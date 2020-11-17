@@ -1,14 +1,12 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch} from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
-import { Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../../../reducers';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import RawHtml from '../../../../../../../components/RawHtml';
-import Editor from './Editor';
-import RightDrawer from '../../../../../../../components/drawer/Right';
+import EditDrawer from './EditDrawer';
+import IconTextButton from '../../../../../../../components/IconTextButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -23,8 +21,11 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(2, 0),
     overflow: 'auto',
   },
-  button: {
-    marginRight: theme.spacing(-0.75),
+  panelHeaderReadme: {
+    paddingRight: 0,
+  },
+  editReadmebutton: {
+    marginRight: -20,
   },
 }));
 
@@ -44,35 +45,23 @@ export default function ReadmeSection({ integrationId }) {
     history.push(`${match.url}/edit/readme`);
   }, [history, match.url]);
 
-  const onClose = useCallback(() => {
-    history.goBack();
-  }, [history]);
-
   return (
     <>
-      <PanelHeader title="Readme">
-        <Button
-          className={classes.button}
+      <PanelHeader title="Readme" className={classes.panelHeaderReadme}>
+        <IconTextButton
+          className={classes.editReadmebutton}
           data-test="form-editor-action"
           variant="text"
           disabled={!canEditIntegration}
           onClick={toggleEditMode}>
           Edit readme
-        </Button>
+        </IconTextButton>
       </PanelHeader>
       <div className={classes.root}>
         <RawHtml className={classes.previewContainer} html={readmeValue} />
       </div>
-      <RightDrawer
-        path="edit/readme"
-        height="tall"
-        width="xl"
-        // type="paper"
-        title="Edit readme"
-        variant="temporary"
-        onClose={onClose}>
-        <Editor readmeValue={readmeValue} onClose={onClose} integrationId={integrationId} />
-      </RightDrawer>
+
+      <EditDrawer value={readmeValue} integrationId={integrationId} />
     </>
   );
 }

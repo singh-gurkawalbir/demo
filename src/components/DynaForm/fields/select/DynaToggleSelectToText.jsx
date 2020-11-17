@@ -7,6 +7,7 @@ import DynaSelect from '../DynaSelect';
 const useStyles = makeStyles(theme => ({
   dynaToggleTextWrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
   dynabtn: {
     marginTop: 26,

@@ -169,7 +169,7 @@ export default {
     },
     'http.unencrypted.version': {
       fieldId: 'http.unencrypted.version',
-      type: 'text',
+      type: 'select',
       label: 'Version',
       helpKey: 'shopify.connection.http.unencrypted.version',
       required: true,
@@ -177,6 +177,16 @@ export default {
         (r && r.http && r.http.unencrypted && r.http.unencrypted.version) ||
         '2020-07',
       visible: r => !(r?._connectorId),
+      options: [
+        {
+          items: [
+            { label: '2020-01', value: '2020-01' },
+            { label: '2020-04', value: '2020-04' },
+            { label: '2020-07', value: '2020-07' },
+            { label: '2020-10', value: '2020-10' },
+          ],
+        },
+      ],
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
@@ -235,6 +245,10 @@ export default {
             'unauthenticated_read_content',
             'read_assigned_fulfillment_orders',
             'write_assigned_fulfillment_orders',
+            'read_merchant_managed_fulfillment_orders',
+            'write_merchant_managed_fulfillment_orders',
+            'read_third_party_fulfillment_orders',
+            'write_third_party_fulfillment_orders',
           ],
         },
         {

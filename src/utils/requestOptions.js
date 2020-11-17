@@ -13,6 +13,10 @@ export default function getRequestOptions(
     filters = {},
     adaptorType,
     actionType,
+    connectorId,
+    licenseId,
+    flowId,
+    isResolved,
   } = {}
 ) {
   switch (action) {
@@ -61,6 +65,8 @@ export default function getRequestOptions(
         path = '/licenses/retrialRequest';
       } else if (actionType === 'upgrade') {
         path = '/licenses/upgradeRequest';
+      } else if (actionType === 'connectorRenewal') {
+        path = `/connectors/${connectorId}/licenses/${licenseId}/renewRequest`;
       }
 
       return {
@@ -167,8 +173,8 @@ export default function getRequestOptions(
       };
     case actionTypes.JOB.RESOLVE_ALL_IN_FLOW_COMMIT:
       return {
-        path: `/flows/${resourceId}/jobs/resolve`,
-        opts: { method: 'PUT' },
+        path: '/flows/jobs/resolve',
+        opts: { method: 'PUT', body: resourceId },
       };
     case actionTypes.JOB.RESOLVE_ALL_IN_INTEGRATION_COMMIT:
       return {
@@ -182,8 +188,8 @@ export default function getRequestOptions(
       };
     case actionTypes.JOB.RETRY_ALL_IN_FLOW_COMMIT:
       return {
-        path: `/flows/${resourceId}/jobs/retry`,
-        opts: { method: 'PUT' },
+        path: '/flows/jobs/retry',
+        opts: { method: 'PUT', body: resourceId },
       };
     case actionTypes.JOB.RETRY_ALL_IN_INTEGRATION_COMMIT:
       return {
@@ -282,6 +288,26 @@ export default function getRequestOptions(
           '&'
         )}`,
         opts: { method: 'GET' },
+      };
+    }
+
+    case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DOWNLOAD.REQUEST: {
+      let path = `/flows/${flowId}/${resourceId}/${isResolved ? 'resolved' : 'errors'}/signedURL`;
+      const { fromDate, toDate } = filters || {};
+      const fromKey = isResolved ? 'resolvedAt_gte' : 'occurredAt_gte';
+      const toKey = isResolved ? 'resolvedAt_lte' : 'occurredAt_lte';
+
+      if (fromDate && toDate) {
+        path += `?${fromKey}=${fromDate}&${toKey}=${toDate}`;
+      } else if (fromDate) {
+        path += `?${fromKey}=${fromDate}`;
+      } else if (toDate) {
+        path += `?${toKey}=${toDate}`;
+      }
+
+      return {
+        path,
+        opts: { method: 'GET'},
       };
     }
 

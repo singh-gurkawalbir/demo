@@ -32,8 +32,9 @@ export default {
     importResource,
   }) => {
     const {generate, lookupName} = value;
-    const {_connectionId: connectionId, adaptorType, _id: resourceId } = importResource;
-    const isComposite = !!(adaptorType === 'NetSuiteDistributedImport' && importResource.netsuite_da?.operation === 'addupdate');
+    const {_connectionId: connectionId, _id: resourceId } = importResource;
+    const isComposite = importResource.netsuite_da?.operation === 'addupdate' || importResource.netsuite?.operation === 'addupdate';
+
     const isGroupedSampleData = Array.isArray(extractFields);
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
 
@@ -134,9 +135,9 @@ export default {
           name: 'useAsAnInitializeValue',
           type: 'checkbox',
           defaultValue: value.useAsAnInitializeValue || false,
-          // helpText not present
+          helpKey: 'mapping.useAsInitializeValue',
           // TODO check when this field is hidden
-          label: 'Use this field during record initialization',
+          label: 'Use this field for NetSuite record initialization',
         },
         fieldMappingType: {
           id: 'fieldMappingType',
@@ -363,8 +364,7 @@ export default {
           name: 'lookupAction',
           type: 'radiogroup',
           defaultValue:
-            mappingUtil.getDefaultLookupActionValue(value, lookup) ||
-            'disallowFailure',
+            mappingUtil.getDefaultLookupActionValue(lookup),
           label: 'Action to take if unique match not found',
           showOptionsVertically: true,
           refreshOptionsOnChangesTo: ['lookup.mode'],
@@ -679,6 +679,9 @@ export default {
 
       fieldMeta.fieldMap['lookup.mapList'].commMetaPath = commMetaPath;
       fieldMeta.fieldMap['lookup.mapList'].connectionId = connectionId;
+      if (generateFieldType === 'select') { // applicable only for 'select'
+        fieldMeta.fieldMap['lookup.mapList'].preferMapValueAsNum = true;
+      }
       fieldMeta.fieldMap['conditional.lookupName'].staticLookupCommMetaPath = commMetaPath;
       // changing metadata for hardcodedDefault and lookupDefault
       ['hardcodedDefault', 'lookupDefault'].forEach(metaKey => {

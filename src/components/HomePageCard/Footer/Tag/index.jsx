@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 
@@ -10,7 +11,7 @@ const useStyles = makeStyles(theme => ({
     padding: [[2, 10]],
     justifyContent: 'flex-start',
     border: '2px solid',
-    borderColor: theme.palette.secondary.lightest,
+    borderColor: theme.palette.secondary.light,
     borderRight: 'none',
     position: 'relative',
     boxSizing: 'border-box',
@@ -20,13 +21,14 @@ const useStyles = makeStyles(theme => ({
       content: '""',
       top: 1,
       right: -8,
-      borderColor: theme.palette.secondary.lightest,
+      borderColor: theme.palette.secondary.light,
       borderStyle: 'solid',
       borderWidth: [[0, 2, 2, 0]],
       display: 'inline-block',
       padding: 7,
       transform: 'rotate(-45deg)',
       position: 'absolute',
+      borderRadius: [[2, 1, 2, 1]],
     },
     '&:after': {
       content: '""',
@@ -36,7 +38,7 @@ const useStyles = makeStyles(theme => ({
       height: 5,
       borderRadius: '50%',
       border: '2px solid',
-      borderColor: theme.palette.secondary.lightest,
+      borderColor: theme.palette.secondary.light,
       position: 'absolute',
       boxSizing: 'content-box',
     },
@@ -46,9 +48,10 @@ const useStyles = makeStyles(theme => ({
   },
   label: {
     maxWidth: 175,
+    color: theme.palette.secondary.light,
     overflow: 'hidden',
     whiteSpace: 'nowrap',
-    lineHeight: '14px',
+    lineHeight: '13px',
     textOverflow: 'ellipsis',
     [theme.breakpoints.down('sm')]: {
       maxWidth: '100%',
@@ -56,12 +59,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Tag(props) {
+function Tag({ variant, className }) {
   const classes = useStyles();
-  const { variant } = props;
 
   return (
-    <div className={classes.wrapper}>
+    <div className={clsx(classes.wrapper, className)}>
       <span className={classes.label}>{variant}</span>
     </div>
   );

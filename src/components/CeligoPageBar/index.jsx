@@ -32,6 +32,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     minWidth: 70,
+    maxWidth: '50%',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -63,6 +64,7 @@ export default function CeligoPageBar(props) {
       <SlideOnScroll threshold={250}>
         <ElevateOnScroll threshold={0}>
           <Paper
+            data-public
             className={clsx(classes.pageHeader, className, {
               [classes.pageHeaderShift]: drawerOpened,
             })}

@@ -12,6 +12,8 @@ const emptyObj = {};
 const useStyles = makeStyles(theme => ({
   button: {
     marginRight: theme.spacing(-0.75),
+    color: theme.palette.secondary.main,
+    fontFamily: 'Roboto400',
   },
 }));
 

@@ -1,15 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core';
-import clsx from 'clsx';
 import ReactResizeDetector from 'react-resize-detector';
 import ConnectionStatusPanel from '../ConnectionStatusPanel';
 import ResourceForm from '../ResourceFormFactory';
 import GenericAdaptorNotification from '../GenericAdaptorNotification';
+import NetSuiteBundleInstallNotification from '../NetSuiteBundleInstallNotification';
 
 const useStyles = makeStyles(theme => ({
-  removeTopPadding: {
-    paddingTop: '0px !important',
-  },
   form: {
     height: props =>
       `calc(100vh - ${props.heightOffset || 150}px - ${
@@ -24,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     padding: '0px !important',
   },
   notification: {
-    margin: theme.spacing(2, 0),
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -36,17 +33,15 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
     notificationPanelHeight,
   });
   const resize = useCallback((width, height) => {
-    setNotificationPanelHeight(height);
+    setNotificationPanelHeight(height + 16);
   }, []);
 
   return (
-    <div
-      className={clsx(className, {
-        [classes.removeTopPadding]: notificationPanelHeight,
-      })}>
+    <div className={className}>
       <div>
         {['exports', 'imports', 'connections'].includes(resourceType) && (
           <ConnectionStatusPanel
+            className={classes.notification}
             resourceType={resourceType}
             isFlowBuilderView={isFlowBuilderView}
             resourceId={resourceId}
@@ -54,6 +49,7 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
         )}
         {showNotificationToaster &&
           <GenericAdaptorNotification className={classes.notification} onClose={onCloseNotificationToaster} />}
+        <NetSuiteBundleInstallNotification className={classes.notification} resourceType={resourceType} resourceId={resourceId} />
         <ReactResizeDetector handleHeight onResize={resize} />
       </div>
       <ResourceForm className={classes.form} {...props} />

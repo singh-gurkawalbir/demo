@@ -12,6 +12,7 @@ import {
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import FieldHelp from '../../FieldHelp';
 import { selectors } from '../../../../reducers';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {
@@ -45,22 +46,24 @@ const ApiParametersModal = props => {
     onFieldChange(id, formValues);
     onClose();
   }
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+  });
 
   return (
     <ModalDialog show onClose={onClose}>
       <span>API parameters</span>
-      <DynaForm fieldMeta={fieldMeta}>
-        <div>
-          <DynaSubmit onClick={onSaveClick}>Save</DynaSubmit>
-          <Button
-            data-test="cancelSearchParams"
-            onClick={onClose}
-            variant="text"
-            color="primary">
-            Cancel
-          </Button>
-        </div>
-      </DynaForm>
+      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <div>
+        <DynaSubmit onClick={onSaveClick}>Save</DynaSubmit>
+        <Button
+          data-test="cancelSearchParams"
+          onClick={onClose}
+          variant="text"
+          color="primary">
+          Cancel
+        </Button>
+      </div>
     </ModalDialog>
   );
 };

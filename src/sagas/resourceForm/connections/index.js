@@ -153,7 +153,7 @@ export function* requestToken({ resourceId, fieldId, values }) {
 
   if (!assistant) throw new Error('Could not determine the assistant type');
 
-  if (assistant === 'procurify' && fieldId === 'http.encrypted.clientSecret') {
+  if (assistant === 'procurify' && fieldId === 'http.unencrypted.clientId') {
     assistant = 'procurifyauthenticate';
   }
 
@@ -388,10 +388,12 @@ export function* saveAndAuthorizeConnection({ resourceId, values }) {
 
   // For New IA framework, UI will not create a connection and backend does it.
   // Open Oauth window logic handled as part of install integration app sagas.
+  const newIAConnDoc = yield call(newIAFrameWorkPayload, {
+    resourceId,
+  });
+
   if (
-    yield call(newIAFrameWorkPayload, {
-      resourceId,
-    })
+    newIAConnDoc?.installStepConnection
   ) {
     return true;
   }

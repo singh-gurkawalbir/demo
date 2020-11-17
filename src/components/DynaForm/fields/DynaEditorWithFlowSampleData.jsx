@@ -1,46 +1,49 @@
-import FormContext from 'react-forms-processor/dist/components/FormContext';
-import React, { useCallback, useMemo, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { isEqual } from 'lodash';
 import HttpRequestBodyEditorDrawer from '../../AFE/HttpRequestBodyEditor/Drawer';
 import UrlEditorDrawer from '../../AFE/UrlEditor/Drawer';
 import CsvConfigEditorDrawer from '../../AFE/CsvConfigEditor/Drawer';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import {
-  getXMLSampleTemplate,
-  getJSONSampleTemplate,
-} from '../../AFE/HttpRequestBodyEditor/templateMapping';
+import { getUniqueFieldId } from '../../../utils/resource';
 
 const DynaEditorWithFlowSampleData = ({
   fieldId,
   editorType,
-  formContext,
   flowId,
   resourceId,
   resourceType,
   disableEditorV2,
+  enableEditorV2,
   rule,
   ...props
 }) => {
+  const fieldType = getUniqueFieldId(fieldId);
   const dispatch = useDispatch();
   const isEditorV2Supported = useSelector(state => {
     if (disableEditorV2) {
       return false;
     }
 
-    return selectors.isEditorV2Supported(state, resourceId, resourceType);
+    return selectors.isEditorV2Supported(state, resourceId, resourceType, flowId, enableEditorV2);
   });
   const {
     data: sampleData,
     status: sampleDataRequestStatus,
     templateVersion,
-  } = useSelector(state =>
-    selectors.getEditorSampleData(state, {
+  } = useSelector(state => {
+    const sampleData = selectors.editorSampleData(state, { flowId, resourceId, fieldType });
+
+    return selectors.sampleDataWrapper(state, {
+      sampleData,
       flowId,
       resourceId,
-      fieldType: fieldId,
-    })
-  );
+      resourceType,
+      fieldType,
+      stage: editorType !== 'csvGenerate' ? 'flowInput' : undefined,
+    });
+  }, isEqual);
   const loadEditorSampleData = useCallback(
     version => {
       dispatch(
@@ -49,15 +52,14 @@ const DynaEditorWithFlowSampleData = ({
           resourceId,
           resourceType,
           stage: 'flowInput',
-          formValues: formContext.value,
-          fieldType: fieldId,
-          isV2NotSupported: disableEditorV2,
+          formKey: props.formKey,
+          fieldType,
+          isEditorV2Supported,
           requestedTemplateVersion: version,
         })
       );
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [disableEditorV2, dispatch, fieldId, flowId, resourceId, resourceType]
+    [dispatch, fieldType, flowId, props.formKey, isEditorV2Supported, resourceId, resourceType]
   );
   const handleEditorVersionToggle = useCallback(
     version => {
@@ -65,16 +67,6 @@ const DynaEditorWithFlowSampleData = ({
     },
     [loadEditorSampleData]
   );
-  const formattedRule = useMemo(() => {
-    if (editorType === 'httpRequestBody' && !rule && templateVersion === 1) {
-      // load sample template when rule is not yet defined
-      if (props.contentType === 'json') return getJSONSampleTemplate((sampleData && sampleData.data) || []);
-
-      return getXMLSampleTemplate((sampleData && sampleData.data) || []);
-    }
-
-    return rule;
-  }, [editorType, props.contentType, rule, sampleData, templateVersion]);
 
   useEffect(() => {
     if (flowId) {
@@ -88,7 +80,7 @@ const DynaEditorWithFlowSampleData = ({
         <HttpRequestBodyEditorDrawer
           {...props}
           id={`${resourceId}-${fieldId}`}
-          rule={formattedRule}
+          rule={rule}
           data={JSON.stringify(sampleData, null, 2)}
           isSampleDataLoading={sampleDataRequestStatus === 'requested'}
           showVersionToggle={isEditorV2Supported}
@@ -100,7 +92,7 @@ const DynaEditorWithFlowSampleData = ({
         <UrlEditorDrawer
           {...props}
           id={`${resourceId}-${fieldId}`}
-          rule={formattedRule}
+          rule={rule}
           data={JSON.stringify(sampleData, null, 2)}
           showVersionToggle={isEditorV2Supported}
           isSampleDataLoading={sampleDataRequestStatus === 'requested'}
@@ -112,8 +104,7 @@ const DynaEditorWithFlowSampleData = ({
         <CsvConfigEditorDrawer
           {...props}
           /** rule to be passed as json */
-          rule={formattedRule}
-          title="CSV generator helper"
+          rule={rule}
           id={`${resourceId}-${fieldId}`}
           mode="csv"
           data={JSON.stringify(sampleData, null, 2)}
@@ -129,10 +120,4 @@ const DynaEditorWithFlowSampleData = ({
   );
 };
 
-export default function DynaEditorWithFlowSampleDataWrapper(props) {
-  return (
-    <FormContext.Consumer>
-      {form => <DynaEditorWithFlowSampleData {...props} formContext={form} />}
-    </FormContext.Consumer>
-  );
-}
+export default DynaEditorWithFlowSampleData;

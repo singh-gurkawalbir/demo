@@ -4,17 +4,18 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
-import { constructResourceFromFormValues, requestExportSampleData } from '../sampleData';
-import { isNewId, isFileAdaptor, isAS2Resource } from '../../utils/resource';
+import { requestExportSampleData } from '../sampleData';
+import { constructResourceFromFormValues } from '../sampleData/utils/exportSampleDataUtils';
+import { isNewId } from '../../utils/resource';
 
 export function* requestEditorSampleData({
   flowId,
   resourceId,
   resourceType,
-  stage,
+  stage = 'flowInput',
   fieldType,
-  formValues,
-  isV2NotSupported,
+  formKey,
+  isEditorV2Supported,
   requestedTemplateVersion,
 }) {
   const isPageGenerator = yield select(
@@ -23,6 +24,7 @@ export function* requestEditorSampleData({
     resourceId,
     resourceType
   );
+  const { value: formValues } = yield select(selectors.formState, formKey) || {};
   const resource = yield call(constructResourceFromFormValues, {
     formValues,
     resourceId,
@@ -30,28 +32,15 @@ export function* requestEditorSampleData({
   });
   let sampleData;
 
-  if (isPageGenerator) {
-    const isRestCsvMediaType = yield select(
-      selectors.isRestCsvMediaTypeExport,
-      resourceId
+  if (isPageGenerator && isEditorV2Supported) {
+    yield call(requestExportSampleData, { resourceId, resourceType, values: formValues });
+    const parsedData = yield select(
+      selectors.getResourceSampleDataWithStatus,
+      resourceId,
+      'parse'
     );
 
-    if (
-      isFileAdaptor(resource) ||
-      isAS2Resource(resource) ||
-      isRestCsvMediaType
-    ) {
-      yield call(requestExportSampleData, { resourceId, resourceType, values: formValues });
-      const parsedData = yield select(
-        selectors.getResourceSampleDataWithStatus,
-        resourceId,
-        'parse'
-      );
-
-      if (parsedData && parsedData.data) {
-        sampleData = parsedData.data;
-      }
-    }
+    sampleData = parsedData?.data;
   } else {
     const flowSampleData = yield select(selectors.getSampleDataContext, {
       flowId,
@@ -60,16 +49,16 @@ export function* requestEditorSampleData({
       stage,
     });
 
-    sampleData = flowSampleData && flowSampleData.data;
+    sampleData = flowSampleData?.data;
   }
 
   if (!sampleData && !isPageGenerator) {
-    // sample data not present.trigger action to get sample data
+    // sample data not present, trigger action to get sample data
     yield call(requestSampleData, {
       flowId,
       resourceId,
       resourceType,
-      stage: 'flowInput',
+      stage,
     });
     // get sample data from the selector once loaded
     const flowSampleData = yield select(selectors.getSampleDataContext, {
@@ -79,27 +68,13 @@ export function* requestEditorSampleData({
       stage,
     });
 
-    sampleData = flowSampleData && flowSampleData.data;
-  }
-
-  let isEditorV2Supported;
-
-  if (isV2NotSupported) {
-    isEditorV2Supported = false;
-  } else {
-    isEditorV2Supported = yield select(
-      selectors.isEditorV2Supported,
-      resourceId,
-      resourceType
-    );
+    sampleData = flowSampleData?.data;
   }
 
   if (!isEditorV2Supported) {
-    const _sampleData = {
-      data: sampleData || {
-        myField: 'sample',
-      },
-    };
+    const _sampleData = sampleData ? {
+      data: sampleData,
+    } : undefined;
 
     yield put(
       actions.editorSampleData.received({
@@ -109,8 +84,6 @@ export function* requestEditorSampleData({
         sampleData: _sampleData,
       })
     );
-
-    // call diff action to render old sample data
   } else {
     const body = {
       sampleData: sampleData || { myField: 'sample' },

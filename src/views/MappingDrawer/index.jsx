@@ -6,12 +6,15 @@ import LoadResources from '../../components/LoadResources';
 import Mapping from '../../components/Mapping';
 import SelectImport from './SelectImport';
 import RightDrawer from '../../components/drawer/Right';
+import DrawerHeader from '../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../components/drawer/Right/DrawerContent';
+import DatabaseMapping from './DatabaseMapping';
+import SelectQueryType from './DatabaseMapping/SelectQueryType';
 
 const MappingWrapper = ({integrationId}) => {
   const history = useHistory();
   const match = useRouteMatch();
   const { flowId, importId, subRecordMappingId } = match.params;
-
   const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
 
   const handleClose = useCallback(() => {
@@ -29,6 +32,7 @@ const MappingWrapper = ({integrationId}) => {
 
   );
 };
+
 export default function MappingDrawerRoute(props) {
   const match = useRouteMatch();
   const integrationId = match.params?.integrationId || props.integrationId;
@@ -40,8 +44,8 @@ export default function MappingDrawerRoute(props) {
   });
 
   return (
-
-    // TODO (Aditya/Raghu): Break it into 2 side drawer after changes to RightDrawer is done on exact property. Also check for dummy route implementation on Right Drawer
+    // TODO (Aditya/Raghu): Break it into 2 side drawer after changes to RightDrawer is done on exact property.
+    // Also check for dummy route implementation on Right Drawer
     <LoadResources
       required="true"
       resources="imports, exports, connections">
@@ -55,10 +59,9 @@ export default function MappingDrawerRoute(props) {
         ]}
         height="tall"
         width={isMappingPreviewAvailable ? 'full' : 'default'}
-        title="Edit Mapping"
-        variant="temporary"
+        variant="persistent"
       >
-
+        <DrawerHeader title="Edit mapping" />
         <Switch>
           <Route
             path={[
@@ -80,6 +83,28 @@ export default function MappingDrawerRoute(props) {
           </Route>
         </Switch>
       </RightDrawer>
+
+      <RightDrawer
+        height="tall"
+        width="default"
+        variant="temporary"
+        hideBackButton
+        path="dbMapping/:flowId/:importId">
+
+        <DrawerHeader title="Select query type" />
+
+        <DrawerContent>
+          <SelectQueryType />
+        </DrawerContent>
+      </RightDrawer>
+
+      <Route
+        path={`${match.url}/queryBuilder/:flowId/:importId/:index/view`}>
+        <DatabaseMapping
+          integrationId={integrationId}
+          {...props}
+          />
+      </Route>
     </LoadResources>
   );
 }

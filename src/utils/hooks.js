@@ -24,7 +24,15 @@ export const hooksList = [
   ...externalScripts /* Used in transformation and filters Scripts */,
 ];
 
-export const importSuiteScriptHooksList = ['preMap', 'postMap', 'postSubmit'];
+export const getImportSuiteScriptHooksList = isNSApiVersion2Selected => {
+  const importSuiteScriptHooksList = ['postMap', 'postSubmit'];
+
+  if (!isNSApiVersion2Selected) {
+    importSuiteScriptHooksList.unshift('preMap');
+  }
+
+  return importSuiteScriptHooksList;
+};
 
 export const hooksToFunctionNamesMap = {
   preSavePage: 'preSavePage',
@@ -72,6 +80,7 @@ export function getSupportedHooksForResource(resource) {
     case 'postgresql':
     case 'mysql':
     case 'mssql':
+    case 'oracle':
     case 'snowflake':
     case 'mongodb':
       unSupportedHooks = [];
@@ -82,7 +91,10 @@ export function getSupportedHooksForResource(resource) {
       unSupportedHooks = [];
       break;
     case 'netsuite':
-      unSupportedHooks = ['postMap', 'postAggregate'];
+      unSupportedHooks = ['postAggregate'];
+      if (!resource.netsuite_da?.useSS2Restlets) { // eslint-disable-line camelcase
+        unSupportedHooks.push('postMap');
+      }
       break;
     case 'rest':
     case 'http':

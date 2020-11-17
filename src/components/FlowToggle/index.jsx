@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {makeStyles} from '@material-ui/core/styles';
 import { Tooltip } from '@material-ui/core';
 import actions from '../../actions';
-import SwitchOnOff from '../SwitchToggle';
+import CeligoSwitch from '../CeligoSwitch';
 import useConfirmDialog from '../ConfirmDialog';
 import { selectors } from '../../reducers';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import Spinner from '../Spinner';
 
+const useStyles = makeStyles({
+  spinnerFlowToggle: {
+    padding: '0 !important',
+  },
+});
 export default function FlowToggle({
   resource: flow,
   disabled,
@@ -16,6 +22,7 @@ export default function FlowToggle({
 }) {
   // TODO: Connector specific things to be added for schedule drawer incase of !isDisabled && isIntegrationApp
   const { confirmDialog } = useConfirmDialog();
+  const classes = useStyles();
   const dispatch = useDispatch();
   const [onOffInProgressStatus, setOnOffInProgressStatus] = useState(false);
   const { onOffInProgress } = useSelector(
@@ -104,17 +111,20 @@ export default function FlowToggle({
     });
   };
 
+  if (flow.disableSlider) return null;
+
   return onOffInProgressStatus ? (
-    <Spinner size={20} />
+    <Spinner size={20} color="primary" className={classes.spinnerFlowToggle} />
   ) : (
     <Tooltip title="Off/On" placement="bottom">
       <div>
-        <SwitchOnOff
+        <CeligoSwitch
           disabled={disabled}
-          on={!flow.disabled}
-          onClick={enableOrDisableFlow}
+          on={!flow.disabled ? 'true' : 'false'}
+          onChange={enableOrDisableFlow}
           data-test="switchFlowOnOff"
-          />
+          checked={!flow.disabled}
+      />
       </div>
     </Tooltip>
   );

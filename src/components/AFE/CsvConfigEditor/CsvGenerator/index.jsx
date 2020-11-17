@@ -92,6 +92,7 @@ export default function CsvGenerateEditor(props) {
             mode="json"
             onChange={handleDataChange}
             readOnly={disabled}
+            hasError={!!violations?.dataError}
         />
         )}
       </PanelGridItem>

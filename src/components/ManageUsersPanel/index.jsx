@@ -1,18 +1,21 @@
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { useRouteMatch, useHistory } from 'react-router-dom';
 import { selectors } from '../../reducers';
 import { USER_ACCESS_LEVELS } from '../../utils/constants';
 import IconTextButton from '../IconTextButton';
 import AddIcon from '../icons/AddIcon';
 import PanelHeader from '../PanelHeader';
-import UserDialog from './UserDialog';
-import UserList from './UserList';
+import UsersList from './UsersList';
 
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.common.white,
     overflow: 'visible',
+  },
+  userListWrapper: {
+    overflowX: 'auto',
   },
 }));
 
@@ -26,49 +29,29 @@ const infoTextUsers =
   the flows within the integration. The user will only see your 
   integrations that you have invited them to.`;
 
-export default function ManageUsersPanel({ integrationId }) {
+export default function ManageUsersPanel({ integrationId, storeId }) {
   const classes = useStyles();
-  const [showDialog, setShowDialog] = useState(false);
-  const [userId, setUserId] = useState();
+  const match = useRouteMatch();
+  const history = useHistory();
   const isAccountOwner = useSelector(
     state =>
       selectors.resourcePermissions(state).accessLevel ===
       USER_ACCESS_LEVELS.ACCOUNT_OWNER
   );
-  const handleCloseDialog = useCallback(() => {
-    setShowDialog(false);
-  }, []);
-  const handleInviteUserClick = useCallback(() => {
-    setShowDialog(true);
-    setUserId();
-  }, []);
-  const handleEditUserClick = useCallback(userId => {
-    setShowDialog(true);
-    setUserId(userId);
-  }, []);
+
+  const handleInvite = useCallback(() => history.push(`${match.url}/invite`), [history, match]);
 
   return (
     <div className={classes.root}>
-      {showDialog && (
-        <UserDialog
-          open={showDialog}
-          userId={userId}
-          onClose={handleCloseDialog}
-          onSuccess={handleCloseDialog}
-        />
-      )}
       <PanelHeader title="Users" infoText={infoTextUsers}>
         {isAccountOwner && (
-          <IconTextButton onClick={handleInviteUserClick}>
+          <IconTextButton onClick={handleInvite}>
             <AddIcon /> Invite user
           </IconTextButton>
         )}
       </PanelHeader>
+      <UsersList integrationId={integrationId} storeId={storeId} className={classes.userListWrapper} />
 
-      <UserList
-        integrationId={integrationId}
-        onEditUserClick={handleEditUserClick}
-      />
     </div>
   );
 }

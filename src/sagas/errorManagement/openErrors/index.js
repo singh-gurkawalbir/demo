@@ -61,6 +61,7 @@ function* requestIntegrationErrors({ integrationId }) {
       opts: {
         method: 'GET',
       },
+      hidden: true,
     });
 
     yield put(
@@ -74,6 +75,13 @@ function* requestIntegrationErrors({ integrationId }) {
   }
 }
 
+function* pollForIntegrationErrors({ integrationId }) {
+  yield put(actions.errorManager.integrationErrors.request({ integrationId }));
+  while (true) {
+    yield call(requestIntegrationErrors, { integrationId });
+    yield delay(5 * 1000);
+  }
+}
 function* pollForOpenErrors({ flowId }) {
   yield put(actions.errorManager.openFlowErrors.request({ flowId }));
   while (true) {
@@ -88,6 +96,12 @@ function* startPollingForOpenErrors({ flowId }) {
   yield take(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.CANCEL_POLL);
   yield cancel(watcher);
 }
+function* startPollingForIntegrationErrors({ integrationId }) {
+  const watcher = yield fork(pollForIntegrationErrors, { integrationId });
+
+  yield take(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.CANCEL_POLL);
+  yield cancel(watcher);
+}
 
 export default [
   takeLatest(
@@ -95,7 +109,7 @@ export default [
     startPollingForOpenErrors
   ),
   takeLatest(
-    actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST,
-    requestIntegrationErrors
+    actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST_FOR_POLL,
+    startPollingForIntegrationErrors
   ),
 ];

@@ -19,6 +19,7 @@ import postResponseMapHook from './actions/postResponseMapHook';
 import responseTransformationAction from './actions/responseTransformation';
 import proceedOnFailureAction from './actions/proceedOnFailure';
 import { actionsMap, isImportMappingAvailable } from '../../../utils/flows';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -53,7 +54,6 @@ const PageProcessor = ({
   isMonitorLevelAccess,
   onDelete,
   openErrorCount,
-  onErrors,
   ...pp
 }) => {
   const pending = !!pp._connectionId;
@@ -70,9 +70,11 @@ const PageProcessor = ({
         resourceId
       )
     ) || {};
+  const flowDetails = useSelectorMemo(selectors.mkFlowDetails, flowId);
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pp._connectionId)
   );
+  // TODO: move this logic to util function and use "resourceCategory" function
   let blockType = pp.type === 'export' ? 'lookup' : 'import';
 
   if (
@@ -92,6 +94,8 @@ const PageProcessor = ({
   ) {
     blockType = 'importTransfer';
   }
+
+  const showMapping = useMemo(() => flowDetails._connectorId ? flowDetails.showMapping : true, [flowDetails]);
 
   // Returns map of all possible actions with true/false whether actions performed on the resource
   const usedActions =
@@ -258,7 +262,7 @@ const PageProcessor = ({
         );
       } else {
         processorActions.push(
-          ...(isImportMappingAvailable(resource)
+          ...((isImportMappingAvailable(resource) && showMapping)
             ? [
               {
                 ...importMappingAction,
@@ -321,7 +325,6 @@ const PageProcessor = ({
           integrationId={integrationId}
           name={name}
           onDelete={onDelete(name)}
-          onErrors={onErrors}
           openErrorCount={openErrorCount}
           isViewMode={isViewMode}
           isMonitorLevelAccess={isMonitorLevelAccess}

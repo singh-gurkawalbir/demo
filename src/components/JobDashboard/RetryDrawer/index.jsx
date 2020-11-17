@@ -5,34 +5,28 @@ import { makeStyles, Button, Typography } from '@material-ui/core';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
+import DrawerHeader from '../../drawer/Right/DrawerHeader';
+import DrawerContent from '../../drawer/Right/DrawerContent';
+import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import Spinner from '../../Spinner';
 import CodeEditor from '../../CodeEditor';
 import ButtonGroup from '../../ButtonGroup';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    height: '100%',
-  },
-  actions: {
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-    // height: theme.spacing(10),
-    marginTop: theme.spacing(1),
-    padding: theme.spacing(2, 0, 1, 0),
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
   spinner: {
     marginRight: theme.spacing(1),
   },
   errorText: {
-    marginTop: theme.spacing(1),
+    margin: theme.spacing(1),
+  },
+  content: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
   },
 }));
 
-function DrawerContent({jobId, flowJobId}) {
+function RetryForm({jobId, flowJobId}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
@@ -84,7 +78,10 @@ function DrawerContent({jobId, flowJobId}) {
   const handleRetry = useCallback(() => {
     dispatch(
       actions.job.retrySelectedRetries({
-        jobId, flowJobId, selectedRetryIds: [retryId],
+        jobId,
+        flowJobId,
+        selectedRetryIds: [retryId],
+        match,
       })
     );
     history.goBack(2);
@@ -109,12 +106,15 @@ function DrawerContent({jobId, flowJobId}) {
   const disabled = !!error || !touched;
 
   return (
-    <div className={classes.root}>
-      <CodeEditor name="retryEditor" mode="json" value={data} onChange={handleChange} />
+    <>
+      <DrawerContent>
+        <div className={classes.content}>
+          <CodeEditor name="retryEditor" mode="json" value={data} onChange={handleChange} />
+          {error && <Typography className={classes.errorText} component="div" color="error">{error}</Typography>}
+        </div>
+      </DrawerContent>
 
-      {error && <Typography className={classes.errorText} component="div" color="error">{error}</Typography>}
-
-      <div className={classes.actions}>
+      <DrawerFooter>
         <ButtonGroup>
           <Button disabled={disabled} variant="outlined" color="primary" onClick={handleSave}>Save</Button>
           <Button disabled={disabled} variant="outlined" color="secondary" onClick={handleSaveAndClose}>Save & close</Button>
@@ -125,8 +125,8 @@ function DrawerContent({jobId, flowJobId}) {
           </Button>
         </ButtonGroup>
         <Button disabled={!!error || touched} variant="outlined" color="secondary" onClick={handleRetry}>Retry</Button>
-      </div>
-    </div>
+      </DrawerFooter>
+    </>
   );
 }
 
@@ -136,9 +136,9 @@ export default function RetryDrawer({height, jobId, flowJobId}) {
       path="editRetry/:retryId"
       height={height}
       width="large"
-      title="Edit retry data"
       variant="permanent">
-      <DrawerContent jobId={jobId} flowJobId={flowJobId} />
+      <DrawerHeader title="Edit retry data" />
+      <RetryForm jobId={jobId} flowJobId={flowJobId} />
     </RightDrawer>
   );
 }

@@ -9,6 +9,7 @@ import { selectors } from '../../../../../../reducers';
 import DeleteIcon from '../../../../../../components/icons/TrashIcon';
 import { getIntegrationAppUrlName } from '../../../../../../utils/integrationApps';
 import getRoutePath from '../../../../../../utils/routePaths';
+import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -32,15 +33,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function UninstallSection({ storeId, integrationId }) {
+export default function UninstallSection({ childId, integrationId }) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
   const { confirmDialog } = useConfirmDialog();
-  const integration =
-    useSelector(state =>
-      selectors.integrationAppSettings(state, integrationId)
-    ) || {};
+
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
+
   const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
   const integrationAppName = getIntegrationAppUrlName(integration.name);
   const handleUninstall = () => {
@@ -73,7 +73,7 @@ export default function UninstallSection({ storeId, integrationId }) {
               integration.settings.supportsMultiStore
             ) {
               history.push(
-                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`)
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`)
               );
             } else {
               history.push(

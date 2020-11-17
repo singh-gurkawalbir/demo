@@ -27,10 +27,65 @@ function action(type, payload = {}) {
   return { type, ...payload };
 }
 
+// #region this form specific source code, please be careful when making changes to the interface
+const form = {
+  init: (formKey, formSpecificProps) =>
+    action(actionTypes.FORM.INIT, { formKey, formSpecificProps }),
+  clear: formKey => action(actionTypes.FORM.CLEAR, { formKey }),
+  formUpdate: (formKey, formSpecificProps) =>
+    action(actionTypes.FORM.UPDATE, { formKey, formSpecificProps }),
+  showFormValidations: formKey =>
+    action(actionTypes.FORM.UPDATE, {
+      formKey,
+      formSpecificProps: { showValidationBeforeTouched: true },
+    }),
+  registerField: formKey => fieldProps =>
+    action(actionTypes.FORM.FIELD.REGISTER, { formKey, fieldProps }),
+  fieldChange: formKey => (id, value, skipFieldTouched) =>
+    action(actionTypes.FORM.FIELD.ON_FIELD_CHANGE, {
+      formKey,
+      fieldProps: { id, value, skipFieldTouched },
+    }),
+  fieldBlur: formKey => id =>
+    action(actionTypes.FORM.FIELD.ON_FIELD_BLUR, {
+      formKey,
+      fieldProps: { id },
+    }),
+  fieldFocus: formKey => id =>
+    action(actionTypes.FORM.FIELD.ON_FIELD_FOCUS, {
+      formKey,
+      fieldProps: { id },
+    }),
+  forceFieldState: formKey => (
+    id,
+    { visible,
+      disabled,
+      required,
+      isValid,
+      errorMessages}
+  ) =>
+    action(actionTypes.FORM.FIELD.FORCE_STATE, {
+      formKey,
+      fieldProps: {
+        id,
+        visible,
+        disabled,
+        required,
+        isValid,
+        errorMessages,
+      },
+    }),
+  clearForceFieldState: formKey => id =>
+    action(actionTypes.FORM.FIELD.CLEAR_FORCE_STATE, {
+      formKey,
+      fieldProps: { id },
+    }),
+};
+// #endregion
 const auth = {
   requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
-  request: (email, password) =>
-    action(actionTypes.AUTH_REQUEST, { email, password }),
+  request: (email, password, showAuthError) =>
+    action(actionTypes.AUTH_REQUEST, { email, password, showAuthError}),
   signInWithGoogle: returnTo =>
     action(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, { returnTo }),
   reSignInWithGoogle: email =>
@@ -44,7 +99,10 @@ const auth = {
     action(actionTypes.USER_LOGOUT, {
       isExistingSessionInvalid,
     }),
+  userAlreadyLoggedIn: () => action(actionTypes.AUTH_USER_ALREADY_LOGGED_IN),
   clearStore: () => action(actionTypes.CLEAR_STORE),
+  abortAllSagasAndInitLR: opts => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR, opts),
+  abortAllSagasAndReset: () => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
@@ -64,6 +122,8 @@ const api = {
 };
 // #region Resource Actions
 const connection = {
+  setActive: connectionId => action(actionTypes.CONNECTION.ACTIVE_SET, { connectionId }),
+
   requestRegister: (connectionIds, integrationId) =>
     action(actionTypes.CONNECTION.REGISTER_REQUEST, {
       connectionIds,
@@ -114,6 +174,10 @@ const connection = {
     action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
   requestQueuedJobs: connectionId =>
     action(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, { connectionId }),
+  requestQueuedJobsPoll: connectionId =>
+    action(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST_POLL, {connectionId}),
+  cancelQueuedJobsPoll: connectionId =>
+    action(actionTypes.CONNECTION.QUEUED_JOBS_CANCEL_POLL, {connectionId}),
   receivedQueuedJobs: (queuedJobs, connectionId) =>
     action(actionTypes.CONNECTION.QUEUED_JOBS_RECEIVED, {
       queuedJobs,
@@ -121,6 +185,7 @@ const connection = {
     }),
   cancelQueuedJob: jobId =>
     action(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, { jobId }),
+  enableDebug: ({ id, debugDurInMins, match }) => action(actionTypes.CONNECTION.ENABLE_DEBUG, { id, debugDurInMins, match }),
 };
 const marketplace = {
   requestConnectors: () =>
@@ -152,18 +217,25 @@ const recycleBin = {
     action(actionTypes.RECYCLEBIN.PURGE, { resourceType, resourceId }),
 };
 const flowMetrics = {
-  request: (flowId, filters) =>
+  // only 'integrations and flows are valid resourceTypes. The metrics are always related to flows as of now.
+  // when resourceType is integrations, fetch metrics of all enabled flows in integration
+  // when resourceType is flow, fetch specific flow metrics
+  request: (resourceType, resourceId, filters) =>
     action(actionTypes.FLOW_METRICS.REQUEST, {
-      flowId,
+      resourceType,
+      resourceId,
       filters,
     }),
 
-  received: (flowId, response) =>
-    action(actionTypes.FLOW_METRICS.RECEIVED, { flowId, response }),
-  clear: flowId => action(actionTypes.FLOW_METRICS.CLEAR, { flowId }),
+  received: (resourceType, resourceId, response) =>
+    action(actionTypes.FLOW_METRICS.RECEIVED, { resourceType, resourceId, response }),
+  clear: resourceId => action(actionTypes.FLOW_METRICS.CLEAR, { resourceId }),
   failed: error => action(actionTypes.FLOW_METRICS.FAILED, { error }),
 };
 const resource = {
+  replaceConnection: (_resourceId, _connectionId, _newConnectionId) =>
+    action(actionTypes.RESOURCE.REPLACE_CONNECTION, { _resourceId, _connectionId, _newConnectionId }),
+
   downloadFile: (id, resourceType) =>
     action(actionTypes.RESOURCE.DOWNLOAD_FILE, { resourceType, id }),
   created: (id, tempId, resourceType) =>
@@ -271,7 +343,10 @@ const resource = {
         resourceId,
         values,
       }),
-
+    requestStatusPoll: integrationId =>
+      action(actionTypes.CONNECTION.STATUS_REQUEST_POLL, {integrationId}),
+    cancelStatusPoll: integrationId =>
+      action(actionTypes.CONNECTION.STATUS_CANCEL_POLL, {integrationId}),
     testErrored: (resourceId, message) =>
       action(actionTypes.CONNECTION.TEST_ERRORED, {
         resourceId,
@@ -326,6 +401,13 @@ const resource = {
         action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
           connectionId,
           values,
+          hideNotificationMessage: true,
+        }),
+      testConnection: (connectionId, values) =>
+        action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
+          connectionId,
+          values,
+          hideNotificationMessage: false,
         }),
       receivedUserRoles: (connectionId, userRoles) =>
         action(actionTypes.NETSUITE_USER_ROLES.RECEIVED, {
@@ -342,8 +424,10 @@ const resource = {
     },
   },
   notifications: {
-    update: notifications =>
-      action(actionTypes.RESOURCE.UPDATE_NOTIFICATIONS, { notifications }),
+    updateTile: (resourcesToUpdate, integrationId, options = {}) =>
+      action(actionTypes.RESOURCE.UPDATE_TILE_NOTIFICATIONS, { resourcesToUpdate, integrationId, ...options }),
+    updateFlow: (flowId, isSubscribed) =>
+      action(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, {flowId, isSubscribed }),
   },
 };
 // #endregion
@@ -454,6 +538,10 @@ const metadata = {
     action(actionTypes.METADATA.SET_REQUEST_STATUS, {
       connectionId,
       commMetaPath,
+    }),
+  getBundleInstallStatus: connectionId =>
+    action(actionTypes.METADATA.BUNDLE_INSTALL_STATUS, {
+      connectionId,
     }),
 };
 const fileDefinitions = {
@@ -816,13 +904,15 @@ const integrationApp = {
       integrationId,
       connectionId,
       connectionDoc,
-      formSubmission
+      formSubmission,
+      stackId
     ) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
         id: integrationId,
         connectionId,
         connectionDoc,
         formSubmission,
+        stackId,
       }),
     updateStep: (integrationId, installerFunction, update, formMeta) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
@@ -1117,8 +1207,8 @@ const user = {
         action(actionTypes.LICENSE_TRIAL_ISSUED, message),
       requestLicenseUpgrade: () =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST, {}),
-      requestUpdate: actionType =>
-        action(actionTypes.LICENSE_UPDATE_REQUEST, { actionType }),
+      requestUpdate: (actionType, connectorId, licenseId) =>
+        action(actionTypes.LICENSE_UPDATE_REQUEST, { actionType, connectorId, licenseId}),
       licenseUpgradeRequestSubmitted: message =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),
       leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
@@ -1156,13 +1246,13 @@ const user = {
   },
 };
 const sampleData = {
-  request: (resourceId, resourceType, values, stage, runOffline) =>
+  request: (resourceId, resourceType, values, stage, options = {}) =>
     action(actionTypes.SAMPLEDATA.REQUEST, {
       resourceId,
       resourceType,
       values,
       stage,
-      runOffline,
+      options,
     }),
   requestLookupPreview: (resourceId, flowId, formValues) =>
     action(actionTypes.SAMPLEDATA.LOOKUP_REQUEST, {
@@ -1174,6 +1264,8 @@ const sampleData = {
     action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
   update: (resourceId, processedData, stage) =>
     action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, processedData, stage }),
+  patch: (resourceId, patch) =>
+    action(actionTypes.SAMPLEDATA.PATCH, { resourceId, patch }),
   receivedError: (resourceId, error, stage) =>
     action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
   reset: resourceId => action(actionTypes.SAMPLEDATA.RESET, { resourceId }),
@@ -1241,8 +1333,8 @@ const flowData = {
       stage,
       refresh,
     }),
-  resetStages: (flowId, resourceId, stages = []) =>
-    action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages}),
+  resetStages: (flowId, resourceId, stages = [], statusToUpdate) =>
+    action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages, statusToUpdate}),
   resetFlowSequence: (flowId, updatedFlow) =>
     action(actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET, { flowId, updatedFlow }),
   updateFlowsForResource: (resourceId, resourceType, stagesToReset = []) =>
@@ -1286,24 +1378,25 @@ const cancelTask = () => action(actionTypes.CANCEL_TASK, {});
 // #region Editor actions
 const editor = {
   init: (id, processor, options) =>
-    action(actionTypes.EDITOR_INIT, { id, processor, options }),
-  changeLayout: id => action(actionTypes.EDITOR_CHANGE_LAYOUT, { id }),
-  patch: (id, patch) => action(actionTypes.EDITOR_PATCH, { id, patch }),
-  reset: id => action(actionTypes.EDITOR_RESET, { id }),
+    action(actionTypes.EDITOR.INIT, { id, processor, options }),
+  changeLayout: id => action(actionTypes.EDITOR.CHANGE_LAYOUT, { id }),
+  patch: (id, patch) => action(actionTypes.EDITOR.PATCH, { id, patch }),
+  reset: id => action(actionTypes.EDITOR.RESET, { id }),
+  clear: id => action(actionTypes.EDITOR.CLEAR, { id }),
   updateHelperFunctions: helperFunctions =>
-    action(actionTypes.EDITOR_UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
+    action(actionTypes.EDITOR.UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
   refreshHelperFunctions: () =>
-    action(actionTypes.EDITOR_REFRESH_HELPER_FUNCTIONS),
-  evaluateRequest: id => action(actionTypes.EDITOR_EVALUATE_REQUEST, { id }),
+    action(actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS),
+  evaluateRequest: id => action(actionTypes.EDITOR.EVALUATE_REQUEST, { id }),
   validateFailure: (id, violations) =>
-    action(actionTypes.EDITOR_VALIDATE_FAILURE, { id, violations }),
+    action(actionTypes.EDITOR.VALIDATE_FAILURE, { id, violations }),
   evaluateFailure: (id, error) =>
-    action(actionTypes.EDITOR_EVALUATE_FAILURE, { id, error }),
+    action(actionTypes.EDITOR.EVALUATE_FAILURE, { id, error }),
   evaluateResponse: (id, result) =>
-    action(actionTypes.EDITOR_EVALUATE_RESPONSE, { id, result }),
-  save: (id, context) => action(actionTypes.EDITOR_SAVE, { id, context }),
-  saveFailed: id => action(actionTypes.EDITOR_SAVE_FAILED, { id }),
-  saveComplete: id => action(actionTypes.EDITOR_SAVE_COMPLETE, { id }),
+    action(actionTypes.EDITOR.EVALUATE_RESPONSE, { id, result }),
+  save: (id, context) => action(actionTypes.EDITOR.SAVE, { id, context }),
+  saveFailed: id => action(actionTypes.EDITOR.SAVE_FAILED, { id }),
+  saveComplete: id => action(actionTypes.EDITOR.SAVE_COMPLETE, { id }),
 };
 // #endregion
 // #region Mapping actions
@@ -1312,8 +1405,11 @@ const mapping = {
     action(actionTypes.MAPPING.INIT, {flowId, importId, subRecordMappingId}),
   initComplete: (options = {}) =>
     action(actionTypes.MAPPING.INIT_COMPLETE, {...options}),
+  initFailed: () => action(actionTypes.MAPPING.INIT_FAILED, {}),
   patchField: (field, key, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { field, key, value }),
+  patchGenerateThroughAssistant: value =>
+    action(actionTypes.MAPPING.PATCH_GENERATE_THROUGH_ASSISTANT, { value }),
   addLookup: ({value, isConditionalLookup}) =>
     action(actionTypes.MAPPING.ADD_LOOKUP, { value, isConditionalLookup }),
   updateLookup: ({oldValue, newValue, isConditionalLookup}) =>
@@ -1325,7 +1421,7 @@ const mapping = {
   patchIncompleteGenerates: (key, value) =>
     action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value}),
   delete: key => action(actionTypes.MAPPING.DELETE, { key }),
-  save: () => action(actionTypes.MAPPING.SAVE),
+  save: ({ match }) => action(actionTypes.MAPPING.SAVE, { match }),
   saveFailed: () => action(actionTypes.MAPPING.SAVE_FAILED, { }),
   saveComplete: () => action(actionTypes.MAPPING.SAVE_COMPLETE, { }),
   requestPreview: () => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { }),
@@ -1339,6 +1435,8 @@ const mapping = {
   updateMappings: mappings => action(actionTypes.MAPPING.UPDATE_LIST, { mappings }),
   clear: () => action(actionTypes.MAPPING.CLEAR, {}),
   shiftOrder: (key, shiftIndex) => action(actionTypes.MAPPING.SHIFT_ORDER, { key, shiftIndex }),
+  setValidationMsg: value => action(actionTypes.MAPPING.SET_VALIDATION_MSG, { value }),
+
 };
 
 const searchCriteria = {
@@ -1395,11 +1493,6 @@ const resourceForm = {
       resourceId,
       resourceType,
     }),
-  showFormValidations: (resourceType, resourceId) =>
-    action(actionTypes.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS, {
-      resourceType,
-      resourceId,
-    }),
   submit: (
     resourceType,
     resourceId,
@@ -1444,6 +1537,10 @@ const resourceForm = {
     }),
   clear: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),
+  showBundleInstallNotification: (bundleVersion, bundleUrl, resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION, {bundleVersion, bundleUrl, resourceType, resourceId}),
+  hideBundleInstallNotification: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION, {resourceType, resourceId}),
 };
 const accessToken = {
   displayToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, { id }),
@@ -1458,11 +1555,12 @@ const accessToken = {
   updatedCollection: () => action(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION),
 };
 const job = {
-  requestCollection: ({ integrationId, flowId, filters }) =>
+  requestCollection: ({ integrationId, flowId, filters, options }) =>
     action(actionTypes.JOB.REQUEST_COLLECTION, {
       integrationId,
       flowId,
       filters,
+      options,
     }),
   receivedCollection: ({ collection }) =>
     action(actionTypes.JOB.RECEIVED_COLLECTION, {
@@ -1485,14 +1583,11 @@ const job = {
 
   cancel: ({ jobId, flowJobId }) =>
     action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
-
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING),
-  resolve: ({ jobId, parentJobId }) =>
-    action(actionTypes.JOB.RESOLVE, { jobId, parentJobId }),
-  resolveSelected: ({ jobs }) =>
-    action(actionTypes.JOB.RESOLVE_SELECTED, { jobs }),
-  resolveAll: ({ flowId, integrationId }) =>
-    action(actionTypes.JOB.RESOLVE_ALL, { flowId, integrationId }),
+  resolveSelected: ({ jobs, match }) =>
+    action(actionTypes.JOB.RESOLVE_SELECTED, { jobs, match }),
+  resolveAll: ({ flowId, storeId, integrationId, filteredJobsOnly, match }) =>
+    action(actionTypes.JOB.RESOLVE_ALL, { flowId, storeId, integrationId, filteredJobsOnly, match }),
   resolveInit: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RESOLVE_INIT, { parentJobId, childJobId }),
   resolveAllInit: () => action(actionTypes.JOB.RESOLVE_ALL_INIT),
@@ -1502,18 +1597,18 @@ const job = {
   resolveCommit: () => action(actionTypes.JOB.RESOLVE_COMMIT),
   resolveAllCommit: () => action(actionTypes.JOB.RESOLVE_ALL_COMMIT),
   retryAllPending: () => action(actionTypes.JOB.RETRY_ALL_PENDING),
-  retrySelected: ({ jobs }) => action(actionTypes.JOB.RETRY_SELECTED, { jobs }),
-  retryFlowJob: ({ jobId }) =>
-    action(actionTypes.JOB.RETRY_FLOW_JOB, { jobId }),
+  retrySelected: ({ jobs, match }) => action(actionTypes.JOB.RETRY_SELECTED, { jobs, match }),
+  retryFlowJob: ({ jobId, match }) =>
+    action(actionTypes.JOB.RETRY_FLOW_JOB, { jobId, match }),
   retryInit: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RETRY_INIT, { parentJobId, childJobId }),
-  retryAllInit: () => action(actionTypes.JOB.RETRY_ALL_INIT),
+  retryAllInit: ({ flowIds }) => action(actionTypes.JOB.RETRY_ALL_INIT, { flowIds }),
   retryUndo: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RETRY_UNDO, { parentJobId, childJobId }),
   retryCommit: () => action(actionTypes.JOB.RETRY_COMMIT),
   retryFlowJobCommit: () => action(actionTypes.JOB.RETRY_FLOW_JOB_COMMIT),
-  retryAll: ({ flowId, integrationId }) =>
-    action(actionTypes.JOB.RETRY_ALL, { flowId, integrationId }),
+  retryAll: ({ flowId, storeId, integrationId, match }) =>
+    action(actionTypes.JOB.RETRY_ALL, { flowId, storeId, integrationId, match }),
   retryAllUndo: () => action(actionTypes.JOB.RETRY_ALL_UNDO),
   retryAllCommit: () => action(actionTypes.JOB.RETRY_ALL_COMMIT),
   requestRetryObjects: ({ jobId }) =>
@@ -1535,17 +1630,19 @@ const job = {
     action(actionTypes.JOB.ERROR.RESOLVE_SELECTED_INIT, {
       selectedErrorIds,
     }),
-  resolveSelectedErrors: ({ jobId, flowJobId, selectedErrorIds }) =>
+  resolveSelectedErrors: ({ jobId, flowJobId, selectedErrorIds, match }) =>
     action(actionTypes.JOB.ERROR.RESOLVE_SELECTED, {
       jobId,
       flowJobId,
       selectedErrorIds,
+      match,
     }),
-  retrySelectedRetries: ({ jobId, flowJobId, selectedRetryIds }) =>
+  retrySelectedRetries: ({ jobId, flowJobId, selectedRetryIds, match }) =>
     action(actionTypes.JOB.ERROR.RETRY_SELECTED, {
       jobId,
       flowJobId,
       selectedRetryIds,
+      match,
     }),
   requestRetryData: ({ retryId }) =>
     action(actionTypes.JOB.ERROR.REQUEST_RETRY_DATA, { retryId }),
@@ -1600,7 +1697,59 @@ const errorManager = {
     cancelPoll: () =>
       action(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.CANCEL_POLL),
   },
+  integrationLatestJobs: {
+    requestPoll: ({ integrationId }) =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.REQUEST_FOR_POLL, { integrationId }),
+    request: ({ integrationId }) =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.REQUEST, {
+        integrationId,
+      }),
+    received: ({ integrationId, latestJobs }) =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.RECEIVED, {
+        integrationId,
+        latestJobs,
+      }),
+    error: ({integrationId}) =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.ERROR, {
+        integrationId,
+      }),
+    cancelPoll: () =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.CANCEL_POLL),
+  },
+  latestFlowJobs: {
+    request: ({ flowId, refresh = false }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST, {
+        flowId,
+        refresh,
+      }),
+    received: ({flowId, latestJobs}) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED, {
+        flowId, latestJobs,
+      }),
+    requestJobFamily: ({ flowId, jobId}) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST_JOB_FAMILY, {
+        flowId, jobId,
+      }),
+    receivedJobFamily: ({ flowId, job}) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED_JOB_FAMILY, {
+        flowId, job,
+      }),
+    requestInProgressJobsPoll: ({ flowId }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST_IN_PROGRESS_JOBS_POLL, {
+        flowId,
+      }),
+    noInProgressJobs: () =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.NO_IN_PROGRESS_JOBS),
+    clear: ({ flowId }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CLEAR, {
+        flowId,
+      }),
+    cancelLatestJobs: ({ flowId, jobIds }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CANCEL, { flowId, jobIds}),
+  },
   integrationErrors: {
+    requestPoll: ({ integrationId }) =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST_FOR_POLL, { integrationId }),
     request: ({ integrationId }) =>
       action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST, {
         integrationId,
@@ -1610,6 +1759,8 @@ const errorManager = {
         integrationId,
         integrationErrors,
       }),
+    cancelPoll: () =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.CANCEL_POLL),
   },
   flowErrorDetails: {
     request: ({ flowId, resourceId, loadMore, isResolved = false }) =>
@@ -1725,6 +1876,12 @@ const errorManager = {
         resourceId,
         diff,
       }),
+    download: ({ flowId, resourceId, isResolved, filters }) => action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DOWNLOAD.REQUEST, {
+      flowId,
+      resourceId,
+      isResolved,
+      filters,
+    }),
   },
   retryData: {
     request: ({ flowId, resourceId, retryId }) =>
@@ -1774,6 +1931,7 @@ const flow = {
       fileType,
       fileName,
     }),
+  runRequested: flowId => action(actionTypes.FLOW.RUN_REQUESTED, { flowId }),
   isOnOffActionInprogress: (onOffInProgress, flowId) =>
     action(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {
       onOffInProgress,
@@ -1826,7 +1984,7 @@ const responseMapping = {
     }),
   delete: (id, index) =>
     action(actionTypes.RESPONSE_MAPPING.DELETE, { id, index }),
-  save: id => action(actionTypes.RESPONSE_MAPPING.SAVE, { id }),
+  save: ({ id, match, resourceType, resourceId }) => action(actionTypes.RESPONSE_MAPPING.SAVE, { id, match, resourceType, resourceId }),
   saveFailed: id => action(actionTypes.RESPONSE_MAPPING.SAVE_FAILED, { id }),
   saveComplete: id =>
     action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, { id }),
@@ -1880,20 +2038,20 @@ const editorSampleData = {
     resourceId,
     resourceType,
     stage,
-    formValues,
+    formKey,
     fieldType,
     requestedTemplateVersion,
-    isV2NotSupported,
+    isEditorV2Supported,
   }) =>
     action(actionTypes.EDITOR_SAMPLE_DATA.REQUEST, {
       flowId,
       resourceId,
       resourceType,
       stage,
-      formValues,
+      formKey,
       fieldType,
       requestedTemplateVersion,
-      isV2NotSupported,
+      isEditorV2Supported,
     }),
   received: ({ flowId, resourceId, fieldType, sampleData, templateVersion }) =>
     action(actionTypes.EDITOR_SAMPLE_DATA.RECEIVED, {
@@ -1916,7 +2074,12 @@ const editorSampleData = {
     }),
 };
 
+const hooks = {
+  save: context => action(actionTypes.HOOKS.SAVE, context),
+};
+
 export default {
+  form,
   postFeedback,
   app,
   toggleBanner,
@@ -1964,4 +2127,5 @@ export default {
   customSettings,
   exportData,
   editorSampleData,
+  hooks,
 };

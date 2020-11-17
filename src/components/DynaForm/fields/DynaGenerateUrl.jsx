@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { FormContext } from 'react-forms-processor/dist';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
@@ -9,17 +8,19 @@ import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaText from './DynaText';
 import { isNewId, getWebhookUrl } from '../../../utils/resource';
+import useFormContext from '../../Form/FormContext';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import { getInvalidFields } from '../../../forms/utils';
 
-const inValidFields = (fields, fieldStates) => fieldStates.filter(field => fields.includes(field.id)).some(
-  field => !field.isValid || field.isDiscretelyInvalid
-);
+const hasInValidFields = (fields, fieldStates) => getInvalidFields(fieldStates).some(field => fields.includes(field.id));
+
 const useStyles = makeStyles(theme => ({
   children: {
     flex: 1,
   },
   dynaGenerateUrlWrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
 
   dynaGenerateTokenbtn: {
@@ -38,13 +39,15 @@ function GenerateUrl(props) {
     id,
     value,
     buttonLabel,
-    formContext,
     flowId,
+    formKey,
     provider: webHookProvider,
   } = props;
   const { webHookToken } = options;
+  const formContext = useFormContext(formKey);
   const { value: formValues, fields: fieldStates } = formContext;
-  const webHookVerify = fieldStates?.find(field => field.key === 'webhook.verify')?.value;
+
+  const webHookVerify = fieldStates?.['webhook.verify']?.value;
   const classes = useStyles();
   const [url, setUrl] = useState(true);
   const dispatch = useDispatch();
@@ -53,12 +56,12 @@ function GenerateUrl(props) {
     resourceId;
   const [enquesnackbar] = useEnqueueSnackbar();
   const handleCopy = useCallback(() =>
-    enquesnackbar({ message: 'URL copied to clipboard' }), [enquesnackbar]);
+    enquesnackbar({ message: 'URL copied to clipboard.' }), [enquesnackbar]);
   const handleGenerateUrl = useCallback(() => {
     if (isNewId(finalResourceId)) {
-      if (inValidFields(webookRequiredFields, fieldStates)) {
+      if (hasInValidFields(webookRequiredFields, fieldStates)) {
         webookRequiredFields.forEach(fieldId => {
-          onFieldChange(fieldId, (fieldStates.find(({id}) => fieldId === id) || {value: ''}).value);
+          onFieldChange(fieldId, (Object.values(fieldStates).find(({id}) => fieldId === id) || {value: ''}).value);
         });
 
         return;
@@ -125,10 +128,4 @@ function GenerateUrl(props) {
   );
 }
 
-const DynaGenerateUrlFormContext = props => (
-  <FormContext.Consumer {...props}>
-    {form => <GenerateUrl {...props} formContext={form} />}
-  </FormContext.Consumer>
-);
-
-export default DynaGenerateUrlFormContext;
+export default GenerateUrl;

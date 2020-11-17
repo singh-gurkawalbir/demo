@@ -40,6 +40,11 @@ export default {
     'http._iClientId': {
       fieldId: 'http._iClientId',
       required: true,
+      filter: { provider: 'custom_oauth2' },
+      type: 'dynaiclient',
+      connectionId: r => r && r._id,
+      connectorId: r => r && r._connectorId,
+      ignoreEnvironmentFilter: true,
     },
     application: {
       fieldId: 'application',

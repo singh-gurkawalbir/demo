@@ -43,6 +43,8 @@ export function getFlowJobIdsThatArePartOfABulkRetryJob(
 
     if (bulkRetryJob._flowId) {
       flowIdMatch = job._flowId === bulkRetryJob._flowId;
+    } else if (bulkRetryJob._flowIds) {
+      flowIdMatch = bulkRetryJob._flowIds.includes(job._flowId);
     }
 
     if (flowIdMatch) {
@@ -108,9 +110,11 @@ export function parseJobs(jobs) {
 }
 
 export function parseJobFamily(job) {
-  const { children, ...rest } = job;
+  const { children, _flowId, _integrationId, ...rest } = job;
   const updatedJob = {
     ...DEFAULT_JOB_PROPS,
+    _flowId,
+    _integrationId,
     ...rest,
   };
 
@@ -119,6 +123,8 @@ export function parseJobFamily(job) {
       .filter(childJob => childJob !== null)
       .map(childJob => ({
         ...DEFAULT_JOB_PROPS,
+        _flowId,
+        _integrationId,
         ...childJob,
       }));
   }

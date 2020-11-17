@@ -6,12 +6,14 @@ export default function SqlQueryBuilderEditor(props) {
     rule,
     editorId,
     disabled,
-    lookups = [],
+    lookups,
     layout = 'compact',
-    ruleTitle,
     sampleData,
     defaultData,
     showDefaultData = true,
+    isSampleDataLoading = false,
+    optionalSaveParams,
+    editorVersion,
   } = props;
 
   return (
@@ -29,9 +31,10 @@ export default function SqlQueryBuilderEditor(props) {
       ruleMode="handlebars"
       dataMode="json"
       resultMode="text"
-      ruleTitle={ruleTitle || 'Template'}
-      resultTitle="Preview"
       showDefaultData={showDefaultData}
+      isSampleDataLoading={isSampleDataLoading}
+      optionalSaveParams={optionalSaveParams}
+      editorVersion={editorVersion}
     />
   );
 }

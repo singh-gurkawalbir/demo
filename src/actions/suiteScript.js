@@ -536,6 +536,8 @@ export default {
       }),
     patchField: ({ field, key, value }) =>
       action(actionTypes.SUITESCRIPT.MAPPING.PATCH_FIELD, { field, key, value }),
+    patchGenerateThroughAssistant: value =>
+      action(actionTypes.SUITESCRIPT.MAPPING.PATCH_GENERATE_THROUGH_ASSISTANT, { value }),
     delete: key =>
       action(actionTypes.SUITESCRIPT.MAPPING.DELETE, {
         key,

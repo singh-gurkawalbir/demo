@@ -25,9 +25,9 @@ export default {
       {
         items: [
           { label: 'XML', value: 'xml' },
-          { label: 'URL ENCODED', value: 'urlencoded' },
+          { label: 'URL Encoded', value: 'urlencoded' },
           { label: 'JSON', value: 'json' },
-          { label: 'FORM DATA', value: 'form-data' },
+          { label: 'Multipart/form-data', value: 'form-data' },
         ],
       },
     ],
@@ -144,6 +144,9 @@ export default {
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
     label: 'Build HTTP request body',
+    refreshOptionsOnChangesTo: ['http.requestMediaType'],
+    requestMediaType: r =>
+      r?.http?.requestMediaType || 'json',
     requiredWhenAll: [
       {
         field: 'http.relativeURI',
@@ -204,7 +207,6 @@ export default {
   },
   'http.paging.body': {
     type: 'httprequestbody',
-    title: 'Build paging post body',
     label: 'Build paging post body',
     required: true,
     visibleWhenAll: [
@@ -535,6 +537,7 @@ export default {
   'http.once.relativeURI': {
     type: 'relativeuri',
     label: 'Relative URI',
+    enableEditorV2: true,
     connectionId: r => r && r._connectionId,
     visibleWhenAll: [
       {
@@ -546,8 +549,12 @@ export default {
   },
   'http.once.body': {
     type: 'httprequestbody',
+    enableEditorV2: true,
     connectionId: r => r && r._connectionId,
     label: 'Build HTTP request body',
+    refreshOptionsOnChangesTo: ['http.requestMediaType'],
+    requestMediaType: r =>
+      r?.http?.requestMediaType || 'json',
     visibleWhenAll: [
       {
         field: 'outputMode',

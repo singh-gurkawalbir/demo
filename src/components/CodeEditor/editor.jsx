@@ -1,26 +1,62 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import ace from 'ace-builds/src-noconflict/ace';
 import AceEditor from 'react-ace';
+import { fade, makeStyles } from '@material-ui/core/styles';
 import ReactResizeDetector from 'react-resize-detector';
-import 'brace/mode/javascript';
-import 'brace/mode/handlebars';
-import 'brace/mode/json';
-import 'brace/mode/xml';
-import 'brace/mode/html';
-import 'brace/theme/monokai';
-import 'brace/theme/tomorrow';
-import 'brace/mode/sql';
-import 'brace/ext/language_tools';
-import 'brace/ext/searchbox';
-import 'brace/ext/beautify';
+import 'ace-builds/src-noconflict/mode-javascript';
+import 'ace-builds/src-noconflict/mode-handlebars';
+import 'ace-builds/src-noconflict/mode-json';
+import 'ace-builds/src-noconflict/mode-xml';
+import 'ace-builds/src-noconflict/mode-html';
+import 'ace-builds/src-noconflict/theme-monokai';
+import 'ace-builds/src-noconflict/theme-tomorrow';
+import 'ace-builds/src-noconflict/mode-sql';
+import 'ace-builds/src-noconflict/ext-language_tools';
+import 'ace-builds/src-noconflict/ext-searchbox';
+import 'ace-builds/src-noconflict/ext-beautify';
 import { useSelector } from 'react-redux';
+import jsonWorkerUrl from 'ace-builds/src-noconflict/worker-json';
+import javascriptWorkerUrl from 'ace-builds/src-noconflict/worker-javascript';
+import cssWorkerUrl from 'ace-builds/src-noconflict/worker-css';
+import xmlWorkerUrl from 'ace-builds/src-noconflict/worker-xml';
 import { selectors } from '../../reducers';
 import handlebarCompleterSetup from '../AFE/editorSetup/editorCompleterSetup/index';
 
+ace.config.setModuleUrl('ace/mode/css_worker', cssWorkerUrl);
+ace.config.setModuleUrl('ace/mode/json_worker', jsonWorkerUrl);
+ace.config.setModuleUrl('ace/mode/javascript_worker', javascriptWorkerUrl);
+ace.config.setModuleUrl('ace/mode/xml_worker', xmlWorkerUrl);
+
+const useStyles = makeStyles(theme => ({
+  editorErrorWrapper: {
+    background: `${fade(theme.palette.error.light, 0.06)} !important`,
+    border: '1px solid',
+    borderColor: theme.palette.error.dark,
+    '& > .ace_gutter': {
+      color: `${theme.palette.error.dark} !important`,
+    },
+  },
+  editorWarningWrapper: {
+    background: `${fade(theme.palette.warning.main, 0.06)} !important`,
+    border: '1px solid',
+    borderColor: theme.palette.warning.main,
+    '& > .ace_gutter': {
+      color: `${theme.palette.warning.main} !important`,
+    },
+  },
+  errorMarker: {
+    background: fade(theme.palette.error.dark, 0.3),
+    color: theme.palette.common.white,
+    position: 'relative',
+  },
+}));
+
+const editorProp = { $blockScrolling: true };
 export default function CodeEditor({
   name,
   value = '',
-  mode,
+  mode = 'text',
   readOnly,
   width,
   height,
@@ -33,7 +69,12 @@ export default function CodeEditor({
   enableAutocomplete,
   onChange,
   skipDelay = false,
+  hasError,
+  hasWarning,
+  errorLine,
+  onLoad,
 }) {
+  const classes = useStyles();
   const aceEditor = useRef(null);
   // inputVal holds value being passed from the prop. editorVal holds current value of the editor
   const [state, setState] = useState({
@@ -44,7 +85,7 @@ export default function CodeEditor({
   const theme = useSelector(state => selectors.editorTheme(state));
   const { inputVal, editorVal, typingTimeout } = state;
   const resize = useCallback(() => {
-    if (aceEditor && aceEditor.current && aceEditor.current.editor) aceEditor.current.editor.resize();
+    if (aceEditor?.current?.editor) aceEditor.current.editor.resize();
   }, []);
 
   useEffect(() => {
@@ -79,8 +120,10 @@ export default function CodeEditor({
           withstmt: true,
         }]);
       }
+
+      onLoad?.(editor);
     }),
-  [enableAutocomplete, mode]
+  [enableAutocomplete, mode, onLoad]
   );
   const handleChange = useCallback(
     value => {
@@ -107,9 +150,33 @@ export default function CodeEditor({
   if (skipDelay) v = value;
   const valueAsString = typeof v === 'string' ? v : JSON.stringify(v, null, 2);
 
+  const markers = useMemo(() => errorLine ? [
+    {
+      startRow: errorLine - 1,
+      endRow: errorLine,
+      className: classes.errorMarker,
+      type: 'line',
+      inFront: true,
+    }] : [], [classes.errorMarker, errorLine]);
+
+  useEffect(() => {
+    if (aceEditor?.current) {
+      if (hasError) {
+        aceEditor.current.editor.setStyle(classes.editorErrorWrapper);
+      } else if (hasWarning) {
+        aceEditor.current.editor.setStyle(classes.editorWarningWrapper);
+      } else {
+        aceEditor.current.editor.unsetStyle(classes.editorErrorWrapper);
+        aceEditor.current.editor.unsetStyle(classes.editorWarningWrapper);
+      }
+    }
+  }, [classes.editorErrorWrapper, classes.editorWarningWrapper, hasError, hasWarning]);
+
   return (
     <>
       <AceEditor
+        wrapEnabled
+        markers={markers}
         ref={aceEditor}
         name={name}
         value={valueAsString}
@@ -132,7 +199,7 @@ export default function CodeEditor({
           displayIndentGuides,
           tabSize: 2,
         }}
-        editorProps={{ $blockScrolling: true }}
+        editorProps={editorProp}
       />
 
       <ReactResizeDetector handleWidth handleHeight onResize={resize} />

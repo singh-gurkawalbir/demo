@@ -148,7 +148,7 @@ export default function DynaNSSavedSearch(props) {
                   label="Private"
                 />
               </RadioGroup>
-              <FieldHelp {...props} />
+              <FieldHelp {...props} helpKey="export.netsuite.restlet.searchType" label="Saved search type" />
             </div>
           </div>
         </FormControl>
@@ -161,6 +161,7 @@ export default function DynaNSSavedSearch(props) {
               {...props}
               urlToOpen={savedSearchUrl}
               className={classes.dynaNsInternalID}
+              helpKey="export.netsuite.restlet.searchId"
             />
           </div>
         ) : (
@@ -170,6 +171,7 @@ export default function DynaNSSavedSearch(props) {
               {...props}
               urlToOpen={savedSearchUrl}
               className={classes.dynaNsInternalID}
+              helpKey="export.netsuite.restlet.searchInternalId"
             />
           </div>
         )}

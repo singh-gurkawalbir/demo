@@ -5,8 +5,11 @@ import { Typography } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../..';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import Spinner from '../../../../Spinner';
 import SpinnerWrapper from '../../../../SpinnerWrapper';
+import useFormContext from '../../../../Form/FormContext';
+import { isFormTouched } from '../../../../../forms/utils';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -17,16 +20,13 @@ const useStyles = makeStyles({
 export default function FormView({
   resourceId,
   resourceType,
-  onFormChange,
   disabled,
+  onFormChange,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const settingsFormState = useSelector(state =>
     selectors.customSettingsForm(state, resourceId)
-  );
-  const formState = useSelector(state =>
-    selectors.resourceFormState(state, resourceType, resourceId)
   );
 
   useEffect(() => {
@@ -44,6 +44,23 @@ export default function FormView({
     },
     [dispatch, resourceId]
   );
+
+  // TODO:verify this behaviour
+  const formKey = useFormInitWithPermissions({
+    remount: settingsFormState?.key,
+    disabled,
+    fieldMeta: settingsFormState?.meta,
+    resourceId,
+    resourceType,
+  });
+
+  const {fields, value, isValid} = useFormContext(formKey);
+
+  const isTouched = (fields && isFormTouched(Object.values(fields))) || false;
+
+  useEffect(() => {
+    if (isTouched) { onFormChange(value, isValid); }
+  }, [isTouched, isValid, onFormChange, value]);
 
   if (settingsFormState && settingsFormState.error) {
     return (
@@ -63,15 +80,7 @@ export default function FormView({
 
   return (
     <div className={classes.wrapper}>
-      <DynaForm
-        key={settingsFormState.key}
-        onChange={onFormChange}
-        disabled={disabled}
-        fieldMeta={settingsFormState.meta}
-        resourceId={resourceId}
-        resourceType={resourceType}
-        formState={formState}
-      />
+      <DynaForm formKey={formKey} fieldMeta={settingsFormState?.meta} />
     </div>
   );
 }

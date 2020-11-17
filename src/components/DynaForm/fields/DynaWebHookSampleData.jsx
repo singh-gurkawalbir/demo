@@ -1,6 +1,6 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Typography, Button } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
 import CodeEditor from '../../CodeEditor';
@@ -38,7 +38,6 @@ export default function DynaWebHookSampleData(props) {
     description,
     isValid,
   } = props;
-  const [manualEnter, setManualEnter] = useState(false);
   const sampleData = useSelector(state => {
     const resource = selectors.resource(state, 'exports', resourceId) || {};
 
@@ -48,22 +47,19 @@ export default function DynaWebHookSampleData(props) {
   // Updates field with latest sampleData requested whenever user clicks on generate sample data
   useEffect(() => {
     onFieldChange(id, sampleData, true);
-    setManualEnter(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, sampleData]);
   const generateSampleData = useCallback(() => {
     if (!options.webHookUrl) {
       return enqueueSnackbar({
-        message: 'Webhook url is mandatory',
+        message: 'Webhook url is mandatory.',
         variant: 'error',
       });
     }
 
     dispatch(actions.resource.request('exports', resourceId));
   }, [dispatch, enqueueSnackbar, options.webHookUrl, resourceId]);
-  const handleManualEnter = useCallback(() => {
-    setManualEnter(true);
-  }, []);
+
   const handleSampleDataChange = useCallback(
     value => {
       if (isJsonString(value)) {
@@ -84,7 +80,6 @@ export default function DynaWebHookSampleData(props) {
           name="sampleData"
           value={sampleData}
           mode="json"
-          readOnly={!manualEnter}
           onChange={handleSampleDataChange}
         />
       </div>
@@ -100,14 +95,6 @@ export default function DynaWebHookSampleData(props) {
           className={classes.inlineActions}
           onClick={generateSampleData}>
           Click to show
-        </Button>
-        <Typography className={classes.inlineActions}> or </Typography>
-        <Button
-          variant="outlined"
-          color="secondary"
-          className={classes.inlineActions}
-          onClick={handleManualEnter}>
-          Manually enter
         </Button>
       </div>
     </div>

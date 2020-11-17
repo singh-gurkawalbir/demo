@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Typography, Button, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -7,8 +6,9 @@ import PanelHeader from '../../../../../../components/PanelHeader';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import { selectors } from '../../../../../../reducers';
 import DeleteIcon from '../../../../../../components/icons/TrashIcon';
-import { getIntegrationAppUrlName } from '../../../../../../utils/integrationApps';
+import { getEmptyMessage, getIntegrationAppUrlName, isParentViewSelected } from '../../../../../../utils/integrationApps';
 import getRoutePath from '../../../../../../utils/routePaths';
+import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -36,10 +36,8 @@ export default function UninstallSection({ storeId, integrationId }) {
   const classes = useStyles();
   const history = useHistory();
   const { confirmDialog } = useConfirmDialog();
-  const integration =
-    useSelector(state =>
-      selectors.integrationAppSettings(state, integrationId)
-    ) || {};
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
+  const isParentView = isParentViewSelected(integration, storeId);
   const integrationAppName = getIntegrationAppUrlName(integration.name);
   const handleUninstall = () => {
     confirmDialog({
@@ -70,6 +68,20 @@ export default function UninstallSection({ storeId, integrationId }) {
       ],
     });
   };
+
+  if (isParentView) {
+    return (
+      <div className={classes.root}>
+        <PanelHeader title="Uninstall" />
+        <Divider />
+        <div className={classes.content}>
+          <span>
+            {getEmptyMessage(integration?.settings?.storeLabel, 'uninstall')}
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

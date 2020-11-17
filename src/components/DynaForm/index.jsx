@@ -1,19 +1,14 @@
-import React, { useMemo, useRef, useEffect } from 'react';
-import { Form } from 'react-forms-processor/dist';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { useSelector } from 'react-redux';
-import getRenderer from './renderer';
+import React, { useEffect, useRef, useMemo } from 'react';
 import DynaFormGenerator from './DynaFormGenerator';
-import ButtonGroup from '../ButtonGroup';
-import { selectors } from '../../reducers';
-import { disableAllFieldsExceptClockedFields } from '../../forms/utils';
+import { generateSimpleLayout } from '../Form';
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
     maxHeight: '100%',
-    overflowY: 'auto',
-    padding: theme.spacing(1),
+    // overflowY: 'auto',
+    // padding: theme.spacing(1),
     border: 'none',
   },
   details: {
@@ -33,29 +28,26 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
   },
 }));
+
 const DynaForm = props => {
   const {
     className,
     children,
-    editMode,
+    showValidationBeforeTouched,
     fieldMeta,
-    resourceId,
-    resourceType,
     full,
-    isResourceForm,
-    proceedOnChange,
-    autoFocus = false,
+    formKey,
+    autoFocus,
     ...rest
   } = props;
   const classes = useStyles();
-  let { layout } = fieldMeta;
-  const { fieldMap } = fieldMeta;
-  const { formState } = rest;
-  const renderer = getRenderer(editMode, fieldMeta, resourceId, resourceType, proceedOnChange);
-  const showValidationBeforeTouched = useMemo(
-    () => (formState && formState.showFormValidationsBeforeTouch) || false,
-    [formState]
-  );
+
+  // This is a helpful logger to find re-renders of forms.
+  // Sometimes forms are rendered in hidden tabs/drawers and thus still
+  // cause re-renders, even when hidden outputting the layout makes it easy
+  // to identify the source.
+  // console.log('RENDER: DynaForm', layout);
+  // useTraceUpdate(props);
   const formRef = useRef();
 
   useEffect(() => {
@@ -69,75 +61,25 @@ const DynaForm = props => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formRef.current]);
 
-  if (!layout) {
-    if (!fieldMap) {
-      return null;
-    }
+  const updatedFieldMeta = useMemo(() => generateSimpleLayout(fieldMeta), [fieldMeta]);
 
-    // if no layout metadata accompanies the fieldMap,
-    // then the order in which the fields are defined in the map are used as the layout.
-    layout = { fields: [] };
-    Object.keys(fieldMap).forEach(fieldId => {
-      layout.fields.push(fieldId);
-    });
+  if (!formKey || !updatedFieldMeta) return null;
+  const {layout, fieldMap} = updatedFieldMeta;
 
-    // return null;
-  }
+  if (!fieldMap) return null;
 
   return (
-    <Form
-      {...rest}
-      showValidationBeforeTouched={showValidationBeforeTouched}
-      renderer={renderer}>
+    <>
       <div ref={formRef} className={clsx(classes.fieldContainer, className)}>
-        <DynaFormGenerator {...rest} layout={layout} fieldMap={fieldMap} />
+        <DynaFormGenerator
+          {...rest}
+          layout={layout}
+          fieldMap={fieldMap}
+          formKey={formKey}
+        />
       </div>
-      {/* The children are action buttons for the form */}
-      {children && (
-        <div className={classes.actions}>
-          {/* Incase of a resource form,  isResourceForm property allows the button group container to be split left and right
-            * based on primary and secondary action buttons
-            */}
-          <ButtonGroup
-            className={clsx({
-              [classes.resourceFormButtons]: isResourceForm,
-            })}>{children}
-          </ButtonGroup>
-        </div>
-      )}
-    </Form>
+    </>
   );
 };
 
-export default function DisabledDynaFormPerUserPermissions(props) {
-  // Disabled is a prop to deliberately disable the Form this is added to support a DynaForm within a DynaForm
-  const {
-    integrationId,
-    disabled,
-    fieldMeta,
-    resourceType,
-    resourceId,
-  } = props;
-  const resource = useSelector(state =>
-    selectors.resource(state, resourceType, resourceId)
-  );
-  // pass in the integration Id to find access level of its associated forms
-  const { disableAllFields, disableAllFieldsExceptClocked } = useSelector(
-    state => selectors.formAccessLevel(state, integrationId, resource, disabled)
-  );
-  const updatedFieldMeta = useMemo(() => {
-    if (disableAllFieldsExceptClocked) return disableAllFieldsExceptClockedFields(fieldMeta, resourceType);
-
-    return fieldMeta;
-  }, [disableAllFieldsExceptClocked, fieldMeta, resourceType]);
-
-  return (
-    <DynaForm
-      {...props}
-      disabled={disableAllFields}
-      fieldMeta={updatedFieldMeta}
-      // when its in view mode we disable validation before touch this ensures that there is no
-      // required fields errored messages
-    />
-  );
-}
+export default DynaForm;

@@ -10,6 +10,10 @@ import DynaUploadFile from '../../DynaUploadFile';
 import getFormMetadata from './metadata';
 import DynaForm from '../../..';
 import usePushRightDrawer from '../../../../../hooks/usePushRightDrawer';
+import {useUpdateParentForm} from '../DynaCsvGenerate';
+import { generateNewId } from '../../../../../utils/resource';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import useSetSubFormShowValidations from '../../../../../hooks/useSetSubFormShowValidations';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -80,8 +84,9 @@ export default function DynaCsvParse(props) {
     resourceType,
     disabled,
     uploadSampleDataFieldName,
+    formKey: parentFormKey,
   } = props;
-  const [formKey, setFormKey] = useState(1);
+  const [remountKey, setRemountKey] = useState(1);
   const getInitOptions = useCallback(
     val => {
       if (!('trimSpaces' in val)) {
@@ -98,7 +103,7 @@ export default function DynaCsvParse(props) {
   const handleOpenDrawer = usePushRightDrawer(id);
 
   const handleFormChange = useCallback(
-    (newOptions, isValid) => {
+    (newOptions, isValid, touched) => {
       setCurrentOptions(newOptions);
       // console.log('optionsChange', newOptions);
       const parsersValue = getParserValue(newOptions);
@@ -106,9 +111,9 @@ export default function DynaCsvParse(props) {
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
       if (!isValid) {
-        onFieldChange(id, { ...parsersValue, __invalid: true });
+        onFieldChange(id, { ...parsersValue, __invalid: true }, touched);
       } else {
-        onFieldChange(id, parsersValue);
+        onFieldChange(id, parsersValue, touched);
       }
     },
     [id, onFieldChange]
@@ -128,7 +133,7 @@ export default function DynaCsvParse(props) {
 
       setCurrentOptions(parsedVal);
       setForm(getFormMetadata({...editorValues, resourceId, resourceType}));
-      setFormKey(formKey + 1);
+      setRemountKey(remountKey => remountKey + 1);
       onFieldChange(id, parsedVal);
 
       dispatch(
@@ -144,7 +149,7 @@ export default function DynaCsvParse(props) {
         )
       );
     }
-  }, [csvData, dispatch, formKey, id, onFieldChange, resourceId, resourceType]);
+  }, [csvData, dispatch, id, onFieldChange, resourceId, resourceType]);
 
   const editorDataTitle = useMemo(
     () => {
@@ -179,11 +184,23 @@ export default function DynaCsvParse(props) {
     [uploadSampleDataFieldName]
   );
 
+  const [secondaryFormKey] = useState(generateNewId());
+
+  useUpdateParentForm(secondaryFormKey, handleFormChange);
+  useSetSubFormShowValidations(parentFormKey, secondaryFormKey);
+  const formKeyComponent = useFormInitWithPermissions({
+    formKey: secondaryFormKey,
+    remount: remountKey,
+    optionsHandler: form?.optionsHandler,
+    disabled,
+    fieldMeta: form,
+  });
+
   return (
     <>
       <div className={classes.container}>
         <CsvConfigEditorDrawer
-          title="CSV parser helper"
+          title={label}
           id={`csvParser-${id}-${resourceId}`}
           mode="csv"
           data={csvData}
@@ -213,10 +230,7 @@ export default function DynaCsvParse(props) {
 
       </div>
       <DynaForm
-        key={formKey}
-        onChange={handleFormChange}
-        optionsHandler={form?.optionsHandler}
-        disabled={disabled}
+        formKey={formKeyComponent}
         fieldMeta={form}
       />
     </>

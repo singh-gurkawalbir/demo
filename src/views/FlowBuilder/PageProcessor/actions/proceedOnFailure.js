@@ -6,6 +6,7 @@ import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import Icon from '../../../../components/icons/AgentsIcon';
 import ModalDialog from '../../../../components/ModalDialog';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 import { selectors } from '../../../../reducers';
@@ -88,30 +89,38 @@ function ProceedOnFailureDialog(props) {
     }
   );
 
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+    disabled: isViewMode,
+  });
+
   return (
     <ModalDialog show={open} onClose={onClose}>
       <div>
         {title}
       </div>
       <div>
-        <DynaForm disabled={isViewMode} fieldMeta={fieldMeta}>
-          <DynaSubmit
-            disabled={disableSave}
-            data-test="saveProceedOnFailure"
-            onClick={submitHandler()}>
-            {defaultLabels.saveLabel}
-          </DynaSubmit>
-          <DynaSubmit
-            disabled={disableSave}
-            data-test="saveAndCloseProceedOnFailure"
-            color="secondary"
-            onClick={submitHandler(true)}>
-            {defaultLabels.saveAndCloseLabel}
-          </DynaSubmit>
-          <Button data-test="cancelProceedOnFailure" onClick={onClose}>
-            Cancel
-          </Button>
-        </DynaForm>
+        <DynaForm
+          formKey={formKey}
+          fieldMeta={fieldMeta} />
+        <DynaSubmit
+          formKey={formKey}
+          disabled={disableSave}
+          data-test="saveProceedOnFailure"
+          onClick={submitHandler()}>
+          {defaultLabels.saveLabel}
+        </DynaSubmit>
+        <DynaSubmit
+          formKey={formKey}
+          disabled={disableSave}
+          data-test="saveAndCloseProceedOnFailure"
+          color="secondary"
+          onClick={submitHandler(true)}>
+          {defaultLabels.saveAndCloseLabel}
+        </DynaSubmit>
+        <Button data-test="cancelProceedOnFailure" onClick={onClose}>
+          Cancel
+        </Button>
       </div>
     </ModalDialog>
   );

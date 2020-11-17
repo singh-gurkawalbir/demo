@@ -8,6 +8,7 @@ import {
   isFileAdaptor,
 } from '../resource';
 import { emptyList, emptyObject, STANDALONE_INTEGRATION } from '../constants';
+import getRoutePath from '../routePaths';
 
 export const actionsMap = {
   as2Routing: 'as2Routing',
@@ -79,7 +80,10 @@ const isActionUsed = (resource, resourceType, flowNode, action) => {
     }
 
     case actionsMap.importMapping: {
-      const mappings = mappingUtil.getMappingFromResource(resource, true);
+      const mappings = mappingUtil.getMappingFromResource({
+        importResource: resource,
+        isFieldMapping: true,
+      });
       const { fields = [], lists = [] } = mappings || {};
 
       return !!(fields.length || lists.length);
@@ -191,7 +195,6 @@ export const isImportMappingAvailable = importResource => {
   if (isBlobTypeResource(importResource)) {
     return false;
   }
-
   const { adaptorType, rdbms = {}, file = {} } = importResource;
   const appType = adaptorTypeMap[adaptorType];
 
@@ -199,7 +202,6 @@ export const isImportMappingAvailable = importResource => {
   if (isFileAdaptor(importResource) && file.type === 'xml') return false;
   // if apptype is mongodb then mapping should not be shown
   if (appType === 'mongodb') return false;
-
   // if apptype is rdbms and querytype is not bulk insert then mapping shouldnot be shown
   if (appType === 'rdbms' && rdbms.queryType.indexOf('BULK INSERT') === -1) {
     return false;
@@ -272,20 +274,24 @@ export function isRealtimeExport(exp) {
   return false;
 }
 
-export function isRealtimeFlow(flow, exports) {
-  const exp = getFirstExportFromFlow(flow, exports);
+export function isRealtimeFlow(flow, exports, flowExports) {
+  const exp = (flowExports?.length && flowExports[0]) || getFirstExportFromFlow(flow, exports);
 
   return isRealtimeExport(exp);
 }
 
-export function hasBatchExport(flow, exports = []) {
-  const exp = getFirstExportFromFlow(flow, exports);
+export function hasBatchExport(flow, exports = [], flowExports) {
+  const exp = (flowExports?.length && flowExports[0]) || getFirstExportFromFlow(flow, exports);
 
   if (isOldFlowSchema(flow)) {
     return !isRealtimeExport(exp);
   }
 
   if (flow && flow.pageGenerators && flow.pageGenerators.length) {
+    if (flowExports?.length) {
+      return flowExports.some(exp => !isRealtimeExport(exp));
+    }
+
     return flow.pageGenerators.some(pg => {
       const exp = exports.find(exp => exp._id === pg._exportId);
 
@@ -296,16 +302,73 @@ export function hasBatchExport(flow, exports = []) {
   return false;
 }
 
-export function isSimpleImportFlow(flow, exports) {
-  const exp = getFirstExportFromFlow(flow, exports);
+export function isSimpleImportFlow(flow, exports, flowExports) {
+  const exp = (flowExports?.length && flowExports[0]) || getFirstExportFromFlow(flow, exports);
 
   return exp && exp.type === 'simple';
 }
 
-export function showScheduleIcon(flow, exports) {
-  if (isSimpleImportFlow(flow, exports)) return false;
+export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationApp, isDataLoader, appName}) {
+  const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
 
-  return hasBatchExport(flow, exports);
+  let flowBuilderTo;
+
+  if (isIntegrationApp) {
+    if (childId) {
+      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${childId}/${flowBuilderPathName}/${flowId}`);
+    } else {
+      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`);
+    }
+  } else {
+    flowBuilderTo = getRoutePath(`/integrations/${integrationId || 'none'}/${flowBuilderPathName}/${flowId}`);
+  }
+
+  return flowBuilderTo;
+}
+
+export function showScheduleIcon(flow, exports, flowExports) {
+  if (isSimpleImportFlow(flow, exports, flowExports)) return false;
+
+  return hasBatchExport(flow, exports, flowExports);
+}
+
+export function flowAllowsScheduling(flow, integration, allExports, isAppVersion2, flowExports) {
+  if (!flow) return false;
+  const isApp = flow._connectorId;
+  const canSchedule = showScheduleIcon(flow, allExports, flowExports);
+
+  // For IA2.0, 'showSchedule' is assumed true for now until we have more clarity
+  if (!isApp || isAppVersion2) return canSchedule;
+  // eslint-disable-next-line no-use-before-define
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  return canSchedule && !!flowSettings.showSchedule;
+}
+
+export function getFlowType(flow, exports, flowExports) {
+  if (!flow) return '';
+  if (!exports && !flowExports) return '';
+  if (isSimpleImportFlow(flow, exports, flowExports)) return 'Data Loader';
+  if (isRealtimeFlow(flow, exports, flowExports)) return 'Realtime';
+
+  // TODO: further refine this logic to differentiate between 'Scheduled'
+  // and 'mixed'. Note that mixed is the case where some exports are scheduled
+  // and others are not.
+  return 'Scheduled';
+}
+
+export function flowSupportsSettings(flow, integration) {
+  if (!flow) return false;
+  const isApp = flow._connectorId;
+
+  if (!isApp) return false;
+  // eslint-disable-next-line no-use-before-define
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  return !!(
+    (flowSettings.settings && flowSettings.settings.length) ||
+    (flowSettings.sections && flowSettings.sections.length)
+  );
 }
 
 export function isRunnable(flow, exports) {
@@ -545,6 +608,63 @@ export function getIAFlowSettings(integration, flowId) {
   }
 
   return allFlows.find(flow => flow._id === flowId) || emptyObject;
+}
+
+export function getFlowResources(flows, exports, imports, flowId) {
+  const resources = [];
+  const flow = (flows || []).find(f => f._id === flowId);
+
+  resources.push({ _id: flowId, name: 'Flow-level' });
+
+  if (!flow) {
+    return resources;
+  }
+
+  if (flow._exportId) {
+    const exportDoc = exports.find(e => e._id === flow._exportId);
+
+    if (exportDoc) {
+      resources.push({ _id: flow._exportId, name: exportDoc.name || flow._exportId, type: 'exports' });
+    }
+  }
+
+  if (flow._importId) {
+    const importDoc = imports.find(e => e._id === flow._importId);
+
+    if (importDoc) {
+      resources.push({ _id: flow._importId, name: importDoc.name || flow._importId, type: 'imports' });
+    }
+  }
+
+  if (flow.pageGenerators && flow.pageGenerators.length) {
+    flow.pageGenerators.forEach(pg => {
+      const exportDoc = exports.find(e => e._id === pg._exportId);
+
+      if (exportDoc) {
+        resources.push({ _id: pg._exportId, name: exportDoc.name || pg._exportId, type: 'exports' });
+      }
+    });
+  }
+
+  if (flow.pageProcessors && flow.pageProcessors.length) {
+    flow.pageProcessors.forEach(pp => {
+      if (pp.type === 'import' && pp._importId) {
+        const importDoc = imports.find(e => e._id === pp._importId);
+
+        if (importDoc) {
+          resources.push({ _id: pp._importId, name: importDoc.name || pp._importId, type: 'imports' });
+        }
+      } else if (pp.type === 'export' && pp._exportId) {
+        const exportDoc = exports.find(e => e._id === pp._exportId);
+
+        if (exportDoc) {
+          resources.push({ _id: pp._exportId, name: exportDoc.name || pp._exportId, type: 'exports', isLookup: true });
+        }
+      }
+    });
+  }
+
+  return resources;
 }
 
 // TODO: The object returned from this selector needs to be overhauled.

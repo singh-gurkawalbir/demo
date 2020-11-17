@@ -28,10 +28,10 @@ export default {
           if (r.dismissed) {
             return 'Dismissed';
           }
-          if (r.fromUser === 'Me' && r.accepted && ['queued', 'started'].indexOf(r.status) > -1) {
+          if (r.accepted && ['queued', 'started'].indexOf(r.status) > -1) {
             return 'Processing';
           }
-          if (r.fromUser === 'Me' && r.accepted && r.status === 'done') {
+          if (!r.ownerUser && r.accepted && r.status === 'done') {
             return 'Accepted';
           }
 
@@ -40,7 +40,6 @@ export default {
             : r.status.charAt(0).toUpperCase() + r.status.slice(1);
         },
       },
-      { heading: 'Status', value: r => r && (r.dismissed ? 'dismissed' : r.status)},
       {
         heading: 'Transfer date',
         value: r => r && <DateTimeDisplay dateTime={r.transferredAt} />,
@@ -53,11 +52,11 @@ export default {
     const actionItems = [];
 
     // User cannot perform delete/cancel action on invited transfers
-    if (r?.fromUser === 'Me' && ['unapproved', 'done', 'canceled', 'failed'].indexOf(r?.status) > -1) {
-      actionItems.push(Delete);
-    }
-    if (r?.fromUser === 'Me' && ['unapproved', 'queued'].indexOf(r?.status) > -1 && !r?.dismissed) {
+    if (!r.ownerUser && ['unapproved', 'queued'].indexOf(r?.status) > -1 && !r?.dismissed) {
       actionItems.push(Cancel);
+    }
+    if (!r.ownerUser && ['unapproved', 'done', 'canceled', 'failed'].indexOf(r?.status) > -1) {
+      actionItems.push(Delete);
     }
 
     return actionItems;

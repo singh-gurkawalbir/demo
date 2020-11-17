@@ -17,13 +17,13 @@ export default {
       }`,
       '/http/auth/oauth/authURI': `${
         environment === 'production'
-          ? 'https://merchant.wish.com/oauth/authorize'
-          : 'https://sandbox.merchant.wish.com/oauth/authorize'
+          ? 'https://merchant.wish.com/v3/oauth/authorize'
+          : 'https://sandbox.merchant.wish.com/v3/oauth/authorize'
       }`,
       '/http/auth/oauth/tokenURI': `${
         environment === 'production'
-          ? 'https://merchant.wish.com/api/v2/oauth/access_token'
-          : 'https://sandbox.merchant.wish.com/api/v2/oauth/access_token'
+          ? 'https://merchant.wish.com/api/v3/oauth/access_token'
+          : 'https://sandbox.merchant.wish.com/api/v3/oauth/access_token'
       }`,
       '/http/auth/oauth/accessTokenPath': 'data.access_token',
       '/http/auth/token/refreshTokenPath': 'data.refresh_token',

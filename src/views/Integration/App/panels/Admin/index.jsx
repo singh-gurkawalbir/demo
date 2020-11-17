@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     padding: theme.spacing(0, 3, 3, 0),
-    overflowX: 'scroll',
+    overflowX: 'auto',
   },
   listItem: {
     color: theme.palette.secondary.main,
@@ -71,7 +71,7 @@ export default function AdminPanel({
   const classes = useStyles();
   const match = useRouteMatch();
   const showAPITokens = useSelector(
-    state => selectors.resourcePermissions(state, 'accesstokens').view
+    state => selectors.resourcePermissions(state, 'accesstokens').view && !storeId
   );
   const canUninstall = useSelector(state => !selectors.isFormAMonitorLevelAccess(state, integrationId));
   const filterTabs = [];

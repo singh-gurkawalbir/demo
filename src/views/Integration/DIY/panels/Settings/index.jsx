@@ -10,10 +10,11 @@ import { isJsonString } from '../../../../../utils/string';
 import PanelHeader from '../../../../../components/PanelHeader';
 import FormBuilderButton from '../../../../../components/FormBuilderButton';
 import useSaveStatusIndicator from '../../../../../hooks/useSaveStatusIndicator';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   form: {
-    padding: theme.spacing(0, 1, 0, 1),
+    padding: theme.spacing(0, 1, 2, 1),
   },
   root: {
     backgroundColor: theme.palette.common.white,
@@ -83,11 +84,16 @@ export default function CustomSettings({ integrationId: parentIntegrationId, chi
       // dont submit the form if there is validation error
       // REVIEW: @ashu, re-visit once Surya's form PR is merged
       if (formVal?.settings?.__invalid) return;
+      let value = formVal?.settings;
+
+      if (isJsonString(value)) {
+        value = JSON.parse(value);
+      }
       const patchSet = [
         {
           op: 'replace',
           path: '/settings',
-          value: formVal?.settings,
+          value,
         },
       ];
 
@@ -114,6 +120,16 @@ export default function CustomSettings({ integrationId: parentIntegrationId, chi
     }
   );
 
+  const formKeyRef = useFormInitWithPermissions({
+    disabled: !canEditIntegration,
+    fieldMeta,
+    resourceType: 'integrations',
+    resourceId: integrationId,
+    validationHandler,
+    remount: formKey,
+
+  });
+
   return (
     <div className={classes.root}>
       <PanelHeader title="Settings" >
@@ -122,20 +138,16 @@ export default function CustomSettings({ integrationId: parentIntegrationId, chi
 
       <div className={classes.form}>
         <DynaForm
-          disabled={!canEditIntegration}
-          fieldMeta={fieldMeta}
+          formKey={formKeyRef}
+          fieldMeta={fieldMeta} />
+        <DynaSubmit
+          formKey={formKeyRef}
           resourceType="integrations"
           resourceId={integrationId}
-          validationHandler={validationHandler}
-          key={formKey}>
-          <DynaSubmit
-            resourceType="integrations"
-            resourceId={integrationId}
-            disabled={!canEditIntegration || disableSave}
-            onClick={submitHandler()}>
-            {defaultLabels.saveLabel}
-          </DynaSubmit>
-        </DynaForm>
+          disabled={!canEditIntegration || disableSave}
+          onClick={submitHandler()}>
+          {defaultLabels.saveLabel}
+        </DynaSubmit>
       </div>
     </div>
   );

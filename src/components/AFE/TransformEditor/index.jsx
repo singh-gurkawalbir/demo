@@ -30,9 +30,10 @@ export default function TransformEditor(props) {
     optionalSaveParams,
     resourceId,
     layout = 'column',
+    isToggleScreen,
   } = props;
   const classes = useStyles();
-  const { data, result, error, isSampleDataLoading } = useSelector(state =>
+  const { data, result, error, isSampleDataLoading, processor } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -71,25 +72,39 @@ export default function TransformEditor(props) {
   );
 
   useEffect(() => {
+    // if the editor is being used in the toggle AFE, editor init should happen only once
+    if (isToggleScreen && processor) return;
     handleInit();
-  }, [handleInit]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isToggleScreen, handleInit]);
+  useEffect(() => {
+    if (isSampleDataLoading && !props.isSampleDataLoading) {
+      dispatch(actions.editor.patch(editorId, {
+        isSampleDataLoading: false,
+        data: props.data,
+        _init_data: props.data,
+      }));
+    }
+  }, [data, dispatch, editorId, isSampleDataLoading, props.data, props.isSampleDataLoading]);
 
   const parsedData = result && result.data && result.data[0];
 
   return (
     <PanelGrid key={editorId} className={classes[`${layout}Template`]}>
       <PanelGridItem gridArea="rule">
-        <PanelTitle title="Transform rules" />
+        <PanelTitle title="Rules" />
         <TransformPanel
           keyName={keyName}
           valueName={valueName}
           editorId={editorId}
           disabled={disabled}
+          hasError={!!error}
         />
       </PanelGridItem>
 
       <PanelGridItem gridArea="data">
-        <PanelTitle title="Incoming data" />
+        <PanelTitle title="Input" />
         {isSampleDataLoading ? (
           <PanelLoader />
         ) : (
@@ -97,25 +112,27 @@ export default function TransformEditor(props) {
             name="data"
             value={data}
             mode="json"
-            overrides={{ showGutter: false }}
             onChange={handleDataChange}
             readOnly={disabled}
+            hasError={!!violations?.dataError}
             />
         )}
       </PanelGridItem>
 
       <PanelGridItem gridArea="result">
-        <PanelTitle title="Transformed data" />
+        <PanelTitle title="Output" />
         <CodePanel
           name="result"
-          overrides={{ showGutter: false }}
           value={parsedData || ''}
           mode="json"
           readOnly
         />
       </PanelGridItem>
 
-      <ErrorGridItem error={error} violations={violations} />
+      {/* Hide error panel when sample data is loading */}
+      {!isSampleDataLoading && (
+        <ErrorGridItem error={error} violations={violations} />
+      )}
     </PanelGrid>
   );
 }

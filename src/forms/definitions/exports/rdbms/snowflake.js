@@ -1,17 +1,6 @@
 import { isNewId } from '../../../../utils/resource';
-import { isLookupResource } from '../../../../utils/flows';
 
 export default {
-  init: (fieldMeta, resource = {}, flow) => {
-    const exportPanelField = fieldMeta.fieldMap.exportPanel;
-
-    if (isLookupResource(flow, resource)) {
-      exportPanelField.visible = false;
-    }
-
-    return fieldMeta;
-  },
-
   preSave: formValues => {
     const retValues = { ...formValues };
 
@@ -68,36 +57,26 @@ export default {
     dataURITemplate: { fieldId: 'dataURITemplate' },
     skipRetries: { fieldId: 'skipRetries' },
     exportOneToMany: { formId: 'exportOneToMany' },
-    exportPanel: {
-      fieldId: 'exportPanel',
-    },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
   },
   layout: {
-    type: 'column',
+    type: 'collapse',
     containers: [
+      { collapsed: true, label: 'General', fields: ['common', 'exportOneToMany'] },
       {
-        type: 'collapse',
-        containers: [
-          { collapsed: true, label: 'General', fields: ['common', 'exportOneToMany'] },
-          {
-            collapsed: true,
-            label: 'What would you like to export?',
-            fields: ['rdbms.query'],
-          },
-          {
-            collapsed: true,
-            label: 'Configure export type',
-            fields: ['type', 'rdbms.once.query'],
-          },
-          {
-            collapsed: true,
-            label: 'Advanced',
-            fields: ['pageSize', 'dataURITemplate', 'skipRetries'],
-          },
-        ],
+        collapsed: true,
+        label: 'What would you like to export?',
+        fields: ['rdbms.query'],
       },
       {
-        fields: ['exportPanel'],
+        collapsed: true,
+        label: 'Configure export type',
+        fields: ['type', 'rdbms.once.query'],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: ['pageSize', 'dataURITemplate', 'skipRetries', 'apiIdentifier'],
       },
     ],
   },

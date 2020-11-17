@@ -14,6 +14,7 @@ const useStyles = makeStyles(theme => ({
   },
   dynaNetsuiteQWrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
   editorButtonNetsuiteQ: {
     alignSelf: 'flex-end',

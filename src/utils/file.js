@@ -136,7 +136,7 @@ export async function getCsvFromXlsx(data) {
  * Else, default headers [Column0, Column1, ...ColumnN] are considered
  * Returns [[a,a], [b,b], [c,c]]
  */
-const generateFields = (data, options = {}) => {
+export const generateCSVFields = (data, options = {}) => {
   const {
     columnDelimiter = ',',
     rowDelimiter = '\n',
@@ -168,17 +168,16 @@ const generateFields = (data, options = {}) => {
   return fields;
 };
 
-/*
- * sample csv content
- * "a,b,c
- * 1,2,3
- * 4,5,6"
- * Extracts headers from the above csv content [a,b,c]
- * Returns [{id: 'a', type: 'string'}, {id: 'b', type: 'string'}, {id: 'c', type: 'string'}]
- */
-export function extractFieldsFromCsv(data = '', options = {}) {
-  if (typeof data !== 'string') return;
-  const fields = generateFields(data, options);
+export const getFileColumns = result => {
+  const columnsData = result?.columnsData || result?.data;
 
-  return fields.map(col => ({ id: col[0], type: 'string' }));
-}
+  if (!columnsData?.length) {
+    return [];
+  }
+
+  const sampleRecord = Array.isArray(columnsData[0])
+    ? columnsData[0][0]
+    : columnsData[0];
+
+  return Object.keys(sampleRecord);
+};

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { FieldWrapper } from 'react-forms-processor';
 import ArrowPopper from '../../ArrowPopper';
 import { getHelpTextMap } from '../../Help';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   helpPopper: {
@@ -58,6 +58,7 @@ function DynaLabel(props) {
         onMouseLeave={handlePopoverClose}
         className={classes.textField}>
         {label}
+        <FieldHelp {...props} />
       </Typography>
     </>
   );
@@ -67,11 +68,11 @@ function DynaLabel(props) {
 // submit. Since im not setting this field in this form,
 // Im assuming the value on this field is either undefined or ''(This is
 // through the defaultValue metadata set in the formFactory) .
-const omitWhenValueIs = [undefined, ''];
-const WrappedDynaLabel = props => (
-  <FieldWrapper {...props} omitWhenValueIs={omitWhenValueIs}>
-    <DynaLabel />
-  </FieldWrapper>
-);
+// const omitWhenValueIs = [undefined, ''];
+// const WrappedDynaLabel = props => (
+//   <FieldWrapper {...props} omitWhenValueIs={omitWhenValueIs}>
+//     <DynaLabel />
+//   </FieldWrapper>
+// );
 
-export default WrappedDynaLabel;
+export default DynaLabel;

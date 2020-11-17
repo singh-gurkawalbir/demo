@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import shortid from 'shortid';
 import { useSelector } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
@@ -11,6 +11,7 @@ import getFormattedSampleData from '../../../utils/sampleData';
 import netsuiteMetadata from './metadata/netsuite';
 import salesforceMetadata from './metadata/salesforce';
 import rdbmsMetadata from './metadata/rdbms';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 export default function ManageLookup({
@@ -28,10 +29,6 @@ export default function ManageLookup({
 }) {
   const { extractFields, picklistOptions } = others;
 
-  // to be removed after form refactor PR merges
-  const [formState, setFormState] = useState({
-    showFormValidationsBeforeTouch: false,
-  });
   const { merged: resource = {} } = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,
@@ -40,13 +37,14 @@ export default function ManageLookup({
 
   const { _connectionId: connectionId } = resource;
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, {
+    selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
       resourceType,
       stage: 'flowInput',
-    })
+    }).data
   );
+  // TODO: @aditya, check if we can get rid of getFormattedSampleData and use wrapSampleDataWithContext instead
   const formattedSampleData = useMemo(
     () =>
       JSON.stringify(
@@ -171,42 +169,39 @@ export default function ManageLookup({
     });
   }, [connectionId, extractFields, flowId, formattedSampleData, others, picklistOptions, resource.adaptorType, resourceId, resourceType, showDynamicLookupOnly, value]);
 
-  const showCustomFormValidations = useCallback(() => {
-    setFormState({
-      showFormValidationsBeforeTouch: true,
-    });
-  }, []);
+  const formKey = useFormInitWithPermissions({
+    disabled,
+    fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+  });
 
   return (
-    <div data-test="lookup-form" className={className}>
+    <div data-test="lookup-form">
       <DynaForm
-        disabled={disabled}
+        formKey={formKey}
         fieldMeta={fieldMeta}
-        optionsHandler={fieldMeta.optionsHandler}
-        // to be removed after form refactor PR merges
-        formState={formState}>
-        {error && (
-          <div>
-            <Typography color="error" variant="h5">
-              {error}
-            </Typography>
-          </div>
-        )}
-        <DynaSubmit
-          disabled={disabled}
-          data-test="saveLookupForm"
-          showCustomFormValidations={showCustomFormValidations}
-          onClick={handleSubmit}>
-          Save
-        </DynaSubmit>
-        <Button
-          data-test="cancelLookupForm"
-          onClick={onCancel}
-          variant="text"
-          color="primary">
-          Cancel
-        </Button>
-      </DynaForm>
+        />
+      {error && (
+        <div>
+          <Typography color="error" variant="h5">
+            {error}
+          </Typography>
+        </div>
+      )}
+      <DynaSubmit
+        formKey={formKey}
+        disabled={disabled}
+        data-test="saveLookupForm"
+        onClick={handleSubmit}>
+        Save
+      </DynaSubmit>
+      <Button
+        data-test="cancelLookupForm"
+        onClick={onCancel}
+        variant="text"
+        color="primary">
+        Cancel
+      </Button>
     </div>
   );
 }

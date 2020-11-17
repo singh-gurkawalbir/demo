@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, FormLabel } from '@material-ui/core';
 import { useSelector } from 'react-redux';
@@ -8,6 +8,10 @@ import FieldHelp from '../../../FieldHelp';
 import getFormMetadata from './metadata';
 import DynaForm from '../../..';
 import usePushRightDrawer from '../../../../../hooks/usePushRightDrawer';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import { generateNewId } from '../../../../../utils/resource';
+import useFormContext from '../../../../Form/FormContext';
+import useSetSubFormShowValidations from '../../../../../hooks/useSetSubFormShowValidations';
 
 const useStyles = makeStyles({
   csvContainer: {
@@ -43,7 +47,19 @@ const getParserValue = ({
   wrapWithQuotes,
   customHeaderRows: customHeaderRows?.split('\n').filter(val => val !== ''),
 });
+export const useUpdateParentForm = (secondaryFormKey, handleFormChange) => {
+  const { value: secondaryFormValue, fields, isValid} = useFormContext(secondaryFormKey);
 
+  useEffect(() => {
+    if (secondaryFormValue) {
+      const isFormTouched = Object.values(fields).some(val => val.touched);
+
+      // skip updates till secondary form is touched
+      handleFormChange(secondaryFormValue, isValid, !isFormTouched);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [secondaryFormValue, fields, isValid]);
+};
 export default function DynaCsvGenerate(props) {
   const classes = useStyles();
   const {
@@ -55,8 +71,9 @@ export default function DynaCsvGenerate(props) {
     resourceType,
     disabled,
     flowId,
+    formKey: parentFormKey,
   } = props;
-  const [formKey, setFormKey] = useState(1);
+  const [remountKey, setRemountKey] = useState(1);
   const handleOpenDrawer = usePushRightDrawer(id);
 
   const isHttpImport = useSelector(state => {
@@ -81,16 +98,16 @@ export default function DynaCsvGenerate(props) {
   const [currentOptions, setCurrentOptions] = useState(initOptions);
   const [form, setForm] = useState(getFormMetadata({...initOptions, customHeaderRowsSupported: isHttpImport}));
   const handleFormChange = useCallback(
-    (newOptions, isValid) => {
+    (newOptions, isValid, touched) => {
       setCurrentOptions({...newOptions, resourceId, resourceType });
       const parsersValue = getParserValue(newOptions);
 
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
       if (!isValid) {
-        onFieldChange(id, { ...parsersValue, __invalid: true });
+        onFieldChange(id, { ...parsersValue, __invalid: true }, touched);
       } else {
-        onFieldChange(id, parsersValue);
+        onFieldChange(id, parsersValue, touched);
       }
     },
     [id, onFieldChange, resourceId, resourceType]
@@ -102,16 +119,29 @@ export default function DynaCsvGenerate(props) {
 
       setCurrentOptions(getInitOptions(parsedVal));
       setForm(getFormMetadata({...editorValues, customHeaderRowsSupported: isHttpImport}));
-      setFormKey(formKey + 1);
+      setRemountKey(remountKey => remountKey + 1);
       onFieldChange(id, parsedVal);
     }
-  }, [formKey, getInitOptions, id, isHttpImport, onFieldChange]);
+  }, [getInitOptions, id, isHttpImport, onFieldChange]);
+
+  const [secondaryFormKey] = useState(generateNewId());
+
+  useUpdateParentForm(secondaryFormKey, handleFormChange);
+  useSetSubFormShowValidations(parentFormKey, secondaryFormKey);
+  const formKeyComponent = useFormInitWithPermissions({
+    formKey: secondaryFormKey,
+    remount: remountKey,
+    optionsHandler: form?.optionsHandler,
+    disabled,
+    fieldMeta: form,
+  });
 
   return (
     <>
       <div className={classes.csvContainer}>
         <DynaEditorWithFlowSampleData
-          title="CSV generator helper"
+          formKey={parentFormKey}
+          title={label}
           id={`csvGenerate-${id}-${resourceId}`}
           mode="csv"
           csvEditorType="generate"
@@ -141,10 +171,7 @@ export default function DynaCsvGenerate(props) {
         </Button>
       </div>
       <DynaForm
-        key={formKey}
-        onChange={handleFormChange}
-        optionsHandler={form?.optionsHandler}
-        disabled={disabled}
+        formKey={formKeyComponent}
         fieldMeta={form}
       />
     </>

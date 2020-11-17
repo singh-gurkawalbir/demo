@@ -4,6 +4,8 @@ import { selectors } from '../../../reducers';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { updateRetryData } from '../retryData';
+import getRequestOptions from '../../../utils/requestOptions';
+import openExternalUrl from '../../../utils/window';
 
 function* requestErrorDetails({
   flowId,
@@ -180,6 +182,27 @@ function* saveAndRetryError({ flowId, resourceId, retryId, retryData }) {
   }
 }
 
+function* downloadErrors({ flowId, resourceId, isResolved, filters }) {
+  const requestOptions = getRequestOptions(
+    actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DOWNLOAD.REQUEST,
+    { flowId, resourceId, isResolved, filters }
+  );
+  const { path, opts } = requestOptions;
+
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+
+    if (response.signedURL) {
+      yield call(openExternalUrl, { url: response.signedURL });
+    }
+  } catch (e) {
+  //  Handle errors
+  }
+}
+
 export default [
   takeEvery(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.SAVE_AND_RETRY,
     saveAndRetryError),
@@ -198,5 +221,9 @@ export default [
   takeLatest(
     actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.REQUEST,
     resolveErrors
+  ),
+  takeLatest(
+    actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DOWNLOAD.REQUEST,
+    downloadErrors
   ),
 ];

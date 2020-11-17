@@ -1,5 +1,5 @@
 import React from 'react';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
+import pick from 'lodash/pick';
 import AuditLogs from '../commonActions/AuditLogs';
 import Clone from '../commonActions/Clone';
 import Download from '../commonActions/Download';
@@ -10,9 +10,12 @@ import Edit from './actions/Edit';
 import NameCell from './cells/NameCell';
 import OnOffCell from './cells/OnOffCell';
 import RunCell from './cells/RunCell';
+import ErrorsCell from './cells/ErrorCell';
+import StatusCell from './cells/StatusCell';
 import ScheduleCell from './cells/ScheduleCell';
 import MappingCell from './cells/MappingCell';
 import SettingsCell from './cells/SettingsCell';
+import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 export default {
   columns: (empty, actionProps) => {
@@ -30,10 +33,25 @@ export default {
               description={r.description}
               isFree={r.free}
               childId={storeId}
+              actionProps={actionProps}
             />
           );
         },
         orderBy: 'name',
+      },
+      {
+        heading: 'Errors',
+        value: function Errors(r) {
+          return (
+            <ErrorsCell
+              flowId={r._id}
+              integrationId={actionProps?.parentId || r._integrationId}
+              isIntegrationApp={!!r._connectorId}
+              childId={actionProps?.storeId}
+            />
+          );
+        },
+        orderBy: 'errors',
       },
       {
         heading: 'Last updated',
@@ -42,7 +60,7 @@ export default {
       },
       {
         heading: 'Last run',
-        value: r => <CeligoTimeAgo date={r.lastExecutedAt} />,
+        value: r => <StatusCell flowId={r._id} integrationId={r._integrationId || 'none'} date={r.lastExecutedAt} actionProps={actionProps} />,
         orderBy: 'lastExecutedAt',
       },
       {
@@ -56,18 +74,25 @@ export default {
         heading: 'Schedule',
         align: 'center',
         value: function Schedule(r) {
-          return <ScheduleCell flowId={r._id} name={r.name} />;
+          return <ScheduleCell flowId={r._id} name={r.name} actionProps={actionProps} />;
         },
       },
     ];
 
+    // Currently Errors column is not supported for EM1.0
+    if (!actionProps || !actionProps.isUserInErrMgtTwoDotZero) {
+      columns = columns.filter(column => column.heading !== 'Errors');
+    }
+
     if (actionProps.isIntegrationApp) {
+      columns = columns.map(col => pick(col, ['heading', 'align', 'value']));
+
       columns.push(
         {
           heading: 'Settings',
           align: 'center',
           value: function Settings(r) {
-            return <SettingsCell flowId={r._id} name={r.name} />;
+            return <SettingsCell flowId={r._id} name={r.name} actionProps={actionProps} />;
           },
         }
       );
@@ -84,6 +109,7 @@ export default {
               integrationId={actionProps?.parentId || r._integrationId}
               isIntegrationApp={!!r._connectorId}
               storeId={actionProps?.storeId}
+              actionProps={actionProps}
             />
           );
         },
@@ -100,6 +126,7 @@ export default {
               isFree={r.free}
               disabled={r.disabled}
               storeId={actionProps.storeId}
+              actionProps={actionProps}
             />
           );
         },

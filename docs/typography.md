@@ -64,7 +64,3 @@ const Typography = require('@material-ui/core/Typography').default;
 
 <Typography variant="overline">The quick brown fox jumps over the lazy dog and that lazy dog got angry.</Typography>
 ```
-### Code
-```js
-<code> The quick brown fox jumps over the lazy dog </code>
-```

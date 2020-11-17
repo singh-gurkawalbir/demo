@@ -1,10 +1,8 @@
-import React, { useState, useMemo, useCallback, cloneElement, useEffect, useRef } from 'react';
+import React, { useState, useCallback, cloneElement, useEffect, useRef } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  Button,
-} from '@material-ui/core';
+import { Button, Divider } from '@material-ui/core';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import { preSaveValidate } from '../../../utils/editor';
@@ -14,38 +12,27 @@ import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
 import DynaCheckbox from '../../DynaForm/fields/checkbox/DynaCheckbox';
 import RightDrawer from '../../drawer/Right';
+import DrawerHeader from '../../drawer/Right/DrawerHeader';
+import DrawerContent from '../../drawer/Right/DrawerContent';
+import DrawerFooter from '../../drawer/Right/DrawerFooter';
+import ButtonGroup from '../../ButtonGroup';
+
 import DrawerActions from './DrawerActions';
 
 const useStyles = makeStyles(theme => ({
-  actions: {
-    display: 'flex',
-    justifyContent: 'space-between',
+  spaceBetween: {
+    flex: 1,
   },
-  wrapper: {
-    '& Button': {
-      marginRight: theme.spacing(2),
-    },
-    '& Button:last-child': {
-      marginRight: 0,
-    },
-  },
-  autoPreview: {
-    margin: theme.spacing(0, 1, 0, 1),
-    '&:after': {
-      content: '""',
-      borderRight: `1px solid ${theme.palette.secondary.lightest}`,
-      height: '80%',
-      width: 1,
-      position: 'absolute',
-      right: -12,
-    },
+  divider: {
+    margin: theme.spacing(0.5, 1, 0),
+    height: 24,
+    width: 1,
   },
 }));
 
 /**
- * @param patchOnSave = false (default editor behaviour) or true (for resource patch on save)
+ * @param patchOnSave = false (default editor behavior) or true (for resource patch on save)
  */
-
 export default function EditorDrawer(props) {
   const {
     children,
@@ -158,21 +145,13 @@ export default function EditorDrawer(props) {
       handleClose();
     }
   }, [confirmDialog, isEditorDirty, handleClose]);
-  const showPreviewAction = useMemo(
-    () =>
-      !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate,
-    [editor, editorViolations, hidePreviewAction]
-  );
-  const disableSave = useMemo(() => {
-    // check for isEditorDirty !== undefined as isEditorDirty is not implemented for all editors
-    const val =
+
+  const showPreviewAction = !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate;
+  const disableSave =
       !editor ||
-      editorViolations ||
+      !!editorViolations ||
       disabled ||
       (isEditorDirty !== undefined && !isEditorDirty);
-
-    return !!val;
-  }, [disabled, editor, editorViolations, isEditorDirty]);
 
   useEffect(() => {
     // patch current editor with autoEvaluate to maintain auto preview checkbox state
@@ -182,35 +161,37 @@ export default function EditorDrawer(props) {
     }
   }, [dispatch, activeEditorId, editor.processor, activeEditorIndex]);
 
-  const drawerActions = useMemo(() => (
-    <DrawerActions
-      action={action}
-      toggleAction={toggleAction}
-      showLayoutOptions={showLayoutOptions}
-      layout={layout}
-      handleLayoutChange={handleLayoutChange}
-      helpKey={helpKey}
-      helpTitle={helpTitle || title}
-      />
-  ), [action, handleLayoutChange, helpKey, helpTitle, layout, showLayoutOptions, title, toggleAction]);
-
   return (
     <RightDrawer
       path={getValidRelativePath(path)}
       height="tall"
       width="full"
       data-test={dataTest}
-      title={title}
       variant="temporary"
-      actions={drawerActions}
-      onClose={handleClose} >
-      {
-        cloneElement(children?.length ? children[activeEditorIndex] : children, {
-          layout,
-          editorId: activeEditorId})
-}
-      <div className={classes.actions}>
-        <div className={classes.wrapper}>
+      onClose={handleCancelClick}>
+
+      <DrawerHeader title={title} disableClose={!!saveInProgress}>
+        <DrawerActions
+          action={action}
+          toggleAction={toggleAction}
+          showLayoutOptions={showLayoutOptions}
+          layout={layout}
+          handleLayoutChange={handleLayoutChange}
+          helpKey={helpKey}
+          helpTitle={helpTitle || title}
+        />
+      </DrawerHeader>
+
+      <DrawerContent>
+        {
+          cloneElement(children?.length ? children[activeEditorIndex] : children, {
+            layout,
+            editorId: activeEditorId})
+        }
+      </DrawerContent>
+
+      <DrawerFooter>
+        <ButtonGroup>
           {patchOnSave ? (
             <>
               <EditorSaveButton
@@ -261,18 +242,21 @@ export default function EditorDrawer(props) {
             onClick={handleCancelClick}>
             Cancel
           </Button>
-        </div>
-        <div className={classes.wrapper}>
+        </ButtonGroup>
+        <div className={classes.spaceBetween} />
+        <ButtonGroup>
           {showPreviewAction && (
-          <Button
-            data-test="previewEditorResult"
-            variant="outlined"
-            color="secondary"
-            disabled={!!saveInProgress}
-            className={classes.autoPreview}
-            onClick={handlePreview}>
-            Preview
-          </Button>
+          <>
+            <Button
+              data-test="previewEditorResult"
+              variant="outlined"
+              color="secondary"
+              disabled={!!saveInProgress}
+              onClick={handlePreview}>
+              Preview
+            </Button>
+            <Divider orientation="vertical" className={classes.divider} />
+          </>
           )}
           {!hidePreviewAction && (
           <DynaCheckbox
@@ -284,8 +268,8 @@ export default function EditorDrawer(props) {
             value={!!editor.autoEvaluate}
           />
           )}
-        </div>
-      </div>
+        </ButtonGroup>
+      </DrawerFooter>
     </RightDrawer>
   );
 }

@@ -1,31 +1,19 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../../actions';
 import RightDrawer from '../../../../../components/drawer/Right';
+import DrawerHeader from '../../../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../../../components/drawer/Right/DrawerContent';
+import DrawerFooter from '../../../../../components/drawer/Right/DrawerFooter';
 import { selectors } from '../../../../../reducers';
-
-const useStyles = makeStyles(() => ({
-  settingsContainer: {
-    width: '100%',
-    overflowX: 'hidden',
-    '& > div:first-child': {
-      overflow: 'visible',
-    },
-  },
-  suiteScriptFlowSettingsDrawer: {
-    '& > .MuiPaper-root': {
-      overflow: 'visible',
-    },
-  },
-}));
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import ButtonGroup from '../../../../../components/ButtonGroup';
 
 export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, flowId }) {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
   const flow = useSelector(state =>
@@ -122,18 +110,31 @@ export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, fl
     [dispatch, flow._integrationId, flowId, history, ssLinkedConnectionId]
   );
 
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+
+    disabled: isViewMode || isIntegrationApp,
+
+  });
+
   return (
-    <RightDrawer path="settings" title="Settings" width="medium" className={classes.suiteScriptFlowSettingsDrawer}>
-      <div className={classes.settingsContainer}>
-        <DynaForm fieldMeta={fieldMeta} disabled={isViewMode || isIntegrationApp} render>
-          <DynaSubmit onClick={handleSubmit} color="primary" variant="outlined">
+    <RightDrawer path="settings" width="medium">
+      <DrawerHeader title="Settings" />
+      <DrawerContent>
+        <DynaForm fieldMeta={fieldMeta} formKey={formKey} />
+      </DrawerContent>
+      <DrawerFooter>
+        <ButtonGroup>
+          <DynaSubmit
+            formKey={formKey}
+            onClick={handleSubmit} color="primary" variant="outlined">
             Save
           </DynaSubmit>
           <Button onClick={handleClose} variant="text" color="primary">
             Cancel
           </Button>
-        </DynaForm>
-      </div>
+        </ButtonGroup>
+      </DrawerFooter>
     </RightDrawer>
   );
 }

@@ -76,6 +76,63 @@ selectors.userPreferences = createSelector(
   }
 );
 
+selectors.ownerUserId = createSelector(
+  state => fromPreferences.userOwnPreferences(state && state.preferences),
+  state => state && state.org,
+  state => state && state.profile,
+  (preferences, org, profile) => {
+    const { defaultAShareId } = preferences;
+
+    if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
+      return profile._id;
+    }
+
+    if (!org || !org.accounts || !org.accounts.length) {
+      return profile._id;
+    }
+
+    const { accounts: orgAccounts = {} } = org;
+    const currentAccount = orgAccounts.find(
+      a => a._id === defaultAShareId
+    );
+
+    if (currentAccount && currentAccount.ownerUser) {
+      return currentAccount.ownerUser._id;
+    }
+
+    return profile._id;
+  }
+);
+
+selectors.isOwnerUserInErrMgtTwoDotZero = createSelector(
+  state => fromPreferences.userOwnPreferences(state && state.preferences),
+  state => state && state.org,
+  state => state && state.profile,
+  (preferences, org, profile) => {
+    const { defaultAShareId } = preferences;
+
+    if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
+      return !!profile.useErrMgtTwoDotZero;
+    }
+
+    if (!org || !org.accounts || !org.accounts.length) {
+      return !!profile.useErrMgtTwoDotZero;
+    }
+
+    /* When the user belongs to an org, we need to return the isErrMgtTwoDotZero from org owner profile. */
+    const { accounts: orgAccounts = [] } = org;
+    const currentAccount = orgAccounts.find(
+      a => a._id === defaultAShareId
+    );
+
+    if (currentAccount && currentAccount.ownerUser) {
+      return !!currentAccount.ownerUser.useErrMgtTwoDotZero;
+    }
+
+    return false;
+  }
+);
+
 selectors.appTheme = createSelector(
   selectors.userPreferences,
   preferences => {
@@ -167,18 +224,12 @@ selectors.accountSummary = createSelector(
 );
 // #endregion ACCOUNT
 
-selectors.userPermissions = state => {
-  const { defaultAShareId } = selectors.userPreferences(state);
-  const allowedToPublish =
-    state && state.profile && state.profile.allowedToPublish;
-  const permissions = fromAccounts.permissions(
-    state && state.org && state.org.accounts,
-    defaultAShareId,
-    { allowedToPublish }
-  );
-
-  return permissions;
-};
+selectors.userPermissions = createSelector(
+  state => selectors.userPreferences(state)?.defaultAShareId,
+  state => state?.profile?.allowedToPublish,
+  state => state?.org?.accounts,
+  (defaultAShareId, allowedToPublish, accounts) => fromAccounts.permissions(accounts, defaultAShareId, { allowedToPublish })
+);
 
 selectors.accountOwner = createSelector(
   selectors.userAccessLevel,

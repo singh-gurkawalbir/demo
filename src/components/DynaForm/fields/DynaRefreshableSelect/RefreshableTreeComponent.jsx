@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
@@ -16,6 +16,8 @@ const fieldToOption = field => ({
   label: field.label,
   value: field.value,
   referenceTo: field.referenceTo,
+  picklistValues: field.picklistValues,
+  type: field.type,
 });
 const fieldToOptionReferencedFields = field => ({
   label: field.relationshipName,
@@ -28,21 +30,39 @@ const NestedValueCheckbox = props => {
     attachedParentNode,
     selectedValues,
     label,
+    isFieldMetaRequired,
+    field,
   } = props;
+
+  const value = useMemo(() => selectedValues.some(v => {
+    if (typeof v === 'string') return v === attachedParentNode;
+
+    return v.label === attachedParentNode;
+  }), [attachedParentNode, selectedValues]);
+
+  const onFieldChange = useCallback((id, checkedValue) => {
+    setSelectedValues(selectedValues => {
+      if (checkedValue) {
+        if (isFieldMetaRequired) { return [...selectedValues, {...field, label: attachedParentNode}]; }
+
+        return [...selectedValues, attachedParentNode];
+      }
+
+      return selectedValues.filter(
+        selectedValue => {
+          if (typeof selectedValue === 'string') { return selectedValue !== attachedParentNode; }
+
+          return selectedValue.label !== attachedParentNode;
+        }
+      );
+    });
+  }, [attachedParentNode, isFieldMetaRequired, field, setSelectedValues]);
 
   return (
     <DynaCheckbox
-      onFieldChange={(id, checkedValue) => {
-        setSelectedValues(selectedValues => {
-          if (checkedValue) return [...selectedValues, attachedParentNode];
-
-          return selectedValues.filter(
-            selectedValue => selectedValue !== attachedParentNode
-          );
-        });
-      }}
+      onFieldChange={onFieldChange}
       label={label}
-      value={!!selectedValues.includes(attachedParentNode)}
+      value={value}
     />
   );
 };
@@ -88,6 +108,7 @@ function TreeViewComponent(props) {
     nestedRelationShipNames,
     skipFirstLevelFields,
     level,
+    isFieldMetaRequired,
   } = props;
   const metaBasePath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/`;
   const {data: dataRef, status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, `${metaBasePath}${selectedReferenceTo}`, 'salesforce-sObjects-referenceFields');
@@ -119,6 +140,8 @@ function TreeViewComponent(props) {
                   attachedParentNode={attachedParentNode}
                   selectedValues={selectedValues}
                   label={label}
+                  field={item}
+                  isFieldMetaRequired={isFieldMetaRequired}
                 />
               </div>
             );

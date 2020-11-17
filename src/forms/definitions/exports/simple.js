@@ -108,11 +108,19 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
+    outputMode: {
+      id: 'outputMode',
+      type: 'text',
+      label: 'Parse files being transferred',
+      defaultValue: 'records',
+      visible: false,
+    },
     'file.type': {
       id: 'file.type',
       name: '/file/type',
       type: 'select',
       label: 'File type',
+      required: true,
       defaultValue: r => (r && r.file && r.file.type) || '',
       options: [
         {
@@ -157,6 +165,12 @@ export default {
     parsers: {
       fieldId: 'parsers',
       uploadSampleDataFieldName: 'uploadFile',
+      visibleWhenAll: [
+        {
+          field: 'file.type',
+          is: ['xml'],
+        },
+      ],
     },
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
@@ -165,52 +179,42 @@ export default {
     'file.encoding': { fieldId: 'file.encoding' },
     pageSize: { fieldId: 'pageSize' },
     dataURITemplate: { fieldId: 'dataURITemplate' },
-    exportPanel: {
-      fieldId: 'exportPanel',
-    },
   },
   layout: {
-    type: 'column',
+    type: 'collapse',
     containers: [
       {
-        type: 'collapse',
-        containers: [
-          {
-            label: 'General',
-            collapsed: false,
-            fields: [
-              'common',
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'How would you like to parse the file?',
-            type: 'indent',
-            fields: [
-              'file.type',
-              'uploadFile',
-            ],
-            containers: [
-              {fields: [
-                // 'file.xml.resourcePath', // moved into 'parsers' input
-                'parsers',
-                'file.csv',
-                'file.json.resourcePath',
-                'file.xlsx.hasHeaderRow',
-                'file.xlsx.rowsPerRecord',
-                'file.xlsx.keyColumns',
-              ]},
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'Advanced',
-            fields: ['file.encoding', 'pageSize', 'dataURITemplate'],
-          },
+        label: 'General',
+        collapsed: false,
+        fields: [
+          'common',
         ],
       },
       {
-        fields: ['exportPanel'],
+        collapsed: true,
+        label: 'How would you like to parse the file?',
+        type: 'indent',
+        fields: [
+          'outputMode',
+          'file.type',
+          'uploadFile',
+        ],
+        containers: [
+          {fields: [
+            // 'file.xml.resourcePath', // moved into 'parsers' input
+            'parsers',
+            'file.csv',
+            'file.json.resourcePath',
+            'file.xlsx.hasHeaderRow',
+            'file.xlsx.rowsPerRecord',
+            'file.xlsx.keyColumns',
+          ]},
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: ['file.encoding', 'pageSize', 'dataURITemplate'],
       },
     ],
   },

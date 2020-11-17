@@ -3,7 +3,7 @@ import actionTypes from '../../../actions/types';
 import { stringCompare } from '../../../utils/sort';
 
 export default (state = {}, action) => {
-  const { type, connectionId, userRoles, message } = action;
+  const { type, connectionId, userRoles, message, hideNotificationMessage = false } = action;
   const newState = { ...state };
 
   switch (type) {
@@ -11,10 +11,13 @@ export default (state = {}, action) => {
       newState[connectionId] = { ...newState[connectionId] };
       delete newState[connectionId].message;
       delete newState[connectionId].status;
+      delete newState[connectionId].hideNotificationMessage;
 
       return newState;
     case actionTypes.NETSUITE_USER_ROLES.REQUEST:
       if (!newState[connectionId]) newState[connectionId] = {};
+
+      newState[connectionId].hideNotificationMessage = hideNotificationMessage;
 
       return newState;
     case actionTypes.NETSUITE_USER_ROLES.RECEIVED:

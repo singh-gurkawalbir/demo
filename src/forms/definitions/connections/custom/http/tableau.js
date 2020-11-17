@@ -77,6 +77,7 @@ export default {
         { field: 'http.encrypted.password', is: [''] },
       ],
       label: 'Generate token',
+      inputboxLabel: 'Token',
       defaultValue: '',
     },
     'http.unencrypted.siteId': {
@@ -100,8 +101,15 @@ export default {
           'http.auth.basic.username',
           'http.auth.basic.password',
           'http.unencrypted.contentUrl',
-          'http.auth.token.token',
-          'http.unencrypted.siteId'] },
+        ],
+        type: 'indent',
+        containers: [
+          {
+            fields: [
+              'http.auth.token.token',
+              'http.unencrypted.siteId'],
+          },
+        ] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

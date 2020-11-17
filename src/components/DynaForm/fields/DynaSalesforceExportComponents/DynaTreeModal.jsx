@@ -12,6 +12,7 @@ import ButtonGroup from '../../../ButtonGroup';
 const useStyles = makeStyles(theme => ({
   refrencedFieldWrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
   dynatreeAddBtn: {
     minWidth: 'unset',

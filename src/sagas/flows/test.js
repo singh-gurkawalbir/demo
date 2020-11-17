@@ -1,6 +1,8 @@
 /* global describe, test, expect */
 
-import { call, put, select } from 'redux-saga/effects';
+import { call, select } from 'redux-saga/effects';
+import { expectSaga } from 'redux-saga-test-plan';
+import * as matchers from 'redux-saga-test-plan/matchers';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -13,24 +15,31 @@ describe('run saga', () => {
   const flowId = 'f1';
   const flowResource = { _id: flowId, _integrationId: 'i1' };
 
-  test('should succeed on successful api call', () => {
-    const saga = run({ flowId });
-
-    expect(saga.next(flowResource).value).toEqual(
-      select(selectors.resource, 'flows', flowId)
-    );
-
-    const { path, opts } = getRequestOptions(actionTypes.FLOW.RUN, {
-      resourceId: flowId,
-    });
-
-    expect(saga.next(flowResource).value).toEqual(
-      call(apiCallWithRetry, { path, opts })
-    );
+  test('should call latestFlowJobs on successful api call in case of EM 2.0 ', () => {
     const response = { _jobId: 'j1', something: 'some thing' };
 
-    expect(saga.next(response).value).toEqual(
-      put(
+    return expectSaga(run, { flowId })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), response],
+        [select(selectors.isOwnerUserInErrMgtTwoDotZero), true],
+        [select(selectors.resource, 'flows', flowId), flowResource],
+      ])
+      .call.fn(apiCallWithRetry)
+      .put(actions.errorManager.latestFlowJobs.request({ flowId }))
+      .run();
+  });
+
+  test('should update job with received response on successful api call ', () => {
+    const response = { _jobId: 'j1', something: 'some thing' };
+
+    return expectSaga(run, { flowId })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), response],
+        [select(selectors.isOwnerUserInErrMgtTwoDotZero), false],
+        [select(selectors.resource, 'flows', flowId), flowResource],
+      ])
+      .call.fn(apiCallWithRetry)
+      .put(
         actions.job.receivedFamily({
           job: {
             ...response,
@@ -42,16 +51,14 @@ describe('run saga', () => {
           },
         })
       )
-    );
-    expect(saga.next().value).toEqual(
-      put(actions.job.requestInProgressJobStatus())
-    );
-    expect(saga.next().done).toEqual(true);
+      .put(actions.job.requestInProgressJobStatus())
+      .run();
   });
 
   test('should handle api error properly', () => {
     const saga = run({ flowId });
 
+    saga.next();
     expect(saga.next(flowResource).value).toEqual(
       select(selectors.resource, 'flows', flowId)
     );

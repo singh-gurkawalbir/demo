@@ -20,24 +20,11 @@ export default {
       ...retValues,
     };
   },
-  optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'mongodb.document' || fieldId === 'mongodb.update') {
-      const queryTypeField = fields.find(
-        field => field.fieldId === 'mongodb.method'
-      );
-
-      return {
-        queryType: queryTypeField && queryTypeField.value,
-      };
-    }
-
-    return null;
-  },
   fieldMap: {
     common: {
       formId: 'common',
     },
-    apiIdentifier: { fieldId: 'apiIdentifier' },
+    advancedSettings: { formId: 'advancedSettings' },
     'mongodb.document': {
       fieldId: 'mongodb.document',
     },
@@ -105,7 +92,7 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['apiIdentifier'],
+        fields: ['advancedSettings'],
       },
     ],
   },

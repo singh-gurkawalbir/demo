@@ -1,14 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 import AuditLog from '../../components/AuditLog';
 import PanelHeader from '../../components/PanelHeader';
 
-export default class Audit extends Component {
-  render() {
-    return (
-      <>
-        <PanelHeader title="Audit Log" />
-        <AuditLog />
-      </>
-    );
-  }
+export default function Audit() {
+  return (
+    <>
+      <PanelHeader title="Audit Log" />
+      <AuditLog />
+    </>
+  );
 }

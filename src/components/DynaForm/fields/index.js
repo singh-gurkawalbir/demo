@@ -40,6 +40,7 @@ import DynaNSSavedSearch from './DynaNSSavedSearch';
 import DynaNSWSSavedSearch from './DynaNSWSSavedSearch';
 import DynaAssistantOptions from './assistant/DynaAssistantOptions';
 import DynaAssistantSearchParams from './assistant/DynaAssistantSearchParams';
+import DynaSemiAssistantOperationSelect from './assistant/DynaSemiAssistantOperationSelect';
 import DynaLabelValueElement from './DynaLabelValueElement';
 import DynaWebHookSampleData from './DynaWebHookSampleData';
 import DynaXmlParse from './editors/DynaXmlParse';
@@ -54,6 +55,7 @@ import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
 import DynaRefreshableIntegrationAppSetting from './DynaRefreshableSelect/RefreshableIntegrationAppSetting';
 import DynaDate from './dateTime/DynaDate';
 import DynaDateTime from './dateTime/DynaDateTime';
+import DynaExpiryTime from './DynaExpiryTime';
 import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import Salesforce from './DynaSalesforceExportComponents';
@@ -79,7 +81,6 @@ import DynaFileKeyColumn from './DynaFileKeyColumn';
 import DynaRadioGroupForResetFields from './radiogroup/DynaRadioGroupForResetFields';
 import DynaTextWithFlowContext from './text/DynaTextWithFlowContext';
 import DynaCheckboxForResetFields from './checkbox/DynaCheckboxForResetFields';
-import DynaExportPanel from './DynaExportPanel';
 import cronBuilderComponents from './cronBuilderComponents';
 import DynaCronGenerator from './DynaCronGenerator';
 import DynaNSSearchCriteria from './editors/DynaNSSearchCriteria';
@@ -113,6 +114,11 @@ import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
 import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
 import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
 import DynaAs2Mode from './DynaAs2Mode';
+import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
+import DynaNetSuiteAPIVersion from './DynaNetSuiteAPIVersion';
+import DynaCeligoSwitch from './DynaCeligoSwitch';
+import DynaReplaceConnection from './DynaReplaceConnection';
+import DynaSelectRequestMediaType from './DynaSelectRequestMediaType';
 
 export default {
   suitescriptsettings: DynaRefreshableSettings,
@@ -151,6 +157,7 @@ export default {
   csvgenerate: DynaCsvGenerate,
   xmlparse: DynaXmlParse,
   refreshableselect: DynaRefreshableSelect,
+  netsuiteapiversion: DynaNetSuiteAPIVersion,
   transformeditor: DynaTransformEditor,
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,
@@ -162,14 +169,17 @@ export default {
   filedefinitionselect: DynaFileDefinitionSelect,
   filedefinitioneditor: DynaFileDefinitionEditor,
   tokengen: DynaTokenGenerator,
+  expirytime: DynaExpiryTime,
   apiidentifier: DynaApiIdentifier,
   labelvalue: DynaLabelValueElement,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
+  selectrequestmediatype: DynaSelectRequestMediaType,
   nssavedsearch: DynaNSSavedSearch,
   nswssavedsearch: DynaNSWSSavedSearch,
   webhooksampledata: DynaWebHookSampleData,
   assistantoptions: DynaAssistantOptions,
   assistantsearchparams: DynaAssistantSearchParams,
+  semiassistantoperationselect: DynaSemiAssistantOperationSelect,
   keywithaction: DynaKeyWithAction,
   fieldexpressionselect: DynaFieldExpressionSelect,
   autosuggest: DynaAutoSuggest,
@@ -199,6 +209,7 @@ export default {
   useremail: DynaUserEmail,
   userpassword: DynaUserPassword,
   dynaiclient: DynaIclient,
+  replaceconnection: DynaReplaceConnection,
   netsuitequalifier: DynaNetSuiteQualifier,
   query: DynaQuery,
   sqlquery: DynaSqlQuery,
@@ -209,7 +220,6 @@ export default {
   radiogroupforresetfields: DynaRadioGroupForResetFields,
   textwithflowcontext: DynaTextWithFlowContext,
   checkboxforresetfields: DynaCheckboxForResetFields,
-  exportpanel: DynaExportPanel,
   crongenerator: DynaCronGenerator,
   slider: cronBuilderComponents.slider,
   groupedButton: cronBuilderComponents.groupedButton,
@@ -223,6 +233,7 @@ export default {
   skipRetries: DynaSkipRetries,
   transformrules: DynaTransformRules,
   netsuiteexporttype: DynaNetsuiteExportType,
+  netsuiteimportoperation: DynaNetSuiteImportOperation,
   netsuitedefaultvalue: DynaNetSuiteDefaultValue,
   ...SuiteScript,
   exportSelect: DynaExportSelect,
@@ -239,4 +250,5 @@ export default {
   suitescriptuploadfile: DynaSuiteScriptUploadFile,
   ftpfilenamewitheditor: DynaFTPFileNameWithEditor,
   as2Mode: DynaAs2Mode,
+  celigoswitch: DynaCeligoSwitch,
 };

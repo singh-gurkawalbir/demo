@@ -66,24 +66,8 @@ export default {
     label: 'Configure HTTP headers',
   },
   'http.requestMediaType': {
-    type: 'select',
+    type: 'selectrequestmediatype',
     label: 'Request media type',
-    visibleWhen: [
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
-    options: [
-      {
-        items: [
-          { label: 'XML', value: 'xml' },
-          { label: 'JSON', value: 'json' },
-          { label: 'CSV', value: 'csv' },
-          { label: 'URL Encoded', value: 'urlencoded' },
-        ],
-      },
-    ],
     defaultValue: r => (r && r.http ? r && r.http.requestMediaType : 'json'),
   },
   'http.compositeType': {
@@ -325,7 +309,7 @@ export default {
   'http.batchSize': {
     type: 'text',
     label: 'Batch size limit',
-    defaultValue: 1,
+    defaultValue: r => r?.http?.batchSize || 1,
     validWhen: {
       matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
     },

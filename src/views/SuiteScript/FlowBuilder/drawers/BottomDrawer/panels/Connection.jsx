@@ -12,14 +12,20 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ConnectionPanel({ ssLinkedConnectionId, flow }) {
-  const { _integrationId: integrationId } = flow;
+export default function ConnectionPanel({ ssLinkedConnectionId, flowId }) {
+  const integrationId = useSelector(state =>
+    selectors.suiteScriptResource(state, {
+      resourceType: 'flows',
+      id: flowId,
+      ssLinkedConnectionId,
+    })._integrationId
+  );
   const classes = useStyles();
   const flowConnections = useSelector(
     state =>
       selectors.suiteScriptFlowConnectionList(state, {
         ssLinkedConnectionId,
-        flowId: flow._id,
+        flowId,
       }),
     (left, right) => left.length === right.length
   );

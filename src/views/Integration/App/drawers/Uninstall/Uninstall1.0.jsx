@@ -5,7 +5,7 @@
 */
 import { useHistory, Redirect } from 'react-router-dom';
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
@@ -60,7 +60,7 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
     selectors.isUninstallComplete(state, { integrationId, storeId })
   );
   const { steps: uninstallSteps, error } = useSelector(state =>
-    selectors.integrationUninstallSteps(state, { integrationId })
+    selectors.integrationUninstallSteps(state, { integrationId }), shallowEqual
   );
 
   useEffect(() => {

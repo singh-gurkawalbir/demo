@@ -2,15 +2,14 @@ import { Tab, Tabs, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { useCallback, useEffect, useState } from 'react';
-import FormContext from 'react-forms-processor/dist/components/FormContext';
+import { useSelector, useDispatch } from 'react-redux';
 import FormGenerator from '..';
-import {
-  getAllFormValuesAssociatedToMeta,
-
-  isAnyFieldTouchedForMeta, isExpansionPanelErrored,
-} from '../../../../forms/utils';
+import {selectors} from '../../../../reducers';
 import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
 import SuiteScriptSaveButton from '../../../SuiteScript/ResourceFormFactory/Actions/SuiteScriptIASettingsSaveButton';
+import { getAllFormValuesAssociatedToMeta } from '../../../../forms/utils';
+import actions from '../../../../actions';
+import useFormContext from '../../../Form/FormContext';
 
 const useStyle = makeStyles(theme => ({
   root: {
@@ -35,14 +34,16 @@ const useStyle = makeStyles(theme => ({
   },
 }));
 
-const TabLabel = ({layout, fieldMap, label, tabType }) => (
-  <FormContext.Consumer>
-    {form => (
-      tabType !== 'tabIA' && isExpansionPanelErrored({ layout, fieldMap }, form.fields) ? <Typography color="error" style={{fontSize: 15, lineHeight: '19px' }}>{label}</Typography> : label
+const TabLabel = ({layout, formKey, fieldMap, label, tabType }) => {
+  const isExpansionPanelErrored = useSelector(state =>
+    selectors.isExpansionPanelErroredForMetaForm(state, formKey, {
+      layout,
+      fieldMap,
+    })
+  );
 
-    )}
-  </FormContext.Consumer>
-);
+  return (tabType !== 'tabIA' && isExpansionPanelErrored ? <Typography color="error" style={{fontSize: 15, lineHeight: '19px' }}>{label}</Typography> : label);
+};
 
 function TabComponent(props) {
   const { containers, fieldMap, children, type, className,
@@ -87,6 +88,7 @@ function TabComponent(props) {
                 fieldMap={fieldMap}
                 label={label}
                 tabType={type}
+                formKey={rest?.formKey}
 
               />
 )}
@@ -113,27 +115,32 @@ function FormWithSave(props) {
     values => getAllFormValuesAssociatedToMeta(values, { layout, fieldMap }),
     [fieldMap, layout]
   );
+  const { formKey } = rest;
+  const isExpansionPanelErrored = useSelector(state =>
+    selectors.isExpansionPanelErroredForMetaForm(state, formKey, {
+      layout,
+      fieldMap,
+    })
+  );
+  const isAnyFieldTouchedForMeta = useSelector(state =>
+    selectors.isAnyFieldTouchedForMetaForm(state, formKey, {
+      layout,
+      fieldMap,
+    })
+  );
 
   return (
-    <FormContext.Consumer>
-      {form => (
-        <>
-          <FormGenerator {...props} />
-          {React.cloneElement(children, {
-            ...rest,
-            isValid: !isExpansionPanelErrored({ layout, fieldMap }, form.fields),
+    <>
+      <FormGenerator {...props} />
+      {React.cloneElement(children, {
+        ...rest,
+        isValid: !isExpansionPanelErrored,
+        isFormTouchedForMeta: isAnyFieldTouchedForMeta,
+        postProcessValuesFn,
 
-            isFormTouchedForMeta: isAnyFieldTouchedForMeta(
-              { layout, fieldMap },
-              form.fields
-            ),
-            postProcessValuesFn,
+      })}
 
-          })}
-
-        </>
-      )}
-    </FormContext.Consumer>
+    </>
   );
 }
 
@@ -147,29 +154,20 @@ export function TabIAComponent(props) {
   );
 }
 
-const InitializeFieldStateHook = ({ fieldMap, registerField}) => {
+// this may not be necessary
+const useInitializeFieldStateHook = ({ fieldMap, formKey}) => {
+  const dispatch = useDispatch();
+  const fields = useFormContext(formKey)?.fields;
+
   useEffect(() => {
     Object.values(fieldMap).forEach(field => {
-      registerField(field);
+      // if field state missing force registration of fields
+      if (!fields[field?.id]) { dispatch(actions.form.registerField(formKey)(field)); }
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  return null;
 };
 
-function InitializeAllFieldState({children, fieldMap}) {
-  return (
-    <FormContext.Consumer>
-      {form => (
-        <>
-          <InitializeFieldStateHook registerField={form.registerField} fieldMap={fieldMap} />
-          {children}
-        </>
-      )}
-    </FormContext.Consumer>
-  );
-}
 // this is necessary when we clone props we want all of its children to receive them
 function SuiteScriptWithCompleteSave(props) {
   return (
@@ -181,16 +179,19 @@ function SuiteScriptWithCompleteSave(props) {
 }
 
 export function SuiteScriptTabIACompleteSave(props) {
-  return (
-    <InitializeAllFieldState fieldMap={props.fieldMap}>
+  const {formKey, fieldMap} = props;
 
-      <TabComponent
-        {...props}
-        orientation="horizontal"
+  useInitializeFieldStateHook({formKey, fieldMap});
+
+  return (
+
+    <TabComponent
+      {...props}
+      orientation="horizontal"
     >
-        <SuiteScriptWithCompleteSave />
-      </TabComponent>
-    </InitializeAllFieldState>
+      <SuiteScriptWithCompleteSave />
+    </TabComponent>
+
   );
 }
 
@@ -205,27 +206,30 @@ function TabWithCompleteSave(props) {
 }
 
 export function TabComponentSimple(props) {
+  const {formKey, fieldMap} = props;
+
+  useInitializeFieldStateHook({formKey, fieldMap});
+
   return (
-    <InitializeAllFieldState fieldMap={props.fieldMap}>
-      <TabComponent {...props}>
-        <TabWithCompleteSave />
-      </TabComponent>
-    </InitializeAllFieldState>
+    <TabComponent {...props}>
+      <TabWithCompleteSave />
+    </TabComponent>
 
   );
 }
 
 export function TabComponentWithoutSave({ index, ...rest }) {
-  return (
-    <InitializeAllFieldState fieldMap={rest.fieldMap}>
+  const {formKey, fieldMap} = rest;
 
-      <TabComponent
-        {...rest}
-        orientation="horizontal"
-        index={index === undefined ? 0 : index + 1}>
-        <FormGenerator />
-      </TabComponent>
-    </InitializeAllFieldState>
+  useInitializeFieldStateHook({formKey, fieldMap});
+
+  return (
+    <TabComponent
+      {...rest}
+      orientation="horizontal"
+      index={index === undefined ? 0 : index + 1}>
+      <FormGenerator />
+    </TabComponent>
   );
 }
 

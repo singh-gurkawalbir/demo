@@ -1,9 +1,9 @@
 import React, { useEffect, useCallback } from 'react';
-import FormContext from 'react-forms-processor/dist/components/FormContext';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles, FormLabel, FormControl } from '@material-ui/core';
 import FieldHelp from '../FieldHelp';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import useFormContext from '../../Form/FormContext';
 
 const useStyle = makeStyles({
   dynaTextFtpFiedWrapper: {
@@ -16,9 +16,9 @@ const useStyle = makeStyles({
   },
 });
 
-function DynaTextFtpPort(props) {
+export default function DynaTextFtpPort(props) {
   const {
-    fields,
+    formKey,
     description,
     errorMessages,
     id,
@@ -32,8 +32,9 @@ function DynaTextFtpPort(props) {
     valueType,
     disabled,
   } = props;
+  const {fields} = useFormContext(formKey);
   const classes = useStyle();
-  const ftptype = fields.find(obj => obj.key === 'ftp.type').value;
+  const ftptype = fields?.['ftp.type']?.value;
 
   useEffect(() => {
     if ((!value || [21, 22, 990].includes(value)) && options) {
@@ -54,7 +55,7 @@ function DynaTextFtpPort(props) {
   );
 
   return (
-    <FormControl>
+    <FormControl className={classes.dynaTextFtpFiedWrapper}>
       <div>
         <FormLabel htmlFor={id} error={!isValid}>
           {label}
@@ -85,11 +86,3 @@ function DynaTextFtpPort(props) {
     </FormControl>
   );
 }
-
-const WrappedContextConsumer = props => (
-  <FormContext.Consumer>
-    {form => <DynaTextFtpPort {...form} {...props} />}
-  </FormContext.Consumer>
-);
-
-export default WrappedContextConsumer;

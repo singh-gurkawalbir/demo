@@ -4,6 +4,9 @@
 import deepClone from 'lodash/cloneDeep';
 import { adaptorTypeMap } from './resource';
 import { isJsonString } from './string';
+import { wrapExportFileSampleData } from './sampleData';
+
+export const DEFAULT_RECORD_SIZE = 10;
 
 // Applications list which include Preview panel as part of the resource drawer
 
@@ -22,6 +25,16 @@ const applicationsWithPreviewPanel = [
 ];
 const emptyList = [];
 
+export const HTTP_STAGES = [
+  { label: 'HTTP request', value: 'request' },
+  { label: 'HTTP response', value: 'raw' },
+  { label: 'Parsed output', value: 'preview' },
+];
+
+Object.freeze(HTTP_STAGES);
+const PREVIEW_STAGE = [{ label: 'Parsed output', value: 'preview' }];
+
+Object.freeze(PREVIEW_STAGE);
 export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExport }) => {
   const { adaptorType } = resource || {};
   const appType = adaptorTypeMap[adaptorType];
@@ -30,33 +43,23 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
   const fileAdaptorAppTypes = ['ftp', 's3', 'as2'];
 
   if (isDataLoader || isRestCsvExport || fileAdaptorAppTypes.includes(appType)) {
-    return [
-      { label: 'Parsed output', value: 'parse' },
-    ];
+    return PREVIEW_STAGE;
   }
 
   if (!appType) return emptyList;
 
   switch (appType) {
     case 'http':
-      return [
-        { label: 'HTTP request', value: 'request' },
-        { label: 'HTTP response', value: 'raw' },
-        { label: 'Parsed output', value: 'parse' },
-      ];
+      return HTTP_STAGES;
     case 'netsuite':
     case 'salesforce':
-      return [{ label: 'Parsed output', value: 'parse' }];
+      return PREVIEW_STAGE;
     case 'rest':
-      return [
-        { label: 'HTTP request', value: 'request' },
-        { label: 'HTTP response', value: 'raw' },
-        { label: 'Parsed output', value: 'parse' },
-      ];
+      return HTTP_STAGES;
     case 'mongodb':
     case 'dynamodb':
     case 'rdbms':
-      return [{ label: 'Parsed output', value: 'parse' }];
+      return PREVIEW_STAGE;
     default:
       return emptyList;
   }
@@ -78,24 +81,6 @@ export const isPreviewPanelAvailable = (resource, resourceType) => {
 
   // If appType is not part of supported applications list, return false
   return applicationsWithPreviewPanel.includes(appType);
-};
-
-const formatPreviewData = records => {
-  // eslint-disable-next-line camelcase
-  const page_of_records = [];
-
-  if (!records) return { page_of_records };
-
-  if (Array.isArray(records)) {
-    const rows = [];
-
-    records.forEach(record => rows.push(record));
-    page_of_records.push({rows});
-  } else {
-    page_of_records.push({ record: records });
-  }
-
-  return { page_of_records };
 };
 
 /*
@@ -125,7 +110,7 @@ const formatBodyForRawStage = previewData => {
 /*
  * Used by View layer to show the preview data
  */
-export const getFormattedPreviewData = previewData => formatPreviewData(previewData?.data);
+export const getFormattedPreviewData = previewData => wrapExportFileSampleData(previewData?.data);
 
 export const getPreviewDataPageSizeInfo = previewData => {
   if (!previewData || !previewData.data) return '1 Page 0 Records';
@@ -172,3 +157,18 @@ export const getBodyHeaderFieldsForPreviewData = (previewData = {}, stage) => {
 };
 
 export const getRequestURL = requestData => requestData?.data?.[0]?.url;
+
+export const previewFileData = (previewData, recordSize) => {
+  if (!previewData || !Array.isArray(previewData) || !recordSize) {
+    return previewData;
+  }
+
+  // if preview data is an array
+  return previewData.slice(0, recordSize);
+};
+
+export const getRecordSizeOptions = () => Array.from(Array(10), (val, index) => {
+  const stringifiedValue = `${(index + 1) * 10}`;
+
+  return { label: stringifiedValue, value: stringifiedValue};
+});

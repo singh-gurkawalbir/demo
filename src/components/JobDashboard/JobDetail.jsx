@@ -173,6 +173,7 @@ function JobDetail({
     const currJob = jobIds[job._id] || {};
 
     currJob.selected = checked;
+    currJob.flowDisabled = job.flowDisabled;
 
     if (checked) {
       currJob.selectedChildJobIds = childJobIds;
@@ -190,6 +191,8 @@ function JobDetail({
   ) {
     const jobIds = { ...selectedJobs };
     const currJob = jobIds[job._id] || {};
+
+    currJob.flowDisabled = job.flowDisabled;
 
     if (!currJob.selectedChildJobIds) {
       currJob.selectedChildJobIds = [];
@@ -320,6 +323,7 @@ function JobDetail({
             userPermissionsOnIntegration={userPermissionsOnIntegration}
             onViewErrorsClick={onViewErrorsClick}
             integrationName={integrationName}
+            isFlowBuilderView={isFlowBuilderView}
           />
         ))}
     </>

@@ -11,6 +11,7 @@ import dateTimezones from '../../utils/dateTimezones';
 import { getDomain } from '../../utils/resource';
 import getImageUrl from '../../utils/image';
 import getRoutePath from '../../utils/routePaths';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 
 const useStyles = makeStyles(theme => ({
@@ -35,6 +36,9 @@ const useStyles = makeStyles(theme => ({
   btnLabel: {
     marginLeft: theme.spacing(3),
     lineHeight: 0,
+  },
+  saveBtnProfile: {
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -221,7 +225,7 @@ export default function ProfileComponent() {
         name: 'developer',
         type: 'checkbox',
         helpKey: 'myaccount.developer',
-        label: 'Developer mode',
+        label: 'Developer Mode',
         defaultValue: preferences && preferences.developer,
       },
     },
@@ -246,17 +250,25 @@ export default function ProfileComponent() {
     setCount(count => count + 1);
   }, [fieldMeta]);
 
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+    remount: count,
+    skipMonitorLevelAccessCheck: true,
+    ...formState,
+  });
+
   return (
     <>
       <PanelHeader title="Profile" />
-      <DynaForm key={count} formState={formState} fieldMeta={fieldMeta}>
-        <DynaSubmit
-          showCustomFormValidations={showCustomFormValidations}
-          onClick={submitHandler()}
-          disabled={disableSave}>
-          {defaultLabels.saveLabel}
-        </DynaSubmit>
-      </DynaForm>
+      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <DynaSubmit
+        formKey={formKey}
+        showCustomFormValidations={showCustomFormValidations}
+        onClick={submitHandler()}
+        className={classes.saveBtnProfile}
+        disabled={disableSave}>
+        {defaultLabels.saveLabel}
+      </DynaSubmit>
       {getDomain() !== 'eu.integrator.io' && (
         <div>
           <PanelHeader

@@ -1,14 +1,10 @@
-import { call, put, takeEvery, select } from 'redux-saga/effects';
+import { call, put, takeLatest, select } from 'redux-saga/effects';
+import * as d3 from 'd3';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
-import {
-  getFlowMetricsQuery,
-  getFlowMetricsAttQuery,
-  parseFlowMetricsJson,
-} from '../../utils/flowMetrics';
-import { invokeProcessor } from '../editor';
+import { getFlowMetricsQuery } from '../../utils/flowMetrics';
 
 function* requestMetric({query}) {
   let csvResponse;
@@ -24,48 +20,32 @@ function* requestMetric({query}) {
       message: 'Loading',
     });
 
-    if (csvResponse) {
-      const json = yield call(invokeProcessor, {
-        processor: 'csvParser',
-        body: {
-          rules: {
-            columnDelimiter: ',',
-            hasHeaderRow: true,
-            trimSpaces: true,
-            rowsToSkip: 0,
-          },
-          data: csvResponse,
-          options: { includeEmptyValues: true },
-        },
-      });
-
-      return json;
-    }
+    return d3.csvParse(csvResponse, d3.autoType);
   } catch (e) {
-    return undefined;
+    return [];
   }
 }
 
-export function* requestFlowMetrics({ flowId, filters }) {
-  const user = yield select(selectors.userProfile);
-  const seiQuery = getFlowMetricsQuery(flowId, user._id, filters);
-  const attQuery = getFlowMetricsAttQuery(flowId, user._id, filters);
+export function* requestFlowMetrics({resourceType, resourceId, filters }) {
+  const userId = yield select(selectors.ownerUserId);
+  let flowIds = [];
+
+  if (resourceType === 'integrations') {
+    flowIds = yield select(selectors.integrationEnabledFlowIds, resourceId);
+    if (!flowIds || !flowIds.length) {
+      yield put(actions.flowMetrics.received(resourceType, resourceId, []));
+
+      return;
+    }
+    // eslint-disable-next-line no-param-reassign
+    filters.selectedResources = flowIds;
+  }
+  const query = getFlowMetricsQuery(resourceType, resourceId, userId, filters);
 
   try {
-    const seiData = yield call(requestMetric, {query: seiQuery});
-    const attData = yield call(requestMetric, {query: attQuery});
-    let data = [];
+    const data = yield call(requestMetric, { query });
 
-    if (seiData && seiData.data) {
-      data = [...data, ...seiData.data];
-    }
-    if (attData && attData.data) {
-      data = [...data, ...attData.data];
-    }
-
-    const parsedJson = parseFlowMetricsJson(data);
-
-    yield put(actions.flowMetrics.received(flowId, parsedJson));
+    yield put(actions.flowMetrics.received(resourceType, resourceId, data));
   } catch (e) {
     yield put(actions.flowMetrics.failed(e));
 
@@ -74,5 +54,5 @@ export function* requestFlowMetrics({ flowId, filters }) {
 }
 
 export const flowMetricSagas = [
-  takeEvery(actionTypes.FLOW_METRICS.REQUEST, requestFlowMetrics),
+  takeLatest(actionTypes.FLOW_METRICS.REQUEST, requestFlowMetrics),
 ];

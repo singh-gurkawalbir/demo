@@ -18,15 +18,18 @@ export default function Actions({
   flowId,
   resourceId,
   onClose,
+  mode = 'view',
+  isResolved = false,
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const retryId = useSelector(state => {
-    const errorDoc =
-      selectors.resourceError(state, { flowId, resourceId, errorId }) || {};
-
-    return errorDoc.retryDataKey;
-  });
+  const retryId = useSelector(state =>
+      selectors.resourceError(state, {
+        flowId,
+        resourceId,
+        errorId,
+      })?.retryDataKey
+  );
   const updateRetry = useCallback(() => {
     dispatch(
       actions.errorManager.retryData.updateRequest({
@@ -64,7 +67,10 @@ export default function Actions({
     if (onClose) onClose();
   }, [dispatch, flowId, onClose, resourceId, retryId, retryData]);
 
-  if (retryId) {
+  if (isResolved) {
+    return null;
+  }
+  if (mode === 'edit') {
     return (
       <div className={classes.action}>
         <Button variant="outlined" color="primary" onClick={handleSaveAndRetry}>

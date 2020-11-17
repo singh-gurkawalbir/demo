@@ -1,4 +1,4 @@
-import { call, takeEvery, put, select, takeLatest, all } from 'redux-saga/effects';
+import { call, takeEvery, put, select, takeLatest, all, take, race } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
 import shortid from 'shortid';
 import actionTypes from '../../actions/types';
@@ -9,7 +9,7 @@ import { commitStagedChanges } from '../resources';
 import mappingUtil from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
-import { getResourceSubType, adaptorTypeMap} from '../../utils/resource';
+import { getResourceSubType} from '../../utils/resource';
 import { getImportOperationDetails } from '../../utils/assistant';
 import {requestSampleData as requestFlowSampleData} from '../sampleData/flows';
 import {requestSampleData as requestImportSampleData} from '../sampleData/imports';
@@ -23,8 +23,13 @@ export function* fetchRequiredMappingData({
 }) {
   const importResource = yield select(selectors.resource, 'imports', importId);
 
+  if (!importResource) {
+    return yield put(actions.mapping.initFailed());
+  }
   const subRecordMappingObj = subRecordMappingId
     ? mappingUtil.getSubRecordRecordTypeAndJsonPath(importResource, subRecordMappingId) : {};
+
+  const {status: generateStatus} = (yield select(selectors.getImportSampleData, importId, subRecordMappingObj)) || {};
 
   yield all([
     call(requestFlowSampleData, {
@@ -33,7 +38,7 @@ export function* fetchRequiredMappingData({
       resourceType: 'imports',
       stage: 'importMappingExtract',
     }),
-    call(requestImportSampleData, {
+    generateStatus !== 'received' && call(requestImportSampleData, {
       resourceId: importId,
       options: subRecordMappingObj,
     }),
@@ -101,21 +106,23 @@ export function* refreshGenerates({ isInit = false }) {
       !isInit
     ));
 
-    /** fetup SF mapping assistant metadata begins */
-    const salesforceMasterRecordTypeInfo = yield select(selectors.getSalesforceMasterRecordTypeInfo, importId);
+    if (!isInit) {
+      /** fetup SF mapping assistant metadata begins */
+      const salesforceMasterRecordTypeInfo = yield select(selectors.getSalesforceMasterRecordTypeInfo, importId);
 
-    if (salesforceMasterRecordTypeInfo?.data) {
-      const {recordTypeId, searchLayoutable} = salesforceMasterRecordTypeInfo.data;
+      if (salesforceMasterRecordTypeInfo?.data) {
+        const {recordTypeId, searchLayoutable} = salesforceMasterRecordTypeInfo.data;
 
-      if (searchLayoutable) {
-        yield put(actions.metadata.request(_connectionId,
-          `salesforce/metadata/connections/${_connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${recordTypeId}`,
-          {refreshCache: !isInit}
-        ));
+        if (searchLayoutable) {
+          yield put(actions.metadata.request(_connectionId,
+            `salesforce/metadata/connections/${_connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${recordTypeId}`,
+            {refreshCache: true}
+          ));
+        }
       }
+      /** fetup SF mapping assistant metadata ends */
     }
-    /** fetup SF mapping assistant metadata ends */
-  } else {
+  } else if (!isInit) {
     const opts = {};
 
     if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType) && subRecordMappingId) {
@@ -124,7 +131,7 @@ export function* refreshGenerates({ isInit = false }) {
     yield put(actions.importSampleData.request(
       importId,
       opts,
-      !isInit
+      true
     )
     );
   }
@@ -135,12 +142,21 @@ export function* mappingInit({
   subRecordMappingId,
 }) {
   /** Flow Preview data & metadata needs to be loaded before generating mapping list */
-  yield call(fetchRequiredMappingData, {
-    flowId,
-    importId,
-    subRecordMappingId,
+  const { cancelInit } = yield race({
+    fetchData: call(fetchRequiredMappingData, {
+      flowId,
+      importId,
+      subRecordMappingId,
+    }),
+    cancelInit: take(actionTypes.MAPPING.CLEAR),
   });
+
+  if (cancelInit) return;
   const importResource = yield select(selectors.resource, 'imports', importId);
+
+  if (!importResource) {
+    return yield put(actions.mapping.initFailed());
+  }
   const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
   const {data: flowSampleData} = yield select(selectors.getSampleDataContext, {
     flowId,
@@ -153,7 +169,7 @@ export function* mappingInit({
   let lookups = [];
   const options = {};
 
-  if (importResource.netsuite_da) {
+  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
     const recordType = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
 
     options.recordType = recordType;
@@ -206,14 +222,14 @@ export function* mappingInit({
     formattedMappings = subRecordMapping;
     lookups = subrecordLookups;
   } else {
-    formattedMappings = mappingUtil.getMappingFromResource(
+    formattedMappings = mappingUtil.getMappingFromResource({
       importResource,
-      false,
+      isFieldMapping: false,
       isGroupedSampleData,
-      options.recordType,
+      netsuiteRecordType: options.recordType,
       options,
-      exportResource
-    );
+      exportResource,
+    });
     lookups = lookupUtil.getLookupFromResource(importResource) || [];
   }
   // adding conditional lookup
@@ -226,7 +242,6 @@ export function* mappingInit({
     actions.mapping.initComplete({
       mappings: formattedMappings.map(m => ({
         ...m,
-        rowIdentifier: 0,
         key: shortid.generate(),
       })),
       lookups,
@@ -249,9 +264,13 @@ export function* saveMappings() {
   } = yield select(selectors.mapping);
   const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);
   const importResource = yield select(selectors.resource, 'imports', importId);
+
+  if (!importResource) {
+    return yield put(actions.mapping.saveFailed());
+  }
   let netsuiteRecordType;
 
-  if (importResource.netsuite_da) {
+  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
     netsuiteRecordType = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
   }
   const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
@@ -288,7 +307,9 @@ export function* saveMappings() {
         subRecordLookups: lookups,
       });
     }
-    mappingPath = '/netsuite_da/mapping';
+    if (importResource.adaptorType === 'NetSuiteDistributedImport') {
+      mappingPath = '/netsuite_da/mapping';
+    }
   }
 
   patch.push({
@@ -306,7 +327,7 @@ export function* saveMappings() {
 
       return true;
     }).map(({isConditionalLookup, ...others}) => ({...others}));
-    const lookupPath = lookupUtil.getLookupPath(adaptorTypeMap[importResource.adaptorType]);
+    const lookupPath = lookupUtil.getLookupPath(importResource.adaptorType);
 
     // TODO: temporary fix Remove check once backend adds lookup support for Snowflake.
     if (lookupPath) {
@@ -320,12 +341,17 @@ export function* saveMappings() {
 
   yield put(actions.resource.patchStaged(importId, patch, SCOPES.VALUE));
 
-  const resp = yield call(commitStagedChanges, {
-    resourceType: 'imports',
-    id: importId,
-    scope: SCOPES.VALUE,
-    context: { flowId },
+  const { cancelSave, resp } = yield race({
+    resp: call(commitStagedChanges, {
+      resourceType: 'imports',
+      id: importId,
+      scope: SCOPES.VALUE,
+      context: { flowId },
+    }),
+    cancelSave: take(actionTypes.MAPPING.CLEAR),
   });
+
+  if (cancelSave) return;
 
   if (resp && (resp.error || resp.conflict)) return yield put(actions.mapping.saveFailed());
 
@@ -342,10 +368,14 @@ export function* previewMappings() {
   } = yield select(selectors.mapping);
   const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);
   const _importRes = yield select(selectors.resource, 'imports', importId);
+
+  if (!_importRes) {
+    return yield put(actions.mapping.previewFailed());
+  }
   let importResource = deepClone(_importRes);
   let netsuiteRecordType;
 
-  if (importResource.netsuite_da) {
+  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
     netsuiteRecordType = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
   }
   const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
@@ -401,7 +431,7 @@ export function* previewMappings() {
       });
     }
 
-    importResource = importResource.netsuite_da;
+    importResource = importResource.netsuite_da || importResource.netsuite;
 
     if (!subRecordMappingId) {
       importResource.lookups = filteredLookups;
@@ -424,11 +454,16 @@ export function* previewMappings() {
   };
 
   try {
-    const preview = yield call(apiCallWithRetry, {
-      path,
-      opts,
-      message: 'Loading',
+    const { cancelPreview, preview } = yield race({
+      preview: call(apiCallWithRetry, {
+        path,
+        opts,
+        message: 'Loading',
+      }),
+      cancelPreview: take(actionTypes.MAPPING.CLEAR),
     });
+
+    if (cancelPreview) return;
 
     if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
       if (
@@ -443,9 +478,26 @@ export function* previewMappings() {
   }
 }
 
+export function* validateMappings() {
+  const {
+    mappings,
+    lookups,
+    validationErrMsg,
+  } = yield select(selectors.mapping);
+  const {
+    isSuccess,
+    errMessage,
+  } = mappingUtil.validateMappings(mappings, lookups);
+  const newValidationErrMsg = isSuccess ? undefined : errMessage;
+
+  if (newValidationErrMsg !== validationErrMsg) {
+    yield put(actions.mapping.setValidationMsg(newValidationErrMsg));
+  }
+}
+
 export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
   if (value.indexOf('_child_') === -1) {
-    return;
+    return yield call(validateMappings);
   }
   const {
     mappings,
@@ -517,12 +569,31 @@ export function* updateImportSampleData() {
   yield put(actions.mapping.updateMappings(modifiedMappings));
 }
 
+export function* patchGenerateThroughAssistant({value}) {
+  const {
+    lastModifiedRowKey,
+  } = yield select(selectors.mapping);
+
+  // trigger patch only when user has touched some field.On touch of last field lastModifiedRowKey = 'new'
+  if (lastModifiedRowKey) {
+    yield put(actions.mapping.patchField('generate',
+      lastModifiedRowKey,
+      value)
+    );
+  }
+}
+
 export const mappingSagas = [
   takeEvery(actionTypes.MAPPING.INIT, mappingInit),
   takeEvery(actionTypes.MAPPING.SAVE, saveMappings),
   takeEvery(actionTypes.MAPPING.PREVIEW_REQUESTED, previewMappings),
   takeLatest(actionTypes.MAPPING.REFRESH_GENERATES, refreshGenerates),
   takeLatest(actionTypes.MAPPING.PATCH_FIELD, checkForIncompleteSFGenerateWhilePatch),
+  takeLatest(actionTypes.MAPPING.PATCH_GENERATE_THROUGH_ASSISTANT, patchGenerateThroughAssistant),
   takeLatest(actionTypes.METADATA.RECEIVED, updateImportSampleData),
-
+  takeLatest([
+    actionTypes.MAPPING.DELETE,
+    actionTypes.MAPPING.UPDATE_LOOKUP,
+    actionTypes.MAPPING.PATCH_SETTINGS,
+  ], validateMappings),
 ];

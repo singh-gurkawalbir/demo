@@ -6,12 +6,14 @@ import PanelHeader from '../../../../../components/PanelHeader';
 const useStyles = makeStyles(theme => ({
   AuditLogWrapper: {
     minWidth: theme.spacing(100),
+    whiteSpace: 'normal',
+    wordBreak: 'break-word',
   },
   root: {
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-    overflowX: 'scroll',
+    overflowX: 'auto',
   },
 }));
 
@@ -24,7 +26,7 @@ export default function AuditLogSection({ integrationId, childId }) {
     <div className={classes.root}>
       <PanelHeader title="Audit log" infoText={infoTextAuditLog} />
       <div className={classes.AuditLogWrapper}>
-        <AuditLog resourceType="integrations" resourceId={childId || integrationId} />
+        <AuditLog resourceType="integrations" resourceId={childId || integrationId} childId={childId} />
       </div>
     </div>
   );

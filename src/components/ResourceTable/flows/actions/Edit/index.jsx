@@ -3,8 +3,8 @@ import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import EditIcon from '../../../../icons/EditIcon';
 import { selectors } from '../../../../../reducers';
-import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
-import getRoutePath from '../../../../../utils/routePaths';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { flowbuilderUrl } from '../../../../../utils/flows';
 
 export default {
   label: 'Edit flow',
@@ -19,23 +19,8 @@ export default {
     const isDataLoader = useSelector(state =>
       selectors.isDataLoader(state, flowId)
     );
-    const appName = useSelector(state => {
-      if (!isIntegrationApp) return;
-
-      const integration = selectors.resource(
-        state,
-        'integrations',
-        integrationId
-      );
-
-      if (integration && integration.name) {
-        return getIntegrationAppUrlName(integration.name);
-      }
-    });
-    const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
-    const flowBuilderTo = isIntegrationApp
-      ? getRoutePath(`/integrationApps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`)
-      : `${flowBuilderPathName}/${flowId}`;
+    const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
+    const flowBuilderTo = flowbuilderUrl(flowId, integrationId, {isIntegrationApp, appName, isDataLoader});
 
     useEffect(() => {
       history.push(flowBuilderTo);

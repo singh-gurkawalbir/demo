@@ -2,18 +2,19 @@ import clsx from 'clsx';
 import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
-import { hashCode } from '../../../utils/string';
 import actions from '../../../actions';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
+import { hashCode } from '../../../utils/string';
 import { selectors } from '../../../reducers';
 import DynaForm from '../../DynaForm';
+import ConsoleGridItem from '../ConsoleGridItem';
+import ErrorGridItem from '../ErrorGridItem';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import CodePanel from '../GenericEditor/CodePanel';
 import JavaScriptPanel from '../JavaScriptEditor/JavaScriptPanel';
 import PanelGrid from '../PanelGrid';
-import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
-import ErrorGridItem from '../ErrorGridItem';
-import ConsoleGridItem from '../ConsoleGridItem';
+import PanelTitle from '../PanelTitle';
 
 /* sample form meta.
   {
@@ -45,14 +46,23 @@ const useStyles = makeStyles(theme => ({
   scriptGridAreas: {
     gridTemplateAreas: '"meta form" "hook settings" "error error"',
   },
-  submitButton: {
-    marginLeft: theme.spacing(1),
-  },
   formPreviewContainer: {
-    maxHeight: 'calc(100% - 54px) !important',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  form: {
+    flex: 1,
+    overflow: 'auto',
+    padding: theme.spacing(2),
+  },
+  testForm: {
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    padding: theme.spacing(1),
   },
 }));
 
+const overrides = { showGutter: false };
 export default function SettingsFormEditor({
   editorId,
   disabled,
@@ -94,13 +104,18 @@ export default function SettingsFormEditor({
   // console.log(finalMeta);
   const key = useMemo(() => hashCode(result), [result]);
   const logs = result && !error && !violations && result.logs;
+  const formKey = useFormInitWithPermissions({
+    fieldMeta: result?.data,
+    remount: key,
+    resourceId,
+    resourceType,
+    ...formState,
+  });
 
   return (
     <PanelGrid
       key={editorId}
-      className={clsx(classes.gridContainer, classes[`${mode}GridAreas`])}
-      height="calc(100vh - 170px)"
-      width="100%">
+      className={clsx(classes.gridContainer, classes[`${mode}GridAreas`])}>
       <PanelGridItem gridArea="meta">
         <PanelTitle
           title={mode === 'json' ? 'Form definition' : 'Script input'}
@@ -127,21 +142,21 @@ export default function SettingsFormEditor({
       <PanelGridItem gridArea="form">
         <PanelTitle title="Form preview" />
         {result && result.data && status !== 'error' ? (
-          <DynaForm
-            className={classes.formPreviewContainer}
-            key={key}
-            fieldMeta={result.data}
-            // onChange={handleFormPreviewChange}
-            formState={formState}
-            resourceId={resourceId}
-            resourceType={resourceType}>
-            <DynaSubmit
-              className={classes.submitButton}
-              onClick={handleFormPreviewChange}
-              showCustomFormValidations={showCustomFormValidations}>
-              Test form
-            </DynaSubmit>
-          </DynaForm>
+          <div className={classes.formPreviewContainer}>
+            <DynaForm
+              formKey={formKey}
+              fieldMeta={result.data}
+              className={classes.form}
+            />
+            <div className={classes.testForm}>
+              <DynaSubmit
+                formKey={formKey}
+                onClick={handleFormPreviewChange}
+                showCustomFormValidations={showCustomFormValidations}>
+                Test form
+              </DynaSubmit>
+            </div>
+          </div>
         ) : (
           <Typography>
             A preview of your settings form will appear once you add some valid
@@ -157,7 +172,7 @@ export default function SettingsFormEditor({
             name="result"
             value={settingsPreview}
             mode="json"
-            overrides={{ showGutter: false }}
+            overrides={overrides}
             readOnly
           />
         ) : (

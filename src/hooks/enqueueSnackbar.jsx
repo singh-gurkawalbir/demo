@@ -18,6 +18,7 @@ export default function useEnqueueSnackbar() {
       enqueueSnackbar(message, {
         variant,
         persist,
+        style: { whiteSpace: 'pre-line' },
         anchorOrigin: {
           vertical: 'top',
           horizontal: 'right',
@@ -47,7 +48,12 @@ export default function useEnqueueSnackbar() {
           </>
         ),
         onClose: (event, reason) => {
-          handleClose && handleClose(event, reason);
+          // Possible reasons are 'maxsnack', 'clickaway', 'instructed' and 'timeout'
+          // We need to avoid unnecessary calling of handleClose other than timeout
+          // which gets triggered on automatic close of snackbar
+          if (reason === 'timeout') {
+            handleClose && handleClose(event, reason);
+          }
         },
         autoHideDuration,
       }),

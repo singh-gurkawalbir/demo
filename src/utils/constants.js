@@ -33,7 +33,7 @@ export const TILE_STATUS = Object.freeze({
 });
 export const STANDALONE_INTEGRATION = Object.freeze({
   id: 'none',
-  name: 'Standalone Flows',
+  name: 'Standalone flows',
 });
 export const INTEGRATION_MODES = Object.freeze({
   INSTALL: 'install',
@@ -43,7 +43,7 @@ export const INTEGRATION_MODES = Object.freeze({
 
 export const UI_FIELD_VALUES = Object.freeze(['/formView']);
 export const SALESFORCE_DA_PACKAGE_URL =
-  'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t1N000002Gl8y';
+  'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t3m000000Y9kv';
 export const NETSUITE_BUNDLE_URL =
   '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038';
 export const PERMISSIONS = Object.freeze({
@@ -390,12 +390,18 @@ export const USAGE_TIER_HOURS = {
   heavy: 4000,
   custom: 10000,
 };
-export const HELP_CENTER_BASE_URL = '/zendesk/sso?return_to=https://docs.celigo.com';
+/**
+ * Zendesk SSO is enabled for production only and the user must have an integrator.io/eu.integrator.io
+ * account to access help center. So redirect user to integrator.io when he try to access help center from
+ * the non-production domains.
+ */
+export const HELP_CENTER_BASE_URL = `${['integrator.io', 'eu.integrator.io'].includes(window.document.location.hostname.replace('www.', '')) ? '' : 'https://integrator.io'}/zendesk/sso?return_to=https://docs.celigo.com`;
 export const SUBMIT_TICKET_URL =
   `${HELP_CENTER_BASE_URL}/hc/en-us/requests/new?preview_as_role=end_user`;
 export const WHATS_NEW_URL =
   `${HELP_CENTER_BASE_URL}/hc/en-us/categories/360002687611`;
-export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake'];
+export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/360048814732`;
+export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle'];
 export const AS2_URLS_STAGING = [
   {
     label: 'http://api.staging.integrator.io/v1/as2',
@@ -572,8 +578,10 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'restlet.delta.lagOffset',
     'restlet.once.booleanField',
     'restlet.type',
+    '_connectionId',
   ],
   imports: [
+    '_connectionId',
     'lookups',
     'batchSize',
     'netsuite_da.batchSize',

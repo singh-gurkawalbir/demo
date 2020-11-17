@@ -15,6 +15,8 @@ import DownloadDebugLogs from './actions/DownloadDebugLogs';
 import RefreshMetadata from './actions/RefreshMetadata';
 import TradingPartner from './actions/TradingPartner';
 import Revoke from './actions/Revoke';
+import actions from '../../../actions';
+import ReplaceConnection from './actions/ReplaceConnection';
 
 export default {
   columns: (r, actionProps) => {
@@ -63,38 +65,45 @@ export default {
 
     return columns;
   },
+
+  onRowOver: (r, dispatch) => dispatch(actions.connection.setActive(r._id)),
+  onRowOut: (r, dispatch) => dispatch(actions.connection.setActive()),
+
   rowActions: (r, actionProps) => {
-    let actionsToReturn = [];
+    const actions = [Edit, ConfigureDebugger];
 
     if (r.debugDate && moment().isBefore(moment(r.debugDate))) {
       if (actionProps.type === 'flowBuilder') {
-        actionsToReturn = [OpenDebugger];
+        actions.push(OpenDebugger);
       } else {
-        actionsToReturn = [DownloadDebugLogs];
+        actions.push(DownloadDebugLogs);
       }
     }
-    actionsToReturn = [ConfigureDebugger, ...actionsToReturn, AuditLogs, References];
+
+    actions.push(AuditLogs);
+    actions.push(References);
+
     if (actionProps.integrationId && !r._connectorId && actionProps.type !== 'flowBuilder') {
-      actionsToReturn = [...actionsToReturn, Deregister];
-    }
-    if (r.type === 'netsuite' || r.type === 'salesforce') {
-      actionsToReturn = [...actionsToReturn, RefreshMetadata];
+      actions.push(Deregister);
     }
 
-    if (
-      r.type === 'http' &&
-      !!((((r.http || {}).auth || {}).token || {}).revoke || {}).uri
-    ) {
-      actionsToReturn = [...actionsToReturn, Revoke];
+    if (r.type === 'netsuite' || r.type === 'salesforce') {
+      actions.push(RefreshMetadata);
     }
-    actionsToReturn = [Edit, ...actionsToReturn];
+
+    if (r.type === 'http' && !!r.http?.auth?.token?.revoke?.uri) {
+      actions.push(Revoke);
+    }
     if (r.type === 'ftp' && !r._connectorId && actionProps?.showTradingPartner) {
-      actionsToReturn = [...actionsToReturn, TradingPartner];
+      actions.push(TradingPartner);
+    }
+    if (actionProps.type === 'flowBuilder') {
+      actions.push(ReplaceConnection);
     }
     if (!actionProps.integrationId && !r._connectorId && actionProps.type !== 'flowBuilder') {
-      actionsToReturn = [...actionsToReturn, Delete];
+      actions.push(Delete);
     }
 
-    return actionsToReturn;
+    return actions;
   },
 };

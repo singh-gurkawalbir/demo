@@ -21,7 +21,7 @@ import IntegrationTabs from '../common/Tabs';
 import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
-  PageWrapper: {
+  pageWrapper: {
     padding: theme.spacing(3),
     '& > [role = tabpanel]': {
       background: 'none',
@@ -144,7 +144,7 @@ export default function Integration({ match }) {
           <IntegrationTabs
             tabs={tabs}
             match={match}
-            className={classes.PageWrapper}
+            className={classes.pageWrapper}
         />
         </LoadSuiteScriptResources>
       </LoadResources>

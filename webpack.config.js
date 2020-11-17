@@ -11,7 +11,7 @@ const config = {
   target: 'web',
   entry: './src/index.jsx',
   externals: {
-    fs: 'fs'
+    fs: 'fs',
   },
   module: {
     rules: [
@@ -22,9 +22,9 @@ const config = {
           loader: 'babel-loader',
           options: {
             cacheDirectory: true,
-            cacheCompression: false
-          }
-        }]
+            cacheCompression: false,
+          },
+        }],
       },
       {
         test: /\.css$/i,
@@ -53,10 +53,23 @@ const config = {
           },
         ],
       },
+      {
+        test: /ace-builds.*\/worker-.*$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              esModule: false,
+              name: '[name].[hash:8].[ext]',
+              outputPath: 'static/ace/',
+            },
+          },
+        ],
+      },
     ],
   },
   resolve: {
-    extensions: ['*', '.js', '.jsx']
+    extensions: ['*', '.js', '.jsx'],
   },
   plugins: [
     new DotenvPlugin(),
@@ -66,10 +79,16 @@ const config = {
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.html'),
-    })
+    }),
+    // define LOGROCKET_IDENTIFIER for logrocket
+    new webpack.DefinePlugin({
+      RELEASE_VERSION: JSON.stringify(process.env.RELEASE_VERSION),
+      LOGROCKET_IDENTIFIER: JSON.stringify(process.env.LOGROCKET_IDENTIFIER),
+      LOGROCKET_IDENTIFIER_EU: JSON.stringify(process.env.LOGROCKET_IDENTIFIER_EU),
+    }),
   ],
   output: {
-    publicPath: '/',
+    publicPath: process.env.RELEASE_VERSION ? `${process.env.CDN_BASE_URI}react/${process.env.RELEASE_VERSION}/` : '/',
     filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'build'),
   },
@@ -84,62 +103,94 @@ const config = {
 module.exports = (env, argv) => {
   config.mode = argv && argv.mode;
 
-  if (config.mode === 'production' && process.env.NODE_ENV === 'analyze') {
-    config.plugins.push(new BundleAnalyzerPlugin());
+  // eslint-disable-next-line no-restricted-syntax
+  for (const k of ['RELEASE_VERSION', 'LOGROCKET_IDENTIFIER', 'LOGROCKET_IDENTIFIER_EU']) {
+    console.log('Custom Environment Variable:', k, '=', process.env[k]);
+  }
+
+  if (config.mode === 'production') {
+    // replace modules not needed in actual builds with dummy
+    // all modules that are only used inside the NODE_ENV === 'development' guard
+    // should be replaced here
+    config.plugins.push(new webpack.NormalModuleReplacementPlugin(
+      /^redux-logger$/,
+      './utils/dummy.js'
+    ));
+
+    if (argv.analyze) {
+      config.plugins.push(new BundleAnalyzerPlugin());
+    } else if (argv.profiling) {
+      config.resolve.alias = {
+        'react-dom$': 'react-dom/profiling',
+        'scheduler/tracing': 'scheduler/tracing-profiling',
+      };
+      // if the below source-map scheme results in poor stack traces against pre-compiled code (line number)
+      // we can temporarily toggle back to the inline-source-map scheme below...
+      // config.devtool = 'inline-source-map';
+      config.devtool = 'eval-cheap-module-source-map';
+      config.devtool = 'inline-source-map';
+    } else {
+      // generate source map for logrocket
+      config.devtool = 'source-map';
+    }
   } else if (config.mode === 'development') {
     config.plugins.push(new ReactRefreshWebpackPlugin());
-    config.output.filename = '[name].js';
-    config.devtool = 'eval-cheap-module-source-map';
-    // if the above source-map scheme results in poor stack traces against pre-compiled code (line number)
+    // if the below source-map scheme results in poor stack traces against pre-compiled code (line number)
     // we can temporarily toggle back to the inline-source-map scheme below...
     // config.devtool = 'inline-source-map';
-
+    config.devtool = 'eval-cheap-module-source-map';
     config.optimization.minimize = false;
-    const getProxyOpts = () => {
-      console.log(`API endpoint: [${dotenv.API_ENDPOINT}]`);
+  }
+  const getProxyOpts = () => {
+    console.log(`API endpoint: [${dotenv.API_ENDPOINT}]`);
 
-      const target = dotenv.API_ENDPOINT || '';
-      const secure = target && target.toLowerCase().startsWith('https://');
+    const target = dotenv.API_ENDPOINT || '';
+    const secure = target && target.toLowerCase().startsWith('https://');
 
-      console.log(`API Target: ${target}`);
-      if (secure) console.log('Cookie rewrite needed for secure API host.');
+    console.log(`API Target: ${target}`);
+    if (secure) console.log('Cookie rewrite needed for secure API host.');
 
-      const opts = {
-        target,
-        secure,
-        changeOrigin: true,
-        timeout: 10 * 60 * 1000,
-        // pathRewrite: {
-        //  '^/api': '',
-        // },
-      };
-
-      if (secure) {
-        opts.onProxyRes = proxyRes => {
-          // Strip the cookie `secure` attribute, otherwise prod cookies
-          // will be rejected by the browser when using non-HTTPS localhost:
-          // https://github.com/nodejitsu/node-http-proxy/pull/1166
-          const removeSecure = str => str.replace(/; Secure/i, '');
-
-          // *** Note we also need to replace the cookie domain so the
-          // browser associates it with this local dev server...
-          // the regex in use matches any domain (prod, dev, stage, etc)
-          const swapDomain = str => str.replace(/Domain=(.*?).io;/i, 'Domain=.localhost.io;');
-
-          const setCookie = proxyRes.headers['set-cookie'];
-
-          if (setCookie) {
-            proxyRes.headers['set-cookie'] = Array.isArray(setCookie)
-              ? setCookie.map(c => swapDomain(removeSecure(c)))
-              : swapDomain(removeSecure(setCookie));
-          }
-        };
-      }
-
-      return opts;
+    const opts = {
+      target,
+      secure,
+      changeOrigin: true,
+      timeout: 10 * 60 * 1000,
+      // pathRewrite: {
+      //  '^/api': '',
+      // },
     };
-    const proxyOpts = getProxyOpts();
+
+    if (secure) {
+      opts.onProxyRes = proxyRes => {
+        // Strip the cookie `secure` attribute, otherwise prod cookies
+        // will be rejected by the browser when using non-HTTPS localhost:
+        // https://github.com/nodejitsu/node-http-proxy/pull/1166
+        const removeSecure = str => str.replace(/; Secure/i, '');
+
+        // *** Note we also need to replace the cookie domain so the
+        // browser associates it with this local dev server...
+        // the regex in use matches any domain (prod, dev, stage, etc)
+        const swapDomain = str => str.replace(/Domain=(.*?).io;/i, 'Domain=.localhost.io;');
+
+        const setCookie = proxyRes.headers['set-cookie'];
+
+        if (setCookie) {
+          proxyRes.headers['set-cookie'] = Array.isArray(setCookie)
+            ? setCookie.map(c => swapDomain(removeSecure(c)))
+            : swapDomain(removeSecure(setCookie));
+        }
+      };
+    }
+
+    return opts;
+  };
+
+  const isDevServer = argv && argv.$0.endsWith('webpack-dev-server');
+
+  if (isDevServer) {
     config.output.filename = '[name].js';
+    const proxyOpts = getProxyOpts();
+
     config.devServer = {
       hot: true,
       contentBase: path.join(__dirname, 'build'),
@@ -167,5 +218,6 @@ module.exports = (env, argv) => {
       },
     };
   }
+
   return config;
 };

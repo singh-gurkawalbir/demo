@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import CodeEditor from '../../CodeEditor';
 
 const defaults = {
@@ -27,12 +27,17 @@ export default function CodePanel({
   enableAutocomplete,
   overrides,
   skipDelay,
+  errorLine,
+  hasError,
+  hasWarning,
+  onLoad,
 }) {
-  const config = {
+  const config = useMemo(() => ({
     ...defaults.global,
     ...defaults[mode],
     ...overrides,
-  };
+  }), [mode, overrides]);
+
   let safeValue = '';
 
   if (value) {
@@ -60,6 +65,10 @@ export default function CodePanel({
       wrap={config.wrap}
       onChange={onChange}
       skipDelay={skipDelay}
+      errorLine={errorLine}
+      hasError={hasError}
+      hasWarning={hasWarning}
+      onLoad={onLoad}
     />
   );
 }

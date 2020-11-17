@@ -122,6 +122,13 @@ export default {
     'edix12.format': {
       fieldId: 'edix12.format',
     },
+    outputMode: {
+      id: 'outputMode',
+      type: 'text',
+      label: 'Parse files being transferred',
+      defaultValue: 'records',
+      visible: false,
+    },
     'file.type': { fieldId: 'file.type' },
     'file.csv': { fieldId: 'file.csv' },
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
@@ -146,45 +153,34 @@ export default {
     },
     advancedSettings: { formId: 'advancedSettings' },
     exportOneToMany: { formId: 'exportOneToMany' },
-    exportPanel: {
-      fieldId: 'exportPanel',
-    },
   },
   layout: {
-    type: 'column',
+    type: 'collapse',
     containers: [
+      { collapsed: true, label: 'General', fields: ['common', 'exportOneToMany'] },
       {
-        type: 'collapse',
-        containers: [
-          { collapsed: true, label: 'General', fields: ['common', 'exportOneToMany'] },
-          {
-            collapsed: true,
-            label: 'How would you like to parse files?',
-            type: 'indent',
-            fields: [
-              'file.type',
-              'file.xml.resourcePath',
-              'file.json.resourcePath',
-              'file.xlsx.hasHeaderRow',
-              'file.xlsx.rowsPerRecord',
-              'file.xlsx.keyColumns',
-              'edix12.format',
-              'fixed.format',
-              'edifact.format',
-              'file.filedefinition.rules',
-            ],
-            containers: [{fields: [
-              'file.csv',
-            ]}],
-          },
-          { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
+        collapsed: true,
+        label: 'How would you like to parse files?',
+        type: 'indent',
+        fields: [
+          'outputMode',
+          'file.type',
+          'file.xml.resourcePath',
+          'file.json.resourcePath',
+          'file.xlsx.hasHeaderRow',
+          'file.xlsx.rowsPerRecord',
+          'file.xlsx.keyColumns',
+          'edix12.format',
+          'fixed.format',
+          'edifact.format',
+          'file.filedefinition.rules',
         ],
+        containers: [{fields: [
+          'file.csv',
+        ]}],
       },
-      {
-        fields: ['exportPanel'],
-      },
+      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
-
   },
   actions: [
     {

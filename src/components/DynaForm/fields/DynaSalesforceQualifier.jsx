@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
   dynaSalesforceQualifierWrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
   textField: {
     width: '100%',
@@ -46,6 +47,7 @@ export default function DynaSalesforceQualifier(props) {
     flowId,
     label,
     options,
+    connectionId,
   } = props;
   const handleOpenDrawer = usePushRightDrawer(id);
 
@@ -66,7 +68,7 @@ export default function DynaSalesforceQualifier(props) {
         resourceId={resourceId}
         flowId={flowId}
         onSave={handleSave}
-          // disabled={disabled}
+        connectionId={connectionId}
         options={options}
         />
 
@@ -97,6 +99,7 @@ export default function DynaSalesforceQualifier(props) {
         </FormControl>
       </div>
       <ActionButton
+        disabled={!options?.hasSObjectType}
         data-test={id}
         onClick={handleOpenDrawer}
         className={classes.exitButtonsalsForceQualifier}>

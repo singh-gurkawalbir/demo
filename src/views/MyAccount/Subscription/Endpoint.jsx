@@ -1,32 +1,29 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Drawer} from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import DrawerTitleBar from '../../../components/drawer/TitleBar';
 import NotificationToaster from '../../../components/NotificationToaster';
 import Progressbar from './Progressbar';
 import LicenceTable from './licenseTable';
 import RightDrawer from '../../../components/drawer/Right';
+import DrawerHeader from '../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../components/drawer/Right/DrawerContent';
 import CheckMarkIcon from '../../../components/icons/CheckmarkIcon';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import Spinner from '../../../components/Spinner';
 import SpinnerWrapper from '../../../components/SpinnerWrapper';
 import LoadResources from '../../../components/LoadResources';
+import PanelHeader from '../../../components/PanelHeader';
+import UpgradeDrawer from './drawers/Upgrade';
 
 const useStyles = makeStyles(theme => ({
   root: {
     margin: theme.spacing(3, 0, 0, 2),
     overflowX: 'auto',
-  },
-  transferButton: {
-    margin: theme.spacing(1),
-    textAlign: 'center',
-    float: 'right',
   },
   wrapper: {
     border: '1px solid',
@@ -68,8 +65,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
   },
   heading: {
-    textAlign: 'left',
-    marginBottom: theme.spacing(3),
+    paddingLeft: 0,
   },
   bold: {
     fontWeight: 'bold',
@@ -92,27 +88,6 @@ const useStyles = makeStyles(theme => ({
   },
   description: {
     marginTop: theme.spacing(2),
-  },
-
-  drawerPaper: {
-    width: 600,
-    padding: theme.spacing(1),
-  },
-
-  content: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3),
-  },
-  link: {
-    marginTop: theme.spacing(2),
-    fontSize: theme.spacing(2),
-  },
-
-  footer: {
-    marginTop: theme.spacing(3),
-    display: 'flex',
-    flexDirection: 'column',
   },
   subscriptionBox: {
     border: '1px solid',
@@ -149,7 +124,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
   },
   subscriptionBoxInnerLeft: {
-    maxWidth: '88%',
+    maxWidth: '100%',
     wordBreak: 'break-word',
   },
   subscriptionUpgradeBtn: {
@@ -158,17 +133,18 @@ const useStyles = makeStyles(theme => ({
     alignSelf: 'flex-start',
   },
   subscriptionFeaturesItems: {
-    maxWidth: '80%',
+    // maxWidth: '80%',
+    marginBottom: theme.spacing(2),
     flexWrap: 'wrap',
     '& li': {
       display: 'inline-flex',
       border: 'none',
-      marginRight: 90,
+      marginRight: 75,
       marginBottom: 12,
     },
   },
   enableIcon: {
-    color: theme.palette.success.light,
+    color: theme.palette.info.main,
     marginRight: theme.spacing(0.5),
     fontSize: 20,
   },
@@ -204,6 +180,13 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(1),
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
   },
+  // Todo Azhar for hardcoded sandbox value
+  sandboxSubscriptionBox: {
+    backgroundColor: '#f5f5f0',
+  },
+  enableIconSandbox: {
+    color: '#836A49',
+  },
 }));
 
 export default function Endpoint() {
@@ -229,22 +212,14 @@ export default function Endpoint() {
   const licenseActionDetails = useSelector(state =>
     selectors.platformLicenseWithMetadata(state)
   );
-  const [showStartFreeDialog, setShowStartFreeDialog] = useState(false);
   const showMessage = (licenseActionDetails?.tier === 'free' && licenseActionDetails?.expiresInDays < 10) || false;
   const [showExpireMessage, setShowExpireMessage] = useState(showMessage);
   const [needMoreNotification, setNeedMoreNotification] = useState(licenseActionDetails?.tier === 'free' && !showExpireMessage);
 
   const onStartFreeTrialClick = useCallback(() => {
-    setShowStartFreeDialog(true);
-  }, [setShowStartFreeDialog]);
-  const onStartFreeTrialInterestedClick = useCallback(() => {
-    dispatch(
-      actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
-    );
-    setShowStartFreeDialog(false);
+    history.push(`${match.url}/upgrade`);
+  }, [history, match.url]);
 
-    return dispatch(actions.user.org.accounts.requestTrialLicense());
-  }, [dispatch, setShowStartFreeDialog]);
   const onTrialUpgradeClick = useCallback(() => {
     dispatch(
       actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
@@ -300,9 +275,6 @@ export default function Endpoint() {
     requestLicenseEntitlementUsage();
   }, [requestLicenseEntitlementUsage]);
 
-  const onDrawerClose = useCallback(() => {
-    setShowStartFreeDialog(false);
-  }, []);
   const onCloseExpireMessage = useCallback(() => {
     setShowExpireMessage(false);
   }, []);
@@ -310,7 +282,6 @@ export default function Endpoint() {
     history.push(match?.url);
   }, [history, match?.url]);
 
-  onCloseExpireMessage;
   if (!licenseEntitlementUsage) {
     return (
       <SpinnerWrapper>
@@ -321,52 +292,17 @@ export default function Endpoint() {
 
   return (
     <>
-      <Drawer
-        anchor="right"
-        open={showStartFreeDialog}
-        classes={{
-          paper: classes.drawerPaper,
-        }}>
-        <DrawerTitleBar
-          onClose={onDrawerClose}
-          title="Upgrade your subscription"
-        />
-        <div className={classes.content}>
-          <Typography variant="body1" className={classes.block}>
-            You are currently on the Free Edition of integrator.io, which gives
-            you one active flow at any given time. Upgrade to one of our paid
-            subscriptions and unlock multiple flow activation to fulfill all
-            your integration needs.
-          </Typography>
-
-          <div className={classes.footer}>
-            <div>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={onStartFreeTrialInterestedClick}>
-                YES, I &apos;M INTERESTED
-              </Button>
-            </div>
-            <a
-              className={classes.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-test="learnmore-link"
-              href="https://www.celigo.com/ipaas-integration-platform/#Pricing">
-              Learn more about our integrator.io premium packages
-              <span className="arrow-box arrow-right arrow-box-20" />
-            </a>
-          </div>
-        </div>
-      </Drawer>
+      <UpgradeDrawer />
       <RightDrawer
         path=":env/:type"
         height="tall"
-        title={titleMap[title]}
         onClose={handleClose}>
-        <LicenceTable />
+        <DrawerHeader title={titleMap[title]} />
+        <DrawerContent>
+          <LicenceTable />
+        </DrawerContent>
       </RightDrawer>
+
       {!showExpireMessage && needMoreNotification && (
       <div className={classes.subscriptionNotificationToaster}>
         <NotificationToaster variant="info" size="large" onClose={onCloseNotification}>
@@ -403,9 +339,7 @@ export default function Endpoint() {
         </NotificationToaster>
       </div>
       )}
-      <Typography variant="h4" className={classes.heading}>
-        Subscription
-      </Typography>
+      <PanelHeader title="Subscription" className={classes.heading} />
       <div className={classes.subscriptionBox}>
         <div className={classes.subscriptionBoxInner}>
           <div className={classes.subscriptionBoxInnerLeft}>
@@ -432,14 +366,6 @@ export default function Endpoint() {
               </Typography>
               <div className={classes.subscriptionFeaturesList} >
                 <ul className={clsx(classes.itemsList, classes.subscriptionFeaturesItems)}>
-                  <li className={classes.subscriptionFeatureEnabled}>
-                    {!!(licenseActionDetails?.totalNumberofEndpoints) && (<CheckMarkIcon className={classes.enableIcon} />)}
-                    <Typography variant="h4" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofEndpoints)})}> {licenseActionDetails?.totalNumberofEndpoints} Endpoint apps</Typography>
-                  </li>
-                  <li>
-                    {!!(licenseActionDetails?.totalNumberofTradingPartners) && (<CheckMarkIcon className={classes.enableIcon} />)}
-                    <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofTradingPartners)})}>{licenseActionDetails?.totalNumberofTradingPartners} Trading partners</Typography>
-                  </li>
                   <li>
                     {licenseActionDetails?.autopilot && (<CheckMarkIcon className={classes.enableIcon} />)}
                     <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.autopilot)})}>Autopilot</Typography>
@@ -447,14 +373,6 @@ export default function Endpoint() {
                   <li>
                     {licenseActionDetails?.sandbox && (<CheckMarkIcon className={classes.enableIcon} />)}
                     <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.sandbox)})}>Sandbox</Typography>
-                  </li>
-                  <li className={classes.subscriptionFeatureEnabled}>
-                    {!!(licenseActionDetails?.totalNumberofFlows) && <CheckMarkIcon className={classes.enableIcon} />}
-                    <Typography variant="h4" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofFlows)})}>{licenseActionDetails?.totalNumberofFlows} Integration flows</Typography>
-                  </li>
-                  <li>
-                    {!!(licenseActionDetails?.totalNumberofAgents) && (<CheckMarkIcon className={classes.enableIcon} />)}
-                    <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofAgents)})}>{licenseActionDetails?.totalNumberofAgents} On-premise agents</Typography>
                   </li>
                   <li>
                     {licenseActionDetails?.endpoint?.apiManagement && (<CheckMarkIcon className={classes.enableIcon} />)}
@@ -464,49 +382,46 @@ export default function Endpoint() {
               </div>
             </div>
           </div>
-          {licenseActionDetails &&
-                licenseActionDetails.subscriptionActions &&
-                licenseActionDetails.subscriptionActions.actions &&
-                licenseActionDetails.subscriptionActions.actions.length > 0 && (
-                  <div>
-                      {licenseActionDetails.subscriptionActions.actions.indexOf(
-                        'start-free-trial'
-                      ) > -1 && (
-                        <Button
-                          onClick={onStartFreeTrialClick}
-                          className={classes.subscriptionUpgradeBtn}
-                          color="primary"
-                          variant="outlined">
-                          Go unlimited for 30days!
-                        </Button>
-                      )}
-                      {(licenseActionDetails.subscriptionActions.actions.indexOf(
-                        'request-upgrade'
-                      ) > -1 || licenseActionDetails.subscriptionActions.actions.indexOf(
-                        'request-subscription'
-                      ) > -1) && (
-                        <Button
-                          onClick={onRequestUpgradeClick}
-                          disabled={upgradeRequested}
-                          className={classes.subscriptionUpgradeBtn}
-                          color="primary"
-                          variant="outlined">
-                          Upgrade
-                        </Button>
-                      )}
-                      {licenseActionDetails.subscriptionActions.actions.indexOf(
-                        'add-more-flows'
-                      ) > -1 && (
-                        <Button
-                          onClick={onRequestUpgradeClick}
-                          disabled={upgradeRequested}
-                          className={classes.subscriptionUpgradeBtn}
-                          color="primary"
-                          variant="outlined">
-                          Add more flows
-                        </Button>
-                      )}
-                  </div>
+          {licenseActionDetails?.subscriptionActions?.actions?.length > 0 && (
+          <div>
+            {licenseActionDetails.subscriptionActions.actions.indexOf(
+              'start-free-trial'
+            ) > -1 && (
+            <Button
+              onClick={onStartFreeTrialClick}
+              className={classes.subscriptionUpgradeBtn}
+              color="primary"
+              variant="outlined">
+              Go unlimited for 30 days!
+            </Button>
+            )}
+            {(licenseActionDetails.subscriptionActions.actions.indexOf(
+              'request-upgrade'
+            ) > -1 || licenseActionDetails.subscriptionActions.actions.indexOf(
+              'request-subscription'
+            ) > -1) && (
+            <Button
+              onClick={onRequestUpgradeClick}
+              disabled={upgradeRequested}
+              className={classes.subscriptionUpgradeBtn}
+              color="primary"
+              variant="outlined">
+              Upgrade
+            </Button>
+            )}
+            {licenseActionDetails.subscriptionActions.actions.indexOf(
+              'add-more-flows'
+            ) > -1 && (
+            <Button
+              onClick={onRequestUpgradeClick}
+              disabled={upgradeRequested}
+              className={classes.subscriptionUpgradeBtn}
+              color="primary"
+              variant="outlined">
+              Add more flows
+            </Button>
+            )}
+          </div>
           )}
         </div>
       </div>
@@ -514,8 +429,40 @@ export default function Endpoint() {
         <div className={classes.subscriptionBoxInner}>
           <div className={classes.subscriptionBoxInnerLeft}>
             <Typography className={classes.subscriptionHeading}>
-              Production usage
+              Production entitlements
             </Typography>
+            <div className={classes.subscriptionFeaturesList} >
+              <ul className={clsx(classes.itemsList, classes.subscriptionFeaturesItems)}>
+                <li>
+                  {!!(licenseActionDetails?.totalNumberofProductionEndpoints) && (<CheckMarkIcon className={classes.enableIcon} />)}
+                  <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofProductionEndpoints)})}>
+                    <Typography>{licenseActionDetails?.endpoint?.production?.numEndpoints} endpoint apps</Typography>
+                    <Typography>{licenseActionDetails?.endpoint?.production?.numAddOnEndpoints > 0 ? `+ ${licenseActionDetails?.endpoint?.production?.numAddOnEndpoints} add-on endpoint apps` : ''}</Typography>
+                  </Typography>
+                </li>
+                <li>
+                  {!!(licenseActionDetails?.totalNumberofProductionTradingPartners) && (<CheckMarkIcon className={classes.enableIcon} />)}
+                  <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofProductionTradingPartners)})}>
+                    <Typography>{licenseActionDetails?.endpoint?.production?.numTradingPartners} trading partners</Typography>
+                    <Typography>{licenseActionDetails?.endpoint?.production?.numAddOnTradingPartners > 0 ? `+ ${licenseActionDetails?.endpoint?.production?.numAddOnTradingPartners} add-on trading partners` : ''}</Typography>
+                  </Typography>
+                </li>
+                <li>
+                  {!!(licenseActionDetails?.totalNumberofProductionFlows) && <CheckMarkIcon className={classes.enableIcon} />}
+                  <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofProductionFlows)})}>
+                    <Typography>{licenseActionDetails?.endpoint?.production?.numFlows} integration flows</Typography>
+                    <Typography>{licenseActionDetails?.endpoint?.production?.numAddOnFlows > 0 ? `+ ${licenseActionDetails?.endpoint?.production?.numAddOnFlows} add-on integration flows` : ''}</Typography>
+                  </Typography>
+                </li>
+                <li>
+                  {!!(licenseActionDetails?.totalNumberofProductionAgents) && (<CheckMarkIcon className={classes.enableIcon} />)}
+                  <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofProductionAgents)})}>
+                    <Typography>{licenseActionDetails?.endpoint?.production?.numAgents} on-premise agents</Typography>
+                    <Typography>{licenseActionDetails?.endpoint?.production?.numAddOnAgents > 0 ? `+ ${licenseActionDetails?.endpoint?.production?.numAddOnAgents} add-on on-premise agents` : ''}</Typography>
+                  </Typography>
+                </li>
+              </ul>
+            </div>
             <Progressbar
               usedCount={numberofUsedEndpoints}
               totalCount={licenseActionDetails?.totalNumberofProductionEndpoints}
@@ -548,12 +495,46 @@ export default function Endpoint() {
         </div>
       </div>
       {licenseActionDetails?.sandbox && (
-      <div className={classes.subscriptionBox}>
+      <div className={clsx(classes.subscriptionBox, classes.sandboxSubscriptionBox)}>
         <div className={classes.subscriptionBoxInner}>
           <div className={classes.subscriptionBoxInnerLeft}>
             <Typography className={classes.subscriptionHeading}>
-              Sandbox usage
+              Sandbox entitlements
             </Typography>
+            <div className={classes.subscriptionFeaturesList} >
+              <ul className={clsx(classes.itemsList, classes.subscriptionFeaturesItems)}>
+                <li>
+                  {!!(licenseActionDetails?.totalNumberofSandboxEndpoints) && (<CheckMarkIcon className={classes.enableIconSandbox} />)}
+                  <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxEndpoints)})}>
+                    <Typography>{licenseActionDetails?.endpoint?.sandbox?.numEndpoints} endpoint apps</Typography>
+                    <Typography>{licenseActionDetails?.endpoint?.sandbox?.numAddOnEndpoints > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnEndpoints} add-on endpoint apps` : ''}</Typography>
+                  </Typography>
+                </li>
+                <li>
+                  {!!(licenseActionDetails?.totalNumberofSandboxTradingPartners) && (<CheckMarkIcon className={classes.enableIconSandbox} />)}
+                  <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxTradingPartners)})}>
+                    <Typography>{licenseActionDetails?.endpoint?.sandbox?.numTradingPartners} trading partners</Typography>
+                    <Typography>{licenseActionDetails?.endpoint?.sandbox?.numAddOnTradingPartners > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnTradingPartners
+                    } add-on trading partners` : ''}
+                    </Typography>
+                  </Typography>
+                </li>
+                <li>
+                  {!!(licenseActionDetails?.totalNumberofSandboxFlows) && <CheckMarkIcon className={classes.enableIconSandbox} />}
+                  <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxFlows)})}>
+                    <Typography>{licenseActionDetails?.endpoint?.sandbox?.numFlows} integration flows</Typography>
+                    <Typography>{licenseActionDetails?.endpoint?.sandbox?.numAddOnFlows > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnFlows} add-on integration flows` : ''}</Typography>
+                  </Typography>
+                </li>
+                <li>
+                  {!!(licenseActionDetails?.totalNumberofSandboxAgents) && (<CheckMarkIcon className={classes.enableIconSandbox} />)}
+                  <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxAgents)})}>
+                    <Typography>{licenseActionDetails?.endpoint?.sandbox?.numAgents} on-premise agents</Typography>
+                    <Typography>{licenseActionDetails?.endpoint?.sandbox?.numAddOnAgents > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnAgents} add-on on-premise agents` : ''}</Typography>
+                  </Typography>
+                </li>
+              </ul>
+            </div>
             <Progressbar
               usedCount={numberofUsedSandboxEndpoints}
               totalCount={licenseActionDetails?.totalNumberofSandboxEndpoints}
@@ -585,7 +566,7 @@ export default function Endpoint() {
           </div>
         </div>
       </div>
-)}
+      )}
       <LoadResources required resources="connections,flows,integrations,agents" />
     </>
   );

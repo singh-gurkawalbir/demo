@@ -119,7 +119,6 @@ export default {
   'rest.nextPageRelativeURI': {
     type: 'text',
     label: 'Next page relative URI',
-    required: true,
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
@@ -144,7 +143,6 @@ export default {
   },
   'rest.pagingPostBody': {
     type: 'httprequestbody',
-    title: 'Build paging post body',
     label: 'Build paging post body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',

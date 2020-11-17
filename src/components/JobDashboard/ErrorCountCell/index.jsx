@@ -25,7 +25,7 @@ export default function ErrorCountCell({count, isError, onClick, isJobInProgress
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       data-test={`view-job-${isError ? 'error' : 'resolved'}`}
-      onClick={onClick}
+      onClick={showLink ? onClick : undefined}
       className={clsx(className, {
         [classes.resolved]: showLink && !isError,
         [classes.link]: showLink,

@@ -1,6 +1,6 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
-import { getFlowMetrics } from '../../../utils/flowMetrics';
 
 function updateStatus(state, flowId, status) {
   return produce(state, draft => {
@@ -13,26 +13,26 @@ function updateStatus(state, flowId, status) {
 }
 
 export default (state = {}, action) => {
-  const { type, flowId, response } = action;
+  const { type, resourceId, response } = action;
 
   switch (type) {
     case actionTypes.FLOW_METRICS.REQUEST:
-      return updateStatus(state, flowId, 'requested');
+      return updateStatus(state, resourceId, 'requested');
     case actionTypes.FLOW_METRICS.RECEIVED:
       return produce(state, draft => {
-        if (!draft[flowId]) {
-          draft[flowId] = {};
+        if (!draft[resourceId]) {
+          draft[resourceId] = {};
         }
 
-        draft[flowId].status = 'received';
-        draft[flowId].data = response;
+        draft[resourceId].status = 'received';
+        draft[resourceId].data = response;
       });
     case actionTypes.FLOW_METRICS.FAILED:
-      return updateStatus(state, flowId, 'failed');
+      return updateStatus(state, resourceId, 'failed');
 
     case actionTypes.FLOW_METRICS.CLEAR:
       return produce(state, draft => {
-        delete draft[flowId];
+        delete draft[resourceId];
       });
 
     default:
@@ -43,17 +43,15 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.flowMetricsData = (state, flowId, measurement) => {
-  if (!state || !state[flowId]) {
-    return null;
-  }
+selectors.flowMetricsData = createSelector(
+  state => state,
+  (_, resourceId) => resourceId,
+  (state, resourceId) => {
+    if (!state || !state[resourceId]) {
+      return null;
+    }
 
-  const metrics = state[flowId];
-
-  return {
-    ...metrics,
-    data: getFlowMetrics(metrics, measurement),
-  };
-};
+    return state[resourceId];
+  });
 
 // #endregion

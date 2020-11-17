@@ -14,6 +14,7 @@ const appTypeToAdaptorType = {
   postgresql: 'RDBMS',
   mysql: 'RDBMS',
   mssql: 'RDBMS',
+  oracle: 'RDBMS',
   snowflake: 'RDBMS',
   netsuite: 'NetSuiteDistributed',
   ftp: 'FTP',

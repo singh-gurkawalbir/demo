@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useState} from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles, Drawer } from '@material-ui/core';
 import LoadResources from '../LoadResources';
@@ -7,6 +7,9 @@ import AddOrSelect from './AddOrSelect';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 import DrawerTitleBar from '../drawer/TitleBar';
 import ResourceFormWithStatusPanel from '../ResourceFormWithStatusPanel';
+import ResourceFormActionsPanel from '../drawer/Resource/Panel/ResourceFormActionsPanel';
+import { generateNewId } from '../../utils/resource';
+import ResourceDrawer from '../drawer/Resource';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -30,7 +33,6 @@ export default function ResourceSetupDrawer(props) {
     onSubmitComplete,
     onClose,
     addOrSelect,
-    connectionType,
     resourceType = 'connections',
   } = props;
   const classes = useStyles();
@@ -42,10 +44,9 @@ export default function ResourceSetupDrawer(props) {
     if (isAuthorized && !addOrSelect) onSubmitComplete(resourceId, isAuthorized);
   }, [isAuthorized, resourceId, onSubmitComplete, addOrSelect]);
 
-  const title = useMemo(
-    () => `Setup ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`,
-    [resourceType]
-  );
+  const title = `Set up ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`;
+
+  const [newId] = useState(generateNewId());
 
   return (
     <LoadResources required resources={resourceType}>
@@ -57,22 +58,30 @@ export default function ResourceSetupDrawer(props) {
         }}
         >
         <DrawerTitleBar title={title} onClose={onClose} />
+        <ResourceDrawer />
+
         <div>
           {addOrSelect ? (
             <AddOrSelect {...props} />
           ) : (
-            <ResourceFormWithStatusPanel
-              occupyFullWidth
-              className={classes.resourceFormWrapper}
-              editMode={false}
-              resourceType={resourceType}
-              resourceId={resourceId}
-              cancelButtonLabel="Cancel"
-              submitButtonLabel="Save & close"
-              onSubmitComplete={onSubmitComplete}
-              connectionType={connectionType}
-              onCancel={onClose}
+            <>
+              <ResourceFormWithStatusPanel
+                occupyFullWidth
+                formKey={newId}
+                className={classes.resourceFormWrapper}
+                resourceType={resourceType}
+                resourceId={resourceId}
+                onSubmitComplete={onSubmitComplete}
             />
+              <ResourceFormActionsPanel
+                formKey={newId}
+                resourceType={resourceType}
+                resourceId={resourceId}
+                cancelButtonLabel="Cancel"
+                submitButtonLabel="Save & close"
+                onCancel={onClose}
+              />
+            </>
           )}
         </div>
       </Drawer>

@@ -1,20 +1,20 @@
-import { Drawer, makeStyles, Button } from '@material-ui/core';
-import { useSelector, useDispatch } from 'react-redux';
-import React, { useCallback, useState } from 'react';
+import { Button, Drawer, makeStyles } from '@material-ui/core';
+import React, { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-  useRouteMatch,
-  useHistory,
-  Route,
-  useLocation,
+  Route, useHistory,
+
+  useLocation, useRouteMatch,
 } from 'react-router-dom';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../../components/LoadResources';
-import DrawerTitleBar from './TitleBar';
 import Spinner from '../../../../../../components/Spinner';
 import SpinnerWrapper from '../../../../../../components/SpinnerWrapper';
+import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
+import DrawerTitleBar from './TitleBar';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -56,14 +56,6 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);
-  const [formState, setFormState] = useState({
-    showFormValidationsBeforeTouch: false,
-  });
-  const showCustomFormValidations = useCallback(() => {
-    setFormState({
-      showFormValidationsBeforeTouch: true,
-    });
-  }, []);
   const handleSave = useCallback(
     ({ category, childCategory, grandchildCategory }) => {
       dispatch(
@@ -205,6 +197,10 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
       return null;
     },
   };
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+  });
 
   return (
     <Drawer
@@ -221,14 +217,14 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         backToParent
       />
       {metadataLoaded ? (
-        <DynaForm
-          fieldMeta={fieldMeta}
-          formState={formState}
-          className={classes.addCategoryDrawerForm}
-          optionsHandler={fieldMeta.optionsHandler}>
+        <>
+          <DynaForm
+            formKey={formKey}
+            fieldMeta={fieldMeta}
+            className={classes.addCategoryDrawerForm} />
           <div className={classes.addCategoryDrawerFormActions}>
             <DynaSubmit
-              showCustomFormValidations={showCustomFormValidations}
+              formKey={formKey}
               data-test="addCategory"
               onClick={handleSave}>
               Add Category
@@ -237,7 +233,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
               Cancel
             </Button>
           </div>
-        </DynaForm>
+        </>
       ) : (
         <SpinnerWrapper>
           <Spinner />

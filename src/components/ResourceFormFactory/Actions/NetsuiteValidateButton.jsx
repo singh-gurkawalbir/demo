@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { FormContext } from 'react-forms-processor/dist';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { selectors } from '../../../reducers';
 import trim from '../../../utils/trim';
+import useFormContext from '../../Form/FormContext';
 
 const styles = theme => ({
   actionButton: {
@@ -20,24 +20,35 @@ const NetsuiteValidateButton = props => {
   const {
     resourceId,
     classes,
-    fields,
     id,
-    registerField,
     visibleWhen,
     visibleWhenAll,
-    value,
-    disabled,
-    onFieldChange,
+    formKey,
   } = props;
+
+  const { fields, disabled: formDisabled, value } = useFormContext(formKey) || {};
+  const { disabled = formDisabled } = props;
+  const onFieldChange = useCallback(
+    (fieldId, value, skipFieldTouched) =>
+      dispatch(
+        actions.form.fieldChange(formKey)(fieldId, value, skipFieldTouched)
+      ),
+    [dispatch, formKey]
+  );
+  const registerField = useCallback(
+    field => dispatch(actions.form.registerField(formKey)(field)),
+    [dispatch, formKey]
+  );
   const handleValidate = values => {
     // clear the ping comm status first as validity will be determined by netsuite user roles
     dispatch(actions.resource.connections.testClear(resourceId));
+    dispatch(actions.resource.connections.netsuite.clearUserRoles(resourceId));
     dispatch(
-      actions.resource.connections.netsuite.requestUserRoles(resourceId, values)
+      actions.resource.connections.netsuite.testConnection(resourceId, values)
     );
   };
 
-  const { status, message } = useSelector(state =>
+  const { status, message, hideNotificationMessage } = useSelector(state =>
     selectors.netsuiteUserRoles(state, resourceId) || {}
   );
   const isValidatingNetsuiteUserRoles = useSelector(state =>
@@ -46,7 +57,7 @@ const NetsuiteValidateButton = props => {
   const isOffline = useSelector(state =>
     selectors.isConnectionOffline(state, resourceId)
   );
-  const matchingActionField = fields.find(field => field.id === id);
+  const matchingActionField = fields && Object.values(fields)?.find(field => field.id === id);
   const fieldsIsVisible = matchingActionField && matchingActionField.visible;
 
   useEffect(() => {
@@ -62,23 +73,16 @@ const NetsuiteValidateButton = props => {
     if (fieldsIsVisible) {
       if (status === 'success') {
         // enable save button
-        onFieldChange(id, 'false');
+        onFieldChange(id, 'false', true);
       } else if (status === 'error') {
         if (message) {
           enquesnackbar({ message, variant: 'error' });
           // disable save button
-          onFieldChange(id, 'true');
+          onFieldChange(id, 'true', true);
         }
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    status,
-    id,
-    fieldsIsVisible,
-    enquesnackbar,
-    message,
-  ]);
+  }, [status, id, fieldsIsVisible, enquesnackbar, message, onFieldChange]);
 
   useEffect(() => {
     // name does not really matter since this is an action button
@@ -95,7 +99,7 @@ const NetsuiteValidateButton = props => {
         omitWhenValueIs: [undefined, 'false', 'true'],
       });
     }
-  }, [registerField, fields, id, visibleWhen, visibleWhenAll, fieldsIsVisible]);
+  }, [fields, id, visibleWhen, visibleWhenAll, fieldsIsVisible, registerField]);
 
   // Clean up action on un mount , to clear user roles when container is closed
   // TODO @Raghu: check ,should we clear on validate click? or on un mount?
@@ -103,6 +107,7 @@ const NetsuiteValidateButton = props => {
     actions.resource.connections.netsuite.clearUserRoles(resourceId)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   ), []);
+  if (!fields) return null;
 
   if (id) {
     if (!fieldsIsVisible) return null;
@@ -118,15 +123,9 @@ const NetsuiteValidateButton = props => {
       onClick={() => {
         handleValidate(trim(value));
       }}>
-      {isValidatingNetsuiteUserRoles ? 'Testing' : 'Test Connection'}
+      {(isValidatingNetsuiteUserRoles && !hideNotificationMessage) ? 'Testing' : 'Test Connection'}
     </Button>
   );
 };
 
-const FormWrappedNetsuiteValidateButton = props => (
-  <FormContext.Consumer>
-    {form => <NetsuiteValidateButton {...form} {...props} />}
-  </FormContext.Consumer>
-);
-
-export default withStyles(styles)(FormWrappedNetsuiteValidateButton);
+export default withStyles(styles)(NetsuiteValidateButton);

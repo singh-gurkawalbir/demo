@@ -35,7 +35,7 @@ export default {
     },
     text: {
       disabled: colors.celigoNeutral4,
-      primary: colors.celigoNeutral6,
+      primary: colors.celigoNeutral8,
       hint: colors.celigoNeutral5,
       secondary: colors.celigoNeutral7,
     },
@@ -74,7 +74,7 @@ export default {
     MuiButton: {
       root: {
         textTransform: 'unset',
-        fontFamily: 'Roboto500',
+        fontFamily: 'Roboto400',
         '&: disabled': {
           cursor: 'not-allowed',
         },
@@ -172,7 +172,7 @@ export default {
         },
       },
       textPrimary: {
-        color: colors.celigoNeutral6,
+        color: colors.celigoNeutral8,
         '&:focus': {
           color: colors.celigoNeutral7,
         },
@@ -208,10 +208,77 @@ export default {
       },
     },
     MuiTooltip: {
+      tooltip: {
+        backgroundColor: colors.celigoNeutral7,
+        fontFamily: 'source sans pro',
+        color: colors.celigoWhite,
+        border: '1px solid',
+        borderColor: colors.celigoNeutral7,
+      },
       tooltipPlacementBottom: {
         margin: '0 !important',
+        '&:before': {
+          top: -7,
+          left: 0,
+          width: 8,
+          right: 0,
+          margin: 'auto',
+          content: '""',
+          zIndex: 1,
+          position: 'absolute',
+          borderLeft: '7px solid transparent',
+          borderRight: '7px solid transparent',
+          borderBottom: `7px solid ${colors.celigoNeutral7}`,
+        },
+        '&:after': {
+          top: -5,
+          left: 0,
+          right: 0,
+          width: 6,
+          margin: 'auto',
+          content: '""',
+          zIndex: 2,
+          position: 'absolute',
+          borderLeft: '6px solid transparent',
+          borderRight: '6px solid transparent',
+          borderBottom: `6px solid ${colors.celigoNeutral7}`,
+        },
       },
     },
+    MuiPickersDay: {
+      day: {
+        borderRadius: 4,
+      },
+    },
+    MuiPickersClock: {
+      container: {
+        marginTop: 0,
+      },
+      clock: {
+        backgroundColor: colors.celigoNeutral2,
+      },
+    },
+    MuiPickersToolbar: {
+      toolbar: {
+        backgroundColor: colors.celigoWhite,
+        height: 64,
+      },
+    },
+    MuiPickersTimePickerToolbar: {
+      toolbarAmpmLeftPadding: {
+        paddingLeft: 24,
+      },
+    },
+    MuiPickersToolbarText: {
+      toolbarTxt: {
+        color: colors.celigoNeutral4,
+        fontSize: 48,
+      },
+      toolbarBtnSelected: {
+        color: colors.celigoNeutral8,
+      },
+    },
+
     MuiMenuItem: {
       root: {
         minHeight: 38,
@@ -253,7 +320,7 @@ export default {
     },
     MuiTypography: {
       root: {
-        color: colors.celigoNeutral6,
+        color: colors.celigoNeutral8,
         fontFamily: 'Roboto400, sans-serif',
       },
       body1: {
@@ -330,6 +397,12 @@ export default {
         '&:hover': {
           backgroundColor: colors.celigoNeutral1,
         },
+      },
+    },
+    MuiListItemText: {
+      root: {
+        flex: 'unset',
+        marginRight: 16,
       },
     },
     MuiTableRow: {
@@ -586,6 +659,7 @@ export default {
         },
       },
       content: {
+        paddingTop: 3,
         margin: 0,
         '&.Mui-expanded': {
           margin: 0,
@@ -593,7 +667,7 @@ export default {
       },
       expandIcon: {
         padding: 0,
-        margin: [[-4, 4, 0, 0]],
+        margin: [[0, 4, 0, 0]],
       },
     },
     MuiChip: {
@@ -661,12 +735,14 @@ export default {
         minWidth: 140,
         padding: '8px 12px 4px',
         textTransform: 'none',
+        fontFamily: 'source sans pro',
+        fontWeight: 'normal',
       },
-      // textColorPrimary: {
-      //   '&.Mui-selected': {
-      //   },
-      // fontWeight: 'bold',
-      // },
+      textColorPrimary: {
+        '&.Mui-selected': {
+          fontWeight: 'bold',
+        },
+      },
       labelIcon: {
         minHeight: 'unset',
       },
@@ -734,6 +810,39 @@ export default {
     MuiCheckbox: {
       disableRipple: true,
       color: 'primary',
+    },
+    MuiButton: {
+      'data-public': true,
+    },
+    MuiFormLabel: {
+      'data-public': true,
+    },
+    MuiExpansionPanelSummary: {
+      'data-public': true,
+    },
+    MuiTooltip: {
+      'data-public': true,
+    },
+    MuiTabs: {
+      'data-public': true,
+    },
+    MuiCard: {
+      'data-public': true,
+    },
+    MuiDialogTitle: {
+      'data-public': true,
+    },
+    MuiDialogContent: {
+      'data-public': true,
+    },
+    MuiTablePagination: {
+      'data-public': true,
+    },
+    MuiSnackbarContent: {
+      'data-public': true,
+    },
+    MuiMenuItem: {
+      'data-public': true,
     },
   },
 };
