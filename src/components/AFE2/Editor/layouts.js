@@ -19,4 +19,14 @@ export default {
     gridTemplateRows: '4fr 0fr',
     gridTemplateAreas: '"rule data result" "error error error"',
   },
+  scriptFormBuilder: {
+    gridTemplateColumns: '2fr 2fr',
+    gridTemplateRows: '1fr 1fr 0fr',
+    gridTemplateAreas: '"meta form" "meta settings" "error error"',
+  },
+  jsonFormBuilder: {
+    gridTemplateColumns: '2fr 2fr',
+    gridTemplateRows: '1fr 1fr 0fr',
+    gridTemplateAreas: '"meta form" "hook settings" "error error"',
+  },
 };

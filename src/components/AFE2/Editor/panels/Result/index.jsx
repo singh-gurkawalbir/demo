@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
-import CodePanel from '../CodePanel';
+import CodePanel from '../Code';
 
 export default function ResultPanel({ editorId, mode }) {
   const result = useSelector(state => selectors.editor.result?.(state, editorId));

@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
-import CodePanel from '../CodePanel';
+import CodePanel from '../Code';
 
 export default function DataPanel({ editorId, mode, readOnly }) {
   const dispatch = useDispatch();
