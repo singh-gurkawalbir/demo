@@ -249,13 +249,25 @@ const pageBarUseStyles = makeStyles(({
 
 }));
 
-export default function PageBar({flowId, integrationId, setTabValue}) {
+const TotalErrors = ({flowId}) => {
   const classes = pageBarUseStyles();
   const {
-
     total: totalErrors = 0,
   } = useSelector(state => selectors.errorMap(state, flowId));
 
+  if (!totalErrors) {
+    return null;
+  }
+
+  return (
+    <span className={classes.errorStatus}>
+      <StatusCircle variant="error" size="small" />
+      <span>{totalErrors} errors</span>
+    </span>
+  );
+};
+
+export default function PageBar({flowId, integrationId, setTabValue}) {
   const description = useSelector(state => {
     const flow = selectors.resourceData(state, 'flows',
       flowId
@@ -273,12 +285,7 @@ export default function PageBar({flowId, integrationId, setTabValue}) {
 )}
       subtitle={<CalcPageBarSubtitle flowId={flowId} />}
       infoText={description}>
-      {totalErrors ? (
-        <span className={classes.errorStatus}>
-          <StatusCircle variant="error" size="small" />
-          <span>{totalErrors} errors</span>
-        </span>
-      ) : null}
+      <TotalErrors flowId={flowId} />
       <PageBarChildren
 
         flowId={flowId} integrationId={integrationId}
