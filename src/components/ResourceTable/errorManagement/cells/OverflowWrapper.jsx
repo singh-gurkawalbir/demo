@@ -21,11 +21,11 @@ const useStyles = makeStyles(() => ({
 
 }));
 
-export default function OverflowWrapper({ message, containsHtml }) {
+export default function OverflowWrapper({ message, containsHtml, style}) {
   const classes = useStyles();
 
   return (
-    <div className={classes.wrapper}>
+    <div className={classes.wrapper} style={style}>
       <div className={classes.message}>
         {containsHtml ? <RawHtml html={message} className={classes.htmlMessage} /> : message}
       </div>

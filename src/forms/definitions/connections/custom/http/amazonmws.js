@@ -57,6 +57,7 @@ export default {
       id: 'http.unencrypted.marketplaceId',
       type: 'marketplaceid',
       label: 'Marketplace ID',
+      skipSort: true,
       helpKey: 'amazonmws.connection.http.unencrypted.marketplaceId',
       required: true,
       options: [
@@ -101,6 +102,10 @@ export default {
             {
               value: 'A1F83G8C2ARO7P',
               label: 'A1F83G8C2ARO7P (UK)',
+            },
+            {
+              value: 'A2NODRKZP88ZB9',
+              label: 'A2NODRKZP88ZB9 (SE)',
             },
             {
               value: 'A2VIGQ35RCS4UG',

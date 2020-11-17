@@ -58,6 +58,7 @@ describe('run saga', () => {
   test('should handle api error properly', () => {
     const saga = run({ flowId });
 
+    saga.next();
     expect(saga.next(flowResource).value).toEqual(
       select(selectors.resource, 'flows', flowId)
     );
