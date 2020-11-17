@@ -8,7 +8,7 @@ const overrides = { showGutter: false };
 
 export default function OutputPanel({ editorId }) {
   const { formOutput, status} = useSelector(state => {
-    const {formOutput, status} = selectors.editor(state, editorId).formOutput;
+    const {formOutput, status} = selectors.editor(state, editorId);
 
     return { formOutput, status };
   });

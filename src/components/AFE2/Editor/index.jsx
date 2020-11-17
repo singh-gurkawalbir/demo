@@ -22,12 +22,14 @@ const useStyles = makeStyles(layouts);
 
 export default function Editor({ editorId }) {
   const classes = useStyles();
-  const editor = useSelector(state => selectors.editor(state, editorId));
-  const type = editor.type || 'csvParse';
+  let editor = useSelector(state => selectors.editor(state, editorId));
+
+  editor = { type: 'formBuilder', mode: 'script' };
+  const {type} = editor;
   const {layout, panels} = editorMetadata[type];
   const gridTemplate = classes[resolveValue(layout, editor)];
 
-  // console.log(panels);
+  // console.log(layout, panels);
 
   return (
     <PanelGrid className={gridTemplate}>
