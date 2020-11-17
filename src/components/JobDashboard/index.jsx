@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core';
+import { useLocation, useRouteMatch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { useRouteMatch } from 'react-router-dom';
+
 import LoadResources from '../LoadResources';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
@@ -31,6 +32,7 @@ export default function JobDashboard({
 }) {
   const filterKey = 'jobs';
   const classes = useStyles();
+  const location = useLocation();
   const match = useRouteMatch();
 
   const dispatch = useDispatch();
@@ -44,6 +46,8 @@ export default function JobDashboard({
   const isBulkRetryInProgress = useSelector(state =>
     selectors.isBulkRetryInProgress(state)
   );
+  const queryParams = new URLSearchParams(location.search);
+  const flowJobId = queryParams.get('_flowJobId');
   const filters = useSelector(state => selectors.filter(state, filterKey));
   const jobs = useSelector(state => selectors.flowJobs(state));
   const numJobsWithErrors = jobs ? jobs.filter(j => j.numError > 0).length : 0;
@@ -99,6 +103,7 @@ export default function JobDashboard({
           integrationId,
           flowId,
           filters,
+          options: { flowJobId },
         })
       );
     }

@@ -1406,6 +1406,7 @@ const mapping = {
     action(actionTypes.MAPPING.INIT, {flowId, importId, subRecordMappingId}),
   initComplete: (options = {}) =>
     action(actionTypes.MAPPING.INIT_COMPLETE, {...options}),
+  initFailed: () => action(actionTypes.MAPPING.INIT_FAILED, {}),
   patchField: (field, key, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { field, key, value }),
   patchGenerateThroughAssistant: value =>
@@ -1555,11 +1556,12 @@ const accessToken = {
   updatedCollection: () => action(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION),
 };
 const job = {
-  requestCollection: ({ integrationId, flowId, filters }) =>
+  requestCollection: ({ integrationId, flowId, filters, options }) =>
     action(actionTypes.JOB.REQUEST_COLLECTION, {
       integrationId,
       flowId,
       filters,
+      options,
     }),
   receivedCollection: ({ collection }) =>
     action(actionTypes.JOB.RECEIVED_COLLECTION, {

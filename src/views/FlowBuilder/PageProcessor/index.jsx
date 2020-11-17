@@ -19,6 +19,7 @@ import postResponseMapHook from './actions/postResponseMapHook';
 import responseTransformationAction from './actions/responseTransformation';
 import proceedOnFailureAction from './actions/proceedOnFailure';
 import { actionsMap, isImportMappingAvailable } from '../../../utils/flows';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -69,6 +70,7 @@ const PageProcessor = ({
         resourceId
       )
     ) || {};
+  const flowDetails = useSelectorMemo(selectors.mkFlowDetails, flowId);
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pp._connectionId)
   );
@@ -92,6 +94,8 @@ const PageProcessor = ({
   ) {
     blockType = 'importTransfer';
   }
+
+  const showMapping = useMemo(() => flowDetails._connectorId ? flowDetails.showMapping : true, [flowDetails]);
 
   // Returns map of all possible actions with true/false whether actions performed on the resource
   const usedActions =
@@ -258,7 +262,7 @@ const PageProcessor = ({
         );
       } else {
         processorActions.push(
-          ...(isImportMappingAvailable(resource)
+          ...((isImportMappingAvailable(resource) && showMapping)
             ? [
               {
                 ...importMappingAction,
