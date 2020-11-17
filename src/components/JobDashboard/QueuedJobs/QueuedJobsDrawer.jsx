@@ -143,6 +143,7 @@ const connectionsFilterConfig = {
   type: 'connections',
 };
 const paths = ['flows/:flowId/queuedJobs', ':flowId/queuedJobs'];
+const flowJobConnectionsOptions = { ignoreBorrowedConnections: true };
 
 export default function QueuedJobsDrawer() {
   const classes = useStyles();
@@ -159,7 +160,7 @@ export default function QueuedJobsDrawer() {
   const connectionName = connectionsResourceList.find(
     c => c._id === connectionId
   )?.name;
-  const connections = useSelectorMemo(selectors.flowJobConnections, flowId);
+  const connections = useSelectorMemo(selectors.flowJobConnections, flowId, flowJobConnectionsOptions);
 
   const handleConnectionChange = useCallback(
     (id, value) => {

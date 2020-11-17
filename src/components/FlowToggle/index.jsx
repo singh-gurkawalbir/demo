@@ -29,11 +29,7 @@ export default function FlowToggle({
     state => selectors.isOnOffInProgress(state, flow._id),
     (left, right) => left.onOffInProgress === right.onOffInProgress
   );
-  const integration = useSelector(state =>
-    selectors.resource(state, 'integrations', integrationId)
-  );
-  const istwoDotZeroFrameWork = integration && integration.installSteps &&
-  integration.installSteps.length;
+  const istwoDotZeroFrameWork = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
 
   useEffect(() => {
     if (!onOffInProgress) {
