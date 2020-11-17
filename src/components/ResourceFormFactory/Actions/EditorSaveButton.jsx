@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
+import { useRouteMatch } from 'react-router-dom';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { useLoadingSnackbarOnSave } from '.';
@@ -18,6 +19,7 @@ export default function EditorSaveButton(props) {
     onClose,
     flowId,
   } = props;
+  const match = useRouteMatch();
   const [saveTriggered, setSaveTriggered] = useState(false);
   const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
   const [enquesnackbar] = useEnqueueSnackbar();
@@ -39,9 +41,9 @@ export default function EditorSaveButton(props) {
     }
   }, [onClose, saveCompleted, saveTerminated, saveTriggered]);
   const onSave = useCallback(() => {
-    dispatch(actions.editor.save(id, { flowId }));
+    dispatch(actions.editor.save(id, { flowId, match, editor }));
     setSaveTriggered(true);
-  }, [dispatch, id, flowId]);
+  }, [dispatch, id, flowId, match]);
   const { handleSubmitForm, disableSave, isSaving } = useLoadingSnackbarOnSave({
     saveTerminated,
     onSave,

@@ -76,6 +76,20 @@ export function* pollForInProgressJobs() {
   }
 }
 
+export function* getJobDetails({ jobId }) {
+  const path = `/jobs/${jobId}`;
+  const opts = { method: 'GET' };
+  let job;
+
+  try {
+    job = yield call(apiCallWithRetry, { path, opts });
+  } catch (error) {
+    return undefined;
+  }
+
+  return job;
+}
+
 export function* startPollingForInProgressJobs() {
   const watcher = yield fork(pollForInProgressJobs);
 
@@ -87,8 +101,9 @@ export function* startPollingForInProgressJobs() {
   yield cancel(watcher);
 }
 
-export function* requestJobCollection({ integrationId, flowId, filters = {} }) {
+export function* requestJobCollection({ integrationId, flowId, filters = {}, options = {} }) {
   const jobFilters = { ...filters, integrationId };
+  let requestedJob;
 
   if (flowId) {
     jobFilters.flowId = flowId;
@@ -156,15 +171,29 @@ export function* requestJobCollection({ integrationId, flowId, filters = {} }) {
     return true;
   }
 
+  // flowJobId is sent in options when user clicks a error notification email and jobId is in url request parameters
+  // If user requested job is not in first 1000 results, fetch particular job and merge it in collection.
+  if (options.flowJobId && !collection.find(j => j._id === options.flowJobId)) {
+    try {
+      requestedJob = yield call(getJobDetails, { jobId: options.flowJobId });
+    // eslint-disable-next-line no-empty
+    } catch (e) {}
+    if (requestedJob && requestedJob._id) {
+      // Push if valid job is returned
+      collection.push(requestedJob);
+    }
+  }
+
   yield put(actions.job.receivedCollection({ collection }));
   yield put(actions.job.requestInProgressJobStatus());
 }
 
-export function* getJobCollection({ integrationId, flowId, filters = {} }) {
+export function* getJobCollection({ integrationId, flowId, filters = {}, options = {} }) {
   const watcher = yield fork(requestJobCollection, {
     integrationId,
     flowId,
     filters,
+    options,
   });
 
   yield take(actionTypes.JOB.CLEAR);

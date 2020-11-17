@@ -74,7 +74,7 @@ export const ConfirmDialog = props => {
           {buttons.map(button => (
             <Button
               variant={button.color === 'secondary' ? 'text' : 'outlined'}
-              data-test={button.label}
+              data-test={button.dataTest || button.label}
               key={button.label}
               className={clsx({[classes.btnRight]: buttons.length > 2 && button.label === 'Cancel'})}
               color={button.color === 'secondary' ? '' : 'primary'}

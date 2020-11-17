@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
+import { useRouteMatch } from 'react-router-dom';
 import Icon from '../../../../components/icons/HookIcon';
 import actions from '../../../../actions';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';
@@ -30,6 +31,7 @@ const useStyles = makeStyles(theme => ({
 
 function ExportHooks({ flowId, isViewMode, resource, onClose, open }) {
   const dispatch = useDispatch();
+  const match = useRouteMatch();
   const classes = useStyles();
   const resourceId = resource._id;
   const resourceType = 'exports';
@@ -42,8 +44,9 @@ function ExportHooks({ flowId, isViewMode, resource, onClose, open }) {
 
       dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
       dispatch(actions.resource.commitStaged(resourceType, resourceId, 'value', null, { flowId }));
+      dispatch(actions.hooks.save({ resourceType, resourceId, flowId, match }));
     },
-    [dispatch, resource, resourceId, flowId]
+    [dispatch, resource, resourceId, flowId, match]
   );
   const handleDrawerClose = useCallback(() => onClose(false), [onClose]);
 

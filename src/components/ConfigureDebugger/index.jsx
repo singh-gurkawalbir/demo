@@ -9,6 +9,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import moment from 'moment';
+import { useRouteMatch } from 'react-router-dom';
 import actions from '../../actions';
 import DrawerTitleBar from '../drawer/TitleBar';
 import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
@@ -65,6 +66,7 @@ const debugDurationOptions = [
 
 export default function ConfigureDebugger(props) {
   const classes = useStyles();
+  const match = useRouteMatch();
   const { id, debugDate, onClose } = props;
   const { confirmDialog } = useConfirmDialog();
   const [debugValue, setDebugValue] = useState(0);
@@ -82,7 +84,8 @@ export default function ConfigureDebugger(props) {
     ];
 
     dispatch(actions.resource.patch('connections', id, patchSet));
-  }, [debugValue, dispatch, id]);
+    if (debugValue !== '0') dispatch(actions.connection.enableDebug({ id, debugDurInMins: debugValue, match }));
+  }, [debugValue, dispatch, id, match]);
   const handleValueChange = useCallback((_id, val) => {
     setDebugValue(val);
   }, []);

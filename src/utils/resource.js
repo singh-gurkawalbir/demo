@@ -116,11 +116,16 @@ export function getResourceSubType(resource) {
     resourceType = adaptorTypeMap[adaptorType] || type;
   }
 
-  return {
+  const out = {
+    id: resource._id,
     type: resourceType,
     assistant,
     resourceType: inferResourceType(adaptorType),
   };
+
+  if (resource.offline === true) out.offline = true;
+
+  return out;
 }
 
 export function getResourceSubTypeFromAdaptorType(adaptorType) {
@@ -301,16 +306,16 @@ export function isRealTimeOrDistributedResource(
 
 export function resourceCategory(resource = {}, isLookup, isImport) {
   // eslint-disable-next-line no-nested-ternary
-  let blockType = isImport ? 'Import' : isLookup ? 'Lookup' : 'Export';
+  let blockType = isImport ? 'import' : isLookup ? 'lookup' : 'export';
 
   if (!isImport && !isLookup) {
     blockType = isRealTimeOrDistributedResource(resource)
-      ? 'Listener'
-      : 'Export';
+      ? 'listener'
+      : 'export';
   }
 
   if (resource.adaptorType === 'SimpleExport') {
-    blockType = 'Data Loader';
+    blockType = 'dataLoader';
   }
 
   if (
@@ -320,7 +325,7 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
       resource.type === 'blob') ||
     ['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0
   ) {
-    blockType = 'Transfer';
+    blockType = 'exportTransfer';
   } else if (
     (['RESTImport', 'HTTPImport', 'NetSuiteImport', 'SalesforceImport'].indexOf(
       resource.adaptorType
@@ -328,7 +333,7 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
       resource.blobKeyPath) ||
     ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
   ) {
-    blockType = 'Transfer';
+    blockType = 'importTransfer';
   }
 
   return blockType;

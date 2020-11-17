@@ -48,8 +48,9 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.EDITOR.CHANGE_LAYOUT: {
+        if (!draft[id]) break;
         const initChangeIdentifier =
-          (draft[id] && draft[id].initChangeIdentifier) || 0;
+          draft[id].initChangeIdentifier || 0;
 
         draft[id].initChangeIdentifier = initChangeIdentifier + 1;
         break;
@@ -73,6 +74,7 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.EDITOR.PATCH: {
+        if (!draft[id]) break;
         Object.assign(draft[id], deepClone(patch));
         draft[id].lastChange = Date.now();
         draft[id].status = 'requested';
@@ -80,6 +82,7 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.EDITOR.EVALUATE_RESPONSE: {
+        if (!draft[id]) break;
         draft[id].result = result;
         draft[id].status = 'received';
         delete draft[id].error;
@@ -89,12 +92,14 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.EDITOR.VALIDATE_FAILURE: {
+        if (!draft[id]) break;
         draft[id].violations = violations;
         draft[id].status = 'error';
         break;
       }
 
       case actionTypes.EDITOR.EVALUATE_FAILURE: {
+        if (!draft[id]) break;
         draft[id].error = error?.errorMessage;
         draft[id].errorLine = error?.errorLine;
         draft[id].status = 'error';
