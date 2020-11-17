@@ -10,7 +10,7 @@ describe('Transfers', () => {
     expect(state).toEqual({});
   });
 
-  test('should update preview response when we receive tranfer preview received event', () => {
+  test('should update preview response when we receive transfer preview received event', () => {
     const response = {exports: [{_id: 'id1', name: 'exp1'}], flows: [{_id: 'id2', name: 'flow1'}, {_id: 'id3', name: 'flow3'}]};
     const requestReducer = reducer(
       undefined,
@@ -20,7 +20,7 @@ describe('Transfers', () => {
       transfer: {response},
     });
   });
-  test('should update preview error when we receive tranfer preview received event', () => {
+  test('should update preview error when we receive transfer preview received event', () => {
     const error = 'error';
     const requestReducer = reducer(
       undefined,

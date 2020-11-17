@@ -133,8 +133,6 @@ describe('generateToken saga', () => {
   });
 });
 describe('resourcesReceived saga', () => {
-  // here i need
-
   test('should able to update collection successfully', () => expectSaga(resourcesReceived, { resourceType: 'accesstokens' })
 
     .put(actions.accessToken.updatedCollection())

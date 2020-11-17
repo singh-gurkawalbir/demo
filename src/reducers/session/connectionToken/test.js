@@ -20,7 +20,7 @@ describe('Connection token', () => {
       1234: {},
     });
   });
-  test('should clear token of perticular id when we receive clear token action', () => {
+  test('should clear token of particular id when we receive clear token action', () => {
     const resourceId = '1234';
     const resourceIdNew = '12345';
     const requestReducer = reducer(
