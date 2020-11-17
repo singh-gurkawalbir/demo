@@ -1,7 +1,8 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
-import { RETRY_COUNT } from '../../../sagas/api/requestInterceptors';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
+
+export const RETRY_COUNT = 3;
 
 const initialState = {};
 

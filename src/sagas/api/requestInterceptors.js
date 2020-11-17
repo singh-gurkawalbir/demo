@@ -11,8 +11,7 @@ import {
 import { unauthenticateAndDeleteProfile } from '..';
 import { selectors } from '../../reducers';
 import { isJsonString } from '../../utils/string';
-
-export const RETRY_COUNT = 3;
+import { RETRY_COUNT } from '../../reducers/comms/networkComms';
 
 function* isCurrentProfileDifferent() {
   const currentProfile = yield select(selectors.userProfile);
