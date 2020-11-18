@@ -1,7 +1,8 @@
 export default {
   key: 'ediParse1',
   type: 'ediParse',
-  name: 'Example of rules necessary to parse EDI.',
+  name: 'Sample EDI',
+  description: 'Example of rules necessary to parse EDI.',
   data: `ISA*01*0000000000*01*0000000000*ZZ*ABCDEFGHIJKLMNO*ZZ*123456789012345*101127*1719*U*00400*000003438*0*P*>
     GS*IN*4405197800*999999999*2011205*1710*1320*X*004010VICS
     ST*810*1004

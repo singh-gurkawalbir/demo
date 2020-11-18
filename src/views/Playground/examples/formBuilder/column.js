@@ -16,8 +16,8 @@ const meta = {
     body: {
       id: 'body',
       name: 'body',
-      type: 'text',
-      multiline: true,
+      type: 'editor',
+      mode: 'json',
       label: 'HTTP request body',
     },
     mode: {
@@ -33,7 +33,7 @@ const meta = {
     },
   },
   layout: {
-    type: 'collapse',
+    type: 'column',
     containers: [
       {
         label: 'Basic Fields',
@@ -48,8 +48,9 @@ const meta = {
 };
 
 export default {
-  key: 'form-collapse',
-  mode: 'json',
-  name: 'Collapsible form',
+  key: 'form-column',
+  type: 'formBuilder',
+  name: 'Multi-column',
+  description: 'Example of a form spanning columns',
   data: JSON.stringify(meta, null, 2),
 };
