@@ -4,7 +4,7 @@ import CsvParseRules from '../panels/CsvParseRules';
 
 export default {
   type: 'csvParse',
-  label: 'CSV Parser',
+  label: 'Delimited file parser',
   description: 'Converts delimited data into JSON',
   layout: 'compact',
   panels: [
@@ -14,7 +14,7 @@ export default {
       Panel: CsvParseRules,
     },
     {
-      title: 'Input data',
+      title: 'Sample CSV file',
       area: 'data',
       Panel: DataPanel,
       props: {
