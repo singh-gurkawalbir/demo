@@ -257,16 +257,21 @@ export function* initializeApp(opts) {
     // that happens in sagas/index.js
     return yield put(actions.auth.abortAllSagasAndInitLR({opts}));
   }
+
+  // delete data state when reloading app...
+  // so that all components lazily fetches latest data
+  if (opts?.reload) {
+    yield put(actions.app.deleteDataState());
+  }
   try {
-    // eslint-disable-next-line no-use-before-define
     yield call(retrieveAppInitializationResources);
-    // the following is moved from within auth*() to here to keep original impl
-    if (opts?.reload) {
-      // remount the component
-      yield put(actions.app.reload());
-    }
   } catch (e) {
     return yield put(actions.auth.logout());
+  }
+  // the following is moved from within auth*() to here to keep original impl
+  if (opts?.reload) {
+    // remount the component
+    yield put(actions.app.reload());
   }
 
   if (getLogrocketId()) {

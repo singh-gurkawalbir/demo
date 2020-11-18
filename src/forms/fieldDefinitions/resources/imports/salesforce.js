@@ -160,8 +160,8 @@ export default {
         is: ['contentVersion'],
       },
       {
-        field: 'salesforce.blobOperation',
-        is: ['update'],
+        field: 'salesforce.blobContentVersionOperation',
+        isNot: ['insert'],
       },
     ],
   },
@@ -178,7 +178,7 @@ export default {
         is: ['contentVersion'],
       },
       {
-        field: 'salesforce.blobOperation',
+        field: 'salesforce.blobContentVersionOperation',
         isNot: [''],
       },
     ],
@@ -196,7 +196,7 @@ export default {
         is: ['contentVersion'],
       },
       {
-        field: 'salesforce.blobOperation',
+        field: 'salesforce.blobContentVersionOperation',
         isNot: [''],
       },
     ],
@@ -222,7 +222,7 @@ export default {
         is: ['contentVersion'],
       },
       {
-        field: 'salesforce.blobOperation',
+        field: 'salesforce.blobContentVersionOperation',
         isNot: [''],
       },
     ],
@@ -240,7 +240,7 @@ export default {
         is: ['contentVersion'],
       },
       {
-        field: 'salesforce.blobOperation',
+        field: 'salesforce.blobContentVersionOperation',
         isNot: [''],
       },
     ],
@@ -426,10 +426,39 @@ export default {
         ],
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'inputMode',
         is: ['blob'],
+      },
+      {
+        field: 'salesforce.blobsObjectType',
+        isNot: ['contentVersion'],
+      },
+    ],
+  },
+  'salesforce.blobContentVersionOperation': {
+    type: 'radiogroup',
+    label: 'Operation',
+    required: true,
+    defaultValue: r => r && r.salesforce && r.salesforce.operation,
+    options: [
+      {
+        items: [
+          { label: 'Insert', value: 'insert' },
+          { label: 'Update', value: 'update' },
+          { label: 'Upsert', value: 'upsert' },
+        ],
+      },
+    ],
+    visibleWhenAll: [
+      {
+        field: 'inputMode',
+        is: ['blob'],
+      },
+      {
+        field: 'salesforce.blobsObjectType',
+        is: ['contentVersion'],
       },
     ],
   },
