@@ -11,6 +11,7 @@ export default function ErrorNotifications() {
   const dispatch = useDispatch();
   const errors = useSelector(state => selectors.commsErrors(state), shallowEqual);
   const [enqueueSnackbar] = useEnqueueSnackbar();
+  const hasWarning = useSelector(state => selectors.reqsHasRetriedTillFailure(state));
 
   useEffect(() => {
     if (!errors) return;
@@ -24,6 +25,17 @@ export default function ErrorNotifications() {
     });
     dispatch(actions.clearComms());
   }, [errors, enqueueSnackbar, dispatch]);
+
+  useEffect(() => {
+    if (hasWarning) {
+      enqueueSnackbar({
+        message: <ErrorContent error="You may be experience intermittent network connectivity, Please check your internet" />,
+        variant: 'warning',
+        persist: true,
+        preventDuplicate: true,
+      });
+    }
+  }, [enqueueSnackbar, hasWarning]);
 
   return null;
 }

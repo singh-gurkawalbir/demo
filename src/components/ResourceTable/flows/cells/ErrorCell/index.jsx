@@ -56,7 +56,7 @@ export default function RunCell({
     return (
       <div className={classes.root}>
         <span className={classes.errorStatus}>
-          <StatusCircle variant="error" size="small" />
+          <StatusCircle variant="error" size="mini" />
           <Link className={classes.errorStatusLink} to={`${match.url}/${flowId}/errorsList`}>{flowErrorCount} {flowErrorCount === 1 ? 'error' : 'errors'}</Link>
         </span>
       </div>
@@ -66,7 +66,7 @@ export default function RunCell({
   return (
     <div className={classes.root}>
       <span className={classes.success}>
-        <StatusCircle variant="success" size="small" />
+        <StatusCircle variant="success" size="mini" />
         <Typography variant="body2" component="span" className={classes.label}> success </Typography>
       </span>
     </div>

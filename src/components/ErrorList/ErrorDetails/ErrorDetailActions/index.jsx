@@ -23,6 +23,9 @@ export default function Actions({
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
+  const isFlowDisabled = useSelector(state =>
+    !!(selectors.resource(state, 'flows', flowId)?.disabled)
+  );
   const retryId = useSelector(state =>
       selectors.resourceError(state, {
         flowId,
@@ -70,7 +73,7 @@ export default function Actions({
   if (isResolved) {
     return null;
   }
-  if (mode === 'edit') {
+  if (mode === 'edit' && !isFlowDisabled) {
     return (
       <div className={classes.action}>
         <Button variant="outlined" color="primary" onClick={handleSaveAndRetry}>

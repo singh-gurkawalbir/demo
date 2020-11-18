@@ -39,9 +39,19 @@ const useStyles = makeStyles(theme => ({
       paddingTop: theme.spacing(1),
     },
   },
+  storeErrorStatus: {
+    display: 'grid',
+    width: '100%',
+    gridColumnGap: '10px',
+    gridTemplateColumns: '55% 45%',
+    '& > div:first-child': {
+      wordBreak: 'break-word',
+    },
+  },
 }));
-
+// TODO Surya : StoreMenuItems to go into the ArrowPopper.
 const StoreMenuItems = ({ integration, integrationId }) => {
+  const classes = useStyles();
   const integrationErrorsPerStore = useSelector(state =>
     selectors.integrationErrorsPerStore(state, integrationId),
   shallowEqual
@@ -62,18 +72,18 @@ const StoreMenuItems = ({ integration, integrationId }) => {
 
     if (storeErrorCount === 0) {
       return (
-        <MenuItem key={store.value} value={store.value}>
+        <MenuItem key={store.value} value={store.value} className={classes.storeErrorStatus}>
           <div> {store.label}</div>
-          <span><StatusCircle size="small" variant="success" /> Success</span>
+          <StatusCircle size="mini" variant="success" />
         </MenuItem>
       );
     }
 
     return (
-      <MenuItem key={store.value} value={store.value}>
+      <MenuItem key={store.value} value={store.value} className={classes.storeErrorStatus}>
         <div> {store.label}</div>
         <div>
-          <StatusCircle size="small" variant="error" />
+          <StatusCircle size="mini" variant="error" />
           <span>{storeErrorCount > 9999 ? '9999+' : storeErrorCount}</span>
         </div>
       </MenuItem>
