@@ -268,6 +268,8 @@ export default function SettingsDrawer(props) {
   return (
     <RightDrawer
       hideBackButton
+      variant="temporary"
+      disableBackdropClick
       path={[
         'settings/:mappingKey',
         'settings/category/:editorId/:mappingIndex',
