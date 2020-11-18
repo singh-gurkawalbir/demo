@@ -208,6 +208,17 @@ selectors._editorRule = (state, id) => {
   return editor?.rule || emptyObj;
 };
 
+selectors._editorPreviewError = (state, id) => {
+  if (!state) return emptyObj;
+
+  const editor = state[id];
+
+  return {
+    error: editor?.error,
+    errorLine: editor?.errorLine,
+  };
+};
+
 selectors._editorDataVersion = (state, id) => {
   if (!state) return;
 
