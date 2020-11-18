@@ -4,6 +4,7 @@ import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
 // import processorPatchSet from '../editors/processorPatchSet';
 import editorFeaturesMap from './featuresMap';
+import { isJsonString } from '../../../utils/string';
 
 const emptyObj = {};
 
@@ -72,7 +73,8 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.CLEAR: {
-        delete draft[id];
+        // TODO: delete draft[id];
+        draft[id] = {};
 
         break;
       }
@@ -81,6 +83,9 @@ export default function reducer(state = {}, action) {
         draft[id].data = sampleData;
         draft[id].dataVersion = templateVersion;
         draft[id].initStatus = 'received';
+        // store lastValidData in case user updates data as invalid json. As we still want to show the dropdown data values in
+        // the rule panel
+        draft[id].lastValidData = sampleData;
         break;
       }
 
@@ -98,7 +103,7 @@ export default function reducer(state = {}, action) {
 
       case actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW: {
         // TODO: change evaluate to preview
-        draft[id].autoEvaluate = autoPreview || !draft[id].autoEvaluate;
+        draft[id].autoEvaluate = autoPreview ?? !draft[id].autoEvaluate;
         if (draft[id].autoEvaluate) {
           draft[id].previewStatus = 'requested';
         }
@@ -107,6 +112,9 @@ export default function reducer(state = {}, action) {
 
       case actionTypes._EDITOR.PATCH: {
         Object.assign(draft[id], deepClone(patch));
+        if (patch?.data && isJsonString(draft[id].data)) {
+          draft[id].lastValidData = draft[id].data;
+        }
         draft[id].lastChange = Date.now();
         if (draft[id].autoEvaluate) {
           draft[id].previewStatus = 'requested';
@@ -173,9 +181,31 @@ selectors._editor = (state, id) => {
 
   const editor = state[id];
 
-  if (!editor) return emptyObj;
-
   return editor || emptyObj;
+};
+
+selectors._editorData = (state, id) => {
+  if (!state) return;
+
+  const editor = state[id];
+
+  return editor?.data;
+};
+
+selectors._editorResult = (state, id) => {
+  if (!state) return emptyObj;
+
+  const editor = state[id];
+
+  return editor?.result || emptyObj;
+};
+
+selectors._editorRule = (state, id) => {
+  if (!state) return emptyObj;
+
+  const editor = state[id];
+
+  return editor?.rule || emptyObj;
 };
 
 selectors._editorDataVersion = (state, id) => {
@@ -183,9 +213,7 @@ selectors._editorDataVersion = (state, id) => {
 
   const editor = state[id];
 
-  if (!editor) return;
-
-  return editor.dataVersion;
+  return editor?.dataVersion;
 };
 
 selectors._editorLayout = (state, id) => {
@@ -193,9 +221,7 @@ selectors._editorLayout = (state, id) => {
 
   const editor = state[id];
 
-  if (!editor) return;
-
-  return editor.layout;
+  return editor?.layout;
 };
 
 selectors._editorViolations = (state, id) => processorLogic.validate(state?.[id]);

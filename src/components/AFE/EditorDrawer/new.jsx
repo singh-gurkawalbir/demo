@@ -72,6 +72,7 @@ export default function EditorDrawer(props) {
     state => selectors._editorLayout(state, activeEditorId)
   );
 
+  // TODO: check if this value can be stored in redux state instead
   // retain auto preview value across toggle editors
   const autoEvaluate = useRef(false);
   const handleAutoPreviewToggle = useCallback(() => {
@@ -185,7 +186,7 @@ export default function EditorDrawer(props) {
       <DrawerContent>
         {
           cloneElement(children?.length ? children[activeEditorIndex] : children, {
-            layout: editorLayout,
+            // layout: editorLayout,
             editorId: activeEditorId})
         }
       </DrawerContent>

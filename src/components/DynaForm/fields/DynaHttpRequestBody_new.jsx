@@ -13,8 +13,8 @@ import FieldHelp from '../FieldHelp';
 import DynaLookupEditor from './DynaLookupEditor';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import actions from '../../../actions';
-import _HandlebarsEditor_ from '../../AFE/HandlebarsEditor/new';
 import _AFE2EditorDrawer_ from '../../AFE/AFE2Editor/new';
+import Editor from '../../AFE2/Editor';
 
 const useStyles = makeStyles({
   dynaHttpRequestBodyWrapper: {
@@ -31,29 +31,6 @@ const useStyles = makeStyles({
     marginBottom: 6,
   },
 });
-const ManageLookup = props => {
-  const {
-    label = 'Manage lookups',
-    lookupFieldId,
-    value,
-    onFieldChange,
-    flowId,
-    resourceType,
-    resourceId,
-  } = props;
-
-  return (
-    <DynaLookupEditor
-      id={lookupFieldId}
-      label={label}
-      value={value}
-      onFieldChange={onFieldChange}
-      flowId={flowId}
-      resourceType={resourceType}
-      resourceId={resourceId}
-    />
-  );
-};
 
 export default function _DynaHttpRequestBody_(props) {
   const {
@@ -113,25 +90,18 @@ export default function _DynaHttpRequestBody_(props) {
 
     if (!lookupFieldId) return;
 
-    return ManageLookup({
-      lookupFieldId,
-      value: lookups,
-      onFieldChange,
-      flowId,
-      resourceType,
-      resourceId,
-      connectionId,
-    });
-  }, [
-    adaptorType,
-    connectionId,
-    flowId,
-    lookups,
-    onFieldChange,
-    resourceId,
-    resourceType,
-    supportLookup,
-  ]);
+    return (
+      <DynaLookupEditor
+        id={lookupFieldId}
+        label="Manage lookups"
+        value={lookups}
+        onFieldChange={onFieldChange}
+        flowId={flowId}
+        resourceType={resourceType}
+        resourceId={resourceId}
+  />
+    );
+  }, [adaptorType, flowId, lookups, onFieldChange, resourceId, resourceType, supportLookup]);
 
   const handleSave = editorValues => {
     const { rule } = editorValues;
@@ -176,13 +146,10 @@ export default function _DynaHttpRequestBody_(props) {
         id={id}
         disabled={disabled}
         editorVersion={editorDataVersion}>
-        <_HandlebarsEditor_
+        <Editor
           lookups={lookups}
           disabled={disabled}
-          ruleMode="handlebars"
-          dataMode="json"
-          enableAutocomplete
-          />
+        />
       </_AFE2EditorDrawer_>
 
       <div className={classes.dynaHttpRequestBodyWrapper}>

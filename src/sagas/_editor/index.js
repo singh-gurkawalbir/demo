@@ -128,55 +128,55 @@ export function* save({ id, context }) {
 
     if (
       evaluateResponse &&
-        (evaluateResponse.error || evaluateResponse.violations)
+          (evaluateResponse.error || evaluateResponse.violations)
     ) {
       return yield put(actions._editor.saveFailed(id));
     }
   }
 
   /**
-       *Editor will not be closed unless 'foregroundPatches' terminates. After success/failure of foreground patches, 'backgroundPatches' run in background.
-       backgroundPatches and foregroundPatches are arrays consisting of resource patch and/or actions
-      Example:
-      foregroundPatches = [{
-          patch: [{ op: 'replace', path:${path}, value: ${value} }],
-          resourceType: ${resourceType},
-          resourceId: ${resourceId},
-       },
+         *Editor will not be closed unless 'foregroundPatches' terminates. After success/failure of foreground patches, 'backgroundPatches' run in background.
+         backgroundPatches and foregroundPatches are arrays consisting of resource patch and/or actions
+        Example:
+        foregroundPatches = [{
+            patch: [{ op: 'replace', path:${path}, value: ${value} }],
+            resourceType: ${resourceType},
+            resourceId: ${resourceId},
+         },
 
-          patch: [{ op: 'replace', path:${path}, value: ${value} }],
-          resourceType: ${resourceType},
-          resourceId: ${resourceId},
-       }];
-       backgroundPatches=[
-        {
-            patch: [
-              {
-                op: 'replace',
-                path: '/content',
-                value: ${code},
-              },
-            ],
-            resourceType: 'scripts',
-            resourceId: ${scriptId},
-        },
-        actions.analytics.gainsight.trackEvent('actionName')
-        ];
-       */
+            patch: [{ op: 'replace', path:${path}, value: ${value} }],
+            resourceType: ${resourceType},
+            resourceId: ${resourceId},
+         }];
+         backgroundPatches=[
+          {
+              patch: [
+                {
+                  op: 'replace',
+                  path: '/content',
+                  value: ${code},
+                },
+              ],
+              resourceType: 'scripts',
+              resourceId: ${scriptId},
+          },
+          actions.analytics.gainsight.trackEvent('actionName')
+          ];
+         */
 
   let { foregroundPatches } = patches || {};
   const { backgroundPatches } = patches || {};
 
   // for backward compatibility
   foregroundPatches =
-      foregroundPatches && !Array.isArray(foregroundPatches)
-        ? [foregroundPatches]
-        : foregroundPatches;
+        foregroundPatches && !Array.isArray(foregroundPatches)
+          ? [foregroundPatches]
+          : foregroundPatches;
 
   if (foregroundPatches) {
     for (let index = 0; index < foregroundPatches.length; index += 1) {
       const { action, patch, resourceType, resourceId } =
-          foregroundPatches[index] || {};
+            foregroundPatches[index] || {};
 
       // check if foregroundPatch is an action
       if (action) {
@@ -212,7 +212,7 @@ export function* save({ id, context }) {
   if (backgroundPatches && Array.isArray(backgroundPatches)) {
     for (let index = 0; index < backgroundPatches.length; index += 1) {
       const { action, patch, resourceType, resourceId } =
-          backgroundPatches[index] || {};
+            backgroundPatches[index] || {};
 
       // check if backgroundPatch is an action
       if (action) {
@@ -245,6 +245,48 @@ export function* autoEvaluateProcessor({ id }) {
   return yield call(requestPreview, { id });
 }
 
+export function* refreshHelperFunctions() {
+  const localStorageData = JSON.parse(localStorage.getItem('helperFunctions'));
+  let { updateTime, helperFunctions } = localStorageData || {};
+
+  // if update time is not defined its missing in the local storage
+  // hence we have to retrieve the helper functions and
+  // persist it in the local storage
+
+  if (
+    !updateTime ||
+          Date.now() - updateTime > +process.env.HELPER_FUNCTIONS_INTERVAL_UPDATE
+  ) {
+    const allHelperFunctions = yield call(getResource, {
+      resourceType: 'processors',
+      message: 'Getting Helper functions',
+    });
+
+    // if the response is undefined
+    // the call must have failed for some collection call failure
+    // it could be because of an authentication issue
+    // In that case don't update helperfunctions in localStorage
+    // and its timestamp
+    if (!allHelperFunctions) return;
+    // destructuring for handlebars helperFunctions
+    const {
+      handlebars: { helperFunctions: tmpHelperFunctions },
+    } = allHelperFunctions;
+
+    helperFunctions = tmpHelperFunctions;
+    updateTime = Date.now();
+    localStorage.setItem(
+      'helperFunctions',
+      JSON.stringify({
+        updateTime,
+        helperFunctions,
+      })
+    );
+  }
+
+  yield put(actions._editor.updateHelperFunctions(helperFunctions));
+}
+
 export function* requestEditorSampleData({
   id,
   requestedTemplateVersion,
@@ -261,7 +303,8 @@ export function* requestEditorSampleData({
     resourceId,
     resourceType
   );
-  const { value: formValues } = yield select(selectors.formState, formKey) || {};
+  const formState = yield select(selectors.formState, formKey);
+  const { value: formValues } = formState || {};
   const resource = yield call(constructResourceFromFormValues, {
     formValues,
     resourceId,
@@ -375,52 +418,10 @@ export function* requestEditorSampleData({
   yield put(
     actions._editor.sampleDataReceived(
       id,
-      JSON.stringify(data),
+      data,
       templateVersion,
     )
   );
-}
-
-export function* refreshHelperFunctions() {
-  const localStorageData = JSON.parse(localStorage.getItem('helperFunctions'));
-  let { updateTime, helperFunctions } = localStorageData || {};
-
-  // if update time is not defined its missing in the local storage
-  // hence we have to retrieve the helper functions and
-  // persist it in the local storage
-
-  if (
-    !updateTime ||
-      Date.now() - updateTime > +process.env.HELPER_FUNCTIONS_INTERVAL_UPDATE
-  ) {
-    const allHelperFunctions = yield call(getResource, {
-      resourceType: 'processors',
-      message: 'Getting Helper functions',
-    });
-
-    // if the response is undefined
-    // the call must have failed for some collection call failure
-    // it could be because of an authentication issue
-    // In that case don't update helperfunctions in localStorage
-    // and its timestamp
-    if (!allHelperFunctions) return;
-    // destructuring for handlebars helperFunctions
-    const {
-      handlebars: { helperFunctions: tmpHelperFunctions },
-    } = allHelperFunctions;
-
-    helperFunctions = tmpHelperFunctions;
-    updateTime = Date.now();
-    localStorage.setItem(
-      'helperFunctions',
-      JSON.stringify({
-        updateTime,
-        helperFunctions,
-      })
-    );
-  }
-
-  yield put(actions._editor.updateHelperFunctions(helperFunctions));
 }
 
 export function* initEditor({ id }) {
@@ -428,8 +429,16 @@ export function* initEditor({ id }) {
 
   if (!editor) return;
 
-  // load sample data only when its not received already
-  if (!editor.initStatus || editor.initStatus === 'requested') {
+  // if data is already passed during init, save it to state directly
+  if (editor.data) {
+    yield put(
+      actions._editor.sampleDataReceived(
+        id,
+        editor.data,
+      )
+    );
+  } else if (!editor.initStatus || editor.initStatus === 'requested') {
+    // load sample data only when its not received already
     yield call(requestEditorSampleData, {id});
   }
 
@@ -454,3 +463,4 @@ export default [
   takeLatest(actionTypes._EDITOR.PREVIEW.REQUEST, requestPreview),
   takeLatest(actionTypes._EDITOR.SAVE.REQUEST, save),
 ];
+
