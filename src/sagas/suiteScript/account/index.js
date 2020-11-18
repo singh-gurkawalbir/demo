@@ -26,12 +26,14 @@ export function* checkHasIntegrations({ connectionId }) {
     connectionId
   );
 
-  yield put(
-    actions.suiteScript.account.receivedHasIntegrations(
-      connection.netsuite.account,
-      response.hasIntegrations
-    )
-  );
+  if (response) {
+    yield put(
+      actions.suiteScript.account.receivedHasIntegrations(
+        connection.netsuite.account,
+        response.hasIntegrations
+      )
+    );
+  }
 }
 
 export const accountSagas = [

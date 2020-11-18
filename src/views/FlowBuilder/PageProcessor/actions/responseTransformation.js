@@ -66,6 +66,7 @@ function ResponseTransformationDrawer(props) {
       insertStubKey="transform"
       onClose={onClose}
       optionalSaveParams={optionalSaveParams}
+      isSampleDataLoading={status === 'requested'}
       path="responseTransformation"
     />
   );
