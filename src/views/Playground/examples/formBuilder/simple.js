@@ -1,24 +1,33 @@
-const meta = {
+const sampleData = {
   fieldMap: {
     url: {
       id: 'url',
       name: 'url',
       type: 'relativeuri',
-      helpText: 'Example of a custom input.',
+      helpText: 'example of a custom input.',
       label: 'some url with handlebars support.',
     },
     A: {
       id: 'A',
       name: 'A',
       type: 'checkbox',
+      helpText: 'Optional help for setting: A',
       label: 'Confirm delete..?',
     },
     body: {
       id: 'body',
       name: 'body',
-      type: 'editor',
-      mode: 'json',
+      type: 'text',
+      multiline: true,
+      helpText: 'Optional help for setting: A',
       label: 'HTTP request body',
+      required: true,
+      visibleWhen: [
+        {
+          field: 'mode',
+          is: ['Update'],
+        },
+      ],
     },
     mode: {
       id: 'mode',
@@ -32,24 +41,11 @@ const meta = {
       ],
     },
   },
-  layout: {
-    type: 'column',
-    containers: [
-      {
-        label: 'Basic Fields',
-        fields: ['A', 'url'],
-      },
-      {
-        label: 'Advanced Fields',
-        fields: ['mode', 'body'],
-      },
-    ],
-  },
 };
 
 export default {
-  key: 'form-column',
-  mode: 'json',
-  name: 'Multi-column form',
-  data: JSON.stringify(meta, null, 2),
+  key: 'form-simple',
+  type: 'formBuilder',
+  name: 'Simple form',
+  data: JSON.stringify(sampleData, null, 2),
 };

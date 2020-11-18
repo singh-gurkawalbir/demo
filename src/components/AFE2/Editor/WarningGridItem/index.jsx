@@ -1,8 +1,9 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
-import PanelTitle from './PanelTitle';
-import CodePanel from './GenericEditor/CodePanel';
+import { useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core';
+import { selectors } from '../../../../reducers';
+import PanelTitle from '../../../AFE/PanelTitle';
+import CodePanel from '../panels/Code';
 
 const useStyles = makeStyles(theme => ({
   gridItem: {
@@ -20,35 +21,28 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     alignItems: 'stretch',
   },
+  title: { color: theme.palette.warning.main },
   panel: { flex: '1 1 100px', minHeight: 50 },
 }));
 
 const overrides = { wrap: true };
-export default function ErrorGridItem({ error, violations }) {
+export default function WarningGridItem({ editorId }) {
   const classes = useStyles();
+  const { warning } = useSelector(state => selectors.editor(state, editorId));
 
-  if (!error && !violations) return null;
-  const errorText = [
-    ...(Array.isArray(error) ? error : [error]),
-    violations?.ruleError,
-    violations?.dataError,
-  ]
-    .filter(e => !!e)
-    .join('\n');
+  if (!warning) return null;
 
   return (
     <div className={classes.gridItem}>
       <div className={classes.flexContainer}>
-        <PanelTitle>
-          <Typography color="error">Error</Typography>
-        </PanelTitle>
+        <PanelTitle className={classes.title} title="Warning" />
         <div className={classes.panel}>
           <CodePanel
             readOnly
             overrides={overrides}
             mode="text"
-            name="error"
-            value={errorText}
+            name="warning"
+            value={warning}
         />
         </div>
       </div>

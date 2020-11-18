@@ -1,10 +1,9 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
-import PanelTitle from './PanelTitle';
-import CodePanel from './GenericEditor/CodePanel';
-
-// TODO: Azhar to do styling for console
+import { useSelector } from 'react-redux';
+import { makeStyles, Typography } from '@material-ui/core';
+import { selectors } from '../../../../reducers';
+import PanelTitle from '../../../AFE/PanelTitle';
+import CodePanel from '../panels/Code';
 
 // utilizing the error section in grid to display console panel
 const useStyles = makeStyles(theme => ({
@@ -27,8 +26,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const overrides = { wrap: true };
-export default function ConsoleGridItem({ logs }) {
+export default function ConsoleGridItem({ editorId }) {
   const classes = useStyles();
+  const { logs } = useSelector(state => selectors.editor(state, editorId));
 
   if (!logs && !Array.isArray(logs)) return null;
 

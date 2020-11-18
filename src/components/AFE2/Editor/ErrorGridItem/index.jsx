@@ -1,8 +1,9 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
-import PanelTitle from './PanelTitle';
-import CodePanel from './GenericEditor/CodePanel';
+import { useSelector } from 'react-redux';
+import { makeStyles, Typography } from '@material-ui/core';
+import { selectors } from '../../../../reducers';
+import PanelTitle from '../../../AFE/PanelTitle';
+import CodePanel from '../panels/Code';
 
 const useStyles = makeStyles(theme => ({
   gridItem: {
@@ -24,7 +25,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const overrides = { wrap: true };
-export default function ErrorGridItem({ error, violations }) {
+export default function ErrorGridItem({ editorId }) {
+  const {error, violations} = useSelector(state => selectors.editor(state, editorId));
   const classes = useStyles();
 
   if (!error && !violations) return null;
