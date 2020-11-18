@@ -10,6 +10,7 @@ import Editor from '../../components/AFE2/Editor';
 import EditorPreviewButton from '../../components/AFE2/EditorPreviewButton';
 import FullScreenOpenIcon from '../../components/icons/FullScreenOpenIcon';
 import EditorMenu from './EditorMenu';
+import EditorDrawer from '../../components/AFE2/Drawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -104,6 +105,7 @@ export default function Editors() {
 
         </main>
       </div>
+      <EditorDrawer />
     </>
   );
 }
