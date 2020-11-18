@@ -63,7 +63,7 @@ export default function CsvParsePanel({ editorId, disabled }) {
 
   const dispatch = useDispatch();
   const patchEditor = (option, value) => {
-    dispatch(actions.editor.patch(editorId, { [option]: value }));
+    dispatch(actions.editor.patchRule(editorId, { [option]: value }));
   };
   const showKeyColumnsOptions = status !== 'requested';
 

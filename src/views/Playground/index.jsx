@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Button, FormControl, makeStyles, MenuItem, Tooltip, Typography } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 // import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import examples from './examples';
 import editors from './editorMetadata';
-import CeligoSelect from '../../components/CeligoSelect';
 import Editor from '../../components/AFE2/Editor';
 import EditorPreviewButton from '../../components/AFE2/EditorPreviewButton';
+import EditorMenu from './EditorMenu';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     height: `calc(100% - ${theme.pageBarHeight + theme.appBarHeight}px)`,
   },
   editorList: {
-    width: 220,
+    width: 280,
     padding: theme.spacing(3),
     border: `solid 0 ${theme.palette.secondary.lightest}`,
     borderRightWidth: 1,
@@ -26,9 +26,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
     flexGrow: 1,
   },
-  selectExample: {
-    display: 'flex',
-    justifyContent: 'space-between',
+  title: {
     paddingBottom: theme.spacing(1),
   },
   buttons: {
@@ -45,9 +43,12 @@ export default function Editors() {
   const activeEditor = editors.find(e => e.type === activeType);
   const activeExample = examples[activeType]?.find(e => e.key === exampleKey);
 
-  const handleEditorClick = type => {
+  const handleMenuClick = (type, exampleKey) => {
     setActiveType(type);
-    setExampleKey(examples[type][0].key);
+    setExampleKey(exampleKey);
+
+    // eslint-disable-next-line no-console
+    console.log(type, exampleKey);
   };
 
   // console.log(activeType, exampleKey, activeExample);
@@ -56,7 +57,8 @@ export default function Editors() {
     //   editorId,
     //   rule: activeExample.rule,
     //   data: activeExample.data,
-    //   type: activeExample.type,
+    //   processor: activeExample.type,
+    //   type: [http, url, dataUri] do we need this?
     //   // whatever other props are needed. Note if the data is supplied,
     //   // no need to pass props which are used to obtain sample data.
     // }));
@@ -70,37 +72,22 @@ export default function Editors() {
       <div className={classes.root}>
         <div className={classes.editorList}>
           <Typography variant="h4">Available Editors</Typography>
-          {editors.map(e => (
-            <div key={e.type}>
-              <Tooltip title={e.description} placement="right">
-                <Button selected onClick={() => handleEditorClick(e.type)}>{e.label}</Button>
-              </Tooltip>
-            </div>
-          ))}
+          <EditorMenu onClick={handleMenuClick} />
         </div>
         <main className={classes.content}>
-          <div className={classes.selectExample}>
-            <Typography variant="h4">{activeEditor?.label} Examples</Typography>
-            {!activeEditor
-              ? (
-                <Typography>
-                  Get started by selecting an editor on the left.
-                </Typography>
-              ) : (
-                <FormControl>
-                  <CeligoSelect
-                    placeholder="Select example"
-                    value={exampleKey}
-                    onChange={e => setExampleKey(e.target.value)}>
-                    {examples[activeType].map(e => (
-                      <MenuItem key={e.key} value={e.key}>
-                        {e.name}
-                      </MenuItem>
-                    ))}
-                  </CeligoSelect>
-                </FormControl>
-              )}
+          <div className={classes.title}>
+            {activeEditor ? (
+              <>
+                <Typography variant="h4">{activeEditor.label}</Typography>
+                <Typography variant="h5">{activeExample.description || activeExample.name}</Typography>
+              </>
+            ) : (
+              <Typography>
+                Get started by selecting an editor example on the left.
+              </Typography>
+            )}
           </div>
+
           {activeExample && (
             <>
               <Editor editorId={editorId} />
