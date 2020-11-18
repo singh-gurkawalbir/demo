@@ -229,6 +229,8 @@ export default function* rootSaga() {
     yield spawn(rootSaga);
     // this action updates the redux state as well as the preferences in the backend
     // we need the preferences state before we clear it
+    // this action ensures that the selected account is tied to the user in the backend...
+    // so when we perform initialization the app knows which account to show
     yield put(
       actions.user.preferences.update({
         defaultAShareId: switchAcc.accountToSwitchTo,
