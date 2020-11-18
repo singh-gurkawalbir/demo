@@ -33,9 +33,27 @@ const getParserValue = ({
 
   if (attributePrefix) rules.attributePrefix = attributePrefix;
   if (textNodeName) rules.textNodeName = textNodeName;
-  if (listNodes && typeof listNodes.split === 'function') rules.listNodes = listNodes.split('\n');
-  if (includeNodes && typeof includeNodes.split === 'function') rules.includeNodes = includeNodes.split('\n');
-  if (excludeNodes && typeof excludeNodes.split === 'function') rules.excludeNodes = excludeNodes.split('\n');
+  if (listNodes) {
+    if (typeof listNodes === 'string') {
+      rules.listNodes = listNodes.split('\n');
+    } else if (Array.isArray(listNodes)) {
+      rules.listNodes = listNodes;
+    }
+  }
+  if (includeNodes) {
+    if (typeof includeNodes === 'string') {
+      rules.includeNodes = includeNodes.split('\n');
+    } else if (Array.isArray(includeNodes)) {
+      rules.includeNodes = includeNodes;
+    }
+  }
+  if (excludeNodes) {
+    if (typeof excludeNodes === 'string') {
+      rules.excludeNodes = excludeNodes.split('\n');
+    } else if (Array.isArray(excludeNodes)) {
+      rules.excludeNodes = excludeNodes;
+    }
+  }
 
   const value = [
     {
