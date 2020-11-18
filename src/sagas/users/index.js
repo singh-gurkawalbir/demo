@@ -233,8 +233,7 @@ export function* switchAccount({ id }) {
   }
 
   if (userPreferences.defaultAShareId !== id) {
-    yield put(actions.auth.clearStore());
-    yield put(actions.auth.initSession());
+    yield put(actions.auth.abortAllSagasAndReset(true));
   }
 }
 

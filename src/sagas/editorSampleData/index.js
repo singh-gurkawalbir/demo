@@ -24,7 +24,9 @@ export function* requestEditorSampleData({
     resourceId,
     resourceType
   );
-  const { value: formValues } = yield select(selectors.formState, formKey) || {};
+
+  const formState = yield select(selectors.formState, formKey);
+  const formValues = formState?.value || {};
   const resource = yield call(constructResourceFromFormValues, {
     formValues,
     resourceId,
