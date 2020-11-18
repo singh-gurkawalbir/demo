@@ -218,23 +218,18 @@ export function* changeEmail({ updatedEmail }) {
 export function* switchAccount({ id }) {
   const userPreferences = yield select(selectors.userPreferences);
 
-  try {
-    yield put(
-      actions.user.preferences.update({
-        defaultAShareId: id,
-        environment: 'production',
-      })
-    );
-  } catch (ex) {
-    // is it put?
-    return yield put(
-      actions.api.failure('switch account', 'PUT', 'Could not switch account')
-    );
+  if (userPreferences.defaultAShareId !== id) {
+    // lazily update preferences when reinitializing with the new session
+    // because abortAllSagasAndReset will kill the preferences call
+    return yield put(actions.auth.abortAllSagasAndSwitchAcc(id));
   }
 
-  if (userPreferences.defaultAShareId !== id) {
-    yield put(actions.auth.abortAllSagasAndReset(true));
-  }
+  yield put(
+    actions.user.preferences.update({
+      defaultAShareId: id,
+      environment: 'production',
+    })
+  );
 }
 
 export function* leaveAccount({ id }) {
