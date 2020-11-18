@@ -26,7 +26,7 @@ export default function Editor({ editorId }) {
   let editor = useSelector(state => selectors.editor(state, editorId));
 
   // hardcode editor for now until data layer is connected..
-  editor = { type: 'csvParse', mode: 'json' };
+  editor = { type: 'formBuilder', mode: 'json' };
   const {type} = editor;
   const {layout, panels} = editorMetadata[type];
   const gridTemplate = classes[resolveValue(layout, editor)];

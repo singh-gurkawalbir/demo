@@ -17,21 +17,27 @@ const useStyles = makeStyles({
 });
 
 // Note that props contain the forwarded 'fullPath' and 'onClose' handlers
-// proxies from the right drawer.
+// proxied from the right drawer.
+// hideSave: This is currently only used for the playground where we do not
+// want the user to have any options to save the editor.
 function RouterWrappedContent({ hideSave, onClose, fullPath}) {
   const classes = useStyles();
   const { editorId } = useParams();
   let editor = useSelector(state => selectors.editor(state, editorId));
 
   // hardcode editor for now until data layer is connected..
-  editor = { type: 'csvParse', mode: 'json' };
+  editor = { type: 'formBuilder', mode: 'json' };
 
   const {type} = editor;
-  const { label } = editorMetadata[type];
+  const { label, drawerActions } = editorMetadata[type];
 
   return (
     <>
-      <DrawerHeader title={label} onClose={onClose} fullPath={fullPath} />
+      <DrawerHeader title={label} onClose={onClose} fullPath={fullPath}>
+        { // eslint-disable-next-line react/no-array-index-key
+          drawerActions && drawerActions.map((Action, i) => <Action key={i} editorId={editorId} />)
+        }
+      </DrawerHeader>
 
       <DrawerContent>
         <Editor editorId={editorId} />
