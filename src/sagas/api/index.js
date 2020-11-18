@@ -6,10 +6,6 @@ import {
 } from './apiPaths';
 import { getCSRFToken } from '../../utils/session';
 
-const delay = delay =>
-  new Promise(fulfill => {
-    setTimeout(fulfill, delay);
-  });
 const sessionExpired = {
   message: 'Session Expired',
   status: 401,
@@ -91,10 +87,6 @@ export function checkToThrowSessionValidationException(response) {
       });
     }
   }
-}
-
-export async function introduceNetworkLatency() {
-  await delay(process.env.ADD_NETWORK_LATENCY || 0);
 }
 
 export function isCsrfExpired(error) {

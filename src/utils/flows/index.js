@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { keys } from 'lodash';
+import { keys, map, uniq } from 'lodash';
 import mappingUtil from '../mapping';
 import {
   adaptorTypeMap,
@@ -572,6 +572,106 @@ export function getNextDataFlows(flows, flow) {
       !f.isSimpleImport &&
       !f.disabled
   );
+}
+
+export function getAllConnectionIdsUsedInTheFlow(flow, connections, exports, imports, options = {}) {
+  const exportIds = getExportIdsFromFlow(flow);
+  const importIds = getImportIdsFromFlow(flow);
+  const connectionIds = [];
+
+  if (!flow) {
+    return [];
+  }
+
+  const attachedExports =
+    exports && exports.filter(e => exportIds.indexOf(e._id) > -1);
+  const attachedImports =
+    imports && imports.filter(i => importIds.indexOf(i._id) > -1);
+
+  attachedExports.forEach(exp => {
+    if (exp && exp._connectionId) {
+      connectionIds.push(exp._connectionId);
+    }
+  });
+  attachedImports.forEach(imp => {
+    if (imp && imp._connectionId) {
+      connectionIds.push(imp._connectionId);
+    }
+  });
+
+  const attachedConnections =
+    connections &&
+    connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
+
+  if (!options.ignoreBorrowedConnections) {
+    attachedConnections.forEach(conn => {
+      if (conn && conn._borrowConcurrencyFromConnectionId) {
+        connectionIds.push(conn._borrowConcurrencyFromConnectionId);
+      }
+    });
+  }
+
+  return uniq(connectionIds);
+}
+
+export function getIAResources(integrationResource = {}, allFlows, allConnections, allExports, allImports, options = {}) {
+  console.log('options', options);
+  const { supportsMultiStore, sections } = integrationResource?.settings || {};
+  const { integrationId, storeId, ignoreUnusedConnections } = options;
+  const integrationConnections = allConnections.filter(c => c._integrationId === integrationId);
+  const integrationFlows = allFlows.filter(f => f._integrationId === integrationId);
+
+  if (!supportsMultiStore || !storeId) {
+    return {
+      connections: integrationConnections,
+      flows: integrationFlows,
+    };
+  }
+
+  const flows = [];
+  const flowIds = [];
+  const allFlowIds = [];
+  const connections = [];
+  const flowConnections = [];
+  const exports = [];
+  const imports = [];
+  const selectedStore = (sections || []).find(s => s.id === storeId) || {};
+
+  (selectedStore.sections || []).forEach(sec => {
+    flowIds.push(...map(sec.flows, '_id'));
+  });
+  (sections || []).forEach(store => {
+    (store.sections || []).forEach(sec => {
+      allFlowIds.push(...map(sec.flows, '_id'));
+    });
+  });
+  allFlowIds.forEach(fid => {
+    const flow = integrationFlows.find(f => f._id === fid) || {};
+
+    flowConnections.push(...getAllConnectionIdsUsedInTheFlow(flow, allConnections, allExports, allImports, options));
+  });
+  const unUsedConnections = integrationConnections.filter(c => !flowConnections.includes(c._id));
+
+  flowIds.forEach(fid => {
+    const flow = integrationFlows.find(f => f._id === fid);
+
+    if (flow) {
+      flows.push({_id: flow._id, name: flow.name});
+      connections.push(...getAllConnectionIdsUsedInTheFlow(flow, allConnections, allExports, allImports, options));
+      exports.push(...getExportIdsFromFlow(flow));
+      imports.push(...getImportIdsFromFlow(flow));
+    }
+  });
+
+  const usedConnections = integrationConnections.filter(c => connections.includes(c._id));
+  const connectionList = ignoreUnusedConnections ? usedConnections : [...usedConnections, ...unUsedConnections];
+
+  return {
+    connections: connectionList,
+    flows,
+    exports,
+    imports,
+  };
 }
 
 export function getIAFlowSettings(integration, flowId) {
