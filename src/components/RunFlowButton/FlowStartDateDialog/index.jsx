@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment-timezone';
 import Button from '@material-ui/core/Button';
@@ -15,11 +15,6 @@ import ButtonGroup from '../../ButtonGroup';
 export default function FlowStartDateDialog(props) {
   const { flowId, onClose, disabled, onRun } = props;
   const dispatch = useDispatch();
-  const [state, setState] = useState({
-    changeIdentifier: 0,
-    lastExportDateTimeLoaded: false,
-  });
-  const { changeIdentifier, lastExportDateTimeLoaded } = state;
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
   const preferences = useSelector(state => selectors.userOwnPreferences(state));
   const profilePreferences = useSelector(state =>
@@ -47,20 +42,6 @@ export default function FlowStartDateDialog(props) {
   useEffect(() => {
     fetchLastExportDateTime();
   }, [fetchLastExportDateTime]);
-  useEffect(() => {
-    if (!lastExportDateTimeLoaded && selectorStatus) {
-      setState({
-        changeIdentifier: changeIdentifier + 1,
-        lastExportDateTimeLoaded: true,
-      });
-    }
-  }, [
-    changeIdentifier,
-    fetchLastExportDateTime,
-    lastExportDateTime,
-    lastExportDateTimeLoaded,
-    selectorStatus,
-  ]);
 
   const handleSubmit = formVal => {
     let customStartDate;

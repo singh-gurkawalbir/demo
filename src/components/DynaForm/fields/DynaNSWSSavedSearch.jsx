@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
 import { selectors } from '../../../reducers';
 
 export default function DynaNSWSSavedSearch(props) {
-  const [savedSearchUrl, setSavedSearchUrl] = useState();
   const { value, connectionId } = props;
   const netSuiteSystemDomain = useSelector(state => {
     const connection = selectors.resource(state, 'connections', connectionId);
@@ -17,15 +16,7 @@ export default function DynaNSWSSavedSearch(props) {
     );
   });
 
-  useEffect(() => {
-    if (value && netSuiteSystemDomain) {
-      setSavedSearchUrl(
-        `${netSuiteSystemDomain}/app/common/search/search.nl?id=${value}`
-      );
-    } else {
-      setSavedSearchUrl();
-    }
-  }, [value, netSuiteSystemDomain]);
+  const savedSearchUrl = value && netSuiteSystemDomain ? `${netSuiteSystemDomain}/app/common/search/search.nl?id=${value}` : null;
 
   return <DynaRefreshableSelect {...props} urlToOpen={savedSearchUrl} />;
 }

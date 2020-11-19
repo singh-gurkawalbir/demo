@@ -1,11 +1,12 @@
 import Frame from 'react-frame-component';
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import { generateLayoutColumns } from './util';
 import Section from './Section';
 import { getDomainUrl } from '../../utils/resource';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 export default function SalesforceMappingAssistant({
   connectionId,
@@ -16,47 +17,22 @@ export default function SalesforceMappingAssistant({
   onFieldClick,
 }) {
   const dispatch = useDispatch();
-  const [editLayoutSections, setEditLayoutSections] = useState();
-  const layout = useSelector(
-    state => {
-      if (connectionId && sObjectType && layoutId) {
-        return selectors.metadataOptionsAndResources(state, {
-          connectionId,
-          commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${layoutId}`,
-          filterKey: 'salesforce-sObject-layout',
-        }).data;
-      }
-    },
-    (left, right) => {
-      if (left.errors && right.errors) {
-        return (
-          left.errors.length === right.errors.length &&
-          left.errors[0].message === right.errors[0].message
-        );
-      }
 
-      return left.editLayoutSections.length === right.editLayoutSections.length;
-    }
-  );
+  const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${layoutId}`;
+  const layout = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, 'salesforce-sObject-layout')?.data;
 
   useEffect(() => {
     if (connectionId && sObjectType && layoutId) {
       dispatch(
         actions.metadata.request(
           connectionId,
-          `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${layoutId}`
+          commMetaPath
         )
       );
     }
-  }, [dispatch, connectionId, sObjectType, layoutId]);
+  }, [dispatch, connectionId, sObjectType, layoutId, commMetaPath]);
 
-  useEffect(() => {
-    if (layout && layout.editLayoutSections) {
-      setEditLayoutSections(
-        generateLayoutColumns([...layout.editLayoutSections])
-      );
-    }
-  }, [layout]);
+  const editLayoutSections = useMemo(() => layout?.editLayoutSections ? generateLayoutColumns([...layout.editLayoutSections]) : null, [layout?.editLayoutSections]);
 
   if (!layoutId) {
     return (

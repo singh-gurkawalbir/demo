@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Select from '@material-ui/core/Select';
@@ -30,6 +30,19 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const getPaginationLabel = (page, rowsPerPage, count, hasMore) => {
+  const start = page * rowsPerPage + 1;
+  const end = (page + 1) * rowsPerPage;
+  const total = `${count}${hasMore ? '+' : ''}`;
+
+  return `${start} - ${end < count ? end : count} of ${total}`;
+};
+
+const isDisableNext = (page, rowsPerPage, count, hasMore) => {
+  const end = (page + 1) * rowsPerPage;
+
+  return (end >= count && !hasMore);
+};
 export default function Pagination(props) {
   const {
     className,
@@ -44,22 +57,9 @@ export default function Pagination(props) {
     loadMoreHandler,
   } = props;
   const classes = useStyles();
-  const [label, setLabel] = useState();
-  const [disableNextPage, setDisableNextPage] = useState(false);
 
-  useEffect(() => {
-    const start = page * rowsPerPage + 1;
-    const end = (page + 1) * rowsPerPage;
-    const total = `${count}${hasMore ? '+' : ''}`;
-
-    setLabel(`${start} - ${end < count ? end : count} of ${total}`);
-
-    if (end >= count && !hasMore) {
-      setDisableNextPage(true);
-    } else {
-      setDisableNextPage(false);
-    }
-  }, [count, hasMore, page, rowsPerPage]);
+  const label = getPaginationLabel(page, rowsPerPage, count, hasMore);
+  const disableNextPage = isDisableNext(page, rowsPerPage, count, hasMore);
 
   const handlePrevPage = useCallback(
     event => {
