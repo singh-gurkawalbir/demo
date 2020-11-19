@@ -20,7 +20,6 @@ const useStyle = makeStyles(theme => ({
       paddingRight: 0,
     },
   },
-  // Todo (Dave): please check if we keep collapsed true to the whole form then we don't need to wrap it in a paper.
   paperDefault: {
     padding: theme.spacing(2),
     border: '1px solid',
