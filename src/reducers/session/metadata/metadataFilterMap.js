@@ -206,6 +206,7 @@ export default {
       updateable: d.updateable,
     })),
   'salesforce-recordType-boolean': data =>
+    data.fields &&
     data.fields
       .filter(f => f.type === 'boolean')
       .map(d => ({
