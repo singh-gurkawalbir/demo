@@ -193,9 +193,10 @@ export default function* rootSaga() {
     onAbort: onAbortSaga,
   });
   const t = yield fork(allSagas);
-  const {logrocket, resetApp} = yield race({
+  const {logrocket, logout, switchAcc} = yield race({
     logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-    resetApp: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
+    logout: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
+    switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC),
   });
 
   if (logrocket) {
@@ -209,19 +210,35 @@ export default function* rootSaga() {
     // from within sagas/authentication/index.js
     yield call(initializeApp, logrocket.opts);
   }
-  if (resetApp) {
+  if (logout) {
     // stop the main sagas
     t.cancel();
     // logout requires also reset the store
     yield put(actions.auth.clearStore());
     // restart the root saga again
     yield spawn(rootSaga);
+  }
+  // this effect originates from switching accounts...
+  // when switching accounts we would like to kill all outstanding
+  // api requests than updatePreferences to the selected account restart the saga and subsequently reinitilialize session
 
-    // this action originates from switching accounts...
-    // when switching accounts we would like to kill all outstanding
-    // api requests than restart the saga and subsequently reinitilialize session
-    if (resetApp?.reInit) {
-      yield put(actions.auth.initSession());
-    }
+  if (switchAcc) {
+    // stop the main sagas
+    t.cancel();
+    // restart the root saga again
+    yield spawn(rootSaga);
+    // this action updates the redux state as well as the preferences in the backend
+    // we need the preferences state before we clear it
+    // this action ensures that the selected account is tied to the user in the backend...
+    // so when we perform initialization the app knows which account to show
+    yield put(
+      actions.user.preferences.update({
+        defaultAShareId: switchAcc.accountToSwitchTo,
+        environment: 'production',
+      })
+    );
+    yield put(actions.auth.clearStore());
+
+    yield put(actions.auth.initSession());
   }
 }
