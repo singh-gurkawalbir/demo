@@ -1,9 +1,9 @@
 import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
-import { emptyObject } from '../../../utils/constants';
 import metadataFilterMap from './metadataFilterMap';
 
+const emptyObject = {};
 export default (
   state = {
     application: {},
