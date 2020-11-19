@@ -64,10 +64,10 @@ const useStyles = makeStyles(theme => ({
   configureSectionBtn: {
     padding: 0,
   },
-  flexContainer: {
+  gridContainer: {
     display: 'grid',
     gridColumnGap: '10px',
-    gridTemplateColumns: '55% auto',
+    gridTemplateColumns: 'auto 38%',
     position: 'relative',
     '& > div:first-child': {
       wordBreak: 'break-word',
@@ -266,7 +266,7 @@ const SectionTitle = ({integrationId, storeId, title, titleId}) => {
   }
 
   return (
-    <div className={classes.flexContainer}>
+    <div className={classes.gridContainer}>
       <div> { title }</div>
       <div> {errorStatus} </div>
     </div>
