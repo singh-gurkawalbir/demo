@@ -7,6 +7,7 @@ import DynaAction from '../../DynaForm/DynaAction';
 import { selectors } from '../../../reducers';
 import { useLoadingSnackbarOnSave } from '.';
 import useConfirmDialog from '../../ConfirmDialog';
+import { isNewId } from '../../../utils/resource';
 
 const styles = theme => ({
   actionButton: {
@@ -63,7 +64,7 @@ const SaveButton = props => {
     }, [dispatch, flowId, isGenerate, match, resourceId, resourceType, skipCloseOnSave]);
   const onSave = useCallback(
     values => {
-      if (resource?._connectionId && values['/_connectionId'] && resource._connectionId !== values['/_connectionId']) {
+      if (!isNewId(resourceId) && ['exports', 'imports'].includes(resourceType) && resource?._connectionId !== values?.['/_connectionId']) {
         confirmDialog({
           title: 'Confirm replace',
           message: 'Are you sure you want to replace the connection for this flow step? Replacing a connection will cancel all jobs currently running for this flow.',
@@ -84,7 +85,7 @@ const SaveButton = props => {
         });
       } else { saveResource(values); }
     },
-    [confirmDialog, onCancel, resource?._connectionId, saveResource]
+    [confirmDialog, onCancel, resource?._connectionId, resourceId, resourceType, saveResource]
   );
   const { handleSubmitForm, disableSave, isSaving } = useLoadingSnackbarOnSave({
     saveTerminated,
