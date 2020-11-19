@@ -77,7 +77,7 @@ const MenuComponent = ({children, closeBtnClassName, closeSelect, ...props}) => 
   </div>
 );
 
-function CeligoSelect({ className, children, ...props }) {
+function CeligoSelect({ className, maxHeightOfSelect, children, ...props }) {
   const [open, setOpen] = useState(false);
   const classes = useStyles();
   const openSelect = useCallback(() => {
@@ -98,7 +98,7 @@ function CeligoSelect({ className, children, ...props }) {
   const MenuProps = useMemo(() => ({
     PaperProps: {
       style: {
-        maxHeight: 252,
+        maxHeight: maxHeightOfSelect,
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
