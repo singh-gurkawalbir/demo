@@ -6,10 +6,12 @@ import CodePanel from '../Code';
 
 export default function RulePanel({ editorId, mode, readOnly }) {
   const dispatch = useDispatch();
-  const { rule } = useSelector(state => selectors.editor(state, editorId));
-  const { errorLine, hasError} = useSelector(state => selectors.editor.dataErrors?.(state, editorId) || {});
-  const handleChange = value => {
-    dispatch(actions.editor.patchRule(value));
+  const rule = useSelector(state => selectors._editorRule(state, editorId));
+  const { errorLine, error} = useSelector(state => selectors._editorPreviewError(state, editorId));
+  const handleChange = rule => {
+    // dispatch(actions.editor.patchRule(value));
+    // TODO: have separate patchrule which then can do version1/2 logic
+    dispatch(actions._editor.patch(editorId, { rule }));
   };
 
   return (
@@ -19,7 +21,7 @@ export default function RulePanel({ editorId, mode, readOnly }) {
       readOnly={readOnly}
       onChange={handleChange}
       errorLine={errorLine}
-      hasError={hasError}
+      hasError={!!error}
     />
   );
 }

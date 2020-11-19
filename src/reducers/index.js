@@ -356,6 +356,7 @@ selectors.connectorFieldOptions = (
 };
 
 selectors.editorHelperFunctions = state => state?.session?.editors?.helperFunctions || [];
+selectors._editorHelperFunctions = state => state?.session?._editors?.helperFunctions || [];
 
 selectors.userProfile = createSelector(
   state => state?.user?.profile,
