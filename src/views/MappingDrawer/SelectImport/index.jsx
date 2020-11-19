@@ -77,6 +77,12 @@ export default function SelectImport() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const sortedImports = useMemo(() => [...imports].sort((i1, i2) => {
+    const i1index = flow.pageProcessors?.findIndex(i => i.type === 'import' && i._importId === i1._id);
+    const i2index = flow.pageProcessors?.findIndex(i => i.type === 'import' && i._importId === i2._id);
+
+    return i1index - i2index;
+  }), [flow.pageProcessors, imports]);
 
   if (!flow) {
     return <Typography>No flow exists with id: {flowId}</Typography>;
@@ -87,15 +93,10 @@ export default function SelectImport() {
   if (selectedImportId) {
     return <Redirect push={false} to={getMappingUrl(selectedImportId)} />;
   }
-  imports.sort((i1, i2) => {
-    const i1index = flow.pageProcessors?.findIndex(i => i.type === 'import' && i._importId === i1._id);
-    const i2index = flow.pageProcessors?.findIndex(i => i.type === 'import' && i._importId === i2._id);
 
-    return i1index - i2index;
-  });
   const flowName = flow.name || flow._id;
 
-  if (imports.length === 0) {
+  if (sortedImports.length === 0) {
     // eslint-disable-next-line react/no-unescaped-entities
     return <Typography>The flow "{flowName}", contains no imports.</Typography>;
   }
@@ -110,7 +111,7 @@ export default function SelectImport() {
         Step name
       </Typography>
 
-      {imports.map((i, index) => (
+      {sortedImports.map((i, index) => (
         <Fragment key={i._id}>
           <Button
             data-key="mapping"
