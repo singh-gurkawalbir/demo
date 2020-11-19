@@ -21,13 +21,13 @@ function resolveValue(value, editor) {
 
 const useStyles = makeStyles(layouts);
 
-export default function Editor({ editorId }) {
+export default function Editor({ editorId, ...rest }) {
   const classes = useStyles();
-  let editor = useSelector(state => selectors.editor(state, editorId));
+  const editor = useSelector(state => selectors._editor(state, editorId));
+  const {processor: type} = editor;
 
-  // hardcode editor for now until data layer is connected..
-  editor = { type: 'formBuilder', mode: 'json' };
-  const {type} = editor;
+  if (!type) { return null; }
+
   const {layout, panels} = editorMetadata[type];
   const gridTemplate = classes[resolveValue(layout, editor)];
 
@@ -38,7 +38,7 @@ export default function Editor({ editorId }) {
       {resolveValue(panels, editor).map(p => (
         <PanelGridItem key={p.area} gridArea={p.area}>
           <PanelTitle title={resolveValue(p.title, editor)} />
-          <p.Panel editorId={editorId} {...p.props} />
+          <p.Panel editorId={editorId} {...p.props} {...rest} />
         </PanelGridItem>
       ))}
 

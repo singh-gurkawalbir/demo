@@ -1,5 +1,10 @@
 export default [
   {
+    type: 'handlebars',
+    label: 'Handlebars',
+    description: 'Constructs JSON or XML template against raw data',
+  },
+  {
     type: 'csvParse',
     label: 'CSV Parser',
     description: 'Converts delimited data into JSON',
