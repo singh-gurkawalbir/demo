@@ -18,6 +18,10 @@ export default function EditRetryData({
   shallowEqual
   );
 
+  const isFlowDisabled = useSelector(state =>
+    !!(selectors.resource(state, 'flows', flowId)?.disabled)
+  );
+
   useEffect(() => {
     if (!status && retryId) {
       dispatch(
@@ -32,6 +36,7 @@ export default function EditRetryData({
       value={retryData}
       mode="json"
       onChange={onChange}
+      readOnly={isFlowDisabled}
     />
   );
 }

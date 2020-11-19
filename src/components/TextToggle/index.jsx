@@ -63,6 +63,7 @@ export default function TextToggle({
   variant,
   onChange,
   className,
+  disabled,
   ...rest
 }) {
   const classes = useStyles({ minWidth });
@@ -83,6 +84,7 @@ export default function TextToggle({
       onChange={handleChange}>
       {options.map(item => (
         <ToggleButton
+          disabled={disabled}
           data-test={item.label}
           key={item.value}
           value={item.value}

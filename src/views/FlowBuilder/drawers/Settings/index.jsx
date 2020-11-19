@@ -92,16 +92,18 @@ function Settings({
     }
   };
 
-  const updateFlowNotification = useCallback(formVal => {
-    if (isFlowSubscribed !== formVal.notifyOnFlowError) {
-      dispatch(actions.resource.notifications.updateFlow(flow._id, formVal.notifyOnFlowError));
+  const updateFlowNotification = useCallback(notifyOnFlowError => {
+    if (isFlowSubscribed !== notifyOnFlowError) {
+      dispatch(actions.resource.notifications.updateFlow(flow._id, notifyOnFlowError));
     }
   }, [dispatch, isFlowSubscribed, flow._id]);
 
   const handleSubmit = useCallback(
     formVal => {
       if (isUserInErrMgtTwoDotZero) {
-        updateFlowNotification(formVal);
+        const notifyOnFlowError = formVal.notifyOnFlowError === 'true';
+
+        updateFlowNotification(notifyOnFlowError);
       }
       if (!hasFlowSettingsAccess) {
         return;

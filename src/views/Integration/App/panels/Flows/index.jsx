@@ -40,8 +40,8 @@ const useStyles = makeStyles(theme => ({
   },
   subNav: {
     minWidth: 200,
+    maxWidth: 240,
     borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
-    paddingTop: theme.spacing(2),
   },
   divider: {
     marginRight: theme.spacing(1),
@@ -65,9 +65,38 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   flexContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
+    display: 'grid',
+    gridColumnGap: '10px',
+    gridTemplateColumns: '55% auto',
+    position: 'relative',
+    '& > div:first-child': {
+      wordBreak: 'break-word',
+    },
+    '& > div:last-child': {
+      position: 'relative',
+      right: -12,
+    },
   },
+  flowTitle: {
+    position: 'relative',
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    '&:before': {
+      content: '""',
+      width: '3px',
+      top: 0,
+      height: '100%',
+      position: 'absolute',
+      background: 'transparent',
+      left: '0px',
+    },
+    '&:hover': {
+      '&:before': {
+        background: theme.palette.primary.main,
+      },
+    },
+  },
+
 }));
 export const useActiveTab = () => {
   const [externalTabState, setExternalTabStateFn] = useState({activeTab: 0});
@@ -130,12 +159,12 @@ export const IAFormStateManager = props => {
   return (
     <>
       <FormStateManager {...allProps} formKey={formKey} />
-      {fieldMeta?.actions?.length && (
+      {!!fieldMeta?.actions?.length && (
       <ActionsPanel
         {...fieldMeta}
         actionProps={allActionProps}
       />
-    )}
+      )}
     </>
   );
 };
@@ -221,12 +250,12 @@ const SectionTitle = ({integrationId, storeId, title, titleId}) => {
   const errorCount = integrationErrorsPerSection[titleId];
   const errorStatus = useMemo(() => {
     if (errorCount === 0) {
-      return <StatusCircle size="small" variant="success" />;
+      return <StatusCircle size="mini" variant="success" />;
     }
 
     return (
       <div>
-        <StatusCircle size="small" variant="error" />
+        <StatusCircle size="mini" variant="error" />
         <span>{errorCount > 9999 ? '9999+' : errorCount}</span>
       </div>
     );
@@ -284,7 +313,7 @@ export default function FlowsPanel({ storeId, integrationId }) {
         <Grid item className={classes.subNav}>
           <List>
             {flowSections.map(({ title, titleId }) => (
-              <ListItem key={titleId}>
+              <ListItem key={titleId} className={classes.flowTitle}>
                 <NavLink
                   className={classes.listItem}
                   activeClassName={classes.activeListItem}

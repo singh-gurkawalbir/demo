@@ -30,11 +30,13 @@ export default function reducer(state = {}, action) {
         draft[resourceId][flowId][fieldType] = { status: 'requested' };
         break;
       case actionTypes.EDITOR_SAMPLE_DATA.RECEIVED:
-        draft[resourceId][flowId][fieldType] = {
-          data: sampleData,
-          templateVersion,
-          status: 'received',
-        };
+        if (draft[resourceId]?.[flowId]) {
+          draft[resourceId][flowId][fieldType] = {
+            data: sampleData,
+            templateVersion,
+            status: 'received',
+          };
+        }
 
         break;
       case actionTypes.EDITOR_SAMPLE_DATA.FAILED:

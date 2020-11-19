@@ -433,8 +433,7 @@ describe('all modal sagas', () => {
             ),
           );
 
-          expect(saga.next().value).toEqual(put(actions.auth.clearStore()));
-          expect(saga.next().value).toEqual(put(actions.auth.initSession()));
+          expect(saga.next().value).toEqual(put(actions.auth.abortAllSagasAndReset(true)));
           expect(saga.next().done).toEqual(true);
         });
         test('should switch to sandbox environment successfuly', () => {
@@ -453,8 +452,7 @@ describe('all modal sagas', () => {
             ),
           );
 
-          expect(saga.next().value).toEqual(put(actions.auth.clearStore()));
-          expect(saga.next().value).toEqual(put(actions.auth.initSession()));
+          expect(saga.next().value).toEqual(put(actions.auth.abortAllSagasAndReset(true)));
           expect(saga.next().done).toEqual(true);
         });
       });

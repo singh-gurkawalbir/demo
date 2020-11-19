@@ -99,13 +99,28 @@ const combinedReducers = combineReducers({
 const rootReducer = (state, action) => {
   const newState = combinedReducers(state, action);
 
-  if (action.type === actionTypes.CLEAR_STORE) {
-    const { app, auth } = newState;
+  const {type} = action;
 
-    return { app, auth };
-  }
+  return produce(newState, draft => {
+    switch (type) {
+      case actionTypes.CLEAR_STORE:
+        Object.keys(draft).forEach(key => {
+          // delete everthing except for app and auth
+          if (key !== 'app' && key !== 'auth') {
+            delete draft[key];
+          }
+        });
 
-  return newState;
+        break;
+
+      case actionTypes.APP_DELETE_DATA_STATE:
+        delete draft.data;
+
+        break;
+
+      default:
+    }
+  });
 };
 
 export default rootReducer;

@@ -479,6 +479,19 @@ describe('Reducers in the root reducer', () => {
       },
     });
   });
+  test('should delete just the data part of the redux state', () => {
+    const someInitialState = {
+      user: { profile: { email: 'sds' } },
+    };
+    const state = reducer(someInitialState, actions.app.deleteDataState());
+
+    expect(state.app).toEqual({
+      appErrored: false,
+      bannerOpened: true,
+      count: 1,
+    });
+    expect(state.data).toEqual(undefined);
+  });
 });
 
 describe('tiles', () => {
