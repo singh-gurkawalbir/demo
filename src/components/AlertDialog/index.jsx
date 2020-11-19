@@ -102,16 +102,16 @@ const WarningSessionContent = () => {
 };
 
 const ExpiredSessionContent = () => (
-  <>
-    <DialogTitle>
+  <ModalDialog show>
+    <div>
       <Typography>Your session has expired</Typography>
       <br />
       <Typography>Please sign in again</Typography>
-    </DialogTitle>
-    <DialogContent style={contentWrapper}>
+    </div>
+    <div style={contentWrapper}>
       <SignInForm dialogOpen />
-    </DialogContent>
-  </>
+    </div>
+  </ModalDialog>
 );
 
 export default function AlertDialog() {

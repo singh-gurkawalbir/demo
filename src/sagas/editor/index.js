@@ -5,6 +5,8 @@ import {
   takeEvery,
   takeLatest,
   delay,
+  take,
+  race,
 } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -13,6 +15,7 @@ import { apiCallWithRetry } from '../index';
 import { getResource, commitStagedChanges } from '../resources';
 import processorLogic from '../../reducers/session/editors/processorLogic';
 import { SCOPES } from '../resourceForm';
+import { safeParse } from '../../utils/string';
 
 export function* invokeProcessor({ processor, body }) {
   const path = `/processors/${processor}`;
@@ -49,27 +52,30 @@ export function* evaluateProcessor({ id }) {
     } catch (e) {
       // Error with status code between 400 and 500 are json, hence we can parse them
       if (e.status >= 400 && e.status < 500) {
-        const errJSON = JSON.parse(e.message);
-        // Receiving errors in different formats from BE, for now added below check
-        // Can remove this once backend bug gets fixed (Id: IO-17172)
-        const errorMessage = [`Message: ${errJSON.message || errJSON.errors?.[0]?.message || JSON.stringify(errJSON)}`];
-        let errorLine;
+        const errJSON = safeParse(e.message);
 
-        if (errJSON.location) {
-          errorMessage.push(`Location: ${errJSON.location}`);
-          try {
-            if (/<anonymous>:(\d+)/.test(errJSON.location)) {
-              errorLine = parseInt(/<anonymous>:(\d+)/.exec(errJSON.location)[1], 10);
-            }
-          } catch (e) {
+        if (errJSON) {
+          // Receiving errors in different formats from BE, for now added below check
+          // Can remove this once backend bug gets fixed (Id: IO-17172)
+          const errorMessage = [`Message: ${errJSON.message || errJSON.errors?.[0]?.message || JSON.stringify(errJSON)}`];
+          let errorLine;
+
+          if (errJSON.location) {
+            errorMessage.push(`Location: ${errJSON.location}`);
+            try {
+              if (/<anonymous>:(\d+)/.test(errJSON.location)) {
+                errorLine = parseInt(/<anonymous>:(\d+)/.exec(errJSON.location)[1], 10);
+              }
+            } catch (e) {
             // do nothing
+            }
           }
-        }
-        if (errJSON.stack) {
-          errorMessage.push(`Stack: ${errJSON.stack}`);
-        }
+          if (errJSON.stack) {
+            errorMessage.push(`Stack: ${errJSON.stack}`);
+          }
 
-        return yield put(actions.editor.evaluateFailure(id, {errorMessage, errorLine}));
+          return yield put(actions.editor.evaluateFailure(id, {errorMessage, errorLine}));
+        }
       }
     }
   }
@@ -247,6 +253,18 @@ export function* autoEvaluateProcessor({ id }) {
   return yield call(evaluateProcessor, { id });
 }
 
+function* autoEvaluateProcessorWithCancel(params) {
+  const {id } = params;
+
+  yield race({
+    editorEval: call(autoEvaluateProcessor, params),
+    cancelEditorEval: take(action =>
+      action.type === actionTypes.EDITOR.CLEAR &&
+      action.id === id
+    ),
+  });
+}
+
 export function* refreshHelperFunctions() {
   const localStorageData = JSON.parse(localStorage.getItem('helperFunctions'));
   let { updateTime, helperFunctions } = localStorageData || {};
@@ -297,7 +315,7 @@ export default [
 
   takeLatest(
     [actionTypes.EDITOR.INIT, actionTypes.EDITOR.PATCH],
-    autoEvaluateProcessor
+    autoEvaluateProcessorWithCancel
   ),
   takeLatest(actionTypes.EDITOR.EVALUATE_REQUEST, evaluateProcessor),
   takeLatest(actionTypes.EDITOR.SAVE, saveProcessor),

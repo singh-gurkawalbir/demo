@@ -78,11 +78,14 @@ function RetryForm({jobId, flowJobId}) {
   const handleRetry = useCallback(() => {
     dispatch(
       actions.job.retrySelectedRetries({
-        jobId, flowJobId, selectedRetryIds: [retryId],
+        jobId,
+        flowJobId,
+        selectedRetryIds: [retryId],
+        match,
       })
     );
     history.goBack(2);
-  }, [dispatch, flowJobId, history, jobId, retryId]);
+  }, [dispatch, flowJobId, history, jobId, match, retryId]);
 
   useEffect(() => {
     if (retryId && !retryData) {

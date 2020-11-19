@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import { func, string } from 'prop-types';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import CodePanel from '../GenericEditor/CodePanel';
 
-const styles = {
+const useStyles = makeStyles(theme => ({
   content: {
     display: 'inline',
     width: '100%',
@@ -15,18 +16,32 @@ const styles = {
   tabPanel: {
     height: '100%',
   },
+  tabPanelTab: {
+    padding: 0,
+    '& > span': {
+      fontSize: 17,
+      fontFamily: 'source sans pro',
+    },
+  },
+  resourceTab: {
+    flex: '1 1 auto',
+
+  },
   dataWrapper: {
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
   },
-};
-const SqlDataTabPanel = props => {
+  tabsHeader: {
+    background: theme.palette.common.white,
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+}));
+export default function SqlDataTabPanel(props) {
   const {
     sampleData,
     dataMode,
     defaultData,
-    classes,
     handleChange,
     showDefaultData,
     disabled,
@@ -36,26 +51,35 @@ const SqlDataTabPanel = props => {
   function handleTabChange(event, newValue) {
     setTabValue(newValue);
   }
+  const classes = useStyles();
 
   return (
     <div className={classes.dataWrapper}>
-      <Tabs
-        value={tabValue} onChange={handleTabChange} variant="fullWidth">
-        <Tab
-          label="Resources available for your handlebars template"
-          value="sample"
-          id="tab-sample"
-          aria-controls="tabpanel-sample"
+      <div className={classes.tabsHeader}>
+        <Tabs
+          value={tabValue} onChange={handleTabChange}
+          variant="fullWidth"
+          textColor="primary"
+          indicatorColor="primary">
+          <Tab
+            label="Resources available for your handlebars template"
+            value="sample"
+            id="tab-sample"
+            className={clsx(classes.tabPanelTab, classes.resourceTab)}
+            aria-controls="tabpanel-sample"
         />
-        {showDefaultData && (
+          {showDefaultData && (
           <Tab
             label="Defaults"
             value="default"
+            textColorPrimary
             id="tab-default"
+            className={classes.tabPanelTab}
             aria-controls="tabpanel-default"
           />
-        )}
-      </Tabs>
+          )}
+        </Tabs>
+      </div>
       <div className={classes.content}>
         {tabValue === 'sample' && (
           <Typography
@@ -78,6 +102,7 @@ const SqlDataTabPanel = props => {
         {tabValue === 'default' && showDefaultData && (
           <Typography
             component="div"
+            variant="body1"
             role="tabpanel"
             id="tabpanel-default"
             aria-labelledby="tab-default"
@@ -96,12 +121,10 @@ const SqlDataTabPanel = props => {
       </div>
     </div>
   );
-};
+}
 
 SqlDataTabPanel.propTypes = {
   defaultData: string,
   sampleData: string,
   handleChange: func.isRequired,
 };
-
-export default withStyles(styles)(SqlDataTabPanel);

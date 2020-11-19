@@ -170,7 +170,7 @@ export default function EditorDrawer(props) {
       variant="temporary"
       onClose={handleCancelClick}>
 
-      <DrawerHeader title={title}>
+      <DrawerHeader title={title} disableClose={!!saveInProgress}>
         <DrawerActions
           action={action}
           toggleAction={toggleAction}
@@ -260,7 +260,7 @@ export default function EditorDrawer(props) {
           )}
           {!hidePreviewAction && (
           <DynaCheckbox
-            disabled={disabled}
+            disabled={!!saveInProgress}
             hideLabelSpacing
             id="disableAutoPreview"
             onFieldChange={handleAutoPreviewToggle}

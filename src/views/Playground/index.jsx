@@ -11,6 +11,7 @@ import EditorPreviewButton from '../../components/AFE2/PreviewButtonGroup';
 import FullScreenOpenIcon from '../../components/icons/FullScreenOpenIcon';
 import EditorMenu from './EditorMenu';
 import EditorDrawer from '../../components/AFE2/Drawer';
+import actions from '../../actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     alignSelf: 'flex-end',
   },
 }));
-const editorId = 'playground';
+// const editorId = 'playground';
 
 export default function Editors() {
   const classes = useStyles();
@@ -43,6 +44,7 @@ export default function Editors() {
   const [exampleKey, setExampleKey] = useState();
   const activeEditor = editors.find(e => e.type === activeType);
   const activeExample = examples[activeType]?.find(e => e.key === exampleKey);
+  const editorId = `${activeType}-${exampleKey}`;
 
   const handleFullScreen = () => history.push(`/playground/editor/${editorId}`);
   const handleMenuClick = (type, exampleKey) => {
@@ -55,18 +57,23 @@ export default function Editors() {
 
   // console.log(activeType, exampleKey, activeExample);
   useEffect(() => {
-    // dispatch(actions.editor.init({
-    //   editorId,
-    //   rule: activeExample.rule,
-    //   data: activeExample.data,
-    //   processor: activeExample.type,
-    //   type: [http, url, dataUri] do we need this?
-    //   // whatever other props are needed. Note if the data is supplied,
-    //   // no need to pass props which are used to obtain sample data.
-    // }));
+    if (activeExample) {
+      dispatch(actions._editor.init(
+        editorId,
+        activeExample.type,
+        {
+          rule: activeExample.rule,
+          data: activeExample.data,
+          resultMode: 'json',
+        // type: [http, url, dataUri], // do we need this?
+        }
+      // whatever other props are needed. Note if the data is supplied,
+      // no need to pass props which are used to obtain sample data.
+      ));
+    }
     // every time a user selects a new example, we run this effect to
     // reset the initial state of the editor.
-  }, [activeExample, dispatch]);
+  }, [activeExample, dispatch, editorId]);
 
   const Subtitle = () => {
     if (!activeEditor) {

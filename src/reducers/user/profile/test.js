@@ -33,19 +33,35 @@ describe('user reducers', () => {
       expect(state).toEqual(someTestProfile2);
     });
 
-    test('when delete profile action is dispatched wipe out user profile info except for the user email ', () => {
+    test('when delete profile action is dispatched wipe out user profile info except for the user email and user auth type google info', () => {
       const action = {
         type: actionTypes.RESOURCE.RECEIVED,
         resourceType: 'profile',
         resource: {
           email: 'someemail@gmail.com',
           userName: 'abcd',
+          auth_type_google: {id: '1234', email: 'someemail11@gmail.com'},
         },
       };
       const initialProfileState = reducer(undefined, action);
       const state = reducer(initialProfileState, actions.user.profile.delete());
 
-      expect(state).toEqual({ email: action.resource.email });
+      expect(state).toEqual({ email: action.resource.email, auth_type_google: action.resource.auth_type_google });
+    });
+    test('when unlink with google request is received, clear auth type google info', () => {
+      const action = {
+        type: actionTypes.UNLINKED_WITH_GOOGLE,
+        resourceType: 'profile',
+        resource: {
+          email: 'someemail@gmail.com',
+          userName: 'abcd',
+          auth_type_google: {id: '1234', email: 'someemail11@gmail.com'},
+        },
+      };
+      const initialProfileState = reducer(undefined, action);
+      const state = reducer(initialProfileState, actions.user.profile.unlinkedWithGoogle());
+
+      expect(state).toEqual({ auth_type_google: {} });
     });
   });
 
@@ -65,6 +81,23 @@ describe('user reducers', () => {
       expect(selectors.avatarUrl(state)).toEqual(
         `https://secure.gravatar.com/avatar/123?d=${process.env.CDN_BASE_URI}images/icons/icon-user-default.png&s=55`
       );
+    });
+  });
+  describe('Upgrade error management', () => {
+    test('should return correct error management if it exists', () => {
+      const mockProfile = { useErrMgtTwoDotZero: true };
+      const state = reducer(
+        undefined,
+        actions.resource.received('profile', mockProfile)
+      );
+
+      expect(selectors.isUserInErrMgtTwoDotZero(state)).toEqual(
+        true
+      );
+    });
+    test('should return undefined if no error management exists', () => {
+      expect(selectors.isUserInErrMgtTwoDotZero(undefined)).toEqual(false);
+      expect(selectors.isUserInErrMgtTwoDotZero({})).toEqual(false);
     });
   });
 });

@@ -102,7 +102,7 @@ const auth = {
   userAlreadyLoggedIn: () => action(actionTypes.AUTH_USER_ALREADY_LOGGED_IN),
   clearStore: () => action(actionTypes.CLEAR_STORE),
   abortAllSagasAndInitLR: opts => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR, opts),
-  abortAllSagasAndReset: () => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET),
+  abortAllSagasAndReset: reInit => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET, {reInit}),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
@@ -185,6 +185,7 @@ const connection = {
     }),
   cancelQueuedJob: jobId =>
     action(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, { jobId }),
+  enableDebug: ({ id, debugDurInMins, match }) => action(actionTypes.CONNECTION.ENABLE_DEBUG, { id, debugDurInMins, match }),
 };
 const marketplace = {
   requestConnectors: () =>
@@ -1354,6 +1355,7 @@ const app = {
   fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),
   updateUIVersion: version => action(actionTypes.UI_VERSION_UPDATE, {version}),
   reload: () => action(actionTypes.APP_RELOAD),
+  deleteDataState: () => action(actionTypes.APP_DELETE_DATA_STATE),
   errored: () => action(actionTypes.APP_ERRORED),
   clearError: () => action(actionTypes.APP_CLEAR_ERROR),
   userAcceptedAccountTransfer: () => action(actionTypes.USER_ACCEPTED_ACCOUNT_TRANSFER),
@@ -1397,6 +1399,30 @@ const editor = {
   saveFailed: id => action(actionTypes.EDITOR.SAVE_FAILED, { id }),
   saveComplete: id => action(actionTypes.EDITOR.SAVE_COMPLETE, { id }),
 };
+// TODO: parallel AFE refactor actions.
+const _editor = {
+  init: (id, processor, options) =>
+    action(actionTypes._EDITOR.INIT, { id, processor, options }),
+  changeLayout: (id, newLayout) => action(actionTypes._EDITOR.CHANGE_LAYOUT, { id, newLayout }),
+  patch: (id, patch) => action(actionTypes._EDITOR.PATCH, { id, patch }),
+  clear: id => action(actionTypes._EDITOR.CLEAR, { id }),
+  toggleVersion: (id, version) => action(actionTypes._EDITOR.TOGGLE_VERSION, { id, version }),
+  sampleDataReceived: (id, sampleData, templateVersion) => action(actionTypes._EDITOR.SAMPLEDATA.RECEIVED, { id, sampleData, templateVersion }),
+  sampleDataFailed: (id, sampleDataError) => action(actionTypes._EDITOR.SAMPLEDATA.FAILED, { id, sampleDataError }),
+  toggleAutoPreview: (id, autoPreview) => action(actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW, { id, autoPreview }),
+  updateHelperFunctions: helperFunctions =>
+    action(actionTypes._EDITOR.UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
+  previewRequest: id => action(actionTypes._EDITOR.PREVIEW.REQUEST, { id }),
+  previewFailed: (id, error) =>
+    action(actionTypes._EDITOR.PREVIEW.FAILED, { id, error }),
+  previewResponse: (id, result) =>
+    action(actionTypes._EDITOR.PREVIEW.RESPONSE, { id, result }),
+  saveRequest: (id, context) => action(actionTypes._EDITOR.SAVE.REQUEST, { id, context }),
+  saveFailed: id => action(actionTypes._EDITOR.SAVE.FAILED, { id }),
+  saveComplete: id => action(actionTypes._EDITOR.SAVE.COMPLETE, { id }),
+  validateFailure: (id, violations) =>
+    action(actionTypes._EDITOR.VALIDATE_FAILURE, { id, violations }),
+};
 // #endregion
 // #region Mapping actions
 const mapping = {
@@ -1404,6 +1430,7 @@ const mapping = {
     action(actionTypes.MAPPING.INIT, {flowId, importId, subRecordMappingId}),
   initComplete: (options = {}) =>
     action(actionTypes.MAPPING.INIT_COMPLETE, {...options}),
+  initFailed: () => action(actionTypes.MAPPING.INIT_FAILED, {}),
   patchField: (field, key, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { field, key, value }),
   patchGenerateThroughAssistant: value =>
@@ -1419,7 +1446,7 @@ const mapping = {
   patchIncompleteGenerates: (key, value) =>
     action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value}),
   delete: key => action(actionTypes.MAPPING.DELETE, { key }),
-  save: () => action(actionTypes.MAPPING.SAVE),
+  save: ({ match }) => action(actionTypes.MAPPING.SAVE, { match }),
   saveFailed: () => action(actionTypes.MAPPING.SAVE_FAILED, { }),
   saveComplete: () => action(actionTypes.MAPPING.SAVE_COMPLETE, { }),
   requestPreview: () => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { }),
@@ -1553,11 +1580,12 @@ const accessToken = {
   updatedCollection: () => action(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION),
 };
 const job = {
-  requestCollection: ({ integrationId, flowId, filters }) =>
+  requestCollection: ({ integrationId, flowId, filters, options }) =>
     action(actionTypes.JOB.REQUEST_COLLECTION, {
       integrationId,
       flowId,
       filters,
+      options,
     }),
   receivedCollection: ({ collection }) =>
     action(actionTypes.JOB.RECEIVED_COLLECTION, {
@@ -1581,12 +1609,10 @@ const job = {
   cancel: ({ jobId, flowJobId }) =>
     action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING),
-  resolve: ({ jobId, parentJobId }) =>
-    action(actionTypes.JOB.RESOLVE, { jobId, parentJobId }),
-  resolveSelected: ({ jobs }) =>
-    action(actionTypes.JOB.RESOLVE_SELECTED, { jobs }),
-  resolveAll: ({ flowId, storeId, integrationId, filteredJobsOnly }) =>
-    action(actionTypes.JOB.RESOLVE_ALL, { flowId, storeId, integrationId, filteredJobsOnly }),
+  resolveSelected: ({ jobs, match }) =>
+    action(actionTypes.JOB.RESOLVE_SELECTED, { jobs, match }),
+  resolveAll: ({ flowId, storeId, integrationId, filteredJobsOnly, match }) =>
+    action(actionTypes.JOB.RESOLVE_ALL, { flowId, storeId, integrationId, filteredJobsOnly, match }),
   resolveInit: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RESOLVE_INIT, { parentJobId, childJobId }),
   resolveAllInit: () => action(actionTypes.JOB.RESOLVE_ALL_INIT),
@@ -1596,9 +1622,9 @@ const job = {
   resolveCommit: () => action(actionTypes.JOB.RESOLVE_COMMIT),
   resolveAllCommit: () => action(actionTypes.JOB.RESOLVE_ALL_COMMIT),
   retryAllPending: () => action(actionTypes.JOB.RETRY_ALL_PENDING),
-  retrySelected: ({ jobs }) => action(actionTypes.JOB.RETRY_SELECTED, { jobs }),
-  retryFlowJob: ({ jobId }) =>
-    action(actionTypes.JOB.RETRY_FLOW_JOB, { jobId }),
+  retrySelected: ({ jobs, match }) => action(actionTypes.JOB.RETRY_SELECTED, { jobs, match }),
+  retryFlowJob: ({ jobId, match }) =>
+    action(actionTypes.JOB.RETRY_FLOW_JOB, { jobId, match }),
   retryInit: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RETRY_INIT, { parentJobId, childJobId }),
   retryAllInit: ({ flowIds }) => action(actionTypes.JOB.RETRY_ALL_INIT, { flowIds }),
@@ -1606,8 +1632,8 @@ const job = {
     action(actionTypes.JOB.RETRY_UNDO, { parentJobId, childJobId }),
   retryCommit: () => action(actionTypes.JOB.RETRY_COMMIT),
   retryFlowJobCommit: () => action(actionTypes.JOB.RETRY_FLOW_JOB_COMMIT),
-  retryAll: ({ flowId, storeId, integrationId }) =>
-    action(actionTypes.JOB.RETRY_ALL, { flowId, storeId, integrationId }),
+  retryAll: ({ flowId, storeId, integrationId, match }) =>
+    action(actionTypes.JOB.RETRY_ALL, { flowId, storeId, integrationId, match }),
   retryAllUndo: () => action(actionTypes.JOB.RETRY_ALL_UNDO),
   retryAllCommit: () => action(actionTypes.JOB.RETRY_ALL_COMMIT),
   requestRetryObjects: ({ jobId }) =>
@@ -1629,17 +1655,19 @@ const job = {
     action(actionTypes.JOB.ERROR.RESOLVE_SELECTED_INIT, {
       selectedErrorIds,
     }),
-  resolveSelectedErrors: ({ jobId, flowJobId, selectedErrorIds }) =>
+  resolveSelectedErrors: ({ jobId, flowJobId, selectedErrorIds, match }) =>
     action(actionTypes.JOB.ERROR.RESOLVE_SELECTED, {
       jobId,
       flowJobId,
       selectedErrorIds,
+      match,
     }),
-  retrySelectedRetries: ({ jobId, flowJobId, selectedRetryIds }) =>
+  retrySelectedRetries: ({ jobId, flowJobId, selectedRetryIds, match }) =>
     action(actionTypes.JOB.ERROR.RETRY_SELECTED, {
       jobId,
       flowJobId,
       selectedRetryIds,
+      match,
     }),
   requestRetryData: ({ retryId }) =>
     action(actionTypes.JOB.ERROR.REQUEST_RETRY_DATA, { retryId }),
@@ -1928,6 +1956,7 @@ const flow = {
       fileType,
       fileName,
     }),
+  runRequested: flowId => action(actionTypes.FLOW.RUN_REQUESTED, { flowId }),
   isOnOffActionInprogress: (onOffInProgress, flowId) =>
     action(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {
       onOffInProgress,
@@ -1980,7 +2009,7 @@ const responseMapping = {
     }),
   delete: (id, index) =>
     action(actionTypes.RESPONSE_MAPPING.DELETE, { id, index }),
-  save: id => action(actionTypes.RESPONSE_MAPPING.SAVE, { id }),
+  save: ({ id, match, resourceType, resourceId }) => action(actionTypes.RESPONSE_MAPPING.SAVE, { id, match, resourceType, resourceId }),
   saveFailed: id => action(actionTypes.RESPONSE_MAPPING.SAVE_FAILED, { id }),
   saveComplete: id =>
     action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, { id }),
@@ -2070,6 +2099,10 @@ const editorSampleData = {
     }),
 };
 
+const hooks = {
+  save: context => action(actionTypes.HOOKS.SAVE, context),
+};
+
 export default {
   form,
   postFeedback,
@@ -2086,6 +2119,7 @@ export default {
   patchFilter,
   clearFilter,
   editor,
+  _editor,
   resourceForm,
   resource,
   user,
@@ -2119,4 +2153,5 @@ export default {
   customSettings,
   exportData,
   editorSampleData,
+  hooks,
 };

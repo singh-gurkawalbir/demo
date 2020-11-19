@@ -12,12 +12,14 @@ export default function useEnqueueSnackbar() {
       variant = 'success',
       showUndo,
       handleClose,
+      preventDuplicate = false,
       autoHideDuration = 5000,
       persist = false,
     }) =>
       enqueueSnackbar(message, {
         variant,
         persist,
+        preventDuplicate,
         style: { whiteSpace: 'pre-line' },
         anchorOrigin: {
           vertical: 'top',

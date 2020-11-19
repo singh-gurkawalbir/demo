@@ -15,7 +15,7 @@ import DynaKeyValue from './DynaKeyValue';
 import DynaToggleSelectToText from './select/DynaToggleSelectToText';
 import DynaLookupEditor from './DynaLookupEditor';
 import DynaKeyWithAction from './DynaKeyWithAction';
-import DynaHttpRequestBody from './DynaHttpRequestBody';
+import _DynaHttpRequestBody_ from './DynaHttpRequestBody_new';
 import DynaEditor from './DynaEditor';
 import DynaCsvParse from './editors/DynaCsvParse';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
@@ -116,7 +116,6 @@ import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
 import DynaAs2Mode from './DynaAs2Mode';
 import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
 import DynaNetSuiteAPIVersion from './DynaNetSuiteAPIVersion';
-import DynaCeligoSwitch from './DynaCeligoSwitch';
 import DynaReplaceConnection from './DynaReplaceConnection';
 import DynaSelectRequestMediaType from './DynaSelectRequestMediaType';
 
@@ -149,7 +148,8 @@ export default {
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
   uri: DynaURI,
-  httprequestbody: DynaHttpRequestBody,
+  // httprequestbody: DynaHttpRequestBody,
+  httprequestbody: _DynaHttpRequestBody_,
   importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
   staticMap: DynaStaticMap,
@@ -250,5 +250,4 @@ export default {
   suitescriptuploadfile: DynaSuiteScriptUploadFile,
   ftpfilenamewitheditor: DynaFTPFileNameWithEditor,
   as2Mode: DynaAs2Mode,
-  celigoswitch: DynaCeligoSwitch,
 };

@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // import { selectors } from '../../../reducers';
 import { makeStyles, Button, Divider } from '@material-ui/core';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaCheckbox from '../../DynaForm/fields/checkbox/DynaCheckbox';
 import ButtonGroup from '../../ButtonGroup';
@@ -19,12 +20,10 @@ export default function PreviewButtonGroup({ editorId }) {
   const classes = useStyles();
 
   // eslint-disable-next-line no-unused-vars
-  const autoEvaluate = useSelector(state => false
-    // return selectors.editor.features(state, editorId).autoPreview;
-  );
+  const autoEvaluate = useSelector(state => selectors._editor(state, editorId).autoEvaluate);
 
-  const handlePreview = () => dispatch(actions.editor.evaluate(editorId));
-  const handleToggle = () => dispatch(actions.editor.toggleAutoEvaluate(editorId));
+  const handlePreview = () => dispatch(actions._editor.previewRequest(editorId));
+  const handleToggle = () => dispatch(actions._editor.toggleAutoPreview(editorId));
 
   return (
     <ButtonGroup>
