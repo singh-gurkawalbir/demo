@@ -7,7 +7,7 @@ import CeligoPageBar from '../../components/CeligoPageBar';
 import examples from './examples';
 import editors from './editorMetadata';
 import Editor from '../../components/AFE2/Editor';
-import EditorPreviewButton from '../../components/AFE2/EditorPreviewButton';
+import EditorPreviewButton from '../../components/AFE2/PreviewButtonGroup';
 import FullScreenOpenIcon from '../../components/icons/FullScreenOpenIcon';
 import EditorMenu from './EditorMenu';
 import EditorDrawer from '../../components/AFE2/Drawer';
@@ -73,7 +73,7 @@ export default function Editors() {
     }
     // every time a user selects a new example, we run this effect to
     // reset the initial state of the editor.
-  }, [editorId]);
+  }, [activeExample, dispatch, editorId]);
 
   const Subtitle = () => {
     if (!activeEditor) {
