@@ -8,22 +8,7 @@ export const fieldDefIsValid = (field, fields) =>
 export const fieldDefIsValidUpdated = (field, fields) =>
   !fields || !fields[field.id];
 
-export const getFirstDefinedValue = (...values) => {
-  let valueToReturn;
-
-  values.some(value => {
-    if (typeof value !== 'undefined') {
-      valueToReturn = value;
-
-      return true;
-    }
-
-    return false;
-  });
-
-  return valueToReturn;
-};
-
+export const getFirstDefinedValue = (...values) => values.find(value => typeof value !== 'undefined');
 export const splitDelimitedValue = (value, valueDelimiter) => {
   if (!valueDelimiter || Array.isArray(value)) return value;
 
