@@ -1,6 +1,7 @@
 import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
+import { emptyObject } from '../../../utils/constants';
 import metadataFilterMap from './metadataFilterMap';
 
 export default (
@@ -234,8 +235,8 @@ selectors.assistantData = (state, { adaptorType, assistant }) => {
 };
 
 selectors.assistantPreviewData = (state, resourceId) => {
-  if (!state || !state.preview) {
-    return null;
+  if (!state || !state.preview || !state.preview[resourceId]) {
+    return emptyObject;
   }
 
   return state.preview[resourceId];
