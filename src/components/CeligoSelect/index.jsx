@@ -116,7 +116,7 @@ function CeligoSelect({ className, maxHeightOfSelect, children, ...props }) {
       },
     },
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), []);
+  }), [maxHeightOfSelect]);
 
   return (
     <Select
