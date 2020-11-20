@@ -71,39 +71,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function AppLogosContainer({apps, tileName}) {
-  let applications = [...apps];
-
-  // Make NetSuite always the last application
-  applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]);
-  // Only consider up to four applications
-  applications.length = 4;
-  applications = applications.filter(Boolean);
-
-  // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
-  if (tileName && tileName.indexOf('Magento 1') !== -1 && applications[0] === 'magento') {
-    applications[0] = 'magento1';
-  }
-
-  return (
-    <ApplicationImages noOfApps={applications.length}>
-      {
-        applications
-          .map(app => (<div key={app}><ApplicationImg type={app} /></div>))
-          .reduce((acc, x) => acc === null ? x : (
-            <>
-              {acc}
-              <span>
-                <AddIcon />
-              </span>
-              {x}
-            </>
-          ), null)
-      }
-    </ApplicationImages>
-  );
-}
-
 function Tile({ tile, history, onMove, onDrop, index }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -160,6 +127,26 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   } else if (tile._connectorId) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}${defaultChildId ? `/child/${defaultChildId}` : ''}`;
     urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
+  }
+
+  let app1;
+  let app2;
+
+  if (
+    tile.connector &&
+    tile.connector.applications &&
+    tile.connector.applications.length
+  ) {
+    [app1, app2] = tile.connector.applications;
+
+    if (app1 === 'netsuite') {
+      // Make NetSuite always the second application
+      [app1, app2] = [app2, app1];
+    }
+    // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
+    if (tile.name && tile.name.indexOf('Magento 1') !== -1 && app1 === 'magento') {
+      app1 = 'magento1';
+    }
   }
 
   const handleConnectionDownStatusClick = useCallback(event => {
@@ -328,7 +315,13 @@ function Tile({ tile, history, onMove, onDrop, index }) {
           {tile.connector &&
               tile.connector.applications &&
               tile.connector.applications.length > 1 && (
-                <AppLogosContainer apps={tile.connector.applications} tileName={tile.name} />
+                <ApplicationImages>
+                  <ApplicationImg type={app1} />
+                  <span>
+                    <AddIcon />
+                  </span>
+                  <ApplicationImg type={app2} />
+                </ApplicationImages>
           )}
         </Content>
         <Footer>
