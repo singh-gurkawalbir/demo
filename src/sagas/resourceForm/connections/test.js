@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 
-import { call, put, select } from 'redux-saga/effects';
+import { call, put, select, race, take } from 'redux-saga/effects';
 import { throwError } from 'redux-saga-test-plan/providers';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
@@ -8,10 +8,11 @@ import actions from '../../../actions';
 import { apiCallWithRetry } from '../../index';
 import {newIAFrameWorkPayload, submitFormValues, createFormValuesPatchSet} from '../index';
 import inferErrorMessage from '../../../utils/inferErrorMessage';
-import { requestToken, requestIClients, pingAndUpdateConnection, pingConnection, createPayload, openOAuthWindowForConnection, commitAndAuthorizeConnection, saveAndAuthorizeConnection, netsuiteUserRoles } from '.';
+import { pingConnectionWithAbort, requestToken, requestIClients, pingAndUpdateConnection, pingConnection, createPayload, openOAuthWindowForConnection, commitAndAuthorizeConnection, saveAndAuthorizeConnection, netsuiteUserRoles } from '.';
 import { commitStagedChanges } from '../../resources';
 import { selectors } from '../../../reducers/index';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
+import actionTypes from '../../../actions/types';
 
 describe('ping and update connection saga', () => {
   const connectionId = 'C1';
@@ -566,6 +567,50 @@ describe('Request token saga', () => {
         inferErrorMessage(e.message)
       )
     )
+    );
+  });
+});
+describe('pingConnectionWithAbort', () => {
+  const params = {resourceId: 1234};
+  const {resourceId} = params;
+
+  test('should be able to ping successfully without abort', () => {
+    const saga = pingConnectionWithAbort(params);
+    const raceBetweenApiCallAndAbort = race({
+      testConn: call(pingConnection, params),
+      abortPing: take(
+        action =>
+          action.type === actionTypes.CONNECTION.TEST_CANCELLED &&
+          action.resourceId === resourceId
+      ),
+    });
+
+    expect(JSON.stringify(saga.next().value)).toEqual(
+      JSON.stringify(raceBetweenApiCallAndAbort)
+    );
+  });
+  test('should be able to abort ping call', () => {
+    const saga = pingConnectionWithAbort(params);
+    const response = {abortPing: true};
+    const raceBetweenApiCallAndAbort = race({
+      testConn: call(pingConnection, params),
+      abortPing: take(
+        action =>
+          action.type === actionTypes.CONNECTION.TEST_CANCELLED &&
+          action.resourceId === resourceId
+      ),
+    });
+
+    expect(JSON.stringify(saga.next().value)).toEqual(
+      JSON.stringify(raceBetweenApiCallAndAbort)
+    );
+    expect(saga.next(response).value).toEqual(
+      put(
+        actions.resource.connections.testCancelled(
+          resourceId,
+          'Request Cancelled'
+        )
+      )
     );
   });
 });
