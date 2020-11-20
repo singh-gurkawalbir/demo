@@ -3,7 +3,7 @@ import ResultPanel from '../panels/Result';
 import CsvParseRules from '../panels/CsvParseRules';
 
 export default {
-  type: 'csvParse',
+  type: 'csvParser',
   label: 'Delimited file parser',
   description: 'Converts delimited data into JSON',
   layout: 'compact',
