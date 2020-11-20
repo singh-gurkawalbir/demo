@@ -3,6 +3,7 @@ import {
   put,
   select,
   takeLatest,
+  takeEvery,
   delay,
 } from 'redux-saga/effects';
 import actions from '../../actions';
@@ -203,8 +204,14 @@ export function* save({ id, context }) {
     }
 
     // if all foregroundPatches succeed
+    if (editor.onSave) {
+      yield call(editor.onSave, editor);
+    }
     yield put(actions._editor.saveComplete(id));
   } else {
+    if (editor.onSave) {
+      yield call(editor.onSave, editor);
+    }
     // trigger save complete in case editor doesnt have any foreground processes
     yield put(actions._editor.saveComplete(id));
   }
@@ -237,7 +244,6 @@ export function* autoEvaluateProcessor({ id }) {
 
   if (!editor.autoEvaluate) return;
 
-  // editor is configured for autoEvaluate
   // we WANT a minimum delay to prevent immediate re-renders
   // while a user is typing.
   yield delay(500);
@@ -311,6 +317,23 @@ export function* requestEditorSampleData({
     resourceType,
   });
   let sampleData;
+
+  if (stage === 'outputFilter') {
+    yield call(requestSampleData, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
+    });
+    const { data } = yield select(selectors.sampleDataWrapper, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
+    });
+
+    return {data};
+  }
 
   if (isPageGenerator && isEditorV2Supported) {
     yield call(requestExportSampleData, { resourceId, resourceType, values: formValues });
@@ -415,13 +438,7 @@ export function* requestEditorSampleData({
     stage,
   });
 
-  yield put(
-    actions._editor.sampleDataReceived(
-      id,
-      data,
-      templateVersion,
-    )
-  );
+  return { data, templateVersion};
 }
 
 export function* initEditor({ id }) {
@@ -434,12 +451,20 @@ export function* initEditor({ id }) {
     yield put(
       actions._editor.sampleDataReceived(
         id,
-        editor.data,
+        JSON.stringify(editor.data, null, 2),
       )
     );
   } else if (!editor.initStatus || editor.initStatus === 'requested') {
     // load sample data only when its not received already
-    yield call(requestEditorSampleData, {id});
+    const {data, templateVersion} = yield call(requestEditorSampleData, {id});
+
+    yield put(
+      actions._editor.sampleDataReceived(
+        id,
+        JSON.stringify(data, null, 2),
+        templateVersion,
+      )
+    );
   }
 
   // get Helper functions when the editor initializes
@@ -454,11 +479,12 @@ export function* toggleEditorVersion({ id, version }) {
 
 export default [
   takeLatest(
-    [actionTypes._EDITOR.PATCH,
+    [actionTypes._EDITOR.PATCH.DATA,
+      actionTypes._EDITOR.PATCH.RULE,
       actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW],
     autoEvaluateProcessor
   ),
-  takeLatest(actionTypes._EDITOR.INIT, initEditor),
+  takeEvery(actionTypes._EDITOR.INIT, initEditor),
   takeLatest(actionTypes._EDITOR.TOGGLE_VERSION, toggleEditorVersion),
   takeLatest(actionTypes._EDITOR.PREVIEW.REQUEST, requestPreview),
   takeLatest(actionTypes._EDITOR.SAVE.REQUEST, save),

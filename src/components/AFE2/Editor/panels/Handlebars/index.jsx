@@ -10,7 +10,6 @@ export default function HandlebarsPanel({ editorId, mode = 'handlebars', disable
   const {
     rule,
     lastValidData,
-    dataVersion,
     error,
     errorLine,
   } = useSelector(state => selectors._editor(state, editorId), shallowEqual);
@@ -28,12 +27,8 @@ export default function HandlebarsPanel({ editorId, mode = 'handlebars', disable
   }, [lastValidData]);
 
   const handleChange = useCallback(newRule => {
-    if (dataVersion === 2) {
-      dispatch(actions._editor.patch(editorId, { rule: newRule, v2Rule: newRule }));
-    } else {
-      dispatch(actions._editor.patch(editorId, { rule: newRule, v1Rule: newRule }));
-    }
-  }, [dispatch, editorId, dataVersion]);
+    dispatch(actions._editor.patchRule(editorId, newRule));
+  }, [dispatch, editorId]);
 
   return (
     <CodePanel

@@ -28,9 +28,10 @@ const useStyles = makeStyles(theme => ({
 const overrides = { wrap: true };
 export default function WarningGridItem({ editorId }) {
   const classes = useStyles();
+  const initStatus = useSelector(state => selectors._editor(state, editorId).initStatus);
   const { warning } = useSelector(state => selectors._editorResult(state, editorId));
 
-  if (!warning) return null;
+  if (!warning || initStatus === 'requested') return null;
 
   return (
     <div className={classes.gridItem}>

@@ -5,12 +5,12 @@ import isEqual from 'lodash/isEqual';
 // import merge from './merge';
 // import transform from './transform';
 import handlebars from './handlebars';
-// import javascript from './javascript';
+import javascript from './javascript';
 // import settingsForm from './settingsForm';
 // import structuredFileParser from './structuredFileParser';
 // import structuredFileGenerator from './structuredFileGenerator';
 // import sql from './sql';
-// import filter from './filter';
+import filter from './filter';
 // import netsuiteLookupFilter from './netsuiteLookupFilter';
 // import netsuiteQualificationCriteria from './netsuiteQualificationCriteria';
 // import salesforceQualifier from './salesforceQualifier';
@@ -19,6 +19,8 @@ import handlebars from './handlebars';
 
 const logicMap = {
   handlebars,
+  filter,
+  javascript,
 };
 
 function getLogic(editor) {

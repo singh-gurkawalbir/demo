@@ -28,6 +28,7 @@ export default function Editor({ editorId, ...rest }) {
 
   if (!type) { return null; }
 
+  // TODO: shouldnt layout be read from editor state?
   const {layout, panels} = editorMetadata[type];
   const gridTemplate = classes[resolveValue(layout, editor)];
 
