@@ -61,7 +61,6 @@ export default function CsvParsePanel({ editorId, disabled }) {
     rowsToSkip,
   } = rule;
 
-  console.log(editor);
   const dispatch = useDispatch();
   const patchEditor = (field, value) => {
     const newRule = {...rule, [field]: value};
