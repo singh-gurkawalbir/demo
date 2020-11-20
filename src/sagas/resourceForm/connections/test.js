@@ -1,6 +1,7 @@
 /* global describe, test, expect */
 
 import { call, put, select } from 'redux-saga/effects';
+import { throwError } from 'redux-saga-test-plan/providers';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import actions from '../../../actions';
@@ -8,7 +9,6 @@ import { apiCallWithRetry } from '../../index';
 import {newIAFrameWorkPayload, submitFormValues, createFormValuesPatchSet} from '../index';
 import inferErrorMessage from '../../../utils/inferErrorMessage';
 import { requestToken, requestIClients, pingAndUpdateConnection, pingConnection, createPayload, openOAuthWindowForConnection, commitAndAuthorizeConnection, saveAndAuthorizeConnection, netsuiteUserRoles } from '.';
-import { pingConnectionParams } from '../../api/apiPaths';
 import { commitStagedChanges } from '../../resources';
 import { selectors } from '../../../reducers/index';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
@@ -98,57 +98,32 @@ describe('ping connection saga', () => {
       .run();
   });
   test('should handle api error properly', () => {
-    const saga = pingConnection({ resourceId, values });
+    const connectionPayload = { name: 'new Connection' };
+    const error = new Error('error');
 
-    expect(saga.next().value).toEqual(
-      call(createPayload, {
-        values,
-        resourceType: 'connections',
-        resourceId,
-      })
-    );
-    expect(saga.next().value).toEqual(
-      call(apiCallWithRetry, {
-        path: pingConnectionParams.path,
-        opts: {
-          body: undefined,
-          ...pingConnectionParams.opts,
-        },
-        hidden: true,
-      })
-    );
-    const error = new Error();
-
-    expect(saga.throw(error).value).toEqual(
-      put(actions.resource.connections.testErrored(
+    return expectSaga(pingConnection, { resourceId, values })
+      .provide([
+        [matchers.call.fn(createPayload), connectionPayload],
+        [matchers.call.fn(apiCallWithRetry), throwError(error)],
+      ])
+      .call.fn(createPayload)
+      .call.fn(apiCallWithRetry)
+      .put(actions.resource.connections.testErrored(
         resourceId,
         inferErrorMessage(error?.message)
       ))
-    );
+      .run();
   });
 });
 describe('request IClients saga', () => {
   const connectionId = 'C1';
 
-  test('should be able to to get IClients successfully', () => {
-    const saga = requestIClients({ connectionId });
-
-    const path = `/connections/${connectionId}/iclients`;
-
-    expect(saga.next().value).toEqual(
-      call(newIAFrameWorkPayload, {
-        resourceId: connectionId,
-      })
-    );
-
-    expect(saga.next().value).toEqual(
-      call(apiCallWithRetry, { path,
-        opts: {
-          method: 'GET',
-        } })
-    );
-    expect(saga.next().done).toEqual(true);
-  });
+  test('should be able to to get IClients successfully', () => expectSaga(requestIClients, { connectionId })
+    .provide([
+    ])
+    .call.fn(newIAFrameWorkPayload)
+    .call.fn(apiCallWithRetry)
+    .run());
   test('should be able to to get IClients correctly if it is assistant connection', () => {
     const saga = requestIClients({ connectionId });
 
@@ -307,93 +282,56 @@ describe('Save and authorize connection saga', () => {
     .run());
 
   test('should handle api error properly', () => {
-    const saga = saveAndAuthorizeConnection({ resourceId, values });
+    const error = new Error('error');
 
-    expect(saga.next().value).toEqual(
-      call(submitFormValues, {
-        resourceType: 'connections',
-        resourceId,
-        values,
-      })
-    );
+    return expectSaga(saveAndAuthorizeConnection, { resourceId, values })
+      .provide([
+        [matchers.call.fn(submitFormValues), throwError(error)],
+      ])
+      .call.fn(submitFormValues)
+      .returns(undefined)
 
-    expect(saga.throw(new Error()).value).toEqual(undefined);
-    expect(saga.next().done).toEqual(true);
+      .run();
   });
-  test('should be able to handle conflicts properly', () => {
-    const saga = saveAndAuthorizeConnection({ resourceId, values });
-    const conflictResponse = {conflict: 'conflict'};
-
-    expect(saga.next().value).toEqual(
-      call(submitFormValues, {
-        resourceType: 'connections',
-        resourceId,
-        values,
-      })
-    );
-
-    expect(saga.next().value).toEqual(select(
-      selectors.resourceData,
-      'connections',
-      resourceId
-    ));
-    const effect = saga.next(conflictResponse).value;
-
-    expect(effect).toEqual(undefined);
-  });
+  test('should be able to handle conflicts properly', () => expectSaga(saveAndAuthorizeConnection, { resourceId, values })
+    .provide([
+      [matchers.call.fn(submitFormValues), resp],
+      [select(selectors.resourceData), conflictResponse],
+    ])
+    .call.fn(submitFormValues)
+    .returns(undefined)
+    .run());
   test('should not open oauth window if it is new IA2.0 installer step', () => {
-    const saga = saveAndAuthorizeConnection({ resourceId, values });
     const connectionResource = {conn: 'conn1'};
     const newIAConnDoc = {installStepConnection: true};
 
-    expect(saga.next().value).toEqual(
-      call(submitFormValues, {
-        resourceType: 'connections',
-        resourceId,
-        values,
-      })
-    );
-
-    expect(saga.next().value).toEqual(select(
-      selectors.resourceData,
-      'connections',
-      resourceId
-    ));
-    let effect = saga.next(connectionResource).value;
-
-    expect(effect).toEqual(call(newIAFrameWorkPayload, {
-      resourceId,
-    }));
-    effect = saga.next(newIAConnDoc).value;
-    expect(effect).toEqual(true);
+    return expectSaga(saveAndAuthorizeConnection, { resourceId, values })
+      .provide([
+        [matchers.call.fn(submitFormValues), resp],
+        [select(selectors.resourceData), connectionResource],
+        [matchers.call.fn(newIAFrameWorkPayload), newIAConnDoc],
+      ])
+      .call.fn(submitFormValues)
+      .call.fn(newIAFrameWorkPayload)
+      .returns(true)
+      .run();
   });
   test('should handle api error in open oauth window', () => {
-    const saga = saveAndAuthorizeConnection({ resourceId, values });
     const connectionResource = {conn: 'conn1'};
     const newIAConnDoc = {};
+    const error = new Error('error');
 
-    expect(saga.next().value).toEqual(
-      call(submitFormValues, {
-        resourceType: 'connections',
-        resourceId,
-        values,
-      })
-    );
-
-    expect(saga.next().value).toEqual(select(
-      selectors.resourceData,
-      'connections',
-      resourceId
-    ));
-    let effect = saga.next(connectionResource).value;
-
-    expect(effect).toEqual(call(newIAFrameWorkPayload, {
-      resourceId,
-    }));
-    effect = saga.next(newIAConnDoc).value;
-    expect(effect).toEqual(call(openOAuthWindowForConnection, resourceId));
-    expect(saga.throw(new Error()).value).toEqual(undefined);
-    expect(saga.next().done).toEqual(true);
+    return expectSaga(saveAndAuthorizeConnection, { resourceId, values })
+      .provide([
+        [matchers.call.fn(submitFormValues), resp],
+        [select(selectors.resourceData), connectionResource],
+        [matchers.call.fn(newIAFrameWorkPayload), newIAConnDoc],
+        [matchers.call.fn(openOAuthWindowForConnection), throwError(error)],
+      ])
+      .call.fn(submitFormValues)
+      .call.fn(newIAFrameWorkPayload)
+      .returns(undefined)
+      .run();
   });
 });
 
@@ -434,6 +372,9 @@ describe('Netsuite user roles saga', () => {
   const resp = {production: {
     success: true, accounts: [{account: {type: 'production'}}],
   }};
+  const error = {message: '{"errors":[{"message":"Error message"}]}'};
+  const errorsJSON = JSON.parse(error.message);
+  const { errors } = errorsJSON;
   const unSuccessfulResp = {};
   const successOnlyEnvs = Object.keys(resp)
     .filter(env => resp[env].success)
@@ -476,30 +417,18 @@ describe('Netsuite user roles saga', () => {
       )
     )
     .run());
-  test('should handle api error properly', () => {
-    const saga = netsuiteUserRoles({ connectionId, values });
-    const { '/netsuite/email': email, '/netsuite/password': password } = values;
-
-    const reqPayload = { email, password };
-
-    expect(saga.next().value).toEqual(
-      call(apiCallWithRetry, {
-        path: '/netsuite/alluserroles',
-        opts: { body: reqPayload, method: 'POST' },
-        hidden: true,
-      })
-    );
-    const e = {message: '{"errors":[{"message":"Error message"}]}'};
-    const errorsJSON = JSON.parse(e.message);
-    const { errors } = errorsJSON;
-
-    expect(saga.throw(e).value).toEqual(put(
+  test('should handle api error properly', () => expectSaga(netsuiteUserRoles, { connectionId, values })
+    .provide([
+      [matchers.call.fn(apiCallWithRetry), throwError(error)],
+    ])
+    .call.fn(apiCallWithRetry)
+    .put(
       actions.resource.connections.netsuite.requestUserRolesFailed(
         connectionId,
         errors[0].message
       ))
-    );
-  });
+    .run());
+
   test('should return directly when there is no connection Id and form values', () => {
     const saga = netsuiteUserRoles({ connectionId: undefined, values: undefined });
 
