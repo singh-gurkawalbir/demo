@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { func, string } from 'prop-types';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import CodePanel from '../GenericEditor/CodePanel';
+import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -16,37 +18,59 @@ const useStyles = makeStyles(theme => ({
   tabPanel: {
     height: '100%',
   },
+  ruleWrap: {
+    whiteSpace: 'nowrap',
+  },
   tabPanelTab: {
-    padding: 0,
+    padding: theme.spacing(1),
     '& > span': {
       fontSize: 17,
       fontFamily: 'source sans pro',
+      fontWeight: 'normal',
+      color: theme.palette.text.secondary,
+      justifyContent: 'flex-start',
+      lineHeight: 1,
+    },
+  },
+  defaultsTab: {
+    '& > span': {
+      justifyContent: 'center',
     },
   },
   resourceTab: {
-    flex: '1 1 auto',
-
+    flex: '1 1',
   },
   dataWrapper: {
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
   },
+  // TODO: @azhar add the color in common file
   tabsHeader: {
     background: theme.palette.common.white,
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    borderBottom: 'solid 1px rgb(0,0,0,0.3)',
   },
+  customTabIndicator: {
+    backgroundColor: 'transparent',
+  },
+
 }));
-export default function SqlDataTabPanel(props) {
+export default function SqlRuleTabPanel(props) {
   const {
-    sampleData,
-    dataMode,
+    rule,
+    ruleMode,
     defaultData,
-    handleChange,
+    handleRuleChange,
+    handleDataChange,
     showDefaultData,
     disabled,
+    enableAutocomplete,
+    error,
+    ruleTitle,
+    dataMode,
   } = props;
-  const [tabValue, setTabValue] = useState('sample');
+  const [tabValue, setTabValue] = useState('rule');
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   function handleTabChange(event, newValue) {
     setTabValue(newValue);
@@ -55,18 +79,23 @@ export default function SqlDataTabPanel(props) {
 
   return (
     <div className={classes.dataWrapper}>
-      <div className={classes.tabsHeader}>
+      <div
+        className={classes.tabsHeader}>
         <Tabs
           value={tabValue} onChange={handleTabChange}
           variant="fullWidth"
           textColor="primary"
-          indicatorColor="primary">
+          indicatorColor="primary"
+          classes={{
+            indicator: clsx({[classes.customTabIndicator]: !showDefaultData}),
+          }}
+          >
           <Tab
-            label="Resources available for your handlebars template"
-            value="sample"
-            id="tab-sample"
-            className={clsx(classes.tabPanelTab, classes.resourceTab)}
-            aria-controls="tabpanel-sample"
+            label={ruleTitle}
+            value="rule"
+            id="tab-rule"
+            className={clsx(classes.tabPanelTab, classes.resourceTab, {[classes.ruleWrap]: drawerOpened})}
+            aria-controls="tabpanel-rule"
         />
           {showDefaultData && (
           <Tab
@@ -74,29 +103,29 @@ export default function SqlDataTabPanel(props) {
             value="default"
             textColorPrimary
             id="tab-default"
-            className={classes.tabPanelTab}
+            className={clsx(classes.tabPanelTab, classes.defaultsTab)}
             aria-controls="tabpanel-default"
           />
           )}
         </Tabs>
       </div>
       <div className={classes.content}>
-        {tabValue === 'sample' && (
+        {tabValue === 'rule' && (
           <Typography
             component="div"
             role="tabpanel"
-            id="tabpanel-sample"
-            aria-labelledby="tab-sample"
+            id="tabpanel-rule"
+            aria-labelledby="tab-rule"
             className={classes.tabPanel}>
             <CodePanel
-              name="sampleData"
-              value={sampleData}
-              mode={dataMode}
+              name="rule"
+              value={rule}
               readOnly={disabled}
-              onChange={data => {
-                handleChange('sampleData', data);
-              }}
-            />
+              mode={ruleMode}
+              onChange={handleRuleChange}
+              enableAutocomplete={enableAutocomplete}
+              hasError={!!error}
+        />
           </Typography>
         )}
         {tabValue === 'default' && showDefaultData && (
@@ -113,7 +142,7 @@ export default function SqlDataTabPanel(props) {
               mode={dataMode}
               readOnly={disabled}
               onChange={data => {
-                handleChange('defaultData', data);
+                handleDataChange('defaultData', data);
               }}
             />
           </Typography>
@@ -123,8 +152,8 @@ export default function SqlDataTabPanel(props) {
   );
 }
 
-SqlDataTabPanel.propTypes = {
+SqlRuleTabPanel.propTypes = {
   defaultData: string,
-  sampleData: string,
-  handleChange: func.isRequired,
+  rule: string,
+  handleDataChange: func.isRequired,
 };
