@@ -102,7 +102,7 @@ const WarningSessionContent = () => {
 };
 
 const ExpiredSessionContent = () => (
-  <ModalDialog show>
+  <ModalDialog show disableEnforceFocus>
     <div>
       <Typography>Your session has expired</Typography>
       <br />
