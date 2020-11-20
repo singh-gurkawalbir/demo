@@ -49,6 +49,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function CsvParsePanel({ editorId, disabled }) {
   const classes = useStyles();
+  const editor = useSelector(state => selectors._editor(state, editorId));
+  const { result, status, rule = {} } = editor;
   const {
     columnDelimiter = '',
     rowDelimiter = '',
@@ -56,14 +58,17 @@ export default function CsvParsePanel({ editorId, disabled }) {
     hasHeaderRow = false,
     multipleRowsPerRecord = false,
     trimSpaces = false,
-    result,
     rowsToSkip,
-    status,
-  } = useSelector(state => selectors.editor(state, editorId));
+  } = rule;
 
   const dispatch = useDispatch();
-  const patchEditor = (option, value) => {
-    dispatch(actions.editor.patchRule(editorId, { [option]: value }));
+  const patchEditor = (field, value) => {
+    const newRule = {...rule, [field]: value};
+
+    if (field === 'multipleRowsPerRecord') {
+      newRule.keyColumns = [];
+    }
+    dispatch(actions._editor.patch(editorId, { rule: newRule }));
   };
   const showKeyColumnsOptions = status !== 'requested';
 
@@ -172,10 +177,7 @@ export default function CsvParsePanel({ editorId, disabled }) {
               color="primary"
               checked={multipleRowsPerRecord}
               data-test="multipleRowsPerRecord"
-              onChange={() => {
-                patchEditor('multipleRowsPerRecord', !multipleRowsPerRecord);
-                patchEditor('keyColumns', []);
-              }}
+              onChange={() => patchEditor('multipleRowsPerRecord', !multipleRowsPerRecord)}
             />
           )}
           label="Multiple rows per record"
