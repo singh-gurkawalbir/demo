@@ -1,9 +1,9 @@
-import csvParse from './csvParse';
+import csvParser from './csvParser';
 import formBuilder from './formBuilder';
 import handlebars from './handlebars';
 
 export default {
-  csvParse,
+  csvParser,
   formBuilder,
   handlebars,
 };
