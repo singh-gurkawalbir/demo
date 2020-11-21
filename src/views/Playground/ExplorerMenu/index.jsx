@@ -8,12 +8,10 @@ import { selectors } from '../../../reducers';
 import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import LoadResources from '../../../components/LoadResources';
-import getEditorsByResource from './util';
 import IntegrationIcon from '../../../components/icons/IntegrationAppsIcon';
 import FlowIcon from '../../../components/icons/FlowsIcon';
 import ResourcesIcon from '../../../components/icons/ResourcesIcon';
-import ToolsIcon from '../../../components/icons/ToolsIcon';
-import TransformIcon from '../../../components/icons/TransformIcon';
+import ResourceItemsBranch from './ResourceActionsBranch';
 
 const useStyles = makeStyles(theme => ({
   editorItem: {
@@ -47,51 +45,6 @@ export default function ExplorerMenu({ onClick }) {
 
   const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
 
-  // The above FlowResource selector does not deliver the resourceType
-  // Without this, we must query both imports and exports collections
-  // to find the flow resource details. If we have a better selector, we
-  // should use it.
-  const resource = useSelector(state => {
-    if (!resourceId) return;
-    const resource = selectors.resource(state, 'exports', resourceId);
-
-    if (resource) return resource;
-
-    return selectors.resource(state, 'imports', resourceId);
-  });
-
-  const EditorIcon = ({type}) => {
-    switch (type) {
-      case 'csvParser':
-        return <ToolsIcon />;
-      case 'transform':
-        return <TransformIcon />;
-      default:
-        return <ToolsIcon />;
-    }
-  };
-
-  const ResourceItemsBranch = ({id}) => {
-    if (id !== resourceId) return null;
-
-    const editors = getEditorsByResource(resource);
-
-    if (!editors?.length) {
-      return <TreeItem nodeId={`${id}-empty`} label="Add this resource type to getEditorsByResource" />;
-    }
-
-    return editors.map(({type, fieldId}) => (
-      <TreeItem
-        key={type} nodeId={type} label={type}
-        icon={<EditorIcon type={type} />}
-        // onClick(flowId, resourceId, stage, fieldId)
-        // We need to enhance the getEditorsByResource response to provide the correct
-        // data points that are needed to init an editor. Possibly the above onClick
-        // callback sent from the playground view needs to be fixed too.
-        onClick={() => onClick(flowId, resourceId, type, fieldId)} />
-    ));
-  };
-
   const ResourcesBranch = ({id}) => {
     if (id !== flowId) return null;
 
@@ -99,12 +52,19 @@ export default function ExplorerMenu({ onClick }) {
       return <TreeItem nodeId={`${id}-empty`} label="No Resources" />;
     }
 
+    // onClick(flowId, resourceId, stage, fieldId)
+    // We need to enhance the getEditorsByResource response to provide the correct
+    // data points that are needed to init an editor. Possibly the above onClick
+    // callback sent from the playground view needs to be fixed too.
+    const handleClick = (type, fieldId) => onClick(flowId, resourceId, type, fieldId);
+
     return flowResources.map(({_id: id, name}) => (
       <TreeItem
         key={id} nodeId={id} label={name || id}
         icon={<ResourcesIcon />}
         onClick={() => setResourceId(id)} >
-        <ResourceItemsBranch id={id} />
+        {(id === resourceId) &&
+          <ResourceItemsBranch resourceId={resourceId} onClick={handleClick} />}
       </TreeItem>
     ));
   };

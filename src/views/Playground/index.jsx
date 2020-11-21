@@ -13,6 +13,7 @@ import ExampleMenu from './ExampleMenu';
 import ExplorerMenu from './ExplorerMenu';
 import EditorDrawer from '../../components/AFE2/Drawer';
 import actions from '../../actions';
+import ResourceDrawer from '../../components/drawer/Resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -127,6 +128,7 @@ export default function Editors() {
         </main>
       </div>
       <EditorDrawer />
+      <ResourceDrawer />
     </>
   );
 }
