@@ -9,6 +9,11 @@ import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import LoadResources from '../../../components/LoadResources';
 import getEditorsByResource from './util';
+import IntegrationIcon from '../../../components/icons/IntegrationAppsIcon';
+import FlowIcon from '../../../components/icons/FlowsIcon';
+import ResourcesIcon from '../../../components/icons/ResourcesIcon';
+import ToolsIcon from '../../../components/icons/ToolsIcon';
+import TransformIcon from '../../../components/icons/TransformIcon';
 
 const useStyles = makeStyles(theme => ({
   editorItem: {
@@ -55,6 +60,17 @@ export default function ExplorerMenu({ onClick }) {
     return selectors.resource(state, 'imports', resourceId);
   });
 
+  const EditorIcon = ({type}) => {
+    switch (type) {
+      case 'csvParser':
+        return <ToolsIcon />;
+      case 'transform':
+        return <TransformIcon />;
+      default:
+        return <ToolsIcon />;
+    }
+  };
+
   const ResourceItemsBranch = ({id}) => {
     if (id !== resourceId) return null;
 
@@ -67,6 +83,7 @@ export default function ExplorerMenu({ onClick }) {
     return editors.map(({type, fieldId}) => (
       <TreeItem
         key={type} nodeId={type} label={type}
+        icon={<EditorIcon type={type} />}
         // onClick(flowId, resourceId, stage, fieldId)
         // We need to enhance the getEditorsByResource response to provide the correct
         // data points that are needed to init an editor. Possibly the above onClick
@@ -85,6 +102,7 @@ export default function ExplorerMenu({ onClick }) {
     return flowResources.map(({_id: id, name}) => (
       <TreeItem
         key={id} nodeId={id} label={name || id}
+        icon={<ResourcesIcon />}
         onClick={() => setResourceId(id)} >
         <ResourceItemsBranch id={id} />
       </TreeItem>
@@ -101,6 +119,7 @@ export default function ExplorerMenu({ onClick }) {
     return flows.map(({id, name}) => (
       <TreeItem
         key={id} nodeId={id} label={name || id}
+        icon={<FlowIcon />}
         onClick={() => setFlowId(id)}>
         <ResourcesBranch id={id} />
       </TreeItem>
@@ -122,10 +141,9 @@ export default function ExplorerMenu({ onClick }) {
       >
         {integrations.map(({id, name}) => (
           <TreeItem
+            icon={<IntegrationIcon />}
             className={classes.editorItem}
-            key={id}
-            nodeId={id}
-            label={name}
+            key={id} nodeId={id} label={name}
             onClick={() => setIntegrationId(id)}>
             <FlowBranch id={id} />
           </TreeItem>

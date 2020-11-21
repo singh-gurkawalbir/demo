@@ -1,4 +1,6 @@
 export default function getEditorsByResource(resource) {
+  if (!resource) return [];
+
   const { adaptorType } = resource;
 
   // eslint-disable-next-line no-console
