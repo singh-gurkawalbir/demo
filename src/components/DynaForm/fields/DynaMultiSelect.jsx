@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import { FormLabel } from '@material-ui/core';
@@ -147,7 +147,7 @@ export default function DynaMultiSelect(props) {
   /**
    * Get a list of option items to filter out invalid options from value, when removeInvalidValues prop is set
    */
-  const optionItems = options.reduce(
+  const optionItems = useMemo(() => options.reduce(
     (itemsSoFar, option) =>
       itemsSoFar.concat(
         option.items.map(item => {
@@ -159,7 +159,7 @@ export default function DynaMultiSelect(props) {
         })
       ),
     []
-  );
+  ), [options]);
 
   useEffect(() => {
     if (removeInvalidValues) {
@@ -170,8 +170,7 @@ export default function DynaMultiSelect(props) {
         onFieldChange(id, processedValue.filter(val => optionItems.includes(val)));
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, optionItems, processedValue, removeInvalidValues]);
+  }, [id, onFieldChange, optionItems, processedValue, removeInvalidValues]);
 
   useEffect(() => {
     // this is used to force 'multiselect' field act as a 'select' field temporarily.
