@@ -428,6 +428,7 @@ export default function ConnectorInstallation(props) {
             'inProgress'
           )
         );
+        // Below code should be reverted once https://celigo.atlassian.net/browse/IO-18981 is fixed.
         let bundleURL = installURL || url;
 
         if (

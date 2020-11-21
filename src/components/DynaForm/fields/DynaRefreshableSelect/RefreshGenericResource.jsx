@@ -37,6 +37,9 @@ const useStyles = makeStyles(theme => ({
 // TODO need to redesign this component to be flexible to read config and render
 // children in required sequence. Currently we are overloading this and child
 // components are hardcoded in it making this inflexible to extend.
+
+// multiselect default value is []
+const isValueEqualDefaultValue = (multiselect, value) => multiselect ? Array.isArray(value) && value.length === 0 : value === '';
 export default function RefreshGenericResource(props) {
   const {
     description,
@@ -55,6 +58,7 @@ export default function RefreshGenericResource(props) {
     children,
     removeRefresh = false,
     urlToOpen,
+    value,
   } = props;
   const classes = useStyles();
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
@@ -99,6 +103,16 @@ export default function RefreshGenericResource(props) {
       setIsDefaultValueChanged(true);
     }
   }, [resourceToFetch, setIsDefaultValueChanged]);
+
+  const isSelectedValueInOptions = fieldData && fieldData.some(({value: optValue}) => value === optValue);
+
+  useEffect(() => {
+    // if selected option is not in options list then reset it to empty
+
+    if (!isSelectedValueInOptions && !isValueEqualDefaultValue(multiselect, value)) {
+      onFieldChange(id, multiselect ? [] : '', true);
+    }
+  }, [id, isSelectedValueInOptions, multiselect, onFieldChange, value]);
 
   const handleOpenResource = useCallback(() => {
     openExternalUrl({ url: urlToOpen });

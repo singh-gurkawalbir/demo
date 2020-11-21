@@ -192,7 +192,7 @@ export function* saveMappings() {
   if (importType === 'salesforce') {
     const { sObjectType } = importRes.salesforce;
 
-    const { data: childRelationshipFields } = yield select(selectors.getMetadataOptions,
+    const { data: childRelationshipFields = [] } = yield select(selectors.getMetadataOptions,
       {
         connectionId: ssLinkedConnectionId,
         commMetaPath: `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`,

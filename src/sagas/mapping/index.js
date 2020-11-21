@@ -65,7 +65,7 @@ export function* refreshGenerates({ isInit = false }) {
     const { _connectionId, salesforce } = importResource;
     const { sObjectType } = salesforce;
     // getting all childRelationshipFields of parent sObject
-    const { data: childRelationshipFields } = yield select(selectors.getMetadataOptions,
+    const { data: childRelationshipFields = [] } = yield select(selectors.getMetadataOptions,
       {
         connectionId: _connectionId,
         commMetaPath: `salesforce/metadata/connections/${_connectionId}/sObjectTypes/${sObjectType}`,

@@ -1,6 +1,7 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -22,13 +23,26 @@ const useStyles = makeStyles(theme => ({
       margin: theme.spacing(0, 1),
     },
   },
+  threeAppImages: {
+    '& img': {
+      maxWidth: '64px',
+      maxHeight: '64px',
+    },
+  },
+  fourAppImages: {
+    '& img': {
+      maxWidth: '50px',
+      maxHeight: '50px',
+    },
+  },
+
 }));
 
 function ApplicationImages(props) {
   const classes = useStyles();
   const { children } = props;
 
-  return <div className={classes.root}>{children}</div>;
+  return <div className={clsx(classes.root, {[classes.threeAppImages]: false}, {[classes.fourAppImages]: false})}>{children}</div>;
 }
 
 export default ApplicationImages;
