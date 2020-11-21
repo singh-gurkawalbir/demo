@@ -65,11 +65,13 @@ export default function ModalDialog({
   fullScreen,
   children,
   className,
+  disableEnforceFocus,
 }) {
   const classes = useStyles();
 
   return (
     <Dialog
+      disableEnforceFocus={disableEnforceFocus}
       open={show}
       maxWidth={maxWidth}
       fullScreen={fullScreen}

@@ -74,6 +74,11 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
 export const isPreviewPanelAvailable = (resource, resourceType) => {
   if (resourceType !== 'exports') return false;
 
+  // for blob exports, preview panel is not applicable
+  if (resource.type === 'blob' || resource.resourceType === 'lookupFiles') {
+    return false;
+  }
+
   // Panel is shown for assistants
   if (resource && resource.assistant) return true;
   const { adaptorType } = resource || {};
