@@ -263,6 +263,12 @@ export default function DynaSelect(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [classes, finalTextValue, id, items, matchMenuIndex, onFieldChange]);
 
+  // if there are fewer options the view port height then let height scale per number of options
+
+  const maxHeightOfSelect = items.length > NO_OF_OPTIONS
+    ? OPTIONS_VIEW_PORT_HEIGHT
+    : ITEM_SIZE * items.length;
+
   return (
     <div className={clsx(classes.dynaSelectWrapper, rootClassName)}>
       <div className={classes.fieldWrapper}>
@@ -281,6 +287,7 @@ export default function DynaSelect(props) {
           value={finalTextValue}
           disableUnderline
           displayEmpty
+          maxHeightOfSelect={maxHeightOfSelect}
           renderValue={renderValue}
           open={open}
           onOpen={openSelect}
@@ -292,11 +299,8 @@ export default function DynaSelect(props) {
             className={className}
             ref={listRef}
             itemSize={ITEM_SIZE}
-            // if there are fewer options the view port height then let height scale per number of options
             height={
-              items.length > NO_OF_OPTIONS
-                ? OPTIONS_VIEW_PORT_HEIGHT
-                : ITEM_SIZE * items.length
+              maxHeightOfSelect
             }
             itemCount={items.length}
             itemData={rowProps}
