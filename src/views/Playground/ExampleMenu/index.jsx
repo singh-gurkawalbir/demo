@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function EditorMenu({ onClick }) {
+export default function ExampleMenu({ onClick }) {
   const classes = useStyles();
 
   // console.log(activeType, exampleKey, activeExample);
