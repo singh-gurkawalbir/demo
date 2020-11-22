@@ -1,10 +1,12 @@
 /* global describe, test, expect */
 import each from 'jest-each';
+import moment from 'moment-timezone';
 import actionTypes from '../actions/types';
 import getJsonPaths from './jsonPaths';
 import getRequestOptions from './requestOptions';
 import getRoutePath from './routePaths';
 import retry from './retry';
+import adjustTimezone from './adjustTimezone';
 
 const uiRoutePathPrefix = '';
 
@@ -248,5 +250,38 @@ describe('retry util', () => {
       expect(c).toEqual(1);
       expect(ex.message).toEqual('fail');
     });
+  });
+});
+
+describe('adjustTimezone', () => {
+  test('should return null when non utc time stamp is provided', () => {
+    const zone = 'America/Los_Angeles';
+    const corruptedDateTime = '2013-11-2';
+
+    expect(adjustTimezone(corruptedDateTime, zone)).toEqual(null);
+  });
+  test('should successfully adjust timezone for PST', () => {
+    const zone = 'America/Los_Angeles';
+    // local time stamp i set in the component
+    const inputLocalTime = '2013-11-22T19:55:00.000';
+
+    // it gets offset internal to the browser local and converted to utc
+    const dateNow = moment(inputLocalTime).toISOString();
+    // check the expected output
+    const expectedOutTime = moment.tz(inputLocalTime, zone).toISOString();
+
+    expect(adjustTimezone(dateNow, zone)).toEqual(expectedOutTime);
+  });
+  test('should successfully adjust timezone for Asia/Tokyo', () => {
+    const zone = 'Asia/Tokyo';
+    // local time stamp i set in the component
+    const inputLocalTime = '2013-11-22T19:55:00.000';
+
+    // it gets offset internal to the browser local and converted to utc
+    const dateNow = moment(inputLocalTime).toISOString();
+    // check the expected output
+    const expectedOutTime = moment.tz(inputLocalTime, zone).toISOString();
+
+    expect(adjustTimezone(dateNow, zone)).toEqual(expectedOutTime);
   });
 });
