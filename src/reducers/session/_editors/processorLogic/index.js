@@ -1,6 +1,6 @@
 import isEqual from 'lodash/isEqual';
 // import xmlParser from './xmlParser';
-// import csvParser from './csvParser';
+import csvParser from './csvParser';
 // import csvDataGenerator from './csvDataGenerator';
 // import merge from './merge';
 // import transform from './transform';
@@ -21,6 +21,7 @@ const logicMap = {
   handlebars,
   filter,
   javascript,
+  csvParser,
 };
 
 function getLogic(editor) {

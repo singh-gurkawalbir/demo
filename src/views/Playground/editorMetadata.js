@@ -5,7 +5,7 @@ export default [
     description: 'Constructs JSON or XML template against raw data',
   },
   {
-    type: 'csvParse',
+    type: 'csvParser',
     label: 'CSV Parser',
     description: 'Converts delimited data into JSON',
   },

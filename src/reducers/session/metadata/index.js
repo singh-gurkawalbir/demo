@@ -3,6 +3,7 @@ import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import metadataFilterMap from './metadataFilterMap';
 
+const emptyObject = {};
 export default (
   state = {
     application: {},
@@ -234,8 +235,8 @@ selectors.assistantData = (state, { adaptorType, assistant }) => {
 };
 
 selectors.assistantPreviewData = (state, resourceId) => {
-  if (!state || !state.preview) {
-    return null;
+  if (!state || !state.preview || !state.preview[resourceId]) {
+    return emptyObject;
   }
 
   return state.preview[resourceId];

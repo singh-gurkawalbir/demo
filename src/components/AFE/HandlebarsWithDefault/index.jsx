@@ -120,6 +120,7 @@ export default function HandlebarsWithDefaults(props) {
       layout={layout}
       templateClassName={templateClassName}
       ruleTitle="Type your handlebars template here"
+      dataTitle="Resources available for your handlebars template"
       resultTitle={autoEvaluate ? 'Evaluated handlebars template' : 'Click preview to evaluate your handlebars template'}
       violations={violations}
       showDefaultData={showDefaultData}

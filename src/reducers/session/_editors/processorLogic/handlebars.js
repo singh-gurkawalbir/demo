@@ -25,7 +25,9 @@ export default {
         const parseError = xmldoc.getElementsByTagName('parsererror');
 
         if (parseError?.length) {
-          return {data, warning: `Evaluated result is not valid XML. ${parseError[0].childNodes?.[1]?.textContent || ''}`, ...rest};
+          const errorText = parseError[0].childNodes?.[1]?.textContent || '';
+
+          return {data, warning: `Evaluated result is not valid XML. ${errorText}`, ...rest};
         }
       }
     }
