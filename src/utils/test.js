@@ -272,6 +272,33 @@ describe('adjustTimezone', () => {
 
     expect(adjustTimezone(dateNow, zone)).toEqual(expectedOutTime);
   });
+  describe('daylight saving time ', () => {
+    test('should successfully adjust timezone with daylight saving time -07:00 offset for PST', () => {
+      const zone = 'America/Los_Angeles';
+      // local time stamp internally set in the component
+      const inputLocalTime = '2020-10-18';
+
+      // it gets offset internal to the browser local and converted to utc
+      const dateNow = moment(inputLocalTime).toISOString();
+      // check the expected output
+      const expectedOutTime = moment.tz(inputLocalTime, zone).toISOString();
+
+      expect(adjustTimezone(dateNow, zone)).toEqual(expectedOutTime);
+    });
+    test('should successfully adjust timezone with daylight saving time -08:00 offset for PST', () => {
+      const zone = 'America/Los_Angeles';
+      // local time stamp internally set in the component
+      const inputLocalTime = '2020-11-18';
+
+      // it gets offset internal to the browser local and converted to utc
+      const dateNow = moment(inputLocalTime).toISOString();
+
+      // check the expected output
+      const expectedOutTime = moment.tz(inputLocalTime, zone).toISOString();
+
+      expect(adjustTimezone(dateNow, zone)).toEqual(expectedOutTime);
+    });
+  });
   test('should successfully adjust timezone for Asia/Tokyo', () => {
     const zone = 'Asia/Tokyo';
     // local time stamp internally set in the component
