@@ -171,6 +171,11 @@ export function* requestJobCollection({ integrationId, flowId, filters = {}, opt
     return true;
   }
 
+  if (!Array.isArray(collection)) {
+    // the jobs collection must be an array
+    collection = [];
+  }
+
   // flowJobId is sent in options when user clicks a error notification email and jobId is in url request parameters
   // If user requested job is not in first 1000 results, fetch particular job and merge it in collection.
   if (options.flowJobId && !collection.find(j => j._id === options.flowJobId)) {
