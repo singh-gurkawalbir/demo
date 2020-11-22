@@ -1,8 +1,9 @@
 import moment from 'moment-timezone';
 
 export default function (isoStringInput, zone) {
-  // should parse it to the browser locale
   if (!isoStringInput || !moment(isoStringInput).isValid()) { return null; }
+  // should parse it to the browser locale
+
   const momentLocalObj = moment(isoStringInput).format();
   // last 4 digits and remove Z
   // this gives me microseconds fraction
