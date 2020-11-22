@@ -5,6 +5,8 @@ export default function (isoStringInput, zone) {
   // should parse it to the browser locale
 
   const momentLocalObj = moment(isoStringInput).format();
+
+  // example of a format 2013-11-22T19:55:00+05:30
   // last 4 digits and remove Z
   // this gives me microseconds fraction
   const microsecondFraction = isoStringInput.slice(-4, -1);
