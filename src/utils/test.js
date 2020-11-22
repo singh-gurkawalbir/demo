@@ -262,7 +262,7 @@ describe('adjustTimezone', () => {
   });
   test('should successfully adjust timezone for PST', () => {
     const zone = 'America/Los_Angeles';
-    // local time stamp i set in the component
+    // local time stamp internally set in the component
     const inputLocalTime = '2013-11-22T19:55:00.000';
 
     // it gets offset internal to the browser local and converted to utc
@@ -274,7 +274,7 @@ describe('adjustTimezone', () => {
   });
   test('should successfully adjust timezone for Asia/Tokyo', () => {
     const zone = 'Asia/Tokyo';
-    // local time stamp i set in the component
+    // local time stamp internally set in the component
     const inputLocalTime = '2013-11-22T19:55:00.000';
 
     // it gets offset internal to the browser local and converted to utc
