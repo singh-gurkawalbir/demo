@@ -19,6 +19,7 @@ export default function (state = {}, action) {
         };
         break;
       case actionTypes.IMPORT_SAMPLEDATA.IA_METADATA_RECEIVED:
+        if (!draft[_importId]) { draft[_importId] = {}; }
         draft[_importId].status = 'received';
         draft[_importId].data = metadata;
         break;
@@ -29,4 +30,8 @@ export default function (state = {}, action) {
 
 export const selectors = {};
 
-selectors.integrationAppImportMetadata = (state, _importId) => state[_importId] || DEFAULT_VALUE;
+selectors.integrationAppImportMetadata = (state, _importId) => {
+  if (!state || !state[_importId]) { return DEFAULT_VALUE; }
+
+  return state[_importId];
+};
