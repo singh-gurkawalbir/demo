@@ -478,7 +478,7 @@ describe('getImportsFromFlow', () => {
   });
 });
 
-describe.only('getFlowListWithMetadata', () => {
+describe('getFlowListWithMetadata', () => {
   const dataLoaderFlowWithMetadata = {resources: [{...dataLoaderFlow,
     isSimpleImport: true,
     isRunnable: true,
