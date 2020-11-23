@@ -112,6 +112,341 @@ describe('resources reducer', () => {
       });
     });
   });
+  describe('Toggle user sharing option', () => {
+    test('Should be able to toggle shared stack', () => {
+      const userId = '1234';
+      const defaultState = {sshares: [{_id: userId, accepted: true, disabled: false, _stackId: '123445'}]};
+      const expectedState = [{_id: userId, accepted: true, disabled: true, _stackId: '123445'}];
+      const state = reducer(
+        defaultState,
+        actions.stack.toggledUserStackSharing({ userId })
+      );
+
+      expect(state.sshares).toEqual(expectedState);
+    });
+    test('Should be able to handle empty state', () => {
+      const userId = '1234';
+      const defaultState = {};
+      const state = reducer(
+        defaultState,
+        actions.stack.toggledUserStackSharing({ userId })
+      );
+
+      expect(state).toEqual(defaultState);
+    });
+
+    test('Should be able to handle wrong id', () => {
+      const userId = '1234';
+      const defaultState = {sshares: [{_id: '12345', accepted: true, disabled: false, _stackId: '123445'}]};
+      const expectedState = [{_id: '12345', accepted: true, disabled: false, _stackId: '123445'}];
+      const state = reducer(
+        defaultState,
+        actions.stack.toggledUserStackSharing({ userId })
+      );
+
+      expect(state.sshares).toEqual(expectedState);
+    });
+  });
+  describe('Toggle trading partner values', () => {
+    test('Should be able to update toggle trading partner values', () => {
+      const connectionIds = [{_id: '12345'}, {_id: '12346'}];
+      const defaultState = {connections: [{_id: '12345', ftp: {tradingPartner: true}}, {_id: '12346', ftp: {tradingPartner: true}}, {_id: '12347', ftp: {tradingPartner: true}}]};
+      const expectedState = [{_id: '12345', ftp: {tradingPartner: false}}, {_id: '12346', ftp: {tradingPartner: false}}, {_id: '12347', ftp: {tradingPartner: true}}];
+      const state = reducer(
+        defaultState,
+        actions.connection.completeTradingPartner(connectionIds || [])
+      );
+
+      expect(state.connections).toEqual(expectedState);
+    });
+    test('Should be able to handle empty input', () => {
+      const defaultState = {connections: [{_id: '12345', ftp: {tradingPartner: true}}, {_id: '12346', ftp: {tradingPartner: true}}, {_id: '12347', ftp: {tradingPartner: true}}]};
+      const expectedState = [{_id: '12345', ftp: {tradingPartner: true}}, {_id: '12346', ftp: {tradingPartner: true}}, {_id: '12347', ftp: {tradingPartner: true}}];
+      const state = reducer(
+        defaultState,
+        actions.connection.completeTradingPartner([])
+      );
+
+      expect(state.connections).toEqual(expectedState);
+    });
+
+    test('Should be able to handle empty state', () => {
+      const defaultState = {};
+      const state = reducer(
+        defaultState,
+        actions.connection.completeTradingPartner([])
+      );
+
+      expect(state).toEqual(defaultState);
+    });
+  });
+  describe('Deregister connection', () => {
+    test('Should be able to deregister connection', () => {
+      const connectionId = '12';
+      const integrationId = '12345';
+      const defaultState = {integrations: [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}]};
+      const expectedState = [{_id: '12345', _registeredConnectionIds: ['34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}];
+      const state = reducer(
+        defaultState,
+        actions.connection.completeDeregister(connectionId, integrationId)
+      );
+
+      expect(state.integrations).toEqual(expectedState);
+    });
+    test('Should be able to handle empty or wrong integration Id', () => {
+      const connectionId = '12';
+      const integrationId = '';
+      const defaultState = {integrations: [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}]};
+      const expectedState = [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}];
+      const state = reducer(
+        defaultState,
+        actions.connection.completeDeregister(connectionId, integrationId)
+      );
+
+      expect(state.integrations).toEqual(expectedState);
+    });
+    test('Should be able to handle empty or wrong connection Id', () => {
+      const connectionId = '121212';
+      const integrationId = '12345';
+      const defaultState = {integrations: [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}]};
+      const expectedState = [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}];
+      const state = reducer(
+        defaultState,
+        actions.connection.completeDeregister(connectionId, integrationId)
+      );
+
+      expect(state.integrations).toEqual(expectedState);
+    });
+
+    test('Should be able to handle empty state', () => {
+      const connectionId = '121212';
+      const integrationId = '12345';
+      const defaultState = {};
+      const state = reducer(
+        defaultState,
+        actions.connection.completeDeregister(connectionId, integrationId)
+      );
+
+      expect(state).toEqual(defaultState);
+    });
+  });
+  describe('Register connections', () => {
+    test('Should be able to register connections', () => {
+      const integrationId = '12345';
+      const connectionIds = ['78', '79'];
+      const defaultState = {integrations: [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}]};
+      const expectedState = [{_id: '12345', _registeredConnectionIds: ['12', '34', '78', '79']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}];
+      const state = reducer(
+        defaultState,
+        actions.connection.completeRegister(connectionIds, integrationId)
+      );
+
+      expect(state.integrations).toEqual(expectedState);
+    });
+    test('Should be able to handle empty or wrong integration Id', () => {
+      const connectionIds = ['78', '79'];
+      const integrationId = '';
+      const defaultState = {integrations: [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}]};
+      const expectedState = [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}];
+      const state = reducer(
+        defaultState,
+        actions.connection.completeRegister(connectionIds, integrationId)
+      );
+
+      expect(state.integrations).toEqual(expectedState);
+    });
+    test('Should be able to handle empty state', () => {
+      const connectionIds = ['121212'];
+      const integrationId = '12345';
+      const defaultState = {};
+      const state = reducer(
+        defaultState,
+        actions.connection.completeRegister(connectionIds, integrationId)
+      );
+
+      expect(state).toEqual(defaultState);
+    });
+  });
+  describe('Clear collection', () => {
+    test('Should be able to clear collection', () => {
+      const resourceType = 'connectors/123/licenses';
+      const collection = [{ _id: '456' }, { _id: '678' }];
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection(resourceType, collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.resource.clearCollection('connectorLicenses')
+      );
+
+      expect(state.connectorLicenses).toEqual([]);
+    });
+
+    test('Should be able to handle empty state', () => {
+      const resourceType = 'connectors/123/licenses';
+      const collection = [];
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection(resourceType, collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.resource.clearCollection('connectorLicenses')
+      );
+
+      expect(state.connectorLicenses).toEqual([]);
+    });
+  });
+  describe('Cancelled transfer', () => {
+    test('Should be able to update cancelled transfer', () => {
+      const resourceType = 'transfers';
+      const collection = [{ _id: '456' }, { _id: '678' }];
+      const expected = [{ _id: '456', status: 'canceled' }, { _id: '678' }];
+
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection(resourceType, collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.transfer.canceledTransfer('456')
+      );
+
+      expect(state.transfers).toEqual(expected);
+    });
+
+    test('Should be able to handle empty state', () => {
+      const resourceType = 'transfers';
+      const collection = [];
+
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection(resourceType, collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.transfer.canceledTransfer('456')
+      );
+
+      expect(state.transfers).toEqual([]);
+    });
+  });
+  describe('Update connection status', () => {
+    test('Should be able filter out purged tokens', () => {
+      const tomorrow = new Date();
+      const yesterday = new Date();
+
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      const connStatus = [{ _id: '456', offline: true, queueSize: 10, name: 'conn1'}, { _id: '678', offline: false, queueSize: 11, name: 'conn2' }];
+      const collection = [{ _id: '456', offline: false, queues: [{size: 32}], name: 'conn4'}, { _id: '678', offline: true, queues: [{size: 99}], name: 'conn20' }];
+
+      const expected = [{ _id: '456', offline: false, queueSize: 32, name: 'conn1'}, { _id: '678', offline: true, queueSize: 99, name: 'conn2' }];
+
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection('connections', connStatus)
+      );
+      const state = reducer(
+        prevState,
+        actions.resource.connections.updateStatus(collection)
+      );
+
+      expect(state.connections).toEqual(expected);
+    });
+
+    test('Should be able to handle empty state', () => {
+      const collection = [];
+
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection('connections', collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.resource.connections.updateStatus(collection)
+      );
+
+      expect(state.connections).toEqual([]);
+    });
+  });
+  describe('Make connection online', () => {
+    test('Should be able filter out purged tokens', () => {
+      const connectionId = '1234';
+
+      const collection = [{ _id: '456', offlineConnections: ['1234', '1236', '1238'], name: 'tile1'}, { _id: '457', offlineConnections: ['1234', '1239', '1231'], name: 'tile2'}];
+      const expected = [{ _id: '456', offlineConnections: ['1236', '1238'], name: 'tile1'}, { _id: '457', offlineConnections: ['1239', '1231'], name: 'tile2'}];
+
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection('tiles', collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.connection.madeOnline(connectionId)
+      );
+
+      expect(state.tiles).toEqual(expected);
+    });
+
+    test('Should be able to handle empty state', () => {
+      const connectionId = '1234';
+
+      const collection = [];
+
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection('tiles', collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.connection.madeOnline(connectionId)
+      );
+
+      expect(state.tiles).toEqual(collection);
+    });
+  });
+  describe('Access token auto purge', () => {
+    test('Should be able filter out purged tokens', () => {
+      const tomorrow = new Date();
+      const yesterday = new Date();
+
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      const collection = [{ _id: '456', autoPurgeAt: tomorrow, name: 'token1'}, { _id: '678', autoPurgeAt: yesterday, name: 'token2' }];
+      const expected = [{ _id: '456', autoPurgeAt: tomorrow, name: 'token1'}];
+
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection('accesstokens', collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.accessToken.deletePurged()
+      );
+
+      expect(state.accesstokens).toEqual(expected);
+    });
+
+    test('Should be able to handle empty state', () => {
+      const collection = [];
+      const expected = [];
+
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection('accesstokens', collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.accessToken.deletePurged()
+      );
+
+      expect(state.accesstokens).toEqual(expected);
+    });
+  });
 });
 
 describe('resources reducer for special cases', () => {
