@@ -13,6 +13,7 @@ const oldFlow = {
   _importId: 'i1',
   p1: 1,
   p2: 2,
+  _integrationId: integration._id,
 };
 
 const oldRealtimeFlow = {
@@ -24,7 +25,7 @@ const oldRealtimeFlow = {
 };
 
 const convertedFlow = {
-  _id: 'f3',
+  _id: 'f1',
   pageGenerators: [{
     _exportId: 'e1',
     type: 'export',
