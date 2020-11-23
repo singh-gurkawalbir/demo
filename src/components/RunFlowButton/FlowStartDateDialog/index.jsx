@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import moment from 'moment-timezone';
 import Button from '@material-ui/core/Button';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -11,6 +10,7 @@ import flowStartDateMetadata from './metadata';
 import Spinner from '../../Spinner';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import ButtonGroup from '../../ButtonGroup';
+import adjustTimezone from '../../../utils/adjustTimezone';
 
 export default function FlowStartDateDialog(props) {
   const { flowId, onClose, disabled, onRun } = props;
@@ -47,10 +47,7 @@ export default function FlowStartDateDialog(props) {
     let customStartDate;
 
     if (formVal.deltaType === 'custom') {
-      customStartDate =
-        moment(formVal.startDateCustom).parseZone(formVal.timeZone);
-
-      customStartDate = customStartDate?.toISOString();
+      customStartDate = adjustTimezone(formVal.startDateCustom, formVal.timeZone);
     }
 
     onRun(customStartDate);

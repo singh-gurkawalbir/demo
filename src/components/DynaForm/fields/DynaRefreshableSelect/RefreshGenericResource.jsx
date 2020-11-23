@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
 // components are hardcoded in it making this inflexible to extend.
 
 // multiselect default value is []
-const isValueEqualDefaultValue = (multiselect, value) => multiselect ? Array.isArray(value) && value.length === 0 : value === '';
+const isValueEqualDefaultValue = value => (value === '');
 export default function RefreshGenericResource(props) {
   const {
     description,
@@ -109,7 +109,7 @@ export default function RefreshGenericResource(props) {
   useEffect(() => {
     // if selected option is not in options list then reset it to empty
 
-    if (!isSelectedValueInOptions && !isValueEqualDefaultValue(multiselect, value)) {
+    if (!multiselect && !isSelectedValueInOptions && !isValueEqualDefaultValue(value)) {
       onFieldChange(id, multiselect ? [] : '', true);
     }
   }, [id, isSelectedValueInOptions, multiselect, onFieldChange, value]);
@@ -172,7 +172,7 @@ export function DynaGenericSelect(props) {
 
   return (
     <RefreshGenericResource {...props}>
-      {multiselect ? <DynaMultiSelect /> : <DynaSelect />}
+      {multiselect ? <DynaMultiSelect removeInvalidValues /> : <DynaSelect />}
     </RefreshGenericResource>
   );
 }
