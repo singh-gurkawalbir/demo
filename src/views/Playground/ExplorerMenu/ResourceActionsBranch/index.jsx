@@ -1,13 +1,13 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { TreeItem} from '@material-ui/lab';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { selectors } from '../../../../reducers';
 import ImportsIcon from '../../../../components/icons/ImportsIcon';
 import ExportsIcon from '../../../../components/icons/ExportsIcon';
 import ToolsIcon from '../../../../components/icons/ToolsIcon';
 import TransformIcon from '../../../../components/icons/TransformIcon';
+import OverflowTreeItem from '../OverflowTreeItem';
 
 function getEditorsByResource(resource) {
   if (!resource) return [];
@@ -49,7 +49,7 @@ export default function ResourceItemsBranch({onClick, resourceId}) {
   // to find the flow resource details. If we have a better selector, we
   // should use it.
   const { resource, resourceType } = useSelector(state => {
-    if (!resourceId) return;
+    if (!resourceId) return {};
     const resource = selectors.resource(state, 'exports', resourceId);
 
     if (resource) {
@@ -73,14 +73,14 @@ export default function ResourceItemsBranch({onClick, resourceId}) {
 
   return (
     <>
-      <TreeItem
+      <OverflowTreeItem
         icon={<ResourcesIcon />}
         nodeId={`${resourceId}-view`}
         label="View resource"
         onClick={handleViewClick} />
 
       {!!editors?.length && editors.map(({type, fieldId}) => (
-        <TreeItem
+        <OverflowTreeItem
           key={type} nodeId={type} label={type}
           icon={<EditorIcon type={type} />}
           onClick={() => onClick(type, fieldId)} />

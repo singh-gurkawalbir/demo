@@ -1,7 +1,8 @@
+import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { IconButton, makeStyles, Tooltip, Typography } from '@material-ui/core';
+import { Button, IconButton, makeStyles, Tooltip, Typography } from '@material-ui/core';
 // import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import examples from './examples';
@@ -25,6 +26,14 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
     border: `solid 0 ${theme.palette.secondary.lightest}`,
     borderRightWidth: 1,
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+
+  },
+  editorListExpanded: {
+    width: 600,
   },
   content: {
     display: 'flex',
@@ -33,7 +42,8 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
   buttons: {
-    alignSelf: 'flex-end',
+    display: 'flex',
+    justifyContent: 'space-between',
   },
   menuSection: {
     marginBottom: theme.spacing(2),
@@ -59,6 +69,12 @@ export default function Editors() {
     // eslint-disable-next-line no-console
     console.log(type, exampleKey);
   };
+
+  const handleCancelEditorClick = () => {
+    setActiveType();
+    setExampleKey();
+  };
+
   const handleExplorerClick = (flowId, resourceId, stage, fieldId) => {
     // eslint-disable-next-line no-console
     console.log({flowId, resourceId, stage, fieldId});
@@ -85,9 +101,7 @@ export default function Editors() {
   }, [activeExample, dispatch, editorId]);
 
   const Subtitle = () => {
-    if (!activeEditor) {
-      return 'Get started by selecting an editor example on the left.';
-    }
+    if (!activeEditor) return null;
 
     return `${activeEditor.label}: ${activeExample.description || activeExample.name}`;
   };
@@ -105,7 +119,7 @@ export default function Editors() {
 
       </CeligoPageBar>
       <div className={classes.root}>
-        <div className={classes.editorList}>
+        <div className={clsx(classes.editorList, {[classes.editorListExpanded]: !activeExample})}>
           <div className={classes.menuSection}>
             <Typography variant="h4">Editor Examples</Typography>
             <ExampleMenu onClick={handleExampleClick} />
@@ -116,13 +130,19 @@ export default function Editors() {
           </div>
         </div>
         <main className={classes.content}>
-          {activeExample && (
+          {activeExample ? (
             <>
               <Editor editorId={editorId} />
               <div className={classes.buttons}>
+                <Button onClick={handleCancelEditorClick}>Cancel</Button>
                 <EditorPreviewButton editorId={editorId} />
               </div>
             </>
+          ) : (
+            <Typography variant="h4">
+              <p>Get started by selecting an editor example on the left.</p>
+              <p>Alternatively, use the Flow Explorer to drill into your flows to find and manage your resources.</p>
+            </Typography>
           )}
 
         </main>
