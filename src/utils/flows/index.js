@@ -247,9 +247,9 @@ export const isOldFlowSchema = ({
   _exportId,
   pageProcessors,
   _importId,
-}) => (!pageGenerators && _exportId) || (!pageProcessors && _importId);
+}) => !!((!pageGenerators && _exportId) || (!pageProcessors && _importId));
 
-export function getFirstExportFromFlow(flow, exports = []) {
+export function getFirstExportFromFlow(flow = {}, exports = []) {
   const exportId =
     flow.pageGenerators && flow.pageGenerators.length
       ? flow.pageGenerators[0]._exportId
@@ -289,10 +289,10 @@ export function hasBatchExport(flow, exports = [], flowExports) {
 
   if (flow && flow.pageGenerators && flow.pageGenerators.length) {
     if (flowExports?.length) {
-      return flowExports.some(exp => !isRealtimeExport(exp));
+      return !!flowExports.some(exp => !isRealtimeExport(exp));
     }
 
-    return flow.pageGenerators.some(pg => {
+    return !!flow.pageGenerators.some(pg => {
       const exp = exports.find(exp => exp._id === pg._exportId);
 
       return !isRealtimeExport(exp);
@@ -305,7 +305,7 @@ export function hasBatchExport(flow, exports = [], flowExports) {
 export function isSimpleImportFlow(flow, exports, flowExports) {
   const exp = (flowExports?.length && flowExports[0]) || getFirstExportFromFlow(flow, exports);
 
-  return exp && exp.type === 'simple';
+  return !!(exp && exp.type === 'simple');
 }
 
 export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationApp, isDataLoader, appName}) {
@@ -902,9 +902,9 @@ export function convertOldFlowSchemaToNewOne(flow) {
   return updatedFlow;
 }
 
-export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => flow && (
+export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => !!(flow && (
   (flow.pageGenerators &&
      flow.pageGenerators.some(({_exportId}) => _exportId === resourceId)) ||
     (
       flow.pageProcessors &&
-    flow.pageProcessors.some(({_exportId, _importId}) => _exportId === resourceId || _importId === resourceId)));
+    flow.pageProcessors.some(({_exportId, _importId}) => _exportId === resourceId || _importId === resourceId))));
