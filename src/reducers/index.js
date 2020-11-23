@@ -74,6 +74,7 @@ import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName, getTitleIdFromSection } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
+import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare } from '../utils/sort';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
@@ -87,6 +88,7 @@ import {
   getRunConsoleJobSteps,
   getParentJobSteps,
 } from '../utils/latestJobs';
+import getJSONPaths from '../utils/jsonPaths';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -5324,4 +5326,40 @@ selectors.getIntegrationUserNameById = (state, userId, flowId) => {
   const usersList = selectors.availableUsersList(state, integrationId);
 
   return usersList.find(user => user?.sharedWithUser?._id === userId)?.sharedWithUser?.name;
+};
+
+selectors.responseMappingExtracts = (state, resourceId, flowId) => {
+  const { merged: flow = {} } = selectors.resourceData(state,
+    'flows',
+    flowId
+  );
+  const pageProcessor = flow?.pageProcessors.findIndex(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+
+  if (pageProcessor) {
+    return emptyArray;
+  }
+  const isImport = !!pageProcessor._importId;
+  const resource = selectors.resource(state, isImport ? 'imports' : 'exports', resourceId);
+
+  if (!resource) { return emptyArray; }
+
+  if (pageProcessor._importId) {
+    const extractFields = selectors.getSampleDataContext(state, {
+      flowId,
+      resourceId,
+      stage: 'importMappingExtract',
+      resourceType: 'imports',
+    }).data;
+
+    if (!isEmpty(extractFields)) {
+      const extractPaths = getJSONPaths(extractFields);
+
+      return extractPaths.map(obj => ({ name: obj.id, id: obj.id })) || emptyArray;
+    }
+  }
+
+  return responseMappingUtil.getResponseMappingDefaultExtracts(
+    isImport ? 'imports' : 'exports',
+    resource.adaptorType
+  );
 };

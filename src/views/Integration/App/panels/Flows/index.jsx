@@ -29,6 +29,7 @@ import StatusCircle from '../../../../../components/StatusCircle';
 import { getEmptyMessage, isParentViewSelected } from '../../../../../utils/integrationApps';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { getTemplateUrlName } from '../../../../../utils/template';
+import ResponseMappingDrawer from '../../../../../components/ResponseMapping/Drawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -228,6 +229,7 @@ function FlowList({ integrationId, storeId }) {
         // storeId={storeId}
         // sectionId={sectionId}
       />
+      <ResponseMappingDrawer />
       {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={storeId} />}
       <CategoryMappingDrawer
         integrationId={integrationId}

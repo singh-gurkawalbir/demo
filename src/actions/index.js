@@ -1968,29 +1968,26 @@ const analytics = {
   },
 };
 const responseMapping = {
-  init: (id, value) =>
+  init: ({flowId, resourceId}) =>
     action(actionTypes.RESPONSE_MAPPING.INIT, {
-      id,
-      value,
+      resourceId,
+      flowId,
     }),
-  setFormattedMapping: (id, value) =>
-    action(actionTypes.RESPONSE_MAPPING.SET_FORMATTED_MAPPING, {
-      id,
-      value,
-    }),
-  patchField: (id, field, index, value) =>
+  initComplete: (options = {}) =>
+    action(actionTypes.RESPONSE_MAPPING.INIT_COMPLETE, {...options}),
+  initFailed: () => action(actionTypes.MAPPING.INIT_FAILED, {}),
+  patchField: (field, key, value) =>
     action(actionTypes.RESPONSE_MAPPING.PATCH_FIELD, {
-      id,
-      field,
-      index,
-      value,
+      field, key, value,
     }),
-  delete: (id, index) =>
-    action(actionTypes.RESPONSE_MAPPING.DELETE, { id, index }),
-  save: ({ id, match, resourceType, resourceId }) => action(actionTypes.RESPONSE_MAPPING.SAVE, { id, match, resourceType, resourceId }),
-  saveFailed: id => action(actionTypes.RESPONSE_MAPPING.SAVE_FAILED, { id }),
-  saveComplete: id =>
-    action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, { id }),
+  delete: key =>
+    action(actionTypes.RESPONSE_MAPPING.DELETE, { key }),
+  save: ({ match }) => action(actionTypes.RESPONSE_MAPPING.SAVE, { match }),
+  saveFailed: () => action(actionTypes.RESPONSE_MAPPING.SAVE_FAILED, {}),
+  saveComplete: () =>
+    action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, {}),
+  clear: () => action(actionTypes.RESPONSE_MAPPING.CLEAR, {}),
+
 };
 const customSettings = {
   formRequest: (resourceType, resourceId) =>
