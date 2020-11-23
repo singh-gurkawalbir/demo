@@ -1,8 +1,14 @@
 /* global describe, test, expect */
 
-import { getFlowListWithMetadata, getImportsFromFlow, isRunnable, showScheduleIcon, hasBatchExport, isRealtimeFlow, isSimpleImportFlow, getExportIdsFromFlow, getImportIdsFromFlow, isDeltaFlow, isIntegrationApp, isPageGeneratorResource, isFlowUpdatedWithPgOrPP, convertOldFlowSchemaToNewOne, isOldFlowSchema, getAllConnectionIdsUsedInTheFlow, getFirstExportFromFlow, isRealtimeExport} from '.';
+import { getFlowResources, getFlowType, flowbuilderUrl, getFlowListWithMetadata, getImportsFromFlow, isRunnable, showScheduleIcon, hasBatchExport, isRealtimeFlow, isSimpleImportFlow, getExportIdsFromFlow, getImportIdsFromFlow, isDeltaFlow, isIntegrationApp, isPageGeneratorResource, isFlowUpdatedWithPgOrPP, convertOldFlowSchemaToNewOne, isOldFlowSchema, getAllConnectionIdsUsedInTheFlow, getFirstExportFromFlow, isRealtimeExport} from '.';
+import getRoutePath from '../routePaths';
 
+const integration = {
+  _id: 'i1',
+  name: 'i1',
+};
 const oldFlow = {
+  _id: 'f1',
   _exportId: 'e1',
   _importId: 'i1',
   p1: 1,
@@ -10,6 +16,7 @@ const oldFlow = {
 };
 
 const oldRealtimeFlow = {
+  _id: 'f2',
   _exportId: 're1',
   _importId: 'i1',
   p1: 1,
@@ -17,6 +24,7 @@ const oldRealtimeFlow = {
 };
 
 const convertedFlow = {
+  _id: 'f3',
   pageGenerators: [{
     _exportId: 'e1',
     type: 'export',
@@ -28,53 +36,69 @@ const convertedFlow = {
   p1: 1,
   p2: 2,
   flowConvertedToNewSchema: true,
+  _integrationId: integration._id,
 };
 const emptyFlow = {};
 const flowWithOnlyPGs = {
-  pageGenerators: [{ _exportId: 'e1' }, { _exportId: 'e2' }],
+  _id: 'f4',
+  pageGenerators: [{ _exportId: 'e1', type: 'export' }, { _exportId: 'e2', type: 'export' }],
+  _integrationId: integration._id,
 };
 const flowWithOnlyPPs = {
+  _id: 'f5',
   pageProcessors: [
-    { _exportId: 'e1' },
-    { _importId: 'i1' },
-    { _exportId: 'e2' },
+    { _exportId: 'e1', type: 'export' },
+    { _importId: 'i1', type: 'import' },
+    { _exportId: 'e2', type: 'export' },
   ],
+  _integrationId: integration._id,
 };
 const flowWithPGsandPPs = {
-  pageGenerators: [{ _exportId: 'e1' }, { _exportId: 'e2' }],
+  _id: 'f6',
+  pageGenerators: [{ _exportId: 'e1', type: 'export' }, { _exportId: 'e2', type: 'export' }],
   pageProcessors: [
-    { _exportId: 'e3' },
-    { _importId: 'i1' },
-    { _exportId: 'e4' },
-    { _importId: 'i2' },
+    { _exportId: 'e3', type: 'export' },
+    { _importId: 'i1', type: 'import' },
+    { _exportId: 'e4', type: 'export' },
+    { _importId: 'i2', type: 'import' },
   ],
+  _integrationId: integration._id,
 };
 
 const dataLoaderFlow = {
+  _id: 'f7',
   pageGenerators: [{ _exportId: 'se' }],
   pageProcessors: [
-    { _importId: 'i1' },
+    { _importId: 'i1', type: 'import' },
   ],
+  _integrationId: integration._id,
 };
 
 const realtimeFlow = {
-  pageGenerators: [{ _exportId: 're1' }],
+  _id: 'f8',
+  pageGenerators: [{ _exportId: 're1', type: 'export' }],
   pageProcessors: [
-    { _importId: 'i1' },
+    { _importId: 'i1', type: 'import' },
   ],
+  _integrationId: integration._id,
 };
 const invalidFlow = {
-  pageGenerators: [{ _exportId: 'invalid' }],
+  _id: 'f9',
+  pageGenerators: [{ _exportId: 'invalid', type: 'export' }],
   pageProcessors: [
-    { _importId: 'invalid' },
+    { _importId: 'invalid', type: 'import' },
   ],
 };
 const disabledFlow = {
+  _id: 'f10',
   disabled: true,
+  _integrationId: integration._id,
 };
 const disabledIAFlow = {
-  _connectorId: 'id',
+  _id: 'f11',
+  _connectorId: 'ia1',
   disabled: true,
+  _integrationId: 'id2',
 };
 const connections = [{
   _id: 'c1',
@@ -499,5 +523,105 @@ describe('getFlowListWithMetadata', () => {
   });
   test('should return valid metadata for batch flow', () => {
     expect(getFlowListWithMetadata([flowWithPGsandPPs], exports)).toEqual(batchFlowWithMetadata);
+  });
+});
+
+describe('flowbuilderUrl', () => {
+  const integrationId = 'i1';
+  const flowId = 'f1';
+  const dataLoaderURL = getRoutePath('/integrations/i1/dataLoader/f1');
+  const flowURL = getRoutePath('/integrations/i1/flowBuilder/f1');
+  const standAloneIntegrationFlowURL = getRoutePath('/integrations/none/flowBuilder/f1');
+  const integrationAppParentFlowURL = getRoutePath('/integrationapps/a1/i1/flowBuilder/f1');
+  const integrationAppChildFlowURL = getRoutePath('/integrationapps/a1/i1/child/c1/flowBuilder/f1');
+  const args = {
+    childId: false,
+    isIntegrationApp: false,
+    isDataLoader: true,
+    appName: null,
+  };
+
+  test('should return valid flowBuilder URL for data loader flow', () => {
+    expect(flowbuilderUrl(flowId, integrationId, args)).toEqual(dataLoaderURL);
+  });
+  test('should return valid flowBuilder URL for flow', () => {
+    args.isDataLoader = false;
+    expect(flowbuilderUrl(flowId, integrationId, args)).toEqual(flowURL);
+  });
+  test('should return valid flowBuilder URL for stand alone integration flow', () => {
+    args.isDataLoader = false;
+    expect(flowbuilderUrl(flowId, null, args)).toEqual(standAloneIntegrationFlowURL);
+  });
+  test('should return valid flowBuilder URL for integration app parent flow', () => {
+    args.isIntegrationApp = true;
+    args.appName = 'a1';
+    expect(flowbuilderUrl(flowId, integrationId, args)).toEqual(integrationAppParentFlowURL);
+  });
+  test('should return valid flowBuilder URL for integration app child flow', () => {
+    args.isIntegrationApp = true;
+    args.appName = 'a1';
+    args.childId = 'c1';
+    expect(flowbuilderUrl(flowId, integrationId, args)).toEqual(integrationAppChildFlowURL);
+  });
+});
+
+describe('getFlowType', () => {
+  test('should return correct flow type for data loader flow', () => {
+    expect(getFlowType(dataLoaderFlow, exports)).toEqual('Data Loader');
+  });
+  test('should return correct flow type for normal flow', () => {
+    expect(getFlowType(flowWithPGsandPPs, exports)).toEqual('Scheduled');
+  });
+  test('should return correct flow type for realtime flow', () => {
+    expect(getFlowType(realtimeFlow, realtimeExports)).toEqual('Realtime');
+  });
+  test('should return correct empty for empty flow', () => {
+    expect(getFlowType(undefined, exports)).toEqual('');
+  });
+  test('should return correct empty for empty export docs', () => {
+    expect(getFlowType(flowWithPGsandPPs, undefined)).toEqual('');
+  });
+});
+
+describe('getFlowResources', () => {
+  const flows = [oldFlow, flowWithOnlyPGs, flowWithOnlyPPs, flowWithPGsandPPs, dataLoaderFlow, realtimeFlow, disabledFlow, disabledIAFlow];
+
+  test('should return correct flow resources for old flow', () => {
+    const expectedResources = [{ _id: oldFlow._id, name: 'Flow-level' },
+      { _id: 'e1', name: 'e1', type: 'exports' },
+      { _id: 'i1', name: 'i1', type: 'imports' }];
+
+    expect(getFlowResources(flows, exports, imports, oldFlow._id)).toEqual(expectedResources);
+  });
+  test('should return correct flow resources for flow with only PGs', () => {
+    const expectedResources = [{ _id: flowWithOnlyPGs._id, name: 'Flow-level' },
+      { _id: 'e1', name: 'e1', type: 'exports' },
+      { _id: 'e2', name: 'e2', type: 'exports' }];
+
+    expect(getFlowResources(flows, exports, imports, flowWithOnlyPGs._id)).toEqual(expectedResources);
+  });
+  test('should return correct flow resources for flow with only PPs', () => {
+    const expectedResources = [{ _id: flowWithOnlyPPs._id, name: 'Flow-level' },
+      { _id: 'e1', name: 'e1', type: 'exports', isLookup: true },
+      { _id: 'i1', name: 'i1', type: 'imports' },
+      { _id: 'e2', name: 'e2', type: 'exports', isLookup: true },
+    ];
+
+    expect(getFlowResources(flows, exports, imports, flowWithOnlyPPs._id)).toEqual(expectedResources);
+  });
+  test('should return correct flow resources for flow with PGs/PPs', () => {
+    const expectedResources = [{ _id: flowWithPGsandPPs._id, name: 'Flow-level' },
+      { _id: 'e1', name: 'e1', type: 'exports' },
+      { _id: 'e2', name: 'e2', type: 'exports' },
+      { _id: 'e3', name: 'e3', type: 'exports', isLookup: true },
+      { _id: 'i1', name: 'i1', type: 'imports' },
+      { _id: 'i2', name: 'i2', type: 'imports' }];
+
+    expect(getFlowResources(flows, exports, imports, flowWithPGsandPPs._id)).toEqual(expectedResources);
+  });
+  test('should return correct default resources for empty flow', () => {
+    const expectedResources = [{ _id: emptyFlow._id, name: 'Flow-level' }];
+
+    expect(getFlowResources(flows, exports, imports, emptyFlow._id)).toEqual(expectedResources);
   });
 });
