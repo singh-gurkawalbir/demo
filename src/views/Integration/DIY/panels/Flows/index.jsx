@@ -134,7 +134,7 @@ export default function FlowsPanel({ integrationId, childId }) {
           <>
             <span className={classes.divider} />
             <span className={classes.errorStatus}>
-              <StatusCircle variant="error" size="small" />
+              <StatusCircle variant="error" size="mini" />
               <span>{totalErrors || currentTileErrorCount} errors</span>
             </span>
           </>

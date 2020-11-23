@@ -1,7 +1,8 @@
 /* global describe, test, expect */
-import { call, put, delay } from 'redux-saga/effects';
+import { call, put, delay, fork, take} from 'redux-saga/effects';
+import { expectSaga } from 'redux-saga-test-plan';
 import actions from '../../actions';
-import { displayToken, generateToken } from '.';
+import { displayToken, generateToken, resourcesReceived, accessTokensUpdated, checkAndRemovePurgedTokens} from '.';
 import { apiCallWithRetry } from '..';
 import getRequestOptions from '../../utils/requestOptions';
 import actionTypes from '../../actions/types';
@@ -131,3 +132,26 @@ describe('generateToken saga', () => {
     expect(saga.next().done).toEqual(true);
   });
 });
+describe('resourcesReceived saga', () => {
+  test('should able to update collection successfully', () => expectSaga(resourcesReceived, { resourceType: 'accesstokens' })
+
+    .put(actions.accessToken.updatedCollection())
+    .run());
+  test('should able to skip update collection if resource type is not accesstokens', () => {
+    const saga = resourcesReceived({ resourceType: 'connections' });
+
+    expect(saga.next().done).toEqual(true);
+  });
+});
+describe('Updated access tokens saga', () => {
+  test('should able to watch updated access tokens', () => {
+    const saga = accessTokensUpdated();
+
+    expect(saga.next().value).toEqual(
+      fork(checkAndRemovePurgedTokens));
+    expect(saga.next().value).toEqual(
+      take(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION)
+    );
+  });
+});
+

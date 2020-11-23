@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import moment from 'moment-timezone';
 import Button from '@material-ui/core/Button';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -11,15 +10,11 @@ import flowStartDateMetadata from './metadata';
 import Spinner from '../../Spinner';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import ButtonGroup from '../../ButtonGroup';
+import adjustTimezone from '../../../utils/adjustTimezone';
 
 export default function FlowStartDateDialog(props) {
   const { flowId, onClose, disabled, onRun } = props;
   const dispatch = useDispatch();
-  const [state, setState] = useState({
-    changeIdentifier: 0,
-    lastExportDateTimeLoaded: false,
-  });
-  const { changeIdentifier, lastExportDateTimeLoaded } = state;
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
   const preferences = useSelector(state => selectors.userOwnPreferences(state));
   const profilePreferences = useSelector(state =>
@@ -47,29 +42,12 @@ export default function FlowStartDateDialog(props) {
   useEffect(() => {
     fetchLastExportDateTime();
   }, [fetchLastExportDateTime]);
-  useEffect(() => {
-    if (!lastExportDateTimeLoaded && selectorStatus) {
-      setState({
-        changeIdentifier: changeIdentifier + 1,
-        lastExportDateTimeLoaded: true,
-      });
-    }
-  }, [
-    changeIdentifier,
-    fetchLastExportDateTime,
-    lastExportDateTime,
-    lastExportDateTimeLoaded,
-    selectorStatus,
-  ]);
 
   const handleSubmit = formVal => {
     let customStartDate;
 
     if (formVal.deltaType === 'custom') {
-      customStartDate =
-        moment(formVal.startDateCustom).parseZone(formVal.timeZone);
-
-      customStartDate = customStartDate?.toISOString();
+      customStartDate = adjustTimezone(formVal.startDateCustom, formVal.timeZone);
     }
 
     onRun(customStartDate);

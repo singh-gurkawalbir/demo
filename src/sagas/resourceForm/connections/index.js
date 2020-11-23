@@ -267,7 +267,7 @@ export function* requestToken({ resourceId, fieldId, values }) {
   }
 }
 
-function* pingConnection({ resourceId, values }) {
+export function* pingConnection({ resourceId, values }) {
   const connectionPayload = yield call(createPayload, {
     values,
     resourceType: 'connections',
@@ -420,7 +420,7 @@ function* saveAndAuthorizeConnectionForm(params) {
   if (cancelSave) yield put(actions.resource.clearStaged(resourceId));
 }
 
-function* commitAndAuthorizeConnection({ resourceId }) {
+export function* commitAndAuthorizeConnection({ resourceId }) {
   const resp = yield call(commitStagedChanges, {
     resourceType: 'connections',
     id: resourceId,
@@ -441,7 +441,7 @@ function* commitAndAuthorizeConnection({ resourceId }) {
   }
 }
 
-function* requestIClients({ connectionId }) {
+export function* requestIClients({ connectionId }) {
   let path;
   const newIAConnDoc = yield call(newIAFrameWorkPayload, {
     resourceId: connectionId,
@@ -458,7 +458,7 @@ function* requestIClients({ connectionId }) {
   }
 
   try {
-    const { iclients } = yield apiCallWithRetry({
+    const { iclients } = yield call(apiCallWithRetry, {
       path,
       opts: {
         method: 'GET',

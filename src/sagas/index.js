@@ -61,12 +61,34 @@ import latestFlowJobsSagas from './errorManagement/latestJobs/flows';
 import errorRetrySagas from './errorManagement/retryData';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
+import { APIException } from './api';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
   yield put(actions.user.profile.delete());
 }
 
+export function* requestCleanup(path, reqMethod) {
+  // yield cancelled is true when the saga gets cancelled
+  // lets perform some cleanup here by completing any ongoing requests
+  const method = reqMethod || 'GET';
+
+  // deliberately delay the sampling of the state so that we capture the cancelled saga state accurately
+  // the select seems to be executed in the same cycle as the canceled sagas actions...by introducing a delay of 0 ms
+  // we are forcing the select to compute in the next cycle...thereby we have the state ready
+  yield delay(0);
+  const status = yield select(selectors.commStatusPerPath, path, method);
+
+  // only dispatch a completed action when the request state is not completed
+  if (status !== COMM_STATES.SUCCESS) {
+    yield put(actions.api.complete(path, method, 'Request Aborted'));
+  }
+}
+
+export const CANCELLED_REQ = {
+  status: 'Cancelled',
+  message: 'Cancelled request',
+};
 // TODO: decide if we this saga has to have takeLatest
 // api call
 export function* apiCallWithRetry(args) {
@@ -95,28 +117,22 @@ export function* apiCallWithRetry(args) {
       });
     }
 
+    if (timeoutEffect) {
+      yield call(requestCleanup, path, opts?.method);
+
+      throw new APIException(CANCELLED_REQ);
+    }
+
     // logout effect succeeded then the apiResp would be undefined
-    if (timeoutEffect || logout) return null;
+
+    if (logout) { return null; }
 
     const { data } = apiResp.response || {};
 
     return data;
   } finally {
     if (yield cancelled()) {
-      // yield cancelled is true when the saga gets cancelled
-      // lets perform some cleanup here by completing any ongoing requests
-      const method = (opts && opts.method) || 'GET';
-
-      // deliberately delay the sampling of the state so that we capture the cancelled saga state accurately
-      // the select seems to be executed in the same cycle as the canceled sagas actions...by intoducing a delay of 1 ms
-      // we are forcing the select to compute in the next cycle...thereby we have the state ready
-      yield delay(1);
-      const status = yield select(selectors.commStatusPerPath, path, method);
-
-      // only dispatch a completed action when the request state is not completed
-      if (status !== COMM_STATES.SUCCESS) {
-        yield put(actions.api.complete(path, method, 'Request Aborted'));
-      }
+      yield call(requestCleanup, path, opts?.method);
     }
   }
 }
@@ -177,9 +193,10 @@ export default function* rootSaga() {
     onAbort: onAbortSaga,
   });
   const t = yield fork(allSagas);
-  const {logrocket, logout} = yield race({
+  const {logrocket, logout, switchAcc} = yield race({
     logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
     logout: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
+    switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC),
   });
 
   if (logrocket) {
@@ -200,5 +217,30 @@ export default function* rootSaga() {
     yield put(actions.auth.clearStore());
     // restart the root saga again
     yield spawn(rootSaga);
+  }
+  // this effect originates from switching accounts...
+  // when switching accounts we would like to kill all outstanding
+  // api requests than updatePreferences to the selected account restart the saga and subsequently reinitilialize session
+
+  if (switchAcc) {
+    // stop the main sagas
+    t.cancel();
+    // restart the root saga again
+    yield spawn(rootSaga);
+    // this action updates the redux state as well as the preferences in the backend
+    // we need the preferences state before we clear it
+    // this action ensures that the selected account is tied to the user in the backend...
+    // so when we perform initialization the app knows which account to show
+    // TODO: we should wait for update preferences to complete...inorder to prevent a race
+    // with initSession to get preferences.
+    yield put(
+      actions.user.preferences.update({
+        defaultAShareId: switchAcc.accountToSwitchTo,
+        environment: 'production',
+      })
+    );
+    yield put(actions.auth.clearStore());
+
+    yield put(actions.auth.initSession());
   }
 }

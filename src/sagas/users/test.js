@@ -425,16 +425,9 @@ describe('all modal sagas', () => {
 
           expect(saga.next().value).toEqual(select(selectors.userPreferences));
           expect(saga.next({ defaultAShareId }).value).toEqual(
-            put(
-              actions.user.preferences.update({
-                defaultAShareId: aShare.id,
-                environment: 'production',
-              }),
-            ),
+            put(actions.auth.abortAllSagasAndSwitchAcc(aShare.id))
           );
 
-          expect(saga.next().value).toEqual(put(actions.auth.clearStore()));
-          expect(saga.next().value).toEqual(put(actions.auth.initSession()));
           expect(saga.next().done).toEqual(true);
         });
         test('should switch to sandbox environment successfuly', () => {
@@ -444,44 +437,9 @@ describe('all modal sagas', () => {
           const saga = switchAccount(aShare);
 
           expect(saga.next().value).toEqual(select(selectors.userPreferences));
-          expect(saga.next({ defaultAShareId }).value).toEqual(
-            put(
-              actions.user.preferences.update({
-                defaultAShareId: aShare.id,
-                environment: 'production',
-              }),
-            ),
-          );
 
-          expect(saga.next().value).toEqual(put(actions.auth.clearStore()));
-          expect(saga.next().value).toEqual(put(actions.auth.initSession()));
-          expect(saga.next().done).toEqual(true);
-        });
-      });
-      describe('handling api error', () => {
-        test('should generate appropriate error message in case of api failure', () => {
-          const aShare = {
-            id: 'somethingelse',
-          };
-          const saga = switchAccount(aShare);
-
-          expect(saga.next().value).toEqual(select(selectors.userPreferences));
           expect(saga.next({ defaultAShareId }).value).toEqual(
-            put(
-              actions.user.preferences.update({
-                defaultAShareId: aShare.id,
-                environment: 'production',
-              }),
-            ),
-          );
-          expect(saga.throw(new Error()).value).toEqual(
-            put(
-              actions.api.failure(
-                'switch account',
-                'PUT',
-                'Could not switch account',
-              ),
-            ),
+            put(actions.auth.abortAllSagasAndSwitchAcc(aShare.id))
           );
           expect(saga.next().done).toEqual(true);
         });

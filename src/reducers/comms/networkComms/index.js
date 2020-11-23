@@ -2,6 +2,8 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
 
+export const RETRY_COUNT = 3;
+
 const initialState = {};
 
 export const COMM_STATES = {
@@ -96,6 +98,11 @@ selectors.isLoading = (state, resourceName) => !!(
     state[resourceName].status === COMM_STATES.LOADING
 );
 
+selectors.reqsHasRetriedTillFailure = state => {
+  if (!state) return false;
+
+  return Object.keys(state).some(key => state[key].retry === RETRY_COUNT);
+};
 selectors.commStatus = (state, resourceName) => state && state[resourceName] && state[resourceName].status;
 
 selectors.requestMessage = (state, resourceName) => (state && state[resourceName] && state[resourceName].message) || '';
