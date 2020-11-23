@@ -33,7 +33,7 @@ export default function NotFound() {
         This is not the page that you&apos;re looking for...
       </Typography>
 
-      <Typography variant="body">
+      <Typography variant="body1">
         We can&apos;t find the page you&apos;re looking for.
         But don&apos;t worry! You can either return
         <br />
