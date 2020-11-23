@@ -1,8 +1,8 @@
 import {
-  ExpansionPanelSummary,
+  AccordionSummary,
   Typography,
-  ExpansionPanelDetails,
-  ExpansionPanel,
+  AccordionDetails,
+  Accordion,
 } from '@material-ui/core';
 import React, { useState } from 'react';
 import ExpandMoreIcon from '../../icons/ArrowDownIcon';
@@ -13,19 +13,19 @@ export default function DynaCeligoTable(props) {
   const [shouldExpand, setShouldExpand] = useState(false);
 
   return collapsable ? (
-    <ExpansionPanel
+    <Accordion
       // eslint-disable-next-line react/no-array-index-key
       expanded={shouldExpand}>
-      <ExpansionPanelSummary
+      <AccordionSummary
         data-test={title}
         onClick={() => setShouldExpand(expand => !expand)}
         expandIcon={<ExpandMoreIcon />}>
         <Typography>{title}</Typography>
-      </ExpansionPanelSummary>
-      <ExpansionPanelDetails>
+      </AccordionSummary>
+      <AccordionDetails>
         <CeligoTable {...props} />
-      </ExpansionPanelDetails>
-    </ExpansionPanel>
+      </AccordionDetails>
+    </Accordion>
   ) : (
     <CeligoTable {...props} />
   );
