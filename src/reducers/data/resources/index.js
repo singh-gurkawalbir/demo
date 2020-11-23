@@ -545,6 +545,8 @@ selectors.defaultStoreId = (state, id, store) => {
   return undefined;
 };
 
+selectors.resources = (state, resourceType) => state[resourceType] || emptyList;
+
 selectors.resourceList = (
   state,
   { type, take, keyword, sort, sandbox, filter, searchBy }

@@ -9,9 +9,11 @@ import editors from './editorMetadata';
 import Editor from '../../components/AFE2/Editor';
 import EditorPreviewButton from '../../components/AFE2/PreviewButtonGroup';
 import FullScreenOpenIcon from '../../components/icons/FullScreenOpenIcon';
-import EditorMenu from './EditorMenu';
+import ExampleMenu from './ExampleMenu';
+import ExplorerMenu from './ExplorerMenu';
 import EditorDrawer from '../../components/AFE2/Drawer';
 import actions from '../../actions';
+import ResourceDrawer from '../../components/drawer/Resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -19,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     height: `calc(100% - ${theme.pageBarHeight + theme.appBarHeight}px)`,
   },
   editorList: {
-    width: 250,
+    width: 300,
     padding: theme.spacing(3),
     border: `solid 0 ${theme.palette.secondary.lightest}`,
     borderRightWidth: 1,
@@ -32,6 +34,9 @@ const useStyles = makeStyles(theme => ({
   },
   buttons: {
     alignSelf: 'flex-end',
+  },
+  menuSection: {
+    marginBottom: theme.spacing(2),
   },
 }));
 // const editorId = 'playground';
@@ -47,12 +52,16 @@ export default function Editors() {
   const editorId = `${activeType}-${exampleKey}`;
 
   const handleFullScreen = () => history.push(`/playground/editor/${editorId}`);
-  const handleMenuClick = (type, exampleKey) => {
+  const handleExampleClick = (type, exampleKey) => {
     setActiveType(type);
     setExampleKey(exampleKey);
 
     // eslint-disable-next-line no-console
     console.log(type, exampleKey);
+  };
+  const handleExplorerClick = (flowId, resourceId, stage, fieldId) => {
+    // eslint-disable-next-line no-console
+    console.log({flowId, resourceId, stage, fieldId});
   };
 
   // console.log(activeType, exampleKey, activeExample);
@@ -97,8 +106,14 @@ export default function Editors() {
       </CeligoPageBar>
       <div className={classes.root}>
         <div className={classes.editorList}>
-          <Typography variant="h4">Available Editors</Typography>
-          <EditorMenu onClick={handleMenuClick} />
+          <div className={classes.menuSection}>
+            <Typography variant="h4">Editor Examples</Typography>
+            <ExampleMenu onClick={handleExampleClick} />
+          </div>
+          <div className={classes.menuSection}>
+            <Typography variant="h4">Flow Explorer</Typography>
+            <ExplorerMenu onClick={handleExplorerClick} />
+          </div>
         </div>
         <main className={classes.content}>
           {activeExample && (
@@ -113,6 +128,7 @@ export default function Editors() {
         </main>
       </div>
       <EditorDrawer />
+      <ResourceDrawer />
     </>
   );
 }

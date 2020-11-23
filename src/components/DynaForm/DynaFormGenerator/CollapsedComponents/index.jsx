@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Typography from '@material-ui/core/Typography';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -87,19 +87,19 @@ const ExpansionPannelExpandOnInValidState = props => {
 
   return (
     <div className={classes.child}>
-      <ExpansionPanel
+      <Accordion
         // eslint-disable-next-line react/no-array-index-key
         expanded={shouldExpand}>
-        <ExpansionPanelSummary
+        <AccordionSummary
           data-test={header}
           onClick={toggleExpansionPanel}
           expandIcon={<ExpandMoreIcon />}>
           <Typography className={classes.expPanelTitle}>{header}</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails >
+        </AccordionSummary>
+        <AccordionDetails >
           <FormGenerator {...props} layout={layout} fieldMap={fieldMap} />
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
+        </AccordionDetails>
+      </Accordion>
     </div>
   );
 };
