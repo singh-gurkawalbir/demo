@@ -151,7 +151,6 @@ const Row = ({ index, style, data }) => {
       })}
       style={style}
       selected={value === finalTextValue}
-
       onClick={() => {
         if (value !== undefined) {
           onFieldChange(id, value);
