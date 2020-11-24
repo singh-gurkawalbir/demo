@@ -4,10 +4,7 @@ import { TreeView, TreeItem} from '@material-ui/lab';
 import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import examples from '../examples';
-import editorMetadata from '../../../components/AFE2/Editor/metadata';
-
-// convert object to array.
-const editors = Object.keys(editorMetadata).map(key => editorMetadata[key]);
+import { editorList } from '../../../components/AFE2/Editor/metadata';
 
 const useStyles = makeStyles(theme => ({
   editorItem: {
@@ -28,7 +25,7 @@ export default function ExampleMenu({ onClick }) {
       defaultCollapseIcon={<ArrowUpIcon />}
       defaultExpandIcon={<ArrowDownIcon />}
       >
-      {editors.map(e => (
+      {editorList.map(e => (
         <TreeItem className={classes.editorItem} nodeId={e.type} key={e.type} label={e.label}>
           {examples[e.type]?.map(e => (
             <TreeItem nodeId={e.key} key={e.key} label={e.name} onClick={() => onClick(e.type, e.key)} />

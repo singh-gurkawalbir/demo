@@ -6,7 +6,7 @@ import { Button, IconButton, makeStyles, Tooltip, Typography } from '@material-u
 // import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import examples from './examples';
-import editorMetadata from '../../components/AFE2/Editor/metadata';
+import editorMap from '../../components/AFE2/Editor/metadata';
 import Editor from '../../components/AFE2/Editor';
 import EditorPreviewButton from '../../components/AFE2/PreviewButtonGroup';
 import FullScreenOpenIcon from '../../components/icons/FullScreenOpenIcon';
@@ -15,9 +15,6 @@ import ExplorerMenu from './ExplorerMenu';
 import EditorDrawer from '../../components/AFE2/Drawer';
 import actions from '../../actions';
 import ResourceDrawer from '../../components/drawer/Resource';
-
-// convert object to array.
-const editors = Object.keys(editorMetadata).map(key => editorMetadata[key]);
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,7 +30,6 @@ const useStyles = makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
-
   },
   editorListExpanded: {
     width: 600,
@@ -60,7 +56,7 @@ export default function Editors() {
   const history = useHistory();
   const [activeType, setActiveType] = useState();
   const [exampleKey, setExampleKey] = useState();
-  const activeEditor = editors.find(e => e.type === activeType);
+  const activeEditor = editorMap[activeType];
   const activeExample = examples[activeType]?.find(e => e.key === exampleKey);
   const editorId = `${activeType}-${exampleKey}`;
 
