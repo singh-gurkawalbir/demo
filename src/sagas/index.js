@@ -231,6 +231,8 @@ export default function* rootSaga() {
     // we need the preferences state before we clear it
     // this action ensures that the selected account is tied to the user in the backend...
     // so when we perform initialization the app knows which account to show
+    // TODO: we should wait for update preferences to complete...inorder to prevent a race
+    // with initSession to get preferences.
     yield put(
       actions.user.preferences.update({
         defaultAShareId: switchAcc.accountToSwitchTo,

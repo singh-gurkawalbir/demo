@@ -4869,7 +4869,7 @@ selectors.mappingSubRecordAndJSONPath = (state, importId, subRecordMappingId) =>
   return emptyObject;
 };
 selectors.mappingGenerates = createSelector([
-  (state, importId) => selectors.resource(state, 'imports', importId).adaptorType,
+  (state, importId) => selectors.resource(state, 'imports', importId)?.adaptorType,
   (state, importId, subRecordMappingId) => {
     const opts = selectors.mappingSubRecordAndJSONPath(state, importId, subRecordMappingId);
 
