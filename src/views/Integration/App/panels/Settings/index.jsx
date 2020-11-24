@@ -19,10 +19,11 @@ import { getEmptyMessage, isParentViewSelected } from '../../../../../utils/inte
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(0),
+    padding: theme.spacing(2),
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     backgroundColor: theme.palette.common.white,
+
   },
   container: {
     display: 'flex',
@@ -114,7 +115,11 @@ export default function SettingsPanel({
             <span>
               {isParentView
                 ? getEmptyMessage(integration.settings?.storeLabel, 'view settings')
-                : 'You don&apos;t have any custom settings for this integration.' }
+                : (
+                  <Typography>
+                    You don &apos;t have any custom settings for this integration.
+                  </Typography>
+                ) }
             </span>
           </div>
         </div>
