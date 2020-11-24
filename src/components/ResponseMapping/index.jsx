@@ -3,7 +3,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import {selectors} from '../../reducers';
+import { selectors } from '../../reducers';
 import Spinner from '../Spinner';
 import SpinnerWrapper from '../SpinnerWrapper';
 import actions from '../../actions';
@@ -11,6 +11,7 @@ import DrawerContent from '../drawer/Right/DrawerContent';
 import DrawerFooter from '../drawer/Right/DrawerFooter';
 import FieldMappingWrapper from './FieldMappingWrapper';
 import ButtonPanel from './ButtonPanel';
+import { isIntegrationApp } from '../../utils/flows';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -28,29 +29,34 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
     flex: 1,
     marginLeft: theme.spacing(3),
+    fontFamily: 'Roboto500',
   },
 
   mappingContainer: {
     flex: '1 1 0',
-    width: 'calc(100% + 24px)',
+    width: '100%',
     overflow: 'hidden',
     flexDirection: 'column',
     display: 'flex',
-    marginLeft: -24,
   },
   mappingsBody: {
     height: '100%',
     overflow: 'auto',
   },
 }));
-const ResponseMapping = props => {
-  const {flowId, resourceId} = props;
-  // replace with logic
-  const disabled = false; // hardcoded
+const ResponseMapping = ({ flowId, resourceId, integrationId}) => {
+  const disabled = useSelector(state => {
+    const flow = selectors.resource(state, 'flows', flowId);
+
+    if (isIntegrationApp(flow)) {
+      return false;
+    }
+
+    return selectors.isFormAMonitorLevelAccess(state, integrationId);
+  });
   const history = useHistory();
   const classes = useStyles();
-  // replace with logic hardcoded
-  const resourceType = 'imports';
+  const resourceType = useSelector(state => selectors.responseMapping(state).resourceType);
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
@@ -62,14 +68,14 @@ const ResponseMapping = props => {
           <div className={clsx(classes.mappingContainer)}>
             <div className={classes.header}>
               <Typography
-                variant="subtitle2"
+                variant="h5"
                 className={classes.headerChild}
                 key="heading_extract">
                 {resourceType === 'imports' ? 'Import' : 'Lookup'} response field
               </Typography>
 
               <Typography
-                variant="subtitle2"
+                variant="h5"
                 className={classes.headerChild}
                 key="heading_generate">
                 Source record field (New/Existing field)
@@ -80,7 +86,7 @@ const ResponseMapping = props => {
                 disabled={disabled}
                 resourceId={resourceId}
                 flowId={flowId}
-            />
+                            />
             </div>
           </div>
         </div>
@@ -91,13 +97,13 @@ const ResponseMapping = props => {
           resourceId={resourceId}
           disabled={disabled}
           onClose={handleClose}
-           />
+                />
       </DrawerFooter>
     </>
   );
 };
 
-export default function ResponseMappingWrapper() {
+export default function ResponseMappingWrapper({integrationId}) {
   const match = useRouteMatch();
   const { flowId, resourceId } = match.params;
   const dispatch = useDispatch();
@@ -131,6 +137,7 @@ export default function ResponseMappingWrapper() {
     <ResponseMapping
       flowId={flowId}
       resourceId={resourceId}
-     />
+      integrationId={integrationId}
+        />
   );
 }

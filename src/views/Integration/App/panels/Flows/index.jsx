@@ -229,7 +229,9 @@ function FlowList({ integrationId, storeId }) {
         // storeId={storeId}
         // sectionId={sectionId}
       />
-      <ResponseMappingDrawer />
+      <ResponseMappingDrawer
+        integrationId={integrationId}
+      />
       {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={storeId} />}
       <CategoryMappingDrawer
         integrationId={integrationId}

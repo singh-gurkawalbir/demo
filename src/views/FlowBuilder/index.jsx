@@ -70,7 +70,7 @@ function FlowBuilder() {
 
         <FBComponent flowId={flowId} integrationId={integrationId} childId={childId} />
         <MappingDrawerRoute integrationId={integrationId} />
-        <ResponseMappingDrawer />
+        <ResponseMappingDrawer integrationId={integrationId} />
       </Redirection>
     </LoadResources>
   );

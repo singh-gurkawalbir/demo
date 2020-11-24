@@ -13,6 +13,7 @@ export default function reducer(state = {}, action) {
     mappings,
     flowId,
     resourceId,
+    resourceType,
     field,
     value,
     key,
@@ -34,6 +35,7 @@ export default function reducer(state = {}, action) {
           mappings,
           flowId,
           resourceId,
+          resourceType,
           status: 'received',
           mappingsCopy: deepClone(mappings),
         };

@@ -49,12 +49,13 @@ export function* responseMappingInit({ flowId, resourceId }) {
       })),
       flowId,
       resourceId,
+      resourceType: isImport ? 'imports' : 'exports',
     })
   );
 }
 
 export function* responseMappingSave() {
-  const { mappings, flowId, resourceId } = yield select(selectors.responseMappings);
+  const { mappings, flowId, resourceId } = yield select(selectors.responseMapping);
   const { merged: flow = {} } = yield select(
     selectors.resourceData,
     'flows',

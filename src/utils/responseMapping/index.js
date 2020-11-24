@@ -63,7 +63,7 @@ export default {
     mappings.forEach(mappingTmp => {
       const mapping = { ...mappingTmp };
 
-      delete mapping.rowIdentifier;
+      delete mapping.key;
 
       if (!mapping.generate) {
         return true;
