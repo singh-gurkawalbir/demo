@@ -8,14 +8,14 @@ import ButtonGroup from '../../ButtonGroup';
 export default function SaveButtonGroup({ editorId, onClose }) {
   const dispatch = useDispatch();
   const [closeTriggered, setCloseTriggered] = useState(false);
-  const { saveStatus, disabled } = useSelector(state => selectors.editor(state, editorId));
-  const editorViolations = useSelector(state => selectors.editorViolations(state, editorId));
+  const { saveStatus, disabled } = useSelector(state => selectors._editor(state, editorId));
+  const editorViolations = useSelector(state => selectors._editorViolations(state, editorId));
 
   const saveInProgress = saveStatus === 'requested';
   const saveSuccessful = saveStatus === 'success';
   const disable = editorViolations || disabled || saveInProgress;
 
-  const handleSave = () => dispatch(actions.editor.save(editorId));
+  const handleSave = () => dispatch(actions._editor.save(editorId));
   const handleSaveAndClose = () => {
     handleSave();
     setCloseTriggered(true);

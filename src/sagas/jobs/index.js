@@ -171,6 +171,11 @@ export function* requestJobCollection({ integrationId, flowId, filters = {}, opt
     return true;
   }
 
+  if (!Array.isArray(collection)) {
+    // the jobs collection must be an array
+    collection = [];
+  }
+
   // flowJobId is sent in options when user clicks a error notification email and jobId is in url request parameters
   // If user requested job is not in first 1000 results, fetch particular job and merge it in collection.
   if (options.flowJobId && !collection.find(j => j._id === options.flowJobId)) {
@@ -178,7 +183,7 @@ export function* requestJobCollection({ integrationId, flowId, filters = {}, opt
       requestedJob = yield call(getJobDetails, { jobId: options.flowJobId });
     // eslint-disable-next-line no-empty
     } catch (e) {}
-    if (requestedJob && requestedJob._id) {
+    if (requestedJob && requestedJob._id && Array.isArray(collection)) {
       // Push if valid job is returned
       collection.push(requestedJob);
     }

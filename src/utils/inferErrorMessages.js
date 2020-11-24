@@ -4,7 +4,8 @@ const convertObjectMessageIntoString = message => {
   return message;
 };
 
-export default function inferErrorMessage(inputMessage) {
+// the return type is always a collection
+export default function inferErrorMessages(inputMessage) {
   let msg;
 
   if (typeof inputMessage === 'string') {
@@ -15,6 +16,9 @@ export default function inferErrorMessage(inputMessage) {
       return [inputMessage];
     }
   } else msg = inputMessage;
+
+  // msg should be an object at this point
+  if (!msg?.message && !msg?.errors) { return []; }
 
   const { message, errors } = msg;
   let finalFormattedMessage;

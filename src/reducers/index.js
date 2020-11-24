@@ -70,7 +70,7 @@ import {
   getAvailablePreviewStages,
   isPreviewPanelAvailable,
 } from '../utils/exportPanel';
-import inferErrorMessage from '../utils/inferErrorMessage';
+import inferErrorMessages from '../utils/inferErrorMessages';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName, getTitleIdFromSection } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
@@ -157,7 +157,7 @@ selectors.commsErrors = state => {
     const c = commsState[key];
 
     if (!c.hidden && c.status === COMM_STATES.ERROR) {
-      errors[key] = inferErrorMessage(c.message);
+      errors[key] = inferErrorMessages(c.message);
     }
   });
 
@@ -4870,7 +4870,7 @@ selectors.mappingSubRecordAndJSONPath = (state, importId, subRecordMappingId) =>
   return emptyObject;
 };
 selectors.mappingGenerates = createSelector([
-  (state, importId) => selectors.resource(state, 'imports', importId).adaptorType,
+  (state, importId) => selectors.resource(state, 'imports', importId)?.adaptorType,
   (state, importId, subRecordMappingId) => {
     const opts = selectors.mappingSubRecordAndJSONPath(state, importId, subRecordMappingId);
 

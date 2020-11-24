@@ -68,7 +68,7 @@ export default function CsvParsePanel({ editorId, disabled }) {
     if (field === 'multipleRowsPerRecord') {
       newRule.keyColumns = [];
     }
-    dispatch(actions._editor.patch(editorId, { rule: newRule }));
+    dispatch(actions._editor.patchRule(editorId, newRule));
   };
   const showKeyColumnsOptions = status !== 'requested';
 

@@ -26,13 +26,13 @@ const useStyles = makeStyles(theme => ({
 
 const overrides = { wrap: true };
 export default function ErrorGridItem({ editorId }) {
-  const {error} = useSelector(state => selectors._editor(state, editorId));
+  const {error, initStatus} = useSelector(state => selectors._editor(state, editorId));
   const violations = useSelector(state =>
     selectors._editorViolations(state, editorId),
   );
   const classes = useStyles();
 
-  if (!error && !violations) return null;
+  if (initStatus === 'requested' || (!error && !violations)) return null;
   const errorText = [
     ...(Array.isArray(error) ? error : [error]),
     violations?.ruleError,

@@ -1,6 +1,8 @@
 import actionTypes from './types';
 import suiteScript from './suiteScript';
 
+export const auditResourceTypePath = (resourceType, resourceId) =>
+  resourceType && resourceId ? `${resourceType}/${resourceId}/audit` : 'audit';
 export const availableResources = [
   'exports',
   'imports',
@@ -433,20 +435,12 @@ const resource = {
   },
 };
 // #endregion
-const auditLogs = {
-  request: (resourceType, resourceId, message) => {
-    if (resourceType && resourceId) {
-      return action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
-        resourceType: `${resourceType}/${resourceId}/audit`,
-        message,
-      });
-    }
 
-    return action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
-      resourceType: 'audit',
-      message,
-    });
-  },
+const auditLogs = {
+  request: (resourceType, resourceId, message) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
+    resourceType: auditResourceTypePath(resourceType, resourceId),
+    message,
+  }),
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
 const connectors = {
@@ -1406,7 +1400,9 @@ const _editor = {
   init: (id, processor, options) =>
     action(actionTypes._EDITOR.INIT, { id, processor, options }),
   changeLayout: (id, newLayout) => action(actionTypes._EDITOR.CHANGE_LAYOUT, { id, newLayout }),
-  patch: (id, patch) => action(actionTypes._EDITOR.PATCH, { id, patch }),
+  patchFeatures: (id, featuresPatch) => action(actionTypes._EDITOR.PATCH.FEATURES, { id, featuresPatch }),
+  patchRule: (id, rulePatch) => action(actionTypes._EDITOR.PATCH.RULE, { id, rulePatch }),
+  patchData: (id, dataPatch) => action(actionTypes._EDITOR.PATCH.DATA, { id, dataPatch }),
   clear: id => action(actionTypes._EDITOR.CLEAR, { id }),
   toggleVersion: (id, version) => action(actionTypes._EDITOR.TOGGLE_VERSION, { id, version }),
   sampleDataReceived: (id, sampleData, templateVersion) => action(actionTypes._EDITOR.SAMPLEDATA.RECEIVED, { id, sampleData, templateVersion }),

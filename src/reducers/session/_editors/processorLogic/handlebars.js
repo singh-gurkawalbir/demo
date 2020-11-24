@@ -5,10 +5,10 @@ export default {
     rules: { strict: !!editor.strict, template: editor.rule },
     data: JSON.parse(editor.data),
   }),
-  validate: editor => ({
-    dataError: !editor.data
+  validate: ({data}) => ({
+    dataError: !data
       ? 'Must provide some sample data.'
-      : util.validateJsonString(editor.data),
+      : typeof data === 'string' && util.validateJsonString(data),
   }),
   processResult: ({resultMode}, result) => {
     const {data, ...rest} = result;

@@ -5,12 +5,14 @@ import csvParser from './csvParser';
 // import merge from './merge';
 // import transform from './transform';
 import handlebars from './handlebars';
-// import javascript from './javascript';
+import javascript from './javascript';
 // import settingsForm from './settingsForm';
 // import structuredFileParser from './structuredFileParser';
 // import structuredFileGenerator from './structuredFileGenerator';
 import sql from './sql';
 // import filter from './filter';
+// import sql from './sql';
+import filter from './filter';
 // import netsuiteLookupFilter from './netsuiteLookupFilter';
 // import netsuiteQualificationCriteria from './netsuiteQualificationCriteria';
 // import salesforceQualifier from './salesforceQualifier';
@@ -19,6 +21,8 @@ import sql from './sql';
 
 const logicMap = {
   handlebars,
+  filter,
+  javascript,
   csvParser,
   sql,
 };
