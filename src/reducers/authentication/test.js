@@ -62,6 +62,7 @@ describe('authentication reducers', () => {
         authenticatedState,
         actions.auth.failure(someFailureMsg)
       );
+      // reauthentication
       const authRequestState = reducer(
         authenticationFailureState,
         actions.auth.request()
@@ -77,7 +78,7 @@ describe('authentication reducers', () => {
         authenticated: true,
       });
     });
-    test('authRequest showAuthError property should get deleted through an authentication sucess cycle', () => {
+    test('in an authRequest action showAuthError property should get deleted through an authentication sucess cycle', () => {
       const state = reducer(undefined, actions.auth.request(null, null, true));
 
       expect(state).toEqual({
@@ -129,7 +130,7 @@ describe('authentication reducers', () => {
       });
     });
 
-    test('authRequest showAuthError property should propagate through an authentication failure cycle', () => {
+    test('in an authRequest action showAuthError property should propagate through an authentication failure cycle', () => {
       const someFailureMsg = 'Error';
       const state = reducer(undefined, actions.auth.request(null, null, true));
 
@@ -197,6 +198,7 @@ describe('auth selectors', () => {
         authenticatedState,
         actions.auth.failure(someFailureMsg)
       );
+      // reauthentication
       const authRequestState = reducer(
         authenticationFailureState,
         actions.auth.request()
@@ -206,7 +208,7 @@ describe('auth selectors', () => {
         expect(selectors.isAuthenticating(authRequestState)).toBe(true);
       });
 
-      test('should return false after authentication completes during sessionExpiration ', () => {
+      test('should return false after authentication enters a terminal state during sessionExpiration', () => {
         const authenticationFailureState = reducer(
           authRequestState,
           actions.auth.failure(someFailureMsg)
@@ -225,7 +227,7 @@ describe('auth selectors', () => {
   });
 
   describe('showAuthError', () => {
-    test('during an authenticaton failure cycle with showAuthError passed in the request showAuthError selector should return true', () => {
+    test('during an authenticaton failure cycle the showAuthError property should propagate all the way through', () => {
       const state = reducer(undefined, actions.auth.request(null, null, true));
 
       expect(selectors.showAuthError(state)).toBe(true);
@@ -238,7 +240,7 @@ describe('auth selectors', () => {
       expect(selectors.showAuthError(failureState)).toBe(true);
     });
 
-    test('during an authenticaton success cycle with showAuthError passed in the request showAuthError selector should return falsey', () => {
+    test('during an authenticaton success cycle the showAuthError property should be deleted as there will not be any error', () => {
       const state = reducer(undefined, actions.auth.request(null, null, true));
 
       expect(selectors.showAuthError(state)).toBe(true);

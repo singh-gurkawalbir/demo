@@ -74,7 +74,7 @@ export default function (state = defaultState, action) {
 
       case actionTypes.AUTH_WARNING:
 
-        // if user is not authenticated there can not be an session timeout warning
+        // if user is not authenticated there can not be a session timeout warning
         if (!draft.authenticated) { break; }
 
         draft.warning = true;
