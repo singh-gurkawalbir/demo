@@ -9,10 +9,11 @@ const toggleOptions = [
   { label: 'Script', value: 'script' },
 ];
 
-export default function ToggleMode({ editorId }) {
+export default function ToggleFormMode({ editorId }) {
   const dispatch = useDispatch();
-  const { mode } = useSelector(state => selectors.editor(state, editorId));
-  const handleToggle = mode => dispatch(actions.editor.patch(editorId, {mode}));
+  // TODO: @Ashu, where would "mode" fit into the editor state? Its not data or a rule.
+  const { mode } = useSelector(state => selectors._editor(state, editorId));
+  const handleToggle = mode => dispatch(actions._editor.patch(editorId, {mode}));
 
   return (
     <TextToggle
