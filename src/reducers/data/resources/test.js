@@ -197,25 +197,23 @@ describe('resources reducer', () => {
       const connectionId = '12';
       const integrationId = '';
       const defaultState = {integrations: [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}]};
-      const expectedState = [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}];
       const state = reducer(
         defaultState,
         actions.connection.completeDeregister(connectionId, integrationId)
       );
 
-      expect(state.integrations).toEqual(expectedState);
+      expect(state.integrations).toEqual(defaultState.integrations);
     });
     test('Should be able to handle empty or wrong connection Id', () => {
       const connectionId = '121212';
       const integrationId = '12345';
       const defaultState = {integrations: [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}]};
-      const expectedState = [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}];
       const state = reducer(
         defaultState,
         actions.connection.completeDeregister(connectionId, integrationId)
       );
 
-      expect(state.integrations).toEqual(expectedState);
+      expect(state).toEqual(defaultState);
     });
 
     test('Should be able to handle empty state', () => {
@@ -247,13 +245,12 @@ describe('resources reducer', () => {
       const connectionIds = ['78', '79'];
       const integrationId = '';
       const defaultState = {integrations: [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}]};
-      const expectedState = [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}];
       const state = reducer(
         defaultState,
         actions.connection.completeRegister(connectionIds, integrationId)
       );
 
-      expect(state.integrations).toEqual(expectedState);
+      expect(state).toEqual(defaultState);
     });
     test('Should be able to handle empty state', () => {
       const connectionIds = ['121212'];
