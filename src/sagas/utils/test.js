@@ -1,5 +1,10 @@
 /* global describe, test, expect */
-import { resourceConflictResolution } from './index';
+import { select } from 'redux-saga/effects';
+import { expectSaga } from 'redux-saga-test-plan';
+import * as matchers from 'redux-saga-test-plan/matchers';
+import { resourceConflictResolution, constructResourceFromFormValues } from './index';
+import { createFormValuesPatchSet } from '../resourceForm';
+import { selectors } from '../../reducers';
 
 describe('resourceConflictResolution', () => {
   /*
@@ -152,5 +157,82 @@ describe('resourceConflictResolution', () => {
         merged: null,
       });
     });
+  });
+});
+
+describe('constructResourceFromFormValues saga', () => {
+  test('should call createFormValuesPatchSet to get resource patchSet', () => {
+    const resourceId = '123';
+    const resourceType = 'imports';
+    const formValues = [];
+
+    return expectSaga(constructResourceFromFormValues, {
+      formValues,
+      resourceId,
+      resourceType,
+    })
+      .call.fn(createFormValuesPatchSet)
+      .run();
+  });
+
+  test('should return combined document if resource has active patch set', () => {
+    const resourceId = '123';
+    const resourceType = 'imports';
+    const formValues = [];
+    const merged = {
+      description: 'abc',
+    };
+    const patchSet = [
+      {
+        op: 'add',
+        path: '/patchKey',
+        value: 'patchValue',
+      },
+    ];
+
+    const expectedOutput = {
+      description: 'abc',
+      patchKey: 'patchValue',
+    };
+
+    return expectSaga(constructResourceFromFormValues, {
+      formValues,
+      resourceId,
+      resourceType,
+    })
+      .provide([
+        [select(selectors.resourceData, 'imports', resourceId, 'value'), { merged }],
+        [matchers.call.fn(createFormValuesPatchSet), {patchSet}],
+      ])
+      .returns(expectedOutput)
+      .run();
+  });
+
+  test('should return empty object if invalid patchSet or resource is passed', () => {
+    const resourceId = '123';
+    const resourceType = 'imports';
+    const formValues = [];
+    const merged = {
+      description: 'abc',
+    };
+    const patchSet = [
+      {
+        op: 'invalid',
+        path: '/patchKey',
+        value: 'patchValue',
+      },
+    ];
+
+    return expectSaga(constructResourceFromFormValues, {
+      formValues,
+      resourceId,
+      resourceType,
+    })
+      .provide([
+        [select(selectors.resourceData, 'imports', resourceId, 'value'), { merged }],
+        [matchers.call.fn(createFormValuesPatchSet), {patchSet}],
+      ])
+      .returns({})
+      .run();
   });
 });
