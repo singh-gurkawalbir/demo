@@ -4,7 +4,6 @@ import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
 // import processorPatchSet from '../editors/processorPatchSet';
 import editorFeaturesMap from './featuresMap';
-import { isJsonString } from '../../../utils/string';
 
 const emptyObj = {};
 
@@ -14,7 +13,9 @@ export default function reducer(state = {}, action) {
     processor,
     id,
     options,
-    patch,
+    featuresPatch,
+    rulePatch,
+    dataPatch,
     result,
     error,
     helperFunctions,
@@ -73,8 +74,9 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.CLEAR: {
-        // TODO: delete draft[id];
-        draft[id] = {};
+        // TODO:
+        delete draft[id];
+        // draft[id] = {};
 
         break;
       }
@@ -84,7 +86,7 @@ export default function reducer(state = {}, action) {
         draft[id].dataVersion = templateVersion;
         draft[id].initStatus = 'received';
         // store lastValidData in case user updates data as invalid json. As we still want to show the dropdown data values in
-        // the rule panel
+        // the rule or handlebars panel
         draft[id].lastValidData = sampleData;
         break;
       }
@@ -98,6 +100,12 @@ export default function reducer(state = {}, action) {
       case actionTypes._EDITOR.TOGGLE_VERSION: {
         draft[id].initStatus = 'requested';
         draft[id].dataVersion = version;
+        draft[id].result = '';
+        if (version === 2) {
+          draft[id].rule = draft[id].v2Rule || '';
+        } else if (version === 1) {
+          draft[id].rule = draft[id].v1Rule || '';
+        }
         break;
       }
 
@@ -110,15 +118,38 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes._EDITOR.PATCH: {
-        Object.assign(draft[id], deepClone(patch));
-        if (patch?.data && isJsonString(draft[id].data)) {
-          draft[id].lastValidData = draft[id].data;
+      case actionTypes._EDITOR.PATCH.RULE: {
+        if (typeof rulePatch === 'string' || Array.isArray(rulePatch)) {
+          draft[id].rule = rulePatch;
+        } else {
+          Object.assign(draft[id].rule, deepClone(rulePatch));
+        }
+        if (draft[id].dataVersion === 2) {
+          draft[id].v2Rule = rulePatch;
+        } else if (draft[id].dataVersion === 1) {
+          draft[id].v1Rule = rulePatch;
         }
         draft[id].lastChange = Date.now();
         if (draft[id].autoEvaluate) {
           draft[id].previewStatus = 'requested';
         }
+        break;
+      }
+
+      case actionTypes._EDITOR.PATCH.DATA: {
+        // Object.assign(draft[id].data, deepClone(dataPatch));
+        draft[id].data = dataPatch;
+        draft[id].lastChange = Date.now();
+        draft[id].lastValidData = draft[id].data;
+        if (draft[id].autoEvaluate) {
+          draft[id].previewStatus = 'requested';
+        }
+        break;
+      }
+
+      case actionTypes._EDITOR.PATCH.FEATURES: {
+        Object.assign(draft[id], featuresPatch);
+        draft[id].lastChange = Date.now();
         break;
       }
 

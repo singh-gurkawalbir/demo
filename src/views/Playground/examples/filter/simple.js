@@ -5,8 +5,8 @@ const sampleData = {
 };
 
 export default {
-  key: 'handlebars1',
-  type: 'handlebars',
+  key: 'filter1',
+  type: 'filter',
   name: 'Simple JSON record',
   description: 'Simple JSON record',
   // data: JSON.stringify(sampleData, null, 2),

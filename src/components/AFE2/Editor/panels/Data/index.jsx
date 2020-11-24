@@ -13,9 +13,8 @@ export default function DataPanel({ editorId, mode, disabled }) {
     selectors._editorViolations(state, editorId),
   );
 
-  const handleChange = data => {
-    // dispatch(actions.editor.patchData(value));
-    dispatch(actions._editor.patch(editorId, { data }));
+  const handleChange = newData => {
+    dispatch(actions._editor.patchData(editorId, newData));
   };
 
   return (

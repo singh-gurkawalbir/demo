@@ -20,6 +20,12 @@ export default [
     description: 'Converts XML into JSON',
   },
   {
+    type: 'filter',
+    label: 'Filter editor',
+    description:
+      'This editor allows you to visually define an expression for filtering records.',
+  },
+  {
     type: 'formBuilder',
     label: 'Form builder',
     description: 'Construct a form from metadata',

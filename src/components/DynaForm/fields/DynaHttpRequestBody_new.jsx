@@ -103,7 +103,7 @@ export default function _DynaHttpRequestBody_(props) {
     );
   }, [adaptorType, flowId, lookups, onFieldChange, resourceId, resourceType, supportLookup]);
 
-  const handleSave = editorValues => {
+  const handleSave = useCallback(editorValues => {
     const { rule } = editorValues;
 
     // TODO: Give better name for arrayIndex
@@ -117,7 +117,7 @@ export default function _DynaHttpRequestBody_(props) {
       // save to field
       onFieldChange(id, rule);
     }
-  };
+  }, [arrayIndex, id, onFieldChange, value]);
 
   const handleEditorClick = useCallback(() => {
     dispatch(actions._editor.init(id, 'handlebars', {
