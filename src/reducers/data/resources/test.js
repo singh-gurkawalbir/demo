@@ -330,7 +330,7 @@ describe('resources reducer', () => {
     });
   });
   describe('Update connection status', () => {
-    test('Should be able filter out purged tokens', () => {
+    test('Should be able to update connection status', () => {
       const tomorrow = new Date();
       const yesterday = new Date();
 
@@ -406,7 +406,7 @@ describe('resources reducer', () => {
     });
   });
   describe('Access token auto purge', () => {
-    test('Should be able filter out purged tokens', () => {
+    test('Should be able to filter out purged tokens', () => {
       const tomorrow = new Date();
       const yesterday = new Date();
 
