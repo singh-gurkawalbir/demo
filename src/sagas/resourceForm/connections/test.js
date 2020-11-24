@@ -7,7 +7,7 @@ import * as matchers from 'redux-saga-test-plan/matchers';
 import actions from '../../../actions';
 import { apiCallWithRetry } from '../../index';
 import {newIAFrameWorkPayload, submitFormValues, createFormValuesPatchSet} from '../index';
-import inferErrorMessage from '../../../utils/inferErrorMessage';
+import inferErrorMessages from '../../../utils/inferErrorMessages';
 import { pingConnectionWithAbort, requestToken, requestIClients, pingAndUpdateConnection, pingConnection, createPayload, openOAuthWindowForConnection, commitAndAuthorizeConnection, saveAndAuthorizeConnection, netsuiteUserRoles } from '.';
 import { commitStagedChanges } from '../../resources';
 import { selectors } from '../../../reducers/index';
@@ -93,7 +93,7 @@ describe('ping connection saga', () => {
       .put(
         actions.resource.connections.testErrored(
           resourceId,
-          inferErrorMessage(resp)
+          inferErrorMessages(resp)
         )
       )
       .run();
@@ -111,7 +111,7 @@ describe('ping connection saga', () => {
       .call.fn(apiCallWithRetry)
       .put(actions.resource.connections.testErrored(
         resourceId,
-        inferErrorMessage(error?.message)
+        inferErrorMessages(error?.message)
       ))
       .run();
   });
@@ -564,7 +564,7 @@ describe('Request token saga', () => {
     expect(saga.throw(e).value).toEqual(put(
       actions.resource.connections.requestTokenFailed(
         resourceId,
-        inferErrorMessage(e.message)
+        inferErrorMessages(e.message)
       )
     )
     );
