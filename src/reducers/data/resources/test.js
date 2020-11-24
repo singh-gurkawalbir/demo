@@ -1390,3 +1390,134 @@ describe('resourceDetailsMap selector', () => {
     });
   });
 });
+describe('Connection has as2 routing selector', () => {
+  const connections = [
+    { _id: '1234',
+      as2: {contentBasedFlowRouter: {_scriptId: '1234'}},
+      name: 'conn1',
+    },
+    { _id: '1235',
+      as2: {},
+      name: 'conn2',
+    },
+    { _id: '12357',
+      file: {csv: {}},
+      name: 'conn2',
+    },
+  ];
+
+  test('should return false when the state is undefined', () => {
+    const state = reducer(undefined, 'some action');
+
+    expect(selectors.connectionHasAs2Routing(state)).toEqual(false);
+  });
+  test('should return true if connection has as2 routing', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('connections', connections)
+    );
+
+    expect(selectors.connectionHasAs2Routing(state, '1234')).toEqual(true);
+  });
+  test('should return false if connection does not have as2 routing', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('connections', connections)
+    );
+
+    expect(selectors.connectionHasAs2Routing(state, '12357')).toEqual(false);
+  });
+});
+describe('Export needs routing selector', () => {
+  const exports = [
+    { _id: '1234',
+      adaptorType: 'AS2Export',
+      _connectionId: 'conn1',
+      name: 'exp1',
+    },
+    { _id: '1235',
+      adaptorType: 'AS2Export',
+      _connectionId: 'conn1',
+      name: 'exp2',
+    },
+    { _id: '12357',
+      adaptorType: 'AS2Export',
+      _connectionId: 'conn2',
+      name: 'exp3',
+    },
+    { _id: '12358',
+      adaptorType: 'FTPExport',
+      _connectionId: 'conn2',
+      name: 'exp4',
+    },
+  ];
+
+  test('should return false when the state is undefined', () => {
+    const state = reducer(undefined, 'some action');
+
+    expect(selectors.exportNeedsRouting(state)).toEqual(false);
+  });
+  test('should return true if export needs routing', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('exports', exports)
+    );
+
+    expect(selectors.exportNeedsRouting(state, '1234')).toEqual(true);
+  });
+  test('should return false if export does not need routing', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('exports', exports)
+    );
+
+    expect(selectors.exportNeedsRouting(state, '12358')).toEqual(false);
+  });
+});
+
+describe('Default store id selector', () => {
+  const integrations = [
+    { _id: 'int1',
+      _connectorId: 'connector3',
+      settings: {supportsMultiStore: true, sections: [{title: 'store1', id: '123'}, {title: 'store2', id: '143'}]},
+      name: 'int_One',
+      something: 'something' },
+    {
+      _id: 'int2',
+      name: 'int_Two',
+      settings: {supportsMultiStore: true, sections: [{title: 'store1', id: '1234'}]},
+      _connectorId: 'connector2',
+      something: 'something',
+    },
+  ];
+
+  test('should return undefined when the state is undefined', () => {
+    const state = reducer(undefined, 'some action');
+
+    expect(selectors.defaultStoreId(state)).toEqual(undefined);
+  });
+  test('should return default store id', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('integrations', integrations)
+    );
+
+    expect(selectors.defaultStoreId(state, 'int1')).toEqual('123');
+  });
+  test('should return correct store id', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('integrations', integrations)
+    );
+
+    expect(selectors.defaultStoreId(state, 'int1', '143')).toEqual('143');
+  });
+  test('should return undefined for invalid integration Id', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('integrations', integrations)
+    );
+
+    expect(selectors.defaultStoreId(state, 'int11234', '143')).toEqual(undefined);
+  });
+});
