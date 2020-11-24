@@ -4,7 +4,10 @@ import { TreeView, TreeItem} from '@material-ui/lab';
 import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import examples from '../examples';
-import editors from '../editorMetadata';
+import editorMetadata from '../../../components/AFE2/Editor/metadata';
+
+// convert object to array.
+const editors = Object.keys(editorMetadata).map(key => editorMetadata[key]);
 
 const useStyles = makeStyles(theme => ({
   editorItem: {

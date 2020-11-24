@@ -6,7 +6,7 @@ import { Button, IconButton, makeStyles, Tooltip, Typography } from '@material-u
 // import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import examples from './examples';
-import editors from './editorMetadata';
+import editorMetadata from '../../components/AFE2/Editor/metadata';
 import Editor from '../../components/AFE2/Editor';
 import EditorPreviewButton from '../../components/AFE2/PreviewButtonGroup';
 import FullScreenOpenIcon from '../../components/icons/FullScreenOpenIcon';
@@ -15,6 +15,9 @@ import ExplorerMenu from './ExplorerMenu';
 import EditorDrawer from '../../components/AFE2/Drawer';
 import actions from '../../actions';
 import ResourceDrawer from '../../components/drawer/Resource';
+
+// convert object to array.
+const editors = Object.keys(editorMetadata).map(key => editorMetadata[key]);
 
 const useStyles = makeStyles(theme => ({
   root: {
