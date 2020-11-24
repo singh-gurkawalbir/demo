@@ -24,4 +24,9 @@ export default [
     label: 'Form builder',
     description: 'Construct a form from metadata',
   },
+  {
+    type: 'sql',
+    label: 'SQL query builder',
+    description: 'Construct a SQL query using handlebars',
+  },
 ];

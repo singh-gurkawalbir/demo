@@ -9,7 +9,7 @@ import handlebars from './handlebars';
 // import settingsForm from './settingsForm';
 // import structuredFileParser from './structuredFileParser';
 // import structuredFileGenerator from './structuredFileGenerator';
-// import sql from './sql';
+import sql from './sql';
 // import filter from './filter';
 // import netsuiteLookupFilter from './netsuiteLookupFilter';
 // import netsuiteQualificationCriteria from './netsuiteQualificationCriteria';
@@ -20,6 +20,7 @@ import handlebars from './handlebars';
 const logicMap = {
   handlebars,
   csvParser,
+  sql,
 };
 
 function getLogic(editor) {

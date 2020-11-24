@@ -3,6 +3,7 @@ import ediParse from './ediParse';
 import xmlParse from './xmlParse';
 import formBuilder from './formBuilder';
 import handlebars from './handlebars';
+import sql from './sql';
 
 export default {
   csvParser,
@@ -10,4 +11,5 @@ export default {
   xmlParse,
   formBuilder,
   handlebars,
+  sql,
 };
