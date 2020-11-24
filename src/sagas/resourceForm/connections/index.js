@@ -24,7 +24,7 @@ import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTok
 import { isNewId } from '../../../utils/resource';
 import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
 import { REST_ASSISTANTS } from '../../../utils/constants';
-import inferErrorMessage from '../../../utils/inferErrorMessage';
+import inferErrorMessages from '../../../utils/inferErrorMessages';
 
 export function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
@@ -200,7 +200,7 @@ export function* requestToken({ resourceId, fieldId, values }) {
     yield put(
       actions.resource.connections.requestTokenFailed(
         resourceId,
-        inferErrorMessage(e.message)
+        inferErrorMessages(e.message)
       )
     );
 
@@ -288,7 +288,7 @@ export function* pingConnection({ resourceId, values }) {
     return yield put(
       actions.resource.connections.testErrored(
         resourceId,
-        inferErrorMessage(e.message)
+        inferErrorMessages(e.message)
       )
     );
   }
@@ -297,7 +297,7 @@ export function* pingConnection({ resourceId, values }) {
     return yield put(
       actions.resource.connections.testErrored(
         resourceId,
-        inferErrorMessage(resp)
+        inferErrorMessages(resp)
       )
     );
   }
