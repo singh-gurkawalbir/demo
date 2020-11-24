@@ -35,7 +35,7 @@ describe('jobErrorsPreview reducer', () => {
   });
 
   describe('receivedPreview action', () => {
-    test('should set requested property on the corresponding job.', () => {
+    test('should set received property on the corresponding job.', () => {
       const jobId = 'j1';
       const previewData = {resolves: 0, retries: 0, remains: 1, invalids: 0, removes: 0, adds: 0, total: 2};
       const errorFileId = 'ef2';
@@ -74,6 +74,16 @@ describe('jobErrorsPreview reducer', () => {
       );
 
       expect(newState).toEqual(expectedState);
+    });
+    test.only('should not alter state for invalid job.', () => {
+      const jobId = 'j3';
+      const error = 'some error';
+      const originalState = {j1: {status: 'error', error}, j2: {status: 'requested', previewData: samplePreviewData, errorFileId: 'ef1'}};
+      const newState = reducer(originalState,
+        actions.job.processedErrors.clearPreview(jobId)
+      );
+
+      expect(newState).toEqual(originalState);
     });
   });
 });
