@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import { makeStyles, Typography, ExpansionPanelSummary, ExpansionPanelDetails, ExpansionPanel } from '@material-ui/core';
+import { makeStyles, Typography, AccordionSummary, AccordionDetails, Accordion } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import FormView from './FormView';
 import RawView from './RawView';
@@ -103,8 +103,8 @@ export default function DynaSettings(props) {
 
   // We are not in edit mode, devs and non-devs alike should see the settings form if it exists.
   return (
-    <ExpansionPanel expanded={!isCollapsed}>
-      <ExpansionPanelSummary
+    <Accordion expanded={!isCollapsed}>
+      <AccordionSummary
         data-test={label}
         className={classes.summaryContainer}
         onClick={handleExpandClick}
@@ -113,10 +113,10 @@ export default function DynaSettings(props) {
         {!isCollapsed && (
         <FormBuilderButton resourceType={resourceType} resourceId={resourceId} integrationId={integrationId} />
         )}
-      </ExpansionPanelSummary>
-      <ExpansionPanelDetails >
+      </AccordionSummary>
+      <AccordionDetails >
         {renderSettings()}
-      </ExpansionPanelDetails>
-    </ExpansionPanel>
+      </AccordionDetails>
+    </Accordion>
   );
 }

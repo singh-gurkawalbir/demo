@@ -57,7 +57,6 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant, label}) {
         }}
         disabled={disabled}
         data-test="runFlow"
-
         onClick={onRunClick}>
         <RunIcon color="secondary" />
       </IconButtonWithTooltip>

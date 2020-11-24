@@ -12,9 +12,9 @@ import {
   IconButton,
   Drawer,
   Typography,
-  ExpansionPanel,
-  ExpansionPanelDetails,
-  ExpansionPanelSummary,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Button,
 } from '@material-ui/core';
 import { selectors } from '../../../../../../reducers';
@@ -275,14 +275,14 @@ function CategoryMappings({
 
   return (
     <div className={isRoot ? classes.mappingContainer : classes.default}>
-      <ExpansionPanel
+      <Accordion
         expanded={expanded}
         elevation={0}
         onChange={handleChange}
         className={
           isRoot ? classes.rootExpansionPanel : classes.childExpansionPanel
         }>
-        <ExpansionPanelSummary
+        <AccordionSummary
           aria-controls="panel1bh-content"
           className={classes.categoryMappingExpPanelSummary}
           id="panel1bh-header">
@@ -346,8 +346,8 @@ function CategoryMappings({
               )}
             </div>
           )}
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
+        </AccordionSummary>
+        <AccordionDetails>
           <div className={classes.fullWidth}>
             <Mappings
               id={`${flowId}-${sectionId}`}
@@ -370,8 +370,8 @@ function CategoryMappings({
                 />
               ))}
           </div>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
+        </AccordionDetails>
+      </Accordion>
     </div>
   );
 }
