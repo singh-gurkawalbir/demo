@@ -331,12 +331,6 @@ describe('resources reducer', () => {
   });
   describe('Update connection status', () => {
     test('Should be able to update connection status', () => {
-      const tomorrow = new Date();
-      const yesterday = new Date();
-
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      yesterday.setDate(yesterday.getDate() - 1);
-
       const connStatus = [{ _id: '456', offline: true, queueSize: 10, name: 'conn1'}, { _id: '678', offline: false, queueSize: 11, name: 'conn2' }];
       const collection = [{ _id: '456', offline: false, queues: [{size: 32}], name: 'conn4'}, { _id: '678', offline: true, queues: [{size: 99}], name: 'conn20' }];
 
@@ -370,7 +364,7 @@ describe('resources reducer', () => {
     });
   });
   describe('Make connection online', () => {
-    test('Should be able filter out purged tokens', () => {
+    test('Should be able to make connection online', () => {
       const connectionId = '1234';
 
       const collection = [{ _id: '456', offlineConnections: ['1234', '1236', '1238'], name: 'tile1'}, { _id: '457', offlineConnections: ['1234', '1239', '1231'], name: 'tile2'}];
