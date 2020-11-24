@@ -7,6 +7,7 @@ import getRequestOptions from './requestOptions';
 import getRoutePath from './routePaths';
 import retry from './retry';
 import adjustTimezone from './adjustTimezone';
+import inferErrorMessages from './inferErrorMessages';
 
 const uiRoutePathPrefix = '';
 
@@ -310,5 +311,39 @@ describe('adjustTimezone', () => {
     const expectedOutTime = moment.tz(inputLocalTime, zone).toISOString();
 
     expect(adjustTimezone(dateNow, zone)).toEqual(expectedOutTime);
+  });
+});
+
+describe('inferErrorMessages expect errored api message in this format { message, errors } ', () => {
+  describe('invalid inputs', () => {
+    test('should return [] for null or undefined inputs', () => {
+      expect(inferErrorMessages(null)).toEqual([]);
+      expect(inferErrorMessages(undefined)).toEqual([]);
+    });
+
+    test('should return just the input in an array for non parsable input messages', () => {
+      expect(inferErrorMessages('some error')).toEqual(['some error']);
+    });
+    test('should return [] for parsable input messages with non message or errors properties', () => {
+      expect(inferErrorMessages({a: 'something', b: 'something1'})).toEqual([]);
+    });
+  });
+  describe('valid { message, errors }', () => {
+    test('should parse { message} in api message and just return it, this is seen in csrf api errored calls', () => {
+      expect(inferErrorMessages({message: 'csrf error'})).toEqual(['csrf error']);
+    });
+    test('should parse stringified input messages consisting of { message} and just return it, this is seen in csrf api errored calls', () => {
+      expect(inferErrorMessages(JSON.stringify({message: 'csrf error'}))).toEqual(['csrf error']);
+    });
+    test('should parse { errors } property in api message, and translate it to a collection of error messages', () => {
+      expect(inferErrorMessages({errors: ['api failure1', 'api failure2']})).toEqual(['api failure1', 'api failure2']);
+      expect(inferErrorMessages({errors: [{message: 'api failure1'}, {message: 'api failure2'}]})).toEqual(['api failure1', 'api failure2']);
+    });
+
+    test('should parse be able to parse stringified inputs consisting of error property and return a collection of error messages', () => {
+      expect(inferErrorMessages(JSON.stringify({errors: ['api failure1', 'api failure2']}))).toEqual(['api failure1', 'api failure2']);
+      expect(inferErrorMessages(JSON.stringify({errors: [{message: 'api failure1'}, {message: 'api failure2'}]})))
+        .toEqual(['api failure1', 'api failure2']);
+    });
   });
 });
