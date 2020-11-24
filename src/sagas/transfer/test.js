@@ -1,8 +1,8 @@
-/* global describe, test, expect */
+/* global describe, test */
 
-import { call, put } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
+import { throwError } from 'redux-saga-test-plan/providers';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { cancel, preview, create } from '.';
@@ -22,19 +22,16 @@ describe('cancel saga', () => {
       .run();
   });
   test('should handle api error properly', () => {
-    const saga = cancel({ id });
-
+    const error = new Error('error');
     const path = `/transfers/${id}/cancel`;
-    const opts = { method: 'PUT' };
-    const error = new Error();
 
-    expect(saga.next().value).toEqual(
-      call(apiCallWithRetry, { path, opts })
-    );
-    expect(saga.throw(error).value).toEqual(
-      put(actions.api.failure(path, 'PUT', error, false))
-    );
-    expect(saga.next().done).toEqual(true);
+    return expectSaga(cancel, { id })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), throwError(error)],
+      ])
+      .call.fn(apiCallWithRetry)
+      .put(actions.api.failure(path, 'PUT', error, false))
+      .run();
   });
 });
 
@@ -53,27 +50,15 @@ describe('preview saga', () => {
       .run();
   });
   test('should handle api error properly', () => {
-    const saga = preview({ data });
+    const error = new Error('error');
 
-    const opts = { method: 'GET' };
-    let path = '/transfers/preview';
-
-    if (data) {
-      path += `?email=${encodeURIComponent(data.email)}`;
-
-      if (data._integrationIds) {
-        path += `&_integrationIds=${JSON.stringify(data._integrationIds)}`;
-      }
-    }
-    const error = new Error();
-
-    expect(saga.next().value).toEqual(
-      call(apiCallWithRetry, { path, opts, hidden: true})
-    );
-    expect(saga.throw(error).value).toEqual(
-      put(actions.transfer.receivedPreview({ error }))
-    );
-    expect(saga.next().done).toEqual(true);
+    return expectSaga(preview, { data })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), throwError(error)],
+      ])
+      .call.fn(apiCallWithRetry)
+      .put(actions.transfer.receivedPreview({ error }))
+      .run();
   });
 });
 
@@ -91,23 +76,17 @@ describe('create saga', () => {
       .put(actions.resource.received('transfers', transferResponse))
       .run();
   });
+
   test('should handle api error properly', () => {
-    const path = '/transfers/invite';
-    const data = { _transferId: 'j1', something: 'some thing' };
-    const opts = {
-      method: 'POST',
-      body: data,
-    };
-    const saga = create({ data });
-
     const error = new Error();
+    const path = '/transfers/invite';
 
-    expect(saga.next().value).toEqual(
-      call(apiCallWithRetry, { path, opts })
-    );
-    expect(saga.throw(error).value).toEqual(
-      put(actions.api.failure(path, 'POST', error, false))
-    );
-    expect(saga.next().done).toEqual(true);
+    return expectSaga(create, { data })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), throwError(error)],
+      ])
+      .call.fn(apiCallWithRetry)
+      .put(actions.api.failure(path, 'POST', error, false))
+      .run();
   });
 });
