@@ -31,12 +31,12 @@ describe('filter reducers', () => {
       state = reducer(undefined, actions.patchFilter(name, filter));
       state = reducer(
         state,
-        actions.patchFilter(name, { take: 5, newCriteria: true })
+        actions.patchFilter(name, { take: 6, newCriteria: true })
       );
 
       expect(state[name]).toEqual({
         keyword: 'findme',
-        take: 5,
+        take: 6,
         newCriteria: true,
       });
     });
@@ -63,6 +63,17 @@ describe('filter reducers', () => {
 
       state = reducer(state, actions.clearFilter('someFilter'));
       expect(state.someFilter).toBeUndefined();
+    });
+
+    test('should return just status for a jobs filter', () => {
+      const filter = { keyword: 'findme', take: 5, status: 'someStatus' };
+      let state;
+
+      state = reducer(undefined, actions.patchFilter('jobs', filter));
+      expect(state.jobs).toEqual(filter);
+
+      state = reducer(state, actions.clearFilter('jobs'));
+      expect(state.jobs).toEqual({status: 'someStatus'});
     });
   });
 });
