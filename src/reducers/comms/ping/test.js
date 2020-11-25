@@ -2,8 +2,29 @@
 import reducer, { PING_STATES, selectors } from '.';
 import actions from '../../../actions';
 
+const invalidInputs = [null, undefined, ''];
+
+// fabricates a test vector table for each action and its corresponding invalid inputs
+const generateTestData = allActions => allActions.map(act => invalidInputs.map(input => [act.name, input, act.action])).flat();
+
 describe('ping reducer', () => {
   const resId = 1;
+
+  describe('invalid action payloads should not make any changes to the state and return default state ', () => {
+    const allActions = [
+      { name: 'actions.resource.connections.test', action: actions.resource.connections.test},
+      { name: 'actions.resource.connections.testSuccessful', action: actions.resource.connections.testSuccessful},
+      { name: 'actions.resource.connections.testClear', action: actions.resource.connections.testClear},
+      { name: 'actions.resource.connections.testErrored', action: actions.resource.connections.testErrored},
+      { name: 'actions.resource.connections.testCancelled', action: actions.resource.connections.testCancelled},
+    ];
+
+    test.each(generateTestData(allActions))('for action %s with resourceID %s should return {} state', (actionName, input, action) => {
+      const newState = reducer(undefined, action(input));
+
+      expect(newState).toEqual({});
+    });
+  });
 
   test('should no make any changes to the state when resourceId is invalid', () => {
     let newState = reducer(undefined, actions.resource.connections.test(null));
@@ -100,6 +121,10 @@ describe('selectors', () => {
     test('should return null for non valid resource Id', () => {
       expect(selectors.testConnectionStatus(newState, 'someother resourceId')).toEqual(null);
     });
+    test('should return null for a null or undefined resource Id', () => {
+      expect(selectors.testConnectionStatus(newState, undefined)).toEqual(null);
+      expect(selectors.testConnectionStatus(newState, null)).toEqual(null);
+    });
   });
   describe('testConnectionMessage', () => {
     test('should return errored message for a valid id', () => {
@@ -107,6 +132,11 @@ describe('selectors', () => {
     });
     test('should return null for non valid resource Id', () => {
       expect(selectors.testConnectionMessage(newState, 'someother resourceId')).toEqual(null);
+    });
+
+    test('should return null for a null or undefined resource Id', () => {
+      expect(selectors.testConnectionMessage(newState, undefined)).toEqual(null);
+      expect(selectors.testConnectionMessage(newState, null)).toEqual(null);
     });
   });
 });
