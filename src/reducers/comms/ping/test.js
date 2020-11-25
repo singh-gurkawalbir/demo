@@ -20,24 +20,11 @@ describe('ping reducer', () => {
     ];
 
     test.each(generateTestData(allActions))('for action %s with resourceID %s should return {} state', (actionName, input, action) => {
+      // checking for invalid resourceId input
       const newState = reducer(undefined, action(input));
 
       expect(newState).toEqual({});
     });
-  });
-
-  test('should no make any changes to the state when resourceId is invalid', () => {
-    let newState = reducer(undefined, actions.resource.connections.test(null));
-
-    expect(newState).toEqual({});
-
-    newState = reducer(undefined, actions.resource.connections.testClear(undefined));
-
-    expect(newState).toEqual({});
-
-    newState = reducer(undefined, actions.resource.connections.testSuccessful(''));
-
-    expect(newState).toEqual({});
   });
 
   test('should show loading state', () => {
