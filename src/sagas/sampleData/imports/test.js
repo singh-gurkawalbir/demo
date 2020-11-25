@@ -9,6 +9,7 @@ import { selectors } from '../../../reducers';
 import { requestSampleData, _fetchAssistantSampleData, _fetchIAMetaData } from './index';
 import { getNetsuiteOrSalesforceMeta, requestAssistantMetadata } from '../../resources/meta';
 import { apiCallWithRetry } from '../..';
+import { SCOPES } from '../../resourceForm';
 
 describe('sampleData imports saga', () => {
   const resourceId = '123';
@@ -31,7 +32,7 @@ describe('sampleData imports saga', () => {
 
       return expectSaga(requestSampleData, { resourceId })
         .provide([
-          [select(selectors.resourceData, 'imports', resourceId, 'value'), { merged }],
+          [select(selectors.resourceData, 'imports', resourceId, SCOPES.VALUE), { merged }],
         ])
         .call(_fetchAssistantSampleData, {resource: merged})
         .run();
@@ -49,7 +50,7 @@ describe('sampleData imports saga', () => {
 
       expectSaga(requestSampleData, { resourceId, options: {recordType: 'account'}, refreshCache: true })
         .provide([
-          [select(selectors.resourceData, 'imports', resourceId, 'value'), { merged }],
+          [select(selectors.resourceData, 'imports', resourceId, SCOPES.VALUE), { merged }],
         ])
         .call(getNetsuiteOrSalesforceMeta, {connectionId: merged._connectionId, commMetaPath: expectedCommMetaPath, addInfo: { refreshCache: true }})
         .run();
@@ -65,7 +66,7 @@ describe('sampleData imports saga', () => {
 
       return expectSaga(requestSampleData, { resourceId: '111', refreshCache: true })
         .provide([
-          [select(selectors.resourceData, 'imports', '111', 'value'), { merged: merged2 }],
+          [select(selectors.resourceData, 'imports', '111', SCOPES.VALUE), { merged: merged2 }],
         ])
         .call(getNetsuiteOrSalesforceMeta, {connectionId: merged2._connectionId, commMetaPath: expectedCommMetaPath2, addInfo: { refreshCache: true }})
         .run();
@@ -83,7 +84,7 @@ describe('sampleData imports saga', () => {
 
       expectSaga(requestSampleData, { resourceId, refreshCache: true })
         .provide([
-          [select(selectors.resourceData, 'imports', resourceId, 'value'), { merged }],
+          [select(selectors.resourceData, 'imports', resourceId, SCOPES.VALUE), { merged }],
         ])
         .call(getNetsuiteOrSalesforceMeta, {connectionId: merged._connectionId, commMetaPath: expectedCommMetaPath, addInfo: { refreshCache: true }})
         .run();
@@ -93,7 +94,7 @@ describe('sampleData imports saga', () => {
 
       return expectSaga(requestSampleData, { resourceId, options: {sObjects: ['contact', 'opp']}, refreshCache: true })
         .provide([
-          [select(selectors.resourceData, 'imports', resourceId, 'value'), { merged }],
+          [select(selectors.resourceData, 'imports', resourceId, SCOPES.VALUE), { merged }],
         ])
         .call(getNetsuiteOrSalesforceMeta, {connectionId: merged._connectionId, commMetaPath: expectedCommMetaPath1, addInfo: { refreshCache: true }})
         .call(getNetsuiteOrSalesforceMeta, {connectionId: merged._connectionId, commMetaPath: expectedCommMetaPath2, addInfo: { refreshCache: true }})
@@ -111,7 +112,7 @@ describe('sampleData imports saga', () => {
 
       return expectSaga(requestSampleData, { resourceId })
         .provide([
-          [select(selectors.resourceData, 'imports', resourceId, 'value'), { merged }],
+          [select(selectors.resourceData, 'imports', resourceId, SCOPES.VALUE), { merged }],
         ])
         .call(_fetchIAMetaData, {
           _importId: resourceId,
