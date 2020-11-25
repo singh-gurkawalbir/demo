@@ -9,6 +9,8 @@ import javascript from './javascript';
 // import settingsForm from './settingsForm';
 // import structuredFileParser from './structuredFileParser';
 // import structuredFileGenerator from './structuredFileGenerator';
+import sql from './sql';
+// import filter from './filter';
 // import sql from './sql';
 import filter from './filter';
 // import netsuiteLookupFilter from './netsuiteLookupFilter';
@@ -22,6 +24,7 @@ const logicMap = {
   filter,
   javascript,
   csvParser,
+  sql,
 };
 
 function getLogic(editor) {

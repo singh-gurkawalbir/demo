@@ -1,6 +1,7 @@
 import DataPanel from '../panels/Data';
 import ResultPanel from '../panels/Result';
 import FilterPanel from '../panels/Filter';
+import ToggleFilterMode from '../../Drawer/actions/ToggleFormMode';
 
 export default {
   type: 'filter',
@@ -30,4 +31,5 @@ export default {
       },
     },
   ],
+  drawerActions: [ToggleFilterMode],
 };
