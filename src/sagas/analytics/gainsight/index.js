@@ -64,7 +64,7 @@ const locationFromMatch = m => {
 };
 
 const trackResolve = a => {
-  gainsight.trakc('CUSTOM_RESOLVE_ERRORS', {
+  gainsight.track('CUSTOM_RESOLVE_ERRORS', {
     where: locationFromMatch(a.match),
   });
 };
