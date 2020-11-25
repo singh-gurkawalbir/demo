@@ -14,38 +14,33 @@ export default function reducer(state = {}, action) {
     parentId,
     childId,
   } = action;
-  let newState;
 
   switch (type) {
     case actionTypes.RESOURCE.CREATED:
-      newState = { ...state, [tempId]: id };
+      return produce(state, draft => {
+        draft[tempId] = id;
+      });
 
-      return newState;
     case actionTypes.RESOURCE.REFERENCES_RECEIVED:
-      newState = { ...state, references: resourceReferences };
+      return produce(state, draft => {
+        draft.references = resourceReferences;
+      });
 
-      return newState;
     case actionTypes.RESOURCE.REFERENCES_CLEAR:
-      newState = { ...state };
-      delete newState.references;
+      return produce(state, draft => {
+        delete draft.references;
+      });
 
-      return newState;
     case actionTypes.LICENSE_TRIAL_ISSUED:
-      newState = {
-        ...state,
-        platformLicenseActionMessage:
-          'Congratulations! Your 30 days of unlimited flows starts now - what will you integrate next?',
-      };
+      return produce(state, draft => {
+        draft.platformLicenseActionMessage = 'Congratulations! Your 30 days of unlimited flows starts now - what will you integrate next?';
+      });
 
-      return newState;
     case actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED:
-      newState = {
-        ...state,
-        platformLicenseActionMessage:
-          'Your request has been received. We will contact you soon.',
-      };
+      return produce(state, draft => {
+        draft.platformLicenseActionMessage = 'Your request has been received. We will contact you soon.';
+      });
 
-      return newState;
     case actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED:
       return produce(state, draft => {
         draft.numEnabledFlows = response;
