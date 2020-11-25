@@ -193,8 +193,7 @@ export default function QueuedJobsDrawer() {
   }, [history]);
 
   const rightActionsQueuedJobs = {
-    display: 'flex',
-    alignSelf: 'flex-end',
+    width: 250,
   };
   const action = useMemo(
     () => (
@@ -210,7 +209,7 @@ export default function QueuedJobsDrawer() {
         />
       </div>
     ),
-    [connectionId, connections, handleConnectionChange]
+    [connectionId, connections, rightActionsQueuedJobs, handleConnectionChange]
   );
 
   return (
