@@ -235,4 +235,16 @@ describe('constructResourceFromFormValues saga', () => {
       .returns({})
       .run();
   });
+
+  test('should return empty object if resource id is undefined', () => {
+    const resourceType = 'imports';
+    const formValues = [];
+
+    return expectSaga(constructResourceFromFormValues, {
+      formValues,
+      resourceType,
+    })
+      .returns({})
+      .run();
+  });
 });
