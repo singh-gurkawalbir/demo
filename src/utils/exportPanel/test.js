@@ -17,15 +17,16 @@ import {
 
 describe('getAvailablePreviewStages util', () => {
   test('should return empty list if the resource is null', () => {
-    expect(getAvailablePreviewStages(null, {})).toMatchObject([]);
+    expect(getAvailablePreviewStages(null, {})).toEqual([]);
   });
   test('should return empty list if the adaptorType is invalid', () => {
     const resource = { adaptorType: 'INVALID', _id: 1 };
 
-    expect(getAvailablePreviewStages(resource, {})).toMatchObject([]);
+    expect(getAvailablePreviewStages(resource, {})).toEqual([]);
   });
   test('should return PREVIEW_STAGE for data loader or rest csv export', () => {
     expect(getAvailablePreviewStages({}, { isDataLoader: true })).toBe(PREVIEW_STAGE);
+    expect(getAvailablePreviewStages({}, { isRestCsvExport: true })).toBe(PREVIEW_STAGE);
   });
   test('should return PREVIEW_STAGE for file adaptors', () => {
     const fileAdaptors = ['FTPExport', 'S3Export', 'AS2Export'];
@@ -72,8 +73,10 @@ describe('isPreviewPanelAvailable util', () => {
   });
   test('should return false if the resource is of blob type is not exports', () => {
     const resource = { _id: 1, adaptorType: 'HTTPExport', type: 'blob'};
+    const newBlobResource = { _id: 'newID', resourceType: 'lookupFiles' };
 
     expect(isPreviewPanelAvailable(resource, 'exports')).toBe(false);
+    expect(isPreviewPanelAvailable(newBlobResource, 'exports')).toBe(false);
   });
   test('should return true for assistants', () => {
     const resource = { _id: 1, adaptorType: 'HTTPExport', assistant: 'bigcommerce'};
@@ -93,7 +96,7 @@ describe('isPreviewPanelAvailable util', () => {
 
 describe('getFormattedPreviewData util', () => {
   test('should return empty pageOfRecords for invalid/empty preview data', () => {
-    expect(getFormattedPreviewData(undefined)).toMatchObject({
+    expect(getFormattedPreviewData(undefined)).toEqual({
       page_of_records: [
         {
           record: {},
@@ -109,7 +112,7 @@ describe('getFormattedPreviewData util', () => {
       },
     };
 
-    expect(getFormattedPreviewData(previewData)).toMatchObject({
+    expect(getFormattedPreviewData(previewData)).toEqual({
       page_of_records: [
         {
           record: {
@@ -132,7 +135,7 @@ describe('getFormattedPreviewData util', () => {
       }],
     };
 
-    expect(getFormattedPreviewData(previewData)).toMatchObject({
+    expect(getFormattedPreviewData(previewData)).toEqual({
       page_of_records: [
         {
           record: {
@@ -174,7 +177,7 @@ describe('getFormattedPreviewData util', () => {
         }],
       ]};
 
-    expect(getFormattedPreviewData(previewData)).toMatchObject({
+    expect(getFormattedPreviewData(previewData)).toEqual({
       page_of_records: [
         {
           rows: [{
@@ -218,7 +221,7 @@ describe('getFormattedPreviewData util', () => {
         }],
       ]};
 
-    expect(getFormattedPreviewData(previewData)).toMatchObject({
+    expect(getFormattedPreviewData(previewData)).toEqual({
       page_of_records: [
         {
           rows: [{
@@ -306,7 +309,7 @@ describe('getPreviewBodyTemplateType util', () => {
 
 describe('getBodyHeaderFieldsForPreviewData util', () => {
   test('should return empty body header fields incase of invalid preview data', () => {
-    expect(getBodyHeaderFieldsForPreviewData(undefined)).toMatchObject({
+    expect(getBodyHeaderFieldsForPreviewData(undefined)).toEqual({
       body: undefined,
       headers: undefined,
       others: {},
@@ -325,7 +328,7 @@ describe('getBodyHeaderFieldsForPreviewData util', () => {
       }],
     };
 
-    expect(getBodyHeaderFieldsForPreviewData(previewData)).toMatchObject({
+    expect(getBodyHeaderFieldsForPreviewData(previewData)).toEqual({
       body: undefined,
       headers: {
         'content-type': 'application/json',
@@ -351,7 +354,7 @@ describe('getBodyHeaderFieldsForPreviewData util', () => {
       }],
     };
 
-    expect(getBodyHeaderFieldsForPreviewData(previewData, 'raw')).toMatchObject({
+    expect(getBodyHeaderFieldsForPreviewData(previewData, 'raw')).toEqual({
       body: { test: 5 },
       headers: {
         'content-type': 'application/json',
@@ -379,12 +382,12 @@ describe('previewFileData util', () => {
   test('should return the passed data if recordSize is not a number', () => {
     const previewData = [{ id1: 5 }, { id2: 15 }, { id3: 25 }, { id4: 35 }, { id5: 45 }];
 
-    expect(previewFileData(previewData, '5')).toMatchObject(previewData);
+    expect(previewFileData(previewData, '5')).toEqual(previewData);
   });
   test('should return extracted data based on valid record size passed', () => {
     const previewData = [{ id1: 5 }, { id2: 15 }, { id3: 25 }, { id4: 35 }, { id5: 45 }];
 
-    expect(previewFileData(previewData, 3)).toMatchObject([{ id1: 5 }, { id2: 15 }, { id3: 25 }]);
+    expect(previewFileData(previewData, 3)).toEqual([{ id1: 5 }, { id2: 15 }, { id3: 25 }]);
   });
 });
 
@@ -418,7 +421,7 @@ describe('Miscellaneous', () => {
     expect(DEFAULT_RECORD_SIZE).toBe(10);
   });
   test('should have request, response and parse stages as part of HTTP_STAGES', () => {
-    expect(HTTP_STAGES).toMatchObject([
+    expect(HTTP_STAGES).toEqual([
       { label: 'HTTP request', value: 'request' },
       { label: 'HTTP response', value: 'raw' },
       { label: 'Parsed output', value: 'preview' },
@@ -438,6 +441,6 @@ describe('Miscellaneous', () => {
       { label: '100', value: '100'},
     ];
 
-    expect(getRecordSizeOptions()).toMatchObject(options);
+    expect(getRecordSizeOptions()).toEqual(options);
   });
 });

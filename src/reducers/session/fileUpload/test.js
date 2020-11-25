@@ -24,14 +24,14 @@ describe('fileUpload reducer', () => {
       const prevState = {};
       const currState = reducer(prevState, { type: actionTypes.FILE.PROCESS });
 
-      expect(currState).toMatchObject(prevState);
+      expect(currState).toEqual(prevState);
     });
     test('should show status as requested for passed fileId', () => {
       const prevState = {};
       const fileId = 'id1';
       const currState = reducer(prevState, { type: actionTypes.FILE.PROCESS, fileId });
 
-      expect(currState).toMatchObject({ [fileId]: {
+      expect(currState).toEqual({ [fileId]: {
         status: 'requested',
       }});
     });
@@ -41,7 +41,7 @@ describe('fileUpload reducer', () => {
       const prevState = { id1: { status: 'requested' }};
       const currState = reducer(prevState, { type: actionTypes.FILE.PROCESSED });
 
-      expect(currState).toMatchObject(prevState);
+      expect(currState).toEqual(prevState);
     });
     test('should show status as received and update file props', () => {
       const fileId = 'id1';
@@ -50,7 +50,7 @@ describe('fileUpload reducer', () => {
       const fileProps = { type: 'json', size: 2};
       const currState = reducer(prevState, { type: actionTypes.FILE.PROCESSED, fileId, file, fileProps });
 
-      expect(currState).toMatchObject({ [fileId]: {
+      expect(currState).toEqual({ [fileId]: {
         status: 'received',
         file,
         ...fileProps,
@@ -62,7 +62,7 @@ describe('fileUpload reducer', () => {
       const prevState = { id1: { status: 'requested' } };
       const currState = reducer(prevState, { type: actionTypes.FILE.PROCESS_ERROR });
 
-      expect(currState).toMatchObject(prevState);
+      expect(currState).toEqual(prevState);
     });
     test('should update file state with the error occured ', () => {
       const fileId = 'id1';
@@ -70,7 +70,7 @@ describe('fileUpload reducer', () => {
       const error = { error: ' Cannot serialize the content '};
       const currState = reducer(prevState, { type: actionTypes.FILE.PROCESS_ERROR, fileId, error });
 
-      expect(currState).toMatchObject({
+      expect(currState).toEqual({
         [fileId]: {
           status: 'error',
           error,
@@ -83,14 +83,14 @@ describe('fileUpload reducer', () => {
       const prevState = { id1: { status: 'requested' } };
       const currState = reducer(prevState, { type: actionTypes.FILE.RESET });
 
-      expect(currState).toMatchObject(prevState);
+      expect(currState).toEqual(prevState);
     });
-    test('should reset file state for the passed fileId ', () => {
+    test('should clear file state for the passed fileId ', () => {
       const file = { name: 'test', id: 2 };
       const prevState = { id1: { status: 'received', file }, id2: { status: 'requested'} };
       const currState = reducer(prevState, { type: actionTypes.FILE.RESET, fileId: 'id1' });
 
-      expect(currState).toMatchObject({
+      expect(currState).toEqual({
         id2: {
           status: 'requested',
         },
@@ -131,7 +131,7 @@ describe('uploadedFile selector', () => {
       },
     };
 
-    expect(selectors.getUploadedFile(state, 'id1')).toMatchObject({
+    expect(selectors.getUploadedFile(state, 'id1')).toEqual({
       status: 'received',
       file: {
         name: 'test',
