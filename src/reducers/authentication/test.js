@@ -67,18 +67,18 @@ describe('authentication reducers', () => {
         authenticationFailureState,
         actions.auth.request()
       );
-      const sucessfulAuthenticatedState = reducer(
+      const successfulAuthenticatedState = reducer(
         authRequestState,
         actions.auth.complete()
       );
 
-      expect(sucessfulAuthenticatedState).toEqual({
+      expect(successfulAuthenticatedState).toEqual({
         initialized: true,
         commStatus: COMM_STATES.SUCCESS,
         authenticated: true,
       });
     });
-    test('in an authRequest action showAuthError property should get deleted through an authentication sucess cycle', () => {
+    test('in an authRequest action showAuthError property should get deleted through an authentication success cycle', () => {
       const state = reducer(undefined, actions.auth.request(null, null, true));
 
       expect(state).toEqual({
