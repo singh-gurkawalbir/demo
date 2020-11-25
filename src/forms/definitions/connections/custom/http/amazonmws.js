@@ -135,6 +135,10 @@ export default {
               value: 'A17E79C6D8DWNP',
               label: 'A17E79C6D8DWNP (SA)',
             },
+            {
+              value: 'A19VAU5U5O7RUS',
+              label: 'A19VAU5U5O7RUS (SG)',
+            },
           ],
         },
       ],
