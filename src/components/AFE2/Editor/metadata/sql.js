@@ -1,6 +1,7 @@
 import DataPanel from '../panels/Data';
 import ResultPanel from '../panels/Result';
 import HandlebarsPanel from '../panels/Handlebars';
+import FeaturePanel from '../panels/Feature';
 
 export default {
   type: 'sql',
@@ -9,9 +10,25 @@ export default {
   layout: 'compact',
   panels: ({ autoEvaluate, resultMode }) => [
     {
+      group: true,
       title: 'Type your handlebars template here',
       area: 'rule',
-      Panel: HandlebarsPanel,
+      panels: [
+        {
+          key: 'query',
+          name: 'Query template',
+          Panel: HandlebarsPanel,
+        },
+        {
+          key: 'default',
+          name: 'Default record',
+          Panel: FeaturePanel,
+          props: {
+            mode: 'json',
+            featureName: 'defaultValue',
+          },
+        },
+      ],
     },
     {
       title: 'Resources available for your handlebars template',

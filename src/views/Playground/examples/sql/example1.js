@@ -13,8 +13,8 @@ export default {
   type: 'sql',
   name: 'Simple SQL query',
   description: 'Example of a simple SQL query template.',
-  data: JSON.stringify(sampleData, null, 2),
+  data: sampleData,
   initProps: {
-    defaultData: JSON.stringify(defaultData, null, 2),
+    defaultData,
   },
 };
