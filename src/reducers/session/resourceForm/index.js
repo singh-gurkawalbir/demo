@@ -55,21 +55,16 @@ export default function reducer(state = {}, action) {
         break;
 
       case actionTypes.RESOURCE_FORM.INIT_FAILED:
-
-        draft[key] = {
-          ...draft[key],
-          initFailed: true,
-        };
+        if (draft[key]) { draft[key].initFailed = true; }
         break;
       case actionTypes.RESOURCE_FORM.CLEAR_INIT_DATA:
-        draft[key] = { ...draft[key] };
         draft[key] && delete draft[key].initData;
         break;
       case actionTypes.RESOURCE_FORM.SUBMIT:
 
         draft[key] = {
           ...draft[key],
-          formStatus: 'loading',
+          formSaveStatus: 'loading',
           formValues: undefined,
           skipClose,
         };
@@ -97,17 +92,17 @@ export default function reducer(state = {}, action) {
 
         draft[key] = {
           ...draft[key],
-          formStatus: 'complete',
+          formSaveStatus: 'complete',
           formValues,
         };
         break;
       case actionTypes.RESOURCE_FORM.SUBMIT_FAILED:
 
-        draft[key] = { ...draft[key], formStatus: 'failed', formValues };
+        draft[key] = { ...draft[key], formSaveStatus: 'failed', formValues };
         break;
 
       case actionTypes.RESOURCE_FORM.SUBMIT_ABORTED:
-        draft[key] = { formStatus: 'aborted' };
+        draft[key] = { formSaveStatus: 'aborted' };
         break;
       case actionTypes.RESOURCE_FORM.CLEAR:
         draft[key] = {};
@@ -136,14 +131,8 @@ selectors.resourceFormSaveProcessTerminated = (
   resourceType,
   resourceId
 ) => {
-  if (!state) return false;
   const key = `${resourceType}-${resourceId}`;
 
-  if (!state[key]) return false;
-  const { formStatus } = state[key];
-
-  if (!formStatus) return false;
-
-  return ['complete', 'failed', 'aborted'].includes(formStatus);
+  return ['complete', 'failed', 'aborted'].includes(state?.[key]?.formSaveStatus);
 };
 // #endregion

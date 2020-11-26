@@ -1,6 +1,7 @@
 import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
+import {LICENSE_TRIAL_ISSUED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE} from '../../../utils/constants';
 
 const defaultObject = { numEnabledPaidFlows: 0, numEnabledSandboxFlows: 0 };
 
@@ -30,11 +31,11 @@ export default function reducer(state = {}, action) {
         break;
 
       case actionTypes.LICENSE_TRIAL_ISSUED:
-        draft.platformLicenseActionMessage = 'Congratulations! Your 30 days of unlimited flows starts now - what will you integrate next?';
+        draft.platformLicenseActionMessage = LICENSE_TRIAL_ISSUED_MESSAGE;
         break;
 
       case actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED:
-        draft.platformLicenseActionMessage = 'Your request has been received. We will contact you soon.';
+        draft.platformLicenseActionMessage = LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE;
         break;
 
       case actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED:

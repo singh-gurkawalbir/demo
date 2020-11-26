@@ -127,11 +127,9 @@ describe('session.resource form reducers', () => {
         integrationId
       ));
 
-      const state = reducer(tempState, actions.resourceForm.clearInitData(resourceType, resourceId));
+      const state = reducer(tempState, actions.resourceForm.clearInitData('exports', resourceId));
 
-      const expected = {...oldState, [key]: {initComplete: false }};
-
-      expect(state).toEqual(expected);
+      expect(state[key].initComplete).toEqual(false);
     });
   });
   describe('RESOURCE_FORM.SUBMIT action', () => {
@@ -149,13 +147,13 @@ describe('session.resource form reducers', () => {
         flowId
       ));
 
-      const expected = { ...oldState,
+      const expected = {
         [exportsKey]: {
-          formStatus: 'loading',
+          formSaveStatus: 'loading',
           formValues: undefined,
           skipClose: true }};
 
-      expect(state).toEqual(expected);
+      expect(state[exportsKey]).toEqual(expected[exportsKey]);
     });
   });
   describe('RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION action', () => {
@@ -166,7 +164,7 @@ describe('session.resource form reducers', () => {
 
       const state = reducer(oldState, actions.resourceForm.showBundleInstallNotification(bundleVersion, bundleUrl, 'exports', resourceId));
 
-      const expected = {...oldState,
+      const expected = {
         [exportsKey]: {
           bundleVersion,
           bundleUrl,
@@ -183,7 +181,7 @@ describe('session.resource form reducers', () => {
 
       const state = reducer(oldState, actions.resourceForm.hideBundleInstallNotification('exports', resourceId));
 
-      const expected = {...oldState,
+      const expected = {
         [exportsKey]: {
           showBundleInstallNotification: false }};
 
@@ -196,9 +194,9 @@ describe('session.resource form reducers', () => {
 
       const state = reducer(oldState, actions.resourceForm.submitComplete(resourceType, resourceId, formValues));
 
-      const expected = {...oldState,
+      const expected = {
         [key]: {
-          formStatus: 'complete',
+          formSaveStatus: 'complete',
           formValues }};
 
       expect(state).toEqual(expected);
@@ -210,9 +208,9 @@ describe('session.resource form reducers', () => {
 
       const state = reducer(oldState, actions.resourceForm.submitFailed(resourceType, resourceId));
 
-      const expected = {...oldState,
+      const expected = {
         [key]: {
-          formStatus: 'failed',
+          formSaveStatus: 'failed',
         }};
 
       expect(state).toEqual(expected);
@@ -224,9 +222,9 @@ describe('session.resource form reducers', () => {
 
       const state = reducer(oldState, actions.resourceForm.submitAborted(resourceType, resourceId));
 
-      const expected = {...oldState,
+      const expected = {
         [key]: {
-          formStatus: 'aborted',
+          formSaveStatus: 'aborted',
         }};
 
       expect(state).toEqual(expected);
@@ -247,7 +245,7 @@ describe('session.resource form reducers', () => {
     test('should return valid form state', () => {
       const state = reducer(undefined, actions.resourceForm.submitAborted(resourceType, resourceId));
 
-      expect(selectors.resourceFormState(state, resourceType, resourceId)).toEqual({formStatus: 'aborted'});
+      expect(selectors.resourceFormState(state, resourceType, resourceId)).toEqual({formSaveStatus: 'aborted'});
     });
   });
   describe('resourceFormSaveProcessTerminated selector', () => {

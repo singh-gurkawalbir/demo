@@ -1,6 +1,7 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
+import {LICENSE_TRIAL_ISSUED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE} from '../../../utils/constants';
 
 describe('session.resource reducers', () => {
   test('reducer should return previous state if action is not handled.', () => {
@@ -74,7 +75,7 @@ describe('session.resource reducers', () => {
         undefined,
         actions.user.org.accounts.trialLicenseIssued()
       );
-      const expected = {platformLicenseActionMessage: 'Congratulations! Your 30 days of unlimited flows starts now - what will you integrate next?'};
+      const expected = {platformLicenseActionMessage: LICENSE_TRIAL_ISSUED_MESSAGE};
 
       expect(state).toEqual(expected);
     });
@@ -85,7 +86,7 @@ describe('session.resource reducers', () => {
         undefined,
         actions.user.org.accounts.licenseUpgradeRequestSubmitted()
       );
-      const expected = {platformLicenseActionMessage: 'Your request has been received. We will contact you soon.'};
+      const expected = {platformLicenseActionMessage: LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE};
 
       expect(state).toEqual(expected);
     });
@@ -167,6 +168,7 @@ describe('session.resource reducers', () => {
           undefined
         );
         expect(selectors.createdResourceId({}, 'tempId')).toEqual(undefined);
+        expect(selectors.createdResourceId({tempId: '123'}, null)).toEqual(undefined);
       });
 
       test('should return correct newly created ID when match against tempId found.', () => {
@@ -223,7 +225,7 @@ describe('session.resource reducers', () => {
         undefined,
         actions.user.org.accounts.trialLicenseIssued()
       );
-      const expected = {platformLicenseActionMessage: 'Congratulations! Your 30 days of unlimited flows starts now - what will you integrate next?'};
+      const expected = {platformLicenseActionMessage: LICENSE_TRIAL_ISSUED_MESSAGE};
 
       expect(selectors.platformLicenseActionMessage(state)).toEqual(expected.platformLicenseActionMessage);
     });
@@ -232,7 +234,7 @@ describe('session.resource reducers', () => {
         undefined,
         actions.user.org.accounts.licenseUpgradeRequestSubmitted()
       );
-      const expected = {platformLicenseActionMessage: 'Your request has been received. We will contact you soon.'};
+      const expected = {platformLicenseActionMessage: LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE};
 
       expect(selectors.platformLicenseActionMessage(state)).toEqual(expected.platformLicenseActionMessage);
     });
@@ -266,31 +268,6 @@ describe('session.resource reducers', () => {
       );
 
       expect(selectors.getChildIntegrationId(state, 'dummy')).toEqual(undefined);
-    });
-  });
-  describe('getNumEnabledFlows', () => {
-    test('should return defaultObject when no match found.', () => {
-      const defaultObject = { numEnabledPaidFlows: 0, numEnabledSandboxFlows: 0 };
-
-      expect(selectors.getNumEnabledFlows(undefined)).toEqual(
-        defaultObject
-      );
-      expect(selectors.getNumEnabledFlows({})).toEqual(defaultObject);
-    });
-
-    test('should return correct number of enabled flows', () => {
-      const response = {numEnabledPaidFlows: 2, numEnabledSandboxFlows: 2, numEnabledFreeFlows: 1 };
-      const state = reducer(
-        undefined,
-        actions.user.org.accounts.receivedNumEnabledFlows(response)
-      );
-      const expected = {
-        numEnabledPaidFlows: 2,
-        numEnabledSandboxFlows: 2,
-        numEnabledFreeFlows: 1,
-      };
-
-      expect(selectors.getNumEnabledFlows(state)).toEqual(expected);
     });
   });
   describe('getNumEnabledFlows', () => {
