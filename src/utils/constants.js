@@ -3,6 +3,12 @@ export const emptyObject = {};
 export const ACCOUNT_IDS = Object.freeze({
   OWN: 'own',
 });
+export const FORM_SAVE_STATUS = Object.freeze({
+  COMPLETE: 'complete',
+  FAILED: 'failed',
+  ABORTED: 'aborted',
+  LOADING: 'loading',
+});
 export const USER_ACCESS_LEVELS = Object.freeze({
   ACCOUNT_OWNER: 'owner',
   ACCOUNT_MANAGE: 'manage',

@@ -1,6 +1,7 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
+import {FORM_SAVE_STATUS} from '../../../utils/constants';
 
 describe('session.resource form reducers', () => {
   const resourceType = 'connections';
@@ -196,7 +197,7 @@ describe('session.resource form reducers', () => {
 
       const expected = {
         [key]: {
-          formSaveStatus: 'complete',
+          formSaveStatus: FORM_SAVE_STATUS.COMPLETE,
           formValues }};
 
       expect(state).toEqual(expected);
@@ -210,7 +211,7 @@ describe('session.resource form reducers', () => {
 
       const expected = {
         [key]: {
-          formSaveStatus: 'failed',
+          formSaveStatus: FORM_SAVE_STATUS.FAILED,
         }};
 
       expect(state).toEqual(expected);
@@ -224,7 +225,7 @@ describe('session.resource form reducers', () => {
 
       const expected = {
         [key]: {
-          formSaveStatus: 'aborted',
+          formSaveStatus: FORM_SAVE_STATUS.ABORTED,
         }};
 
       expect(state).toEqual(expected);

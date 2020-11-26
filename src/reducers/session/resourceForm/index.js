@@ -2,6 +2,7 @@ import produce from 'immer';
 
 import actionTypes from '../../../actions/types';
 import { fieldsTouchedForMeta } from '../../../forms/utils';
+import {FORM_SAVE_STATUS} from '../../../utils/constants';
 
 const emptyObj = {};
 
@@ -55,54 +56,62 @@ export default function reducer(state = {}, action) {
         break;
 
       case actionTypes.RESOURCE_FORM.INIT_FAILED:
-        if (draft[key]) { draft[key].initFailed = true; }
+        if (!draft[key]) {
+          draft[key] = {};
+        }
+        draft[key].initFailed = true;
         break;
       case actionTypes.RESOURCE_FORM.CLEAR_INIT_DATA:
         draft[key] && delete draft[key].initData;
         break;
       case actionTypes.RESOURCE_FORM.SUBMIT:
-
-        draft[key] = {
-          ...draft[key],
-          formSaveStatus: 'loading',
-          formValues: undefined,
-          skipClose,
-        };
+        if (!draft[key]) {
+          draft[key] = {};
+        }
+        draft[key].formSaveStatus = FORM_SAVE_STATUS.LOADING;
+        draft[key].formValues = undefined;
+        draft[key].skipClose = skipClose;
 
         break;
 
       case actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION:
+        if (!draft[key]) {
+          draft[key] = {};
+        }
 
-        draft[key] = {
-          ...draft[key],
-          bundleVersion,
-          bundleUrl,
-          showBundleInstallNotification: true,
-        };
+        draft[key].bundleVersion = bundleVersion;
+        draft[key].bundleUrl = bundleUrl;
+        draft[key].showBundleInstallNotification = true;
         break;
       case actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION:
-
-        draft[key] = {
-          ...draft[key],
-          showBundleInstallNotification: false,
-        };
+        if (!draft[key]) {
+          draft[key] = {};
+        }
+        draft[key].showBundleInstallNotification = false;
         break;
 
       case actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE:
+        if (!draft[key]) {
+          draft[key] = {};
+        }
 
-        draft[key] = {
-          ...draft[key],
-          formSaveStatus: 'complete',
-          formValues,
-        };
+        draft[key].formSaveStatus = FORM_SAVE_STATUS.COMPLETE;
+        draft[key].formValues = formValues;
         break;
       case actionTypes.RESOURCE_FORM.SUBMIT_FAILED:
+        if (!draft[key]) {
+          draft[key] = {};
+        }
 
-        draft[key] = { ...draft[key], formSaveStatus: 'failed', formValues };
+        draft[key].formSaveStatus = FORM_SAVE_STATUS.FAILED;
+        draft[key].formValues = formValues;
         break;
 
       case actionTypes.RESOURCE_FORM.SUBMIT_ABORTED:
-        draft[key] = { formSaveStatus: 'aborted' };
+        if (!draft[key]) {
+          draft[key] = {};
+        }
+        draft[key].formSaveStatus = FORM_SAVE_STATUS.ABORTED;
         break;
       case actionTypes.RESOURCE_FORM.CLEAR:
         draft[key] = {};
@@ -133,6 +142,6 @@ selectors.resourceFormSaveProcessTerminated = (
 ) => {
   const key = `${resourceType}-${resourceId}`;
 
-  return ['complete', 'failed', 'aborted'].includes(state?.[key]?.formSaveStatus);
+  return [FORM_SAVE_STATUS.COMPLETE, FORM_SAVE_STATUS.FAILED, FORM_SAVE_STATUS.ABORTED].includes(state?.[key]?.formSaveStatus);
 };
 // #endregion

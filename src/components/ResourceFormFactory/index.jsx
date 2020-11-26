@@ -5,6 +5,7 @@ import formFactory from '../../forms/formFactory';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../reducers';
+import { FORM_SAVE_STATUS } from '../../utils/constants';
 import DynaForm from '../DynaForm';
 import Spinner from '../Spinner';
 import SpinnerWrapper from '../SpinnerWrapper';
@@ -32,12 +33,14 @@ export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
   const [count, setCount] = useState(0);
   const remountForm = useCallback(() => setCount(count => count + 1), []);
 
+  const isSubmitComplete = formState?.formSaveStatus === FORM_SAVE_STATUS.COMPLETE;
+
   useEffect(() => {
-    if (formState.submitComplete && onSubmitComplete) {
+    if (isSubmitComplete && onSubmitComplete) {
       onSubmitComplete('', false, formState.formValues);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formState.submitComplete]);
+  }, []);
   useEffect(() => {
     remountForm();
   }, [fieldMeta, remountForm]);
