@@ -18,12 +18,10 @@ import {
 import { generateFileParserOptionsFromResource } from './utils/fileParserUtils';
 import { DEFAULT_RECORD_SIZE, previewFileData } from '../../utils/exportPanel';
 import {
-  getSampleDataRecordSize,
   constructResourceFromFormValues,
-  getProcessorOutput,
-  updateDataForStages,
-  hasSampleDataOnResource,
-} from './utils/exportSampleDataUtils';
+} from '../utils';
+import { evaluateExternalProcessor } from '../editor';
+
 /*
  * Parsers for different file types used for converting into JSON format
  * For XLSX Files , this saga receives converted csv content as input
@@ -37,6 +35,65 @@ const PARSERS = {
   fileDefinitionParser: 'structuredFileParser',
   fileDefinitionGenerator: 'structuredFileGenerator',
 };
+
+function* getSampleDataRecordSize({ resourceId }) {
+  const recordSize = yield select(selectors.sampleDataRecordSize, resourceId) || DEFAULT_RECORD_SIZE;
+
+  return recordSize;
+}
+
+/**
+ * Checks if the constructed body from formValues has same file type as saved resource
+ * and if body has sampleData
+ */
+export function* hasSampleDataOnResource({ resourceId, resourceType, body }) {
+  const resource = yield select(selectors.resource, resourceType, resourceId);
+
+  if (!resource || !body.sampleData) return false;
+  const resourceFileType = resource?.file?.type;
+  const bodyFileType = body?.file?.type;
+
+  if (
+    ['filedefinition', 'fixed', 'delimited/edifact'].includes(bodyFileType) &&
+      resourceFileType === 'filedefinition'
+  ) {
+    return true;
+  }
+
+  return bodyFileType === resourceFileType;
+}
+
+function* getProcessorOutput({ processorData }) {
+  try {
+    const processedData = yield call(evaluateExternalProcessor, {
+      processorData,
+    });
+
+    return { data: processedData };
+  } catch (e) {
+    // Handling Errors with status code between 400 and 500
+    if (e.status >= 400 && e.status < 500) {
+      const parsedError = JSON.parse(e.message);
+
+      return {error: parsedError};
+    }
+  }
+}
+
+/**
+* Given list of stages mapped with data to be saved against it
+* Triggers action that saves each stage with data on resource's sample data
+*/
+function* updateDataForStages({resourceId, dataForEachStageMap }) {
+  const stages = Object.keys(dataForEachStageMap);
+
+  for (let stageIndex = 0; stageIndex < stages.length; stageIndex += 1) {
+    const stage = stages[stageIndex];
+    const stageData = dataForEachStageMap[stage];
+
+    yield put(actions.sampleData.update(resourceId, stageData, stage));
+  }
+}
 
 function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
   const { transform, filter, hooks, ...constructedResourceObj } = yield call(constructResourceFromFormValues, {

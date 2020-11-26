@@ -1,6 +1,8 @@
 import actionTypes from './types';
 import suiteScript from './suiteScript';
 
+export const auditResourceTypePath = (resourceType, resourceId) =>
+  resourceType && resourceId ? `${resourceType}/${resourceId}/audit` : 'audit';
 export const availableResources = [
   'exports',
   'imports',
@@ -102,7 +104,9 @@ const auth = {
   userAlreadyLoggedIn: () => action(actionTypes.AUTH_USER_ALREADY_LOGGED_IN),
   clearStore: () => action(actionTypes.CLEAR_STORE),
   abortAllSagasAndInitLR: opts => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR, opts),
-  abortAllSagasAndReset: reInit => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET, {reInit}),
+  abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC, {accountToSwitchTo}),
+
+  abortAllSagasAndReset: accountToResetTo => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET, {accountToResetTo}),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
@@ -431,20 +435,12 @@ const resource = {
   },
 };
 // #endregion
-const auditLogs = {
-  request: (resourceType, resourceId, message) => {
-    if (resourceType && resourceId) {
-      return action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
-        resourceType: `${resourceType}/${resourceId}/audit`,
-        message,
-      });
-    }
 
-    return action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
-      resourceType: 'audit',
-      message,
-    });
-  },
+const auditLogs = {
+  request: (resourceType, resourceId, message) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
+    resourceType: auditResourceTypePath(resourceType, resourceId),
+    message,
+  }),
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
 const connectors = {

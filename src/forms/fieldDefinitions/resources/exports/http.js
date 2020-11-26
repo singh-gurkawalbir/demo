@@ -146,7 +146,7 @@ export default {
     label: 'Build HTTP request body',
     refreshOptionsOnChangesTo: ['http.requestMediaType'],
     requestMediaType: r =>
-      r?.http?.requestMediaType || 'json',
+      r?.http?.requestMediaType || '',
     requiredWhenAll: [
       {
         field: 'http.relativeURI',
