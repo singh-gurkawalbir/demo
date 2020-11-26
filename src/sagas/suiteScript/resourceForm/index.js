@@ -120,7 +120,7 @@ export function* submitFormValues({
 
   // fetch all possible pending patches.
   if (!skipCommit) {
-    const { patch } = yield select(
+    const { patch } = (yield select(
       selectors.stagedResource,
       suiteScriptResourceKey({
         ssLinkedConnectionId,
@@ -128,7 +128,7 @@ export function* submitFormValues({
         resourceId,
       }),
       SCOPES.VALUE
-    );
+    )) || {};
     // In most cases there would be no other pending staged changes, since most
     // times a patch is followed by an immediate commit.  If however some
     // component has staged some changes, even if the patchSet above is empty,
