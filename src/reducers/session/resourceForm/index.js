@@ -69,9 +69,7 @@ export default function reducer(state = {}, action) {
 
         draft[key] = {
           ...draft[key],
-          submitAborted: false,
-          submitComplete: false,
-          submitFailed: false,
+          formStatus: 'loading',
           formValues: undefined,
           skipClose,
         };
@@ -99,17 +97,17 @@ export default function reducer(state = {}, action) {
 
         draft[key] = {
           ...draft[key],
-          submitComplete: true,
+          formStatus: 'complete',
           formValues,
         };
         break;
       case actionTypes.RESOURCE_FORM.SUBMIT_FAILED:
 
-        draft[key] = { ...draft[key], submitFailed: true, formValues };
+        draft[key] = { ...draft[key], formStatus: 'failed', formValues };
         break;
 
       case actionTypes.RESOURCE_FORM.SUBMIT_ABORTED:
-        draft[key] = { submitAborted: true };
+        draft[key] = { formStatus: 'aborted' };
         break;
       case actionTypes.RESOURCE_FORM.CLEAR:
         draft[key] = {};
@@ -142,8 +140,10 @@ selectors.resourceFormSaveProcessTerminated = (
   const key = `${resourceType}-${resourceId}`;
 
   if (!state[key]) return false;
-  const { submitFailed, submitComplete, submitAborted } = state[key];
+  const { formStatus } = state[key];
 
-  return !!(submitFailed || submitComplete || submitAborted);
+  if (!formStatus) return false;
+
+  return ['complete', 'failed', 'aborted'].includes(formStatus);
 };
 // #endregion

@@ -151,9 +151,7 @@ describe('session.resource form reducers', () => {
 
       const expected = { ...oldState,
         [exportsKey]: {
-          submitAborted: false,
-          submitComplete: false,
-          submitFailed: false,
+          formStatus: 'loading',
           formValues: undefined,
           skipClose: true }};
 
@@ -200,7 +198,7 @@ describe('session.resource form reducers', () => {
 
       const expected = {...oldState,
         [key]: {
-          submitComplete: true,
+          formStatus: 'complete',
           formValues }};
 
       expect(state).toEqual(expected);
@@ -214,7 +212,7 @@ describe('session.resource form reducers', () => {
 
       const expected = {...oldState,
         [key]: {
-          submitFailed: true,
+          formStatus: 'failed',
         }};
 
       expect(state).toEqual(expected);
@@ -228,7 +226,7 @@ describe('session.resource form reducers', () => {
 
       const expected = {...oldState,
         [key]: {
-          submitAborted: true,
+          formStatus: 'aborted',
         }};
 
       expect(state).toEqual(expected);
@@ -249,7 +247,7 @@ describe('session.resource form reducers', () => {
     test('should return valid form state', () => {
       const state = reducer(undefined, actions.resourceForm.submitAborted(resourceType, resourceId));
 
-      expect(selectors.resourceFormState(state, resourceType, resourceId)).toEqual({submitAborted: true});
+      expect(selectors.resourceFormState(state, resourceType, resourceId)).toEqual({formStatus: 'aborted'});
     });
   });
   describe('resourceFormSaveProcessTerminated selector', () => {
