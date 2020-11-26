@@ -29,7 +29,7 @@ export default function ErrorNotifications() {
   useEffect(() => {
     if (hasWarning) {
       enqueueSnackbar({
-        message: <ErrorContent error="You may be experience intermittent network connectivity, please check your internet" />,
+        message: <ErrorContent error="You may be experience intermittent network connectivity, Please check your internet" />,
         variant: 'warning',
         persist: true,
         preventDuplicate: true,

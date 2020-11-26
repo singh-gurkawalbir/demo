@@ -73,10 +73,10 @@ const StoreMenuItems = ({ integration, integrationId }) => {
     if (storeErrorCount === 0) {
       return (
         <MenuItem key={store.value} value={store.value} className={classes.storeErrorStatus}>
-          <div> welcome to the world</div>
+          <div> {store.label}</div>
           <div>
             <StatusCircle size="mini" variant="success" />
-            <span>{!storeErrorCount > 9999 ? '9999+' : '9999+'}</span>
+            <span>{!storeErrorCount > 9999 ? '9999+' : storeErrorCount}</span>
           </div>
         </MenuItem>
       );

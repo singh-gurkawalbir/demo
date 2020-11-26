@@ -35,6 +35,7 @@ import PageContent from './PageContent';
 const useStyles = makeStyles({
   root: {
     display: 'flex',
+    background: 'blue',
     '& > .MuiSnackbarContent-message': {
       maxHeight: 300,
       overflow: 'auto',
