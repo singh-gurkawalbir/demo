@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import clsx from 'clsx';
 import { withRouter } from 'react-router-dom';
 import Truncate from 'react-truncate';
 import { Typography, Tooltip, makeStyles, Zoom, Button, IconButton } from '@material-ui/core';
@@ -34,6 +35,7 @@ import TrialExpireNotification from '../../components/HomePageCard/TrialExpireNo
 const useStyles = makeStyles(theme => ({
   tileName: {
     color: theme.palette.secondary.main,
+    wordBreak: 'break-word',
     '&:hover': {
       color: theme.palette.primary.main,
     },
@@ -66,8 +68,11 @@ const useStyles = makeStyles(theme => ({
     top: 0,
   },
   tagExpire: {
-    bottom: 80,
+    bottom: 90,
     position: 'absolute',
+  },
+  noAppImages: {
+    display: 'none',
   },
 }));
 
@@ -315,7 +320,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
           {tile.connector &&
               tile.connector.applications &&
               tile.connector.applications.length > 1 && (
-                <ApplicationImages>
+                <ApplicationImages className={clsx({[classes.noAppImages]: expired && tile.tag})}>
                   <ApplicationImg type={app1} />
                   <span>
                     <AddIcon />
