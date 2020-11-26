@@ -8,8 +8,8 @@ import { apiCallWithRetry } from '../index';
 import { requestJobErrorPreview } from '.';
 import { uploadRawData } from '../uploadFile';
 
-describe('evaluate jobErrorsPreview saga', () => {
-  test('should update state correctly with received preview when job errors preview call is successful', () => {
+describe('requestJobErrorPreview saga', () => {
+  test('should dispatch received preview action when job errors preview call is successful', () => {
     const jobId = 'j1';
     const errorFile = {};
     const errorFileId = 'ef1';
@@ -35,7 +35,7 @@ describe('evaluate jobErrorsPreview saga', () => {
       .run();
   });
 
-  test('should update state correctly with preview error when job errors preview call fails', () => {
+  test('should dispatch preview error action when job errors preview call fails', () => {
     const jobId = 'j1';
     const errorFile = {};
     const errorFileId = 'ef1';
