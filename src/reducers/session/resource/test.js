@@ -143,6 +143,21 @@ describe('session.resource reducers', () => {
 
       expect(state).toEqual({});
     });
+    test('should be able to handle if parent id is invalid or null', () => {
+      const parentId = null;
+      const childId = 'childId';
+
+      const prevState = reducer(
+        undefined,
+        actions.resource.updateChildIntegration(parentId, childId)
+      );
+      const state = reducer(
+        prevState,
+        actions.resource.clearChildIntegration()
+      );
+
+      expect(state).toEqual({});
+    });
   });
 
   describe('session.resource selectors', () => {

@@ -114,10 +114,19 @@ describe('session.resource form reducers', () => {
       const exportsKey = `exports-${resourceId}`;
 
       const oldState = { [exportsKey]: {} };
+      const tempState = reducer(oldState, actions.resourceForm.init(
+        resourceType,
+        resourceId,
+        isNew,
+        skipCommit,
+        flowId,
+        initData,
+        integrationId
+      ));
 
-      const state = reducer(oldState, actions.resourceForm.clearInitData(resourceType, resourceId));
+      const state = reducer(tempState, actions.resourceForm.clearInitData(resourceType, resourceId));
 
-      const expected = {...oldState, [key]: { }};
+      const expected = {...oldState, [key]: {initComplete: false }};
 
       expect(state).toEqual(expected);
     });
@@ -227,11 +236,7 @@ describe('session.resource form reducers', () => {
       const oldState = reducer(undefined, actions.resourceForm.submitAborted(resourceType, resourceId));
       const state = reducer(oldState, actions.resourceForm.clear(resourceType, resourceId));
 
-      const expected = {...oldState,
-        [key]: {
-        }};
-
-      expect(state).toEqual(expected);
+      expect(state[key]).toEqual({});
     });
   });
   describe('resourceFormState selector', () => {

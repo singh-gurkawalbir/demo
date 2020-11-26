@@ -15,55 +15,50 @@ export default function reducer(state = {}, action) {
     childId,
   } = action;
 
-  switch (type) {
-    case actionTypes.RESOURCE.CREATED:
-      return produce(state, draft => {
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.RESOURCE.CREATED:
         draft[tempId] = id;
-      });
+        break;
 
-    case actionTypes.RESOURCE.REFERENCES_RECEIVED:
-      return produce(state, draft => {
+      case actionTypes.RESOURCE.REFERENCES_RECEIVED:
         draft.references = resourceReferences;
-      });
+        break;
 
-    case actionTypes.RESOURCE.REFERENCES_CLEAR:
-      return produce(state, draft => {
+      case actionTypes.RESOURCE.REFERENCES_CLEAR:
         delete draft.references;
-      });
+        break;
 
-    case actionTypes.LICENSE_TRIAL_ISSUED:
-      return produce(state, draft => {
+      case actionTypes.LICENSE_TRIAL_ISSUED:
         draft.platformLicenseActionMessage = 'Congratulations! Your 30 days of unlimited flows starts now - what will you integrate next?';
-      });
+        break;
 
-    case actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED:
-      return produce(state, draft => {
+      case actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED:
         draft.platformLicenseActionMessage = 'Your request has been received. We will contact you soon.';
-      });
+        break;
 
-    case actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED:
-      return produce(state, draft => {
+      case actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED:
         draft.numEnabledFlows = response;
-      });
-    case actionTypes.LICENSE_ENTITLEMENT_USAGE_RECEIVED:
-      return produce(state, draft => {
+        break;
+
+      case actionTypes.LICENSE_ENTITLEMENT_USAGE_RECEIVED:
         draft.licenseEntitlementUsage = response;
-      });
-    case actionTypes.CLEAR_CHILD_INTEGRATION:
-      return produce(state, draft => {
+        break;
+
+      case actionTypes.CLEAR_CHILD_INTEGRATION:
         draft.parentChildMap = undefined;
         delete draft.parentChildMap;
-      });
+        break;
 
-    case actionTypes.UPDATE_CHILD_INTEGRATION:
-      return produce(state, draft => {
+      case actionTypes.UPDATE_CHILD_INTEGRATION:
         draft.parentChildMap = {};
         draft.parentChildMap[parentId] = childId;
-      });
+        break;
 
-    default:
-      return state;
-  }
+      default:
+        break;
+    }
+  });
 }
 
 // #region PUBLIC SELECTORS
