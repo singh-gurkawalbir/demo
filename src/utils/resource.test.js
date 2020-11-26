@@ -457,7 +457,7 @@ describe('resource util tests', () => {
       }, '1234')).toEqual(true);
     });
 
-    test('should return false for valid resource and filedefinition id', () => {
+    test('should return false for if filedefinition id not used', () => {
       expect(isFileDefinitionIdUsedInResource({
         file: {
           fileDefinition: {
@@ -465,16 +465,6 @@ describe('resource util tests', () => {
           },
         },
       }, '12345')).toEqual(false);
-    });
-
-    test('should return false for valid resource and filedefinition id 2', () => {
-      expect(isFileDefinitionIdUsedInResource({
-        file: {
-          fileDefinition: {
-            _fileDefinitionId: '12345',
-          },
-        },
-      }, '1234')).toEqual(false);
     });
   });
 
