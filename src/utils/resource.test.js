@@ -19,8 +19,18 @@ import {
   getDomainUrl,
   getApiUrl,
   getHelpUrlForConnector,
+  getHelpUrl,
   getNetSuiteSubrecordLabel,
   getNetSuiteSubrecordImportsFromMappings,
+  getNetSuiteSubrecordImports,
+  updateMappingsBasedOnNetSuiteSubrecords,
+  isOauth,
+  getConnectionType,
+  isTradingPartnerSupported,
+  isNetSuiteBatchExport,
+  isQueryBuilderSupported,
+  getUniqueFieldId,
+  getUserAccessLevelOnConnection,
 } from './resource';
 
 describe('resource util tests', () => {
@@ -1180,6 +1190,60 @@ describe('resource util tests', () => {
     });
   });
 
+  describe('tests for util getHelpUrl', () => {
+    let windowSpy;
+
+    beforeEach(() => {
+      windowSpy = jest.spyOn(window, 'window', 'get');
+    });
+
+    afterEach(() => {
+      windowSpy.mockRestore();
+    });
+
+    test('should return connector help urls for integrator', () => {
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'www.integrator.io',
+          },
+        },
+        location: {
+          href: 'https://integrator.io/integrationapps/ADPNetSuite/5e09c64142748f7b5a3380a3',
+        },
+      }));
+
+      expect(getHelpUrl([{
+        _id: '5e09c64142748f7b5a3380a3',
+        _connectorId: '54fa0b38a7044f9252000036',
+      },
+      ])).toEqual(
+        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203963787'
+      );
+    });
+
+    test('should return connector help urls for staging integrator', () => {
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'www.staging.integrator.io',
+          },
+        },
+        location: {
+          href: 'https://staging.integrator.io/integrationapps/SalesforceNetSuiteIO/5e09c64142748f7b5a3380a3',
+        },
+      }));
+
+      expect(getHelpUrl([{
+        _id: '5e09c64142748f7b5a3380a3',
+        _connectorId: '5656f5e3bebf89c03f5dd77e',
+      },
+      ])).toEqual(
+        'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203963787'
+      );
+    });
+  });
+
   describe('tests for util getNetSuiteSubrecordLabel', () => {
     test('should return empty string for undefined props', () => {
       expect(getNetSuiteSubrecordLabel()).toEqual('');
@@ -1259,6 +1323,14 @@ describe('resource util tests', () => {
       ];
 
       expect(getNetSuiteSubrecordImportsFromMappings(mapping)).toEqual(expected);
+
+      const importDoc = {
+        netsuite_da: {
+          mapping,
+        },
+      };
+
+      expect(getNetSuiteSubrecordImports(importDoc)).toEqual(expected);
     });
 
     test('should return subrecord from mapping if subrecord exists in parent record', () => {
@@ -1290,17 +1362,712 @@ describe('resource util tests', () => {
           },
         ],
       };
+      const expected = [
+        {
+          fieldId: 'celigo_inventorydetail',
+          jsonPath: '$',
+          name: 'Inventory Details',
+          recordType: 'inventorydetail',
+        },
+      ];
 
-      expect(getNetSuiteSubrecordImportsFromMappings(mapping)).toEqual(
-        [
-          {
-            fieldId: 'celigo_inventorydetail',
-            jsonPath: '$',
-            name: 'Inventory Details',
-            recordType: 'inventorydetail',
-          },
-        ]
+      expect(getNetSuiteSubrecordImportsFromMappings(mapping)).toEqual(expected);
+
+      const importDoc = {
+        netsuite_da: {
+          mapping,
+        },
+      };
+
+      expect(getNetSuiteSubrecordImports(importDoc)).toEqual(expected);
+    });
+  });
+
+  describe('tests for util updateMappingsBasedOnNetSuiteSubrecords', () => {
+    test('should return undefined for empty props', () => {
+      expect(updateMappingsBasedOnNetSuiteSubrecords()).toEqual(undefined);
+    });
+
+    test('should update mapping based on line level subrecord', () => {
+      const mapping = {};
+
+      const subrecord = [
+        {
+          fieldId: 'item[*].celigo_inventorydetail',
+          jsonPath: '$',
+          recordType: 'inventorydetail',
+        },
+      ];
+
+      expect(updateMappingsBasedOnNetSuiteSubrecords(mapping, subrecord)).toEqual(
+        {
+          fields: [
+
+          ],
+          lists: [
+            {
+              fields: [
+                {
+                  generate: 'celigo_inventorydetail',
+                  subRecordMapping: {
+                    jsonPath: '$',
+                    recordType: 'inventorydetail',
+                  },
+                },
+              ],
+              generate: 'item',
+            },
+          ],
+        }
       );
+    });
+
+    test('should update mapping based on body level subrecord', () => {
+      const mapping = {};
+
+      const subrecord = [
+        {
+          fieldId: 'celigo_inventorydetail',
+          jsonPath: '$',
+          recordType: 'inventorydetail',
+        },
+      ];
+
+      expect(updateMappingsBasedOnNetSuiteSubrecords(mapping, subrecord)).toEqual(
+        {
+          fields: [
+            {
+              generate: 'celigo_inventorydetail',
+              subRecordMapping: {
+                recordType: 'inventorydetail',
+                jsonPath: '$',
+              },
+            },
+          ],
+          lists: [],
+        }
+      );
+    });
+
+    test('should update mapping based on both body level and line level subrecord', () => {
+      const mapping = {};
+
+      const subrecord = [
+        {
+          fieldId: 'item[*].celigo_inventorydetail',
+          jsonPath: '$',
+          recordType: 'inventorydetail',
+        },
+        {
+          fieldId: 'celigo_inventorydetail',
+          jsonPath: '$',
+          recordType: 'inventorydetail',
+        },
+      ];
+
+      expect(updateMappingsBasedOnNetSuiteSubrecords(mapping, subrecord)).toEqual(
+        {
+          fields: [
+            {
+              generate: 'celigo_inventorydetail',
+              subRecordMapping: {
+                recordType: 'inventorydetail',
+                jsonPath: '$',
+              },
+            },
+          ],
+          lists: [
+            {
+              generate: 'item',
+              fields: [
+                {
+                  generate: 'celigo_inventorydetail',
+                  subRecordMapping: {
+                    recordType: 'inventorydetail',
+                    jsonPath: '$',
+                  },
+                },
+              ],
+            },
+          ],
+        }
+      );
+    });
+
+    test('should update mapping based on subrecord for already existing mapping', () => {
+      const mapping = {
+        fields: [
+          {
+            generate: 'acctname',
+            extract: 'name',
+          },
+          {
+            generate: 'accttype',
+            hardCodedValue: 'Equity',
+          },
+          {
+            generate: 'subsidiary',
+            hardCodedValue: '1',
+          },
+        ],
+        lists: [
+          {
+            fields: [
+              {
+                extract: 'item[*].quantity',
+                generate: 'Quantity',
+              },
+              {
+                extract: 'item[*].price',
+                generate: 'TotalPrice',
+              },
+            ],
+            generate: 'items',
+          }],
+      };
+
+      const subrecord = [
+        {
+          fieldId: 'item[*].celigo_inventorydetail',
+          jsonPath: '$',
+          recordType: 'inventorydetail',
+        },
+        {
+          fieldId: 'celigo_inventorydetail',
+          jsonPath: '$',
+          recordType: 'inventorydetail',
+        },
+      ];
+
+      expect(updateMappingsBasedOnNetSuiteSubrecords(mapping, subrecord)).toEqual(
+        {
+          fields: [
+            {
+              generate: 'acctname',
+              extract: 'name',
+            },
+            {
+              generate: 'accttype',
+              hardCodedValue: 'Equity',
+            },
+            {
+              generate: 'subsidiary',
+              hardCodedValue: '1',
+            },
+            {
+              generate: 'celigo_inventorydetail',
+              subRecordMapping: {
+                recordType: 'inventorydetail',
+                jsonPath: '$',
+              },
+            },
+          ],
+          lists: [
+            {
+              fields: [
+                {
+                  extract: 'item[*].quantity',
+                  generate: 'Quantity',
+                },
+                {
+                  extract: 'item[*].price',
+                  generate: 'TotalPrice',
+                },
+              ],
+              generate: 'items',
+            },
+            {
+              generate: 'item',
+              fields: [
+                {
+                  generate: 'celigo_inventorydetail',
+                  subRecordMapping: {
+                    recordType: 'inventorydetail',
+                    jsonPath: '$',
+                  },
+                },
+              ],
+            },
+          ],
+        }
+      );
+    });
+  });
+
+  describe('tests for util isOauth', () => {
+    test('should return false if conn doc is undefined', () => {
+      expect(isOauth()).toEqual(false);
+    });
+
+    test('should return true for oauth conns', () => {
+      expect(isOauth(
+        {
+          rest:
+          {
+            authType: 'oauth',
+          },
+        }
+      )).toEqual(true);
+
+      expect(isOauth(
+        {
+          http:
+          {
+            auth: {
+              type: 'oauth',
+            },
+          },
+        }
+      )).toEqual(true);
+
+      expect(isOauth(
+        {
+          salesforce:
+          {
+            oauth2FlowType: 'refreshToken',
+          },
+        }
+      )).toEqual(true);
+
+      expect(isOauth(
+        {
+          netsuite:
+          {
+            authType: 'token-auto',
+          },
+        }
+      )).toEqual(true);
+    });
+
+    test('should return false for non-oauth conns', () => {
+      expect(isOauth(
+        {
+          rest:
+          {
+            authType: 'cookie',
+          },
+        }
+      )).toEqual(false);
+
+      expect(isOauth(
+        {
+          http:
+          {
+            auth: {
+              type: 'cookie',
+            },
+          },
+        }
+      )).toEqual(false);
+
+      expect(isOauth(
+        {
+          netsuite:
+          {
+            authType: 'basic',
+          },
+        }
+      )).toEqual(false);
+
+      expect(isOauth(
+        {
+          type: 'rdbms',
+        }
+      )).toEqual(false);
+    });
+  });
+
+  describe('tests for util getConnectionType', () => {
+    test('should return undefined for undefined ip', () => {
+      expect(getConnectionType()).toEqual(undefined);
+    });
+
+    test('should return correct type for oauth conns', () => {
+      expect(getConnectionType({
+        assistant: 'shopify',
+        type: 'http',
+        http: {
+          auth: {
+            type: 'oauth',
+          },
+        },
+      })).toEqual('shopify-oauth');
+
+      expect(getConnectionType({
+        assistant: 'acumatica',
+        type: 'http',
+        http: {
+          auth: {
+            type: 'oauth',
+          },
+        },
+      })).toEqual('acumatica-oauth');
+
+      expect(getConnectionType({
+        type: 'netsuite',
+        netsuite: {
+          authType: 'token-auto',
+        },
+      })).toEqual('netsuite-oauth');
+    });
+
+    test('should return correct type for all conns', () => {
+      expect(getConnectionType({
+        assistant: 'shopify',
+        type: 'http',
+        http: {
+          auth: {
+            type: 'cookie',
+          },
+        },
+      })).toEqual('shopify');
+
+      expect(getConnectionType({
+        assistant: 'acumatica',
+        type: 'http',
+        http: {
+          auth: {
+            type: 'cookie',
+          },
+        },
+      })).toEqual('acumatica');
+
+      expect(getConnectionType({
+        type: 'netsuite',
+        netsuite: {
+          authType: 'basic',
+        },
+      })).toEqual('netsuite');
+
+      expect(getConnectionType({
+        type: 'salesforce',
+      })).toEqual('salesforce');
+
+      expect(getConnectionType({
+        type: 'rdbms',
+      })).toEqual('rdbms');
+
+      expect(getConnectionType({
+        type: 'rest',
+        assistant: 'zendesk',
+      })).toEqual('zendesk');
+
+      expect(getConnectionType({
+        type: 'http',
+        assistant: 'paypal',
+      })).toEqual('paypal');
+    });
+  });
+
+  describe('tests for util isTradingPartnerSupported', () => {
+    test('should return false for empty ip', () => {
+      expect(isTradingPartnerSupported()).toEqual(false);
+    });
+
+    test('should return true if trading partner licenses are present', () => {
+      expect(isTradingPartnerSupported({
+        environment: 'production',
+        licenseActionDetails: {
+          type: 'endpoint',
+          totalNumberofProductionTradingPartners: 5,
+        },
+        accessLevel: 'manage',
+      })).toEqual(true);
+
+      expect(isTradingPartnerSupported({
+        environment: 'production',
+        licenseActionDetails: {
+          type: 'endpoint',
+          totalNumberofProductionTradingPartners: 5,
+        },
+        accessLevel: 'owner',
+      })).toEqual(true);
+
+      expect(isTradingPartnerSupported({
+        environment: 'sandbox',
+        licenseActionDetails: {
+          type: 'endpoint',
+          totalNumberofSandboxTradingPartners: 5,
+        },
+        accessLevel: 'owner',
+      })).toEqual(true);
+
+      expect(isTradingPartnerSupported({
+        environment: 'sandbox',
+        licenseActionDetails: {
+          type: 'endpoint',
+          totalNumberofSandboxTradingPartners: 5,
+        },
+        accessLevel: 'manage',
+      })).toEqual(true);
+    });
+
+    test('should return false if trading partner licenses are not present or unaccessible', () => {
+      expect(isTradingPartnerSupported({
+        environment: 'production',
+        licenseActionDetails: {
+          type: 'endpoint',
+          totalNumberofProductionTradingPartners: 5,
+        },
+        accessLevel: 'monitor',
+      })).toEqual(false);
+
+      expect(isTradingPartnerSupported({
+        environment: 'production',
+        licenseActionDetails: {
+          type: 'endpoint',
+          totalNumberofProductionTradingPartners: 0,
+        },
+        accessLevel: 'owner',
+      })).toEqual(false);
+
+      expect(isTradingPartnerSupported({
+        environment: 'sandbox',
+        licenseActionDetails: {
+          type: 'endpoint',
+          totalNumberofSandboxTradingPartners: 5,
+        },
+        accessLevel: 'monitor',
+      })).toEqual(false);
+
+      expect(isTradingPartnerSupported({
+        environment: 'sandbox',
+        licenseActionDetails: {
+          type: 'endpoint',
+          totalNumberofSandboxTradingPartners: 0,
+        },
+        accessLevel: 'manage',
+      })).toEqual(false);
+    });
+  });
+
+  describe('tests for util isNetSuiteBatchExport', () => {
+    test('should return false for empty ip', () => {
+      expect(isNetSuiteBatchExport()).toEqual(false);
+    });
+
+    test('should return true for ns batch exp docs', () => {
+      expect(isNetSuiteBatchExport({
+        netsuite: {
+          type: 'search',
+        },
+      })).toEqual(true);
+
+      expect(isNetSuiteBatchExport({
+        netsuite: {
+          restlet: {
+            searchId: '1234',
+          },
+        },
+      })).toEqual(true);
+    });
+
+    test('should return false for ns realtime exp docs', () => {
+      expect(isNetSuiteBatchExport({
+        netsuite: {
+          type: 'distributed',
+        },
+      })).toEqual(false);
+    });
+  });
+
+  describe('tests for util isQueryBuilderSupported', () => {
+    test('should return false for empty ip', () => {
+      expect(isQueryBuilderSupported()).toEqual(false);
+    });
+
+    test('should return true for query builder supported db imps', () => {
+      expect(isQueryBuilderSupported({
+        adaptorType: 'MongoDbImport',
+      })).toEqual(true);
+
+      expect(isQueryBuilderSupported({
+        adaptorType: 'DynamodbImport',
+      })).toEqual(true);
+
+      expect(isQueryBuilderSupported({
+        adaptorType: 'RDBMSImport',
+        rdbms: {
+          queryType: ['INSERT'],
+        },
+      })).toEqual(true);
+
+      expect(isQueryBuilderSupported({
+        adaptorType: 'RDBMSImport',
+        rdbms: {
+          queryType: ['UPDATE'],
+        },
+      })).toEqual(true);
+    });
+
+    test('should return false if query builder not supported', () => {
+      expect(isQueryBuilderSupported({
+        adaptorType: 'SalesforceImport',
+      })).toEqual(false);
+
+      expect(isQueryBuilderSupported({
+        adaptorType: 'NetSuiteImport',
+      })).toEqual(false);
+
+      expect(isQueryBuilderSupported({
+        adaptorType: 'RDBMSImport',
+        rdbms: {
+          queryType: ['INSERT', 'MERGE'],
+        },
+      })).toEqual(false);
+
+      expect(isQueryBuilderSupported({
+        adaptorType: 'RDBMSImport',
+        rdbms: {
+          queryType: ['UPDATE', 'BULK INSERT'],
+        },
+      })).toEqual(false);
+    });
+  });
+
+  describe('tests for util getUniqueFieldId', () => {
+    test('should return empty string for empty ip', () => {
+      expect(getUniqueFieldId()).toEqual('');
+    });
+
+    test('should return uniq fieldId', () => {
+      expect(getUniqueFieldId('rdbms.queryInsert')).toEqual('rdbms.query.1');
+      expect(getUniqueFieldId('rdbms.queryUpdate')).toEqual('rdbms.query.0');
+      expect(getUniqueFieldId('http.bodyCreate')).toEqual('http.body.1');
+      expect(getUniqueFieldId('http.bodyUpdate')).toEqual('http.body.0');
+      expect(getUniqueFieldId('http.relativeURIUpdate')).toEqual('http.relativeURI.0');
+      expect(getUniqueFieldId('http.relativeURICreate')).toEqual('http.relativeURI.1');
+      expect(getUniqueFieldId('rest.relativeURIUpdate')).toEqual('rest.relativeURI.0');
+      expect(getUniqueFieldId('rest.relativeURICreate')).toEqual('rest.relativeURI.1');
+      expect(getUniqueFieldId('rest.bodyUpdate')).toEqual('rest.body.0');
+      expect(getUniqueFieldId('rest.bodyCreate')).toEqual('rest.body.1');
+    });
+  });
+
+  describe('tests for util getUserAccessLevelOnConnection', () => {
+    test('should return undefined for empty ip', () => {
+      expect(getUserAccessLevelOnConnection()).toEqual(undefined);
+    });
+
+    test('should return same accessLevel if not of type tile', () => {
+      expect(getUserAccessLevelOnConnection({
+        accessLevel: 'manage',
+      })).toEqual('manage');
+
+      expect(getUserAccessLevelOnConnection({
+        accessLevel: 'monitor',
+      })).toEqual('monitor');
+
+      expect(getUserAccessLevelOnConnection({
+        accessLevel: 'owner',
+      })).toEqual('owner');
+    });
+
+    test('should return accessLevel on tile with registered connection', () => {
+      expect(getUserAccessLevelOnConnection({
+        accessLevel: 'tile',
+        integrations:
+          {
+            3: {
+              accessLevel: 'monitor',
+            },
+          },
+      }, [
+        {
+          _registeredConnectionIds: ['111', '222'],
+          _id: '1',
+        },
+        {
+          _registeredConnectionIds: ['333', '444'],
+          _id: '2',
+        },
+        {
+          _registeredConnectionIds: ['555'],
+          _id: '3',
+        },
+      ], '555')).toEqual('monitor');
+    });
+
+    test('should return highest access if multiple tiles are registered', () => {
+      expect(getUserAccessLevelOnConnection({
+        accessLevel: 'tile',
+        integrations:
+          {
+            1: {
+              accessLevel: 'monitor',
+            },
+            2: {
+              accessLevel: 'manage',
+            },
+          },
+      }, [
+        {
+          _registeredConnectionIds: ['111', '222'],
+          _id: '1',
+        },
+        {
+          _registeredConnectionIds: ['333', '444', '111'],
+          _id: '2',
+        },
+        {
+          _registeredConnectionIds: ['555'],
+          _id: '3',
+        },
+      ], '111')).toEqual('manage');
+    });
+
+    test('should return undefined if no tile is registered or accessible', () => {
+      expect(getUserAccessLevelOnConnection({
+        accessLevel: 'tile',
+        integrations:
+          {
+            1: {
+              accessLevel: 'monitor',
+            },
+            2: {
+              accessLevel: 'manage',
+            },
+          },
+      }, [
+        {
+          _registeredConnectionIds: ['111', '222'],
+          _id: '1',
+        },
+        {
+          _registeredConnectionIds: ['333', '444', '111'],
+          _id: '2',
+        },
+        {
+          _registeredConnectionIds: ['555'],
+          _id: '3',
+        },
+      ], '666')).toEqual(undefined);
+
+      expect(getUserAccessLevelOnConnection({
+        accessLevel: 'tile',
+        integrations:
+          {
+            1: {
+              accessLevel: 'monitor',
+            },
+            2: {
+              accessLevel: 'manage',
+            },
+          },
+      }, [
+        {
+          _registeredConnectionIds: ['111', '222'],
+          _id: '1',
+        },
+        {
+          _registeredConnectionIds: ['333', '444', '111'],
+          _id: '2',
+        },
+        {
+          _registeredConnectionIds: ['555'],
+          _id: '3',
+        },
+      ], '555')).toEqual(undefined);
     });
   });
 });

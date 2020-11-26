@@ -727,14 +727,10 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
 };
 
 export const isOauth = connectionDoc =>
-  connectionDoc &&
-  ((connectionDoc.rest && connectionDoc.rest.authType === 'oauth') ||
-    (connectionDoc.http &&
-      connectionDoc.http.auth &&
-      connectionDoc.http.auth.type === 'oauth') ||
-    (connectionDoc.salesforce && connectionDoc.salesforce.oauth2FlowType) ||
-    (connectionDoc.netsuite &&
-      connectionDoc.netsuite.authType === 'token-auto'));
+    connectionDoc?.rest?.authType === 'oauth' ||
+    connectionDoc?.http?.auth?.type === 'oauth' ||
+    !!connectionDoc?.salesforce?.oauth2FlowType ||
+    connectionDoc?.netsuite?.authType === 'token-auto';
 
 export function getConnectionType(resource) {
   const { assistant, type } = getResourceSubType(resource);
@@ -747,8 +743,6 @@ export function getConnectionType(resource) {
     ) {
       return `${assistant}-oauth`;
     }
-
-    return '';
   }
 
   if (assistant) return assistant;
@@ -761,7 +755,7 @@ export function getConnectionType(resource) {
 
   return type;
 }
-export function isTradingPartnerSupported({environment, licenseActionDetails, accessLevel}) {
+export function isTradingPartnerSupported({environment, licenseActionDetails, accessLevel} = {}) {
   const isSandbox = environment === 'sandbox';
   let enabled = false;
 
@@ -776,12 +770,12 @@ export function isTradingPartnerSupported({environment, licenseActionDetails, ac
     } else {
       enabled = licenseActionDetails?.type === 'endpoint' && licenseActionDetails?.totalNumberofProductionTradingPartners > 0;
     }
-
-    return enabled;
   }
+
+  return enabled;
 }
 export function isNetSuiteBatchExport(exportRes) {
-  return ((exportRes.netsuite && exportRes.netsuite.type === 'search') || (exportRes.netsuite && exportRes.netsuite.restlet && exportRes.netsuite.restlet.searchId !== undefined));
+  return exportRes?.netsuite?.type === 'search' || exportRes?.netsuite?.restlet?.searchId !== undefined;
 }
 export const isQueryBuilderSupported = (importResource = {}) => {
   const {adaptorType} = importResource;
@@ -827,7 +821,7 @@ export const getUniqueFieldId = fieldId => {
   }
 };
 
-export const getUserAccessLevelOnConnection = (permissions, ioIntegrations = [], connectionId) => {
+export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations = [], connectionId) => {
   let accessLevelOnConnection;
 
   if (
