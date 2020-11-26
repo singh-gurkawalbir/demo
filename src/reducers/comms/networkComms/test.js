@@ -1,4 +1,4 @@
-// TODO: Figure out ho to configure the linter to ignore warnings about global
+// TODO: Figure out how to configure the linter to ignore warnings about global
 // references introduced by JEST. Witout the below exclusion in every test file,
 // the linter precommit step will fail. ...and the IDE doesnt like the globals
 // either.

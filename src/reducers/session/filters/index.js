@@ -1,44 +1,41 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 const emptyObj = {};
 
 export default function reducer(state = {}, action) {
   const { type, name, filter } = action;
-  let newState;
 
-  switch (type) {
-    case actionTypes.CLEAR_FILTER:
-      newState = { ...state };
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.CLEAR_FILTER:
+        if (name === 'jobs' && draft[name]) {
+          const { status } = draft[name];
 
-      if (name === 'jobs' && newState[name]) {
-        const { status } = newState[name];
+          draft[name] = { status };
+        } else {
+          delete draft[name];
+        }
+        break;
 
-        newState[name] = { status };
-      } else {
-        delete newState[name];
-      }
+      case actionTypes.PATCH_FILTER:
+        if (!draft[name]) draft[name] = {};
 
-      return newState;
+        // more finer level updates to a draft can result in more efficient state update
+        Object.keys(filter).forEach(key => {
+          draft[name][key] = filter[key];
+        });
 
-    case actionTypes.PATCH_FILTER:
-      newState = { ...state };
-      newState[name] = { ...newState[name], ...filter };
+        break;
 
-      return newState;
-
-    default:
-      return state;
-  }
+      default:
+        break;
+    }
+  });
 }
 
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.filter = (state, name) => {
-  if (!state) {
-    return emptyObj;
-  }
-
-  return state[name] || emptyObj;
-};
+selectors.filter = (state, name) => (state && state[name]) || emptyObj;
 // #endregion
