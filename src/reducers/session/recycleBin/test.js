@@ -11,7 +11,7 @@ describe('recycleBin reducers', () => {
     expect(newState).toEqual(oldState);
   });
 
-  test('should set status property correctly on restore action.', () => {
+  test('should set status property to requested correctly on restore action.', () => {
     const oldState = { };
     const expectedState = {
       status: 'requested',
@@ -23,7 +23,7 @@ describe('recycleBin reducers', () => {
     expect(newState).toEqual(expectedState);
   });
 
-  test('should set status property and redirectTo url correctly on restoreRedirectUrl action.', () => {
+  test('should set status property to completed and redirectTo url correctly on restoreRedirectUrl action.', () => {
     const oldState = { };
     const expectedState = {
       status: 'completed',
