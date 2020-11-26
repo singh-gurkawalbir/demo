@@ -12,6 +12,7 @@ import {
   APIException,
   throwExceptionUsingTheResponse,
   checkToThrowSessionValidationException,
+  isCsrfExpired,
 } from './index';
 import * as apiConsts from './apiPaths';
 import { unauthenticateAndDeleteProfile } from '..';
@@ -249,6 +250,18 @@ describe('request interceptors...testing the various stages of an api request on
           ...sessionError200Response,
           status: 201,
         });
+      });
+    });
+
+    describe('isCsrfExpired', () => {
+      test('should return true for a valid CSRF message body', () => {
+        expect(isCsrfExpired(some403Response)).toEqual(true);
+      });
+
+      test('should return false for a invalid CSRF message body', () => {
+        expect(isCsrfExpired(null)).toEqual(false);
+        expect(isCsrfExpired({})).toEqual(false);
+        expect(isCsrfExpired(some400Response)).toEqual(false);
       });
     });
 

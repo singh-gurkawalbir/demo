@@ -91,9 +91,8 @@ export function checkToThrowSessionValidationException(response) {
 
 export function isCsrfExpired(error) {
   return (
-    error.status === 403 &&
-    error.data &&
-    error.data.message === 'Bad_Request_CSRF'
+    error?.status === 403 &&
+    error?.data?.message === 'Bad_Request_CSRF'
   );
 }
 
