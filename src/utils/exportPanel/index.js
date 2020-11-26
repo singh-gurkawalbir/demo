@@ -2,15 +2,15 @@
  * All utility functions related to Exports Preview Panel
  */
 import deepClone from 'lodash/cloneDeep';
-import { adaptorTypeMap } from './resource';
-import { isJsonString } from './string';
-import { wrapExportFileSampleData } from './sampleData';
+import { adaptorTypeMap } from '../resource';
+import { isJsonString } from '../string';
+import { wrapExportFileSampleData } from '../sampleData';
 
 export const DEFAULT_RECORD_SIZE = 10;
 
 // Applications list which include Preview panel as part of the resource drawer
 
-const applicationsWithPreviewPanel = [
+export const applicationsWithPreviewPanel = [
   'http',
   'rest',
   'mongodb',
@@ -32,7 +32,7 @@ export const HTTP_STAGES = [
 ];
 
 Object.freeze(HTTP_STAGES);
-const PREVIEW_STAGE = [{ label: 'Parsed output', value: 'preview' }];
+export const PREVIEW_STAGE = [{ label: 'Parsed output', value: 'preview' }];
 
 Object.freeze(PREVIEW_STAGE);
 export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExport }) => {
@@ -118,7 +118,7 @@ const formatBodyForRawStage = previewData => {
 export const getFormattedPreviewData = previewData => wrapExportFileSampleData(previewData?.data);
 
 export const getPreviewDataPageSizeInfo = previewData => {
-  if (!previewData || !previewData.data) return '1 Page 0 Records';
+  if (!previewData || !previewData.data) return '1 Page, 0 Records';
   const records = previewData.data;
   const pageSize = Array.isArray(records) ? records.length : 1;
 
@@ -126,7 +126,7 @@ export const getPreviewDataPageSizeInfo = previewData => {
     return '1 Page, 1 Record';
   }
 
-  return `1 Page ${pageSize} Records`;
+  return `1 Page, ${pageSize} Records`;
 };
 
 /*
@@ -164,7 +164,7 @@ export const getBodyHeaderFieldsForPreviewData = (previewData = {}, stage) => {
 export const getRequestURL = requestData => requestData?.data?.[0]?.url;
 
 export const previewFileData = (previewData, recordSize) => {
-  if (!previewData || !Array.isArray(previewData) || !recordSize) {
+  if (!previewData || !Array.isArray(previewData) || !recordSize || Number.isNaN(recordSize)) {
     return previewData;
   }
 
