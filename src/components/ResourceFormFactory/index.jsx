@@ -40,7 +40,7 @@ export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
       onSubmitComplete('', false, formState.formValues);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isSubmitComplete]);
   useEffect(() => {
     remountForm();
   }, [fieldMeta, remountForm]);
