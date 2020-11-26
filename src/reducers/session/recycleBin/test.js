@@ -52,14 +52,11 @@ describe('recycleBin reducers', () => {
 
 describe('recycleBin selectors', () => {
   describe('recycleBinState', () => {
-    test('should return undefined when no match found.', () => {
-      expect(selectors.recycleBinState(undefined, 'tempId')).toEqual(
-        {}
-      );
-      expect(selectors.recycleBinState({}, 'tempId')).toEqual({});
+    test('should return empty object when state is undefined.', () => {
+      expect(selectors.recycleBinState(undefined, 'tempId')).toEqual({});
     });
 
-    test('should return correct newly created ID when match against tempId found.', () => {
+    test('should return correct object with status and redirectTo properties.', () => {
       const oldState = { };
       const expectedState = {
         status: 'completed',
