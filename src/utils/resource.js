@@ -244,10 +244,10 @@ export function isValidResourceReference(
   }
 }
 
-export function salesforceExportSelectOptions(data, fieldName) {
+export function salesforceExportSelectOptions(data, type) {
   let options;
 
-  switch (fieldName) {
+  switch (type) {
     case 'deltaExportDateFields':
       options = data.filter(f => ['datetime', 'date'].indexOf(f.type) > -1);
       break;
@@ -258,13 +258,13 @@ export function salesforceExportSelectOptions(data, fieldName) {
       options = data.filter(f => f.externalId || f.name === 'Id');
       break;
     case 'referenceFields':
-      options = data.filter(f => f.referenceTo.length !== 0);
+      options = data.filter(f => f.referenceTo?.length > 0);
       break;
     default:
       options = data;
   }
 
-  return options.map(op => ({ label: op.label, value: op.value }));
+  return options?.map(op => ({ label: op.label, value: op.value }));
 }
 
 /*
@@ -380,6 +380,7 @@ export const isFlowResource = (flow, resourceId, resourceType) => {
 
 export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {
   const domain = getDomain();
+
   let toReturn = false;
   let filteredConnectors = [];
   const supportBaseUrl = `${HELP_CENTER_BASE_URL}/hc/en-us/categories/`;
@@ -507,6 +508,9 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
 export const getUniversityUrl = '/litmos/sso';
 
 export const getNetSuiteSubrecordLabel = (fieldId, subrecordType) => {
+  if (!fieldId) {
+    return '';
+  }
   const subrecordLabelMap = {
     inventorydetail: 'Inventory Details',
     componentinventorydetail: 'Inventory Details',
