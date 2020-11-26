@@ -27,13 +27,15 @@ describe('fileUpload reducer', () => {
       expect(currState).toEqual(prevState);
     });
     test('should show status as requested for passed fileId', () => {
-      const prevState = {};
+      const prevState = {id2: { status: 'received', file: { test: 5 }, type: 'json'} };
       const fileId = 'id1';
       const currState = reducer(prevState, { type: actionTypes.FILE.PROCESS, fileId });
 
-      expect(currState).toEqual({ [fileId]: {
-        status: 'requested',
-      }});
+      expect(currState).toEqual({
+        ...prevState,
+        [fileId]: {
+          status: 'requested',
+        }});
     });
   });
   describe('FILE.PROCESSED action', () => {
@@ -45,16 +47,18 @@ describe('fileUpload reducer', () => {
     });
     test('should show status as received and update file props', () => {
       const fileId = 'id1';
-      const prevState = { [fileId]: { status: 'requested' }};
+      const prevState = { [fileId]: { status: 'requested' }, id2: { status: 'received', file: { test: 5 }, type: 'json' }};
       const file = { name: 'test', id: 2 };
       const fileProps = { type: 'json', size: 2};
       const currState = reducer(prevState, { type: actionTypes.FILE.PROCESSED, fileId, file, fileProps });
 
-      expect(currState).toEqual({ [fileId]: {
-        status: 'received',
-        file,
-        ...fileProps,
-      }});
+      expect(currState).toEqual({
+        id2: { status: 'received', file: { test: 5 }, type: 'json' },
+        [fileId]: {
+          status: 'received',
+          file,
+          ...fileProps,
+        }});
     });
   });
   describe('FILE.PROCESS_ERROR action', () => {
