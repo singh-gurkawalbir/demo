@@ -11,17 +11,24 @@ import { requestMetric, requestFlowMetrics } from '.';
 
 describe('flowMetrics saga', () => {
   describe('requestMetrics generator', () => {
-    const query = 'dummyQuery';
-    const csvResponse = 'dummyResponse';
+    const query = 'someQuery';
+    const csvResponse = 'Year,Make,Model,Length\n1997,Ford,E350,2.34\n2000,Mercury,Cougar,2.38';
+    const data = [
+      { Length: 2.34, Make: 'Ford', Model: 'E350', Year: 1997 },
+      { Length: 2.38, Make: 'Mercury', Model: 'Cougar', Year: 2000 },
+    ];
 
-    test('should parse the response on successful api call', () => expectSaga(requestMetric, { query })
-      .provide([[matchers.call.fn(apiCallWithRetry), csvResponse]])
-      .call.fn(apiCallWithRetry)
-      .run());
+    test('should return parsed response on successful api call', () =>
+      expectSaga(requestMetric, { query })
+        .provide([[matchers.call.fn(apiCallWithRetry), csvResponse]])
+        .call.fn(apiCallWithRetry)
+        .returns(data)
+        .run());
 
     test('should return empty array, if api call fails', () => expectSaga(requestMetric, { query })
       .provide([[matchers.call.fn(apiCallWithRetry), throwError([])]])
       .call.fn(apiCallWithRetry)
+      .returns([])
       .run());
   });
   describe('requestFlowMetrics saga', () => {
@@ -69,7 +76,7 @@ describe('flowMetrics saga', () => {
     });
     test('should dispatch received action with empty data, if resource is an integration without flowIds and api call is successful', () => {
       const resourceType = 'integrations';
-      const flowIds = [];
+      const flowIds = null;
 
       return expectSaga(requestFlowMetrics, {
         resourceType,
