@@ -7,7 +7,6 @@ import {
   getPreviewBodyTemplateType,
   getBodyHeaderFieldsForPreviewData,
   previewFileData,
-  DEFAULT_RECORD_SIZE,
   HTTP_STAGES,
   PREVIEW_STAGE,
   getRequestURL,
@@ -119,121 +118,6 @@ describe('getFormattedPreviewData util', () => {
             id: 5,
             name: 'user1',
           },
-        },
-      ],
-    });
-  });
-  test('should return multiple page of records for preview data of multiple records', () => {
-    const previewData = {
-      data: [{
-        id: 5,
-        name: 'user1',
-      },
-      {
-        id: 6,
-        name: 'user2',
-      }],
-    };
-
-    expect(getFormattedPreviewData(previewData)).toEqual({
-      page_of_records: [
-        {
-          record: {
-            id: 5,
-            name: 'user1',
-          },
-        },
-        {
-          record: {
-            id: 6,
-            name: 'user2',
-          },
-        },
-      ],
-    });
-  });
-  test('should return multiple page of records for preview data of multiple grouped records', () => {
-    const previewData = {
-      data: [
-        [{
-          id: 5,
-          name: 'user1',
-          category: 'category1',
-        },
-        {
-          id: 6,
-          name: 'user2',
-          category: 'category1',
-        }],
-        [{
-          id: 7,
-          name: 'user3',
-          category: 'category2',
-        },
-        {
-          id: 8,
-          name: 'user4',
-          category: 'category2',
-        }],
-      ]};
-
-    expect(getFormattedPreviewData(previewData)).toEqual({
-      page_of_records: [
-        {
-          rows: [{
-            id: 5,
-            name: 'user1',
-            category: 'category1',
-          },
-          {
-            id: 6,
-            name: 'user2',
-            category: 'category1',
-          }],
-        },
-        {
-          rows: [{
-            id: 7,
-            name: 'user3',
-            category: 'category2',
-          },
-          {
-            id: 8,
-            name: 'user4',
-            category: 'category2',
-          }],
-        },
-      ],
-    });
-  });
-  test('should return single page of rows for preview data of grouped records with record size 1', () => {
-    const previewData = {
-      data: [
-        [{
-          id: 5,
-          name: 'user1',
-          category: 'category1',
-        },
-        {
-          id: 6,
-          name: 'user2',
-          category: 'category1',
-        }],
-      ]};
-
-    expect(getFormattedPreviewData(previewData)).toEqual({
-      page_of_records: [
-        {
-          rows: [{
-            id: 5,
-            name: 'user1',
-            category: 'category1',
-          },
-          {
-            id: 6,
-            name: 'user2',
-            category: 'category1',
-          }],
         },
       ],
     });
@@ -416,17 +300,7 @@ describe('getRequestURL util', () => {
   });
 });
 
-describe('Miscellaneous', () => {
-  test('should have DEFAULT_RECORD_SIZE as 10 for preview panel', () => {
-    expect(DEFAULT_RECORD_SIZE).toBe(10);
-  });
-  test('should have request, response and parse stages as part of HTTP_STAGES', () => {
-    expect(HTTP_STAGES).toEqual([
-      { label: 'HTTP request', value: 'request' },
-      { label: 'HTTP response', value: 'raw' },
-      { label: 'Parsed output', value: 'preview' },
-    ]);
-  });
+describe('getRecordSizeOptions util', () => {
   test('should return 10 options to select in the record size field', () => {
     const options = [
       { label: '10', value: '10'},
