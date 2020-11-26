@@ -1,7 +1,6 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
-import { fieldsTouchedForMeta } from '../../../forms/utils';
 
 describe('session.resource form reducers', () => {
   const resourceType = 'connections';
@@ -78,32 +77,36 @@ describe('session.resource form reducers', () => {
         flowId
       ));
 
-      const expected = {...oldState,
-        [key]: { initData: state[key] && state[key].initData
-          ? fieldsTouchedForMeta(
-            fieldMeta,
-            state[key] && state[key].initData
-          )
-          : null,
-        isNew,
-        skipCommit,
-        initComplete: true,
-        fieldMeta,
-        flowId,
-        showValidationBeforeTouched: false }};
+      const expected = {
+        [key]: { initData: null,
+          isNew,
+          skipCommit,
+          initComplete: true,
+          fieldMeta,
+          flowId,
+          showValidationBeforeTouched: false }};
 
       expect(state).toEqual(expected);
     });
   });
   describe('RESOURCE_FORM.INIT_FAILED action', () => {
     test('should store the failed form data', () => {
-      const oldState = { [key]: {initData} };
+      const oldState = reducer(undefined, actions.resourceForm.init(
+        resourceType,
+        resourceId,
+        isNew,
+        skipCommit,
+        flowId,
+        initData,
+        integrationId
+      ));
 
       const state = reducer(oldState, actions.resourceForm.initFailed(resourceType, resourceId));
 
-      const expected = {...oldState,
+      const expected = {
         [key]: { initData,
           initFailed: true,
+          initComplete: false,
         }};
 
       expect(state).toEqual(expected);
