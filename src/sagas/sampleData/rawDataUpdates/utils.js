@@ -59,6 +59,7 @@ export function* removeRawDataOnResource({
 }) {
   const resourceObj = yield select(selectors.resource, resourceType, resourceId) || {};
 
+  // TODO: make a generic fix on raw data and not specific to netsuite. Ref: IO-18967 for netsuite specific fix
   if (resourceObj.adaptorType === 'NetSuiteExport' || !resourceObj.rawData || resourceObj.rawData === EMPTY_RAW_DATA) {
     return;
   }
