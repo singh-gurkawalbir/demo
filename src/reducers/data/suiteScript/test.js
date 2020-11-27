@@ -26,7 +26,7 @@ const refreshlegacycontrolpanel = [
  * TODO: Ignoring SS tests for sometime and Shiva needs to fix these.
  */
 
-describe.skip('suiteScript reducer', () => {
+describe('suiteScript reducer', () => {
   test('any other action should return default state', () => {
     const newState = reducer(undefined, 'someaction');
 
@@ -51,7 +51,7 @@ describe.skip('suiteScript reducer', () => {
 
     test('should update the state properly when the current state is undefined', () => {
       const newState = reducer(undefined, tilesReceivedAction);
-      const expected = { refreshlegacycontrolpanel, tiles: [], integrations: [] };
+      const expected = { refreshlegacycontrolpanel, tiles: [], integrations: [], settings: {} };
 
       tiles.forEach(t => {
         const tile = {status: 'success', ...t, displayName: t.name, ssLinkedConnectionId: connectionId};
@@ -80,6 +80,7 @@ describe.skip('suiteScript reducer', () => {
       expected[connectionId].refreshlegacycontrolpanel = refreshlegacycontrolpanel;
       expected[connectionId].tiles = [];
       expected[connectionId].integrations = [];
+      expected[connectionId].settings = {};
 
       tiles.forEach(t => {
         const tile = {status: 'success', ...t, displayName: t.name, ssLinkedConnectionId: connectionId};
@@ -98,12 +99,12 @@ describe.skip('suiteScript reducer', () => {
   });
 });
 
-describe.skip('tiles selector', () => {
+describe('tiles selector', () => {
   test('should return [] when the state is empty', () => {
     const state = reducer(undefined, 'some action');
 
-    expect(selectors.mkTiles()(state)).toEqual([]);
-    expect(selectors.mkTiles()(state, 'something')).toEqual([]);
+    expect(selectors.suiteScriptTiles(state)).toEqual([]);
+    expect(selectors.suiteScriptTiles(state, 'something')).toEqual([]);
   });
   describe('should return correct results for different connectionIds', () => {
     const state = {
@@ -134,7 +135,7 @@ describe.skip('tiles selector', () => {
       );
       const newState = reducer(state, tilesReceivedAction);
 
-      expect(selectors.mkTiles()(newState, 'c1')).toEqual([
+      expect(selectors.suiteScriptTiles(newState, 'c1')).toEqual([
         {
           _integrationId: 'i1',
           name: 'i one',
@@ -158,7 +159,7 @@ describe.skip('tiles selector', () => {
       );
       const newState = reducer(state, tilesReceivedAction);
 
-      expect(selectors.mkTiles()(newState, 'c2')).toEqual([
+      expect(selectors.suiteScriptTiles(newState, 'c2')).toEqual([
         {
           _integrationId: 'i2',
           name: 'i two',
@@ -196,12 +197,12 @@ describe.skip('tiles selector', () => {
   });
 });
 
-describe.skip('integrations selector', () => {
+describe('integrations selector', () => {
   test('should return [] when the state is empty', () => {
     const state = reducer(undefined, 'some action');
 
-    expect(selectors.integrations(state)).toEqual([]);
-    expect(selectors.integrations(state, 'something')).toEqual([]);
+    expect(selectors.suiteScriptIntegrations(state)).toEqual([]);
+    expect(selectors.suiteScriptIntegrations(state, 'something')).toEqual([]);
   });
   describe('should return correct results for different connectionIds', () => {
     const state = {
@@ -240,7 +241,7 @@ describe.skip('integrations selector', () => {
       );
       const newState = reducer(state, tilesReceivedAction);
 
-      expect(selectors.integrations(newState, 'c1')).toEqual([
+      expect(selectors.suiteScriptIntegrations(newState, 'c1')).toEqual([
         {
           _id: 'i1',
           name: 'i one',
@@ -262,7 +263,7 @@ describe.skip('integrations selector', () => {
       );
       const newState = reducer(state, tilesReceivedAction);
 
-      expect(selectors.integrations(newState, 'c2')).toEqual([
+      expect(selectors.suiteScriptIntegrations(newState, 'c2')).toEqual([
         {
           _id: 'i2',
           name: 'i two',
