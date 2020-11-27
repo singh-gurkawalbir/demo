@@ -76,7 +76,7 @@ const StoreMenuItems = ({ integration, integrationId }) => {
           <div> {store.label}</div>
           <div>
             <StatusCircle size="mini" variant="success" />
-            <span>{!storeErrorCount > 9999 ? '9999+' : storeErrorCount}</span>
+            <span>{storeErrorCount > 9999 ? '9999+' : storeErrorCount}</span>
           </div>
         </MenuItem>
       );
