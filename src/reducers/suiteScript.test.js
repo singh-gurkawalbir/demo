@@ -14,7 +14,7 @@ import {
  * TODO: Ignoring SS tests for sometime and Shiva needs to fix these.
  */
 
-describe.skip('suiteScriptLinkedConnections selector', () => {
+describe('suiteScriptLinkedConnections selector', () => {
   const data = {
     resources: {
       integrations: [
@@ -203,7 +203,7 @@ describe.skip('suiteScriptLinkedConnections selector', () => {
   });
 });
 
-describe.skip('suiteScriptIntegrations selector', () => {
+describe('suiteScriptIntegrations selector', () => {
   const data = {
     suiteScript: {
       connection1: {
@@ -242,19 +242,23 @@ describe.skip('suiteScriptIntegrations selector', () => {
         {
           _id: 'i1',
           name: 'i one',
-          permissions: { accessLevel: 'manage', connections: { edit: true } },
+          displayName: 'i one',
+          isNotEditable: false,
         },
         {
           _id: 'i2',
           name: 'i two',
-          permissions: { accessLevel: 'manage', connections: { edit: true } },
+          displayName: 'i two',
+          isNotEditable: false,
         },
         {
           _id: 'i3',
           _connectorId: SUITESCRIPT_CONNECTORS[0]._id,
           name: SUITESCRIPT_CONNECTORS[0].name,
+          displayName: SUITESCRIPT_CONNECTORS[0].name,
+          isNotEditable: false,
           mode: 'install',
-          permissions: { accessLevel: 'manage', connections: { edit: true } },
+          urlName: 'sfns',
         },
       ],
     ],
@@ -263,18 +267,19 @@ describe.skip('suiteScriptIntegrations selector', () => {
       { _id: 'connection2', permissions: { accessLevel: 'monitor' } },
       [
         {
-          _ioConnectionId: 'connection2',
           _id: 'i3',
           name: 'i three',
-          permissions: { accessLevel: 'monitor', connections: { edit: false } },
+          displayName: 'i three',
+          isNotEditable: false,
         },
         {
-          _ioConnectionId: 'connection2',
           _id: 'i4',
           _connectorId: SUITESCRIPT_CONNECTORS[1]._id,
           name: SUITESCRIPT_CONNECTORS[1].name,
+          displayName: SUITESCRIPT_CONNECTORS[1].name,
+          isNotEditable: false,
           mode: 'settings',
-          permissions: { accessLevel: 'monitor', connections: { edit: false } },
+          urlName: 'svbns',
         },
       ],
     ],
@@ -282,21 +287,21 @@ describe.skip('suiteScriptIntegrations selector', () => {
   const state = reducer({}, 'some action');
   const tilesReceivedAction = actions.resource.receivedCollection(
     'suitescript/connections/connection1/tiles',
-    data.connection1.tiles
+    data.suiteScript.connection1.tiles
   );
   const newState = reducer(state, tilesReceivedAction);
   const tilesReceivedAction2 = actions.resource.receivedCollection(
     'suitescript/connections/connection2/tiles',
-    data.connection2.tiles
+    data.suiteScript.connection2.tiles
   );
   const newState2 = reducer(newState, tilesReceivedAction2);
 
   each(testCases).test('%s', (name, connection, expected) => {
-    expect(selectors.suiteScriptIntegrations(newState2, connection)).toEqual(expected);
+    expect(selectors.suiteScriptIntegrations(newState2, connection._id)).toEqual(expected);
   });
 });
 
-describe.skip('suiteScriptTiles selector', () => {
+describe('suiteScriptTiles selector', () => {
   const data = {
     resources: {},
     suiteScript: {
@@ -338,44 +343,29 @@ describe.skip('suiteScriptTiles selector', () => {
       },
       [
         {
-          _ioConnectionId: 'connection1',
-          _id: 'connection1_i1',
+          ssLinkedConnectionId: 'connection1',
           _integrationId: 'i1',
           name: 'i one',
+          displayName: 'i one',
           status: TILE_STATUS.SUCCESS,
-          integration: {
-            permissions: { accessLevel: 'manage', connections: { edit: true } },
-          },
-          tag: 'NSAccount1',
         },
         {
-          _ioConnectionId: 'connection1',
-          _id: 'connection1_i2',
+          ssLinkedConnectionId: 'connection1',
           _integrationId: 'i2',
           name: 'i two',
+          displayName: 'i two',
           status: TILE_STATUS.HAS_ERRORS,
           numError: 10,
-          integration: {
-            permissions: { accessLevel: 'manage', connections: { edit: true } },
-          },
-          tag: 'NSAccount1',
         },
         {
-          _ioConnectionId: 'connection1',
-          _id: 'connection1_i3',
+          ssLinkedConnectionId: 'connection1',
           _integrationId: 'i3',
           name: SUITESCRIPT_CONNECTORS[0].name,
+          displayName: SUITESCRIPT_CONNECTORS[0].name,
           status: TILE_STATUS.IS_PENDING_SETUP,
           _connectorId: SUITESCRIPT_CONNECTORS[0]._id,
           mode: 'install',
-          integration: {
-            permissions: { accessLevel: 'manage', connections: { edit: true } },
-          },
-          connector: {
-            owner: SUITESCRIPT_CONNECTORS[0].user.company,
-            applications: SUITESCRIPT_CONNECTORS[0].applications,
-          },
-          tag: 'NSAccount1',
+          urlName: SUITESCRIPT_CONNECTORS[0].urlName,
         },
       ],
     ],
@@ -388,45 +378,38 @@ describe.skip('suiteScriptTiles selector', () => {
       },
       [
         {
-          _ioConnectionId: 'connection2',
-          _id: 'connection2_i3',
+          ssLinkedConnectionId: 'connection2',
           _integrationId: 'i3',
           name: 'i three',
+          displayName: 'i three',
           status: TILE_STATUS.SUCCESS,
-          integration: {
-            permissions: {
-              accessLevel: 'monitor',
-              connections: { edit: false },
-            },
-          },
-          tag: 'NSAccount2',
         },
         {
-          _ioConnectionId: 'connection2',
-          _id: 'connection2_i4',
+          ssLinkedConnectionId: 'connection2',
           _integrationId: 'i4',
           name: SUITESCRIPT_CONNECTORS[1].name,
+          displayName: SUITESCRIPT_CONNECTORS[1].name,
           status: TILE_STATUS.SUCCESS,
           _connectorId: SUITESCRIPT_CONNECTORS[1]._id,
           mode: 'settings',
-          integration: {
-            permissions: {
-              accessLevel: 'monitor',
-              connections: { edit: false },
-            },
-          },
-          connector: {
-            owner: SUITESCRIPT_CONNECTORS[1].user.company,
-            applications: SUITESCRIPT_CONNECTORS[1].applications,
-          },
-          tag: 'NSAccount2',
+          urlName: SUITESCRIPT_CONNECTORS[1].urlName,
         },
       ],
     ],
   ];
-  const state = reducer({ data }, 'some action');
+  const state = reducer({}, 'some action');
+  const tilesReceivedAction = actions.resource.receivedCollection(
+    'suitescript/connections/connection1/tiles',
+    data.suiteScript.connection1.tiles
+  );
+  const newState = reducer(state, tilesReceivedAction);
+  const tilesReceivedAction2 = actions.resource.receivedCollection(
+    'suitescript/connections/connection2/tiles',
+    data.suiteScript.connection2.tiles
+  );
+  const newState2 = reducer(newState, tilesReceivedAction2);
 
   each(testCases).test('%s', (name, connection, expected) => {
-    expect(selectors.suiteScriptTiles(state, connection)).toEqual(expected);
+    expect(selectors.suiteScriptTiles(newState2, connection._id)).toEqual(expected);
   });
 });
