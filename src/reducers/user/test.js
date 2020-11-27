@@ -280,4 +280,381 @@ describe('user selectors', () => {
       expect(selectors.editorTheme(state)).not.toEqual(DEFAULT_EDITOR_THEME);
     });
   });
+  describe('User preferences selector', () => {
+    test('should return empty object if no state exists', () => {
+      expect(selectors.userPreferences(undefined)).toEqual({});
+    });
+    test('should return correct user preferences for an org user', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                _id: 'ashare1',
+                ownerUser: {
+                  email: 'owner@test.com',
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.userPreferences(state)).toEqual({
+        defaultAShareId: 'ashare1',
+      });
+    });
+    test('should return correct user preferences info for an org owner', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+        },
+        'some action'
+      );
+
+      expect(selectors.userPreferences(state)).toEqual({
+        defaultAShareId: ACCOUNT_IDS.OWN,
+      });
+    });
+  });
+  describe('Owner user id selector', () => {
+    test('should return undefined if no state exists', () => {
+      expect(selectors.ownerUserId(undefined)).toEqual(undefined);
+    });
+    test('should return correct owner user id for an org user', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                _id: 'ashare1',
+                ownerUser: {
+                  _id: 'owner1',
+                  email: 'owner@test.com',
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.ownerUserId(state)).toEqual('owner1');
+    });
+    test('should return correct owner user id info for an org owner', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', _id: 'owner' },
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+        },
+        'some action'
+      );
+
+      expect(selectors.ownerUserId(state)).toEqual('owner');
+    });
+    test('should return correct owner user id info for an org owner when there are no preferences', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', _id: 'owner' },
+        },
+        'some action'
+      );
+
+      expect(selectors.ownerUserId(state)).toEqual('owner');
+    });
+  });
+  describe('isOwnerUserInErrMgtTwoDotZero selector', () => {
+    test('should return false if no state exists', () => {
+      expect(selectors.isOwnerUserInErrMgtTwoDotZero(undefined)).toEqual(false);
+    });
+    test('should return correct owner user error management 2.0 flag for an org user', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                _id: 'ashare1',
+                ownerUser: {
+                  _id: 'owner1',
+                  useErrMgtTwoDotZero: true,
+                  email: 'owner@test.com',
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toEqual(true);
+    });
+    test('should return correct owner user error management 2.0 flag info for an org owner', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', _id: 'owner', useErrMgtTwoDotZero: true },
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+        },
+        'some action'
+      );
+
+      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toEqual(true);
+    });
+    test('should return correct owner user error management 2.0 flag info for an org owner when there are no preferences', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', _id: 'owner', useErrMgtTwoDotZero: true },
+        },
+        'some action'
+      );
+
+      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toEqual(true);
+    });
+    test('should return correct owner user error management 2.0 flag for an org user', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                _id: 'ashare1',
+                ownerUser: {
+                  _id: 'owner1',
+                  email: 'owner@test.com',
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toEqual(false);
+    });
+    test('should return correct owner user error management 2.0 flag info for an org owner', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', _id: 'owner' },
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+        },
+        'some action'
+      );
+
+      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toEqual(false);
+    });
+    test('should return correct owner user error management 2.0 flag info for an org owner when there are no preferences', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', _id: 'owner' },
+        },
+        'some action'
+      );
+
+      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toEqual(false);
+    });
+  });
+  describe('drawerOpened selector', () => {
+    test('should return false if no state exists', () => {
+      expect(selectors.drawerOpened(undefined)).toEqual(false);
+    });
+
+    test('should return correct drawer opened flag for an org owner', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', _id: 'owner' },
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN, drawerOpened: true },
+        },
+        'some action'
+      );
+
+      expect(selectors.drawerOpened(state)).toEqual(true);
+    });
+    test('should return false for an org owner', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', _id: 'owner' },
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+        },
+        'some action'
+      );
+
+      expect(selectors.drawerOpened(state)).toEqual(false);
+    });
+  });
+  describe('expandSelected selector', () => {
+    test('should return undefined if no state exists', () => {
+      expect(selectors.expandSelected(undefined)).toEqual(undefined);
+    });
+    test('should return correct expand selected label for an org owner', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', _id: 'owner' },
+          preferences: { expand: 'expand', defaultAShareId: ACCOUNT_IDS.OWN, drawerOpened: true },
+        },
+        'some action'
+      );
+
+      expect(selectors.expandSelected(state)).toEqual('expand');
+    });
+    test('should return undefined for an org owner', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', _id: 'owner' },
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+        },
+        'some action'
+      );
+
+      expect(selectors.expandSelected(state)).toEqual(undefined);
+    });
+  });
+  describe('userAccessLevel selector', () => {
+    test('should return false if no state exists', () => {
+      expect(selectors.userAccessLevel(undefined)).toEqual(undefined);
+    });
+    test('should return tile access for an org user', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                _id: 'ashare1',
+                ownerUser: {
+                  email: 'owner@test.com',
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.userAccessLevel(state)).toEqual('tile');
+    });
+    test('should return monitor access for an org user', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                accessLevel: 'monitor',
+                _id: 'ashare1',
+                ownerUser: {
+                  email: 'owner@test.com',
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.userAccessLevel(state)).toEqual('monitor');
+    });
+    test('should return monitor access for an org user', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                accessLevel: 'manage',
+                _id: 'ashare1',
+                ownerUser: {
+                  email: 'owner@test.com',
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.userAccessLevel(state)).toEqual('manage');
+    });
+
+    test('should return tile access for an org user if it has integration access level', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                accessLevel: 'monitor',
+                integrationAccessLevel: [{_integrationId: '123', accessLevel: 'manage'}, {_integrationId: '456', accessLevel: 'monitor'}],
+                _id: 'ashare1',
+                ownerUser: {
+                  email: 'owner@test.com',
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.userAccessLevel(state)).toEqual('tile');
+    });
+    test('should return correct user access level info info for an org owner', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+        },
+        'some action'
+      );
+
+      expect(selectors.userAccessLevel(state)).toEqual('owner');
+    });
+  });
+  describe('userPermissions selector', () => {
+    const defaultObject = {
+      accesstokens: {},
+      audits: {},
+      connectors: {},
+      subscriptions: {},
+      templates: {},
+      transfers: {},
+      users: {},
+      agents: {},
+      apis: {},
+      connections: {},
+      exports: {},
+      imports: {},
+      integrations: {},
+      recyclebin: {},
+      scripts: {},
+      stacks: {} };
+
+    test('should return default object if no state exists', () => {
+      expect(selectors.userPermissions(undefined)).toEqual(defaultObject);
+    });
+  });
+  describe('licenses selector', () => {
+    test('should return empty array if no state exists', () => {
+      expect(selectors.licenses(undefined)).toEqual([]);
+    });
+  });
 });

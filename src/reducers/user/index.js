@@ -84,11 +84,11 @@ selectors.ownerUserId = createSelector(
     const { defaultAShareId } = preferences;
 
     if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
-      return profile._id;
+      return profile?._id;
     }
 
     if (!org || !org.accounts || !org.accounts.length) {
-      return profile._id;
+      return profile?._id;
     }
 
     const { accounts: orgAccounts = {} } = org;
@@ -112,11 +112,11 @@ selectors.isOwnerUserInErrMgtTwoDotZero = createSelector(
     const { defaultAShareId } = preferences;
 
     if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
-      return !!profile.useErrMgtTwoDotZero;
+      return !!profile?.useErrMgtTwoDotZero;
     }
 
     if (!org || !org.accounts || !org.accounts.length) {
-      return !!profile.useErrMgtTwoDotZero;
+      return !!profile?.useErrMgtTwoDotZero;
     }
 
     /* When the user belongs to an org, we need to return the isErrMgtTwoDotZero from org owner profile. */
