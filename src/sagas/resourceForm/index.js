@@ -17,7 +17,7 @@ import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
-import { UI_FIELD_VALUES } from '../../utils/constants';
+import { UI_FIELD_VALUES, FORM_SAVE_STATUS} from '../../utils/constants';
 import { isIntegrationApp, isFlowUpdatedWithPgOrPP } from '../../utils/flows';
 
 export const SCOPES = {
@@ -270,10 +270,10 @@ function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
 }
 
 export function* newIAFrameWorkPayload({ resourceId }) {
-  const { patch: allPatches } = yield select(
+  const { patch: allPatches } = (yield select(
     selectors.stagedResource,
     resourceId
-  );
+  )) || {};
   // TO DO: Ashok Needs to refactor this code
 
   if (
@@ -380,11 +380,11 @@ export function* submitFormValues({
     );
   }
 
-  const { patch } = yield select(
+  const { patch } = (yield select(
     selectors.stagedResource,
     resourceId,
     SCOPES.VALUE
-  );
+  )) || {};
   // In most cases there would be no other pending staged changes, since most
   // times a patch is followed by an immediate commit.  If however some
   // component has staged some changes, even if the patchSet above is empty,
@@ -737,14 +737,14 @@ export function* submitResourceForm(params) {
   // perform submit cleanup
   if (cancelSave) return yield put(actions.resource.clearStaged(resourceId));
 
-  const { submitFailed, skipCommit } = yield select(
+  const { formSaveStatus, skipCommit } = yield select(
     selectors.resourceFormState,
     resourceType,
     resourceId
   );
 
   // if it fails return
-  if (submitFailed || !flowId) return;
+  if (formSaveStatus === FORM_SAVE_STATUS.FAILED || !flowId) return;
 
   const { merged: flow } = yield select(
     selectors.resourceData,
