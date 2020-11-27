@@ -59,7 +59,7 @@ export function* removeRawDataOnResource({
 }) {
   const resourceObj = yield select(selectors.resource, resourceType, resourceId) || {};
 
-  if (!resourceObj.rawData || resourceObj.rawData === EMPTY_RAW_DATA) {
+  if (resourceObj.adaptorType === 'NetSuiteExport' || !resourceObj.rawData || resourceObj.rawData === EMPTY_RAW_DATA) {
     return;
   }
   // TODO @Raghu Remove this EMPTY_RAW_DATA and remove rawData prop once BE Fix is done
