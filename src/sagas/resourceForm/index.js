@@ -270,10 +270,10 @@ function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
 }
 
 export function* newIAFrameWorkPayload({ resourceId }) {
-  const { patch: allPatches } = yield select(
+  const { patch: allPatches } = (yield select(
     selectors.stagedResource,
     resourceId
-  );
+  )) || {};
   // TO DO: Ashok Needs to refactor this code
 
   if (
@@ -380,11 +380,11 @@ export function* submitFormValues({
     );
   }
 
-  const { patch } = yield select(
+  const { patch } = (yield select(
     selectors.stagedResource,
     resourceId,
     SCOPES.VALUE
-  );
+  )) || {};
   // In most cases there would be no other pending staged changes, since most
   // times a patch is followed by an immediate commit.  If however some
   // component has staged some changes, even if the patchSet above is empty,
