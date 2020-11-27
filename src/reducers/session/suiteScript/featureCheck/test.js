@@ -41,7 +41,7 @@ describe('featurecheck reducer', () => {
       '1-2-someFeature': COMM_STATES.LOADING,
 
       [generatedKey]: {
-        status: 'success',
+        status: COMM_STATES.SUCCESS,
       },
     });
   });
@@ -51,7 +51,7 @@ describe('featurecheck reducer', () => {
     expect(state).toEqual({
       '1-2-someFeature': COMM_STATES.LOADING,
       [generatedKey]: {
-        status: 'success',
+        status: COMM_STATES.SUCCESS,
       },
     });
   });
@@ -62,7 +62,7 @@ describe('featurecheck reducer', () => {
     expect(state).toEqual({
       '1-2-someFeature': COMM_STATES.LOADING,
       [generatedKey]: {
-        status: 'error',
+        status: COMM_STATES.ERROR,
         message: error,
       },
     });
