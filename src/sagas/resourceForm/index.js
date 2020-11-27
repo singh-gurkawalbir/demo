@@ -17,7 +17,7 @@ import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
-import { EMPTY_RAW_DATA, UI_FIELD_VALUES } from '../../utils/constants';
+import { UI_FIELD_VALUES } from '../../utils/constants';
 import { isIntegrationApp, isFlowUpdatedWithPgOrPP } from '../../utils/flows';
 
 export const SCOPES = {
@@ -336,7 +336,7 @@ export function* submitFormValues({
   });
 
   if (resourceType === 'exports') {
-    formValues['/rawData'] = EMPTY_RAW_DATA;
+    delete formValues['/rawData'];
 
     // We have a special case for exports that define a "Data loader" flow.
     // We need to store the raw data s3 key so that when a user 'runs' the flow,
