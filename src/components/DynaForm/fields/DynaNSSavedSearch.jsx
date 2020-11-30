@@ -159,6 +159,7 @@ export default function DynaNSSavedSearch(props) {
             <DynaRefreshableSelect
               {...searchIdOptions}
               {...props}
+              ignoreValueUnset
               urlToOpen={savedSearchUrl}
               className={classes.dynaNsInternalID}
             />
