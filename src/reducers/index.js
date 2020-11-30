@@ -5221,7 +5221,7 @@ selectors.makeResourceErrorsSelector = () => createSelector(
 
 selectors.resourceErrors = selectors.makeResourceErrorsSelector();
 
-selectors.allRegisteredConnectionIds = createSelector(
+selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
   selectors.userPermissions,
   state => state?.data?.resources?.integrations,
   state => state?.data?.resources?.connections,
