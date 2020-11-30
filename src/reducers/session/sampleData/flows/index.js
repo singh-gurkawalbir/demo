@@ -59,29 +59,6 @@ export default function (state = {}, action) {
 
       // TODO: @Raghu Below request actions for preview and processor can be removed
       // as we are now handling request stage using generic stageRequest action above
-      case actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST: {
-        if (!resourceId) return;
-        const resourceMap =
-          (draft[flowId] &&
-            draft[flowId][
-              isPageGeneratorResource(draft[flowId], resourceId)
-                ? 'pageGeneratorsMap'
-                : 'pageProcessorsMap'
-            ]) ||
-          {};
-        const stage = previewType;
-
-        resourceMap[resourceId] = {
-          ...resourceMap[resourceId],
-        };
-        resourceMap[resourceId][stage] = {
-          ...resourceMap[resourceId][stage],
-          status: 'requested',
-        };
-
-        break;
-      }
-
       case actionTypes.FLOW_DATA.PREVIEW_DATA_RECEIVED: {
         if (!resourceId) return;
         const resourceMap =

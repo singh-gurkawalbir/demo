@@ -176,7 +176,7 @@ export function* requestSampleDataForImports({
         _pageProcessorId: resourceId,
         resourceType,
         hidden,
-        previewType: sampleDataStage,
+        previewType: 'flowInput',
       });
       break;
     }
