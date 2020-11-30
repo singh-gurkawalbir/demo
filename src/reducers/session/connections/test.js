@@ -19,17 +19,31 @@ describe('Connections API', () => {
         expect(state.activeConnection).toEqual(undefined);
       });
 
-      test('should set debug logs for the connection once received', () => {
+      test('should update offline flag of connection once connection is authorized', () => {
         const prevState = {
-
+          status: [{
+            _id: '1',
+            offline: true,
+            type: 'ns',
+          }, {
+            _id: '2',
+            offline: true,
+            type: 'sf',
+          }],
         };
 
-        const nextState = reducer(prevState, actions.connection.receivedDebugLogs('test log message', 'connId'));
+        const nextState = reducer(prevState, actions.resource.connections.authorized('1'));
 
         expect(nextState).toEqual({
-          debugLogs: {
-            connId: 'test log message',
-          },
+          status: [{
+            _id: '1',
+            offline: false,
+            type: 'ns',
+          }, {
+            _id: '2',
+            offline: true,
+            type: 'sf',
+          }],
         });
       });
 
@@ -70,7 +84,7 @@ describe('Connections API', () => {
         });
       });
 
-      test('should have state same as previous state when invoked with invalid connection id', () => {
+      test('should have state same as previous state when invoked with invalid connection id for clearing debuglogs', () => {
         const prevState = {
           debugLogs: {
             1: 'test log message',
@@ -84,20 +98,6 @@ describe('Connections API', () => {
           debugLogs: {
             1: 'test log message',
             2: 'test message',
-          },
-        });
-      });
-
-      test('should set iclients for the given connection once received', () => {
-        const prevState = {
-
-        };
-
-        const nextState = reducer(prevState, actions.connection.updateIClients(['iclientId1'], 'connId'));
-
-        expect(nextState).toEqual({
-          iClients: {
-            connId: ['iclientId1'],
           },
         });
       });
@@ -118,20 +118,6 @@ describe('Connections API', () => {
             1: ['iclientId1', 'iclientId11'],
             2: ['iclientId2'],
             3: ['iclientId3'],
-          },
-        });
-      });
-
-      test('should set queued jobs for the given connection once received', () => {
-        const prevState = {
-
-        };
-
-        const nextState = reducer(prevState, actions.connection.receivedQueuedJobs(['queuedjob1'], 'connId'));
-
-        expect(nextState).toEqual({
-          queuedJobs: {
-            connId: ['queuedjob1'],
           },
         });
       });
@@ -169,6 +155,56 @@ describe('Connections API', () => {
         const state = reducer(undefined, actions.connection.setActive(id));
 
         expect(selectors.activeConnection(state)).toEqual(id);
+      });
+
+      test('should return null for debugLogs for empty state', () => {
+        expect(selectors.debugLogs(undefined)).toEqual(null);
+      });
+
+      test('should return empty array for iclients for empty state', () => {
+        expect(selectors.iClients(undefined)).toEqual([]);
+      });
+
+      test('should return empty array for queuedjobs for empty state', () => {
+        expect(selectors.queuedJobs(undefined)).toEqual([]);
+      });
+
+      test('should return debugLogs when present', () => {
+        const state = {
+          debugLogs: {
+            1: 'test log message',
+            2: 'test message',
+            3: 'request sent',
+          },
+        };
+
+        expect(selectors.debugLogs(state)).toEqual(state.debugLogs);
+      });
+
+      test('should return iclients when present', () => {
+        const state = {
+          iClients: {
+            1: ['iclientId1', 'iclientId11'],
+            2: ['iclientId2'],
+            3: ['iclientId3'],
+          },
+        };
+
+        expect(selectors.iClients(state, '1')).toEqual(['iclientId1', 'iclientId11']);
+        expect(selectors.iClients(state, '2')).toEqual(['iclientId2']);
+      });
+
+      test('should return queuedJobs when present', () => {
+        const state = {
+          queuedJobs: {
+            1: ['queuedjob1', 'queuedjob11'],
+            2: ['queuedjob2'],
+            3: ['queuedjob3'],
+          },
+        };
+
+        expect(selectors.queuedJobs(state, '1')).toEqual(['queuedjob1', 'queuedjob11']);
+        expect(selectors.queuedJobs(state, '2')).toEqual(['queuedjob2']);
       });
     });
   });
