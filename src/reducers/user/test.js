@@ -33,6 +33,13 @@ describe('user selectors', () => {
                   name: 'owner 1',
                 },
               },
+              {
+                _id: 'ashare2',
+                ownerUser: {
+                  email: 'owner2@test.com',
+                  name: 'owner 2',
+                },
+              },
             ],
           },
         },
@@ -298,6 +305,13 @@ describe('user selectors', () => {
                   name: 'owner 1',
                 },
               },
+              {
+                _id: 'ashare2',
+                ownerUser: {
+                  email: 'owner2@test.com',
+                  name: 'owner 2',
+                },
+              },
             ],
           },
         },
@@ -339,6 +353,14 @@ describe('user selectors', () => {
                   _id: 'owner1',
                   email: 'owner@test.com',
                   name: 'owner 1',
+                },
+              },
+              {
+                _id: 'ashare2',
+                ownerUser: {
+                  _id: 'owner2',
+                  email: 'owner2@test.com',
+                  name: 'owner 2',
                 },
               },
             ],
@@ -391,6 +413,15 @@ describe('user selectors', () => {
                   name: 'owner 1',
                 },
               },
+              {
+                _id: 'ashare2',
+                ownerUser: {
+                  _id: 'owner2',
+                  useErrMgtTwoDotZero: false,
+                  email: 'owner2@test.com',
+                  name: 'owner 2',
+                },
+              },
             ],
           },
         },
@@ -433,6 +464,15 @@ describe('user selectors', () => {
                   _id: 'owner1',
                   email: 'owner@test.com',
                   name: 'owner 1',
+                },
+              },
+              {
+                _id: 'ashare2',
+                ownerUser: {
+                  _id: 'owner2',
+                  email: 'owner2@test.com',
+                  name: 'owner 2',
+                  useErrMgtTwoDotZero: true,
                 },
               },
             ],
@@ -524,7 +564,7 @@ describe('user selectors', () => {
     test('should return false if no state exists', () => {
       expect(selectors.userAccessLevel(undefined)).toEqual(undefined);
     });
-    test('should return tile access for an org user', () => {
+    test('should return "tile" for an org user', () => {
       const state = reducer(
         {
           profile: { email: 'something@test.com', name: 'First Last' },
@@ -546,7 +586,7 @@ describe('user selectors', () => {
 
       expect(selectors.userAccessLevel(state)).toEqual('tile');
     });
-    test('should return monitor access for an org user', () => {
+    test('should return "monitor" for an org user', () => {
       const state = reducer(
         {
           profile: { email: 'something@test.com', name: 'First Last' },
@@ -569,7 +609,7 @@ describe('user selectors', () => {
 
       expect(selectors.userAccessLevel(state)).toEqual('monitor');
     });
-    test('should return monitor access for an org user', () => {
+    test('should return "monitor" for an org user', () => {
       const state = reducer(
         {
           profile: { email: 'something@test.com', name: 'First Last' },
@@ -593,7 +633,7 @@ describe('user selectors', () => {
       expect(selectors.userAccessLevel(state)).toEqual('manage');
     });
 
-    test('should return tile access for an org user if it has integration access level', () => {
+    test('should return "tile" for an org user if it has integration access level', () => {
       const state = reducer(
         {
           profile: { email: 'something@test.com', name: 'First Last' },
