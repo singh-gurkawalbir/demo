@@ -521,7 +521,7 @@ describe('user selectors', () => {
 
       expect(selectors.drawerOpened(state)).toEqual(true);
     });
-    test('should return false for an org owner', () => {
+    test('should return false for specific org owner account', () => {
       const state = reducer(
         {
           profile: { email: 'something@test.com', name: 'First Last', _id: 'owner' },
@@ -548,7 +548,7 @@ describe('user selectors', () => {
 
       expect(selectors.expandSelected(state)).toEqual('expand');
     });
-    test('should return undefined for an org owner', () => {
+    test('should return undefined for specific org owner account', () => {
       const state = reducer(
         {
           profile: { email: 'something@test.com', name: 'First Last', _id: 'owner' },
@@ -609,7 +609,7 @@ describe('user selectors', () => {
 
       expect(selectors.userAccessLevel(state)).toEqual('monitor');
     });
-    test('should return "monitor" for an org user', () => {
+    test('should return "manage" for an org user', () => {
       const state = reducer(
         {
           profile: { email: 'something@test.com', name: 'First Last' },
