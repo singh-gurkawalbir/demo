@@ -3,7 +3,7 @@ import reducer, { selectors } from '.';
 import actions from '../../../actions';
 import {FORM_SAVE_STATUS} from '../../../utils/constants';
 
-describe('session.resource form reducers', () => {
+describe('session.resourceForm form reducers', () => {
   const resourceType = 'connections';
   const resourceId = 'res1';
   const isNew = false;
