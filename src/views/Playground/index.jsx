@@ -15,6 +15,7 @@ import ExplorerMenu from './ExplorerMenu';
 import EditorDrawer from '../../components/AFE2/Drawer';
 import actions from '../../actions';
 import ResourceDrawer from '../../components/drawer/Resource';
+import ExportExampleButton from './ExportExampleButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -108,6 +109,7 @@ export default function Editors() {
   return (
     <>
       <CeligoPageBar title="Developer playground" subtitle={<Subtitle />}>
+        <ExportExampleButton editorId={editorId} />
         {activeType && (
           <Tooltip title="Fullscreen mode" placement="right">
             <IconButton onClick={handleFullScreen} size="small">

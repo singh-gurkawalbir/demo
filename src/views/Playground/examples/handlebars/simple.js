@@ -9,7 +9,11 @@ export default {
   type: 'handlebars',
   name: 'Simple JSON record',
   description: 'Simple JSON record',
-  // data: JSON.stringify(sampleData, null, 2),
   data: sampleData,
+  rule:
+`{
+  "First Name": "{{name}}",
+  "addResult": {{add id age}}
+}`,
 };
 
