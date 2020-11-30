@@ -1750,7 +1750,7 @@ describe('resource util tests', () => {
   });
 
   describe('tests for util isTradingPartnerSupported', () => {
-    test('should return false for empty ip', () => {
+    test('should return false  if no parameters are passed', () => {
       expect(isTradingPartnerSupported()).toEqual(false);
     });
 
@@ -1832,7 +1832,7 @@ describe('resource util tests', () => {
   });
 
   describe('tests for util isNetSuiteBatchExport', () => {
-    test('should return false for empty ip', () => {
+    test('should return false if no parameters are passed', () => {
       expect(isNetSuiteBatchExport()).toEqual(false);
     });
 
@@ -1862,7 +1862,7 @@ describe('resource util tests', () => {
   });
 
   describe('tests for util isQueryBuilderSupported', () => {
-    test('should return false for empty ip', () => {
+    test('should return false  if no parameters are passed', () => {
       expect(isQueryBuilderSupported()).toEqual(false);
     });
 
@@ -1916,7 +1916,7 @@ describe('resource util tests', () => {
   });
 
   describe('tests for util getUniqueFieldId', () => {
-    test('should return empty string for empty ip', () => {
+    test('should return empty string if no parameters are passed', () => {
       expect(getUniqueFieldId()).toEqual('');
     });
 
@@ -1935,7 +1935,7 @@ describe('resource util tests', () => {
   });
 
   describe('tests for util getUserAccessLevelOnConnection', () => {
-    test('should return undefined for empty ip', () => {
+    test('should return undefined  if no parameters are passed', () => {
       expect(getUserAccessLevelOnConnection()).toEqual(undefined);
     });
 

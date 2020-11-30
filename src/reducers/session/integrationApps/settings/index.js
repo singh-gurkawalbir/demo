@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { deepClone } from 'fast-json-patch/lib/core';
-import actionTypes from '../../../actions/types';
-import mappingUtil from '../../../utils/mapping';
+import actionTypes from '../../../../actions/types';
+import mappingUtil from '../../../../utils/mapping';
 
 const emptyObj = {};
 const emptySet = [];

@@ -2527,7 +2527,7 @@ selectors.availableConnectionsToRegister = (state, integrationId) => {
 selectors.mkSuiteScriptLinkedConnections = () => createSelector(
   selectors.userPreferences,
   selectors.userPermissions,
-  state => state?.data?.resources?.connections,
+  state => selectors.resourceList(state, {type: 'connections'}).resources,
   state => state?.data?.resources?.integrations,
   (preferences, permissions, connections = [], integrations = []) => {
     const linkedConnections = [];

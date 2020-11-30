@@ -1,7 +1,8 @@
 import produce from 'immer';
-import actionTypes from '../../../actions/types';
+import actionTypes from '../../../../actions/types';
 
 const emptyObject = {};
+const emptyArray = [];
 
 export default (state = {}, action) => {
   const {
@@ -9,6 +10,7 @@ export default (state = {}, action) => {
     type,
     error,
     uninstallSteps,
+    uninstallerFunction,
     update,
   } = action;
   let step;
@@ -20,49 +22,45 @@ export default (state = {}, action) => {
 
     // eslint-disable-next-line default-case
     switch (type) {
-      case actionTypes.INTEGRATION_APPS.UNINSTALLER2.INIT:
+      case actionTypes.INTEGRATION_APPS.UNINSTALLER.PRE_UNINSTALL:
         draft[id] = {};
         break;
-      case actionTypes.INTEGRATION_APPS.UNINSTALLER2.FAILED:
+      case actionTypes.INTEGRATION_APPS.UNINSTALLER.RECEIVED_STEPS:
+        if (!draft[id]) {
+          draft[id] = {};
+        }
+
+        draft[id].steps = uninstallSteps;
+
+        break;
+      case actionTypes.INTEGRATION_APPS.UNINSTALLER.FAILED_UNINSTALL_STEPS:
         if (!draft[id]) {
           draft[id] = {};
         }
 
         draft[id].error = error;
         break;
-      case actionTypes.INTEGRATION_APPS.UNINSTALLER2.RECEIVED_STEPS:
-        if (!draft[id]) {
-          draft[id] = {};
-        }
-
-        // isFetched is used to identify if integration has 0 steps
-        draft[id].isFetched = true;
-        draft[id].steps = uninstallSteps;
-
-        break;
-      case actionTypes.INTEGRATION_APPS.UNINSTALLER2.CLEAR_STEPS:
+      case actionTypes.INTEGRATION_APPS.UNINSTALLER.STEP.CLEAR:
         delete draft[id];
         break;
-      case actionTypes.INTEGRATION_APPS.UNINSTALLER2.COMPLETE:
-        if (!draft[id]) {
-          draft[id] = {};
-        }
-        draft[id].isComplete = true;
-        break;
-      case actionTypes.INTEGRATION_APPS.UNINSTALLER2.STEP.UPDATE:
-        if (draft[id]?.steps) {
+      case actionTypes.INTEGRATION_APPS.UNINSTALLER.STEP.UPDATE:
+        if (draft[id] && draft[id].steps) {
           step = draft[id].steps.find(
-            s => !s.completed
+            s => s.uninstallerFunction === uninstallerFunction
           );
         }
 
         if (step) {
           if (update === 'completed') {
             step.isTriggered = false;
+            step.verifying = false;
             step.completed = true;
-          } else if (update === 'reset') {
+          } else if (update === 'verify') {
+            step.verifying = true;
+            step.isTriggered = true;
+          } else if (update === 'failed') {
+            step.verifying = false;
             step.isTriggered = false;
-            step.completed = false;
           } else if (update === 'inProgress') {
             step.isTriggered = true;
           }
@@ -76,7 +74,15 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.uninstall2Data = (state, id) => {
+selectors.uninstallSteps = (state, id) => {
+  if (!state || !state[id]) {
+    return emptyArray;
+  }
+
+  return state[id].steps;
+};
+
+selectors.uninstallData = (state, id) => {
   if (!state || !state[id]) {
     return emptyObject;
   }
