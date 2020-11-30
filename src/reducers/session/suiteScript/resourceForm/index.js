@@ -1,12 +1,10 @@
 import produce from 'immer';
+import actionTypes from '../../../../actions/types';
+import { fieldsTouchedForMeta } from '../../../../forms/utils';
+import { suiteScriptResourceKey } from '../../../../utils/suiteScript';
+import {FORM_SAVE_STATUS} from '../../../../utils/constants';
 
-import actionTypes from '../../../actions/types';
-import { fieldsTouchedForMeta } from '../../../forms/utils';
-import {FORM_SAVE_STATUS} from '../../../utils/constants';
-
-const emptyObj = {};
-
-export default function reducer(state = {}, action) {
+export default (state = {}, action) => {
   const {
     type,
     resourceType,
@@ -18,21 +16,24 @@ export default function reducer(state = {}, action) {
     formValues,
     skipClose = false,
     initData,
-    bundleUrl,
-    bundleVersion,
+    ssLinkedConnectionId,
   } = action;
-  const key = `${resourceType}-${resourceId}`;
 
-  if (!resourceType || !resourceId) return state;
+  if (!resourceType || !resourceId || !ssLinkedConnectionId) return state;
+
+  const key = suiteScriptResourceKey({
+    ssLinkedConnectionId,
+    resourceType,
+    resourceId,
+  });
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.RESOURCE_FORM.INIT:
-
+      case actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT:
         draft[key] = { initComplete: false, initData };
         break;
 
-      case actionTypes.RESOURCE_FORM.INIT_COMPLETE:
+      case actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT_COMPLETE:
 
         // Are there any issues with storing fn pointers here?
         // if the state is not serializable, will we recover properly from
@@ -51,46 +52,22 @@ export default function reducer(state = {}, action) {
           initComplete: true,
           fieldMeta,
           flowId,
-          showValidationBeforeTouched: false,
+          showFormValidationsBeforeTouch: false,
         };
         break;
 
-      case actionTypes.RESOURCE_FORM.INIT_FAILED:
-        if (!draft[key]) {
-          draft[key] = {};
-        }
-        draft[key].initFailed = true;
-        break;
-      case actionTypes.RESOURCE_FORM.CLEAR_INIT_DATA:
-        draft[key] && delete draft[key].initData;
-        break;
-      case actionTypes.RESOURCE_FORM.SUBMIT:
+      case actionTypes.SUITESCRIPT.RESOURCE_FORM.SUBMIT:
+
         if (!draft[key]) {
           draft[key] = {};
         }
         draft[key].formSaveStatus = FORM_SAVE_STATUS.LOADING;
         draft[key].formValues = undefined;
         draft[key].skipClose = skipClose;
-
         break;
 
-      case actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION:
-        if (!draft[key]) {
-          draft[key] = {};
-        }
+      case actionTypes.SUITESCRIPT.RESOURCE_FORM.SUBMIT_COMPLETE:
 
-        draft[key].bundleVersion = bundleVersion;
-        draft[key].bundleUrl = bundleUrl;
-        draft[key].showBundleInstallNotification = true;
-        break;
-      case actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION:
-        if (!draft[key]) {
-          draft[key] = {};
-        }
-        draft[key].showBundleInstallNotification = false;
-        break;
-
-      case actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE:
         if (!draft[key]) {
           draft[key] = {};
         }
@@ -98,7 +75,7 @@ export default function reducer(state = {}, action) {
         draft[key].formSaveStatus = FORM_SAVE_STATUS.COMPLETE;
         draft[key].formValues = formValues;
         break;
-      case actionTypes.RESOURCE_FORM.SUBMIT_FAILED:
+      case actionTypes.SUITESCRIPT.RESOURCE_FORM.SUBMIT_FAILED:
         if (!draft[key]) {
           draft[key] = {};
         }
@@ -107,40 +84,45 @@ export default function reducer(state = {}, action) {
         draft[key].formValues = formValues;
         break;
 
-      case actionTypes.RESOURCE_FORM.SUBMIT_ABORTED:
+      case actionTypes.SUITESCRIPT.RESOURCE_FORM.SUBMIT_ABORTED:
         if (!draft[key]) {
           draft[key] = {};
         }
         draft[key].formSaveStatus = FORM_SAVE_STATUS.ABORTED;
         break;
-      case actionTypes.RESOURCE_FORM.CLEAR:
+      case actionTypes.SUITESCRIPT.RESOURCE_FORM.CLEAR:
         draft[key] = {};
         break;
       default:
         break;
     }
   });
-}
+};
 
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.resourceFormState = (state, resourceType, resourceId) => {
+selectors.suiteScriptResourceFormState = (state, { ssLinkedConnectionId, resourceType, resourceId }) => {
   if (!state) {
-    return emptyObj;
+    return {};
   }
 
-  const key = `${resourceType}-${resourceId}`;
+  const key = suiteScriptResourceKey({
+    ssLinkedConnectionId,
+    resourceType,
+    resourceId,
+  });
 
-  return state[key] || emptyObj;
+  return state[key] || {};
 };
 
-selectors.resourceFormSaveProcessTerminated = (
-  state,
-  resourceType,
-  resourceId
-) => {
-  const key = `${resourceType}-${resourceId}`;
+selectors.suiteScriptResourceFormSaveProcessTerminated = (state, { ssLinkedConnectionId, resourceType, resourceId }) => {
+  if (!state) return false;
+  const key = suiteScriptResourceKey({
+    ssLinkedConnectionId,
+    resourceType,
+    resourceId,
+  });
 
   return [FORM_SAVE_STATUS.COMPLETE, FORM_SAVE_STATUS.FAILED, FORM_SAVE_STATUS.ABORTED].includes(state?.[key]?.formSaveStatus);
 };
