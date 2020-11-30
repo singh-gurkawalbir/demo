@@ -100,6 +100,7 @@ export default {
       type: 'selectresource',
       resourceType: 'connections',
       label: 'Connection',
+      checkPermissions: true,
       defaultValue: r => (r && r._connectionId) || '',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
