@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Button, makeStyles } from '@material-ui/core';
+import { makeStyles, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions }
+  from '@material-ui/core';
+import shortid from 'shortid';
 import { selectors } from '../../../reducers';
+import CodeEditor from '../../../components/CodeEditor/editor';
 
 const useStyles = makeStyles(theme => ({
   exportButton: {
     marginRight: theme.spacing(1),
+  },
+  dialogContent: {
+    width: 700,
+    height: 600,
+    display: 'flex',
+    flexDirection: 'column',
   },
 }));
 
@@ -13,29 +22,59 @@ const emptyObj = {};
 
 export default function ExportExampleButton({ editorId }) {
   const classes = useStyles();
+  const [open, setOpen] = useState(false);
   const canExport = useSelector(state => {
     if (!editorId) return false;
 
     const { developer, email = '' } = selectors.userProfile(state);
 
-    return (developer && email.endsWith('celigo.com'));
+    // Only Celigo developers can use this feature (currently).
+    return developer && email.endsWith('celigo.com');
   });
 
-  const {rule, data} = useSelector(state => canExport
+  const {processor: type, rule, data} = useSelector(state => canExport
     ? selectors._editor(state, editorId)
     : emptyObj);
 
-  const handleClick = () => console.log({rule, data});
+  const handleOpen = () => { setOpen(true); };
+  const handleClose = () => { setOpen(false); };
 
-  // only Celigo developers can use this feature (currently).
+  const example = {
+    type,
+    key: `${type}-${shortid.generate()}`,
+    name: 'node text in example tree',
+    description: 'Not used yet.',
+    rule,
+    data,
+  };
+
   if (!canExport) return null;
 
   return (
-    <Button
-      className={classes.exportButton}
-      onClick={handleClick}
-      variant="text">
-      Export example
-    </Button>
+    <>
+      <Button
+        className={classes.exportButton}
+        onClick={handleOpen}
+        variant="text">
+        Export example
+      </Button>
+
+      <Dialog open={open} onClose={handleClose} aria-labelledby="example-dialog" maxWidth="lg">
+        <DialogTitle id="example-dialog">Subscribe</DialogTitle>
+        <DialogContent className={classes.dialogContent}>
+          <DialogContentText>
+            Send this JSON snippet to the dave@celigo.com.
+          </DialogContentText>
+
+          <CodeEditor readonly value={example} mode="json" />
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }
