@@ -330,12 +330,20 @@ describe('template reducer test cases', () => {
           preview: {
             status: '',
           },
+        },
+        anotherTemplate: {
+          preview: testComponents,
+          connectionMap: { abc: 'def' },
         } },
         actions.template.requestPreview(testTemplateId)
       );
 
       expect(state).toEqual({
         [testTemplateId]: { preview: { status: 'requested'} },
+        anotherTemplate: {
+          preview: testComponents,
+          connectionMap: { abc: 'def' },
+        },
       });
     });
   });
@@ -354,12 +362,21 @@ describe('template reducer test cases', () => {
 
     test('should find the template with template Id and reset the existing  value', () => {
       const state = reducer(
-        { [testTemplateId]: {} },
+        { [testTemplateId]: {},
+          anotherTemplate: {
+            preview: testComponents,
+            connectionMap: { abc: 'def' },
+          } },
+
         actions.template.receivedPreview(testComponents, testTemplateId)
       );
 
       expect(state).toEqual({
         [testTemplateId]: { preview: {components: testComponents, status: 'success'} },
+        anotherTemplate: {
+          preview: testComponents,
+          connectionMap: { abc: 'def' },
+        },
       });
     });
   });
@@ -382,12 +399,22 @@ describe('template reducer test cases', () => {
           preview: {
             status: 'success',
           },
+        },
+        anotherTemplate: {
+          preview: {
+            status: 'requested',
+          },
         } },
         actions.template.failedPreview(testTemplateId)
       );
 
       expect(state).toEqual({
         [testTemplateId]: { preview: { status: 'failure'} },
+        anotherTemplate: {
+          preview: {
+            status: 'requested',
+          },
+        },
       });
     });
   });
@@ -1002,17 +1029,25 @@ describe('template reducer test cases', () => {
       });
     });
 
-    test('should find the template with template Id and reset the status value', () => {
+    test('should find the template with template Id and set the isInstalled flag', () => {
       const state = reducer(
         { [testTemplateId]: {
           installSteps,
           isInstallFailed: false,
+        },
+        anotherTemplate: {
+          installSteps,
+          isInstalled: true,
         } },
         actions.template.failedInstall(testTemplateId)
       );
 
       expect(state).toEqual({
         [testTemplateId]: { installSteps, isInstallFailed: true },
+        anotherTemplate: {
+          installSteps,
+          isInstalled: true,
+        },
       });
     });
   });
