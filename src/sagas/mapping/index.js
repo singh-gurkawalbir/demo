@@ -248,6 +248,7 @@ export function* mappingInit({
       flowId,
       importId,
       subRecordMappingId,
+      isGroupedSampleData,
     })
   );
   yield call(refreshGenerates, {isInit: true});

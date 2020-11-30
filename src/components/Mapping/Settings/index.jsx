@@ -45,7 +45,7 @@ function MappingSettings({
 
   const [enquesnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
-  const {importId, flowId, subRecordMappingId} = useSelector(state => {
+  const {importId, flowId, subRecordMappingId, isGroupedSampleData} = useSelector(state => {
     if (isCategoryMapping) {
       const {importId, flowId} = categoryMappingOpts;
 
@@ -107,11 +107,12 @@ function MappingSettings({
         isCategoryMapping,
         recordType: nsRecordType,
         importResource,
+        isGroupedSampleData,
       };
 
       return ApplicationMappingSettings.getMetaData(opts);
     },
-    [value, flowId, extractFields, generateFields, lookups, isCategoryMapping, nsRecordType, importResource]
+    [value, flowId, extractFields, generateFields, lookups, isCategoryMapping, nsRecordType, importResource, isGroupedSampleData]
   );
   const disableSave = useMemo(() => {
     // Disable all fields except useAsAnInitializeValue in case mapping is not editable

@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     width: '100%',
     gridColumnGap: '10px',
-    gridTemplateColumns: '55% 45%',
+    gridTemplateColumns: '70% 30%',
     '& > div:first-child': {
       wordBreak: 'break-word',
     },
@@ -74,7 +74,10 @@ const StoreMenuItems = ({ integration, integrationId }) => {
       return (
         <MenuItem key={store.value} value={store.value} className={classes.storeErrorStatus}>
           <div> {store.label}</div>
-          <StatusCircle size="mini" variant="success" />
+          <div>
+            <StatusCircle size="mini" variant="success" />
+            <span>{storeErrorCount > 9999 ? '9999+' : storeErrorCount}</span>
+          </div>
         </MenuItem>
       );
     }
