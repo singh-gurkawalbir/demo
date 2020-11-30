@@ -191,7 +191,7 @@ function DynaSelectResource(props) {
   const createdId = useSelector(state =>
     selectors.createdResourceId(state, newResourceId)
   );
-  const allRegisteredConnectionIds = useSelector(state => selectors.allRegisteredConnectionIds(state));
+  const allRegisteredConnectionIdsFromManagedIntegrations = useSelector(state => selectors.allRegisteredConnectionIdsFromManagedIntegrations(state));
 
   useEffect(() => {
     if (!appTypeIsStatic && options.appType && !!value) {
@@ -224,14 +224,14 @@ function DynaSelectResource(props) {
       );
     }
     if (resourceType === 'connections' && checkPermissions) {
-      filteredResources = filteredResources.filter(r => allRegisteredConnectionIds.includes(r._id));
+      filteredResources = filteredResources.filter(r => allRegisteredConnectionIdsFromManagedIntegrations.includes(r._id));
     }
 
     return filteredResources.map(conn => ({
       label: conn.offline ? `${conn.name || conn._id} - Offline` : conn.name || conn._id,
       value: conn._id,
     }));
-  }, [filter, options, resources, checkPermissions, allRegisteredConnectionIds, resourceType]);
+  }, [filter, options, resources, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations, resourceType]);
   const { merged } =
     useSelectorMemo(
       selectors.makeResourceDataSelector,
