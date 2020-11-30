@@ -2,7 +2,6 @@
 /*
  * Utility functions related to sample data for flows
  */
-import { keys } from 'lodash';
 import moment from 'moment';
 import { deepClone } from 'fast-json-patch';
 import {
@@ -11,12 +10,12 @@ import {
   isBlobTypeResource,
   isRestCsvMediaTypeExport,
   adaptorTypeMap,
-} from './resource';
-import responseMappingUtil from './responseMapping';
-import arrayUtils from './array';
-import jsonUtils from './json';
-import { isIntegrationApp } from './flows';
-import { isJsonString } from './string';
+} from '../resource';
+import responseMappingUtil from '../responseMapping';
+import arrayUtils from '../array';
+import jsonUtils from '../json';
+import { isIntegrationApp } from '../flows';
+import { isJsonString } from '../string';
 
 const sampleDataStage = {
   exports: {
@@ -81,7 +80,7 @@ export const getAllDependentSampleDataStages = (
 
 // compare util returns -1, 0, 1 for less, equal and greater respectively
 // returns 2 when both stages need to exist incase of different paths
-const compareSampleDataStage = (prevStage, currStage, resourceType) => {
+export const _compareSampleDataStage = (prevStage, currStage, resourceType) => {
   if (prevStage === currStage) return 0;
   const prevStageRoute = [
     prevStage,
@@ -110,7 +109,7 @@ export const getCurrentSampleDataStageStatus = (
   let relatedPrevStage;
 
   prevStages.forEach(prevStage => {
-    const status = compareSampleDataStage(prevStage, currStage, resourceType);
+    const status = _compareSampleDataStage(prevStage, currStage, resourceType);
 
     // min of all stages
     if (status < currentStageStatus) {
@@ -159,61 +158,6 @@ export function getPreviewStageData(previewData, previewStage = 'parse') {
 
 export const getSampleDataStage = (stage, resourceType = 'exports') =>
   (sampleDataStage?.[resourceType]?.[stage]) || stage;
-
-// @TODO: Raghu Change this to return instead of inplace updates to flow
-export const reset = (flow, index, isPageGenerator) => {
-  if (isPageGenerator) {
-    const pgsToReset = flow.pageGenerators.slice(index).map(pg => pg._exportId);
-    const pgIds = keys(flow.pageGeneratorsMap);
-
-    pgIds.forEach(pgId => {
-      if (pgsToReset.includes(pgId)) flow.pageGeneratorsMap[pgId] = {};
-    });
-
-    flow.pageProcessorsMap = {};
-  } else {
-    const ppsToReset = flow.pageProcessors
-      .slice(index)
-      .map(pp => pp._exportId || pp._importId);
-    const ppIds = keys(flow.pageProcessorsMap);
-
-    ppIds.forEach(ppId => {
-      if (ppsToReset.includes(ppId)) flow.pageProcessorsMap[ppId] = {};
-    });
-  }
-};
-
-export const resetStagesForFlowResource = (flow, index, stages = [], statusToUpdate, isPageGenerator) => {
-  const resource = isPageGenerator ? flow.pageGenerators[index] : flow.pageProcessors[index];
-  const resourceId = resource._exportId || resource._importId;
-  const resourceMap = isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap';
-  const resourceIds = keys(flow[resourceMap]);
-
-  if (resourceIds.includes(resourceId)) {
-    stages.forEach(stage => {
-      if (flow[resourceMap][resourceId][stage]) {
-        if (statusToUpdate) {
-          flow[resourceMap][resourceId][stage].status = statusToUpdate;
-        } else {
-          flow[resourceMap][resourceId][stage] = {};
-        }
-      }
-    });
-  }
-};
-
-export const compare = (currentList = [], updatedList = []) => {
-  const changedIndex = updatedList.findIndex((item, index) => {
-    const currentItem = currentList[index] || {};
-
-    return (
-      (item._exportId || item._importId) !==
-      (currentItem._exportId || currentItem._importId)
-    );
-  });
-
-  return changedIndex;
-};
 
 export const getLastExportDateTime = () =>
   moment()

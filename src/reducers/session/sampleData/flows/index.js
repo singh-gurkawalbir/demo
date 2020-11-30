@@ -1,7 +1,8 @@
 import produce from 'immer';
 import actionTypes from '../../../../actions/types';
-import { getSampleDataStage, reset, resetStagesForFlowResource, compare } from '../../../../utils/flowData';
+import { getSampleDataStage } from '../../../../utils/flowData';
 import { isPageGeneratorResource } from '../../../../utils/flows';
+import { clearInvalidFlowState, clearInvalidStagesForPgOrPp, getFirstOutOfOrderIndex } from './utils';
 
 export default function (state = {}, action) {
   const {
@@ -176,12 +177,12 @@ export default function (state = {}, action) {
         // given a resourceId -- resets itself and  all linked pps or pgs after that
         if (pageGeneratorIndexToReset > -1) {
           if (!stages.length) {
-            reset(flow, pageGeneratorIndexToReset, true);
+            clearInvalidFlowState(flow, pageGeneratorIndexToReset, true);
           } else {
             // at this index, reset resource for all the passed stages
-            resetStagesForFlowResource(flow, pageGeneratorIndexToReset, stages, statusToUpdate, true);
+            clearInvalidStagesForPgOrPp(flow, pageGeneratorIndexToReset, stages, statusToUpdate, true);
             // then pass index+1 to reset everything
-            reset(flow, pageGeneratorIndexToReset + 1, true);
+            clearInvalidFlowState(flow, pageGeneratorIndexToReset + 1, true);
           }
 
           break;
@@ -193,12 +194,12 @@ export default function (state = {}, action) {
 
         if (pageProcessorIndexToReset > -1) {
           if (!stages.length) {
-            reset(flow, pageProcessorIndexToReset);
+            clearInvalidFlowState(flow, pageProcessorIndexToReset);
           } else {
             // at this index, reset resource for all the passed stages
-            resetStagesForFlowResource(flow, pageProcessorIndexToReset, stages, statusToUpdate);
+            clearInvalidFlowState(flow, pageProcessorIndexToReset, stages, statusToUpdate);
             // then pass index+1 to reset everything for other resources
-            reset(flow, pageProcessorIndexToReset + 1);
+            clearInvalidFlowState(flow, pageProcessorIndexToReset + 1);
           }
         }
 
@@ -216,9 +217,9 @@ export default function (state = {}, action) {
           pageProcessors: updatedPageProcessors = [],
         } = updatedFlow;
         // get first change in sequence of pgs
-        const updatedPgIndex = compare(pageGenerators, updatedPageGenerators);
+        const updatedPgIndex = getFirstOutOfOrderIndex(pageGenerators, updatedPageGenerators);
         // get first change in sequence of pgs
-        const updatedPpIndex = compare(pageProcessors, updatedPageProcessors);
+        const updatedPpIndex = getFirstOutOfOrderIndex(pageProcessors, updatedPageProcessors);
 
         // update sequence
         currentFlow.pageGenerators = updatedPageGenerators;
@@ -226,13 +227,13 @@ export default function (state = {}, action) {
 
         // reset all pg data stages starting from index
         if (updatedPgIndex > -1) {
-          reset(currentFlow, updatedPgIndex, true);
+          clearInvalidFlowState(currentFlow, updatedPgIndex, true);
           break;
         }
 
         // reset all pp data stages starting from index
         if (updatedPpIndex > -1) {
-          reset(currentFlow, updatedPpIndex);
+          clearInvalidFlowState(currentFlow, updatedPpIndex);
         }
 
         break;
