@@ -19,6 +19,7 @@ import {
 } from '../../../utils/resource';
 import { selectors } from '../../../reducers';
 import { isIntegrationApp } from '../../../utils/flows';
+import { EMPTY_RAW_DATA } from '../../../utils/constants';
 
 function* getUIDataForResource({ resource, connection, flow, refresh }) {
   const { adaptorType, type, sampleData } = resource;
@@ -58,7 +59,7 @@ function* getUIDataForResource({ resource, connection, flow, refresh }) {
   if (isIntegrationApp(flow) && sampleData) return sampleData;
 }
 
-export default function* getPreviewOptionsForResource({ resource, flow, refresh }) {
+export default function* getPreviewOptionsForResource({ resource, flow, refresh, runOffline }) {
   const connection = yield select(
     selectors.resource,
     'connections',
@@ -70,7 +71,17 @@ export default function* getPreviewOptionsForResource({ resource, flow, refresh 
   const postData = {
     lastExportDateTime: getLastExportDateTime(),
   };
-  const { type } = resource;
+  const { type, rawData } = resource;
+
+  // check for raw data on resource
+  if (runOffline && rawData && rawData !== EMPTY_RAW_DATA) {
+    const runOfflineOptions = {
+      runOffline: true,
+      runOfflineSource: 'db',
+    };
+
+    return type === 'delta' ? { runOfflineOptions, postData } : { runOfflineOptions };
+  }
 
   return type === 'delta' ? { uiData, postData } : { uiData };
 }
