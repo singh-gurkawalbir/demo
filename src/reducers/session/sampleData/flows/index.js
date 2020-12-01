@@ -60,9 +60,6 @@ export default function (state = {}, action) {
         };
         break;
       }
-
-      // TODO: @Raghu Below request actions for preview and processor can be removed
-      // as we are now handling request stage using generic stageRequest action above
       case actionTypes.FLOW_DATA.PREVIEW_DATA_RECEIVED: {
         if (!flowId || !resourceId || !previewType) return;
 
