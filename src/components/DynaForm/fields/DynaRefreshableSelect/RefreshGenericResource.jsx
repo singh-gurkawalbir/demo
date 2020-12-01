@@ -170,11 +170,17 @@ export default function RefreshGenericResource(props) {
 }
 
 export function DynaGenericSelect(props) {
-  const { multiselect } = props;
+  const { multiselect, ignoreValueUnset, disableOptionsLoad, fieldStatus } = props;
+  // component is in loading state in both request and refresh cases
+  const isLoading =
+    !disableOptionsLoad &&
+    (!fieldStatus ||
+      fieldStatus === 'requested' ||
+      fieldStatus === 'refreshed');
 
   return (
     <RefreshGenericResource {...props}>
-      {multiselect ? <DynaMultiSelect removeInvalidValues /> : <DynaSelect />}
+      {multiselect ? <DynaMultiSelect removeInvalidValues={!ignoreValueUnset} isLoading={isLoading} /> : <DynaSelect />}
     </RefreshGenericResource>
   );
 }
