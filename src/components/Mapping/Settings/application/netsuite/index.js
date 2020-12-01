@@ -30,12 +30,12 @@ export default {
     isCategoryMapping,
     recordType,
     importResource,
+    isGroupedSampleData,
   }) => {
     const {generate, lookupName} = value;
     const {_connectionId: connectionId, _id: resourceId } = importResource;
     const isComposite = importResource.netsuite_da?.operation === 'addupdate' || importResource.netsuite?.operation === 'addupdate';
 
-    const isGroupedSampleData = Array.isArray(extractFields);
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
 
     const fieldId =

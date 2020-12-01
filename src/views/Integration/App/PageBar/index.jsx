@@ -41,6 +41,7 @@ const useStyles = makeStyles(theme => ({
   },
   storeErrorStatus: {
     display: 'grid',
+    minWidth: 250,
     width: '100%',
     gridColumnGap: '10px',
     gridTemplateColumns: '70% 30%',
@@ -76,7 +77,6 @@ const StoreMenuItems = ({ integration, integrationId }) => {
           <div> {store.label}</div>
           <div>
             <StatusCircle size="mini" variant="success" />
-            <span>{storeErrorCount > 9999 ? '9999+' : storeErrorCount}</span>
           </div>
         </MenuItem>
       );
