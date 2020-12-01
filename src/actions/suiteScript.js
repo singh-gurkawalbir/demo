@@ -57,15 +57,6 @@ export default {
         flowId,
         ssLinkedConnectionId,
       }),
-    showFormValidations: (resourceType, resourceId, ssLinkedConnectionId) =>
-      action(
-        actionTypes.SUITESCRIPT.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS,
-        {
-          resourceType,
-          resourceId,
-          ssLinkedConnectionId,
-        }
-      ),
     clear: (ssLinkedConnectionId, resourceType, resourceId) =>
       action(actionTypes.SUITESCRIPT.RESOURCE_FORM.CLEAR, {
         resourceType,

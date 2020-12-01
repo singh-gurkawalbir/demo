@@ -13,6 +13,8 @@ Object.freeze(PING_STATES);
 export default (state = {}, action) => {
   const { type, resourceId, message, retainStatus = false } = action;
 
+  if (!resourceId) { return state; }
+
   return produce(state, draft => {
     switch (type) {
       case actionTypes.CONNECTION.TEST: {
@@ -48,7 +50,7 @@ export default (state = {}, action) => {
       case actionTypes.CONNECTION.TEST_CLEAR: {
         if (retainStatus && draft[resourceId]) {
           delete draft[resourceId].message;
-        } else draft[resourceId] = {};
+        } else delete draft[resourceId];
 
         break;
       }
@@ -60,16 +62,6 @@ export default (state = {}, action) => {
 
 export const selectors = {};
 
-selectors.testConnectionStatus = (state, resourceId) => {
-  if (!state || !state[resourceId]) return null;
-  const { status } = state[resourceId];
+selectors.testConnectionStatus = (state, resourceId) => state?.[resourceId]?.status || null;
 
-  return status;
-};
-
-selectors.testConnectionMessage = (state, resourceId) => {
-  if (!state || !state[resourceId]) return null;
-  const { message } = state[resourceId];
-
-  return message;
-};
+selectors.testConnectionMessage = (state, resourceId) => state?.[resourceId]?.message || null;
