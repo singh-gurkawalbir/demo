@@ -134,6 +134,7 @@ export default {
       id: 'connection',
       name: '/_connectionId',
       type: 'selectresource',
+      checkPermissions: true,
       resourceType: 'connections',
       label: 'Connection',
       defaultValue: r => (r && r._connectionId) || '',
