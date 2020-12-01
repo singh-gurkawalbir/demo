@@ -87,7 +87,7 @@ describe('errorManagement latestJobs flows reducer test cases', () => {
         expect(state).toEqual({});
       });
 
-      test('should find the flow with id and set clear the fllow data and should not affect the existing data', () => {
+      test('should find the flow with id and set clear the flow data and should not affect the existing data', () => {
         const state = reducer(
           {
             flowId: { status: 'request', data: [{id: 'id1'}]},
