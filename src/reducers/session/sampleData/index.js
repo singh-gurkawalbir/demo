@@ -9,6 +9,7 @@ import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 
 const DEFAULT_VALUE = undefined;
+const emptyObj = {};
 
 export function extractStages(sampleData) {
   const stagesInSampleData = sampleData?.stages;
@@ -96,12 +97,15 @@ selectors.getResourceSampleDataWithStatus = (state, resourceId, stage) => getRes
 selectors.mkPreviewStageDataList = () => createSelector(
   (state, resourceId) => state?.[resourceId],
   (_1, _2, stages) => stages,
-  (resourceIdSampleData, stages) =>
-    stages.reduce((acc, stage) => {
+  (resourceIdSampleData, stages) => {
+    if (!stages) return emptyObj;
+
+    return stages.reduce((acc, stage) => {
       acc[stage] = getResourceSampleDataWithStatus(resourceIdSampleData, stage);
 
       return acc;
-    }, {})
+    }, {});
+  }
 );
 
 selectors.sampleDataRecordSize = (state, resourceId) => state?.[resourceId]?.recordSize;

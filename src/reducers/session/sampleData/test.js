@@ -55,7 +55,7 @@ describe('sampleData reducer', () => {
   });
 
   describe('RECEIVED action', () => {
-    test('should add the state and not throw error if state doesnt exist', () => {
+    test('should add the resource state if doesnt exist already', () => {
       const previewData = {
         sku: 'abc',
         price: 23,
@@ -86,6 +86,9 @@ describe('sampleData reducer', () => {
         price: 23,
       };
       const initialState = {
+        123: {
+          status: 'requested',
+        },
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
       };
@@ -100,7 +103,6 @@ describe('sampleData reducer', () => {
         },
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
-
       };
       const newState = reducer(
         stateAfterRequest,
@@ -112,7 +114,7 @@ describe('sampleData reducer', () => {
   });
 
   describe('UPDATE action', () => {
-    test('should add the state and not throw error if state doesnt exist', () => {
+    test('should add the resource state if doesnt exist already', () => {
       const processedData = {
         data: [{
           url: 'https://api.mocki.io/v1/awe',
@@ -170,7 +172,6 @@ describe('sampleData reducer', () => {
         },
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
-
       };
       const newState = reducer(
         initialState,
@@ -204,7 +205,6 @@ describe('sampleData reducer', () => {
         },
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
-
       };
       const newState = reducer(
         initialState,
@@ -216,7 +216,7 @@ describe('sampleData reducer', () => {
   });
 
   describe('RECEIVED_ERROR action', () => {
-    test('should add the state with status = error and not throw error if state doesnt exist', () => {
+    test('should add the resource state with status = error if doesnt exist already', () => {
       const error = {
         errors: [{
           code: 'invalid_json_str',
@@ -433,6 +433,88 @@ describe('sampleData selectors', () => {
   });
 
   describe('mkPreviewStageDataList', () => {
+    const sel = selectors.mkPreviewStageDataList();
+
+    const initialState = {
+      123: {
+        status: 'received',
+        data: {
+          parse: [{
+            name: 'Bob',
+            age: 23,
+          }],
+          raw: [{
+            url: 'https://api.mocki.io/v1/awe',
+            statusCode: 200,
+            body: '{"name":"Bob","age":23}',
+          }],
+          request: [{
+            url: 'https://api.mocki.io/v1/awe',
+            method: 'GET',
+          }]},
+      },
+      456: { status: 'received', data: {} },
+      789: { status: 'received', data: {} },
+    };
+
+    test('should return stage map with undefined values when state is empty', () => {
+      const previewStages = ['parse', 'preview', 'raw'];
+      const expectedOutput = {
+        parse: {
+          data: undefined,
+          error: undefined,
+          status: undefined,
+        },
+        preview: {
+          data: undefined,
+          error: undefined,
+          status: undefined,
+        },
+        raw: {
+          data: undefined,
+          error: undefined,
+          status: undefined,
+        },
+      };
+
+      expect(sel(undefined, resourceId, previewStages)).toEqual(expectedOutput);
+    });
+    test('should return empty object if stages are not passed', () => {
+      expect(sel(initialState, resourceId)).toEqual({});
+    });
+    test('should return correct stage data object if stages are passed', () => {
+      const previewStages = ['parse', 'preview', 'raw'];
+      const expectedOutput = {
+        parse: {
+          data: {
+            name: 'Bob',
+            age: 23,
+          },
+          error: undefined,
+          status: 'received',
+        },
+        preview: {
+          data: [{
+            name: 'Bob',
+            age: 23,
+          }],
+          error: undefined,
+          status: 'received',
+        },
+        raw: {
+          data: [{
+            url: 'https://api.mocki.io/v1/awe',
+            statusCode: 200,
+            body: '{"name":"Bob","age":23}',
+          }],
+          error: undefined,
+          status: 'received',
+        },
+
+      };
+
+      expect(sel(initialState, resourceId, previewStages)).toEqual(expectedOutput);
+    });
   });
 });
 
@@ -520,6 +602,10 @@ describe('sampleData getResourceSampleData util function', () => {
           name: 'Bob',
           age: 23,
         }],
+        preview: {
+          name: 'Bob',
+          age: 23,
+        },
         request: [{
           url: 'https://api.mocki.io/v1/awe',
           method: 'GET',
@@ -530,7 +616,13 @@ describe('sampleData getResourceSampleData util function', () => {
       name: 'Bob',
       age: 23,
     };
+    const expectedOutputForRequest = [{
+      url: 'https://api.mocki.io/v1/awe',
+      method: 'GET',
+    }];
 
     expect(getResourceSampleData(resourceIdSampleData, 'parse')).toEqual(expectedOutput);
+    expect(getResourceSampleData(resourceIdSampleData, 'preview')).toEqual(expectedOutput);
+    expect(getResourceSampleData(resourceIdSampleData, 'request')).toEqual(expectedOutputForRequest);
   });
 });
