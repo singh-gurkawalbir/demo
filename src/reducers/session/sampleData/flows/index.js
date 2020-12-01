@@ -28,6 +28,9 @@ export default function (state = {}, action) {
       case actionTypes.FLOW_DATA.INIT: {
         const { pageGenerators = [], pageProcessors = [], _id, refresh } = flow;
 
+        if (!_id) {
+          break;
+        }
         if (!draft[_id]) {
           draft[_id] = { pageGeneratorsMap: {}, pageProcessorsMap: {}, refresh };
         }
@@ -61,7 +64,8 @@ export default function (state = {}, action) {
       // TODO: @Raghu Below request actions for preview and processor can be removed
       // as we are now handling request stage using generic stageRequest action above
       case actionTypes.FLOW_DATA.PREVIEW_DATA_RECEIVED: {
-        if (!resourceId) return;
+        if (!flowId || !resourceId || !previewType) return;
+
         const resourceMap =
           (draft[flowId] &&
             draft[flowId][
@@ -70,6 +74,7 @@ export default function (state = {}, action) {
                 : 'pageProcessorsMap'
             ]) ||
           {};
+
         const stage = previewType;
 
         resourceMap[resourceId] = {
@@ -85,26 +90,26 @@ export default function (state = {}, action) {
       }
 
       case actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST: {
+        if (!flowId || !resourceId || !processor) break;
         const resourceMap =
-          (draft[flowId] &&
-            draft[flowId][
+            draft[flowId]?.[
               isPageGeneratorResource(draft[flowId], resourceId)
                 ? 'pageGeneratorsMap'
                 : 'pageProcessorsMap'
-            ]) ||
-          {};
+            ] || {};
 
-        resourceMap[resourceId] = {
-          ...resourceMap[resourceId],
-        };
-        resourceMap[resourceId][processor] = {
-          ...resourceMap[resourceId][processor],
-        };
+        if (!resourceMap[resourceId]) {
+          resourceMap[resourceId] = {};
+        }
+        if (!resourceMap[resourceId][processor]) {
+          resourceMap[resourceId][processor] = {};
+        }
         resourceMap[resourceId][processor].status = 'requested';
         break;
       }
 
       case actionTypes.FLOW_DATA.PROCESSOR_DATA_RECEIVED: {
+        if (!flowId || !resourceId || !processor) break;
         const { data: receivedData } = processedData || {};
         const resourceMap =
           (draft[flowId] &&
@@ -128,12 +133,15 @@ export default function (state = {}, action) {
           resourceMap[resourceId][processor].data = Array.isArray(receivedData)
             ? receivedData[0]
             : receivedData.data && receivedData.data[0];
+        } else {
+          resourceMap[resourceId][processor].data = undefined;
         }
 
         break;
       }
 
       case actionTypes.FLOW_DATA.RECEIVED_ERROR: {
+        if (!flowId || !resourceId || !stage) break;
         const resourceMap =
           (draft[flowId] &&
             draft[flowId][
@@ -143,12 +151,12 @@ export default function (state = {}, action) {
             ]) ||
           {};
 
-        resourceMap[resourceId] = {
-          ...resourceMap[resourceId],
-        };
-        resourceMap[resourceId][stage] = {
-          ...resourceMap[resourceId][stage],
-        };
+        if (!resourceMap[resourceId]) {
+          resourceMap[resourceId] = {};
+        }
+        if (!resourceMap[resourceId][stage]) {
+          resourceMap[resourceId][stage] = {};
+        }
         resourceMap[resourceId][stage].status = 'error';
         resourceMap[resourceId][stage].error = error;
         break;
@@ -259,7 +267,7 @@ selectors.getFlowDataState = (state, flowId, resourceId) => {
     ? flow.pageGeneratorsMap
     : flow.pageProcessorsMap;
 
-  return (resourceMap[resourceId] && resourceMap[resourceId].data) || {};
+  return resourceMap[resourceId] || DEFAULT_VALUE;
 };
 
 selectors.getSampleDataContext = (
@@ -267,7 +275,7 @@ selectors.getSampleDataContext = (
   { flowId, resourceId, resourceType, stage }
 ) => {
   // returns input data for that stage to populate
-  const flow = state[flowId];
+  const flow = state?.[flowId];
   const sampleDataStage = getSampleDataStage(stage, resourceType);
 
   if (!flow || !sampleDataStage || !resourceId) return DEFAULT_VALUE;
