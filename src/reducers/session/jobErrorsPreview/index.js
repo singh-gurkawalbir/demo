@@ -1,12 +1,12 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
+const DEFAULT_VALUE = {};
 export default function (state = {}, action) {
   const { type, jobId, previewData, error, errorFileId } = action;
 
   return produce(state, draft => {
     if (!type || !jobId) return draft;
-
     switch (type) {
       case actionTypes.JOB.ERROR.PREVIEW.REQUEST:
         draft[jobId] = {
@@ -37,4 +37,8 @@ export default function (state = {}, action) {
 
 export const selectors = {};
 
-selectors.getJobErrorsPreview = (state, jobId) => state[jobId];
+selectors.getJobErrorsPreview = (state, jobId) => {
+  if (!state || !state[jobId]) { return DEFAULT_VALUE; }
+
+  return state[jobId];
+};

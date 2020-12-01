@@ -3,7 +3,6 @@ import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 
 const emptyList = [];
-const emptyObj = {};
 
 export default (state = {}, action) => {
   const {
@@ -160,24 +159,8 @@ selectors.stagedIdState = (state, id) => {
 };
 
 // #region PUBLIC SELECTORS
-selectors.stagedResource = (state, id, scope) => {
-  if (!state || !id || !state[id]) {
-    return emptyObj;
-  }
 
-  let updatedPatches;
-
-  if (scope) {
-    updatedPatches =
-      state[id] &&
-      state[id].patch &&
-      state[id].patch.filter(patch => patch.scope === scope);
-  } else updatedPatches = state[id] && state[id].patch;
-
-  return { ...state[id], patch: updatedPatches };
-};
-
-selectors.transformStagedResource = (stagedIdState, scope) => {
+const transformStagedResource = (stagedIdState, scope) => {
   if (!stagedIdState) return null;
 
   let updatedPatches;
@@ -196,8 +179,9 @@ selectors.makeTransformStagedResource = () =>
   createSelector(
     selectors.stagedIdState,
     (_1, _2, scope) => scope,
-    (stagedIdState, scope) => selectors.transformStagedResource(stagedIdState, scope)
+    (stagedIdState, scope) => transformStagedResource(stagedIdState, scope)
   );
+selectors.stagedResource = selectors.makeTransformStagedResource();
 
 selectors.getAllResourceConflicts = createSelector(
   state => state,
