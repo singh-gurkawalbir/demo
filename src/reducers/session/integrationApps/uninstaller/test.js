@@ -598,7 +598,6 @@ describe('integrationApps uninstaller reducer test cases', () => {
           undefined,
           actions.integrationApp.uninstaller.receivedUninstallSteps(
             uninstallSteps,
-            'STOREID',
             2
           )
         );
@@ -632,7 +631,6 @@ describe('integrationApps uninstaller reducer test cases', () => {
           { 1: { steps: uninstallSteps } },
           actions.integrationApp.uninstaller.receivedUninstallSteps(
             uninstallSteps,
-            'STOREID',
             2
           )
         );
@@ -684,7 +682,6 @@ describe('integrationApps uninstaller reducer test cases', () => {
           { 1: { steps: uninstallSteps } },
           actions.integrationApp.uninstaller.receivedUninstallSteps(
             uninstallSteps,
-            'STOREID',
             undefined
           )
         );
@@ -718,7 +715,6 @@ describe('integrationApps uninstaller reducer test cases', () => {
           { 1: { steps: uninstallSteps } },
           actions.integrationApp.uninstaller.receivedUninstallSteps(
             undefined,
-            'STOREID',
             2
           )
         );
@@ -887,7 +883,6 @@ describe('integrationApps selectors test cases', () => {
         {},
         actions.integrationApp.uninstaller.receivedUninstallSteps(
           [{step1: 'step1'}, {step2: 'step2'}],
-          'storeId',
           'integrationId'
         )
       );
@@ -912,7 +907,6 @@ describe('integrationApps selectors test cases', () => {
         {},
         actions.integrationApp.uninstaller.receivedUninstallSteps(
           [{step1: 'step1'}, {step2: 'step2'}],
-          'storeId',
           'integrationId'
         )
       );
