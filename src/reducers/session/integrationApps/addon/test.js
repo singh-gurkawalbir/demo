@@ -4,9 +4,12 @@ import actions from '../../../../actions';
 
 describe('integrationApps reducer test cases', () => {
   test('should return initial state when action is not matched', () => {
-    const state = reducer(undefined, { type: 'RANDOM_ACTION' });
-
-    expect(state).toEqual({});
+    expect(reducer(undefined, { type: 'RANDOM_ACTION' })).toEqual({});
+    expect(reducer(undefined, { type: null })).toEqual({});
+    expect(reducer(undefined, { type: undefined})).toEqual({});
+    expect(reducer(null, { type: 'RANDOM_ACTION' })).toEqual(null);
+    expect(reducer('string', { type: 'RANDOM_ACTION' })).toEqual('string');
+    expect(reducer({}, { type: 'RANDOM_ACTION' })).toEqual({});
   });
 });
 
@@ -46,7 +49,11 @@ describe('integrationApps addon selectors test cases', () => {
   describe('isAddOnInstallInProgress', () => {
     test('should return empty state when no match found.', () => {
       expect(selectors.isAddOnInstallInProgress(undefined, 'dummy')).toEqual({installInprogress: false});
-      expect(selectors.isAddOnInstallInProgress({}, 'dummy')).toEqual({installInprogress: false});
+      expect(selectors.isAddOnInstallInProgress(null, 'dummy')).toEqual({installInprogress: false});
+      expect(selectors.isAddOnInstallInProgress('string', 'dummy')).toEqual({installInprogress: false});
+      expect(selectors.isAddOnInstallInProgress()).toEqual({installInprogress: false});
+      expect(selectors.isAddOnInstallInProgress(undefined, null)).toEqual({installInprogress: false});
+      expect(selectors.isAddOnInstallInProgress({}, 123)).toEqual({installInprogress: false});
     });
 
     test('should return correct state data when a match is found.', () => {
