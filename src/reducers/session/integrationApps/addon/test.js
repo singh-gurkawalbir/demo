@@ -48,16 +48,16 @@ describe('intetgrationApps addon reducer', () => {
 describe('integrationApps addon selectors test cases', () => {
   describe('isAddOnInstallInProgress', () => {
     test('should return empty state when no match found.', () => {
-      expect(selectors.isAddOnInstallInProgress(undefined, 'dummy')).toEqual({installInprogress: false});
-      expect(selectors.isAddOnInstallInProgress(null, 'dummy')).toEqual({installInprogress: false});
-      expect(selectors.isAddOnInstallInProgress('string', 'dummy')).toEqual({installInprogress: false});
-      expect(selectors.isAddOnInstallInProgress()).toEqual({installInprogress: false});
-      expect(selectors.isAddOnInstallInProgress(undefined, null)).toEqual({installInprogress: false});
-      expect(selectors.isAddOnInstallInProgress({}, 123)).toEqual({installInprogress: false});
+      expect(selectors.isAddOnInstallInProgress(undefined, 'dummy')).toEqual(false);
+      expect(selectors.isAddOnInstallInProgress(null, 'dummy')).toEqual(false);
+      expect(selectors.isAddOnInstallInProgress('string', 'dummy')).toEqual(false);
+      expect(selectors.isAddOnInstallInProgress()).toEqual(false);
+      expect(selectors.isAddOnInstallInProgress(undefined, null)).toEqual(false);
+      expect(selectors.isAddOnInstallInProgress({}, 123)).toEqual(false);
     });
 
     test('should return correct state data when a match is found.', () => {
-      const expectedData = { installInprogress: true };
+      const expectedData = true;
       const state = reducer(
         {},
         actions.integrationApp.isAddonInstallInprogress(true, 1)
@@ -66,7 +66,7 @@ describe('integrationApps addon selectors test cases', () => {
       expect(selectors.isAddOnInstallInProgress(state, 1)).toEqual(expectedData);
     });
     test('should return correct data when a matching id is not found.', () => {
-      const expectedData = { installInprogress: false };
+      const expectedData = false;
 
       expect(selectors.isAddOnInstallInProgress({1: 'dummyData'}, 1)).toEqual(expectedData);
     });

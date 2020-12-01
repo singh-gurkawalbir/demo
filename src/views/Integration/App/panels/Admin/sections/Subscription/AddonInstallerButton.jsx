@@ -25,9 +25,8 @@ export default function AddonInstallerButton({ resource }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [isInProgress, setIsInProgressStatus] = useState(false);
-  const { installInprogress } = useSelector(
-    state => selectors.isAddOnInstallInProgress(state, resource.id),
-    (left, right) => left.installerInprogress === right.installerInprogress
+  const installInprogress = useSelector(
+    state => selectors.isAddOnInstallInProgress(state, resource.id)
   );
 
   useEffect(() => {
