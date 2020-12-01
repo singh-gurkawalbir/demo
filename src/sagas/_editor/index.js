@@ -14,8 +14,8 @@ import { getResource, commitStagedChanges } from '../resources';
 import processorLogic from '../../reducers/session/_editors/processorLogic';
 import { SCOPES } from '../resourceForm';
 import { requestSampleData } from '../sampleData/flows';
-import { requestExportSampleData } from '../sampleData';
-import { constructResourceFromFormValues } from '../sampleData/utils/exportSampleDataUtils';
+import { requestExportSampleData } from '../sampleData/exports';
+import { constructResourceFromFormValues } from '../utils';
 
 export function* invokeProcessor({ processor, body }) {
   const path = `/processors/${processor}`;
