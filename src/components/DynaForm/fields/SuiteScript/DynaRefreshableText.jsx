@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
-import RefreshGenericResource from '../DynaRefreshableSelect/RefreshGenericResource';
+import RefreshGenericResource from './DynaRefreshableSelect/RefreshGenericResource';
 import DynaText from '../DynaText';
 
 export default function DynaRefreshableText(props) {

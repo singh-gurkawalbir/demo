@@ -69,7 +69,7 @@ export default function UpgradeErrorManagement() {
         buttons: [
           {
             label: 'Yes, upgrade',
-            dataTest: 'EM2.0_Confirm_Upgrade',
+            dataTest: 'em2.0_confirm_upgrade',
             onClick: () => {
               dispatch(actions.user.profile.update({ useErrMgtTwoDotZero: true }));
               setUpgradeRequested(true);
@@ -166,7 +166,7 @@ export default function UpgradeErrorManagement() {
               color="primary"
               disabled={upgradeRequested}
               onClick={handleUpgrade}
-              data-test="EM2.0_Upgrade"
+              data-test="em2.0_upgrade"
               >
               {(upgradeRequested && commStatus === 'loading') ? 'Upgrading...' : 'Upgrade'}
             </Button>
@@ -174,7 +174,7 @@ export default function UpgradeErrorManagement() {
               variant="text"
               color="primary"
               onClick={redirectToDashboard}
-              data-test="EM2.0_Later">
+              data-test="em2.0_later">
               I&apos;ll do this later
             </Button>
           </ButtonGroup>

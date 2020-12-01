@@ -724,6 +724,11 @@ const integrationApp = {
             id,
           }
         ),
+      loadFailed: (integrationId, flowId, id) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.LOAD_FAILED,
+          { integrationId, flowId, id }
+        ),
     },
     initComplete: (integrationId, flowId, sectionId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE, {

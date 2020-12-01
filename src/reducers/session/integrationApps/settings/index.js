@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { deepClone } from 'fast-json-patch/lib/core';
-import actionTypes from '../../../actions/types';
-import mappingUtil from '../../../utils/mapping';
+import actionTypes from '../../../../actions/types';
+import mappingUtil from '../../../../utils/mapping';
 
 const emptyObj = {};
 const emptySet = [];
@@ -550,7 +550,9 @@ export default (state = {}, action) => {
         }
 
         break;
-
+      // the action loadFailed is empty for future use
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.LOAD_FAILED:
+        break;
       case actionTypes.INTEGRATION_APPS.SETTINGS
         .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA:
         ({ response: categoryMappingData } = metadata);
