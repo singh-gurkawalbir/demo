@@ -1,20 +1,16 @@
 import clsx from 'clsx';
-import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, IconButton, makeStyles, Tooltip, Typography } from '@material-ui/core';
-// import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
-import examples from './examples';
-import editorMap from '../../components/AFE2/Editor/metadata';
 import Editor from '../../components/AFE2/Editor';
 import EditorPreviewButton from '../../components/AFE2/PreviewButtonGroup';
 import FullScreenOpenIcon from '../../components/icons/FullScreenOpenIcon';
 import ExampleMenu from './ExampleMenu';
 import ExplorerMenu from './ExplorerMenu';
 import EditorDrawer from '../../components/AFE2/Drawer';
-import actions from '../../actions';
 import ResourceDrawer from '../../components/drawer/Resource';
+import ExportExampleButton from './ExportExampleButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -48,67 +44,25 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
   },
 }));
-// const editorId = 'playground';
 
 export default function Editors() {
   const classes = useStyles();
-  const dispatch = useDispatch();
   const history = useHistory();
-  const [activeType, setActiveType] = useState();
-  const [exampleKey, setExampleKey] = useState();
-  const activeEditor = editorMap[activeType];
-  const activeExample = examples[activeType]?.find(e => e.key === exampleKey);
-  const editorId = `${activeType}-${exampleKey}`;
+  const [editorId, setEditorId] = useState();
 
   const handleFullScreen = () => history.push(`/playground/editor/${editorId}`);
-  const handleExampleClick = (type, exampleKey) => {
-    setActiveType(type);
-    setExampleKey(exampleKey);
 
-    // eslint-disable-next-line no-console
-    console.log(type, exampleKey);
+  const handleEditorChange = newEditorId => {
+    setEditorId(newEditorId);
   };
 
-  const handleCancelEditorClick = () => {
-    setActiveType();
-    setExampleKey();
-  };
-
-  const handleExplorerClick = (flowId, resourceId, stage, fieldId) => {
-    // eslint-disable-next-line no-console
-    console.log({flowId, resourceId, stage, fieldId});
-  };
-
-  // console.log(activeType, exampleKey, activeExample);
-  useEffect(() => {
-    if (activeExample) {
-      dispatch(actions._editor.init(
-        editorId,
-        activeExample.type,
-        {
-          rule: activeExample.rule,
-          data: activeExample.data,
-          resultMode: 'json',
-        // type: [http, url, dataUri], // do we need this?
-        }
-      // whatever other props are needed. Note if the data is supplied,
-      // no need to pass props which are used to obtain sample data.
-      ));
-    }
-    // every time a user selects a new example, we run this effect to
-    // reset the initial state of the editor.
-  }, [activeExample, dispatch, editorId]);
-
-  const Subtitle = () => {
-    if (!activeEditor) return null;
-
-    return `${activeEditor.label}: ${activeExample.description || activeExample.name}`;
-  };
+  const handleCancelEditorClick = () => { setEditorId(); };
 
   return (
     <>
-      <CeligoPageBar title="Developer playground" subtitle={<Subtitle />}>
-        {activeType && (
+      <CeligoPageBar title="Developer playground">
+        <ExportExampleButton editorId={editorId} />
+        {editorId && (
           <Tooltip title="Fullscreen mode" placement="right">
             <IconButton onClick={handleFullScreen} size="small">
               <FullScreenOpenIcon />
@@ -118,18 +72,18 @@ export default function Editors() {
 
       </CeligoPageBar>
       <div className={classes.root}>
-        <div className={clsx(classes.editorList, {[classes.editorListExpanded]: !activeExample})}>
+        <div className={clsx(classes.editorList, {[classes.editorListExpanded]: !editorId})}>
           <div className={classes.menuSection}>
             <Typography variant="h4">Editor Examples</Typography>
-            <ExampleMenu onClick={handleExampleClick} />
+            <ExampleMenu onEditorChange={handleEditorChange} />
           </div>
           <div className={classes.menuSection}>
             <Typography variant="h4">Flow Explorer</Typography>
-            <ExplorerMenu onClick={handleExplorerClick} />
+            <ExplorerMenu onEditorChange={handleEditorChange} />
           </div>
         </div>
         <main className={classes.content}>
-          {activeExample ? (
+          {editorId ? (
             <>
               <Editor editorId={editorId} />
               <div className={classes.buttons}>

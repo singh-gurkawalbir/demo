@@ -29,12 +29,11 @@ const useTabStyles = makeStyles({
 export default function Editor({ editorId, ...rest }) {
   const classes = useStyles();
   const editor = useSelector(state => selectors._editor(state, editorId));
-  const {processor: type} = editor;
+  const {processor: type, layout} = editor;
 
   if (!type) { return null; }
 
-  // TODO: shouldnt layout be read from editor state?
-  const {layout, panels} = editorMetadata[type];
+  const { panels } = editorMetadata[type];
   const gridTemplate = classes[resolveValue(layout, editor)];
 
   // console.log(layout, panels);

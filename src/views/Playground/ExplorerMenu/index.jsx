@@ -11,7 +11,7 @@ import LoadResources from '../../../components/LoadResources';
 import IntegrationIcon from '../../../components/icons/IntegrationAppsIcon';
 import FlowIcon from '../../../components/icons/FlowsIcon';
 import ResourcesIcon from '../../../components/icons/ResourcesIcon';
-import ResourceItemsBranch from './ResourceActionsBranch';
+import ResourceActionsBranch from './ResourceActionsBranch';
 import OverflowTreeItem from './OverflowTreeItem';
 
 const useStyles = makeStyles(theme => ({
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ExplorerMenu({ onClick }) {
+export default function ExplorerMenu({ onEditorChange }) {
   const classes = useStyles();
   const [integrationId, setIntegrationId] = useState();
   const [flowId, setFlowId] = useState();
@@ -53,19 +53,18 @@ export default function ExplorerMenu({ onClick }) {
       return <OverflowTreeItem nodeId={`${id}-empty`} label="No Resources" />;
     }
 
-    // onClick(flowId, resourceId, stage, fieldId)
-    // We need to enhance the getEditorsByResource response to provide the correct
-    // data points that are needed to init an editor. Possibly the above onClick
-    // callback sent from the playground view needs to be fixed too.
-    const handleClick = (type, fieldId) => onClick(flowId, resourceId, type, fieldId);
-
     return flowResources.map(({_id: id, name}) => (
       <OverflowTreeItem
         key={id} nodeId={id} label={name || id}
         icon={<ResourcesIcon />}
         onClick={() => setResourceId(id)} >
-        {(id === resourceId) &&
-          <ResourceItemsBranch resourceId={resourceId} onClick={handleClick} />}
+        {(id === resourceId) && (
+          <ResourceActionsBranch
+            flowId={flowId}
+            resourceId={resourceId}
+            onEditorChange={onEditorChange}
+          />
+        )}
       </OverflowTreeItem>
     ));
   };
