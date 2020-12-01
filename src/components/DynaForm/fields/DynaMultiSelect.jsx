@@ -85,6 +85,7 @@ export default function DynaMultiSelect(props) {
     disabled,
     id,
     name,
+    isLoading,
     options = [],
     value = [],
     label,
@@ -162,7 +163,7 @@ export default function DynaMultiSelect(props) {
   );
 
   useEffect(() => {
-    if (removeInvalidValues) {
+    if (removeInvalidValues && !isLoading) {
       // If the value contains any item not present in the options array, remove it.
       if (Array.isArray(processedValue) &&
        processedValue.length &&
