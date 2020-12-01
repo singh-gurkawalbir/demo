@@ -709,6 +709,143 @@ describe('integrationApps reducer test cases', () => {
         expect(state).toEqual(expectedValue);
       });
     });
+
+    describe('integrationApps addNewStore - step installation complete reducer', () => {
+      test('should find and update failed flag on integrationId if found', () => {
+        const state = reducer(
+          {
+            1: {
+              steps: [{
+                name: 'step1',
+              }],
+            },
+          },
+          actions.integrationApp.store.completedStepInstall(
+            2,
+            'installerFunction',
+            [{step1: 'step1 name'}]
+          )
+        );
+
+        expect(state).toEqual({
+          1: {
+            steps: [{
+              name: 'step1',
+            }],
+          },
+        });
+      });
+
+      test('should find the step by installerFunction and update it as completed', () => {
+        const state = reducer(
+          {
+            1: {
+              steps: [{
+                name: 'step1',
+              }],
+            },
+            2: {
+              steps: [{
+                name: 'step1',
+                installerFunction: 'installerFunction',
+              }, {
+                name: 'step2',
+                installerFunction: 'installerFunction2',
+              }],
+            },
+          },
+          actions.integrationApp.store.completedStepInstall(
+            2,
+            null,
+            [
+              {step1: 'step1 name', installerFunction: 'installerFunction', dummy1: 'value1'},
+              {step2: 'step2 name', installerFunction: 'installerFunction2', dummy2: 'value2'},
+            ]
+          )
+        );
+        const expectedValue = {
+          1: {
+            steps: [{
+              name: 'step1',
+            }],
+          },
+          2: {
+            steps: [{
+              name: 'step1',
+              step1: 'step1 name',
+              installerFunction: 'installerFunction',
+              dummy1: 'value1',
+            }, {
+              name: 'step2',
+              step2: 'step2 name',
+              dummy2: 'value2',
+              installerFunction: 'installerFunction2',
+            }],
+          },
+        };
+
+        expect(state).toEqual(expectedValue);
+      });
+    });
+
+    describe('integrationApps addNewStore - failed reducer', () => {
+      test('should find and update failed flag on integrationId if found', () => {
+        const state = reducer(
+          {
+            1: {
+              steps: [{
+                name: 'step1',
+              }],
+            },
+          },
+          actions.integrationApp.store.failedNewStoreSteps(
+            2,
+            'failed to fetch data'
+          )
+        );
+        const expectedValue = {
+          1: {
+            steps: [{
+              name: 'step1',
+            }],
+          },
+          2: {error: 'failed to fetch data'},
+        };
+
+        expect(state).toEqual(expectedValue);
+      });
+
+      test('should not affect the state when clearSteps is called and no integrationId is passed', () => {
+        const state = reducer(
+          { 1: { steps: addNewStoreSteps } },
+          actions.integrationApp.store.failedNewStoreSteps()
+        );
+        const expectedValue = {
+
+          1: {
+            steps: [
+              {
+                completed: false,
+                description: 'Install the bank in CAM',
+                imageURL: '/images/company-logos/cashapp.png',
+                installerFunction: 'installConnectorComponents',
+                name: 'Install Bank',
+              },
+              {
+                completed: false,
+                description: 'Install the bundle in NetSuite',
+                imageURL: '/images/company-logos/netsuite.png',
+                installerFunction: 'installConnectorComponents',
+                name: 'Install Bundle in NetSuite',
+              },
+            ],
+          },
+        };
+
+        expect(state).toEqual(expectedValue);
+      });
+    });
+
     describe('integrationApps addNewStore - clear steps reducer', () => {
       test('should initialise the addStore state and remove the integrationId if found', () => {
         const state = reducer(
