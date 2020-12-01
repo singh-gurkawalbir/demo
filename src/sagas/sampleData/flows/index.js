@@ -188,6 +188,7 @@ export function* fetchPageProcessorPreview({
     hidden,
     throwOnError: true,
     refresh: refresh || flowDataState.refresh,
+    runOffline: true,
   });
   const { merged: resource = {} } = yield select(
     selectors.resourceData,

@@ -8,10 +8,10 @@ export default {
     value,
     extractFields,
     lookups,
+    isGroupedSampleData,
   }) => {
     const {lookupName } = value;
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
-    const isGroupedSampleData = Array.isArray(extractFields);
 
     const fieldMeta = {
       fieldMap: {
