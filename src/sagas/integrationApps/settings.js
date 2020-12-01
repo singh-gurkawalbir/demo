@@ -228,7 +228,7 @@ export function* saveCategoryMappings({ integrationId, flowId }) {
     }) || {});
   } catch (error) {
     yield put(
-      actions.integrationApp.settings.saveCategoryMappingsFailed(
+      actions.integrationApp.settings.categoryMappings.loadFailed(
         integrationId,
         flowId
       )
