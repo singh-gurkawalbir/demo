@@ -178,7 +178,7 @@ export function* requestJobCollection({ integrationId, flowId, filters = {}, opt
       requestedJob = yield call(getJobDetails, { jobId: options.flowJobId });
     // eslint-disable-next-line no-empty
     } catch (e) {}
-    if (requestedJob && requestedJob._id) {
+    if (requestedJob && requestedJob._id && Array.isArray(collection)) {
       // Push if valid job is returned
       collection.push(requestedJob);
     }

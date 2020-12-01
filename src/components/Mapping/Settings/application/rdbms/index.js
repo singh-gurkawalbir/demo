@@ -6,9 +6,9 @@ export default {
   getMetaData: ({
     value = {},
     extractFields,
+    isGroupedSampleData,
   }) => {
     const {generate} = value;
-    const isGroupedSampleData = Array.isArray(extractFields);
     const fieldMeta = {
       fieldMap: {
         dataType: {

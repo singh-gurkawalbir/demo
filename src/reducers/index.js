@@ -5221,6 +5221,30 @@ selectors.makeResourceErrorsSelector = () => createSelector(
 
 selectors.resourceErrors = selectors.makeResourceErrorsSelector();
 
+selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
+  selectors.userPermissions,
+  state => state?.data?.resources?.integrations,
+  state => state?.data?.resources?.connections,
+  (permissions = emptyObject, integrations = emptySet, connections = emptySet) => {
+    if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE].includes(permissions.accessLevel)) {
+      return connections.map(c => c._id);
+    }
+    if (permissions.accessLevel === USER_ACCESS_LEVELS.TILE) {
+      const connectionIds = [];
+
+      integrations.forEach(i => {
+        if (permissions?.integrations && permissions.integrations[i._id] && permissions.integrations[i._id].accessLevel === 'manage') {
+          connectionIds.push(...i._registeredConnectionIds);
+        }
+      });
+
+      return connectionIds;
+    }
+
+    return emptySet;
+  }
+);
+
 selectors.availableUsersList = (state, integrationId) => {
   const permissions = selectors.userPermissions(state);
   let _users = [];

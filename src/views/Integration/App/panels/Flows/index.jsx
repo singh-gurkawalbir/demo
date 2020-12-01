@@ -7,6 +7,7 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import { makeStyles, Grid, List, ListItem, Typography, Divider } from '@material-ui/core';
+import clsx from 'clsx';
 import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
@@ -64,10 +65,10 @@ const useStyles = makeStyles(theme => ({
   configureSectionBtn: {
     padding: 0,
   },
-  flexContainer: {
+  gridContainer: {
     display: 'grid',
     gridColumnGap: '10px',
-    gridTemplateColumns: '55% auto',
+    gridTemplateColumns: 'auto 38%',
     position: 'relative',
     '& > div:first-child': {
       wordBreak: 'break-word',
@@ -76,6 +77,9 @@ const useStyles = makeStyles(theme => ({
       position: 'relative',
       right: -12,
     },
+  },
+  emptyMessageWrapper: {
+    padding: theme.spacing(1, 2),
   },
   flowTitle: {
     position: 'relative',
@@ -266,7 +270,7 @@ const SectionTitle = ({integrationId, storeId, title, titleId}) => {
   }
 
   return (
-    <div className={classes.flexContainer}>
+    <div className={classes.gridContainer}>
       <div> { title }</div>
       <div> {errorStatus} </div>
     </div>
@@ -291,7 +295,7 @@ export default function FlowsPanel({ storeId, integrationId }) {
 
   if (isParentView) {
     return (
-      <div className={classes.root}>
+      <div className={clsx(classes.root, classes.emptyMessageWrapper)}>
         <div className={classes.container}>
           <Typography variant="h4">
             Flows
