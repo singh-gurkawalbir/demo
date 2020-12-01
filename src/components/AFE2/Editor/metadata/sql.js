@@ -8,7 +8,7 @@ export default {
   label: 'SQL query builder',
   description: 'Use a handlebar template to construct SQL queries',
   layout: 'compact',
-  panels: ({ autoEvaluate, resultMode }) => [
+  panels: ({ autoEvaluate }) => [
     {
       group: true,
       title: 'Type your handlebars template here',
@@ -43,7 +43,7 @@ export default {
       area: 'result',
       Panel: ResultPanel,
       props: {
-        mode: resultMode,
+        mode: 'text',
       },
     },
   ],

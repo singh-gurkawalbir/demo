@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import CodeEditor from '../../../../CodeEditor';
+import CodeEditor from '../../../../CodeEditor2';
 
 const defaults = {
   global: {
@@ -21,12 +21,9 @@ export default function CodePanel({
   value,
   mode,
   readOnly = false,
-  height,
-  width,
   onChange,
   enableAutocomplete,
   overrides,
-  skipDelay,
   errorLine,
   hasError,
   hasWarning,
@@ -56,15 +53,12 @@ export default function CodePanel({
       value={safeValue}
       mode={mode}
       readOnly={readOnly}
-      height={height}
-      width={width}
       showGutter={config.showGutter}
       showInvisibles={config.showInvisibles}
       useWorker={config.useWorker}
       enableAutocomplete={enableAutocomplete}
       wrap={config.wrap}
       onChange={onChange}
-      skipDelay={skipDelay}
       errorLine={errorLine}
       hasError={hasError}
       hasWarning={hasWarning}
