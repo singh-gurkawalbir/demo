@@ -14,6 +14,28 @@ describe('integrationApps reducer test cases', () => {
 });
 
 describe('intetgrationApps installer reducer', () => {
+  describe('integrationApps received ouath connection status action', () => {
+    test('should find the integration with id and update connection details', () => {
+      const state = reducer(
+        {
+          456: {
+            dummy: 'data',
+          },
+        },
+        actions.integrationApp.installer.setOauthConnectionMode('connectionId', true, '123')
+      );
+
+      expect(state).toEqual({
+        456: {
+          dummy: 'data',
+        },
+        123: {
+          connectionId: 'connectionId',
+          openOauthConnection: true,
+        },
+      });
+    });
+  });
   describe('integrationApps received installer install_inProgress action', () => {
     test('should find the integration with id and set isTriggered flag to true', () => {
       const state = reducer(
