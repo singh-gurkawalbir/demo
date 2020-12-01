@@ -12,14 +12,11 @@ import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
 import resourceMeta from '../../../forms/definitions';
 import { generateNewId } from '../../../utils/resource';
-import {
-  defaultPatchSetConverter,
-  getMissingPatchSet,
-} from '../../../forms/utils';
 import ActionButton from '../../ActionButton';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import StatusCircle from '../../StatusCircle';
 import { stringCompare } from '../../../utils/sort';
+import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/formFactory/utils';
 
 const emptyArray = [];
 const handleAddNewResource = args => {

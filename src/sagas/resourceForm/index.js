@@ -8,8 +8,7 @@ import {
   defaultPatchSetConverter,
   getPatchPathForCustomForms,
   getFieldWithReferenceById,
-} from '../../forms/utils';
-import factory from '../../forms/formFactory';
+} from '../../forms/formFactory/utils';
 import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
 import { getResource, commitStagedChanges } from '../resources';
 import connectionSagas, { createPayload } from './connections';
@@ -19,6 +18,9 @@ import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
 import { UI_FIELD_VALUES, FORM_SAVE_STATUS} from '../../utils/constants';
 import { isIntegrationApp, isFlowUpdatedWithPgOrPP } from '../../utils/flows';
+import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
+import getFieldsWithoutFuncs from '../../forms/formFactory/getFieldsWithoutFuncs';
+import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
 
 export const SCOPES = {
   META: 'meta',
@@ -162,7 +164,7 @@ export function* createFormValuesPatchSet({
       );
     }
 
-    const { preSave } = factory.getResourceFormAssets({
+    const { preSave } = getResourceFormAssets({
       resourceType,
       resource,
       connection,
@@ -920,7 +922,7 @@ export function* initFormValues({
   }
 
   try {
-    const defaultFormAssets = factory.getResourceFormAssets({
+    const defaultFormAssets = getResourceFormAssets({
       resourceType,
       resource,
       isNew,
@@ -933,7 +935,7 @@ export function* initFormValues({
         ? customForm.form
         : defaultFormAssets.fieldMeta;
     //
-    const fieldMeta = factory.getFieldsWithDefaults(
+    const fieldMeta = getFieldsWithDefaults(
       form,
       resourceType,
       resource,
@@ -998,7 +1000,7 @@ export function* initCustomForm({ resourceType, resourceId }) {
     'connections',
     resource._connectionId
   );
-  const defaultFormAssets = factory.getResourceFormAssets({
+  const defaultFormAssets = getResourceFormAssets({
     connection,
     resourceType,
     resource,
@@ -1006,7 +1008,7 @@ export function* initCustomForm({ resourceType, resourceId }) {
   const {
     extractedInitFunctions,
     ...remainingMeta
-  } = factory.getFieldsWithoutFuncs(
+  } = getFieldsWithoutFuncs(
     defaultFormAssets && defaultFormAssets.fieldMeta,
     resource,
     resourceType

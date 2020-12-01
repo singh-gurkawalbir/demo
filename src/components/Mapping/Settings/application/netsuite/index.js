@@ -5,7 +5,7 @@ import {
   isProduction,
   conditionalLookupOptionsforNetsuite,
   conditionalLookupOptionsforNetsuiteProduction,
-} from '../../../../../forms/utils';
+} from '../../../../../forms/formFactory/utils';
 
 const emptyObject = {};
 const getNetsuiteSelectFieldValueUrl = ({

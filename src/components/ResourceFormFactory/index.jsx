@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
-import formFactory from '../../forms/formFactory';
+import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../reducers';
@@ -117,7 +117,7 @@ export const ResourceFormFactory = props => {
 
   const { optionsHandler, validationHandler } = useMemo(
     () =>
-      formFactory.getResourceFormAssets({
+      getResourceFormAssets({
         resourceType,
         resource,
         isNew,

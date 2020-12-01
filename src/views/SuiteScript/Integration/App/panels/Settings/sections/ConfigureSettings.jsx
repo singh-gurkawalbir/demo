@@ -5,7 +5,7 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import actions from '../../../../../../../actions';
 import LoadSuiteScriptResources from '../../../../../../../components/SuiteScript/LoadResources';
-import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
+import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/formFactory/utils';
 import { selectors } from '../../../../../../../reducers';
 import Loader from '../../../../../../../components/Loader';
 import Spinner from '../../../../../../../components/Spinner';

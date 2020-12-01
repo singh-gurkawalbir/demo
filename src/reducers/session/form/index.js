@@ -9,7 +9,7 @@ import {
   isVisible,
 } from '../../../utils/form';
 import fields from './fields';
-import { isAnyFieldVisibleForMeta, isExpansionPanelRequired, isExpansionPanelErrored, isAnyFieldTouchedForMeta} from '../../../forms/utils';
+import { isAnyFieldVisibleForMeta, isExpansionPanelRequired, isExpansionPanelErrored, isAnyFieldTouchedForMeta} from '../../../forms/formFactory/utils';
 
 function form(state = {}, action) {
   const { type, formKey, formSpecificProps = {} } = action;

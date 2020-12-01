@@ -6,14 +6,15 @@ import { selectors } from '../../../reducers';
 import {
   sanitizePatchSet,
   defaultPatchSetConverter,
-} from '../../../forms/utils';
-import factory from '../../../forms/formFactory';
+} from '../../../forms/formFactory/utils';
 import { commitStagedChanges, requestSuiteScriptMetadata } from '../resources';
 import connectionSagas from './connections';
 import { isNewId } from '../../../utils/resource';
 import { suiteScriptResourceKey } from '../../../utils/suiteScript';
 import { apiCallWithRetry } from '../..';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
+import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
+import getFieldsWithDefaults from '../../../forms/formFactory/getFieldsWithDefaults';
 
 export const SCOPES = {
   META: 'meta',
@@ -59,7 +60,7 @@ export function* createFormValuesPatchSet({
     });
   }
 
-  const { preSave } = factory.getResourceFormAssets({
+  const { preSave } = getResourceFormAssets({
     resourceType,
     resource,
     connection,
@@ -223,7 +224,7 @@ export function* initFormValues({
     });
   }
 
-  const defaultFormAssets = factory.getResourceFormAssets({
+  const defaultFormAssets = getResourceFormAssets({
     resourceType,
     resource,
     isNew,
@@ -237,7 +238,7 @@ export function* initFormValues({
       ? customForm.form
       : defaultFormAssets.fieldMeta;
   //
-  const fieldMeta = factory.getFieldsWithDefaults(
+  const fieldMeta = getFieldsWithDefaults(
     form,
     `ss-${resourceType}`,
     resource,
