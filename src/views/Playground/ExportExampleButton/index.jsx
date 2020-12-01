@@ -31,7 +31,7 @@ export default function ExportExampleButton({ editorId }) {
     return developer && email.endsWith('celigo.com');
   });
 
-  const {processor: type, rule, data} = useSelector(state => canExport
+  const {processor: type, rule, data} = useSelector(state => canExport && open
     ? selectors._editor(state, editorId)
     : emptyObj);
 

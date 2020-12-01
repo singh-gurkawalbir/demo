@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { TreeView} from '@material-ui/lab';
-import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
 import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';
@@ -26,6 +25,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const emptyArray = [];
+
 export default function ExplorerMenu({ onEditorChange }) {
   const classes = useStyles();
   const [integrationId, setIntegrationId] = useState();
@@ -33,16 +34,16 @@ export default function ExplorerMenu({ onEditorChange }) {
   const [resourceId, setResourceId] = useState();
 
   const integrations = useSelector(state =>
-    selectors.resources(state, 'integrations')
-      .map(i => ({ id: i._id, name: i.name })), shallowEqual);
+    selectors.resources(state, 'integrations'))
+    .map(i => ({ id: i._id, name: i.name }));
 
   const flows = useSelector(state => {
-    if (!integrationId) return;
+    if (!integrationId) return emptyArray;
 
-    return selectors.resources(state, 'flows')
-      .filter(f => f._integrationId === integrationId)
-      .map(f => ({ id: f._id, name: f.name }));
-  }, shallowEqual);
+    return selectors.resources(state, 'flows');
+  })
+    .filter(f => f._integrationId === integrationId)
+    .map(f => ({ id: f._id, name: f.name }));
 
   const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
 
