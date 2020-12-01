@@ -23,10 +23,10 @@ export const selectors = {};
 
 selectors.isAddOnInstallInProgress = (state, id) => {
   if (!(state && state[id])) {
-    return { installInprogress: false };
+    return false;
   }
 
-  return { installInprogress: state[id].installInprogress || false };
+  return state[id].installInprogress || false;
 };
 
 // #endregion

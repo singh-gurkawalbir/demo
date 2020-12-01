@@ -957,11 +957,10 @@ const integrationApp = {
         uninstallerFunction,
         addOnId,
       }),
-    receivedUninstallSteps: (uninstallSteps, storeId, id) =>
+    receivedUninstallSteps: (uninstallSteps, id) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.RECEIVED_STEPS, {
         uninstallSteps,
         id,
-        storeId,
       }),
     failedUninstallSteps: (id, error, storeId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.FAILED_UNINSTALL_STEPS, {
