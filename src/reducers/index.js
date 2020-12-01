@@ -5100,7 +5100,7 @@ selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
   selectors.userPermissions,
   state => state?.data?.resources?.integrations,
   state => state?.data?.resources?.connections,
-  (permissions = emptyObject, integrations = emptySet, connections = emptySet) => {
+  (permissions = emptyObject, integrations = emptyArray, connections = emptyArray) => {
     if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE].includes(permissions.accessLevel)) {
       return connections.map(c => c._id);
     }
@@ -5116,7 +5116,7 @@ selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
       return connectionIds;
     }
 
-    return emptySet;
+    return emptyArray;
   }
 );
 
