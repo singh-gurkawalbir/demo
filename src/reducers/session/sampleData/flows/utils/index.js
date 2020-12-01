@@ -15,7 +15,8 @@ export const getFirstOutOfOrderIndex = (currentList = [], updatedList = []) => {
   return changedIndex;
 };
 
-export const clearInvalidFlowState = (flow, index, isPageGenerator) => {
+export const clearInvalidPgOrPpStates = (flow, index, isPageGenerator) => {
+  if (!flow) return;
   if (isPageGenerator) {
     const pgsToReset = flow.pageGenerators.slice(index).map(pg => pg._exportId);
     const pgIds = keys(flow.pageGeneratorsMap);
@@ -38,6 +39,7 @@ export const clearInvalidFlowState = (flow, index, isPageGenerator) => {
 };
 
 export const clearInvalidStagesForPgOrPp = (flow, index, stages = [], statusToUpdate, isPageGenerator) => {
+  if (!flow) return;
   const resource = isPageGenerator ? flow.pageGenerators[index] : flow.pageProcessors[index];
   const resourceId = resource._exportId || resource._importId;
   const resourceMap = isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap';

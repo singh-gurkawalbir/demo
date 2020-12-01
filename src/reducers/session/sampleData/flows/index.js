@@ -2,7 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 import { getSampleDataStage } from '../../../../utils/flowData';
 import { isPageGeneratorResource } from '../../../../utils/flows';
-import { clearInvalidFlowState, clearInvalidStagesForPgOrPp, getFirstOutOfOrderIndex } from './utils';
+import { clearInvalidPgOrPpStates, clearInvalidStagesForPgOrPp, getFirstOutOfOrderIndex } from './utils';
 
 export default function (state = {}, action) {
   const {
@@ -185,12 +185,12 @@ export default function (state = {}, action) {
         // given a resourceId -- resets itself and  all linked pps or pgs after that
         if (pageGeneratorIndexToReset > -1) {
           if (!stages.length) {
-            clearInvalidFlowState(flow, pageGeneratorIndexToReset, true);
+            clearInvalidPgOrPpStates(flow, pageGeneratorIndexToReset, true);
           } else {
             // at this index, reset resource for all the passed stages
             clearInvalidStagesForPgOrPp(flow, pageGeneratorIndexToReset, stages, statusToUpdate, true);
             // then pass index+1 to reset everything
-            clearInvalidFlowState(flow, pageGeneratorIndexToReset + 1, true);
+            clearInvalidPgOrPpStates(flow, pageGeneratorIndexToReset + 1, true);
           }
 
           break;
@@ -202,12 +202,12 @@ export default function (state = {}, action) {
 
         if (pageProcessorIndexToReset > -1) {
           if (!stages.length) {
-            clearInvalidFlowState(flow, pageProcessorIndexToReset);
+            clearInvalidPgOrPpStates(flow, pageProcessorIndexToReset);
           } else {
             // at this index, reset resource for all the passed stages
-            clearInvalidFlowState(flow, pageProcessorIndexToReset, stages, statusToUpdate);
+            clearInvalidStagesForPgOrPp(flow, pageProcessorIndexToReset, stages, statusToUpdate);
             // then pass index+1 to reset everything for other resources
-            clearInvalidFlowState(flow, pageProcessorIndexToReset + 1);
+            clearInvalidPgOrPpStates(flow, pageProcessorIndexToReset + 1);
           }
         }
 
@@ -235,13 +235,13 @@ export default function (state = {}, action) {
 
         // reset all pg data stages starting from index
         if (updatedPgIndex > -1) {
-          clearInvalidFlowState(currentFlow, updatedPgIndex, true);
+          clearInvalidPgOrPpStates(currentFlow, updatedPgIndex, true);
           break;
         }
 
         // reset all pp data stages starting from index
         if (updatedPpIndex > -1) {
-          clearInvalidFlowState(currentFlow, updatedPpIndex);
+          clearInvalidPgOrPpStates(currentFlow, updatedPpIndex);
         }
 
         break;
