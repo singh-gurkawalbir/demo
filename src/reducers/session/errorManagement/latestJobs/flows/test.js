@@ -4,9 +4,11 @@ import actions from '../../../../../actions';
 
 describe('errorManagement latestJobs flows reducer test cases', () => {
   test('should return initial state when action is not matched', () => {
-    const state = reducer(undefined, { type: 'RANDOM_ACTION' });
-
-    expect(state).toEqual({});
+    expect(reducer(undefined, { type: 'RANDOM_ACTION' })).toEqual({});
+    expect(reducer(null, { type: 'RANDOM_ACTION' })).toEqual(null);
+    expect(reducer('string', { type: 'RANDOM_ACTION' })).toEqual('string');
+    expect(reducer(undefined, { type: undefined })).toEqual({});
+    expect(reducer(undefined, { type: null })).toEqual({});
   });
   describe('errorManagement latestJobs reducer', () => {
     describe('errorManagement flow latestJobs request action', () => {
@@ -531,10 +533,13 @@ describe('errorManagement latestJobs flows reducer test cases', () => {
 describe('errorManagement latestJobs flows selectors test cases', () => {
   describe('latestFlowJobsList', () => {
     test('should return empty state when no match found.', () => {
-      expect(selectors.latestFlowJobsList(undefined, 'dummy')).toEqual(
-        {}
-      );
+      expect(selectors.latestFlowJobsList(undefined, 'dummy')).toEqual({});
+      expect(selectors.latestFlowJobsList(null, 'dummy')).toEqual({});
+      expect(selectors.latestFlowJobsList('string', 'dummy')).toEqual({});
+      expect(selectors.latestFlowJobsList(123, 'dummy')).toEqual({});
       expect(selectors.latestFlowJobsList({}, 'dummy')).toEqual({});
+      expect(selectors.latestFlowJobsList(undefined, null)).toEqual({});
+      expect(selectors.latestFlowJobsList()).toEqual({});
     });
 
     test('should return correct state data when a match is found.', () => {
@@ -577,10 +582,13 @@ describe('errorManagement latestJobs flows selectors test cases', () => {
 
   describe('getInProgressLatestJobs', () => {
     test('should return empty state when no match found.', () => {
-      expect(selectors.getInProgressLatestJobs(undefined, 'dummy')).toEqual(
-        []
-      );
+      expect(selectors.getInProgressLatestJobs(undefined, 'dummy')).toEqual([]);
+      expect(selectors.getInProgressLatestJobs(null, 'dummy')).toEqual([]);
+      expect(selectors.getInProgressLatestJobs('string', 'dummy')).toEqual([]);
+      expect(selectors.getInProgressLatestJobs(123, 'dummy')).toEqual([]);
       expect(selectors.getInProgressLatestJobs({}, 'dummy')).toEqual([]);
+      expect(selectors.getInProgressLatestJobs(undefined, null)).toEqual([]);
+      expect(selectors.getInProgressLatestJobs()).toEqual([]);
     });
 
     test('should return correct state data when a match is found.', () => {
