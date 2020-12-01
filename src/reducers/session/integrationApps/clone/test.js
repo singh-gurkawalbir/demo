@@ -14,7 +14,7 @@ describe('integrationApps reducer test cases', () => {
   });
   describe('intetgrationApps clone reducer', () => {
     describe('integrationApps receivedIntegrationClonedStatus action', () => {
-      test('should find the integration with id and set isTriggered flag to true', () => {
+      test('should find the integration with id and set cloning details on the integration key', () => {
         const state = reducer(
           {},
           actions.integrationApp.clone.receivedIntegrationClonedStatus(
@@ -66,7 +66,7 @@ describe('integrationApps reducer test cases', () => {
     });
 
     describe('integrationApps clone clearIntegrationClonedStatus action', () => {
-      test('should find the integration with id and set isTriggered and verifying flag to true', () => {
+      test('should find the integration with id and reset the flags present', () => {
         const state = reducer(
           {},
           actions.integrationApp.clone.clearIntegrationClonedStatus(
