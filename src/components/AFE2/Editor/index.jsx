@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles, Tab, Tabs } from '@material-ui/core';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { selectors } from '../../../reducers';
 import PanelGrid from '../../AFE/PanelGrid';
 import PanelTitle from '../../AFE/PanelTitle';
@@ -26,21 +27,32 @@ const useTabStyles = makeStyles({
   },
 });
 
-export default function Editor({ editorId, ...rest }) {
+export default function Editor({ editorId }) {
   const classes = useStyles();
-  const editor = useSelector(state => selectors._editor(state, editorId));
-  const {processor: type, layout} = editor;
+  const editorContext = useSelector(state => {
+    // we want to remove all volatile fields. If we take the
+    // editor state directly, it causes re-renders since its ref changes
+    // with any change. Possibly we can create a dedicated selector to
+    // return a static editor context object.
+    // for now, adding fields as they are used so we understand what part of the
+    // editor state is needed to render the editor wire-frame.
+    const {processor, layout, mode, autoEvaluate, resultMode} = selectors._editor(state, editorId);
+
+    return {processor, layout, mode, autoEvaluate, resultMode};
+  }, shallowEqual);
+
+  const {processor: type, layout} = editorContext;
 
   if (!type) { return null; }
 
   const { panels } = editorMetadata[type];
-  const gridTemplate = classes[resolveValue(layout, editor)];
+  const gridTemplate = classes[resolveValue(layout, editorContext)];
 
   // console.log(layout, panels);
   const SinglePanel = ({panel: p}) => (
     <>
-      <PanelTitle title={resolveValue(p.title, editor)} />
-      <p.Panel editorId={editorId} {...p.props} {...rest} />
+      <PanelTitle title={resolveValue(p.title, editorContext)} />
+      <p.Panel editorId={editorId} {...p.props} />
     </>
   );
 
@@ -80,7 +92,7 @@ export default function Editor({ editorId, ...rest }) {
           id={`tabpanel-${activeKey}`}
           aria-labelledby={`tab-${tabValue}`}
           className={classes.tabPanel}>
-          <ActivePanel editorId={editorId} {...activePanelProps} {...rest} />
+          <ActivePanel editorId={editorId} {...activePanelProps} />
         </div>
       </>
     );
@@ -88,7 +100,7 @@ export default function Editor({ editorId, ...rest }) {
 
   return (
     <PanelGrid className={gridTemplate}>
-      {resolveValue(panels, editor).map(p => (
+      {resolveValue(panels, editorContext).map(p => (
         <PanelGridItem key={p.area} gridArea={p.area}>
           {!p.group
             ? <SinglePanel panel={p} />
