@@ -2,7 +2,7 @@ import RulePanel from '../panels/Rule';
 import JavaScriptPanel from '../panels/JavaScript';
 import FormPreviewPanel from '../panels/formBuilder/FormPreview';
 import OutputPanel from '../panels/formBuilder/Output';
-import ToggleMode from '../../Drawer/actions/ToggleMode';
+import ToggleFormMode from '../../Drawer/actions/ToggleFormMode';
 
 export default {
   type: 'formBuilder',
@@ -41,5 +41,5 @@ export default {
 
     return panels;
   },
-  drawerActions: [ToggleMode],
+  drawerActions: [ToggleFormMode],
 };

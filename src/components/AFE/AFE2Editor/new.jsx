@@ -46,21 +46,16 @@ export default function _AFE2EditorDrawer_(props) {
     disabled,
   } = props;
   const dispatch = useDispatch();
-  const { v1Rule, v2Rule, isEditorV2Supported } = useSelector(state => selectors._editor(state, id));
+  const { isEditorV2Supported } = useSelector(state => selectors._editor(state, id));
 
   const handleVersionToggle = useCallback(
     newVersion => {
-      if (newVersion === 2) {
-        dispatch(actions._editor.patch(id, { rule: v2Rule || '', result: '' }));
-      } else {
-        dispatch(actions._editor.patch(id, { rule: v1Rule || '', result: '' }));
-      }
       dispatch(actions._editor.toggleVersion(id, newVersion));
       if (onVersionToggle) {
         onVersionToggle(newVersion);
       }
     },
-    [dispatch, id, onVersionToggle, v1Rule, v2Rule]
+    [dispatch, id, onVersionToggle]
   );
 
   const handleCloseEditor = useCallback(

@@ -18,7 +18,7 @@ import exportHooksAction from './actions/exportHooks';
 import as2RoutingAction from './actions/as2Routing';
 import transformationAction from './actions/transformation';
 import scheduleAction from './actions/schedule';
-import exportFilterAction from './actions/exportFilter';
+import exportFilterAction from './actions/_exportFilter';
 import { actionsMap } from '../../../utils/flows';
 
 /* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme.

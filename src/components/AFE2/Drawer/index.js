@@ -23,13 +23,16 @@ const useStyles = makeStyles({
 function RouterWrappedContent({ hideSave, onClose, fullPath}) {
   const classes = useStyles();
   const { editorId } = useParams();
-  let editor = useSelector(state => selectors.editor(state, editorId));
+  const editor = useSelector(state => selectors._editor(state, editorId));
 
-  // hardcode editor for now until data layer is connected..
-  editor = { type: 'formBuilder', mode: 'json' };
+  // TODO: @Ashu, processor and type are not the same. type is used to differentiate
+  // between editors that share the same processor. We then can have metadata specific
+  // to each editor variant. If you have a better idea, pls share. Also maybe "type"
+  // could be renamed.
+  const {processor: type} = editor;
 
-  const {type} = editor;
-  const { label, drawerActions } = editorMetadata[type];
+  // console.log('drawer editor', editorId, editor);
+  const { label, drawerActions } = editorMetadata[type] || {};
 
   return (
     <>

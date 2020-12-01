@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import { TreeView, TreeItem} from '@material-ui/lab';
+import { TreeView} from '@material-ui/lab';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
@@ -12,6 +12,7 @@ import IntegrationIcon from '../../../components/icons/IntegrationAppsIcon';
 import FlowIcon from '../../../components/icons/FlowsIcon';
 import ResourcesIcon from '../../../components/icons/ResourcesIcon';
 import ResourceItemsBranch from './ResourceActionsBranch';
+import OverflowTreeItem from './OverflowTreeItem';
 
 const useStyles = makeStyles(theme => ({
   editorItem: {
@@ -49,7 +50,7 @@ export default function ExplorerMenu({ onClick }) {
     if (id !== flowId) return null;
 
     if (!flowResources?.length) {
-      return <TreeItem nodeId={`${id}-empty`} label="No Resources" />;
+      return <OverflowTreeItem nodeId={`${id}-empty`} label="No Resources" />;
     }
 
     // onClick(flowId, resourceId, stage, fieldId)
@@ -59,13 +60,13 @@ export default function ExplorerMenu({ onClick }) {
     const handleClick = (type, fieldId) => onClick(flowId, resourceId, type, fieldId);
 
     return flowResources.map(({_id: id, name}) => (
-      <TreeItem
+      <OverflowTreeItem
         key={id} nodeId={id} label={name || id}
         icon={<ResourcesIcon />}
         onClick={() => setResourceId(id)} >
         {(id === resourceId) &&
           <ResourceItemsBranch resourceId={resourceId} onClick={handleClick} />}
-      </TreeItem>
+      </OverflowTreeItem>
     ));
   };
 
@@ -73,16 +74,16 @@ export default function ExplorerMenu({ onClick }) {
     if (id !== integrationId) return null;
 
     if (!flows.length) {
-      return <TreeItem nodeId={`${id}-empty`} label="No Flows" />;
+      return <OverflowTreeItem nodeId={`${id}-empty`} label="No Flows" />;
     }
 
     return flows.map(({id, name}) => (
-      <TreeItem
+      <OverflowTreeItem
         key={id} nodeId={id} label={name || id}
         icon={<FlowIcon />}
         onClick={() => setFlowId(id)}>
         <ResourcesBranch id={id} />
-      </TreeItem>
+      </OverflowTreeItem>
     ));
   };
 
@@ -100,13 +101,13 @@ export default function ExplorerMenu({ onClick }) {
         expanded={expanded}
       >
         {integrations.map(({id, name}) => (
-          <TreeItem
+          <OverflowTreeItem
             icon={<IntegrationIcon />}
             className={classes.editorItem}
             key={id} nodeId={id} label={name}
             onClick={() => setIntegrationId(id)}>
             <FlowBranch id={id} />
-          </TreeItem>
+          </OverflowTreeItem>
         ))}
       </TreeView>
     </LoadResources>

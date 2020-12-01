@@ -19,5 +19,6 @@ export default {
   type: 'handlebars',
   name: 'Nested JSON record',
   description: 'Nested JSON record',
-  data: JSON.stringify(sampleData, null, 2),
+  // data: JSON.stringify(sampleData, null, 2),
+  data: sampleData,
 };

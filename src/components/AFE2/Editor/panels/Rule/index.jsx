@@ -8,10 +8,8 @@ export default function RulePanel({ editorId, mode, readOnly }) {
   const dispatch = useDispatch();
   const rule = useSelector(state => selectors._editorRule(state, editorId));
   const { errorLine, error} = useSelector(state => selectors._editorPreviewError(state, editorId));
-  const handleChange = rule => {
-    // dispatch(actions.editor.patchRule(value));
-    // TODO: have separate patchrule which then can do version1/2 logic
-    dispatch(actions._editor.patch(editorId, { rule }));
+  const handleChange = newRule => {
+    dispatch(actions._editor.patchRule(editorId, newRule));
   };
 
   return (

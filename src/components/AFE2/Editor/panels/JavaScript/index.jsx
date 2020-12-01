@@ -41,49 +41,42 @@ const useStyles = makeStyles(theme => ({
 }));
 const scriptFilterConfig = { type: 'scripts' };
 
-export default function JavaScriptPanel({ editorId }) {
+export default function JavaScriptPanel(props) {
+  const { editorId, disabled, insertStubKey, errorLine, hasError } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const aceEditor = useRef(null);
-  const editor = useSelector(state => selectors.editor(state, editorId));
-  const {
-    code = '',
-    fetchScriptContent = false,
-    entryFunction = '',
-    scriptId = '',
-    insertStubKey,
-    disabled,
-    errorLine,
-    hasError,
-  } = editor;
+  const editor = useSelector(state => selectors._editor(state, editorId));
+  const {code = '', entryFunction = '', scriptId = '', fetchScriptContent } = editor.rule || {};
+
   const data = useSelectorMemo(selectors.makeResourceDataSelector, 'scripts', scriptId);
   const scriptContent = data?.merged?.content;
   const allScripts = useSelectorMemo(selectors.makeResourceListSelector, scriptFilterConfig).resources;
-  const patchEditor = useCallback(
+  const patchRule = useCallback(
     val => {
-      dispatch(actions.editor.patch(editorId, val));
+      dispatch(actions._editor.patchRule(editorId, val));
     },
     [dispatch, editorId]
   );
   const requestScript = useCallback(() => {
     dispatch(actions.resource.request('scripts', scriptId));
   }, [dispatch, scriptId]);
-  const handleCodeChange = useCallback(code => patchEditor({ code }), [
-    patchEditor,
+  const handleCodeChange = useCallback(code => patchRule({ code }), [
+    patchRule,
   ]);
   const handleScriptChange = useCallback(
     event => {
       if (!event.target.value) {
-        return patchEditor({
+        return patchRule({
           scriptId: '',
           code: '',
           entryFunction: '',
         });
       }
 
-      patchEditor({ scriptId: event.target.value, fetchScriptContent: true });
+      patchRule({ scriptId: event.target.value, fetchScriptContent: true });
     },
-    [patchEditor]
+    [patchRule]
   );
   const handleInsertStubClick = useCallback(() => {
     const editor = aceEditor.current;
@@ -94,32 +87,22 @@ export default function JavaScriptPanel({ editorId }) {
   }, [insertStubKey]);
 
   useEffect(() => {
-    if (fetchScriptContent && scriptContent !== undefined) {
+    // fetchScriptContent ensures we are patching code only first time (when state is initialized) or
+    // only when scriptId changes (and not on every remount)
+    if (fetchScriptContent && scriptContent) {
       const patchObj = {
         code: scriptContent,
         fetchScriptContent: false,
       };
 
-      // check if initCode property existings in editor. If no, save a copy of copy as _init_code for dirty checking
-      if (!('_init_code' in editor)) patchObj._init_code = scriptContent;
-
-      patchEditor(patchObj);
+      // save a copy of _init_code for dirty checking
+      patchObj._init_code = scriptContent;
+      patchRule(patchObj);
     } else if (scriptContent === undefined && scriptId) {
       requestScript();
-    } else if (scriptId === undefined && !('_init_code' in editor)) {
-      // case of scriptId selected as none
-      patchEditor({ _init_code: undefined });
     }
-  }, [
-    code,
-    editor,
-    editorId,
-    fetchScriptContent,
-    patchEditor,
-    requestScript,
-    scriptContent,
-    scriptId,
-  ]);
+  }, [scriptId, scriptContent, patchRule, requestScript, fetchScriptContent]);
+
   const defaultItem = (
     <MenuItem key="__placeholder" value="">
       None
@@ -160,7 +143,7 @@ export default function JavaScriptPanel({ editorId }) {
             className={classes.textField}
             value={entryFunction}
             onChange={event =>
-              patchEditor({ entryFunction: event.target.value })}
+              patchRule({ entryFunction: event.target.value })}
             label="Function"
             margin="dense"
           />
