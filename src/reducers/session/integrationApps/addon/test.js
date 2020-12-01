@@ -65,5 +65,10 @@ describe('integrationApps addon selectors test cases', () => {
 
       expect(selectors.isAddOnInstallInProgress(state, 1)).toEqual(expectedData);
     });
+    test('should return correct data when a matching id is not found.', () => {
+      const expectedData = { installInprogress: false };
+
+      expect(selectors.isAddOnInstallInProgress({1: 'dummyData'}, 1)).toEqual(expectedData);
+    });
   });
 });
