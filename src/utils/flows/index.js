@@ -615,7 +615,6 @@ export function getAllConnectionIdsUsedInTheFlow(flow, connections, exports, imp
 }
 
 export function getIAResources(integrationResource = {}, allFlows, allConnections, allExports, allImports, options = {}) {
-  console.log('options', options);
   const { supportsMultiStore, sections } = integrationResource?.settings || {};
   const { integrationId, storeId, ignoreUnusedConnections } = options;
   const integrationConnections = allConnections.filter(c => c._integrationId === integrationId);

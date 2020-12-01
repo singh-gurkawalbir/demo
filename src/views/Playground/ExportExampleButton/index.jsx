@@ -25,7 +25,6 @@ export default function ExportExampleButton({ editorId }) {
   const [open, setOpen] = useState(false);
   const canExport = useSelector(state => {
     if (!editorId) return false;
-
     const { developer, email = '' } = selectors.userProfile(state);
 
     // Only Celigo developers can use this feature (currently).
@@ -60,10 +59,10 @@ export default function ExportExampleButton({ editorId }) {
       </Button>
 
       <Dialog open={open} onClose={handleClose} aria-labelledby="example-dialog" maxWidth="lg">
-        <DialogTitle id="example-dialog">Subscribe</DialogTitle>
+        <DialogTitle id="example-dialog">Export example</DialogTitle>
         <DialogContent className={classes.dialogContent}>
           <DialogContentText>
-            Send this JSON snippet to the dave@celigo.com.
+            Send this JSON snippet to dave@celigo.com.
           </DialogContentText>
 
           <CodeEditor readonly value={example} mode="json" />
