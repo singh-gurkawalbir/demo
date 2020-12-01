@@ -4,9 +4,12 @@ import actions from '../../../../actions';
 
 describe('integrationApps reducer test cases', () => {
   test('should return initial state when action is not matched', () => {
-    const state = reducer(undefined, { type: 'RANDOM_ACTION' });
-
-    expect(state).toEqual({});
+    expect(reducer(undefined, { type: 'RANDOM_ACTION' })).toEqual({});
+    expect(reducer(null, { type: 'RANDOM_ACTION' })).toEqual(null);
+    expect(reducer('string', { type: 'RANDOM_ACTION' })).toEqual('string');
+    expect(reducer(undefined, { type: null})).toEqual({});
+    expect(reducer(undefined, { type: undefined })).toEqual({});
+    expect(reducer(123, { type: 123 })).toEqual(123);
   });
   describe('intetgrationApps addNewStore reducer', () => {
     const addNewStoreSteps = [
@@ -795,10 +798,12 @@ describe('integrationApps reducer test cases', () => {
 describe('integrationApps addStore selectors test cases', () => {
   describe('addNewStoreSteps', () => {
     test('should return empty state when no match found.', () => {
-      expect(selectors.addNewStoreSteps(undefined, 'dummy')).toEqual(
-        {}
-      );
+      expect(selectors.addNewStoreSteps(undefined, 'dummy')).toEqual({});
       expect(selectors.addNewStoreSteps({}, 'dummy')).toEqual({});
+      expect(selectors.addNewStoreSteps(null, 'dummy')).toEqual({});
+      expect(selectors.addNewStoreSteps(123, 'dummy')).toEqual({});
+      expect(selectors.addNewStoreSteps(undefined)).toEqual({});
+      expect(selectors.addNewStoreSteps({}, null)).toEqual({});
     });
 
     test('should return correct state data when a match is found.', () => {
