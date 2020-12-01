@@ -38,7 +38,7 @@ import { templateSagas } from './template';
 import { cloneSagas } from './clone';
 import { uploadFileSagas } from './uploadFile';
 import { stackSagas } from './stack';
-import sampleDataSagas from './sampleData';
+import exportsSampleDataSagas from './sampleData/exports';
 import flowDataSagas from './sampleData/flows';
 import rawDataUpdateSagas from './sampleData/rawDataUpdates';
 import importsSampleDataSagas from './sampleData/imports';
@@ -154,7 +154,7 @@ function* allSagas() {
     ...agentSagas,
     ...uploadFileSagas,
     ...stackSagas,
-    ...sampleDataSagas,
+    ...exportsSampleDataSagas,
     ...flowDataSagas,
     ...rawDataUpdateSagas,
     ...importsSampleDataSagas,
