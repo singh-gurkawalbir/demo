@@ -4,13 +4,17 @@ import actions from '../../../../actions';
 
 describe('integrationApps reducer test cases', () => {
   test('should return initial state when action is not matched', () => {
-    const state = reducer(undefined, { type: 'RANDOM_ACTION' });
-
-    expect(state).toEqual({ });
+    expect(reducer(undefined, { type: 'RANDOM_ACTION' })).toEqual({ });
+    expect(reducer({}, { type: 'RANDOM_ACTION' })).toEqual({ });
+    expect(reducer(null, { type: 'RANDOM_ACTION' })).toEqual(null);
+    expect(reducer(undefined, { type: null })).toEqual({ });
+    expect(reducer(undefined, { type: undefined })).toEqual({ });
+    expect(reducer('string', { type: 'RANDOM_ACTION' })).toEqual('string');
+    expect(reducer(123, { type: 'RANDOM_ACTION' })).toEqual(123);
   });
   describe('intetgrationApps clone reducer', () => {
     describe('integrationApps receivedIntegrationClonedStatus action', () => {
-      test('should find the integration with id and set isTriggered flag to true', () => {
+      test('should find the integration with id and set cloning details on the integration key', () => {
         const state = reducer(
           {},
           actions.integrationApp.clone.receivedIntegrationClonedStatus(
@@ -62,7 +66,7 @@ describe('integrationApps reducer test cases', () => {
     });
 
     describe('integrationApps clone clearIntegrationClonedStatus action', () => {
-      test('should find the integration with id and set isTriggered and verifying flag to true', () => {
+      test('should find the integration with id and reset the flags present', () => {
         const state = reducer(
           {},
           actions.integrationApp.clone.clearIntegrationClonedStatus(
@@ -119,6 +123,14 @@ describe('integrationApps selectors test cases', () => {
           {isCloned: false, integrationId: undefined}
         );
         expect(selectors.integrationClonedDetails({}, 'dummy')).toEqual({isCloned: false, integrationId: undefined});
+        expect(selectors.integrationClonedDetails(null, 'dummy')).toEqual(
+          {isCloned: false, integrationId: undefined}
+        );
+        expect(selectors.integrationClonedDetails({}, {})).toEqual({isCloned: false, integrationId: undefined});
+        expect(selectors.integrationClonedDetails(123, 'dummy')).toEqual(
+          {isCloned: false, integrationId: undefined}
+        );
+        expect(selectors.integrationClonedDetails('striing', 'dummy')).toEqual({isCloned: false, integrationId: undefined});
       });
 
       test('should return correct state data when a match is found.', () => {
