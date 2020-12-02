@@ -65,87 +65,6 @@ const flow = {
   },
 };
 
-describe('deleteFlow saga', () => {
-  const requestOptions = {
-    path: '/suitescript/connections/c1/integrations/i1/flows/1?type=EXPORT',
-    opts: {
-      method: 'DELETE',
-    },
-  };
-
-  test('should dispatch resource deleted action when delete flow call is successful', () => expectSaga(deleteFlow, { ssLinkedConnectionId, integrationId, _id })
-    .provide([[call(apiCallWithRetry, requestOptions), {}]])
-    .put(
-      actions.suiteScript.resource.deleted('flows', _id, ssLinkedConnectionId)
-    )
-    .run());
-
-  test('should not dispatch resource deleted action when delete flow call fails', () => expectSaga(deleteFlow, { ssLinkedConnectionId, integrationId, _id })
-    .provide([[call(apiCallWithRetry, requestOptions), throwError(error)]])
-    .not.put(
-      actions.suiteScript.resource.deleted('flows', _id, ssLinkedConnectionId)
-    )
-    .run());
-});
-
-describe('disableFlow saga', () => {
-  const requestOptions = {
-    path: '/suitescript/connections/c1/integrations/i1/flows/1/disable',
-    opts: {
-      method: 'PUT',
-      body: {type: 'EXPORT'},
-    },
-  };
-
-  test('should dispatch resource received action and flow onOffProgress action when disable flow call is successful', () => expectSaga(disableFlow, { ssLinkedConnectionId, integrationId, _id })
-    .provide([[call(apiCallWithRetry, requestOptions), flow]])
-    .put(
-      actions.suiteScript.resource.received(ssLinkedConnectionId, integrationId, 'flows', flow)
-    )
-    .put(
-      actions.suiteScript.flow.isOnOffActionInprogress({onOffInProgress: false, ssLinkedConnectionId, _id})
-    )
-    .run());
-
-  test('should not dispatch resource received action but dispatch flow onOffProgress action when disable flow call fails', () => expectSaga(disableFlow, { ssLinkedConnectionId, integrationId, _id })
-    .provide([[call(apiCallWithRetry, requestOptions), throwError(error)]])
-    .not.put(
-      actions.suiteScript.resource.received(ssLinkedConnectionId, integrationId, 'flows', flow))
-    .put(
-      actions.suiteScript.flow.isOnOffActionInprogress({onOffInProgress: false, ssLinkedConnectionId, _id})
-    )
-    .run());
-});
-
-describe('enableFlow saga', () => {
-  const requestOptions = {
-    path: '/suitescript/connections/c1/integrations/i1/flows/1/enable',
-    opts: {
-      method: 'PUT',
-      body: {type: 'EXPORT'},
-    },
-  };
-
-  test('should dispatch resource received action and flow onOffProgress action when enable flow call is successful', () => expectSaga(enableFlow, { ssLinkedConnectionId, integrationId, _id })
-    .provide([[call(apiCallWithRetry, requestOptions), flow]])
-    .put(
-      actions.suiteScript.resource.received(ssLinkedConnectionId, integrationId, 'flows', flow)
-    )
-    .put(
-      actions.suiteScript.flow.isOnOffActionInprogress({onOffInProgress: false, ssLinkedConnectionId, _id})
-    )
-    .run());
-
-  test('should not dispatch resource received action but dispatch flow onOffProgress action when enable flow call fails', () => expectSaga(enableFlow, { ssLinkedConnectionId, integrationId, _id })
-    .provide([[call(apiCallWithRetry, requestOptions), throwError(error)]])
-    .not.put(
-      actions.suiteScript.resource.received(ssLinkedConnectionId, integrationId, 'flows', flow))
-    .put(
-      actions.suiteScript.flow.isOnOffActionInprogress({onOffInProgress: false, ssLinkedConnectionId, _id})
-    )
-    .run());
-});
-
 describe('runFlow saga', () => {
   const requestOptions = {
     path: '/suitescript/connections/c1/integrations/i1/flows/1/run',
@@ -193,6 +112,87 @@ describe('runFlow saga', () => {
         ssLinkedConnectionId,
         integrationId,
       })
+    )
+    .run());
+});
+
+describe('enableFlow saga', () => {
+  const requestOptions = {
+    path: '/suitescript/connections/c1/integrations/i1/flows/1/enable',
+    opts: {
+      method: 'PUT',
+      body: {type: 'EXPORT'},
+    },
+  };
+
+  test('should dispatch resource received action and flow onOffProgress action when enable flow call is successful', () => expectSaga(enableFlow, { ssLinkedConnectionId, integrationId, _id })
+    .provide([[call(apiCallWithRetry, requestOptions), flow]])
+    .put(
+      actions.suiteScript.resource.received(ssLinkedConnectionId, integrationId, 'flows', flow)
+    )
+    .put(
+      actions.suiteScript.flow.isOnOffActionInprogress({onOffInProgress: false, ssLinkedConnectionId, _id})
+    )
+    .run());
+
+  test('should not dispatch resource received action but dispatch flow onOffProgress action when enable flow call fails', () => expectSaga(enableFlow, { ssLinkedConnectionId, integrationId, _id })
+    .provide([[call(apiCallWithRetry, requestOptions), throwError(error)]])
+    .not.put(
+      actions.suiteScript.resource.received(ssLinkedConnectionId, integrationId, 'flows', flow))
+    .put(
+      actions.suiteScript.flow.isOnOffActionInprogress({onOffInProgress: false, ssLinkedConnectionId, _id})
+    )
+    .run());
+});
+
+describe('disableFlow saga', () => {
+  const requestOptions = {
+    path: '/suitescript/connections/c1/integrations/i1/flows/1/disable',
+    opts: {
+      method: 'PUT',
+      body: {type: 'EXPORT'},
+    },
+  };
+
+  test('should dispatch resource received action and flow onOffProgress action when disable flow call is successful', () => expectSaga(disableFlow, { ssLinkedConnectionId, integrationId, _id })
+    .provide([[call(apiCallWithRetry, requestOptions), flow]])
+    .put(
+      actions.suiteScript.resource.received(ssLinkedConnectionId, integrationId, 'flows', flow)
+    )
+    .put(
+      actions.suiteScript.flow.isOnOffActionInprogress({onOffInProgress: false, ssLinkedConnectionId, _id})
+    )
+    .run());
+
+  test('should not dispatch resource received action but dispatch flow onOffProgress action when disable flow call fails', () => expectSaga(disableFlow, { ssLinkedConnectionId, integrationId, _id })
+    .provide([[call(apiCallWithRetry, requestOptions), throwError(error)]])
+    .not.put(
+      actions.suiteScript.resource.received(ssLinkedConnectionId, integrationId, 'flows', flow))
+    .put(
+      actions.suiteScript.flow.isOnOffActionInprogress({onOffInProgress: false, ssLinkedConnectionId, _id})
+    )
+    .run());
+});
+
+describe('deleteFlow saga', () => {
+  const requestOptions = {
+    path: '/suitescript/connections/c1/integrations/i1/flows/1?type=EXPORT',
+    opts: {
+      method: 'DELETE',
+    },
+  };
+
+  test('should dispatch resource deleted action when delete flow call is successful', () => expectSaga(deleteFlow, { ssLinkedConnectionId, integrationId, _id })
+    .provide([[call(apiCallWithRetry, requestOptions), {}]])
+    .put(
+      actions.suiteScript.resource.deleted('flows', _id, ssLinkedConnectionId)
+    )
+    .run());
+
+  test('should not dispatch resource deleted action when delete flow call fails', () => expectSaga(deleteFlow, { ssLinkedConnectionId, integrationId, _id })
+    .provide([[call(apiCallWithRetry, requestOptions), throwError(error)]])
+    .not.put(
+      actions.suiteScript.resource.deleted('flows', _id, ssLinkedConnectionId)
     )
     .run());
 });
