@@ -11,6 +11,7 @@ import Editor from '../Editor';
 import editorMetadata from '../Editor/metadata';
 import PreviewButtonGroup from '../PreviewButtonGroup';
 import SaveButtonGroup from '../SaveButtonGroup';
+import HelpIconButton from './actions/HelpIconButton';
 
 const useStyles = makeStyles({
   spaceBetween: { flexGrow: 100 },
@@ -40,6 +41,7 @@ function RouterWrappedContent({ hideSave, onClose, fullPath}) {
         { // eslint-disable-next-line react/no-array-index-key
           drawerActions && drawerActions.map((Action, i) => <Action key={i} editorId={editorId} />)
         }
+        <HelpIconButton editorId={editorId} />
       </DrawerHeader>
 
       <DrawerContent>

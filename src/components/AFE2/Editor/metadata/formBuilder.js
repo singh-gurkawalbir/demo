@@ -7,6 +7,7 @@ import ToggleFormMode from '../../Drawer/actions/ToggleFormMode';
 export default {
   type: 'formBuilder',
   label: 'Form builder',
+  fieldId: 'settingsForm',
   description: 'Construct a form from metadata',
   layout: ({ mode }) => `${mode}FormBuilder`,
   panels: ({ mode }) => {

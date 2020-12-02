@@ -5,6 +5,7 @@ import FeaturePanel from '../panels/Feature';
 
 export default {
   type: 'sql',
+  fieldId: 'rdbms.query',
   label: 'SQL query builder',
   description: 'Use a handlebar template to construct SQL queries',
   layout: 'compact',

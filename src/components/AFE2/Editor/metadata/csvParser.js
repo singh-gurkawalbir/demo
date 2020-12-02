@@ -4,6 +4,7 @@ import CsvParseRules from '../panels/CsvParseRules';
 
 export default {
   type: 'csvParser',
+  fieldId: 'file.csv',
   label: 'Delimited file parser',
   description: 'Converts delimited data into JSON',
   layout: 'compact',
