@@ -77,7 +77,7 @@ export function* pollForInProgressJobs() {
 }
 
 export function* getJobDetails({ jobId }) {
-  const path = `/jobs/${jobId}`;
+  const path = `/jobs/${jobId}/family`;
   const opts = { method: 'GET' };
   let job;
 
