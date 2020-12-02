@@ -22,6 +22,7 @@ export function* pageProcessorPreview({
   throwOnError = false,
   refresh = false,
   includeStages = false,
+  runOffline = false,
 }) {
   if (!flowId || !_pageProcessorId) return;
   const { merged } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
@@ -35,11 +36,13 @@ export function* pageProcessorPreview({
     flow,
     type: 'pageGenerators',
     refresh,
+    runOffline,
   });
   const pageProcessorMap = yield call(fetchFlowResources, {
     flow,
     type: 'pageProcessors',
     eliminateDataProcessors: true,
+    runOffline,
   });
 
   // Override the map with provided document for this _pageProcessorId
@@ -98,6 +101,25 @@ export function* pageProcessorPreview({
 
     return previewData;
   } catch (e) {
+    const isRunOfflineConfigured = Object.values(pageGeneratorMap)
+      .some(
+        pgInfo => pgInfo?.options?.runOfflineOptions
+      );
+
+    // When runOffline mode fails make preview call without offlineMode and move further
+    if (runOffline && isRunOfflineConfigured) {
+      return yield call(pageProcessorPreview, {
+        flowId,
+        _pageProcessorId,
+        _pageProcessorDoc,
+        previewType,
+        resourceType,
+        hidden,
+        throwOnError,
+        refresh,
+        includeStages,
+      });
+    }
     // Error handler
     if (throwOnError) {
       throw e;

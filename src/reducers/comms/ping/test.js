@@ -6,6 +6,9 @@ const invalidInputs = [null, undefined, ''];
 
 // fabricates a test vector table for each action and its corresponding invalid inputs
 const generateTestData = allActions => allActions.map(act => invalidInputs.map(input => [act.name, input, act.action])).flat();
+const initialState = {
+  2: { status: PING_STATES.SUCCESS},
+};
 
 describe('ping reducer', () => {
   const resId = 1;
@@ -19,79 +22,90 @@ describe('ping reducer', () => {
       { name: 'actions.resource.connections.testCancelled', action: actions.resource.connections.testCancelled},
     ];
 
-    test.each(generateTestData(allActions))('for action %s with resourceID %s should return {} state', (actionName, input, action) => {
+    test.each(generateTestData(allActions))('for action %s with resourceID %s should return initial state', (actionName, input, action) => {
       // checking for invalid resourceId input
-      const newState = reducer(undefined, action(input));
+      const newState = reducer(initialState, action(input));
 
-      expect(newState).toEqual({});
+      expect(newState).toEqual(initialState);
     });
   });
 
   test('should show loading state', () => {
-    const newState = reducer(undefined, actions.resource.connections.test(resId));
+    const newState = reducer(initialState, actions.resource.connections.test(resId));
 
     expect(newState).toEqual({1: {
       status: PING_STATES.LOADING,
     },
+    2: { status: PING_STATES.SUCCESS},
     });
   });
 
   test('should show success state', () => {
-    const newState = reducer(undefined, actions.resource.connections.testSuccessful(resId));
+    const newState = reducer(initialState, actions.resource.connections.testSuccessful(resId));
 
     expect(newState).toEqual({1: {
       status: PING_STATES.SUCCESS,
     },
+    2: { status: PING_STATES.SUCCESS},
     });
   });
   test('should show errored state', () => {
     const error = 'error msg';
-    const newState = reducer(undefined, actions.resource.connections.testErrored(resId, error));
+    const newState = reducer(initialState, actions.resource.connections.testErrored(resId, error));
 
     expect(newState).toEqual({1: {
       status: PING_STATES.ERROR,
       message: error,
     },
+    2: { status: PING_STATES.SUCCESS},
     });
   });
   test('should show aborted state', () => {
     const abortedMsg = 'aborted msg';
-    const newState = reducer(undefined, actions.resource.connections.testCancelled(resId, abortedMsg));
+    const newState = reducer(initialState, actions.resource.connections.testCancelled(resId, abortedMsg));
 
     expect(newState).toEqual({1: {
       status: PING_STATES.ABORTED,
       message: abortedMsg,
     },
+    2: { status: PING_STATES.SUCCESS},
     });
   });
 
   describe('clear test state', () => {
     test('should clear test state', () => {
       const error = 'error msg';
-      let newState = reducer(undefined, actions.resource.connections.testErrored(resId, error));
+      let newState = reducer(initialState, actions.resource.connections.testErrored(resId, error));
 
       expect(newState).toEqual({1: {
         status: PING_STATES.ERROR,
         message: error,
       },
+      2: { status: PING_STATES.SUCCESS},
       });
 
       newState = reducer(newState, actions.resource.connections.testClear(resId));
 
-      expect(newState).toEqual({});
+      expect(newState).toEqual({
+        2: { status: PING_STATES.SUCCESS},
+      });
     });
 
     test('should clear just test message', () => {
       const error = 'error msg';
-      let newState = reducer(undefined, actions.resource.connections.testErrored(resId, error));
+      let newState = reducer(initialState, actions.resource.connections.testErrored(resId, error));
 
       expect(newState).toEqual({1: {
         status: PING_STATES.ERROR,
         message: error,
       },
+      2: { status: PING_STATES.SUCCESS},
       });
       newState = reducer(newState, actions.resource.connections.testClear(resId, true));
-      expect(newState).toEqual({1: {status: PING_STATES.ERROR } });
+      expect(newState).toEqual({
+        1: {status: PING_STATES.ERROR },
+        2: { status: PING_STATES.SUCCESS},
+      });
     });
   });
 });
@@ -99,7 +113,7 @@ describe('ping reducer', () => {
 describe('selectors', () => {
   const error = 'error msg';
   const resId = '1';
-  const newState = reducer(undefined, actions.resource.connections.testErrored(resId, error));
+  const newState = reducer(initialState, actions.resource.connections.testErrored(resId, error));
 
   describe('testConnectionStatus', () => {
     test('should return errored state for a valid id', () => {

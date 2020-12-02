@@ -244,10 +244,10 @@ export function isValidResourceReference(
   }
 }
 
-export function salesforceExportSelectOptions(data, fieldName) {
+export function salesforceExportSelectOptions(data, type) {
   let options;
 
-  switch (fieldName) {
+  switch (type) {
     case 'deltaExportDateFields':
       options = data.filter(f => ['datetime', 'date'].indexOf(f.type) > -1);
       break;
@@ -258,13 +258,13 @@ export function salesforceExportSelectOptions(data, fieldName) {
       options = data.filter(f => f.externalId || f.name === 'Id');
       break;
     case 'referenceFields':
-      options = data.filter(f => f.referenceTo.length !== 0);
+      options = data.filter(f => f.referenceTo?.length > 0);
       break;
     default:
       options = data;
   }
 
-  return options.map(op => ({ label: op.label, value: op.value }));
+  return options?.map(op => ({ label: op.label, value: op.value }));
 }
 
 /*
@@ -380,6 +380,7 @@ export const isFlowResource = (flow, resourceId, resourceType) => {
 
 export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {
   const domain = getDomain();
+
   let toReturn = false;
   let filteredConnectors = [];
   const supportBaseUrl = `${HELP_CENTER_BASE_URL}/hc/en-us/categories/`;
@@ -507,6 +508,9 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
 export const getUniversityUrl = '/litmos/sso';
 
 export const getNetSuiteSubrecordLabel = (fieldId, subrecordType) => {
+  if (!fieldId) {
+    return '';
+  }
   const subrecordLabelMap = {
     inventorydetail: 'Inventory Details',
     componentinventorydetail: 'Inventory Details',
@@ -723,14 +727,10 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
 };
 
 export const isOauth = connectionDoc =>
-  connectionDoc &&
-  ((connectionDoc.rest && connectionDoc.rest.authType === 'oauth') ||
-    (connectionDoc.http &&
-      connectionDoc.http.auth &&
-      connectionDoc.http.auth.type === 'oauth') ||
-    (connectionDoc.salesforce && connectionDoc.salesforce.oauth2FlowType) ||
-    (connectionDoc.netsuite &&
-      connectionDoc.netsuite.authType === 'token-auto'));
+    connectionDoc?.rest?.authType === 'oauth' ||
+    connectionDoc?.http?.auth?.type === 'oauth' ||
+    !!connectionDoc?.salesforce?.oauth2FlowType ||
+    connectionDoc?.netsuite?.authType === 'token-auto';
 
 export function getConnectionType(resource) {
   const { assistant, type } = getResourceSubType(resource);
@@ -743,8 +743,6 @@ export function getConnectionType(resource) {
     ) {
       return `${assistant}-oauth`;
     }
-
-    return '';
   }
 
   if (assistant) return assistant;
@@ -757,7 +755,7 @@ export function getConnectionType(resource) {
 
   return type;
 }
-export function isTradingPartnerSupported({environment, licenseActionDetails, accessLevel}) {
+export function isTradingPartnerSupported({environment, licenseActionDetails, accessLevel} = {}) {
   const isSandbox = environment === 'sandbox';
   let enabled = false;
 
@@ -772,12 +770,12 @@ export function isTradingPartnerSupported({environment, licenseActionDetails, ac
     } else {
       enabled = licenseActionDetails?.type === 'endpoint' && licenseActionDetails?.totalNumberofProductionTradingPartners > 0;
     }
-
-    return enabled;
   }
+
+  return enabled;
 }
 export function isNetSuiteBatchExport(exportRes) {
-  return ((exportRes.netsuite && exportRes.netsuite.type === 'search') || (exportRes.netsuite && exportRes.netsuite.restlet && exportRes.netsuite.restlet.searchId !== undefined));
+  return exportRes?.netsuite?.type === 'search' || exportRes?.netsuite?.restlet?.searchId !== undefined;
 }
 export const isQueryBuilderSupported = (importResource = {}) => {
   const {adaptorType} = importResource;
@@ -823,7 +821,7 @@ export const getUniqueFieldId = fieldId => {
   }
 };
 
-export const getUserAccessLevelOnConnection = (permissions, ioIntegrations = [], connectionId) => {
+export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations = [], connectionId) => {
   let accessLevelOnConnection;
 
   if (

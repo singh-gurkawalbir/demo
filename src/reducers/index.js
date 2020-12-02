@@ -2527,7 +2527,7 @@ selectors.availableConnectionsToRegister = (state, integrationId) => {
 selectors.mkSuiteScriptLinkedConnections = () => createSelector(
   selectors.userPreferences,
   selectors.userPermissions,
-  state => state?.data?.resources?.connections,
+  state => selectors.resourceList(state, {type: 'connections'}).resources,
   state => state?.data?.resources?.integrations,
   (preferences, permissions, connections = [], integrations = []) => {
     const linkedConnections = [];
@@ -5095,6 +5095,30 @@ selectors.makeResourceErrorsSelector = () => createSelector(
 );
 
 selectors.resourceErrors = selectors.makeResourceErrorsSelector();
+
+selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
+  selectors.userPermissions,
+  state => state?.data?.resources?.integrations,
+  state => state?.data?.resources?.connections,
+  (permissions = emptyObject, integrations = emptyArray, connections = emptyArray) => {
+    if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE].includes(permissions.accessLevel)) {
+      return connections.map(c => c._id);
+    }
+    if (permissions.accessLevel === USER_ACCESS_LEVELS.TILE) {
+      const connectionIds = [];
+
+      integrations.forEach(i => {
+        if (permissions?.integrations && permissions.integrations[i._id] && permissions.integrations[i._id].accessLevel === 'manage') {
+          connectionIds.push(...i._registeredConnectionIds);
+        }
+      });
+
+      return connectionIds;
+    }
+
+    return emptyArray;
+  }
+);
 
 selectors.availableUsersList = (state, integrationId) => {
   const permissions = selectors.userPermissions(state);

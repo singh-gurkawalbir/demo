@@ -225,7 +225,7 @@ export default function AccountList() {
               }}
               key={a.id}>
               <ListItemText className={classes.itemRootName}>{a.company}</ListItemText>
-              {a.canLeave && (
+              {a.company && a.canLeave && (
                 <ListItemSecondaryAction className={classes.secondaryAction}>
                   <Button
                     data-test="leaveAccount"
