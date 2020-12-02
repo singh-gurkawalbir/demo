@@ -17,7 +17,7 @@ import jsonUtils from '../json';
 import { isIntegrationApp } from '../flows';
 import { isJsonString } from '../string';
 
-const sampleDataStage = {
+export const sampleDataStage = {
   exports: {
     inputFilter: 'flowInput',
     transform: 'raw',
@@ -283,7 +283,7 @@ export const getFormattedResourceForPreview = (
   resourceType,
   flowType
 ) => {
-  const resource = deepClone(resourceObj);
+  const resource = deepClone(resourceObj || {});
 
   // type Once need not be passed in preview as it gets executed in preview call
   // so remove type once

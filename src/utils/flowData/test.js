@@ -1,29 +1,30 @@
 /* global describe expect test */
-// import {
-//   getAllDependentSampleDataStages,
-//   _compareSampleDataStage,
-//   getCurrentSampleDataStageStatus,
-//   getPreviewStageData,
-//   getSampleDataStage,
-//   getLastExportDateTime,
-//   getAddedLookupInFlow,
-//   getFlowUpdatesFromPatch,
-//   isRawDataPatchSet,
-//   isUIDataExpectedForResource,
-//   getBlobResourceSampleData,
-//   isOneToManyResource,
-//   isPostDataNeededInResource,
-//   generateDefaultExtractsObject,
-//   generatePostResponseMapData,
-//   getFormattedResourceForPreview,
-//   getResourceStageUpdatedFromPatch,
-//   getSubsequentStages,
-//   shouldUpdateResourceSampleData,
-// } from '.';
+import {
+  // sampleDataStage,
+  // getAllDependentSampleDataStages,
+  // _compareSampleDataStage,
+  // getCurrentSampleDataStageStatus,
+  // getPreviewStageData,
+  // getSampleDataStage,
+  // getLastExportDateTime,
+  // getAddedLookupInFlow,
+  // getFlowUpdatesFromPatch,
+  // isRawDataPatchSet,
+  // isUIDataExpectedForResource,
+  // getBlobResourceSampleData,
+  // isOneToManyResource,
+  // isPostDataNeededInResource,
+  // generateDefaultExtractsObject,
+  // generatePostResponseMapData,
+  getFormattedResourceForPreview,
+  getResourceStageUpdatedFromPatch,
+  // getSubsequentStages,
+  shouldUpdateResourceSampleData,
+} from '.';
 
 describe('getAllDependentSampleDataStages util', () => {
   test('should return true', () => {
-    expect(true).toBe(true);
+    expect(true).toBeTruthy();
   });
 });
 describe('_compareSampleDataStage util', () => {
@@ -33,7 +34,21 @@ describe('getCurrentSampleDataStageStatus util', () => {
 
 });
 describe('getPreviewStageData util', () => {
+  test('should return undefined when previewData is undefined', () => {
 
+  });
+  test('should return undefined when previewData does not have stages', () => {
+
+  });
+  test('should return expected stage data from previewData when stage is not raw stage', () => {
+
+  });
+  test('should return parse stage when previewStage is raw and previewData does not have raw stage', () => {
+
+  });
+  test('should return raw stage when requested for and also previewData has raw stage', () => {
+
+  });
 });
 describe('getSampleDataStage util', () => {
 
@@ -159,31 +174,150 @@ describe('generatePostResponseMapData util', () => {
 });
 describe('getFormattedResourceForPreview util', () => {
   test('should return undefined if the resourceObj is invalid', () => {
-
+    expect(getFormattedResourceForPreview()).toEqual({});
   });
   test('should remove once field from the resource incase of once type for preview', () => {
+    const resource = {
+      name: 'Test export',
+      _id: '1234',
+      type: 'once',
+      rest: {
+        once: { relativeURI: '/api/v2/users.json', method: 'PUT', body: { test: 5}},
+        relativeURI: '/api/v2/users.json',
+      },
+      adaptorType: 'RESTExport',
+    };
+    const formattedResourceWithoutOnceDoc = {
+      name: 'Test export',
+      _id: '1234',
+      rest: {
+        relativeURI: '/api/v2/users.json',
+      },
+      adaptorType: 'RESTExport',
+    };
 
+    expect(getFormattedResourceForPreview(resource)).toEqual(formattedResourceWithoutOnceDoc);
   });
   test('should add postData on the resource incase of delta export', () => {
+    const deltaResource = {
+      name: 'Test export',
+      _id: '1234',
+      type: 'delta',
+      rest: {
+        once: { relativeURI: '/api/v2/users.json', method: 'PUT', body: { test: 5}},
+        relativeURI: '/api/v2/users.json',
+      },
+      adaptorType: 'RESTExport',
+    };
+    const deltaResourceWithPostData = {
+      name: 'Test export',
+      _id: '1234',
+      type: 'delta',
+      rest: {
+        once: { relativeURI: '/api/v2/users.json', method: 'PUT', body: { test: 5}},
+        relativeURI: '/api/v2/users.json',
+      },
+      adaptorType: 'RESTExport',
+      postData: {
+        lastExportDateTime: expect.any(String),
+      },
+    };
 
+    expect(getFormattedResourceForPreview(deltaResource)).toEqual(deltaResourceWithPostData);
   });
   test('should update stringified sampleResponse to JSON sampleResponse on Page processor flow type resource for preview', () => {
+    const importResource = {
+      adaptorType: 'FTPImport',
+      ftp: {
+        directoryPath: '/users',
+        fileName: 'UserList.json',
+      },
+      _id: 'asdf2345',
+      name: 'FTP Import',
+      sampleResponseData: '{ "test": 5 }',
+    };
+    const formattedImportResource = {
+      adaptorType: 'FTPImport',
+      ftp: {
+        directoryPath: '/users',
+        fileName: 'UserList.json',
+      },
+      _id: 'asdf2345',
+      name: 'FTP Import',
+      sampleResponseData: {
+        test: 5,
+      },
+    };
 
+    expect(getFormattedResourceForPreview(importResource, 'imports', 'pageProcessors')).toEqual(formattedImportResource);
   });
   test('should add default extracts object as sampleResponse on PP flow type resource to fetch pageProcessorPreview data', () => {
+    const importResource = {
+      adaptorType: 'FTPImport',
+      ftp: {
+        directoryPath: '/users',
+        fileName: 'UserList.json',
+      },
+      _id: 'asdf2345',
+      name: 'FTP Import',
+    };
+    const formattedImportResource = {
+      adaptorType: 'FTPImport',
+      ftp: {
+        directoryPath: '/users',
+        fileName: 'UserList.json',
+      },
+      _id: 'asdf2345',
+      name: 'FTP Import',
+      sampleResponseData: {
+        errors: '',
+        id: '',
+        ignored: '',
+        statusCode: '',
+      },
+    };
 
+    expect(getFormattedResourceForPreview(importResource, 'imports', 'pageProcessors')).toEqual(formattedImportResource);
   });
 });
 describe('getResourceStageUpdatedFromPatch util', () => {
   test('should return undefined when the patchSet is empty', () => {
-
+    expect(getResourceStageUpdatedFromPatch([])).toBeUndefined();
   });
 
   test('should return undefined when the patchSet is a rawData patchSet', () => {
+    const rawDataPatchSet = [
+      {
+        path: '/rawData',
+        value: 'sdf456dsfgsdfghj',
+        op: 'add',
+      },
+    ];
 
+    expect(getResourceStageUpdatedFromPatch(rawDataPatchSet)).toBeUndefined();
   });
   test('should return corresponding stage if the patchSet matches one of the actions on FB bubbles', () => {
+    const hooksPatchSet = [{
+      path: '/hooks',
+      op: 'replace',
+      value: {
+        preSavePage: { _scriptId: '5df366d52af2f07355f590ea', function: 'preSavePageFunction' },
+      },
+    }];
+    const transformPatchSet = [{
+      path: '/transform',
+      op: 'replace',
+      value: {
+        type: 'expression',
+        expression: {
+          version: 1,
+          rules: [{ extract: '_id', generate: 'userID'}],
+        },
+      },
+    }];
 
+    expect(getResourceStageUpdatedFromPatch(hooksPatchSet)).toBe('preSavePage');
+    expect(getResourceStageUpdatedFromPatch(transformPatchSet)).toBe('transform');
   });
 });
 describe('getSubsequentStages util', () => {
@@ -191,15 +325,37 @@ describe('getSubsequentStages util', () => {
 });
 describe('shouldUpdateResourceSampleData util', () => {
   test('should return false when patchSet is empty', () => {
-
+    expect(shouldUpdateResourceSampleData([])).toBeFalsy();
   });
   test('should return false when patchSet has rawData patchSet', () => {
+    const rawDataPatchSet = [
+      {
+        path: '/rawData',
+        value: 'sdf456dsfgsdfghj',
+        op: 'add',
+      },
+    ];
 
+    expect(shouldUpdateResourceSampleData(rawDataPatchSet)).toBeFalsy();
   });
-  test('should return false when patchSet has one of the processor actions triggered outside resourceform', () => {
+  test('should return false when patchSet has one of the processor actions triggered outside resource form like update preSavePage hook', () => {
+    const hooksPatchSet = [{
+      path: '/hooks',
+      op: 'replace',
+      value: {
+        preSavePage: { _scriptId: '5df366d52af2f07355f590ea', function: 'preSavePageFunction' },
+      },
+    }];
 
+    expect(shouldUpdateResourceSampleData(hooksPatchSet)).toBeFalsy();
   });
   test('should return true if there are patches that could effect sample data', () => {
+    const relativeUriPatchSet = [{
+      path: '/rest/relativeURI',
+      op: 'replace',
+      value: '/api/v2/users.json',
+    }];
 
+    expect(shouldUpdateResourceSampleData(relativeUriPatchSet)).toBeTruthy();
   });
 });
