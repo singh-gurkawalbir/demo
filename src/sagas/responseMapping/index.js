@@ -35,7 +35,7 @@ export function* responseMappingInit({ flowId, resourceId }) {
         flowId,
         resourceId,
         resourceType: 'imports',
-        stage: 'importMappingExtract',
+        stage: 'responseMappingExtract',
       });
     }
   }

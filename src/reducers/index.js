@@ -5333,9 +5333,9 @@ selectors.responseMappingExtracts = (state, resourceId, flowId) => {
     'flows',
     flowId
   );
-  const pageProcessor = flow?.pageProcessors.findIndex(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+  const pageProcessor = flow?.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
 
-  if (pageProcessor) {
+  if (!pageProcessor) {
     return emptyArray;
   }
   const isImport = pageProcessor.type === 'import';
