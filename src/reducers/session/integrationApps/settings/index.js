@@ -550,7 +550,9 @@ export default (state = {}, action) => {
         }
 
         break;
-
+      // the action loadFailed is empty for future use
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.LOAD_FAILED:
+        break;
       case actionTypes.INTEGRATION_APPS.SETTINGS
         .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA:
         ({ response: categoryMappingData } = metadata);

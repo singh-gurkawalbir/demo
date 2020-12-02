@@ -4,9 +4,13 @@ import actions from '../../../../actions';
 
 describe('integrationApps uninstaller reducer test cases', () => {
   test('should return initial state when action is not matched', () => {
-    const state = reducer(undefined, { type: 'RANDOM_ACTION' });
-
-    expect(state).toEqual({});
+    expect(reducer(undefined, { type: 'RANDOM_ACTION' })).toEqual({});
+    expect(reducer(null, { type: 'RANDOM_ACTION' })).toEqual(null);
+    expect(reducer(123, { type: 'RANDOM_ACTION' })).toEqual(123);
+    expect(reducer('string', { type: 'RANDOM_ACTION' })).toEqual('string');
+    expect(reducer(undefined, { type: null })).toEqual({});
+    expect(reducer(undefined, { type: undefined })).toEqual({});
+    expect(reducer(undefined, { type: 123 })).toEqual({});
   });
   describe('intetgrationApps uninstaller reducer', () => {
     const uninstallSteps = [
@@ -594,7 +598,6 @@ describe('integrationApps uninstaller reducer test cases', () => {
           undefined,
           actions.integrationApp.uninstaller.receivedUninstallSteps(
             uninstallSteps,
-            'STOREID',
             2
           )
         );
@@ -628,7 +631,6 @@ describe('integrationApps uninstaller reducer test cases', () => {
           { 1: { steps: uninstallSteps } },
           actions.integrationApp.uninstaller.receivedUninstallSteps(
             uninstallSteps,
-            'STOREID',
             2
           )
         );
@@ -680,7 +682,6 @@ describe('integrationApps uninstaller reducer test cases', () => {
           { 1: { steps: uninstallSteps } },
           actions.integrationApp.uninstaller.receivedUninstallSteps(
             uninstallSteps,
-            'STOREID',
             undefined
           )
         );
@@ -714,7 +715,6 @@ describe('integrationApps uninstaller reducer test cases', () => {
           { 1: { steps: uninstallSteps } },
           actions.integrationApp.uninstaller.receivedUninstallSteps(
             undefined,
-            'STOREID',
             2
           )
         );
@@ -872,6 +872,8 @@ describe('integrationApps selectors test cases', () => {
       expect(selectors.uninstallData({}, 'dummy')).toEqual({});
       expect(selectors.uninstallData(null, 'dummy')).toEqual({});
       expect(selectors.uninstallData(null, null)).toEqual({});
+      expect(selectors.uninstallData(123, null)).toEqual({});
+      expect(selectors.uninstallData('string', null)).toEqual({});
       expect(selectors.uninstallData()).toEqual({});
     });
 
@@ -881,7 +883,6 @@ describe('integrationApps selectors test cases', () => {
         {},
         actions.integrationApp.uninstaller.receivedUninstallSteps(
           [{step1: 'step1'}, {step2: 'step2'}],
-          'storeId',
           'integrationId'
         )
       );
@@ -895,6 +896,8 @@ describe('integrationApps selectors test cases', () => {
       expect(selectors.uninstallSteps({}, 'dummy')).toEqual([]);
       expect(selectors.uninstallSteps(null, 'dummy')).toEqual([]);
       expect(selectors.uninstallSteps(null, null)).toEqual([]);
+      expect(selectors.uninstallSteps(123, null)).toEqual([]);
+      expect(selectors.uninstallSteps('null', null)).toEqual([]);
       expect(selectors.uninstallSteps()).toEqual([]);
     });
 
@@ -904,7 +907,6 @@ describe('integrationApps selectors test cases', () => {
         {},
         actions.integrationApp.uninstaller.receivedUninstallSteps(
           [{step1: 'step1'}, {step2: 'step2'}],
-          'storeId',
           'integrationId'
         )
       );
