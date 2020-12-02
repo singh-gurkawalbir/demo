@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 
-import reducer from '.';
+import reducer, { selectors } from '.';
 import actions from '../../../actions';
 
 describe('Response mapping', () => {
@@ -183,5 +183,143 @@ describe('Response mapping', () => {
     };
 
     expect(state).toEqual(expectedState);
+  });
+
+  test('selector[responseMappingSaveStatus] should return status correctly when state is not initialized', () => {
+    const value = selectors.responseMappingSaveStatus(undefined);
+
+    expect({}).toEqual(value);
+  });
+
+  test('selector[responseMappingSaveStatus] should return status correctly while saving', () => {
+    const state = reducer({mapping: {}}, actions.responseMapping.save({}));
+    const result = selectors.responseMappingSaveStatus(state);
+
+    expect({
+      saveCompleted: false,
+      saveInProgress: true,
+      saveTerminated: false,
+    }).toEqual(result);
+  });
+
+  test('selector[responseMappingSaveStatus] should return status correctly when save fails', () => {
+    const state = reducer({mapping: {}}, actions.responseMapping.save({}));
+    const newState = reducer(state, actions.responseMapping.saveFailed({}));
+    const result = selectors.responseMappingSaveStatus(newState);
+
+    expect({
+      saveCompleted: false,
+      saveInProgress: false,
+      saveTerminated: true,
+    }).toEqual(result);
+  });
+
+  test('selector[responseMappingSaveStatus] should return status correctly when save is completed', () => {
+    const state = reducer({mapping: {}}, actions.responseMapping.save({}));
+    const newState = reducer(state, actions.responseMapping.saveComplete());
+    const result = selectors.responseMappingSaveStatus(newState);
+
+    expect({
+      saveCompleted: true,
+      saveInProgress: false,
+      saveTerminated: true,
+    }).toEqual(result);
+  });
+
+  test('selector[responseMapping] should return correct state before init', () => {
+    const value = selectors.responseMapping(undefined);
+
+    expect({}).toEqual(value);
+  });
+  test('selector[responseMapping] should return correct state after init complete', () => {
+    const flowId = '123';
+    const resourceId = '123';
+    const state = reducer(undefined, actions.responseMapping.init({
+      flowId,
+      resourceId,
+    }));
+    let newState = reducer(state, actions.responseMapping.initComplete({
+      mappings: [{generate: 'a', extract: 'b', key: 'k1'}],
+      flowId,
+      resourceId,
+      resourceType: 'imports',
+    }));
+
+    const {mappings} = selectors.responseMapping(newState);
+
+    expect([{generate: 'a', extract: 'b', key: 'k1'}]).toEqual(mappings);
+
+    newState = reducer(newState, actions.responseMapping.patchField('generate', 'new', 'xyz3'));
+    const {mappings: mappingsAfterPatch} = selectors.responseMapping(newState);
+
+    expect([{generate: 'a', extract: 'b', key: 'k1'}, {generate: 'xyz3', key: expect.anything()}]).toEqual(mappingsAfterPatch);
+  });
+
+  test('selector[responseMappingChanged] should return false in case response mapping is not yet initialized', () => {
+    const isMappingChanged = selectors.responseMappingChanged(undefined);
+
+    expect(false).toEqual(isMappingChanged);
+  });
+
+  test('selector[responseMappingChanged] should return true in case mapping is changed', () => {
+    const state = {
+      mapping: {
+        mappings: [
+          {generate: 'a', extract: 'b', key: 'k1'},
+          {generate: 'c', extract: 'd', key: 'k2'},
+        ],
+        mappingsCopy: [
+          {generate: 'a', extract: 'b', key: 'k1'},
+          {generate: 'c', extract: 'd', key: 'k2'},
+        ],
+      },
+    };
+    const newState = reducer(state, actions.responseMapping.patchField('generate', 'new', 'xyz3'));
+
+    const isMappingChanged = selectors.responseMappingChanged(newState);
+
+    expect(true).toEqual(isMappingChanged);
+  });
+
+  test('selector[responseMappingChanged] should return true in case mapping order is changed', () => {
+    const state = {
+      mapping: {
+        mappings: [
+          {generate: 'a', extract: 'b', key: 'k1'},
+          {generate: 'c', extract: 'd', key: 'k2'},
+        ],
+        mappingsCopy: [
+          {generate: 'c', extract: 'd', key: 'k2'},
+          {generate: 'a', extract: 'b', key: 'k3'},
+
+        ],
+      },
+    };
+    const newState = reducer(state, actions.responseMapping.patchField('generate', 'new', 'xyz3'));
+
+    const isMappingChanged = selectors.responseMappingChanged(newState);
+
+    expect(true).toEqual(isMappingChanged);
+  });
+
+  test('selector[responseMappingChanged] should return false in case mapping order [generate and extract] is same', () => {
+    const state = {
+      mapping: {
+        mappings: [
+          {generate: 'a', extract: 'b', key: 'k1'},
+          {generate: 'c', extract: 'd', key: 'k2'},
+        ],
+        mappingsCopy: [
+          {generate: 'a', extract: 'b', key: 'k4'},
+          {generate: 'c', extract: 'd', key: 'k5'},
+
+        ],
+      },
+    };
+    const newState = reducer(state, actions.responseMapping.patchField('generate', 'new', 'xyz3'));
+
+    const isMappingChanged = selectors.responseMappingChanged(newState);
+
+    expect(true).toEqual(isMappingChanged);
   });
 });

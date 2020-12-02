@@ -96,28 +96,63 @@ describe('response mapping utils', () => {
     });
   });
   test('getFieldsAndListMappings util', () => {
-    const mapping = {
-      fields: [
-        {generate: 'fg1', extract: 'e1'},
-      ],
-      lists: [
-        {
-          generate: 'lg1',
+    const testCases = [
+      {
+        mapping: {
           fields: [
-            {generate: 'lfg1', extract: 'lge1'},
-            {generate: 'lfg2', extract: 'lge2'},
+            {generate: 'fg1', extract: 'e1'},
+          ],
+          lists: [
+            {
+              generate: 'lg1',
+              fields: [
+                {generate: 'lfg1', extract: 'lge1'},
+                {generate: 'lfg2', extract: 'lge2'},
+              ],
+            },
           ],
         },
-      ],
-    };
+        result: [
+          {generate: 'fg1', extract: 'e1'},
+          {generate: 'lg1[*].lfg1', extract: 'lge1'},
+          {generate: 'lg1[*].lfg2', extract: 'lge2'},
+        ],
+      },
+      {
+        mapping: {
+          lists: [
+            {
+              generate: 'lg1',
+              fields: [
+                {generate: 'lfg1', extract: 'lge1'},
+                {generate: 'lfg2', extract: 'lge2'},
+              ],
+            },
+          ],
+        },
+        result: [
+          {generate: 'lg1[*].lfg1', extract: 'lge1'},
+          {generate: 'lg1[*].lfg2', extract: 'lge2'},
+        ],
+      },
+      {
+        mapping: {
+          fields: [
+            {generate: 'fg1', extract: 'e1'},
+            {generate: 'fg2', extract: 'e2'},
+          ],
+        },
+        result: [
+          {generate: 'fg1', extract: 'e1'},
+          {generate: 'fg2', extract: 'e2'},
+        ],
+      },
 
-    expect(responseMappingUtil.getFieldsAndListMappings(mapping)).toEqual(
-      [
-        {generate: 'fg1', extract: 'e1'},
-        {generate: 'lg1[*].lfg1', extract: 'lge1'},
-        {generate: 'lg1[*].lfg2', extract: 'lge2'},
-      ]
-    );
+    ];
+
+    testCases.forEach(({mapping, result}) => {
+      expect(responseMappingUtil.getFieldsAndListMappings(mapping)).toEqual(result);
+    });
   });
 
   test('generateMappingFieldsAndList util', () => {
@@ -192,7 +227,29 @@ describe('response mapping utils', () => {
           ],
         },
       },
-
+      {
+        flatMapping: [
+          {generate: 'fg1', extract: 'e1'},
+          {generate: '', extract: 'e2'},
+          {generate: 'lg1[*].lfg1', extract: 'lge1'},
+          {generate: '', extract: 'lge2'},
+          {generate: 'abc'},
+        ],
+        result: {
+          fields: [
+            {generate: 'fg1', extract: 'e1'},
+            {generate: 'abc'},
+          ],
+          lists: [
+            {
+              generate: 'lg1',
+              fields: [
+                {generate: 'lfg1', extract: 'lge1'},
+              ],
+            },
+          ],
+        },
+      },
     ];
 
     testCases.forEach(({flatMapping, result}) => {
@@ -200,4 +257,3 @@ describe('response mapping utils', () => {
     });
   });
 });
-
