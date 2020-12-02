@@ -21,11 +21,14 @@ function resolveValue(value, editor) {
 }
 
 const useStyles = makeStyles(layouts);
-const useTabStyles = makeStyles({
+const useTabStyles = makeStyles(theme => ({
   tabPanel: {
     height: '100%',
   },
-});
+  tabs: {
+    backgroundColor: theme.palette.common.white,
+  },
+}));
 
 export default function Editor({ editorId }) {
   const classes = useStyles();
@@ -72,6 +75,7 @@ export default function Editor({ editorId }) {
     return (
       <>
         <Tabs
+          className={classes.tabs}
           value={tabValue} onChange={handleTabChange}
           variant="fullWidth"
           textColor="primary"
