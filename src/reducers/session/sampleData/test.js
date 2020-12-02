@@ -116,12 +116,12 @@ describe('sampleData reducer', () => {
   describe('UPDATE action', () => {
     test('should add the resource state if doesnt exist already', () => {
       const processedData = {
-        data: [{
+        data: {
           url: 'https://api.mocki.io/v1/awe',
           method: 'GET',
-        }],
+        },
       };
-      const stage = 'request';
+      const stage = 'preview';
       const initialState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
@@ -143,12 +143,12 @@ describe('sampleData reducer', () => {
     });
     test('should update the existing state with status and stage data', () => {
       const processedData = {
-        data: [{
+        data: {
           url: 'https://api.mocki.io/v1/awe',
           method: 'GET',
-        }],
+        },
       };
-      const stage = 'request';
+      const stage = 'preview';
       const initialState = {
         123: {
           status: 'received',
@@ -181,7 +181,7 @@ describe('sampleData reducer', () => {
       expect(newState).toEqual(expectedState);
     });
     test('should not throw error and update state correctly if processedData is null', () => {
-      const stage = 'request';
+      const stage = 'preview';
       const initialState = {
         123: {
           status: 'received',
@@ -219,12 +219,22 @@ describe('sampleData reducer', () => {
     test('should add the resource state with status = error if doesnt exist already', () => {
       const error = {
         errors: [{
-          code: 'invalid_json_str',
-          source: 'resource',
-          message: 'Invalid JSON',
+          code: '401',
+          source: 'application',
+          message: "{\"error\":\"Couldn't authenticate you\"}",
+        }],
+        stages: [{
+          name: 'request',
+          data: [{
+            body: 'test',
+          }],
+        }, {
+          name: 'raw',
+          data: [{
+            error: "{\"error\":\"Couldn't authenticate you\"}",
+          }],
         }],
       };
-      const stage = 'request';
       const initialState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
@@ -235,12 +245,19 @@ describe('sampleData reducer', () => {
         123: {
           status: 'error',
           error: error.errors,
-          data: {parse: error},
+          data: {
+            request: [{
+              body: 'test',
+            }],
+            raw: [{
+              error: "{\"error\":\"Couldn't authenticate you\"}",
+            }],
+          },
         },
       };
       const newState = reducer(
         initialState,
-        actions.sampleData.receivedError(resourceId, error, stage)
+        actions.sampleData.receivedError(resourceId, error)
       );
 
       expect(newState).toEqual(expectedState);
@@ -249,12 +266,22 @@ describe('sampleData reducer', () => {
     test('should update the existing state with status = error', () => {
       const error = {
         errors: [{
-          code: 'invalid_json_str',
-          source: 'resource',
-          message: 'Invalid JSON',
+          code: '401',
+          source: 'application',
+          message: "{\"error\":\"Couldn't authenticate you\"}",
+        }],
+        stages: [{
+          name: 'request',
+          data: [{
+            body: 'test',
+          }],
+        }, {
+          name: 'raw',
+          data: [{
+            error: "{\"error\":\"Couldn't authenticate you\"}",
+          }],
         }],
       };
-      const stage = 'request';
       const initialState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
@@ -268,19 +295,60 @@ describe('sampleData reducer', () => {
         123: {
           status: 'error',
           error: error.errors,
-          data: {parse: error},
+          data: {
+            request: [{
+              body: 'test',
+            }],
+            raw: [{
+              error: "{\"error\":\"Couldn't authenticate you\"}",
+            }],
+          },
         },
       };
       const newState = reducer(
         initialState,
-        actions.sampleData.receivedError(resourceId, error, stage)
+        actions.sampleData.receivedError(resourceId, error)
+      );
+
+      expect(newState).toEqual(expectedState);
+    });
+
+    test('should update the existing state with status = error and default parse stage, if no stages are returned', () => {
+      const error = {
+        errors: [{
+          code: '401',
+          source: 'application',
+          message: "{\"error\":\"Couldn't authenticate you\"}",
+        }],
+        stages: null,
+      };
+      const initialState = {
+        456: { status: 'received', data: {} },
+        789: { status: 'received', data: {} },
+        123: {
+          status: 'requested',
+        },
+      };
+      const expectedState = {
+        456: { status: 'received', data: {} },
+        789: { status: 'received', data: {} },
+        123: {
+          status: 'error',
+          error: error.errors,
+          data: {
+            parse: error,
+          },
+        },
+      };
+      const newState = reducer(
+        initialState,
+        actions.sampleData.receivedError(resourceId, error)
       );
 
       expect(newState).toEqual(expectedState);
     });
 
     test('should not throw error and update state correctly if error object is null', () => {
-      const stage = 'request';
       const initialState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
@@ -299,7 +367,7 @@ describe('sampleData reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.sampleData.receivedError(resourceId, null, stage)
+        actions.sampleData.receivedError(resourceId, null)
       );
 
       expect(newState).toEqual(expectedState);
