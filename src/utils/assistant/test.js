@@ -15,6 +15,11 @@ import {
   convertToExport,
   PARAMETER_LOCATION,
   DEFAULT_PROPS,
+  routeToRegExp,
+  extractParameters,
+  convertFromExport,
+  convertFromImport,
+  convertToImport,
 } from '.';
 
 describe('getMatchingRoute', () => {
@@ -1954,6 +1959,179 @@ const assistantData = {
     ],
   },
 };
+const restAssistantData = {
+  export: {
+    labels: {
+      version: 'API Version',
+      resource: 'API Name',
+      endpoint: 'Operation',
+    },
+    paging: {
+      pagingMethod: 'pageargument',
+      pageArgument: 'page',
+    },
+    urlResolution: [
+      '/v3/customers',
+      '/v3/customers/:_customerId',
+    ],
+    versions: [
+      {
+        version: 'v3',
+        resources: [
+          {
+            id: 'customers',
+            name: 'Customers',
+            endpoints: [
+              {
+                url: '/v3/customers/:_customerId',
+                name: 'Single customer based on ID',
+                doesNotSupportPaging: true,
+                resourcePath: '',
+                pathParameters: [
+                  {
+                    id: 'customerId',
+                    name: 'customer ID',
+                    required: true,
+                    fieldType: 'input',
+                  },
+                ],
+              },
+              {
+                url: '/v3/customers',
+                name: 'List of all customers',
+                resourcePath: 'items',
+                queryParameters: [
+                  {
+                    id: 'page',
+                    name: 'Page',
+                    description: '',
+                    fieldType: 'input',
+                  },
+                  {
+                    id: 'itemsInPage',
+                    name: 'Items In Page',
+                    description: '',
+                    fieldType: 'input',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  import: {
+    labels: {
+      version: 'API Version',
+    },
+    urlResolution: [
+      '/v3/customers',
+      '/v3/customers/:_customerId',
+    ],
+    versions: [
+      {
+        version: 'v3',
+        resources: [
+          {
+            id: 'customers',
+            name: 'Customers',
+            sampleData: {
+              CustomerID: 144,
+              CustomerName: 'cust1',
+              CreatedOn: '2017-10-09T10:57:39Z',
+              LastModified: '2017-10-09T10:57:39Z',
+              BusinessNumber: null,
+              Domain: null,
+              Address: null,
+              City: null,
+              State: null,
+              Country: null,
+              Phone: '9695965665',
+              Fax: null,
+              Notes: null,
+              Logo: null,
+              Links: null,
+              Longitude: 0,
+              Latitude: 0,
+              ZipCodeStr: null,
+            },
+            operations: [
+              {
+                url: '/v3/customers',
+                name: 'Create',
+                method: 'POST',
+                responseIdPath: '',
+                supportIgnoreExisting: true,
+                parameters: [
+                  {
+                    id: 'customerId',
+                    in: 'path',
+                    required: true,
+                    isIdentifier: true,
+                  },
+                ],
+              },
+              {
+                url: '/v3/customers/:_customerId',
+                name: 'Update',
+                method: 'PUT',
+                responseIdPath: '',
+                supportIgnoreMissing: true,
+                parameters: [
+                  {
+                    id: 'customerId',
+                    in: 'path',
+                    required: true,
+                    isIdentifier: true,
+                  },
+                ],
+              },
+              {
+                url: [
+                  '/v3/customers/:_customerId',
+                  '/v3/customers',
+                ],
+                name: 'Create or Update',
+                method: [
+                  'PUT',
+                  'POST',
+                ],
+                responseIdPath: [
+                  '',
+                  '',
+                ],
+                parameters: [
+                  {
+                    id: 'customerId',
+                    in: 'path',
+                    required: true,
+                    isIdentifier: true,
+                  },
+                ],
+              },
+              {
+                url: '/v3/customers/:_customerId',
+                name: 'Delete',
+                method: 'DELETE',
+                responseIdPath: '',
+                askForHowToGetIdentifier: true,
+                parameters: [
+                  {
+                    id: 'customerId',
+                    in: 'path',
+                    required: true,
+                    isIdentifier: true,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
 
 describe('convertToExport', () => {
   const testCases = [
@@ -2042,3 +2220,234 @@ describe('convertToExport', () => {
     }
   );
 });
+describe('routeToRegExp', () => {
+  const testCases = [
+
+    [/^\/v1\/connections(?:\?([\s\S]*))?$/, '/v1/connections'],
+    [/^\/v1\/connections\/([^/?]+)(?:\?([\s\S]*))?$/, '/v1/connections/:_id'],
+    [/^\/v1\/integrations\/([^/?]+)\/connections(?:\?([\s\S]*))?$/, '/v1/integrations/:_integrationId/connections'],
+    [/^\/v1\/integrations(?:\?([\s\S]*))?$/, '/v1/integrations'],
+    [/^\/v1\/integrations\/([^/?]+)(?:\?([\s\S]*))?$/, '/v1/integrations/:_id'],
+    [/^\/v1\/integrations\/([^/?]+)\/exports(?:\?([\s\S]*))?$/, '/v1/integrations/:_integrationId/exports'],
+  ];
+
+  each(testCases).test(
+    'should return %o when route = %o',
+    (expected, route) => {
+      expect(routeToRegExp(route)).toEqual(expected);
+    }
+  );
+});
+
+describe('extractParameters', () => {
+  const testCases = [
+
+    [[null], /^\/v1\/connections(?:\?([\s\S]*))?$/, '/v1/connections', '/v1/connections'],
+    [[':_id', null], /^\/v1\/connections\/([^/?]+)(?:\?([\s\S]*))?$/, '/v1/connections/:_id', '/v1/connections/someConnectionId?some=thing&someThing=else'],
+    [[':_integrationId', null], /^\/v1\/integrations\/([^/?]+)\/connections(?:\?([\s\S]*))?$/, '/v1/integrations/:_integrationId/connections', '/v1/integrations/someIntegrationId/connections'],
+    [[null], /^\/v1\/integrations(?:\?([\s\S]*))?$/, '/v1/integrations', '/v1/integrations'],
+    [[':_id', null], /^\/v1\/integrations\/([^/?]+)(?:\?([\s\S]*))?$/, '/v1/integrations/:_id', '/v1/integrations/someIntegrationId'],
+    [[':_integrationId', null], /^\/v1\/integrations\/([^/?]+)\/exports(?:\?([\s\S]*))?$/, '/v1/integrations/:_integrationId/exports', '/v1/integrations/someIntegrationId/exports'],
+  ];
+
+  each(testCases).test(
+    'should return %o when route = %o',
+    (expected, routeRegex, fragment, route) => {
+      expect(extractParameters(routeRegex, fragment, route)).toEqual(expected);
+    }
+  );
+});
+
+describe('extractParameters', () => {
+  const testCases = [
+
+    [[null], /^\/v1\/connections(?:\?([\s\S]*))?$/, '/v1/connections', '/v1/connections'],
+    [[':_id', null], /^\/v1\/connections\/([^/?]+)(?:\?([\s\S]*))?$/, '/v1/connections/:_id', '/v1/connections/someConnectionId?some=thing&someThing=else'],
+    [[':_integrationId', null], /^\/v1\/integrations\/([^/?]+)\/connections(?:\?([\s\S]*))?$/, '/v1/integrations/:_integrationId/connections', '/v1/integrations/someIntegrationId/connections'],
+    [[null], /^\/v1\/integrations(?:\?([\s\S]*))?$/, '/v1/integrations', '/v1/integrations'],
+    [[':_id', null], /^\/v1\/integrations\/([^/?]+)(?:\?([\s\S]*))?$/, '/v1/integrations/:_id', '/v1/integrations/someIntegrationId'],
+    [[':_integrationId', null], /^\/v1\/integrations\/([^/?]+)\/exports(?:\?([\s\S]*))?$/, '/v1/integrations/:_integrationId/exports', '/v1/integrations/someIntegrationId/exports'],
+  ];
+
+  each(testCases).test(
+    'should return %o when route = %o',
+    (expected, routeRegex, fragment, route) => {
+      expect(extractParameters(routeRegex, fragment, route)).toEqual(expected);
+    }
+  );
+});
+
+describe('convertFromExport', () => {
+  const testCases = [
+    [{bodyParams: {}, exportType: undefined, operation: undefined, pathParams: {}, queryParams: {}, resource: undefined, version: undefined}, {}, undefined, ''],
+    [
+      {
+        resource: 'r1',
+        bodyParams: {},
+        exportType: undefined,
+        operation: 'ep1',
+
+        operationDetails: {
+          pathParameters: [],
+          queryParameters: [],
+          url: 'some/thing',
+          headers: {},
+          id: 'ep1',
+        },
+        pathParams: {},
+        queryParams: {},
+
+        version: 'v1',
+      },
+      {
+        assistant: 'someAssistant',
+        adaptorType: 'RESTExport',
+        assistantMetadata: {
+          resource: 'r1',
+          operation: 'ep1',
+          version: 'v1',
+        },
+        rest: {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          method: 'GET',
+          headers: [],
+          relativeURI: 'some/thing',
+          allowUndefinedResource: false,
+        },
+      },
+      assistantData,
+      'rest',
+    ],
+    [
+      {
+        bodyParams: {},
+        exportType: undefined,
+        operation: 'some/unique/url',
+        operationDetails: {
+          headers: {},
+          pathParameters: [],
+          queryParameters: [],
+          url: 'some/unique/url',
+        },
+        pathParams: {},
+        queryParams: {},
+        resource: 'r1',
+        version: 'v1',
+      },
+      {
+        assistant: 'someAssistant',
+        adaptorType: 'RESTExport',
+        assistantMetadata: {
+          resource: 'r1',
+          operation: 'some/unique/url',
+          version: 'v1',
+        },
+        rest: {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          method: 'GET',
+          headers: [],
+          relativeURI: 'some/unique/url',
+          allowUndefinedResource: false,
+        },
+      },
+      assistantData,
+      'rest',
+    ],
+    [
+      {
+        bodyParams: {},
+        exportType: undefined,
+        operation: 'ep2',
+        operationDetails: {
+          headers: {},
+          id: 'ep2',
+          paging: {
+            nextPagePath: 'npp',
+            pagingMethod: 'nextpageurl',
+          },
+          pathParameters: [
+            {
+              config: {
+                prefix: "(guid'",
+                suffix: "')",
+              },
+              id: 'id',
+            },
+            {
+              id: 'action',
+            },
+          ],
+          queryParameters: [],
+          url: 'some/lists:_id/thing/:_action/some/other/:_action',
+        },
+        pathParams: {
+          action: 'XYZ',
+          id: 'ABC',
+        },
+        queryParams: {},
+        resource: 'r2',
+        version: 'v1',
+      },
+      {
+        assistant: 'someAssistant',
+        adaptorType: 'RESTExport',
+        assistantMetadata: {
+          resource: 'r2',
+          operation: 'ep2',
+          version: 'v1',
+        },
+        rest: {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          method: 'GET',
+          headers: [],
+          relativeURI: "some/lists(guid'ABC')/thing/XYZ/some/other/XYZ",
+          allowUndefinedResource: false,
+          pagingMethod: 'nextpageurl',
+          nextPagePath: 'npp',
+        },
+      },
+      assistantData,
+      'rest',
+    ],
+  ];
+
+  each(testCases).test(
+    'should return %o when exportDoc =  %o and assistantData = %o and adaptorType = %o',
+    (expected, exportDoc, assistantData, adaptorType) => {
+      expect(convertFromExport({ exportDoc, assistantData, adaptorType })).toEqual(
+        expected
+      );
+    }
+  );
+});
+describe('convertFromImport', () => {
+  const testCases = [
+    [{bodyParams: {}, pathParams: {}, queryParams: {}}, {}, restAssistantData, ''],
+
+  ];
+
+  each(testCases).test(
+    'should return %o when importDoc =  %o and assistantData = %o and adaptorType = %o',
+    (expected, importDoc, assistantData, adaptorType) => {
+      expect(convertFromImport({ importDoc, assistantData, adaptorType })).toEqual(
+        expected
+      );
+    }
+  );
+});
+
+describe('convertToImport', () => {
+  const testCases = [
+    [undefined, {}, undefined],
+  ];
+
+  each(testCases).test(
+    'should return %o when assistantConfig =  %o and assistantData = %o',
+    (expected, assistantConfig, assistantData) => {
+      expect(convertToImport({ assistantConfig, assistantData })).toEqual(
+        expected
+      );
+    }
+  );
+});
+
