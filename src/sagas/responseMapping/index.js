@@ -19,7 +19,7 @@ export function* responseMappingInit({ flowId, resourceId }) {
   if (!pageProcessor) {
     return yield put(actions.responseMapping.initFailed());
   }
-  const isImport = !!pageProcessor._importId;
+  const isImport = pageProcessor.type === 'import';
 
   if (isImport) {
     // check if responseMappingExtract is loaded

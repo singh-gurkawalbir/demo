@@ -5338,12 +5338,12 @@ selectors.responseMappingExtracts = (state, resourceId, flowId) => {
   if (pageProcessor) {
     return emptyArray;
   }
-  const isImport = !!pageProcessor._importId;
+  const isImport = pageProcessor.type === 'import';
   const resource = selectors.resource(state, isImport ? 'imports' : 'exports', resourceId);
 
   if (!resource) { return emptyArray; }
 
-  if (pageProcessor._importId) {
+  if (isImport) {
     const extractFields = selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
