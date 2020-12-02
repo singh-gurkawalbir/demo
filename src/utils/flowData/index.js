@@ -257,7 +257,6 @@ export const isPostDataNeededInResource = resource => {
  * This fn returns { data:'', errors: '', ignored: '', statusCode: ''}
  */
 export const generateDefaultExtractsObject = (resourceType, adaptorType) => {
-  // TODO: @Raghu Confirm the below format to generate default objects
   const defaultExtractsList = responseMappingUtil.getResponseMappingExtracts(resourceType, adaptorType);
 
   return defaultExtractsList.reduce((extractsObj, extractItem) => {
@@ -379,6 +378,6 @@ export const getSubsequentStages = (stage, resourceType) => {
  * As of now any field change in the resourceForm triggers sample data update
  */
 export const shouldUpdateResourceSampleData = (patch = []) =>
-  patch.length &&
+  !!patch.length &&
   !isRawDataPatchSet(patch) &&
   !getResourceStageUpdatedFromPatch(patch);
