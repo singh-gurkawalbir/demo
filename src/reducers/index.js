@@ -5347,7 +5347,7 @@ selectors.responseMappingExtracts = (state, resourceId, flowId) => {
     const extractFields = selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
-      stage: 'importMappingExtract',
+      stage: 'responseMappingExtract',
       resourceType: 'imports',
     }).data;
 
