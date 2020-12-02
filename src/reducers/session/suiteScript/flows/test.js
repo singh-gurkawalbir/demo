@@ -1,4 +1,5 @@
 /* global describe, test, expect */
+import each from 'jest-each';
 import reducer, {selectors} from '.';
 import actions from '../../../../actions/suiteScript';
 
@@ -10,14 +11,18 @@ const initialState = {
 describe('flow status reducer', () => {
   const ssLinkedConnectionId = 'c3';
   const _id = 'f3'; // _id is flow id
+  const testCases = [
+    ['should return state unaltered when suitescript linked connection id is undefined', undefined, _id],
+    ['should return state unaltered when suitescript linked connection id is null', null, _id],
+    ['should return state unaltered when suitescript linked connection id is empty', '', _id],
+    ['should return state unaltered when flow id is undefined', ssLinkedConnectionId, undefined],
+    ['should return state unaltered when flow id is null', ssLinkedConnectionId, null],
+    ['should return state unaltered when flow id is empty', ssLinkedConnectionId, ''],
+  ];
 
-  test('should return state unaltered when invalid suitescript linked connection id or flow id are sent like null, undefined, "', () => {
+  each(testCases).test('%s', (name, ssLinkedConnectionId, _id) => {
     expect(reducer(initialState,
-      actions.flow.isOnOffActionInprogress({onOffInProgress: false, ssLinkedConnectionId: null, _id: null}))).toEqual(initialState);
-    expect(reducer(initialState,
-      actions.flow.isOnOffActionInprogress({onOffInProgress: false, ssLinkedConnectionId: undefined, _id: undefined}))).toEqual(initialState);
-    expect(reducer(initialState,
-      actions.flow.isOnOffActionInprogress({onOffInProgress: false, ssLinkedConnectionId: '', _id: ''}))).toEqual(initialState);
+      actions.flow.isOnOffActionInprogress({onOffInProgress: false, ssLinkedConnectionId, _id}))).toEqual(initialState);
   });
 
   test('should return correct state when valid suitescript connection id and flow id are passed', () => {
