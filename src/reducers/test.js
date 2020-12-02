@@ -4344,4 +4344,23 @@ describe('utils', () => {
       expect(() => genSelectors(to, fr)).toThrow(new Error('duplicate selector name method1 from sub2!'));
     });
   });
+  describe('exportData reducer and selector', () => {
+    test('should set and return exportData', () => {
+      const state = reducer(
+        {
+          session: {
+            exportData: {
+              aaaa: {
+                data: [1, 2, 3],
+              },
+            },
+          },
+        },
+        'some_action'
+      );
+
+      expect(selectors.exportData(state, 'bbbb').data).toBeUndefined();
+      expect(selectors.exportData(state, 'aaaa').data).toEqual([1, 2, 3]);
+    });
+  });
 });
