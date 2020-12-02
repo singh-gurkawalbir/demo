@@ -4,13 +4,38 @@ import actions from '../../../../actions';
 
 describe('integrationApps reducer test cases', () => {
   test('should return initial state when action is not matched', () => {
-    const state = reducer(undefined, { type: 'RANDOM_ACTION' });
-
-    expect(state).toEqual({});
+    expect(reducer(undefined, { type: 'RANDOM_ACTION' })).toEqual({});
+    expect(reducer(null, { type: 'RANDOM_ACTION' })).toEqual(null);
+    expect(reducer('string', { type: 'RANDOM_ACTION' })).toEqual('string');
+    expect(reducer(123, { type: 'RANDOM_ACTION' })).toEqual(123);
+    expect(reducer(undefined, { type: null })).toEqual({});
+    expect(reducer(undefined, { type: undefined })).toEqual({});
   });
 });
 
 describe('intetgrationApps installer reducer', () => {
+  describe('integrationApps received ouath connection status action', () => {
+    test('should find the integration with id and update connection details', () => {
+      const state = reducer(
+        {
+          456: {
+            dummy: 'data',
+          },
+        },
+        actions.integrationApp.installer.setOauthConnectionMode('connectionId', true, '123')
+      );
+
+      expect(state).toEqual({
+        456: {
+          dummy: 'data',
+        },
+        123: {
+          connectionId: 'connectionId',
+          openOauthConnection: true,
+        },
+      });
+    });
+  });
   describe('integrationApps received installer install_inProgress action', () => {
     test('should find the integration with id and set isTriggered flag to true', () => {
       const state = reducer(
@@ -172,10 +197,14 @@ describe('intetgrationApps installer reducer', () => {
 describe('integrationApps installer selectors test cases', () => {
   describe('integrationAppsInstaller', () => {
     test('should return empty state when no match found.', () => {
-      expect(selectors.integrationAppsInstaller(undefined, 'dummy')).toEqual(
-        {}
-      );
+      expect(selectors.integrationAppsInstaller(undefined, 'dummy')).toEqual({});
       expect(selectors.integrationAppsInstaller({}, 'dummy')).toEqual({});
+      expect(selectors.integrationAppsInstaller(null, 'dummy')).toEqual({});
+      expect(selectors.integrationAppsInstaller('string', 'dummy')).toEqual({});
+      expect(selectors.integrationAppsInstaller(123, 'dummy')).toEqual({});
+      expect(selectors.integrationAppsInstaller({}, null)).toEqual({});
+      expect(selectors.integrationAppsInstaller(undefined)).toEqual({});
+      expect(selectors.integrationAppsInstaller({}, 123)).toEqual({});
     });
 
     test('should return correct state data when a match is found.', () => {
@@ -223,17 +252,20 @@ describe('integrationApps installer selectors test cases', () => {
         )
       );
 
-      console.log('new state', newState);
       expect(selectors.integrationAppsInstaller(newState, 1)).toEqual(expectedData);
     });
   });
 
   describe('canOpenOauthConnection', () => {
     test('should return empty state when no match found.', () => {
-      expect(selectors.canOpenOauthConnection(undefined, 'dummy')).toEqual(
-        { openOauthConnection: false }
-      );
-      expect(selectors.canOpenOauthConnection({}, 'dummy')).toEqual({ openOauthConnection: false });
+      expect(selectors.canOpenOauthConnection(undefined, 'dummy')).toEqual({ openOauthConnection: false });
+      expect(selectors.canOpenOauthConnection({}, 'dummy')).toEqual({openOauthConnection: false});
+      expect(selectors.canOpenOauthConnection(null, 'dummy')).toEqual({openOauthConnection: false});
+      expect(selectors.canOpenOauthConnection('string', 'dummy')).toEqual({openOauthConnection: false});
+      expect(selectors.canOpenOauthConnection(123, 'dummy')).toEqual({openOauthConnection: false});
+      expect(selectors.canOpenOauthConnection({}, null)).toEqual({openOauthConnection: false});
+      expect(selectors.canOpenOauthConnection(undefined)).toEqual({openOauthConnection: false});
+      expect(selectors.canOpenOauthConnection({}, 123)).toEqual({openOauthConnection: false});
     });
 
     test('should return correct state data when a match is found.', () => {
