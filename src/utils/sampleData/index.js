@@ -465,11 +465,11 @@ export const generateTransformationRulesOnXMLData = xmlJsonData => {
   * pathSegments: ["e", "check", "f"] points to "f" attribute which is an array returns true
   * If not an array returns false
  */
-const isValidPathToMany = (sampleData, pathSegments) => {
+export const isValidPathToMany = (sampleData, pathSegments) => {
   let isValid = false;
   let temp = { ...sampleData };
 
-  pathSegments.forEach(path => {
+  pathSegments?.forEach(path => {
     if (!temp) return;
     temp = temp[path];
   });
@@ -494,7 +494,7 @@ const isValidPathToMany = (sampleData, pathSegments) => {
       "a": 1 ( properties inside "f" attribute are on to the main level )
   * }
  */
-export const processOneToManySampleData = (sampleData, resource) => {
+export const processOneToManySampleData = (sampleData, resource = {}) => {
   const { pathToMany } = resource;
   const pathSegments = getPathSegments(pathToMany);
 

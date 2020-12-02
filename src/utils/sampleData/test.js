@@ -7,6 +7,9 @@ import {
   extractSampleDataAtResourcePath,
   processJsonSampleData,
   generateTransformationRulesOnXMLData,
+  isValidPathToMany,
+  processOneToManySampleData,
+  wrapExportFileSampleData,
 } from '.';
 
 // TODO: describe('getFormattedSampleData util', () => {});
@@ -331,5 +334,169 @@ describe('generateTransformationRulesOnXMLData util', () => {
     ]];
 
     expect(generateTransformationRulesOnXMLData(xmlJsonData)).toEqual(expectedRules);
+  });
+});
+
+describe('isValidPathToMany util', () => {
+  test('should return false if sample data or path segments is empty', () => {
+    expect(isValidPathToMany({key: 'value'})).toBe(false);
+    expect(isValidPathToMany(null, ['a'])).toBe(false);
+  });
+  test('should return false if expected path value is not an array', () => {
+    const sampleData = {
+      a: 5,
+      c: { d: 7 },
+      e: { check: { f: [{ a: 1}]} },
+    };
+    const pathSegments = ['c', 'd'];
+
+    expect(isValidPathToMany(sampleData, pathSegments)).toBe(false);
+    expect(isValidPathToMany(sampleData, ['e', 'x'])).toBe(false);
+  });
+  test('should return true if expected path value is an array', () => {
+    const sampleData = {
+      a: 5,
+      c: { d: 7 },
+      e: { check: { f: [{ a: 1}]} },
+    };
+    const pathSegments = ['e', 'check', 'f'];
+
+    expect(isValidPathToMany(sampleData, pathSegments)).toBe(true);
+  });
+});
+
+describe('processOneToManySampleData util', () => {
+  test('should return original sample data if sample data or resource or path segments are empty', () => {
+    const sampleData = {
+      key: 'value',
+    };
+    const resource = {
+      _id: '999',
+      name: 'dummy resource',
+      adaptorType: 'HTTPImport',
+      pathToMany: '*',
+    };
+
+    expect(processOneToManySampleData(null, resource)).toBeNull();
+    expect(processOneToManySampleData(sampleData)).toBe(sampleData);
+    expect(processOneToManySampleData(sampleData, resource)).toBe(sampleData);
+  });
+  test('should return original sample data if resource has invalid pathToMany field', () => {
+    const sampleData = {
+      a: 5,
+      c: { d: 7 },
+      e: { check: { f: [{ a: 1}]} },
+    };
+    const resource = {
+      _id: '999',
+      name: 'dummy resource',
+      adaptorType: 'HTTPImport',
+      pathToMany: 'c.d',
+    };
+
+    expect(processOneToManySampleData(sampleData, resource)).toBe(sampleData);
+  });
+  test('should return the correct extracted sample data at target path if resource has correct pathToMany field', () => {
+    const sampleData = {
+      a: 5,
+      c: { d: 7 },
+      e: { check: { f: [{ a: 1}]} },
+    };
+    const resource = {
+      _id: '999',
+      name: 'dummy resource',
+      adaptorType: 'HTTPImport',
+      pathToMany: 'e.check.f',
+    };
+    const expectedData = {
+      _PARENT: { a: 5, c: { d: 7}, e: { check: {} } },
+      a: 1,
+    };
+
+    expect(processOneToManySampleData(sampleData, resource)).toEqual(expectedData);
+  });
+  test('should generate correct union sample data object if target path is array of multiple objects', () => {
+    const sampleData = {
+      a: 5,
+      c: { d: 7 },
+      e: { check: { f: [{a: 5, b: 6}, {c: 7}, {a: 6, d: 11}]} },
+    };
+    const resource = {
+      _id: '999',
+      name: 'dummy resource',
+      adaptorType: 'HTTPImport',
+      pathToMany: 'e.check.f',
+    };
+    const expectedData = {
+      _PARENT: { a: 5, c: { d: 7}, e: { check: {} } },
+      a: 6,
+      b: 6,
+      c: 7,
+      d: 11,
+    };
+
+    expect(processOneToManySampleData(sampleData, resource)).toEqual(expectedData);
+  });
+});
+
+describe('wrapExportFileSampleData util', () => {
+  test('should return empty page_of_records record if sample input is empty or not of object type', () => {
+    const expectedData = { page_of_records: [{ record: {} }] };
+
+    expect(wrapExportFileSampleData()).toEqual(expectedData);
+    expect(wrapExportFileSampleData('dummy')).toEqual(expectedData);
+  });
+  test('should return page_of_records record = original input if input is a non-array type', () => {
+    const records = {
+      name: 'Bob',
+      age: 23,
+    };
+    const expectedData = { page_of_records: [{ record: records }] };
+
+    expect(wrapExportFileSampleData(records)).toEqual(expectedData);
+  });
+  test('should return correctly wrapped page_of_records and rows structure if input records is of array type', () => {
+    const records = [
+      {
+        CONTRACT_PRICE: '20',
+        CUSTOMER_NUMBER: 'C82828',
+      },
+      {
+        CONTRACT_PRICE: '14',
+        CUSTOMER_NUMBER: 'C98890',
+      },
+      [{
+        type: 'retail',
+      },
+      {
+        type: 'wholesale',
+      }],
+    ];
+    const expectedData = { page_of_records: [
+      {
+        record: {
+          CONTRACT_PRICE: '20',
+          CUSTOMER_NUMBER: 'C82828',
+        },
+      },
+      {
+        record:
+        {
+          CONTRACT_PRICE: '14',
+          CUSTOMER_NUMBER: 'C98890',
+        },
+      },
+      {
+        rows: [{
+          type: 'retail',
+        },
+        {
+          type: 'wholesale',
+        },
+        ],
+      },
+    ] };
+
+    expect(wrapExportFileSampleData(records)).toEqual(expectedData);
   });
 });
