@@ -2,16 +2,16 @@
 import { isEmpty, each, isArray } from 'lodash';
 import moment from 'moment';
 import deepClone from 'lodash/cloneDeep';
-import jsonUtil from './json';
-import { isFileAdaptor, isBlobTypeResource } from './resource';
-import { extractMappingFieldsFromCsv } from './mapping';
+import jsonUtil from '../json';
+import { isFileAdaptor, isBlobTypeResource } from '../resource';
+import { extractMappingFieldsFromCsv } from '../mapping';
 import {
   getFormattedNSSalesOrderMetadataData,
   getFormattedNSCustomerSampleData,
   filterSubListProperties,
   getFormattedSalesForceMetadata,
-} from './metadata';
-import { getUnionObject, getTransformPaths } from './jsonPaths';
+} from '../metadata';
+import { getUnionObject, getTransformPaths } from '../jsonPaths';
 
 // wrap the function inside useMemo since result may contain property 'lastExportDateTime' which refers to new Date()
 export default function getFormattedSampleData({
@@ -66,6 +66,7 @@ export default function getFormattedSampleData({
 }
 
 export function getDefaultData(obj) {
+  if (!obj) return;
   const _obj = obj;
 
   Object.keys(_obj).forEach(key => {
@@ -163,11 +164,11 @@ export const getFormattedObject = objData => {
 };
 
 export const getSampleValue = (type, id) => {
-  let sampleValue = id.split('[*].').length === 1 ? id : id.split('[*].')[1];
-
   if (!id) {
-    return sampleValue;
+    return;
   }
+
+  let sampleValue = id.split('[*].').length === 1 ? id : id.split('[*].')[1];
 
   switch (type) {
     case 'email':
@@ -379,6 +380,7 @@ export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
 
   if (typeof resourcePath !== 'string') return;
   const segments = getPathSegments(resourcePath.replace(/\.?\*$/, ''));
+
   let processedSampleData = sampleData;
 
   // Segments : Array of level wiser paths to drill down the sample data
