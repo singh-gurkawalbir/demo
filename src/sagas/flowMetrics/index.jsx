@@ -6,7 +6,7 @@ import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
 import { getFlowMetricsQuery } from '../../utils/flowMetrics';
 
-function* requestMetric({query}) {
+export function* requestMetric({query}) {
   let csvResponse;
   const path = '/stats/tsdb';
 
