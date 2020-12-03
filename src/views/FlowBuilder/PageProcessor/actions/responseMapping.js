@@ -1,27 +1,26 @@
-import React from 'react';
+import {useEffect} from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import Icon from '../../../../components/icons/MapDataIcon';
-import ResponseMappingDialog from '../../../../components/AFE/ResponseMapping/Dialog';
-import { isIntegrationApp } from '../../../../utils/flows';
-import { selectors } from '../../../../reducers';
-import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
-function ResponseMapping(props) {
-  const { open, isViewMode, flowId } = props;
-  const flow = useSelectorMemo(
-    selectors.makeResourceDataSelector,
-    'flows',
-    flowId
-  ).merged;
-  const isIAFlow = isIntegrationApp(flow);
-  // Incase of connectors , responseMapping should be enabled for the users
-  // In all other cases it is disabled based on isViewMode prop sent by Flow Builder
-  const disabled = isIAFlow ? false : isViewMode;
+function ResponseMapping({
+  flowId,
+  resource,
+  onClose,
+  open,
+}) {
+  const match = useRouteMatch();
+  const history = useHistory();
+  const {_id: resourceId} = resource;
 
-  return (
-    <>
-      {open && <ResponseMappingDialog disabled={disabled} {...props} />}
-    </>
-  );
+  useEffect(() => {
+    if (open && match.path.indexOf('mapping') === -1) {
+      history.push(`${history.location.pathname}/responseMapping/${flowId}/${resourceId}`);
+      onClose();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flowId, history, onClose, open, resourceId]);
+
+  return null;
 }
 
 export default {
