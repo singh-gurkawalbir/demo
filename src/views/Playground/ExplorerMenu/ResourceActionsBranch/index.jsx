@@ -3,9 +3,11 @@ import { useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import actions from '../../../../actions';
+import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import ImportsIcon from '../../../../components/icons/ImportsIcon';
 import ExportsIcon from '../../../../components/icons/ExportsIcon';
+import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import ToolsIcon from '../../../../components/icons/ToolsIcon';
 import TransformIcon from '../../../../components/icons/TransformIcon';
 import OverflowTreeItem from '../OverflowTreeItem';
@@ -86,9 +88,10 @@ export default function ResourceItemsBranch({onEditorChange, flowId, resourceId}
     };
   }, shallowEqual);
 
-  const handleViewClick = () => {
+  const handleViewResource = (resourceType, resourceId) => {
     history.push(`/playground/edit/${resourceType}/${resourceId}`);
   };
+
   const handleEditorClick = (type, fieldId) => {
     // eslint-disable-next-line no-console
     // console.log('type, fieldId, flowId, resourceId, resource',
@@ -116,9 +119,17 @@ export default function ResourceItemsBranch({onEditorChange, flowId, resourceId}
     <>
       <OverflowTreeItem
         icon={<ResourcesIcon />}
-        nodeId={`${resourceId}-view`}
-        label="View resource"
-        onClick={handleViewClick} />
+        nodeId={`${resourceId}-view-resource`}
+        label={`View ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
+        onClick={() => handleViewResource(resourceType, resourceId)} />
+
+      {resource._connectionId && (
+      <OverflowTreeItem
+        icon={<ConnectionsIcon />}
+        nodeId={`${resource._connectionId}-view-connection`}
+        label="View Connection"
+        onClick={() => handleViewResource('connections', resource._connectionId)} />
+      )}
 
       {!!editors?.length && editors.map(({type, fieldId}) => (
         <OverflowTreeItem

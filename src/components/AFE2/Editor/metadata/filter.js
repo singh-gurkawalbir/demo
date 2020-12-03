@@ -7,6 +7,7 @@ import ToggleLayout from '../../Drawer/actions/ToggleLayout';
 export default {
   type: 'filter',
   label: 'Filter editor',
+  fieldId: 'transform',
   description: 'Constructs filter rules against raw data',
   layout: 'compact',
   panels: [

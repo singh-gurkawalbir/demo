@@ -448,10 +448,14 @@ export function* initEditor({ id }) {
 
   // if data is already passed during init, save it to state directly
   if (editor.data) {
+    const dataAsString = typeof editor.data === 'string'
+      ? editor.data
+      : JSON.stringify(editor.data, null, 2);
+
     yield put(
       actions._editor.sampleDataReceived(
         id,
-        JSON.stringify(editor.data, null, 2),
+        dataAsString,
       )
     );
   } else if (!editor.initStatus || editor.initStatus === 'requested') {

@@ -19,7 +19,7 @@ export default function FeaturePanel({ editorId, mode, featureName, disabled }) 
   // );
 
   const handleChange = value => {
-    dispatch(actions._editor.patchFeature(editorId, {[featureName]: value}));
+    dispatch(actions._editor.patchFeatures(editorId, {[featureName]: value}));
   };
 
   return (
