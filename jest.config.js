@@ -1,6 +1,6 @@
 module.exports = {
   bail: false,
-  testRegex: undefined,
+  testRegex: 'src/reducers/session/flowMetrics/test.js',
   roots: [
     '<rootDir>/src',
   ],

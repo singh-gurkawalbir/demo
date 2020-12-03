@@ -15,6 +15,7 @@ function updateStatus(state, flowId, status) {
 export default (state = {}, action) => {
   const { type, resourceId, response } = action;
 
+  if (!resourceId) { return state; }
   switch (type) {
     case actionTypes.FLOW_METRICS.REQUEST:
       return updateStatus(state, resourceId, 'requested');
