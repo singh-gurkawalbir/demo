@@ -1,8 +1,8 @@
-import RulePanel from '../panels/Rule';
-import JavaScriptPanel from '../panels/JavaScript';
-import FormPreviewPanel from '../panels/formBuilder/FormPreview';
-import OutputPanel from '../panels/formBuilder/Output';
-import ToggleFormMode from '../../Drawer/actions/ToggleFormMode';
+import RulePanel from '../Editor/panels/Rule';
+import JavaScriptPanel from '../Editor/panels/JavaScript';
+import FormPreviewPanel from '../Editor/panels/formBuilder/FormPreview';
+import OutputPanel from '../Editor/panels/formBuilder/Output';
+import ToggleFormMode from '../Drawer/actions/ToggleFormMode';
 
 export default {
   type: 'formBuilder',

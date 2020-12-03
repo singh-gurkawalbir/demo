@@ -1,6 +1,6 @@
-import DataPanel from '../panels/Data';
-import ResultPanel from '../panels/Result';
-import JavaScriptPanel from '../panels/JavaScript';
+import DataPanel from '../Editor/panels/Data';
+import ResultPanel from '../Editor/panels/Result';
+import JavaScriptPanel from '../Editor/panels/JavaScript';
 
 export default {
   type: 'javascript',

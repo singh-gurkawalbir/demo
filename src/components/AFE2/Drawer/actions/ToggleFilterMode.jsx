@@ -11,11 +11,11 @@ const toggleOptions = [
 
 export default function ToggleFilterMode({ editorId }) {
   const dispatch = useDispatch();
-  const handleToggle =
-    activeEditorIndex => dispatch(actions._editor.patch(editorId, {activeEditorIndex}));
-
   // TODO: @Ashu, where would "activeEditorIndex" fit into the editor state? Its not data or a rule.
   const { activeEditorIndex } = useSelector(state => selectors._editor(state, editorId));
+
+  const handleToggle =
+    activeEditorIndex => dispatch(actions._editor.patch(editorId, {activeEditorIndex}));
 
   return (
     <TextToggle
