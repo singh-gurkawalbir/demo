@@ -3,7 +3,7 @@ const batchSizePattern = /^([4-9]|[1-8][0-9]|9[0-9]|1[0-9]{2}|200)$/; // Regular
 export default {
   'salesforce.sObjectType': {
     type: 'text',
-    label: 'SObject type',
+    label: 'sObject type',
     required: true,
     visibleWhenAll: [
       {
@@ -51,7 +51,7 @@ export default {
     ],
   },
   'salesforce.distributed.sObjectType': {
-    label: 'SObject type',
+    label: 'sObject type',
     required: true,
     visibleWhenAll: [
       {
@@ -189,7 +189,7 @@ export default {
     type: 'select',
     required: true,
     defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,
-    label: 'SObject type',
+    label: 'sObject type',
     options: [
       {
         items: [
