@@ -9,9 +9,10 @@ import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 
 const DEFAULT_VALUE = undefined;
+const emptyObj = {};
 
-function extractStages(sampleData) {
-  const stagesInSampleData = sampleData && sampleData.stages;
+export function extractStages(sampleData) {
+  const stagesInSampleData = sampleData?.stages;
   const stageMap = {};
 
   if (!stagesInSampleData) {
@@ -46,12 +47,12 @@ export default function (state = {}, action) {
         draft[resourceId] = draft[resourceId] || {};
         draft[resourceId].status = 'received';
         draft[resourceId].data = draft[resourceId].data || {};
-        draft[resourceId].data[stage] = processedData.data;
+        draft[resourceId].data[stage] = processedData?.data;
         break;
       case actionTypes.SAMPLEDATA.RECEIVED_ERROR:
         draft[resourceId] = draft[resourceId] || {};
         draft[resourceId].status = 'error';
-        draft[resourceId].error = error.errors;
+        draft[resourceId].error = error?.errors;
         draft[resourceId].data = extractStages(error);
         break;
       case actionTypes.SAMPLEDATA.RESET:
@@ -70,7 +71,7 @@ export default function (state = {}, action) {
 
 export const selectors = {};
 
-const getResourceSampleData = (resourceIdSampleData, stage) => {
+export const getResourceSampleData = (resourceIdSampleData, stage) => {
   const resourceData = resourceIdSampleData?.data;
 
   if (!resourceData) return DEFAULT_VALUE;
@@ -96,12 +97,15 @@ selectors.getResourceSampleDataWithStatus = (state, resourceId, stage) => getRes
 selectors.mkPreviewStageDataList = () => createSelector(
   (state, resourceId) => state?.[resourceId],
   (_1, _2, stages) => stages,
-  (resourceIdSampleData, stages) =>
-    stages.reduce((acc, stage) => {
+  (resourceIdSampleData, stages) => {
+    if (!stages) return emptyObj;
+
+    return stages.reduce((acc, stage) => {
       acc[stage] = getResourceSampleDataWithStatus(resourceIdSampleData, stage);
 
       return acc;
-    }, {})
+    }, {});
+  }
 );
 
 selectors.sampleDataRecordSize = (state, resourceId) => state?.[resourceId]?.recordSize;

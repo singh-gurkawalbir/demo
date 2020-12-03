@@ -4,9 +4,12 @@ import actions from '../../../../actions';
 
 describe('integrationApps reducer test cases', () => {
   test('should return initial state when action is not matched', () => {
-    const state = reducer(undefined, { type: 'RANDOM_ACTION' });
-
-    expect(state).toEqual({});
+    expect(reducer(undefined, { type: 'RANDOM_ACTION' })).toEqual({});
+    expect(reducer('string', { type: 'RANDOM_ACTION' })).toEqual('string');
+    expect(reducer(null, { type: 'RANDOM_ACTION' })).toEqual(null);
+    expect(reducer(123, { type: 'RANDOM_ACTION' })).toEqual(123);
+    expect(reducer(undefined, { type: null })).toEqual({});
+    expect(reducer(undefined, { type: undefined })).toEqual({});
   });
 
   describe('integrationApps uninstaller2.0 reducer', () => {
@@ -198,10 +201,13 @@ describe('integrationApps selectors test cases', () => {
   describe('integrationApps uninstaller2.0 selectors', () => {
     describe('uninstall2Data', () => {
       test('should return empty state when no match found.', () => {
-        expect(selectors.uninstall2Data(undefined, 'dummy')).toEqual(
-          {}
-        );
+        expect(selectors.uninstall2Data(undefined, 'dummy')).toEqual({});
         expect(selectors.uninstall2Data({}, 'dummy')).toEqual({});
+        expect(selectors.uninstall2Data(null, 'dummy')).toEqual({});
+        expect(selectors.uninstall2Data(123, 'dummy')).toEqual({});
+        expect(selectors.uninstall2Data(undefined, null)).toEqual({});
+        expect(selectors.uninstall2Data({})).toEqual({});
+        expect(selectors.uninstall2Data()).toEqual({});
       });
 
       test('should return correct state data when a match is found.', () => {
