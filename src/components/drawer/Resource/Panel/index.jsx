@@ -41,7 +41,8 @@ const useStyles = makeStyles(theme => ({
   },
   baseForm: {
     display: 'grid',
-    gridTemplateColumns: '1fr auto',
+    gridTemplateColumns: '55% 43%',
+    gridColumnGap: theme.spacing(1),
     paddingTop: theme.spacing(3),
     '& > div:first-child': {
       paddingTop: 0,
