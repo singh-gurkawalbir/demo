@@ -29,7 +29,7 @@ export const sampleDataStage = {
     postResponseMapHook: 'postResponseMap',
   },
   /**
-   * flowInput, InputFilter
+   * flowInput, inputFilter
    * raw, transform, preSavePage, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
    * raw, transform, outputFilter
    */
@@ -49,6 +49,8 @@ export const sampleDataStage = {
   /**
    * flowInput, inputFilter
    * flowInput, preMap, importMappingExtract, importMapping, postMap,
+   * sampleResponse, responseTransform, postSubmit
+   * sampleResponse, responseTransform, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
    */
 };
 

@@ -1,9 +1,11 @@
 /* global describe expect test */
+import each from 'jest-each';
 import {
-  // sampleDataStage,
-  // getAllDependentSampleDataStages,
-  // _compareSampleDataStage,
+  sampleDataStage,
+  getAllDependentSampleDataStages,
+  _compareSampleDataStage,
   // getCurrentSampleDataStageStatus,
+  getSubsequentStages,
   getPreviewStageData,
   getAddedLookupIdInFlow,
   getFlowUpdatesFromPatch,
@@ -15,18 +17,117 @@ import {
   generatePostResponseMapData,
   getFormattedResourceForPreview,
   getResourceStageUpdatedFromPatch,
-  // getSubsequentStages,
   shouldUpdateResourceSampleData,
 } from '.';
 
-describe('getAllDependentSampleDataStages util', () => {
+const possibleExportSampleDataStagePaths = [
+  ['flowInput', 'inputFilter'],
+  ['raw', 'transform', 'preSavePage', 'responseMappingExtract', 'responseMapping', 'postResponseMap', 'postResponseMapHook'],
+  ['raw', 'transform', 'outputFilter'],
+];
+const possibleImportSampleDataStagePaths = [
+  ['flowInput', 'inputFilter'],
+  ['flowInput', 'preMap', 'importMappingExtract', 'importMapping', 'postMap'],
+  ['sampleResponse', 'responseTransform', 'postSubmit'],
+  ['sampleResponse', 'responseTransform', 'responseMappingExtract', 'responseMapping', 'postResponseMap', 'postResponseMapHook'],
+];
 
+describe('getAllDependentSampleDataStages util', () => {
+  const exportStages = Object.keys(sampleDataStage.exports);
+  const importStages = Object.keys(sampleDataStage.imports);
+
+  const getExpectedDependentStagesList = (stage, resourceType) => {
+    const paths = resourceType === 'exports' ? possibleExportSampleDataStagePaths : possibleImportSampleDataStagePaths;
+    const stagePath = paths.find(path => path.includes(stage));
+    const stageIndex = stagePath.indexOf(stage);
+
+    return stagePath.slice(0, stageIndex).reverse();
+  };
+
+  each(exportStages).test('should return valid dependent sample data stages of exports/lookups for stage - %s ', stage => {
+    const expectedDependentStages = getExpectedDependentStagesList(stage, 'exports');
+
+    expect(getAllDependentSampleDataStages(stage, 'exports')).toEqual(expectedDependentStages);
+  });
+  each(importStages).test('should return valid dependent sample data stages of imports for stage - %s ', stage => {
+    const expectedDependentStages = getExpectedDependentStagesList(stage, 'imports');
+
+    expect(getAllDependentSampleDataStages(stage, 'imports')).toEqual(expectedDependentStages);
+  });
 });
 describe('_compareSampleDataStage util', () => {
+  test('should return 0 if both stages are equal', () => {
+    expect(_compareSampleDataStage('inputFilter', 'inputFilter', 'exports')).toBe(0);
+  });
+  test('should return 1 for exports if current stage has previous stage as part of its path', () => {
+    const previousStage = 'transform';
+    const currentStage = 'responseMapping';
 
+    expect(_compareSampleDataStage(previousStage, currentStage, 'exports')).toBe(1);
+  });
+  test('should return -1 for exports if previous stage has current stage as part of its path', () => {
+    const previousStage = 'responseMapping';
+    const currentStage = 'transform';
+
+    expect(_compareSampleDataStage(previousStage, currentStage, 'exports')).toBe(-1);
+  });
+  test('should return 2 for exports  if both stages have mutually exclusive paths and both needs to be run ', () => {
+    const previousStage = 'inputFilter';
+    const currentStage = 'outputFilter';
+
+    expect(_compareSampleDataStage(previousStage, currentStage, 'exports')).toBe(2);
+  });
+  test('should return -1 for imports if current stage has previous stage as part of its path', () => {
+    const previousStage = 'postMap';
+    const currentStage = 'preMap';
+
+    expect(_compareSampleDataStage(previousStage, currentStage, 'imports')).toBe(-1);
+  });
+  test('should return 1 for imports if previous stage has current stage as part of its path', () => {
+    const previousStage = 'preMap';
+    const currentStage = 'postMap';
+
+    expect(_compareSampleDataStage(previousStage, currentStage, 'imports')).toBe(1);
+  });
+  test('should return 2 for imports  if both stages have mutually exclusive paths and both needs to be run ', () => {
+    const previousStage = 'postMap';
+    const currentStage = 'postSubmit';
+
+    expect(_compareSampleDataStage(previousStage, currentStage, 'imports')).toBe(2);
+  });
 });
 describe('getCurrentSampleDataStageStatus util', () => {
 
+});
+describe('getSubsequentStages util - gives all the stages followed by passed stage', () => {
+  const exportStages = Object.keys(sampleDataStage.exports);
+  const importStages = Object.keys(sampleDataStage.imports);
+
+  const getExpectedSubsequentStagesList = (stage, resourceType) => {
+    const paths = resourceType === 'exports' ? possibleExportSampleDataStagePaths : possibleImportSampleDataStagePaths;
+    const pathsWithStageIncluded = paths.filter(path => path.includes(stage));
+
+    return pathsWithStageIncluded.reduce((stageList, currentPath) => {
+      const stageIndex = currentPath.indexOf(stage);
+      const stagesFollowedByCurrentStage = currentPath.slice(stageIndex + 1);
+
+      return [...stageList, ...stagesFollowedByCurrentStage];
+    }, []);
+  };
+
+  each(exportStages).test('should return expected subsequent stages of exports for stage - %s ', stage => {
+    const expectedStagesList = getExpectedSubsequentStagesList(stage, 'exports').sort();
+    const subsequentStagesList = getSubsequentStages(stage, 'exports').sort();
+
+    expect(subsequentStagesList).toEqual(expectedStagesList);
+  });
+
+  each(importStages).test('should return expected subsequent stages of imports for stage - %s ', stage => {
+    const expectedStagesList = getExpectedSubsequentStagesList(stage, 'imports').sort();
+    const subsequentStagesList = getSubsequentStages(stage, 'imports').sort();
+
+    expect(subsequentStagesList).toEqual(expectedStagesList);
+  });
 });
 describe('getPreviewStageData util', () => {
   const previewData = {
@@ -705,9 +806,6 @@ describe('getResourceStageUpdatedFromPatch util', () => {
     expect(getResourceStageUpdatedFromPatch(hooksPatchSet)).toBe('preSavePage');
     expect(getResourceStageUpdatedFromPatch(transformPatchSet)).toBe('transform');
   });
-});
-describe('getSubsequentStages util', () => {
-
 });
 describe('shouldUpdateResourceSampleData util', () => {
   test('should return false when patchSet is empty', () => {
