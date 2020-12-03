@@ -13,16 +13,20 @@ const SaveButton = ({
   color = 'secondary',
   disabled = false,
   dataTest,
-  showOnlyOnChanges,
+  showOnDirty,
   onClose,
 }) => {
   const [saveTrigerred, setSaveTriggered] = useState(false);
   const match = useRouteMatch();
   const dispatch = useDispatch();
+  const { saveTerminated, saveCompleted, saveInProgress } = useSelector(state => selectors.responseMappingSaveStatus(state), shallowEqual);
   const mappingsChanged = useSelector(state =>
     selectors.responseMappingChanged(state)
   );
-  const { saveTerminated, saveCompleted, saveInProgress } = useSelector(state => selectors.responseMappingSaveStatus(state), shallowEqual);
+  const handleSave = useCallback(() => {
+    dispatch(actions.responseMapping.save({ match }));
+    setSaveTriggered(true);
+  }, [dispatch, match]);
 
   useEffect(() => {
     if (saveTrigerred && saveCompleted && onClose) {
@@ -30,15 +34,10 @@ const SaveButton = ({
       setSaveTriggered(false);
     }
   }, [onClose, saveCompleted, saveTerminated, saveTrigerred]);
-  const handleSave = useCallback(() => {
-    dispatch(actions.responseMapping.save({ match }));
-    setSaveTriggered(true);
-  }, [dispatch, match]);
 
-  const disableSave = disabled || saveInProgress || !mappingsChanged;
   const showSpinner = saveTrigerred && saveInProgress;
 
-  if (showOnlyOnChanges && !mappingsChanged) {
+  if (showOnDirty && !mappingsChanged) {
     return null;
   }
 
@@ -47,7 +46,7 @@ const SaveButton = ({
       data-test={dataTest}
       variant={variant}
       color={color}
-      disabled={disableSave}
+      disabled={disabled}
       onClick={handleSave}>
       {showSpinner ? (
         <>
@@ -65,12 +64,16 @@ export default function SaveButtonGroup({ disabled, onClose}) {
   const saveInProgress = useSelector(
     state => selectors.responseMappingSaveStatus(state).saveInProgress
   );
+  const mappingsChanged = useSelector(state =>
+    selectors.responseMappingChanged(state)
+  );
+  const disableSave = !!(disabled || saveInProgress || !mappingsChanged);
 
   return (
     <>
       <ButtonGroup>
         <SaveButton
-          disabled={!!(disabled || saveInProgress)}
+          disabled={disableSave}
           color="primary"
           dataTest="saveImportMapping"
           submitButtonLabel="Save"
@@ -80,9 +83,9 @@ export default function SaveButtonGroup({ disabled, onClose}) {
           color="secondary"
           dataTest="saveAndCloseImportMapping"
           onClose={onClose}
-          disabled={!!(disabled || saveInProgress)}
+          disabled={disableSave}
           submitButtonLabel="Save & close"
-          showOnlyOnChanges
+          showOnDirty
           />
         <Button
           variant="text"
