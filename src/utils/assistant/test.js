@@ -2026,13 +2026,107 @@ const restAssistantData = {
       version: 'API Version',
     },
     urlResolution: [
-      '/v3/customers',
-      '/v3/customers/:_customerId',
+      '/v3/contacts',
+      '/v3/contacts/:_contactId',
+      '/v3/contacts',
+      '/v3/contacts/:_contactId',
     ],
     versions: [
       {
         version: 'v3',
         resources: [
+          {
+            id: 'contacts',
+            name: 'Contacts',
+            sampleData: {
+              EndUserID: 8,
+              CustomerID: 2,
+              CustomerName: 'cust1',
+              Firstname: null,
+              Lastname: null,
+              JobTitle: null,
+              Email: 'cust1c@gmail.com',
+              Phone: null,
+              IsContactPerson: false,
+              InIgnoreMode: false,
+              CreatedOn: '2017-10-10T13:03:08Z',
+              LastModified: '2017-10-10T13:03:08Z',
+            },
+            operations: [
+              {
+                id: 'create_contacts',
+                url: '/v3/contacts',
+                name: 'Create',
+                method: 'POST',
+                responseIdPath: '',
+                supportIgnoreExisting: true,
+                parameters: [
+                  {
+                    id: 'contactId',
+                    in: 'path',
+                    required: true,
+                    isIdentifier: true,
+                  },
+                ],
+              },
+              {
+                id: 'update_contacts',
+                url: '/v3/contacts/:_contactId',
+                name: 'Update',
+                method: 'PUT',
+                responseIdPath: '',
+                supportIgnoreMissing: true,
+                parameters: [
+                  {
+                    id: 'contactId',
+                    in: 'path',
+                    required: true,
+                    isIdentifier: true,
+                  },
+                ],
+              },
+              {
+                id: 'create_or_update_contacts',
+                url: [
+                  '/v3/contacts/:_contactId',
+                  '/v3/contacts',
+                ],
+                name: 'Create or Update',
+                method: [
+                  'PUT',
+                  'POST',
+                ],
+                responseIdPath: [
+                  '',
+                  '',
+                ],
+                parameters: [
+                  {
+                    id: 'contactId',
+                    in: 'path',
+                    required: true,
+                    isIdentifier: true,
+                  },
+                ],
+              },
+              {
+                id: 'delete_contacts',
+                url: '/v3/contacts/:_contactId',
+                name: 'Delete',
+                method: 'DELETE',
+                responseIdPath: '',
+                askForHowToGetIdentifier: true,
+                parameters: [
+                  {
+                    id: 'contactId',
+                    in: 'path',
+                    required: true,
+                    isIdentifier: true,
+                  },
+                ],
+              },
+            ],
+          },
           {
             id: 'customers',
             name: 'Customers',
@@ -2423,6 +2517,217 @@ describe('convertFromExport', () => {
 describe('convertFromImport', () => {
   const testCases = [
     [{bodyParams: {}, pathParams: {}, queryParams: {}}, {}, restAssistantData, ''],
+    [{bodyParams: {}, pathParams: {}, queryParams: {}}, {adaptorType: 'RESTImport',
+      assistant: 'atera',
+      name: 'Atera Latest',
+      _connectionId: 'connId',
+      _id: 'id'}, restAssistantData, 'rest'],
+
+    [{bodyParams: {},
+      resource: 'contacts',
+      version: 'v3',
+      lookupType: 'source',
+      operation: 'create_or_update_contacts',
+      operationDetails: {
+        headers: {},
+        howToFindIdentifier: {},
+        id: 'create_or_update_contacts',
+        method: [
+          'PUT',
+          'POST',
+        ],
+        name: 'Create or Update',
+        parameters: [
+          {
+            id: 'contactId',
+            in: 'path',
+            isIdentifier: true,
+            required: true,
+          },
+        ],
+        pathParameters: [],
+        queryParameters: [],
+        responseIdPath: [
+          '',
+          '',
+        ],
+        sampleData: {
+          CreatedOn: '2017-10-10T13:03:08Z',
+          CustomerID: 2,
+          CustomerName: 'cust1',
+          Email: 'cust1c@gmail.com',
+          EndUserID: 8,
+          Firstname: null,
+          InIgnoreMode: false,
+          IsContactPerson: false,
+          JobTitle: null,
+          LastModified: '2017-10-10T13:03:08Z',
+          Lastname: null,
+          Phone: null,
+        },
+        url: [
+          '/v3/contacts/:_contactId',
+          '/v3/contacts',
+        ],
+      },
+      pathParams: {
+        contactId: 'id',
+      },
+      queryParams: {}}, {
+      name: 'Atera Latest1',
+
+      distributed: false,
+      apiIdentifier: '***',
+      assistant: 'atera',
+      assistantMetadata: {
+        resource: 'contacts',
+        version: 'v3',
+        operation: 'create_or_update_contacts',
+
+      },
+
+      http: {
+        relativeURI: [
+          '/v3/contacts/{{{id}}}',
+          '/v3/contacts',
+        ],
+        method: [
+          'PUT',
+          'POST',
+        ],
+        body: [
+          null,
+          null,
+        ],
+        headers: [
+
+        ],
+        batchSize: 1,
+        ignoreExtract: 'id',
+        requestMediaType: 'json',
+        successMediaType: 'json',
+        errorMediaType: 'json',
+        requestType: [
+          'UPDATE',
+          'CREATE',
+        ],
+        strictHandlebarEvaluation: true,
+        sendPostMappedData: true,
+
+      },
+      rest: {
+        relativeURI: [
+          '/v3/contacts/{{{id}}}',
+          '/v3/contacts',
+        ],
+        method: [
+          'PUT',
+          'POST',
+        ],
+        body: [
+          null,
+          null,
+        ],
+        headers: [
+
+        ],
+        ignoreExtract: 'id',
+        requestType: [
+          'UPDATE',
+          'CREATE',
+        ],
+      },
+      adaptorType: 'RESTImport',
+
+    }, restAssistantData, 'rest'],
+
+    [
+      {bodyParams: {},
+        resource: 'contacts',
+        version: 'v3',
+        lookupType: 'source',
+        operation: 'delete_contacts',
+        operationDetails: {
+          askForHowToGetIdentifier: true,
+          headers: {},
+          howToFindIdentifier: {},
+          id: 'delete_contacts',
+          method: 'DELETE',
+          name: 'Delete',
+          parameters: [
+            {
+              id: 'contactId',
+              in: 'path',
+              isIdentifier: true,
+              required: true,
+            },
+          ],
+          pathParameters: [],
+          queryParameters: [],
+          responseIdPath: '',
+          sampleData: {
+            CreatedOn: '2017-10-10T13:03:08Z',
+            CustomerID: 2,
+            CustomerName: 'cust1',
+            Email: 'cust1c@gmail.com',
+            EndUserID: 8,
+            Firstname: null,
+            InIgnoreMode: false,
+            IsContactPerson: false,
+            JobTitle: null,
+            LastModified: '2017-10-10T13:03:08Z',
+            Lastname: null,
+            Phone: null,
+          },
+          url: '/v3/contacts/:_contactId',
+        },
+        pathParams: {
+          contactId: 'id',
+        },
+        queryParams: {}}, {
+        name: 'Atera Latest1',
+
+        distributed: false,
+        apiIdentifier: '***',
+        assistant: 'atera',
+        assistantMetadata: {
+          resource: 'contacts',
+          version: 'v3',
+          operation: 'delete_contacts',
+
+        },
+
+        http: {
+          relativeURI: [
+            '/v3/contacts/{{{id}}}',
+          ],
+          method: [
+            'DELETE',
+          ],
+
+          batchSize: 1,
+          ignoreExtract: 'id',
+          requestMediaType: 'json',
+          successMediaType: 'json',
+          errorMediaType: 'json',
+
+          strictHandlebarEvaluation: true,
+          sendPostMappedData: true,
+        },
+        rest: {
+          relativeURI: [
+            '/v3/contacts/{{{id}}}',
+          ],
+          method: [
+            'DELETE',
+          ],
+
+          ignoreExtract: 'id',
+
+        },
+        adaptorType: 'RESTImport',
+
+      }, restAssistantData, 'rest'],
 
   ];
 
@@ -2439,6 +2744,114 @@ describe('convertFromImport', () => {
 describe('convertToImport', () => {
   const testCases = [
     [undefined, {}, undefined],
+    [{'/assistant': 'atera', '/assistantMetadata': {lookups: {}, operation: 'create_contacts', resource: 'contacts', version: 'v3'}, '/file': undefined, '/ignoreExisting': false, '/ignoreMissing': false, '/rest': {body: [null], headers: [], ignoreExisting: false, ignoreExtract: undefined, ignoreLookupName: undefined, ignoreMissing: false, lookups: [], method: ['POST'], relativeURI: ['/v3/contacts'], responseIdPath: [''], successPath: [undefined], successValues: [undefined]}}, {
+      adaptorType: 'rest',
+      assistant: 'atera',
+      ignoreExisting: false,
+      ignoreMissing: undefined,
+      lookupQueryParams: undefined,
+      lookupType: '',
+      lookups: [],
+      operation: 'create_contacts',
+      pathParams: {contactId: ''},
+      resource: 'contacts',
+      version: 'v3',
+    }, restAssistantData],
+    [{
+      '/assistant': 'atera',
+      '/assistantMetadata': {
+        lookups: {},
+        operation: 'create_or_update_contacts',
+        resource: 'contacts',
+        version: 'v3',
+      },
+      '/file': undefined,
+      '/ignoreExisting': false,
+      '/ignoreMissing': false,
+      '/rest': {
+        body: [
+          null,
+          null,
+        ],
+        headers: [],
+        ignoreExisting: false,
+        ignoreExtract: 'id',
+        ignoreLookupName: undefined,
+        ignoreMissing: false,
+        lookups: [],
+        method: [
+          'PUT',
+          'POST',
+        ],
+        relativeURI: [
+          '/v3/contacts/{{{id}}}',
+          '/v3/contacts',
+        ],
+        requestType: [
+          'UPDATE',
+          'CREATE',
+        ],
+        responseIdPath: [
+          '',
+          '',
+        ],
+
+      },
+    }, {
+      adaptorType: 'rest',
+      assistant: 'atera',
+      lookupType: 'source',
+      lookups: {},
+      operation: 'create_or_update_contacts',
+      pathParams: {contactId: 'id'},
+      resource: 'contacts',
+      version: 'v3',
+    }, restAssistantData],
+    [{
+      '/assistant': 'atera',
+      '/assistantMetadata': {
+        lookups: {},
+        operationUrl: ':',
+        resource: 'customers',
+        version: 'v3',
+      },
+      '/ignoreExisting': false,
+      '/ignoreMissing': false,
+      '/rest': {
+        body: [
+          null,
+        ],
+        headers: [],
+        ignoreExisting: false,
+        ignoreExtract: undefined,
+        ignoreLookupName: undefined,
+        ignoreMissing: false,
+        lookups: [],
+        method: [
+          undefined,
+        ],
+        relativeURI: [
+          undefined,
+        ],
+        responseIdPath: [
+          undefined,
+        ],
+        successPath: [
+          undefined,
+        ],
+        successValues: [
+          undefined,
+        ],
+      },
+    }, {adaptorType: 'rest',
+      assistant: 'atera',
+      lookupType: 'source',
+      lookups: '',
+      operation: 'delete_customers',
+      pathParams: {customerId: 'id1'},
+      resource: 'customers',
+      version: 'v3'}, restAssistantData],
+
   ];
 
   each(testCases).test(
