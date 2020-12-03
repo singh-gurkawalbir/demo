@@ -24,7 +24,7 @@ describe('responseMappingInit saga', () => {
       .run();
   });
 
-  test('should dispatch initFailed in case there is page processor corresponding to resourceId is not present', () => {
+  test('should dispatch initFailed if pageProcessor corresponding to resourceId is not present', () => {
     const flowId = 'f1';
     const resourceId = 'r1';
     const flowResource = {
@@ -275,7 +275,7 @@ describe('responseMappingSave saga', () => {
       .run();
   });
 
-  test('should patch stage changes to response mapping correctly', () => {
+  test('should patch stage changes to responseMapping property of pageProcessors correctly', () => {
     const listMapping = [
       {generate: 'g1', extract: 'e1', key: 'a'},
       {generate: 'g2', extract: 'e2', key: 'a'},
@@ -304,7 +304,7 @@ describe('responseMappingSave saga', () => {
       .run();
   });
 
-  test('show trigger saveFailed in case commitStagedChanges returns and error', () => {
+  test('show trigger saveFailed in case commitStagedChanges returns an error', () => {
     const listMapping = [
       {generate: 'g1', extract: 'e1', key: 'a'},
       {generate: 'g2', extract: 'e2', key: 'a'},
