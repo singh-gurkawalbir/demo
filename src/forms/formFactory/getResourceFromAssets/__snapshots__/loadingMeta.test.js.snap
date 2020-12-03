@@ -1459,12 +1459,14 @@ Object {
       },
       "s3.accessKeyId": Object {
         "fieldId": "s3.accessKeyId",
+        "required": true,
       },
       "s3.pingBucket": Object {
         "fieldId": "s3.pingBucket",
       },
       "s3.secretAccessKey": Object {
         "fieldId": "s3.secretAccessKey",
+        "required": true,
       },
       "settings": Object {
         "fieldId": "settings",
