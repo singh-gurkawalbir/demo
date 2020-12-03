@@ -9,11 +9,11 @@ export default {
   label: 'Settings Form builder',
   fieldId: 'settingsForm',
   description: 'Construct a form from metadata',
-  layout: ({ mode }) => `${mode}FormBuilder`,
-  panels: ({ mode }) => {
+  layout: ({ mode = 'json' }) => `${mode}FormBuilder`,
+  panels: ({ mode = 'json' }) => {
     const panels = [
       {
-        title: ({ mode }) => mode === 'json' ? 'Form definition' : 'Script input',
+        title: ({ mode = 'json' }) => mode === 'json' ? 'Form definition' : 'Script input',
         area: 'meta',
         Panel: RulePanel,
         props: { mode: 'json' },

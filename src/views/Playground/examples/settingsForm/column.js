@@ -52,5 +52,5 @@ export default {
   type: 'settingsForm',
   name: 'Multi-column',
   description: 'Example of a form spanning columns',
-  data: JSON.stringify(meta, null, 2),
+  rule: JSON.stringify(meta, null, 2),
 };

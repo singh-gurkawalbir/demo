@@ -52,5 +52,5 @@ export default {
   type: 'settingsForm',
   name: 'Collapsible',
   description: 'Example of adding a collapsible section',
-  data: JSON.stringify(meta, null, 2),
+  rule: JSON.stringify(meta, null, 2),
 };

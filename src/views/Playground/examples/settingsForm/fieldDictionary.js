@@ -151,5 +151,5 @@ export default {
   type: 'settingsForm',
   name: 'Field dictionary',
   description: 'Sample form demonstrating available fields',
-  data: JSON.stringify(sampleData, null, 2),
+  rule: JSON.stringify(sampleData, null, 2),
 };
