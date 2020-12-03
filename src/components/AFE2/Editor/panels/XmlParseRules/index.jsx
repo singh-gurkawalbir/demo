@@ -10,14 +10,17 @@ import { selectors } from '../../../../../reducers';
 import { getHelpTextMap } from '../../../../Help';
 
 const useStyles = makeStyles(theme => ({
-  helpText: {
-    whiteSpace: 'pre-line',
-  },
   container: {
     padding: 10,
     backgroundColor: theme.palette.background.default,
     height: '100%',
     overflow: 'auto',
+    '& > div:first-child': {
+      flexDirection: 'column',
+    },
+  },
+  helpText: {
+    whiteSpace: 'pre-line',
   },
   formControl: {
     margin: theme.spacing(1),
