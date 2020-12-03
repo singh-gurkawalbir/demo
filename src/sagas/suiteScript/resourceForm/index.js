@@ -96,6 +96,7 @@ export function* submitFormValues({
   let finalValues;
 
   try {
+    // getResourceFrom assets can throw an error when it cannot pick up a matching form
     ({ patchSet, finalValues } = yield call(createFormValuesPatchSet, {
       resourceType,
       resourceId,
