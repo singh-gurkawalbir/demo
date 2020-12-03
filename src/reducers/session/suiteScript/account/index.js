@@ -1,8 +1,10 @@
 import produce from 'immer';
-import actionTypes from '../../../actions/types';
+import actionTypes from '../../../../actions/types';
 
 export default (state = {}, action) => {
   const { type, account, hasIntegrations } = action;
+
+  if (!account) return state;
 
   return produce(state, draft => {
     switch (type) {
@@ -18,7 +20,7 @@ export default (state = {}, action) => {
 export const selectors = {};
 
 selectors.netsuiteAccountHasSuiteScriptIntegrations = (state, account) => {
-  if (!(state && state[account.toUpperCase()])) {
+  if (!(state && account && state[account.toUpperCase()])) {
     return null;
   }
 
