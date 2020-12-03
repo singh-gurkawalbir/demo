@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import { TreeView} from '@material-ui/lab';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
@@ -9,7 +10,9 @@ import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import LoadResources from '../../../components/LoadResources';
 import IntegrationIcon from '../../../components/icons/IntegrationAppsIcon';
 import FlowIcon from '../../../components/icons/FlowsIcon';
-import ResourcesIcon from '../../../components/icons/ResourcesIcon';
+import ImportsIcon from '../../../components/icons/ImportsIcon';
+import ExportsIcon from '../../../components/icons/ExportsIcon';
+import FlowBuilderIcon from '../../../components/icons/FlowBuilderIcon';
 import ResourceActionsBranch from './ResourceActionsBranch';
 import OverflowTreeItem from './OverflowTreeItem';
 
@@ -29,6 +32,7 @@ const emptyArray = [];
 
 export default function ExplorerMenu({ onEditorChange }) {
   const classes = useStyles();
+  const history = useHistory();
   const [integrationId, setIntegrationId] = useState();
   const [flowId, setFlowId] = useState();
   const [resourceId, setResourceId] = useState();
@@ -50,24 +54,37 @@ export default function ExplorerMenu({ onEditorChange }) {
   const ResourcesBranch = ({id}) => {
     if (id !== flowId) return null;
 
-    if (!flowResources?.length) {
-      return <OverflowTreeItem nodeId={`${id}-empty`} label="No Resources" />;
-    }
+    const handleFbClick = () => {
+      history.push(history.push(`/integrations/${integrationId}/flowBuilder/${flowId}`));
+    };
 
-    return flowResources.map(({_id: id, name}) => (
-      <OverflowTreeItem
-        key={id} nodeId={id} label={name || id}
-        icon={<ResourcesIcon />}
-        onClick={() => setResourceId(id)} >
-        {(id === resourceId) && (
-          <ResourceActionsBranch
-            flowId={flowId}
-            resourceId={resourceId}
-            onEditorChange={onEditorChange}
-          />
-        )}
-      </OverflowTreeItem>
-    ));
+    const ResourceIcon = ({resourceType}) =>
+      resourceType === 'exports' ? <ExportsIcon /> : <ImportsIcon />;
+
+    return (
+      <>
+        <OverflowTreeItem
+          icon={<FlowBuilderIcon />}
+          nodeId={`${resourceId}-fb`}
+          label="Open in Flow Builder"
+          onClick={handleFbClick} />
+
+        {flowResources.map(({_id: id, name, type}) => (
+          <OverflowTreeItem
+            key={id} nodeId={id} label={name || id}
+            icon={<ResourceIcon resourceType={type} />}
+            onClick={() => setResourceId(id)} >
+            {(id === resourceId) && (
+            <ResourceActionsBranch
+              flowId={flowId}
+              resourceId={resourceId}
+              onEditorChange={onEditorChange}
+            />
+            )}
+          </OverflowTreeItem>
+        ))}
+      </>
+    );
   };
 
   const FlowBranch = ({id}) => {

@@ -13,6 +13,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function HelpIconButton({ editorId }) {
   const classes = useStyles();
+
+  // TODO: Remove this hardcoded default after 1/1/2021. Used only for test purposes.
   const { fieldId = 'settingsForm', processor: type } = useSelector(state => selectors._editor(state, editorId));
 
   if (!fieldId) return null;
@@ -25,6 +27,6 @@ export default function HelpIconButton({ editorId }) {
       className={classes.helpTextButton}
       helpKey={fieldId}
       fieldId={fieldId}
-      />
+    />
   );
 }

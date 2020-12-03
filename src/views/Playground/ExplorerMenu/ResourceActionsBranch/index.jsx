@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import actions from '../../../../actions';
+import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import ImportsIcon from '../../../../components/icons/ImportsIcon';
 import ExportsIcon from '../../../../components/icons/ExportsIcon';
@@ -117,7 +118,7 @@ export default function ResourceItemsBranch({onEditorChange, flowId, resourceId}
       <OverflowTreeItem
         icon={<ResourcesIcon />}
         nodeId={`${resourceId}-view`}
-        label="View resource"
+        label={`View ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
         onClick={handleViewClick} />
 
       {!!editors?.length && editors.map(({type, fieldId}) => (
