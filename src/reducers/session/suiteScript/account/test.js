@@ -33,11 +33,15 @@ describe('account hasIntegrations reducer', () => {
   });
 });
 describe('netsuiteAccountHasSuiteScriptIntegrations selectors', () => {
-  const ssLinkedAccountId = 'ACCOUNT4';
-  const state = reducer(initialState, actions.account.receivedHasIntegrations(ssLinkedAccountId, true));
+  const ssLinkedAccountId1 = 'ACCOUNT4';
+  const ssLinkedAccountId2 = 'account5';
+  let state = reducer(initialState, actions.account.receivedHasIntegrations(ssLinkedAccountId1, true));
+
+  state = reducer(state, actions.account.receivedHasIntegrations(ssLinkedAccountId2, false));
 
   test('should return state correctly when valid suitescript account id is sent through', () => {
-    expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(state, ssLinkedAccountId)).toEqual(true);
+    expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(state, ssLinkedAccountId1)).toEqual(true);
+    expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(state, ssLinkedAccountId2)).toEqual(false);
   });
 
   const testCases = [

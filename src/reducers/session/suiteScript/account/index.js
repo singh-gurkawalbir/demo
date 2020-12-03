@@ -24,5 +24,5 @@ selectors.netsuiteAccountHasSuiteScriptIntegrations = (state, account) => {
     return null;
   }
 
-  return state[account].hasIntegrations;
+  return state[account.toUpperCase()].hasIntegrations;
 };
