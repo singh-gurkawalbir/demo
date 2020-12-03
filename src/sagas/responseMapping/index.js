@@ -6,7 +6,6 @@ import { SCOPES } from '../resourceForm';
 import { selectors } from '../../reducers';
 import { commitStagedChanges } from '../resources';
 import responseMappingUtil from '../../utils/responseMapping';
-import {requestSampleData as requestFlowSampleData} from '../sampleData/flows';
 
 export function* responseMappingInit({ flowId, resourceId }) {
   const { merged: flow = {} } = yield select(
@@ -31,12 +30,13 @@ export function* responseMappingInit({ flowId, resourceId }) {
     });
 
     if (!extractFields) {
-      yield call(requestFlowSampleData, {
+      // fetch can be made in parallel without masking response mapping
+      yield put(actions.flowData.requestSampleData(
         flowId,
         resourceId,
-        resourceType: 'imports',
-        stage: 'responseMappingExtract',
-      });
+        'imports',
+        'responseMappingExtract',
+      ));
     }
   }
   const mappings = responseMappingUtil.getFieldsAndListMappings(pageProcessor.responseMapping);
