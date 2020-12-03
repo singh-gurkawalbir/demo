@@ -96,9 +96,9 @@ describe('_compareSampleDataStage util', () => {
     expect(_compareSampleDataStage(previousStage, currentStage, 'imports')).toBe(2);
   });
 });
-describe('getCurrentSampleDataStageStatus util', () => {
+// TODO: describe('getCurrentSampleDataStageStatus util', () => {
 
-});
+// });
 describe('getSubsequentStages util - gives all the stages followed by passed stage', () => {
   const exportStages = Object.keys(sampleDataStage.exports);
   const importStages = Object.keys(sampleDataStage.imports);
