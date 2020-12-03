@@ -25,15 +25,15 @@ import dynamodb from './dynamodb';
 
 export default {
   new: newExport,
-  // common,
-  inputFilter,
+  // common, //ghost code
+  inputFilter, // ghost code
   test,
   delta,
   once,
-  valueDelta,
+  valueDelta, // ghost code
   webhook,
   distributed,
-  filter,
+  filter, // ghost code
   ftp,
   rest,
   subForms,

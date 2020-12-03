@@ -1,4 +1,6 @@
 export default {
+
+  // TODO:ghost code?
   fieldMap: {
     'delta.dateField': { fieldId: 'delta.dateField' },
     'delta.dateFormat': { fieldId: 'delta.dateFormat' },

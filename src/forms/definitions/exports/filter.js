@@ -1,4 +1,5 @@
 export default {
+  // TODO: ghost code
   fieldMap: {
     'filter.expression.version': { fieldId: 'filter.expression.version' },
     'filter.expression.rules': { fieldId: 'filter.expression.rules' },

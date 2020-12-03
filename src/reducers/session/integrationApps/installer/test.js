@@ -223,7 +223,6 @@ describe('integrationApps installer selectors test cases', () => {
         )
       );
 
-      console.log('new state', newState);
       expect(selectors.integrationAppsInstaller(newState, 1)).toEqual(expectedData);
     });
   });

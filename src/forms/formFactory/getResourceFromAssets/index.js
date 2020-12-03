@@ -216,7 +216,7 @@ const getResourceFormAssets = ({
           perspective and when all assistant metadata files are moved over to HTTP adaptor */
           if (
             resource.assistant &&
-              REST_ASSISTANTS.indexOf(resource.assistant) > -1
+              REST_ASSISTANTS.includes(resource.assistant)
           ) {
             meta = formMeta.connections.custom.http;
           }
@@ -229,7 +229,7 @@ const getResourceFormAssets = ({
 
           // when editing rdms connection we lookup for the resource subtype
           meta = formMeta.connections.rdbms[rdbmsSubType];
-        } else if (RDBMS_TYPES.indexOf(type) !== -1) {
+        } else if (RDBMS_TYPES.includes(type)) {
           meta = formMeta.connections.rdbms[type];
         } else {
           meta = formMeta.connections[type];
@@ -251,7 +251,7 @@ const getResourceFormAssets = ({
             // get edit form meta branch
             meta = meta.netsuiteDistributed;
           } else if (
-            type === 'salesforce' &&
+            type === 'salesforce' ||
               resource.assistant === 'financialforce'
           ) {
             // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
@@ -260,7 +260,7 @@ const getResourceFormAssets = ({
             const rdbmsSubType =
                 connection && connection.rdbms && connection.rdbms.type;
 
-            // when editing rdms connection we lookup for the resource subtype
+            // when editing rdbms connection we lookup for the resource subtype
             if (rdbmsSubType === 'snowflake') {
               meta = meta.rdbms.snowflake;
             } else {
@@ -299,16 +299,16 @@ const getResourceFormAssets = ({
 
             // when editing rdms connection we lookup for the resource subtype
             if (rdbmsSubType === 'snowflake') {
+              // TODO:both seems to be duplicated
               meta = meta.rdbms.snowflake;
             } else {
               meta = meta.rdbms.sql;
             }
           } else if (
-            type === 'salesforce' &&
+            type === 'salesforce' ||
               resource.assistant === 'financialforce'
           ) {
             // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
-
             meta = meta.salesforce;
           } else if (
             resource && resource.assistant !== 'openair' &&
