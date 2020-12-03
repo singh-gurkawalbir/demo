@@ -6,7 +6,6 @@ import ButtonGroup from '../../ButtonGroup';
 import actions from '../../../actions';
 import {selectors} from '../../../reducers';
 import Spinner from '../../Spinner';
-import { useLoadingSnackbarOnSave } from '../../ResourceFormFactory/Actions';
 
 const SaveButton = ({
   submitButtonLabel = 'Save',
@@ -18,18 +17,12 @@ const SaveButton = ({
   onClose,
 }) => {
   const [saveTrigerred, setSaveTriggered] = useState(false);
-  const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
   const match = useRouteMatch();
   const dispatch = useDispatch();
   const mappingsChanged = useSelector(state =>
     selectors.responseMappingChanged(state)
   );
-  const { saveTerminated, saveCompleted } = useSelector(state => {
-    const { saveTerminated, saveCompleted } = selectors.responseMappingSaveStatus(state);
-
-    return { saveTerminated, saveCompleted };
-  }, shallowEqual
-  );
+  const { saveTerminated, saveCompleted, saveInProgress } = useSelector(state => selectors.responseMappingSaveStatus(state), shallowEqual);
 
   useEffect(() => {
     if (saveTrigerred && saveCompleted && onClose) {
@@ -37,17 +30,13 @@ const SaveButton = ({
       setSaveTriggered(false);
     }
   }, [onClose, saveCompleted, saveTerminated, saveTrigerred]);
-  const onSave = useCallback(() => {
+  const handleSave = useCallback(() => {
     dispatch(actions.responseMapping.save({ match }));
     setSaveTriggered(true);
   }, [dispatch, match]);
-  const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
-    saveTerminated,
-    onSave,
-    resourceType: 'mappings',
-    disableSaveOnClick,
-    setDisableSaveOnClick,
-  });
+
+  const disableSave = disabled || saveInProgress || !mappingsChanged;
+  const showSpinner = saveTrigerred && saveInProgress;
 
   if (showOnlyOnChanges && !mappingsChanged) {
     return null;
@@ -58,9 +47,9 @@ const SaveButton = ({
       data-test={dataTest}
       variant={variant}
       color={color}
-      disabled={disabled || disableSave || !mappingsChanged}
-      onClick={handleSubmitForm}>
-      {disableSave ? (
+      disabled={disableSave}
+      onClick={handleSave}>
+      {showSpinner ? (
         <>
           <Spinner size={16} />
           Saving
