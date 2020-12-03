@@ -1,4 +1,4 @@
-/* global expect, describe, test */
+/* global expect, describe, test, beforeEach */
 import {
   getDefaultData,
   convertFileDataToJSON,
@@ -10,6 +10,7 @@ import {
   isValidPathToMany,
   processOneToManySampleData,
   wrapExportFileSampleData,
+  wrapSampleDataWithContext,
 } from '.';
 
 // TODO: describe('getFormattedSampleData util', () => {});
@@ -498,5 +499,491 @@ describe('wrapExportFileSampleData util', () => {
     ] };
 
     expect(wrapExportFileSampleData(records)).toEqual(expectedData);
+  });
+});
+
+describe('wrapSampleDataWithContext util', () => {
+  let integration; let resource; let flow; let connection; let
+    sampleData;
+
+  beforeEach(() => {
+    integration = {
+      _id: 'some integration id',
+      name: 'dummy integration',
+      settings: {
+        store: 'shopify',
+      },
+    };
+    flow = {
+      _id: 'some flow id',
+      _integrationId: 'some integration id',
+      name: 'dummy flow',
+
+    };
+    connection = {
+      _id: 'some connection id',
+      name: 'dummy connection',
+      type: 's3',
+      offline: true,
+      settings: {conn1: 'conn1'},
+      http: {
+        encrypted: '****',
+        unencrypted: {
+          user: 'abcd',
+        },
+      },
+    };
+    resource = {
+      _id: 'some resource id',
+      _connectionId: 'some connection id',
+      name: 'dummy resource',
+      adaptorType: 'S3Export',
+      settings: {resourceSet: 'custom settings'},
+    };
+    sampleData = {
+      status: 'received',
+      data: {
+        id: 333,
+        phone: '1234',
+      },
+      templateVersion: 1,
+    };
+  });
+
+  test('should return with status if status is empty or has requested value', () => {
+    const sampleData = {
+      status: 'requested',
+    };
+    const stage = 'flowInput';
+
+    expect(wrapSampleDataWithContext({sampleData, stage})).toEqual({status: 'requested'});
+    expect(wrapSampleDataWithContext({sampleData: {}, stage})).toEqual({status: undefined});
+  });
+  test('should return same sample data if resource is not attached to any flow', () => {
+    const flow = {};
+    const stage = 'flowInput';
+
+    expect(wrapSampleDataWithContext({sampleData, flow, stage})).toEqual(sampleData);
+  });
+  test('should return same sample data if field is dataURITemplate/idLockTemplate and template version is 1', () => {
+    const stage = 'flowInput';
+
+    expect(wrapSampleDataWithContext({sampleData, flow: {}, fieldType: 'dataURITemplate', stage})).toEqual(sampleData);
+    expect(wrapSampleDataWithContext({sampleData, flow: {}, fieldType: 'idLockTemplate', stage})).toEqual(sampleData);
+  });
+  test('should return same sample data if stage is not supported', () => {
+    const stage = 'importMappingExtract';
+
+    expect(wrapSampleDataWithContext({sampleData, flow: {}, stage})).toEqual(sampleData);
+  });
+  test('should return correctly wrapped sample data with connection details for http resource if stage = flowInput and version is 2', () => {
+    const stage = 'flowInput';
+
+    resource.adaptorType = 'HTTPExport';
+
+    const sampleData = {
+      status: 'received',
+      data: {
+        record: {
+          CONTRACT_PRICE: '89',
+          CUSTOMER_NUMBER: 'C1234',
+        },
+      },
+      templateVersion: 2,
+    };
+
+    const expectedData = {
+      data: {
+        record: {
+          CONTRACT_PRICE: '89',
+          CUSTOMER_NUMBER: 'C1234',
+        },
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+        connection: {
+          name: 'dummy connection',
+          http: {
+            unencrypted: {
+              user: 'abcd',
+            },
+            encrypted: '****',
+          },
+        },
+      },
+      status: 'received',
+      templateVersion: 2,
+    };
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+  });
+  test('should return correctly wrapped sample data without connection details if stage is flowInput and resource is non http type', () => {
+    const stage = 'flowInput';
+
+    const sampleData = {
+      status: 'received',
+      data: {
+        record: {
+          CONTRACT_PRICE: '89',
+          CUSTOMER_NUMBER: 'C1234',
+        },
+      },
+      templateVersion: 2,
+    };
+
+    const expectedData = {
+      data: {
+        record: {
+          CONTRACT_PRICE: '89',
+          CUSTOMER_NUMBER: 'C1234',
+        },
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+      },
+      status: 'received',
+      templateVersion: 2,
+    };
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+  });
+  test('should include paging details in returned object if stage is flowInput and http/rest resource has paging set', () => {
+    const stage = 'flowInput';
+
+    resource.adaptorType = 'RESTExport';
+    resource.http = {
+      paging: {
+        method: 'token',
+        path: '/p1',
+        relativeURI: '/catalog/search/123?1={{{export.http.paging.token}}}',
+        lastPageStatusCode: 404,
+      },
+    };
+
+    const sampleData = {
+      status: 'received',
+      data: {
+        record: {
+          CONTRACT_PRICE: '89',
+          CUSTOMER_NUMBER: 'C1234',
+        },
+      },
+      templateVersion: 2,
+    };
+
+    const expectedData = {
+      data: {
+        record: {
+          CONTRACT_PRICE: '89',
+          CUSTOMER_NUMBER: 'C1234',
+        },
+        export: {
+          http: {
+            paging: {
+              method: 'token',
+              path: '/p1',
+              relativeURI: '/catalog/search/123?1={{{export.http.paging.token}}}',
+              lastPageStatusCode: 404,
+            },
+          },
+        },
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+      },
+      status: 'received',
+      templateVersion: 2,
+    };
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+  });
+  test('should return correctly wrapped sample data if stage is transform or sampleResponse or inputFilter', () => {
+    const stages = ['transform', 'sampleResponse', 'inputFilter'];
+    const expectedData = {
+      status: 'received',
+      data: {
+        record: {
+          id: 333,
+          phone: '1234',
+        },
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+      },
+    };
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage: stages[Math.floor(Math.random() * stages.length)]})).toEqual(expectedData);
+  });
+  test('should return correctly wrapped sample data if stage is outputFilter', () => {
+    const stage = 'outputFilter';
+
+    const expectedData = {
+      status: 'received',
+      data: {
+        record: {
+          id: 333,
+          phone: '1234',
+        },
+        pageIndex: 0,
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+      },
+    };
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+
+    // delta type resource
+    resource.type = 'delta';
+    expectedData.data.lastExportDateTime = expect.any(String);
+    expectedData.data.currentExportDateTime = expect.any(String);
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+  });
+  test('should return correctly wrapped sample data if stage is preSavePage', () => {
+    const stage = 'preSavePage';
+
+    const expectedData = {
+      status: 'received',
+      data: {
+        data: [{
+          id: 333,
+          phone: '1234',
+        }],
+        errors: [],
+        _exportId: 'some resource id',
+        _connectionId: 'some connection id',
+        _flowId: 'some flow id',
+        _integrationId: 'some integration id',
+        pageIndex: 0,
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+      },
+    };
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+
+    // delta type resource
+    resource.type = 'delta';
+    expectedData.data.lastExportDateTime = expect.any(String);
+    expectedData.data.currentExportDateTime = expect.any(String);
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+  });
+  test('should return correctly wrapped sample data if stage is preMap', () => {
+    const stage = 'preMap';
+
+    const expectedData = {
+      status: 'received',
+      data: {
+        data: [{
+          id: 333,
+          phone: '1234',
+        }],
+        _exportId: 'some resource id',
+        _connectionId: 'some connection id',
+        _flowId: 'some flow id',
+        _integrationId: 'some integration id',
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+      },
+    };
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+  });
+  test('should return correctly wrapped sample data if stage is postMap', () => {
+    const preMapSampleData = {
+      data: {
+        id: 333,
+        phone: '1234',
+      },
+    };
+    const stage = 'postMap';
+
+    const expectedData = {
+      status: 'received',
+      data: {
+        preMapData: [{
+          id: 333,
+          phone: '1234',
+        }],
+        postMapData: [{
+          id: 333,
+          phone: '1234',
+        }],
+        _exportId: 'some resource id',
+        _connectionId: 'some connection id',
+        _flowId: 'some flow id',
+        _integrationId: 'some integration id',
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+      },
+    };
+
+    expect(wrapSampleDataWithContext({sampleData, preMapSampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+  });
+  test('should return correctly wrapped sample data if stage is postSubmit', () => {
+    const preMapSampleData = {
+      data: {
+        id: 333,
+        phone: '1234',
+      },
+    };
+    const postMapSampleData = {
+      data: {
+        id: 333,
+        phone: '1234',
+        isValid: true,
+      },
+    };
+    const sampleData = {
+      status: 'received',
+      data: {
+        success: true,
+        id: 2001,
+      },
+    };
+    const stage = 'postSubmit';
+
+    const expectedData = {
+      status: 'received',
+      data: {
+        preMapData: [{
+          id: 333,
+          phone: '1234',
+        }],
+        postMapData: [{
+          id: 333,
+          phone: '1234',
+          isValid: true,
+        }],
+        responseData: [{
+          statusCode: 200,
+          errors: [{ code: '', message: '', source: '' }],
+          ignored: false,
+          id: '',
+          _json: {
+            success: true,
+            id: 2001,
+          },
+          dataURI: '',
+        }],
+        _exportId: 'some resource id',
+        _connectionId: 'some connection id',
+        _flowId: 'some flow id',
+        _integrationId: 'some integration id',
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+      },
+    };
+
+    expect(wrapSampleDataWithContext({sampleData, preMapSampleData, postMapSampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+  });
+  test('should return correctly wrapped sample data if stage is postAggregate', () => {
+    const stage = 'postAggregate';
+
+    const expectedData = {
+      status: 'received',
+      data: {
+        postAggregateData: {
+          success: true,
+          _json: {},
+          code: '',
+          message: '',
+          source: '',
+        },
+        _exportId: 'some resource id',
+        _connectionId: 'some connection id',
+        _flowId: 'some flow id',
+        _integrationId: 'some integration id',
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+      },
+    };
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+  });
+  test('should return correctly wrapped sample data if stage is postResponseMapHook', () => {
+    const stage = 'postResponseMapHook';
+    const sampleData = {
+      status: 'received',
+      data: [
+        {
+          id: 999,
+          ignored: true,
+          recordId: 78,
+        },
+      ],
+    };
+
+    const expectedData = {
+      status: 'received',
+      data: {
+        postResponseMapData: [
+          {
+            id: 999,
+            ignored: true,
+            recordId: 78,
+          },
+        ],
+      },
+    };
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
   });
 });

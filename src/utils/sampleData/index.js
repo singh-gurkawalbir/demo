@@ -700,7 +700,7 @@ export const wrapSampleDataWithContext = ({
       return {
         status,
         data: {
-          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
+          preMapData: preMapSampleData?.data ? [preMapSampleData.data] : [],
           postMapData: data ? [data] : [],
           ...resourceIds,
           settings,
@@ -710,8 +710,8 @@ export const wrapSampleDataWithContext = ({
       return {
         status,
         data: {
-          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
-          postMapData: postMapSampleData.data ? [postMapSampleData.data] : [],
+          preMapData: preMapSampleData?.data ? [preMapSampleData.data] : [],
+          postMapData: postMapSampleData?.data ? [postMapSampleData.data] : [],
           responseData: [data].map(() => ({
             statusCode: 200,
             errors: [{ code: '', message: '', source: '' }],
