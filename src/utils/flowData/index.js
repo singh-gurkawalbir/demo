@@ -127,9 +127,11 @@ export const getCurrentSampleDataStageStatus = (
 // Regex for parsing patchSet paths to listen field specific changes of a resource
 // sample Sequence path:  '/pageProcessors' or '/pageGenerators'
 // sample responseMapping path: '/pageProcessors/${resourceIndex}/responseMapping
+// when added a lookup to the flow path: '/pageProcessors/${resourceIndex}
 const pathRegex = {
   sequence: /^(\/pageProcessors|\/pageGenerators)$/,
   responseMapping: /\/pageProcessors\/[0-9]+\/responseMapping/,
+  lookupAddition: /\/pageProcessors\/[0-9]+$/,
 };
 
 export function getPreviewStageData(previewData, previewStage = 'parse') {
@@ -164,18 +166,14 @@ export const getLastExportDateTime = () =>
     .add(-1, 'y')
     .toISOString();
 
-export const getAddedLookupInFlow = (oldFlow = {}, patchSet = []) => {
-  const { pageProcessors = [] } = oldFlow;
+export const getAddedLookupIdInFlow = (patchSet = []) => {
   const pageProcessorsPatch = patchSet.find(
-    patch => patch.path === '/pageProcessors'
+    patch => pathRegex.lookupAddition.test(patch.path) &&
+      ['add', 'replace'].includes(patch.op)
   );
-  const updatedPageProcessors =
-    (pageProcessorsPatch && pageProcessorsPatch.value) || [];
 
-  if (updatedPageProcessors.length - pageProcessors.length === 1) {
-    const addedPP = updatedPageProcessors[updatedPageProcessors.length - 1];
-
-    return addedPP.type === 'export' ? addedPP._exportId : undefined;
+  if (pageProcessorsPatch?.value?.type === 'export') {
+    return pageProcessorsPatch.value._exportId;
   }
 };
 

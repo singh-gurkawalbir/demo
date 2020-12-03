@@ -4,11 +4,9 @@ import {
   // getAllDependentSampleDataStages,
   // _compareSampleDataStage,
   // getCurrentSampleDataStageStatus,
-  // getPreviewStageData,
-  // getSampleDataStage,
-  // getLastExportDateTime,
-  // getAddedLookupInFlow,
-  // getFlowUpdatesFromPatch,
+  getPreviewStageData,
+  getAddedLookupIdInFlow,
+  getFlowUpdatesFromPatch,
   isRawDataPatchSet,
   isUIDataExpectedForResource,
   isOneToManyResource,
@@ -22,9 +20,7 @@ import {
 } from '.';
 
 describe('getAllDependentSampleDataStages util', () => {
-  test('should return true', () => {
-    expect(true).toBeTruthy();
-  });
+
 });
 describe('_compareSampleDataStage util', () => {
 
@@ -33,51 +29,194 @@ describe('getCurrentSampleDataStageStatus util', () => {
 
 });
 describe('getPreviewStageData util', () => {
-  test('should return undefined when previewData is undefined', () => {
+  const previewData = {
+    data: [{
+      users: [
+        { _id: 'user1', name: 'user1'},
+        { _id: 'user2', name: 'user2'},
+        { _id: 'user3', name: 'user3'},
+      ],
+    }],
+    stages: [{
+      name: 'request',
+      data: [{
+        url: 'https://celigohelp.zendesk.com/api/v2/users.json',
+        method: 'GET',
+      }],
+    },
+    {
+      name: 'raw',
+      data: [{
+        headers: {
+          'content-type': 'application/json',
+        },
+        statusCode: 200,
+        url: 'https://celigohelp.zendesk.com/api/v2/users.json',
+        body: '{"users": [{id: "123", name: "user1"}]}',
+      }],
+    },
+    {
+      name: 'parse',
+      data: {
+        users: [{
+          id: '123',
+          name: 'user1',
+        }],
+      },
+    }],
+  };
 
+  test('should return undefined when previewData is undefined', () => {
+    expect(getPreviewStageData()).toBeUndefined();
   });
   test('should return undefined when previewData does not have stages', () => {
+    const previewDataWithoutStages = {
+      data: [{
+        users: [
+          { _id: 'user1', name: 'user1'},
+          { _id: 'user2', name: 'user2'},
+          { _id: 'user3', name: 'user3'},
+        ],
+      }],
+    };
 
+    expect(getPreviewStageData(previewDataWithoutStages)).toBeUndefined();
   });
   test('should return expected stage data from previewData when stage is not raw stage', () => {
-
+    expect(getPreviewStageData(previewData, 'request')).toEqual({
+      url: 'https://celigohelp.zendesk.com/api/v2/users.json',
+      method: 'GET',
+    });
   });
-  test('should return parse stage when previewStage is raw and previewData does not have raw stage', () => {
+  test('should return complete parse stage when previewStage is raw and previewData does not have raw stage when we consider NS/SF or DB adaptors for example', () => {
+    const netsuitePreviewData = {
+      data: [{
+        DocumentNumber: '0',
+        Amount: '989.20',
+      }],
+      stages: [{
+        name: 'parse',
+        data: [{
+          DocumentNumber: '0',
+          Amount: '989.20',
+        }],
+        errors: null,
+      }],
+    };
 
+    expect(getPreviewStageData(netsuitePreviewData, 'raw')).toEqual([{
+      DocumentNumber: '0',
+      Amount: '989.20',
+    }]);
   });
-  test('should return raw stage when requested for and also previewData has raw stage', () => {
-
+  test('should return complete raw stage when requested for and also previewData has raw stage', () => {
+    expect(getPreviewStageData(previewData, 'raw')).toEqual({
+      headers: {
+        'content-type': 'application/json',
+      },
+      statusCode: 200,
+      url: 'https://celigohelp.zendesk.com/api/v2/users.json',
+      body: '{"users": [{id: "123", name: "user1"}]}',
+    });
   });
 });
-describe('getSampleDataStage util', () => {
 
-});
-describe('getAddedLookupInFlow util', () => {
+describe('getAddedLookupIdInFlow util', () => {
   test('should return undefined when the patchSet is empty ', () => {
-
+    expect(getAddedLookupIdInFlow()).toBeUndefined();
   });
-  test('should return undefined when the patchSet does not contain /pageProcessors which means no lookup has been added', () => {
+  test('should return undefined when the patchSet does not contain /pageProcessors/index which means no lookup has been added', () => {
+    const flowPatchSet = [{
+      op: 'replace',
+      path: '/lastModified',
+      value: '2020-12-03T11:49:53.921Z',
+    },
+    {
+      op: 'remove',
+      path: '/pageProcessors/0/responseMapping',
+    }];
 
+    expect(getAddedLookupIdInFlow(flowPatchSet)).toBeUndefined();
   });
-  test('should return undefined when the patchSet has /pageProcessors but an import has been added to the flow', () => {
+  test('should return undefined when the patchSet has /pageProcessors/index but an import has been added to the flow', () => {
+    const flowPatchSet = [{
+      op: 'add',
+      path: '/pageProcessors/1',
+      value: {
+        type: 'import',
+        _importId: '1234',
+      },
+    }];
 
+    expect(getAddedLookupIdInFlow(flowPatchSet)).toBeUndefined();
   });
-  test('should return exportId when the patchSet has /pageProcessors and a lookup has been added to the flow', () => {
+  test('should return exportId when the patchSet has /pageProcessors/index and a lookup has been added to the flow', () => {
+    const flowPatchSet = [{
+      op: 'add',
+      path: '/pageProcessors/12',
+      value: {
+        type: 'export',
+        _exportId: '1234',
+      },
+    }];
 
+    expect(getAddedLookupIdInFlow(flowPatchSet)).toBe('1234');
   });
 });
 describe('getFlowUpdatesFromPatch util used to determine if the flow sequence / flow response mapping has been changed', () => {
   test('should return empty object when the patchSet is empty', () => {
-
+    expect(getFlowUpdatesFromPatch()).toEqual({});
   });
   test('should return empty object when the patchSet has lastModified patch', () => {
+    const flowPatchSet = [{
+      op: 'replace',
+      path: '/lastModified',
+      value: '2020-12-03T11:49:53.921Z',
+    },
+    {
+      op: 'remove',
+      path: '/pageProcessors/0/responseMapping',
+    }];
 
+    expect(getFlowUpdatesFromPatch(flowPatchSet)).toEqual({});
   });
   test('should return sequence as true if the patchSet has /pageGenerators or /pageProcessors as the path', () => {
+    const flowPatchSet = [{
+      op: 'replace',
+      path: '/pageProcessors',
+      value: [{
+        type: 'import',
+        _importId: 'import123',
+      },
+      {
+        type: 'export',
+        _exportId: 'export456',
+      }],
+    }];
 
+    expect(getFlowUpdatesFromPatch(flowPatchSet)).toEqual({
+      responseMapping: false,
+      sequence: true,
+    });
   });
-  test('should return responseMapping as true if the patchSet has pageProcessors/resourceIndex/responseMapping as the path', () => {
+  test('should return responseMapping with resourceIndex if the patchSet has pageProcessors/resourceIndex/responseMapping as the path', () => {
+    const flowPatchSet = [
+      {
+        op: 'replace',
+        path: '/pageProcessors/2/responseMapping',
+        value: {
+          fields: [{ extract: 'id', generate: 'userID'}],
+          lists: [],
+        },
+      },
+    ];
 
+    expect(getFlowUpdatesFromPatch(flowPatchSet)).toEqual({
+      responseMapping: {
+        resourceIndex: 2,
+      },
+      sequence: false,
+    });
   });
 });
 describe('isRawDataPatchSet util', () => {
