@@ -116,14 +116,23 @@ export const ResourceFormFactory = props => {
   ]);
 
   const { optionsHandler, validationHandler } = useMemo(
-    () =>
-      getResourceFormAssets({
-        resourceType,
-        resource,
-        isNew,
-        connection,
-        integrationId,
-      }),
+    () => {
+      let metadataAssets;
+
+      try {
+        metadataAssets = getResourceFormAssets({
+          resourceType,
+          resource,
+          isNew,
+          connection,
+          integrationId,
+        });
+      } catch (e) {
+        metadataAssets = {};
+      }
+
+      return metadataAssets;
+    },
     [connection, isNew, resource, resourceType, integrationId]
   );
   const { fieldMeta } = formState;

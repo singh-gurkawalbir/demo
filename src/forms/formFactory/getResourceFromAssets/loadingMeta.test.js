@@ -1,4 +1,4 @@
-/* global describe, test, expect,jest */
+/* global describe, test, expect, fail, jest */
 import getResourceFormAssets from '.';
 import mockExportAssist from '../../definitions/exports/custom/http/assistant';
 import mockImportAssist from '../../definitions/imports/custom/http/assistant';
@@ -53,13 +53,14 @@ describe('getResourceFromAssets load correct form', () => {
       expect(result?.fieldMeta?.fieldMap?.application?.label).toEqual('Application');
       expect(result).toMatchSnapshot();
     });
-    // change this negative test case to throw an error
-    test('should not load a form and return null for non-valid schema', () => {
+    test('should not load a form and throw an error for non-valid schema', () => {
       const resource = {id: 'something1'};
 
-      const result = getResourceFormAssets({resourceType, resource, isNew: false, assistantData, connection });
-
-      expect(result.fieldMeta.fieldMap).toEqual(undefined);
+      try {
+        getResourceFormAssets({resourceType, resource, isNew: false, assistantData, connection });
+        fail('should fail ');
+      // eslint-disable-next-line no-empty
+      } catch (e) {}
     });
 
     describe('assistants', () => {
@@ -153,13 +154,15 @@ describe('getResourceFromAssets load correct form', () => {
       expect(result).toMatchSnapshot();
     });
     // change this negative test case to throw an error
-    test('should not load a form and return null for non-valid schema', () => {
+    test('should not load a form and throw an error for non-valid schema', () => {
       const resource = {id: 'something1'};
       const connection = {id: 'something2'};
 
-      const result = getResourceFormAssets({resourceType, resource, isNew: false, assistantData, connection });
-
-      expect(result.fieldMeta.fieldMap).toEqual(undefined);
+      try {
+        getResourceFormAssets({resourceType, resource, isNew: false, assistantData, connection });
+        fail('should fail ');
+      // eslint-disable-next-line no-empty
+      } catch (e) {}
     });
 
     const inputs = [
@@ -270,13 +273,15 @@ describe('getResourceFromAssets load correct form', () => {
       expect(result).toMatchSnapshot();
     });
     // change this negative test case to throw an error
-    test('should not load a form and return null for non-valid schema', () => {
+    test('should not load a form and throw an error for non-valid schema', () => {
       const resource = {id: 'something1'};
       const connection = {id: 'something2'};
 
-      const result = getResourceFormAssets({resourceType, resource, isNew: false, assistantData, connection });
-
-      expect(result.fieldMeta.fieldMap).toEqual(undefined);
+      try {
+        getResourceFormAssets({resourceType, resource, isNew: false, assistantData, connection });
+        fail('should fail ');
+      // eslint-disable-next-line no-empty
+      } catch (e) {}
     });
 
     test('should load assistant data', () => {

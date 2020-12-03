@@ -3998,7 +3998,7 @@ selectors.suiteScriptResourceData = (
       resourceId: id,
     }),
     scope
-  );
+  ) || {};
 
   if (!master && !patch) return { merged: {} };
 

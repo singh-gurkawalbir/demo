@@ -1,4 +1,5 @@
 import { call, put, select, takeEvery, take, race } from 'redux-saga/effects';
+import { isEmpty } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -350,14 +351,22 @@ export function* submitFormValues({
       values: formValues,
     });
   }
+  let patchSet;
+  let finalValues;
 
-  const { patchSet, finalValues } = yield call(createFormValuesPatchSet, {
-    resourceType,
-    resourceId,
-    values: formValues,
-    scope: SCOPES.VALUE,
-  });
-
+  try {
+    // getResourceFrom assets can throw an error when it can pick up a matching form
+    ({ patchSet, finalValues } = yield call(createFormValuesPatchSet, {
+      resourceType,
+      resourceId,
+      values: formValues,
+      scope: SCOPES.VALUE,
+    }));
+  } catch (e) {
+    return yield put(
+      actions.resourceForm.submitFailed(resourceType, resourceId)
+    );
+  }
   if (patchSet && patchSet.length > 0) {
     yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
   }
@@ -880,7 +889,13 @@ export function* initFormValues({
     resource._id = resourceId;
   }
 
-  if (!resource) return; // nothing to do.
+  // if resource is empty.... it could be a resource looked up with invalid Id
+  if (!resource || isEmpty(resource)) {
+    yield put(actions.resourceForm.initFailed(resourceType, resourceId));
+
+    return; // nothing to do.
+  }
+
   let assistantData;
 
   if (['exports', 'imports'].includes(resourceType) && resource.assistant) {

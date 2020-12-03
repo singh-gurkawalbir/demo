@@ -21,6 +21,12 @@ export default {
     clear: (ssLinkedConnectionId, integrationId, featureName) => action(actionTypes.SUITESCRIPT.FEATURE_CHECK.CLEAR, {ssLinkedConnectionId, integrationId, featureName}),
   },
   resourceForm: {
+    initFailed: (ssLinkedConnectionId, resourceType, resourceId) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT_FAILED, {
+        ssLinkedConnectionId,
+        resourceType,
+        resourceId,
+      }),
     init: (
       ssLinkedConnectionId,
       resourceType,

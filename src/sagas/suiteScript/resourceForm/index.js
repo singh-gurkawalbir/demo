@@ -1,5 +1,6 @@
 import { call, put, select, takeEvery, take, race } from 'redux-saga/effects';
 import jsonPatch from 'fast-json-patch';
+import { isEmpty } from 'lodash';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { selectors } from '../../../reducers';
@@ -91,15 +92,23 @@ export function* submitFormValues({
   integrationId,
 }) {
   const formValues = { ...values };
-  const { patchSet, finalValues } = yield call(createFormValuesPatchSet, {
-    resourceType,
-    resourceId,
-    values: formValues,
-    scope: SCOPES.VALUE,
-    ssLinkedConnectionId,
-    integrationId,
-  });
+  let patchSet;
+  let finalValues;
 
+  try {
+    ({ patchSet, finalValues } = yield call(createFormValuesPatchSet, {
+      resourceType,
+      resourceId,
+      values: formValues,
+      scope: SCOPES.VALUE,
+      ssLinkedConnectionId,
+      integrationId,
+    }));
+  } catch (e) {
+    return yield put(
+      actions.resourceForm.submitFailed(resourceType, resourceId)
+    );
+  }
   if (patchSet && patchSet.length > 0) {
     yield put(
       actions.suiteScript.resource.patchStaged(
@@ -211,7 +220,14 @@ export function* initFormValues({
     resource._id = resourceId;
   }
 
-  if (!resource) return; // nothing to do.
+  // if resource is empty.... it could be a resource looked up with invalid Id
+  if (!resource || isEmpty(resource)) {
+    yield put(
+      actions.suiteScript.resourceForm.initFailed(ssLinkedConnectionId, resourceType, resourceId));
+
+    return; // nothing to do.
+  }
+
   let assistantData;
   let connection;
 
@@ -224,45 +240,49 @@ export function* initFormValues({
     });
   }
 
-  const defaultFormAssets = getResourceFormAssets({
-    resourceType,
-    resource,
-    isNew,
-    assistantData,
-    connection,
-    ssLinkedConnectionId,
-  });
-  const { customForm } = resource;
-  const form =
+  try {
+    const defaultFormAssets = getResourceFormAssets({
+      resourceType,
+      resource,
+      isNew,
+      assistantData,
+      connection,
+      ssLinkedConnectionId,
+    });
+    const { customForm } = resource;
+    const form =
     customForm && customForm.form
       ? customForm.form
       : defaultFormAssets.fieldMeta;
-  //
-  const fieldMeta = getFieldsWithDefaults(
-    form,
-    `ss-${resourceType}`,
-    resource,
-    { developerMode, flowId }
-  );
-  let finalFieldMeta = fieldMeta;
+    //
+    const fieldMeta = getFieldsWithDefaults(
+      form,
+      `ss-${resourceType}`,
+      resource,
+      { developerMode, flowId }
+    );
+    let finalFieldMeta = fieldMeta;
 
-  if (typeof defaultFormAssets.init === 'function') {
+    if (typeof defaultFormAssets.init === 'function') {
     // standard form init fn...
 
-    finalFieldMeta = defaultFormAssets.init(fieldMeta, resource, flow);
-  }
+      finalFieldMeta = defaultFormAssets.init(fieldMeta, resource, flow);
+    }
 
-  yield put(
-    actions.suiteScript.resourceForm.initComplete(
-      ssLinkedConnectionId,
-      resourceType,
-      resourceId,
-      finalFieldMeta,
-      isNew,
-      skipCommit,
-      flowId,
-    )
-  );
+    yield put(
+      actions.suiteScript.resourceForm.initComplete(
+        ssLinkedConnectionId,
+        resourceType,
+        resourceId,
+        finalFieldMeta,
+        isNew,
+        skipCommit,
+        flowId,
+      )
+    );
+  } catch (e) {
+    yield put(actions.suiteScript.resourceForm.initFailed(ssLinkedConnectionId, resourceType, resourceId));
+  }
 }
 
 function* suiteScriptSubmitIA({

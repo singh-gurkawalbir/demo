@@ -82,14 +82,24 @@ export const ResourceFormFactory = props => {
   ]);
 
   const { optionsHandler, validationHandler } = useMemo(
-    () =>
-      getResourceFormAssets({
-        resourceType,
-        resource,
-        isNew,
-        connection,
-        ssLinkedConnectionId,
-      }),
+    () => {
+      let metadataAssets;
+
+      try {
+        // try to load the assets if it can't initForm saga should fail anyway
+        metadataAssets = getResourceFormAssets({
+          resourceType,
+          resource,
+          isNew,
+          connection,
+          ssLinkedConnectionId,
+        });
+      } catch (e) {
+        metadataAssets = {};
+      }
+
+      return metadataAssets;
+    },
     [connection, isNew, resource, resourceType, ssLinkedConnectionId]
   );
   const { fieldMeta } = formState;

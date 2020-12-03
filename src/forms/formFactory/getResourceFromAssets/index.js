@@ -151,6 +151,197 @@ const applyCustomSettings = ({
   };
 };
 
+const getSuiteScriptFormMeta = ({resourceType, resource}) => {
+  let meta;
+
+  meta = formMeta.suiteScript[resourceType];
+
+  if (resourceType === 'connections') {
+    if (resource.type) {
+      meta = meta[resource.type];
+    }
+  } else if (resourceType === 'exports') {
+    const ssExport = resource.export;
+
+    if (ssExport.netsuite && ssExport.netsuite.type) {
+      meta = meta.netsuite[ssExport.netsuite.type];
+    } else if (ssExport.type === 'salesforce') {
+      if (ssExport.salesforce.type === 'sobject') {
+        meta = meta.salesforce.realtime;
+      } else {
+        meta = meta.salesforce.scheduled;
+      }
+    } else {
+      meta = meta[ssExport.type];
+    }
+  } else if (resourceType === 'imports') {
+    const ssImport = resource.import;
+
+    meta = meta[ssImport.type];
+  }
+
+  return meta;
+};
+const getFormMeta = ({resourceType, isNew, resource, connection, assistantData}) => {
+  let meta;
+
+  const { type } = getResourceSubType(resource);
+
+  switch (resourceType) {
+    case 'connections':
+      if (isNew) {
+        meta = formMeta.connections.new;
+      } else if (resource && resource.assistant === 'financialforce') {
+        // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
+
+        meta = formMeta.connections.salesforce;
+      } else if (resource && resource.assistant) {
+        meta = formMeta.connections.custom[type];
+
+        /* TODO This is a temp fix until React becomes the only app and when REST deprecation is done from backend
+        perspective and when all assistant metadata files are moved over to HTTP adaptor */
+        if (
+          resource.assistant &&
+            REST_ASSISTANTS.includes(resource.assistant)
+        ) {
+          meta = formMeta.connections.custom.http;
+        }
+
+        if (meta) {
+          meta = meta[resource.assistant];
+        }
+      } else if (resource && resource.type === 'rdbms') {
+        const rdbmsSubType = resource.rdbms.type;
+
+        // when editing rdms connection we lookup for the resource subtype
+        meta = formMeta.connections.rdbms[rdbmsSubType];
+      } else if (RDBMS_TYPES.includes(type)) {
+        meta = formMeta.connections.rdbms[type];
+      } else {
+        meta = formMeta.connections[type];
+      }
+
+      break;
+
+    case 'imports':
+      meta = formMeta[resourceType];
+
+      if (meta) {
+        if (isNew) {
+          meta = meta.new;
+        } else if (type === 'netsuite') {
+          // get edit form meta branch
+          meta = meta.netsuiteDistributed;
+        } else if (
+          type === 'salesforce' ||
+            resource.assistant === 'financialforce'
+        ) {
+          // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
+          meta = meta.salesforce;
+        } else if (type === 'rdbms') {
+          const rdbmsSubType =
+              connection && connection.rdbms && connection.rdbms.type;
+
+          // when editing rdbms connection we lookup for the resource subtype
+          if (rdbmsSubType === 'snowflake') {
+            meta = meta.rdbms.snowflake;
+          } else {
+            meta = meta.rdbms.sql;
+          }
+        } else if (
+          resource &&
+            (resource.useParentForm !== undefined
+              ? !resource.useParentForm && resource.assistant
+              : resource.assistant) && !resource.useTechAdaptorForm
+        ) {
+          meta = meta.custom.http.assistantDefinition(
+            resource._id,
+            resource,
+            assistantData
+          );
+        } else {
+          meta = meta[type];
+        }
+      }
+
+      break;
+    case 'exports':
+      meta = formMeta[resourceType];
+
+      if (meta) {
+        if (isNew) {
+          meta = meta.new;
+        } else if (type === 'rdbms') {
+          const rdbmsSubType =
+              connection && connection.rdbms && connection.rdbms.type;
+
+          // when editing rdms connection we lookup for the resource subtype
+          if (rdbmsSubType === 'snowflake') {
+            // TODO:both seems to be duplicated
+            meta = meta.rdbms.snowflake;
+          } else {
+            meta = meta.rdbms.sql;
+          }
+        } else if (
+          type === 'salesforce' ||
+            resource.assistant === 'financialforce'
+        ) {
+          // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
+          meta = meta.salesforce;
+        } else if (
+          resource && resource.assistant !== 'openair' &&
+            (resource.useParentForm !== undefined
+              ? !resource.useParentForm && resource.assistant
+              : resource.assistant) && !resource.useTechAdaptorForm
+        ) {
+          meta = meta.custom.http.assistantDefinition(
+            resource._id,
+            resource,
+            assistantData
+          );
+        } else if (type === 'rest') {
+          const { mediaType } = (connection && connection[type]) || {};
+
+          meta = meta[type];
+
+          if (mediaType === 'csv') {
+            meta = meta.csv;
+          } else {
+            meta = meta.json;
+          }
+        } else {
+          meta = meta[type];
+        }
+      }
+
+      break;
+
+    case 'agents':
+    case 'apis':
+    case 'scripts':
+    case 'accesstokens':
+    case 'connectorLicenses':
+    case 'integrations':
+      meta = formMeta[resourceType];
+      break;
+    case 'stacks':
+    case 'templates':
+    case 'connectors':
+    case 'iClients':
+    case 'asyncHelpers':
+    case 'pageProcessor':
+    case 'pageGenerator':
+      meta = formMeta[resourceType];
+      break;
+
+    default:
+      // TODO:is this necessary ghost code?
+      meta = formMeta.default;
+      break;
+  }
+
+  return meta;
+};
 const getResourceFormAssets = ({
   resourceType,
   resource,
@@ -159,215 +350,32 @@ const getResourceFormAssets = ({
   connection,
   ssLinkedConnectionId,
 }) => {
+  let meta;
+
+  // FormMeta generic pattern: fromMeta[resourceType][sub-type]
+  // FormMeta custom pattern: fromMeta[resourceType].custom.[sub-type]
+
+  try {
+    if (ssLinkedConnectionId) {
+      meta = getSuiteScriptFormMeta({resourceType, resource});
+    } else {
+      meta = getFormMeta({resourceType, isNew, resource, connection, assistantData});
+    }
+  } catch (e) {
+    throw new Error(`cannot load metadata assets ${resourceType} ${resource?._id}`);
+  }
+  if (!meta) { throw new Error(`cannot load metadata assets ${resourceType} ${resource?._id}`); }
+
   let fieldMap;
   let layout = {};
   let preSave;
   let init;
   let actions;
-  let meta;
   let validationHandler;
-  const { type } = getResourceSubType(resource);
 
-  // FormMeta generic pattern: fromMeta[resourceType][sub-type]
-  // FormMeta custom pattern: fromMeta[resourceType].custom.[sub-type]
-  if (ssLinkedConnectionId) {
-    meta = formMeta.suiteScript[resourceType];
-
-    if (resourceType === 'connections') {
-      if (resource.type) {
-        meta = meta[resource.type];
-      }
-    } else if (resourceType === 'exports') {
-      const ssExport = resource.export;
-
-      if (ssExport.netsuite && ssExport.netsuite.type) {
-        meta = meta.netsuite[ssExport.netsuite.type];
-      } else if (ssExport.type === 'salesforce') {
-        if (ssExport.salesforce.type === 'sobject') {
-          meta = meta.salesforce.realtime;
-        } else {
-          meta = meta.salesforce.scheduled;
-        }
-      } else {
-        meta = meta[ssExport.type];
-      }
-    } else if (resourceType === 'imports') {
-      const ssImport = resource.import;
-
-      meta = meta[ssImport.type];
-    }
-
-    if (meta) {
-      ({ fieldMap, layout, preSave, init, actions } = meta);
-    }
-  } else {
-    switch (resourceType) {
-      case 'connections':
-        if (isNew) {
-          meta = formMeta.connections.new;
-        } else if (resource && resource.assistant === 'financialforce') {
-          // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
-
-          meta = formMeta.connections.salesforce;
-        } else if (resource && resource.assistant) {
-          meta = formMeta.connections.custom[type];
-
-          /* TODO This is a temp fix until React becomes the only app and when REST deprecation is done from backend
-          perspective and when all assistant metadata files are moved over to HTTP adaptor */
-          if (
-            resource.assistant &&
-              REST_ASSISTANTS.includes(resource.assistant)
-          ) {
-            meta = formMeta.connections.custom.http;
-          }
-
-          if (meta) {
-            meta = meta[resource.assistant];
-          }
-        } else if (resource && resource.type === 'rdbms') {
-          const rdbmsSubType = resource.rdbms.type;
-
-          // when editing rdms connection we lookup for the resource subtype
-          meta = formMeta.connections.rdbms[rdbmsSubType];
-        } else if (RDBMS_TYPES.includes(type)) {
-          meta = formMeta.connections.rdbms[type];
-        } else {
-          meta = formMeta.connections[type];
-        }
-
-        if (meta) {
-          ({ fieldMap, layout, preSave, init, actions } = meta);
-        }
-
-        break;
-
-      case 'imports':
-        meta = formMeta[resourceType];
-
-        if (meta) {
-          if (isNew) {
-            meta = meta.new;
-          } else if (type === 'netsuite') {
-            // get edit form meta branch
-            meta = meta.netsuiteDistributed;
-          } else if (
-            type === 'salesforce' ||
-              resource.assistant === 'financialforce'
-          ) {
-            // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
-            meta = meta.salesforce;
-          } else if (type === 'rdbms') {
-            const rdbmsSubType =
-                connection && connection.rdbms && connection.rdbms.type;
-
-            // when editing rdbms connection we lookup for the resource subtype
-            if (rdbmsSubType === 'snowflake') {
-              meta = meta.rdbms.snowflake;
-            } else {
-              meta = meta.rdbms.sql;
-            }
-          } else if (
-            resource &&
-              (resource.useParentForm !== undefined
-                ? !resource.useParentForm && resource.assistant
-                : resource.assistant) && !resource.useTechAdaptorForm
-          ) {
-            meta = meta.custom.http.assistantDefinition(
-              resource._id,
-              resource,
-              assistantData
-            );
-          } else {
-            meta = meta[type];
-          }
-
-          if (meta) {
-            ({ fieldMap, layout, init, preSave, actions } = meta);
-          }
-        }
-
-        break;
-      case 'exports':
-        meta = formMeta[resourceType];
-
-        if (meta) {
-          if (isNew) {
-            meta = meta.new;
-          } else if (type === 'rdbms') {
-            const rdbmsSubType =
-                connection && connection.rdbms && connection.rdbms.type;
-
-            // when editing rdms connection we lookup for the resource subtype
-            if (rdbmsSubType === 'snowflake') {
-              // TODO:both seems to be duplicated
-              meta = meta.rdbms.snowflake;
-            } else {
-              meta = meta.rdbms.sql;
-            }
-          } else if (
-            type === 'salesforce' ||
-              resource.assistant === 'financialforce'
-          ) {
-            // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
-            meta = meta.salesforce;
-          } else if (
-            resource && resource.assistant !== 'openair' &&
-              (resource.useParentForm !== undefined
-                ? !resource.useParentForm && resource.assistant
-                : resource.assistant) && !resource.useTechAdaptorForm
-          ) {
-            meta = meta.custom.http.assistantDefinition(
-              resource._id,
-              resource,
-              assistantData
-            );
-          } else if (type === 'rest') {
-            const { mediaType } = (connection && connection[type]) || {};
-
-            meta = meta[type];
-
-            if (mediaType === 'csv') {
-              meta = meta.csv;
-            } else {
-              meta = meta.json;
-            }
-          } else {
-            meta = meta[type];
-          }
-
-          if (meta) {
-            ({ fieldMap, layout, init, preSave, actions } = meta);
-          }
-        }
-
-        break;
-
-      case 'agents':
-      case 'apis':
-      case 'scripts':
-      case 'accesstokens':
-      case 'connectorLicenses':
-      case 'integrations':
-        meta = formMeta[resourceType];
-        ({ fieldMap, preSave, init, layout } = meta);
-        break;
-      case 'stacks':
-      case 'templates':
-      case 'connectors':
-      case 'iClients':
-      case 'asyncHelpers':
-      case 'pageProcessor':
-      case 'pageGenerator':
-        meta = formMeta[resourceType];
-        ({ fieldMap, layout, init, preSave, actions } = meta);
-        break;
-
-      default:
-        meta = formMeta.default;
-        break;
-    }
+  if (meta) {
+    ({ fieldMap, layout, preSave, init, actions } = meta);
   }
-
   const optionsHandler = getAmalgamatedOptionsHandler(meta, resourceType);
 
   // Need to be revisited @Surya

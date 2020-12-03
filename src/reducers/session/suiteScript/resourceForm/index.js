@@ -32,6 +32,11 @@ export default (state = {}, action) => {
       case actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT:
         draft[key] = { initComplete: false, initData };
         break;
+      case actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT_FAILED:
+
+        draft[key] = {initFailed: true,
+          initComplete: false};
+        break;
 
       case actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT_COMPLETE:
 

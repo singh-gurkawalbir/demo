@@ -1,4 +1,4 @@
-/* global describe, test */
+/* global describe, test, jest */
 
 import { select, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -21,6 +21,12 @@ import {
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import { pageProcessorPreview } from '../utils/previewCalls';
 import { requestFileAdaptorPreview } from '../sampleDataGenerator/fileAdaptorSampleData';
+import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
+
+jest.mock('../../../forms/formFactory/getResourceFromAssets');
+
+// fake the return value of getResourceFormAssets when createFormValuesPatchSet calls this fn
+getResourceFormAssets.mockReturnValue({fieldMap: {}, preSave: null});
 
 describe('sampleData exports saga', () => {
   const resourceId = '123';
