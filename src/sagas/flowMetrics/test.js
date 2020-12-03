@@ -98,7 +98,7 @@ describe('flowMetrics saga', () => {
     });
     test('should dispatch received action with empty data, if resource is an integration without flowIds and api call is successful', () => {
       const resourceType = 'integrations';
-      const flowIds = null;
+      const flowIds = [];
 
       return expectSaga(requestFlowMetrics, {
         resourceType,
