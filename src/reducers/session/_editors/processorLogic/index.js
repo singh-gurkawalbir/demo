@@ -6,7 +6,7 @@ import csvParser from './csvParser';
 // import transform from './transform';
 import handlebars from './handlebars';
 import javascript from './javascript';
-// import settingsForm from './settingsForm';
+import settingsForm from './settingsForm';
 // import structuredFileParser from './structuredFileParser';
 // import structuredFileGenerator from './structuredFileGenerator';
 import sql from './sql';
@@ -25,6 +25,7 @@ const logicMap = {
   javascript,
   csvParser,
   sql,
+  settingsForm,
 };
 
 function getLogic(editor) {

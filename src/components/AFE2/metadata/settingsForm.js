@@ -5,8 +5,8 @@ import OutputPanel from '../Editor/panels/formBuilder/Output';
 import ToggleFormMode from '../Drawer/actions/ToggleFormMode';
 
 export default {
-  type: 'formBuilder',
-  label: 'Form builder',
+  type: 'settingsForm',
+  label: 'Settings Form builder',
   fieldId: 'settingsForm',
   description: 'Construct a form from metadata',
   layout: ({ mode }) => `${mode}FormBuilder`,

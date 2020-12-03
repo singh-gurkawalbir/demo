@@ -4,7 +4,7 @@ import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
 // import processorPatchSet from '../editors/processorPatchSet';
 import editorFeaturesMap from './featuresMap';
-import editorMetadata from '../../../components/AFE2/Editor/metadata';
+import editorMetadata from '../../../components/AFE2/metadata';
 
 const emptyObj = {};
 

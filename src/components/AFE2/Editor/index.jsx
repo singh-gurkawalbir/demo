@@ -10,7 +10,7 @@ import ErrorGridItem from './ErrorGridItem';
 import WarningGridItem from './WarningGridItem';
 import ConsoleGridItem from './ConsoleGridItem';
 import layouts from './layouts';
-import editorMetadata from './metadata';
+import editorMetadata from '../metadata';
 
 function resolveValue(value, editorContext) {
   if (typeof value === 'function') {

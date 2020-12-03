@@ -1,5 +1,5 @@
 import csvParser from './csvParser';
-import formBuilder from './formBuilder';
+import settingsForm from './settingsForm';
 import handlebars from './handlebars';
 import sql from './sql';
 import filter from './filter';
@@ -7,7 +7,7 @@ import javascript from './javascript';
 
 const map = {
   csvParser,
-  formBuilder,
+  settingsForm,
   handlebars,
   sql,
   filter,

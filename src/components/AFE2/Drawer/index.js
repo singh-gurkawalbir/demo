@@ -8,7 +8,7 @@ import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import Editor from '../Editor';
-import editorMetadata from '../Editor/metadata';
+import editorMetadata from '../metadata';
 import PreviewButtonGroup from '../PreviewButtonGroup';
 import SaveButtonGroup from '../SaveButtonGroup';
 import HelpIconButton from './actions/HelpIconButton';
