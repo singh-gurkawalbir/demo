@@ -42,5 +42,8 @@ export default {
 
     return panels;
   },
-  drawerActions: [ToggleFormMode],
+  drawer: {
+    size: 'large',
+    actions: [ToggleFormMode],
+  },
 };

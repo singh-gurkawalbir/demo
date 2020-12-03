@@ -33,5 +33,9 @@ export default {
       },
     },
   ],
-  drawerActions: [ToggleFilterMode, ToggleLayout],
+  // sample metadata to support new features.
+  drawer: {
+    size: 'large',
+    actions: [ToggleFilterMode, ToggleLayout],
+  },
 };

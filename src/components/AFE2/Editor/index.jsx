@@ -12,9 +12,9 @@ import ConsoleGridItem from './ConsoleGridItem';
 import layouts from './layouts';
 import editorMetadata from './metadata';
 
-function resolveValue(value, editor) {
+function resolveValue(value, editorContext) {
   if (typeof value === 'function') {
-    return value(editor);
+    return value(editorContext);
   }
 
   return value;
