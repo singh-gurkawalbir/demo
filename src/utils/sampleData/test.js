@@ -1,10 +1,13 @@
 /* global expect, describe, test, beforeEach */
-import {
+import getFormattedSampleData, {
   getDefaultData,
   convertFileDataToJSON,
   getFormattedObject,
   getSampleValue,
+  getNetsuiteRealTimeSampleData,
+  getSalesforceRealTimeSampleData,
   extractSampleDataAtResourcePath,
+  processJsonPreviewData,
   processJsonSampleData,
   generateTransformationRulesOnXMLData,
   isValidPathToMany,
@@ -13,7 +16,123 @@ import {
   wrapSampleDataWithContext,
 } from '.';
 
-// TODO: describe('getFormattedSampleData util', () => {});
+describe('getFormattedSampleData util', () => {
+  test('should return default sample data if not passed to the util', () => {
+    const expectedData = {
+      connection: {},
+      data: {
+        myField: 'sample',
+      },
+      import: {
+        name: 'some name',
+      },
+    };
+
+    expect(getFormattedSampleData({resourceType: 'imports', resourceName: 'some name'})).toEqual(expectedData);
+  });
+  test('should wrap sample data in array if flag is passed to the util', () => {
+    const options = {resourceType: 'imports', resourceName: 'some name', wrapInArray: true};
+    const expectedData = {
+      connection: {},
+      data: [{
+        myField: 'sample',
+      }],
+      import: {
+        name: 'some name',
+      },
+    };
+
+    expect(getFormattedSampleData(options)).toEqual(expectedData);
+  });
+  test('should add connection details to sample data if connection is present', () => {
+    const connection = {
+      _id: '123',
+      name: 'HTTP connection',
+      type: 'http',
+      http: {
+        mediaType: 'json',
+        successMediaType: 'json',
+        errorMediaType: 'json',
+        baseURI: 'https://api.mocki.io/v1',
+        unencrypted: {
+          user: 'label',
+        },
+        encrypted: '******',
+        auth: {
+          type: 'custom',
+          oauth: {
+            clientCredentialsLocation: 'body',
+          },
+        },
+      },
+
+    };
+    const sampleData = {
+      recordId: '123',
+      name: 'orders',
+    };
+    const options = {connection, sampleData, resourceType: 'imports', resourceName: 'some name'};
+    const expectedData = {
+      connection: {
+        name: 'HTTP connection',
+        http: {
+          unencrypted: {
+            user: 'label',
+          },
+          encrypted: '******',
+        },
+      },
+      data: {
+        recordId: '123',
+        name: 'orders',
+      },
+      import: {
+        name: 'some name',
+      },
+    };
+
+    expect(getFormattedSampleData(options)).toEqual(expectedData);
+  });
+  test('should add lastExportDateTime if resource type is exports', () => {
+    const options = {resourceType: 'exports', resourceName: 'some name'};
+    const expectedData = {
+      connection: {},
+      data: {
+        myField: 'sample',
+      },
+      export: {
+        name: 'some name',
+      },
+      lastExportDateTime: expect.any(String),
+    };
+
+    expect(getFormattedSampleData(options)).toEqual(expectedData);
+  });
+  test('should add uuid if connection type is as2', () => {
+    const connection = {
+      _id: '123',
+      name: 'AS2 connection',
+      type: 'as2',
+    };
+    const options = {connection, resourceType: 'exports', resourceName: 'some name'};
+    const expectedData = {
+      connection: {
+        name: 'AS2 connection',
+        as2: {},
+      },
+      data: {
+        myField: 'sample',
+      },
+      export: {
+        name: 'some name',
+      },
+      lastExportDateTime: expect.any(String),
+      uuid: 'uuid',
+    };
+
+    expect(getFormattedSampleData(options)).toEqual(expectedData);
+  });
+});
 
 describe('getDefaultData util', () => {
   test('should return undefined if the data passed is null or undefined', () => {
@@ -211,9 +330,117 @@ describe('getSampleValue util', () => {
   });
 });
 
-// TODO: describe('getFormattedNetsuiteMetadataData util', () => {});
-// TODO: describe('getNetsuiteRealTimeSampleData util', () => {});
-// TODO: describe('getSalesforceRealTimeSampleData util', () => {});
+describe('getNetsuiteRealTimeSampleData util', () => {
+  test('should return empty object if passed metadata is empty', () => {
+    expect(getNetsuiteRealTimeSampleData(null, 'customer')).toEqual({});
+  });
+  test('should correctly format sublist properties if metadata contains sublist', () => {
+    const nsMetaData = [
+      {
+        group: 'Body Field',
+        id: 'thirdpartyacct',
+        name: '3rd Party Billing Account Number',
+        type: 'text',
+      },
+      {
+        group: 'Billing Address',
+        id: '_billing_addressbook[*].addr1',
+        name: 'Billing Address 1',
+        sublist: '_billing_addressbook',
+        type: 'text',
+      },
+      {
+        group: 'Address Book',
+        id: 'addressbook[*].addr1',
+        name: 'Address Book : Address 1',
+        sublist: 'addressbook',
+        type: 'text',
+      },
+    ];
+    const nsRecordType = 'customer';
+
+    const expectedMetaData = {
+      thirdpartyacct: 'thirdpartyacct',
+      _billingaddress_addr1: '_billingaddress_addr1',
+      addressbook: [
+        {
+          addr1: 'addr1',
+        },
+      ],
+    };
+
+    expect(getNetsuiteRealTimeSampleData(nsMetaData, nsRecordType)).toEqual(expectedMetaData);
+  });
+  test('should add default sample values to the fields in the returned object', () => {
+    const nsMetaData = [
+      {
+        group: 'Body Field',
+        id: 'thirdpartyacct',
+        name: '3rd Party Billing Account Number',
+        type: 'text',
+      },
+      {
+        group: 'Body Field',
+        id: 'autoname',
+        name: 'Auto',
+        type: 'checkbox',
+      },
+      {
+        group: 'Address Book',
+        id: 'addressbook[*].addrphone',
+        name: 'Address Book : Phone',
+        sublist: 'addressbook',
+        type: 'phone',
+      },
+    ];
+    const nsRecordType = 'customer';
+
+    const expectedMetaData = {
+      thirdpartyacct: 'thirdpartyacct',
+      autoname: false,
+      addressbook: [
+        {
+          addrphone: '(917)494-4476',
+        },
+      ],
+    };
+
+    expect(getNetsuiteRealTimeSampleData(nsMetaData, nsRecordType)).toEqual(expectedMetaData);
+  });
+});
+
+describe('getSalesforceRealTimeSampleData util', () => {
+  test('should return empty object if passed metadata is empty', () => {
+    expect(getSalesforceRealTimeSampleData()).toEqual({});
+  });
+  test('should correctly add fields with no reference if present in metadata', () => {
+    const sfMetadata = {
+      fields: [
+        {
+          custom: false,
+          defaultValue: false,
+          label: 'Deleted',
+          name: 'IsDeleted',
+          referenceTo: [],
+          relationshipName: null,
+          type: 'boolean',
+        },
+        {
+          custom: false,
+          defaultValue: null,
+          label: 'Master Record ID',
+          name: 'MasterRecordId',
+          referenceTo: ['Account'],
+          relationshipName: 'MasterRecord',
+          type: 'reference',
+        },
+      ],
+    };
+    const expectedMetaData = {IsDeleted: 'IsDeleted'};
+
+    expect(getSalesforceRealTimeSampleData(sfMetadata)).toEqual(expectedMetaData);
+  });
+});
 // TODO: describe('getPathSegments util', () => {});
 
 describe('extractSampleDataAtResourcePath util', () => {
@@ -262,7 +489,41 @@ describe('extractSampleDataAtResourcePath util', () => {
   });
 });
 
-// TODO: describe('processJsonPreviewData util', () => {});
+describe('processJsonPreviewData util', () => {
+  test('should return original sample data if its empty', () => {
+    expect(processJsonPreviewData()).toBeUndefined();
+  });
+  test('should return original sample data if resourcePath is not passed', () => {
+    const sampleData = {key: 'value'};
+
+    expect(processJsonPreviewData(sampleData)).toBe(sampleData);
+  });
+  test('should correctly extract sample data at given path', () => {
+    const sampleData = {
+      _id: '999',
+      name: 'As2 json',
+      file: [{
+        type: 'json',
+      },
+      {
+        type: 'xml',
+      },
+      {
+        type: 'csv',
+      },
+      ],
+      adaptorType: 'AS2Export',
+    };
+    const options = {
+      resourcePath: 'file[0]',
+    };
+    const expectedData = {
+      type: 'json',
+    };
+
+    expect(processJsonPreviewData(sampleData, options)).toEqual(expectedData);
+  });
+});
 
 describe('processJsonSampleData util', () => {
   test('should return preview data as is if its of non-array type', () => {
