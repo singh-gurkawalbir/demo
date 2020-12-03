@@ -19,7 +19,7 @@ export default {
       area: 'data',
       Panel: DataPanel,
       props: {
-        mode: 'text',
+        // mode: 'text',
       },
     },
     {
