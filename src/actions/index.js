@@ -1974,7 +1974,7 @@ const responseMapping = {
       flowId,
     }),
   initComplete: (options = {}) =>
-    action(actionTypes.RESPONSE_MAPPING.INIT_COMPLETE, {...options}),
+    action(actionTypes.RESPONSE_MAPPING.INIT_COMPLETE, options),
   initFailed: () => action(actionTypes.RESPONSE_MAPPING.INIT_FAILED, {}),
   patchField: (field, key, value) =>
     action(actionTypes.RESPONSE_MAPPING.PATCH_FIELD, {

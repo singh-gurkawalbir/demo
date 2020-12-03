@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import clsx from 'clsx';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../reducers';
 import Spinner from '../Spinner';
@@ -9,15 +8,11 @@ import SpinnerWrapper from '../SpinnerWrapper';
 import actions from '../../actions';
 import DrawerContent from '../drawer/Right/DrawerContent';
 import DrawerFooter from '../drawer/Right/DrawerFooter';
-import FieldMappingWrapper from './FieldMappingWrapper';
-import ButtonPanel from './ButtonPanel';
+import FieldMappingForm from './FieldMappingForm';
 import { isIntegrationApp } from '../../utils/flows';
+import SaveButtonGroup from './SaveButtonGroup';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    height: '100%',
-    display: 'flex',
-  },
   header: {
     display: 'flex',
     width: '100%',
@@ -32,12 +27,13 @@ const useStyles = makeStyles(theme => ({
     fontFamily: 'Roboto500',
   },
 
-  mappingContainer: {
+  root: {
     flex: '1 1 0',
     width: '100%',
     overflow: 'hidden',
     flexDirection: 'column',
     display: 'flex',
+    height: '100%',
   },
   mappingsBody: {
     height: '100%',
@@ -65,34 +61,32 @@ const ResponseMapping = ({ flowId, resourceId, integrationId}) => {
     <>
       <DrawerContent>
         <div className={classes.root}>
-          <div className={clsx(classes.mappingContainer)}>
-            <div className={classes.header}>
-              <Typography
-                variant="h5"
-                className={classes.headerChild}
-                key="heading_extract">
-                {resourceType === 'imports' ? 'Import' : 'Lookup'} response field
-              </Typography>
+          <div className={classes.header}>
+            <Typography
+              variant="h5"
+              className={classes.headerChild}
+              key="heading_extract">
+              {resourceType === 'imports' ? 'Import' : 'Lookup'} response field
+            </Typography>
 
-              <Typography
-                variant="h5"
-                className={classes.headerChild}
-                key="heading_generate">
-                Source record field (New/Existing field)
-              </Typography>
-            </div>
-            <div className={classes.mappingsBody}>
-              <FieldMappingWrapper
-                disabled={disabled}
-                resourceId={resourceId}
-                flowId={flowId}
+            <Typography
+              variant="h5"
+              className={classes.headerChild}
+              key="heading_generate">
+              Source record field (New/Existing field)
+            </Typography>
+          </div>
+          <div className={classes.mappingsBody}>
+            <FieldMappingForm
+              disabled={disabled}
+              resourceId={resourceId}
+              flowId={flowId}
                             />
-            </div>
           </div>
         </div>
       </DrawerContent>
       <DrawerFooter>
-        <ButtonPanel
+        <SaveButtonGroup
           flowId={flowId}
           resourceId={resourceId}
           disabled={disabled}

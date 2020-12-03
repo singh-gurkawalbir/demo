@@ -22,13 +22,8 @@ export default function reducer(state = {}, action) {
   return produce(state, draft => {
     switch (type) {
       case actionTypes.RESPONSE_MAPPING.INIT:
-        if (!draft.mapping) {
-          draft.mapping = {
-            status: 'requested',
-          };
-        } else {
-          draft.mapping.status = 'requested';
-        }
+        if (!draft.mapping) draft.mapping = {};
+        draft.mapping.status = 'requested';
         break;
       case actionTypes.RESPONSE_MAPPING.INIT_COMPLETE:
         draft.mapping = {

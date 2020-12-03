@@ -4,7 +4,7 @@ import {selectors} from '../../reducers';
 import MappingRow from './MappingRow';
 
 const emptyObject = {};
-export default function FieldMappingWrapper(props) {
+export default function FieldMappingForm(props) {
   const mappings = useSelector(state => selectors.responseMapping(state).mappings);
   const emptyRowIndex = mappings.length;
 

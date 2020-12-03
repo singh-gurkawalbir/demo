@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from '@material-ui/core';
-import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import ButtonGroup from '../../ButtonGroup';
 import actions from '../../../actions';
@@ -20,12 +20,15 @@ const SaveButton = ({
   const [saveTrigerred, setSaveTriggered] = useState(false);
   const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
   const match = useRouteMatch();
+  const dispatch = useDispatch();
   const mappingsChanged = useSelector(state =>
     selectors.responseMappingChanged(state)
   );
-  const dispatch = useDispatch();
-  const { saveTerminated, saveCompleted } = useSelector(state =>
-    selectors.responseMappingSaveStatus(state)
+  const { saveTerminated, saveCompleted } = useSelector(state => {
+    const { saveTerminated, saveCompleted } = selectors.responseMappingSaveStatus(state);
+
+    return { saveTerminated, saveCompleted };
+  }, shallowEqual
   );
 
   useEffect(() => {
@@ -69,7 +72,7 @@ const SaveButton = ({
   );
 };
 
-export default function ButtonPanel({ disabled, onClose}) {
+export default function SaveButtonGroup({ disabled, onClose}) {
   const saveInProgress = useSelector(
     state => selectors.responseMappingSaveStatus(state).saveInProgress
   );
