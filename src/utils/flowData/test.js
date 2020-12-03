@@ -9,13 +9,12 @@ import {
   // getLastExportDateTime,
   // getAddedLookupInFlow,
   // getFlowUpdatesFromPatch,
-  // isRawDataPatchSet,
-  // isUIDataExpectedForResource,
-  // getBlobResourceSampleData,
-  // isOneToManyResource,
-  // isPostDataNeededInResource,
-  // generateDefaultExtractsObject,
-  // generatePostResponseMapData,
+  isRawDataPatchSet,
+  isUIDataExpectedForResource,
+  isOneToManyResource,
+  isPostDataNeededInResource,
+  generateDefaultExtractsObject,
+  generatePostResponseMapData,
   getFormattedResourceForPreview,
   getResourceStageUpdatedFromPatch,
   // getSubsequentStages,
@@ -83,94 +82,342 @@ describe('getFlowUpdatesFromPatch util used to determine if the flow sequence / 
 });
 describe('isRawDataPatchSet util', () => {
   test('should return false when the patchSet is empty', () => {
-
+    expect(isRawDataPatchSet()).toBeFalsy();
   });
   test('should return false when the patchSet does not have rawData or sampleData as the first patch', () => {
+    const hooksPatchSet = [{
+      path: '/hooks',
+      op: 'replace',
+      value: {
+        preSavePage: { _scriptId: '5df366d52af2f07355f590ea', function: 'preSavePageFunction' },
+      },
+    }];
 
+    expect(isRawDataPatchSet(hooksPatchSet)).toBeFalsy();
   });
   test('should return false when patchSet has rawData but not the first patch', () => {
+    const patchSet = [
+      {
+        path: '/hooks',
+        op: 'replace',
+        value: {
+          preSavePage: { _scriptId: '5df366d52af2f07355f590ea', function: 'preSavePageFunction' },
+        },
+      },
+      {
+        path: '/rawData',
+        value: 'sdf456dsfgsdfghj',
+        op: 'add',
+      },
+    ];
 
+    expect(isRawDataPatchSet(patchSet)).toBeFalsy();
   });
   test('should return true if first patch is rawData', () => {
+    const patchSet = [
+      {
+        path: '/rawData',
+        value: 'sdf456dsfgsdfghj',
+        op: 'add',
+      },
+    ];
 
+    expect(isRawDataPatchSet(patchSet)).toBeTruthy();
   });
   test('should return true if first patch is sampleData', () => {
+    const patchSet = [
+      {
+        path: '/sampleData',
+        value: {
+          test: 5,
+        },
+        op: 'add',
+      },
+    ];
 
+    expect(isRawDataPatchSet(patchSet)).toBeTruthy();
   });
 });
 describe('isUIDataExpectedForResource util', () => {
   test('should return false when null/undefined resource is passed', () => {
-
+    expect(isUIDataExpectedForResource()).toBeFalsy();
+    expect(isUIDataExpectedForResource(null)).toBeFalsy();
   });
   test('should return true for a real time resource', () => {
+    const realTimeExport = {
+      _id: '1234',
+      name: 'Netsuite Export',
+      adaptorType: 'NetSuiteExport',
+      type: 'distributed',
+    };
 
+    expect(isUIDataExpectedForResource(realTimeExport)).toBeTruthy();
   });
   test('should return true for file adaptor resource', () => {
+    const ftpExport = {
+      _id: 'asdfb',
+      name: 'FTP export',
+      adaptorType: 'FTPExport',
+      ftp: {
+        directoryPath: '/Test',
+      },
+    };
 
+    expect(isUIDataExpectedForResource(ftpExport)).toBeTruthy();
   });
   test('should return true for csv rest export resource', () => {
+    const restCsvExport = {
+      _id: '5e1075527420a91f588827d6',
+      _connectionId: '5e106c3cf5d4f21dc5b3fe61',
+      name: 'rest csv',
+      file: {
+        type: 'csv',
+        csv: {
+          columnDelimiter: ',',
+          rowDelimiter: ' ',
+          hasHeaderRow: false,
+          trimSpaces: true,
+          rowsToSkip: 0,
+        },
+      },
+      adaptorType: 'RESTExport',
+    };
+    const restCsvConnection = {
+      _id: '5e106c3cf5d4f21dc5b3fe61',
+      type: 'rest',
+      name: 'rest csv connection',
+      rest: {
+        mediaType: 'csv',
+        authType: 'basic',
+        authHeader: 'Authorization',
+        authScheme: 'Bearer',
+      },
+    };
 
+    expect(isUIDataExpectedForResource(restCsvExport, restCsvConnection)).toBeTruthy();
   });
   test('should return true for blob resource', () => {
+    const blobResource = {
+      _id: '234',
+      name: 'Blob export',
+      type: 'blob',
+    };
 
+    expect(isUIDataExpectedForResource(blobResource)).toBeTruthy();
   });
   test('should return true if the resource is an Integration app resource', () => {
+    const restIAExport = {
+      name: 'Test export',
+      _id: '1234',
+      rest: {
+        once: { relativeURI: '/api/v2/users.json', method: 'PUT', body: { test: 5 }},
+        relativeURI: '/api/v2/users.json',
+      },
+      adaptorType: 'RESTExport',
+      _connectorId: 'sdf345tdfghdfghdfgh',
+    };
 
+    expect(isUIDataExpectedForResource(restIAExport)).toBeTruthy();
   });
-  test('should return false for http/rest resource', () => {
+  test('should return false for http resource', () => {
+    const httpExport = {
+      name: 'Test export',
+      _id: '1234',
+      http: {
+        relativeURI: '/api/v2/users.json',
+        method: 'GET',
+      },
+      adaptorType: 'HTTPExport',
+    };
 
+    expect(isUIDataExpectedForResource(httpExport)).toBeFalsy();
   });
 });
 describe('isOneToManyResource util', () => {
   test('should return false when null/undefined resource is passed', () => {
-
+    expect(isOneToManyResource(null)).toBeFalsy();
+    expect(isOneToManyResource()).toBeFalsy();
   });
   test('should return true if the resource has oneToMany and also pathToMany properties', () => {
+    const restExport = {
+      name: 'Test export',
+      _id: '1234',
+      rest: {
+        once: { relativeURI: '/api/v2/users.json', method: 'PUT', body: { test: 5 }},
+        relativeURI: '/api/v2/users.json',
+      },
+      adaptorType: 'RESTExport',
+      oneToMany: true,
+      pathToMany: 'users.addresses',
+    };
 
+    expect(isOneToManyResource(restExport)).toBeTruthy();
   });
   test('should return false for any resource without oneToMany/pathToMany', () => {
+    const restExport = {
+      name: 'Test export',
+      _id: '1234',
+      rest: {
+        once: { relativeURI: '/api/v2/users.json', method: 'PUT', body: { test: 5 }},
+        relativeURI: '/api/v2/users.json',
+      },
+      adaptorType: 'RESTExport',
+    };
 
+    expect(isOneToManyResource(restExport)).toBeFalsy();
   });
 });
 describe('isPostDataNeededInResource util', () => {
   test('should return false when null resource is passed', () => {
-
+    expect(isPostDataNeededInResource(null)).toBeFalsy();
   });
 
   test('should return true if the resource is of delta type', () => {
+    const deltaResource = {
+      name: 'Test export',
+      _id: '1234',
+      type: 'delta',
+      rest: {
+        once: { relativeURI: '/api/v2/users.json', method: 'PUT', body: { test: 5 }},
+        relativeURI: '/api/v2/users.json',
+      },
+      adaptorType: 'RESTExport',
+    };
 
+    expect(isPostDataNeededInResource(deltaResource)).toBeTruthy();
   });
   test('should return true for salesforce scheduled export', () => {
+    const salesforceScheduledExport = {
+      name: 'Test export',
+      _id: '1234',
+      salesforce: {
+        executionType: 'scheduled',
+      },
+      adaptorType: 'SalesforceExport',
+    };
 
+    expect(isPostDataNeededInResource(salesforceScheduledExport)).toBeTruthy();
   });
   test('should return false for resources other than salesforce ', () => {
+    const restExport = {
+      name: 'Test export',
+      _id: '1234',
+      rest: {
+        once: { relativeURI: '/api/v2/users.json', method: 'PUT', body: { test: 5 }},
+        relativeURI: '/api/v2/users.json',
+      },
+      adaptorType: 'RESTExport',
+    };
 
+    expect(isPostDataNeededInResource(restExport)).toBeFalsy();
   });
 });
 describe('generateDefaultExtractsObject util', () => {
-  test('should return default extracts sample data as expected for exports', () => {
+  test('should return default extracts sample data as expected for lookup exports', () => {
+    const lookupDefaultExtracts = {
+      errors: '',
+      data: '',
+      ignored: '',
+      statusCode: '',
+    };
 
+    expect(generateDefaultExtractsObject('exports')).toEqual(lookupDefaultExtracts);
   });
-  test('should return default extracts sample data as expected for lookups', () => {
+  test('should return default extracts sample data as expected for imports', () => {
+    const importDefaultExtracts = {
+      errors: '',
+      id: '',
+      ignored: '',
+      statusCode: '',
+    };
 
+    expect(generateDefaultExtractsObject('imports')).toEqual(importDefaultExtracts);
   });
   test('should return  by default exports related default extracts when there is no resource type ', () => {
+    const lookupDefaultExtracts = {
+      errors: '',
+      data: '',
+      ignored: '',
+      statusCode: '',
+    };
 
+    expect(generateDefaultExtractsObject()).toEqual(lookupDefaultExtracts);
+  });
+  test('should return default extracts containing headers incase of http imports', () => {
+    const httpImportDefaultExtracts = {
+      errors: '',
+      id: '',
+      ignored: '',
+      statusCode: '',
+      headers: '',
+    };
+
+    expect(generateDefaultExtractsObject('imports', 'HTTPImport')).toEqual(httpImportDefaultExtracts);
   });
 });
 describe('generatePostResponseMapData util', () => {
   test('should return single empty record when both flowData and rawData are empty', () => {
-
+    expect(generatePostResponseMapData()).toEqual([{}]);
   });
   test('should return wrapped rawData when flowData is empty', () => {
+    const rawData = {
+      _id: '123',
+      name: 'User1',
+    };
 
+    expect(generatePostResponseMapData(undefined, rawData)).toEqual([{
+      _id: '123',
+      name: 'User1',
+    }]);
   });
   test('should return single record of flowData merged with rawData when flowData is an object', () => {
+    const rawData = {
+      _id: '123',
+      name: 'User1',
+    };
+    const flowData = {
+      users: [{ _id: 'userId1', name: 'userName1'}, { _id: 'userId2', name: 'userName2'}],
+      tickets: [{ _id: 'ticketId1', name: 'ticket1'}, { _id: 'ticketId2', name: 'ticket2'}],
+    };
 
+    expect(generatePostResponseMapData(flowData, rawData)).toEqual([{
+      users: [{ _id: 'userId1', name: 'userName1'}, { _id: 'userId2', name: 'userName2'}],
+      tickets: [{ _id: 'ticketId1', name: 'ticket1'}, { _id: 'ticketId2', name: 'ticket2'}],
+      _id: '123',
+      name: 'User1',
+    }]);
   });
-  test('should return list of records of flowData merged with rawData when flowData is an array', () => {
+  test('should return list of records of flowData merged with rawData on each record when flowData is an array', () => {
+    const rawData = {
+      _id: '123',
+      _name: 'User1',
+    };
+    const flowData = [{ id: 'userId1', name: 'userName1'}, { id: 'userId2', name: 'userName2'}];
 
+    expect(generatePostResponseMapData(flowData, rawData)).toEqual([
+      {
+        id: 'userId1',
+        name: 'userName1',
+        _id: '123',
+        _name: 'User1',
+      },
+      {
+        id: 'userId2',
+        name: 'userName2',
+        _id: '123',
+        _name: 'User1',
+      },
+    ]);
   });
+  // test('should return list of records of flowData merged with rawData on each record when flowData is an array and rawData is an array', () => {
+  //   // const rawData = [{
+  //   //   recordId: '123',
+  //   //   recordName: 'User1',
+  //   // }];
+  //   // const flowData = [{ id: 'userId1', name: 'userName1'}, { id: 'userId2', name: 'userName2'}];
+
+  //   // TODO @Raghu: What should be the expected in this case?
+  // });
 });
 describe('getFormattedResourceForPreview util', () => {
   test('should return undefined if the resourceObj is invalid', () => {
@@ -182,7 +429,7 @@ describe('getFormattedResourceForPreview util', () => {
       _id: '1234',
       type: 'once',
       rest: {
-        once: { relativeURI: '/api/v2/users.json', method: 'PUT', body: { test: 5}},
+        once: { relativeURI: '/api/v2/users.json', method: 'PUT', body: { test: 5 }},
         relativeURI: '/api/v2/users.json',
       },
       adaptorType: 'RESTExport',

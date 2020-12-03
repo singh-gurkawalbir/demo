@@ -218,12 +218,12 @@ export const isRawDataPatchSet = (patchSet = []) =>
 /*
  * File adaptor / Real time( NS/ SF/ Webhooks)/ Blob type/ Rest CSV resources need UI Data to be passed in Page processor preview
  */
-export const isUIDataExpectedForResource = (resource, connection, flow) =>
+export const isUIDataExpectedForResource = (resource, connection) =>
   isRealTimeOrDistributedResource(resource) ||
   isFileAdaptor(resource) ||
   isRestCsvMediaTypeExport(resource, connection) ||
   isBlobTypeResource(resource) ||
-  isIntegrationApp(flow);
+  isIntegrationApp(resource);
 
 /*
  * Gives a sample data for Blob resource
