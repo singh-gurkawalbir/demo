@@ -120,6 +120,7 @@ export const ResourceFormFactory = props => {
       let metadataAssets;
 
       try {
+        // try to load the assets if it can't initForm saga should fail anyway
         metadataAssets = getResourceFormAssets({
           resourceType,
           resource,
