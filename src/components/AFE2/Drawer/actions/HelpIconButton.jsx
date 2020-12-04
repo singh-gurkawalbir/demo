@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../reducers';
-import editorMetadata from '../../Editor/metadata';
+import editorMetadata from '../../metadata';
 import Help from '../../../Help';
 
 const useStyles = makeStyles(theme => ({

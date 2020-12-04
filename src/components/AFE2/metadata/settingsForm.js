@@ -1,19 +1,19 @@
-import RulePanel from '../panels/Rule';
-import JavaScriptPanel from '../panels/JavaScript';
-import FormPreviewPanel from '../panels/formBuilder/FormPreview';
-import OutputPanel from '../panels/formBuilder/Output';
-import ToggleFormMode from '../../Drawer/actions/ToggleFormMode';
+import RulePanel from '../Editor/panels/Rule';
+import JavaScriptPanel from '../Editor/panels/JavaScript';
+import FormPreviewPanel from '../Editor/panels/formBuilder/FormPreview';
+import OutputPanel from '../Editor/panels/formBuilder/Output';
+import ToggleFormMode from '../Drawer/actions/ToggleFormMode';
 
 export default {
-  type: 'formBuilder',
-  label: 'Form builder',
+  type: 'settingsForm',
+  label: 'Settings Form builder',
   fieldId: 'settingsForm',
   description: 'Construct a form from metadata',
-  layout: ({ mode }) => `${mode}FormBuilder`,
-  panels: ({ mode }) => {
+  layout: ({ mode = 'json' }) => `${mode}FormBuilder`,
+  panels: ({ mode = 'json' }) => {
     const panels = [
       {
-        title: ({ mode }) => mode === 'json' ? 'Form definition' : 'Script input',
+        title: ({ mode = 'json' }) => mode === 'json' ? 'Form definition' : 'Script input',
         area: 'meta',
         Panel: RulePanel,
         props: { mode: 'json' },
@@ -42,5 +42,8 @@ export default {
 
     return panels;
   },
-  drawerActions: [ToggleFormMode],
+  drawer: {
+    size: 'large',
+    actions: [ToggleFormMode],
+  },
 };

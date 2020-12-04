@@ -1,8 +1,8 @@
-import DataPanel from '../panels/Data';
-import ResultPanel from '../panels/Result';
-import FilterPanel from '../panels/Filter';
-import ToggleFilterMode from '../../Drawer/actions/ToggleFormMode';
-import ToggleLayout from '../../Drawer/actions/ToggleLayout';
+import DataPanel from '../Editor/panels/Data';
+import ResultPanel from '../Editor/panels/Result';
+import FilterPanel from '../Editor/panels/Filter';
+import ToggleFilterMode from '../Drawer/actions/ToggleFormMode';
+import ToggleLayout from '../Drawer/actions/ToggleLayout';
 
 export default {
   type: 'filter',
@@ -33,5 +33,9 @@ export default {
       },
     },
   ],
-  drawerActions: [ToggleFilterMode, ToggleLayout],
+  // sample metadata to support new features.
+  drawer: {
+    size: 'large',
+    actions: [ToggleFilterMode, ToggleLayout],
+  },
 };

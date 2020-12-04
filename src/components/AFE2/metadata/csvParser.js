@@ -1,6 +1,6 @@
-import DataPanel from '../panels/Data';
-import ResultPanel from '../panels/Result';
-import CsvParseRules from '../panels/CsvParseRules';
+import DataPanel from '../Editor/panels/Data';
+import ResultPanel from '../Editor/panels/Result';
+import CsvParseRules from '../Editor/panels/CsvParseRules';
 
 export default {
   type: 'csvParser',
@@ -31,5 +31,4 @@ export default {
       },
     },
   ],
-  drawerActions: [],
 };

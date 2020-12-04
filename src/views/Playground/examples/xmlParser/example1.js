@@ -1,6 +1,6 @@
 export default {
   key: 'xmpParse1',
-  type: 'xmlParse',
+  type: 'xmlParser',
   name: 'XML parser',
   data: `<Contact id="123">
   <Name gender="male">   Luke Skywalker</Name>

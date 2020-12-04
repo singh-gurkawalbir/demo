@@ -1,17 +1,14 @@
 import isEqual from 'lodash/isEqual';
-// import xmlParser from './xmlParser';
+import xmlParser from './xmlParser';
 import csvParser from './csvParser';
 // import csvDataGenerator from './csvDataGenerator';
-// import merge from './merge';
 // import transform from './transform';
 import handlebars from './handlebars';
 import javascript from './javascript';
-// import settingsForm from './settingsForm';
+import settingsForm from './settingsForm';
 // import structuredFileParser from './structuredFileParser';
 // import structuredFileGenerator from './structuredFileGenerator';
 import sql from './sql';
-// import filter from './filter';
-// import sql from './sql';
 import filter from './filter';
 // import netsuiteLookupFilter from './netsuiteLookupFilter';
 // import netsuiteQualificationCriteria from './netsuiteQualificationCriteria';
@@ -24,7 +21,9 @@ const logicMap = {
   filter,
   javascript,
   csvParser,
+  xmlParser,
   sql,
+  settingsForm,
 };
 
 function getLogic(editor) {

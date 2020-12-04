@@ -1,6 +1,6 @@
-import DataPanel from '../panels/Data';
-import ResultPanel from '../panels/Result';
-import HandlebarsPanel from '../panels/Handlebars';
+import DataPanel from '../Editor/panels/Data';
+import ResultPanel from '../Editor/panels/Result';
+import HandlebarsPanel from '../Editor/panels/Handlebars';
 
 export default {
   type: 'handlebars',

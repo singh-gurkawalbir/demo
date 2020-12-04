@@ -4,7 +4,7 @@ import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
 // import processorPatchSet from '../editors/processorPatchSet';
 import editorFeaturesMap from './featuresMap';
-import editorMetadata from '../../../components/AFE2/Editor/metadata';
+import editorMetadata from '../../../components/AFE2/metadata';
 
 const emptyObj = {};
 
@@ -123,9 +123,12 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.PATCH.RULE: {
-        if (typeof rulePatch === 'string' || Array.isArray(rulePatch)) {
+        if (typeof rulePatch === 'string' ||
+          Array.isArray(rulePatch) ||
+          draft[id].rule === undefined) {
           draft[id].rule = rulePatch;
         } else {
+          // TODO: Ashu, why do we need to clone the rulePatch?
           Object.assign(draft[id].rule, deepClone(rulePatch));
         }
         if (draft[id].dataVersion === 2) {

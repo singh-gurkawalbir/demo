@@ -1,7 +1,7 @@
-import DataPanel from '../panels/Data';
-import ResultPanel from '../panels/Result';
-import HandlebarsPanel from '../panels/Handlebars';
-import FeaturePanel from '../panels/Feature';
+import DataPanel from '../Editor/panels/Data';
+import ResultPanel from '../Editor/panels/Result';
+import HandlebarsPanel from '../Editor/panels/Handlebars';
+import FeaturePanel from '../Editor/panels/Feature';
 
 export default {
   type: 'sql',
