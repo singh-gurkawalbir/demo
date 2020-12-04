@@ -2,7 +2,6 @@
 /*
  * Utility functions related to sample data for flows
  */
-import { keys } from 'lodash';
 import moment from 'moment';
 import { deepClone } from 'fast-json-patch';
 import {
@@ -11,14 +10,14 @@ import {
   isBlobTypeResource,
   isRestCsvMediaTypeExport,
   adaptorTypeMap,
-} from './resource';
-import responseMappingUtil from './responseMapping';
-import arrayUtils from './array';
-import jsonUtils from './json';
-import { isIntegrationApp } from './flows';
-import { isJsonString } from './string';
+} from '../resource';
+import responseMappingUtil from '../responseMapping';
+import arrayUtils from '../array';
+import jsonUtils from '../json';
+import { isIntegrationApp } from '../flows';
+import { isJsonString } from '../string';
 
-const sampleDataStage = {
+export const sampleDataStage = {
   exports: {
     inputFilter: 'flowInput',
     transform: 'raw',
@@ -30,7 +29,7 @@ const sampleDataStage = {
     postResponseMapHook: 'postResponseMap',
   },
   /**
-   * flowInput, InputFilter
+   * flowInput, inputFilter
    * raw, transform, preSavePage, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
    * raw, transform, outputFilter
    */
@@ -50,6 +49,8 @@ const sampleDataStage = {
   /**
    * flowInput, inputFilter
    * flowInput, preMap, importMappingExtract, importMapping, postMap,
+   * sampleResponse, responseTransform, postSubmit
+   * sampleResponse, responseTransform, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
    */
 };
 
@@ -81,7 +82,7 @@ export const getAllDependentSampleDataStages = (
 
 // compare util returns -1, 0, 1 for less, equal and greater respectively
 // returns 2 when both stages need to exist incase of different paths
-const compareSampleDataStage = (prevStage, currStage, resourceType) => {
+export const _compareSampleDataStage = (prevStage, currStage, resourceType) => {
   if (prevStage === currStage) return 0;
   const prevStageRoute = [
     prevStage,
@@ -110,7 +111,7 @@ export const getCurrentSampleDataStageStatus = (
   let relatedPrevStage;
 
   prevStages.forEach(prevStage => {
-    const status = compareSampleDataStage(prevStage, currStage, resourceType);
+    const status = _compareSampleDataStage(prevStage, currStage, resourceType);
 
     // min of all stages
     if (status < currentStageStatus) {
@@ -128,9 +129,11 @@ export const getCurrentSampleDataStageStatus = (
 // Regex for parsing patchSet paths to listen field specific changes of a resource
 // sample Sequence path:  '/pageProcessors' or '/pageGenerators'
 // sample responseMapping path: '/pageProcessors/${resourceIndex}/responseMapping
+// when added a lookup to the flow path: '/pageProcessors/${resourceIndex}
 const pathRegex = {
   sequence: /^(\/pageProcessors|\/pageGenerators)$/,
   responseMapping: /\/pageProcessors\/[0-9]+\/responseMapping/,
+  lookupAddition: /\/pageProcessors\/[0-9]+$/,
 };
 
 export function getPreviewStageData(previewData, previewStage = 'parse') {
@@ -160,78 +163,19 @@ export function getPreviewStageData(previewData, previewStage = 'parse') {
 export const getSampleDataStage = (stage, resourceType = 'exports') =>
   (sampleDataStage?.[resourceType]?.[stage]) || stage;
 
-// @TODO: Raghu Change this to return instead of inplace updates to flow
-export const reset = (flow, index, isPageGenerator) => {
-  if (isPageGenerator) {
-    const pgsToReset = flow.pageGenerators.slice(index).map(pg => pg._exportId);
-    const pgIds = keys(flow.pageGeneratorsMap);
-
-    pgIds.forEach(pgId => {
-      if (pgsToReset.includes(pgId)) flow.pageGeneratorsMap[pgId] = {};
-    });
-
-    flow.pageProcessorsMap = {};
-  } else {
-    const ppsToReset = flow.pageProcessors
-      .slice(index)
-      .map(pp => pp._exportId || pp._importId);
-    const ppIds = keys(flow.pageProcessorsMap);
-
-    ppIds.forEach(ppId => {
-      if (ppsToReset.includes(ppId)) flow.pageProcessorsMap[ppId] = {};
-    });
-  }
-};
-
-export const resetStagesForFlowResource = (flow, index, stages = [], statusToUpdate, isPageGenerator) => {
-  const resource = isPageGenerator ? flow.pageGenerators[index] : flow.pageProcessors[index];
-  const resourceId = resource._exportId || resource._importId;
-  const resourceMap = isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap';
-  const resourceIds = keys(flow[resourceMap]);
-
-  if (resourceIds.includes(resourceId)) {
-    stages.forEach(stage => {
-      if (flow[resourceMap][resourceId][stage]) {
-        if (statusToUpdate) {
-          flow[resourceMap][resourceId][stage].status = statusToUpdate;
-        } else {
-          flow[resourceMap][resourceId][stage] = {};
-        }
-      }
-    });
-  }
-};
-
-export const compare = (currentList = [], updatedList = []) => {
-  const changedIndex = updatedList.findIndex((item, index) => {
-    const currentItem = currentList[index] || {};
-
-    return (
-      (item._exportId || item._importId) !==
-      (currentItem._exportId || currentItem._importId)
-    );
-  });
-
-  return changedIndex;
-};
-
 export const getLastExportDateTime = () =>
   moment()
     .add(-1, 'y')
     .toISOString();
 
-export const getAddedLookupInFlow = (oldFlow = {}, patchSet = []) => {
-  const { pageProcessors = [] } = oldFlow;
+export const getAddedLookupIdInFlow = (patchSet = []) => {
   const pageProcessorsPatch = patchSet.find(
-    patch => patch.path === '/pageProcessors'
+    patch => pathRegex.lookupAddition.test(patch.path) &&
+      ['add', 'replace'].includes(patch.op)
   );
-  const updatedPageProcessors =
-    (pageProcessorsPatch && pageProcessorsPatch.value) || [];
 
-  if (updatedPageProcessors.length - pageProcessors.length === 1) {
-    const addedPP = updatedPageProcessors[updatedPageProcessors.length - 1];
-
-    return addedPP.type === 'export' ? addedPP._exportId : undefined;
+  if (pageProcessorsPatch?.value?.type === 'export') {
+    return pageProcessorsPatch.value._exportId;
   }
 };
 
@@ -274,12 +218,12 @@ export const isRawDataPatchSet = (patchSet = []) =>
 /*
  * File adaptor / Real time( NS/ SF/ Webhooks)/ Blob type/ Rest CSV resources need UI Data to be passed in Page processor preview
  */
-export const isUIDataExpectedForResource = (resource, connection, flow) =>
+export const isUIDataExpectedForResource = (resource, connection) =>
   isRealTimeOrDistributedResource(resource) ||
   isFileAdaptor(resource) ||
   isRestCsvMediaTypeExport(resource, connection) ||
   isBlobTypeResource(resource) ||
-  isIntegrationApp(flow);
+  isIntegrationApp(resource);
 
 /*
  * Gives a sample data for Blob resource
@@ -313,7 +257,6 @@ export const isPostDataNeededInResource = resource => {
  * This fn returns { data:'', errors: '', ignored: '', statusCode: ''}
  */
 export const generateDefaultExtractsObject = (resourceType, adaptorType) => {
-  // TODO: @Raghu Confirm the below format to generate default objects
   const defaultExtractsList = responseMappingUtil.getResponseMappingExtracts(resourceType, adaptorType);
 
   return defaultExtractsList.reduce((extractsObj, extractItem) => {
@@ -340,7 +283,7 @@ export const getFormattedResourceForPreview = (
   resourceType,
   flowType
 ) => {
-  const resource = deepClone(resourceObj);
+  const resource = deepClone(resourceObj || {});
 
   // type Once need not be passed in preview as it gets executed in preview call
   // so remove type once
@@ -401,6 +344,7 @@ export const getResourceStageUpdatedFromPatch = (patchSet = []) => {
 };
 
 /**
+ * gives all the succeeding stages followed by passed stage
  * @input stage
  * @input resourceType : supports imports, exports
  * @outPut listOfStages []
@@ -435,6 +379,6 @@ export const getSubsequentStages = (stage, resourceType) => {
  * As of now any field change in the resourceForm triggers sample data update
  */
 export const shouldUpdateResourceSampleData = (patch = []) =>
-  patch.length &&
+  !!patch.length &&
   !isRawDataPatchSet(patch) &&
   !getResourceStageUpdatedFromPatch(patch);
