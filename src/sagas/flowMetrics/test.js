@@ -134,7 +134,7 @@ describe('flowMetrics saga', () => {
           [call(requestMetric, args), throwError(e)],
         ])
         .call(requestMetric, args)
-        .put(actions.flowMetrics.failed(e))
+        .put(actions.flowMetrics.failed(resourceId))
         .run();
     });
   });
