@@ -113,6 +113,7 @@ export default function DateRangeSelector({
   showTime = true,
   clearable = false,
   clearValue,
+  placement,
 }) {
   const defaultValue = getSelectedRange({preset: 'last30days'});
   const { startDate = defaultValue.startDate, endDate = defaultValue.endDate, preset = defaultValue.preset } = value;
@@ -183,7 +184,7 @@ export default function DateRangeSelector({
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
-        placement="bottom-end"
+        placement={placement || 'bottom-end'}
         onClose={toggleClick}>
         {anchorEl && (
           <div className={classes.dateRangePickerWrapper}>

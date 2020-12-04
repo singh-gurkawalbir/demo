@@ -25,7 +25,7 @@ export default function CreateScriptDialog({ onClose, onSave, scriptId }) {
 
   return (
     <ModalDialog show onClose={onClose}>
-      <div>Create Script</div>
+      <div>Create script</div>
       <div>
         <DynaForm
           formKey={formKey}

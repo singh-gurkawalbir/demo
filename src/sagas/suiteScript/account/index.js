@@ -17,7 +17,7 @@ export function* checkHasIntegrations({ connectionId }) {
   try {
     response = yield call(apiCallWithRetry, requestOptions);
   } catch (error) {
-    return true;
+    return;
   }
 
   const connection = yield select(

@@ -279,7 +279,7 @@ describe('getRequestURL util', () => {
   test('should return undefined incase of request data not having request url', () => {
     const requestData = { data: [{ method: 'GET' }]};
 
-    expect(getRequestURL(requestData)).toBe(undefined);
+    expect(getRequestURL(requestData)).toBeUndefined();
   });
   test('should return request url from valid request data', () => {
     const requestData = {
