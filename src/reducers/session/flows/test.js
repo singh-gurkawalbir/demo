@@ -100,7 +100,7 @@ describe('session.flows selectors', () => {
 
       expect(selectors.getLastExportDateTime(newState, flowId)).toEqual(expected);
     });
-    test('should return undefined when flowId is undefined.', () => {
+    test('should return null when flowId is undefined.', () => {
       const oldState = { };
       const lastExportDateTimeResponse = {lastExportDateTime};
       const newState = reducer(oldState,
@@ -127,7 +127,7 @@ describe('session.flows selectors', () => {
       expect(selectors.isOnOffInProgress(undefined, flowId)).toEqual(defaultObject);
     });
 
-    test('should return correct object with status', () => {
+    test('should return correct isOnOffInProgress flag', () => {
       const oldState = { };
 
       let newState = reducer(oldState,
