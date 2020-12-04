@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 // TODO:(Aditya): Work on test cases for Netsuite and Salesforce.
-import reducer from '.';
+import reducer, { selectors } from '.';
 import actions from '../../../actions';
 
 /*
@@ -114,6 +114,386 @@ describe('NetSuiteAndSalesforce', () => {
         application: { 1234: { url: { data: [], status: 'refreshed' } } },
         assistants: { http: {}, rest: {} },
       });
+    });
+  });
+  describe('Metadata assistant reducer tests', () => {
+    test('should update status as requested for assistant preview request action', () => {
+      const state = reducer(
+        undefined,
+        actions.metadata.requestAssistantImportPreview('123')
+      );
+
+      expect(state).toMatchObject({
+        application: {},
+        assistants: {
+          rest: {},
+          http: {},
+        },
+        preview: {
+          123: {
+            status: 'requested',
+          },
+        },
+      });
+    });
+
+    test('should update status as error for assistant preview failed action', () => {
+      const state = reducer(
+        undefined,
+        actions.metadata.failedAssistantImportPreview('123')
+      );
+
+      expect(state).toEqual({
+        application: {},
+        assistants: {
+          rest: {},
+          http: {},
+        },
+        preview: {
+          123: {
+            status: 'error',
+          },
+        },
+      });
+    });
+
+    test('should update status as receieved for preview received action', () => {
+      const state = reducer(
+        undefined,
+        actions.metadata.receivedAssistantImportPreview('123', {
+          id: '123',
+          name: 'Account',
+        })
+      );
+
+      expect(state).toEqual({
+        application: {},
+        assistants: {
+          rest: {},
+          http: {},
+        },
+        preview: {
+          123: {
+            status: 'received',
+            data: {
+              id: '123',
+              name: 'Account',
+            },
+          },
+        },
+      });
+    });
+
+    test('should remove assistant preview data for resource on reset action', () => {
+      const state = reducer(
+        {
+          preview: {
+            123: {
+              status: 'received',
+              data: {
+                id: '123',
+                name: 'Account',
+              },
+            },
+          },
+        },
+        actions.metadata.resetAssistantImportPreview('123')
+      );
+
+      expect(state).toEqual({
+        preview: {},
+      });
+    });
+
+    test('should update assistant metadata with received action', () => {
+      const state = reducer(
+        {
+          assistants: {
+            http: {},
+            rest: {},
+          },
+        },
+        actions.assistantMetadata.received({
+          adaptorType: 'rest',
+          assistant: 'gainsight',
+          metadata: {
+            recordType: 'order',
+          }})
+      );
+
+      expect(state).toEqual({
+        assistants: {
+          http: {},
+          rest: {
+            gainsight: {
+              recordType: 'order',
+            },
+          },
+        },
+      });
+    });
+  });
+
+  describe('tests for action metadata received error', () => {
+    test('should update metadata path with error received', () => {
+      const connId = '123';
+      const state = reducer(
+        undefined,
+        actions.metadata.receivedError(
+          'Request limit exceeded',
+          connId,
+          `salesforce/metadata/${connId}/recordTypes`,
+        )
+      );
+
+      expect(state).toEqual(
+        {
+          application:
+          { 123: { 'salesforce/metadata/123/recordTypes': {
+            status: 'error',
+            data: [],
+            errorMessage: 'Request limit exceeded',
+          } } },
+          preview: {},
+          assistants: { rest: {}, http: {} } }
+      );
+    });
+
+    test('should update metadata path with error message and metadata shouldn\'t be changed if status is refreshed', () => {
+      const connId = '123';
+      const state = reducer({
+        application:
+          { 123: { 'salesforce/metadata/123/recordTypes': {
+            status: 'refreshed',
+            data: ['account', 'opportunity'],
+
+          } } },
+        preview: {},
+        assistants: { rest: {}, http: {} } },
+      actions.metadata.receivedError(
+        'Request limit exceeded',
+        connId,
+        `salesforce/metadata/${connId}/recordTypes`,
+      )
+      );
+
+      expect(state).toEqual(
+        {
+          application:
+          { 123: { 'salesforce/metadata/123/recordTypes': {
+            status: 'error',
+            data: ['account', 'opportunity'],
+            errorMessage: 'Request limit exceeded',
+          } } },
+          preview: {},
+          assistants: { rest: {}, http: {} } }
+      );
+    });
+
+    test('should update metadata path with error message and metadata should be reset if status is not refreshed', () => {
+      const connId = '123';
+      const state = reducer({
+        application:
+          { 123: { 'salesforce/metadata/123/recordTypes': {
+            status: 'requested',
+            data: ['account', 'opportunity'],
+
+          } } },
+        preview: {},
+        assistants: { rest: {}, http: {} } },
+      actions.metadata.receivedError(
+        'Request limit exceeded',
+        connId,
+        `salesforce/metadata/${connId}/recordTypes`,
+      )
+      );
+
+      expect(state).toEqual(
+        {
+          application:
+          { 123: { 'salesforce/metadata/123/recordTypes': {
+            status: 'error',
+            data: [],
+            errorMessage: 'Request limit exceeded',
+          } } },
+          preview: {},
+          assistants: { rest: {}, http: {} } }
+      );
+    });
+  });
+
+  describe('tests for action metadata received validation error', () => {
+    test('should update metadata path with validation message and metadata should be reset if status is not refreshed', () => {
+      const connId = '123';
+      const state = reducer({
+        application:
+          { 123: { 'salesforce/metadata/123/recordTypes': {
+            status: 'requested',
+            data: ['account', 'opportunity'],
+
+          } } },
+        preview: {},
+        assistants: { rest: {}, http: {} } },
+      actions.metadata.validationError(
+        'Bundle not installed.',
+        connId,
+        `salesforce/metadata/${connId}/recordTypes`,
+      )
+      );
+
+      expect(state).toEqual(
+        {
+          application:
+          { 123: { 'salesforce/metadata/123/recordTypes': {
+            status: 'error',
+            data: [],
+            validationError: 'Bundle not installed.',
+          } } },
+          preview: {},
+          assistants: { rest: {}, http: {} } }
+      );
+    });
+  });
+
+  test('should update metadata path with validation message and metadata should not be modified if status is refreshed', () => {
+    const connId = '123';
+    const state = reducer({
+      application:
+        { 123: { 'salesforce/metadata/123/recordTypes': {
+          status: 'refreshed',
+          data: ['account', 'opportunity'],
+
+        } } },
+      preview: {},
+      assistants: { rest: {}, http: {} } },
+    actions.metadata.validationError(
+      'Bundle not installed.',
+      connId,
+      `salesforce/metadata/${connId}/recordTypes`,
+    )
+    );
+
+    expect(state).toEqual(
+      {
+        application:
+        { 123: { 'salesforce/metadata/123/recordTypes': {
+          status: 'error',
+          data: ['account', 'opportunity'],
+          validationError: 'Bundle not installed.',
+        } } },
+        preview: {},
+        assistants: { rest: {}, http: {} } }
+    );
+  });
+});
+
+describe('selector testcases for metadata', () => {
+  test('should return metadata from state based on metapath', () => {
+    const connId = '1234';
+
+    const accountMetadata = [
+      {
+        fields: [{
+          id: 'name',
+          label: 'Name',
+          type: 'string',
+        }, {
+          id: 'recordid',
+          label: 'Record Id',
+          type: 'id',
+        }, {
+          id: 'createddate',
+          label: 'Created Date',
+          type: 'datetime',
+        }],
+      },
+    ];
+
+    const opportunityMetadata = [
+      {
+        fields: [{
+          id: 'opportunityname',
+          label: 'Opportunity Name',
+          type: 'string',
+        }, {
+          id: 'oppid',
+          label: 'Opportunity Id',
+          type: 'id',
+        }, {
+          id: 'createddate',
+          label: 'Created Date',
+          type: 'datetime',
+        }],
+      },
+    ];
+    const requestState = reducer(
+      undefined,
+      actions.metadata.request(connId, `/salesforce/metadata/${connId}/sobjects/account`)
+    );
+    let receivedState = reducer(
+      requestState,
+      actions.metadata.receivedCollection(
+        accountMetadata,
+        connId,
+        `/salesforce/metadata/${connId}/sobjects/account`
+      )
+    );
+
+    receivedState = reducer(
+      receivedState,
+      actions.metadata.receivedCollection(
+        opportunityMetadata,
+        connId,
+        `/salesforce/metadata/${connId}/sobjects/opportunity`
+      )
+    );
+
+    expect(selectors.optionsFromMetadata(receivedState, {
+      connectionId: connId,
+      commMetaPath: `/salesforce/metadata/${connId}/sobjects/account`,
+      filterKey: 'salesforce-sObject-layout',
+    }).data).toEqual(accountMetadata);
+
+    expect(selectors.optionsFromMetadata(receivedState, {
+      connectionId: connId,
+      commMetaPath: `/salesforce/metadata/${connId}/sobjects/opportunity`,
+      filterKey: 'salesforce-sObject-layout',
+    }).data).toEqual(opportunityMetadata);
+  });
+
+  test('should return assistantData from state', () => {
+    const state = reducer(
+      {
+        assistants: {
+          http: {},
+          rest: {},
+        },
+      },
+      actions.assistantMetadata.received({
+        adaptorType: 'rest',
+        assistant: 'gainsight',
+        metadata: {
+          recordType: 'order',
+        }})
+    );
+
+    expect(selectors.assistantData(state, {adaptorType: 'rest', assistant: 'gainsight'})).toEqual({
+      recordType: 'order',
+    });
+  });
+
+  test('should return assistant preview data from state', () => {
+    const state = reducer(
+      undefined,
+      actions.metadata.receivedAssistantImportPreview('123', {
+        id: '123',
+        name: 'Account',
+      })
+    );
+
+    expect(selectors.assistantPreviewData(state, '123').data).toEqual({
+      id: '123',
+      name: 'Account',
     });
   });
 });
