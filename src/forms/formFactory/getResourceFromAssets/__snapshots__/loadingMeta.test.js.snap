@@ -13039,3 +13039,533 @@ Object {
   "validationHandler": undefined,
 }
 `;
+
+exports[`getResourceFromAssets load correct suitescript forms connections should load a ftp 1`] = `
+Object {
+  "fieldMeta": Object {
+    "actions": undefined,
+    "fieldMap": Object {
+      "ftp.authKey": Object {
+        "fieldId": "ftp.authKey",
+      },
+      "ftp.hostURI": Object {
+        "fieldId": "ftp.hostURI",
+      },
+      "ftp.password": Object {
+        "fieldId": "ftp.password",
+      },
+      "ftp.usePassiveMode": Object {
+        "fieldId": "ftp.usePassiveMode",
+      },
+      "ftp.useSFTP": Object {
+        "fieldId": "ftp.useSFTP",
+      },
+      "ftp.userDirectoryIsRoot": Object {
+        "fieldId": "ftp.userDirectoryIsRoot",
+      },
+      "ftp.username": Object {
+        "fieldId": "ftp.username",
+      },
+      "name": Object {
+        "fieldId": "name",
+      },
+    },
+    "layout": Object {
+      "fields": Array [
+        "name",
+        "ftp.hostURI",
+        "ftp.useSFTP",
+        "ftp.username",
+        "ftp.password",
+        "ftp.authKey",
+        "ftp.usePassiveMode",
+        "ftp.userDirectoryIsRoot",
+      ],
+      "type": "collapse",
+    },
+  },
+  "init": undefined,
+  "optionsHandler": [Function],
+  "preSave": [Function],
+  "validationHandler": undefined,
+}
+`;
+
+exports[`getResourceFromAssets load correct suitescript forms connections should load a salesforce 1`] = `
+Object {
+  "fieldMeta": Object {
+    "actions": undefined,
+    "fieldMap": Object {
+      "name": Object {
+        "fieldId": "name",
+      },
+      "salesforce.password": Object {
+        "fieldId": "salesforce.password",
+      },
+      "salesforce.sandbox": Object {
+        "fieldId": "salesforce.sandbox",
+      },
+      "salesforce.securityKey": Object {
+        "fieldId": "salesforce.securityKey",
+      },
+      "salesforce.username": Object {
+        "fieldId": "salesforce.username",
+      },
+    },
+    "layout": Object {
+      "fields": Array [
+        "name",
+        "salesforce.username",
+        "salesforce.password",
+        "salesforce.securityKey",
+        "salesforce.sandbox",
+      ],
+      "type": "collapse",
+    },
+  },
+  "init": undefined,
+  "optionsHandler": [Function],
+  "preSave": undefined,
+  "validationHandler": undefined,
+}
+`;
+
+exports[`getResourceFromAssets load correct suitescript forms exports netsuite should load a realtime 1`] = `
+Object {
+  "fieldMeta": Object {
+    "actions": undefined,
+    "fieldMap": Object {
+      "export.netsuite.realtime.checkboxField": Object {
+        "fieldId": "export.netsuite.realtime.checkboxField",
+      },
+      "export.netsuite.realtime.executionContext": Object {
+        "fieldId": "export.netsuite.realtime.executionContext",
+      },
+      "export.netsuite.realtime.executionType": Object {
+        "fieldId": "export.netsuite.realtime.executionType",
+      },
+      "export.netsuite.realtime.exportType": Object {
+        "fieldId": "export.netsuite.realtime.exportType",
+      },
+      "export.netsuite.realtime.recordType": Object {
+        "fieldId": "export.netsuite.realtime.recordType",
+      },
+    },
+    "layout": Object {
+      "containers": Array [
+        Object {
+          "containers": Array [
+            Object {
+              "fields": Array [
+                "export.netsuite.realtime.recordType",
+                "export.netsuite.realtime.executionContext",
+                "export.netsuite.realtime.executionType",
+                "export.netsuite.realtime.exportType",
+                "export.netsuite.realtime.checkboxField",
+              ],
+              "label": "Configure real-time export",
+            },
+          ],
+          "type": "collapse",
+        },
+      ],
+      "type": "column",
+    },
+  },
+  "init": undefined,
+  "optionsHandler": [Function],
+  "preSave": [Function],
+  "validationHandler": undefined,
+}
+`;
+
+exports[`getResourceFromAssets load correct suitescript forms exports netsuite should load a restlet 1`] = `
+Object {
+  "fieldMeta": Object {
+    "actions": undefined,
+    "fieldMap": Object {
+      "export.delta.dateField": Object {
+        "fieldId": "export.delta.dateField",
+      },
+      "export.netsuite.restlet.recordType": Object {
+        "fieldId": "export.netsuite.restlet.recordType",
+      },
+      "export.netsuite.restlet.searchId": Object {
+        "fieldId": "export.netsuite.restlet.searchId",
+      },
+      "export.once.booleanField": Object {
+        "fieldId": "export.once.booleanField",
+      },
+      "export.type": Object {
+        "fieldId": "export.type",
+      },
+      "export.valueDelta.exportedField": Object {
+        "fieldId": "export.valueDelta.exportedField",
+      },
+      "export.valueDelta.pendingField": Object {
+        "fieldId": "export.valueDelta.pendingField",
+      },
+    },
+    "layout": Object {
+      "containers": Array [
+        Object {
+          "containers": Array [
+            Object {
+              "fields": Array [
+                "export.netsuite.restlet.recordType",
+                "export.netsuite.restlet.searchId",
+              ],
+              "label": "What would you like to export?",
+            },
+            Object {
+              "fields": Array [
+                "export.type",
+                "export.delta.dateField",
+                "export.once.booleanField",
+                "export.valueDelta.exportedField",
+                "export.valueDelta.pendingField",
+              ],
+              "label": "Configure export type",
+            },
+          ],
+          "type": "collapse",
+        },
+      ],
+      "type": "column",
+    },
+  },
+  "init": undefined,
+  "optionsHandler": [Function],
+  "preSave": [Function],
+  "validationHandler": undefined,
+}
+`;
+
+exports[`getResourceFromAssets load correct suitescript forms exports other exports should load a fileCabinet 1`] = `
+Object {
+  "fieldMeta": Object {
+    "actions": undefined,
+    "fieldMap": Object {
+      "export.file.csv": Object {
+        "fieldId": "export.file.csv",
+      },
+      "export.fileCabinet.folderHierarchy": Object {
+        "fieldId": "export.fileCabinet.folderHierarchy",
+      },
+      "uploadFile": Object {
+        "fieldId": "uploadFile",
+      },
+    },
+    "layout": Object {
+      "containers": Array [
+        Object {
+          "containers": Array [
+            Object {
+              "fields": Array [
+                "uploadFile",
+                "export.file.csv",
+              ],
+              "label": "How would you like to parse files?",
+            },
+            Object {
+              "fields": Array [
+                "export.fileCabinet.folderHierarchy",
+              ],
+              "label": "Where would you like to transfer from?",
+            },
+          ],
+          "type": "collapse",
+        },
+      ],
+      "type": "column",
+    },
+  },
+  "init": undefined,
+  "optionsHandler": [Function],
+  "preSave": [Function],
+  "validationHandler": undefined,
+}
+`;
+
+exports[`getResourceFromAssets load correct suitescript forms exports other exports should load a newegg 1`] = `
+Object {
+  "fieldMeta": Object {
+    "actions": undefined,
+    "fieldMap": Object {
+      "export.newegg.method": Object {
+        "fieldId": "export.newegg.method",
+      },
+      "export.newegg.methodConfig": Object {
+        "fieldId": "export.newegg.methodConfig",
+      },
+    },
+    "layout": Object {
+      "containers": Array [
+        Object {
+          "containers": Array [
+            Object {
+              "fields": Array [
+                "export.newegg.method",
+                "export.newegg.methodConfig",
+              ],
+              "label": "What would you like to export?",
+            },
+          ],
+          "type": "collapse",
+        },
+      ],
+      "type": "column",
+    },
+  },
+  "init": undefined,
+  "optionsHandler": [Function],
+  "preSave": undefined,
+  "validationHandler": undefined,
+}
+`;
+
+exports[`getResourceFromAssets load correct suitescript forms exports salesforce should load a realtime 1`] = `
+Object {
+  "fieldMeta": Object {
+    "actions": undefined,
+    "fieldMap": Object {
+      "advanced": Object {
+        "fieldId": "advanced",
+      },
+      "export.salesforce.errorMessageField.id": Object {
+        "fieldId": "export.salesforce.errorMessageField.id",
+      },
+      "export.salesforce.netsuiteIdField": Object {
+        "fieldId": "export.salesforce.netsuiteIdField",
+      },
+      "export.salesforce.sObjectType": Object {
+        "fieldId": "export.salesforce.sObjectType",
+      },
+    },
+    "layout": Object {
+      "containers": Array [
+        Object {
+          "containers": Array [
+            Object {
+              "collapsed": false,
+              "fields": Array [
+                "export.salesforce.sObjectType",
+              ],
+              "label": "Configure real-time export",
+            },
+            Object {
+              "collapsed": false,
+              "fields": Array [
+                "export.salesforce.errorMessageField.id",
+                "export.salesforce.netsuiteIdField",
+              ],
+              "label": "Advanced",
+            },
+          ],
+          "type": "collapse",
+        },
+      ],
+      "type": "column",
+    },
+  },
+  "init": undefined,
+  "optionsHandler": [Function],
+  "preSave": undefined,
+  "validationHandler": undefined,
+}
+`;
+
+exports[`getResourceFromAssets load correct suitescript forms exports salesforce should load a scheduled 1`] = `
+Object {
+  "fieldMeta": Object {
+    "actions": undefined,
+    "fieldMap": Object {
+      "export.salesforce.booleanField": Object {
+        "fieldId": "export.salesforce.booleanField",
+      },
+      "export.salesforce.exportType": Object {
+        "fieldId": "export.salesforce.exportType",
+      },
+      "export.salesforce.soql": Object {
+        "fieldId": "export.salesforce.soql",
+      },
+      "export.salesforce.soqlErrorMessageField.id": Object {
+        "fieldId": "export.salesforce.soqlErrorMessageField.id",
+        "refreshOptionsOnChangesTo": Array [
+          "export.salesforce.soql",
+        ],
+        "visibleWhenAll": Array [
+          Object {
+            "field": "export.salesforce.soql",
+            "isNot": Array [
+              "",
+            ],
+          },
+          Object {
+            "field": "export.salesforce.exportType",
+            "isNot": Array [
+              "delta",
+            ],
+          },
+        ],
+      },
+    },
+    "layout": Object {
+      "containers": Array [
+        Object {
+          "containers": Array [
+            Object {
+              "fields": Array [
+                "export.salesforce.soql",
+              ],
+              "label": "What would you like to export?",
+            },
+            Object {
+              "fields": Array [
+                "export.salesforce.exportType",
+                "export.salesforce.booleanField",
+              ],
+              "label": "Configure export type",
+            },
+            Object {
+              "fields": Array [
+                "export.salesforce.soqlErrorMessageField.id",
+              ],
+              "label": "Advanced",
+            },
+          ],
+          "type": "collapse",
+        },
+      ],
+      "type": "column",
+    },
+  },
+  "init": undefined,
+  "optionsHandler": [Function],
+  "preSave": [Function],
+  "validationHandler": undefined,
+}
+`;
+
+exports[`getResourceFromAssets load correct suitescript forms imports should load a ftp 1`] = `
+Object {
+  "fieldMeta": Object {
+    "actions": undefined,
+    "fieldMap": Object {
+      "import.file.csv.columnDelimiter": Object {
+        "fieldId": "import.file.csv.columnDelimiter",
+      },
+      "import.file.csv.includeHeader": Object {
+        "fieldId": "import.file.csv.includeHeader",
+      },
+      "import.ftp.directoryPath": Object {
+        "fieldId": "import.ftp.directoryPath",
+      },
+      "import.ftp.fileExtension": Object {
+        "fieldId": "import.ftp.fileExtension",
+      },
+      "import.ftp.fileName": Object {
+        "fieldId": "import.ftp.fileName",
+      },
+    },
+    "layout": Object {
+      "containers": Array [
+        Object {
+          "containers": Array [
+            Object {
+              "collapsed": false,
+              "fields": Array [
+                "import.ftp.fileName",
+                "import.ftp.fileExtension",
+                "import.file.csv.columnDelimiter",
+                "import.file.csv.includeHeader",
+              ],
+              "label": "How would you like to generate files?",
+            },
+            Object {
+              "collapsed": false,
+              "fields": Array [
+                "import.ftp.directoryPath",
+              ],
+              "label": "Where would you like the files transferred?",
+            },
+          ],
+          "type": "collapse",
+        },
+      ],
+      "type": "column",
+    },
+  },
+  "init": undefined,
+  "optionsHandler": [Function],
+  "preSave": undefined,
+  "validationHandler": undefined,
+}
+`;
+
+exports[`getResourceFromAssets load correct suitescript forms imports should load a salesforce 1`] = `
+Object {
+  "fieldMeta": Object {
+    "actions": undefined,
+    "fieldMap": Object {
+      "import.salesforce.operation": Object {
+        "fieldId": "import.salesforce.operation",
+      },
+      "import.salesforce.sObjectType": Object {
+        "fieldId": "import.salesforce.sObjectType",
+      },
+      "import.salesforce.salesforceIdField": Object {
+        "fieldId": "import.salesforce.salesforceIdField",
+      },
+      "import.salesforce.update.externalField": Object {
+        "fieldId": "import.salesforce.update.externalField",
+      },
+      "import.salesforce.update.jsField": Object {
+        "fieldId": "import.salesforce.update.jsField",
+      },
+      "import.salesforce.upsert.externalField": Object {
+        "fieldId": "import.salesforce.upsert.externalField",
+      },
+      "import.salesforce.upsert.jsField": Object {
+        "fieldId": "import.salesforce.upsert.jsField",
+      },
+      "importData": Object {
+        "fieldId": "importData",
+      },
+    },
+    "layout": Object {
+      "containers": Array [
+        Object {
+          "containers": Array [
+            Object {
+              "fields": Array [
+                "import.salesforce.sObjectType",
+                "import.salesforce.operation",
+                "import.salesforce.update.jsField",
+                "import.salesforce.update.externalField",
+                "import.salesforce.upsert.jsField",
+                "import.salesforce.upsert.externalField",
+              ],
+              "label": "How would you like the records imported?",
+              "type": "collapse",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "import.salesforce.salesforceIdField",
+              ],
+              "label": "Advanced",
+            },
+          ],
+          "type": "collapse",
+        },
+      ],
+      "type": "column",
+    },
+  },
+  "init": undefined,
+  "optionsHandler": [Function],
+  "preSave": [Function],
+  "validationHandler": undefined,
+}
+`;

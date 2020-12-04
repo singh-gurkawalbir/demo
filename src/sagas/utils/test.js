@@ -10,7 +10,7 @@ import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets
 jest.mock('../../forms/formFactory/getResourceFromAssets');
 
 // fake the return value of getResourceFormAssets when createFormValuesPatchSet calls this fn
-getResourceFormAssets.mockReturnValue({fieldMap: {}, preSave: null});
+getResourceFormAssets.mockReturnValue({fieldMap: {field1: {fieldId: 'something'}}, preSave: null});
 
 describe('resourceConflictResolution', () => {
   /*

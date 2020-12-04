@@ -9,6 +9,132 @@ jest.mock('../../definitions/exports/custom/http/assistant');
 
 jest.mock('../../definitions/imports/custom/http/assistant');
 
+describe('getResourceFromAssets load correct suitescript forms', () => {
+  const ssLinkedConnectionId = 'id1';
+
+  const assistantData = {};
+
+  const connection = {};
+
+  test('should not load a form and throw an error for non-valid schema', () => {
+    const resource = {id: 'something1'};
+
+    try {
+      getResourceFormAssets({
+        resourceType: 'connections', resource, isNew: false, assistantData, connection, ssLinkedConnectionId,
+      });
+
+      fail('should fail');
+    // eslint-disable-next-line no-empty
+    } catch (e) {}
+  });
+
+  describe('connections', () => {
+    const inputs = [
+      // test a few connections to see it work
+      ['ftp', {id: 'something1',
+        type: 'ftp',
+      }, 'ftp.useSFTP'],
+      ['salesforce', {id: 'something1',
+        type: 'salesforce',
+      }, 'salesforce.username'],
+    ];
+
+    test.each(inputs)('should load a %s', (name, resource, expectedField) => {
+      const result = getResourceFormAssets({
+        resourceType: 'connections', resource, isNew: false, assistantData, connection, ssLinkedConnectionId,
+      });
+
+      expect(result?.fieldMeta?.fieldMap?.[expectedField]).toBeTruthy();
+      expect(result).toMatchSnapshot();
+    });
+  });
+  describe('exports', () => {
+    describe('netsuite', () => {
+      const inputs = [
+        // test a few connections to see it work
+        ['realtime', {id: 'something1',
+          export: { netsuite: {type: 'realtime'}},
+        }, 'export.netsuite.realtime.exportType'],
+        ['restlet', {id: 'something1',
+          export: { netsuite: {type: 'restlet'}},
+        }, 'export.netsuite.restlet.recordType'],
+      ];
+
+      test.each(inputs)('should load a %s', (name, resource, expectedField) => {
+        const result = getResourceFormAssets({
+          resourceType: 'exports', resource, isNew: false, assistantData, connection, ssLinkedConnectionId,
+        });
+
+        expect(result?.fieldMeta?.fieldMap?.[expectedField]).toBeTruthy();
+        expect(result).toMatchSnapshot();
+      });
+    });
+    describe('salesforce', () => {
+      const inputs = [
+        ['realtime', {id: 'something1',
+          export: { type: 'salesforce',
+            salesforce: { type: 'sobject'},
+          },
+        }, 'export.salesforce.sObjectType'],
+        ['scheduled', {id: 'something1',
+          export: { type: 'salesforce',
+            salesforce: { type: 'someother'},
+          },
+        }, 'export.salesforce.soqlErrorMessageField.id'],
+      ];
+
+      test.each(inputs)('should load a %s', (name, resource, expectedField) => {
+        const result = getResourceFormAssets({
+          resourceType: 'exports', resource, isNew: false, assistantData, connection, ssLinkedConnectionId,
+        });
+
+        expect(result?.fieldMeta?.fieldMap?.[expectedField]).toBeTruthy();
+        expect(result).toMatchSnapshot();
+      });
+    });
+    describe('other exports', () => {
+      const inputs = [
+        // test a few exports to see it work
+        ['fileCabinet', {id: 'something1',
+          export: { type: 'fileCabinet'},
+        }, 'export.fileCabinet.folderHierarchy'],
+        ['newegg', {id: 'something1',
+          export: {type: 'newegg'},
+        }, 'export.newegg.methodConfig'],
+      ];
+
+      test.each(inputs)('should load a %s', (name, resource, expectedField) => {
+        const result = getResourceFormAssets({
+          resourceType: 'exports', resource, isNew: false, assistantData, connection, ssLinkedConnectionId,
+        });
+
+        expect(result?.fieldMeta?.fieldMap?.[expectedField]).toBeTruthy();
+        expect(result).toMatchSnapshot();
+      });
+    });
+  });
+  describe('imports', () => {
+    const inputs = [
+      // test a few imports to see it work
+      ['ftp', {id: 'something1',
+        import: { type: 'ftp' },
+      }, 'import.ftp.directoryPath'],
+      ['salesforce', {id: 'something1',
+        import: { type: 'salesforce'},
+      }, 'import.salesforce.sObjectType'],
+    ];
+
+    test.each(inputs)('should load a %s', (name, resource, expectedField) => {
+      const result = getResourceFormAssets({
+        resourceType: 'imports', resource, isNew: false, assistantData, connection, ssLinkedConnectionId,
+      });
+
+      expect(result?.fieldMeta?.fieldMap?.[expectedField]).toBeTruthy();
+      expect(result).toMatchSnapshot();
+    });
+  });
+});
 describe('getResourceFromAssets load correct form', () => {
   describe('other resource types', () => {
     test.each([

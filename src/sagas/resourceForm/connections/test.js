@@ -348,7 +348,7 @@ describe('Create payload saga', () => {
 
   // fake the return value of getResourceFormAssets when createFormValuesPatchSet calls this fn
 
-  getResourceFormAssets.mockReturnValue({fieldMap: {}, preSave: null});
+  getResourceFormAssets.mockReturnValue({fieldMap: {field1: {fieldId: 'something'}}, preSave: null});
   test('should be able to check payload calls successfully', () => expectSaga(createPayload, { resourceId, values })
     .provide([
       [select(selectors.resourceData), conn],
