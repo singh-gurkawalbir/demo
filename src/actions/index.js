@@ -1291,12 +1291,6 @@ const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
   requestStage: (flowId, resourceId, stage) =>
     action(actionTypes.FLOW_DATA.STAGE_REQUEST, { flowId, resourceId, stage }),
-  requestPreviewData: (flowId, resourceId, previewType) =>
-    action(actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST, {
-      flowId,
-      resourceId,
-      previewType,
-    }),
   receivedPreviewData: (flowId, resourceId, previewData, previewType) =>
     action(actionTypes.FLOW_DATA.PREVIEW_DATA_RECEIVED, {
       flowId,

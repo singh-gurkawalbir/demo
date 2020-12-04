@@ -65,7 +65,8 @@ export default function* getPreviewOptionsForResource({ resource, flow, refresh,
     'connections',
     resource && resource._connectionId
   );
-  const uiData = isUIDataExpectedForResource(resource, connection, flow)
+
+  const uiData = isUIDataExpectedForResource(resource, connection)
     ? yield call(getUIDataForResource, { resource, connection, flow, refresh })
     : undefined;
   const postData = {
