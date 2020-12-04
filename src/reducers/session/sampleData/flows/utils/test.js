@@ -75,8 +75,6 @@ const dummyFlowId = 'flow-1234';
 describe('getFirstOutOfOrderIndex util', () => {
   test('should return -1 incase of empty lists passed', () => {
     expect(getFirstOutOfOrderIndex([], [])).toBe(-1);
-  });
-  test('should return -1 incase of empty lists passed', () => {
     const currentList = [
       { _exportId: '123' },
       { _exportId: '456' },
@@ -91,28 +89,22 @@ describe('getFirstOutOfOrderIndex util', () => {
       { _importId: '456' },
       { _exportId: '789' },
     ];
-    const updatedList = [
+    const updatedListWithSwappingItems = [
       { _exportId: '123' },
       { _exportId: '789' },
       { _importId: '456' },
     ];
 
-    expect(getFirstOutOfOrderIndex(currentList, updatedList)).toBe(1);
-  });
-  test('should return the index of the first item that mismatches', () => {
-    const currentList = [
-      { _exportId: '123' },
-      { _importId: '456' },
-      { _importId: '789' },
-    ];
-    const updatedList = [
+    expect(getFirstOutOfOrderIndex(currentList, updatedListWithSwappingItems)).toBe(1);
+
+    const updatedListWithNewItem = [
       { _exportId: '123' },
       { _importId: '456' },
       { _importId: '789' },
       { _importId: '111' },
     ];
 
-    expect(getFirstOutOfOrderIndex(currentList, updatedList)).toBe(3);
+    expect(getFirstOutOfOrderIndex(currentList, updatedListWithNewItem)).toBe(3);
   });
 });
 describe('clearInvalidFlowState util', () => {

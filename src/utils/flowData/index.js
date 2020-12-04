@@ -344,6 +344,7 @@ export const getResourceStageUpdatedFromPatch = (patchSet = []) => {
 };
 
 /**
+ * gives all the succeeding stages followed by passed stage
  * @input stage
  * @input resourceType : supports imports, exports
  * @outPut listOfStages []

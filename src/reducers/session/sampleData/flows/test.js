@@ -500,6 +500,29 @@ describe('Flow sample data reducer ', () => {
         },
       });
     });
+    test('should update processor stage as received with processor data even if the request processor data action is not triggered ', () => {
+      const initState = reducer(undefined, actions.flowData.init(dummyFlow));
+      const processor = 'transform';
+      const processorData = {data: [{ userId: '123'}]};
+      const currState = reducer(initState, actions.flowData.receivedProcessorData(dummyFlowId, '222', processor, processorData));
+
+      expect(currState).toEqual({
+        [dummyFlowId]: {
+          pageGenerators: dummyFlow.pageGenerators,
+          pageProcessors: dummyFlow.pageProcessors,
+          pageGeneratorsMap: {},
+          refresh: false,
+          pageProcessorsMap: {
+            222: {
+              transform: {
+                status: 'received',
+                data: { userId: '123' },
+              },
+            },
+          },
+        },
+      });
+    });
   });
   describe('FLOW_DATA.RECEIVED_ERROR action', () => {
     test('should retain previous state in case of no stage passed', () => {
@@ -544,6 +567,29 @@ describe('Flow sample data reducer ', () => {
       const error = { error: [{ message: ' Cannot transform the data '}] };
       const prevState = reducer(initState, actions.flowData.requestProcessorData(dummyFlowId, '123', 'exports', processor));
       const currState = reducer(prevState, actions.flowData.receivedError(dummyFlowId, '123', processor, error));
+
+      expect(currState).toEqual({
+        [dummyFlowId]: {
+          pageGenerators: dummyFlow.pageGenerators,
+          pageProcessors: dummyFlow.pageProcessors,
+          pageGeneratorsMap: {
+            123: {
+              transform: {
+                status: 'error',
+                error,
+              },
+            },
+          },
+          refresh: false,
+          pageProcessorsMap: {},
+        },
+      });
+    });
+    test('should update processor stage inside pageGeneratorsMap as error with passed error even if there is no existing sample data for the resource on the state', () => {
+      const initState = reducer(undefined, actions.flowData.init(dummyFlow));
+      const processor = 'transform';
+      const error = { error: [{ message: ' Cannot transform the data '}] };
+      const currState = reducer(initState, actions.flowData.receivedError(dummyFlowId, '123', processor, error));
 
       expect(currState).toEqual({
         [dummyFlowId]: {
@@ -896,7 +942,7 @@ describe('Flow sample data reducer ', () => {
 
 describe('getFlowDataState selector', () => {
   test('should return undefined when the state/flowId is invalid ', () => {
-    expect(selectors.getFlowDataState()).toBe(undefined);
+    expect(selectors.getFlowDataState()).toBeUndefined();
   });
   test('should return entire flow state if there is no resourceId passed', () => {
     expect(selectors.getFlowDataState(dummyFlowStateWithStages, dummyFlowId)).toBe(dummyFlowStateWithStages[dummyFlowId]);
@@ -943,7 +989,7 @@ describe('getSampleDataContext selector', () => {
 
     expect(selectors.getSampleDataContext(dummyFlowStateWithStages, options)).toEqual({});
   });
-  test('should return default value if the passed resourceId does not exist or passed stage does not exist', () => {
+  test('should return default value if the passed resourceId does not exist ', () => {
     const options = {
       flowId: dummyFlowId,
       resourceId: '111',

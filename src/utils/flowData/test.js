@@ -4,7 +4,7 @@ import {
   sampleDataStage,
   getAllDependentSampleDataStages,
   _compareSampleDataStage,
-  // getCurrentSampleDataStageStatus,
+  getCurrentSampleDataStageStatus,
   getSubsequentStages,
   getPreviewStageData,
   getAddedLookupIdInFlow,
@@ -18,7 +18,6 @@ import {
   getFormattedResourceForPreview,
   getResourceStageUpdatedFromPatch,
   shouldUpdateResourceSampleData,
-  getCurrentSampleDataStageStatus,
 } from '.';
 
 const possibleExportSampleDataStagePaths = [
@@ -135,7 +134,7 @@ describe('getCurrentSampleDataStageStatus util', () => {
     expect(getCurrentSampleDataStageStatus(prevStagesRunning, 'transform', 'exports')).toEqual(expectedCurrentStageStatus);
   });
 });
-describe('getSubsequentStages util - gives all the stages followed by passed stage', () => {
+describe('getSubsequentStages util', () => {
   const exportStages = Object.keys(sampleDataStage.exports);
   const importStages = Object.keys(sampleDataStage.imports);
 
@@ -300,7 +299,7 @@ describe('getAddedLookupIdInFlow util', () => {
     expect(getAddedLookupIdInFlow(flowPatchSet)).toBe('1234');
   });
 });
-describe('getFlowUpdatesFromPatch util used to determine if the flow sequence / flow response mapping has been changed', () => {
+describe('getFlowUpdatesFromPatch util', () => {
   test('should return empty object when the patchSet is empty', () => {
     expect(getFlowUpdatesFromPatch()).toEqual({});
   });
