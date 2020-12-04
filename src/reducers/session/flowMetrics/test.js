@@ -31,7 +31,7 @@ describe('flowMetrics status reducer', () => {
     expect(reducer(initialState,
       actions.flowMetrics.request(resourceType, resourceId))).toEqual(initialState);
     expect(reducer(initialState,
-      actions.flowMetrics.received(resourceType, resourceId, []))).toEqual(initialState);
+      actions.flowMetrics.received(resourceId, []))).toEqual(initialState);
     expect(reducer(initialState,
       actions.flowMetrics.failed(resourceId))).toEqual(initialState);
     expect(reducer(initialState,
@@ -79,7 +79,7 @@ describe('flowMetrics status reducer', () => {
     };
 
     expect(reducer(initialState,
-      actions.flowMetrics.received(resourceType, resourceId, parsedResponsedata))).toEqual(expectedState);
+      actions.flowMetrics.received(resourceId, parsedResponsedata))).toEqual(expectedState);
   });
 
   test('should return correct state with status property set to failed on failed action', () => {
@@ -101,7 +101,7 @@ describe('flowMetrics status reducer', () => {
   });
   test('should return correct state by deleting resource entry on clear action', () => {
     const state = reducer(initialState,
-      actions.flowMetrics.received(resourceType, resourceId, parsedResponsedata));
+      actions.flowMetrics.received(resourceId, parsedResponsedata));
 
     expect(reducer(state,
       actions.flowMetrics.clear(resourceId))).toEqual(initialState);
@@ -109,7 +109,7 @@ describe('flowMetrics status reducer', () => {
 });
 describe('flowMetricsData selectors', () => {
   test('should return state correctly when valid ids are sent through', () => {
-    const state = reducer(initialState, actions.flowMetrics.received(resourceType, resourceId, parsedResponsedata));
+    const state = reducer(initialState, actions.flowMetrics.received(resourceId, parsedResponsedata));
     const expectedResponse = {
       status: COMM_STATES.SUCCESS,
       data: parsedResponsedata,

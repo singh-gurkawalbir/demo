@@ -231,8 +231,8 @@ const flowMetrics = {
       filters,
     }),
 
-  received: (resourceType, resourceId, response) =>
-    action(actionTypes.FLOW_METRICS.RECEIVED, { resourceType, resourceId, response }),
+  received: (resourceId, response) =>
+    action(actionTypes.FLOW_METRICS.RECEIVED, { resourceId, response }),
   clear: resourceId => action(actionTypes.FLOW_METRICS.CLEAR, { resourceId }),
   failed: resourceId => action(actionTypes.FLOW_METRICS.FAILED, { resourceId }),
 };

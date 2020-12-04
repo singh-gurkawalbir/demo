@@ -33,7 +33,7 @@ export function* requestFlowMetrics({resourceType, resourceId, filters }) {
   if (resourceType === 'integrations') {
     flowIds = yield select(selectors.integrationEnabledFlowIds, resourceId);
     if (!flowIds || !flowIds.length) {
-      yield put(actions.flowMetrics.received(resourceType, resourceId, []));
+      yield put(actions.flowMetrics.received(resourceId, []));
 
       return;
     }
@@ -45,7 +45,7 @@ export function* requestFlowMetrics({resourceType, resourceId, filters }) {
   try {
     const data = yield call(requestMetric, { query });
 
-    yield put(actions.flowMetrics.received(resourceType, resourceId, data));
+    yield put(actions.flowMetrics.received(resourceId, data));
   } catch (e) {
     yield put(actions.flowMetrics.failed(resourceId));
 
