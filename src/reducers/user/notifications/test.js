@@ -10,8 +10,8 @@ describe('tests for notifications reducer', () => {
         accepted: false,
         accessLevel: 'monitor',
         ownerUser: {
-          email: 'dileepkrishnasai.madamanchi@celigo.com',
-          name: 'Dileep Krishna Sai',
+          email: 'testuser@abc.com',
+          name: 'user xy',
         },
       },
       {
@@ -19,8 +19,8 @@ describe('tests for notifications reducer', () => {
         rejected: false,
         accessLevel: 'manage',
         ownerUser: {
-          email: 'ssssantoshkumar@celigo.com',
-          name: 'santosh kumar',
+          email: 'user1@abc.com',
+          name: 'user yz',
           company: 'Celigo',
         },
       },
@@ -32,16 +32,16 @@ describe('tests for notifications reducer', () => {
 
         ],
         ownerUser: {
-          email: 'thotakura.muneswara@celigo.com',
-          name: 'THOTAKURA MUNESWARA',
+          email: 'user2@xyz.com',
+          name: 'user st',
         },
       },
       {
         _id: '4',
         accepted: false,
         ownerUser: {
-          email: 'keerthi.sri469@gmail.com',
-          name: 'Sukeerthi Sriram',
+          email: 'user4@mail.com',
+          name: 'User cd',
         },
       },
     ];
@@ -74,8 +74,8 @@ describe('tests for notifications reducer', () => {
         accepted: true,
         accessLevel: 'monitor',
         ownerUser: {
-          email: 'dileepkrishnasai.madamanchi@celigo.com',
-          name: 'Dileep Krishna Sai',
+          email: 'testuser@abc.com',
+          name: 'user xy',
         },
       },
       {
@@ -83,8 +83,8 @@ describe('tests for notifications reducer', () => {
         rejected: true,
         accessLevel: 'manage',
         ownerUser: {
-          email: 'ssssantoshkumar@celigo.com',
-          name: 'santosh kumar',
+          email: 'user1@abc.com',
+          name: 'user yz',
         },
       },
       {
@@ -95,8 +95,8 @@ describe('tests for notifications reducer', () => {
 
         ],
         ownerUser: {
-          email: 'thotakura.muneswara@celigo.com',
-          name: 'THOTAKURA MUNESWARA',
+          email: 'user2@xyz.com',
+          name: 'user st',
         },
       },
       {
@@ -129,36 +129,36 @@ describe('tests for notifications reducer', () => {
   test('should add unaccepted transfers to the state on received action', () => {
     const transfers = [
       {
-        _id: '5f2aa287e238492e2a5a2189',
+        _id: '1',
         accepted: false,
         toTransfer: {
           integrations: [
             {
-              _id: '5f2aa24c3ce94135c8a230e8',
-              name: 'test transfer integration - santosh',
+              _id: 'id1',
+              name: 'test transfer integration - Comp',
             },
           ],
         },
         ownerUser: {
-          email: 'dileepkrishnasai.madamanchi@celigo.com',
-          name: 'Dileep Krishna Sai',
+          email: 'testuser@abc.com',
+          name: 'user xy',
         },
       },
       {
-        _id: '5f228e3b9b2e7468fbf7db2c',
+        _id: '2',
         accepted: false,
         toTransfer: {
           integrations: [
             {
-              _id: '5f1b38201df46c2a7ec36011',
+              _id: 'iid2',
               name: 'test latest status changes for transfer',
             },
           ],
         },
         ownerUser: {
-          _id: '5c417c492a5dd30cd676a990',
-          email: 'dileepkrishnasai.madamanchi@celigo.com',
-          name: 'Dileep Krishna Sai',
+          _id: 'oid',
+          email: 'testuser@abc.com',
+          name: 'user xy',
         },
       },
     ];
@@ -189,36 +189,36 @@ describe('tests for notifications reducer', () => {
   test('should ignore accepted/dismissed transfers to the state on received action', () => {
     const transfers = [
       {
-        _id: '5f2aa287e238492e2a5a2189',
+        _id: '1',
         accepted: true,
         toTransfer: {
           integrations: [
             {
-              _id: '5f2aa24c3ce94135c8a230e8',
-              name: 'test transfer integration - santosh',
+              _id: 'id1',
+              name: 'test transfer integration - Comp',
             },
           ],
         },
         ownerUser: {
-          email: 'dileepkrishnasai.madamanchi@celigo.com',
-          name: 'Dileep Krishna Sai',
+          email: 'testuser@abc.com',
+          name: 'user xy',
         },
       },
       {
-        _id: '5f228e3b9b2e7468fbf7db2c',
+        _id: '2',
         dismissed: true,
         toTransfer: {
           integrations: [
             {
-              _id: '5f1b38201df46c2a7ec36011',
+              _id: 'iid2',
               name: 'test latest status changes for transfer',
             },
           ],
         },
         ownerUser: {
-          _id: '5c417c492a5dd30cd676a990',
-          email: 'dileepkrishnasai.madamanchi@celigo.com',
-          name: 'Dileep Krishna Sai',
+          _id: 'oid',
+          email: 'testuser@abc.com',
+          name: 'user xy',
         },
       },
       {
@@ -226,7 +226,7 @@ describe('tests for notifications reducer', () => {
         toTransfer: {
           integrations: [
             {
-              _id: '5f1b38201df46c2a7ec36011',
+              _id: 'iid2',
               name: 'test latest status changes for transfer',
             },
           ],
@@ -269,8 +269,8 @@ describe('tests for selector testcases', () => {
       accepted: false,
       accessLevel: 'monitor',
       ownerUser: {
-        email: 'dileepkrishnasai.madamanchi@celigo.com',
-        name: 'Dileep Krishna Sai',
+        email: 'testuser@abc.com',
+        name: 'user xy',
       },
     }];
 
@@ -279,8 +279,8 @@ describe('tests for selector testcases', () => {
       accepted: false,
       accessLevel: 'monitor',
       ownerUser: {
-        email: 'dileepkrishnasai.madamanchi@celigo.com',
-        name: 'Dileep Krishna Sai',
+        email: 'testuser@abc.com',
+        name: 'user xy',
       },
       stack: {
         name: 'High Tech',
@@ -288,36 +288,36 @@ describe('tests for selector testcases', () => {
     }];
 
     const transferCollection = [{
-      _id: '5f2aa287e238492e2a5a2189',
+      _id: '1',
       accepted: false,
       toTransfer: {
         integrations: [
           {
-            _id: '5f2aa24c3ce94135c8a230e8',
-            name: 'test transfer integration - santosh',
+            _id: 'id1',
+            name: 'test transfer integration - Comp',
           },
         ],
       },
       ownerUser: {
-        email: 'dileepkrishnasai.madamanchi@celigo.com',
-        name: 'Dileep Krishna Sai',
+        email: 'testuser@abc.com',
+        name: 'user xy',
       },
     },
     {
-      _id: '5f228e3b9b2e7468fbf7db2c',
+      _id: '2',
       dismissed: false,
       toTransfer: {
         integrations: [
           {
-            _id: '5f1b38201df46c2a7ec36011',
+            _id: 'iid2',
             name: 'test latest status changes for transfer',
           },
         ],
       },
       ownerUser: {
-        _id: '5c417c492a5dd30cd676a990',
-        email: 'dileepkrishnasai.madamanchi@celigo.com',
-        name: 'Dileep Krishna Sai',
+        _id: 'oid',
+        email: 'testuser@abc.com',
+        name: 'user xy',
       },
     },
     {
@@ -326,7 +326,7 @@ describe('tests for selector testcases', () => {
       account: true,
       ownerUser: {
         email: 'sant.test@celigo.com',
-        name: 'Santosh',
+        name: 'Comp',
       },
     },
     ];
@@ -350,28 +350,28 @@ describe('tests for selector testcases', () => {
       {
         id: '1',
         type: 'account',
-        nameOrCompany: 'Dileep Krishna Sai',
-        email: 'dileepkrishnasai.madamanchi@celigo.com',
+        nameOrCompany: 'user xy',
+        email: 'testuser@abc.com',
         message: 'is inviting you to join their account.',
       },
       {
-        id: '5f2aa287e238492e2a5a2189',
+        id: '1',
         type: 'transfer',
-        nameOrCompany: 'Dileep Krishna Sai',
-        email: 'dileepkrishnasai.madamanchi@celigo.com',
-        message: 'wants to transfer integration(s) test transfer integration - santosh to you.',
+        nameOrCompany: 'user xy',
+        email: 'testuser@abc.com',
+        message: 'wants to transfer integration(s) test transfer integration - Comp to you.',
       },
       {
-        id: '5f228e3b9b2e7468fbf7db2c',
+        id: '2',
         type: 'transfer',
-        nameOrCompany: 'Dileep Krishna Sai',
-        email: 'dileepkrishnasai.madamanchi@celigo.com',
+        nameOrCompany: 'user xy',
+        email: 'testuser@abc.com',
         message: 'wants to transfer integration(s) test latest status changes for transfer to you.',
       },
       {
         id: '3',
         type: 'transfer',
-        nameOrCompany: 'Santosh',
+        nameOrCompany: 'Comp',
         email: 'sant.test@celigo.com',
         message: 'has invited you to become the owner of their account.',
         account: true,
@@ -379,10 +379,10 @@ describe('tests for selector testcases', () => {
       {
         id: '1',
         type: 'stack',
-        nameOrCompany: 'Dileep Krishna Sai',
-        email: 'dileepkrishnasai.madamanchi@celigo.com',
+        nameOrCompany: 'user xy',
+        email: 'testuser@abc.com',
         stackName: 'High Tech',
-        message: 'dileepkrishnasai.madamanchi@celigo.com has shared the "High Tech" stack with you.',
+        message: 'testuser@abc.com has shared the "High Tech" stack with you.',
       },
     ]);
   });
