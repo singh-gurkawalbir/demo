@@ -57,7 +57,6 @@ export default (state = {}, action) => {
           initComplete: true,
           fieldMeta,
           flowId,
-          showFormValidationsBeforeTouch: false,
         };
         break;
 

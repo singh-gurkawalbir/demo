@@ -9,7 +9,6 @@ export default {
   iaForm: {
     initComplete: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.INIT_COMPLETE, {ssLinkedConnectionId, integrationId}),
     initClear: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.INIT_CLEAR, {ssLinkedConnectionId, integrationId}),
-    showFormValidations: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.SHOW_FORM_VALIDATION_ERRORS, {ssLinkedConnectionId, integrationId}),
     submit: (ssLinkedConnectionId, integrationId, sectionId, values) => action(actionTypes.SUITESCRIPT.IA_FORM.SUBMIT, {ssLinkedConnectionId, integrationId, sectionId, values}),
     submitComplete: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.SUBMIT_COMPLETE, {ssLinkedConnectionId, integrationId}),
     submitFailed: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.SUBMIT_FAILED, {ssLinkedConnectionId, integrationId}),

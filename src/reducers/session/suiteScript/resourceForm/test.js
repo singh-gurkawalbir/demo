@@ -118,8 +118,7 @@ describe('session.suiteScript.resourceForm form reducers', () => {
           skipCommit,
           initComplete: true,
           fieldMeta,
-          flowId,
-          showFormValidationsBeforeTouch: false }};
+          flowId }};
 
       expect(state).toEqual(expected);
     });

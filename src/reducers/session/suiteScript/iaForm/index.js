@@ -22,19 +22,12 @@ export default (state = {}, action) => {
       case actionTypes.SUITESCRIPT.IA_FORM.INIT_COMPLETE:
         if (!draft[key]) draft[key] = {};
         draft[key] = { initComplete: true,
-          showFormValidationsBeforeTouch: false,
         };
 
         return;
 
       case actionTypes.SUITESCRIPT.IA_FORM.INIT_CLEAR:
         delete draft[key];
-
-        return;
-
-      case actionTypes.SUITESCRIPT.IA_FORM.SHOW_FORM_VALIDATION_ERRORS:
-        if (!draft[key])draft[key] = {};
-        draft[key].showFormValidationsBeforeTouch = true;
 
         return;
       case actionTypes.SUITESCRIPT.IA_FORM.SUBMIT:
