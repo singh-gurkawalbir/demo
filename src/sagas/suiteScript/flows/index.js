@@ -18,7 +18,7 @@ export function* runFlow({ ssLinkedConnectionId, integrationId, flowId, _id }) {
   try {
     job = yield call(apiCallWithRetry, requestOptions);
   } catch (error) {
-    return true;
+    return;
   }
 
   yield put(
@@ -54,7 +54,9 @@ export function* enableFlow({ ssLinkedConnectionId, integrationId, _id }) {
   try {
     flow = yield call(apiCallWithRetry, requestOptions);
   } catch (error) {
-    return true;
+    yield put(actions.suiteScript.flow.isOnOffActionInprogress({onOffInProgress: false, ssLinkedConnectionId, _id}));
+
+    return;
   }
 
   yield put(
@@ -77,7 +79,9 @@ export function* disableFlow({ ssLinkedConnectionId, integrationId, _id }) {
   try {
     flow = yield call(apiCallWithRetry, requestOptions);
   } catch (error) {
-    return true;
+    yield put(actions.suiteScript.flow.isOnOffActionInprogress({onOffInProgress: false, ssLinkedConnectionId, _id}));
+
+    return;
   }
 
   yield put(
@@ -98,7 +102,7 @@ export function* deleteFlow({ ssLinkedConnectionId, integrationId, _id }) {
   try {
     yield call(apiCallWithRetry, requestOptions);
   } catch (error) {
-    return true;
+    return;
   }
 
   yield put(

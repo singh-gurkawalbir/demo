@@ -4,9 +4,11 @@ import actions from '../../../../../actions';
 
 describe('errorManagement latestJobs integrations reducer test cases', () => {
   test('should return initial state when action is not matched', () => {
-    const state = reducer(undefined, { type: 'RANDOM_ACTION' });
-
-    expect(state).toEqual({});
+    expect(reducer(undefined, { type: 'RANDOM_ACTION' })).toEqual({});
+    expect(reducer(null, { type: 'RANDOM_ACTION' })).toEqual(null);
+    expect(reducer('string', { type: 'RANDOM_ACTION' })).toEqual('string');
+    expect(reducer(undefined, { type: undefined })).toEqual({});
+    expect(reducer(undefined, { type: null })).toEqual({});
   });
   describe('errorManagement integrations latestJobs reducer', () => {
     describe('errorManagement integration latestJobs request action', () => {
@@ -115,10 +117,12 @@ describe('errorManagement latestJobs integrations reducer test cases', () => {
 describe('errorManagement latestJobs integration selectors test cases', () => {
   describe('latestJobMap', () => {
     test('should return empty state when no match found.', () => {
-      expect(selectors.latestJobMap(undefined, 'dummy')).toEqual(
-        {}
-      );
+      expect(selectors.latestJobMap(undefined, 'dummy')).toEqual({});
       expect(selectors.latestJobMap({}, 'dummy')).toEqual({});
+      expect(selectors.latestJobMap(null, 'dummy')).toEqual({});
+      expect(selectors.latestJobMap({}, {})).toEqual({});
+      expect(selectors.latestJobMap(undefined, null)).toEqual({});
+      expect(selectors.latestJobMap({})).toEqual({});
     });
 
     test('should return correct state data when a match is found.', () => {

@@ -116,7 +116,7 @@ function EditListItemModal(props) {
         id: 'childRelationship',
         name: 'childRelationship',
         helpKey: 'childRelationship',
-        label: 'Child SObject Type',
+        label: 'Child sObject Type',
         type: 'refreshableselect',
         filterKey: 'salesforce-sObjects-childReferenceTo',
         commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,

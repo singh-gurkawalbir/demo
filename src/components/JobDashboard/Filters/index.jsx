@@ -238,6 +238,7 @@ export default function Filters({
         <DateRangeSelector
           value={dateRange || defaultRange}
           clearable
+          placement={isFlowBuilderView ? 'right' : 'bottom'}
           customPresets={rangeFilters}
           clearValue={defaultRange}
           onSave={handleDateRangeChange}

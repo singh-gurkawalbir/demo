@@ -20,7 +20,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'SOAP(Recomended)', value: 'soap' },
+          { label: 'SOAP (recomended)', value: 'soap' },
           { label: 'REST', value: 'rest' },
           { label: 'Composite', value: 'compositerecord' },
         ],
@@ -376,7 +376,7 @@ export default {
   },
   'salesforce.blobsObjectType': {
     type: 'select',
-    label: 'SObject type',
+    label: 'sObject type',
     defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,
     visibleWhen: [
       {
@@ -396,7 +396,7 @@ export default {
     ],
   },
   'salesforce.sObjectType': {
-    label: 'SObject type',
+    label: 'sObject type',
     type: 'refreshableselect',
     filterKey: 'salesforce-sObjects',
     ignoreValidation: true,
@@ -404,7 +404,7 @@ export default {
       r && `salesforce/metadata/connections/${r._connectionId}/sObjectTypes`,
     connectionId: r => r && r._connectionId,
     required: true,
-    placeholder: 'Please select a sObject type',
+    placeholder: 'Please select an sObject type',
     helpKey: 'export.salesforce.sObjectType',
     visibleWhen: [
       {
