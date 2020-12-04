@@ -1,21 +1,26 @@
 /* global describe, test, expect */
 import each from 'jest-each';
-import reducer from '.';
+import reducer, {selectors} from '.';
 import actions from '../../../actions';
+import {COMM_STATES} from '../../comms/networkComms';
 
 const initialState = {
   id1: {
-    status: 'requested',
+    status: COMM_STATES.LOADING,
   },
   id2: {
-    status: 'received',
+    status: COMM_STATES.SUCCESS,
     data: [],
   },
 };
+const parsedResponsedata = [
+  {Year: '1997', Make: 'Ford', Model: 'E350', Length: '2.34'},
+  {Year: '2000', Make: 'Mercury', Model: 'Cougar', Length: '2.38'},
+];
+const resourceType = 'rt1';
+const resourceId = 'id3';
 
-describe.only('flowMetrics status reducer', () => {
-  const resourceType = 'rt1';
-  const resourceId = 'id3';
+describe('flowMetrics status reducer', () => {
   const testCases = [
     ['should return state unaltered when resource id is undefined', undefined],
     ['should return state unaltered when resource id is null', null],
@@ -28,22 +33,29 @@ describe.only('flowMetrics status reducer', () => {
     expect(reducer(initialState,
       actions.flowMetrics.received(resourceType, resourceId, []))).toEqual(initialState);
     expect(reducer(initialState,
-      actions.flowMetrics.failed(resourceType, resourceId))).toEqual(initialState);
+      actions.flowMetrics.failed(resourceId))).toEqual(initialState);
     expect(reducer(initialState,
-      actions.flowMetrics.clear(resourceType, resourceId))).toEqual(initialState);
+      actions.flowMetrics.clear(resourceId))).toEqual(initialState);
   });
 
-  test.only('should return correct state with status property set to request on request action', () => {
+  test('should return original state on unknown action', () => {
+    const unknownAction = { type: 'unknown', resourceId: 'id1' };
+
+    expect(reducer(initialState,
+      unknownAction)).toEqual(initialState);
+  });
+
+  test('should return correct state with status property set to requested on request action', () => {
     const expectedState = {
       id1: {
-        status: 'requested',
+        status: COMM_STATES.LOADING,
       },
       id2: {
-        status: 'received',
+        status: COMM_STATES.SUCCESS,
         data: [],
       },
       id3: {
-        status: 'requested',
+        status: COMM_STATES.LOADING,
       },
     };
 
@@ -51,37 +63,73 @@ describe.only('flowMetrics status reducer', () => {
       actions.flowMetrics.request(resourceType, resourceId))).toEqual(expectedState);
   });
 
-  test.only('should return correct state with status property set to received on received action', () => {
+  test('should return correct state with status property set to received on received action', () => {
     const expectedState = {
       id1: {
-        status: 'requested',
+        status: COMM_STATES.LOADING,
       },
       id2: {
-        status: 'received',
+        status: COMM_STATES.SUCCESS,
         data: [],
       },
       id3: {
-        status: 'requested',
-        data: 'SOME DATA TO CHANGE',
+        status: COMM_STATES.SUCCESS,
+        data: parsedResponsedata,
       },
     };
 
     expect(reducer(initialState,
-      actions.flowMetrics.request(resourceType, resourceId))).toEqual(expectedState);
+      actions.flowMetrics.received(resourceType, resourceId, parsedResponsedata))).toEqual(expectedState);
+  });
+
+  test('should return correct state with status property set to failed on failed action', () => {
+    const expectedState = {
+      id1: {
+        status: COMM_STATES.LOADING,
+      },
+      id2: {
+        status: COMM_STATES.SUCCESS,
+        data: [],
+      },
+      id3: {
+        status: COMM_STATES.ERROR,
+      },
+    };
+
+    expect(reducer(initialState,
+      actions.flowMetrics.failed(resourceId))).toEqual(expectedState);
+  });
+  test('should return correct state by deleting resource entry on clear action', () => {
+    const state = reducer(initialState,
+      actions.flowMetrics.received(resourceType, resourceId, parsedResponsedata));
+
+    expect(reducer(state,
+      actions.flowMetrics.clear(resourceId))).toEqual(initialState);
   });
 });
-/* describe('isSuiteScriptFlowOnOffInProgress selectors', () => {
-  const ssLinkedConnectionId = 'c4';
-  const _id = 'f4'; // _id is flow id
-  const state = reducer(initialState, actions.flow.isOnOffActionInprogress({onOffInProgress: true, ssLinkedConnectionId, _id}));
-
+describe('flowMetricsData selectors', () => {
   test('should return state correctly when valid ids are sent through', () => {
-    expect(selectors.isSuiteScriptFlowOnOffInProgress(state, {ssLinkedConnectionId, _id})).toEqual(true);
+    const state = reducer(initialState, actions.flowMetrics.received(resourceType, resourceId, parsedResponsedata));
+    const expectedResponse = {
+      status: COMM_STATES.SUCCESS,
+      data: parsedResponsedata,
+    };
+
+    expect(selectors.flowMetricsData(state, resourceId)).toEqual(expectedResponse);
+    expect(selectors.flowMetricsData(state, 'id1')).toEqual({
+      status: COMM_STATES.LOADING,
+    });
+    expect(selectors.flowMetricsData(state, 'id2')).toEqual({
+      status: COMM_STATES.SUCCESS,
+      data: [],
+    });
   });
 
-  test('should return false correctly when invalid ids are sent through the selector', () => {
-    expect(selectors.isSuiteScriptFlowOnOffInProgress(state, {
-    })).toEqual(false);
+  test('should return null correctly when invalid id is sent through the selector', () => {
+    expect(selectors.flowMetricsData(initialState, null)).toEqual(null);
+  });
+  test('should return null correctly when valid id not in state is sent through the selector', () => {
+    expect(selectors.flowMetricsData(initialState, 'missing_id')).toEqual(null);
   });
 });
-*/
+

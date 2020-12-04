@@ -47,7 +47,7 @@ export function* requestFlowMetrics({resourceType, resourceId, filters }) {
 
     yield put(actions.flowMetrics.received(resourceType, resourceId, data));
   } catch (e) {
-    yield put(actions.flowMetrics.failed(e));
+    yield put(actions.flowMetrics.failed(resourceId));
 
     return undefined;
   }

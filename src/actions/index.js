@@ -234,7 +234,7 @@ const flowMetrics = {
   received: (resourceType, resourceId, response) =>
     action(actionTypes.FLOW_METRICS.RECEIVED, { resourceType, resourceId, response }),
   clear: resourceId => action(actionTypes.FLOW_METRICS.CLEAR, { resourceId }),
-  failed: error => action(actionTypes.FLOW_METRICS.FAILED, { error }),
+  failed: resourceId => action(actionTypes.FLOW_METRICS.FAILED, { resourceId }),
 };
 const resource = {
   replaceConnection: (_resourceId, _connectionId, _newConnectionId) =>

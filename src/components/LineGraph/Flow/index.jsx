@@ -32,6 +32,7 @@ import OptionalIcon from '../../icons/OptionalIcon';
 import ConditionalIcon from '../../icons/ConditionalIcon';
 import PreferredIcon from '../../icons/PreferredIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import {COMM_STATES} from '../../../reducers/comms/networkComms';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -321,14 +322,14 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
     }
   }, [data, dispatch, flowId, range]);
 
-  if (data.status === 'requested') {
+  if (data.status === COMM_STATES.LOADING) {
     return (
       <SpinnerWrapper>
         <Spinner />
       </SpinnerWrapper>
     );
   }
-  if (data.status === 'error') {
+  if (data.status === COMM_STATES.ERROR) {
     return <Typography>Error occurred</Typography>;
   }
 
