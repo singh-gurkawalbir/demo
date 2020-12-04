@@ -6,6 +6,7 @@ import getFormattedSampleData, {
   getSampleValue,
   getNetsuiteRealTimeSampleData,
   getSalesforceRealTimeSampleData,
+  getPathSegments,
   extractSampleDataAtResourcePath,
   processJsonPreviewData,
   processJsonSampleData,
@@ -441,16 +442,45 @@ describe('getSalesforceRealTimeSampleData util', () => {
     expect(getSalesforceRealTimeSampleData(sfMetadata)).toEqual(expectedMetaData);
   });
 });
-// TODO: describe('getPathSegments util', () => {});
+
+describe('getPathSegments util', () => {
+  test('should return empty array if path is empty or is equal to *', () => {
+    expect(getPathSegments()).toEqual([]);
+    expect(getPathSegments('*')).toEqual([]);
+  });
+  test('should return correct path segments if provided path contains escaped characters', () => {
+    const path = "bob\\'spath.key";
+
+    expect(getPathSegments(path)).toEqual(["bob\\'spath", 'key']);
+  });
+  test('should return correct path segments if provided path contains space', () => {
+    const path = 'bob path.some key.value';
+
+    expect(getPathSegments(path)).toEqual(['bob path', 'some key', 'value']);
+  });
+  test('should return correct path segments if provided path starts with [', () => {
+    const path = '[dummy].a';
+
+    expect(getPathSegments(path)).toEqual(['dummy', 'a']);
+  });
+  test('should return correct path segments if provided path contains ]', () => {
+    const path = 'dummy.a.[value]';
+
+    expect(getPathSegments(path)).toEqual(['dummy', 'a', 'value']);
+  });
+  test('should return correct path segments if provided path contains *', () => {
+    const path = 'dummy.*.value[*].path[0]';
+
+    expect(getPathSegments(path)).toEqual(['dummy', '*', 'value', '*', 'path', '0']);
+  });
+});
 
 describe('extractSampleDataAtResourcePath util', () => {
-  test('should return null value object if sample data is empty', () => {
-    expect(extractSampleDataAtResourcePath(null, 'somepath')).toEqual({value: null});
-  });
-  test('should return original sample data if resource path is empty', () => {
+  test('should return original sample data if sample data or resource path is empty', () => {
     const sampleData = {key: 'value'};
 
     expect(extractSampleDataAtResourcePath(sampleData)).toBe(sampleData);
+    expect(extractSampleDataAtResourcePath(null, 'somepath')).toBeNull();
   });
   test('should return undefined if resource path is not of string type', () => {
     const sampleData = {key: 'value'};
@@ -458,11 +488,11 @@ describe('extractSampleDataAtResourcePath util', () => {
 
     expect(extractSampleDataAtResourcePath(sampleData, resourcePath)).toBeUndefined();
   });
-  test('should return empty object if there is any error', () => {
+  test('should return undefined if there is any error', () => {
     const sampleData = {key: 'value'};
     const resourcePath = 'somepath[0]]';
 
-    expect(extractSampleDataAtResourcePath(sampleData, resourcePath)).toEqual({});
+    expect(extractSampleDataAtResourcePath(sampleData, resourcePath)).toBeUndefined();
   });
   test('should return correct sample data at given resource path', () => {
     const sampleData = {
@@ -526,6 +556,10 @@ describe('processJsonPreviewData util', () => {
 });
 
 describe('processJsonSampleData util', () => {
+  test('should return original sample data(null/undefined) if sample data is empty', () => {
+    expect(processJsonSampleData()).toBeUndefined();
+    expect(processJsonSampleData(null, {resourcePath: 'file[0]'})).toBeNull();
+  });
   test('should return preview data as is if its of non-array type', () => {
     const sampleData = {
       _id: '999',
@@ -577,21 +611,49 @@ describe('generateTransformationRulesOnXMLData util', () => {
   test('should return empty array if no xml json data is passed', () => {
     expect(generateTransformationRulesOnXMLData()).toEqual([[]]);
   });
-  test('should correctly generate xml transformation rules when xml json data is valid', () => {
+  test('should correctly generate xml transformation rules when xml json data is generated with custom parser', () => {
     const xmlJsonData = {
       InSituTestRequest: {
         Name: 'dummyName',
-        Description: 'some description',
+        Description: {
+          TestCase: 'A2',
+        },
       },
     };
     const expectedRules = [[
       {
-        extract: 'InSituTestRequest.Description',
-        generate: 'InSituTestRequest.Description',
+        extract: 'InSituTestRequest.Description.TestCase',
+        generate: 'InSituTestRequest.Description.TestCase',
       },
       {
         extract: 'InSituTestRequest.Name',
         generate: 'InSituTestRequest.Name',
+      },
+    ]];
+
+    expect(generateTransformationRulesOnXMLData(xmlJsonData)).toEqual(expectedRules);
+  });
+  test('should correctly generate xml transformation rules when xml json data is generated with automatic parser', () => {
+    const xmlJsonData = {
+      InSituTestRequest: [{
+        0: {
+          Description: [{
+            0: {
+              TestCase: [{
+                0: {
+                  _: 'A2',
+                },
+              }],
+            },
+          }],
+        },
+      }],
+    };
+
+    const expectedRules = [[
+      {
+        extract: 'InSituTestRequest[0].0.Description[0].0.TestCase[0].0._',
+        generate: 'InSituTestRequest.0.Description.0.TestCase.0._',
       },
     ]];
 
@@ -641,6 +703,7 @@ describe('processOneToManySampleData util', () => {
 
     expect(processOneToManySampleData(null, resource)).toBeNull();
     expect(processOneToManySampleData(sampleData)).toBe(sampleData);
+    expect(processOneToManySampleData(sampleData, null)).toBe(sampleData);
     expect(processOneToManySampleData(sampleData, resource)).toBe(sampleData);
   });
   test('should return original sample data if resource has invalid pathToMany field', () => {
@@ -717,7 +780,7 @@ describe('wrapExportFileSampleData util', () => {
 
     expect(wrapExportFileSampleData(records)).toEqual(expectedData);
   });
-  test('should return correctly wrapped page_of_records and rows structure if input records is of array type', () => {
+  test('should return correctly wrapped page_of_records and rows structure if input records is array of objects', () => {
     const records = [
       {
         CONTRACT_PRICE: '20',
@@ -727,12 +790,6 @@ describe('wrapExportFileSampleData util', () => {
         CONTRACT_PRICE: '14',
         CUSTOMER_NUMBER: 'C98890',
       },
-      [{
-        type: 'retail',
-      },
-      {
-        type: 'wholesale',
-      }],
     ];
     const expectedData = { page_of_records: [
       {
@@ -748,12 +805,33 @@ describe('wrapExportFileSampleData util', () => {
           CUSTOMER_NUMBER: 'C98890',
         },
       },
+    ] };
+
+    expect(wrapExportFileSampleData(records)).toEqual(expectedData);
+  });
+  test('should return correctly wrapped page_of_records and rows structure if input records is array of arrays (grouped data)', () => {
+    const records = [
+      [{
+        CONTRACT_PRICE: '20',
+        CUSTOMER_NUMBER: 'C82828',
+      }],
+      [{
+        CONTRACT_PRICE: '14',
+        CUSTOMER_NUMBER: 'C98890',
+      }],
+    ];
+    const expectedData = { page_of_records: [
       {
         rows: [{
-          type: 'retail',
+          CONTRACT_PRICE: '20',
+          CUSTOMER_NUMBER: 'C82828',
         },
-        {
-          type: 'wholesale',
+        ],
+      },
+      {
+        rows: [{
+          CONTRACT_PRICE: '14',
+          CUSTOMER_NUMBER: 'C98890',
         },
         ],
       },

@@ -302,9 +302,7 @@ export const getPathSegments = path => {
 };
 
 export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
-  if (!sampleData) return { value: null };
-
-  if (!resourcePath) return sampleData;
+  if (!sampleData || !resourcePath) return sampleData;
 
   if (typeof resourcePath !== 'string') return;
   const segments = getPathSegments(resourcePath.replace(/\.?\*$/, ''));
@@ -317,7 +315,7 @@ export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
 
     return processedSampleData;
   } catch (e) {
-    return {};
+    return undefined;
   }
 };
 
@@ -422,8 +420,8 @@ export const isValidPathToMany = (sampleData, pathSegments) => {
       "a": 1 ( properties inside "f" attribute are on to the main level )
   * }
  */
-export const processOneToManySampleData = (sampleData, resource = {}) => {
-  const { pathToMany } = resource;
+export const processOneToManySampleData = (sampleData, resource) => {
+  const { pathToMany } = resource || {};
   const pathSegments = getPathSegments(pathToMany);
 
   if (!sampleData || !pathSegments || !pathSegments.length) return sampleData;
