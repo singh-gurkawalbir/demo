@@ -32,7 +32,7 @@ export default {
           filterKey: 'salesforce-sObjects',
           required: true,
           commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
-          label: 'SObject type',
+          label: 'sObject type',
           connectionId,
           helpKey: 'mapping.salesforce.lookup.sObjectType',
           visibleWhenAll: [{ field: '_mode', is: ['dynamic'] }],

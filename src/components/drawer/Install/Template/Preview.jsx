@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(2, 0),
     backgroundColor: theme.palette.background.paper,
     display: 'grid',
-    gridTemplateColumns: '1fr 4fr',
+    gridTemplateColumns: '33% 67%',
     gridTemplateRows: 'auto',
     height: `calc(100vh - ${theme.appBarHeight + 192}px)`,
   },
@@ -26,6 +26,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
     display: 'flex',
     flexDirection: 'column',
+    wordBreak: 'break-word',
   },
   componentPreview: {
     padding: theme.spacing(2),
