@@ -15,7 +15,7 @@ const addSubHeaderElement = (acc, curr) => {
   return acc;
 };
 
-function generateFileDefinitionOptions({ definitions }) {
+export function _generateFileDefinitionOptions({ definitions }) {
   if (!definitions || !definitions.length) return emptyObj;
   const categorizedDefinitionMap = {};
   const definitionOptions = definitions.map(({ name, _id, ...rest }) => ({
@@ -65,7 +65,7 @@ function generateFileDefinitionOptions({ definitions }) {
   return categorizedDefinitionMap;
 }
 
-function addDefinition(definitions, definitionId, definition) {
+export function _addDefinition(definitions, definitionId, definition) {
   // Once finalized formats remove those conditions here and add default [] for formats
 
   if (!definitions || !definitions.length || !definitionId) return definitions;
@@ -105,14 +105,14 @@ export default (
 
       case actionTypes.FILE_DEFINITIONS.PRE_BUILT.RECEIVED: {
         draft.preBuiltFileDefinitions.status = 'received';
-        draft.preBuiltFileDefinitions.data = generateFileDefinitionOptions(
+        draft.preBuiltFileDefinitions.data = _generateFileDefinitionOptions(
           fileDefinitions || {}
         );
         break;
       }
 
       case actionTypes.FILE_DEFINITIONS.DEFINITION.PRE_BUILT.RECEIVED: {
-        draft.preBuiltFileDefinitions.data[format] = addDefinition(
+        draft.preBuiltFileDefinitions.data[format] = _addDefinition(
           draft.preBuiltFileDefinitions.data[format],
           definitionId,
           definition
@@ -146,19 +146,13 @@ selectors.preBuiltFileDefinitions = (state, format) => ({
     state.preBuiltFileDefinitions.status,
 });
 
-selectors.fileDefinition = (state, definitionId, options) => {
+selectors.fileDefinition = (state, definitionId, options = {}) => {
   const { format, resourceType } = options;
 
-  if (!format || !definitionId || !resourceType) return undefined;
-  const definitions =
-    state &&
-    state.preBuiltFileDefinitions &&
-    state.preBuiltFileDefinitions.data &&
-    state.preBuiltFileDefinitions.data[format];
-  const definition = (definitions || []).find(
-    def => def.value === definitionId
-  );
-  const { generate, parse } = (definition && definition.template) || {};
+  if (!format || !definitionId || !resourceType) return;
+  const definitions = state?.preBuiltFileDefinitions?.data?.[format] || [];
+  const definition = definitions.find(def => def.value === definitionId);
+  const { generate, parse } = definition?.template || {};
 
   // Exports use Parse rules and Imports use Generate rules
   return resourceType === 'exports' ? parse : generate;
