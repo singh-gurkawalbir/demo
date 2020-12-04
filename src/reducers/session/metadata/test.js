@@ -22,101 +22,251 @@ describe('NetSuiteAndSalesforce', () => {
       assistants: { http: {}, rest: {} },
     });
   });
-  describe('Metadata Request reducer', () => {
-    test('should show status as request for resource', () => {
-      const requestReducer = reducer(
-        undefined,
-        actions.metadata.request('1234', 'url')
-      );
+  describe('metadata reducer testcases', () => {
+    describe('tests for actions request, refresh, received', () => {
+      test('should set status as requested for request action', () => {
+        const requestReducer = reducer(
+          undefined,
+          actions.metadata.request('1234', 'url')
+        );
 
-      expect(requestReducer).toMatchObject({
-        application: { 1234: { url: { status: 'requested' } } },
-        assistants: { http: {}, rest: {} },
+        expect(requestReducer).toMatchObject({
+          application: { 1234: { url: { status: 'requested' } } },
+          assistants: { http: {}, rest: {} },
+        });
       });
-    });
-  });
-  describe('Metadata Received reducer', () => {
-    test('should show data for resource', () => {
-      const requestState = reducer(
-        undefined,
-        actions.metadata.request('1234', 'url')
-      );
-      const receivedState = reducer(
-        requestState,
-        actions.metadata.receivedCollection(
-          [
-            {
-              id: 'account1',
-              name: 'Account1',
-              permissionId: 'LIST_ACCOUNT',
-              scriptId: 'account1',
-              scriptable: true,
-              url: '/app/accounting/account/account.nl',
-              userPermission: '4',
-            },
-            {
-              id: 'account2',
-              name: 'Account2',
-              permissionId: 'LIST_ACCOUNT',
-              scriptId: 'account2',
-              scriptable: true,
-              url: '/app/accounting/account/account.nl',
-              userPermission: '4',
-            },
-          ],
-          '1234',
-          'url'
-        )
-      );
+      test('should update status as refreshed for refresh action', () => {
+        const receivedState = reducer(
+          undefined,
+          actions.metadata.receivedCollection([], '1234', 'url')
+        );
+        const refreshReducer = reducer(
+          receivedState,
+          actions.metadata.refresh('1234', 'url')
+        );
 
-      expect(receivedState).toMatchObject({
-        application: {
-          1234: {
-            url: {
-              status: 'received',
-              data: [
-                {
-                  id: 'account1',
-                  name: 'Account1',
-                  permissionId: 'LIST_ACCOUNT',
-                  scriptId: 'account1',
-                  scriptable: true,
-                  url: '/app/accounting/account/account.nl',
-                  userPermission: '4',
-                },
-                {
-                  id: 'account2',
-                  name: 'Account2',
-                  permissionId: 'LIST_ACCOUNT',
-                  scriptId: 'account2',
-                  scriptable: true,
-                  url: '/app/accounting/account/account.nl',
-                  userPermission: '4',
-                },
-              ],
+        expect(refreshReducer).toMatchObject({
+          application: { 1234: { url: { data: [], status: 'refreshed' } } },
+          assistants: { http: {}, rest: {} },
+        });
+      });
+      test('should set metadata for application for provided path when called received action', () => {
+        const requestState = reducer(
+          undefined,
+          actions.metadata.request('connId', 'recordTypes')
+        );
+        const receivedState = reducer(
+          requestState,
+          actions.metadata.receivedCollection(
+            [
+              {
+                id: 'account1',
+                name: 'Account1',
+                permissionId: 'LIST_ACCOUNT',
+                scriptId: 'account1',
+                scriptable: true,
+                url: '/app/accounting/account/account.nl',
+                userPermission: '4',
+              },
+              {
+                id: 'account2',
+                name: 'Account2',
+                permissionId: 'LIST_ACCOUNT',
+                scriptId: 'account2',
+                scriptable: true,
+                url: '/app/accounting/account/account.nl',
+                userPermission: '4',
+              },
+            ],
+            'connId',
+            'recordTypes'
+          )
+        );
+
+        expect(receivedState).toMatchObject({
+          application: {
+            connId: {
+              recordTypes: {
+                status: 'received',
+                data: [
+                  {
+                    id: 'account1',
+                    name: 'Account1',
+                    permissionId: 'LIST_ACCOUNT',
+                    scriptId: 'account1',
+                    scriptable: true,
+                    url: '/app/accounting/account/account.nl',
+                    userPermission: '4',
+                  },
+                  {
+                    id: 'account2',
+                    name: 'Account2',
+                    permissionId: 'LIST_ACCOUNT',
+                    scriptId: 'account2',
+                    scriptable: true,
+                    url: '/app/accounting/account/account.nl',
+                    userPermission: '4',
+                  },
+                ],
+              },
             },
           },
-        },
-        assistants: { http: {}, rest: {} },
+          assistants: { http: {}, rest: {} },
+        });
       });
     });
-    test('should update status as refreshed', () => {
-      const receivedState = reducer(
-        undefined,
-        actions.metadata.receivedCollection([], '1234', 'url')
-      );
-      const refreshReducer = reducer(
-        receivedState,
-        actions.metadata.refresh('1234', 'url')
-      );
+    describe('tests for action received error', () => {
+      test('should update metadata path with error received', () => {
+        const connId = '123';
+        const state = reducer(
+          undefined,
+          actions.metadata.receivedError(
+            'Request limit exceeded',
+            connId,
+            `salesforce/metadata/${connId}/recordTypes`,
+          )
+        );
 
-      expect(refreshReducer).toMatchObject({
-        application: { 1234: { url: { data: [], status: 'refreshed' } } },
-        assistants: { http: {}, rest: {} },
+        expect(state).toEqual(
+          {
+            application:
+            { 123: { 'salesforce/metadata/123/recordTypes': {
+              status: 'error',
+              data: [],
+              errorMessage: 'Request limit exceeded',
+            } } },
+            preview: {},
+            assistants: { rest: {}, http: {} } }
+        );
+      });
+
+      test('should update metadata path with error message and metadata shouldn\'t be changed if status is refreshed', () => {
+        const connId = '123';
+        const state = reducer({
+          application:
+            { 123: { 'salesforce/metadata/123/recordTypes': {
+              status: 'refreshed',
+              data: ['account', 'opportunity'],
+
+            } } },
+          preview: {},
+          assistants: { rest: {}, http: {} } },
+        actions.metadata.receivedError(
+          'Request limit exceeded',
+          connId,
+          `salesforce/metadata/${connId}/recordTypes`,
+        )
+        );
+
+        expect(state).toEqual(
+          {
+            application:
+            { 123: { 'salesforce/metadata/123/recordTypes': {
+              status: 'error',
+              data: ['account', 'opportunity'],
+              errorMessage: 'Request limit exceeded',
+            } } },
+            preview: {},
+            assistants: { rest: {}, http: {} } }
+        );
+      });
+
+      test('should update metadata path with error message and metadata should be reset if status is not refreshed', () => {
+        const connId = '123';
+        const state = reducer({
+          application:
+            { 123: { 'salesforce/metadata/123/recordTypes': {
+              status: 'requested',
+              data: ['account', 'opportunity'],
+
+            } } },
+          preview: {},
+          assistants: { rest: {}, http: {} } },
+        actions.metadata.receivedError(
+          'Request limit exceeded',
+          connId,
+          `salesforce/metadata/${connId}/recordTypes`,
+        )
+        );
+
+        expect(state).toEqual(
+          {
+            application:
+            { 123: { 'salesforce/metadata/123/recordTypes': {
+              status: 'error',
+              data: [],
+              errorMessage: 'Request limit exceeded',
+            } } },
+            preview: {},
+            assistants: { rest: {}, http: {} } }
+        );
+      });
+    });
+    describe('tests for action received validation error', () => {
+      test('should update metadata path with validation message and metadata should be reset if status is not refreshed', () => {
+        const connId = '123';
+        const state = reducer({
+          application:
+            { 123: { 'salesforce/metadata/123/recordTypes': {
+              status: 'requested',
+              data: ['account', 'opportunity'],
+
+            } } },
+          preview: {},
+          assistants: { rest: {}, http: {} } },
+        actions.metadata.validationError(
+          'Bundle not installed.',
+          connId,
+          `salesforce/metadata/${connId}/recordTypes`,
+        )
+        );
+
+        expect(state).toEqual(
+          {
+            application:
+            { 123: { 'salesforce/metadata/123/recordTypes': {
+              status: 'error',
+              data: [],
+              validationError: 'Bundle not installed.',
+            } } },
+            preview: {},
+            assistants: { rest: {}, http: {} } }
+        );
+      });
+
+      test('should update metadata path with validation message and metadata should not be modified if status is refreshed', () => {
+        const connId = '123';
+        const state = reducer({
+          application:
+            { 123: { 'salesforce/metadata/123/recordTypes': {
+              status: 'refreshed',
+              data: ['account', 'opportunity'],
+
+            } } },
+          preview: {},
+          assistants: { rest: {}, http: {} } },
+        actions.metadata.validationError(
+          'Bundle not installed.',
+          connId,
+          `salesforce/metadata/${connId}/recordTypes`,
+        )
+        );
+
+        expect(state).toEqual(
+          {
+            application:
+            { 123: { 'salesforce/metadata/123/recordTypes': {
+              status: 'error',
+              data: ['account', 'opportunity'],
+              validationError: 'Bundle not installed.',
+            } } },
+            preview: {},
+            assistants: { rest: {}, http: {} } }
+        );
       });
     });
   });
-  describe('Metadata assistant reducer tests', () => {
+  describe('assistant preview reducer tests', () => {
     test('should update status as requested for assistant preview request action', () => {
       const state = reducer(
         undefined,
@@ -233,158 +383,6 @@ describe('NetSuiteAndSalesforce', () => {
       });
     });
   });
-
-  describe('tests for action metadata received error', () => {
-    test('should update metadata path with error received', () => {
-      const connId = '123';
-      const state = reducer(
-        undefined,
-        actions.metadata.receivedError(
-          'Request limit exceeded',
-          connId,
-          `salesforce/metadata/${connId}/recordTypes`,
-        )
-      );
-
-      expect(state).toEqual(
-        {
-          application:
-          { 123: { 'salesforce/metadata/123/recordTypes': {
-            status: 'error',
-            data: [],
-            errorMessage: 'Request limit exceeded',
-          } } },
-          preview: {},
-          assistants: { rest: {}, http: {} } }
-      );
-    });
-
-    test('should update metadata path with error message and metadata shouldn\'t be changed if status is refreshed', () => {
-      const connId = '123';
-      const state = reducer({
-        application:
-          { 123: { 'salesforce/metadata/123/recordTypes': {
-            status: 'refreshed',
-            data: ['account', 'opportunity'],
-
-          } } },
-        preview: {},
-        assistants: { rest: {}, http: {} } },
-      actions.metadata.receivedError(
-        'Request limit exceeded',
-        connId,
-        `salesforce/metadata/${connId}/recordTypes`,
-      )
-      );
-
-      expect(state).toEqual(
-        {
-          application:
-          { 123: { 'salesforce/metadata/123/recordTypes': {
-            status: 'error',
-            data: ['account', 'opportunity'],
-            errorMessage: 'Request limit exceeded',
-          } } },
-          preview: {},
-          assistants: { rest: {}, http: {} } }
-      );
-    });
-
-    test('should update metadata path with error message and metadata should be reset if status is not refreshed', () => {
-      const connId = '123';
-      const state = reducer({
-        application:
-          { 123: { 'salesforce/metadata/123/recordTypes': {
-            status: 'requested',
-            data: ['account', 'opportunity'],
-
-          } } },
-        preview: {},
-        assistants: { rest: {}, http: {} } },
-      actions.metadata.receivedError(
-        'Request limit exceeded',
-        connId,
-        `salesforce/metadata/${connId}/recordTypes`,
-      )
-      );
-
-      expect(state).toEqual(
-        {
-          application:
-          { 123: { 'salesforce/metadata/123/recordTypes': {
-            status: 'error',
-            data: [],
-            errorMessage: 'Request limit exceeded',
-          } } },
-          preview: {},
-          assistants: { rest: {}, http: {} } }
-      );
-    });
-  });
-
-  describe('tests for action metadata received validation error', () => {
-    test('should update metadata path with validation message and metadata should be reset if status is not refreshed', () => {
-      const connId = '123';
-      const state = reducer({
-        application:
-          { 123: { 'salesforce/metadata/123/recordTypes': {
-            status: 'requested',
-            data: ['account', 'opportunity'],
-
-          } } },
-        preview: {},
-        assistants: { rest: {}, http: {} } },
-      actions.metadata.validationError(
-        'Bundle not installed.',
-        connId,
-        `salesforce/metadata/${connId}/recordTypes`,
-      )
-      );
-
-      expect(state).toEqual(
-        {
-          application:
-          { 123: { 'salesforce/metadata/123/recordTypes': {
-            status: 'error',
-            data: [],
-            validationError: 'Bundle not installed.',
-          } } },
-          preview: {},
-          assistants: { rest: {}, http: {} } }
-      );
-    });
-  });
-
-  test('should update metadata path with validation message and metadata should not be modified if status is refreshed', () => {
-    const connId = '123';
-    const state = reducer({
-      application:
-        { 123: { 'salesforce/metadata/123/recordTypes': {
-          status: 'refreshed',
-          data: ['account', 'opportunity'],
-
-        } } },
-      preview: {},
-      assistants: { rest: {}, http: {} } },
-    actions.metadata.validationError(
-      'Bundle not installed.',
-      connId,
-      `salesforce/metadata/${connId}/recordTypes`,
-    )
-    );
-
-    expect(state).toEqual(
-      {
-        application:
-        { 123: { 'salesforce/metadata/123/recordTypes': {
-          status: 'error',
-          data: ['account', 'opportunity'],
-          validationError: 'Bundle not installed.',
-        } } },
-        preview: {},
-        assistants: { rest: {}, http: {} } }
-    );
-  });
 });
 
 describe('selector testcases for metadata', () => {
@@ -461,6 +459,82 @@ describe('selector testcases for metadata', () => {
     }).data).toEqual(opportunityMetadata);
   });
 
+  test('should return metadata from state based on metapath for cached selector', () => {
+    const connId = '1234';
+
+    const accountMetadata = [
+      {
+        fields: [{
+          id: 'name',
+          label: 'Name',
+          type: 'string',
+        }, {
+          id: 'recordid',
+          label: 'Record Id',
+          type: 'id',
+        }, {
+          id: 'createddate',
+          label: 'Created Date',
+          type: 'datetime',
+        }],
+      },
+    ];
+
+    const opportunityMetadata = [
+      {
+        fields: [{
+          id: 'opportunityname',
+          label: 'Opportunity Name',
+          type: 'string',
+        }, {
+          id: 'oppid',
+          label: 'Opportunity Id',
+          type: 'id',
+        }, {
+          id: 'createddate',
+          label: 'Created Date',
+          type: 'datetime',
+        }],
+      },
+    ];
+    const requestState = reducer(
+      undefined,
+      actions.metadata.request(connId, `/salesforce/metadata/${connId}/sobjects/account`)
+    );
+    let receivedState = reducer(
+      requestState,
+      actions.metadata.receivedCollection(
+        accountMetadata,
+        connId,
+        `/salesforce/metadata/${connId}/sobjects/account`
+      )
+    );
+
+    receivedState = reducer(
+      receivedState,
+      actions.metadata.receivedCollection(
+        opportunityMetadata,
+        connId,
+        `/salesforce/metadata/${connId}/sobjects/opportunity`
+      )
+    );
+
+    const cachedSelector = selectors.makeOptionsFromMetadata();
+
+    expect(cachedSelector(
+      receivedState,
+      connId,
+      `/salesforce/metadata/${connId}/sobjects/account`,
+      'salesforce-sObject-layout',
+    ).data).toEqual(accountMetadata);
+
+    expect(cachedSelector(receivedState,
+      connId,
+      `/salesforce/metadata/${connId}/sobjects/opportunity`,
+      'salesforce-sObject-layout',
+    ).data).toEqual(opportunityMetadata);
+  });
+
   test('should return assistantData from state', () => {
     const state = reducer(
       {
@@ -497,5 +571,4 @@ describe('selector testcases for metadata', () => {
     });
   });
 });
-// Salesforce related testcases
-describe('Salesforce', () => {});
+
