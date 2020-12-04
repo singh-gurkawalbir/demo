@@ -1,8 +1,11 @@
 import produce from 'immer';
+import { COMM_STATES } from '../../comms/networkComms';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
   const { type, response, flowId, onOffInProgress } = action;
+
+  if (!flowId) return state;
 
   return produce(state, draft => {
     switch (type) {
@@ -10,7 +13,7 @@ export default (state = {}, action) => {
         draft.lastExportDateTime = {
           [flowId]: {
             data: response && response.lastExportDateTime,
-            status: response ? 'received' : 'error',
+            status: response ? COMM_STATES.RECEIVED : COMM_STATES.ERROR,
           },
         };
 
@@ -27,7 +30,7 @@ export default (state = {}, action) => {
 export const selectors = {};
 
 selectors.getLastExportDateTime = (state, flowId) => {
-  if (!state || !state.lastExportDateTime) {
+  if (!state || !state.lastExportDateTime || !flowId) {
     return null;
   }
 

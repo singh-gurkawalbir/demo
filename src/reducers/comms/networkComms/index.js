@@ -10,6 +10,7 @@ export const COMM_STATES = {
   LOADING: 'loading',
   ERROR: 'error',
   SUCCESS: 'success',
+  RECEIVED: 'received',
 };
 
 Object.freeze(COMM_STATES);
