@@ -18,6 +18,7 @@ import {
   getFormattedResourceForPreview,
   getResourceStageUpdatedFromPatch,
   shouldUpdateResourceSampleData,
+  getCurrentSampleDataStageStatus,
 } from '.';
 
 const possibleExportSampleDataStagePaths = [
@@ -96,9 +97,44 @@ describe('_compareSampleDataStage util', () => {
     expect(_compareSampleDataStage(previousStage, currentStage, 'imports')).toBe(2);
   });
 });
-// TODO: describe('getCurrentSampleDataStageStatus util', () => {
+describe('getCurrentSampleDataStageStatus util', () => {
+  test('should return status as 2 when there are no previous stages running indicating a new saga to be forked with this stage', () => {
+    const prevStagesRunning = [];
+    const expectedCurrentStageStatus = {
+      prevStage: undefined,
+      currentStageStatus: 2,
+    };
 
-// });
+    expect(getCurrentSampleDataStageStatus(prevStagesRunning, 'transform', 'exports')).toEqual(expectedCurrentStageStatus);
+  });
+  test('should return -1 if the current stage is a subset of previously running stages', () => {
+    const prevStagesRunning = ['responseMapping', 'outputFilter'];
+    const expectedCurrentStageStatus = {
+      currentStageStatus: -1,
+      prevStage: 'responseMapping',
+    };
+
+    expect(getCurrentSampleDataStageStatus(prevStagesRunning, 'transform', 'exports')).toEqual(expectedCurrentStageStatus);
+  });
+  test('should return 1 if the previous stage is a subset of current stage  ', () => {
+    const prevStagesRunning = ['inputFilter', 'transform'];
+    const expectedCurrentStageStatus = {
+      currentStageStatus: 1,
+      prevStage: 'transform',
+    };
+
+    expect(getCurrentSampleDataStageStatus(prevStagesRunning, 'responseMapping', 'exports')).toEqual(expectedCurrentStageStatus);
+  });
+  test('should return 0 if the current stage already exists in the list of running previous stage sagas  ', () => {
+    const prevStagesRunning = ['transform', 'inputFilter'];
+    const expectedCurrentStageStatus = {
+      currentStageStatus: 0,
+      prevStage: 'transform',
+    };
+
+    expect(getCurrentSampleDataStageStatus(prevStagesRunning, 'transform', 'exports')).toEqual(expectedCurrentStageStatus);
+  });
+});
 describe('getSubsequentStages util - gives all the stages followed by passed stage', () => {
   const exportStages = Object.keys(sampleDataStage.exports);
   const importStages = Object.keys(sampleDataStage.imports);
