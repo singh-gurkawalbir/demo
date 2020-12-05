@@ -81,7 +81,7 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import getFilteredErrors from '../utils/errorManagement';
+import { getFilteredErrors } from '../utils/errorManagement';
 import {
   getFlowStepsYetToBeCreated,
   generatePendingFlowSteps,
