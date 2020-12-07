@@ -5998,32 +5998,6 @@ Object {
 }
 `;
 
-exports[`getResourceFromAssets load correct form exports all regular export driven forms should load a test export form 1`] = `
-Object {
-  "fieldMeta": Object {
-    "actions": undefined,
-    "fieldMap": Object {
-      "settings": Object {
-        "fieldId": "settings",
-      },
-      "test.limit": Object {
-        "fieldId": "test.limit",
-      },
-    },
-    "layout": Object {
-      "fields": Array [
-        "test.limit",
-        "settings",
-      ],
-    },
-  },
-  "init": undefined,
-  "optionsHandler": [Function],
-  "preSave": [Function],
-  "validationHandler": [Function],
-}
-`;
-
 exports[`getResourceFromAssets load correct form exports all regular export driven forms should load a webhook export form 1`] = `
 Object {
   "fieldMeta": Object {
