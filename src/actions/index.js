@@ -1,6 +1,8 @@
 import actionTypes from './types';
 import suiteScript from './suiteScript';
 
+export const auditResourceTypePath = (resourceType, resourceId) =>
+  resourceType && resourceId ? `${resourceType}/${resourceId}/audit` : 'audit';
 export const availableResources = [
   'exports',
   'imports',
@@ -229,10 +231,10 @@ const flowMetrics = {
       filters,
     }),
 
-  received: (resourceType, resourceId, response) =>
-    action(actionTypes.FLOW_METRICS.RECEIVED, { resourceType, resourceId, response }),
+  received: (resourceId, response) =>
+    action(actionTypes.FLOW_METRICS.RECEIVED, { resourceId, response }),
   clear: resourceId => action(actionTypes.FLOW_METRICS.CLEAR, { resourceId }),
-  failed: error => action(actionTypes.FLOW_METRICS.FAILED, { error }),
+  failed: resourceId => action(actionTypes.FLOW_METRICS.FAILED, { resourceId }),
 };
 const resource = {
   replaceConnection: (_resourceId, _connectionId, _newConnectionId) =>
@@ -433,20 +435,12 @@ const resource = {
   },
 };
 // #endregion
-const auditLogs = {
-  request: (resourceType, resourceId, message) => {
-    if (resourceType && resourceId) {
-      return action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
-        resourceType: `${resourceType}/${resourceId}/audit`,
-        message,
-      });
-    }
 
-    return action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
-      resourceType: 'audit',
-      message,
-    });
-  },
+const auditLogs = {
+  request: (resourceType, resourceId, message) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
+    resourceType: auditResourceTypePath(resourceType, resourceId),
+    message,
+  }),
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
 const connectors = {
@@ -730,6 +724,11 @@ const integrationApp = {
             id,
           }
         ),
+      loadFailed: (integrationId, flowId, id) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.LOAD_FAILED,
+          { integrationId, flowId, id }
+        ),
     },
     initComplete: (integrationId, flowId, sectionId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE, {
@@ -958,11 +957,10 @@ const integrationApp = {
         uninstallerFunction,
         addOnId,
       }),
-    receivedUninstallSteps: (uninstallSteps, storeId, id) =>
+    receivedUninstallSteps: (uninstallSteps, id) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.RECEIVED_STEPS, {
         uninstallSteps,
         id,
-        storeId,
       }),
     failedUninstallSteps: (id, error, storeId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.FAILED_UNINSTALL_STEPS, {
@@ -1293,12 +1291,6 @@ const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
   requestStage: (flowId, resourceId, stage) =>
     action(actionTypes.FLOW_DATA.STAGE_REQUEST, { flowId, resourceId, stage }),
-  requestPreviewData: (flowId, resourceId, previewType) =>
-    action(actionTypes.FLOW_DATA.PREVIEW_DATA_REQUEST, {
-      flowId,
-      resourceId,
-      previewType,
-    }),
   receivedPreviewData: (flowId, resourceId, previewData, previewType) =>
     action(actionTypes.FLOW_DATA.PREVIEW_DATA_RECEIVED, {
       flowId,
@@ -1994,29 +1986,26 @@ const analytics = {
   },
 };
 const responseMapping = {
-  init: (id, value) =>
+  init: ({flowId, resourceId}) =>
     action(actionTypes.RESPONSE_MAPPING.INIT, {
-      id,
-      value,
+      resourceId,
+      flowId,
     }),
-  setFormattedMapping: (id, value) =>
-    action(actionTypes.RESPONSE_MAPPING.SET_FORMATTED_MAPPING, {
-      id,
-      value,
-    }),
-  patchField: (id, field, index, value) =>
+  initComplete: (options = {}) =>
+    action(actionTypes.RESPONSE_MAPPING.INIT_COMPLETE, options),
+  initFailed: () => action(actionTypes.RESPONSE_MAPPING.INIT_FAILED, {}),
+  patchField: (field, key, value) =>
     action(actionTypes.RESPONSE_MAPPING.PATCH_FIELD, {
-      id,
-      field,
-      index,
-      value,
+      field, key, value,
     }),
-  delete: (id, index) =>
-    action(actionTypes.RESPONSE_MAPPING.DELETE, { id, index }),
-  save: ({ id, match, resourceType, resourceId }) => action(actionTypes.RESPONSE_MAPPING.SAVE, { id, match, resourceType, resourceId }),
-  saveFailed: id => action(actionTypes.RESPONSE_MAPPING.SAVE_FAILED, { id }),
-  saveComplete: id =>
-    action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, { id }),
+  delete: key =>
+    action(actionTypes.RESPONSE_MAPPING.DELETE, { key }),
+  save: ({ match }) => action(actionTypes.RESPONSE_MAPPING.SAVE, { match }),
+  saveFailed: () => action(actionTypes.RESPONSE_MAPPING.SAVE_FAILED, {}),
+  saveComplete: () =>
+    action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, {}),
+  clear: () => action(actionTypes.RESPONSE_MAPPING.CLEAR, {}),
+
 };
 const customSettings = {
   formRequest: (resourceType, resourceId) =>

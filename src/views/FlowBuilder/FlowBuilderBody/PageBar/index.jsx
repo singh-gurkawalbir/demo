@@ -199,6 +199,7 @@ const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
           <FlowToggle
             integrationId={integrationId}
             resource={flowDetails}
+            storeId={match.params?.childId}
             disabled={isNewFlow || isMonitorLevelAccess}
             isConnector={isIAType}
             data-test="switchFlowOnOff"

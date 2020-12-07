@@ -229,7 +229,7 @@ export default (state = {}, action) => {
     case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE:
       return getIntegrationAppsNextState(state, action);
     case actionTypes.STACK.USER_SHARING_TOGGLED:
-      resourceIndex = state.sshares.findIndex(user => user._id === id);
+      resourceIndex = state.sshares?.findIndex(user => user._id === id);
 
       if (resourceIndex > -1) {
         return produce(state, draft => {
@@ -256,7 +256,7 @@ export default (state = {}, action) => {
       return state;
     }
     case actionTypes.CONNECTION.DEREGISTER_COMPLETE:
-      resourceIndex = state.integrations.findIndex(
+      resourceIndex = state.integrations?.findIndex(
         r => r._id === integrationId
       );
 
@@ -273,7 +273,7 @@ export default (state = {}, action) => {
       return state;
 
     case actionTypes.CONNECTION.REGISTER_COMPLETE:
-      resourceIndex = state.integrations.findIndex(
+      resourceIndex = state.integrations?.findIndex(
         r => r._id === integrationId
       );
 
@@ -545,7 +545,11 @@ selectors.defaultStoreId = (state, id, store) => {
   return undefined;
 };
 
-selectors.resources = (state, resourceType) => state[resourceType] || emptyList;
+selectors.resources = (state, resourceType) => {
+  if (!state || !resourceType) return emptyList;
+
+  return state[resourceType] || emptyList;
+};
 
 selectors.resourceList = (
   state,

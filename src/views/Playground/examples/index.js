@@ -1,15 +1,17 @@
 import csvParser from './csvParser';
 import ediParse from './ediParse';
-import xmlParse from './xmlParse';
-import formBuilder from './formBuilder';
+import xmlParser from './xmlParser';
+import settingsForm from './settingsForm';
 import handlebars from './handlebars';
+import sql from './sql';
 import filter from './filter';
 
 export default {
   csvParser,
   ediParse,
-  xmlParse,
-  formBuilder,
+  xmlParser,
+  settingsForm,
   handlebars,
+  sql,
   filter,
 };

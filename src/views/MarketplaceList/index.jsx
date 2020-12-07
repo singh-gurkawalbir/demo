@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     margin: '0 auto',
     borderRadius: '4px',
-    padding: theme.spacing(2),
+    padding: [[14, 18]],
     wordBreak: 'break-word',
   },
   connectorCard: {

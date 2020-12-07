@@ -13,7 +13,7 @@ import connectionSagas from './connections';
 import { isNewId } from '../../../utils/resource';
 import { suiteScriptResourceKey } from '../../../utils/suiteScript';
 import { apiCallWithRetry } from '../..';
-import inferErrorMessage from '../../../utils/inferErrorMessage';
+import inferErrorMessages from '../../../utils/inferErrorMessages';
 
 export const SCOPES = {
   META: 'meta',
@@ -120,7 +120,7 @@ export function* submitFormValues({
 
   // fetch all possible pending patches.
   if (!skipCommit) {
-    const { patch } = yield select(
+    const { patch } = (yield select(
       selectors.stagedResource,
       suiteScriptResourceKey({
         ssLinkedConnectionId,
@@ -128,7 +128,7 @@ export function* submitFormValues({
         resourceId,
       }),
       SCOPES.VALUE
-    );
+    )) || {};
     // In most cases there would be no other pending staged changes, since most
     // times a patch is followed by an immediate commit.  If however some
     // component has staged some changes, even if the patchSet above is empty,
@@ -289,7 +289,7 @@ function* suiteScriptSubmitIA({
     const resp = yield call(apiCallWithRetry, {path, opts});
 
     if (!resp?.success) {
-      yield put(actions.api.failure(path, 'GET', inferErrorMessage(resp)[0], false));
+      yield put(actions.api.failure(path, 'GET', inferErrorMessages(resp)[0], false));
 
       return yield put(actions.suiteScript.iaForm.submitFailed(ssLinkedConnectionId, integrationId));
     }

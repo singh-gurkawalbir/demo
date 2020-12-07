@@ -4,6 +4,7 @@ import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
 // import processorPatchSet from '../editors/processorPatchSet';
 import editorFeaturesMap from './featuresMap';
+import editorMetadata from '../../../components/AFE2/metadata';
 
 const emptyObj = {};
 
@@ -34,6 +35,8 @@ export default function reducer(state = {}, action) {
         draft.helperFunctions = helperFunctions;
         break;
       case actionTypes._EDITOR.INIT: {
+        const { layout } = editorMetadata[processor];
+
         // const initChangeIdentifier = draft[id]?.initChangeIdentifier || 0;
         const init = processorLogic.init(processor);
         const {rule} = options || {};
@@ -55,6 +58,7 @@ export default function reducer(state = {}, action) {
         }
 
         draft[id] = {
+          layout,
           processor,
           ...formattedInitOptions,
           ...deepClone(editorFeaturesMap[processor]), // TODO: check later if features get mutated. if not, remove deepClone
@@ -119,9 +123,12 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.PATCH.RULE: {
-        if (typeof rulePatch === 'string' || Array.isArray(rulePatch)) {
+        if (typeof rulePatch === 'string' ||
+          Array.isArray(rulePatch) ||
+          draft[id].rule === undefined) {
           draft[id].rule = rulePatch;
         } else {
+          // TODO: Ashu, why do we need to clone the rulePatch?
           Object.assign(draft[id].rule, deepClone(rulePatch));
         }
         if (draft[id].dataVersion === 2) {

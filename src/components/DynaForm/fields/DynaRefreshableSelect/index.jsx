@@ -22,6 +22,7 @@ export default function DynaSelectOptionsGenerator(props) {
     connectionId,
     bundlePath,
     ignoreValidation,
+    ignoreValueUnset,
     bundleUrlHelp,
     options = {},
     filterKey,
@@ -85,6 +86,7 @@ export default function DynaSelectOptionsGenerator(props) {
         onRefresh={onRefresh}
         fieldStatus={status}
         fieldData={data}
+        ignoreValueUnset={ignoreValueUnset}
         fieldError={errorMessage}
         disableOptionsLoad={disableOptionsLoad}
         {...props}

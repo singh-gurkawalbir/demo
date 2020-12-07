@@ -28,7 +28,7 @@ export default function OnOffCell({ ssLinkedConnectionId, flow }) {
       selectors.isSuiteScriptFlowOnOffInProgress(state, {
         ssLinkedConnectionId,
         _id: flow._id,
-      }).onOffInProgress
+      })
   );
   const isManageLevelUser = useSelector(state => selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId));
   const handleDisableClick = useCallback(() => {

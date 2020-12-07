@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
-import { TreeView, TreeItem} from '@material-ui/lab';
-import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import { TreeView} from '@material-ui/lab';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
 import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';
@@ -10,8 +10,11 @@ import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import LoadResources from '../../../components/LoadResources';
 import IntegrationIcon from '../../../components/icons/IntegrationAppsIcon';
 import FlowIcon from '../../../components/icons/FlowsIcon';
-import ResourcesIcon from '../../../components/icons/ResourcesIcon';
-import ResourceItemsBranch from './ResourceActionsBranch';
+import ImportsIcon from '../../../components/icons/ImportsIcon';
+import ExportsIcon from '../../../components/icons/ExportsIcon';
+import FlowBuilderIcon from '../../../components/icons/FlowBuilderIcon';
+import ResourceActionsBranch from './ResourceActionsBranch';
+import OverflowTreeItem from './OverflowTreeItem';
 
 const useStyles = makeStyles(theme => ({
   editorItem: {
@@ -25,64 +28,79 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ExplorerMenu({ onClick }) {
+const emptyArray = [];
+
+export default function ExplorerMenu({ onEditorChange }) {
   const classes = useStyles();
+  const history = useHistory();
   const [integrationId, setIntegrationId] = useState();
   const [flowId, setFlowId] = useState();
   const [resourceId, setResourceId] = useState();
 
   const integrations = useSelector(state =>
-    selectors.resources(state, 'integrations')
-      .map(i => ({ id: i._id, name: i.name })), shallowEqual);
+    selectors.resources(state, 'integrations'))
+    .map(i => ({ id: i._id, name: i.name }));
 
   const flows = useSelector(state => {
-    if (!integrationId) return;
+    if (!integrationId) return emptyArray;
 
-    return selectors.resources(state, 'flows')
-      .filter(f => f._integrationId === integrationId)
-      .map(f => ({ id: f._id, name: f.name }));
-  }, shallowEqual);
+    return selectors.resources(state, 'flows');
+  })
+    .filter(f => f._integrationId === integrationId)
+    .map(f => ({ id: f._id, name: f.name }));
 
   const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
 
   const ResourcesBranch = ({id}) => {
     if (id !== flowId) return null;
 
-    if (!flowResources?.length) {
-      return <TreeItem nodeId={`${id}-empty`} label="No Resources" />;
-    }
+    const handleFbClick = () => {
+      history.push(history.push(`/integrations/${integrationId}/flowBuilder/${flowId}`));
+    };
 
-    // onClick(flowId, resourceId, stage, fieldId)
-    // We need to enhance the getEditorsByResource response to provide the correct
-    // data points that are needed to init an editor. Possibly the above onClick
-    // callback sent from the playground view needs to be fixed too.
-    const handleClick = (type, fieldId) => onClick(flowId, resourceId, type, fieldId);
+    const ResourceIcon = ({resourceType}) =>
+      resourceType === 'exports' ? <ExportsIcon /> : <ImportsIcon />;
 
-    return flowResources.map(({_id: id, name}) => (
-      <TreeItem
-        key={id} nodeId={id} label={name || id}
-        icon={<ResourcesIcon />}
-        onClick={() => setResourceId(id)} >
-        {(id === resourceId) &&
-          <ResourceItemsBranch resourceId={resourceId} onClick={handleClick} />}
-      </TreeItem>
-    ));
+    return (
+      <>
+        <OverflowTreeItem
+          icon={<FlowBuilderIcon />}
+          nodeId={`${resourceId}-fb`}
+          label="Open in Flow Builder"
+          onClick={handleFbClick} />
+
+        {flowResources.map(({_id: id, name, type}) => (
+          <OverflowTreeItem
+            key={id} nodeId={id} label={name || id}
+            icon={<ResourceIcon resourceType={type} />}
+            onClick={() => setResourceId(id)} >
+            {(id === resourceId) && (
+            <ResourceActionsBranch
+              flowId={flowId}
+              resourceId={resourceId}
+              onEditorChange={onEditorChange}
+            />
+            )}
+          </OverflowTreeItem>
+        ))}
+      </>
+    );
   };
 
   const FlowBranch = ({id}) => {
     if (id !== integrationId) return null;
 
     if (!flows.length) {
-      return <TreeItem nodeId={`${id}-empty`} label="No Flows" />;
+      return <OverflowTreeItem nodeId={`${id}-empty`} label="No Flows" />;
     }
 
     return flows.map(({id, name}) => (
-      <TreeItem
+      <OverflowTreeItem
         key={id} nodeId={id} label={name || id}
         icon={<FlowIcon />}
         onClick={() => setFlowId(id)}>
         <ResourcesBranch id={id} />
-      </TreeItem>
+      </OverflowTreeItem>
     ));
   };
 
@@ -100,13 +118,13 @@ export default function ExplorerMenu({ onClick }) {
         expanded={expanded}
       >
         {integrations.map(({id, name}) => (
-          <TreeItem
+          <OverflowTreeItem
             icon={<IntegrationIcon />}
             className={classes.editorItem}
             key={id} nodeId={id} label={name}
             onClick={() => setIntegrationId(id)}>
             <FlowBranch id={id} />
-          </TreeItem>
+          </OverflowTreeItem>
         ))}
       </TreeView>
     </LoadResources>

@@ -91,7 +91,7 @@ export function* fetchResourceDataForNewFlowResource({
   return getFormattedResourceForPreview(newResource);
 }
 
-export function* fetchFlowResources({ flow, type, eliminateDataProcessors, refresh }) {
+export function* fetchFlowResources({ flow, type, eliminateDataProcessors, refresh, runOffline }) {
   const resourceMap = {};
   const resourceList = flow[type];
 
@@ -111,6 +111,7 @@ export function* fetchFlowResources({ flow, type, eliminateDataProcessors, refre
 
       if (resource) {
         const { transform, filter, hooks, ...rest } = resource;
+        const {sampleData, ...resourceWithoutSampleData} = resource;
 
         // getFormattedResourceForPreview util removes unnecessary props of resource that should not be sent in preview calls
         // Example: type: once should not be sent while previewing
@@ -123,7 +124,7 @@ export function* fetchFlowResources({ flow, type, eliminateDataProcessors, refre
           // As existing connector pg's sampledata represent data after these tx, filter, hooks actions are processed, so remove those from doc
           resourceMap[resourceId] = {
             doc: getFormattedResourceForPreview(
-              isIntegrationApp(flow) && resource.sampleData ? rest : resource,
+              isIntegrationApp(flow) && resource.sampleData ? rest : resourceWithoutSampleData,
               resourceType,
               type
             ),
@@ -136,7 +137,7 @@ export function* fetchFlowResources({ flow, type, eliminateDataProcessors, refre
           // Gets required uiData (for real time exports - FTP, NS, SF, Web hook) and postData to pass for Page processors
           resourceMap[resourceId].options = yield call(
             getPreviewOptionsForResource,
-            { resource, flow, refresh }
+            { resource, flow, refresh, runOffline }
           );
         }
       }
@@ -176,7 +177,7 @@ export function* requestSampleDataForImports({
         _pageProcessorId: resourceId,
         resourceType,
         hidden,
-        previewType: sampleDataStage,
+        previewType: 'flowInput',
       });
       break;
     }

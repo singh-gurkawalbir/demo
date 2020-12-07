@@ -14,8 +14,8 @@ import { getResource, commitStagedChanges } from '../resources';
 import processorLogic from '../../reducers/session/_editors/processorLogic';
 import { SCOPES } from '../resourceForm';
 import { requestSampleData } from '../sampleData/flows';
-import { requestExportSampleData } from '../sampleData';
-import { constructResourceFromFormValues } from '../sampleData/utils/exportSampleDataUtils';
+import { requestExportSampleData } from '../sampleData/exports';
+import { constructResourceFromFormValues } from '../utils';
 
 export function* invokeProcessor({ processor, body }) {
   const path = `/processors/${processor}`;
@@ -448,10 +448,14 @@ export function* initEditor({ id }) {
 
   // if data is already passed during init, save it to state directly
   if (editor.data) {
+    const dataAsString = typeof editor.data === 'string'
+      ? editor.data
+      : JSON.stringify(editor.data, null, 2);
+
     yield put(
       actions._editor.sampleDataReceived(
         id,
-        JSON.stringify(editor.data, null, 2),
+        dataAsString,
       )
     );
   } else if (!editor.initStatus || editor.initStatus === 'requested') {

@@ -70,10 +70,11 @@ import {
   getAvailablePreviewStages,
   isPreviewPanelAvailable,
 } from '../utils/exportPanel';
-import inferErrorMessage from '../utils/inferErrorMessage';
+import inferErrorMessages from '../utils/inferErrorMessages';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName, getTitleIdFromSection } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
+import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare } from '../utils/sort';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
@@ -87,6 +88,7 @@ import {
   getRunConsoleJobSteps,
   getParentJobSteps,
 } from '../utils/latestJobs';
+import getJSONPaths from '../utils/jsonPaths';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -157,7 +159,7 @@ selectors.commsErrors = state => {
     const c = commsState[key];
 
     if (!c.hidden && c.status === COMM_STATES.ERROR) {
-      errors[key] = inferErrorMessage(c.message);
+      errors[key] = inferErrorMessages(c.message);
     }
   });
 
@@ -2528,7 +2530,7 @@ selectors.availableConnectionsToRegister = (state, integrationId) => {
 selectors.mkSuiteScriptLinkedConnections = () => createSelector(
   selectors.userPreferences,
   selectors.userPermissions,
-  state => state?.data?.resources?.connections,
+  state => selectors.resourceList(state, {type: 'connections'}).resources,
   state => state?.data?.resources?.integrations,
   (preferences, permissions, connections = [], integrations = []) => {
     const linkedConnections = [];
@@ -4870,7 +4872,7 @@ selectors.mappingSubRecordAndJSONPath = (state, importId, subRecordMappingId) =>
   return emptyObject;
 };
 selectors.mappingGenerates = createSelector([
-  (state, importId) => selectors.resource(state, 'imports', importId).adaptorType,
+  (state, importId) => selectors.resource(state, 'imports', importId)?.adaptorType,
   (state, importId, subRecordMappingId) => {
     const opts = selectors.mappingSubRecordAndJSONPath(state, importId, subRecordMappingId);
 
@@ -5096,6 +5098,30 @@ selectors.makeResourceErrorsSelector = () => createSelector(
 );
 
 selectors.resourceErrors = selectors.makeResourceErrorsSelector();
+
+selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
+  selectors.userPermissions,
+  state => state?.data?.resources?.integrations,
+  state => state?.data?.resources?.connections,
+  (permissions = emptyObject, integrations = emptyArray, connections = emptyArray) => {
+    if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE].includes(permissions.accessLevel)) {
+      return connections.map(c => c._id);
+    }
+    if (permissions.accessLevel === USER_ACCESS_LEVELS.TILE) {
+      const connectionIds = [];
+
+      integrations.forEach(i => {
+        if (permissions?.integrations && permissions.integrations[i._id] && permissions.integrations[i._id].accessLevel === 'manage') {
+          connectionIds.push(...i._registeredConnectionIds);
+        }
+      });
+
+      return connectionIds;
+    }
+
+    return emptyArray;
+  }
+);
 
 selectors.availableUsersList = (state, integrationId) => {
   const permissions = selectors.userPermissions(state);
@@ -5325,4 +5351,40 @@ selectors.getIntegrationUserNameById = (state, userId, flowId) => {
   const usersList = selectors.availableUsersList(state, integrationId);
 
   return usersList.find(user => user?.sharedWithUser?._id === userId)?.sharedWithUser?.name;
+};
+
+selectors.responseMappingExtracts = (state, resourceId, flowId) => {
+  const { merged: flow = {} } = selectors.resourceData(state,
+    'flows',
+    flowId
+  );
+  const pageProcessor = flow?.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+
+  if (!pageProcessor) {
+    return emptyArray;
+  }
+  const isImport = pageProcessor.type === 'import';
+  const resource = selectors.resource(state, isImport ? 'imports' : 'exports', resourceId);
+
+  if (!resource) { return emptyArray; }
+
+  if (isImport) {
+    const extractFields = selectors.getSampleDataContext(state, {
+      flowId,
+      resourceId,
+      stage: 'responseMappingExtract',
+      resourceType: 'imports',
+    }).data;
+
+    if (!isEmpty(extractFields)) {
+      const extractPaths = getJSONPaths(extractFields);
+
+      return extractPaths.map(obj => ({ name: obj.id, id: obj.id })) || emptyArray;
+    }
+  }
+
+  return responseMappingUtil.getResponseMappingDefaultExtracts(
+    isImport ? 'imports' : 'exports',
+    resource.adaptorType
+  );
 };

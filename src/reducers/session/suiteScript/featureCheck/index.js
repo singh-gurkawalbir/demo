@@ -6,7 +6,7 @@ export const keyGen = (
   ssLinkedConnectionId,
   integrationId,
   featureName,
-) => `${ssLinkedConnectionId}-${integrationId}-${featureName}`;
+) => `${ssLinkedConnectionId || ''}${integrationId ? `-${integrationId}` : ''}${featureName ? `-${featureName}` : ''}`;
 export default (state = {}, action) => {
   const {
     type,
@@ -21,11 +21,17 @@ export default (state = {}, action) => {
     featureName,
   );
 
+  // if not valid key return state
+
+  if (!key) {
+    return state;
+  }
+
   return produce(state, draft => {
     switch (type) {
       case actionTypes.SUITESCRIPT.FEATURE_CHECK.REQUEST:
         if (!draft[key]) draft[key] = {};
-        draft[key].status = 'requesting';
+        draft[key].status = COMM_STATES.LOADING;
         break;
 
       case actionTypes.SUITESCRIPT.FEATURE_CHECK.CLEAR:
@@ -47,7 +53,6 @@ export default (state = {}, action) => {
     }
   });
 };
-const emptyObj = {};
 
 export const selectors = {};
 
@@ -57,7 +62,5 @@ selectors.suiteScriptIAFeatureCheckState = (
 ) => {
   const key = keyGen(ssLinkedConnectionId, integrationId, featureName);
 
-  if (!state || !state[key]) return emptyObj;
-
-  return state[key];
+  return (state?.[key]) || null;
 };

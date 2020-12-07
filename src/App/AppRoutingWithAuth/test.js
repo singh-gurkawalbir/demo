@@ -91,7 +91,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
   });
 
   describe('clear app error message', () => {
-    test.skip('should clear the app error message on refresh', () => {
+    test('should clear the app error message on refresh', () => {
       const history = createMemoryHistory({
         initialEntries: [getRoutePath(someRoute)],
       });

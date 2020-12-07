@@ -40,9 +40,22 @@ const useStyles = makeStyles(theme => ({
 
 function ApplicationImages(props) {
   const classes = useStyles();
-  const { children } = props;
+  const { children, className, noOfApps } = props;
 
-  return <div className={clsx(classes.root, {[classes.threeAppImages]: false}, {[classes.fourAppImages]: false})}>{children}</div>;
+  return (
+    <div
+      className={
+        clsx(
+          className,
+          classes.root,
+          {[classes.threeAppImages]: noOfApps === 3},
+          {[classes.fourAppImages]: noOfApps === 4},
+
+        )
+      }>
+      {children}
+    </div>
+  );
 }
 
 export default ApplicationImages;

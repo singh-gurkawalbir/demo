@@ -3,7 +3,7 @@ import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import {
-  getAddedLookupInFlow,
+  getAddedLookupIdInFlow,
   getPreviewStageData,
   shouldUpdateResourceSampleData,
 } from '../../../utils/flowData';
@@ -165,7 +165,7 @@ function* onResourceUpdate({
   }
 
   if (resourceType === 'flows') {
-    const addedPageProcessorId = getAddedLookupInFlow(master, patch);
+    const addedPageProcessorId = getAddedLookupIdInFlow(patch);
 
     if (addedPageProcessorId) {
       yield call(fetchAndSaveRawDataForResource, {

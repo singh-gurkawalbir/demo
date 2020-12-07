@@ -12,7 +12,7 @@ describe('evaluate fetchMetadata saga', () => {
   const fieldName = 'dummy';
   const _integrationId = 'dummy';
 
-  test('If api successfull, should dispatch receivedMetadata while there is no options.autoPostBack', () => {
+  test('If api successful, should dispatch receivedMetadata while there is no options.autoPostBack', () => {
     const options = {};
     const metadata = { a: 1 };
 
@@ -29,7 +29,7 @@ describe('evaluate fetchMetadata saga', () => {
       )
       .run();
   });
-  test('If api successfull, should dispatch multiple receivedMetadata while metadata is an array and options.autoPostBack is true', () => {
+  test('If api successful, should dispatch multiple receivedMetadata while metadata is an array and options.autoPostBack is true', () => {
     const options = { autoPostBack: true };
     const metadata = [{ a: 1 }, { b: 2 }, { c: 3 }];
 
@@ -50,7 +50,7 @@ describe('evaluate fetchMetadata saga', () => {
 
     return saga.run();
   });
-  test('If api successfull, should dispatch receivedMetadata while metadata is not an array and options.autoPostBack is true', () => {
+  test('If api successful, should dispatch receivedMetadata while metadata is not an array and options.autoPostBack is true', () => {
     const options = { autoPostBack: true };
     const metadata = { name: 'dummy' };
 

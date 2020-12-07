@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CsvParsePanel({ editorId, disabled }) {
+export default function CsvParseRules({ editorId, disabled }) {
   const classes = useStyles();
   const editor = useSelector(state => selectors._editor(state, editorId));
   const { result, status, rule = {} } = editor;
