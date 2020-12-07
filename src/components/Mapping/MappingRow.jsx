@@ -92,7 +92,6 @@ const useStyles = makeStyles(theme => ({
   deleteMappingRow: {
     width: theme.spacing(4),
     marginRight: theme.spacing(1),
-
   },
   rowContainer: {
     '&:hover': {

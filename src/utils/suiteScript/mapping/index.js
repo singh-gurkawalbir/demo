@@ -1,6 +1,7 @@
+import { isEqual } from 'lodash';
 import getJSONPaths, { pickFirstObject } from '../../jsonPaths';
 
-function isFileOrNetSuiteBatchExport(res) {
+export function isFileOrNetSuiteBatchExport(res) {
   if (res.netsuite && (res.netsuite.type === 'search' || (res.netsuite.restlet && res.netsuite.restlet.searchId))) {
     return true;
   }
@@ -11,7 +12,8 @@ function isFileOrNetSuiteBatchExport(res) {
   return false;
 }
 
-export default function generateFieldAndListMappings({importType, mapping, exportRes, isGroupedSampleData}) {
+export default function generateFieldAndListMappings({importType, mapping, exportResource, isGroupedSampleData}) {
+  // console.log('**', JSON.stringify({importType, mapping, exportResource, isGroupedSampleData}));
   const isNetsuiteImport = importType === 'netsuite';
   const {fields = [], lists = []} = mapping || {};
   const toReturn = [];
@@ -27,7 +29,7 @@ export default function generateFieldAndListMappings({importType, mapping, expor
           tempFm.extract += '.internalid';
         }
       }
-      if (isFileOrNetSuiteBatchExport(exportRes)) { // it is an ftp/s3/simple export
+      if (isFileOrNetSuiteBatchExport(exportResource)) { // it is an ftp/s3/simple export
         if (/^\[.*\]$/.test(tempFm.extract)) { // if extract starts with [ and ends with ]
           tempFm.extract = tempFm.extract.replace(/^(\[)(.*)(\])$/, '$2');
         }
@@ -51,9 +53,9 @@ export default function generateFieldAndListMappings({importType, mapping, expor
           }
         }
 
-        if (isFileOrNetSuiteBatchExport(exportRes) && /^\['.*']$/.test(tempFm.extract)) {
+        if (isFileOrNetSuiteBatchExport(exportResource) && /^\[.*\]$/.test(tempFm.extract)) {
           // if extract starts with [' and ends with ']
-          tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2'); // removing [' and '] at begining and end of extract that we added
+          tempFm.extract = tempFm.extract.replace(/^(\[)(.*)(\])$/, '$2'); // removing [' and '] at begining and end of extract that we added
         }
 
         if (isGroupedSampleData) {
@@ -203,7 +205,7 @@ export const updateMappingConfigs = ({importType, mappings = [], exportConfig, o
       } else {
         mapping.internalId = false;
       }
-      if (exportConfig.type === 'sa.lesforce' && exportConfig.salesforce && exportConfig.salesforce.soql && exportConfig.salesforce.soql.query && mapping.extract && mapping.extract.indexOf('[*].') > -1) {
+      if (exportConfig.type === 'salesforce' && exportConfig.salesforce && exportConfig.salesforce.soql && exportConfig.salesforce.soql.query && mapping.extract && mapping.extract.indexOf('[*].') > -1) {
         mapping.extract = mapping.extract.replace('[*].', '.');
       }
     } else if (mapping.extract) {
@@ -268,4 +270,27 @@ export const getExtractPaths = (fields, jsonPath) => {
       ...f,
       id: f.id.replace(`${jsonPath}[*].`, ''),
     }));
+};
+
+export const getSuiteScriptAppType = resType => {
+  if (resType === 'netsuite') return 'Netsuite';
+  if (resType === 'rakuten') return 'Rakuten';
+  if (resType === 'sears') return 'Sears';
+  if (resType === 'newegg') return 'Newegg';
+  if (resType === 'salesforce') return 'Salesforce';
+};
+
+export const isMappingObjEqual = (mapping1, mapping2) => {
+  const {
+    rowIdentifier: r1,
+    key: key1,
+    ...formattedMapping1
+  } = mapping1;
+  const {
+    rowIdentifier: r2,
+    key: key2,
+    ...formattedMapping2
+  } = mapping2;
+
+  return isEqual(formattedMapping1, formattedMapping2);
 };

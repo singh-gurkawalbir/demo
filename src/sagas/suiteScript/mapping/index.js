@@ -1,18 +1,40 @@
-import { takeEvery, put, select, call, takeLatest } from 'redux-saga/effects';
+import { takeEvery, put, select, call, takeLatest, take, race, all } from 'redux-saga/effects';
 // import { deepClone } from 'fast-json-patch';
-import { deepClone } from 'fast-json-patch/lib/core';
+import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { commitStagedChanges } from '../resources';
-import generateFieldAndListMappings, { updateMappingConfigs } from '../../../utils/suiteScript/mapping';
+import generateFieldAndListMappings, { updateMappingConfigs, validateMappings } from '../../../utils/suiteScript/mapping';
+import { SCOPES } from '../resourceForm';
+import {requestSampleData as requestImportSampleData} from '../sampleData/imports';
+import {requestFlowSampleData} from '../sampleData/flow';
+// check do we need to load if sample data already loaded
+export function* fetchRequiredMappingData({
+  ssLinkedConnectionId,
+  integrationId,
+  flowId,
+  subRecordMappingId,
+}) {
+  const {recordType: subRecordType} = yield select(selectors.suiteScriptNetsuiteMappingSubRecord, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
+  const {status: importSampleDataStatus} = yield select(selectors.suiteScriptGenerates, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
 
-export const SCOPES = {
-  META: 'meta',
-  VALUE: 'value',
-  SCRIPT: 'script',
-};
-
+  // const {status: flowSampleDataStatus} = yield select(selectors.suiteScriptExtracts, {ssLinkedConnectionId, integrationId, flowId});
+  // we are fetching flow sample data each time. is it correct. In case we are not emptying the state after change, this needs to change
+  yield all([
+    call(requestFlowSampleData, {
+      ssLinkedConnectionId,
+      integrationId,
+      flowId,
+    }),
+    importSampleDataStatus !== 'received' && call(requestImportSampleData, {
+      ssLinkedConnectionId,
+      integrationId,
+      flowId,
+      options: {recordType: subRecordType},
+    }),
+  ]);
+}
 export function* refreshGenerates({ isInit = false }) {
   const {
     mappings = [],
@@ -20,7 +42,7 @@ export function* refreshGenerates({ isInit = false }) {
     integrationId,
     flowId,
     subRecordMappingId,
-  } = yield select(selectors.suiteScriptMappings);
+  } = yield select(selectors.suiteScriptMapping);
 
   const flow = yield select(
     selectors.suiteScriptFlowDetail,
@@ -44,7 +66,12 @@ export function* refreshGenerates({ isInit = false }) {
         commMetaPath: `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`,
         filterKey: 'salesforce-sObjects-childReferenceTo',
       });
-    let sObjectList = [sObjectType];
+    let sObjectList = [];
+
+    // in some configuration sObjectType not defined
+    if (sObjectType) {
+      sObjectList.push(sObjectType);
+    }
 
     // check for each mapping sublist if it relates to childSObject
     generateFields.forEach(({id}) => {
@@ -68,7 +95,7 @@ export function* refreshGenerates({ isInit = false }) {
         }
       }
     });
-    if (isInit) {
+    if (isInit && sObjectType) {
       // during init, parent sObject metadata is already fetched.
       sObjectList = sObjectList.filter(sObject => sObject !== sObjectType);
     }
@@ -104,7 +131,22 @@ export function* refreshGenerates({ isInit = false }) {
     );
   }
 }
+
 export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId, subRecordMappingId }) {
+  /** fetch sample data required to load read mapping */
+  const { cancelInit } = yield race({
+    fetchData: call(fetchRequiredMappingData, {
+      ssLinkedConnectionId,
+      integrationId,
+      flowId,
+      subRecordMappingId,
+    }),
+    cancelInit: take(actionTypes.SUITESCRIPT.MAPPING.CLEAR),
+  });
+
+  // return in case user closes the mapping or does logout/any similar action
+  if (cancelInit) return;
+
   const flow = yield select(
     selectors.suiteScriptFlowDetail,
     {
@@ -113,20 +155,25 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId, subR
       flowId,
     }
   );
-  const {export: exportRes, import: importRes} = flow;
-  const {type: importType} = importRes;
+
+  if (!flow) {
+    return yield put(actions.suiteScript.mapping.initFailed());
+  }
+
+  const {export: exportResource, import: importResource} = flow;
+  const {type: importType} = importResource;
 
   let exportType;
 
-  if (exportRes.netsuite && ['restlet', 'batch', 'realtime'].includes(exportRes.netsuite.type)) {
+  if (exportResource.netsuite && ['restlet', 'batch', 'realtime'].includes(exportResource.netsuite.type)) {
     exportType = 'netsuite';
   } else {
-    exportType = exportRes.type;
+    exportType = exportResource.type;
   }
   const options = {
     importType,
     exportType,
-    connectionId: importRes._connectionId,
+    connectionId: exportResource._connectionId,
     subRecordMappingId,
   };
   let mapping;
@@ -140,30 +187,30 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId, subR
       mapping = netsuiteSubrecordObj.mapping;
       lookups = netsuiteSubrecordObj.lookups;
     } else {
-      options.recordType = importRes.netsuite.recordType;
-      mapping = importRes.mapping;
-      lookups = importRes.netsuite.lookups;
+      options.recordType = importResource.netsuite.recordType;
+      mapping = importResource.mapping;
+      lookups = importResource.netsuite.lookups;
     }
   } else if (importType === 'salesforce') {
-    options.sObjectType = importRes.salesforce.sObjectType;
-    mapping = importRes.mapping;
-    lookups = importRes[importType].lookups;
+    options.sObjectType = importResource.salesforce.sObjectType;
+    mapping = importResource.mapping;
+    lookups = importResource[importType].lookups;
   }
   const subRecordFields = mapping?.fields?.filter(f => f.mappingId);
   // const {type: importType, mapping} = importRes;
-  const generatedMappings = generateFieldAndListMappings({importType, mapping, exportRes, isGroupedSampleData: false});
+  const flattenedMapping = generateFieldAndListMappings({importType, mapping, exportResource, isGroupedSampleData: false});
 
   yield put(actions.suiteScript.mapping.initComplete(
     {
       ssLinkedConnectionId,
       integrationId,
       flowId,
-      generatedMappings,
+      mappings: flattenedMapping,
       subRecordFields,
       lookups,
       options,
     }));
-  yield call(refreshGenerates, {isInit: true });
+  yield put(actions.suiteScript.mapping.refreshGenerates({isInit: true }));
 }
 
 export function* saveMappings() {
@@ -176,7 +223,7 @@ export function* saveMappings() {
     recordType,
     subRecordFields,
     subRecordMappingId,
-  } = yield select(selectors.suiteScriptMappings);
+  } = yield select(selectors.suiteScriptMapping);
   const flow = yield select(
     selectors.suiteScriptFlowDetail,
     {
@@ -287,7 +334,7 @@ export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
     mappings = [],
     subRecordMappingId,
     ssLinkedConnectionId, integrationId, flowId,
-  } = yield select(selectors.suiteScriptMappings);
+  } = yield select(selectors.suiteScriptMapping);
   const flow = yield select(
     selectors.suiteScriptFlowDetail,
     {
@@ -335,7 +382,7 @@ export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
 export function* checkForSFSublistExtractPatch({key, value}) {
   const {
     ssLinkedConnectionId, integrationId, flowId,
-  } = yield select(selectors.suiteScriptMappings);
+  } = yield select(selectors.suiteScriptMapping);
   const {data: flowSampleData} = yield select(selectors.suiteScriptFlowSampleData, {ssLinkedConnectionId, integrationId, flowId});
 
   const childRelationshipField =
@@ -356,7 +403,7 @@ export function* updateImportSampleData() {
     integrationId,
     flowId,
     subRecordMappingId,
-  } = yield select(selectors.suiteScriptMappings);
+  } = yield select(selectors.suiteScriptMapping);
 
   if (!incompleteGenerates.length) return;
 
@@ -392,7 +439,7 @@ export function* updateImportSampleData() {
 export function* patchGenerateThroughAssistant({value}) {
   const {
     lastModifiedRowKey,
-  } = yield select(selectors.suiteScriptMappings);
+  } = yield select(selectors.suiteScriptMapping);
 
   // trigger patch only when user has touched some field.On touch of last field lastModifiedRowKey = 'new'
   if (lastModifiedRowKey) {
@@ -400,6 +447,45 @@ export function* patchGenerateThroughAssistant({value}) {
       lastModifiedRowKey,
       value)
     );
+  }
+}
+
+function* requestPatchField({key, field, value}) {
+  const {mappings} = yield select(selectors.suiteScriptMapping);
+  const mapping = mappings.find(_m => _m.key === key) || {};
+  const {generate, extract} = mapping;
+
+  // check if value changes or user entered something in new row
+  if ((!key && value) || (key && mapping[field] !== value)) {
+    if (key && value === '') {
+      if (
+        (field === 'extract' && !generate) ||
+        (field === 'generate' &&
+          !extract &&
+          !('hardCodedValue' in mapping))
+      ) {
+        return yield put(actions.suiteScript.mapping.delete(key));
+      }
+    }
+
+    return yield put(actions.suiteScript.mapping.patchField(field, key, value));
+  }
+}
+
+export function* validateSuitescriptMappings() {
+  const {
+    mappings,
+    lookups,
+    validationErrMsg,
+  } = yield select(selectors.suiteScriptMapping);
+  const {
+    isSuccess,
+    errMessage,
+  } = validateMappings(mappings, lookups);
+  const newValidationErrMsg = isSuccess ? undefined : errMessage;
+
+  if (newValidationErrMsg !== validationErrMsg) {
+    yield put(actions.suiteScript.mapping.setValidationMsg(newValidationErrMsg));
   }
 }
 export const mappingSagas = [
@@ -410,5 +496,11 @@ export const mappingSagas = [
   takeLatest(actionTypes.METADATA.RECEIVED, updateImportSampleData),
   takeEvery(actionTypes.SUITESCRIPT.MAPPING.CHECK_FOR_SF_SUBLIST_EXTRACT_PATCH, checkForSFSublistExtractPatch),
   takeLatest(actionTypes.SUITESCRIPT.MAPPING.PATCH_GENERATE_THROUGH_ASSISTANT, patchGenerateThroughAssistant),
+  takeEvery(actionTypes.SUITESCRIPT.MAPPING.PATCH_FIELD_REQUEST, requestPatchField),
+  takeLatest([
+    actionTypes.SUITESCRIPT.MAPPING.DELETE,
+    actionTypes.SUITESCRIPT.MAPPING.UPDATE_LOOKUP,
+    actionTypes.SUITESCRIPT.MAPPING.PATCH_SETTINGS,
+  ], validateSuitescriptMappings),
 
 ];

@@ -1,7 +1,7 @@
 import { withStyles } from '@material-ui/core/styles';
 import React, { useCallback, useState, useEffect } from 'react';
 import { Button } from '@material-ui/core';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -44,15 +44,15 @@ const MappingSaveButton = props => {
   } = props;
   const [saveTrigerred, setSaveTriggered] = useState(false);
   const [enquesnackbar] = useEnqueueSnackbar();
-  const { validationErrMsg } = useSelector(state =>
-    selectors.suiteScriptMappings(state)
+  const validationErrMsg = useSelector(state =>
+    selectors.suiteScriptMapping(state).validationErrMsg
   );
   const mappingsChanged = useSelector(state =>
-    selectors.suiteScriptMappingsChanged(state)
+    selectors.suiteScriptMappingChanged(state)
   );
   const dispatch = useDispatch();
   const { saveTerminated, saveCompleted } = useSelector(state =>
-    selectors.suiteScriptMappingsSaveStatus(state)
+    selectors.suiteScriptMappingSaveStatus(state), shallowEqual
   );
 
   const onSave = useCallback(() => {
