@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { isEmpty } from 'lodash';
 import actionTypes from '../../../../actions/types';
 
 export const PING_STATES = {
@@ -59,7 +60,12 @@ export default (state = {}, action) => {
       case actionTypes.SUITESCRIPT.CONNECTION.TEST_CLEAR: {
         if (retainStatus && draft[ssLinkedConnectionId][resourceId]) {
           delete draft[ssLinkedConnectionId][resourceId].message;
-        } else draft[ssLinkedConnectionId][resourceId] = {};
+        } else {
+          delete draft[ssLinkedConnectionId][resourceId];
+          if (isEmpty(draft[ssLinkedConnectionId])) {
+            delete draft[ssLinkedConnectionId];
+          }
+        }
 
         break;
       }

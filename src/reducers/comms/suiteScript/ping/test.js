@@ -62,7 +62,17 @@ describe('reducer test cases', () => {
 
     expect(state).toEqual({
       3: { 4: {status: PING_STATES.SUCCESS}},
-      1: {2: {}}});
+    });
+    // check if it build up state
+    state = reducer(
+      initialState,
+      actions.suiteScript.resource.connections.test(
+        resourceId, null, ssLinkedConnectionId));
+
+    expect(state).toEqual({
+      3: { 4: {status: PING_STATES.SUCCESS}},
+      1: { 2: {status: PING_STATES.LOADING}},
+    });
   });
   test('should clear just the message and retain when clear is dispatched with retainStatus set to true', () => {
     const errorMsg = 'error message';
