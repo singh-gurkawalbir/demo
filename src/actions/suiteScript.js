@@ -145,10 +145,9 @@ export default {
           message,
           ssLinkedConnectionId,
         }),
-      testSuccessful: (resourceId, message, ssLinkedConnectionId) =>
+      testSuccessful: (resourceId, ssLinkedConnectionId) =>
         action(actionTypes.SUITESCRIPT.CONNECTION.TEST_SUCCESSFUL, {
           resourceId,
-          message,
           ssLinkedConnectionId,
         }),
       testClear: (resourceId, retainStatus, ssLinkedConnectionId) =>

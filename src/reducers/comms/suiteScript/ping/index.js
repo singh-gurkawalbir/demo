@@ -53,6 +53,7 @@ export default (state = {}, action) => {
       case actionTypes.SUITESCRIPT.CONNECTION.TEST_CANCELLED: {
         draft[ssLinkedConnectionId][resourceId] = {
           status: PING_STATES.ABORTED,
+          message,
         };
         break;
       }

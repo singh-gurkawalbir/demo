@@ -30,30 +30,31 @@ describe('reducer test cases', () => {
       1: { 2: {status: PING_STATES.ERROR, message: errorMsg}}});
   });
   test('should set the ping state to success when ping successful action is dispatched', () => {
-    const message = 'successMsg';
     const state = reducer(initialState,
       actions.suiteScript.resource.connections.testSuccessful(
-        resourceId, message, ssLinkedConnectionId));
+        resourceId, ssLinkedConnectionId));
 
     expect(state).toEqual({
       3: {4: {status: PING_STATES.SUCCESS }},
       1: {2: {status: PING_STATES.SUCCESS}}});
   });
   test('should set the status to aborted when aborted action is dispatched ', () => {
+    const message = 'abortMessage';
     const state = reducer(initialState,
       actions.suiteScript.resource.connections.testCancelled(
-        resourceId, 'abortMessage', ssLinkedConnectionId));
+        resourceId, message, ssLinkedConnectionId));
 
     expect(state).toEqual({
       3: {4: {status: PING_STATES.SUCCESS}},
-      1: {2: {status: PING_STATES.ABORTED}}});
+      1: {2: {
+        status: PING_STATES.ABORTED,
+        message,
+      }}});
   });
   test('should clear the complete state when clear is dispatched', () => {
-    const message = 'successMsg';
-
     let state = reducer(initialState,
       actions.suiteScript.resource.connections.testSuccessful(
-        ssLinkedConnectionId, message, resourceId));
+        resourceId, ssLinkedConnectionId));
 
     state = reducer(
       initialState,
@@ -98,7 +99,7 @@ describe('reducer test cases', () => {
       expect(selectors.suiteScriptTestConnectionStatus(state, resourceId, ssLinkedConnectionId))
         .toEqual(PING_STATES.LOADING);
       state = reducer(state,
-        actions.suiteScript.resource.connections.testSuccessful(resourceId, 'success msg', ssLinkedConnectionId));
+        actions.suiteScript.resource.connections.testSuccessful(resourceId, ssLinkedConnectionId));
       expect(selectors.suiteScriptTestConnectionStatus(state, resourceId, ssLinkedConnectionId))
         .toEqual(PING_STATES.SUCCESS);
       state = reducer(state,
