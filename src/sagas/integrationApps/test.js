@@ -7,7 +7,16 @@ import { call, select } from 'redux-saga/effects';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
-import { getCurrentStep } from './installer';
+import { openOAuthWindowForConnection } from '../resourceForm/connections/index';
+import { getResource } from '../resources';
+import {
+  installStep,
+  installScriptStep,
+  getCurrentStep,
+  addNewStore,
+  installStoreStep,
+  installInitChild,
+} from './installer';
 import {
   requestUpgrade,
   upgrade,
@@ -19,6 +28,504 @@ import {
 import {initUninstall, uninstallStep, requestSteps} from './uninstaller2.0';
 
 describe('installer saga', () => {
+  describe('installStep generator', () => {
+    const id = 'dummyId';
+    const installerFunction = () => {};
+    const storeId = 'dummyStoreId';
+    const path = `/integrations/${id}/installer/${installerFunction}`;
+    const args = {
+      path,
+      timeout: 5 * 60 * 1000,
+      opts: { body: { storeId }, method: 'PUT' },
+      hidden: true,
+    };
+
+    test('if api call is successful but without response, should not dispatch any action', () => {
+      const addOnId = 'dummyAddOnId';
+      const stepCompleteResponse = null;
+
+      args.opts.body.addOnId = addOnId;
+
+      return expectSaga(installStep, {
+        id,
+        installerFunction,
+        storeId,
+        addOnId,
+      })
+        .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
+        .call(apiCallWithRetry, args)
+        .not.put(
+          actions.api.failure(
+            path,
+            'PUT',
+            null,
+            false
+          )
+        )
+        .run();
+    });
+    test('if api call is successful but stepCompleteResponse.success is false, should dispatch api.failure', () => {
+      const addOnId = 'dummyAddOnId';
+      const stepCompleteResponse = {
+        success: false,
+        resBody: {dummy: 'dummy'},
+      };
+
+      args.opts.body.addOnId = addOnId;
+
+      return expectSaga(installStep, {
+        id,
+        installerFunction,
+        storeId,
+        addOnId,
+      })
+        .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.api.failure(
+            path,
+            'PUT',
+            stepCompleteResponse.resBody || stepCompleteResponse.message,
+            false
+          )
+        )
+        .run();
+    });
+    test('if api is successful and response is a success, should dispatch completedInstall and other actions if addOnId is present', () => {
+      const addOnId = 'dummyAddOnId';
+      const stepCompleteResponse = {
+        success: true,
+        stepsToUpdate: [{ a: 1, b: 2 }, { a: 2, b: 1 }],
+      };
+
+      args.opts.body.addOnId = addOnId;
+
+      return expectSaga(installStep, {
+        id,
+        installerFunction,
+        storeId,
+        addOnId,
+      })
+        .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.completedStepInstall(
+            stepCompleteResponse,
+            id,
+            installerFunction
+          )
+        )
+        .put(actions.integrationApp.settings.requestAddOnLicenseMetadata(id))
+        .put(actions.resource.request('integrations', id))
+        .put(actions.resource.requestCollection('flows'))
+        .put(actions.resource.requestCollection('exports'))
+        .put(actions.resource.requestCollection('imports'))
+        .put(actions.resource.requestCollection('connections'))
+        .put(actions.integrationApp.isAddonInstallInprogress(false, addOnId))
+        .run();
+    });
+    test('if api call fails, should dispatch updateStep and api.failure, and isAddOnInstallInprogress action if addOnId is present', () => {
+      const addOnId = 'dummyAddOnId';
+      const error = new Error();
+
+      args.opts.body.addOnId = addOnId;
+
+      return expectSaga(installStep, {
+        id,
+        installerFunction,
+        storeId,
+        addOnId,
+      })
+        .provide([[call(apiCallWithRetry, args), throwError(error)]])
+        .call(apiCallWithRetry, args)
+        .put(actions.integrationApp.isAddonInstallInprogress(false, addOnId))
+        .put(
+          actions.integrationApp.installer.updateStep(
+            id,
+            installerFunction,
+            'failed'
+          )
+        )
+        .put(actions.api.failure(path, 'PUT', error.message, false))
+        .run();
+    });
+  });
+  describe('installScriptStep generator', () => {
+    const id = '123';
+    let connectionId = 'dummyId';
+    let formSubmission = null;
+    let stackId = 'dummyStackId';
+    const path = `/integrations/${id}/installSteps`;
+    let body = {};
+
+    const args = {
+      path,
+      timeout: 5 * 60 * 1000,
+      opts: {
+        method: 'POST',
+      },
+      hidden: true,
+    };
+
+    test('if api call is successful but with warnings, should dispatch completedStepInstall and resource.request', () => {
+      const connectionDoc = {
+        rest: {
+          authType: 'oauth',
+        },
+      };
+
+      stackId = null;
+
+      if (stackId) {
+        body = {_stackId: stackId};
+      } else {
+        body = formSubmission ||
+        (connectionId
+          ? { _connectionId: connectionId }
+          : { connection: connectionDoc });
+      }
+
+      args.opts.body = body;
+      const stepCompleteResponse = {
+        warnings: 'dummy',
+      };
+      const integration = {
+        initChild: {
+          function: 'somefunc',
+        },
+      };
+
+      return expectSaga(installScriptStep, {
+        id,
+        connectionId,
+        connectionDoc,
+        formSubmission,
+        stackId,
+      })
+        .provide([
+          [select(selectors.resource, 'integrations', id), integration],
+          [call(apiCallWithRetry, args), stepCompleteResponse],
+          [call(installInitChild, { id })],
+        ])
+        .call(apiCallWithRetry, args)
+        .call(installInitChild, { id })
+        .put(
+          actions.integrationApp.installer.completedStepInstall(
+            { stepsToUpdate: [] },
+            id
+          )
+        )
+        .put(actions.resource.request('integrations', id))
+        .run();
+    });
+    test('if api call is successful with response having a connection not authorized and is OAuth type, should authorize the connection and dispatch completedStepInstall', () => {
+      const connectionDoc = {
+        rest: {
+          authType: 'oauth',
+        },
+      };
+
+      stackId = null;
+      formSubmission = {
+        dummy: 'dummy',
+      };
+
+      if (stackId) {
+        body = { _stackId: stackId };
+      } else {
+        body =
+          formSubmission ||
+          (connectionId
+            ? { _connectionId: connectionId }
+            : { connection: connectionDoc });
+      }
+
+      args.opts.body = body;
+      const stepCompleteResponse = [
+        {
+          completed: false,
+          _connectionId: '222',
+        },
+      ];
+      const currentConnectionStep = {
+        completed: false,
+        _connectionId: '222',
+      };
+
+      return expectSaga(installScriptStep, {
+        id,
+        connectionId,
+        connectionDoc,
+        formSubmission,
+        stackId,
+      })
+        .provide([
+          [call(apiCallWithRetry, args), stepCompleteResponse],
+          [
+            call(
+              openOAuthWindowForConnection,
+              currentConnectionStep._connectionId
+            ),
+          ],
+        ])
+        .call(apiCallWithRetry, args)
+        .put(actions.resource.requestCollection('connections'))
+        .put(
+          actions.integrationApp.installer.setOauthConnectionMode(
+            currentConnectionStep._connectionId,
+            true,
+            id
+          )
+        )
+        .call(openOAuthWindowForConnection, currentConnectionStep._connectionId)
+        .put(
+          actions.integrationApp.installer.completedStepInstall(
+            { stepsToUpdate: stepCompleteResponse },
+            id
+          )
+        )
+        .run();
+    });
+    test('if api is successful but connectionDoc is empty, should dispatch completedStepInstall only', () => {
+      const connectionDoc = null;
+
+      if (stackId) {
+        body = {_stackId: stackId};
+      } else {
+        body = formSubmission ||
+        (connectionId
+          ? { _connectionId: connectionId }
+          : { connection: connectionDoc });
+      }
+
+      args.opts.body = body;
+      const stepCompleteResponse = [
+        {
+          completed: false,
+          _connectionId: '222',
+        },
+      ];
+      const currentConnectionStep = {
+        completed: false,
+        _connectionId: '222',
+      };
+
+      return expectSaga(installScriptStep, {
+        id,
+        connectionId,
+        connectionDoc,
+        formSubmission,
+        stackId,
+      })
+        .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
+        // .call(apiCallWithRetry, args)
+        .not.put(actions.resource.requestCollection('connections'))
+        .not.put(
+          actions.integrationApp.installer.setOauthConnectionMode(
+            currentConnectionStep._connectionId,
+            true,
+            id
+          )
+        )
+        .put(
+          actions.integrationApp.installer.completedStepInstall(
+            { stepsToUpdate: stepCompleteResponse },
+            id
+          )
+        )
+        .run();
+    });
+    test('if api call is successful with response having a connection not authorized and is OAuth type, but the authorization of connection fails', () => {
+      const connectionDoc = {
+        rest: {
+          authType: 'oauth',
+        },
+      };
+
+      stackId = null;
+      connectionId = null;
+
+      if (stackId) {
+        body = {_stackId: stackId};
+      } else {
+        body = formSubmission ||
+        (connectionId
+          ? { _connectionId: connectionId }
+          : { connection: connectionDoc });
+      }
+
+      args.opts.body = body;
+      const stepCompleteResponse = [
+        {
+          completed: false,
+          _connectionId: '222',
+        },
+      ];
+      const currentConnectionStep = {
+        completed: false,
+        _connectionId: '222',
+      };
+
+      return expectSaga(installScriptStep, {
+        id,
+        connectionId,
+        connectionDoc,
+        formSubmission,
+        stackId,
+      })
+        .provide([
+          [call(apiCallWithRetry, args), stepCompleteResponse],
+          [call(openOAuthWindowForConnection, currentConnectionStep._connectionId), throwError()],
+        ])
+        .call(apiCallWithRetry, args)
+        .put(actions.resource.requestCollection('connections'))
+        .put(
+          actions.integrationApp.installer.setOauthConnectionMode(
+            currentConnectionStep._connectionId,
+            true,
+            id
+          )
+        )
+        .call(openOAuthWindowForConnection, currentConnectionStep._connectionId)
+        .put(
+          actions.integrationApp.installer.completedStepInstall(
+            { stepsToUpdate: stepCompleteResponse },
+            id
+          )
+        )
+        .run();
+    });
+    test('if api call fails with some error message and both connectionDoc and connectionId are null, should dispatch completedStepInstall, updateStep and api.failure', () => {
+      const connectionDoc = null;
+
+      connectionId = null;
+
+      if (stackId) {
+        body = {_stackId: stackId};
+      } else {
+        body = formSubmission ||
+        (connectionId
+          ? { _connectionId: connectionId }
+          : { connection: connectionDoc });
+      }
+
+      args.opts.body = body;
+      const error = {
+        message: {
+          steps: [{ a: 1, b: 2 }, { a: 2, b: 1 }],
+        },
+      };
+
+      return expectSaga(installScriptStep, {
+        id,
+        connectionId,
+        connectionDoc,
+        formSubmission,
+        stackId,
+      })
+        .provide([[call(apiCallWithRetry, args), throwError(error)]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.completedStepInstall(
+            { stepsToUpdate: error.message.steps },
+            id
+          )
+        )
+        .not.put(actions.resource.requestCollection('connections'))
+        .put(actions.integrationApp.installer.updateStep(id, '', 'failed'))
+        .put(actions.api.failure(path, 'PUT', error.message, false))
+        .run();
+    });
+    test('if api call fails with some error message and either of connectionDoc or connectionId is truthy, should dispatch completedStepInstall, requestCollection, updateStep and api.failure', () => {
+      const connectionDoc = {
+        rest: {
+          authType: 'oauth',
+        },
+      };
+
+      connectionId = null;
+
+      if (stackId) {
+        body = {_stackId: stackId};
+      } else {
+        body = formSubmission ||
+        (connectionId
+          ? { _connectionId: connectionId }
+          : { connection: connectionDoc });
+      }
+
+      args.opts.body = body;
+      const error = {
+        message: {
+          steps: [{ a: 1, b: 2 }, { a: 2, b: 1 }],
+        },
+      };
+
+      return expectSaga(installScriptStep, {
+        id,
+        connectionId,
+        connectionDoc,
+        formSubmission,
+        stackId,
+      })
+        .provide([[call(apiCallWithRetry, args), throwError(error)]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.completedStepInstall(
+            { stepsToUpdate: error.message.steps },
+            id
+          )
+        )
+        .put(actions.resource.requestCollection('connections'))
+        .put(actions.integrationApp.installer.updateStep(id, '', 'failed'))
+        .put(actions.api.failure(path, 'PUT', error.message, false))
+        .run();
+    });
+    test('if api call fails and error message does not have any steps to complete, should dispatch updateStep and api.failure', () => {
+      const connectionDoc = {
+        rest: {
+          authType: 'oauth',
+        },
+      };
+
+      connectionId = null;
+
+      if (stackId) {
+        body = {_stackId: stackId};
+      } else {
+        body = formSubmission ||
+        (connectionId
+          ? { _connectionId: connectionId }
+          : { connection: connectionDoc });
+      }
+
+      args.opts.body = body;
+      const error = {
+        message: {
+          steps: null,
+        },
+      };
+
+      return expectSaga(installScriptStep, {
+        id,
+        connectionId,
+        connectionDoc,
+        formSubmission,
+        stackId,
+      })
+        .provide([[call(apiCallWithRetry, args), throwError(error)]])
+        .call(apiCallWithRetry, args)
+        .not.put(
+          actions.integrationApp.installer.completedStepInstall(
+            { stepsToUpdate: null },
+            id
+          )
+        )
+        .put(actions.integrationApp.installer.updateStep(id, '', 'failed'))
+        .put(actions.api.failure(path, 'PUT', error.message, false))
+        .run();
+    });
+  });
   describe('getCurrentStep generator', () => {
     const id = '1234';
     const form = {
@@ -52,8 +559,44 @@ describe('installer saga', () => {
         .run();
     });
 
+    test('should make API call when init function present and dispatch action with same form meta if response is null or result is false', () => {
+      const step = { type: 'form', form, initFormFunction: 'somefunc' };
+      const args = {
+        path: `/integrations/${id}/currentStep`,
+        timeout: 5 * 60 * 1000,
+        opts: {
+          method: 'GET',
+        },
+        hidden: true,
+      };
+      const expectedOut = {
+        result: null,
+      };
+
+      return expectSaga(getCurrentStep, { id, step })
+        .provide([[call(apiCallWithRetry, args), expectedOut]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.updateStep(
+            id,
+            '',
+            'inProgress',
+            step.form
+          )
+        )
+        .run();
+    });
+
     test('should make API call when init function present and dispatch action with updated form meta', () => {
       const step = { type: 'form', form, initFormFunction: 'somefunc' };
+      const args = {
+        path: `/integrations/${id}/currentStep`,
+        timeout: 5 * 60 * 1000,
+        opts: {
+          method: 'GET',
+        },
+        hidden: true,
+      };
       const expectedOut = {
         result: {
           fieldMap: {
@@ -66,8 +609,8 @@ describe('installer saga', () => {
       };
 
       return expectSaga(getCurrentStep, { id, step })
-        .provide([[matchers.call.fn(apiCallWithRetry), expectedOut]])
-        .call.fn(apiCallWithRetry)
+        .provide([[call(apiCallWithRetry, args), expectedOut]])
+        .call(apiCallWithRetry, args)
         .put(
           actions.integrationApp.installer.updateStep(
             id,
@@ -81,12 +624,212 @@ describe('installer saga', () => {
 
     test('should dispatch failed step action if API call fails', () => {
       const step = { type: 'form', form, initFormFunction: 'somefunc' };
+      const args = {
+        path: `/integrations/${id}/currentStep`,
+        timeout: 5 * 60 * 1000,
+        opts: {
+          method: 'GET',
+        },
+        hidden: true,
+      };
       const error = { code: 422, message: 'unprocessable entity' };
 
       return expectSaga(getCurrentStep, { id, step })
-        .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
-        .call.fn(apiCallWithRetry)
+        .provide([[call(apiCallWithRetry, args), throwError(error)]])
+        .call(apiCallWithRetry, args)
         .put(actions.integrationApp.installer.updateStep(id, '', 'failed'))
+        .run();
+    });
+  });
+  describe('addNewStore generator', () => {
+    const id = '123';
+    const path = `/integrations/${id}/installer/addNewStore`;
+    const args = {
+      path,
+      opts: { body: {}, method: 'PUT' },
+      hidden: true,
+      message: 'Installing',
+    };
+
+    test('if api call is successful without any response, should not dispatch any actions', () => {
+      const steps = null;
+
+      return expectSaga(addNewStore, { id })
+        .provide([[call(apiCallWithRetry, args), steps]])
+        .call(apiCallWithRetry, args)
+        .not.put(actions.resource.requestCollection('connections'))
+        .run();
+    });
+    test('if api call is successful with response, should dispatch receivedNewStoreSteps', () => {
+      const steps = [
+        {
+          completed: false,
+          description: 'Install the bank in CAM',
+          imageURL: '/images/company-logos/cashapp.png',
+          installerFunction: 'installConnectorComponents',
+          name: 'Install Bank',
+        },
+        {
+          completed: false,
+          description: 'Install the bundle in NetSuite',
+          imageURL: '/images/company-logos/netsuite.png',
+          installerFunction: 'installConnectorComponents',
+          name: 'Install Bundle in NetSuite',
+        },
+      ];
+
+      return expectSaga(addNewStore, { id })
+        .provide([[call(apiCallWithRetry, args), steps]])
+        .call(apiCallWithRetry, args)
+        .put(actions.resource.requestCollection('connections'))
+        .put(actions.integrationApp.store.receivedNewStoreSteps(id, steps))
+        .run();
+    });
+    test('if api call fails, should dispatch api.failure and failedNewStoreSteps', () => {
+      const error = new Error();
+
+      return expectSaga(addNewStore, { id })
+        .provide([[call(apiCallWithRetry, args), throwError(error)]])
+        .call(apiCallWithRetry, args)
+        .put(actions.api.failure(path, 'PUT', error && error.message, false))
+        .put(
+          actions.integrationApp.store.failedNewStoreSteps(id, error.message)
+        )
+        .run();
+    });
+  });
+  describe('installStoreStep generator', () => {
+    const id = '123';
+    const installerFunction = () => {};
+    const path = `/integrations/${id}/installer/${installerFunction}`;
+    const args = {
+      path,
+      timeout: 5 * 60 * 1000,
+      opts: { body: {}, method: 'PUT' },
+      hidden: true,
+      message: 'Installing',
+    };
+
+    test('if api call is successful without any response, should not dispatch any actions', () => {
+      const stepCompleteResponse = null;
+
+      return expectSaga(installStoreStep, { id, installerFunction })
+        .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
+        .call(apiCallWithRetry, args)
+        .not.put(
+          actions.api.failure(
+            path,
+            'PUT',
+            null,
+            false
+          )
+        )
+        .run();
+    });
+    test('if api call is successful but stepCompleteResponse.success is false, should dispatch api.failure', () => {
+      const stepCompleteResponse = {
+        success: false,
+        resBody: {
+          dummy: 'dummy',
+        },
+      };
+
+      return expectSaga(installStoreStep, { id, installerFunction })
+        .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.api.failure(
+            path,
+            'PUT',
+            stepCompleteResponse.resBody || stepCompleteResponse.message,
+            false
+          )
+        )
+        .run();
+    });
+    test('if api call is successful with stepCompleteResponse.success true, should dispatch completedStepInstall with stepsToUpdate', () => {
+      const stepCompleteResponse = {
+        success: true,
+        stepsToUpdate: [
+          {step1: 'step1 name', installerFunction: 'installerFunction', dummy1: 'value1'},
+          {step2: 'step2 name', installerFunction: 'installerFunction2', dummy2: 'value2'},
+        ],
+      };
+
+      return expectSaga(installStoreStep, { id, installerFunction })
+        .provide([
+          [call(apiCallWithRetry, args), stepCompleteResponse],
+          [call(getResource, { resourceType: 'integrations', id })],
+        ])
+        .call(apiCallWithRetry, args)
+        .call(getResource, { resourceType: 'integrations', id })
+        .put(
+          actions.integrationApp.store.completedStepInstall(
+            id,
+            installerFunction,
+            stepCompleteResponse.stepsToUpdate
+          )
+        )
+        .run();
+    });
+    test('if api call fails, should dispatch updateStep with flag as failed', () => {
+      const error = new Error();
+
+      return expectSaga(installStoreStep, { id, installerFunction })
+        .provide([[call(apiCallWithRetry, args), throwError(error)]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.store.updateStep(
+            id,
+            installerFunction,
+            'failed'
+          )
+        )
+        .put(actions.api.failure(path, 'PUT', error, false))
+        .run();
+    });
+  });
+  describe('installInitChild generator', () => {
+    const id = '123';
+    const path = `/integrations/${id}/initChild`;
+    const args = {
+      path,
+      timeout: 5 * 60 * 1000,
+      opts: {
+        method: 'POST',
+      },
+      hidden: true,
+    };
+
+    test('if api call is successful, should dispatch resource.request and resource.updateChildIntegration', () => {
+      const childIntegration = {
+        _childIntegrationId: 'dummy',
+      };
+
+      return expectSaga(installInitChild, { id })
+        .provide([[call(apiCallWithRetry, args), childIntegration]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.resource.request(
+            'integrations',
+            childIntegration._childIntegrationId
+          )
+        )
+        .put(
+          actions.resource.updateChildIntegration(
+            id,
+            childIntegration._childIntegrationId
+          )
+        )
+        .run();
+    });
+    test('if api call fails, should dispatch api.failure with error message', () => {
+      const error = new Error();
+
+      return expectSaga(installInitChild, { id })
+        .provide([[call(apiCallWithRetry, args), throwError(error)]])
+        .call(apiCallWithRetry, args)
+        .put(actions.api.failure(path, 'PUT', error.message, false))
         .run();
     });
   });

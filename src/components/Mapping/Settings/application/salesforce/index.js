@@ -89,7 +89,7 @@ export default {
           type: 'refreshableselect',
           filterKey: 'salesforce-sObjects',
           commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
-          label: 'SObject type',
+          label: 'sObject type',
           required: true,
           connectionId,
           helpKey: 'mapping.salesforce.lookup.sObjectType',
