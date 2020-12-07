@@ -1,6 +1,7 @@
 /* global describe, test, expect */
 import reducer, {selectors } from '.';
 import actions from '../../../../actions';
+import { COMM_STATES } from '../../../comms/networkComms';
 
 const initialState = {
   '3-4': {initComplete: true},
@@ -38,7 +39,7 @@ describe('reducer test cases', () => {
 
     expect(state).toEqual({
       '3-4': {initComplete: true},
-      '1-2': {initComplete: true, status: 'saving'}});
+      '1-2': {initComplete: true, status: COMM_STATES.LOADING}});
   });
   test('should set the status to success when submitComplete action is dispatched ', () => {
     const state = reducer(initialStateWithInitComplete,
@@ -46,7 +47,7 @@ describe('reducer test cases', () => {
 
     expect(state).toEqual({
       '3-4': {initComplete: true},
-      '1-2': {initComplete: true, status: 'success'}});
+      '1-2': {initComplete: true, status: COMM_STATES.SUCCESS}});
   });
   test('should set the status to success when submitFailed action is dispatched ', () => {
     const state = reducer(
@@ -56,7 +57,7 @@ describe('reducer test cases', () => {
 
     expect(state).toEqual({
       '3-4': {initComplete: true},
-      '1-2': {initComplete: true, status: 'failed'}});
+      '1-2': {initComplete: true, status: COMM_STATES.ERROR}});
   });
 
   describe('workflow', () => {
@@ -72,14 +73,14 @@ describe('reducer test cases', () => {
 
       expect(selectors.suiteScriptIAFormState(state, {
         ssLinkedConnectionId, integrationId}))
-        .toEqual({ initComplete: true, status: 'saving'});
+        .toEqual({ initComplete: true, status: COMM_STATES.LOADING});
 
       state = reducer(state,
         actions.suiteScript.iaForm.submitComplete(ssLinkedConnectionId, integrationId));
 
       expect(selectors.suiteScriptIAFormState(state, {
         ssLinkedConnectionId, integrationId}))
-        .toEqual({ initComplete: true, status: 'success'});
+        .toEqual({ initComplete: true, status: COMM_STATES.SUCCESS});
     });
     test('save process failing of a suiteScript form should indicate states correctly', () => {
       let state = reducer(initialStateWithInitComplete,
@@ -93,14 +94,14 @@ describe('reducer test cases', () => {
 
       expect(selectors.suiteScriptIAFormState(state, {
         ssLinkedConnectionId, integrationId}))
-        .toEqual({ initComplete: true, status: 'saving'});
+        .toEqual({ initComplete: true, status: COMM_STATES.LOADING});
 
       state = reducer(state,
         actions.suiteScript.iaForm.submitFailed(ssLinkedConnectionId, integrationId));
 
       expect(selectors.suiteScriptIAFormState(state, {
         ssLinkedConnectionId, integrationId}))
-        .toEqual({ initComplete: true, status: 'failed'});
+        .toEqual({ initComplete: true, status: COMM_STATES.ERROR});
     });
   });
 });

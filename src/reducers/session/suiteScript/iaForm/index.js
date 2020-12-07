@@ -1,5 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../../../actions/types';
+import {COMM_STATES} from '../../../comms/networkComms';
 
 const iaFormKey = (
   ssLinkedConnectionId,
@@ -32,15 +33,15 @@ export default (state = {}, action) => {
         return;
       case actionTypes.SUITESCRIPT.IA_FORM.SUBMIT:
         if (!draft[key])draft[key] = {};
-        draft[key].status = 'saving';
+        draft[key].status = COMM_STATES.LOADING;
 
         return;
       case actionTypes.SUITESCRIPT.IA_FORM.SUBMIT_COMPLETE:
-        draft[key].status = 'success';
+        draft[key].status = COMM_STATES.SUCCESS;
 
         return;
       case actionTypes.SUITESCRIPT.IA_FORM.SUBMIT_FAILED:
-        draft[key].status = 'failed';
+        draft[key].status = COMM_STATES.ERROR;
         break;
       default:
     }
@@ -55,13 +56,9 @@ selectors.suiteScriptIAFormState = (
   state,
   { ssLinkedConnectionId, integrationId }
 ) => {
-  if (!state) {
-    return emptyObj;
-  }
-
   const key = iaFormKey(ssLinkedConnectionId, integrationId);
 
-  return state[key] || emptyObj;
+  return state?.[key] || emptyObj;
 };
 
 selectors.suiteScriptIAFormSaving = (
@@ -71,6 +68,6 @@ selectors.suiteScriptIAFormSaving = (
   if (!state) return false;
   const key = iaFormKey(ssLinkedConnectionId, integrationId);
 
-  return !!(state?.[key]?.status === 'saving');
+  return !!(state?.[key]?.status === COMM_STATES.LOADING);
 };
 // #endregion

@@ -12,6 +12,7 @@ import Spinner from '../../../../../../../components/Spinner';
 import { ActionsPanel } from '../../../../../../Integration/App/panels/Flows';
 import { FormStateManager } from '../../../../../../../components/ResourceFormFactory';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
+import { COMM_STATES } from '../../../../../../../reducers/comms/networkComms';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -59,6 +60,7 @@ const SettingsForm = props => {
     </>
   );
 };
+
 export const SuiteScriptForm = props => {
   const dispatch = useDispatch();
 
@@ -84,12 +86,12 @@ export const SuiteScriptForm = props => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    if (status === 'success') setCount(count => count + 1);
+    if (status === COMM_STATES.SUCCESS) setCount(count => count + 1);
   }, [status]);
 
   return (
     <>
-      {status === 'saving' && <SavingMask />}
+      {status === COMM_STATES.LOADING && <SavingMask />}
       <SettingsForm
         key={count}
         formState={formState}
