@@ -368,8 +368,6 @@ describe('getResourceFromAssets load correct form', () => {
         ['distributed', {id: 'something', type: 'distributed'}, 'distributed.bearerToken'],
         ['once', {id: 'something', type: 'once'}, 'once.booleanField'],
         ['delta', {id: 'something', type: 'delta'}, 'delta.dateFormat'],
-        ['test', {id: 'something', type: 'test'}, 'test.limit'],
-
       ];
 
       test.each(inputs)('should load a %s export form', (name, resource, fieldId) => {

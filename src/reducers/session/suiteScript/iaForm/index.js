@@ -48,6 +48,7 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
+const emptyObj = {};
 export const selectors = {};
 
 selectors.suiteScriptIAFormState = (
@@ -55,12 +56,12 @@ selectors.suiteScriptIAFormState = (
   { ssLinkedConnectionId, integrationId }
 ) => {
   if (!state) {
-    return {};
+    return emptyObj;
   }
 
   const key = iaFormKey(ssLinkedConnectionId, integrationId);
 
-  return state[key] || {};
+  return state[key] || emptyObj;
 };
 
 selectors.suiteScriptIAFormSaving = (

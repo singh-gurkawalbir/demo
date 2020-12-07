@@ -72,11 +72,15 @@ export const SuiteScriptForm = props => {
     };
   }, [dispatch, integrationId, ssLinkedConnectionId]);
 
-  const {status} = useSelector(state => selectors.suiteScriptIAFormState(state, {
-    ssLinkedConnectionId,
-    integrationId,
-  }));
-
+  const formState = useSelector(
+    state =>
+      selectors.suiteScriptIAFormState(
+        state,
+        {integrationId, ssLinkedConnectionId}
+      ),
+    shallowEqual
+  );
+  const status = formState?.status;
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -88,6 +92,7 @@ export const SuiteScriptForm = props => {
       {status === 'saving' && <SavingMask />}
       <SettingsForm
         key={count}
+        formState={formState}
         {...props}
     />
     </>
@@ -110,15 +115,6 @@ export default function ConfigureSettings({ ssLinkedConnectionId, integrationId,
     [id, integrationId, section, ssLinkedConnectionId]
   );
 
-  const formState = useSelector(
-    state =>
-      selectors.suiteScriptIAFormState(
-        state,
-        {integrationId, ssLinkedConnectionId}
-      ),
-    shallowEqual
-  );
-
   return (
     <LoadSuiteScriptResources
       required
@@ -130,7 +126,6 @@ export default function ConfigureSettings({ ssLinkedConnectionId, integrationId,
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId}
         sectionId={id}
-        formState={formState}
         className={clsx(classes.configureDrawerform, {
           [classes.configureDrawerCamForm]: section.sections,
         })}
