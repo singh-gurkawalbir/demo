@@ -5,11 +5,10 @@ import {
   getUploadedFileStatus,
   getFileReaderOptions,
   getJSONContent,
-  // getCsvFromXlsx,
   generateCSVFields,
   getFileColumns,
 } from '.';
-import errorStore from '../../constants/errors';
+import messageStore from '../../constants/messages';
 
 describe('isValidFileType util', () => {
   test('should return true if fileType is empty eg ADP connector', () => {
@@ -92,7 +91,7 @@ describe('getUploadedFileStatus util', () => {
     };
     const expectedObj = {
       success: false,
-      error: errorStore('FILE_SIZE_EXCEEDED'),
+      error: messageStore('FILE_SIZE_EXCEEDED'),
     };
 
     expect(getUploadedFileStatus(file, 'json', {maxSize: 1000})).toEqual(expectedObj);
@@ -106,7 +105,7 @@ describe('getUploadedFileStatus util', () => {
     };
     const expectedObj = {
       success: false,
-      error: errorStore('FILE_TYPE_INVALID', {fileType: 'json'}),
+      error: messageStore('FILE_TYPE_INVALID', {fileType: 'json'}),
     };
 
     expect(getUploadedFileStatus(file, 'json', {maxSize: 1000})).toEqual(expectedObj);
@@ -141,16 +140,17 @@ describe('getFileReaderOptions util', () => {
 
 describe('getJSONContent util', () => {
   test('should return error if provided data is empty or not a json string', () => {
-    expect(getJSONContent()).toEqual({ success: false, error: errorStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
-    expect(getJSONContent('')).toEqual({ success: false, error: errorStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
-    expect(getJSONContent('{some}')).toEqual({ success: false, error: errorStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
+    expect(getJSONContent()).toEqual({ success: false, error: messageStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
+    expect(getJSONContent('')).toEqual({ success: false, error: messageStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
+    expect(getJSONContent('{some}')).toEqual({ success: false, error: messageStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
   });
   test('should return success with parsed content if valid json string is provided', () => {
     expect(getJSONContent('{"key":"value"}')).toEqual({ success: true, data: {key: 'value'}});
   });
 });
 
-// TODO: describe('getCsvFromXlsx util', () => {})
+// TODO: describe('getCsvFromXlsx util', () => {});
+// requires some research on how to read a file locally
 
 describe('generateCSVFields util', () => {
   test('should return empty array if data is empty', () => {

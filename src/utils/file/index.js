@@ -2,7 +2,7 @@ import { each } from 'lodash';
 import { MAX_FILE_SIZE } from '../constants';
 import { isJsonString } from '../string';
 import retry from '../retry';
-import errorStore from '../../constants/errors';
+import messageStore from '../../constants/messages';
 
 // A map that returns corresponding application file types used for file uploading
 export const fileTypeToApplicationTypeMap = {
@@ -48,9 +48,9 @@ export const getUploadedFileStatus = (file, fileType, fileProps = {}) => {
   if (!file) return {};
   const { maxSize = MAX_FILE_SIZE } = fileProps;
 
-  if (!isValidFileSize(file, maxSize)) return { success: false, error: errorStore('FILE_SIZE_EXCEEDED') };
+  if (!isValidFileSize(file, maxSize)) return { success: false, error: messageStore('FILE_SIZE_EXCEEDED') };
 
-  if (fileType && !isValidFileType(fileType, file)) return { success: false, error: errorStore('FILE_TYPE_INVALID', {fileType}) };
+  if (fileType && !isValidFileType(fileType, file)) return { success: false, error: messageStore('FILE_TYPE_INVALID', {fileType}) };
 
   return { success: true };
 };
@@ -71,7 +71,7 @@ export function getFileReaderOptions(type) {
 
 export const getJSONContent = data => {
   if (!isJsonString(data)) {
-    return { success: false, error: errorStore('FILE_TYPE_INVALID', {fileType: 'JSON'}) };
+    return { success: false, error: messageStore('FILE_TYPE_INVALID', {fileType: 'JSON'}) };
   }
 
   return { success: true, data: JSON.parse(data) };

@@ -1,10 +1,10 @@
-const errors = {
+const messages = {
   FILE_SIZE_EXCEEDED: 'File exceeds max file size',
   FILE_TYPE_INVALID: 'Please select valid {{{fileType}}} file',
 };
 
-const errorStore = (errorKey, argsObj) => {
-  let str = errors[errorKey];
+const messageStore = (key, argsObj) => {
+  let str = messages[key];
 
   if (!str) return '';
   if (!argsObj || typeof argsObj !== 'object') return str;
@@ -16,4 +16,4 @@ const errorStore = (errorKey, argsObj) => {
   return str;
 };
 
-export default errorStore;
+export default messageStore;
