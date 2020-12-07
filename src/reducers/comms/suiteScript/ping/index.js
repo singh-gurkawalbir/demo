@@ -75,32 +75,11 @@ selectors.suiteScriptTestConnectionStatus = (
   state,
   resourceId,
   ssLinkedConnectionId
-) => {
-  if (
-    !state ||
-    !state[ssLinkedConnectionId] ||
-    !state[ssLinkedConnectionId][resourceId]
-  ) {
-    return null;
-  }
-  const { status } = state[ssLinkedConnectionId][resourceId];
-
-  return status;
-};
+) => state?.[ssLinkedConnectionId]?.[resourceId]?.status || null;
 
 selectors.suiteScriptTestConnectionMessage = (
   state,
   resourceId,
   ssLinkedConnectionId
-) => {
-  if (
-    !state ||
-    !state[ssLinkedConnectionId] ||
-    !state[ssLinkedConnectionId][resourceId]
-  ) {
-    return null;
-  }
-  const { message } = state[ssLinkedConnectionId][resourceId];
+) => state?.[ssLinkedConnectionId]?.[resourceId]?.message || null;
 
-  return message;
-};
