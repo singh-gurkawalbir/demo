@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 
-export default function getFilteredErrors(errors = [], options = {}) {
+export const getFilteredErrors = (errors = [], options = {}) => {
   const { keyword, searchBy = [] } = options;
 
   function searchKey(resource, key) {
@@ -20,7 +20,7 @@ export default function getFilteredErrors(errors = [], options = {}) {
   };
 
   return errors.filter(errorFilter);
-}
+};
 
 export const formatErrorDetails = (error = {}) => {
   const { occurredAt, code, message, errorId, traceKey, source } = error;
@@ -48,8 +48,10 @@ export const getErrorMapWithTotal = (errorList = [], resourceId) => {
   let totalCount = 0;
 
   errorList.forEach(error => {
-    errorMap[error[resourceId]] = error.numError;
-    totalCount += error.numError;
+    if (resourceId && error[resourceId]) {
+      errorMap[error[resourceId]] = error.numError;
+      totalCount += error.numError;
+    }
   });
 
   return {data: errorMap, total: totalCount};
@@ -73,7 +75,7 @@ export const getErrorCountDiffMap = (prevErrorMap = {}, currErrorMap = {}) => {
   const errorDiffMap = {};
 
   resourceIds.forEach(resourceId => {
-    errorDiffMap[resourceId] = currErrorMap[resourceId] - (prevErrorMap[resourceId] || 0);
+    errorDiffMap[resourceId] = (currErrorMap[resourceId] || 0) - (prevErrorMap[resourceId] || 0);
   });
 
   return errorDiffMap;

@@ -2,16 +2,15 @@
 import { isEmpty, each, isArray } from 'lodash';
 import moment from 'moment';
 import deepClone from 'lodash/cloneDeep';
-import jsonUtil from './json';
-import { isFileAdaptor, isBlobTypeResource } from './resource';
-import { extractMappingFieldsFromCsv } from './mapping';
+import jsonUtil from '../json';
+import { isFileAdaptor, isBlobTypeResource } from '../resource';
+import { extractMappingFieldsFromCsv } from '../mapping';
 import {
-  getFormattedNSSalesOrderMetadataData,
-  getFormattedNSCustomerSampleData,
   filterSubListProperties,
   getFormattedSalesForceMetadata,
-} from './metadata';
-import { getUnionObject, getTransformPaths } from './jsonPaths';
+  getFormattedNetsuiteMetadataData,
+} from '../metadata';
+import { getUnionObject, getTransformPaths } from '../jsonPaths';
 
 // wrap the function inside useMemo since result may contain property 'lastExportDateTime' which refers to new Date()
 export default function getFormattedSampleData({
@@ -58,7 +57,7 @@ export default function getFormattedSampleData({
     data.lastExportDateTime = new Date().toISOString();
   }
 
-  if (_connection && _connection.type === 'as2') {
+  if (_connection?.type === 'as2') {
     data.uuid = 'uuid';
   }
 
@@ -66,6 +65,7 @@ export default function getFormattedSampleData({
 }
 
 export function getDefaultData(obj) {
+  if (!obj) return;
   const _obj = obj;
 
   Object.keys(_obj).forEach(key => {
@@ -163,11 +163,11 @@ export const getFormattedObject = objData => {
 };
 
 export const getSampleValue = (type, id) => {
-  let sampleValue = id.split('[*].').length === 1 ? id : id.split('[*].')[1];
-
   if (!id) {
-    return sampleValue;
+    return;
   }
+
+  let sampleValue = id.split('[*].').length === 1 ? id : id.split('[*].')[1];
 
   switch (type) {
     case 'email':
@@ -196,79 +196,6 @@ export const getSampleValue = (type, id) => {
 
   return sampleValue;
 };
-
-export function getFormattedNetsuiteMetadataData(nsMetaData, nsRecordType) {
-  const formattedNSMetadata = [];
-
-  each(nsMetaData, metadata => {
-    const { sublist, type, id, ...rest } = metadata;
-    let formattedID = id;
-
-    if (['_billing_addressbook', '_shipping_addressbook'].includes(sublist)) {
-      if (sublist === '_billing_addressbook') {
-        formattedID = id.replace(`${sublist}[*].`, '_billingaddress_');
-      }
-
-      if (sublist === '_shipping_addressbook') {
-        formattedID = id.replace(`${sublist}[*].`, '_shippingaddress_');
-      }
-
-      if (type === 'select' && id.indexOf('.') === -1) {
-        formattedID += '.name';
-      }
-    }
-
-    if (type === 'select') {
-      if (sublist) {
-        if (formattedID.indexOf('.') === formattedID.lastIndexOf('.')) {
-          formattedID += '.name';
-        }
-      } else if (formattedID.indexOf('.') === -1) {
-        formattedID += '.name';
-      }
-    }
-
-    formattedNSMetadata.push({ ...rest, type, id: formattedID });
-
-    if (id === '_billingaddress_state') {
-      formattedNSMetadata.push(
-        {
-          id: '_billingaddress_dropdownstate.internalid',
-          name: 'Billing State (InternalId)',
-          type: 'select',
-        },
-        {
-          id: '_billingaddress_dropdownstate.name',
-          name: 'Billing State (Name)',
-          type: 'select',
-        }
-      );
-    } else if (id === '_shippingaddress_state') {
-      formattedNSMetadata.push(
-        {
-          id: '_shippingaddress_dropdownstate.internalid',
-          name: 'Shipping State (InternalId)',
-          type: 'select',
-        },
-        {
-          id: '_shippingaddress_dropdownstate.name',
-          name: 'Shipping State (Name)',
-          type: 'select',
-        }
-      );
-    }
-  });
-
-  if (nsRecordType === 'salesorder') {
-    return getFormattedNSSalesOrderMetadataData(formattedNSMetadata);
-  }
-
-  if (nsRecordType === 'customer') {
-    return getFormattedNSCustomerSampleData(formattedNSMetadata);
-  }
-
-  return formattedNSMetadata;
-}
 
 /*
  * Given NS metadata list converts into JSON sample data format
@@ -302,6 +229,8 @@ export const getSalesforceRealTimeSampleData = sfMetadata => {
   const sfFormattedMetadata = getFormattedSalesForceMetadata(sfMetadata);
   const salesforceSampleData = {};
 
+  // TODO: below loop is redundant as 'type' is not present in 'sfFormattedMetadata'
+  // @raghu pls check this
   // Attach sample values against each field id for sample data
   each(sfFormattedMetadata, field => {
     const { id, type } = field;
@@ -373,12 +302,11 @@ export const getPathSegments = path => {
 };
 
 export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
-  if (!sampleData) return { value: null };
-
-  if (!resourcePath) return sampleData;
+  if (!sampleData || !resourcePath) return sampleData;
 
   if (typeof resourcePath !== 'string') return;
   const segments = getPathSegments(resourcePath.replace(/\.?\*$/, ''));
+
   let processedSampleData = sampleData;
 
   // Segments : Array of level wiser paths to drill down the sample data
@@ -387,7 +315,7 @@ export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
 
     return processedSampleData;
   } catch (e) {
-    return {};
+    return undefined;
   }
 };
 
@@ -463,11 +391,11 @@ export const generateTransformationRulesOnXMLData = xmlJsonData => {
   * pathSegments: ["e", "check", "f"] points to "f" attribute which is an array returns true
   * If not an array returns false
  */
-const isValidPathToMany = (sampleData, pathSegments) => {
+export const isValidPathToMany = (sampleData, pathSegments) => {
   let isValid = false;
   let temp = { ...sampleData };
 
-  pathSegments.forEach(path => {
+  pathSegments?.forEach(path => {
     if (!temp) return;
     temp = temp[path];
   });
@@ -493,7 +421,7 @@ const isValidPathToMany = (sampleData, pathSegments) => {
   * }
  */
 export const processOneToManySampleData = (sampleData, resource) => {
-  const { pathToMany } = resource;
+  const { pathToMany } = resource || {};
   const pathSegments = getPathSegments(pathToMany);
 
   if (!sampleData || !pathSegments || !pathSegments.length) return sampleData;
@@ -698,7 +626,7 @@ export const wrapSampleDataWithContext = ({
       return {
         status,
         data: {
-          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
+          preMapData: preMapSampleData?.data ? [preMapSampleData.data] : [],
           postMapData: data ? [data] : [],
           ...resourceIds,
           settings,
@@ -708,8 +636,8 @@ export const wrapSampleDataWithContext = ({
       return {
         status,
         data: {
-          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
-          postMapData: postMapSampleData.data ? [postMapSampleData.data] : [],
+          preMapData: preMapSampleData?.data ? [preMapSampleData.data] : [],
+          postMapData: postMapSampleData?.data ? [postMapSampleData.data] : [],
           responseData: [data].map(() => ({
             statusCode: 200,
             errors: [{ code: '', message: '', source: '' }],
