@@ -5,7 +5,7 @@ import {
   isProduction,
   conditionalLookupOptionsforSalesforce,
   conditionalLookupOptionsforSalesforceProduction,
-} from '../../../../../forms/utils';
+} from '../../../../../forms/formFactory/utils';
 
 const emptyObject = {};
 export default {
@@ -89,7 +89,7 @@ export default {
           type: 'refreshableselect',
           filterKey: 'salesforce-sObjects',
           commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
-          label: 'SObject type',
+          label: 'sObject type',
           required: true,
           connectionId,
           helpKey: 'mapping.salesforce.lookup.sObjectType',

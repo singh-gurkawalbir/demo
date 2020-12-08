@@ -15,6 +15,7 @@ const flowTypeToIdPrefixMap = {
 export const flowTypeFromId = _id => {
   let type;
 
+  if (!_id) { return null; }
   Object.keys(flowTypeToIdPrefixMap).forEach(key => {
     if (_id.startsWith(flowTypeToIdPrefixMap[key])) {
       type = key;
@@ -27,9 +28,18 @@ export const flowTypeFromId = _id => {
 export const generateUniqueFlowId = (_id, type) => `${flowTypeToIdPrefixMap[type]}${_id}`;
 
 export const getFlowIdAndTypeFromUniqueId = _id => {
+  const returnValue = {
+    flowType: null,
+    flowId: null,
+  };
+
+  if (!_id) { return returnValue; }
   const flowType = flowTypeFromId(_id);
 
-  return {flowType, flowId: _id.replace(flowTypeToIdPrefixMap[flowType], '')};
+  returnValue.flowType = flowType;
+  returnValue.flowId = _id.replace(flowTypeToIdPrefixMap[flowType], '');
+
+  return returnValue;
 };
 
 export const suiteScriptResourceKey = ({

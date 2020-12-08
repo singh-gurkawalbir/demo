@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
-import formFactory from '../../forms/formFactory';
+import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../reducers';
@@ -116,14 +116,24 @@ export const ResourceFormFactory = props => {
   ]);
 
   const { optionsHandler, validationHandler } = useMemo(
-    () =>
-      formFactory.getResourceFormAssets({
-        resourceType,
-        resource,
-        isNew,
-        connection,
-        integrationId,
-      }),
+    () => {
+      let metadataAssets;
+
+      try {
+        // try to load the assets if it can't initForm saga should fail anyway
+        metadataAssets = getResourceFormAssets({
+          resourceType,
+          resource,
+          isNew,
+          connection,
+          integrationId,
+        });
+      } catch (e) {
+        metadataAssets = {};
+      }
+
+      return metadataAssets;
+    },
     [connection, isNew, resource, resourceType, integrationId]
   );
   const { fieldMeta } = formState;

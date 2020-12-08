@@ -59,7 +59,7 @@ const FirstLevelModal = props => {
       parentSObjectType: {
         id: 'parentSObjectType',
         name: '/parentSObjectType',
-        label: 'Parent SObject type:',
+        label: 'Parent sObject type:',
         type: 'refreshableselect',
         helpKey: 'parentSObjectType',
         filterKey: 'salesforce-sObjects-referenceFields',

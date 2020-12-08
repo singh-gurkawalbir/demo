@@ -11,6 +11,7 @@ import Close from '../../../icons/CloseIcon';
 import ConnectionStatusPanel from '../../ConnectionStatusPanel';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
+import { useRedirectToParentRoute } from '../../../drawer/Resource/Panel';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -60,6 +61,15 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
 }));
+const useSuiteScriptFormRedirectionToParentRoute = (ssLinkedConnectionId, resourceType, id) => {
+  const initFailed = useSelector(state => selectors.suiteScriptResourceFormState(state, {
+    resourceType,
+    resourceId: id,
+    ssLinkedConnectionId,
+  })?.initFailed);
+
+  useRedirectToParentRoute(initFailed);
+};
 
 export default function Panel(props) {
   const {
@@ -79,6 +89,8 @@ export default function Panel(props) {
       id = flowId;
     }
   }
+
+  useSuiteScriptFormRedirectionToParentRoute(ssLinkedConnectionId, resourceType, id);
 
   const isNew = operation === 'add';
   const dispatch = useDispatch();

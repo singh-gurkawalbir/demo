@@ -1,6 +1,6 @@
 export default {
   'import.salesforce.sObjectType': {
-    label: 'SObject type',
+    label: 'sObject type',
     type: 'refreshableselect',
     filterKey: 'salesforce-sObjects',
     commMetaPath: r =>
@@ -9,7 +9,7 @@ export default {
       `suitescript/connections/${r.ssLinkedConnectionId}/connections/${r.import._connectionId}/sObjectTypes`,
     connectionId: r => r && r.ssLinkedConnectionId,
     required: true,
-    placeholder: 'Please select a sObject type',
+    placeholder: 'Please select an sObject type',
     helpKey: 'import.salesforce.sObjectType',
   },
   'import.salesforce.operation': {

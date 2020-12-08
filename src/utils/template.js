@@ -1,6 +1,6 @@
 /* eslint-disable no-plusplus */
 import { some, reduce } from 'lodash';
-import {applicationsList} from '../constants/applications';
+import { applicationsList } from '../constants/applications';
 import {
   NETSUITE_BUNDLE_URL,
   SALESFORCE_DA_PACKAGE_URL,
@@ -21,32 +21,43 @@ export const getTemplateUrlName = applications => {
 };
 
 export const getApplication = conn => {
+  if (!conn) {
+    return {};
+  }
   const applications = applicationsList();
-  const app =
-        applications.find(a => {
-          if (conn.assistant) {
-            return a.id === conn.assistant;
-          }
+  const app = applications.find(a => {
+    if (conn.assistant) {
+      return a.id === conn.assistant;
+    }
 
-          if (conn.type === 'rdbms' && conn.rdbms) {
-            return a.id === conn.rdbms.type;
-          }
+    if (conn.type === 'rdbms' && conn.rdbms) {
+      return a.id === conn.rdbms.type;
+    }
 
-          return a.id === conn.type;
-        }) || {};
+    return a.id === conn.type;
+  }) || {};
 
-  return {name: app.name, id: app.id};
+  return { name: app.name, id: app.id };
 };
 
 export default {
-  getDependentResources: (components = []) =>
-    components.map(component => ({
+  getDependentResources: components => {
+    if (!components || !Array.isArray(components)) {
+      return [];
+    }
+
+    return components.map(component => ({
       resourceType: `${component.model.toLowerCase()}s`,
       id: component._id,
-    })),
+    }));
+  },
   getInstallSteps: previewData => {
     const connectionMap = {};
     const installSteps = [];
+
+    if (!previewData || !previewData.objects) {
+      return {connectionMap, installSteps};
+    }
     let netsuiteConnFound = false;
     let salesforceConnFound = false;
     const {

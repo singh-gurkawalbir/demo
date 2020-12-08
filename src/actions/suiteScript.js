@@ -9,7 +9,6 @@ export default {
   iaForm: {
     initComplete: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.INIT_COMPLETE, {ssLinkedConnectionId, integrationId}),
     initClear: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.INIT_CLEAR, {ssLinkedConnectionId, integrationId}),
-    showFormValidations: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.SHOW_FORM_VALIDATION_ERRORS, {ssLinkedConnectionId, integrationId}),
     submit: (ssLinkedConnectionId, integrationId, sectionId, values) => action(actionTypes.SUITESCRIPT.IA_FORM.SUBMIT, {ssLinkedConnectionId, integrationId, sectionId, values}),
     submitComplete: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.SUBMIT_COMPLETE, {ssLinkedConnectionId, integrationId}),
     submitFailed: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.SUBMIT_FAILED, {ssLinkedConnectionId, integrationId}),
@@ -21,6 +20,12 @@ export default {
     clear: (ssLinkedConnectionId, integrationId, featureName) => action(actionTypes.SUITESCRIPT.FEATURE_CHECK.CLEAR, {ssLinkedConnectionId, integrationId, featureName}),
   },
   resourceForm: {
+    initFailed: (ssLinkedConnectionId, resourceType, resourceId) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT_FAILED, {
+        ssLinkedConnectionId,
+        resourceType,
+        resourceId,
+      }),
     init: (
       ssLinkedConnectionId,
       resourceType,
@@ -57,15 +62,6 @@ export default {
         flowId,
         ssLinkedConnectionId,
       }),
-    showFormValidations: (resourceType, resourceId, ssLinkedConnectionId) =>
-      action(
-        actionTypes.SUITESCRIPT.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS,
-        {
-          resourceType,
-          resourceId,
-          ssLinkedConnectionId,
-        }
-      ),
     clear: (ssLinkedConnectionId, resourceType, resourceId) =>
       action(actionTypes.SUITESCRIPT.RESOURCE_FORM.CLEAR, {
         resourceType,
@@ -149,10 +145,9 @@ export default {
           message,
           ssLinkedConnectionId,
         }),
-      testSuccessful: (resourceId, message, ssLinkedConnectionId) =>
+      testSuccessful: (resourceId, ssLinkedConnectionId) =>
         action(actionTypes.SUITESCRIPT.CONNECTION.TEST_SUCCESSFUL, {
           resourceId,
-          message,
           ssLinkedConnectionId,
         }),
       testClear: (resourceId, retainStatus, ssLinkedConnectionId) =>

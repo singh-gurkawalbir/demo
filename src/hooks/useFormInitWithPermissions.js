@@ -2,7 +2,7 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import useForm from '../components/Form';
 import { selectors } from '../reducers';
-import { fieldIDsExceptClockedFields } from '../forms/utils';
+import { fieldIDsExceptClockedFields } from '../forms/formFactory/utils';
 import actions from '../actions';
 
 export default function useFormInitWithPermissions(props) {

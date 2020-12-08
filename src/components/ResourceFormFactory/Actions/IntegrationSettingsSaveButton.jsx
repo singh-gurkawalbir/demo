@@ -5,7 +5,7 @@ import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import { selectors } from '../../../reducers';
 import { useLoadingSnackbarOnSave } from '.';
-import { integrationSettingsToDynaFormMetadata } from '../../../forms/utils';
+import { integrationSettingsToDynaFormMetadata } from '../../../forms/formFactory/utils';
 
 const useStyles = makeStyles(theme => ({
   actionButton: {

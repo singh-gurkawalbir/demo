@@ -9,6 +9,8 @@ import AppBlock from '../AppBlock';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import {applicationsList} from '../../../constants/applications';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+
 import {
   getResourceSubType,
   generateNewId,
@@ -72,6 +74,7 @@ const PageGenerator = ({
       ? emptyObj
       : selectors.resource(state, resourceType, resourceId) || emptyObj
   );
+  const allowSchedule = useSelectorMemo(selectors.mkFlowAllowsScheduling, flowId);
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pg._connectionId)
   );
@@ -304,7 +307,7 @@ const PageGenerator = ({
     let generatorActions = [];
 
     if (!pending) {
-      if (['export', 'exportTransfer'].indexOf(blockType) >= 0) {
+      if (allowSchedule && ['export', 'exportTransfer'].indexOf(blockType) >= 0) {
         generatorActions.push({
           ...scheduleAction,
           isUsed: usedActions[actionsMap.schedule],
@@ -336,6 +339,7 @@ const PageGenerator = ({
 
     return generatorActions;
   }, [
+    allowSchedule,
     blockType,
     connectionHasAs2Routing,
     exportNeedsRouting,

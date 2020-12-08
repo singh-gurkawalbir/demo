@@ -130,7 +130,6 @@ import postmark from './postmark';
 import klaviyo from './klaviyo';
 import returnly from './returnly';
 import aptrinsic from './aptrinsic';
-// import cardknox from './cardknox';
 import coupa from './coupa';
 import microsoftdynamics365 from './microsoftdynamics365';
 import microsoftbusinesscentral from './microsoftbusinesscentral';
