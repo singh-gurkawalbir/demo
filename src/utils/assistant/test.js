@@ -1916,6 +1916,155 @@ describe('updateFormValues', () => {
   );
 });
 
+const restServiceNowData = {
+  export: {
+    labels: {
+      version: 'API Version',
+      resource: 'API Name',
+      endpoint: 'Operation',
+    },
+    successPath: 'result',
+    successValues: 'true',
+    urlResolution: [],
+    paging: {
+      pagingMethod: 'skipargument',
+      skipArgument: 'sysparm_offset',
+    },
+    versions: [
+      {
+        version: 'latest',
+        resources: [
+          {
+            id: 'contact',
+            name: 'Contact',
+            endpoints: [
+              {
+                id: 'get_contact',
+                url: '/api/now/contact',
+                name: 'Query contact by search query',
+                resourcePath: 'result',
+                supportedExportTypes: [
+                  'delta',
+                  'test',
+                ],
+                delta: {
+                  defaults: {
+                    sysparm_query: 'sys_updated_on>{{{lastExportDateTime}}}',
+                  },
+                  dateFormat: 'YYYY-MM-DD HH:mm:ss',
+                },
+                response: {
+                  resourcePath: 'contacts',
+                },
+                queryParameters: [
+                  {
+                    id: 'sysparm_query',
+                    name: 'sysparm_query',
+                    description: 'An encoded query string used to filter the results',
+                    fieldType: 'textarea',
+                  },
+                  {
+                    id: 'sysparm_display_value',
+                    name: 'sysparm_display_value',
+                    description: 'Return the display value (true), actual value (false), or both (all) for reference fields (default: false)',
+                    fieldType: 'select',
+                    options: [
+                      'false',
+                      'true',
+                      'all',
+                    ],
+                    defaultValue: 'false',
+                  },
+                  {
+                    id: 'sysparm_exclude_reference_link',
+                    name: 'sysparm_exclude_reference_link',
+                    description: 'True to exclude Table API links for reference fields (default: false)',
+                    fieldType: 'select',
+                    options: [
+                      'false',
+                      'true',
+                    ],
+                    defaultValue: 'false',
+                  },
+                  {
+                    id: 'sysparm_fields',
+                    name: 'sysparm_fields',
+                    description: 'A comma-separated list of fields to return in the response',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  import: {
+    labels: {
+      version: 'API Version',
+      resource: 'API Name',
+      operation: 'Operation',
+    },
+    urlResolution: [],
+    versions: [
+      {
+        version: 'latest',
+        resources: [
+          {
+            id: 'contact',
+            name: 'Contact',
+            operations: [
+              {
+                id: 'create_contact',
+                name: 'create contact',
+                url: '/api/now/contact',
+                method: 'POST',
+                requiredMappings: [
+                  'first_name',
+                  'last_name',
+                  'email',
+                ],
+
+                sampleData: {
+                  calendar_integration: '1',
+                  country: 'q',
+                  user_password: 'q',
+                  last_login_time: 'q',
+                  source: 'q',
+                },
+                supportIgnoreExisting: true,
+                parameters: [
+                  {
+                    id: 'sys_id',
+                    in: 'path',
+                    required: true,
+                    isIdentifier: true,
+                  },
+                  {
+                    id: 'customerid',
+                    name: 'Customer ID',
+                    in: 'path',
+                    description: 'Unique Customer ID.',
+                    required: true,
+                  },
+                ],
+                howToFindIdentifier: {
+                  lookup: {
+                    url: '/api/now/contact',
+                    parameterValues: {
+                      sysparm_fields: 'sys_id',
+                    },
+                    id: 'get_contact',
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
 const httpRecurlyData = {
   export: {
     labels: {
@@ -3945,6 +4094,12 @@ const httpRecurlyData = {
                     isIdentifier: true,
                   },
                 ],
+                howToFindIdentifier: {
+                  lookup: {
+                    url: 'https://a.recurly.com',
+                    extract: 'accounts[0].id',
+                  },
+                },
                 id: 'create_or_update',
               },
               {
@@ -7477,6 +7632,8 @@ describe('convertFromImport', () => {
         resource: 'contacts',
         version: 'v3',
         lookupType: 'source',
+        ignoreExisting: false,
+        ignoreMissing: false,
         operation: 'delete_contacts',
         operationDetails: {
           askForHowToGetIdentifier: true,
@@ -7525,9 +7682,9 @@ describe('convertFromImport', () => {
           resource: 'contacts',
           version: 'v3',
           operation: 'delete_contacts',
-
+          ignoreExisting: false,
+          ignoreMissing: false,
         },
-
         http: {
           relativeURI: [
             '/v3/contacts/{{{id}}}',
@@ -7535,13 +7692,11 @@ describe('convertFromImport', () => {
           method: [
             'DELETE',
           ],
-
           batchSize: 1,
           ignoreExtract: 'id',
           requestMediaType: 'json',
           successMediaType: 'json',
           errorMediaType: 'json',
-
           strictHandlebarEvaluation: true,
           sendPostMappedData: true,
         },
@@ -7559,7 +7714,300 @@ describe('convertFromImport', () => {
         adaptorType: 'RESTImport',
 
       }, restAssistantData, 'rest'],
+    [
+      {bodyParams: {},
+        resource: 'contacts',
+        sampleData: {
+          CreatedOn: '2017-10-10T13:03:08Z',
+          CustomerID: 2,
+          CustomerName: 'cust1',
+          Email: 'cust1c@gmail.com',
+          EndUserID: 8,
+          Firstname: null,
+          InIgnoreMode: false,
+          IsContactPerson: false,
+          JobTitle: null,
+          LastModified: '2017-10-10T13:03:08Z',
+          Lastname: null,
+          Phone: null,
+        },
+        version: 'v3',
+        lookupType: 'source',
+        operation: 'delete_contacts',
+        operationDetails: {
+          askForHowToGetIdentifier: true,
+          headers: {},
+          howToFindIdentifier: {},
+          id: 'delete_contacts',
+          method: 'DELETE',
+          name: 'Delete',
+          parameters: [
+            {
+              id: 'contactId',
+              in: 'path',
+              isIdentifier: true,
+              required: true,
+            },
+          ],
+          pathParameters: [],
+          queryParameters: [],
+          responseIdPath: '',
+          sampleData: {
+            CreatedOn: '2017-10-10T13:03:08Z',
+            CustomerID: 2,
+            CustomerName: 'cust1',
+            Email: 'cust1c@gmail.com',
+            EndUserID: 8,
+            Firstname: null,
+            InIgnoreMode: false,
+            IsContactPerson: false,
+            JobTitle: null,
+            LastModified: '2017-10-10T13:03:08Z',
+            Lastname: null,
+            Phone: null,
+          },
+          url: '/v3/contacts/:_contactId',
+        },
+        pathParams: {
+          contactId: 'id',
+        },
+        queryParams: {}}, {
+        name: 'Atera Latest1',
 
+        distributed: false,
+        apiIdentifier: '***',
+        assistant: 'atera',
+        assistantMetadata: {
+          resource: 'contacts',
+          version: 'v3',
+        },
+        http: {
+          relativeURI: [
+            '/v3/contacts/{{{id}}}',
+          ],
+          method: [
+            'DELETE',
+          ],
+          batchSize: 1,
+          ignoreExtract: 'id',
+          requestMediaType: 'json',
+          successMediaType: 'json',
+          errorMediaType: 'json',
+          strictHandlebarEvaluation: true,
+          sendPostMappedData: true,
+        },
+        rest: {
+          relativeURI: [
+            '/v3/contacts/{{{id}}}',
+          ],
+          method: [
+            'DELETE',
+          ],
+
+          ignoreExtract: 'id',
+
+        },
+        adaptorType: 'RESTImport',
+
+      }, restAssistantData, 'rest'],
+    [{bodyParams: {},
+      resource: 'contacts',
+      sampleData: {
+        CreatedOn: '2017-10-10T13:03:08Z',
+        CustomerID: 2,
+        CustomerName: 'cust1',
+        Email: 'cust1c@gmail.com',
+        EndUserID: 8,
+        Firstname: null,
+        InIgnoreMode: false,
+        IsContactPerson: false,
+        JobTitle: null,
+        LastModified: '2017-10-10T13:03:08Z',
+        Lastname: null,
+        Phone: null,
+      },
+      version: 'v3',
+      lookupType: 'source',
+      operation: 'create_or_update_contacts',
+      operationDetails: {
+        headers: {},
+        howToFindIdentifier: {},
+        id: 'create_or_update_contacts',
+        method: [
+          'PUT',
+          'POST',
+        ],
+        name: 'Create or Update',
+        parameters: [
+          {
+            id: 'contactId',
+            in: 'path',
+            isIdentifier: true,
+            required: true,
+          },
+        ],
+        pathParameters: [],
+        queryParameters: [],
+        responseIdPath: [
+          '',
+          '',
+        ],
+        sampleData: {
+          CreatedOn: '2017-10-10T13:03:08Z',
+          CustomerID: 2,
+          CustomerName: 'cust1',
+          Email: 'cust1c@gmail.com',
+          EndUserID: 8,
+          Firstname: null,
+          InIgnoreMode: false,
+          IsContactPerson: false,
+          JobTitle: null,
+          LastModified: '2017-10-10T13:03:08Z',
+          Lastname: null,
+          Phone: null,
+        },
+        url: [
+          '/v3/contacts/:_contactId',
+          '/v3/contacts',
+        ],
+      },
+      pathParams: {
+        contactId: 'id',
+      },
+      queryParams: {}}, {
+      name: 'Atera Latest1',
+
+      distributed: false,
+      apiIdentifier: '***',
+      assistant: 'atera',
+      assistantMetadata: {
+        operation: 'create_or_update_contacts',
+      },
+
+      http: {
+        relativeURI: [
+          '/v3/contacts/{{{id}}}',
+          '/v3/contacts',
+        ],
+        method: [
+          'PUT',
+          'POST',
+        ],
+        body: [
+          null,
+          null,
+        ],
+        headers: [
+
+        ],
+        batchSize: 1,
+        ignoreExtract: 'id',
+        requestMediaType: 'json',
+        successMediaType: 'json',
+        errorMediaType: 'json',
+        requestType: [
+          'UPDATE',
+          'CREATE',
+        ],
+        strictHandlebarEvaluation: true,
+        sendPostMappedData: true,
+
+      },
+      rest: {
+        relativeURI: [
+          '/v3/contacts/{{{id}}}',
+          '/v3/contacts',
+        ],
+        method: [
+          'PUT',
+          'POST',
+        ],
+        body: [
+          null,
+          null,
+        ],
+        headers: [
+
+        ],
+        ignoreExtract: 'id',
+        requestType: [
+          'UPDATE',
+          'CREATE',
+        ],
+      },
+      adaptorType: 'RESTImport',
+
+    }, restAssistantData, 'rest'],
+    [{ bodyParams: {},
+      operation: 'create_or_update_cont',
+      pathParams: {},
+      queryParams: {},
+      resource: undefined,
+      sampleData: undefined,
+      version: undefined}, {
+      name: 'Atera Latest1',
+
+      distributed: false,
+      apiIdentifier: '***',
+      assistant: 'atera',
+      assistantMetadata: {
+        operation: 'create_or_update_cont',
+      },
+
+      http: {
+        relativeURI: [
+          '/v3/contacts/{{{id}}}',
+          '/v3/contacts',
+        ],
+        method: [
+          'PUT',
+          'POST',
+        ],
+        body: [
+          null,
+          null,
+        ],
+        headers: [
+
+        ],
+        batchSize: 1,
+        ignoreExtract: 'id',
+        requestMediaType: 'json',
+        successMediaType: 'json',
+        errorMediaType: 'json',
+        requestType: [
+          'UPDATE',
+          'CREATE',
+        ],
+        strictHandlebarEvaluation: true,
+        sendPostMappedData: true,
+
+      },
+      rest: {
+        relativeURI: [
+          '/v3/contacts/{{{id}}}',
+          '/v3/contacts',
+        ],
+        method: [
+          'PUT',
+          'POST',
+        ],
+        body: [
+          null,
+          null,
+        ],
+        headers: [
+
+        ],
+        ignoreExtract: 'id',
+        requestType: [
+          'UPDATE',
+          'CREATE',
+        ],
+      },
+      adaptorType: 'RESTImport',
+
+    }, restAssistantData, 'rest'],
   ];
 
   each(testCases).test(
@@ -7959,6 +8407,17 @@ describe('convertToImport', () => {
       pathParams: {account_code: 'idd'},
       resource: 'accounts',
       version: 'v2.13'}, httpRecurlyData],
+    [{'/assistant': 'servicenow', '/assistantMetadata': {lookups: {sys_id: {operation: 'get_contact'}}, operation: 'create_contact', resource: 'contact', version: 'latest'}, '/file': undefined, '/ignoreExisting': true, '/ignoreMissing': false, '/rest': {body: [null], headers: [], ignoreExisting: false, ignoreExtract: undefined, ignoreLookupName: 'sys_id', ignoreMissing: false, lookups: [{extract: 'result[0].sys_id', method: 'GET', name: 'sys_id', postBody: '', relativeURI: '/api/now/contact?sysparm_query=abc&sysparm_display_value=false&sysparm_exclude_reference_link=false&sysparm_fields=sys_id&sysparm_view=asdsa'}], method: ['POST'], relativeURI: ['/api/now/contact'], responseIdPath: [undefined], successPath: [undefined], successValues: [undefined]}}, {adaptorType: 'rest',
+      assistant: 'servicenow',
+      ignoreExisting: true,
+      ignoreMissing: undefined,
+      lookupQueryParams: {sysparm_query: 'abc', sysparm_display_value: 'false', sysparm_exclude_reference_link: 'false', sysparm_fields: 'sys_id', sysparm_view: 'asdsa'},
+      lookupType: 'lookup',
+      lookups: '',
+      operation: 'create_contact',
+      pathParams: {sys_id: ''},
+      resource: 'contact',
+      version: 'latest'}, restServiceNowData],
   ];
 
   each(testCases).test(
