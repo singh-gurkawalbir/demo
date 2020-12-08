@@ -141,12 +141,9 @@ const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
   return `${opTitle} ${resourceLabel.toLowerCase()}`;
 };
 
-const useRedirectionToParentRoute = (resourceType, id) => {
+export const useRedirectToParentRoute = initFailed => {
   const history = useHistory();
   const match = useRouteMatch();
-  const { initFailed } = useSelector(state =>
-    selectors.resourceFormState(state, resourceType, id)
-  );
 
   useEffect(() => {
     if (initFailed) {
@@ -162,6 +159,14 @@ const useRedirectionToParentRoute = (resourceType, id) => {
   }, [history, initFailed, match.url]);
 };
 
+const useResourceFormRedirectionToParentRoute = (resourceType, id) => {
+  const initFailed = useSelector(state =>
+    selectors.resourceFormState(state, resourceType, id)?.initFailed
+  );
+
+  useRedirectToParentRoute(initFailed);
+};
+
 export default function Panel(props) {
   const { onClose, occupyFullWidth, flowId, integrationId } = props;
   const [newId] = useState(generateNewId());
@@ -172,7 +177,7 @@ export default function Panel(props) {
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
 
-  useRedirectionToParentRoute(resourceType, id);
+  useResourceFormRedirectionToParentRoute(resourceType, id);
   const classes = useStyles({
     ...props,
     occupyFullWidth,

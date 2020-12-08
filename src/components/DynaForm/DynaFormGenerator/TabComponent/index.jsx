@@ -7,7 +7,7 @@ import FormGenerator from '..';
 import {selectors} from '../../../../reducers';
 import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
 import SuiteScriptSaveButton from '../../../SuiteScript/ResourceFormFactory/Actions/SuiteScriptIASettingsSaveButton';
-import { getAllFormValuesAssociatedToMeta } from '../../../../forms/utils';
+import { getAllFormValuesAssociatedToMeta } from '../../../../forms/formFactory/utils';
 import actions from '../../../../actions';
 import useFormContext from '../../../Form/FormContext';
 

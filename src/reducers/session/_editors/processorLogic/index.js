@@ -2,7 +2,7 @@ import isEqual from 'lodash/isEqual';
 import xmlParser from './xmlParser';
 import csvParser from './csvParser';
 // import csvDataGenerator from './csvDataGenerator';
-// import transform from './transform';
+import transform from './transform';
 import handlebars from './handlebars';
 import javascript from './javascript';
 import settingsForm from './settingsForm';
@@ -24,6 +24,7 @@ const logicMap = {
   xmlParser,
   sql,
   settingsForm,
+  transform,
 };
 
 function getLogic(editor) {

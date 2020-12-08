@@ -100,7 +100,7 @@ export default function Editors() {
 
         </main>
       </div>
-      <EditorDrawer />
+      <EditorDrawer hideSave />
       <ResourceDrawer />
     </>
   );

@@ -52,7 +52,7 @@ import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import {
   getFieldById,
-} from '../forms/utils';
+} from '../forms/formFactory/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
@@ -81,7 +81,7 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import getFilteredErrors from '../utils/errorManagement';
+import { getFilteredErrors } from '../utils/errorManagement';
 import {
   getFlowStepsYetToBeCreated,
   generatePendingFlowSteps,
@@ -4001,7 +4001,7 @@ selectors.suiteScriptResourceData = (
       resourceId: id,
     }),
     scope
-  );
+  ) || {};
 
   if (!master && !patch) return { merged: {} };
 
