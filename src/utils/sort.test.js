@@ -778,7 +778,6 @@ describe('Sort util function test', () => {
         {id: 'Greenland'}];
 
       sampleArray.sort(celigoListCompare);
-      console.log('sampleArray', sampleArray);
       expect(sampleArray).toEqual([
         { id: 3 },
         { id: 123 },

@@ -1,10 +1,16 @@
-/* global describe, test, expect */
+/* global describe, test, expect, jest */
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { resourceConflictResolution, constructResourceFromFormValues } from './index';
 import { createFormValuesPatchSet } from '../resourceForm';
 import { selectors } from '../../reducers';
+import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
+
+jest.mock('../../forms/formFactory/getResourceFromAssets');
+
+// fake the return value of getResourceFormAssets when createFormValuesPatchSet calls this fn
+getResourceFormAssets.mockReturnValue({fieldMap: {field1: {fieldId: 'something'}}, preSave: null});
 
 describe('resourceConflictResolution', () => {
   /*

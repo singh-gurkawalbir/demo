@@ -9,7 +9,7 @@ import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPerm
 import Spinner from '../../../../Spinner';
 import SpinnerWrapper from '../../../../SpinnerWrapper';
 import useFormContext from '../../../../Form/FormContext';
-import { isFormTouched } from '../../../../../forms/utils';
+import { isFormTouched } from '../../../../../forms/formFactory/utils';
 
 const useStyles = makeStyles({
   wrapper: {
