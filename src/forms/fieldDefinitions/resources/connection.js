@@ -1,5 +1,5 @@
 import { URI_VALIDATION_PATTERN, RDBMS_TYPES} from '../../../utils/constants';
-import { isProduction, isEuRegion } from '../../utils';
+import { isProduction, isEuRegion } from '../../formFactory/utils';
 import { isNewId } from '../../../utils/resource';
 import { applicationsList } from '../../../constants/applications';
 
