@@ -34,7 +34,7 @@ describe('session.flows reducers', () => {
     const oldState = { };
     const lastExportDateTimeResponse = {lastExportDateTime};
     const expectedState = {
-      lastExportDateTime: {[flowId]: {data: lastExportDateTime, status: COMM_STATES.RECEIVED}},
+      [flowId]: {lastExportDateTime: {data: lastExportDateTime, status: COMM_STATES.SUCCESS}},
     };
     const newState = reducer(oldState,
       actions.flow.receivedLastExportDateTime(flowId, lastExportDateTimeResponse)
@@ -45,7 +45,7 @@ describe('session.flows reducers', () => {
   test('should set status property to error and data to undefined correctly when error response received', () => {
     const oldState = { };
     const expectedState = {
-      lastExportDateTime: {[flowId]: {data: undefined, status: COMM_STATES.ERROR}},
+      [flowId]: {lastExportDateTime: {data: undefined, status: COMM_STATES.ERROR}},
     };
     const newState = reducer(oldState,
       actions.flow.receivedLastExportDateTime(flowId)
@@ -96,7 +96,7 @@ describe('session.flows selectors', () => {
       const newState = reducer(oldState,
         actions.flow.receivedLastExportDateTime(flowId, lastExportDateTimeResponse)
       );
-      const expected = {data: lastExportDateTime, status: COMM_STATES.RECEIVED };
+      const expected = {data: lastExportDateTime, status: COMM_STATES.SUCCESS };
 
       expect(selectors.getLastExportDateTime(newState, flowId)).toEqual(expected);
     });
@@ -115,7 +115,7 @@ describe('session.flows selectors', () => {
       const newState = reducer(oldState,
         actions.flow.receivedLastExportDateTime(flowId, lastExportDateTimeResponse)
       );
-      const expected = {data: null, status: 'received'};
+      const expected = {data: null, status: COMM_STATES.SUCCESS};
 
       expect(selectors.getLastExportDateTime(newState, flowId)).toEqual(expected);
     });

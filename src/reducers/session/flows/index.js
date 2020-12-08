@@ -10,10 +10,10 @@ export default (state = {}, action) => {
   return produce(state, draft => {
     switch (type) {
       case actionTypes.FLOW.RECEIVED_LAST_EXPORT_DATE_TIME:
-        draft.lastExportDateTime = {
-          [flowId]: {
+        draft[flowId] = {
+          lastExportDateTime: {
             data: response && response.lastExportDateTime,
-            status: response ? COMM_STATES.RECEIVED : COMM_STATES.ERROR,
+            status: response ? COMM_STATES.SUCCESS : COMM_STATES.ERROR,
           },
         };
 
@@ -30,11 +30,11 @@ export default (state = {}, action) => {
 export const selectors = {};
 
 selectors.getLastExportDateTime = (state, flowId) => {
-  if (!state || !state.lastExportDateTime || !flowId) {
+  if (!state || !state[flowId] || !flowId) {
     return null;
   }
 
-  return state.lastExportDateTime && state.lastExportDateTime[flowId];
+  return state[flowId].lastExportDateTime;
 };
 
 selectors.isOnOffInProgress = (state, flowId) => {
