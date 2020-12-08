@@ -885,6 +885,7 @@ selectors.userAccessLevelOnConnection = (state, connectionId) => {
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
       USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
     ].includes(permissions.accessLevel)
   ) {
     accessLevelOnConnection = permissions.accessLevel;
@@ -943,7 +944,7 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
             !this._connectorId &&
             (this.netsuite.account) &&
             (!environment || !!this.sandbox === (environment === 'sandbox')) &&
-            (accessLevel === 'owner' || accessLevel === 'manage')
+            ([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE].includes(accessLevel))
           );
         }
 
@@ -2284,6 +2285,7 @@ selectors.userPermissionsOnConnection = (state, connectionId) => {
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
       USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
     ].includes(permissions.accessLevel)
   ) {
     const connection = selectors.resource(state, 'connections', connectionId);
@@ -2360,6 +2362,7 @@ selectors.resourcePermissions = (
         USER_ACCESS_LEVELS.ACCOUNT_OWNER,
         USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
         USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+        USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
       ].includes(permissions.accessLevel)
     ) {
       const value =
@@ -2450,7 +2453,8 @@ selectors.formAccessLevel = (state, integrationId, resource, disabled) => {
 
   if (
     accessLevelIntegration === USER_ACCESS_LEVELS.ACCOUNT_OWNER ||
-    accessLevelIntegration === USER_ACCESS_LEVELS.ACCOUNT_MANAGE
+    accessLevelIntegration === USER_ACCESS_LEVELS.ACCOUNT_MANAGE ||
+    accessLevelIntegration === USER_ACCESS_LEVELS.ACCOUNT_ADMIN
   ) {
     // check integration app is manage or owner then selectively disable fields
     if (isIntegrationApp) return { disableAllFieldsExceptClocked: true };
@@ -2637,6 +2641,7 @@ selectors.mkTiles = () => createSelector(
           USER_ACCESS_LEVELS.ACCOUNT_OWNER,
           USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
           USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+          USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
         ].includes(permissions.accessLevel)
       ) {
         return {
@@ -5137,7 +5142,7 @@ selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
   state => state?.data?.resources?.integrations,
   state => state?.data?.resources?.connections,
   (permissions = emptyObject, integrations = emptyArray, connections = emptyArray) => {
-    if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE].includes(permissions.accessLevel)) {
+    if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(permissions.accessLevel)) {
       return connections.map(c => c._id);
     }
     if (permissions.accessLevel === USER_ACCESS_LEVELS.TILE) {
@@ -5160,7 +5165,7 @@ selectors.availableUsersList = (state, integrationId) => {
   const permissions = selectors.userPermissions(state);
   let _users = [];
 
-  if (permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+  if (permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER || permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN) {
     if (integrationId) {
       _users = selectors.integrationUsersForOwner(state, integrationId);
     } else {
@@ -5325,7 +5330,7 @@ selectors.shouldShowAddPageProcessor = (state, flowId) => {
 // #endregion Flow builder selectors
 
 selectors.hasManageIntegrationAccess = (state, integrationId) => {
-  const isAccountOwner = selectors.userPermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
+  const isAccountOwner = [USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(selectors.userPermissions(state).accessLevel);
 
   if (isAccountOwner) {
     return true;

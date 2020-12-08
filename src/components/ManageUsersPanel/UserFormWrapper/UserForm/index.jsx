@@ -77,6 +77,10 @@ export default function UserForm({
           {
             items: [
               {
+                label: 'Administer account',
+                value: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+              },
+              {
                 label: 'Manage all integrations',
                 value: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
               },

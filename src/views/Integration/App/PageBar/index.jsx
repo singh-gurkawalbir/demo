@@ -15,6 +15,7 @@ import { selectors } from '../../../../reducers';
 import integrationAppUtil, { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import getRoutePath from '../../../../utils/routePaths';
 import StatusCircle from '../../../../components/StatusCircle';
+import { USER_ACCESS_LEVELS } from '../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   tag: {
@@ -169,7 +170,7 @@ export default function PageBar() {
       title={integration.name}
       titleTag={(
         <ChipInput
-          disabled={!['owner', 'manage'].includes(accessLevel)}
+          disabled={![USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_MANAGE, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(accessLevel)}
           value={integration.tag || 'tag'}
           className={classes.tag}
           variant="outlined"
@@ -188,7 +189,7 @@ export default function PageBar() {
       )}
       {supportsMultiStore && (
       <div className={classes.actions}>
-        {(accessLevel === 'owner' || accessLevel === 'manage') && (
+        {([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_MANAGE, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(accessLevel)) && (
         <IconTextButton
           variant="text"
           data-test={`add${storeLabel}`}

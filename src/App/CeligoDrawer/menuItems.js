@@ -18,7 +18,7 @@ import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
 import WhatsNewIcon from '../../components/icons/KnowledgeBaseIcon';
 import { getHelpUrl, getUniversityUrl } from '../../utils/resource';
-import { SUBMIT_TICKET_URL, WHATS_NEW_URL } from '../../utils/constants';
+import { SUBMIT_TICKET_URL, USER_ACCESS_LEVELS, WHATS_NEW_URL } from '../../utils/constants';
 import UniversityIcon from '../../components/icons/UniversityIcon';
 import HelpCenterIcon from '../../components/icons/HelpCenterIcon';
 import HelpIcon from '../../components/icons/HelpIcon';
@@ -160,7 +160,7 @@ export default function menuItems(
       );
     }
 
-    if (accessLevel !== 'owner') {
+    if (accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_OWNER && accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_ADMIN) {
       resourceItems.children = resourceItems.children.filter(
         i => !(i.label === 'API tokens' || i.label === 'My APIs')
       );

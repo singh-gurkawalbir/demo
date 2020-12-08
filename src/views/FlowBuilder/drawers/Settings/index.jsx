@@ -54,8 +54,8 @@ function Settings({
     if (!isIntegrationApp) {
       return true;
     }
-    // Incase of Integration app, only owner & manage users have cLocked fields to edit
-    if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE].includes(accessLevelIntegration)) {
+    // Incase of Integration app, only owner, admin & manage users have cLocked fields to edit
+    if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevelIntegration)) {
       return true;
     }
 

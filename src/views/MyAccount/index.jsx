@@ -27,33 +27,41 @@ const Audit = loadable(() =>
 const Transfers = loadable(() =>
   retry(() => import(/* webpackChunkName: 'MyAccount.Transfers' */ './Transfers/index'))
 );
-const tabs = [
-  {
-    path: 'profile',
-    label: 'Profile',
-    Icon: SingleUserIcon,
-    Panel: Profile,
-  },
-  { path: 'users', label: 'Users', Icon: UsersIcon, Panel: UsersPanel },
-  {
-    path: 'subscription',
-    label: 'Subscription',
-    Icon: KnowledgeBaseIcon,
-    Panel: Subscription,
-  },
-  {
-    path: 'audit',
-    label: 'Audit log',
-    Icon: AuditLogIcon,
-    Panel: Audit,
-  },
-  {
-    path: 'transfers',
-    label: 'Transfers',
-    Icon: TransfersIcon,
-    Panel: Transfers,
-  },
-];
+const getTabs = accessLevel => {
+  const tabs = [
+    {
+      path: 'profile',
+      label: 'Profile',
+      Icon: SingleUserIcon,
+      Panel: Profile,
+    },
+    { path: 'users', label: 'Users', Icon: UsersIcon, Panel: UsersPanel },
+    {
+      path: 'subscription',
+      label: 'Subscription',
+      Icon: KnowledgeBaseIcon,
+      Panel: Subscription,
+    },
+    {
+      path: 'audit',
+      label: 'Audit log',
+      Icon: AuditLogIcon,
+      Panel: Audit,
+    },
+
+  ];
+
+  if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+    tabs.push({
+      path: 'transfers',
+      label: 'Transfers',
+      Icon: TransfersIcon,
+      Panel: Transfers,
+    });
+  }
+
+  return tabs;
+};
 
 const useStyles = makeStyles(theme => ({
   wrapperProfile: {
@@ -71,6 +79,7 @@ const useStyles = makeStyles(theme => ({
 export default function MyAccount({ match }) {
   const classes = useStyles();
   const permissions = useSelector(state => selectors.userPermissions(state));
+  const tabs = getTabs(permissions.accessLevel);
 
   return (
     <>
@@ -81,7 +90,7 @@ export default function MyAccount({ match }) {
               : 'My profile'
           }
         />
-      {permissions.accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_OWNER ? (
+      {![USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(permissions.accessLevel) ? (
         <div className={classes.wrapperProfile}>
           <Profile />
         </div>

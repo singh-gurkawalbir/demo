@@ -35,8 +35,8 @@ export default function ManageUsersPanel({ integrationId, storeId }) {
   const history = useHistory();
   const isAccountOwner = useSelector(
     state =>
-      selectors.resourcePermissions(state).accessLevel ===
-      USER_ACCESS_LEVELS.ACCOUNT_OWNER
+      [USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(selectors.resourcePermissions(state).accessLevel)
+
   );
 
   const handleInvite = useCallback(() => history.push(`${match.url}/invite`), [history, match]);
