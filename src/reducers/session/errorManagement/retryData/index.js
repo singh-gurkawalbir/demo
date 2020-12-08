@@ -15,26 +15,38 @@ export default (
   return produce(state, draft => {
     switch (type) {
       case actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST:
-        draft.retryObjects[retryId] = { status: 'requested' };
+        if (retryId) {
+          draft.retryObjects[retryId] = { status: 'requested' };
+        }
         break;
       case actionTypes.ERROR_MANAGER.RETRY_DATA.RECEIVED:
+        if (!retryId || !draft.retryObjects[retryId]) {
+          break;
+        }
         draft.retryObjects[retryId].status = 'received';
         draft.retryObjects[retryId].data = retryData;
         break;
       case actionTypes.ERROR_MANAGER.RETRY_DATA.RECEIVED_ERROR:
+        if (!retryId || !draft.retryObjects[retryId]) {
+          break;
+        }
         draft.retryObjects[retryId].status = 'error';
-        draft.retryObjects[retryId].data = error;
+        draft.retryObjects[retryId].error = error;
         break;
       case actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST:
-        if (!draft.retryStatus[flowId]) {
+        if (flowId && !draft.retryStatus[flowId]) {
           draft.retryStatus[flowId] = {};
         }
         break;
       case actionTypes.ERROR_MANAGER.RETRY_STATUS.RECEIVED:
-        draft.retryStatus[flowId][resourceId] = status;
+        if (flowId && draft.retryStatus[flowId]) {
+          draft.retryStatus[flowId][resourceId] = status;
+        }
         break;
       case actionTypes.ERROR_MANAGER.RETRY_STATUS.CLEAR:
-        draft.retryStatus[flowId] = {};
+        if (flowId && draft.retryStatus[flowId]) {
+          draft.retryStatus[flowId] = {};
+        }
         break;
       default:
     }
