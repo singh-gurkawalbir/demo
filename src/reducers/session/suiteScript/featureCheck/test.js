@@ -45,16 +45,6 @@ describe('featurecheck reducer', () => {
       },
     });
   });
-  test('should set a success state when feature request is successful', () => {
-    const state = reducer(intialState, actions.featureCheck.successful(ssConnectionId, integrationId, feature));
-
-    expect(state).toEqual({
-      '1-2-someFeature': COMM_STATES.LOADING,
-      [generatedKey]: {
-        status: COMM_STATES.SUCCESS,
-      },
-    });
-  });
   test('should set a failure state when feature request fails', () => {
     const error = 'some error';
     const state = reducer(intialState, actions.featureCheck.failed(ssConnectionId, integrationId, feature, error));
