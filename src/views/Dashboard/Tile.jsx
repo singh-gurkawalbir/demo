@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import clsx from 'clsx';
 import { withRouter } from 'react-router-dom';
 import Truncate from 'react-truncate';
 import { Typography, Tooltip, makeStyles, Zoom, Button, IconButton } from '@material-ui/core';
@@ -31,6 +30,7 @@ import actions from '../../actions';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import { getTemplateUrlName } from '../../utils/template';
 import TrialExpireNotification from '../../components/HomePageCard/TrialExpireNotification';
+import { useSelectorMemo } from '../../hooks';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -75,6 +75,32 @@ const useStyles = makeStyles(theme => ({
     display: 'none',
   },
 }));
+
+function AppLogosContainer({ tile }) {
+  const applications = useSelectorMemo(selectors.mkTileApplications, tile);
+
+  if (applications.length < 2) {
+    return null;
+  }
+
+  return (
+    <ApplicationImages noOfApps={applications.length}>
+      {
+        applications
+          .map(app => (<div key={app}><ApplicationImg type={app} /></div>))
+          .reduce((acc, x) => acc === null ? x : (
+            <>
+              {acc}
+              <span>
+                <AddIcon />
+              </span>
+              {x}
+            </>
+          ), null)
+      }
+    </ApplicationImages>
+  );
+}
 
 function Tile({ tile, history, onMove, onDrop, index }) {
   const classes = useStyles();
@@ -132,26 +158,6 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   } else if (tile._connectorId) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}${defaultChildId ? `/child/${defaultChildId}` : ''}`;
     urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
-  }
-
-  let app1;
-  let app2;
-
-  if (
-    tile.connector &&
-    tile.connector.applications &&
-    tile.connector.applications.length
-  ) {
-    [app1, app2] = tile.connector.applications;
-
-    if (app1 === 'netsuite') {
-      // Make NetSuite always the second application
-      [app1, app2] = [app2, app1];
-    }
-    // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
-    if (tile.name && tile.name.indexOf('Magento 1') !== -1 && app1 === 'magento') {
-      app1 = 'magento1';
-    }
   }
 
   const handleConnectionDownStatusClick = useCallback(event => {
@@ -317,17 +323,9 @@ function Tile({ tile, history, onMove, onDrop, index }) {
               )}
             </Typography>
           </CardTitle>
-          {tile.connector &&
-              tile.connector.applications &&
-              tile.connector.applications.length > 1 && (
-                <ApplicationImages className={clsx({[classes.noAppImages]: expired && tile.tag})}>
-                  <ApplicationImg type={app1} />
-                  <span>
-                    <AddIcon />
-                  </span>
-                  <ApplicationImg type={app2} />
-                </ApplicationImages>
-          )}
+
+          <AppLogosContainer tile={tile} />
+
         </Content>
         <Footer>
           <FooterActions>

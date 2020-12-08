@@ -8,6 +8,26 @@ export const getIntegrationAppUrlName = integrationAppName => {
   return integrationAppName.replace(/\W/g, '').replace(/Connector/gi, '');
 };
 
+export const isIntegrationAppVerion2 = (integration, skipCloneCheck) => {
+  if (!integration) return false;
+  let isCloned = false;
+
+  if (!skipCloneCheck) {
+    isCloned =
+    integration.install &&
+    integration.install.find(step => step.isClone);
+  }
+  const isFrameWork2 =
+    !!((
+      integration.installSteps &&
+      integration.installSteps.length) || (
+      integration.uninstallSteps &&
+        integration.uninstallSteps.length)) ||
+    isCloned;
+
+  return isFrameWork2;
+};
+
 export const getEmptyMessage = (storeLabel = '', action) => {
   switch (storeLabel.toLowerCase()) {
     case 'amazon account':
