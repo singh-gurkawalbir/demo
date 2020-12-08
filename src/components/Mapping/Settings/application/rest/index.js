@@ -5,7 +5,7 @@ import {
   isProduction,
   conditionalLookupOptionsforRest,
   conditionalLookupOptionsforRestProduction,
-} from '../../../../../forms/utils';
+} from '../../../../../forms/formFactory/utils';
 
 const emptyObject = {};
 export default {

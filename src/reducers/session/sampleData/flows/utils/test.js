@@ -109,7 +109,7 @@ describe('getFirstOutOfOrderIndex util', () => {
 });
 describe('clearInvalidFlowState util', () => {
   test('should return undefined if the flow is undefined', () => {
-    expect(clearInvalidPgOrPpStates(undefined, 1, true)).toBe(undefined);
+    expect(clearInvalidPgOrPpStates(undefined, 1, true)).toBeUndefined();
   });
   test('should update the passed flow object by removing sample data states for the pp resources from the passed index', () => {
     const flowState = deepClone(dummyFlowStateWithStages);
@@ -197,7 +197,7 @@ describe('clearInvalidFlowState util', () => {
 });
 describe('clearInvalidStagesForPgOrPp util', () => {
   test('should return undefined if the flow is undefined', () => {
-    expect(clearInvalidPgOrPpStates()).toBe(undefined);
+    expect(clearInvalidPgOrPpStates()).toBeUndefined();
   });
   test('should retain previous flowState if there are no stages passed', () => {
     const flowState = deepClone(dummyFlowStateWithStages);

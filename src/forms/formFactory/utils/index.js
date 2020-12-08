@@ -1,6 +1,6 @@
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { get, sortBy } from 'lodash';
-import { C_LOCKED_FIELDS } from '../utils/constants';
+import { C_LOCKED_FIELDS } from '../../../utils/constants';
 
 export const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
   if (!meta) return null;

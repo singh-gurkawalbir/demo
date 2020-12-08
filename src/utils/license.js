@@ -20,6 +20,7 @@ export function upgradeStatus(license, integration = {}) {
   const highestEditionForConnector = integrationAppUtil.getHighestEditionForIntegrationApp(
     integration
   );
+
   const editionArray = [
     'starter',
     'standard',
@@ -73,7 +74,7 @@ export function upgradeButtonText(license, integration = {}, upgradeRequested) {
 }
 
 export function expiresInfo(license) {
-  const { expires } = license;
+  const { expires } = license || {};
   const hasExpired = moment(expires) - moment() < 0;
   let expiresText = '';
   const dtExpires = moment(expires);
