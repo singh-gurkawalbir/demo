@@ -1859,11 +1859,10 @@ const errorManager = {
         isResolved,
         errorIds,
       }),
-    clear: ({ flowId, resourceId, isResolved = false }) =>
+    clear: ({ flowId, resourceId }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.CLEAR, {
         flowId,
         resourceId,
-        isResolved,
       }),
     notifyUpdate: ({ flowId, resourceId, diff }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.NOTIFY_UPDATE, {
