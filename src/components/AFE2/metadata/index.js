@@ -5,6 +5,7 @@ import handlebars from './handlebars';
 import sql from './sql';
 import filter from './filter';
 import javascript from './javascript';
+import transform from './transform';
 
 const map = {
   csvParser,
@@ -14,6 +15,7 @@ const map = {
   sql,
   filter,
   javascript,
+  transform,
 };
 export default map;
 

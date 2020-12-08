@@ -7,11 +7,13 @@ const sampleData = {
 };
 
 export default {
-  key: 'filter1',
-  type: 'filter',
+  key: 'javascript1',
+  type: 'javascript',
   name: 'Simple JSON record',
   description: 'Simple JSON record',
   data: sampleData,
-  rule: ['equals', ['string', ['extract', 'id']], ''],
+  rule: {
+    entryFunction: 'main',
+  },
 };
 
