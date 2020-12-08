@@ -442,7 +442,7 @@ selectors.suiteScriptIntegrations = (state, ssLinkedConnectionId) => {
   return state[ssLinkedConnectionId].integrations;
 };
 
-selectors.suiteScriptResource = (state, { resourceType, id, ssLinkedConnectionId }) => {
+selectors.suiteScriptResource = (state, { resourceType, id, ssLinkedConnectionId } = {}) => {
   if (
     !state ||
     !ssLinkedConnectionId ||
@@ -553,7 +553,7 @@ selectors.suiteScriptJobsPagingDetails = state => {
   return state.paging.jobs;
 };
 
-selectors.jobs = (state, { ssLinkedConnectionId, integrationId }) => {
+selectors.jobs = (state, { ssLinkedConnectionId, integrationId } = {}) => {
   if (!state || !state.jobs) {
     return emptyList;
   }
@@ -613,7 +613,7 @@ selectors.suiteScriptResourceList = (
 
 selectors.hasSuiteScriptData = (
   state,
-  { resourceType, integrationId, ssLinkedConnectionId }
+  { resourceType, integrationId, ssLinkedConnectionId } = {}
 ) => {
   if (
     !state ||
@@ -633,7 +633,7 @@ selectors.hasSuiteScriptData = (
   return resources.length > 0;
 };
 
-selectors.suiteScriptJobErrors = (state, { jobId, jobType }) => {
+selectors.suiteScriptJobErrors = (state, { jobId, jobType } = {}) => {
   if (!state || !state.jobErrors) {
     return undefined;
   }

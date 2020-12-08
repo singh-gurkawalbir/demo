@@ -1762,6 +1762,98 @@ describe('testcases for suitescript selectors', () => {
         }
       );
     });
+
+    describe('hasSuiteScriptData selector tests', () => {
+      test('should return false if doesn\'t have suitescript data', () => {
+        expect(selectors.hasSuiteScriptData(undefined)).toEqual(false);
+      });
+
+      test('should return true if state has settings', () => {
+        const settings = {
+          general: {
+            description: 'general settings',
+            id: 'gensettings',
+          },
+        };
+
+        const state = reducer({
+          connId: {
+            settings: {
+
+            },
+          },
+        }, suitescriptActions.resource.received('connId', 'int1', 'settings', settings));
+
+        expect(selectors.hasSuiteScriptData(state, {
+          resourceType: 'settings',
+          integrationId: 'int1',
+          ssLinkedConnectionId: 'connId',
+        })).toEqual(true);
+      });
+      test('should return true if state has flows', () => {
+        const flowCollection = [
+          {
+            _id: 'EXP1',
+            type: 'EXPORT',
+            _flowId: '26',
+            ioFlowName: 'sync Acc to NS acc',
+            _integrationId: 'intid',
+          },
+          {
+            _id: 'IMP2',
+            type: 'IMPORT',
+          },
+        ];
+
+        const state = reducer(defaultState, actions.resource.receivedCollection(
+          'suitescript/connections/connId/integrations/intid/flows',
+          flowCollection
+        ));
+
+        expect(selectors.hasSuiteScriptData(state, {
+          resourceType: 'flows',
+          integrationId: 'intid',
+          ssLinkedConnectionId: 'connId',
+        })).toEqual(true);
+      });
+    });
+  });
+
+  test('should return resource list from state', () => {
+    const flowCollection = [
+      {
+        _id: 'EXP1',
+        type: 'EXPORT',
+        _flowId: '26',
+        ioFlowName: 'sync Acc to NS acc',
+        _integrationId: 'intid',
+      },
+      {
+        _id: 'IMP2',
+        type: 'IMPORT',
+      },
+    ];
+
+    const state = reducer(defaultState, actions.resource.receivedCollection(
+      'suitescript/connections/connId/integrations/intid/flows',
+      flowCollection
+    ));
+
+    expect(selectors.suiteScriptResourceList(state, {
+      resourceType: 'flows',
+      integrationId: 'intid',
+      ssLinkedConnectionId: 'connId'})).toEqual(
+      [
+        {
+          _flowId: '26',
+          _id: 'eEXP1',
+          _integrationId: 'intid',
+          ioFlowName: 'sync Acc to NS acc',
+          ssLinkedConnectionId: 'connId',
+          type: 'EXPORT',
+        },
+      ]
+    );
   });
   test('should return IA settings from state', () => {
     const settings = {
@@ -1821,6 +1913,178 @@ describe('testcases for suitescript selectors', () => {
     });
   });
   describe('suitescript jobs selectors', () => {
+    const jobsCollection = [
+      {
+        type: 'import',
+        _id: '1',
+        _integrationId: '1',
+        _flowId: '26',
+        createdAt: '2020-12-04T11:03:00.000Z',
+        startedAt: '2020-12-04T10:00:00.000Z',
+        endedAt: '2020-12-04T10:59:59.000Z',
+        status: 'completed',
+        numError: 0,
+        numSuccess: 2,
+      },
+      {
+        type: 'import',
+        _id: '2',
+        _integrationId: '1',
+        _flowId: '31',
+        createdAt: '2020-12-04T11:03:00.000Z',
+        startedAt: '2020-12-04T10:00:00.000Z',
+        endedAt: '2020-12-04T10:59:59.000Z',
+        status: 'completed',
+        numError: 0,
+        numSuccess: 2,
+      },
+      {
+        type: 'export',
+        _id: '25901',
+        _integrationId: '1',
+        _flowId: '41',
+        createdAt: '2020-12-04T11:03:00.000Z',
+        startedAt: '2020-12-04T10:00:00.000Z',
+        endedAt: '2020-12-04T10:59:59.000Z',
+        status: 'completed',
+      }];
 
+    test('should return empty obj/list when selected on empty state', () => {
+      expect(selectors.suiteScriptJobsPagingDetails(undefined)).toEqual({});
+      expect(selectors.jobs(undefined)).toEqual([]);
+      expect(selectors.suiteScriptJobErrors(undefined)).toEqual(undefined);
+    });
+
+    test('should return paging details for non-empty state', () => {
+      const state = reducer(defaultState, suitescriptActions.job.receivedCollection({
+        collection: jobsCollection,
+      }));
+
+      expect(selectors.suiteScriptJobsPagingDetails(state)).toEqual({
+        currentPage: 0,
+        rowsPerPage: 10,
+        totalJobs: 3,
+      });
+    });
+
+    test('should return job details for non-empty state', () => {
+      const flowCollection = [
+        {
+          _id: 'EXP1',
+          type: 'EXPORT',
+          _flowId: '26',
+          ioFlowName: 'sync Acc to NS acc',
+          _integrationId: 'intid',
+        },
+        {
+          _id: 'IMP2',
+          type: 'IMPORT',
+        },
+      ];
+
+      let state = reducer(defaultState, actions.resource.receivedCollection(
+        'suitescript/connections/connId/integrations/intid/flows',
+        flowCollection
+      ));
+
+      state = reducer(state, suitescriptActions.job.receivedCollection({
+        collection: jobsCollection,
+      }));
+
+      expect(selectors.jobs(state, {
+        ssLinkedConnectionId: 'connId',
+        integrationId: 'intid',
+      })).toEqual([
+        {
+          _flowId: '26',
+          _id: '1',
+          _integrationId: '1',
+          name: 'sync Acc to NS acc',
+          createdAt: '2020-12-04T11:03:00.000Z',
+          duration: '00:59:59',
+          endedAt: '2020-12-04T10:59:59.000Z',
+          numError: 0,
+          numSuccess: 2,
+          startedAt: '2020-12-04T10:00:00.000Z',
+          status: 'completed',
+          type: 'import',
+        },
+        {
+          _flowId: '31',
+          _id: '2',
+          _integrationId: '1',
+          createdAt: '2020-12-04T11:03:00.000Z',
+          duration: '00:59:59',
+          endedAt: '2020-12-04T10:59:59.000Z',
+          numError: 0,
+          numSuccess: 2,
+          startedAt: '2020-12-04T10:00:00.000Z',
+          status: 'completed',
+          type: 'import',
+        },
+        {
+          _flowId: '41',
+          _id: '25901',
+          _integrationId: '1',
+          createdAt: '2020-12-04T11:03:00.000Z',
+          duration: '00:59:59',
+          endedAt: '2020-12-04T10:59:59.000Z',
+          startedAt: '2020-12-04T10:00:00.000Z',
+          status: 'completed',
+          type: 'export',
+        },
+      ]);
+    });
+
+    test('should return job errors for non-empty state', () => {
+      const state = reducer({
+        paging: {
+          jobs: {
+            currentPage: 0,
+            rowsPerPage: 10,
+            totalJobs: 3,
+          },
+        },
+        jobs: [],
+      }, suitescriptActions.job.receivedErrors({
+        collection: [
+          {
+            _id: '1',
+            _jobId: '1',
+            type: 'export',
+            createdAt: '2020-11-10T04:07:00.000Z',
+            resolved: false,
+            code: '',
+            message: 'Error Code: Error | Error Message: MULTICURRENCY : Please Enable Multi Curency and refresh Corporate Currency',
+            recordLink: '',
+          },
+          {
+            _id: '2',
+            _jobId: '2',
+            type: 'import',
+            createdAt: '2020-12-04T05:57:00.000Z',
+            resolved: true,
+            code: '',
+            message: 'Name: INVALID_KEY_OR_REF',
+            recordLink: '',
+          },
+        ],
+      },
+      ));
+
+      expect(selectors.suiteScriptJobErrors(state, {
+        jobId: '1',
+        jobType: 'export',
+      })).toEqual([{
+        _id: '1',
+        _jobId: '1',
+        type: 'export',
+        createdAt: '2020-11-10T04:07:00.000Z',
+        resolved: false,
+        code: '',
+        message: 'Error Code: Error | Error Message: MULTICURRENCY : Please Enable Multi Curency and refresh Corporate Currency',
+        recordLink: '',
+      }]);
+    });
   });
 });
