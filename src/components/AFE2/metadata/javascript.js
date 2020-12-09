@@ -7,7 +7,7 @@ export default {
   label: 'JavaScript editor',
   description: 'Run JavaScript safely in a secure runtime environment.',
   layout: 'compact',
-  panels: ({ resultMode }) => [
+  panels: [
     {
       title: 'Script',
       area: 'rule',
@@ -25,9 +25,9 @@ export default {
       title: 'Function output',
       area: 'result',
       Panel: ResultPanel,
-      props: {
+      props: ({ resultMode }) => ({
         mode: resultMode,
-      },
+      }),
     },
   ],
 };

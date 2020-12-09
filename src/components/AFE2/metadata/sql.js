@@ -12,7 +12,6 @@ export default {
   panels: ({ autoEvaluate }) => [
     {
       group: true,
-      title: 'Type your handlebars template here',
       area: 'rule',
       panels: [
         {
