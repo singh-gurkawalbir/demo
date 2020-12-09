@@ -43,14 +43,6 @@ export default function reducer(state = {}, action) {
         const optionsCopy = deepClone(options);
         const formattedInitOptions = init ? init(optionsCopy) : optionsCopy;
 
-        let v1Rule; let
-          v2Rule;
-
-        if (processor === 'handlebars' && options.isEditorV2Supported) {
-          v1Rule = rule;
-          v2Rule = rule;
-        }
-
         let originalRule = rule;
 
         if (typeof rule === 'object') {
@@ -66,8 +58,6 @@ export default function reducer(state = {}, action) {
           lastChange: Date.now(),
           // initChangeIdentifier: initChangeIdentifier + 1,
           initStatus: 'requested',
-          v1Rule,
-          v2Rule,
         };
         break;
       }

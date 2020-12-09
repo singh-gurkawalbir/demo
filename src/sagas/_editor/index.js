@@ -12,6 +12,7 @@ import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import { getResource, commitStagedChanges } from '../resources';
 import processorLogic from '../../reducers/session/_editors/processorLogic';
+import sagasProcessorLogic from './processorLogic';
 import { SCOPES } from '../resourceForm';
 import { requestSampleData } from '../sampleData/flows';
 import { requestExportSampleData } from '../sampleData/exports';
@@ -445,6 +446,11 @@ export function* initEditor({ id }) {
   const editor = yield select(selectors._editor, id);
 
   if (!editor) return;
+  const init = sagasProcessorLogic.init(editor.processor);
+
+  if (init) {
+    yield call(init, {id});
+  }
 
   // if data is already passed during init, save it to state directly
   if (editor.data) {
@@ -478,7 +484,15 @@ export function* initEditor({ id }) {
 }
 
 export function* toggleEditorVersion({ id, version }) {
-  return yield call(requestEditorSampleData, {id, requestedTemplateVersion: version});
+  const {data, templateVersion} = yield call(requestEditorSampleData, {id, requestedTemplateVersion: version});
+
+  return yield put(
+    actions._editor.sampleDataReceived(
+      id,
+      JSON.stringify(data, null, 2),
+      templateVersion,
+    )
+  );
 }
 
 export default [
