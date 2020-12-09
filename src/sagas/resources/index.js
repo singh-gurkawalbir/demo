@@ -631,8 +631,8 @@ export function* getResourceCollection({ resourceType }) {
   /** hide the error that GET SuiteScript tiles throws when connection is offline */
   if (
     resourceType &&
-    resourceType.includes('suitescript/connections/') &&
-    resourceType.includes('/tiles')
+    ((resourceType.includes('suitescript/connections/') && resourceType.includes('/tiles')) ||
+    resourceType.includes('ashares'))
   ) {
     hideNetWorkSnackbar = true;
   }

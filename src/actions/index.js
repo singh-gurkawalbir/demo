@@ -1185,7 +1185,7 @@ const user = {
   org: {
     users: {
       requestCollection: message =>
-        resource.requestCollection('ashares', undefined, message),
+        resource.requestCollection('ashares', message),
       create: user => action(actionTypes.USER_CREATE, { user }),
       created: user => action(actionTypes.USER_CREATED, { user }),
       update: (_id, user) => action(actionTypes.USER_UPDATE, { _id, user }),
