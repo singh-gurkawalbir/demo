@@ -70,7 +70,6 @@ import {
   getAvailablePreviewStages,
   isPreviewPanelAvailable,
 } from '../utils/exportPanel';
-import inferErrorMessages from '../utils/inferErrorMessages';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVerion2 } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
@@ -144,59 +143,6 @@ genSelectors(selectors, subSelectors);
 
 // additional user defined selectors
 selectors.userState = state => state && state.user;
-
-// #region PUBLIC COMMS SELECTORS
-// Use shallowEquality operator to prevent re-renders.
-// or convert this to re-select since it has no args, it s perfect
-// case for re-select.
-selectors.commsErrors = state => {
-  const commsState = state?.comms?.networkComms;
-
-  if (!commsState) return;
-  const errors = {};
-
-  Object.keys(commsState).forEach(key => {
-    const c = commsState[key];
-
-    if (!c.hidden && c.status === COMM_STATES.ERROR) {
-      errors[key] = inferErrorMessages(c.message);
-    }
-  });
-
-  return errors;
-};
-
-selectors.commsSummary = state => {
-  let isLoading = false;
-  let isRetrying = false;
-  let hasError = false;
-  const commsState = state?.comms?.networkComms;
-
-  if (commsState) {
-    Object.keys(commsState).forEach(key => {
-      const c = commsState[key];
-
-      if (!c.hidden) {
-        if (c.status === COMM_STATES.ERROR) {
-          hasError = true;
-        } else if (c.retryCount > 0) {
-          isRetrying = true;
-        } else if (c.status === COMM_STATES.LOADING && Date.now() - c.timestamp > Number(process.env.NETWORK_THRESHOLD)) {
-          isLoading = true;
-        }
-      }
-    });
-  }
-
-  return { isLoading, isRetrying, hasError };
-};
-
-selectors.commStatusPerPath = (state, path, method) => {
-  const key = commKeyGen(path, method);
-
-  return fromComms.commStatus(state && state.comms, key);
-};
-// #endregion
 
 // #region PUBLIC SESSION SELECTORS
 
@@ -599,12 +545,6 @@ selectors.makeResourceListSelector = () =>
     (userState, resourcesState, options) =>
       selectors.resourceListModified(userState, resourcesState, options)
   );
-
-selectors.iaFlowSettings = (state, integrationId, flowId) => {
-  const integration = selectors.resource(state, 'integrations', integrationId);
-
-  return getIAFlowSettings(integration, flowId);
-};
 
 // TODO: The object returned from this selector needs to be overhauled.
 // It is shared between IA and DIY flows,

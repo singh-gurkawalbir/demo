@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import { createSelector } from 'reselect';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
-import { convertOldFlowSchemaToNewOne } from '../../../utils/flows';
+import { convertOldFlowSchemaToNewOne, getIAFlowSettings } from '../../../utils/flows';
 import { stringCompare } from '../../../utils/sort';
 
 const emptyObject = {};
@@ -687,4 +687,11 @@ selectors.hasSettingsForm = (state, resourceType, resourceId) => {
 
   return !!(settingsForm && (settingsForm.form || settingsForm.init));
 };
+
+selectors.iaFlowSettings = (state, integrationId, flowId) => {
+  const integration = selectors.resource(state, 'integrations', integrationId);
+
+  return getIAFlowSettings(integration, flowId);
+};
+
 // #endregion
