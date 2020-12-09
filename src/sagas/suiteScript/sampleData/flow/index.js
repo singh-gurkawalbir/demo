@@ -18,6 +18,10 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
       flowId,
     }
   );
+
+  if (!flow) {
+    return;
+  }
   const { export: exportConfig } = flow;
   const {type: exportType, _connectionId } = exportConfig;
 

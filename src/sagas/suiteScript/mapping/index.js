@@ -428,7 +428,10 @@ export function* updateImportSampleData() {
       const objCopy = { ...modifiedMappings[incompleteGenIndex] };
 
       objCopy.generate = childSObject.id;
-      objCopy.rowIdentifier += 1;
+      // TODO we need rowIdentifier to refersh row. Add this to reducer
+      if (!objCopy.rowIdentifier) {
+        objCopy.rowIdentifier = 1;
+      } else objCopy.rowIdentifier += 1;
       modifiedMappings[incompleteGenIndex] = objCopy;
     }
   });
@@ -450,7 +453,7 @@ export function* patchGenerateThroughAssistant({value}) {
   }
 }
 
-function* requestPatchField({key, field, value}) {
+export function* requestPatchField({key, field, value}) {
   const {mappings} = yield select(selectors.suiteScriptMapping);
   const mapping = mappings.find(_m => _m.key === key) || {};
   const {generate, extract} = mapping;
