@@ -5,6 +5,7 @@ import { call, race, select, take } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 
+// TODO to see why its needed. The sagas starts failing if this line is removed
 // eslint-disable-next-line no-unused-vars
 import { apiCallWithRetry } from '../../index';
 import { fetchRequiredMappingData,
@@ -121,6 +122,138 @@ describe('Suitescript sagas', () => {
             connectionId: 's',
             importType: 'netsuite',
             exportType: 'xyz',
+            subRecordMappingId,
+          },
+        }))
+        .run();
+    });
+
+    test('should trigger initComplete for netsuite import after successful completion of init[2]', () => {
+      const ssLinkedConnectionId = 'c1';
+      const integrationId = 'i1';
+      const flowId = 'f1';
+      const subRecordMappingId = undefined;
+
+      return expectSaga(mappingInit, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
+        .provide([
+          [select(selectors.suiteScriptFlowDetail, {
+            integrationId,
+            ssLinkedConnectionId,
+            flowId,
+          }), {
+            export: { _connectionId: 's',
+              type: 'netsuite',
+              netsuite: {
+                type: 'restlet',
+              },
+
+            },
+            import: {
+              type: 'netsuite',
+              netsuite: {
+                recordType: 'myRecordType',
+                lookups: [],
+              },
+              mapping: {
+                fields: [{generate: 'a', extract: 'b'}],
+                lists: [],
+              },
+
+            },
+          }],
+          [race({
+            fetchData: call(fetchRequiredMappingData, {
+              ssLinkedConnectionId,
+              integrationId,
+              flowId,
+              subRecordMappingId,
+            }),
+            cancelInit: take(actionTypes.SUITESCRIPT.MAPPING.CLEAR),
+          }), {}],
+        ]).put(actions.suiteScript.mapping.initComplete({
+          ssLinkedConnectionId,
+          integrationId,
+          flowId,
+          mappings: [{generate: 'a', extract: 'b'}],
+          subRecordFields: [],
+          lookups: [],
+          options: {
+            recordType: 'myRecordType',
+            connectionId: 's',
+            importType: 'netsuite',
+            exportType: 'netsuite',
+            subRecordMappingId,
+          },
+        }))
+        .run();
+    });
+
+    test('should trigger initComplete for netsuite import[sub-record] after successful completion of init', () => {
+      const ssLinkedConnectionId = 'c1';
+      const integrationId = 'i1';
+      const flowId = 'f1';
+      const subRecordMappingId = 'subRecordId';
+
+      return expectSaga(mappingInit, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
+        .provide([
+          [select(selectors.suiteScriptFlowDetail, {
+            integrationId,
+            ssLinkedConnectionId,
+            flowId,
+          }), {
+            export: { _connectionId: 's',
+              type: 'netsuite',
+              netsuite: {
+                type: 'restlet',
+              },
+
+            },
+            import: {
+              type: 'netsuite',
+              netsuite: {
+                recordType: 'myRecordType',
+                lookups: [],
+              },
+              mapping: {
+                fields: [{generate: 'a', extract: 'b'}],
+                lists: [],
+              },
+
+            },
+          }],
+          [
+            select(selectors.suiteScriptNetsuiteMappingSubRecord, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}),
+            {
+              recordType: 'subRecordType',
+              mapping: {
+                fields: [
+                  {mappingId: 'xyz', something: 'else'},
+                ],
+                lists: [],
+              },
+              lookups: []},
+          ],
+          [race({
+            fetchData: call(fetchRequiredMappingData, {
+              ssLinkedConnectionId,
+              integrationId,
+              flowId,
+              subRecordMappingId,
+            }),
+            cancelInit: take(actionTypes.SUITESCRIPT.MAPPING.CLEAR),
+          }), {}],
+        ]).put(actions.suiteScript.mapping.initComplete({
+          ssLinkedConnectionId,
+          integrationId,
+          flowId,
+          mappings: [],
+          subRecordFields: [{mappingId: 'xyz', something: 'else'}],
+          lookups: [],
+          options: {
+            recordType: 'subRecordType',
+            connectionId: 's',
+            importType: 'netsuite',
+            exportType: 'netsuite',
             subRecordMappingId,
           },
         }))
@@ -745,12 +878,6 @@ describe('Suitescript sagas', () => {
     });
   });
 
-  // ///////
-  // ///////
-  // ///////
-  // ////////
-  // ////////
-  // /////to remove
   describe('saveMappings saga', () => {
     test('should save mapping correctly in case of netsuite import', () => {
       const ssLinkedConnectionId = 'c1';
@@ -759,7 +886,6 @@ describe('Suitescript sagas', () => {
       const recordType = 'test';
       const subRecordMappingId = undefined;
       const connectionId = 'conn';
-      // const importId = '_i_1';
 
       return expectSaga(saveMappings, {})
         .provide([
@@ -846,7 +972,208 @@ describe('Suitescript sagas', () => {
         .run();
     });
 
-    // todo: surecord mapping save
+    test('should save mapping correctly in case of netsuite[sub record] import', () => {
+      const ssLinkedConnectionId = 'c1';
+      const integrationId = 'i1';
+      const flowId = 'f1';
+      const recordType = 'test';
+      const subRecordMappingId = 'subRecordId';
+      const connectionId = 'conn';
+
+      return expectSaga(saveMappings, {})
+        .provide([
+          [select(selectors.suiteScriptMapping),
+            {
+              mappings: [
+                {generate: 'xyz', extract: 'abcd'},
+                {generate: 'njm', extract: 'opo'},
+              ],
+              lookups: [],
+              ssLinkedConnectionId,
+              integrationId,
+              flowId,
+              recordType,
+              subRecordFields: [{
+                mappingId: 'xyz',
+                something: 'else',
+              }],
+              subRecordMappingId,
+            }],
+          [select(selectors.suiteScriptFlowDetail, {
+            integrationId,
+            ssLinkedConnectionId,
+            flowId,
+          }), {
+            export: {
+              type: 'xyz',
+            },
+            import: {
+              type: 'netsuite',
+              _connectionId: connectionId,
+              netsuite: {
+                subRecordImports: [{
+                  mappingId: 'xyz',
+                  mapping: {fields: [], lists: []},
+                  lookups: [{name: 'test', something: 'else'}],
+                }],
+              },
+            },
+            _id: flowId,
+          }],
+          [
+            call(commitStagedChanges, {
+              resourceType: 'imports',
+              id: flowId,
+              scope: 'value',
+              ssLinkedConnectionId,
+              integrationId,
+            }), undefined,
+          ],
+        ])
+        .put(
+          actions.suiteScript.resource.patchStaged(
+            ssLinkedConnectionId,
+            'imports',
+            flowId,
+            [
+              {
+                op: 'replace',
+                path: '/import/netsuite/subRecordImports',
+                value: [
+                  {
+                    mappingId: 'xyz',
+                    mapping: {
+                      fields: [],
+                      lists: [
+
+                      ],
+                    },
+                    lookups: [
+                      {
+                        name: 'test',
+                        something: 'else',
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+            'value',
+          )
+        )
+        .put(
+          actions.suiteScript.mapping.saveComplete()
+        )
+        .run();
+    });
+
+    test('should save mapping correctly in case of netsuite[sub record] import[2]', () => {
+      const ssLinkedConnectionId = 'c1';
+      const integrationId = 'i1';
+      const flowId = 'f1';
+      const recordType = 'test';
+      const subRecordMappingId = 'subRecordId';
+      const connectionId = 'conn';
+
+      return expectSaga(saveMappings, {})
+        .provide([
+          [select(selectors.suiteScriptMapping),
+            {
+              mappings: [
+                {generate: 'xyz', extract: 'abcd'},
+                {generate: 'njm', extract: 'opo'},
+              ],
+              lookups: [],
+              ssLinkedConnectionId,
+              integrationId,
+              flowId,
+              recordType,
+              subRecordFields: [{
+                mappingId: 'subRecordId',
+                something: 'else',
+              }],
+              subRecordMappingId,
+            }],
+          [select(selectors.suiteScriptFlowDetail, {
+            integrationId,
+            ssLinkedConnectionId,
+            flowId,
+          }), {
+            export: {
+              type: 'xyz',
+            },
+            import: {
+              type: 'netsuite',
+              _connectionId: connectionId,
+              netsuite: {
+                subRecordImports: [{
+                  mappingId: 'subRecordId',
+                  mapping: {fields: [], lists: []},
+                  lookups: [{name: 'test', something: 'else'}],
+                }],
+              },
+            },
+            _id: flowId,
+          }],
+          [
+            call(commitStagedChanges, {
+              resourceType: 'imports',
+              id: flowId,
+              scope: 'value',
+              ssLinkedConnectionId,
+              integrationId,
+            }), undefined,
+          ],
+        ])
+        .put(
+          actions.suiteScript.resource.patchStaged(
+            ssLinkedConnectionId,
+            'imports',
+            flowId,
+            [
+              {
+                op: 'replace',
+                path: '/import/netsuite/subRecordImports',
+                value: [
+                  {
+                    mappingId: 'subRecordId',
+                    mapping: {
+                      fields: [
+                        {
+                          generate: 'xyz',
+                          extract: 'abcd',
+                          internalId: false,
+                        },
+                        {
+                          generate: 'njm',
+                          extract: 'opo',
+                          internalId: false,
+                        },
+                        {
+                          mappingId: 'subRecordId',
+                          something: 'else',
+                        },
+                      ],
+                      lists: [
+
+                      ],
+                    },
+                    lookups: [
+
+                    ],
+                  },
+                ],
+              },
+            ],
+            'value',
+          )
+        )
+        .put(
+          actions.suiteScript.mapping.saveComplete()
+        )
+        .run();
+    });
+
     test('should save mapping correctly in case of salesforce import', () => {
       const ssLinkedConnectionId = 'c1';
       const integrationId = 'i1';
@@ -1110,6 +1437,52 @@ describe('Suitescript sagas', () => {
         .run();
     });
 
+    test('should not trigger patchIncompleteGenerates action in case of non-salesforce import and value has _child_ ', () => {
+      const ssLinkedConnectionId = 'c1';
+      const integrationId = 'i1';
+      const flowId = 'f1';
+      const sObjectType = 'test';
+      const subRecordMappingId = undefined;
+      const connectionId = 'conn';
+      // const importId = '_i_1';
+
+      return expectSaga(checkForIncompleteSFGenerateWhilePatch, { field: 'generate', value: '_child_' })
+        .provide([
+          [select(selectors.suiteScriptMapping),
+            {
+              mappings: [],
+              lookups: [],
+              ssLinkedConnectionId,
+              integrationId,
+              flowId,
+              // recordType,
+              subRecordFields: [],
+              subRecordMappingId,
+            }],
+          [select(selectors.suiteScriptFlowDetail, {
+            integrationId,
+            ssLinkedConnectionId,
+            flowId,
+          }), {
+            export: {
+              type: 'xyz',
+            },
+            import: {
+              type: 'something',
+              _connectionId: connectionId,
+            },
+            _id: flowId,
+          }],
+        ])
+        .not.put(actions.suiteScript.mapping.patchIncompleteGenerates(
+          {
+            key: 'anything',
+            value: 'anything',
+          }
+        ))
+        .run();
+    });
+
     test('should trigger patchIncompleteGenerates action correctly', () => {
       const ssLinkedConnectionId = 'c1';
       const integrationId = 'i1';
@@ -1290,6 +1663,55 @@ describe('Suitescript sagas', () => {
         .put(actions.suiteScript.mapping.updateMappings(
           [
             {generate: 'xyz[*].abc', extarct: 'xyz', key: 'k1', rowIdentifier: 1},
+            {generate: 'sd', extarct: 'ss', key: 'k2'},
+          ]))
+        .run();
+    });
+
+    test('should update mapping if there is sample data update and there was incomplete generate pending[2]', () => {
+      const ssLinkedConnectionId = 'c1';
+      const integrationId = 'i1';
+      const flowId = 'f1';
+      const value = 'myValue';
+      const subRecordMappingId = undefined;
+      const key = 'key';
+
+      return expectSaga(updateImportSampleData, {key, value })
+        .provide([
+          [select(selectors.suiteScriptMapping),
+            {
+              mappings: [
+                {generate: 'xyz', extarct: 'xyz', key: 'k1', rowIdentifier: 1},
+                {generate: 'sd', extarct: 'ss', key: 'k2'},
+              ],
+              lookups: [],
+              ssLinkedConnectionId,
+              integrationId,
+              flowId,
+              subRecordFields: [],
+              subRecordMappingId,
+              incompleteGenerates: [{key: 'k1', value: 'xyz'}],
+            }],
+          [
+            select(selectors.suiteScriptGenerates,
+              {
+                ssLinkedConnectionId,
+                integrationId,
+                flowId,
+                subRecordMappingId,
+              }),
+            {data: [
+              {
+                id: 'xyz[*].abc',
+                relationshipName: 'xyz',
+                childSObject: 'childSObject',
+              },
+            ]},
+          ],
+        ])
+        .put(actions.suiteScript.mapping.updateMappings(
+          [
+            {generate: 'xyz[*].abc', extarct: 'xyz', key: 'k1', rowIdentifier: 2},
             {generate: 'sd', extarct: 'ss', key: 'k2'},
           ]))
         .run();
