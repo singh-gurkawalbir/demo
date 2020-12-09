@@ -313,7 +313,7 @@ selectors.suiteScriptMappingSaveStatus = state => {
   };
 };
 
-selectors.suitesciptMappingFormLabels = state => {
+selectors.suitesciptMappingExtractGenerateLabel = state => {
   const {exportType, importType} = state.mapping;
   const extract = `Source Record Field ${getSuiteScriptAppType(exportType) ? `(${getSuiteScriptAppType(exportType)})` : ''}`;
   const generate = `Import Field ${getSuiteScriptAppType(importType) ? `(${getSuiteScriptAppType(importType)})` : ''}`;

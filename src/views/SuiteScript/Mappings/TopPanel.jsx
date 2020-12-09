@@ -62,7 +62,7 @@ export default function TopPanel({disabled}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId} = useSelector(state => selectors.suiteScriptMapping(state));
-  const {generate: generateLabel, extract: extractLabel} = useSelector(state => selectors.suitesciptMappingFormLabels(state));
+  const {generate: generateLabel, extract: extractLabel} = useSelector(state => selectors.suitesciptMappingExtractGenerateLabel(state));
 
   const isExtractsLoading = useSelector(state => {
     const flowSampleDataStatus = selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}).status;

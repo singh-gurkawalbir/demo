@@ -93,6 +93,7 @@ const useStyles = makeStyles(theme => ({
     width: theme.spacing(4),
     marginRight: theme.spacing(1),
   },
+
   rowContainer: {
     '&:hover': {
 

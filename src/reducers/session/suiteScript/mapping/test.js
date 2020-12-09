@@ -53,7 +53,7 @@ describe('Suitescript mapping reducers', () => {
     expect(state.mapping.status).toEqual('error');
   });
 
-  test('should delete mapping corrctly', () => {
+  test('should delete mapping correctly', () => {
     const initialState = {
       mapping: {
         mappings: [
@@ -479,7 +479,7 @@ describe('Suitescript mapping reducers', () => {
     expect(newState).toEqual(expectedState);
   });
 
-  test('should not change mappings in case mapping is dragged to its oriignal position', () => {
+  test('should not change mappings in case mapping is dragged to its original position', () => {
     const initialState = {
       mapping: {
         mappings: [
@@ -973,7 +973,7 @@ describe('suiteScriptMappingSaveStatus selectors', () => {
   });
 });
 
-describe('suitesciptMappingFormLabels selectors', () => {
+describe('suitesciptMappingExtractGenerateLabel selectors', () => {
   test('selector should return form label correctly[1]', () => {
     const state = reducer({mapping: {}}, actions.suiteScript.mapping.initComplete({
       something: {},
@@ -984,7 +984,7 @@ describe('suitesciptMappingFormLabels selectors', () => {
       },
     }));
 
-    expect(selectors.suitesciptMappingFormLabels(state)).toEqual({
+    expect(selectors.suitesciptMappingExtractGenerateLabel(state)).toEqual({
       extract: 'Source Record Field (Salesforce)',
       generate: 'Import Field (Netsuite)',
     });
@@ -1000,7 +1000,7 @@ describe('suitesciptMappingFormLabels selectors', () => {
       },
     }));
 
-    expect(selectors.suitesciptMappingFormLabels(state)).toEqual({
+    expect(selectors.suitesciptMappingExtractGenerateLabel(state)).toEqual({
       extract: 'Source Record Field (Rakuten)',
       generate: 'Import Field ',
     });
