@@ -199,15 +199,6 @@ selectors.commStatusPerPath = (state, path, method) => {
 // #endregion
 
 // #region PUBLIC SESSION SELECTORS
-selectors.clonePreview = (state, resourceType, resourceId) => fromSession.previewTemplate(
-  state && state.session,
-  `${resourceType}-${resourceId}`
-);
-
-selectors.cloneData = (state, resourceType, resourceId) => fromSession.template(
-  state && state.session,
-  `${resourceType}-${resourceId}`
-);
 
 selectors.isSetupComplete = (
   state,
