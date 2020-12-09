@@ -224,19 +224,6 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
     errorObj.status,
   ]);
 
-  useEffect(
-    () => () => {
-      dispatch(
-        actions.errorManager.flowErrorDetails.clear({
-          flowId,
-          resourceId,
-          isResolved,
-        })
-      );
-    },
-    [dispatch, flowId, resourceId, isResolved]
-  );
-
   useEffect(() => {
     setPage(0);
   }, [dataFilter, rowsPerPage]);
