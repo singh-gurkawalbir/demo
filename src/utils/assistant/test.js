@@ -2096,25 +2096,6 @@ describe('extractParameters', () => {
   );
 });
 
-describe('extractParameters', () => {
-  const testCases = [
-
-    [[null], /^\/v1\/connections(?:\?([\s\S]*))?$/, '/v1/connections', '/v1/connections'],
-    [[':_id', null], /^\/v1\/connections\/([^/?]+)(?:\?([\s\S]*))?$/, '/v1/connections/:_id', '/v1/connections/someConnectionId?some=thing&someThing=else'],
-    [[':_integrationId', null], /^\/v1\/integrations\/([^/?]+)\/connections(?:\?([\s\S]*))?$/, '/v1/integrations/:_integrationId/connections', '/v1/integrations/someIntegrationId/connections'],
-    [[null], /^\/v1\/integrations(?:\?([\s\S]*))?$/, '/v1/integrations', '/v1/integrations'],
-    [[':_id', null], /^\/v1\/integrations\/([^/?]+)(?:\?([\s\S]*))?$/, '/v1/integrations/:_id', '/v1/integrations/someIntegrationId'],
-    [[':_integrationId', null], /^\/v1\/integrations\/([^/?]+)\/exports(?:\?([\s\S]*))?$/, '/v1/integrations/:_integrationId/exports', '/v1/integrations/someIntegrationId/exports'],
-  ];
-
-  each(testCases).test(
-    'should return %o when route = %o',
-    (expected, routeRegex, fragment, route) => {
-      expect(extractParameters(routeRegex, fragment, route)).toEqual(expected);
-    }
-  );
-});
-
 describe('convertFromExport', () => {
   const testCases = [
     [{bodyParams: {}, exportType: undefined, operation: undefined, pathParams: {}, queryParams: {}, resource: undefined, version: undefined}, {}, undefined, ''],
