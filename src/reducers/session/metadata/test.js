@@ -37,7 +37,16 @@ describe('NetSuiteAndSalesforce', () => {
       });
       test('should update status as refreshed for refresh action', () => {
         const receivedState = reducer(
-          undefined,
+          {
+            application:
+            { 123: { 'salesforce/metadata/123/recordTypes': {
+              status: 'error',
+              data: ['account', 'opportunity'],
+              errorMessage: 'Request limit exceeded',
+            } } },
+            preview: {},
+            assistants: { rest: {}, http: {} },
+          },
           actions.metadata.receivedCollection([], '1234', 'url')
         );
         const refreshReducer = reducer(
@@ -46,13 +55,37 @@ describe('NetSuiteAndSalesforce', () => {
         );
 
         expect(refreshReducer).toMatchObject({
-          application: { 1234: { url: { data: [], status: 'refreshed' } } },
+          application: {
+            1234: {
+              url: {
+                data: [],
+                status: 'refreshed',
+              },
+            },
+            123: {
+              'salesforce/metadata/123/recordTypes': {
+                status: 'error',
+                data: ['account', 'opportunity'],
+                errorMessage: 'Request limit exceeded',
+              },
+            },
+          },
+          preview: {},
           assistants: { http: {}, rest: {} },
         });
       });
       test('should set metadata for application for provided path when called received action', () => {
         const requestState = reducer(
-          undefined,
+          {
+            application:
+            { 123: { 'salesforce/metadata/123/recordTypes': {
+              status: 'error',
+              data: ['account', 'opportunity'],
+              errorMessage: 'Request limit exceeded',
+            } } },
+            preview: {},
+            assistants: { rest: {}, http: {} },
+          },
           actions.metadata.request('connId', 'recordTypes')
         );
         const receivedState = reducer(
@@ -110,7 +143,18 @@ describe('NetSuiteAndSalesforce', () => {
                 ],
               },
             },
+            123: {
+              'salesforce/metadata/123/recordTypes': {
+                status: 'error',
+                data: [
+                  'account',
+                  'opportunity',
+                ],
+                errorMessage: 'Request limit exceeded',
+              },
+            },
           },
+          preview: {},
           assistants: { http: {}, rest: {} },
         });
       });
@@ -307,33 +351,6 @@ describe('NetSuiteAndSalesforce', () => {
       });
     });
 
-    test('should update status as receieved for preview received action', () => {
-      const state = reducer(
-        undefined,
-        actions.metadata.receivedAssistantImportPreview('123', {
-          id: '123',
-          name: 'Account',
-        })
-      );
-
-      expect(state).toEqual({
-        application: {},
-        assistants: {
-          rest: {},
-          http: {},
-        },
-        preview: {
-          123: {
-            status: 'received',
-            data: {
-              id: '123',
-              name: 'Account',
-            },
-          },
-        },
-      });
-    });
-
     test('should remove assistant preview data for resource on reset action', () => {
       const state = reducer(
         {
@@ -355,13 +372,14 @@ describe('NetSuiteAndSalesforce', () => {
       });
     });
 
-    test('should update assistant metadata with received action', () => {
-      const state = reducer(
+    test('should update assistant metadata and status with received action', () => {
+      let state = reducer(
         {
           assistants: {
             http: {},
             rest: {},
           },
+          preview: {},
         },
         actions.assistantMetadata.received({
           adaptorType: 'rest',
@@ -371,12 +389,29 @@ describe('NetSuiteAndSalesforce', () => {
           }})
       );
 
+      state = reducer(
+        state,
+        actions.metadata.receivedAssistantImportPreview('123', {
+          id: '123',
+          name: 'Account',
+        })
+      );
+
       expect(state).toEqual({
         assistants: {
           http: {},
           rest: {
             gainsight: {
               recordType: 'order',
+            },
+          },
+        },
+        preview: {
+          123: {
+            status: 'received',
+            data: {
+              id: '123',
+              name: 'Account',
             },
           },
         },
