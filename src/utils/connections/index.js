@@ -38,4 +38,11 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
 
   return options;
 };
+export const KBDocumentation = {'3dcart': 'https://docs.celigo.com/hc/en-us/sections/360007385152-3dCart',
+  netsuite: 'https://docs.celigo.com/hc/en-us/sections/360007478471-NetSuite',
+  zendesk: 'https://docs.celigo.com/hc/en-us/sections/360007387992-Zendesk',
+  '3plcentral': 'https://docs.celigo.com/hc/en-us/sections/360008434132-3PL-Central',
+  '4castplus': 'https://docs.celigo.com/hc/en-us/sections/360008103851-4castplus',
+  accelo: 'https://docs.celigo.com/hc/en-us/sections/360007476291-Accelo',
+  ftp: 'https://docs.celigo.com/hc/en-us/sections/360007479691-FTP'};
 
