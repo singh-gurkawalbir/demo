@@ -29,6 +29,7 @@ function RouterWrappedContent({ hideSave, onClose, fullPath}) {
   // to each editor variant. If you have a better idea, pls share. Also maybe "type"
   // could be renamed.
   const type = useSelector(state => selectors._editor(state, editorId).processor);
+  const editorTitle = useSelector(state => selectors._editor(state, editorId).editorTitle);
 
   // console.log('drawer editor', editorId, editor);
   const { label, drawer = {} } = editorMetadata[type] || {};
@@ -36,7 +37,7 @@ function RouterWrappedContent({ hideSave, onClose, fullPath}) {
 
   return (
     <>
-      <DrawerHeader title={label} onClose={onClose} fullPath={fullPath}>
+      <DrawerHeader title={editorTitle || label} onClose={onClose} fullPath={fullPath}>
         { // eslint-disable-next-line react/no-array-index-key
           actions && actions.map((Action, i) => <Action key={i} editorId={editorId} />)
         }

@@ -82,7 +82,7 @@ const getLookupMetadata = ({
         type: 'httprequestbody',
         required: true,
         disableEditorV2: true,
-        supportLookup: false,
+        // supportLookup: false,
         connectionId,
         resourceId,
         resourceType,

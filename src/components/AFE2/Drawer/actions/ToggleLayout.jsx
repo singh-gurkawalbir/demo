@@ -10,7 +10,7 @@ import ViewCompactIcon from '../../../icons/LayoutLgLeftSmrightIcon';
 
 export default function ToggleLayout({ editorId }) {
   const dispatch = useDispatch();
-  const { layout } = useSelector(state => selectors._editor(state, editorId));
+  const layout = useSelector(state => selectors._editor(state, editorId).layout);
   const handleToggle = (event, newLayout) => {
     dispatch(actions._editor.changeLayout(editorId, newLayout));
   };
