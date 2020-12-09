@@ -4,7 +4,6 @@ import shortid from 'shortid';
 import actionTypes from '../../../../actions/types';
 import { getSuiteScriptAppType, isMappingObjEqual } from '../../../../utils/suiteScript/mapping';
 
-// todo validate mapping
 const { deepClone } = require('fast-json-patch');
 
 const emptyObj = {};
@@ -100,17 +99,8 @@ export default (state = {}, action) => {
           } else {
             mapping[field] = value;
 
-            if (
-              !draft.mapping.isCsvOrXlsxResource &&
-              value.indexOf('[*].') === -1
-            ) {
-              if ('isKey' in mapping) {
-                delete mapping.isKey;
-              }
-
-              if ('useFirstRow' in mapping) {
-                delete mapping.useFirstRow;
-              }
+            if (value.indexOf('[*].') === -1 && 'isKey' in mapping) {
+              delete mapping.isKey;
             }
           }
 
@@ -207,7 +197,6 @@ export default (state = {}, action) => {
         draft.mapping.mappingsCopy = deepClone(draft.mapping.mappings);
         draft.mapping.lookupsCopy = deepClone(draft.mapping.lookups);
         break;
-        // TODO shouldnt status be error
       case actionTypes.SUITESCRIPT.MAPPING.SAVE_FAILED:
         draft.mapping.saveStatus = 'failed';
         draft.mapping.validationErrMsg = undefined;
@@ -217,26 +206,10 @@ export default (state = {}, action) => {
         break;
       }
       case actionTypes.SUITESCRIPT.MAPPING.SET_SF_SUBLIST_FIELD_NAME: {
-        const { value } = action;
-
         draft.mapping.sfSubListExtractFieldName = value;
-
-        if (!value) {
-          const key = draft.mapping.lastModifiedRowKey;
-
-          if (key) {
-            const index = draft.mapping.mappings.findIndex(m => m.key === key);
-
-            draft.mapping.mappings[index].rowIdentifier += 1;
-          } else {
-          // TODO check this
-            //  draft.mapping.changeIdentifier += 1;
-          }
-        }
         break;
       }
       case actionTypes.SUITESCRIPT.MAPPING.PATCH_EXTRACT_LIST: {
-        const { value } = action;
         const extractList = deepClone(value);
 
         if (Array.isArray(extractList) && extractList.length) {

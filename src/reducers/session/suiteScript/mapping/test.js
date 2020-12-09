@@ -811,7 +811,6 @@ describe('Suitescript mapping reducers', () => {
   // TODO PATCH_EXTRACT_LIST
   // TODO SET_SF_SUBLIST_FIELD_NAME
   // TODO check for isKey
-  // TODO check for useFirstRow
   // TODO PATCH_INCOMPLETE_GENERATES
 });
 

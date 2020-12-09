@@ -1441,10 +1441,8 @@ describe('Suitescript sagas', () => {
       const ssLinkedConnectionId = 'c1';
       const integrationId = 'i1';
       const flowId = 'f1';
-      const sObjectType = 'test';
       const subRecordMappingId = undefined;
       const connectionId = 'conn';
-      // const importId = '_i_1';
 
       return expectSaga(checkForIncompleteSFGenerateWhilePatch, { field: 'generate', value: '_child_' })
         .provide([
