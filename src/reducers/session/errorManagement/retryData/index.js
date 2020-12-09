@@ -56,8 +56,8 @@ export default (
 export const selectors = {};
 
 selectors.retryDataContext = (state, retryId) =>
-  (state.retryObjects?.[retryId]) || defaultObject;
+  (state?.retryObjects?.[retryId]) || defaultObject;
 
 selectors.retryStatus = (state, flowId, resourceId) =>
-  state.retryStatus?.[flowId]?.[resourceId];
+  state?.retryStatus?.[flowId]?.[resourceId];
 

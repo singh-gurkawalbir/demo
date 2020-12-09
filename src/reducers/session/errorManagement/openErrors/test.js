@@ -1,4 +1,5 @@
 /* global describe, test, expect */
+import { deepClone } from 'fast-json-patch';
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 
@@ -154,38 +155,9 @@ describe('Flow Open errors info reducers for EM2.0 ', () => {
     });
     test('should retain previous state if existed with data and update only status as requested', () => {
       const currState = reducer(filledState, actions.errorManager.integrationErrors.request({ integrationId }));
-      const expectedState = {
-        [flowId]: {
-          status: 'received',
-          data: {
-            e1: 11,
-            e2: 20,
-            i1: 4,
-          },
-          total: 35,
-        },
-        'flow-5678': {
-          status: 'received',
-          data: {
-            e3: 10,
-            e4: 30,
-            i2: 7,
-          },
-          total: 47,
-        },
-        [integrationId]: {
-          status: 'requested',
-          data: {
-            f1: 100,
-            f2: 10,
-            f3: 20,
-          },
-          total: 130,
-        },
-        'integrationId-5678': {
-          status: 'requested',
-        },
-      };
+      const expectedState = deepClone(filledState);
+
+      expectedState[integrationId].status = 'requested';
 
       expect(currState).toEqual(expectedState);
     });

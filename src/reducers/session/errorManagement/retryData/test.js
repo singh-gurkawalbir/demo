@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer from '.';
+import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 
 const defaultState = {
@@ -337,3 +337,35 @@ describe('Retry data in EM 2.0 reducers', () => {
     });
   });
 });
+
+describe('retryDataContext selector', () => {
+  test('should return default object incase of no state or invalid props', () => {
+    expect(selectors.retryDataContext()).toEqual({});
+    expect(selectors.retryDataContext(defaultState)).toEqual({});
+    expect(selectors.retryDataContext(defaultState, '1234')).toEqual({});
+    expect(selectors.retryDataContext(existingState, '1234')).toEqual({});
+  });
+  test('should return target state of the passed retryId', () => {
+    const expectedState = {
+      status: 'received',
+      data: {
+        test: 5,
+      },
+    };
+
+    expect(selectors.retryDataContext(existingState, retryId)).toEqual(expectedState);
+  });
+});
+
+describe('retryStatus selector', () => {
+  test('should return undefined incase of no state or invalid props', () => {
+    expect(selectors.retryStatus()).toBeUndefined();
+    expect(selectors.retryStatus(defaultState)).toBeUndefined();
+    expect(selectors.retryStatus(defaultState, '1234', '5678')).toBeUndefined();
+    expect(selectors.retryStatus(existingState, '1234', '5678')).toBeUndefined();
+  });
+  test('should return retry status of the passed flowId and resourceId', () => {
+    expect(selectors.retryStatus(existingState, flowId, resourceId)).toEqual('retrying');
+  });
+});
+
