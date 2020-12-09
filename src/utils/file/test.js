@@ -4,7 +4,7 @@ import {
   isValidFileSize,
   getUploadedFileStatus,
   getFileReaderOptions,
-  getJSONContent,
+  getJSONContentFromString,
   generateCSVFields,
   getFileColumns,
 } from '.';
@@ -138,14 +138,14 @@ describe('getFileReaderOptions util', () => {
   });
 });
 
-describe('getJSONContent util', () => {
+describe('getJSONContentFromString util', () => {
   test('should return error if provided data is empty or not a json string', () => {
-    expect(getJSONContent()).toEqual({ success: false, error: messageStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
-    expect(getJSONContent('')).toEqual({ success: false, error: messageStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
-    expect(getJSONContent('{some}')).toEqual({ success: false, error: messageStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
+    expect(getJSONContentFromString()).toEqual({ success: false, error: messageStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
+    expect(getJSONContentFromString('')).toEqual({ success: false, error: messageStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
+    expect(getJSONContentFromString('{some}')).toEqual({ success: false, error: messageStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
   });
   test('should return success with parsed content if valid json string is provided', () => {
-    expect(getJSONContent('{"key":"value"}')).toEqual({ success: true, data: {key: 'value'}});
+    expect(getJSONContentFromString('{"key":"value"}')).toEqual({ success: true, data: {key: 'value'}});
   });
 });
 
@@ -203,6 +203,27 @@ describe('generateCSVFields util', () => {
 
     expect(generateCSVFields(data, {includeHeader: true, columnDelimiter: '|'})).toEqual(expectedHeaders);
   });
+  test('should take default column and/or row delimiter if not provided in the options', () => {
+    const data = `CUSTOMER_NUMBER|VENDOR_NAME|VENDOR_PART_NUM
+    C1000010839|Sato|12S000357CS
+    C1000010839|Unitech|1400-900035G`;
+
+    const expectedHeaders = [
+      ['CUSTOMER_NUMBER|VENDOR_NAME|VENDOR_PART_NUM',
+        'CUSTOMER_NUMBER|VENDOR_NAME|VENDOR_PART_NUM'],
+    ];
+
+    expect(generateCSVFields(data)).toEqual(expectedHeaders);
+  });
+  test('should return empty array if data is not a string', () => {
+    const data = {
+      data: `CUSTOMER_NUMBER|VENDOR_NAME|VENDOR_PART_NUM
+    C1000010839|Sato|12S000357CS
+    C1000010839|Unitech|1400-900035G`,
+    };
+
+    expect(generateCSVFields(data, { columnDelimiter: '|' })).toEqual([]);
+  });
 });
 
 describe('getFileColumns util', () => {
@@ -237,6 +258,21 @@ describe('getFileColumns util', () => {
       }],
       [{
         CUSTOMER_NUM: 'C1000010909',
+        CODE: 'K6423',
+      }],
+      ],
+    };
+
+    expect(getFileColumns(result)).toEqual(['CUSTOMER_NUM', 'CODE']);
+  });
+  test('should return first object columns without failing if input data is grouped with different keys', () => {
+    const result = {
+      data: [[{
+        CUSTOMER_NUM: 'C1000010839',
+        CODE: 'T113L',
+      }],
+      [{
+        ID: 'C1000010909',
         CODE: 'K6423',
       }],
       ],

@@ -69,7 +69,7 @@ export function getFileReaderOptions(type) {
   return {};
 }
 
-export const getJSONContent = data => {
+export const getJSONContentFromString = data => {
   if (!isJsonString(data)) {
     return { success: false, error: messageStore('FILE_TYPE_INVALID', {fileType: 'JSON'}) };
   }
@@ -138,7 +138,7 @@ export async function getCsvFromXlsx(data) {
  * Returns [[a,a], [b,b], [c,c]]
  */
 export const generateCSVFields = (data, options = {}) => {
-  if (!data) return [];
+  if (!data || typeof data !== 'string') return [];
   const {
     columnDelimiter = ',',
     rowDelimiter = '\n',
