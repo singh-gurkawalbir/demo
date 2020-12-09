@@ -5165,7 +5165,7 @@ selectors.availableUsersList = (state, integrationId) => {
   const permissions = selectors.userPermissions(state);
   let _users = [];
 
-  if (permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER || permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN) {
+  if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(permissions.accessLevel)) {
     if (integrationId) {
       _users = selectors.integrationUsersForOwner(state, integrationId);
     } else {
@@ -5175,7 +5175,7 @@ selectors.availableUsersList = (state, integrationId) => {
     _users = selectors.integrationUsers(state, integrationId);
   }
 
-  if (integrationId && _users && _users.length > 0) {
+  if ((integrationId || permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN) && _users && _users.length > 0) {
     const accountOwner = selectors.accountOwner(state);
 
     _users = [

@@ -19,6 +19,7 @@ export default function AccessLevel({ user, integrationId }) {
     <>
       {!integrationId &&
       {
+        [USER_ACCESS_LEVELS.ACCOUNT_OWNER]: 'Owner',
         [USER_ACCESS_LEVELS.ACCOUNT_MANAGE]: 'Manage',
         [USER_ACCESS_LEVELS.ACCOUNT_MONITOR]: 'Monitor',
         [USER_ACCESS_LEVELS.ACCOUNT_ADMIN]: 'Adminstrator',

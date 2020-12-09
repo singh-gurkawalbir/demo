@@ -15,7 +15,7 @@ export default function UsersList({ integrationId, storeId, className }) {
   const isAccountOwner = useSelector(state =>
     [USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(selectors.resourcePermissions(state).accessLevel)
   );
-
+  const accessLevel = useSelector(state => selectors.resourcePermissions(state)?.accessLevel);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
@@ -40,8 +40,9 @@ export default function UsersList({ integrationId, storeId, className }) {
     {
       integrationId,
       storeId,
+      accessLevel,
       isUserInErrMgtTwoDotZero,
-    }), [integrationId, storeId, isUserInErrMgtTwoDotZero]);
+    }), [integrationId, storeId, accessLevel, isUserInErrMgtTwoDotZero]);
 
   return (
     <>
