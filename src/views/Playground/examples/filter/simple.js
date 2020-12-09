@@ -1,7 +1,9 @@
 const sampleData = {
-  id: 123,
-  name: 'Bob',
-  age: 33,
+  record: {
+    id: 123,
+    name: 'Bob',
+    age: 33,
+  },
 };
 
 export default {
@@ -9,7 +11,7 @@ export default {
   type: 'filter',
   name: 'Simple JSON record',
   description: 'Simple JSON record',
-  // data: JSON.stringify(sampleData, null, 2),
   data: sampleData,
+  rule: ['equals', ['string', ['extract', 'id']], ''],
 };
 

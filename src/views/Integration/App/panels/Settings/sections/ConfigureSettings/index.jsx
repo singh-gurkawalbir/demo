@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../../../../reducers';
-import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
+import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/formFactory/utils';
 import LoadResources from '../../../../../../../components/LoadResources';
 import { IAFormStateManager, useActiveTab } from '../../../Flows';
 import { SavingMask } from '../../../../../../SuiteScript/Integration/App/panels/Settings/sections/ConfigureSettings';

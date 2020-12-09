@@ -2,7 +2,7 @@ import React, { useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import DynaRadio from './radiogroup/DynaRadioGroup';
-import { isProduction } from '../../../forms/utils';
+import { isProduction } from '../../../forms/formFactory/utils';
 import DynaLabelValueElement from './DynaLabelValueElement';
 import FieldHelp from '../FieldHelp';
 

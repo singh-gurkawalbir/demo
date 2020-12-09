@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { isEmpty } from 'lodash';
 import actionTypes from '../../../../actions/types';
 
 export const PING_STATES = {
@@ -52,6 +53,7 @@ export default (state = {}, action) => {
       case actionTypes.SUITESCRIPT.CONNECTION.TEST_CANCELLED: {
         draft[ssLinkedConnectionId][resourceId] = {
           status: PING_STATES.ABORTED,
+          message,
         };
         break;
       }
@@ -59,7 +61,12 @@ export default (state = {}, action) => {
       case actionTypes.SUITESCRIPT.CONNECTION.TEST_CLEAR: {
         if (retainStatus && draft[ssLinkedConnectionId][resourceId]) {
           delete draft[ssLinkedConnectionId][resourceId].message;
-        } else draft[ssLinkedConnectionId][resourceId] = {};
+        } else {
+          delete draft[ssLinkedConnectionId][resourceId];
+          if (isEmpty(draft[ssLinkedConnectionId])) {
+            delete draft[ssLinkedConnectionId];
+          }
+        }
 
         break;
       }
@@ -75,32 +82,11 @@ selectors.suiteScriptTestConnectionStatus = (
   state,
   resourceId,
   ssLinkedConnectionId
-) => {
-  if (
-    !state ||
-    !state[ssLinkedConnectionId] ||
-    !state[ssLinkedConnectionId][resourceId]
-  ) {
-    return null;
-  }
-  const { status } = state[ssLinkedConnectionId][resourceId];
-
-  return status;
-};
+) => state?.[ssLinkedConnectionId]?.[resourceId]?.status || null;
 
 selectors.suiteScriptTestConnectionMessage = (
   state,
   resourceId,
   ssLinkedConnectionId
-) => {
-  if (
-    !state ||
-    !state[ssLinkedConnectionId] ||
-    !state[ssLinkedConnectionId][resourceId]
-  ) {
-    return null;
-  }
-  const { message } = state[ssLinkedConnectionId][resourceId];
+) => state?.[ssLinkedConnectionId]?.[resourceId]?.message || null;
 
-  return message;
-};

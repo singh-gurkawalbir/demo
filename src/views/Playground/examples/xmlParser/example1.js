@@ -7,4 +7,7 @@ export default {
   <Age>12  </Age>
 </Contact>
 `,
+  rule: {
+    V0_json: false,
+  },
 };
