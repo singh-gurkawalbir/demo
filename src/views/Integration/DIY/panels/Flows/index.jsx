@@ -108,9 +108,9 @@ const FlowListingTable = ({
   actionProps,
   sectionId,
 }) => {
-  const groupedFlows = flows.filter(flow => sectionId === MISCELLANEOUS_SECTION_ID ? !flow._flowGroupingId
+  const groupedFlows = useMemo(() => flows.filter(flow => sectionId === MISCELLANEOUS_SECTION_ID ? !flow._flowGroupingId
     : flow._flowGroupingId === sectionId
-  );
+  ), [flows, sectionId]);
 
   return (
     <CeligoTable
