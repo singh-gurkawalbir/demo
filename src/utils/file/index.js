@@ -1,7 +1,8 @@
 import { each } from 'lodash';
-import { MAX_FILE_SIZE } from './constants';
-import { isJsonString } from './string';
-import retry from './retry';
+import { MAX_FILE_SIZE } from '../constants';
+import { isJsonString } from '../string';
+import retry from '../retry';
+import messageStore from '../../constants/messages';
 
 // A map that returns corresponding application file types used for file uploading
 export const fileTypeToApplicationTypeMap = {
@@ -34,22 +35,22 @@ export function isValidFileType(fileType, file) {
   };
 
   // In ADP connection, Client certificates need to included, those will not have file type.
-  //  File can not be validated if it doesn't have fie type, so assuming it is a valid file.
+  //  File can not be validated if it doesn't have file type, so assuming it is a valid file.
   return validFileTypes[fileType]
-    ? validFileTypes[fileType].includes(file.type)
+    ? validFileTypes[fileType].includes(file?.type)
     : true;
 }
 
 // Validates file size against MAX_FILE_SIZE as per Bug @IO-12216
-export const isValidFileSize = (file, maxSize) => file.size <= maxSize;
+export const isValidFileSize = (file, maxSize) => file?.size <= maxSize;
 
-// TODO: @Raghu Move these error messages to constants
 export const getUploadedFileStatus = (file, fileType, fileProps = {}) => {
+  if (!file) return {};
   const { maxSize = MAX_FILE_SIZE } = fileProps;
 
-  if (!isValidFileSize(file, maxSize)) return { success: false, error: 'File exceeds max file size' };
+  if (!isValidFileSize(file, maxSize)) return { success: false, error: messageStore('FILE_SIZE_EXCEEDED') };
 
-  if (fileType && !isValidFileType(fileType, file)) return { success: false, error: `Please select valid ${fileType} file` };
+  if (fileType && !isValidFileType(fileType, file)) return { success: false, error: messageStore('FILE_TYPE_INVALID', {fileType}) };
 
   return { success: true };
 };
@@ -68,9 +69,9 @@ export function getFileReaderOptions(type) {
   return {};
 }
 
-export const getJSONContent = data => {
+export const getJSONContentFromString = data => {
   if (!isJsonString(data)) {
-    return { success: false, error: 'Please provide valid JSON file' };
+    return { success: false, error: messageStore('FILE_TYPE_INVALID', {fileType: 'JSON'}) };
   }
 
   return { success: true, data: JSON.parse(data) };
@@ -137,18 +138,14 @@ export async function getCsvFromXlsx(data) {
  * Returns [[a,a], [b,b], [c,c]]
  */
 export const generateCSVFields = (data, options = {}) => {
+  if (!data || typeof data !== 'string') return [];
   const {
     columnDelimiter = ',',
     rowDelimiter = '\n',
     includeHeader = true,
   } = options;
-  let fieldsList;
 
-  if (columnDelimiter && rowDelimiter) {
-    fieldsList = data.split(rowDelimiter)[0].split(columnDelimiter);
-  } else {
-    fieldsList = data;
-  }
+  const fieldsList = data.split(rowDelimiter)[0].split(columnDelimiter);
 
   const fields = [];
 
