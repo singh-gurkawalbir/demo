@@ -184,8 +184,15 @@ export default function MarketplaceList() {
           applicationName
             ? applicationName.charAt(0).toUpperCase() + applicationName.slice(1)
             : ''
-        } Integrations`}
+        } Integrations`} subtitle={(templates.length || connectors.length) ? (
+          <div>Don`t see a connector or template you need. <a href="mailto:product_feedback@celigo.com" rel="noreferrer" target="_blank">Prioritize it.</a></div>
+        ) : ''}
+
       />
+
+      {(!templates.length && !connectors.length) && (
+        <div>We don`t have any pre-built solutions for this application yet. <a href="mailto:product_feedback@celigo.com" rel="noreferrer" target="_blank">Prioritize it.</a></div>
+      )}
       <div className={classes.root}>
         {connectors.map(connector => (
           <Card
