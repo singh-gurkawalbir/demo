@@ -8,7 +8,7 @@ import { selectors } from '../../reducers';
 import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
 import getRequestOptions from '../../utils/requestOptions';
-import { defaultPatchSetConverter } from '../../forms/utils';
+import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import { REST_ASSISTANTS, USER_ACCESS_LEVELS } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';

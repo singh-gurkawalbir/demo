@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+/* global describe, test, expect, jest */
 
 import { call, put, select, race, take } from 'redux-saga/effects';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -13,6 +13,9 @@ import { commitStagedChanges } from '../../resources';
 import { selectors } from '../../../reducers/index';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import actionTypes from '../../../actions/types';
+import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
+
+jest.mock('../../../forms/formFactory/getResourceFromAssets');
 
 describe('ping and update connection saga', () => {
   const connectionId = 'C1';
@@ -343,6 +346,9 @@ describe('Create payload saga', () => {
   const patchSet = [{op: 'replace', path: '/name', value: 'ZendeskToday'}, {op: 'add', path: '/http', value: {}}, {op: 'add', path: '/http/ping', value: {}}, {op: 'replace', path: '/http/ping/relativeURI', value: '/api/v3/users.json'}, {op: 'replace', path: '/assistant', value: 'zendesk'}];
   const patchSetAmazonMws = [{op: 'replace', path: '/name', value: 'AmazonMWS'}, {op: 'add', path: '/http', value: {}}, {op: 'add', path: '/http/ping', value: {}}, {op: 'replace', path: '/http/ping/relativeURI', value: '/api/v3/users.json'}, {op: 'replace', path: '/assistant', value: 'amazonmws'}];
 
+  // fake the return value of getResourceFormAssets when createFormValuesPatchSet calls this fn
+
+  getResourceFormAssets.mockReturnValue({fieldMap: {field1: {fieldId: 'something'}}, preSave: null});
   test('should be able to check payload calls successfully', () => expectSaga(createPayload, { resourceId, values })
     .provide([
       [select(selectors.resourceData), conn],

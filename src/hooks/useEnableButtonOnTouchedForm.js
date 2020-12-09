@@ -1,7 +1,7 @@
 import { useMemo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { isFormTouched } from '../forms/utils';
 import actions from '../actions';
+import { isFormTouched } from '../forms/formFactory/utils';
 
 const useEnableButtonOnTouchedForm = ({
   onClick,

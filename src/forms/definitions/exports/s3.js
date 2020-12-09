@@ -1,5 +1,5 @@
 import { isNewId } from '../../../utils/resource';
-import { alterFileDefinitionRulesVisibility } from '../../utils';
+import { alterFileDefinitionRulesVisibility } from '../../formFactory/utils';
 
 export default {
   preSave: formValues => {

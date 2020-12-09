@@ -8,6 +8,26 @@ export const getIntegrationAppUrlName = integrationAppName => {
   return integrationAppName.replace(/\W/g, '').replace(/Connector/gi, '');
 };
 
+export const isIntegrationAppVerion2 = (integration, skipCloneCheck) => {
+  if (!integration) return false;
+  let isCloned = false;
+
+  if (!skipCloneCheck) {
+    isCloned =
+    integration.install &&
+    integration.install.find(step => step.isClone);
+  }
+  const isFrameWork2 =
+    !!((
+      integration.installSteps &&
+      integration.installSteps.length) || (
+      integration.uninstallSteps &&
+        integration.uninstallSteps.length)) ||
+    isCloned;
+
+  return isFrameWork2;
+};
+
 export const getEmptyMessage = (storeLabel = '', action) => {
   switch (storeLabel.toLowerCase()) {
     case 'amazon account':
@@ -98,6 +118,7 @@ export const getTopLevelTabs = (options = {}) => {
 
 const getIntegrationApp = ({ _connectorId, name }) => {
   const domain = window.document.location.hostname.replace('www.', '');
+
   const integrationAppId = {
     'staging.integrator.io': {
       '5666865f67c1650309224904': 'zendesk',
@@ -166,8 +187,8 @@ const getIntegrationApp = ({ _connectorId, name }) => {
   };
   let integrationApp;
 
-  if (domain === 'localhost.io') {
-    integrationApp = integrationAppId[domain][name];
+  if (domain.indexOf('localhost') > -1) {
+    integrationApp = integrationAppId['localhost.io'][name];
   } else {
     integrationApp = integrationAppId[domain][_connectorId];
   }

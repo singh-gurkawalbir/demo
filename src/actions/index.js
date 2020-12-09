@@ -736,15 +736,6 @@ const integrationApp = {
         flowId,
         sectionId,
       }),
-    showFormValidations: (integrationId, flowId, sectionId) =>
-      action(
-        actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SHOW_FORM_VALIDATION_ERRORS,
-        {
-          integrationId,
-          flowId,
-          sectionId,
-        }
-      ),
     requestUpgrade: (integrationId, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_UPGRADE, {
         integrationId,
@@ -1859,11 +1850,10 @@ const errorManager = {
         isResolved,
         errorIds,
       }),
-    clear: ({ flowId, resourceId, isResolved = false }) =>
+    clear: ({ flowId, resourceId }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.CLEAR, {
         flowId,
         resourceId,
-        isResolved,
       }),
     notifyUpdate: ({ flowId, resourceId, diff }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.NOTIFY_UPDATE, {

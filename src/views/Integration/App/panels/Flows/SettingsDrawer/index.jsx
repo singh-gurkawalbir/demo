@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import clsx from 'clsx';
 import { selectors } from '../../../../../../reducers';
-import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
+import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/formFactory/utils';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
 import { IAFormStateManager, useActiveTab } from '..';
