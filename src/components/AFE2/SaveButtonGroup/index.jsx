@@ -4,16 +4,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ButtonGroup from '../../ButtonGroup';
+import useCancelConfirm from '../useCancelConfirm';
 
 export default function SaveButtonGroup({ editorId, onClose }) {
   const dispatch = useDispatch();
+  const handleCancelClick = useCancelConfirm(editorId, onClose);
   const [closeTriggered, setCloseTriggered] = useState(false);
   const { saveStatus, disabled } = useSelector(state => selectors._editor(state, editorId));
   const editorViolations = useSelector(state => selectors._editorViolations(state, editorId));
-  const isEditorDirty = useSelector(state =>
-    selectors._isEditorDirty(state, editorId)
-  );
-
+  const isEditorDirty = useSelector(state => selectors._isEditorDirty(state, editorId));
   const saveInProgress = saveStatus === 'requested';
   const saveSuccessful = saveStatus === 'success';
   const disable = !!editorViolations || disabled || saveInProgress || !isEditorDirty;
@@ -51,7 +50,7 @@ export default function SaveButtonGroup({ editorId, onClose }) {
         color="primary"
         data-test="closeEditor"
         disabled={saveInProgress}
-        onClick={onClose}>
+        onClick={handleCancelClick}>
         Cancel
       </Button>
     </ButtonGroup>
