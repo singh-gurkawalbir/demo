@@ -65,7 +65,7 @@ export default {
     type: 'multiselect',
     label: 'Applications',
     valueDelimiter: ',',
-    defaultValue: r => (r?.applications) || [], // This one i need to consider
+    defaultValue: r => (r?.applications) || [],
     options: [
       {
         items: [
