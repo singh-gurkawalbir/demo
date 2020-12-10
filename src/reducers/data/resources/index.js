@@ -410,6 +410,36 @@ selectors.rdbmsConnectionType = (state, connectionId) => {
   return connection.rdbms && connection.rdbms.type;
 };
 
+selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
+  if (type === 'generate') {
+    /** generating generate Label */
+    const importResource = selectors.resource(state, 'imports', resourceId);
+    const importConn = selectors.resource(state, 'connections', importResource?._connectionId);
+
+    return `Import field (${mappingUtil.getApplicationName(
+      importResource,
+      importConn
+    )})`;
+  }
+  if (type === 'extract') {
+    /** generating extract Label */
+    const flow = selectors.resource(state, 'flows', flowId);
+
+    if (flow && flow.pageGenerators && flow.pageGenerators.length && flow.pageGenerators[0]._exportId) {
+      const {_exportId} = flow.pageGenerators[0];
+      const exportResource = selectors.resource(state, 'exports', _exportId);
+      const exportConn = selectors.resource(state, 'connections', exportResource?._connectionId);
+
+      return `Export field (${mappingUtil.getApplicationName(
+        exportResource,
+        exportConn
+      )})`;
+    }
+
+    return 'Source record field';
+  }
+};
+
 // transformed from above selector
 function resourceTransformed(resourceIdState, resourceType) {
   if (!resourceIdState) return null;
