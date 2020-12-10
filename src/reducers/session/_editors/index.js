@@ -186,7 +186,7 @@ export default function reducer(state = {}, action) {
       case actionTypes._EDITOR.SAVE.COMPLETE: {
         const editor = draft[id];
 
-        editor.saveStatus = 'completed';
+        editor.saveStatus = 'success';
         let originalRule = editor.rule;
 
         if (typeof originalRule === 'object') {
