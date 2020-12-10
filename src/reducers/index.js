@@ -76,7 +76,6 @@ import mappingUtil from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare } from '../utils/sort';
-import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
@@ -4213,28 +4212,6 @@ selectors.mkFlowResources = () => createSelector(
   (flows, exports, imports, flowId) => getFlowResources(flows, exports, imports, flowId)
 );
 
-selectors.redirectUrlToResourceListingPage = (
-  state,
-  resourceType,
-  resourceId
-) => {
-  if (resourceType === 'integration') {
-    return getRoutePath(`/integrations/${resourceId}/flows`);
-  }
-
-  if (resourceType === 'flow') {
-    const flow = selectors.resource(state, 'flows', resourceId);
-
-    if (flow) {
-      return getRoutePath(
-        `integrations/${flow._integrationId || 'none'}/flows`
-      );
-    }
-  }
-
-  return getRoutePath(RESOURCE_TYPE_SINGULAR_TO_PLURAL[resourceType]);
-};
-
 selectors.httpAssistantSupportsMappingPreview = (state, importId) => {
   const importResource = selectors.resource(state, 'imports', importId);
   const { _integrationId, _connectionId, http } = importResource;
@@ -4279,6 +4256,80 @@ selectors.mappingPreviewType = (state, importId) => {
       return 'http';
     }
   }
+};
+
+/*
+* Definition rules are fetched in 2 ways
+* 1. In creation of an export, from FileDefinitions list based on 'definitionId' and 'format'
+* 2. In Editing an existing export, from UserSupportedFileDefinitions based on userDefinitionId
+* TODO @Raghu: Refactor this selector to be more clear
+*/
+selectors.fileDefinitionSampleData = (state, { userDefinitionId, resourceType, options }) => {
+  const { resourcePath, definitionId, format } = options;
+  let template;
+
+  if (definitionId && format) {
+    template = selectors.fileDefinition(state, definitionId, {
+      format,
+      resourceType,
+    });
+  } else if (userDefinitionId) {
+    // selector to get that resource based on userDefId
+    template = selectors.resource(state, 'filedefinitions', userDefinitionId);
+  }
+
+  if (!template) return {};
+  const { sampleData, ...fileDefinitionRules } = template;
+  // Stringify rules as the editor expects a string
+  let rule;
+  let formattedSampleData;
+
+  if (resourceType === 'imports') {
+    rule = JSON.stringify(fileDefinitionRules, null, 2);
+    formattedSampleData =
+        sampleData &&
+        JSON.stringify(
+          Array.isArray(sampleData) && sampleData.length ? sampleData[0] : {},
+          null,
+          2
+        );
+  } else {
+    rule = JSON.stringify(
+      {
+        resourcePath: resourcePath || '',
+        fileDefinition: fileDefinitionRules,
+      },
+      null,
+      2
+    );
+    formattedSampleData = sampleData;
+  }
+
+  return { sampleData: formattedSampleData, rule };
+};
+
+/**
+ * Supported File types : csv, json, xml, xlsx
+ * Note : Incase of xlsx 'csv' stage is requested as the raw stage contains xlsx format which is not used
+ * Modify this if we need xlsx content any where to show
+ */
+selectors.fileSampleData = (state, { resourceId, resourceType, fileType}) => {
+  const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
+  const { data: rawData } = selectors.getResourceSampleDataWithStatus(
+    state,
+    resourceId,
+    stage,
+  );
+
+  if (!rawData) {
+    const resourceObj = selectors.resource(state, resourceType, resourceId);
+
+    if (resourceObj?.file?.type === fileType) {
+      return resourceObj.sampleData;
+    }
+  }
+
+  return rawData?.body;
 };
 
 selectors.netsuiteAccountHasSuiteScriptIntegrations = (state, connectionId) => {
@@ -4542,7 +4593,6 @@ selectors.suiteScriptFlowSampleData = (state, {ssLinkedConnectionId, integration
 
   return fromSession.suiteScriptFlowSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
 };
-
 selectors.suiteScriptExtracts = createSelector(
   [(state, {ssLinkedConnectionId, integrationId, flowId}) => selectors.suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId}),
     (state, {ssLinkedConnectionId, integrationId, flowId}) => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId})],
@@ -4608,80 +4658,6 @@ selectors.suiteScriptSalesforceMasterRecordTypeInfo = (state, {ssLinkedConnectio
     commMetaPath,
     filterKey: 'salesforce-masterRecordTypeInfo',
   });
-};
-
-/*
-* Definition rules are fetched in 2 ways
-* 1. In creation of an export, from FileDefinitions list based on 'definitionId' and 'format'
-* 2. In Editing an existing export, from UserSupportedFileDefinitions based on userDefinitionId
-* TODO @Raghu: Refactor this selector to be more clear
-*/
-selectors.fileDefinitionSampleData = (state, { userDefinitionId, resourceType, options }) => {
-  const { resourcePath, definitionId, format } = options;
-  let template;
-
-  if (definitionId && format) {
-    template = selectors.fileDefinition(state, definitionId, {
-      format,
-      resourceType,
-    });
-  } else if (userDefinitionId) {
-    // selector to get that resource based on userDefId
-    template = selectors.resource(state, 'filedefinitions', userDefinitionId);
-  }
-
-  if (!template) return {};
-  const { sampleData, ...fileDefinitionRules } = template;
-  // Stringify rules as the editor expects a string
-  let rule;
-  let formattedSampleData;
-
-  if (resourceType === 'imports') {
-    rule = JSON.stringify(fileDefinitionRules, null, 2);
-    formattedSampleData =
-        sampleData &&
-        JSON.stringify(
-          Array.isArray(sampleData) && sampleData.length ? sampleData[0] : {},
-          null,
-          2
-        );
-  } else {
-    rule = JSON.stringify(
-      {
-        resourcePath: resourcePath || '',
-        fileDefinition: fileDefinitionRules,
-      },
-      null,
-      2
-    );
-    formattedSampleData = sampleData;
-  }
-
-  return { sampleData: formattedSampleData, rule };
-};
-
-/**
- * Supported File types : csv, json, xml, xlsx
- * Note : Incase of xlsx 'csv' stage is requested as the raw stage contains xlsx format which is not used
- * Modify this if we need xlsx content any where to show
- */
-selectors.fileSampleData = (state, { resourceId, resourceType, fileType}) => {
-  const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
-  const { data: rawData } = selectors.getResourceSampleDataWithStatus(
-    state,
-    resourceId,
-    stage,
-  );
-
-  if (!rawData) {
-    const resourceObj = selectors.resource(state, resourceType, resourceId);
-
-    if (resourceObj?.file?.type === fileType) {
-      return resourceObj.sampleData;
-    }
-  }
-
-  return rawData?.body;
 };
 selectors.suiteScriptFileExportSampleData = (state, { ssLinkedConnectionId, resourceType, resourceId}) => {
   // const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
@@ -4777,31 +4753,7 @@ selectors.applicationType = (state, resourceType, id) => {
 
   return assistant || adaptorType;
 };
-selectors.lookupProcessorResourceType = (state, resourceId) => {
-  const stagedProcessor = selectors.stagedResource(state, resourceId);
 
-  if (!stagedProcessor || !stagedProcessor.patch) {
-    // TODO: we need a better pattern for logging warnings. We need a common util method
-    // which logs these warning only if the build is dev... if build is prod, these
-    // console.warn/logs should not even be bundled by webpack...
-    // eslint-disable-next-line
-    /*
-     console.warn(
-      'No patch-set available to determine new Page Processor resourceType.'
-    );
-    */
-    return;
-  }
-
-  // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-  const adaptorType = stagedProcessor?.patch?.find(
-    p => p.op === 'replace' && p.path === '/adaptorType'
-  );
-
-  // console.log(`adaptorType-${id}`, adaptorType);
-
-  return adaptorType?.value?.includes('Export') ? 'exports' : 'imports';
-};
 selectors.tradingPartnerConnections = (
   state,
   connectionId,
@@ -4816,24 +4768,6 @@ selectors.tradingPartnerConnections = (
   ));
 };
 
-selectors.mappingImportSampleDataSupported = (state, importId) => {
-  const importResource = selectors.resource(state, 'imports', importId);
-  const {adaptorType} = importResource;
-  const isAssistant =
-  !!importResource.assistant && importResource.assistant !== 'financialforce';
-
-  return isAssistant || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(adaptorType);
-};
-
-selectors.mappingSubRecordAndJSONPath = (state, importId, subRecordMappingId) => {
-  const importResource = selectors.resource(state, 'imports', importId);
-
-  if (subRecordMappingId && ['NetSuiteImport', 'NetSuiteDistributedImport'].includes(importResource.adaptorType)) {
-    return mappingUtil.getSubRecordRecordTypeAndJsonPath(importResource, subRecordMappingId);
-  }
-
-  return emptyObject;
-};
 selectors.mappingGenerates = createSelector([
   (state, importId) => selectors.resource(state, 'imports', importId)?.adaptorType,
   (state, importId, subRecordMappingId) => {

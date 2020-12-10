@@ -6,6 +6,8 @@ import actionTypes from '../../../actions/types';
 import { convertOldFlowSchemaToNewOne, getIAFlowSettings } from '../../../utils/flows';
 import { stringCompare } from '../../../utils/sort';
 import mappingUtil from '../../../utils/mapping';
+import getRoutePath from '../../../utils/routePaths';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
 
 const emptyObject = {};
 const emptyList = [];
@@ -438,6 +440,47 @@ selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
 
     return 'Source record field';
   }
+};
+
+selectors.mappingImportSampleDataSupported = (state, importId) => {
+  const importResource = selectors.resource(state, 'imports', importId);
+  const {adaptorType} = importResource;
+  const isAssistant =
+  !!importResource.assistant && importResource.assistant !== 'financialforce';
+
+  return isAssistant || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(adaptorType);
+};
+
+selectors.redirectUrlToResourceListingPage = (
+  state,
+  resourceType,
+  resourceId
+) => {
+  if (resourceType === 'integration') {
+    return getRoutePath(`/integrations/${resourceId}/flows`);
+  }
+
+  if (resourceType === 'flow') {
+    const flow = selectors.resource(state, 'flows', resourceId);
+
+    if (flow) {
+      return getRoutePath(
+        `integrations/${flow._integrationId || 'none'}/flows`
+      );
+    }
+  }
+
+  return getRoutePath(RESOURCE_TYPE_SINGULAR_TO_PLURAL[resourceType]);
+};
+
+selectors.mappingSubRecordAndJSONPath = (state, importId, subRecordMappingId) => {
+  const importResource = selectors.resource(state, 'imports', importId);
+
+  if (subRecordMappingId && ['NetSuiteImport', 'NetSuiteDistributedImport'].includes(importResource.adaptorType)) {
+    return mappingUtil.getSubRecordRecordTypeAndJsonPath(importResource, subRecordMappingId);
+  }
+
+  return emptyObject;
 };
 
 // transformed from above selector
