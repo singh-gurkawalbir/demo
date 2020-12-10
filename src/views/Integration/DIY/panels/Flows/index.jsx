@@ -128,7 +128,7 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
   const history = useHistory();
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
   const allSection = useMemo(() =>
-    flowGroupingsSections && [{title: 'Miscellaneous', sectionId: MISCELLANEOUS_SECTION_ID}, ...flowGroupingsSections],
+    flowGroupingsSections && [...flowGroupingsSections, {title: 'Miscellaneous', sectionId: MISCELLANEOUS_SECTION_ID}],
   [flowGroupingsSections]);
 
   if (!flowGroupingsSections) {
@@ -141,8 +141,8 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
 />
     );
   }
-  const {sectionId} = match.params;
-  const isMatchingWithSectionId = match?.params?.sectionId;
+  const sectionId = match.params?.sectionId;
+  const isMatchingWithSectionId = !!sectionId;
 
   if (!isMatchingWithSectionId) {
     history.replace(`${match.url}/sections/${MISCELLANEOUS_SECTION_ID}`);
