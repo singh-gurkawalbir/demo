@@ -2596,11 +2596,13 @@ export default {
     type: 'text',
     label: 'Access key ID',
     required: true,
+    helpKey: 'connection.dynamodb.aws.accessKeyId',
   },
   'dynamodb.aws.secretAccessKey': {
     type: 'text',
     label: 'Secret access key',
     required: true,
+    helpKey: 'connection.dynamodb.aws.secretAccessKey',
   },
   // #endregion dynamodb
   settings: {
