@@ -38,6 +38,7 @@ export default function DrawerHeader({
   hideBackButton = false,
   fullPath, // forwarded from parent (RightDrawer)
   onClose, // forwarded from parent (RightDrawer)
+  CloseButton,
   disableClose,
 }) {
   const classes = useStyles();
@@ -45,6 +46,23 @@ export default function DrawerHeader({
   const location = useLocation();
   const { isExact } = matchPath(location.pathname, fullPath) || {};
   const showBackButton = !isExact && !hideBackButton;
+
+  const CloseIconButton = () => {
+    // If the parent drawer provided a custom close button, then use it.
+    if (CloseButton) return CloseButton;
+
+    // Otherwise return the default close button.
+    return (
+      <IconButton
+        size="small"
+        disabled={!!disableClose}
+        data-test="closeRightDrawer"
+        aria-label="Close"
+        onClick={onClose}>
+        <CloseIcon />
+      </IconButton>
+    );
+  };
 
   return (
     <div data-public className={classes.drawerHeader}>
@@ -74,14 +92,7 @@ export default function DrawerHeader({
       {/* Typically children are the action icons/buttons */}
       {children}
 
-      <IconButton
-        size="small"
-        disabled={!!disableClose}
-        data-test="closeRightDrawer"
-        aria-label="Close"
-        onClick={onClose}>
-        <CloseIcon />
-      </IconButton>
+      <CloseIconButton />
     </div>
 
   );
