@@ -21,7 +21,10 @@ export default function ErrorList({ flowId, errorType }) {
   useEffect(() => {
     dispatch(actions.errorManager.retryStatus.requestPoll({ flowId, resourceId}));
 
-    return () => dispatch(actions.errorManager.retryStatus.clear(flowId));
+    return () => {
+      dispatch(actions.errorManager.retryStatus.clear(flowId));
+      dispatch(actions.errorManager.flowErrorDetails.clear({ flowId, resourceId }));
+    };
   }, [dispatch, flowId, resourceId]);
 
   const requestIntegrationUsers = useCallback(() => {

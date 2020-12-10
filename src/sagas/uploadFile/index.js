@@ -5,7 +5,7 @@ import { apiCallWithRetry } from '../index';
 import {
   getFileReaderOptions,
   getCsvFromXlsx,
-  getJSONContent,
+  getJSONContentFromString,
   getUploadedFileStatus,
 } from '../../utils/file';
 
@@ -119,7 +119,7 @@ function* processFile({ fileId, file, fileType, fileProps = {} }) {
     let out;
 
     if (fileType === 'json') {
-      out = getJSONContent(fileContent);
+      out = getJSONContentFromString(fileContent);
     } else {
       out = yield call(getCsvFromXlsx, fileContent);
     }

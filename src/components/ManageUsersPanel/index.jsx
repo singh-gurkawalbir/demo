@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     overflow: 'visible',
   },
   userListWrapper: {
-    overflowX: 'auto',
+    overflow: 'visible',
   },
 }));
 

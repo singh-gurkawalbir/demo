@@ -72,7 +72,7 @@ import {
 } from '../utils/exportPanel';
 import inferErrorMessages from '../utils/inferErrorMessages';
 import getRoutePath from '../utils/routePaths';
-import { getIntegrationAppUrlName, getTitleIdFromSection } from '../utils/integrationApps';
+import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVerion2 } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
@@ -1843,26 +1843,6 @@ selectors.isIAV2UninstallComplete = (state, { integrationId }) => {
   return false;
 };
 
-const isIntegrationAppVerion2 = (integration, skipCloneCheck) => {
-  if (!integration) return false;
-  let isCloned = false;
-
-  if (!skipCloneCheck) {
-    isCloned =
-    integration.install &&
-    integration.install.find(step => step.isClone);
-  }
-  const isFrameWork2 =
-    !!((
-      integration.installSteps &&
-      integration.installSteps.length) || (
-      integration.uninstallSteps &&
-        integration.uninstallSteps.length)) ||
-    isCloned;
-
-  return isFrameWork2;
-};
-
 // FIXME: @ashu, we can refactor this later and completely remove
 // the clone check once the functionality is clear and tested for all scenarios
 selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
@@ -2530,10 +2510,13 @@ selectors.availableConnectionsToRegister = (state, integrationId) => {
 selectors.mkSuiteScriptLinkedConnections = () => createSelector(
   selectors.userPreferences,
   selectors.userPermissions,
-  state => selectors.resourceList(state, {type: 'connections'}).resources,
+  state => state?.data?.resources?.connections,
   state => state?.data?.resources?.integrations,
-  (preferences, permissions, connections = [], integrations = []) => {
+  state => selectors.currentEnvironment(state),
+  (preferences, permissions, allConnections = [], integrations = [], currentEnvironment) => {
     const linkedConnections = [];
+    const connections = allConnections.filter(c => (!!c.sandbox === (currentEnvironment === 'sandbox')));
+
     let connection;
     let accessLevel;
 
@@ -2578,6 +2561,57 @@ selectors.suiteScriptLinkedTiles = createSelector(
 
     return tiles;
   });
+
+selectors.mkTileApplications = () => createSelector(
+  (_, tile) => tile,
+  state => state?.data?.resources?.integrations,
+  state => state?.data?.resources?.connections,
+  (state, tile) => selectors.isIntegrationAppVersion2(state, tile?._integrationId, true),
+  (tile, integrations = emptyArray, connections = emptyArray, isIAV2) => {
+    let applications = [];
+
+    if (!tile || !tile._connectorId) {
+      return emptyArray;
+    }
+    if (!isIAV2) {
+      applications = tile?.connector?.applications || emptyArray;
+      // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
+      if (tile.name && tile.name.indexOf('Magento 1') !== -1 && applications[0] === 'magento') {
+        applications[0] = 'magento1';
+      }
+      // Make NetSuite always the last application
+      applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]);
+
+      return applications;
+    }
+
+    const childIntegrations = integrations.filter(i => i._parentId === tile._integrationId);
+    const parentIntegration = integrations.find(i => i._id === tile._integrationId);
+
+    childIntegrations.forEach(i => {
+      const integrationConnections = connections.filter(c => c._integrationId === i._id);
+
+      integrationConnections.forEach(c => {
+        applications.push(c.assistant || c.type);
+      });
+    });
+
+    const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
+
+    parentIntegrationConnections.forEach(c => {
+      applications.push(c.assistant || c.type);
+    });
+    applications = uniq(applications);
+    // Make NetSuite always the last application
+    applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]);
+    // Only consider up to four applications
+    if (applications.length > 4) {
+      applications.length = 4;
+    }
+
+    return applications;
+  }
+);
 
 selectors.mkTiles = () => createSelector(
   state => state?.data?.resources?.tiles,
