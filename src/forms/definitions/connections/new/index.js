@@ -1,4 +1,4 @@
-import {applicationsList} from '../../../../constants/applications';
+import {applicationsList, totalNumOfConnectorsRoundedToTen} from '../../../../constants/applications';
 
 export default {
   preSave: ({ application, ...rest }) => {
@@ -25,7 +25,7 @@ export default {
       type: 'selectapplication',
       label: 'Application',
       placeholder:
-        'Choose application or start typing to browse 150+ applications',
+        `Choose application or start typing to browse ${totalNumOfConnectorsRoundedToTen()}+ applications`,
       defaultValue: '',
       required: true,
       validWhen: {

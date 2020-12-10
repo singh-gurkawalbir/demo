@@ -1,4 +1,4 @@
-import {applicationsList} from '../../../../constants/applications';
+import {applicationsList, totalNumOfConnectorsRoundedToTen} from '../../../../constants/applications';
 import { RDBMS_TYPES } from '../../../../utils/constants';
 
 const visibleWhen = [
@@ -56,7 +56,7 @@ export default {
       label: 'Application',
       appType: 'import',
       placeholder:
-        'Choose application or start typing to browse 150+ applications',
+      `Choose application or start typing to browse ${totalNumOfConnectorsRoundedToTen()}+ applications`,
       defaultValue: '',
       required: true,
       validWhen: {

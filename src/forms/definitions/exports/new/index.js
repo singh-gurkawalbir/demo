@@ -1,6 +1,7 @@
 import {applicationsList,
   getWebhookConnectors,
   getWebhookOnlyConnectors,
+  totalNumOfConnectorsRoundedToTen,
 } from '../../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../../utils/resource';
 import { RDBMS_TYPES } from '../../../../utils/constants';
@@ -47,7 +48,7 @@ export default {
       label: 'Application',
       appType: 'export',
       placeholder:
-        'Choose application or start typing to browse 150+ applications',
+      `Choose application or start typing to browse ${totalNumOfConnectorsRoundedToTen()}+ applications`,
       defaultValue: r => (r && r.application) || '',
       validWhen: {
         isNot: { values: [''], message: 'Please select an application' },

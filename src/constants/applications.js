@@ -933,5 +933,10 @@ export const getApp = (type, assistant) => {
 
   return applications.find(c => c.id === id) || {};
 };
+export const totalNumOfConnectorsRoundedToTen = () => {
+  const applications = applicationsList();
+
+  return parseInt(applications.length / 10, 10) * 10;
+};
 
 export default connectors;
