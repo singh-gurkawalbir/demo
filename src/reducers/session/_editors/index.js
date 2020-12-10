@@ -13,7 +13,7 @@ export default function reducer(state = {}, action) {
     type,
     processor,
     id,
-    options,
+    options = {},
     featuresPatch,
     rulePatch,
     dataPatch,
@@ -39,14 +39,14 @@ export default function reducer(state = {}, action) {
 
         // const initChangeIdentifier = draft[id]?.initChangeIdentifier || 0;
         const init = processorLogic.init(processor);
-        const {rule} = options || {};
-        const optionsCopy = deepClone(options);
+        const {onSave, ...rest} = options;
+        const optionsCopy = deepClone(rest);
         const formattedInitOptions = init ? init(optionsCopy) : optionsCopy;
 
-        let originalRule = rule;
+        let originalRule = options.rule;
 
-        if (typeof rule === 'object') {
-          originalRule = deepClone(rule);
+        if (typeof originalRule === 'object') {
+          originalRule = deepClone(options.rule);
         }
 
         draft[id] = {
@@ -58,6 +58,7 @@ export default function reducer(state = {}, action) {
           lastChange: Date.now(),
           // initChangeIdentifier: initChangeIdentifier + 1,
           initStatus: 'requested',
+          onSave,
         };
         break;
       }

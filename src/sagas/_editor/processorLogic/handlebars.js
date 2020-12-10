@@ -16,8 +16,8 @@ function* init({ id }) {
 
   const { value: formValues } = formState || {};
   const isEditorV2Supported = yield select(selectors._isEditorV2Supported, id);
-  let v1Rule; let
-    v2Rule;
+  let v1Rule;
+  let v2Rule;
 
   if (isEditorV2Supported) {
     v1Rule = rule;

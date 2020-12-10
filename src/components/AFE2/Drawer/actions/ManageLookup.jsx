@@ -1,15 +1,13 @@
-import React, { useMemo, Fragment, useCallback } from 'react';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import React, { useMemo } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
 import lookupUtil from '../../../../utils/lookup';
 import DynaLookupEditor from '../../../DynaForm/fields/DynaLookupEditor';
 import { selectors } from '../../../../reducers';
-import actions from '../../../../actions';
 import useFormContext from '../../../Form/FormContext';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import EditorDrawer from '../index';
 
 export default function ManageLookup({ editorId }) {
-  const dispatch = useDispatch();
   const {resourceType, formKey, resourceId, flowId, fieldId} = useSelector(state => {
     const {resourceType, formKey, resourceId, flowId, fieldId} = selectors._editor(state, editorId);
 
@@ -29,14 +27,6 @@ export default function ManageLookup({ editorId }) {
 
   const lookupFieldId = lookupUtil.getLookupFieldId(adaptorType);
 
-  const onFieldChange = useCallback(
-    (fieldId, value, skipFieldTouched) =>
-      dispatch(
-        actions.form.fieldChange(formKey)(fieldId, value, skipFieldTouched)
-      ),
-    [dispatch, formKey]
-  );
-
   if (fieldId === '_body' || resourceType !== 'imports' || !lookupFieldId) {
     return null;
   }
@@ -47,7 +37,7 @@ export default function ManageLookup({ editorId }) {
         id={lookupFieldId}
         label="Manage lookups"
         value={lookups}
-        onFieldChange={onFieldChange}
+        formKey={formKey}
         flowId={flowId}
         resourceType={resourceType}
         resourceId={resourceId}
