@@ -63,17 +63,12 @@ export default function _DynaHttpRequestBody_(props) {
   const handleEditorClick = useCallback(() => {
     dispatch(actions._editor.init(id, 'handlebars', {
       rule: typeof formattedRule === 'string' ? formattedRule : JSON.stringify(formattedRule, null, 2),
-      // interesting. How do we use formKey?
       formKey,
       flowId,
       resourceId,
       resourceType,
       fieldId: id,
       stage: 'flowInput',
-      // TODO: @ashu Propose to push the save callback into the editor state so that
-      // we have a single implementation of save button in all editors...
-      // If this callback exists, we call it, otherwise we default to the
-      // foreground/background save logic in the processor logic.
       onSave: handleSave,
     }));
 

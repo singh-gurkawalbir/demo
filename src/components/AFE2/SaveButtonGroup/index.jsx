@@ -10,12 +10,15 @@ export default function SaveButtonGroup({ editorId, onClose }) {
   const [closeTriggered, setCloseTriggered] = useState(false);
   const { saveStatus, disabled } = useSelector(state => selectors._editor(state, editorId));
   const editorViolations = useSelector(state => selectors._editorViolations(state, editorId));
+  const isEditorDirty = useSelector(state =>
+    selectors._isEditorDirty(state, editorId)
+  );
 
   const saveInProgress = saveStatus === 'requested';
   const saveSuccessful = saveStatus === 'success';
-  const disable = editorViolations || disabled || saveInProgress;
+  const disable = !!editorViolations || disabled || saveInProgress || !isEditorDirty;
 
-  const handleSave = () => dispatch(actions._editor.save(editorId));
+  const handleSave = () => dispatch(actions._editor.saveRequest(editorId));
   const handleSaveAndClose = () => {
     handleSave();
     setCloseTriggered(true);

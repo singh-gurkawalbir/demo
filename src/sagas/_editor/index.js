@@ -18,6 +18,12 @@ import { requestSampleData } from '../sampleData/flows';
 import { requestExportSampleData } from '../sampleData/exports';
 import { constructResourceFromFormValues } from '../utils';
 
+export function dataAsString(data) {
+  return typeof data === 'string'
+    ? data
+    : JSON.stringify(data, null, 2);
+}
+
 export function* invokeProcessor({ processor, body }) {
   const path = `/processors/${processor}`;
   const opts = {
@@ -113,15 +119,12 @@ export function* evaluateExternalProcessor({ processorData }) {
 }
 
 export function* save({ id, context }) {
-  const patches = yield select(selectors._editorPatchSet, id);
+  // TODO: @ashu const patches = yield select(selectors._editorPatchSet, id);
+  const patches = undefined;
   const editor = yield select(selectors._editor, id);
 
   if (!editor) {
     return; // nothing to do
-  }
-
-  if (!patches) {
-    return yield put(actions._editor.saveFailed(id));
   }
 
   // if preview before saving the editor is on, call the evaluateProcessor
@@ -134,6 +137,16 @@ export function* save({ id, context }) {
     ) {
       return yield put(actions._editor.saveFailed(id));
     }
+  }
+
+  if (editor.onSave) {
+    yield call(editor.onSave, editor);
+
+    return yield put(actions._editor.saveComplete(id));
+  }
+
+  if (!patches) {
+    return yield put(actions._editor.saveFailed(id));
   }
 
   /**
@@ -204,15 +217,8 @@ export function* save({ id, context }) {
       }
     }
 
-    // if all foregroundPatches succeed
-    if (editor.onSave) {
-      yield call(editor.onSave, editor);
-    }
     yield put(actions._editor.saveComplete(id));
   } else {
-    if (editor.onSave) {
-      yield call(editor.onSave, editor);
-    }
     // trigger save complete in case editor doesnt have any foreground processes
     yield put(actions._editor.saveComplete(id));
   }
@@ -302,7 +308,7 @@ export function* requestEditorSampleData({
 
   if (!editor) return;
 
-  const {flowId, resourceId, resourceType, fieldId, isEditorV2Supported, formKey, stage} = editor;
+  const {processor, flowId, resourceId, resourceType, fieldId, isEditorV2Supported, formKey, stage} = editor;
 
   const isPageGenerator = yield select(
     selectors.isPageGenerator,
@@ -336,7 +342,14 @@ export function* requestEditorSampleData({
     return {data};
   }
 
-  if (isPageGenerator && isEditorV2Supported) {
+  // TODO: @ashu test this
+  if (processor === 'csvParse' || processor === 'xmlParse') {
+    const fileType = processor === 'csvParse' ? 'csv' : 'xml';
+
+    const fileData = yield select(selectors.fileSampleData, { resourceId, resourceType, fileType});
+
+    return { data: fileData};
+  } if (isPageGenerator && isEditorV2Supported) {
     yield call(requestExportSampleData, { resourceId, resourceType, values: formValues });
     const parsedData = yield select(
       selectors.getResourceSampleDataWithStatus,
@@ -454,14 +467,10 @@ export function* initEditor({ id }) {
 
   // if data is already passed during init, save it to state directly
   if (editor.data) {
-    const dataAsString = typeof editor.data === 'string'
-      ? editor.data
-      : JSON.stringify(editor.data, null, 2);
-
     yield put(
       actions._editor.sampleDataReceived(
         id,
-        dataAsString,
+        dataAsString(editor.data),
       )
     );
   } else if (!editor.initStatus || editor.initStatus === 'requested') {
@@ -471,7 +480,7 @@ export function* initEditor({ id }) {
     yield put(
       actions._editor.sampleDataReceived(
         id,
-        JSON.stringify(data, null, 2),
+        dataAsString(data),
         templateVersion,
       )
     );
@@ -489,7 +498,7 @@ export function* toggleEditorVersion({ id, version }) {
   return yield put(
     actions._editor.sampleDataReceived(
       id,
-      JSON.stringify(data, null, 2),
+      dataAsString(data),
       templateVersion,
     )
   );
