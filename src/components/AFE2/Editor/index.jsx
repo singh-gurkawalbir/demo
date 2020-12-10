@@ -55,7 +55,7 @@ export default function Editor({ editorId }) {
   const SinglePanel = ({panel: p}) => (
     <>
       <PanelTitle title={resolveValue(p.title, editorContext)} />
-      <p.Panel editorId={editorId} {...p.props} />
+      <p.Panel editorId={editorId} {...resolveValue(p.props, editorContext)} />
     </>
   );
 
@@ -96,7 +96,10 @@ export default function Editor({ editorId }) {
           id={`tabpanel-${activeKey}`}
           aria-labelledby={`tab-${tabValue}`}
           className={classes.tabPanel}>
-          <ActivePanel editorId={editorId} {...activePanelProps} />
+          <ActivePanel
+            editorId={editorId}
+            {...resolveValue(activePanelProps, editorContext)}
+          />
         </div>
       </>
     );
