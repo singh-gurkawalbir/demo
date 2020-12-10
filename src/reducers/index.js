@@ -4281,12 +4281,6 @@ selectors.mappingPreviewType = (state, importId) => {
   }
 };
 
-selectors.rdbmsConnectionType = (state, connectionId) => {
-  const connection = selectors.resource(state, 'connections', connectionId) || {};
-
-  return connection.rdbms && connection.rdbms.type;
-};
-
 selectors.netsuiteAccountHasSuiteScriptIntegrations = (state, connectionId) => {
   const connection = selectors.resource(state, 'connections', connectionId);
 

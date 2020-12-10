@@ -404,6 +404,12 @@ selectors.firstFlowPageGenerator = (state, flowId) => {
   return emptyObject;
 };
 
+selectors.rdbmsConnectionType = (state, connectionId) => {
+  const connection = selectors.resource(state, 'connections', connectionId) || {};
+
+  return connection.rdbms && connection.rdbms.type;
+};
+
 // transformed from above selector
 function resourceTransformed(resourceIdState, resourceType) {
   if (!resourceIdState) return null;
