@@ -4962,19 +4962,6 @@ selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
   return importResource.netsuite_da?.recordType || importResource.netsuite?.recordType;
 };
 
-/** returns 1st Page generator for a flow */
-selectors.firstFlowPageGenerator = (state, flowId) => {
-  const flow = selectors.resource(state, 'flows', flowId);
-
-  if (flow?.pageGenerators?.length) {
-    const exportId = flow.pageGenerators[0]._exportId;
-
-    return selectors.resource(state, 'exports', exportId);
-  }
-
-  return emptyObject;
-};
-
 // DO NOT DELETE, might be needed later
 // selectors.sampleRuleForSQLQueryBuilder = createSelector([
 //   (state, { importId}) => {
