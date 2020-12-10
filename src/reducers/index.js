@@ -4942,26 +4942,6 @@ selectors.mappingHttpAssistantPreviewData = createSelector([
   };
 });
 
-selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
-  const importResource = selectors.resource(state, 'imports', importId);
-  const {adaptorType} = importResource;
-
-  if (!['NetSuiteImport', 'NetSuiteDistributedImport'].includes(adaptorType)) {
-    return;
-  }
-  if (subRecordMappingId) {
-    const { recordType } = mappingUtil.getSubRecordRecordTypeAndJsonPath(
-      importResource,
-      subRecordMappingId
-    );
-
-    return recordType;
-  }
-
-  // give precedence to netsuite_da
-  return importResource.netsuite_da?.recordType || importResource.netsuite?.recordType;
-};
-
 // DO NOT DELETE, might be needed later
 // selectors.sampleRuleForSQLQueryBuilder = createSelector([
 //   (state, { importId}) => {

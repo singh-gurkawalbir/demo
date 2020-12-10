@@ -5,6 +5,7 @@ import sift from 'sift';
 import actionTypes from '../../../actions/types';
 import { convertOldFlowSchemaToNewOne, getIAFlowSettings } from '../../../utils/flows';
 import { stringCompare } from '../../../utils/sort';
+import mappingUtil from '../../../utils/mapping';
 
 const emptyObject = {};
 const emptyList = [];
@@ -463,6 +464,26 @@ selectors.connectionHasAs2Routing = (state, id) => {
     connection.as2.contentBasedFlowRouter &&
     connection.as2.contentBasedFlowRouter._scriptId
   );
+};
+
+selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
+  const importResource = selectors.resource(state, 'imports', importId);
+  const {adaptorType} = importResource;
+
+  if (!['NetSuiteImport', 'NetSuiteDistributedImport'].includes(adaptorType)) {
+    return;
+  }
+  if (subRecordMappingId) {
+    const { recordType } = mappingUtil.getSubRecordRecordTypeAndJsonPath(
+      importResource,
+      subRecordMappingId
+    );
+
+    return recordType;
+  }
+
+  // give precedence to netsuite_da
+  return importResource.netsuite_da?.recordType || importResource.netsuite?.recordType;
 };
 
 selectors.isIntegrationApp = (state, integrationId) => {
