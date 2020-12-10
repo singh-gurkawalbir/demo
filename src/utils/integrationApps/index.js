@@ -96,7 +96,7 @@ export const getTopLevelTabs = (options = {}) => {
   return allTabs.filter(tab => !excludeTabs.includes(tab.path));
 };
 
-const getIntegrationApp = ({ _connectorId, name }) => {
+export const getIntegrationApp = ({ _connectorId, name }) => {
   const domain = window.document.location.hostname.replace('www.', '');
   const integrationAppId = {
     'staging.integrator.io': {
