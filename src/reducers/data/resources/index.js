@@ -452,6 +452,15 @@ selectors.connectionHasAs2Routing = (state, id) => {
   );
 };
 
+selectors.isIntegrationApp = (state, integrationId) => {
+  const integration = selectors.resource(state,
+    'integrations',
+    integrationId
+  );
+
+  return !!(integration && integration._connectorId);
+};
+
 selectors.integrationInstallSteps = (state, id) => {
   const integration = selectors.resource(state, 'integrations', id);
 

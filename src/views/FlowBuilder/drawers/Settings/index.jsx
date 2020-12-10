@@ -49,7 +49,7 @@ function Settings({
       'integrations',
       integrationId
     );
-    const isIntegrationApp = selectors.isIAType(state, flowId);
+    const isIntegrationApp = !!flow?._connectorId;
 
     if (!isIntegrationApp) {
       return true;

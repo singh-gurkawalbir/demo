@@ -5198,27 +5198,12 @@ selectors.isFreeFlowResource = (state, flowId) => {
   return isFreeFlow;
 };
 
-selectors.isIAType = (state, flowId) => {
+selectors.isFlowViewMode = (state, integrationId, flowId) => {
   const flow = selectors.resourceData(state,
     'flows',
     flowId
   ).merged;
   const isIAType = isIntegrationApp(flow);
-
-  return isIAType;
-};
-
-selectors.isIntegrationApp = (state, integrationId) => {
-  const integration = selectors.resourceData(state,
-    'integrations',
-    integrationId
-  ).merged;
-
-  return !!(integration && integration._connectorId);
-};
-
-selectors.isFlowViewMode = (state, integrationId, flowId) => {
-  const isIAType = selectors.isIAType(state, flowId);
 
   const isMonitorLevelAccess =
     selectors.isFormAMonitorLevelAccess(state, integrationId);
@@ -5259,27 +5244,6 @@ selectors.shouldShowAddPageProcessor = (state, flowId) => {
 };
 
 // #endregion Flow builder selectors
-
-selectors.hasManageIntegrationAccess = (state, integrationId) => {
-  const isAccountOwner = [USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(selectors.userPermissions(state).accessLevel);
-
-  if (isAccountOwner) {
-    return true;
-  }
-  const manageIntegrationAccessLevels = [
-    INTEGRATION_ACCESS_LEVELS.OWNER,
-    INTEGRATION_ACCESS_LEVELS.MANAGE,
-  ];
-
-  const userPermissions = selectors.userPermissions(state);
-  const integrationPermissions = userPermissions.integrations;
-
-  if (manageIntegrationAccessLevels.includes(integrationPermissions.all?.accessLevel)) {
-    return true;
-  }
-
-  return manageIntegrationAccessLevels.includes(integrationPermissions[integrationId]?.accessLevel);
-};
 
 selectors.canUserUpgradeToErrMgtTwoDotZero = state => {
   const integrations = selectors.resourceList(state, {
