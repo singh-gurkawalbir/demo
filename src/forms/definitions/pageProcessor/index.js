@@ -1,4 +1,4 @@
-import {applicationsList, totalNumOfConnectorsRoundedToTen} from '../../../constants/applications';
+import {applicationsList, applicationsPlaceHolderText} from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 import { RDBMS_TYPES } from '../../../utils/constants';
 
@@ -74,8 +74,7 @@ export default {
       type: 'selectapplication',
       label: 'Application',
       refreshOptionsOnChangesTo: ['resourceType'],
-      placeholder:
-      `Choose application or start typing to browse ${totalNumOfConnectorsRoundedToTen()}+ applications`,
+      placeholder: applicationsPlaceHolderText(),
       defaultValue: r => {
         if (!r) return '';
 
