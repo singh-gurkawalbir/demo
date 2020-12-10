@@ -2969,7 +2969,7 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enable
     'DynamodbExport',
   ].includes(resource.adaptorType);
 };
-selectors._editor = (state, id) => state?.session?._editors?.[id] || {};
+selectors._editor = (state, id) => fromSession._editor(state?.session, id);
 
 selectors._isEditorV2Supported = (state, editorId) => {
   const editor = selectors._editor(state, editorId);

@@ -16,12 +16,12 @@ export default {
       panels: [
         {
           key: 'query',
-          name: 'Query template',
+          name: 'Type your handlebars template here',
           Panel: HandlebarsPanel,
         },
         {
           key: 'default',
-          name: 'Default record',
+          name: 'Defaults',
           Panel: FeaturePanel,
           props: {
             mode: 'json',
