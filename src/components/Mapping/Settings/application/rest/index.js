@@ -5,7 +5,7 @@ import {
   isProduction,
   conditionalLookupOptionsforRest,
   conditionalLookupOptionsforRestProduction,
-} from '../../../../../forms/utils';
+} from '../../../../../forms/formFactory/utils';
 
 const emptyObject = {};
 export default {
@@ -15,12 +15,12 @@ export default {
     extractFields,
     lookups,
     importResource = {},
+    isGroupedSampleData,
   }) => {
     const {generate, lookupName} = value;
     const {_connectionId: connectionId, name: resourceName, adaptorType, _id: resourceId } = importResource;
 
     const isComposite = !!((adaptorType === 'HTTPImport' && importResource?.http?.method && importResource.http.method.length > 1) || (adaptorType === 'RESTImport' && importResource?.rest?.method && importResource.rest.method.length > 1));
-    const isGroupedSampleData = Array.isArray(extractFields);
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
 
     let conditionalWhenOptions = isProduction()

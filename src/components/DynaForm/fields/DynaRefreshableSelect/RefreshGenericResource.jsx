@@ -47,6 +47,7 @@ export default function RefreshGenericResource(props) {
     disableOptionsLoad,
     id,
     resourceToFetch,
+    ignoreValueUnset = false,
     resetValue,
     multiselect,
     onFieldChange,
@@ -60,6 +61,7 @@ export default function RefreshGenericResource(props) {
     urlToOpen,
     value,
   } = props;
+
   const classes = useStyles();
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
   // component is in loading state in both request and refresh cases
@@ -109,10 +111,10 @@ export default function RefreshGenericResource(props) {
   useEffect(() => {
     // if selected option is not in options list then reset it to empty
 
-    if (!multiselect && !isSelectedValueInOptions && !isValueEqualDefaultValue(value)) {
-      onFieldChange(id, multiselect ? [] : '', true);
+    if (!ignoreValueUnset && !isLoading && !multiselect && !isSelectedValueInOptions && !isValueEqualDefaultValue(value)) {
+      onFieldChange(id, '', true);
     }
-  }, [id, isSelectedValueInOptions, multiselect, onFieldChange, value]);
+  }, [id, isLoading, isSelectedValueInOptions, multiselect, onFieldChange, value, ignoreValueUnset]);
 
   const handleOpenResource = useCallback(() => {
     openExternalUrl({ url: urlToOpen });
@@ -168,11 +170,17 @@ export default function RefreshGenericResource(props) {
 }
 
 export function DynaGenericSelect(props) {
-  const { multiselect } = props;
+  const { multiselect, ignoreValueUnset, disableOptionsLoad, fieldStatus } = props;
+  // component is in loading state in both request and refresh cases
+  const isLoading =
+    !disableOptionsLoad &&
+    (!fieldStatus ||
+      fieldStatus === 'requested' ||
+      fieldStatus === 'refreshed');
 
   return (
     <RefreshGenericResource {...props}>
-      {multiselect ? <DynaMultiSelect removeInvalidValues /> : <DynaSelect />}
+      {multiselect ? <DynaMultiSelect removeInvalidValues={!ignoreValueUnset} isLoading={isLoading} /> : <DynaSelect />}
     </RefreshGenericResource>
   );
 }

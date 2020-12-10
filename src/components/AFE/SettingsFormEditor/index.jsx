@@ -71,9 +71,6 @@ export default function SettingsFormEditor({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [formState, setFormState] = useState({
-    showFormValidationsBeforeTouch: false,
-  });
   const [settingsPreview, setSettingsPreview] = useState();
   const editor = useSelector(state => selectors.editor(state, editorId));
   const { data, result, error, lastChange, mode, status } = editor;
@@ -88,11 +85,6 @@ export default function SettingsFormEditor({
   );
   const handleFormPreviewChange = useCallback(values => {
     setSettingsPreview(values);
-  }, []);
-  const showCustomFormValidations = useCallback(() => {
-    setFormState({
-      showFormValidationsBeforeTouch: true,
-    });
   }, []);
 
   // any time the form metadata updates, we need to reset the settings since
@@ -109,7 +101,6 @@ export default function SettingsFormEditor({
     remount: key,
     resourceId,
     resourceType,
-    ...formState,
   });
 
   return (
@@ -152,7 +143,7 @@ export default function SettingsFormEditor({
               <DynaSubmit
                 formKey={formKey}
                 onClick={handleFormPreviewChange}
-                showCustomFormValidations={showCustomFormValidations}>
+                >
                 Test form
               </DynaSubmit>
             </div>

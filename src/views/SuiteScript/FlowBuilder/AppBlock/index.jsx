@@ -46,14 +46,12 @@ const useStyles = makeStyles(theme => ({
   leftActions: {
     position: 'absolute',
     display: 'flex',
-    // border: 'solid 1px blue',
     left: -16,
     top: 68,
   },
   rightActions: {
     position: 'absolute',
     display: 'flex',
-    // border: 'solid 1px blue',
     left: 280,
     top: 68,
   },

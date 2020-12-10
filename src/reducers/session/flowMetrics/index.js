@@ -1,43 +1,40 @@
 import produce from 'immer';
 import { createSelector } from 'reselect';
+import {COMM_STATES } from '../../comms/networkComms';
 import actionTypes from '../../../actions/types';
 
-function updateStatus(state, flowId, status) {
-  return produce(state, draft => {
-    if (!draft[flowId]) {
-      draft[flowId] = {};
-    }
+function updateStatus(draft, flowId, status) {
+  if (!draft[flowId]) {
+    draft[flowId] = {};
+  }
 
-    draft[flowId].status = status;
-  });
+  draft[flowId].status = status;
 }
 
 export default (state = {}, action) => {
   const { type, resourceId, response } = action;
 
-  switch (type) {
-    case actionTypes.FLOW_METRICS.REQUEST:
-      return updateStatus(state, resourceId, 'requested');
-    case actionTypes.FLOW_METRICS.RECEIVED:
-      return produce(state, draft => {
-        if (!draft[resourceId]) {
-          draft[resourceId] = {};
-        }
+  if (!resourceId) { return state; }
 
-        draft[resourceId].status = 'received';
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.FLOW_METRICS.REQUEST:
+        updateStatus(draft, resourceId, COMM_STATES.LOADING);
+        break;
+      case actionTypes.FLOW_METRICS.RECEIVED:
+        updateStatus(draft, resourceId, COMM_STATES.SUCCESS);
         draft[resourceId].data = response;
-      });
-    case actionTypes.FLOW_METRICS.FAILED:
-      return updateStatus(state, resourceId, 'failed');
+        break;
+      case actionTypes.FLOW_METRICS.FAILED:
+        updateStatus(draft, resourceId, COMM_STATES.ERROR);
+        break;
 
-    case actionTypes.FLOW_METRICS.CLEAR:
-      return produce(state, draft => {
+      case actionTypes.FLOW_METRICS.CLEAR:
         delete draft[resourceId];
-      });
-
-    default:
-      return state;
-  }
+        break;
+      default:
+    }
+  });
 };
 
 // #region PUBLIC SELECTORS
@@ -47,7 +44,7 @@ selectors.flowMetricsData = createSelector(
   state => state,
   (_, resourceId) => resourceId,
   (state, resourceId) => {
-    if (!state || !state[resourceId]) {
+    if (!state || !resourceId || !state[resourceId]) {
       return null;
     }
 

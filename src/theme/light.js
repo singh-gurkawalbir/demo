@@ -778,10 +778,10 @@ export default {
     // component used in the application's root component.
     MuiSnackbarContent: {
       action: {
-        color: colors.celigoNeutral6,
+        color: colors.celigoNeutral8,
       },
       message: {
-        color: colors.celigoNeutral6,
+        color: colors.celigoNeutral8,
         '& svg': {
           fontSize: '32px !important',
         },

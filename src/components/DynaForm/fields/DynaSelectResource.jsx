@@ -12,14 +12,11 @@ import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
 import resourceMeta from '../../../forms/definitions';
 import { generateNewId } from '../../../utils/resource';
-import {
-  defaultPatchSetConverter,
-  getMissingPatchSet,
-} from '../../../forms/utils';
 import ActionButton from '../../ActionButton';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import StatusCircle from '../../StatusCircle';
 import { stringCompare } from '../../../utils/sort';
+import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/formFactory/utils';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -160,6 +157,7 @@ function DynaSelectResource(props) {
     resourceType,
     allowNew,
     allowEdit,
+    checkPermissions = false,
     filter,
     hideOnEmptyList = false,
     appTypeIsStatic = false,
@@ -190,6 +188,7 @@ function DynaSelectResource(props) {
   const createdId = useSelector(state =>
     selectors.createdResourceId(state, newResourceId)
   );
+  const allRegisteredConnectionIdsFromManagedIntegrations = useSelector(state => selectors.allRegisteredConnectionIdsFromManagedIntegrations(state));
 
   useEffect(() => {
     if (!appTypeIsStatic && options.appType && !!value) {
@@ -221,12 +220,15 @@ function DynaSelectResource(props) {
         sift(options && options.filter ? options.filter : filter)
       );
     }
+    if (resourceType === 'connections' && checkPermissions) {
+      filteredResources = filteredResources.filter(r => allRegisteredConnectionIdsFromManagedIntegrations.includes(r._id));
+    }
 
     return filteredResources.map(conn => ({
       label: conn.offline ? `${conn.name || conn._id} - Offline` : conn.name || conn._id,
       value: conn._id,
     }));
-  }, [filter, options, resources]);
+  }, [filter, options, resources, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations, resourceType]);
   const { merged } =
     useSelectorMemo(
       selectors.makeResourceDataSelector,

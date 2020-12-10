@@ -151,6 +151,7 @@ export default function DynaNSSavedSearch(props) {
             <DynaRefreshableSelect
               {...searchIdOptions}
               {...props}
+              ignoreValueUnset
               urlToOpen={savedSearchUrl}
               className={classes.dynaNsInternalID}
               helpKey="export.netsuite.restlet.searchId"

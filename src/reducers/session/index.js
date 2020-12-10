@@ -106,7 +106,7 @@ const subSelectors = {
   suiteScript: fromSuiteScript,
   jobErrorsPreview: fromJobErrorsPreview,
   errorManagement: fromErrorManagement,
-  exportDataReducer: fromExportData,
+  exportData: fromExportData,
   customSettings: fromCustomSettings,
   recycleBin: fromRecycleBin,
 };

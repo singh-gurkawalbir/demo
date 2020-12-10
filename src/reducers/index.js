@@ -52,7 +52,7 @@ import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import {
   getFieldById,
-} from '../forms/utils';
+} from '../forms/formFactory/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
@@ -72,21 +72,23 @@ import {
 } from '../utils/exportPanel';
 import inferErrorMessages from '../utils/inferErrorMessages';
 import getRoutePath from '../utils/routePaths';
-import { getIntegrationAppUrlName, getTitleIdFromSection } from '../utils/integrationApps';
+import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVerion2 } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
+import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare } from '../utils/sort';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import getFilteredErrors from '../utils/errorManagement';
+import { getFilteredErrors } from '../utils/errorManagement';
 import {
   getFlowStepsYetToBeCreated,
   generatePendingFlowSteps,
   getRunConsoleJobSteps,
   getParentJobSteps,
 } from '../utils/latestJobs';
+import getJSONPaths from '../utils/jsonPaths';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -1840,26 +1842,6 @@ selectors.isIAV2UninstallComplete = (state, { integrationId }) => {
   return false;
 };
 
-const isIntegrationAppVerion2 = (integration, skipCloneCheck) => {
-  if (!integration) return false;
-  let isCloned = false;
-
-  if (!skipCloneCheck) {
-    isCloned =
-    integration.install &&
-    integration.install.find(step => step.isClone);
-  }
-  const isFrameWork2 =
-    !!((
-      integration.installSteps &&
-      integration.installSteps.length) || (
-      integration.uninstallSteps &&
-        integration.uninstallSteps.length)) ||
-    isCloned;
-
-  return isFrameWork2;
-};
-
 // FIXME: @ashu, we can refactor this later and completely remove
 // the clone check once the functionality is clear and tested for all scenarios
 selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
@@ -2529,8 +2511,11 @@ selectors.mkSuiteScriptLinkedConnections = () => createSelector(
   selectors.userPermissions,
   state => state?.data?.resources?.connections,
   state => state?.data?.resources?.integrations,
-  (preferences, permissions, connections = [], integrations = []) => {
+  state => selectors.currentEnvironment(state),
+  (preferences, permissions, allConnections = [], integrations = [], currentEnvironment) => {
     const linkedConnections = [];
+    const connections = allConnections.filter(c => (!!c.sandbox === (currentEnvironment === 'sandbox')));
+
     let connection;
     let accessLevel;
 
@@ -2575,6 +2560,57 @@ selectors.suiteScriptLinkedTiles = createSelector(
 
     return tiles;
   });
+
+selectors.mkTileApplications = () => createSelector(
+  (_, tile) => tile,
+  state => state?.data?.resources?.integrations,
+  state => state?.data?.resources?.connections,
+  (state, tile) => selectors.isIntegrationAppVersion2(state, tile?._integrationId, true),
+  (tile, integrations = emptyArray, connections = emptyArray, isIAV2) => {
+    let applications = [];
+
+    if (!tile || !tile._connectorId) {
+      return emptyArray;
+    }
+    if (!isIAV2) {
+      applications = tile?.connector?.applications || emptyArray;
+      // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
+      if (tile.name && tile.name.indexOf('Magento 1') !== -1 && applications[0] === 'magento') {
+        applications[0] = 'magento1';
+      }
+      // Make NetSuite always the last application
+      applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]);
+
+      return applications;
+    }
+
+    const childIntegrations = integrations.filter(i => i._parentId === tile._integrationId);
+    const parentIntegration = integrations.find(i => i._id === tile._integrationId);
+
+    childIntegrations.forEach(i => {
+      const integrationConnections = connections.filter(c => c._integrationId === i._id);
+
+      integrationConnections.forEach(c => {
+        applications.push(c.assistant || c.type);
+      });
+    });
+
+    const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
+
+    parentIntegrationConnections.forEach(c => {
+      applications.push(c.assistant || c.type);
+    });
+    applications = uniq(applications);
+    // Make NetSuite always the last application
+    applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]);
+    // Only consider up to four applications
+    if (applications.length > 4) {
+      applications.length = 4;
+    }
+
+    return applications;
+  }
+);
 
 selectors.mkTiles = () => createSelector(
   state => state?.data?.resources?.tiles,
@@ -3998,7 +4034,7 @@ selectors.suiteScriptResourceData = (
       resourceId: id,
     }),
     scope
-  );
+  ) || {};
 
   if (!master && !patch) return { merged: {} };
 
@@ -5096,6 +5132,30 @@ selectors.makeResourceErrorsSelector = () => createSelector(
 
 selectors.resourceErrors = selectors.makeResourceErrorsSelector();
 
+selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
+  selectors.userPermissions,
+  state => state?.data?.resources?.integrations,
+  state => state?.data?.resources?.connections,
+  (permissions = emptyObject, integrations = emptyArray, connections = emptyArray) => {
+    if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE].includes(permissions.accessLevel)) {
+      return connections.map(c => c._id);
+    }
+    if (permissions.accessLevel === USER_ACCESS_LEVELS.TILE) {
+      const connectionIds = [];
+
+      integrations.forEach(i => {
+        if (permissions?.integrations && permissions.integrations[i._id] && permissions.integrations[i._id].accessLevel === 'manage') {
+          connectionIds.push(...i._registeredConnectionIds);
+        }
+      });
+
+      return connectionIds;
+    }
+
+    return emptyArray;
+  }
+);
+
 selectors.availableUsersList = (state, integrationId) => {
   const permissions = selectors.userPermissions(state);
   let _users = [];
@@ -5324,4 +5384,40 @@ selectors.getIntegrationUserNameById = (state, userId, flowId) => {
   const usersList = selectors.availableUsersList(state, integrationId);
 
   return usersList.find(user => user?.sharedWithUser?._id === userId)?.sharedWithUser?.name;
+};
+
+selectors.responseMappingExtracts = (state, resourceId, flowId) => {
+  const { merged: flow = {} } = selectors.resourceData(state,
+    'flows',
+    flowId
+  );
+  const pageProcessor = flow?.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+
+  if (!pageProcessor) {
+    return emptyArray;
+  }
+  const isImport = pageProcessor.type === 'import';
+  const resource = selectors.resource(state, isImport ? 'imports' : 'exports', resourceId);
+
+  if (!resource) { return emptyArray; }
+
+  if (isImport) {
+    const extractFields = selectors.getSampleDataContext(state, {
+      flowId,
+      resourceId,
+      stage: 'responseMappingExtract',
+      resourceType: 'imports',
+    }).data;
+
+    if (!isEmpty(extractFields)) {
+      const extractPaths = getJSONPaths(extractFields);
+
+      return extractPaths.map(obj => ({ name: obj.id, id: obj.id })) || emptyArray;
+    }
+  }
+
+  return responseMappingUtil.getResponseMappingDefaultExtracts(
+    isImport ? 'imports' : 'exports',
+    resource.adaptorType
+  );
 };

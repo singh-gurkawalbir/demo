@@ -7,6 +7,7 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import { makeStyles, Grid, List, ListItem, Typography, Divider } from '@material-ui/core';
+import clsx from 'clsx';
 import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
@@ -29,6 +30,7 @@ import StatusCircle from '../../../../../components/StatusCircle';
 import { getEmptyMessage, isParentViewSelected } from '../../../../../utils/integrationApps';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { getTemplateUrlName } from '../../../../../utils/template';
+import ResponseMappingDrawer from '../../../../../components/ResponseMapping/Drawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -77,6 +79,9 @@ const useStyles = makeStyles(theme => ({
       position: 'relative',
       right: -12,
     },
+  },
+  emptyMessageWrapper: {
+    padding: theme.spacing(1, 2),
   },
   flowTitle: {
     position: 'relative',
@@ -228,6 +233,9 @@ function FlowList({ integrationId, storeId }) {
         // storeId={storeId}
         // sectionId={sectionId}
       />
+      <ResponseMappingDrawer
+        integrationId={integrationId}
+      />
       {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={storeId} />}
       <CategoryMappingDrawer
         integrationId={integrationId}
@@ -311,7 +319,7 @@ export default function FlowsPanel({ storeId, integrationId }) {
 
   if (isParentView) {
     return (
-      <div className={classes.root}>
+      <div className={clsx(classes.root, classes.emptyMessageWrapper)}>
         <div className={classes.container}>
           <Typography variant="h4">
             Flows
