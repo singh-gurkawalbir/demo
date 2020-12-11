@@ -10400,6 +10400,9 @@ Object {
       "file.csv": Object {
         "fieldId": "file.csv",
       },
+      "file.encoding": Object {
+        "fieldId": "file.encoding",
+      },
       "file.lookups": Object {
         "fieldId": "file.lookups",
         "visible": false,
@@ -10547,6 +10550,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "s3.backupBucket",
+                "file.encoding",
                 "blobKeyPath",
                 "fileAdvancedSettings",
                 "deleteAfterImport",
