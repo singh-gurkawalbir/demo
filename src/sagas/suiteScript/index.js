@@ -7,7 +7,7 @@ import installerSagas from './installer';
 import { importSampleDataSagas } from './sampleData/imports';
 import { flowSampleDataSagas } from './sampleData/flow';
 
-import {mappingSagas} from './mappings';
+import {mappingSagas} from './mapping';
 
 export const suiteScriptSagas = [
   ...resourceFormSagas,

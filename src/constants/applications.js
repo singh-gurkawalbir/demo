@@ -945,5 +945,10 @@ export const getApp = (type, assistant) => {
 
   return applications.find(c => c.id === id) || {};
 };
+export const applicationsPlaceHolderText = () => {
+  const applications = applicationsList();
+
+  return `Choose application or start typing to browse ${parseInt(applications.length / 10, 10) * 10}+ applications`;
+};
 
 export default connectors;

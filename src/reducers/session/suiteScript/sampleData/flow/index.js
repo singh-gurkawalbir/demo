@@ -22,6 +22,9 @@ export default (state = {}, action) => {
       case actionTypes.SUITESCRIPT.SAMPLEDATA.RECEIVED: {
         const {previewData} = action;
 
+        if (!draft[id]) {
+          draft[id] = {};
+        }
         draft[id].status = 'received';
         draft[id].data = previewData;
         break;
@@ -29,6 +32,9 @@ export default (state = {}, action) => {
       case actionTypes.SUITESCRIPT.SAMPLEDATA.RECEIVED_ERROR: {
         const {error} = action;
 
+        if (!draft[id]) {
+          draft[id] = {};
+        }
         draft[id].status = 'error';
         draft[id].data = error;
         break;

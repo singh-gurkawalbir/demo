@@ -5,13 +5,13 @@ import flows, { selectors as fromFlows } from './flows';
 import featureCheck, { selectors as fromFeatureCheck } from './featureCheck';
 import account, { selectors as fromAccount } from './account';
 import installer, { selectors as fromInstaller } from './installer';
-import mappings, { selectors as fromMappings } from './mappings';
+import mapping, { selectors as fromMapping } from './mapping';
 import importSampleData, { selectors as fromImportSampleData } from './sampleData/import';
 import flowSampleData, { selectors as fromFlowSampleData } from './sampleData/flow';
 import { genSelectors } from '../../util';
 
 export default combineReducers({
-  mappings,
+  mapping,
   resourceForm,
   iaForm,
   flows,
@@ -30,7 +30,7 @@ const subSelectors = {
   featureCheck: fromFeatureCheck,
   account: fromAccount,
   installer: fromInstaller,
-  mappings: fromMappings,
+  mapping: fromMapping,
   importSampleData: fromImportSampleData,
   flowSampleData: fromFlowSampleData,
 };

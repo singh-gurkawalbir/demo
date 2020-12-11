@@ -597,4 +597,5 @@ export const mappingSagas = [
     actionTypes.MAPPING.UPDATE_LOOKUP,
     actionTypes.MAPPING.PATCH_SETTINGS,
   ], validateMappings),
+
 ];
