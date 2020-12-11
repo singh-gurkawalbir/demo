@@ -276,6 +276,7 @@ const connectors = [
     icon: 'travis',
   },
   { id: 'yammer', name: 'Yammer', marketPlaceOnly: true},
+  // Metadata doesn't exist for below connectors. Only connections are available as of now.
   {id: 'amazonaws', name: 'Amazon AWS', type: 'http', assistant: 'amazonaws'},
   {id: 'banking', name: 'Banking', type: 'http', assistant: 'banking'},
   {id: 'clover', name: 'Clover', type: 'http', assistant: 'clover'},
