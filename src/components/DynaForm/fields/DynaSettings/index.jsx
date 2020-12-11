@@ -110,7 +110,7 @@ export default function DynaSettings(props) {
 
   // We are not in edit mode, devs and non-devs alike should see the settings form if it exists.
   return (
-    <div className={classes.child}>
+    <div className={classes.customWrapper}>
       <Accordion expanded={!isCollapsed} elevation={0}>
         <AccordionSummary
           data-test={label}

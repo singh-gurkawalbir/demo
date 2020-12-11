@@ -1,6 +1,7 @@
 import React, { } from 'react';
 import { makeStyles } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
+import clsx from 'clsx';
 import FormGenerator from '..';
 // import ColorPalette from '../../../../styleguide/ColorPalette';
 
@@ -17,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function BoxComponents(props) {
-  const { containers, fieldMap} = props;
+  const { containers, fieldMap, className} = props;
   const classes = useStyles();
   const transformedContainers =
     containers &&
@@ -25,7 +26,7 @@ export default function BoxComponents(props) {
       const {label, ...rest } = container;
 
       return (
-        <Paper key={label} elevation={0} className={classes.root}>
+        <Paper key={label} elevation={0} className={clsx(classes.root, className)}>
           <FormGenerator {...props} layout={rest} fieldMap={fieldMap} />
         </Paper>
 
