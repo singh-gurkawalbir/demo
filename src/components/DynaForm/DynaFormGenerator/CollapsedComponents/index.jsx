@@ -17,6 +17,13 @@ const useStyles = makeStyles(theme => ({
   expPanelTitle: {
     color: theme.palette.secondary.main,
   },
+  child: {
+    marginBottom: theme.spacing(2),
+    boxShadow: 'none',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    borderRadius: theme.spacing(0.5),
+  },
 }));
 
 export default function CollapsedComponents(props) {
@@ -89,7 +96,7 @@ const ExpansionPannelExpandOnInValidState = props => {
     <div className={classes.child}>
       <Accordion
         // eslint-disable-next-line react/no-array-index-key
-        expanded={shouldExpand}>
+        expanded={shouldExpand} elevation={0}>
         <AccordionSummary
           data-test={header}
           onClick={toggleExpansionPanel}

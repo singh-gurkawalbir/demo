@@ -58,7 +58,7 @@ export default function AuditLog({
       resources="integrations, flows, exports, imports, connections">
       <>
         {isLoadingAuditLog
-          ? <Spinner /> : (
+          ? <Spinner loading /> : (
             <div className={(classes.root, className)}>
               <Filters
                 affectedResources={affectedResources}
