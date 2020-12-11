@@ -4,7 +4,9 @@ import { useRouteMatch, Redirect } from 'react-router-dom';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
 
-function TxLauncher({ flowId, resourceType, resourceId, onClose, open }) {
+// its crazy that the FB passes the full resource to all of these processor launchers.
+// we are already given the resourceType and Id so we can easily look it up here.
+function TxLauncher({ flowId, resourceType, resource, resourceId, onClose, open }) {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const editorId = `tx-${resourceId}`;
@@ -19,7 +21,7 @@ function TxLauncher({ flowId, resourceType, resourceId, onClose, open }) {
     onClose();
 
     dispatch(actions._editor.init(editorId, 'transform', {
-      rule: resourceId.transformation || [],
+      rule: resource.transformation || [],
       // formKey is only for editors launch by a form. Is this correct?
       // formKey,
       flowId,
