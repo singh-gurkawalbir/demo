@@ -20,6 +20,7 @@ const connectors = [
     type: 'http',
     keywords: 'technology,protocol',
     group: 'tech',
+    helpURL: 'https://docs.celigo.com/hc/en-us/sections/360007388192-HTTP-',
   },
   {
     id: 'rest',
@@ -27,6 +28,7 @@ const connectors = [
     type: 'rest',
     keywords: 'technology,protocol',
     group: 'tech',
+    helpURL: 'https://docs.celigo.com/hc/en-us/sections/360007479711-REST',
   },
   {
     id: 'ftp',
@@ -34,6 +36,7 @@ const connectors = [
     type: 'ftp',
     keywords: 'sftp,ftps,technology,protocol',
     group: 'tech',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360045263152-Set-up-an-FTP-connection-',
   },
   {
     id: 'wrapper',
@@ -93,6 +96,7 @@ const connectors = [
     type: 'as2',
     keywords: 'technology,protocol',
     group: 'tech',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360029551372-Set-up-an-AS2-connection',
   },
   // Database connectors
   {
@@ -101,6 +105,7 @@ const connectors = [
     type: 'mongodb',
     keywords: 'database,db',
     group: 'db',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360039632032-Set-up-a-connection-to-MongoDB',
   },
   {
     id: 'mssql',
@@ -115,6 +120,7 @@ const connectors = [
     type: 'mysql',
     keywords: 'database,rdbms,db',
     group: 'db',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360038611852-Set-up-a-connection-to-MySQL',
   },
   {
     id: 'oracle',
@@ -122,6 +128,7 @@ const connectors = [
     type: 'oracle',
     keywords: 'database,rdbms,db',
     group: 'db',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360050360312-Set-up-a-connection-to-Oracle-DB-SQL-',
   },
   {
     id: 'postgresql',
@@ -129,6 +136,7 @@ const connectors = [
     type: 'postgresql',
     keywords: 'database,rdbms,db',
     group: 'db',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360038997991-Set-up-a-connection-to-PostgreSQL',
   },
   {
     id: 'snowflake',
@@ -136,6 +144,7 @@ const connectors = [
     type: 'snowflake',
     keywords: 'database,rdbms,db',
     group: 'db',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360048048792-Set-up-a-connection-to-Snowflake',
   },
   {
     id: 'dynamodb',
@@ -143,6 +152,7 @@ const connectors = [
     type: 'dynamodb',
     keywords: 'database,db',
     group: 'db',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360039720112-Set-up-a-connection-to-DynamoDB',
   },
   // Application connectors
 
@@ -558,7 +568,7 @@ const connectors = [
     assistant: 'myobadvanced',
   },
   { id: 'namely', name: 'Namely', type: 'rest', assistant: 'namely' },
-  { id: 'netsuite', name: 'NetSuite', type: 'netsuite' },
+  { id: 'netsuite', name: 'NetSuite', type: 'netsuite', helpURL: 'https://docs.celigo.com/hc/en-us/articles/360038996151-Set-up-a-connection-to-NetSuite' },
   { id: 'newegg', name: 'Newegg', type: 'http', assistant: 'newegg' },
   { id: 'newrelic', name: 'New Relic', type: 'rest', assistant: 'newrelic' },
   { id: 'nextag', name: 'Nextag', type: 'http', assistant: 'nextag' },
@@ -643,12 +653,13 @@ const connectors = [
   // { id: 'replicon', name: 'replicon', type: 'http', assistant: 'replicon' },
   { id: 'retailops', name: 'RetailOps', type: 'rest', assistant: 'retailops' },
   { id: 'returnly', name: 'Returnly', type: 'rest', assistant: 'returnly' },
-  { id: 's3', name: 'Amazon S3', type: 's3' },
+  { id: 's3', name: 'Amazon S3', type: 's3', helpURL: 'https://docs.celigo.com/hc/en-us/articles/360038373912-Set-up-a-connection-to-Amazon-S3' },
   { id: 'sageone', name: 'Sage One', type: 'rest', assistant: 'sageone' },
   {
     id: 'salesforce',
     name: 'Salesforce',
     type: 'salesforce',
+    helpURL: 'https://docs.celigo.com/hc/en-us/sections/360007478991-Salesforce-',
   },
   { id: 'segment', name: 'segment', type: 'http', webhookOnly: true, icon: 'segment' },
   {
@@ -910,6 +921,7 @@ export const applicationsList = () => {
       export: asst.export,
       import: asst.import,
       webhook: asst.webhook,
+      helpURL: asst.helpURL,
     });
   });
 

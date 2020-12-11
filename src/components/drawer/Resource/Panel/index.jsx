@@ -17,7 +17,6 @@ import LoadResources from '../../../LoadResources';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from './ResourceFormActionsPanel';
 import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
-import { KBDocumentation } from '../../../../utils/connections';
 import {applicationsList} from '../../../../constants/applications';
 import InstallationGuideIcon from '../../../icons/InstallationGuideIcon';
 
@@ -292,8 +291,8 @@ export default function Panel(props) {
             </Typography>
             {showApplicationLogo && (
             <div className={classes.guideWrapper}>
-              {resourceType === 'connections' && KBDocumentation[applicationType] && (
-              <a className={classes.guideLink} href={KBDocumentation[applicationType]} rel="noreferrer" target="_blank">
+              {resourceType === 'connections' && app.helpURL && (
+              <a className={classes.guideLink} href={app.helpURL} rel="noreferrer" target="_blank">
                 <InstallationGuideIcon className={classes.guideLinkIcon} />
                 {app.name || applicationType} connection guide
               </a>
