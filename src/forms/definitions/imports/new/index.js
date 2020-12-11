@@ -1,4 +1,4 @@
-import {applicationsList} from '../../../../constants/applications';
+import {applicationsList, applicationsPlaceHolderText} from '../../../../constants/applications';
 import { RDBMS_TYPES } from '../../../../utils/constants';
 
 const visibleWhen = [
@@ -55,8 +55,7 @@ export default {
       type: 'selectapplication',
       label: 'Application',
       appType: 'import',
-      placeholder:
-        'Choose application or start typing to browse 150+ applications',
+      placeholder: applicationsPlaceHolderText(),
       defaultValue: '',
       required: true,
       validWhen: {
