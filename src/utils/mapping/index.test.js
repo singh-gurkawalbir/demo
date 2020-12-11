@@ -3064,7 +3064,7 @@ describe('mapping utils', () => {
   });
   test('getApplicationName util', () => {
     const testCases = [
-      {resource: {assistant: 'trinet'}, connection: {}, appName: 'TriNet'},
+      {resource: {assistant: 'wiser'}, connection: {}, appName: 'Wiser'},
       {resource: {adaptorType: 'FTPImport'}, connection: {}, appName: 'FTP'},
       {resource: {adaptorType: 'S3Import'}, connection: {}, appName: 'Amazon S3'},
       {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'mysql'}}, appName: 'MySQL'},
