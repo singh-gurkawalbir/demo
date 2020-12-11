@@ -61,3 +61,5 @@ selectors.retryDataContext = (state, retryId) =>
 selectors.retryStatus = (state, flowId, resourceId) =>
   state?.retryStatus?.[flowId]?.[resourceId];
 
+selectors.retryData = (state, retryId) => state?.retryObjects?.[retryId]?.data?.data;
+
