@@ -853,10 +853,6 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup additional records (per record)',
-      value: 'lookupRecords',
-    },
-    {
       label: 'Lookup additional files (per record)',
       value: 'lookupFiles',
     },
@@ -865,10 +861,6 @@ export const destinationOptions = {
     {
       label: 'Transfer files into destination application',
       value: 'transferFiles',
-    },
-    {
-      label: 'Lookup additional records (per record)',
-      value: 'lookupRecords',
     },
     {
       label: 'Lookup additional files (per record)',

@@ -3661,7 +3661,6 @@ Object {
           },
         ],
         "type": "mode",
-        "visible": [Function],
       },
       "pageSize": Object {
         "fieldId": "pageSize",
@@ -5347,7 +5346,6 @@ Object {
           },
         ],
         "type": "mode",
-        "visible": [Function],
       },
       "pageSize": Object {
         "fieldId": "pageSize",
