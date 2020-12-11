@@ -51,6 +51,49 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
+const AllStoreItem = ({integrationId, storeLabel}) => {
+  const classes = useStyles();
+  const integrationErrorsPerStore = useSelector(state =>
+    selectors.integrationErrorsPerStore(state, integrationId),
+  shallowEqual
+  );
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const totalCount = Object.values(integrationErrorsPerStore).reduce(
+    (total, count) => total + count,
+    0);
+
+  if (!isUserInErrMgtTwoDotZero) {
+    return (
+      <MenuItem value="">
+        All {storeLabel}s
+      </MenuItem>
+    );
+  }
+
+  if (totalCount === 0) {
+    return (
+      <MenuItem value="" className={classes.storeErrorStatus}>
+        <div> All {storeLabel}s</div>
+        <div>
+          <StatusCircle size="mini" variant="success" />
+        </div>
+      </MenuItem>
+    );
+  }
+
+  return (
+    <MenuItem value="" className={classes.storeErrorStatus}>
+      <div> All {storeLabel}s</div>
+      <div>
+        <StatusCircle size="mini" variant="error" />
+        <span>{totalCount > 9999 ? '9999+' : totalCount}</span>
+      </div>
+    </MenuItem>
+  );
+};
 // TODO Surya : StoreMenuItems to go into the ArrowPopper.
 const StoreMenuItems = ({ integration, integrationId }) => {
   const classes = useStyles();
@@ -164,6 +207,7 @@ export default function PageBar() {
   [integration]);
 
   const storeItems = StoreMenuItems({ integration, integrationId });
+  const allStoreItem = AllStoreItem({integrationId, storeLabel});
 
   return (
     <CeligoPageBar
@@ -205,9 +249,7 @@ export default function PageBar() {
           renderValue={renderStoreLabel}
           IconComponent={ArrowDownIcon}
           value={storeId || ''}>
-          <MenuItem value="">
-            All {storeLabel}s
-          </MenuItem>
+          {allStoreItem}
           {storeItems}
         </Select>
       </div>
