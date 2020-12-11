@@ -13,7 +13,7 @@ export default function reducer(state = {}, action) {
     type,
     processor,
     id,
-    options,
+    options = {},
     featuresPatch,
     rulePatch,
     dataPatch,
@@ -39,22 +39,14 @@ export default function reducer(state = {}, action) {
 
         // const initChangeIdentifier = draft[id]?.initChangeIdentifier || 0;
         const init = processorLogic.init(processor);
-        const {rule} = options || {};
-        const optionsCopy = deepClone(options);
+        const {onSave, ...rest} = options;
+        const optionsCopy = deepClone(rest);
         const formattedInitOptions = init ? init(optionsCopy) : optionsCopy;
 
-        let v1Rule; let
-          v2Rule;
+        let originalRule = options.rule;
 
-        if (processor === 'handlebars' && options.isEditorV2Supported) {
-          v1Rule = rule;
-          v2Rule = rule;
-        }
-
-        let originalRule = rule;
-
-        if (typeof rule === 'object') {
-          originalRule = deepClone(rule);
+        if (typeof originalRule === 'object') {
+          originalRule = deepClone(options.rule);
         }
 
         draft[id] = {
@@ -66,8 +58,7 @@ export default function reducer(state = {}, action) {
           lastChange: Date.now(),
           // initChangeIdentifier: initChangeIdentifier + 1,
           initStatus: 'requested',
-          v1Rule,
-          v2Rule,
+          onSave,
         };
         break;
       }
@@ -195,7 +186,7 @@ export default function reducer(state = {}, action) {
       case actionTypes._EDITOR.SAVE.COMPLETE: {
         const editor = draft[id];
 
-        editor.saveStatus = 'completed';
+        editor.saveStatus = 'success';
         let originalRule = editor.rule;
 
         if (typeof originalRule === 'object') {

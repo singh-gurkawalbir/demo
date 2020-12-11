@@ -12,17 +12,16 @@ export default {
   panels: ({ autoEvaluate }) => [
     {
       group: true,
-      title: 'Type your handlebars template here',
       area: 'rule',
       panels: [
         {
           key: 'query',
-          name: 'Query template',
+          name: 'Type your handlebars template here',
           Panel: HandlebarsPanel,
         },
         {
           key: 'default',
-          name: 'Default record',
+          name: 'Defaults',
           Panel: FeaturePanel,
           props: {
             mode: 'json',

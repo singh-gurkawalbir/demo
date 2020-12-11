@@ -12,6 +12,7 @@ import editorMetadata from '../metadata';
 import PreviewButtonGroup from '../PreviewButtonGroup';
 import SaveButtonGroup from '../SaveButtonGroup';
 import HelpIconButton from './actions/HelpIconButton';
+import CloseIconButton from './CloseIconButton';
 
 const useStyles = makeStyles({
   spaceBetween: { flexGrow: 100 },
@@ -21,6 +22,7 @@ const useStyles = makeStyles({
 // proxied from the right drawer.
 // hideSave: This is currently only used for the playground where we do not
 // want the user to have any options to save the editor.
+// eslint-disable-next-line no-unused-vars
 function RouterWrappedContent({ hideSave, onClose, fullPath}) {
   const classes = useStyles();
   const { editorId } = useParams();
@@ -29,14 +31,17 @@ function RouterWrappedContent({ hideSave, onClose, fullPath}) {
   // to each editor variant. If you have a better idea, pls share. Also maybe "type"
   // could be renamed.
   const type = useSelector(state => selectors._editor(state, editorId).processor);
+  const editorTitle = useSelector(state => selectors._editor(state, editorId).editorTitle);
 
   // console.log('drawer editor', editorId, editor);
   const { label, drawer = {} } = editorMetadata[type] || {};
   const { actions } = drawer;
 
+  const CloseButton = <CloseIconButton onClose={onClose} editorId={editorId} />;
+
   return (
     <>
-      <DrawerHeader title={label} onClose={onClose} fullPath={fullPath}>
+      <DrawerHeader title={editorTitle || label} CloseButton={CloseButton} fullPath={fullPath}>
         { // eslint-disable-next-line react/no-array-index-key
           actions && actions.map((Action, i) => <Action key={i} editorId={editorId} />)
         }
@@ -48,7 +53,7 @@ function RouterWrappedContent({ hideSave, onClose, fullPath}) {
       </DrawerContent>
 
       <DrawerFooter>
-        {!hideSave && (
+        {!false && (
           <SaveButtonGroup editorId={editorId} onClose={onClose} />
         )}
         <div className={classes.spaceBetween} />
