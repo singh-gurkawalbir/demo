@@ -25,6 +25,13 @@ const useStyles = makeStyles(theme => ({
     alignSelf: 'center',
     color: theme.palette.secondary.main,
   },
+  customWrapper: {
+    marginBottom: theme.spacing(2),
+    boxShadow: 'none',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    borderRadius: theme.spacing(0.5),
+  },
 }));
 
 export default function DynaSettings(props) {
@@ -103,20 +110,22 @@ export default function DynaSettings(props) {
 
   // We are not in edit mode, devs and non-devs alike should see the settings form if it exists.
   return (
-    <Accordion expanded={!isCollapsed}>
-      <AccordionSummary
-        data-test={label}
-        className={classes.summaryContainer}
-        onClick={handleExpandClick}
-        expandIcon={<ExpandMoreIcon />}>
-        <Typography className={classes.summaryLabel}>{label}</Typography>
-        {!isCollapsed && (
-        <FormBuilderButton resourceType={resourceType} resourceId={resourceId} integrationId={integrationId} />
-        )}
-      </AccordionSummary>
-      <AccordionDetails >
-        {renderSettings()}
-      </AccordionDetails>
-    </Accordion>
+    <div className={classes.customWrapper}>
+      <Accordion expanded={!isCollapsed} elevation={0}>
+        <AccordionSummary
+          data-test={label}
+          className={classes.summaryContainer}
+          onClick={handleExpandClick}
+          expandIcon={<ExpandMoreIcon />}>
+          <Typography className={classes.summaryLabel}>{label}</Typography>
+          {!isCollapsed && (
+          <FormBuilderButton resourceType={resourceType} resourceId={resourceId} integrationId={integrationId} />
+          )}
+        </AccordionSummary>
+        <AccordionDetails >
+          {renderSettings()}
+        </AccordionDetails>
+      </Accordion>
+    </div>
   );
 }

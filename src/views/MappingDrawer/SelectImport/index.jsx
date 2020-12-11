@@ -10,6 +10,7 @@ const emptyObject = {};
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
+    padding: theme.spacing(2, 3),
   },
   button: {
     // color: theme.palette.primary.main,
