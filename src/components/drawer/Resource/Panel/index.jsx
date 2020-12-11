@@ -19,6 +19,7 @@ import ResourceFormActionsPanel from './ResourceFormActionsPanel';
 import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
 import {applicationsList} from '../../../../constants/applications';
 import InstallationGuideIcon from '../../../icons/InstallationGuideIcon';
+import { KBDocumentation } from '../../../../utils/connections';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 const isNestedDrawer = url => !!matchPath(url, {
@@ -291,8 +292,8 @@ export default function Panel(props) {
             </Typography>
             {showApplicationLogo && (
             <div className={classes.guideWrapper}>
-              {resourceType === 'connections' && app.helpURL && (
-              <a className={classes.guideLink} href={app.helpURL} rel="noreferrer" target="_blank">
+              {resourceType === 'connections' && (app.helpURL || KBDocumentation[applicationType]) && (
+              <a className={classes.guideLink} href={app.helpURL || KBDocumentation[applicationType]} rel="noreferrer" target="_blank">
                 <InstallationGuideIcon className={classes.guideLinkIcon} />
                 {app.name || applicationType} connection guide
               </a>
