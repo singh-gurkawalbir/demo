@@ -624,52 +624,6 @@ export default {
         background: colors.celigoNeutral1,
       },
     },
-    // MuiExpansionPanel: {
-    //   root: {
-    //     background: colors.celigoWhite,
-    //     border: '1px solid',
-    //     borderColor: colors.celigoNeutral3,
-    //     borderRadius: 4,
-    //     boxShadow: 'none',
-    //     marginBottom: 24,
-    //     '&.Mui-expanded': {
-    //       '&:last-child': {
-    //         marginBottom: '24px !important',
-    //       },
-    //     },
-
-    //   },
-    // },
-    // MuiExpansionPanelDetails: {
-    //   root: {
-    //     padding: [[10, 16, 0, 16]],
-    //     borderTop: `1px solid ${colors.celigoNeutral3}`,
-    //   },
-    // },
-    // MuiExpansionPanelSummary: {
-    //   root: {
-    //     padding: '0px 12px',
-    //     height: 42,
-    //     display: 'inline-flex',
-    //     minHeight: 'unset',
-    //     paddingLeft: 16,
-    //     flexDirection: 'row-reverse',
-    //     '&.Mui-expanded': {
-    //       minHeight: 0,
-    //     },
-    //   },
-    //   content: {
-    //     paddingTop: 3,
-    //     margin: 0,
-    //     '&.Mui-expanded': {
-    //       margin: 0,
-    //     },
-    //   },
-    //   expandIcon: {
-    //     padding: 0,
-    //     margin: [[0, 4, 0, 0]],
-    //   },
-    // },
     MuiChip: {
       root: {
         backgroundColor: colors.celigoWhite,
@@ -818,8 +772,9 @@ export default {
         margin: [[0, 4, 0, 0]],
       },
       content: {
+        margin: '10px 0px',
         '&.Mui-expanded': {
-          margin: '12px 0px',
+          margin: '10px 0px',
         },
       },
     },
