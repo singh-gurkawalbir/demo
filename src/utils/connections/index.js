@@ -38,4 +38,17 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
 
   return options;
 };
+export const KBDocumentation = {http: 'https://docs.celigo.com/hc/en-us/sections/360007388192-HTTP-',
+  rest: 'https://docs.celigo.com/hc/en-us/sections/360007479711-REST',
+  ftp: 'https://docs.celigo.com/hc/en-us/articles/360045263152-Set-up-an-FTP-connection-',
+  as2: 'https://docs.celigo.com/hc/en-us/articles/360029551372-Set-up-an-AS2-connection',
+  mongodb: 'https://docs.celigo.com/hc/en-us/articles/360039632032-Set-up-a-connection-to-MongoDB',
+  mysql: 'https://docs.celigo.com/hc/en-us/articles/360038611852-Set-up-a-connection-to-MySQL',
+  oracle: 'https://docs.celigo.com/hc/en-us/articles/360050360312-Set-up-a-connection-to-Oracle-DB-SQL-',
+  postgresql: 'https://docs.celigo.com/hc/en-us/articles/360038997991-Set-up-a-connection-to-PostgreSQL',
+  snowflake: 'https://docs.celigo.com/hc/en-us/articles/360048048792-Set-up-a-connection-to-Snowflake',
+  dynamodb: 'https://docs.celigo.com/hc/en-us/articles/360039720112-Set-up-a-connection-to-DynamoDB',
+  netsuite: 'https://docs.celigo.com/hc/en-us/articles/360038996151-Set-up-a-connection-to-NetSuite',
+  s3: 'https://docs.celigo.com/hc/en-us/articles/360038373912-Set-up-a-connection-to-Amazon-S3',
+  salesforce: 'https://docs.celigo.com/hc/en-us/sections/360007478991-Salesforce-'};
 
