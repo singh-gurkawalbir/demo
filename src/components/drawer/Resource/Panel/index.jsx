@@ -17,6 +17,8 @@ import LoadResources from '../../../LoadResources';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from './ResourceFormActionsPanel';
 import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
+import {applicationsList} from '../../../../constants/applications';
+import InstallationGuideIcon from '../../../icons/InstallationGuideIcon';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 const isNestedDrawer = url => !!matchPath(url, {
@@ -62,7 +64,18 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(-0.5),
     marginRight: theme.spacing(4),
     borderRight: `1px solid ${theme.palette.secondary.lightest}`,
-
+  },
+  guideWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  guideLink: {
+    marginRight: theme.spacing(2),
+    display: 'flex',
+    alignItems: 'center',
+  },
+  guideLinkIcon: {
+    marginRight: theme.spacing(0.5),
   },
   title: {
     display: 'flex',
@@ -174,6 +187,8 @@ export default function Panel(props) {
   const location = useLocation();
   const dispatch = useDispatch();
   const match = useRouteMatch();
+  const applications = applicationsList();
+
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
 
@@ -211,6 +226,8 @@ export default function Panel(props) {
 
   );
   const applicationType = useSelector(state => selectors.applicationType(state, resourceType, id));
+
+  const app = applications.find(a => a.id === applicationType) || {};
   // Incase of a multi step resource, with isNew flag indicates first step and shows Next button
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
   const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save & close';
@@ -273,12 +290,20 @@ export default function Panel(props) {
               {title}
             </Typography>
             {showApplicationLogo && (
-            <ApplicationImg
-              className={classes.appLogo}
-              size="small"
-              type={applicationType}
-              alt={applicationType || 'Application image'}
+            <div className={classes.guideWrapper}>
+              {resourceType === 'connections' && app.helpURL && (
+              <a className={classes.guideLink} href={app.helpURL} rel="noreferrer" target="_blank">
+                <InstallationGuideIcon className={classes.guideLinkIcon} />
+                {app.name || applicationType} connection guide
+              </a>
+              )}
+              <ApplicationImg
+                className={classes.appLogo}
+                size="small"
+                type={applicationType}
+                alt={applicationType || 'Application image'}
             />
+            </div>
             )}
           </div>
 
