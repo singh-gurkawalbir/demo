@@ -1512,3 +1512,32 @@ describe('Default store id selector', () => {
     expect(selectors.defaultStoreId(state, 'int11234', '143')).toEqual(undefined);
   });
 });
+
+describe('mkFlowGroupingsSections', () => {
+  const groupingsSelector = selectors.mkFlowGroupingsSections();
+
+  const state = {
+    integrations: [
+      {_id: '1',
+        flowGroupings: [
+          {name: 'Grouping1 name', _id: 'grouping1Id'},
+          {name: 'Grouping2 name', _id: 'grouping2Id'},
+        ]},
+    ],
+
+  };
+
+  test('should get groupings translated', () => {
+    expect(groupingsSelector(state, '1')).toEqual(
+      [
+        {title: 'Grouping1 name', sectionId: 'grouping1Id'},
+        {title: 'Grouping2 name', sectionId: 'grouping2Id'},
+      ]
+    );
+  });
+  test('should get null for non existent integration id', () => {
+    expect(groupingsSelector(state, '2')).toEqual(
+      null
+    );
+  });
+});

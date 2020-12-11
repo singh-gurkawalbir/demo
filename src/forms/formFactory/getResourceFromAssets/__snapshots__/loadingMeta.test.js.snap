@@ -2993,7 +2993,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 150+ applications",
+        "placeholder": "Choose application or start typing to browse 210+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -3661,7 +3661,6 @@ Object {
           },
         ],
         "type": "mode",
-        "visible": [Function],
       },
       "pageSize": Object {
         "fieldId": "pageSize",
@@ -5347,7 +5346,6 @@ Object {
           },
         ],
         "type": "mode",
-        "visible": [Function],
       },
       "pageSize": Object {
         "fieldId": "pageSize",
@@ -7064,7 +7062,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 150+ applications",
+        "placeholder": "Choose application or start typing to browse 210+ applications",
         "type": "selectapplication",
         "validWhen": Object {
           "isNot": Object {
@@ -10669,7 +10667,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 150+ applications",
+        "placeholder": "Choose application or start typing to browse 210+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -12580,7 +12578,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 150+ applications",
+        "placeholder": "Choose application or start typing to browse 210+ applications",
         "required": true,
         "type": "selectapplication",
       },
@@ -12706,7 +12704,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 150+ applications",
+        "placeholder": "Choose application or start typing to browse 210+ applications",
         "refreshOptionsOnChangesTo": Array [
           "resourceType",
         ],

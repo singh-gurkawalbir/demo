@@ -193,10 +193,18 @@ export default function AppRouting() {
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
+          getRoutePath('/integrations/:integrationId/:tab/sections/:sectionId'),
           getRoutePath('/integrations/:integrationId/:tab'),
         ]}
         component={Integration}
         />
+      <Route
+        // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
+        // templateName has structure of application2-application2 will contain atleast 5 characters
+        path={getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/:tab/sections/:sectionId')}
+        component={Integration}
+        />
+
       <Route
         // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
         // templateName has structure of application2-application2 will contain atleast 5 characters

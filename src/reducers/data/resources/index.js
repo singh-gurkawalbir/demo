@@ -608,6 +608,19 @@ selectors.integrationInstallSteps = (state, id) => {
   });
 };
 
+selectors.mkFlowGroupingsSections = () => {
+  const resourceSelector = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, integrationId) => resourceSelector(state, 'integrations', integrationId)?.flowGroupings,
+    groupings => {
+      if (!groupings || !groupings.length) { return null; }
+
+      return groupings.map(({name, _id}) => ({title: name, sectionId: _id }));
+    }
+  );
+};
+
 // TODO: Santosh, All this selector does is transform the integration settings.
 // Its probably best if the component uses the resource selector directly
 // to fetch the integration, then use a util method to do the transform
