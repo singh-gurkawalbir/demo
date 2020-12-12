@@ -1,6 +1,7 @@
 import {applicationsList,
   getWebhookConnectors,
   getWebhookOnlyConnectors,
+  applicationsPlaceHolderText,
 } from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 import { RDBMS_TYPES } from '../../../utils/constants';
@@ -67,8 +68,7 @@ export default {
       name: 'application',
       type: 'selectapplication',
       appType: 'export',
-      placeholder:
-        'Choose application or start typing to browse 150+ applications',
+      placeholder: applicationsPlaceHolderText(),
       defaultValue: r => {
         if (!r) return '';
 

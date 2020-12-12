@@ -1,4 +1,4 @@
-import { applicationsList } from '../../../constants/templates';
+import { templatesList } from '../../../constants/applications';
 
 export default {
   name: {
@@ -35,7 +35,7 @@ export default {
     defaultValue: r => (r?.applications) || [],
     options: [
       {
-        items: applicationsList(),
+        items: templatesList(),
       },
     ],
   },

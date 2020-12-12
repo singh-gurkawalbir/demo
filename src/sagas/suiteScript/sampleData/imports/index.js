@@ -14,6 +14,10 @@ export function* requestSampleData({ ssLinkedConnectionId, integrationId, flowId
       flowId,
     }
   );
+
+  if (!flow) {
+    return;
+  }
   const { import: importConfig} = flow;
   const {type: importType, _connectionId, netsuite, salesforce} = importConfig;
 
