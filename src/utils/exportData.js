@@ -13,11 +13,11 @@ export const makeExportResource = (resource, connectionId, connectorId) => {
     _connectionId: exportResource._connectionId || connectionId,
     _connectorId: exportResource._connectorId || connectorId,
   };
-  const identifier = String(hashCode(exportResource, true));
+  const key = String(hashCode(exportResource, true));
 
   return {
     kind,
-    identifier,
+    key,
     exportResource,
   };
 };

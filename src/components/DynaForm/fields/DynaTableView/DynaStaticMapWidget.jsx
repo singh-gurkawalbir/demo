@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const isExportRefresh = (supportsRefresh, staticLength, kind, identifier, exportResource) => supportsRefresh && !staticLength && kind && identifier && exportResource;
+const isExportRefresh = (supportsRefresh, staticLength, kind, key, exportResource) => !!(supportsRefresh && !staticLength && kind && key && exportResource);
 
 export default function DynaStaticMapWidget(props) {
   const {
@@ -67,23 +67,23 @@ export default function DynaStaticMapWidget(props) {
     getRadioValue({ allowFailures, defaultValue: defaultVal })
   );
 
-  const resourceContextType = resourceContext?.resourceType;
-  const resourceContextId = resourceContext?.resourceId;
-  const { _connectionId: resConnectionId, _connectorId: resConnectorId } = useSelector(state => (selectors.resource(state, resourceContextType, resourceContextId) || {}));
-  const { kind: eKind, identifier: eIdentifier, exportResource: eExportResource } = makeExportResource(extractResource, resConnectionId, resConnectorId);
-  const { kind: gKind, identifier: gIdentifier, exportResource: gExportResource } = makeExportResource(generateResource, resConnectionId, resConnectorId);
-  const { data: eData } = useSelector(state => selectors.exportData(state, eIdentifier));
-  const { data: gData } = useSelector(state => selectors.exportData(state, gIdentifier));
+  const resourceType = resourceContext?.resourceType;
+  const resourceId = resourceContext?.resourceId;
+  const { _connectionId: resConnectionId, _connectorId: resConnectorId } = useSelector(state => (selectors.resource(state, resourceType, resourceId) || {}));
+  const { kind: eKind, key: eKey, exportResource: eExportResource } = makeExportResource(extractResource, resConnectionId, resConnectorId);
+  const { kind: gKind, key: gKey, exportResource: gExportResource } = makeExportResource(generateResource, resConnectionId, resConnectorId);
+  const { status: eStatus, data: eData } = useSelector(state => selectors.exportData(state, eKey));
+  const { status: gStatus, data: gData } = useSelector(state => selectors.exportData(state, gKey));
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (!initComplete) {
-      if (isExportRefresh(supportsExtractsRefresh, extracts.length, eKind, eIdentifier, eExportResource)) {
-        dispatch(actions.exportData.request(eKind, eIdentifier, eExportResource));
+      if (isExportRefresh(supportsExtractsRefresh, extracts.length, eKind, eKey, eExportResource)) {
+        dispatch(actions.exportData.request(eKind, eKey, eExportResource));
       }
-      if (isExportRefresh(supportsGeneratesRefresh, generates.length, gKind, gIdentifier, gExportResource)) {
-        dispatch(actions.exportData.request(gKind, gIdentifier, gExportResource));
+      if (isExportRefresh(supportsGeneratesRefresh, generates.length, gKind, gKey, gExportResource)) {
+        dispatch(actions.exportData.request(gKind, gKey, gExportResource));
       }
       onFieldChange(id, { map, default: defaultVal, allowFailures }, true);
       setInitComplete(true);
@@ -95,54 +95,51 @@ export default function DynaStaticMapWidget(props) {
     generates: map[key],
   }));
 
-  const eOptions = useMemo(() => ((Array.isArray(extracts) && extracts.length && extracts) || (eData?.length && eData) || []).filter(Boolean), [extracts, eData]);
-  const gOptions = useMemo(() => ((Array.isArray(generates) && generates.length && generates) || (gData?.length && gData) || []).filter(Boolean), [generates, gData]);
+  const eOptions = ((Array.isArray(extracts) && extracts.length && extracts) || (eData?.length && eData) || []).filter(Boolean);
+  const gOptions = ((Array.isArray(generates) && generates.length && generates) || (gData?.length && gData) || []).filter(Boolean);
 
-  const optionsMap = useMemo(() => [
-    {
-      id: 'extracts',
-      label: extractFieldHeader,
-      name: extractFieldHeader,
-      required: true,
-      type: eOptions.length ? 'autosuggest' : 'input',
-      options: eOptions,
-      supportsRefresh: supportsExtractsRefresh,
-    },
-    {
-      id: 'generates',
-      label: generateFieldHeader,
-      name: generateFieldHeader,
-      required: true,
-      options: gOptions,
-      type: gOptions.length ? 'autosuggest' : 'input',
-      supportsRefresh: supportsGeneratesRefresh,
-    },
-  ], [eOptions, extractFieldHeader, gOptions, generateFieldHeader, supportsExtractsRefresh, supportsGeneratesRefresh]);
-  const { isLoading, shouldReset, data: metadata, fieldType } = useSelector(
-    state =>
-      selectors.connectorMetadata(state, id, null, _integrationId, optionsMap)
-  );
-  let defaultOptions = gOptions;
+  const optionsMap = [{
+    id: 'extracts',
+    label: extractFieldHeader,
+    name: extractFieldHeader,
+    required: true,
+    type: eOptions.length ? 'autosuggest' : 'input',
+    options: eOptions,
+    supportsRefresh: supportsExtractsRefresh,
+  }, {
+    id: 'generates',
+    label: generateFieldHeader,
+    name: generateFieldHeader,
+    required: true,
+    options: gOptions,
+    type: gOptions.length ? 'autosuggest' : 'input',
+    supportsRefresh: supportsGeneratesRefresh,
+  }];
+
+  const { isLoading: isMetadataLoading, shouldReset, data: metadata } = useSelector(state => selectors.connectorMetadata(state, id, null, _integrationId, optionsMap));
+
+  let defaultOptions = optionsMap[1].options;
   // TODO: useMemo for the below code
 
-  if (metadata) {
+  if (!isExportRefresh(supportsGeneratesRefresh, generates.length, gKind, gKey, gExportResource) && metadata) {
     metadata.optionsMap = [...optionsMap];
     metadata.optionsMap[0].options = metadata.extracts;
     metadata.optionsMap[1].options = metadata.generates;
     defaultOptions = metadata.generates.filter(Boolean);
   }
 
-  const handleRefreshClick = useCallback(fieldId => {
-    if (fieldId === 'extracts' && isExportRefresh(supportsExtractsRefresh, extracts.length, eKind, eIdentifier, eExportResource)) {
-      dispatch(actions.exportData.request(eKind, eIdentifier, eExportResource));
-    } else if (fieldId === 'generates' && isExportRefresh(supportsGeneratesRefresh, generates.length, gKind, gIdentifier, gExportResource)) {
-      dispatch(actions.exportData.request(gKind, gIdentifier, gExportResource));
+  const handleRefreshClick = useCallback(column => {
+    if (column === 'extracts' && isExportRefresh(supportsExtractsRefresh, extracts.length, eKind, eKey, eExportResource)) {
+      dispatch(actions.exportData.request(eKind, eKey, eExportResource));
+    } else if (column === 'generates' && isExportRefresh(supportsGeneratesRefresh, generates.length, gKind, gKey, gExportResource)) {
+      dispatch(actions.exportData.request(gKind, gKey, gExportResource));
     } else {
-      dispatch(actions.connectors.refreshMetadata(fieldId, id, _integrationId));
+      dispatch(actions.connectors.refreshMetadata(column, id, _integrationId));
     }
   },
-  [_integrationId, dispatch, eExportResource, eIdentifier, eKind, extracts.length, gExportResource, gIdentifier, gKind, generates.length, id, supportsExtractsRefresh, supportsGeneratesRefresh]
+  [_integrationId, dispatch, eExportResource, eKey, eKind, extracts.length, gExportResource, gKey, gKind, generates.length, id, supportsExtractsRefresh, supportsGeneratesRefresh]
   );
+
   const handleMapChange = useCallback(
     (tableid, value = []) => {
       const mapValue = {};
@@ -159,6 +156,7 @@ export default function DynaStaticMapWidget(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [allowFailures, defaultVal]
   );
+
   const handleCleanup = useCallback(() => {
     dispatch(actions.connectors.clearMetadata(id, _integrationId));
   }, [_integrationId, dispatch, id]);
@@ -189,7 +187,10 @@ export default function DynaStaticMapWidget(props) {
     onFieldChange(id, { map, default: val, allowFailures });
   };
 
-  const isLoadingMap = useMemo(() => ({[fieldType]: isLoading}), [fieldType, isLoading]);
+  const isLoadingMap = useMemo(() => ({
+    [optionsMap[0].id]: optionsMap[0].supportsRefresh && eStatus === 'requested',
+    [optionsMap[1].id]: optionsMap[1].supportsRefresh && (gStatus === 'requested' || isMetadataLoading),
+  }), [eStatus, gStatus, isMetadataLoading, optionsMap]);
 
   return (
     <>

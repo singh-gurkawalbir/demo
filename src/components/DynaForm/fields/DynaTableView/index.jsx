@@ -16,6 +16,8 @@ export default function DynaTable(props) {
     extracts,
     onFieldChange,
     value,
+    keyResource,
+    valueResource,
   } = props;
   let tableType;
   // The values should be saved within a value object
@@ -36,12 +38,12 @@ export default function DynaTable(props) {
 
   if (extractFieldHeader || extracts) {
     tableType = 'staticMapWidget';
+  } else if (connectionId || keyResource || valueResource) {
+    tableType = 'refreshableStaticMap';
   } else if ((map || !optionsMap) && !connectionId) {
     tableType = 'staticMap';
-  } else if (optionsMap && optionsMap.length && _integrationId) {
+  } else if (optionsMap?.length && _integrationId) {
     tableType = 'connectorStaticMap';
-  } else if (connectionId) {
-    tableType = 'refreshableStaticMap';
   } else {
     tableType = 'generic';
   }

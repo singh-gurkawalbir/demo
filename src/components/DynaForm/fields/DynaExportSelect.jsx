@@ -8,19 +8,19 @@ import { makeExportResource } from '../../../utils/exportData';
 
 export default function DynaExportSelect(props) {
   const { resourceContext, resource, id, type } = props;
-  const resourceContextType = resourceContext?.resourceType;
-  const resourceContextId = resourceContext?.resourceId;
-  const { _connectionId: resConnectionId, _connectorId: resConnectorId } = useSelector(state => (selectors.resource(state, resourceContextType, resourceContextId) || {}));
-  const { kind, identifier, exportResource } = makeExportResource(resource, resConnectionId, resConnectorId);
+  const resourceType = resourceContext?.resourceType;
+  const resourceId = resourceContext?.resourceId;
+  const { _connectionId: resConnectionId, _connectorId: resConnectorId } = useSelector(state => (selectors.resource(state, resourceType, resourceId) || {}));
+  const { kind, key, exportResource } = makeExportResource(resource, resConnectionId, resConnectorId);
   const { status, data, errorMessage } = useSelector(state =>
-    selectors.exportData(state, identifier)
+    selectors.exportData(state, key)
   );
   const dispatch = useDispatch();
   const onFetch = useCallback(() => {
-    dispatch(actions.exportData.request(kind, identifier, exportResource));
-  }, [dispatch, kind, identifier, exportResource]);
+    dispatch(actions.exportData.request(kind, key, exportResource));
+  }, [dispatch, kind, key, exportResource]);
 
-  if (!kind || !identifier || !exportResource) {
+  if (!kind || !key || !exportResource) {
     return (
       <>
         <Typography>{`Field id=${id}, type=${type}`}</Typography>
@@ -31,7 +31,7 @@ export default function DynaExportSelect(props) {
 
   return (
     <DynaGenericSelect
-      resourceToFetch={identifier}
+      resourceToFetch={key}
       onFetch={onFetch}
       onRefresh={onFetch}
       fieldStatus={status}
