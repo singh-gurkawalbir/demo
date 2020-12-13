@@ -2993,7 +2993,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 210+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -7062,7 +7062,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 210+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "type": "selectapplication",
         "validWhen": Object {
           "isNot": Object {
@@ -10400,6 +10400,9 @@ Object {
       "file.csv": Object {
         "fieldId": "file.csv",
       },
+      "file.encoding": Object {
+        "fieldId": "file.encoding",
+      },
       "file.lookups": Object {
         "fieldId": "file.lookups",
         "visible": false,
@@ -10547,6 +10550,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "s3.backupBucket",
+                "file.encoding",
                 "blobKeyPath",
                 "fileAdvancedSettings",
                 "deleteAfterImport",
@@ -10667,7 +10671,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 210+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -12578,7 +12582,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 210+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
       },
@@ -12704,7 +12708,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 210+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "refreshOptionsOnChangesTo": Array [
           "resourceType",
         ],

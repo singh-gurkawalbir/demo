@@ -42,11 +42,11 @@ describe('template util function test', () => {
     });
 
     test('should return correct application details when connection is passed and has assistant', () => {
-      expect(getApplication({assistant: 'zendesk'})).toEqual({id: 'zendesk', name: 'Zendesk'});
-      expect(getApplication({assistant: 'zohobooks'})).toEqual({id: 'zohobooks', name: 'Zoho Books'});
-      expect(getApplication({assistant: 'target'})).toEqual({id: 'target', name: 'Target'});
-      expect(getApplication({assistant: 'smartsheet'})).toEqual({id: 'smartsheet', name: 'Smartsheet'});
-      expect(getApplication({assistant: 'shopify', type: 'rest'})).toEqual({id: 'shopify', name: 'Shopify'});
+      expect(getApplication({assistant: 'ariba'})).toEqual({id: 'ariba', name: 'SAP Ariba'});
+      expect(getApplication({assistant: 'skuvault'})).toEqual({id: 'skuvault', name: 'SkuVault'});
+      expect(getApplication({assistant: 'strata'})).toEqual({id: 'strata', name: 'Strata'});
+      expect(getApplication({assistant: 'svb'})).toEqual({id: 'svb', name: 'SVB'});
+      expect(getApplication({assistant: 'wiser', type: 'rest'})).toEqual({id: 'wiser', name: 'Wiser'});
     });
 
     test('should return correct application details when connection is passed and doesnt have assistant', () => {
