@@ -6,7 +6,6 @@ export default {
   type: 'javascript',
   label: 'JavaScript editor',
   description: 'Run JavaScript safely in a secure runtime environment.',
-  layout: 'compact',
   panels: [
     {
       title: 'Script',

@@ -9,7 +9,6 @@ export default {
   label: 'Filter editor',
   fieldId: 'transform',
   description: 'Constructs filter rules against raw data',
-  layout: 'compact',
   panels: [
     {
       title: 'Rules',
