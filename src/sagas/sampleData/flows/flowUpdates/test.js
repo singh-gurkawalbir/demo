@@ -2,17 +2,16 @@
 
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
-import actions from '../../../actions';
-import { selectors } from '../../../reducers';
-import { updateFlowDoc } from '../../resourceForm';
-import { updateFlowOnResourceUpdate } from './flowUpdates';
+import actions from '../../../../actions';
+import { selectors } from '../../../../reducers';
+import { updateFlowDoc } from '../../../resourceForm';
+import { updateFlowOnResourceUpdate } from '.';
 
-describe('sampleData flow saga', () => {
-  describe('flowUpdate saga', () => {
+describe('flow updates sagas', () => {
+  describe('updateFlowOnResourceUpdate saga', () => {
     test('should not trigger updateFlowDoc when no flowId context for export', () => expectSaga(updateFlowOnResourceUpdate, {
       resourceType: 'exports',
       resourceId: 123,
-      patche: null,
     })
       .put(actions.flowData.updateFlowsForResource(123, 'exports'))
       .not.call.fn(updateFlowDoc)
@@ -20,7 +19,6 @@ describe('sampleData flow saga', () => {
     test('should not trigger updateFlowDoc when no flowId context for import', () => expectSaga(updateFlowOnResourceUpdate, {
       resourceType: 'imports',
       resourceId: 123,
-      patche: null,
       context: null,
     })
       .put(actions.flowData.updateFlowsForResource(123, 'imports'))
@@ -29,7 +27,6 @@ describe('sampleData flow saga', () => {
     test('should not trigger updateFlowDoc when no flowId context for script', () => expectSaga(updateFlowOnResourceUpdate, {
       resourceType: 'scripts',
       resourceId: 123,
-      patche: null,
       context: {
         somethingElse: {},
       },
@@ -45,7 +42,6 @@ describe('sampleData flow saga', () => {
       return expectSaga(updateFlowOnResourceUpdate, {
         resourceType,
         resourceId,
-        patche: null,
         context: {
           flowId,
         },
@@ -68,7 +64,6 @@ describe('sampleData flow saga', () => {
       return expectSaga(updateFlowOnResourceUpdate, {
         resourceType,
         resourceId,
-        patche: null,
         context: {
           flowId,
         },
@@ -91,7 +86,6 @@ describe('sampleData flow saga', () => {
       return expectSaga(updateFlowOnResourceUpdate, {
         resourceType,
         resourceId,
-        patche: null,
         context: {
           flowId,
         },

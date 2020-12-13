@@ -1,13 +1,13 @@
 import { put, select, call } from 'redux-saga/effects';
-import { selectors } from '../../../reducers';
-import { SCOPES, updateFlowDoc } from '../../resourceForm';
-import actions from '../../../actions';
+import { selectors } from '../../../../reducers';
+import { SCOPES, updateFlowDoc } from '../../../resourceForm';
+import actions from '../../../../actions';
 import {
   getFlowUpdatesFromPatch,
   getResourceStageUpdatedFromPatch,
   getSubsequentStages,
   isRawDataPatchSet,
-} from '../../../utils/flowData';
+} from '../../../../utils/flowData';
 
 function* updateResponseMapping({ flowId, resourceIndex }) {
   const { merged: flow } = yield select(
