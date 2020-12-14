@@ -33,8 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TransformPanel(props) {
-  const { editorId } = props;
+export default function TransformPanel({ editorId }) {
   const classes = useStyles(props);
   const data = useSelector(state => selectors._editorData(state, editorId));
   const rule = useSelector(state => selectors._editorRule(state, editorId));

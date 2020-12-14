@@ -7,6 +7,7 @@ import { makeStyles,
   FormControl,
   Select,
   Button } from '@material-ui/core';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import LoadResources from '../../../../LoadResources';
 import CodePanel from '../Code';
 import actions from '../../../../../actions';
@@ -41,14 +42,28 @@ const useStyles = makeStyles(theme => ({
 }));
 const scriptFilterConfig = { type: 'scripts' };
 
-export default function JavaScriptPanel(props) {
-  const { editorId, disabled, insertStubKey, errorLine, hasError } = props;
+export default function JavaScriptPanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const aceEditor = useRef(null);
-  const editor = useSelector(state => selectors._editor(state, editorId));
-  const {code = '', entryFunction = '', scriptId = '', fetchScriptContent } = editor.rule || {};
+  const { code = '', entryFunction = '', scriptId = '', fetchScriptContent } = useSelector(state => selectors._editorRule(state, editorId));
 
+  // TODO: @Ashu, Here too, i'm assuming the stub key is dependant on what
+  // field a user is editing. If they are editing the preSave or postMap, etc, then we should
+  // be able to do the logic in the javascript init.
+  const {disabled, insertStubKey } = useSelector(state => {
+    const e = selectors._editor(state, editorId);
+
+    return {
+      disabled: e.disabled,
+      insertStubKey: e.insertStubKey,
+    };
+  }, shallowEqual);
+
+  // TODO: @Ashu, Is this the correct way to get the erroLine and hasError?
+  const { errorLine, error } =
+    useSelector(state => selectors._editorPreviewError(state, editorId), shallowEqual);
+  const hasError = !!error;
   const data = useSelectorMemo(selectors.makeResourceDataSelector, 'scripts', scriptId);
   const scriptContent = data?.merged?.content;
   const allScripts = useSelectorMemo(selectors.makeResourceListSelector, scriptFilterConfig).resources;

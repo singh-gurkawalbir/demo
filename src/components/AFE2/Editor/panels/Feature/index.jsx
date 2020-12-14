@@ -1,14 +1,22 @@
 import React from 'react';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import CodePanel from '../Code';
 import PanelLoader from '../../../../PanelLoader';
 
-export default function FeaturePanel({ editorId, mode, featureName, disabled }) {
+export default function FeaturePanel({ editorId, mode, featureName }) {
   const dispatch = useDispatch();
-  const initStatus = useSelector(state => selectors._editor(state, editorId).initStatus);
-  const featureValue = useSelector(state => selectors._editor(state, editorId)[featureName]);
+  const {initStatus, disabled, featureValue} = useSelector(state => {
+    const e = selectors._editor(state, editorId);
+
+    return {
+      initStatus: e.initStatus,
+      disabled: e.disabled,
+      featureValue: e[featureName],
+    };
+  }, shallowEqual);
 
   // TODO: @Ashu, how should we handle validating and presenting errors here?
   // Should editorViolations be a map where the key is the panel name?

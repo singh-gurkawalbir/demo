@@ -37,12 +37,10 @@ const useStyles = makeStyles(theme => ({
 }));
 const defaultData = {};
 
-export default function FilterPanel({
-  editorId,
-  disabled,
-}) {
+export default function FilterPanel({editorId}) {
   const qbuilder = useRef(null);
   const classes = useStyles();
+  const disabled = useSelector(state => selectors._editor(state, editorId).disabled);
   const data = useSelector(state => selectors._editorData(state, editorId) || defaultData);
   const rule = useSelector(state => selectors._editorRule(state, editorId));
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
