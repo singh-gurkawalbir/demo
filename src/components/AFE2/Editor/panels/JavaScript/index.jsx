@@ -46,8 +46,8 @@ export default function JavaScriptPanel(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const aceEditor = useRef(null);
-  const editor = useSelector(state => selectors._editor(state, editorId));
-  const {code = '', entryFunction = '', scriptId = '', fetchScriptContent } = editor.rule || {};
+  const rule = useSelector(state => selectors._editorRule(state, editorId));
+  const {code = '', entryFunction = '', scriptId = '', fetchScriptContent } = rule || {};
 
   const data = useSelectorMemo(selectors.makeResourceDataSelector, 'scripts', scriptId);
   const scriptContent = data?.merged?.content;

@@ -7,7 +7,6 @@ export default {
   fieldId: 'file.csv',
   label: 'Delimited file parser',
   description: 'Converts delimited data into JSON',
-  layout: 'compact',
   panels: [
     {
       title: 'Parse options',

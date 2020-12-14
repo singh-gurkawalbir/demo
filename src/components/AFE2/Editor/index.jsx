@@ -39,16 +39,16 @@ export default function Editor({ editorId }) {
     // return a static editor context object.
     // for now, adding fields as they are used so we understand what part of the
     // editor state is needed to render the editor wire-frame.
-    const {processor, layout, mode, autoEvaluate, resultMode} = selectors._editor(state, editorId);
+    const {editorType, layout, activeProcessor, autoEvaluate, resultMode} = selectors._editor(state, editorId);
 
-    return {processor, layout, mode, autoEvaluate, resultMode};
+    return {editorType, layout, activeProcessor, autoEvaluate, resultMode};
   }, shallowEqual);
 
-  const {processor: type, layout} = editorContext;
+  const {editorType, layout} = editorContext;
 
-  if (!type) { return null; }
+  if (!editorType) { return null; }
 
-  const { panels } = editorMetadata[type];
+  const { panels } = editorMetadata[editorType];
   const gridTemplate = classes[resolveValue(layout, editorContext)];
 
   // console.log(layout, panels);

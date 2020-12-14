@@ -38,13 +38,15 @@ export default {
       fetchScriptContent,
       ...rest
     } = rule;
+    const {fetchScriptContent: originalFetchScriptContent, ...originalRest} = originalRule;
 
     if (_init_code !== code) { return true; }
 
-    if (!isEqual(originalRule, rest)) {
+    if (!isEqual(originalRest, rest)) {
       return true;
     }
 
     return false;
   },
+  processResult: (editor, result) => ({data: result ? result.data : ''}),
 };

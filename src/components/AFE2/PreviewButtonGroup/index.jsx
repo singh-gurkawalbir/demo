@@ -18,9 +18,12 @@ const useStyles = makeStyles(theme => ({
 export default function PreviewButtonGroup({ editorId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-
-  // eslint-disable-next-line no-unused-vars
   const autoEvaluate = useSelector(state => selectors._editor(state, editorId).autoEvaluate);
+  const saveInProgress = useSelector(state => {
+    const {saveStatus} = selectors._editor(state, editorId);
+
+    return saveStatus === 'requested';
+  });
 
   const handlePreview = () => dispatch(actions._editor.previewRequest(editorId));
   const handleToggle = () => dispatch(actions._editor.toggleAutoPreview(editorId));
@@ -33,6 +36,7 @@ export default function PreviewButtonGroup({ editorId }) {
           data-test="previewEditorResult"
           variant="outlined"
           color="secondary"
+          disabled={saveInProgress}
           onClick={handlePreview}>
           Preview
         </Button>
@@ -43,6 +47,7 @@ export default function PreviewButtonGroup({ editorId }) {
         hideLabelSpacing
         id="disableAutoPreview"
         onFieldChange={handleToggle}
+        disabled={saveInProgress}
         label="Auto preview"
         value={autoEvaluate} />
     </ButtonGroup>

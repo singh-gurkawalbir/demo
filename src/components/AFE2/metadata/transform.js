@@ -7,7 +7,6 @@ export default {
   label: 'Transform editor',
   fieldId: 'transform',
   description: 'Transforms raw data to desired structure',
-  layout: 'compact',
   panels: [
     {
       title: 'Rules',

@@ -9,7 +9,6 @@ export default {
   label: 'Settings Form builder',
   fieldId: 'settingsForm',
   description: 'Construct a form from metadata',
-  layout: ({ mode = 'json' }) => `${mode}FormBuilder`,
   panels: ({ mode = 'json' }) => {
     const panels = [
       {

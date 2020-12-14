@@ -2969,69 +2969,6 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enable
     'DynamodbExport',
   ].includes(resource.adaptorType);
 };
-selectors._editor = (state, id) => fromSession._editor(state?.session, id);
-
-selectors._isEditorV2Supported = (state, editorId) => {
-  const editor = selectors._editor(state, editorId);
-  const {fieldId, resourceType, resourceId, flowId} = editor;
-
-  if (fieldId === '_body' || fieldId === '_relativeURI') return false;
-  const { merged: resource = {} } = selectors.resourceData(
-    state,
-    resourceType,
-    resourceId
-  );
-  const connection = selectors.resource(state, 'connections', resource._connectionId);
-
-  // for below fields,
-  // the whole adaptor is not yet supported (except for native REST)
-  // TODO: we will not need all these conditions once all fields/adaptors support AFE2
-  if (fieldId === 'idLockTemplate' ||
-  fieldId === 'dataURITemplate' ||
-  fieldId === 'http.once.relativeURI' ||
-  fieldId === 'http.once.body') {
-    if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-      return connection.isHTTP;
-    }
-
-    return true;
-  }
-
-  // no AFE1/2 is shown for PG export (with some exceptions)
-  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
-
-  if (isPageGenerator) {
-    return false;
-  }
-
-  // AFE 2.0 not supported for Native REST Adaptor for any fields
-  if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-    return connection.isHTTP;
-  }
-
-  // BE doesnt support oracle and snowflake adaptor yet
-  // remove this check once same is added in BE
-  if (connection?.rdbms?.type === 'oracle' || connection?.rdbms?.type === 'snowflake') {
-    return false;
-  }
-
-  return [
-    'HTTPImport',
-    'HTTPExport',
-    'FTPImport',
-    'FTPExport',
-    'AS2Import',
-    'AS2Export',
-    'S3Import',
-    'S3Export',
-    'RDBMSImport',
-    'RDBMSExport',
-    'MongodbImport',
-    'MongodbExport',
-    'DynamodbImport',
-    'DynamodbExport',
-  ].includes(resource.adaptorType);
-};
 
 selectors.resourceFormField = (state, resourceType, resourceId, id) => {
   const data = selectors.resourceData(state, resourceType, resourceId);
@@ -5484,4 +5421,29 @@ selectors.responseMappingExtracts = (state, resourceId, flowId) => {
     isImport ? 'imports' : 'exports',
     resource.adaptorType
   );
+};
+
+selectors.isEditorDisabled = (state, editorId) => {
+  const editor = fromSession._editor(state?.session, editorId);
+  const {flowId, fieldId, formKey, editorType, activeProcessor} = editor;
+  const flow = selectors.resource(state, 'flows', flowId);
+
+  // if we are on form field then form state determines disabled
+  if (formKey) {
+    const fieldState = selectors.fieldState(state, formKey, fieldId);
+
+    if (fieldState) return fieldState.disabled;
+  }
+
+  // if we are on FB actions, below logic applies
+  // for input and output filter, the filter processor(not the JS processor) uses isMonitorLevelAccess check
+  if (activeProcessor === 'filter' && (editorType === 'inputFilter' || editorType === 'outputFilter')) {
+    const isMonitorLevelAccess = selectors.isFormAMonitorLevelAccess(state, flow?._integrationId);
+
+    return isMonitorLevelAccess;
+  }
+  const isViewMode = selectors.isFlowViewMode(state, flow?._integrationId, flowId);
+  const isFreeFlow = selectors.isFreeFlowResource(state, flowId);
+
+  return isViewMode || isFreeFlow;
 };

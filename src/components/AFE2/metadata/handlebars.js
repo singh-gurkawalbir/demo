@@ -9,7 +9,6 @@ export default {
   type: 'handlebars',
   label: 'Handlebars editor',
   description: 'Constructs JSON or XML template against raw data',
-  layout: 'compact',
   panels: ({ autoEvaluate, resultMode }) => [
     {
       title: 'Type your handlebars template here',

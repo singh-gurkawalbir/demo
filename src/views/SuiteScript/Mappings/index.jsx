@@ -1,31 +1,24 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Typography, makeStyles, ButtonGroup, Button } from '@material-ui/core';
+import React, { useEffect } from 'react';
+import { Typography, makeStyles} from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import MappingRow from './MappingRow';
-import SaveButton from './SaveButton';
-import RefreshIcon from '../../../components/icons/RefreshIcon';
 import Spinner from '../../../components/Spinner';
 import SpinnerWrapper from '../../../components/SpinnerWrapper';
-import NetSuiteMappingAssistant from '../NetSuiteMappingAssistant';
-import SalesforceMappingAssistant from '../SalesforceMappingAssistant';
+import DrawerContent from '../../../components/drawer/Right/DrawerContent';
+import TopPanel from './TopPanel';
+import DragContainer from './DragContainer';
+import SettingsDrawer from './Settings';
+import PreviewPanel from './Preview/Panel';
+import DrawerFooter from '../../../components/drawer/Right/DrawerFooter';
+import ButtonPanel from './ButtonPanel';
 import SalesforceSubListDialog from './SalesforceSubList';
 
-const getAppType = resType => {
-  if (resType === 'netsuite') return 'Netsuite';
-  if (resType === 'rakuten') return 'Rakuten';
-  if (resType === 'sears') return 'Sears';
-  if (resType === 'newegg') return 'Newegg';
-  if (resType === 'salesforce') return 'Salesforce';
-};
-const emptyObj = {};
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   root: {
     height: '100%',
     display: 'flex',
-    width: '100%',
   },
   mappingContainer: {
     flex: '1 1 0',
@@ -35,534 +28,75 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     marginLeft: -24,
   },
-  mapCont: {
-    width: '0px',
-    flex: '1.1 1 0',
-  },
-  assistantContainer: {
-    flex: '1 1 0',
-    width: '0px',
-    marginRight: theme.spacing(1),
-    marginLeft: theme.spacing(1),
-  },
-  header: {
-    display: 'flex',
-    width: '100%',
-    marginBottom: theme.spacing(2),
-    alignItems: 'center',
-    padding: theme.spacing(0, 0, 0, 1),
-  },
-  rowContainer: {
-    display: 'block',
-    padding: '0px',
-  },
-  child: {
-    '& + div': {
-      width: '100%',
-    },
-  },
-  childHeader: {
-    width: '46%',
-    display: 'flex',
-    alignItems: 'center',
-    '& > div': {
-      width: '100%',
-    },
-    '&:first-child': {
-      paddingLeft: 20,
-    },
-  },
   mappingsBody: {
-    height: 'calc(100% - 100px)',
+    height: '100%',
     overflow: 'auto',
-    paddingRight: theme.spacing(2),
   },
-  refreshButton: {
-    marginLeft: theme.spacing(1),
-    marginRight: 0,
-    cursor: 'pointer',
-  },
-  disableRefresh: {
-    pointerEvents: 'none',
-    cursor: 'not-allowed',
-  },
-  spinner: {
-    marginLeft: 5,
-    width: 50,
-    height: 50,
-  },
-  topHeading: {
-    fontFamily: 'Roboto500',
-  },
-  importMappingButtonGroup: {
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-    width: '100%',
-    padding: theme.spacing(2, 1, 0, 0),
-    display: 'block',
-    marginLeft: theme.spacing(3),
-  },
-
-}));
+});
 const SuiteScriptMapping = props => {
-  const {onClose, ssLinkedConnectionId, integrationId, flowId, subRecordMappingId } = props;
-  const [state, setState] = useState({
-    localMappings: [],
-    localChangeIdentifier: -1,
-  });
-  const [salesforceLayoutId, setSalesforceLayoutId] = useState('');
-  const { localMappings, localChangeIdentifier } = state;
+  const {onClose, ssLinkedConnectionId } = props;
   const classes = useStyles();
-  const dispatch = useDispatch();
-
   const isManageLevelUser = useSelector(
     state => selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId)
   );
-  const {
-    mappings,
-    lookups,
-    changeIdentifier,
-    importType,
-    exportType,
-    connectionId,
-    recordType,
-    sObjectType,
-    lastModifiedRowKey = '',
-    sfSubListExtractFieldName,
-  } = useSelector(state => selectors.suiteScriptMappings(state));
-  const sfLayoutId = useSelector(state => {
-    const salesforceMasterRecordTypeInfo = selectors.suiteScriptSalesforceMasterRecordTypeInfo(state, {integrationId,
-      ssLinkedConnectionId,
-      flowId,
-    });
-
-    return salesforceMasterRecordTypeInfo?.data?.recordTypeId;
-  });
-  const saveInProgress = useSelector(
-    state => selectors.suiteScriptMappingsSaveStatus(state).saveInProgress
+  const sfSubListExtractFieldName = useSelector(
+    state => selectors.suiteScriptMapping(state, ssLinkedConnectionId).sfSubListExtractFieldName
   );
-  const {status: importSampleDataStatus } = useSelector(state => selectors.suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}));
-  const {status: flowSampleDataStatus} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
-
-  const handleInit = useCallback(() => {
-    dispatch(actions.suiteScript.mapping.init({ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}));
-  }, [dispatch, flowId, integrationId, ssLinkedConnectionId, subRecordMappingId]);
-  const handleRefreshGenerates = useCallback(
-    () => {
-      dispatch(
-        actions.suiteScript.mapping.refreshGenerates()
-      );
-    },
-    [dispatch],
-  );
-
-  const handleRefreshExtracts = useCallback(
-    () => {
-      dispatch(
-        actions.suiteScript.sampleData.request(
-          {
-            ssLinkedConnectionId,
-            integrationId,
-            flowId,
-            options: {
-              refreshCache: true,
-            },
-          }
-        )
-      );
-    },
-    [dispatch, flowId, integrationId, ssLinkedConnectionId]
-  );
-
-  const extractLabel = useMemo(() => `Source Record Field ${getAppType(exportType) ? `(${getAppType(exportType)})` : ''}`, [exportType]);
-  const generateLabel = useMemo(() => `Import Field ${getAppType(importType) ? `(${getAppType(importType)})` : ''}`, [importType]);
-  const emptyRowIndex = useMemo(() => localMappings.length, [
-    localMappings,
-  ]);
-  const handleClose = useCallback(
-    () => {
-      onClose();
-    },
-    [onClose],
-  );
-  const handleDelete = useCallback(key => {
-    dispatch(actions.suiteScript.mapping.delete(key));
-  }, [dispatch]);
-
-  const handleTouch = useCallback(key => {
-    dispatch(actions.suiteScript.mapping.updateLastFieldTouched(key));
-  }, [dispatch]);
-  const handleFieldUpdate = useCallback(
-    (_mapping, field, value) => {
-      const { key, generate = '', extract = '' } = _mapping;
-
-      if (field === 'extract' && value.indexOf('_child_') > -1) {
-        dispatch(actions.suiteScript.mapping.checkForSFSublistExtractPatch(key, value));
-
-        return;
-      }
-      if ((!key && value) || (key && _mapping[field] !== value)) {
-        // check if value changes or user entered something in new row
-
-        if (key && value === '') {
-          if (
-            (field === 'extract' && generate === '') ||
-                  (field === 'generate' &&
-                  extract === '' &&
-                  !('hardCodedValue' in _mapping))
-          ) {
-            dispatch(actions.suiteScript.mapping.delete(key));
-
-            return;
-          }
-        }
-        dispatch(actions.suiteScript.mapping.patchField({ field, key, value}));
-      }
-    },
-    [dispatch]
-  );
-  const handleSFNSAssistantFieldClick = useCallback(
-    meta => {
-      if (!isManageLevelUser) {
-        return;
-      }
-      let value;
-
-      if (sObjectType) {
-        value = meta.id;
-      } else if (recordType) {
-        value = meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id;
-      }
-      if (lastModifiedRowKey && value) {
-        dispatch(
-          actions.suiteScript.mapping.patchField({
-            field: 'generate',
-            key: lastModifiedRowKey === 'new' ? undefined : lastModifiedRowKey,
-            value,
-          })
-        );
-      }
-    }, [dispatch, isManageLevelUser, lastModifiedRowKey, recordType, sObjectType]);
-  const patchSettings = useCallback(
-    (key, settings) => {
-      dispatch(actions.suiteScript.mapping.patchSettings(key, settings));
-    },
-    [dispatch]
-  );
-  const updateLookupHandler = (lookupOps = []) => {
-    let lookupsTmp = [...lookups];
-    // Here lookupOPs will be an array of lookups and actions. Lookups can be added and delted simultaneously from settings.
-
-    lookupOps.forEach(({ isDelete, obj }) => {
-      if (isDelete) {
-        lookupsTmp = lookupsTmp.filter(lookup => lookup.name !== obj.name);
-      } else {
-        const index = lookupsTmp.findIndex(lookup => lookup.name === obj.name);
-
-        if (index !== -1) {
-          lookupsTmp[index] = obj;
-        } else {
-          lookupsTmp.push(obj);
-        }
-      }
-    });
-
-    dispatch(actions.suiteScript.mapping.updateLookups(lookupsTmp));
-  };
-  const handleDrop = useCallback(() => {
-    dispatch(actions.suiteScript.mapping.changeOrder(localMappings));
-  }, [dispatch, localMappings]);
-
-  const handleMove = useCallback(
-    (dragIndex, hoverIndex) => {
-      const mappingsCopy = [...localMappings];
-      const dragItem = mappingsCopy[dragIndex];
-
-      mappingsCopy.splice(dragIndex, 1);
-      mappingsCopy.splice(hoverIndex, 0, dragItem);
-
-      setState({
-        ...state,
-        localMappings: mappingsCopy,
-      });
-    },
-    [localMappings, state]
-  );
-
-  const tableData = useMemo(
-    () =>
-      (localMappings || []).map((value, index) => {
-        const obj = { ...value };
-
-        obj.index = index;
-
-        return obj;
-      }),
-    [localMappings]
-  );
-
-  useEffect(() => {
-    handleInit();
-
-    return () => {
-      dispatch(actions.suiteScript.mapping.clear());
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  useEffect(() => {
-    // update local mapping state when mappings in data layer changes
-    if (localChangeIdentifier !== changeIdentifier && mappings) {
-      setState({
-        localMappings: mappings,
-        localChangeIdentifier: changeIdentifier,
-      });
-    }
-  }, [changeIdentifier, localChangeIdentifier, localMappings, mappings]);
-
-  useEffect(() => {
-    if (sfLayoutId && salesforceLayoutId !== sfLayoutId) {
-      setSalesforceLayoutId(sfLayoutId);
-    }
-  }, [sfLayoutId, salesforceLayoutId]);
-
-  const showPreviewPane = ['netsuite', 'salesforce'].includes(importType) && isManageLevelUser;
 
   return (
-    <div className={classes.root}>
-      <div
-        className={clsx(classes.mappingContainer, {
-          [classes.mapCont]: showPreviewPane,
-        })}
-        >
-        <div className={classes.header}>
-          <Typography
-            variant="h5"
-            className={clsx(classes.childHeader, classes.topHeading, {
-              [classes.topHeadingCustomWidth]: showPreviewPane,
-            })}>
-            {extractLabel}
-            { flowSampleDataStatus !== 'requested' && (
-              <RefreshIcon
-                disabled={!isManageLevelUser}
-                onClick={handleRefreshExtracts}
-                className={
-                  clsx(classes.refreshButton,
-                    {
-                      [classes.disableRefresh]: !isManageLevelUser,
-                    }
-                  )
-                }
-                data-test="refreshExtracts"
-              />
-            )}
-            {flowSampleDataStatus === 'requested' && (
-              <span className={classes.spinner}>
-                <Spinner size={24} color="primary" />
-              </span>
-            )}
-          </Typography>
-
-          <Typography
-            variant="h5"
-            className={clsx(classes.childHeader, classes.topHeading)}>
-            {generateLabel}
-            { importSampleDataStatus !== 'requested' && (
-              <RefreshIcon
-                disabled={!isManageLevelUser}
-                onClick={handleRefreshGenerates}
-                className={
-                  clsx(classes.refreshButton,
-                    {
-                      [classes.disableRefresh]: !isManageLevelUser,
-                    }
-                  )
-                }
-                data-test="refreshGenerates"
-              />
-            )}
-            {importSampleDataStatus === 'requested' && (
-              <span className={classes.spinner}>
-                <Spinner size={24} color="primary" />
-              </span>
-            )}
-          </Typography>
-        </div>
-
-        <div className={classes.mappingsBody}>
-          {tableData.map((mapping, index) => (
-            <MappingRow
-              index={index}
-              id={`${mapping.key}-${mapping.rowIdentifier}`}
-                // eslint-disable-next-line react/no-array-index-key
-              key={`${mapping.key}-${mapping.rowIdentifier}`}
-              mapping={mapping}
-              onFieldUpdate={handleFieldUpdate}
-              onTouch={handleTouch}
-              disabled={!isManageLevelUser}
-              ssLinkedConnectionId={ssLinkedConnectionId}
-              integrationId={integrationId}
-              flowId={flowId}
-              updateLookupHandler={updateLookupHandler}
-              patchSettings={patchSettings}
-              onDelete={handleDelete}
-              onMove={handleMove}
-              onDrop={handleDrop}
-              isDraggable={isManageLevelUser}
-              importType={importType}
-              />
-          ))}
-          <MappingRow
-            key={`${emptyRowIndex}-${localChangeIdentifier}`}
-            index={emptyRowIndex}
-            mapping={emptyObj}
-            onFieldUpdate={handleFieldUpdate}
-            onTouch={handleTouch}
-            disabled={!isManageLevelUser}
-            ssLinkedConnectionId={ssLinkedConnectionId}
-            integrationId={integrationId}
-            flowId={flowId}
-            updateLookupHandler={updateLookupHandler}
-            patchSettings={patchSettings}
-            onDelete={handleDelete}
-            isDraggable={false}
-            importType={importType}
-          />
-        </div>
-        <ButtonGroup
-          className={classes.importMappingButtonGroup}>
-
-          <SaveButton
-            disabled={!isManageLevelUser || saveInProgress}
-            color="primary"
-            dataTest="saveImportMapping"
-            submitButtonLabel="Save"
-
-          />
-          <SaveButton
-            variant="outlined"
-            color="secondary"
-            dataTest="saveAndCloseImportMapping"
-            onClose={handleClose}
-            disabled={!isManageLevelUser || saveInProgress}
-            showOnlyOnChanges
-            submitButtonLabel="Save & close"
-          />
-          <Button
-            variant="text"
-            data-test="saveImportMapping"
-            disabled={saveInProgress}
-            onClick={handleClose}>
-            Cancel
-          </Button>
-        </ButtonGroup>
-      </div>
-      {showPreviewPane && (
-        <div className={classes.assistantContainer}>
-          {importType === 'netsuite' && (
-          <NetSuiteMappingAssistant
-            style={{
-              width: '100%',
-              height: '100%',
-            }}
-            netSuiteConnectionId={ssLinkedConnectionId}
-            netSuiteRecordType={recordType}
-            onFieldClick={handleSFNSAssistantFieldClick}
-            data={{}}
-       />
-          )}
-          {importType === 'salesforce' && (
-          <SalesforceMappingAssistant
-            style={{
-              width: '100%',
-              height: '100%',
-            }}
-            ssLinkedConnectionId={ssLinkedConnectionId}
-            connectionId={connectionId}
-            sObjectType={sObjectType}
-            sObjectLabel={sObjectType}
-            layoutId={salesforceLayoutId}
-            onFieldClick={handleSFNSAssistantFieldClick}
-            data={{}}
-     />
+    <>
+      <DrawerContent>
+        <div className={classes.root}>
+          <div className={clsx(classes.mappingContainer)}>
+            <TopPanel
+              disabled={!isManageLevelUser} />
+            <div className={classes.mappingsBody}>
+              <DragContainer
+                disabled={!isManageLevelUser} />
+            </div>
+          </div>
+          <PreviewPanel
+            disabled={!isManageLevelUser} />
+          <SettingsDrawer
+            disabled={!isManageLevelUser} />
+          {sfSubListExtractFieldName && (
+            <SalesforceSubListDialog />
           )}
         </div>
-      )}
-      {sfSubListExtractFieldName && (
-        <SalesforceSubListDialog />
-      )}
-
-    </div>
+      </DrawerContent>
+      <DrawerFooter>
+        <ButtonPanel
+          disabled={!isManageLevelUser}
+          onClose={onClose} />
+      </DrawerFooter>
+    </>
   );
 };
 
 export default function SuiteScriptMappingWrapper(props) {
   const {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId} = props;
-  // console.log('subRecordMappingId', subRecordMappingId);
   const dispatch = useDispatch();
-  const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
-
-  const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
-  const subRecordType = useSelector(state => selectors.suiteScriptNetsuiteMappingSubRecord(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}).recordType);
-  const {status: importSampleDataStatus, data: importSampleData} = useSelector(state => selectors.suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}));
-  const {status: flowSampleDataStatus, data: flowSampleData} = useSelector(state => selectors.suiteScriptExtracts(state, {ssLinkedConnectionId, integrationId, flowId}));
-  const requestImportSampleData = useCallback(
-    () => {
-      dispatch(
-        actions.suiteScript.importSampleData.request(
-          {
-            ssLinkedConnectionId,
-            integrationId,
-            flowId,
-            options: {recordType: subRecordType},
-          }
-        )
-      );
-    },
-    [dispatch, flowId, integrationId, ssLinkedConnectionId, subRecordType]
-  );
-  const requestFlowSampleData = useCallback(
-    () => {
-      dispatch(
-        actions.suiteScript.sampleData.request(
-          {
-            ssLinkedConnectionId,
-            integrationId,
-            flowId,
-          }
-        )
-      );
-    },
-    [dispatch, flowId, integrationId, ssLinkedConnectionId]
-  );
+  const mappingStatus = useSelector(state => selectors.suiteScriptMapping(state).status);
 
   useEffect(() => {
-    if (
-      !importSampleDataLoaded &&
-      (importSampleDataStatus === 'received' || importSampleDataStatus === 'error')
-    ) {
-      setImportSampleDataLoaded(true);
-    }
-  }, [importSampleDataStatus, importSampleDataLoaded, setImportSampleDataLoaded]);
+    /** initiate a mapping init each time user opens mapping. Sample data is loaded */
+    dispatch(actions.suiteScript.mapping.init({
+      ssLinkedConnectionId,
+      integrationId,
+      flowId,
+      subRecordMappingId,
+    }));
 
-  useEffect(() => {
-    if (
-      !flowSampleDataLoaded &&
-      (flowSampleDataStatus === 'received' || flowSampleDataStatus === 'error')
-    ) {
-      setFlowSampleDataLoaded(true);
-    }
-  }, [flowSampleDataLoaded, flowSampleDataStatus]);
+    return () => {
+      // clear the mapping list when component unloads.
+      dispatch(actions.suiteScript.mapping.clear());
+    };
+  }, [dispatch, flowId, integrationId, ssLinkedConnectionId, subRecordMappingId]);
 
-  useEffect(() => {
-    if (!importSampleData && !importSampleDataLoaded) {
-      requestImportSampleData();
-    }
-  }, [importSampleData, dispatch, requestImportSampleData, importSampleDataLoaded]);
-  useEffect(() => {
-    if (!flowSampleData && !flowSampleDataLoaded) {
-      requestFlowSampleData();
-    }
-  }, [flowSampleData, flowSampleDataLoaded, requestFlowSampleData]);
-  if (!importSampleDataLoaded || !flowSampleDataLoaded) {
+  if (mappingStatus === 'error') {
+    return (<Typography>Failed to load mapping.</Typography>);
+  }
+  if (mappingStatus !== 'received') {
     return (
       <SpinnerWrapper>
         <Spinner />

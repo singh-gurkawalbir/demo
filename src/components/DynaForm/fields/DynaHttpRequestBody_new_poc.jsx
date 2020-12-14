@@ -42,7 +42,6 @@ export default function _DynaHttpRequestBody_(props) {
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
-  const formattedRule = Array.isArray(value) ? value[arrayIndex] : value;
 
   const handleSave = useCallback(editorValues => {
     const { rule } = editorValues;
@@ -62,7 +61,6 @@ export default function _DynaHttpRequestBody_(props) {
 
   const handleEditorClick = useCallback(() => {
     dispatch(actions._editor.init(id, 'handlebars', {
-      rule: typeof formattedRule === 'string' ? formattedRule : JSON.stringify(formattedRule, null, 2),
       formKey,
       flowId,
       resourceId,
@@ -73,7 +71,7 @@ export default function _DynaHttpRequestBody_(props) {
     }));
 
     history.push(`${match.url}/editor/${id}`);
-  }, [dispatch, id, formattedRule, formKey, flowId, resourceId, resourceType, handleSave, history, match.url]);
+  }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url]);
 
   return (
     <Fragment key={`${resourceId}-${id}`}>
