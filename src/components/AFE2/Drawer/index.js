@@ -30,11 +30,11 @@ function RouterWrappedContent({ hideSave, onClose, fullPath}) {
   // between editors that share the same processor. We then can have metadata specific
   // to each editor variant. If you have a better idea, pls share. Also maybe "type"
   // could be renamed.
-  const type = useSelector(state => selectors._editor(state, editorId).processor);
+  const editorType = useSelector(state => selectors._editor(state, editorId).editorType);
   const editorTitle = useSelector(state => selectors._editor(state, editorId).editorTitle);
 
   // console.log('drawer editor', editorId, editor);
-  const { label, drawer = {} } = editorMetadata[type] || {};
+  const { label, drawer = {} } = editorMetadata[editorType] || {};
   const { actions } = drawer;
 
   const CloseButton = <CloseIconButton onClose={onClose} editorId={editorId} />;

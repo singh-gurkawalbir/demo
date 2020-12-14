@@ -1386,8 +1386,9 @@ const editor = {
 };
 // TODO: parallel AFE refactor actions.
 const _editor = {
-  init: (id, processor, options) =>
-    action(actionTypes._EDITOR.INIT, { id, processor, options }),
+  init: (id, editorType, options) =>
+    action(actionTypes._EDITOR.INIT, { id, editorType, options }),
+  initComplete: (id, options) => action(actionTypes._EDITOR.INIT_COMPLETE, { id, options }),
   changeLayout: (id, newLayout) => action(actionTypes._EDITOR.CHANGE_LAYOUT, { id, newLayout }),
   patchFeatures: (id, featuresPatch) => action(actionTypes._EDITOR.PATCH.FEATURES, { id, featuresPatch }),
   patchRule: (id, rulePatch) => action(actionTypes._EDITOR.PATCH.RULE, { id, rulePatch }),
