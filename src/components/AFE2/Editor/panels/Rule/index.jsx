@@ -7,7 +7,7 @@ import CodePanel from '../Code';
 export default function RulePanel({ editorId, mode }) {
   const dispatch = useDispatch();
   const rule = useSelector(state => selectors._editorRule(state, editorId));
-  const disabled = useSelector(state => selectors._editor(state, editorId).disabled);
+  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const { errorLine, error} = useSelector(state => selectors._editorPreviewError(state, editorId));
   const handleChange = newRule => {
     dispatch(actions._editor.patchRule(editorId, newRule));

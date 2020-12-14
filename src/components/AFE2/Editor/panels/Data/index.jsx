@@ -7,8 +7,8 @@ import PanelLoader from '../../../../PanelLoader';
 
 export default function DataPanel({ editorId, mode }) {
   const dispatch = useDispatch();
-  const initStatus = useSelector(state => selectors._editor(state, editorId).initStatus);
-  const disabled = useSelector(state => selectors._editor(state, editorId).disabled);
+  const sampleDataStatus = useSelector(state => selectors._editor(state, editorId).sampleDataStatus);
+  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const data = useSelector(state => selectors._editorData(state, editorId));
   const violations = useSelector(state => selectors._editorViolations(state, editorId));
 
@@ -18,7 +18,7 @@ export default function DataPanel({ editorId, mode }) {
 
   return (
     <>
-      {initStatus === 'requested' ? (
+      {sampleDataStatus === 'requested' ? (
         <PanelLoader />
       ) : (
         <CodePanel

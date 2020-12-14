@@ -15,6 +15,14 @@ import filter from './filter';
 // import salesforceQualifier from './salesforceQualifier';
 // import salesforceLookupFilter from './salesforceLookupFilter';
 // import readme from './readme';
+import scriptEdit from './scriptEdit';
+import postResponseMapHook from './postResponseMapHook';
+import exportFilter from './exportFilter';
+import inputFilter from './inputFilter';
+import outputFilter from './outputFilter';
+import responseTransform from './responseTransform';
+import databaseMapping from './databaseMapping';
+import flowTransform from './flowTransform';
 
 const logicMap = {
   handlebars,
@@ -25,13 +33,21 @@ const logicMap = {
   sql,
   settingsForm,
   transform,
+  scriptEdit,
+  postResponseMapHook,
+  exportFilter,
+  inputFilter,
+  outputFilter,
+  responseTransform,
+  databaseMapping,
+  flowTransform,
 };
 
 function getLogic(editor) {
-  const logic = logicMap[editor.processor];
+  const logic = logicMap[editor.editorType];
 
   if (!logic) {
-    throw new Error(`Processor [${editor.processor}] not supported.`);
+    throw new Error(`Type [${editor.editorType}] not supported.`);
   }
 
   return logic;
@@ -57,9 +73,17 @@ const requestOptions = editor => {
   if (violations || skipPreview) {
     return { violations, skipPreview };
   }
+  let processor;
+
+  if (typeof logic.processor === 'function') {
+    processor = logic.processor(editor);
+  } else {
+    processor = logic.processor;
+  }
+  processor = processor || editor.editorType;
 
   return {
-    processor: logic.processor || editor.processor,
+    processor,
     body: logic.requestBody(editor),
   };
 };
@@ -84,11 +108,29 @@ const isDirty = editor => {
 
   return false;
 };
-const init = processor => {
-  if (!processor) return;
-  const logic = getLogic({ processor });
+/**
+ * init is optional for processors and is called during EDITOR_INIT.
+ * data saved during EDITOR.INIT can be modified with it
+ */
+const init = editorType => {
+  if (!editorType) return;
+  const logic = getLogic({ editorType });
 
   return logic.init;
+};
+
+const getRule = editorType => {
+  if (!editorType) return;
+  const logic = getLogic({ editorType });
+
+  return logic.getRule;
+};
+
+const buildData = editorType => {
+  if (!editorType) return;
+  const logic = getLogic({ editorType });
+
+  return logic.buildData;
 };
 
 const processResult = editor => {
@@ -98,10 +140,61 @@ const processResult = editor => {
   return logic.processResult;
 };
 
-/**
- * init is optional for processors and is called during EDITOR_INIT.
- * data saved during EDITOR.INIT can be modified with it
- */
+function getPatchSetLogic(editor) {
+  // TODO:
+  const processorKey =
+    (editor.optionalSaveParams && editor.optionalSaveParams.processorKey) ||
+    editor.editorType;
+
+  if (!processorKey) {
+    throw new Error('Not supported.');
+  }
+
+  const logic = logicMap[processorKey];
+
+  if (!logic) {
+    throw new Error(`Processor [${processorKey}] not supported.`);
+  }
+
+  return logic;
+}
+
+const getPatchSet = editor => getPatchSetLogic(editor).patchSet?.(editor);
+
+export const featuresMap = options => ({
+  handlebars: {
+    autoEvaluate: false,
+    strict: false,
+    layout: 'compact',
+  },
+  csvParser: {
+    layout: 'compact',
+  },
+  xmlParser: {
+    layout: 'compact',
+  },
+  settingsForm: {
+    layout: `${options?.mode || 'json'}FormBuilder`,
+  },
+  sql: {
+    layout: 'compact',
+  },
+  filter: {
+    autoEvaluate: false,
+    layout: 'compact',
+  },
+  javascript: {
+    autoEvaluate: false,
+    layout: 'compact',
+  },
+  transform: {
+    duplicateKeyToValidate: 'generate',
+    layout: 'compact',
+  },
+  flowTransform: {
+    layout: 'compact',
+  },
+});
 
 export default {
   requestOptions,
@@ -109,4 +202,7 @@ export default {
   isDirty,
   init,
   processResult,
+  getPatchSet,
+  getRule,
+  buildData,
 };

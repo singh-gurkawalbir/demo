@@ -69,6 +69,8 @@ export default function ApplicationsList({ filter }) {
 
     connectors.forEach(c => { applications = applications.concat(c.applications); });
     templates.forEach(t => { applications = applications.concat(t.applications); });
+    connectorsMetadata.forEach(c => { applications = applications.concat(c.id); });
+
     applications = uniq(applications.filter(Boolean).sort());
 
     // do not filter the applications if user has not typed in any search string

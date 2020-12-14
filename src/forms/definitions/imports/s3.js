@@ -155,6 +155,9 @@ export default {
     's3.backupBucket': {
       fieldId: 's3.backupBucket',
     },
+    'file.encoding': {
+      fieldId: 'file.encoding',
+    },
     blobKeyPath: {
       fieldId: 'blobKeyPath',
     },
@@ -252,6 +255,7 @@ export default {
         label: 'Advanced',
         fields: [
           's3.backupBucket',
+          'file.encoding',
           'blobKeyPath',
           'fileAdvancedSettings',
           'deleteAfterImport',

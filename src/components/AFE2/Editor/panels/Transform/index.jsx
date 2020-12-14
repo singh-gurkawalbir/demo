@@ -34,10 +34,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function TransformPanel({ editorId }) {
-  const classes = useStyles(props);
+  const dispatch = useDispatch();
   const data = useSelector(state => selectors._editorData(state, editorId));
   const rule = useSelector(state => selectors._editorRule(state, editorId));
-  const dispatch = useDispatch();
+  const hasError =
+    useSelector(state => !!selectors._editorPreviewError(state, editorId).error);
+  const classes = useStyles({hasError});
+
   const patchEditor = useCallback(value => {
     dispatch(actions._editor.patchRule(editorId, value));
   }, [dispatch, editorId]);
@@ -81,11 +84,14 @@ export default function TransformPanel({ editorId }) {
 
   return (
     <KeyValueComponent
-      {...props}
       suggestionConfig={suggestionConfig}
       dataTest="transformRule"
       onUpdate={patchEditor}
       showDelete
+      // TODO: This is not a good pattern! All we should do
+      // is pass a 'hasError' prop, and let the keyValue
+      // component be responsible for the style. This parent
+      // component shoudl not concern itself with what a child looks like.
       classes={classes}
       value={rule}
       keyName="extract"

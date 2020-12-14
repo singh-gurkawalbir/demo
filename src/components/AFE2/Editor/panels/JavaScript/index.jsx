@@ -46,7 +46,8 @@ export default function JavaScriptPanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const aceEditor = useRef(null);
-  const { code = '', entryFunction = '', scriptId = '', fetchScriptContent } = useSelector(state => selectors._editorRule(state, editorId));
+  const rule = useSelector(state => selectors._editorRule(state, editorId));
+  const {code = '', entryFunction = '', scriptId = '', fetchScriptContent } = rule || {};
 
   // TODO: @Ashu, Here too, i'm assuming the stub key is dependant on what
   // field a user is editing. If they are editing the preSave or postMap, etc, then we should

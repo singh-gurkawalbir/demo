@@ -7,7 +7,6 @@ export default {
   fieldId: 'file.xml',
   label: 'XML parser',
   description: 'Converts XML data into JSON',
-  layout: 'compact',
   panels: [
     {
       title: 'Parse options',

@@ -6,7 +6,7 @@ import Icon from '../../../../components/icons/TransformIcon';
 
 // its crazy that the FB passes the full resource to all of these processor launchers.
 // we are already given the resourceType and Id so we can easily look it up here.
-function TxLauncher({ flowId, resourceType, resource, resourceId, onClose, open }) {
+function TxLauncher({ flowId, resourceType, resourceId, onClose, open }) {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const editorId = `tx-${resourceId}`;
@@ -20,15 +20,10 @@ function TxLauncher({ flowId, resourceType, resource, resourceId, onClose, open 
     // the other processor buttons would not even be visible.
     onClose();
 
-    dispatch(actions._editor.init(editorId, 'transform', {
-      rule: resource.transformation || [],
-      // formKey is only for editors launch by a form. Is this correct?
-      // formKey,
+    dispatch(actions._editor.init(editorId, 'flowTransform', {
       flowId,
       resourceId,
       resourceType,
-      // i don't think we need this? Is this used along with the formKey?
-      // fieldId: 'export.transform,
       stage: 'transform',
 
       // We could also use the onSave callback to call the proxied onClose

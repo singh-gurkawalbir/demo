@@ -2,18 +2,14 @@ import produce from 'immer';
 import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
-// import processorPatchSet from '../editors/processorPatchSet';
-import editorFeaturesMap from './featuresMap';
-import editorMetadata from '../../../components/AFE2/metadata';
 
 const emptyObj = {};
 
 export default function reducer(state = {}, action) {
   const {
     type,
-    processor,
     id,
-    options = {},
+    options,
     featuresPatch,
     rulePatch,
     dataPatch,
@@ -34,32 +30,9 @@ export default function reducer(state = {}, action) {
       case actionTypes._EDITOR.UPDATE_HELPER_FUNCTIONS:
         draft.helperFunctions = helperFunctions;
         break;
-      case actionTypes._EDITOR.INIT: {
-        const { layout } = editorMetadata[processor];
 
-        // const initChangeIdentifier = draft[id]?.initChangeIdentifier || 0;
-        const init = processorLogic.init(processor);
-        const {onSave, ...rest} = options;
-        const optionsCopy = deepClone(rest);
-        const formattedInitOptions = init ? init(optionsCopy) : optionsCopy;
-
-        let originalRule = options.rule;
-
-        if (typeof originalRule === 'object') {
-          originalRule = deepClone(options.rule);
-        }
-
-        draft[id] = {
-          layout,
-          processor,
-          ...formattedInitOptions,
-          ...deepClone(editorFeaturesMap[processor]), // TODO: check later if features get mutated. if not, remove deepClone
-          originalRule,
-          lastChange: Date.now(),
-          // initChangeIdentifier: initChangeIdentifier + 1,
-          initStatus: 'requested',
-          onSave,
-        };
+      case actionTypes._EDITOR.INIT_COMPLETE: {
+        draft[id] = options;
         break;
       }
 
@@ -77,9 +50,15 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.SAMPLEDATA.RECEIVED: {
-        draft[id].data = sampleData;
+        const buildData = processorLogic.buildData(draft[id].editorType);
+
+        if (buildData) {
+          draft[id].data = buildData(sampleData);
+        } else {
+          draft[id].data = sampleData;
+        }
         draft[id].dataVersion = templateVersion;
-        draft[id].initStatus = 'received';
+        draft[id].sampleDataStatus = 'received';
         // store lastValidData in case user updates data as invalid json. As we still want to show the dropdown data values in
         // the rule or handlebars panel
         draft[id].lastValidData = sampleData;
@@ -87,13 +66,13 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.SAMPLEDATA.FAILED: {
-        draft[id].initStatus = 'error';
+        draft[id].sampleDataStatus = 'error';
         draft[id].initError = sampleDataError;
         break;
       }
 
       case actionTypes._EDITOR.TOGGLE_VERSION: {
-        draft[id].initStatus = 'requested';
+        draft[id].sampleDataStatus = 'requested';
         draft[id].dataVersion = version;
         draft[id].result = '';
         if (version === 2) {
@@ -114,7 +93,18 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.PATCH.RULE: {
-        if (typeof rulePatch === 'string' ||
+        const mode = draft[id].activeProcessor;
+
+        if (mode) {
+          if (typeof rulePatch === 'string' ||
+          Array.isArray(rulePatch) ||
+          draft[id].rule[mode] === undefined) {
+            draft[id].rule[mode] = rulePatch;
+          } else {
+          // TODO: Ashu, why do we need to clone the rulePatch?
+            Object.assign(draft[id].rule[mode], deepClone(rulePatch));
+          }
+        } else if (typeof rulePatch === 'string' ||
           Array.isArray(rulePatch) ||
           draft[id].rule === undefined) {
           draft[id].rule = rulePatch;
@@ -122,6 +112,7 @@ export default function reducer(state = {}, action) {
           // TODO: Ashu, why do we need to clone the rulePatch?
           Object.assign(draft[id].rule, deepClone(rulePatch));
         }
+
         if (draft[id].dataVersion === 2) {
           draft[id].v2Rule = rulePatch;
         } else if (draft[id].dataVersion === 1) {
@@ -136,7 +127,13 @@ export default function reducer(state = {}, action) {
 
       case actionTypes._EDITOR.PATCH.DATA: {
         // Object.assign(draft[id].data, deepClone(dataPatch));
-        draft[id].data = dataPatch;
+        const mode = draft[id].activeProcessor;
+
+        if (mode) {
+          draft[id].data[mode] = dataPatch;
+        } else {
+          draft[id].data = dataPatch;
+        }
         draft[id].lastChange = Date.now();
         draft[id].lastValidData = draft[id].data;
         if (draft[id].autoEvaluate) {
@@ -218,7 +215,14 @@ selectors._editorData = (state, id) => {
 
   const editor = state[id];
 
-  return editor?.data;
+  if (!editor) return;
+  const mode = editor.activeProcessor;
+
+  if (mode) {
+    return editor.data?.[mode];
+  }
+
+  return editor.data;
 };
 
 selectors._editorResult = (state, id) => {
@@ -234,7 +238,14 @@ selectors._editorRule = (state, id) => {
 
   const editor = state[id];
 
-  return editor?.rule || emptyObj;
+  if (!editor) return;
+  const mode = editor.activeProcessor;
+
+  if (mode) {
+    return editor.rule?.[mode];
+  }
+
+  return editor.rule;
 };
 
 selectors._editorPreviewError = (state, id) => {
@@ -268,21 +279,8 @@ selectors._editorViolations = (state, id) => processorLogic.validate(state?.[id]
 
 selectors._isEditorDirty = (state, id) => processorLogic.isDirty(state?.[id]);
 
-// selectors._editorPatchSet = (state, id) => processorPatchSet.getPatchSet(state?.[id]);
+// selectors._processorRequestOptions = (state, id) => processorLogic.requestOptions(state?.[id]);
 
-selectors._editorSaveStatus = (state, id) => {
-  if (!state || !state[id]) {
-    return emptyObj;
-  }
+// selectors._editorPatchSet = (state, id) => processorLogic.getPatchSet(state?.[id]);
 
-  const { saveStatus } = state[id];
-
-  return {
-    saveTerminated: saveStatus === 'completed' || saveStatus === 'failed',
-    saveCompleted: saveStatus === 'completed',
-    saveInProgress: saveStatus === 'requested',
-  };
-};
-
-selectors._processorRequestOptions = (state, id) => processorLogic.requestOptions(state?.[id]);
 // #endregion

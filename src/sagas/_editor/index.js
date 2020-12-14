@@ -6,13 +6,13 @@ import {
   takeEvery,
   delay,
 } from 'redux-saga/effects';
+import { deepClone } from 'fast-json-patch';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import { getResource, commitStagedChanges } from '../resources';
-import processorLogic from '../../reducers/session/_editors/processorLogic';
-import sagasProcessorLogic from './processorLogic';
+import processorLogic, { featuresMap } from '../../reducers/session/_editors/processorLogic';
 import { SCOPES } from '../resourceForm';
 import { requestSampleData } from '../sampleData/flows';
 import { requestExportSampleData } from '../sampleData/exports';
@@ -36,8 +36,8 @@ export function* invokeProcessor({ processor, body }) {
 
 export function* requestPreview({ id }) {
   const editor = yield select(selectors._editor, id);
-  // const reqOpts = processorLogic.requestOptions(editor);
-  const reqOpts = yield select(selectors._processorRequestOptions, id);
+
+  const reqOpts = processorLogic.requestOptions(editor);
 
   if (!reqOpts) {
     return; // nothing to do...
@@ -119,9 +119,8 @@ export function* evaluateExternalProcessor({ processorData }) {
 }
 
 export function* save({ id, context }) {
-  // TODO: @ashu const patches = yield select(selectors._editorPatchSet, id);
-  const patches = undefined;
   const editor = yield select(selectors._editor, id);
+  const patches = processorLogic.getPatchSet(editor);
 
   if (!editor) {
     return; // nothing to do
@@ -140,7 +139,7 @@ export function* save({ id, context }) {
   }
 
   if (editor.onSave) {
-    yield call(editor.onSave, editor);
+    editor.onSave(editor);
 
     return yield put(actions._editor.saveComplete(id));
   }
@@ -308,7 +307,7 @@ export function* requestEditorSampleData({
 
   if (!editor) return;
 
-  const {processor, flowId, resourceId, resourceType, fieldId, isEditorV2Supported, formKey, stage} = editor;
+  const {editorType, flowId, resourceId, resourceType, fieldId, isEditorV2Supported, formKey, stage} = editor;
 
   const isPageGenerator = yield select(
     selectors.isPageGenerator,
@@ -325,7 +324,7 @@ export function* requestEditorSampleData({
   });
   let sampleData;
 
-  if (stage === 'outputFilter') {
+  if (stage === 'outputFilter' || stage === 'transform') {
     yield call(requestSampleData, {
       flowId,
       resourceId,
@@ -343,13 +342,15 @@ export function* requestEditorSampleData({
   }
 
   // TODO: @ashu test this
-  if (processor === 'csvParse' || processor === 'xmlParse') {
-    const fileType = processor === 'csvParse' ? 'csv' : 'xml';
+  if (editorType === 'csvParse' || editorType === 'xmlParse') {
+    const fileType = editorType === 'csvParse' ? 'csv' : 'xml';
 
     const fileData = yield select(selectors.fileSampleData, { resourceId, resourceType, fileType});
 
     return { data: fileData};
-  } if (isPageGenerator && isEditorV2Supported) {
+  }
+
+  if (isPageGenerator && isEditorV2Supported) {
     yield call(requestExportSampleData, { resourceId, resourceType, values: formValues });
     const parsedData = yield select(
       selectors.getResourceSampleDataWithStatus,
@@ -455,15 +456,9 @@ export function* requestEditorSampleData({
   return { data, templateVersion};
 }
 
-export function* initEditor({ id }) {
+export function* initSampleData({ id }) {
+// re-fetching the editor from state to get latest editor (in case init processorLogic made any changes)
   const editor = yield select(selectors._editor, id);
-
-  if (!editor) return;
-  const init = sagasProcessorLogic.init(editor.processor);
-
-  if (init) {
-    yield call(init, {id});
-  }
 
   // if data is already passed during init, save it to state directly
   if (editor.data) {
@@ -473,8 +468,8 @@ export function* initEditor({ id }) {
         dataAsString(editor.data),
       )
     );
-  } else if (!editor.initStatus || editor.initStatus === 'requested') {
-    // load sample data only when its not received already
+  } else if (!editor.sampleDataStatus || editor.sampleDataStatus === 'requested') {
+  // load sample data only when its not received already
     const {data, templateVersion} = yield call(requestEditorSampleData, {id});
 
     yield put(
@@ -490,6 +485,71 @@ export function* initEditor({ id }) {
   yield call(refreshHelperFunctions);
 
   return yield call(autoEvaluateProcessor, { id });
+}
+
+export function* initEditor({ id, editorType, options = {} }) {
+  let fieldState;
+
+  if (options.formKey) {
+    fieldState = yield select(selectors.fieldState, options.formKey, options.fieldId);
+  }
+  // todo, check with raghu if this is the right way to get latest resource
+  const resource = yield select(selectors.resource, options.resourceType, options.resourceId);
+
+  let editorRule = options.rule;
+  const ruleLogic = processorLogic.getRule(editorType);
+
+  if (editorRule === undefined && ruleLogic) {
+    editorRule = ruleLogic({resource, options, fieldState});
+  }
+  const {onSave, ...rest} = options;
+  let formattedOptions = rest;
+
+  formattedOptions.rule = editorRule;
+  const init = processorLogic.init(editorType);
+
+  if (init) {
+    // for now we need all below props for handlebars init only
+    if (editorType === 'handlebars') {
+      const { formKey, resourceId, resourceType, flowId} = options;
+      const formState = yield select(selectors.formState, formKey);
+      const { value: formValues } = formState || {};
+      const resource = yield call(constructResourceFromFormValues, {
+        formValues,
+        resourceId,
+        resourceType,
+      });
+      const { _connectionId: connectionId } = resource;
+      const connection = yield select(selectors.resource, 'connections', connectionId);
+      const isPageGenerator = yield select(selectors.isPageGenerator, flowId, resourceId, resourceType);
+
+      formattedOptions = init({id, options: formattedOptions, resource, fieldState, connection, isPageGenerator});
+    } else {
+      formattedOptions = init(formattedOptions);
+    }
+  }
+
+  let originalRule = editorRule;
+
+  if (typeof originalRule === 'object') {
+    originalRule = {...editorRule};
+  }
+  const stateOptions = {
+    editorType,
+    ...deepClone(formattedOptions),
+    ...featuresMap(options)[editorType],
+    originalRule,
+    lastChange: Date.now(),
+    sampleDataStatus: 'requested',
+    onSave,
+  };
+
+  yield put(actions._editor.initComplete(
+    id,
+    stateOptions,
+  ));
+
+  return yield call(initSampleData, { id });
 }
 
 export function* toggleEditorVersion({ id, version }) {

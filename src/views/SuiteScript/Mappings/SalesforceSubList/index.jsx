@@ -36,7 +36,7 @@ export default function SalesforceSubListDialog() {
 
   const [selectedValues, setSelectedValues] = useState([]);
   const {relationshipName, sObjectType, ssLinkedConnectionId, relationshipType} = useSelector(state => {
-    const abcd = selectors.suiteScriptMappings(state);
+    const abcd = selectors.suiteScriptMapping(state);
     const {sfSubListExtractFieldName, ssLinkedConnectionId, integrationId, flowId} = abcd;
     const {data} = selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId});
     const childRelationshipField = data && data.find(field => field.value === sfSubListExtractFieldName);

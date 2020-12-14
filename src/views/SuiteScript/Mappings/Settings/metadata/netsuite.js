@@ -23,7 +23,6 @@ export default {
       generateFields,
       ssLinkedConnectionId,
       recordType,
-      isGroupedSampleData = false,
     } = params;
     const fieldId =
       generate && generate.indexOf('[*].') !== -1
@@ -60,15 +59,6 @@ export default {
 
     const fieldMeta = {
       fieldMap: {
-        useFirstRow: {
-          id: 'useFirstRow',
-          name: 'useFirstRow',
-          type: 'checkbox',
-          defaultValue: value.useFirstRow || false,
-          // helpText not present
-          label: 'Use first row',
-        },
-
         fieldMappingType: {
           id: 'fieldMappingType',
           name: 'fieldMappingType',
@@ -297,7 +287,6 @@ export default {
       },
       layout: {
         fields: [
-          'useFirstRow',
           'fieldMappingType',
           'lookup.mode',
           'lookup.recordType',
@@ -364,11 +353,6 @@ export default {
     };
     const { fieldMap, layout } = fieldMeta;
     let { fields } = layout;
-
-    if (!isGroupedSampleData || generate.indexOf('[*].') === -1) {
-      delete fieldMeta.fieldMap.useFirstRow;
-      fields = fields.filter(el => el !== 'useFirstRow');
-    }
 
     if (generate.indexOf('[*].') === -1) {
       delete fieldMeta.fieldMap.isKey;

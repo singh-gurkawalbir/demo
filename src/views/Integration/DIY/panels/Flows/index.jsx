@@ -1,27 +1,27 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { makeStyles, Divider, Typography } from '@material-ui/core';
-import { selectors } from '../../../../../reducers';
+import { Divider, Grid, List, ListItem, makeStyles, Typography } from '@material-ui/core';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { Link, NavLink, useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../../actions';
-import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import AttachFlowsDialog from '../../../../../components/AttachFlows';
-import flowTableMeta from '../../../../../components/ResourceTable/flows/metadata';
 import CeligoTable from '../../../../../components/CeligoTable';
-import LoadResources from '../../../../../components/LoadResources';
-import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
+import IconTextButton from '../../../../../components/IconTextButton';
+import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
+import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
-import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import flowTableMeta from '../../../../../components/ResourceTable/flows/metadata';
+import Spinner from '../../../../../components/Spinner';
+import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 import StatusCircle from '../../../../../components/StatusCircle';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { selectors } from '../../../../../reducers';
+import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
+import { getTemplateUrlName } from '../../../../../utils/template';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
-import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
-import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
-import Spinner from '../../../../../components/Spinner';
-import { getTemplateUrlName } from '../../../../../utils/template';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -49,14 +49,142 @@ const useStyles = makeStyles(theme => ({
   content: {
     padding: theme.spacing(3, 2),
   },
+  flowTitle: {
+    position: 'relative',
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    '&:before': {
+      content: '""',
+      width: '3px',
+      top: 0,
+      height: '100%',
+      position: 'absolute',
+      background: 'transparent',
+      left: '0px',
+    },
+    '&:hover': {
+      '&:before': {
+        background: theme.palette.primary.main,
+      },
+    },
+  },
+  subNav: {
+    minWidth: 200,
+    maxWidth: 240,
+    borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
+  },
+  listItem: {
+    color: theme.palette.secondary.main,
+    width: '100%',
+  },
+  activeListItem: {
+    color: theme.palette.primary.main,
+  },
 }));
 
+const getBasePath = match => {
+  if (match.params?.sectionId) {
+    // if there are sections in the path strip it out the last three segments
+    // it would appear like this /flows/sections/someSectionOd
+    return match.url
+      .split('/')
+      .slice(0, -3)
+      .join('/');
+  }
+
+  // remove just the tab section in the url
+  return match.url
+    .split('/')
+    .slice(0, -1)
+    .join('/');
+};
 const tilesFilterConfig = { type: 'tiles'};
 
+const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
+const FlowListingTable = ({
+  flows,
+  filterKey,
+  flowTableMeta,
+  actionProps,
+  sectionId,
+}) => {
+  const groupedFlows = useMemo(() => flows.filter(flow => sectionId === MISCELLANEOUS_SECTION_ID ? !flow._flowGroupingId
+    : flow._flowGroupingId === sectionId
+  ), [flows, sectionId]);
+
+  return (
+    <CeligoTable
+      data={groupedFlows}
+      filterKey={filterKey}
+      {...flowTableMeta}
+      actionProps={actionProps}
+/>
+  );
+};
+
+const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
+  const match = useRouteMatch();
+  const classes = useStyles();
+  const history = useHistory();
+  const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
+  const allSection = useMemo(() =>
+    flowGroupingsSections && [...flowGroupingsSections, {title: 'Miscellaneous', sectionId: MISCELLANEOUS_SECTION_ID}],
+  [flowGroupingsSections]);
+
+  if (!flowGroupingsSections) {
+    return (
+      <CeligoTable
+        data={flows}
+        filterKey={filterKey}
+        {...flowTableMeta}
+        actionProps={actionProps}
+/>
+    );
+  }
+  const sectionId = match.params?.sectionId;
+  const isMatchingWithSectionId = !!sectionId;
+
+  if (!isMatchingWithSectionId) {
+    history.replace(`${match.url}/sections/${MISCELLANEOUS_SECTION_ID}`);
+  }
+
+  return (
+    <Grid container wrap="nowrap">
+      <Grid item className={classes.subNav}>
+        <List>
+          {allSection.map(({ title, sectionId }) => (
+            <ListItem key={sectionId} className={classes.flowTitle}>
+              <NavLink
+                className={classes.listItem}
+                activeClassName={classes.activeListItem}
+                to={sectionId}
+                data-test={sectionId}>
+                {title}
+              </NavLink>
+            </ListItem>
+          ))}
+        </List>
+      </Grid>
+      <Grid item className={classes.content}>
+        <LoadResources required resources="flows">
+
+          <FlowListingTable
+            flows={flows}
+            filterKey={filterKey}
+            flowTableMeta={flowTableMeta}
+            actionProps={actionProps}
+            sectionId={sectionId}
+        />
+        </LoadResources>
+      </Grid>
+    </Grid>
+  );
+};
 export default function FlowsPanel({ integrationId, childId }) {
   const isStandalone = integrationId === 'none';
   const classes = useStyles();
   const dispatch = useDispatch();
+  const match = useRouteMatch();
   const [showDialog, setShowDialog] = useState(false);
   const filterKey = `${integrationId}-flows`;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
@@ -189,6 +317,8 @@ export default function FlowsPanel({ integrationId, childId }) {
     );
   }
 
+  const basePath = getBasePath(match);
+
   return (
     <div className={classes.root}>
       {showDialog && (
@@ -206,7 +336,7 @@ export default function FlowsPanel({ integrationId, childId }) {
         {canCreate && !isIntegrationApp && (
           <IconTextButton
             component={Link}
-            to="flowBuilder/new"
+            to={`${basePath}/flowBuilder/new`}
             data-test="createFlow">
             <AddIcon /> Create flow
           </IconTextButton>
@@ -222,7 +352,7 @@ export default function FlowsPanel({ integrationId, childId }) {
         {canEdit && !isIntegrationApp && (
           <IconTextButton
             component={Link}
-            to="dataLoader/new"
+            to={`${basePath}/dataLoader/new`}
             data-test="loadData">
             <AddIcon /> Load data
           </IconTextButton>
@@ -230,11 +360,11 @@ export default function FlowsPanel({ integrationId, childId }) {
       </PanelHeader>
 
       <LoadResources required resources="flows, exports">
-        <CeligoTable
-          data={flows}
+        <FlowListing
+          integrationId={integrationId}
           filterKey={filterKey}
-          {...flowTableMeta}
           actionProps={actionProps}
+          flows={flows}
         />
       </LoadResources>
     </div>

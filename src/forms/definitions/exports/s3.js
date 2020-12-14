@@ -181,7 +181,6 @@ export default {
           ],
         },
       ],
-      visible: r => !(r && r.isLookup),
       defaultDisabled: r => {
         const isNew = isNewId(r._id);
 

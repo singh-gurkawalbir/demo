@@ -6,6 +6,7 @@ import sql from './sql';
 import filter from './filter';
 import javascript from './javascript';
 import transform from './transform';
+import flowTransform from './flowTransform';
 
 const map = {
   csvParser,
@@ -16,6 +17,7 @@ const map = {
   filter,
   javascript,
   transform,
+  flowTransform,
 };
 export default map;
 

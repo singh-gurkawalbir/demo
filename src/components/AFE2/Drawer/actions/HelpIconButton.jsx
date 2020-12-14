@@ -14,11 +14,11 @@ const useStyles = makeStyles(theme => ({
 export default function HelpIconButton({ editorId }) {
   const classes = useStyles();
 
-  const { fieldId, processor: type } = useSelector(state => selectors._editor(state, editorId));
+  const { fieldId, editorType } = useSelector(state => selectors._editor(state, editorId));
 
   if (!fieldId) return null;
 
-  const { label } = editorMetadata[type];
+  const { label } = editorMetadata[editorType];
 
   return (
     <Help

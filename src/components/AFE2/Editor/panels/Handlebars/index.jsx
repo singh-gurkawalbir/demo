@@ -5,7 +5,7 @@ import { selectors } from '../../../../../reducers';
 import * as completers from '../../../../AFE/editorSetup/completers';
 import CodePanel from '../Code';
 
-export default function HandlebarsPanel({ editorId, mode = 'handlebars', disabled, lookups, enableAutocomplete = true }) {
+export default function HandlebarsPanel({ editorId, mode = 'handlebars', lookups, enableAutocomplete = true }) {
   const dispatch = useDispatch();
   const {
     rule,
@@ -13,6 +13,7 @@ export default function HandlebarsPanel({ editorId, mode = 'handlebars', disable
     error,
     errorLine,
   } = useSelector(state => selectors._editor(state, editorId), shallowEqual);
+  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
 
   const handlebarHelperFunction = useSelector(state =>
     selectors._editorHelperFunctions(state), shallowEqual

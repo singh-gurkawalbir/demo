@@ -31,7 +31,7 @@ export default {
   dirty: editor => {
     // TODO: @ashu fix this
     const {
-      _init_rule = [],
+      originalRule = [],
       data,
       _init_data,
       rule = [],
@@ -44,9 +44,60 @@ export default {
       return true;
     }
 
-    const rulesDiff = differenceWith(_init_rule, rule, isEqual);
-    const isRulesEqual = _init_rule.length === rule.length && !rulesDiff.length;
+    const rulesDiff = differenceWith(originalRule, rule, isEqual);
+    const isRulesEqual = originalRule.length === rule.length && !rulesDiff.length;
 
     return !isRulesEqual;
+  },
+  processResult: (editor, result) => ({data: result?.data?.[0]}),
+  patchSet: editor => {
+    const patches = {
+      foregroundPatches: undefined,
+      backgroundPatches: [],
+    };
+    const {
+      editorType,
+      rule,
+      scriptId,
+      code,
+      entryFunction,
+      optionalSaveParams = {},
+    } = editor;
+    const { resourceId, resourceType } = optionalSaveParams;
+    const type = editorType === 'transform' ? 'expression' : 'script';
+    const path = '/transform';
+    const value = {
+      type,
+      expression: {
+        version: 1,
+        rules: rule ? [rule] : [[]],
+      },
+      script: {
+        _scriptId: scriptId,
+        function: entryFunction,
+      },
+    };
+
+    patches.foregroundPatches = {
+      patch: [{ op: 'replace', path, value }],
+      resourceType,
+      resourceId,
+    };
+
+    if (type === 'script') {
+      patches.backgroundPatches.push({
+        patch: [
+          {
+            op: 'replace',
+            path: '/content',
+            value: code,
+          },
+        ],
+        resourceType: 'scripts',
+        resourceId: scriptId,
+      });
+    }
+
+    return patches;
   },
 };
