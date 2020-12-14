@@ -7,7 +7,7 @@ import PanelLoader from '../../../../PanelLoader';
 
 export default function FeaturePanel({ editorId, mode, featureName, disabled }) {
   const dispatch = useDispatch();
-  const initStatus = useSelector(state => selectors._editor(state, editorId).initStatus);
+  const sampleDataStatus = useSelector(state => selectors._editor(state, editorId).sampleDataStatus);
   const featureValue = useSelector(state => selectors._editor(state, editorId)[featureName]);
 
   // TODO: @Ashu, how should we handle validating and presenting errors here?
@@ -24,7 +24,7 @@ export default function FeaturePanel({ editorId, mode, featureName, disabled }) 
 
   return (
     <>
-      {initStatus === 'requested' ? (
+      {sampleDataStatus === 'requested' ? (
         <PanelLoader />
       ) : (
         <CodePanel
