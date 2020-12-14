@@ -81,6 +81,13 @@ export default {
       originalRule: editor.originalRule?.javascript,
     });
   },
+  processResult: (editor, result) => {
+    if (editor.activeProcessor === 'transform') {
+      return transform.processResult(editor, result);
+    }
+
+    return javascript.processResult(editor, result);
+  },
   patchSet: editor => {
     const patches = {
       foregroundPatches: undefined,

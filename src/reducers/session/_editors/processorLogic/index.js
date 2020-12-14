@@ -159,7 +159,7 @@ function getPatchSetLogic(editor) {
   return logic;
 }
 
-const getPatchSet = editor => getPatchSetLogic(editor).patchSet(editor);
+const getPatchSet = editor => getPatchSetLogic(editor).patchSet?.(editor);
 
 export const featuresMap = options => ({
   handlebars: {

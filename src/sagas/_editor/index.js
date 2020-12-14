@@ -488,7 +488,11 @@ export function* initSampleData({ id }) {
 }
 
 export function* initEditor({ id, editorType, options = {} }) {
-  const fieldState = yield select(selectors.fieldState, options.formKey, options.fieldId);
+  let fieldState;
+
+  if (options.formKey) {
+    fieldState = yield select(selectors.fieldState, options.formKey, options.fieldId);
+  }
   // todo, check with raghu if this is the right way to get latest resource
   const resource = yield select(selectors.resource, options.resourceType, options.resourceId);
 

@@ -49,6 +49,7 @@ export default {
 
     return !isRulesEqual;
   },
+  processResult: (editor, result) => ({data: result?.data?.[0]}),
   patchSet: editor => {
     const patches = {
       foregroundPatches: undefined,
