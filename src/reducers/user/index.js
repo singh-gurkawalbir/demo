@@ -7,7 +7,7 @@ import preferences, { selectors as fromPreferences } from './preferences';
 import notifications, { selectors as fromNotifications } from './notifications';
 import profile, { selectors as fromProfile } from './profile';
 import debug, { selectors as fromDebug } from './debug';
-import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
+import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../utils/constants';
 import { genSelectors } from '../util';
 
 export const DEFAULT_EDITOR_THEME = 'tomorrow';
@@ -230,6 +230,27 @@ selectors.userPermissions = createSelector(
   state => state?.org?.accounts,
   (defaultAShareId, allowedToPublish, accounts) => fromAccounts.permissions(accounts, defaultAShareId, { allowedToPublish })
 );
+
+selectors.hasManageIntegrationAccess = (state, integrationId) => {
+  const userPermissions = selectors.userPermissions(state);
+  const isAccountOwner = [USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(userPermissions.accessLevel);
+
+  if (isAccountOwner) {
+    return true;
+  }
+  const manageIntegrationAccessLevels = [
+    INTEGRATION_ACCESS_LEVELS.OWNER,
+    INTEGRATION_ACCESS_LEVELS.MANAGE,
+  ];
+
+  const integrationPermissions = userPermissions.integrations;
+
+  if (manageIntegrationAccessLevels.includes(integrationPermissions.all?.accessLevel)) {
+    return true;
+  }
+
+  return manageIntegrationAccessLevels.includes(integrationPermissions[integrationId]?.accessLevel);
+};
 
 selectors.accountOwner = createSelector(
   selectors.userAccessLevel,
