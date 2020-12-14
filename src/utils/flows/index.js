@@ -792,6 +792,7 @@ export function getFlowDetails(flow, integration, exports) {
       : draft.canSchedule;
     draft.showStartDateDialog = flowSettings.showStartDateDialog;
     draft.disableSlider = flowSettings.disableSlider;
+    draft.showRunFlow = !(flowSettings.showRunFlow === false);
     draft.showUtilityMapping = flowSettings.showUtilityMapping;
   });
 }

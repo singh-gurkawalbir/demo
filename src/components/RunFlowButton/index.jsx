@@ -230,6 +230,10 @@ export default function RunFlowButton({
   const isDataLoaderFileProcessRequested =
     isDataLoaderFlow && uploadedFile && uploadedFile.status !== 'error';
 
+  if (!flowDetails?.showRunFlow) {
+    return null;
+  }
+
   return (
     <>
       {showDeltaStartDateDialog && flowDetails.isDeltaFlow && (

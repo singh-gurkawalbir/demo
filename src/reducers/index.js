@@ -630,14 +630,19 @@ selectors.mkFlowAttributes = () => createSelector(
       // isFlowEnableLocked
       // moved from previous selector impl
       let isLocked = true;
+      let isRunnable = true;
 
       if (!flow || !flow._connectorId) isLocked = false;
       else if (!integration) isLocked = false;
       else {
         // strange flow setting name to indicate that flows can not be
         // enabled/disabled by a user...
-        isLocked = getIAFlowSettings(integration, flow._id)?.disableSlider;
+        const iaFlowSettings = getIAFlowSettings(integration, flow._id);
+
+        isLocked = iaFlowSettings?.disableSlider;
+        isRunnable = !(iaFlowSettings?.showRunFlow === false);
       }
+      o.showRunFlow = isRunnable;
       o.isFlowEnableLocked = isLocked;
       // allowSchedule
       o.allowSchedule = flowAllowsScheduling(flow, integration, [], isIntegrationV2, flExp);
