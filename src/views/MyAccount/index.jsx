@@ -27,6 +27,7 @@ const Audit = loadable(() =>
 const Transfers = loadable(() =>
   retry(() => import(/* webpackChunkName: 'MyAccount.Transfers' */ './Transfers/index'))
 );
+
 const tabs = [
   {
     path: 'profile',
@@ -81,7 +82,7 @@ export default function MyAccount({ match }) {
               : 'My profile'
           }
         />
-      {permissions.accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_OWNER ? (
+      {![USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(permissions.accessLevel) ? (
         <div className={classes.wrapperProfile}>
           <Profile />
         </div>

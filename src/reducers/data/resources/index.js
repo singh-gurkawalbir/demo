@@ -3,8 +3,11 @@ import { get } from 'lodash';
 import { createSelector } from 'reselect';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
-import { convertOldFlowSchemaToNewOne } from '../../../utils/flows';
+import { convertOldFlowSchemaToNewOne, getIAFlowSettings } from '../../../utils/flows';
 import { stringCompare } from '../../../utils/sort';
+import mappingUtil from '../../../utils/mapping';
+import getRoutePath from '../../../utils/routePaths';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
 
 const emptyObject = {};
 const emptyList = [];
@@ -390,6 +393,96 @@ selectors.resource = (state, resourceType, id) => {
   return match;
 };
 
+/** returns 1st Page generator for a flow */
+selectors.firstFlowPageGenerator = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
+
+  if (flow?.pageGenerators?.length) {
+    const exportId = flow.pageGenerators[0]._exportId;
+
+    return selectors.resource(state, 'exports', exportId);
+  }
+
+  return emptyObject;
+};
+
+selectors.rdbmsConnectionType = (state, connectionId) => {
+  const connection = selectors.resource(state, 'connections', connectionId) || {};
+
+  return connection.rdbms && connection.rdbms.type;
+};
+
+selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
+  if (type === 'generate') {
+    /** generating generate Label */
+    const importResource = selectors.resource(state, 'imports', resourceId);
+    const importConn = selectors.resource(state, 'connections', importResource?._connectionId);
+
+    return `Import field (${mappingUtil.getApplicationName(
+      importResource,
+      importConn
+    )})`;
+  }
+  if (type === 'extract') {
+    /** generating extract Label */
+    const flow = selectors.resource(state, 'flows', flowId);
+
+    if (flow && flow.pageGenerators && flow.pageGenerators.length && flow.pageGenerators[0]._exportId) {
+      const {_exportId} = flow.pageGenerators[0];
+      const exportResource = selectors.resource(state, 'exports', _exportId);
+      const exportConn = selectors.resource(state, 'connections', exportResource?._connectionId);
+
+      return `Export field (${mappingUtil.getApplicationName(
+        exportResource,
+        exportConn
+      )})`;
+    }
+
+    return 'Source record field';
+  }
+};
+
+selectors.mappingImportSampleDataSupported = (state, importId) => {
+  const importResource = selectors.resource(state, 'imports', importId);
+  const {adaptorType} = importResource;
+  const isAssistant =
+  !!importResource.assistant && importResource.assistant !== 'financialforce';
+
+  return isAssistant || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(adaptorType);
+};
+
+selectors.redirectUrlToResourceListingPage = (
+  state,
+  resourceType,
+  resourceId
+) => {
+  if (resourceType === 'integration') {
+    return getRoutePath(`/integrations/${resourceId}/flows`);
+  }
+
+  if (resourceType === 'flow') {
+    const flow = selectors.resource(state, 'flows', resourceId);
+
+    if (flow) {
+      return getRoutePath(
+        `integrations/${flow._integrationId || 'none'}/flows`
+      );
+    }
+  }
+
+  return getRoutePath(RESOURCE_TYPE_SINGULAR_TO_PLURAL[resourceType]);
+};
+
+selectors.mappingSubRecordAndJSONPath = (state, importId, subRecordMappingId) => {
+  const importResource = selectors.resource(state, 'imports', importId);
+
+  if (subRecordMappingId && ['NetSuiteImport', 'NetSuiteDistributedImport'].includes(importResource.adaptorType)) {
+    return mappingUtil.getSubRecordRecordTypeAndJsonPath(importResource, subRecordMappingId);
+  }
+
+  return emptyObject;
+};
+
 // transformed from above selector
 function resourceTransformed(resourceIdState, resourceType) {
   if (!resourceIdState) return null;
@@ -450,6 +543,35 @@ selectors.connectionHasAs2Routing = (state, id) => {
     connection.as2.contentBasedFlowRouter &&
     connection.as2.contentBasedFlowRouter._scriptId
   );
+};
+
+selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
+  const importResource = selectors.resource(state, 'imports', importId);
+  const {adaptorType} = importResource;
+
+  if (!['NetSuiteImport', 'NetSuiteDistributedImport'].includes(adaptorType)) {
+    return;
+  }
+  if (subRecordMappingId) {
+    const { recordType } = mappingUtil.getSubRecordRecordTypeAndJsonPath(
+      importResource,
+      subRecordMappingId
+    );
+
+    return recordType;
+  }
+
+  // give precedence to netsuite_da
+  return importResource.netsuite_da?.recordType || importResource.netsuite?.recordType;
+};
+
+selectors.isIntegrationApp = (state, integrationId) => {
+  const integration = selectors.resource(state,
+    'integrations',
+    integrationId
+  );
+
+  return !!(integration && integration._connectorId);
 };
 
 selectors.integrationInstallSteps = (state, id) => {
@@ -700,4 +822,11 @@ selectors.hasSettingsForm = (state, resourceType, resourceId) => {
 
   return !!(settingsForm && (settingsForm.form || settingsForm.init));
 };
+
+selectors.iaFlowSettings = (state, integrationId, flowId) => {
+  const integration = selectors.resource(state, 'integrations', integrationId);
+
+  return getIAFlowSettings(integration, flowId);
+};
+
 // #endregion
