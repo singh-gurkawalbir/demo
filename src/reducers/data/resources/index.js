@@ -499,6 +499,44 @@ selectors.mkFlowGroupingsSections = () => {
   );
 };
 
+selectors.mkGetAllCustomFormsForAResource = () => {
+  const resourceSelector = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, resourceType, resourceId) => resourceSelector(state, resourceType, resourceId),
+    resource => {
+      const {settingsForm, settings, flowGroupings} = resource;
+      const settingsMeta = {settingsForm, settings, title: 'General', sectionId: 'general'};
+
+      // flowGroupings preset for only in integrations
+      if (!flowGroupings || !flowGroupings.length) {
+        return {allSections: [settingsMeta], hasFlowGroupings: false};
+      }
+
+      return {allSections: [settingsMeta, ...flowGroupings.map(({name, _id, ...rest}) => ({...rest, title: name, sectionId: _id }))],
+        hasFlowGroupings: true,
+      };
+    }
+  );
+};
+
+selectors.mkGetCustomFormPerSectionId = () => {
+  const sectionsMetadata = selectors.mkGetAllCustomFormsForAResource();
+
+  return createSelector(
+
+    (state, resourceType, resourceId) => sectionsMetadata(state, resourceType, resourceId),
+    (_1, _2, _3, sectionId) => sectionId,
+    (metadata, sectionId) => {
+      const {allSections, hasFlowGroupings} = metadata;
+
+      return allSections.find(ele => !hasFlowGroupings
+        ? ele.sectionId === 'general' : ele.sectionId === sectionId);
+    }
+  );
+};
+
+selectors.getSectionMetadata = selectors.mkGetCustomFormPerSectionId();
 // TODO: Santosh, All this selector does is transform the integration settings.
 // Its probably best if the component uses the resource selector directly
 // to fetch the integration, then use a util method to do the transform
@@ -694,10 +732,20 @@ selectors.resourceDetailsMap = createSelector(
   }
 );
 
-selectors.hasSettingsForm = (state, resourceType, resourceId) => {
+const hasFormData = settingsForm => !!(settingsForm && (settingsForm.form || settingsForm.init));
+
+const getSectionMetadata = selectors.mkGetCustomFormPerSectionId();
+
+selectors.hasSettingsForm = (state, resourceType, resourceId, sectionId) => {
+  if (sectionId) {
+    // it is an integration
+    const integrationSectionMetadata = getSectionMetadata(state, resourceType, resourceId, sectionId);
+
+    return hasFormData(integrationSectionMetadata?.settingsForm);
+  }
   const res = selectors.resource(state, resourceType, resourceId);
   const settingsForm = res && res.settingsForm;
 
-  return !!(settingsForm && (settingsForm.form || settingsForm.init));
+  return hasFormData(settingsForm);
 };
 // #endregion

@@ -24,10 +24,25 @@ describe('initSettingsForm saga', () => {
 
     return expectSaga(initSettingsForm, { resourceType, resourceId })
       .provide([
-        [select(selectors.resource, resourceType, resourceId), resourceState],
+        [select(selectors.getSectionMetadata, resourceType, resourceId, 'general'), resourceState],
       ])
       .not.call.fn(apiCallWithRetry)
       .put(actions.customSettings.formReceived(resourceId, expectedMeta))
+      .run();
+  });
+
+  test('should not make api call when section metadata isn\'t present', () => {
+    const error = { code: 422, message: 'unprocessable entity' };
+    const resourceState = null;
+    const sectionId = 'unknownSectionId';
+
+    return expectSaga(initSettingsForm, { resourceType, resourceId, sectionId})
+      .provide([
+        // mock for unknown sectionId
+        [select(selectors.getSectionMetadata, resourceType, resourceId, sectionId), resourceState],
+        [matchers.call.fn(apiCallWithRetry), throwError(error)],
+      ])
+      .not.call.fn(apiCallWithRetry)
       .run();
   });
 
@@ -51,7 +66,7 @@ describe('initSettingsForm saga', () => {
 
     return expectSaga(initSettingsForm, { resourceType, resourceId })
       .provide([
-        [select(selectors.resource, resourceType, resourceId), resourceState],
+        [select(selectors.getSectionMetadata, resourceType, resourceId, 'general'), resourceState],
         [matchers.call.fn(apiCallWithRetry), initHookMeta],
       ])
       .call.fn(apiCallWithRetry)
@@ -77,7 +92,7 @@ describe('initSettingsForm saga', () => {
 
     return expectSaga(initSettingsForm, { resourceType, resourceId })
       .provide([
-        [select(selectors.resource, resourceType, resourceId), resourceState],
+        [select(selectors.getSectionMetadata, resourceType, resourceId, 'general'), resourceState],
         [matchers.call.fn(apiCallWithRetry), throwError(error)],
       ])
       .put(actions.customSettings.formError(resourceId, [error.message]))

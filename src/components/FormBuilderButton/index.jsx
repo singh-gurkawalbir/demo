@@ -6,8 +6,7 @@ import { selectors } from '../../reducers';
 import FieldHelp from '../DynaForm/FieldHelp';
 import EditDrawer from '../AFE/SettingsFormEditor/Drawer';
 import usePushRightDrawer from '../../hooks/usePushRightDrawer';
-
-const emptyObj = {};
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -17,16 +16,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FormBuilderButton({resourceId, resourceType, integrationId}) {
+export default function FormBuilderButton({resourceId, resourceType, integrationId, sectionId}) {
   const classes = useStyles();
   const history = useHistory();
   const handleOpenDrawer = usePushRightDrawer();
   const [drawerKey, setDrawerKey] = useState(0);
-  const settingsForm = useSelector(state => {
-    const resource = selectors.resource(state, resourceType, resourceId);
 
-    return (resource && resource.settingsForm) || emptyObj;
-  });
+  const settingsForm = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, resourceType, resourceId, sectionId || 'general')?.settingsForm;
+
   const allowFormEdit = useSelector(state =>
     selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)
   );
@@ -63,6 +60,7 @@ export default function FormBuilderButton({resourceId, resourceType, integration
         resourceId={resourceId}
         resourceType={resourceType}
         settingsForm={settingsForm}
+        sectionId={sectionId}
         // eslint-disable-next-line react/jsx-handler-names
         onClose={history.goBack}
         />

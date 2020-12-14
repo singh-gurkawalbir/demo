@@ -20,6 +20,7 @@ const useStyles = makeStyles({
 export default function FormView({
   resourceId,
   resourceType,
+  sectionId,
   disabled,
   onFormChange,
 }) {
@@ -33,9 +34,9 @@ export default function FormView({
     // use effect will fire any time formState changes but...
     // Only if the formState is missing do we need to perform an init.
     if (!settingsFormState) {
-      dispatch(actions.customSettings.formRequest(resourceType, resourceId));
+      dispatch(actions.customSettings.formRequest(resourceType, resourceId, sectionId));
     }
-  }, [dispatch, settingsFormState, resourceId, resourceType]);
+  }, [dispatch, settingsFormState, resourceId, resourceType, sectionId]);
 
   useEffect(
     () => () => {
