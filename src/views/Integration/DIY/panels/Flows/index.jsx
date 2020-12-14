@@ -100,7 +100,7 @@ const getBasePath = match => {
 };
 const tilesFilterConfig = { type: 'tiles'};
 
-export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
+const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
 const FlowListingTable = ({
   flows,
   filterKey,

@@ -537,10 +537,11 @@ selectors.mkGetCustomFormPerSectionId = () => {
     (_1, _2, _3, sectionId) => sectionId,
     (metadata, sectionId) => {
       if (!metadata) return null;
-      const {allSections, hasFlowGroupings} = metadata;
+      const {allSections} = metadata;
 
-      return allSections.find(ele => !hasFlowGroupings
-        ? ele.sectionId === 'general' : ele.sectionId === sectionId);
+      if (!allSections) return null;
+
+      return allSections.find(ele => ele.sectionId === sectionId);
     }
   );
 };

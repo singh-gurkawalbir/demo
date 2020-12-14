@@ -1706,28 +1706,6 @@ describe('mkGetCustomFormPerSectionId', () => {
     expect(received).toEqual(expected);
   });
 
-  test('should return the root level settings form when the resource does not have flowGroupings(non-integration resource)', () => {
-    const state = {
-      exports: [
-        {_id: '1',
-          settingsForm,
-          settings,
-        },
-      ],
-
-    };
-    // no sectionId has been provided
-    const received = customFormSelectorPerSectionId(state, 'exports', '1');
-
-    const expected = {
-      sectionId: 'general',
-      title: 'General',
-      settingsForm,
-      settings,
-    };
-
-    expect(received).toEqual(expected);
-  });
   test('should return the flowGroupSettings form when the integration does have flowGroupings', () => {
     const state = {
       integrations: [
