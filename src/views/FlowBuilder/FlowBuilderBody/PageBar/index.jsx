@@ -185,7 +185,7 @@ const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
 
-  const isIAType = useSelector(state => selectors.isIAType(state, flowId));
+  const isIAType = !!flowDetails?._connectorId;
   const handleExitClick = useHandleExitClick();
   const isNewFlow = isNewFlowFn(flowId);
 

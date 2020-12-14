@@ -106,9 +106,11 @@ describe('initialize all app relevant resources sagas', () => {
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
 
     expect(saga.next().value).toEqual(
+      retrievingUserDetailsEffect,
+    );
+    expect(saga.next().value).toEqual(
       all([
         retrievingOrgDetailsEffect,
-        retrievingUserDetailsEffect,
         retrievingAssistantDetailsEffect,
       ])
     );
@@ -137,9 +139,11 @@ describe('initialize all app relevant resources sagas', () => {
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
 
     expect(saga.next().value).toEqual(
+      retrievingUserDetailsEffect,
+    );
+    expect(saga.next().value).toEqual(
       all([
         retrievingOrgDetailsEffect,
-        retrievingUserDetailsEffect,
         retrievingAssistantDetailsEffect,
       ])
     );
@@ -177,9 +181,11 @@ describe('initialize all app relevant resources sagas', () => {
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
 
     expect(saga.next().value).toEqual(
+      retrievingUserDetailsEffect,
+    );
+    expect(saga.next().value).toEqual(
       all([
         retrievingOrgDetailsEffect,
-        retrievingUserDetailsEffect,
         retrievingAssistantDetailsEffect,
       ])
     );

@@ -10,6 +10,7 @@ export const FORM_SAVE_STATUS = Object.freeze({
   LOADING: 'loading',
 });
 export const USER_ACCESS_LEVELS = Object.freeze({
+  ACCOUNT_ADMIN: 'administrator',
   ACCOUNT_OWNER: 'owner',
   ACCOUNT_MANAGE: 'manage',
   ACCOUNT_MONITOR: 'monitor',
@@ -261,7 +262,6 @@ export const JOB_STATUS = Object.freeze({
   RETRYING: 'retrying',
 });
 export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
-  'ashares',
   'licenses',
   'preferences',
   'profile',

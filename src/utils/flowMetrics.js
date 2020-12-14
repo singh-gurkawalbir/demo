@@ -132,9 +132,9 @@ export const getTicks = (domainRange, srange, isValue) => {
   if (hours <= 4 * 24) {
     ticks = domainRange.ticks(d3.timeHour.every(1)).map(t => t.getTime());
   } else if (days < 90) {
-    ticks = domainRange.ticks(d3.timeHour.every(24)).map(t => t.getTime());
+    ticks = domainRange.ticks(d3.timeDay.every(1)).map(t => t.getTime());
   } else {
-    ticks = domainRange.ticks(d3.timeDay.every(30)).map(t => t.getTime());
+    ticks = domainRange.ticks(d3.timeMonth.every(1)).map(t => t.getTime());
   }
 
   return ticks;

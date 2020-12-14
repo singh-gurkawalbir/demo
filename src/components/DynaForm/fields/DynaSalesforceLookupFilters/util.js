@@ -24,8 +24,9 @@ export function convertSalesforceLookupFilterExpression(expression, data = []) {
     let toReturn = {};
     let value = expression;
 
-    if (expression.type === 'SimpleExprParentheses') {
-      [value] = expression.value.value;
+    // To handle nested wrapped braces
+    while (value.type === 'SimpleExprParentheses') {
+      [value] = value.value.value;
     }
 
     if (['AND', 'OR'].includes(value.operator)) {

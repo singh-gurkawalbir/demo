@@ -1,5 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
+import inferErrorMessages from '../../../utils/inferErrorMessages';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
 
 export const RETRY_COUNT = 3;
@@ -110,4 +111,50 @@ selectors.requestMessage = (state, resourceName) => (state && state[resourceName
 selectors.timestampComms = (state, resourceName) => (state && state[resourceName] && state[resourceName].timestamp) || 0;
 
 selectors.retryCount = (state, resourceName) => (state && state[resourceName] && state[resourceName].retry) || 0;
+
+selectors.commsErrors = commsState => {
+  if (!commsState) return;
+  const errors = {};
+
+  Object.keys(commsState).forEach(key => {
+    const c = commsState[key];
+
+    if (!c.hidden && c.status === COMM_STATES.ERROR) {
+      errors[key] = inferErrorMessages(c.message);
+    }
+  });
+
+  return errors;
+};
+
+selectors.commsSummary = commsState => {
+  let isLoading = false;
+  let isRetrying = false;
+  let hasError = false;
+
+  if (commsState) {
+    Object.keys(commsState).forEach(key => {
+      const c = commsState[key];
+
+      if (!c.hidden) {
+        if (c.status === COMM_STATES.ERROR) {
+          hasError = true;
+        } else if (c.retryCount > 0) {
+          isRetrying = true;
+        } else if (c.status === COMM_STATES.LOADING && Date.now() - c.timestamp > Number(process.env.NETWORK_THRESHOLD)) {
+          isLoading = true;
+        }
+      }
+    });
+  }
+
+  return { isLoading, isRetrying, hasError };
+};
+
+selectors.commStatusPerPath = (state, path, method) => {
+  const key = commKeyGenerator(path, method);
+
+  return state && state[key] && state[key].status;
+};
+
 // #endregion

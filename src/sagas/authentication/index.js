@@ -154,9 +154,9 @@ export function* fetchUIVersion() {
 }
 
 export function* retrieveAppInitializationResources() {
+  yield call(retrievingUserDetails);
   yield all([
     call(retrievingOrgDetails),
-    call(retrievingUserDetails),
     call(retrievingAssistantDetails),
   ]);
 
