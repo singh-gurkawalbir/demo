@@ -18,10 +18,7 @@ function TxLauncher({ flowId, resourceType, resourceId, onClose, open }) {
     // the other processor buttons would not even be visible.
     onClose();
 
-    dispatch(actions._editor.init(editorId, 'transform', {
-      rule: resourceId.transformation || [],
-      // formKey is only for editors launch by a form. Is this correct?
-      // formKey,
+    dispatch(actions._editor.init(editorId, 'flowTransform', {
       flowId,
       resourceId,
       resourceType,
