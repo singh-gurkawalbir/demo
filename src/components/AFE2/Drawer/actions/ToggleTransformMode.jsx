@@ -12,14 +12,17 @@ const toggleOptions = [
 export default function ToggleTransformMode({ editorId }) {
   const dispatch = useDispatch();
   const activeProcessor = useSelector(state => selectors._editor(state, editorId).activeProcessor);
+  const saveInProgress = useSelector(state => {
+    const {saveStatus} = selectors._editor(state, editorId);
 
+    return saveStatus === 'requested';
+  });
   const handleToggle =
   activeProcessor => dispatch(actions._editor.patchFeatures(editorId, {activeProcessor}));
 
   return (
     <TextToggle
-      // Todo: disabled={disabled} we should have a selector that tells us if the editor is disabled.
-      // so the components do not need to understand and use the user permissions.
+      disabled={saveInProgress}
       value={activeProcessor}
       onChange={handleToggle}
       exclusive

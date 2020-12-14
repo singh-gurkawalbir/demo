@@ -5422,3 +5422,28 @@ selectors.responseMappingExtracts = (state, resourceId, flowId) => {
     resource.adaptorType
   );
 };
+
+selectors.isEditorDisabled = (state, editorId) => {
+  const editor = fromSession._editor(state?.session, editorId);
+  const {flowId, fieldId, formKey, editorType, activeProcessor} = editor;
+  const flow = selectors.resource(state, 'flows', flowId);
+
+  // if we are on form field then form state determines disabled
+  if (formKey) {
+    const fieldState = selectors.fieldState(state, formKey, fieldId);
+
+    if (fieldState) return fieldState.disabled;
+  }
+
+  // if we are on FB actions, below logic applies
+  // for input and output filter, the filter processor(not the JS processor) uses isMonitorLevelAccess check
+  if (activeProcessor === 'filter' && (editorType === 'inputFilter' || editorType === 'outputFilter')) {
+    const isMonitorLevelAccess = selectors.isFormAMonitorLevelAccess(state, flow?._integrationId);
+
+    return isMonitorLevelAccess;
+  }
+  const isViewMode = selectors.isFlowViewMode(state, flow?._integrationId, flowId);
+  const isFreeFlow = selectors.isFreeFlowResource(state, flowId);
+
+  return isViewMode || isFreeFlow;
+};
