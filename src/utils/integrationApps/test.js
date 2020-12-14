@@ -14,6 +14,8 @@ describe('getIntegrationAppUrlName', () => {
   const testCases = [
     ['integrationApp', 123],
     ['IntegrationAppId', 'connector/IntegrationAppId'],
+    ['AmazonNetSuite', 'Amazon - NetSuite Connector'],
+    ['Magento2NetSuite', 'Magento 2 - NetSuite Connector'],
   ];
 
   each(testCases).test(
@@ -59,56 +61,6 @@ describe('getEmptyMessage', () => {
 describe('getAdminLevelTabs', () => {
   const testCases = [
     [
-      ['subscription'],
-      {
-        integrationId: 'none',
-        isIntegrationApp: true,
-        isParent: true,
-        supportsChild: true,
-        children: ['dummy', 'dummy'],
-        isMonitorLevelUser: true,
-      },
-    ],
-    [
-      ['subscription'],
-      {
-        integrationId: 'none',
-        isIntegrationApp: true,
-        isParent: false,
-        supportsChild: false,
-        children: [],
-        isMonitorLevelUser: true,
-      },
-    ],
-    [
-      [
-        'apitoken',
-        'subscription',
-      ],
-      {
-        integrationId: 'none',
-        isIntegrationApp: true,
-        isParent: true,
-        supportsChild: true,
-        children: ['dummy', 'dummy'],
-        isMonitorLevelUser: false,
-      },
-    ],
-    [
-      [
-        'subscription',
-        'uninstall',
-      ],
-      {
-        integrationId: 'none',
-        isIntegrationApp: true,
-        isParent: false,
-        supportsChild: false,
-        children: [],
-        isMonitorLevelUser: false,
-      },
-    ],
-    [
       [],
       {
         integrationId: 'none',
@@ -120,15 +72,210 @@ describe('getAdminLevelTabs', () => {
       },
     ],
     [
-      [
-        'general',
-        'readme',
-      ],
+      ['subscription'],
+      {
+        integrationId: 'none',
+        isIntegrationApp: true,
+        isParent: false,
+        supportsChild: false,
+        children: [],
+        isMonitorLevelUser: true,
+      },
+    ],
+    [
+      ['subscription'],
+      {
+        integrationId: 'none',
+        isIntegrationApp: true,
+        isParent: true,
+        supportsChild: false,
+        children: [],
+        isMonitorLevelUser: true,
+      },
+    ],
+    [
+      ['subscription'],
+      {
+        integrationId: 'none',
+        isIntegrationApp: true,
+        isParent: false,
+        supportsChild: true,
+        children: [],
+        isMonitorLevelUser: true,
+      },
+    ],
+    [
+      ['subscription'],
+      {
+        integrationId: 'none',
+        isIntegrationApp: true,
+        isParent: true,
+        supportsChild: true,
+        children: ['dummy', 'dummy'],
+        isMonitorLevelUser: true,
+      },
+    ],
+    [
+      [],
+      {
+        integrationId: 'none',
+        isIntegrationApp: false,
+        isParent: false,
+        supportsChild: false,
+        children: [],
+        isMonitorLevelUser: false,
+      },
+    ],
+    [
+      ['subscription', 'uninstall'],
+      {
+        integrationId: 'none',
+        isIntegrationApp: true,
+        isParent: false,
+        supportsChild: false,
+        children: [],
+        isMonitorLevelUser: false,
+      },
+    ],
+    [
+      ['apitoken', 'subscription', 'uninstall'],
+      {
+        integrationId: 'none',
+        isIntegrationApp: true,
+        isParent: true,
+        supportsChild: false,
+        children: [],
+        isMonitorLevelUser: false,
+      },
+    ],
+    [
+      ['subscription', 'uninstall'],
+      {
+        integrationId: 'none',
+        isIntegrationApp: true,
+        isParent: false,
+        supportsChild: true,
+        children: [],
+        isMonitorLevelUser: false,
+      },
+    ],
+    [
+      ['apitoken', 'subscription'],
+      {
+        integrationId: 'none',
+        isIntegrationApp: true,
+        isParent: true,
+        supportsChild: true,
+        children: ['dummy', 'dummy'],
+        isMonitorLevelUser: false,
+      },
+    ],
+    [
+      ['general', 'readme'],
       {
         integrationId: 'something',
         isIntegrationApp: false,
         isParent: false,
         supportsChild: false,
+        children: [],
+        isMonitorLevelUser: true,
+      },
+    ],
+    [
+      ['subscription'],
+      {
+        integrationId: 'something',
+        isIntegrationApp: true,
+        isParent: false,
+        supportsChild: false,
+        children: [],
+        isMonitorLevelUser: true,
+      },
+    ],
+    [
+      ['subscription'],
+      {
+        integrationId: 'something',
+        isIntegrationApp: true,
+        isParent: true,
+        supportsChild: false,
+        children: [],
+        isMonitorLevelUser: true,
+      },
+    ],
+    [
+      ['subscription'],
+      {
+        integrationId: 'something',
+        isIntegrationApp: true,
+        isParent: false,
+        supportsChild: true,
+        children: [],
+        isMonitorLevelUser: true,
+      },
+    ],
+    [
+      ['subscription'],
+      {
+        integrationId: 'something',
+        isIntegrationApp: true,
+        isParent: true,
+        supportsChild: true,
+        children: [],
+        isMonitorLevelUser: true,
+      },
+    ],
+    [
+      ['general', 'readme'],
+      {
+        integrationId: 'something',
+        isIntegrationApp: false,
+        isParent: false,
+        supportsChild: false,
+        children: [],
+        isMonitorLevelUser: false,
+      },
+    ],
+    [
+      ['subscription', 'uninstall'],
+      {
+        integrationId: 'something',
+        isIntegrationApp: true,
+        isParent: false,
+        supportsChild: false,
+        children: [],
+        isMonitorLevelUser: false,
+      },
+    ],
+    [
+      ['apitoken', 'subscription', 'uninstall'],
+      {
+        integrationId: 'something',
+        isIntegrationApp: true,
+        isParent: true,
+        supportsChild: false,
+        children: [],
+        isMonitorLevelUser: false,
+      },
+    ],
+    [
+      ['subscription', 'uninstall'],
+      {
+        integrationId: 'something',
+        isIntegrationApp: true,
+        isParent: false,
+        supportsChild: true,
+        children: [],
+        isMonitorLevelUser: false,
+      },
+    ],
+    [
+      ['apitoken', 'subscription', 'uninstall'],
+      {
+        integrationId: 'something',
+        isIntegrationApp: true,
+        isParent: true,
+        supportsChild: true,
         children: [],
         isMonitorLevelUser: false,
       },
@@ -303,7 +450,7 @@ describe('getIntegrationApp', () => {
   afterEach(() => {
     windowSpy.mockRestore();
   });
-  const testCases = [
+  const testCases1 = [
     [
       'zendesk',
       {
@@ -326,14 +473,102 @@ describe('getIntegrationApp', () => {
       },
     ],
   ];
+  const testCases2 = [
+    [
+      'zendesk',
+      {
+        _connectorId: '55022fc3285348c76a000005',
+        name: 'Zendesk - NetSuite Connector',
+      },
+    ],
+    [
+      'shopify',
+      {
+        _connectorId: '54fa0b38a7044f9252000036',
+        name: 'Shopify - NetSuite Connector',
+      },
+    ],
+    [
+      undefined,
+      {
+        _connectorId: 'something',
+        name: 'something',
+      },
+    ],
+  ];
+  const testCases3 = [
+    [
+      'zendesk',
+      {
+        _connectorId: '5f1ad76d288b074c1a73fadd',
+        name: 'Zendesk - NetSuite Connector',
+      },
+    ],
+    [
+      'shopify',
+      {
+        _connectorId: '5e8d6ca02387e356b6769bb8',
+        name: 'Shopify - NetSuite Connector',
+      },
+    ],
+    [
+      undefined,
+      {
+        _connectorId: 'something',
+        name: 'something',
+      },
+    ],
+  ];
 
-  each(testCases).test(
+  each(testCases1).test(
     'should return %o when options = %o',
     (expected, { _connectorId, name }) => {
       windowSpy.mockImplementation(() => ({
         document: {
           location: {
             hostname: 'www.staging.integrator.io',
+          },
+        },
+      }));
+
+      return expect(getIntegrationApp({ _connectorId, name })).toEqual(expected);
+    }
+  );
+  each(testCases2).test(
+    'should return %o when options = %o',
+    (expected, { _connectorId, name }) => {
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'www.integrator.io',
+          },
+        },
+      }));
+
+      return expect(getIntegrationApp({ _connectorId, name })).toEqual(expected);
+    }
+  );
+  each(testCases3).test(
+    'should return %o when options = %o',
+    (expected, { _connectorId, name }) => {
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'www.eu.integrator.io',
+          },
+        },
+      }));
+
+      return expect(getIntegrationApp({ _connectorId, name })).toEqual(expected);
+    }
+  );
+  each(testCases1).test(
+    'should return %o when options = %o',
+    (expected, { _connectorId, name }) => {
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'www.localhost.io',
           },
         },
       }));
@@ -558,32 +793,76 @@ describe('getHighestEditionForIntegrationApp', () => {
   afterEach(() => {
     windowSpy.mockRestore();
   });
-  const testCases = [
+  const testCases1 = [
     ['starter', { _connectorId: '', name: 'dummy' }],
     ['starter', { _connectorId: 'something', name: 'something' }],
     ['enterprise', { _connectorId: '57e10364a0047c23baeffa09', name: 'Jet - NetSuite Connector' }],
-    ['enterprise', { _connectorId: '5811aeea2095951e76c6ce64', name: 'salesforceCommerce' }],
     ['premium', { _connectorId: '5656f5e3bebf89c03f5dd77e', name: 'Shopify - NetSuite Connector'}],
-    ['premium', { _connectorId: '56fbb1176691821844de2721', name: 'BigCommerce - NetSuite Connector'}],
-    ['premium', { _connectorId: '56d3e8d3e24d0cf5090e5a18', name: 'Magento 2 - NetSuite Connector'}],
-    ['premium', { _connectorId: '58777a2b1008fb325e6c0953', name: 'Amazon - NetSuite Connector'}],
-    ['premium', { _connectorId: '5b61ae4aeb538642c26bdbe6', name: 'Salesforce - NetSuite Connector'}],
-    ['premium', { _connectorId: '570222ce6c99305e0beff026', name: 'ADP - NetSuite Connector'}],
-    ['premium', { _connectorId: '58d3b1b7822f16187f873177', name: 'Vendor Payment Manager'}],
-    ['premium', { _connectorId: '568e4843d997f2b705f44082', name: 'JIRA - NetSuite Connector'}],
-    ['premium', { _connectorId: '57c8199e8489cc1a298cc6ea', name: 'Cash Application Manager for NetSuite'}],
     ['standard', { _connectorId: '5666865f67c1650309224904', name: 'Zendesk - NetSuite Connector' }],
-    ['standard', { _connectorId: '5829bce6069ccb4460cdb34e', name: 'eBay - NetSuite Connector' }],
-    ['standard', { _connectorId: '57b5c79c61314b461e1515b1', name: 'Walmart - NetSuite Connector' }],
+  ];
+  const testCases2 = [
+    ['starter', { _connectorId: '', name: 'dummy' }],
+    ['starter', { _connectorId: 'something', name: 'something' }],
+    ['enterprise', { _connectorId: '581cebf290a63a26daea6081', name: 'Jet - NetSuite Connector' }],
+    ['premium', { _connectorId: '54fa0b38a7044f9252000036', name: 'Shopify - NetSuite Connector'}],
+    ['standard', { _connectorId: '55022fc3285348c76a000005', name: 'Zendesk - NetSuite Connector' }],
+  ];
+  const testCases3 = [
+    ['starter', { _connectorId: '', name: 'dummy' }],
+    ['starter', { _connectorId: 'something', name: 'something' }],
+    ['premium', { _connectorId: '5e8d6ca02387e356b6769bb8', name: 'Shopify - NetSuite Connector'}],
+    ['standard', { _connectorId: '5f1ad76d288b074c1a73fadd', name: 'Zendesk - NetSuite Connector' }],
   ];
 
-  each(testCases).test(
+  each(testCases1).test(
     'should return %s when integration = %o',
     (expected, integration) => {
       windowSpy.mockImplementation(() => ({
         document: {
           location: {
             hostname: 'www.staging.integrator.io',
+          },
+        },
+      }));
+
+      return expect(IntegrationApp.getHighestEditionForIntegrationApp(integration)).toEqual(expected);
+    }
+  );
+  each(testCases2).test(
+    'should return %s when integration = %o',
+    (expected, integration) => {
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'www.integrator.io',
+          },
+        },
+      }));
+
+      return expect(IntegrationApp.getHighestEditionForIntegrationApp(integration)).toEqual(expected);
+    }
+  );
+  each(testCases3).test(
+    'should return %s when integration = %o',
+    (expected, integration) => {
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'www.eu.integrator.io',
+          },
+        },
+      }));
+
+      return expect(IntegrationApp.getHighestEditionForIntegrationApp(integration)).toEqual(expected);
+    }
+  );
+  each(testCases1).test(
+    'should return %s when integration = %o',
+    (expected, integration) => {
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'www.localhost.io',
           },
         },
       }));
@@ -603,20 +882,74 @@ describe('isCloningSupported', () => {
   afterEach(() => {
     windowSpy.mockRestore();
   });
-  const testCases = [
+  const testCases1 = [
     [false, '', ''],
     [false, 'dummy', 'dummy'],
     [false, '5666865f67c1650309224904', 'Zendesk - NetSuite Connector'],
     [true, '5b61ae4aeb538642c26bdbe6', 'Salesforce - NetSuite Connector'],
   ];
+  const testCases2 = [
+    [false, '', ''],
+    [false, 'dummy', 'dummy'],
+    [false, '55022fc3285348c76a000005', 'Zendesk - NetSuite Connector'],
+    [true, '5c8f30229f701b3e9a0aa817', 'Salesforce - NetSuite Connector'],
+  ];
+  const testCases3 = [
+    [false, '', ''],
+    [false, 'dummy', 'dummy'],
+    [false, '5f1ad76d288b074c1a73fadd', 'Zendesk - NetSuite Connector'],
+    [true, '5e7d921e2387e356b67669ce', 'Salesforce - NetSuite Connector'],
+  ];
 
-  each(testCases).test(
+  each(testCases1).test(
     'should return %s when _connectorId = %s and name = %s',
     (expected, _connectorId, name) => {
       windowSpy.mockImplementation(() => ({
         document: {
           location: {
             hostname: 'www.staging.integrator.io',
+          },
+        },
+      }));
+
+      return expect(IntegrationApp.isCloningSupported(_connectorId, name)).toEqual(expected);
+    }
+  );
+  each(testCases2).test(
+    'should return %s when _connectorId = %s and name = %s',
+    (expected, _connectorId, name) => {
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'www.integrator.io',
+          },
+        },
+      }));
+
+      return expect(IntegrationApp.isCloningSupported(_connectorId, name)).toEqual(expected);
+    }
+  );
+  each(testCases3).test(
+    'should return %s when _connectorId = %s and name = %s',
+    (expected, _connectorId, name) => {
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'www.eu.integrator.io',
+          },
+        },
+      }));
+
+      return expect(IntegrationApp.isCloningSupported(_connectorId, name)).toEqual(expected);
+    }
+  );
+  each(testCases1).test(
+    'should return %s when _connectorId = %s and name = %s',
+    (expected, _connectorId, name) => {
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'www.localhost.io',
           },
         },
       }));
