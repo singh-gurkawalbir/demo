@@ -4972,7 +4972,7 @@ selectors.availableUsersList = (state, integrationId) => {
     _users = selectors.integrationUsers(state, integrationId);
   }
 
-  if ((integrationId || permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN) && _users && _users.length > 0) {
+  if ((integrationId || [USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(permissions.accessLevel)) && _users && _users.length > 0) {
     const accountOwner = selectors.accountOwner(state);
 
     _users = [
