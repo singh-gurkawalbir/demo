@@ -504,17 +504,25 @@ selectors.mkGetAllCustomFormsForAResource = () => {
 
   return createSelector(
     (state, resourceType, resourceId) => resourceSelector(state, resourceType, resourceId),
-    resource => {
+    (_1, resourceType) => resourceType,
+    (resource, resourceType) => {
+      if (!resource) return null;
       const {settingsForm, settings, flowGroupings} = resource;
       const settingsMeta = {settingsForm, settings, title: 'General', sectionId: 'general'};
 
-      // flowGroupings preset for only in integrations
+      const noFlowGroupings = {allSections: [settingsMeta], hasFlowGroupings: false};
+
+      // flowGroupings present for only in integrations
+      if (resourceType !== 'integrations') { return noFlowGroupings; }
+
+      // if the integration does not have it
       if (!flowGroupings || !flowGroupings.length) {
-        return {allSections: [settingsMeta], hasFlowGroupings: false};
+        return noFlowGroupings;
       }
 
-      return {allSections: [settingsMeta, ...flowGroupings.map(({name, _id, ...rest}) => ({...rest, title: name, sectionId: _id }))],
-        hasFlowGroupings: true,
+      return {allSections: [settingsMeta, ...flowGroupings.map(({name, _id, settingsForm, settings}) =>
+        ({ title: name, sectionId: _id, settingsForm, settings }))],
+      hasFlowGroupings: true,
       };
     }
   );
@@ -528,6 +536,7 @@ selectors.mkGetCustomFormPerSectionId = () => {
     (state, resourceType, resourceId) => sectionsMetadata(state, resourceType, resourceId),
     (_1, _2, _3, sectionId) => sectionId,
     (metadata, sectionId) => {
+      if (!metadata) return null;
       const {allSections, hasFlowGroupings} = metadata;
 
       return allSections.find(ele => !hasFlowGroupings
