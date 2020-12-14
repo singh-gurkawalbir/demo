@@ -861,6 +861,8 @@ export default {
   'connection.mongodb.ssl': 'Enables or disables TLS/SSL for the connection.',
   'connection.mongodb.authSource':
     "The name of the database associated with the user’s credentials. If a database name is not provided here, then the 'Database' field above will be used as the default",
+  'connection.dynamodb.aws.accessKeyId': 'Enter the ID for this account set up by the DynamoDB server administrator.',
+  'connection.dynamodb.aws.secretAccessKey': 'Enter the access key for the account ID.',
   'connection.ftp.hostURI':
     "The URI of the FTP/SFTP/FTPS server host.  Typically this value will look something like 'ftp.mycompany.com', or sometimes just a raw IP address '100.200.300.1'.  It is also very common for FTP/SFTP/FTPS servers to be behind a firewall, and to support accessing resources behind a firewall you will need to make sure all of the FTP/SFTP/FTPS specific integrator.io IP addresses (listed right below the HOST field) have been white-listed on your FTP/SFTP/FTPS server infrastructure.",
   'connection.ftp.username':
@@ -1595,7 +1597,7 @@ export default {
   'import.mongodb.ignoreLookupFilter':
     'If you are adding documents to your MongoDB instance and you have the Ignore Existing flag set to true please enter a filter object here to find existing documents in this collection. The value of this field must be a valid JSON string describing a MongoDB filter object in the correct format and with the correct operators. Refer to the <a href="https://docs.mongodb.com/manual/reference/operator/query/" target="_blank">MongoDB documentation</a> for the list of valid query operators and the correct filter object syntax.',
   'import.dynamodb.region': 'Name of the DynamoDB region to the location where the request is being made. If not set, by default \'us-east-1\' is selected.',
-  'import.dynamodb.method': '',
+  'import.dynamodb.method': '<b>putItem: </b>Creates an item or replaces an old item with a new item.<br><b> updateItem: </b>Edits an existing item’s attributes or adds a new item to the table if it does not already exist.',
   'import.dynamodb.tableName':
     'Enter the name of the DynamoDB collection in your database that you would like to query from. For example: orders, items, users, customers, etc..',
   'import.dynamodb.partitionKey':

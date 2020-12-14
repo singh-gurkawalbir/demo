@@ -1,3 +1,4 @@
+import { deepClone } from 'fast-json-patch';
 import { put, takeLatest, take, call, delay, fork, cancel, select } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
@@ -18,7 +19,7 @@ function* requestRetryData({ flowId, resourceId, retryId }) {
         flowId,
         resourceId,
         retryId,
-        retryData: retryDataResponse && retryDataResponse.data,
+        retryData: retryDataResponse,
       })
     );
   } catch (e) {
@@ -39,12 +40,16 @@ function* requestRetryData({ flowId, resourceId, retryId }) {
 }
 
 export function* updateRetryData({ flowId, resourceId, retryId, retryData }) {
+  const { data: retryDataInfo } = yield select(selectors.retryDataContext, retryId);
+  const updatedRetryDataInfo = deepClone(retryDataInfo);
+
+  updatedRetryDataInfo.data = retryData;
   try {
     yield apiCallWithRetry({
       path: `/flows/${flowId}/${resourceId}/${retryId}/data`,
       opts: {
         method: 'PUT',
-        body: retryData,
+        body: updatedRetryDataInfo,
       },
     });
 
@@ -53,7 +58,7 @@ export function* updateRetryData({ flowId, resourceId, retryId, retryData }) {
         flowId,
         resourceId,
         retryId,
-        retryData,
+        retryData: updatedRetryDataInfo,
       })
     );
   } catch (e) {

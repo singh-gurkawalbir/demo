@@ -26,7 +26,13 @@ const existingState = {
     [retryId]: {
       status: 'received',
       data: {
-        test: 5,
+        data: {
+          id: '12345432',
+          test: 5,
+        },
+        dataURI: null,
+        stage: 'page_processor_import',
+        traceKey: '1347756661',
       },
     },
     'retry-2222': {
@@ -35,7 +41,12 @@ const existingState = {
     'retry-1111': {
       status: 'received',
       data: {
-        users: [{ _id: '1111', name: 'user1' }, { _id: '2222', name: 'user2' }],
+        data: {
+          users: [{ _id: '1111', name: 'user1' }, { _id: '2222', name: 'user2' }],
+        },
+        dataURI: null,
+        stage: 'page_processor_import',
+        traceKey: '1345823456',
       },
     },
   },
@@ -86,7 +97,12 @@ describe('Retry data in EM 2.0 reducers', () => {
           'retry-1111': {
             status: 'received',
             data: {
-              users: [{ _id: '1111', name: 'user1' }, { _id: '2222', name: 'user2' }],
+              data: {
+                users: [{ _id: '1111', name: 'user1' }, { _id: '2222', name: 'user2' }],
+              },
+              dataURI: null,
+              stage: 'page_processor_import',
+              traceKey: '1345823456',
             },
           },
         },
@@ -106,7 +122,12 @@ describe('Retry data in EM 2.0 reducers', () => {
         flowId,
         resourceId,
         retryData: {
-          _id: '12345',
+          data: {
+            _id: '3456',
+          },
+          dataURI: null,
+          stage: 'transform',
+          traceKey: '2345676543',
         },
       }));
 
@@ -116,7 +137,12 @@ describe('Retry data in EM 2.0 reducers', () => {
         resourceId,
         retryId: 'retry-5678',
         retryData: {
-          _id: '12345',
+          data: {
+            _id: '3456',
+          },
+          dataURI: null,
+          stage: 'transform',
+          traceKey: '2345676543',
         },
       }));
 
@@ -128,21 +154,26 @@ describe('Retry data in EM 2.0 reducers', () => {
         resourceId,
         retryId,
       }));
+      const retryData = {
+        data: {
+
+          _id: '12345',
+        },
+        dataURI: null,
+        stage: 'transform',
+        traceKey: '3456234564',
+      };
       const currState = reducer(prevState, actions.errorManager.retryData.received({
         flowId,
         resourceId,
         retryId,
-        retryData: {
-          _id: '12345',
-        },
+        retryData,
       }));
       const expectedState = {
         retryObjects: {
           [retryId]: {
             status: 'received',
-            data: {
-              _id: '12345',
-            },
+            data: retryData,
           },
         },
       };
@@ -216,7 +247,13 @@ describe('Retry data in EM 2.0 reducers', () => {
               message: 'Retry data does not exist',
             },
             data: {
-              test: 5,
+              data: {
+                id: '12345432',
+                test: 5,
+              },
+              dataURI: null,
+              stage: 'page_processor_import',
+              traceKey: '1347756661',
             },
           },
           'retry-2222': {
@@ -225,7 +262,12 @@ describe('Retry data in EM 2.0 reducers', () => {
           'retry-1111': {
             status: 'received',
             data: {
-              users: [{ _id: '1111', name: 'user1' }, { _id: '2222', name: 'user2' }],
+              data: {
+                users: [{ _id: '1111', name: 'user1' }, { _id: '2222', name: 'user2' }],
+              },
+              dataURI: null,
+              stage: 'page_processor_import',
+              traceKey: '1345823456',
             },
           },
         },
@@ -349,7 +391,13 @@ describe('retryDataContext selector', () => {
     const expectedState = {
       status: 'received',
       data: {
-        test: 5,
+        data: {
+          id: '12345432',
+          test: 5,
+        },
+        dataURI: null,
+        stage: 'page_processor_import',
+        traceKey: '1347756661',
       },
     };
 
@@ -366,6 +414,21 @@ describe('retryStatus selector', () => {
   });
   test('should return retry status of the passed flowId and resourceId', () => {
     expect(selectors.retryStatus(existingState, flowId, resourceId)).toEqual('retrying');
+  });
+});
+
+describe('retryData selector', () => {
+  test('should return undefined incase of no state or invalid props', () => {
+    expect(selectors.retryData()).toBeUndefined();
+    expect(selectors.retryData(defaultState)).toBeUndefined();
+    expect(selectors.retryData(defaultState, '1234')).toBeUndefined();
+    expect(selectors.retryData(existingState, '1234')).toBeUndefined();
+  });
+  test('should return retry status of the passed flowId and resourceId', () => {
+    expect(selectors.retryData(existingState, retryId)).toEqual({
+      id: '12345432',
+      test: 5,
+    });
   });
 });
 
