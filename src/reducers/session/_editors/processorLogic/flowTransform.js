@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import javascript from './javascript';
 import transform from './transform';
+import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
 export default {
   processor: ({activeProcessor}) => activeProcessor,
@@ -20,16 +21,14 @@ export default {
     if (script._scriptId) {
       rule.javascript.scriptId = script._scriptId;
     }
-    if (script.function) {
-      rule.javascript.entryFunction = script.function;
-    }
+    rule.javascript.entryFunction = script.function || hooksToFunctionNamesMap.transform;
 
     return rule;
   },
   init: options => {
     let activeProcessor = 'transform';
 
-    if (options.rule.javascript.entryFunction) {
+    if (options.rule.javascript.scriptId) {
       activeProcessor = 'javascript';
     }
 
