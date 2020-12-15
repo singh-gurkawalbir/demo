@@ -6,6 +6,7 @@ import ApplicationImg from '../../components/icons/ApplicationImg';
 
 const useStyles = makeStyles(theme => ({
   description: {
+    minHeight: 115,
     maxHeight: 115,
     overflowY: 'auto',
     marginBottom: theme.spacing(1),
