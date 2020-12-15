@@ -48,8 +48,6 @@ function ApplicationImages(props) {
   const classes = useStyles();
   const { children, className, noOfApps } = props;
 
-  console.log('there are', noOfApps);
-
   return (
     <div
       className={
