@@ -9,8 +9,8 @@ import {
   isRawDataPatchSet,
 } from '../../../../utils/flowData';
 
-function* updateResponseMapping({ flowId, resourceIndex }) {
-  const { merged: flow } = yield select(
+export function* _updateResponseMapping({ flowId, resourceIndex }) {
+  const { merged: flow = {} } = yield select(
     selectors.resourceData,
     'flows',
     flowId,
@@ -19,6 +19,9 @@ function* updateResponseMapping({ flowId, resourceIndex }) {
   const { pageProcessors = [] } = flow;
   const updatedResource = pageProcessors[resourceIndex];
 
+  if (resourceIndex < 0 || !updatedResource) {
+    return;
+  }
   yield put(
     actions.flowData.updateResponseMapping(
       flowId,
@@ -62,7 +65,7 @@ export function* updateFlowOnResourceUpdate({
     if (flowUpdates.responseMapping) {
       const { resourceIndex } = flowUpdates.responseMapping;
 
-      yield call(updateResponseMapping, { flowId: resourceId, resourceIndex });
+      yield call(_updateResponseMapping, { flowId: resourceId, resourceIndex });
     }
   }
 
@@ -121,5 +124,7 @@ export function* updateFlowData({ flowId }) {
     SCOPES.VALUE
   );
 
-  yield put(actions.flowData.resetFlowSequence(flowId, updatedFlow));
+  if (updatedFlow) {
+    yield put(actions.flowData.resetFlowSequence(flowId, updatedFlow));
+  }
 }
