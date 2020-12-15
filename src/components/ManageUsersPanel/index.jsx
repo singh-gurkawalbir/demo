@@ -3,7 +3,6 @@ import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { selectors } from '../../reducers';
-import { USER_ACCESS_LEVELS } from '../../utils/constants';
 import IconTextButton from '../IconTextButton';
 import AddIcon from '../icons/AddIcon';
 import PanelHeader from '../PanelHeader';
@@ -33,11 +32,7 @@ export default function ManageUsersPanel({ integrationId, storeId }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const history = useHistory();
-  const isAccountOwner = useSelector(
-    state =>
-      [USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(selectors.resourcePermissions(state).accessLevel)
-
-  );
+  const isAccountOwner = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
 
   const handleInvite = useCallback(() => history.push(`${match.url}/invite`), [history, match]);
 

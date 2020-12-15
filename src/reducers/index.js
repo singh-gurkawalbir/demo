@@ -2548,6 +2548,12 @@ selectors.mkTileApplications = () => createSelector(
   }
 );
 
+selectors.isAccountOwnerOrAdmin = state => {
+  const userPermissions = selectors.userPermissions(state) || emptyObject;
+
+  return [USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(userPermissions.accessLevel);
+};
+
 selectors.mkTiles = () => createSelector(
   state => state?.data?.resources?.tiles,
   state => state?.data?.resources?.integrations,
@@ -4940,8 +4946,9 @@ selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
   selectors.userPermissions,
   state => state?.data?.resources?.integrations,
   state => state?.data?.resources?.connections,
-  (permissions = emptyObject, integrations = emptyArray, connections = emptyArray) => {
-    if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(permissions.accessLevel)) {
+  selectors.isAccountOwnerOrAdmin,
+  (permissions = emptyObject, integrations = emptyArray, connections = emptyArray, isAccountOwnerOrAdmin) => {
+    if (isAccountOwnerOrAdmin) {
       return connections.map(c => c._id);
     }
     if (permissions.accessLevel === USER_ACCESS_LEVELS.TILE) {
@@ -4961,10 +4968,10 @@ selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
 );
 
 selectors.availableUsersList = (state, integrationId) => {
-  const permissions = selectors.userPermissions(state);
+  const isAccountOwnerOrAdmin = selectors.isAccountOwnerOrAdmin(state);
   let _users = [];
 
-  if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(permissions.accessLevel)) {
+  if (isAccountOwnerOrAdmin) {
     if (integrationId) {
       _users = selectors.integrationUsersForOwner(state, integrationId);
     } else {
@@ -4974,7 +4981,7 @@ selectors.availableUsersList = (state, integrationId) => {
     _users = selectors.integrationUsers(state, integrationId);
   }
 
-  if ((integrationId || [USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(permissions.accessLevel)) && _users && _users.length > 0) {
+  if ((integrationId || isAccountOwnerOrAdmin) && _users && _users.length > 0) {
     const accountOwner = selectors.accountOwner(state);
 
     _users = [
