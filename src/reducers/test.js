@@ -1205,6 +1205,30 @@ describe('userAccessLevelOnConnection selector', () => {
       USER_ACCESS_LEVELS.ACCOUNT_OWNER
     );
   });
+  test(`should return ${USER_ACCESS_LEVELS.ACCOUNT_ADMIN} access level for account administrator`, () => {
+    const state = reducer(
+      {
+        user: {
+          profile: {},
+          preferences: { defaultAShareId: '123' },
+          org: {
+            accounts: [
+              {
+                _id: '123',
+                accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+              },
+            ],
+            users: [],
+          },
+        },
+      },
+      'some action'
+    );
+
+    expect(selectors.userAccessLevelOnConnection(state, 'c1')).toEqual(
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN
+    );
+  });
   describe('should return correct access level for org users', () => {
     const accounts = [
       {
@@ -1229,6 +1253,10 @@ describe('userAccessLevelOnConnection selector', () => {
           },
         ],
       },
+      {
+        _id: 'aShare4',
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+      },
     ];
     const testCases = [];
 
@@ -1239,6 +1267,13 @@ describe('userAccessLevelOnConnection selector', () => {
         '',
         'account level manage user',
         'aShare1',
+      ],
+      [
+        USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+        'any',
+        '',
+        'account level adminstrator user',
+        'aShare4',
       ],
       [
         USER_ACCESS_LEVELS.ACCOUNT_MONITOR,

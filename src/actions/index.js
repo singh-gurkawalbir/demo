@@ -1972,10 +1972,11 @@ const responseMapping = {
 
 };
 const customSettings = {
-  formRequest: (resourceType, resourceId) =>
+  formRequest: (resourceType, resourceId, sectionId) =>
     action(actionTypes.CUSTOM_SETTINGS.FORM_REQUEST, {
       resourceType,
       resourceId,
+      sectionId,
     }),
   formReceived: (resourceId, formMeta, scriptId) =>
     action(actionTypes.CUSTOM_SETTINGS.FORM_RECEIVED, {

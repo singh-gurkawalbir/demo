@@ -630,14 +630,19 @@ selectors.mkFlowAttributes = () => createSelector(
       // isFlowEnableLocked
       // moved from previous selector impl
       let isLocked = true;
+      let isRunnable = true;
 
       if (!flow || !flow._connectorId) isLocked = false;
       else if (!integration) isLocked = false;
       else {
         // strange flow setting name to indicate that flows can not be
         // enabled/disabled by a user...
-        isLocked = getIAFlowSettings(integration, flow._id)?.disableSlider;
+        const iaFlowSettings = getIAFlowSettings(integration, flow._id);
+
+        isLocked = iaFlowSettings?.disableSlider;
+        isRunnable = !iaFlowSettings?.disableRunFlow;
       }
+      o.disableRunFlow = isRunnable;
       o.isFlowEnableLocked = isLocked;
       // allowSchedule
       o.allowSchedule = flowAllowsScheduling(flow, integration, [], isIntegrationV2, flExp);
@@ -4972,7 +4977,7 @@ selectors.availableUsersList = (state, integrationId) => {
     _users = selectors.integrationUsers(state, integrationId);
   }
 
-  if ((integrationId || permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN) && _users && _users.length > 0) {
+  if ((integrationId || [USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(permissions.accessLevel)) && _users && _users.length > 0) {
     const accountOwner = selectors.accountOwner(state);
 
     _users = [

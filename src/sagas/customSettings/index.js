@@ -6,10 +6,11 @@ import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import inferErrorMessages from '../../utils/inferErrorMessages';
 
-export function* initSettingsForm({ resourceType, resourceId }) {
-  const resource = yield select(selectors.resource, resourceType, resourceId);
+export function* initSettingsForm({ resourceType, resourceId, sectionId }) {
+  const resource = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
 
   if (!resource) return; // nothing to do.
+
   let initScriptId; let
     initFunc;
 

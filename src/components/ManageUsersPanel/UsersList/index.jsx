@@ -12,10 +12,8 @@ import LoadResources from '../../LoadResources';
 
 export default function UsersList({ integrationId, storeId, className }) {
   const dispatch = useDispatch();
-  const isAccountOwner = useSelector(state =>
-    [USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(selectors.resourcePermissions(state).accessLevel)
-  );
   const accessLevel = useSelector(state => selectors.resourcePermissions(state)?.accessLevel);
+  const isAccountOwner = [USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
