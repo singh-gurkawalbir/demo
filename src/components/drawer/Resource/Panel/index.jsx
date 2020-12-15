@@ -43,13 +43,16 @@ const useStyles = makeStyles(theme => ({
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
   },
   baseForm: {
-    display: 'grid',
-    gridTemplateColumns: '55% 43%',
-    gridColumnGap: theme.spacing(1),
     paddingTop: theme.spacing(3),
     '& > div:first-child': {
       paddingTop: 0,
     },
+  },
+  baseFormWithPreview: {
+    display: 'grid',
+    gridTemplateColumns: '55% 43%',
+    gridColumnGap: theme.spacing(1),
+
   },
   resourceFormWrapper: {
     flexDirection: 'row',
@@ -320,7 +323,9 @@ export default function Panel(props) {
           <div
             className={clsx({
               [classes.baseForm]: resourceType === 'exports',
-            })}
+            },
+            {[classes.baseFormWithPreview]: showPreviewPanel }
+            )}
           >
             <ResourceFormWithStatusPanel
               formKey={newId}
