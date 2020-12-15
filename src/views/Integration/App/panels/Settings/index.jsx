@@ -19,7 +19,7 @@ import { getEmptyMessage, isParentViewSelected } from '../../../../../utils/inte
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(2),
+    // padding: theme.spacing(0),
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     backgroundColor: theme.palette.common.white,
