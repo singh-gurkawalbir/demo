@@ -57,6 +57,7 @@ export default {
           { label: 'Add or update', value: 'addupdate' },
           { label: 'Attach', value: 'attach' },
           { label: 'Detach', value: 'detach' },
+          { label: 'Delete', value: 'delete'},
         ],
       },
     ],
@@ -119,7 +120,7 @@ export default {
       },
       {
         field: 'netsuite_da.operation',
-        is: ['update', 'addupdate'],
+        is: ['update', 'addupdate', 'delete'],
       },
     ],
   },
