@@ -9,7 +9,6 @@ const columns = [
   {
     heading: 'Name',
     value: r => r?.doc?.name || r?.doc?._id,
-    orderBy: 'name',
   },
   { heading: 'Description', value: r => r.doc?.description },
 ];
