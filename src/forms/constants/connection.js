@@ -198,7 +198,6 @@ export default {
     'googlecontacts',
     'googlemail',
     'acumatica',
-    'googledrive',
     'googleanalytics',
     'lightspeed',
     'accelo',

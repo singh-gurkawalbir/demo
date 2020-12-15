@@ -123,6 +123,84 @@ Object {
 }
 `;
 
+exports[`getResourceFromAssets load correct form connections assistants should load a http assistant googledrive connection form 1`] = `
+Object {
+  "fieldMeta": Object {
+    "actions": undefined,
+    "fieldMap": Object {
+      "application": Object {
+        "fieldId": "application",
+      },
+      "http._iClientId": Object {
+        "connectionId": [Function],
+        "connectorId": [Function],
+        "fieldId": "http._iClientId",
+        "filter": Object {
+          "provider": "custom_oauth2",
+        },
+        "ignoreEnvironmentFilter": true,
+        "required": true,
+        "type": "dynaiclient",
+      },
+      "http.auth.oauth.callbackURL": Object {
+        "copyToClipboard": true,
+        "fieldId": "http.auth.oauth.callbackURL",
+      },
+      "httpAdvanced": Object {
+        "formId": "httpAdvanced",
+      },
+      "name": Object {
+        "fieldId": "name",
+      },
+      "settings": Object {
+        "fieldId": "settings",
+      },
+    },
+    "layout": Object {
+      "containers": Array [
+        Object {
+          "containers": Array [
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "name",
+                "application",
+              ],
+              "label": "General",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "http.auth.oauth.callbackURL",
+                "http._iClientId",
+              ],
+              "label": "Configure your client id and secret",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "httpAdvanced",
+              ],
+              "label": "Advanced",
+            },
+          ],
+          "type": "collapse",
+        },
+        Object {
+          "fields": Array [
+            "settings",
+          ],
+        },
+      ],
+    },
+  },
+  "init": undefined,
+  "optionsHandler": [Function],
+  "preSave": [Function],
+  "validationHandler": [Function],
+}
+`;
+
 exports[`getResourceFromAssets load correct form connections assistants should load a rest assistant certify connection form 1`] = `
 Object {
   "fieldMeta": Object {
@@ -194,87 +272,6 @@ Object {
             "settings",
           ],
         },
-      ],
-    },
-  },
-  "init": undefined,
-  "optionsHandler": [Function],
-  "preSave": [Function],
-  "validationHandler": [Function],
-}
-`;
-
-exports[`getResourceFromAssets load correct form connections assistants should load a rest assistant googledrive connection form 1`] = `
-Object {
-  "fieldMeta": Object {
-    "actions": undefined,
-    "fieldMap": Object {
-      "application": Object {
-        "fieldId": "application",
-      },
-      "name": Object {
-        "fieldId": "name",
-      },
-      "rest.scope": Object {
-        "fieldId": "rest.scope",
-        "scopes": Array [
-          "https://www.googleapis.com/auth/drive",
-          "https://www.googleapis.com/auth/drive.readonly",
-          "https://www.googleapis.com/auth/drive.appfolder",
-          "https://www.googleapis.com/auth/drive.file",
-          "https://www.googleapis.com/auth/drive.install",
-          "https://www.googleapis.com/auth/drive.metadata",
-          "https://www.googleapis.com/auth/drive.metadata.readonly",
-          "https://www.googleapis.com/auth/drive.photos.readonly",
-          "https://www.googleapis.com/auth/drive.scripts",
-        ],
-      },
-      "restAdvanced": Object {
-        "formId": "restAdvanced",
-      },
-      "settings": Object {
-        "fieldId": "settings",
-      },
-    },
-    "layout": Object {
-      "containers": Array [
-        Object {
-          "containers": Array [
-            Object {
-              "collapsed": true,
-              "fields": Array [
-                "name",
-                "application",
-              ],
-              "label": "General",
-            },
-            Object {
-              "collapsed": true,
-              "fields": Array [
-                "http.unencrypted.partnerUserId",
-                "http.encrypted.partnerUserSecret",
-              ],
-              "label": "Application details",
-            },
-            Object {
-              "collapsed": true,
-              "fields": Array [
-                "restAdvanced",
-              ],
-              "label": "Advanced",
-            },
-          ],
-          "type": "collapse",
-        },
-        Object {
-          "fields": Array [
-            "settings",
-          ],
-        },
-      ],
-      "fields": Array [
-        "name",
-        "rest.scope",
       ],
     },
   },
