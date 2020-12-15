@@ -55,6 +55,7 @@ import {
 } from '../../../utils/resource';
 import { isIntegrationApp } from '../../../utils/flows';
 
+const VALID_RESOURCE_TYPES_FOR_FLOW_DATA = ['exports', 'imports', 'connections'];
 export function* _initFlowData({ flowId, resourceId, resourceType, refresh }) {
   const { merged: flow } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
   const clonedFlow = deepClone(flow || {});
@@ -100,7 +101,7 @@ export function* requestSampleData({
   isInitialized,
   onSagaEnd,
 }) {
-  if (!flowId || !resourceId) return;
+  if (!flowId || !resourceId || !VALID_RESOURCE_TYPES_FOR_FLOW_DATA.includes(resourceType)) return;
 
   // TODO: @Raghu: I dont know where the best place for this code is to go...
   // probably the only time we need sample data for a connection is

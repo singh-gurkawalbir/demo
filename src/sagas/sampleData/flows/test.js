@@ -147,8 +147,13 @@ describe('flow sample data sagas', () => {
     const exportId = 'export-123';
     const importId = 'import-123';
 
-    test('should do nothing incase of no flowId/resourceId', () =>
-      expectSaga(requestSampleData, {}).returns(undefined).run()
+    test('should do nothing incase of no flowId/resourceId or when added invalid resource type', () =>
+      expectSaga(requestSampleData, {}).returns(undefined).run() &&
+      expectSaga(requestSampleData, {
+        resourceId: 'flow-123',
+        flowId: 'flow-123',
+        resourceType: 'flows',
+      }).returns(undefined).run()
     );
     test('should return dummy as2 object incase of connections resourceType', () => {
       const expected = { as2: { sample: { data: 'coming soon' } } };
@@ -262,7 +267,6 @@ describe('flow sample data sagas', () => {
             processorData,
           }), processedData],
         ])
-        .call(evaluateExternalProcessor, { processorData })
         .call(updateStateForProcessorData, {
           flowId,
           resourceId,
@@ -1083,6 +1087,7 @@ describe('flow sample data sagas', () => {
           }), {}],
         ])
         .call.fn(updateStateForProcessorData)
+        .not.call.fn(_processData)
         .run();
     });
   });
