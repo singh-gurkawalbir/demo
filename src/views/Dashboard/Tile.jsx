@@ -321,7 +321,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             </Typography>
           </CardTitle>
 
-          <AppLogosContainer tile={tile} />
+          {!(expired && tile.tag) ? <AppLogosContainer tile={tile} /> : ''}
 
         </Content>
         <Footer>
