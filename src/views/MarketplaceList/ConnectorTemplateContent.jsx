@@ -60,7 +60,7 @@ export default function ConnectorTemplateContent({ resource, application }) {
             assistant={assistant}
             size="medium"
         />
-          {!free && (
+          {free && (
           <Chip
             variant="outlined"
             color="primary"
