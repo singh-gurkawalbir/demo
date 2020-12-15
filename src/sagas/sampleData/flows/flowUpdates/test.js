@@ -35,7 +35,7 @@ describe('flow updates sagas', () => {
       .put(actions.flowData.updateFlowsForResource(123, 'scripts'))
       .not.call.fn(updateFlowDoc)
       .run());
-    test('should trigger updateFlowDoc when no flowId context for export', () => {
+    test('should trigger updateFlowDoc when there is flowId context for export', () => {
       const resourceType = 'exports';
       const resourceId = '123';
       const flowId = '456';
@@ -47,9 +47,6 @@ describe('flow updates sagas', () => {
           flowId,
         },
       })
-        .provide([
-          [select(selectors.resourceData, 'flows', flowId), { merged: {} }],
-        ])
         .call(updateFlowDoc, {
           flowId,
           resourceType,
@@ -57,7 +54,7 @@ describe('flow updates sagas', () => {
         })
         .run();
     });
-    test('should trigger updateFlowDoc when no flowId context for import', () => {
+    test('should trigger updateFlowDoc when there is flowId context for import', () => {
       const resourceType = 'imports';
       const resourceId = '123';
       const flowId = '456';
@@ -69,9 +66,6 @@ describe('flow updates sagas', () => {
           flowId,
         },
       })
-        .provide([
-          [select(selectors.resourceData, 'flows', flowId), { merged: {} }],
-        ])
         .call(updateFlowDoc, {
           flowId,
           resourceType,
@@ -79,7 +73,7 @@ describe('flow updates sagas', () => {
         })
         .run();
     });
-    test('should trigger updateFlowDoc when no flowId context for scripts', () => {
+    test('should trigger updateFlowDoc when there is flowId context for scripts', () => {
       const resourceType = 'scripts';
       const resourceId = '123';
       const flowId = '456';
@@ -91,9 +85,6 @@ describe('flow updates sagas', () => {
           flowId,
         },
       })
-        .provide([
-          [select(selectors.resourceData, 'flows', flowId), { merged: {} }],
-        ])
         .call(updateFlowDoc, {
           flowId,
           resourceType,
