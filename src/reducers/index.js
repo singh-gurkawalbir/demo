@@ -2517,29 +2517,26 @@ selectors.mkTileApplications = () => createSelector(
       if (tile.name && tile.name.indexOf('Magento 1') !== -1 && applications[0] === 'magento') {
         applications[0] = 'magento1';
       }
-      // Make NetSuite always the last application
-      applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]);
+    } else {
+      const childIntegrations = integrations.filter(i => i._parentId === tile._integrationId);
+      const parentIntegration = integrations.find(i => i._id === tile._integrationId);
 
-      return applications;
-    }
+      childIntegrations.forEach(i => {
+        const integrationConnections = connections.filter(c => c._integrationId === i._id);
 
-    const childIntegrations = integrations.filter(i => i._parentId === tile._integrationId);
-    const parentIntegration = integrations.find(i => i._id === tile._integrationId);
+        integrationConnections.forEach(c => {
+          applications.push(c.assistant || c.type);
+        });
+      });
 
-    childIntegrations.forEach(i => {
-      const integrationConnections = connections.filter(c => c._integrationId === i._id);
+      const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
 
-      integrationConnections.forEach(c => {
+      parentIntegrationConnections.forEach(c => {
         applications.push(c.assistant || c.type);
       });
-    });
+      applications = uniq(applications);
+    }
 
-    const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
-
-    parentIntegrationConnections.forEach(c => {
-      applications.push(c.assistant || c.type);
-    });
-    applications = uniq(applications);
     // Make NetSuite always the last application
     applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]);
     // Only consider up to four applications
