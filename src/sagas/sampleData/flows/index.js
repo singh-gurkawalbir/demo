@@ -204,6 +204,8 @@ export function* fetchPageProcessorPreview({
   const {data: existingPreviewData} = yield select(selectors.getSampleDataContext,
     { flowId, resourceId: _pageProcessorId, resourceType, stage: 'flowInput' });
 
+  // in case on hard refresh and flow preview doesnt return data,
+  // dont empty the state, rather use old preview data
   if (flowDataState.refresh && existingPreviewData && !previewData) {
     return yield put(
       actions.flowData.reuseOldPreviewData(
