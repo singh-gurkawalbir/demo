@@ -201,6 +201,18 @@ export function* fetchPageProcessorPreview({
     previewData = processOneToManySampleData(previewData, resource);
   }
 
+  const {data: existingPreviewData} = yield select(selectors.getSampleDataContext,
+    { flowId, resourceId: _pageProcessorId, resourceType, stage: 'flowInput' });
+
+  if (flowDataState.refresh && existingPreviewData && !previewData) {
+    return yield put(
+      actions.flowData.reuseOldPreviewData(
+        flowId,
+        _pageProcessorId,
+        previewType
+      )
+    );
+  }
   yield put(
     actions.flowData.receivedPreviewData(
       flowId,

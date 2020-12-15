@@ -75,7 +75,7 @@ export default function* getPreviewOptionsForResource({ resource, flow, refresh,
   const { type, rawData } = resource;
 
   // check for raw data on resource
-  if (runOffline && rawData && rawData !== EMPTY_RAW_DATA) {
+  if (!refresh && runOffline && rawData && rawData !== EMPTY_RAW_DATA) {
     const runOfflineOptions = {
       runOffline: true,
       runOfflineSource: 'db',

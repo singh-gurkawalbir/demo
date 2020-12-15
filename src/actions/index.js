@@ -1289,6 +1289,12 @@ const flowData = {
       previewData,
       previewType,
     }),
+  reuseOldPreviewData: (flowId, resourceId, previewType) =>
+    action(actionTypes.FLOW_DATA.REUSE_OLD_PREVIEW_DATA, {
+      flowId,
+      resourceId,
+      previewType,
+    }),
   requestProcessorData: (flowId, resourceId, resourceType, processor) =>
     action(actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST, {
       flowId,
