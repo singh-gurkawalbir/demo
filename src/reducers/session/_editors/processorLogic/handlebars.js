@@ -1,5 +1,18 @@
 import util from '../../../../utils/json';
 
+function constructFieldLabel(label) {
+  if (!label) return label;
+  const regexp = /^[A-Z]{2}/;
+
+  if (label.startsWith('Build')) {
+    return label;
+  } if (regexp.test(label)) {
+    // first 2 chars are uppercase so don't convert to lowercase
+    return `Build ${label}`;
+  }
+
+  return `Build ${label[0].toLowerCase()}${label.slice(1)}`;
+}
 function _isEditorV2Supported({resource, fieldId, connection, isPageGenerator}) {
   if (fieldId === '_body' || fieldId === '_relativeURI') return false;
 
@@ -53,8 +66,13 @@ function _isEditorV2Supported({resource, fieldId, connection, isPageGenerator}) 
 
 export default {
   getRule: ({fieldState}) => {
-    const {value, arrayIndex} = fieldState;
-    const formattedRule = Array.isArray(value) ? value[arrayIndex] : value;
+    const {type, value, arrayIndex} = fieldState;
+
+    if (type !== 'relativeuri' && type !== 'httprequestbody') {
+      return value;
+    }
+    // below formatting applies for only relative URI and body fields
+    const formattedRule = typeof arrayIndex === 'number' && Array.isArray(value) ? value[arrayIndex] : value;
 
     return typeof formattedRule === 'string' ? formattedRule : JSON.stringify(formattedRule, null, 2);
   },
@@ -73,13 +91,19 @@ export default {
 
     const connectionMediaType = connection?.type === 'http' ? connection?.http?.mediaType : connection?.rest?.mediaType;
     const contentType = fieldState?.options?.contentType || fieldState?.contentType || connectionMediaType;
-    const resultMode = contentType === 'json' ? 'json' : 'xml';
+    let resultMode;
+
+    if (fieldState?.type !== 'httprequestbody') {
+      resultMode = 'text';
+    } else {
+      resultMode = contentType === 'json' ? 'json' : 'xml';
+    }
 
     return {
       ...options,
       isEditorV2Supported,
       resultMode,
-      editorTitle: fieldState?.label,
+      editorTitle: constructFieldLabel(fieldState?.label),
       v1Rule,
       v2Rule,
     };

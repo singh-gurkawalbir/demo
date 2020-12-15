@@ -50,11 +50,8 @@ const useStyles = makeStyles(theme => ({
 export default function CsvParseRules({ editorId }) {
   const classes = useStyles();
   const editor = useSelector(state => selectors._editor(state, editorId));
-  // TODO: @Ashu, are all editors disabled because of user permissions?
-  // That is, if a user has read but not write access to the resource being
-  // modified by this editor instance ? If so, we can calculate this during
-  // the init... given the init is passed the resourceType and resourceId.
-  const { result, status, disabled, rule = {} } = editor;
+  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
+  const { result, status, rule = {} } = editor;
   const {
     columnDelimiter = '',
     rowDelimiter = '',

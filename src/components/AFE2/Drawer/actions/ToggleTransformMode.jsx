@@ -17,8 +17,7 @@ export default function ToggleTransformMode({ editorId }) {
 
     return saveStatus === 'requested';
   });
-  const handleToggle =
-  activeProcessor => dispatch(actions._editor.patchFeatures(editorId, {activeProcessor}));
+  const handleToggle = activeProcessor => dispatch(actions._editor.patchFeatures(editorId, {activeProcessor}));
 
   return (
     <TextToggle

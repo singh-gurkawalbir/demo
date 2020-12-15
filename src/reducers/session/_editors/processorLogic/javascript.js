@@ -8,6 +8,7 @@ export default {
 
     return {
       ...others,
+      insertStubKey: options.stage, // todo ashu test this
       rule: {
         ...rule,
         fetchScriptContent: true,

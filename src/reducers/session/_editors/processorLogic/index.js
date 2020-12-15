@@ -169,6 +169,7 @@ export const featuresMap = options => ({
   },
   csvParser: {
     layout: 'compact',
+    autoEvaluate: true,
   },
   xmlParser: {
     layout: 'compact',

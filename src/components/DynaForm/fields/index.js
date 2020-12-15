@@ -15,7 +15,7 @@ import DynaKeyValue from './DynaKeyValue';
 import DynaToggleSelectToText from './select/DynaToggleSelectToText';
 import DynaLookupEditor from './DynaLookupEditor';
 import DynaKeyWithAction from './DynaKeyWithAction';
-import _DynaHttpRequestBody_ from './DynaHttpRequestBody_new_poc';
+import _DynaHttpRequestBody_ from './DynaHttpRequestBody_afe2';
 import DynaEditor from './DynaEditor';
 import DynaCsvParse from './editors/DynaCsvParse';
 import DynaRefreshableSelect from './DynaRefreshableSelect';

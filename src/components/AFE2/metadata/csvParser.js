@@ -5,11 +5,11 @@ import CsvParseRules from '../Editor/panels/CsvParseRules';
 export default {
   type: 'csvParser',
   fieldId: 'file.csv',
-  label: 'Delimited file parser',
+  label: 'CSV parser helper',
   description: 'Converts delimited data into JSON',
   panels: [
     {
-      title: 'Parse options',
+      title: 'CSV parser options',
       area: 'rule',
       Panel: CsvParseRules,
     },
@@ -22,7 +22,7 @@ export default {
       },
     },
     {
-      title: 'Output record',
+      title: 'Parsed output',
       area: 'result',
       Panel: ResultPanel,
       props: {
