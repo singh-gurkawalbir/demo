@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'left',
   },
   header: {
-    padding: theme.spacing(2, 0),
+    marginBottom: theme.spacing(2),
     '&:before': {
       content: '""',
       width: '100%',
@@ -56,8 +56,8 @@ const useStyles = makeStyles(theme => ({
     },
   },
   description: {
-    width: '200px',
-    maxHeight: '100px',
+    minHeight: '160px',
+    maxHeight: '175px',
     overflowY: 'auto',
   },
   cardAction: {
@@ -120,7 +120,7 @@ export default function AddOnsPanel({ integrationId }) {
               <div className={classes.header}>
                 <Typography variant="h4">{data.name}</Typography>
               </div>
-              <Typography variant="body2">{data.description}</Typography>
+              <Typography variant="body2" className={classes.description}>{data.description}</Typography>
               <CardActions className={classes.cardAction}>
                 <Button
                   data-test="contactSales"
