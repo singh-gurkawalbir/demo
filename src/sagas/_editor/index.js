@@ -5,6 +5,8 @@ import {
   takeLatest,
   takeEvery,
   delay,
+  take,
+  race,
 } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
 import actions from '../../actions';
@@ -17,6 +19,7 @@ import { SCOPES } from '../resourceForm';
 import { requestSampleData } from '../sampleData/flows';
 import { requestExportSampleData } from '../sampleData/exports';
 import { constructResourceFromFormValues } from '../utils';
+import { safeParse } from '../../utils/string';
 
 export function dataAsString(data) {
   return typeof data === 'string'
@@ -59,27 +62,30 @@ export function* requestPreview({ id }) {
     } catch (e) {
       // Error with status code between 400 and 500 are json, hence we can parse them
       if (e.status >= 400 && e.status < 500) {
-        const errJSON = JSON.parse(e.message);
-        // Receiving errors in different formats from BE, for now added below check
-        // Can remove this once backend bug gets fixed (Id: IO-17172)
-        const errorMessage = [`Message: ${errJSON.message || errJSON.errors?.[0]?.message || JSON.stringify(errJSON)}`];
-        let errorLine;
+        const errJSON = safeParse(e.message);
 
-        if (errJSON.location) {
-          errorMessage.push(`Location: ${errJSON.location}`);
-          try {
-            if (/<anonymous>:(\d+)/.test(errJSON.location)) {
-              errorLine = parseInt(/<anonymous>:(\d+)/.exec(errJSON.location)[1], 10);
-            }
-          } catch (e) {
+        if (errJSON) {
+          // Receiving errors in different formats from BE, for now added below check
+          // Can remove this once backend bug gets fixed (Id: IO-17172)
+          const errorMessage = [`Message: ${errJSON.message || errJSON.errors?.[0]?.message || JSON.stringify(errJSON)}`];
+          let errorLine;
+
+          if (errJSON.location) {
+            errorMessage.push(`Location: ${errJSON.location}`);
+            try {
+              if (/<anonymous>:(\d+)/.test(errJSON.location)) {
+                errorLine = parseInt(/<anonymous>:(\d+)/.exec(errJSON.location)[1], 10);
+              }
+            } catch (e) {
             // do nothing
+            }
           }
-        }
-        if (errJSON.stack) {
-          errorMessage.push(`Stack: ${errJSON.stack}`);
-        }
+          if (errJSON.stack) {
+            errorMessage.push(`Stack: ${errJSON.stack}`);
+          }
 
-        return yield put(actions._editor.previewFailed(id, {errorMessage, errorLine}));
+          return yield put(actions._editor.previewFailed(id, {errorMessage, errorLine}));
+        }
       }
     }
   }
@@ -141,6 +147,8 @@ export function* save({ id, context }) {
   if (editor.onSave) {
     editor.onSave(editor);
 
+    // we might have use cases in future where onSave and patches , both need to be called
+    // in that case we should not return from here and continue to run the patchSet also
     return yield put(actions._editor.saveComplete(id));
   }
 
@@ -257,6 +265,19 @@ export function* autoEvaluateProcessor({ id }) {
   return yield call(requestPreview, { id });
 }
 
+// todo ashu , check this, we may not need this with afe refactor changes
+function* autoEvaluateProcessorWithCancel(params) {
+  const { id } = params;
+
+  yield race({
+    editorEval: call(autoEvaluateProcessor, params),
+    cancelEditorEval: take(action =>
+      action.type === actionTypes._EDITOR.CLEAR &&
+      action.id === id
+    ),
+  });
+}
+
 export function* refreshHelperFunctions() {
   const localStorageData = JSON.parse(localStorage.getItem('helperFunctions'));
   let { updateTime, helperFunctions } = localStorageData || {};
@@ -341,9 +362,8 @@ export function* requestEditorSampleData({
     return {data};
   }
 
-  // TODO: @ashu test this
-  if (editorType === 'csvParse' || editorType === 'xmlParse') {
-    const fileType = editorType === 'csvParse' ? 'csv' : 'xml';
+  if (editorType === 'csvParser' || editorType === 'xmlParser') {
+    const fileType = editorType === 'csvParser' ? 'csv' : 'xml';
 
     const fileData = yield select(selectors.fileSampleData, { resourceId, resourceType, fileType});
 
@@ -484,7 +504,7 @@ export function* initSampleData({ id }) {
   // get Helper functions when the editor initializes
   yield call(refreshHelperFunctions);
 
-  return yield call(autoEvaluateProcessor, { id });
+  return yield call(autoEvaluateProcessorWithCancel, { id });
 }
 
 export function* initEditor({ id, editorType, options = {} }) {
@@ -493,7 +513,6 @@ export function* initEditor({ id, editorType, options = {} }) {
   if (options.formKey) {
     fieldState = yield select(selectors.fieldState, options.formKey, options.fieldId);
   }
-  // todo, check with raghu if this is the right way to get latest resource
   const resource = yield select(selectors.resource, options.resourceType, options.resourceId);
 
   let editorRule = options.rule;
@@ -503,7 +522,7 @@ export function* initEditor({ id, editorType, options = {} }) {
     editorRule = ruleLogic({resource, options, fieldState});
   }
   const {onSave, ...rest} = options;
-  let formattedOptions = rest;
+  let formattedOptions = deepClone(rest);
 
   formattedOptions.rule = editorRule;
   const init = processorLogic.init(editorType);
@@ -536,7 +555,7 @@ export function* initEditor({ id, editorType, options = {} }) {
   }
   const stateOptions = {
     editorType,
-    ...deepClone(formattedOptions),
+    ...formattedOptions,
     ...featuresMap(options)[editorType],
     originalRule,
     lastChange: Date.now(),
@@ -569,7 +588,7 @@ export default [
     [actionTypes._EDITOR.PATCH.DATA,
       actionTypes._EDITOR.PATCH.RULE,
       actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW],
-    autoEvaluateProcessor
+    autoEvaluateProcessorWithCancel
   ),
   takeEvery(actionTypes._EDITOR.INIT, initEditor),
   takeLatest(actionTypes._EDITOR.TOGGLE_VERSION, toggleEditorVersion),

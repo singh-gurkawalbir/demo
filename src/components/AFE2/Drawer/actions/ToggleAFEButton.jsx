@@ -21,6 +21,11 @@ export default function ToggleAFEButton({ editorId }) {
   const dispatch = useDispatch();
   const isEditorV2Supported = useSelector(state => selectors._editor(state, editorId).isEditorV2Supported);
   const editorVersion = useSelector(state => selectors._editorDataVersion(state, editorId));
+  const saveInProgress = useSelector(state => {
+    const {saveStatus} = selectors._editor(state, editorId);
+
+    return saveStatus === 'requested';
+  });
 
   const handleVersionToggle = useCallback(
     newVersion => {
@@ -29,22 +34,12 @@ export default function ToggleAFEButton({ editorId }) {
     [dispatch, editorId]
   );
 
-  // TODO: should state be cleared on editor close?
-  //   const handleCloseEditor = useCallback(
-  //     () => {
-  //       dispatch(actions._editor.clear(editorId));
-  //       if (onClose) {
-  //         onClose();
-  //       }
-  //     },
-  //     [dispatch, id, onClose]
-  //   );
   if (!isEditorV2Supported) return null;
 
   return (
     <>
       <TextToggle
-       // disabled={disabled}
+        disabled={saveInProgress}
         value={editorVersion}
         onChange={handleVersionToggle}
         exclusive

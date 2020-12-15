@@ -47,21 +47,10 @@ export default function JavaScriptPanel({ editorId }) {
   const dispatch = useDispatch();
   const aceEditor = useRef(null);
   const rule = useSelector(state => selectors._editorRule(state, editorId));
+  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const {code = '', entryFunction = '', scriptId = '', fetchScriptContent } = rule || {};
+  const insertStubKey = useSelector(state => selectors._editor(state, editorId).insertStubKey);
 
-  // TODO: @Ashu, Here too, i'm assuming the stub key is dependant on what
-  // field a user is editing. If they are editing the preSave or postMap, etc, then we should
-  // be able to do the logic in the javascript init.
-  const {disabled, insertStubKey } = useSelector(state => {
-    const e = selectors._editor(state, editorId);
-
-    return {
-      disabled: e.disabled,
-      insertStubKey: e.insertStubKey,
-    };
-  }, shallowEqual);
-
-  // TODO: @Ashu, Is this the correct way to get the erroLine and hasError?
   const { errorLine, error } =
     useSelector(state => selectors._editorPreviewError(state, editorId), shallowEqual);
   const hasError = !!error;

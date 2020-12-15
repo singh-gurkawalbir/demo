@@ -93,26 +93,25 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.PATCH.RULE: {
-        const mode = draft[id].activeProcessor;
+        const ap = draft[id].activeProcessor;
+        const draftRule = ap ? draft[id].rule[ap] : draft[id].rule;
+        const shouldReplace =
+          typeof rulePatch === 'string' ||
+          Array.isArray(rulePatch) ||
+          draftRule === undefined;
 
-        if (mode) {
-          if (typeof rulePatch === 'string' ||
-          Array.isArray(rulePatch) ||
-          draft[id].rule[mode] === undefined) {
-            draft[id].rule[mode] = rulePatch;
-          } else {
-          // TODO: Ashu, why do we need to clone the rulePatch?
-            Object.assign(draft[id].rule[mode], deepClone(rulePatch));
-          }
-        } else if (typeof rulePatch === 'string' ||
-          Array.isArray(rulePatch) ||
-          draft[id].rule === undefined) {
-          draft[id].rule = rulePatch;
+        if (!shouldReplace) {
+          // TODO: ashu do we need to deep clone?
+          Object.assign(draftRule, deepClone(rulePatch));
+        } else if (ap) {
+          draft[id].rule[ap] = rulePatch;
         } else {
-          // TODO: Ashu, why do we need to clone the rulePatch?
-          Object.assign(draft[id].rule, deepClone(rulePatch));
+          draft[id].rule = rulePatch;
         }
 
+        // this logic is only applicable for handlebars editor and right now
+        // the dual processor editors do not support handlebars. If they do in future, then
+        // below logic would have to be updated accordingly
         if (draft[id].dataVersion === 2) {
           draft[id].v2Rule = rulePatch;
         } else if (draft[id].dataVersion === 1) {

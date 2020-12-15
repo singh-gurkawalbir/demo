@@ -8,10 +8,10 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import EditorDrawer from '../index';
 
 export default function ManageLookup({ editorId }) {
-  const {resourceType, formKey, resourceId, flowId, fieldId} = useSelector(state => {
-    const {resourceType, formKey, resourceId, flowId, fieldId} = selectors._editor(state, editorId);
+  const {resourceType, formKey, resourceId, flowId, fieldId, resultMode} = useSelector(state => {
+    const {resourceType, formKey, resourceId, flowId, fieldId, resultMode} = selectors._editor(state, editorId);
 
-    return {resourceType, formKey, resourceId, flowId, fieldId};
+    return {resourceType, formKey, resourceId, flowId, fieldId, resultMode};
   }, shallowEqual);
   const formContext = useFormContext(formKey);
   const { merged: resourceData = {} } = useSelectorMemo(
@@ -27,7 +27,8 @@ export default function ManageLookup({ editorId }) {
 
   const lookupFieldId = lookupUtil.getLookupFieldId(adaptorType);
 
-  if (fieldId === '_body' || resourceType !== 'imports' || !lookupFieldId) {
+  // lookups are only valid for httprequestbody fields
+  if (fieldId === '_body' || resourceType !== 'imports' || !lookupFieldId || resultMode === 'text') {
     return null;
   }
 

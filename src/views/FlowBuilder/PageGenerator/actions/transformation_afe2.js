@@ -24,6 +24,8 @@ function TxLauncher({ flowId, resourceType, resourceId, onClose, open }) {
       flowId,
       resourceId,
       resourceType,
+      // TODO: ashu, maybe the stage can also be initialized in data layer,
+      // store a static map for editorType and stage
       stage: 'transform',
 
       // We could also use the onSave callback to call the proxied onClose

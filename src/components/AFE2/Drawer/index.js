@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { useParams } from 'react-router-dom';
 import { selectors } from '../../../reducers';
@@ -13,6 +13,7 @@ import PreviewButtonGroup from '../PreviewButtonGroup';
 import SaveButtonGroup from '../SaveButtonGroup';
 import HelpIconButton from './actions/HelpIconButton';
 import CloseIconButton from './CloseIconButton';
+import actions from '../../../actions';
 
 const useStyles = makeStyles({
   spaceBetween: { flexGrow: 100 },
@@ -25,25 +26,28 @@ const useStyles = makeStyles({
 // eslint-disable-next-line no-unused-vars
 function RouterWrappedContent({ hideSave, onClose, fullPath}) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const { editorId } = useParams();
-  // TODO: @Ashu, processor and type are not the same. type is used to differentiate
-  // between editors that share the same processor. We then can have metadata specific
-  // to each editor variant. If you have a better idea, pls share. Also maybe "type"
-  // could be renamed.
   const editorType = useSelector(state => selectors._editor(state, editorId).editorType);
   const editorTitle = useSelector(state => selectors._editor(state, editorId).editorTitle);
 
   // console.log('drawer editor', editorId, editor);
   const { label, drawer = {} } = editorMetadata[editorType] || {};
-  const { actions } = drawer;
+  const { actions: drawerActions } = drawer;
 
-  const CloseButton = <CloseIconButton onClose={onClose} editorId={editorId} />;
+  // is it safe to clear the state when the drawer is closed??
+  const handleClose = () => {
+    dispatch(actions._editor.clear(editorId));
+    onClose();
+  };
+
+  const CloseButton = <CloseIconButton onClose={handleClose} editorId={editorId} />;
 
   return (
     <>
       <DrawerHeader title={editorTitle || label} CloseButton={CloseButton} fullPath={fullPath}>
         { // eslint-disable-next-line react/no-array-index-key
-          actions && actions.map((Action, i) => <Action key={i} editorId={editorId} />)
+          drawerActions && drawerActions.map((Action, i) => <Action key={i} editorId={editorId} />)
         }
         <HelpIconButton editorId={editorId} />
       </DrawerHeader>
@@ -54,7 +58,7 @@ function RouterWrappedContent({ hideSave, onClose, fullPath}) {
 
       <DrawerFooter>
         {!false && (
-          <SaveButtonGroup editorId={editorId} onClose={onClose} />
+          <SaveButtonGroup editorId={editorId} onClose={handleClose} />
         )}
         <div className={classes.spaceBetween} />
         <PreviewButtonGroup editorId={editorId} />

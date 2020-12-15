@@ -18,7 +18,7 @@ import {
 } from '../../../utils/resource';
 import exportHooksAction from './actions/exportHooks';
 import as2RoutingAction from './actions/as2Routing';
-import transformationAction from './actions/transformation_afe2_poc';
+import transformationAction from './actions/transformation_afe2';
 import scheduleAction from './actions/schedule';
 import exportFilterAction from './actions/_exportFilter';
 import { actionsMap } from '../../../utils/flows';

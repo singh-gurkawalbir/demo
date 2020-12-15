@@ -1,6 +1,16 @@
 
 import { wrapExportFileSampleData } from '../../../../utils/sampleData';
 
+const getRule = ({fieldState}) => {
+  const value = fieldState?.value;
+
+  if (!('trimSpaces' in value)) {
+    return {...value, trimSpaces: true};
+  }
+
+  return value;
+};
+
 const requestBody = ({ rule, data }) => {
   const rules = {
     ...rule,
@@ -17,7 +27,7 @@ const requestBody = ({ rule, data }) => {
 const init = editor => {
   const { rule = {}, ...others } = editor;
 
-  rule.multipleRowsPerRecord = !!(rule.keyColumns && rule.keyColumns.length);
+  rule.multipleRowsPerRecord = !!rule.keyColumns?.length;
 
   return {
     ...others,
@@ -27,7 +37,7 @@ const init = editor => {
 
 const validate = editor => ({
   dataError:
-    (!editor.data || !editor.data.length) && 'Must provide some sample data.',
+    !editor.data?.length && 'Must provide some sample data.',
 });
 
 const processResult = ({ isSuiteScriptData }, result) => {
@@ -42,4 +52,5 @@ export default {
   requestBody,
   init,
   processResult,
+  getRule,
 };
