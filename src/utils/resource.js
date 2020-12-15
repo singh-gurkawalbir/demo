@@ -762,6 +762,7 @@ export function isTradingPartnerSupported({environment, licenseActionDetails, ac
   if (
     [
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
     ].includes(accessLevel)
   ) {
@@ -829,6 +830,7 @@ export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations 
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
       USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
     ].includes(permissions.accessLevel)
   ) {
     accessLevelOnConnection = permissions.accessLevel;

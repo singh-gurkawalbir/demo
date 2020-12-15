@@ -5,10 +5,11 @@ import { selectors } from '../../../../../reducers';
 import CodePanel from '../Code';
 import PanelLoader from '../../../../PanelLoader';
 
-export default function FeaturePanel({ editorId, mode, featureName, disabled }) {
+export default function FeaturePanel({ editorId, mode, featureName }) {
   const dispatch = useDispatch();
   const sampleDataStatus = useSelector(state => selectors._editor(state, editorId).sampleDataStatus);
   const featureValue = useSelector(state => selectors._editor(state, editorId)[featureName]);
+  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
 
   // TODO: @Ashu, how should we handle validating and presenting errors here?
   // Should editorViolations be a map where the key is the panel name?

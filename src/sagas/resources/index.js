@@ -80,7 +80,7 @@ export function* linkUnlinkSuiteScriptIntegrator({ connectionId, link }) {
     userPreferences.ssConnectionIds.includes(connectionId);
   const userAccessLevel = yield select(selectors.userAccessLevel);
 
-  if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+  if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(userAccessLevel)) {
     if (link) {
       if (!isLinked) {
         yield put(
@@ -631,8 +631,8 @@ export function* getResourceCollection({ resourceType }) {
   /** hide the error that GET SuiteScript tiles throws when connection is offline */
   if (
     resourceType &&
-    resourceType.includes('suitescript/connections/') &&
-    resourceType.includes('/tiles')
+    ((resourceType.includes('suitescript/connections/') && resourceType.includes('/tiles')) ||
+    resourceType.includes('ashares'))
   ) {
     hideNetWorkSnackbar = true;
   }

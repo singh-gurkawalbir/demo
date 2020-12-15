@@ -30,10 +30,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function XmlParseRules({ editorId, disabled }) {
+export default function XmlParseRules({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { rule = {}} = useSelector(state => selectors._editor(state, editorId));
+  const disabled = useSelector(state => selectors._editor(state, editorId).disabled);
+  const rule = useSelector(state => selectors._editorRule(state, editorId));
+
   const {
     V0_json = false,
     trimSpaces = false,

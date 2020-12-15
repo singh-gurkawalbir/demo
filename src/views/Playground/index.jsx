@@ -17,8 +17,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     height: `calc(100% - ${theme.pageBarHeight + theme.appBarHeight}px)`,
   },
-  editorList: {
+  leftNav: {
     width: 300,
+    overflowY: 'auto',
     padding: theme.spacing(3),
     border: `solid 0 ${theme.palette.secondary.lightest}`,
     borderRightWidth: 1,
@@ -27,7 +28,7 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
-  editorListExpanded: {
+  leftNavExpanded: {
     width: 600,
   },
   content: {
@@ -72,7 +73,7 @@ export default function Editors() {
 
       </CeligoPageBar>
       <div className={classes.root}>
-        <div className={clsx(classes.editorList, {[classes.editorListExpanded]: !editorId})}>
+        <div className={clsx(classes.leftNav, {[classes.leftNavExpanded]: !editorId})}>
           <div className={classes.menuSection}>
             <Typography variant="h4">Editor Examples</Typography>
             <ExampleMenu onEditorChange={handleEditorChange} />
