@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import { Grid, List, ListItem, makeStyles } from '@material-ui/core';
+import { generatePath, NavLink, useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../../reducers';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import actions from '../../../../../actions';
@@ -11,6 +12,7 @@ import PanelHeader from '../../../../../components/PanelHeader';
 import FormBuilderButton from '../../../../../components/FormBuilderButton';
 import useSaveStatusIndicator from '../../../../../hooks/useSaveStatusIndicator';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -24,20 +26,40 @@ const useStyles = makeStyles(theme => ({
   noSettings: {
     margin: theme.spacing(1, 2, 4, 2),
   },
+  subNav: {
+    minWidth: 200,
+    maxWidth: 240,
+    borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
+  },
+  listItem: {
+    color: theme.palette.secondary.main,
+    width: '100%',
+  },
+  activeListItem: {
+    color: theme.palette.primary.main,
+  },
+  content: {
+    padding: theme.spacing(3, 2),
+  },
 }));
 
-const emptyObj = {};
+const getPatchPath = (allSections, sectionId) => {
+  if (!sectionId) return '/settings';
+  const sectionsExcluding = allSections.filter(sec => sec.sectionId !== 'general');
+  const ind = sectionsExcluding.findIndex(sec => sec.sectionId === sectionId);
 
-export default function CustomSettings({ integrationId: parentIntegrationId, childId }) {
-  const integrationId = useMemo(() => childId || parentIntegrationId, [childId, parentIntegrationId]);
+  return `/flowGroupings/${ind}/settings`;
+};
+
+function CustomSettings({ integrationId, sectionId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [formKey, setFormKey] = useState(0);
-  const settings = useSelector(state => {
-    const resource = selectors.resource(state, 'integrations', integrationId);
 
-    return resource ? resource.settings : emptyObj;
-  });
+  const {allSections} = useSelectorMemo(selectors.mkGetAllCustomFormsForAResource, 'integrations', integrationId);
+
+  const settings = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, 'integrations', integrationId, sectionId || 'general')?.settings;
+
   const canEditIntegration = useSelector(
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId).edit
@@ -49,6 +71,7 @@ export default function CustomSettings({ integrationId: parentIntegrationId, chi
           id: 'settings',
           helpKey: 'integration.settings',
           name: 'settings',
+          sectionId,
           type: 'settings',
           label: 'Settings',
           defaultValue: settings,
@@ -59,12 +82,12 @@ export default function CustomSettings({ integrationId: parentIntegrationId, chi
         fields: ['settings'],
       },
     }),
-    [settings]
+    [sectionId, settings]
   );
 
   useEffect(() => {
     setFormKey(formKey => formKey + 1);
-  }, [settings]);
+  }, [fieldMeta]);
   const validationHandler = useCallback(field => {
     // Incase of invalid json throws error to be shown on the field
 
@@ -92,7 +115,7 @@ export default function CustomSettings({ integrationId: parentIntegrationId, chi
       const patchSet = [
         {
           op: 'replace',
-          path: '/settings',
+          path: getPatchPath(allSections, sectionId),
           value,
         },
       ];
@@ -109,7 +132,7 @@ export default function CustomSettings({ integrationId: parentIntegrationId, chi
       );
       setFormKey(formKey => formKey + 1);
     },
-    [dispatch, integrationId]
+    [allSections, dispatch, integrationId, sectionId]
   );
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
@@ -133,7 +156,9 @@ export default function CustomSettings({ integrationId: parentIntegrationId, chi
   return (
     <div className={classes.root}>
       <PanelHeader title="Settings" >
-        <FormBuilderButton resourceType="integrations" resourceId={integrationId} integrationId={integrationId} />
+        <FormBuilderButton
+          resourceType="integrations" resourceId={integrationId}
+          integrationId={integrationId} sectionId={sectionId} />
       </PanelHeader>
 
       <div className={classes.form}>
@@ -150,5 +175,64 @@ export default function CustomSettings({ integrationId: parentIntegrationId, chi
         </DynaSubmit>
       </div>
     </div>
+  );
+}
+
+export default function SettingsForm({integrationId: parentIntegrationId, childId}) {
+  const integrationId = childId || parentIntegrationId;
+
+  const classes = useStyles();
+  const history = useHistory();
+  const match = useRouteMatch();
+  const {allSections, hasFlowGroupings} = useSelectorMemo(selectors.mkGetAllCustomFormsForAResource, 'integrations', integrationId);
+
+  // for integrations without any flowgroupings
+  if (!hasFlowGroupings) {
+    return (
+      <CustomSettings
+        integrationId={integrationId}
+        sectionId="general"
+      />
+    );
+  }
+  const sectionId = match.params?.sectionId;
+
+  const isMatchingWithSectionId = allSections.some(ele => ele.sectionId === sectionId);
+
+  if (!isMatchingWithSectionId) {
+    const redirectToGeneralTab = generatePath(match.path, {
+
+      ...match.params, sectionId: 'general',
+    });
+
+    history.replace(redirectToGeneralTab);
+  }
+
+  return (
+    <Grid container wrap="nowrap">
+      <Grid item className={classes.subNav}>
+        <List>
+          {allSections.map(({ title, sectionId }) => (
+            <ListItem key={sectionId} className={classes.flowTitle}>
+              <NavLink
+                className={classes.listItem}
+                activeClassName={classes.activeListItem}
+                to={sectionId}
+                data-test={sectionId}>
+                {title}
+              </NavLink>
+            </ListItem>
+          ))}
+        </List>
+      </Grid>
+      <Grid item className={classes.content}>
+
+        <CustomSettings
+          integrationId={integrationId}
+          sectionId={sectionId}
+          />
+
+      </Grid>
+    </Grid>
   );
 }

@@ -88,7 +88,7 @@ export default {
     ignoreMissing: {
       fieldId: 'ignoreMissing',
       visibleWhenAll: [
-        { field: 'netsuite_da.operation', is: ['update'] },
+        { field: 'netsuite_da.operation', is: ['update', 'delete'] },
         {
           field: 'inputMode',
           is: ['records'],

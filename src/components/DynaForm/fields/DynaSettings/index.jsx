@@ -33,6 +33,7 @@ export default function DynaSettings(props) {
     resourceContext,
     disabled,
     onFieldChange,
+    sectionId,
     label = 'Custom settings',
     collapsed = true,
     fieldsOnly = false,
@@ -47,8 +48,9 @@ export default function DynaSettings(props) {
   );
 
   const hasSettingsForm = useSelector(state =>
-    selectors.hasSettingsForm(state, resourceType, resourceId)
+    selectors.hasSettingsForm(state, resourceType, resourceId, sectionId)
   );
+
   const handleSettingFormChange = useCallback(
     (values, isValid) => {
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
@@ -91,6 +93,7 @@ export default function DynaSettings(props) {
           onFormChange={handleSettingFormChange}
           resourceId={resourceId}
           resourceType={resourceType}
+          sectionId={sectionId}
           disabled={disabled}
       />
       );
