@@ -44,19 +44,22 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const getPatchPath = (allSections, sectionId) => {
-  if (!sectionId) return '/settings';
-  const sectionsExcluding = allSections.filter(sec => sec.sectionId !== 'general');
-  const ind = sectionsExcluding.findIndex(sec => sec.sectionId === sectionId);
+  if (!sectionId || sectionId === 'general') return '/settings';
+  // if sectionId is defined and its not general we are probably looking up a flow grouping
+  const sectionsExcludingGeneral = allSections.filter(sec => sec.sectionId !== 'general');
+  // general is the first section in allSections
+  const ind = sectionsExcludingGeneral.findIndex(sec => sec.sectionId === sectionId);
 
   return `/flowGroupings/${ind}/settings`;
 };
+const emptyObj = {};
 
 function CustomSettings({ integrationId, sectionId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [formKey, setFormKey] = useState(0);
 
-  const {allSections} = useSelectorMemo(selectors.mkGetAllCustomFormsForAResource, 'integrations', integrationId);
+  const {allSections} = useSelectorMemo(selectors.mkGetAllCustomFormsForAResource, 'integrations', integrationId) || emptyObj;
 
   const settings = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, 'integrations', integrationId, sectionId || 'general')?.settings;
 
@@ -177,14 +180,13 @@ function CustomSettings({ integrationId, sectionId }) {
     </div>
   );
 }
-
 export default function SettingsForm({integrationId: parentIntegrationId, childId}) {
   const integrationId = childId || parentIntegrationId;
 
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
-  const {allSections, hasFlowGroupings} = useSelectorMemo(selectors.mkGetAllCustomFormsForAResource, 'integrations', integrationId);
+  const {allSections, hasFlowGroupings} = useSelectorMemo(selectors.mkGetAllCustomFormsForAResource, 'integrations', integrationId) || emptyObj;
 
   // for integrations without any flowgroupings
   if (!hasFlowGroupings) {
