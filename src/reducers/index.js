@@ -640,9 +640,9 @@ selectors.mkFlowAttributes = () => createSelector(
         const iaFlowSettings = getIAFlowSettings(integration, flow._id);
 
         isLocked = iaFlowSettings?.disableSlider;
-        isRunnable = !(iaFlowSettings?.showRunFlow === false);
+        isRunnable = !iaFlowSettings?.disableRunFlow;
       }
-      o.showRunFlow = isRunnable;
+      o.disableRunFlow = isRunnable;
       o.isFlowEnableLocked = isLocked;
       // allowSchedule
       o.allowSchedule = flowAllowsScheduling(flow, integration, [], isIntegrationV2, flExp);

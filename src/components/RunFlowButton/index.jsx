@@ -189,7 +189,7 @@ export default function RunFlowButton({
   const handleCloseDeltaDialog = useCallback(() => {
     setShowDeltaStartDateDialog(false);
   }, []);
-  const disabled = isNewFlow || !(flowDetails && flowDetails.isRunnable);
+  const disabled = isNewFlow || !flowDetails?.isRunnable || flowDetails?.disableRunFlow;
 
   useEffect(() => {
     const { status, file, error, rawFile } = uploadedFile || {};
@@ -229,10 +229,6 @@ export default function RunFlowButton({
   ]);
   const isDataLoaderFileProcessRequested =
     isDataLoaderFlow && uploadedFile && uploadedFile.status !== 'error';
-
-  if (!flowDetails?.showRunFlow) {
-    return null;
-  }
 
   return (
     <>
