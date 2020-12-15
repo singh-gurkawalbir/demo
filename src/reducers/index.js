@@ -70,14 +70,12 @@ import {
   getAvailablePreviewStages,
   isPreviewPanelAvailable,
 } from '../utils/exportPanel';
-import inferErrorMessages from '../utils/inferErrorMessages';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVerion2 } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare } from '../utils/sort';
-import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
@@ -145,69 +143,7 @@ genSelectors(selectors, subSelectors);
 // additional user defined selectors
 selectors.userState = state => state && state.user;
 
-// #region PUBLIC COMMS SELECTORS
-// Use shallowEquality operator to prevent re-renders.
-// or convert this to re-select since it has no args, it s perfect
-// case for re-select.
-selectors.commsErrors = state => {
-  const commsState = state?.comms?.networkComms;
-
-  if (!commsState) return;
-  const errors = {};
-
-  Object.keys(commsState).forEach(key => {
-    const c = commsState[key];
-
-    if (!c.hidden && c.status === COMM_STATES.ERROR) {
-      errors[key] = inferErrorMessages(c.message);
-    }
-  });
-
-  return errors;
-};
-
-selectors.commsSummary = state => {
-  let isLoading = false;
-  let isRetrying = false;
-  let hasError = false;
-  const commsState = state?.comms?.networkComms;
-
-  if (commsState) {
-    Object.keys(commsState).forEach(key => {
-      const c = commsState[key];
-
-      if (!c.hidden) {
-        if (c.status === COMM_STATES.ERROR) {
-          hasError = true;
-        } else if (c.retryCount > 0) {
-          isRetrying = true;
-        } else if (c.status === COMM_STATES.LOADING && Date.now() - c.timestamp > Number(process.env.NETWORK_THRESHOLD)) {
-          isLoading = true;
-        }
-      }
-    });
-  }
-
-  return { isLoading, isRetrying, hasError };
-};
-
-selectors.commStatusPerPath = (state, path, method) => {
-  const key = commKeyGen(path, method);
-
-  return fromComms.commStatus(state && state.comms, key);
-};
-// #endregion
-
 // #region PUBLIC SESSION SELECTORS
-selectors.clonePreview = (state, resourceType, resourceId) => fromSession.previewTemplate(
-  state && state.session,
-  `${resourceType}-${resourceId}`
-);
-
-selectors.cloneData = (state, resourceType, resourceId) => fromSession.template(
-  state && state.session,
-  `${resourceType}-${resourceId}`
-);
 
 selectors.isSetupComplete = (
   state,
@@ -609,12 +545,6 @@ selectors.makeResourceListSelector = () =>
       selectors.resourceListModified(userState, resourcesState, options)
   );
 
-selectors.iaFlowSettings = (state, integrationId, flowId) => {
-  const integration = selectors.resource(state, 'integrations', integrationId);
-
-  return getIAFlowSettings(integration, flowId);
-};
-
 // TODO: The object returned from this selector needs to be overhauled.
 // It is shared between IA and DIY flows,
 // yet its impossible to know which works for each flow type. For example,
@@ -885,6 +815,7 @@ selectors.userAccessLevelOnConnection = (state, connectionId) => {
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
       USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
     ].includes(permissions.accessLevel)
   ) {
     accessLevelOnConnection = permissions.accessLevel;
@@ -943,7 +874,7 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
             !this._connectorId &&
             (this.netsuite.account) &&
             (!environment || !!this.sandbox === (environment === 'sandbox')) &&
-            (accessLevel === 'owner' || accessLevel === 'manage')
+            ([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE].includes(accessLevel))
           );
         }
 
@@ -2284,6 +2215,7 @@ selectors.userPermissionsOnConnection = (state, connectionId) => {
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
       USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
     ].includes(permissions.accessLevel)
   ) {
     const connection = selectors.resource(state, 'connections', connectionId);
@@ -2360,6 +2292,7 @@ selectors.resourcePermissions = (
         USER_ACCESS_LEVELS.ACCOUNT_OWNER,
         USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
         USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+        USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
       ].includes(permissions.accessLevel)
     ) {
       const value =
@@ -2450,7 +2383,8 @@ selectors.formAccessLevel = (state, integrationId, resource, disabled) => {
 
   if (
     accessLevelIntegration === USER_ACCESS_LEVELS.ACCOUNT_OWNER ||
-    accessLevelIntegration === USER_ACCESS_LEVELS.ACCOUNT_MANAGE
+    accessLevelIntegration === USER_ACCESS_LEVELS.ACCOUNT_MANAGE ||
+    accessLevelIntegration === USER_ACCESS_LEVELS.ACCOUNT_ADMIN
   ) {
     // check integration app is manage or owner then selectively disable fields
     if (isIntegrationApp) return { disableAllFieldsExceptClocked: true };
@@ -2637,6 +2571,7 @@ selectors.mkTiles = () => createSelector(
           USER_ACCESS_LEVELS.ACCOUNT_OWNER,
           USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
           USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+          USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
         ].includes(permissions.accessLevel)
       ) {
         return {
@@ -4277,28 +4212,6 @@ selectors.mkFlowResources = () => createSelector(
   (flows, exports, imports, flowId) => getFlowResources(flows, exports, imports, flowId)
 );
 
-selectors.redirectUrlToResourceListingPage = (
-  state,
-  resourceType,
-  resourceId
-) => {
-  if (resourceType === 'integration') {
-    return getRoutePath(`/integrations/${resourceId}/flows`);
-  }
-
-  if (resourceType === 'flow') {
-    const flow = selectors.resource(state, 'flows', resourceId);
-
-    if (flow) {
-      return getRoutePath(
-        `integrations/${flow._integrationId || 'none'}/flows`
-      );
-    }
-  }
-
-  return getRoutePath(RESOURCE_TYPE_SINGULAR_TO_PLURAL[resourceType]);
-};
-
 selectors.httpAssistantSupportsMappingPreview = (state, importId) => {
   const importResource = selectors.resource(state, 'imports', importId);
   const { _integrationId, _connectionId, http } = importResource;
@@ -4345,10 +4258,78 @@ selectors.mappingPreviewType = (state, importId) => {
   }
 };
 
-selectors.rdbmsConnectionType = (state, connectionId) => {
-  const connection = selectors.resource(state, 'connections', connectionId) || {};
+/*
+* Definition rules are fetched in 2 ways
+* 1. In creation of an export, from FileDefinitions list based on 'definitionId' and 'format'
+* 2. In Editing an existing export, from UserSupportedFileDefinitions based on userDefinitionId
+* TODO @Raghu: Refactor this selector to be more clear
+*/
+selectors.fileDefinitionSampleData = (state, { userDefinitionId, resourceType, options }) => {
+  const { resourcePath, definitionId, format } = options;
+  let template;
 
-  return connection.rdbms && connection.rdbms.type;
+  if (definitionId && format) {
+    template = selectors.fileDefinition(state, definitionId, {
+      format,
+      resourceType,
+    });
+  } else if (userDefinitionId) {
+    // selector to get that resource based on userDefId
+    template = selectors.resource(state, 'filedefinitions', userDefinitionId);
+  }
+
+  if (!template) return {};
+  const { sampleData, ...fileDefinitionRules } = template;
+  // Stringify rules as the editor expects a string
+  let rule;
+  let formattedSampleData;
+
+  if (resourceType === 'imports') {
+    rule = JSON.stringify(fileDefinitionRules, null, 2);
+    formattedSampleData =
+        sampleData &&
+        JSON.stringify(
+          Array.isArray(sampleData) && sampleData.length ? sampleData[0] : {},
+          null,
+          2
+        );
+  } else {
+    rule = JSON.stringify(
+      {
+        resourcePath: resourcePath || '',
+        fileDefinition: fileDefinitionRules,
+      },
+      null,
+      2
+    );
+    formattedSampleData = sampleData;
+  }
+
+  return { sampleData: formattedSampleData, rule };
+};
+
+/**
+ * Supported File types : csv, json, xml, xlsx
+ * Note : Incase of xlsx 'csv' stage is requested as the raw stage contains xlsx format which is not used
+ * Modify this if we need xlsx content any where to show
+ */
+selectors.fileSampleData = (state, { resourceId, resourceType, fileType}) => {
+  const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
+  const { data: rawData } = selectors.getResourceSampleDataWithStatus(
+    state,
+    resourceId,
+    stage,
+  );
+
+  if (!rawData) {
+    const resourceObj = selectors.resource(state, resourceType, resourceId);
+
+    if (resourceObj?.file?.type === fileType) {
+      return resourceObj.sampleData;
+    }
+  }
+
+  return rawData?.body;
 };
 
 selectors.netsuiteAccountHasSuiteScriptIntegrations = (state, connectionId) => {
@@ -4612,7 +4593,6 @@ selectors.suiteScriptFlowSampleData = (state, {ssLinkedConnectionId, integration
 
   return fromSession.suiteScriptFlowSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
 };
-
 selectors.suiteScriptExtracts = createSelector(
   [(state, {ssLinkedConnectionId, integrationId, flowId}) => selectors.suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId}),
     (state, {ssLinkedConnectionId, integrationId, flowId}) => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId})],
@@ -4678,80 +4658,6 @@ selectors.suiteScriptSalesforceMasterRecordTypeInfo = (state, {ssLinkedConnectio
     commMetaPath,
     filterKey: 'salesforce-masterRecordTypeInfo',
   });
-};
-
-/*
-* Definition rules are fetched in 2 ways
-* 1. In creation of an export, from FileDefinitions list based on 'definitionId' and 'format'
-* 2. In Editing an existing export, from UserSupportedFileDefinitions based on userDefinitionId
-* TODO @Raghu: Refactor this selector to be more clear
-*/
-selectors.fileDefinitionSampleData = (state, { userDefinitionId, resourceType, options }) => {
-  const { resourcePath, definitionId, format } = options;
-  let template;
-
-  if (definitionId && format) {
-    template = selectors.fileDefinition(state, definitionId, {
-      format,
-      resourceType,
-    });
-  } else if (userDefinitionId) {
-    // selector to get that resource based on userDefId
-    template = selectors.resource(state, 'filedefinitions', userDefinitionId);
-  }
-
-  if (!template) return {};
-  const { sampleData, ...fileDefinitionRules } = template;
-  // Stringify rules as the editor expects a string
-  let rule;
-  let formattedSampleData;
-
-  if (resourceType === 'imports') {
-    rule = JSON.stringify(fileDefinitionRules, null, 2);
-    formattedSampleData =
-        sampleData &&
-        JSON.stringify(
-          Array.isArray(sampleData) && sampleData.length ? sampleData[0] : {},
-          null,
-          2
-        );
-  } else {
-    rule = JSON.stringify(
-      {
-        resourcePath: resourcePath || '',
-        fileDefinition: fileDefinitionRules,
-      },
-      null,
-      2
-    );
-    formattedSampleData = sampleData;
-  }
-
-  return { sampleData: formattedSampleData, rule };
-};
-
-/**
- * Supported File types : csv, json, xml, xlsx
- * Note : Incase of xlsx 'csv' stage is requested as the raw stage contains xlsx format which is not used
- * Modify this if we need xlsx content any where to show
- */
-selectors.fileSampleData = (state, { resourceId, resourceType, fileType}) => {
-  const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
-  const { data: rawData } = selectors.getResourceSampleDataWithStatus(
-    state,
-    resourceId,
-    stage,
-  );
-
-  if (!rawData) {
-    const resourceObj = selectors.resource(state, resourceType, resourceId);
-
-    if (resourceObj?.file?.type === fileType) {
-      return resourceObj.sampleData;
-    }
-  }
-
-  return rawData?.body;
 };
 selectors.suiteScriptFileExportSampleData = (state, { ssLinkedConnectionId, resourceType, resourceId}) => {
   // const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
@@ -4847,31 +4753,7 @@ selectors.applicationType = (state, resourceType, id) => {
 
   return assistant || adaptorType;
 };
-selectors.lookupProcessorResourceType = (state, resourceId) => {
-  const stagedProcessor = selectors.stagedResource(state, resourceId);
 
-  if (!stagedProcessor || !stagedProcessor.patch) {
-    // TODO: we need a better pattern for logging warnings. We need a common util method
-    // which logs these warning only if the build is dev... if build is prod, these
-    // console.warn/logs should not even be bundled by webpack...
-    // eslint-disable-next-line
-    /*
-     console.warn(
-      'No patch-set available to determine new Page Processor resourceType.'
-    );
-    */
-    return;
-  }
-
-  // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-  const adaptorType = stagedProcessor?.patch?.find(
-    p => p.op === 'replace' && p.path === '/adaptorType'
-  );
-
-  // console.log(`adaptorType-${id}`, adaptorType);
-
-  return adaptorType?.value?.includes('Export') ? 'exports' : 'imports';
-};
 selectors.tradingPartnerConnections = (
   state,
   connectionId,
@@ -4886,24 +4768,6 @@ selectors.tradingPartnerConnections = (
   ));
 };
 
-selectors.mappingImportSampleDataSupported = (state, importId) => {
-  const importResource = selectors.resource(state, 'imports', importId);
-  const {adaptorType} = importResource;
-  const isAssistant =
-  !!importResource.assistant && importResource.assistant !== 'financialforce';
-
-  return isAssistant || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(adaptorType);
-};
-
-selectors.mappingSubRecordAndJSONPath = (state, importId, subRecordMappingId) => {
-  const importResource = selectors.resource(state, 'imports', importId);
-
-  if (subRecordMappingId && ['NetSuiteImport', 'NetSuiteDistributedImport'].includes(importResource.adaptorType)) {
-    return mappingUtil.getSubRecordRecordTypeAndJsonPath(importResource, subRecordMappingId);
-  }
-
-  return emptyObject;
-};
 selectors.mappingGenerates = createSelector([
   (state, importId) => selectors.resource(state, 'imports', importId)?.adaptorType,
   (state, importId, subRecordMappingId) => {
@@ -4936,35 +4800,6 @@ selectors.mappingExtracts = createSelector([
   return emptyArray;
 });
 
-selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
-  if (type === 'generate') {
-    /** generating generate Label */
-    const importResource = selectors.resource(state, 'imports', resourceId);
-    const importConn = selectors.resource(state, 'connections', importResource?._connectionId);
-
-    return `Import field (${mappingUtil.getApplicationName(
-      importResource,
-      importConn
-    )})`;
-  }
-  if (type === 'extract') {
-    /** generating extract Label */
-    const flow = selectors.resource(state, 'flows', flowId);
-
-    if (flow && flow.pageGenerators && flow.pageGenerators.length && flow.pageGenerators[0]._exportId) {
-      const {_exportId} = flow.pageGenerators[0];
-      const exportResource = selectors.resource(state, 'exports', _exportId);
-      const exportConn = selectors.resource(state, 'connections', exportResource?._connectionId);
-
-      return `Export field (${mappingUtil.getApplicationName(
-        exportResource,
-        exportConn
-      )})`;
-    }
-
-    return 'Source record field';
-  }
-};
 selectors.mappingHttpAssistantPreviewData = createSelector([
   state => {
     const mappingPreview = selectors.mapping(state).preview;
@@ -5005,39 +4840,6 @@ selectors.mappingHttpAssistantPreviewData = createSelector([
     data: JSON.stringify(model),
   };
 });
-
-selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
-  const importResource = selectors.resource(state, 'imports', importId);
-  const {adaptorType} = importResource;
-
-  if (!['NetSuiteImport', 'NetSuiteDistributedImport'].includes(adaptorType)) {
-    return;
-  }
-  if (subRecordMappingId) {
-    const { recordType } = mappingUtil.getSubRecordRecordTypeAndJsonPath(
-      importResource,
-      subRecordMappingId
-    );
-
-    return recordType;
-  }
-
-  // give precedence to netsuite_da
-  return importResource.netsuite_da?.recordType || importResource.netsuite?.recordType;
-};
-
-/** returns 1st Page generator for a flow */
-selectors.firstFlowPageGenerator = (state, flowId) => {
-  const flow = selectors.resource(state, 'flows', flowId);
-
-  if (flow?.pageGenerators?.length) {
-    const exportId = flow.pageGenerators[0]._exportId;
-
-    return selectors.resource(state, 'exports', exportId);
-  }
-
-  return emptyObject;
-};
 
 // DO NOT DELETE, might be needed later
 // selectors.sampleRuleForSQLQueryBuilder = createSelector([
@@ -5137,7 +4939,7 @@ selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
   state => state?.data?.resources?.integrations,
   state => state?.data?.resources?.connections,
   (permissions = emptyObject, integrations = emptyArray, connections = emptyArray) => {
-    if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE].includes(permissions.accessLevel)) {
+    if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(permissions.accessLevel)) {
       return connections.map(c => c._id);
     }
     if (permissions.accessLevel === USER_ACCESS_LEVELS.TILE) {
@@ -5160,7 +4962,7 @@ selectors.availableUsersList = (state, integrationId) => {
   const permissions = selectors.userPermissions(state);
   let _users = [];
 
-  if (permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+  if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(permissions.accessLevel)) {
     if (integrationId) {
       _users = selectors.integrationUsersForOwner(state, integrationId);
     } else {
@@ -5170,7 +4972,7 @@ selectors.availableUsersList = (state, integrationId) => {
     _users = selectors.integrationUsers(state, integrationId);
   }
 
-  if (integrationId && _users && _users.length > 0) {
+  if ((integrationId || permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN) && _users && _users.length > 0) {
     const accountOwner = selectors.accountOwner(state);
 
     _users = [
@@ -5262,27 +5064,12 @@ selectors.isFreeFlowResource = (state, flowId) => {
   return isFreeFlow;
 };
 
-selectors.isIAType = (state, flowId) => {
+selectors.isFlowViewMode = (state, integrationId, flowId) => {
   const flow = selectors.resourceData(state,
     'flows',
     flowId
   ).merged;
   const isIAType = isIntegrationApp(flow);
-
-  return isIAType;
-};
-
-selectors.isIntegrationApp = (state, integrationId) => {
-  const integration = selectors.resourceData(state,
-    'integrations',
-    integrationId
-  ).merged;
-
-  return !!(integration && integration._connectorId);
-};
-
-selectors.isFlowViewMode = (state, integrationId, flowId) => {
-  const isIAType = selectors.isIAType(state, flowId);
 
   const isMonitorLevelAccess =
     selectors.isFormAMonitorLevelAccess(state, integrationId);
@@ -5323,27 +5110,6 @@ selectors.shouldShowAddPageProcessor = (state, flowId) => {
 };
 
 // #endregion Flow builder selectors
-
-selectors.hasManageIntegrationAccess = (state, integrationId) => {
-  const isAccountOwner = selectors.userPermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
-
-  if (isAccountOwner) {
-    return true;
-  }
-  const manageIntegrationAccessLevels = [
-    INTEGRATION_ACCESS_LEVELS.OWNER,
-    INTEGRATION_ACCESS_LEVELS.MANAGE,
-  ];
-
-  const userPermissions = selectors.userPermissions(state);
-  const integrationPermissions = userPermissions.integrations;
-
-  if (manageIntegrationAccessLevels.includes(integrationPermissions.all?.accessLevel)) {
-    return true;
-  }
-
-  return manageIntegrationAccessLevels.includes(integrationPermissions[integrationId]?.accessLevel);
-};
 
 selectors.canUserUpgradeToErrMgtTwoDotZero = state => {
   const integrations = selectors.resourceList(state, {
