@@ -95,7 +95,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
                   {plan}{' '}
                 </Typography>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={4} lg={4} xl={3}>
                 <Typography data-test="iaVersion" className={classes.item}>
                   {`Version ${integration.version}`}
                 </Typography>
@@ -103,7 +103,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
                   {`Integration ID ${integrationId}`}
                 </Typography>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={3} lg={3}>
                 <Typography className={classes.item}>{createdText}</Typography>
                 <Typography className={classes.item}>{expiresText}</Typography>
               </Grid>

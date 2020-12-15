@@ -59,6 +59,8 @@ const useStyles = makeStyles(theme => ({
     minHeight: '160px',
     maxHeight: '175px',
     overflowY: 'auto',
+    paddingRight: theme.spacing(2),
+    wordBreak: 'break-word',
   },
   cardAction: {
     position: 'absolute',
