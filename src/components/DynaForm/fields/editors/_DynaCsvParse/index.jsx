@@ -91,6 +91,8 @@ export default function _DynaCsvParse_(props) {
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
+  const editorId = getValidRelativePath(id);
+
   const getInitOptions = useCallback(
     val => {
       if (!('trimSpaces' in val)) {
@@ -189,7 +191,7 @@ export default function _DynaCsvParse_(props) {
   });
 
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(id, 'csvParser', {
+    dispatch(actions._editor.init(editorId, 'csvParser', {
       formKey: parentFormKey,
       flowId,
       resourceId,
@@ -199,8 +201,8 @@ export default function _DynaCsvParse_(props) {
       onSave: handleSave,
     }));
 
-    history.push(`${match.url}/editor/${getValidRelativePath(id)}`);
-  }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url]);
+    history.push(`${match.url}/editor/${editorId}`);
+  }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
 
   return (
     <>

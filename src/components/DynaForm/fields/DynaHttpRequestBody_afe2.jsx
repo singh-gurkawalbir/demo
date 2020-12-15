@@ -43,6 +43,7 @@ export default function _DynaHttpRequestBody_(props) {
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
+  const editorId = getValidRelativePath(id);
 
   const handleSave = useCallback(editorValues => {
     const { rule } = editorValues;
@@ -61,7 +62,7 @@ export default function _DynaHttpRequestBody_(props) {
   }, [arrayIndex, id, onFieldChange, value]);
 
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(id, 'handlebars', {
+    dispatch(actions._editor.init(editorId, 'handlebars', {
       formKey,
       flowId,
       resourceId,
@@ -71,8 +72,8 @@ export default function _DynaHttpRequestBody_(props) {
       onSave: handleSave,
     }));
 
-    history.push(`${match.url}/editor/${getValidRelativePath(id)}`);
-  }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url]);
+    history.push(`${match.url}/editor/${editorId}`);
+  }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
 
   return (
     <Fragment key={`${resourceId}-${id}`}>
