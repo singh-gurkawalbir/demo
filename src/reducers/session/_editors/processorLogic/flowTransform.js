@@ -35,7 +35,6 @@ export default {
     return {
       ...options,
       activeProcessor,
-      insertStubKey: 'transform',
     };
   },
   buildData: sampleData => ({
