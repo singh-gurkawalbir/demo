@@ -1,5 +1,7 @@
 /* eslint-disable no-param-reassign */
 import deepClone from 'lodash/cloneDeep';
+import flatten from 'lodash/flatten';
+import uniqBy from 'lodash/uniqBy';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
@@ -1468,8 +1470,19 @@ selectors.mkIntegrationAppFlowSections = () => {
             flowSections =
             (sections.find(sec => sec.id === store) || {}).sections || [];
           } else {
-            flowSections =
-            (sections.find(sec => sec.mode !== 'install') || {}).sections || [];
+            const allFlowsections = flatten(sections.filter(sec => sec.mode !== 'install').map(sec => sec.sections || []));
+
+            flowSections = allFlowsections.reduce((acc, section) => {
+              const index = acc.findIndex(sec => sec.title === section.title);
+
+              if (index !== -1) {
+                acc[index].flows = uniqBy([...acc[index].flows, ...section.flows], '_id');
+              } else {
+                acc.push(section);
+              }
+
+              return acc;
+            }, []);
           }
         }
       } else {
@@ -1588,7 +1601,7 @@ selectors.makeIntegrationAppSectionFlows = () =>
         supportsMultiStore,
         sections = [],
       } = integration.settings || {};
-      let requiredFlows = [];
+      const requiredFlows = [];
       let sectionFlows;
       let allSections = sections;
 
@@ -1607,21 +1620,16 @@ selectors.makeIntegrationAppSectionFlows = () =>
         }
       }
 
-      const selectedSection =
-        allSections.find(
+      const selectedSections =
+        allSections.filter(
           sec =>
-            getTitleIdFromSection(sec) === section
+            !section || getTitleIdFromSection(sec) === section
         );
 
-      if (!section) {
-        allSections.forEach(sec => {
-          sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
-          requiredFlows.push(...map(sectionFlows, '_id'));
-        });
-      } else if (selectedSection) {
-        sectionFlows = options.excludeHiddenFlows ? selectedSection.flows.filter(f => !f.hidden) : selectedSection.flows;
-        requiredFlows = map(sectionFlows, '_id');
-      }
+      selectedSections.forEach(sec => {
+        sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
+        requiredFlows.push(...map(sectionFlows, '_id'));
+      });
 
       return flows
         .filter(f => f._integrationId === integrationId && requiredFlows.includes(f._id))

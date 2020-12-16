@@ -1,4 +1,4 @@
-import { Divider, Grid, List, ListItem, makeStyles, Typography } from '@material-ui/core';
+import { Grid, List, ListItem, makeStyles } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink, useHistory, useRouteMatch } from 'react-router-dom';
@@ -189,8 +189,8 @@ export default function FlowsPanel({ integrationId, childId }) {
   const filterKey = `${integrationId}-flows`;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
   const flowsFilterConfig = useMemo(() => ({ ...flowFilter, type: 'flows' }), [flowFilter]);
+  const integrationChildren = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
-  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
   const allFlows = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsFilterConfig
@@ -207,16 +207,20 @@ export default function FlowsPanel({ integrationId, childId }) {
   shallowEqual);
 
   const flows = useMemo(
-    () =>
-      allFlows &&
-      allFlows.filter(
-        f =>
-          f._integrationId ===
-          (integrationId === STANDALONE_INTEGRATION.id
-            ? undefined
-            : (childId || integrationId))
-      ),
-    [allFlows, childId, integrationId]
+    () => {
+      const childIntegrationIds = integrationChildren.map(i => i.value);
+
+      return allFlows && allFlows.filter(f => {
+        if (integrationId === STANDALONE_INTEGRATION.id) {
+          return !f._integrationId;
+        } if (childId && (childId !== integrationId)) {
+          return f._integrationId === childId;
+        }
+
+        return childIntegrationIds.includes(f._integrationId);
+      });
+    },
+    [allFlows, childId, integrationChildren, integrationId]
   );
   const {
     data: integrationErrorsMap = {},
@@ -302,20 +306,6 @@ export default function FlowsPanel({ integrationId, childId }) {
   }
   const infoTextFlow =
     'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
-
-  if (isFrameWork2 && childId === integrationId && isIntegrationApp) {
-    return (
-      <div className={classes.root}>
-        <PanelHeader title="Integration flows" />
-        <Divider />
-        <div className={classes.content}>
-          <Typography component="span">
-            Choose a child from the drop-down to view flows.
-          </Typography>
-        </div>
-      </div>
-    );
-  }
 
   const basePath = getBasePath(match);
 

@@ -6,8 +6,7 @@ import {
   Redirect,
   useRouteMatch,
 } from 'react-router-dom';
-import { makeStyles, Grid, List, ListItem, Typography, Divider } from '@material-ui/core';
-import clsx from 'clsx';
+import { makeStyles, Grid, List, ListItem } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
@@ -27,7 +26,6 @@ import MappingDrawer from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import StatusCircle from '../../../../../components/StatusCircle';
-import { getEmptyMessage, isParentViewSelected } from '../../../../../utils/integrationApps';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { getTemplateUrlName } from '../../../../../utils/template';
 import ResponseMappingDrawer from '../../../../../components/ResponseMapping/Drawer';
@@ -304,34 +302,14 @@ const SectionTitle = ({integrationId, storeId, title, titleId}) => {
 export default function FlowsPanel({ storeId, integrationId }) {
   const match = useRouteMatch();
   const classes = useStyles();
-  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
-  const isParentView = isParentViewSelected(integration, storeId);
   const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
 
   // If someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can
   // not hard-code this because different sections exist across IAs.
-  if (match.isExact && flowSections && flowSections.length && !isParentView) {
+  if (match.isExact && flowSections && flowSections.length) {
     return (
       <Redirect push={false} to={`${match.url}/${flowSections[0].titleId}`} />
-    );
-  }
-
-  if (isParentView) {
-    return (
-      <div className={clsx(classes.root, classes.emptyMessageWrapper)}>
-        <div className={classes.container}>
-          <Typography variant="h4">
-            Flows
-          </Typography>
-        </div>
-        <Divider className={classes.divider} />
-        <div className={classes.content}>
-          <span>
-            {getEmptyMessage(integration.settings?.storeLabel, 'view flows')}
-          </span>
-        </div>
-      </div>
     );
   }
 
