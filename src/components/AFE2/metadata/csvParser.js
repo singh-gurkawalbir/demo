@@ -1,6 +1,8 @@
+import React from 'react';
 import DataPanel from '../Editor/panels/Data';
 import ResultPanel from '../Editor/panels/Result';
 import CsvParseRules from '../Editor/panels/CsvParseRules';
+import FileUpload from '../Editor/actions/FileUpload';
 
 export default {
   type: 'csvParser',
@@ -14,7 +16,9 @@ export default {
       Panel: CsvParseRules,
     },
     {
-      title: 'Sample CSV file',
+      title: ({editorId, fieldId = 'a', formKey = 'a'}) => fieldId && formKey
+        ? <FileUpload editorId={editorId} />
+        : 'Sample CSV file',
       area: 'data',
       Panel: DataPanel,
       props: {

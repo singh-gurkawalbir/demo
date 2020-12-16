@@ -31,9 +31,18 @@ export default function Editor({ editorId }) {
     // return a static editor context object.
     // for now, adding fields as they are used so we understand what part of the
     // editor state is needed to render the editor wire-frame.
-    const {editorType, layout, activeProcessor, autoEvaluate, resultMode} = selectors._editor(state, editorId);
+    const e = selectors._editor(state, editorId);
 
-    return {editorType, layout, activeProcessor, autoEvaluate, resultMode};
+    return {
+      editorId,
+      editorType: e.editorType,
+      layout: e.layout,
+      activeProcessor: e.activeProcessor,
+      autoEvaluate: e.autoEvaluate,
+      resultMode: e.resultMode,
+      fieldId: e.fieldId,
+      formKey: e.formKey,
+    };
   }, shallowEqual);
 
   const {editorType, layout} = editorContext;
