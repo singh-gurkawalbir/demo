@@ -142,9 +142,8 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
     );
   }
   const sectionId = match.params?.sectionId;
-  const isMatchingWithSectionId = !!sectionId;
 
-  if (!isMatchingWithSectionId) {
+  if (!sectionId) {
     history.replace(`${match.url}/sections/${MISCELLANEOUS_SECTION_ID}`);
   }
 
@@ -294,8 +293,10 @@ export default function FlowsPanel({ integrationId, childId }) {
       appName,
       flowAttributes,
       integration,
+      showChild: (isIntegrationApp && childId === integrationId),
+      integrationChildren,
       templateName,
-    }), [integrationId, childId, isIntegrationApp, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration, templateName]);
+    }), [integrationId, childId, isIntegrationApp, isUserInErrMgtTwoDotZero, integrationChildren, appName, flowAttributes, integration, templateName]);
 
   if (!flowErrorCountStatus && isUserInErrMgtTwoDotZero) {
     return (
