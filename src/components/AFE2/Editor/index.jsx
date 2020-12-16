@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles, Tab, Tabs } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { selectors } from '../../../reducers';
 import PanelGrid from '../../AFE/PanelGrid';
-import PanelTitle from '../../AFE/PanelTitle';
-import PanelGridItem from '../../AFE/PanelGridItem';
-import ErrorGridItem from './ErrorGridItem';
-import WarningGridItem from './WarningGridItem';
-import ConsoleGridItem from './ConsoleGridItem';
+import ErrorGridItem from './gridItems/ErrorGridItem';
+import WarningGridItem from './gridItems/WarningGridItem';
+import ConsoleGridItem from './gridItems/ConsoleGridItem';
+import SinglePanelGridItem from './gridItems/SinglePanelGridItem';
+import TabbedPanelGridItem from './gridItems/TabbedPanelGridItem';
 import layouts from './layouts';
 import editorMetadata from '../metadata';
 
@@ -21,14 +21,6 @@ function resolveValue(value, editorContext) {
 }
 
 const useStyles = makeStyles(layouts);
-const useTabStyles = makeStyles(theme => ({
-  tabPanel: {
-    height: '100%',
-  },
-  tabs: {
-    backgroundColor: theme.palette.common.white,
-  },
-}));
 
 export default function Editor({ editorId }) {
   const classes = useStyles();
@@ -51,69 +43,25 @@ export default function Editor({ editorId }) {
   const { panels } = editorMetadata[editorType];
   const gridTemplate = classes[resolveValue(layout, editorContext)];
 
-  // console.log(layout, panels);
-  const SinglePanel = ({panel: p}) => (
-    <>
-      <PanelTitle title={resolveValue(p.title, editorContext)} />
-      <p.Panel editorId={editorId} {...resolveValue(p.props, editorContext)} />
-    </>
-  );
-
-  const TabbedPanel = ({panelGroup}) => {
-    const classes = useTabStyles();
-    const [tabValue, setTabValue] = useState(0);
-
-    function handleTabChange(event, newValue) {
-      setTabValue(newValue);
-    }
-
-    const {
-      key: activeKey,
-      Panel: ActivePanel,
-      props: activePanelProps } = panelGroup.panels[tabValue];
-
-    return (
-      <>
-        <Tabs
-          className={classes.tabs}
-          value={tabValue} onChange={handleTabChange}
-          variant="fullWidth"
-          textColor="primary"
-          indicatorColor="primary"
-        >
-          {panelGroup.panels.map((p, i) => (
-            <Tab
-              label={p.name}
-              value={i}
-              id={`tab-${p.key}`} key={p.key}
-              aria-controls={`tabpanel-${p.key}`}
-        />
-          ))}
-        </Tabs>
-
-        <div
-          role="tabpanel"
-          id={`tabpanel-${activeKey}`}
-          aria-labelledby={`tab-${tabValue}`}
-          className={classes.tabPanel}>
-          <ActivePanel
-            editorId={editorId}
-            {...resolveValue(activePanelProps, editorContext)}
-          />
-        </div>
-      </>
-    );
-  };
-
   return (
     <PanelGrid className={gridTemplate}>
-      {resolveValue(panels, editorContext).map(p => (
-        <PanelGridItem key={p.area} gridArea={p.area}>
-          {!p.group
-            ? <SinglePanel panel={p} />
-            : <TabbedPanel panelGroup={p} />}
-        </PanelGridItem>
-      ))}
+      {resolveValue(panels, editorContext).map(p => !p.group
+        ? (
+          <SinglePanelGridItem
+            key={p.area}
+            area={p.area}
+            title={resolveValue(p.title, editorContext)}>
+            <p.Panel editorId={editorId} {...resolveValue(p.props, editorContext)} />
+          </SinglePanelGridItem>
+        )
+        : (
+          <TabbedPanelGridItem
+            editorId={editorId}
+            key={p.area}
+            area={p.area}
+            panelGroup={p} />
+        )
+      )}
 
       <ErrorGridItem editorId={editorId} />
       <WarningGridItem editorId={editorId} />
