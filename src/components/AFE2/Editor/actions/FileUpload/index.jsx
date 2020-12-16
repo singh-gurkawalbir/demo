@@ -37,6 +37,7 @@ const useStyles = makeStyles(theme => ({
 export default function FileUpload({editorId, fileType}) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const { resourceId, resourceType, formKey, fieldId } = useSelector(state => {
     const e = selectors._editor(state, editorId);
 
@@ -64,6 +65,7 @@ export default function FileUpload({editorId, fileType}) {
 
   return (
     <DynaUploadFile
+      disabled={disabled}
       resourceId={resourceId}
       resourceType={resourceType}
       onFieldChange={onFieldChange}

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -49,9 +49,14 @@ const useStyles = makeStyles(theme => ({
 
 export default function CsvParseRules({ editorId }) {
   const classes = useStyles();
-  const editor = useSelector(state => selectors._editor(state, editorId));
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const { result, status, rule = {} } = editor;
+  const rule = useSelector(state => selectors._editorRule(state, editorId));
+  const {result, sampleDataStatus} = useSelector(state => {
+    const {result, sampleDataStatus} = selectors._editor(state, editorId);
+
+    return {result, sampleDataStatus};
+  }, shallowEqual);
+
   const {
     columnDelimiter = '',
     rowDelimiter = '',
@@ -60,7 +65,7 @@ export default function CsvParseRules({ editorId }) {
     multipleRowsPerRecord = false,
     trimSpaces = false,
     rowsToSkip,
-  } = rule;
+  } = rule || {};
 
   const dispatch = useDispatch();
   const patchEditor = (field, value) => {
@@ -71,7 +76,7 @@ export default function CsvParseRules({ editorId }) {
     }
     dispatch(actions._editor.patchRule(editorId, newRule));
   };
-  const showKeyColumnsOptions = status !== 'requested';
+  const showKeyColumnsOptions = sampleDataStatus !== 'requested';
 
   const allColumns = useMemo(() => {
     if (!showKeyColumnsOptions) {
@@ -92,7 +97,7 @@ export default function CsvParseRules({ editorId }) {
     return [{ items: formattedOptions }];
   }, [keyColumns, result, showKeyColumnsOptions]);
 
-  // TODO: Refractor to use dyna form
+  // TODO: Refactor to use dyna form
   return (
     <div className={classes.container}>
       <FormGroup column="true">
