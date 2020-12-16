@@ -194,6 +194,7 @@ export const featuresMap = options => ({
   },
   flowTransform: {
     layout: 'compact',
+    insertStubKey: 'transform',
   },
 });
 

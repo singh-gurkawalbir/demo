@@ -17,7 +17,7 @@ import DynaLookupEditor from './DynaLookupEditor';
 import DynaKeyWithAction from './DynaKeyWithAction';
 import _DynaHttpRequestBody_ from './DynaHttpRequestBody_afe2';
 import DynaEditor from './DynaEditor';
-import DynaCsvParse from './editors/DynaCsvParse';
+import _DynaCsvParse_ from './editors/_DynaCsvParse';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
 import DynaTransformEditor from './editors/DynaTransformEditor';
 import DynaTextFtpPort from './DynaTextFtpPort';
@@ -43,7 +43,7 @@ import DynaAssistantSearchParams from './assistant/DynaAssistantSearchParams';
 import DynaSemiAssistantOperationSelect from './assistant/DynaSemiAssistantOperationSelect';
 import DynaLabelValueElement from './DynaLabelValueElement';
 import DynaWebHookSampleData from './DynaWebHookSampleData';
-import DynaXmlParse from './editors/DynaXmlParse';
+import _DynaXmlParse_ from './editors/_DynaXmlParse';
 import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 import DynaAutoSuggest from './DynaAutoSuggest';
 import DynaGenerateUrl from './DynaGenerateUrl';
@@ -153,9 +153,11 @@ export default {
   importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
   staticMap: DynaStaticMap,
-  csvparse: DynaCsvParse,
+  // csvparse: DynaCsvParse,
+  csvparse: _DynaCsvParse_,
   csvgenerate: DynaCsvGenerate,
-  xmlparse: DynaXmlParse,
+  // xmlparse: DynaXmlParse,
+  xmlparse: _DynaXmlParse_,
   refreshableselect: DynaRefreshableSelect,
   netsuiteapiversion: DynaNetSuiteAPIVersion,
   transformeditor: DynaTransformEditor,

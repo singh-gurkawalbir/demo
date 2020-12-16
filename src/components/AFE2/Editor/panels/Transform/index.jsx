@@ -35,6 +35,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function TransformPanel({ editorId }) {
   const dispatch = useDispatch();
+  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const data = useSelector(state => selectors._editorData(state, editorId));
   const rule = useSelector(state => selectors._editorRule(state, editorId));
   const hasError =
@@ -84,6 +85,7 @@ export default function TransformPanel({ editorId }) {
 
   return (
     <KeyValueComponent
+      disabled={disabled}
       suggestionConfig={suggestionConfig}
       dataTest="transformRule"
       onUpdate={patchEditor}

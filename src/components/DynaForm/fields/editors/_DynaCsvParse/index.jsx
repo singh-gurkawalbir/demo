@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../../actions';
 import FieldHelp from '../../../FieldHelp';
-// import DynaUploadFile from '../../DynaUploadFile';
 import getFormMetadata from '../DynaCsvParse/metadata';
 import DynaForm from '../../..';
 import {useUpdateParentForm} from '../DynaCsvGenerate';
@@ -13,6 +12,7 @@ import { generateNewId } from '../../../../../utils/resource';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useSetSubFormShowValidations from '../../../../../hooks/useSetSubFormShowValidations';
 import { getValidRelativePath } from '../../../../../utils/routePaths';
+import FileDataChange from './FileDataChange';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -29,30 +29,6 @@ const useStyles = makeStyles(theme => ({
   labelWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
-  },
-  fileUploadLabelWrapper: {
-    width: '100%',
-    marginTop: 'auto',
-    marginBottom: 'auto',
-
-  },
-  fileUploadRoot: {
-    width: '100%',
-  },
-  actionContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-
-  },
-  uploadContainer: {
-    justifyContent: 'flex-end',
-    background: 'transparent !important',
-    border: '0px !important',
-    width: 'auto !important',
-    padding: 4,
-  },
-  uploadFileErrorContainer: {
-    marginBottom: 4,
   },
 }));
 
@@ -81,7 +57,6 @@ export default function _DynaCsvParse_(props) {
     resourceId,
     resourceType,
     disabled,
-    // uploadSampleDataFieldName,
     formKey: parentFormKey,
     flowId,
   } = props;
@@ -145,41 +120,6 @@ export default function _DynaCsvParse_(props) {
     // );
   }, [id, onFieldChange, resourceId, resourceType]);
 
-  // todo @dave this title is used for Data panel.
-  // looks like the new editor component would require some changes to support this, pls check
-  // const editorDataTitle = useMemo(
-  //   () => {
-  //     if (uploadSampleDataFieldName) {
-  //       return (
-  //         <DynaUploadFile
-  //           resourceId={resourceId}
-  //           resourceType={resourceType}
-  //           onFieldChange={onFieldChange}
-  //           options="csv"
-  //           color=""
-  //           placeholder="Sample CSV file (that would be parsed)"
-  //           id={uploadSampleDataFieldName}
-  //           persistData
-  //           hideFileName
-  //           variant="text"
-  //           classProps={
-  //             {
-  //               root: classes.fileUploadRoot,
-  //               labelWrapper: classes.fileUploadLabelWrapper,
-  //               uploadFile: classes.uploadContainer,
-  //               actionContainer: classes.actionContainer,
-  //               errorContainer: classes.uploadFileErrorContainer,
-  //             }
-  //           }
-  //         />
-  //       );
-  //     }
-  //   },
-
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   [uploadSampleDataFieldName]
-  // );
-
   useUpdateParentForm(secondaryFormKey, handleFormChange);
   useSetSubFormShowValidations(parentFormKey, secondaryFormKey);
   const formKeyComponent = useFormInitWithPermissions({
@@ -207,6 +147,9 @@ export default function _DynaCsvParse_(props) {
   return (
     <>
       <div className={classes.container}>
+        {/* todo: FileDataChange is a temporary hack until Raghu's changes are
+        done re dispatching of SAMPLEDATA_UPDATED action to update editor sample data */}
+        <FileDataChange editorId={editorId} fileType="csv" />
         <div className={classes.labelWrapper}>
           <FormLabel className={classes.label}>{label}</FormLabel>
           <FieldHelp {...props} />

@@ -1,6 +1,11 @@
 import util from '../../../../utils/json';
 
-function constructFieldLabel(label) {
+/* this util is used to read field label and generate editor title from it
+* eg, label = 'Build HTTP request body', editor title would be same i.e. 'Build HTTP request body'
+* label = 'HTTP body', editor title would be 'Build HTTP body'
+* label = 'Relative URI', editor title would be 'Build relative URI'
+*/
+function _constructEditorTitle(label) {
   if (!label) return label;
   const regexp = /^[A-Z]{2}/;
 
@@ -103,7 +108,7 @@ export default {
       ...options,
       isEditorV2Supported,
       resultMode,
-      editorTitle: constructFieldLabel(fieldState?.label),
+      editorTitle: _constructEditorTitle(fieldState?.label),
       v1Rule,
       v2Rule,
     };
