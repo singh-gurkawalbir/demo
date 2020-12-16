@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 export default function XmlParseRules({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const disabled = useSelector(state => selectors._editor(state, editorId).disabled);
+  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const rule = useSelector(state => selectors._editorRule(state, editorId));
 
   const {
@@ -46,7 +46,7 @@ export default function XmlParseRules({ editorId }) {
     includeNodes = '',
     resourcePath = '',
     excludeNodes = '',
-  } = rule;
+  } = rule || {};
 
   const patchEditor = (field, value) => {
     dispatch(actions._editor.patchRule(editorId, {...rule, [field]: value}));

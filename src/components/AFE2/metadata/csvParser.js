@@ -16,9 +16,7 @@ export default {
       Panel: CsvParseRules,
     },
     {
-      title: ({editorId, fieldId = 'a', formKey = 'a'}) => fieldId && formKey
-        ? <FileUpload editorId={editorId} />
-        : 'Sample CSV file',
+      title: ({editorId}) => <FileUpload editorId={editorId} fileType="csv" />,
       area: 'data',
       Panel: DataPanel,
       props: {

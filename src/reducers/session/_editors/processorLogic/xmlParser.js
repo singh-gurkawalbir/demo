@@ -2,6 +2,28 @@ import { wrapExportFileSampleData } from '../../../../utils/sampleData';
 
 const parseNodes = nodesAsText => nodesAsText?.split('\n');
 
+const getRule = ({resource, fieldState}) => {
+  const { value} = fieldState;
+  const resourcePath = resource?.file?.xml?.resourcePath;
+  const rule = {
+    resourcePath,
+    ...value?.[0]?.rules,
+  };
+
+  return {
+    // eslint-disable-next-line camelcase
+    V0_json: rule.V0_json === true || false,
+    resourcePath: rule.resourcePath,
+    trimSpaces: rule.trimSpaces,
+    stripNewLineChars: rule.stripNewLineChars,
+    attributePrefix: rule.attributePrefix,
+    textNodeName: rule.textNodeName,
+    listNodes: rule.listNodes,
+    includeNodes: rule.includeNodes,
+    excludeNodes: rule.excludeNodes,
+  };
+};
+
 const requestBody = ({ data, rule = {} }) => {
   let options;
 
@@ -45,7 +67,7 @@ const requestBody = ({ data, rule = {} }) => {
 
 const validate = editor => ({
   dataError:
-    (!editor.data || !editor.data.length) && 'Must provide some sample data.',
+    !editor.data?.length && 'Must provide some sample data.',
 });
 
 const processResult = ({ isSuiteScriptData }, result) => {
@@ -61,4 +83,5 @@ export default {
   validate,
   requestBody,
   processResult,
+  getRule,
 };

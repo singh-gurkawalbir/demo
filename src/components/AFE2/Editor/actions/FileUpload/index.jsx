@@ -4,42 +4,37 @@ import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import DynaUploadFile from '../../../../DynaForm/fields/DynaUploadFile';
+import { isFileAdaptor } from '../../../../../utils/resource';
 
+// Refer to DynaForm/fields/DynaUploadFile/FileUploader/jsx for
+// class names.
 const useStyles = makeStyles(theme => ({
-  fileUploadLabelWrapper: {
+  labelWrapper: {
     width: '100%',
     marginTop: 'auto',
     marginBottom: 'auto',
-
-  },
-  fileUploadRoot: {
-    width: '100%',
   },
   actionContainer: {
     display: 'flex',
     flexDirection: 'row',
 
   },
-  uploadContainer: {
+  uploadFile: {
     justifyContent: 'flex-end',
     background: 'transparent !important',
     border: '0px !important',
     width: 'auto !important',
     padding: theme.spacing(0.5),
   },
-  uploadFileErrorContainer: {
+  errorContainer: {
     marginBottom: theme.spacing(0.5),
   },
 }));
 
-// this was a prop passed from metadata, but if i examine
-// every instance, they are all the same... so may as well
-// hard code this.
-const uploadSampleDataFieldName = 'uploadFile';
-
-export default function FileUpload({editorId}) {
+export default function FileUpload({editorId, fileType}) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const { resourceId, resourceType, formKey, fieldId } = useSelector(state => {
     const e = selectors._editor(state, editorId);
 
@@ -50,38 +45,31 @@ export default function FileUpload({editorId}) {
       fieldId: e.fieldId,
     });
   }, shallowEqual);
-
-  // This component should render a simple title if there is no form or fieldId.
-  // for this to be generic though, we probably can not hardcode "CSV". Possibly
-  // this component renders NULL instead? and the upstream code managed the
-  // proper default title?
-  if (!formKey || !fieldId) return 'Sample CSV file';
+  const resource = useSelector(state => selectors.resource(state, resourceType, resourceId));
 
   const onFieldChange = (fieldId, value) => {
     dispatch(actions.form.fieldChange(formKey)(fieldId, value));
   };
 
+  // upload file option is only available for file adaptors (ftp, s3, simple)
+  if (!fieldId || !formKey || resourceType !== 'exports' || !isFileAdaptor(resource)) {
+    return `Sample ${fileType.toUpperCase()} file`;
+  }
+
   return (
     <DynaUploadFile
+      disabled={disabled}
       resourceId={resourceId}
       resourceType={resourceType}
       onFieldChange={onFieldChange}
-      options="csv"
+      options={fileType}
       color=""
-      placeholder="Sample CSV file (that would be parsed)"
-      id={uploadSampleDataFieldName}
+      placeholder={`Sample ${fileType.toUpperCase()} file (that would be parsed)`}
+      id="uploadFile"
       persistData
       hideFileName
       variant="text"
-      classProps={
-        {
-          root: classes.fileUploadRoot,
-          labelWrapper: classes.fileUploadLabelWrapper,
-          uploadFile: classes.uploadContainer,
-          actionContainer: classes.actionContainer,
-          errorContainer: classes.uploadFileErrorContainer,
-        }
-      }
+      classProps={classes}
     />
   );
 }
