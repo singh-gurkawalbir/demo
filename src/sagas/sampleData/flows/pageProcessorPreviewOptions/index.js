@@ -9,20 +9,20 @@ import {
   getLastExportDateTime,
   isUIDataExpectedForResource,
   getBlobResourceSampleData,
-} from '../../../utils/flowData';
-import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
-import requestFileAdaptorSampleData from '../sampleDataGenerator/fileAdaptorSampleData';
+} from '../../../../utils/flowData';
+import requestRealTimeMetadata from '../../sampleDataGenerator/realTimeSampleData';
+import requestFileAdaptorSampleData from '../../sampleDataGenerator/fileAdaptorSampleData';
 import {
   isBlobTypeResource,
   isRestCsvMediaTypeExport,
   isRealTimeOrDistributedResource,
-} from '../../../utils/resource';
-import { selectors } from '../../../reducers';
-import { isIntegrationApp } from '../../../utils/flows';
-import { EMPTY_RAW_DATA } from '../../../utils/constants';
+} from '../../../../utils/resource';
+import { selectors } from '../../../../reducers';
+import { isIntegrationApp } from '../../../../utils/flows';
+import { EMPTY_RAW_DATA } from '../../../../utils/constants';
 
-function* getUIDataForResource({ resource, connection, flow, refresh }) {
-  const { adaptorType, type, sampleData } = resource;
+export function* _getUIDataForResource({ resource, connection, flow, refresh }) {
+  const { adaptorType, type, sampleData } = resource || {};
   const isDataLoader = type === 'simple';
 
   if (isBlobTypeResource(resource)) return getBlobResourceSampleData();
@@ -63,16 +63,16 @@ export default function* getPreviewOptionsForResource({ resource, flow, refresh,
   const connection = yield select(
     selectors.resource,
     'connections',
-    resource && resource._connectionId
+    resource?._connectionId
   );
 
   const uiData = isUIDataExpectedForResource(resource, connection)
-    ? yield call(getUIDataForResource, { resource, connection, flow, refresh })
+    ? yield call(_getUIDataForResource, { resource, connection, flow, refresh })
     : undefined;
   const postData = {
     lastExportDateTime: getLastExportDateTime(),
   };
-  const { type, rawData } = resource;
+  const { type, rawData } = resource || {};
 
   // check for raw data on resource
   if (runOffline && rawData && rawData !== EMPTY_RAW_DATA) {
