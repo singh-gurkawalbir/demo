@@ -2,7 +2,7 @@ import React from 'react';
 import DataPanel from '../Editor/panels/Data';
 import ResultPanel from '../Editor/panels/Result';
 import CsvParseRules from '../Editor/panels/CsvParseRules';
-import FileUpload from '../Editor/actions/FileUpload';
+import FileDataPanelTitle from '../Editor/actions/FileDataPanelTitle';
 
 export default {
   type: 'csvParser',
@@ -16,12 +16,9 @@ export default {
       Panel: CsvParseRules,
     },
     {
-      title: ({editorId}) => <FileUpload editorId={editorId} fileType="csv" />,
+      title: ({editorId}) => <FileDataPanelTitle editorId={editorId} fileType="csv" />,
       area: 'data',
       Panel: DataPanel,
-      props: {
-        // mode: 'text',
-      },
     },
     {
       title: 'Parsed output',
