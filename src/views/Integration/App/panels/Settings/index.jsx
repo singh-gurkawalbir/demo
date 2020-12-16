@@ -7,6 +7,7 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router-dom';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { List, ListItem, Divider } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
@@ -19,11 +20,9 @@ import { getEmptyMessage, isParentViewSelected } from '../../../../../utils/inte
 
 const useStyles = makeStyles(theme => ({
   root: {
-    // padding: theme.spacing(0),
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     backgroundColor: theme.palette.common.white,
-
   },
   container: {
     display: 'flex',
@@ -50,6 +49,9 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
     marginTop: '10px',
     marginBottom: '10px',
+  },
+  emptyMessageWrapper: {
+    padding: theme.spacing(1, 2),
   },
 }));
 
@@ -104,7 +106,7 @@ export default function SettingsPanel({
     // no section provided.
     if (availableSections.length === 0 || isParentView) {
       return (
-        <div className={classes.root}>
+        <div className={clsx(classes.root, classes.emptyMessageWrapper)}>
           <div className={classes.container}>
             <Typography variant="h4">
               Settings

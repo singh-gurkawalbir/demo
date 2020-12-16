@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
   subNav: {
     minWidth: 200,
     maxWidth: 240,
-    paddingTop: theme.spacing(1),
+    paddingTop: theme.spacing(2),
     borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
   },
   divider: {
