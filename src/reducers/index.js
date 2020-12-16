@@ -863,9 +863,10 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
     ignoreEnvironmentFilter: true,
     filter: {
       $where() {
-        if (connection.assistant) {
+        if (connection.assistant || connection.rdbms?.type) {
           return (
             this.assistant === connection.assistant &&
+            this.rdbms?.type === connection.rdbms?.type &&
             !this._connectorId &&
             (!environment || !!this.sandbox === (environment === 'sandbox'))
           );
