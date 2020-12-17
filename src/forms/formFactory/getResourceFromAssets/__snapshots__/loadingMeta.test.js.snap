@@ -146,6 +146,24 @@ Object {
         "copyToClipboard": true,
         "fieldId": "http.auth.oauth.callbackURL",
       },
+      "http.auth.oauth.scope": Object {
+        "fieldId": "http.auth.oauth.scope",
+        "scopes": Array [
+          "https://www.googleapis.com/auth/drive",
+          "https://www.googleapis.com/auth/drive.readonly",
+          "https://www.googleapis.com/auth/drive.appfolder",
+          "https://www.googleapis.com/auth/drive.file",
+          "https://www.googleapis.com/auth/drive.install",
+          "https://www.googleapis.com/auth/drive.metadata",
+          "https://www.googleapis.com/auth/drive.metadata.readonly",
+          "https://www.googleapis.com/auth/drive.photos.readonly",
+          "https://www.googleapis.com/auth/drive.scripts",
+          "https://www.googleapis.com/auth/drive.appdata",
+          "https://www.googleapis.com/auth/drive.apps.readonly",
+          "https://www.googleapis.com/auth/drive.activity",
+          "https://www.googleapis.com/auth/drive.activity.readonly",
+        ],
+      },
       "httpAdvanced": Object {
         "formId": "httpAdvanced",
       },
@@ -173,6 +191,7 @@ Object {
               "fields": Array [
                 "http.auth.oauth.callbackURL",
                 "http._iClientId",
+                "http.auth.oauth.scope",
               ],
               "label": "Configure your client id and secret",
             },

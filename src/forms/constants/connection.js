@@ -217,5 +217,6 @@ export default {
     'slack',
     'myobadvanced',
     'lexbizz',
+    'googledrive',
   ],
 };
