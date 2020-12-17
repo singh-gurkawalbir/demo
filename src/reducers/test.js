@@ -4421,11 +4421,17 @@ describe('integrationApp Settings reducers', () => {
           _id: '5d9f70b98a71fc911a4068bd',
           _integrationId: 'integrationId',
           name: '5d9f70b98a71fc911a4068bd',
+          childId: 'fb5fb65e',
+          childName: 'BILLTECH',
+          id: '5d9f70b98a71fc911a4068bd',
         },
         {
           _id: '5d9f71628a71fc911a4068d9',
           _integrationId: 'integrationId',
           name: '5d9f71628a71fc911a4068d9',
+          childId: 'dd67a407',
+          childName: 'HSBC',
+          id: '5d9f71628a71fc911a4068d9',
         },
       ]);
     });

@@ -1,7 +1,5 @@
 /* eslint-disable no-param-reassign */
 import deepClone from 'lodash/cloneDeep';
-import flatten from 'lodash/flatten';
-import uniqBy from 'lodash/uniqBy';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
@@ -1470,19 +1468,20 @@ selectors.mkIntegrationAppFlowSections = () => {
             flowSections =
             (sections.find(sec => sec.id === store) || {}).sections || [];
           } else {
-            const allFlowsections = flatten(sections.filter(sec => sec.mode !== 'install').map(sec => sec.sections || []));
+            const allFlowsections = sections
+              .filter(sec => sec.mode !== 'install')
+              .map(sec => sec.sections || [])
+              .flat();
 
-            flowSections = allFlowsections.reduce((acc, section) => {
-              const index = acc.findIndex(sec => sec.title === section.title);
+            allFlowsections.forEach(section => {
+              const index = flowSections.findIndex(sec => sec.title === section.title);
 
-              if (index !== -1) {
-                acc[index].flows = uniqBy([...acc[index].flows, ...section.flows], '_id');
+              if (index === -1) {
+                flowSections.push({...section});
               } else {
-                acc.push(section);
+                flowSections[index].flows = [...flowSections[index].flows, ...section.flows];
               }
-
-              return acc;
-            }, []);
+            });
           }
         }
       } else {
@@ -1615,11 +1614,10 @@ selectors.makeIntegrationAppSectionFlows = () =>
           // If no storeId is passed, return all sections from all stores
           allSections = [];
           sections.forEach(sec => {
-            allSections.push(...sec.sections);
+            allSections.push(...(sec.sections.map(s => ({...s, childId: sec.id, childName: sec.title}))));
           });
         }
       }
-
       const selectedSections =
         allSections.filter(
           sec =>
@@ -1628,14 +1626,15 @@ selectors.makeIntegrationAppSectionFlows = () =>
 
       selectedSections.forEach(sec => {
         sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
-        requiredFlows.push(...map(sectionFlows, '_id'));
+        requiredFlows.push(...sectionFlows.map(f => ({id: f._id, childId: sec.childId, childName: sec.childName})));
       });
+      const requiredFlowIds = requiredFlows.map(f => f.id);
 
       return flows
-        .filter(f => f._integrationId === integrationId && requiredFlows.includes(f._id))
+        .filter(f => f._integrationId === integrationId && requiredFlowIds.includes(f._id))
         .sort(
-          (a, b) => requiredFlows.indexOf(a._id) - requiredFlows.indexOf(b._id)
-        );
+          (a, b) => requiredFlowIds.indexOf(a._id) - requiredFlowIds.indexOf(b._id)
+        ).map((f, i) => (supportsMultiStore && !childId) ? ({...f, ...requiredFlows[i]}) : f);
     }
   );
 selectors.integrationAppSectionFlows = selectors.makeIntegrationAppSectionFlows();

@@ -40,11 +40,11 @@ export default {
         orderBy: 'name',
       },
       ...(actionProps.showChild ? [{
-        heading: 'Child',
+        heading: actionProps.childHeader || 'Child',
         value: function ChildName(r, actionProps) {
           const {integrationChildren = []} = actionProps;
 
-          return integrationChildren.find(i => i.value === r._integrationId)?.label || '';
+          return r.childName || integrationChildren.find(i => i.value === r._integrationId)?.label || '';
         },
         orderBy: '_integrationId',
       }] : []),

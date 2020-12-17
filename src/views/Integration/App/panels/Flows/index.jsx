@@ -27,7 +27,6 @@ import ErrorsListDrawer from '../../../common/ErrorsList';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import StatusCircle from '../../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import { getTemplateUrlName } from '../../../../../utils/template';
 import ResponseMappingDrawer from '../../../../../components/ResponseMapping/Drawer';
 
 const useStyles = makeStyles(theme => ({
@@ -186,12 +185,6 @@ function FlowList({ integrationId, storeId }) {
   const section = flowSections.find(s => s.titleId === sectionId);
   const filterKey = `${integrationId}-flows`;
   const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
-  const templateName = useSelector(state => {
-    if (!integration || !integration._templateId) return null;
-    const t = selectors.resource(state, 'marketplacetemplates', integration._templateId);
-
-    return getTemplateUrlName(t && t.applications);
-  });
   const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
   const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration);
   const actionProps = useMemo(() => ({
@@ -199,11 +192,12 @@ function FlowList({ integrationId, storeId }) {
     storeId,
     resourceType: 'flows',
     isUserInErrMgtTwoDotZero,
+    showChild: (integration?.settings?.supportsMultiStore && !storeId),
     appName,
+    childHeader: integration?.settings?.storeLabel,
     flowAttributes,
     integration,
-    templateName,
-  }), [storeId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration, templateName]);
+  }), [storeId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration]);
 
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
