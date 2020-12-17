@@ -328,7 +328,9 @@ export function* requestEditorSampleData({
 
   if (!editor) return;
 
-  const {editorType, flowId, resourceId, resourceType, fieldId, isEditorV2Supported, formKey, stage} = editor;
+  const {editorType, flowId, resourceId, resourceType, fieldId, showAFEToggle, formKey, stage} = editor;
+  // for some fields we dont show the toggle but only v2 data
+  const showOnlyV2Data = yield select(selectors.showOnlyV2Editor, id);
 
   const isPageGenerator = yield select(
     selectors.isPageGenerator,
@@ -345,6 +347,7 @@ export function* requestEditorSampleData({
   });
   let sampleData;
 
+  // no /getContext call for FB actions yet
   if (stage === 'outputFilter' || stage === 'transform') {
     yield call(requestSampleData, {
       flowId,
@@ -362,6 +365,7 @@ export function* requestEditorSampleData({
     return {data};
   }
 
+  // for csv and xml parsers, simply get the file sample data
   if (editorType === 'csvParser' || editorType === 'xmlParser') {
     const fileType = editorType === 'csvParser' ? 'csv' : 'xml';
 
@@ -370,7 +374,7 @@ export function* requestEditorSampleData({
     return { data: fileData};
   }
 
-  if (isPageGenerator && isEditorV2Supported) {
+  if (isPageGenerator && showAFEToggle) {
     yield call(requestExportSampleData, { resourceId, resourceType, values: formValues });
     const parsedData = yield select(
       selectors.getResourceSampleDataWithStatus,
@@ -411,14 +415,16 @@ export function* requestEditorSampleData({
   let _sampleData = null;
   let templateVersion;
 
-  if (!isEditorV2Supported) {
+  // dont make /getContext call only when afe toggle is not supported and
+  // editor doesnt need to show only v2 data
+  if (!showAFEToggle && !showOnlyV2Data) {
     _sampleData = sampleData ? {
       data: sampleData,
     } : undefined;
   } else {
     const body = {
       sampleData: sampleData || { myField: 'sample' },
-      templateVersion: requestedTemplateVersion,
+      templateVersion: showOnlyV2Data ? 2 : requestedTemplateVersion,
     };
 
     body[resourceType === 'imports' ? 'import' : 'export'] = resource;
@@ -460,20 +466,25 @@ export function* requestEditorSampleData({
     }
   }
 
-  const { data } = yield select(selectors.sampleDataWrapper, {
-    sampleData: {
-      data: _sampleData,
-      templateVersion,
-      status: 'received',
-    },
-    flowId,
-    resourceId,
-    resourceType,
-    fieldType: fieldId,
-    stage,
-  });
+  // dont wrap with context for csv generator
+  if (editorType !== 'csvGenerator') {
+    const { data } = yield select(selectors.sampleDataWrapper, {
+      sampleData: {
+        data: _sampleData,
+        templateVersion,
+        status: 'received',
+      },
+      flowId,
+      resourceId,
+      resourceType,
+      fieldType: fieldId,
+      stage,
+    });
 
-  return { data, templateVersion};
+    return { data, templateVersion};
+  }
+
+  return { data: _sampleData, templateVersion};
 }
 
 export function* initSampleData({ id }) {
@@ -529,7 +540,7 @@ export function* initEditor({ id, editorType, options = {} }) {
 
   if (init) {
     // for now we need all below props for handlebars init only
-    if (editorType === 'handlebars') {
+    if (editorType === 'handlebars' || editorType === 'sql') {
       const { formKey, resourceId, resourceType, flowId} = options;
       const formState = yield select(selectors.formState, formKey);
       const { value: formValues } = formState || {};
@@ -542,7 +553,7 @@ export function* initEditor({ id, editorType, options = {} }) {
       const connection = yield select(selectors.resource, 'connections', connectionId);
       const isPageGenerator = yield select(selectors.isPageGenerator, flowId, resourceId, resourceType);
 
-      formattedOptions = init({id, options: formattedOptions, resource, fieldState, connection, isPageGenerator});
+      formattedOptions = init({id, options: formattedOptions, resource, formValues, fieldState, connection, isPageGenerator});
     } else {
       formattedOptions = init(formattedOptions);
     }

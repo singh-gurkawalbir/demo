@@ -117,7 +117,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DynaXmlParse({
+export default function _DynaXmlParse_({
   id,
   value,
   onFieldChange,
@@ -143,6 +143,7 @@ export default function DynaXmlParse({
   const options = useMemo(() => getInitOptions(value), [getInitOptions, value]);
   const [form, setForm] = useState(getForm(options, resourceId));
 
+  // below logic would need to move to data-layer as part of tracker IO-17578
   useEffect(() => {
     // corrupted export without parsers object (possibly created in Ampersand). Set the default strategy as 'Automatic'
     if (!isNewId(resourceId) && !options.V0_json && options.V0_json !== false) {

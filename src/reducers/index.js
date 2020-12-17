@@ -2905,6 +2905,15 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enable
   ].includes(resource.adaptorType);
 };
 
+// this selector returns true if the field/editor supports only AFE2.0 data
+selectors.showOnlyV2Editor = (state, editorId) => {
+  const {editorType} = fromSession._editor(state.session, editorId);
+
+  if (editorType === 'csvGenerator') return true;
+
+  return false;
+};
+
 selectors.resourceFormField = (state, resourceType, resourceId, id) => {
   const data = selectors.resourceData(state, resourceType, resourceId);
 

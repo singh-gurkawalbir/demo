@@ -7,6 +7,7 @@ import filter from './filter';
 import javascript from './javascript';
 import transform from './transform';
 import flowTransform from './flowTransform';
+import csvGenerator from './csvGenerator';
 
 const map = {
   csvParser,
@@ -18,6 +19,7 @@ const map = {
   javascript,
   transform,
   flowTransform,
+  csvGenerator,
 };
 export default map;
 
