@@ -4,37 +4,34 @@ import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import DynaUploadFile from '../../../../DynaForm/fields/DynaUploadFile';
-import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import {isFileAdaptor} from '../../../../../utils/resource';
+import { isFileAdaptor } from '../../../../../utils/resource';
 
+// Refer to DynaForm/fields/DynaUploadFile/FileUploader/jsx for
+// class names.
 const useStyles = makeStyles(theme => ({
-  fileUploadLabelWrapper: {
+  labelWrapper: {
     width: '100%',
     marginTop: 'auto',
     marginBottom: 'auto',
-
-  },
-  fileUploadRoot: {
-    width: '100%',
   },
   actionContainer: {
     display: 'flex',
     flexDirection: 'row',
 
   },
-  uploadContainer: {
+  uploadFile: {
     justifyContent: 'flex-end',
     background: 'transparent !important',
     border: '0px !important',
     width: 'auto !important',
     padding: theme.spacing(0.5),
   },
-  uploadFileErrorContainer: {
+  errorContainer: {
     marginBottom: theme.spacing(0.5),
   },
 }));
 
-export default function FileUpload({editorId, fileType}) {
+export default function FileDataPanelTitle({editorId, fileType}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
@@ -48,18 +45,14 @@ export default function FileUpload({editorId, fileType}) {
       fieldId: e.fieldId,
     });
   }, shallowEqual);
-  const { merged: resourceData = {} } = useSelectorMemo(
-    selectors.makeResourceDataSelector,
-    resourceType,
-    resourceId
-  );
+  const resource = useSelector(state => selectors.resource(state, resourceType, resourceId));
 
   const onFieldChange = (fieldId, value) => {
     dispatch(actions.form.fieldChange(formKey)(fieldId, value));
   };
 
   // upload file option is only available for file adaptors (ftp, s3, simple)
-  if (!fieldId || !formKey || resourceType !== 'exports' || !isFileAdaptor(resourceData)) {
+  if (!fieldId || !formKey || resourceType !== 'exports' || !isFileAdaptor(resource)) {
     return `Sample ${fileType.toUpperCase()} file`;
   }
 
@@ -76,15 +69,7 @@ export default function FileUpload({editorId, fileType}) {
       persistData
       hideFileName
       variant="text"
-      classProps={
-        {
-          root: classes.fileUploadRoot,
-          labelWrapper: classes.fileUploadLabelWrapper,
-          uploadFile: classes.uploadContainer,
-          actionContainer: classes.actionContainer,
-          errorContainer: classes.uploadFileErrorContainer,
-        }
-      }
+      classProps={classes}
     />
   );
 }

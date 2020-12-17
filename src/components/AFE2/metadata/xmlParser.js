@@ -2,7 +2,7 @@ import React from 'react';
 import DataPanel from '../Editor/panels/Data';
 import ResultPanel from '../Editor/panels/Result';
 import XmlParseRules from '../Editor/panels/XmlParseRules';
-import FileUpload from '../Editor/actions/FileUpload';
+import FileDataPanelTitle from '../Editor/actions/FileDataPanelTitle';
 
 export default {
   type: 'xmlParser',
@@ -16,7 +16,7 @@ export default {
       Panel: XmlParseRules,
     },
     {
-      title: ({editorId}) => <FileUpload editorId={editorId} fileType="xml" />,
+      title: ({editorId}) => <FileDataPanelTitle editorId={editorId} fileType="xml" />,
       area: 'data',
       Panel: DataPanel,
       props: {
