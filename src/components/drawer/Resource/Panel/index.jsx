@@ -77,6 +77,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2),
     display: 'flex',
     alignItems: 'center',
+    marginBottom: theme.spacing(0.5),
   },
   guideLinkIcon: {
     marginRight: theme.spacing(0.5),
