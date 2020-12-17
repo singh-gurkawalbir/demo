@@ -9,6 +9,7 @@ import AddIcon from '../../../../../components/icons/AddIcon';
 import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
 import IconTextButton from '../../../../../components/IconTextButton';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
+import KeywordSearch from '../../../../../components/KeywordSearch';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
 import flowTableMeta from '../../../../../components/ResourceTable/flows/metadata';
@@ -28,6 +29,9 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+  },
+  actions: {
+    display: 'flex',
   },
   errorStatus: {
     justifyContent: 'center',
@@ -179,6 +183,12 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
     </Grid>
   );
 };
+const defaultFilter = {
+  take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
+  searchBy: [
+    'name',
+  ],
+};
 export default function FlowsPanel({ integrationId, childId }) {
   const isStandalone = integrationId === 'none';
   const classes = useStyles();
@@ -324,30 +334,36 @@ export default function FlowsPanel({ integrationId, childId }) {
       <QueuedJobsDrawer />
 
       <PanelHeader title={title} infoText={infoTextFlow}>
-        {canCreate && !isIntegrationApp && (
+        <div className={classes.actions}>
+          <KeywordSearch
+            filterKey={filterKey}
+            defaultFilter={defaultFilter}
+        />
+          {canCreate && !isIntegrationApp && (
           <IconTextButton
             component={Link}
             to={`${basePath}/flowBuilder/new`}
             data-test="createFlow">
             <AddIcon /> Create flow
           </IconTextButton>
-        )}
-        {canAttach && !isStandalone && !isIntegrationApp && (
+          )}
+          {canAttach && !isStandalone && !isIntegrationApp && (
           <IconTextButton
             onClick={() => setShowDialog(true)}
             data-test="attachFlow">
             <AttachIcon /> Attach flow
           </IconTextButton>
-        )}
-        {/* check if this condition is correct */}
-        {canEdit && !isIntegrationApp && (
+          )}
+          {/* check if this condition is correct */}
+          {canEdit && !isIntegrationApp && (
           <IconTextButton
             component={Link}
             to={`${basePath}/dataLoader/new`}
             data-test="loadData">
             <AddIcon /> Load data
           </IconTextButton>
-        )}
+          )}
+        </div>
       </PanelHeader>
 
       <LoadResources required resources="flows, exports">

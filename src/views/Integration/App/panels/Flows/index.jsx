@@ -28,12 +28,16 @@ import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/
 import StatusCircle from '../../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import ResponseMappingDrawer from '../../../../../components/ResponseMapping/Drawer';
+import KeywordSearch from '../../../../../components/KeywordSearch';
 
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+  },
+  action: {
+    display: 'flex',
   },
   container: {
     display: 'flex',
@@ -171,19 +175,28 @@ export const IAFormStateManager = props => {
     </>
   );
 };
-const integrationAppSectionFlowsOptions = { excludeHiddenFlows: true};
+const defaultFilter = {
+  take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
+  searchBy: [
+    'name',
+  ],
+};
 
 function FlowList({ integrationId, storeId }) {
   const match = useRouteMatch();
+  const classes = useStyles();
   const { sectionId } = match.params;
   const dispatch = useDispatch();
-  const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, storeId, integrationAppSectionFlowsOptions);
+  const filterKey = `${integrationId}-flows`;
+  const flowFilter = useSelector(state => selectors.filter(state, filterKey));
+  const flowsFilterConfig = useMemo(() => ({ ...flowFilter, excludeHiddenFlows: true }), [flowFilter]);
+
+  const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, storeId, flowsFilterConfig);
   const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
   const section = flowSections.find(s => s.titleId === sectionId);
-  const filterKey = `${integrationId}-flows`;
   const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
   const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration);
@@ -247,7 +260,14 @@ function FlowList({ integrationId, storeId }) {
         sectionId={sectionId}
         // flowId={flowId}
       />
-      <PanelHeader title={`${section?.title} flows`} />
+      <PanelHeader title={`${section?.title} flows`} >
+        <div className={classes.action}>
+          <KeywordSearch
+            filterKey={filterKey}
+            defaultFilter={defaultFilter}
+        />
+        </div>
+      </PanelHeader>
       <CeligoTable
         data={flows}
         filterKey={filterKey}

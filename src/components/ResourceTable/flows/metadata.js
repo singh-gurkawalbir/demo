@@ -40,7 +40,7 @@ export default {
         orderBy: 'name',
       },
       ...(actionProps.showChild ? [{
-        heading: actionProps.childHeader || 'Child',
+        heading: actionProps.childHeader || 'App',
         value: function ChildName(r, actionProps) {
           const {integrationChildren = []} = actionProps;
 
