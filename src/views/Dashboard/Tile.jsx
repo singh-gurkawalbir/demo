@@ -23,11 +23,11 @@ import Manage from '../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
 import ConnectionDownIcon from '../../components/icons/unLinkedIcon';
-import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
+import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS, USER_ACCESS_LEVELS } from '../../utils/constants';
 import { tileStatus, isTileStatusConnectionDown, dragTileConfig, dropTileConfig } from './util';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
-import { getIntegrationAppUrlName } from '../../utils/integrationApps';
+import { getIntegrationAppUrlName, isIntegrationAppVerion2 } from '../../utils/integrationApps';
 import { getTemplateUrlName } from '../../utils/template';
 import TrialExpireNotification from '../../components/HomePageCard/TrialExpireNotification';
 import { useSelectorMemo } from '../../hooks';
@@ -114,6 +114,11 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  // const defaultChildId = useSelector(state =>
+  //   selectors.defaultStoreId(state, tile._integrationId)
+  // );
+  const isIntegrationV2 = isIntegrationAppVerion2(integration, true);
+
   const templateName = useSelector(state => {
     if (integration && integration._templateId) {
       const template = selectors.resource(
@@ -156,9 +161,32 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
     urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
   }
+  const remainingDays = date =>
+    Math.ceil((moment(date) - moment()) / 1000 / 60 / 60 / 24);
+  const licenses = useSelector(state =>
+    selectors.licenses(state)
+  );
+
+  const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
+  const expiresInDays = license && remainingDays(license.expires);
+  let licenseMessageContent = '';
+  let expired = false;
+  const resumable = license?.resumable && [INTEGRATION_ACCESS_LEVELS.MONITOR, USER_ACCESS_LEVELS].includes(accessLevel);
+
+  if (resumable) {
+    licenseMessageContent = `Your subscription was renewed on ${moment(license.expires).format('MMM Do, YYYY')}. Click Reactivate to continue.`;
+  } else if (expiresInDays <= 0) {
+    expired = true;
+    licenseMessageContent = `Your license expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your license`;
+  } else if (expiresInDays > 0 && expiresInDays <= 30) {
+    licenseMessageContent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
+  }
 
   const handleConnectionDownStatusClick = useCallback(event => {
     event.stopPropagation();
+    if (expired) {
+      return;
+    }
     if (tile._connectorId) {
       history.push(
         getRoutePath(
@@ -172,15 +200,13 @@ function Tile({ tile, history, onMove, onDrop, index }) {
         )
       );
     }
-  }, [
-    history,
-    integrationAppTileName,
-    tile._connectorId,
-    tile._integrationId,
-  ]);
+  }, [expired, history, integrationAppTileName, tile._connectorId, tile._integrationId]);
 
   const handleStatusClick = useCallback(
     event => {
+      if (expired) {
+        return;
+      }
       if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         event.stopPropagation();
         if (tile._connectorId) {
@@ -217,49 +243,28 @@ function Tile({ tile, history, onMove, onDrop, index }) {
         }
       }
     },
-    [
-      dispatch,
-      history,
-      isUserInErrMgtTwoDotZero,
-      integrationAppTileName,
-      status.variant,
-      tile._connectorId,
-      tile._integrationId,
-      tile.status,
-      isCloned,
-    ]
+    [expired, tile.status, tile._connectorId, tile._integrationId, isUserInErrMgtTwoDotZero, history, isCloned, integrationAppTileName, dispatch, status.variant]
   );
 
   const handleUsersClick = useCallback(event => {
+    if (expired) {
+      return;
+    }
     event.stopPropagation();
     history.push(getRoutePath(urlToIntegrationUsers));
-  }, [history, urlToIntegrationUsers]);
+  }, [expired, history, urlToIntegrationUsers]);
 
   const handleTileClick = useCallback(
     event => {
+      if (expired) {
+        return;
+      }
       event.stopPropagation();
 
       history.push(getRoutePath(urlToIntegrationSettings));
     },
-    [history, urlToIntegrationSettings]
+    [expired, history, urlToIntegrationSettings]
   );
-  const remainingDays = date =>
-    Math.ceil((moment(date) - moment()) / 1000 / 60 / 60 / 24);
-  const licenses = useSelector(state =>
-    selectors.licenses(state)
-  );
-
-  const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
-  const expiresInDays = license && remainingDays(license.expires);
-  let licenseMessageContent = '';
-  let expired = false;
-
-  if (expiresInDays <= 0) {
-    expired = true;
-    licenseMessageContent = `Your license expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your license`;
-  } else if (expiresInDays > 0 && expiresInDays <= 30) {
-    licenseMessageContent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
-  }
 
   // #region Drag&Drop related
   const ref = useRef(null);
@@ -365,7 +370,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
           <TrialExpireNotification
             content={licenseMessageContent} expired={expired} connectorId={tile._connectorId}
             licenseId={license._id}
-            single />
+            isIntegrationV2={isIntegrationV2} integrationId={tile._integrationId}
+            integrationAppTileName={integrationAppTileName} resumable={resumable} accessLevel={accessLevel} />
           )
         }
       </HomePageCardContainer>

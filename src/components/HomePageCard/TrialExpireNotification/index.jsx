@@ -2,12 +2,17 @@ import React, {useCallback, useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 import ButtonGroup from '../../ButtonGroup';
 import WarningIcon from '../../icons/WarningIcon';
 import actions from '../../../actions';
+import getRoutePath from '../../../utils/routePaths';
+import { INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../../utils/constants';
+import useConfirmDialog from '../../ConfirmDialog';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   trialExpireWrapper: {
@@ -63,16 +68,51 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function TrialExpireNotification({ content, single, expired, connectorId, licenseId}) {
+function TrialExpireNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel}) {
   const classes = useStyles();
+  const history = useHistory();
   const dispatch = useDispatch();
+  const { confirmDialog } = useConfirmDialog();
+  const [enquesnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
+  const single = isIntegrationV2 || !expired;
 
-  const onClickRenewButton = useCallback(event => {
+  const onClickRenewOrReactivateButton = useCallback(event => {
     event.stopPropagation();
     setUpgradeRequested(true);
-    dispatch(actions.user.org.accounts.requestUpdate('connectorRenewal', connectorId, licenseId));
-  }, [dispatch, connectorId, licenseId]);
+    if (resumable) {
+      dispatch(actions.integrationApp.license.resume(integrationId));
+    } else {
+      dispatch(actions.user.org.accounts.requestUpdate('connectorRenewal', connectorId, licenseId));
+    }
+  }, [connectorId, dispatch, integrationId, licenseId, resumable]);
+  const handleUninstall = useCallback(event => {
+    event.stopPropagation();
+    if (![INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel)) {
+      enquesnackbar({ message: 'Contact your account owner to uninstall this integration app.' });
+    } else {
+      confirmDialog({
+        title: 'Confirm uninstall',
+        message: 'Are you sure you want to uninstall?',
+        buttons: [
+          {
+            label: 'Uninstall',
+            onClick: () => {
+              history.push(
+                getRoutePath(
+                  `integrationapps/${integrationAppTileName}/${integrationId}/uninstall`
+                )
+              );
+            },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
+          },
+        ],
+      });
+    }
+  }, [accessLevel, confirmDialog, enquesnackbar, history, integrationAppTileName, integrationId]);
 
   return (
     <div className={classes.trialExpireWrapper}>
@@ -85,21 +125,22 @@ function TrialExpireNotification({ content, single, expired, connectorId, licens
       <div className={clsx(classes.footer, {[classes.footerSingleBtn]: single})}>
         {single ? (
           <Button
-            disabled={upgradeRequested} onClick={onClickRenewButton} data-test="Renew" variant="outlined"
+            disabled={upgradeRequested} onClick={onClickRenewOrReactivateButton} data-test="Renew" variant="outlined"
             color="primary">
-            Renew
+            {resumable ? 'Reactivate' : 'Renew'}
           </Button>
-        )
-          : (
-            <ButtonGroup>
-              <Button data-test="uninstall" variant="outlined" color="primary">
-                Upgrade
-              </Button>
-              <Button data-test="contactSales" variant="text" color="primary">
-                Uninstall
-              </Button>
-            </ButtonGroup>
-          )}
+        ) : (
+          <ButtonGroup>
+            <Button
+              disabled={upgradeRequested} onClick={onClickRenewOrReactivateButton} data-test="Renew" variant="outlined"
+              color="primary">
+              Renew
+            </Button>
+            <Button data-test="uninstall" variant="text" color="primary" onClick={handleUninstall}>
+              Uninstall
+            </Button>
+          </ButtonGroup>
+        )}
       </div>
       <div />
     </div>
