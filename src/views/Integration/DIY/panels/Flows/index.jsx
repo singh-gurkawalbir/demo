@@ -197,10 +197,24 @@ export default function FlowsPanel({ integrationId, childId }) {
   const [showDialog, setShowDialog] = useState(false);
   const filterKey = `${integrationId}-flows`;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
-  const flowsFilterConfig = useMemo(() => ({ ...flowFilter, type: 'flows' }), [flowFilter]);
   const integrationChildren = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
+  const flowsFilterConfig = useMemo(() => ({ ...flowFilter,
+    type: 'flows',
+    filter: {
+      $where() {
+        const childIntegrationIds = integrationChildren.map(i => i.value);
+
+        // eslint-disable-next-line react/no-this-in-sfc
+        if (integrationId === STANDALONE_INTEGRATION.id) return !this._integrationId;
+        // eslint-disable-next-line react/no-this-in-sfc
+        if (childId && childId !== integrationId) return this._integrationId === childId;
+
+        // eslint-disable-next-line react/no-this-in-sfc
+        return childIntegrationIds.includes(this._integrationId);
+      },
+    } }), [childId, flowFilter, integrationChildren, integrationId]);
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
-  const allFlows = useSelectorMemo(
+  const flows = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsFilterConfig
   ).resources;
@@ -214,23 +228,6 @@ export default function FlowsPanel({ integrationId, childId }) {
     };
   },
   shallowEqual);
-
-  const flows = useMemo(
-    () => {
-      const childIntegrationIds = integrationChildren.map(i => i.value);
-
-      return allFlows && allFlows.filter(f => {
-        if (integrationId === STANDALONE_INTEGRATION.id) {
-          return !f._integrationId;
-        } if (childId && (childId !== integrationId)) {
-          return f._integrationId === childId;
-        }
-
-        return childIntegrationIds.includes(f._integrationId);
-      });
-    },
-    [allFlows, childId, integrationChildren, integrationId]
-  );
   const {
     data: integrationErrorsMap = {},
     status: flowErrorCountStatus,
