@@ -1,12 +1,15 @@
 // import clsx from 'clsx';
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Input } from '@material-ui/core';
+import { Input, InputLabel } from '@material-ui/core';
 import shortid from 'shortid';
 import TrashIcon from '../../../../../icons/TrashIcon';
 import ActionButton from '../../../../../ActionButton';
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    marginTop: theme.spacing(1),
+  },
   input: {
     backgroundColor: theme.palette.background.paper,
     marginBottom: theme.spacing(0.5),
@@ -68,8 +71,8 @@ export default function TextFieldList({ label, disabled, value, onChange}) {
   };
 
   return (
-    <>
-      <Typography>{label}</Typography>
+    <div className={classes.root}>
+      <InputLabel>{label}</InputLabel>
       {rows.map(({key, value}, index) => (
         <div className={classes.rowContainer} key={key}>
           <Input
@@ -92,6 +95,6 @@ export default function TextFieldList({ label, disabled, value, onChange}) {
           </ActionButton>
         </div>
       ))}
-    </>
+    </div>
   );
 }
