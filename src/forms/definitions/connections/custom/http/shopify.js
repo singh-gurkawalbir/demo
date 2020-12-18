@@ -182,7 +182,7 @@ export default {
           items: [
             { label: '2020-07', value: '2020-07' },
             { label: '2020-10', value: '2020-10' },
-            { label: '2020-01', value: '2021-01' },
+            { label: '2021-01', value: '2021-01' },
           ],
         },
       ],
