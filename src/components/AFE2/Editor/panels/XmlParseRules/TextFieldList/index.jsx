@@ -38,10 +38,11 @@ export default function TextFieldList({ label, disabled, value, onChange}) {
   const classes = useStyles();
   const [rows, setRows] = useState(getRowsFromValues(value));
 
-  const handleDelete = key => () => {
+  const handleDelete = key => {
     const newRows = [...rows];
     const index = rows.findIndex(r => r.key === key);
 
+    console.log(index, rows[index]);
     if (rows[index]) {
       newRows.splice(index, 1);
       setRows(addEmptyLastRowIfNotExist(newRows));
