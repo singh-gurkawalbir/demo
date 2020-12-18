@@ -1,7 +1,7 @@
 import isEqual from 'lodash/isEqual';
 import xmlParser from './xmlParser';
 import csvParser from './csvParser';
-// import csvDataGenerator from './csvDataGenerator';
+import csvGenerator from './csvGenerator';
 import transform from './transform';
 import handlebars from './handlebars';
 import javascript from './javascript';
@@ -41,6 +41,7 @@ const logicMap = {
   responseTransform,
   databaseMapping,
   flowTransform,
+  csvGenerator,
 };
 
 function getLogic(editor) {
@@ -168,6 +169,10 @@ export const featuresMap = options => ({
     layout: 'compact',
   },
   csvParser: {
+    layout: 'compact',
+    autoEvaluate: true,
+  },
+  csvGenerator: {
     layout: 'compact',
     autoEvaluate: true,
   },

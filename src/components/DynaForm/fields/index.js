@@ -76,7 +76,7 @@ import DynaSalesforceLookup from './DynaSalesforceLookup';
 import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
 import DynaTimestampFileName from './DynaTimestampFileName';
 import DynaMode from './DynaMode';
-import DynaCsvGenerate from './editors/DynaCsvGenerate';
+import _DynaCsvGenerate_ from './editors/_DynaCsvGenerate';
 import DynaFileKeyColumn from './DynaFileKeyColumn';
 import DynaRadioGroupForResetFields from './radiogroup/DynaRadioGroupForResetFields';
 import DynaTextWithFlowContext from './text/DynaTextWithFlowContext';
@@ -155,7 +155,8 @@ export default {
   staticMap: DynaStaticMap,
   // csvparse: DynaCsvParse,
   csvparse: _DynaCsvParse_,
-  csvgenerate: DynaCsvGenerate,
+  // csvgenerate: DynaCsvGenerate,
+  csvgenerate: _DynaCsvGenerate_,
   // xmlparse: DynaXmlParse,
   xmlparse: _DynaXmlParse_,
   refreshableselect: DynaRefreshableSelect,

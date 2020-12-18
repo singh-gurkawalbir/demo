@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */ // V0_json is a schema field. cant change.
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { makeStyles, Button, FormLabel } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
@@ -99,7 +99,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DynaXmlParse({
+export default function _DynaXmlParse_({
   id,
   value,
   onFieldChange,
@@ -114,8 +114,10 @@ export default function DynaXmlParse({
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
+  const secondaryFormKey = useRef(generateNewId());
   const editorId = getValidRelativePath(id);
   const [remountKey, setRemountKey] = useState(1);
+
   const resourcePath = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
   const getInitOptions = useCallback(
@@ -125,6 +127,7 @@ export default function DynaXmlParse({
   const options = useMemo(() => getInitOptions(value), [getInitOptions, value]);
   const [form, setForm] = useState(getForm(options, resourceId));
 
+  // below logic would need to move to data-layer as part of tracker IO-17578
   useEffect(() => {
     // corrupted export without parsers object (possibly created in Ampersand). Set the default strategy as 'Automatic'
     if (!isNewId(resourceId) && !options.V0_json && options.V0_json !== false) {
@@ -173,12 +176,10 @@ export default function DynaXmlParse({
     [id, onFieldChange]
   );
 
-  const [secondaryFormKey] = useState(generateNewId());
-
-  useUpdateParentForm(secondaryFormKey, handleFormChange);
-  useSetSubFormShowValidations(parentFormKey, secondaryFormKey);
+  useUpdateParentForm(secondaryFormKey.current, handleFormChange);
+  useSetSubFormShowValidations(parentFormKey, secondaryFormKey.current);
   const formKeyComponent = useFormInitWithPermissions({
-    formKey: secondaryFormKey,
+    formKey: secondaryFormKey.current,
     remount: remountKey,
     optionsHandler: form?.optionsHandler,
     disabled,

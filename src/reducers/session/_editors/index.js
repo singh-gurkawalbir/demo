@@ -37,6 +37,7 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.CHANGE_LAYOUT: {
+        if (!draft[id]) break;
         draft[id].layout = newLayout;
         break;
       }
@@ -50,6 +51,7 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.SAMPLEDATA.RECEIVED: {
+        if (!draft[id]) break;
         const buildData = processorLogic.buildData(draft[id].editorType);
 
         if (buildData) {
@@ -66,12 +68,14 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.SAMPLEDATA.FAILED: {
+        if (!draft[id]) break;
         draft[id].sampleDataStatus = 'error';
         draft[id].initError = sampleDataError;
         break;
       }
 
       case actionTypes._EDITOR.TOGGLE_VERSION: {
+        if (!draft[id]) break;
         draft[id].sampleDataStatus = 'requested';
         draft[id].dataVersion = version;
         draft[id].result = '';
@@ -84,6 +88,7 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW: {
+        if (!draft[id]) break;
         // TODO: change evaluate to preview
         draft[id].autoEvaluate = autoPreview ?? !draft[id].autoEvaluate;
         if (draft[id].autoEvaluate) {
@@ -93,6 +98,7 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.PATCH.RULE: {
+        if (!draft[id]) break;
         const ap = draft[id].activeProcessor;
         const draftRule = ap ? draft[id].rule[ap] : draft[id].rule;
         const shouldReplace =
@@ -125,6 +131,7 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.PATCH.DATA: {
+        if (!draft[id]) break;
         // Object.assign(draft[id].data, deepClone(dataPatch));
         const mode = draft[id].activeProcessor;
 
@@ -142,12 +149,14 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.PATCH.FEATURES: {
+        if (!draft[id]) break;
         Object.assign(draft[id], featuresPatch);
         draft[id].lastChange = Date.now();
         break;
       }
 
       case actionTypes._EDITOR.PREVIEW.RESPONSE: {
+        if (!draft[id]) break;
         draft[id].result = result;
         draft[id].previewStatus = 'received';
         delete draft[id].error;
@@ -157,12 +166,14 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.VALIDATE_FAILURE: {
+        if (!draft[id]) break;
         draft[id].violations = violations;
         draft[id].previewStatus = 'error';
         break;
       }
 
       case actionTypes._EDITOR.PREVIEW.FAILED: {
+        if (!draft[id]) break;
         draft[id].error = error?.errorMessage;
         draft[id].errorLine = error?.errorLine;
         draft[id].previewStatus = 'error';
@@ -170,16 +181,19 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.SAVE.REQUEST: {
+        if (!draft[id]) break;
         draft[id].saveStatus = 'requested';
         break;
       }
 
       case actionTypes._EDITOR.SAVE.FAILED: {
+        if (!draft[id]) break;
         draft[id].saveStatus = 'failed';
         break;
       }
 
       case actionTypes._EDITOR.SAVE.COMPLETE: {
+        if (!draft[id]) break;
         const editor = draft[id];
 
         editor.saveStatus = 'success';

@@ -19,7 +19,7 @@ const toggleEditorOptions = [
 export default function ToggleAFEButton({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const isEditorV2Supported = useSelector(state => selectors._editor(state, editorId).isEditorV2Supported);
+  const showAFEToggle = useSelector(state => selectors._editor(state, editorId).editorSupportsV1V2data);
   const editorVersion = useSelector(state => selectors._editorDataVersion(state, editorId));
   const saveInProgress = useSelector(state => {
     const {saveStatus} = selectors._editor(state, editorId);
@@ -34,7 +34,7 @@ export default function ToggleAFEButton({ editorId }) {
     [dispatch, editorId]
   );
 
-  if (!isEditorV2Supported) return null;
+  if (!showAFEToggle) return null;
 
   return (
     <>
