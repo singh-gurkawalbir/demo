@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, FormLabel } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
@@ -32,19 +32,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const getParserValue = ({
-  columnDelimiter,
-  rowDelimiter,
-  hasHeaderRow,
-  keyColumns,
-  rowsToSkip,
-  trimSpaces,
-}) => ({
-  columnDelimiter,
-  rowDelimiter,
-  hasHeaderRow,
-  keyColumns,
-  trimSpaces,
+// multipleRowsPerRecord is not saved on form doc
+const getParserValue = ({rowsToSkip, multipleRowsPerRecord, ...rest}) => ({
+  ...rest,
   rowsToSkip: Number.isInteger(rowsToSkip) ? rowsToSkip : 0,
 });
 
@@ -62,7 +52,7 @@ export default function _DynaCsvParse_(props) {
   } = props;
   const classes = useStyles();
   const [remountKey, setRemountKey] = useState(1);
-  const [secondaryFormKey] = useState(generateNewId());
+  const secondaryFormKey = useRef(generateNewId());
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
@@ -120,10 +110,10 @@ export default function _DynaCsvParse_(props) {
     // );
   }, [id, onFieldChange, resourceId, resourceType]);
 
-  useUpdateParentForm(secondaryFormKey, handleFormChange);
-  useSetSubFormShowValidations(parentFormKey, secondaryFormKey);
+  useUpdateParentForm(secondaryFormKey.current, handleFormChange);
+  useSetSubFormShowValidations(parentFormKey, secondaryFormKey.current);
   const formKeyComponent = useFormInitWithPermissions({
-    formKey: secondaryFormKey,
+    formKey: secondaryFormKey.current,
     remount: remountKey,
     optionsHandler: form?.optionsHandler,
     disabled,

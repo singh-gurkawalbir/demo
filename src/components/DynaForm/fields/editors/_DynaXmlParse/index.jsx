@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */ // V0_json is a schema field. cant change.
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { makeStyles, Button, FormLabel } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
@@ -114,8 +114,10 @@ export default function _DynaXmlParse_({
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
+  const secondaryFormKey = useRef(generateNewId());
   const editorId = getValidRelativePath(id);
   const [remountKey, setRemountKey] = useState(1);
+
   const resourcePath = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
   const getInitOptions = useCallback(
@@ -174,12 +176,10 @@ export default function _DynaXmlParse_({
     [id, onFieldChange]
   );
 
-  const [secondaryFormKey] = useState(generateNewId());
-
-  useUpdateParentForm(secondaryFormKey, handleFormChange);
-  useSetSubFormShowValidations(parentFormKey, secondaryFormKey);
+  useUpdateParentForm(secondaryFormKey.current, handleFormChange);
+  useSetSubFormShowValidations(parentFormKey, secondaryFormKey.current);
   const formKeyComponent = useFormInitWithPermissions({
-    formKey: secondaryFormKey,
+    formKey: secondaryFormKey.current,
     remount: remountKey,
     optionsHandler: form?.optionsHandler,
     disabled,

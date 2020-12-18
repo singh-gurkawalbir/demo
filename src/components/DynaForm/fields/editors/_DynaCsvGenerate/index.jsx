@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, FormLabel } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
@@ -30,25 +30,13 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
   },
 }));
-const getParserValue = ({
-  includeHeader,
-  columnDelimiter,
-  rowDelimiter,
-  replaceNewlineWithSpace,
-  replaceTabWithSpace,
-  truncateLastRowDelimiter,
-  wrapWithQuotes,
-  customHeaderRows,
-}) => ({
-  includeHeader,
-  columnDelimiter,
-  rowDelimiter,
-  replaceNewlineWithSpace,
-  replaceTabWithSpace,
-  truncateLastRowDelimiter,
-  wrapWithQuotes,
+
+// resourceId and resourceType are not saved on form doc
+const getParserValue = ({customHeaderRows, resourceId, resourceType, ...rest}) => ({
+  ...rest,
   customHeaderRows: customHeaderRows?.split('\n').filter(val => val !== ''),
 });
+
 export const useUpdateParentForm = (secondaryFormKey, handleFormChange) => {
   const { value: secondaryFormValue, fields, isValid} = useFormContext(secondaryFormKey);
 
@@ -79,6 +67,7 @@ export default function _DynaCsvGenerate_(props) {
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
+  const secondaryFormKey = useRef(generateNewId());
   const editorId = getValidRelativePath(id);
 
   const isHttpImport = useSelector(state => {
@@ -125,12 +114,10 @@ export default function _DynaCsvGenerate_(props) {
     onFieldChange(id, parsedVal);
   }, [id, isHttpImport, onFieldChange]);
 
-  const [secondaryFormKey] = useState(generateNewId());
-
-  useUpdateParentForm(secondaryFormKey, handleFormChange);
-  useSetSubFormShowValidations(parentFormKey, secondaryFormKey);
+  useUpdateParentForm(secondaryFormKey.current, handleFormChange);
+  useSetSubFormShowValidations(parentFormKey, secondaryFormKey.current);
   const formKeyComponent = useFormInitWithPermissions({
-    formKey: secondaryFormKey,
+    formKey: secondaryFormKey.current,
     remount: remountKey,
     optionsHandler: form?.optionsHandler,
     disabled,

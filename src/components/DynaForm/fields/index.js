@@ -10,7 +10,7 @@ import DynaSelectApplication from './DynaSelectApplication';
 import DynaFileTypeSelect from './select/DynaFileTypeSelect';
 import DynaText from './DynaText';
 import DynaCheckbox from './checkbox/DynaCheckbox';
-import DynaRelativeUri from './DynaRelativeUri';
+import _DynaRelativeUri_ from './DynaRelativeUri_afe2';
 import DynaKeyValue from './DynaKeyValue';
 import DynaToggleSelectToText from './select/DynaToggleSelectToText';
 import DynaLookupEditor from './DynaLookupEditor';
@@ -70,13 +70,13 @@ import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier from './DynaNetSuiteQualifier';
 import DynaSalesforceQualifier from './DynaSalesforceQualifier';
 import DynaQuery from './DynaQuery';
-import DynaSqlQuery from './DynaSqlQuery';
+import _DynaSqlQuery_ from './DynaSqlQuery_afe2';
 import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
 import DynaSalesforceLookup from './DynaSalesforceLookup';
 import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
 import DynaTimestampFileName from './DynaTimestampFileName';
 import DynaMode from './DynaMode';
-import DynaCsvGenerate from './editors/DynaCsvGenerate';
+import _DynaCsvGenerate_ from './editors/_DynaCsvGenerate';
 import DynaFileKeyColumn from './DynaFileKeyColumn';
 import DynaRadioGroupForResetFields from './radiogroup/DynaRadioGroupForResetFields';
 import DynaTextWithFlowContext from './text/DynaTextWithFlowContext';
@@ -96,9 +96,9 @@ import DynaNetsuiteExportType from './DynaNetsuiteExportType';
 import SuiteScript from './SuiteScript';
 import DynaExportSelect from './DynaExportSelect';
 import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
-import DynaDataURITemplate from './DynaDataURITemplate';
-import DynaConcurrencyIdLockTemplate from './DynaConcurrencyIdLockTemplate';
-import DynaNameWithEditor from './DynaNameWithEditor';
+import _DynaDataURITemplate_ from './DynaDataURITemplate_afe2';
+import _DynaConcurrencyIdLockTemplate_ from './DynaConcurrencyIdLockTemplate_afe2';
+// import DynaNameWithEditor from './DynaNameWithEditor';
 import DynaSelectConditionalLookup from './DynaSelectConditionalLookup';
 import DynaURI from './DynaURI';
 import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
@@ -146,7 +146,8 @@ export default {
   filetypeselect: DynaFileTypeSelect,
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
-  relativeuri: DynaRelativeUri,
+  // relativeuri: DynaRelativeUri,
+  relativeuri: _DynaRelativeUri_,
   uri: DynaURI,
   // httprequestbody: DynaHttpRequestBody,
   httprequestbody: _DynaHttpRequestBody_,
@@ -155,7 +156,8 @@ export default {
   staticMap: DynaStaticMap,
   // csvparse: DynaCsvParse,
   csvparse: _DynaCsvParse_,
-  csvgenerate: DynaCsvGenerate,
+  // csvgenerate: DynaCsvGenerate,
+  csvgenerate: _DynaCsvGenerate_,
   // xmlparse: DynaXmlParse,
   xmlparse: _DynaXmlParse_,
   refreshableselect: DynaRefreshableSelect,
@@ -214,7 +216,8 @@ export default {
   replaceconnection: DynaReplaceConnection,
   netsuitequalifier: DynaNetSuiteQualifier,
   query: DynaQuery,
-  sqlquery: DynaSqlQuery,
+  // sqlquery: DynaSqlQuery,
+  sqlquery: _DynaSqlQuery_,
   salesforcelookupfilters: DynaSalesforceLookupFilters,
   salesforcelookup: DynaSalesforceLookup,
   timestampfilename: DynaTimestampFileName,
@@ -239,10 +242,13 @@ export default {
   netsuitedefaultvalue: DynaNetSuiteDefaultValue,
   ...SuiteScript,
   exportSelect: DynaExportSelect,
-  datauritemplate: DynaDataURITemplate,
-  concurrencyidlocktemplate: DynaConcurrencyIdLockTemplate,
+  // datauritemplate: DynaDataURITemplate,
+  datauritemplate: _DynaDataURITemplate_,
+  // concurrencyidlocktemplate: DynaConcurrencyIdLockTemplate,
+  concurrencyidlocktemplate: _DynaConcurrencyIdLockTemplate_,
   textwithflowsuggestion: DynaTextWithFlowSuggestion,
-  namewitheditor: DynaNameWithEditor,
+  // namewitheditor: DynaNameWithEditor,
+  namewitheditor: _DynaConcurrencyIdLockTemplate_,
   selectconditionallookup: DynaSelectConditionalLookup,
   csvhasheaderrow: DynaCsvHasHeaderRow,
   selectwithinput: DynaSelectWithInput,

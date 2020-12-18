@@ -328,9 +328,9 @@ export function* requestEditorSampleData({
 
   if (!editor) return;
 
-  const {editorType, flowId, resourceId, resourceType, fieldId, showAFEToggle, formKey, stage} = editor;
-  // for some fields we dont show the toggle but only v2 data
-  const showOnlyV2Data = yield select(selectors.showOnlyV2Editor, id);
+  const {editorType, flowId, resourceId, resourceType, fieldId, editorSupportsV1V2data, formKey, stage} = editor;
+  // for some fields only v2 data is supported (not v1)
+  const editorSupportsOnlyV2Data = yield select(selectors.editorSupportsOnlyV2Data, id);
 
   const isPageGenerator = yield select(
     selectors.isPageGenerator,
@@ -374,7 +374,7 @@ export function* requestEditorSampleData({
     return { data: fileData};
   }
 
-  if (isPageGenerator && showAFEToggle) {
+  if (isPageGenerator && editorSupportsV1V2data) {
     yield call(requestExportSampleData, { resourceId, resourceType, values: formValues });
     const parsedData = yield select(
       selectors.getResourceSampleDataWithStatus,
@@ -415,16 +415,15 @@ export function* requestEditorSampleData({
   let _sampleData = null;
   let templateVersion;
 
-  // dont make /getContext call only when afe toggle is not supported and
-  // editor doesnt need to show only v2 data
-  if (!showAFEToggle && !showOnlyV2Data) {
+  // dont make /getContext call when v2 data is not supported
+  if (!editorSupportsV1V2data && !editorSupportsOnlyV2Data) {
     _sampleData = sampleData ? {
       data: sampleData,
     } : undefined;
   } else {
     const body = {
       sampleData: sampleData || { myField: 'sample' },
-      templateVersion: showOnlyV2Data ? 2 : requestedTemplateVersion,
+      templateVersion: editorSupportsOnlyV2Data ? 2 : requestedTemplateVersion,
     };
 
     body[resourceType === 'imports' ? 'import' : 'export'] = resource;

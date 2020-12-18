@@ -18,7 +18,7 @@ function _constructEditorTitle(label) {
 
   return `Build ${label[0].toLowerCase()}${label.slice(1)}`;
 }
-function _showAFEToggle({resource, fieldId, connection, isPageGenerator}) {
+function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator}) {
   if (fieldId === '_body' || fieldId === '_relativeURI') return false;
 
   // for below fields,
@@ -85,11 +85,11 @@ export default {
     const {options, resource, fieldState, connection, isPageGenerator} = props;
     const {rule, fieldId} = options;
 
-    const showAFEToggle = _showAFEToggle({resource, fieldId, connection, isPageGenerator});
+    const editorSupportsV1V2data = _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator});
     let v1Rule;
     let v2Rule;
 
-    if (showAFEToggle) {
+    if (editorSupportsV1V2data) {
       v1Rule = rule;
       v2Rule = rule;
     }
@@ -106,7 +106,7 @@ export default {
 
     return {
       ...options,
-      showAFEToggle,
+      editorSupportsV1V2data,
       resultMode,
       editorTitle: _constructEditorTitle(fieldState?.label),
       v1Rule,
