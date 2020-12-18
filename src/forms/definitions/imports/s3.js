@@ -77,6 +77,10 @@ export default {
       delete newValues['/blobKeyPath'];
     }
 
+    if (!newValues['/file/encoding']) {
+      newValues['/file/encoding'] = undefined;
+    }
+
     delete newValues['/file/compressFiles'];
 
     return {

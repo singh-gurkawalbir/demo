@@ -1475,8 +1475,20 @@ selectors.mkIntegrationAppFlowSections = () => {
             flowSections =
             (sections.find(sec => sec.id === store) || {}).sections || [];
           } else {
-            flowSections =
-            (sections.find(sec => sec.mode !== 'install') || {}).sections || [];
+            const allFlowsections = sections
+              .filter(sec => sec.mode !== 'install')
+              .map(sec => sec.sections || [])
+              .flat();
+
+            allFlowsections.forEach(section => {
+              const index = flowSections.findIndex(sec => sec.title === section.title);
+
+              if (index === -1) {
+                flowSections.push({...section});
+              } else {
+                flowSections[index].flows = [...flowSections[index].flows, ...section.flows];
+              }
+            });
           }
         }
       } else {
@@ -1591,11 +1603,12 @@ selectors.makeIntegrationAppSectionFlows = () =>
       if (!integration) {
         return emptyArray;
       }
+      const {searchBy, keyword} = options;
       const {
         supportsMultiStore,
         sections = [],
       } = integration.settings || {};
-      let requiredFlows = [];
+      const requiredFlows = [];
       let sectionFlows;
       let allSections = sections;
 
@@ -1609,32 +1622,37 @@ selectors.makeIntegrationAppSectionFlows = () =>
           // If no storeId is passed, return all sections from all stores
           allSections = [];
           sections.forEach(sec => {
-            allSections.push(...sec.sections);
+            allSections.push(...(sec.sections.map(s => ({...s, childId: sec.id, childName: sec.title}))));
           });
         }
       }
-
-      const selectedSection =
-        allSections.find(
+      const selectedSections =
+        allSections.filter(
           sec =>
-            getTitleIdFromSection(sec) === section
+            !section || getTitleIdFromSection(sec) === section
         );
 
-      if (!section) {
-        allSections.forEach(sec => {
-          sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
-          requiredFlows.push(...map(sectionFlows, '_id'));
-        });
-      } else if (selectedSection) {
-        sectionFlows = options.excludeHiddenFlows ? selectedSection.flows.filter(f => !f.hidden) : selectedSection.flows;
-        requiredFlows = map(sectionFlows, '_id');
-      }
+      selectedSections.forEach(sec => {
+        sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
+        requiredFlows.push(...sectionFlows.map(f => ({id: f._id, childId: sec.childId, childName: sec.childName})));
+      });
+      const requiredFlowIds = requiredFlows.map(f => f.id);
+      const stringTest = r => {
+        if (!keyword) return true;
+        const searchableText =
+          Array.isArray(searchBy) && searchBy.length
+            ? `${searchBy.map(key => r[key]).join('|')}`
+            : `${r._id}|${r.name}|${r.description}`;
+
+        return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
+      };
 
       return flows
-        .filter(f => f._integrationId === integrationId && requiredFlows.includes(f._id))
+        .filter(f => f._integrationId === integrationId && requiredFlowIds.includes(f._id))
+        .filter(stringTest)
         .sort(
-          (a, b) => requiredFlows.indexOf(a._id) - requiredFlows.indexOf(b._id)
-        );
+          (a, b) => requiredFlowIds.indexOf(a._id) - requiredFlowIds.indexOf(b._id)
+        ).map((f, i) => (supportsMultiStore && !childId) ? ({...f, ...requiredFlows[i]}) : f);
     }
   );
 selectors.integrationAppSectionFlows = selectors.makeIntegrationAppSectionFlows();
@@ -2524,29 +2542,26 @@ selectors.mkTileApplications = () => createSelector(
       if (tile.name && tile.name.indexOf('Magento 1') !== -1 && applications[0] === 'magento') {
         applications[0] = 'magento1';
       }
-      // Make NetSuite always the last application
-      applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]);
+    } else {
+      const childIntegrations = integrations.filter(i => i._parentId === tile._integrationId);
+      const parentIntegration = integrations.find(i => i._id === tile._integrationId);
 
-      return applications;
-    }
+      childIntegrations.forEach(i => {
+        const integrationConnections = connections.filter(c => c._integrationId === i._id);
 
-    const childIntegrations = integrations.filter(i => i._parentId === tile._integrationId);
-    const parentIntegration = integrations.find(i => i._id === tile._integrationId);
+        integrationConnections.forEach(c => {
+          applications.push(c.assistant || c.type);
+        });
+      });
 
-    childIntegrations.forEach(i => {
-      const integrationConnections = connections.filter(c => c._integrationId === i._id);
+      const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
 
-      integrationConnections.forEach(c => {
+      parentIntegrationConnections.forEach(c => {
         applications.push(c.assistant || c.type);
       });
-    });
+      applications = uniq(applications);
+    }
 
-    const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
-
-    parentIntegrationConnections.forEach(c => {
-      applications.push(c.assistant || c.type);
-    });
-    applications = uniq(applications);
     // Make NetSuite always the last application
     applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]);
     // Only consider up to four applications
@@ -2557,6 +2572,12 @@ selectors.mkTileApplications = () => createSelector(
     return applications;
   }
 );
+
+selectors.isAccountOwnerOrAdmin = state => {
+  const userPermissions = selectors.userPermissions(state) || emptyObject;
+
+  return [USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(userPermissions.accessLevel);
+};
 
 selectors.mkTiles = () => createSelector(
   state => state?.data?.resources?.tiles,
@@ -4950,8 +4971,9 @@ selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
   selectors.userPermissions,
   state => state?.data?.resources?.integrations,
   state => state?.data?.resources?.connections,
-  (permissions = emptyObject, integrations = emptyArray, connections = emptyArray) => {
-    if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(permissions.accessLevel)) {
+  selectors.isAccountOwnerOrAdmin,
+  (permissions = emptyObject, integrations = emptyArray, connections = emptyArray, isAccountOwnerOrAdmin) => {
+    if (isAccountOwnerOrAdmin) {
       return connections.map(c => c._id);
     }
     if (permissions.accessLevel === USER_ACCESS_LEVELS.TILE) {
@@ -4971,10 +4993,10 @@ selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
 );
 
 selectors.availableUsersList = (state, integrationId) => {
-  const permissions = selectors.userPermissions(state);
+  const isAccountOwnerOrAdmin = selectors.isAccountOwnerOrAdmin(state);
   let _users = [];
 
-  if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(permissions.accessLevel)) {
+  if (isAccountOwnerOrAdmin) {
     if (integrationId) {
       _users = selectors.integrationUsersForOwner(state, integrationId);
     } else {
@@ -4984,7 +5006,7 @@ selectors.availableUsersList = (state, integrationId) => {
     _users = selectors.integrationUsers(state, integrationId);
   }
 
-  if ((integrationId || [USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(permissions.accessLevel)) && _users && _users.length > 0) {
+  if ((integrationId || isAccountOwnerOrAdmin) && _users && _users.length > 0) {
     const accountOwner = selectors.accountOwner(state);
 
     _users = [

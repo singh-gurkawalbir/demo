@@ -9,8 +9,8 @@ import ExpandMoreIcon from '../../icons/ArrowDownIcon';
 import CeligoTable from '../../CeligoTable';
 
 export default function DynaCeligoTable(props) {
-  const { title, collapsable = false } = props;
-  const [shouldExpand, setShouldExpand] = useState(false);
+  const { title, collapsable = false, defaultExpand = false } = props;
+  const [shouldExpand, setShouldExpand] = useState(defaultExpand);
 
   return collapsable ? (
     <ExpansionPanel
