@@ -1,7 +1,7 @@
 import { wrapExportFileSampleData } from '../../../../utils/sampleData';
 
 const getRule = ({resource, fieldState}) => {
-  const { value} = fieldState;
+  const { value } = fieldState;
   const resourcePath = resource?.file?.xml?.resourcePath;
   const rule = {
     resourcePath,
