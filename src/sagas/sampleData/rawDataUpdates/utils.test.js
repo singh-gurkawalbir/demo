@@ -58,6 +58,7 @@ describe('rawDataUpdates utility sagas', () => {
       }];
 
       return expectSaga(saveSampleDataOnResource, { resourceId, rawData: sampleData, resourceType: 'exports' })
+        .delay(50)
         .put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE))
         .put(actions.resource.commitStaged('exports', resourceId, SCOPES.VALUE))
         .run();

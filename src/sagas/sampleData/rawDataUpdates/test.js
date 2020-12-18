@@ -305,6 +305,7 @@ describe('rawDataUpdates sagas', () => {
         ])
         .not.call.fn(saveRawDataForFileAdaptors)
         .not.call.fn(exportPreview)
+        .returns(undefined)
         .run();
       const test2 = expectSaga(_fetchAndSaveRawDataForResource, { type, resourceId: 'blob-234'})
         .provide([
@@ -316,6 +317,7 @@ describe('rawDataUpdates sagas', () => {
         ])
         .not.call.fn(saveRawDataForFileAdaptors)
         .not.call.fn(exportPreview)
+        .returns(undefined)
         .run();
 
       return test1 && test2;
