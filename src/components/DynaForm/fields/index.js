@@ -96,8 +96,6 @@ import DynaNetsuiteExportType from './DynaNetsuiteExportType';
 import SuiteScript from './SuiteScript';
 import DynaExportSelect from './DynaExportSelect';
 import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
-import _DynaDataURITemplate_ from './DynaDataURITemplate_afe2';
-import _DynaConcurrencyIdLockTemplate_ from './DynaConcurrencyIdLockTemplate_afe2';
 // import DynaNameWithEditor from './DynaNameWithEditor';
 import DynaSelectConditionalLookup from './DynaSelectConditionalLookup';
 import _DynaURI_ from './DynaURI_afe2';
@@ -245,12 +243,9 @@ export default {
   ...SuiteScript,
   exportSelect: DynaExportSelect,
   // datauritemplate: DynaDataURITemplate,
-  datauritemplate: _DynaDataURITemplate_,
   // concurrencyidlocktemplate: DynaConcurrencyIdLockTemplate,
-  concurrencyidlocktemplate: _DynaConcurrencyIdLockTemplate_,
   textwithflowsuggestion: DynaTextWithFlowSuggestion,
   // namewitheditor: DynaNameWithEditor,
-  namewitheditor: _DynaConcurrencyIdLockTemplate_,
   selectconditionallookup: DynaSelectConditionalLookup,
   csvhasheaderrow: DynaCsvHasHeaderRow,
   selectwithinput: DynaSelectWithInput,
