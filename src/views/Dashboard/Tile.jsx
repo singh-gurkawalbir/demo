@@ -297,7 +297,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
                 <Tooltip
                   title={<span className={classes.tooltipNameFB}> {tile.name}</span>}
                   TransitionComponent={Zoom}
-                  placement="top"
+                  placement="bottom"
                   enterDelay={100}>
                   <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
                     <Button
@@ -321,7 +321,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             </Typography>
           </CardTitle>
 
-          <AppLogosContainer tile={tile} />
+          {!(expired && tile.tag) ? <AppLogosContainer tile={tile} /> : ''}
 
         </Content>
         <Footer>

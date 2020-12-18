@@ -118,6 +118,17 @@ function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
       })
     );
 
+    if (isResolved) {
+      return yield put(
+        actions.errorManager.flowErrorDetails.selectErrors({
+          flowId,
+          resourceId,
+          errorIds,
+          checked: false,
+          isResolved,
+        })
+      );
+    }
     yield put(
       actions.errorManager.flowErrorDetails.remove({
         flowId,
