@@ -125,14 +125,14 @@ function TileNotification({ content, expired, connectorId, licenseId, integratio
       <div className={clsx(classes.footer, {[classes.footerSingleBtn]: single})}>
         {single ? (
           <Button
-            disabled={upgradeRequested} onClick={onClickRenewOrReactivateButton} data-test="Renew" variant="outlined"
+            disabled={upgradeRequested} onClick={onClickRenewOrReactivateButton} data-test="RenewOrReactivate" variant="outlined"
             color="primary">
             {resumable ? 'Reactivate' : 'Renew'}
           </Button>
         ) : (
           <ButtonGroup>
             <Button
-              disabled={upgradeRequested} onClick={onClickRenewOrReactivateButton} data-test="Renew" variant="outlined"
+              disabled={upgradeRequested} onClick={onClickRenewOrReactivateButton} data-test="RenewOrReactivateDouble" variant="outlined"
               color="primary">
               Renew
             </Button>

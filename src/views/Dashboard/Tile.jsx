@@ -114,9 +114,6 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  // const defaultChildId = useSelector(state =>
-  //   selectors.defaultStoreId(state, tile._integrationId)
-  // );
   const isIntegrationV2 = isIntegrationAppVerion2(integration, true);
 
   const templateName = useSelector(state => {
@@ -184,9 +181,6 @@ function Tile({ tile, history, onMove, onDrop, index }) {
 
   const handleConnectionDownStatusClick = useCallback(event => {
     event.stopPropagation();
-    if (expired) {
-      return;
-    }
     if (tile._connectorId) {
       history.push(
         getRoutePath(
@@ -200,13 +194,10 @@ function Tile({ tile, history, onMove, onDrop, index }) {
         )
       );
     }
-  }, [expired, history, integrationAppTileName, tile._connectorId, tile._integrationId]);
+  }, [history, integrationAppTileName, tile._connectorId, tile._integrationId]);
 
   const handleStatusClick = useCallback(
     event => {
-      if (expired) {
-        return;
-      }
       if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         event.stopPropagation();
         if (tile._connectorId) {
@@ -243,27 +234,21 @@ function Tile({ tile, history, onMove, onDrop, index }) {
         }
       }
     },
-    [expired, tile.status, tile._connectorId, tile._integrationId, isUserInErrMgtTwoDotZero, history, isCloned, integrationAppTileName, dispatch, status.variant]
+    [tile.status, tile._connectorId, tile._integrationId, isUserInErrMgtTwoDotZero, history, isCloned, integrationAppTileName, dispatch, status.variant]
   );
 
   const handleUsersClick = useCallback(event => {
-    if (expired) {
-      return;
-    }
     event.stopPropagation();
     history.push(getRoutePath(urlToIntegrationUsers));
-  }, [expired, history, urlToIntegrationUsers]);
+  }, [history, urlToIntegrationUsers]);
 
   const handleTileClick = useCallback(
     event => {
-      if (expired) {
-        return;
-      }
       event.stopPropagation();
 
       history.push(getRoutePath(urlToIntegrationSettings));
     },
-    [expired, history, urlToIntegrationSettings]
+    [history, urlToIntegrationSettings]
   );
 
   // #region Drag&Drop related
