@@ -12,6 +12,7 @@ import DynaText from './DynaText';
 import DynaCheckbox from './checkbox/DynaCheckbox';
 import _DynaRelativeUri_ from './DynaRelativeUri_afe2';
 import DynaKeyValue from './DynaKeyValue';
+import DynaTextList from './DynaTextList';
 import DynaToggleSelectToText from './select/DynaToggleSelectToText';
 import DynaLookupEditor from './DynaLookupEditor';
 import DynaKeyWithAction from './DynaKeyWithAction';
@@ -129,6 +130,7 @@ export default {
   toggleSelectToText: DynaToggleSelectToText,
   selectscopes: DynaSelectScopes,
   text: DynaText,
+  textlist: DynaTextList,
   editor: DynaEditor,
   textarea: DynaText,
   checkbox: DynaCheckbox,

@@ -3,13 +3,14 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Input, InputLabel } from '@material-ui/core';
 import shortid from 'shortid';
-import TrashIcon from '../../../../../icons/TrashIcon';
-import ActionButton from '../../../../../ActionButton';
+import TrashIcon from '../icons/TrashIcon';
+import ActionButton from '../ActionButton';
 
 const useStyles = makeStyles(theme => ({
   input: {
     backgroundColor: theme.palette.background.paper,
     marginBottom: theme.spacing(0.5),
+    border: `solid 1px ${theme.palette.secondary.lightest}`,
   },
   rowContainer: {
     display: 'flex',

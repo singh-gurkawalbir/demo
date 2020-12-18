@@ -6,7 +6,7 @@ import { makeStyles, Typography, Radio, RadioGroup, Checkbox, FormGroup, FormCon
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { getHelpTextMap } from '../../../../Help';
-import TextFieldList from './TextFieldList';
+import TextFieldList from '../../../../TextFieldList';
 
 const useStyles = makeStyles(theme => ({
   container: {

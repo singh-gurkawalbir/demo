@@ -7,7 +7,7 @@ import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../..';
 import FieldHelp from '../../../FieldHelp';
-import getForm from '../DynaXmlParse/formMeta';
+import getForm from './formMeta';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import { generateNewId, isNewId } from '../../../../../utils/resource';
 import {useUpdateParentForm} from '../DynaCsvGenerate';
@@ -59,10 +59,6 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(1),
     paddingBottom: theme.spacing(1),
   },
-  launchContainer: {
-    display: 'flex',
-    alignItems: 'center',
-  },
   button: {
     maxWidth: 100,
   },
@@ -72,30 +68,6 @@ const useStyles = makeStyles(theme => ({
   labelWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
-  },
-  fileUploadLabelWrapper: {
-    width: '100%',
-    marginTop: 'auto',
-    marginBottom: 'auto',
-
-  },
-  fileUploadRoot: {
-    width: '100%',
-  },
-  actionContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-
-  },
-  uploadContainer: {
-    justifyContent: 'flex-end',
-    background: 'transparent !important',
-    border: '0px !important',
-    width: 'auto !important',
-    padding: 4,
-  },
-  uploadFileErrorContainer: {
-    marginBottom: 4,
   },
 }));
 
