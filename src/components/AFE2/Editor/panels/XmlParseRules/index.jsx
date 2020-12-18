@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles, Typography, Radio, RadioGroup, TextField, Checkbox, FormGroup, FormControlLabel }
+import { makeStyles, Typography, Radio, RadioGroup, Checkbox, FormGroup, FormControlLabel, Input, InputLabel }
   from '@material-ui/core';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
@@ -28,6 +28,11 @@ const useStyles = makeStyles(theme => ({
   textField: {
     marginTop: theme.spacing(2),
   },
+  input: {
+    backgroundColor: theme.palette.background.paper,
+    marginBottom: theme.spacing(1),
+  },
+
 }));
 
 export default function XmlParseRules({ editorId }) {
@@ -73,17 +78,18 @@ export default function XmlParseRules({ editorId }) {
           ))}
         </RadioGroup>
 
-        <TextField
-          label="Resource path"
-          placeholder="none"
-          multiline
-          rowsMax={4}
-          disabled={disabled}
-          className={classes.textField}
-          value={resourcePath}
-          InputLabelProps={{ shrink: true }}
-          onChange={e => patchEditor('resourcePath', e.target.value)}
-        />
+        <div className={classes.textField}>
+          <InputLabel>Resource path</InputLabel>
+          <Input
+            multiline
+            fullWidth
+            rowsMax={4}
+            disabled={disabled}
+            className={classes.input}
+            value={resourcePath}
+            onChange={e => patchEditor('resourcePath', e.target.value)}
+          />
+        </div>
 
         {V0_json && (
           <Typography variant="caption" className={classes.helpText}>
@@ -117,27 +123,29 @@ export default function XmlParseRules({ editorId }) {
               label="Strip newline chars"
             />
 
-            <TextField
-              label="Text node name"
-              placeholder="&txt"
-              disabled={disabled}
-              className={classes.textField}
-              value={textNodeName}
-              InputLabelProps={{ shrink: true }}
-              onChange={e => patchEditor('textNodeName', e.target.value)}
-            />
+            <div className={classes.textField}>
+              <InputLabel>Text node name</InputLabel>
+              <Input
+                className={classes.input}
+                placeholder="&txt"
+                disabled={disabled}
+                value={textNodeName}
+                onChange={e => patchEditor('textNodeName', e.target.value)}
+              />
+            </div>
 
-            <TextField
-              label="Attribute prefix"
-              placeholder="none"
-              disabled={disabled}
-              className={classes.textField}
-              value={attributePrefix}
-              onChange={e => patchEditor('attributePrefix', e.target.value)}
-              InputLabelProps={{ shrink: true }}
-            />
+            <div className={classes.textField}>
+              <InputLabel>Attribute prefix</InputLabel>
+              <Input
+                className={classes.input}
+                disabled={disabled}
+                value={attributePrefix}
+                onChange={e => patchEditor('attributePrefix', e.target.value)}
+              />
+            </div>
 
             <TextFieldList
+              className={classes.textField}
               label="List nodes"
               disabled={disabled}
               value={listNodes}
@@ -145,6 +153,7 @@ export default function XmlParseRules({ editorId }) {
             />
 
             <TextFieldList
+              className={classes.textField}
               label="Nodes to include"
               disabled={disabled}
               value={includeNodes}
@@ -152,6 +161,7 @@ export default function XmlParseRules({ editorId }) {
             />
 
             <TextFieldList
+              className={classes.textField}
               label="Nodes to exclude"
               disabled={disabled}
               value={excludeNodes}

@@ -7,9 +7,6 @@ import TrashIcon from '../../../../../icons/TrashIcon';
 import ActionButton from '../../../../../ActionButton';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    marginTop: theme.spacing(1),
-  },
   input: {
     backgroundColor: theme.palette.background.paper,
     marginBottom: theme.spacing(0.5),
@@ -37,7 +34,7 @@ const getRowsFromValues = values => {
 
 const getValuesFromRows = rows => rows.map(v => v.value);
 
-export default function TextFieldList({ label, disabled, value, onChange}) {
+export default function TextFieldList({ label, disabled, value, onChange, className}) {
   const classes = useStyles();
   const [rows, setRows] = useState(getRowsFromValues(value));
 
@@ -71,7 +68,7 @@ export default function TextFieldList({ label, disabled, value, onChange}) {
   };
 
   return (
-    <div className={classes.root}>
+    <div className={className}>
       <InputLabel>{label}</InputLabel>
       {rows.map(({key, value}, index) => (
         <div className={classes.rowContainer} key={key}>
