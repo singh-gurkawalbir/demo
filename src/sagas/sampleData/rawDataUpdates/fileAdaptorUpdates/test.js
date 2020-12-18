@@ -215,27 +215,11 @@ describe('fileAdaptorUpdates sagas', () => {
       .not.call.fn(saveSampleDataOnResource)
       .run());
     test('should call _fetchRawDataForFileAdaptors and also call saveSampleDataOnResource if there is rawData', () => {
-      const ftpExport = {
-        _id: 'export-123',
-        name: 'FTP export',
-        adaptorType: 'FTPExport',
-        ftp: {
-          directoryPath: '/Test',
-        },
-        file: {
-          type: 'json',
-        },
-      };
       const resourceId = 'export-123';
       const rawData = { body: { test: 5 } };
 
       return expectSaga(saveRawDataForFileAdaptors, { resourceId, type: 'exports' })
         .provide([
-          [select(
-            selectors.resource,
-            'exports',
-            resourceId
-          ), ftpExport],
           [call(_fetchRawDataForFileAdaptors, {
             resourceId,
             tempResourceId: undefined,
