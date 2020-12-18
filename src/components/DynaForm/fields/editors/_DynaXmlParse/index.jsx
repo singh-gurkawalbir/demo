@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */ // V0_json is a schema field. cant change.
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { makeStyles, Button, FormLabel } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
@@ -7,9 +7,9 @@ import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../..';
 import FieldHelp from '../../../FieldHelp';
-import getForm from '../DynaXmlParse/formMeta';
+import getForm from '../../../../AFE2/Editor/panels/XmlParseRules/formMeta';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
-import { generateNewId, isNewId } from '../../../../../utils/resource';
+import { isNewId } from '../../../../../utils/resource';
 import {useUpdateParentForm} from '../DynaCsvGenerate';
 import useSetSubFormShowValidations from '../../../../../hooks/useSetSubFormShowValidations';
 import { getValidRelativePath } from '../../../../../utils/routePaths';
@@ -33,9 +33,9 @@ const getParserValue = ({
 
   if (attributePrefix) rules.attributePrefix = attributePrefix;
   if (textNodeName) rules.textNodeName = textNodeName;
-  if (listNodes) rules.listNodes = listNodes;
-  if (includeNodes) rules.includeNodes = includeNodes;
-  if (excludeNodes) rules.excludeNodes = excludeNodes;
+  if (listNodes?.length) rules.listNodes = listNodes;
+  if (includeNodes?.length) rules.includeNodes = includeNodes;
+  if (excludeNodes?.length) rules.excludeNodes = excludeNodes;
 
   const value = [
     {
@@ -59,10 +59,6 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(1),
     paddingBottom: theme.spacing(1),
   },
-  launchContainer: {
-    display: 'flex',
-    alignItems: 'center',
-  },
   button: {
     maxWidth: 100,
   },
@@ -72,30 +68,6 @@ const useStyles = makeStyles(theme => ({
   labelWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
-  },
-  fileUploadLabelWrapper: {
-    width: '100%',
-    marginTop: 'auto',
-    marginBottom: 'auto',
-
-  },
-  fileUploadRoot: {
-    width: '100%',
-  },
-  actionContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-
-  },
-  uploadContainer: {
-    justifyContent: 'flex-end',
-    background: 'transparent !important',
-    border: '0px !important',
-    width: 'auto !important',
-    padding: 4,
-  },
-  uploadFileErrorContainer: {
-    marginBottom: 4,
   },
 }));
 
@@ -114,7 +86,6 @@ export default function _DynaXmlParse_({
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
-  const secondaryFormKey = useRef(generateNewId());
   const editorId = getValidRelativePath(id);
   const [remountKey, setRemountKey] = useState(1);
 
@@ -154,7 +125,10 @@ export default function _DynaXmlParse_({
 
   const handleSave = useCallback((editorValues = {}) => {
     const { rule } = editorValues;
+
     const parsersValue = getParserValue(rule);
+
+    // console.log('handleSave: rule, parsed', rule, parsersValue);
 
     setForm(getForm(rule, resourceId));
     setRemountKey(remountKey => remountKey + 1);
@@ -165,6 +139,7 @@ export default function _DynaXmlParse_({
     (newOptions, isValid, touched) => {
       const parsersValue = getParserValue(newOptions);
 
+      // console.log('dyna xml parse handleFormChange', parsersValue);
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
       if (!isValid) {
@@ -176,10 +151,14 @@ export default function _DynaXmlParse_({
     [id, onFieldChange]
   );
 
-  useUpdateParentForm(secondaryFormKey.current, handleFormChange);
-  useSetSubFormShowValidations(parentFormKey, secondaryFormKey.current);
+  // TODO: @Ashu: Why not just hardcode this sub-form key? I cant think of
+  // a case where we would have a collision.
+  const parseFormKey = 'xmlParserFields';
+
+  useUpdateParentForm(parseFormKey, handleFormChange);
+  useSetSubFormShowValidations(parentFormKey, parseFormKey);
   const formKeyComponent = useFormInitWithPermissions({
-    formKey: secondaryFormKey.current,
+    formKey: parseFormKey,
     remount: remountKey,
     optionsHandler: form?.optionsHandler,
     disabled,

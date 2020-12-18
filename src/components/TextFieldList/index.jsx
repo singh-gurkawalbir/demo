@@ -3,13 +3,14 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Input, InputLabel } from '@material-ui/core';
 import shortid from 'shortid';
-import TrashIcon from '../../../../../icons/TrashIcon';
-import ActionButton from '../../../../../ActionButton';
+import TrashIcon from '../icons/TrashIcon';
+import ActionButton from '../ActionButton';
 
 const useStyles = makeStyles(theme => ({
   input: {
     backgroundColor: theme.palette.background.paper,
     marginBottom: theme.spacing(0.5),
+    border: `solid 1px ${theme.palette.secondary.lightest}`,
   },
   rowContainer: {
     display: 'flex',
@@ -32,7 +33,9 @@ const getRowsFromValues = values => {
   return addEmptyLastRowIfNotExist(rows);
 };
 
-const getValuesFromRows = rows => rows.map(v => v.value);
+const getValuesFromRows = rows => rows
+  .map(r => r.value)
+  .filter(v => !!v);
 
 export default function TextFieldList({ label, disabled, value, onChange, className}) {
   const classes = useStyles();
@@ -44,23 +47,16 @@ export default function TextFieldList({ label, disabled, value, onChange, classN
 
     if (rows[index]) {
       newRows.splice(index, 1);
-      setRows(addEmptyLastRowIfNotExist(newRows));
+      setRows(newRows);
       onChange(getValuesFromRows(newRows));
     }
   };
 
   const handleUpdate = (key, value) => {
     let newRows = [...rows];
-    let row;
+    const row = rows.findIndex(item => item.key === key);
 
-    if (key) {
-      row = rows.findIndex(item => item.key === key);
-
-      newRows[row].value = value;
-    } else {
-      newRows.push({ value, key: shortid.generate() });
-    }
-
+    newRows[row].value = value;
     newRows = newRows.filter(r => !!r.value);
 
     setRows(addEmptyLastRowIfNotExist(newRows));
