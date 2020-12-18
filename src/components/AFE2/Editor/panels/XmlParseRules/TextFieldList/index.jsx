@@ -42,7 +42,6 @@ export default function TextFieldList({ label, disabled, value, onChange}) {
     const newRows = [...rows];
     const index = rows.findIndex(r => r.key === key);
 
-    console.log(index, rows[index]);
     if (rows[index]) {
       newRows.splice(index, 1);
       setRows(addEmptyLastRowIfNotExist(newRows));

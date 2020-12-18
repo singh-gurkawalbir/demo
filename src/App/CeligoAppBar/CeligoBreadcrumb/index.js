@@ -246,6 +246,7 @@ const routes = [
   { path: getRoutePath('/accesstokens'), breadcrumb: 'API tokens' },
   // Dev tools
   { path: getRoutePath('/resources'), breadcrumb: 'Resources' },
+  { path: getRoutePath('/editors'), breadcrumb: 'Dev playground' },
   { path: getRoutePath('/playground'), breadcrumb: 'Developer playground' },
   { path: getRoutePath('/permissions'), breadcrumb: 'Permission explorer' },
   { path: getRoutePath('/migrate'), breadcrumb: 'Our new error management' },

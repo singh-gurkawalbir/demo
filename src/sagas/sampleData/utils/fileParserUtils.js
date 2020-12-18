@@ -47,11 +47,9 @@ export const generateFileParserOptionsFromResource = (resource = {}) => {
     return {
       resourcePath: fields.resourcePath,
       ...rest,
-      // the export.parsers schema defines the following as arrays,
-      // while the processor logic uses strings.
-      listNodes: listNodes?.join('\n'),
-      includeNodes: includeNodes?.join('\n'),
-      excludeNodes: excludeNodes?.join('\n'),
+      listNodes,
+      includeNodes,
+      excludeNodes,
     };
   }
 

@@ -42,10 +42,10 @@ export default function XmlParseRules({ editorId }) {
     stripNewLineChars = false,
     textNodeName = '',
     attributePrefix = '',
-    listNodes = '',
-    includeNodes = '',
+    listNodes = [],
+    includeNodes = [],
+    excludeNodes = [],
     resourcePath = '',
-    excludeNodes = '',
   } = rule || {};
 
   const patchEditor = (field, value) => {
@@ -137,46 +137,25 @@ export default function XmlParseRules({ editorId }) {
               InputLabelProps={{ shrink: true }}
             />
 
-            <TextField
+            <TextFieldList
               label="List nodes"
-              placeholder="none"
-              multiline
-              rowsMax={4}
               disabled={disabled}
-              className={classes.textField}
               value={listNodes}
-              InputLabelProps={{ shrink: true }}
-              onChange={e => patchEditor('listNodes', e.target.value)}
+              onChange={value => patchEditor('listNodes', value)}
             />
+
             <TextFieldList
               label="Nodes to include"
               disabled={disabled}
               value={includeNodes}
-              onChange={value => console.log(value)}
+              onChange={value => patchEditor('includeNodes', value)}
             />
 
-            <TextField
-              label="Nodes to include"
-              placeholder="all"
-              multiline
-              rowsMax={4}
-              disabled={disabled}
-              className={classes.textField}
-              value={includeNodes}
-              InputLabelProps={{ shrink: true }}
-              onChange={e => patchEditor('includeNodes', e.target.value)}
-            />
-
-            <TextField
+            <TextFieldList
               label="Nodes to exclude"
-              placeholder="none"
-              multiline
-              rowsMax={4}
               disabled={disabled}
-              className={classes.textField}
               value={excludeNodes}
-              InputLabelProps={{ shrink: true }}
-              onChange={e => patchEditor('excludeNodes', e.target.value)}
+              onChange={value => patchEditor('excludeNodes', value)}
             />
           </>
         )}
