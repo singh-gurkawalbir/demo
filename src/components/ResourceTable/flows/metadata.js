@@ -39,6 +39,15 @@ export default {
         },
         orderBy: 'name',
       },
+      ...(actionProps.showChild ? [{
+        heading: actionProps.childHeader || 'App',
+        value: function ChildName(r, actionProps) {
+          const {integrationChildren = []} = actionProps;
+
+          return r.childName || integrationChildren.find(i => i.value === r._integrationId)?.label || '';
+        },
+        orderBy: '_integrationId',
+      }] : []),
       {
         heading: 'Errors',
         value: function Errors(r) {

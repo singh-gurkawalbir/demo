@@ -25,14 +25,20 @@ const useStyles = makeStyles(theme => ({
   },
   threeAppImages: {
     '& img': {
-      maxWidth: '64px',
-      maxHeight: '64px',
+      maxWidth: theme.spacing(8),
+      maxHeight: theme.spacing(8),
+    },
+    '& > span': {
+      margin: '0px',
     },
   },
   fourAppImages: {
     '& img': {
-      maxWidth: '50px',
-      maxHeight: '50px',
+      maxWidth: '45px',
+      maxHeight: '45px',
+    },
+    '& > span': {
+      margin: '0px',
     },
   },
 

@@ -72,6 +72,7 @@ const useStyles = makeStyles(theme => ({
 export default function MyAccount({ match }) {
   const classes = useStyles();
   const permissions = useSelector(state => selectors.userPermissions(state));
+  const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
 
   return (
     <>
@@ -82,7 +83,7 @@ export default function MyAccount({ match }) {
               : 'My profile'
           }
         />
-      {![USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(permissions.accessLevel) ? (
+      {!isAccountOwnerOrAdmin ? (
         <div className={classes.wrapperProfile}>
           <Profile />
         </div>
