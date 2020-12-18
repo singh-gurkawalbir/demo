@@ -1180,6 +1180,132 @@ describe('publishedConnectors selector', () => {
   });
 });
 
+describe('isAccountOwnerOrAdmin selector', () => {
+  test('should return true for account owner', () => {
+    const state = reducer(
+      {
+        user: {
+          profile: {},
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+          org: {
+            accounts: [
+              {
+                _id: ACCOUNT_IDS.OWN,
+                accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+              },
+            ],
+            users: [],
+          },
+        },
+      },
+      'some action'
+    );
+
+    expect(selectors.isAccountOwnerOrAdmin(state)).toEqual(true);
+  });
+  test('should return true for account administrator', () => {
+    const state = reducer(
+      {
+        user: {
+          profile: {},
+          preferences: { defaultAShareId: '123' },
+          org: {
+            accounts: [
+              {
+                _id: '123',
+                accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+              },
+            ],
+            users: [],
+          },
+        },
+      },
+      'some action'
+    );
+
+    expect(selectors.isAccountOwnerOrAdmin(state)).toEqual(true);
+  });
+  describe('should return correct flag for org users', () => {
+    const accounts = [
+      {
+        _id: 'aShare1',
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+      },
+      {
+        _id: 'aShare2',
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      },
+      {
+        _id: 'aShare3',
+        accessLevel: USER_ACCESS_LEVELS.TILE,
+        integrationAccessLevel: [
+          {
+            _integrationId: 'i1',
+            accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+          },
+          {
+            _integrationId: 'i2',
+            accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+          },
+        ],
+      },
+      {
+        _id: 'aShare4',
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+      },
+    ];
+    const testCases = [];
+
+    testCases.push(
+      [
+        false,
+        'aShare1',
+      ],
+      [
+        true,
+        'aShare4',
+      ],
+      [
+        false,
+        'aShare2',
+      ],
+      [
+        false,
+        'aShare3',
+      ]
+    );
+    each(testCases).test(
+      'should return %s for %s',
+      (expected, defaultAShareId) => {
+        const state = reducer(
+          {
+            user: {
+              profile: {},
+              preferences: { defaultAShareId },
+              org: {
+                accounts,
+              },
+            },
+            data: {
+              resources: {
+                integrations: [
+                  { _id: 'i1', _registeredConnectionIds: ['c1', 'c2'] },
+                  { _id: 'i2', _registeredConnectionIds: ['c2', 'c3'] },
+                ],
+              },
+            },
+          },
+          'some action'
+        );
+
+        expect(
+          selectors.isAccountOwnerOrAdmin(state)
+        ).toEqual(expected);
+      }
+    );
+  });
+});
+
 describe('userAccessLevelOnConnection selector', () => {
   test(`should return ${USER_ACCESS_LEVELS.ACCOUNT_OWNER} access level for account owner`, () => {
     const state = reducer(
@@ -1203,6 +1329,30 @@ describe('userAccessLevelOnConnection selector', () => {
 
     expect(selectors.userAccessLevelOnConnection(state, 'c1')).toEqual(
       USER_ACCESS_LEVELS.ACCOUNT_OWNER
+    );
+  });
+  test(`should return ${USER_ACCESS_LEVELS.ACCOUNT_ADMIN} access level for account administrator`, () => {
+    const state = reducer(
+      {
+        user: {
+          profile: {},
+          preferences: { defaultAShareId: '123' },
+          org: {
+            accounts: [
+              {
+                _id: '123',
+                accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+              },
+            ],
+            users: [],
+          },
+        },
+      },
+      'some action'
+    );
+
+    expect(selectors.userAccessLevelOnConnection(state, 'c1')).toEqual(
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN
     );
   });
   describe('should return correct access level for org users', () => {
@@ -1229,6 +1379,10 @@ describe('userAccessLevelOnConnection selector', () => {
           },
         ],
       },
+      {
+        _id: 'aShare4',
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+      },
     ];
     const testCases = [];
 
@@ -1239,6 +1393,13 @@ describe('userAccessLevelOnConnection selector', () => {
         '',
         'account level manage user',
         'aShare1',
+      ],
+      [
+        USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+        'any',
+        '',
+        'account level adminstrator user',
+        'aShare4',
       ],
       [
         USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
@@ -4260,11 +4421,17 @@ describe('integrationApp Settings reducers', () => {
           _id: '5d9f70b98a71fc911a4068bd',
           _integrationId: 'integrationId',
           name: '5d9f70b98a71fc911a4068bd',
+          childId: 'fb5fb65e',
+          childName: 'BILLTECH',
+          id: '5d9f70b98a71fc911a4068bd',
         },
         {
           _id: '5d9f71628a71fc911a4068d9',
           _integrationId: 'integrationId',
           name: '5d9f71628a71fc911a4068d9',
+          childId: 'dd67a407',
+          childName: 'HSBC',
+          id: '5d9f71628a71fc911a4068d9',
         },
       ]);
     });
