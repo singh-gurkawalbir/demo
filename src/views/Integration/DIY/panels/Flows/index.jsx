@@ -189,6 +189,41 @@ const defaultFilter = {
     'name',
   ],
 };
+const Title = ({flows, integrationId}) => {
+  const classes = useStyles();
+  const allTiles = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    tilesFilterConfig
+  ).resources;
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const integrationErrorsMap = useSelector(state => selectors.errorMap(state, integrationId)?.data);
+  const currentTileErrorCount = isUserInErrMgtTwoDotZero ? allTiles.find(t => t._integrationId === integrationId)?.numError : 0;
+
+  let totalErrors = 0;
+
+  flows.forEach(flow => {
+    if (!flow.disabled && integrationErrorsMap[flow._id]) {
+      totalErrors += integrationErrorsMap[flow._id];
+    }
+  });
+
+  return (
+    <span className={classes.flowsPanelWithStatus}>
+      Integration flows
+      {(totalErrors || currentTileErrorCount) ? (
+        <>
+          <span className={classes.divider} />
+          <span className={classes.errorStatus}>
+            <StatusCircle variant="error" size="mini" />
+            <span>{totalErrors || currentTileErrorCount} errors</span>
+          </span>
+        </>
+      ) : null}
+    </span>
+  );
+};
 export default function FlowsPanel({ integrationId, childId }) {
   const isStandalone = integrationId === 'none';
   const classes = useStyles();
@@ -228,26 +263,11 @@ export default function FlowsPanel({ integrationId, childId }) {
     };
   },
   shallowEqual);
-  const {
-    data: integrationErrorsMap = {},
-    status: flowErrorCountStatus,
-  } = useSelector(state => selectors.errorMap(state, integrationId));
+  const flowErrorCountStatus = useSelector(state => selectors.errorMap(state, integrationId)?.status);
+
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const allTiles = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    tilesFilterConfig
-  ).resources;
-  const currentTileErrorCount = isUserInErrMgtTwoDotZero ? allTiles.find(t => t._integrationId === integrationId)?.numError : 0;
-
-  let totalErrors = 0;
-
-  flows.forEach(flow => {
-    if (!flow.disabled && integrationErrorsMap[flow._id]) {
-      totalErrors += integrationErrorsMap[flow._id];
-    }
-  });
   const handleClose = useCallback(() => {
     setShowDialog();
   }, [setShowDialog]);
@@ -264,23 +284,6 @@ export default function FlowsPanel({ integrationId, childId }) {
     };
   }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
 
-  const title = useMemo(
-    () => (
-      <span className={classes.flowsPanelWithStatus}>
-        Integration flows
-        {(totalErrors || currentTileErrorCount) ? (
-          <>
-            <span className={classes.divider} />
-            <span className={classes.errorStatus}>
-              <StatusCircle variant="error" size="mini" />
-              <span>{totalErrors || currentTileErrorCount} errors</span>
-            </span>
-          </>
-        ) : null}
-      </span>
-    ),
-    [classes.divider, classes.errorStatus, classes.flowsPanelWithStatus, currentTileErrorCount, totalErrors]
-  );
   const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const templateName = useSelector(state => {
     if (!integration || !integration._templateId) return null;
@@ -330,7 +333,7 @@ export default function FlowsPanel({ integrationId, childId }) {
       <ScheduleDrawer />
       <QueuedJobsDrawer />
 
-      <PanelHeader title={title} infoText={infoTextFlow}>
+      <PanelHeader title={<Title flows={flows} integrationId={integrationId} />} infoText={infoTextFlow}>
         <div className={classes.actions}>
           <KeywordSearch
             filterKey={filterKey}
