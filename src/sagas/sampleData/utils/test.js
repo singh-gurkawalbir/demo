@@ -36,6 +36,7 @@ import saveTransformationRulesForNewXMLExport, {
   _getXmlFileAdaptorSampleData,
   _getXmlHttpAdaptorSampleData,
 } from './xmlTransformationRulesGenerator';
+import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
 
 describe('Flow sample data utility sagas', () => {
   describe('fileParserUtils sagas', () => {
@@ -715,7 +716,247 @@ describe('Flow sample data utility sagas', () => {
       });
     });
     describe('fetchFlowResources saga', () => {
-      // TODO @Raghu: verify pageProcessorPreview call cases
+      test('should return empty object incase of flow passed as null or type is INVALID', () => {
+        const flow = {
+          _id: 'flow-123',
+          name: 'test flow',
+          pageGenerators: [],
+          pageProcessors: [{ type: 'import', _importId: 'import-123'}],
+        };
+
+        return expectSaga(fetchFlowResources, {})
+          .returns({})
+          .run() && expectSaga(fetchFlowResources, {flow, type: 'INVALID'})
+          .returns({})
+          .run();
+      });
+      test('should return map of pgs when type is pageGenerators ', () => {
+        const flow = {
+          _id: 'flow-123',
+          name: 'test flow',
+          pageGenerators: [{ _exportId: 'export-123'}, { _exportId: 'export-456'}],
+          pageProcessors: [{ type: 'import', _importId: 'import-123'}],
+        };
+        const pg1 = { _id: 'export-123', name: 'pg1', adaptorType: 'RESTExport'};
+        const pg2 = { _id: 'export-456', name: 'pg2', adaptorType: 'HTTPExport'};
+        const resourceType = 'exports';
+        const flowResourcesMap = {
+          'export-123': {doc: pg1, options: {}},
+          'export-456': {doc: pg2, options: {}},
+        };
+
+        return expectSaga(fetchFlowResources, { flow, type: 'pageGenerators' })
+          .provide([
+            [select(
+              selectors.resourceData,
+              resourceType,
+              'export-123',
+              SCOPES.VALUE
+            ), { merged: pg1}],
+            [select(
+              selectors.resourceData,
+              resourceType,
+              'export-456',
+              SCOPES.VALUE
+            ), { merged: pg2}],
+            [call(
+              getPreviewOptionsForResource,
+              { resource: pg1, flow, refresh: undefined, runOffline: undefined }
+            ), {}],
+            [call(
+              getPreviewOptionsForResource,
+              { resource: pg2, flow, refresh: undefined, runOffline: undefined }
+            ), {}],
+          ])
+          .returns(flowResourcesMap)
+          .run();
+      });
+      test('should return map of pps when type is pageProcessors ', () => {
+        const flow = {
+          _id: 'flow-123',
+          name: 'test flow',
+          pageGenerators: [{ _exportId: 'export-123'}, { _exportId: 'export-456'}],
+          pageProcessors: [
+            { type: 'export', _exportId: 'lookup-123'},
+            { type: 'export', _exportId: 'lookup-456'},
+            { type: 'import', _importId: 'import-123'},
+          ],
+        };
+        const pp1 = { _id: 'lookup-123', name: 'pp1', adaptorType: 'RESTExport'};
+        const pp2 = { _id: 'lookup-456', name: 'pp2', adaptorType: 'HTTPExport'};
+        const pp3 = { _id: 'import-123', name: 'pp3', adaptorType: 'HTTPImport'};
+
+        const sampleResponseData = {
+          id: '',
+          errors: '',
+          ignored: '',
+          statusCode: '',
+          headers: '',
+        };
+        const lookupResponseData = {
+          data: '',
+          errors: '',
+          ignored: '',
+          statusCode: '',
+        };
+
+        const flowResourcesMap = {
+          'lookup-123': {doc: {...pp1, sampleResponseData: lookupResponseData}, options: {}},
+          'lookup-456': {doc: {...pp2, sampleResponseData: lookupResponseData}, options: {}},
+          'import-123': {doc: {...pp3, sampleResponseData}, options: {}},
+        };
+
+        return expectSaga(fetchFlowResources, { flow, type: 'pageProcessors' })
+          .provide([
+            [select(
+              selectors.resourceData,
+              'exports',
+              'lookup-123',
+              SCOPES.VALUE
+            ), { merged: pp1}],
+            [select(
+              selectors.resourceData,
+              'exports',
+              'lookup-456',
+              SCOPES.VALUE
+            ), { merged: pp2}],
+            [select(
+              selectors.resourceData,
+              'imports',
+              'import-123',
+              SCOPES.VALUE
+            ), { merged: pp3}],
+            [call(
+              getPreviewOptionsForResource,
+              { resource: pp1, flow, refresh: undefined, runOffline: undefined }
+            ), {}],
+            [call(
+              getPreviewOptionsForResource,
+              { resource: pp2, flow, refresh: undefined, runOffline: undefined }
+            ), {}],
+          ])
+          .returns(flowResourcesMap)
+          .run();
+      });
+      test('should return map of pgs with uiData/postData in the options when type is pageGenerators', async () => {
+        const flow = {
+          _id: 'flow-123',
+          name: 'test flow',
+          pageGenerators: [{ _exportId: 'export-123'}, { _exportId: 'export-456'}],
+          pageProcessors: [{ type: 'import', _importId: 'import-123'}],
+        };
+        const postData = { lastExportDateTime: expect.any(String) };
+        const pg1Options = {
+          uiData: { users: [{_id: 'user1', name: 'user1'}, {_id: 'user2', name: 'user2'}]},
+        };
+        const pg2Options = {
+          uiData: {tickets: [{_id: 'ticket1', name: 'ticket1'}, {_id: 'ticket2', name: 'ticket2'}]},
+          postData,
+        };
+
+        const pg1 = { _id: 'export-123', name: 'pg1', adaptorType: 'RESTExport'};
+        const pg2 = { _id: 'export-456', name: 'pg2', adaptorType: 'HTTPExport', type: 'delta'};
+        const resourceType = 'exports';
+        const flowResourcesMap = {
+          'export-123': {doc: pg1, options: pg1Options},
+          'export-456': {doc: {...pg2, postData}, options: pg2Options},
+        };
+
+        const { returnValue } = await expectSaga(fetchFlowResources, { flow, type: 'pageGenerators' })
+          .provide([
+            [select(
+              selectors.resourceData,
+              resourceType,
+              'export-123',
+              SCOPES.VALUE
+            ), { merged: pg1}],
+            [select(
+              selectors.resourceData,
+              resourceType,
+              'export-456',
+              SCOPES.VALUE
+            ), { merged: pg2}],
+            [call(
+              getPreviewOptionsForResource,
+              { resource: pg1, flow, refresh: undefined, runOffline: undefined }
+            ), pg1Options],
+            [call(
+              getPreviewOptionsForResource,
+              { resource: pg2, flow, refresh: undefined, runOffline: undefined }
+            ), pg2Options],
+          ])
+          .run();
+
+        expect(returnValue).toEqual(flowResourcesMap);
+      });
+      test('should return runOfflineOptions for PGs incase runOffline is true and PG has rawData, should also pass refresh prop to getPreviewOptionsForResource saga if passed true ', async () => {
+        const flow = {
+          _id: 'flow-123',
+          name: 'test flow',
+          pageGenerators: [{ _exportId: 'export-123'}, { _exportId: 'export-456'}],
+          pageProcessors: [{ type: 'import', _importId: 'import-123'}],
+        };
+
+        const runOfflineOptions = {
+          runOffline: true,
+          runOfflineSource: 'db',
+        };
+        const postData = { lastExportDateTime: expect.any(String) };
+
+        const pg1 = {
+          _id: 'export-123',
+          name: 'pg1',
+          adaptorType: 'RESTExport',
+          rawData: 'EMPTY_RAW_DATA',
+        };
+        const pg2 = {
+          _id: 'export-456',
+          name: 'pg2',
+          adaptorType: 'HTTPExport',
+          type: 'delta',
+          rawData: 'rawData123',
+        };
+
+        const pg1Options = {
+          uiData: { users: [{_id: 'user1', name: 'user1'}, {_id: 'user2', name: 'user2'}]},
+        };
+        const pg2OptionsWithRunOffline = { runOfflineOptions, postData };
+
+        const resourceType = 'exports';
+        const flowResourcesMap = {
+          'export-123': {doc: pg1, options: pg1Options},
+          'export-456': {doc: {...pg2, postData}, options: pg2OptionsWithRunOffline},
+        };
+        const runOffline = true;
+        const refresh = true;
+
+        const { returnValue } = await expectSaga(fetchFlowResources, { flow, type: 'pageGenerators', runOffline, refresh })
+          .provide([
+            [select(
+              selectors.resourceData,
+              resourceType,
+              'export-123',
+              SCOPES.VALUE
+            ), { merged: pg1}],
+            [select(
+              selectors.resourceData,
+              resourceType,
+              'export-456',
+              SCOPES.VALUE
+            ), { merged: pg2}],
+            [call(
+              getPreviewOptionsForResource,
+              { resource: pg1, flow, refresh, runOffline }
+            ), pg1Options],
+            [call(
+              getPreviewOptionsForResource,
+              { resource: pg2, flow, refresh, runOffline }
+            ), pg2OptionsWithRunOffline],
+          ])
+          .run();
+
+        expect(returnValue).toEqual(flowResourcesMap);
+      });
     });
     describe('requestSampleDataForImports saga', () => {
       test('should do nothing if the sampleDataStage is not passed / invalid', () => {
@@ -1160,8 +1401,9 @@ describe('Flow sample data utility sagas', () => {
           pageGenerators: [],
           pageProcessors: [{ type: 'import', _importId: _pageProcessorId}],
         };
+        const resourceType = 'imports';
 
-        return expectSaga(pageProcessorPreview, { flowId, _pageProcessorId })
+        return expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType })
           .provide([
             [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow}],
           ])
@@ -1228,7 +1470,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              eliminateDataProcessors: true,
               runOffline: false,
             }), pageProcessorMap],
             [call(fetchResourceDataForNewFlowResource, {
@@ -1310,7 +1551,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              eliminateDataProcessors: true,
               runOffline: false,
             }), previousPageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
@@ -1379,7 +1619,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              eliminateDataProcessors: true,
               runOffline: false,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
@@ -1388,6 +1627,233 @@ describe('Flow sample data utility sagas', () => {
           .returns(previewData)
           .run();
       });
+      test('should remove processors config if existed incase of previewType raw for lookup pageProcessor Doc before passing it to preview call', () => {
+        const flowId = 'flow-123';
+        const _pageProcessorId = 'lookup-111';
+        const flow = {
+          _id: flowId,
+          name: 'test flow',
+          pageGenerators: [{ _exportId: 'export-123'}],
+          pageProcessors: [{ type: 'export', _exportId: _pageProcessorId}, { type: 'import', _importId: 'import-123'}],
+        };
+        const previewData = { test: 5 };
+        const _pageProcessorDoc = {
+          _id: _pageProcessorId,
+          name: 'test lookup',
+          adaptorType: 'RESTExport',
+          transform: {
+            type: 'expression',
+            expression: {
+              rules: [
+                [
+                  {
+                    extract: 'users[*]',
+                    generate: 'customers[*]',
+                  },
+                ],
+              ],
+              version: '1',
+            },
+          },
+          filter: {
+            type: 'expression',
+            expression: {
+              rules: [],
+              version: '1',
+            },
+          },
+        };
+        const _pageProcessorDocWithoutProcessorsConfig = {
+          _id: _pageProcessorId,
+          name: 'test lookup',
+          adaptorType: 'RESTExport',
+        };
+        const pageGeneratorMap = {
+          'export-123': {
+            doc: { _id: '123', name: 'test', adaptorType: 'RESTExport'}, options: {},
+          },
+        };
+        const pageProcessorMap = {
+          [_pageProcessorId]: {
+            doc: _pageProcessorDoc,
+          },
+          'import-123': {
+            doc: { _id: '123', name: 'test', adaptorType: 'RESTImport'}, options: {},
+          },
+        };
+        const updatedPageProcessorMap = {
+          [_pageProcessorId]: {
+            doc: _pageProcessorDocWithoutProcessorsConfig,
+          },
+          'import-123': {
+            doc: { _id: '123', name: 'test', adaptorType: 'RESTImport'}, options: {},
+          },
+        };
+        const body = {
+          flow: {
+            _id: flowId,
+            name: 'test flow',
+            pageGenerators: [{ _exportId: 'export-123'}],
+            pageProcessors: [
+              { type: 'export', _exportId: _pageProcessorId},
+              { type: 'import', _importId: 'import-123'},
+            ],
+          },
+          _pageProcessorId,
+          pageGeneratorMap,
+          pageProcessorMap: updatedPageProcessorMap,
+          includeStages: false,
+        };
+        const apiOptions = {
+          path: '/pageProcessors/preview',
+          opts: {
+            method: 'POST',
+            body,
+          },
+          message: 'Loading',
+          hidden: false,
+        };
+
+        return expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'exports' })
+          .provide([
+            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [call(fetchFlowResources, {
+              flow,
+              type: 'pageGenerators',
+              refresh: false,
+              runOffline: false,
+            }), pageGeneratorMap],
+            [call(fetchFlowResources, {
+              flow,
+              type: 'pageProcessors',
+              runOffline: false,
+            }), pageProcessorMap],
+            [call(apiCallWithRetry, apiOptions), previewData],
+          ])
+          .call(apiCallWithRetry, apiOptions)
+          .returns(previewData)
+          .run();
+      });
+      test('should remove processors config if existed as part of passed pageProcessorDoc incase of previewType raw for lookup pageProcessor Doc before passing it to preview call', () => {
+        const flowId = 'flow-123';
+        const _pageProcessorId = 'lookup-111';
+        const flow = {
+          _id: flowId,
+          name: 'test flow',
+          pageGenerators: [{ _exportId: 'export-123'}],
+          pageProcessors: [{ type: 'export', _exportId: _pageProcessorId}, { type: 'import', _importId: 'import-123'}],
+        };
+        const previewData = { test: 5 };
+        const _pageProcessorDoc = {
+          _id: _pageProcessorId,
+          name: 'test lookup',
+          adaptorType: 'RESTExport',
+          transform: {
+            type: 'expression',
+            expression: {
+              rules: [
+                [
+                  {
+                    extract: 'users[*]',
+                    generate: 'customers[*]',
+                  },
+                ],
+              ],
+              version: '1',
+            },
+          },
+          filter: {
+            type: 'expression',
+            expression: {
+              rules: [],
+              version: '1',
+            },
+          },
+        };
+        const _pageProcessorDocWithoutProcessorsConfig = {
+          _id: _pageProcessorId,
+          name: 'test lookup',
+          adaptorType: 'RESTExport',
+        };
+        const pageGeneratorMap = {
+          'export-123': {
+            doc: {
+              _id: '123',
+              name: 'test',
+              adaptorType: 'RESTExport',
+              filter: {
+                type: 'expression',
+                expression: {
+                  rules: [],
+                  version: '1',
+                },
+              },
+            },
+            options: {},
+          },
+        };
+        const pageProcessorMapWithoutPageProcessorDoc = {
+          [_pageProcessorId]: {
+            doc: null,
+          },
+          'import-123': {
+            doc: { _id: '123', name: 'test', adaptorType: 'RESTImport'}, options: {},
+          },
+        };
+        const updatedPageProcessorMap = {
+          [_pageProcessorId]: {
+            doc: _pageProcessorDocWithoutProcessorsConfig,
+          },
+          'import-123': {
+            doc: { _id: '123', name: 'test', adaptorType: 'RESTImport'}, options: {},
+          },
+        };
+        const body = {
+          flow: {
+            _id: flowId,
+            name: 'test flow',
+            pageGenerators: [{ _exportId: 'export-123'}],
+            pageProcessors: [
+              { type: 'export', _exportId: _pageProcessorId},
+              { type: 'import', _importId: 'import-123'},
+            ],
+          },
+          _pageProcessorId,
+          pageGeneratorMap,
+          pageProcessorMap: updatedPageProcessorMap,
+          includeStages: false,
+        };
+        const apiOptions = {
+          path: '/pageProcessors/preview',
+          opts: {
+            method: 'POST',
+            body,
+          },
+          message: 'Loading',
+          hidden: false,
+        };
+
+        return expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'exports', _pageProcessorDoc })
+          .provide([
+            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [call(fetchFlowResources, {
+              flow,
+              type: 'pageGenerators',
+              refresh: false,
+              runOffline: false,
+            }), pageGeneratorMap],
+            [call(fetchFlowResources, {
+              flow,
+              type: 'pageProcessors',
+              runOffline: false,
+            }), pageProcessorMapWithoutPageProcessorDoc],
+            [call(apiCallWithRetry, apiOptions), previewData],
+          ])
+          .call(apiCallWithRetry, apiOptions)
+          .returns(previewData)
+          .run();
+      });
+
       test('should have runOfflineOptions as part of the _pageProcessorId doc in pageProcessorMap when runOffline is true and also hidden should be true', () => {
         const flowId = 'flow-123';
         const _pageProcessorId = 'import-111';
@@ -1456,7 +1922,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              eliminateDataProcessors: true,
               runOffline,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
@@ -1530,7 +1995,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              eliminateDataProcessors: true,
               runOffline: false,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
@@ -1604,7 +2068,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              eliminateDataProcessors: true,
               runOffline: false,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), throwError(error)],
@@ -1686,7 +2149,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              eliminateDataProcessors: true,
               runOffline,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), throwError(error)],
