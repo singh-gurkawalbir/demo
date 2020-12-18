@@ -10,7 +10,7 @@ import DynaSelectApplication from './DynaSelectApplication';
 import DynaFileTypeSelect from './select/DynaFileTypeSelect';
 import DynaText from './DynaText';
 import DynaCheckbox from './checkbox/DynaCheckbox';
-import DynaRelativeUri from './DynaRelativeUri';
+import _DynaRelativeUri_ from './DynaRelativeUri_afe2';
 import DynaKeyValue from './DynaKeyValue';
 import DynaToggleSelectToText from './select/DynaToggleSelectToText';
 import DynaLookupEditor from './DynaLookupEditor';
@@ -96,11 +96,9 @@ import DynaNetsuiteExportType from './DynaNetsuiteExportType';
 import SuiteScript from './SuiteScript';
 import DynaExportSelect from './DynaExportSelect';
 import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
-import DynaDataURITemplate from './DynaDataURITemplate';
-import DynaConcurrencyIdLockTemplate from './DynaConcurrencyIdLockTemplate';
-import DynaNameWithEditor from './DynaNameWithEditor';
+// import DynaNameWithEditor from './DynaNameWithEditor';
 import DynaSelectConditionalLookup from './DynaSelectConditionalLookup';
-import DynaURI from './DynaURI';
+import _DynaURI_ from './DynaURI_afe2';
 import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
 import DynaSelectWithInput from './DynaSelectWithInput';
 import DynaJsonResourcePath from './DynaJsonResourcePath';
@@ -111,7 +109,7 @@ import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
 import DynaRoutingRules from './editors/DynaRoutingRules';
 import DynaMatchingCriteriaWithModal from './DynaMatchingCriteria';
 import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
-import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
+import _DynaFTPFileNameWithEditor_ from './DynaFTPFileNameWithEditor_afe2';
 import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
 import DynaAs2Mode from './DynaAs2Mode';
 import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
@@ -147,8 +145,10 @@ export default {
   filetypeselect: DynaFileTypeSelect,
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
-  relativeuri: DynaRelativeUri,
-  uri: DynaURI,
+  // relativeuri: DynaRelativeUri,
+  relativeuri: _DynaRelativeUri_,
+  // uri: DynaURI,
+  uri: _DynaURI_,
   // httprequestbody: DynaHttpRequestBody,
   httprequestbody: _DynaHttpRequestBody_,
   importLookup: DynaLookupEditor,
@@ -242,10 +242,10 @@ export default {
   netsuitedefaultvalue: DynaNetSuiteDefaultValue,
   ...SuiteScript,
   exportSelect: DynaExportSelect,
-  datauritemplate: DynaDataURITemplate,
-  concurrencyidlocktemplate: DynaConcurrencyIdLockTemplate,
+  // datauritemplate: DynaDataURITemplate,
+  // concurrencyidlocktemplate: DynaConcurrencyIdLockTemplate,
   textwithflowsuggestion: DynaTextWithFlowSuggestion,
-  namewitheditor: DynaNameWithEditor,
+  // namewitheditor: DynaNameWithEditor,
   selectconditionallookup: DynaSelectConditionalLookup,
   csvhasheaderrow: DynaCsvHasHeaderRow,
   selectwithinput: DynaSelectWithInput,
@@ -253,6 +253,7 @@ export default {
   linksuitescriptintegrator: DynaLinkSuiteScriptIntegrator,
   routingrules: DynaRoutingRules,
   suitescriptuploadfile: DynaSuiteScriptUploadFile,
-  ftpfilenamewitheditor: DynaFTPFileNameWithEditor,
+  // ftpfilenamewitheditor: DynaFTPFileNameWithEditor,
+  ftpfilenamewitheditor: _DynaFTPFileNameWithEditor_,
   as2Mode: DynaAs2Mode,
 };
