@@ -192,6 +192,7 @@ export const featuresMap = options => ({
   javascript: {
     autoEvaluate: false,
     layout: 'compact',
+    fetchScriptContent: true,
   },
   transform: {
     duplicateKeyToValidate: 'generate',

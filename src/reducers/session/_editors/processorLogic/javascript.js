@@ -3,18 +3,10 @@ import isEqual from 'lodash/isEqual';
 import util from '../../../../utils/json';
 
 export default {
-  init: options => {
-    const { rule = {}, ...others } = options;
-
-    return {
-      ...others,
-      insertStubKey: options.stage, // todo ashu test this
-      rule: {
-        ...rule,
-        fetchScriptContent: true,
-      },
-    };
-  },
+  init: options => ({
+    ...options,
+    insertStubKey: options.stage, // todo ashu test this
+  }),
 
   requestBody: ({ data, rule, context }) => ({
     rules: {
