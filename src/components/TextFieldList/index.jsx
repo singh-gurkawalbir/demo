@@ -33,7 +33,9 @@ const getRowsFromValues = values => {
   return addEmptyLastRowIfNotExist(rows);
 };
 
-const getValuesFromRows = rows => rows.map(v => v.value);
+const getValuesFromRows = rows => rows
+  .map(r => r.value)
+  .filter(v => !!v);
 
 export default function TextFieldList({ label, disabled, value, onChange, className}) {
   const classes = useStyles();
@@ -45,23 +47,16 @@ export default function TextFieldList({ label, disabled, value, onChange, classN
 
     if (rows[index]) {
       newRows.splice(index, 1);
-      setRows(addEmptyLastRowIfNotExist(newRows));
+      setRows(newRows);
       onChange(getValuesFromRows(newRows));
     }
   };
 
   const handleUpdate = (key, value) => {
     let newRows = [...rows];
-    let row;
+    const row = rows.findIndex(item => item.key === key);
 
-    if (key) {
-      row = rows.findIndex(item => item.key === key);
-
-      newRows[row].value = value;
-    } else {
-      newRows.push({ value, key: shortid.generate() });
-    }
-
+    newRows[row].value = value;
     newRows = newRows.filter(r => !!r.value);
 
     setRows(addEmptyLastRowIfNotExist(newRows));

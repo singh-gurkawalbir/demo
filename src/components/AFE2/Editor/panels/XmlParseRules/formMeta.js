@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */ // V0_json is a schema field. cant change.
 import { isNewId } from '../../../../../utils/resource';
 
-const visibleWhen = [{ field: 'V0_json', is: ['false'] }];
+const visibleWhenCustom = [{ field: 'V0_json', is: ['false'] }];
 
 export default function getForm(options, resourceId) {
   let defaultParser = 'false';
@@ -50,7 +50,7 @@ export default function getForm(options, resourceId) {
         defaultValue: !!options?.trimSpaces,
         helpKey: 'parser.xml.trimSpaces',
         label: 'Trim leading and trailing spaces',
-        visibleWhen,
+        visibleWhen: visibleWhenCustom,
       },
       stripNewLineChars: {
         id: 'stripNewLineChars',
@@ -58,7 +58,7 @@ export default function getForm(options, resourceId) {
         type: 'checkbox',
         defaultValue: !!options?.stripNewLineChars,
         label: 'Strip new line characters',
-        visibleWhen,
+        visibleWhen: visibleWhenCustom,
       },
       attributePrefix: {
         id: 'attributePrefix',
@@ -67,7 +67,7 @@ export default function getForm(options, resourceId) {
         placeholder: 'none',
         defaultValue: options?.attributePrefix || '',
         label: 'Character to prepend on attribute names',
-        visibleWhen,
+        visibleWhen: visibleWhenCustom,
       },
       textNodeName: {
         id: 'textNodeName',
@@ -76,7 +76,7 @@ export default function getForm(options, resourceId) {
         placeholder: '&txt',
         defaultValue: options?.textNodeName || '',
         label: 'Text node name',
-        visibleWhen,
+        visibleWhen: visibleWhenCustom,
       },
       listNodes: {
         id: 'listNodes',
@@ -86,7 +86,7 @@ export default function getForm(options, resourceId) {
         // multiline: true,
         helpKey: 'parser.xml.listNodes',
         label: 'List nodes',
-        visibleWhen,
+        visibleWhen: visibleWhenCustom,
       },
       includeNodes: {
         id: 'includeNodes',
@@ -96,7 +96,7 @@ export default function getForm(options, resourceId) {
         // multiline: true,
         helpKey: 'parser.xml.includeNodes',
         label: 'Include only these nodes',
-        visibleWhen,
+        visibleWhen: visibleWhenCustom,
       },
       excludeNodes: {
         id: 'excludeNodes',
@@ -106,7 +106,7 @@ export default function getForm(options, resourceId) {
         // multiline: true,
         helpKey: 'parser.xml.excludeNodes',
         label: 'Exclude any of these nodes',
-        visibleWhen,
+        visibleWhen: visibleWhenCustom,
       },
     },
   };
