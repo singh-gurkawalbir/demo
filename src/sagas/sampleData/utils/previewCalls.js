@@ -91,23 +91,23 @@ export function* pageProcessorPreview({
 
   const body = { flow, _pageProcessorId, pageGeneratorMap, pageProcessorMap, includeStages };
 
+  const isRunOfflineConfigured = runOffline && Object.values(pageGeneratorMap)
+    .some(
+      pgInfo => pgInfo?.options?.runOfflineOptions
+    );
+
   try {
     const previewData = yield call(apiCallWithRetry, {
       path: '/pageProcessors/preview',
       opts: { method: 'POST', body },
       message: 'Loading',
-      hidden,
+      hidden: isRunOfflineConfigured ? true : hidden,
     });
 
     return previewData;
   } catch (e) {
-    const isRunOfflineConfigured = Object.values(pageGeneratorMap)
-      .some(
-        pgInfo => pgInfo?.options?.runOfflineOptions
-      );
-
     // When runOffline mode fails make preview call without offlineMode and move further
-    if (runOffline && isRunOfflineConfigured) {
+    if (isRunOfflineConfigured) {
       return yield call(pageProcessorPreview, {
         flowId,
         _pageProcessorId,
@@ -133,10 +133,12 @@ export function* exportPreview({
   runOffline = false,
   throwOnError = false,
 }) {
+  if (!resourceId) return;
   const { merged: resource } = yield select(
     selectors.resourceData,
     'exports',
-    resourceId
+    resourceId,
+    SCOPES.VALUE
   );
   let body = deepClone(resource);
 
@@ -160,19 +162,20 @@ export function* exportPreview({
   }
 
   const path = '/exports/preview';
+  const isRunOfflineConfigured = runOffline && hasValidRawDataKey;
 
   try {
     const previewData = yield call(apiCallWithRetry, {
       path,
       opts: { method: 'POST', body },
       message: 'Loading',
-      hidden,
+      hidden: isRunOfflineConfigured ? true : hidden,
     });
 
     return previewData;
   } catch (e) {
     // When runOffline mode fails make preview call without offlineMode and move further
-    if (runOffline && hasValidRawDataKey) {
+    if (isRunOfflineConfigured) {
       return yield call(exportPreview, {
         resourceId,
         hidden,

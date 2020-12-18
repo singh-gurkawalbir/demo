@@ -1,3 +1,4 @@
+import { deepClone } from 'fast-json-patch';
 import { put, select, call } from 'redux-saga/effects';
 import { isEmpty } from 'lodash';
 import { selectors } from '../../../reducers';
@@ -51,7 +52,10 @@ export function* getFlowResourceNode({ flowId, resourceId, resourceType }) {
 /*
  * Given a flow, filters out all the pending PGs and PPs without resourceId
  */
-export function filterPendingResources({ flow = {} }) {
+export function filterPendingResources({ flow }) {
+  if (!flow) {
+    return;
+  }
   const { pageGenerators: pgs = [], pageProcessors: pps = [], ...rest } = flow;
   const filteredPageGenerators = pgs.filter(pg => !!pg._exportId);
   const filteredPageProcessors = pps.filter(
@@ -73,11 +77,14 @@ export function* fetchResourceDataForNewFlowResource({
   resourceId,
   resourceType,
 }) {
-  const { merged: newResource = {} } = yield select(
+  if (!resourceId) {
+    return;
+  }
+  let { merged: newResource = {} } = yield select(
     selectors.resourceData,
     resourceType,
     resourceId,
-    'value'
+    SCOPES.VALUE
   );
 
   // TODO @Raghu: Should handle in metadata to pass boolean instead of string
@@ -85,7 +92,7 @@ export function* fetchResourceDataForNewFlowResource({
   if (newResource.oneToMany) {
     const oneToMany = newResource.oneToMany === 'true';
 
-    return { ...newResource, oneToMany };
+    newResource = { ...newResource, oneToMany };
   }
 
   return getFormattedResourceForPreview(newResource);
@@ -147,26 +154,9 @@ export function* fetchFlowResources({ flow, type, eliminateDataProcessors, refre
   return resourceMap;
 }
 
-export function* refreshResourceData({ flowId, resourceId, resourceType }) {
-  // Stage to update incase of node reset
-  // Incase of exports, stage is transform so that it updates raw and transform stage
-  // Incase of imports, we refresh raw data
-  const stageToUpdate = resourceType === 'exports' ? 'transform' : 'raw';
-
-  yield put(
-    actions.flowData.requestProcessorData(
-      flowId,
-      resourceId,
-      resourceType,
-      stageToUpdate
-    )
-  );
-}
-
 export function* requestSampleDataForImports({
   flowId,
   resourceId,
-  resourceType,
   hidden = true,
   sampleDataStage,
 }) {
@@ -175,7 +165,7 @@ export function* requestSampleDataForImports({
       yield call(fetchPageProcessorPreview, {
         flowId,
         _pageProcessorId: resourceId,
-        resourceType,
+        resourceType: 'imports',
         hidden,
         previewType: 'flowInput',
       });
@@ -190,31 +180,20 @@ export function* requestSampleDataForImports({
         SCOPES.VALUE
       );
 
-      try {
-        // @TODO Raghu: Handle sample response as a XML
-        const { sampleResponseData = '' } = resource;
-        const sampleResponse = isJsonString(sampleResponseData)
-          ? JSON.parse(sampleResponseData)
-          : sampleResponseData;
+      // @TODO Raghu: Handle sample response as a XML
+      const { sampleResponseData = '' } = resource;
+      const sampleResponse = isJsonString(sampleResponseData)
+        ? JSON.parse(sampleResponseData)
+        : sampleResponseData;
 
-        yield put(
-          actions.flowData.receivedPreviewData(
-            flowId,
-            resourceId,
-            sampleResponse,
-            'sampleResponse'
-          )
-        );
-      } catch (e) {
-        yield put(
-          actions.flowData.receivedPreviewData(
-            flowId,
-            resourceId,
-            {},
-            'sampleResponse'
-          )
-        );
-      }
+      yield put(
+        actions.flowData.receivedPreviewData(
+          flowId,
+          resourceId,
+          sampleResponse,
+          'sampleResponse'
+        )
+      );
 
       break;
     }
@@ -283,24 +262,21 @@ export function* updateStateForProcessorData({
   wrapInArrayProcessedData,
   removeDataPropFromProcessedData,
 }) {
+  const resultantProcessedData = processedData && deepClone(processedData);
+
   // wrapInArrayProcessedData: Incase of Transform scripts , data is not inside an array as in other stages
   // So this prop wraps data to extract the same in the reducer
-  if (wrapInArrayProcessedData && processedData && processedData.data) {
-    // eslint-disable-next-line no-param-reassign
-    processedData.data = [processedData.data];
+  if (wrapInArrayProcessedData && resultantProcessedData?.data) {
+    resultantProcessedData.data = [resultantProcessedData.data];
   }
 
   // Incase of preMap u get sampleData wrapped against 'data' prop
   // This replaces [{data: {}}] to direct [{}], so that receivedProcessorData reducer extract the same
   if (
     removeDataPropFromProcessedData &&
-    processedData &&
-    processedData.data &&
-    processedData.data[0] &&
-    processedData.data[0].data
+    resultantProcessedData?.data?.[0]?.data
   ) {
-    // eslint-disable-next-line no-param-reassign
-    processedData.data[0] = processedData.data[0].data;
+    resultantProcessedData.data[0] = resultantProcessedData.data[0].data;
   }
 
   yield put(
@@ -308,7 +284,7 @@ export function* updateStateForProcessorData({
       flowId,
       resourceId,
       stage,
-      processedData
+      resultantProcessedData
     )
   );
 }
@@ -321,13 +297,13 @@ export function* handleFlowDataStageErrors({
   flowId,
   resourceId,
   stage,
-  error,
+  error = {},
 }) {
   if (error.status === 403 || error.status === 401) {
     return;
   }
 
-  if (error.status >= 400 && error.status < 500) {
+  if (error.status >= 400 && error.status < 500 && isJsonString(error.message)) {
     const errorsJSON = JSON.parse(error.message);
     const { errors } = errorsJSON;
 
