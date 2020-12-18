@@ -10,7 +10,7 @@ import DynaSelectApplication from './DynaSelectApplication';
 import DynaFileTypeSelect from './select/DynaFileTypeSelect';
 import DynaText from './DynaText';
 import DynaCheckbox from './checkbox/DynaCheckbox';
-import _DynaRelativeUri_ from './DynaRelativeUri_afe2';
+import DynaRelativeUri from './DynaRelativeUri';
 import DynaKeyValue from './DynaKeyValue';
 import DynaToggleSelectToText from './select/DynaToggleSelectToText';
 import DynaLookupEditor from './DynaLookupEditor';
@@ -70,7 +70,7 @@ import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier from './DynaNetSuiteQualifier';
 import DynaSalesforceQualifier from './DynaSalesforceQualifier';
 import DynaQuery from './DynaQuery';
-import _DynaSqlQuery_ from './DynaSqlQuery_afe2';
+import DynaSqlQuery from './DynaSqlQuery';
 import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
 import DynaSalesforceLookup from './DynaSalesforceLookup';
 import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
@@ -96,9 +96,9 @@ import DynaNetsuiteExportType from './DynaNetsuiteExportType';
 import SuiteScript from './SuiteScript';
 import DynaExportSelect from './DynaExportSelect';
 import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
-import _DynaDataURITemplate_ from './DynaDataURITemplate_afe2';
-import _DynaConcurrencyIdLockTemplate_ from './DynaConcurrencyIdLockTemplate_afe2';
-// import DynaNameWithEditor from './DynaNameWithEditor';
+import DynaDataURITemplate from './DynaDataURITemplate';
+import DynaConcurrencyIdLockTemplate from './DynaConcurrencyIdLockTemplate';
+import DynaNameWithEditor from './DynaNameWithEditor';
 import DynaSelectConditionalLookup from './DynaSelectConditionalLookup';
 import DynaURI from './DynaURI';
 import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
@@ -146,8 +146,7 @@ export default {
   filetypeselect: DynaFileTypeSelect,
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
-  // relativeuri: DynaRelativeUri,
-  relativeuri: _DynaRelativeUri_,
+  relativeuri: DynaRelativeUri,
   uri: DynaURI,
   // httprequestbody: DynaHttpRequestBody,
   httprequestbody: _DynaHttpRequestBody_,
@@ -216,8 +215,7 @@ export default {
   replaceconnection: DynaReplaceConnection,
   netsuitequalifier: DynaNetSuiteQualifier,
   query: DynaQuery,
-  // sqlquery: DynaSqlQuery,
-  sqlquery: _DynaSqlQuery_,
+  sqlquery: DynaSqlQuery,
   salesforcelookupfilters: DynaSalesforceLookupFilters,
   salesforcelookup: DynaSalesforceLookup,
   timestampfilename: DynaTimestampFileName,
@@ -242,13 +240,10 @@ export default {
   netsuitedefaultvalue: DynaNetSuiteDefaultValue,
   ...SuiteScript,
   exportSelect: DynaExportSelect,
-  // datauritemplate: DynaDataURITemplate,
-  datauritemplate: _DynaDataURITemplate_,
-  // concurrencyidlocktemplate: DynaConcurrencyIdLockTemplate,
-  concurrencyidlocktemplate: _DynaConcurrencyIdLockTemplate_,
+  datauritemplate: DynaDataURITemplate,
+  concurrencyidlocktemplate: DynaConcurrencyIdLockTemplate,
   textwithflowsuggestion: DynaTextWithFlowSuggestion,
-  // namewitheditor: DynaNameWithEditor,
-  namewitheditor: _DynaConcurrencyIdLockTemplate_,
+  namewitheditor: DynaNameWithEditor,
   selectconditionallookup: DynaSelectConditionalLookup,
   csvhasheaderrow: DynaCsvHasHeaderRow,
   selectwithinput: DynaSelectWithInput,
