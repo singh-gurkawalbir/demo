@@ -23,7 +23,7 @@ export default function DynaPreviewComponentsTable({ data: objects, columns }) {
       <>
         <DynaCeligoTable
           title="Flows" collapsable="true" data={componentsMap?.Flow} columns={columns}
-          defaultExpand="true" />
+          defaultExpand />
       </>
       {Object.keys(componentsMap).map(resourceType => (
         <>
