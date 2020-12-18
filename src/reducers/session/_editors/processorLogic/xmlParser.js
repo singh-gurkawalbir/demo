@@ -1,7 +1,5 @@
 import { wrapExportFileSampleData } from '../../../../utils/sampleData';
 
-const parseNodes = nodesAsText => nodesAsText?.split('\n');
-
 const getRule = ({resource, fieldState}) => {
   const { value} = fieldState;
   const resourcePath = resource?.file?.xml?.resourcePath;
@@ -36,9 +34,9 @@ const requestBody = ({ data, rule = {} }) => {
 
     if (rule.attributePrefix) options.attributePrefix = rule.attributePrefix;
     if (rule.textNodeName) options.textNodeName = rule.textNodeName;
-    if (rule.listNodes) options.listNodes = parseNodes(rule.listNodes);
-    if (rule.includeNodes) options.includeNodes = parseNodes(rule.includeNodes);
-    if (rule.excludeNodes) options.excludeNodes = parseNodes(rule.excludeNodes);
+    if (rule.listNodes) options.listNodes = rule.listNodes;
+    if (rule.includeNodes) options.includeNodes = rule.includeNodes;
+    if (rule.excludeNodes) options.excludeNodes = rule.excludeNodes;
   } else {
     // exports created in ampersand will have empty parsers object
     // which should be considered as automatic strategy

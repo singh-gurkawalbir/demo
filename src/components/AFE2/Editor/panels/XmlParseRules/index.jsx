@@ -1,13 +1,12 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import { makeStyles, Typography, Radio, RadioGroup, TextField } from '@material-ui/core';
+import { makeStyles, Typography, Radio, RadioGroup, Checkbox, FormGroup, FormControlLabel, Input, InputLabel }
+  from '@material-ui/core';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { getHelpTextMap } from '../../../../Help';
+import TextFieldList from './TextFieldList';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -21,6 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
   helpText: {
     whiteSpace: 'pre-line',
+    maxWidth: 450,
   },
   formControl: {
     margin: theme.spacing(1),
@@ -28,6 +28,11 @@ const useStyles = makeStyles(theme => ({
   textField: {
     marginTop: theme.spacing(2),
   },
+  input: {
+    backgroundColor: theme.palette.background.paper,
+    marginBottom: theme.spacing(1),
+  },
+
 }));
 
 export default function XmlParseRules({ editorId }) {
@@ -42,10 +47,10 @@ export default function XmlParseRules({ editorId }) {
     stripNewLineChars = false,
     textNodeName = '',
     attributePrefix = '',
-    listNodes = '',
-    includeNodes = '',
+    listNodes = [],
+    includeNodes = [],
+    excludeNodes = [],
     resourcePath = '',
-    excludeNodes = '',
   } = rule || {};
 
   const patchEditor = (field, value) => {
@@ -55,24 +60,9 @@ export default function XmlParseRules({ editorId }) {
   return (
     <div className={classes.container}>
       <FormGroup>
-        <TextField
-          label="Resource path"
-          placeholder="none"
-          multiline
-          rowsMax={4}
-          disabled={disabled}
-          className={classes.textField}
-          value={resourcePath}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          onChange={e => patchEditor('resourcePath', e.target.value)}
-        />
         <RadioGroup
           row
-          onChange={() => {
-            patchEditor('V0_json', !V0_json);
-          }}>
+          onChange={() => patchEditor('V0_json', !V0_json)}>
           {['Custom', 'Automatic'].map(label => (
             <FormControlLabel
               disabled={disabled}
@@ -87,6 +77,19 @@ export default function XmlParseRules({ editorId }) {
             />
           ))}
         </RadioGroup>
+
+        <div className={classes.textField}>
+          <InputLabel>Resource path</InputLabel>
+          <Input
+            multiline
+            fullWidth
+            rowsMax={4}
+            disabled={disabled}
+            className={classes.input}
+            value={resourcePath}
+            onChange={e => patchEditor('resourcePath', e.target.value)}
+          />
+        </div>
 
         {V0_json && (
           <Typography variant="caption" className={classes.helpText}>
@@ -114,77 +117,55 @@ export default function XmlParseRules({ editorId }) {
                   disabled={disabled}
                   checked={stripNewLineChars}
                   color="primary"
-                  onChange={() =>
-                    patchEditor('stripNewLineChars', !stripNewLineChars)}
+                  onChange={() => patchEditor('stripNewLineChars', !stripNewLineChars)}
                 />
               )}
               label="Strip newline chars"
             />
 
-            <TextField
-              label="Text node name"
-              placeholder="&txt"
-              disabled={disabled}
-              className={classes.textField}
-              value={textNodeName}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              onChange={e => patchEditor('textNodeName', e.target.value)}
-            />
+            <div className={classes.textField}>
+              <InputLabel>Text node name</InputLabel>
+              <Input
+                className={classes.input}
+                placeholder="&txt"
+                disabled={disabled}
+                value={textNodeName}
+                onChange={e => patchEditor('textNodeName', e.target.value)}
+              />
+            </div>
 
-            <TextField
-              label="Attribute prefix"
-              placeholder="none"
-              disabled={disabled}
-              className={classes.textField}
-              value={attributePrefix}
-              onChange={e => patchEditor('attributePrefix', e.target.value)}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
+            <div className={classes.textField}>
+              <InputLabel>Attribute prefix</InputLabel>
+              <Input
+                className={classes.input}
+                disabled={disabled}
+                value={attributePrefix}
+                onChange={e => patchEditor('attributePrefix', e.target.value)}
+              />
+            </div>
 
-            <TextField
+            <TextFieldList
+              className={classes.textField}
               label="List nodes"
-              placeholder="none"
-              multiline
-              rowsMax={4}
               disabled={disabled}
-              className={classes.textField}
               value={listNodes}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              onChange={e => patchEditor('listNodes', e.target.value)}
+              onChange={value => patchEditor('listNodes', value)}
             />
 
-            <TextField
+            <TextFieldList
+              className={classes.textField}
               label="Nodes to include"
-              placeholder="all"
-              multiline
-              rowsMax={4}
               disabled={disabled}
-              className={classes.textField}
               value={includeNodes}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              onChange={e => patchEditor('includeNodes', e.target.value)}
+              onChange={value => patchEditor('includeNodes', value)}
             />
 
-            <TextField
-              label="Nodes to exclude"
-              placeholder="none"
-              multiline
-              rowsMax={4}
-              disabled={disabled}
+            <TextFieldList
               className={classes.textField}
+              label="Nodes to exclude"
+              disabled={disabled}
               value={excludeNodes}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              onChange={e => patchEditor('excludeNodes', e.target.value)}
+              onChange={value => patchEditor('excludeNodes', value)}
             />
           </>
         )}
