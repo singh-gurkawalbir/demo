@@ -1,13 +1,12 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import { makeStyles, Typography, Radio, RadioGroup, TextField } from '@material-ui/core';
+import { makeStyles, Typography, Radio, RadioGroup, TextField, Checkbox, FormGroup, FormControlLabel }
+  from '@material-ui/core';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { getHelpTextMap } from '../../../../Help';
+import TextFieldList from './TextFieldList';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -21,6 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
   helpText: {
     whiteSpace: 'pre-line',
+    maxWidth: 450,
   },
   formControl: {
     margin: theme.spacing(1),
@@ -55,24 +55,9 @@ export default function XmlParseRules({ editorId }) {
   return (
     <div className={classes.container}>
       <FormGroup>
-        <TextField
-          label="Resource path"
-          placeholder="none"
-          multiline
-          rowsMax={4}
-          disabled={disabled}
-          className={classes.textField}
-          value={resourcePath}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          onChange={e => patchEditor('resourcePath', e.target.value)}
-        />
         <RadioGroup
           row
-          onChange={() => {
-            patchEditor('V0_json', !V0_json);
-          }}>
+          onChange={() => patchEditor('V0_json', !V0_json)}>
           {['Custom', 'Automatic'].map(label => (
             <FormControlLabel
               disabled={disabled}
@@ -87,6 +72,18 @@ export default function XmlParseRules({ editorId }) {
             />
           ))}
         </RadioGroup>
+
+        <TextField
+          label="Resource path"
+          placeholder="none"
+          multiline
+          rowsMax={4}
+          disabled={disabled}
+          className={classes.textField}
+          value={resourcePath}
+          InputLabelProps={{ shrink: true }}
+          onChange={e => patchEditor('resourcePath', e.target.value)}
+        />
 
         {V0_json && (
           <Typography variant="caption" className={classes.helpText}>
@@ -114,8 +111,7 @@ export default function XmlParseRules({ editorId }) {
                   disabled={disabled}
                   checked={stripNewLineChars}
                   color="primary"
-                  onChange={() =>
-                    patchEditor('stripNewLineChars', !stripNewLineChars)}
+                  onChange={() => patchEditor('stripNewLineChars', !stripNewLineChars)}
                 />
               )}
               label="Strip newline chars"
@@ -127,9 +123,7 @@ export default function XmlParseRules({ editorId }) {
               disabled={disabled}
               className={classes.textField}
               value={textNodeName}
-              InputLabelProps={{
-                shrink: true,
-              }}
+              InputLabelProps={{ shrink: true }}
               onChange={e => patchEditor('textNodeName', e.target.value)}
             />
 
@@ -140,9 +134,7 @@ export default function XmlParseRules({ editorId }) {
               className={classes.textField}
               value={attributePrefix}
               onChange={e => patchEditor('attributePrefix', e.target.value)}
-              InputLabelProps={{
-                shrink: true,
-              }}
+              InputLabelProps={{ shrink: true }}
             />
 
             <TextField
@@ -153,10 +145,14 @@ export default function XmlParseRules({ editorId }) {
               disabled={disabled}
               className={classes.textField}
               value={listNodes}
-              InputLabelProps={{
-                shrink: true,
-              }}
+              InputLabelProps={{ shrink: true }}
               onChange={e => patchEditor('listNodes', e.target.value)}
+            />
+            <TextFieldList
+              label="Nodes to include"
+              disabled={disabled}
+              value={includeNodes}
+              onChange={value => console.log(value)}
             />
 
             <TextField
@@ -167,9 +163,7 @@ export default function XmlParseRules({ editorId }) {
               disabled={disabled}
               className={classes.textField}
               value={includeNodes}
-              InputLabelProps={{
-                shrink: true,
-              }}
+              InputLabelProps={{ shrink: true }}
               onChange={e => patchEditor('includeNodes', e.target.value)}
             />
 
@@ -181,9 +175,7 @@ export default function XmlParseRules({ editorId }) {
               disabled={disabled}
               className={classes.textField}
               value={excludeNodes}
-              InputLabelProps={{
-                shrink: true,
-              }}
+              InputLabelProps={{ shrink: true }}
               onChange={e => patchEditor('excludeNodes', e.target.value)}
             />
           </>

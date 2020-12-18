@@ -67,7 +67,7 @@ export default function menuItems(
         {
           label: 'Dev playground',
           Icon: EditorsPlaygroundIcon,
-          path: '/editors',
+          path: '/playground',
         },
       ],
     },
