@@ -29,7 +29,7 @@ import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
 import { getIntegrationAppUrlName, isIntegrationAppVerion2 } from '../../utils/integrationApps';
 import { getTemplateUrlName } from '../../utils/template';
-import TrialExpireNotification from '../../components/HomePageCard/TrialExpireNotification';
+import TileNotification from '../../components/HomePageCard/TileNotification';
 import { useSelectorMemo } from '../../hooks';
 
 const useStyles = makeStyles(theme => ({
@@ -367,7 +367,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             />
         </Footer>{
           tile._connectorId && licenseMessageContent && (
-          <TrialExpireNotification
+          <TileNotification
             content={licenseMessageContent} expired={expired} connectorId={tile._connectorId}
             licenseId={license._id}
             isIntegrationV2={isIntegrationV2} integrationId={tile._integrationId}

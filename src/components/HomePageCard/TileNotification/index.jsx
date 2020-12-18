@@ -68,7 +68,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function TrialExpireNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel}) {
+function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel}) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -148,4 +148,4 @@ function TrialExpireNotification({ content, expired, connectorId, licenseId, int
   );
 }
 
-export default TrialExpireNotification;
+export default TileNotification;
