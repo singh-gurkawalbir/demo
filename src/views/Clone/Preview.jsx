@@ -19,7 +19,6 @@ import CeligoPageBar from '../../components/CeligoPageBar';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import InfoIconButton from '../../components/InfoIconButton';
 import useConfirmDialog from '../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
@@ -123,17 +122,9 @@ export default function ClonePreview(props) {
   const columns = [
     {
       heading: 'Name',
-      value: function NameWithInfoicon(r) {
-        return (
-          <>
-            {r && (r.doc.name || r.doc._id)}
-            <InfoIconButton info={r.doc.description} size="xs" />
-          </>
-        );
-      },
-      orderBy: 'name',
+      value: r => r?.doc?.name || r?.doc?._id,
     },
-    { heading: 'Type', value: r => r.model },
+    { heading: 'Description', value: r => r.doc?.description },
   ];
 
   useEffect(() => {
@@ -277,7 +268,7 @@ export default function ClonePreview(props) {
       components: {
         id: 'components',
         name: 'components',
-        type: 'celigotable',
+        type: 'previewcomponentstable',
         data: objects.map((obj, index) => ({
           ...obj,
           _id: index,
