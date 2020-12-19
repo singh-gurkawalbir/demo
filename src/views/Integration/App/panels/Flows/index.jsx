@@ -178,6 +178,7 @@ export const IAFormStateManager = props => {
 };
 const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
+  sort: { orderBy: 'name', order: 'asc' },
   searchBy: [
     'name',
   ],
