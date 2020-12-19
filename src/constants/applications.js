@@ -297,6 +297,8 @@ const connectors = [
   {id: 'svb', name: 'SVB', type: 'http', assistant: 'svb'},
   {id: 'wiser', name: 'Wiser', type: 'http', assistant: 'wiser'},
 ];
+// These can be removed once metadata gets updated.
+const newConnections = [{id: 'googledrive', name: 'Google Drive', type: 'http', assistant: 'googledrive'}];
 
 connectors.sort(stringCompare('name'));
 const getAssistants = () => {
@@ -310,6 +312,9 @@ const getAssistants = () => {
   } catch (e) {
     localStorageAssistants = [];
   }
+  newConnections.forEach(asst => {
+    localStorageAssistants.push(asst);
+  });
 
   return localStorageAssistants;
 };

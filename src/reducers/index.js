@@ -870,6 +870,13 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
             (!environment || !!this.sandbox === (environment === 'sandbox'))
           );
         }
+        if (connection.rdbms?.type) {
+          return (
+            this.rdbms?.type === connection.rdbms?.type &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+          );
+        }
 
         if (['netsuite'].indexOf(connection.type) > -1) {
           const accessLevel = manageOnly ? selectors.userAccessLevelOnConnection(state, this._id) : 'owner';

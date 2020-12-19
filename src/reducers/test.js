@@ -1531,6 +1531,20 @@ describe('matchingConnectionList selector', () => {
       account: 'netsuite_account',
     },
   };
+  const postgresqlConnection = {
+    _id: 'postgresqlId',
+    type: 'rdbms',
+    rdbms: {
+      type: 'postgresql',
+    },
+  };
+  const snowflakeConnection = {
+    _id: 'snowflakeId',
+    type: 'rdbms',
+    rdbms: {
+      type: 'snowflake',
+    },
+  };
   const netsuiteConnectionConnector = {
     _id: 'netsuiteId',
     _connectorId: 'connector',
@@ -1589,6 +1603,8 @@ describe('matchingConnectionList selector', () => {
     restConnection,
     assistantConnection,
     assistantConnectionSandbox,
+    postgresqlConnection,
+    snowflakeConnection,
   ];
 
   test('should not throw any error when params are bad', () => {
@@ -1617,6 +1633,12 @@ describe('matchingConnectionList selector', () => {
     expect(selectors.matchingConnectionList(state, { type: 'rest' })).toEqual([
       restConnection,
       assistantConnection,
+    ]);
+    expect(
+      selectors.matchingConnectionList(state, { type: 'rdbms', rdbms: {type: 'postgresql'} })
+    ).toEqual([postgresqlConnection]);
+    expect(selectors.matchingConnectionList(state, { type: 'rdbms', rdbms: {type: 'snowflake'} })).toEqual([
+      snowflakeConnection,
     ]);
   });
   test('should return correct values in sandbox environment', () => {

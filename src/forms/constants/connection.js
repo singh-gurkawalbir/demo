@@ -198,7 +198,6 @@ export default {
     'googlecontacts',
     'googlemail',
     'acumatica',
-    'googledrive',
     'googleanalytics',
     'lightspeed',
     'accelo',
@@ -218,5 +217,6 @@ export default {
     'slack',
     'myobadvanced',
     'lexbizz',
+    'googledrive',
   ],
 };
