@@ -870,6 +870,13 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
             (!environment || !!this.sandbox === (environment === 'sandbox'))
           );
         }
+        if (connection.rdbms?.type) {
+          return (
+            this.rdbms?.type === connection.rdbms?.type &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+          );
+        }
 
         if (['netsuite'].indexOf(connection.type) > -1) {
           const accessLevel = manageOnly ? selectors.userAccessLevelOnConnection(state, this._id) : 'owner';
@@ -1642,10 +1649,10 @@ selectors.makeIntegrationAppSectionFlows = () =>
 
       return flows
         .filter(f => f._integrationId === integrationId && requiredFlowIds.includes(f._id))
-        .filter(stringTest)
         .sort(
           (a, b) => requiredFlowIds.indexOf(a._id) - requiredFlowIds.indexOf(b._id)
-        ).map((f, i) => (supportsMultiStore && !childId) ? ({...f, ...requiredFlows[i]}) : f);
+        ).map((f, i) => (supportsMultiStore && !childId) ? ({...f, ...requiredFlows[i]}) : f)
+        .filter(stringTest);
     }
   );
 selectors.integrationAppSectionFlows = selectors.makeIntegrationAppSectionFlows();

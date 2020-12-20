@@ -194,7 +194,7 @@ describe('getResourceFromAssets load correct form', () => {
       // rest assistant
         ['rest assistant certify', {id: 'something1', type: 'rest', assistant: 'certify' }, 'http.encrypted.apiSecret'],
         // go into rest folder
-        ['rest assistant googledrive', {id: 'something1', type: 'rest', assistant: 'googledrive' }, 'rest.scope'],
+        ['http assistant googledrive', {id: 'something1', type: 'http', assistant: 'googledrive' }, 'http._iClientId'],
 
         ['http assistant adp', {id: 'something1', type: 'http', assistant: 'adp' }, 'http.clientCertificates.passphrase'],
 

@@ -10,6 +10,8 @@ import {
   select,
   all,
 } from 'redux-saga/effects';
+import { expectSaga } from 'redux-saga-test-plan';
+import { throwError } from 'redux-saga-test-plan/providers';
 import { createMockTask } from '@redux-saga/testing-utils';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -19,6 +21,7 @@ import {
   getJobFamily,
   getInProgressJobsStatus,
   pollForInProgressJobs,
+  getJobDetails,
   startPollingForInProgressJobs,
   requestJobCollection,
   getJobCollection,
@@ -41,6 +44,7 @@ import {
   retrySelectedRetries,
   requestRetryData,
   updateRetryData,
+  retryProcessedErrors,
 } from '.';
 import { selectors } from '../../reducers';
 import { JOB_TYPES, JOB_STATUS } from '../../utils/constants';
@@ -163,6 +167,47 @@ describe('job sagas', () => {
     });
   });
 
+  describe('getJobDetails saga', () => {
+    const jobId = '123';
+    const path = `/jobs/${jobId}/family`;
+    const opts = {
+      method: 'GET',
+    };
+
+    test('should call jobs api and return result on successful api call', () => {
+      const jobResponse = {
+        _id: '1',
+        numSuccess: 1,
+      };
+
+      return expectSaga(getJobDetails, { jobId })
+        .provide([
+          [call(apiCallWithRetry, { path, opts }), jobResponse],
+        ])
+        .call(apiCallWithRetry, {
+          path,
+          opts,
+        })
+        .returns(jobResponse)
+        .run();
+    });
+
+    test('should return undefined if api call throws error', () => expectSaga(getJobDetails, { jobId })
+      .provide([
+        [call(apiCallWithRetry,
+          { path, opts }),
+        throwError({
+          status: 401,
+          message: '{"code":"error code"}',
+        })],
+      ])
+      .call(apiCallWithRetry, {
+        path,
+        opts,
+      })
+      .returns(undefined)
+      .run());
+  });
   describe('startPollingForInProgressJobs saga', () => {
     test('should fork pollForInProgressJobs, waits for job clear or no running jobs or request inprogress jobs status action and then cancels pollForInProgressJobs', () => {
       const saga = startPollingForInProgressJobs();
@@ -622,6 +667,64 @@ describe('job sagas', () => {
       expect(saga.throw(new Error()).value).toEqual(true);
       expect(saga.next().done).toEqual(true);
     });
+
+    test('should call resolveCommit for filteredJobs if filtersJobsOnly is true', () => {
+      const opts = {
+        method: 'PUT',
+      };
+      const path = '/jobs/resolve';
+
+      return expectSaga(resolveAllCommit, { filteredJobsOnly: true })
+        .provide([
+          [select(selectors.allJobs, { type: 'flowJobs' }),
+            [{
+              _id: 1,
+              __original: {
+                numError: 5,
+              },
+            },
+            {
+              _id: 2,
+              __original: {
+                numError: 3,
+              },
+            }],
+          ],
+        ])
+        .call(apiCallWithRetry, {
+          path,
+          opts: {
+            ...opts,
+            body: [1, 2],
+          },
+        })
+        .run();
+    });
+    test('should call resolveCommit for flows in the store', () => {
+      const opts = {
+        method: 'PUT',
+      };
+      const path = '/flows/jobs/resolve';
+
+      return expectSaga(resolveAllCommit, { storeId: '123' })
+        .provide([
+          [select(
+            selectors.integrationAppFlowIds,
+            undefined,
+            '123'
+          ),
+          ['1', '2', '3'],
+          ],
+        ])
+        .call(apiCallWithRetry, {
+          path,
+          opts: {
+            ...opts,
+            body: ['1', '2', '3'],
+          },
+        })
+        .run();
+    });
   });
 
   describe('resolveSelected saga', () => {
@@ -732,10 +835,11 @@ describe('job sagas', () => {
 
   describe('resolveAll saga', () => {
     const integrationId = 'i1';
+    const storeId = 's1';
 
     describe('integration level resolve all', () => {
       test('should resolve all pending and init resolve all, wait for resolve all pending and then commit resolve all', () => {
-        const saga = resolveAll({ integrationId });
+        const saga = resolveAll({ integrationId, storeId });
 
         expect(saga.next().value).toEqual(put(actions.job.resolveAllPending()));
         expect(saga.next().value).toEqual(put(actions.job.resolveAllInit()));
@@ -748,13 +852,13 @@ describe('job sagas', () => {
           ])
         );
         expect(saga.next(actions.job.resolveAllPending()).value).toEqual(
-          call(resolveAllCommit, { integrationId })
+          call(resolveAllCommit, { integrationId, storeId })
         );
         expect(saga.next().done).toEqual(true);
       });
 
       test('should resolve all pending and init resolve all, wait for resolve all commit and then commit resolve all', () => {
-        const saga = resolveAll({ integrationId });
+        const saga = resolveAll({ integrationId, storeId });
 
         expect(saga.next().value).toEqual(put(actions.job.resolveAllPending()));
         expect(saga.next().value).toEqual(put(actions.job.resolveAllInit()));
@@ -767,7 +871,7 @@ describe('job sagas', () => {
           ])
         );
         expect(saga.next(actions.job.resolveAllCommit()).value).toEqual(
-          call(resolveAllCommit, { integrationId })
+          call(resolveAllCommit, { integrationId, storeId })
         );
         expect(saga.next().done).toEqual(true);
       });
@@ -1724,5 +1828,66 @@ describe('job sagas', () => {
       expect(saga.throw(new Error()).value).toEqual(true);
       expect(saga.next().done).toEqual(true);
     });
+  });
+
+  describe('retryProcessedErrors saga', () => {
+    test('should call retry api and update jobs list once retried', () => expectSaga(retryProcessedErrors, { jobId: 'j1', flowJobId: 'fj1', errorFileId: 'ef1' })
+      .provide([
+        [call(apiCallWithRetry, {
+          path: '/jobs/j1/retries/retry',
+          opts: {
+            method: 'POST',
+            body: { errorFile: { host: 's3', id: 'ef1' } },
+          },
+        }), {
+          success: true,
+        }],
+        [
+          call(getJobFamily, { jobId: 'fj1' }),
+          [{
+            _id: 'j1',
+            numError: 0,
+          }],
+        ],
+      ])
+      .call(apiCallWithRetry, {
+        path: '/jobs/j1/retries/retry',
+        opts: {
+          method: 'POST',
+          body: { errorFile: { host: 's3', id: 'ef1' } },
+        },
+      })
+      .call(getJobFamily, { jobId: 'fj1' })
+      .put(actions.job.requestInProgressJobStatus())
+      .run());
+
+    test('should handle api error properly', () => expectSaga(retryProcessedErrors, { jobId: 'j1', flowJobId: 'fj1', errorFileId: 'ef1' })
+      .provide([
+        [call(apiCallWithRetry, {
+          path: '/jobs/j1/retries/retry',
+          opts: {
+            method: 'POST',
+            body: { errorFile: { host: 's3', id: 'ef1' } },
+          },
+        }), throwError({
+          status: 401,
+          message: '{"code":"error code"}',
+        })],
+      ])
+      .call(apiCallWithRetry, {
+        path: '/jobs/j1/retries/retry',
+        opts: {
+          method: 'POST',
+          body: { errorFile: { host: 's3', id: 'ef1' } },
+        },
+      })
+      .not.call(apiCallWithRetry, {
+        path: '/jobs/j1/retries/retry',
+        opts: {
+          method: 'POST',
+          body: { errorFile: { host: 's3', id: 'ef1' } },
+        },
+      })
+      .run());
   });
 });

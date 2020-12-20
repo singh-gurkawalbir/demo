@@ -21,10 +21,10 @@ const wrapper = {
 };
 <div style={wrapper}>
     <div style={styles}>
-    <TrialExpireNotification content="Your free trial expired on Jan 10th, 2020 (60 days). Contact sales to upgrade your app. " single  />
+    <TileNotification content="Your free trial expired on Jan 10th, 2020 (60 days). Contact sales to upgrade your app. " single  />
     </div>
     <div style={styles}>
-    <TrialExpireNotification content="Your free trial expired on Jan 10th, 2020 (60 days). Contact sales to upgrade your app. " />
+    <TileNotification content="Your free trial expired on Jan 10th, 2020 (60 days). Contact sales to upgrade your app. " />
     </div>
 </div>
 
