@@ -20,6 +20,7 @@ import {
   fetchPageProcessorPreview,
   fetchPageGeneratorPreview,
   requestProcessorData,
+  requestSampleData,
 } from '../flows';
 import {
   getFlowResourceNode,
@@ -30,6 +31,8 @@ import {
   requestSampleDataForExports,
   updateStateForProcessorData,
   handleFlowDataStageErrors,
+  getPreProcessedResponseMappingData,
+  getFlowStageData,
 } from './flowDataUtils';
 import fetchMetadata from './metadataUtils';
 import saveTransformationRulesForNewXMLExport, {
@@ -675,69 +678,6 @@ describe('Flow sample data utility sagas', () => {
       test('should return undefined incase of invalid/no resourceId ', () => expectSaga(fetchResourceDataForNewFlowResource, {})
         .returns(undefined)
         .run());
-
-      test('should return the resource object with formatted oneToMany property to boolean', () => {
-        const resourceId = 'import-123';
-        const resourceType = 'imports';
-        const oneToManyResource = {
-          _id: 'import-123',
-          oneToMany: 'true',
-          pathToMany: 'e.check.f',
-          name: 'test',
-          adaptorType: 'RESTImport',
-        };
-        const expectedResource = {
-          _id: 'import-123',
-          oneToMany: true,
-          pathToMany: 'e.check.f',
-          name: 'test',
-          adaptorType: 'RESTImport',
-        };
-
-        return expectSaga(fetchResourceDataForNewFlowResource, { resourceId, resourceType })
-          .provide([
-            [select(
-              selectors.resourceData,
-              resourceType,
-              resourceId,
-              SCOPES.VALUE
-            ), { merged: oneToManyResource}],
-          ])
-          .returns(expectedResource)
-          .run();
-      });
-      test('should remove once field from the resource incase of once type resource', () => {
-        const resource = {
-          name: 'Test export',
-          _id: '1234',
-          type: 'once',
-          rest: {
-            once: { relativeURI: '/api/v2/users.json', method: 'PUT', body: { test: 5 }},
-            relativeURI: '/api/v2/users.json',
-          },
-          adaptorType: 'RESTExport',
-        };
-        const expectedResource = {
-          name: 'Test export',
-          _id: '1234',
-          rest: {
-            relativeURI: '/api/v2/users.json',
-          },
-          adaptorType: 'RESTExport',
-        };
-
-        return expectSaga(fetchResourceDataForNewFlowResource, { resourceId: '1234', resourceType: 'exports' })
-          .provide([
-            [select(
-              selectors.resourceData,
-              'exports',
-              '1234',
-              SCOPES.VALUE
-            ), { merged: resource}],
-          ])
-          .returns(expectedResource)
-          .run();
-      });
       test('should add postData on the resource incase of delta export resource', async () => {
         const deltaResource = {
           name: 'Test export',
@@ -1236,6 +1176,36 @@ describe('Flow sample data utility sagas', () => {
           )
           .run();
       });
+      test('should dispatch receivedPreviewData with sampleResponse if the data is not in non JSON string format ( like XML sampleResponse ) on the resource for the stage sampleResponse', () => {
+        const resourceId = 'import-123';
+        const flowId = 'flow-123';
+        const resource = {
+          _id: 'import-123',
+          name: 'test',
+          adaptorType: 'RESTImport',
+          sampleResponseData: '<xml>123</xml>',
+        };
+        const parsedSampleResponse = '<xml>123</xml>';
+
+        return expectSaga(requestSampleDataForImports, { resourceId, flowId, sampleDataStage: 'sampleResponse' })
+          .provide([
+            [select(
+              selectors.resourceData,
+              'imports',
+              resourceId,
+              SCOPES.VALUE
+            ), { merged: resource}],
+          ])
+          .put(
+            actions.flowData.receivedPreviewData(
+              flowId,
+              resourceId,
+              parsedSampleResponse,
+              'sampleResponse'
+            )
+          )
+          .run();
+      });
       test('should call requestProcessorData for all the other processor stages', () => {
         const resourceId = 'import-123';
         const flowId = 'flow-123';
@@ -1509,6 +1479,114 @@ describe('Flow sample data utility sagas', () => {
               errorMessage
             )
           )
+          .run();
+      });
+    });
+    describe('getPreProcessedResponseMappingData util', () => {
+      test('should return undefined incase of invalid(other than exports/imports)/no resourceType', () => {
+        expect(getPreProcessedResponseMappingData({ resourceType: 'connections', preProcessedData: {}, adaptorType: 'HTTPExport'})).toBeUndefined();
+        expect(getPreProcessedResponseMappingData({ preProcessedData: {}, adaptorType: 'HTTPExport'})).toBeUndefined();
+      });
+
+      test('should return defaultExtractsObj without data prop incase of export lookups with no preProcessedData', () => {
+        const lookupDefaultExtracts = {
+          errors: '',
+          ignored: '',
+          statusCode: '',
+        };
+
+        expect(getPreProcessedResponseMappingData({resourceType: 'exports', adaptorType: 'RESTExport'}))
+          .toEqual(lookupDefaultExtracts);
+      });
+      test('should return defaultExtractsObj incase of imports with no/empty preProcessedData', () => {
+        const importDefaultExtracts = {
+          errors: '',
+          id: '',
+          ignored: '',
+          statusCode: '',
+        };
+
+        expect(getPreProcessedResponseMappingData({resourceType: 'imports', adaptorType: 'RESTImport'}))
+          .toEqual(importDefaultExtracts);
+        expect(getPreProcessedResponseMappingData({resourceType: 'imports', adaptorType: 'RESTImport', preProcessedData: []}))
+          .toEqual(importDefaultExtracts);
+        expect(getPreProcessedResponseMappingData({resourceType: 'imports', adaptorType: 'RESTImport', preProcessedData: {}}))
+          .toEqual(importDefaultExtracts);
+      });
+      test('should return preProcessedData wrapped in data with extractsObj for export lookups', () => {
+        const preProcessedData = {
+          users: [{ _id: 'user1', name: 'user1'}],
+        };
+        const expectedOutput = {
+          errors: '',
+          ignored: '',
+          statusCode: '',
+          data: [preProcessedData],
+        };
+
+        expect(getPreProcessedResponseMappingData({resourceType: 'exports', adaptorType: 'RESTExport', preProcessedData}))
+          .toEqual(expectedOutput);
+      });
+      test('should return preProcessedData if exists incase of imports', () => {
+        const preProcessedData = {
+          users: [{ _id: 'user1', name: 'user1'}],
+        };
+
+        expect(getPreProcessedResponseMappingData({resourceType: 'imports', adaptorType: 'RESTImport', preProcessedData}))
+          .toEqual(preProcessedData);
+      });
+    });
+    describe('getFlowStageData saga', () => {
+      const flowId = 'flow-123';
+      const resourceId = 'export-123';
+      const resourceType = 'exports';
+      const stage = 'transform';
+      const isInitialized = true;
+
+      test('should not call requestSampleData saga when the flowStageData status is received and return the data', () => {
+        const flowStageData = {
+          status: 'received',
+          data: { test: 5 },
+        };
+
+        return expectSaga(getFlowStageData, {flowId,
+          resourceId,
+          resourceType,
+          stage,
+          isInitialized})
+          .provide([
+            [select(selectors.sampleDataWrapper, {
+              flowId,
+              resourceId,
+              resourceType,
+              stage,
+            }), flowStageData],
+          ])
+          .not.call.fn(requestSampleData)
+          .returns(flowStageData.data)
+          .run();
+      });
+      test('should call requestSampleData saga when the flowStageData status is not received and return the data', () => {
+        const flowStageData = {
+          status: 'error',
+          data: { test: 5 },
+        };
+
+        return expectSaga(getFlowStageData, {flowId,
+          resourceId,
+          resourceType,
+          stage,
+          isInitialized})
+          .provide([
+            [select(selectors.sampleDataWrapper, {
+              flowId,
+              resourceId,
+              resourceType,
+              stage,
+            }), flowStageData],
+          ])
+          .call.fn(requestSampleData)
+          .returns(flowStageData.data)
           .run();
       });
     });
@@ -2678,31 +2756,9 @@ describe('Flow sample data utility sagas', () => {
         const sampleData = {
           body: `<?xml version="1.0" encoding="UTF-8"?>
           <letter>
-          <title maxlength="10"> Quote Letter </title>
-          <salutation limit="40">Dear Daniel,</salutation>
-          <text>Thank you for sending us the information on
-          <emphasis>SDL Trados Studio 2015</emphasis>. We like
-          your products and think they certainly represent the most powerful
-          translation solution on the market. We especially like the
-          <component translate="yes">XML Parser rules</component>
-          options in the <component
-          translate="no">XML</component> filter. It has helped us to
-          set up support for our XML files in a flash. We have already
-          downloaded the latest version from your Customer Center.
-          </text> <title maxlength="40"> Quote Details
-          </title> <text> We would like to order 50 licenses.
-          Please send us a quote. Keep up the good work!
-          </text>
-          <greetings minlength="10">Yours sincerely,</greetings>
-          <signature> Paul Smith</signature> <address
-          translate="yes">Smith &amp; Company Ltd.</address>
-          <address translate="no">Smithtown</address>
-          <weblink>http://www.smith-company-ltd.com</weblink>
-          <logo alt="Logo of Smith and Company Ltd."
-          address="http://www.smith-company-ltd.com/logo.jpg"/>
           </letter>`,
         };
-        const fileParserData = {mediaType: 'json', data: [{letter: [{title: [{$: {maxlength: '10'}, _: ' Quote Letter '}, {$: {maxlength: '40'}, _: ' Quote Details\n'}], salutation: [{$: {limit: '40'}, _: 'Dear Daniel,'}], text: [{emphasis: [{_: 'SDL Trados Studio 2015'}], component: [{$: {translate: 'yes'}, _: 'XML Parser rules'}, {$: {translate: 'no'}, _: 'XML'}], _: 'Thank you for sending us the information on\n. We like\nyour products and think they certainly represent the most powerful\ntranslation solution on the market. We especially like the\n\noptions in the  filter. It has helped us to\nset up support for our XML files in a flash. We have already\ndownloaded the latest version from your Customer Center.\n'}, {_: ' We would like to order 50 licenses.\nPlease send us a quote. Keep up the good work!\n'}], greetings: [{$: {minlength: '10'}, _: 'Yours sincerely,'}], signature: [{_: ' Paul Smith'}], address: [{$: {translate: 'yes'}, _: 'Smith & Company Ltd.'}, {$: {translate: 'no'}, _: 'Smithtown'}], weblink: [{_: 'http://www.smith-company-ltd.com'}], logo: [{$: {alt: 'Logo of Smith and Company Ltd.', address: 'http://www.smith-company-ltd.com/logo.jpg'}}]}]}], duration: 0};
+        const fileParserData = {mediaType: 'json', data: [{letter: {}}], duration: 0};
 
         return expectSaga(_getXmlFileAdaptorSampleData, { resource, newResourceId})
           .provide([

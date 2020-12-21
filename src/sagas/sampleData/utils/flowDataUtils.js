@@ -173,7 +173,6 @@ export function* requestSampleDataForImports({
         SCOPES.VALUE
       );
 
-      // @TODO Raghu: Handle sample response as a XML
       const { sampleResponseData = '' } = resource;
       const sampleResponse = isJsonString(sampleResponseData)
         ? JSON.parse(sampleResponseData)
@@ -316,6 +315,9 @@ export function getPreProcessedResponseMappingData({
   preProcessedData,
   adaptorType,
 }) {
+  if (!['exports', 'imports'].includes(resourceType)) {
+    return;
+  }
   const extractsObj = generateDefaultExtractsObject(resourceType, adaptorType);
 
   // Incase of lookups , add preProcessedData as part of data if exists else no data from lookup is passed
