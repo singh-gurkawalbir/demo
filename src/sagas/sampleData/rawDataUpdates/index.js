@@ -13,6 +13,7 @@ import {
   isBlobTypeResource,
   isAS2Resource,
   isRestCsvMediaTypeExport,
+  isGoogleDriveExport,
 } from '../../../utils/resource';
 import { exportPreview } from '../utils/previewCalls';
 import { saveRawDataOnResource, removeRawDataOnResource } from './utils';
@@ -50,7 +51,7 @@ function* fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
   if (
     isFileAdaptor(resourceObj) ||
     isAS2Resource(resourceObj) ||
-    (type === 'exports' && isRestCsvMediaTypeExport(resourceObj, connectionObj))
+    (type === 'exports' && (isRestCsvMediaTypeExport(resourceObj, connectionObj) || isGoogleDriveExport(resourceObj, connectionObj))) // Needs to check
   ) {
     return yield call(saveRawDataForFileAdaptors, {
       resourceId,

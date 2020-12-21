@@ -3603,6 +3603,20 @@ selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
   return connection && connection.rest && connection.rest.mediaType === 'csv';
 };
 
+selectors.isGoogleDriveExport = (state, resourceId) => {
+  const { merged: resourceObj } = selectors.resourceData(state, 'exports', resourceId);
+  const { adaptorType, _connectionId: connectionId } = resourceObj || {};
+
+  // Returns false if it is not a http export
+  if (adaptorType !== 'HTTPExport') {
+    return false;
+  }
+
+  const connection = selectors.resource(state, 'connections', connectionId);
+
+  return connection && connection.assistant === 'googledrive';
+};
+
 selectors.isDataLoaderExport = (state, resourceId, flowId) => {
   if (isNewId(resourceId)) {
     if (!flowId) return false;
@@ -3643,7 +3657,7 @@ selectors.isExportPreviewDisabled = (state, resourceId, resourceType) => {
     isAS2Resource(resourceObj) ||
     selectors.isRestCsvMediaTypeExport(state, resourceId)
   ) {
-    return false;
+    return false; // Google drive
   }
 
   // In all other cases, where preview depends on connection being online, return the same
