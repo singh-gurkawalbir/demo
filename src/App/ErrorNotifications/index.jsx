@@ -11,7 +11,7 @@ export default function ErrorNotifications() {
   const dispatch = useDispatch();
   const errors = useSelector(state => selectors.commsErrors(state), shallowEqual);
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const hasWarning = useSelector(state => selectors.reqsHasRetriedTillFailure(state));
+  // const hasWarning = useSelector(state => selectors.reqsHasRetriedTillFailure(state));
 
   useEffect(() => {
     if (!errors) return;
@@ -26,6 +26,7 @@ export default function ErrorNotifications() {
     dispatch(actions.clearComms());
   }, [errors, enqueueSnackbar, dispatch]);
 
+  /*
   useEffect(() => {
     if (hasWarning) {
       enqueueSnackbar({
@@ -36,6 +37,6 @@ export default function ErrorNotifications() {
       });
     }
   }, [enqueueSnackbar, hasWarning]);
-
+  */
   return null;
 }
