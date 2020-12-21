@@ -1,4 +1,3 @@
-import googledrive from './googledrive';
 import google from './google';
 import linkedin from './linkedin';
 import yahoo from './yahoo';
@@ -8,7 +7,6 @@ import signnow from './signnow';
 import nimble from './nimble';
 
 export default {
-  googledrive,
   google,
   linkedin,
   yahoo,
