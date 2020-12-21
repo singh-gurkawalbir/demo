@@ -1,9 +1,10 @@
 import { select, call } from 'redux-saga/effects';
-import { selectors } from '../../../reducers';
-import { saveSampleDataOnResource } from './utils';
-import { safeParse } from '../../../utils/string';
+import { selectors } from '../../../../reducers';
+import { saveSampleDataOnResource } from '../utils';
+import { safeParse } from '../../../../utils/string';
 
-function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
+export function* _fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
+  if (!resourceId) return;
   // Incase of FTP, raw data to be saved in the data in Raw Stage ( file content )
   // tempResourceId if passed used incase of newly created export
   // to fetch Sample data saved against temp id in state
@@ -54,7 +55,7 @@ export default function* saveRawDataForFileAdaptors({
   tempResourceId,
   type,
 }) {
-  const rawData = yield call(fetchRawDataForFileAdaptors, {
+  const rawData = yield call(_fetchRawDataForFileAdaptors, {
     resourceId,
     tempResourceId,
     type,

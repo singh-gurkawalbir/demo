@@ -20,7 +20,7 @@ import { saveRawDataOnResource, removeRawDataOnResource } from './utils';
 import saveRawDataForFileAdaptors from './fileAdaptorUpdates';
 import saveTransformationRulesForNewXMLExport from '../utils/xmlTransformationRulesGenerator';
 
-function* fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
+export function* _fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
   const resourceObj = yield select(
     selectors.resource,
     type === 'imports' ? 'imports' : 'exports',
@@ -96,7 +96,8 @@ function* fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
   }
 }
 
-function* onResourceCreate({ id, resourceType, tempId }) {
+export function* onResourceCreate({ id, resourceType, tempId }) {
+  if (!id) return;
   /*
    * Question: How to differentiate -- a lookup creation and an existing lookup add on flow
    */
@@ -112,7 +113,7 @@ function* onResourceCreate({ id, resourceType, tempId }) {
 
     if (!resourceObj.isLookup) {
       // If export, get raw data calling preview and call save raw data with a patch on this id
-      yield call(fetchAndSaveRawDataForResource, {
+      yield call(_fetchAndSaveRawDataForResource, {
         type: 'exports',
         resourceId: id,
         tempResourceId: tempId,
@@ -121,7 +122,7 @@ function* onResourceCreate({ id, resourceType, tempId }) {
   }
 
   if (resourceType === 'imports') {
-    yield call(fetchAndSaveRawDataForResource, {
+    yield call(_fetchAndSaveRawDataForResource, {
       type: 'imports',
       resourceId: id,
       tempResourceId: tempId,
@@ -129,7 +130,7 @@ function* onResourceCreate({ id, resourceType, tempId }) {
   }
 }
 
-function* onResourceUpdate({
+export function* onResourceUpdate({
   resourceType,
   resourceId,
   master = {},
@@ -152,13 +153,13 @@ function* onResourceUpdate({
     }
 
     if (isLookup) {
-      yield call(fetchAndSaveRawDataForResource, {
+      yield call(_fetchAndSaveRawDataForResource, {
         type: 'pageprocessors',
         flowId,
         resourceId,
       });
     } else {
-      yield call(fetchAndSaveRawDataForResource, {
+      yield call(_fetchAndSaveRawDataForResource, {
         type: 'exports',
         resourceId,
       });
@@ -169,7 +170,7 @@ function* onResourceUpdate({
     const addedPageProcessorId = getAddedLookupIdInFlow(patch);
 
     if (addedPageProcessorId) {
-      yield call(fetchAndSaveRawDataForResource, {
+      yield call(_fetchAndSaveRawDataForResource, {
         type: 'pageprocessors',
         flowId: resourceId,
         resourceId: addedPageProcessorId,
@@ -191,7 +192,7 @@ function* onResourceUpdate({
       );
     }
 
-    yield call(fetchAndSaveRawDataForResource, {
+    yield call(_fetchAndSaveRawDataForResource, {
       type: 'imports',
       resourceId,
     });
