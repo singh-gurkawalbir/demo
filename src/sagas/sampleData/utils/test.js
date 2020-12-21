@@ -347,7 +347,7 @@ describe('Flow sample data utility sagas', () => {
           .run();
       });
       test('should invoke file definition processor api and return the response if no resourcePath is provided', () => {
-        const sampleData = "UNB+UNOC:3+<Sender GLN>:14+<Receiver GLN>:14+140407:1000+100+ + + + +EANCOM' UNH+1+DESADV:D:96A:UN:EAN005' BGM+351: :9+DES587441+9' DTM+11:20140407:102' DTM+132:20140409:102' DTM+137:20140407:102' RFF+DQ:ABCD12333' RFF+ON:2BB2TEST' NAD+DP+5450534000109: :9+ + + + + + +GB' NAD+SU+<Supplier GLN>: :9' NAD+SF+<Warehouse GLN>: :9+ + + + + +ZIP CODE+ISOCOUNTRYCODE' TDT+20+ +30+31' CPS+1' PAC+2+ +201' PAC+2+ +PK' CPS+2+1' PAC+1+ :52+PK' MEA+PD+LN+CMT:120' MEA+PD+WD+CMT:50' MEA+PD+HT+CMT:30' MEA+PD+AAB+KGM:12' HAN+BIG' PCI+33E' GIN+BJ+354123450000000014' LIN+1+ +1234567891234:EN' QTY+12:30' PCI+17' DTM+361:20141121:102' GIN+BX+72811023' LIN+2+ +1234567891236:EN' QTY+12:30' PCI+17' DTM+361:20141031:102' GIN+BX+63214914' CPS+3+1' PAC+1+:52+PK' MEA+PD+LN+CMT:120' MEA+PD+WD+CMT:50' MEA+PD+HT+CMT:30' MEA+PD+AAB+KGM:12' HAN+BIG' PCI+33E' GIN+BJ+354123450000000015' LIN+3' PIA+5+1234567891:IB' QTY+12:20' RFF+ON:1AA1TEST' PCI+17' DTM+361:20141215:102' GIN+BX+33594011' UNT+50+1' UNZ+1+100'";
+        const sampleData = 'UNB+UNOC:3+<Sender GLN>:14+<Receiver GLN>:14+140407:1000+100+ + + + +EANCOM';
         const _fileDefinitionId = '5fda05801730a97681d30444';
         const ftpFileDefResource = {
           _id: 'export-123',
@@ -366,7 +366,14 @@ describe('Flow sample data utility sagas', () => {
             },
           },
         };
-        const processedData = {data: {'SYNTAX IDENTIFIER': {'Syntax identifier': 'UNOC', 'Syntax version number': '3'}, 'INTERCHANGE SENDER': {'Sender identification': '<Sender GLN>', 'Partner identification code qualifier': '14'}, 'INTERCHANGE RECIPIENT': {'Recipient identification': '<Receiver GLN>', 'Partner identification code qualifier': '14'}, 'DATE/TIME OF PREPARATION': {'Date of preparation': '140407', 'Time of preparation': '1000'}, 'Interchange control reference': '100', UNB060: '', UNB070: '', UNB080: '', UNB090: '', 'Communications agreement ID': 'EANCOM', 'Message reference number': '1', 'MESSAGE IDENTIFIER': {'Message type identifier': 'DESADV', 'Message type version number': 'D', 'Message type release number': '96A', 'Controlling agency': 'UN', 'Association assigned code': 'EAN005'}, 'DOCUMENT/MESSAGE NAME': {'Document/message name, coded': '351', 'BGM010-020': '', 'Code list responsible agency, coded': '9'}, 'Document/message number': 'DES587441', 'Message function, coded': '9', DTM: [{'DATE/TIME/PERIOD': {'Date/time/period qualifier': '11', 'Date/time/period': '20140407', 'Date/time/period format qualifier': '102'}}, {'DATE/TIME/PERIOD': {'Date/time/period qualifier': '132', 'Date/time/period': '20140409', 'Date/time/period format qualifier': '102'}}, {'DATE/TIME/PERIOD': {'Date/time/period qualifier': '137', 'Date/time/period': '20140407', 'Date/time/period format qualifier': '102'}}], 'Segment Group 1': [{REFERENCE: {'Reference qualifier': 'DQ', 'Reference number': 'ABCD12333'}}, {REFERENCE: {'Reference qualifier': 'ON', 'Reference number': '2BB2TEST'}}], 'Segment Group 2': [{'Party qualifier': 'DP', 'PARTY IDENTIFICATION DETAILS': {'Party id identification': '5450534000109', 'NAD020-020': '', 'Code list responsible agency, coded': '9'}, NAD030: '', NAD040: '', NAD050: '', NAD060: '', NAD070: '', 'Postcode identification': '', 'Country, coded': 'GB'}, {'Party qualifier': 'SU', 'PARTY IDENTIFICATION DETAILS': {'Party id identification': '<Supplier GLN>', 'NAD020-020': '', 'Code list responsible agency, coded': '9'}}, {'Party qualifier': 'SF', 'PARTY IDENTIFICATION DETAILS': {'Party id identification': '<Warehouse GLN>', 'NAD020-020': '', 'Code list responsible agency, coded': '9'}, NAD030: '', NAD040: '', NAD050: '', NAD060: '', NAD070: '', 'Postcode identification': 'ZIP CODE', 'Country, coded': 'ISOCOUNTRYCODE'}], 'Segment Group 6': [{'Transport stage qualifier': '20', TDT020: '', 'Mode of transport, coded': '30', 'Type of means of transport identification': '31'}], 'Segment Group 10': [{'Hierarchical id number': '1', 'Segment Group 11': [{'Number of packages': '2', 'PACKAGING DETAILS': {'PAC020-010': ''}, 'Type of packages identification': '201'}, {'Number of packages': '2', 'PACKAGING DETAILS': {'PAC020-010': ''}, 'Type of packages identification': 'PK'}]}, {'Hierarchical id number': '2', 'Hierarchical parent id': '1', 'Segment Group 11': [{'Number of packages': '1', 'PACKAGING DETAILS': {'PAC020-010': '', 'Packaging related information, coded': '52'}, 'Type of packages identification': 'PK', MEA: [{'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'LN', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '120'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'WD', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '50'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'HT', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '30'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'AAB', 'VALUE/RANGE': {'Measure unit qualifier': 'KGM', 'Measurement value': '12'}}], 'Segment Group 12': [{'Handling instructions, coded': 'BIG'}], 'Segment Group 13': [{'Marking instructions, coded': '33E', 'Segment Group 14': [{'Identity number qualifier': 'BJ', 'Identity number': '354123450000000014'}]}]}], 'Segment Group 15': [{'Line item number': '1', LIN020: '', 'ITEM NUMBER IDENTIFICATION': {'Item number': '1234567891234', 'Item number type, coded': 'EN'}, QTY: [{'QUANTITY DETAILS': {'Quantity qualifier': '12', Quantity: '30'}}], 'Segment Group 20': [{'Marking instructions, coded': '17', DTM: [{'DATE/TIME/PERIOD': {'Date/time/period qualifier': '361', 'Date/time/period': '20141121', 'Date/time/period format qualifier': '102'}}], 'Segment Group 21': [{'Identity number qualifier': 'BX', 'Identity number': '72811023'}]}]}, {'Line item number': '2', LIN020: '', 'ITEM NUMBER IDENTIFICATION': {'Item number': '1234567891236', 'Item number type, coded': 'EN'}, QTY: [{'QUANTITY DETAILS': {'Quantity qualifier': '12', Quantity: '30'}}], 'Segment Group 20': [{'Marking instructions, coded': '17', DTM: [{'DATE/TIME/PERIOD': {'Date/time/period qualifier': '361', 'Date/time/period': '20141031', 'Date/time/period format qualifier': '102'}}], 'Segment Group 21': [{'Identity number qualifier': 'BX', 'Identity number': '63214914'}]}]}]}, {'Hierarchical id number': '3', 'Hierarchical parent id': '1', 'Segment Group 11': [{'Number of packages': '1', 'PACKAGING DETAILS': {'Packaging related information, coded': '52'}, 'Type of packages identification': 'PK', MEA: [{'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'LN', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '120'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'WD', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '50'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'HT', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '30'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'AAB', 'VALUE/RANGE': {'Measure unit qualifier': 'KGM', 'Measurement value': '12'}}], 'Segment Group 12': [{'Handling instructions, coded': 'BIG'}], 'Segment Group 13': [{'Marking instructions, coded': '33E', 'Segment Group 14': [{'Identity number qualifier': 'BJ', 'Identity number': '354123450000000015'}]}]}], 'Segment Group 15': [{'Line item number': '3', PIA: [{'Product id function qualifier': '5', 'ITEM NUMBER IDENTIFICATION': {'Item number': '1234567891', 'Item number type, coded': 'IB'}}], QTY: [{'QUANTITY DETAILS': {'Quantity qualifier': '12', Quantity: '20'}}], 'Segment Group 16': [{REFERENCE: {'Reference qualifier': 'ON', 'Reference number': '1AA1TEST'}}], 'Segment Group 20': [{'Marking instructions, coded': '17', DTM: [{'DATE/TIME/PERIOD': {'Date/time/period qualifier': '361', 'Date/time/period': '20141215', 'Date/time/period format qualifier': '102'}}], 'Segment Group 21': [{'Identity number qualifier': 'BX', 'Identity number': '33594011'}]}]}]}], 'Number of segments in a message': '50', 'Message reference number(UNT020)': '1', 'Interchange control count': '1', 'Interchange control reference(UNZ020)': '100'}};
+        const processedData = {
+          data: {
+            'SYNTAX IDENTIFIER': {
+              'Syntax identifier': 'UNOC',
+              'Syntax version number': '3',
+            },
+          },
+        };
 
         return expectSaga(parseFileDefinition, {sampleData, resource: ftpFileDefResource})
           .provide([
@@ -388,7 +395,7 @@ describe('Flow sample data utility sagas', () => {
           .run();
       });
       test('should invoke file definition processor api and return the target data when resourcePath is provided', () => {
-        const sampleData = "UNB+UNOC:3+<Sender GLN>:14+<Receiver GLN>:14+140407:1000+100+ + + + +EANCOM' UNH+1+DESADV:D:96A:UN:EAN005' BGM+351: :9+DES587441+9' DTM+11:20140407:102' DTM+132:20140409:102' DTM+137:20140407:102' RFF+DQ:ABCD12333' RFF+ON:2BB2TEST' NAD+DP+5450534000109: :9+ + + + + + +GB' NAD+SU+<Supplier GLN>: :9' NAD+SF+<Warehouse GLN>: :9+ + + + + +ZIP CODE+ISOCOUNTRYCODE' TDT+20+ +30+31' CPS+1' PAC+2+ +201' PAC+2+ +PK' CPS+2+1' PAC+1+ :52+PK' MEA+PD+LN+CMT:120' MEA+PD+WD+CMT:50' MEA+PD+HT+CMT:30' MEA+PD+AAB+KGM:12' HAN+BIG' PCI+33E' GIN+BJ+354123450000000014' LIN+1+ +1234567891234:EN' QTY+12:30' PCI+17' DTM+361:20141121:102' GIN+BX+72811023' LIN+2+ +1234567891236:EN' QTY+12:30' PCI+17' DTM+361:20141031:102' GIN+BX+63214914' CPS+3+1' PAC+1+:52+PK' MEA+PD+LN+CMT:120' MEA+PD+WD+CMT:50' MEA+PD+HT+CMT:30' MEA+PD+AAB+KGM:12' HAN+BIG' PCI+33E' GIN+BJ+354123450000000015' LIN+3' PIA+5+1234567891:IB' QTY+12:20' RFF+ON:1AA1TEST' PCI+17' DTM+361:20141215:102' GIN+BX+33594011' UNT+50+1' UNZ+1+100'";
+        const sampleData = 'UNB+UNOC:3+<Sender GLN>:14+<Receiver GLN>:14+140407:1000+100+ + + + +EANCOM';
         const _fileDefinitionId = '5fda05801730a97681d30444';
         const ftpFileDefResource = {
           _id: 'export-123',
@@ -407,7 +414,14 @@ describe('Flow sample data utility sagas', () => {
             },
           },
         };
-        const processedData = {data: {'SYNTAX IDENTIFIER': {'Syntax identifier': 'UNOC', 'Syntax version number': '3'}, 'INTERCHANGE SENDER': {'Sender identification': '<Sender GLN>', 'Partner identification code qualifier': '14'}, 'INTERCHANGE RECIPIENT': {'Recipient identification': '<Receiver GLN>', 'Partner identification code qualifier': '14'}, 'DATE/TIME OF PREPARATION': {'Date of preparation': '140407', 'Time of preparation': '1000'}, 'Interchange control reference': '100', UNB060: '', UNB070: '', UNB080: '', UNB090: '', 'Communications agreement ID': 'EANCOM', 'Message reference number': '1', 'MESSAGE IDENTIFIER': {'Message type identifier': 'DESADV', 'Message type version number': 'D', 'Message type release number': '96A', 'Controlling agency': 'UN', 'Association assigned code': 'EAN005'}, 'DOCUMENT/MESSAGE NAME': {'Document/message name, coded': '351', 'BGM010-020': '', 'Code list responsible agency, coded': '9'}, 'Document/message number': 'DES587441', 'Message function, coded': '9', DTM: [{'DATE/TIME/PERIOD': {'Date/time/period qualifier': '11', 'Date/time/period': '20140407', 'Date/time/period format qualifier': '102'}}, {'DATE/TIME/PERIOD': {'Date/time/period qualifier': '132', 'Date/time/period': '20140409', 'Date/time/period format qualifier': '102'}}, {'DATE/TIME/PERIOD': {'Date/time/period qualifier': '137', 'Date/time/period': '20140407', 'Date/time/period format qualifier': '102'}}], 'Segment Group 1': [{REFERENCE: {'Reference qualifier': 'DQ', 'Reference number': 'ABCD12333'}}, {REFERENCE: {'Reference qualifier': 'ON', 'Reference number': '2BB2TEST'}}], 'Segment Group 2': [{'Party qualifier': 'DP', 'PARTY IDENTIFICATION DETAILS': {'Party id identification': '5450534000109', 'NAD020-020': '', 'Code list responsible agency, coded': '9'}, NAD030: '', NAD040: '', NAD050: '', NAD060: '', NAD070: '', 'Postcode identification': '', 'Country, coded': 'GB'}, {'Party qualifier': 'SU', 'PARTY IDENTIFICATION DETAILS': {'Party id identification': '<Supplier GLN>', 'NAD020-020': '', 'Code list responsible agency, coded': '9'}}, {'Party qualifier': 'SF', 'PARTY IDENTIFICATION DETAILS': {'Party id identification': '<Warehouse GLN>', 'NAD020-020': '', 'Code list responsible agency, coded': '9'}, NAD030: '', NAD040: '', NAD050: '', NAD060: '', NAD070: '', 'Postcode identification': 'ZIP CODE', 'Country, coded': 'ISOCOUNTRYCODE'}], 'Segment Group 6': [{'Transport stage qualifier': '20', TDT020: '', 'Mode of transport, coded': '30', 'Type of means of transport identification': '31'}], 'Segment Group 10': [{'Hierarchical id number': '1', 'Segment Group 11': [{'Number of packages': '2', 'PACKAGING DETAILS': {'PAC020-010': ''}, 'Type of packages identification': '201'}, {'Number of packages': '2', 'PACKAGING DETAILS': {'PAC020-010': ''}, 'Type of packages identification': 'PK'}]}, {'Hierarchical id number': '2', 'Hierarchical parent id': '1', 'Segment Group 11': [{'Number of packages': '1', 'PACKAGING DETAILS': {'PAC020-010': '', 'Packaging related information, coded': '52'}, 'Type of packages identification': 'PK', MEA: [{'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'LN', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '120'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'WD', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '50'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'HT', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '30'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'AAB', 'VALUE/RANGE': {'Measure unit qualifier': 'KGM', 'Measurement value': '12'}}], 'Segment Group 12': [{'Handling instructions, coded': 'BIG'}], 'Segment Group 13': [{'Marking instructions, coded': '33E', 'Segment Group 14': [{'Identity number qualifier': 'BJ', 'Identity number': '354123450000000014'}]}]}], 'Segment Group 15': [{'Line item number': '1', LIN020: '', 'ITEM NUMBER IDENTIFICATION': {'Item number': '1234567891234', 'Item number type, coded': 'EN'}, QTY: [{'QUANTITY DETAILS': {'Quantity qualifier': '12', Quantity: '30'}}], 'Segment Group 20': [{'Marking instructions, coded': '17', DTM: [{'DATE/TIME/PERIOD': {'Date/time/period qualifier': '361', 'Date/time/period': '20141121', 'Date/time/period format qualifier': '102'}}], 'Segment Group 21': [{'Identity number qualifier': 'BX', 'Identity number': '72811023'}]}]}, {'Line item number': '2', LIN020: '', 'ITEM NUMBER IDENTIFICATION': {'Item number': '1234567891236', 'Item number type, coded': 'EN'}, QTY: [{'QUANTITY DETAILS': {'Quantity qualifier': '12', Quantity: '30'}}], 'Segment Group 20': [{'Marking instructions, coded': '17', DTM: [{'DATE/TIME/PERIOD': {'Date/time/period qualifier': '361', 'Date/time/period': '20141031', 'Date/time/period format qualifier': '102'}}], 'Segment Group 21': [{'Identity number qualifier': 'BX', 'Identity number': '63214914'}]}]}]}, {'Hierarchical id number': '3', 'Hierarchical parent id': '1', 'Segment Group 11': [{'Number of packages': '1', 'PACKAGING DETAILS': {'Packaging related information, coded': '52'}, 'Type of packages identification': 'PK', MEA: [{'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'LN', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '120'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'WD', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '50'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'HT', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '30'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'AAB', 'VALUE/RANGE': {'Measure unit qualifier': 'KGM', 'Measurement value': '12'}}], 'Segment Group 12': [{'Handling instructions, coded': 'BIG'}], 'Segment Group 13': [{'Marking instructions, coded': '33E', 'Segment Group 14': [{'Identity number qualifier': 'BJ', 'Identity number': '354123450000000015'}]}]}], 'Segment Group 15': [{'Line item number': '3', PIA: [{'Product id function qualifier': '5', 'ITEM NUMBER IDENTIFICATION': {'Item number': '1234567891', 'Item number type, coded': 'IB'}}], QTY: [{'QUANTITY DETAILS': {'Quantity qualifier': '12', Quantity: '20'}}], 'Segment Group 16': [{REFERENCE: {'Reference qualifier': 'ON', 'Reference number': '1AA1TEST'}}], 'Segment Group 20': [{'Marking instructions, coded': '17', DTM: [{'DATE/TIME/PERIOD': {'Date/time/period qualifier': '361', 'Date/time/period': '20141215', 'Date/time/period format qualifier': '102'}}], 'Segment Group 21': [{'Identity number qualifier': 'BX', 'Identity number': '33594011'}]}]}]}], 'Number of segments in a message': '50', 'Message reference number(UNT020)': '1', 'Interchange control count': '1', 'Interchange control reference(UNZ020)': '100'}};
+        const processedData = {
+          data: {
+            'SYNTAX IDENTIFIER': {
+              'Syntax identifier': 'UNOC',
+              'Syntax version number': '3',
+            },
+          },
+        };
         const processedDataWithResourcePath = {
           data: {
             'Syntax identifier': 'UNOC',
@@ -435,7 +449,7 @@ describe('Flow sample data utility sagas', () => {
           .run();
       });
       test('should invoke file definition processor api and return the undefined data when invalid resourcePath is provided', () => {
-        const sampleData = "UNB+UNOC:3+<Sender GLN>:14+<Receiver GLN>:14+140407:1000+100+ + + + +EANCOM' UNH+1+DESADV:D:96A:UN:EAN005' BGM+351: :9+DES587441+9' DTM+11:20140407:102' DTM+132:20140409:102' DTM+137:20140407:102' RFF+DQ:ABCD12333' RFF+ON:2BB2TEST' NAD+DP+5450534000109: :9+ + + + + + +GB' NAD+SU+<Supplier GLN>: :9' NAD+SF+<Warehouse GLN>: :9+ + + + + +ZIP CODE+ISOCOUNTRYCODE' TDT+20+ +30+31' CPS+1' PAC+2+ +201' PAC+2+ +PK' CPS+2+1' PAC+1+ :52+PK' MEA+PD+LN+CMT:120' MEA+PD+WD+CMT:50' MEA+PD+HT+CMT:30' MEA+PD+AAB+KGM:12' HAN+BIG' PCI+33E' GIN+BJ+354123450000000014' LIN+1+ +1234567891234:EN' QTY+12:30' PCI+17' DTM+361:20141121:102' GIN+BX+72811023' LIN+2+ +1234567891236:EN' QTY+12:30' PCI+17' DTM+361:20141031:102' GIN+BX+63214914' CPS+3+1' PAC+1+:52+PK' MEA+PD+LN+CMT:120' MEA+PD+WD+CMT:50' MEA+PD+HT+CMT:30' MEA+PD+AAB+KGM:12' HAN+BIG' PCI+33E' GIN+BJ+354123450000000015' LIN+3' PIA+5+1234567891:IB' QTY+12:20' RFF+ON:1AA1TEST' PCI+17' DTM+361:20141215:102' GIN+BX+33594011' UNT+50+1' UNZ+1+100'";
+        const sampleData = 'UNB+UNOC:3+<Sender GLN>:14+<Receiver GLN>:14+140407:1000+100+ + + + +EANCOM';
         const _fileDefinitionId = '5fda05801730a97681d30444';
         const ftpFileDefResource = {
           _id: 'export-123',
@@ -454,7 +468,14 @@ describe('Flow sample data utility sagas', () => {
             },
           },
         };
-        const processedData = {data: {'SYNTAX IDENTIFIER': {'Syntax identifier': 'UNOC', 'Syntax version number': '3'}, 'INTERCHANGE SENDER': {'Sender identification': '<Sender GLN>', 'Partner identification code qualifier': '14'}, 'INTERCHANGE RECIPIENT': {'Recipient identification': '<Receiver GLN>', 'Partner identification code qualifier': '14'}, 'DATE/TIME OF PREPARATION': {'Date of preparation': '140407', 'Time of preparation': '1000'}, 'Interchange control reference': '100', UNB060: '', UNB070: '', UNB080: '', UNB090: '', 'Communications agreement ID': 'EANCOM', 'Message reference number': '1', 'MESSAGE IDENTIFIER': {'Message type identifier': 'DESADV', 'Message type version number': 'D', 'Message type release number': '96A', 'Controlling agency': 'UN', 'Association assigned code': 'EAN005'}, 'DOCUMENT/MESSAGE NAME': {'Document/message name, coded': '351', 'BGM010-020': '', 'Code list responsible agency, coded': '9'}, 'Document/message number': 'DES587441', 'Message function, coded': '9', DTM: [{'DATE/TIME/PERIOD': {'Date/time/period qualifier': '11', 'Date/time/period': '20140407', 'Date/time/period format qualifier': '102'}}, {'DATE/TIME/PERIOD': {'Date/time/period qualifier': '132', 'Date/time/period': '20140409', 'Date/time/period format qualifier': '102'}}, {'DATE/TIME/PERIOD': {'Date/time/period qualifier': '137', 'Date/time/period': '20140407', 'Date/time/period format qualifier': '102'}}], 'Segment Group 1': [{REFERENCE: {'Reference qualifier': 'DQ', 'Reference number': 'ABCD12333'}}, {REFERENCE: {'Reference qualifier': 'ON', 'Reference number': '2BB2TEST'}}], 'Segment Group 2': [{'Party qualifier': 'DP', 'PARTY IDENTIFICATION DETAILS': {'Party id identification': '5450534000109', 'NAD020-020': '', 'Code list responsible agency, coded': '9'}, NAD030: '', NAD040: '', NAD050: '', NAD060: '', NAD070: '', 'Postcode identification': '', 'Country, coded': 'GB'}, {'Party qualifier': 'SU', 'PARTY IDENTIFICATION DETAILS': {'Party id identification': '<Supplier GLN>', 'NAD020-020': '', 'Code list responsible agency, coded': '9'}}, {'Party qualifier': 'SF', 'PARTY IDENTIFICATION DETAILS': {'Party id identification': '<Warehouse GLN>', 'NAD020-020': '', 'Code list responsible agency, coded': '9'}, NAD030: '', NAD040: '', NAD050: '', NAD060: '', NAD070: '', 'Postcode identification': 'ZIP CODE', 'Country, coded': 'ISOCOUNTRYCODE'}], 'Segment Group 6': [{'Transport stage qualifier': '20', TDT020: '', 'Mode of transport, coded': '30', 'Type of means of transport identification': '31'}], 'Segment Group 10': [{'Hierarchical id number': '1', 'Segment Group 11': [{'Number of packages': '2', 'PACKAGING DETAILS': {'PAC020-010': ''}, 'Type of packages identification': '201'}, {'Number of packages': '2', 'PACKAGING DETAILS': {'PAC020-010': ''}, 'Type of packages identification': 'PK'}]}, {'Hierarchical id number': '2', 'Hierarchical parent id': '1', 'Segment Group 11': [{'Number of packages': '1', 'PACKAGING DETAILS': {'PAC020-010': '', 'Packaging related information, coded': '52'}, 'Type of packages identification': 'PK', MEA: [{'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'LN', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '120'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'WD', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '50'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'HT', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '30'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'AAB', 'VALUE/RANGE': {'Measure unit qualifier': 'KGM', 'Measurement value': '12'}}], 'Segment Group 12': [{'Handling instructions, coded': 'BIG'}], 'Segment Group 13': [{'Marking instructions, coded': '33E', 'Segment Group 14': [{'Identity number qualifier': 'BJ', 'Identity number': '354123450000000014'}]}]}], 'Segment Group 15': [{'Line item number': '1', LIN020: '', 'ITEM NUMBER IDENTIFICATION': {'Item number': '1234567891234', 'Item number type, coded': 'EN'}, QTY: [{'QUANTITY DETAILS': {'Quantity qualifier': '12', Quantity: '30'}}], 'Segment Group 20': [{'Marking instructions, coded': '17', DTM: [{'DATE/TIME/PERIOD': {'Date/time/period qualifier': '361', 'Date/time/period': '20141121', 'Date/time/period format qualifier': '102'}}], 'Segment Group 21': [{'Identity number qualifier': 'BX', 'Identity number': '72811023'}]}]}, {'Line item number': '2', LIN020: '', 'ITEM NUMBER IDENTIFICATION': {'Item number': '1234567891236', 'Item number type, coded': 'EN'}, QTY: [{'QUANTITY DETAILS': {'Quantity qualifier': '12', Quantity: '30'}}], 'Segment Group 20': [{'Marking instructions, coded': '17', DTM: [{'DATE/TIME/PERIOD': {'Date/time/period qualifier': '361', 'Date/time/period': '20141031', 'Date/time/period format qualifier': '102'}}], 'Segment Group 21': [{'Identity number qualifier': 'BX', 'Identity number': '63214914'}]}]}]}, {'Hierarchical id number': '3', 'Hierarchical parent id': '1', 'Segment Group 11': [{'Number of packages': '1', 'PACKAGING DETAILS': {'Packaging related information, coded': '52'}, 'Type of packages identification': 'PK', MEA: [{'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'LN', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '120'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'WD', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '50'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'HT', 'VALUE/RANGE': {'Measure unit qualifier': 'CMT', 'Measurement value': '30'}}, {'Measurement application qualifier': 'PD', 'Measurement dimension, coded': 'AAB', 'VALUE/RANGE': {'Measure unit qualifier': 'KGM', 'Measurement value': '12'}}], 'Segment Group 12': [{'Handling instructions, coded': 'BIG'}], 'Segment Group 13': [{'Marking instructions, coded': '33E', 'Segment Group 14': [{'Identity number qualifier': 'BJ', 'Identity number': '354123450000000015'}]}]}], 'Segment Group 15': [{'Line item number': '3', PIA: [{'Product id function qualifier': '5', 'ITEM NUMBER IDENTIFICATION': {'Item number': '1234567891', 'Item number type, coded': 'IB'}}], QTY: [{'QUANTITY DETAILS': {'Quantity qualifier': '12', Quantity: '20'}}], 'Segment Group 16': [{REFERENCE: {'Reference qualifier': 'ON', 'Reference number': '1AA1TEST'}}], 'Segment Group 20': [{'Marking instructions, coded': '17', DTM: [{'DATE/TIME/PERIOD': {'Date/time/period qualifier': '361', 'Date/time/period': '20141215', 'Date/time/period format qualifier': '102'}}], 'Segment Group 21': [{'Identity number qualifier': 'BX', 'Identity number': '33594011'}]}]}]}], 'Number of segments in a message': '50', 'Message reference number(UNT020)': '1', 'Interchange control count': '1', 'Interchange control reference(UNZ020)': '100'}};
+        const processedData = {
+          data: {
+            'SYNTAX IDENTIFIER': {
+              'Syntax identifier': 'UNOC',
+              'Syntax version number': '3',
+            },
+          },
+        };
         const processedDataWithResourcePath = {
           data: undefined,
         };
@@ -476,6 +497,46 @@ describe('Flow sample data utility sagas', () => {
           ])
           .call.fn(apiCallWithRetry)
           .returns(processedDataWithResourcePath)
+          .run();
+      });
+      test('should invoke file definition processor api and return undefined when the api fails', () => {
+        const sampleData = 'INVALID_DATA';
+        const _fileDefinitionId = '5fda05801730a97681d30444';
+        const ftpFileDefResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          ftp: {
+            directoryPath: '/test',
+          },
+          file: {
+            output: 'records',
+            skipDelete: false,
+            type: 'filedefinition',
+            fileDefinition: {
+              _fileDefinitionId,
+            },
+          },
+        };
+        const error = { status: 404, message: 'Not found' };
+
+        return expectSaga(parseFileDefinition, {sampleData, resource: ftpFileDefResource})
+          .provide([
+            [call(apiCallWithRetry, {
+              path: `/fileDefinitions/parse?_fileDefinitionId=${_fileDefinitionId}`,
+              opts: {
+                method: 'POST',
+                body: {
+                  data: sampleData,
+                  _fileDefinitionId,
+                },
+              },
+              message: 'Loading',
+              hidden: true,
+            }), throwError(error)],
+          ])
+          .call.fn(apiCallWithRetry)
+          .returns(undefined)
           .run();
       });
     });
@@ -588,7 +649,7 @@ describe('Flow sample data utility sagas', () => {
 
         expect(filterPendingResources({ flow })).toEqual(flow);
       });
-      test('should return the flow without the pending PP/PP from the original flow', () => {
+      test('should return the flow without the pending PG/PP from the original flow', () => {
         const flow = {
           _id: 'flow-123',
           name: 'test flow',
@@ -611,7 +672,7 @@ describe('Flow sample data utility sagas', () => {
       });
     });
     describe('fetchResourceDataForNewFlowResource saga', () => {
-      test('should return empty object incase of invalid/no resourceId ', () => expectSaga(fetchResourceDataForNewFlowResource, {})
+      test('should return undefined incase of invalid/no resourceId ', () => expectSaga(fetchResourceDataForNewFlowResource, {})
         .returns(undefined)
         .run());
 
@@ -2492,7 +2553,7 @@ describe('Flow sample data utility sagas', () => {
         const resource = { _id: 'export-123', adaptorType: 'RESTSExport', name: 'test'};
         const newResourceId = 'new-123';
         const sampleData = {
-          body: `<?xml version="1.0" encoding="UTF-8"?> 
+          body: `<?xml version="1.0" encoding="UTF-8"?>
           <letter>
           <title maxlength="10"> Quote Letter </title>
           <salutation limit="40">Dear Daniel,</salutation>
@@ -2823,4 +2884,3 @@ describe('Flow sample data utility sagas', () => {
     });
   });
 });
-
