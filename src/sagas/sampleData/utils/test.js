@@ -1598,6 +1598,8 @@ describe('Flow sample data utility sagas', () => {
           .provide([
             [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow}],
           ])
+          .not.call.fn(apiCallWithRetry)
+          .returns(undefined)
           .run();
       });
       test('should construct PP doc if the _pageProcessorId is newId  before passing it to apiCall', () => {
