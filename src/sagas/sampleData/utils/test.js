@@ -1663,7 +1663,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              runOffline: false,
             }), pageProcessorMap],
             [call(fetchResourceDataForNewFlowResource, {
               resourceId: _pageProcessorId,
@@ -1744,7 +1743,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              runOffline: false,
             }), previousPageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
           ])
@@ -1812,7 +1810,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              runOffline: false,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
           ])
@@ -1919,7 +1916,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              runOffline: false,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
           ])
@@ -2038,7 +2034,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              runOffline: false,
             }), pageProcessorMapWithoutPageProcessorDoc],
             [call(apiCallWithRetry, apiOptions), previewData],
           ])
@@ -2115,7 +2110,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              runOffline,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
           ])
@@ -2188,7 +2182,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              runOffline: false,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
           ])
@@ -2261,7 +2254,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              runOffline: false,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), throwError(error)],
           ])
@@ -2342,7 +2334,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              runOffline,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), throwError(error)],
             [call(pageProcessorPreview, {

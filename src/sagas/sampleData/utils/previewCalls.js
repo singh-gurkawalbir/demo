@@ -41,7 +41,7 @@ export function* pageProcessorPreview({
   const pageProcessorMap = yield call(fetchFlowResources, {
     flow,
     type: 'pageProcessors',
-    runOffline,
+    // runOffline, Run offline is currently not supported for PPs
   });
 
   // Override the map with provided document for this _pageProcessorId
