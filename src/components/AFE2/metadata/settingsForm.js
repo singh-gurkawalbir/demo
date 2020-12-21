@@ -1,4 +1,4 @@
-import RulePanel from '../Editor/panels/Rule';
+import FormDefinitionPanel from '../Editor/panels/formBuilder/FromDefinition';
 import JavaScriptPanel from '../Editor/panels/JavaScript';
 import FormPreviewPanel from '../Editor/panels/formBuilder/FormPreview';
 import OutputPanel from '../Editor/panels/formBuilder/Output';
@@ -9,12 +9,12 @@ export default {
   label: 'Settings Form builder',
   fieldId: 'settingsForm',
   description: 'Construct a form from metadata',
-  panels: ({ mode = 'json' }) => {
+  panels: ({ activeProcessor = 'json' }) => {
     const panels = [
       {
-        title: ({ mode = 'json' }) => mode === 'json' ? 'Form definition' : 'Script input',
+        title: ({ activeProcessor = 'json' }) => activeProcessor === 'json' ? 'Form definition' : 'Script input',
         area: 'meta',
-        Panel: RulePanel,
+        Panel: FormDefinitionPanel,
         props: { mode: 'json' },
       },
       {
@@ -29,12 +29,12 @@ export default {
       },
     ];
 
-    if (mode === 'script') {
+    if (activeProcessor === 'script') {
       panels.push(
         {
+          title: 'Script',
           area: 'hook',
           Panel: JavaScriptPanel,
-          props: { insertStubKey: 'formInit' },
         }
       );
     }

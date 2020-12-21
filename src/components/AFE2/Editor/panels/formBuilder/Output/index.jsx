@@ -7,10 +7,10 @@ import CodePanel from '../../Code';
 const overrides = { showGutter: false };
 
 export default function OutputPanel({ editorId }) {
-  const { formOutput, status} = useSelector(state => {
-    const {formOutput, status} = selectors.editor(state, editorId);
+  const { formOutput, previewStatus} = useSelector(state => {
+    const {formOutput, previewStatus} = selectors._editor(state, editorId);
 
-    return { formOutput, status };
+    return { formOutput, previewStatus };
   });
 
   return (
@@ -25,7 +25,7 @@ export default function OutputPanel({ editorId }) {
           readOnly
       />
       ) : (
-        status !== 'error' && (
+        previewStatus !== 'error' && (
         <Typography>
           Click the ‘test form’ button above to preview form output.
         </Typography>

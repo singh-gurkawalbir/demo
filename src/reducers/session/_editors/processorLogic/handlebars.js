@@ -70,20 +70,18 @@ function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator
 }
 
 export default {
-  getRule: ({fieldState}) => {
-    const {type, value, arrayIndex} = fieldState;
-
-    if (type !== 'relativeuri' && type !== 'httprequestbody') {
-      return value;
-    }
-    // below formatting applies for only relative URI and body fields
-    const formattedRule = typeof arrayIndex === 'number' && Array.isArray(value) ? value[arrayIndex] : value;
-
-    return typeof formattedRule === 'string' ? formattedRule : JSON.stringify(formattedRule, null, 2);
-  },
   init: props => {
     const {options, resource, fieldState, connection, isPageGenerator} = props;
-    const {rule, fieldId} = options;
+    const {fieldId} = options;
+    const {type, value, arrayIndex} = fieldState;
+    let rule = value;
+
+    if (type === 'relativeuri' || type === 'httprequestbody') {
+    // below formatting applies for only relative URI and body fields
+      const formattedRule = typeof arrayIndex === 'number' && Array.isArray(value) ? value[arrayIndex] : value;
+
+      rule = typeof formattedRule === 'string' ? formattedRule : JSON.stringify(formattedRule, null, 2);
+    }
 
     const editorSupportsV1V2data = _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator});
     let v1Rule;
@@ -106,6 +104,7 @@ export default {
 
     return {
       ...options,
+      rule: options.rule || rule, // if rule was already passed in options, use that first
       editorSupportsV1V2data,
       resultMode,
       editorTitle: _constructEditorTitle(fieldState?.label),

@@ -120,13 +120,6 @@ const init = editorType => {
   return logic.init;
 };
 
-const getRule = editorType => {
-  if (!editorType) return;
-  const logic = getLogic({ editorType });
-
-  return logic.getRule;
-};
-
 const buildData = editorType => {
   if (!editorType) return;
   const logic = getLogic({ editorType });
@@ -180,7 +173,9 @@ export const featuresMap = options => ({
     layout: 'compact',
   },
   settingsForm: {
-    layout: `${options?.mode || 'json'}FormBuilder`,
+    layout: `${options?.activeProcessor || 'json'}FormBuilder`,
+    autoEvaluate: true,
+    previewOnSave: true,
   },
   sql: {
     layout: 'compact',
@@ -211,6 +206,5 @@ export default {
   init,
   processResult,
   getPatchSet,
-  getRule,
   buildData,
 };

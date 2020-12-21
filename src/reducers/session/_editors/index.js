@@ -2,6 +2,7 @@ import produce from 'immer';
 import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
+import { toggleData } from './processorLogic/settingsForm';
 
 const emptyObj = {};
 
@@ -151,6 +152,22 @@ export default function reducer(state = {}, action) {
       case actionTypes._EDITOR.PATCH.FEATURES: {
         if (!draft[id]) break;
         Object.assign(draft[id], featuresPatch);
+        const mode = featuresPatch?.activeProcessor;
+
+        // toggle form definition data when view is changed
+        if (draft[id].editorType === 'settingsForm') {
+          // if view was toggled, update form defintion
+          if (mode) {
+            const formData = toggleData(draft[id].data, mode);
+
+            draft[id].data = formData;
+            draft[id].layout = `${mode}FormBuilder`;
+          } else if (featuresPatch?.data) {
+            // if metadata is updated, reset form preview and output
+            delete draft[id].result;
+            delete draft[id].formOutput;
+          }
+        }
         draft[id].lastChange = Date.now();
         break;
       }

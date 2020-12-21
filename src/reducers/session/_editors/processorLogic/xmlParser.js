@@ -1,6 +1,6 @@
 import { wrapExportFileSampleData } from '../../../../utils/sampleData';
 
-const getRule = ({resource, fieldState}) => {
+const init = ({resource, fieldState, options}) => {
   const { value } = fieldState;
   const resourcePath = resource?.file?.xml?.resourcePath;
   const rule = {
@@ -9,16 +9,19 @@ const getRule = ({resource, fieldState}) => {
   };
 
   return {
-    // eslint-disable-next-line camelcase
-    V0_json: rule.V0_json === true || false,
-    resourcePath: rule.resourcePath,
-    trimSpaces: rule.trimSpaces,
-    stripNewLineChars: rule.stripNewLineChars,
-    attributePrefix: rule.attributePrefix,
-    textNodeName: rule.textNodeName,
-    listNodes: rule.listNodes,
-    includeNodes: rule.includeNodes,
-    excludeNodes: rule.excludeNodes,
+    ...options,
+    rule: options.rule || {
+      // eslint-disable-next-line camelcase
+      V0_json: rule.V0_json === true || false,
+      resourcePath: rule.resourcePath,
+      trimSpaces: rule.trimSpaces,
+      stripNewLineChars: rule.stripNewLineChars,
+      attributePrefix: rule.attributePrefix,
+      textNodeName: rule.textNodeName,
+      listNodes: rule.listNodes,
+      includeNodes: rule.includeNodes,
+      excludeNodes: rule.excludeNodes,
+    },
   };
 };
 
@@ -81,5 +84,5 @@ export default {
   validate,
   requestBody,
   processResult,
-  getRule,
+  init,
 };

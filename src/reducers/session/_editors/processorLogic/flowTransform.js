@@ -5,7 +5,9 @@ import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
 export default {
   processor: ({activeProcessor}) => activeProcessor,
-  getRule: ({resource}) => {
+  init: ({resource, options}) => {
+    let activeProcessor = 'transform';
+
     const transformObj = resource?.transform || {};
     const { script = {}, expression = {} } = transformObj;
     const rule = {
@@ -20,20 +22,13 @@ export default {
     }
     if (script._scriptId) {
       rule.javascript.scriptId = script._scriptId;
+      activeProcessor = 'javascript';
     }
     rule.javascript.entryFunction = script.function || hooksToFunctionNamesMap.transform;
 
-    return rule;
-  },
-  init: options => {
-    let activeProcessor = 'transform';
-
-    if (options.rule.javascript.scriptId) {
-      activeProcessor = 'javascript';
-    }
-
     return {
       ...options,
+      rule,
       activeProcessor,
     };
   },

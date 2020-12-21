@@ -3,7 +3,7 @@ import isEqual from 'lodash/isEqual';
 import util from '../../../../utils/json';
 
 export default {
-  init: options => ({
+  init: ({options}) => ({
     ...options,
     insertStubKey: options.stage, // todo ashu test this
   }),
