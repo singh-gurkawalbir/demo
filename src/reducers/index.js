@@ -12,7 +12,7 @@ import { selectors as fromResources } from './data/resources';
 import { selectors as fromMarketPlace } from './data/marketPlace';
 import session, { selectors as fromSession } from './session';
 import comms, { selectors as fromComms } from './comms';
-import { COMM_STATES, selectors as fromNetworkComms } from './comms/networkComms';
+import { selectors as fromNetworkComms } from './comms/networkComms';
 import auth, { selectors as fromAuth } from './authentication';
 import user, { selectors as fromUser } from './user';
 import actionTypes from '../actions/types';
@@ -49,7 +49,6 @@ import {
   JOB_STATUS,
 } from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
-import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import {
   getFieldById,
 } from '../forms/formFactory/utils';
@@ -395,69 +394,6 @@ selectors.isSessionExpired = state => !!(state && state.auth && state.auth.sessi
 
 selectors.sessionValidTimestamp = state => state && state.auth && state.auth.authTimestamp;
 // #endregion AUTHENTICATION SELECTORS
-
-// #region PASSWORD & EMAIL update selectors for modals
-selectors.changePasswordSuccess = state => {
-  const commKey = commKeyGen(
-    changePasswordParams.path,
-    changePasswordParams.opts.method
-  );
-  const status = fromComms.commStatus(state && state.comms, commKey);
-
-  return status === COMM_STATES.SUCCESS;
-};
-
-selectors.changePasswordFailure = state => {
-  const commKey = commKeyGen(
-    changePasswordParams.path,
-    changePasswordParams.opts.method
-  );
-  const status = fromComms.commStatus(state && state.comms, commKey);
-
-  return status === COMM_STATES.ERROR;
-};
-
-selectors.changePasswordMsg = state => {
-  const commKey = commKeyGen(
-    changePasswordParams.path,
-    changePasswordParams.opts.method
-  );
-  const message = fromComms.requestMessage(state && state.comms, commKey);
-
-  return message || '';
-};
-
-selectors.changeEmailFailure = state => {
-  const commKey = commKeyGen(
-    changeEmailParams.path,
-    changeEmailParams.opts.method
-  );
-  const status = fromComms.commStatus(state && state.comms, commKey);
-
-  return status === COMM_STATES.ERROR;
-};
-
-selectors.changeEmailSuccess = state => {
-  const commKey = commKeyGen(
-    changeEmailParams.path,
-    changeEmailParams.opts.method
-  );
-  const status = fromComms.commStatus(state && state.comms, commKey);
-
-  return status === COMM_STATES.SUCCESS;
-};
-
-selectors.changeEmailMsg = state => {
-  const commKey = commKeyGen(
-    changeEmailParams.path,
-    changeEmailParams.opts.method
-  );
-  const message = fromComms.requestMessage(state && state.comms, commKey);
-
-  return message || '';
-};
-
-// #endregion PASSWORD & EMAIL update selectors for modals
 
 // #region USER SELECTORS
 selectors.testConnectionCommState = (state, resourceId) => {
@@ -3116,22 +3052,7 @@ selectors.getMetadataOptions = (
   }) || emptyObject
 );
 
-selectors.isValidatingNetsuiteUserRoles = state => {
-  const commPath = commKeyGen('/netsuite/alluserroles', 'POST');
-
-  return fromComms.isLoading(state.comms, commPath);
-};
 // #endregion Session metadata selectors
-
-selectors.commStatusByKey = (state, key) => {
-  const commStatus =
-    state &&
-    state.comms &&
-    state.comms.networkComms &&
-    state.comms.networkComms[key];
-
-  return commStatus;
-};
 
 // TODO: This all needs to be refactored, and the code that uses is too.
 // The extra data points added to the results should be a different selector
@@ -3221,117 +3142,6 @@ selectors.accessTokenList = (
   return tokensList;
 };
 
-selectors.flowJobs = (state, options = {}) => {
-  const jobs = fromData.flowJobs(state?.data, options);
-  const resourceMap = fromData.resourceDetailsMap(state?.data);
-
-  return jobs.map(job => {
-    if (job.children && job.children.length > 0) {
-      // eslint-disable-next-line no-param-reassign
-      job.children = job.children.map(cJob => {
-        const additionalChildProps = {
-          name: cJob._exportId
-            ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
-            : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
-          flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
-        };
-
-        return { ...cJob, ...additionalChildProps };
-      });
-    }
-
-    const additionalProps = {
-      name: resourceMap.flows && resourceMap.flows[job._flowId]?.name,
-      flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
-    };
-
-    if (job.doneExporting && job.numPagesGenerated > 0) {
-      additionalProps.percentComplete = Math.floor(
-        (job.numPagesProcessed * 100) /
-          (job.numPagesGenerated *
-            ((resourceMap.flows &&
-              resourceMap.flows[job._flowId] &&
-              resourceMap.flows[job._flowId].numImports) ||
-              1))
-      );
-    } else {
-      additionalProps.percentComplete = 0;
-    }
-
-    return { ...job, ...additionalProps };
-  });
-};
-
-selectors.flowDashboardJobs = createSelector(
-  (state, flowId) => selectors.latestFlowJobsList(state, flowId),
-  state => fromData.resourceDetailsMap(state?.data),
-  (state, flowId) => selectors.resourceData(state, 'flows', flowId).merged,
-  (latestFlowJobs, resourceMap, flowObj) => {
-    const dashboardSteps = [];
-
-    latestFlowJobs?.data?.forEach(parentJob => {
-      // parent job steps are special cases like waiting / cancelled jobs to show a dashboard step
-      const parentJobSteps = getParentJobSteps(parentJob);
-
-      parentJobSteps.forEach(step => dashboardSteps.push(step));
-      // Show flow steps if the parent job has children
-      if (parentJob.children?.length) {
-        const dashboardJobSteps = getRunConsoleJobSteps(parentJob, parentJob.children, resourceMap);
-
-        dashboardJobSteps.forEach(step => dashboardSteps.push(step));
-      }
-      // If the parent job is queued/in progress, show dummy steps of flows as waiting status
-      if ([JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(parentJob.status)) {
-        const pendingChildren = getFlowStepsYetToBeCreated(flowObj, parentJob.children);
-        const pendingChildrenSteps = generatePendingFlowSteps(pendingChildren, resourceMap);
-
-        pendingChildrenSteps.forEach(pendingChildStep => dashboardSteps.push(pendingChildStep));
-      }
-    });
-
-    return {
-      status: latestFlowJobs?.status,
-      data: dashboardSteps,
-    };
-  });
-
-selectors.flowJob = (state, ops = {}) => {
-  const jobList = selectors.flowJobs(state, ops);
-
-  return jobList.find(j => j._id === ops?.jobId);
-};
-
-selectors.job = (state, { type, jobId, parentJobId }) => {
-  const resourceMap = selectors.resourceDetailsMap(state);
-  const j = fromData.job(state.data, { type, jobId, parentJobId });
-
-  if (!j) {
-    return j;
-  }
-
-  return {
-    ...j,
-    name: resourceMap.flows[j._flowId] && resourceMap.flows[j._flowId].name,
-  };
-};
-
-selectors.allJobs = (state, { type }) => fromData.allJobs(state.data, { type });
-
-selectors.flowJobConnections = () => createSelector(
-  state => state?.data?.resources?.connections,
-  state => state?.data?.resources?.imports,
-  state => state?.data?.resources?.exports,
-  state => state?.data?.resources?.flows,
-  (state, flowId) => flowId,
-  (_1, _2, options) => options,
-  (connections = emptyArray, imports = emptyArray, exports = emptyArray, flows = emptyArray, flowId, options = {}) => {
-    const flow = flows.find(f => f._id === flowId);
-    const connectionIds = getAllConnectionIdsUsedInTheFlow(flow, connections, exports, imports, options);
-
-    return connections.filter(c => connectionIds.includes(c._id)).map(c => ({id: c._id, name: c.name}));
-  }
-);
-
 selectors.mkConnectionIdsUsedInSelectedFlows = () => createSelector(
   state => state?.data?.resources?.connections,
   state => state?.data?.resources?.exports,
@@ -3357,38 +3167,126 @@ selectors.mkConnectionIdsUsedInSelectedFlows = () => createSelector(
   }
 );
 
-// returns a list of import resources for a given flow,
-// identified by flowId.
-selectors.flowImports = (state, id) => {
-  const flow = selectors.resource(state, 'flows', id);
-  const imports = selectors.resourceList(state, { type: 'imports' }).resources;
+selectors.getSalesforceMasterRecordTypeInfo = (state, resourceId) => {
+  const { merged: resource } = selectors.resourceData(state, 'imports', resourceId);
+  const { _connectionId: connectionId, salesforce } = resource;
+  const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
+  const { data, status } = selectors.metadataOptionsAndResources(state, {
+    connectionId,
+    commMetaPath,
+    filterKey: 'salesforce-masterRecordTypeInfo',
+  });
 
-  return getImportsFromFlow(flow, imports);
+  return { data, status };
 };
 
-selectors.flowMappingsImportsList = () => createSelector(
-  (state, flowId) => selectors.resource(state, 'flows', flowId),
-  state => state?.data?.resources?.imports,
-  (state, flowId, importId) => importId,
-  (flow, imports, importId) => {
-    if (importId) {
-      const subRecordResource = imports.find(i => i._id === importId);
+/*
+ * The selector returns appropriate context for the JS Processor to run
+ * For now, it supports contextType: hook
+ * Other context types are 'settings' and 'setup'
+ */
+selectors.getScriptContext = createSelector(
+  [
+    (state, { contextType }) => contextType,
+    (state, { flowId }) => {
+      const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
 
-      return [subRecordResource];
+      return flow._integrationId;
+    },
+  ],
+  (contextType, _integrationId) => {
+    if (contextType === 'hook' && _integrationId) {
+      return {
+        type: 'hook',
+        container: 'integration',
+        _integrationId,
+      };
     }
-
-    const flowImports = getImportsFromFlow(flow, imports);
-
-    return flowImports.filter(i => isImportMappingAvailable(i) || isQueryBuilderSupported(i));
   }
 );
 
-// TODO: The selector below should be deprecated and the above selector
-// should be used instead.
-selectors.getAllPageProcessorImports = (state, pageProcessors) => {
-  const imports = selectors.resourceList(state, { type: 'imports' }).resources;
+selectors.mkFlowResources = () => createSelector(
+  state => state?.data?.resources?.flows,
+  state => state?.data?.resources?.exports,
+  state => state?.data?.resources?.imports,
+  (_, flowId) => flowId,
+  (flows, exports, imports, flowId) => getFlowResources(flows, exports, imports, flowId)
+);
 
-  return getPageProcessorImportsFromFlow(imports, pageProcessors);
+// #region SAMPLE DATA selectors
+
+/*
+* Definition rules are fetched in 2 ways
+* 1. In creation of an export, from FileDefinitions list based on 'definitionId' and 'format'
+* 2. In Editing an existing export, from UserSupportedFileDefinitions based on userDefinitionId
+* TODO @Raghu: Refactor this selector to be more clear
+*/
+selectors.fileDefinitionSampleData = (state, { userDefinitionId, resourceType, options }) => {
+  const { resourcePath, definitionId, format } = options;
+  let template;
+
+  if (definitionId && format) {
+    template = selectors.fileDefinition(state, definitionId, {
+      format,
+      resourceType,
+    });
+  } else if (userDefinitionId) {
+    // selector to get that resource based on userDefId
+    template = selectors.resource(state, 'filedefinitions', userDefinitionId);
+  }
+
+  if (!template) return {};
+  const { sampleData, ...fileDefinitionRules } = template;
+  // Stringify rules as the editor expects a string
+  let rule;
+  let formattedSampleData;
+
+  if (resourceType === 'imports') {
+    rule = JSON.stringify(fileDefinitionRules, null, 2);
+    formattedSampleData =
+        sampleData &&
+        JSON.stringify(
+          Array.isArray(sampleData) && sampleData.length ? sampleData[0] : {},
+          null,
+          2
+        );
+  } else {
+    rule = JSON.stringify(
+      {
+        resourcePath: resourcePath || '',
+        fileDefinition: fileDefinitionRules,
+      },
+      null,
+      2
+    );
+    formattedSampleData = sampleData;
+  }
+
+  return { sampleData: formattedSampleData, rule };
+};
+
+/**
+ * Supported File types : csv, json, xml, xlsx
+ * Note : Incase of xlsx 'csv' stage is requested as the raw stage contains xlsx format which is not used
+ * Modify this if we need xlsx content any where to show
+ */
+selectors.fileSampleData = (state, { resourceId, resourceType, fileType}) => {
+  const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
+  const { data: rawData } = selectors.getResourceSampleDataWithStatus(
+    state,
+    resourceId,
+    stage,
+  );
+
+  if (!rawData) {
+    const resourceObj = selectors.resource(state, resourceType, resourceId);
+
+    if (resourceObj?.file?.type === fileType) {
+      return resourceObj.sampleData;
+    }
+  }
+
+  return rawData?.body;
 };
 
 selectors.getImportSampleData = (state, resourceId, options = {}) => {
@@ -3452,175 +3350,60 @@ selectors.getImportSampleData = (state, resourceId, options = {}) => {
   return emptyObject;
 };
 
-selectors.getSalesforceMasterRecordTypeInfo = (state, resourceId) => {
-  const { merged: resource } = selectors.resourceData(state, 'imports', resourceId);
-  const { _connectionId: connectionId, salesforce } = resource;
-  const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
-  const { data, status } = selectors.metadataOptionsAndResources(state, {
-    connectionId,
-    commMetaPath,
-    filterKey: 'salesforce-masterRecordTypeInfo',
-  });
+// This selector will pre-process the raw sample data to the proper stage for each AFE
+selectors.sampleDataWrapper = createSelector(
+  [
+    // eslint-disable-next-line no-use-before-define
+    (state, params) => params.sampleData || selectors.getSampleDataContext(state, params),
+    (state, params) => {
+      if (['postMap', 'postSubmit'].includes(params.stage)) {
+        return selectors.getSampleDataContext(state, { ...params, stage: 'preMap' });
+      }
+    },
+    (state, params) => {
+      if (params.stage === 'postSubmit') {
+        return selectors.getSampleDataContext(state, { ...params, stage: 'postMap' });
+      }
+    },
+    (state, { flowId }) => selectors.resource(state, 'flows', flowId) || emptyObject,
+    (state, { flowId }) => {
+      const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
 
-  return { data, status };
-};
+      return (
+        selectors.resource(state, 'integrations', flow._integrationId) || emptyObject
+      );
+    },
+    (state, { resourceId, resourceType }) =>
+      selectors.resource(state, resourceType, resourceId) || emptyObject,
+    (state, { resourceId, resourceType }) => {
+      const res = selectors.resource(state, resourceType, resourceId) || emptyObject;
 
-selectors.mkFlowConnectionList = () => createSelector(
-  state => state?.data?.resources?.connections,
-  state => state?.data?.resources?.exports,
-  state => state?.data?.resources?.imports,
-  (state, flowId) => selectors.resource(state, 'flows', flowId),
-  (connections = emptyArray, exports = emptyArray, imports = emptyArray, flow) => {
-    const connectionIds = getAllConnectionIdsUsedInTheFlow(flow, connections, exports, imports);
-
-    return connections.filter(c => connectionIds.includes(c._id));
-  }
+      return selectors.resource(state, 'connections', res._connectionId) || emptyObject;
+    },
+    (_, { stage }) => stage,
+    (_, { fieldType }) => fieldType,
+  ],
+  (
+    sampleData,
+    preMapSampleData,
+    postMapSampleData,
+    flow,
+    integration,
+    resource,
+    connection,
+    stage,
+    fieldType,
+  ) => wrapSampleDataWithContext({sampleData,
+    preMapSampleData,
+    postMapSampleData,
+    flow,
+    integration,
+    resource,
+    connection,
+    stage,
+    fieldType})
 );
 
-selectors.mkIsAnyFlowConnectionOffline = () => {
-  const flowConnections = selectors.mkFlowConnectionList();
-
-  return createSelector(
-    (state, flowId) => flowConnections(state, flowId),
-    flowConnections => flowConnections.some(c => c.offline)
-  );
-};
-
-selectors.flowReferencesForResource = (state, resourceType, resourceId) => {
-  const flowsState = state && state.session && state.session.flowData;
-  const exports = selectors.resourceList(state, {
-    type: 'exports',
-  }).resources;
-  const imports = selectors.resourceList(state, {
-    type: 'imports',
-  }).resources;
-
-  return getFlowReferencesForResource(
-    flowsState,
-    exports,
-    imports,
-    resourceType,
-    resourceId
-  );
-};
-
-/*
- * Given flowId, resourceId determines whether resource is a pg/pp
- */
-selectors.isPageGenerator = (state, flowId, resourceId, resourceType) => {
-  // If imports , straight forward not a pg
-  if (resourceType === 'imports') return false;
-
-  // Incase of new resource (export/lookup), flow doc does not have this resource yet
-  // So, get staged resource and determine export/lookup based on isLookup flag
-  const { merged: resource } = selectors.resourceData(
-    state,
-    'exports',
-    resourceId
-  );
-
-  if (!resource) return false;
-
-  if (isNewId(resourceId)) {
-    return !resource.isLookup;
-  }
-  // In case of webhook, by default it is page generator.
-  if (resource.type === 'webhook') {
-    return true;
-  }
-
-  // Search in flow doc to determine pg/pp
-  const { merged: flow } = selectors.resourceData(state, 'flows', flowId, 'value');
-
-  return isPageGeneratorResource(flow, resourceId);
-};
-
-selectors.getUsedActionsForResource = (
-  state,
-  resourceId,
-  resourceType,
-  flowNode
-) => {
-  const r = selectors.resource(state, resourceType, resourceId);
-
-  if (!r) return emptyObject;
-
-  return getUsedActionsMapForResource(r, resourceType, flowNode);
-};
-
-selectors.transferListWithMetadata = state => {
-  const transfers =
-    selectors.resourceList(state, {
-      type: 'transfers',
-    }).resources || [];
-
-  const updatedTransfers = [...transfers];
-
-  updatedTransfers.forEach((transfer, i) => {
-    let integrations = [];
-
-    if (transfer.ownerUser && transfer.ownerUser._id) {
-      updatedTransfers[i].isInvited = true;
-    }
-
-    if (transfer.toTransfer && transfer.toTransfer.integrations) {
-      transfer.toTransfer.integrations.forEach(i => {
-        let { name } = i;
-
-        if (i._id === 'none') {
-          name = 'Standalone flows';
-        }
-
-        name = name || i._id;
-
-        if (i.tag) {
-          name += ` (${i.tag})`;
-        }
-
-        integrations.push(name);
-      });
-    }
-
-    integrations = integrations.join('\n');
-    updatedTransfers[i].integrations = integrations;
-  });
-
-  return updatedTransfers.filter(t => !t.isInvited || t.status !== 'unapproved');
-};
-
-selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
-  const { merged: resourceObj } = selectors.resourceData(state, 'exports', resourceId);
-  const { adaptorType, _connectionId: connectionId } = resourceObj || {};
-
-  // Returns false if it is not a rest export
-  if (adaptorType !== 'RESTExport') {
-    return false;
-  }
-
-  const connection = selectors.resource(state, 'connections', connectionId);
-
-  // Check for media type 'csv' from connection object
-  return connection && connection.rest && connection.rest.mediaType === 'csv';
-};
-
-selectors.isDataLoaderExport = (state, resourceId, flowId) => {
-  if (isNewId(resourceId)) {
-    if (!flowId) return false;
-    const { merged: flowObj = {} } = selectors.resourceData(state, 'flows', flowId, 'value');
-
-    return !!(flowObj.pageGenerators &&
-              flowObj.pageGenerators[0] &&
-              flowObj.pageGenerators[0].application === 'dataLoader');
-  }
-  const { merged: resourceObj = {} } = selectors.resourceData(
-    state,
-    'exports',
-    resourceId,
-    'value'
-  );
-
-  return resourceObj.type === 'simple';
-};
 /**
  * All the adaptors whose preview depends on connection
  * are disabled if their respective connections are offline
@@ -3683,218 +3466,10 @@ selectors.isRequestUrlAvailableForPreviewPanel = (state, resourceId, resourceTyp
   return ['http', 'rest'].includes(appType);
 };
 
-/*
- * Returns boolean true/false whether it is a lookup export or not based on passed flowId and resourceType
- */
-selectors.isLookUpExport = (state, { flowId, resourceId, resourceType }) => {
-  // If not an export , then it is not a lookup
-  if (resourceType !== 'exports' || !resourceId) return false;
+// #endregion SAMPLE DATA selectors
 
-  // Incase of a new resource , check for isLookup flag on resource patched for new lookup exports
-  // Also for existing exports ( newly created after Flow Builder feature ) have isLookup flag
-  const { merged: resourceObj = {} } = selectors.resourceData(
-    state,
-    'exports',
-    resourceId
-  );
+/* REGION SUITESCRIPT START */
 
-  // If exists it is a lookup
-  if (resourceObj.isLookup) return true;
-
-  // If it is an existing export with a flow context, search in pps to match this resource id
-  const flow = selectors.resource(state, 'flows', flowId);
-  const { pageProcessors = [] } = flow || {};
-
-  return !!pageProcessors.find(pp => pp._exportId === resourceId);
-};
-
-/*
- * This Selector handles all Resource Type's Label in case of Stand alone / Flow Builder Context
- * Used at Resource Form's Title like 'Create/Edit Export' , at Bread Crumb level to show 'Add/Edit Export'
- */
-selectors.getCustomResourceLabel = (
-  state,
-  { resourceType, resourceId, flowId }
-) => {
-  const isLookup = selectors.isLookUpExport(state, { flowId, resourceId, resourceType });
-  const isDataloader = !!selectors.flowDetails(state, flowId).isSimpleImport;
-  const isNewResource = isNewId(resourceId);
-  const { merged: resource = {} } = selectors.resourceData(
-    state,
-    resourceType,
-    resourceId
-  );
-  let resourceLabel;
-
-  // Default resource labels based on resourceTypes handled here
-  if (isLookup) {
-    resourceLabel = 'Lookup';
-  } else if (isDataloader && resourceType === 'pageProcessor') {
-    // Incase of data loader PP 1st step , we cannot add lookups so , resourceLabel is of imports type
-    resourceLabel = MODEL_PLURAL_TO_LABEL.imports;
-  } else {
-    resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
-  }
-
-  // Incase of Flow context, 2nd step of PG/PP creation resource labels handled here
-  // The Below resource labels override the default labels above
-  if (flowId && isNewResource) {
-    if (resource.resourceType === 'exportRecords') {
-      resourceLabel = 'Export';
-    } else if (
-      ['transferFiles', 'lookupFiles'].indexOf(resource.resourceType) >= 0
-    ) {
-      resourceLabel = 'Transfer';
-    } else if (['webhook', 'realtime'].indexOf(resource.resourceType) >= 0) {
-      resourceLabel = 'Listener';
-    } else if (resource.resourceType === 'importRecords') {
-      resourceLabel = 'Import';
-    } else if (resource.resourceType === 'lookupRecords') {
-      resourceLabel = 'Lookup';
-    }
-  } else if (flowId) {
-    if (
-      ([
-        'RESTExport',
-        'HTTPExport',
-        'NetSuiteExport',
-        'SalesforceExport',
-      ].indexOf(resource.adaptorType) >= 0 &&
-        resource.type === 'blob') ||
-      ['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0 ||
-      ([
-        'RESTImport',
-        'HTTPImport',
-        'NetSuiteImport',
-        'SalesforceImport',
-      ].indexOf(resource.adaptorType) >= 0 &&
-        resource.blobKeyPath) ||
-      ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
-    ) {
-      resourceLabel = 'Transfer';
-    }
-  }
-
-  // For real time resources , we show resource label as 'listener'
-  if (
-    resourceType === 'exports' &&
-    isRealTimeOrDistributedResource(resource, resourceType)
-  ) {
-    resourceLabel = 'Listener';
-  }
-
-  return resourceLabel;
-};
-
-/*
- * This selector used to differentiate drawers with/without Preview Panel
- */
-selectors.isPreviewPanelAvailableForResource = (
-  state,
-  resourceId,
-  resourceType,
-  flowId
-) => {
-  if (resourceType !== 'exports') return false;
-  const { merged: resourceObj = {} } = selectors.resourceData(
-    state,
-    resourceType,
-    resourceId,
-    'value'
-  );
-  const connectionObj = selectors.resource(
-    state,
-    'connections',
-    resourceObj._connectionId
-  );
-
-  if (selectors.isDataLoaderExport(state, resourceId, flowId)) {
-    return true;
-  }
-
-  return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
-};
-
-// This selector will pre-process the raw sample data to the proper stage for each AFE
-selectors.sampleDataWrapper = createSelector(
-  [
-    // eslint-disable-next-line no-use-before-define
-    (state, params) => params.sampleData || selectors.getSampleDataContext(state, params),
-    (state, params) => {
-      if (['postMap', 'postSubmit'].includes(params.stage)) {
-        return selectors.getSampleDataContext(state, { ...params, stage: 'preMap' });
-      }
-    },
-    (state, params) => {
-      if (params.stage === 'postSubmit') {
-        return selectors.getSampleDataContext(state, { ...params, stage: 'postMap' });
-      }
-    },
-    (state, { flowId }) => selectors.resource(state, 'flows', flowId) || emptyObject,
-    (state, { flowId }) => {
-      const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
-
-      return (
-        selectors.resource(state, 'integrations', flow._integrationId) || emptyObject
-      );
-    },
-    (state, { resourceId, resourceType }) =>
-      selectors.resource(state, resourceType, resourceId) || emptyObject,
-    (state, { resourceId, resourceType }) => {
-      const res = selectors.resource(state, resourceType, resourceId) || emptyObject;
-
-      return selectors.resource(state, 'connections', res._connectionId) || emptyObject;
-    },
-    (_, { stage }) => stage,
-    (_, { fieldType }) => fieldType,
-  ],
-  (
-    sampleData,
-    preMapSampleData,
-    postMapSampleData,
-    flow,
-    integration,
-    resource,
-    connection,
-    stage,
-    fieldType,
-  ) => wrapSampleDataWithContext({sampleData,
-    preMapSampleData,
-    postMapSampleData,
-    flow,
-    integration,
-    resource,
-    connection,
-    stage,
-    fieldType})
-);
-
-/*
- * The selector returns appropriate context for the JS Processor to run
- * For now, it supports contextType: hook
- * Other context types are 'settings' and 'setup'
- */
-selectors.getScriptContext = createSelector(
-  [
-    (state, { contextType }) => contextType,
-    (state, { flowId }) => {
-      const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
-
-      return flow._integrationId;
-    },
-  ],
-  (contextType, _integrationId) => {
-    if (contextType === 'hook' && _integrationId) {
-      return {
-        type: 'hook',
-        container: 'integration',
-        _integrationId,
-      };
-    }
-  }
-);
-
-// #region suiteScript
 selectors.makeSuiteScriptIAFlowSections = () => {
   const cachedIASettingsSelector = selectors.makeSuiteScriptIASettings();
 
@@ -4179,190 +3754,6 @@ selectors.suiteScriptJob = (
   });
 
   return jobList.find(j => j._id === jobId && j.type === jobType);
-};
-
-// Given an errorId, gives back error doc
-selectors.resourceError = (state, { flowId, resourceId, options, errorId }) => {
-  const { errors = [] } = selectors.resourceErrors(state, {
-    flowId,
-    resourceId,
-    options,
-  });
-
-  return errors.find(error => error.errorId === errorId);
-};
-
-selectors.selectedRetryIds = (state, { flowId, resourceId, options = {} }) => {
-  const { errors } = selectors.resourceErrors(state, { flowId, resourceId, options });
-
-  return errors
-    .filter(({ selected, retryDataKey }) => selected && !!retryDataKey)
-    .map(error => error.retryDataKey);
-};
-
-selectors.selectedErrorIds = (state, { flowId, resourceId, options = {} }) => {
-  const { errors } = selectors.resourceErrors(state, { flowId, resourceId, options });
-
-  return errors.filter(({ selected }) => selected).map(error => error.errorId);
-};
-
-selectors.isAllErrorsSelected = (
-  state,
-  { flowId, resourceId, filterKey, defaultFilter, isResolved }
-) => {
-  const errorFilter = selectors.filter(state, filterKey) || defaultFilter;
-  const { errors = [] } = selectors.resourceErrors(state, {
-    flowId,
-    resourceId,
-    options: { ...errorFilter, isResolved },
-  });
-  const errorIds = errors.map(error => error.errorId);
-
-  return fromSession.isAllErrorsSelected(state && state.session, {
-    flowId,
-    resourceId,
-    isResolved,
-    errorIds,
-  });
-};
-
-selectors.isAnyErrorActionInProgress = (state, { flowId, resourceId }) => {
-  const isRetryInProgress =
-    selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
-      .status === 'requested';
-  const isResolveInProgress =
-    selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'resolve' })
-      .status === 'requested';
-
-  return isRetryInProgress || isResolveInProgress;
-};
-
-selectors.mkFlowResources = () => createSelector(
-  state => state?.data?.resources?.flows,
-  state => state?.data?.resources?.exports,
-  state => state?.data?.resources?.imports,
-  (_, flowId) => flowId,
-  (flows, exports, imports, flowId) => getFlowResources(flows, exports, imports, flowId)
-);
-
-selectors.httpAssistantSupportsMappingPreview = (state, importId) => {
-  const importResource = selectors.resource(state, 'imports', importId);
-  const { _integrationId, _connectionId, http } = importResource;
-
-  if (_integrationId && http) {
-    const connection = selectors.resource(state, 'connections', _connectionId);
-
-    return (http.requestMediaType === 'xml' || connection?.http?.mediaType === 'xml');
-  }
-
-  return false;
-};
-
-selectors.mappingPreviewType = (state, importId) => {
-  const importResource = selectors.resource(state, 'imports', importId);
-
-  if (!importResource) return;
-  const { adaptorType } = importResource;
-
-  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(adaptorType)) {
-    return 'netsuite';
-  } if (adaptorType === 'SalesforceImport') {
-    const masterRecordTypeInfo = selectors.getSalesforceMasterRecordTypeInfo(
-      state,
-      importId
-    );
-
-    if (masterRecordTypeInfo && masterRecordTypeInfo.data) {
-      const { searchLayoutable } = masterRecordTypeInfo.data;
-
-      if (searchLayoutable) {
-        return 'salesforce';
-      }
-    }
-  } else if (importResource.http) {
-    const showHttpAssistant = selectors.httpAssistantSupportsMappingPreview(
-      state,
-      importId
-    );
-
-    if (showHttpAssistant) {
-      return 'http';
-    }
-  }
-};
-
-/*
-* Definition rules are fetched in 2 ways
-* 1. In creation of an export, from FileDefinitions list based on 'definitionId' and 'format'
-* 2. In Editing an existing export, from UserSupportedFileDefinitions based on userDefinitionId
-* TODO @Raghu: Refactor this selector to be more clear
-*/
-selectors.fileDefinitionSampleData = (state, { userDefinitionId, resourceType, options }) => {
-  const { resourcePath, definitionId, format } = options;
-  let template;
-
-  if (definitionId && format) {
-    template = selectors.fileDefinition(state, definitionId, {
-      format,
-      resourceType,
-    });
-  } else if (userDefinitionId) {
-    // selector to get that resource based on userDefId
-    template = selectors.resource(state, 'filedefinitions', userDefinitionId);
-  }
-
-  if (!template) return {};
-  const { sampleData, ...fileDefinitionRules } = template;
-  // Stringify rules as the editor expects a string
-  let rule;
-  let formattedSampleData;
-
-  if (resourceType === 'imports') {
-    rule = JSON.stringify(fileDefinitionRules, null, 2);
-    formattedSampleData =
-        sampleData &&
-        JSON.stringify(
-          Array.isArray(sampleData) && sampleData.length ? sampleData[0] : {},
-          null,
-          2
-        );
-  } else {
-    rule = JSON.stringify(
-      {
-        resourcePath: resourcePath || '',
-        fileDefinition: fileDefinitionRules,
-      },
-      null,
-      2
-    );
-    formattedSampleData = sampleData;
-  }
-
-  return { sampleData: formattedSampleData, rule };
-};
-
-/**
- * Supported File types : csv, json, xml, xlsx
- * Note : Incase of xlsx 'csv' stage is requested as the raw stage contains xlsx format which is not used
- * Modify this if we need xlsx content any where to show
- */
-selectors.fileSampleData = (state, { resourceId, resourceType, fileType}) => {
-  const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
-  const { data: rawData } = selectors.getResourceSampleDataWithStatus(
-    state,
-    resourceId,
-    stage,
-  );
-
-  if (!rawData) {
-    const resourceObj = selectors.resource(state, resourceType, resourceId);
-
-    if (resourceObj?.file?.type === fileType) {
-      return resourceObj.sampleData;
-    }
-  }
-
-  return rawData?.body;
 };
 
 selectors.netsuiteAccountHasSuiteScriptIntegrations = (state, connectionId) => {
@@ -4743,6 +4134,120 @@ selectors.getSuitescriptMappingSubRecordList = createSelector([
 
   return emptyArray;
 });
+
+/* REGION SUITESCRIPT END */
+
+/* REGION MAPPINGS START */
+
+// returns a list of import resources for a given flow,
+// identified by flowId.
+selectors.flowImports = (state, id) => {
+  const flow = selectors.resource(state, 'flows', id);
+  const imports = selectors.resourceList(state, { type: 'imports' }).resources;
+
+  return getImportsFromFlow(flow, imports);
+};
+
+selectors.flowMappingsImportsList = () => createSelector(
+  (state, flowId) => selectors.resource(state, 'flows', flowId),
+  state => state?.data?.resources?.imports,
+  (state, flowId, importId) => importId,
+  (flow, imports, importId) => {
+    if (importId) {
+      const subRecordResource = imports.find(i => i._id === importId);
+
+      return [subRecordResource];
+    }
+
+    const flowImports = getImportsFromFlow(flow, imports);
+
+    return flowImports.filter(i => isImportMappingAvailable(i) || isQueryBuilderSupported(i));
+  }
+);
+
+// TODO: The selector below should be deprecated and the above selector
+// should be used instead.
+selectors.getAllPageProcessorImports = (state, pageProcessors) => {
+  const imports = selectors.resourceList(state, { type: 'imports' }).resources;
+
+  return getPageProcessorImportsFromFlow(imports, pageProcessors);
+};
+
+selectors.httpAssistantSupportsMappingPreview = (state, importId) => {
+  const importResource = selectors.resource(state, 'imports', importId);
+  const { _integrationId, _connectionId, http } = importResource;
+
+  if (_integrationId && http) {
+    const connection = selectors.resource(state, 'connections', _connectionId);
+
+    return (http.requestMediaType === 'xml' || connection?.http?.mediaType === 'xml');
+  }
+
+  return false;
+};
+
+selectors.mappingPreviewType = (state, importId) => {
+  const importResource = selectors.resource(state, 'imports', importId);
+
+  if (!importResource) return;
+  const { adaptorType } = importResource;
+
+  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(adaptorType)) {
+    return 'netsuite';
+  } if (adaptorType === 'SalesforceImport') {
+    const masterRecordTypeInfo = selectors.getSalesforceMasterRecordTypeInfo(
+      state,
+      importId
+    );
+
+    if (masterRecordTypeInfo && masterRecordTypeInfo.data) {
+      const { searchLayoutable } = masterRecordTypeInfo.data;
+
+      if (searchLayoutable) {
+        return 'salesforce';
+      }
+    }
+  } else if (importResource.http) {
+    const showHttpAssistant = selectors.httpAssistantSupportsMappingPreview(
+      state,
+      importId
+    );
+
+    if (showHttpAssistant) {
+      return 'http';
+    }
+  }
+};
+
+/*
+ * This selector used to differentiate drawers with/without Preview Panel
+ */
+selectors.isPreviewPanelAvailableForResource = (
+  state,
+  resourceId,
+  resourceType,
+  flowId
+) => {
+  if (resourceType !== 'exports') return false;
+  const { merged: resourceObj = {} } = selectors.resourceData(
+    state,
+    resourceType,
+    resourceId,
+    'value'
+  );
+  const connectionObj = selectors.resource(
+    state,
+    'connections',
+    resourceObj._connectionId
+  );
+
+  if (selectors.isDataLoaderExport(state, resourceId, flowId)) {
+    return true;
+  }
+
+  return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
+};
+
 selectors.applicationType = (state, resourceType, id) => {
   const resourceObj = selectors.resource(state, resourceType, id);
   const stagedResourceObj = selectors.stagedResource(state, id);
@@ -4874,6 +4379,44 @@ selectors.mappingHttpAssistantPreviewData = createSelector([
   };
 });
 
+selectors.responseMappingExtracts = (state, resourceId, flowId) => {
+  const { merged: flow = {} } = selectors.resourceData(state,
+    'flows',
+    flowId
+  );
+  const pageProcessor = flow?.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+
+  if (!pageProcessor) {
+    return emptyArray;
+  }
+  const isImport = pageProcessor.type === 'import';
+  const resource = selectors.resource(state, isImport ? 'imports' : 'exports', resourceId);
+
+  if (!resource) { return emptyArray; }
+
+  if (isImport) {
+    const extractFields = selectors.getSampleDataContext(state, {
+      flowId,
+      resourceId,
+      stage: 'responseMappingExtract',
+      resourceType: 'imports',
+    }).data;
+
+    if (!isEmpty(extractFields)) {
+      const extractPaths = getJSONPaths(extractFields);
+
+      return extractPaths.map(obj => ({ name: obj.id, id: obj.id })) || emptyArray;
+    }
+  }
+
+  return responseMappingUtil.getResponseMappingDefaultExtracts(
+    isImport ? 'imports' : 'exports',
+    resource.adaptorType
+  );
+};
+
+/* REGION MAPPING END */
+
 // DO NOT DELETE, might be needed later
 // selectors.sampleRuleForSQLQueryBuilder = createSelector([
 //   (state, { importId}) => {
@@ -4946,6 +4489,176 @@ selectors.mappingHttpAssistantPreviewData = createSelector([
 //   }
 // });
 
+/*
+ ** //#region errorManagement selectors
+*/
+
+selectors.flowJobs = (state, options = {}) => {
+  const jobs = fromData.flowJobs(state?.data, options);
+  const resourceMap = fromData.resourceDetailsMap(state?.data);
+
+  return jobs.map(job => {
+    if (job.children && job.children.length > 0) {
+      // eslint-disable-next-line no-param-reassign
+      job.children = job.children.map(cJob => {
+        const additionalChildProps = {
+          name: cJob._exportId
+            ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
+            : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
+          flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
+        };
+
+        return { ...cJob, ...additionalChildProps };
+      });
+    }
+
+    const additionalProps = {
+      name: resourceMap.flows && resourceMap.flows[job._flowId]?.name,
+      flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
+    };
+
+    if (job.doneExporting && job.numPagesGenerated > 0) {
+      additionalProps.percentComplete = Math.floor(
+        (job.numPagesProcessed * 100) /
+          (job.numPagesGenerated *
+            ((resourceMap.flows &&
+              resourceMap.flows[job._flowId] &&
+              resourceMap.flows[job._flowId].numImports) ||
+              1))
+      );
+    } else {
+      additionalProps.percentComplete = 0;
+    }
+
+    return { ...job, ...additionalProps };
+  });
+};
+
+selectors.flowDashboardJobs = createSelector(
+  (state, flowId) => selectors.latestFlowJobsList(state, flowId),
+  state => fromData.resourceDetailsMap(state?.data),
+  (state, flowId) => selectors.resourceData(state, 'flows', flowId).merged,
+  (latestFlowJobs, resourceMap, flowObj) => {
+    const dashboardSteps = [];
+
+    latestFlowJobs?.data?.forEach(parentJob => {
+      // parent job steps are special cases like waiting / cancelled jobs to show a dashboard step
+      const parentJobSteps = getParentJobSteps(parentJob);
+
+      parentJobSteps.forEach(step => dashboardSteps.push(step));
+      // Show flow steps if the parent job has children
+      if (parentJob.children?.length) {
+        const dashboardJobSteps = getRunConsoleJobSteps(parentJob, parentJob.children, resourceMap);
+
+        dashboardJobSteps.forEach(step => dashboardSteps.push(step));
+      }
+      // If the parent job is queued/in progress, show dummy steps of flows as waiting status
+      if ([JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(parentJob.status)) {
+        const pendingChildren = getFlowStepsYetToBeCreated(flowObj, parentJob.children);
+        const pendingChildrenSteps = generatePendingFlowSteps(pendingChildren, resourceMap);
+
+        pendingChildrenSteps.forEach(pendingChildStep => dashboardSteps.push(pendingChildStep));
+      }
+    });
+
+    return {
+      status: latestFlowJobs?.status,
+      data: dashboardSteps,
+    };
+  });
+
+selectors.flowJob = (state, ops = {}) => {
+  const jobList = selectors.flowJobs(state, ops);
+
+  return jobList.find(j => j._id === ops?.jobId);
+};
+
+selectors.job = (state, { type, jobId, parentJobId }) => {
+  const resourceMap = selectors.resourceDetailsMap(state);
+  const j = fromData.job(state.data, { type, jobId, parentJobId });
+
+  if (!j) {
+    return j;
+  }
+
+  return {
+    ...j,
+    name: resourceMap.flows[j._flowId] && resourceMap.flows[j._flowId].name,
+  };
+};
+
+selectors.allJobs = (state, { type }) => fromData.allJobs(state.data, { type });
+
+selectors.flowJobConnections = () => createSelector(
+  state => state?.data?.resources?.connections,
+  state => state?.data?.resources?.imports,
+  state => state?.data?.resources?.exports,
+  state => state?.data?.resources?.flows,
+  (state, flowId) => flowId,
+  (_1, _2, options) => options,
+  (connections = emptyArray, imports = emptyArray, exports = emptyArray, flows = emptyArray, flowId, options = {}) => {
+    const flow = flows.find(f => f._id === flowId);
+    const connectionIds = getAllConnectionIdsUsedInTheFlow(flow, connections, exports, imports, options);
+
+    return connections.filter(c => connectionIds.includes(c._id)).map(c => ({id: c._id, name: c.name}));
+  }
+);
+
+// Given an errorId, gives back error doc
+selectors.resourceError = (state, { flowId, resourceId, options, errorId }) => {
+  const { errors = [] } = selectors.resourceErrors(state, {
+    flowId,
+    resourceId,
+    options,
+  });
+
+  return errors.find(error => error.errorId === errorId);
+};
+
+selectors.selectedRetryIds = (state, { flowId, resourceId, options = {} }) => {
+  const { errors } = selectors.resourceErrors(state, { flowId, resourceId, options });
+
+  return errors
+    .filter(({ selected, retryDataKey }) => selected && !!retryDataKey)
+    .map(error => error.retryDataKey);
+};
+
+selectors.selectedErrorIds = (state, { flowId, resourceId, options = {} }) => {
+  const { errors } = selectors.resourceErrors(state, { flowId, resourceId, options });
+
+  return errors.filter(({ selected }) => selected).map(error => error.errorId);
+};
+
+selectors.isAllErrorsSelected = (
+  state,
+  { flowId, resourceId, filterKey, defaultFilter, isResolved }
+) => {
+  const errorFilter = selectors.filter(state, filterKey) || defaultFilter;
+  const { errors = [] } = selectors.resourceErrors(state, {
+    flowId,
+    resourceId,
+    options: { ...errorFilter, isResolved },
+  });
+  const errorIds = errors.map(error => error.errorId);
+
+  return fromSession.isAllErrorsSelected(state && state.session, {
+    flowId,
+    resourceId,
+    isResolved,
+    errorIds,
+  });
+};
+selectors.isAnyErrorActionInProgress = (state, { flowId, resourceId }) => {
+  const isRetryInProgress =
+    selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
+      .status === 'requested';
+  const isResolveInProgress =
+    selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'resolve' })
+      .status === 'requested';
+
+  return isRetryInProgress || isResolveInProgress;
+};
+
 selectors.errorDetails = (state, params) => {
   const { flowId, resourceId, options = {} } = params;
 
@@ -4966,6 +4679,70 @@ selectors.makeResourceErrorsSelector = () => createSelector(
 );
 
 selectors.resourceErrors = selectors.makeResourceErrorsSelector();
+
+/**
+ * Returns error count per category in a store for IA 1.0
+ * A map of titleId and total errors on that category
+ */
+selectors.integrationErrorsPerSection = createSelector(
+  selectors.integrationAppFlowSections,
+  (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
+  state => selectors.resourceList(state, { type: 'flows' }).resources,
+  (flowSections, integrationErrors, flowsList) =>
+    // go through all sections and aggregate error counts of all the flows per sections against titleId
+    flowSections.reduce((errorsMap, section) => {
+      const { flows = [], titleId } = section;
+
+      errorsMap[titleId] = flows.reduce((total, flow) => {
+        const isFlowDisabled = !!flowsList.find(flowObj => flowObj._id === flow._id)?.disabled;
+
+        // we consider enabled flows to show total count per section
+        if (!isFlowDisabled) {
+          total += (integrationErrors[flow._id] || 0);
+        }
+
+        return total;
+      }, 0);
+
+      return errorsMap;
+    }, {})
+);
+
+/**
+ * Returns error count per Store in an Integration for IA 1.0
+ * A map of storeId and total errors on that Store
+ */
+selectors.integrationErrorsPerStore = (state, integrationId) => {
+  const integrationAppSettings = selectors.integrationAppSettings(state, integrationId);
+  const { supportsMultiStore, sections: stores = [] } = integrationAppSettings.settings || {};
+
+  if (!supportsMultiStore) return emptyObject;
+
+  return stores.reduce((storeErrorsMap, store) => {
+    const sectionErrorsMap = selectors.integrationErrorsPerSection(state, integrationId, store.id);
+
+    storeErrorsMap[store.id] = Object.values(sectionErrorsMap).reduce(
+      (total, count) => total + count,
+      0);
+
+    return storeErrorsMap;
+  }, {});
+};
+
+selectors.canUserUpgradeToErrMgtTwoDotZero = state => {
+  const integrations = selectors.resourceList(state, {
+    type: 'integrations',
+  }).resources;
+  const userLicenses = fromUser.licenses(selectors.userState(state)) || [];
+  const hasValidConnectorLicenses = userLicenses.some(license => license.type === 'connector' && moment(license.expires) - moment() > 0);
+  const hasConnectors = integrations.some(integration => !!integration._connectorId);
+
+  return !(hasConnectors || hasValidConnectorLicenses);
+};
+
+/*
+  //#endregion errorManagement selectors
+*/
 
 selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
   selectors.userPermissions,
@@ -5023,55 +4800,6 @@ selectors.availableUsersList = (state, integrationId) => {
   return _users;
 };
 
-/**
- * Returns error count per category in a store for IA 1.0
- * A map of titleId and total errors on that category
- */
-selectors.integrationErrorsPerSection = createSelector(
-  selectors.integrationAppFlowSections,
-  (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
-  state => selectors.resourceList(state, { type: 'flows' }).resources,
-  (flowSections, integrationErrors, flowsList) =>
-    // go through all sections and aggregate error counts of all the flows per sections against titleId
-    flowSections.reduce((errorsMap, section) => {
-      const { flows = [], titleId } = section;
-
-      errorsMap[titleId] = flows.reduce((total, flow) => {
-        const isFlowDisabled = !!flowsList.find(flowObj => flowObj._id === flow._id)?.disabled;
-
-        // we consider enabled flows to show total count per section
-        if (!isFlowDisabled) {
-          total += (integrationErrors[flow._id] || 0);
-        }
-
-        return total;
-      }, 0);
-
-      return errorsMap;
-    }, {})
-);
-
-/**
- * Returns error count per Store in an Integration for IA 1.0
- * A map of storeId and total errors on that Store
- */
-selectors.integrationErrorsPerStore = (state, integrationId) => {
-  const integrationAppSettings = selectors.integrationAppSettings(state, integrationId);
-  const { supportsMultiStore, sections: stores = [] } = integrationAppSettings.settings || {};
-
-  if (!supportsMultiStore) return emptyObject;
-
-  return stores.reduce((storeErrorsMap, store) => {
-    const sectionErrorsMap = selectors.integrationErrorsPerSection(state, integrationId, store.id);
-
-    storeErrorsMap[store.id] = Object.values(sectionErrorsMap).reduce(
-      (total, count) => total + count,
-      0);
-
-    return storeErrorsMap;
-  }, {});
-};
-
 selectors.mkChildIntegration = () => {
   const resourceSelector = selectors.makeResourceSelector();
 
@@ -5086,6 +4814,163 @@ selectors.mkChildIntegration = () => {
 };
 
 // #region Flow builder selectors
+
+selectors.mkFlowConnectionList = () => createSelector(
+  state => state?.data?.resources?.connections,
+  state => state?.data?.resources?.exports,
+  state => state?.data?.resources?.imports,
+  (state, flowId) => selectors.resource(state, 'flows', flowId),
+  (connections = emptyArray, exports = emptyArray, imports = emptyArray, flow) => {
+    const connectionIds = getAllConnectionIdsUsedInTheFlow(flow, connections, exports, imports);
+
+    return connections.filter(c => connectionIds.includes(c._id));
+  }
+);
+
+selectors.mkIsAnyFlowConnectionOffline = () => {
+  const flowConnections = selectors.mkFlowConnectionList();
+
+  return createSelector(
+    (state, flowId) => flowConnections(state, flowId),
+    flowConnections => flowConnections.some(c => c.offline)
+  );
+};
+
+selectors.flowReferencesForResource = (state, resourceType, resourceId) => {
+  const flowsState = state && state.session && state.session.flowData;
+  const exports = selectors.resourceList(state, {
+    type: 'exports',
+  }).resources;
+  const imports = selectors.resourceList(state, {
+    type: 'imports',
+  }).resources;
+
+  return getFlowReferencesForResource(
+    flowsState,
+    exports,
+    imports,
+    resourceType,
+    resourceId
+  );
+};
+
+/*
+ * Given flowId, resourceId determines whether resource is a pg/pp
+ */
+selectors.isPageGenerator = (state, flowId, resourceId, resourceType) => {
+  // If imports , straight forward not a pg
+  if (resourceType === 'imports') return false;
+
+  // Incase of new resource (export/lookup), flow doc does not have this resource yet
+  // So, get staged resource and determine export/lookup based on isLookup flag
+  const { merged: resource } = selectors.resourceData(
+    state,
+    'exports',
+    resourceId
+  );
+
+  if (!resource) return false;
+
+  if (isNewId(resourceId)) {
+    return !resource.isLookup;
+  }
+  // In case of webhook, by default it is page generator.
+  if (resource.type === 'webhook') {
+    return true;
+  }
+
+  // Search in flow doc to determine pg/pp
+  const { merged: flow } = selectors.resourceData(state, 'flows', flowId, 'value');
+
+  return isPageGeneratorResource(flow, resourceId);
+};
+
+selectors.getUsedActionsForResource = (
+  state,
+  resourceId,
+  resourceType,
+  flowNode
+) => {
+  const r = selectors.resource(state, resourceType, resourceId);
+
+  if (!r) return emptyObject;
+
+  return getUsedActionsMapForResource(r, resourceType, flowNode);
+};
+
+selectors.transferListWithMetadata = state => {
+  const transfers =
+    selectors.resourceList(state, {
+      type: 'transfers',
+    }).resources || [];
+
+  const updatedTransfers = [...transfers];
+
+  updatedTransfers.forEach((transfer, i) => {
+    let integrations = [];
+
+    if (transfer.ownerUser && transfer.ownerUser._id) {
+      updatedTransfers[i].isInvited = true;
+    }
+
+    if (transfer.toTransfer && transfer.toTransfer.integrations) {
+      transfer.toTransfer.integrations.forEach(i => {
+        let { name } = i;
+
+        if (i._id === 'none') {
+          name = 'Standalone flows';
+        }
+
+        name = name || i._id;
+
+        if (i.tag) {
+          name += ` (${i.tag})`;
+        }
+
+        integrations.push(name);
+      });
+    }
+
+    integrations = integrations.join('\n');
+    updatedTransfers[i].integrations = integrations;
+  });
+
+  return updatedTransfers.filter(t => !t.isInvited || t.status !== 'unapproved');
+};
+
+selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
+  const { merged: resourceObj } = selectors.resourceData(state, 'exports', resourceId);
+  const { adaptorType, _connectionId: connectionId } = resourceObj || {};
+
+  // Returns false if it is not a rest export
+  if (adaptorType !== 'RESTExport') {
+    return false;
+  }
+
+  const connection = selectors.resource(state, 'connections', connectionId);
+
+  // Check for media type 'csv' from connection object
+  return connection && connection.rest && connection.rest.mediaType === 'csv';
+};
+
+selectors.isDataLoaderExport = (state, resourceId, flowId) => {
+  if (isNewId(resourceId)) {
+    if (!flowId) return false;
+    const { merged: flowObj = {} } = selectors.resourceData(state, 'flows', flowId, 'value');
+
+    return !!(flowObj.pageGenerators &&
+              flowObj.pageGenerators[0] &&
+              flowObj.pageGenerators[0].application === 'dataLoader');
+  }
+  const { merged: resourceObj = {} } = selectors.resourceData(
+    state,
+    'exports',
+    resourceId,
+    'value'
+  );
+
+  return resourceObj.type === 'simple';
+};
 
 selectors.isFreeFlowResource = (state, flowId) => {
   const flow = selectors.resourceData(state,
@@ -5143,18 +5028,110 @@ selectors.shouldShowAddPageProcessor = (state, flowId) => {
   return showAddPageProcessor;
 };
 
-// #endregion Flow builder selectors
+/*
+ * Returns boolean true/false whether it is a lookup export or not based on passed flowId and resourceType
+ */
+selectors.isLookUpExport = (state, { flowId, resourceId, resourceType }) => {
+  // If not an export , then it is not a lookup
+  if (resourceType !== 'exports' || !resourceId) return false;
 
-selectors.canUserUpgradeToErrMgtTwoDotZero = state => {
-  const integrations = selectors.resourceList(state, {
-    type: 'integrations',
-  }).resources;
-  const userLicenses = fromUser.licenses(selectors.userState(state)) || [];
-  const hasValidConnectorLicenses = userLicenses.some(license => license.type === 'connector' && moment(license.expires) - moment() > 0);
-  const hasConnectors = integrations.some(integration => !!integration._connectorId);
+  // Incase of a new resource , check for isLookup flag on resource patched for new lookup exports
+  // Also for existing exports ( newly created after Flow Builder feature ) have isLookup flag
+  const { merged: resourceObj = {} } = selectors.resourceData(
+    state,
+    'exports',
+    resourceId
+  );
 
-  return !(hasConnectors || hasValidConnectorLicenses);
+  // If exists it is a lookup
+  if (resourceObj.isLookup) return true;
+
+  // If it is an existing export with a flow context, search in pps to match this resource id
+  const flow = selectors.resource(state, 'flows', flowId);
+  const { pageProcessors = [] } = flow || {};
+
+  return !!pageProcessors.find(pp => pp._exportId === resourceId);
 };
+
+/*
+ * This Selector handles all Resource Type's Label in case of Stand alone / Flow Builder Context
+ * Used at Resource Form's Title like 'Create/Edit Export' , at Bread Crumb level to show 'Add/Edit Export'
+ */
+selectors.getCustomResourceLabel = (
+  state,
+  { resourceType, resourceId, flowId }
+) => {
+  const isLookup = selectors.isLookUpExport(state, { flowId, resourceId, resourceType });
+  const isDataloader = !!selectors.flowDetails(state, flowId).isSimpleImport;
+  const isNewResource = isNewId(resourceId);
+  const { merged: resource = {} } = selectors.resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
+  let resourceLabel;
+
+  // Default resource labels based on resourceTypes handled here
+  if (isLookup) {
+    resourceLabel = 'Lookup';
+  } else if (isDataloader && resourceType === 'pageProcessor') {
+    // Incase of data loader PP 1st step , we cannot add lookups so , resourceLabel is of imports type
+    resourceLabel = MODEL_PLURAL_TO_LABEL.imports;
+  } else {
+    resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
+  }
+
+  // Incase of Flow context, 2nd step of PG/PP creation resource labels handled here
+  // The Below resource labels override the default labels above
+  if (flowId && isNewResource) {
+    if (resource.resourceType === 'exportRecords') {
+      resourceLabel = 'Export';
+    } else if (
+      ['transferFiles', 'lookupFiles'].indexOf(resource.resourceType) >= 0
+    ) {
+      resourceLabel = 'Transfer';
+    } else if (['webhook', 'realtime'].indexOf(resource.resourceType) >= 0) {
+      resourceLabel = 'Listener';
+    } else if (resource.resourceType === 'importRecords') {
+      resourceLabel = 'Import';
+    } else if (resource.resourceType === 'lookupRecords') {
+      resourceLabel = 'Lookup';
+    }
+  } else if (flowId) {
+    if (
+      ([
+        'RESTExport',
+        'HTTPExport',
+        'NetSuiteExport',
+        'SalesforceExport',
+      ].indexOf(resource.adaptorType) >= 0 &&
+        resource.type === 'blob') ||
+      ['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0 ||
+      ([
+        'RESTImport',
+        'HTTPImport',
+        'NetSuiteImport',
+        'SalesforceImport',
+      ].indexOf(resource.adaptorType) >= 0 &&
+        resource.blobKeyPath) ||
+      ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
+    ) {
+      resourceLabel = 'Transfer';
+    }
+  }
+
+  // For real time resources , we show resource label as 'listener'
+  if (
+    resourceType === 'exports' &&
+    isRealTimeOrDistributedResource(resource, resourceType)
+  ) {
+    resourceLabel = 'Listener';
+  }
+
+  return resourceLabel;
+};
+
+// #endregion Flow builder selectors
 
 /**
  * User can select number of records in all cases except for realtime adaptors
@@ -5186,38 +5163,3 @@ selectors.getIntegrationUserNameById = (state, userId, flowId) => {
   return usersList.find(user => user?.sharedWithUser?._id === userId)?.sharedWithUser?.name;
 };
 
-selectors.responseMappingExtracts = (state, resourceId, flowId) => {
-  const { merged: flow = {} } = selectors.resourceData(state,
-    'flows',
-    flowId
-  );
-  const pageProcessor = flow?.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
-
-  if (!pageProcessor) {
-    return emptyArray;
-  }
-  const isImport = pageProcessor.type === 'import';
-  const resource = selectors.resource(state, isImport ? 'imports' : 'exports', resourceId);
-
-  if (!resource) { return emptyArray; }
-
-  if (isImport) {
-    const extractFields = selectors.getSampleDataContext(state, {
-      flowId,
-      resourceId,
-      stage: 'responseMappingExtract',
-      resourceType: 'imports',
-    }).data;
-
-    if (!isEmpty(extractFields)) {
-      const extractPaths = getJSONPaths(extractFields);
-
-      return extractPaths.map(obj => ({ name: obj.id, id: obj.id })) || emptyArray;
-    }
-  }
-
-  return responseMappingUtil.getResponseMappingDefaultExtracts(
-    isImport ? 'imports' : 'exports',
-    resource.adaptorType
-  );
-};
