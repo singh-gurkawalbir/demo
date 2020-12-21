@@ -198,7 +198,7 @@ const Title = ({flows, integrationId}) => {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const integrationErrorsMap = useSelector(state => selectors.errorMap(state, integrationId)?.data);
+  const integrationErrorsMap = useSelector(state => selectors.errorMap(state, integrationId)?.data) || {};
   const currentTileErrorCount = isUserInErrMgtTwoDotZero ? allTiles.find(t => t._integrationId === integrationId)?.numError : 0;
 
   let totalErrors = 0;
