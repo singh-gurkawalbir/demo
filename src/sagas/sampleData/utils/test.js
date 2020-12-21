@@ -1176,7 +1176,7 @@ describe('Flow sample data utility sagas', () => {
           )
           .run();
       });
-      test('should dispatch receivedPreviewData with sampleResponse if the data is not in non JSON string format ( like XML sampleResponse ) on the resource for the stage sampleResponse', () => {
+      test('should dispatch receivedPreviewData with sampleResponse if the data is not in JSON string format ( like XML sampleResponse ) on the resource for the stage sampleResponse', () => {
         const resourceId = 'import-123';
         const flowId = 'flow-123';
         const resource = {
