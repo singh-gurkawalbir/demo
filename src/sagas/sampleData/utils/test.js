@@ -1018,6 +1018,136 @@ describe('Flow sample data utility sagas', () => {
 
         expect(returnValue).toEqual(flowResourcesMap);
       });
+      test('should trim data processors ( tx,filters, hooks) for IA resource in the resourceMap returned', () => {
+        const flow = {
+          _id: 'flow-123',
+          name: 'test flow',
+          _connectorId: 'conn-123',
+          pageGenerators: [{ _exportId: 'export-123'}, { _exportId: 'export-456'}],
+          pageProcessors: [{ type: 'import', _importId: 'import-123'}],
+        };
+
+        const pg1 = {
+          _id: 'export-123',
+          name: 'pg1',
+          adaptorType: 'RESTExport',
+          _connectorId: 'conn-123',
+          transform: {
+            type: 'expression',
+            expression: {
+              rules: [
+                [
+                  {
+                    extract: 'users[*]',
+                    generate: 'customers[*]',
+                  },
+                ],
+              ],
+              version: '1',
+            },
+          },
+          filter: {
+            type: 'expression',
+            expression: {
+              rules: [],
+              version: '1',
+            },
+          },
+          sampleData: { test: 5 },
+        };
+        const pg1WithoutProcessors = {
+          _id: 'export-123',
+          name: 'pg1',
+          adaptorType: 'RESTExport',
+          _connectorId: 'conn-123',
+          sampleData: { test: 5 },
+        };
+        const pg2 = {
+          _id: 'export-456',
+          name: 'pg2',
+          adaptorType: 'HTTPExport',
+          _connectorId: 'conn-123',
+        };
+        const resourceType = 'exports';
+        const flowResourcesMap = {
+          'export-123': {doc: pg1WithoutProcessors, options: { uiData: pg1.sampleData }},
+          'export-456': {doc: pg2, options: { uiData: undefined }},
+        };
+
+        return expectSaga(fetchFlowResources, { flow, type: 'pageGenerators' })
+          .provide([
+            [select(
+              selectors.resourceData,
+              resourceType,
+              'export-123',
+              SCOPES.VALUE
+            ), { merged: pg1}],
+            [select(
+              selectors.resourceData,
+              resourceType,
+              'export-456',
+              SCOPES.VALUE
+            ), { merged: pg2}],
+            [call(
+              getPreviewOptionsForResource,
+              { resource: pg1, flow, refresh: undefined, runOffline: undefined }
+            ), { uiData: pg1.sampleData }],
+            [call(
+              getPreviewOptionsForResource,
+              { resource: pg2, flow, refresh: undefined, runOffline: undefined }
+            ), { uiData: undefined }],
+          ])
+          .returns(flowResourcesMap)
+          .run();
+      });
+      test('should remove sampleData from any resource returned in case the resource is not an IA', () => {
+        const flow = {
+          _id: 'flow-123',
+          name: 'test flow',
+          pageGenerators: [{ _exportId: 'export-123'}, { _exportId: 'export-456'}],
+          pageProcessors: [{ type: 'import', _importId: 'import-123'}],
+        };
+
+        const pg1 = {
+          _id: 'export-123',
+          name: 'pg1',
+          adaptorType: 'RESTExport',
+          sampleData: { test: 5 },
+        };
+        const pg1WithoutSampledata = {
+          _id: 'export-123',
+          name: 'pg1',
+          adaptorType: 'RESTExport',
+        };
+        const pg2 = {
+          _id: 'export-456',
+          name: 'pg2',
+          adaptorType: 'HTTPExport',
+        };
+        const resourceType = 'exports';
+        const flowResourcesMap = {
+          'export-123': {doc: pg1WithoutSampledata, options: { uiData: undefined }},
+          'export-456': {doc: pg2, options: { uiData: undefined }},
+        };
+
+        return expectSaga(fetchFlowResources, { flow, type: 'pageGenerators' })
+          .provide([
+            [select(
+              selectors.resourceData,
+              resourceType,
+              'export-123',
+              SCOPES.VALUE
+            ), { merged: pg1}],
+            [select(
+              selectors.resourceData,
+              resourceType,
+              'export-456',
+              SCOPES.VALUE
+            ), { merged: pg2}],
+          ])
+          .returns(flowResourcesMap)
+          .run();
+      });
     });
     describe('requestSampleDataForImports saga', () => {
       test('should do nothing if the sampleDataStage is not passed / invalid', () => {
@@ -1042,7 +1172,7 @@ describe('Flow sample data utility sagas', () => {
           })
           .run();
       });
-      test('should dispatch receivedPreviewData with parsed sampleResponse if the data is in string format on the resource for the stage sampleResponse', () => {
+      test('should dispatch receivedPreviewData with parsed sampleResponse if the data is in JSON string format on the resource for the stage sampleResponse', () => {
         const resourceId = 'import-123';
         const flowId = 'flow-123';
         const resource = {
@@ -1074,7 +1204,7 @@ describe('Flow sample data utility sagas', () => {
           )
           .run();
       });
-      test('should dispatch receivedPreviewData with sampleResponse if the data is not in string format on the resource for the stage sampleResponse', () => {
+      test('should dispatch receivedPreviewData with sampleResponse if the data is not in JSON string format on the resource for the stage sampleResponse', () => {
         const resourceId = 'import-123';
         const flowId = 'flow-123';
         const resource = {
@@ -1190,7 +1320,7 @@ describe('Flow sample data utility sagas', () => {
       });
     });
     describe('updateStateForProcessorData saga', () => {
-      test('should dispatch receivedProcessorData with receivedProcessorData if passed processedData is undefined', () => {
+      test('should dispatch receivedProcessorData with undefined if passed processedData is undefined', () => {
         const resourceId = 'export-123';
         const flowId = 'flow-123';
         const stage = 'preSavePage';
@@ -1265,7 +1395,7 @@ describe('Flow sample data utility sagas', () => {
           )
           .run();
       });
-      test('should dispatch receivedProcessorData with processedData passed irrespective of other props passed if it does not meet the expected data forma', () => {
+      test('should dispatch receivedProcessorData with processedData passed irrespective of other props passed if it does not meet the expected data format', () => {
         const resourceId = 'export-123';
         const flowId = 'flow-123';
         const stage = 'preSavePage';
