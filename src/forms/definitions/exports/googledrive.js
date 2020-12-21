@@ -216,7 +216,7 @@ export default {
         return output ? 'records' : 'blob';
       },
     },
-    'http.relativeURI': { fieldId: 'http.relativeURI' },
+    'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path' },
     'file.type': { fieldId: 'file.type' },
     uploadFile: {
       fieldId: 'uploadFile',
