@@ -139,10 +139,94 @@ const subSelectors = {
 
 genSelectors(selectors, subSelectors);
 
+// #region PUBLIC SESSION SELECTORS
 // additional user defined selectors
 selectors.userState = state => state && state.user;
 
-// #region PUBLIC SESSION SELECTORS
+selectors.userProfile = createSelector(
+  state => state?.user?.profile,
+  profile => profile
+);
+
+selectors.developerMode = state => (
+  state && state.user && state.user.profile && state.user.profile.developer
+);
+
+selectors.currentEnvironment = state => selectors.userPreferences(state).environment;
+
+selectors.userOwnPreferences = createSelector(
+  state => state.user,
+  user => fromUser.userOwnPreferences(user)
+);
+
+// TODO: make this selector a lot more granular...its dependency is user
+selectors.userProfilePreferencesProps = createSelector(
+  selectors.userProfile,
+  selectors.userPreferences,
+  (profile, preferences) => {
+    const {
+      _id,
+      name,
+      email,
+      company,
+      role,
+      developer,
+      phone,
+      dateFormat,
+      timezone,
+      timeFormat,
+      scheduleShiftForFlowsCreatedAfter,
+      // eslint-disable-next-line camelcase
+      auth_type_google,
+    } = { ...profile, ...preferences };
+
+    return {
+      _id,
+      name,
+      email,
+      company,
+      role,
+      developer,
+      phone,
+      dateFormat,
+      timezone,
+      timeFormat,
+      scheduleShiftForFlowsCreatedAfter,
+      auth_type_google,
+    };
+  });
+
+selectors.userProfileEmail = state => state?.user?.profile?.email;
+
+selectors.userProfileLinkedWithGoogle = state => !!(
+  state &&
+    state.user &&
+    state.user.profile &&
+    state.user.profile.auth_type_google &&
+    state.user.profile.auth_type_google.id
+);
+selectors.testConnectionCommState = (state, resourceId) => {
+  const status = fromComms.testConnectionStatus(
+    state && state.comms,
+    resourceId
+  );
+  const message = fromComms.testConnectionMessage(
+    state && state.comms,
+    resourceId
+  );
+
+  return {
+    commState: status,
+    message,
+  };
+};
+
+selectors.hasPreferences = state => !!selectors.userPreferences(state);
+
+selectors.hasProfile = state => !!selectors.userProfile(state);
+// #endregion user selectors
+
+// #region  Template, Cloning, installation and uninstallation selectors
 
 selectors.isSetupComplete = (
   state,
@@ -263,6 +347,8 @@ selectors.templateInstallSteps = (state, templateId) => {
 
 selectors.cloneInstallSteps = (state, resourceType, resourceId) => selectors.templateInstallSteps(state, `${resourceType}-${resourceId}`);
 
+// #endregion Template, Cloning, installation and uninstallation selectors
+
 selectors.connectorFieldOptions = (
   state,
   fieldName,
@@ -293,70 +379,6 @@ selectors.connectorFieldOptions = (
 };
 
 selectors.editorHelperFunctions = state => state?.session?.editors?.helperFunctions || [];
-
-selectors.userProfile = createSelector(
-  state => state?.user?.profile,
-  profile => profile
-);
-
-selectors.developerMode = state => (
-  state && state.user && state.user.profile && state.user.profile.developer
-);
-
-selectors.currentEnvironment = state => selectors.userPreferences(state).environment;
-
-selectors.userOwnPreferences = createSelector(
-  state => state.user,
-  user => fromUser.userOwnPreferences(user)
-);
-
-// TODO: make this selector a lot more granular...its dependency is user
-selectors.userProfilePreferencesProps = createSelector(
-  selectors.userProfile,
-  selectors.userPreferences,
-  (profile, preferences) => {
-    const {
-      _id,
-      name,
-      email,
-      company,
-      role,
-      developer,
-      phone,
-      dateFormat,
-      timezone,
-      timeFormat,
-      scheduleShiftForFlowsCreatedAfter,
-      // eslint-disable-next-line camelcase
-      auth_type_google,
-    } = { ...profile, ...preferences };
-
-    return {
-      _id,
-      name,
-      email,
-      company,
-      role,
-      developer,
-      phone,
-      dateFormat,
-      timezone,
-      timeFormat,
-      scheduleShiftForFlowsCreatedAfter,
-      auth_type_google,
-    };
-  });
-
-selectors.userProfileEmail = state => state?.user?.profile?.email;
-
-selectors.userProfileLinkedWithGoogle = state => !!(
-  state &&
-    state.user &&
-    state.user.profile &&
-    state.user.profile.auth_type_google &&
-    state.user.profile.auth_type_google.id
-);
-// #endregiod
 
 // #region AUTHENTICATION SELECTORS
 selectors.isAuthenticated = state => !!(state && state.auth && state.auth.authenticated);
@@ -394,28 +416,6 @@ selectors.isSessionExpired = state => !!(state && state.auth && state.auth.sessi
 
 selectors.sessionValidTimestamp = state => state && state.auth && state.auth.authTimestamp;
 // #endregion AUTHENTICATION SELECTORS
-
-// #region USER SELECTORS
-selectors.testConnectionCommState = (state, resourceId) => {
-  const status = fromComms.testConnectionStatus(
-    state && state.comms,
-    resourceId
-  );
-  const message = fromComms.testConnectionMessage(
-    state && state.comms,
-    resourceId
-  );
-
-  return {
-    commState: status,
-    message,
-  };
-};
-
-selectors.hasPreferences = state => !!selectors.userPreferences(state);
-
-selectors.hasProfile = state => !!selectors.userProfile(state);
-// #endregion
 
 // #region PUBLIC DATA SELECTORS
 selectors.resourceList = (state, options = {}) => {
@@ -3215,6 +3215,24 @@ selectors.mkFlowResources = () => createSelector(
 
 // #region SAMPLE DATA selectors
 
+/**
+ * User can select number of records in all cases except for realtime adaptors
+ * No need to show when export preview is disabled
+ */
+selectors.canSelectRecordsInPreviewPanel = (state, resourceId, resourceType) => {
+  const isExportPreviewDisabled = selectors.isExportPreviewDisabled(state, resourceId, resourceType);
+
+  if (isExportPreviewDisabled) return false;
+  const resource = selectors.resourceData(state, resourceType, resourceId).merged;
+  // TODO @Raghu: merge this as part of isRealTimeOrDistributedResource to handle this resourceType
+  // it is realtime incase of new export for realtime adaptors
+
+  if (resource?.resourceType === 'realtime') return false;
+  if (isRealTimeOrDistributedResource(resource, resourceType)) return false;
+
+  return true;
+};
+
 /*
 * Definition rules are fetched in 2 ways
 * 1. In creation of an export, from FileDefinitions list based on 'definitionId' and 'format'
@@ -4489,9 +4507,7 @@ selectors.responseMappingExtracts = (state, resourceId, flowId) => {
 //   }
 // });
 
-/*
- ** //#region errorManagement selectors
-*/
+// #region errorManagement selectors
 
 selectors.flowJobs = (state, options = {}) => {
   const jobs = fromData.flowJobs(state?.data, options);
@@ -4738,6 +4754,18 @@ selectors.canUserUpgradeToErrMgtTwoDotZero = state => {
   const hasConnectors = integrations.some(integration => !!integration._connectorId);
 
   return !(hasConnectors || hasValidConnectorLicenses);
+};
+
+selectors.getIntegrationUserNameById = (state, userId, flowId) => {
+  const profile = selectors.userProfile(state);
+
+  // If it is logged in user , return its name
+  if (profile._id === userId) return profile.name || profile.email;
+  // else get user name from integration users list
+  const integrationId = selectors.resource(state, 'flows', flowId)?._integrationId || 'none';
+  const usersList = selectors.availableUsersList(state, integrationId);
+
+  return usersList.find(user => user?.sharedWithUser?._id === userId)?.sharedWithUser?.name;
 };
 
 /*
@@ -5132,34 +5160,4 @@ selectors.getCustomResourceLabel = (
 };
 
 // #endregion Flow builder selectors
-
-/**
- * User can select number of records in all cases except for realtime adaptors
- * No need to show when export preview is disabled
- */
-selectors.canSelectRecordsInPreviewPanel = (state, resourceId, resourceType) => {
-  const isExportPreviewDisabled = selectors.isExportPreviewDisabled(state, resourceId, resourceType);
-
-  if (isExportPreviewDisabled) return false;
-  const resource = selectors.resourceData(state, resourceType, resourceId).merged;
-  // TODO @Raghu: merge this as part of isRealTimeOrDistributedResource to handle this resourceType
-  // it is realtime incase of new export for realtime adaptors
-
-  if (resource?.resourceType === 'realtime') return false;
-  if (isRealTimeOrDistributedResource(resource, resourceType)) return false;
-
-  return true;
-};
-
-selectors.getIntegrationUserNameById = (state, userId, flowId) => {
-  const profile = selectors.userProfile(state);
-
-  // If it is logged in user , return its name
-  if (profile._id === userId) return profile.name || profile.email;
-  // else get user name from integration users list
-  const integrationId = selectors.resource(state, 'flows', flowId)?._integrationId || 'none';
-  const usersList = selectors.availableUsersList(state, integrationId);
-
-  return usersList.find(user => user?.sharedWithUser?._id === userId)?.sharedWithUser?.name;
-};
 
