@@ -246,6 +246,47 @@ selectors.isSetupComplete = (
   return isSetupComplete;
 };
 
+selectors.isIAConnectionSetupPending = (state, connectionId) => {
+  const connection = selectors.resource(state, 'connections', connectionId) || {};
+
+  if (!connection || !connection._connectorId) {
+    return;
+  }
+
+  const { _integrationId } = connection;
+  const integration = selectors.resource(state, 'integrations', _integrationId);
+
+  const addNewStoreSteps = fromSession.addNewStoreSteps(
+    state?.session,
+    _integrationId
+  );
+  const { steps } = addNewStoreSteps;
+
+  if (steps && Array.isArray(steps)) {
+    const installStep = steps.find(s => s._connectionId === connectionId);
+
+    if (!installStep?.completed) {
+      return true;
+    }
+  }
+
+  if (integration?.mode === 'settings') {
+    return false;
+  }
+
+  if (integration?.install) {
+    const installStep = integration.install.find(
+      step => step._connectionId === connectionId
+    );
+
+    if (!installStep?.completed) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
 selectors.isUninstallComplete = (state, { integrationId, storeId }) => {
   let isSetupComplete = false;
   const uninstallSteps =
@@ -387,6 +428,7 @@ selectors.sessionValidTimestamp = state => state && state.auth && state.auth.aut
 // #endregion AUTHENTICATION SELECTORS
 
 // #region PUBLIC DATA SELECTORS
+// #region resouce selectors
 selectors.resourceList = (state, options = {}) => {
   if (
     !options.ignoreEnvironmentFilter &&
@@ -660,47 +702,6 @@ selectors.mkNextDataFlowsForFlow = () => createSelector(
   (flows, flow) => getNextDataFlows(flows, flow)
 );
 
-selectors.isIAConnectionSetupPending = (state, connectionId) => {
-  const connection = selectors.resource(state, 'connections', connectionId) || {};
-
-  if (!connection || !connection._connectorId) {
-    return;
-  }
-
-  const { _integrationId } = connection;
-  const integration = selectors.resource(state, 'integrations', _integrationId);
-
-  const addNewStoreSteps = fromSession.addNewStoreSteps(
-    state?.session,
-    _integrationId
-  );
-  const { steps } = addNewStoreSteps;
-
-  if (steps && Array.isArray(steps)) {
-    const installStep = steps.find(s => s._connectionId === connectionId);
-
-    if (!installStep?.completed) {
-      return true;
-    }
-  }
-
-  if (integration?.mode === 'settings') {
-    return false;
-  }
-
-  if (integration?.install) {
-    const installStep = integration.install.find(
-      step => step._connectionId === connectionId
-    );
-
-    if (!installStep?.completed) {
-      return true;
-    }
-  }
-
-  return false;
-};
-
 selectors.isConnectionOffline = (state, id) => {
   const connection = selectors.resource(state, 'connections', id);
 
@@ -860,8 +861,6 @@ selectors.marketplaceConnectors = (
     .sort(stringCompare('name'));
 };
 
-selectors.integrationAppSettings = selectors.mkIntegrationAppSettings();
-
 selectors.makeMarketPlaceConnectorsSelector = () =>
   createSelector(
     selectors.userState,
@@ -878,6 +877,12 @@ selectors.makeMarketPlaceConnectorsSelector = () =>
         sandbox
       )
   );
+
+// #endregion resource selectors
+
+// #region  integrationApps selectors
+
+selectors.integrationAppSettings = selectors.mkIntegrationAppSettings();
 
 selectors.getFlowsAssociatedExportFromIAMetadata = (state, fieldMeta) => {
   const { resource: flowResource, properties } = fieldMeta;
@@ -897,7 +902,7 @@ selectors.getFlowsAssociatedExportFromIAMetadata = (state, fieldMeta) => {
 
   return selectors.resource(state, 'exports', resourceId);
 };
-// #begin integrationApps Region
+
 selectors.integrationConnectionList = (state, integrationId, childId, tableConfig) => {
   const integration = selectors.resource(state, 'integrations', integrationId) || {};
   // eslint-disable-next-line no-use-before-define
@@ -1234,23 +1239,6 @@ selectors.integrationAppName = () => createSelector(
   }
 );
 
-selectors.integrationChildren = (state, integrationId) => {
-  if (!state) return null;
-  const children = [];
-  const integration = selectors.resource(state, 'integrations', integrationId) || {};
-  const childIntegrations = selectors.resourceList(state, {
-    type: 'integrations',
-    filter: { _parentId: integrationId },
-  }).resources;
-
-  children.push({ value: integrationId, label: integration.name });
-  childIntegrations.forEach(ci => {
-    children.push({ value: ci._id, label: ci.name, mode: ci.mode });
-  });
-
-  return children;
-};
-
 selectors.mkIntegrationChildren = () => createSelector(
   state => state?.data?.resources?.integrations,
   (state, integrationId) => integrationId,
@@ -1267,6 +1255,7 @@ selectors.mkIntegrationChildren = () => createSelector(
     return children;
   }
 );
+selectors.integrationChildren = selectors.mkIntegrationChildren();
 
 selectors.integrationAppLicense = (state, id) => {
   if (!state) return emptyObject;
