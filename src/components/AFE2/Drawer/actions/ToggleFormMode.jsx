@@ -11,13 +11,18 @@ const toggleOptions = [
 
 export default function ToggleFormMode({ editorId }) {
   const dispatch = useDispatch();
-  // TODO: @Ashu, where would "mode" fit into the editor state? Its not data or a rule.
-  const { mode } = useSelector(state => selectors._editor(state, editorId));
-  const handleToggle = mode => dispatch(actions._editor.patchFeatures(editorId, {mode}));
+  const activeProcessor = useSelector(state => selectors._editor(state, editorId).activeProcessor);
+  const saveInProgress = useSelector(state => {
+    const {saveStatus} = selectors._editor(state, editorId);
+
+    return saveStatus === 'requested';
+  });
+  const handleToggle = activeProcessor => dispatch(actions._editor.patchFeatures(editorId, {activeProcessor}));
 
   return (
     <TextToggle
-      value={mode}
+      disabled={saveInProgress}
+      value={activeProcessor}
       onChange={handleToggle}
       exclusive
       options={toggleOptions}

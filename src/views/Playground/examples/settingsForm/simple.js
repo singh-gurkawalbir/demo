@@ -47,5 +47,5 @@ export default {
   key: 'form-simple',
   type: 'settingsForm',
   name: 'Simple form',
-  rule: JSON.stringify(sampleData, null, 2),
+  data: JSON.stringify(sampleData, null, 2),
 };

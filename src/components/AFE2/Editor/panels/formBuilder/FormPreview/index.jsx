@@ -1,6 +1,6 @@
 
 import React, { useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
@@ -29,13 +29,21 @@ const useStyles = makeStyles(theme => ({
 export default function FormPreviewPanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { result, status, resourceId, resourceType } =
-    useSelector(state => selectors.editor(state, editorId));
+  const { result, previewStatus, resourceId, resourceType } = useSelector(state => {
+    const e = selectors._editor(state, editorId);
+
+    return {
+      result: e.result,
+      previewStatus: e.previewStatus,
+      resourceId: e.resourceId,
+      resourceType: e.resourceType,
+    };
+  }, shallowEqual);
   const [formState, setFormState] = useState({
     showFormValidationsBeforeTouch: false,
   });
   const handleFormPreviewChange = useCallback(values => {
-    dispatch(actions.editor.patch(editorId, 'outputPreview', values));
+    dispatch(actions._editor.patchFeatures(editorId, {formOutput: values}));
   }, [dispatch, editorId]);
   const showCustomFormValidations = useCallback(() => {
     setFormState({
@@ -63,12 +71,12 @@ export default function FormPreviewPanel({ editorId }) {
     ...formState,
   });
 
-  if (result?.data && status !== 'error') {
+  if (result?.data && previewStatus !== 'error') {
     return (
       <div className={classes.formPreviewContainer}>
         <DynaForm
           formKey={editorId}
-          fieldMeta={result.fieldMeta}
+          fieldMeta={result.data}
           className={classes.form}
             />
         <div className={classes.testForm}>

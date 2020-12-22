@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { isEqual, isEmpty } from 'lodash';
 import util from '../../../../utils/json';
-import { safeParse } from '../../../../utils/string';
+import { safeParse, isJsonString } from '../../../../utils/string';
 import javascript from './javascript';
 
 function extractForm(data, mode) {
@@ -19,19 +19,88 @@ function extractForm(data, mode) {
     return parsedData;
   }
 
-  if (parsedData && parsedData.resource && parsedData.resource.settingsForm) {
+  if (parsedData?.resource?.settingsForm) {
     return parsedData.resource.settingsForm.form;
   }
 }
 
+export function toggleData(data, mode) {
+  if (typeof data === 'string' && !isJsonString(data)) {
+    return data;
+  }
+
+  const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+  const hasWrapper = !!(parsedData?.resource?.settingsForm?.form !== undefined);
+  let finalData = parsedData;
+
+  // console.log(mode, hasWrapper);
+
+  if (mode === 'json') {
+    // try and find only the form meta...
+    // since the user can type anything, we are not guaranteed of a
+    // json schema that contains an expected shape... for now, lets
+    // assume we do.
+    if (hasWrapper) {
+      finalData = parsedData.resource.settingsForm.form;
+    }
+    // script
+  } else if (!hasWrapper) {
+    finalData = {
+      resource: {
+        settingsForm: {
+          form: parsedData || { fieldMap: {}, layout: { fields: [] } },
+        },
+      },
+      parentResource: {},
+      license: {},
+      parentLicense: {},
+      sandbox: false,
+    };
+  }
+
+  return JSON.stringify(finalData, null, 2);
+}
+
 export default {
   processor: 'javascript',
-  skipPreview: ({ code, entryFunction }) => !code || !entryFunction,
+  skipPreview: ({ rule }) => {
+    const { code, entryFunction } = rule.script || {};
 
-  requestBody: ({ data, code, entryFunction, context, mode }) => {
+    return !code || !entryFunction;
+  },
+  init: ({options, settingsForm, settings}) => {
+    const { form, init = {} } = settingsForm || {};
+    const mode = init._scriptId ? 'script' : 'json';
+    const initForm = form || {
+      fieldMap: {},
+      layout: { fields: [] },
+    };
+
+    const rule = {
+      script: {
+        scriptId: init._scriptId,
+        entryFunction: init.function || 'main',
+        fetchScriptContent: true,
+      },
+    };
+    const data = mode === 'script' ? toggleData(initForm, 'script') : initForm;
+
+    return {
+      ...options,
+      data: options.data || data,
+      rule: options.rule || rule,
+      settings,
+      insertStubKey: 'formInit',
+      activeProcessor: mode,
+      originalData: data,
+    };
+  },
+  requestBody: editor => {
+    const { data, rule, context, activeProcessor } = editor;
+    const {code, entryFunction} = rule.script || {};
     let parsedData = typeof data === 'string' ? JSON.parse(data) : data;
 
-    if (mode === 'json') {
+    if (activeProcessor === 'json') {
       parsedData = {
         resource: {
           settingsForm: {
@@ -64,16 +133,12 @@ export default {
       return false;
     }
 
-    if (editor.mode === 'script') {
-      parsedData =
-        parsedData &&
-        parsedData.resource &&
-        parsedData.resource.settingsForm &&
-        parsedData.resource.settingsForm.form;
+    if (editor.activeProcessor === 'script') {
+      parsedData = parsedData?.resource?.settingsForm?.form;
     }
 
     // added JSON.stringify check to consider the object keys' order as well
-    if (!isEqual(parsedData, editor._init_data) || (JSON.stringify(parsedData) !== JSON.stringify(editor._init_data))) {
+    if (!isEqual(parsedData, editor.originalData) || (JSON.stringify(parsedData) !== JSON.stringify(editor.originalData))) {
       return true;
     }
 
@@ -88,7 +153,7 @@ export default {
     return { dataError: dataError !== null && dataError };
   },
 
-  processResult: ({ settings, data, mode }, newResult) => {
+  processResult: ({ settings, data, activeProcessor }, newResult) => {
     let meta;
 
     if (newResult) {
@@ -96,13 +161,10 @@ export default {
     } else {
       const parsedData = safeParse(data);
 
-      if (mode === 'json') {
+      if (activeProcessor === 'json') {
         meta = parsedData;
       } else if (parsedData) {
-        meta =
-          parsedData.resource &&
-          parsedData.resource.settingsForm &&
-          parsedData.resource.settingsForm.form;
+        meta = parsedData.resource?.settingsForm?.form;
       }
     }
 
@@ -123,7 +185,7 @@ export default {
       }
     });
 
-    return { data: newMeta, logs: newResult && newResult.logs };
+    return { data: newMeta, logs: newResult?.logs };
   },
 
   patchSet: editor => {
@@ -137,12 +199,12 @@ export default {
       data,
       resourceId,
       resourceType,
-      mode,
+      activeProcessor,
     } = editor;
     const value = {};
 
     if (data) {
-      const form = extractForm(data, mode);
+      const form = extractForm(data, activeProcessor);
 
       value.form = form;
 

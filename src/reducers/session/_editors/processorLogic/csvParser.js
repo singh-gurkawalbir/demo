@@ -1,16 +1,6 @@
 
 import { wrapExportFileSampleData } from '../../../../utils/sampleData';
 
-const getRule = ({fieldState}) => {
-  const value = fieldState?.value;
-
-  if (!('trimSpaces' in value)) {
-    return {...value, trimSpaces: true};
-  }
-
-  return value;
-};
-
 const requestBody = ({ rule, data }) => {
   const rules = {
     ...rule,
@@ -24,14 +14,19 @@ const requestBody = ({ rule, data }) => {
   };
 };
 
-const init = editor => {
-  const { rule = {}, ...others } = editor;
+const init = ({options, fieldState}) => {
+  const value = fieldState?.value || {};
+  let rule = value;
+
+  if (!('trimSpaces' in value)) {
+    rule = {...value, trimSpaces: true};
+  }
 
   rule.multipleRowsPerRecord = !!rule.keyColumns?.length;
 
   return {
-    ...others,
-    rule,
+    ...options,
+    rule: options.rule || rule,
   };
 };
 
@@ -52,5 +47,4 @@ export default {
   requestBody,
   init,
   processResult,
-  getRule,
 };

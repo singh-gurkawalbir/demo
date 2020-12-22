@@ -2,7 +2,7 @@ import util from '../../../../utils/json';
 
 const processor = 'csvDataGenerator';
 
-const getRule = ({resource, options, fieldState}) => {
+const init = ({resource, options, fieldState}) => {
   const {value} = fieldState;
   const {resourceId, resourceType} = options;
   const {customHeaderRows = [], ...others} = value;
@@ -12,8 +12,12 @@ const getRule = ({resource, options, fieldState}) => {
     opts.customHeaderRows = customHeaderRows?.join('\n');
   }
 
-  return opts;
+  return {
+    ...options,
+    rule: options.rule || opts,
+  };
 };
+
 const requestBody = ({rule, data}) => {
   const {
     columnDelimiter,
@@ -54,5 +58,5 @@ export default {
   processor,
   validate,
   requestBody,
-  getRule,
+  init,
 };

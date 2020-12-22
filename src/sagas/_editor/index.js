@@ -518,23 +518,15 @@ export function* initSampleData({ id }) {
 }
 
 export function* initEditor({ id, editorType, options = {} }) {
-  let fieldState;
+  let fieldState = {};
 
   if (options.formKey) {
     fieldState = yield select(selectors.fieldState, options.formKey, options.fieldId);
   }
   const resource = yield select(selectors.resource, options.resourceType, options.resourceId);
-
-  let editorRule = options.rule;
-  const ruleLogic = processorLogic.getRule(editorType);
-
-  if (editorRule === undefined && ruleLogic) {
-    editorRule = ruleLogic({resource, options, fieldState});
-  }
   const {onSave, ...rest} = options;
   let formattedOptions = deepClone(rest);
 
-  formattedOptions.rule = editorRule;
   const init = processorLogic.init(editorType);
 
   if (init) {
@@ -553,15 +545,21 @@ export function* initEditor({ id, editorType, options = {} }) {
       const isPageGenerator = yield select(selectors.isPageGenerator, flowId, resourceId, resourceType);
 
       formattedOptions = init({id, options: formattedOptions, resource, formValues, fieldState, connection, isPageGenerator});
+    } else if (editorType === 'settingsForm') {
+      const { resourceId, resourceType, sectionId} = options;
+      const sectionMeta = yield select(selectors.mkGetCustomFormPerSectionId(), resourceType, resourceId, sectionId || 'general');
+      const { settingsForm, settings} = sectionMeta || {};
+
+      formattedOptions = init({options: formattedOptions, settingsForm, settings});
     } else {
-      formattedOptions = init(formattedOptions);
+      formattedOptions = init({options: formattedOptions, resource, fieldState});
     }
   }
 
-  let originalRule = editorRule;
+  let originalRule = formattedOptions.rule;
 
   if (typeof originalRule === 'object') {
-    originalRule = {...editorRule};
+    originalRule = {...formattedOptions.rule};
   }
   const stateOptions = {
     editorType,
