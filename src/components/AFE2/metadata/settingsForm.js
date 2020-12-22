@@ -1,4 +1,4 @@
-import FormDefinitionPanel from '../Editor/panels/formBuilder/FromDefinition';
+import FormDefinitionPanel from '../Editor/panels/formBuilder/FormDefinition';
 import JavaScriptPanel from '../Editor/panels/JavaScript';
 import FormPreviewPanel from '../Editor/panels/formBuilder/FormPreview';
 import OutputPanel from '../Editor/panels/formBuilder/Output';
@@ -6,7 +6,7 @@ import ToggleFormMode from '../Drawer/actions/ToggleFormMode';
 
 export default {
   type: 'settingsForm',
-  label: 'Settings Form builder',
+  label: 'Form builder',
   fieldId: 'settingsForm',
   description: 'Construct a form from metadata',
   panels: ({ activeProcessor = 'json' }) => {

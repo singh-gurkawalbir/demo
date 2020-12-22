@@ -19,7 +19,7 @@ export default function FormBuilderButton({resourceId, resourceType, integration
   const history = useHistory();
   const match = useRouteMatch();
   const dispatch = useDispatch();
-  const editorId = `settings-${resourceId}`;
+  const editorId = `settings-${resourceId}-${sectionId || 'general'}`;
 
   const allowFormEdit = useSelector(state =>
     selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)

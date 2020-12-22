@@ -547,9 +547,8 @@ export function* initEditor({ id, editorType, options = {} }) {
       formattedOptions = init({id, options: formattedOptions, resource, formValues, fieldState, connection, isPageGenerator});
     } else if (editorType === 'settingsForm') {
       const { resourceId, resourceType, sectionId} = options;
-      // todo: fix selector logic
-      const settingsForm = yield select(selectors.mkGetCustomFormPerSectionId, resourceType, resourceId, sectionId || 'general')?.settingsForm;
-      const settings = yield select(selectors.mkGetCustomFormPerSectionId, resourceType, resourceId, sectionId || 'general')?.settings;
+      const sectionMeta = yield select(selectors.mkGetCustomFormPerSectionId(), resourceType, resourceId, sectionId || 'general');
+      const { settingsForm, settings} = sectionMeta || {};
 
       formattedOptions = init({options: formattedOptions, settingsForm, settings});
     } else {

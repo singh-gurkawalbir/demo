@@ -163,8 +163,7 @@ export default function reducer(state = {}, action) {
             draft[id].data = formData;
             draft[id].layout = `${mode}FormBuilder`;
           } else if (featuresPatch?.data) {
-            // if metadata is updated, reset form preview and output
-            delete draft[id].result;
+            // if metadata is updated, reset form output
             delete draft[id].formOutput;
           }
         }
