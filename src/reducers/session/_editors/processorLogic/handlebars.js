@@ -45,9 +45,9 @@ function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator
     return connection.isHTTP;
   }
 
-  // BE doesnt support oracle and snowflake adaptor yet
+  // BE doesnt support snowflake adaptor yet
   // remove this check once same is added in BE
-  if (connection?.rdbms?.type === 'oracle' || connection?.rdbms?.type === 'snowflake') {
+  if (connection?.rdbms?.type === 'snowflake') {
     return false;
   }
 
