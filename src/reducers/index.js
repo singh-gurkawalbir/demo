@@ -1714,7 +1714,7 @@ selectors.mkIntegrationAppConnectionList = () => {
 selectors.integrationAppConnectionList = selectors.mkIntegrationAppConnectionList();
 
 selectors.pendingCategoryMappings = (state, integrationId, flowId) => {
-  const { response, mappings, deleted, uiAssistant } =
+  const { response = [], mappings, deleted, uiAssistant } =
     fromSession.categoryMapping(
       state && state.session,
       integrationId,
@@ -1811,7 +1811,7 @@ selectors.categoryMappingGenerateFields = (
   state,
   integrationId,
   flowId,
-  options
+  options = emptyObject
 ) => {
   const { sectionId } = options;
   const generatesMetadata =
@@ -1819,16 +1819,16 @@ selectors.categoryMappingGenerateFields = (
       state && state.session,
       integrationId,
       flowId
-    ) || {};
+    );
 
-  if (generatesMetadata) {
+  if (Array.isArray(generatesMetadata)) {
     return generatesMetadata.find(sec => sec.id === sectionId);
   }
 
   return null;
 };
 
-selectors.mappingsForVariation = (state, integrationId, flowId, filters) => {
+selectors.mappingsForVariation = (state, integrationId, flowId, filters = emptyObject) => {
   const { sectionId, variation, isVariationAttributes } = filters;
   let mappings = {};
   const recordMappings =
@@ -1838,7 +1838,7 @@ selectors.mappingsForVariation = (state, integrationId, flowId, filters) => {
       flowId
     ) || emptyObject;
 
-  if (recordMappings) {
+  if (Array.isArray(recordMappings)) {
     mappings = recordMappings.find(item => item.id === sectionId) || {};
   }
 
@@ -1856,7 +1856,7 @@ selectors.mappingsForVariation = (state, integrationId, flowId, filters) => {
   );
 };
 
-selectors.mappingsForCategory = (state, integrationId, flowId, filters) => {
+selectors.mappingsForCategory = (state, integrationId, flowId, filters = emptyObject) => {
   const { sectionId, depth } = filters;
   let mappings = emptyArray;
   const { attributes = {}, mappingFilter = 'all' } =
@@ -1866,7 +1866,7 @@ selectors.mappingsForCategory = (state, integrationId, flowId, filters) => {
       state && state.session,
       integrationId,
       flowId
-    ) || {};
+    ) || [];
   const { fields = [] } =
     selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
       sectionId,
@@ -1905,9 +1905,9 @@ selectors.mappingsForCategory = (state, integrationId, flowId, filters) => {
 };
 
 selectors.integrationAppName = () => createSelector(
-  state => state?.data?.resources.integrations,
+  state => state?.data?.resources?.integrations,
   (state, integrationId) => integrationId,
-  (integrations, integrationId) => {
+  (integrations = emptyArray, integrationId) => {
     const integration = integrations.find(i => i._id === integrationId);
 
     if (integration && integration._connectorId && integration.name) {
