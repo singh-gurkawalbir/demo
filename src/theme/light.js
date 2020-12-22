@@ -211,6 +211,7 @@ export default {
       tooltip: {
         backgroundColor: colors.celigoNeutral7,
         fontFamily: 'source sans pro',
+        fontSize: 13,
         color: colors.celigoWhite,
         border: '1px solid',
         borderColor: colors.celigoNeutral7,

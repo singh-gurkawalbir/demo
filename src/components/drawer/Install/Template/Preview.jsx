@@ -162,7 +162,7 @@ export default function TemplatePreview() {
             <AddIcon className={classes.plusIcon} />
             <ApplicationImg
               markOnly
-              size="small"
+              size="medium"
               type={template.applications[1]}
             />
           </>
