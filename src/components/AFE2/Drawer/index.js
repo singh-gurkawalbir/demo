@@ -67,13 +67,13 @@ function RouterWrappedContent({ hideSave, onClose, fullPath}) {
   );
 }
 
-export default function EditorDrawer({ hideSave }) {
+export default function EditorDrawer({ hideSave, width = 'full' }) {
   return (
     <RightDrawer
       path="editor/:editorId"
       variant="temporary"
       height="tall"
-      width="large">
+      width={width}>
       <RouterWrappedContent hideSave={hideSave} />
     </RightDrawer>
   );

@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import React, { useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles,
@@ -23,14 +24,18 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
   },
+  formControls: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    margin: theme.spacing(0, 1),
+  },
   textField: {
-    marginTop: theme.spacing(1),
+    flexGrow: 1,
+    marginRight: theme.spacing(1),
+  },
+  entryFn: {
     marginBottom: theme.spacing(1),
-    // Changing this from 50% to 33% to accommodate 3 elements
-    // TODO:@Azhar Make this flexible layout to fix  multiple elements instead of having width
-    width: '33%',
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1),
   },
   label: {
     paddingLeft: theme.spacing(1),
@@ -126,7 +131,7 @@ export default function JavaScriptPanel({ editorId }) {
   return (
     <LoadResources required resources={['scripts']}>
       <div className={classes.container}>
-        <div data-public >
+        <div data-public className={classes.formControls}>
           <FormControl className={classes.textField}>
             <InputLabel className={classes.label} htmlFor="scriptId">
               Script
@@ -145,23 +150,21 @@ export default function JavaScriptPanel({ editorId }) {
             id="entryFunction"
             disabled={disabled}
             InputLabelProps={{ className: classes.label }}
-            className={classes.textField}
+            className={clsx(classes.textField, classes.entryFn)}
             value={entryFunction}
-            onChange={event =>
-              patchRule({ entryFunction: event.target.value })}
+            onChange={event => patchRule({ entryFunction: event.target.value })}
             label="Function"
             margin="dense"
           />
           {scriptId && insertStubKey && (
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.textField}
-              onClick={handleInsertStubClick}
-              disabled={disabled}
-              data-test={insertStubKey}>
-              {`Insert ${hooksLabelMap[insertStubKey].toLowerCase()} stub`}
-            </Button>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={handleInsertStubClick}
+            disabled={disabled}
+            data-test={insertStubKey}>
+            {`Insert ${hooksLabelMap[insertStubKey].toLowerCase()} stub`}
+          </Button>
           )}
         </div>
         <div className={classes.scriptPanel}>
