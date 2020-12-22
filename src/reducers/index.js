@@ -140,7 +140,7 @@ const subSelectors = {
 genSelectors(selectors, subSelectors);
 
 // #region PUBLIC SESSION SELECTORS
-// additional user defined selectors
+// #region  user selectors
 selectors.userState = state => state && state.user;
 
 selectors.userProfile = createSelector(
