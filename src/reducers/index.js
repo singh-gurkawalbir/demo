@@ -349,8 +349,6 @@ selectors.cloneInstallSteps = (state, resourceType, resourceId) => selectors.tem
 
 // #endregion Template, Cloning, installation and uninstallation selectors
 
-selectors.editorHelperFunctions = state => state?.session?.editors?.helperFunctions || [];
-
 // #region AUTHENTICATION SELECTORS
 selectors.isAuthenticated = state => !!(state && state.auth && state.auth.authenticated);
 
