@@ -1090,8 +1090,8 @@ selectors.mkTiles = () => createSelector(
   });
 
 selectors.isDataReady = (state, resource) => (
-  fromData.hasData(state.data, resource) &&
-      !fromComms.isLoading(state.comms, resource)
+  fromData.hasData(state?.data, resource) &&
+      !fromComms.isLoading(state?.comms, resource)
 );
 
 // Below selector will take resourceName as argument and returns
@@ -1121,9 +1121,9 @@ selectors.resourceStatus = (
   else resourceType = `/${origResourceType}`;
   const commKey = commKeyGen(resourceType, resourceReqMethod);
   const method = resourceReqMethod;
-  const hasData = fromData.hasData(state.data, origResourceType);
-  const isLoading = fromComms.isLoading(state.comms, commKey);
-  const retryCount = fromComms.retryCount(state.comms, commKey);
+  const hasData = fromData.hasData(state?.data, origResourceType);
+  const isLoading = fromComms.isLoading(state?.comms, commKey);
+  const retryCount = fromComms.retryCount(state?.comms, commKey);
   const isReady = method !== 'GET' || (hasData && !isLoading);
 
   return {
@@ -1354,7 +1354,7 @@ selectors.auditLogs = (
   options = {}
 ) => {
   let auditLogs = fromData.auditLogs(
-    state.data,
+    state?.data,
     resourceType,
     resourceId,
     filters
