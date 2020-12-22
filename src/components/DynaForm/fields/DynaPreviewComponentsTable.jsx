@@ -22,14 +22,14 @@ export default function DynaPreviewComponentsTable({ data: objects, columns }) {
     <>
       <>
         <DynaCeligoTable
-          title="Flows" collapsable="true" data={componentsMap?.Flow} columns={columns}
+          title="Flows" collapsable data={componentsMap?.Flow} columns={columns}
           defaultExpand />
       </>
       {Object.keys(componentsMap).map(resourceType => (
         <>
           {resourceType !== 'Flow' && (
           <DynaCeligoTable
-            title={`${resourceType}s`} collapsable="true" data={componentsMap[resourceType]} columns={columns} />
+            title={`${resourceType}s`} collapsable data={componentsMap[resourceType]} columns={columns} />
           )}
         </>
       ))}

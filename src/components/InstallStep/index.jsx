@@ -228,7 +228,7 @@ export default function InstallationStep(props) {
               type={
                 step?.options?.connectionType?.toLowerCase() || step?.sourceConnection?.type || ''
               }
-              assistant={step?.sourceConnection?.assistant}
+              assistant={step?.sourceConnection?.assistant || step?.sourceConnection?.rdbms?.type}
             />
             )}
           </div>

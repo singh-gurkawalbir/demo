@@ -711,7 +711,7 @@ export function* updateRetryData({ retryId, retryData }) {
   yield put(actions.job.receivedRetryData({ retryData, retryId }));
 }
 
-function* retryProcessedErrors({ jobId, flowJobId, errorFileId }) {
+export function* retryProcessedErrors({ jobId, flowJobId, errorFileId }) {
   try {
     const body = { errorFile: { host: 's3', id: errorFileId } };
 
