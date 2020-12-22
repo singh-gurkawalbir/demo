@@ -11,9 +11,9 @@ import { selectors } from '../../reducers';
 /*
  * Fetches all Supported File Definitions
  */
-function* getFileDefinitions() {
+export function* getFileDefinitions() {
   try {
-    const fileDefinitions = yield apiCallWithRetry({
+    const fileDefinitions = yield call(apiCallWithRetry, {
       path: '/ui/filedefinitions',
       opts: {
         method: 'GET',
@@ -34,9 +34,12 @@ function* getFileDefinitions() {
 /*
  * Fetches definition template ( Parse / Generate rules ) for the selected definitionId
  */
-function* getDefinition({ definitionId, format }) {
+export function* getDefinition({ definitionId, format }) {
+  if (!definitionId || !format) {
+    return;
+  }
   try {
-    const definition = yield apiCallWithRetry({
+    const definition = yield call(apiCallWithRetry, {
       path: `/ui/filedefinitions/${definitionId}`,
     });
 
@@ -48,18 +51,11 @@ function* getDefinition({ definitionId, format }) {
       )
     );
   } catch (e) {
-    // Handling Errors with status code between 400 and 500
-    if (e.status >= 400 && e.status < 500) {
-      const parsedError = JSON.parse(e.message);
-
-      yield put(
-        actions.fileDefinitions.definition.preBuilt.receivedError(parsedError)
-      );
-    }
+    //  handle errors
   }
 }
 
-function* saveUserFileDefinition({ definitionRules, formValues, flowId, skipClose }) {
+export function* saveUserFileDefinition({ definitionRules, formValues, flowId, skipClose }) {
   const fileDefinition =
     formValues.resourceType === 'imports'
       ? definitionRules
@@ -76,7 +72,13 @@ function* saveUserFileDefinition({ definitionRules, formValues, flowId, skipClos
   });
 
   if (isNewId(definitionId)) {
-    definitionId = yield select(selectors.createdResourceId, definitionId);
+    const createdDefinitionId = yield select(selectors.createdResourceId, definitionId);
+
+    if (!createdDefinitionId) {
+      // when the above file definitions save call is unsuccessful
+      return;
+    }
+    definitionId = createdDefinitionId;
   }
 
   const fileDefinitionDetails = {
