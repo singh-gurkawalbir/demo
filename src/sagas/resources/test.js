@@ -597,17 +597,16 @@ describe('tests for metadata sagas', () => {
     const metaPath = 'recordTypes';
     const bundleURL = 'ns/distributed';
 
-    test('should call setRequestStatus action if metadata status is not requested', () => {
-      expectSaga(getNetsuiteOrSalesforceMeta, {connectionId: connId, commMetaPath: metaPath})
-        .provide([
-          [select(selectors.metadataOptionsAndResources, {connectionId: connId,
-            commMetaPath: metaPath}), {
-            status: 'refreshed',
-          }],
-        ])
-        .put(actions.metadata.setRequestStatus(connId, metaPath))
-        .run();
-    });
+    test('should call setRequestStatus action if metadata status is not requested', () => expectSaga(getNetsuiteOrSalesforceMeta, {connectionId: connId, commMetaPath: metaPath})
+      .provide([
+        [select(selectors.metadataOptionsAndResources, {connectionId: connId,
+          commMetaPath: metaPath}), {
+          status: 'refreshed',
+        }],
+      ])
+      .put(actions.metadata.setRequestStatus(connId, metaPath))
+      .run()
+    );
 
     test('should check if bundle is installed or not if bundlePath is provided as additional argument', () => expectSaga(getNetsuiteOrSalesforceMeta, {
       connectionId: connId,
@@ -661,6 +660,11 @@ describe('tests for metadata sagas', () => {
         connId,
         metaPath
       ))
+      .not.call(apiCallWithRetry, {
+        path: metaPath,
+        opts: {},
+        message: 'Loading',
+      })
       .run());
 
     test('should call action received Collection if metadata call is successful', () => {
@@ -689,6 +693,50 @@ describe('tests for metadata sagas', () => {
         ])
         .call(apiCallWithRetry, {
           path: `/${metaPath}`,
+          opts: {},
+          message: 'Loading',
+        })
+        .put(actions.metadata.receivedCollection(
+          metadata,
+          connId,
+          metaPath
+        ))
+        .run();
+    });
+
+    test('should form the path correctly and make api call if provided additional params', () => {
+      const metadata = [{
+        id: 'salesorder',
+        doesNotSupportCreate: false,
+      }, {
+        id: 'customer',
+        doesNotSupportCreate: false,
+      }];
+
+      const query = 'select id,name from account';
+      const newpath = `/${metaPath}?refreshCache=true&q=${encodeURIComponent(query)}`;
+
+      return expectSaga(getNetsuiteOrSalesforceMeta, {
+        connectionId: connId,
+        commMetaPath: metaPath,
+        addInfo: {
+          refreshCache: true,
+          query,
+        },
+      })
+        .provide([
+          [select(selectors.metadataOptionsAndResources, {connectionId: '123',
+            commMetaPath: metaPath}), {
+            status: 'requested',
+          }],
+          [call(apiCallWithRetry, {
+            path: newpath,
+            opts: {},
+            message: 'Loading',
+          }), metadata],
+        ])
+        .call(apiCallWithRetry, {
+          path: newpath,
           opts: {},
           message: 'Loading',
         })
@@ -906,7 +954,7 @@ describe('tests for metadata sagas', () => {
         recordType: 'order',
       };
 
-      expectSaga(requestAssistantMetadata, {
+      return expectSaga(requestAssistantMetadata, {
         adaptorType, assistant,
       })
         .provide([
@@ -914,8 +962,9 @@ describe('tests for metadata sagas', () => {
             selectors.commStatusByKey,
             commKeyGenerator(`/ui/assistants/http/${assistant}`, 'GET')
           ), {
+            status: COMM_STATES.ERROR,
           }],
-          [call(apiCallWithRetry, { path: `/ui/assistants/http/${assistant}`, opts: { method: 'GET'} })],
+          [call(apiCallWithRetry, { path: `/ui/assistants/http/${assistant}`, opts: { method: 'GET'} }), metadata],
         ])
         .call(apiCallWithRetry, { path: `/ui/assistants/http/${assistant}`, opts: { method: 'GET'} })
         .put(actions.assistantMetadata.received({
@@ -927,7 +976,7 @@ describe('tests for metadata sagas', () => {
         .run();
     });
 
-    test('should return undefined if assistants call throws error', () => {
+    test('should return undefined if assistants call throws error', () =>
       expectSaga(requestAssistantMetadata, {
         adaptorType, assistant,
       })
@@ -936,6 +985,7 @@ describe('tests for metadata sagas', () => {
             selectors.commStatusByKey,
             commKeyGenerator(`/ui/assistants/http/${assistant}`, 'GET')
           ), {
+            status: COMM_STATES.ERROR,
           }],
           [call(apiCallWithRetry, {
             path: `/ui/assistants/http/${assistant}`,
@@ -947,7 +997,6 @@ describe('tests for metadata sagas', () => {
           )]])
         .call(apiCallWithRetry, { path: `/ui/assistants/http/${assistant}`, opts: { method: 'GET'} })
         .returns(undefined)
-        .run();
-    });
+        .run());
   });
 });
