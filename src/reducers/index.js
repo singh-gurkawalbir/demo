@@ -155,7 +155,7 @@ selectors.developerMode = state => (
 selectors.currentEnvironment = state => selectors.userPreferences(state).environment;
 
 selectors.userOwnPreferences = createSelector(
-  state => state.user,
+  state => state?.user,
   user => fromUser.userOwnPreferences(user)
 );
 
