@@ -230,8 +230,9 @@ selectors.hasProfile = state => !!selectors.userProfile(state);
 
 selectors.isSetupComplete = (
   state,
-  { templateId, resourceType, resourceId }
+  options = emptyObject
 ) => {
+  const { templateId, resourceType, resourceId } = options;
   let isSetupComplete = false;
   const installSteps =
     fromSession.templateInstallSteps(
@@ -243,7 +244,7 @@ selectors.isSetupComplete = (
     installSteps.length &&
     !installSteps.reduce((result, step) => result || !step.completed, false);
 
-  return isSetupComplete;
+  return !!isSetupComplete;
 };
 
 selectors.isIAConnectionSetupPending = (state, connectionId) => {
