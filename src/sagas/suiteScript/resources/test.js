@@ -347,7 +347,7 @@ describe('Suitescript resources testcases', () => {
         },
       };
 
-      expectSaga(requestSuiteScriptMetadata, { ssLinkedConnectionId, resourceType, integrationId})
+      return expectSaga(requestSuiteScriptMetadata, { ssLinkedConnectionId, resourceType, integrationId})
         .provide([[
           call(apiCallWithRetry,
             {
