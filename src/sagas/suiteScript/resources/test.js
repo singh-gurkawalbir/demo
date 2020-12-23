@@ -21,22 +21,35 @@ describe('Suitescript resources testcases', () => {
     const integrationId = 'intId';
     const patch = [{ path: '/name', value: 'updating name' }];
 
-    test('should return undefined if there is no patch object in state', () => expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType, id, integrationId, scope })
-      .provide([[
-        select(selectors.suiteScriptResourceData, {
-          resourceType,
-          id,
-          scope,
-          ssLinkedConnectionId,
-          integrationId,
-        }), {
-          master: {
-            name: 'exporting from NS',
+    test('should exit if there is no patch object in state', () => {
+      const merged = {
+        name: 'updating exporting from NS',
+      };
+
+      return expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType, id, integrationId, scope })
+        .provide([[
+          select(selectors.suiteScriptResourceData, {
+            resourceType,
+            id,
+            scope,
+            ssLinkedConnectionId,
+            integrationId,
+          }), {
+            master: {
+              name: 'exporting from NS',
+            },
+            merged,
           },
-        },
-      ]])
-      .returns(undefined)
-      .run());
+        ]])
+        .not.call(apiCallWithRetry, {
+          path: `/suitescript/connections/${ssLinkedConnectionId}/flows/${id}`,
+          opts: {
+            method: 'put',
+            body: merged,
+          },
+        })
+        .run();
+    });
 
     test('should commit patches for connections resourceType', () => {
       const master = {
@@ -95,6 +108,7 @@ describe('Suitescript resources testcases', () => {
           master,
           patch,
         ))
+        .not.put(actions.flow.isOnOffActionInprogress(false, id))
         .put(
           actions.suiteScript.resource.clearStaged(
             ssLinkedConnectionId,
@@ -162,6 +176,7 @@ describe('Suitescript resources testcases', () => {
           master,
           patch,
         ))
+        .not.put(actions.flow.isOnOffActionInprogress(false, 're123'))
         .put(
           actions.suiteScript.resource.clearStaged(
             ssLinkedConnectionId,
