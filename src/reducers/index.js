@@ -3154,7 +3154,7 @@ selectors.canSelectRecordsInPreviewPanel = (state, resourceId, resourceType) => 
 * 2. In Editing an existing export, from UserSupportedFileDefinitions based on userDefinitionId
 * TODO @Raghu: Refactor this selector to be more clear
 */
-selectors.fileDefinitionSampleData = (state, { userDefinitionId, resourceType, options }) => {
+selectors.fileDefinitionSampleData = (state, { userDefinitionId, resourceType, options = emptyObject }) => {
   const { resourcePath, definitionId, format } = options;
   let template;
 
@@ -3212,7 +3212,7 @@ selectors.fileSampleData = (state, { resourceId, resourceType, fileType}) => {
   );
 
   if (!rawData) {
-    const resourceObj = selectors.resource(state, resourceType, resourceId);
+    const resourceObj = selectors.resource(state, resourceType, resourceId) || emptyObject;
 
     if (resourceObj?.file?.type === fileType) {
       return resourceObj.sampleData;
@@ -3223,7 +3223,7 @@ selectors.fileSampleData = (state, { resourceId, resourceType, fileType}) => {
 };
 
 selectors.getImportSampleData = (state, resourceId, options = {}) => {
-  const { merged: resource } = selectors.resourceData(state, 'imports', resourceId);
+  const { merged: resource = emptyObject } = selectors.resourceData(state, 'imports', resourceId);
   const { assistant, adaptorType, sampleData, _connectorId } = resource;
   const isIntegrationApp = !!_connectorId;
 
