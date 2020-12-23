@@ -2434,7 +2434,7 @@ selectors.availableUsersList = (state, integrationId) => {
     ];
   }
 
-  return _users;
+  return _users.sort(stringCompare('sharedWithUser.name'));
 };
 
 selectors.platformLicense = createSelector(

@@ -1,7 +1,7 @@
 /* global describe, expect, test */
 import { selectors } from '.';
 
-describe('Notifications region selector testcases', () => {
+describe('Metadata region selector testcases', () => {
   describe('selectors.metadataOptionsAndResources test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.metadataOptionsAndResources({}, {})).toEqual({
