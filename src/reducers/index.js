@@ -3465,7 +3465,7 @@ selectors.makeSuiteScriptIAFlowSections = () => {
     (state, id, ssLinkedConnectionId) => cachedIASettingsSelector(state, id, ssLinkedConnectionId),
 
     meta => {
-      const {sections = []} = meta;
+      const {sections = []} = meta || {};
 
       return sections.map(sec => ({
         ...sec,
@@ -3483,7 +3483,7 @@ selectors.makeSuiteScriptIASections = () => {
     (state, id, ssLinkedConnectionId) => cachedIASettingsSelector(state, id, ssLinkedConnectionId),
 
     metaSections => {
-      const {general, sections = [] } = metaSections;
+      const {general, sections = [] } = metaSections || {};
 
       let selectedGeneral = general;
 
