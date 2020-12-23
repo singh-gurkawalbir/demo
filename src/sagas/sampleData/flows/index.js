@@ -141,7 +141,6 @@ export function* requestSampleData({
       yield call(requestSampleDataForImports, {
         flowId,
         resourceId,
-        resourceType,
         hidden: true,
         sampleDataStage,
       });

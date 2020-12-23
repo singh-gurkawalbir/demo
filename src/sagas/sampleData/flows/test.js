@@ -184,7 +184,6 @@ describe('flow sample data sagas', () => {
         .put(actions.flowData.requestStage(flowId, importId, sampleDataStage))
         .call(requestSampleDataForImports, { flowId,
           resourceId: importId,
-          resourceType: 'imports',
           hidden: true,
           sampleDataStage,
         })
