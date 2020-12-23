@@ -3081,7 +3081,7 @@ selectors.integrationNotificationResources = selectors.mkIntegrationNotification
 
 selectors.isFlowSubscribedForNotification = (state, flowId) => {
   const flow = selectors.resource(state, 'flows', flowId);
-  const integrationId = flow._integrationId || 'none';
+  const integrationId = flow?._integrationId || 'none';
   const subscribedFlows = selectors.integrationNotificationResources(state, integrationId).flowValues;
 
   return subscribedFlows.includes(integrationId) || subscribedFlows.includes(flowId);
