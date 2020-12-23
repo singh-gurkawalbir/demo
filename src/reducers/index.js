@@ -4162,7 +4162,7 @@ selectors.getAllPageProcessorImports = (state, pageProcessors) => {
 };
 
 selectors.httpAssistantSupportsMappingPreview = (state, importId) => {
-  const importResource = selectors.resource(state, 'imports', importId);
+  const importResource = selectors.resource(state, 'imports', importId) || emptyObject;
   const { _integrationId, _connectionId, http } = importResource;
 
   if (_integrationId && http) {
@@ -4372,7 +4372,7 @@ selectors.responseMappingExtracts = (state, resourceId, flowId) => {
     'flows',
     flowId
   );
-  const pageProcessor = flow?.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+  const pageProcessor = flow?.pageProcessors && flow?.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
 
   if (!pageProcessor) {
     return emptyArray;
