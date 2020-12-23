@@ -46,7 +46,7 @@ export default {
 
           return r.childName || integrationChildren.find(i => i.value === r._integrationId)?.label || '';
         },
-        orderBy: '_integrationId',
+        orderBy: actionProps.childHeader ? 'childName' : '_integrationId',
       }] : []),
       {
         heading: 'Errors',
@@ -94,7 +94,7 @@ export default {
     }
 
     if (actionProps.isIntegrationApp) {
-      columns = columns.map(col => pick(col, ['heading', 'align', 'value']));
+      columns = columns.map(col => pick(col, ['heading', 'align', 'value', 'orderBy']));
 
       columns.push(
         {

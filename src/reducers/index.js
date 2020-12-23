@@ -2219,7 +2219,8 @@ selectors.makeIntegrationAppSectionFlows = () =>
       if (!integration) {
         return emptyArray;
       }
-      const {searchBy, keyword} = options;
+      const {searchBy, keyword, sort = emptyObject} = options;
+
       const {
         supportsMultiStore,
         sections = [],
@@ -2263,12 +2264,16 @@ selectors.makeIntegrationAppSectionFlows = () =>
         return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
       };
 
+      const comparer = ({ order = 'asc', orderBy = 'name' }) =>
+        order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
+
       return flows
         .filter(f => f._integrationId === integrationId && requiredFlowIds.includes(f._id))
         .sort(
           (a, b) => requiredFlowIds.indexOf(a._id) - requiredFlowIds.indexOf(b._id)
         ).map((f, i) => (supportsMultiStore && !childId) ? ({...f, ...requiredFlows[i]}) : f)
-        .filter(stringTest);
+        .filter(stringTest)
+        .sort(comparer(sort));
     }
   );
 selectors.integrationAppSectionFlows = selectors.makeIntegrationAppSectionFlows();

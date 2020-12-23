@@ -2360,19 +2360,14 @@ describe('integrationApps selector testcases', () => {
           name: '5d9b20328a71fc911a4018a4',
         },
         {
-          _id: '5d9b20328a71fc911a4018ad',
-          _integrationId: 'integrationId2',
-          name: '5d9b20328a71fc911a4018ad',
-        },
-        {
           _id: '5d9b20328a71fc911a4018a7',
           _integrationId: 'integrationId2',
           name: '5d9b20328a71fc911a4018a7',
         },
         {
-          _id: '5d9b20328a71fc911a4018ac',
+          _id: '5d9b20328a71fc911a4018a8',
           _integrationId: 'integrationId2',
-          name: '5d9b20328a71fc911a4018ac',
+          name: '5d9b20328a71fc911a4018a8',
         },
         {
           _id: '5d9b20328a71fc911a4018a9',
@@ -2380,9 +2375,19 @@ describe('integrationApps selector testcases', () => {
           name: '5d9b20328a71fc911a4018a9',
         },
         {
-          _id: '5d9b20328a71fc911a4018a8',
+          _id: '5d9b20328a71fc911a4018ac',
           _integrationId: 'integrationId2',
-          name: '5d9b20328a71fc911a4018a8',
+          name: '5d9b20328a71fc911a4018ac',
+        },
+        {
+          _id: '5d9b20328a71fc911a4018ad',
+          _integrationId: 'integrationId2',
+          name: '5d9b20328a71fc911a4018ad',
+        },
+        {
+          _id: '5d9b20328a71fc911a4018b0',
+          _integrationId: 'integrationId2',
+          name: '5d9b20328a71fc911a4018b0',
         },
         {
           _id: '5d9b20328a71fc911a4018b2',
@@ -2394,11 +2399,7 @@ describe('integrationApps selector testcases', () => {
           _integrationId: 'integrationId2',
           name: '5d9b20328a71fc911a4018b3',
         },
-        {
-          _id: '5d9b20328a71fc911a4018b0',
-          _integrationId: 'integrationId2',
-          name: '5d9b20328a71fc911a4018b0',
-        },
+
         {
           _id: '5d9b20328a71fc911a4018ba',
           _integrationId: 'integrationId2',
