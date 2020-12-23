@@ -4699,7 +4699,7 @@ selectors.integrationErrorsPerSection = createSelector(
  * A map of storeId and total errors on that Store
  */
 selectors.integrationErrorsPerStore = (state, integrationId) => {
-  const integrationAppSettings = selectors.integrationAppSettings(state, integrationId);
+  const integrationAppSettings = selectors.integrationAppSettings(state, integrationId) || emptyObject;
   const { supportsMultiStore, sections: stores = [] } = integrationAppSettings.settings || {};
 
   if (!supportsMultiStore) return emptyObject;
@@ -4727,7 +4727,7 @@ selectors.canUserUpgradeToErrMgtTwoDotZero = state => {
 };
 
 selectors.getIntegrationUserNameById = (state, userId, flowId) => {
-  const profile = selectors.userProfile(state);
+  const profile = selectors.userProfile(state) || emptyObject;
 
   // If it is logged in user , return its name
   if (profile._id === userId) return profile.name || profile.email;
