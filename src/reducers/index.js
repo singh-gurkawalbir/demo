@@ -3114,9 +3114,9 @@ selectors.getMetadataOptions = (
 );
 
 selectors.getSalesforceMasterRecordTypeInfo = (state, resourceId) => {
-  const { merged: resource } = selectors.resourceData(state, 'imports', resourceId);
+  const { merged: resource = emptyObject } = selectors.resourceData(state, 'imports', resourceId) || emptyObject;
   const { _connectionId: connectionId, salesforce } = resource;
-  const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
+  const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce?.sObjectType}`;
   const { data, status } = selectors.metadataOptionsAndResources(state, {
     connectionId,
     commMetaPath,
