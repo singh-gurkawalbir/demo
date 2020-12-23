@@ -530,6 +530,55 @@ selectors.sessionValidTimestamp = state => state && state.auth && state.auth.aut
 // #endregion AUTHENTICATION SELECTORS
 
 // #region resouce selectors
+
+selectors.mkTileApplications = () => createSelector(
+  (_, tile) => tile,
+  state => state?.data?.resources?.integrations,
+  state => state?.data?.resources?.connections,
+  (state, tile) => selectors.isIntegrationAppVersion2(state, tile?._integrationId, true),
+  (tile, integrations = emptyArray, connections = emptyArray, isIAV2) => {
+    let applications = [];
+
+    if (!tile || !tile._connectorId) {
+      return emptyArray;
+    }
+    if (!isIAV2) {
+      applications = tile?.connector?.applications || emptyArray;
+      // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
+      if (tile.name && tile.name.indexOf('Magento 1') !== -1 && applications[0] === 'magento') {
+        applications[0] = 'magento1';
+      }
+    } else {
+      const childIntegrations = integrations.filter(i => i._parentId === tile._integrationId);
+      const parentIntegration = integrations.find(i => i._id === tile._integrationId);
+
+      childIntegrations.forEach(i => {
+        const integrationConnections = connections.filter(c => c._integrationId === i._id);
+
+        integrationConnections.forEach(c => {
+          applications.push(c.assistant || c.type);
+        });
+      });
+
+      const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
+
+      parentIntegrationConnections.forEach(c => {
+        applications.push(c.assistant || c.type);
+      });
+      applications = uniq(applications);
+    }
+
+    // Make NetSuite always the last application
+    applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]);
+    // Only consider up to four applications
+    if (applications.length > 4) {
+      applications.length = 4;
+    }
+
+    return applications;
+  }
+);
+
 selectors.resourceList = (state, options = {}) => {
   if (
     !options.ignoreEnvironmentFilter &&
@@ -2916,7 +2965,7 @@ selectors.formAccessLevel = (state, integrationId, resource, disabled) => {
 selectors.canEditSettingsForm = (state, resourceType, resourceId, integrationId) => {
   const r = selectors.resource(state, resourceType, resourceId);
   const isIAResource = !!(r && r._connectorId);
-  const {allowedToPublish, developer} = selectors.userProfile(state);
+  const {allowedToPublish, developer} = selectors.userProfile(state) || emptyObject;
   const viewOnly = selectors.isFormAMonitorLevelAccess(state, integrationId);
 
   // if the resource belongs to an IA and the user cannot publish, then
@@ -2950,109 +2999,6 @@ selectors.availableConnectionsToRegister = (state, integrationId) => {
 
   return availableConnectionsToRegister;
 };
-
-selectors.mkSuiteScriptLinkedConnections = () => createSelector(
-  selectors.userPreferences,
-  selectors.userPermissions,
-  state => state?.data?.resources?.connections,
-  state => state?.data?.resources?.integrations,
-  state => selectors.currentEnvironment(state),
-  (preferences, permissions, allConnections = [], integrations = [], currentEnvironment) => {
-    const linkedConnections = [];
-    const connections = allConnections.filter(c => (!!c.sandbox === (currentEnvironment === 'sandbox')));
-
-    let connection;
-    let accessLevel;
-
-    if (
-      !preferences.ssConnectionIds ||
-    preferences.ssConnectionIds.length === 0
-    ) {
-      return linkedConnections;
-    }
-
-    preferences.ssConnectionIds.forEach(connectionId => {
-      connection = connections.find(c => c._id === connectionId);
-
-      if (connection) {
-        accessLevel = getUserAccessLevelOnConnection(permissions, integrations, connectionId);
-
-        if (accessLevel) {
-          linkedConnections.push({
-            ...connection,
-            permissions: {
-              accessLevel,
-            },
-          });
-        }
-      }
-    });
-
-    return linkedConnections;
-  }
-);
-selectors.suiteScriptLinkedConnections = selectors.mkSuiteScriptLinkedConnections();
-
-selectors.suiteScriptLinkedTiles = createSelector(
-  selectors.suiteScriptLinkedConnections,
-  state => state?.data?.suiteScript,
-  (linkedConnections, suiteScriptTiles = {}) => {
-    let tiles = [];
-
-    linkedConnections.forEach(connection => {
-      tiles = tiles.concat(suiteScriptTiles[connection._id]?.tiles || []);
-    });
-
-    return tiles;
-  });
-
-selectors.mkTileApplications = () => createSelector(
-  (_, tile) => tile,
-  state => state?.data?.resources?.integrations,
-  state => state?.data?.resources?.connections,
-  (state, tile) => selectors.isIntegrationAppVersion2(state, tile?._integrationId, true),
-  (tile, integrations = emptyArray, connections = emptyArray, isIAV2) => {
-    let applications = [];
-
-    if (!tile || !tile._connectorId) {
-      return emptyArray;
-    }
-    if (!isIAV2) {
-      applications = tile?.connector?.applications || emptyArray;
-      // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
-      if (tile.name && tile.name.indexOf('Magento 1') !== -1 && applications[0] === 'magento') {
-        applications[0] = 'magento1';
-      }
-    } else {
-      const childIntegrations = integrations.filter(i => i._parentId === tile._integrationId);
-      const parentIntegration = integrations.find(i => i._id === tile._integrationId);
-
-      childIntegrations.forEach(i => {
-        const integrationConnections = connections.filter(c => c._integrationId === i._id);
-
-        integrationConnections.forEach(c => {
-          applications.push(c.assistant || c.type);
-        });
-      });
-
-      const parentIntegrationConnections = connections.filter(c => c._integrationId === parentIntegration._id);
-
-      parentIntegrationConnections.forEach(c => {
-        applications.push(c.assistant || c.type);
-      });
-      applications = uniq(applications);
-    }
-
-    // Make NetSuite always the last application
-    applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]);
-    // Only consider up to four applications
-    if (applications.length > 4) {
-      applications.length = 4;
-    }
-
-    return applications;
-  }
-);
 
 // #endregion
 
@@ -3456,6 +3402,61 @@ selectors.isRequestUrlAvailableForPreviewPanel = (state, resourceId, resourceTyp
 // #endregion SAMPLE DATA selectors
 
 // #region  SUITESCRIPT Selectors
+
+selectors.mkSuiteScriptLinkedConnections = () => createSelector(
+  selectors.userPreferences,
+  selectors.userPermissions,
+  state => state?.data?.resources?.connections,
+  state => state?.data?.resources?.integrations,
+  state => selectors.currentEnvironment(state),
+  (preferences, permissions, allConnections = [], integrations = [], currentEnvironment) => {
+    const linkedConnections = [];
+    const connections = allConnections.filter(c => (!!c.sandbox === (currentEnvironment === 'sandbox')));
+
+    let connection;
+    let accessLevel;
+
+    if (
+      !preferences.ssConnectionIds ||
+    preferences.ssConnectionIds.length === 0
+    ) {
+      return linkedConnections;
+    }
+
+    preferences.ssConnectionIds.forEach(connectionId => {
+      connection = connections.find(c => c._id === connectionId);
+
+      if (connection) {
+        accessLevel = getUserAccessLevelOnConnection(permissions, integrations, connectionId);
+
+        if (accessLevel) {
+          linkedConnections.push({
+            ...connection,
+            permissions: {
+              accessLevel,
+            },
+          });
+        }
+      }
+    });
+
+    return linkedConnections;
+  }
+);
+selectors.suiteScriptLinkedConnections = selectors.mkSuiteScriptLinkedConnections();
+
+selectors.suiteScriptLinkedTiles = createSelector(
+  selectors.suiteScriptLinkedConnections,
+  state => state?.data?.suiteScript,
+  (linkedConnections, suiteScriptTiles = {}) => {
+    let tiles = [];
+
+    linkedConnections.forEach(connection => {
+      tiles = tiles.concat(suiteScriptTiles[connection._id]?.tiles || []);
+    });
+
+    return tiles;
+  });
 
 selectors.makeSuiteScriptIAFlowSections = () => {
   const cachedIASettingsSelector = selectors.makeSuiteScriptIASettings();

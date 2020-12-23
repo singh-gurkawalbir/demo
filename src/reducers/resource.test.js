@@ -104,6 +104,14 @@ const suitescriptConnectors = [
 ];
 
 describe('resource region selector testcases', () => {
+  describe('selectors.mkTileApplications test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      const selector = selectors.mkTileApplications();
+
+      expect(selector()).toEqual([]);
+    });
+  });
+
   describe('selectors.resourceList test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.resourceList()).toEqual({count: 0, filtered: 0, resources: [], total: 0, type: undefined});
