@@ -347,7 +347,7 @@ describe('Suitescript resources testcases', () => {
         },
       };
 
-      expectSaga(requestSuiteScriptMetadata, { ssLinkedConnectionId, resourceType, integrationId})
+      return expectSaga(requestSuiteScriptMetadata, { ssLinkedConnectionId, resourceType, integrationId})
         .provide([[
           call(apiCallWithRetry,
             {
@@ -368,6 +368,7 @@ describe('Suitescript resources testcases', () => {
         .run();
     });
   });
+
   describe('resourcesReceived saga tests', () => {
     const resourceType = 'suitescript/connections/connId/tiles';
     const integrationId = 'intId';
@@ -413,6 +414,7 @@ describe('Suitescript resources testcases', () => {
       .not.put(actions.suiteScript.resource.request('settings', ssLinkedConnectionId, integrationId))
       .run());
   });
+
   describe('featureCheck saga tests', () => {
     const ssLinkedConnectionId = 'connId';
     const integrationId = 'intId';
@@ -453,7 +455,7 @@ describe('Suitescript resources testcases', () => {
         success: true,
       };
 
-      expectSaga(requestSuiteScriptMetadata, { ssLinkedConnectionId, featureName, integrationId})
+      return expectSaga(featureCheck, { ssLinkedConnectionId, featureName, integrationId})
         .provide([[
           call(apiCallWithRetry,
             {
@@ -483,7 +485,7 @@ describe('Suitescript resources testcases', () => {
         ],
       };
 
-      expectSaga(requestSuiteScriptMetadata, { ssLinkedConnectionId, featureName, integrationId})
+      return expectSaga(featureCheck, { ssLinkedConnectionId, featureName, integrationId})
         .provide([[
           call(apiCallWithRetry,
             {
