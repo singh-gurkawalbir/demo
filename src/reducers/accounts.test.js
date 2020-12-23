@@ -134,6 +134,210 @@ describe('Accounts region selector testcases', () => {
   describe('selectors.allRegisteredConnectionIdsFromManagedIntegrations test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.allRegisteredConnectionIdsFromManagedIntegrations()).toEqual([]);
+      expect(selectors.allRegisteredConnectionIdsFromManagedIntegrations({})).toEqual([]);
+      expect(selectors.allRegisteredConnectionIdsFromManagedIntegrations(null)).toEqual([]);
+      expect(selectors.allRegisteredConnectionIdsFromManagedIntegrations(123)).toEqual([]);
+      expect(selectors.allRegisteredConnectionIdsFromManagedIntegrations(new Date())).toEqual([]);
+      expect(selectors.allRegisteredConnectionIdsFromManagedIntegrations('string')).toEqual([]);
+    });
+
+    test('should return correct data for account owner', () => {
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: ACCOUNT_IDS.OWN,
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                },
+              ],
+              users: [],
+            },
+          },
+          data: {
+            resources: {
+              connections: [{
+                _id: 'connection1',
+                name: 'connection 1',
+              }, {
+                _id: 'connection2',
+                name: 'connection2',
+              }],
+            },
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.allRegisteredConnectionIdsFromManagedIntegrations(state)).toEqual(['connection1', 'connection2']);
+    });
+
+    test('should return correct data for account admin', () => {
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: 'ashare1' },
+            org: {
+              accounts: [
+                {
+                  _id: 'ashare1',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+                },
+                {
+                  _id: 'ashare2',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+                },
+              ],
+              users: [],
+            },
+          },
+          data: {
+            resources: {
+              connections: [{
+                _id: 'connection1',
+                name: 'connection 1',
+              }, {
+                _id: 'connection2',
+                name: 'connection2',
+              }],
+            },
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.allRegisteredConnectionIdsFromManagedIntegrations(state)).toEqual(['connection1', 'connection2']);
+    });
+
+    test('should return correct data for account manage user', () => {
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: 'ashare2' },
+            org: {
+              accounts: [
+                {
+                  _id: 'ashare1',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+                },
+                {
+                  _id: 'ashare2',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+                },
+              ],
+              users: [],
+            },
+          },
+          data: {
+            resources: {
+              connections: [{
+                _id: 'connection1',
+                name: 'connection 1',
+              }, {
+                _id: 'connection2',
+                name: 'connection2',
+              }],
+            },
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.allRegisteredConnectionIdsFromManagedIntegrations(state)).toEqual(['connection1', 'connection2']);
+    });
+
+    test('should return correct data for account monitor user', () => {
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: 'ashare2' },
+            org: {
+              accounts: [
+                {
+                  _id: 'ashare1',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+                },
+                {
+                  _id: 'ashare2',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+                },
+              ],
+              users: [],
+            },
+          },
+          data: {
+            resources: {
+              connections: [{
+                _id: 'connection1',
+                name: 'connection 1',
+              }, {
+                _id: 'connection2',
+                name: 'connection2',
+              }],
+            },
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.allRegisteredConnectionIdsFromManagedIntegrations(state)).toEqual([]);
+    });
+
+    test('should return correct data for tile level manage user', () => {
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: 'ashare2' },
+            org: {
+              accounts: [
+                {
+                  _id: 'ashare1',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+                },
+                {
+                  _id: 'ashare2',
+                  integrationAccessLevel: [{
+                    _integrationId: 'integrationId1',
+                    accessLevel: 'manage',
+                  }, {
+                    _integrationId: 'integrationId2',
+                    accessLevel: 'monitor',
+                  }],
+                },
+              ],
+              users: [],
+            },
+          },
+          data: {
+            resources: {
+              integrations: [{
+                _id: 'integrationId1',
+                _registeredConnectionIds: ['connection1'],
+              }, {
+                _id: 'integrationId2',
+                _registeredConnectionIds: ['connection2'],
+              }],
+              connections: [{
+                _id: 'connection1',
+                name: 'connection 1',
+              }, {
+                _id: 'connection2',
+                name: 'connection2',
+              }],
+            },
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.allRegisteredConnectionIdsFromManagedIntegrations(state)).toEqual(['connection1']);
     });
   });
 
