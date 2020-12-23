@@ -2371,7 +2371,7 @@ selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
   state => state?.data?.resources?.connections,
   selectors.isAccountOwnerOrAdmin,
   (permissions = emptyObject, integrations = emptyArray, connections = emptyArray, isAccountOwnerOrAdmin) => {
-    if (isAccountOwnerOrAdmin) {
+    if (isAccountOwnerOrAdmin || permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MANAGE) {
       return connections.map(c => c._id);
     }
     if (permissions.accessLevel === USER_ACCESS_LEVELS.TILE) {
@@ -2434,7 +2434,7 @@ selectors.availableUsersList = (state, integrationId) => {
     ];
   }
 
-  return _users;
+  return _users.sort(stringCompare('sharedWithUser.name'));
 };
 
 selectors.platformLicense = createSelector(

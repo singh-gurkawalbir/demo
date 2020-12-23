@@ -557,7 +557,7 @@ export function getFlowListWithMetadata(flows = [], exports = []) {
   return { resources: flows };
 }
 
-export function getNextDataFlows(flows = emptyList, flow = {}) {
+export function getNextDataFlows(flows = emptyList, flow = emptyObject) {
   const { _integrationId } = flow;
   // Incase of standalone Integrations, _integrationId is undefined for flow resources
   const flowIntegrationId =
