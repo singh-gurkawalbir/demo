@@ -4991,7 +4991,7 @@ selectors.isDataLoaderFlow = (state, flowId) => {
     'flows',
     flowId
   ).merged;
-  const { pageGenerators = [] } = flow;
+  const { pageGenerators = [] } = flow || emptyObject;
 
   return flowDetails.isSimpleImport ||
   (pageGenerators.length && pageGenerators[0].application === 'dataLoader');
@@ -5003,7 +5003,7 @@ selectors.shouldShowAddPageProcessor = (state, flowId) => {
     flowId
   ).merged;
 
-  const { pageProcessors = [], pageGenerators = [] } = flow;
+  const { pageProcessors = [], pageGenerators = [] } = flow || {};
   const isDataLoaderFlow = selectors.isDataLoaderFlow(state, flowId);
 
   const showAddPageProcessor =
