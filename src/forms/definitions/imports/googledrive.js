@@ -85,6 +85,9 @@ export default {
     delete newValues['/inputMode'];
     newValues['/http/method'] = 'POST';
     newValues['/http/type'] = 'file';
+    newValues['/http/response'] = {
+      resourcePath: 'files',
+    };
 
     return {
       ...newValues,
@@ -132,6 +135,9 @@ export default {
       fieldId: 'blobKeyPath',
     },
     'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true },
+    'file.fileName': {
+      fieldId: 'file.fileName', required: true,
+    },
     'file.xml.body': {
       id: 'file.xml.body',
       type: 'httprequestbody',
@@ -241,6 +247,7 @@ export default {
         label: 'Where would you like the files transferred?',
         fields: [
           'http.relativeURI',
+          'file.fileName',
           'file.xml.body',
           'file.lookups',
         ],

@@ -116,7 +116,9 @@ export default {
     newValues['/http/method'] = 'GET';
     newValues['/http/type'] = 'file';
     newValues['/file/encoding'] = undefined;
-
+    newValues['/http/response'] = {
+      resourcePath: 'files',
+    };
     delete newValues['/file/decompressFiles'];
 
     return {
