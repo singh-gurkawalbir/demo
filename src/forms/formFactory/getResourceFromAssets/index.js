@@ -248,6 +248,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           } else {
             meta = meta.rdbms.sql;
           }
+        } else if (resource.assistant === 'googledrive') {
+          meta = meta.googledrive;
         } else if (
           resource &&
             (resource.useParentForm !== undefined

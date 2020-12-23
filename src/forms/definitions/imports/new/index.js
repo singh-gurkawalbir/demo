@@ -42,7 +42,7 @@ export default {
     }
     // If there is no assistant for the import, we need to show generic adaptor form
     // we are patching useTechAdaptorForm field to not to show default assistant form
-    if (!app.import && app.assistant) {
+    if (!app.import && app.assistant && app.assistant !== 'googledrive') {
       newValues['/useTechAdaptorForm'] = true;
     }
 

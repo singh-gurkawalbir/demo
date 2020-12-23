@@ -3608,7 +3608,7 @@ selectors.isGoogleDriveExport = (state, resourceId) => {
   const { adaptorType, _connectionId: connectionId } = resourceObj || {};
 
   // Returns false if it is not a http export
-  if (adaptorType !== 'HTTPExport') {
+  if (adaptorType !== 'HTTPExport' && adaptorType !== 'HTTPImport') {
     return false;
   }
 
@@ -3655,9 +3655,10 @@ selectors.isExportPreviewDisabled = (state, resourceId, resourceType) => {
   if (
     isFileAdaptor(resourceObj) ||
     isAS2Resource(resourceObj) ||
-    selectors.isRestCsvMediaTypeExport(state, resourceId)
+    selectors.isRestCsvMediaTypeExport(state, resourceId) ||
+    selectors.isGoogleDriveExport(state, resourceId)
   ) {
-    return false; // Google drive
+    return false;
   }
 
   // In all other cases, where preview depends on connection being online, return the same
