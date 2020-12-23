@@ -13,6 +13,7 @@ import {
 import { selectors } from '../../../reducers/index';
 
 describe('Suitescript resources testcases', () => {
+  //
   describe('commitStagedChanges saga tests', () => {
     const ssLinkedConnectionId = 'connId';
     const resourceType = 'exports';
