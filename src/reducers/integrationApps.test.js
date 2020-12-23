@@ -2399,7 +2399,6 @@ describe('integrationApps selector testcases', () => {
           _integrationId: 'integrationId2',
           name: '5d9b20328a71fc911a4018b3',
         },
-
         {
           _id: '5d9b20328a71fc911a4018ba',
           _integrationId: 'integrationId2',
