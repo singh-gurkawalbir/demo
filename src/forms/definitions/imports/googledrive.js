@@ -134,7 +134,7 @@ export default {
     blobKeyPath: {
       fieldId: 'blobKeyPath',
     },
-    'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true },
+    'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'namewitheditor' },
     'file.fileName': {
       fieldId: 'file.fileName', required: true,
     },

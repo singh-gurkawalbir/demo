@@ -8,9 +8,9 @@ export default function DynaRelativeUri({ value, arrayIndex, ...props }) {
     selectors.resource(state, 'connections', props.connectionId)
   );
   const description = useMemo(() => {
-    const { type, assistant } = connection || {};
+    const { type } = connection || {};
 
-    return (assistant !== 'googledrive' && (type === 'http' || type === 'rest'))
+    return type === 'http' || type === 'rest'
       ? `Relative to: ${connection[type].baseURI}`
       : '';
   }, [connection]);

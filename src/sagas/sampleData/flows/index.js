@@ -52,7 +52,7 @@ import {
   isBlobTypeResource,
   isAS2Resource,
   isRestCsvMediaTypeExport,
-  isGoogleDriveAssistant,
+  isFileProviderAssistant,
 } from '../../../utils/resource';
 import { isIntegrationApp } from '../../../utils/flows';
 
@@ -238,7 +238,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
     isFileAdaptor(resource) ||
     isAS2Resource(resource) ||
     isRestCsvMediaTypeExport(resource, connection) ||
-    isGoogleDriveAssistant(resource, connection)
+    isFileProviderAssistant(resource, connection)
   ) {
     // fetch data for file adaptors , AS2 and Rest CSV Media type resource and get parsed based on file type to JSON
     previewData = yield call(requestFileAdaptorSampleData, { resource });

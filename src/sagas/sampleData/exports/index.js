@@ -258,10 +258,10 @@ export function* _fetchExportPreviewData({
 
   const recordSize = yield call(_getSampleDataRecordSize, { resourceId });
   const isRestCsvExport = yield select(selectors.isRestCsvMediaTypeExport, resourceId);
-  const isGoogleDriveAssistant = yield select(selectors.isGoogleDriveAssistant, resourceId);
+  const isFileProviderAssistant = yield select(selectors.isFileProviderAssistant, resourceId);
 
   // If it is a file adaptor/Rest csv export , follows a different approach to fetch sample data
-  if (isFileAdaptor(body) || isAS2Resource(body) || isRestCsvExport || isGoogleDriveAssistant) {
+  if (isFileAdaptor(body) || isAS2Resource(body) || isRestCsvExport || isFileProviderAssistant) {
     // extract all details needed for a file sampledata
     const { data: fileDetails } = yield select(selectors.getResourceSampleDataWithStatus, resourceId, 'rawFile');
 

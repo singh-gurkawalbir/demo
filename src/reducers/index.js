@@ -63,6 +63,7 @@ import {
   adaptorTypeMap,
   isQueryBuilderSupported,
   getUserAccessLevelOnConnection,
+  isFileProviderAssistant,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -4944,18 +4945,12 @@ selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
   // Check for media type 'csv' from connection object
   return connection && connection.rest && connection.rest.mediaType === 'csv';
 };
-selectors.isGoogleDriveAssistant = (state, resourceId) => {
+selectors.isFileProviderAssistant = (state, resourceId) => {
   const { merged: resourceObj } = selectors.resourceData(state, 'exports', resourceId);
-  const { adaptorType, _connectionId: connectionId } = resourceObj || {};
-
-  // Returns false if it is not a http export
-  if (adaptorType !== 'HTTPExport' && adaptorType !== 'HTTPImport') {
-    return false;
-  }
-
+  const { _connectionId: connectionId } = resourceObj || {};
   const connection = selectors.resource(state, 'connections', connectionId);
 
-  return connection && connection.assistant === 'googledrive';
+  return isFileProviderAssistant(resourceObj, connection);
 };
 
 selectors.isDataLoaderExport = (state, resourceId, flowId) => {
