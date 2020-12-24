@@ -360,7 +360,7 @@ export const isRestCsvMediaTypeExport = (resource, connection) => {
   // Check for media type 'csv' from connection object
   return connection && connection.rest && connection.rest.mediaType === 'csv';
 };
-export const isGoogleDriveExport = (resource, connection) => {
+export const isGoogleDriveAssistant = (resource, connection) => {
   const { adaptorType } = resource || {};
 
   // Returns false if it is not a http export

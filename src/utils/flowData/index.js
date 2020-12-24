@@ -10,7 +10,7 @@ import {
   isBlobTypeResource,
   isRestCsvMediaTypeExport,
   adaptorTypeMap,
-  isGoogleDriveExport,
+  isGoogleDriveAssistant,
 } from '../resource';
 import responseMappingUtil from '../responseMapping';
 import arrayUtils from '../array';
@@ -223,7 +223,7 @@ export const isUIDataExpectedForResource = (resource, connection) =>
   isRealTimeOrDistributedResource(resource) ||
   isFileAdaptor(resource) ||
   isRestCsvMediaTypeExport(resource, connection) ||
-  isGoogleDriveExport(resource, connection) ||
+  isGoogleDriveAssistant(resource, connection) ||
   isBlobTypeResource(resource) ||
   isIntegrationApp(resource); // Need to do
 

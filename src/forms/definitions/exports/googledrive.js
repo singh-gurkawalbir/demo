@@ -139,7 +139,6 @@ export default {
       // resetting key columns when hasHeaderRow changes
       if (
         keyColumnField &&
-        keyColumnField &&
         keyColumnField.hasHeaderRow !== hasHeaderRowField.value
       ) {
         keyColumnField.value = [];

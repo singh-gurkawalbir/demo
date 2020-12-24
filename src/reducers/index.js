@@ -4944,7 +4944,7 @@ selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
   // Check for media type 'csv' from connection object
   return connection && connection.rest && connection.rest.mediaType === 'csv';
 };
-selectors.isGoogleDriveExport = (state, resourceId) => {
+selectors.isGoogleDriveAssistant = (state, resourceId) => {
   const { merged: resourceObj } = selectors.resourceData(state, 'exports', resourceId);
   const { adaptorType, _connectionId: connectionId } = resourceObj || {};
 
