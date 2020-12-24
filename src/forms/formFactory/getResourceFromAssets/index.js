@@ -248,6 +248,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           } else {
             meta = meta.rdbms.sql;
           }
+        } else if (resource.assistant === 'googledrive') {
+          meta = meta.googledrive;
         } else if (
           resource &&
             (resource.useParentForm !== undefined
@@ -288,6 +290,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         ) {
           // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
           meta = meta.salesforce;
+        } else if (resource.assistant === 'googledrive') {
+          meta = meta.googledrive;
         } else if (
           resource && resource.assistant !== 'openair' &&
             (resource.useParentForm !== undefined

@@ -25,6 +25,11 @@ export default {
       r.file.fileDefinition &&
       r.file.fileDefinition._fileDefinitionId,
   },
+  'file.fileName': {
+    type: 'namewitheditor',
+    label: 'File name',
+    editorTitle: 'Build file name',
+  },
   'edix12.format': {
     type: 'filedefinitionselect',
     label: 'EDI x12 format',
