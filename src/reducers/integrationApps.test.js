@@ -2973,51 +2973,70 @@ describe('integrationApps selector testcases', () => {
         {
           _id: '5d9b20328a71fc911a4018a4',
           _integrationId: 'integrationId2',
+          errors: 0,
           name: '5d9b20328a71fc911a4018a4',
         },
         {
           _id: '5d9b20328a71fc911a4018a7',
           _integrationId: 'integrationId2',
+          errors: 0,
+
           name: '5d9b20328a71fc911a4018a7',
         },
         {
           _id: '5d9b20328a71fc911a4018a8',
           _integrationId: 'integrationId2',
+          errors: 0,
+
           name: '5d9b20328a71fc911a4018a8',
         },
         {
           _id: '5d9b20328a71fc911a4018a9',
           _integrationId: 'integrationId2',
+          errors: 0,
+
           name: '5d9b20328a71fc911a4018a9',
         },
         {
           _id: '5d9b20328a71fc911a4018ac',
           _integrationId: 'integrationId2',
+          errors: 0,
+
           name: '5d9b20328a71fc911a4018ac',
         },
         {
           _id: '5d9b20328a71fc911a4018ad',
           _integrationId: 'integrationId2',
+          errors: 0,
+
           name: '5d9b20328a71fc911a4018ad',
         },
         {
           _id: '5d9b20328a71fc911a4018b0',
           _integrationId: 'integrationId2',
+          errors: 0,
+
           name: '5d9b20328a71fc911a4018b0',
         },
         {
           _id: '5d9b20328a71fc911a4018b2',
           _integrationId: 'integrationId2',
+          errors: 0,
+
           name: '5d9b20328a71fc911a4018b2',
         },
         {
           _id: '5d9b20328a71fc911a4018b3',
           _integrationId: 'integrationId2',
+          errors: 0,
+
           name: '5d9b20328a71fc911a4018b3',
         },
         {
           _id: '5d9b20328a71fc911a4018ba',
           _integrationId: 'integrationId2',
+          errors: 0,
+
           name: '5d9b20328a71fc911a4018ba',
         },
       ]);
@@ -3045,6 +3064,7 @@ describe('integrationApps selector testcases', () => {
           name: '5d9f70b98a71fc911a4068bd',
           childId: 'fb5fb65e',
           childName: 'BILLTECH',
+          errors: 0,
           id: '5d9f70b98a71fc911a4068bd',
         },
         {
@@ -3053,6 +3073,7 @@ describe('integrationApps selector testcases', () => {
           name: '5d9f71628a71fc911a4068d9',
           childId: 'dd67a407',
           childName: 'HSBC',
+          errors: 0,
           id: '5d9f71628a71fc911a4068d9',
         },
       ]);
@@ -3082,6 +3103,7 @@ describe('integrationApps selector testcases', () => {
         {
           _id: '5d9f70b98a71fc911a4068bd',
           _integrationId: 'integrationId',
+          errors: 0,
           name: '5d9f70b98a71fc911a4068bd',
         },
       ]);
