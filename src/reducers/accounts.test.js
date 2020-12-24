@@ -339,6 +339,56 @@ describe('Accounts region selector testcases', () => {
 
       expect(selectors.allRegisteredConnectionIdsFromManagedIntegrations(state)).toEqual(['connection1']);
     });
+
+    test('should return correct data for account monitor user with tile level manage access', () => {
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: 'ashare2' },
+            org: {
+              accounts: [
+                {
+                  _id: 'ashare1',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+                },
+                {
+                  _id: 'ashare2',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+                  accepted: true,
+                  integrationAccessLevel: [{
+                    _integrationId: 'integrationId1',
+                    accessLevel: 'manage',
+                  }],
+                },
+              ],
+              users: [],
+            },
+          },
+          data: {
+            resources: {
+              integrations: [{
+                _id: 'integrationId1',
+                _registeredConnectionIds: ['connection1'],
+              }, {
+                _id: 'integrationId2',
+                _registeredConnectionIds: ['connection2'],
+              }],
+              connections: [{
+                _id: 'connection1',
+                name: 'connection 1',
+              }, {
+                _id: 'connection2',
+                name: 'connection2',
+              }],
+            },
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.allRegisteredConnectionIdsFromManagedIntegrations(state)).toEqual(['connection1']);
+    });
   });
 
   describe('isProfileDataReady', () => {
