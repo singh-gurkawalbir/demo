@@ -156,7 +156,7 @@ export function* getNetsuiteOrSalesforceBundleInstallStatus({connectionId}) {
   }
 }
 
-function* getNetsuiteOrSalesforceMetaTakeLatestPerAction(params) {
+export function* getNetsuiteOrSalesforceMetaTakeLatestPerAction(params) {
   const {
     connectionId,
     commMetaPath,
