@@ -18,7 +18,7 @@ const integrations = [
               label: 'Enable Manual Upload Mode',
               type: 'checkbox',
               name: 'enableManualUploadMode_fb5fb65e',
-              tooltip: 'Select the checkbox for manual upload of file.',
+
             },
           ],
         },
@@ -31,7 +31,7 @@ const integrations = [
               label: 'Enable Manual Upload Mode',
               type: 'checkbox',
               name: 'enableManualUploadMode_dd67a407',
-              tooltip: 'Select the checkbox for manual upload of file.',
+
             },
           ],
         },
@@ -44,7 +44,7 @@ const integrations = [
               label: 'Enable Manual Upload Mode',
               type: 'checkbox',
               name: 'enableManualUploadMode_9606430a',
-              tooltip: 'Select the checkbox for manual upload of file.',
+
             },
           ],
         },
@@ -75,40 +75,35 @@ const integrations = [
                           required: true,
                           placeholder:
                             'Enter FTP folder path, such as Directory/File',
-                          tooltip:
-                            'Please provide the path of the Directory in the FTP server where the files are stored.',
+
                         },
                         {
                           label: 'File Name Starts With:',
                           type: 'input',
                           name: 'fileNameStartsWith_5d9f70b98a71fc911a4068bd',
                           placeholder: 'Optional',
-                          tooltip:
-                            'Please provide the first few characters of the file name which the Connector should read.',
+
                         },
                         {
                           label: 'File Name Ends With:',
                           type: 'input',
                           name: 'fileNameEndsWith_5d9f70b98a71fc911a4068bd',
                           placeholder: 'Optional',
-                          tooltip:
-                            'Please provide the last few characters of the file name which the Connector should read.',
+
                         },
                         {
                           label: 'Sample File:',
                           type: 'file',
                           name: 'ftp_sample_file_5d9f70b98a71fc911a4068bd',
                           value: '',
-                          tooltip:
-                            'Please upload a sample csv file containing records to help us build the mapping definition of the csv file.',
+
                         },
                         {
                           label: 'Leave File On Server',
                           type: 'checkbox',
                           name: 'skipDelete_5d9f70b98a71fc911a4068bd',
                           value: false,
-                          tooltip:
-                            'Choose this setting if the Connector should leave the files on the FTP server after reading. Else the file will be deleted from the FTP server after reading.',
+
                         },
                         {
                           label: 'Use Credit Memos',
@@ -116,8 +111,7 @@ const integrations = [
                           name:
                             'checkbox_credit_memo_5d9f70b98a71fc911a4068bd',
                           value: false,
-                          tooltip:
-                            'Choose this setting if the Connector should sync credit memos.',
+
                         },
                         {
                           label: 'Ignore following Customers:',
@@ -126,8 +120,7 @@ const integrations = [
                             'textarea_customer_filter_5d9f70b98a71fc911a4068bd',
                           value: '',
                           placeholder: 'eg. ACME Inc., S Industries',
-                          tooltip:
-                            'Please enter names of customers (separated by ",") for which payments should be ignored.',
+
                         },
                         {
                           label: 'NetSuite Invoice Prefix:',
@@ -136,8 +129,7 @@ const integrations = [
                             'textarea_ns_invoice_prefix_5d9f70b98a71fc911a4068bd',
                           value: '',
                           placeholder: 'eg. INV, IV',
-                          tooltip:
-                            'Please enter list of prefixes (separated by ",") in order of priority used in NetSuite Account.',
+
                         },
                         {
                           label: 'NetSuite Invoice Identifier',
@@ -147,23 +139,21 @@ const integrations = [
                           options: [['tranid_Invoice #', 'Invoice #']],
                           value: 'tranid_Invoice #',
                           supportsRefresh: true,
-                          tooltip:
-                            'Please select the field from the list for which the connector should look for the Invoice number to match the Invoice Id from bank file.',
+
                         },
                         {
                           label: 'Column delimiter:',
                           type: 'input',
                           name: 'columnDelimiter_5d9f70b98a71fc911a4068bd',
                           placeholder: 'Optional',
-                          tooltip: 'Please provide the column delimiter.',
+
                         },
                         {
                           label: 'Archive file',
                           type: 'checkbox',
                           name: 'archive_file_5d9f70b98a71fc911a4068bd',
                           value: false,
-                          tooltip:
-                            'Choose this setting if the Connector should archive the files in NetSuite file cabinet.',
+
                           dependencies: {
                             disabled: {
                               fields: [
@@ -199,8 +189,7 @@ const integrations = [
                           maxNumberOfColumns: 50,
                           name: '_batch_record_5d9f70b98a71fc911a4068bd',
                           value: [],
-                          tooltip:
-                            'Settings to change the column position of fields in csv file format.',
+
                         },
                         {
                           label: 'Transaction Record',
@@ -215,8 +204,7 @@ const integrations = [
                               column: '1',
                             },
                           ],
-                          tooltip:
-                            'Settings to change the column position of fields in csv file format.',
+
                         },
                         {
                           label: 'Invoice Record',
@@ -238,8 +226,7 @@ const integrations = [
                               column: '8',
                             },
                           ],
-                          tooltip:
-                            'Settings to change the column position of fields in csv file format.',
+
                         },
                       ],
                     },
@@ -259,16 +246,14 @@ const integrations = [
                             ['allow', 'Allow'],
                             ['default', 'Default'],
                           ],
-                          tooltip:
-                            'This setting allows you to specify how certain transaction codes will be processed by the connector. A transaction code could be sent by the bank in the remittance file indicating the type of transaction for eg: Debit or Credit. Based on your needs you can choose to skip or process only those transaction codes. You can only choose one action for the transaction codes as described below.\n\nSkip: Choose this option to skip the transaction codes which have been specified in the text box.\n\nAllow: Choose this to only allow the processing of transaction codes specified in the text box. All other incoming transaction codes will be ignored.\n\nDefault: Choose this to process all the incoming transaction codes. This is the default selection.',
+
                         },
                         {
                           label: 'Enter Transaction Codes',
                           type: 'input',
                           name: 'transactionCodes_5d9f70b98a71fc911a4068bd',
                           placeholder: 'eg. 100,102,104,201-299,305',
-                          tooltip:
-                            "Enter individual transaction code(s) or range(s) separated by a comma. Based on your choice, corresponding transactions will either be skipped or included for processing from the bank file. Use '-' to indicate a code range. For example: 100,102,104,201-299,305",
+
                           properties: {
                             sectionName: 'Filter Settings',
                           },
@@ -280,8 +265,7 @@ const integrations = [
                             'select_bank_currency_5d9f70b98a71fc911a4068bd',
                           options: [],
                           supportsRefresh: true,
-                          tooltip:
-                            'Please enter the currency that should be used for the creation of payment. This is an optional field and should only be specified when the bank will send all the transactions in a pre-defined currency. In the case when the transactions in the bank file will carry currency details, this field need not be populated and the transaction currency from the bank file will be used to create payments. In case the currency is not specified and the bank file doesn’t contain currency details for the transactions, then the payment will be created for the customer’s primary currency.',
+
                           properties: {
                             sectionName: 'Payment Settings',
                           },
@@ -291,8 +275,7 @@ const integrations = [
                           type: 'checkbox',
                           name:
                             'checkbox_customer_priority_5d9f70b98a71fc911a4068bd',
-                          tooltip:
-                            'This setting will assume transaction customer to be of higher priority and if the transaction customer is found and ascertained, the invoices will be searched for this customer as we now know the correct customer before the invoice search happens.',
+
                           properties: {
                             sectionName: 'Matching Settings',
                           },
@@ -303,8 +286,7 @@ const integrations = [
                             'checkbox_match_invoice_with_amount_5d9f70b98a71fc911a4068bd',
                           type: 'checkbox',
                           value: false,
-                          tooltip:
-                            'If there is no match using invoice number, then this enables to find the match using invoice/transaction amount for that customer.',
+
                           properties: {
                             sectionName: 'Matching Settings',
                           },
@@ -315,8 +297,7 @@ const integrations = [
                           name:
                             'checkbox_skip_zero_amount_transactions_5d9f70b98a71fc911a4068bd',
                           value: true,
-                          tooltip:
-                            'This setting if checked will filter out any zero amount transactions.\nUnselect this checkbox to create zero amount transactions.',
+
                           properties: {
                             sectionName: 'Payment Settings',
                           },
@@ -328,8 +309,7 @@ const integrations = [
                           name:
                             'checkbox_validate_posting_period_5d9f70b98a71fc911a4068bd',
                           value: true,
-                          tooltip:
-                            'Unselect this check box to create customer payment for Administrator role when posting period is locked.',
+
                           properties: {
                             sectionName: 'Payment Settings',
                           },
@@ -340,8 +320,7 @@ const integrations = [
                           name:
                             'checkbox_use_fuzzy_search_5d9f70b98a71fc911a4068bd',
                           value: false,
-                          tooltip:
-                            'CAM employs an optional advanced search algorithm which can improve the match rate by employing fuzzy search on the the file record with the records in NetSuite in case the exact matches are not found. The results returned are approximate matches and certain users may prefer to review the matches thus found.',
+
                           dependencies: {
                             disabled: {
                               fields: [
@@ -374,8 +353,7 @@ const integrations = [
                           name:
                             'fuzzy_config_threshold_value_5d9f70b98a71fc911a4068bd',
                           value: '0.1',
-                          tooltip:
-                            'This value determines the degree of search results. With 0.1 being highest and 1 being lowest',
+
                           properties: {
                             sectionName: 'Matching Settings',
                           },
@@ -384,8 +362,7 @@ const integrations = [
                           type: 'subsidiaryMapWidget',
                           name:
                             'multisubsidiary_settings_5d9f70b98a71fc911a4068bd',
-                          tooltip:
-                            'Please specify the GL accounts for each of your subsidiaries here. This mapping allows the product to identify the GL account that will be used for a particular subsidiary to create payments, write-offs or customer deposits. The Subsidiary name and Payment account are mandatory fields and must be supplied. You can choose to provide a dummy customer in the corresponding subsidiary to allow the creation of incoming payment in case the customer is not identified during processing, and later once you have identified the customer you can change the value to the correct customer. Please make sure that all your subsidiaries have an entry in this section.',
+
                           title: 'Multi-subsidiary Settings',
                           optionsMap: [
                             {
@@ -423,15 +400,6 @@ const integrations = [
                       ],
                     },
                   ],
-                  matchingRules: {
-                    transactionStatusValues: [],
-                    creditMemoStatusValues: [],
-                    applyValues: [],
-                    expressionSearchFilters: [],
-                    expressionSearchOperators: [],
-                    expressionSearchValues: [],
-                    value: [],
-                  },
                 },
               ],
             },
@@ -460,40 +428,35 @@ const integrations = [
                           required: true,
                           placeholder:
                             'Enter FTP folder path, such as Directory/File',
-                          tooltip:
-                            'Please provide the path of the Directory in the FTP server where the files are stored.',
+
                         },
                         {
                           label: 'File Name Starts With:',
                           type: 'input',
                           name: 'fileNameStartsWith_5d9f71628a71fc911a4068d9',
                           placeholder: 'Optional',
-                          tooltip:
-                            'Please provide the first few characters of the file name which the Connector should read.',
+
                         },
                         {
                           label: 'File Name Ends With:',
                           type: 'input',
                           name: 'fileNameEndsWith_5d9f71628a71fc911a4068d9',
                           placeholder: 'Optional',
-                          tooltip:
-                            'Please provide the last few characters of the file name which the Connector should read.',
+
                         },
                         {
                           label: 'Sample File:',
                           type: 'file',
                           name: 'ftp_sample_file_5d9f71628a71fc911a4068d9',
                           value: '',
-                          tooltip:
-                            'Please upload a sample csv file containing records to help us build the mapping definition of the csv file.',
+
                         },
                         {
                           label: 'Leave File On Server',
                           type: 'checkbox',
                           name: 'skipDelete_5d9f71628a71fc911a4068d9',
                           value: false,
-                          tooltip:
-                            'Choose this setting if the Connector should leave the files on the FTP server after reading. Else the file will be deleted from the FTP server after reading.',
+
                         },
                         {
                           label: 'Use Credit Memos',
@@ -501,8 +464,7 @@ const integrations = [
                           name:
                             'checkbox_credit_memo_5d9f71628a71fc911a4068d9',
                           value: false,
-                          tooltip:
-                            'Choose this setting if the Connector should sync credit memos.',
+
                         },
                         {
                           label: 'Ignore following Customers:',
@@ -511,8 +473,7 @@ const integrations = [
                             'textarea_customer_filter_5d9f71628a71fc911a4068d9',
                           value: '',
                           placeholder: 'eg. ACME Inc., S Industries',
-                          tooltip:
-                            'Please enter names of customers (separated by ",") for which payments should be ignored.',
+
                         },
                         {
                           label: 'NetSuite Invoice Prefix:',
@@ -521,8 +482,7 @@ const integrations = [
                             'textarea_ns_invoice_prefix_5d9f71628a71fc911a4068d9',
                           value: '',
                           placeholder: 'eg. INV, IV',
-                          tooltip:
-                            'Please enter list of prefixes (separated by ",") in order of priority used in NetSuite Account.',
+
                         },
                         {
                           label: 'NetSuite Invoice Identifier',
@@ -532,23 +492,21 @@ const integrations = [
                           options: [['tranid_Invoice #', 'Invoice #']],
                           value: 'tranid_Invoice #',
                           supportsRefresh: true,
-                          tooltip:
-                            'Please select the field from the list for which the connector should look for the Invoice number to match the Invoice Id from bank file.',
+
                         },
                         {
                           label: 'Column delimiter:',
                           type: 'input',
                           name: 'columnDelimiter_5d9f71628a71fc911a4068d9',
                           placeholder: 'Optional',
-                          tooltip: 'Please provide the column delimiter.',
+
                         },
                         {
                           label: 'Archive file',
                           type: 'checkbox',
                           name: 'archive_file_5d9f71628a71fc911a4068d9',
                           value: false,
-                          tooltip:
-                            'Choose this setting if the Connector should archive the files in NetSuite file cabinet.',
+
                           dependencies: {
                             disabled: {
                               fields: [
@@ -578,16 +536,14 @@ const integrations = [
                           name:
                             'netsuite_archive_dir_5d9f71628a71fc911a4068d9',
                           placeholder: 'Optional',
-                          tooltip:
-                            'Specify the netsuite file cabinet location where the outgoing file will be archived once it has been transferred.',
+
                         },
                         {
                           label: 'File Has Header Row',
                           type: 'checkbox',
                           name: 'hasHeaderRow_5d9f71628a71fc911a4068d9',
                           value: false,
-                          tooltip:
-                            'Please indicate if the csv file has column headers',
+
                         },
                       ],
                     },
@@ -612,8 +568,7 @@ const integrations = [
                               columnName: 'DEPOSIT DATE',
                             },
                           ],
-                          tooltip:
-                            'Settings to change the column position of fields in csv file format.',
+
                         },
                         {
                           label: 'Transaction Record',
@@ -649,8 +604,7 @@ const integrations = [
                               columnName: 'CHECK DATE',
                             },
                           ],
-                          tooltip:
-                            'Settings to change the column position of fields in csv file format.',
+
                         },
                         {
                           label: 'Invoice Record',
@@ -665,8 +619,7 @@ const integrations = [
                               columnName: 'INVOICE NUMBER',
                             },
                           ],
-                          tooltip:
-                            'Settings to change the column position of fields in csv file format.',
+
                         },
                       ],
                     },
@@ -686,16 +639,14 @@ const integrations = [
                             ['allow', 'Allow'],
                             ['default', 'Default'],
                           ],
-                          tooltip:
-                            'This setting allows you to specify how certain transaction codes will be processed by the connector. A transaction code could be sent by the bank in the remittance file indicating the type of transaction for eg: Debit or Credit. Based on your needs you can choose to skip or process only those transaction codes. You can only choose one action for the transaction codes as described below.\n\nSkip: Choose this option to skip the transaction codes which have been specified in the text box.\n\nAllow: Choose this to only allow the processing of transaction codes specified in the text box. All other incoming transaction codes will be ignored.\n\nDefault: Choose this to process all the incoming transaction codes. This is the default selection.',
+
                         },
                         {
                           label: 'Enter Transaction Codes',
                           type: 'input',
                           name: 'transactionCodes_5d9f71628a71fc911a4068d9',
                           placeholder: 'eg. 100,102,104,201-299,305',
-                          tooltip:
-                            "Enter individual transaction code(s) or range(s) separated by a comma. Based on your choice, corresponding transactions will either be skipped or included for processing from the bank file. Use '-' to indicate a code range. For example: 100,102,104,201-299,305",
+
                           properties: {
                             sectionName: 'Filter Settings',
                           },
@@ -707,8 +658,7 @@ const integrations = [
                             'select_bank_currency_5d9f71628a71fc911a4068d9',
                           options: [],
                           supportsRefresh: true,
-                          tooltip:
-                            'Please enter the currency that should be used for the creation of payment. This is an optional field and should only be specified when the bank will send all the transactions in a pre-defined currency. In the case when the transactions in the bank file will carry currency details, this field need not be populated and the transaction currency from the bank file will be used to create payments. In case the currency is not specified and the bank file doesn’t contain currency details for the transactions, then the payment will be created for the customer’s primary currency.',
+
                           properties: {
                             sectionName: 'Payment Settings',
                           },
@@ -718,8 +668,7 @@ const integrations = [
                           type: 'checkbox',
                           name:
                             'checkbox_customer_priority_5d9f71628a71fc911a4068d9',
-                          tooltip:
-                            'This setting will assume transaction customer to be of higher priority and if the transaction customer is found and ascertained, the invoices will be searched for this customer as we now know the correct customer before the invoice search happens.',
+
                           properties: {
                             sectionName: 'Matching Settings',
                           },
@@ -730,8 +679,7 @@ const integrations = [
                             'checkbox_match_invoice_with_amount_5d9f71628a71fc911a4068d9',
                           type: 'checkbox',
                           value: false,
-                          tooltip:
-                            'If there is no match using invoice number, then this enables to find the match using invoice/transaction amount for that customer.',
+
                           properties: {
                             sectionName: 'Matching Settings',
                           },
@@ -742,8 +690,7 @@ const integrations = [
                           name:
                             'checkbox_skip_zero_amount_transactions_5d9f71628a71fc911a4068d9',
                           value: true,
-                          tooltip:
-                            'This setting if checked will filter out any zero amount transactions.\nUnselect this checkbox to create zero amount transactions.',
+
                           properties: {
                             sectionName: 'Payment Settings',
                           },
@@ -755,8 +702,7 @@ const integrations = [
                           name:
                             'checkbox_validate_posting_period_5d9f71628a71fc911a4068d9',
                           value: true,
-                          tooltip:
-                            'Unselect this check box to create customer payment for Administrator role when posting period is locked.',
+
                           properties: {
                             sectionName: 'Payment Settings',
                           },
@@ -767,8 +713,7 @@ const integrations = [
                           name:
                             'checkbox_use_fuzzy_search_5d9f71628a71fc911a4068d9',
                           value: false,
-                          tooltip:
-                            'CAM employs an optional advanced search algorithm which can improve the match rate by employing fuzzy search on the the file record with the records in NetSuite in case the exact matches are not found. The results returned are approximate matches and certain users may prefer to review the matches thus found.',
+
                           dependencies: {
                             disabled: {
                               fields: [
@@ -801,8 +746,7 @@ const integrations = [
                           name:
                             'fuzzy_config_threshold_value_5d9f71628a71fc911a4068d9',
                           value: '0.1',
-                          tooltip:
-                            'This value determines the degree of search results. With 0.1 being highest and 1 being lowest',
+
                           properties: {
                             sectionName: 'Matching Settings',
                           },
@@ -811,8 +755,7 @@ const integrations = [
                           type: 'subsidiaryMapWidget',
                           name:
                             'multisubsidiary_settings_5d9f71628a71fc911a4068d9',
-                          tooltip:
-                            'Please specify the GL accounts for each of your subsidiaries here. This mapping allows the product to identify the GL account that will be used for a particular subsidiary to create payments, write-offs or customer deposits. The Subsidiary name and Payment account are mandatory fields and must be supplied. You can choose to provide a dummy customer in the corresponding subsidiary to allow the creation of incoming payment in case the customer is not identified during processing, and later once you have identified the customer you can change the value to the correct customer. Please make sure that all your subsidiaries have an entry in this section.',
+
                           title: 'Multi-subsidiary Settings',
                           optionsMap: [
                             {
@@ -850,15 +793,6 @@ const integrations = [
                       ],
                     },
                   ],
-                  matchingRules: {
-                    transactionStatusValues: [],
-                    creditMemoStatusValues: [],
-                    applyValues: [],
-                    expressionSearchFilters: [],
-                    expressionSearchOperators: [],
-                    expressionSearchValues: [],
-                    value: [],
-                  },
                 },
               ],
             },
@@ -885,15 +819,13 @@ const integrations = [
             label: 'Enable Test Mode',
             type: 'checkbox',
             name: 'enableTestMode',
-            tooltip:
-              'If you are setting up the Connector and only want few test records to sync, enable this setting. Only records which have a field pre-fixed with the Test Mode Text will be selected for syncing.',
+
             value: false,
           },
           {
             label: 'Test Mode Text',
             name: 'testModeText',
-            tooltip:
-              'This text should be at least 5 characters long. Records with a field prefixed with this text will be selected for syncing.',
+
             value: '',
           },
         ],
@@ -1011,8 +943,7 @@ const integrations = [
               label: 'Sync all Zendesk Organizations as NetSuite Customers',
               type: 'checkbox',
               name: 'sync_zendesk_organizations_as_netsuite_customsers',
-              tooltip:
-                'If this setting is selected all Zendesk Organizations will be synced as NetSuite Customers.',
+
               value: true,
             },
           ],
@@ -1131,8 +1062,7 @@ const integrations = [
                 'Create Zendesk Organization and User (if non-existent) while syncing NetSuite Support Case',
               type: 'checkbox',
               name: 'create_users_and_organizations_in_zendesk',
-              tooltip:
-                'The Connector will first create the Zendesk Organization and User and then sync the NetSuite Support Case as Zendesk Ticket under the Zendesk User.',
+
               value: false,
             },
             {
@@ -1140,8 +1070,7 @@ const integrations = [
                 'Create NetSuite Customer and Contact (if non-existent) while syncing Zendesk Ticket',
               type: 'checkbox',
               name: 'create_contacts_and_customers_in_netsuite',
-              tooltip:
-                'The Connector will first create the NetSuite Customer and Contact and then sync the Zendesk Ticket as NetSuite Support Case NetSuite Customer.',
+
               value: false,
             },
             {
@@ -1149,8 +1078,7 @@ const integrations = [
                 'Sync Zendesk Ticket Public Replies to NetSuite Case as Message',
               type: 'checkbox',
               name: 'sync_ticket_comments_to_netsuite',
-              tooltip:
-                'Zendesk Ticket Public replies will be synced as Public Case Messages in NetSuite.',
+
               value: false,
             },
 
@@ -1159,8 +1087,7 @@ const integrations = [
                 'Sync attachments in NetSuite Support Cases to Zendesk Tickets',
               type: 'checkbox',
               name: 'sync_attachments_from_netsuite_to_zendesk',
-              tooltip:
-                'If this setting is selected, NetSuite Case Attachments will be synced to Zendesk.',
+
               value: false,
             },
           ],
@@ -1576,15 +1503,6 @@ describe('integrationApps selector testcases', () => {
           flows: [
             {
               _id: '5d9f70b98a71fc911a4068bd',
-              matchingRules: {
-                applyValues: [],
-                creditMemoStatusValues: [],
-                expressionSearchFilters: [],
-                expressionSearchOperators: [],
-                expressionSearchValues: [],
-                transactionStatusValues: [],
-                value: [],
-              },
               sections: [
                 {
                   title: 'File Import',
@@ -1596,48 +1514,42 @@ describe('integrationApps selector testcases', () => {
                       required: true,
                       placeholder:
                         'Enter FTP folder path, such as Directory/File',
-                      tooltip:
-                        'Please provide the path of the Directory in the FTP server where the files are stored.',
+
                     },
                     {
                       label: 'File Name Starts With:',
                       type: 'input',
                       name: 'fileNameStartsWith_5d9f70b98a71fc911a4068bd',
                       placeholder: 'Optional',
-                      tooltip:
-                        'Please provide the first few characters of the file name which the Connector should read.',
+
                     },
                     {
                       label: 'File Name Ends With:',
                       type: 'input',
                       name: 'fileNameEndsWith_5d9f70b98a71fc911a4068bd',
                       placeholder: 'Optional',
-                      tooltip:
-                        'Please provide the last few characters of the file name which the Connector should read.',
+
                     },
                     {
                       label: 'Sample File:',
                       type: 'file',
                       name: 'ftp_sample_file_5d9f70b98a71fc911a4068bd',
                       value: '',
-                      tooltip:
-                        'Please upload a sample csv file containing records to help us build the mapping definition of the csv file.',
+
                     },
                     {
                       label: 'Leave File On Server',
                       type: 'checkbox',
                       name: 'skipDelete_5d9f70b98a71fc911a4068bd',
                       value: false,
-                      tooltip:
-                        'Choose this setting if the Connector should leave the files on the FTP server after reading. Else the file will be deleted from the FTP server after reading.',
+
                     },
                     {
                       label: 'Use Credit Memos',
                       type: 'checkbox',
                       name: 'checkbox_credit_memo_5d9f70b98a71fc911a4068bd',
                       value: false,
-                      tooltip:
-                        'Choose this setting if the Connector should sync credit memos.',
+
                     },
                     {
                       label: 'Ignore following Customers:',
@@ -1645,8 +1557,7 @@ describe('integrationApps selector testcases', () => {
                       name: 'textarea_customer_filter_5d9f70b98a71fc911a4068bd',
                       value: '',
                       placeholder: 'eg. ACME Inc., S Industries',
-                      tooltip:
-                        'Please enter names of customers (separated by ",") for which payments should be ignored.',
+
                     },
                     {
                       label: 'NetSuite Invoice Prefix:',
@@ -1655,8 +1566,7 @@ describe('integrationApps selector testcases', () => {
                         'textarea_ns_invoice_prefix_5d9f70b98a71fc911a4068bd',
                       value: '',
                       placeholder: 'eg. INV, IV',
-                      tooltip:
-                        'Please enter list of prefixes (separated by ",") in order of priority used in NetSuite Account.',
+
                     },
                     {
                       label: 'NetSuite Invoice Identifier',
@@ -1666,23 +1576,21 @@ describe('integrationApps selector testcases', () => {
                       options: [['tranid_Invoice #', 'Invoice #']],
                       value: 'tranid_Invoice #',
                       supportsRefresh: true,
-                      tooltip:
-                        'Please select the field from the list for which the connector should look for the Invoice number to match the Invoice Id from bank file.',
+
                     },
                     {
                       label: 'Column delimiter:',
                       type: 'input',
                       name: 'columnDelimiter_5d9f70b98a71fc911a4068bd',
                       placeholder: 'Optional',
-                      tooltip: 'Please provide the column delimiter.',
+
                     },
                     {
                       label: 'Archive file',
                       type: 'checkbox',
                       name: 'archive_file_5d9f70b98a71fc911a4068bd',
                       value: false,
-                      tooltip:
-                        'Choose this setting if the Connector should archive the files in NetSuite file cabinet.',
+
                       dependencies: {
                         disabled: {
                           fields: [
@@ -1718,8 +1626,7 @@ describe('integrationApps selector testcases', () => {
                       maxNumberOfColumns: 50,
                       name: '_batch_record_5d9f70b98a71fc911a4068bd',
                       value: [],
-                      tooltip:
-                        'Settings to change the column position of fields in csv file format.',
+
                     },
                     {
                       label: 'Transaction Record',
@@ -1733,8 +1640,7 @@ describe('integrationApps selector testcases', () => {
                           column: '1',
                         },
                       ],
-                      tooltip:
-                        'Settings to change the column position of fields in csv file format.',
+
                     },
                     {
                       label: 'Invoice Record',
@@ -1756,8 +1662,7 @@ describe('integrationApps selector testcases', () => {
                           column: '8',
                         },
                       ],
-                      tooltip:
-                        'Settings to change the column position of fields in csv file format.',
+
                     },
                   ],
                 },
@@ -1776,16 +1681,14 @@ describe('integrationApps selector testcases', () => {
                         ['allow', 'Allow'],
                         ['default', 'Default'],
                       ],
-                      tooltip:
-                        'This setting allows you to specify how certain transaction codes will be processed by the connector. A transaction code could be sent by the bank in the remittance file indicating the type of transaction for eg: Debit or Credit. Based on your needs you can choose to skip or process only those transaction codes. You can only choose one action for the transaction codes as described below.\n\nSkip: Choose this option to skip the transaction codes which have been specified in the text box.\n\nAllow: Choose this to only allow the processing of transaction codes specified in the text box. All other incoming transaction codes will be ignored.\n\nDefault: Choose this to process all the incoming transaction codes. This is the default selection.',
+
                     },
                     {
                       label: 'Enter Transaction Codes',
                       type: 'input',
                       name: 'transactionCodes_5d9f70b98a71fc911a4068bd',
                       placeholder: 'eg. 100,102,104,201-299,305',
-                      tooltip:
-                        "Enter individual transaction code(s) or range(s) separated by a comma. Based on your choice, corresponding transactions will either be skipped or included for processing from the bank file. Use '-' to indicate a code range. For example: 100,102,104,201-299,305",
+
                       properties: {
                         sectionName: 'Filter Settings',
                       },
@@ -1796,8 +1699,7 @@ describe('integrationApps selector testcases', () => {
                       name: 'select_bank_currency_5d9f70b98a71fc911a4068bd',
                       options: [],
                       supportsRefresh: true,
-                      tooltip:
-                        'Please enter the currency that should be used for the creation of payment. This is an optional field and should only be specified when the bank will send all the transactions in a pre-defined currency. In the case when the transactions in the bank file will carry currency details, this field need not be populated and the transaction currency from the bank file will be used to create payments. In case the currency is not specified and the bank file doesn’t contain currency details for the transactions, then the payment will be created for the customer’s primary currency.',
+
                       properties: {
                         sectionName: 'Payment Settings',
                       },
@@ -1807,8 +1709,7 @@ describe('integrationApps selector testcases', () => {
                       type: 'checkbox',
                       name:
                         'checkbox_customer_priority_5d9f70b98a71fc911a4068bd',
-                      tooltip:
-                        'This setting will assume transaction customer to be of higher priority and if the transaction customer is found and ascertained, the invoices will be searched for this customer as we now know the correct customer before the invoice search happens.',
+
                       properties: {
                         sectionName: 'Matching Settings',
                       },
@@ -1819,8 +1720,7 @@ describe('integrationApps selector testcases', () => {
                         'checkbox_match_invoice_with_amount_5d9f70b98a71fc911a4068bd',
                       type: 'checkbox',
                       value: false,
-                      tooltip:
-                        'If there is no match using invoice number, then this enables to find the match using invoice/transaction amount for that customer.',
+
                       properties: {
                         sectionName: 'Matching Settings',
                       },
@@ -1831,8 +1731,7 @@ describe('integrationApps selector testcases', () => {
                       name:
                         'checkbox_skip_zero_amount_transactions_5d9f70b98a71fc911a4068bd',
                       value: true,
-                      tooltip:
-                        'This setting if checked will filter out any zero amount transactions.\nUnselect this checkbox to create zero amount transactions.',
+
                       properties: {
                         sectionName: 'Payment Settings',
                       },
@@ -1843,8 +1742,7 @@ describe('integrationApps selector testcases', () => {
                       name:
                         'checkbox_validate_posting_period_5d9f70b98a71fc911a4068bd',
                       value: true,
-                      tooltip:
-                        'Unselect this check box to create customer payment for Administrator role when posting period is locked.',
+
                       properties: {
                         sectionName: 'Payment Settings',
                       },
@@ -1855,8 +1753,7 @@ describe('integrationApps selector testcases', () => {
                       name:
                         'checkbox_use_fuzzy_search_5d9f70b98a71fc911a4068bd',
                       value: false,
-                      tooltip:
-                        'CAM employs an optional advanced search algorithm which can improve the match rate by employing fuzzy search on the the file record with the records in NetSuite in case the exact matches are not found. The results returned are approximate matches and certain users may prefer to review the matches thus found.',
+
                       dependencies: {
                         disabled: {
                           fields: [
@@ -1889,8 +1786,7 @@ describe('integrationApps selector testcases', () => {
                       name:
                         'fuzzy_config_threshold_value_5d9f70b98a71fc911a4068bd',
                       value: '0.1',
-                      tooltip:
-                        'This value determines the degree of search results. With 0.1 being highest and 1 being lowest',
+
                       properties: {
                         sectionName: 'Matching Settings',
                       },
@@ -1898,8 +1794,7 @@ describe('integrationApps selector testcases', () => {
                     {
                       type: 'subsidiaryMapWidget',
                       name: 'multisubsidiary_settings_5d9f70b98a71fc911a4068bd',
-                      tooltip:
-                        'Please specify the GL accounts for each of your subsidiaries here. This mapping allows the product to identify the GL account that will be used for a particular subsidiary to create payments, write-offs or customer deposits. The Subsidiary name and Payment account are mandatory fields and must be supplied. You can choose to provide a dummy customer in the corresponding subsidiary to allow the creation of incoming payment in case the customer is not identified during processing, and later once you have identified the customer you can change the value to the correct customer. Please make sure that all your subsidiaries have an entry in this section.',
+
                       title: 'Multi-subsidiary Settings',
                       optionsMap: [
                         {
@@ -1948,6 +1843,740 @@ describe('integrationApps selector testcases', () => {
       ]);
     });
 
+    test('should return correct flow sections for multistore integrationApp', () => {
+      const state = reducer(
+        {
+          data: {
+            resources: {
+              integrations,
+            },
+          },
+        },
+        'some_action'
+      );
+
+      expect(
+        selectors.integrationAppFlowSections(state, 'integrationId')
+      ).toEqual([
+        {
+          flows: [
+            {
+              _id: '5d9f70b98a71fc911a4068bd',
+              sections: [
+                {
+                  fields: [
+                    {
+                      label: 'Directory Path:',
+                      name: 'directoryPath_5d9f70b98a71fc911a4068bd',
+                      placeholder: 'Enter FTP folder path, such as Directory/File',
+                      required: true,
+
+                      type: 'input',
+                    },
+                    {
+                      label: 'File Name Starts With:',
+                      name: 'fileNameStartsWith_5d9f70b98a71fc911a4068bd',
+                      placeholder: 'Optional',
+
+                      type: 'input',
+                    },
+                    {
+                      label: 'File Name Ends With:',
+                      name: 'fileNameEndsWith_5d9f70b98a71fc911a4068bd',
+                      placeholder: 'Optional',
+
+                      type: 'input',
+                    },
+                    {
+                      label: 'Sample File:',
+                      name: 'ftp_sample_file_5d9f70b98a71fc911a4068bd',
+
+                      type: 'file',
+                      value: '',
+                    },
+                    {
+                      label: 'Leave File On Server',
+                      name: 'skipDelete_5d9f70b98a71fc911a4068bd',
+
+                      type: 'checkbox',
+                      value: false,
+                    },
+                    {
+                      label: 'Use Credit Memos',
+                      name: 'checkbox_credit_memo_5d9f70b98a71fc911a4068bd',
+
+                      type: 'checkbox',
+                      value: false,
+                    },
+                    {
+                      label: 'Ignore following Customers:',
+                      name: 'textarea_customer_filter_5d9f70b98a71fc911a4068bd',
+                      placeholder: 'eg. ACME Inc., S Industries',
+
+                      type: 'textarea',
+                      value: '',
+                    },
+                    {
+                      label: 'NetSuite Invoice Prefix:',
+                      name: 'textarea_ns_invoice_prefix_5d9f70b98a71fc911a4068bd',
+                      placeholder: 'eg. INV, IV',
+
+                      type: 'textarea',
+                      value: '',
+                    },
+                    {
+                      label: 'NetSuite Invoice Identifier',
+                      name: 'select_ns_invoice_identifier_5d9f70b98a71fc911a4068bd',
+                      options: [
+                        [
+                          'tranid_Invoice #',
+                          'Invoice #',
+                        ],
+                      ],
+                      supportsRefresh: true,
+
+                      type: 'select',
+                      value: 'tranid_Invoice #',
+                    },
+                    {
+                      label: 'Column delimiter:',
+                      name: 'columnDelimiter_5d9f70b98a71fc911a4068bd',
+                      placeholder: 'Optional',
+
+                      type: 'input',
+                    },
+                    {
+                      dependencies: {
+                        disabled: {
+                          fields: [
+                            {
+                              hidden: true,
+                              name: 'netsuite_archive_dir_5d9f70b98a71fc911a4068bd',
+                              required: false,
+                            },
+                          ],
+                        },
+                        enabled: {
+                          fields: [
+                            {
+                              hidden: false,
+                              name: 'netsuite_archive_dir_5d9f70b98a71fc911a4068bd',
+                              required: true,
+                            },
+                          ],
+                        },
+                      },
+                      label: 'Archive file',
+                      name: 'archive_file_5d9f70b98a71fc911a4068bd',
+
+                      type: 'checkbox',
+                      value: false,
+                    },
+                  ],
+                  title: 'File Import',
+                },
+                {
+                  fields: [
+                    {
+                      label: 'Batch Record',
+                      maxNumberOfColumns: 50,
+                      name: '_batch_record_5d9f70b98a71fc911a4068bd',
+                      title: 'Batch Record',
+
+                      type: 'csvColumnMapper',
+                      value: [],
+                    },
+                    {
+                      label: 'Transaction Record',
+                      maxNumberOfColumns: 50,
+                      name: '_transaction_record_5d9f70b98a71fc911a4068bd',
+                      title: 'Transaction Record',
+
+                      type: 'csvColumnMapper',
+                      value: [
+                        {
+                          column: '1',
+                          fieldName: 'Transaction Id',
+                        },
+                      ],
+                    },
+                    {
+                      label: 'Invoice Record',
+                      maxNumberOfColumns: 50,
+                      name: '_invoice_record_5d9f70b98a71fc911a4068bd',
+                      title: 'Invoice Record',
+
+                      type: 'csvColumnMapper',
+                      value: [
+                        {
+                          column: '19',
+                          fieldName: 'Invoice number',
+                        },
+                        {
+                          column: '4',
+                          fieldName: 'Invoice Date',
+                        },
+                        {
+                          column: '8',
+                          fieldName: 'Invoice amount',
+                        },
+                      ],
+                    },
+                  ],
+                  title: 'File Parsing',
+                },
+                {
+                  fields: [
+                    {
+                      label: 'Transaction Filter: Choose an action',
+                      name: 'transactionFilterOptions_5d9f70b98a71fc911a4068bd',
+                      options: [
+                        [
+                          'skip',
+                          'Skip',
+                        ],
+                        [
+                          'allow',
+                          'Allow',
+                        ],
+                        [
+                          'default',
+                          'Default',
+                        ],
+                      ],
+                      properties: {
+                        sectionName: 'Filter Settings',
+                      },
+
+                      type: 'radio',
+                    },
+                    {
+                      label: 'Enter Transaction Codes',
+                      name: 'transactionCodes_5d9f70b98a71fc911a4068bd',
+                      placeholder: 'eg. 100,102,104,201-299,305',
+                      properties: {
+                        sectionName: 'Filter Settings',
+                      },
+
+                      type: 'input',
+                    },
+                    {
+                      label: 'Default Currency',
+                      name: 'select_bank_currency_5d9f70b98a71fc911a4068bd',
+                      options: [],
+                      properties: {
+                        sectionName: 'Payment Settings',
+                      },
+                      supportsRefresh: true,
+
+                      type: 'select',
+                    },
+                    {
+                      label: 'Customer Has Priority',
+                      name: 'checkbox_customer_priority_5d9f70b98a71fc911a4068bd',
+                      properties: {
+                        sectionName: 'Matching Settings',
+                      },
+
+                      type: 'checkbox',
+                    },
+                    {
+                      label: 'Identify invoice with Amount',
+                      name: 'checkbox_match_invoice_with_amount_5d9f70b98a71fc911a4068bd',
+                      properties: {
+                        sectionName: 'Matching Settings',
+                      },
+
+                      type: 'checkbox',
+                      value: false,
+                    },
+                    {
+                      label: 'Skip Zero Amount Transactions',
+                      name: 'checkbox_skip_zero_amount_transactions_5d9f70b98a71fc911a4068bd',
+                      properties: {
+                        sectionName: 'Payment Settings',
+                      },
+
+                      type: 'checkbox',
+                      value: true,
+                    },
+                    {
+                      label: "Don't create payment in locked posting period",
+                      name: 'checkbox_validate_posting_period_5d9f70b98a71fc911a4068bd',
+                      properties: {
+                        sectionName: 'Payment Settings',
+                      },
+
+                      type: 'checkbox',
+                      value: true,
+                    },
+                    {
+                      dependencies: {
+                        disabled: {
+                          fields: [
+                            {
+                              hidden: true,
+                              name: 'fuzzy_config_threshold_value_5d9f70b98a71fc911a4068bd',
+                              required: false,
+                            },
+                          ],
+                        },
+                        enabled: {
+                          fields: [
+                            {
+                              hidden: false,
+                              name: 'fuzzy_config_threshold_value_5d9f70b98a71fc911a4068bd',
+                              required: true,
+                            },
+                          ],
+                        },
+                      },
+                      label: 'Advanced Search for Customers',
+                      name: 'checkbox_use_fuzzy_search_5d9f70b98a71fc911a4068bd',
+                      properties: {
+                        sectionName: 'Matching Settings',
+                      },
+
+                      type: 'checkbox',
+                      value: false,
+                    },
+                    {
+                      label: 'Threshold',
+                      name: 'fuzzy_config_threshold_value_5d9f70b98a71fc911a4068bd',
+                      properties: {
+                        sectionName: 'Matching Settings',
+                      },
+
+                      type: 'input',
+                      value: '0.1',
+                    },
+                    {
+                      name: 'multisubsidiary_settings_5d9f70b98a71fc911a4068bd',
+                      optionsMap: [
+                        {
+                          id: 'subsidiary',
+                          name: 'Subsidiary',
+                          options: [],
+                          type: 'select',
+                        },
+                        {
+                          id: 'paymentAccount',
+                          name: 'Payment Account',
+                          options: [],
+                          type: 'select',
+                        },
+                        {
+                          id: 'debitAccount',
+                          name: 'Write off Account',
+                          options: [],
+                          type: 'select',
+                        },
+                        {
+                          id: 'depositAccount',
+                          name: 'Customer Deposit Account',
+                          options: [],
+                          type: 'select',
+                        },
+                        {
+                          id: 'dummyCustomer',
+                          name: 'Dummy Customer',
+                          type: 'input',
+                        },
+                      ],
+                      title: 'Multi-subsidiary Settings',
+
+                      type: 'subsidiaryMapWidget',
+                      value: [],
+                    },
+                  ],
+                  title: 'Advanced Settings',
+                },
+              ],
+              showMapping: true,
+              showSchedule: true,
+            },
+            {
+              _id: '5d9f71628a71fc911a4068d9',
+              sections: [
+                {
+                  fields: [
+                    {
+                      label: 'Directory Path:',
+                      name: 'directoryPath_5d9f71628a71fc911a4068d9',
+                      placeholder: 'Enter FTP folder path, such as Directory/File',
+                      required: true,
+
+                      type: 'input',
+                    },
+                    {
+                      label: 'File Name Starts With:',
+                      name: 'fileNameStartsWith_5d9f71628a71fc911a4068d9',
+                      placeholder: 'Optional',
+
+                      type: 'input',
+                    },
+                    {
+                      label: 'File Name Ends With:',
+                      name: 'fileNameEndsWith_5d9f71628a71fc911a4068d9',
+                      placeholder: 'Optional',
+
+                      type: 'input',
+                    },
+                    {
+                      label: 'Sample File:',
+                      name: 'ftp_sample_file_5d9f71628a71fc911a4068d9',
+
+                      type: 'file',
+                      value: '',
+                    },
+                    {
+                      label: 'Leave File On Server',
+                      name: 'skipDelete_5d9f71628a71fc911a4068d9',
+
+                      type: 'checkbox',
+                      value: false,
+                    },
+                    {
+                      label: 'Use Credit Memos',
+                      name: 'checkbox_credit_memo_5d9f71628a71fc911a4068d9',
+
+                      type: 'checkbox',
+                      value: false,
+                    },
+                    {
+                      label: 'Ignore following Customers:',
+                      name: 'textarea_customer_filter_5d9f71628a71fc911a4068d9',
+                      placeholder: 'eg. ACME Inc., S Industries',
+
+                      type: 'textarea',
+                      value: '',
+                    },
+                    {
+                      label: 'NetSuite Invoice Prefix:',
+                      name: 'textarea_ns_invoice_prefix_5d9f71628a71fc911a4068d9',
+                      placeholder: 'eg. INV, IV',
+
+                      type: 'textarea',
+                      value: '',
+                    },
+                    {
+                      label: 'NetSuite Invoice Identifier',
+                      name: 'select_ns_invoice_identifier_5d9f71628a71fc911a4068d9',
+                      options: [
+                        [
+                          'tranid_Invoice #',
+                          'Invoice #',
+                        ],
+                      ],
+                      supportsRefresh: true,
+
+                      type: 'select',
+                      value: 'tranid_Invoice #',
+                    },
+                    {
+                      label: 'Column delimiter:',
+                      name: 'columnDelimiter_5d9f71628a71fc911a4068d9',
+                      placeholder: 'Optional',
+
+                      type: 'input',
+                    },
+                    {
+                      dependencies: {
+                        disabled: {
+                          fields: [
+                            {
+                              hidden: true,
+                              name: 'netsuite_archive_dir_5d9f71628a71fc911a4068d9',
+                              required: false,
+                            },
+                          ],
+                        },
+                        enabled: {
+                          fields: [
+                            {
+                              hidden: false,
+                              name: 'netsuite_archive_dir_5d9f71628a71fc911a4068d9',
+                              required: true,
+                            },
+                          ],
+                        },
+                      },
+                      label: 'Archive file',
+                      name: 'archive_file_5d9f71628a71fc911a4068d9',
+
+                      type: 'checkbox',
+                      value: false,
+                    },
+                    {
+                      label: 'NetSuite Archive Folder: ',
+                      name: 'netsuite_archive_dir_5d9f71628a71fc911a4068d9',
+                      placeholder: 'Optional',
+
+                      type: 'input',
+                    },
+                    {
+                      label: 'File Has Header Row',
+                      name: 'hasHeaderRow_5d9f71628a71fc911a4068d9',
+
+                      type: 'checkbox',
+                      value: false,
+                    },
+                  ],
+                  title: 'File Import',
+                },
+                {
+                  fields: [
+                    {
+                      label: 'Batch Record',
+                      maxNumberOfColumns: 50,
+                      name: '_batch_record_5d9f71628a71fc911a4068d9',
+                      title: 'Batch Record',
+
+                      type: 'csvColumnMapper',
+                      value: [
+                        {
+                          column: '1',
+                          columnName: 'BATCH NUMBER',
+                          fieldName: 'Batch Number',
+                        },
+                        {
+                          column: '2',
+                          columnName: 'DEPOSIT DATE',
+                          fieldName: 'Batch Date',
+                        },
+                      ],
+                    },
+                    {
+                      label: 'Transaction Record',
+                      maxNumberOfColumns: 50,
+                      name: '_transaction_record_5d9f71628a71fc911a4068d9',
+                      title: 'Transaction Record',
+
+                      type: 'csvColumnMapper',
+                      value: [
+                        {
+                          column: '3',
+                          columnName: 'TRANSIT ROUTING #',
+                          fieldName: 'Transaction Id',
+                        },
+                        {
+                          column: '4',
+                          columnName: 'CHECK NUMBER',
+                          fieldName: 'Check Number',
+                        },
+                        {
+                          column: '5',
+                          columnName: 'CHECK AMOUNT',
+                          fieldName: 'Payment Amount',
+                        },
+                        {
+                          column: '6',
+                          columnName: 'REMITTER NAME',
+                          fieldName: 'Customer Name',
+                        },
+                        {
+                          column: '7',
+                          columnName: 'CHECK DATE',
+                          fieldName: 'Check Date',
+                        },
+                      ],
+                    },
+                    {
+                      label: 'Invoice Record',
+                      maxNumberOfColumns: 50,
+                      name: '_invoice_record_5d9f71628a71fc911a4068d9',
+                      title: 'Invoice Record',
+
+                      type: 'csvColumnMapper',
+                      value: [
+                        {
+                          column: '8',
+                          columnName: 'INVOICE NUMBER',
+                          fieldName: 'Invoice number',
+                        },
+                      ],
+                    },
+                  ],
+                  title: 'File Parsing',
+                },
+                {
+                  fields: [
+                    {
+                      label: 'Transaction Filter: Choose an action',
+                      name: 'transactionFilterOptions_5d9f71628a71fc911a4068d9',
+                      options: [
+                        [
+                          'skip',
+                          'Skip',
+                        ],
+                        [
+                          'allow',
+                          'Allow',
+                        ],
+                        [
+                          'default',
+                          'Default',
+                        ],
+                      ],
+                      properties: {
+                        sectionName: 'Filter Settings',
+                      },
+
+                      type: 'radio',
+                    },
+                    {
+                      label: 'Enter Transaction Codes',
+                      name: 'transactionCodes_5d9f71628a71fc911a4068d9',
+                      placeholder: 'eg. 100,102,104,201-299,305',
+                      properties: {
+                        sectionName: 'Filter Settings',
+                      },
+
+                      type: 'input',
+                    },
+                    {
+                      label: 'Default Currency',
+                      name: 'select_bank_currency_5d9f71628a71fc911a4068d9',
+                      options: [],
+                      properties: {
+                        sectionName: 'Payment Settings',
+                      },
+                      supportsRefresh: true,
+
+                      type: 'select',
+                    },
+                    {
+                      label: 'Customer Has Priority',
+                      name: 'checkbox_customer_priority_5d9f71628a71fc911a4068d9',
+                      properties: {
+                        sectionName: 'Matching Settings',
+                      },
+
+                      type: 'checkbox',
+                    },
+                    {
+                      label: 'Identify invoice with Amount',
+                      name: 'checkbox_match_invoice_with_amount_5d9f71628a71fc911a4068d9',
+                      properties: {
+                        sectionName: 'Matching Settings',
+                      },
+
+                      type: 'checkbox',
+                      value: false,
+                    },
+                    {
+                      label: 'Skip Zero Amount Transactions',
+                      name: 'checkbox_skip_zero_amount_transactions_5d9f71628a71fc911a4068d9',
+                      properties: {
+                        sectionName: 'Payment Settings',
+                      },
+
+                      type: 'checkbox',
+                      value: true,
+                    },
+                    {
+                      label: "Don't create payment in locked posting period",
+                      name: 'checkbox_validate_posting_period_5d9f71628a71fc911a4068d9',
+                      properties: {
+                        sectionName: 'Payment Settings',
+                      },
+
+                      type: 'checkbox',
+                      value: true,
+                    },
+                    {
+                      dependencies: {
+                        disabled: {
+                          fields: [
+                            {
+                              hidden: true,
+                              name: 'fuzzy_config_threshold_value_5d9f71628a71fc911a4068d9',
+                              required: false,
+                            },
+                          ],
+                        },
+                        enabled: {
+                          fields: [
+                            {
+                              hidden: false,
+                              name: 'fuzzy_config_threshold_value_5d9f71628a71fc911a4068d9',
+                              required: true,
+                            },
+                          ],
+                        },
+                      },
+                      label: 'Advanced Search for Customers',
+                      name: 'checkbox_use_fuzzy_search_5d9f71628a71fc911a4068d9',
+                      properties: {
+                        sectionName: 'Matching Settings',
+                      },
+
+                      type: 'checkbox',
+                      value: false,
+                    },
+                    {
+                      label: 'Threshold',
+                      name: 'fuzzy_config_threshold_value_5d9f71628a71fc911a4068d9',
+                      properties: {
+                        sectionName: 'Matching Settings',
+                      },
+
+                      type: 'input',
+                      value: '0.1',
+                    },
+                    {
+                      name: 'multisubsidiary_settings_5d9f71628a71fc911a4068d9',
+                      optionsMap: [
+                        {
+                          id: 'subsidiary',
+                          name: 'Subsidiary',
+                          options: [],
+                          type: 'select',
+                        },
+                        {
+                          id: 'paymentAccount',
+                          name: 'Payment Account',
+                          options: [],
+                          type: 'select',
+                        },
+                        {
+                          id: 'debitAccount',
+                          name: 'Write off Account',
+                          options: [],
+                          type: 'select',
+                        },
+                        {
+                          id: 'depositAccount',
+                          name: 'Customer Deposit Account',
+                          options: [],
+                          type: 'select',
+                        },
+                        {
+                          id: 'dummyCustomer',
+                          name: 'Dummy Customer',
+                          type: 'input',
+                        },
+                      ],
+                      title: 'Multi-subsidiary Settings',
+
+                      type: 'subsidiaryMapWidget',
+                      value: [],
+                    },
+                  ],
+                  title: 'Advanced Settings',
+                },
+              ],
+              showMapping: true,
+              showSchedule: true,
+            },
+          ],
+          iconURL: '/images/icons/settings/BAI2.png',
+          title: 'CSV',
+          titleId: 'CSV',
+        },
+      ]);
+    });
+
     test('should return correct flow sections for single store integration App', () => {
       const state = reducer(
         {
@@ -1971,8 +2600,6 @@ describe('integrationApps selector testcases', () => {
             {
               label: 'Sync all Zendesk Organizations as NetSuite Customers',
               name: 'sync_zendesk_organizations_as_netsuite_customsers',
-              tooltip:
-                'If this setting is selected all Zendesk Organizations will be synced as NetSuite Customers.',
               type: 'checkbox',
               value: true,
             },
@@ -2092,8 +2719,6 @@ describe('integrationApps selector testcases', () => {
               label:
                 'Create Zendesk Organization and User (if non-existent) while syncing NetSuite Support Case',
               name: 'create_users_and_organizations_in_zendesk',
-              tooltip:
-                'The Connector will first create the Zendesk Organization and User and then sync the NetSuite Support Case as Zendesk Ticket under the Zendesk User.',
               type: 'checkbox',
               value: false,
             },
@@ -2101,8 +2726,6 @@ describe('integrationApps selector testcases', () => {
               label:
                 'Create NetSuite Customer and Contact (if non-existent) while syncing Zendesk Ticket',
               name: 'create_contacts_and_customers_in_netsuite',
-              tooltip:
-                'The Connector will first create the NetSuite Customer and Contact and then sync the Zendesk Ticket as NetSuite Support Case NetSuite Customer.',
               type: 'checkbox',
               value: false,
             },
@@ -2110,8 +2733,6 @@ describe('integrationApps selector testcases', () => {
               label:
                 'Sync Zendesk Ticket Public Replies to NetSuite Case as Message',
               name: 'sync_ticket_comments_to_netsuite',
-              tooltip:
-                'Zendesk Ticket Public replies will be synced as Public Case Messages in NetSuite.',
               type: 'checkbox',
               value: false,
             },
@@ -2119,8 +2740,7 @@ describe('integrationApps selector testcases', () => {
               label:
                 'Sync attachments in NetSuite Support Cases to Zendesk Tickets',
               name: 'sync_attachments_from_netsuite_to_zendesk',
-              tooltip:
-                'If this setting is selected, NetSuite Case Attachments will be synced to Zendesk.',
+
               type: 'checkbox',
               value: false,
             },
@@ -2273,7 +2893,7 @@ describe('integrationApps selector testcases', () => {
           {
             label: 'Enable Manual Upload Mode',
             name: 'enableManualUploadMode_fb5fb65e',
-            tooltip: 'Select the checkbox for manual upload of file.',
+
             type: 'checkbox',
           },
         ],
@@ -2300,16 +2920,12 @@ describe('integrationApps selector testcases', () => {
           {
             label: 'Enable Test Mode',
             name: 'enableTestMode',
-            tooltip:
-              'If you are setting up the Connector and only want few test records to sync, enable this setting. Only records which have a field pre-fixed with the Test Mode Text will be selected for syncing.',
             type: 'checkbox',
             value: false,
           },
           {
             label: 'Test Mode Text',
             name: 'testModeText',
-            tooltip:
-              'This text should be at least 5 characters long. Records with a field prefixed with this text will be selected for syncing.',
             value: '',
           },
         ],
