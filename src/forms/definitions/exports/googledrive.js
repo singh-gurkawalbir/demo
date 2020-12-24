@@ -79,6 +79,7 @@ export default {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/xml'] = undefined;
       newValues['/file/csv'] = undefined;
+      // TODO: Ashok needs to revisit on delete form values.
       delete newValues['/file/csv/rowsToSkip'];
       delete newValues['/file/csv/trimSpaces'];
       delete newValues['/file/csv/columnDelimiter'];
@@ -158,6 +159,7 @@ export default {
       let definitionFieldId;
 
       // Fetch format specific Field Definition field to fetch id
+      // TODO: Raghu to refactor this code.
       if (fileType.value === 'filedefinition') definitionFieldId = 'edix12.format';
       else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
       else definitionFieldId = 'edifact.format';
