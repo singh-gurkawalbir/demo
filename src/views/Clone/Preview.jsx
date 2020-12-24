@@ -273,6 +273,7 @@ export default function ClonePreview(props) {
           ...obj,
           _id: index,
         })),
+        resourceType,
         columns,
       },
     },
