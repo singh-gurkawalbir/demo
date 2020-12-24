@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import deepClone from 'lodash/cloneDeep';
+import uniqBy from 'lodash/uniqBy';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
@@ -2102,7 +2103,7 @@ selectors.mkIntegrationAppFlowSections = () => {
               if (index === -1) {
                 flowSections.push({...section});
               } else {
-                flowSections[index].flows = [...flowSections[index].flows, ...section.flows];
+                flowSections[index].flows = uniqBy([...flowSections[index].flows, ...section.flows], '_id');
               }
             });
           }
@@ -4678,8 +4679,8 @@ selectors.resourceErrors = selectors.makeResourceErrorsSelector();
 selectors.integrationErrorsPerSection = createSelector(
   selectors.integrationAppFlowSections,
   (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
-  state => selectors.resourceList(state, { type: 'flows' }).resources,
-  (flowSections, integrationErrors, flowsList) =>
+  state => state?.data?.resources?.flows,
+  (flowSections, integrationErrors, flowsList = emptyArray) =>
     // go through all sections and aggregate error counts of all the flows per sections against titleId
     flowSections.reduce((errorsMap, section) => {
       const { flows = [], titleId } = section;
@@ -4697,6 +4698,7 @@ selectors.integrationErrorsPerSection = createSelector(
 
       return errorsMap;
     }, {})
+
 );
 
 /**
