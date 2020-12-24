@@ -35,6 +35,8 @@ const useStyles = makeStyles(theme => ({
   appLogos: {
     display: 'flex',
     alignItems: 'center',
+    position: 'relative',
+    top: theme.spacing(-2),
   },
   appDetailsHeader: {
     borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
