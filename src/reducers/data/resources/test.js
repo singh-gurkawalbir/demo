@@ -548,6 +548,138 @@ describe('resources reducer for special cases', () => {
   });
 });
 
+describe('integrationAppSettings reducer', () => {
+  const integrations = [
+    {
+      _id: 'integrationId',
+      name: 'integration Name',
+      _connectorId: 'connectorId',
+      settings: {
+        sections: [
+          {
+            id: 'store1',
+            sections: [
+              {
+                id: 'sectionTitle',
+                flows: [
+                  {
+                    _id: 'flowId',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        supportsMultiStore: true,
+      },
+    },
+    {
+      _id: 'integrationId2',
+      name: 'integration2 Name',
+      _connectorId: 'connectorId1',
+      settings: {
+        sections: [
+          {
+            id: 'sectionTitle',
+            flows: [
+              {
+                _id: 'flowId',
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ];
+
+  test('should not throw error for bad params', () => {
+    const integrationAppSettings = selectors.mkIntegrationAppSettings();
+
+    expect(integrationAppSettings({}, 'integrationId')).toEqual(null);
+    expect(integrationAppSettings(undefined, undefined)).toEqual(
+      null
+    );
+    expect(
+      integrationAppSettings(undefined, undefined, undefined)
+    ).toEqual(null);
+    expect(integrationAppSettings()).toEqual(null);
+  });
+
+  test('should return correct integration App settings for multistore integrationApp', () => {
+    const state = reducer(
+      {
+        data: {
+          resources: {
+            integrations,
+          },
+        },
+      },
+      'some_action'
+    );
+    const integrationAppSettings = selectors.mkIntegrationAppSettings();
+
+    expect(
+      integrationAppSettings(state, 'integrationId', 'store1')
+    ).toEqual({
+      _id: 'integrationId',
+      _connectorId: 'connectorId',
+      name: 'integration Name',
+      settings: {
+        sections: [
+          {
+            id: 'store1',
+            sections: [{ flows: [{ _id: 'flowId' }], id: 'sectionTitle' }],
+          },
+        ],
+        supportsMultiStore: true,
+      },
+      stores: [
+        { hidden: false, label: undefined, mode: 'settings', value: 'store1' },
+      ],
+    });
+
+    expect(integrationAppSettings(state, 'integrationId')).toEqual({
+      _connectorId: 'connectorId',
+      _id: 'integrationId',
+      name: 'integration Name',
+      settings: {
+        sections: [
+          {
+            id: 'store1',
+            sections: [{ flows: [{ _id: 'flowId' }], id: 'sectionTitle' }],
+          },
+        ],
+        supportsMultiStore: true,
+      },
+      stores: [
+        { hidden: false, label: undefined, mode: 'settings', value: 'store1' },
+      ],
+    });
+  });
+  test('should return correct integration App settings for single store integrationApp', () => {
+    const state = reducer(
+      {
+        data: {
+          resources: {
+            integrations,
+          },
+        },
+      },
+      'some_action'
+    );
+    const integrationAppSettings = selectors.mkIntegrationAppSettings();
+
+    expect(integrationAppSettings(state, 'integrationId2')).toEqual({
+      _id: 'integrationId2',
+      _connectorId: 'connectorId1',
+      name: 'integration2 Name',
+      settings: {
+        sections: [{ flows: [{ _id: 'flowId' }], id: 'sectionTitle' }],
+      },
+    });
+  });
+});
+
 describe('integrationApps installer reducer', () => {
   describe('integrationApps received installer install_inProgress action', () => {
     test('should find the integration with id and find the installation step with passed installerFunction and set isTriggered flag to true', () => {
