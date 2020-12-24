@@ -381,7 +381,6 @@ export default {
         fontSize: '14px',
         lineHeight: '18px',
         letterSpacing: 'normal',
-        fontFamily: 'Roboto400',
       },
       overline: {
         fontSize: '12px',
