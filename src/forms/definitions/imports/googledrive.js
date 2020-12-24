@@ -1,4 +1,4 @@
-import { isNewId } from '../../../utils/resource';
+import { IMPORT_FILE_FIELD_MAP } from '../../../utils/fileUtil';
 
 export default {
   preSave: formValues => {
@@ -118,112 +118,7 @@ export default {
 
     return null;
   },
-  fieldMap: {
-    common: {
-      formId: 'common',
-    },
-    fileType: {
-      formId: 'fileType',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    blobKeyPath: {
-      fieldId: 'blobKeyPath',
-    },
-    'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'namewitheditor' },
-    'file.fileName': {
-      fieldId: 'file.fileName', required: true,
-    },
-    'file.xml.body': {
-      id: 'file.xml.body',
-      type: 'httprequestbody',
-      connectionId: r => r && r._connectionId,
-      label: 'Build XML document',
-      refreshOptionsOnChangesTo: ['file.type'],
-      required: true,
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['xml'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    uploadFile: {
-      fieldId: 'uploadFile',
-      refreshOptionsOnChangesTo: ['file.type'],
-      placeholder: 'Sample file (that would be generated)',
-      helpKey: 'import.uploadFile',
-    },
-    'file.csv': { fieldId: 'file.csv' },
-    'file.xlsx.includeHeader': { fieldId: 'file.xlsx.includeHeader' },
-    dataMappings: {
-      formId: 'dataMappings',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    'file.lookups': {
-      fieldId: 'file.lookups',
-      visible: false,
-    },
-    inputMode: {
-      id: 'inputMode',
-      type: 'mode',
-      label: 'Generate files from records:',
-      helpKey: 'import.inputMode',
-      options: [
-        {
-          items: [
-            { label: 'Yes', value: 'records' },
-            { label: 'No', value: 'blob' },
-          ],
-        },
-      ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
-
-      defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
-    },
-    'file.encoding': {
-      fieldId: 'file.encoding',
-    },
-    deleteAfterImport: {
-      fieldId: 'deleteAfterImport',
-      visibleWhen: [
-        {
-          field: 'inputMode',
-          is: ['blob'],
-        },
-      ],
-    },
-    fileAdvancedSettings: {
-      formId: 'fileAdvancedSettings',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    fileApiIdentifier: {
-      formId: 'fileApiIdentifier',
-    },
+  fieldMap: {...IMPORT_FILE_FIELD_MAP,
   },
   layout: {
     type: 'collapse',
