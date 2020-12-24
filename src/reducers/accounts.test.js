@@ -230,29 +230,12 @@ describe('Accounts region selector testcases', () => {
     });
   });
 
-  describe('selectors.hasAcceptedUsers test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.hasAcceptedUsers()).toEqual(false);
-    });
-  });
-
-  describe('selectors.hasAcceptedAccounts test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.hasAcceptedAccounts()).toEqual(false);
-    });
-  });
-
-  describe('selectors.isValidSharedAccountId test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isValidSharedAccountId()).toEqual(false);
-    });
-  });
-
   describe('selectors.userPermissionsOnConnection test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.userPermissionsOnConnection()).toEqual({});
     });
-  }); describe('selectors.resourcePermissions test cases', () => {
+  });
+  describe('selectors.resourcePermissions test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.resourcePermissions()).toEqual({
         accesstokens: {
@@ -323,12 +306,6 @@ describe('Accounts region selector testcases', () => {
   describe('selectors.canEditSettingsForm test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.canEditSettingsForm()).toEqual();
-    });
-  });
-
-  describe('selectors.availableConnectionsToRegister test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.availableConnectionsToRegister()).toEqual([]);
     });
   });
 
