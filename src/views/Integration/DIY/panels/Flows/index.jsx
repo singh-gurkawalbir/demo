@@ -198,26 +198,33 @@ const Title = ({flows, integrationId}) => {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const yetToLoadOpenErrors = useSelector(state => {
+    const {status, data} = selectors.errorMap(state, integrationId) || {};
+
+    return !status || (status === 'requested' && !data);
+  });
   const integrationErrorsMap = useSelector(state => selectors.errorMap(state, integrationId)?.data) || {};
   const currentTileErrorCount = isUserInErrMgtTwoDotZero ? allTiles.find(t => t._integrationId === integrationId)?.numError : 0;
 
-  let totalErrors = 0;
-
-  flows.forEach(flow => {
+  const totalCount = flows.reduce((count, flow) => {
     if (!flow.disabled && integrationErrorsMap[flow._id]) {
-      totalErrors += integrationErrorsMap[flow._id];
+      return count + integrationErrorsMap[flow._id];
     }
-  });
+
+    return count;
+  }, 0);
+
+  const errorCount = yetToLoadOpenErrors ? currentTileErrorCount : totalCount;
 
   return (
     <span className={classes.flowsPanelWithStatus}>
       Integration flows
-      {(totalErrors || currentTileErrorCount) ? (
+      {errorCount ? (
         <>
           <span className={classes.divider} />
           <span className={classes.errorStatus}>
             <StatusCircle variant="error" size="mini" />
-            <span>{totalErrors || currentTileErrorCount} errors</span>
+            <span>{errorCount === 1 ? `${errorCount} error` : `${errorCount} errors`} </span>
           </span>
         </>
       ) : null}
