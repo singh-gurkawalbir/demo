@@ -8,6 +8,8 @@ import javascript from './javascript';
 import transform from './transform';
 import flowTransform from './flowTransform';
 import csvGenerator from './csvGenerator';
+import structuredFileGenerator from './structuredFileGenerator';
+import structuredFileParser from './structuredFileParser';
 
 const map = {
   csvParser,
@@ -20,6 +22,8 @@ const map = {
   transform,
   flowTransform,
   csvGenerator,
+  structuredFileGenerator,
+  structuredFileParser,
 };
 export default map;
 

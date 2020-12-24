@@ -6,8 +6,8 @@ import transform from './transform';
 import handlebars from './handlebars';
 import javascript from './javascript';
 import settingsForm from './settingsForm';
-// import structuredFileParser from './structuredFileParser';
-// import structuredFileGenerator from './structuredFileGenerator';
+import structuredFileParser from './structuredFileParser';
+import structuredFileGenerator from './structuredFileGenerator';
 import sql from './sql';
 import filter from './filter';
 // import netsuiteLookupFilter from './netsuiteLookupFilter';
@@ -42,6 +42,8 @@ const logicMap = {
   databaseMapping,
   flowTransform,
   csvGenerator,
+  structuredFileParser,
+  structuredFileGenerator,
 };
 
 function getLogic(editor) {
@@ -196,6 +198,14 @@ export const featuresMap = options => ({
   flowTransform: {
     layout: 'compact',
     insertStubKey: 'transform',
+  },
+  structuredFileParser: {
+    layout: 'compact',
+    autoEvaluate: true,
+  },
+  structuredFileGenerator: {
+    layout: 'compact',
+    autoEvaluate: true,
   },
 });
 
