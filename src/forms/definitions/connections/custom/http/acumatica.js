@@ -52,6 +52,9 @@ export default {
       delete retValues['/http/unencrypted/company'];
       retValues['/http/auth/cookie'] = undefined;
     }
+    if (retValues['/mode'] === 'cloud') {
+      retValues['/_agentId'] = undefined;
+    }
 
     return {
       ...retValues,
