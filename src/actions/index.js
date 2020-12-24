@@ -1055,6 +1055,12 @@ const integrationApp = {
       installInprogress,
       id,
     }),
+  license: {
+    resume: integrationId => action(actionTypes.INTEGRATION_APPS.LICENSE.RESUME, {
+      integrationId,
+    }),
+  },
+
 };
 const ashare = {
   receivedCollection: ashares =>
@@ -1176,7 +1182,7 @@ const user = {
   org: {
     users: {
       requestCollection: message =>
-        resource.requestCollection('ashares', undefined, message),
+        resource.requestCollection('ashares', message),
       create: user => action(actionTypes.USER_CREATE, { user }),
       created: user => action(actionTypes.USER_CREATED, { user }),
       update: (_id, user) => action(actionTypes.USER_UPDATE, { _id, user }),
@@ -1972,10 +1978,11 @@ const responseMapping = {
 
 };
 const customSettings = {
-  formRequest: (resourceType, resourceId) =>
+  formRequest: (resourceType, resourceId, sectionId) =>
     action(actionTypes.CUSTOM_SETTINGS.FORM_REQUEST, {
       resourceType,
       resourceId,
+      sectionId,
     }),
   formReceived: (resourceId, formMeta, scriptId) =>
     action(actionTypes.CUSTOM_SETTINGS.FORM_RECEIVED, {

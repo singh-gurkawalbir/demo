@@ -94,6 +94,7 @@ export function* retrievingAssistantDetails() {
         assistant: asst._id,
         export: asst.export,
         import: asst.import,
+        helpURL: asst.helpURL,
         webhook: webhookAssistants.indexOf(asst._id) >= 0,
       });
     });
@@ -105,6 +106,7 @@ export function* retrievingAssistantDetails() {
         assistant: asst._id,
         export: asst.export,
         import: asst.import,
+        helpURL: asst.helpURL,
         webhook: webhookAssistants.indexOf(asst._id) >= 0,
       });
     });
@@ -152,9 +154,9 @@ export function* fetchUIVersion() {
 }
 
 export function* retrieveAppInitializationResources() {
+  yield call(retrievingUserDetails);
   yield all([
     call(retrievingOrgDetails),
-    call(retrievingUserDetails),
     call(retrievingAssistantDetails),
   ]);
 

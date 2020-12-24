@@ -123,6 +123,103 @@ Object {
 }
 `;
 
+exports[`getResourceFromAssets load correct form connections assistants should load a http assistant googledrive connection form 1`] = `
+Object {
+  "fieldMeta": Object {
+    "actions": undefined,
+    "fieldMap": Object {
+      "application": Object {
+        "fieldId": "application",
+      },
+      "http._iClientId": Object {
+        "connectionId": [Function],
+        "connectorId": [Function],
+        "fieldId": "http._iClientId",
+        "filter": Object {
+          "provider": "custom_oauth2",
+        },
+        "ignoreEnvironmentFilter": true,
+        "required": true,
+        "type": "dynaiclient",
+      },
+      "http.auth.oauth.callbackURL": Object {
+        "copyToClipboard": true,
+        "fieldId": "http.auth.oauth.callbackURL",
+      },
+      "http.auth.oauth.scope": Object {
+        "fieldId": "http.auth.oauth.scope",
+        "scopes": Array [
+          "https://www.googleapis.com/auth/drive",
+          "https://www.googleapis.com/auth/drive.readonly",
+          "https://www.googleapis.com/auth/drive.appfolder",
+          "https://www.googleapis.com/auth/drive.file",
+          "https://www.googleapis.com/auth/drive.install",
+          "https://www.googleapis.com/auth/drive.metadata",
+          "https://www.googleapis.com/auth/drive.metadata.readonly",
+          "https://www.googleapis.com/auth/drive.photos.readonly",
+          "https://www.googleapis.com/auth/drive.scripts",
+          "https://www.googleapis.com/auth/drive.appdata",
+          "https://www.googleapis.com/auth/drive.apps.readonly",
+          "https://www.googleapis.com/auth/drive.activity",
+          "https://www.googleapis.com/auth/drive.activity.readonly",
+        ],
+      },
+      "httpAdvanced": Object {
+        "formId": "httpAdvanced",
+      },
+      "name": Object {
+        "fieldId": "name",
+      },
+      "settings": Object {
+        "fieldId": "settings",
+      },
+    },
+    "layout": Object {
+      "containers": Array [
+        Object {
+          "containers": Array [
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "name",
+                "application",
+              ],
+              "label": "General",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "http.auth.oauth.callbackURL",
+                "http._iClientId",
+                "http.auth.oauth.scope",
+              ],
+              "label": "Configure your client id and secret",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "httpAdvanced",
+              ],
+              "label": "Advanced",
+            },
+          ],
+          "type": "collapse",
+        },
+        Object {
+          "fields": Array [
+            "settings",
+          ],
+        },
+      ],
+    },
+  },
+  "init": undefined,
+  "optionsHandler": [Function],
+  "preSave": [Function],
+  "validationHandler": [Function],
+}
+`;
+
 exports[`getResourceFromAssets load correct form connections assistants should load a rest assistant certify connection form 1`] = `
 Object {
   "fieldMeta": Object {
@@ -194,87 +291,6 @@ Object {
             "settings",
           ],
         },
-      ],
-    },
-  },
-  "init": undefined,
-  "optionsHandler": [Function],
-  "preSave": [Function],
-  "validationHandler": [Function],
-}
-`;
-
-exports[`getResourceFromAssets load correct form connections assistants should load a rest assistant googledrive connection form 1`] = `
-Object {
-  "fieldMeta": Object {
-    "actions": undefined,
-    "fieldMap": Object {
-      "application": Object {
-        "fieldId": "application",
-      },
-      "name": Object {
-        "fieldId": "name",
-      },
-      "rest.scope": Object {
-        "fieldId": "rest.scope",
-        "scopes": Array [
-          "https://www.googleapis.com/auth/drive",
-          "https://www.googleapis.com/auth/drive.readonly",
-          "https://www.googleapis.com/auth/drive.appfolder",
-          "https://www.googleapis.com/auth/drive.file",
-          "https://www.googleapis.com/auth/drive.install",
-          "https://www.googleapis.com/auth/drive.metadata",
-          "https://www.googleapis.com/auth/drive.metadata.readonly",
-          "https://www.googleapis.com/auth/drive.photos.readonly",
-          "https://www.googleapis.com/auth/drive.scripts",
-        ],
-      },
-      "restAdvanced": Object {
-        "formId": "restAdvanced",
-      },
-      "settings": Object {
-        "fieldId": "settings",
-      },
-    },
-    "layout": Object {
-      "containers": Array [
-        Object {
-          "containers": Array [
-            Object {
-              "collapsed": true,
-              "fields": Array [
-                "name",
-                "application",
-              ],
-              "label": "General",
-            },
-            Object {
-              "collapsed": true,
-              "fields": Array [
-                "http.unencrypted.partnerUserId",
-                "http.encrypted.partnerUserSecret",
-              ],
-              "label": "Application details",
-            },
-            Object {
-              "collapsed": true,
-              "fields": Array [
-                "restAdvanced",
-              ],
-              "label": "Advanced",
-            },
-          ],
-          "type": "collapse",
-        },
-        Object {
-          "fields": Array [
-            "settings",
-          ],
-        },
-      ],
-      "fields": Array [
-        "name",
-        "rest.scope",
       ],
     },
   },
@@ -2993,7 +3009,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 210+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -7062,7 +7078,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 210+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "type": "selectapplication",
         "validWhen": Object {
           "isNot": Object {
@@ -10400,6 +10416,9 @@ Object {
       "file.csv": Object {
         "fieldId": "file.csv",
       },
+      "file.encoding": Object {
+        "fieldId": "file.encoding",
+      },
       "file.lookups": Object {
         "fieldId": "file.lookups",
         "visible": false,
@@ -10547,6 +10566,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "s3.backupBucket",
+                "file.encoding",
                 "blobKeyPath",
                 "fileAdvancedSettings",
                 "deleteAfterImport",
@@ -10667,7 +10687,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 210+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -11134,6 +11154,7 @@ Object {
             "field": "netsuite_da.operation",
             "is": Array [
               "update",
+              "delete",
             ],
           },
           Object {
@@ -11362,6 +11383,7 @@ Object {
             "field": "netsuite_da.operation",
             "is": Array [
               "update",
+              "delete",
             ],
           },
           Object {
@@ -12578,7 +12600,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 210+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "required": true,
         "type": "selectapplication",
       },
@@ -12704,7 +12726,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 210+ applications",
+        "placeholder": "Choose application or start typing to browse 60+ applications",
         "refreshOptionsOnChangesTo": Array [
           "resourceType",
         ],

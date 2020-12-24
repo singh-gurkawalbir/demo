@@ -183,6 +183,32 @@ selectors.makeTransformStagedResource = () =>
   );
 selectors.stagedResource = selectors.makeTransformStagedResource();
 
+selectors.lookupProcessorResourceType = (state, resourceId) => {
+  const stagedProcessor = selectors.stagedResource(state, resourceId);
+
+  if (!stagedProcessor || !stagedProcessor.patch) {
+    // TODO: we need a better pattern for logging warnings. We need a common util method
+    // which logs these warning only if the build is dev... if build is prod, these
+    // console.warn/logs should not even be bundled by webpack...
+    // eslint-disable-next-line
+    /*
+     console.warn(
+      'No patch-set available to determine new Page Processor resourceType.'
+    );
+    */
+    return;
+  }
+
+  // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
+  const adaptorType = stagedProcessor?.patch?.find(
+    p => p.op === 'replace' && p.path === '/adaptorType'
+  );
+
+  // console.log(`adaptorType-${id}`, adaptorType);
+
+  return adaptorType?.value?.includes('Export') ? 'exports' : 'imports';
+};
+
 selectors.getAllResourceConflicts = createSelector(
   state => state,
   state => {

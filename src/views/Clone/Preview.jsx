@@ -93,7 +93,7 @@ export default function ClonePreview(props) {
     !!(resourceType === 'integrations' && resource._connectorId);
   const { createdComponents } =
     useSelector(state =>
-      selectors.cloneData(state, resourceType, resourceId)
+      selectors.template(state, `${resourceType}-${resourceId}`)
     ) || {};
   const { isCloned, integrationId, sandbox } = useSelector(
     state => selectors.integrationClonedDetails(state, resource._id),
@@ -117,7 +117,7 @@ export default function ClonePreview(props) {
     return selectedAccount?.hasSandbox || selectedAccount?.hasConnectorSandbox;
   });
   const { components } = useSelector(state =>
-    selectors.clonePreview(state, resourceType, resourceId)
+    selectors.previewTemplate(state, `${resourceType}-${resourceId}`)
   );
   const columns = [
     {

@@ -77,6 +77,10 @@ export default {
       delete newValues['/blobKeyPath'];
     }
 
+    if (!newValues['/file/encoding']) {
+      newValues['/file/encoding'] = undefined;
+    }
+
     delete newValues['/file/compressFiles'];
 
     return {
@@ -154,6 +158,9 @@ export default {
     },
     's3.backupBucket': {
       fieldId: 's3.backupBucket',
+    },
+    'file.encoding': {
+      fieldId: 'file.encoding',
     },
     blobKeyPath: {
       fieldId: 'blobKeyPath',
@@ -252,6 +259,7 @@ export default {
         label: 'Advanced',
         fields: [
           's3.backupBucket',
+          'file.encoding',
           'blobKeyPath',
           'fileAdvancedSettings',
           'deleteAfterImport',

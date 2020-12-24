@@ -211,6 +211,7 @@ export default {
       tooltip: {
         backgroundColor: colors.celigoNeutral7,
         fontFamily: 'source sans pro',
+        fontSize: 13,
         color: colors.celigoWhite,
         border: '1px solid',
         borderColor: colors.celigoNeutral7,
@@ -380,7 +381,6 @@ export default {
         fontSize: '14px',
         lineHeight: '18px',
         letterSpacing: 'normal',
-        fontFamily: 'Roboto400',
       },
       overline: {
         fontSize: '12px',

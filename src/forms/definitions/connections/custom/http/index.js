@@ -53,7 +53,7 @@ import accelo from './accelo';
 import acumatica from './acumatica';
 import tsheets from './tsheets';
 import etsy from './etsy';
-// import googledrive from './googledrive';
+import googledrive from './googledrive';
 import namely from './namely';
 import newegg from './newegg';
 import asana from './asana';
@@ -253,7 +253,7 @@ export default {
   splunk,
   anaplan,
   etsy,
-  // googledrive,
+  googledrive,
   namely,
   newegg,
   asana,

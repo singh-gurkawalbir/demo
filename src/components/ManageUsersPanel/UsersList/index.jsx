@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import ResourceTable from '../../ResourceTable';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import { USER_ACCESS_LEVELS } from '../../../utils/constants';
 import ManagePermissionsDrawer from '../Drawers/ManagePermissions';
 import InviteUserDrawer from '../Drawers/InviteUser';
 import ViewNotificationsDrawer from '../Drawers/ViewNotifications';
@@ -12,10 +11,8 @@ import LoadResources from '../../LoadResources';
 
 export default function UsersList({ integrationId, storeId, className }) {
   const dispatch = useDispatch();
-  const isAccountOwner = useSelector(state =>
-    selectors.userPermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
-  );
-
+  const accessLevel = useSelector(state => selectors.resourcePermissions(state)?.accessLevel);
+  const isAccountOwner = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
@@ -40,8 +37,9 @@ export default function UsersList({ integrationId, storeId, className }) {
     {
       integrationId,
       storeId,
+      accessLevel,
       isUserInErrMgtTwoDotZero,
-    }), [integrationId, storeId, isUserInErrMgtTwoDotZero]);
+    }), [integrationId, storeId, accessLevel, isUserInErrMgtTwoDotZero]);
 
   return (
     <>

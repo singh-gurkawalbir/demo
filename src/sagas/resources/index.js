@@ -10,7 +10,7 @@ import metadataSagas from './meta';
 import getRequestOptions from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
-import { REST_ASSISTANTS, USER_ACCESS_LEVELS } from '../../utils/constants';
+import { REST_ASSISTANTS } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
@@ -78,9 +78,9 @@ export function* linkUnlinkSuiteScriptIntegrator({ connectionId, link }) {
   const isLinked = userPreferences &&
     userPreferences.ssConnectionIds &&
     userPreferences.ssConnectionIds.includes(connectionId);
-  const userAccessLevel = yield select(selectors.userAccessLevel);
+  const isAccountOwnerOrAdmin = yield select(selectors.isAccountOwnerOrAdmin);
 
-  if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+  if (isAccountOwnerOrAdmin) {
     if (link) {
       if (!isLinked) {
         yield put(
@@ -631,8 +631,8 @@ export function* getResourceCollection({ resourceType }) {
   /** hide the error that GET SuiteScript tiles throws when connection is offline */
   if (
     resourceType &&
-    resourceType.includes('suitescript/connections/') &&
-    resourceType.includes('/tiles')
+    ((resourceType.includes('suitescript/connections/') && resourceType.includes('/tiles')) ||
+    resourceType.includes('ashares'))
   ) {
     hideNetWorkSnackbar = true;
   }

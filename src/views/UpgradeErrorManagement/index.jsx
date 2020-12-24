@@ -10,7 +10,7 @@ import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import { USER_ACCESS_LEVELS, ERROR_MANAGEMENT_DOC_URL } from '../../utils/constants';
+import { ERROR_MANAGEMENT_DOC_URL } from '../../utils/constants';
 import LoadResources from '../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
@@ -46,7 +46,7 @@ export default function UpgradeErrorManagement() {
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
   const isMigrationPageAccessible = useSelector(state => {
-    const isAccountOwner = selectors.resourcePermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
+    const isAccountOwner = selectors.isAccountOwnerOrAdmin(state);
     const isUserInErrMgtTwoDotZero = selectors.isOwnerUserInErrMgtTwoDotZero(state);
 
     return isAccountOwner && !isUserInErrMgtTwoDotZero;

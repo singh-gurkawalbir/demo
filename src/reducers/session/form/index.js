@@ -107,13 +107,13 @@ selectors.isActionButtonVisible = (state, formKey, fieldVisibleRules) => {
 selectors.isAnyFieldVisibleForMetaForm = (state, formKey, fieldMeta) => {
   const { fields } = selectors.formState(state, formKey) || {};
 
-  return isAnyFieldVisibleForMeta(fieldMeta, fields);
+  return isAnyFieldVisibleForMeta(fieldMeta, fields || []);
 };
 
 selectors.isExpansionPanelRequiredForMetaForm = (state, formKey, fieldMeta) => {
   const { fields } = selectors.formState(state, formKey) || {};
 
-  return isExpansionPanelRequired(fieldMeta, fields);
+  return isExpansionPanelRequired(fieldMeta, fields || []);
 };
 
 selectors.isExpansionPanelErroredForMetaForm = (

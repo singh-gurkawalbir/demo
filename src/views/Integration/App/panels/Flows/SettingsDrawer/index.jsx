@@ -24,6 +24,7 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.appBarHeight,
   },
   settingsDrawerForm: {
+    overflowY: 'auto',
     padding: theme.spacing(2, 3),
     '& + div': {
       margin: theme.spacing(0, 3),
@@ -33,23 +34,22 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(-2),
       marginLeft: theme.spacing(-3),
       marginRight: theme.spacing(2),
-      minHeight: '100%',
-    },
-  },
-  settingsDrawerCamForm: {
-    minHeight: 'calc(100% - 65px)',
-    marginBottom: theme.spacing(4),
-    '& > div': {
-      height: '100%',
-      '& > div': {
-        height: '100%',
-        paddingBottom: theme.spacing(5),
+      '& > * button > span': {
+        justifyContent: 'flex-start',
       },
     },
   },
-  settingsDrawerDetails: {
-    minHeight: 'calc(100% - 138px)',
+  settingsDrawerCamForm: {
+    '& > div': {
+      height: '100%',
+      '& > div': {
+        paddingBottom: theme.spacing(3),
+      },
+    },
   },
+  // settingsDrawerDetails: {
+  //   minHeight: 'calc(100% - 138px)',
+  // },
 }));
 
 function SettingsDrawer({ integrationId, storeId, parentUrl }) {
@@ -93,6 +93,7 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
   );
   const activeTabProps = useActiveTab();
 
+  // Todo: Sravan, we should use Rightdrawer here
   return (
     <Drawer
       // variant="persistent"
