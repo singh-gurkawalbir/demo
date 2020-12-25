@@ -801,6 +801,12 @@ export const sourceOptions = {
       value: 'transferFiles',
     },
   ],
+  googledrive: [
+    {
+      label: 'Transfer files out of source application',
+      value: 'transferFiles',
+    },
+  ],
   as2: [
     {
       label: 'Transfer files out of source application',
@@ -848,6 +854,16 @@ export const sourceOptions = {
 };
 export const destinationOptions = {
   ftp: [
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Lookup additional files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  googledrive: [
     {
       label: 'Transfer files into destination application',
       value: 'transferFiles',

@@ -13,6 +13,7 @@ import {
   isBlobTypeResource,
   isAS2Resource,
   isRestCsvMediaTypeExport,
+  isFileProviderAssistant,
 } from '../../../utils/resource';
 import { exportPreview } from '../utils/previewCalls';
 import { saveRawDataOnResource, removeRawDataOnResource } from './utils';
@@ -50,7 +51,7 @@ export function* _fetchAndSaveRawDataForResource({ type, resourceId, tempResourc
   if (
     isFileAdaptor(resourceObj) ||
     isAS2Resource(resourceObj) ||
-    (type === 'exports' && isRestCsvMediaTypeExport(resourceObj, connectionObj))
+    (type === 'exports' && (isRestCsvMediaTypeExport(resourceObj, connectionObj) || isFileProviderAssistant(resourceObj, connectionObj)))
   ) {
     return yield call(saveRawDataForFileAdaptors, {
       resourceId,
