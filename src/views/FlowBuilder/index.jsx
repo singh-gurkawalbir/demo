@@ -49,7 +49,7 @@ function FlowBuilder() {
   // #endregion
 
   return (
-    <LoadResources required resources="imports, exports, flows">
+    <LoadResources required resources="imports, exports, flows, scripts">
       <Redirection>
         <ResourceDrawer flowId={flowId} integrationId={integrationId} />
         <ConfigConnectionDebugger />

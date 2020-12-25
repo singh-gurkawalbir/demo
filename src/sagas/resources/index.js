@@ -575,7 +575,8 @@ export function* patchResource({ resourceType, id, patchSet, options = {} }) {
   }
 }
 
-export function* requestReferences({ resourceType, id, options = {} }) {
+export function* requestReferences({ resourceType, id, skipSave = false, options = {} }) {
+  console.log('resourceType, id', resourceType, id);
   const path = `/${resourceType}/${id}/dependencies`;
 
   try {
@@ -584,7 +585,7 @@ export function* requestReferences({ resourceType, id, options = {} }) {
       hidden: !!options.ignoreError,
     });
 
-    yield put(actions.resource.receivedReferences(resourceReferences));
+    if (!skipSave) yield put(actions.resource.receivedReferences(resourceReferences));
 
     return resourceReferences;
   } catch (error) {

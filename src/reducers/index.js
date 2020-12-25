@@ -36,7 +36,7 @@ import {
   flowAllowsScheduling,
   getFlowType,
   flowSupportsSettings,
-} from '../utils/flows';
+  getScriptsReferencedInFlow} from '../utils/flows';
 import {
   PASSWORD_MASK,
   USER_ACCESS_LEVELS,
@@ -79,6 +79,7 @@ import { stringCompare } from '../utils/sort';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
+
 import { getFilteredErrors } from '../utils/errorManagement';
 import {
   getFlowStepsYetToBeCreated,
@@ -5192,3 +5193,21 @@ selectors.responseMappingExtracts = (state, resourceId, flowId) => {
     resource.adaptorType
   );
 };
+
+const emptySet = [];
+
+selectors.scripts = createSelector(
+  state => selectors.resourceList(state, { type: 'scripts' }).resources,
+  (state, flowId) => flowId && selectors.resource(state, 'flows', flowId),
+  state => selectors.resourceList(state, { type: 'imports' }).resources,
+  state => selectors.resourceList(state, { type: 'exports' }).resources,
+  (scripts, flow, imports, exports) => {
+    if (!scripts) {
+      return emptySet;
+    }
+    if (!flow) {
+      return scripts;
+    }
+
+    return getScriptsReferencedInFlow({scripts, flow, imports, exports});
+  });
