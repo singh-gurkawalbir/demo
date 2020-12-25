@@ -3036,18 +3036,13 @@ selectors.mkSubscribedNotifications = () => createSelector(
 selectors.mkDiyFlows = () => createSelector(
   state => state?.data?.resources?.flows,
   (_, _integrationId) => _integrationId,
-  (_1, _2, options) => options,
-  (allFlows = emptyArray, _integrationId, options) => {
-    const flows = allFlows.filter(f => {
-      if (!_integrationId || _integrationId === 'none') {
-        return !f._integrationId;
-      }
+  (flows = emptyArray, _integrationId) => flows.filter(f => {
+    if (!_integrationId || _integrationId === 'none') {
+      return !f._integrationId;
+    }
 
-      return f._integrationId === _integrationId;
-    });
-
-    return options ? filterAndSortResources(flows, options) : flows;
-  }
+    return f._integrationId === _integrationId;
+  })
 );
 
 selectors.mkDiyConnections = () => createSelector(
