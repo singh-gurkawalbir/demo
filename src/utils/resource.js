@@ -133,7 +133,7 @@ export function filterAndSortResources(resources = emptyList, config = emptyObje
   if (!Array.isArray(resources)) {
     return emptyList;
   }
-  const { sort = emptyObject, searchBy, keyword } = config;
+  const { sort = emptyObject, searchBy, keyword } = config || {};
   const stringTest = r => {
     if (!keyword) return true;
     const searchableText =
