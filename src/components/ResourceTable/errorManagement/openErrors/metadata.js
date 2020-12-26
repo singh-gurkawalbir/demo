@@ -5,6 +5,8 @@ import ViewErrorDetails from '../actions/ViewErrorDetails';
 import EditRetryData from '../actions/EditRetry';
 import SelectError from '../cells/SelectError';
 import SelectAllErrors from '../cells/SelectAllErrors';
+import SelectSource from '../cells/SelectSource';
+import SelectDate from '../cells/SelectDate';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import OverflowWrapper from '../cells/OverflowWrapper';
 
@@ -27,16 +29,20 @@ export default {
     {
       heading: 'Code',
       value: r => <OverflowWrapper message={r.code} />,
-      width: '20%',
+      width: '18%',
     },
     {
-      heading: 'Source',
+      headerValue: function SelectOpenSource(r, actionProps) {
+        return <SelectSource {...actionProps} />;
+      },
       value: r => <OverflowWrapper message={r.source} />,
       width: '15%',
     },
     {
-      heading: 'Timestamp',
-      width: '10%',
+      headerValue: function SelectTimestamp(r, actionProps) {
+        return <SelectDate {...actionProps} />;
+      },
+      width: '12%',
       value: r => <CeligoTimeAgo date={r.occurredAt} />,
     },
   ],

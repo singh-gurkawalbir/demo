@@ -6,6 +6,8 @@ import SelectAllErrors from '../cells/SelectAllErrors';
 import UserName from '../cells/UserName';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import OverflowWrapper from '../cells/OverflowWrapper';
+import SelectSource from '../cells/SelectSource';
+import SelectDate from '../cells/SelectDate';
 
 export default {
   columns: [
@@ -29,23 +31,29 @@ export default {
       value: r => <OverflowWrapper message={r.code} />,
     },
     {
-      heading: 'Source',
+      headerValue: function SelectResolvedSource(r, actionProps) {
+        return <SelectSource {...actionProps} />;
+      },
       width: '10%',
       value: r => <OverflowWrapper message={r.source} />,
     },
     {
-      heading: 'Timestamp',
-      width: '10%',
+      headerValue: function SelectTimestamp(r, actionProps) {
+        return <SelectDate {...actionProps} />;
+      },
+      width: '12%',
       value: r => <CeligoTimeAgo date={r.occurredAt} />,
     },
     {
       heading: 'Resolved by',
-      width: '15%',
+      width: '12%',
       value: (r, { flowId }) => <UserName userId={r.resolvedBy} flowId={flowId} />,
     },
     {
-      heading: 'Resolved at',
-      width: '10%',
+      headerValue: function SelectResolvedAt(r, actionProps) {
+        return <SelectDate {...actionProps} title="Resolved at" />;
+      },
+      width: '12%',
       value: r => <CeligoTimeAgo date={r.resolvedAt} />,
     },
   ],

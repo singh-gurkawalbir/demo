@@ -81,3 +81,33 @@ export const getErrorCountDiffMap = (prevErrorMap = {}, currErrorMap = {}) => {
   return errorDiffMap;
 };
 
+export const getSourceOptions = () => {
+  const _sourceEnums = {
+    INTERNAL: 'internal',
+    APPLICATION: 'application',
+    CONNECTION: 'connection',
+    RESOURCE: 'resource',
+    TRANSFORMATION: 'transformation',
+    OUTPUT_FILTER: 'output_filter',
+    INPUT_FILTER: 'input_filter',
+    IMPORT_FILTER: 'import_filter',
+    LOOKUP: 'lookup',
+    MAPPING: 'mapping',
+    RESPONSE_MAPPING: 'response_mapping',
+    PRE_SAVE_PAGE_HOOK: 'pre_save_page_hook',
+    PRE_MAP_HOOK: 'pre_map_hook',
+    POST_MAP_HOOK: 'post_map_hook',
+    POST_SUBMIT_HOOK: 'post_submit_hook',
+    POST_RESPONE_MAP_HOOK: 'post_response_map_hook',
+    POST_AGGREGATE_HOOK: 'post_aggregate_hook',
+    // adding ss hooks here as well so as to check the response from restlets
+    PRE_SEND_HOOK_SS: 'pre_send_hook_ss',
+    PRE_MAP_HOOK_SS: 'pre_map_hook_ss',
+    POST_MAP_HOOK_SS: 'post_map_hook_ss',
+    POST_SUBMIT_HOOK_SS: 'post_submit_hook_ss',
+  };
+  const options = Object.values(_sourceEnums).map(source => ({_id: source, name: source}));
+
+  return [{ _id: 'all', name: 'All sources'}, ...options];
+};
+
