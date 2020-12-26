@@ -2075,29 +2075,8 @@ const hooks = {
 };
 
 const script = {
-  requestLogs: ({
-    scriptId,
-    flowId,
-    resourceId,
-    functionType,
-    _forUserId,
-    startAfterKey,
-    time_lte,
-    time_gt,
-    _resourceId,
-  }) =>
-    action(actionTypes.SCRIPT.LOGS_REQUEST, {
-      scriptId,
-      flowId,
-      resourceId,
-      functionType,
-      _forUserId,
-      startAfterKey,
-      time_lte,
-      time_gt,
-      _resourceId,
-    }),
-
+  requestLogs: ({ scriptId, flowId }) =>
+    action(actionTypes.SCRIPT.LOGS_REQUEST, { scriptId, flowId }),
   receivedLogs: ({logs, nextPageURL, scriptId, ...options}) =>
     action(actionTypes.SCRIPT.LOGS_RECEIVED, {logs, nextPageURL, scriptId, ...options}),
   requestFailed: ({flowId, scriptId}) =>
@@ -2107,27 +2086,13 @@ const script = {
   patchFilter: ({scriptId, flowId, field, value}) =>
     action(actionTypes.SCRIPT.PATCH_FILTER, {scriptId, flowId, field, value}),
   startDebug: ({ scriptId, value }) =>
-    action(actionTypes.SCRIPT.START_DEBUG, {
-      scriptId,
-      value,
-    }),
+    action(actionTypes.SCRIPT.START_DEBUG, { scriptId, value }),
   refreshLogs: ({ scriptId, flowId }) =>
-    action(actionTypes.SCRIPT.LOGS_REFRESH, {
-      scriptId,
-      flowId,
-    }),
+    action(actionTypes.SCRIPT.LOGS_REFRESH, { scriptId, flowId }),
   clear: ({ flowId, scriptId }) =>
-    action(actionTypes.SCRIPT.LOGS_CLEAR, {
-      flowId,
-      scriptId,
-    }),
+    action(actionTypes.SCRIPT.LOGS_CLEAR, { flowId, scriptId }),
   loadMore: ({ flowId, scriptId }) =>
-    action(actionTypes.SCRIPT.LOGS_LOAD_MORE, {
-      flowId,
-      scriptId,
-      loadMore: true,
-    }),
-
+    action(actionTypes.SCRIPT.LOGS_LOAD_MORE, { flowId, scriptId, loadMore: true }),
 };
 
 export default {

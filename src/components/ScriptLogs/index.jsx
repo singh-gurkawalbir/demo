@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { makeStyles, MenuItem } from '@material-ui/core';
-import { addDays, addMinutes, startOfDay, endOfDay } from 'date-fns';
+import { addDays, addMinutes, startOfDay } from 'date-fns';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import DateRangeSelector from '../DateRangeSelector';
@@ -96,8 +96,8 @@ const rangeFilters = [
   {id: 'last24hours', label: 'Last 24 hours'},
 ];
 const defaultRange = {
-  startDate: startOfDay(addMinutes(new Date(), -15)),
-  endDate: endOfDay(new Date()),
+  startDate: addMinutes(new Date(), -15),
+  endDate: new Date(),
   preset: 'last15minutes',
 };
 

@@ -1,46 +1,17 @@
 import produce from 'immer';
-import { addMinutes, startOfDay, endOfDay } from 'date-fns';
+import { addMinutes } from 'date-fns';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 
 const emptySet = [];
 const emptyObj = {};
 
-// const findScript = (scriptObj, params = emptyObj) => scriptObj.find(script => {
-//   let toReturn = true;
-
-//   if (params._resourceId) {
-//     toReturn = toReturn && isEqual(sortBy(script._resourceId), sortBy(params._resourceId));
-//   }
-//   if (params.functionType) {
-//     toReturn = toReturn && isEqual(sortBy(script.functionType), sortBy(params.functionType));
-//   }
-//   if (params.flowId) {
-//     toReturn = toReturn && isEqual(sortBy(script.flowId), sortBy(params.flowId));
-//   }
-//   if (params.time_lte) {
-//     toReturn = toReturn && script.time_lte === params.time_lte;
-//   }
-//   if (params.time_gt) {
-//     toReturn = toReturn && script.time_gt === params.time_gt;
-//   }
-//   // if (params.startAfterKey) {
-//   //   toReturn = toReturn && script.startAfterKey === params.startAfterKey;
-//   // }
-//   if (params._forUserId) {
-//     toReturn = toReturn && script._forUserId === params._forUserId;
-//   }
-
-//   return toReturn;
-// });
 export default (state = {}, action) => {
   const { type, scriptId = '', resourceReferences, logs, nextPageURL, field, value, flowId = '' } = action;
-  // others => flowId, resourceId, functionType
   const key = `${scriptId}-${flowId}`;
 
   return produce(state, draft => {
     switch (type) {
-      // TODO (Aditya): Check for this
       case actionTypes.SCRIPT.LOGS_REQUEST:
         if (!draft.script) {
           draft.script = {};
@@ -51,8 +22,8 @@ export default (state = {}, action) => {
         draft.script[key].scriptId = scriptId;
         draft.script[key].flowId = flowId;
         draft.script[key].dateRange = {
-          startDate: startOfDay(addMinutes(new Date(), -15)),
-          endDate: endOfDay(new Date()),
+          startDate: addMinutes(new Date(), -15),
+          endDate: new Date(),
           preset: 'last15minutes',
         };
         draft.script[key].status = 'requested';
@@ -77,7 +48,6 @@ export default (state = {}, action) => {
             draft.script[key].logs.push({...log, index: (oldLogCount + index)});
           });
 
-          // draft.script[key].logs.push(...logs);
           draft.script[key].status = 'success';
           draft.script[key].nextPageURL = nextPageURL;
         }
@@ -112,7 +82,6 @@ export default (state = {}, action) => {
       case actionTypes.SCRIPT.LOGS_LOAD_MORE:
         if (draft.script[key]) {
           draft.script[key].status = 'requested';
-          // draft.script[key].script;
         }
         break;
       default:
