@@ -118,6 +118,7 @@ import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
 import DynaNetSuiteAPIVersion from './DynaNetSuiteAPIVersion';
 import DynaReplaceConnection from './DynaReplaceConnection';
 import DynaSelectRequestMediaType from './DynaSelectRequestMediaType';
+import DynaPreviewComponentsTable from './DynaPreviewComponentsTable';
 
 export default {
   suitescriptsettings: DynaRefreshableSettings,
@@ -162,6 +163,7 @@ export default {
   uploadfile: DynaUploadFile,
   labeltitle: DynaLabel,
   celigotable: DynaCeligoTable,
+  previewcomponentstable: DynaPreviewComponentsTable,
   hook: DynaHook,
   suitescripthook: DynaSuiteScriptHook,
   scriptcontent: DynaScriptContent,

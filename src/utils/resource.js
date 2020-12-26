@@ -1,7 +1,7 @@
 import { values, keyBy } from 'lodash';
 import shortid from 'shortid';
 import { isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS } from './constants';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, FILE_PROVIDER_ASSISTANTS } from './constants';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
@@ -359,6 +359,16 @@ export const isRestCsvMediaTypeExport = (resource, connection) => {
 
   // Check for media type 'csv' from connection object
   return connection && connection.rest && connection.rest.mediaType === 'csv';
+};
+export const isFileProviderAssistant = (resource, connection) => {
+  const { adaptorType } = resource || {};
+
+  // Returns false if it is not a http export
+  if (adaptorTypeMap[adaptorType] !== 'http') {
+    return false;
+  }
+
+  return connection && FILE_PROVIDER_ASSISTANTS.includes(connection.assistant);
 };
 
 export const isFlowResource = (flow, resourceId, resourceType) => {

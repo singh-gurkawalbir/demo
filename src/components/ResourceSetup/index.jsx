@@ -13,17 +13,17 @@ import ResourceDrawer from '../drawer/Resource';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
-    width: 660,
+    width: 824,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
+    overflowY: 'hidden',
   },
   resourceFormWrapper: {
     padding: theme.spacing(3),
-    borderColor: 'rgb(0,0,0,0.1)',
-    borderStyle: 'solid',
-    borderWidth: '1px 0 0 0',
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    overflowY: 'auto',
   },
 }));
 

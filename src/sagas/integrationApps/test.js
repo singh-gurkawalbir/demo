@@ -26,6 +26,7 @@ import {
   getMappingMetadata,
 } from './settings';
 import {initUninstall, uninstallStep, requestSteps} from './uninstaller2.0';
+import {resumeIntegration} from './resume';
 
 describe('installer saga', () => {
   describe('installStep generator', () => {
@@ -1426,5 +1427,26 @@ describe('uninstaller2.0 saga', () => {
         )
         .run();
     });
+  });
+});
+describe('resumeIntegration Saga', () => {
+  const integrationId = 'intId';
+
+  test('should make API call and dispatch received steps action', () => expectSaga(resumeIntegration, { integrationId })
+    .provide([[matchers.call.fn(apiCallWithRetry), {}]])
+    .call.fn(apiCallWithRetry)
+    .put(actions.resource.request('integrations', integrationId))
+    .put(actions.resource.requestCollection('flows'))
+    .put(actions.resource.requestCollection('exports'))
+    .put(actions.resource.requestCollection('imports'))
+    .run());
+
+  test('should dispatch failed action if API call throws error', () => {
+    const error = { message: 'Resume error' };
+
+    return expectSaga(resumeIntegration, { integrationId })
+      .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
+      .call.fn(apiCallWithRetry)
+      .run();
   });
 });

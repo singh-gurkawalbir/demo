@@ -1,4 +1,4 @@
-import { Divider, Grid, List, ListItem, makeStyles, Typography } from '@material-ui/core';
+import { Grid, List, ListItem, makeStyles } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink, useHistory, useRouteMatch } from 'react-router-dom';
@@ -9,6 +9,7 @@ import AddIcon from '../../../../../components/icons/AddIcon';
 import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
 import IconTextButton from '../../../../../components/IconTextButton';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
+import KeywordSearch from '../../../../../components/KeywordSearch';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
 import flowTableMeta from '../../../../../components/ResourceTable/flows/metadata';
@@ -28,6 +29,9 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+  },
+  actions: {
+    display: 'flex',
   },
   errorStatus: {
     justifyContent: 'center',
@@ -142,9 +146,8 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
     );
   }
   const sectionId = match.params?.sectionId;
-  const isMatchingWithSectionId = !!sectionId;
 
-  if (!isMatchingWithSectionId) {
+  if (!sectionId) {
     history.replace(`${match.url}/sections/${MISCELLANEOUS_SECTION_ID}`);
   }
 
@@ -180,6 +183,48 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
     </Grid>
   );
 };
+const defaultFilter = {
+  take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
+  sort: { orderBy: 'name', order: 'asc' },
+  searchBy: [
+    'name',
+  ],
+};
+const Title = ({flows, integrationId}) => {
+  const classes = useStyles();
+  const allTiles = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    tilesFilterConfig
+  ).resources;
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const integrationErrorsMap = useSelector(state => selectors.errorMap(state, integrationId)?.data) || {};
+  const currentTileErrorCount = isUserInErrMgtTwoDotZero ? allTiles.find(t => t._integrationId === integrationId)?.numError : 0;
+
+  let totalErrors = 0;
+
+  flows.forEach(flow => {
+    if (!flow.disabled && integrationErrorsMap[flow._id]) {
+      totalErrors += integrationErrorsMap[flow._id];
+    }
+  });
+
+  return (
+    <span className={classes.flowsPanelWithStatus}>
+      Integration flows
+      {(totalErrors || currentTileErrorCount) ? (
+        <>
+          <span className={classes.divider} />
+          <span className={classes.errorStatus}>
+            <StatusCircle variant="error" size="mini" />
+            <span>{totalErrors || currentTileErrorCount} errors</span>
+          </span>
+        </>
+      ) : null}
+    </span>
+  );
+};
 export default function FlowsPanel({ integrationId, childId }) {
   const isStandalone = integrationId === 'none';
   const classes = useStyles();
@@ -188,10 +233,24 @@ export default function FlowsPanel({ integrationId, childId }) {
   const [showDialog, setShowDialog] = useState(false);
   const filterKey = `${integrationId}-flows`;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
-  const flowsFilterConfig = useMemo(() => ({ ...flowFilter, type: 'flows' }), [flowFilter]);
+  const integrationChildren = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
+  const flowsFilterConfig = useMemo(() => ({ ...flowFilter,
+    type: 'flows',
+    filter: {
+      $where() {
+        const childIntegrationIds = integrationChildren.map(i => i.value);
+
+        // eslint-disable-next-line react/no-this-in-sfc
+        if (integrationId === STANDALONE_INTEGRATION.id) return !this._integrationId;
+        // eslint-disable-next-line react/no-this-in-sfc
+        if (childId && childId !== integrationId) return this._integrationId === childId;
+
+        // eslint-disable-next-line react/no-this-in-sfc
+        return childIntegrationIds.includes(this._integrationId);
+      },
+    } }), [childId, flowFilter, integrationChildren, integrationId]);
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
-  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
-  const allFlows = useSelectorMemo(
+  const flows = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsFilterConfig
   ).resources;
@@ -205,39 +264,11 @@ export default function FlowsPanel({ integrationId, childId }) {
     };
   },
   shallowEqual);
+  const flowErrorCountStatus = useSelector(state => selectors.errorMap(state, integrationId)?.status);
 
-  const flows = useMemo(
-    () =>
-      allFlows &&
-      allFlows.filter(
-        f =>
-          f._integrationId ===
-          (integrationId === STANDALONE_INTEGRATION.id
-            ? undefined
-            : (childId || integrationId))
-      ),
-    [allFlows, childId, integrationId]
-  );
-  const {
-    data: integrationErrorsMap = {},
-    status: flowErrorCountStatus,
-  } = useSelector(state => selectors.errorMap(state, integrationId));
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const allTiles = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    tilesFilterConfig
-  ).resources;
-  const currentTileErrorCount = isUserInErrMgtTwoDotZero ? allTiles.find(t => t._integrationId === integrationId)?.numError : 0;
-
-  let totalErrors = 0;
-
-  flows.forEach(flow => {
-    if (!flow.disabled && integrationErrorsMap[flow._id]) {
-      totalErrors += integrationErrorsMap[flow._id];
-    }
-  });
   const handleClose = useCallback(() => {
     setShowDialog();
   }, [setShowDialog]);
@@ -254,23 +285,6 @@ export default function FlowsPanel({ integrationId, childId }) {
     };
   }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
 
-  const title = useMemo(
-    () => (
-      <span className={classes.flowsPanelWithStatus}>
-        Integration flows
-        {(totalErrors || currentTileErrorCount) ? (
-          <>
-            <span className={classes.divider} />
-            <span className={classes.errorStatus}>
-              <StatusCircle variant="error" size="mini" />
-              <span>{totalErrors || currentTileErrorCount} errors</span>
-            </span>
-          </>
-        ) : null}
-      </span>
-    ),
-    [classes.divider, classes.errorStatus, classes.flowsPanelWithStatus, currentTileErrorCount, totalErrors]
-  );
   const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const templateName = useSelector(state => {
     if (!integration || !integration._templateId) return null;
@@ -290,8 +304,10 @@ export default function FlowsPanel({ integrationId, childId }) {
       appName,
       flowAttributes,
       integration,
+      showChild: (isIntegrationApp && childId === integrationId),
+      integrationChildren,
       templateName,
-    }), [integrationId, childId, isIntegrationApp, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration, templateName]);
+    }), [integrationId, childId, isIntegrationApp, isUserInErrMgtTwoDotZero, integrationChildren, appName, flowAttributes, integration, templateName]);
 
   if (!flowErrorCountStatus && isUserInErrMgtTwoDotZero) {
     return (
@@ -302,20 +318,6 @@ export default function FlowsPanel({ integrationId, childId }) {
   }
   const infoTextFlow =
     'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
-
-  if (isFrameWork2 && childId === integrationId && isIntegrationApp) {
-    return (
-      <div className={classes.root}>
-        <PanelHeader title="Integration flows" />
-        <Divider />
-        <div className={classes.content}>
-          <Typography component="span">
-            Choose a child from the drop-down to view flows.
-          </Typography>
-        </div>
-      </div>
-    );
-  }
 
   const basePath = getBasePath(match);
 
@@ -332,31 +334,37 @@ export default function FlowsPanel({ integrationId, childId }) {
       <ScheduleDrawer />
       <QueuedJobsDrawer />
 
-      <PanelHeader title={title} infoText={infoTextFlow}>
-        {canCreate && !isIntegrationApp && (
+      <PanelHeader title={<Title flows={flows} integrationId={integrationId} />} infoText={infoTextFlow}>
+        <div className={classes.actions}>
+          <KeywordSearch
+            filterKey={filterKey}
+            defaultFilter={defaultFilter}
+        />
+          {canCreate && !isIntegrationApp && (
           <IconTextButton
             component={Link}
             to={`${basePath}/flowBuilder/new`}
             data-test="createFlow">
             <AddIcon /> Create flow
           </IconTextButton>
-        )}
-        {canAttach && !isStandalone && !isIntegrationApp && (
+          )}
+          {canAttach && !isStandalone && !isIntegrationApp && (
           <IconTextButton
             onClick={() => setShowDialog(true)}
             data-test="attachFlow">
             <AttachIcon /> Attach flow
           </IconTextButton>
-        )}
-        {/* check if this condition is correct */}
-        {canEdit && !isIntegrationApp && (
+          )}
+          {/* check if this condition is correct */}
+          {canEdit && !isIntegrationApp && (
           <IconTextButton
             component={Link}
             to={`${basePath}/dataLoader/new`}
             data-test="loadData">
             <AddIcon /> Load data
           </IconTextButton>
-        )}
+          )}
+        </div>
       </PanelHeader>
 
       <LoadResources required resources="flows, exports">

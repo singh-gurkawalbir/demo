@@ -147,7 +147,7 @@ export default function LineGraphDrawer({ flowId }) {
         );
       }
     },
-    [dispatch, flowId, integrationId, preferences, range, selectedResources]
+    [dispatch, flowId, preferences, range, selectedResources]
   );
 
   return (

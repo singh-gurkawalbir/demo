@@ -1056,6 +1056,12 @@ const integrationApp = {
       installInprogress,
       id,
     }),
+  license: {
+    resume: integrationId => action(actionTypes.INTEGRATION_APPS.LICENSE.RESUME, {
+      integrationId,
+    }),
+  },
+
 };
 const ashare = {
   receivedCollection: ashares =>

@@ -123,6 +123,103 @@ Object {
 }
 `;
 
+exports[`getResourceFromAssets load correct form connections assistants should load a http assistant googledrive connection form 1`] = `
+Object {
+  "fieldMeta": Object {
+    "actions": undefined,
+    "fieldMap": Object {
+      "application": Object {
+        "fieldId": "application",
+      },
+      "http._iClientId": Object {
+        "connectionId": [Function],
+        "connectorId": [Function],
+        "fieldId": "http._iClientId",
+        "filter": Object {
+          "provider": "custom_oauth2",
+        },
+        "ignoreEnvironmentFilter": true,
+        "required": true,
+        "type": "dynaiclient",
+      },
+      "http.auth.oauth.callbackURL": Object {
+        "copyToClipboard": true,
+        "fieldId": "http.auth.oauth.callbackURL",
+      },
+      "http.auth.oauth.scope": Object {
+        "fieldId": "http.auth.oauth.scope",
+        "scopes": Array [
+          "https://www.googleapis.com/auth/drive",
+          "https://www.googleapis.com/auth/drive.readonly",
+          "https://www.googleapis.com/auth/drive.appfolder",
+          "https://www.googleapis.com/auth/drive.file",
+          "https://www.googleapis.com/auth/drive.install",
+          "https://www.googleapis.com/auth/drive.metadata",
+          "https://www.googleapis.com/auth/drive.metadata.readonly",
+          "https://www.googleapis.com/auth/drive.photos.readonly",
+          "https://www.googleapis.com/auth/drive.scripts",
+          "https://www.googleapis.com/auth/drive.appdata",
+          "https://www.googleapis.com/auth/drive.apps.readonly",
+          "https://www.googleapis.com/auth/drive.activity",
+          "https://www.googleapis.com/auth/drive.activity.readonly",
+        ],
+      },
+      "httpAdvanced": Object {
+        "formId": "httpAdvanced",
+      },
+      "name": Object {
+        "fieldId": "name",
+      },
+      "settings": Object {
+        "fieldId": "settings",
+      },
+    },
+    "layout": Object {
+      "containers": Array [
+        Object {
+          "containers": Array [
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "name",
+                "application",
+              ],
+              "label": "General",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "http.auth.oauth.callbackURL",
+                "http._iClientId",
+                "http.auth.oauth.scope",
+              ],
+              "label": "Configure your client id and secret",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "httpAdvanced",
+              ],
+              "label": "Advanced",
+            },
+          ],
+          "type": "collapse",
+        },
+        Object {
+          "fields": Array [
+            "settings",
+          ],
+        },
+      ],
+    },
+  },
+  "init": undefined,
+  "optionsHandler": [Function],
+  "preSave": [Function],
+  "validationHandler": [Function],
+}
+`;
+
 exports[`getResourceFromAssets load correct form connections assistants should load a rest assistant certify connection form 1`] = `
 Object {
   "fieldMeta": Object {
@@ -194,87 +291,6 @@ Object {
             "settings",
           ],
         },
-      ],
-    },
-  },
-  "init": undefined,
-  "optionsHandler": [Function],
-  "preSave": [Function],
-  "validationHandler": [Function],
-}
-`;
-
-exports[`getResourceFromAssets load correct form connections assistants should load a rest assistant googledrive connection form 1`] = `
-Object {
-  "fieldMeta": Object {
-    "actions": undefined,
-    "fieldMap": Object {
-      "application": Object {
-        "fieldId": "application",
-      },
-      "name": Object {
-        "fieldId": "name",
-      },
-      "rest.scope": Object {
-        "fieldId": "rest.scope",
-        "scopes": Array [
-          "https://www.googleapis.com/auth/drive",
-          "https://www.googleapis.com/auth/drive.readonly",
-          "https://www.googleapis.com/auth/drive.appfolder",
-          "https://www.googleapis.com/auth/drive.file",
-          "https://www.googleapis.com/auth/drive.install",
-          "https://www.googleapis.com/auth/drive.metadata",
-          "https://www.googleapis.com/auth/drive.metadata.readonly",
-          "https://www.googleapis.com/auth/drive.photos.readonly",
-          "https://www.googleapis.com/auth/drive.scripts",
-        ],
-      },
-      "restAdvanced": Object {
-        "formId": "restAdvanced",
-      },
-      "settings": Object {
-        "fieldId": "settings",
-      },
-    },
-    "layout": Object {
-      "containers": Array [
-        Object {
-          "containers": Array [
-            Object {
-              "collapsed": true,
-              "fields": Array [
-                "name",
-                "application",
-              ],
-              "label": "General",
-            },
-            Object {
-              "collapsed": true,
-              "fields": Array [
-                "http.unencrypted.partnerUserId",
-                "http.encrypted.partnerUserSecret",
-              ],
-              "label": "Application details",
-            },
-            Object {
-              "collapsed": true,
-              "fields": Array [
-                "restAdvanced",
-              ],
-              "label": "Advanced",
-            },
-          ],
-          "type": "collapse",
-        },
-        Object {
-          "fields": Array [
-            "settings",
-          ],
-        },
-      ],
-      "fields": Array [
-        "name",
-        "rest.scope",
       ],
     },
   },
@@ -3640,6 +3656,12 @@ Object {
       "ftp.fileNameStartsWith": Object {
         "fieldId": "ftp.fileNameStartsWith",
       },
+      "http.relativeURI": Object {
+        "fieldId": "http.relativeURI",
+        "label": "Directory path",
+        "required": true,
+        "type": "namewitheditor",
+      },
       "outputMode": Object {
         "defaultDisabled": [Function],
         "defaultValue": [Function],
@@ -3690,6 +3712,21 @@ Object {
             ],
           },
         ],
+      },
+      "s3.backupBucket": Object {
+        "fieldId": "s3.backupBucket",
+      },
+      "s3.bucket": Object {
+        "fieldId": "s3.bucket",
+      },
+      "s3.keyEndsWith": Object {
+        "fieldId": "s3.keyEndsWith",
+      },
+      "s3.keyStartsWith": Object {
+        "fieldId": "s3.keyStartsWith",
+      },
+      "s3.region": Object {
+        "fieldId": "s3.region",
       },
       "settings": Object {
         "fieldId": "settings",
@@ -5229,6 +5266,12 @@ Object {
       "edix12.format": Object {
         "fieldId": "edix12.format",
       },
+      "exportOneToMany": Object {
+        "formId": "exportOneToMany",
+      },
+      "file.batchSize": Object {
+        "fieldId": "file.batchSize",
+      },
       "file.compressionFormat": Object {
         "fieldId": "file.compressionFormat",
         "visibleWhen": Array [
@@ -5324,6 +5367,24 @@ Object {
       },
       "fixed.format": Object {
         "fieldId": "fixed.format",
+      },
+      "ftp.backupDirectoryPath": Object {
+        "fieldId": "ftp.backupDirectoryPath",
+      },
+      "ftp.directoryPath": Object {
+        "fieldId": "ftp.directoryPath",
+      },
+      "ftp.fileNameEndsWith": Object {
+        "fieldId": "ftp.fileNameEndsWith",
+      },
+      "ftp.fileNameStartsWith": Object {
+        "fieldId": "ftp.fileNameStartsWith",
+      },
+      "http.relativeURI": Object {
+        "fieldId": "http.relativeURI",
+        "label": "Directory path",
+        "required": true,
+        "type": "namewitheditor",
       },
       "outputMode": Object {
         "defaultDisabled": [Function],
@@ -8271,6 +8332,10 @@ Object {
       "file.encoding": Object {
         "fieldId": "file.encoding",
       },
+      "file.fileName": Object {
+        "fieldId": "file.fileName",
+        "required": true,
+      },
       "file.lookups": Object {
         "fieldId": "file.lookups",
         "visible": false,
@@ -8351,6 +8416,12 @@ Object {
       "ftp.useTempFile": Object {
         "fieldId": "ftp.useTempFile",
       },
+      "http.relativeURI": Object {
+        "fieldId": "http.relativeURI",
+        "label": "Directory path",
+        "required": true,
+        "type": "namewitheditor",
+      },
       "inputMode": Object {
         "defaultDisabled": [Function],
         "defaultValue": [Function],
@@ -8372,6 +8443,18 @@ Object {
           },
         ],
         "type": "mode",
+      },
+      "s3.backupBucket": Object {
+        "fieldId": "s3.backupBucket",
+      },
+      "s3.bucket": Object {
+        "fieldId": "s3.bucket",
+      },
+      "s3.fileKey": Object {
+        "fieldId": "s3.fileKey",
+      },
+      "s3.region": Object {
+        "fieldId": "s3.region",
       },
       "settings": Object {
         "fieldId": "settings",
@@ -10403,6 +10486,10 @@ Object {
       "file.encoding": Object {
         "fieldId": "file.encoding",
       },
+      "file.fileName": Object {
+        "fieldId": "file.fileName",
+        "required": true,
+      },
       "file.lookups": Object {
         "fieldId": "file.lookups",
         "visible": false,
@@ -10458,6 +10545,36 @@ Object {
             ],
           },
         ],
+      },
+      "ftp.backupDirectoryPath": Object {
+        "fieldId": "ftp.backupDirectoryPath",
+      },
+      "ftp.blobFileName": Object {
+        "fieldId": "ftp.blobFileName",
+      },
+      "ftp.blobInProgressFileName": Object {
+        "fieldId": "ftp.blobInProgressFileName",
+      },
+      "ftp.blobUseTempFile": Object {
+        "fieldId": "ftp.blobUseTempFile",
+      },
+      "ftp.directoryPath": Object {
+        "fieldId": "ftp.directoryPath",
+      },
+      "ftp.fileName": Object {
+        "fieldId": "ftp.fileName",
+      },
+      "ftp.inProgressFileName": Object {
+        "fieldId": "ftp.inProgressFileName",
+      },
+      "ftp.useTempFile": Object {
+        "fieldId": "ftp.useTempFile",
+      },
+      "http.relativeURI": Object {
+        "fieldId": "http.relativeURI",
+        "label": "Directory path",
+        "required": true,
+        "type": "namewitheditor",
       },
       "inputMode": Object {
         "defaultDisabled": [Function],

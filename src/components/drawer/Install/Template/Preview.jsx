@@ -35,6 +35,8 @@ const useStyles = makeStyles(theme => ({
   appLogos: {
     display: 'flex',
     alignItems: 'center',
+    position: 'relative',
+    top: theme.spacing(-2),
   },
   appDetailsHeader: {
     borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
@@ -162,7 +164,7 @@ export default function TemplatePreview() {
             <AddIcon className={classes.plusIcon} />
             <ApplicationImg
               markOnly
-              size="small"
+              size="medium"
               type={template.applications[1]}
             />
           </>
