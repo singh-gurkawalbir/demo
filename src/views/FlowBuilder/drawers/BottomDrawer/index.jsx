@@ -217,12 +217,12 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
     [setDrawerHeight, setTabValue, drawerHeight]
   );
   const handleScriptLogsClose = useCallback(
-    scriptId => event => {
+    () => event => {
       event.stopPropagation();
       setTabValue(0);
-      dispatch(actions.script.clear({scriptId, flowId}));
+      // dispatch(actions.script.clear({scriptId, flowId}));
     },
-    [dispatch, flowId, setTabValue]
+    [setTabValue]
   );
 
   const handleDebugLogsClose = useCallback(

@@ -3,8 +3,8 @@ import { call, takeEvery, put, select, takeLatest } from 'redux-saga/effects';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { requestReferences } from '../resources';
-import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '..';
+import { selectors } from '../../reducers';
 
 export function* getScriptDependencies({scriptId = '',
   flowId = '',
@@ -59,13 +59,6 @@ export function* getScriptDependencies({scriptId = '',
 }
 
 export function* fetchScriptLogs({scriptId = '', flowId = '', field, loadMore}) {
-  // resourceId,
-  // functionType,
-  // _forUserId,
-  // startAfterKey,
-  // time_lte,
-  // time_gt,
-  // _resourceId,
   if (field === 'logLevel') {
     // do not fetch data in case of log level change. Log level is a ui level filter
     return;
@@ -98,9 +91,10 @@ export function* fetchScriptLogs({scriptId = '', flowId = '', field, loadMore}) 
     if (functionType) {
       path += `&functionType=${functionType}`;
     }
-    // tmp fix
-    path += `&searchGranularity=${8}`;
   }
+
+  // tmp fix
+  path += `&searchGranularity=${8}`;
 
   let response;
   const opts = {

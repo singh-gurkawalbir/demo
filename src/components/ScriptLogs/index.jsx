@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { makeStyles, MenuItem } from '@material-ui/core';
 import { addDays, addMinutes, startOfDay } from 'date-fns';
@@ -179,6 +179,14 @@ export default function ScriptLogs({ flowId, scriptId }) {
     [page, rowsPerPage, scriptExecutionLogs]
   );
 
+  useEffect(() => {
+    dispatch(actions.script.requestLogs({scriptId, flowId}));
+
+    return () => {
+      dispatch(actions.script.clear({scriptId, flowId}));
+    };
+  }, [dispatch, scriptId, flowId]);
+
   return (
     <div className={classes.root}>
       <div className={classes.filterContainer}>
@@ -219,7 +227,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
             value={logLevel || ''}>
             <MenuItem value="">Select log level</MenuItem>
             {Object.keys(LOG_LEVELS).map(logLevel => (
-              <MenuItem key={LOG_LEVELS[logLevel]} value={LOG_LEVELS[logLevel]}>
+              <MenuItem key={logLevel} value={logLevel}>
                 {logLevel}
               </MenuItem>
             ))}

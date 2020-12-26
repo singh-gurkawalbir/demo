@@ -30,7 +30,7 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.SCRIPT.LOGS_REQUEST_FAILED:
-        if (draft.script[key]) {
+        if (draft?.script?.[key]) {
           draft.script[key].status = 'error';
           delete draft.script[key].nextPageURL;
         }
@@ -38,7 +38,7 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.SCRIPT.LOGS_RECEIVED: {
-        if (draft.script[key]) {
+        if (draft?.script?.[key]) {
           if (!draft.script[key].logs) {
             draft.script[key].logs = [];
           }
@@ -55,12 +55,12 @@ export default (state = {}, action) => {
         break;
       }
       case actionTypes.SCRIPT.SET_DEPENDENCY:
-        if (draft.script[key]) {
+        if (draft?.script?.[key]) {
           draft.script[key].resourceReferences = resourceReferences;
         }
         break;
       case actionTypes.SCRIPT.PATCH_FILTER:
-        if (draft.script[key]) {
+        if (draft?.script?.[key]) {
           draft.script[key][field] = value;
           if (field !== 'logLevel') {
             delete draft.script[key].logs;
@@ -69,7 +69,7 @@ export default (state = {}, action) => {
         }
         break;
       case actionTypes.SCRIPT.LOGS_REFRESH:
-        if (draft.script[key]) {
+        if (draft?.script?.[key]) {
           draft.script[key].status = 'requested';
           delete draft.script[key].logs;
           delete draft.script[key].nextPageURL;
@@ -80,7 +80,7 @@ export default (state = {}, action) => {
         delete draft.script;
         break;
       case actionTypes.SCRIPT.LOGS_LOAD_MORE:
-        if (draft.script[key]) {
+        if (draft?.script?.[key]) {
           draft.script[key].status = 'requested';
         }
         break;
