@@ -60,7 +60,7 @@ export default function (state = {}, action) {
         };
         break;
       }
-      case actionTypes.REUSE_OLD_PREVIEW_DATA: {
+      case actionTypes.FLOW_DATA.SET_STATUS_RECEIVED: {
         if (!flowId || !resourceId || !previewType) return;
         const resourceMap =
           (draft[flowId] &&

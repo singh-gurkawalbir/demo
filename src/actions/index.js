@@ -1296,8 +1296,8 @@ const flowData = {
       previewData,
       previewType,
     }),
-  reuseOldPreviewData: (flowId, resourceId, previewType) =>
-    action(actionTypes.FLOW_DATA.REUSE_OLD_PREVIEW_DATA, {
+  setStatusReceived: (flowId, resourceId, previewType) =>
+    action(actionTypes.FLOW_DATA.SET_STATUS_RECEIVED, {
       flowId,
       resourceId,
       previewType,

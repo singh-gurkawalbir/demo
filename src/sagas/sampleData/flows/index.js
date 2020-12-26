@@ -209,7 +209,7 @@ export function* fetchPageProcessorPreview({
   // dont empty the state, rather use old preview data
   if (flowDataState?.refresh && existingPreviewData && !previewData) {
     return yield put(
-      actions.flowData.reuseOldPreviewData(
+      actions.flowData.setStatusReceived(
         flowId,
         _pageProcessorId,
         previewType
