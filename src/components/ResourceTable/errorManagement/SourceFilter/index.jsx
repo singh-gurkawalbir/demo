@@ -26,11 +26,13 @@ export default function SourceFilter(props) {
 
     return [...selectedIds, id];
   }, []);
+  const selected = ['all'];
 
   return (
     <MultiSelectFilter
       Icon={FilterIcon}
       items={values}
+      selected={selected}
       onSave={onSave}
       onSelect={handleSelect}
     />
