@@ -1,14 +1,12 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 // import { useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 import { addDays, startOfDay } from 'date-fns';
-import FilterIcon from '../../../icons/FilterIcon';
 // import actions from '../../../../actions';
 // import { selectors } from '../../../../reducers';
 // import ActionButton from '../../../ActionButton';
 // import { getSelectedRange } from '../../../../utils/flowMetrics';
 import DateRangeSelector from '../../../DateRangeSelector';
+import ErrorFilterIcon from '../ErrorFilterIcon';
 
 const defaultRange = {
   startDate: startOfDay(addDays(new Date(), -29)).toISOString(),
@@ -16,11 +14,6 @@ const defaultRange = {
   preset: 'last30days',
 };
 
-const useStyles = makeStyles(theme => ({
-  filterSelected: {
-    color: theme.palette.primary.main,
-  },
-}));
 // eslint-disable-next-line no-empty-pattern
 export default function SelectAllErrors({
   // flowId,
@@ -32,23 +25,19 @@ export default function SelectAllErrors({
   title = 'Timestamp',
 }) {
   // const dispatch = useDispatch();
-  const classes = useStyles();
-  const [selected, setSelected] = useState(false);
   const handleDateFilter = useCallback(
     () => {
       // console.log(dateFilter);
-      setSelected(true);
     },
     [],
   );
-
-  const Filter = () => <FilterIcon className={clsx({[classes.filterSelected]: selected})} />;
+  const FilterIcon = () => <ErrorFilterIcon />;
 
   return (
     <div> {title}
       <DateRangeSelector
         onSave={handleDateFilter}
-        Icon={Filter}
+        Icon={FilterIcon}
         value={{
           startDate: new Date(defaultRange.startDate),
           endDate: new Date(defaultRange.endDate),

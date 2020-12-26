@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 // import { useDispatch, useSelector } from 'react-redux';
-import FilterIcon from '../../../icons/FilterIcon';
+import ErrorFilterIcon from '../ErrorFilterIcon';
 // import actions from '../../../../actions';
 // import { selectors } from '../../../../reducers';
 // import ActionButton from '../../../ActionButton';
@@ -27,6 +27,7 @@ export default function SourceFilter(props) {
     return [...selectedIds, id];
   }, []);
   const selected = ['all'];
+  const FilterIcon = () => <ErrorFilterIcon />;
 
   return (
     <MultiSelectFilter

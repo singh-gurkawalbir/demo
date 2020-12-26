@@ -82,6 +82,7 @@ export const getErrorCountDiffMap = (prevErrorMap = {}, currErrorMap = {}) => {
 };
 
 export const getSourceOptions = () => {
+  // Ref: https://github.com/celigo/integrator-adaptor/blob/master/util/errorUtil.js#L68
   const sourceOptions = {
     internal: 'Internal',
     application: 'Application',
