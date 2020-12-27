@@ -1,5 +1,10 @@
 import { get } from 'lodash';
 
+export const FILTER_KEYS = {
+  OPEN: 'openErrors',
+  RESOLVED: 'resolvedErrors',
+};
+
 export const getFilteredErrors = (errors = [], options = {}) => {
   const { keyword, searchBy = [] } = options;
 

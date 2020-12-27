@@ -14,6 +14,7 @@ import { selectors } from '../../../reducers';
 import CeligPagination from '../../CeligoPagination';
 import ResourceTable from '../../ResourceTable';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { FILTER_KEYS } from '../../../utils/errorManagement';
 
 const useStyles = makeStyles(theme => ({
   errorsKeywordSearch: {
@@ -103,10 +104,10 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE);
-  const errorType = isResolved ? 'resolvedErrors' : 'openErrors';
   const defaultFilter = isResolved ? defaultResolvedErrorsFilter : defaultOpenErrorsFilter;
+  const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
   const errorFilter = useSelector(
-    state => selectors.filter(state, errorType) || defaultFilter
+    state => selectors.filter(state, filterKey) || defaultFilter
   );
   const isAnyActionInProgress = useSelector(state =>
     selectors.isAnyErrorActionInProgress(state, {
@@ -116,7 +117,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   );
 
   const dataFilter = useSelector(
-    state => selectors.filter(state, errorType) || defaultFilter
+    state => selectors.filter(state, filterKey) || defaultFilter
   );
   const isFlowDisabled = useSelector(state =>
     selectors.resource(state, 'flows', flowId)?.disabled
@@ -147,7 +148,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const isFreshDataLoad = !!((!errorObj.status || errorObj.status === 'requested') && !errorObj.nextPageURL);
   const actionProps = useMemo(
     () => ({
-      filterKey: errorType,
+      filterKey,
       defaultFilter,
       resourceId,
       flowId,
@@ -155,10 +156,13 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
       isResolved,
       isFlowDisabled,
     }),
-    [errorType, flowId, isAnyActionInProgress, resourceId, defaultFilter, isResolved, isFlowDisabled]
+    [filterKey, flowId, isAnyActionInProgress, resourceId, defaultFilter, isResolved, isFlowDisabled]
   );
   const fetchErrors = useCallback(
-    loadMore =>
+    loadMore => {
+      if (!loadMore) {
+        dispatch(actions.clearFilter(filterKey));
+      }
       dispatch(
         actions.errorManager.flowErrorDetails.request({
           flowId,
@@ -166,8 +170,9 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
           loadMore,
           isResolved,
         })
-      ),
-    [dispatch, flowId, resourceId, isResolved]
+      );
+    },
+    [dispatch, flowId, resourceId, isResolved, filterKey]
   );
   const fetchMoreErrors = useCallback(() => fetchErrors(true), [
     fetchErrors,
@@ -242,7 +247,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
             hasErrors &&
               (
                 <div className={classes.errorsKeywordSearch}>
-                  <KeywordSearch filterKey={errorType} defaultFilter={defaultFilter} />
+                  <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
                 </div>
               )
             }
@@ -285,7 +290,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
           <ResourceTable
             resources={errorsInCurrentPage}
             className={classes.errorDetailsTable}
-            resourceType={errorType}
+            resourceType={filterKey}
             actionProps={actionProps}
           />
         </>

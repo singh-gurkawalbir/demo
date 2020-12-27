@@ -324,7 +324,7 @@ export default function getRequestOptions(
         sources.forEach(source => queryParams.push(`source=${source}`));
       }
 
-      path += `?${queryParams.join('&')}`;
+      path += (nextPageURL ? `&${queryParams.join('&')}` : `?${queryParams.join('&')}`);
 
       return {
         path,

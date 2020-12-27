@@ -5,12 +5,14 @@ import actions from '../../actions';
 import ErrorTable from './ErrorTable';
 import DownloadErrorsDrawer from './DownloadErrorsDrawer';
 import ErrorDetailsDrawer from './ErrorTable/ErrorDetailsDrawer';
+import { FILTER_KEYS } from '../../utils/errorManagement';
 import { selectors } from '../../reducers';
 
 export default function ErrorList({ flowId, errorType }) {
   const match = useRouteMatch();
   const dispatch = useDispatch();
   const { resourceId } = match.params;
+
   const integrationId = useSelector(state =>
     selectors.resource(state, 'flows', flowId)?._integrationId || 'none'
   );
@@ -24,8 +26,8 @@ export default function ErrorList({ flowId, errorType }) {
     return () => {
       dispatch(actions.errorManager.retryStatus.clear(flowId));
       dispatch(actions.errorManager.flowErrorDetails.clear({ flowId, resourceId }));
-      dispatch(actions.clearFilter('openErrors'));
-      dispatch(actions.clearFilter('resolvedErrors'));
+      dispatch(actions.clearFilter(FILTER_KEYS.OPEN));
+      dispatch(actions.clearFilter(FILTER_KEYS.RESOLVED));
     };
   }, [dispatch, flowId, resourceId]);
 
