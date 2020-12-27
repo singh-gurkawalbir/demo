@@ -1,3 +1,4 @@
+import moment from 'moment';
 import actionTypes from '../actions/types';
 import { JOB_TYPES } from './constants';
 
@@ -318,12 +319,19 @@ export default function getRequestOptions(
         : `/flows/${flowId}/${resourceId}/${isResolved ? 'resolved' : 'errors'}`;
       const queryParams = [];
 
-      const { sources = [] } = filters;
+      const { sources = [], occuredAt, resolvedAt } = filters;
 
       if (!sources.includes('all')) {
         sources.forEach(source => queryParams.push(`source=${source}`));
       }
-
+      if (occuredAt?.startDate && occuredAt?.endDate) {
+        queryParams.push(`occurredAt_gte=${moment(occuredAt.startDate).toISOString()}`);
+        queryParams.push(`occurredAt_lte=${moment(occuredAt.endDate).toISOString()}`);
+      }
+      if (resolvedAt?.startDate && resolvedAt?.endDate) {
+        queryParams.push(`resolvedAt_gte=${new Date(resolvedAt.startDate).toISOString()}`);
+        queryParams.push(`resolvedAt_lte=${new Date(resolvedAt.endDate).toISOString()}`);
+      }
       path += (nextPageURL ? `&${queryParams.join('&')}` : `?${queryParams.join('&')}`);
 
       return {

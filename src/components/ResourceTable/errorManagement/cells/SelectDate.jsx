@@ -1,9 +1,8 @@
-import React, { useCallback } from 'react';
-// import { useDispatch } from 'react-redux';
+import React, { useCallback, useMemo } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { addDays, startOfDay } from 'date-fns';
-// import actions from '../../../../actions';
-// import { selectors } from '../../../../reducers';
-// import ActionButton from '../../../ActionButton';
+import actions from '../../../../actions';
+import { selectors } from '../../../../reducers';
 // import { getSelectedRange } from '../../../../utils/flowMetrics';
 import DateRangeSelector from '../../../DateRangeSelector';
 import ErrorFilterIcon from '../ErrorFilterIcon';
@@ -14,35 +13,62 @@ const defaultRange = {
   preset: 'last30days',
 };
 
-// eslint-disable-next-line no-empty-pattern
 export default function SelectDate({
-  // flowId,
-  // resourceId,
-  // isResolved,
-  // filterKey,
-  // defaultFilter,
+  flowId,
+  resourceId,
+  isResolved,
+  filterKey,
   // actionInProgress,
   title = 'Timestamp',
+  filterBy = 'occuredAt',
 }) {
-  // const dispatch = useDispatch();
-  const handleDateFilter = useCallback(
-    () => {
-      // console.log(dateFilter);
-    },
-    [],
+  const dispatch = useDispatch();
+  const filter = useSelector(state =>
+    selectors.filter(state, filterKey),
+  shallowEqual
   );
-  const FilterIcon = () => <ErrorFilterIcon />;
+  const isDateFilterSelected = !!filter[filterBy];
+
+  const handleDateFilter = useCallback(
+    dateFilter => {
+      dispatch(
+        actions.patchFilter(filterKey, {
+          ...filter,
+          [filterBy]: dateFilter,
+        })
+      );
+      dispatch(
+        actions.errorManager.flowErrorDetails.request({
+          flowId,
+          resourceId,
+          isResolved,
+        })
+      );
+    },
+    [dispatch, flowId, resourceId, isResolved, filterKey, filterBy, filter],
+  );
+  const FilterIcon = () => <ErrorFilterIcon selected={isDateFilterSelected} />;
+
+  const selectedDate = useMemo(() => {
+    const defaultFilter = {
+      startDate: new Date(defaultRange.startDate),
+      endDate: new Date(defaultRange.endDate),
+      preset: defaultRange.preset,
+    };
+
+    return isDateFilterSelected ? {
+      startDate: new Date(filter[filterBy].startDate),
+      endDate: new Date(filter[filterBy].endDate),
+      preset: filter[filterBy].preset,
+    } : defaultFilter;
+  }, [isDateFilterSelected, filter, filterBy]);
 
   return (
     <div> {title}
       <DateRangeSelector
         onSave={handleDateFilter}
         Icon={FilterIcon}
-        value={{
-          startDate: new Date(defaultRange.startDate),
-          endDate: new Date(defaultRange.endDate),
-          preset: defaultRange.preset,
-        }} />
+        value={selectedDate} />
     </div>
   );
 }
