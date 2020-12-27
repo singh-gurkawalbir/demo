@@ -3,9 +3,9 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { addDays, startOfDay } from 'date-fns';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-// import { getSelectedRange } from '../../../../utils/flowMetrics';
 import DateRangeSelector from '../../../DateRangeSelector';
 import ErrorFilterIcon from '../ErrorFilterIcon';
+import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
 const defaultRange = {
   startDate: startOfDay(addDays(new Date(), -29)).toISOString(),
@@ -17,12 +17,11 @@ export default function SelectDate({
   flowId,
   resourceId,
   isResolved,
-  filterKey,
-  // actionInProgress,
   title = 'Timestamp',
   filterBy = 'occuredAt',
 }) {
   const dispatch = useDispatch();
+  const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
   const filter = useSelector(state =>
     selectors.filter(state, filterKey),
   shallowEqual

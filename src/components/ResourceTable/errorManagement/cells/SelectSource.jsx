@@ -3,14 +3,16 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import SourceFilter from '../SourceFilter';
+import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
 export default function SelectSource({
   flowId,
   resourceId,
   isResolved,
-  filterKey,
 }) {
   const dispatch = useDispatch();
+  const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
+
   const filter = useSelector(state =>
     selectors.filter(state, filterKey),
   shallowEqual

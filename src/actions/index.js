@@ -1796,12 +1796,12 @@ const errorManager = {
         checked,
         isResolved,
       }),
-    selectAll: ({ flowId, resourceId, checked, options }) =>
+    selectAll: ({ flowId, resourceId, checked, isResolved }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS, {
         flowId,
         resourceId,
         checked,
-        options,
+        isResolved,
       }),
     saveAndRetry: ({ flowId, resourceId, retryId, retryData }) => action(
       actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.SAVE_AND_RETRY, {

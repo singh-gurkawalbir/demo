@@ -5,6 +5,15 @@ export const FILTER_KEYS = {
   RESOLVED: 'resolvedErrors',
 };
 
+export const DEFAULT_FILTERS = {
+  OPEN: {
+    searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey', 'errorId'],
+  },
+  RESOLVED: {
+    searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey', 'errorId', 'resolvedAt', 'resolvedBy'],
+  },
+};
+
 export const getFilteredErrors = (errors = [], options = {}) => {
   const { keyword, searchBy = [] } = options;
 

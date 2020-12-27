@@ -14,7 +14,7 @@ import { selectors } from '../../../reducers';
 import CeligPagination from '../../CeligoPagination';
 import ResourceTable from '../../ResourceTable';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { FILTER_KEYS } from '../../../utils/errorManagement';
+import { FILTER_KEYS, DEFAULT_FILTERS } from '../../../utils/errorManagement';
 
 const useStyles = makeStyles(theme => ({
   errorsKeywordSearch: {
@@ -85,13 +85,6 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
   },
 }));
-const defaultOpenErrorsFilter = {
-  searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey', 'errorId'],
-};
-
-const defaultResolvedErrorsFilter = {
-  searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey', 'errorId', 'resolvedAt', 'resolvedBy'],
-};
 
 const rowsPerPageOptions = [10, 25, 50];
 const DEFAULT_ROWS_PER_PAGE = 50;
@@ -104,10 +97,10 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE);
-  const defaultFilter = isResolved ? defaultResolvedErrorsFilter : defaultOpenErrorsFilter;
+  const defaultFilter = isResolved ? DEFAULT_FILTERS.RESOLVED : DEFAULT_FILTERS.OPEN;
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
   const errorFilter = useSelector(
-    state => selectors.filter(state, filterKey) || defaultFilter
+    state => selectors.filter(state, filterKey)
   );
   const isAnyActionInProgress = useSelector(state =>
     selectors.isAnyErrorActionInProgress(state, {
@@ -115,13 +108,10 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
       resourceId,
     })
   );
-
-  const dataFilter = useSelector(
-    state => selectors.filter(state, filterKey) || defaultFilter
-  );
   const isFlowDisabled = useSelector(state =>
     selectors.resource(state, 'flows', flowId)?.disabled
   );
+
   const errorConfig = useMemo(() => ({
     flowId,
     resourceId,
@@ -148,15 +138,13 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const isFreshDataLoad = !!((!errorObj.status || errorObj.status === 'requested') && !errorObj.nextPageURL);
   const actionProps = useMemo(
     () => ({
-      filterKey,
-      defaultFilter,
       resourceId,
       flowId,
       actionInProgress: isAnyActionInProgress,
       isResolved,
       isFlowDisabled,
     }),
-    [filterKey, flowId, isAnyActionInProgress, resourceId, defaultFilter, isResolved, isFlowDisabled]
+    [flowId, isAnyActionInProgress, resourceId, isResolved, isFlowDisabled]
   );
   const fetchErrors = useCallback(
     loadMore => {
@@ -230,7 +218,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
 
   useEffect(() => {
     setPage(0);
-  }, [dataFilter, rowsPerPage]);
+  }, [errorFilter, rowsPerPage]);
 
   // TODO @Raghu: Refactor the pagination related code
   return (

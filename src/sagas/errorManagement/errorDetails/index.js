@@ -6,6 +6,7 @@ import { apiCallWithRetry } from '../../index';
 import { updateRetryData } from '../metadata';
 import getRequestOptions from '../../../utils/requestOptions';
 import openExternalUrl from '../../../utils/window';
+import { FILTER_KEYS } from '../../../utils/errorManagement';
 
 function* requestErrorDetails({
   flowId,
@@ -60,9 +61,10 @@ function* requestErrorDetails({
   }
 }
 
-function* selectAllErrorDetails({ flowId, resourceId, checked, options }) {
-  const { filterKey, defaultFilter, isResolved } = options || {};
-  const errorFilter = yield select(selectors.filter, filterKey) || defaultFilter;
+function* selectAllErrorDetails({ flowId, resourceId, checked, isResolved }) {
+  const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
+  const errorFilter = yield select(selectors.filter, filterKey);
+
   const { errors = [] } = yield select(selectors.resourceErrors, {
     flowId,
     resourceId,

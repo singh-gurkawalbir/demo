@@ -80,7 +80,7 @@ import { stringCompare } from '../utils/sort';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import { getFilteredErrors } from '../utils/errorManagement';
+import { getFilteredErrors, FILTER_KEYS } from '../utils/errorManagement';
 import {
   getFlowStepsYetToBeCreated,
   generatePendingFlowSteps,
@@ -4622,11 +4622,9 @@ selectors.selectedErrorIds = (state, { flowId, resourceId, options = {} }) => {
   return errors.filter(({ selected }) => selected).map(error => error.errorId);
 };
 
-selectors.isAllErrorsSelected = (
-  state,
-  { flowId, resourceId, filterKey, defaultFilter, isResolved }
-) => {
-  const errorFilter = selectors.filter(state, filterKey) || defaultFilter;
+selectors.isAllErrorsSelected = (state,{ flowId, resourceId, isResolved }) => {
+  const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
+  const errorFilter = selectors.filter(state, filterKey);
   const { errors = [] } = selectors.resourceErrors(state, {
     flowId,
     resourceId,
