@@ -86,9 +86,8 @@ export const getErrorCountDiffMap = (prevErrorMap = {}, currErrorMap = {}) => {
   return errorDiffMap;
 };
 
-export const getSourceOptions = () => {
-  // Ref: https://github.com/celigo/integrator-adaptor/blob/master/util/errorUtil.js#L68
-  const sourceOptions = {
+export const getSourceOptions = (sourceList = []) => {
+  const sourceLabelsMap = {
     internal: 'Internal',
     application: 'Application',
     connection: 'Connection',
@@ -106,13 +105,12 @@ export const getSourceOptions = () => {
     post_submit_hook: 'Post submit hook',
     post_response_map_hook: 'Post response map hook',
     post_aggregate_hook: 'Post aggregate hook',
-    // PRE_SEND_HOOK_SS: 'pre_send_hook_ss',
-    // PRE_MAP_HOOK_SS: 'pre_map_hook_ss',
-    // POST_MAP_HOOK_SS: 'post_map_hook_ss',
-    // POST_SUBMIT_HOOK_SS: 'post_submit_hook_ss',
+    pre_send_hook_ss: 'Pre send suitescript hook',
+    pre_map_hook_ss: 'Pre map suitescript hook',
+    post_map_hook_ss: 'Post map suitescript hook',
+    post_submit_hook_ss: 'Post submit suitescript hook',
   };
-  const options = Object.keys(sourceOptions).map(sourceId => ({_id: sourceId, name: sourceOptions[sourceId]}));
+  const options = sourceList.map(sourceId => ({_id: sourceId, name: sourceLabelsMap[sourceId] || sourceId}));
 
   return [{ _id: 'all', name: 'All sources'}, ...options];
 };
-

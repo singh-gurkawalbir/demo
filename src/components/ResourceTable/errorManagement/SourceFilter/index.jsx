@@ -1,15 +1,17 @@
 import React, { useCallback, useMemo } from 'react';
-// import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { useSelector } from 'react-redux';
 import ErrorFilterIcon from '../ErrorFilterIcon';
 // import actions from '../../../../actions';
-// import { selectors } from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import MultiSelectFilter from '../../../MultiSelectFilter';
 import { getSourceOptions } from '../../../../utils/errorManagement';
 
 export default function SourceFilter(props) {
   const { onSave, selectedSources = [] } = props;
-
-  const values = useMemo(() => getSourceOptions(), []);
+  const sourceList = useSelector(state =>
+    selectors.getSourceMetadata(state)
+  );
+  const values = useMemo(() => getSourceOptions(sourceList), [sourceList]);
 
   const handleSelect = useCallback((selectedIds, id) => {
     if (id === 'all') {
