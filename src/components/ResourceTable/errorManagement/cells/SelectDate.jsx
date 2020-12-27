@@ -15,7 +15,7 @@ const defaultRange = {
 };
 
 // eslint-disable-next-line no-empty-pattern
-export default function SelectAllErrors({
+export default function SelectDate({
   // flowId,
   // resourceId,
   // isResolved,

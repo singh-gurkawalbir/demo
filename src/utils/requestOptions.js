@@ -17,6 +17,7 @@ export default function getRequestOptions(
     licenseId,
     flowId,
     isResolved,
+    nextPageURL,
   } = {}
 ) {
   switch (action) {
@@ -304,6 +305,26 @@ export default function getRequestOptions(
       } else if (toDate) {
         path += `?${toKey}=${toDate}`;
       }
+
+      return {
+        path,
+        opts: { method: 'GET'},
+      };
+    }
+
+    case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST: {
+      let path = nextPageURL
+        ? nextPageURL.replace('/api', '')
+        : `/flows/${flowId}/${resourceId}/${isResolved ? 'resolved' : 'errors'}`;
+      const queryParams = [];
+
+      const { sources = [] } = filters;
+
+      if (!sources.includes('all')) {
+        sources.forEach(source => queryParams.push(`source=${source}`));
+      }
+
+      path += `?${queryParams.join('&')}`;
 
       return {
         path,

@@ -1,5 +1,6 @@
 import { Button, FormControl, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { isEqual } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import ArrowPopper from '../ArrowPopper';
 import ButtonGroup from '../ButtonGroup';
@@ -15,7 +16,7 @@ const useStyles = makeStyles(theme => ({
 
   },
   filter: {
-    maxWidth: '350px',
+    maxWidth: 250,
   },
   wrapper: {
     display: 'grid',
@@ -147,8 +148,7 @@ export default function MultiSelectFilter(props) {
               </div>
               <div className={classes.actions}>
                 <ButtonGroup>
-
-                  <Button variant="outlined" color="primary" onClick={handleSave}>
+                  <Button variant="outlined" color="primary" onClick={handleSave} disabled={isEqual(checked, selected)}>
                     Apply
                   </Button>
                   <Button variant="text" color="primary" onClick={handleClose}>

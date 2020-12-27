@@ -105,7 +105,6 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE);
   const errorType = isResolved ? 'resolvedErrors' : 'openErrors';
   const defaultFilter = isResolved ? defaultResolvedErrorsFilter : defaultOpenErrorsFilter;
-  const emptyRowsLabel = isResolved ? 'No resolved errors' : 'No open errors';
   const errorFilter = useSelector(
     state => selectors.filter(state, errorType) || defaultFilter
   );
@@ -283,16 +282,12 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
 
             </div>
           </div>
-          {errorObj.errors.length ? (
-            <ResourceTable
-              resources={errorsInCurrentPage}
-              className={classes.errorDetailsTable}
-              resourceType={errorType}
-              actionProps={actionProps}
+          <ResourceTable
+            resources={errorsInCurrentPage}
+            className={classes.errorDetailsTable}
+            resourceType={errorType}
+            actionProps={actionProps}
           />
-          ) : (
-            <div className={classes.emptyRow}>{emptyRowsLabel || 'No Rows'} </div>
-          )}
         </>
       )}
     </div>

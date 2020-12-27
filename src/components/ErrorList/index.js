@@ -24,6 +24,8 @@ export default function ErrorList({ flowId, errorType }) {
     return () => {
       dispatch(actions.errorManager.retryStatus.clear(flowId));
       dispatch(actions.errorManager.flowErrorDetails.clear({ flowId, resourceId }));
+      dispatch(actions.clearFilter('openErrors'));
+      dispatch(actions.clearFilter('resolvedErrors'));
     };
   }, [dispatch, flowId, resourceId]);
 

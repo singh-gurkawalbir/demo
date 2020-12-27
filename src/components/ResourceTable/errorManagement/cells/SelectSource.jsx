@@ -1,32 +1,42 @@
 import React, { useCallback } from 'react';
-// import { useDispatch, useSelector } from 'react-redux';
-// import FilterIcon from '../../../icons/FilterIcon';
-// import actions from '../../../../actions';
-// import { selectors } from '../../../../reducers';
-// import ActionButton from '../../../ActionButton';
-// import MultiSelectFilter from '../../../MultiSelectFilter';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import actions from '../../../../actions';
+import { selectors } from '../../../../reducers';
 import SourceFilter from '../SourceFilter';
 
-// eslint-disable-next-line no-empty-pattern
-export default function SelectAllErrors({
-  // flowId,
-  // resourceId,
-  // isResolved,
-  // filterKey,
-  // defaultFilter,
-  // actionInProgress,
+export default function SelectSource({
+  flowId,
+  resourceId,
+  isResolved,
+  filterKey,
 }) {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const filter = useSelector(state =>
+    selectors.filter(state, filterKey),
+  shallowEqual
+  );
   const handleSave = useCallback(
-    () => {
-      // console.log(sourceIds);
+    sourceIds => {
+      dispatch(
+        actions.patchFilter(filterKey, {
+          ...filter,
+          sources: sourceIds,
+        })
+      );
+      dispatch(
+        actions.errorManager.flowErrorDetails.request({
+          flowId,
+          resourceId,
+          isResolved,
+        })
+      );
     },
-    [],
+    [dispatch, filter, filterKey, flowId, isResolved, resourceId],
   );
 
   return (
     <div> Source
-      <SourceFilter onSave={handleSave} />
+      <SourceFilter onSave={handleSave} selectedSources={filter.sources} />
     </div>
   );
 }

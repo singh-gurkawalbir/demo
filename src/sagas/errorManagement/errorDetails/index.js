@@ -14,26 +14,32 @@ function* requestErrorDetails({
   isResolved = false,
 }) {
   try {
-    let path = `/flows/${flowId}/${resourceId}/${
-      isResolved ? 'resolved' : 'errors'
-    }`;
+    const errorType = isResolved ? 'resolvedErrors' : 'openErrors';
+    const filters = yield select(selectors.filter, errorType);
+
+    let nextPageURL;
 
     if (loadMore) {
-      const { nextPageURL } = yield select(selectors.resourceErrors, {
+      const errors = yield select(selectors.resourceErrors, {
         flowId,
         resourceId,
         options: { isResolved },
       });
 
+      nextPageURL = errors?.nextPageURL;
+
       if (!nextPageURL) return;
-      path = nextPageURL.replace('/api', '');
     }
+
+    const requestOptions = getRequestOptions(
+      actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST,
+      { flowId, resourceId, isResolved, filters, nextPageURL }
+    );
+    const { path, opts } = requestOptions;
 
     const errorDetails = yield apiCallWithRetry({
       path,
-      opts: {
-        method: 'GET',
-      },
+      opts,
     });
 
     yield put(
