@@ -1910,6 +1910,11 @@ const errorManager = {
     request: ({ flowId, resourceId }) => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST, ({ flowId, resourceId })),
     received: ({ flowId, resourceId, status }) => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.RECEIVED, ({ flowId, resourceId, status})),
   },
+  filterMetadata: {
+    request: () => action(actionTypes.ERROR_MANAGER.FILTER_METADATA.REQUEST),
+    received: (metadata = []) =>
+      action(actionTypes.ERROR_MANAGER.FILTER_METADATA.RECEIVED, { metadata }),
+  },
 };
 const flow = {
   run: ({ flowId, customStartDate, options }) =>

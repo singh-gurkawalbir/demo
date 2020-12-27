@@ -19,6 +19,15 @@ export default function ErrorList({ flowId, errorType }) {
   const users = useSelector(state =>
     selectors.availableUsersList(state, integrationId)
   );
+  const isErrorFilterMetadataRequested = useSelector(state =>
+    selectors.isErrorFilterMetadataRequested(state)
+  );
+
+  useEffect(() => {
+    if (!isErrorFilterMetadataRequested) {
+      dispatch(actions.errorManager.filterMetadata.request());
+    }
+  }, [dispatch, isErrorFilterMetadataRequested]);
 
   useEffect(() => {
     dispatch(actions.errorManager.retryStatus.requestPoll({ flowId, resourceId}));

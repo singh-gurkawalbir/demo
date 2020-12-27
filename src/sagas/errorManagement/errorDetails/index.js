@@ -3,7 +3,7 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
-import { updateRetryData } from '../retryData';
+import { updateRetryData } from '../metadata';
 import getRequestOptions from '../../../utils/requestOptions';
 import openExternalUrl from '../../../utils/window';
 

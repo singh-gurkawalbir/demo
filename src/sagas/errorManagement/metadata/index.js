@@ -120,6 +120,21 @@ function* startPollingForRetryStatus({ flowId, resourceId }) {
   yield cancel(watcher);
 }
 
+export function* requestFilterMetadata() {
+  try {
+    const metadata = yield apiCallWithRetry({
+      path: '/errors/filterMetadata',
+      opts: {
+        method: 'GET',
+      },
+    });
+
+    yield put(actions.errorManager.filterMetadata.received(metadata?.filters));
+  } catch (e) {
+    // handle errors
+  }
+}
+
 export default [
   takeLatest(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, requestRetryData),
   takeLatest(
@@ -130,4 +145,5 @@ export default [
     actionTypes.ERROR_MANAGER.RETRY_DATA.UPDATE_REQUEST,
     updateRetryData
   ),
+  takeLatest(actionTypes.ERROR_MANAGER.FILTER_METADATA.REQUEST, requestFilterMetadata),
 ];
