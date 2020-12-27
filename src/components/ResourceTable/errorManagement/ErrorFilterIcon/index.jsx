@@ -7,10 +7,13 @@ const useStyles = makeStyles(theme => ({
   filterSelected: {
     color: theme.palette.primary.main,
   },
+  filter: {
+    fontSize: 18,
+  },
 }));
 
 export default function ErrorFilterIcon({ selected }) {
   const classes = useStyles();
 
-  return <FilterIcon className={clsx({[classes.filterSelected]: selected})} />;
+  return <FilterIcon className={clsx(classes.filter, {[classes.filterSelected]: selected})} />;
 }
