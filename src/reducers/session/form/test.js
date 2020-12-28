@@ -590,19 +590,19 @@ describe('selectors test cases', () => {
       });
     });
 
-    test('should pick up null for a non existing form parent context state', () => {
+    test('should return null for a non existing form parent context state', () => {
       expect(selectors.formParentContext(formState, 'someotherOne')).toEqual(null);
     });
   });
   describe('formParentContext', () => {
-    test('should pick up formParentCont correctly for a existing form state', () => {
+    test('should pick up formParentContext correctly for a existing form state', () => {
       expect(selectors.formParentContext(formState, '1-2')).toEqual({
         resourceType: 'exports',
         resourceId: 'someId',
       });
     });
 
-    test('should pick up null for a non existing form state', () => {
+    test('should return null for a non existing form state', () => {
       expect(selectors.formParentContext(formState, 'someotherOne')).toEqual(null);
     });
   });
