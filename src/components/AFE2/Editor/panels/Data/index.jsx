@@ -22,6 +22,7 @@ export default function DataPanel({ editorId, mode }) {
         <PanelLoader />
       ) : (
         <CodePanel
+          name="data"
           value={data}
           mode={mode}
           readOnly={disabled}

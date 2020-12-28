@@ -8,6 +8,7 @@ export default function ResultPanel({ editorId, mode }) {
 
   return (
     <CodePanel
+      name="result"
       value={result}
       mode={mode}
       readOnly

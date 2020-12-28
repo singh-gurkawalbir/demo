@@ -15,6 +15,7 @@ export default function RulePanel({ editorId, mode }) {
 
   return (
     <CodePanel
+      name="rule"
       value={rule}
       mode={mode}
       readOnly={disabled}
