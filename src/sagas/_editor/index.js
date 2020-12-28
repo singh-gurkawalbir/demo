@@ -363,7 +363,12 @@ export function* requestEditorSampleData({
   let sampleData;
 
   // no /getContext call for FB actions yet
-  if (stage === 'outputFilter' || stage === 'transform') {
+  if (stage === 'outputFilter' ||
+  stage === 'transform' ||
+  stage === 'exportFilter' ||
+  stage === 'inputFilter' ||
+  stage === 'postResponseMapHook' ||
+  stage === 'sampleResponse') {
     yield call(requestSampleData, {
       flowId,
       resourceId,
@@ -545,6 +550,7 @@ export function* initEditor({ id, editorType, options = {} }) {
     fieldState = yield select(selectors.fieldState, formKey, fieldId);
   }
   const resource = yield select(selectors.resource, resourceType, resourceId);
+  const flow = yield select(selectors.resource, 'flows', flowId);
   const {onSave, ...rest} = options;
   let formattedOptions = deepClone(rest);
 
@@ -584,7 +590,7 @@ export function* initEditor({ id, editorType, options = {} }) {
 
       formattedOptions = init({options: formattedOptions, resource, fieldState, fileDefinitionData});
     } else {
-      formattedOptions = init({options: formattedOptions, resource, fieldState});
+      formattedOptions = init({options: formattedOptions, resource, fieldState, flow});
     }
   }
 
