@@ -621,6 +621,7 @@ selectors.mkFlowGroupingsSections = () => {
   );
 };
 
+selectors.flowGroupingsSections = selectors.mkFlowGroupingsSections();
 selectors.mkGetAllCustomFormsForAResource = () => {
   const resourceSelector = selectors.makeResourceSelector();
 
