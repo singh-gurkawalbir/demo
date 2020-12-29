@@ -363,6 +363,9 @@ export default {
     'Please enter API Secret of your Pitney Bowes Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
   'pitneybowes.connection.http.auth.token.token':
     'The access token of your Pitney Bowes account.',
+  'pricefx.connection.http.unencrypted.partition': 'Please enter the partition of your Pricefx account.This can be found under the Administration/User Admin section of your Pricefx account.',
+  'pricefx.connection.http.unencrypted.username': 'Please enter the username of your Pricefx account.',
+  'pricefx.connection.http.encrypted.password': 'Please enter the password of your Pricefx account.',
   'lexbizz.connection.http.auth.type': 'Please select Authentication Type.',
   'lexbizz.connection.instanceURI':
     'Please enter URL of your instance with lexbizz. For example, https://isv.lexbizz.app/entity/Default/18.200.001, then the Instance URI would be https://isv.lexbizz.app.',
