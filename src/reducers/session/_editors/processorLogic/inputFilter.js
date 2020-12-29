@@ -1,9 +1,7 @@
-import isEqual from 'lodash/isEqual';
 import actions from '../../../../actions';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../../constants/resource';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
-import javascript from './javascript';
-import filter from './filter';
+import exportFilter from './exportFilter';
 
 export default {
   processor: ({activeProcessor}) => activeProcessor,
@@ -32,56 +30,11 @@ export default {
       activeProcessor,
     };
   },
-  buildData: sampleData => ({
-    filter: sampleData,
-    javascript: sampleData,
-  }),
-  requestBody: editor => {
-    if (editor.activeProcessor === 'filter') {
-      return filter.requestBody({
-        data: editor.data?.filter,
-        rule: editor.rule?.filter,
-      });
-    }
-
-    return javascript.requestBody({
-      data: editor.data?.javascript,
-      rule: editor.rule?.javascript,
-      context: editor.context,
-    });
-  },
-  validate: editor => {
-    if (editor.activeProcessor === 'filter') {
-      return filter.validate({
-        data: editor.data?.filter,
-        rule: editor.rule?.filter,
-      });
-    }
-
-    return javascript.validate({
-      data: editor.data?.javascript,
-    });
-  },
-  dirty: editor => {
-    if (editor.activeProcessor === 'javascript') {
-      return javascript.dirty({
-        rule: editor.rule?.javascript,
-        originalRule: editor.originalRule?.javascript,
-      });
-    }
-    if (!isEqual(editor.originalRule?.filter, editor.rule?.filter)) {
-      return true;
-    }
-
-    return false;
-  },
-  processResult: (editor, result) => {
-    if (editor.activeProcessor === 'filter') {
-      return filter.processResult(editor, result);
-    }
-
-    return javascript.processResult(editor, result);
-  },
+  buildData: exportFilter.buildData,
+  requestBody: exportFilter.requestBody,
+  validate: exportFilter.validate,
+  dirty: exportFilter.dirty,
+  processResult: exportFilter.processResult,
   patchSet: editor => {
     const patches = {
       foregroundPatches: undefined,
