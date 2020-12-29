@@ -56,14 +56,17 @@ export default {
     defaultValue: r => !!(r && r.ignoreMissing),
   },
   idLockTemplate: {
-    type: 'concurrencyidlocktemplate',
+    type: 'uri',
     label: 'Concurrency ID lock template',
-    enableEditorV2: true,
+    // enableEditorV2: true,
+    showExtract: false,
+    showLookup: false,
   },
   dataURITemplate: {
-    type: 'datauritemplate',
+    type: 'uri',
     label: 'Data URI template',
-    enableEditorV2: true,
+    // enableEditorV2: true,
+    showLookup: false,
   },
   oneToMany: {
     type: 'radiogroup',

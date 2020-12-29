@@ -1,10 +1,12 @@
 export default {
   'ftp.directoryPath': {
-    type: 'namewitheditor',
+    type: 'uri',
     label: 'Directory path',
-    editorTitle: 'Build directory path',
+    // editorTitle: 'Build directory path',
     placeholder: 'Enter FTP folder path, such as: MySite/Orders',
     required: true,
+    showExtract: false,
+    showLookup: false,
   },
   'ftp.fileName': {
     type: 'ftpfilenamewitheditor',

@@ -114,9 +114,9 @@ describe('Flow sample data utility sagas', () => {
         const expectedOptions = {
           V0_json: false,
           attributePrefix: 'name',
-          excludeNodes: '/desc\n/others',
-          includeNodes: '/city/pin\n/branch',
-          listNodes: '/addresses\n/names',
+          excludeNodes: ['/desc', '/others'],
+          includeNodes: ['/city/pin', '/branch'],
+          listNodes: ['/addresses', '/names'],
           resourcePath: undefined,
           stripNewLineChars: true,
           textNodeName: 'locations',

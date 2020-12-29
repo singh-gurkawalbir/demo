@@ -729,6 +729,12 @@ selectors.defaultStoreId = (state, id, store) => {
   return undefined;
 };
 
+selectors.resources = (state, resourceType) => {
+  if (!state || !resourceType) return emptyList;
+
+  return state[resourceType] || emptyList;
+};
+
 selectors.resourceList = (
   state,
   { type, take, keyword, sort, sandbox, filter, searchBy }

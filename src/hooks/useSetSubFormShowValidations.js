@@ -7,13 +7,13 @@ const useSetSubFormShowValidations = (
   parentFormKey,
   childFormKey) => {
   const dispatch = useDispatch();
-  const parentShowformValidation = useFormContext(parentFormKey)?.showValidationBeforeTouched;
+  const parentShowFormValidation = useFormContext(parentFormKey)?.showValidationBeforeTouched;
 
   useEffect(() => {
-    if (parentShowformValidation) {
+    if (parentShowFormValidation) {
       dispatch(actions.form.showFormValidations(childFormKey));
     }
-  }, [parentShowformValidation, childFormKey, dispatch]);
+  }, [parentShowFormValidation, childFormKey, dispatch]);
 };
 
 export default useSetSubFormShowValidations;

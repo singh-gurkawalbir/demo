@@ -1,19 +1,25 @@
 export default {
   'ftp.directoryPath': {
-    type: 'namewitheditor',
+    type: 'uri',
     label: 'Directory path',
-    editorTitle: 'Build directory path',
+    // editorTitle: 'Build directory path',
     required: true,
+    showExtract: false,
+    showLookup: false,
   },
   'ftp.fileNameStartsWith': {
-    type: 'namewitheditor',
+    type: 'uri',
     label: 'File name starts with',
-    editorTitle: 'Build file name starts with',
+    // editorTitle: 'Build file name starts with',
+    showExtract: false,
+    showLookup: false,
   },
   'ftp.fileNameEndsWith': {
-    type: 'namewitheditor',
+    type: 'uri',
     label: 'File name ends with',
-    editorTitle: 'Build file name ends with',
+    // editorTitle: 'Build file name ends with',
+    showExtract: false,
+    showLookup: false,
   },
   'ftp.backupDirectoryPath': {
     type: 'text',
