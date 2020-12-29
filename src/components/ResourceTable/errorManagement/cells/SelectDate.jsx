@@ -6,6 +6,7 @@ import { selectors } from '../../../../reducers';
 import DateRangeSelector from '../../../DateRangeSelector';
 import ErrorFilterIcon from '../ErrorFilterIcon';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
+import { getSelectedRange } from '../../../../utils/flowMetrics';
 
 const defaultRange = {
   startDate: startOfDay(addDays(new Date(), -29)).toISOString(),
@@ -30,10 +31,12 @@ export default function SelectDate({
 
   const handleDateFilter = useCallback(
     dateFilter => {
+      const selectedRange = getSelectedRange(dateFilter);
+
       dispatch(
         actions.patchFilter(filterKey, {
           ...filter,
-          [filterBy]: dateFilter,
+          [filterBy]: selectedRange,
         })
       );
       dispatch(
