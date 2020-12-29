@@ -2,7 +2,6 @@ import React, { } from 'react';
 import { makeStyles } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import FormGenerator from '..';
-// import ColorPalette from '../../../../styleguide/ColorPalette';
 
 const useStyles = makeStyles(theme => ({
   root: {

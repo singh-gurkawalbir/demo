@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import { makeStyles, Typography, ExpansionPanelSummary, ExpansionPanelDetails, ExpansionPanel } from '@material-ui/core';
+import { makeStyles, Typography, AccordionSummary, AccordionDetails, Accordion } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import FormView from './FormView';
 import RawView from './RawView';
@@ -24,6 +24,13 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     alignSelf: 'center',
     color: theme.palette.secondary.main,
+  },
+  customWrapper: {
+    marginBottom: theme.spacing(2),
+    boxShadow: 'none',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    borderRadius: theme.spacing(0.5),
   },
 }));
 
@@ -106,20 +113,22 @@ export default function DynaSettings(props) {
 
   // We are not in edit mode, devs and non-devs alike should see the settings form if it exists.
   return (
-    <ExpansionPanel expanded={!isCollapsed}>
-      <ExpansionPanelSummary
-        data-test={label}
-        className={classes.summaryContainer}
-        onClick={handleExpandClick}
-        expandIcon={<ExpandMoreIcon />}>
-        <Typography className={classes.summaryLabel}>{label}</Typography>
-        {!isCollapsed && (
-        <FormBuilderButton resourceType={resourceType} resourceId={resourceId} integrationId={integrationId} />
-        )}
-      </ExpansionPanelSummary>
-      <ExpansionPanelDetails >
-        {renderSettings()}
-      </ExpansionPanelDetails>
-    </ExpansionPanel>
+    <div className={classes.customWrapper}>
+      <Accordion expanded={!isCollapsed} elevation={0}>
+        <AccordionSummary
+          data-test={label}
+          className={classes.summaryContainer}
+          onClick={handleExpandClick}
+          expandIcon={<ExpandMoreIcon />}>
+          <Typography className={classes.summaryLabel}>{label}</Typography>
+          {!isCollapsed && (
+          <FormBuilderButton resourceType={resourceType} resourceId={resourceId} integrationId={integrationId} />
+          )}
+        </AccordionSummary>
+        <AccordionDetails >
+          {renderSettings()}
+        </AccordionDetails>
+      </Accordion>
+    </div>
   );
 }

@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     display: 'block',
     paddingRight: theme.spacing(1),
   },
-  expansionPanel: {
+  Accordion: {
     width: '100%',
     overflow: 'hidden',
   },
