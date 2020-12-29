@@ -4720,17 +4720,6 @@ selectors.integrationErrorsPerStore = (state, integrationId) => {
   }, {});
 };
 
-selectors.canUserUpgradeToErrMgtTwoDotZero = state => {
-  const integrations = selectors.resourceList(state, {
-    type: 'integrations',
-  }).resources;
-  const userLicenses = fromUser.licenses(selectors.userState(state)) || [];
-  const hasValidConnectorLicenses = userLicenses.some(license => license.type === 'connector' && moment(license.expires) - moment() > 0);
-  const hasConnectors = integrations.some(integration => !!integration._connectorId);
-
-  return !(hasConnectors || hasValidConnectorLicenses);
-};
-
 selectors.getIntegrationUserNameById = (state, userId, flowId) => {
   const profile = selectors.userProfile(state) || emptyObject;
 
