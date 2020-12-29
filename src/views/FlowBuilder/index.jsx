@@ -14,6 +14,7 @@ import ChartsDrawer from './drawers/LineGraph';
 import ReplaceConnectionDrawer from './drawers/ReplaceConnection';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
+import EditorDrawer from '../../components/AFE2/Drawer';
 import FlowBuilderBody from './FlowBuilderBody';
 import Redirection from './Redirection';
 
@@ -57,6 +58,7 @@ function FlowBuilder() {
         <ScheduleDrawer flowId={flowId} />
         <ChartsDrawer flowId={flowId} />
         <QueuedJobsDrawer />
+        <EditorDrawer />
         <ErrorDetailsDrawer flowId={flowId} />
         <SettingsDrawer
           integrationId={integrationId}

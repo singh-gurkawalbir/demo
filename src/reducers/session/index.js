@@ -3,6 +3,7 @@ import form, {selectors as fromForm} from './form';
 import stage, { selectors as fromStage } from './stage';
 import filters, { selectors as fromFilters } from './filters';
 import editors, { selectors as fromEditors } from './editors';
+import _editors, { selectors as fromEditorsAfe2 } from './_editors';
 import metadata, { selectors as fromMetadata } from './metadata';
 import editorSampleData, { selectors as fromEditorSampleData } from './editorSampleData';
 import connectors, { selectors as fromConnectors } from './connectors';
@@ -42,6 +43,7 @@ export default combineReducers({
   stage,
   filters,
   editors,
+  _editors,
   metadata,
   connectors,
   connections,
@@ -81,6 +83,7 @@ const subSelectors = {
   stage: fromStage,
   filters: fromFilters,
   editors: fromEditors,
+  _editors: fromEditorsAfe2,
   metadata: fromMetadata,
   editorSampleData: fromEditorSampleData,
   connectors: fromConnectors,

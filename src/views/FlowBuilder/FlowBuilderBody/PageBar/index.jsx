@@ -279,20 +279,14 @@ export default function PageBar({flowId, integrationId, setTabValue}) {
 
   return (
     <CeligoPageBar
-      title={(
-        <CalcPageBarTitle
-
-          flowId={flowId} integrationId={integrationId} />
-)}
+      title={(<CalcPageBarTitle flowId={flowId} integrationId={integrationId} />)}
       subtitle={<CalcPageBarSubtitle flowId={flowId} />}
       infoText={description}>
       <TotalErrors flowId={flowId} />
       <PageBarChildren
-
         flowId={flowId} integrationId={integrationId}
         setTabValue={setTabValue}
-
-        />
+      />
     </CeligoPageBar>
   );
 }

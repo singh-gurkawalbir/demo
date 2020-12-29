@@ -10,6 +10,7 @@ import Spinner from '../../../../Spinner';
 import SpinnerWrapper from '../../../../SpinnerWrapper';
 import useFormContext from '../../../../Form/FormContext';
 import { isFormTouched } from '../../../../../forms/formFactory/utils';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -30,6 +31,9 @@ export default function FormView({
     selectors.customSettingsForm(state, resourceId)
   );
 
+  const settingsForm = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, resourceType, resourceId, sectionId) ?.settingsForm;
+  const settings = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, resourceType, resourceId, sectionId) ?.settings;
+
   useEffect(() => {
     // use effect will fire any time formState changes but...
     // Only if the formState is missing do we need to perform an init.
@@ -40,10 +44,10 @@ export default function FormView({
 
   useEffect(
     () => () => {
-      // console.log('cleaned up');
+      // reload settings form when the settingsForm or settings changes
       dispatch(actions.customSettings.formClear(resourceId));
     },
-    [dispatch, resourceId]
+    [dispatch, resourceId, settingsForm, settings]
   );
 
   // TODO:verify this behaviour

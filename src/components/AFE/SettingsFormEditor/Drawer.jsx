@@ -15,6 +15,7 @@ import { isJsonString } from '../../../utils/string';
 import DynaCheckbox from '../../DynaForm/fields/checkbox/DynaCheckbox';
 import ButtonGroup from '../../ButtonGroup';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { useSettingsPatch } from '../../../views/Integration/DIY/panels/Settings';
 
 const emptyObj = {};
 
@@ -93,6 +94,9 @@ export default function EditorDrawer({
   const { confirmDialog } = useConfirmDialog();
 
   const settings = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, resourceType, resourceId, sectionId || 'general')?.settings;
+
+  const settingsFormPatchPath = useSettingsPatch(resourceId, sectionId, '/settingsForm');
+  const scriptPatchPath = useSettingsPatch(resourceId, sectionId, '/content');
 
   const editor = useSelector(state => selectors.editor(state, editorId));
   const saveInProgress = useSelector(
@@ -174,6 +178,8 @@ export default function EditorDrawer({
         autoEvaluateDelay: 200,
         resourceId,
         resourceType,
+        scriptPatchPath,
+        settingsFormPatchPath,
         settings,
         previewOnSave: true,
         mode,

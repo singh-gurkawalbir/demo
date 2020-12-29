@@ -1326,61 +1326,6 @@ selectors.makeResourceDataSelector = () => {
 // For sagas we can use resourceData which points to cached selector.
 selectors.resourceData = selectors.makeResourceDataSelector();
 
-selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enableEditorV2) => {
-  const { merged: resource = {} } = selectors.resourceData(
-    state,
-    resourceType,
-    resourceId
-  );
-  const connection = selectors.resource(state, 'connections', resource._connectionId);
-
-  // enableEditorV2 is to force fields to show editor when
-  // the whole adaptor is not yet supported (except for native REST)
-  // TODO: we will not need all these conditions once all fields/adaptors support AFE2
-  if (enableEditorV2) {
-    if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-      return connection.isHTTP;
-    }
-
-    return true;
-  }
-
-  // no AFE1/2 is shown for PG export (with some exceptions)
-  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
-
-  if (isPageGenerator) {
-    return false;
-  }
-
-  // AFE 2.0 not supported for Native REST Adaptor for any fields
-  if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-    return connection.isHTTP;
-  }
-
-  // BE doesnt support oracle and snowflake adaptor yet
-  // remove this check once same is added in BE
-  if (connection?.rdbms?.type === 'oracle' || connection?.rdbms?.type === 'snowflake') {
-    return false;
-  }
-
-  return [
-    'HTTPImport',
-    'HTTPExport',
-    'FTPImport',
-    'FTPExport',
-    'AS2Import',
-    'AS2Export',
-    'S3Import',
-    'S3Export',
-    'RDBMSImport',
-    'RDBMSExport',
-    'MongodbImport',
-    'MongodbExport',
-    'DynamodbImport',
-    'DynamodbExport',
-  ].includes(resource.adaptorType);
-};
-
 selectors.resourceFormField = (state, resourceType, resourceId, id) => {
   const data = selectors.resourceData(state, resourceType, resourceId);
 
@@ -2359,6 +2304,23 @@ selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {
 };
 
 // #endregion integrationApps selectors
+
+selectors.resourceFormField = (state, resourceType, resourceId, id) => {
+  const data = selectors.resourceData(state, resourceType, resourceId);
+
+  if (!data || !data.merged) return;
+
+  const { merged } = data;
+  const meta = merged.customForm && merged.customForm.form;
+
+  if (!meta) return;
+
+  const field = getFieldById({ meta, id });
+
+  if (!field) return;
+
+  return field;
+};
 
 // #region PUBLIC ACCOUNTS SELECTORS
 
@@ -5133,7 +5095,9 @@ selectors.getCustomResourceLabel = (
 
   return resourceLabel;
 };
+// #endregion Flow builder selectors
 
+// #region script selectors
 selectors.scripts = createSelector(
   state => selectors.resourceList(state, { type: 'scripts' }).resources,
   (state, flowId) => flowId && selectors.resource(state, 'flows', flowId),
@@ -5149,3 +5113,100 @@ selectors.scripts = createSelector(
 
     return getScriptsReferencedInFlow({scripts, flow, imports, exports});
   });
+// #endregion script selectors
+
+// #region AFE selectors
+
+selectors.editorHelperFunctions = state => state?.session?.editors?.helperFunctions || [];
+selectors._editorHelperFunctions = state => state?.session?._editors?.helperFunctions || [];
+
+selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enableEditorV2) => {
+  const { merged: resource = {} } = selectors.resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
+  const connection = selectors.resource(state, 'connections', resource._connectionId);
+
+  // enableEditorV2 is to force fields to show editor when
+  // the whole adaptor is not yet supported (except for native REST)
+  // TODO: we will not need all these conditions once all fields/adaptors support AFE2
+  if (enableEditorV2) {
+    if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
+      return connection.isHTTP;
+    }
+
+    return true;
+  }
+
+  // no AFE1/2 is shown for PG export (with some exceptions)
+  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
+
+  if (isPageGenerator) {
+    return false;
+  }
+
+  // AFE 2.0 not supported for Native REST Adaptor for any fields
+  if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
+    return connection.isHTTP;
+  }
+
+  // BE doesnt support oracle and snowflake adaptor yet
+  // remove this check once same is added in BE
+  if (connection?.rdbms?.type === 'oracle' || connection?.rdbms?.type === 'snowflake') {
+    return false;
+  }
+
+  return [
+    'HTTPImport',
+    'HTTPExport',
+    'FTPImport',
+    'FTPExport',
+    'AS2Import',
+    'AS2Export',
+    'S3Import',
+    'S3Export',
+    'RDBMSImport',
+    'RDBMSExport',
+    'MongodbImport',
+    'MongodbExport',
+    'DynamodbImport',
+    'DynamodbExport',
+  ].includes(resource.adaptorType);
+};
+
+// this selector returns true if the field/editor supports only AFE2.0 data
+selectors.editorSupportsOnlyV2Data = (state, editorId) => {
+  const {editorType} = fromSession._editor(state.session, editorId);
+
+  if (editorType === 'csvGenerator') return true;
+
+  return false;
+};
+
+selectors.isEditorDisabled = (state, editorId) => {
+  const editor = fromSession._editor(state?.session, editorId);
+  const {flowId, fieldId, formKey, editorType, activeProcessor} = editor;
+  const flow = selectors.resource(state, 'flows', flowId);
+
+  // if we are on form field then form state determines disabled
+  if (formKey) {
+    const fieldState = selectors.fieldState(state, formKey, fieldId);
+
+    if (fieldState) return fieldState.disabled;
+  }
+
+  // if we are on FB actions, below logic applies
+  // for input and output filter, the filter processor(not the JS processor) uses isMonitorLevelAccess check
+  if (activeProcessor === 'filter' && (editorType === 'inputFilter' || editorType === 'outputFilter')) {
+    const isMonitorLevelAccess = selectors.isFormAMonitorLevelAccess(state, flow?._integrationId);
+
+    return isMonitorLevelAccess;
+  }
+  const isViewMode = selectors.isFlowViewMode(state, flow?._integrationId, flowId);
+  const isFreeFlow = selectors.isFreeFlowResource(state, flowId);
+
+  return isViewMode || isFreeFlow;
+};
+
+// #endregion AFE selectors

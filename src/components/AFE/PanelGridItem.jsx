@@ -19,9 +19,8 @@ const useStyles = makeStyles(() => ({
   panel: { flex: '1 1 100px', minHeight: 50 },
 }));
 
-export default function PanelGridItem(props) {
-  const { className, children, gridArea } = props;
-  const classes = useStyles(props);
+export default function PanelGridItem({ className, children, gridArea }) {
+  const classes = useStyles();
 
   if (!children.length) {
     return (
@@ -32,9 +31,7 @@ export default function PanelGridItem(props) {
   }
 
   return (
-    <div
-      className={clsx(className, classes.gridItem)}
-      style={{ gridArea }}>
+    <div className={clsx(className, classes.gridItem)} style={{ gridArea }}>
       <div className={classes.flexContainer}>
         <div className={classes.title}>{children[0]}</div>
         <div className={classes.panel}>{children[1]}</div>

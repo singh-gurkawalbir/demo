@@ -109,9 +109,10 @@ export default {
     ],
   },
   dataURITemplate: {
-    type: 'datauritemplate',
+    type: 'uri',
     label: 'Data URI template',
-    enableEditorV2: true,
+    // enableEditorV2: true,
+    showLookup: false,
   },
   oneToMany: {
     type: 'radiogroup',

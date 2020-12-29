@@ -21,28 +21,6 @@ import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    margin: theme.spacing(3, 0, 0, 2),
-    overflowX: 'auto',
-  },
-  wrapper: {
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    width: '100%',
-    borderRadius: theme.spacing(0.5),
-    padding: theme.spacing(2),
-    textAlign: 'left',
-    marginBottom: theme.spacing(2),
-  },
-  progressBar: {
-    height: 10,
-    borderRadius: 10,
-    maxWidth: '75%',
-    backgroundColor: theme.palette.secondary.lightest,
-  },
-  linearProgressWrapper: {
-    marginTop: theme.spacing(1),
-  },
   itemsList: {
     marginTop: theme.spacing(1),
     listStyle: 'none',
@@ -60,34 +38,12 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  subHeading: {
-    textAlign: 'left',
-    marginBottom: theme.spacing(2),
-  },
   heading: {
     paddingLeft: 0,
   },
   bold: {
     fontWeight: 'bold',
     paddingRight: theme.spacing(0.5),
-  },
-  normal: {
-    fontWeight: 'normal',
-  },
-  block: {
-    marginBottom: theme.spacing(3),
-  },
-  linkCompare: {
-    marginLeft: theme.spacing(2),
-  },
-  headingMaster: {
-    fontSize: theme.spacing(4),
-    fontWeight: 'bold',
-    textAlign: 'left',
-    padding: theme.spacing(2),
-  },
-  description: {
-    marginTop: theme.spacing(2),
   },
   subscriptionBox: {
     border: '1px solid',
@@ -148,10 +104,6 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(0.5),
     fontSize: 20,
   },
-  subscriptionFeatureEnabled: {
-    display: 'flex',
-    alignItems: 'center',
-  },
   featureText: {
     fontSize: 15,
     lineHeight: '22px',
@@ -161,24 +113,6 @@ const useStyles = makeStyles(theme => ({
   },
   subscriptionFeatures: {
     paddingTop: theme.spacing(2),
-  },
-  productionUsageWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: theme.spacing(2),
-  },
-  productionUsageInfo: {
-    width: 200,
-    wordBreak: 'break-word',
-  },
-  productionProgressBar: {
-    minWidth: 560,
-    marginRight: theme.spacing(2),
-  },
-  productionUsageListLink: {
-    color: theme.palette.primary.light,
-    paddingLeft: theme.spacing(1),
-    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
   },
   // Todo Azhar for hardcoded sandbox value
   sandboxSubscriptionBox: {

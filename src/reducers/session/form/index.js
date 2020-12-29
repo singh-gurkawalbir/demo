@@ -91,9 +91,9 @@ selectors.formParentContext = (state, formKey) => {
 selectors.fieldState = (state, formKey, fieldId) => {
   const form = selectors.formState(state, formKey);
 
-  if (!form) return null;
+  if (!form?.fields?.[fieldId]) return null;
 
-  return form.fields && form.fields[fieldId];
+  return form.fields[fieldId];
 };
 
 selectors.isActionButtonVisible = (state, formKey, fieldVisibleRules) => {
