@@ -621,6 +621,7 @@ selectors.mkFlowGroupingsSections = () => {
   );
 };
 
+selectors.flowGroupingsSections = selectors.mkFlowGroupingsSections();
 selectors.mkGetAllCustomFormsForAResource = () => {
   const resourceSelector = selectors.makeResourceSelector();
 
@@ -726,6 +727,12 @@ selectors.defaultStoreId = (state, id, store) => {
   }
 
   return undefined;
+};
+
+selectors.resources = (state, resourceType) => {
+  if (!state || !resourceType) return emptyList;
+
+  return state[resourceType] || emptyList;
 };
 
 selectors.resourceList = (

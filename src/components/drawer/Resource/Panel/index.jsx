@@ -9,6 +9,7 @@ import {
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { generateNewId, isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
+import EditorDrawer from '../../../AFE2/Drawer';
 import ExportsPreviewPanel from '../../../ExportsPreviewPanel';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import Back from '../../../icons/BackArrowIcon';
@@ -368,6 +369,8 @@ export default function Panel(props) {
           </div>
         </LoadResources>
       </div>
+
+      <EditorDrawer />
     </>
   );
 }
