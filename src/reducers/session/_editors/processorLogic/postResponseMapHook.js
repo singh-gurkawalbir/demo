@@ -20,10 +20,10 @@ export default {
       rule,
     };
   },
-  requestBody: props => javascript.requestBody(props),
-  validate: props => javascript.validate(props),
-  dirty: props => javascript.dirty(props),
-  processResult: (editor, result) => javascript.processResult(editor, result),
+  requestBody: javascript.requestBody,
+  validate: javascript.validate,
+  dirty: javascript.dirty,
+  processResult: javascript.processResult,
   patchSet: editor => {
     const patches = {
       foregroundPatches: undefined,

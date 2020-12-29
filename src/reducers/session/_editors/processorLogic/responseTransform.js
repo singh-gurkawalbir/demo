@@ -29,11 +29,11 @@ export default {
       activeProcessor,
     };
   },
-  buildData: sampleData => flowTransform.buildData(sampleData),
-  requestBody: editor => flowTransform.requestBody(editor),
-  validate: editor => flowTransform.validate(editor),
-  dirty: editor => flowTransform.dirty(editor),
-  processResult: (editor, result) => flowTransform.processResult(editor, result),
+  buildData: flowTransform.buildData,
+  requestBody: flowTransform.requestBody,
+  validate: flowTransform.validate,
+  dirty: flowTransform.dirty,
+  processResult: flowTransform.processResult,
   patchSet: editor => {
     const patches = {
       foregroundPatches: undefined,
