@@ -10,7 +10,6 @@ import LoadResources from '../LoadResources';
 const ScriptLogWrapper = () => {
   const match = useRouteMatch();
   const { scriptId } = match.params;
-  //   const isScriptValid = useSelector(state => !!selectors.resource(state, 'scripts', scriptId));
 
   return (
     <ScriptLogs

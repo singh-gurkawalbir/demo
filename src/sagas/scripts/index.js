@@ -118,7 +118,7 @@ export function* fetchScriptLogs({scriptId = '', flowId = '', field, loadMore}) 
     nextPageURL: response.nextPageURL,
   }));
 
-  // if no results then can automatically.Maybe
+  // if no results then can automatically fetch next url
   // if (response.nextPageURL) yield put(actions.script.loadMore({scriptId, flowId}));
 }
 

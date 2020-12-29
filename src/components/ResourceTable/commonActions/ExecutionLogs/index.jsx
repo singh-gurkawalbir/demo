@@ -16,11 +16,6 @@ export default {
 
     useEffect(() => {
       dispatch(actions.script.requestLogs({scriptId, flowId}));
-
-      // return () => {
-      //   console.log('closing');
-      //   dispatch(actions.script.clear({scriptId, flowId}));
-      // };
     }, [dispatch, flowId, scriptId]);
 
     useEffect(() => {

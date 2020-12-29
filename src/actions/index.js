@@ -2077,8 +2077,8 @@ const hooks = {
 const script = {
   requestLogs: ({ scriptId, flowId }) =>
     action(actionTypes.SCRIPT.LOGS_REQUEST, { scriptId, flowId }),
-  receivedLogs: ({logs, nextPageURL, scriptId, ...options}) =>
-    action(actionTypes.SCRIPT.LOGS_RECEIVED, {logs, nextPageURL, scriptId, ...options}),
+  receivedLogs: ({logs, nextPageURL, scriptId, flowId}) =>
+    action(actionTypes.SCRIPT.LOGS_RECEIVED, {logs, nextPageURL, scriptId, flowId}),
   requestFailed: ({flowId, scriptId}) =>
     action(actionTypes.SCRIPT.LOGS_REQUEST_FAILED, {scriptId, flowId}),
   setDependency: ({resourceReferences, scriptId, flowId}) =>
@@ -2092,7 +2092,7 @@ const script = {
   clear: ({ flowId, scriptId }) =>
     action(actionTypes.SCRIPT.LOGS_CLEAR, { flowId, scriptId }),
   loadMore: ({ flowId, scriptId }) =>
-    action(actionTypes.SCRIPT.LOGS_LOAD_MORE, { flowId, scriptId, loadMore: true }),
+    action(actionTypes.SCRIPT.LOGS_LOAD_MORE, { flowId, scriptId }),
 };
 
 export default {

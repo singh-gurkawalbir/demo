@@ -25,9 +25,7 @@ export default {
   rowActions: (r, actionProps) => {
     const actions = [Edit];
 
-    // if (actionProps.type === 'flowBuilder') {
     actions.push(ViewExecutionLogs);
-    // }
 
     actions.push(AuditLogs, References);
     if (actionProps.type !== 'flowBuilder') {
