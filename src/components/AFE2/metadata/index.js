@@ -7,7 +7,14 @@ import filter from './filter';
 import javascript from './javascript';
 import transform from './transform';
 import flowTransform from './flowTransform';
+import exportFilter from './exportFilter';
+import inputFilter from './inputFilter';
+import outputFilter from './outputFilter';
 import csvGenerator from './csvGenerator';
+import structuredFileGenerator from './structuredFileGenerator';
+import structuredFileParser from './structuredFileParser';
+import postResponseMapHook from './postResponseMapHook';
+import responseTransform from './responseTransform';
 
 const map = {
   csvParser,
@@ -19,7 +26,14 @@ const map = {
   javascript,
   transform,
   flowTransform,
+  exportFilter,
+  inputFilter,
+  outputFilter,
   csvGenerator,
+  structuredFileGenerator,
+  structuredFileParser,
+  postResponseMapHook,
+  responseTransform,
 };
 export default map;
 
