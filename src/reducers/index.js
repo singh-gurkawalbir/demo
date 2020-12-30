@@ -5130,9 +5130,9 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enable
     return connection.isHTTP;
   }
 
-  // BE doesnt support oracle and snowflake adaptor yet
+  // BE doesnt support snowflake adaptor yet
   // remove this check once same is added in BE
-  if (connection?.rdbms?.type === 'oracle' || connection?.rdbms?.type === 'snowflake') {
+  if (connection?.rdbms?.type === 'snowflake') {
     return false;
   }
 
