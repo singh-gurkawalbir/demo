@@ -5,23 +5,24 @@ import { selectors } from '../../../../reducers';
 import TextToggle from '../../../TextToggle';
 
 const toggleOptions = [
-  { label: 'Rules', value: 0 },
-  { label: 'JavaScript', value: 1 },
+  { label: 'Rules', value: 'filter' },
+  { label: 'JavaScript', value: 'javascript' },
 ];
 
 export default function ToggleFilterMode({ editorId }) {
   const dispatch = useDispatch();
-  // TODO: @Ashu, where would "activeEditorIndex" fit into the editor state? Its not data or a rule.
-  const { activeEditorIndex } = useSelector(state => selectors._editor(state, editorId));
+  const activeProcessor = useSelector(state => selectors._editor(state, editorId).activeProcessor);
+  const saveInProgress = useSelector(state => {
+    const {saveStatus} = selectors._editor(state, editorId);
 
-  const handleToggle =
-    activeEditorIndex => dispatch(actions._editor.patch(editorId, {activeEditorIndex}));
+    return saveStatus === 'requested';
+  });
+  const handleToggle = activeProcessor => dispatch(actions._editor.patchFeatures(editorId, {activeProcessor}));
 
   return (
     <TextToggle
-      // disabled={disabled} we should have a selector that tells us if the editor is disabled.
-      // so the components do not need to understand and use the user permissions.
-      value={activeEditorIndex}
+      disabled={saveInProgress}
+      value={activeProcessor}
       onChange={handleToggle}
       exclusive
       options={toggleOptions}
