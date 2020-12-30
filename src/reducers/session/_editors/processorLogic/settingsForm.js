@@ -61,6 +61,17 @@ export function toggleData(data, mode) {
   return JSON.stringify(finalData, null, 2);
 }
 
+// get correct patch path in case of flowgroupings sections for integration resource
+function generatePatchPath(sectionId, allSections, path) {
+  if (!sectionId || sectionId === 'general' || !allSections) return path;
+  // if sectionId is defined and its not general we are probably looking up a flow grouping
+  const sectionsExcludingGeneral = allSections.filter(sec => sec.sectionId !== 'general');
+  // general is the first section in allSections
+  const ind = sectionsExcludingGeneral.findIndex(sec => sec.sectionId === sectionId);
+
+  return `/flowGroupings/${ind}${path}`;
+}
+
 export default {
   processor: 'javascript',
   skipPreview: ({ rule }) => {
@@ -68,7 +79,7 @@ export default {
 
     return !code || !entryFunction;
   },
-  init: ({options, settingsForm, settings}) => {
+  init: ({options, settingsForm, settings, integrationAllSections}) => {
     const { form, init = {} } = settingsForm || {};
     const mode = init._scriptId ? 'script' : 'json';
     const initForm = form || {
@@ -78,11 +89,14 @@ export default {
 
     const rule = {
       script: {
-        scriptId: init._scriptId,
         entryFunction: init.function || 'main',
         fetchScriptContent: true,
       },
     };
+
+    if (init._scriptId) {
+      rule.script.scriptId = init._scriptId;
+    }
     const data = mode === 'script' ? toggleData(initForm, 'script') : initForm;
 
     return {
@@ -93,6 +107,8 @@ export default {
       insertStubKey: 'formInit',
       activeProcessor: mode,
       originalData: data,
+      scriptPatchPath: generatePatchPath(options.sectionId, integrationAllSections, '/content'),
+      settingsFormPatchPath: generatePatchPath(options.sectionId, integrationAllSections, '/settingsForm'),
     };
   },
   requestBody: editor => {
@@ -128,6 +144,7 @@ export default {
 
   dirty: editor => {
     let parsedData = safeParse(editor.data);
+    const parsedOriginalData = safeParse(editor.originalData);
 
     if (parsedData === undefined) {
       return false;
@@ -138,7 +155,7 @@ export default {
     }
 
     // added JSON.stringify check to consider the object keys' order as well
-    if (!isEqual(parsedData, editor.originalData) || (JSON.stringify(parsedData) !== JSON.stringify(editor.originalData))) {
+    if (!isEqual(parsedData, parsedOriginalData) || (JSON.stringify(parsedData) !== JSON.stringify(parsedOriginalData))) {
       return true;
     }
 
@@ -193,14 +210,15 @@ export default {
       foregroundPatches: [],
     };
     const {
-      code,
-      scriptId,
-      entryFunction,
+      rule,
       data,
       resourceId,
       resourceType,
       activeProcessor,
+      scriptPatchPath,
+      settingsFormPatchPath,
     } = editor;
+    const {code, scriptId, entryFunction} = rule?.script || {};
     const value = {};
 
     if (data) {
@@ -245,7 +263,7 @@ export default {
         patch: [
           {
             op: 'replace',
-            path: '/content',
+            path: scriptPatchPath,
             value: code,
           },
         ],
@@ -258,7 +276,7 @@ export default {
       patch: [
         {
           op: 'replace',
-          path: '/settingsForm',
+          path: settingsFormPatchPath,
           value,
         },
       ],

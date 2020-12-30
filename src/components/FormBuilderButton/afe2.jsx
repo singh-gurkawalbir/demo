@@ -30,6 +30,7 @@ export default function FormBuilderButton({resourceId, resourceType, integration
       e.stopPropagation();
       dispatch(
         actions._editor.init(editorId, 'settingsForm', {
+          integrationId,
           resourceId,
           resourceType,
           sectionId,
@@ -37,7 +38,7 @@ export default function FormBuilderButton({resourceId, resourceType, integration
       );
       history.push(`${match.url}/editor/${editorId}`);
     },
-    [dispatch, editorId, history, match.url, resourceId, resourceType, sectionId]
+    [dispatch, editorId, history, match.url, resourceId, resourceType, sectionId, integrationId]
   );
 
   if (!allowFormEdit) return null;

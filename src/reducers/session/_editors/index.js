@@ -220,6 +220,16 @@ export default function reducer(state = {}, action) {
         }
         editor.originalRule = originalRule;
 
+        // reset originalData also if already exists in state
+        if (editor.originalData) {
+          let originalData = editor.data;
+
+          if (typeof originalData === 'object') {
+            originalData = deepClone(editor.data);
+          }
+          editor.originalData = originalData;
+        }
+
         break;
       }
 
