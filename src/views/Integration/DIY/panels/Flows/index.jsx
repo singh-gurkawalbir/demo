@@ -18,7 +18,6 @@ import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 import StatusCircle from '../../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../reducers';
-import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import { getTemplateUrlName } from '../../../../../utils/template';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
@@ -234,26 +233,9 @@ export default function FlowsPanel({ integrationId, childId }) {
   const filterKey = `${integrationId}-flows`;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
   const integrationChildren = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
-  const flowsFilterConfig = useMemo(() => ({ ...flowFilter,
-    type: 'flows',
-    filter: {
-      $where() {
-        const childIntegrationIds = integrationChildren.map(i => i.value);
-
-        // eslint-disable-next-line react/no-this-in-sfc
-        if (integrationId === STANDALONE_INTEGRATION.id) return !this._integrationId;
-        // eslint-disable-next-line react/no-this-in-sfc
-        if (childId && childId !== integrationId) return this._integrationId === childId;
-
-        // eslint-disable-next-line react/no-this-in-sfc
-        return childIntegrationIds.includes(this._integrationId);
-      },
-    } }), [childId, flowFilter, integrationChildren, integrationId]);
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
-  const flows = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    flowsFilterConfig
-  ).resources;
+  const flows = useSelectorMemo(selectors.mkDIYIntegrationFlowList, integrationId, childId, flowFilter);
+
   const { canCreate, canAttach, canEdit } = useSelector(state => {
     const permission = selectors.resourcePermissions(state, 'integrations', integrationId, 'flows') || {};
 
