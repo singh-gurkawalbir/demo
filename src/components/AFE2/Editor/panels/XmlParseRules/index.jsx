@@ -53,10 +53,14 @@ export default function XmlParseRules({ editorId }) {
 
   useFormInitWithPermissions({ formKey, disabled, fieldMeta });
 
-  // console.log('xml parse panel form context', formContext.value);
-
   useEffect(() => {
-    dispatch(actions._editor.patchRule(editorId, formContext.value));
+    if (!formContext.value) return;
+    const rule = {
+      ...formContext.value,
+      V0_json: formContext.value.V0_json === 'true',
+    };
+
+    dispatch(actions._editor.patchRule(editorId, rule));
   },
   [dispatch, editorId, formContext.value]);
 

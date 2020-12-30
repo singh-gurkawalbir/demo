@@ -1,12 +1,37 @@
+import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
+import javascript from './javascript';
+
 export default {
+  processor: 'javascript',
+  init: ({flow, options}) => {
+    const pageProcessorsObject = flow?.pageProcessors?.[options.resourceIndex] || {};
+    const postResponseMapHook = pageProcessorsObject?.hooks?.postResponseMap || {};
+    const rule = {
+      entryFunction: postResponseMapHook.function || hooksToFunctionNamesMap.postResponseMap,
+    };
+
+    if (postResponseMapHook._scriptId) {
+      rule.scriptId = postResponseMapHook._scriptId;
+    }
+
+    return {
+      ...options,
+      pageProcessorsObject,
+      rule,
+    };
+  },
+  requestBody: javascript.requestBody,
+  validate: javascript.validate,
+  dirty: javascript.dirty,
+  processResult: javascript.processResult,
   patchSet: editor => {
     const patches = {
       foregroundPatches: undefined,
       backgroundPatches: [],
     };
-    const { code, scriptId, entryFunction, optionalSaveParams } = editor;
-    const { flowId, pageProcessorsObject, resourceIndex } =
-        optionalSaveParams || {};
+
+    const { flowId, pageProcessorsObject, resourceIndex, rule } = editor;
+    const { code, scriptId, entryFunction } = rule || {};
     const foregroundPatchSet = [];
 
     if (!pageProcessorsObject.hooks) {

@@ -10,13 +10,18 @@ export default function DynaTextList({
   onFieldChange,
   description,
   errorMessages,
-  isValid }) {
+  isValid,
+  helpKey,
+}) {
   const handleChange = values => { onFieldChange(id, values); };
 
   return (
     <>
       <TextFieldList
-        label={label} value={value} disabled={disabled} dataTest={id}
+        // key={value}
+        label={label} value={value} disabled={disabled}
+        helpKey={helpKey}
+        dataTest={id}
         onChange={handleChange} />
       <ErroredMessageComponent description={description} errorMessages={errorMessages} isValid={isValid} />
     </>

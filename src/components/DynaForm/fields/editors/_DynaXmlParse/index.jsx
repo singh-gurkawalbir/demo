@@ -33,9 +33,9 @@ const getParserValue = ({
 
   if (attributePrefix) rules.attributePrefix = attributePrefix;
   if (textNodeName) rules.textNodeName = textNodeName;
-  if (listNodes?.length) rules.listNodes = listNodes;
-  if (includeNodes?.length) rules.includeNodes = includeNodes;
-  if (excludeNodes?.length) rules.excludeNodes = excludeNodes;
+  if (listNodes) rules.listNodes = listNodes;
+  if (includeNodes) rules.includeNodes = includeNodes;
+  if (excludeNodes) rules.excludeNodes = excludeNodes;
 
   const value = [
     {

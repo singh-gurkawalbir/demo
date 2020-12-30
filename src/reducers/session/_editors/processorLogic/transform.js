@@ -29,20 +29,15 @@ export default {
     };
   },
   dirty: editor => {
-    // TODO: @ashu fix this
     const {
       originalRule = [],
-      data,
-      _init_data,
       rule = [],
-      optionalSaveParams = {},
-    } = editor || {};
-    const { processorKey } = optionalSaveParams;
+    } = editor;
 
-    // in case of response transformation, data change is considered as editor change
-    if (processorKey === 'responseTransform' && _init_data !== data) {
-      return true;
-    }
+    // todo: check if this is really required in case of response transformation, data change is considered as editor change
+    // if (processorKey === 'responseTransform' && _init_data !== data) {
+    //   return true;
+    // }
 
     const rulesDiff = differenceWith(originalRule, rule, isEqual);
     const isRulesEqual = originalRule.length === rule.length && !rulesDiff.length;
@@ -50,54 +45,4 @@ export default {
     return !isRulesEqual;
   },
   processResult: (editor, result) => ({data: result?.data?.[0]}),
-  patchSet: editor => {
-    const patches = {
-      foregroundPatches: undefined,
-      backgroundPatches: [],
-    };
-    const {
-      editorType,
-      rule,
-      scriptId,
-      code,
-      entryFunction,
-      optionalSaveParams = {},
-    } = editor;
-    const { resourceId, resourceType } = optionalSaveParams;
-    const type = editorType === 'transform' ? 'expression' : 'script';
-    const path = '/transform';
-    const value = {
-      type,
-      expression: {
-        version: 1,
-        rules: rule ? [rule] : [[]],
-      },
-      script: {
-        _scriptId: scriptId,
-        function: entryFunction,
-      },
-    };
-
-    patches.foregroundPatches = {
-      patch: [{ op: 'replace', path, value }],
-      resourceType,
-      resourceId,
-    };
-
-    if (type === 'script') {
-      patches.backgroundPatches.push({
-        patch: [
-          {
-            op: 'replace',
-            path: '/content',
-            value: code,
-          },
-        ],
-        resourceType: 'scripts',
-        resourceId: scriptId,
-      });
-    }
-
-    return patches;
-  },
 };

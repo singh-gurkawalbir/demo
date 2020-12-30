@@ -1868,5 +1868,233 @@ describe('resource region selector testcases', () => {
       expect(selector()).toEqual();
     });
   });
+
+  describe('selectors.mkDIYIntegrationFlowList test cases', () => {
+    test('should not throw any exception for bad params', () => {
+      const selector = selectors.mkDIYIntegrationFlowList();
+
+      expect(selector()).toEqual([]);
+      expect(selector({})).toEqual([]);
+      expect(selector(null, null, null, null)).toEqual([]);
+      expect(selector(1, 1, 1, 1)).toEqual([]);
+      expect(selector('string', 'string', 'string', 'string')).toEqual([]);
+    });
+
+    describe('should return correct flow list for all integration types', () => {
+      const state = reducer(
+        {
+          session: {
+            errorManagement: {
+              openErrors: {
+                integrationId1: {
+                  status: 'received',
+                  data: {
+                    flow2: 2,
+                    flow6: 1,
+                    flow7: 0,
+                  },
+                },
+                integrationId2: {
+                  status: 'received',
+                  data: {
+                    flow3: 23,
+                  },
+                },
+                integrationId3: {
+                  status: 'received',
+                  data: {
+                    flow4: 213,
+                    flow5: 32,
+                  },
+                },
+              },
+            },
+          },
+          data: {
+            resources: {
+              flows: [{
+                name: 'flow name 1',
+                _id: 'flow1',
+              }, {
+                name: 'flow name 2',
+                _id: 'flow2',
+                _integrationId: 'integrationId1',
+              },
+              {
+                name: 'flow name 6',
+                _id: 'flow6',
+                _integrationId: 'integrationId1',
+              }, {
+                name: 'flow name 7',
+                _id: 'flow7',
+                _integrationId: 'integrationId1',
+              }, {
+                name: 'flow name 3',
+                _id: 'flow3',
+                _integrationId: 'integrationId2',
+              }, {
+                name: 'flow name 4',
+                _id: 'flow4',
+                _integrationId: 'integrationId3',
+              }, {
+                name: 'flow name 5',
+                _id: 'flow5',
+                _integrationId: 'integrationId3',
+              }],
+              integrations: [{
+                _id: 'integrationId1',
+                _registeredConnectionIds: ['connection1'],
+              }, {
+                _id: 'integrationId2',
+                _registeredConnectionIds: ['connection2'],
+              }, {
+                _id: 'integrationId3',
+                _parentId: 'integrationId2',
+                _registeredConnectionIds: ['connection2'],
+              }],
+              connections: [{
+                _id: 'connection1',
+                name: 'connection 1',
+              }, {
+                _id: 'connection2',
+                name: 'connection2',
+              }],
+            },
+          },
+        },
+        'some action'
+      );
+      const selector = selectors.mkDIYIntegrationFlowList();
+
+      test('should return correct flow list for standalone integration', () => {
+        expect(selector(state, 'none')).toEqual([{
+          name: 'flow name 1',
+          errors: 0,
+          _id: 'flow1',
+        }]);
+      });
+
+      test('should return correct flow list for a diy integration in default order', () => {
+        expect(selector(state, 'integrationId1')).toEqual([
+          {
+            name: 'flow name 2',
+            _integrationId: 'integrationId1',
+            errors: 2,
+            _id: 'flow2',
+          },
+          {
+            name: 'flow name 6',
+            _integrationId: 'integrationId1',
+            errors: 1,
+            _id: 'flow6',
+          },
+          {
+            name: 'flow name 7',
+            _integrationId: 'integrationId1',
+            errors: 0,
+            _id: 'flow7',
+          },
+        ]);
+      });
+
+      test('should return correct flow list for a diy integration in sorted order', () => {
+        expect(selector(state, 'integrationId1', null, {sort: {order: 'asc', orderBy: 'errors'}})).toEqual([
+          {
+            name: 'flow name 7',
+            _integrationId: 'integrationId1',
+            errors: 0,
+            _id: 'flow7',
+          },
+          {
+            name: 'flow name 6',
+            _integrationId: 'integrationId1',
+            errors: 1,
+            _id: 'flow6',
+          },
+          {
+            name: 'flow name 2',
+            _integrationId: 'integrationId1',
+            errors: 2,
+            _id: 'flow2',
+          },
+        ]);
+
+        expect(selector(state, 'integrationId1', null, {sort: {order: 'desc', orderBy: 'errors'}})).toEqual([
+          {
+            name: 'flow name 2',
+            _integrationId: 'integrationId1',
+            errors: 2,
+            _id: 'flow2',
+          },
+          {
+            name: 'flow name 6',
+            _integrationId: 'integrationId1',
+            errors: 1,
+            _id: 'flow6',
+          },
+          {
+            name: 'flow name 7',
+            _integrationId: 'integrationId1',
+            errors: 0,
+            _id: 'flow7',
+          },
+        ]);
+      });
+
+      // Skipping all these test cases for noo as ccurrent errorMap doesnt work for IAF2.0
+      test.skip('should return correct flow list for a parent integration', () => {
+        expect(selector(state, 'integrationId2')).toEqual([{
+          name: 'flow name 3',
+          errors: 23,
+          _integrationId: 'integrationId2',
+          _id: 'flow3',
+        }, {
+          name: 'flow name 4',
+          errors: 213,
+          _integrationId: 'integrationId3',
+          _id: 'flow4',
+        }, {
+          name: 'flow name 5',
+          errors: 32,
+          _integrationId: 'integrationId3',
+          _id: 'flow5',
+        }]);
+      });
+
+      test.skip('should return correct flow list for child Integration', () => {
+        expect(selector(state, 'integrationId2', 'integrationId3')).toEqual([
+          {
+            name: 'flow name 4',
+            errors: 213,
+            _integrationId: 'integrationId3',
+            _id: 'flow4',
+          },
+          {
+            name: 'flow name 5',
+            errors: 32,
+            _integrationId: 'integrationId3',
+            _id: 'flow5',
+          },
+        ]);
+      });
+
+      test.skip('should return correct flow list and sorteed by errors when filter config is sent', () => {
+        expect(selector(state, 'integrationId2', 'integrationId3', {sort: {order: 'asc', orderBy: 'errors'}})).toEqual([
+          {
+            name: 'flow name 4',
+            errors: 213,
+            _integrationId: 'integrationId3',
+            _id: 'flow4',
+          },
+          {
+            name: 'flow name 5',
+            errors: 32,
+            _integrationId: 'integrationId3',
+            _id: 'flow5',
+          },
+        ]);
+      });
+    });
+  });
 });
 

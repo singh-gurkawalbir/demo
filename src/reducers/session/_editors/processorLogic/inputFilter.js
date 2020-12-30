@@ -1,22 +1,57 @@
 import actions from '../../../../actions';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../../constants/resource';
+import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
+import exportFilter from './exportFilter';
 
 export default {
+  processor: ({activeProcessor}) => activeProcessor,
+  init: ({resource, options}) => {
+    let activeProcessor = 'filter';
+
+    const filterObj = options.resourceType === 'imports' ? resource?.filter : resource?.inputFilter;
+    const { script = {}, expression = {} } = filterObj || {};
+    const rule = {
+      filter: expression.rules || [],
+      javascript: {
+        fetchScriptContent: true,
+      },
+    };
+
+    // set values only if undefined (to pass dirty check correctly)
+    if (script._scriptId) {
+      rule.javascript.scriptId = script._scriptId;
+      activeProcessor = 'javascript';
+    }
+    rule.javascript.entryFunction = script.function || hooksToFunctionNamesMap.filter;
+
+    return {
+      ...options,
+      rule,
+      activeProcessor,
+    };
+  },
+  buildData: exportFilter.buildData,
+  requestBody: exportFilter.requestBody,
+  validate: exportFilter.validate,
+  dirty: exportFilter.dirty,
+  processResult: exportFilter.processResult,
   patchSet: editor => {
     const patches = {
       foregroundPatches: undefined,
       backgroundPatches: [],
     };
     const {
-      editorType,
-      rule: filterRules = [],
-      scriptId,
-      code,
-      entryFunction,
-      optionalSaveParams = {},
+      rule,
+      originalRule,
+      resourceId,
+      resourceType,
+      activeProcessor,
     } = editor;
-    const { resourceId, resourceType, rules } = optionalSaveParams || {};
-    const type = editorType === 'filter' ? 'expression' : 'script';
+    const {filter: filterRules, javascript} = rule || {};
+    const {filter: originalRules} = originalRule || {};
+    const {scriptId, code, entryFunction } = javascript || {};
+
+    const type = activeProcessor === 'filter' ? 'expression' : 'script';
     const path = resourceType === 'imports' ? '/filter' : '/inputFilter';
     const value = {
       type,
@@ -50,7 +85,7 @@ export default {
       });
     }
 
-    if ((type === 'expression' && !rules.length) || !scriptId) {
+    if ((type === 'expression' && !originalRules.length) || !scriptId) {
       // If user configures filters first time
       if ((type === 'expression' && filterRules.length) || scriptId) {
         patches.backgroundPatches.push({
