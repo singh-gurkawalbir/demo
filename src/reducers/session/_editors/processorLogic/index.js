@@ -137,10 +137,7 @@ const processResult = editor => {
 };
 
 function getPatchSetLogic(editor) {
-  // TODO:
-  const processorKey =
-    (editor.optionalSaveParams && editor.optionalSaveParams.processorKey) ||
-    editor.editorType;
+  const processorKey = editor.editorType;
 
   if (!processorKey) {
     throw new Error('Not supported.');
@@ -199,6 +196,22 @@ export const featuresMap = options => ({
     layout: 'compact',
     insertStubKey: 'transform',
   },
+  responseTransform: {
+    layout: 'compact',
+    insertStubKey: 'transform',
+  },
+  exportFilter: {
+    layout: 'compact',
+    insertStubKey: 'filter',
+  },
+  inputFilter: {
+    layout: 'compact',
+    insertStubKey: 'filter',
+  },
+  outputFilter: {
+    layout: 'compact',
+    insertStubKey: 'filter',
+  },
   structuredFileParser: {
     layout: 'compact',
     autoEvaluate: true,
@@ -206,6 +219,10 @@ export const featuresMap = options => ({
   structuredFileGenerator: {
     layout: 'compact',
     autoEvaluate: true,
+  },
+  postResponseMapHook: {
+    layout: 'compact',
+    insertStubKey: 'postResponseMap',
   },
 });
 
