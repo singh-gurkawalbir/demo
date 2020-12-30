@@ -18,6 +18,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import ButtonGroup from '../../../../components/ButtonGroup';
 import LoadResources from '../../../../components/LoadResources';
 import getSettingsMetadata from './metadata';
+import EditorDrawer from '../../../../components/AFE2/Drawer';
 
 function Settings({
   flowId,
@@ -227,6 +228,7 @@ export default function SettingsDrawer(props) {
       width="medium">
       <DrawerHeader title="Settings" />
       <Settings {...props} />
+      <EditorDrawer />
     </RightDrawer>
   );
 }

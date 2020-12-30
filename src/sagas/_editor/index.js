@@ -542,7 +542,7 @@ export function* initSampleData({ id }) {
 }
 
 export function* initEditor({ id, editorType, options = {} }) {
-  const { formKey, resourceId, resourceType, flowId, sectionId, fieldId} = options;
+  const { formKey, integrationId, resourceId, resourceType, flowId, sectionId, fieldId} = options;
 
   let fieldState = {};
 
@@ -574,8 +574,9 @@ export function* initEditor({ id, editorType, options = {} }) {
     } else if (editorType === 'settingsForm') {
       const sectionMeta = yield select(selectors.mkGetCustomFormPerSectionId(), resourceType, resourceId, sectionId || 'general');
       const { settingsForm, settings} = sectionMeta || {};
+      const integrationAllSections = yield select(selectors.mkGetAllCustomFormsForAResource(), 'integrations', integrationId);
 
-      formattedOptions = init({options: formattedOptions, settingsForm, settings});
+      formattedOptions = init({options: formattedOptions, settingsForm, settings, integrationAllSections: integrationAllSections?.allSections});
     } else if (editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') {
       const {userDefinitionId, fileDefinitionResourcePath, value: fieldValue, options: fieldOptions} = fieldState;
       const { format, definitionId } = fieldOptions || {};
