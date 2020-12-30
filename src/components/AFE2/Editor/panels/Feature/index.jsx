@@ -29,6 +29,7 @@ export default function FeaturePanel({ editorId, mode, featureName }) {
         <PanelLoader />
       ) : (
         <CodePanel
+          name="feature"
           value={featureValue}
           mode={mode}
           readOnly={disabled}

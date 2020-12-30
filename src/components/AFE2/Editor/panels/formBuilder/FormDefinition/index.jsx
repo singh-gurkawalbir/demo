@@ -22,6 +22,7 @@ export default function FormDefinitionPanel({ editorId, mode }) {
 
   return (
     <CodePanel
+      name="data"
       value={formData}
       mode={mode}
       readOnly={disabled}

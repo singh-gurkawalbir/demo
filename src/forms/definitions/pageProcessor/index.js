@@ -1,6 +1,6 @@
 import {applicationsList, applicationsPlaceHolderText} from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
-import { RDBMS_TYPES } from '../../../utils/constants';
+import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
 
 export default {
   init: meta => meta,
@@ -44,7 +44,7 @@ export default {
     }
     // If there is no assistant for the import, we need to show generic adaptor form
     // we are patching useTechAdaptorForm field to not to show default assistant form
-    if ((!app.import || !app.export) && app.assistant) {
+    if ((!app.import || !app.export) && app.assistant && !FILE_PROVIDER_ASSISTANTS.includes(app.assistant)) {
       newValues['/useTechAdaptorForm'] = true;
     }
 

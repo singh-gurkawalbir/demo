@@ -33,6 +33,7 @@ export default function HandlebarsPanel({ editorId, mode = 'handlebars', lookups
 
   return (
     <CodePanel
+      name="rule"
       value={rule}
       mode={mode}
       readOnly={disabled}

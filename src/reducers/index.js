@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import deepClone from 'lodash/cloneDeep';
+import uniqBy from 'lodash/uniqBy';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
@@ -62,7 +63,9 @@ import {
   isAS2Resource,
   adaptorTypeMap,
   isQueryBuilderSupported,
+  filterAndSortResources,
   getUserAccessLevelOnConnection,
+  isFileProviderAssistant,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -1551,6 +1554,28 @@ selectors.mkChildIntegration = () => {
   );
 };
 
+selectors.mkDIYIntegrationFlowList = () => createSelector(
+  state => state?.data?.resources?.integrations,
+  state => state?.data?.resources?.flows,
+  (state, integrationId) => integrationId,
+  (_1, _2, childId) => childId,
+  (_1, _2, _3, options) => options,
+  selectors.errorMap,
+  (integrations = emptyArray, flows = emptyArray, integrationId, childId, options, errorMap) => {
+    const childIntegrationIds = integrations.filter(i => i._parentId === integrationId || i._id === integrationId).map(i => i._id);
+    let integrationFlows = flows.filter(f => {
+      if (integrationId === STANDALONE_INTEGRATION.id) return !f._integrationId;
+      if (childId && childId !== integrationId) return f._integrationId === childId;
+
+      return childIntegrationIds.includes(f._integrationId);
+    });
+
+    integrationFlows = integrationFlows.map(f => ({...f, errors: (errorMap?.data && errorMap.data[f._id]) || 0}));
+
+    return filterAndSortResources(integrationFlows, options);
+  }
+);
+
 // #endregion resource selectors
 
 // #region integrationApps selectors
@@ -2047,7 +2072,7 @@ selectors.mkIntegrationAppFlowSections = () => {
               if (index === -1) {
                 flowSections.push({...section});
               } else {
-                flowSections[index].flows = [...flowSections[index].flows, ...section.flows];
+                flowSections[index].flows = uniqBy([...flowSections[index].flows, ...section.flows], '_id');
               }
             });
           }
@@ -2159,13 +2184,12 @@ selectors.makeIntegrationAppSectionFlows = () =>
     (_, integrationId) => integrationId,
     (_1, _2, section) => section,
     (_1, _2, _3, childId) => childId,
+    selectors.errorMap,
     (_1, _2, _3, _4, options) => options,
-    (integration, flows = [], integrationId, section, childId, options = {}) => {
+    (integration, flows = [], integrationId, section, childId, errorMap = emptyObject, options = emptyObject) => {
       if (!integration) {
         return emptyArray;
       }
-      const {searchBy, keyword, sort = emptyObject} = options;
-
       const {
         supportsMultiStore,
         sections = [],
@@ -2199,26 +2223,13 @@ selectors.makeIntegrationAppSectionFlows = () =>
         requiredFlows.push(...sectionFlows.map(f => ({id: f._id, childId: sec.childId, childName: sec.childName})));
       });
       const requiredFlowIds = requiredFlows.map(f => f.id);
-      const stringTest = r => {
-        if (!keyword) return true;
-        const searchableText =
-          Array.isArray(searchBy) && searchBy.length
-            ? `${searchBy.map(key => r[key]).join('|')}`
-            : `${r._id}|${r.name}|${r.description}`;
 
-        return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
-      };
-
-      const comparer = ({ order = 'asc', orderBy = 'name' }) =>
-        order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
-
-      return flows
+      return filterAndSortResources(flows
         .filter(f => f._integrationId === integrationId && requiredFlowIds.includes(f._id))
         .sort(
           (a, b) => requiredFlowIds.indexOf(a._id) - requiredFlowIds.indexOf(b._id)
-        ).map((f, i) => (supportsMultiStore && !childId) ? ({...f, ...requiredFlows[i]}) : f)
-        .filter(stringTest)
-        .sort(comparer(sort));
+        ).map(f => ({...f, errors: (errorMap && errorMap.data && errorMap.data[f._id]) || 0}))
+        .map((f, i) => (supportsMultiStore && !childId) ? ({...f, ...requiredFlows[i]}) : f), options);
     }
   );
 selectors.integrationAppSectionFlows = selectors.makeIntegrationAppSectionFlows();
@@ -4640,8 +4651,8 @@ selectors.resourceErrors = selectors.makeResourceErrorsSelector();
 selectors.integrationErrorsPerSection = createSelector(
   selectors.integrationAppFlowSections,
   (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
-  state => selectors.resourceList(state, { type: 'flows' }).resources,
-  (flowSections, integrationErrors, flowsList) =>
+  state => state?.data?.resources?.flows,
+  (flowSections, integrationErrors, flowsList = emptyArray) =>
     // go through all sections and aggregate error counts of all the flows per sections against titleId
     flowSections.reduce((errorsMap, section) => {
       const { flows = [], titleId } = section;
@@ -4659,6 +4670,7 @@ selectors.integrationErrorsPerSection = createSelector(
 
       return errorsMap;
     }, {})
+
 );
 
 /**
@@ -4905,6 +4917,13 @@ selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
 
   // Check for media type 'csv' from connection object
   return connection && connection.rest && connection.rest.mediaType === 'csv';
+};
+selectors.isFileProviderAssistant = (state, resourceId) => {
+  const { merged: resourceObj } = selectors.resourceData(state, 'exports', resourceId);
+  const { _connectionId: connectionId } = resourceObj || {};
+  const connection = selectors.resource(state, 'connections', connectionId);
+
+  return isFileProviderAssistant(resourceObj, connection);
 };
 
 selectors.isDataLoaderExport = (state, resourceId, flowId) => {
