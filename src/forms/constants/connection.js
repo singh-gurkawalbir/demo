@@ -109,6 +109,7 @@ export default {
     'gainsight',
     'dotdigital',
     'checkout',
+    'pricefx',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

@@ -3,6 +3,39 @@ const { stringCompare, celigoListCompare } = require('./sort');
 
 describe('Sort util function test', () => {
   describe('stringCompare function test', () => {
+    test('should return correct sorted data for array of objects with compare property and type number', () => {
+      const sampleArray = [
+        {
+          name: 'name3',
+          errors: 123,
+        }, {
+          name: 'name1',
+          errors: 0,
+        }, {
+          name: 'name4',
+          errors: 345,
+        }, {
+          name: 'name2',
+          errors: 0,
+        }];
+
+      sampleArray.sort(stringCompare('errors'));
+      expect(sampleArray).toEqual([
+        {
+          name: 'name1',
+          errors: 0,
+        }, {
+          name: 'name2',
+          errors: 0,
+        }, {
+          name: 'name3',
+          errors: 123,
+        }, {
+          name: 'name4',
+          errors: 345,
+        },
+      ]);
+    });
     test('should return correct sorted data for array of strings with all Capitals', () => {
       const sampleArray = ['Canada', 'USA', 'India', 'China', 'Australia', 'Swden', 'Sri Lanka', 'Germany'];
 
