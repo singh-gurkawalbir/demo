@@ -3597,6 +3597,12 @@ Object {
       "file.fileDefinition.resourcePath": Object {
         "fieldId": "file.fileDefinition.resourcePath",
       },
+      "file.fileNameEndsWith": Object {
+        "fieldId": "file.fileNameEndsWith",
+      },
+      "file.fileNameStartsWith": Object {
+        "fieldId": "file.fileNameStartsWith",
+      },
       "file.filedefinition.rules": Object {
         "fieldId": "file.filedefinition.rules",
         "refreshOptionsOnChangesTo": Array [
@@ -5320,6 +5326,12 @@ Object {
       },
       "file.fileDefinition.resourcePath": Object {
         "fieldId": "file.fileDefinition.resourcePath",
+      },
+      "file.fileNameEndsWith": Object {
+        "fieldId": "file.fileNameEndsWith",
+      },
+      "file.fileNameStartsWith": Object {
+        "fieldId": "file.fileNameStartsWith",
       },
       "file.filedefinition.rules": Object {
         "fieldId": "file.filedefinition.rules",
