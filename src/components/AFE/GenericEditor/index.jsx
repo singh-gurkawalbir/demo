@@ -40,7 +40,9 @@ const Editor = props => {
   const classes = useStyles();
 
   useEffect(() => {
-    handleInit();
+    if (handleInit) {
+      handleInit();
+    }
   }, [handleInit]);
   // favor custom template over pre-defined layouts.
   const gridTemplate = templateClassName || classes[`${layout}Template`];

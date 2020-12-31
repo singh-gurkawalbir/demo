@@ -21,7 +21,8 @@ export default {
       heading: 'Ignored',
       value: r => r.numIgnore,
     },
-    { heading: 'Errors', value: r => r.numError },
+    { heading: 'Errors', value: r => r.numOpenError },
+    { heading: 'Resolved', value: r => r.numResolved },
     {
       heading: 'Pages',
       value: r => r.type === 'export' ? r.numPagesGenerated : r.numPagesProcessed,

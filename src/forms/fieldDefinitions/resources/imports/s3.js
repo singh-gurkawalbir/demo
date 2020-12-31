@@ -12,11 +12,13 @@ export default {
     ],
   },
   's3.bucket': {
-    type: 'namewitheditor',
+    type: 'uri',
     label: 'Bucket name',
-    editorTitle: 'Build bucket name',
+    // editorTitle: 'Build bucket name',
     placeholder: 'Enter S3 folder path,such as:MySite/Orders',
     required: true,
+    showExtract: false,
+    showLookup: false,
   },
   's3.fileKey': {
     type: 'ftpfilenamewitheditor',
@@ -28,7 +30,7 @@ export default {
     refreshOptionsOnChangesTo: ['file.type'],
   },
   's3.backupBucket': {
-    type: 'text',
+    type: 'uri',
     label: 'Backup bucket name',
     helpKey: 'import.s3.backupBucket',
   },

@@ -7,9 +7,9 @@ import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermission
 import { hashCode } from '../../../utils/string';
 import { selectors } from '../../../reducers';
 import DynaForm from '../../DynaForm';
+import DynaSubmit from '../../DynaForm/DynaSubmit';
 import ConsoleGridItem from '../ConsoleGridItem';
 import ErrorGridItem from '../ErrorGridItem';
-import DynaSubmit from '../../DynaForm/DynaSubmit';
 import CodePanel from '../GenericEditor/CodePanel';
 import JavaScriptPanel from '../JavaScriptEditor/JavaScriptPanel';
 import PanelGrid from '../PanelGrid';

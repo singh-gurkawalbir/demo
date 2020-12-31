@@ -18,7 +18,6 @@ import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 import StatusCircle from '../../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../reducers';
-import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import { getTemplateUrlName } from '../../../../../utils/template';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
@@ -199,26 +198,33 @@ const Title = ({flows, integrationId}) => {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const yetToLoadOpenErrors = useSelector(state => {
+    const {status, data} = selectors.errorMap(state, integrationId) || {};
+
+    return !status || (status === 'requested' && !data);
+  });
   const integrationErrorsMap = useSelector(state => selectors.errorMap(state, integrationId)?.data) || {};
   const currentTileErrorCount = isUserInErrMgtTwoDotZero ? allTiles.find(t => t._integrationId === integrationId)?.numError : 0;
 
-  let totalErrors = 0;
-
-  flows.forEach(flow => {
+  const totalCount = flows.reduce((count, flow) => {
     if (!flow.disabled && integrationErrorsMap[flow._id]) {
-      totalErrors += integrationErrorsMap[flow._id];
+      return count + integrationErrorsMap[flow._id];
     }
-  });
+
+    return count;
+  }, 0);
+
+  const errorCount = yetToLoadOpenErrors ? currentTileErrorCount : totalCount;
 
   return (
     <span className={classes.flowsPanelWithStatus}>
       Integration flows
-      {(totalErrors || currentTileErrorCount) ? (
+      {errorCount ? (
         <>
           <span className={classes.divider} />
           <span className={classes.errorStatus}>
             <StatusCircle variant="error" size="mini" />
-            <span>{totalErrors || currentTileErrorCount} errors</span>
+            <span>{errorCount === 1 ? `${errorCount} error` : `${errorCount} errors`} </span>
           </span>
         </>
       ) : null}
@@ -234,26 +240,9 @@ export default function FlowsPanel({ integrationId, childId }) {
   const filterKey = `${integrationId}-flows`;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
   const integrationChildren = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
-  const flowsFilterConfig = useMemo(() => ({ ...flowFilter,
-    type: 'flows',
-    filter: {
-      $where() {
-        const childIntegrationIds = integrationChildren.map(i => i.value);
-
-        // eslint-disable-next-line react/no-this-in-sfc
-        if (integrationId === STANDALONE_INTEGRATION.id) return !this._integrationId;
-        // eslint-disable-next-line react/no-this-in-sfc
-        if (childId && childId !== integrationId) return this._integrationId === childId;
-
-        // eslint-disable-next-line react/no-this-in-sfc
-        return childIntegrationIds.includes(this._integrationId);
-      },
-    } }), [childId, flowFilter, integrationChildren, integrationId]);
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
-  const flows = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    flowsFilterConfig
-  ).resources;
+  const flows = useSelectorMemo(selectors.mkDIYIntegrationFlowList, integrationId, childId, flowFilter);
+
   const { canCreate, canAttach, canEdit } = useSelector(state => {
     const permission = selectors.resourcePermissions(state, 'integrations', integrationId, 'flows') || {};
 

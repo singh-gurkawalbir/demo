@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import deepClone from 'lodash/cloneDeep';
+import uniqBy from 'lodash/uniqBy';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
@@ -62,6 +63,7 @@ import {
   isAS2Resource,
   adaptorTypeMap,
   isQueryBuilderSupported,
+  filterAndSortResources,
   getUserAccessLevelOnConnection,
   isFileProviderAssistant,
 } from '../utils/resource';
@@ -1324,61 +1326,6 @@ selectors.makeResourceDataSelector = () => {
 // For sagas we can use resourceData which points to cached selector.
 selectors.resourceData = selectors.makeResourceDataSelector();
 
-selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enableEditorV2) => {
-  const { merged: resource = {} } = selectors.resourceData(
-    state,
-    resourceType,
-    resourceId
-  );
-  const connection = selectors.resource(state, 'connections', resource._connectionId);
-
-  // enableEditorV2 is to force fields to show editor when
-  // the whole adaptor is not yet supported (except for native REST)
-  // TODO: we will not need all these conditions once all fields/adaptors support AFE2
-  if (enableEditorV2) {
-    if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-      return connection.isHTTP;
-    }
-
-    return true;
-  }
-
-  // no AFE1/2 is shown for PG export (with some exceptions)
-  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
-
-  if (isPageGenerator) {
-    return false;
-  }
-
-  // AFE 2.0 not supported for Native REST Adaptor for any fields
-  if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-    return connection.isHTTP;
-  }
-
-  // BE doesnt support oracle and snowflake adaptor yet
-  // remove this check once same is added in BE
-  if (connection?.rdbms?.type === 'oracle' || connection?.rdbms?.type === 'snowflake') {
-    return false;
-  }
-
-  return [
-    'HTTPImport',
-    'HTTPExport',
-    'FTPImport',
-    'FTPExport',
-    'AS2Import',
-    'AS2Export',
-    'S3Import',
-    'S3Export',
-    'RDBMSImport',
-    'RDBMSExport',
-    'MongodbImport',
-    'MongodbExport',
-    'DynamodbImport',
-    'DynamodbExport',
-  ].includes(resource.adaptorType);
-};
-
 selectors.resourceFormField = (state, resourceType, resourceId, id) => {
   const data = selectors.resourceData(state, resourceType, resourceId);
 
@@ -1606,6 +1553,28 @@ selectors.mkChildIntegration = () => {
     childIntegration => childIntegration
   );
 };
+
+selectors.mkDIYIntegrationFlowList = () => createSelector(
+  state => state?.data?.resources?.integrations,
+  state => state?.data?.resources?.flows,
+  (state, integrationId) => integrationId,
+  (_1, _2, childId) => childId,
+  (_1, _2, _3, options) => options,
+  selectors.errorMap,
+  (integrations = emptyArray, flows = emptyArray, integrationId, childId, options, errorMap) => {
+    const childIntegrationIds = integrations.filter(i => i._parentId === integrationId || i._id === integrationId).map(i => i._id);
+    let integrationFlows = flows.filter(f => {
+      if (integrationId === STANDALONE_INTEGRATION.id) return !f._integrationId;
+      if (childId && childId !== integrationId) return f._integrationId === childId;
+
+      return childIntegrationIds.includes(f._integrationId);
+    });
+
+    integrationFlows = integrationFlows.map(f => ({...f, errors: (errorMap?.data && errorMap.data[f._id]) || 0}));
+
+    return filterAndSortResources(integrationFlows, options);
+  }
+);
 
 // #endregion resource selectors
 
@@ -2103,7 +2072,7 @@ selectors.mkIntegrationAppFlowSections = () => {
               if (index === -1) {
                 flowSections.push({...section});
               } else {
-                flowSections[index].flows = [...flowSections[index].flows, ...section.flows];
+                flowSections[index].flows = uniqBy([...flowSections[index].flows, ...section.flows], '_id');
               }
             });
           }
@@ -2215,13 +2184,12 @@ selectors.makeIntegrationAppSectionFlows = () =>
     (_, integrationId) => integrationId,
     (_1, _2, section) => section,
     (_1, _2, _3, childId) => childId,
+    selectors.errorMap,
     (_1, _2, _3, _4, options) => options,
-    (integration, flows = [], integrationId, section, childId, options = {}) => {
+    (integration, flows = [], integrationId, section, childId, errorMap = emptyObject, options = emptyObject) => {
       if (!integration) {
         return emptyArray;
       }
-      const {searchBy, keyword, sort = emptyObject} = options;
-
       const {
         supportsMultiStore,
         sections = [],
@@ -2255,26 +2223,13 @@ selectors.makeIntegrationAppSectionFlows = () =>
         requiredFlows.push(...sectionFlows.map(f => ({id: f._id, childId: sec.childId, childName: sec.childName})));
       });
       const requiredFlowIds = requiredFlows.map(f => f.id);
-      const stringTest = r => {
-        if (!keyword) return true;
-        const searchableText =
-          Array.isArray(searchBy) && searchBy.length
-            ? `${searchBy.map(key => r[key]).join('|')}`
-            : `${r._id}|${r.name}|${r.description}`;
 
-        return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
-      };
-
-      const comparer = ({ order = 'asc', orderBy = 'name' }) =>
-        order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
-
-      return flows
+      return filterAndSortResources(flows
         .filter(f => f._integrationId === integrationId && requiredFlowIds.includes(f._id))
         .sort(
           (a, b) => requiredFlowIds.indexOf(a._id) - requiredFlowIds.indexOf(b._id)
-        ).map((f, i) => (supportsMultiStore && !childId) ? ({...f, ...requiredFlows[i]}) : f)
-        .filter(stringTest)
-        .sort(comparer(sort));
+        ).map(f => ({...f, errors: (errorMap && errorMap.data && errorMap.data[f._id]) || 0}))
+        .map((f, i) => (supportsMultiStore && !childId) ? ({...f, ...requiredFlows[i]}) : f), options);
     }
   );
 selectors.integrationAppSectionFlows = selectors.makeIntegrationAppSectionFlows();
@@ -2357,6 +2312,23 @@ selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {
 };
 
 // #endregion integrationApps selectors
+
+selectors.resourceFormField = (state, resourceType, resourceId, id) => {
+  const data = selectors.resourceData(state, resourceType, resourceId);
+
+  if (!data || !data.merged) return;
+
+  const { merged } = data;
+  const meta = merged.customForm && merged.customForm.form;
+
+  if (!meta) return;
+
+  const field = getFieldById({ meta, id });
+
+  if (!field) return;
+
+  return field;
+};
 
 // #region PUBLIC ACCOUNTS SELECTORS
 
@@ -4679,8 +4651,8 @@ selectors.resourceErrors = selectors.makeResourceErrorsSelector();
 selectors.integrationErrorsPerSection = createSelector(
   selectors.integrationAppFlowSections,
   (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
-  state => selectors.resourceList(state, { type: 'flows' }).resources,
-  (flowSections, integrationErrors, flowsList) =>
+  state => state?.data?.resources?.flows,
+  (flowSections, integrationErrors, flowsList = emptyArray) =>
     // go through all sections and aggregate error counts of all the flows per sections against titleId
     flowSections.reduce((errorsMap, section) => {
       const { flows = [], titleId } = section;
@@ -4698,6 +4670,7 @@ selectors.integrationErrorsPerSection = createSelector(
 
       return errorsMap;
     }, {})
+
 );
 
 /**
@@ -4719,17 +4692,6 @@ selectors.integrationErrorsPerStore = (state, integrationId) => {
 
     return storeErrorsMap;
   }, {});
-};
-
-selectors.canUserUpgradeToErrMgtTwoDotZero = state => {
-  const integrations = selectors.resourceList(state, {
-    type: 'integrations',
-  }).resources;
-  const userLicenses = fromUser.licenses(selectors.userState(state)) || [];
-  const hasValidConnectorLicenses = userLicenses.some(license => license.type === 'connector' && moment(license.expires) - moment() > 0);
-  const hasConnectors = integrations.some(integration => !!integration._connectorId);
-
-  return !(hasConnectors || hasValidConnectorLicenses);
 };
 
 selectors.getIntegrationUserNameById = (state, userId, flowId) => {
@@ -5130,6 +5092,105 @@ selectors.getCustomResourceLabel = (
 
   return resourceLabel;
 };
-
 // #endregion Flow builder selectors
 
+// #region AFE selectors
+
+selectors.editorHelperFunctions = state => state?.session?.editors?.helperFunctions || [];
+selectors._editorHelperFunctions = state => state?.session?._editors?.helperFunctions || [];
+
+selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enableEditorV2) => {
+  const { merged: resource = {} } = selectors.resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
+  const connection = selectors.resource(state, 'connections', resource._connectionId);
+
+  // enableEditorV2 is to force fields to show editor when
+  // the whole adaptor is not yet supported (except for native REST)
+  // TODO: we will not need all these conditions once all fields/adaptors support AFE2
+  if (enableEditorV2) {
+    if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
+      return connection.isHTTP;
+    }
+
+    return true;
+  }
+
+  // no AFE1/2 is shown for PG export (with some exceptions)
+  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
+
+  if (isPageGenerator) {
+    return false;
+  }
+
+  // AFE 2.0 not supported for Native REST Adaptor for any fields
+  if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
+    return connection.isHTTP;
+  }
+
+  // BE doesnt support snowflake adaptor yet
+  // remove this check once same is added in BE
+  if (connection?.rdbms?.type === 'snowflake') {
+    return false;
+  }
+
+  return [
+    'HTTPImport',
+    'HTTPExport',
+    'FTPImport',
+    'FTPExport',
+    'AS2Import',
+    'AS2Export',
+    'S3Import',
+    'S3Export',
+    'RDBMSImport',
+    'RDBMSExport',
+    'MongodbImport',
+    'MongodbExport',
+    'DynamodbImport',
+    'DynamodbExport',
+  ].includes(resource.adaptorType);
+};
+
+// this selector returns true if the field/editor supports only AFE2.0 data
+selectors.editorSupportsOnlyV2Data = (state, editorId) => {
+  const {editorType, fieldId, flowId, resourceId, resourceType} = fromSession._editor(state.session, editorId);
+  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
+
+  // no use case yet where any PG field supports only v2 data
+  if (isPageGenerator) return false;
+
+  if (editorType === 'csvGenerator' || fieldId === 'ftp.backupDirectoryPath' || fieldId === 's3.backupBucket') return true;
+
+  return false;
+};
+
+selectors.isEditorDisabled = (state, editorId) => {
+  const editor = fromSession._editor(state?.session, editorId);
+  const {flowId, fieldId, formKey, editorType, activeProcessor} = editor;
+  const flow = selectors.resource(state, 'flows', flowId);
+  const integrationId = flow?._integrationId || 'none';
+
+  // if we are on form field then form state determines disabled
+  if (formKey) {
+    const fieldState = selectors.fieldState(state, formKey, fieldId);
+
+    if (fieldState) return fieldState.disabled;
+  }
+
+  // if we are on FB actions, below logic applies
+  // for input and output filter, the filter processor(not the JS processor) uses isMonitorLevelAccess check
+  if (activeProcessor === 'filter' && (editorType === 'inputFilter' || editorType === 'outputFilter')) {
+    const isMonitorLevelAccess = selectors.isFormAMonitorLevelAccess(state, integrationId);
+
+    return isMonitorLevelAccess;
+  }
+  const isViewMode = selectors.isFlowViewMode(state, integrationId, flowId);
+  const isFreeFlow = selectors.isFreeFlowResource(state, flowId);
+
+  return isViewMode || isFreeFlow;
+};
+
+// #endregion AFE selectors

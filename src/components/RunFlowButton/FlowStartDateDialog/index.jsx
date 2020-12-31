@@ -15,26 +15,25 @@ import adjustTimezone from '../../../utils/adjustTimezone';
 export default function FlowStartDateDialog(props) {
   const { flowId, onClose, disabled, onRun } = props;
   const dispatch = useDispatch();
-  const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
   const preferences = useSelector(state => selectors.userOwnPreferences(state));
   const profilePreferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
   let lastExportDateTime = useSelector(state =>
-    selectors.getLastExportDateTime(state, flow._id)
+    selectors.getLastExportDateTime(state, flowId)
   ).data;
   const selectorStatus = useSelector(state =>
-    selectors.getLastExportDateTime(state, flow._id)
+    selectors.getLastExportDateTime(state, flowId)
   ).status;
-  const timeZone = profilePreferences && profilePreferences.timezone;
+  const timeZone = profilePreferences?.timezone;
 
   if (!lastExportDateTime) {
     lastExportDateTime = new Date();
   }
 
   const fetchLastExportDateTime = useCallback(() => {
-    dispatch(actions.flow.requestLastExportDateTime({ flowId: flow._id }));
-  }, [dispatch, flow._id]);
+    dispatch(actions.flow.requestLastExportDateTime({ flowId }));
+  }, [dispatch, flowId]);
   const cancelDialog = useCallback(() => {
     onClose();
   }, [onClose]);

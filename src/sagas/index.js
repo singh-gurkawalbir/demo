@@ -24,6 +24,7 @@ import { flowMetricSagas } from './flowMetrics';
 import integrationAppsSagas from './integrationApps';
 import { flowSagas } from './flows';
 import editorSagas from './editor';
+import editorAfe2 from './_editor';
 import editorSampleData from './editorSampleData';
 import {
   onRequestSaga,
@@ -144,6 +145,7 @@ function* allSagas() {
     ...templateSagas,
     ...cloneSagas,
     ...editorSagas,
+    ...editorAfe2,
     ...userSagas,
     ...authenticationSagas,
     ...resourceFormSagas,

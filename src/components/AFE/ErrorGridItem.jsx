@@ -20,7 +20,6 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     alignItems: 'stretch',
   },
-  title: { flex: '0 0 auto' },
   panel: { flex: '1 1 100px', minHeight: 50 },
 }));
 
