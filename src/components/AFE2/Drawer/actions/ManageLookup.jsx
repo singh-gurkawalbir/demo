@@ -6,6 +6,7 @@ import { selectors } from '../../../../reducers';
 import useFormContext from '../../../Form/FormContext';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import EditorDrawer from '../index';
+import CeligoDivider from '../../../CeligoDivider';
 
 export default function ManageLookup({ editorId }) {
   const {resourceType, formKey, resourceId, flowId, fieldId, resultMode} = useSelector(state => {
@@ -27,7 +28,7 @@ export default function ManageLookup({ editorId }) {
 
   const lookupFieldId = lookupUtil.getLookupFieldId(adaptorType);
 
-  // lookups are only valid for httprequestbody fields
+  // lookups are only valid for http request body fields
   if (fieldId === '_body' || resourceType !== 'imports' || !lookupFieldId || resultMode === 'text') {
     return null;
   }
@@ -42,7 +43,8 @@ export default function ManageLookup({ editorId }) {
         flowId={flowId}
         resourceType={resourceType}
         resourceId={resourceId}
-    />
+      />
+      <CeligoDivider position="right" />
       <EditorDrawer />
     </>
   );

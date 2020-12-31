@@ -1,5 +1,4 @@
 import ToggleFilterMode from '../Drawer/actions/ToggleFilterMode';
-import ToggleLayout from '../Drawer/actions/ToggleLayout';
 import filterMetadata from './filter';
 import javascriptMetadata from './javascript';
 
@@ -15,6 +14,9 @@ export default {
     return filterMetadata.panels;
   },
   drawer: {
-    actions: [ToggleFilterMode, ToggleLayout],
+    showLayoutToggle: true,
+    actions: [
+      { component: ToggleFilterMode, position: 'right' },
+    ],
   },
 };

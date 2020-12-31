@@ -2,7 +2,6 @@ import DataPanel from '../Editor/panels/Data';
 import ResultPanel from '../Editor/panels/Result';
 import HandlebarsPanel from '../Editor/panels/Handlebars';
 import FeaturePanel from '../Editor/panels/Feature';
-import ToggleLayout from '../Drawer/actions/ToggleLayout';
 
 export default {
   type: 'sql',
@@ -48,7 +47,6 @@ export default {
     },
   ],
   drawer: {
-    actions: [ToggleLayout],
+    showLayoutToggle: true,
   },
-
 };
