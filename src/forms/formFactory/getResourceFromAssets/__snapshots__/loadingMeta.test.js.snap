@@ -12451,14 +12451,20 @@ Object {
       "description": Object {
         "fieldId": "description",
       },
-      "imageURL": Object {
-        "fieldId": "imageURL",
+      "editions": Object {
+        "fieldId": "editions",
+      },
+      "framework": Object {
+        "fieldId": "framework",
       },
       "installerFunction": Object {
         "fieldId": "installerFunction",
       },
       "name": Object {
         "fieldId": "name",
+      },
+      "sourceIntegration": Object {
+        "fieldId": "sourceIntegration",
       },
       "uninstallerFunction": Object {
         "fieldId": "uninstallerFunction",
@@ -12476,14 +12482,16 @@ Object {
           "fields": Array [
             "name",
             "description",
-            "imageURL",
-            "websiteURL",
+            "applications",
+            "sourceIntegration",
             "contactEmail",
+            "websiteURL",
+            "editions",
             "_stackId",
             "installerFunction",
             "uninstallerFunction",
             "updateFunction",
-            "applications",
+            "framework",
           ],
         },
       ],
