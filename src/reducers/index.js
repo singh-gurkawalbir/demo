@@ -5098,11 +5098,19 @@ selectors.getCustomResourceLabel = (
 // #endregion Flow builder selectors
 
 // #region script selectors
+const emptySet = [];
+
 selectors.scripts = createSelector(
-  state => selectors.resourceList(state, { type: 'scripts' }).resources,
-  (state, flowId) => flowId && selectors.resource(state, 'flows', flowId),
-  state => selectors.resourceList(state, { type: 'imports' }).resources,
-  state => selectors.resourceList(state, { type: 'exports' }).resources,
+  state => state?.data?.resources?.scripts || emptySet,
+  (state, flowId) => {
+    if (!flowId) {
+      return;
+    }
+
+    return state?.data?.resources?.flows?.find(({_id}) => _id === flowId);
+  },
+  state => state?.data?.resources?.imports || emptySet,
+  state => state?.data?.resources?.exports || emptySet,
   (scripts, flow, imports, exports) => {
     if (!scripts) {
       return emptyArray;

@@ -576,7 +576,6 @@ export function* patchResource({ resourceType, id, patchSet, options = {} }) {
 }
 
 export function* requestReferences({ resourceType, id, skipSave = false, options = {} }) {
-  console.log('resourceType, id', resourceType, id);
   const path = `/${resourceType}/${id}/dependencies`;
 
   try {

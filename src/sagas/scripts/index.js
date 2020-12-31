@@ -94,12 +94,11 @@ export function* fetchScriptLogs({scriptId = '', flowId = '', field, loadMore}) 
   }
 
   // tmp fix
-  path += `&searchGranularity=${8}`;
+  // path += `&searchGranularity=${8}`;
 
   let response;
   const opts = {
     method: 'GET',
-    // body: data,
   };
 
   try {
@@ -108,7 +107,11 @@ export function* fetchScriptLogs({scriptId = '', flowId = '', field, loadMore}) 
       opts,
     });
   } catch (e) {
-    return yield put(actions.script.failure(path, 'POST', e, false));
+    return yield put(actions.script.requestFailed(
+      {
+        scriptId,
+        flowId,
+      }));
   }
 
   return yield put(actions.script.receivedLogs({

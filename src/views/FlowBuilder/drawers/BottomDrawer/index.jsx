@@ -150,8 +150,6 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
   const flowScripts = useSelector(state => selectors.scripts(state, flowId), shallowEqual);
   const flowScriptsLogs = useSelector(state => selectors.flowExecutionLogScripts(state, flowId), shallowEqual);
 
-  console.log('flowScriptsLogs', flowScriptsLogs);
-
   const connections = useSelectorMemo(
     selectors.makeResourceListSelector,
     connectionsFilterConfig
