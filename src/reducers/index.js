@@ -2220,7 +2220,17 @@ selectors.makeIntegrationAppSectionFlows = () =>
 
       selectedSections.forEach(sec => {
         sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
-        requiredFlows.push(...sectionFlows.map(f => ({id: f._id, childId: sec.childId, childName: sec.childName})));
+        sectionFlows.forEach(f => {
+          const flow = requiredFlows.find(fi => fi.id === f._id);
+
+          if (flow) {
+            // If flow is present in two stores, then it is a commom flow and does not belong to any single store, so remove store information from flow
+            delete flow.childId;
+            delete flow.childName;
+          } else {
+            requiredFlows.push({id: f._id, childId: sec.childId, childName: sec.childName});
+          }
+        });
       });
       const requiredFlowIds = requiredFlows.map(f => f.id);
 
