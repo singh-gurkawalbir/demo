@@ -121,6 +121,37 @@ export default {
       resourcePath: 'files',
     };
     delete newValues['/file/decompressFiles'];
+    if (newValues['/file/fileNameStartsWith'] && newValues['/file/fileNameEndsWith']) {
+      newValues['/file/filter'] = {
+        type: 'expression',
+        expression: {
+          version: '1',
+          rules: ['and',
+            ['startswith', ['string', ['extract', 'name']], newValues['/file/fileNameStartsWith']],
+            ['endswith', ['string', ['extract', 'name']], newValues['/file/fileNameEndsWith']]],
+        },
+      };
+    } else if (newValues['/file/fileNameStartsWith']) {
+      newValues['/file/filter'] = {
+        type: 'expression',
+        expression: {
+          version: '1',
+          rules:
+            ['startswith', ['string', ['extract', 'name']], newValues['/file/fileNameStartsWith']],
+        },
+      };
+    } else if (newValues['/file/fileNameEndsWith']) {
+      newValues['/file/filter'] = {
+        type: 'expression',
+        expression: {
+          version: '1',
+          rules:
+            ['endswith', ['string', ['extract', 'name']], newValues['/file/fileNameEndsWith']],
+        },
+      };
+    } else {
+      newValues['/file/filter'] = undefined;
+    }
 
     return {
       ...newValues,
@@ -213,6 +244,8 @@ export default {
         label: 'Where would you like to transfer from?',
         fields: [
           'http.relativeURI',
+          'file.fileNameStartsWith',
+          'file.fileNameEndsWith',
         ],
       },
       {
