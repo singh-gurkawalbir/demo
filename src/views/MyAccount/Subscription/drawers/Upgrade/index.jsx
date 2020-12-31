@@ -50,7 +50,7 @@ export default function UpgradeDrawer() {
           data-test="learnmore-link"
           href="https://www.celigo.com/ipaas-integration-platform/#Pricing">
           <Typography variant="h5" color="primary">
-            Learn more about our integrator.io premium packages
+            Learn more about integrator.io premium packages
           </Typography>
         </a>
       </DrawerContent>

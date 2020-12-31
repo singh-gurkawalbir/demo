@@ -53,7 +53,7 @@ import accelo from './accelo';
 import acumatica from './acumatica';
 import tsheets from './tsheets';
 import etsy from './etsy';
-// import googledrive from './googledrive';
+import googledrive from './googledrive';
 import namely from './namely';
 import newegg from './newegg';
 import asana from './asana';
@@ -191,6 +191,7 @@ import gainsight from './gainsight';
 import dotdigital from './dotdigital';
 import checkout from './checkout';
 import channelape from './channelape';
+import pricefx from './pricefx';
 
 export default {
   channelape,
@@ -253,7 +254,7 @@ export default {
   splunk,
   anaplan,
   etsy,
-  // googledrive,
+  googledrive,
   namely,
   newegg,
   asana,
@@ -386,4 +387,5 @@ export default {
   gainsight,
   dotdigital,
   checkout,
+  pricefx,
 };

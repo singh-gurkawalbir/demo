@@ -1,5 +1,7 @@
 /* global describe, test, expect, beforeEach */
-import { call, put, select } from 'redux-saga/effects';
+import { call, put, select, take, race } from 'redux-saga/effects';
+import { expectSaga } from 'redux-saga-test-plan';
+import { throwError } from 'redux-saga-test-plan/providers';
 import actions, { availableResources } from '../../actions';
 import {
   commitStagedChanges,
@@ -16,6 +18,15 @@ import { selectors } from '../../reducers';
 import { SCOPES } from '../resourceForm';
 import { APIException } from '../api';
 import { resourceConflictResolution } from '../utils';
+import {
+  getNetsuiteOrSalesforceMeta,
+  getNetsuiteOrSalesforceBundleInstallStatus,
+  getNetsuiteOrSalesforceMetaTakeLatestPerAction,
+  requestAssistantMetadata,
+} from './meta';
+import actionTypes from '../../actions/types';
+import commKeyGenerator from '../../utils/commKeyGenerator';
+import { COMM_STATES } from '../../reducers/comms/networkComms';
 
 describe('commitStagedChanges saga', () => {
   const id = '1';
@@ -577,5 +588,415 @@ describe('Deregister connection Saga', () => {
     const final = saga.throw(new Error('some API exception'));
 
     expect(final.done).toBe(true);
+  });
+});
+
+describe('tests for metadata sagas', () => {
+  describe('getNetsuiteOrSalesforceMeta saga tests', () => {
+    const connId = '123';
+    const metaPath = 'recordTypes';
+    const bundleURL = 'ns/distributed';
+
+    test('should call setRequestStatus action if metadata status is not requested', () => expectSaga(getNetsuiteOrSalesforceMeta, {connectionId: connId, commMetaPath: metaPath})
+      .provide([
+        [select(selectors.metadataOptionsAndResources, {connectionId: connId,
+          commMetaPath: metaPath}), {
+          status: 'refreshed',
+        }],
+      ])
+      .put(actions.metadata.setRequestStatus(connId, metaPath))
+      .run()
+    );
+
+    test('should check if bundle is installed or not if bundlePath is provided as additional argument', () => expectSaga(getNetsuiteOrSalesforceMeta, {
+      connectionId: connId,
+      commMetaPath: metaPath,
+      addInfo: {
+        bundlePath: bundleURL,
+      },
+    })
+      .provide([
+        [select(selectors.metadataOptionsAndResources, {connectionId: connId,
+          commMetaPath: metaPath}), {
+          status: 'requested',
+        }],
+      ])
+      .call(apiCallWithRetry, {
+        path: `/${bundleURL}`,
+        opts: {},
+        hidden: true,
+      })
+      .run());
+
+    test('should throw validation error if bundle is not installed', () => expectSaga(getNetsuiteOrSalesforceMeta, {
+      connectionId: connId,
+      commMetaPath: metaPath,
+      addInfo: {
+        bundlePath: bundleURL,
+        bundleUrlHelp: 'please install bundle BUNDLE_URL',
+      },
+    })
+      .provide([
+        [select(selectors.metadataOptionsAndResources, {connectionId: connId,
+          commMetaPath: metaPath}), {
+          status: 'requested',
+        }],
+        [call(apiCallWithRetry, {
+          path: `/${bundleURL}`,
+          opts: {},
+          hidden: true,
+        }), {
+          success: false,
+          bundleURL: 'ns/installationURL',
+        }],
+      ])
+      .call(apiCallWithRetry, {
+        path: `/${bundleURL}`,
+        opts: {},
+        hidden: true,
+      })
+      .put(actions.metadata.validationError(
+        'please install bundle ns/installationURL',
+        connId,
+        metaPath
+      ))
+      .not.call(apiCallWithRetry, {
+        path: metaPath,
+        opts: {},
+        message: 'Loading',
+      })
+      .run());
+
+    test('should call action received Collection if metadata call is successful', () => {
+      const metadata = [{
+        id: 'salesorder',
+        doesNotSupportCreate: false,
+      }, {
+        id: 'customer',
+        doesNotSupportCreate: false,
+      }];
+
+      return expectSaga(getNetsuiteOrSalesforceMeta, {
+        connectionId: connId,
+        commMetaPath: metaPath,
+      })
+        .provide([
+          [select(selectors.metadataOptionsAndResources, {connectionId: '123',
+            commMetaPath: metaPath}), {
+            status: 'requested',
+          }],
+          [call(apiCallWithRetry, {
+            path: `/${metaPath}`,
+            opts: {},
+            message: 'Loading',
+          }), metadata],
+        ])
+        .call(apiCallWithRetry, {
+          path: `/${metaPath}`,
+          opts: {},
+          message: 'Loading',
+        })
+        .put(actions.metadata.receivedCollection(
+          metadata,
+          connId,
+          metaPath
+        ))
+        .run();
+    });
+
+    test('should form the path correctly and make api call if provided additional params', () => {
+      const metadata = [{
+        id: 'salesorder',
+        doesNotSupportCreate: false,
+      }, {
+        id: 'customer',
+        doesNotSupportCreate: false,
+      }];
+
+      const query = 'select id,name from account';
+      const newpath = `/${metaPath}?refreshCache=true&q=${encodeURIComponent(query)}`;
+
+      return expectSaga(getNetsuiteOrSalesforceMeta, {
+        connectionId: connId,
+        commMetaPath: metaPath,
+        addInfo: {
+          refreshCache: true,
+          query,
+        },
+      })
+        .provide([
+          [select(selectors.metadataOptionsAndResources, {connectionId: '123',
+            commMetaPath: metaPath}), {
+            status: 'requested',
+          }],
+          [call(apiCallWithRetry, {
+            path: newpath,
+            opts: {},
+            message: 'Loading',
+          }), metadata],
+        ])
+        .call(apiCallWithRetry, {
+          path: newpath,
+          opts: {},
+          message: 'Loading',
+        })
+        .put(actions.metadata.receivedCollection(
+          metadata,
+          connId,
+          metaPath
+        ))
+        .run();
+    });
+
+    test('should call action receivedError if metadata contains error', () => {
+      const metadata = {
+        errors: [
+          {
+            message: 'Request limits exceeded',
+          },
+        ],
+      };
+
+      return expectSaga(getNetsuiteOrSalesforceMeta, {
+        connectionId: connId,
+        commMetaPath: metaPath,
+      })
+        .provide([
+          [select(selectors.metadataOptionsAndResources, {connectionId: '123',
+            commMetaPath: metaPath}), {
+            status: 'requested',
+          }],
+          [call(apiCallWithRetry, {
+            path: `/${metaPath}`,
+            opts: {},
+            message: 'Loading',
+          }), metadata],
+        ])
+        .call(apiCallWithRetry, {
+          path: `/${metaPath}`,
+          opts: {},
+          message: 'Loading',
+        })
+        .put(actions.metadata.receivedError(
+          metadata.errors[0].message,
+          connId,
+          metaPath
+        ))
+        .run();
+    });
+
+    test('should call action receivedError if exception is thrown', () => expectSaga(getNetsuiteOrSalesforceMeta, {
+      connectionId: connId,
+      commMetaPath: metaPath,
+    })
+      .provide([
+        [select(selectors.metadataOptionsAndResources, {connectionId: '123',
+          commMetaPath: metaPath}), {
+          status: 'requested',
+        }],
+        [call(apiCallWithRetry, {
+          path: `/${metaPath}`,
+          opts: {},
+          message: 'Loading',
+        }), throwError({status: 404, message: '[{"message":"error msg"}]'})],
+      ])
+      .call(apiCallWithRetry, {
+        path: `/${metaPath}`,
+        opts: {},
+        message: 'Loading',
+      })
+      .put(actions.metadata.receivedError(
+        'error msg',
+        connId,
+        metaPath
+      ))
+      .run());
+  });
+
+  describe('getNetsuiteOrSalesforceBundleInstallStatus saga tests', () => {
+    const connId = '123';
+    const metaPath = `connections/${connId}/distributedApps`;
+
+    test('should call action receivedCollection if bundleVerify is successful', () => {
+      const bundleInstallResponse = {
+        bundle: {
+          success: true,
+        },
+        suiteapp: {
+          success: false,
+        },
+      };
+
+      return expectSaga(getNetsuiteOrSalesforceBundleInstallStatus, {
+        connectionId: connId,
+      })
+        .provide([
+          [call(apiCallWithRetry, {
+            path: `/${metaPath}`,
+            opts: {},
+            hidden: true,
+          }), bundleInstallResponse],
+        ])
+        .put(actions.metadata.setRequestStatus(connId, metaPath))
+        .call(apiCallWithRetry, {
+          path: `/${metaPath}`,
+          opts: {},
+          hidden: true,
+        })
+        .put(actions.metadata.receivedCollection(
+          bundleInstallResponse,
+          connId,
+          metaPath
+        ))
+        .run();
+    });
+
+    test('should call action receivedError if call returns error in the response', () => {
+      const bundleInstallResponse = {
+        errors: [
+          {
+            message: 'unexpected error',
+          },
+        ],
+      };
+
+      return expectSaga(getNetsuiteOrSalesforceBundleInstallStatus, {
+        connectionId: connId,
+      })
+        .provide([
+          [call(apiCallWithRetry, {
+            path: `/${metaPath}`,
+            opts: {},
+            hidden: true,
+          }), bundleInstallResponse],
+        ])
+        .put(actions.metadata.setRequestStatus(connId, metaPath))
+        .call(apiCallWithRetry, {
+          path: `/${metaPath}`,
+          opts: {},
+          hidden: true,
+        })
+        .put(actions.metadata.receivedError(
+          'unexpected error',
+          connId,
+          metaPath
+        ))
+        .run();
+    });
+
+    test('should call action receivedError if error is thrown', () => expectSaga(getNetsuiteOrSalesforceBundleInstallStatus, {
+      connectionId: connId,
+    })
+      .provide([
+        [call(apiCallWithRetry, {
+          path: `/${metaPath}`,
+          opts: {},
+          hidden: true,
+        }), throwError({status: 404, message: '[{"message":"error msg"}]'})],
+      ])
+      .put(actions.metadata.setRequestStatus(connId, metaPath))
+      .call(apiCallWithRetry, {
+        path: `/${metaPath}`,
+        opts: {},
+        hidden: true,
+      })
+      .put(actions.metadata.receivedError(
+        'error msg',
+        connId,
+        metaPath
+      ))
+      .run());
+  });
+
+  describe('getNetsuiteOrSalesforceMetaTakeLatestPerAction saga tests', () => {
+    const params = {
+      connectionId: '123',
+      commMetaPath: '/recordTypes',
+    };
+
+    test('should call race effect to complete first getMetadata and abort other reqs', () => {
+      const saga = getNetsuiteOrSalesforceMetaTakeLatestPerAction(params);
+      const raceBetweenApiCallAndAbort = race({
+        getMetadata: call(getNetsuiteOrSalesforceMeta, params),
+        abortMetadata: take(
+          action =>
+            action.type === actionTypes.METADATA.REFRESH &&
+          action.connectionId === params.connectionId &&
+          action.commMetaPath === params.commMetaPath,
+        )});
+
+      expect(JSON.stringify(saga.next().value)).toEqual(
+        JSON.stringify(raceBetweenApiCallAndAbort)
+      );
+    });
+  });
+
+  describe('requestAssistantMetadata saga tests', () => {
+    const assistant = 'zendesk';
+    const adaptorType = 'http';
+
+    test('should return undefined if assistants already loaded or loading', () => expectSaga(requestAssistantMetadata, {
+      adaptorType, assistant,
+    })
+      .provide([
+        [select(
+          selectors.commStatusByKey,
+          commKeyGenerator(`/ui/assistants/http/${assistant}`, 'GET')
+        ), {
+          status: COMM_STATES.SUCCESS,
+        }],
+      ])
+      .returns(undefined)
+      .run());
+
+    test('should return assistant metadata if assistants isn\'t loaded previously', () => {
+      const metadata = {
+        recordType: 'order',
+      };
+
+      return expectSaga(requestAssistantMetadata, {
+        adaptorType, assistant,
+      })
+        .provide([
+          [select(
+            selectors.commStatusByKey,
+            commKeyGenerator(`/ui/assistants/http/${assistant}`, 'GET')
+          ), {
+            status: COMM_STATES.ERROR,
+          }],
+          [call(apiCallWithRetry, { path: `/ui/assistants/http/${assistant}`, opts: { method: 'GET'} }), metadata],
+        ])
+        .call(apiCallWithRetry, { path: `/ui/assistants/http/${assistant}`, opts: { method: 'GET'} })
+        .put(actions.assistantMetadata.received({
+          adaptorType,
+          assistant,
+          metadata,
+        }))
+        .returns(metadata)
+        .run();
+    });
+
+    test('should return undefined if assistants call throws error', () =>
+      expectSaga(requestAssistantMetadata, {
+        adaptorType, assistant,
+      })
+        .provide([
+          [select(
+            selectors.commStatusByKey,
+            commKeyGenerator(`/ui/assistants/http/${assistant}`, 'GET')
+          ), {
+            status: COMM_STATES.ERROR,
+          }],
+          [call(apiCallWithRetry, {
+            path: `/ui/assistants/http/${assistant}`,
+            opts: {
+              method: 'GET',
+            },
+          }), throwError(
+            {status: 404, message: '[{"message":"error msg"}]'}
+          )]])
+        .call(apiCallWithRetry, { path: `/ui/assistants/http/${assistant}`, opts: { method: 'GET'} })
+        .returns(undefined)
+        .run());
   });
 });

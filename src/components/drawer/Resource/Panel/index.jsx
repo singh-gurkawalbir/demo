@@ -9,6 +9,7 @@ import {
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { generateNewId, isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
+import EditorDrawer from '../../../AFE2/Drawer';
 import ExportsPreviewPanel from '../../../ExportsPreviewPanel';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import Back from '../../../icons/BackArrowIcon';
@@ -43,13 +44,16 @@ const useStyles = makeStyles(theme => ({
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
   },
   baseForm: {
-    display: 'grid',
-    gridTemplateColumns: '55% 43%',
-    gridColumnGap: theme.spacing(1),
     paddingTop: theme.spacing(3),
     '& > div:first-child': {
       paddingTop: 0,
     },
+  },
+  baseFormWithPreview: {
+    display: 'grid',
+    gridTemplateColumns: '55% 43%',
+    gridColumnGap: theme.spacing(1),
+
   },
   resourceFormWrapper: {
     flexDirection: 'row',
@@ -74,6 +78,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2),
     display: 'flex',
     alignItems: 'center',
+    marginBottom: theme.spacing(0.5),
   },
   guideLinkIcon: {
     marginRight: theme.spacing(0.5),
@@ -320,7 +325,9 @@ export default function Panel(props) {
           <div
             className={clsx({
               [classes.baseForm]: resourceType === 'exports',
-            })}
+            },
+            {[classes.baseFormWithPreview]: showPreviewPanel }
+            )}
           >
             <ResourceFormWithStatusPanel
               formKey={newId}
@@ -362,6 +369,8 @@ export default function Panel(props) {
           </div>
         </LoadResources>
       </div>
+
+      <EditorDrawer />
     </>
   );
 }

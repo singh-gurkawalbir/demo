@@ -192,9 +192,9 @@ const connectors = [
   {
     id: 'intercom',
     name: 'Intercom',
-    marketPlaceOnly: true,
     type: 'http',
-    webhookOnly: true,
+    assistant: 'intercom',
+    webhook: true,
   },
   {
     id: 'jira',
@@ -276,6 +276,7 @@ const connectors = [
     icon: 'travis',
   },
   { id: 'yammer', name: 'Yammer', marketPlaceOnly: true},
+  { id: 's3', name: 'Amazon S3', type: 's3'},
   // Metadata doesn't exist for below connectors. Only connections are available as of now.
   {id: 'amazonaws', name: 'Amazon AWS', type: 'http', assistant: 'amazonaws'},
   {id: 'banking', name: 'Banking', type: 'http', assistant: 'banking'},
@@ -296,6 +297,8 @@ const connectors = [
   {id: 'svb', name: 'SVB', type: 'http', assistant: 'svb'},
   {id: 'wiser', name: 'Wiser', type: 'http', assistant: 'wiser'},
 ];
+// These can be removed once metadata gets updated.
+const newConnections = [{id: 'googledrive', name: 'Google Drive', type: 'http', assistant: 'googledrive'}];
 
 connectors.sort(stringCompare('name'));
 const getAssistants = () => {
@@ -309,6 +312,9 @@ const getAssistants = () => {
   } catch (e) {
     localStorageAssistants = [];
   }
+  newConnections.forEach(asst => {
+    localStorageAssistants.push(asst);
+  });
 
   return localStorageAssistants;
 };

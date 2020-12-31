@@ -1,4 +1,4 @@
-/* global describe, expect */
+/* global describe, expect, test */
 import each from 'jest-each';
 import reducer, { selectors } from '.';
 import actions from '../actions';
@@ -411,5 +411,171 @@ describe('suiteScriptTiles selector', () => {
 
   each(testCases).test('%s', (name, connection, expected) => {
     expect(selectors.suiteScriptTiles(newState2, connection._id)).toEqual(expected);
+  });
+});
+
+describe('suiteScriptLinkedTiles selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptLinkedTiles(undefined, {})).toEqual([]);
+  });
+});
+
+describe('makeSuiteScriptIAFlowSections selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    const selector = selectors.makeSuiteScriptIAFlowSections();
+
+    expect(selector(undefined, {})).toEqual([]);
+  });
+});
+
+describe('makeSuiteScriptIASections selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    const selector = selectors.makeSuiteScriptIASections();
+
+    expect(selector(undefined, {})).toEqual([]);
+  });
+});
+
+describe('suiteScriptResourceStatus selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptResourceStatus({}, {})).toEqual({
+      hasData: false,
+      isLoading: false,
+      method: 'GET',
+      isReady: false,
+      retryCount: 0,
+    });
+  });
+});
+
+describe('suiteScriptResourceData selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptResourceData(undefined, {})).toEqual({data: undefined, status: undefined});
+  });
+});
+
+describe('suiteScriptIASettings selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptIASettings(undefined, {})).toEqual(null);
+  });
+});
+
+describe('suiteScriptFlowSettings selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptFlowSettings(undefined, {})).toEqual({});
+  });
+});
+
+describe('suiteScriptFlowConnectionList selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptFlowConnectionList(undefined, {})).toEqual([]);
+  });
+});
+
+describe('suiteScriptIntegrationConnectionList selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptIntegrationConnectionList(undefined, {})).toEqual([]);
+  });
+});
+
+describe('suiteScriptTestConnectionCommState selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptTestConnectionCommState(undefined, {})).toEqual({commState: null, message: null});
+  });
+});
+
+describe('suiteScriptJob selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptJob(undefined, {})).toEqual();
+  });
+});
+
+describe('netsuiteAccountHasSuiteScriptIntegrations selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(undefined, {})).toEqual(false);
+  });
+});
+
+describe('canLinkSuiteScriptIntegrator selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.canLinkSuiteScriptIntegrator(undefined, {})).toEqual(false);
+  });
+});
+
+describe('suiteScriptIntegratorLinkedConnectionId selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptIntegratorLinkedConnectionId(undefined, {})).toEqual();
+  });
+});
+
+describe('suiteScriptIntegrationAppInstallerData selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptIntegrationAppInstallerData(undefined, {})).toEqual(null);
+  });
+});
+
+describe('isSuiteScriptIntegrationAppInstallComplete selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.isSuiteScriptIntegrationAppInstallComplete(undefined, {})).toEqual(null);
+  });
+});
+
+describe('userHasManageAccessOnSuiteScriptAccount selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.userHasManageAccessOnSuiteScriptAccount(undefined, {})).toEqual(false);
+  });
+});
+
+describe('suiteScriptFlowDetail selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptFlowDetail(undefined, {})).toEqual();
+  });
+});
+
+describe('suiteScriptNetsuiteMappingSubRecord selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptNetsuiteMappingSubRecord(undefined, {})).toEqual({data: undefined, status: undefined});
+  });
+});
+
+describe('suiteScriptImportSampleData selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptImportSampleData(undefined, {})).toEqual({data: undefined, status: undefined});
+  });
+});
+
+describe('suiteScriptGenerates selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptGenerates(undefined, {})).toEqual({data: undefined, status: undefined});
+  });
+});
+
+describe('suiteScriptFlowSampleData selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptFlowSampleData(undefined, {})).toEqual({data: undefined, status: undefined});
+  });
+});
+
+describe('suiteScriptExtracts selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptExtracts(undefined, {})).toEqual({data: undefined, status: undefined});
+  });
+});
+
+describe('suiteScriptSalesforceMasterRecordTypeInfo selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptSalesforceMasterRecordTypeInfo(undefined, {})).toEqual({data: undefined, status: undefined});
+  });
+});
+
+describe('suiteScriptFileExportSampleData selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptFileExportSampleData(undefined, {})).toEqual();
+  });
+});
+
+describe('getSuitescriptMappingSubRecordList selector', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.getSuitescriptMappingSubRecordList(undefined, {})).toEqual([]);
   });
 });

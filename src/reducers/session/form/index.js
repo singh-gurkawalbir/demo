@@ -91,9 +91,9 @@ selectors.formParentContext = (state, formKey) => {
 selectors.fieldState = (state, formKey, fieldId) => {
   const form = selectors.formState(state, formKey);
 
-  if (!form) return null;
+  if (!form?.fields?.[fieldId]) return null;
 
-  return form.fields && form.fields[fieldId];
+  return form.fields[fieldId];
 };
 
 selectors.isActionButtonVisible = (state, formKey, fieldVisibleRules) => {
@@ -107,13 +107,13 @@ selectors.isActionButtonVisible = (state, formKey, fieldVisibleRules) => {
 selectors.isAnyFieldVisibleForMetaForm = (state, formKey, fieldMeta) => {
   const { fields } = selectors.formState(state, formKey) || {};
 
-  return isAnyFieldVisibleForMeta(fieldMeta, fields);
+  return isAnyFieldVisibleForMeta(fieldMeta, fields || []);
 };
 
 selectors.isExpansionPanelRequiredForMetaForm = (state, formKey, fieldMeta) => {
   const { fields } = selectors.formState(state, formKey) || {};
 
-  return isExpansionPanelRequired(fieldMeta, fields);
+  return isExpansionPanelRequired(fieldMeta, fields || []);
 };
 
 selectors.isExpansionPanelErroredForMetaForm = (

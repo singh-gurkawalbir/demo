@@ -57,7 +57,6 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant, label}) {
         }}
         disabled={disabled}
         data-test="runFlow"
-
         onClick={onRunClick}>
         <RunIcon color="secondary" />
       </IconButtonWithTooltip>
@@ -189,7 +188,7 @@ export default function RunFlowButton({
   const handleCloseDeltaDialog = useCallback(() => {
     setShowDeltaStartDateDialog(false);
   }, []);
-  const disabled = isNewFlow || !(flowDetails && flowDetails.isRunnable);
+  const disabled = isNewFlow || !flowDetails?.isRunnable || flowDetails?.disableRunFlow;
 
   useEffect(() => {
     const { status, file, error, rawFile } = uploadedFile || {};

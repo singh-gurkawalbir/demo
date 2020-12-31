@@ -70,7 +70,6 @@ export function* retrievingAssistantDetails() {
     'parseur',
     'postmark',
     'recurly',
-    'intercom',
     'segment',
     'shipwire',
     'integratorio',

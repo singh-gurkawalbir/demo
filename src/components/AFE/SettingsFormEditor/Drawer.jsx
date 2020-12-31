@@ -14,6 +14,8 @@ import SettingsFormEditor from '.';
 import { isJsonString } from '../../../utils/string';
 import DynaCheckbox from '../../DynaForm/fields/checkbox/DynaCheckbox';
 import ButtonGroup from '../../ButtonGroup';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { useSettingsPatch } from '../../../views/Integration/DIY/panels/Settings';
 
 const emptyObj = {};
 
@@ -81,6 +83,7 @@ export default function EditorDrawer({
   settingsForm = {},
   resourceId,
   resourceType,
+  sectionId,
   disabled,
   hideSaveAction = false,
   path = 'editSettings',
@@ -89,13 +92,12 @@ export default function EditorDrawer({
   const classes = useStyles();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
-  const settings = useSelector(state => {
-    if (!resourceType || !resourceId) return {};
 
-    const resource = selectors.resource(state, resourceType, resourceId);
+  const settings = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, resourceType, resourceId, sectionId || 'general')?.settings;
 
-    return (resource && resource.settings) || {};
-  });
+  const settingsFormPatchPath = useSettingsPatch(resourceId, sectionId, '/settingsForm');
+  const scriptPatchPath = useSettingsPatch(resourceId, sectionId, '/content');
+
   const editor = useSelector(state => selectors.editor(state, editorId));
   const saveInProgress = useSelector(
     state => selectors.editorPatchStatus(state, editorId).saveInProgress
@@ -176,6 +178,8 @@ export default function EditorDrawer({
         autoEvaluateDelay: 200,
         resourceId,
         resourceType,
+        scriptPatchPath,
+        settingsFormPatchPath,
         settings,
         previewOnSave: true,
         mode,

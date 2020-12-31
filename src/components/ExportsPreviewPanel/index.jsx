@@ -24,9 +24,9 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.up('xl')]: {
       width: `calc(100% - ${theme.spacing(3)}px)`,
     },
-    [theme.breakpoints.up('xxl')]: {
-      width: 880,
-    },
+    // [theme.breakpoints.up('xxl')]: {
+    //   width: 880,
+    // },
   },
   previewDataHeading: {
     fontSize: 18,

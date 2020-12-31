@@ -29,6 +29,35 @@ export default {
       },
     },
   },
+  'file.fileNameStartsWith': {
+    type: 'namewitheditor',
+    label: 'File name starts with',
+    editorTitle: 'Build file name starts with',
+    defaultValue: r => {
+      if (r?.file?.filter?.rules) {
+        if (r.file.filter.rules[0] === 'and') {
+          return r.file.filter.rules[1][2];
+        } if (r.file.filter.rules[0] === 'startswith') {
+          return r.file.filter.rules[2];
+        }
+      }
+    },
+
+  },
+  'file.fileNameEndsWith': {
+    type: 'namewitheditor',
+    label: 'File name ends with',
+    editorTitle: 'Build file name ends with',
+    defaultValue: r => {
+      if (r?.file?.filter?.rules) {
+        if (r.file.filter.rules[0] === 'and') {
+          return r.file.filter.rules[2][2];
+        } if (r.file.filter.rules[0] === 'endswith') {
+          return r.file.filter.rules[2];
+        }
+      }
+    },
+  },
   'file.encoding': {
     type: 'select',
     label: 'File encoding',

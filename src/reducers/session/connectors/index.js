@@ -64,4 +64,34 @@ selectors.connectorMetadata = (state, fieldName, id, _integrationId) => {
 
   return { isLoading: false };
 };
+
+selectors.connectorFieldOptions = (
+  state,
+  fieldName,
+  id,
+  _integrationId,
+  defaultFieldOptions
+) => {
+  const { data, isLoading } = selectors.connectorMetadata(
+    state,
+    fieldName,
+    id,
+    _integrationId
+  );
+
+  // should select options from either defaultOptions or the refreshed metadata options
+  return {
+    isLoading,
+    value: data && data.value,
+    options:
+      (data &&
+        data.options &&
+        data.options.map(option => ({
+          value: option[0],
+          label: option[1],
+        }))) ||
+      (defaultFieldOptions && defaultFieldOptions[0].items),
+  };
+};
+
 // #endregion
