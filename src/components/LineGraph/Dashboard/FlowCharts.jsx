@@ -146,7 +146,6 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
       flowData[r] = sortBy(flowData[r], ['timeInMills']);
     });
   }
-
   const getResourceName = name => {
     if (!name || typeof name !== 'string') {
       return name || '';

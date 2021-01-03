@@ -117,7 +117,6 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
   const { data = [] } =
     useSelector(state => selectors.flowMetricsData(state, flowId)) || {};
   const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
-
   const { startDate, endDate } = range;
   const type = useMemo(() => id === 'averageTimeTaken' ? 'att' : 'sei', [id]);
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
@@ -229,6 +228,13 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
     const timezone = useSelector(state => selectors.userProfile(state)?.timezone);
 
     if (active && Array.isArray(payload) && payload.length) {
+      payload.sort((a, b) => {
+        const aIndex = flowResources.findIndex(r => r._id === a?.payload?.resourceId) || -1;
+        const bIndex = flowResources.findIndex(r => r._id === b?.payload?.resourceId) || -1;
+
+        return aIndex - bIndex;
+      });
+
       return (
         <div className={classes.CustomTooltip}>
           <p className="label">{getDateTimeFormat(range, label, preferences, timezone)} </p>
