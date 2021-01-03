@@ -8,7 +8,8 @@ export function convertUtcToTimezone(
   dateOnly
 ) {
   const utcMoment = moment.utc(date, moment.ISO_8601);
-  const timeZoneDate = utcMoment.tz(timeZone || 'GMT'); // timeZone could be null.
+
+  const timeZoneDate = utcMoment.tz(timeZone || moment.tz.guess(true)); // timeZone could be null.
 
   return dateOnly ? timeZoneDate.format(`${dateFormat}`) : timeZoneDate.format(`${dateFormat} ${timeFormat}`);
 }

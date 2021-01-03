@@ -5,9 +5,23 @@ import addHours from 'date-fns/addHours';
 import moment from 'moment';
 import * as d3 from 'd3';
 import addMonths from 'date-fns/addMonths';
+import { convertUtcToTimezone } from './date';
 
 export const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
 
+export const getDateTimeFormat = (range, epochTime, preferences = {}, timezone) => {
+  if (range && range.startDate && range.endDate) {
+    const days = moment(range.endDate).diff(moment(range.startDate), 'days');
+
+    if (days > 4 && days < 4 * 30) {
+      return moment(epochTime).format(preferences?.dateFormat || 'MM/DD/YYYY');
+    } if (days >= 4 * 30) {
+      return moment(epochTime).format('MMMM');
+    }
+  }
+
+  return convertUtcToTimezone(moment(epochTime).toISOString(), preferences?.dateFormat, preferences?.timeFormat, timezone);
+};
 export const getLineColor = index => {
   const colorSpectrum = [
     '#2B5B36',
