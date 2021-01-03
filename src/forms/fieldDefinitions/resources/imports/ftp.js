@@ -134,7 +134,7 @@ export default {
     ],
   },
   'ftp.backupDirectoryPath': {
-    type: 'text',
+    type: 'uri',
     label: 'Backup files path',
     helpKey: 'import.ftp.backupDirectoryPath',
   },

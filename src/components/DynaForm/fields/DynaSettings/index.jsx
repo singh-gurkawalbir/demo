@@ -7,7 +7,7 @@ import FormView from './FormView';
 import RawView from './RawView';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useIntegration from '../../../../hooks/useIntegration';
-import FormBuilderButton from '../../../FormBuilderButton';
+import FormBuilderButton from '../../../FormBuilderButton/afe2';
 
 const useStyles = makeStyles(theme => ({
   root: {

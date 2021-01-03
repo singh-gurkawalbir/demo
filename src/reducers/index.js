@@ -5140,9 +5140,9 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enable
     return connection.isHTTP;
   }
 
-  // BE doesnt support oracle and snowflake adaptor yet
+  // BE doesnt support snowflake adaptor yet
   // remove this check once same is added in BE
-  if (connection?.rdbms?.type === 'oracle' || connection?.rdbms?.type === 'snowflake') {
+  if (connection?.rdbms?.type === 'snowflake') {
     return false;
   }
 
@@ -5166,9 +5166,13 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enable
 
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
-  const {editorType} = fromSession._editor(state.session, editorId);
+  const {editorType, fieldId, flowId, resourceId, resourceType} = fromSession._editor(state.session, editorId);
+  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
-  if (editorType === 'csvGenerator') return true;
+  // no use case yet where any PG field supports only v2 data
+  if (isPageGenerator) return false;
+
+  if (editorType === 'csvGenerator' || fieldId === 'ftp.backupDirectoryPath' || fieldId === 's3.backupBucket') return true;
 
   return false;
 };
