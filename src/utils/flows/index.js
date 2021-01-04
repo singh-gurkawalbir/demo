@@ -912,10 +912,10 @@ export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => !!(flow && (
 
 export function getScriptsReferencedInFlow(
   {
-    flow,
-    exports,
-    imports,
-    scripts,
+    flow = {},
+    exports = [],
+    imports = [],
+    scripts = [],
   }
 ) {
   const scriptIdsUsed = [];
@@ -932,7 +932,6 @@ export function getScriptsReferencedInFlow(
     });
   };
 
-  // TODO test for all filters
   flow?.pageGenerators?.forEach(({_exportId}) => {
     const _export = exports?.find(({_id}) => _id === _exportId);
 
@@ -977,6 +976,9 @@ export function getScriptsReferencedInFlow(
       }
       if (_export?.responseTransform?.type === 'script' && _export?.responseTransform?.script?._scriptId) {
         scriptIdsUsed.push(_export.responseTransform.script._scriptId);
+      }
+      if (_export?.transform?.type === 'script' && _export?.transform?.script?._scriptId) {
+        scriptIdsUsed.push(_export.transform.script._scriptId);
       }
       checkForHookScripts(_export?.hooks);
     }
