@@ -6,8 +6,31 @@ import { apiCallWithRetry } from '../../index';
 import { updateRetryData } from '../metadata';
 import getRequestOptions from '../../../utils/requestOptions';
 import openExternalUrl from '../../../utils/window';
+import { appTypeToAdaptorType, adaptorTypeMap } from '../../../utils/resource';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
 
+function* formatErrors({ errors, resourceId }) {
+  const {resources: exportList = []} = yield select(selectors.resourceList, {
+    type: 'exports',
+  });
+  const {resources: importList = []} = yield select(selectors.resourceList, {
+    type: 'imports',
+  });
+  let resource = exportList.find(e => e._id === resourceId);
+
+  if (!resource) {
+    resource = importList.find(e => e._id === resourceId);
+  }
+
+  const application = appTypeToAdaptorType[adaptorTypeMap[resource.adaptorType]];
+
+  const formattedErrors = errors.map(e => ({
+    ...e,
+    source: (e.source === 'application' && application) ? application : e.source,
+  }));
+
+  return formattedErrors;
+}
 function* requestErrorDetails({
   flowId,
   resourceId,
@@ -42,6 +65,10 @@ function* requestErrorDetails({
       path,
       opts,
     });
+
+    const errorKey = isResolved ? 'resolved' : 'errors';
+
+    errorDetails[errorKey] = yield call(formatErrors, { resourceId, errors: errorDetails[errorKey] });
 
     yield put(
       actions.errorManager.flowErrorDetails.received({
