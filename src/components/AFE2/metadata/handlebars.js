@@ -3,7 +3,7 @@ import ResultPanel from '../Editor/panels/Result';
 import HandlebarsPanel from '../Editor/panels/Handlebars';
 import ManageLookup from '../Drawer/actions/ManageLookup';
 import ToggleAFEButton from '../Drawer/actions/ToggleAFEButton';
-import ToggleLayout from '../Drawer/actions/ToggleLayout';
+import HandlebarGuide from '../Drawer/actions/HandlebarGuide';
 
 export default {
   type: 'handlebars',
@@ -33,7 +33,15 @@ export default {
     },
   ],
   drawer: {
-    size: 'large',
-    actions: [ManageLookup, ToggleAFEButton, ToggleLayout],
+    showLayoutToggle: true,
+    actions: [
+      { component: ToggleAFEButton,
+        position: 'left',
+      },
+      { component: HandlebarGuide, position: 'right' },
+      { component: ManageLookup,
+        position: 'right', // default is right.
+      },
+    ],
   },
 };
