@@ -9,6 +9,7 @@ import SelectSource from '../cells/SelectSource';
 import SelectDate from '../cells/SelectDate';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import OverflowWrapper from '../cells/OverflowWrapper';
+import ErrorMessage from '../cells/ErrorMessage';
 
 export default {
   columns: [
@@ -23,8 +24,15 @@ export default {
     },
     {
       heading: 'Message',
-      width: '50%',
-      value: r => <OverflowWrapper message={r.message} containsHtml />,
+      width: '40%',
+      value: (r, { flowId, resourceId }) => (
+        <ErrorMessage
+          message={r.message}
+          flowId={flowId}
+          resourceId={resourceId}
+          traceKey={r.traceKey}
+      />
+      ),
     },
     {
       heading: 'Code',

@@ -1171,7 +1171,7 @@ describe(' Error details in EM 2.0 reducer ', () => {
           [resourceId]: {
             open: {},
             resolved: {},
-            actions: {},
+            actions: currState[flowId][resourceId].actions,
           },
         },
       };

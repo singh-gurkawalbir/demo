@@ -145,6 +145,17 @@ function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
         errorIds,
       })
     );
+    const traceKeyList = errors
+      .filter(({errorId, traceKey }) => !!(errorIds.includes(errorId) && traceKey))
+      .map(error => error.traceKey);
+
+    if (traceKeyList.length) {
+      yield put(actions.errorManager.flowErrorDetails.trackTraceKeys({
+        flowId,
+        resourceId,
+        traceKeys: traceKeyList,
+      }));
+    }
   } catch (e) {
     // console.log('error');
   }

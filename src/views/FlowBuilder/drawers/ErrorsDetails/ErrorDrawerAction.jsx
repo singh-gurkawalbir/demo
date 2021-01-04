@@ -42,8 +42,8 @@ export default function ErrorDrawerAction({ flowId, errorType, setErrorType }) {
     { label: 'Open errors', value: 'open' },
     { label: 'Resolved errors', value: 'resolved' },
   ];
-  const isRetrying = useSelector(
-    state => selectors.retryStatus(state, flowId, resourceId) === 'retrying'
+  const retryStatus = useSelector(
+    state => selectors.retryStatus(state, flowId, resourceId)
   );
 
   const handleErrorTypeChange = useCallback(() => {
@@ -52,7 +52,7 @@ export default function ErrorDrawerAction({ flowId, errorType, setErrorType }) {
 
   return (
     <>
-      { isRetrying && (
+      { retryStatus === 'inProgress' && (
       <div className={classes.retryContainer}>
         <Divider orientation className={classes.divider} />
         <Spinner size={16} className={classes.spinner} />
@@ -61,7 +61,14 @@ export default function ErrorDrawerAction({ flowId, errorType, setErrorType }) {
         </Typography>
       </div>
       )}
-
+      { retryStatus === 'completed' && (
+      <div className={classes.retryContainer}>
+        <Divider orientation className={classes.divider} />
+        <Typography variant="body2" component="div" className={classes.status}>
+          Retrying complete
+        </Typography>
+      </div>
+      )}
       {
         resourceId && (
           <ErrorActionStatus flowId={flowId} resourceId={resourceId} />

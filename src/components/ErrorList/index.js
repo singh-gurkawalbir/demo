@@ -33,7 +33,7 @@ export default function ErrorList({ flowId, errorType }) {
     dispatch(actions.errorManager.retryStatus.requestPoll({ flowId, resourceId}));
 
     return () => {
-      dispatch(actions.errorManager.retryStatus.clear(flowId));
+      dispatch(actions.errorManager.retryStatus.stopPoll());
       dispatch(actions.errorManager.flowErrorDetails.clear({ flowId, resourceId }));
       dispatch(actions.clearFilter(FILTER_KEYS.OPEN));
       dispatch(actions.clearFilter(FILTER_KEYS.RESOLVED));
