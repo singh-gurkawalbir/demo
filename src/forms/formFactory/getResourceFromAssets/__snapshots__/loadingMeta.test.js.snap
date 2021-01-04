@@ -8432,7 +8432,7 @@ Object {
         "fieldId": "http.relativeURI",
         "label": "Directory path",
         "required": true,
-        "type": "namewitheditor",
+        "type": "uri",
       },
       "inputMode": Object {
         "defaultDisabled": [Function],
@@ -10586,7 +10586,7 @@ Object {
         "fieldId": "http.relativeURI",
         "label": "Directory path",
         "required": true,
-        "type": "namewitheditor",
+        "type": "uri",
       },
       "inputMode": Object {
         "defaultDisabled": [Function],

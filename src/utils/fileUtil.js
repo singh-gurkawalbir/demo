@@ -33,7 +33,6 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
         return 'blob';
       }
 
-      // if its create
       if (isNew) return 'records';
 
       const output = r && r.file && r.file.type;
@@ -188,7 +187,7 @@ fileType: {
 blobKeyPath: {
   fieldId: 'blobKeyPath',
 },
-'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'namewitheditor' },
+'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'uri' },
 'file.fileName': {
   fieldId: 'file.fileName', required: true,
 },
