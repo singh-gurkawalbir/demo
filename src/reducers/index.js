@@ -5193,4 +5193,16 @@ selectors.isEditorDisabled = (state, editorId) => {
   return isViewMode || isFreeFlow;
 };
 
+selectors.isEditorLookupSupported = (state, editorId) => {
+  const editor = fromSession._editor(state?.session, editorId);
+  const {resultMode, fieldId, editorType, resourceType} = editor;
+
+  // lookups are only valid for http request body and sql query fields (not for uri fields)
+  if (fieldId === '_body' || fieldId === '_query' || resourceType !== 'imports' || (resultMode === 'text' && editorType !== 'sql')) {
+    return false;
+  }
+
+  return true;
+};
+
 // #endregion AFE selectors
