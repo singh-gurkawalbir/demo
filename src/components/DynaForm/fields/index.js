@@ -28,7 +28,7 @@ import DynaSuiteScriptHook from './DynaSuiteScriptHook';
 import DynaScriptContent from './DynaScriptContent';
 import DynaSelectScopes from './DynaSelectScopes';
 import DynaFileDefinitionSelect from './DynaFileDefinitionSelect';
-import DynaFileDefinitionEditor from './editors/DynaFileDefinitionEditor';
+import _DynaFileDefinitionEditor_ from './editors/_DynaFileDefinitionEditor';
 import DynaCSVColumnMapper from './DynaTableView/DynaCSVColumnMapper';
 import DynaTrueFixedWidthColumnMapper from './DynaTableView/DynaTrueFixedWidthColumnMapper';
 import DynaXMLMapper from './DynaTableView/DynaXMLMapper';
@@ -174,7 +174,8 @@ export default {
   suitescripthook: DynaSuiteScriptHook,
   scriptcontent: DynaScriptContent,
   filedefinitionselect: DynaFileDefinitionSelect,
-  filedefinitioneditor: DynaFileDefinitionEditor,
+  // filedefinitioneditor: DynaFileDefinitionEditor,
+  filedefinitioneditor: _DynaFileDefinitionEditor_,
   tokengen: DynaTokenGenerator,
   expirytime: DynaExpiryTime,
   apiidentifier: DynaApiIdentifier,

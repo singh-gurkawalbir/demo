@@ -43,6 +43,8 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
   },
   'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'namewitheditor',
   },
+  'file.fileNameStartsWith': { fieldId: 'file.fileNameStartsWith' },
+  'file.fileNameEndsWith': { fieldId: 'file.fileNameEndsWith' },
   'file.type': { fieldId: 'file.type' },
   uploadFile: {
     fieldId: 'uploadFile',

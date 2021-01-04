@@ -21,6 +21,21 @@ import { requestExportSampleData } from '../sampleData/exports';
 import { constructResourceFromFormValues } from '../utils';
 import { safeParse } from '../../utils/string';
 
+/**
+ * a util function to get resourcePath based on value / defaultPath
+ * If user updated resourcePath, returns path from the value
+ * Initially, returns resourcePath on saved resource
+ */
+function extractResourcePath(value, initialResourcePath) {
+  if (value) {
+    const jsonValue = safeParse(value) || {};
+
+    return jsonValue.resourcePath;
+  }
+
+  return initialResourcePath;
+}
+
 export function dataAsString(data) {
   return typeof data === 'string'
     ? data
@@ -348,7 +363,12 @@ export function* requestEditorSampleData({
   let sampleData;
 
   // no /getContext call for FB actions yet
-  if (stage === 'outputFilter' || stage === 'transform') {
+  if (stage === 'outputFilter' ||
+  stage === 'transform' ||
+  stage === 'exportFilter' ||
+  stage === 'inputFilter' ||
+  stage === 'postResponseMapHook' ||
+  stage === 'sampleResponse') {
     yield call(requestSampleData, {
       flowId,
       resourceId,
@@ -373,6 +393,10 @@ export function* requestEditorSampleData({
 
     return { data: fileData};
   }
+
+  // for file definition editors, sample data is read from network call
+  // adding this check here, in case network call is delayed
+  if (editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') { return {}; }
 
   if (isPageGenerator && editorSupportsV1V2data) {
     yield call(requestExportSampleData, { resourceId, resourceType, values: formValues });
@@ -465,7 +489,7 @@ export function* requestEditorSampleData({
     }
   }
 
-  // dont wrap with context for csv generator
+  // don't wrap with context for csv generator
   if (editorType !== 'csvGenerator') {
     const { data } = yield select(selectors.sampleDataWrapper, {
       sampleData: {
@@ -518,12 +542,15 @@ export function* initSampleData({ id }) {
 }
 
 export function* initEditor({ id, editorType, options = {} }) {
+  const { formKey, integrationId, resourceId, resourceType, flowId, sectionId, fieldId} = options;
+
   let fieldState = {};
 
-  if (options.formKey) {
-    fieldState = yield select(selectors.fieldState, options.formKey, options.fieldId);
+  if (formKey) {
+    fieldState = yield select(selectors.fieldState, formKey, fieldId);
   }
-  const resource = yield select(selectors.resource, options.resourceType, options.resourceId);
+  const resource = yield select(selectors.resource, resourceType, resourceId);
+  const flow = yield select(selectors.resource, 'flows', flowId);
   const {onSave, ...rest} = options;
   let formattedOptions = deepClone(rest);
 
@@ -532,7 +559,6 @@ export function* initEditor({ id, editorType, options = {} }) {
   if (init) {
     // for now we need all below props for handlebars init only
     if (editorType === 'handlebars' || editorType === 'sql') {
-      const { formKey, resourceId, resourceType, flowId} = options;
       const formState = yield select(selectors.formState, formKey);
       const { value: formValues } = formState || {};
       const resource = yield call(constructResourceFromFormValues, {
@@ -544,15 +570,28 @@ export function* initEditor({ id, editorType, options = {} }) {
       const connection = yield select(selectors.resource, 'connections', connectionId);
       const isPageGenerator = yield select(selectors.isPageGenerator, flowId, resourceId, resourceType);
 
-      formattedOptions = init({id, options: formattedOptions, resource, formValues, fieldState, connection, isPageGenerator});
+      formattedOptions = init({options: formattedOptions, resource, formValues, fieldState, connection, isPageGenerator});
     } else if (editorType === 'settingsForm') {
-      const { resourceId, resourceType, sectionId} = options;
       const sectionMeta = yield select(selectors.mkGetCustomFormPerSectionId(), resourceType, resourceId, sectionId || 'general');
       const { settingsForm, settings} = sectionMeta || {};
+      const integrationAllSections = yield select(selectors.mkGetAllCustomFormsForAResource(), 'integrations', integrationId);
 
-      formattedOptions = init({options: formattedOptions, settingsForm, settings});
+      formattedOptions = init({options: formattedOptions, settingsForm, settings, integrationAllSections: integrationAllSections?.allSections});
+    } else if (editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') {
+      const {userDefinitionId, fileDefinitionResourcePath, value: fieldValue, options: fieldOptions} = fieldState;
+      const { format, definitionId } = fieldOptions || {};
+      const resourcePath = extractResourcePath(fieldValue, fileDefinitionResourcePath);
+
+      // todo: once all file sampledata selectors are merged we can use the same one
+      const fileDefinitionData = yield select(selectors.fileDefinitionSampleData, {
+        userDefinitionId,
+        resourceType,
+        options: { format, definitionId, resourcePath },
+      });
+
+      formattedOptions = init({options: formattedOptions, resource, fieldState, fileDefinitionData});
     } else {
-      formattedOptions = init({options: formattedOptions, resource, fieldState});
+      formattedOptions = init({options: formattedOptions, resource, fieldState, flow});
     }
   }
 

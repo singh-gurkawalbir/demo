@@ -4692,17 +4692,6 @@ selectors.integrationErrorsPerStore = (state, integrationId) => {
   }, {});
 };
 
-selectors.canUserUpgradeToErrMgtTwoDotZero = state => {
-  const integrations = selectors.resourceList(state, {
-    type: 'integrations',
-  }).resources;
-  const userLicenses = fromUser.licenses(selectors.userState(state)) || [];
-  const hasValidConnectorLicenses = userLicenses.some(license => license.type === 'connector' && moment(license.expires) - moment() > 0);
-  const hasConnectors = integrations.some(integration => !!integration._connectorId);
-
-  return !(hasConnectors || hasValidConnectorLicenses);
-};
-
 selectors.getIntegrationUserNameById = (state, userId, flowId) => {
   const profile = selectors.userProfile(state) || emptyObject;
 
@@ -5139,9 +5128,9 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enable
     return connection.isHTTP;
   }
 
-  // BE doesnt support oracle and snowflake adaptor yet
+  // BE doesnt support snowflake adaptor yet
   // remove this check once same is added in BE
-  if (connection?.rdbms?.type === 'oracle' || connection?.rdbms?.type === 'snowflake') {
+  if (connection?.rdbms?.type === 'snowflake') {
     return false;
   }
 
@@ -5165,9 +5154,13 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enable
 
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
-  const {editorType} = fromSession._editor(state.session, editorId);
+  const {editorType, fieldId, flowId, resourceId, resourceType} = fromSession._editor(state.session, editorId);
+  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
-  if (editorType === 'csvGenerator') return true;
+  // no use case yet where any PG field supports only v2 data
+  if (isPageGenerator) return false;
+
+  if (editorType === 'csvGenerator' || fieldId === 'ftp.backupDirectoryPath' || fieldId === 's3.backupBucket') return true;
 
   return false;
 };
@@ -5176,6 +5169,7 @@ selectors.isEditorDisabled = (state, editorId) => {
   const editor = fromSession._editor(state?.session, editorId);
   const {flowId, fieldId, formKey, editorType, activeProcessor} = editor;
   const flow = selectors.resource(state, 'flows', flowId);
+  const integrationId = flow?._integrationId || 'none';
 
   // if we are on form field then form state determines disabled
   if (formKey) {
@@ -5187,11 +5181,11 @@ selectors.isEditorDisabled = (state, editorId) => {
   // if we are on FB actions, below logic applies
   // for input and output filter, the filter processor(not the JS processor) uses isMonitorLevelAccess check
   if (activeProcessor === 'filter' && (editorType === 'inputFilter' || editorType === 'outputFilter')) {
-    const isMonitorLevelAccess = selectors.isFormAMonitorLevelAccess(state, flow?._integrationId);
+    const isMonitorLevelAccess = selectors.isFormAMonitorLevelAccess(state, integrationId);
 
     return isMonitorLevelAccess;
   }
-  const isViewMode = selectors.isFlowViewMode(state, flow?._integrationId, flowId);
+  const isViewMode = selectors.isFlowViewMode(state, integrationId, flowId);
   const isFreeFlow = selectors.isFreeFlowResource(state, flowId);
 
   return isViewMode || isFreeFlow;

@@ -5,6 +5,7 @@ import { Input, InputLabel } from '@material-ui/core';
 import shortid from 'shortid';
 import TrashIcon from '../icons/TrashIcon';
 import ActionButton from '../ActionButton';
+import FieldHelp from '../DynaForm/FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   input: {
@@ -14,6 +15,12 @@ const useStyles = makeStyles(theme => ({
   },
   rowContainer: {
     display: 'flex',
+  },
+  labelWithHelpTextWrapper: {
+    flexDirection: 'row',
+    display: 'flex',
+    alignItems: 'flex-start',
+    minWidth: 100,
   },
 }));
 
@@ -37,7 +44,7 @@ const getValuesFromRows = rows => rows
   .map(r => r.value)
   .filter(v => !!v);
 
-export default function TextFieldList({ label, disabled, value, onChange, className}) {
+export default function TextFieldList({ label, disabled, value, onChange, className, helpKey}) {
   const classes = useStyles();
   const [rows, setRows] = useState(getRowsFromValues(value));
 
@@ -65,7 +72,10 @@ export default function TextFieldList({ label, disabled, value, onChange, classN
 
   return (
     <div className={className}>
-      <InputLabel>{label}</InputLabel>
+      <div className={classes.labelWithHelpTextWrapper}>
+        <InputLabel>{label}</InputLabel>
+        <FieldHelp helpKey={helpKey} />
+      </div>
       {rows.map(({key, value}, index) => (
         <div className={classes.rowContainer} key={key}>
           <Input
