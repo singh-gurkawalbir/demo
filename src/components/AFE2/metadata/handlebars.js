@@ -9,16 +9,20 @@ export default {
   type: 'handlebars',
   label: 'Handlebars editor',
   description: 'Constructs JSON or XML template against raw data',
-  panels: ({ autoEvaluate, resultMode }) => [
+  panels: ({ autoEvaluate, resultMode, fieldId }) => [
     {
       title: 'Type your handlebars template here',
       area: 'rule',
       Panel: HandlebarsPanel,
+      // possibly some help is field specific
+      helpKey: `afe.handlebar.rule.${fieldId}`,
     },
     {
       title: 'Resources available for your handlebars template',
       area: 'data',
       Panel: DataPanel,
+      // other help may be fixed for a specific panel.
+      helpKey: 'afe.handlebar.data',
       props: {
         mode: 'json',
       },
