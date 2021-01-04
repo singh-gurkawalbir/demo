@@ -165,6 +165,7 @@ export default {
       type: 'text',
       inputType: 'password',
       label: 'Password',
+      defaultValue: '',
       required: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
       helpKey: 'acumatica.connection.http.encrypted.password',
