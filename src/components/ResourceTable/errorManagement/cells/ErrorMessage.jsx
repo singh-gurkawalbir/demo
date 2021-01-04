@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import RawHtml from '../../../RawHtml';
 import { selectors } from '../../../../reducers';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   wrapper: {
     position: 'relative',
     overflowY: 'auto',
@@ -21,7 +21,7 @@ const useStyles = makeStyles(() => ({
     },
   },
   retryTag: {
-
+    background: theme.palette.background.paper2,
   },
 
 }));
@@ -33,11 +33,12 @@ export default function ErrorMessage({ message, traceKey, flowId, resourceId }) 
     resourceId,
     traceKey,
   }));
+  const retryFailedTag = <span className={classes.retryTag}> Retry failed </span>;
 
   return (
     <div className={classes.wrapper}>
       <div className={classes.message}>
-        {isRetryFailed === true ? 1 : 0}  <RawHtml html={message} className={classes.htmlMessage} />
+        <span>{isRetryFailed && retryFailedTag} </span> <RawHtml html={message} className={classes.htmlMessage} />
       </div>
     </div>
   );
