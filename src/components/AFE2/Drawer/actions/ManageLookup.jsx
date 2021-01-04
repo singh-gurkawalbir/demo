@@ -8,10 +8,16 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import EditorDrawer from '../index';
 
 export default function ManageLookup({ editorId }) {
-  const {resourceType, formKey, resourceId, flowId, fieldId, resultMode} = useSelector(state => {
-    const {resourceType, formKey, resourceId, flowId, fieldId, resultMode} = selectors._editor(state, editorId);
+  const {resourceType, formKey, resourceId, flowId, fieldId, resultMode, editorType} = useSelector(state => {
+    const e = selectors._editor(state, editorId);
 
-    return {resourceType, formKey, resourceId, flowId, fieldId, resultMode};
+    return {resourceType: e.resourceType,
+      formKey: e.formKey,
+      resourceId: e.resourceId,
+      flowId: e.flowId,
+      fieldId: e.fieldId,
+      resultMode: e.resultMode,
+      editorType: e.editorType};
   }, shallowEqual);
   const formContext = useFormContext(formKey);
   const { merged: resourceData = {} } = useSelectorMemo(
@@ -27,8 +33,8 @@ export default function ManageLookup({ editorId }) {
 
   const lookupFieldId = lookupUtil.getLookupFieldId(adaptorType);
 
-  // lookups are only valid for httprequestbody fields
-  if (fieldId === '_body' || resourceType !== 'imports' || !lookupFieldId || resultMode === 'text') {
+  // lookups are only valid for http request body and sql query fields (not for uri fields)
+  if (fieldId === '_body' || fieldId === '_query' || resourceType !== 'imports' || !lookupFieldId || (resultMode === 'text' && editorType !== 'sql')) {
     return null;
   }
 

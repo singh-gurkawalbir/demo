@@ -11969,6 +11969,7 @@ Object {
         "visible": false,
       },
       "rdbms.query": Object {
+        "arrayIndex": 0,
         "id": "rdbms.query",
         "label": "Build SQL query",
         "querySetPos": 0,

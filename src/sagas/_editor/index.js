@@ -20,6 +20,7 @@ import { requestSampleData } from '../sampleData/flows';
 import { requestExportSampleData } from '../sampleData/exports';
 import { constructResourceFromFormValues } from '../utils';
 import { safeParse } from '../../utils/string';
+import { getUniqueFieldId, dataAsString } from '../../utils/editor';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -34,12 +35,6 @@ function extractResourcePath(value, initialResourcePath) {
   }
 
   return initialResourcePath;
-}
-
-export function dataAsString(data) {
-  return typeof data === 'string'
-    ? data
-    : JSON.stringify(data, null, 2);
 }
 
 export function* invokeProcessor({ processor, body }) {
@@ -603,6 +598,7 @@ export function* initEditor({ id, editorType, options = {} }) {
   const stateOptions = {
     editorType,
     ...formattedOptions,
+    fieldId: getUniqueFieldId(fieldId),
     ...featuresMap(options)[editorType],
     originalRule,
     lastChange: Date.now(),

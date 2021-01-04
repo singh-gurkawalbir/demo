@@ -42,6 +42,7 @@ export default function Editor({ editorId }) {
       resultMode: e.resultMode,
       fieldId: e.fieldId,
       formKey: e.formKey,
+      supportsDefaultData: e.supportsDefaultData,
     };
   }, shallowEqual);
 

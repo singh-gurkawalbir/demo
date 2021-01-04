@@ -29,9 +29,9 @@ import {
   isTradingPartnerSupported,
   isNetSuiteBatchExport,
   isQueryBuilderSupported,
-  getUniqueFieldId,
   getUserAccessLevelOnConnection,
 } from './resource';
+import { getUniqueFieldId } from './editor';
 
 describe('resource util tests', () => {
   describe('tests for util getResourceSubType', () => {
