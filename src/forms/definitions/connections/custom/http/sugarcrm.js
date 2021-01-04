@@ -1,26 +1,28 @@
 export default {
-  preSave: formValues => ({
-    ...formValues,
-    '/type': 'http',
-    '/assistant': 'sugarcrm',
-    '/http/auth/type': 'token',
-    '/http/mediaType': 'json',
-    '/http/baseURI': `https://${formValues['/sugarcrmSubdomain']}/rest/${
+  preSave: formValues => {
+    const baseURI = `https://${formValues['/sugarcrmSubdomain']}/rest/${
       formValues['/http/unencrypted/version']
-    }`,
-    '/http/ping/method': 'GET',
-    '/http/ping/relativeURI': '/Activities',
-    '/http/auth/token/location': 'header',
-    '/http/auth/token/scheme': ' ',
-    '/http/auth/token/headerName': 'OAuth-Token',
-    '/http/auth/token/refreshMediaType': 'json',
-    '/http/auth/token/refreshRelativeURI': `${
-      formValues['/http/baseURI']
-    }/oauth2/token`,
-    '/http/auth/token/refreshBody':
+    }`;
+
+    return {
+      ...formValues,
+      '/type': 'http',
+      '/assistant': 'sugarcrm',
+      '/http/auth/type': 'token',
+      '/http/mediaType': 'json',
+      '/http/baseURI': baseURI,
+      '/http/ping/method': 'GET',
+      '/http/ping/relativeURI': '/Activities',
+      '/http/auth/token/location': 'header',
+      '/http/auth/token/scheme': ' ',
+      '/http/auth/token/headerName': 'OAuth-Token',
+      '/http/auth/token/refreshMediaType': 'json',
+      '/http/auth/token/refreshRelativeURI': `${baseURI}/oauth2/token`,
+      '/http/auth/token/refreshBody':
       '{"grant_type":"password","client_id":"{{{connection.http.unencrypted.clientID}}}","client_secret":"","username":"{{{connection.http.unencrypted.username}}}","password":"{{{connection.http.encrypted.password}}}","platform":"base"}',
-    '/http/auth/token/refreshMethod': 'POST',
-  }),
+      '/http/auth/token/refreshMethod': 'POST',
+    };
+  },
   fieldMap: {
     name: { fieldId: 'name' },
     sugarcrmSubdomain: {

@@ -96,12 +96,6 @@ describe('Error Management region selector testcases', () => {
     });
   });
 
-  describe('selectors.canUserUpgradeToErrMgtTwoDotZero test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.canUserUpgradeToErrMgtTwoDotZero()).toEqual(true);
-    });
-  });
-
   describe('selectors.getIntegrationUserNameById test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.getIntegrationUserNameById()).toEqual();

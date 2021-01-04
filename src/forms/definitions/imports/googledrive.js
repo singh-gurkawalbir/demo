@@ -69,19 +69,25 @@ export default {
       delete newValues['/file/xlsx/rowsPerRecord'];
       delete newValues['/file/xlsx/keyColumns'];
     }
-    if (newValues['/file/compressFiles'] === false) {
-      newValues['/file/compressionFormat'] = undefined;
-    }
 
     if (newValues['/inputMode'] !== 'blob') {
       delete newValues['/blobKeyPath'];
     }
 
+    if (newValues['/file/compressFiles'] === false) {
+      newValues['/file/compressionFormat'] = undefined;
+    }
+
     if (!newValues['/file/encoding']) {
       newValues['/file/encoding'] = undefined;
     }
-
     delete newValues['/file/compressFiles'];
+    delete newValues['/inputMode'];
+    newValues['/http/method'] = 'POST';
+    newValues['/http/type'] = 'file';
+    newValues['/http/response'] = {
+      resourcePath: 'files',
+    };
 
     return {
       ...newValues,
@@ -112,7 +118,8 @@ export default {
 
     return null;
   },
-  fieldMap: {...IMPORT_FILE_FIELD_MAP},
+  fieldMap: {...IMPORT_FILE_FIELD_MAP,
+  },
   layout: {
     type: 'collapse',
     containers: [
@@ -134,9 +141,8 @@ export default {
         collapsed: true,
         label: 'Where would you like the files transferred?',
         fields: [
-          's3.region',
-          's3.bucket',
-          's3.fileKey',
+          'http.relativeURI',
+          'file.fileName',
           'file.xml.body',
           'file.lookups',
         ],
@@ -145,7 +151,6 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          's3.backupBucket',
           'file.encoding',
           'blobKeyPath',
           'fileAdvancedSettings',

@@ -3597,6 +3597,12 @@ Object {
       "file.fileDefinition.resourcePath": Object {
         "fieldId": "file.fileDefinition.resourcePath",
       },
+      "file.fileNameEndsWith": Object {
+        "fieldId": "file.fileNameEndsWith",
+      },
+      "file.fileNameStartsWith": Object {
+        "fieldId": "file.fileNameStartsWith",
+      },
       "file.filedefinition.rules": Object {
         "fieldId": "file.filedefinition.rules",
         "refreshOptionsOnChangesTo": Array [
@@ -3656,6 +3662,12 @@ Object {
       "ftp.fileNameStartsWith": Object {
         "fieldId": "ftp.fileNameStartsWith",
       },
+      "http.relativeURI": Object {
+        "fieldId": "http.relativeURI",
+        "label": "Directory path",
+        "required": true,
+        "type": "uri",
+      },
       "outputMode": Object {
         "defaultDisabled": [Function],
         "defaultValue": [Function],
@@ -3706,6 +3718,21 @@ Object {
             ],
           },
         ],
+      },
+      "s3.backupBucket": Object {
+        "fieldId": "s3.backupBucket",
+      },
+      "s3.bucket": Object {
+        "fieldId": "s3.bucket",
+      },
+      "s3.keyEndsWith": Object {
+        "fieldId": "s3.keyEndsWith",
+      },
+      "s3.keyStartsWith": Object {
+        "fieldId": "s3.keyStartsWith",
+      },
+      "s3.region": Object {
+        "fieldId": "s3.region",
       },
       "settings": Object {
         "fieldId": "settings",
@@ -5245,6 +5272,12 @@ Object {
       "edix12.format": Object {
         "fieldId": "edix12.format",
       },
+      "exportOneToMany": Object {
+        "formId": "exportOneToMany",
+      },
+      "file.batchSize": Object {
+        "fieldId": "file.batchSize",
+      },
       "file.compressionFormat": Object {
         "fieldId": "file.compressionFormat",
         "visibleWhen": Array [
@@ -5294,6 +5327,12 @@ Object {
       "file.fileDefinition.resourcePath": Object {
         "fieldId": "file.fileDefinition.resourcePath",
       },
+      "file.fileNameEndsWith": Object {
+        "fieldId": "file.fileNameEndsWith",
+      },
+      "file.fileNameStartsWith": Object {
+        "fieldId": "file.fileNameStartsWith",
+      },
       "file.filedefinition.rules": Object {
         "fieldId": "file.filedefinition.rules",
         "refreshOptionsOnChangesTo": Array [
@@ -5340,6 +5379,24 @@ Object {
       },
       "fixed.format": Object {
         "fieldId": "fixed.format",
+      },
+      "ftp.backupDirectoryPath": Object {
+        "fieldId": "ftp.backupDirectoryPath",
+      },
+      "ftp.directoryPath": Object {
+        "fieldId": "ftp.directoryPath",
+      },
+      "ftp.fileNameEndsWith": Object {
+        "fieldId": "ftp.fileNameEndsWith",
+      },
+      "ftp.fileNameStartsWith": Object {
+        "fieldId": "ftp.fileNameStartsWith",
+      },
+      "http.relativeURI": Object {
+        "fieldId": "http.relativeURI",
+        "label": "Directory path",
+        "required": true,
+        "type": "uri",
       },
       "outputMode": Object {
         "defaultDisabled": [Function],
@@ -7120,7 +7177,6 @@ Object {
               "dropbox",
               "errorception",
               "helpscout",
-              "intercom",
               "mailparser-io",
               "pagerduty",
               "sapariba",
@@ -7203,6 +7259,7 @@ Object {
               "github",
               "hubspot",
               "integratorio",
+              "intercom",
               "jira",
               "mailchimp",
               "parseur",
@@ -8287,6 +8344,10 @@ Object {
       "file.encoding": Object {
         "fieldId": "file.encoding",
       },
+      "file.fileName": Object {
+        "fieldId": "file.fileName",
+        "required": true,
+      },
       "file.lookups": Object {
         "fieldId": "file.lookups",
         "visible": false,
@@ -8367,6 +8428,12 @@ Object {
       "ftp.useTempFile": Object {
         "fieldId": "ftp.useTempFile",
       },
+      "http.relativeURI": Object {
+        "fieldId": "http.relativeURI",
+        "label": "Directory path",
+        "required": true,
+        "type": "namewitheditor",
+      },
       "inputMode": Object {
         "defaultDisabled": [Function],
         "defaultValue": [Function],
@@ -8388,6 +8455,18 @@ Object {
           },
         ],
         "type": "mode",
+      },
+      "s3.backupBucket": Object {
+        "fieldId": "s3.backupBucket",
+      },
+      "s3.bucket": Object {
+        "fieldId": "s3.bucket",
+      },
+      "s3.fileKey": Object {
+        "fieldId": "s3.fileKey",
+      },
+      "s3.region": Object {
+        "fieldId": "s3.region",
       },
       "settings": Object {
         "fieldId": "settings",
@@ -10419,6 +10498,10 @@ Object {
       "file.encoding": Object {
         "fieldId": "file.encoding",
       },
+      "file.fileName": Object {
+        "fieldId": "file.fileName",
+        "required": true,
+      },
       "file.lookups": Object {
         "fieldId": "file.lookups",
         "visible": false,
@@ -10474,6 +10557,36 @@ Object {
             ],
           },
         ],
+      },
+      "ftp.backupDirectoryPath": Object {
+        "fieldId": "ftp.backupDirectoryPath",
+      },
+      "ftp.blobFileName": Object {
+        "fieldId": "ftp.blobFileName",
+      },
+      "ftp.blobInProgressFileName": Object {
+        "fieldId": "ftp.blobInProgressFileName",
+      },
+      "ftp.blobUseTempFile": Object {
+        "fieldId": "ftp.blobUseTempFile",
+      },
+      "ftp.directoryPath": Object {
+        "fieldId": "ftp.directoryPath",
+      },
+      "ftp.fileName": Object {
+        "fieldId": "ftp.fileName",
+      },
+      "ftp.inProgressFileName": Object {
+        "fieldId": "ftp.inProgressFileName",
+      },
+      "ftp.useTempFile": Object {
+        "fieldId": "ftp.useTempFile",
+      },
+      "http.relativeURI": Object {
+        "fieldId": "http.relativeURI",
+        "label": "Directory path",
+        "required": true,
+        "type": "namewitheditor",
       },
       "inputMode": Object {
         "defaultDisabled": [Function],
@@ -12628,7 +12741,6 @@ Object {
               "dropbox",
               "errorception",
               "helpscout",
-              "intercom",
               "mailparser-io",
               "pagerduty",
               "sapariba",

@@ -18,7 +18,6 @@ export default {
     if (newValues['/file/type'] === 'json') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/xml'] = undefined;
-
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/xlsx/hasHeaderRow'];
       delete newValues['/file/xlsx/rowsPerRecord'];
@@ -31,7 +30,6 @@ export default {
       delete newValues['/file/csv/hasHeaderRow'];
       delete newValues['/file/csv/rowsPerRecord'];
       delete newValues['/file/csv/keyColumns'];
-
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'xml') {
       newValues['/file/xlsx'] = undefined;
@@ -62,6 +60,7 @@ export default {
       delete newValues['/file/csv/hasHeaderRow'];
       delete newValues['/file/csv/rowsPerRecord'];
       delete newValues['/file/csv/keyColumns'];
+
       delete newValues['/parsers'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'csv') {
@@ -80,6 +79,7 @@ export default {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/xml'] = undefined;
       newValues['/file/csv'] = undefined;
+      // TODO: Ashok needs to revisit on delete form values.
       delete newValues['/file/csv/rowsToSkip'];
       delete newValues['/file/csv/trimSpaces'];
       delete newValues['/file/csv/columnDelimiter'];
@@ -99,11 +99,13 @@ export default {
         newValues['/file/output'] = 'metadata';
       } else newValues['/file/output'] = 'blobKeys';
       newValues['/file/type'] = undefined;
+      newValues['/type'] = 'blob';
     } else {
       newValues['/file/output'] = 'records';
     }
 
     delete newValues['/outputMode'];
+    delete newValues['/fileMetadata'];
 
     if (newValues['/file/decompressFiles'] === false) {
       newValues['/file/compressionFormat'] = undefined;
@@ -112,8 +114,44 @@ export default {
     if (!newValues['/file/encoding']) {
       newValues['/file/encoding'] = undefined;
     }
-
+    newValues['/http/method'] = 'GET';
+    newValues['/http/type'] = 'file';
+    newValues['/file/encoding'] = undefined;
+    newValues['/http/response'] = {
+      resourcePath: 'files',
+    };
     delete newValues['/file/decompressFiles'];
+    if (newValues['/file/fileNameStartsWith'] && newValues['/file/fileNameEndsWith']) {
+      newValues['/file/filter'] = {
+        type: 'expression',
+        expression: {
+          version: '1',
+          rules: ['and',
+            ['startswith', ['string', ['extract', 'name']], newValues['/file/fileNameStartsWith']],
+            ['endswith', ['string', ['extract', 'name']], newValues['/file/fileNameEndsWith']]],
+        },
+      };
+    } else if (newValues['/file/fileNameStartsWith']) {
+      newValues['/file/filter'] = {
+        type: 'expression',
+        expression: {
+          version: '1',
+          rules:
+            ['startswith', ['string', ['extract', 'name']], newValues['/file/fileNameStartsWith']],
+        },
+      };
+    } else if (newValues['/file/fileNameEndsWith']) {
+      newValues['/file/filter'] = {
+        type: 'expression',
+        expression: {
+          version: '1',
+          rules:
+            ['endswith', ['string', ['extract', 'name']], newValues['/file/fileNameEndsWith']],
+        },
+      };
+    } else {
+      newValues['/file/filter'] = undefined;
+    }
 
     return {
       ...newValues,
@@ -123,21 +161,20 @@ export default {
     const fileType = fields.find(field => field.id === 'file.type');
 
     if (fieldId === 'file.xlsx.keyColumns') {
-      const keyColoumnField = fields.find(
+      const keyColumnField = fields.find(
         field => field.id === 'file.xlsx.keyColumns'
       );
       const hasHeaderRowField = fields.find(
         field => field.id === 'file.xlsx.hasHeaderRow'
       );
 
-      // resetting key coloums when hasHeaderRow changes
+      // resetting key columns when hasHeaderRow changes
       if (
-        keyColoumnField &&
-        keyColoumnField &&
-        keyColoumnField.hasHeaderRow !== hasHeaderRowField.value
+        keyColumnField &&
+        keyColumnField.hasHeaderRow !== hasHeaderRowField.value
       ) {
-        keyColoumnField.value = [];
-        keyColoumnField.hasHeaderRow = hasHeaderRowField.value;
+        keyColumnField.value = [];
+        keyColumnField.hasHeaderRow = hasHeaderRowField.value;
       }
 
       return {
@@ -153,6 +190,7 @@ export default {
       let definitionFieldId;
 
       // Fetch format specific Field Definition field to fetch id
+      // TODO: Raghu to refactor this code.
       if (fileType.value === 'filedefinition') definitionFieldId = 'edix12.format';
       else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
       else definitionFieldId = 'edifact.format';
@@ -205,10 +243,9 @@ export default {
         collapsed: true,
         label: 'Where would you like to transfer from?',
         fields: [
-          's3.region',
-          's3.bucket',
-          's3.keyStartsWith',
-          's3.keyEndsWith',
+          'http.relativeURI',
+          'file.fileNameStartsWith',
+          'file.fileNameEndsWith',
         ],
       },
       {
@@ -219,12 +256,12 @@ export default {
           'file.compressionFormat',
           'file.skipDelete',
           'fileMetadata',
-          's3.backupBucket',
           'file.encoding',
           'pageSize',
           'dataURITemplate',
           'skipRetries',
-          'apiIdentifier'],
+          'apiIdentifier',
+          'file.batchSize'],
       },
     ],
   },

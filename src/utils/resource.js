@@ -1,7 +1,8 @@
 import { values, keyBy } from 'lodash';
 import shortid from 'shortid';
 import { isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS } from './constants';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject, FILE_PROVIDER_ASSISTANTS } from './constants';
+import { stringCompare } from './sort';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
@@ -126,6 +127,27 @@ export function getResourceSubType(resource) {
   if (resource.offline === true) out.offline = true;
 
   return out;
+}
+
+export function filterAndSortResources(resources = emptyList, config = emptyObject) {
+  if (!Array.isArray(resources)) {
+    return emptyList;
+  }
+  const { sort = emptyObject, searchBy, keyword } = config || {};
+  const stringTest = r => {
+    if (!keyword) return true;
+    const searchableText =
+      Array.isArray(searchBy) && searchBy.length
+        ? `${searchBy.map(key => r[key]).join('|')}`
+        : `${r._id}|${r.name}|${r.description}`;
+
+    return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
+  };
+
+  const comparer = ({ order = 'asc', orderBy = 'name' }) =>
+    order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
+
+  return resources.filter(stringTest).sort(comparer(sort));
 }
 
 export function getResourceSubTypeFromAdaptorType(adaptorType) {
@@ -359,6 +381,16 @@ export const isRestCsvMediaTypeExport = (resource, connection) => {
 
   // Check for media type 'csv' from connection object
   return connection && connection.rest && connection.rest.mediaType === 'csv';
+};
+export const isFileProviderAssistant = (resource, connection) => {
+  const { adaptorType } = resource || {};
+
+  // Returns false if it is not a http export
+  if (adaptorTypeMap[adaptorType] !== 'http') {
+    return false;
+  }
+
+  return connection && FILE_PROVIDER_ASSISTANTS.includes(connection.assistant);
 };
 
 export const isFlowResource = (flow, resourceId, resourceType) => {

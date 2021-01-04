@@ -19,13 +19,17 @@ const toggleEditorOptions = [
 export default function ToggleAFEButton({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const showAFEToggle = useSelector(state => selectors._editor(state, editorId).editorSupportsV1V2data);
+  const editorSupportsV1V2data = useSelector(state => selectors._editor(state, editorId).editorSupportsV1V2data);
   const editorVersion = useSelector(state => selectors._editorDataVersion(state, editorId));
+  const editorSupportsOnlyV2Data = useSelector(state => selectors.editorSupportsOnlyV2Data(state, editorId));
   const saveInProgress = useSelector(state => {
     const {saveStatus} = selectors._editor(state, editorId);
 
     return saveStatus === 'requested';
   });
+
+  // AFE toggle is not shown if editor doesn't support v1 and v2 data both
+  const hideAFEToggle = !editorSupportsV1V2data || editorSupportsOnlyV2Data;
 
   const handleVersionToggle = useCallback(
     newVersion => {
@@ -34,7 +38,7 @@ export default function ToggleAFEButton({ editorId }) {
     [dispatch, editorId]
   );
 
-  if (!showAFEToggle) return null;
+  if (hideAFEToggle) return null;
 
   return (
     <>

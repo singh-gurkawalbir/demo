@@ -9,7 +9,7 @@ import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import { isJsonString } from '../../../../../utils/string';
 import PanelHeader from '../../../../../components/PanelHeader';
-import FormBuilderButton from '../../../../../components/FormBuilderButton';
+import FormBuilderButton from '../../../../../components/FormBuilderButton/afe2';
 import useSaveStatusIndicator from '../../../../../hooks/useSaveStatusIndicator';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
@@ -43,14 +43,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const getPatchPath = (allSections, sectionId) => {
-  if (!sectionId || sectionId === 'general') return '/settings';
+export const useSettingsPatch = (integrationId, sectionId, path) => {
+  const allSections = useSelectorMemo(selectors.mkGetAllCustomFormsForAResource, 'integrations', integrationId)?.allSections;
+
+  if (!sectionId || sectionId === 'general') return path;
   // if sectionId is defined and its not general we are probably looking up a flow grouping
   const sectionsExcludingGeneral = allSections.filter(sec => sec.sectionId !== 'general');
   // general is the first section in allSections
   const ind = sectionsExcludingGeneral.findIndex(sec => sec.sectionId === sectionId);
 
-  return `/flowGroupings/${ind}/settings`;
+  return `/flowGroupings/${ind}${path}`;
 };
 const emptyObj = {};
 
@@ -59,9 +61,7 @@ function CustomSettings({ integrationId, sectionId }) {
   const classes = useStyles();
   const [formKey, setFormKey] = useState(0);
 
-  const {allSections} = useSelectorMemo(selectors.mkGetAllCustomFormsForAResource, 'integrations', integrationId) || emptyObj;
-
-  const settings = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, 'integrations', integrationId, sectionId || 'general')?.settings;
+  const {settings} = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, 'integrations', integrationId, sectionId || 'general') || emptyObj;
 
   const canEditIntegration = useSelector(
     state =>
@@ -105,6 +105,8 @@ function CustomSettings({ integrationId, sectionId }) {
     }
   }, []);
 
+  const patchPath = useSettingsPatch(integrationId, sectionId, '/settings');
+
   const handleSubmit = useCallback(
     formVal => {
       // dont submit the form if there is validation error
@@ -118,7 +120,7 @@ function CustomSettings({ integrationId, sectionId }) {
       const patchSet = [
         {
           op: 'replace',
-          path: getPatchPath(allSections, sectionId),
+          path: patchPath,
           value,
         },
       ];
@@ -135,7 +137,7 @@ function CustomSettings({ integrationId, sectionId }) {
       );
       setFormKey(formKey => formKey + 1);
     },
-    [allSections, dispatch, integrationId, sectionId]
+    [dispatch, integrationId, patchPath]
   );
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
