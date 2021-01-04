@@ -12570,6 +12570,9 @@ Object {
   "fieldMeta": Object {
     "actions": undefined,
     "fieldMap": Object {
+      "_integrationId": Object {
+        "fieldId": "_integrationId",
+      },
       "_stackId": Object {
         "fieldId": "_stackId",
       },
@@ -12594,9 +12597,6 @@ Object {
       "name": Object {
         "fieldId": "name",
       },
-      "sourceIntegration": Object {
-        "fieldId": "sourceIntegration",
-      },
       "uninstallerFunction": Object {
         "fieldId": "uninstallerFunction",
       },
@@ -12614,7 +12614,7 @@ Object {
             "name",
             "description",
             "applications",
-            "sourceIntegration",
+            "_integrationId",
             "contactEmail",
             "websiteURL",
             "editions",

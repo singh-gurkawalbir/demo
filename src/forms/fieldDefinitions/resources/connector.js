@@ -1,6 +1,7 @@
 // Regular Expression to Simple multiple email addresses separated by commas from regextester.com
 
 import { connectorsList } from '../../../constants/applications';
+import { isNewId } from '../../../utils/resource';
 
 const MULTIPLE_EMAILS = /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/;
 
@@ -15,11 +16,6 @@ export default {
     multiline: true,
     maxRows: 5,
     label: 'Description',
-  },
-  imageURL: {
-    type: 'text',
-    label: 'Image URL',
-    required: true,
   },
   websiteURL: {
     type: 'text',
@@ -44,21 +40,81 @@ export default {
       },
     },
   },
+  editions: {
+    type: 'text',
+    label: 'Editions',
+    visibleWhen: [
+      {
+        field: 'framework',
+        is: ['twoDotZero'],
+      },
+    ],
+  },
+  framework: {
+    type: 'text',
+    label: 'Framework',
+    defaultValue: r => (isNewId(r._id) || r.framework === 'twoDotZero') ? 'twoDotZero' : '',
+    visible: false,
+  },
   installerFunction: {
     type: 'text',
     label: 'Installer function',
-    required: true,
+    requiredWhen: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
+  },
+  _integrationId: {
+    type: 'selectresource',
+    label: 'Source integration',
+    resourceType: 'integrations',
+    requiredWhen: [
+      {
+        field: 'framework',
+        is: ['twoDotZero'],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'framework',
+        is: ['twoDotZero'],
+      },
+    ],
   },
   _stackId: {
     type: 'selectresource',
     label: 'Stack',
     resourceType: 'stacks',
-    required: true,
+    requiredWhen: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
   },
   uninstallerFunction: {
     type: 'text',
     label: 'Uninstaller function',
-    required: true,
+    required: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
   },
   updateFunction: {
     type: 'text',
@@ -66,10 +122,16 @@ export default {
     required: true,
   },
   applications: {
-    type: 'multiselect',
+    type: 'selectmultiapplication',
     label: 'Applications',
     valueDelimiter: ',',
     defaultValue: r => (r?.applications) || [],
+    requiredWhen: [
+      {
+        field: 'framework',
+        is: ['twoDotZero'],
+      },
+    ],
     options: [
       {
         items: connectorsList(),
