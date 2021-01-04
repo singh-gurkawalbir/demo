@@ -26,7 +26,7 @@ export default {
       r.file.fileDefinition._fileDefinitionId,
   },
   'file.fileName': {
-    type: 'namewitheditor',
+    type: 'uri',
     label: 'File name',
     editorTitle: 'Build file name',
   },

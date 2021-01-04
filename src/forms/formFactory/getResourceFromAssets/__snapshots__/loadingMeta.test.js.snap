@@ -3666,7 +3666,7 @@ Object {
         "fieldId": "http.relativeURI",
         "label": "Directory path",
         "required": true,
-        "type": "namewitheditor",
+        "type": "uri",
       },
       "outputMode": Object {
         "defaultDisabled": [Function],
@@ -5396,7 +5396,7 @@ Object {
         "fieldId": "http.relativeURI",
         "label": "Directory path",
         "required": true,
-        "type": "namewitheditor",
+        "type": "uri",
       },
       "outputMode": Object {
         "defaultDisabled": [Function],
