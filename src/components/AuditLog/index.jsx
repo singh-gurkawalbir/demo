@@ -8,6 +8,7 @@ import LoadResources from '../LoadResources';
 import Spinner from '../Spinner';
 import AuditLogTable from './AuditLogTable';
 import Filters from './Filters';
+import { isNewId } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,7 +42,7 @@ export default function AuditLog({
   const [filters, handleFiltersChange] = useState({});
 
   useEffect(() => {
-    requestAuditLogs(resourceType, resourceId);
+    if (!isNewId(resourceId)) { requestAuditLogs(resourceType, resourceId); }
 
     return clearAuditLogs;
   // eslint-disable-next-line react-hooks/exhaustive-deps
