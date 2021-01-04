@@ -14,6 +14,7 @@ import resourceMeta from '../../../forms/definitions';
 import { generateNewId } from '../../../utils/resource';
 import ActionButton from '../../ActionButton';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import useIntegration from '../../../hooks/useIntegration';
 import StatusCircle from '../../StatusCircle';
 import { stringCompare } from '../../../utils/sort';
 import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/formFactory/utils';
@@ -170,6 +171,7 @@ function DynaSelectResource(props) {
   const {options} = props;
   const classes = useStyles();
   const location = useLocation();
+  const integrationIdFromUrl = useIntegration(resourceType, id);
   const dispatch = useDispatch();
   const history = useHistory();
   const [newResourceId, setNewResourceId] = useState(generateNewId());
@@ -254,7 +256,7 @@ function DynaSelectResource(props) {
         statusExport,
         expConnId,
         assistant,
-        integrationId,
+        integrationId: integrationId || integrationIdFromUrl,
       }),
     [
       dispatch,
@@ -267,6 +269,7 @@ function DynaSelectResource(props) {
       expConnId,
       assistant,
       integrationId,
+      integrationIdFromUrl,
     ]
   );
   const handleEditResource = useCallback(() => {
@@ -314,8 +317,6 @@ function DynaSelectResource(props) {
       optionSearch: i.label,
       value: i.value,
     }));
-
-  // console.log(truncatedItems(resourceItems || []));
 
   if (!resourceItems.length && hideOnEmptyList) {
     return null;
