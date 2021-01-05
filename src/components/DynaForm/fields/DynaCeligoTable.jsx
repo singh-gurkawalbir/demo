@@ -4,11 +4,18 @@ import {
   AccordionDetails,
   Accordion,
 } from '@material-ui/core';
+import {makeStyles} from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import ExpandMoreIcon from '../../icons/ArrowDownIcon';
 import CeligoTable from '../../CeligoTable';
 
+const useStyles = makeStyles(theme => ({
+  accordianDetails: {
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+}));
 export default function DynaCeligoTable(props) {
+  const classes = useStyles();
   const { title, collapsable = false, defaultExpand = false } = props;
   const [shouldExpand, setShouldExpand] = useState(defaultExpand);
 
@@ -24,7 +31,7 @@ export default function DynaCeligoTable(props) {
         expandIcon={<ExpandMoreIcon />}>
         <Typography>{title}</Typography>
       </AccordionSummary>
-      <AccordionDetails>
+      <AccordionDetails className={classes.accordianDetails}>
         <CeligoTable {...props} />
       </AccordionDetails>
     </Accordion>
