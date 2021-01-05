@@ -1,4 +1,4 @@
-import produce from 'immer';
+import { original, produce } from 'immer';
 import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
@@ -56,7 +56,14 @@ export default function reducer(state = {}, action) {
         const buildData = processorLogic.buildData(draft[id].editorType);
 
         if (buildData) {
-          draft[id].data = buildData(sampleData);
+          if (draft[id].editorType === 'sql') {
+            const {data, defaultData} = buildData(original(draft[id]), sampleData);
+
+            draft[id].data = data;
+            draft[id].defaultData = defaultData;
+          } else {
+            draft[id].data = buildData(original(draft[id]), sampleData);
+          }
         } else {
           draft[id].data = sampleData;
         }
