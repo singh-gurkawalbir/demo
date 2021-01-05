@@ -41,7 +41,6 @@ export function* pageProcessorPreview({
   const pageProcessorMap = yield call(fetchFlowResources, {
     flow,
     type: 'pageProcessors',
-    eliminateDataProcessors: true,
     runOffline,
   });
 
@@ -87,6 +86,11 @@ export function* pageProcessorPreview({
 
       return pageProcessor;
     });
+  } else if (resourceType === 'exports' && pageProcessorMap[_pageProcessorId]?.doc) {
+    // remove tx,filters,hooks from PP Doc to get preview data for _pageProcessorId
+    const { transform, filter, hooks, ...rest } = pageProcessorMap[_pageProcessorId].doc;
+
+    pageProcessorMap[_pageProcessorId].doc = rest;
   }
 
   const body = { flow, _pageProcessorId, pageGeneratorMap, pageProcessorMap, includeStages };

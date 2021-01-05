@@ -91,11 +91,11 @@ export function* fetchResourceDataForNewFlowResource({
   return getFormattedResourceForPreview(newResource);
 }
 
-export function* fetchFlowResources({ flow, type, eliminateDataProcessors, refresh, runOffline }) {
+export function* fetchFlowResources({ flow, type, refresh, runOffline }) {
   const resourceMap = {};
-  const resourceList = flow[type];
+  const resourceList = flow?.[type];
 
-  if (flow && resourceList && resourceList.length) {
+  if (resourceList?.length) {
     for (let index = 0; index < resourceList.length; index += 1) {
       const resourceInfo = resourceList[index];
       const resourceType =
@@ -114,22 +114,15 @@ export function* fetchFlowResources({ flow, type, eliminateDataProcessors, refre
         const {sampleData, ...resourceWithoutSampleData} = resource;
 
         // getFormattedResourceForPreview util removes unnecessary props of resource that should not be sent in preview calls
-        // Example: type: once should not be sent while previewing
-        if (eliminateDataProcessors) {
-          resourceMap[resourceId] = {
-            doc: getFormattedResourceForPreview(rest, resourceType, type),
-          };
-        } else {
-          // pgs have eliminateDataProcessors as false, but incase of connectors with sampledata on resource it should be true
-          // As existing connector pg's sampledata represent data after these tx, filter, hooks actions are processed, so remove those from doc
-          resourceMap[resourceId] = {
-            doc: getFormattedResourceForPreview(
-              isIntegrationApp(flow) && resource.sampleData ? rest : resourceWithoutSampleData,
-              resourceType,
-              type
-            ),
-          };
-        }
+        // Incase of connectors with sampledata on resource it should be true
+        // As existing connector pg's sampledata represent data after these tx, filter, hooks actions are processed, so remove those from doc
+        resourceMap[resourceId] = {
+          doc: getFormattedResourceForPreview(
+            (isIntegrationApp(flow) && resource.sampleData) ? rest : resourceWithoutSampleData,
+            resourceType,
+            type
+          ),
+        };
 
         resourceMap[resourceId].options = {};
 
