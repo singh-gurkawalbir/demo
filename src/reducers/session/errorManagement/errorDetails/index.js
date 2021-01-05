@@ -155,7 +155,7 @@ export default (state = {}, action) => {
       }
 
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.TRACK_RETRIED_TRACE_KEYS: {
-        if (!draft[flowId] || !draft[flowId][resourceId]) {
+        if (!draft?.[flowId]?.[resourceId]?.actions?.retry || !traceKeys.length) {
           break;
         }
         const prevTraceKeys = draft[flowId][resourceId].actions.retry.traceKeys || [];
