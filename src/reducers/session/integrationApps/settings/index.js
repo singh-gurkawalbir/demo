@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import { deepClone } from 'fast-json-patch/lib/core';
 import actionTypes from '../../../../actions/types';
 import mappingUtil from '../../../../utils/mapping';
@@ -731,6 +732,34 @@ selectors.categoryMapping = (state, integrationId, flowId) => {
 
   return state[cKey];
 };
+
+selectors.mappedCategories = () => createSelector(
+  (state, integrationId, flowId) => {
+    const newState = state?.session?.integrationApps?.settings;
+
+    return newState && newState[getCategoryKey(integrationId, flowId)];
+  },
+  (categoryMappingData = emptyObj) => {
+    let mappedCategories = emptySet;
+    const { response } = categoryMappingData;
+
+    if (response) {
+      const mappingData = response.find(sec => sec.operation === 'mappingData');
+
+      if (mappingData) {
+        mappedCategories = mappingData.data.mappingData.basicMappings.recordMappings.map(
+          item => ({
+            id: item.id,
+            name: item.name === 'commonAttributes' ? 'Common' : item.name,
+            children: item.children,
+          })
+        );
+      }
+    }
+
+    return mappedCategories;
+  }
+);
 
 selectors.variationMappingData = (state, integrationId, flowId) => {
   const cKey = getCategoryKey(integrationId, flowId);

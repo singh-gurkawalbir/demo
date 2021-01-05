@@ -39,6 +39,7 @@ import DrawerTitleBar from './TitleBar';
 import ButtonGroup from '../../../../../../components/ButtonGroup';
 import CollapseWindowIcon from '../../../../../../components/icons/CollapseWindowIcon';
 import ExpandWindowIcon from '../../../../../../components/icons/ExpandWindowIcon';
+import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 
 const emptySet = [];
 const useStyles = makeStyles(theme => ({
@@ -419,10 +420,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
 
     return deleted.includes(categoryId);
   });
-  const mappedCategories =
-    useSelector(state =>
-      selectors.mappedCategories(state, integrationId, flowId)
-    ) || [];
+  const mappedCategories = useSelectorMemo(selectors.mappedCategories, integrationId, flowId) || [];
   const currentSectionLabel =
     (mappedCategories.find(category => category.id === categoryId) || {})
       .name || categoryId;

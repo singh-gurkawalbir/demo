@@ -1421,7 +1421,9 @@ describe('integrationApps selector testcases', () => {
 
   describe('selectors.mappedCategories test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.mappedCategories()).toEqual([]);
+      const selector = selectors.mappedCategories();
+
+      expect(selector()).toEqual([]);
     });
   });
 

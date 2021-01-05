@@ -1799,33 +1799,6 @@ selectors.categoryMappingMetadata = (state, integrationId, flowId) => {
   return categoryMappingMetadata;
 };
 
-selectors.mappedCategories = (state, integrationId, flowId) => {
-  const categoryMappingData =
-    fromSession.categoryMapping(
-      state && state.session,
-      integrationId,
-      flowId
-    ) || {};
-  let mappedCategories = emptyArray;
-  const { response } = categoryMappingData;
-
-  if (response) {
-    const mappingData = response.find(sec => sec.operation === 'mappingData');
-
-    if (mappingData) {
-      mappedCategories = mappingData.data.mappingData.basicMappings.recordMappings.map(
-        item => ({
-          id: item.id,
-          name: item.name === 'commonAttributes' ? 'Common' : item.name,
-          children: item.children,
-        })
-      );
-    }
-  }
-
-  return mappedCategories;
-};
-
 selectors.categoryMappingGenerateFields = (
   state,
   integrationId,
