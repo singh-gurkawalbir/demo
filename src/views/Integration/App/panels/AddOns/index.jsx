@@ -9,6 +9,7 @@ import { LICENSE_UPGRADE_REQUEST_RECEIVED } from '../../../../../utils/messageSt
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import ModalDialog from '../../../../../components/ModalDialog';
+import {isHTML} from '../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -123,7 +124,7 @@ export default function AddOnsPanel({ integrationId }) {
               <div className={classes.header}>
                 <Typography variant="h4">{data.name}</Typography>
               </div>
-              <Typography variant="body2" className={classes.description}>{/<\/?[a-z][\s\S]*>/i.test(data.description) ? <RawHtml html={data.description} /> : data.description}</Typography>
+              <Typography variant="body2" className={classes.description}>{isHTML(data.description) ? <RawHtml html={data.description} /> : data.description}</Typography>
               <CardActions className={classes.cardAction}>
                 <Button
                   data-test="contactSales"
