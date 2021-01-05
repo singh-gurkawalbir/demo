@@ -16,14 +16,15 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
   },
   htmlMessage: {
+    display: 'inline',
     '& > pre': {
       whiteSpace: 'pre-wrap',
     },
   },
   retryTag: {
     background: theme.palette.background.paper2,
+    marginRight: theme.spacing(1),
   },
-
 }));
 
 export default function ErrorMessage({ message, traceKey, flowId, resourceId }) {
@@ -38,7 +39,8 @@ export default function ErrorMessage({ message, traceKey, flowId, resourceId }) 
   return (
     <div className={classes.wrapper}>
       <div className={classes.message}>
-        <span>{isRetryFailed && retryFailedTag} </span> <RawHtml html={message} className={classes.htmlMessage} />
+        {isRetryFailed && retryFailedTag}
+        <RawHtml html={message} className={classes.htmlMessage} />
       </div>
     </div>
   );

@@ -2407,7 +2407,7 @@ selectors.availableUsersList = (state, integrationId) => {
     ];
   }
 
-  return _users.sort(stringCompare('sharedWithUser.name'));
+  return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
 };
 
 selectors.platformLicense = createSelector(
@@ -4593,7 +4593,7 @@ selectors.selectedErrorIds = (state, { flowId, resourceId, options = {} }) => {
   return errors.filter(({ selected }) => selected).map(error => error.errorId);
 };
 
-selectors.isAllErrorsSelected = (state,{ flowId, resourceId, isResolved }) => {
+selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved }) => {
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
   const errorFilter = selectors.filter(state, filterKey);
   const { errors = [] } = selectors.resourceErrors(state, {
