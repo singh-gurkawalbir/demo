@@ -622,3 +622,5 @@ export const ALLOWED_HTML_TAGS =
 export const LICENSE_TRIAL_ISSUED_MESSAGE = 'Congratulations! Your 30 days of unlimited flows starts now - what will you integrate next?';
 export const LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE = 'Your request has been received. We will contact you soon.';
 export const FILE_PROVIDER_ASSISTANTS = ['googledrive'];
+export const isHTML = text => /<\/?[a-z][\s\S]*>/i.test(text);
+
