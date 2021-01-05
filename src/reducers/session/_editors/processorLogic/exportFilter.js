@@ -31,7 +31,7 @@ export default {
       activeProcessor,
     };
   },
-  buildData: sampleData => ({
+  buildData: (_, sampleData) => ({
     filter: sampleData,
     javascript: sampleData,
   }),

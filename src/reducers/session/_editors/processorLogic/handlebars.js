@@ -45,12 +45,6 @@ function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator
     return connection.isHTTP;
   }
 
-  // BE doesnt support snowflake adaptor yet
-  // remove this check once same is added in BE
-  if (connection?.rdbms?.type === 'snowflake') {
-    return false;
-  }
-
   return [
     'HTTPImport',
     'HTTPExport',
@@ -71,13 +65,13 @@ function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator
 
 export default {
   init: props => {
-    const {options, resource, fieldState, connection, isPageGenerator} = props;
+    const {options, resource, fieldState, connection, isPageGenerator, formValues, ...rest} = props;
     const {fieldId} = options;
     const {type, value, arrayIndex} = fieldState;
     let rule = value;
 
-    if (type === 'relativeuri' || type === 'httprequestbody') {
-    // below formatting applies for only relative URI and body fields
+    if (type === 'relativeuri' || type === 'httprequestbody' || type === 'sqlquerybuilder') {
+    // below formatting applies for only relative URI, body and sql fields
       const formattedRule = typeof arrayIndex === 'number' && Array.isArray(value) ? value[arrayIndex] : value;
 
       rule = typeof formattedRule === 'string' ? formattedRule : JSON.stringify(formattedRule, null, 2);
@@ -110,6 +104,7 @@ export default {
       editorTitle: _constructEditorTitle(fieldState?.label),
       v1Rule,
       v2Rule,
+      ...rest,
     };
   },
   requestBody: editor => ({
