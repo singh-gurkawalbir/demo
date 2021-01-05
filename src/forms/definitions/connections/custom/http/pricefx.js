@@ -35,6 +35,8 @@ export default {
     'http.encrypted.password': {
       fieldId: 'http.encrypted.password',
       type: 'text',
+      inputType: 'password',
+      defaultValue: '',
       label: 'Password',
       required: true,
       helpKey: 'pricefx.connection.http.encrypted.password',
