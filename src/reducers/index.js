@@ -676,10 +676,11 @@ selectors.mkFlowDetails = () => {
       return integrationResourceSel(state, 'integrations', flow._integrationId);
     },
     state => state?.data?.resources?.exports,
-    (flow, integration, exports) => {
+    (_1, _2, childId) => childId,
+    (flow, integration, exports, childId) => {
       if (!flow) return emptyObject;
 
-      return getFlowDetails(flow, integration, exports);
+      return getFlowDetails(flow, integration, exports, childId);
     });
 };
 
@@ -705,7 +706,8 @@ selectors.mkFlowAttributes = () => createSelector(
   state => state?.data?.resources?.exports,
   (_, flows) => flows,
   (_1, _2, integration) => integration,
-  (exps = emptyArray, flows = emptyArray, integration) => {
+  (_1, _2, _3, childId) => childId,
+  (exps = emptyArray, flows = emptyArray, integration, childId) => {
     const out = {};
 
     if (exps.length < 1) return out;
@@ -737,7 +739,7 @@ selectors.mkFlowAttributes = () => createSelector(
       else {
         // strange flow setting name to indicate that flows can not be
         // enabled/disabled by a user...
-        const iaFlowSettings = getIAFlowSettings(integration, flow._id);
+        const iaFlowSettings = getIAFlowSettings(integration, flow._id, childId);
 
         isLocked = iaFlowSettings?.disableSlider;
         isRunnable = !iaFlowSettings?.disableRunFlow;
@@ -745,11 +747,11 @@ selectors.mkFlowAttributes = () => createSelector(
       o.disableRunFlow = isRunnable;
       o.isFlowEnableLocked = isLocked;
       // allowSchedule
-      o.allowSchedule = flowAllowsScheduling(flow, integration, [], isIntegrationV2, flExp);
+      o.allowSchedule = flowAllowsScheduling(flow, integration, [], isIntegrationV2, flExp, childId);
       // flow type
       o.type = getFlowType(flow, [], flExp);
       // supports settings
-      o.supportsSettings = flowSupportsSettings(flow, integration);
+      o.supportsSettings = flowSupportsSettings(flow, integration, childId);
     });
 
     return out;
@@ -792,7 +794,7 @@ selectors.mkFlowAllowsScheduling = () => {
   );
 };
 
-selectors.flowUsesUtilityMapping = (state, id) => {
+selectors.flowUsesUtilityMapping = (state, id, childId) => {
   const flow = selectors.resource(state, 'flows', id);
 
   if (!flow) return false;
@@ -801,12 +803,12 @@ selectors.flowUsesUtilityMapping = (state, id) => {
 
   if (!isApp) return false;
 
-  const flowSettings = getIAFlowSettings(integration, flow._id);
+  const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
   return !!flowSettings.showUtilityMapping;
 };
 
-selectors.flowSupportsMapping = (state, id) => {
+selectors.flowSupportsMapping = (state, id, childId) => {
   const flow = selectors.resource(state, 'flows', id);
 
   if (!flow) return false;
@@ -819,18 +821,18 @@ selectors.flowSupportsMapping = (state, id) => {
 
   const integration = selectors.resource(state, 'integrations', flow._integrationId);
 
-  const flowSettings = getIAFlowSettings(integration, flow._id);
+  const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
   return !!flowSettings.showMapping;
 };
 
-selectors.flowSupportsSettings = (state, id) => {
+selectors.flowSupportsSettings = (state, id, childId) => {
   const flow = selectors.resource(state, 'flows', id);
 
   if (!flow) return false;
   const integration = selectors.resource(state, 'integrations', flow._integrationId);
 
-  return flowSupportsSettings(flow, integration);
+  return flowSupportsSettings(flow, integration, childId);
 };
 
 /* End of refactoring of flowDetails selector.. Once all use is refactored of

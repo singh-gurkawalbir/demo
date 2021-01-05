@@ -178,7 +178,7 @@ const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
     [handleDrawerOpen]
   );
 
-  const flowDetails = useSelectorMemo(selectors.mkFlowDetails, flowId);
+  const flowDetails = useSelectorMemo(selectors.mkFlowDetails, flowId, match.params?.childId);
 
   const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
   const isMonitorLevelAccess = useSelector(state =>

@@ -201,7 +201,7 @@ function FlowList({ integrationId, storeId }) {
   const section = flowSections.find(s => s.titleId === sectionId);
   const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
-  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration);
+  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration, storeId);
   const actionProps = useMemo(() => ({
     isIntegrationApp: true,
     storeId,
