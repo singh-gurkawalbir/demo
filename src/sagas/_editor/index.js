@@ -20,6 +20,7 @@ import { requestSampleData } from '../sampleData/flows';
 import { requestExportSampleData } from '../sampleData/exports';
 import { constructResourceFromFormValues } from '../utils';
 import { safeParse } from '../../utils/string';
+import { getUniqueFieldId, dataAsString } from '../../utils/editor';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -34,12 +35,6 @@ function extractResourcePath(value, initialResourcePath) {
   }
 
   return initialResourcePath;
-}
-
-export function dataAsString(data) {
-  return typeof data === 'string'
-    ? data
-    : JSON.stringify(data, null, 2);
 }
 
 export function* invokeProcessor({ processor, body }) {
@@ -545,11 +540,18 @@ export function* initEditor({ id, editorType, options = {} }) {
   const { formKey, integrationId, resourceId, resourceType, flowId, sectionId, fieldId} = options;
 
   let fieldState = {};
+  let formState = {};
 
   if (formKey) {
     fieldState = yield select(selectors.fieldState, formKey, fieldId);
+    formState = yield select(selectors.formState, formKey);
   }
-  const resource = yield select(selectors.resource, resourceType, resourceId);
+  const { value: formValues } = formState;
+  const resource = yield call(constructResourceFromFormValues, {
+    formValues,
+    resourceId,
+    resourceType,
+  });
   const flow = yield select(selectors.resource, 'flows', flowId);
   const {onSave, ...rest} = options;
   let formattedOptions = deepClone(rest);
@@ -559,13 +561,6 @@ export function* initEditor({ id, editorType, options = {} }) {
   if (init) {
     // for now we need all below props for handlebars init only
     if (editorType === 'handlebars' || editorType === 'sql') {
-      const formState = yield select(selectors.formState, formKey);
-      const { value: formValues } = formState || {};
-      const resource = yield call(constructResourceFromFormValues, {
-        formValues,
-        resourceId,
-        resourceType,
-      });
       const { _connectionId: connectionId } = resource;
       const connection = yield select(selectors.resource, 'connections', connectionId);
       const isPageGenerator = yield select(selectors.isPageGenerator, flowId, resourceId, resourceType);
@@ -603,6 +598,7 @@ export function* initEditor({ id, editorType, options = {} }) {
   const stateOptions = {
     editorType,
     ...formattedOptions,
+    fieldId: getUniqueFieldId(fieldId),
     ...featuresMap(options)[editorType],
     originalRule,
     lastChange: Date.now(),

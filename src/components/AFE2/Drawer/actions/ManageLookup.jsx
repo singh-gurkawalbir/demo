@@ -9,10 +9,14 @@ import EditorDrawer from '../index';
 import CeligoDivider from '../../../CeligoDivider';
 
 export default function ManageLookup({ editorId }) {
-  const {resourceType, formKey, resourceId, flowId, fieldId, resultMode} = useSelector(state => {
-    const {resourceType, formKey, resourceId, flowId, fieldId, resultMode} = selectors._editor(state, editorId);
+  const showLookup = useSelector(state => selectors.isEditorLookupSupported(state, editorId));
+  const {resourceType, formKey, resourceId, flowId} = useSelector(state => {
+    const e = selectors._editor(state, editorId);
 
-    return {resourceType, formKey, resourceId, flowId, fieldId, resultMode};
+    return {resourceType: e.resourceType,
+      formKey: e.formKey,
+      resourceId: e.resourceId,
+      flowId: e.flowId};
   }, shallowEqual);
   const formContext = useFormContext(formKey);
   const { merged: resourceData = {} } = useSelectorMemo(
@@ -28,8 +32,7 @@ export default function ManageLookup({ editorId }) {
 
   const lookupFieldId = lookupUtil.getLookupFieldId(adaptorType);
 
-  // lookups are only valid for http request body fields
-  if (fieldId === '_body' || resourceType !== 'imports' || !lookupFieldId || resultMode === 'text') {
+  if (!showLookup || !lookupFieldId) {
     return null;
   }
 
