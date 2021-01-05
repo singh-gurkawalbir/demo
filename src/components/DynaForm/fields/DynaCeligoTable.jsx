@@ -14,6 +14,8 @@ export default function DynaCeligoTable(props) {
 
   return collapsable ? (
     <Accordion
+      elevation={0}
+      square
       // eslint-disable-next-line react/no-array-index-key
       expanded={shouldExpand}>
       <AccordionSummary
