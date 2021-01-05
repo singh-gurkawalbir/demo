@@ -6,6 +6,7 @@ import { selectors } from '../../../../reducers';
 import useFormContext from '../../../Form/FormContext';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import EditorDrawer from '../index';
+import CeligoDivider from '../../../CeligoDivider';
 
 export default function ManageLookup({ editorId }) {
   const showLookup = useSelector(state => selectors.isEditorLookupSupported(state, editorId));
@@ -45,7 +46,8 @@ export default function ManageLookup({ editorId }) {
         flowId={flowId}
         resourceType={resourceType}
         resourceId={resourceId}
-    />
+      />
+      <CeligoDivider position="right" />
       <EditorDrawer />
     </>
   );

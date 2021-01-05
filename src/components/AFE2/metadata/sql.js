@@ -4,7 +4,6 @@ import HandlebarsPanel from '../Editor/panels/Handlebars';
 import FeaturePanel from '../Editor/panels/Feature';
 import ManageLookup from '../Drawer/actions/ManageLookup';
 import ToggleAFEButton from '../Drawer/actions/ToggleAFEButton';
-import ToggleLayout from '../Drawer/actions/ToggleLayout';
 
 export default {
   type: 'sql',
@@ -61,6 +60,14 @@ export default {
   },
 
   drawer: {
-    actions: [ManageLookup, ToggleAFEButton, ToggleLayout],
+    showLayoutToggle: true,
+    actions: [
+      { component: ToggleAFEButton,
+        position: 'left',
+      },
+      { component: ManageLookup,
+        position: 'right',
+      },
+    ],
   },
 };
