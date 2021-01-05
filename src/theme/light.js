@@ -794,13 +794,7 @@ export default {
         paddingBottom: 0,
       },
     },
-    MuiCollapse: {
-      entered: {
-        borderTop: `1px solid ${colors.celigoNeutral3}`,
-      },
-    },
   },
-
   props: {
     MuiCheckbox: {
       disableRipple: true,
