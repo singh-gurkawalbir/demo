@@ -160,6 +160,7 @@ export default {
       type: 'text',
       inputType: 'password',
       label: 'Password',
+      defaultValue: '',
       required: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
       helpKey: 'myobadvanced.connection.http.encrypted.password',

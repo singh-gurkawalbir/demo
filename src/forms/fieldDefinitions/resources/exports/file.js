@@ -30,7 +30,7 @@ export default {
     },
   },
   'file.fileNameStartsWith': {
-    type: 'namewitheditor',
+    type: 'uri',
     label: 'File name starts with',
     editorTitle: 'Build file name starts with',
     defaultValue: r => {
@@ -45,7 +45,7 @@ export default {
 
   },
   'file.fileNameEndsWith': {
-    type: 'namewitheditor',
+    type: 'uri',
     label: 'File name ends with',
     editorTitle: 'Build file name ends with',
     defaultValue: r => {
@@ -57,6 +57,11 @@ export default {
         }
       }
     },
+  },
+  'file.backupPath': {
+    type: 'uri',
+    label: 'Backup files path',
+    helpKey: 'export.file.backupPath',
   },
   'file.encoding': {
     type: 'select',

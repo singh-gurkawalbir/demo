@@ -131,10 +131,6 @@ function ConnectionLoadingChip(props) {
     selectors.isConnectionOffline(state, connectionId)
   );
 
-  if (isConnectionOffline === undefined) {
-    return null;
-  }
-
   return isConnectionOffline ? (
     <div className={classes.connectionStatusWrapper}>
       <StatusCircle size="small" variant="error" />

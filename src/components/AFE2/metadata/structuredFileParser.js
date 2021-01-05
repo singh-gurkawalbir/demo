@@ -1,7 +1,6 @@
 import DataPanel from '../Editor/panels/Data';
 import ResultPanel from '../Editor/panels/Result';
 import RulePanel from '../Editor/panels/Rule';
-import ToggleLayout from '../Drawer/actions/ToggleLayout';
 
 export default {
   type: 'structuredFileParser',
@@ -34,6 +33,6 @@ export default {
     },
   ],
   drawer: {
-    actions: [ToggleLayout],
+    showLayoutToggle: true,
   },
 };

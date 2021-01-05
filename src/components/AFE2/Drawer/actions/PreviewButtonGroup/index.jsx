@@ -1,23 +1,13 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-// import { selectors } from '../../../reducers';
-import { makeStyles, Button, Divider } from '@material-ui/core';
-import { selectors } from '../../../reducers';
-import actions from '../../../actions';
-import DynaCheckbox from '../../DynaForm/fields/checkbox/DynaCheckbox';
-import ButtonGroup from '../../ButtonGroup';
-
-const useStyles = makeStyles(theme => ({
-  divider: {
-    margin: theme.spacing(0.5, 1, 0),
-    height: 24,
-    width: 1,
-  },
-}));
+import { Button } from '@material-ui/core';
+import { selectors } from '../../../../../reducers';
+import actions from '../../../../../actions';
+import DynaCheckbox from '../../../../DynaForm/fields/checkbox/DynaCheckbox';
+import ButtonGroup from '../../../../ButtonGroup';
 
 export default function PreviewButtonGroup({ editorId }) {
   const dispatch = useDispatch();
-  const classes = useStyles();
   const autoEvaluate = useSelector(state => selectors._editor(state, editorId).autoEvaluate);
   const saveInProgress = useSelector(state => {
     const {saveStatus} = selectors._editor(state, editorId);
@@ -31,7 +21,6 @@ export default function PreviewButtonGroup({ editorId }) {
   return (
     <ButtonGroup>
       {!autoEvaluate && (
-      <>
         <Button
           data-test="previewEditorResult"
           variant="outlined"
@@ -40,8 +29,6 @@ export default function PreviewButtonGroup({ editorId }) {
           onClick={handlePreview}>
           Preview
         </Button>
-        <Divider orientation="vertical" className={classes.divider} />
-      </>
       )}
       <DynaCheckbox
         hideLabelSpacing

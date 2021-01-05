@@ -3545,6 +3545,9 @@ Object {
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
       },
+      "file.backupPath": Object {
+        "fieldId": "file.backupPath",
+      },
       "file.batchSize": Object {
         "fieldId": "file.batchSize",
       },
@@ -3666,7 +3669,7 @@ Object {
         "fieldId": "http.relativeURI",
         "label": "Directory path",
         "required": true,
-        "type": "namewitheditor",
+        "type": "uri",
       },
       "outputMode": Object {
         "defaultDisabled": [Function],
@@ -5275,6 +5278,9 @@ Object {
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
       },
+      "file.backupPath": Object {
+        "fieldId": "file.backupPath",
+      },
       "file.batchSize": Object {
         "fieldId": "file.batchSize",
       },
@@ -5396,7 +5402,7 @@ Object {
         "fieldId": "http.relativeURI",
         "label": "Directory path",
         "required": true,
-        "type": "namewitheditor",
+        "type": "uri",
       },
       "outputMode": Object {
         "defaultDisabled": [Function],
@@ -8432,7 +8438,7 @@ Object {
         "fieldId": "http.relativeURI",
         "label": "Directory path",
         "required": true,
-        "type": "namewitheditor",
+        "type": "uri",
       },
       "inputMode": Object {
         "defaultDisabled": [Function],
@@ -10586,7 +10592,7 @@ Object {
         "fieldId": "http.relativeURI",
         "label": "Directory path",
         "required": true,
-        "type": "namewitheditor",
+        "type": "uri",
       },
       "inputMode": Object {
         "defaultDisabled": [Function],
