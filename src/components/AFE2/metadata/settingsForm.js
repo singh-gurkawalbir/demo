@@ -42,7 +42,8 @@ export default {
     return panels;
   },
   drawer: {
-    size: 'large',
-    actions: [ToggleFormMode],
+    actions: [
+      { component: ToggleFormMode, position: 'right' },
+    ],
   },
 };

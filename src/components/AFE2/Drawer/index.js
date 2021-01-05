@@ -9,11 +9,12 @@ import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import Editor from '../Editor';
 import editorMetadata from '../metadata';
-import PreviewButtonGroup from '../PreviewButtonGroup';
+import PreviewButtonGroup from './actions/PreviewButtonGroup';
 import SaveButtonGroup from '../SaveButtonGroup';
 import HelpIconButton from './actions/HelpIconButton';
 import CloseIconButton from './CloseIconButton';
 import actions from '../../../actions';
+import ToggleLayout from './actions/ToggleLayout';
 
 const useStyles = makeStyles({
   spaceBetween: { flexGrow: 100 },
@@ -33,8 +34,10 @@ function RouterWrappedContent({ hideSave, onClose, fullPath}) {
 
   // console.log('drawer editor', editorId, editor);
   const { label, drawer = {} } = editorMetadata[editorType] || {};
-  const { actions: drawerActions } = drawer;
-
+  const { showLayoutToggle, actions: drawerActions = [] } = drawer;
+  const leftActions = drawerActions.filter(a => a.position === 'left');
+  // Note: we default to right. currently only the afe1/2 data toggle is left aligned.
+  const rightActions = drawerActions.filter(a => a.position !== 'left');
   // is it safe to clear the state when the drawer is closed??
   const handleClose = () => {
     dispatch(actions._editor.clear(editorId));
@@ -47,8 +50,18 @@ function RouterWrappedContent({ hideSave, onClose, fullPath}) {
     <>
       <DrawerHeader title={editorTitle || label} CloseButton={CloseButton} fullPath={fullPath}>
         { // eslint-disable-next-line react/no-array-index-key
-          drawerActions && drawerActions.map((Action, i) => <Action key={i} editorId={editorId} />)
+          leftActions.map((a, i) => <a.component key={i} editorId={editorId} />)
         }
+
+        <div className={classes.spaceBetween} />
+
+        { // eslint-disable-next-line react/no-array-index-key
+          rightActions.map((a, i) => <a.component key={i} editorId={editorId} />)
+        }
+
+        <PreviewButtonGroup editorId={editorId} />
+
+        {showLayoutToggle && <ToggleLayout editorId={editorId} />}
         <HelpIconButton editorId={editorId} />
       </DrawerHeader>
 
@@ -57,11 +70,9 @@ function RouterWrappedContent({ hideSave, onClose, fullPath}) {
       </DrawerContent>
 
       <DrawerFooter>
-        {!false && (
+        {!hideSave && (
           <SaveButtonGroup editorId={editorId} onClose={handleClose} />
         )}
-        <div className={classes.spaceBetween} />
-        <PreviewButtonGroup editorId={editorId} />
       </DrawerFooter>
     </>
   );
