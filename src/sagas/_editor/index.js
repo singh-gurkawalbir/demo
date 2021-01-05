@@ -357,11 +357,8 @@ export function* requestEditorSampleData({
   });
   let sampleData;
 
-  // no /getContext call for FB actions yet
-  if (stage === 'outputFilter' ||
-  stage === 'transform' ||
-  stage === 'exportFilter' ||
-  stage === 'inputFilter' ||
+  // no /getContext call for below FB actions yet
+  if (stage === 'transform' ||
   stage === 'postResponseMapHook' ||
   stage === 'sampleResponse') {
     yield call(requestSampleData, {
@@ -413,7 +410,9 @@ export function* requestEditorSampleData({
     sampleData = flowSampleData?.data;
   }
 
-  if (!sampleData && !isPageGenerator) {
+  if (!sampleData && (!isPageGenerator || stage === 'outputFilter' ||
+  stage === 'exportFilter' ||
+  stage === 'inputFilter')) {
     // sample data not present, trigger action to get sample data
     yield call(requestSampleData, {
       flowId,
@@ -440,13 +439,14 @@ export function* requestEditorSampleData({
       data: sampleData,
     } : undefined;
   } else {
+    const filterPath = (stage === 'inputFilter' && resourceType === 'exports') ? 'inputFilter' : 'filter';
     const body = {
       sampleData: sampleData || { myField: 'sample' },
       templateVersion: editorSupportsOnlyV2Data ? 2 : requestedTemplateVersion,
     };
 
     body[resourceType === 'imports' ? 'import' : 'export'] = resource;
-    body.fieldPath = fieldId;
+    body.fieldPath = fieldId || filterPath;
 
     const opts = {
       method: 'POST',
@@ -484,8 +484,11 @@ export function* requestEditorSampleData({
     }
   }
 
-  // don't wrap with context for csv generator
-  if (editorType !== 'csvGenerator') {
+  // don't wrap with context for below editors
+  if (editorType !== 'csvGenerator' &&
+  stage !== 'outputFilter' &&
+  stage !== 'exportFilter' &&
+  stage !== 'inputFilter') {
     const { data } = yield select(selectors.sampleDataWrapper, {
       sampleData: {
         data: _sampleData,

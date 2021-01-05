@@ -5156,8 +5156,12 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enable
 
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
-  const {editorType, fieldId, flowId, resourceId, resourceType} = fromSession._editor(state.session, editorId);
+  const {editorType, fieldId, flowId, resourceId, resourceType, stage} = fromSession._editor(state.session, editorId);
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
+
+  if (stage === 'outputFilter' ||
+    stage === 'exportFilter' ||
+    stage === 'inputFilter') return true;
 
   // no use case yet where any PG field supports only v2 data
   if (isPageGenerator) return false;
