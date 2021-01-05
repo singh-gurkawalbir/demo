@@ -257,6 +257,7 @@ export default {
           'file.skipDelete',
           'fileMetadata',
           'file.encoding',
+          'file.backupPath',
           'pageSize',
           'dataURITemplate',
           'skipRetries',

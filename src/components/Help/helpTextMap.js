@@ -1282,6 +1282,7 @@ export default {
     'Set this field to true if the files you are transferring contain a top level header row.  Saying this another way, if the very first row in the CSV files being transferred is reserved for column names (and not actual data) then set this field to true.',
   'export.exportData':
     'Over here you can specify how you would like to export data.',
+  'export.file.backupPath': 'Specify the directory path of the Google Drive folder where files will be backed up after successful transfer.',
   'export.ftp.directoryPath':
     "Use this field to specify the directory path of the FTP folder containing the files that you want to transfer.  For example, if you set this field to 'MySite/Orders' integrator.io will first look for a parent folder 'MySite', and then for a child folder 'Orders', and then transfer all files from the child folder 'Orders'.  Please note that by default integrator.io will transfer all files in the folder, and also delete them from the folder once the transfer completes.   Copies of the original files will be stored in integrator.io for a maximum of 30 days, and can be transferred from the jobs dashboard.  You can also (optionally) configure integrator.io to leave files on the FTP server, or to only transfer files that match a certain 'starts with' or 'ends with' name pattern.",
   'export.ftp.fileNameStartsWith':

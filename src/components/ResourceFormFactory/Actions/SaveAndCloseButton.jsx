@@ -82,7 +82,7 @@ const SaveButton = props => {
                   const registeredConnections = integration?._registeredConnectionIds || [];
 
                   if (!(registeredConnections.includes(values?.['/_connectionId']))) {
-                    dispatch(actions.connection.requestRegister([values?.['/_connectionId']], integration._id));
+                    dispatch(actions.connection.completeRegister([values?.['/_connectionId']], integration._id));
                   }
                 }
 

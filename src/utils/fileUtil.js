@@ -44,6 +44,9 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
   'file.fileNameStartsWith': { fieldId: 'file.fileNameStartsWith' },
   'file.fileNameEndsWith': { fieldId: 'file.fileNameEndsWith' },
   'file.type': { fieldId: 'file.type' },
+  'file.backupPath': {
+    fieldId: 'file.backupPath',
+  },
   uploadFile: {
     fieldId: 'uploadFile',
     refreshOptionsOnChangesTo: 'file.type',
