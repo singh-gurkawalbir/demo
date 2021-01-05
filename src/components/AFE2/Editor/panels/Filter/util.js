@@ -36,7 +36,7 @@ export function getFilterRuleId(rule) {
   return rule.id.split('_rule_')[1];
 }
 
-export function convertIOFilterExpression(filterExpression = []) {
+export function convertIOFilterExpression(filterExpression = [], context) {
   const dataTypes = ['boolean', 'epochtime', 'number', 'string'];
   const transformations = ['ceiling', 'floor', 'lowercase', 'uppercase'];
 
@@ -113,7 +113,7 @@ export function convertIOFilterExpression(filterExpression = []) {
               [, [, temp.field]] = tempExp;
 
               if (tempExp[1][0] === 'extract') {
-                temp.field = `record.${temp.field}`;
+                temp.field = `${context}.${temp.field}`;
               } else if (tempExp[1][0] === 'settings') {
                 temp.field = `settings.${temp.field}`;
               } else if (tempExp[1][0] === 'context') {
@@ -219,7 +219,7 @@ export function generateRulesState(rules) {
   return rulesState;
 }
 
-export function generateIOFilterExpression(rules) {
+export function generateIOFilterExpression(rules, context) {
   function iterate(r) {
     let exp = [];
     let lhs;
@@ -237,10 +237,10 @@ export function generateIOFilterExpression(rules) {
         rhs = undefined;
 
         if (rr.data.lhs.type === 'field') {
-          if (rr.data.lhs.field.startsWith('record.')) {
+          if (rr.data.lhs.field.startsWith(`${context}.`)) {
             lhs = [
               rr.data.lhs.dataType,
-              ['extract', rr.data.lhs.field.replace('record.', '')],
+              ['extract', rr.data.lhs.field.replace(`${context}.`, '')],
             ];
           } else if (rr.data.lhs.field.startsWith('settings.')) {
             lhs = [
@@ -285,10 +285,10 @@ export function generateIOFilterExpression(rules) {
           exp.push([operatorsMap.jQueryToIOFilters[rr.operator], lhs]);
         } else {
           if (rr.data.rhs.type === 'field') {
-            if (rr.data.rhs.field.startsWith('record.')) {
+            if (rr.data.rhs.field.startsWith(`${context}.`)) {
               rhs = [
                 rr.data.rhs.dataType,
-                ['extract', rr.data.rhs.field.replace('record.', '')],
+                ['extract', rr.data.rhs.field.replace(`${context}.`, '')],
               ];
             } else if (rr.data.rhs.field.startsWith('settings.')) {
               rhs = [
