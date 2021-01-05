@@ -30,6 +30,11 @@ const SaveButton = props => {
     setDisableSaveOnClick,
   } = props;
   const { confirmDialog } = useConfirmDialog();
+  const flow =
+    useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
+  const integration = useSelector(state =>
+    selectors.resource(state, 'integrations', flow?._integrationId)
+  );
 
   const match = useRouteMatch();
   const resource = useSelector(state =>
@@ -73,6 +78,14 @@ const SaveButton = props => {
             {
               label: 'Replace',
               onClick: () => {
+                if (integration?._id) {
+                  const registeredConnections = integration?._registeredConnectionIds || [];
+
+                  if (!(registeredConnections.includes(values?.['/_connectionId']))) {
+                    dispatch(actions.connection.requestRegister([values?.['/_connectionId']], integration._id));
+                  }
+                }
+
                 saveResource(values);
               },
             },
@@ -85,7 +98,7 @@ const SaveButton = props => {
         });
       } else { saveResource(values); }
     },
-    [confirmDialog, onCancel, resource?._connectionId, resourceId, resourceType, saveResource]
+    [confirmDialog, dispatch, integration, onCancel, resource?._connectionId, resourceId, resourceType, saveResource]
   );
   const { handleSubmitForm, disableSave, isSaving } = useLoadingSnackbarOnSave({
     saveTerminated,
