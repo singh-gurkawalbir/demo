@@ -1,4 +1,4 @@
-/* global describe, test, expect, fail,beforeEach,afterEach */
+/* global describe, test, expect, fail,beforeEach,afterEach,jest */
 // see: https://medium.com/@alanraison/testing-redux-sagas-e6eaa08d0ee7
 // for good article on testing sagas..
 import {
@@ -9,16 +9,19 @@ import {
   delay,
   cancelled,
   select,
+  fork,
+  spawn,
 } from 'redux-saga/effects';
 import { sendRequest } from 'redux-saga-requests';
 import actionsTypes from '../actions/types';
 import actions from '../actions';
-import { apiCallWithRetry, requestCleanup, CANCELLED_REQ } from '.';
+import rootSaga, { apiCallWithRetry, requestCleanup, CANCELLED_REQ, allSagas } from '.';
 import { APIException } from './api';
 import * as apiConsts from './api/apiPaths';
 import { netsuiteUserRoles } from './resourceForm/connections';
 import { selectors } from '../reducers';
 import { COMM_STATES } from '../reducers/comms/networkComms';
+import { initializeApp, initializeLogrocket } from './authentication';
 
 // todo : should be moved to a seperate test file
 describe('netsuiteUserRoles', () => {
@@ -489,3 +492,109 @@ describe('apiCallWithRetry saga', () => {
     });
   });
 });
+
+describe('rootSaga', () => {
+  describe('testing restart behaviors', () => {
+    let saga;
+
+    beforeEach(() => {
+      saga = rootSaga();
+
+      // skip the first yield effect
+      saga.next();
+    });
+
+    test('should initialize logrocket when the logrocket action races', () => {
+      const forkEffect = fork(allSagas);
+
+      expect(saga.next().value).toEqual(
+        forkEffect
+      );
+      const forkEffectRes = {
+        cancel: jest.fn(),
+      };
+
+      expect(saga.next(forkEffectRes).value).toEqual(
+        race({
+          logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
+          logout: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
+          switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC
+          )})
+      );
+      expect(saga.next({logrocket: {opts: {prop1: 'someOptsz'}}}).value)
+        .toEqual(call(initializeLogrocket));
+      expect(forkEffectRes.cancel).toHaveBeenCalled();
+
+      expect(saga.next().value)
+        .toEqual(spawn(rootSaga));
+      expect(saga.next().value)
+        .toEqual(call(initializeApp, {prop1: 'someOptsz'}));
+      expect(saga.next().done).toBe(true);
+    });
+
+    test('should clear store and respawn rootSaga during logout', () => {
+      const forkEffect = fork(allSagas);
+
+      expect(saga.next().value).toEqual(
+        forkEffect
+      );
+      const forkEffectRes = {
+        cancel: jest.fn(),
+      };
+
+      expect(saga.next(forkEffectRes).value).toEqual(
+        race({
+          logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
+          logout: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
+          switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC
+          )})
+      );
+      expect(saga.next({logout: {opts: {prop1: 'someOptsz'}}}).value)
+        .toEqual(put(actions.auth.clearStore()));
+      expect(forkEffectRes.cancel).toHaveBeenCalled();
+
+      expect(saga.next().value)
+        .toEqual(spawn(rootSaga));
+
+      expect(saga.next().done).toBe(true);
+    });
+    test('should update preferences and subsequently reinitialize session during switching account ', () => {
+      const forkEffect = fork(allSagas);
+
+      expect(saga.next().value).toEqual(
+        forkEffect
+      );
+      const forkEffectRes = {
+        cancel: jest.fn(),
+      };
+
+      expect(saga.next(forkEffectRes).value).toEqual(
+        race({
+          logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
+          logout: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
+          switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC
+          )})
+      );
+      const account = 'another account';
+
+      expect(saga.next({switchAcc: {accountToSwitchTo: account}}).value)
+        .toEqual(spawn(rootSaga));
+      expect(forkEffectRes.cancel).toHaveBeenCalled();
+
+      expect(saga.next().value)
+        .toEqual(put(actions.user.preferences.update({
+          defaultAShareId: account,
+          environment: 'production',
+        })));
+      expect(saga.next().value).toEqual(
+        put(actions.auth.clearStore())
+      );
+      expect(saga.next().value).toEqual(
+        put(actions.auth.initSession())
+      );
+
+      expect(saga.next().done).toBe(true);
+    });
+  });
+});
+
