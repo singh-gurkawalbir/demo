@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import ErrorFilterIcon from '../ErrorFilterIcon';
-// import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import MultiSelectFilter from '../../../MultiSelectFilter';
 import { getSourceOptions } from '../../../../utils/errorManagement';
