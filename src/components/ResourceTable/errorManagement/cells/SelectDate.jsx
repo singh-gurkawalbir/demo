@@ -75,6 +75,8 @@ export default function SelectDate({
         Icon={FilterIcon}
         value={selectedDate}
         customPresets={rangeFilters}
+        fromDate={startOfDay(addDays(new Date(), -29))}
+        showTime={false}
          />
     </div>
   );

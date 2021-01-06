@@ -159,10 +159,15 @@ export default function DateRangeSelector({
   }, [initalValue]);
 
   const handleClear = useCallback(() => {
-    setSelectedRange(clearValue || {startDate: null, endDate: null, preset: null});
-    onSave && onSave(selectedRange);
+    setSelectedRange(() => {
+      const clearRangeValue = clearValue || {startDate: null, endDate: null, preset: null};
+
+      onSave && onSave(clearRangeValue);
+
+      return clearRangeValue;
+    });
     setAnchorEl(null);
-  }, [onSave, selectedRange, clearValue]);
+  }, [onSave, clearValue]);
 
   const handleDateRangeSelection = useCallback(range => {
     let { startDate, endDate } = range;
