@@ -40,6 +40,7 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     padding: theme.spacing(3, 2),
+    width: '100%',
   },
 }));
 
