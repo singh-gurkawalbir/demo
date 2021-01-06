@@ -1433,12 +1433,6 @@ describe('integrationApps selector testcases', () => {
     });
   });
 
-  describe('selectors.mappingsForCategory test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.mappingsForCategory({})).toEqual();
-    });
-  });
-
   describe('selectors.integrationAppName test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       const selector = selectors.integrationAppName();

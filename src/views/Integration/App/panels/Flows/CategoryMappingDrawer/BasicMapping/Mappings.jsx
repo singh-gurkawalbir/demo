@@ -21,6 +21,7 @@ import DynaText from '../../../../../../../components/DynaForm/fields/DynaText';
 import Help from '../../../../../../../components/Help';
 import KnowledgeBaseIcon from '../../../../../../../components/icons/KnowledgeBaseIcon';
 import SettingsDrawer from '../../../../../../../components/Mapping/Settings';
+import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -133,10 +134,7 @@ export default function ImportMapping(props) {
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { attributes = {}, mappingFilter = 'mapped' } =
-    useSelector(state =>
-      selectors.categoryMappingFilters(state, integrationId, flowId)
-    ) || {};
+  const { attributes = {}, mappingFilter = 'mapped' } = useSelectorMemo(selectors.mkCategoryMappingFilters, integrationId, flowId) || {};
   const { mappings, initChangeIdentifier } = useSelector(state =>
     selectors.categoryMappingsForSection(state, integrationId, flowId, editorId)
   );

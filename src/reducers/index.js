@@ -1829,54 +1829,6 @@ selectors.mappingsForVariation = (state, integrationId, flowId, filters = emptyO
   );
 };
 
-selectors.mappingsForCategory = (state, integrationId, flowId, filters = emptyObject) => {
-  const { sectionId, depth } = filters;
-  let mappings = emptyArray;
-  const { attributes = {}, mappingFilter = 'all' } =
-    selectors.categoryMappingFilters(state, integrationId, flowId) || {};
-  const recordMappings =
-    fromSession.categoryMappingData(
-      state && state.session,
-      integrationId,
-      flowId
-    ) || [];
-  const { fields = [] } =
-    selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
-      sectionId,
-    }) || {};
-
-  if (recordMappings) {
-    if (depth === undefined) {
-      mappings = recordMappings.find(item => item.id === sectionId);
-    } else {
-      mappings = recordMappings.find(item => item.id === sectionId && depth === item.depth);
-    }
-  }
-
-  // If no filters are passed, return all mapppings
-  if (!mappings || !attributes || !mappingFilter) {
-    return mappings;
-  }
-
-  const mappedFields = map(mappings.fieldMappings, 'generate');
-  // Filter all generateFields with filter which are not yet mapped
-  const filteredFields = fields
-    .filter(field => !mappedFields.includes(field.id))
-    .map(field => ({
-      generate: field.id,
-      extract: '',
-      discardIfEmpty: true,
-    }));
-  // Combine filtered mappings and unmapped fields and generate unmapped fields
-  const filteredMappings = [...mappings.fieldMappings, ...filteredFields];
-
-  // return mappings object by overriding field mappings with filtered mappings
-  return {
-    ...mappings,
-    fieldMappings: filteredMappings,
-  };
-};
-
 selectors.integrationAppName = () => createSelector(
   state => state?.data?.resources?.integrations,
   (state, integrationId) => integrationId,

@@ -1,4 +1,5 @@
 import produce from 'immer';
+import map from 'lodash/map';
 import { createSelector } from 'reselect';
 import { deepClone } from 'fast-json-patch/lib/core';
 import actionTypes from '../../../../actions/types';
@@ -703,25 +704,28 @@ selectors.integrationAppSettingsFormState = (
   return state[key] || emptyObj;
 };
 
-selectors.categoryMappingsCollapsedStatus = (state, integrationId, flowId) => {
-  const cKey = getCategoryKey(integrationId, flowId);
+selectors.mkCategoryMappingsCollapsedStatus = () => createSelector(
+  (state, integrationId, flowId) => {
+    const cKey = getCategoryKey(integrationId, flowId);
 
-  if (!state || !state[cKey]) {
-    return emptyObj;
-  }
+    if (!state || !state[cKey]) {
+      return emptyObj;
+    }
 
-  return state[cKey].collapseStatus || emptyObj;
-};
+    return state[cKey].collapseStatus || emptyObj;
+  },
+  collapseStatus => collapseStatus);
 
-selectors.categoryMappingFilters = (state, integrationId, flowId) => {
-  const cKey = getCategoryKey(integrationId, flowId);
+selectors.mkCategoryMappingFilters = () => createSelector(
+  (state, integrationId, flowId) => {
+    const cKey = getCategoryKey(integrationId, flowId);
 
-  if (!state || !state[cKey]) {
-    return null;
-  }
+    if (!state || !state[cKey]) {
+      return null;
+    }
 
-  return state[cKey].filters;
-};
+    return state[cKey].filters;
+  }, filters => filters);
 
 selectors.categoryMapping = (state, integrationId, flowId) => {
   const cKey = getCategoryKey(integrationId, flowId);
@@ -780,34 +784,36 @@ selectors.variationMappingData = (state, integrationId, flowId) => {
   return mappings;
 };
 
-selectors.categoryMappingData = (state, integrationId, flowId) => {
-  const cKey = getCategoryKey(integrationId, flowId);
+selectors.mkCategoryMappingData = () => createSelector(
+  (state, integrationId, flowId) => {
+    const cKey = getCategoryKey(integrationId, flowId);
 
-  if (!state) {
-    return null;
-  }
+    if (!state) {
+      return null;
+    }
 
-  const { response = [], deleted = [], uiAssistant } = state[cKey] || emptyObj;
-  const mappings = [];
-  let mappingMetadata = [];
-  const basicMappingData = response.find(
-    sec => sec.operation === 'mappingData'
-  );
+    const { response = [], deleted = [], uiAssistant } = state[cKey] || emptyObj;
+    const mappings = [];
+    let mappingMetadata = [];
+    const basicMappingData = response.find(
+      sec => sec.operation === 'mappingData'
+    );
 
-  if (basicMappingData) {
-    mappingMetadata =
+    if (basicMappingData) {
+      mappingMetadata =
       basicMappingData.data.mappingData.basicMappings.recordMappings;
-  }
+    }
 
-  mappingMetadata.forEach(meta => {
-    flattenChildrenStructrue(mappings, meta, true, {
-      deleted,
-      deleteChildlessParent: uiAssistant !== 'jet',
+    mappingMetadata.forEach(meta => {
+      flattenChildrenStructrue(mappings, meta, true, {
+        deleted,
+        deleteChildlessParent: uiAssistant !== 'jet',
+      });
     });
-  });
 
-  return mappings;
-};
+    return mappings;
+  }, data => data);
+selectors.categoryMappingData = selectors.mkCategoryMappingData();
 
 selectors.categoryMappingGeneratesMetadata = (state, integrationId, flowId) => {
   const cKey = getCategoryKey(integrationId, flowId);
@@ -839,7 +845,7 @@ selectors.categoryMappingsForSection = (state, integrationId, flowId, id) => {
 selectors.mkCategoryMappingGenerateFields = () => createSelector(
   (state, integrationId, flowId) => {
     const cKey = getCategoryKey(integrationId, flowId);
-    const { generatesMetadata = [] } = state?.session?.integrationApps?.settings?.[cKey] || emptyObj;
+    const { generatesMetadata = [] } = state?.[cKey] || emptyObj;
     const generates = [];
 
     generatesMetadata.forEach(meta => {
@@ -857,6 +863,55 @@ selectors.mkCategoryMappingGenerateFields = () => createSelector(
     return null;
   });
 selectors.categoryMappingGenerateFields = selectors.mkCategoryMappingGenerateFields();
+
+selectors.mkMappingsForCategory = () => {
+  const categoryMappingFiltersSelector = selectors.mkCategoryMappingFilters();
+  const categoryMappingDataSelector = selectors.mkCategoryMappingData();
+  const categoryMappingGenerateFieldsSelector = selectors.mkCategoryMappingGenerateFields();
+
+  return createSelector(
+    categoryMappingFiltersSelector,
+    categoryMappingDataSelector,
+    categoryMappingGenerateFieldsSelector,
+    (_1, _2, _3, filters) => filters,
+    (categoryMappingFilters = emptyObj, recordMappings = emptySet, generateFields = emptyObj, filters = emptyObj) => {
+      const { sectionId, depth } = filters;
+      let mappings = emptySet;
+      const { attributes = {}, mappingFilter = 'all' } = categoryMappingFilters;
+      const { fields = [] } = generateFields;
+
+      if (recordMappings) {
+        if (depth === undefined) {
+          mappings = recordMappings.find(item => item.id === sectionId);
+        } else {
+          mappings = recordMappings.find(item => item.id === sectionId && depth === item.depth);
+        }
+      }
+
+      // If no filters are passed, return all mapppings
+      if (!mappings || !attributes || !mappingFilter) {
+        return mappings;
+      }
+
+      const mappedFields = map(mappings.fieldMappings, 'generate');
+      // Filter all generateFields with filter which are not yet mapped
+      const filteredFields = fields
+        .filter(field => !mappedFields.includes(field.id))
+        .map(field => ({
+          generate: field.id,
+          extract: '',
+          discardIfEmpty: true,
+        }));
+      // Combine filtered mappings and unmapped fields and generate unmapped fields
+      const filteredMappings = [...mappings.fieldMappings, ...filteredFields];
+
+      // return mappings object by overriding field mappings with filtered mappings
+      return {
+        ...mappings,
+        fieldMappings: filteredMappings,
+      };
+    });
+};
 
 // #region PUBLIC SELECTORS
 selectors.categoryMappingsChanged = (state, integrationId, flowId) => {

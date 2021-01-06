@@ -171,17 +171,9 @@ function CategoryMappings({
     variation_themes: variationThemes,
     variation_attributes: variationAttributes,
   } = useSelectorMemo(selectors.mkCategoryMappingGenerateFields, integrationId, flowId, memoizedOptions) || {};
-  const { collapseAction } =
-    useSelector(state =>
-      selectors.categoryMappingsCollapsedStatus(state, integrationId, flowId)
-    ) || {};
-  const { children = [], deleted } =
-    useSelector(state =>
-      selectors.mappingsForCategory(state, integrationId, flowId, {
-        sectionId,
-        depth,
-      })
-    ) || {};
+  const { collapseAction } = useSelectorMemo(selectors.mkCategoryMappingsCollapsedStatus, integrationId, flowId) || {};
+  const memoizedCategoryOptions = useMemo(() => ({sectionId, depth}), [sectionId, depth]);
+  const { children = [], deleted } = useSelectorMemo(selectors.mkMappingsForCategory, integrationId, flowId, memoizedCategoryOptions) || {};
   const hasVariationMappings =
     (variationThemes && !!variationThemes.length) ||
     (variationAttributes && !!variationAttributes.length);
@@ -399,9 +391,8 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const metadataLoaded = useSelector(
     state => !!selectors.categoryMapping(state, integrationId, flowId)
   );
-  const { collapseStatus = 'collapsed' } = useSelector(state =>
-    selectors.categoryMappingsCollapsedStatus(state, integrationId, flowId)
-  );
+  const { collapseStatus = 'collapsed' } = useSelectorMemo(selectors.mkCategoryMappingsCollapsedStatus, integrationId, flowId) || {};
+
   const uiAssistant = useSelector(state => {
     const categoryMappingMetadata =
       selectors.categoryMapping(state, integrationId, flowId) || {};
