@@ -9,8 +9,8 @@ import { FILTER_KEYS } from '../../../../utils/errorManagement';
 import { getSelectedRange } from '../../../../utils/flowMetrics';
 
 const defaultRange = {
-  startDate: startOfDay(addDays(new Date(), -29)).toISOString(),
-  endDate: new Date().toISOString(),
+  startDate: startOfDay(addDays(new Date(), -29)),
+  endDate: new Date(),
   preset: 'last30days',
 };
 
@@ -27,7 +27,7 @@ export default function SelectDate({
     selectors.filter(state, filterKey),
   shallowEqual
   );
-  const isDateFilterSelected = !!filter[filterBy];
+  const isDateFilterSelected = !!(filter[filterBy] && filter[filterBy].preset !== defaultRange.preset);
 
   const handleDateFilter = useCallback(
     dateFilter => {
@@ -51,26 +51,31 @@ export default function SelectDate({
   );
   const FilterIcon = () => <ErrorFilterIcon selected={isDateFilterSelected} />;
 
-  const selectedDate = useMemo(() => {
-    const defaultFilter = {
-      startDate: new Date(defaultRange.startDate),
-      endDate: new Date(defaultRange.endDate),
-      preset: defaultRange.preset,
-    };
+  const selectedDate = useMemo(() => isDateFilterSelected ? {
+    startDate: new Date(filter[filterBy].startDate),
+    endDate: new Date(filter[filterBy].endDate),
+    preset: filter[filterBy].preset,
+  } : defaultRange, [isDateFilterSelected, filter, filterBy]);
 
-    return isDateFilterSelected ? {
-      startDate: new Date(filter[filterBy].startDate),
-      endDate: new Date(filter[filterBy].endDate),
-      preset: filter[filterBy].preset,
-    } : defaultFilter;
-  }, [isDateFilterSelected, filter, filterBy]);
+  const rangeFilters = [
+    {id: 'today', label: 'Today'},
+    {id: 'yesterday', label: 'Yesterday'},
+    {id: 'last7days', label: 'Last 7 Days'},
+    {id: 'last15days', label: 'Last 15 Days'},
+    {id: 'last30days', label: 'Last 30 Days'},
+    {id: 'custom', label: 'Custom'},
+  ];
 
   return (
     <div> {title}
       <DateRangeSelector
+        clearable
+        clearValue={defaultRange}
         onSave={handleDateFilter}
         Icon={FilterIcon}
-        value={selectedDate} />
+        value={selectedDate}
+        customPresets={rangeFilters}
+         />
     </div>
   );
 }
