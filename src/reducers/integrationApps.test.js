@@ -1427,12 +1427,6 @@ describe('integrationApps selector testcases', () => {
     });
   });
 
-  describe('selectors.categoryMappingGenerateFields test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.categoryMappingGenerateFields({})).toEqual(null);
-    });
-  });
-
   describe('selectors.mappingsForVariation test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.mappingsForVariation({})).toEqual({});

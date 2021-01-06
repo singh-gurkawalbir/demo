@@ -836,6 +836,28 @@ selectors.categoryMappingsForSection = (state, integrationId, flowId, id) => {
   return state[cKey].mappings[id] || emptySet;
 };
 
+selectors.mkCategoryMappingGenerateFields = () => createSelector(
+  (state, integrationId, flowId) => {
+    const cKey = getCategoryKey(integrationId, flowId);
+    const { generatesMetadata = [] } = state?.session?.integrationApps?.settings?.[cKey] || emptyObj;
+    const generates = [];
+
+    generatesMetadata.forEach(meta => {
+      flattenChildrenStructrue(generates, meta);
+    });
+
+    return generates;
+  },
+  (_1, _2, _3, options = emptyObj) => options.sectionId,
+  (generatesMetadata, sectionId) => {
+    if (Array.isArray(generatesMetadata)) {
+      return generatesMetadata.find(sec => sec.id === sectionId);
+    }
+
+    return null;
+  });
+selectors.categoryMappingGenerateFields = selectors.mkCategoryMappingGenerateFields();
+
 // #region PUBLIC SELECTORS
 selectors.categoryMappingsChanged = (state, integrationId, flowId) => {
   const cKey = getCategoryKey(integrationId, flowId);

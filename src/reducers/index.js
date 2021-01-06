@@ -1801,27 +1801,6 @@ selectors.categoryMappingMetadata = (state, integrationId, flowId) => {
   return categoryMappingMetadata;
 };
 
-selectors.categoryMappingGenerateFields = (
-  state,
-  integrationId,
-  flowId,
-  options = emptyObject
-) => {
-  const { sectionId } = options;
-  const generatesMetadata =
-    fromSession.categoryMappingGeneratesMetadata(
-      state && state.session,
-      integrationId,
-      flowId
-    );
-
-  if (Array.isArray(generatesMetadata)) {
-    return generatesMetadata.find(sec => sec.id === sectionId);
-  }
-
-  return null;
-};
-
 selectors.mappingsForVariation = (state, integrationId, flowId, filters = emptyObject) => {
   const { sectionId, variation, isVariationAttributes } = filters;
   let mappings = {};

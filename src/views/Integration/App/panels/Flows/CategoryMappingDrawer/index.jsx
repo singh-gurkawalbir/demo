@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Route,
@@ -164,17 +164,13 @@ function CategoryMappings({
   const isCommonCategory =
     sectionId === 'commonAttributes' || isParentCommonCategory;
   const [expanded, setExpanded] = useState(isRoot);
+  const memoizedOptions = useMemo(() => ({ sectionId }), [sectionId]);
   const {
     fields: generateFields,
     name,
     variation_themes: variationThemes,
     variation_attributes: variationAttributes,
-  } =
-    useSelector(state =>
-      selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
-        sectionId,
-      })
-    ) || {};
+  } = useSelectorMemo(selectors.mkCategoryMappingGenerateFields, integrationId, flowId, memoizedOptions) || {};
   const { collapseAction } =
     useSelector(state =>
       selectors.categoryMappingsCollapsedStatus(state, integrationId, flowId)
