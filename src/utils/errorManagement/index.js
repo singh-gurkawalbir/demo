@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, sortBy } from 'lodash';
 
 export const FILTER_KEYS = {
   OPEN: 'openErrors',
@@ -120,6 +120,7 @@ export const getSourceOptions = (sourceList = []) => {
     post_submit_hook_ss: 'Post submit suitescript hook',
   };
   const options = sourceList.map(sourceId => ({_id: sourceId, name: sourceLabelsMap[sourceId] || sourceId}));
+  const sortedOptions = sortBy(options, s => s.name);
 
-  return [{ _id: 'all', name: 'All sources'}, ...options];
+  return [{ _id: 'all', name: 'All sources'}, ...sortedOptions];
 };
