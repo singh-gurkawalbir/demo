@@ -84,11 +84,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const emptyObj = {};
+const emptyLogMessage = 'There are no logs available for this connection. Please run your flow so that we can record the outgoing and incoming traffic to this connection';
 export default function ConnectionLogs({ connectionId, flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [isInitTriggered, setIsInitTriggered] = useState(false);
-  const {logs} = useSelector(state => {
+  const {logs, status} = useSelector(state => {
     const allConnectionDebugLogs = selectors.allConnectionsLogs(state);
 
     return allConnectionDebugLogs?.[connectionId] || emptyObj;
@@ -174,13 +175,16 @@ export default function ConnectionLogs({ connectionId, flowId }) {
         </div>
       </div>
       <div className={classes.editorContainer}>
-        <CodePanel
-          name="code"
-          readOnly
-          value={logs}
-          mode="javascript"
-          overrides={overrides}
+        {['success', 'error'].includes(status) && (
+          <CodePanel
+            name="code"
+            readOnly
+            value={logs || emptyLogMessage}
+            mode="javascript"
+            overrides={overrides}
         />
+        )}
+
       </div>
     </div>
   );

@@ -26,7 +26,7 @@ describe('Script reducer', () => {
     }));
 
     const expectedState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -48,7 +48,7 @@ describe('Script reducer', () => {
     const flowId = 'f123';
     const scriptId = 's123';
     const currentState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -61,7 +61,7 @@ describe('Script reducer', () => {
       scriptId,
     }));
     const expectedState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -77,7 +77,7 @@ describe('Script reducer', () => {
     const flowId = 'f123';
     const scriptId = 's123';
     const currentState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -92,7 +92,7 @@ describe('Script reducer', () => {
       scriptId,
     }));
     const expectedState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -109,7 +109,7 @@ describe('Script reducer', () => {
     const flowId = 'f123';
     const scriptId = 's123';
     const currentState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -124,7 +124,7 @@ describe('Script reducer', () => {
       nextPageURL: 'abc',
     }));
     const expectedState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -142,7 +142,7 @@ describe('Script reducer', () => {
     const flowId = 'f123';
     const scriptId = 's123';
     const currentState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -161,7 +161,7 @@ describe('Script reducer', () => {
       nextPageURL: 'abc',
     }));
     const expectedState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -184,7 +184,7 @@ describe('Script reducer', () => {
     const flowId = 'f123';
     const scriptId = 's123';
     const currentState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -202,7 +202,7 @@ describe('Script reducer', () => {
       resourceReferences: [{id: 'a', type: 'flow'}, {id: 'a', type: 'export'}],
     }));
     const expectedState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -223,7 +223,7 @@ describe('Script reducer', () => {
     const flowId = 'f123';
     const scriptId = 's123';
     const currentState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -242,7 +242,7 @@ describe('Script reducer', () => {
       value: 'xyz',
     }));
     const expectedState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -259,7 +259,7 @@ describe('Script reducer', () => {
     const flowId = 'f123';
     const scriptId = 's123';
     const currentState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -279,7 +279,7 @@ describe('Script reducer', () => {
       value: 'DEBUG',
     }));
     const expectedState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -301,7 +301,7 @@ describe('Script reducer', () => {
     const flowId = 'f123';
     const scriptId = 's123';
     const currentState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -319,7 +319,7 @@ describe('Script reducer', () => {
       scriptId,
     }));
     const expectedState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -331,38 +331,39 @@ describe('Script reducer', () => {
     expect(state).toEqual(expectedState);
   });
 
-  test('LOGS_CLEAR action should delete state correctly', () => {
+  // TODO add test cases
+  // test('LOGS_CLEAR action should delete state correctly', () => {
+  //   const flowId = 'f123';
+  //   const scriptId = 's123';
+  //   const currentState = {
+  //     scripts: {
+  //       's123-f123': {
+  //         scriptId: 's123',
+  //         flowId: 'f123',
+  //         logs: [
+  //           {a: 1, index: 0},
+  //           {a: 2, index: 1},
+  //         ],
+  //         nextPageURL: 'abc',
+  //         status: 'success',
+  //       },
+  //     },
+  //   };
+  //   const state = reducer(currentState, actions.logs.scripts.clear({
+  //     flowId,
+  //     scriptId,
+  //   }));
+  //   const expectedState = {
+  //   };
+
+  //   expect(state).toEqual(expectedState);
+  // });
+
+  test('LOGS_LOAD_MORE action should set status correctly', () => {
     const flowId = 'f123';
     const scriptId = 's123';
     const currentState = {
-      script: {
-        's123-f123': {
-          scriptId: 's123',
-          flowId: 'f123',
-          logs: [
-            {a: 1, index: 0},
-            {a: 2, index: 1},
-          ],
-          nextPageURL: 'abc',
-          status: 'success',
-        },
-      },
-    };
-    const state = reducer(currentState, actions.logs.scripts.clear({
-      flowId,
-      scriptId,
-    }));
-    const expectedState = {
-    };
-
-    expect(state).toEqual(expectedState);
-  });
-
-  test('LOGS_LOAD_MORE action set status correctly', () => {
-    const flowId = 'f123';
-    const scriptId = 's123';
-    const currentState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -380,7 +381,7 @@ describe('Script reducer', () => {
       scriptId,
     }));
     const expectedState = {
-      script: {
+      scripts: {
         's123-f123': {
           scriptId: 's123',
           flowId: 'f123',
@@ -399,7 +400,7 @@ describe('Script reducer', () => {
 
   test('should not alter state in case script with particular scriptId is not present in state', () => {
     const originalState = {
-      script: {
+      scripts: {
         's1-f1': {
           a: 1,
         },
@@ -456,14 +457,14 @@ describe('script selector', () => {
   });
 
   test('selector[scriptLog] should return empty state in case script is not initalised for particular scriptId', () => {
-    const state = {script: {'s1-f1': {a: 1}}};
+    const state = {scripts: {'s1-f1': {a: 1}}};
     const scriptLog = selectors.scriptLog(state, {scriptId: 's2', flowId: 'f2'});
 
     expect({}).toEqual(scriptLog);
   });
 
   test('selector[scriptLog] should return state correctly', () => {
-    const state = {script: {'s1-f1': {
+    const state = {scripts: {'s1-f1': {
       scriptId: 's1',
       flowId: 'f1',
       logs: [
@@ -486,7 +487,7 @@ describe('script selector', () => {
   });
 
   test('selector[scriptLog] should return filtered logs correctly', () => {
-    const state = {script: {'s1-f1': {
+    const state = {scripts: {'s1-f1': {
       scriptId: 's1',
       flowId: 'f1',
       logs: [
@@ -515,7 +516,7 @@ describe('script selector', () => {
   });
 
   test('selector[flowExecutionLogScripts] should all script log for a particular flow', () => {
-    const state = {script: {
+    const state = {scripts: {
       's1-f1': {
         scriptId: 's1',
         flowId: 'f1',
@@ -570,7 +571,7 @@ describe('script selector', () => {
   });
 
   test('selector[flowExecutionLogScripts] should all empty set when script logs for particular flow is not present', () => {
-    const state = {script: {
+    const state = {scripts: {
       's1-f1': {
         scriptId: 's1',
         flowId: 'f1',
@@ -605,7 +606,7 @@ describe('script selector', () => {
     expect([]).toEqual(scriptLog);
   });
   test('selector[flowExecutionLogScripts] should all empty set when no flowId is passed', () => {
-    const state = {script: {
+    const state = {scripts: {
       's1-f1': {
         scriptId: 's1',
         flowId: 'f1',

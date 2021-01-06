@@ -36,6 +36,7 @@ export default (state = {}, action) => {
         }
         break;
       case actionTypes.LOGS.CONNECTIONS.DELETE:
+        delete draft.connections[connectionId].status;
         delete draft.connections[connectionId].logs;
         break;
       default:

@@ -5,6 +5,7 @@ import actions from '../../../actions';
 import { requestReferences } from '../../resources';
 import { apiCallWithRetry } from '../..';
 import { selectors } from '../../../reducers';
+import { convertUtcToTimezone } from '../../../utils/date';
 
 export function* getScriptDependencies({scriptId = '',
   flowId = '',
@@ -114,11 +115,22 @@ export function* fetchScriptLogs({scriptId = '', flowId = '', field, loadMore}) 
       }));
   }
 
+  // change logs utc datetime to local date time
+  const {dateFormat, timeFormat, timezone } = yield select(selectors.userProfilePreferencesProps);
+
+  const formattedLogs = response?.logs?.map(({time = '', ...others}) => {
+    const timeArr = time.split(' ');
+    const utcISODateTime = `${timeArr[0]}T${timeArr[1]}Z`;
+    const localDateTime = convertUtcToTimezone(utcISODateTime, dateFormat, timeFormat, timezone);
+
+    return {time: localDateTime, ...others };
+  });
+
   return yield put(actions.logs.scripts.receivedLogs({
     scriptId,
     flowId,
-    logs: response.logs || [],
-    nextPageURL: response.nextPageURL,
+    logs: formattedLogs || [],
+    nextPageURL: response?.nextPageURL,
   }));
 
   // if no results then can automatically fetch next url

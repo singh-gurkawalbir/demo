@@ -1,28 +1,61 @@
 /* eslint-disable camelcase */
-import { call, takeEvery, put, select } from 'redux-saga/effects';
+import { call, takeEvery, put, select, delay, fork, take, cancel} from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 // import { requestReferences } from '../../resources';
 import { apiCallWithRetry } from '../..';
 import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
+import { convertUtcToTimezone } from '../../../utils/date';
 // import { selectors } from '../../../reducers';
+const UTCDateTimeRegex = '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}Z';
 
-export function* requestConnectionDebugLogs({ connectionId }) {
-  let response;
+export function* getConnectionDebugLogs({ connectionId }) {
   const path = `/connections/${connectionId}/debug`;
 
   try {
-    response = yield call(apiCallWithRetry, { path });
+    const logs = yield call(apiCallWithRetry, { path });
+    const {dateFormat, timeFormat, timezone } = yield select(selectors.userProfilePreferencesProps);
+    const _logs = [];
+
+    logs.split('\n').forEach(log => {
+      let logTmp = log;
+      const matchedUTCDateTime = logTmp.match(UTCDateTimeRegex)?.[0];
+
+      if (matchedUTCDateTime) {
+        const localDateTime = convertUtcToTimezone(matchedUTCDateTime, dateFormat, timeFormat, timezone);
+
+        logTmp = logTmp.replace(matchedUTCDateTime, localDateTime);
+      }
+      _logs.push(logTmp || '');
+    });
     yield put(
       actions.logs.connections.received(
         connectionId,
-        response || 'There are no logs available for this connection. Please run your flow so that we can record the outgoing and incoming traffic to this connection.',
+        _logs.join('\n'),
       )
     );
   } catch (error) {
     actions.logs.connections.requestFailed(connectionId);
   }
+}
+
+export function* pollForConnectionLogs({ connectionId }) {
+  while (true) {
+    yield call(getConnectionDebugLogs, { connectionId });
+    yield delay(5 * 1000);
+  }
+}
+export function* startPollingForConnectionDebugLogs({ connectionId }) {
+  const watcher = yield fork(pollForConnectionLogs, {connectionId});
+
+  yield take([
+    actionTypes.LOGS.CONNECTIONS.DELETE,
+    actionTypes.LOGS.CONNECTIONS.CLEAR,
+    actionTypes.LOGS.CONNECTIONS.REQUEST,
+    actionTypes.LOGS.CONNECTIONS.REFRESH,
+  ]);
+  yield cancel(watcher);
 }
 export function* deleteConnectionDebugLogs({ connectionId}) {
   const path = `/connections/${connectionId}/debug`;
@@ -32,6 +65,7 @@ export function* deleteConnectionDebugLogs({ connectionId}) {
   } catch (e) {
     // do nothing
   }
+  startPollingForConnectionDebugLogs();
 }
 
 export function* downloadConnectionDebugLogs({ connectionId}) {
@@ -47,8 +81,8 @@ export function* downloadConnectionDebugLogs({ connectionId}) {
   openExternalUrl({ url: _url });
 }
 export const connectionsLogSagas = [
-  takeEvery(actionTypes.LOGS.CONNECTIONS.REQUEST, requestConnectionDebugLogs),
-  takeEvery(actionTypes.LOGS.CONNECTIONS.REFRESH, requestConnectionDebugLogs),
+  takeEvery(actionTypes.LOGS.CONNECTIONS.REQUEST, startPollingForConnectionDebugLogs),
+  takeEvery(actionTypes.LOGS.CONNECTIONS.REFRESH, startPollingForConnectionDebugLogs),
   takeEvery(actionTypes.LOGS.CONNECTIONS.DELETE, deleteConnectionDebugLogs),
   takeEvery(actionTypes.LOGS.CONNECTIONS.DOWNLOAD, downloadConnectionDebugLogs),
 ];
