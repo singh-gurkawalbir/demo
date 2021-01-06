@@ -1511,7 +1511,7 @@ export default {
     'Please specify the type of files that you want to generate. For example, if you are trying to generate CSV files (i.e. files containing Comma Separated Value data) then please choose CSV.  Please note also that you can name your files however you like (i.e. using the File Name field) without affecting the type of data being generated.',
   'import.file.encoding': 'The file encoding indicates how the individual characters in your data are represented on the file system. Leave this field blank if you do not know what the encoding format is. The default encoding is UTF-8 and the other supported format is: UTF-8, Windows-1252 and UTF-16LE',
   'import.file.compressionFormat':
-    "Currently 'gzip' is the only compression format supported by integrator.io, please log a support ticket if you would like any other compression formats added.",
+    "Currently 'gzip' and 'zip' are the only compression formats supported by integrator.io, please log a support ticket if you would like any other compression formats added.",
   'import.file.csv.columnDelimiter':
     'Column delimiter to be used in the file. Ex: ",", "*", "|", etc...',
   'import.file.csv.rowDelimiter':
