@@ -1,9 +1,9 @@
 /* eslint-disable camelcase */
-import React from 'react';
+import React, { useMemo } from 'react';
 import { makeStyles, List, ListItem } from '@material-ui/core';
-import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { selectors } from '../../../../../../../reducers';
+import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   nested: {
@@ -24,12 +24,8 @@ export default function VariationAttributesList({
   categoryId,
 }) {
   const classes = useStyles();
-  const { variation_themes = [] } =
-    useSelector(state =>
-      selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
-        sectionId: categoryId,
-      })
-    ) || {};
+  const memoizedOptions = useMemo(() => ({sectionId: categoryId}), [categoryId]);
+  const { variation_themes = [] } = useSelectorMemo(selectors.mkCategoryMappingGenerateFields, integrationId, flowId, memoizedOptions) || {};
   // propery being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
   const { variation_attributes = [] } =
     variation_themes.find(theme => theme.id === 'variation_theme') || {};

@@ -11,6 +11,7 @@ import LockIcon from '../../../../../../../components/icons/LockIcon';
 import TrashIcon from '../../../../../../../components/icons/TrashIcon';
 import DynaTypeableSelect from '../../../../../../../components/DynaForm/fields/DynaTypeableSelect';
 import MappingConnectorIcon from '../../../../../../../components/icons/MappingConnectorIcon';
+import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -96,9 +97,7 @@ export default function ImportMapping(props) {
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { mappings, initChangeIdentifier } = useSelector(state =>
-    selectors.categoryMappingsForSection(state, integrationId, flowId, editorId)
-  );
+  const { mappings, initChangeIdentifier } = useSelectorMemo(selectors.mkCategoryMappingsForSection, integrationId, flowId, editorId);
   const { extractsMetadata: extractFields } = useSelector(state =>
     selectors.categoryMappingMetadata(state, integrationId, flowId)
   );

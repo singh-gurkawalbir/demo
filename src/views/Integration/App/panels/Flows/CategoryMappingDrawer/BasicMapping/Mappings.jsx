@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { components } from 'react-select';
 import { Tooltip } from '@material-ui/core';
@@ -134,16 +134,10 @@ export default function ImportMapping(props) {
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
+  const memoizedOptions = useMemo(() => ({ sectionId }), [sectionId]);
   const { attributes = {}, mappingFilter = 'mapped' } = useSelectorMemo(selectors.mkCategoryMappingFilters, integrationId, flowId) || {};
-  const { mappings, initChangeIdentifier } = useSelector(state =>
-    selectors.categoryMappingsForSection(state, integrationId, flowId, editorId)
-  );
-  const { fields = [] } =
-    useSelector(state =>
-      selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
-        sectionId,
-      })
-    ) || {};
+  const { mappings, initChangeIdentifier } = useSelectorMemo(selectors.mkCategoryMappingsForSection, integrationId, flowId, editorId);
+  const { fields = [] } = useSelectorMemo(selectors.mkCategoryMappingGenerateFields, integrationId, flowId, memoizedOptions) || {};
   const { extractsMetadata: extractFields } = useSelector(state =>
     selectors.categoryMappingMetadata(state, integrationId, flowId)
   );

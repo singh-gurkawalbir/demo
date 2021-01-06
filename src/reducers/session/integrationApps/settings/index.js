@@ -832,15 +832,18 @@ selectors.categoryMappingGeneratesMetadata = (state, integrationId, flowId) => {
   return generates;
 };
 
-selectors.categoryMappingsForSection = (state, integrationId, flowId, id) => {
-  const cKey = getCategoryKey(integrationId, flowId);
+selectors.mkCategoryMappingsForSection = () => createSelector(
+  (state, integrationId, flowId, id) => {
+    const cKey = getCategoryKey(integrationId, flowId);
 
-  if (!state || !state[cKey] || !state[cKey].mappings) {
-    return emptySet;
-  }
+    if (!state || !state[cKey] || !state[cKey].mappings) {
+      return emptySet;
+    }
 
-  return state[cKey].mappings[id] || emptySet;
-};
+    return state[cKey].mappings[id] || emptySet;
+  }, mappings => mappings
+);
+selectors.categoryMappingsForSection = selectors.mkCategoryMappingsForSection();
 
 selectors.mkCategoryMappingGenerateFields = () => createSelector(
   (state, integrationId, flowId) => {
