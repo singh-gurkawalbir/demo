@@ -9,7 +9,7 @@ import { LICENSE_UPGRADE_REQUEST_RECEIVED } from '../../../../../utils/messageSt
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import ModalDialog from '../../../../../components/ModalDialog';
-import {isHTML} from '../../../../../utils/constants';
+import {isHTML} from '../../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   root: {
