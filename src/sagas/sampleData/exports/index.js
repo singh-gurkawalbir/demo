@@ -137,7 +137,9 @@ export function* _getPreviewData({ resourceId, resourceType, values, runOffline 
     if (isRealTimeOrDistributedResource(body)) {
       // Handles SF/NS : Fetches metadata for the real time adaptors
       // @Raghu: Update this when we support other real time adaptors like Webhooks
-      previewData = yield call(requestRealTimeMetadata, { resource: body });
+      const data = yield call(requestRealTimeMetadata, { resource: body });
+
+      previewData = [data];
     } else {
       // Makes base preview calls for all other adaptors
       previewData = yield call(apiCallWithRetry, {
