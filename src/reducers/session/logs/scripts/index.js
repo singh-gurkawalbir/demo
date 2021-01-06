@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { addMinutes } from 'date-fns';
 import { createSelector } from 'reselect';
-import actionTypes from '../../../actions/types';
+import actionTypes from '../../../../actions/types';
 
 const emptySet = [];
 const emptyObj = {};
@@ -12,7 +12,7 @@ export default (state = {}, action) => {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.SCRIPT.LOGS_REQUEST:
+      case actionTypes.LOGS.SCRIPT.LOGS_REQUEST:
         if (!draft.script) {
           draft.script = {};
         }
@@ -29,7 +29,7 @@ export default (state = {}, action) => {
         draft.script[key].status = 'requested';
         break;
 
-      case actionTypes.SCRIPT.LOGS_REQUEST_FAILED:
+      case actionTypes.LOGS.SCRIPT.LOGS_REQUEST_FAILED:
         if (draft?.script?.[key]) {
           draft.script[key].status = 'error';
           delete draft.script[key].nextPageURL;
@@ -37,7 +37,7 @@ export default (state = {}, action) => {
 
         break;
 
-      case actionTypes.SCRIPT.LOGS_RECEIVED: {
+      case actionTypes.LOGS.SCRIPT.LOGS_RECEIVED: {
         if (draft?.script?.[key]) {
           if (!draft.script[key].logs) {
             draft.script[key].logs = [];
@@ -54,12 +54,12 @@ export default (state = {}, action) => {
 
         break;
       }
-      case actionTypes.SCRIPT.SET_DEPENDENCY:
+      case actionTypes.LOGS.SCRIPT.SET_DEPENDENCY:
         if (draft?.script?.[key]) {
           draft.script[key].resourceReferences = resourceReferences;
         }
         break;
-      case actionTypes.SCRIPT.PATCH_FILTER:
+      case actionTypes.LOGS.SCRIPT.PATCH_FILTER:
         if (draft?.script?.[key]) {
           draft.script[key][field] = value;
           if (field !== 'logLevel') {
@@ -68,7 +68,7 @@ export default (state = {}, action) => {
           }
         }
         break;
-      case actionTypes.SCRIPT.LOGS_REFRESH:
+      case actionTypes.LOGS.SCRIPT.LOGS_REFRESH:
         if (draft?.script?.[key]) {
           draft.script[key].status = 'requested';
           delete draft.script[key].logs;
@@ -76,10 +76,19 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.SCRIPT.LOGS_CLEAR:
-        delete draft.script;
+      case actionTypes.LOGS.SCRIPT.LOGS_CLEAR:
+        if (!scriptId && flowId) {
+          Object.keys(draft.script).forEach(scriptKey => {
+            if (draft.script[scriptKey]?.flowId === flowId) {
+              delete draft.script[scriptKey];
+            }
+          });
+        } else {
+          delete draft.script[key];
+        }
+
         break;
-      case actionTypes.SCRIPT.LOGS_LOAD_MORE:
+      case actionTypes.LOGS.SCRIPT.LOGS_LOAD_MORE:
         if (draft?.script?.[key]) {
           draft.script[key].status = 'requested';
         }

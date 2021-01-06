@@ -3,7 +3,6 @@ import { makeStyles, Drawer, IconButton, Tab, Tabs, useTheme } from '@material-u
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
-import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
 import AuditLogIcon from '../../../../components/icons/AuditLogIcon';
@@ -18,14 +17,13 @@ import RunDashboardPanel from './panels/Dashboard/RunDashboardPanel';
 import RunDashboardV2 from '../../../../components/JobDashboard/RunDashboardV2';
 import AuditPanel from './panels/Audit';
 import ScriptPanel from './panels/Script';
-import RefreshIcon from '../../../../components/icons/RefreshIcon';
-import IconTextButton from '../../../../components/IconTextButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RunDashboardActions from './panels/Dashboard/RunDashboardActions';
 import useBottomDrawer from './useBottomDrawer';
 import Spinner from '../../../../components/Spinner';
 import ScriptLogs from '../../../../components/ScriptLogs';
 import ScriptsIcon from '../../../../components/icons/ScriptsIcon';
+import ConnectionLogs from '../../../../components/ConnectionLogs';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -122,12 +120,6 @@ function TabPanel({ children, value, index, className }) {
     </div>
   );
 }
-
-const connectionsFilterConfig = {
-  type: 'connections',
-};
-const overrides = { useWorker: false };
-
 export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -145,23 +137,12 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
+  const flowConnectionsWithLogEntry = useSelectorMemo(selectors.flowConnectionsWithLogEntry, flowId);
 
   const flowScripts = useSelector(state => selectors.scripts(state, flowId), shallowEqual);
-  const flowScriptsLogs = useSelector(state => selectors.flowExecutionLogScripts(state, flowId), shallowEqual);
+  const flowScriptsWithLogEntry = useSelector(state => selectors.flowExecutionLogScripts(state, flowId), shallowEqual);
 
-  const connections = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    connectionsFilterConfig
-  ).resources;
-  const connectionIdNameMap = useMemo(() => {
-    const resourceIdNameMap = {};
-
-    connections.forEach(r => { resourceIdNameMap[r._id] = r.name || r._id; });
-
-    return resourceIdNameMap;
-  }, [connections]);
-  const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
+  // const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
   const minDrawerHeight = 41;
   const maxHeight = window.innerHeight - theme.appBarHeight - theme.pageBarHeight + 1; // border 1px
   const stepSize = parseInt((maxHeight - minDrawerHeight) / 4, 10);
@@ -215,39 +196,36 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
     [setDrawerHeight, setTabValue, drawerHeight]
   );
   const handleScriptLogsClose = useCallback(
-    () => event => {
+    scriptId => event => {
       event.stopPropagation();
-      setTabValue(0);
-      // dispatch(actions.script.clear({scriptId, flowId}));
+      setTabValue(3);
+      dispatch(actions.logs.script.clear({scriptId, flowId}));
     },
-    [setTabValue]
+    [dispatch, flowId, setTabValue]
   );
 
   const handleDebugLogsClose = useCallback(
     connectionId => event => {
       event.stopPropagation();
-      setTabValue(0);
-      dispatch(actions.connection.clearDebugLogs(connectionId));
+      setTabValue(1);
+      dispatch(actions.logs.connection.clear(connectionId));
     },
     [dispatch, setTabValue]
   );
-  const handleDebugLogsRefresh = useCallback(
-    connectionId => event => {
-      event.stopPropagation();
-      dispatch(actions.connection.requestDebugLogs(connectionId));
-    },
-    [dispatch]
-  );
 
-  useEffect(() => {
-    if (clearConnectionLogs) {
-      connectionDebugLogs &&
-        Object.keys(connectionDebugLogs).forEach(connectionId =>
-          dispatch(actions.connection.clearDebugLogs(connectionId))
-        );
-      setClearConnectionLogs(false);
-    }
-  }, [clearConnectionLogs, connectionDebugLogs, dispatch]);
+  useEffect(() =>
+    () => {
+      if (flowScriptsWithLogEntry.length) {
+        dispatch(actions.logs.script.clear(flowId));
+      }
+    },
+  [dispatch, flowId, flowScriptsWithLogEntry.length]);
+
+  useEffect(() =>
+    () => {
+      dispatch(actions.logs.connection.clear());
+    },
+  [dispatch]);
 
   useEffect(() => {
     if (isDragging === false) {
@@ -340,7 +318,7 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
             <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
             {flowScripts?.length &&
             <Tab {...tabProps(3)} icon={<ScriptsIcon />} label="Scripts" />}
-            {flowScriptsLogs.map((script, index) => (
+            {flowScriptsWithLogEntry.map((script, index) => (
               <Tab
                 className={classes.customTab}
                 // TODO pass correct tabProp Index
@@ -364,22 +342,21 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
                       )}
                     />
             ))}
-            {connectionDebugLogs &&
-              Object.keys(connectionDebugLogs).map(
-                (connectionId, cIndex) =>
-                  connectionDebugLogs[connectionId] && (
+            {flowConnectionsWithLogEntry?.map(
+                (connection, cIndex) =>
+                  (
                     <Tab
                       className={classes.customTab}
-                      {...tabProps(cIndex + 3 + (flowScripts?.length ? 1 : 0) + (flowScriptsLogs?.length || 0))}
+                      {...tabProps(cIndex + 3 + (flowScripts?.length ? 1 : 0) + (flowScriptsWithLogEntry?.length || 0))}
                       icon={<DebugIcon />}
-                      key={connectionId}
+                      key={connection._id}
                       component="div"
                       label={(
                         <div className={classes.customTabContainer}>
-                          {connectionIdNameMap[connectionId]} - DEBUG
+                          {connection.name} - DEBUG
                           <IconButton
                             className={classes.closeBtn}
-                            onClick={handleDebugLogsClose(connectionId)}>
+                            onClick={handleDebugLogsClose(connection._id)}>
                             <CloseIcon />
                           </IconButton>
                         </div>
@@ -427,34 +404,23 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
               <ScriptPanel flowId={flowId} />
             </TabPanel>
           )}
-          {flowScriptsLogs.map((script, index) => (
+          {flowScriptsWithLogEntry.map((script, index) => (
             <TabPanel key={script.scriptId} value={tabValue} index={4 + index} className={classes.tabPanel}>
               <ScriptLogs flowId={flowId} scriptId={script.scriptId} />
             </TabPanel>
           ))}
-          {connectionDebugLogs &&
-            Object.keys(connectionDebugLogs).map(
-              (connectionId, cIndex) =>
-                connectionDebugLogs[connectionId] && (
+          {flowConnectionsWithLogEntry?.map(
+              (connection, cIndex) =>
+                (
                   <TabPanel
                     value={tabValue}
-                    key={connectionId}
-                    index={cIndex + 3 + (flowScripts?.length ? 1 : 0) + (flowScriptsLogs?.length || 0)}
+                    key={connection._id}
+                    index={cIndex + 3 + (flowScripts?.length ? 1 : 0) + (flowScriptsWithLogEntry?.length || 0)}
                     className={classes.tabPanel}>
                     <>
-                      <div className={classes.rightActionContainer}>
-                        <IconTextButton
-                          className={classes.refreshButton}
-                          onClick={handleDebugLogsRefresh(connectionId)}>
-                          <RefreshIcon /> Refresh
-                        </IconTextButton>
-                      </div>
-                      <CodePanel
-                        name="code"
-                        readOnly
-                        value={connectionDebugLogs[connectionId]}
-                        mode="javascript"
-                        overrides={overrides}
+                      <ConnectionLogs
+                        connectionId={connection._id}
+                        flowId={flowId}
                       />
                     </>
                   </TabPanel>

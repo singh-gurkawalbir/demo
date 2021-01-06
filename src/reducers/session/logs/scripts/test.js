@@ -2,7 +2,7 @@
 
 import { addMinutes } from 'date-fns';
 import reducer, { selectors } from '.';
-import actions from '../../../actions';
+import actions from '../../../../actions';
 
 describe('Script reducer', () => {
   test('should return initial state when action is not matched', () => {
@@ -20,7 +20,7 @@ describe('Script reducer', () => {
 
     mock.mockReturnValue(now);
 
-    const state = reducer(undefined, actions.script.requestLogs({
+    const state = reducer(undefined, actions.logs.script.requestLogs({
       flowId,
       scriptId,
     }));
@@ -56,7 +56,7 @@ describe('Script reducer', () => {
         },
       },
     };
-    const state = reducer(currentState, actions.script.requestFailed({
+    const state = reducer(currentState, actions.logs.script.requestFailed({
       flowId,
       scriptId,
     }));
@@ -87,7 +87,7 @@ describe('Script reducer', () => {
         },
       },
     };
-    const state = reducer(currentState, actions.script.requestFailed({
+    const state = reducer(currentState, actions.logs.script.requestFailed({
       flowId,
       scriptId,
     }));
@@ -117,7 +117,7 @@ describe('Script reducer', () => {
         },
       },
     };
-    const state = reducer(currentState, actions.script.receivedLogs({
+    const state = reducer(currentState, actions.logs.script.receivedLogs({
       flowId,
       scriptId,
       logs: [{a: 1}],
@@ -154,7 +154,7 @@ describe('Script reducer', () => {
         },
       },
     };
-    const state = reducer(currentState, actions.script.receivedLogs({
+    const state = reducer(currentState, actions.logs.script.receivedLogs({
       flowId,
       scriptId,
       logs: [{a: 3}, {a: 4}],
@@ -196,7 +196,7 @@ describe('Script reducer', () => {
         },
       },
     };
-    const state = reducer(currentState, actions.script.setDependency({
+    const state = reducer(currentState, actions.logs.script.setDependency({
       flowId,
       scriptId,
       resourceReferences: [{id: 'a', type: 'flow'}, {id: 'a', type: 'export'}],
@@ -235,7 +235,7 @@ describe('Script reducer', () => {
         },
       },
     };
-    const state = reducer(currentState, actions.script.patchFilter({
+    const state = reducer(currentState, actions.logs.script.patchFilter({
       flowId,
       scriptId,
       field: 'functionType',
@@ -272,7 +272,7 @@ describe('Script reducer', () => {
         },
       },
     };
-    const state = reducer(currentState, actions.script.patchFilter({
+    const state = reducer(currentState, actions.logs.script.patchFilter({
       flowId,
       scriptId,
       field: 'logLevel',
@@ -314,7 +314,7 @@ describe('Script reducer', () => {
         },
       },
     };
-    const state = reducer(currentState, actions.script.refreshLogs({
+    const state = reducer(currentState, actions.logs.script.refreshLogs({
       flowId,
       scriptId,
     }));
@@ -348,7 +348,7 @@ describe('Script reducer', () => {
         },
       },
     };
-    const state = reducer(currentState, actions.script.clear({
+    const state = reducer(currentState, actions.logs.script.clear({
       flowId,
       scriptId,
     }));
@@ -375,7 +375,7 @@ describe('Script reducer', () => {
         },
       },
     };
-    const state = reducer(currentState, actions.script.loadMore({
+    const state = reducer(currentState, actions.logs.script.loadMore({
       flowId,
       scriptId,
     }));
@@ -406,40 +406,40 @@ describe('Script reducer', () => {
       },
     };
 
-    let expectedState = reducer(originalState, actions.script.requestFailed({
+    let expectedState = reducer(originalState, actions.logs.script.requestFailed({
       flowId: 'f2',
       scriptId: 's1',
     }));
 
     expect(expectedState).toEqual(originalState);
 
-    expectedState = reducer(originalState, actions.script.receivedLogs({
+    expectedState = reducer(originalState, actions.logs.script.receivedLogs({
       flowId: 'f2',
       scriptId: 's1',
     }));
 
     expect(expectedState).toEqual(originalState);
     /// //
-    expectedState = reducer(originalState, actions.script.setDependency({
+    expectedState = reducer(originalState, actions.logs.script.setDependency({
       flowId: 'f2',
       scriptId: 's1',
     }));
 
     expect(expectedState).toEqual(originalState);
 
-    expectedState = reducer(originalState, actions.script.patchFilter({
+    expectedState = reducer(originalState, actions.logs.script.patchFilter({
       flowId: 'f2',
       scriptId: 's1',
     }));
 
     expect(expectedState).toEqual(originalState);
-    expectedState = reducer(originalState, actions.script.refreshLogs({
+    expectedState = reducer(originalState, actions.logs.script.refreshLogs({
       flowId: 'f2',
       scriptId: 's1',
     }));
 
     expect(expectedState).toEqual(originalState);
-    expectedState = reducer(originalState, actions.script.loadMore({
+    expectedState = reducer(originalState, actions.logs.script.loadMore({
       flowId: 'f2',
       scriptId: 's1',
     }));
@@ -495,7 +495,7 @@ describe('script selector', () => {
         {message: 'm3', logLevel: 'DEBUG' },
       ],
     }}};
-    const newState = reducer(state, actions.script.patchFilter({
+    const newState = reducer(state, actions.logs.script.patchFilter({
       flowId: 'f1',
       scriptId: 's1',
       field: 'logLevel',

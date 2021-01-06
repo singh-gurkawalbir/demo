@@ -34,7 +34,7 @@ import errorManagement, { selectors as fromErrorManagement } from './errorManage
 import exportDataReducer, { selectors as fromExportData } from './exportData';
 import customSettings, { selectors as fromCustomSettings } from './customSettings';
 import recycleBin, { selectors as fromRecycleBin } from './recycleBin';
-import scripts, {selectors as fromScripts} from './scripts';
+import logs, {selectors as fromLogs} from './logs';
 import { genSelectors } from '../util';
 
 export default combineReducers({
@@ -73,7 +73,7 @@ export default combineReducers({
   customSettings,
   exportData: exportDataReducer,
   editorSampleData,
-  scripts,
+  logs,
 });
 
 // #region PUBLIC SELECTORS
@@ -114,7 +114,7 @@ const subSelectors = {
   exportData: fromExportData,
   customSettings: fromCustomSettings,
   recycleBin: fromRecycleBin,
-  scripts: fromScripts,
+  logs: fromLogs,
 };
 
 genSelectors(selectors, subSelectors);

@@ -2101,25 +2101,44 @@ const hooks = {
   save: context => action(actionTypes.HOOKS.SAVE, context),
 };
 
-const script = {
-  requestLogs: ({ scriptId, flowId }) =>
-    action(actionTypes.SCRIPT.LOGS_REQUEST, { scriptId, flowId }),
-  receivedLogs: ({logs, nextPageURL, scriptId, flowId}) =>
-    action(actionTypes.SCRIPT.LOGS_RECEIVED, {logs, nextPageURL, scriptId, flowId}),
-  requestFailed: ({flowId, scriptId}) =>
-    action(actionTypes.SCRIPT.LOGS_REQUEST_FAILED, {scriptId, flowId}),
-  setDependency: ({resourceReferences, scriptId, flowId}) =>
-    action(actionTypes.SCRIPT.SET_DEPENDENCY, {resourceReferences, scriptId, flowId}),
-  patchFilter: ({scriptId, flowId, field, value}) =>
-    action(actionTypes.SCRIPT.PATCH_FILTER, {scriptId, flowId, field, value}),
-  startDebug: ({ scriptId, value }) =>
-    action(actionTypes.SCRIPT.START_DEBUG, { scriptId, value }),
-  refreshLogs: ({ scriptId, flowId }) =>
-    action(actionTypes.SCRIPT.LOGS_REFRESH, { scriptId, flowId }),
-  clear: ({ flowId, scriptId }) =>
-    action(actionTypes.SCRIPT.LOGS_CLEAR, { flowId, scriptId }),
-  loadMore: ({ flowId, scriptId }) =>
-    action(actionTypes.SCRIPT.LOGS_LOAD_MORE, { flowId, scriptId }),
+const logs = {
+  script: {
+    requestLogs: ({ scriptId, flowId }) =>
+      action(actionTypes.LOGS.SCRIPT.LOGS_REQUEST, { scriptId, flowId }),
+    receivedLogs: ({logs, nextPageURL, scriptId, flowId}) =>
+      action(actionTypes.LOGS.SCRIPT.LOGS_RECEIVED, {logs, nextPageURL, scriptId, flowId}),
+    requestFailed: ({flowId, scriptId}) =>
+      action(actionTypes.LOGS.SCRIPT.LOGS_REQUEST_FAILED, {scriptId, flowId}),
+    setDependency: ({resourceReferences, scriptId, flowId}) =>
+      action(actionTypes.LOGS.SCRIPT.SET_DEPENDENCY, {resourceReferences, scriptId, flowId}),
+    patchFilter: ({scriptId, flowId, field, value}) =>
+      action(actionTypes.LOGS.SCRIPT.PATCH_FILTER, {scriptId, flowId, field, value}),
+    startDebug: ({ scriptId, value }) =>
+      action(actionTypes.LOGS.SCRIPT.START_DEBUG, { scriptId, value }),
+    refreshLogs: ({ scriptId, flowId }) =>
+      action(actionTypes.LOGS.SCRIPT.LOGS_REFRESH, { scriptId, flowId }),
+    clear: ({ flowId, scriptId }) =>
+      action(actionTypes.LOGS.SCRIPT.LOGS_CLEAR, { flowId, scriptId }),
+    loadMore: ({ flowId, scriptId }) =>
+      action(actionTypes.LOGS.SCRIPT.LOGS_LOAD_MORE, { flowId, scriptId }),
+  },
+  connection: {
+    request: connectionId =>
+      action(actionTypes.LOGS.CONNECTION.REQUEST, { connectionId }),
+    requestFailed: connectionId =>
+      action(actionTypes.LOGS.CONNECTION.REQUEST_FAILED, { connectionId }),
+    received: (connectionId, logs) =>
+      action(actionTypes.LOGS.CONNECTION.RECEIVED, { connectionId, logs }),
+    refresh: connectionId =>
+      action(actionTypes.LOGS.CONNECTION.REFRESH, { connectionId }),
+    clear: connectionId =>
+      action(actionTypes.LOGS.CONNECTION.CLEAR, { connectionId }),
+    delete: connectionId =>
+      action(actionTypes.LOGS.CONNECTION.DELETE, { connectionId }),
+    download: connectionId =>
+      action(actionTypes.LOGS.CONNECTION.DOWNLOAD, { connectionId }),
+
+  },
 };
 
 export default {
@@ -2173,5 +2192,5 @@ export default {
   exportData,
   editorSampleData,
   hooks,
-  script,
+  logs,
 };

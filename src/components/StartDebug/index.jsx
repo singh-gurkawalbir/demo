@@ -96,8 +96,14 @@ export default function StartDebug({ resourceId, resourceType}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const debugMinutesPending = useSelector(state => {
-    const {debugUntil} = selectors.resource(state, resourceType, resourceId);
+    const resource = selectors.resource(state, resourceType, resourceId);
+    let debugUntil;
 
+    if (resourceType === 'connections') {
+      debugUntil = resource.debugDate;
+    } else {
+      debugUntil = resource.debugUntil;
+    }
     if (!debugUntil || moment().isAfter(moment(debugUntil))) {
       return 0;
     }
@@ -115,7 +121,7 @@ export default function StartDebug({ resourceId, resourceType}) {
     const patchSet = [
       {
         op: value !== '0' ? 'replace' : 'remove',
-        path: '/debugUntil',
+        path: resourceType === 'connections' ? '/debugDate' : '/debugUntil',
         value: moment().add(value, 'm').toISOString(),
       },
     ];

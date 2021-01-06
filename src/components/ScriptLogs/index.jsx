@@ -107,7 +107,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
   const rowsPerPageOptions = [10, 25, 50];
   const DEFAULT_ROWS_PER_PAGE = 50;
   const dispatch = useDispatch();
-
+  const [isInitTriggered, setIsInitTriggered] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE);
 
@@ -122,7 +122,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
   } = useSelector(state => selectors.scriptLog(state, {scriptId, flowId}), shallowEqual);
 
   const patchFilter = useCallback((field, value) => {
-    dispatch(actions.script.patchFilter({scriptId, flowId, field, value}));
+    dispatch(actions.logs.script.patchFilter({scriptId, flowId, field, value}));
   }, [dispatch, flowId, scriptId]);
   const handleChangeRowsPerPage = useCallback(event => {
     setRowsPerPage(parseInt(event.target.value, 10));
@@ -142,7 +142,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
   }, [patchFilter]);
   const loadMoreLogs = useCallback(
     () => {
-      dispatch(actions.script.loadMore({scriptId, flowId}));
+      dispatch(actions.logs.script.loadMore({scriptId, flowId}));
     },
     [dispatch, flowId, scriptId],
   );
@@ -158,7 +158,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
 
   const handleRefreshClick = useCallback(
     () => {
-      dispatch(actions.script.refreshLogs({scriptId, flowId}));
+      dispatch(actions.logs.script.refreshLogs({scriptId, flowId}));
     },
     [dispatch, flowId, scriptId],
   );
@@ -180,12 +180,16 @@ export default function ScriptLogs({ flowId, scriptId }) {
   );
 
   useEffect(() => {
-    dispatch(actions.script.requestLogs({scriptId, flowId}));
+    if (isInitTriggered) {
+      dispatch(actions.logs.script.requestLogs({scriptId, flowId}));
+      setIsInitTriggered(true);
+    }
 
-    return () => {
-      dispatch(actions.script.clear({scriptId, flowId}));
-    };
-  }, [dispatch, scriptId, flowId]);
+    // return () => {
+    //   console.log('clear triggered');
+    //   dispatch(actions.logs.script.clear({scriptId, flowId}));
+    // };
+  }, [dispatch, scriptId, flowId, isInitTriggered]);
 
   return (
     <div className={classes.root}>

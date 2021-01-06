@@ -2,16 +2,16 @@
 import { expectSaga } from 'redux-saga-test-plan';
 import { call, select } from 'redux-saga/effects';
 import { addMinutes } from 'date-fns';
-import actions from '../../actions';
-import { selectors } from '../../reducers';
-import { requestReferences } from '../resources';
+import actions from '../../../actions';
+import { selectors } from '../../../reducers';
+import { requestReferences } from '../../resources';
 import {
   fetchScriptLogs,
   getScriptDependencies,
   requestScriptLogs,
   loadMoreLogs,
 } from '.';
-import { apiCallWithRetry } from '..';
+import { apiCallWithRetry } from '../..';
 
 describe('getScriptDependencies saga', () => {
   test('should dispatch setDependency action after fetching depedency', () => {
@@ -37,7 +37,7 @@ describe('getScriptDependencies saga', () => {
             {id: 'f2', name: 'nf2'},
           ],
         }],
-      ]).put(actions.script.setDependency({
+      ]).put(actions.logs.script.setDependency({
         scriptId,
         flowId: '',
         resourceReferences: [
@@ -105,7 +105,7 @@ describe('getScriptDependencies saga', () => {
             ],
           },
         ],
-      ]).put(actions.script.setDependency({
+      ]).put(actions.logs.script.setDependency({
         scriptId,
         flowId,
         resourceReferences: [
@@ -124,7 +124,7 @@ describe('fetchScriptLogs saga', () => {
     const scriptId = 's1';
 
     return expectSaga(fetchScriptLogs, { flowId, scriptId, field: 'logLevel' })
-      .not.put(actions.script.setDependency({
+      .not.put(actions.logs.script.setDependency({
         scriptId,
         flowId,
       }))
@@ -154,7 +154,7 @@ describe('fetchScriptLogs saga', () => {
           },
         ],
       ])
-      .put(actions.script.receivedLogs({
+      .put(actions.logs.script.receivedLogs({
         scriptId,
         flowId,
         logs: [{message: 'abc'}],
@@ -191,7 +191,7 @@ describe('fetchScriptLogs saga', () => {
           },
         ],
       ])
-      .put(actions.script.receivedLogs({
+      .put(actions.logs.script.receivedLogs({
         scriptId,
         flowId,
         logs: [{message: 'abc'}],
@@ -214,7 +214,7 @@ describe('fetchScriptLogs saga', () => {
           nextPageURL,
         }],
       ])
-      .put(actions.script.requestFailed({
+      .put(actions.logs.script.requestFailed({
         scriptId,
         flowId,
       }))
@@ -235,7 +235,7 @@ describe('fetchScriptLogs saga', () => {
           nextPageURL,
         }],
       ])
-      .put(actions.script.requestFailed({
+      .put(actions.logs.script.requestFailed({
         scriptId,
         flowId,
       }))
