@@ -122,7 +122,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
   } = useSelector(state => selectors.scriptLog(state, {scriptId, flowId}), shallowEqual);
 
   const patchFilter = useCallback((field, value) => {
-    dispatch(actions.logs.script.patchFilter({scriptId, flowId, field, value}));
+    dispatch(actions.logs.scripts.patchFilter({scriptId, flowId, field, value}));
   }, [dispatch, flowId, scriptId]);
   const handleChangeRowsPerPage = useCallback(event => {
     setRowsPerPage(parseInt(event.target.value, 10));
@@ -142,7 +142,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
   }, [patchFilter]);
   const loadMoreLogs = useCallback(
     () => {
-      dispatch(actions.logs.script.loadMore({scriptId, flowId}));
+      dispatch(actions.logs.scripts.loadMore({scriptId, flowId}));
     },
     [dispatch, flowId, scriptId],
   );
@@ -158,7 +158,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
 
   const handleRefreshClick = useCallback(
     () => {
-      dispatch(actions.logs.script.refreshLogs({scriptId, flowId}));
+      dispatch(actions.logs.scripts.refreshLogs({scriptId, flowId}));
     },
     [dispatch, flowId, scriptId],
   );
@@ -181,13 +181,13 @@ export default function ScriptLogs({ flowId, scriptId }) {
 
   useEffect(() => {
     if (isInitTriggered) {
-      dispatch(actions.logs.script.requestLogs({scriptId, flowId}));
+      dispatch(actions.logs.scripts.requestLogs({scriptId, flowId}));
       setIsInitTriggered(true);
     }
 
     // return () => {
     //   console.log('clear triggered');
-    //   dispatch(actions.logs.script.clear({scriptId, flowId}));
+    //   dispatch(actions.logs.scripts.clear({scriptId, flowId}));
     // };
   }, [dispatch, scriptId, flowId, isInitTriggered]);
 

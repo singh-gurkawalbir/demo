@@ -169,7 +169,7 @@ export default function SelectDependentResource({resources = emptySet, selectedR
                   <FormLabel className={classes.headerLabel}>Name</FormLabel>
                 </div>
                 {resources.map(m => (
-                  <div className={classes.row} key={`${m.id}-${checked.find(({id}) => id === m.id) ? '1' : '0'}`}>
+                  <div className={classes.row} key={m.id}>
                     <FormControlLabel
                       className={classes.selectResourceItem}
                       id={m.id}
@@ -177,7 +177,7 @@ export default function SelectDependentResource({resources = emptySet, selectedR
                       control={(
                         <Checkbox
                           color="primary"
-                          checked={!!checked.find(({id}) => id === m.id)}
+                          checked={checked.some(({id}) => id === m.id)}
                           id={m.id}
                           onChange={handleResourceToggle}
                           value="required"

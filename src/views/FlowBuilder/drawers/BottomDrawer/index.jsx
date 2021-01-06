@@ -199,7 +199,7 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
     scriptId => event => {
       event.stopPropagation();
       setTabValue(3);
-      dispatch(actions.logs.script.clear({scriptId, flowId}));
+      dispatch(actions.logs.scripts.clear({scriptId, flowId}));
     },
     [dispatch, flowId, setTabValue]
   );
@@ -208,7 +208,7 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
     connectionId => event => {
       event.stopPropagation();
       setTabValue(1);
-      dispatch(actions.logs.connection.clear(connectionId));
+      dispatch(actions.logs.connections.clear(connectionId));
     },
     [dispatch, setTabValue]
   );
@@ -216,14 +216,14 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
   useEffect(() =>
     () => {
       if (flowScriptsWithLogEntry.length) {
-        dispatch(actions.logs.script.clear(flowId));
+        dispatch(actions.logs.scripts.clear(flowId));
       }
     },
   [dispatch, flowId, flowScriptsWithLogEntry.length]);
 
   useEffect(() =>
     () => {
-      dispatch(actions.logs.connection.clear());
+      dispatch(actions.logs.connections.clear());
     },
   [dispatch]);
 

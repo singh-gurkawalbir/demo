@@ -6,37 +6,37 @@ export default (state = {}, action) => {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.LOGS.CONNECTION.REQUEST:
-        if (!draft.connection) {
-          draft.connection = {};
+      case actionTypes.LOGS.CONNECTIONS.REQUEST:
+        if (!draft.connections) {
+          draft.connections = {};
         }
-        if (!draft.connection[connectionId]) {
-          draft.connection[connectionId] = {};
+        if (!draft.connections[connectionId]) {
+          draft.connections[connectionId] = {};
         }
-        draft.connection[connectionId].status = 'requested';
+        draft.connections[connectionId].status = 'requested';
         break;
-      case actionTypes.LOGS.CONNECTION.RECEIVED:
-        draft.connection[connectionId].logs = logs;
-        draft.connection[connectionId].status = 'success';
+      case actionTypes.LOGS.CONNECTIONS.RECEIVED:
+        draft.connections[connectionId].logs = logs;
+        draft.connections[connectionId].status = 'success';
         break;
-      case actionTypes.LOGS.CONNECTION.REQUEST_FAILED:
-        draft.connection[connectionId].status = 'error';
+      case actionTypes.LOGS.CONNECTIONS.REQUEST_FAILED:
+        draft.connections[connectionId].status = 'error';
         break;
-      case actionTypes.LOGS.CONNECTION.REFRESH:
-        draft.connection[connectionId].status = 'requested';
-        delete draft.connection[connectionId].logs;
+      case actionTypes.LOGS.CONNECTIONS.REFRESH:
+        draft.connections[connectionId].status = 'requested';
+        delete draft.connections[connectionId].logs;
         break;
-      case actionTypes.LOGS.CONNECTION.CLEAR:
+      case actionTypes.LOGS.CONNECTIONS.CLEAR:
         if (connectionId) {
-          delete draft.connection[connectionId];
+          delete draft.connections[connectionId];
         } else {
-          Object.keys(draft.connection).forEach(connectionId => {
-            delete draft.connection[connectionId];
+          Object.keys(draft.connections).forEach(connectionId => {
+            delete draft.connections[connectionId];
           });
         }
         break;
-      case actionTypes.LOGS.CONNECTION.DELETE:
-        delete draft.connection[connectionId].logs;
+      case actionTypes.LOGS.CONNECTIONS.DELETE:
+        delete draft.connections[connectionId].logs;
         break;
       default:
     }
@@ -47,9 +47,9 @@ export const selectors = {};
 const emptyObj = {};
 
 selectors.allConnectionsLogs = state => {
-  if (!state || !state.connection) {
+  if (!state || !state.connections) {
     return emptyObj;
   }
 
-  return state.connection;
+  return state.connections;
 };

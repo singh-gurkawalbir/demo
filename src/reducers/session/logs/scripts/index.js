@@ -12,85 +12,85 @@ export default (state = {}, action) => {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.LOGS.SCRIPT.LOGS_REQUEST:
-        if (!draft.script) {
-          draft.script = {};
+      case actionTypes.LOGS.SCRIPTS.LOGS_REQUEST:
+        if (!draft.scripts) {
+          draft.scripts = {};
         }
-        if (!draft.script[key]) {
-          draft.script[key] = {};
+        if (!draft.scripts[key]) {
+          draft.scripts[key] = {};
         }
-        draft.script[key].scriptId = scriptId;
-        draft.script[key].flowId = flowId;
-        draft.script[key].dateRange = {
+        draft.scripts[key].scriptId = scriptId;
+        draft.scripts[key].flowId = flowId;
+        draft.scripts[key].dateRange = {
           startDate: addMinutes(new Date(), -15),
           endDate: new Date(),
           preset: 'last15minutes',
         };
-        draft.script[key].status = 'requested';
+        draft.scripts[key].status = 'requested';
         break;
 
-      case actionTypes.LOGS.SCRIPT.LOGS_REQUEST_FAILED:
-        if (draft?.script?.[key]) {
-          draft.script[key].status = 'error';
-          delete draft.script[key].nextPageURL;
+      case actionTypes.LOGS.SCRIPTS.LOGS_REQUEST_FAILED:
+        if (draft?.scripts?.[key]) {
+          draft.scripts[key].status = 'error';
+          delete draft.scripts[key].nextPageURL;
         }
 
         break;
 
-      case actionTypes.LOGS.SCRIPT.LOGS_RECEIVED: {
-        if (draft?.script?.[key]) {
-          if (!draft.script[key].logs) {
-            draft.script[key].logs = [];
+      case actionTypes.LOGS.SCRIPTS.LOGS_RECEIVED: {
+        if (draft?.scripts?.[key]) {
+          if (!draft.scripts[key].logs) {
+            draft.scripts[key].logs = [];
           }
-          const oldLogCount = draft.script[key].logs.length;
+          const oldLogCount = draft.scripts[key].logs.length;
 
           logs.forEach((log, index) => {
-            draft.script[key].logs.push({...log, index: (oldLogCount + index)});
+            draft.scripts[key].logs.push({...log, index: (oldLogCount + index)});
           });
 
-          draft.script[key].status = 'success';
-          draft.script[key].nextPageURL = nextPageURL;
+          draft.scripts[key].status = 'success';
+          draft.scripts[key].nextPageURL = nextPageURL;
         }
 
         break;
       }
-      case actionTypes.LOGS.SCRIPT.SET_DEPENDENCY:
-        if (draft?.script?.[key]) {
-          draft.script[key].resourceReferences = resourceReferences;
+      case actionTypes.LOGS.SCRIPTS.SET_DEPENDENCY:
+        if (draft?.scripts?.[key]) {
+          draft.scripts[key].resourceReferences = resourceReferences;
         }
         break;
-      case actionTypes.LOGS.SCRIPT.PATCH_FILTER:
-        if (draft?.script?.[key]) {
-          draft.script[key][field] = value;
+      case actionTypes.LOGS.SCRIPTS.PATCH_FILTER:
+        if (draft?.scripts?.[key]) {
+          draft.scripts[key][field] = value;
           if (field !== 'logLevel') {
-            delete draft.script[key].logs;
-            delete draft.script[key].nextPageURL;
+            delete draft.scripts[key].logs;
+            delete draft.scripts[key].nextPageURL;
           }
         }
         break;
-      case actionTypes.LOGS.SCRIPT.LOGS_REFRESH:
-        if (draft?.script?.[key]) {
-          draft.script[key].status = 'requested';
-          delete draft.script[key].logs;
-          delete draft.script[key].nextPageURL;
+      case actionTypes.LOGS.SCRIPTS.LOGS_REFRESH:
+        if (draft?.scripts?.[key]) {
+          draft.scripts[key].status = 'requested';
+          delete draft.scripts[key].logs;
+          delete draft.scripts[key].nextPageURL;
         }
 
         break;
-      case actionTypes.LOGS.SCRIPT.LOGS_CLEAR:
+      case actionTypes.LOGS.SCRIPTS.LOGS_CLEAR:
         if (!scriptId && flowId) {
-          Object.keys(draft.script).forEach(scriptKey => {
-            if (draft.script[scriptKey]?.flowId === flowId) {
-              delete draft.script[scriptKey];
+          Object.keys(draft.scripts).forEach(scriptKey => {
+            if (draft.scripts[scriptKey]?.flowId === flowId) {
+              delete draft.scripts[scriptKey];
             }
           });
         } else {
-          delete draft.script[key];
+          delete draft.scripts[key];
         }
 
         break;
-      case actionTypes.LOGS.SCRIPT.LOGS_LOAD_MORE:
-        if (draft?.script?.[key]) {
-          draft.script[key].status = 'requested';
+      case actionTypes.LOGS.SCRIPTS.LOGS_LOAD_MORE:
+        if (draft?.scripts?.[key]) {
+          draft.scripts[key].status = 'requested';
         }
         break;
       default:
@@ -102,12 +102,12 @@ export const selectors = {};
 
 selectors.scriptLog = createSelector(
   (state, {scriptId = '', flowId = ''}) => {
-    if (!state || !state.script) {
+    if (!state || !state.scripts) {
       return emptyObj;
     }
     const key = `${scriptId}-${flowId}`;
 
-    return state.script[key] || emptyObj;
+    return state.scripts[key] || emptyObj;
   },
   script => {
     const {logs, ...others} = script;
@@ -120,7 +120,7 @@ selectors.scriptLog = createSelector(
 );
 
 selectors.flowExecutionLogScripts = createSelector(
-  state => state?.script || emptySet,
+  state => state?.scripts || emptySet,
   (state, flowId) => flowId,
   (scripts, flowId) => {
     if (!flowId) {

@@ -37,7 +37,7 @@ describe('getScriptDependencies saga', () => {
             {id: 'f2', name: 'nf2'},
           ],
         }],
-      ]).put(actions.logs.script.setDependency({
+      ]).put(actions.logs.scripts.setDependency({
         scriptId,
         flowId: '',
         resourceReferences: [
@@ -105,7 +105,7 @@ describe('getScriptDependencies saga', () => {
             ],
           },
         ],
-      ]).put(actions.logs.script.setDependency({
+      ]).put(actions.logs.scripts.setDependency({
         scriptId,
         flowId,
         resourceReferences: [
@@ -124,7 +124,7 @@ describe('fetchScriptLogs saga', () => {
     const scriptId = 's1';
 
     return expectSaga(fetchScriptLogs, { flowId, scriptId, field: 'logLevel' })
-      .not.put(actions.logs.script.setDependency({
+      .not.put(actions.logs.scripts.setDependency({
         scriptId,
         flowId,
       }))
@@ -154,7 +154,7 @@ describe('fetchScriptLogs saga', () => {
           },
         ],
       ])
-      .put(actions.logs.script.receivedLogs({
+      .put(actions.logs.scripts.receivedLogs({
         scriptId,
         flowId,
         logs: [{message: 'abc'}],
@@ -191,7 +191,7 @@ describe('fetchScriptLogs saga', () => {
           },
         ],
       ])
-      .put(actions.logs.script.receivedLogs({
+      .put(actions.logs.scripts.receivedLogs({
         scriptId,
         flowId,
         logs: [{message: 'abc'}],
@@ -214,28 +214,7 @@ describe('fetchScriptLogs saga', () => {
           nextPageURL,
         }],
       ])
-      .put(actions.logs.script.requestFailed({
-        scriptId,
-        flowId,
-      }))
-      .run();
-  });
-
-  test('should dispatch requestFailed action when fetch script log failed', () => {
-    const flowId = 'f1';
-    const scriptId = 's1';
-
-    const nextPageURL = '/api/abcd/xyz';
-
-    expectSaga(fetchScriptLogs, { flowId, scriptId, loadMore: true })
-      .provide([
-        [select(selectors.scriptLog, {
-          scriptId, flowId,
-        }), {
-          nextPageURL,
-        }],
-      ])
-      .put(actions.logs.script.requestFailed({
+      .put(actions.logs.scripts.requestFailed({
         scriptId,
         flowId,
       }))

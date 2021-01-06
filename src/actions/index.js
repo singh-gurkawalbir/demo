@@ -2102,41 +2102,41 @@ const hooks = {
 };
 
 const logs = {
-  script: {
+  scripts: {
     requestLogs: ({ scriptId, flowId }) =>
-      action(actionTypes.LOGS.SCRIPT.LOGS_REQUEST, { scriptId, flowId }),
+      action(actionTypes.LOGS.SCRIPTS.LOGS_REQUEST, { scriptId, flowId }),
     receivedLogs: ({logs, nextPageURL, scriptId, flowId}) =>
-      action(actionTypes.LOGS.SCRIPT.LOGS_RECEIVED, {logs, nextPageURL, scriptId, flowId}),
+      action(actionTypes.LOGS.SCRIPTS.LOGS_RECEIVED, {logs, nextPageURL, scriptId, flowId}),
     requestFailed: ({flowId, scriptId}) =>
-      action(actionTypes.LOGS.SCRIPT.LOGS_REQUEST_FAILED, {scriptId, flowId}),
+      action(actionTypes.LOGS.SCRIPTS.LOGS_REQUEST_FAILED, {scriptId, flowId}),
     setDependency: ({resourceReferences, scriptId, flowId}) =>
-      action(actionTypes.LOGS.SCRIPT.SET_DEPENDENCY, {resourceReferences, scriptId, flowId}),
+      action(actionTypes.LOGS.SCRIPTS.SET_DEPENDENCY, {resourceReferences, scriptId, flowId}),
     patchFilter: ({scriptId, flowId, field, value}) =>
-      action(actionTypes.LOGS.SCRIPT.PATCH_FILTER, {scriptId, flowId, field, value}),
+      action(actionTypes.LOGS.SCRIPTS.PATCH_FILTER, {scriptId, flowId, field, value}),
     startDebug: ({ scriptId, value }) =>
-      action(actionTypes.LOGS.SCRIPT.START_DEBUG, { scriptId, value }),
+      action(actionTypes.LOGS.SCRIPTS.START_DEBUG, { scriptId, value }),
     refreshLogs: ({ scriptId, flowId }) =>
-      action(actionTypes.LOGS.SCRIPT.LOGS_REFRESH, { scriptId, flowId }),
+      action(actionTypes.LOGS.SCRIPTS.LOGS_REFRESH, { scriptId, flowId }),
     clear: ({ flowId, scriptId }) =>
-      action(actionTypes.LOGS.SCRIPT.LOGS_CLEAR, { flowId, scriptId }),
+      action(actionTypes.LOGS.SCRIPTS.LOGS_CLEAR, { flowId, scriptId }),
     loadMore: ({ flowId, scriptId }) =>
-      action(actionTypes.LOGS.SCRIPT.LOGS_LOAD_MORE, { flowId, scriptId }),
+      action(actionTypes.LOGS.SCRIPTS.LOGS_LOAD_MORE, { flowId, scriptId }),
   },
-  connection: {
+  connections: {
     request: connectionId =>
-      action(actionTypes.LOGS.CONNECTION.REQUEST, { connectionId }),
+      action(actionTypes.LOGS.CONNECTIONS.REQUEST, { connectionId }),
     requestFailed: connectionId =>
-      action(actionTypes.LOGS.CONNECTION.REQUEST_FAILED, { connectionId }),
+      action(actionTypes.LOGS.CONNECTIONS.REQUEST_FAILED, { connectionId }),
     received: (connectionId, logs) =>
-      action(actionTypes.LOGS.CONNECTION.RECEIVED, { connectionId, logs }),
+      action(actionTypes.LOGS.CONNECTIONS.RECEIVED, { connectionId, logs }),
     refresh: connectionId =>
-      action(actionTypes.LOGS.CONNECTION.REFRESH, { connectionId }),
+      action(actionTypes.LOGS.CONNECTIONS.REFRESH, { connectionId }),
     clear: connectionId =>
-      action(actionTypes.LOGS.CONNECTION.CLEAR, { connectionId }),
+      action(actionTypes.LOGS.CONNECTIONS.CLEAR, { connectionId }),
     delete: connectionId =>
-      action(actionTypes.LOGS.CONNECTION.DELETE, { connectionId }),
+      action(actionTypes.LOGS.CONNECTIONS.DELETE, { connectionId }),
     download: connectionId =>
-      action(actionTypes.LOGS.CONNECTION.DOWNLOAD, { connectionId }),
+      action(actionTypes.LOGS.CONNECTIONS.DOWNLOAD, { connectionId }),
 
   },
 };

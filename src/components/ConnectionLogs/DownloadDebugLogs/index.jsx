@@ -9,7 +9,7 @@ export default function DownloadDebugLogs({ connectionId}) {
   const dispatch = useDispatch();
 
   const handleDownloadLogClick = useCallback(() => {
-    dispatch(actions.logs.connection.download(connectionId));
+    dispatch(actions.logs.connections.download(connectionId));
   }, [dispatch, connectionId]);
 
   return (

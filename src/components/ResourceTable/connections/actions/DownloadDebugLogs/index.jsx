@@ -11,7 +11,7 @@ export default {
     const { _id: connectionId } = rowData;
 
     useEffect(() => {
-      dispatch(actions.logs.connection.download(connectionId));
+      dispatch(actions.logs.connections.download(connectionId));
     }, [connectionId, dispatch]);
 
     return null;

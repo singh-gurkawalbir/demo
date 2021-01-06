@@ -105,14 +105,14 @@ export default function ConnectionLogs({ connectionId, flowId }) {
   });
   const handleDeleteLogsClick = useCallback(
     () => {
-      dispatch(actions.logs.connection.delete(connectionId));
+      dispatch(actions.logs.connections.delete(connectionId));
     },
     [dispatch, connectionId],
   );
 
   const handleRefreshClick = useCallback(
     () => {
-      dispatch(actions.logs.connection.refresh(connectionId));
+      dispatch(actions.logs.connections.refresh(connectionId));
     },
     [dispatch, connectionId],
   );

@@ -48,7 +48,7 @@ export function* getScriptDependencies({scriptId = '',
         });
       });
     }
-    yield put(actions.logs.script.setDependency({
+    yield put(actions.logs.scripts.setDependency({
       scriptId,
       flowId,
       resourceReferences: references,
@@ -107,14 +107,14 @@ export function* fetchScriptLogs({scriptId = '', flowId = '', field, loadMore}) 
       opts,
     });
   } catch (e) {
-    return yield put(actions.logs.script.requestFailed(
+    return yield put(actions.logs.scripts.requestFailed(
       {
         scriptId,
         flowId,
       }));
   }
 
-  return yield put(actions.logs.script.receivedLogs({
+  return yield put(actions.logs.scripts.receivedLogs({
     scriptId,
     flowId,
     logs: response.logs || [],
@@ -122,7 +122,7 @@ export function* fetchScriptLogs({scriptId = '', flowId = '', field, loadMore}) 
   }));
 
   // if no results then can automatically fetch next url
-  // if (response.nextPageURL) yield put(actions.logs.script.loadMore({scriptId, flowId}));
+  // if (response.nextPageURL) yield put(actions.logs.scripts.loadMore({scriptId, flowId}));
 }
 
 export function* requestScriptLogs({
@@ -138,8 +138,8 @@ export function* loadMoreLogs(opts) {
 }
 
 export const scriptsLogSagas = [
-  takeEvery(actionTypes.LOGS.SCRIPT.LOGS_REQUEST, requestScriptLogs),
-  takeEvery(actionTypes.LOGS.SCRIPT.LOGS_LOAD_MORE, loadMoreLogs),
-  takeLatest(actionTypes.LOGS.SCRIPT.PATCH_FILTER, fetchScriptLogs),
-  takeLatest(actionTypes.LOGS.SCRIPT.LOGS_REFRESH, fetchScriptLogs),
+  takeEvery(actionTypes.LOGS.SCRIPTS.LOGS_REQUEST, requestScriptLogs),
+  takeEvery(actionTypes.LOGS.SCRIPTS.LOGS_LOAD_MORE, loadMoreLogs),
+  takeLatest(actionTypes.LOGS.SCRIPTS.PATCH_FILTER, fetchScriptLogs),
+  takeLatest(actionTypes.LOGS.SCRIPTS.LOGS_REFRESH, fetchScriptLogs),
 ];

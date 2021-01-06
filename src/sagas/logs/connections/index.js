@@ -15,13 +15,13 @@ export function* requestConnectionDebugLogs({ connectionId }) {
   try {
     response = yield call(apiCallWithRetry, { path });
     yield put(
-      actions.logs.connection.received(
+      actions.logs.connections.received(
         connectionId,
         response || 'There are no logs available for this connection. Please run your flow so that we can record the outgoing and incoming traffic to this connection.',
       )
     );
   } catch (error) {
-    actions.logs.connection.requestFailed(connectionId);
+    actions.logs.connections.requestFailed(connectionId);
   }
 }
 export function* deleteConnectionDebugLogs({ connectionId}) {
@@ -47,8 +47,8 @@ export function* downloadConnectionDebugLogs({ connectionId}) {
   openExternalUrl({ url: _url });
 }
 export const connectionsLogSagas = [
-  takeEvery(actionTypes.LOGS.CONNECTION.REQUEST, requestConnectionDebugLogs),
-  takeEvery(actionTypes.LOGS.CONNECTION.REFRESH, requestConnectionDebugLogs),
-  takeEvery(actionTypes.LOGS.CONNECTION.DELETE, deleteConnectionDebugLogs),
-  takeEvery(actionTypes.LOGS.CONNECTION.DOWNLOAD, downloadConnectionDebugLogs),
+  takeEvery(actionTypes.LOGS.CONNECTIONS.REQUEST, requestConnectionDebugLogs),
+  takeEvery(actionTypes.LOGS.CONNECTIONS.REFRESH, requestConnectionDebugLogs),
+  takeEvery(actionTypes.LOGS.CONNECTIONS.DELETE, deleteConnectionDebugLogs),
+  takeEvery(actionTypes.LOGS.CONNECTIONS.DOWNLOAD, downloadConnectionDebugLogs),
 ];
