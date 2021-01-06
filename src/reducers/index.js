@@ -81,7 +81,7 @@ import { stringCompare } from '../utils/sort';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import { getFilteredErrors, FILTER_KEYS } from '../utils/errorManagement';
+import { getFilteredErrors, FILTER_KEYS, getSourceOptions, applicationType } from '../utils/errorManagement';
 import {
   getFlowStepsYetToBeCreated,
   generatePendingFlowSteps,
@@ -89,6 +89,7 @@ import {
   getParentJobSteps,
 } from '../utils/latestJobs';
 import getJSONPaths from '../utils/jsonPaths';
+import { getApp } from '../constants/applications';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -5204,3 +5205,29 @@ selectors.isEditorLookupSupported = (state, editorId) => {
 };
 
 // #endregion AFE selectors
+
+selectors.applicationName = (state, _expOrImpId) => {
+  if (!_expOrImpId) return;
+  const exportsList = selectors.resourceList(state, {
+    type: 'exports',
+  }).resources;
+  const resourceType = exportsList.find(e => e._id === _expOrImpId) ? 'exports' : 'imports';
+  const resource = selectors.resource(state, resourceType, _expOrImpId);
+
+  if (!resource) return;
+  const { _connectionId, adaptorType } = resource;
+  const connection = selectors.resource(state, 'connections', _connectionId) || {};
+  const type = connection.assistant || applicationType(adaptorType);
+
+  if (type === 'SimpleExport') {
+    return 'Data loader';
+  }
+
+  return getApp(type)?.name;
+};
+
+selectors.sourceOptions = createSelector(
+  state => selectors.getSourceMetadata(state),
+  (state, resourceId) => selectors.applicationName(state, resourceId),
+  (sources, applicationName) => getSourceOptions(sources, applicationName)
+);

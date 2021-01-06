@@ -95,10 +95,10 @@ export const getErrorCountDiffMap = (prevErrorMap = {}, currErrorMap = {}) => {
   return errorDiffMap;
 };
 
-export const getSourceOptions = (sourceList = []) => {
+export const getSourceOptions = (sourceList = [], applicationName) => {
   const sourceLabelsMap = {
     internal: 'Internal',
-    application: 'Application',
+    application: `${applicationName || 'Application'}`,
     connection: 'Connection',
     resource: 'Resource',
     transformation: 'Transformation',
@@ -124,3 +124,37 @@ export const getSourceOptions = (sourceList = []) => {
 
   return [{ _id: 'all', name: 'All sources'}, ...sortedOptions];
 };
+
+export function applicationType(type = '') {
+  if (type.toLowerCase().includes('ftp')) return 'ftp';
+
+  if (type.toLowerCase().includes('http')) return 'http';
+
+  if (type.toLowerCase().includes('rest')) return 'rest';
+
+  if (type.toLowerCase().includes('mysql')) return 'mysql';
+
+  if (type.toLowerCase().includes('microsoftsql')) return 'mssql';
+
+  if (type.toLowerCase().includes('postgresql')) return 'postgresql';
+
+  if (type.toLowerCase().includes('netsuite')) return 'netsuite';
+
+  if (type.toLowerCase().includes('salesforce')) return 'salesforce';
+
+  if (type.toLowerCase().includes('webhook')) return 'webhook';
+
+  if (type.toLowerCase().includes('mongodb')) return 'mongodb';
+
+  if (type.toLowerCase().includes('dynamodb')) return 'dynamodb';
+
+  if (type.toLowerCase().includes('as2')) return 'as2';
+
+  if (type.toLowerCase().includes('wrapper')) return 'wrapper';
+
+  if (type.toLowerCase().includes('rdbms')) return 'rdbms';
+
+  // 's3' are too few words that it could be contained in lot more words. In current list of applications, it matches with 'msdynamics360'.
+  // Hence expilicity check for S3Export and S3Import for S3 type.
+  if (['s3export', 's3import'].includes(type.toLowerCase())) return 's3';
+}

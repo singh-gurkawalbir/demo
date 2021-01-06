@@ -38,7 +38,11 @@ export default function SelectSource({
 
   return (
     <div> Source
-      <SourceFilter onSave={handleSave} selectedSources={filter.sources} />
+      <SourceFilter
+        onSave={handleSave}
+        selectedSources={filter.sources}
+        resourceId={resourceId}
+      />
     </div>
   );
 }

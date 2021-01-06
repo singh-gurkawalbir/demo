@@ -1,16 +1,14 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import ErrorFilterIcon from '../ErrorFilterIcon';
 import { selectors } from '../../../../reducers';
 import MultiSelectFilter from '../../../MultiSelectFilter';
-import { getSourceOptions } from '../../../../utils/errorManagement';
 
 export default function SourceFilter(props) {
-  const { onSave, selectedSources = [] } = props;
-  const sourceList = useSelector(state =>
-    selectors.getSourceMetadata(state)
+  const { onSave, selectedSources = [], resourceId } = props;
+  const sourceOptions = useSelector(state =>
+    selectors.sourceOptions(state, resourceId)
   );
-  const values = useMemo(() => getSourceOptions(sourceList), [sourceList]);
 
   const handleSelect = useCallback((selectedIds, id) => {
     if (id === 'all') {
@@ -34,7 +32,7 @@ export default function SourceFilter(props) {
   return (
     <MultiSelectFilter
       Icon={FilterIcon}
-      items={values}
+      items={sourceOptions}
       selected={selected}
       onSave={onSave}
       onSelect={handleSelect}

@@ -7,32 +7,17 @@ import { updateRetryData } from '../metadata';
 import getRequestOptions from '../../../utils/requestOptions';
 import openExternalUrl from '../../../utils/window';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
-// import { getApp } from '../../../constants/applications';
 
-// function* getApplicationName({ resourceId }) {
-//   const {resources: importList = []} = yield select(selectors.resourceList, {
-//     type: 'imports',
-//   });
-//   const resourceType = importList.find(i => i._id === resourceId) ? 'imports' : 'exports';
-//   const resource = yield select(selectors.resource, resourceType, resourceId);
-//   const connection = yield select(selectors.resource, 'connections', resource._connectionId);
-//   const {assistant} = connection;
+function* formatErrors({ errors, resourceId }) {
+  const application = yield select(selectors.applicationName, resourceId);
 
-//   console.log(111, connection, resource);
+  const formattedErrors = errors.map(e => ({
+    ...e,
+    source: (e.source === 'application' && application) ? application : e.source,
+  }));
 
-//   return getApp(assistant)?.name;
-// }
-// function* formatErrors({ errors, resourceId }) {
-//   const application = yield call(getApplicationName, { resourceId });
-
-//   const formattedErrors = errors.map(e => ({
-//     ...e,
-//     // source: (e.source === 'application' && application) ? application : e.source,
-//     source: application,
-//   }));
-
-//   return formattedErrors;
-// }
+  return formattedErrors;
+}
 function* requestErrorDetails({
   flowId,
   resourceId,
@@ -68,9 +53,9 @@ function* requestErrorDetails({
       opts,
     });
 
-    // const errorKey = isResolved ? 'resolved' : 'errors';
+    const errorKey = isResolved ? 'resolved' : 'errors';
 
-    // errorDetails[errorKey] = yield call(formatErrors, { resourceId, errors: errorDetails[errorKey] });
+    errorDetails[errorKey] = yield call(formatErrors, { resourceId, errors: errorDetails[errorKey] });
 
     yield put(
       actions.errorManager.flowErrorDetails.received({
