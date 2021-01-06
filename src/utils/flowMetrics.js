@@ -184,6 +184,7 @@ const getISODateString = date => isDate(date) ? date.toISOString() : date;
 
 const getFlowMetricsQueryParams = (resourceType, resourceId, filters) => {
   const { range = {} } = filters;
+  let timeSrcExpression = '';
   const flowFilterExpression = getFlowFilterExpression(resourceType, resourceId, filters);
   let start = '-1d';
   let end = '-1s';
@@ -227,7 +228,11 @@ const getFlowMetricsQueryParams = (resourceType, resourceId, filters) => {
     duration = '1h';
   }
 
-  return { bucket, start, end, flowFilterExpression, duration };
+  if ((bucket === 'flowEvents' && duration === '1m') || (bucket === 'flowEvents_1hr' && duration === '1h')) {
+    timeSrcExpression = ', timeSrc: "_start"';
+  }
+
+  return { bucket, start, end, flowFilterExpression, timeSrcExpression, duration };
 };
 
 export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) => {
@@ -236,6 +241,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
     start,
     end,
     flowFilterExpression,
+    timeSrcExpression,
     duration,
   } = getFlowMetricsQueryParams(resourceType, resourceId, filters);
 
@@ -247,7 +253,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> filter(fn: (r) => r.u == "${userId}")
         ${flowFilterExpression}
         |> filter(fn: (r) => r._field == "c")
-        |> aggregateWindow(every: ${duration}, fn: sum)
+        |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
         |> fill(value: 0.0)
         |> group(columns: ["_time", "f", "u", "_measurement"], mode: "by")
         |> sum()
@@ -295,7 +301,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         (tables
         |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => ({tc: accumulator.tc + r.c, tt: accumulator.tt + r.att * r.c,  attph: math.floor(x: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c))}))
         |> set(key: "_field", value: outputField)
-        |> rename(columns: {attph: "_value"})))
+        |> rename(columns: {attph: "_value"}))${timeSrcExpression})
         |> group(columns: ["_time", "f", "u"])
         |> calculateAttPerHour()
 
@@ -329,7 +335,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> filter(fn: (r) => r.u == "${userId}")
         |> filter(fn: (r) => r.f == "${resourceId}")
         |> filter(fn: (r) => r._field == "c")
-        |> aggregateWindow(every: ${duration}, fn: sum)
+        |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
 
     data1 = seiBaseData
         |> group()
@@ -376,7 +382,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         (tables
         |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => ({tc: accumulator.tc + r.c, tt: accumulator.tt + r.att * r.c,  attph: math.floor(x: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c))}))
         |> set(key: "_field", value: outputField)
-        |> rename(columns: {attph: "_value"})))
+        |> rename(columns: {attph: "_value"}))${timeSrcExpression})
 
     data3 = attBaseData
         |> group()
