@@ -1764,43 +1764,6 @@ selectors.pendingCategoryMappings = (state, integrationId, flowId) => {
   return sessionMappings;
 };
 
-selectors.categoryMappingMetadata = (state, integrationId, flowId) => {
-  const categoryMappingData =
-    fromSession.categoryMapping(
-      state && state.session,
-      integrationId,
-      flowId
-    ) || emptyObject;
-  const categoryMappingMetadata = {};
-  const { response } = categoryMappingData;
-
-  if (!response) {
-    return categoryMappingMetadata;
-  }
-
-  const extractsMetadata = response.find(
-    sec => sec.operation === 'extractsMetaData'
-  );
-  const generatesMetadata = response.find(
-    sec => sec.operation === 'generatesMetaData'
-  );
-
-  if (extractsMetadata) {
-    categoryMappingMetadata.extractsMetadata = extractsMetadata.data;
-  }
-
-  if (generatesMetadata) {
-    categoryMappingMetadata.generatesMetadata =
-      generatesMetadata.data &&
-      generatesMetadata.data.generatesMetaData &&
-      generatesMetadata.data.generatesMetaData.fields;
-    categoryMappingMetadata.relationshipData =
-      generatesMetadata.data && generatesMetadata.data.categoryRelationshipData;
-  }
-
-  return categoryMappingMetadata;
-};
-
 selectors.mappingsForVariation = (state, integrationId, flowId, filters = emptyObject) => {
   const { sectionId, variation, isVariationAttributes } = filters;
   let mappings = {};

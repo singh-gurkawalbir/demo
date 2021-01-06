@@ -1413,12 +1413,6 @@ describe('integrationApps selector testcases', () => {
     });
   });
 
-  describe('selectors.categoryMappingMetadata test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.categoryMappingMetadata(undefined, {})).toEqual({});
-    });
-  });
-
   describe('selectors.mappedCategories test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       const selector = selectors.mappedCategories();
