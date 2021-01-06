@@ -81,7 +81,7 @@ import { stringCompare } from '../utils/sort';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import { getFilteredErrors, FILTER_KEYS, getSourceOptions, applicationType } from '../utils/errorManagement';
+import { getFilteredErrors, FILTER_KEYS, getSourceOptions } from '../utils/errorManagement';
 import {
   getFlowStepsYetToBeCreated,
   generatePendingFlowSteps,
@@ -5215,15 +5215,23 @@ selectors.applicationName = (state, _expOrImpId) => {
   const resource = selectors.resource(state, resourceType, _expOrImpId);
 
   if (!resource) return;
-  const { _connectionId, adaptorType } = resource;
-  const connection = selectors.resource(state, 'connections', _connectionId) || {};
-  const type = connection.assistant || applicationType(adaptorType);
+  const { _connectionId, type } = resource;
 
-  if (type === 'SimpleExport') {
+  if (type === 'simple') {
     return 'Data loader';
   }
 
-  return getApp(type)?.name;
+  let appType;
+
+  if (!_connectionId) {
+    appType = type;
+  } else {
+    const connection = selectors.resource(state, 'connections', _connectionId) || {};
+
+    appType = connection.assistant || connection.rdbms?.type || connection.type;
+  }
+
+  return getApp(appType)?.name;
 };
 
 selectors.sourceOptions = createSelector(
