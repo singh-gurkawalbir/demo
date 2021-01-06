@@ -78,7 +78,6 @@ export default {
           { label: 'Add', value: 'add' },
           { label: 'Update', value: 'update' },
           { label: 'Add or update', value: 'addupdate' },
-          { label: 'Delete', value: 'delete' },
         ],
       },
     ],
@@ -105,6 +104,12 @@ export default {
       return false;
     },
     isNew: r => isNewId(r._id),
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
     connectionId: r => r?._connectionId,
     resourceType: 'imports',
     resourceId: r => r?._id,
@@ -227,7 +232,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'netsuite.operation',
-        is: ['update', 'delete'],
+        is: ['update'],
       },
       {
         field: 'inputMode',

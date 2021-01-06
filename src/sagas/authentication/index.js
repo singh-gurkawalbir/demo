@@ -254,7 +254,7 @@ export function* initializeApp(opts) {
     // note the current saga `initializeApp` is killed as well
     // so that it needs to be called again after logrocket is initialized and sagas restarted
     // that happens in sagas/index.js
-    return yield put(actions.auth.abortAllSagasAndInitLR({opts}));
+    return yield put(actions.auth.abortAllSagasAndInitLR(opts));
   }
 
   // delete data state when reloading app...

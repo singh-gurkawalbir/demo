@@ -137,7 +137,7 @@ export default {
   'file.compressionFormat': {
     type: 'select',
     label: 'Compression format',
-    options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
+    options: [{ items: [{ label: 'gzip', value: 'gzip' }, { label: 'zip', value: 'zip' }] }],
   },
   'file.skipAggregation': {
     type: 'checkbox',

@@ -65,7 +65,7 @@ export default {
     defaultValue: r => {
       const isNew = isNewId(r._id);
 
-      if (isNew) {
+      if (isNew && r.application) {
         return r.application;
       }
       const applications = applicationsList();

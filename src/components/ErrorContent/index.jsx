@@ -2,9 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import JsonContent from '../JsonContent';
 import RawHtml from '../RawHtml';
-import { isJsonString } from '../../utils/string';
-
-const isHTML = text => /<\/?[a-z][\s\S]*>/i.test(text);
+import { isJsonString, isHTML} from '../../utils/string';
 
 const useStyles = makeStyles({
   errorText: {
