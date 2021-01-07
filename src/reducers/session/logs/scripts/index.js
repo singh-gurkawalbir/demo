@@ -77,14 +77,16 @@ export default (state = {}, action) => {
 
         break;
       case actionTypes.LOGS.SCRIPTS.CLEAR:
-        if (!scriptId && flowId) {
-          Object.keys(draft.scripts).forEach(scriptKey => {
-            if (draft.scripts[scriptKey]?.flowId === flowId) {
-              delete draft.scripts[scriptKey];
-            }
-          });
-        } else {
-          delete draft.scripts[key];
+        if (draft.scripts) {
+          if (!scriptId && flowId) {
+            Object.keys(draft.scripts).forEach(scriptKey => {
+              if (draft.scripts[scriptKey]?.flowId === flowId) {
+                delete draft.scripts[scriptKey];
+              }
+            });
+          } else {
+            delete draft.scripts[key];
+          }
         }
 
         break;
