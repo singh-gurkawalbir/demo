@@ -62,6 +62,7 @@ export default {
     label: 'Form view',
     visible: r => !r?.useTechAdaptorForm,
     defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
+    helpKey: 'formView',
   },
   semiassistantoperationselect: {
     id: 'semiassistantoperationselect',

@@ -58,6 +58,11 @@ export default {
       }
     },
   },
+  'file.backupPath': {
+    type: 'uri',
+    label: 'Backup files path',
+    helpKey: 'export.file.backupPath',
+  },
   'file.encoding': {
     type: 'select',
     label: 'File encoding',

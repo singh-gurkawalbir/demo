@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
-import PanelTitle from '../../../../AFE/PanelTitle';
+import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
 
 const useStyles = makeStyles({
@@ -14,14 +14,14 @@ const useStyles = makeStyles({
   panel: { flex: '1 1 100px', minHeight: 50 },
 });
 
-export default function SinglePanelGridItem({area, title, children}) {
+export default function SinglePanelGridItem({area, title, children, helpKey}) {
   const classes = useStyles();
 
   return (
     <PanelGridItem gridArea={area}>
       <div className={classes.flexContainer}>
         <div className={classes.title}>
-          <PanelTitle title={title} />
+          <PanelTitle title={title} helpKey={helpKey} />
         </div>
         <div className={classes.panel}>
           {children}

@@ -20,6 +20,7 @@ import { requestSampleData } from '../sampleData/flows';
 import { requestExportSampleData } from '../sampleData/exports';
 import { constructResourceFromFormValues } from '../utils';
 import { safeParse } from '../../utils/string';
+import { getUniqueFieldId, dataAsString } from '../../utils/editor';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -34,12 +35,6 @@ function extractResourcePath(value, initialResourcePath) {
   }
 
   return initialResourcePath;
-}
-
-export function dataAsString(data) {
-  return typeof data === 'string'
-    ? data
-    : JSON.stringify(data, null, 2);
 }
 
 export function* invokeProcessor({ processor, body }) {
@@ -362,11 +357,8 @@ export function* requestEditorSampleData({
   });
   let sampleData;
 
-  // no /getContext call for FB actions yet
-  if (stage === 'outputFilter' ||
-  stage === 'transform' ||
-  stage === 'exportFilter' ||
-  stage === 'inputFilter' ||
+  // no /getContext call for below FB actions yet
+  if (stage === 'transform' ||
   stage === 'postResponseMapHook' ||
   stage === 'sampleResponse') {
     yield call(requestSampleData, {
@@ -418,7 +410,9 @@ export function* requestEditorSampleData({
     sampleData = flowSampleData?.data;
   }
 
-  if (!sampleData && !isPageGenerator) {
+  if (!sampleData && (!isPageGenerator || stage === 'outputFilter' ||
+  stage === 'exportFilter' ||
+  stage === 'inputFilter')) {
     // sample data not present, trigger action to get sample data
     yield call(requestSampleData, {
       flowId,
@@ -445,13 +439,14 @@ export function* requestEditorSampleData({
       data: sampleData,
     } : undefined;
   } else {
+    const filterPath = (stage === 'inputFilter' && resourceType === 'exports') ? 'inputFilter' : 'filter';
     const body = {
       sampleData: sampleData || { myField: 'sample' },
       templateVersion: editorSupportsOnlyV2Data ? 2 : requestedTemplateVersion,
     };
 
     body[resourceType === 'imports' ? 'import' : 'export'] = resource;
-    body.fieldPath = fieldId;
+    body.fieldPath = fieldId || filterPath;
 
     const opts = {
       method: 'POST',
@@ -489,8 +484,11 @@ export function* requestEditorSampleData({
     }
   }
 
-  // don't wrap with context for csv generator
-  if (editorType !== 'csvGenerator') {
+  // don't wrap with context for below editors
+  if (editorType !== 'csvGenerator' &&
+  stage !== 'outputFilter' &&
+  stage !== 'exportFilter' &&
+  stage !== 'inputFilter') {
     const { data } = yield select(selectors.sampleDataWrapper, {
       sampleData: {
         data: _sampleData,
@@ -545,11 +543,18 @@ export function* initEditor({ id, editorType, options = {} }) {
   const { formKey, integrationId, resourceId, resourceType, flowId, sectionId, fieldId} = options;
 
   let fieldState = {};
+  let formState = {};
 
   if (formKey) {
     fieldState = yield select(selectors.fieldState, formKey, fieldId);
+    formState = yield select(selectors.formState, formKey);
   }
-  const resource = yield select(selectors.resource, resourceType, resourceId);
+  const { value: formValues } = formState;
+  const resource = yield call(constructResourceFromFormValues, {
+    formValues,
+    resourceId,
+    resourceType,
+  });
   const flow = yield select(selectors.resource, 'flows', flowId);
   const {onSave, ...rest} = options;
   let formattedOptions = deepClone(rest);
@@ -559,13 +564,6 @@ export function* initEditor({ id, editorType, options = {} }) {
   if (init) {
     // for now we need all below props for handlebars init only
     if (editorType === 'handlebars' || editorType === 'sql') {
-      const formState = yield select(selectors.formState, formKey);
-      const { value: formValues } = formState || {};
-      const resource = yield call(constructResourceFromFormValues, {
-        formValues,
-        resourceId,
-        resourceType,
-      });
       const { _connectionId: connectionId } = resource;
       const connection = yield select(selectors.resource, 'connections', connectionId);
       const isPageGenerator = yield select(selectors.isPageGenerator, flowId, resourceId, resourceType);
@@ -597,12 +595,13 @@ export function* initEditor({ id, editorType, options = {} }) {
 
   let originalRule = formattedOptions.rule;
 
-  if (typeof originalRule === 'object') {
+  if (typeof originalRule === 'object' && !Array.isArray(originalRule)) {
     originalRule = {...formattedOptions.rule};
   }
   const stateOptions = {
     editorType,
     ...formattedOptions,
+    fieldId: getUniqueFieldId(fieldId),
     ...featuresMap(options)[editorType],
     originalRule,
     lastChange: Date.now(),

@@ -3545,6 +3545,9 @@ Object {
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
       },
+      "file.backupPath": Object {
+        "fieldId": "file.backupPath",
+      },
       "file.batchSize": Object {
         "fieldId": "file.batchSize",
       },
@@ -5274,6 +5277,9 @@ Object {
       },
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
+      },
+      "file.backupPath": Object {
+        "fieldId": "file.backupPath",
       },
       "file.batchSize": Object {
         "fieldId": "file.batchSize",
@@ -8432,7 +8438,7 @@ Object {
         "fieldId": "http.relativeURI",
         "label": "Directory path",
         "required": true,
-        "type": "namewitheditor",
+        "type": "uri",
       },
       "inputMode": Object {
         "defaultDisabled": [Function],
@@ -10586,7 +10592,7 @@ Object {
         "fieldId": "http.relativeURI",
         "label": "Directory path",
         "required": true,
-        "type": "namewitheditor",
+        "type": "uri",
       },
       "inputMode": Object {
         "defaultDisabled": [Function],
@@ -11969,6 +11975,7 @@ Object {
         "visible": false,
       },
       "rdbms.query": Object {
+        "arrayIndex": 0,
         "id": "rdbms.query",
         "label": "Build SQL query",
         "querySetPos": 0,

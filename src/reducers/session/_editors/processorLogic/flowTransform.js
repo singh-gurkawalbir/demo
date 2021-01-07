@@ -32,7 +32,7 @@ export default {
       activeProcessor,
     };
   },
-  buildData: sampleData => ({
+  buildData: (_, sampleData) => ({
     transform: JSON.stringify(JSON.parse(sampleData)?.record, null, 2),
     javascript: sampleData,
   }),

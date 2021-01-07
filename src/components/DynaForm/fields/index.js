@@ -58,7 +58,7 @@ import DynaDate from './dateTime/DynaDate';
 import DynaDateTime from './dateTime/DynaDateTime';
 import DynaExpiryTime from './DynaExpiryTime';
 import DynaToggle from './DynaToggle';
-import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
+import _DynaSQLQueryBuilder_ from './_DynaSQLQueryBuilder';
 import Salesforce from './DynaSalesforceExportComponents';
 import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaTreeModal';
 import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
@@ -70,8 +70,8 @@ import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier from './DynaNetSuiteQualifier';
 import DynaSalesforceQualifier from './DynaSalesforceQualifier';
-import DynaQuery from './DynaQuery';
-import DynaSqlQuery from './DynaSqlQuery';
+import _DynaQuery_ from './DynaQuery_afe2';
+import _DynaSqlQuery_ from './DynaSqlQuery_afe2';
 import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
 import DynaSalesforceLookup from './DynaSalesforceLookup';
 import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
@@ -203,7 +203,8 @@ export default {
   integrationapprefreshableselect: DynaRefreshableIntegrationAppSetting,
   date: DynaDate,
   datetime: DynaDateTime,
-  sqlquerybuilder: DynaSQLQueryBuilder,
+  // sqlquerybuilder: DynaSQLQueryBuilder,
+  sqlquerybuilder: _DynaSQLQueryBuilder_,
   salesforcequalifier: DynaSalesforceQualifier,
   salesforcerequiredtrigger: Salesforce.DynaRequiredTrigger,
   salesforcereferencedfields: Salesforce.DynaReferencedFields,
@@ -221,8 +222,10 @@ export default {
   dynaiclient: DynaIclient,
   replaceconnection: DynaReplaceConnection,
   netsuitequalifier: DynaNetSuiteQualifier,
-  query: DynaQuery,
-  sqlquery: DynaSqlQuery,
+  // query: DynaQuery,
+  query: _DynaQuery_,
+  // sqlquery: DynaSqlQuery,
+  sqlquery: _DynaSqlQuery_,
   salesforcelookupfilters: DynaSalesforceLookupFilters,
   salesforcelookup: DynaSalesforceLookup,
   timestampfilename: DynaTimestampFileName,

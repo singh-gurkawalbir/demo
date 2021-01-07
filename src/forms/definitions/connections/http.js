@@ -139,6 +139,10 @@ export default {
     if (!newValues['/http/auth/failPath']) {
       newValues['/http/auth/failValues'] = undefined;
     }
+    if (newValues['/http/auth/type'] === 'basic') {
+      newValues['/http/auth/oauth'] = undefined;
+      newValues['/http/auth/token'] = undefined;
+    }
 
     delete newValues['/http/auth/oauth/location'];
     delete newValues['/http/auth/oauth/headerName'];
