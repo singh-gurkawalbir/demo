@@ -11,6 +11,7 @@ import endOfDay from 'date-fns/endOfDay';
 import ArrowPopper from '../ArrowPopper';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import ButtonGroup from '../ButtonGroup';
+import ActionButton from '../ActionButton';
 
 const defaultPresets = [
   {id: 'last1hour', label: 'Last 1 hour'},
@@ -114,6 +115,7 @@ export default function DateRangeSelector({
   clearable = false,
   clearValue,
   placement,
+  Icon,
 }) {
   const defaultValue = getSelectedRange({preset: 'last30days'});
   const { startDate = defaultValue.startDate, endDate = defaultValue.endDate, preset = defaultValue.preset } = value;
@@ -157,10 +159,15 @@ export default function DateRangeSelector({
   }, [initalValue]);
 
   const handleClear = useCallback(() => {
-    setSelectedRange(clearValue || {startDate: null, endDate: null, preset: null});
-    onSave && onSave(selectedRange);
+    setSelectedRange(() => {
+      const clearRangeValue = clearValue || {startDate: null, endDate: null, preset: null};
+
+      onSave && onSave(clearRangeValue);
+
+      return clearRangeValue;
+    });
     setAnchorEl(null);
-  }, [onSave, selectedRange, clearValue]);
+  }, [onSave, clearValue]);
 
   const handleDateRangeSelection = useCallback(range => {
     let { startDate, endDate } = range;
@@ -174,13 +181,21 @@ export default function DateRangeSelector({
 
   return (
     <>
-      <Button
-        onClick={toggleClick}
-        variant="outlined"
-        color="secondary"
-        className={classes.dateRangePopperBtn}>
-        {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || 'Select range'}
-      </Button>
+      {
+        Icon ? (
+          <ActionButton onClick={toggleClick}>
+            <Icon />
+          </ActionButton>
+        ) : (
+          <Button
+            onClick={toggleClick}
+            variant="outlined"
+            color="secondary"
+            className={classes.dateRangePopperBtn}>
+            {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || 'Select range'}
+          </Button>
+        )
+      }
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}

@@ -5,8 +5,11 @@ import ViewErrorDetails from '../actions/ViewErrorDetails';
 import EditRetryData from '../actions/EditRetry';
 import SelectError from '../cells/SelectError';
 import SelectAllErrors from '../cells/SelectAllErrors';
+import SelectSource from '../cells/SelectSource';
+import SelectDate from '../cells/SelectDate';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import OverflowWrapper from '../cells/OverflowWrapper';
+import ErrorMessage from '../cells/ErrorMessage';
 
 export default {
   columns: [
@@ -21,22 +24,33 @@ export default {
     },
     {
       heading: 'Message',
-      width: '50%',
-      value: r => <OverflowWrapper message={r.message} containsHtml />,
+      width: '40%',
+      value: (r, { flowId, resourceId }) => (
+        <ErrorMessage
+          message={r.message}
+          flowId={flowId}
+          resourceId={resourceId}
+          traceKey={r.traceKey}
+      />
+      ),
     },
     {
       heading: 'Code',
       value: r => <OverflowWrapper message={r.code} />,
-      width: '20%',
+      width: '18%',
     },
     {
-      heading: 'Source',
+      headerValue: function SelectOpenSource(r, actionProps) {
+        return <SelectSource {...actionProps} />;
+      },
       value: r => <OverflowWrapper message={r.source} />,
       width: '15%',
     },
     {
-      heading: 'Timestamp',
-      width: '10%',
+      headerValue: function SelectTimestamp(r, actionProps) {
+        return <SelectDate {...actionProps} />;
+      },
+      width: '12%',
       value: r => <CeligoTimeAgo date={r.occurredAt} />,
     },
   ],
