@@ -17,6 +17,7 @@ function _hasDefaultMetaData({fieldId, resourceType}) {
     'mongodb.ignoreLookupFilter',
     'mongodb.filter',
     '_query',
+    'salesforce.soql',
   ];
 
   if (hideDefaultDataFields.includes(fieldId)) {

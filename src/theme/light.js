@@ -758,13 +758,24 @@ export default {
         },
       },
     },
-
+    MuiAccordion: {
+      root: {
+        border: `1px solid ${colors.celigoNeutral3}`,
+        marginBottom: '8px',
+        borderRadius: '4px',
+        '&:before': {
+          backgroundColor: 'none',
+        },
+      },
+    },
     MuiAccordionSummary: {
       root: {
+        flexDirection: 'row-reverse',
+        display: 'inline-flex',
         minHeight: 'unset',
         '&.Mui-expanded': {
           minHeight: '42px',
-          borderBottom: `1px solid ${colors.celigoNeutral3}`,
+
         },
       },
       expandIcon: {
@@ -784,7 +795,6 @@ export default {
       },
     },
   },
-
   props: {
     MuiCheckbox: {
       disableRipple: true,

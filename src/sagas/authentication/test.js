@@ -1,7 +1,9 @@
 /* global describe, test, expect, jest,afterEach  */
 import { call, put, all, select } from 'redux-saga/effects';
-import { expectSaga } from 'redux-saga-test-plan';
+import { expectSaga, testSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
+import setupLogRocketReact from 'logrocket-react';
+import LogRocket from 'logrocket';
 import { apiCallWithRetry } from '..';
 import actions from '../../actions';
 import { authParams, getCSRFParams, logoutParams } from '../api/apiPaths';
@@ -760,5 +762,64 @@ describe('retrievingAssistantDetails', () => {
     expect(setItemMock).toHaveBeenCalled();
     // mock stringify method called when setting Item
     expect(spyStringify).toHaveBeenCalledWith([]);
+  });
+});
+
+describe('initializeApp', () => {
+  test('should abort all sagas and reinitialize logrocket when app is initialized for the first time', () => {
+    const opts = {};
+
+    testSaga(initializeApp, opts)
+      .next()
+      .put(actions.auth.abortAllSagasAndInitLR(opts))
+      .next()
+      .isDone();
+  });
+  test('should fetch app initialization resources update logrocket session identity when authenticating for the first time', () => {
+    const opts = {};
+
+    testSaga(initializeApp, opts)
+      .next()
+      .call(retrieveAppInitializationResources)
+      .next()
+      .call(identifyLogRocketSession)
+      .next()
+      .isDone();
+  });
+  test('should logout when unable to fetch app InitializationResources', () => {
+    const opts = {};
+
+    testSaga(initializeApp, opts)
+      .next()
+      .call(retrieveAppInitializationResources)
+      .throw(new Error('some api error'))
+      .put(actions.auth.logout())
+      .next()
+      .isDone();
+  });
+  test('should reload app when session has expired', () => {
+    const opts = {reload: true};
+
+    testSaga(initializeApp, opts)
+      .next()
+      .put(actions.app.deleteDataState())
+      .next()
+      .call(retrieveAppInitializationResources)
+      .next()
+      .put(actions.app.reload())
+      .next()
+      .call(identifyLogRocketSession)
+      .next()
+      .isDone();
+  });
+});
+
+jest.mock('logrocket');
+jest.mock('logrocket-react');
+describe('initializeLogrocket', () => {
+  test('should call Logrocket logrocketInitialize and setupLogrocketReact', () => {
+    expectSaga(initializeLogrocket).call(identifyLogRocketSession).run();
+    expect(setupLogRocketReact).toHaveBeenCalled();
+    expect(LogRocket.init).toHaveBeenCalled();
   });
 });
