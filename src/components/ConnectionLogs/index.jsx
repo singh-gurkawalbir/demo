@@ -135,6 +135,7 @@ export default function ConnectionLogs({ connectionId, flowId }) {
             />
           <DownloadDebugLogs
             connectionId={connectionId}
+            disabled={!logs}
           />
           {flowId && (
             <RunFlowButton

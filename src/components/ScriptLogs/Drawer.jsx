@@ -7,7 +7,7 @@ import RightDrawer from '../drawer/Right';
 import DrawerHeader from '../drawer/Right/DrawerHeader';
 import LoadResources from '../LoadResources';
 
-const ScriptLogWrapper = () => {
+const ScriptLogsWrapper = () => {
   const match = useRouteMatch();
   const { scriptId } = match.params;
 
@@ -17,7 +17,7 @@ const ScriptLogWrapper = () => {
       />
   );
 };
-const ScriptLogDrawerHeader = () => {
+const ScriptLogsDrawerHeader = () => {
   const match = useRouteMatch();
   const history = useHistory();
   const { scriptId } = match.params;
@@ -52,8 +52,8 @@ export default function ScriptLogsDrawerRoute() {
         width="full"
         variant="persistent"
         >
-        <ScriptLogDrawerHeader />
-        <ScriptLogWrapper />
+        <ScriptLogsDrawerHeader />
+        <ScriptLogsWrapper />
       </RightDrawer>
     </LoadResources>
   );

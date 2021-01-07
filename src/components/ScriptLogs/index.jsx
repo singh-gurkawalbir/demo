@@ -112,7 +112,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE);
 
   const {
-    logs: scriptExecutionLogs = emptySet,
+    logs = emptySet,
     resourceReferences, dateRange,
     selectedResources,
     functionType,
@@ -175,8 +175,8 @@ export default function ScriptLogs({ flowId, scriptId }) {
   }), [flowId, scriptId]);
 
   const logsInCurrentPage = useMemo(
-    () => scriptExecutionLogs.slice(page * rowsPerPage, (page + 1) * rowsPerPage),
-    [page, rowsPerPage, scriptExecutionLogs]
+    () => logs.slice(page * rowsPerPage, (page + 1) * rowsPerPage),
+    [page, rowsPerPage, logs]
   );
 
   useEffect(() => {
@@ -258,8 +258,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
             {...paginationOptions}
             rowsPerPageOptions={rowsPerPageOptions}
             className={classes.tablePaginationRoot}
-            // count={errorObj.errors.length}
-            count={scriptExecutionLogs.length}
+            count={logs.length}
             page={page}
             rowsPerPage={rowsPerPage}
             resultPerPageLabel="Rows:"
@@ -269,14 +268,13 @@ export default function ScriptLogs({ flowId, scriptId }) {
         </div>
       </div>
       <div className={classes.container}>
-        {scriptExecutionLogs?.length ? (
+        {logs?.length ? (
           <CeligoTable
             data={logsInCurrentPage}
             {...metadata}
             actionProps={actionProps}
         />
         ) : null}
-
         {nextPageURL && (
         <div className={classes.searchMoreWrapper}>
           <IconTextButton
@@ -293,11 +291,9 @@ export default function ScriptLogs({ flowId, scriptId }) {
                 Search more
               </>
             )}
-
           </IconTextButton>
         </div>
         )}
-
       </div>
       <ViewLogDetailDrawer />
     </div>

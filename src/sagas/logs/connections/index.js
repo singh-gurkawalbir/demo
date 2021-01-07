@@ -51,10 +51,8 @@ export function* startPollingForConnectionDebugLogs({ connectionId }) {
   const watcher = yield fork(pollForConnectionLogs, {connectionId});
 
   yield take([
-    actionTypes.LOGS.CONNECTIONS.DELETE,
     actionTypes.LOGS.CONNECTIONS.CLEAR,
     actionTypes.LOGS.CONNECTIONS.REQUEST,
-    actionTypes.LOGS.CONNECTIONS.REFRESH,
   ]);
   yield cancel(watcher);
 }

@@ -5,7 +5,7 @@ import actions from '../../../actions';
 import DownloadIcon from '../../icons/DownloadIcon';
 import IconTextButton from '../../IconTextButton';
 
-export default function DownloadDebugLogs({ connectionId}) {
+export default function DownloadDebugLogs({ connectionId, disabled}) {
   const dispatch = useDispatch();
 
   const handleDownloadLogsClick = useCallback(() => {
@@ -17,6 +17,7 @@ export default function DownloadDebugLogs({ connectionId}) {
       <IconTextButton
         key="downloadLogs"
         onClick={handleDownloadLogsClick}
+        disabled={disabled}
         data-test="downloadLogs">
         <DownloadIcon />
         Download logs

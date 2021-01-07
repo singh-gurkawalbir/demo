@@ -137,12 +137,10 @@ export default function StartDebug({ resourceId, resourceType}) {
   }, [anchorEl]);
 
   const handleSave = useCallback(() => {
-    const debugDuration = moment().add(value, 'm').toISOString();
-
     if (resourceType === 'connections') {
-      dispatch(actions.logs.connections.startDebug(resourceId, debugDuration));
+      dispatch(actions.logs.connections.startDebug(resourceId, value));
     } else if (resourceType === 'scripts') {
-      dispatch(actions.logs.scripts.startDebug(resourceId, debugDuration));
+      dispatch(actions.logs.scripts.startDebug(resourceId, value));
     }
 
     setAnchorEl(null);
