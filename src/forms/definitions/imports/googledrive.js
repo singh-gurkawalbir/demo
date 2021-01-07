@@ -154,6 +154,7 @@ export default {
           'file.encoding',
           'blobKeyPath',
           'fileAdvancedSettings',
+          'file.backupPath',
           'deleteAfterImport',
           'fileApiIdentifier',
         ],

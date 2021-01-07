@@ -8344,6 +8344,9 @@ Object {
           },
         ],
       },
+      "file.backupPath": Object {
+        "fieldId": "file.backupPath",
+      },
       "file.csv": Object {
         "fieldId": "file.csv",
       },
@@ -10497,6 +10500,9 @@ Object {
             ],
           },
         ],
+      },
+      "file.backupPath": Object {
+        "fieldId": "file.backupPath",
       },
       "file.csv": Object {
         "fieldId": "file.csv",
