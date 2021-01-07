@@ -2122,7 +2122,7 @@ const logs = {
       action(actionTypes.LOGS.SCRIPTS.CLEAR, { flowId, scriptId }),
     loadMore: ({ flowId, scriptId }) =>
       action(actionTypes.LOGS.SCRIPTS.LOAD_MORE, { flowId, scriptId }),
-    startDebug: ({ scriptId, value }) =>
+    startDebug: (scriptId, value) =>
       action(actionTypes.LOGS.SCRIPTS.START_DEBUG, { scriptId, value }),
   },
   connections: {

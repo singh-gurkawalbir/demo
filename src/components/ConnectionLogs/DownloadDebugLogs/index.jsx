@@ -8,7 +8,7 @@ import IconTextButton from '../../IconTextButton';
 export default function DownloadDebugLogs({ connectionId}) {
   const dispatch = useDispatch();
 
-  const handleDownloadLogClick = useCallback(() => {
+  const handleDownloadLogsClick = useCallback(() => {
     dispatch(actions.logs.connections.download(connectionId));
   }, [dispatch, connectionId]);
 
@@ -16,7 +16,7 @@ export default function DownloadDebugLogs({ connectionId}) {
     <>
       <IconTextButton
         key="downloadLogs"
-        onClick={handleDownloadLogClick}
+        onClick={handleDownloadLogsClick}
         data-test="downloadLogs">
         <DownloadIcon />
         Download logs

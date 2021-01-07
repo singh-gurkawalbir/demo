@@ -89,20 +89,11 @@ export default function ConnectionLogs({ connectionId, flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [isInitTriggered, setIsInitTriggered] = useState(false);
-  const {logs, status} = useSelector(state => {
-    const allConnectionDebugLogs = selectors.allConnectionsLogs(state);
-
-    return allConnectionDebugLogs?.[connectionId] || emptyObj;
-  }, shallowEqual);
-
-  const debugMinutesPending = useSelector(state => {
+  const {logs, status} = useSelector(state => selectors.allConnectionsLogs(state)?.[connectionId] || emptyObj, shallowEqual);
+  const isDebugActive = useSelector(state => {
     const {debugDate} = selectors.resource(state, 'connections', connectionId);
 
-    if (!debugDate || moment().isAfter(moment(debugDate))) {
-      return 0;
-    }
-
-    return moment(debugDate).diff(moment(), 'minutes');
+    return !!(debugDate && moment().isBefore(moment(debugDate)));
   });
   const handleDeleteLogsClick = useCallback(
     () => {
@@ -125,13 +116,13 @@ export default function ConnectionLogs({ connectionId, flowId }) {
   useEffect(() => {
     if (!isInitTriggered) {
       // check if debug is already set on connection. If not start debug for 15 mins.
-      if (debugMinutesPending === 0) {
+      if (!isDebugActive) {
         // trigger start debug
         startAutoDebug();
       }
       setIsInitTriggered(true);
     }
-  }, [debugMinutesPending, isInitTriggered, startAutoDebug]);
+  }, [isDebugActive, isInitTriggered, startAutoDebug]);
 
   return (
     <div className={classes.root}>
