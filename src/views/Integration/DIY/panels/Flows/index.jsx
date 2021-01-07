@@ -281,7 +281,7 @@ export default function FlowsPanel({ integrationId, childId }) {
 
     return getTemplateUrlName(t && t.applications);
   });
-  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration);
+  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration, childId);
   const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
   const actionProps = useMemo(() => (
     {
