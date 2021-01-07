@@ -30,6 +30,8 @@ export default function OnOffCell({
       },
     ];
 
+    console.log(resourceType);
+    // dispatch(actions.resource.isPublishActionInprogress(true, resourceId));
     dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
     dispatch(actions.resource.commitStaged(resourceType, resourceId));
   }, [dispatch, isPublished, resourceId, resourceType]);

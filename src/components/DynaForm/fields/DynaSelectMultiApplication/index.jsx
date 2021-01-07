@@ -8,7 +8,6 @@ import ErroredMessageComponent from '../ErroredMessageComponent';
 import FieldHelp from '../../FieldHelp';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import Tag from '../../../HomePageCard/Footer/Tag';
-import SearchIcon from '../../../icons/SearchIcon';
 
 const useStyles = makeStyles(theme => ({
   optionRoot: {
@@ -102,6 +101,61 @@ const SelectedValueChip = ({value, tag}) => {
   );
 };
 
+const filterOptions = (candidate, input) => {
+  if (input) {
+    const term = input.toLowerCase();
+    const { label } = candidate.data;
+
+    return (label && label.toLowerCase().includes(term));
+  }
+
+  return true;
+};
+
+const Option = props => {
+  const classes = useStyles();
+  const { type, icon, value, label } = props.data;
+
+  // TODO (Azhar): please do styling changes to options
+  return (
+    <div data-test={value} className={classes.menuItems}>
+      <components.Option {...props}>
+        <span className={classes.optionImg}>
+          <ApplicationImg
+            markOnly
+            type={type === 'webhook' ? value : type}
+            assistant={icon}
+            className={classes.img}
+          />
+        </span>
+        <span className={classes.optionLabel}>{label}</span>
+        <span className={classes.optionCheckBox}>
+          <Checkbox
+            checked={props.isSelected}
+            color="primary"
+          />
+        </span>
+      </components.Option>
+    </div>
+  );
+};
+
+const MultiValueLabel = props => {
+  const classes = useStyles();
+  const value = typeof props.data === 'object' ? props.data.value : props.data;
+
+  // TODO (Azhar): please make styling changes to the chip
+  return (
+    <div data-test={value} className={classes.chips}>
+      <components.MultiValueLabel {...props}>
+        <SelectedValueChip
+          value={value}
+        />
+      </components.MultiValueLabel>
+    </div>
+  );
+};
+
 export default function MultiSelectApplication(props) {
   const {
     disabled,
@@ -110,79 +164,14 @@ export default function MultiSelectApplication(props) {
     required,
     options = [],
     removeHelperText = false,
-    valueDelimiter,
-    value = [],
-    placeholder,
     defaultValue,
+    placeholder,
     isValid,
   } = props;
 
   const classes = useStyles();
   const ref = useRef(null);
-  let processedValue = value || [];
-
-  if (valueDelimiter && typeof value === 'string') {
-    processedValue = value ? value.split(valueDelimiter) : [];
-  }
-
-  if (processedValue && !Array.isArray(processedValue)) {
-    processedValue = [processedValue];
-  }
-
-  const filterOptions = (candidate, input) => {
-    if (input) {
-      const term = input.toLowerCase();
-      const { label } = candidate.data;
-
-      return (label && label.toLowerCase().includes(term));
-    }
-
-    return true;
-  };
-
-  const DropdownIndicator = props => (
-    <components.DropdownIndicator {...props}>
-      <SearchIcon />
-    </components.DropdownIndicator>
-  );
-  const Option = props => {
-    const { type, icon, value, label } = props.data;
-
-    return (
-      <div data-test={value} className={classes.menuItems}>
-        <components.Option {...props}>
-          <span className={classes.optionImg}>
-            <ApplicationImg
-              markOnly
-              type={type === 'webhook' ? value : type}
-              assistant={icon}
-              className={classes.img}
-            />
-          </span>
-          <span className={classes.optionLabel}>{label}</span>
-          <span className={classes.optionCheckBox}>
-            <Checkbox
-              checked={props.isSelected || processedValue.indexOf(value) !== -1}
-              color="primary"
-            />
-          </span>
-        </components.Option>
-      </div>
-    );
-  };
-  const MultiValueLabel = props => {
-    const opt = props.data;
-
-    return (
-      <div data-test={value} className={classes.chips}>
-        <components.MultiValueLabel {...props}>
-          <SelectedValueChip
-            value={typeof opt === 'object' ? opt.value : opt}
-          />
-        </components.MultiValueLabel>
-      </div>
-    );
-  };
+  const processedValues = defaultValue.map(value => options[0].items.find(item => item.value === value));
 
   return (
     <div className={classes.multislectWrapper}>
@@ -202,9 +191,8 @@ export default function MultiSelectApplication(props) {
           isMulti
           ref={ref}
           placeholder={placeholder}
-          value={processedValue}
-          components={{ Option, MultiValueLabel, DropdownIndicator }}
-          defaultValue={defaultValue}
+          components={{ Option, MultiValueLabel }}
+          defaultValue={processedValues}
           options={options[0].items}
           closeMenuOnSelect={false}
           hideSelectedOptions={false}

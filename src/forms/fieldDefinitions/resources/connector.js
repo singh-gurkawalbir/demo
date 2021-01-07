@@ -124,7 +124,6 @@ export default {
   applications: {
     type: 'selectmultiapplication',
     label: 'Applications',
-    valueDelimiter: ',',
     defaultValue: r => (r?.applications) || [],
     requiredWhen: [
       {

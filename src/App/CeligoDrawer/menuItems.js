@@ -97,7 +97,7 @@ export default function menuItems(
         { label: 'My APIs', path: '/apis', Icon: MyApiIcon },
         { label: 'API tokens', path: '/accesstokens', Icon: TokensApiIcon },
         { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
-        { label: 'Integration Apps', Icon: IntegrationAppsIcon, path: '/connectors' },
+        { label: 'Integration apps', Icon: IntegrationAppsIcon, path: '/connectors' },
         { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
       ],
     },
@@ -156,7 +156,7 @@ export default function menuItems(
 
     if (!canPublish) {
       resourceItems.children = resourceItems.children.filter(
-        i => !(i.label === 'Templates' || i.label === 'Integration Apps')
+        i => !(i.label === 'Templates' || i.label === 'Integration apps')
       );
     }
 

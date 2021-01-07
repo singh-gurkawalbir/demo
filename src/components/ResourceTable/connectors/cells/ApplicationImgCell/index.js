@@ -39,9 +39,11 @@ export default function ApplicationImgCell({ applications }) {
   const classes = useStyles();
   const connectors = connectorsList();
 
+  // we are rendering max of 4 logos as of now
   const apps = applications.slice(0, 4).map(application => {
     const { value, type, icon} = connectors.find(connector => connector.value === application);
 
+    // TODO (Azhar): please make styling changes to listItems
     return (
       <ListItem key={value}>
         <span className={classes.optionImg}>
