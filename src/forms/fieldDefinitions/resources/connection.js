@@ -65,7 +65,7 @@ export default {
     defaultValue: r => {
       const isNew = isNewId(r._id);
 
-      if (isNew) {
+      if (isNew && r.application) {
         return r.application;
       }
       const applications = applicationsList();
@@ -148,7 +148,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'SQL Server 2008 R2', value: 'SQL Server 2008 R2' },
+          { label: 'SQL Server 2008 R2 (Not supported by Microsoft)', value: 'SQL Server 2008 R2' },
           { label: 'SQL Server 2012', value: 'SQL Server 2012' },
           { label: 'SQL Server 2014', value: 'SQL Server 2014' },
           { label: 'SQL Server 2016', value: 'SQL Server 2016' },

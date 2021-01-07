@@ -11,7 +11,7 @@ import ExitIcon from '../../icons/ExitIcon';
 import SqlQueryBuilderEditorDrawer from '../../AFE/SqlQueryBuilderEditor/Drawer';
 import FieldHelp from '../FieldHelp';
 import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
-import { getUniqueFieldId } from '../../../utils/resource';
+import { getUniqueFieldId } from '../../../utils/editor';
 
 const useStyles = makeStyles(theme => ({
   container: {

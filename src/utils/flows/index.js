@@ -333,7 +333,7 @@ export function showScheduleIcon(flow, exports, flowExports) {
   return hasBatchExport(flow, exports, flowExports);
 }
 
-export function flowAllowsScheduling(flow, integration, allExports, isAppVersion2, flowExports) {
+export function flowAllowsScheduling(flow, integration, allExports, isAppVersion2, flowExports, childId) {
   if (!flow) return false;
   const isApp = flow._connectorId;
   const canSchedule = showScheduleIcon(flow, allExports, flowExports);
@@ -341,7 +341,7 @@ export function flowAllowsScheduling(flow, integration, allExports, isAppVersion
   // For IA2.0, 'showSchedule' is assumed true for now until we have more clarity
   if (!isApp || isAppVersion2) return canSchedule;
   // eslint-disable-next-line no-use-before-define
-  const flowSettings = getIAFlowSettings(integration, flow._id);
+  const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
   return canSchedule && !!flowSettings.showSchedule;
 }
@@ -358,13 +358,13 @@ export function getFlowType(flow, exports, flowExports) {
   return 'Scheduled';
 }
 
-export function flowSupportsSettings(flow, integration) {
+export function flowSupportsSettings(flow, integration, childId) {
   if (!flow) return false;
   const isApp = flow._connectorId;
 
   if (!isApp) return false;
   // eslint-disable-next-line no-use-before-define
-  const flowSettings = getIAFlowSettings(integration, flow._id);
+  const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
   return !!(
     (flowSettings.settings && flowSettings.settings.length) ||
@@ -674,7 +674,7 @@ export function getIAResources(integrationResource = {}, allFlows, allConnection
   };
 }
 
-export function getIAFlowSettings(integration, flowId) {
+export function getIAFlowSettings(integration, flowId, childId) {
   const allFlows = [];
 
   // TODO: InstallSteps check here is temporary. Nees to to change this as part of IA2.o implementation.
@@ -688,7 +688,9 @@ export function getIAFlowSettings(integration, flowId) {
   }
 
   if (integration.settings && integration.settings.supportsMultiStore) {
-    integration.settings.sections.forEach(section => {
+    if (childId) {
+      const section = integration.settings.sections.find(sec => sec.id === childId);
+
       if (!section.sections) {
         return;
       }
@@ -698,7 +700,19 @@ export function getIAFlowSettings(integration, flowId) {
       }));
 
       allFlows.push(...(flows || []));
-    });
+    } else {
+      integration.settings.sections.forEach(section => {
+        if (!section.sections) {
+          return;
+        }
+
+        const { flows } = section.sections.reduce((a, b) => ({
+          flows: [...a.flows, ...b.flows],
+        }));
+
+        allFlows.push(...(flows || []));
+      });
+    }
   } else {
     const { flows } = integration.settings.sections.reduce((a, b) => ({
       flows: [...a.flows, ...b.flows],
@@ -772,7 +786,7 @@ export function getFlowResources(flows, exports, imports, flowId) {
 // yet its impossible to know which works for each flow type. For example,
 // showMapping is an IA only field, how do we determine if a DIY flow has mapping support?
 // Maybe its best to only hav common props here and remove all IA props to a separate selector.
-export function getFlowDetails(flow, integration, exports) {
+export function getFlowDetails(flow, integration, exports, childId) {
   if (!flow) return emptyObject;
 
   return produce(flow, draft => {
@@ -781,7 +795,7 @@ export function getFlowDetails(flow, integration, exports) {
     draft.isRunnable = isRunnable(flow, exports);
     draft.canSchedule = showScheduleIcon(flow, exports);
     draft.isDeltaFlow = isDeltaFlow(flow, exports);
-    const flowSettings = getIAFlowSettings(integration, flow._id);
+    const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
     draft.showMapping = flowSettings.showMapping;
     draft.hasSettings = !!(

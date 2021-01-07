@@ -59,7 +59,7 @@ import openErrorsSagas from './errorManagement/openErrors';
 import errorDetailsSagas from './errorManagement/errorDetails';
 import latestIntegrationJobsSagas from './errorManagement/latestJobs/integrations';
 import latestFlowJobsSagas from './errorManagement/latestJobs/flows';
-import errorRetrySagas from './errorManagement/retryData';
+import errorMetadataSagas from './errorManagement/metadata';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
 import {logsSagas} from './logs';
@@ -139,7 +139,7 @@ export function* apiCallWithRetry(args) {
   }
 }
 
-function* allSagas() {
+export function* allSagas() {
   yield all([
     ...resourceSagas,
     ...connectorSagas,
@@ -175,7 +175,7 @@ function* allSagas() {
     ...errorDetailsSagas,
     ...latestIntegrationJobsSagas,
     ...latestFlowJobsSagas,
-    ...errorRetrySagas,
+    ...errorMetadataSagas,
     ...customSettingsSagas,
     ...exportDataSagas,
     ...editorSampleData,
@@ -203,11 +203,12 @@ export default function* rootSaga() {
     switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC),
   });
 
+  // stop the main sagas
+  t.cancel();
+
   if (logrocket) {
     // initializeLogrocket init must be done prior to redux-saga-requests fetch wrapping and must be done synchronously
-    t.cancel();
     yield call(initializeLogrocket);
-    // yield requestWrapper();
     yield spawn(rootSaga);
     // initializeApp must be called(again) after initilizeLogrocket and saga restart
     // the only code path that leads here is by calling initializeApp after successful `auth` or `initializeSession`
@@ -215,8 +216,6 @@ export default function* rootSaga() {
     yield call(initializeApp, logrocket.opts);
   }
   if (logout) {
-    // stop the main sagas
-    t.cancel();
     // logout requires also reset the store
     yield put(actions.auth.clearStore());
     // restart the root saga again
@@ -227,8 +226,6 @@ export default function* rootSaga() {
   // api requests than updatePreferences to the selected account restart the saga and subsequently reinitilialize session
 
   if (switchAcc) {
-    // stop the main sagas
-    t.cancel();
     // restart the root saga again
     yield spawn(rootSaga);
     // this action updates the redux state as well as the preferences in the backend

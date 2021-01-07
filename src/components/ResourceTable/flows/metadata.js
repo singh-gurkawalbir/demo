@@ -76,7 +76,7 @@ export default {
         heading: 'Mapping',
         align: 'center',
         value: function Mapping(r) {
-          return <MappingCell flowId={r._id} />;
+          return <MappingCell flowId={r._id} childId={actionProps?.storeId} />;
         },
       },
       {

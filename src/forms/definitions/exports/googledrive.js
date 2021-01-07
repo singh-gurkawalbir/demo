@@ -93,13 +93,16 @@ export default {
       delete newValues['/file/xlsx/rowsPerRecord'];
       delete newValues['/file/xlsx/keyColumns'];
     }
+    newValues['/type'] = undefined;
 
     if (newValues['/outputMode'] === 'blob') {
       if (newValues['/fileMetadata']) {
         newValues['/file/output'] = 'metadata';
-      } else newValues['/file/output'] = 'blobKeys';
+      } else {
+        newValues['/file/output'] = 'blobKeys';
+        newValues['/type'] = 'blob';
+      }
       newValues['/file/type'] = undefined;
-      newValues['/type'] = 'blob';
     } else {
       newValues['/file/output'] = 'records';
     }
@@ -121,6 +124,37 @@ export default {
       resourcePath: 'files',
     };
     delete newValues['/file/decompressFiles'];
+    if (newValues['/file/fileNameStartsWith'] && newValues['/file/fileNameEndsWith']) {
+      newValues['/file/filter'] = {
+        type: 'expression',
+        expression: {
+          version: '1',
+          rules: ['and',
+            ['startswith', ['string', ['extract', 'name']], newValues['/file/fileNameStartsWith']],
+            ['endswith', ['string', ['extract', 'name']], newValues['/file/fileNameEndsWith']]],
+        },
+      };
+    } else if (newValues['/file/fileNameStartsWith']) {
+      newValues['/file/filter'] = {
+        type: 'expression',
+        expression: {
+          version: '1',
+          rules:
+            ['startswith', ['string', ['extract', 'name']], newValues['/file/fileNameStartsWith']],
+        },
+      };
+    } else if (newValues['/file/fileNameEndsWith']) {
+      newValues['/file/filter'] = {
+        type: 'expression',
+        expression: {
+          version: '1',
+          rules:
+            ['endswith', ['string', ['extract', 'name']], newValues['/file/fileNameEndsWith']],
+        },
+      };
+    } else {
+      newValues['/file/filter'] = undefined;
+    }
 
     return {
       ...newValues,
@@ -213,6 +247,8 @@ export default {
         label: 'Where would you like to transfer from?',
         fields: [
           'http.relativeURI',
+          'file.fileNameStartsWith',
+          'file.fileNameEndsWith',
         ],
       },
       {
@@ -224,6 +260,7 @@ export default {
           'file.skipDelete',
           'fileMetadata',
           'file.encoding',
+          'file.backupPath',
           'pageSize',
           'dataURITemplate',
           'skipRetries',

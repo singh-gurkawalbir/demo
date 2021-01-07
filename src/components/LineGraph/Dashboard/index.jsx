@@ -120,7 +120,7 @@ export default function LineGraphDrawer({ integrationId, childId }) {
         })
       );
     },
-    [dispatch, integrationId]
+    [dispatch, integrationId, preferences, selectedResources]
   );
   const handleResourcesChange = useCallback(
     val => {
@@ -137,7 +137,7 @@ export default function LineGraphDrawer({ integrationId, childId }) {
         })
       );
     },
-    [dispatch, integrationId, preferences]
+    [dispatch, integrationId, preferences, range]
   );
   const sections = useMemo(() => integrationAppFlowSections.map(s => <MenuItem key={s.titleId} value={s.titleId}>{s.title}</MenuItem>), [integrationAppFlowSections]);
 

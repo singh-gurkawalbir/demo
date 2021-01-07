@@ -1,7 +1,8 @@
 import { values, keyBy } from 'lodash';
 import shortid from 'shortid';
 import { isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, FILE_PROVIDER_ASSISTANTS } from './constants';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject, FILE_PROVIDER_ASSISTANTS } from './constants';
+import { stringCompare } from './sort';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
@@ -126,6 +127,27 @@ export function getResourceSubType(resource) {
   if (resource.offline === true) out.offline = true;
 
   return out;
+}
+
+export function filterAndSortResources(resources = emptyList, config = emptyObject) {
+  if (!Array.isArray(resources)) {
+    return emptyList;
+  }
+  const { sort = emptyObject, searchBy, keyword } = config || {};
+  const stringTest = r => {
+    if (!keyword) return true;
+    const searchableText =
+      Array.isArray(searchBy) && searchBy.length
+        ? `${searchBy.map(key => r[key]).join('|')}`
+        : `${r._id}|${r.name}|${r.description}`;
+
+    return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
+  };
+
+  const comparer = ({ order = 'asc', orderBy = 'name' }) =>
+    order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
+
+  return resources.filter(stringTest).sort(comparer(sort));
 }
 
 export function getResourceSubTypeFromAdaptorType(adaptorType) {
@@ -799,37 +821,6 @@ export const isQueryBuilderSupported = (importResource = {}) => {
   }
 
   return false;
-};
-
-export const getUniqueFieldId = fieldId => {
-  if (!fieldId) { return ''; }
-
-  // some field types have same field ids
-  switch (fieldId) {
-    case 'rdbms.queryInsert':
-      return 'rdbms.query.1';
-    case 'rdbms.queryUpdate':
-      return 'rdbms.query.0';
-    case 'http.bodyCreate':
-      return 'http.body.1';
-    case 'http.bodyUpdate':
-      return 'http.body.0';
-    case 'http.relativeURIUpdate':
-      return 'http.relativeURI.0';
-    case 'http.relativeURICreate':
-      return 'http.relativeURI.1';
-    case 'rest.relativeURIUpdate':
-      return 'rest.relativeURI.0';
-    case 'rest.relativeURICreate':
-      return 'rest.relativeURI.1';
-    case 'rest.bodyUpdate':
-      return 'rest.body.0';
-    case 'rest.bodyCreate':
-      return 'rest.body.1';
-
-    default:
-      return fieldId;
-  }
 };
 
 export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations = [], connectionId) => {

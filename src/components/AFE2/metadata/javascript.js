@@ -25,7 +25,7 @@ export default {
       area: 'result',
       Panel: ResultPanel,
       props: ({ resultMode }) => ({
-        mode: resultMode,
+        mode: resultMode || 'json',
       }),
     },
   ],

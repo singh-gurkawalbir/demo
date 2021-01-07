@@ -305,7 +305,7 @@ export default function CeligoDrawer() {
         </div>
         <div className={classes.menuList}>
           <List className={clsx(classes.list)}>
-            {listItemsMemo.map(({ label, Icon, path, routeProps, children, href, component }) => (
+            {listItemsMemo.map(({ label, Icon, path, routeProps, children, href, component, dataTest }) => (
               <Fragment key={label}>
                 <ListItem
                   button
@@ -316,7 +316,7 @@ export default function CeligoDrawer() {
                   })}
                   component={children ? undefined : component || Link}
                   {...getHrefProps(href, path)}
-                  data-test={label}
+                  data-test={dataTest || label}
                   onClick={children ? handleExpandClick(label) : null}>
                   <ListItemIcon classes={{ root: classes.itemIconRoot }}>
                     <>
@@ -353,6 +353,7 @@ export default function CeligoDrawer() {
                           routeProps,
                           href,
                           component,
+                          dataTest,
                         }) => (
                           <ListItem
                             className={clsx(
@@ -365,7 +366,7 @@ export default function CeligoDrawer() {
                                 ),
                               }
                             )}
-                            data-test={label}
+                            data-test={dataTest || label}
                             key={label}
                             component={component || Link}
                             {...getHrefProps(href, path)}

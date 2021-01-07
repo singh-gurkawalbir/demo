@@ -858,11 +858,12 @@ export function* authorizedConnection({ connectionId }) {
     'connections',
     connectionId
   );
+  const isOauthOfflineResource = [connectionResource?.http?.auth?.type, connectionResource?.rest?.authType].includes('oauth') && !!(connectionResource?.offline);
 
   if (
     connectionResource &&
     (connectionResource.type === 'netsuite' ||
-      connectionResource.type === 'salesforce')
+      connectionResource.type === 'salesforce' || isOauthOfflineResource)
   ) {
     yield put(actions.resource.request('connections', connectionId));
   }

@@ -6,8 +6,8 @@ import transform from './transform';
 import handlebars from './handlebars';
 import javascript from './javascript';
 import settingsForm from './settingsForm';
-// import structuredFileParser from './structuredFileParser';
-// import structuredFileGenerator from './structuredFileGenerator';
+import structuredFileParser from './structuredFileParser';
+import structuredFileGenerator from './structuredFileGenerator';
 import sql from './sql';
 import filter from './filter';
 // import netsuiteLookupFilter from './netsuiteLookupFilter';
@@ -42,6 +42,8 @@ const logicMap = {
   databaseMapping,
   flowTransform,
   csvGenerator,
+  structuredFileParser,
+  structuredFileGenerator,
 };
 
 function getLogic(editor) {
@@ -135,10 +137,7 @@ const processResult = editor => {
 };
 
 function getPatchSetLogic(editor) {
-  // TODO:
-  const processorKey =
-    (editor.optionalSaveParams && editor.optionalSaveParams.processorKey) ||
-    editor.editorType;
+  const processorKey = editor.editorType;
 
   if (!processorKey) {
     throw new Error('Not supported.');
@@ -196,6 +195,34 @@ export const featuresMap = options => ({
   flowTransform: {
     layout: 'compact',
     insertStubKey: 'transform',
+  },
+  responseTransform: {
+    layout: 'compact',
+    insertStubKey: 'transform',
+  },
+  exportFilter: {
+    layout: 'compact',
+    insertStubKey: 'filter',
+  },
+  inputFilter: {
+    layout: 'compact',
+    insertStubKey: 'filter',
+  },
+  outputFilter: {
+    layout: 'compact',
+    insertStubKey: 'filter',
+  },
+  structuredFileParser: {
+    layout: 'compact',
+    autoEvaluate: true,
+  },
+  structuredFileGenerator: {
+    layout: 'compact',
+    autoEvaluate: true,
+  },
+  postResponseMapHook: {
+    layout: 'compact',
+    insertStubKey: 'postResponseMap',
   },
 });
 

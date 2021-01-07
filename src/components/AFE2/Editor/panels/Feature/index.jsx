@@ -11,14 +11,6 @@ export default function FeaturePanel({ editorId, mode, featureName }) {
   const featureValue = useSelector(state => selectors._editor(state, editorId)[featureName]);
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
 
-  // TODO: @Ashu, how should we handle validating and presenting errors here?
-  // Should editorViolations be a map where the key is the panel name?
-  // or we pass another argument to the _editorViolations selector to
-  // identify what subset of the errors we want?
-  // const violations = useSelector(state =>
-  //   selectors._editorViolations(state, editorId),
-  // );
-
   const handleChange = value => {
     dispatch(actions._editor.patchFeatures(editorId, {[featureName]: value}));
   };
@@ -34,8 +26,6 @@ export default function FeaturePanel({ editorId, mode, featureName }) {
           mode={mode}
           readOnly={disabled}
           onChange={handleChange}
-          // errorLine={!!violations?.errorLine}
-          // hasError={!!violations?.dataError}
     />
       )}
     </>

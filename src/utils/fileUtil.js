@@ -33,7 +33,6 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
         return 'blob';
       }
 
-      // if its create
       if (isNew) return 'records';
 
       const output = r && r.file && r.file.type;
@@ -41,9 +40,13 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
       return output ? 'records' : 'blob';
     },
   },
-  'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'namewitheditor',
-  },
+  'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'uri'},
+  'file.fileNameStartsWith': { fieldId: 'file.fileNameStartsWith' },
+  'file.fileNameEndsWith': { fieldId: 'file.fileNameEndsWith' },
   'file.type': { fieldId: 'file.type' },
+  'file.backupPath': {
+    fieldId: 'file.backupPath',
+  },
   uploadFile: {
     fieldId: 'uploadFile',
     refreshOptionsOnChangesTo: 'file.type',
@@ -187,7 +190,7 @@ fileType: {
 blobKeyPath: {
   fieldId: 'blobKeyPath',
 },
-'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'namewitheditor' },
+'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'uri' },
 'file.fileName': {
   fieldId: 'file.fileName', required: true,
 },
@@ -255,6 +258,9 @@ inputMode: {
 },
 'file.encoding': {
   fieldId: 'file.encoding',
+},
+'file.backupPath': {
+  fieldId: 'file.backupPath',
 },
 deleteAfterImport: {
   fieldId: 'deleteAfterImport',

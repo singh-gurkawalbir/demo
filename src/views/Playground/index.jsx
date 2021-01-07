@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { Button, IconButton, makeStyles, Tooltip, Typography } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import Editor from '../../components/AFE2/Editor';
-import EditorPreviewButton from '../../components/AFE2/PreviewButtonGroup';
+import EditorPreviewButton from '../../components/AFE2/Drawer/actions/PreviewButtonGroup';
 import FullScreenOpenIcon from '../../components/icons/FullScreenOpenIcon';
 import ExampleMenu from './ExampleMenu';
 import ExplorerMenu from './ExplorerMenu';

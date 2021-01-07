@@ -10,18 +10,15 @@ export default function SelectAllErrors({
   flowId,
   resourceId,
   isResolved,
-  filterKey,
-  defaultFilter,
   actionInProgress,
 }) {
   const dispatch = useDispatch();
+
   const isAllSelected = useSelector(state =>
     selectors.isAllErrorsSelected(state, {
       flowId,
       resourceId,
       isResolved,
-      filterKey,
-      defaultFilter,
     })
   );
   const handleChange = event => {
@@ -32,11 +29,7 @@ export default function SelectAllErrors({
         flowId,
         resourceId,
         checked,
-        options: {
-          filterKey,
-          defaultFilter,
-          isResolved,
-        },
+        isResolved,
       })
     );
   };

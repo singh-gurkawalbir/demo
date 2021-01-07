@@ -3545,6 +3545,9 @@ Object {
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
       },
+      "file.backupPath": Object {
+        "fieldId": "file.backupPath",
+      },
       "file.batchSize": Object {
         "fieldId": "file.batchSize",
       },
@@ -3596,6 +3599,12 @@ Object {
       },
       "file.fileDefinition.resourcePath": Object {
         "fieldId": "file.fileDefinition.resourcePath",
+      },
+      "file.fileNameEndsWith": Object {
+        "fieldId": "file.fileNameEndsWith",
+      },
+      "file.fileNameStartsWith": Object {
+        "fieldId": "file.fileNameStartsWith",
       },
       "file.filedefinition.rules": Object {
         "fieldId": "file.filedefinition.rules",
@@ -3660,7 +3669,7 @@ Object {
         "fieldId": "http.relativeURI",
         "label": "Directory path",
         "required": true,
-        "type": "namewitheditor",
+        "type": "uri",
       },
       "outputMode": Object {
         "defaultDisabled": [Function],
@@ -5269,6 +5278,9 @@ Object {
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
       },
+      "file.backupPath": Object {
+        "fieldId": "file.backupPath",
+      },
       "file.batchSize": Object {
         "fieldId": "file.batchSize",
       },
@@ -5320,6 +5332,12 @@ Object {
       },
       "file.fileDefinition.resourcePath": Object {
         "fieldId": "file.fileDefinition.resourcePath",
+      },
+      "file.fileNameEndsWith": Object {
+        "fieldId": "file.fileNameEndsWith",
+      },
+      "file.fileNameStartsWith": Object {
+        "fieldId": "file.fileNameStartsWith",
       },
       "file.filedefinition.rules": Object {
         "fieldId": "file.filedefinition.rules",
@@ -5384,7 +5402,7 @@ Object {
         "fieldId": "http.relativeURI",
         "label": "Directory path",
         "required": true,
-        "type": "namewitheditor",
+        "type": "uri",
       },
       "outputMode": Object {
         "defaultDisabled": [Function],
@@ -7165,7 +7183,6 @@ Object {
               "dropbox",
               "errorception",
               "helpscout",
-              "intercom",
               "mailparser-io",
               "pagerduty",
               "sapariba",
@@ -7248,6 +7265,7 @@ Object {
               "github",
               "hubspot",
               "integratorio",
+              "intercom",
               "jira",
               "mailchimp",
               "parseur",
@@ -8326,6 +8344,9 @@ Object {
           },
         ],
       },
+      "file.backupPath": Object {
+        "fieldId": "file.backupPath",
+      },
       "file.csv": Object {
         "fieldId": "file.csv",
       },
@@ -8420,7 +8441,7 @@ Object {
         "fieldId": "http.relativeURI",
         "label": "Directory path",
         "required": true,
-        "type": "namewitheditor",
+        "type": "uri",
       },
       "inputMode": Object {
         "defaultDisabled": [Function],
@@ -10480,6 +10501,9 @@ Object {
           },
         ],
       },
+      "file.backupPath": Object {
+        "fieldId": "file.backupPath",
+      },
       "file.csv": Object {
         "fieldId": "file.csv",
       },
@@ -10574,7 +10598,7 @@ Object {
         "fieldId": "http.relativeURI",
         "label": "Directory path",
         "required": true,
-        "type": "namewitheditor",
+        "type": "uri",
       },
       "inputMode": Object {
         "defaultDisabled": [Function],
@@ -11957,6 +11981,7 @@ Object {
         "visible": false,
       },
       "rdbms.query": Object {
+        "arrayIndex": 0,
         "id": "rdbms.query",
         "label": "Build SQL query",
         "querySetPos": 0,
@@ -12729,7 +12754,6 @@ Object {
               "dropbox",
               "errorception",
               "helpscout",
-              "intercom",
               "mailparser-io",
               "pagerduty",
               "sapariba",

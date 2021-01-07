@@ -22,7 +22,7 @@ export default {
     showLookup: false,
   },
   'ftp.backupDirectoryPath': {
-    type: 'text',
+    type: 'uri',
     label: 'Backup files path',
     helpKey: 'export.ftp.backupDirectoryPath',
   },

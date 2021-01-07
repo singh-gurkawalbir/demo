@@ -192,9 +192,9 @@ const connectors = [
   {
     id: 'intercom',
     name: 'Intercom',
-    marketPlaceOnly: true,
     type: 'http',
-    webhookOnly: true,
+    assistant: 'intercom',
+    webhook: true,
   },
   {
     id: 'jira',

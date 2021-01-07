@@ -31,7 +31,7 @@ export default function ExampleMenu({ onEditorChange }) {
       defaultCollapseIcon={<ArrowUpIcon />}
       defaultExpandIcon={<ArrowDownIcon />}
     >
-      {editorList.map(e => (
+      {editorList.filter(e => examples[e.type]?.length).map(e => (
         <TreeItem className={classes.editorItem} nodeId={e.type} key={e.type} label={e.label}>
           {examples[e.type]?.map(e => (
             <TreeItem nodeId={e.key} key={e.key} label={e.name} onClick={() => handleClick(e)} />
