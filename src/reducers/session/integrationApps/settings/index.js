@@ -737,8 +737,8 @@ selectors.categoryMapping = (state, integrationId, flowId) => {
   return state[cKey];
 };
 
-selectors.mappedCategories = () => createSelector(
-  (state, integrationId, flowId) => state?.session?.integrationApps?.settings?.[getCategoryKey(integrationId, flowId)],
+selectors.mkMappedCategories = () => createSelector(
+  (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)],
   (categoryMappingData = emptyObj) => {
     let mappedCategories = emptySet;
     const { response } = categoryMappingData;

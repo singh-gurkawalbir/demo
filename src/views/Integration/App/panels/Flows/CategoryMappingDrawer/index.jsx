@@ -407,7 +407,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
 
     return deleted.includes(categoryId);
   });
-  const mappedCategories = useSelectorMemo(selectors.mappedCategories, integrationId, flowId) || [];
+  const mappedCategories = useSelectorMemo(selectors.mkMappedCategories, integrationId, flowId) || [];
   const currentSectionLabel =
     (mappedCategories.find(category => category.id === categoryId) || {})
       .name || categoryId;

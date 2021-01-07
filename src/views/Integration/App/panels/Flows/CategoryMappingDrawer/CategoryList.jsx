@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function CategoryList({ integrationId, flowId }) {
   const classes = useStyles();
-  const mappedCategories = useSelectorMemo(selectors.mappedCategories, integrationId, flowId) || [];
+  const mappedCategories = useSelectorMemo(selectors.mkMappedCategories, integrationId, flowId) || [];
   const [listCollapseState, setListCollapseState] = useState({});
   const handleListClick = id => () => {
     setListCollapseState({
