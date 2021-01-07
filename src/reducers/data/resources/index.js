@@ -888,10 +888,10 @@ selectors.hasSettingsForm = (state, resourceType, resourceId, sectionId) => {
   return hasFormData(settingsForm);
 };
 
-selectors.iaFlowSettings = (state, integrationId, flowId) => {
+selectors.iaFlowSettings = (state, integrationId, flowId, childId) => {
   const integration = selectors.resource(state, 'integrations', integrationId);
 
-  return getIAFlowSettings(integration, flowId);
+  return getIAFlowSettings(integration, flowId, childId);
 };
 
 // #endregion
