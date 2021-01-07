@@ -158,7 +158,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
 
   const handleRefreshClick = useCallback(
     () => {
-      dispatch(actions.logs.scripts.refreshLogs({scriptId, flowId}));
+      dispatch(actions.logs.scripts.refresh({scriptId, flowId}));
     },
     [dispatch, flowId, scriptId],
   );
@@ -181,7 +181,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
 
   useEffect(() => {
     if (isInitTriggered) {
-      dispatch(actions.logs.scripts.requestLogs({scriptId, flowId}));
+      dispatch(actions.logs.scripts.request({scriptId, flowId}));
       setIsInitTriggered(true);
     }
 

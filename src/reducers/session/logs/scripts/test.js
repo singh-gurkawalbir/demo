@@ -20,7 +20,7 @@ describe('Script reducer', () => {
 
     mock.mockReturnValue(now);
 
-    const state = reducer(undefined, actions.logs.scripts.requestLogs({
+    const state = reducer(undefined, actions.logs.scripts.request({
       flowId,
       scriptId,
     }));
@@ -117,7 +117,7 @@ describe('Script reducer', () => {
         },
       },
     };
-    const state = reducer(currentState, actions.logs.scripts.receivedLogs({
+    const state = reducer(currentState, actions.logs.scripts.received({
       flowId,
       scriptId,
       logs: [{a: 1}],
@@ -154,7 +154,7 @@ describe('Script reducer', () => {
         },
       },
     };
-    const state = reducer(currentState, actions.logs.scripts.receivedLogs({
+    const state = reducer(currentState, actions.logs.scripts.received({
       flowId,
       scriptId,
       logs: [{a: 3}, {a: 4}],
@@ -314,7 +314,7 @@ describe('Script reducer', () => {
         },
       },
     };
-    const state = reducer(currentState, actions.logs.scripts.refreshLogs({
+    const state = reducer(currentState, actions.logs.scripts.refresh({
       flowId,
       scriptId,
     }));
@@ -414,7 +414,7 @@ describe('Script reducer', () => {
 
     expect(expectedState).toEqual(originalState);
 
-    expectedState = reducer(originalState, actions.logs.scripts.receivedLogs({
+    expectedState = reducer(originalState, actions.logs.scripts.received({
       flowId: 'f2',
       scriptId: 's1',
     }));
@@ -434,7 +434,7 @@ describe('Script reducer', () => {
     }));
 
     expect(expectedState).toEqual(originalState);
-    expectedState = reducer(originalState, actions.logs.scripts.refreshLogs({
+    expectedState = reducer(originalState, actions.logs.scripts.refresh({
       flowId: 'f2',
       scriptId: 's1',
     }));

@@ -10,53 +10,55 @@ import { convertUtcToTimezone } from '../../../utils/date';
 export function* getScriptDependencies({scriptId = '',
   flowId = '',
 }) {
+  let resourceReferences;
+
   try {
-    const resourceReferences = yield call(requestReferences, {
+    resourceReferences = yield call(requestReferences, {
       resourceType: 'scripts',
       id: scriptId,
     });
-    const references = [];
-
-    if (flowId) {
-      const flowResource = yield select(selectors.resource, 'flows', flowId);
-
-      flowResource.pageGenerators.forEach(({_exportId}) => {
-        const resource = resourceReferences?.exports?.find(({id}) => id === _exportId);
-
-        if (resource) {
-          references.push({type: 'exports', id: resource.id, name: resource.name});
-        }
-      });
-
-      flowResource.pageProcessors.forEach(({type: ppType, _importId, _exportId}) => {
-        const resource = (ppType === 'export')
-          ? resourceReferences?.exports?.find(({id}) => id === _exportId)
-          : resourceReferences?.imports?.find(({id}) => id === _importId);
-
-        if (resource) {
-          references.push({
-            type: ppType === 'export' ? 'exports' : 'imports',
-            id: resource.id,
-            name: resource.name,
-          });
-        }
-      });
-    } else {
-      Object.keys(resourceReferences).forEach(resourceType => {
-        resourceReferences[resourceType].forEach(res => {
-          // res.access => do we need it?
-          references.push({type: resourceType, id: res.id, name: res.name});
-        });
-      });
-    }
-    yield put(actions.logs.scripts.setDependency({
-      scriptId,
-      flowId,
-      resourceReferences: references,
-    }));
   } catch (e) {
-    // do nothing
+    return;
   }
+  const references = [];
+
+  if (flowId) {
+    const flowResource = yield select(selectors.resource, 'flows', flowId);
+
+    flowResource.pageGenerators.forEach(({_exportId}) => {
+      const resource = resourceReferences?.exports?.find(({id}) => id === _exportId);
+
+      if (resource) {
+        references.push({type: 'exports', id: resource.id, name: resource.name});
+      }
+    });
+
+    flowResource.pageProcessors.forEach(({type: ppType, _importId, _exportId}) => {
+      const resource = (ppType === 'export')
+        ? resourceReferences?.exports?.find(({id}) => id === _exportId)
+        : resourceReferences?.imports?.find(({id}) => id === _importId);
+
+      if (resource) {
+        references.push({
+          type: ppType === 'export' ? 'exports' : 'imports',
+          id: resource.id,
+          name: resource.name,
+        });
+      }
+    });
+  } else {
+    Object.keys(resourceReferences).forEach(resourceType => {
+      resourceReferences[resourceType].forEach(res => {
+        // res.access => do we need it?
+        references.push({type: resourceType, id: res.id, name: res.name});
+      });
+    });
+  }
+  yield put(actions.logs.scripts.setDependency({
+    scriptId,
+    flowId,
+    resourceReferences: references,
+  }));
 }
 
 export function* fetchScriptLogs({scriptId = '', flowId = '', field, loadMore}) {
@@ -126,7 +128,7 @@ export function* fetchScriptLogs({scriptId = '', flowId = '', field, loadMore}) 
     return {time: localDateTime, ...others };
   });
 
-  return yield put(actions.logs.scripts.receivedLogs({
+  return yield put(actions.logs.scripts.received({
     scriptId,
     flowId,
     logs: formattedLogs || [],
@@ -150,8 +152,8 @@ export function* loadMoreLogs(opts) {
 }
 
 export const scriptsLogSagas = [
-  takeEvery(actionTypes.LOGS.SCRIPTS.LOGS_REQUEST, requestScriptLogs),
-  takeEvery(actionTypes.LOGS.SCRIPTS.LOGS_LOAD_MORE, loadMoreLogs),
+  takeEvery(actionTypes.LOGS.SCRIPTS.REQUEST, requestScriptLogs),
+  takeEvery(actionTypes.LOGS.SCRIPTS.LOAD_MORE, loadMoreLogs),
   takeLatest(actionTypes.LOGS.SCRIPTS.PATCH_FILTER, fetchScriptLogs),
-  takeLatest(actionTypes.LOGS.SCRIPTS.LOGS_REFRESH, fetchScriptLogs),
+  takeLatest(actionTypes.LOGS.SCRIPTS.REFRESH, fetchScriptLogs),
 ];

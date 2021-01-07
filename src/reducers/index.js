@@ -37,7 +37,7 @@ import {
   flowAllowsScheduling,
   getFlowType,
   flowSupportsSettings,
-  getScriptsReferencedInFlow} from '../utils/flows';
+} from '../utils/flows';
 import {
   PASSWORD_MASK,
   USER_ACCESS_LEVELS,
@@ -5096,32 +5096,6 @@ selectors.getCustomResourceLabel = (
   return resourceLabel;
 };
 // #endregion Flow builder selectors
-
-// #region script selectors
-const emptySet = [];
-
-selectors.scripts = createSelector(
-  state => state?.data?.resources?.scripts || emptySet,
-  (state, flowId) => {
-    if (!flowId) {
-      return;
-    }
-
-    return state?.data?.resources?.flows?.find(({_id}) => _id === flowId);
-  },
-  state => state?.data?.resources?.imports || emptySet,
-  state => state?.data?.resources?.exports || emptySet,
-  (scripts, flow, imports, exports) => {
-    if (!scripts) {
-      return emptyArray;
-    }
-    if (!flow) {
-      return scripts;
-    }
-
-    return getScriptsReferencedInFlow({scripts, flow, imports, exports});
-  });
-// #endregion script selectors
 
 // #region connection log selectors
 

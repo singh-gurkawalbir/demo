@@ -15,7 +15,7 @@ export default {
     const history = useHistory();
 
     useEffect(() => {
-      dispatch(actions.logs.scripts.requestLogs({scriptId, flowId}));
+      dispatch(actions.logs.scripts.request({scriptId, flowId}));
     }, [dispatch, flowId, scriptId]);
 
     useEffect(() => {

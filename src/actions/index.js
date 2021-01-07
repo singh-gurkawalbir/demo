@@ -166,15 +166,6 @@ const connection = {
       iClients,
       connectionId,
     }),
-  requestDebugLogs: connectionId =>
-    action(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, { connectionId }),
-  receivedDebugLogs: (debugLogs, connectionId) =>
-    action(actionTypes.CONNECTION.DEBUG_LOGS_RECEIVED, {
-      debugLogs,
-      connectionId,
-    }),
-  clearDebugLogs: connectionId =>
-    action(actionTypes.CONNECTION.DEBUG_LOGS_CLEAR, { connectionId }),
   madeOnline: connectionId =>
     action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
   requestQueuedJobs: connectionId =>
@@ -2103,24 +2094,22 @@ const hooks = {
 
 const logs = {
   scripts: {
-    requestLogs: ({ scriptId, flowId }) =>
-      action(actionTypes.LOGS.SCRIPTS.LOGS_REQUEST, { scriptId, flowId }),
-    receivedLogs: ({logs, nextPageURL, scriptId, flowId}) =>
-      action(actionTypes.LOGS.SCRIPTS.LOGS_RECEIVED, {logs, nextPageURL, scriptId, flowId}),
+    request: ({ scriptId, flowId }) =>
+      action(actionTypes.LOGS.SCRIPTS.REQUEST, { scriptId, flowId }),
+    received: ({logs, nextPageURL, scriptId, flowId}) =>
+      action(actionTypes.LOGS.SCRIPTS.RECEIVED, {logs, nextPageURL, scriptId, flowId}),
     requestFailed: ({flowId, scriptId}) =>
-      action(actionTypes.LOGS.SCRIPTS.LOGS_REQUEST_FAILED, {scriptId, flowId}),
+      action(actionTypes.LOGS.SCRIPTS.REQUEST_FAILED, {scriptId, flowId}),
     setDependency: ({resourceReferences, scriptId, flowId}) =>
       action(actionTypes.LOGS.SCRIPTS.SET_DEPENDENCY, {resourceReferences, scriptId, flowId}),
     patchFilter: ({scriptId, flowId, field, value}) =>
       action(actionTypes.LOGS.SCRIPTS.PATCH_FILTER, {scriptId, flowId, field, value}),
-    startDebug: ({ scriptId, value }) =>
-      action(actionTypes.LOGS.SCRIPTS.START_DEBUG, { scriptId, value }),
-    refreshLogs: ({ scriptId, flowId }) =>
-      action(actionTypes.LOGS.SCRIPTS.LOGS_REFRESH, { scriptId, flowId }),
+    refresh: ({ scriptId, flowId }) =>
+      action(actionTypes.LOGS.SCRIPTS.REFRESH, { scriptId, flowId }),
     clear: ({ flowId, scriptId }) =>
-      action(actionTypes.LOGS.SCRIPTS.LOGS_CLEAR, { flowId, scriptId }),
+      action(actionTypes.LOGS.SCRIPTS.CLEAR, { flowId, scriptId }),
     loadMore: ({ flowId, scriptId }) =>
-      action(actionTypes.LOGS.SCRIPTS.LOGS_LOAD_MORE, { flowId, scriptId }),
+      action(actionTypes.LOGS.SCRIPTS.LOAD_MORE, { flowId, scriptId }),
   },
   connections: {
     request: connectionId =>

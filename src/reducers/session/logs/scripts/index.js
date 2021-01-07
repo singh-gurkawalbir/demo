@@ -12,7 +12,7 @@ export default (state = {}, action) => {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.LOGS.SCRIPTS.LOGS_REQUEST:
+      case actionTypes.LOGS.SCRIPTS.REQUEST:
         if (!draft.scripts) {
           draft.scripts = {};
         }
@@ -29,7 +29,7 @@ export default (state = {}, action) => {
         draft.scripts[key].status = 'requested';
         break;
 
-      case actionTypes.LOGS.SCRIPTS.LOGS_REQUEST_FAILED:
+      case actionTypes.LOGS.SCRIPTS.REQUEST_FAILED:
         if (draft?.scripts?.[key]) {
           draft.scripts[key].status = 'error';
           delete draft.scripts[key].nextPageURL;
@@ -37,7 +37,7 @@ export default (state = {}, action) => {
 
         break;
 
-      case actionTypes.LOGS.SCRIPTS.LOGS_RECEIVED: {
+      case actionTypes.LOGS.SCRIPTS.RECEIVED: {
         if (draft?.scripts?.[key]) {
           if (!draft.scripts[key].logs) {
             draft.scripts[key].logs = [];
@@ -68,7 +68,7 @@ export default (state = {}, action) => {
           }
         }
         break;
-      case actionTypes.LOGS.SCRIPTS.LOGS_REFRESH:
+      case actionTypes.LOGS.SCRIPTS.REFRESH:
         if (draft?.scripts?.[key]) {
           draft.scripts[key].status = 'requested';
           delete draft.scripts[key].logs;
@@ -76,7 +76,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.LOGS.SCRIPTS.LOGS_CLEAR:
+      case actionTypes.LOGS.SCRIPTS.CLEAR:
         if (!scriptId && flowId) {
           Object.keys(draft.scripts).forEach(scriptKey => {
             if (draft.scripts[scriptKey]?.flowId === flowId) {
@@ -88,7 +88,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.LOGS.SCRIPTS.LOGS_LOAD_MORE:
+      case actionTypes.LOGS.SCRIPTS.LOAD_MORE:
         if (draft?.scripts?.[key]) {
           draft.scripts[key].status = 'requested';
         }

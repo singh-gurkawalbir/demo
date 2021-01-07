@@ -20,20 +20,26 @@ export default (state = {}, action) => {
         draft.connections[connectionId].status = 'success';
         break;
       case actionTypes.LOGS.CONNECTIONS.REQUEST_FAILED:
-        draft.connections[connectionId].status = 'error';
+        if (draft.connections[connectionId]) {
+          draft.connections[connectionId].status = 'error';
+        }
+
         break;
       case actionTypes.LOGS.CONNECTIONS.REFRESH:
         draft.connections[connectionId].status = 'requested';
         delete draft.connections[connectionId].logs;
         break;
       case actionTypes.LOGS.CONNECTIONS.CLEAR:
-        if (connectionId) {
-          delete draft.connections[connectionId];
-        } else {
-          Object.keys(draft.connections).forEach(connectionId => {
+        if (draft.connections) {
+          if (connectionId) {
             delete draft.connections[connectionId];
-          });
+          } else {
+            Object.keys(draft.connections).forEach(connectionId => {
+              delete draft.connections[connectionId];
+            });
+          }
         }
+
         break;
       case actionTypes.LOGS.CONNECTIONS.DELETE:
         delete draft.connections[connectionId].status;

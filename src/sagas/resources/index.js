@@ -845,24 +845,6 @@ export function* updateTradingPartner({ connectionId }) {
   }
 }
 
-export function* requestDebugLogs({ connectionId }) {
-  let response;
-  const path = `/connections/${connectionId}/debug`;
-
-  try {
-    response = yield call(apiCallWithRetry, { path });
-    yield put(
-      actions.connection.receivedDebugLogs(
-        response ||
-          'There are no logs available for this connection. Please run your flow so that we can record the outgoing and incoming traffic to this connection.',
-        connectionId
-      )
-    );
-  } catch (error) {
-    return undefined;
-  }
-}
-
 export function* receivedResource({ resourceType, resource }) {
   if (resourceType === 'connections' && resource && !resource.offline) {
     yield put(actions.connection.madeOnline(resource._id));
