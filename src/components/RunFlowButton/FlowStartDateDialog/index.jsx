@@ -62,6 +62,7 @@ export default function FlowStartDateDialog(props) {
   const formKey = useFormInitWithPermissions({
     disabled,
     fieldMeta,
+    remount: lastExportDateTime,
   });
 
   if (!selectorStatus) {
