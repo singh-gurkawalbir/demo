@@ -595,7 +595,7 @@ export function* initEditor({ id, editorType, options = {} }) {
 
   let originalRule = formattedOptions.rule;
 
-  if (typeof originalRule === 'object') {
+  if (typeof originalRule === 'object' && !Array.isArray(originalRule)) {
     originalRule = {...formattedOptions.rule};
   }
   const stateOptions = {

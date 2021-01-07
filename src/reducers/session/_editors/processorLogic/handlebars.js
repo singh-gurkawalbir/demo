@@ -60,6 +60,7 @@ function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator
     'MongodbExport',
     'DynamodbImport',
     'DynamodbExport',
+    'SalesforceExport',
   ].includes(resource.adaptorType);
 }
 
@@ -75,6 +76,8 @@ export default {
       const formattedRule = typeof arrayIndex === 'number' && Array.isArray(value) ? value[arrayIndex] : value;
 
       rule = typeof formattedRule === 'string' ? formattedRule : JSON.stringify(formattedRule, null, 2);
+    } else if (type === 'soqlquery') {
+      rule = value?.query;
     }
 
     const editorSupportsV1V2data = _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator});
