@@ -40,6 +40,7 @@ import ButtonGroup from '../../../../../../components/ButtonGroup';
 import CollapseWindowIcon from '../../../../../../components/icons/CollapseWindowIcon';
 import ExpandWindowIcon from '../../../../../../components/icons/ExpandWindowIcon';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
+import SettingsDrawer from '../../../../../../components/Mapping/Settings';
 
 const emptySet = [];
 const useStyles = makeStyles(theme => ({
@@ -341,6 +342,7 @@ function CategoryMappings({
             <Mappings
               id={`${flowId}-${sectionId}`}
               flowId={flowId}
+              depth={depth}
               integrationId={integrationId}
               sectionId={sectionId}
               generateFields={generateFields || emptySet}
@@ -404,6 +406,19 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
     const { deleted = [] } = categoryMappingMetadata;
 
     return deleted.includes(categoryId);
+  });
+  const importId = useSelector(state => {
+    const flow = selectors.resource(state, 'flows', flowId);
+
+    if (flow) {
+      const firstPP = flow.pageProcessors.find(
+        pp => pp.type === 'import'
+      );
+
+      return firstPP ? firstPP._importId : null;
+    }
+
+    return null;
   });
   const mappedCategories = useSelectorMemo(selectors.mkMappedCategories, integrationId, flowId) || [];
   const currentSectionLabel =
@@ -625,6 +640,11 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
           </Loader>
         )}
       </Drawer>
+      <SettingsDrawer
+        integrationId={integrationId}
+        flowId={flowId}
+        importId={importId}
+      />
     </>
   );
 }

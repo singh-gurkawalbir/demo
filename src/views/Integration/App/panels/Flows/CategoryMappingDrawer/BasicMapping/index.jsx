@@ -6,7 +6,7 @@ import ImportMapping from './Mappings';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
 export default function MappingWrapper(props) {
-  const { id, flowId, generateFields, sectionId, integrationId } = props;
+  const { id, flowId, generateFields, sectionId, integrationId, depth } = props;
   const [initTriggered, setInitTriggered] = useState(false);
   const [resetMappings, setResetMappings] = useState(false);
   const resourceId = useSelector(state => {
@@ -22,7 +22,7 @@ export default function MappingWrapper(props) {
 
     return null;
   });
-  const memoizedOptions = useMemo(() => ({ sectionId }), [sectionId]);
+  const memoizedOptions = useMemo(() => ({ sectionId, depth }), [sectionId, depth]);
   const { fieldMappings, lookups, deleted = false } = useSelectorMemo(selectors.mkMappingsForCategory, integrationId, flowId, memoizedOptions) || {};
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
