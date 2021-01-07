@@ -2030,8 +2030,8 @@ selectors.makeIntegrationAppSectionFlows = () =>
         );
 
       selectedSections.forEach(sec => {
-        sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
-        sectionFlows.forEach(f => {
+        sectionFlows = options.excludeHiddenFlows ? (sec.flows || []).filter(f => !f.hidden) : sec.flows;
+        (sectionFlows || []).forEach(f => {
           const flow = requiredFlows.find(fi => fi.id === f._id);
 
           if (flow) {
