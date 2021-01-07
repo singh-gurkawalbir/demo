@@ -96,8 +96,14 @@ function* requestRetryStatus({ flowId, resourceId }) {
       },
       hidden: true,
     });
-    // TODO @Raghu: Revisit this status update based on the requirement
-    const status = pendingRetryList?.length ? 'retrying' : 'completed';
+    const prevStatus = yield select(selectors.retryStatus, flowId, resourceId);
+    let status;
+
+    if (pendingRetryList?.length) {
+      status = 'inProgress';
+    } else if (prevStatus) {
+      status = 'completed';
+    }
 
     yield put(actions.errorManager.retryStatus.received({ flowId, resourceId, status}));
   } catch (e) {
@@ -116,8 +122,23 @@ function* pollForRetryStatus({ flowId, resourceId }) {
 function* startPollingForRetryStatus({ flowId, resourceId }) {
   const watcher = yield fork(pollForRetryStatus, { flowId, resourceId });
 
-  yield take(actionTypes.ERROR_MANAGER.RETRY_STATUS.CLEAR);
+  yield take(actionTypes.ERROR_MANAGER.RETRY_STATUS.STOP_POLL);
   yield cancel(watcher);
+}
+
+export function* requestFilterMetadata() {
+  try {
+    const metadata = yield apiCallWithRetry({
+      path: '/errors/filterMetadata',
+      opts: {
+        method: 'GET',
+      },
+    });
+
+    yield put(actions.errorManager.filterMetadata.received(metadata?.filters));
+  } catch (e) {
+    // handle errors
+  }
 }
 
 export default [
@@ -130,4 +151,5 @@ export default [
     actionTypes.ERROR_MANAGER.RETRY_DATA.UPDATE_REQUEST,
     updateRetryData
   ),
+  takeLatest(actionTypes.ERROR_MANAGER.FILTER_METADATA.REQUEST, requestFilterMetadata),
 ];

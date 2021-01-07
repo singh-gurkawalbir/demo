@@ -81,7 +81,7 @@ import { stringCompare } from '../utils/sort';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import { getFilteredErrors } from '../utils/errorManagement';
+import { getFilteredErrors, FILTER_KEYS, getSourceOptions } from '../utils/errorManagement';
 import {
   getFlowStepsYetToBeCreated,
   generatePendingFlowSteps,
@@ -89,6 +89,7 @@ import {
   getParentJobSteps,
 } from '../utils/latestJobs';
 import getJSONPaths from '../utils/jsonPaths';
+import { getApp } from '../constants/applications';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -2407,7 +2408,7 @@ selectors.availableUsersList = (state, integrationId) => {
     ];
   }
 
-  return _users.sort(stringCompare('sharedWithUser.name'));
+  return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
 };
 
 selectors.platformLicense = createSelector(
@@ -4593,11 +4594,9 @@ selectors.selectedErrorIds = (state, { flowId, resourceId, options = {} }) => {
   return errors.filter(({ selected }) => selected).map(error => error.errorId);
 };
 
-selectors.isAllErrorsSelected = (
-  state,
-  { flowId, resourceId, filterKey, defaultFilter, isResolved }
-) => {
-  const errorFilter = selectors.filter(state, filterKey) || defaultFilter;
+selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved }) => {
+  const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
+  const errorFilter = selectors.filter(state, filterKey);
   const { errors = [] } = selectors.resourceErrors(state, {
     flowId,
     resourceId,
@@ -5210,3 +5209,37 @@ selectors.isEditorLookupSupported = (state, editorId) => {
 };
 
 // #endregion AFE selectors
+
+selectors.applicationName = (state, _expOrImpId) => {
+  if (!_expOrImpId) return;
+  const exportsList = selectors.resourceList(state, {
+    type: 'exports',
+  }).resources;
+  const resourceType = exportsList.find(e => e._id === _expOrImpId) ? 'exports' : 'imports';
+  const resource = selectors.resource(state, resourceType, _expOrImpId);
+
+  if (!resource) return;
+  const { _connectionId, type } = resource;
+
+  if (type === 'simple') {
+    return 'Data loader';
+  }
+
+  let appType;
+
+  if (!_connectionId) {
+    appType = type;
+  } else {
+    const connection = selectors.resource(state, 'connections', _connectionId) || {};
+
+    appType = connection.assistant || connection.rdbms?.type || connection.type;
+  }
+
+  return getApp(appType)?.name;
+};
+
+selectors.sourceOptions = createSelector(
+  state => selectors.getSourceMetadata(state),
+  (state, resourceId) => selectors.applicationName(state, resourceId),
+  (sources, applicationName) => getSourceOptions(sources, applicationName)
+);

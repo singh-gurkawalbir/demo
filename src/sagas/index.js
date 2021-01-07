@@ -59,7 +59,7 @@ import openErrorsSagas from './errorManagement/openErrors';
 import errorDetailsSagas from './errorManagement/errorDetails';
 import latestIntegrationJobsSagas from './errorManagement/latestJobs/integrations';
 import latestFlowJobsSagas from './errorManagement/latestJobs/flows';
-import errorRetrySagas from './errorManagement/retryData';
+import errorMetadataSagas from './errorManagement/metadata';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
 import { APIException } from './api';
@@ -174,7 +174,7 @@ export function* allSagas() {
     ...errorDetailsSagas,
     ...latestIntegrationJobsSagas,
     ...latestFlowJobsSagas,
-    ...errorRetrySagas,
+    ...errorMetadataSagas,
     ...customSettingsSagas,
     ...exportDataSagas,
     ...editorSampleData,
