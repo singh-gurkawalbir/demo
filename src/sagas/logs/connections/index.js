@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
-import { call, takeEvery, put, select, delay, fork, take, cancel} from 'redux-saga/effects';
+import { call, takeEvery, put, select, delay, fork, take, cancel, takeLatest} from 'redux-saga/effects';
+import moment from 'moment';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 // import { requestReferences } from '../../resources';
@@ -80,9 +81,23 @@ export function* downloadConnectionDebugLogs({ connectionId}) {
   }
   openExternalUrl({ url: _url });
 }
+export function* startDebug({connectionId, value}) {
+  const { debugDate } = yield select(selectors.resource, 'connections', connectionId);
+
+  const patchSet = [
+    {
+      op: debugDate ? 'replace' : 'remove',
+      path: '/debugDate',
+      value: moment().add(value, 'm').toISOString(),
+    },
+  ];
+
+  yield put(actions.resource.patch('connections', connectionId, patchSet));
+}
 export const connectionsLogSagas = [
   takeEvery(actionTypes.LOGS.CONNECTIONS.REQUEST, startPollingForConnectionDebugLogs),
-  takeEvery(actionTypes.LOGS.CONNECTIONS.REFRESH, startPollingForConnectionDebugLogs),
-  takeEvery(actionTypes.LOGS.CONNECTIONS.DELETE, deleteConnectionDebugLogs),
-  takeEvery(actionTypes.LOGS.CONNECTIONS.DOWNLOAD, downloadConnectionDebugLogs),
+  takeLatest(actionTypes.LOGS.CONNECTIONS.REFRESH, startPollingForConnectionDebugLogs),
+  takeLatest(actionTypes.LOGS.CONNECTIONS.DELETE, deleteConnectionDebugLogs),
+  takeLatest(actionTypes.LOGS.CONNECTIONS.DOWNLOAD, downloadConnectionDebugLogs),
+  takeLatest(actionTypes.LOGS.CONNECTIONS.START_DEBUG, startDebug),
 ];

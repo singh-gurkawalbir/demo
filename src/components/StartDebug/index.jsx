@@ -137,15 +137,13 @@ export default function StartDebug({ resourceId, resourceType}) {
   }, [anchorEl]);
 
   const handleSave = useCallback(() => {
-    const patchSet = [
-      {
-        op: value !== '0' ? 'replace' : 'remove',
-        path: resourceType === 'connections' ? '/debugDate' : '/debugUntil',
-        value: moment().add(value, 'm').toISOString(),
-      },
-    ];
+    const debugDuration = moment().add(value, 'm').toISOString();
 
-    dispatch(actions.resource.patch(resourceType, resourceId, patchSet));
+    if (resourceType === 'connections') {
+      dispatch(actions.logs.connections.startDebug(resourceId, debugDuration));
+    } else if (resourceType === 'scripts') {
+      dispatch(actions.logs.scripts.startDebug(resourceId, debugDuration));
+    }
 
     setAnchorEl(null);
   }, [dispatch, resourceId, resourceType, value]);

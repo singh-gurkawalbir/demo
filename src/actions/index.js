@@ -2122,6 +2122,8 @@ const logs = {
       action(actionTypes.LOGS.SCRIPTS.CLEAR, { flowId, scriptId }),
     loadMore: ({ flowId, scriptId }) =>
       action(actionTypes.LOGS.SCRIPTS.LOAD_MORE, { flowId, scriptId }),
+    startDebug: ({ scriptId, value }) =>
+      action(actionTypes.LOGS.SCRIPTS.START_DEBUG, { scriptId, value }),
   },
   connections: {
     request: connectionId =>
@@ -2138,7 +2140,8 @@ const logs = {
       action(actionTypes.LOGS.CONNECTIONS.DELETE, { connectionId }),
     download: connectionId =>
       action(actionTypes.LOGS.CONNECTIONS.DOWNLOAD, { connectionId }),
-
+    startDebug: (connectionId, value) =>
+      action(actionTypes.LOGS.CONNECTIONS.START_DEBUG, { connectionId, value }),
   },
 };
 

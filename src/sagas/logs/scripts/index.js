@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import { call, takeEvery, put, select, takeLatest } from 'redux-saga/effects';
+import moment from 'moment';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { requestReferences } from '../../resources';
@@ -151,9 +152,23 @@ export function* loadMoreLogs(opts) {
   yield call(fetchScriptLogs, {...opts, loadMore: true});
 }
 
+export function* startDebug({scriptId, value}) {
+  const { debugUntil } = yield select(selectors.resource, 'scripts', scriptId);
+
+  const patchSet = [
+    {
+      op: debugUntil ? 'replace' : 'remove',
+      path: '/debugUntil',
+      value: moment().add(value, 'm').toISOString(),
+    },
+  ];
+
+  yield put(actions.resource.patch('scripts', scriptId, patchSet));
+}
 export const scriptsLogSagas = [
   takeEvery(actionTypes.LOGS.SCRIPTS.REQUEST, requestScriptLogs),
   takeEvery(actionTypes.LOGS.SCRIPTS.LOAD_MORE, loadMoreLogs),
   takeLatest(actionTypes.LOGS.SCRIPTS.PATCH_FILTER, fetchScriptLogs),
   takeLatest(actionTypes.LOGS.SCRIPTS.REFRESH, fetchScriptLogs),
+  takeLatest(actionTypes.LOGS.SCRIPTS.START_DEBUG, startDebug),
 ];

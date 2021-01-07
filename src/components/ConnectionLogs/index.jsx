@@ -119,16 +119,8 @@ export default function ConnectionLogs({ connectionId, flowId }) {
   );
 
   const startAutoDebug = useCallback(() => {
-    const patchSet = [
-      {
-        op: debugMinutesPending !== '0' ? 'replace' : 'remove',
-        path: '/debugDate',
-        value: moment().add('15', 'm').toISOString(),
-      },
-    ];
-
-    dispatch(actions.resource.patch('connections', connectionId, patchSet));
-  }, [connectionId, debugMinutesPending, dispatch]);
+    dispatch(actions.logs.connections.startDebug(connectionId, 15));
+  }, [connectionId, dispatch]);
 
   useEffect(() => {
     if (!isInitTriggered) {
@@ -171,7 +163,6 @@ export default function ConnectionLogs({ connectionId, flowId }) {
             <CancelIcon />
             Clear
           </IconTextButton>
-
         </div>
       </div>
       <div className={classes.editorContainer}>
@@ -184,7 +175,6 @@ export default function ConnectionLogs({ connectionId, flowId }) {
             overrides={overrides}
         />
         )}
-
       </div>
     </div>
   );
