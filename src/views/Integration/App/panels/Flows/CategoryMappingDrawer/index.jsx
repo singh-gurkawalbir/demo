@@ -372,9 +372,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const match = useRouteMatch();
   const { flowId, categoryId } = match.params;
   const [requestedMetadata, setRequestedMetadata] = useState(false);
-  const mappingsChanged = useSelector(state =>
-    selectors.categoryMappingsChanged(state, integrationId, flowId)
-  );
+  const mappingsChanged = useSelectorMemo(selectors.mkCategoryMappingsChanged, integrationId, flowId);
   const mappingSaveStatus = useSelector(state =>
     selectors.categoryMappingSaveStatus(state, integrationId, flowId)
   );

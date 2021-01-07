@@ -761,27 +761,54 @@ selectors.mkMappedCategories = () => createSelector(
   }
 );
 
-selectors.variationMappingData = (state, integrationId, flowId) => {
-  const cKey = getCategoryKey(integrationId, flowId);
+selectors.mkVariationMappingData = () => createSelector(
+  (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)]?.response,
+  (response = emptySet) => {
+    const mappings = [];
+    let mappingMetadata = [];
+    const basicMappingData = response.find(
+      sec => sec.operation === 'mappingData'
+    );
 
-  if (!state) return null;
-  const { response = [] } = state[cKey] || emptyObj;
-  const mappings = [];
-  let mappingMetadata = [];
-  const basicMappingData = response.find(
-    sec => sec.operation === 'mappingData'
-  );
-
-  if (basicMappingData) {
-    mappingMetadata =
+    if (basicMappingData) {
+      mappingMetadata =
       basicMappingData.data.mappingData.variationMappings.recordMappings;
+    }
+
+    mappingMetadata.forEach(meta => {
+      flattenChildrenStructrue(mappings, meta);
+    });
+
+    return mappings;
   }
+);
 
-  mappingMetadata.forEach(meta => {
-    flattenChildrenStructrue(mappings, meta);
-  });
+selectors.mkMappingsForVariation = () => {
+  const variationMappingsSelector = selectors.mkVariationMappingData();
 
-  return mappings;
+  return createSelector(
+    variationMappingsSelector,
+    (_1, _2, _3, filters) => filters,
+    (recordMappings = emptyObj, filters = emptyObj) => {
+      const { sectionId, variation, isVariationAttributes } = filters;
+      let mappings = {};
+
+      if (Array.isArray(recordMappings)) {
+        mappings = recordMappings.find(item => item.id === sectionId) || {};
+      }
+
+      if (isVariationAttributes) {
+        return mappings;
+      }
+
+      // propery being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
+      // eslint-disable-next-line camelcase
+      const { variation_themes = [] } = mappings;
+
+      return (
+        variation_themes.find(theme => theme.variation_theme === variation) || emptyObj
+      );
+    });
 };
 
 selectors.mkCategoryMappingData = () => createSelector(
@@ -815,22 +842,25 @@ selectors.mkCategoryMappingData = () => createSelector(
   }, data => data);
 selectors.categoryMappingData = selectors.mkCategoryMappingData();
 
-selectors.categoryMappingGeneratesMetadata = (state, integrationId, flowId) => {
-  const cKey = getCategoryKey(integrationId, flowId);
+selectors.mkCategoryMappingGeneratesMetadata = () => createSelector(
+  (state, integrationId, flowId) => {
+    const cKey = getCategoryKey(integrationId, flowId);
 
-  if (!state) {
-    return null;
-  }
+    if (!state) {
+      return null;
+    }
 
-  const { generatesMetadata = [] } = state[cKey] || emptyObj;
-  const generates = [];
+    const { generatesMetadata = [] } = state[cKey] || emptyObj;
+    const generates = [];
 
-  generatesMetadata.forEach(meta => {
-    flattenChildrenStructrue(generates, meta);
-  });
+    generatesMetadata.forEach(meta => {
+      flattenChildrenStructrue(generates, meta);
+    });
 
-  return generates;
-};
+    return generates;
+  }, generates => generates
+);
+selectors.categoryMappingGeneratesMetadata = selectors.mkCategoryMappingGeneratesMetadata();
 
 selectors.mkCategoryMappingsForSection = () => createSelector(
   (state, integrationId, flowId, id) => {
@@ -950,41 +980,71 @@ selectors.mkCategoryMappingMetadata = () => createSelector(
   });
 selectors.categoryMappingMetadata = selectors.mkCategoryMappingMetadata();
 
-// #region PUBLIC SELECTORS
-selectors.categoryMappingsChanged = (state, integrationId, flowId) => {
-  const cKey = getCategoryKey(integrationId, flowId);
-  const isMappingsEqual = false;
+selectors.mkPendingCategoryMappings = () => {
+  const categoryMappingsGeneratesSelector = selectors.mkCategoryMappingGeneratesMetadata();
 
-  if (!state || !state[cKey] || !state[cKey].response) {
-    return isMappingsEqual;
-  }
-
-  const { response, mappings, deleted } =
-    selectors.categoryMapping(state, integrationId, flowId) || {};
-  const mappingData = response.find(op => op.operation === 'mappingData');
-  const sessionMappedData =
+  return createSelector(
+    (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)],
+    categoryMappingsGeneratesSelector,
+    (_1, _2, flowId) => flowId,
+    (categoryMappingData = emptyObj, categoryRelationshipData, flowId) => {
+      const { response = [], mappings, deleted, uiAssistant } = categoryMappingData;
+      const mappingData = response.find(op => op.operation === 'mappingData');
+      const sessionMappedData =
     mappingData && mappingData.data && mappingData.data.mappingData;
-  const clonedData = deepClone(sessionMappedData);
-  const categoryRelationshipData = selectors.categoryMappingGeneratesMetadata(
-    state,
-    integrationId,
-    flowId
-  );
 
-  mappingUtil.setCategoryMappingData(
-    flowId,
-    clonedData,
-    mappings,
-    deleted,
-    categoryRelationshipData
-  );
-  const initData = state[cKey].initMappingData;
+      // SessionMappedData is a state object reference and setCategoryMappingData recursively mutates the parameter, hence deepClone the sessionData
+      const sessionMappings = deepClone(sessionMappedData);
 
-  if (!initData || !initData.data || !initData.data.mappingData) {
-    return isMappingsEqual;
-  }
+      mappingUtil.setCategoryMappingData(
+        flowId,
+        sessionMappings,
+        mappings,
+        deleted,
+        categoryRelationshipData,
+        uiAssistant !== 'jet'
+      );
 
-  return !mappingUtil.isEqual(initData.data.mappingData, clonedData);
+      return sessionMappings;
+    });
+};
+selectors.pendingCategoryMappings = selectors.mkPendingCategoryMappings();
+
+// #region PUBLIC SELECTORS
+selectors.mkCategoryMappingsChanged = () => {
+  const categoryMappingsGeneratesSelector = selectors.mkCategoryMappingGeneratesMetadata();
+
+  return createSelector(
+    (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)],
+    categoryMappingsGeneratesSelector,
+    (_1, _2, flowId) => flowId,
+    (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)]?.initMappingData,
+    (categoryMappingData = emptyObj, categoryRelationshipData, flowId, initData) => {
+      const isMappingsEqual = false;
+
+      if (!categoryMappingData || !categoryMappingData.response) {
+        return isMappingsEqual;
+      }
+
+      const { response, mappings, deleted } = categoryMappingData;
+      const mappingData = response.find(op => op.operation === 'mappingData');
+      const sessionMappedData = mappingData && mappingData.data && mappingData.data.mappingData;
+      const clonedData = deepClone(sessionMappedData);
+
+      mappingUtil.setCategoryMappingData(
+        flowId,
+        clonedData,
+        mappings,
+        deleted,
+        categoryRelationshipData
+      );
+
+      if (!initData || !initData.data || !initData.data.mappingData) {
+        return isMappingsEqual;
+      }
+
+      return !mappingUtil.isEqual(initData.data.mappingData, clonedData);
+    });
 };
 
 selectors.categoryMappingSaveStatus = (state, integrationId, flowId) => {

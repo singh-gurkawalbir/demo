@@ -1407,18 +1407,6 @@ describe('integrationApps selector testcases', () => {
     });
   });
 
-  describe('selectors.pendingCategoryMappings test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.pendingCategoryMappings({})).toEqual();
-    });
-  });
-
-  describe('selectors.mappingsForVariation test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.mappingsForVariation({})).toEqual({});
-    });
-  });
-
   describe('selectors.integrationAppName test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       const selector = selectors.integrationAppName();

@@ -1,5 +1,4 @@
 /* eslint-disable no-param-reassign */
-import deepClone from 'lodash/cloneDeep';
 import uniqBy from 'lodash/uniqBy';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
@@ -1733,64 +1732,6 @@ selectors.mkIntegrationAppConnectionList = () => {
   );
 };
 selectors.integrationAppConnectionList = selectors.mkIntegrationAppConnectionList();
-
-selectors.pendingCategoryMappings = (state, integrationId, flowId) => {
-  const { response = [], mappings, deleted, uiAssistant } =
-    fromSession.categoryMapping(
-      state && state.session,
-      integrationId,
-      flowId
-    ) || {};
-  const mappingData = response.find(op => op.operation === 'mappingData');
-  const sessionMappedData =
-    mappingData && mappingData.data && mappingData.data.mappingData;
-  const categoryRelationshipData = fromSession.categoryMappingGeneratesMetadata(
-    state && state.session,
-    integrationId,
-    flowId
-  );
-  // SessionMappedData is a state object reference and setCategoryMappingData recursively mutates the parameter, hence deepClone the sessionData
-  const sessionMappings = deepClone(sessionMappedData);
-
-  mappingUtil.setCategoryMappingData(
-    flowId,
-    sessionMappings,
-    mappings,
-    deleted,
-    categoryRelationshipData,
-    uiAssistant !== 'jet'
-  );
-
-  return sessionMappings;
-};
-
-selectors.mappingsForVariation = (state, integrationId, flowId, filters = emptyObject) => {
-  const { sectionId, variation, isVariationAttributes } = filters;
-  let mappings = {};
-  const recordMappings =
-    fromSession.variationMappingData(
-      state && state.session,
-      integrationId,
-      flowId
-    ) || emptyObject;
-
-  if (Array.isArray(recordMappings)) {
-    mappings = recordMappings.find(item => item.id === sectionId) || {};
-  }
-
-  if (isVariationAttributes) {
-    return mappings;
-  }
-
-  // propery being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
-  // eslint-disable-next-line camelcase
-  const { variation_themes = [] } = mappings;
-
-  return (
-    variation_themes.find(theme => theme.variation_theme === variation) ||
-    emptyObject
-  );
-};
 
 selectors.integrationAppName = () => createSelector(
   state => state?.data?.resources?.integrations,
