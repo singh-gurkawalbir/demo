@@ -60,7 +60,10 @@ function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator
     'MongodbExport',
     'DynamodbImport',
     'DynamodbExport',
+    'SalesforceImport',
     'SalesforceExport',
+    'NetSuiteImport',
+    'NetSuiteExport',
   ].includes(resource.adaptorType);
 }
 

@@ -175,9 +175,11 @@ export default {
     ],
   },
   'salesforce.id': {
-    type: 'text',
+    type: 'uri',
     label: 'Id',
     required: true,
+    showExtract: false,
+    showLookup: false,
     visibleWhen: [
       {
         field: 'outputMode',
