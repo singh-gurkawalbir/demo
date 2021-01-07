@@ -1,8 +1,9 @@
+import React, { useCallback, useState } from 'react';
 import { Button, MenuItem, InputLabel, FormControl} from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import moment from 'moment';
-import React, { useCallback, useState } from 'react';
+import TimeAgo from 'react-timeago';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
@@ -89,13 +90,30 @@ const debugOptions = [
   { label: 'Next 45 mins', value: '45' },
   { label: 'Next 60 mins', value: '60' },
 ];
+
+const formatter = (value, unit, suffix) => {
+  if (suffix === 'ago') {
+    return 'Start debug';
+  }
+  let formattedUnit = '';
+
+  if (unit === 'second') {
+    formattedUnit = 's';
+  } else if (unit === 'minute') {
+    formattedUnit = 'm';
+  } else {
+    formattedUnit = unit;
+  }
+
+  return `${value}${formattedUnit} remaining`;
+};
 const defaultValue = 15;
 export default function StartDebug({ resourceId, resourceType}) {
   const [value, setValue] = useState(defaultValue);
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const dispatch = useDispatch();
-  const debugMinutesPending = useSelector(state => {
+  const debugUntil = useSelector(state => {
     const resource = selectors.resource(state, resourceType, resourceId);
     let debugUntil;
 
@@ -105,11 +123,12 @@ export default function StartDebug({ resourceId, resourceType}) {
       debugUntil = resource.debugUntil;
     }
     if (!debugUntil || moment().isAfter(moment(debugUntil))) {
-      return 0;
+      return;
     }
 
-    return moment(debugUntil).diff(moment(), 'minutes');
+    return debugUntil;
   });
+
   const toggleClick = useCallback(event => {
     if (anchorEl) {
       setValue(defaultValue);
@@ -146,12 +165,12 @@ export default function StartDebug({ resourceId, resourceType}) {
   return (
     <>
       <IconTextButton
-        key={debugMinutesPending}
         onClick={toggleClick}
         data-test="refreshResource">
         <DebugIcon />
-        {debugMinutesPending > 1 ? `${debugMinutesPending}m remaining` : 'Start Debug'}
-
+        {debugUntil ? (
+          <TimeAgo date={debugUntil} formatter={formatter} />
+        ) : 'Start debug'}
       </IconTextButton>
       <ArrowPopper
         open={!!anchorEl}
