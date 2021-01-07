@@ -19,6 +19,7 @@ function _constructEditorTitle(label) {
   return `Build ${label[0].toLowerCase()}${label.slice(1)}`;
 }
 function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator}) {
+  // lookup fields dont support toggle yet
   if (fieldId === '_body' || fieldId === '_relativeURI') return false;
 
   // for below fields,
@@ -26,8 +27,7 @@ function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator
   // TODO: we will not need all these conditions once all fields/adaptors support AFE2
   if (fieldId === 'idLockTemplate' ||
   fieldId === 'dataURITemplate' ||
-  fieldId === 'http.once.relativeURI' ||
-  fieldId === 'http.once.body') {
+  fieldId.includes('once')) {
     if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
       return connection.isHTTP;
     }
@@ -60,6 +60,7 @@ function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator
     'MongodbExport',
     'DynamodbImport',
     'DynamodbExport',
+    'SalesforceExport',
   ].includes(resource.adaptorType);
 }
 
@@ -75,6 +76,8 @@ export default {
       const formattedRule = typeof arrayIndex === 'number' && Array.isArray(value) ? value[arrayIndex] : value;
 
       rule = typeof formattedRule === 'string' ? formattedRule : JSON.stringify(formattedRule, null, 2);
+    } else if (type === 'soqlquery') {
+      rule = value?.query;
     }
 
     const editorSupportsV1V2data = _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator});

@@ -137,7 +137,12 @@ export default {
   'file.compressionFormat': {
     type: 'select',
     label: 'Compression format',
-    options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
+    options: [{ items: [{ label: 'gzip', value: 'gzip' }, { label: 'zip', value: 'zip' }] }],
+  },
+  'file.backupPath': {
+    type: 'uri',
+    label: 'Backup files path',
+    helpKey: 'import.file.backupPath',
   },
   'file.skipAggregation': {
     type: 'checkbox',

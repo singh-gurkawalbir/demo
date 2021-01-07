@@ -4,6 +4,7 @@ import HandlebarsPanel from '../Editor/panels/Handlebars';
 import FeaturePanel from '../Editor/panels/Feature';
 import ManageLookup from '../Drawer/actions/ManageLookup';
 import ToggleAFEButton from '../Drawer/actions/ToggleAFEButton';
+import HandlebarGuide from '../Drawer/actions/HandlebarGuide';
 
 export default {
   type: 'sql',
@@ -65,6 +66,7 @@ export default {
       { component: ToggleAFEButton,
         position: 'left',
       },
+      { component: HandlebarGuide, position: 'right' },
       { component: ManageLookup,
         position: 'right',
       },

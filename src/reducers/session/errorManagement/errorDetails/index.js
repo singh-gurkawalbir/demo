@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { union } from 'lodash';
 import actionTypes from '../../../../actions/types';
 
 const defaultObject = {};
@@ -16,6 +17,7 @@ export default (state = {}, action) => {
     retryCount,
     resolveCount,
     diff: errorCountDiff,
+    traceKeys = [],
   } = action;
 
   return produce(state, draft => {
@@ -152,6 +154,17 @@ export default (state = {}, action) => {
         break;
       }
 
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.TRACK_RETRIED_TRACE_KEYS: {
+        if (!draft?.[flowId]?.[resourceId]?.actions?.retry || !traceKeys.length) {
+          break;
+        }
+        const prevTraceKeys = draft[flowId][resourceId].actions.retry.traceKeys || [];
+        const updatedTraceKeys = union(prevTraceKeys, traceKeys);
+
+        draft[flowId][resourceId].actions.retry.traceKeys = updatedTraceKeys;
+        break;
+      }
+
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.NOTIFY_UPDATE: {
         if (!draft[flowId] || !draft[flowId][resourceId]) {
           break;
@@ -166,13 +179,13 @@ export default (state = {}, action) => {
         }
         break;
       }
+
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.CLEAR:
         if (!draft[flowId] || !draft[flowId][resourceId]) {
           break;
         }
         draft[flowId][resourceId].open = {};
         draft[flowId][resourceId].resolved = {};
-        draft[flowId][resourceId].actions = {};
         break;
       default:
     }
@@ -201,4 +214,12 @@ selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved, errorI
   return !errors.some(
     error => errorIds.includes(error.errorId) && !error.selected
   );
+};
+
+selectors.isTraceKeyRetried = (state, { flowId, resourceId, traceKey }) => {
+  if (!traceKey || !state?.[flowId]?.[resourceId]?.actions?.retry?.traceKeys) {
+    return false;
+  }
+
+  return state[flowId][resourceId].actions.retry.traceKeys.includes(traceKey);
 };

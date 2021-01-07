@@ -1,7 +1,7 @@
 import React from 'react';
 import SvgIcon from '@material-ui/core/SvgIcon';
 
-export default function FileIcon(props) {
+export default function FilterIcon(props) {
   return (
     <SvgIcon {...props}>
       <path
