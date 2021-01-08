@@ -6,7 +6,8 @@ export default {
     '/http/auth/type': 'token',
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://api.orderful.com',
-    '/http/ping/relativeURI': '/v2/transactions',
+    '/http/ping/relativeURI': `${formValues['/http/unencrypted/version'] === 'v2' ? '/v2/transactions' : '/v3/organizations/me'
+    }`,
     '/http/ping/method': 'GET',
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'orderful-api-key',
@@ -14,6 +15,32 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
+    'http.unencrypted.version': {
+      id: 'http.unencrypted.version',
+      required: true,
+      type: 'select',
+      label: 'Version',
+      helpKey: 'orderful.connection.http.unencrypted.version',
+      options: [
+        {
+          items: [
+            { label: 'V2', value: 'v2' },
+            { label: 'V3', value: 'v3' },
+          ],
+        },
+      ],
+      defaultValue: r => {
+        const relativeUri = r && r.http && r.http.ping && r.http.ping.relativeURI;
+
+        if (relativeUri) {
+          if (relativeUri.indexOf('/v3') === -1) {
+            return 'v2';
+          }
+
+          return 'v3';
+        }
+      },
+    },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       helpKey: 'orderful.connection.http.auth.token.token',
@@ -31,7 +58,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.auth.token.token'] },
+        fields: ['http.unencrypted.version', 'http.auth.token.token'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
