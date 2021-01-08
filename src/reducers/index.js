@@ -81,7 +81,7 @@ import { stringCompare } from '../utils/sort';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import { getFilteredErrors } from '../utils/errorManagement';
+import { getFilteredErrors, FILTER_KEYS, getSourceOptions } from '../utils/errorManagement';
 import {
   getFlowStepsYetToBeCreated,
   generatePendingFlowSteps,
@@ -89,6 +89,7 @@ import {
   getParentJobSteps,
 } from '../utils/latestJobs';
 import getJSONPaths from '../utils/jsonPaths';
+import { getApp } from '../constants/applications';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -676,10 +677,11 @@ selectors.mkFlowDetails = () => {
       return integrationResourceSel(state, 'integrations', flow._integrationId);
     },
     state => state?.data?.resources?.exports,
-    (flow, integration, exports) => {
+    (_1, _2, childId) => childId,
+    (flow, integration, exports, childId) => {
       if (!flow) return emptyObject;
 
-      return getFlowDetails(flow, integration, exports);
+      return getFlowDetails(flow, integration, exports, childId);
     });
 };
 
@@ -705,7 +707,8 @@ selectors.mkFlowAttributes = () => createSelector(
   state => state?.data?.resources?.exports,
   (_, flows) => flows,
   (_1, _2, integration) => integration,
-  (exps = emptyArray, flows = emptyArray, integration) => {
+  (_1, _2, _3, childId) => childId,
+  (exps = emptyArray, flows = emptyArray, integration, childId) => {
     const out = {};
 
     if (exps.length < 1) return out;
@@ -737,7 +740,7 @@ selectors.mkFlowAttributes = () => createSelector(
       else {
         // strange flow setting name to indicate that flows can not be
         // enabled/disabled by a user...
-        const iaFlowSettings = getIAFlowSettings(integration, flow._id);
+        const iaFlowSettings = getIAFlowSettings(integration, flow._id, childId);
 
         isLocked = iaFlowSettings?.disableSlider;
         isRunnable = !iaFlowSettings?.disableRunFlow;
@@ -745,11 +748,11 @@ selectors.mkFlowAttributes = () => createSelector(
       o.disableRunFlow = isRunnable;
       o.isFlowEnableLocked = isLocked;
       // allowSchedule
-      o.allowSchedule = flowAllowsScheduling(flow, integration, [], isIntegrationV2, flExp);
+      o.allowSchedule = flowAllowsScheduling(flow, integration, [], isIntegrationV2, flExp, childId);
       // flow type
       o.type = getFlowType(flow, [], flExp);
       // supports settings
-      o.supportsSettings = flowSupportsSettings(flow, integration);
+      o.supportsSettings = flowSupportsSettings(flow, integration, childId);
     });
 
     return out;
@@ -792,7 +795,7 @@ selectors.mkFlowAllowsScheduling = () => {
   );
 };
 
-selectors.flowUsesUtilityMapping = (state, id) => {
+selectors.flowUsesUtilityMapping = (state, id, childId) => {
   const flow = selectors.resource(state, 'flows', id);
 
   if (!flow) return false;
@@ -801,12 +804,12 @@ selectors.flowUsesUtilityMapping = (state, id) => {
 
   if (!isApp) return false;
 
-  const flowSettings = getIAFlowSettings(integration, flow._id);
+  const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
   return !!flowSettings.showUtilityMapping;
 };
 
-selectors.flowSupportsMapping = (state, id) => {
+selectors.flowSupportsMapping = (state, id, childId) => {
   const flow = selectors.resource(state, 'flows', id);
 
   if (!flow) return false;
@@ -819,18 +822,18 @@ selectors.flowSupportsMapping = (state, id) => {
 
   const integration = selectors.resource(state, 'integrations', flow._integrationId);
 
-  const flowSettings = getIAFlowSettings(integration, flow._id);
+  const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
   return !!flowSettings.showMapping;
 };
 
-selectors.flowSupportsSettings = (state, id) => {
+selectors.flowSupportsSettings = (state, id, childId) => {
   const flow = selectors.resource(state, 'flows', id);
 
   if (!flow) return false;
   const integration = selectors.resource(state, 'integrations', flow._integrationId);
 
-  return flowSupportsSettings(flow, integration);
+  return flowSupportsSettings(flow, integration, childId);
 };
 
 /* End of refactoring of flowDetails selector.. Once all use is refactored of
@@ -2220,7 +2223,17 @@ selectors.makeIntegrationAppSectionFlows = () =>
 
       selectedSections.forEach(sec => {
         sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
-        requiredFlows.push(...sectionFlows.map(f => ({id: f._id, childId: sec.childId, childName: sec.childName})));
+        sectionFlows.forEach(f => {
+          const flow = requiredFlows.find(fi => fi.id === f._id);
+
+          if (flow) {
+            // If flow is present in two stores, then it is a commom flow and does not belong to any single store, so remove store information from flow
+            delete flow.childId;
+            delete flow.childName;
+          } else {
+            requiredFlows.push({id: f._id, childId: sec.childId, childName: sec.childName});
+          }
+        });
       });
       const requiredFlowIds = requiredFlows.map(f => f.id);
 
@@ -2407,7 +2420,7 @@ selectors.availableUsersList = (state, integrationId) => {
     ];
   }
 
-  return _users.sort(stringCompare('sharedWithUser.name'));
+  return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
 };
 
 selectors.platformLicense = createSelector(
@@ -4593,11 +4606,9 @@ selectors.selectedErrorIds = (state, { flowId, resourceId, options = {} }) => {
   return errors.filter(({ selected }) => selected).map(error => error.errorId);
 };
 
-selectors.isAllErrorsSelected = (
-  state,
-  { flowId, resourceId, filterKey, defaultFilter, isResolved }
-) => {
-  const errorFilter = selectors.filter(state, filterKey) || defaultFilter;
+selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved }) => {
+  const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
+  const errorFilter = selectors.filter(state, filterKey);
   const { errors = [] } = selectors.resourceErrors(state, {
     flowId,
     resourceId,
@@ -5210,3 +5221,37 @@ selectors.isEditorLookupSupported = (state, editorId) => {
 };
 
 // #endregion AFE selectors
+
+selectors.applicationName = (state, _expOrImpId) => {
+  if (!_expOrImpId) return;
+  const exportsList = selectors.resourceList(state, {
+    type: 'exports',
+  }).resources;
+  const resourceType = exportsList.find(e => e._id === _expOrImpId) ? 'exports' : 'imports';
+  const resource = selectors.resource(state, resourceType, _expOrImpId);
+
+  if (!resource) return;
+  const { _connectionId, type } = resource;
+
+  if (type === 'simple') {
+    return 'Data loader';
+  }
+
+  let appType;
+
+  if (!_connectionId) {
+    appType = type;
+  } else {
+    const connection = selectors.resource(state, 'connections', _connectionId) || {};
+
+    appType = connection.assistant || connection.rdbms?.type || connection.type;
+  }
+
+  return getApp(appType)?.name;
+};
+
+selectors.sourceOptions = createSelector(
+  state => selectors.getSourceMetadata(state),
+  (state, resourceId) => selectors.applicationName(state, resourceId),
+  (sources, applicationName) => getSourceOptions(sources, applicationName)
+);

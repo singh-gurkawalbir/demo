@@ -110,6 +110,7 @@ export default function menuItems(
           Icon: HelpCenterIcon,
           component: 'a',
           href: getHelpUrl(integrations, marketplaceConnectors),
+          dataTest: 'help_center',
         },
         {
           label: "What's new",
@@ -130,6 +131,7 @@ export default function menuItems(
       Icon: UniversityIcon,
       href: getUniversityUrl,
       component: 'a',
+      dataTest: 'celigo_university',
     },
     {
       label: 'Marketplace',

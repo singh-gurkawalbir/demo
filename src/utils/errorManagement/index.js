@@ -1,4 +1,18 @@
-import { get } from 'lodash';
+import { get, sortBy } from 'lodash';
+
+export const FILTER_KEYS = {
+  OPEN: 'openErrors',
+  RESOLVED: 'resolvedErrors',
+};
+
+export const DEFAULT_FILTERS = {
+  OPEN: {
+    searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey', 'errorId'],
+  },
+  RESOLVED: {
+    searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey', 'errorId', 'resolvedAt', 'resolvedBy'],
+  },
+};
 
 export const getFilteredErrors = (errors = [], options = {}) => {
   const { keyword, searchBy = [] } = options;
@@ -81,3 +95,32 @@ export const getErrorCountDiffMap = (prevErrorMap = {}, currErrorMap = {}) => {
   return errorDiffMap;
 };
 
+export const getSourceOptions = (sourceList = [], applicationName) => {
+  const sourceLabelsMap = {
+    internal: 'Internal',
+    application: `${applicationName || 'Application'}`,
+    connection: 'Connection',
+    resource: 'Resource',
+    transformation: 'Transformation',
+    output_filter: 'Output filter',
+    input_filter: 'Input filter',
+    import_filter: 'Import filter',
+    lookup: 'Lookup',
+    mapping: 'Mapping',
+    response_mapping: 'Response mapping',
+    pre_save_page_hook: 'Pre save page hook',
+    pre_map_hook: 'Pre map hook',
+    post_map_hook: 'Post map hook',
+    post_submit_hook: 'Post submit hook',
+    post_response_map_hook: 'Post response map hook',
+    post_aggregate_hook: 'Post aggregate hook',
+    pre_send_hook_ss: 'Pre send suitescript hook',
+    pre_map_hook_ss: 'Pre map suitescript hook',
+    post_map_hook_ss: 'Post map suitescript hook',
+    post_submit_hook_ss: 'Post submit suitescript hook',
+  };
+  const options = sourceList.map(sourceId => ({_id: sourceId, name: sourceLabelsMap[sourceId] || sourceId}));
+  const sortedOptions = sortBy(options, s => s.name);
+
+  return [{ _id: 'all', name: 'All sources'}, ...sortedOptions];
+};

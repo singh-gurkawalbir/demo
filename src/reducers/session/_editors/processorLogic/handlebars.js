@@ -19,6 +19,12 @@ function _constructEditorTitle(label) {
   return `Build ${label[0].toLowerCase()}${label.slice(1)}`;
 }
 function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator}) {
+  if (fieldId === '_query') {
+    // we dont get whole resource object in case of rdbms lookup query so
+    // change this to true when lookup query supports toggle in future
+    return false;
+  }
+  // lookup fields dont support toggle yet
   if (fieldId === '_body' || fieldId === '_relativeURI') return false;
 
   // for below fields,
@@ -26,8 +32,7 @@ function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator
   // TODO: we will not need all these conditions once all fields/adaptors support AFE2
   if (fieldId === 'idLockTemplate' ||
   fieldId === 'dataURITemplate' ||
-  fieldId === 'http.once.relativeURI' ||
-  fieldId === 'http.once.body') {
+  fieldId.includes('once')) {
     if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
       return connection.isHTTP;
     }
@@ -60,7 +65,10 @@ function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator
     'MongodbExport',
     'DynamodbImport',
     'DynamodbExport',
+    'SalesforceImport',
     'SalesforceExport',
+    'NetSuiteImport',
+    'NetSuiteExport',
   ].includes(resource.adaptorType);
 }
 

@@ -259,6 +259,9 @@ inputMode: {
 'file.encoding': {
   fieldId: 'file.encoding',
 },
+'file.backupPath': {
+  fieldId: 'file.backupPath',
+},
 deleteAfterImport: {
   fieldId: 'deleteAfterImport',
   visibleWhen: [

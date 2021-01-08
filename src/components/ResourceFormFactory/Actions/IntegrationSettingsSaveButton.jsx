@@ -27,7 +27,7 @@ export default function IntegrationSettingsSaveButton(props) {
   } = props;
   const dispatch = useDispatch();
   const { settings: fields, sections } = useSelector(
-    state => selectors.iaFlowSettings(state, integrationId, flowId),
+    state => selectors.iaFlowSettings(state, integrationId, flowId, storeId),
     shallowEqual
   );
   const flowSettingsMemo = useMemo(

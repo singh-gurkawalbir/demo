@@ -3,10 +3,21 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
-import { updateRetryData } from '../retryData';
+import { updateRetryData } from '../metadata';
 import getRequestOptions from '../../../utils/requestOptions';
 import openExternalUrl from '../../../utils/window';
+import { FILTER_KEYS } from '../../../utils/errorManagement';
 
+function* formatErrors({ errors, resourceId }) {
+  const application = yield select(selectors.applicationName, resourceId);
+
+  const formattedErrors = errors.map(e => ({
+    ...e,
+    source: (e.source === 'application' && application) ? application : e.source,
+  }));
+
+  return formattedErrors;
+}
 function* requestErrorDetails({
   flowId,
   resourceId,
@@ -14,27 +25,37 @@ function* requestErrorDetails({
   isResolved = false,
 }) {
   try {
-    let path = `/flows/${flowId}/${resourceId}/${
-      isResolved ? 'resolved' : 'errors'
-    }`;
+    const errorType = isResolved ? 'resolvedErrors' : 'openErrors';
+    const filters = yield select(selectors.filter, errorType);
+
+    let nextPageURL;
 
     if (loadMore) {
-      const { nextPageURL } = yield select(selectors.resourceErrors, {
+      const errors = yield select(selectors.resourceErrors, {
         flowId,
         resourceId,
         options: { isResolved },
       });
 
+      nextPageURL = errors?.nextPageURL;
+
       if (!nextPageURL) return;
-      path = nextPageURL.replace('/api', '');
     }
+
+    const requestOptions = getRequestOptions(
+      actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST,
+      { flowId, resourceId, isResolved, filters, nextPageURL }
+    );
+    const { path, opts } = requestOptions;
 
     const errorDetails = yield apiCallWithRetry({
       path,
-      opts: {
-        method: 'GET',
-      },
+      opts,
     });
+
+    const errorKey = isResolved ? 'resolved' : 'errors';
+
+    errorDetails[errorKey] = yield call(formatErrors, { resourceId, errors: errorDetails[errorKey] });
 
     yield put(
       actions.errorManager.flowErrorDetails.received({
@@ -54,9 +75,10 @@ function* requestErrorDetails({
   }
 }
 
-function* selectAllErrorDetails({ flowId, resourceId, checked, options }) {
-  const { filterKey, defaultFilter, isResolved } = options || {};
-  const errorFilter = yield select(selectors.filter, filterKey) || defaultFilter;
+function* selectAllErrorDetails({ flowId, resourceId, checked, isResolved }) {
+  const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
+  const errorFilter = yield select(selectors.filter, filterKey);
+
   const { errors = [] } = yield select(selectors.resourceErrors, {
     flowId,
     resourceId,
@@ -137,6 +159,17 @@ function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
         errorIds,
       })
     );
+    const traceKeyList = errors
+      .filter(({errorId, traceKey }) => !!(errorIds.includes(errorId) && traceKey))
+      .map(error => error.traceKey);
+
+    if (traceKeyList.length) {
+      yield put(actions.errorManager.flowErrorDetails.trackTraceKeys({
+        flowId,
+        resourceId,
+        traceKeys: traceKeyList,
+      }));
+    }
   } catch (e) {
     // console.log('error');
   }
