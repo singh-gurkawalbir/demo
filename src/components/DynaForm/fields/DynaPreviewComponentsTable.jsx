@@ -3,12 +3,16 @@ import { makeStyles } from '@material-ui/core/styles';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR, RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
 import DynaCeligoTable from './DynaCeligoTable';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   previewTableWrapper: {
     width: '100%',
-    paddingBottom: 16,
+    marginBottom: theme.spacing(2),
   },
-});
+  accordianWrapper: {
+    marginBottom: theme.spacing(2),
+    width: '100%',
+  },
+}));
 
 export default function DynaPreviewComponentsTable({ data: objects, columns, resourceType: cloneResourceType }) {
   const classes = useStyles();
@@ -34,6 +38,7 @@ export default function DynaPreviewComponentsTable({ data: objects, columns, res
       <DynaCeligoTable
         title="Flows"
         collapsable
+        className={classes.accordianWrapper}
         data={componentsMap?.Flow}
         columns={columns}
         defaultExpand />
