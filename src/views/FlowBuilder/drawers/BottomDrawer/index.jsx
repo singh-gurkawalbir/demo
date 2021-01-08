@@ -21,9 +21,9 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RunDashboardActions from './panels/Dashboard/RunDashboardActions';
 import useBottomDrawer from './useBottomDrawer';
 import Spinner from '../../../../components/Spinner';
-import ScriptLogs from '../../../../components/ScriptLogs';
+import ScriptLogs from '../../../ScriptLogs';
 import ScriptsIcon from '../../../../components/icons/ScriptsIcon';
-import ConnectionLogs from '../../../../components/ConnectionLogs';
+import ConnectionLogs from '../../../ConnectionLogs';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {

@@ -23,7 +23,7 @@ import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import StackShareDrawer from '../../components/StackShare/Drawer';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
-import ScriptLogsDrawerRoute from '../../components/ScriptLogs/Drawer';
+import ScriptLogsDrawerRoute from '../ScriptLogs/Drawer';
 
 const useStyles = makeStyles(theme => ({
   actions: {

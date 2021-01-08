@@ -107,7 +107,6 @@ export default function ScriptLogs({ flowId, scriptId }) {
   const rowsPerPageOptions = [10, 25, 50];
   const DEFAULT_ROWS_PER_PAGE = 50;
   const dispatch = useDispatch();
-  const [isInitTriggered, setIsInitTriggered] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE);
 
@@ -180,16 +179,10 @@ export default function ScriptLogs({ flowId, scriptId }) {
   );
 
   useEffect(() => {
-    if (isInitTriggered) {
+    if (status === undefined) {
       dispatch(actions.logs.scripts.request({scriptId, flowId}));
-      setIsInitTriggered(true);
     }
-
-    // return () => {
-    //   console.log('clear triggered');
-    //   dispatch(actions.logs.scripts.clear({scriptId, flowId}));
-    // };
-  }, [dispatch, scriptId, flowId, isInitTriggered]);
+  }, [dispatch, flowId, scriptId, status]);
 
   return (
     <div className={classes.root}>
