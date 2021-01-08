@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Select from '@material-ui/core/Select';
@@ -11,27 +12,34 @@ import Spinner from '../Spinner';
 
 const useStyles = makeStyles(theme => ({
   label: {
-    textAlign: 'center',
-    // display: 'flex',
+    padding: theme.spacing(0, 1),
   },
-  arrow: {
-    paddingLeft: '0px',
-    paddingRight: '0px',
+  arrowBtn: {
+    padding: 0,
+    minWidth: theme.spacing(3),
+    maxWidth: theme.spacing(4),
+    display: 'flex',
+    marginLeft: 0,
+    '& > * svg': {
+      marginLeft: theme.spacing(1),
+    },
   },
   resultsLabel: {
     display: 'flex',
     alignItems: 'center',
+    marginRight: theme.spacing(1),
   },
   selectRowsPage: {
-    paddingTop: 5,
     marginLeft: 5,
   },
-  labelLeft: {
-    color: theme.palette.secondary.main,
+  pagesCountWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    marginRight: theme.spacing(3),
   },
-  pageWrapper: {
-    button: {
-      minWidth: 28,
+  arrowBtnRight: {
+    '& > svg': {
+      marginRight: 0,
     },
   },
 }));
@@ -100,12 +108,12 @@ export default function Pagination(props) {
       {rowsPerPageOptions.length > 1 ? (
 
         <div className={classes.resultsLabel}>
-          <Typography className={classes.labelLeft}>{resultPerPageLabel}</Typography>
+          <Typography variant="body2">{resultPerPageLabel}</Typography>
           <Select
             value={rowsPerPage}
+            className={classes.selectRowsPage}
             IconComponent={ArrowDownIcon}
             disableUnderline
-            className={classes.selectRowsPage}
             displayEmpty
             onChange={onChangeRowsPerPage}>
             {rowsPerPageOptions.map(opt => (
@@ -116,10 +124,10 @@ export default function Pagination(props) {
           </Select>
         </div>
       ) : null}
-      <div className={classes.pageWrapper}>
+      <div className={classes.pagesCountWrapper}>
         <IconTextButton
           onClick={handlePrevPage}
-          className={classes.arrow}
+          className={classes.arrowBtn}
           disabled={page === 0}>
           <ArrowLeftIcon />
         </IconTextButton>
@@ -129,7 +137,7 @@ export default function Pagination(props) {
         ) : (
           <IconTextButton
             onClick={handleNextPage}
-            className={classes.arrow}
+            className={clsx(classes.arrowBtn, classes.arrowBtnRight)}
             disabled={disableNextPage}>
             <ArrowRightIcon />
           </IconTextButton>
