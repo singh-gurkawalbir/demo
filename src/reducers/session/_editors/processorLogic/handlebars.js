@@ -32,7 +32,7 @@ function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator
   // TODO: we will not need all these conditions once all fields/adaptors support AFE2
   if (fieldId === 'idLockTemplate' ||
   fieldId === 'dataURITemplate' ||
-  fieldId.includes('once')) {
+  fieldId?.includes('once')) {
     if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
       return connection.isHTTP;
     }
