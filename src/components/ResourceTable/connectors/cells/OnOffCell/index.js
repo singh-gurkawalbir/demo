@@ -30,18 +30,18 @@ export default function OnOffCell({
       },
     ];
 
-    console.log(resourceType);
-    // dispatch(actions.resource.isPublishActionInprogress(true, resourceId));
     dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
     dispatch(actions.resource.commitStaged(resourceType, resourceId));
   }, [dispatch, isPublished, resourceId, resourceType]);
   const handleTogglePublishConfirm = useCallback(() => {
+    const label = isPublished ? 'unpublish' : 'publish';
+
     confirmDialog({
-      title: `Confirm ${isPublished ? 'unpublish' : 'publish'}`,
-      message: `Are you sure you want to ${isPublished ? 'unpublish' : 'publish'} this integration app?`,
+      title: `Confirm ${label}`,
+      message: `Are you sure you want to ${label} this integration app?`,
       buttons: [
         {
-          label: isPublished ? 'Unpublish' : 'Publish',
+          label,
           onClick: togglePublish,
         },
         {
