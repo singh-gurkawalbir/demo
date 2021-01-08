@@ -3,9 +3,9 @@ import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import ScriptLogs from '.';
 import { selectors } from '../../reducers';
-import RightDrawer from '../drawer/Right';
-import DrawerHeader from '../drawer/Right/DrawerHeader';
-import LoadResources from '../LoadResources';
+import RightDrawer from '../../components/drawer/Right';
+import DrawerHeader from '../../components/drawer/Right/DrawerHeader';
+import LoadResources from '../../components/LoadResources';
 
 const ScriptLogsWrapper = () => {
   const match = useRouteMatch();

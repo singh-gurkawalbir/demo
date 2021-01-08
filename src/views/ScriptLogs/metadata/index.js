@@ -1,5 +1,5 @@
 import React from 'react';
-import ResourceName from '../../ResourceName';
+import ResourceName from '../../../components/ResourceName';
 import ViewLogDetail from './actions/ViewLogDetail';
 
 export default {

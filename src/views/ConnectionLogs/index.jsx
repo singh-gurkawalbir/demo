@@ -5,13 +5,13 @@ import moment from 'moment';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
-import RunFlowButton from '../RunFlowButton';
-import StartDebug from '../StartDebug';
-import IconTextButton from '../IconTextButton';
-import CancelIcon from '../icons/CancelIcon';
-import RefreshIcon from '../icons/RefreshIcon';
-import CodePanel from '../AFE/GenericEditor/CodePanel';
+import RunFlowButton from '../../components/RunFlowButton';
+import StartDebug from '../../components/StartDebug';
+import IconTextButton from '../../components/IconTextButton';
+import CancelIcon from '../../components/icons/CancelIcon';
+import RefreshIcon from '../../components/icons/RefreshIcon';
 import DownloadDebugLogs from './DownloadDebugLogs';
+import CodePanel from '../../components/AFE/GenericEditor';
 
 const overrides = { useWorker: false };
 

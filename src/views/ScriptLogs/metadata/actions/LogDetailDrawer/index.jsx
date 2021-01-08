@@ -2,9 +2,9 @@ import React, { useEffect, useCallback } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../../reducers';
-import RightDrawer from '../../../../drawer/Right';
-import DrawerContent from '../../../../drawer/Right/DrawerContent';
-import DrawerHeader from '../../../../drawer/Right/DrawerHeader';
+import RightDrawer from '../../../../../components/drawer/Right';
+import DrawerContent from '../../../../../components/drawer/Right/DrawerContent';
+import DrawerHeader from '../../../../../components/drawer/Right/DrawerHeader';
 
 const emptyObj = {};
 const ScriptLogDetailDrawerHeader = () => {

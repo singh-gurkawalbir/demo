@@ -2,8 +2,8 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../actions';
-import DownloadIcon from '../../icons/DownloadIcon';
-import IconTextButton from '../../IconTextButton';
+import DownloadIcon from '../../../components/icons/DownloadIcon';
+import IconTextButton from '../../../components/IconTextButton';
 
 export default function DownloadDebugLogs({ connectionId, disabled}) {
   const dispatch = useDispatch();
