@@ -575,7 +575,7 @@ export function* patchResource({ resourceType, id, patchSet, options = {} }) {
   }
 }
 
-export function* requestReferences({ resourceType, id, options = {} }) {
+export function* requestReferences({ resourceType, id, skipSave = false, options = {} }) {
   const path = `/${resourceType}/${id}/dependencies`;
 
   try {
@@ -584,7 +584,7 @@ export function* requestReferences({ resourceType, id, options = {} }) {
       hidden: !!options.ignoreError,
     });
 
-    yield put(actions.resource.receivedReferences(resourceReferences));
+    if (!skipSave) yield put(actions.resource.receivedReferences(resourceReferences));
 
     return resourceReferences;
   } catch (error) {
@@ -845,24 +845,6 @@ export function* updateTradingPartner({ connectionId }) {
   }
 }
 
-export function* requestDebugLogs({ connectionId }) {
-  let response;
-  const path = `/connections/${connectionId}/debug`;
-
-  try {
-    response = yield call(apiCallWithRetry, { path });
-    yield put(
-      actions.connection.receivedDebugLogs(
-        response ||
-          'There are no logs available for this connection. Please run your flow so that we can record the outgoing and incoming traffic to this connection.',
-        connectionId
-      )
-    );
-  } catch (error) {
-    return undefined;
-  }
-}
-
 export function* receivedResource({ resourceType, resource }) {
   if (resourceType === 'connections' && resource && !resource.offline) {
     yield put(actions.connection.madeOnline(resource._id));
@@ -987,7 +969,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, updateFlowNotification),
   takeEvery(actionTypes.CONNECTION.DEREGISTER_REQUEST, requestDeregister),
   takeEvery(actionTypes.CONNECTION.TRADING_PARTNER_UPDATE, updateTradingPartner),
-  takeEvery(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, requestDebugLogs),
+
   takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
   takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),

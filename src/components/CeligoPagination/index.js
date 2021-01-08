@@ -12,6 +12,7 @@ import Spinner from '../Spinner';
 const useStyles = makeStyles(theme => ({
   label: {
     textAlign: 'center',
+    // display: 'flex',
   },
   arrow: {
     paddingLeft: '0px',
@@ -27,6 +28,11 @@ const useStyles = makeStyles(theme => ({
   },
   labelLeft: {
     color: theme.palette.secondary.main,
+  },
+  pageWrapper: {
+    button: {
+      minWidth: 28,
+    },
   },
 }));
 
@@ -55,6 +61,7 @@ export default function Pagination(props) {
     hasMore,
     loading,
     loadMoreHandler,
+    resultPerPageLabel = 'Results per page:',
   } = props;
   const classes = useStyles();
 
@@ -93,7 +100,7 @@ export default function Pagination(props) {
       {rowsPerPageOptions.length > 1 ? (
 
         <div className={classes.resultsLabel}>
-          <Typography className={classes.labelLeft}>Results per page:</Typography>
+          <Typography className={classes.labelLeft}>{resultPerPageLabel}</Typography>
           <Select
             value={rowsPerPage}
             IconComponent={ArrowDownIcon}
@@ -109,24 +116,25 @@ export default function Pagination(props) {
           </Select>
         </div>
       ) : null}
-
-      <IconTextButton
-        onClick={handlePrevPage}
-        className={classes.arrow}
-        disabled={page === 0}>
-        <ArrowLeftIcon />
-      </IconTextButton>
-      <span className={classes.label}>{label}</span>
-      {loading ? (
-        <Spinner size={24} />
-      ) : (
+      <div className={classes.pageWrapper}>
         <IconTextButton
-          onClick={handleNextPage}
+          onClick={handlePrevPage}
           className={classes.arrow}
-          disabled={disableNextPage}>
-          <ArrowRightIcon />
+          disabled={page === 0}>
+          <ArrowLeftIcon />
         </IconTextButton>
-      )}
+        <span className={classes.label}>{label}</span>
+        {loading ? (
+          <Spinner size={24} />
+        ) : (
+          <IconTextButton
+            onClick={handleNextPage}
+            className={classes.arrow}
+            disabled={disableNextPage}>
+            <ArrowRightIcon />
+          </IconTextButton>
+        )}
+      </div>
     </div>
   );
 }
