@@ -23,6 +23,7 @@ import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import StackShareDrawer from '../../components/StackShare/Drawer';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
+import ScriptLogsDrawerRoute from '../ScriptLogs/Drawer';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -134,6 +135,7 @@ export default function ResourceList(props) {
       { resourceType === 'connections' && <ConfigConnectionDebugger />}
 
       <ResourceDrawer {...props} />
+      <ScriptLogsDrawerRoute />
 
       <CeligoPageBar
         title={`${resourceName}s`}

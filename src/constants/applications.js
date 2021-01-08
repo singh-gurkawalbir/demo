@@ -473,6 +473,8 @@ export const connectorsList = () => {
       connectors.push({
         value: asst.id,
         label: asst.name,
+        icon: asst.id,
+        type: asst.type,
       });
     }
   });

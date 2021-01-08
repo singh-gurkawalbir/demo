@@ -83,7 +83,7 @@ export default function useForm({
   useEffect(() => {
     // generate a new formKey when none is provided
 
-    const finalFormKey = formKey || generateNewId();
+    const finalFormKey = formKey || formKeyUsed || generateNewId();
 
     setFormKeyUsed(finalFormKey);
 
@@ -91,7 +91,7 @@ export default function useForm({
 
     if (updatedFieldMeta) {
       dispatch(
-        actions.form.init(finalFormKey, {
+        actions.form.init(finalFormKey, remount, {
           ...normalizeAllPropsToFormApi({...formSpecificProps, fieldMeta: updatedFieldMeta}),
         })
       );

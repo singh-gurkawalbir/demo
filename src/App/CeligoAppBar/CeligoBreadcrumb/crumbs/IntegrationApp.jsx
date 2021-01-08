@@ -6,7 +6,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 export const IntegrationAppCrumb = ({ integrationId }) => {
   const integrationAppName = useSelector(state =>
-    selectors.resource(state, 'integrations', integrationId)?.name || 'Integration App'
+    selectors.resource(state, 'integrations', integrationId)?.name || 'Integration app'
   );
 
   return (

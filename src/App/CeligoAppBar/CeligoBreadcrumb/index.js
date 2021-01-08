@@ -190,7 +190,7 @@ const routes = [
   },
   {
     path: getRoutePath('/connectors'),
-    breadcrumb: 'Integration Apps',
+    breadcrumb: 'Integration apps',
     childRoutes: [
       { path: '/edit/:resourceType/:resourceId', breadcrumb: EditResourceTypeCrumb },
       { path: '/add/:resourceType/:resourceId', breadcrumb: AddResourceTypeCrumb },
