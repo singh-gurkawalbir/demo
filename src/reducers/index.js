@@ -4913,6 +4913,19 @@ selectors.getCustomResourceLabel = (
 };
 // #endregion Flow builder selectors
 
+// #region connection log selectors
+
+selectors.flowConnectionsWithLogEntry = () => {
+  const flowConnections = selectors.mkFlowConnectionList();
+
+  return createSelector(
+    (state, flowId) => flowConnections(state, flowId),
+    state => selectors.allConnectionsLogs(state),
+    (flowConnections, allConnectionsLog) => flowConnections.filter(({_id}) => !!allConnectionsLog[_id])
+  );
+};
+// #endregion connection log selectors
+
 // #region AFE selectors
 
 selectors.editorHelperFunctions = state => state?.session?.editors?.helperFunctions || [];

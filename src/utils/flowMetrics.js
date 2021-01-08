@@ -2,6 +2,7 @@ import startOfDay from 'date-fns/startOfDay';
 import addDays from 'date-fns/addDays';
 import endOfDay from 'date-fns/endOfDay';
 import addHours from 'date-fns/addHours';
+import addMinutes from 'date-fns/addMinutes';
 import moment from 'moment';
 import * as d3 from 'd3';
 import addMonths from 'date-fns/addMonths';
@@ -46,6 +47,14 @@ export const getSelectedRange = range => {
   let end = endDate;
 
   switch (preset) {
+    case 'last15minutes':
+      start = addMinutes(new Date(), -15);
+      end = new Date();
+      break;
+    case 'last30minutes':
+      start = addMinutes(new Date(), -30);
+      end = new Date();
+      break;
     case 'last1hour':
       start = addHours(new Date(), -1);
       end = new Date();

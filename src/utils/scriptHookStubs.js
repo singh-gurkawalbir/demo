@@ -330,3 +330,13 @@ export default {
   formInit: formInitFunctionStub,
   handleRequest: handleRequestFunctionStub,
 };
+
+export const HOOKS_IN_IMPORT_EXPORT_RESOURCE = [
+  'preSavePage',
+  'preMap',
+  'postMap',
+  'postSubmit',
+  'postAggregate',
+  'postResponseMap',
+
+];

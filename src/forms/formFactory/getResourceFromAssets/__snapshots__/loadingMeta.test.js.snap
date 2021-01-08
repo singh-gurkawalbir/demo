@@ -12583,6 +12583,9 @@ Object {
   "fieldMeta": Object {
     "actions": undefined,
     "fieldMap": Object {
+      "_integrationId": Object {
+        "fieldId": "_integrationId",
+      },
       "_stackId": Object {
         "fieldId": "_stackId",
       },
@@ -12595,8 +12598,11 @@ Object {
       "description": Object {
         "fieldId": "description",
       },
-      "imageURL": Object {
-        "fieldId": "imageURL",
+      "editions": Object {
+        "fieldId": "editions",
+      },
+      "framework": Object {
+        "fieldId": "framework",
       },
       "installerFunction": Object {
         "fieldId": "installerFunction",
@@ -12620,14 +12626,16 @@ Object {
           "fields": Array [
             "name",
             "description",
-            "imageURL",
-            "websiteURL",
+            "applications",
+            "_integrationId",
             "contactEmail",
+            "websiteURL",
+            "editions",
             "_stackId",
             "installerFunction",
             "uninstallerFunction",
             "updateFunction",
-            "applications",
+            "framework",
           ],
         },
       ],

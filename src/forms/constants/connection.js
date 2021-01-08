@@ -182,6 +182,7 @@ export default {
     'financialforce',
     'zendesksell',
     'microsoftdynamics365financeandoperation',
+    'clover',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',
