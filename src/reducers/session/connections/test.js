@@ -47,61 +47,6 @@ describe('Connections API', () => {
         });
       });
 
-      test('should correctly update debug logs for the given connection when multiple connections debug logs are present', () => {
-        const prevState = {
-          debugLogs: {
-            1: 'test log message',
-            2: 'test message',
-            3: 'request sent',
-          },
-        };
-
-        const nextState = reducer(prevState, actions.connection.receivedDebugLogs('updated log message', '1'));
-
-        expect(nextState).toEqual({
-          debugLogs: {
-            1: 'updated log message',
-            2: 'test message',
-            3: 'request sent',
-          },
-        });
-      });
-
-      test('should clear debug logs for the given connection', () => {
-        const prevState = {
-          debugLogs: {
-            1: 'test log message',
-            2: 'test message',
-          },
-        };
-
-        const nextState = reducer(prevState, actions.connection.clearDebugLogs('1'));
-
-        expect(nextState).toEqual({
-          debugLogs: {
-            2: 'test message',
-          },
-        });
-      });
-
-      test('should have state same as previous state when invoked with invalid connection id for clearing debuglogs', () => {
-        const prevState = {
-          debugLogs: {
-            1: 'test log message',
-            2: 'test message',
-          },
-        };
-
-        const nextState = reducer(prevState, actions.connection.clearDebugLogs('invalidId'));
-
-        expect(nextState).toEqual({
-          debugLogs: {
-            1: 'test log message',
-            2: 'test message',
-          },
-        });
-      });
-
       test('should correctly update iclients for the given connection when multiple connections iclients present', () => {
         const prevState = {
           iClients: {
