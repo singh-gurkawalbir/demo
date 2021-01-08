@@ -193,12 +193,12 @@ export default function MarketplaceList() {
         } Integrations`}
         >
         {(templates.length || connectors.length) ? (
-          <Typography component="div" variant="body2" className={classes.rightSubtitle}>Don`t see a connector or template you need. <a href="mailto:product_feedback@celigo.com" rel="noreferrer" target="_blank">Prioritize it.</a></Typography>
+          <Typography component="div" variant="body2" className={classes.rightSubtitle}>Don`t see what you need? <a href="mailto:product_feedback@celigo.com" rel="noreferrer" target="_blank">Let us know.</a></Typography>
         ) : ''}
       </CeligoPageBar>
 
       {(!templates.length && !connectors.length) && (
-        <Typography component="div" variant="body2" className={classes.noDataTitle}>We don`t have any pre-built solutions for this application yet. <a href="mailto:product_feedback@celigo.com" rel="noreferrer" target="_blank">Prioritize it.</a></Typography>
+        <Typography component="div" variant="body2" className={classes.noDataTitle}>Don`t see what you need? <a href="mailto:product_feedback@celigo.com" rel="noreferrer" target="_blank">Let us know.</a></Typography>
       )}
       <div className={classes.root}>
         {connectors.map(connector => (
