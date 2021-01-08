@@ -12,7 +12,8 @@ import fields from './fields';
 import { isAnyFieldVisibleForMeta, isExpansionPanelRequired, isExpansionPanelErrored, isAnyFieldTouchedForMeta} from '../../../forms/formFactory/utils';
 
 function form(state = {}, action) {
-  const { type, formKey, formSpecificProps = {} } = action;
+  // we can have the same form key but different remount keys
+  const { type, formKey, remountKey, formSpecificProps = {} } = action;
   const {
     showValidationBeforeTouched,
     conditionalUpdate,
@@ -26,6 +27,7 @@ function form(state = {}, action) {
       case actionTypes.FORM.INIT:
         draft[formKey] = {
           ...formSpecificProps,
+          remountKey,
           showValidationBeforeTouched: !!showValidationBeforeTouched,
           conditionalUpdate: !!conditionalUpdate,
           formIsDisabled: !!disabled,
@@ -80,6 +82,7 @@ selectors.formState = (state, formKey) => {
   return state[formKey];
 };
 
+selectors.formRemountKey = (state, formKey) => state?.[formKey]?.remountKey;
 selectors.formParentContext = (state, formKey) => {
   const form = selectors.formState(state, formKey);
 

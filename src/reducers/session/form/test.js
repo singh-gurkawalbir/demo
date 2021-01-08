@@ -4,6 +4,7 @@ import forms from '.';
 
 describe('reducer expression test cases', () => {
   const formKey = '123';
+  const remountKey = '';
 
   describe('validation expression test case', () => {
     describe('shown validation errors immediately', () => {
@@ -45,7 +46,7 @@ describe('reducer expression test cases', () => {
       beforeAll(() => {
         formState = forms(
           undefined,
-          actions.form.init(formKey, {
+          actions.form.init(formKey, remountKey, {
             fieldMeta,
             showValidationBeforeTouched: true,
           })
@@ -133,7 +134,7 @@ describe('reducer expression test cases', () => {
       beforeAll(() => {
         formState = forms(
           undefined,
-          actions.form.init(formKey, {
+          actions.form.init(formKey, remountKey, {
             fieldMeta,
           })
         );
@@ -209,7 +210,7 @@ describe('reducer expression test cases', () => {
     beforeAll(() => {
       formState = forms(
         undefined,
-        actions.form.init(formKey, {
+        actions.form.init(formKey, remountKey, {
           fieldMeta,
         })
       );
@@ -277,7 +278,7 @@ describe('reducer expression test cases', () => {
     beforeAll(() => {
       formState = forms(
         undefined,
-        actions.form.init(formKey, {
+        actions.form.init(formKey, remountKey, {
           fieldMeta,
         })
       );
@@ -344,7 +345,7 @@ describe('reducer expression test cases', () => {
 
         const formState = forms(
           undefined,
-          actions.form.init(formKey, {
+          actions.form.init(formKey, remountKey, {
             fieldMeta,
           })
         );
@@ -384,7 +385,7 @@ describe('reducer expression test cases', () => {
       beforeAll(() => {
         formState = forms(
           undefined,
-          actions.form.init(formKey, {
+          actions.form.init(formKey, remountKey, {
             fieldMeta,
           })
         );
@@ -459,7 +460,7 @@ describe('reducer expression test cases', () => {
       beforeAll(() => {
         formState = forms(
           undefined,
-          actions.form.init(formKey, {
+          actions.form.init(formKey, remountKey, {
             fieldMeta,
             showValidationBeforeTouched: true,
           })
