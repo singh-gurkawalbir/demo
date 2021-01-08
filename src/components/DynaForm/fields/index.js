@@ -117,6 +117,7 @@ import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
 import DynaNetSuiteAPIVersion from './DynaNetSuiteAPIVersion';
 import DynaReplaceConnection from './DynaReplaceConnection';
 import DynaSelectRequestMediaType from './DynaSelectRequestMediaType';
+import DynaSelectMultiApplication from './DynaSelectMultiApplication';
 import DynaPreviewComponentsTable from './DynaPreviewComponentsTable';
 
 export default {
@@ -144,6 +145,7 @@ export default {
   selectresource: DynaSelectResource,
   selectresourcetype: DynaSelectResourceType,
   selectapplication: DynaSelectApplication,
+  selectmultiapplication: DynaSelectMultiApplication,
   filetypeselect: DynaFileTypeSelect,
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,

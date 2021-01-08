@@ -9,7 +9,7 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   accesstokens: 'API token',
   asyncHelpers: 'Async helper',
   connections: 'Connection',
-  connectors: 'Integration App',
+  connectors: 'Integration app',
   exports: 'Export',
   filedefinitions: 'File definition',
   flows: 'Flow',
