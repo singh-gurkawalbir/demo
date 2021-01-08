@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { isEmpty } from 'lodash';
 import { Grid, Typography } from '@material-ui/core';
 import { selectors } from '../../reducers';
@@ -20,6 +20,7 @@ import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import useConfirmDialog from '../../components/ConfirmDialog';
+import { hashCode } from '../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -119,6 +120,8 @@ export default function ClonePreview(props) {
   const { components } = useSelector(state =>
     selectors.previewTemplate(state, `${resourceType}-${resourceId}`)
   );
+
+  const remountKey = useMemo(() => hashCode(components), [components]);
   const columns = [
     {
       heading: 'Name',
@@ -348,7 +351,7 @@ export default function ClonePreview(props) {
   const formKey = useFormInitWithPermissions({
     fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
-    remount: components,
+    remount: remountKey,
   });
 
   if (!components || isEmpty(components)) {

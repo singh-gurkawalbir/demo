@@ -1,8 +1,10 @@
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { useEffect, useRef, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import DynaFormGenerator from './DynaFormGenerator';
 import { generateSimpleLayout } from '../Form';
+import { selectors } from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
@@ -28,6 +30,8 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
   },
 }));
+
+const key = 'key';
 
 const DynaForm = props => {
   const {
@@ -62,6 +66,7 @@ const DynaForm = props => {
   }, [formRef.current]);
 
   const updatedFieldMeta = useMemo(() => generateSimpleLayout(fieldMeta), [fieldMeta]);
+  const remountKey = useSelector(state => selectors.formRemountKey(state, formKey)) || key;
 
   if (!formKey || !updatedFieldMeta) return null;
   const {layout, fieldMap} = updatedFieldMeta;
@@ -76,6 +81,7 @@ const DynaForm = props => {
           layout={layout}
           fieldMap={fieldMap}
           formKey={formKey}
+          key={remountKey}
         />
       </div>
     </>

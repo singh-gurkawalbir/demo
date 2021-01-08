@@ -32,8 +32,8 @@ function action(type, payload = {}) {
 
 // #region this form specific source code, please be careful when making changes to the interface
 const form = {
-  init: (formKey, formSpecificProps) =>
-    action(actionTypes.FORM.INIT, { formKey, formSpecificProps }),
+  init: (formKey, remountKey, formSpecificProps) =>
+    action(actionTypes.FORM.INIT, { formKey, remountKey, formSpecificProps }),
   clear: formKey => action(actionTypes.FORM.CLEAR, { formKey }),
   formUpdate: (formKey, formSpecificProps) =>
     action(actionTypes.FORM.UPDATE, { formKey, formSpecificProps }),
