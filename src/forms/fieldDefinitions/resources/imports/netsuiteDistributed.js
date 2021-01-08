@@ -185,8 +185,10 @@ export default {
     ],
   },
   'netsuite.file.name': {
-    type: 'text',
+    type: 'uri',
     label: 'Name',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'netsuite.operation',
@@ -199,8 +201,10 @@ export default {
     ],
   },
   'netsuite.file.fileType': {
-    type: 'text',
+    type: 'uri',
     label: 'File type',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'netsuite.operation',
@@ -213,8 +217,10 @@ export default {
     ],
   },
   'netsuite.file.folder': {
-    type: 'text',
+    type: 'uri',
     label: 'Folder',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'netsuite.operation',
@@ -227,8 +233,10 @@ export default {
     ],
   },
   'netsuite.file.internalId': {
-    type: 'text',
+    type: 'uri',
     label: 'File internal ID',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'netsuite.operation',
