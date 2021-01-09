@@ -1992,6 +1992,8 @@ export default {
     'Please specify the Amazon MWS Region for this connection. Please note that you must be registered to sell in the Amazon MWS Region selected, else your Amazon MWS calls will fail.',
   'connection.rdbms.useSSL':
     'Please check this field if you want to establish a secure connection to the database. This ensures that data in transit is encrypted.',
+  'connection.as2.preventCanonicalization': '“Canonicalized” data has been transformed to its simplest essential form during HTTP requests. Check this box to skip canonicalization during signature verification, which avoids any risk of the signature’s getting invalidated when accompanying transformed binary data',
+  'connection.as2.concurrencyLevel': 'Set this field to limit the number of concurrent HTTP requests allowed by the connection resource (at any one time), or leave this field blank to use burst mode. With burst mode, integrator.io will make HTTP requests as fast as possible, with really high levels of concurrency. Some APIs are really great with burst mode, and can typically handle any types of volume. Conversely other APIs are much more strict when it comes to the number of API requests being sent to their servers, and burst mode may not be recommended.',
   'connection.as2.userStationInfo.as2URL':
     'This is the URL to which your trading partners will send AS2 documents. Note that the same URL is used for all integrator.io users, which is why the above AS2 identifier must be unique. It is not editable but is provided here so that you can communicate it to your trading partners.',
   'connection.as2.userStationInfo.requireMDNsFromPartners':
