@@ -11,7 +11,7 @@ import IconTextButton from '../../components/IconTextButton';
 import CancelIcon from '../../components/icons/CancelIcon';
 import RefreshIcon from '../../components/icons/RefreshIcon';
 import DownloadDebugLogs from './DownloadDebugLogs';
-import CodePanel from '../../components/AFE/GenericEditor';
+import CodePanel from '../../components/AFE/GenericEditor/CodePanel';
 
 const overrides = { useWorker: false };
 
@@ -24,7 +24,11 @@ const useStyles = makeStyles(theme => ({
   },
   filterContainer: {
     display: 'flex',
+    position: 'sticky',
     justifyContent: 'space-between',
+    background: theme.palette.background.default,
+    marginLeft: theme.spacing(-2),
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
   rightActionContainer: {
     padding: theme.spacing(2, 0),
@@ -48,8 +52,10 @@ const useStyles = makeStyles(theme => ({
     },
   },
   editorContainer: {
-    height: '100%',
     width: '100%',
+    height: 'calc(100% - 63px)',
+    overflowY: 'auto',
+
   },
 }));
 
