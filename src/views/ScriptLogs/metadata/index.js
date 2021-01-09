@@ -1,6 +1,7 @@
 import React from 'react';
 import ResourceName from '../../../components/ResourceName';
 import ViewLogDetail from './actions/ViewLogDetail';
+import Message from './MessageCell';
 
 export default {
   columns: () => {
@@ -29,7 +30,7 @@ export default {
       },
       {
         heading: 'Message',
-        value: r => r.message,
+        value: r => <Message value={r.message} />,
       },
     ];
 

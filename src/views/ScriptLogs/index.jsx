@@ -29,11 +29,16 @@ const useStyles = makeStyles(theme => ({
   },
   filterContainer: {
     display: 'flex',
+    position: 'sticky',
     justifyContent: 'space-between',
     background: theme.palette.background.default,
     marginLeft: theme.spacing(-2),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
 
+  },
+  tableContainer: {
+    height: 'calc(100% - 69px)',
+    overflowY: 'auto',
   },
   filterButton: {
     borderRadius: theme.spacing(0.5),
@@ -173,7 +178,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
   }), [flowId, scriptId]);
 
   const logsInCurrentPage = useMemo(
-    () => logs.slice(page * rowsPerPage, (page + 1) * rowsPerPage),
+    () => logs.slice(page * rowsPerPage, (page + 1) * rowsPerPage).map(l => ({key: `${l.index}`, ...l})),
     [page, rowsPerPage, logs]
   );
 
@@ -260,7 +265,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
           />
         </div>
       </div>
-      <div className={classes.container}>
+      <div className={classes.tableContainer}>
         {logs?.length ? (
           <CeligoTable
             data={logsInCurrentPage}
