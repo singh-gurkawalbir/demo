@@ -522,6 +522,8 @@ describe('reducer expression test cases', () => {
 });
 
 describe('selectors test cases', () => {
+  const remountKey = '';
+
   const initialState = {
     '3-4': {
       fields: {},
@@ -563,7 +565,7 @@ describe('selectors test cases', () => {
   const formKey = '1-2';
   const formState = forms(
     initialState,
-    actions.form.init(formKey, {
+    actions.form.init(formKey, remountKey, {
       fieldMeta,
       parentContext: {
         resourceType: 'exports',
@@ -642,7 +644,7 @@ describe('selectors test cases', () => {
     const formKey = '1-2';
     const formState = forms(
       initialState,
-      actions.form.init(formKey, {
+      actions.form.init(formKey, remountKey, {
         fieldMeta,
         showValidationBeforeTouched: true,
       })
@@ -705,7 +707,7 @@ describe('selectors test cases', () => {
     const formKey = '1-2';
     const formState = forms(
       initialState,
-      actions.form.init(formKey, {
+      actions.form.init(formKey, remountKey, {
         fieldMeta,
         showValidationBeforeTouched: true,
       })
@@ -777,7 +779,7 @@ describe('selectors test cases', () => {
     const formKey = '1-2';
     const formState = forms(
       initialState,
-      actions.form.init(formKey, {
+      actions.form.init(formKey, remountKey, {
         fieldMeta,
         showValidationBeforeTouched: true,
       })
@@ -864,7 +866,7 @@ describe('selectors test cases', () => {
     const formKey = '1-2';
     const formState = forms(
       initialState,
-      actions.form.init(formKey, {
+      actions.form.init(formKey, remountKey, {
         fieldMeta,
         showValidationBeforeTouched: true,
       })
@@ -940,7 +942,7 @@ describe('selectors test cases', () => {
     const formKey = '1-2';
     const formState = forms(
       initialState,
-      actions.form.init(formKey, {
+      actions.form.init(formKey, remountKey, {
         fieldMeta,
         showValidationBeforeTouched: true,
       })
