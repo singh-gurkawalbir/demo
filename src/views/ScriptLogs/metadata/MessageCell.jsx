@@ -9,6 +9,9 @@ const useStyles = makeStyles(({
     width: 659,
     height: 150,
     overflowY: 'auto',
+    '& > *:first-child': {
+      wordBreak: 'break-all',
+    },
   },
 }));
 export default function Message({value}) {
