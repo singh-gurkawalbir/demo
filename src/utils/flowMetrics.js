@@ -10,6 +10,12 @@ import { convertUtcToTimezone } from './date';
 
 export const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
 
+export const getRoundedDate = (d = new Date(), offsetInMins, isFloor) => {
+  const ms = 1000 * 60 * offsetInMins; // convert minutes to ms
+
+  return new Date(isFloor ? (Math.floor(d.getTime() / ms) * ms) : (Math.ceil(d.getTime() / ms) * ms));
+};
+
 export const getDateTimeFormat = (range, epochTime, preferences = {}, timezone) => {
   if (range && range.startDate && range.endDate) {
     const days = moment(range.endDate).diff(moment(range.startDate), 'days');
