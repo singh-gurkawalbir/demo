@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
 import { selectors } from '../../../../reducers';
@@ -230,15 +230,28 @@ export default function RefreshableTreeComponent(props) {
   const metaBasePath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/`;
   const [expanded, setExpanded] = useState([]);
   const [refreshNodes, setRefreshNodes] = useState([]);
+  const [toggleOpenReferenceTo, setToggleOpenReferenceTo] = useState();
 
   const dispatch = useDispatch();
-  const statusSelector = useSelector(state => selectedReferenceTo =>
-    selectors.metadataOptionsAndResources(state, {
-      connectionId,
-      commMetaPath: `${metaBasePath}${selectedReferenceTo}`,
-      filterKey: 'salesforce-sObjects-referenceFields',
-    })
-  );
+  const { status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,
+    `${metaBasePath}${selectedReferenceTo}`, 'salesforce-sObjects-referenceFields');
+
+  // get the status of the opened node status
+  const { status: toggleOpenNodeStatus } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,
+    `${metaBasePath}${toggleOpenReferenceTo}`, 'salesforce-sObjects-referenceFields');
+
+  useEffect(() => {
+    // if the opened node does not have metadata fetch it
+    if (toggleOpenReferenceTo && toggleOpenNodeStatus !== 'received') {
+      dispatch(
+        actions.metadata.refresh(
+          connectionId,
+          `${metaBasePath}${toggleOpenReferenceTo}`,
+          {refreshCache: true}
+        )
+      );
+    }
+  }, [connectionId, dispatch, metaBasePath, toggleOpenNodeStatus, toggleOpenReferenceTo]);
   const onNodeToggle = (event, newExpandedNodes) => {
     // get expanded node id
 
@@ -246,23 +259,16 @@ export default function RefreshableTreeComponent(props) {
 
     if (newExpandedNode) {
       const referenceTo = newExpandedNode.split(',')[1];
-      const { status } = statusSelector(referenceTo);
 
-      if (status !== 'received') {
-        dispatch(
-          actions.metadata.refresh(
-            connectionId,
-            `${metaBasePath}${referenceTo}`,
-            {refreshCache: true}
-          )
-        );
-      }
+      // newly opened toggle node
+      setToggleOpenReferenceTo(referenceTo);
     }
     setExpanded(newExpandedNodes);
   };
 
   useEffect(() => {
-    if (statusSelector(selectedReferenceTo) !== 'received') {
+    // on load get reference to metadata
+    if (status !== 'received') {
       dispatch(
         actions.metadata.refresh(
           connectionId,
@@ -274,24 +280,28 @@ export default function RefreshableTreeComponent(props) {
   }, []);
 
   return (
-    <TreeView
-      expanded={expanded}
-      onNodeToggle={onNodeToggle}
-      defaultCollapseIcon={<ArrowUpIcon />}
-      defaultExpandIcon={<ArrowDownIcon />}>
-      <TreeViewComponent
-        refreshNodes={refreshNodes}
-        setRefreshNodes={setRefreshNodes}
-        setExpanded={setExpanded}
-        {...props}
-        setSelectedValues={setSelectedValues}
-        metaBasePath={metaBasePath}
-        selectedReferenceTo={selectedReferenceTo}
-        selectedRelationshipName={selectedRelationshipName}
-        nestedRelationShipNames={selectedRelationshipName}
-        expanded={expanded}
-        level={1}
+    status === 'received'
+      ? (
+        <TreeView
+          expanded={expanded}
+          onNodeToggle={onNodeToggle}
+          defaultCollapseIcon={<ArrowUpIcon />}
+          defaultExpandIcon={<ArrowDownIcon />}>
+          <TreeViewComponent
+            refreshNodes={refreshNodes}
+            setRefreshNodes={setRefreshNodes}
+            setExpanded={setExpanded}
+            {...props}
+            setSelectedValues={setSelectedValues}
+            metaBasePath={metaBasePath}
+            selectedReferenceTo={selectedReferenceTo}
+            selectedRelationshipName={selectedRelationshipName}
+            nestedRelationShipNames={selectedRelationshipName}
+            expanded={expanded}
+            level={1}
       />
-    </TreeView>
+        </TreeView>
+      )
+      : <Spinner />
   );
 }
