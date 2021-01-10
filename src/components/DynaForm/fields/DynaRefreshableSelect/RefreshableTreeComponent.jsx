@@ -70,6 +70,25 @@ const NestedValueCheckbox = props => {
   );
 };
 
+const RefreshButton = ({connectionId, selectedNodeBasePath, status}) => {
+  const dispatch = useDispatch();
+
+  if (status === 'requested') return <Spinner />;
+
+  return (
+    <RefreshIcon
+      onClick={evt => {
+        dispatch(
+          actions.metadata.refresh(
+            connectionId,
+            selectedNodeBasePath,
+            {refreshCache: true}
+          ));
+        evt.preventDefault();
+      }} />
+  );
+};
+
 const RefreshTreeElement = props => {
   const {
     label,
@@ -81,20 +100,31 @@ const RefreshTreeElement = props => {
     selectedRelationshipName,
     level,
   } = props;
+
   const nodeId = `${selectedRelationshipName}${level},${selectedReferenceTo}`;
 
-  const { status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, `${metaBasePath}${selectedReferenceTo}`, 'salesforce-sObjects-referenceFields');
+  const selectedNodeBasePath = `${metaBasePath}${selectedReferenceTo}`;
+  const { status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, selectedNodeBasePath, 'salesforce-sObjects-referenceFields');
+
+  const LabelEle = () => (
+    <>
+      <span>{selectedRelationshipName} Fields...</span>
+      <RefreshButton
+        connectionId={connectionId}
+        status={status}
+        selectedNodeBasePath={selectedNodeBasePath}
+         />
+    </>
+  );
 
   return (
     <TreeItem
       key={label}
-      label={`${selectedRelationshipName} Fields...`}
-      nodeId={nodeId}
-      expandIcon={
-        status === 'refreshed' ? <RefreshIcon /> : <ArrowDownIcon />
-      }>
+      label={<LabelEle />}
+      endIcon={<RefreshIcon />}
+      nodeId={nodeId}>
       {expanded.includes(nodeId) ? (
-        <TreeViewComponent {...props} key={label} />
+        (status === 'received' && <TreeViewComponent {...props} key={label} />) || <Spinner />
       ) : (
         <></>
       )}
