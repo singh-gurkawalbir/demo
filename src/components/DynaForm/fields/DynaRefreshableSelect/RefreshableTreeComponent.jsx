@@ -70,14 +70,22 @@ const NestedValueCheckbox = props => {
   );
 };
 
-const RefreshButton = ({connectionId, selectedNodeBasePath, status}) => {
+const RefreshButton = ({connectionId, nodeId, refreshNodes,
+  setRefreshNodes, selectedNodeBasePath, status}) => {
   const dispatch = useDispatch();
 
-  if (status === 'requested') return <Spinner />;
+  useEffect(() => {
+    if (refreshNodes.includes(nodeId) && status !== 'requested') {
+      setRefreshNodes(nodes => nodes.filter(node => node !== nodeId));
+    }
+  }, [nodeId, refreshNodes, setRefreshNodes, status]);
+
+  if (refreshNodes.includes(nodeId) && status === 'requested') return <Spinner />;
 
   return (
     <RefreshIcon
       onClick={evt => {
+        setRefreshNodes(nodes => [...nodes, nodeId]);
         dispatch(
           actions.metadata.refresh(
             connectionId,
@@ -95,6 +103,8 @@ const RefreshTreeElement = props => {
     connectionId,
     metaBasePath,
     // setExpanded,
+    refreshNodes,
+    setRefreshNodes,
     expanded,
     selectedReferenceTo,
     selectedRelationshipName,
@@ -110,6 +120,9 @@ const RefreshTreeElement = props => {
     <>
       <span>{selectedRelationshipName} Fields...</span>
       <RefreshButton
+        nodeId={nodeId}
+        refreshNodes={refreshNodes}
+        setRefreshNodes={setRefreshNodes}
         connectionId={connectionId}
         status={status}
         selectedNodeBasePath={selectedNodeBasePath}
@@ -216,6 +229,8 @@ export default function RefreshableTreeComponent(props) {
   } = props;
   const metaBasePath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/`;
   const [expanded, setExpanded] = useState([]);
+  const [refreshNodes, setRefreshNodes] = useState([]);
+
   const dispatch = useDispatch();
   const statusSelector = useSelector(state => selectedReferenceTo =>
     selectors.metadataOptionsAndResources(state, {
@@ -246,10 +261,8 @@ export default function RefreshableTreeComponent(props) {
     setExpanded(newExpandedNodes);
   };
 
-  const [hasCalled, setHasCalled] = useState(false);
-
   useEffect(() => {
-    if (!hasCalled && statusSelector(selectedReferenceTo) !== 'received') {
+    if (statusSelector(selectedReferenceTo) !== 'received') {
       dispatch(
         actions.metadata.refresh(
           connectionId,
@@ -257,15 +270,8 @@ export default function RefreshableTreeComponent(props) {
         )
       );
     }
-    setHasCalled(true);
-  }, [
-    dispatch,
-    connectionId,
-    hasCalled,
-    selectedReferenceTo,
-    metaBasePath,
-    statusSelector,
-  ]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <TreeView
@@ -274,6 +280,8 @@ export default function RefreshableTreeComponent(props) {
       defaultCollapseIcon={<ArrowUpIcon />}
       defaultExpandIcon={<ArrowDownIcon />}>
       <TreeViewComponent
+        refreshNodes={refreshNodes}
+        setRefreshNodes={setRefreshNodes}
         setExpanded={setExpanded}
         {...props}
         setSelectedValues={setSelectedValues}
