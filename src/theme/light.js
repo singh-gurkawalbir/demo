@@ -440,7 +440,7 @@ export default {
     },
     MuiSelect: {
       icon: {
-        color: colors.celigoNeutral5,
+        color: colors.celigoNeutral8,
       },
       select: {
         '&:focus': {
@@ -760,8 +760,6 @@ export default {
     },
     MuiAccordion: {
       root: {
-        border: `1px solid ${colors.celigoNeutral3}`,
-        marginBottom: '8px',
         borderRadius: '4px',
         '&:before': {
           backgroundColor: 'none',

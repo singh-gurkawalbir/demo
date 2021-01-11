@@ -11,7 +11,7 @@ import IconTextButton from '../../components/IconTextButton';
 import CancelIcon from '../../components/icons/CancelIcon';
 import RefreshIcon from '../../components/icons/RefreshIcon';
 import DownloadDebugLogs from './DownloadDebugLogs';
-import CodePanel from '../../components/AFE/GenericEditor';
+import CodePanel from '../../components/AFE/GenericEditor/CodePanel';
 
 const overrides = { useWorker: false };
 
@@ -24,22 +24,18 @@ const useStyles = makeStyles(theme => ({
   },
   filterContainer: {
     display: 'flex',
+    position: 'sticky',
     justifyContent: 'space-between',
-
-  },
-  filterButton: {
-    borderRadius: theme.spacing(0.5),
-    height: theme.spacing(4.5),
-    '&:first-child': {
-      marginLeft: 0,
-    },
+    background: theme.palette.background.default,
+    marginLeft: theme.spacing(-2),
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
   rightActionContainer: {
     padding: theme.spacing(2, 0),
     // flexGrow: 1,
-    // display: 'flex',
+    display: 'flex',
     // justifyContent: 'flex-end',
-    // alignContent: 'center',
+    alignContent: 'center',
   },
   leftActionContainer: {
     padding: theme.spacing(2, 0),
@@ -56,30 +52,10 @@ const useStyles = makeStyles(theme => ({
     },
   },
   editorContainer: {
-    height: '100%',
     width: '100%',
-  },
-  tablePaginationRoot: {
-    float: 'right',
-    display: 'flex',
-    margin: 'auto',
-  },
-  searchMoreWrapper: {
-    textAlign: 'center',
-    '& > button': {
-      fontFamily: 'Roboto400',
-      minWidth: 190,
-      color: theme.palette.common.white,
-      marginBottom: theme.spacing(2),
-      marginTop: theme.spacing(2),
-      padding: theme.spacing(1, 5, 1, 5),
-    },
-  },
-  searchMoreIcon: {
-    height: 18,
-  },
-  searchMoreSpinner: {
-    marginRight: theme.spacing(1),
+    height: 'calc(100% - 63px)',
+    overflowY: 'auto',
+
   },
 }));
 
@@ -147,7 +123,7 @@ export default function ConnectionLogs({ connectionId, flowId }) {
             onClick={handleRefreshClick}
             data-test="refreshResource">
             <RefreshIcon />
-            Refesh
+            Refresh
           </IconTextButton>
           <IconTextButton
             onClick={handleDeleteLogsClick}

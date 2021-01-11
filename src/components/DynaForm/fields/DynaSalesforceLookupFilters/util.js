@@ -194,8 +194,9 @@ export function generateSalesforceLookupFilterExpression(
       if (qbRules.rules[i].data && qbRules.rules[i].data.rhs) {
         rhs =
           qbRules.rules[i].data.rhs[qbRules.rules[i].data.rhs.type || 'field'];
-
-        rhs = `{{{${salesforceFilterDataTypes[lhs]} ${rhs}}}}`;
+        if (qbRules.rules[i].data.rhs.type === 'field') {
+          rhs = `{{{${salesforceFilterDataTypes[lhs]} ${rhs}}}}`;
+        }
       }
 
       salesforceFilterExpression += `(${lhs} ${

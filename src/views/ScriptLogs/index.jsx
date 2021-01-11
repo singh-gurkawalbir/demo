@@ -29,8 +29,16 @@ const useStyles = makeStyles(theme => ({
   },
   filterContainer: {
     display: 'flex',
+    position: 'sticky',
     justifyContent: 'space-between',
+    background: theme.palette.background.default,
+    marginLeft: theme.spacing(-2),
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
 
+  },
+  tableContainer: {
+    height: 'calc(100% - 69px)',
+    overflowY: 'auto',
   },
   filterButton: {
     borderRadius: theme.spacing(0.5),
@@ -41,10 +49,6 @@ const useStyles = makeStyles(theme => ({
   },
   rightActionContainer: {
     padding: theme.spacing(2, 0),
-    // flexGrow: 1,
-    // display: 'flex',
-    // justifyContent: 'flex-end',
-    // alignContent: 'center',
   },
   leftActionContainer: {
     padding: theme.spacing(2, 0),
@@ -174,7 +178,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
   }), [flowId, scriptId]);
 
   const logsInCurrentPage = useMemo(
-    () => logs.slice(page * rowsPerPage, (page + 1) * rowsPerPage),
+    () => logs.slice(page * rowsPerPage, (page + 1) * rowsPerPage).map(l => ({key: `${l.index}`, ...l})),
     [page, rowsPerPage, logs]
   );
 
@@ -197,6 +201,19 @@ export default function ScriptLogs({ flowId, scriptId }) {
             onSave={handleDateRangeChange}
             fromDate={startOfDay(addDays(new Date(), -29))}
             showTime={false} />
+          <CeligoSelect
+            data-test="selectLogLevel"
+            className={classes.filterButton}
+            onChange={handleLogLevelChange}
+            displayEmpty
+            value={logLevel || ''}>
+            <MenuItem value="">Log level</MenuItem>
+            {Object.keys(LOG_LEVELS).map(logLevel => (
+              <MenuItem key={logLevel} value={logLevel}>
+                {logLevel}
+              </MenuItem>
+            ))}
+          </CeligoSelect>
           <SelectDependentResource
             selectedResources={selectedResources}
             resources={resourceReferences}
@@ -208,7 +225,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
             onChange={handleFunctionTypeChange}
             displayEmpty
             value={functionType || ''}>
-            <MenuItem value="">Select function type</MenuItem>
+            <MenuItem value="">Function type</MenuItem>
             {Object.keys(SCRIPT_FUNCTION_TYPES).map(functionType => (
               <MenuItem key={SCRIPT_FUNCTION_TYPES[functionType]} value={SCRIPT_FUNCTION_TYPES[functionType]}>
                 {SCRIPT_FUNCTION_TYPES[functionType]}
@@ -216,19 +233,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
 
             ))}
           </CeligoSelect>
-          <CeligoSelect
-            data-test="selectLogLevel"
-            className={classes.filterButton}
-            onChange={handleLogLevelChange}
-            displayEmpty
-            value={logLevel || ''}>
-            <MenuItem value="">Select log level</MenuItem>
-            {Object.keys(LOG_LEVELS).map(logLevel => (
-              <MenuItem key={logLevel} value={logLevel}>
-                {logLevel}
-              </MenuItem>
-            ))}
-          </CeligoSelect>
+
         </div>
         <div className={classes.rightActionContainer}>
           {flowId && (
@@ -260,7 +265,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
           />
         </div>
       </div>
-      <div className={classes.container}>
+      <div className={classes.tableContainer}>
         {logs?.length ? (
           <CeligoTable
             data={logsInCurrentPage}
