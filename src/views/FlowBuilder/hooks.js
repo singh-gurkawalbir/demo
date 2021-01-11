@@ -180,15 +180,28 @@ export const useHandleExitClick = () => {
     // Note that our App init must do some internal redirects since
     // a new browser tab session always has a history depth of 2!
     // if depth is more than 2, we are safe to just go back in the history queue.
+    const parts = location.pathname.split('/');
+    const isIARoute = parts[1].toLowerCase() === 'integrationapps';
+
+    // /integrationapps/ShopifyNetSuite/{integrationId}/flowBuilder/{flowId}
+    // 6 route segements
+
+    // if there is history and you are accessing other routes within the flowbuilder such as schedule
+    // go back twice..the base flowbuilder for IA route has 6 parts..for other Integrations it is 5 parts
+
+    const shouldGoBackTwice = history.length > 3 && (isIARoute ? parts.length > 6 : parts.length > 5);
+
+    if (shouldGoBackTwice) {
+      return history.go(-2);
+    }
     if (history.length > 2) {
       return history.goBack();
     }
 
-    // Otherwise parse the location and return the user to the integration
+    // in a no history stack parse the location and return the user to the integration
     // details page.
-    const parts = location.pathname.split('/');
 
-    if (parts[1].toLowerCase() === 'integrationapps') {
+    if (isIARoute) {
       // if user is editing an IA flow, the url is 1 segment longer.
       return history.push(parts.slice(0, 4).join('/'));
     }

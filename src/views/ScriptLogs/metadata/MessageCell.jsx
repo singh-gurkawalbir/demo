@@ -6,7 +6,12 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(({
   messageWrapper: {
-    width: 500,
+    width: 659,
+    height: 150,
+    overflowY: 'auto',
+    '& > *:first-child': {
+      wordBreak: 'break-all',
+    },
   },
 }));
 export default function Message({value}) {

@@ -391,7 +391,7 @@ export function* requestEditorSampleData({
   if (editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') { return {}; }
 
   // for exports resource with 'once' type fields, exported preview data is shown and not the flow input data
-  const fetchPreviewStageData = resourceType === 'exports' && (fieldId.includes('once') || fieldId === 'dataURITemplate');
+  const fetchPreviewStageData = resourceType === 'exports' && (fieldId?.includes('once') || fieldId === 'dataURITemplate');
 
   if (fetchPreviewStageData) {
     yield call(requestExportSampleData, { resourceId, resourceType, values: formValues });

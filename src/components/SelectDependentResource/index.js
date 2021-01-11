@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import React, { useCallback, useState, useMemo } from 'react';
 import ArrowPopper from '../ArrowPopper';
 import ButtonGroup from '../ButtonGroup';
+import ArrowDownIcon from '../icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -13,14 +14,15 @@ const useStyles = makeStyles(theme => ({
   },
   formControl: {
     wordBreak: 'break-word',
-
   },
   filter: {
     maxWidth: '350px',
   },
   wrapper: {
-    display: 'grid',
-    gridTemplateColumns: '1fr',
+    maxHeight: 240,
+    overflowY: 'auto',
+    padding: theme.spacing(2),
+    width: '100%',
   },
   heading: {
     fontWeight: 'bold',
@@ -40,14 +42,14 @@ const useStyles = makeStyles(theme => ({
   dateRangePickerWrapper: {
     display: 'flex',
     flexDirection: 'column',
-    padding: theme.spacing(2),
   },
   actions: {
-    marginTop: theme.spacing(2),
+    margin: theme.spacing(3, 1, 2),
   },
   dateRangePopperBtn: {
     borderColor: theme.palette.secondary.lightest,
     minHeight: 36,
+    padding: theme.spacing(0, 1),
     color: theme.palette.secondary.main,
     fontFamily: 'source sans pro',
     fontSize: 15,
@@ -59,20 +61,24 @@ const useStyles = makeStyles(theme => ({
   selectResourceItem: {
     display: 'flex',
     alignItems: 'flex-start',
-    marginBottom: theme.spacing(2),
-    '& > .MuiFormControlLabel-label': {
-      fontSize: theme.spacing(2),
-    },
   },
   selectResourceCheck: {
     marginTop: theme.spacing(-0.5),
     marginRight: theme.spacing(0.5),
   },
   headerLabel: {
-
+    fontWeight: 'bold',
+    fontSize: 14,
+    '& > span': {
+      fontWeight: 'bold',
+    },
   },
   row: {
-    display: 'flex',
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    wordBreak: 'break-word',
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    marginBottom: theme.spacing(1),
   },
 }));
 
@@ -141,7 +147,7 @@ export default function SelectDependentResource({resources = emptySet, selectedR
         variant="outlined"
         color="secondary"
         className={classes.dateRangePopperBtn}>
-        {buttonName}
+        {buttonName} <ArrowDownIcon />
       </Button>
       <ArrowPopper
         open={!!anchorEl}

@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
   formControl: {
     wordBreak: 'break-word',
-
+    width: '100%',
   },
   filter: {
     maxWidth: '350px',
@@ -28,21 +28,6 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     display: 'grid',
     gridTemplateColumns: '1fr',
-  },
-  heading: {
-    fontWeight: 'bold',
-    color: theme.palette.secondary.light,
-    marginBottom: 5,
-  },
-  formGroup: {
-    maxHeight: 380,
-    overflowY: 'auto',
-    '& > label': {
-      width: '100%',
-    },
-  },
-  child: {
-    flexBasis: '100%',
   },
   dateRangePickerWrapper: {
     display: 'flex',
@@ -52,34 +37,19 @@ const useStyles = makeStyles(theme => ({
   actions: {
     marginTop: theme.spacing(2),
   },
-  dateRangePopperBtn: {
-    borderColor: theme.palette.secondary.lightest,
-    minHeight: 36,
-    color: theme.palette.secondary.main,
-    fontFamily: 'source sans pro',
+  formLabel: {
     fontSize: 15,
-    '&:hover': {
-      borderColor: theme.palette.secondary.lightest,
-      color: theme.palette.secondary.light,
-    },
-  },
-  selectResourceItem: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    marginBottom: theme.spacing(2),
-    '& > .MuiFormControlLabel-label': {
-      fontSize: theme.spacing(2),
-    },
-  },
-  selectResourceCheck: {
-    marginTop: theme.spacing(-0.5),
-    marginRight: theme.spacing(0.5),
-  },
-  headerLabel: {
-
+    position: 'relative',
   },
   row: {
     display: 'flex',
+    flexDirection: 'column',
+  },
+  dateRangePopper: {
+    zIndex: 1300,
+  },
+  dropdown: {
+    marginTop: '0px !important',
   },
 }));
 
@@ -171,6 +141,9 @@ export default function StartDebug({ resourceId, resourceType}) {
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
+        classes={{
+          popper: classes.dateRangePopper,
+        }}
         placement="bottom-end"
         onClose={toggleClick}>
         {anchorEl && (
@@ -178,15 +151,14 @@ export default function StartDebug({ resourceId, resourceType}) {
             <div className={classes.filter}>
               <div className={classes.wrapper}>
                 <div className={classes.row}>
+                  <InputLabel className={classes.formLabel}>
+                    Start debug log level for:
+                  </InputLabel>
                   <FormControl className={classes.formControl}>
-                    <InputLabel>
-                      Start debug level for:
-                    </InputLabel>
 
-                    {/* <FormLabel className={classes.headerLabel}>Start debug level for:</FormLabel> */}
                     <CeligoSelect
                       data-test="selectDebugInterval"
-                      className={classes.xyz}
+                      className={classes.dropdown}
                       onChange={handleChange}
                       value={value || ''}
                     >
