@@ -22,11 +22,21 @@ export default function DynaPreviewComponentsTable({ data: objects, columns, res
     const result = {};
 
     objects.forEach(obj => {
-      if (!result[obj.model]) {
-        result[obj.model] = [];
+      let resourceType;
+
+      if (obj.model === 'AsyncHelper') {
+        resourceType = 'Async helper';
+      } else if (obj.model === 'FileDefinition') {
+        resourceType = 'File definition';
+      } else {
+        resourceType = obj.model;
       }
 
-      result[obj.model].push(obj);
+      if (!result[resourceType]) {
+        result[resourceType] = [];
+      }
+
+      result[resourceType].push(obj);
     });
 
     return result;
@@ -52,7 +62,7 @@ export default function DynaPreviewComponentsTable({ data: objects, columns, res
             collapsable
             data={componentsMap[resourceType]}
             columns={columns}
-            defaultExpand={cloneResourceType === RESOURCE_TYPE_SINGULAR_TO_PLURAL[RESOURCE_TYPE_LABEL_TO_SINGULAR[resourceType]]}
+            defaultExpand={cloneResourceType !== 'integrations' && cloneResourceType === RESOURCE_TYPE_SINGULAR_TO_PLURAL[RESOURCE_TYPE_LABEL_TO_SINGULAR[resourceType]]}
             />
           )}
         </>
