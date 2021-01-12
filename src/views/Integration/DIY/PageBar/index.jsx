@@ -209,7 +209,7 @@ export default function PageBar() {
         }
       }
 
-      if (!availableTabs.find(tab => tab.path === tab)) {
+      if (!availableTabs.find(t => t.path === tab)) {
         newTab = availableTabs[0].path;
       }
 
