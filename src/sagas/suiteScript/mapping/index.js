@@ -52,7 +52,11 @@ export function* refreshGenerates({ isInit = false }) {
       flowId,
     }
   );
+
+  if (!flow) { return; }
   const { import: importRes } = flow;
+
+  if (!importRes) { return; }
   const {type: importType, _connectionId} = importRes;
 
   const {data: generateFields} = yield select(selectors.suiteScriptGenerates, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
