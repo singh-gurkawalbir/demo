@@ -630,7 +630,7 @@ export function* initEditor({ id, editorType, options = {} }) {
   const stateOptions = {
     editorType,
     ...formattedOptions,
-    fieldId: getUniqueFieldId({fieldId, resource}),
+    fieldId: getUniqueFieldId(fieldId, resource),
     ...featuresMap(options)[editorType],
     originalRule,
     lastChange: Date.now(),
