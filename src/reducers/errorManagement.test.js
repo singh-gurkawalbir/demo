@@ -563,25 +563,12 @@ describe('Error Management region selector testcases', () => {
     const orgOwnerState = {
       user: {
         preferences: {
-          environment: 'production',
-          dateFormat: 'MM/DD/YYYY',
-          timeFormat: 'h:mm:ss a',
           defaultAShareId: 'own',
         },
         profile: {
           _id: '5cadc8b42b10347a2708bf29',
           name: 'Raghuvamsi Owner',
           email: 'raghuvamsi.chandrabhatla@celigo.com',
-          role: 'Developer',
-          company: 'Celigodfv',
-          phone: '8309284434',
-          auth_type_google: {},
-          timezone: 'Asia/Calcutta',
-          developer: true,
-          agreeTOSAndPP: true,
-          createdAt: '2019-04-10T10:43:01.501Z',
-          useErrMgtTwoDotZero: true,
-          emailHash: '03303b0760008c24fe76829f56287336',
         },
         org: {
           users: [
@@ -635,6 +622,49 @@ describe('Error Management region selector testcases', () => {
               accessLevel: 'owner',
             },
           ],
+        },
+        data: {
+          resources: {
+            flows: [{
+              _id: 'flow-123',
+              _integrationId: '5e44ee816fb284424f693b43',
+              name: 'test flow',
+            }],
+          },
+          integrationAShares: {
+            '5e44ee816fb284424f693b43': [
+              {
+                _id: '5f7011605b2e3244837309f9',
+                accepted: true,
+                accessLevel: 'monitor',
+                sharedWithUser: {
+                  _id: '5f6882679daecd32740e2c38',
+                  email: 'raghuvamsi.chandrabhatla+3@celigo.com',
+                  name: 'Raghuvamsi4 Chandrabhatla',
+                },
+              },
+              {
+                _id: '5f72fae75b2e32448373575e',
+                accepted: true,
+                sharedWithUser: {
+                  _id: '5f686ef49daecd32740e2710',
+                  email: 'raghuvamsi.chandrabhatla+2@celigo.com',
+                  name: 'Raghuvamsi',
+                },
+                accessLevel: 'monitor',
+              },
+              {
+                _id: '5f770d4b96ae3b4bf0fdd8f1',
+                accepted: true,
+                accessLevel: 'monitor',
+                sharedWithUser: {
+                  _id: '5f770d4b96ae3b4bf0fdd8ee',
+                  email: 'raghuvamsi.chandrabhatla+6@celigo.com',
+                  name: 'Raghuvamsi C',
+                },
+              },
+            ],
+          },
         },
         debug: false,
       },
@@ -697,9 +727,12 @@ describe('Error Management region selector testcases', () => {
     test('should return undefined if passed userId does not exist', () => {
       expect(selectors.getIntegrationUserNameById(orgOwnerState, 'INVALID_USER_ID')).toBeUndefined();
     });
-    // test('should return user name from the integration usersList if valid userId and flowId are passed', () => {
+    test('should return user name from the integration usersList if valid userId and flowId are passed', () => {
+      const userId = '5f6882679daecd32740e2c38';
+      const flowId = 'flow-123';
 
-    // });
+      expect(selectors.getIntegrationUserNameById(orgOwnerState, userId, flowId)).toBe('Raghuvamsi4 Chandrabhatla');
+    });
   });
 });
 

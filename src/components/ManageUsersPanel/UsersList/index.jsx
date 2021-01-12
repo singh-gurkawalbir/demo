@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useCallback } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import ResourceTable from '../../ResourceTable';
 import { selectors } from '../../../reducers';
@@ -17,21 +17,17 @@ export default function UsersList({ integrationId, storeId, className }) {
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
   const users = useSelector(state => selectors.availableUsersList(state, integrationId));
-  const requestIntegrationAShares = useCallback(() => {
-    if (integrationId) {
-      if (!users) {
-        dispatch(
-          actions.resource.requestCollection(
-            ['integrations', integrationId, 'ashares'].join('/')
-          )
-        );
-      }
-    }
-  }, [dispatch, integrationId, users]);
 
   useEffect(() => {
-    requestIntegrationAShares();
-  }, [requestIntegrationAShares]);
+    if (integrationId) {
+      dispatch(
+        actions.resource.requestCollection(
+          ['integrations', integrationId, 'ashares'].join('/')
+        )
+      );
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const actionProps = useMemo(() => (
     {

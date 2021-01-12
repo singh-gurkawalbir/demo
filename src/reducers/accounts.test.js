@@ -414,32 +414,19 @@ describe('Accounts region selector testcases', () => {
     const orgOwnerState = {
       user: {
         preferences: {
-          environment: 'production',
-          dateFormat: 'MM/DD/YYYY',
-          timeFormat: 'h:mm:ss a',
           defaultAShareId: 'own',
         },
         profile: {
           _id: '5cadc8b42b10347a2708bf29',
           name: 'Raghuvamsi Owner',
           email: 'raghuvamsi.chandrabhatla@celigo.com',
-          role: 'Developer',
-          company: 'Celigodfv',
-          phone: '8309284434',
-          auth_type_google: {},
-          timezone: 'Asia/Calcutta',
-          developer: true,
-          agreeTOSAndPP: true,
-          createdAt: '2019-04-10T10:43:01.501Z',
-          useErrMgtTwoDotZero: true,
-          emailHash: '03303b0760008c24fe76829f56287336',
         },
         org: {
           users: [
             {
               _id: '5f7011605b2e3244837309f9',
               accepted: true,
-              accessLevel: 'monitor',
+              accessLevel: 'manage',
               integrationAccessLevel: [
                 {
                   _integrationId: '5e44efa28015c9464272256f',
@@ -450,33 +437,6 @@ describe('Accounts region selector testcases', () => {
                 _id: '5f6882679daecd32740e2c38',
                 email: 'raghuvamsi.chandrabhatla+3@celigo.com',
                 name: 'Raghuvamsi4 Chandrabhatla',
-              },
-            },
-            {
-              _id: '5f72fae75b2e32448373575e',
-              accepted: true,
-              accessLevel: 'monitor',
-              integrationAccessLevel: [
-                {
-                  _integrationId: '5e44ee816fb284424f693b43',
-                  accessLevel: 'manage',
-                },
-              ],
-              sharedWithUser: {
-                _id: '5f686ef49daecd32740e2710',
-                email: 'raghuvamsi.chandrabhatla+2@celigo.com',
-                name: 'Raghuvamsi',
-              },
-            },
-            {
-              _id: '5f770d4b96ae3b4bf0fdd8f1',
-              accepted: true,
-              accessLevel: 'monitor',
-              integrationAccessLevel: [],
-              sharedWithUser: {
-                _id: '5f770d4b96ae3b4bf0fdd8ee',
-                email: 'raghuvamsi.chandrabhatla+6@celigo.com',
-                name: 'Raghuvamsi C',
               },
             },
           ],
@@ -494,25 +454,12 @@ describe('Accounts region selector testcases', () => {
     const orgUserState = {
       user: {
         preferences: {
-          environment: 'production',
-          dateFormat: 'MM/DD/YYYY',
-          timeFormat: 'h:mm:ss a',
-          defaultAShareId: 'own',
+          defaultAShareId: '5f770d4b96ae3b4bf0fdd8f1',
         },
         profile: {
           _id: '5cadc8b42b10347a2708bf29',
-          name: 'Raghuvamsi Owner',
+          name: 'Raghuvamsi User',
           email: 'raghuvamsi.chandrabhatla@celigo.com',
-          role: 'Developer',
-          company: 'Celigodfv',
-          phone: '8309284434',
-          auth_type_google: {},
-          timezone: 'Asia/Calcutta',
-          developer: true,
-          agreeTOSAndPP: true,
-          createdAt: '2019-04-10T10:43:01.501Z',
-          useErrMgtTwoDotZero: true,
-          emailHash: '03303b0760008c24fe76829f56287336',
         },
         org: {
           users: [
@@ -523,7 +470,7 @@ describe('Accounts region selector testcases', () => {
               integrationAccessLevel: [
                 {
                   _integrationId: '5e44efa28015c9464272256f',
-                  accessLevel: 'manage',
+                  accessLevel: 'monitor',
                 },
               ],
               sharedWithUser: {
@@ -538,7 +485,7 @@ describe('Accounts region selector testcases', () => {
               integrationAccessLevel: [
                 {
                   _integrationId: '5e44ee816fb284424f693b43',
-                  accessLevel: 'manage',
+                  accessLevel: 'monitor',
                 },
               ],
               sharedWithUser: {
@@ -561,7 +508,7 @@ describe('Accounts region selector testcases', () => {
           ],
           accounts: [
             {
-              _id: 'own',
+              _id: '5f770d4b96ae3b4bf0fdd8f1',
               accessLevel: 'owner',
               ownerUser: {
                 licenses: [],
@@ -584,6 +531,42 @@ describe('Accounts region selector testcases', () => {
         },
         debug: false,
       },
+      data: {
+        integrationAShares: {
+          '5e44ee816fb284424f693b43': [
+            {
+              _id: '5f7011605b2e3244837309f9',
+              accepted: true,
+              accessLevel: 'monitor',
+              sharedWithUser: {
+                _id: '5f6882679daecd32740e2c38',
+                email: 'raghuvamsi.chandrabhatla+3@celigo.com',
+                name: 'Raghuvamsi4 Chandrabhatla',
+              },
+            },
+            {
+              _id: '5f72fae75b2e32448373575e',
+              accepted: true,
+              sharedWithUser: {
+                _id: '5f686ef49daecd32740e2710',
+                email: 'raghuvamsi.chandrabhatla+2@celigo.com',
+                name: 'Raghuvamsi',
+              },
+              accessLevel: 'monitor',
+            },
+            {
+              _id: '5f770d4b96ae3b4bf0fdd8f1',
+              accepted: true,
+              accessLevel: 'monitor',
+              sharedWithUser: {
+                _id: '5f770d4b96ae3b4bf0fdd8ee',
+                email: 'raghuvamsi.chandrabhatla+6@celigo.com',
+                name: 'Raghuvamsi C',
+              },
+            },
+          ],
+        },
+      },
     };
 
     test('should not throw any exception for invalid arguments', () => {
@@ -595,14 +578,43 @@ describe('Accounts region selector testcases', () => {
       sampleState.user.org.users = [];
       expect(selectors.availableUsersList(sampleState)).toEqual([]);
     });
-    // test('should return integrationUsers list if exist for orgUser when integrationId is passed ', () => {
-    //   const integrationId = '5e44efa28015c9464272256f';
+    test('should return integrationUsers list if exist for orgUser when integrationId is passed ', () => {
+      const integrationId = '5e44ee816fb284424f693b43';
+      const integrationUserList = orgUserState.data.integrationAShares[integrationId];
+      const userList = [
+        {
+          _id: 'own',
+          accepted: true,
+          accessLevel: 'owner',
+          sharedWithUser: {
+            email: 'raghuvamsi.chandrabhatla@celigo.com',
+            name: 'Raghuvamsi User',
+          },
+        },
+        ...integrationUserList,
+      ];
 
-    //   // expect(selectors.availableUsersList(orgUserState, integrationId));
-    // });
-    // test('should return integrationUsers list for orgOwner when integrationId is passed', () => {
+      expect(selectors.availableUsersList(orgUserState, integrationId)).toEqual(userList.sort(stringCompare('sharedWithUser.name')));
+    });
+    test('should return integrationUsers list for orgOwner when integrationId is passed', () => {
+      const integrationId = '5e44ee816fb284424f693b43';
+      const userList = [
+        {
+          _id: 'own',
+          accepted: true,
+          accessLevel: 'owner',
+          sharedWithUser: {name: 'Raghuvamsi Owner', email: 'raghuvamsi.chandrabhatla@celigo.com'},
+        },
+        {
+          _id: '5f7011605b2e3244837309f9',
+          accepted: true,
+          accessLevel: 'manage',
+          sharedWithUser: {_id: '5f6882679daecd32740e2c38', email: 'raghuvamsi.chandrabhatla+3@celigo.com', name: 'Raghuvamsi4 Chandrabhatla'},
+        },
+      ];
 
-    // });
+      expect(selectors.availableUsersList(orgOwnerState, integrationId)).toEqual(userList.sort(stringCompare('sharedWithUser.name')));
+    });
     test('should return all the users list for the account incase of logged in user is orgOwner and no integrationId is passed', () => {
       const userList = [
         {
@@ -614,7 +626,7 @@ describe('Accounts region selector testcases', () => {
         ...orgOwnerState.user.org.users,
       ];
 
-      expect(selectors.availableUsersList(orgOwnerState, null, true)).toEqual(userList.sort(stringCompare('sharedWithUser.name')));
+      expect(selectors.availableUsersList(orgOwnerState)).toEqual(userList.sort(stringCompare('sharedWithUser.name')));
     });
   });
 
