@@ -38,12 +38,12 @@ export default function DynaTable(props) {
 
   if (extractFieldHeader || extracts) {
     tableType = 'staticMapWidget';
+  } else if ((map || !optionsMap) && !connectionId && !keyResource && !valueResource) {
+    tableType = 'staticMap';
+  } else if (optionsMap?.length && _integrationId && !keyResource && !valueResource) {
+    tableType = 'connectorStaticMap';
   } else if (connectionId || keyResource || valueResource) {
     tableType = 'refreshableStaticMap';
-  } else if ((map || !optionsMap) && !connectionId) {
-    tableType = 'staticMap';
-  } else if (optionsMap?.length && _integrationId) {
-    tableType = 'connectorStaticMap';
   } else {
     tableType = 'generic';
   }
