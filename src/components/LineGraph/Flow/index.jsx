@@ -110,13 +110,15 @@ const DataIcon = ({index}) => {
   );
 };
 
-const Chart = ({ id, flowId, range, selectedResources }) => {
+const Chart = ({ id, flowId, range, selectedResources: selected }) => {
   const classes = useStyles();
   const [opacity, setOpacity] = useState({});
   let mouseHoverTimer;
   const { data = [] } =
     useSelector(state => selectors.flowMetricsData(state, flowId)) || {};
   const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
+  // Selected resources are read from previously saved resources in preferences which may not be valid anymore. pick only valid resources.
+  const selectedResources = selected.filter(r => flowResources.find(res => res._id === r));
   const { startDate, endDate } = range;
   const type = useMemo(() => id === 'averageTimeTaken' ? 'att' : 'sei', [id]);
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
