@@ -51,7 +51,10 @@ export default function Editors() {
   const history = useHistory();
   const [editorId, setEditorId] = useState();
 
-  const handleFullScreen = () => history.push(`/playground/editor/${editorId}`);
+  const handleFullScreen = () => {
+    history.push(`/playground/editor/${editorId}`);
+    setEditorId();
+  };
 
   const handleEditorChange = newEditorId => {
     setEditorId(newEditorId);
