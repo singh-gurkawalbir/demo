@@ -37,11 +37,37 @@ function extractResourcePath(value, initialResourcePath) {
   return initialResourcePath;
 }
 
-export function* invokeProcessor({ processor, body }) {
+export function* invokeProcessor({ editorId, processor, body }) {
+  let reqBody = body;
+
+  // options should be passed to BE for handlebars processor
+  // for correct HTML/URL encoding
+  if (processor === 'handlebars' && editorId) {
+    const editor = yield select(selectors._editor, editorId);
+    const {formKey, fieldId, resourceId, resourceType} = editor;
+    const formState = yield select(selectors.formState, formKey);
+    const { value: formValues } = formState || {};
+    const resource = yield call(constructResourceFromFormValues, {
+      formValues,
+      resourceId,
+      resourceType,
+    });
+    const { _connectionId: connectionId } = resource;
+    const connection = yield select(selectors.resource, 'connections', connectionId);
+
+    reqBody = {
+      ...body,
+      options: {
+        connection,
+        [resourceType === 'imports' ? 'import' : 'export']: resource,
+        fieldPath: fieldId,
+      },
+    };
+  }
   const path = `/processors/${processor}`;
   const opts = {
     method: 'POST',
-    body,
+    body: reqBody,
   };
 
   return yield call(apiCallWithRetry, { path, opts, hidden: true });
@@ -68,7 +94,7 @@ export function* requestPreview({ id }) {
     try {
       // we are hiding this comm activity from the network snackbar
 
-      result = yield call(invokeProcessor, { processor, body });
+      result = yield call(invokeProcessor, { editorId: id, processor, body });
     } catch (e) {
       // Error with status code between 400 and 500 are json, hence we can parse them
       if (e.status >= 400 && e.status < 500) {
@@ -604,7 +630,7 @@ export function* initEditor({ id, editorType, options = {} }) {
   const stateOptions = {
     editorType,
     ...formattedOptions,
-    fieldId: getUniqueFieldId(fieldId),
+    fieldId: getUniqueFieldId({fieldId, resource}),
     ...featuresMap(options)[editorType],
     originalRule,
     lastChange: Date.now(),
