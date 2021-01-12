@@ -71,6 +71,11 @@ const useStyles = makeStyles(theme => ({
   closeBtn: {
     padding: 0,
     marginLeft: theme.spacing(1),
+    '& > * svg': {
+      width: theme.spacing(2),
+      height: theme.spacing(2),
+      marginTop: -3,
+    },
   },
   connectionWarning: {
     color: theme.palette.error.main,

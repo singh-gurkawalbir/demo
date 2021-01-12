@@ -7,7 +7,7 @@ const emptySet = [];
 const emptyObj = {};
 
 export default (state = {}, action) => {
-  const { type, scriptId = '', resourceReferences, logs, nextPageURL, field, value, flowId = '' } = action;
+  const { type, scriptId = '', resourceReferences, logs = emptySet, nextPageURL, field, value, flowId = '', shouldAutoRetry, isAutoFetch } = action;
   const key = `${scriptId}-${flowId}`;
 
   return produce(state, draft => {
@@ -33,6 +33,7 @@ export default (state = {}, action) => {
         if (draft?.scripts?.[key]) {
           draft.scripts[key].status = 'error';
           delete draft.scripts[key].nextPageURL;
+          delete draft.scripts[key].autoRetryCount;
         }
 
         break;
@@ -42,13 +43,17 @@ export default (state = {}, action) => {
           if (!draft.scripts[key].logs) {
             draft.scripts[key].logs = [];
           }
+          if (shouldAutoRetry) {
+            draft.scripts[key].autoRetryCount = (draft.scripts[key].autoRetryCount || 0) + 1;
+          } else {
+            delete draft.scripts[key].autoRetryCount;
+            draft.scripts[key].status = 'success';
+          }
           const oldLogCount = draft.scripts[key].logs.length;
 
           logs.forEach((log, index) => {
             draft.scripts[key].logs.push({...log, index: (oldLogCount + index)});
           });
-
-          draft.scripts[key].status = 'success';
           draft.scripts[key].nextPageURL = nextPageURL;
         }
 
@@ -63,6 +68,7 @@ export default (state = {}, action) => {
         if (draft?.scripts?.[key]) {
           draft.scripts[key][field] = value;
           if (field !== 'logLevel') {
+            delete draft.scripts[key].autoRetryCount;
             delete draft.scripts[key].logs;
             delete draft.scripts[key].nextPageURL;
           }
@@ -72,6 +78,7 @@ export default (state = {}, action) => {
         if (draft?.scripts?.[key]) {
           draft.scripts[key].status = 'requested';
           delete draft.scripts[key].logs;
+          delete draft.scripts[key].autoRetryCount;
           delete draft.scripts[key].nextPageURL;
         }
 
@@ -93,6 +100,7 @@ export default (state = {}, action) => {
       case actionTypes.LOGS.SCRIPTS.LOAD_MORE:
         if (draft?.scripts?.[key]) {
           draft.scripts[key].status = 'requested';
+          if (!isAutoFetch) delete draft.scripts[key].autoRetryCount;
         }
         break;
       default:

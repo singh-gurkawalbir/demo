@@ -72,6 +72,7 @@ export function* fetchScriptLogs({scriptId = '', flowId = '', field, loadMore}) 
     selectedResources,
     functionType,
     nextPageURL,
+    autoRetryCount = 0,
   } = yield select(selectors.scriptLog, {scriptId, flowId});
   let path;
 
@@ -128,16 +129,19 @@ export function* fetchScriptLogs({scriptId = '', flowId = '', field, loadMore}) 
 
     return {time: localDateTime, ...others };
   });
+  const shouldAutoRetry = autoRetryCount < 3 && !!response?.nextPageURL && !formattedLogs?.length;
 
-  return yield put(actions.logs.scripts.received({
+  yield put(actions.logs.scripts.received({
     scriptId,
     flowId,
     logs: formattedLogs || [],
     nextPageURL: response?.nextPageURL,
+    shouldAutoRetry,
   }));
 
-  // if no results then can automatically fetch next url
-  // if (response.nextPageURL) yield put(actions.logs.scripts.loadMore({scriptId, flowId}));
+  if (shouldAutoRetry) {
+    yield put(actions.logs.scripts.loadMore({scriptId, flowId, isAutoFetch: true}));
+  }
 }
 
 export function* requestScriptLogs({
@@ -157,7 +161,7 @@ export function* startDebug({scriptId, value}) {
 
   const patchSet = [
     {
-      op: debugUntil ? 'replace' : 'remove',
+      op: debugUntil ? 'replace' : 'add',
       path: '/debugUntil',
       value: moment().add(value, 'm').toISOString(),
     },
@@ -171,4 +175,5 @@ export const scriptsLogSagas = [
   takeLatest(actionTypes.LOGS.SCRIPTS.PATCH_FILTER, fetchScriptLogs),
   takeLatest(actionTypes.LOGS.SCRIPTS.REFRESH, fetchScriptLogs),
   takeLatest(actionTypes.LOGS.SCRIPTS.START_DEBUG, startDebug),
+
 ];

@@ -1,7 +1,7 @@
 import React from 'react';
 import ResourceName from '../../../components/ResourceName';
+import OverflowWrapper from '../../../components/ResourceTable/errorManagement/cells/OverflowWrapper';
 import ViewLogDetail from './actions/ViewLogDetail';
-import Message from './MessageCell';
 
 export default {
   columns: () => {
@@ -30,7 +30,12 @@ export default {
       },
       {
         heading: 'Message',
-        value: r => <Message value={r.message} />,
+        value: r => (
+          <OverflowWrapper
+            message={r.message}
+            style={{maxWidth: 659}} />
+        ),
+
       },
     ];
 

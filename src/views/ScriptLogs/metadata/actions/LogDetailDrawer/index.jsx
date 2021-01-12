@@ -1,12 +1,31 @@
 import React, { useEffect, useCallback } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import RightDrawer from '../../../../../components/drawer/Right';
 import DrawerContent from '../../../../../components/drawer/Right/DrawerContent';
 import DrawerHeader from '../../../../../components/drawer/Right/DrawerHeader';
 
 const emptyObj = {};
+const useStyles = makeStyles(theme => ({
+  title: {
+    display: 'flex',
+    fontSize: 14,
+    padding: theme.spacing(4, 0, 6, 0),
+    alignItems: 'center',
+    marginBottom: theme.spacing(0.5),
+    justifyContent: 'center',
+    color: theme.palette.secondary.main,
+  },
+  wrapper: {
+    '& > div': {
+      marginBottom: theme.spacing(2),
+    },
+
+  },
+}));
+
 const ScriptLogDetailDrawerHeader = () => {
   const match = useRouteMatch();
   const history = useHistory();
@@ -30,9 +49,11 @@ const ScriptLogDetailDrawerHeader = () => {
     />
   );
 };
+
 const ScriptLogDrawerBody = () => {
   const match = useRouteMatch();
   const history = useHistory();
+  const classes = useStyles();
   const { scriptId, flowId, index } = match.params;
   const {time, logLevel, message} = useSelector(state => {
     const script = selectors.scriptLog(state, {scriptId, flowId});
@@ -55,27 +76,25 @@ const ScriptLogDrawerBody = () => {
   }, [history, time]);
 
   return (
-    <>
+    <div className={classes.wrapper}>
       <div>
         Timestamp: {time}
-      </div>
-      <div>
-        Title:
       </div>
       <div>
         Type: {logLevel}
       </div>
       <div>
-        Message
+        Message:
         <br />
         {message}
       </div>
-    </>
+    </div>
   );
 };
 export default function ViewLogDetailDrawer() {
   return (
     <RightDrawer
+      variant="temporary"
       path={[
         'scriptLog/:scriptId/:flowId/:index',
         'scriptLog/:scriptId/:index',

@@ -141,6 +141,7 @@ export default function StartDebug({ resourceId, resourceType}) {
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
+        restrictToParent={false}
         classes={{
           popper: classes.dateRangePopper,
         }}

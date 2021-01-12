@@ -2108,8 +2108,8 @@ const logs = {
   scripts: {
     request: ({ scriptId, flowId }) =>
       action(actionTypes.LOGS.SCRIPTS.REQUEST, { scriptId, flowId }),
-    received: ({logs, nextPageURL, scriptId, flowId}) =>
-      action(actionTypes.LOGS.SCRIPTS.RECEIVED, {logs, nextPageURL, scriptId, flowId}),
+    received: ({logs, nextPageURL, scriptId, flowId, shouldAutoRetry}) =>
+      action(actionTypes.LOGS.SCRIPTS.RECEIVED, {logs, nextPageURL, scriptId, flowId, shouldAutoRetry}),
     requestFailed: ({flowId, scriptId}) =>
       action(actionTypes.LOGS.SCRIPTS.REQUEST_FAILED, {scriptId, flowId}),
     setDependency: ({resourceReferences, scriptId, flowId}) =>
@@ -2120,8 +2120,8 @@ const logs = {
       action(actionTypes.LOGS.SCRIPTS.REFRESH, { scriptId, flowId }),
     clear: ({ flowId, scriptId }) =>
       action(actionTypes.LOGS.SCRIPTS.CLEAR, { flowId, scriptId }),
-    loadMore: ({ flowId, scriptId }) =>
-      action(actionTypes.LOGS.SCRIPTS.LOAD_MORE, { flowId, scriptId }),
+    loadMore: ({ flowId, scriptId, isAutoFetch }) =>
+      action(actionTypes.LOGS.SCRIPTS.LOAD_MORE, { flowId, scriptId, isAutoFetch }),
     startDebug: (scriptId, value) =>
       action(actionTypes.LOGS.SCRIPTS.START_DEBUG, { scriptId, value }),
   },
