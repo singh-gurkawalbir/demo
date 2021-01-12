@@ -73,7 +73,7 @@ function FileUploader(props) {
     <FormControl className={classProps.root}>
       <div className={classProps.actionContainer} >
         <div className={clsx(classes.fileUploadLabelWrapper, classProps.labelWrapper)}>
-          <FormLabel required={required}>
+          <FormLabel required={required} className={classProps.label}>
             {label}
           </FormLabel>
           <FieldHelp {...props} />
