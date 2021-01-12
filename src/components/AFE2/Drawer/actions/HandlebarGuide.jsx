@@ -1,14 +1,15 @@
 import React from 'react';
-import { makeStyles, useTheme, useMediaQuery, IconButton } from '@material-ui/core';
+import { makeStyles, useTheme, useMediaQuery, IconButton, Tooltip } from '@material-ui/core';
 import CeligoDivider from '../../../CeligoDivider';
 import IconTextButton from '../../../IconTextButton';
 import Icon from '../../../icons/InstallationGuideIcon';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   button: {
     marginRight: '0 !important',
+    color: theme.palette.primary.main,
   },
-});
+}));
 
 const anchorProps = {
   component: 'a',
@@ -24,15 +25,17 @@ export default function HandlebarGuide() {
   return (
     <>
       {hasWideScreen ? (
-        <IconTextButton {...anchorProps} className={classes.button} variant="text">
-          <Icon /> Handlebar guide
+        <IconTextButton
+          {...anchorProps} className={classes.button} variant="text">
+          <Icon /> Handlebars guide
         </IconTextButton>
       ) : (
-        <IconButton {...anchorProps} className={classes.button} >
-          <Icon />
-        </IconButton>
+        <Tooltip title="Handlebars guide" placement="bottom">
+          <IconButton {...anchorProps} className={classes.button} >
+            <Icon />
+          </IconButton>
+        </Tooltip>
       )}
-
       <CeligoDivider position="right" />
     </>
   );
