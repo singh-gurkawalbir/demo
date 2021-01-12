@@ -76,16 +76,105 @@ describe('Sample data region selector testcases', () => {
       expect(selectors.fileSampleData(undefined, {})).toBe();
     });
     test('should return undefined if there is no file uploaded yet by the user and resourceObj has no sampleData property in the doc', () => {
+      const sampleState = {
+        session: {},
+        data: {
+          resources: {
+            exports: [
+              {
+                _id: 'export-123',
+                name: 'test export',
+                adaptorType: 'FTPExport',
+                file: {
+                  type: 'json',
+                },
+              },
+            ],
+          },
+        },
+      };
 
+      expect(selectors.fileSampleData(sampleState, { resourceId: 'export-123', resourceType: 'exports', fileType: 'json'})).toBeUndefined();
     });
     test('should return sampleData on the resourceDoc if there is no file uploaded by user yet', () => {
+      const jsonContent = {
+        test: [
+          {
+            flow: 3,
+            test: 44,
+            win: 1,
+          },
+        ],
+      };
+      const sampleState = {
+        session: {},
+        data: {
+          resources: {
+            exports: [
+              {
+                _id: 'export-123',
+                name: 'test export',
+                adaptorType: 'FTPExport',
+                file: {
+                  type: 'json',
+                },
+                sampleData: jsonContent,
+              },
+            ],
+          },
+        },
+      };
 
+      expect(selectors.fileSampleData(sampleState, { resourceId: 'export-123', resourceType: 'exports', fileType: 'json'})).toEqual(jsonContent);
     });
     test('should return uploaded file content incase of all file types except xlsx', () => {
+      const jsonContent = {
+        test: [
+          {
+            flow: 3,
+            test: 44,
+            win: 1,
+          },
+        ],
+      };
+      const jsonFileState = {
+        session: {
+          sampleData: {
+            'export-123': {
+              recordSize: 10,
+              status: 'received',
+              data: {
+                rawFile: {
+                  body: jsonContent,
+                  type: 'json',
+                },
+              },
+            },
+          },
+        },
+      };
 
+      expect(selectors.fileSampleData(jsonFileState, { resourceId: 'export-123', resourceType: 'exports', fileType: 'json'})).toEqual(jsonContent);
     });
     test('should return csv content of the xlsx file uploaded by the  user incase of file type xlsx', () => {
+      const csvContent = 'name,age,gender\nname0,21,male\n    ,    ,   \nname1,22,male\n,,\nname2,23,female\nname3,21,male\nname4,22,male\n,,\nname5,23,female\nname6,21,male\n,,\nname7,22,male\n,,\nname8,23,female\nname9,21,male\n';
+      const csvFileState = {
+        session: {
+          sampleData: {
+            'export-123': {
+              recordSize: 10,
+              status: 'received',
+              data: {
+                csv: {
+                  body: csvContent,
+                },
+              },
+            },
+          },
+        },
+      };
 
+      expect(selectors.fileSampleData(csvFileState, { resourceId: 'export-123', resourceType: 'exports', fileType: 'xlsx'})).toEqual(csvContent);
     });
   });
 
