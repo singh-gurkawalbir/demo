@@ -5,7 +5,7 @@ const { convertUtcToTimezone} = require('./date');
 
 describe('date util function test', () => {
   describe('convertUtcToTimezone function test', () => {
-    const testDate = new Date(2018, 11, 24, 10, 33, 30, 0);
+    const testDate = new Date('2018-12-24T10:33:30.000+05:30');
 
     test('should not throw exception for bad params', () => {
       expect(convertUtcToTimezone('fasdf')).toEqual('Invalid date');
