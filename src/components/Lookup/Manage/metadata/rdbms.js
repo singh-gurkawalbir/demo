@@ -1,7 +1,9 @@
 import getFailedRecordDefault from './util';
 
 export default {
-  getLookupMetadata: ({ lookup, showDynamicLookupOnly, sampleData }) => {
+  getLookupMetadata: ({ lookup, showDynamicLookupOnly, sampleData, resourceId,
+    resourceType,
+    flowId }) => {
     const fieldMeta = {
       fieldMap: {
         _mode: {
@@ -29,6 +31,9 @@ export default {
           required: true,
           helpText: 'The query that fetches records to be exported.',
           sampleData,
+          resourceId,
+          resourceType,
+          flowId,
           defaultValue: lookup.query,
           visibleWhen: [
             {
