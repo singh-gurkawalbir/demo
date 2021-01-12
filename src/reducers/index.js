@@ -5010,14 +5010,14 @@ selectors.isLookUpExport = (state, { flowId, resourceId, resourceType }) => {
 
   // Incase of a new resource , check for isLookup flag on resource patched for new lookup exports
   // Also for existing exports ( newly created after Flow Builder feature ) have isLookup flag
-  const { merged: resourceObj = {} } = selectors.resourceData(
+  const { merged: resourceObj } = selectors.resourceData(
     state,
     'exports',
     resourceId
   );
 
   // If exists it is a lookup
-  if (resourceObj.isLookup) return true;
+  if (resourceObj?.isLookup) return true;
 
   // If it is an existing export with a flow context, search in pps to match this resource id
   const flow = selectors.resource(state, 'flows', flowId);
