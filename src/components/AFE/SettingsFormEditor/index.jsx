@@ -60,6 +60,9 @@ const useStyles = makeStyles(theme => ({
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(1),
   },
+  message: {
+    padding: theme.spacing(1),
+  },
 }));
 
 const overrides = { showGutter: false };
@@ -149,7 +152,7 @@ export default function SettingsFormEditor({
             </div>
           </div>
         ) : (
-          <Typography>
+          <Typography className={classes.message}>
             A preview of your settings form will appear once you add some valid
             form metadata or add an init hook.
           </Typography>
@@ -168,7 +171,7 @@ export default function SettingsFormEditor({
           />
         ) : (
           status !== 'error' && (
-            <Typography>
+            <Typography className={classes.message}>
               Click the ‘test form’ button above to preview form output.
             </Typography>
           )

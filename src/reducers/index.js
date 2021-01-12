@@ -5010,14 +5010,14 @@ selectors.isLookUpExport = (state, { flowId, resourceId, resourceType }) => {
 
   // Incase of a new resource , check for isLookup flag on resource patched for new lookup exports
   // Also for existing exports ( newly created after Flow Builder feature ) have isLookup flag
-  const { merged: resourceObj = {} } = selectors.resourceData(
+  const { merged: resourceObj } = selectors.resourceData(
     state,
     'exports',
     resourceId
   );
 
   // If exists it is a lookup
-  if (resourceObj.isLookup) return true;
+  if (resourceObj?.isLookup) return true;
 
   // If it is an existing export with a flow context, search in pps to match this resource id
   const flow = selectors.resource(state, 'flows', flowId);
@@ -5037,7 +5037,7 @@ selectors.getCustomResourceLabel = (
   const isLookup = selectors.isLookUpExport(state, { flowId, resourceId, resourceType });
   const isDataloader = !!selectors.flowDetails(state, flowId).isSimpleImport;
   const isNewResource = isNewId(resourceId);
-  const { merged: resource = {} } = selectors.resourceData(
+  const { merged: resource } = selectors.resourceData(
     state,
     resourceType,
     resourceId
@@ -5054,16 +5054,17 @@ selectors.getCustomResourceLabel = (
     resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
   }
 
+  if (!resource) { return ''; }
   // Incase of Flow context, 2nd step of PG/PP creation resource labels handled here
   // The Below resource labels override the default labels above
   if (flowId && isNewResource) {
     if (resource.resourceType === 'exportRecords') {
       resourceLabel = 'Export';
     } else if (
-      ['transferFiles', 'lookupFiles'].indexOf(resource.resourceType) >= 0
+      ['transferFiles', 'lookupFiles'].includes(resource.resourceType)
     ) {
       resourceLabel = 'Transfer';
-    } else if (['webhook', 'realtime'].indexOf(resource.resourceType) >= 0) {
+    } else if (['webhook', 'realtime'].includes(resource.resourceType)) {
       resourceLabel = 'Listener';
     } else if (resource.resourceType === 'importRecords') {
       resourceLabel = 'Import';
@@ -5077,9 +5078,9 @@ selectors.getCustomResourceLabel = (
         'HTTPExport',
         'NetSuiteExport',
         'SalesforceExport',
-      ].indexOf(resource.adaptorType) >= 0 &&
+      ].includes(resource.adaptorType) &&
         resource.type === 'blob') ||
-      ['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0 ||
+      ['FTPExport', 'S3Export'].includes(resource.adaptorType) ||
       ([
         'RESTImport',
         'HTTPImport',
@@ -5087,7 +5088,7 @@ selectors.getCustomResourceLabel = (
         'SalesforceImport',
       ].indexOf(resource.adaptorType) >= 0 &&
         resource.blobKeyPath) ||
-      ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
+      ['FTPImport', 'S3Import'].includes(resource.adaptorType)
     ) {
       resourceLabel = 'Transfer';
     }
