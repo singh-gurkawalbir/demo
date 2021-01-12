@@ -157,11 +157,9 @@ export function* loadMoreLogs(opts) {
 }
 
 export function* startDebug({scriptId, value}) {
-  const { debugUntil } = yield select(selectors.resource, 'scripts', scriptId);
-
   const patchSet = [
     {
-      op: debugUntil ? 'replace' : 'add',
+      op: value !== '0' ? 'replace' : 'remove',
       path: '/debugUntil',
       value: moment().add(value, 'm').toISOString(),
     },
