@@ -7,6 +7,7 @@ import { requestReferences } from '../../resources';
 import { apiCallWithRetry } from '../..';
 import { selectors } from '../../../reducers';
 import { convertUtcToTimezone } from '../../../utils/date';
+import {RESOURCE_TYPE_PLURAL_TO_SINGULAR} from '../../../constants/resource';
 
 export function* getScriptDependencies({scriptId = '',
   flowId = '',
@@ -30,7 +31,7 @@ export function* getScriptDependencies({scriptId = '',
       const resource = resourceReferences?.exports?.find(({id}) => id === _exportId);
 
       if (resource) {
-        references.push({type: 'exports', id: resource.id, name: resource.name});
+        references.push({type: RESOURCE_TYPE_PLURAL_TO_SINGULAR.exports, id: resource.id, name: resource.name});
       }
     });
 
@@ -41,7 +42,7 @@ export function* getScriptDependencies({scriptId = '',
 
       if (resource) {
         references.push({
-          type: ppType === 'export' ? 'exports' : 'imports',
+          type: RESOURCE_TYPE_PLURAL_TO_SINGULAR[ppType === 'export' ? 'exports' : 'imports'],
           id: resource.id,
           name: resource.name,
         });
@@ -51,7 +52,7 @@ export function* getScriptDependencies({scriptId = '',
     Object.keys(resourceReferences).forEach(resourceType => {
       resourceReferences[resourceType].forEach(res => {
         // res.access => do we need it?
-        references.push({type: resourceType, id: res.id, name: res.name});
+        references.push({type: RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType], id: res.id, name: res.name});
       });
     });
   }
@@ -140,7 +141,7 @@ export function* fetchScriptLogs({scriptId = '', flowId = '', field, loadMore}) 
   }));
 
   if (shouldAutoRetry) {
-    yield put(actions.logs.scripts.loadMore({scriptId, flowId, isAutoFetch: true}));
+    yield put(actions.logs.scripts.loadMore({scriptId, flowId, shouldAutoRetry}));
   }
 }
 

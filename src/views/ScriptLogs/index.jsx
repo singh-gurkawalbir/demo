@@ -256,7 +256,8 @@ export default function ScriptLogs({ flowId, scriptId }) {
             />
           <IconTextButton
             onClick={handleRefreshClick}
-            data-test="refreshResource">
+            data-test="refreshResource"
+            disabled={status === 'requested'}>
             <RefreshIcon />
             Refresh
           </IconTextButton>

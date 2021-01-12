@@ -7,7 +7,7 @@ const emptySet = [];
 const emptyObj = {};
 
 export default (state = {}, action) => {
-  const { type, scriptId = '', resourceReferences, logs = emptySet, nextPageURL, field, value, flowId = '', shouldAutoRetry, isAutoFetch } = action;
+  const { type, scriptId = '', resourceReferences, logs = emptySet, nextPageURL, field, value, flowId = '', shouldAutoRetry } = action;
   const key = `${scriptId}-${flowId}`;
 
   return produce(state, draft => {
@@ -100,7 +100,7 @@ export default (state = {}, action) => {
       case actionTypes.LOGS.SCRIPTS.LOAD_MORE:
         if (draft?.scripts?.[key]) {
           draft.scripts[key].status = 'requested';
-          if (!isAutoFetch) delete draft.scripts[key].autoRetryCount;
+          if (!shouldAutoRetry) delete draft.scripts[key].autoRetryCount;
         }
         break;
       default:

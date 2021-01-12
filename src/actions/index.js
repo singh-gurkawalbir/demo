@@ -2120,8 +2120,8 @@ const logs = {
       action(actionTypes.LOGS.SCRIPTS.REFRESH, { scriptId, flowId }),
     clear: ({ flowId, scriptId }) =>
       action(actionTypes.LOGS.SCRIPTS.CLEAR, { flowId, scriptId }),
-    loadMore: ({ flowId, scriptId, isAutoFetch }) =>
-      action(actionTypes.LOGS.SCRIPTS.LOAD_MORE, { flowId, scriptId, isAutoFetch }),
+    loadMore: ({ flowId, scriptId, shouldAutoRetry }) =>
+      action(actionTypes.LOGS.SCRIPTS.LOAD_MORE, { flowId, scriptId, shouldAutoRetry }),
     startDebug: (scriptId, value) =>
       action(actionTypes.LOGS.SCRIPTS.START_DEBUG, { scriptId, value }),
   },

@@ -41,12 +41,12 @@ describe('getScriptDependencies saga', () => {
         scriptId,
         flowId: '',
         resourceReferences: [
-          {id: 'e1', name: 'ne1', type: 'exports'},
-          {id: 'e2', name: 'ne2', type: 'exports'},
-          {id: 'i1', name: 'ni1', type: 'imports'},
-          {id: 'i2', name: 'ni2', type: 'imports'},
-          {id: 'f1', name: 'nf1', type: 'flows'},
-          {id: 'f2', name: 'nf2', type: 'flows'},
+          {id: 'e1', name: 'ne1', type: 'export'},
+          {id: 'e2', name: 'ne2', type: 'export'},
+          {id: 'i1', name: 'ni1', type: 'import'},
+          {id: 'i2', name: 'ni2', type: 'import'},
+          {id: 'f1', name: 'nf1', type: 'flow'},
+          {id: 'f2', name: 'nf2', type: 'flow'},
         ],
       }))
       .run();
@@ -109,9 +109,9 @@ describe('getScriptDependencies saga', () => {
         scriptId,
         flowId,
         resourceReferences: [
-          {id: 'e1', name: 'ne1', type: 'exports'},
-          {id: 'e2', name: 'ne2', type: 'exports'},
-          {id: 'i2', name: 'ni2', type: 'imports'},
+          {id: 'e1', name: 'ne1', type: 'export'},
+          {id: 'e2', name: 'ne2', type: 'export'},
+          {id: 'i2', name: 'ni2', type: 'import'},
         ],
       }))
       .run();
