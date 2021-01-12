@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
   accordianWrapper: {
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+    marginBottom: theme.spacing(2),
   },
 
 }));
