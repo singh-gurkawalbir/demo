@@ -1,6 +1,6 @@
 import { wrapExportFileSampleData } from '../../../../utils/sampleData';
 
-const parseNodes = nodesAsText => nodesAsText?.split('\n');
+const parseNodes = nodesAsText => nodesAsText?.split?.('\n');
 
 const requestBody = editor => {
   let options;
