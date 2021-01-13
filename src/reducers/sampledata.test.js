@@ -183,19 +183,160 @@ describe('Sample data region selector testcases', () => {
       expect(selectors.getImportSampleData()).toEqual({});
     });
     test('should return empty object if the resource is not an assistant/IA/NS/SF and the resource does not have a sampleData saved', () => {
+      const sampleState = {
+        data: {
+          resources: {
+            imports: [{ _id: 'import-1234', adaptorType: 'RESTImport', name: 'test '}],
+          },
+        },
+        session: {},
+      };
 
+      expect(selectors.getImportSampleData(sampleState, 'import-1234')).toEqual({});
     });
     test('should return sampleData from the resourceObj if it is not an assistant/IA/NS/SF ', () => {
+      const jsonContent = { test: 5 };
+      const sampleState = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'import-1234',
+              adaptorType: 'FTPImport',
+              name: 'test',
+              file: { type: 'json' },
+              sampleData: jsonContent,
+            }],
+          },
+        },
+        session: {},
+      };
+      const expectedImportSampleData = {
+        status: 'received',
+        data: jsonContent,
+      };
 
+      expect(selectors.getImportSampleData(sampleState, 'import-1234')).toEqual(expectedImportSampleData);
     });
     test('should return assistant preview data if the assistant is not financialforce', () => {
+      const sampleState = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'import-1234',
+              adaptorType: 'RESTImport',
+              name: 'test',
+              assistant: 'zendesk',
+            }],
+          },
+        },
+        session: {
+          metadata: {
+            preview: {
+              'import-1234': {
+                status: 'received',
+                data: { users: [] },
+              },
+            },
+          },
+        },
+      };
+      const expectedImportSampleData = {
+        status: 'received',
+        data: { users: [] },
+      };
 
+      expect(selectors.getImportSampleData(sampleState, 'import-1234')).toEqual(expectedImportSampleData);
     });
     test('should return metadata from the state for NS/SF import based on the connectionId', () => {
+      const _connectionId = '5efec2cca56953365bd2bf1e';
+      const recordType = 'account';
+      const sampleNetsuiteState = {
+        data: {
+          resources: {
+            imports: [
+              {
+                _id: 'import-123',
+                name: 'netsuite import',
+                adaptorType: 'NetSuiteDistributedImport',
+                netsuite_da: { recordType},
+                _connectionId,
+              },
+            ],
+          },
+        },
+        session: {
+          metadata: {
+            application: {
+              '5efec2cca56953365bd2bf1e': {
+                [`netsuite/metadata/suitescript/connections/${_connectionId}/recordTypes/${recordType}`]: {
+                  status: 'received',
+                  data: [
+                    {
+                      group: 'Body Field',
+                      id: 'category1099misc.internalid',
+                      name: '1099-MISC Category (InternalId)',
+                      type: 'select',
+                    },
+                  ],
+                  changeIdentifier: 1,
+                },
+              },
+            },
+          },
+        },
+      };
+      const expectedImportSampleData = {
+        data: [
+          {
+            label: '1099-MISC Category (InternalId)',
+            value: 'category1099misc.internalid',
+            type: 'select',
+          },
+        ],
+        status: 'received',
+      };
 
+      expect(selectors.getImportSampleData(sampleNetsuiteState, 'import-123')).toEqual(expectedImportSampleData);
     });
     test('should return integration app import metadata if the resource is an IA', () => {
+      const iaMetadata = [{id: 'id', name: 'name'}];
+      const sampleIAState = {
+        data: {
+          resources: {
+            imports: [
+              {
+                _id: 'import-123',
+                name: 'rest import',
+                adaptorType: 'RESTImport',
+                _connectorId: 'conn-1234',
+              },
+              {
+                _id: 'import-111',
+                name: 'rest import',
+                adaptorType: 'RESTImport',
+                _connectorId: 'conn-5678',
+              },
+            ],
+          },
+        },
+        session: {
+          importSampleData: {
+            'import-123': {
+              status: 'received',
+              data: iaMetadata,
+            },
+            'import-111': {
+              status: 'requested',
+            },
+          },
+        },
+      };
 
+      const expectedImportSampleData1 = { status: 'received', data: iaMetadata};
+      const expectedImportSampleData2 = { status: 'requested'};
+
+      expect(selectors.getImportSampleData(sampleIAState, 'import-123')).toEqual(expectedImportSampleData1);
+      expect(selectors.getImportSampleData(sampleIAState, 'import-111')).toEqual(expectedImportSampleData2);
     });
   });
 
