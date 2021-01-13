@@ -42,6 +42,7 @@ export default function UserForm({
       USER_ACCESS_LEVELS.TILE,
       USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
     ].includes(data.accessLevel) &&
+    // integrationAccessLevel is expected to be an array but can be undefined
     data.integrationAccessLevel?.length
   ) {
     integrationsToManage = data.integrationAccessLevel
