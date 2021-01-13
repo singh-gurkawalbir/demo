@@ -122,11 +122,12 @@ const pageChildreUseStyles = makeStyles(theme => ({
   },
   flowToggle: {
     marginRight: 12,
-    marginLeft: theme.spacing(1),
+    marginLeft: 12,
     '& > div:first-child': {
-      padding: '8px 0px',
+      padding: '8px 0px 4px 0px',
     },
   },
+  chartsIcon: { marginRight: theme.spacing(3) },
 
 }));
 
@@ -195,7 +196,7 @@ const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
       <LineGraphButton flowId={flowId} onClickHandler={handleDrawerClick} />
       )}
       {!isDataLoaderFlow && (
-        <div className={clsx(classes.chartsIcon, classes.flowToggle)}>
+        <div className={clsx(classes.flowToggle)}>
           <FlowToggle
             integrationId={integrationId}
             resource={flowDetails}

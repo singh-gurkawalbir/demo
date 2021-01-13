@@ -18,18 +18,10 @@ const getConnectionType = resource => {
 
 const useStyles = makeStyles(theme => ({
   actions: {
-    padding: theme.spacing(2, 0),
+    padding: theme.spacing(2, 3),
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     display: 'flex',
     justifyContent: 'space-between',
-    // '& > div': {
-    //   '& > button': {
-    //     marginRight: theme.spacing(2),
-    //     '&:last-child': {
-    //       marginRight: 0,
-    //     },
-    //   },
-    // },
   },
 }));
 /**

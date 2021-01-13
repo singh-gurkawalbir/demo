@@ -23,7 +23,6 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2),
   },
   runNowIcon: {
-    marginLeft: theme.spacing(-1),
     '&:hover': {
       background: 'none',
       color: theme.palette.primary.main,
