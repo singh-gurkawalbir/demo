@@ -126,6 +126,9 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
   } catch (error) {
     return yield put(actions.api.failure(path, 'POST', error, false));
   }
+  if (actionType === 'ioResume') {
+    yield put(actions.resource.requestCollection('flows'));
+  }
 
   yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
 }
