@@ -17,17 +17,15 @@ export default function UsersList({ integrationId, storeId, className }) {
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
   const users = useSelector(state => selectors.availableUsersList(state, integrationId));
+  const isIntegrationUsersRequested = useSelector(state =>
+    !!selectors.integrationUsers(state, integrationId)
+  );
 
   useEffect(() => {
-    if (integrationId) {
-      dispatch(
-        actions.resource.requestCollection(
-          ['integrations', integrationId, 'ashares'].join('/')
-        )
-      );
+    if (integrationId && !isIntegrationUsersRequested) {
+      dispatch(actions.resource.requestCollection(`integrations/${integrationId}/ashares`));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isIntegrationUsersRequested, dispatch, integrationId]);
 
   const actionProps = useMemo(() => (
     {
