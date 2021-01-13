@@ -16,6 +16,7 @@ export default {
       value: function Applications(r) {
         return <ApplicationImgCell applications={r.applications} />;
       },
+
     },
     {
       heading: 'Name',
@@ -30,17 +31,17 @@ export default {
       orderBy: 'lastModified',
     },
     {
-      heading: 'Website',
+      heading: 'Website URL',
       value(r) {
         return r.websiteURL ? (
           <Link href={r.websiteURL} target="_blank">
-            Website
+            View
           </Link>
         ) : null;
       },
     },
     {
-      heading: 'Publish',
+      heading: 'Published',
       value: function Type(r) {
         return (
           <OnOffCell
