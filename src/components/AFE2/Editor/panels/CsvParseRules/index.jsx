@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
@@ -26,16 +26,28 @@ export default function CsvParseRules({ editorId }) {
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const rule = useSelector(state => selectors._editorRule(state, editorId));
-  const resourceId = useSelector(state => selectors._editor(state, editorId).resourceId);
+  const { resourceId, resourceType } = useSelector(state => {
+    const editor = selectors._editor(state, editorId);
+
+    return {
+      resourceId: editor.resourceId,
+      resourceType: editor.resourceType,
+    };
+  }, shallowEqual);
   const formContext = useFormContext(formKey);
 
   // Since the form metadata is used only once, we don't need to refresh the
   // metadata cache on rule changes... we just need the original rule to set the
   // starting values.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const fieldMeta = useMemo(() => getForm(rule, resourceId), [resourceId]);
+  const fieldMeta = useMemo(() => getForm({...rule, resourceId, resourceType}), [resourceId]);
 
-  useFormInitWithPermissions({ formKey, disabled, fieldMeta });
+  useFormInitWithPermissions({
+    formKey,
+    disabled,
+    optionsHandler: fieldMeta?.optionsHandler,
+    fieldMeta,
+  });
 
   // any time the form value changes, we dispatch an action to update the
   // editor state with the current form value.
