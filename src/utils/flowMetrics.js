@@ -21,7 +21,7 @@ export const getDateTimeFormat = (range, epochTime, preferences = {}, timezone) 
     const days = moment(range.endDate).diff(moment(range.startDate), 'days');
 
     if (days > 4 && days < 4 * 30) {
-      return moment(epochTime).format(preferences?.dateFormat || 'MM/DD/YYYY');
+      return `${moment(epochTime).format(preferences?.dateFormat || 'MM/DD/YYYY')} GMT`;
     } if (days >= 4 * 30) {
       return moment(epochTime).format('MMMM');
     }
