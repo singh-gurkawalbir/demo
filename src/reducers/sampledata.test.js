@@ -54,20 +54,155 @@ describe('Sample data region selector testcases', () => {
   });
 
   describe('selectors.fileDefinitionSampleData test cases', () => {
+    const sampleTemplate = {
+      generate: {
+        name: '84 Lumber 810',
+        description: 'Invoice',
+        version: 1,
+        format: 'delimited',
+        delimited: {
+          rowSuffix: '~',
+          rowDelimiter: '\n',
+          colDelimiter: '*',
+        },
+        sampleData: [
+          {
+            'Authorization Information Qualifier': '02',
+            IT1: [
+              {
+                IT101: '1',
+                'Quantity Invoiced': '7.56',
+              },
+            ],
+          },
+        ],
+        rules: [],
+      },
+      parse: {
+        name: '84 Lumber 810',
+        description: 'Invoice',
+        version: 1,
+        format: 'delimited',
+        delimited: {
+          rowSuffix: '~',
+          rowDelimiter: '\n',
+          colDelimiter: '*',
+        },
+        sampleData: 'ISA*02*SW810 *00* *01*84EXAMPLE',
+        rules: [
+          {
+            maxOccurrence: 1,
+            skipRowSuffix: true,
+            required: true,
+          },
+        ],
+      },
+    };
+
+    const fileDefinitionState = {
+      fileDefinitions: {
+        preBuiltFileDefinitions: {
+          status: 'received',
+          data: {
+            edi: [
+              {
+                subHeader: '84 Lumber',
+              },
+              {
+                vendor: '84 Lumber',
+                format: 'delimited',
+                label: '84 Lumber 810',
+                value: '84lumberedi810',
+                template: sampleTemplate,
+              },
+            ],
+          },
+        },
+      },
+    };
+    const fileDefinitionStateWithoutSampleData = {
+      fileDefinitions: {
+        preBuiltFileDefinitions: {
+          status: 'received',
+          data: {
+            edi: [
+              {
+                subHeader: '84 Lumber',
+              },
+              {
+                vendor: '84 Lumber',
+                format: 'delimited',
+                label: '84 Lumber 810',
+                value: '84lumberedi810',
+              },
+            ],
+          },
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.fileDefinitionSampleData({}, {})).toEqual({});
     });
     test('should return empty object if the sample data does not exist', () => {
+      const sampleState = {
+        data: {...fileDefinitionStateWithoutSampleData},
+      };
+      const options = { definitionId: '84lumberedi810', format: 'edi'};
 
+      expect(selectors.fileDefinitionSampleData(sampleState, { options, resourceType: 'exports' })).toEqual({});
+      expect(selectors.fileDefinitionSampleData(sampleState, { options, resourceType: 'imports' })).toEqual({});
     });
     test('should return rule and sampleData for a new File def resource when definitionId and format are passed', () => {
+      const sampleState = {
+        data: {...fileDefinitionState},
+      };
+      const resourcePath = 'IT1';
+      const options = { definitionId: '84lumberedi810', format: 'edi'};
 
+      const { sampleData: exportSampleData, ...exportFileDefRules } = sampleTemplate.parse;
+      const { sampleData: importSampleData, ...importFileDefRules } = sampleTemplate.generate;
+
+      const expectedExportRules = JSON.stringify(
+        {
+          resourcePath: '',
+          fileDefinition: exportFileDefRules,
+        }, null, 2
+      );
+      const expectedExportRulesWithResourcePath = JSON.stringify(
+        {
+          resourcePath,
+          fileDefinition: exportFileDefRules,
+        }, null, 2
+      );
+      const expectedImportRules = JSON.stringify(importFileDefRules, null, 2);
+      const stringifiedImportSampleData = JSON.stringify(importSampleData[0], null, 2);
+
+      expect(selectors.fileDefinitionSampleData(sampleState, { options, resourceType: 'exports' })).toEqual({ sampleData: exportSampleData, rule: expectedExportRules });
+      expect(selectors.fileDefinitionSampleData(sampleState, { options: { ...options, resourcePath }, resourceType: 'exports' })).toEqual({ sampleData: exportSampleData, rule: expectedExportRulesWithResourcePath });
+      expect(selectors.fileDefinitionSampleData(sampleState, { options, resourceType: 'imports' })).toEqual({ sampleData: stringifiedImportSampleData, rule: expectedImportRules });
     });
-    test('should return user saved rule and sampleData for existing File def resource when userDefinitionId is passed', () => {
+    test('should return user saved rule for existing File def resource when userDefinitionId is passed', () => {
+      const userDefinitionId = '5efc90dea56953365bd24843';
+      const userDefinition = {
+        _id: userDefinitionId,
+        ...sampleTemplate,
+      };
+      const sampleState = {
+        data: {
+          resources: {
+            filedefinitions: [userDefinition],
+          },
+        },
+      };
+      const expectedExportRules = JSON.stringify(
+        {
+          resourcePath: '',
+          fileDefinition: userDefinition,
+        }, null, 2
+      );
 
-    });
-    test('should include resourcePath in the rule incase of exports ', () => {
-
+      expect(selectors.fileDefinitionSampleData(sampleState, { userDefinitionId, resourceType: 'exports' })).toEqual({ sampleData: undefined, rule: expectedExportRules });
     });
   });
 
