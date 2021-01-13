@@ -31,6 +31,8 @@ export default {
           flowId={flowId}
           resourceId={resourceId}
           traceKey={r.traceKey}
+          exportDataURI={r.exportDataURI}
+          importDataURI={r.importDataURI}
       />
       ),
     },
