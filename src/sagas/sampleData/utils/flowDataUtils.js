@@ -339,8 +339,14 @@ export function* getFlowStageData({
   resourceType,
   stage,
   isInitialized,
+  noWrap,
 }) {
-  let flowStageData = yield select(selectors.sampleDataWrapper, {
+  let selector = selectors.sampleDataWrapper;
+
+  if (noWrap) {
+    selector = selectors.getSampleDataContext;
+  }
+  let flowStageData = yield select(selector, {
     flowId,
     resourceId,
     resourceType,
@@ -357,7 +363,7 @@ export function* getFlowStageData({
       stage,
       isInitialized,
     });
-    flowStageData = yield select(selectors.sampleDataWrapper, {
+    flowStageData = yield select(selector, {
       flowId,
       resourceId,
       resourceType,
