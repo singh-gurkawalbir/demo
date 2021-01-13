@@ -1,12 +1,18 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Typography } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import { selectors } from '../../../../../../reducers';
 import CodePanel from '../../Code';
 
 const overrides = { showGutter: false };
 
+const useStyles = makeStyles(theme => ({
+  message: {
+    padding: theme.spacing(1),
+  },
+}));
 export default function OutputPanel({ editorId }) {
+  const classes = useStyles();
   const { formOutput, previewStatus} = useSelector(state => {
     const {formOutput, previewStatus} = selectors._editor(state, editorId);
 
@@ -26,7 +32,7 @@ export default function OutputPanel({ editorId }) {
       />
       ) : (
         previewStatus !== 'error' && (
-        <Typography>
+        <Typography className={classes.message}>
           Click the ‘test form’ button above to preview form output.
         </Typography>
         )

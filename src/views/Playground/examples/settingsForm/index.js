@@ -1,6 +1,6 @@
 import simple from './simple';
-import collapse from './collapse';
 import column from './column';
+import fieldContainers from './fieldContainers';
 import fieldDictionary from './fieldDictionary';
 
-export default [simple, column, collapse, fieldDictionary];
+export default [simple, column, fieldContainers, fieldDictionary];

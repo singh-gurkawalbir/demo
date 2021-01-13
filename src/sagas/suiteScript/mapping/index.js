@@ -52,7 +52,11 @@ export function* refreshGenerates({ isInit = false }) {
       flowId,
     }
   );
+
+  if (!flow) { return; }
   const { import: importRes } = flow;
+
+  if (!importRes) { return; }
   const {type: importType, _connectionId} = importRes;
 
   const {data: generateFields} = yield select(selectors.suiteScriptGenerates, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
@@ -79,7 +83,9 @@ export function* refreshGenerates({ isInit = false }) {
         const childObjectName = id.split('[*].')[0];
         const childRelationshipObject = childRelationshipFields.find(field => field.value === childObjectName);
 
-        if (sObjectList.indexOf(childRelationshipObject.childSObject) === -1) {
+        if (!childRelationshipObject) { return; }
+
+        if (!sObjectList.includes(childRelationshipObject.childSObject)) {
           sObjectList.push(childRelationshipObject.childSObject);
         }
       }
@@ -90,7 +96,8 @@ export function* refreshGenerates({ isInit = false }) {
         const subListName = generate.split('[*].')[0];
         const childRelationshipObject = childRelationshipFields.find(field => field.value === subListName);
 
-        if (sObjectList.indexOf(childRelationshipObject.childSObject) === -1) {
+        if (!childRelationshipObject) { return; }
+        if (!sObjectList.includes(childRelationshipObject.childSObject)) {
           sObjectList.push(childRelationshipObject.childSObject);
         }
       }
