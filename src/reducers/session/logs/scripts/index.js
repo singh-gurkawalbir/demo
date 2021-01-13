@@ -2,6 +2,7 @@ import produce from 'immer';
 import { addMinutes } from 'date-fns';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
+import { getSelectedRange } from '../../../../utils/flowMetrics';
 
 const emptySet = [];
 const emptyObj = {};
@@ -77,6 +78,14 @@ export default (state = {}, action) => {
       case actionTypes.LOGS.SCRIPTS.REFRESH:
         if (draft?.scripts?.[key]) {
           draft.scripts[key].status = 'requested';
+          if (draft.scripts[key].dateRange) {
+            const newDateRange = getSelectedRange({
+              preset: draft.scripts[key]?.dateRange?.preset,
+            });
+
+            draft.scripts[key].dateRange = newDateRange;
+          }
+
           delete draft.scripts[key].logs;
           delete draft.scripts[key].autoRetryCount;
           delete draft.scripts[key].nextPageURL;
@@ -100,7 +109,6 @@ export default (state = {}, action) => {
       case actionTypes.LOGS.SCRIPTS.LOAD_MORE:
         if (draft?.scripts?.[key]) {
           draft.scripts[key].status = 'requested';
-          if (!shouldAutoRetry) delete draft.scripts[key].autoRetryCount;
         }
         break;
       default:

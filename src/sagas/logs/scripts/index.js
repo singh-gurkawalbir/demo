@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { call, takeEvery, put, select, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeLatest } from 'redux-saga/effects';
 import moment from 'moment';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
@@ -9,6 +9,41 @@ import { selectors } from '../../../reducers';
 import { convertUtcToTimezone } from '../../../utils/date';
 import {RESOURCE_TYPE_PLURAL_TO_SINGULAR} from '../../../constants/resource';
 
+function getFetchLogsPath({
+  dateRange,
+  selectedResources,
+  functionType,
+  nextPageURL,
+  flowId,
+  scriptId,
+  fetchNextPage = false,
+}) {
+  let path;
+
+  if (fetchNextPage && nextPageURL) {
+    path = nextPageURL.replace('/api', '');
+  } else {
+    path = `/scripts/${scriptId}/logs?time_gt=${dateRange?.startDate?.getTime()}&time_lte=${dateRange?.endDate?.getTime()}`;
+
+    if (flowId) {
+      path += `&_flowId=${flowId}`;
+    }
+    if (selectedResources?.length) {
+      selectedResources.forEach(res => {
+        if (res.type === 'flows') {
+          path += `&_flowId=${res.id}`;
+        } else {
+          path += `&_resourceId=${res.id}`;
+        }
+      });
+    }
+    if (functionType) {
+      path += `&functionType=${functionType}`;
+    }
+  }
+
+  return path;
+}
 export function* getScriptDependencies({scriptId = '',
   flowId = '',
 }) {
@@ -63,98 +98,70 @@ export function* getScriptDependencies({scriptId = '',
   }));
 }
 
-export function* fetchScriptLogs({scriptId = '', flowId = '', field, loadMore}) {
-  if (field === 'logLevel') {
-    // do not fetch data in case of log level change. Log level is a ui level filter
-    return;
-  }
-  const {
-    dateRange,
-    selectedResources,
-    functionType,
-    nextPageURL,
-    autoRetryCount = 0,
-  } = yield select(selectors.scriptLog, {scriptId, flowId});
-  let path;
-
-  if (loadMore && nextPageURL) {
-    path = nextPageURL.replace('/api', '');
-  } else {
-    path = `/scripts/${scriptId}/logs?time_gt=${dateRange?.startDate?.getTime()}&time_lte=${dateRange?.endDate?.getTime()}`;
-
-    if (flowId) {
-      path += `&_flowId=${flowId}`;
-    }
-    if (selectedResources?.length) {
-      selectedResources.forEach(res => {
-        if (res.type === 'flows') {
-          path += `&_flowId=${res.id}`;
-        } else {
-          path += `&_resourceId=${res.id}`;
-        }
-      });
-    }
-    if (functionType) {
-      path += `&functionType=${functionType}`;
-    }
-  }
-
-  // tmp fix
-  // path += `&searchGranularity=${10}`;
-
-  let response;
+export function* retryToFetchLogs(props) {
+  const {retryCount = 0, fetchLogsPath} = props;
   const opts = {
     method: 'GET',
   };
 
+  if (retryCount > 4) {
+    return {
+      nextPageUrl: fetchLogsPath,
+      logs: [],
+    };
+  }
+
+  let response;
+
   try {
     response = yield call(apiCallWithRetry, {
-      path,
+      path: fetchLogsPath,
       opts,
     });
   } catch (e) {
-    return yield put(actions.logs.scripts.requestFailed(
-      {
-        scriptId,
-        flowId,
-      }));
+    response = {};
   }
+
+  const {logs, nextPageURL} = response;
+
+  if (logs?.length || !nextPageURL) {
+    return {logs, nextPageURL};
+  }
+
+  return yield call(retryToFetchLogs, {...props, retryCount: retryCount + 1, fetchLogsPath: nextPageURL });
+}
+
+export function* requestScriptLogs({isInit, field, ...props}) {
+  if (field === 'logLevel') {
+    // do not fetch data in case of log level change. Log level is a ui level filter
+    return;
+  }
+  const {scriptId, flowId, fetchNextPage} = props;
+
+  if (isInit) {
+    yield put(actions.logs.scripts.getDependency({scriptId, flowId}));
+  }
+  const logState = yield select(selectors.scriptLog, {scriptId, flowId});
+  const fetchLogsPath = getFetchLogsPath({...logState, fetchNextPage });
+  const { logs = [], nextPageURL } = yield call(retryToFetchLogs, {...props, fetchLogsPath});
 
   // change logs utc datetime to local date time
   const {dateFormat, timeFormat, timezone } = yield select(selectors.userProfilePreferencesProps);
 
-  const formattedLogs = response?.logs?.map(({time = '', ...others}) => {
+  const formattedLogs = logs.map(({time = '', ...others}) => {
     const timeArr = time.split(' ');
     const utcISODateTime = `${timeArr[0]}T${timeArr[1]}Z`;
     const localDateTime = convertUtcToTimezone(utcISODateTime, dateFormat, timeFormat, timezone);
 
     return {time: localDateTime, ...others };
   });
-  const shouldAutoRetry = autoRetryCount < 3 && !!response?.nextPageURL && !formattedLogs?.length;
 
   yield put(actions.logs.scripts.received({
     scriptId,
     flowId,
     logs: formattedLogs || [],
-    nextPageURL: response?.nextPageURL,
-    shouldAutoRetry,
+    nextPageURL,
   }));
-
-  if (shouldAutoRetry) {
-    yield put(actions.logs.scripts.loadMore({scriptId, flowId, shouldAutoRetry}));
-  }
-}
-
-export function* requestScriptLogs({
-  scriptId = '',
-  flowId = ''}) {
-  // check if scripts not loaded. if not load from api
-  yield call(getScriptDependencies, {scriptId, flowId});
-  yield call(fetchScriptLogs, {scriptId, flowId});
-}
-export function* loadMoreLogs(opts) {
-  // check if scripts not loaded. if not load from api
-  yield call(fetchScriptLogs, {...opts, loadMore: true});
 }
 
 export function* startDebug({scriptId, value}) {
@@ -168,11 +175,15 @@ export function* startDebug({scriptId, value}) {
 
   yield put(actions.resource.patch('scripts', scriptId, patchSet));
 }
-export const scriptsLogSagas = [
-  takeEvery(actionTypes.LOGS.SCRIPTS.REQUEST, requestScriptLogs),
-  takeEvery(actionTypes.LOGS.SCRIPTS.LOAD_MORE, loadMoreLogs),
-  takeLatest(actionTypes.LOGS.SCRIPTS.PATCH_FILTER, fetchScriptLogs),
-  takeLatest(actionTypes.LOGS.SCRIPTS.REFRESH, fetchScriptLogs),
-  takeLatest(actionTypes.LOGS.SCRIPTS.START_DEBUG, startDebug),
 
+export const scriptsLogSagas = [
+  takeLatest([
+    actionTypes.LOGS.SCRIPTS.REQUEST,
+    actionTypes.LOGS.SCRIPTS.LOAD_MORE,
+    actionTypes.LOGS.SCRIPTS.PATCH_FILTER,
+    actionTypes.LOGS.SCRIPTS.REFRESH,
+  ], requestScriptLogs),
+  takeLatest(actionTypes.LOGS.SCRIPTS.START_DEBUG, startDebug),
+  takeLatest(actionTypes.LOGS.SCRIPTS.GET_DEPENDENCY, getScriptDependencies),
 ];
+

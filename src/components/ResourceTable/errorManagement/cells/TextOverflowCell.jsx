@@ -21,7 +21,7 @@ const useStyles = makeStyles(() => ({
 
 }));
 
-export default function OverflowWrapper({ message, containsHtml, style}) {
+export default function TextOverflowCell({ message, containsHtml, style}) {
   const classes = useStyles();
 
   return (

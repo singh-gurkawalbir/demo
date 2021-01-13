@@ -12,13 +12,13 @@ import IconTextButton from '../../components/IconTextButton';
 import RefreshIcon from '../../components/icons/RefreshIcon';
 import CeligoPagination from '../../components/CeligoPagination';
 import CeligoTable from '../../components/CeligoTable';
-import metadata from './metadata';
+import metadata from '../../components/ResourceTable/scriptLogs/metadata';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import SelectDependentResource from '../../components/SelectDependentResource';
 import { LOG_LEVELS, SCRIPT_FUNCTION_TYPES, SCRIPT_FUNCTION_TYPES_FOR_FLOW } from '../../utils/script';
 import Spinner from '../../components/Spinner';
 import SearchIcon from '../../components/icons/SearchIcon';
-import ViewLogDetailDrawer from './metadata/actions/LogDetailDrawer';
+import ViewLogDetailDrawer from './DetailDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -225,7 +225,6 @@ export default function ScriptLogs({ flowId, scriptId }) {
               <MenuItem key={functionTypes[functionType]} value={functionTypes[functionType]}>
                 {functionTypes[functionType]}
               </MenuItem>
-
             ))}
           </CeligoSelect>
           <CeligoSelect
