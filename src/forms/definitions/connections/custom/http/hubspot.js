@@ -1,5 +1,5 @@
 export default {
-  preSave: formValues => {
+  preSave: (formValues, resource) => {
     const retValues = { ...formValues };
 
     if (retValues['/http/auth/type'] === 'token') {
@@ -7,6 +7,7 @@ export default {
       retValues['/http/auth/token/paramName'] = 'hapikey';
       retValues['/http/auth/oauth/authURI'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] = undefined;
+      retValues['/http/_iClientId'] = undefined;
     } else {
       const scopes = retValues['/http/auth/oauth/scope'].filter(s => s !== 'oauth');
 
@@ -19,6 +20,14 @@ export default {
         'https://api.hubapi.com/oauth/v1/token';
       retValues['/http/auth/oauth/scopeDelimiter'] = ' ';
       retValues['/http/auth/oauth/scope'] = ['oauth'];
+      if (
+        resource &&
+        !resource._connectorId &&
+        resource.http &&
+        resource.http._iClientId
+      ) {
+        retValues['/http/_iClientId'] = undefined;
+      }
     }
 
     return {
@@ -103,7 +112,14 @@ export default {
           return [...selectedScopes, ...scopes];
         }
       },
-      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      visibleWhenAll: r => {
+        if (r?.http?._iClientId) {
+          return [{ field: 'http.auth.type', isNot: ['oauth'] },
+            { field: 'http.auth.type', isNot: ['token'] }];
+        }
+
+        return [{ field: 'http.auth.type', is: ['oauth'] }];
+      },
     },
     application: {
       fieldId: 'application',
