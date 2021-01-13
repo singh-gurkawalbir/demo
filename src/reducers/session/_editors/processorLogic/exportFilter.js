@@ -3,6 +3,7 @@ import actions from '../../../../actions';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 import javascript from './javascript';
 import filter from './filter';
+import { safeParse } from '../../../../utils/string';
 
 export default {
   processor: ({activeProcessor}) => activeProcessor,
@@ -31,10 +32,20 @@ export default {
       activeProcessor,
     };
   },
-  buildData: (_, sampleData) => ({
-    filter: sampleData,
-    javascript: sampleData,
-  }),
+  buildData: (_, sampleData) => {
+    const parsedData = safeParse(sampleData);
+
+    // for JS panel, 'rows' is also represented as 'record'
+    if (parsedData?.rows) {
+      parsedData.record = parsedData.rows;
+      delete parsedData.rows;
+    }
+
+    return {
+      filter: sampleData,
+      javascript: JSON.stringify(parsedData, null, 2),
+    };
+  },
   requestBody: editor => {
     if (editor.activeProcessor === 'filter') {
       return filter.requestBody({

@@ -8,6 +8,7 @@ export default {
     const postResponseMapHook = pageProcessorsObject?.hooks?.postResponseMap || {};
     const rule = {
       entryFunction: postResponseMapHook.function || hooksToFunctionNamesMap.postResponseMap,
+      fetchScriptContent: true,
     };
 
     if (postResponseMapHook._scriptId) {
