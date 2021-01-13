@@ -151,8 +151,7 @@ export default function PageBar() {
   const integrationAppName = getIntegrationAppUrlName(integration?.name);
   const accessLevel = useSelector(
     state =>
-      selectors.resourcePermissions(state, 'integrations', integrationId)
-        .accessLevel
+      selectors.resourcePermissions(state, 'integrations', integrationId)?.accessLevel
   );
   const { supportsMultiStore, storeLabel } = integration?.settings || {};
 

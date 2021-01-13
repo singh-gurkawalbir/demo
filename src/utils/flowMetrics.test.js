@@ -1,11 +1,13 @@
-/* global describe, test, expect */
+/* global describe, test, expect beforeAll afterAll jest */
 import moment from 'moment';
+import momenttz from 'moment-timezone';
 import addDays from 'date-fns/addDays';
 
 const {
   isDate,
   getSelectedRange,
   getLineColor,
+  getDateTimeFormat,
 } = require('./flowMetrics');
 
 describe('flowMetrics util function test', () => {
@@ -17,6 +19,105 @@ describe('flowMetrics util function test', () => {
       expect(isDate(moment())).toEqual(false);
       expect(isDate(moment().toISOString())).toEqual(false);
       expect(isDate(moment().toDate())).toEqual(true);
+    });
+  });
+
+  describe('getDateTimeFormat function test', () => {
+    let dateNowSpy;
+    let momentSpy;
+
+    beforeAll(() => {
+    // Lock Time
+      dateNowSpy = jest.spyOn(Date, 'now').mockImplementation(() => +new Date('2020-06-05'));
+      momentSpy = jest.spyOn(momenttz.tz, 'guess').mockImplementation(() => 'GMT');
+    });
+
+    afterAll(() => {
+    // Unlock Time
+      dateNowSpy.mockRestore();
+      momentSpy.mockRestore();
+    });
+    test('should not throw any exception for bad params', () => {
+      expect(getDateTimeFormat()).toEqual('06/05/2020 12:00:00 am');
+      expect(getDateTimeFormat(null)).toEqual('06/05/2020 12:00:00 am');
+      expect(getDateTimeFormat(null, null, null, null)).toEqual('Invalid date');
+      expect(getDateTimeFormat('string', 123, '123')).toEqual('01/01/1970 12:00:00 am');
+    });
+
+    test('should return correct formatted date for respective params', () => {
+      const testCases = [{
+        range: {
+          startDate: '2021-01-03T09:08:26.883Z',
+          endDate: '2021-01-01T09:08:26.883Z',
+        },
+        epochTime: 1609664979229,
+        preferences: {dateFormat: 'MM/DD/YY', timeFormat: 'hh:mm'},
+        timezone: 'Asia/Calcutta',
+        result: '01/03/21 02:39',
+      },
+      {
+        range: {
+          startDate: '2021-01-03T09:08:26.883Z',
+          endDate: '2021-01-01T09:08:26.883Z',
+        },
+        epochTime: 1609664979229,
+        preferences: {dateFormat: 'DD/MM/YY', timeFormat: 'hh:mm'},
+        timezone: 'Asia/Calcutta',
+        result: '03/01/21 02:39',
+      },
+      {
+        range: {
+          startDate: '2021-01-03T09:08:26.883Z',
+          endDate: '2021-01-01T09:08:26.883Z',
+        },
+        epochTime: 1609664979229,
+        preferences: {dateFormat: 'MM/DD/YYYY', timeFormat: 'hh:mm'},
+        timezone: 'Asia/Calcutta',
+        result: '01/03/2021 02:39',
+      },
+      {
+        range: {
+          endDate: '2021-01-03T09:08:26.883Z',
+          startDate: '2020-12-24T09:08:26.883Z',
+        },
+        epochTime: 1609664979229,
+        preferences: {dateFormat: 'MM/DD/YYYY', timeFormat: 'hh:mm'},
+        timezone: 'Asia/Calcutta',
+        result: '01/03/2021',
+      },
+      {
+        range: {
+          endDate: '2021-01-03T09:08:26.883Z',
+          startDate: '2020-02-24T09:08:26.883Z',
+        },
+        epochTime: 1609664979229,
+        preferences: {dateFormat: 'MM/DD/YYYY', timeFormat: 'hh:mm'},
+        timezone: 'Asia/Calcutta',
+        result: 'January',
+      },
+      {
+        range: {
+          endDate: '2021-01-03T09:08:26.883Z',
+          startDate: '2021-01-01T09:08:26.883Z',
+        },
+        epochTime: 1609664979229,
+        preferences: {dateFormat: 'MM/DD/YYYY', timeFormat: 'HH:MM:ss'},
+        timezone: 'Asia/Calcutta',
+        result: '01/03/2021 14:01:39',
+      },
+      {
+        range: {
+          endDate: '2021-01-03T09:08:26.883Z',
+          startDate: '2021-01-01T09:08:26.883Z',
+        },
+        epochTime: 1609664979229,
+        preferences: {dateFormat: 'MM/DD/YYYY', timeFormat: 'HH:MM:ss'},
+        result: '01/03/2021 09:01:39',
+      }];
+
+      testCases.forEach(test => {
+        expect(getDateTimeFormat(test.range, test.epochTime, test.preferences, test.timezone)).toEqual(test.result);
+      });
     });
   });
 

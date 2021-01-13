@@ -1,14 +1,29 @@
 import React, { useMemo } from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
+import { Button } from '@material-ui/core';
 import lookupUtil from '../../../../utils/lookup';
-import DynaLookupEditor from '../../../DynaForm/fields/DynaLookupEditor';
+import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import useFormContext from '../../../Form/FormContext';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import EditorDrawer from '../index';
 import CeligoDivider from '../../../CeligoDivider';
+import FieldHelp from '../../../DynaForm/FieldHelp';
+import LookupDrawer from '../../../drawer/Lookup';
+
+const useStyles = makeStyles({
+  button: {
+    display: 'flex',
+    whiteSpace: 'nowrap',
+  },
+});
 
 export default function ManageLookup({ editorId }) {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const match = useRouteMatch();
   const showLookup = useSelector(state => selectors.isEditorLookupSupported(state, editorId));
   const {resourceType, formKey, resourceId, flowId} = useSelector(state => {
     const e = selectors._editor(state, editorId);
@@ -31,6 +46,16 @@ export default function ManageLookup({ editorId }) {
   [adaptorType, formContext, resourceType]);
 
   const lookupFieldId = lookupUtil.getLookupFieldId(adaptorType);
+  const handleEditorClick = () => {
+    if (lookups?.length) {
+      history.push(`${match.url}/lookup`);
+    } else {
+      history.push(`${match.url}/lookup/add`);
+    }
+  };
+  const handleUpdate = lookups => {
+    dispatch(actions.form.fieldChange(formKey)(lookupFieldId, lookups));
+  };
 
   if (!showLookup || !lookupFieldId) {
     return null;
@@ -38,17 +63,27 @@ export default function ManageLookup({ editorId }) {
 
   return (
     <>
-      <DynaLookupEditor
+      <LookupDrawer
         id={lookupFieldId}
-        label="Manage lookups"
-        value={lookups}
-        formKey={formKey}
-        flowId={flowId}
-        resourceType={resourceType}
+        lookups={lookups}
         resourceId={resourceId}
-      />
+        resourceType={resourceType}
+        flowId={flowId}
+        onSave={handleUpdate} />
+      <div className={classes.button}>
+        <Button
+          data-test={lookupFieldId}
+          variant="outlined"
+          color="secondary"
+          onClick={handleEditorClick}>
+          {lookups?.length ? 'Manage lookups' : 'Create lookup'}
+        </Button>
+        <FieldHelp
+          id="Lookups"
+          helpKey="afe.lookups"
+          label="Lookups" />
+      </div>
       <CeligoDivider position="right" />
-      <EditorDrawer />
     </>
   );
 }

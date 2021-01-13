@@ -1,11 +1,12 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import ImportMapping from './Mappings';
+import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
 export default function MappingWrapper(props) {
-  const { id, flowId, generateFields, sectionId, integrationId } = props;
+  const { id, flowId, generateFields, sectionId, integrationId, depth } = props;
   const [initTriggered, setInitTriggered] = useState(false);
   const [resetMappings, setResetMappings] = useState(false);
   const resourceId = useSelector(state => {
@@ -21,12 +22,8 @@ export default function MappingWrapper(props) {
 
     return null;
   });
-  const { fieldMappings, lookups, deleted = false } =
-    useSelector(state =>
-      selectors.mappingsForCategory(state, integrationId, flowId, {
-        sectionId,
-      })
-    ) || {};
+  const memoizedOptions = useMemo(() => ({ sectionId, depth }), [sectionId, depth]);
+  const { fieldMappings, lookups, deleted = false } = useSelectorMemo(selectors.mkMappingsForCategory, integrationId, flowId, memoizedOptions) || {};
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );

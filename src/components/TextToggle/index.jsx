@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
       minWidth: 100,
       '& span': {
         color: theme.palette.secondary.light,
-        lineHeight: '24px',
+        lineHeight: '0px',
       },
     },
     '& button.Mui-selected': {

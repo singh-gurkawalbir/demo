@@ -42,26 +42,50 @@ export default {
 
     return handlebars.init({...props, modelMetadata, supportsDefaultData: _hasDefaultMetaData(props.options)});
   },
-  buildData: ({dataVersion, modelMetadata, supportsDefaultData}, sampleData) => {
+  buildData: ({modelMetadata, supportsDefaultData}, sampleData) => {
     if (!supportsDefaultData) {
       return { data: sampleData};
     }
+    const parsedData = safeParse(sampleData);
+
+    let dataContext = 'data';
+
+    if (parsedData?.rows) {
+      dataContext = 'row';
+    } else if (parsedData?.record) {
+      dataContext = 'record';
+    }
+
     if (modelMetadata) {
       const newMeta = cloneDeep(modelMetadata);
-      const defaultData = dataVersion === 2 ? {record: newMeta} : {data: newMeta};
+      const defaultData = {[dataContext]: newMeta};
 
       return {
         data: sampleData,
         defaultData: JSON.stringify(defaultData, null, 2),
       };
     }
-    const parsedData = safeParse(sampleData);
+
     let temp = {};
 
     if (Array.isArray(parsedData) && parsedData.length && typeof parsedData[0] === 'object') {
       temp = cloneDeep(getUnionObject(parsedData));
     } else if (parsedData) {
-      temp = cloneDeep(parsedData);
+      const {data, rows, record} = parsedData;
+      let sampleDataToClone;
+
+      if (dataContext === 'data') {
+        if (Array.isArray(data)) {
+          sampleDataToClone = data?.[0];
+        } else {
+          sampleDataToClone = data;
+        }
+      } else if (dataContext === 'row') {
+        sampleDataToClone = rows?.[0];
+      } else {
+        sampleDataToClone = record;
+      }
+      temp = {[dataContext]: cloneDeep(sampleDataToClone)};
     }
     const defaultData = getDefaultData(temp);
 

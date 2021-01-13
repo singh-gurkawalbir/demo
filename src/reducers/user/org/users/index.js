@@ -1,3 +1,4 @@
+import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
 import {
   USER_ACCESS_LEVELS,
@@ -68,18 +69,20 @@ export default (state = [], action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.usersList = state => {
-  if (!state || !state.length) {
-    return [];
-  }
+selectors.usersList = createSelector(
+  state => state,
+  state => {
+    if (!state || !state.length) {
+      return [];
+    }
 
-  const aShares = state.map(share => ({
-    ...share,
-    accessLevel: share.accessLevel || USER_ACCESS_LEVELS.TILE,
-  }));
+    const aShares = state.map(share => ({
+      ...share,
+      accessLevel: share.accessLevel || USER_ACCESS_LEVELS.TILE,
+    }));
 
-  return aShares;
-};
+    return aShares;
+  });
 
 selectors.integrationUsersForOwner = (state, integrationId) => {
   if (!state || !state.length) {

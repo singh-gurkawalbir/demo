@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackInjectAttributesPlugin = require('html-webpack-inject-attributes-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const webpack = require('webpack');
 const DotenvPlugin = require('dotenv-webpack');
@@ -80,6 +81,9 @@ const config = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.html'),
     }),
+    new HtmlWebpackInjectAttributesPlugin({
+      crossorigin: 'anonymous',
+    }),
     // define LOGROCKET_IDENTIFIER for logrocket
     new webpack.DefinePlugin({
       RELEASE_VERSION: JSON.stringify(process.env.RELEASE_VERSION),
@@ -91,6 +95,7 @@ const config = {
     publicPath: process.env.RELEASE_VERSION ? `${process.env.CDN_BASE_URI}react/${process.env.RELEASE_VERSION}/` : '/',
     filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'build'),
+    crossOriginLoading: 'anonymous',
   },
   optimization: {
     splitChunks: {

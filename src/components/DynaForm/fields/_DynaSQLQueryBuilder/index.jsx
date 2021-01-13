@@ -5,10 +5,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { Button, FormLabel, FormHelperText } from '@material-ui/core';
 import FieldHelp from '../../FieldHelp';
-import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import { getValidRelativePath } from '../../../../utils/routePaths';
-import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   sqlContainer: {
@@ -53,17 +51,11 @@ export default function _DynaSQLQueryBuilder_(props) {
   const history = useHistory();
   const match = useRouteMatch();
   const editorId = getValidRelativePath(id);
-  const { merged: resourceData } = useSelectorMemo(
-    selectors.makeResourceDataSelector,
-    'imports',
-    resourceId
-  );
-  const { adaptorType} = resourceData;
 
   const handleSave = useCallback(editorValues => {
-    const { rule, defaultData } = editorValues;
+    const { rule, defaultData, supportsDefaultData } = editorValues;
 
-    if (adaptorType === 'RDBMSImport') {
+    if (supportsDefaultData) {
       let parsedDefaultData;
 
       try {
@@ -73,6 +65,8 @@ export default function _DynaSQLQueryBuilder_(props) {
           onFieldChange('modelMetadata', parsedDefaultData.data);
         } else if (parsedDefaultData.record) {
           onFieldChange('modelMetadata', parsedDefaultData.record);
+        } else if (parsedDefaultData.row) {
+          onFieldChange('modelMetadata', parsedDefaultData.row);
         }
       } catch (e) { // do nothing }
       }
@@ -87,7 +81,7 @@ export default function _DynaSQLQueryBuilder_(props) {
       // save to field
       onFieldChange(id, rule);
     }
-  }, [adaptorType, arrayIndex, id, onFieldChange, value]);
+  }, [arrayIndex, id, onFieldChange, value]);
 
   const handleEditorClick = useCallback(() => {
     dispatch(actions._editor.init(editorId, 'sql', {
@@ -119,7 +113,6 @@ export default function _DynaSQLQueryBuilder_(props) {
           Launch
         </Button>
         {!isValid && <FormHelperText error>{errorMessages}</FormHelperText>}
-
       </div>
     </>
   );

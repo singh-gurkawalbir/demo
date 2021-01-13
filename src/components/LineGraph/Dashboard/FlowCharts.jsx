@@ -22,6 +22,7 @@ import {
   getTicks,
   getLineColor,
   getLegend,
+  getDateTimeFormat,
 } from '../../../utils/flowMetrics';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -134,23 +135,6 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
     [resourceList.resources, integrationId]
   );
   const { startDate, endDate } = range;
-
-  let dateTimeFormat;
-  const userOwnPreferences = useSelector(
-    state => selectors.userOwnPreferences(state),
-    (left, right) =>
-      left &&
-      right &&
-      left.dateFormat === right.dateFormat &&
-      left.timeFormat === right.timeFormat
-  );
-
-  if (!userOwnPreferences) {
-    dateTimeFormat = 'MM/DD hh:mm';
-  } else {
-    dateTimeFormat = `${userOwnPreferences.dateFormat || 'MM/DD'} ${userOwnPreferences.timeFormat || 'hh:mm'} `;
-  }
-
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
   const domain = [new Date(startDate).getTime(), new Date(endDate).getTime()];
   const ticks = getTicks(domainRange, range);
@@ -162,7 +146,6 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
       flowData[r] = sortBy(flowData[r], ['timeInMills']);
     });
   }
-
   const getResourceName = name => {
     if (!name || typeof name !== 'string') {
       return name || '';
@@ -251,11 +234,20 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
 
   function CustomTooltip({ payload, label, active }) {
     const classes = useStyles();
+    const preferences = useSelector(
+      state => selectors.userOwnPreferences(state),
+      (left, right) =>
+        left &&
+        right &&
+        left.dateFormat === right.dateFormat &&
+        left.timeFormat === right.timeFormat
+    );
+    const timezone = useSelector(state => selectors.userProfile(state)?.timezone);
 
     if (active && Array.isArray(payload) && payload.length) {
       return (
         <div className={classes.CustomTooltip}>
-          <p className="label">{`${moment(label).format(dateTimeFormat)}`} </p>
+          <p className="label">{getDateTimeFormat(range, label, preferences, timezone)} </p>
           {payload.map(
             p => (
               p && !!p.value && <p key={p.name}> {`${getResourceName(p.name)}: ${p.value}`} </p>

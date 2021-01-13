@@ -17,7 +17,6 @@ const useStyles = makeStyles(theme => ({
   actionContainer: {
     display: 'flex',
     flexDirection: 'row',
-
   },
   uploadFile: {
     justifyContent: 'flex-end',
@@ -28,6 +27,9 @@ const useStyles = makeStyles(theme => ({
   },
   errorContainer: {
     marginBottom: theme.spacing(0.5),
+  },
+  label: {
+    fontSize: 17,
   },
 }));
 
