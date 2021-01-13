@@ -49,13 +49,14 @@ export default function CsvParseRules({ editorId }) {
     fieldMeta,
   });
 
-  // any time the form value changes, we dispatch an action to update the
-  // editor state with the current form value.
+  // any time the form value changes from a user interacting with the form,
+  // we dispatch an action to update the editor patch state with the current form value.
+  //  We do this because this form has no submit button. And this is the only way we
+  // can keep the editor state in sync with the form state.
   useEffect(() => {
-    if (!formContext.value) return;
-    const rule = formContext.value;
+    if (!formContext?.value) return;
 
-    dispatch(actions._editor.patchRule(editorId, rule));
+    dispatch(actions._editor.patchRule(editorId, formContext.value));
   },
   [dispatch, editorId, formContext.value]);
 
