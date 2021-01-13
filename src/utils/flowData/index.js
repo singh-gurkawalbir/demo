@@ -275,9 +275,16 @@ export const generateDefaultExtractsObject = (resourceType, adaptorType) => {
  * If flowData is an Object, create array wrapped on it and merge rawData
  */
 export const generatePostResponseMapData = (flowData, rawData = {}) => {
-  const flowDataArray = Array.isArray(flowData) ? flowData : [flowData || {}];
+  if (Array.isArray(flowData)) {
+    return flowData.map(fd => ({ ...fd, ...rawData }));
+  }
 
-  return flowDataArray.map(fd => ({ ...fd, ...rawData }));
+  const flowDataToReturn = flowData || {};
+
+  return {
+    ...flowDataToReturn,
+    ...rawData,
+  };
 };
 
 export const getFormattedResourceForPreview = (

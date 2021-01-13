@@ -513,6 +513,7 @@ export function* requestProcessorData({
       resourceType,
       stage: 'flowInput',
       isInitialized: true,
+      noWrap: true,
     });
     const postResponseMapData = generatePostResponseMapData(
       flowData,
