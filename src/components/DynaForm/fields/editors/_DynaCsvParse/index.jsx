@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../../actions';
 import FieldHelp from '../../../FieldHelp';
-import getFormMetadata from '../DynaCsvParse/metadata';
+import getForm from '../../../../AFE2/Editor/panels/CsvParseRules/formMeta';
 import DynaForm from '../../..';
 import {useUpdateParentForm} from '../DynaCsvGenerate';
 import { generateNewId } from '../../../../../utils/resource';
@@ -69,7 +69,7 @@ export default function _DynaCsvParse_(props) {
     [],
   );
   const initOptions = useMemo(() => getInitOptions(value), [getInitOptions, value]);
-  const [form, setForm] = useState(getFormMetadata({...initOptions, resourceId, resourceType}));
+  const [form, setForm] = useState(getForm({...initOptions, resourceId, resourceType}));
 
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {
@@ -90,7 +90,7 @@ export default function _DynaCsvParse_(props) {
     const { rule } = editorValues;
     const parsedVal = getParserValue(rule);
 
-    setForm(getFormMetadata({...rule, resourceId, resourceType}));
+    setForm(getForm({...rule, resourceId, resourceType}));
     setRemountKey(remountKey => remountKey + 1);
     onFieldChange(id, parsedVal);
 
