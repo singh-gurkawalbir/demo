@@ -204,7 +204,7 @@ export default function PageBar() {
 
     return integration.stores?.find(store => store.value === selectedStoreId)?.label || selectedStoreId;
   },
-  [integration]);
+  [integration.stores, storeLabel]);
 
   const storeItems = StoreMenuItems({ integration, integrationId });
   const allStoreItem = AllStoreItem({integrationId, storeLabel});
