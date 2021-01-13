@@ -60,6 +60,7 @@ export default function SelectDate({
   const rangeFilters = [
     {id: 'today', label: 'Today'},
     {id: 'yesterday', label: 'Yesterday'},
+    {id: 'last24hours', label: 'Last 24 hours'},
     {id: 'last7days', label: 'Last 7 Days'},
     {id: 'last15days', label: 'Last 15 Days'},
     {id: 'last30days', label: 'Last 30 Days'},
@@ -75,7 +76,6 @@ export default function SelectDate({
         Icon={FilterIcon}
         value={selectedDate}
         customPresets={rangeFilters}
-        fromDate={startOfDay(addDays(new Date(), -29))}
         showTime={false}
          />
     </div>
