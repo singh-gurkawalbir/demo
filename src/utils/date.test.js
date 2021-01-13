@@ -56,10 +56,8 @@ describe('date util function test', () => {
       expect(convertUtcToTimezone(testDate, undefined, undefined, 'Asia/Baku', false)).toEqual('12/24/2018 9:03:30 am');
     });
 
-    describe('', () => {
-      test('should return in system timezone when timezone not passed in params', () => {
-        expect(convertUtcToTimezone(testDate, undefined, undefined)).toEqual('12/24/2018 5:03:30 am');
-      });
+    test('should return in system timezone when timezone not passed in params', () => {
+      expect(convertUtcToTimezone(testDate, undefined, undefined)).toEqual('12/24/2018 5:03:30 am');
     });
   });
 });

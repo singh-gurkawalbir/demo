@@ -274,7 +274,7 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     updated.content = merged.content;
   }
 
-  // when date is posted /integrations/:integrationId/connections, connection created will be auto-registered to integration.
+  // when data is posted /integrations/:integrationId/connections, connection created will be auto-registered to integration.
   // Refetch the integration
   if (resourceType === 'connections' && merged.integrationId && isNew) {
     // eslint-disable-next-line no-use-before-define
