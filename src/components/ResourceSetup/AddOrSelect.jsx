@@ -18,9 +18,7 @@ import { generateNewId } from '../../utils/resource';
 const useStyles = makeStyles(theme => ({
   resourceFormWrapper: {
     padding: theme.spacing(3),
-    borderColor: 'rgb(0,0,0,0.1)',
-    borderStyle: 'solid',
-    borderWidth: '1px 0 0 0',
+    overflowY: 'auto',
   },
   resourceFormRadioGroupWrapper: {
     marginBottom: theme.spacing(2),

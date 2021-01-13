@@ -6,6 +6,7 @@ import { getResourceSubType, multiStepSaveResourceTypes } from '../../../../util
 import consolidatedActions from '../../../ResourceFormFactory/Actions';
 import { selectors } from '../../../../reducers';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import ButtonGroup from '../../../ButtonGroup';
 
 const getConnectionType = resource => {
   const { assistant, type } = getResourceSubType(resource);
@@ -21,14 +22,6 @@ const useStyles = makeStyles(theme => ({
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     display: 'flex',
     justifyContent: 'space-between',
-    '& > div': {
-      '& > button': {
-        marginRight: theme.spacing(2),
-        '&:last-child': {
-          marginRight: 0,
-        },
-      },
-    },
   },
 }));
 /**
@@ -95,8 +88,8 @@ const ActionButtons = ({actions, formProps, consolidatedActions}) => {
 
   return (
     <div className={classes.actions}>
-      {primaryActions?.length ? <div> {primaryActions} </div> : null}
-      {secondaryActions?.length ? <div> { secondaryActions }</div> : null}
+      {primaryActions?.length ? <ButtonGroup> {primaryActions} </ButtonGroup> : null}
+      {secondaryActions?.length ? <ButtonGroup> { secondaryActions }</ButtonGroup> : null}
     </div>
   );
 };
