@@ -481,17 +481,17 @@ describe('selector testcases for metadata', () => {
       )
     );
 
-    expect(selectors.optionsFromMetadata(receivedState, {
-      connectionId: connId,
-      commMetaPath: `/salesforce/metadata/${connId}/sobjects/account`,
-      filterKey: 'salesforce-sObject-layout',
-    }).data).toEqual(accountMetadata);
+    expect(selectors.optionsFromMetadata(receivedState,
+      connId,
+      `/salesforce/metadata/${connId}/sobjects/account`,
+      'salesforce-sObject-layout',
+    ).data).toEqual(accountMetadata);
 
-    expect(selectors.optionsFromMetadata(receivedState, {
-      connectionId: connId,
-      commMetaPath: `/salesforce/metadata/${connId}/sobjects/opportunity`,
-      filterKey: 'salesforce-sObject-layout',
-    }).data).toEqual(opportunityMetadata);
+    expect(selectors.optionsFromMetadata(receivedState,
+      connId,
+      `/salesforce/metadata/${connId}/sobjects/opportunity`,
+      'salesforce-sObject-layout',
+    ).data).toEqual(opportunityMetadata);
   });
 
   test('should return metadata from state based on metapath for cached selector', () => {
