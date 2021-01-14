@@ -1313,13 +1313,25 @@ describe('wrapSampleDataWithContext util', () => {
     const expectedData = {
       status: 'received',
       data: {
-        postResponseMapData: [
+        postResponseMapData: [[
           {
             id: 999,
             ignored: true,
             recordId: 78,
           },
-        ],
+        ]],
+        _exportId: 'some resource id',
+        _connectionId: 'some connection id',
+        _flowId: 'some flow id',
+        _integrationId: 'some integration id',
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
       },
     };
 

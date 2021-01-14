@@ -632,20 +632,20 @@ describe('generateDefaultExtractsObject util', () => {
 });
 describe('generatePostResponseMapData util', () => {
   test('should return single empty record when both flowData and rawData are empty', () => {
-    expect(generatePostResponseMapData()).toEqual([{}]);
+    expect(generatePostResponseMapData()).toEqual({});
   });
-  test('should return wrapped rawData when flowData is empty', () => {
+  test('should return only rawData when flowData is empty', () => {
     const rawData = {
       _id: '123',
       name: 'User1',
     };
 
-    expect(generatePostResponseMapData(undefined, rawData)).toEqual([{
+    expect(generatePostResponseMapData(undefined, rawData)).toEqual({
       _id: '123',
       name: 'User1',
-    }]);
+    });
   });
-  test('should return single record of flowData merged with rawData when flowData is an object', () => {
+  test('should return single record object of flowData merged with rawData when flowData is an object', () => {
     const rawData = {
       _id: '123',
       name: 'User1',
@@ -655,12 +655,12 @@ describe('generatePostResponseMapData util', () => {
       tickets: [{ _id: 'ticketId1', name: 'ticket1'}, { _id: 'ticketId2', name: 'ticket2'}],
     };
 
-    expect(generatePostResponseMapData(flowData, rawData)).toEqual([{
+    expect(generatePostResponseMapData(flowData, rawData)).toEqual({
       users: [{ _id: 'userId1', name: 'userName1'}, { _id: 'userId2', name: 'userName2'}],
       tickets: [{ _id: 'ticketId1', name: 'ticket1'}, { _id: 'ticketId2', name: 'ticket2'}],
       _id: '123',
       name: 'User1',
-    }]);
+    });
   });
   test('should return list of records of flowData merged with rawData on each record when flowData is an array', () => {
     const rawData = {
