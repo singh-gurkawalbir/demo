@@ -215,7 +215,7 @@ describe('sampleData exports saga', () => {
           runOffline: true,
           runOfflineSource: 'db',
         },
-        test: {limit: 10},
+        test: {limit: DEFAULT_RECORD_SIZE},
       };
 
       return expectSaga(_getPreviewData, { resourceId, resourceType, runOffline: true })
@@ -247,7 +247,7 @@ describe('sampleData exports saga', () => {
           runOffline: true,
           runOfflineSource: 'db',
         },
-        test: {limit: 10},
+        test: {limit: DEFAULT_RECORD_SIZE},
       };
 
       return expectSaga(_getPreviewData, { resourceId, resourceType, runOffline: true })
@@ -557,6 +557,7 @@ describe('sampleData exports saga', () => {
       const body = {
         adaptorType: 'FTPExport',
       };
+      const previewRecordSize = 2;
       const previewData = [{
         Column0: 'CUSTOMER_NUMBER|VENDOR_NAME|VENDOR_PART_NUM|DISTRIBUTOR_PART_NUM|LIST_PRICE|DESCRIPTION|CONTRACT_PRICE|QUANTITY_AVAILABLE',
       }, {
@@ -597,6 +598,7 @@ describe('sampleData exports saga', () => {
             resourceId,
             resourceType,
           }), body],
+          [call(_getSampleDataRecordSize, { resourceId }), previewRecordSize],
           [select(selectors.getResourceSampleDataWithStatus, resourceId, 'rawFile'), {}],
           [call(_hasSampleDataOnResource, { resourceId, resourceType, body}), true],
           [call(requestFileAdaptorPreview, { resource: body }), previewData],
