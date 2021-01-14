@@ -1,16 +1,16 @@
 /* eslint-disable react/jsx-pascal-case */
-import { FormLabel } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
 import React, { Fragment, useCallback } from 'react';
+import { makeStyles, FormLabel } from '@material-ui/core';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import FieldHelp from '../FieldHelp';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
+import ActionButton from '../../ActionButton';
+import EditIcon from '../../icons/ScriptsIcon';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   dynaHttpRequestBodyWrapper: {
     width: '100%',
   },
@@ -18,13 +18,21 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'flex-start',
   },
-  dynaReqBodyBtn: {
-    maxWidth: 100,
+  previewContainer: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'flex-start',
   },
-  dynaHttpReqLabel: {
-    marginBottom: 6,
+  preview: {
+    flexGrow: 1,
+    maxHeight: 100,
+    overflow: 'auto',
+    border: `1px solid ${theme.palette.secondary.lightest}`,
+    backgroundColor: theme.palette.background.paper2,
+    padding: theme.spacing(0, 1),
+
   },
-});
+}));
 
 export default function _DynaHttpRequestBody_(props) {
   const {
@@ -37,7 +45,6 @@ export default function _DynaHttpRequestBody_(props) {
     flowId,
     arrayIndex,
     formKey,
-    // disabled,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -51,7 +58,7 @@ export default function _DynaHttpRequestBody_(props) {
     // TODO: Give better name for arrayIndex
     if (typeof arrayIndex === 'number' && Array.isArray(value)) {
       // save to array at position arrayIndex
-      const valueTmp = value;
+      const valueTmp = [...value];
 
       valueTmp[arrayIndex] = rule;
       onFieldChange(id, valueTmp);
@@ -79,19 +86,23 @@ export default function _DynaHttpRequestBody_(props) {
     <Fragment key={`${resourceId}-${id}`}>
       <div className={classes.dynaHttpRequestBodyWrapper}>
         <div className={classes.dynaHttpRequestlabelWrapper}>
-          <FormLabel className={classes.dynaHttpReqLabel}>
+          <FormLabel>
             {label}
           </FormLabel>
           <FieldHelp {...props} />
         </div>
-        <Button
-          data-test={id}
-          variant="outlined"
-          color="secondary"
-          className={classes.dynaReqBodyBtn}
-          onClick={handleEditorClick}>
-          Launch
-        </Button>
+        <div className={classes.previewContainer}>
+          <div className={classes.preview}>
+            <pre>{value}</pre>
+          </div>
+          <ActionButton
+            data-test={id}
+            variant="outlined"
+            color="secondary"
+            onClick={handleEditorClick}>
+            <EditIcon />
+          </ActionButton>
+        </div>
       </div>
       <ErroredMessageComponent {...props} />
     </Fragment>
