@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
@@ -22,7 +23,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function _DynaURI_(props) {
+export default function DynaURI_afe2(props) {
   const {
     id,
     onFieldChange,

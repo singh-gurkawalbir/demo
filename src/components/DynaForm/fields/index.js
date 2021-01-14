@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import DynaMultiSelect from './DynaMultiSelect';
 import DynaRadioGroup from './radiogroup/DynaRadioGroup';
 import DynaSelect from './DynaSelect';
@@ -10,15 +11,15 @@ import DynaSelectApplication from './DynaSelectApplication';
 import DynaFileTypeSelect from './select/DynaFileTypeSelect';
 import DynaText from './DynaText';
 import DynaCheckbox from './checkbox/DynaCheckbox';
-import _DynaRelativeUri_ from './DynaRelativeUri_afe2';
+import DynaRelativeUri_afe2 from './DynaRelativeUri_afe2';
 import DynaKeyValue from './DynaKeyValue';
 import DynaTextList from './DynaTextList';
 import DynaToggleSelectToText from './select/DynaToggleSelectToText';
 import DynaLookupEditor from './DynaLookupEditor';
 import DynaKeyWithAction from './DynaKeyWithAction';
-import _DynaHttpRequestBody_ from './DynaHttpRequestBody_afe2';
+import DynaHttpRequestBody_afe2 from './DynaHttpRequestBody_afe2';
 import DynaEditor from './DynaEditor';
-import _DynaCsvParse_ from './editors/_DynaCsvParse';
+import DynaCsvParse_afe2 from './editors/DynaCsvParse_afe2';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
 import DynaTransformEditor from './editors/DynaTransformEditor';
 import DynaTextFtpPort from './DynaTextFtpPort';
@@ -28,7 +29,7 @@ import DynaSuiteScriptHook from './DynaSuiteScriptHook';
 import DynaScriptContent from './DynaScriptContent';
 import DynaSelectScopes from './DynaSelectScopes';
 import DynaFileDefinitionSelect from './DynaFileDefinitionSelect';
-import _DynaFileDefinitionEditor_ from './editors/_DynaFileDefinitionEditor';
+import DynaFileDefinitionEditor_afe2 from './editors/DynaFileDefinitionEditor_afe2';
 import DynaCSVColumnMapper from './DynaTableView/DynaCSVColumnMapper';
 import DynaTrueFixedWidthColumnMapper from './DynaTableView/DynaTrueFixedWidthColumnMapper';
 import DynaXMLMapper from './DynaTableView/DynaXMLMapper';
@@ -44,7 +45,7 @@ import DynaAssistantSearchParams from './assistant/DynaAssistantSearchParams';
 import DynaSemiAssistantOperationSelect from './assistant/DynaSemiAssistantOperationSelect';
 import DynaLabelValueElement from './DynaLabelValueElement';
 import DynaWebHookSampleData from './DynaWebHookSampleData';
-import _DynaXmlParse_ from './editors/_DynaXmlParse';
+import DynaXmlParse_afe2 from './editors/DynaXmlParse_afe2';
 import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 import DynaAutoSuggest from './DynaAutoSuggest';
 import DynaGenerateUrl from './DynaGenerateUrl';
@@ -58,7 +59,7 @@ import DynaDate from './dateTime/DynaDate';
 import DynaDateTime from './dateTime/DynaDateTime';
 import DynaExpiryTime from './DynaExpiryTime';
 import DynaToggle from './DynaToggle';
-import _DynaSQLQueryBuilder_ from './_DynaSQLQueryBuilder';
+import DynaSQLQueryBuilder_afe2 from './DynaSQLQueryBuilder_afe2';
 import Salesforce from './DynaSalesforceExportComponents';
 import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaTreeModal';
 import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
@@ -70,14 +71,14 @@ import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier from './DynaNetSuiteQualifier';
 import DynaSalesforceQualifier from './DynaSalesforceQualifier';
-import _DynaQuery_ from './DynaQuery_afe2';
-import _DynaSqlQuery_ from './DynaSqlQuery_afe2';
+import DynaQuery_afe2 from './DynaQuery_afe2';
+import DynaSqlQuery_afe2 from './DynaSqlQuery_afe2';
 import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
 import DynaSalesforceLookup from './DynaSalesforceLookup';
 import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
 import DynaTimestampFileName from './DynaTimestampFileName';
 import DynaMode from './DynaMode';
-import _DynaCsvGenerate_ from './editors/_DynaCsvGenerate';
+import DynaCsvGenerate_afe2 from './editors/DynaCsvGenerate_afe2';
 import DynaFileKeyColumn from './DynaFileKeyColumn';
 import DynaRadioGroupForResetFields from './radiogroup/DynaRadioGroupForResetFields';
 import DynaTextWithFlowContext from './text/DynaTextWithFlowContext';
@@ -99,7 +100,7 @@ import DynaExportSelect from './DynaExportSelect';
 import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
 // import DynaNameWithEditor from './DynaNameWithEditor';
 import DynaSelectConditionalLookup from './DynaSelectConditionalLookup';
-import _DynaURI_ from './DynaURI_afe2';
+import DynaURI_afe2 from './DynaURI_afe2';
 import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
 import DynaSelectWithInput from './DynaSelectWithInput';
 import DynaJsonResourcePath from './DynaJsonResourcePath';
@@ -110,7 +111,7 @@ import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
 import DynaRoutingRules from './editors/DynaRoutingRules';
 import DynaMatchingCriteriaWithModal from './DynaMatchingCriteria';
 import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
-import _DynaFTPFileNameWithEditor_ from './DynaFTPFileNameWithEditor_afe2';
+import DynaFTPFileNameWithEditor_afe2 from './DynaFTPFileNameWithEditor_afe2';
 import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
 import DynaAs2Mode from './DynaAs2Mode';
 import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
@@ -150,20 +151,20 @@ export default {
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
   // relativeuri: DynaRelativeUri,
-  relativeuri: _DynaRelativeUri_,
+  relativeuri: DynaRelativeUri_afe2,
   // uri: DynaURI,
-  uri: _DynaURI_,
+  uri: DynaURI_afe2,
   // httprequestbody: DynaHttpRequestBody,
-  httprequestbody: _DynaHttpRequestBody_,
+  httprequestbody: DynaHttpRequestBody_afe2,
   importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
   staticMap: DynaStaticMap,
   // csvparse: DynaCsvParse,
-  csvparse: _DynaCsvParse_,
+  csvparse: DynaCsvParse_afe2,
   // csvgenerate: DynaCsvGenerate,
-  csvgenerate: _DynaCsvGenerate_,
+  csvgenerate: DynaCsvGenerate_afe2,
   // xmlparse: DynaXmlParse,
-  xmlparse: _DynaXmlParse_,
+  xmlparse: DynaXmlParse_afe2,
   refreshableselect: DynaRefreshableSelect,
   netsuiteapiversion: DynaNetSuiteAPIVersion,
   transformeditor: DynaTransformEditor,
@@ -177,7 +178,7 @@ export default {
   scriptcontent: DynaScriptContent,
   filedefinitionselect: DynaFileDefinitionSelect,
   // filedefinitioneditor: DynaFileDefinitionEditor,
-  filedefinitioneditor: _DynaFileDefinitionEditor_,
+  filedefinitioneditor: DynaFileDefinitionEditor_afe2,
   tokengen: DynaTokenGenerator,
   expirytime: DynaExpiryTime,
   apiidentifier: DynaApiIdentifier,
@@ -204,7 +205,7 @@ export default {
   date: DynaDate,
   datetime: DynaDateTime,
   // sqlquerybuilder: DynaSQLQueryBuilder,
-  sqlquerybuilder: _DynaSQLQueryBuilder_,
+  sqlquerybuilder: DynaSQLQueryBuilder_afe2,
   salesforcequalifier: DynaSalesforceQualifier,
   salesforcerequiredtrigger: Salesforce.DynaRequiredTrigger,
   salesforcereferencedfields: Salesforce.DynaReferencedFields,
@@ -223,9 +224,9 @@ export default {
   replaceconnection: DynaReplaceConnection,
   netsuitequalifier: DynaNetSuiteQualifier,
   // query: DynaQuery,
-  query: _DynaQuery_,
+  query: DynaQuery_afe2,
   // sqlquery: DynaSqlQuery,
-  sqlquery: _DynaSqlQuery_,
+  sqlquery: DynaSqlQuery_afe2,
   salesforcelookupfilters: DynaSalesforceLookupFilters,
   salesforcelookup: DynaSalesforceLookup,
   timestampfilename: DynaTimestampFileName,
@@ -262,6 +263,6 @@ export default {
   routingrules: DynaRoutingRules,
   suitescriptuploadfile: DynaSuiteScriptUploadFile,
   // ftpfilenamewitheditor: DynaFTPFileNameWithEditor,
-  ftpfilenamewitheditor: _DynaFTPFileNameWithEditor_,
+  ftpfilenamewitheditor: DynaFTPFileNameWithEditor_afe2,
   as2Mode: DynaAs2Mode,
 };

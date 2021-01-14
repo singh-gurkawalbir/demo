@@ -1,57 +1,45 @@
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+/* eslint-disable camelcase */
+import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, FormLabel } from '@material-ui/core';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { selectors } from '../../../../../reducers';
+import actions from '../../../../../actions';
 import FieldHelp from '../../../FieldHelp';
-import getFormMetadata from '../DynaCsvGenerate/metadata';
+import getForm from '../../../../AFE2/Editor/panels/CsvParseRules/formMeta';
 import DynaForm from '../../..';
-import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import {useUpdateParentForm} from '../DynaCsvGenerate';
 import { generateNewId } from '../../../../../utils/resource';
-import useFormContext from '../../../../Form/FormContext';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useSetSubFormShowValidations from '../../../../../hooks/useSetSubFormShowValidations';
 import { getValidRelativePath } from '../../../../../utils/routePaths';
-import actions from '../../../../../actions';
+import FileDataChange from './FileDataChange';
 
 const useStyles = makeStyles(theme => ({
-  csvContainer: {
+  container: {
     width: '100%',
-    marginBottom: theme.spacing(2),
+    paddingLeft: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
   },
-  csvBtn: {
+  button: {
     maxWidth: 100,
   },
-  csvLabel: {
+  label: {
     marginBottom: 6,
   },
-  csvLabelWrapper: {
+  labelWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
   },
 }));
 
-// resourceId and resourceType are not saved on form doc
-const getParserValue = ({customHeaderRows, resourceId, resourceType, ...rest}) => ({
+// multipleRowsPerRecord is not saved on form doc
+const getParserValue = ({rowsToSkip, multipleRowsPerRecord, ...rest}) => ({
   ...rest,
-  customHeaderRows: customHeaderRows?.split('\n').filter(val => val !== ''),
+  rowsToSkip: Number.isInteger(rowsToSkip) ? rowsToSkip : 0,
 });
 
-export const useUpdateParentForm = (secondaryFormKey, handleFormChange) => {
-  const { value: secondaryFormValue, fields, isValid} = useFormContext(secondaryFormKey);
-
-  useEffect(() => {
-    if (secondaryFormValue) {
-      const isFormTouched = Object.values(fields).some(val => val.touched);
-
-      // skip updates till secondary form is touched
-      handleFormChange(secondaryFormValue, isValid, !isFormTouched);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [secondaryFormValue, fields, isValid]);
-};
-export default function _DynaCsvGenerate_(props) {
-  const classes = useStyles();
+export default function DynaCsvParse_afe2(props) {
   const {
     id,
     onFieldChange,
@@ -60,36 +48,30 @@ export default function _DynaCsvGenerate_(props) {
     resourceId,
     resourceType,
     disabled,
-    flowId,
     formKey: parentFormKey,
+    flowId,
   } = props;
+  const classes = useStyles();
   const [remountKey, setRemountKey] = useState(1);
+  const secondaryFormKey = useRef(generateNewId());
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
-  const secondaryFormKey = useRef(generateNewId());
   const editorId = getValidRelativePath(id);
 
-  const isHttpImport = useSelector(state => {
-    const {merged: resource = {}} = selectors.resourceData(state, resourceType, resourceId);
-
-    return resource?.adaptorType === 'HTTPImport';
-  });
   const getInitOptions = useCallback(
     val => {
-      const {customHeaderRows = [], ...others} = val;
-      const opts = {...others, resourceId, resourceType};
-
-      if (isHttpImport) {
-        opts.customHeaderRows = customHeaderRows?.join('\n');
+      if (!('trimSpaces' in val)) {
+        return {...val, trimSpaces: true};
       }
 
-      return opts;
+      return val;
     },
-    [isHttpImport, resourceId, resourceType],
+    [],
   );
   const initOptions = useMemo(() => getInitOptions(value), [getInitOptions, value]);
-  const [form, setForm] = useState(getFormMetadata({...initOptions, customHeaderRowsSupported: isHttpImport}));
+  const [form, setForm] = useState(getForm({...initOptions, resourceId, resourceType}));
+
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {
       const parsersValue = getParserValue(newOptions);
@@ -109,10 +91,25 @@ export default function _DynaCsvGenerate_(props) {
     const { rule } = editorValues;
     const parsedVal = getParserValue(rule);
 
-    setForm(getFormMetadata({...rule, customHeaderRowsSupported: isHttpImport}));
+    setForm(getForm({...rule, resourceId, resourceType}));
     setRemountKey(remountKey => remountKey + 1);
     onFieldChange(id, parsedVal);
-  }, [id, isHttpImport, onFieldChange]);
+
+    // todo: @raghu removing this dispatch action from here as it will be taken care
+    // by field change on the form itself. Please confirm and remove this comment
+    // dispatch(
+    //   actions.sampleData.request(
+    //     resourceId,
+    //     resourceType,
+    //     {
+    //       type: 'csv',
+    //       // file: csvData,
+    //       editorValues,
+    //     },
+    //     'file'
+    //   )
+    // );
+  }, [id, onFieldChange, resourceId, resourceType]);
 
   useUpdateParentForm(secondaryFormKey.current, handleFormChange);
   useSetSubFormShowValidations(parentFormKey, secondaryFormKey.current);
@@ -125,7 +122,7 @@ export default function _DynaCsvGenerate_(props) {
   });
 
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(editorId, 'csvGenerator', {
+    dispatch(actions._editor.init(editorId, 'csvParser', {
       formKey: parentFormKey,
       flowId,
       resourceId,
@@ -140,19 +137,23 @@ export default function _DynaCsvGenerate_(props) {
 
   return (
     <>
-      <div className={classes.csvContainer}>
-        <div className={classes.csvLabelWrapper}>
-          <FormLabel className={classes.csvLabel}>{label}</FormLabel>
+      <div className={classes.container}>
+        {/* todo: FileDataChange is a temporary hack until Raghu's changes are
+        done re dispatching of SAMPLEDATA_UPDATED action to update editor sample data */}
+        <FileDataChange editorId={editorId} fileType="csv" />
+        <div className={classes.labelWrapper}>
+          <FormLabel className={classes.label}>{label}</FormLabel>
           <FieldHelp {...props} />
         </div>
         <Button
           data-test={id}
           variant="outlined"
           color="secondary"
-          className={classes.csvBtn}
+          className={classes.button}
           onClick={handleEditorClick}>
           Launch
         </Button>
+
       </div>
       <DynaForm
         formKey={formKeyComponent}
