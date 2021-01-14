@@ -1951,7 +1951,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'Basic', value: 'basic' },
+          { label: 'Basic (To be deprecated - Do not use)', value: 'basic' },
           { label: 'Token Based Auth (Manual)', value: 'token' },
           { label: 'Token Based Auth (Automatic)', value: 'token-auto' },
         ],
