@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
@@ -10,7 +11,7 @@ import actions from '../../../actions';
  * DynaQuery is being used to Define Query under Database Lookup
  */
 
-export default function _DynaQuery_(props) {
+export default function DynaQuery_afe2(props) {
   const { id, onFieldChange, formKey, sampleData } = props;
   const editorId = getValidRelativePath(id);
   const dispatch = useDispatch();
