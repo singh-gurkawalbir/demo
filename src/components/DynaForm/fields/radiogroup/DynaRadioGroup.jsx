@@ -8,7 +8,7 @@ import {
   RadioGroup,
   Radio,
 } from '@material-ui/core';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
@@ -128,7 +128,7 @@ export default function DynaRadio(props) {
 
         </div>
       </FormControl>
-      <ErroredMessageComponent {...props} />
+      <FieldMessage {...props} />
     </div>
   );
 }

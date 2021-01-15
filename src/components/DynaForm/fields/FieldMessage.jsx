@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ErroredMessageComponent({ description, errorMessages, isValid }) {
+export default function FieldMessage({ description, errorMessages, isValid }) {
   const classes = useStyles();
 
   return description || errorMessages ? (

@@ -4,7 +4,7 @@ import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import OpenInNewIcon from '../../icons/FilterIcon';
 import NetSuiteQualificationCriteriaEditorDrawer from '../../AFE/NetSuiteQualificationCriteriaEditor/Drawer';
 import FieldHelp from '../FieldHelp';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 import ActionButton from '../../ActionButton';
 import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
@@ -117,7 +117,7 @@ export default function DynaNetSuiteQualifier(props) {
           variant="filled"
         />
 
-        <ErroredMessageComponent
+        <FieldMessage
           isValid={isValid}
           errorMessages={errorMessages}
         />

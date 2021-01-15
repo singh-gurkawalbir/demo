@@ -8,7 +8,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { isJsonString } from '../../../utils/string';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -83,7 +83,7 @@ export default function DynaWebHookSampleData(props) {
           onChange={handleSampleDataChange}
         />
       </div>
-      <ErroredMessageComponent
+      <FieldMessage
         description={description}
         errorMessages={errorMessages}
         isValid={isValid}

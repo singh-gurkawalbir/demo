@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, FormLabel } from '@material-ui/core';
 import Chip from '@material-ui/core/Chip';
 import Checkbox from '@material-ui/core/Checkbox';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import Tag from '../../../HomePageCard/Footer/Tag';
@@ -200,7 +200,7 @@ export default function MultiSelectApplication(props) {
           filterOption={filterOptions}
         />
 
-        {!removeHelperText && <ErroredMessageComponent {...props} />}
+        {!removeHelperText && <FieldMessage {...props} />}
       </FormControl>
     </div>
   );

@@ -3,7 +3,7 @@ import React from 'react';
 import { FormControl, makeStyles, Typography } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles({
@@ -66,7 +66,7 @@ export default function DynaCheckbox(props) {
         )}
       />
       <FieldHelp {...props} />
-      <ErroredMessageComponent {...props} />
+      <FieldMessage {...props} />
     </FormControl>
   );
 }

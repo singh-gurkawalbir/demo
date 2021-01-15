@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import React from 'react';
 import { makeStyles, FormLabel } from '@material-ui/core';
 import FieldHelp from '../../FieldHelp';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 import ActionButton from '../../../ActionButton';
 import AfeIcon from '../../../icons/AfeIcon';
 
@@ -75,7 +75,7 @@ export default function DynaHandlebarPreview({
           </ActionButton>
         </div>
       </div>
-      <ErroredMessageComponent {...{description, errorMessages, isValid}} />
+      <FieldMessage {...{description, errorMessages, isValid}} />
     </>
   );
 }

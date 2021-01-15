@@ -9,7 +9,7 @@ import getJSONPaths, { pickFirstObject } from '../../../utils/jsonPaths';
 import ActionButton from '../../ActionButton';
 import FilterIcon from '../../icons/FilterIcon';
 import FieldHelp from '../FieldHelp';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
@@ -128,7 +128,7 @@ export default function DynaSalesforceLookup(props) {
               variant="filled"
             />
 
-            <ErroredMessageComponent
+            <FieldMessage
               isValid={isValid}
               errorMessages={errorMessages}
             />
