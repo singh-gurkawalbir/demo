@@ -19,7 +19,7 @@ export default {
     validWhen: {
       someAreTrue: {
         message:
-          'Please append date and time stamp, such as {{timestamp(YYYY-MM-DD hh:mm:ss)}}.',
+          'Please append date and time stamp, such as {{timestamp "YYYY-MM-DD hh:mm:ss" "America/Los_Angeles"}}.',
         conditions: [
           {
             field: 'file.skipAggregation',
@@ -29,7 +29,7 @@ export default {
           },
           {
             matchesRegEx: {
-              pattern: '{{timestamp}}|{{dateFormat|{{timestamp((?=.*x).*)}}|{{timestamp((?=.*X).*)}}|{{timestamp((?=.*mm)(?=.*ss).*)}}',
+              pattern: '{{timestamp "(?=.*x).*"}}|{{timestamp "(?=.*X).*"}}|{{timestamp "(?=.*mm)(?=.*ss).*"}}',
             },
           },
         ],
@@ -83,7 +83,7 @@ export default {
     validWhen: {
       someAreTrue: {
         message:
-          'Please append date and time stamp, such as {{timestamp(YYYY-MM-DD hh:mm:ss)}}.',
+          'Please append date and time stamp, such as {{timestamp "YYYY-MM-DD hh:mm:ss" "America/Los_Angeles"}}.',
         conditions: [
           {
             field: 'file.skipAggregation',
@@ -93,7 +93,7 @@ export default {
           },
           {
             matchesRegEx: {
-              pattern: '{{timestamp}}|{{dateFormat|{{timestamp((?=.*x).*)}}|{{timestamp((?=.*X).*)}}|{{timestamp((?=.*mm)(?=.*ss).*)}}',
+              pattern: '{{timestamp "(?=.*x).*"}}|{{timestamp "(?=.*X).*"}}|{{timestamp "(?=.*mm)(?=.*ss).*"}}',
             },
           },
         ],
