@@ -2903,22 +2903,22 @@ selectors.metadataOptionsAndResources = (state, {
   commMetaPath,
   filterKey,
 }) => (
-  selectors.optionsFromMetadata(state, {
+  selectors.optionsFromMetadata(state,
     connectionId,
     commMetaPath,
     filterKey,
-  }) || emptyObject
+  ) || emptyObject
 );
 
 selectors.getMetadataOptions = (
   state,
   { connectionId, commMetaPath, filterKey }
 ) => (
-  selectors.optionsFromMetadata(state, {
+  selectors.optionsFromMetadata(state,
     connectionId,
     commMetaPath,
     filterKey,
-  }) || emptyObject
+  ) || emptyObject
 );
 
 selectors.getSalesforceMasterRecordTypeInfo = (state, resourceId) => {

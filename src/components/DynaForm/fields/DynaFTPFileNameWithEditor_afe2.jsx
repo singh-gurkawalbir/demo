@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useHistory, useRouteMatch } from 'react-router-dom';
@@ -22,7 +23,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function _DynaFTPFileNameWithEditor_(props) {
+export default function DynaFTPFileNameWithEditor_afe2(props) {
   const {id, flowId, resourceId, resourceType, onFieldChange, formKey} = props;
   const classes = useStyles();
   const dispatch = useDispatch();

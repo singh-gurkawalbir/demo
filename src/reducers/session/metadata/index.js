@@ -201,19 +201,6 @@ const optionsFromMetadataTransformFunct = (
 // TODO: deprecate this function and use the makeOptionsFromMetadata
 export const selectors = {};
 
-selectors.optionsFromMetadata = (state, {
-  connectionId,
-  commMetaPath,
-  filterKey,
-}) => {
-  const applicationResource = (state && state.application) || null;
-
-  return optionsFromMetadataTransformFunct(applicationResource,
-    connectionId,
-    commMetaPath,
-    filterKey);
-};
-
 selectors.makeOptionsFromMetadata = () => createSelector(
   state => state?.application,
   (_1, connectionId) => connectionId,
@@ -221,6 +208,7 @@ selectors.makeOptionsFromMetadata = () => createSelector(
   (_1, _2, _3, filterKey) => filterKey,
   optionsFromMetadataTransformFunct
 );
+selectors.optionsFromMetadata = selectors.makeOptionsFromMetadata();
 
 selectors.assistantData = (state, { adaptorType, assistant }) => {
   if (

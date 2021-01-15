@@ -301,7 +301,6 @@ export function* autoEvaluateProcessor({ id }) {
   return yield call(requestPreview, { id });
 }
 
-// todo ashu , check this, we may not need this with afe refactor changes
 function* autoEvaluateProcessorWithCancel(params) {
   const { id } = params;
 
