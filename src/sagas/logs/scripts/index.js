@@ -114,7 +114,7 @@ export function* retryToFetchLogs(props) {
 
   try {
     response = yield call(apiCallWithRetry, {
-      path: fetchLogsPath,
+      path: fetchLogsPath.replace('/api', ''),
       opts,
     });
   } catch (e) {
@@ -130,7 +130,7 @@ export function* retryToFetchLogs(props) {
     return {logs, nextPageURL};
   }
 
-  return yield call(retryToFetchLogs, {...props, retryCount: retryCount + 1, fetchLogsPath: nextPageURL.replace('/api', '') });
+  return yield call(retryToFetchLogs, {...props, retryCount: retryCount + 1, fetchLogsPath: nextPageURL });
 }
 
 export function* requestScriptLogs({isInit, field, ...props}) {
@@ -145,7 +145,7 @@ export function* requestScriptLogs({isInit, field, ...props}) {
   }
   const logState = yield select(selectors.scriptLog, {scriptId, flowId});
   const fetchLogsPath = getFetchLogsPath({...logState, fetchNextPage });
-  const { errorMsg, logs =[], nextPageURL } = yield call(retryToFetchLogs, {...props, fetchLogsPath});
+  const { errorMsg, logs = [], nextPageURL } = yield call(retryToFetchLogs, {...props, fetchLogsPath});
 
   if (errorMsg) {
     return yield put(actions.logs.scripts.requestFailed({
