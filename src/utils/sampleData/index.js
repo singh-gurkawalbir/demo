@@ -669,7 +669,9 @@ export const wrapSampleDataWithContext = ({
       return {
         status,
         data: {
-          postResponseMapData: data || [],
+          postResponseMapData: data ? [data] : [],
+          ...resourceIds,
+          settings,
         },
       };
     default:

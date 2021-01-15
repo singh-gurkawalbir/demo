@@ -1407,42 +1407,6 @@ describe('integrationApps selector testcases', () => {
     });
   });
 
-  describe('selectors.pendingCategoryMappings test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.pendingCategoryMappings({})).toEqual();
-    });
-  });
-
-  describe('selectors.categoryMappingMetadata test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.categoryMappingMetadata(undefined, {})).toEqual({});
-    });
-  });
-
-  describe('selectors.mappedCategories test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.mappedCategories()).toEqual([]);
-    });
-  });
-
-  describe('selectors.categoryMappingGenerateFields test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.categoryMappingGenerateFields({})).toEqual(null);
-    });
-  });
-
-  describe('selectors.mappingsForVariation test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.mappingsForVariation({})).toEqual({});
-    });
-  });
-
-  describe('selectors.mappingsForCategory test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.mappingsForCategory({})).toEqual();
-    });
-  });
-
   describe('selectors.integrationAppName test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       const selector = selectors.integrationAppName();

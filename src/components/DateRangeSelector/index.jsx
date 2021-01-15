@@ -83,19 +83,19 @@ const useStyles = makeStyles(theme => ({
       textAlign: 'center',
     },
     '&.Mui-selected': {
-      background: theme.palette.primary.light,
-      borderColor: theme.palette.primary.light,
+      background: theme.palette.primary.dark,
+      borderColor: theme.palette.primary.dark,
       '& > * .MuiTypography-root': {
         color: theme.palette.common.white,
       },
       '&:hover': {
-        background: theme.palette.primary.light,
-        borderColor: theme.palette.primary.light,
+        background: theme.palette.primary.dark,
+        borderColor: theme.palette.primary.dark,
       },
     },
     '&:hover': {
-      borderColor: theme.palette.primary.light,
-      background: theme.palette.primary.light,
+      borderColor: theme.palette.primary.dark,
+      background: theme.palette.primary.dark,
       '& > * .MuiTypography-root': {
         color: theme.palette.common.white,
       },

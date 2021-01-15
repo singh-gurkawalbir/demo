@@ -272,12 +272,17 @@ export const generateDefaultExtractsObject = (resourceType, adaptorType) => {
  * @Inputs: flowInputData and rawData for the pp
  * This util merges both to generate actual format of Flow Record being passed at runtime
  * If flowData is Array , then merge rawData to each object in that array
- * If flowData is an Object, create array wrapped on it and merge rawData
+ * If flowData is an Object, then merge rawData and return the merged object
  */
 export const generatePostResponseMapData = (flowData, rawData = {}) => {
-  const flowDataArray = Array.isArray(flowData) ? flowData : [flowData || {}];
+  if (Array.isArray(flowData)) {
+    return flowData.map(fd => ({ ...fd, ...rawData }));
+  }
 
-  return flowDataArray.map(fd => ({ ...fd, ...rawData }));
+  return {
+    ...(flowData || {}),
+    ...rawData,
+  };
 };
 
 export const getFormattedResourceForPreview = (

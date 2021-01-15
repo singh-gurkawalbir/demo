@@ -23,7 +23,7 @@ import ViewLogDetailDrawer from './DetailDrawer';
 const useStyles = makeStyles(theme => ({
   root: {
     marginTop: -1,
-    padding: theme.spacing(0, 0, 1.5, 2),
+    padding: theme.spacing(0, 0, 1.5, 0),
     backgroundColor: theme.palette.common.white,
     height: '100%',
   },
@@ -32,9 +32,7 @@ const useStyles = makeStyles(theme => ({
     position: 'sticky',
     justifyContent: 'space-between',
     background: theme.palette.background.default,
-    marginLeft: theme.spacing(-2),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-
   },
   tableContainer: {
     height: 'calc(100% - 69px)',
@@ -216,6 +214,19 @@ export default function ScriptLogs({ flowId, scriptId }) {
             {Object.values(functionTypes).map(functionValue => (
               <MenuItem key={functionValue} value={functionValue}>
                 {functionValue}
+              </MenuItem>
+            ))}
+          </CeligoSelect>
+          <CeligoSelect
+            data-test="selectLogLevel"
+            className={classes.filterButton}
+            onChange={handleLogLevelChange}
+            displayEmpty
+            value={logLevel || ''}>
+            <MenuItem value="">Log level</MenuItem>
+            {Object.keys(LOG_LEVELS).map(logLevel => (
+              <MenuItem key={logLevel} value={logLevel}>
+                {logLevel}
               </MenuItem>
             ))}
           </CeligoSelect>

@@ -1,4 +1,4 @@
-import { takeLatest, put, call } from 'redux-saga/effects';
+import { put, call, takeLeading } from 'redux-saga/effects';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
@@ -83,4 +83,4 @@ function* getData({ kind, identifier: id, resource }) {
   }
 }
 
-export default [takeLatest(actionTypes.EXPORTDATA.REQUEST, getData)];
+export default [takeLeading(actionTypes.EXPORTDATA.REQUEST, getData)];

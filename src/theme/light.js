@@ -428,14 +428,14 @@ export default {
         borderBottomColor: colors.celigoNeutral3,
       },
       head: {
-        fontFamily: 'Roboto500',
-        color: colors.celigoNeutral6,
-        fontSize: 15,
+        fontFamily: 'source sans pro semibold',
+        color: colors.celigoNeutral8,
+        fontSize: 16,
       },
       body: {
         fontFamily: 'source sans pro',
         position: 'relative',
-        fontSize: 15,
+        fontSize: 16,
       },
     },
     MuiSelect: {

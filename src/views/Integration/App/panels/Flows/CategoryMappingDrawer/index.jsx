@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Route,
@@ -39,6 +39,8 @@ import DrawerTitleBar from './TitleBar';
 import ButtonGroup from '../../../../../../components/ButtonGroup';
 import CollapseWindowIcon from '../../../../../../components/icons/CollapseWindowIcon';
 import ExpandWindowIcon from '../../../../../../components/icons/ExpandWindowIcon';
+import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
+import SettingsDrawer from '../../../../../../components/Mapping/Settings';
 
 const emptySet = [];
 const useStyles = makeStyles(theme => ({
@@ -163,28 +165,16 @@ function CategoryMappings({
   const isCommonCategory =
     sectionId === 'commonAttributes' || isParentCommonCategory;
   const [expanded, setExpanded] = useState(isRoot);
+  const memoizedOptions = useMemo(() => ({ sectionId }), [sectionId]);
   const {
     fields: generateFields,
     name,
     variation_themes: variationThemes,
     variation_attributes: variationAttributes,
-  } =
-    useSelector(state =>
-      selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
-        sectionId,
-      })
-    ) || {};
-  const { collapseAction } =
-    useSelector(state =>
-      selectors.categoryMappingsCollapsedStatus(state, integrationId, flowId)
-    ) || {};
-  const { children = [], deleted } =
-    useSelector(state =>
-      selectors.mappingsForCategory(state, integrationId, flowId, {
-        sectionId,
-        depth,
-      })
-    ) || {};
+  } = useSelectorMemo(selectors.mkCategoryMappingGenerateFields, integrationId, flowId, memoizedOptions) || {};
+  const { collapseAction } = useSelectorMemo(selectors.mkCategoryMappingsCollapsedStatus, integrationId, flowId) || {};
+  const memoizedCategoryOptions = useMemo(() => ({sectionId, depth}), [sectionId, depth]);
+  const { children = [], deleted } = useSelectorMemo(selectors.mkMappingsForCategory, integrationId, flowId, memoizedCategoryOptions) || {};
   const hasVariationMappings =
     (variationThemes && !!variationThemes.length) ||
     (variationAttributes && !!variationAttributes.length);
@@ -352,6 +342,7 @@ function CategoryMappings({
             <Mappings
               id={`${flowId}-${sectionId}`}
               flowId={flowId}
+              depth={depth}
               integrationId={integrationId}
               sectionId={sectionId}
               generateFields={generateFields || emptySet}
@@ -383,9 +374,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const match = useRouteMatch();
   const { flowId, categoryId } = match.params;
   const [requestedMetadata, setRequestedMetadata] = useState(false);
-  const mappingsChanged = useSelector(state =>
-    selectors.categoryMappingsChanged(state, integrationId, flowId)
-  );
+  const mappingsChanged = useSelectorMemo(selectors.mkCategoryMappingsChanged, integrationId, flowId);
   const mappingSaveStatus = useSelector(state =>
     selectors.categoryMappingSaveStatus(state, integrationId, flowId)
   );
@@ -402,9 +391,8 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const metadataLoaded = useSelector(
     state => !!selectors.categoryMapping(state, integrationId, flowId)
   );
-  const { collapseStatus = 'collapsed' } = useSelector(state =>
-    selectors.categoryMappingsCollapsedStatus(state, integrationId, flowId)
-  );
+  const { collapseStatus = 'collapsed' } = useSelectorMemo(selectors.mkCategoryMappingsCollapsedStatus, integrationId, flowId) || {};
+
   const uiAssistant = useSelector(state => {
     const categoryMappingMetadata =
       selectors.categoryMapping(state, integrationId, flowId) || {};
@@ -419,10 +407,20 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
 
     return deleted.includes(categoryId);
   });
-  const mappedCategories =
-    useSelector(state =>
-      selectors.mappedCategories(state, integrationId, flowId)
-    ) || [];
+  const importId = useSelector(state => {
+    const flow = selectors.resource(state, 'flows', flowId);
+
+    if (flow) {
+      const firstPP = flow.pageProcessors.find(
+        pp => pp.type === 'import'
+      );
+
+      return firstPP ? firstPP._importId : null;
+    }
+
+    return null;
+  });
+  const mappedCategories = useSelectorMemo(selectors.mkMappedCategories, integrationId, flowId) || [];
   const currentSectionLabel =
     (mappedCategories.find(category => category.id === categoryId) || {})
       .name || categoryId;
@@ -642,6 +640,11 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
           </Loader>
         )}
       </Drawer>
+      <SettingsDrawer
+        integrationId={integrationId}
+        flowId={flowId}
+        importId={importId}
+      />
     </>
   );
 }

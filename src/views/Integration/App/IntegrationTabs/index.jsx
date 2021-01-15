@@ -99,8 +99,7 @@ export default function IntegrationTabsComponent() {
 
   const accessLevel = useSelector(
     state =>
-      selectors.resourcePermissions(state, 'integrations', integrationId)
-        .accessLevel
+      selectors.resourcePermissions(state, 'integrations', integrationId)?.accessLevel
   );
   const showAdminTab = getAdminLevelTabs({
     integrationId,

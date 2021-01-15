@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import React from 'react';
 import { FormControl, makeStyles, Typography } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -31,6 +32,7 @@ export default function DynaCheckbox(props) {
     inverse,
     required,
     isValid,
+    className,
   } = props;
 
   return (
@@ -38,7 +40,7 @@ export default function DynaCheckbox(props) {
       error={!isValid}
       required={required}
       disabled={disabled}
-      className={classes.dynaLabelWrapper}>
+      className={clsx(classes.dynaLabelWrapper, className)}>
       <FormControlLabel
         control={(
           <Checkbox

@@ -135,7 +135,7 @@ export default function StartDebug({ resourceId, resourceType}) {
         data-test="refreshResource">
         <DebugIcon />
         {debugUntil ? (
-          <TimeAgo date={debugUntil} formatter={formatter} />
+          <TimeAgo date={debugUntil} formatter={formatter} style={{marginLeft: 0 }} />
         ) : 'Start debug'}
       </IconTextButton>
       <ArrowPopper

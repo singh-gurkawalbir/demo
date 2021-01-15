@@ -274,6 +274,13 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     updated.content = merged.content;
   }
 
+  // when data is posted /integrations/:integrationId/connections, connection created will be auto-registered to integration.
+  // Refetch the integration
+  if (resourceType === 'connections' && merged.integrationId && isNew) {
+    // eslint-disable-next-line no-use-before-define
+    yield call(getResource, {resourceType: 'integrations', id: merged.integrationId});
+  }
+
   /*
      connections can be saved with valid or invalid credentials(i.e whether ping succeeded or failed)
      calling ping after connection save sets the offline flag appropriately in the backend.
