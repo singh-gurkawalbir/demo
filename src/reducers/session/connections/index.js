@@ -24,7 +24,7 @@ const updateConnectionStatus = (
 };
 
 export default (state = {}, action) => {
-  const { type, debugLogs, connectionId, queuedJobs, iClients } = action;
+  const { type, connectionId, queuedJobs, iClients } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -34,15 +34,6 @@ export default (state = {}, action) => {
         updateConnectionStatus(draft.status, connectionId, {
           offline: false,
         });
-
-        break;
-      case actionTypes.CONNECTION.DEBUG_LOGS_RECEIVED:
-        draft.debugLogs = { ...draft.debugLogs, [connectionId]: debugLogs };
-        break;
-      case actionTypes.CONNECTION.DEBUG_LOGS_CLEAR:
-        if (draft.debugLogs && draft.debugLogs[connectionId]) {
-          delete draft.debugLogs[connectionId];
-        }
 
         break;
       case actionTypes.CONNECTION.UPDATE_ICLIENTS:

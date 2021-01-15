@@ -7,7 +7,6 @@ import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
 import Panels from './Panels';
-import { isNewId } from '../../utils/resource';
 import { DEFAULT_RECORD_SIZE } from '../../utils/exportPanel';
 
 const useStyles = makeStyles(theme => ({
@@ -67,7 +66,7 @@ function PreviewInfo({
   const isPageGeneratorExport = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId)
   );
-  const [isPreviewDataFetched, setIsPreviewDataFetched] = useState(false);
+  // const [isPreviewDataFetched, setIsPreviewDataFetched] = useState(false);
 
   const fetchExportPreviewData = useCallback(() => {
     // Just a fail safe condition not to request for sample data incase of not exports
@@ -97,16 +96,16 @@ function PreviewInfo({
     setShowPreviewData(true);
   }, [fetchExportPreviewData, setShowPreviewData]);
 
-  useEffect(() => {
-    // Fetches preview data incase of initial load of an edit export mode
-    // Not fetched for online connections
-    // TODO @Raghu: should we make a offline preview call though connection is offline ?
-    // Needs a refactor to preview saga for that
-    if (!isPreviewDisabled && !isPreviewDataFetched && !isNewId(resourceId)) {
-      setIsPreviewDataFetched(true);
-      handlePreview();
-    }
-  }, [resourceId, isPreviewDataFetched, handlePreview, isPreviewDisabled]);
+  // useEffect(() => {
+  //   // Fetches preview data incase of initial load of an edit export mode
+  //   // Not fetched for online connections
+  //   // TODO @Raghu: should we make a offline preview call though connection is offline ?
+  //   // Needs a refactor to preview saga for that
+  //   if (!isPreviewDisabled && !isPreviewDataFetched && !isNewId(resourceId)) {
+  //     setIsPreviewDataFetched(true);
+  //     handlePreview();
+  //   }
+  // }, [resourceId, isPreviewDataFetched, handlePreview, isPreviewDisabled]);
 
   // on close of the panel, updates record size to default
   // remove this action, if in future we need to retain record size

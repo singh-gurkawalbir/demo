@@ -428,19 +428,19 @@ export default {
         borderBottomColor: colors.celigoNeutral3,
       },
       head: {
-        fontFamily: 'Roboto500',
-        color: colors.celigoNeutral6,
-        fontSize: 15,
+        fontFamily: 'source sans pro semibold',
+        color: colors.celigoNeutral8,
+        fontSize: 16,
       },
       body: {
         fontFamily: 'source sans pro',
         position: 'relative',
-        fontSize: 15,
+        fontSize: 16,
       },
     },
     MuiSelect: {
       icon: {
-        color: colors.celigoNeutral5,
+        color: colors.celigoNeutral8,
       },
       select: {
         '&:focus': {
@@ -760,8 +760,6 @@ export default {
     },
     MuiAccordion: {
       root: {
-        border: `1px solid ${colors.celigoNeutral3}`,
-        marginBottom: '8px',
         borderRadius: '4px',
         '&:before': {
           backgroundColor: 'none',

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable react/jsx-pascal-case */
 import { FormLabel } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
@@ -26,7 +27,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function _DynaHttpRequestBody_(props) {
+export default function DynaHttpRequestBody_afe2(props) {
   const {
     id,
     onFieldChange,

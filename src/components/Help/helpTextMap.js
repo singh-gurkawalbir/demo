@@ -86,7 +86,7 @@ export default {
     'Please reach out to Pacejet support team for License key. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your License key safe.',
   'integratorio.connection.integrator.region':
     'Please select your region here. Select North America if the account is created on https://api.integrator.io. Select Europe if the account is created on https://api.eu.integrator.io.',
-  'integratorio.connection.http.auth.token.token': 'Enter an integrator.io token. You can generate a token in Resources >  <a href="https://docs.celigo.com/hc/en-us/articles/360019782431-Generate-API-tokens">API tokens</a>, when <a href="https://docs.celigo.com/hc/en-us/articles/227018868-Switch-to-Developer-mode">Developer mode</a> is enabled. Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe.',
+  'integratorio.connection.http.auth.token.token': 'Enter an integrator.io token. You can generate a token in <b>Resources</b> > <a href=https://docs.celigo.com/hc/en-us/articles/360019782431-Generate-API-tokens>API tokens</a>, when <a href=https://docs.celigo.com/hc/en-us/articles/227018868-Switch-to-Developer-mode>Developer mode</a> is enabled. <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'recharge.connection.http.auth.token.token':
     'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. Access to the API will need to be given by a member of the ReCharge team so reach out to their support team to enable this for you. Once this has been enabled for your store, you can go to Integrations and click on API tokens on the far right corner of your dashboard.',
   'bamboohr.connection.http.bamboohrSubdomain':
@@ -576,10 +576,14 @@ export default {
     'This Client ID works together with the Access Token to grant authorization.',
   'bigcommerce.connection.storeHash':
     'The base api path will look something like this: https://api.bigcommerce.com/stores/123456/. In the base path, the store hash is the 123456.',
+  'clover.connection.http.unencrypted.environment': 'Please select the environment of your Clover account.',
+  'clover.connection.http.unencrypted.region': 'Please select your region.',
+  'clover.connection.http.unencrypted.merchantId': 'Please enter the Merchant ID of your Clover account.<br> <b>Follow the below steps to get Merchant ID:</b><br> 1.  Log in to your clover account.<br>2. On the dashboard, navigate to SetUp, select Merchants.<br>3. You can find your Merchant ID(MID) in that section if you have a merchant created.',
   'inspectorio.connection.http.encrypted.apiKey':
     'Please enter your API key here.Log into your Inspectorio Account-> Configuration > API keys, you can generate an API key or use an existing one.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
   'inspectorio.connection.enviornment':
     'Please select the environment of your Inspectorio account.',
+  'orderful.connection.http.unencrypted.version': 'Please enter the version of your Orderful account.',
   'orderful.connection.http.auth.token.token':
     'Please enter your API key here.Log into your Orderful Account->Settings > API Credentials, you can view your API token.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
   'gorgias.connection.gorgiasSubdomain': 'Please enter your Gorgias subdomain. For example, in https://temp-portal.gorgias.com \'temp-portal\' is the subdomain.',
@@ -1527,7 +1531,7 @@ export default {
   'import.file.csv.replaceNewlineWithSpace':
     'Boolean value, when set new lines in the content of the data (except rowDelimiters) are replaced with a space (Default is false)',
   'import.as2.fileNameTemplate':
-    "Use this field to specify how the files being sent via AS2 should be named in the AS2 message header. You can type '{{{' to include a variable in your file name, such as timestamp, unique ID, and other AS2 metadata (consult the documentation for more details). For example, 'FileXYZ-{{{timestamp(YY-MM-DD)}}}.txt' will create files with the following pattern: 'FileXYZ-16-06-30.txt'. Or, 'FileXYZ-{{{random \"UUID\"}}}.txt' will upload files with the following pattern: 'FileXYZ-69368e91d9a440f79165b73afd46859d.txt', using the unique id (UUID) of the file. Please note also that you can include whatever file name extension you like, and the file name extension will never change the type of data being generated.",
+    "Use this field to specify how the files being sent via AS2 should be named in the AS2 message header. You can type '{{{' to include a variable in your file name, such as timestamp, unique ID, and other AS2 metadata (consult the documentation for more details). For example, 'FileXYZ-{{{timestamp \"YY-MM-DD\" \"America/Los_Angeles\"}}}.txt' will create files with the following pattern: 'FileXYZ-16-06-30.txt' in America/Los_Angeles time. Or, 'FileXYZ-{{{random \"UUID\"}}}.txt' will upload files with the following pattern: 'FileXYZ-69368e91d9a440f79165b73afd46859d.txt', using the unique id (UUID) of the file. Please note also that you can include whatever file name extension you like, and the file name extension will never change the type of data being generated.",
   'import.as2.messageIdTemplate':
     'This field is used to specify the format of a unique message identifier that can be automatically generated as part of the import and included in the AS2 message header. The field uses handlebars to access available variables. For example, {{dateFormat "ddMMyyyyHHmmssZ"-random@ connection.as2.as2Id _ connection.as2.partnerId',
   'import.as2.maxRetries':
@@ -1577,7 +1581,7 @@ export default {
   'import.ftp.fileExtension':
     "This field can be used to include a specific file name extension to all files being generated and transferred to an FTP site.  For example, if you choose '.csv' then all files being transferred to the FTP site will include the extension '.csv' in their file name (i.e. FileXYZ-16-06-30.csv). Please note that this field is only relates to the file's name, and does not dictate the type of data being generated (which is set via a different field).  Saying this another way, although not recommended you could generate json files but use a '.csv' extension for the file names.",
   'import.ftp.fileName':
-    "Use this field to specify how the files being uploaded to the ftp site should be named.  You can type '{{{' to include a predefined timestamp template in your file name.  For example, 'FileXYZ-{{{timestamp(YY-MM-DD)}}}.txt' will upload files with the following pattern: 'FileXYZ-16-06-30.txt'.  Please note also that you can include whatever file name extension you like, and the file name extension will never change the type of data being generated.",
+    "Use this field to specify how the files being uploaded to the ftp site should be named.  You can type '{{{' to include a predefined timestamp template in your file name.  For example, 'FileXYZ-{{{timestamp \"YY-MM-DD\" \"America/Los_Angeles\"}}}.txt' will upload files with the following pattern: 'FileXYZ-16-06-30.txt' in America/Los_Angeles time.  Please note also that you can include whatever file name extension you like, and the file name extension will never change the type of data being generated.",
   'import.ftp.inProgressFileName':
     'If the destination folder where your file is being generated is also being watched by another service, it may be necessary to "hide" the file being generated by integrator.io until it completes.  This field is used to tell our platform to write the file under a temporary filename while the write opperation is in progress. Upon completion, integrator.io will rename this file to the intended filename defined by the "fileName" field.',
   'import.file.backupPath': 'Specify the directory path of the Google Drive folder where files will be backed up after successful transfer.',
@@ -1988,6 +1992,8 @@ export default {
     'Please specify the Amazon MWS Region for this connection. Please note that you must be registered to sell in the Amazon MWS Region selected, else your Amazon MWS calls will fail.',
   'connection.rdbms.useSSL':
     'Please check this field if you want to establish a secure connection to the database. This ensures that data in transit is encrypted.',
+  'connection.as2.preventCanonicalization': '“Canonicalized” data has been transformed to its simplest essential form during HTTP requests. Check this box to skip canonicalization during signature verification, which avoids any risk of the signature’s getting invalidated when accompanying transformed binary data',
+  'connection.as2.concurrencyLevel': 'Set this field to limit the number of concurrent HTTP requests allowed by the connection resource (at any one time), or leave this field blank to use burst mode. With burst mode, integrator.io will make HTTP requests as fast as possible, with really high levels of concurrency. Some APIs are really great with burst mode, and can typically handle any types of volume. Conversely other APIs are much more strict when it comes to the number of API requests being sent to their servers, and burst mode may not be recommended.',
   'connection.as2.userStationInfo.as2URL':
     'This is the URL to which your trading partners will send AS2 documents. Note that the same URL is used for all integrator.io users, which is why the above AS2 identifier must be unique. It is not editable but is provided here so that you can communicate it to your trading partners.',
   'connection.as2.userStationInfo.requireMDNsFromPartners':
@@ -2232,4 +2238,5 @@ export default {
   'parser.xml.excludeNodes': 'It may be easier to specify node to exclude than which to include. If you wish to exclude certain xml nodes from the final record, specify them here using a simplified xpath.',
   'fb.pp.inputFilter':
     'Define an \'input filter\' here to specify which source records should get processed. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
+  'afe.lookups': 'Lookups can be used to dynamically retrieve information from the destination application for the purpose of setting fields that cannot be set directly from the fields provided by the source application. For example, if the destination application requires \'customer_id\' values, but the source application only gives you email addresses, then you can define a lookup to search for \'customer_id\' values using the email addresses, and then inject the \'customer_id\' values into your final API requests.',
 };

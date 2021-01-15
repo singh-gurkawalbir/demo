@@ -175,7 +175,7 @@ export default function TabRedirection({children: componentChildren}) {
         <Redirect
           push={false}
           to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${defaultChild}/${tab ||
-            'settings'}`)}
+            'flows'}`)}
         />
       );
     }
@@ -184,7 +184,7 @@ export default function TabRedirection({children: componentChildren}) {
     return (
       <Redirect
         push={false}
-        to={`${match.url}/${childId === integrationId ? 'settings' : 'flows'}`}
+        to={`${match.url}/flows`}
       />
     );
   }

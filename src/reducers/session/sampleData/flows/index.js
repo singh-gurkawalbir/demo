@@ -60,6 +60,24 @@ export default function (state = {}, action) {
         };
         break;
       }
+      case actionTypes.FLOW_DATA.SET_STATUS_RECEIVED: {
+        if (!flowId || !resourceId || !previewType) return;
+        const resourceMap =
+          (draft[flowId] &&
+            draft[flowId][
+              isPageGeneratorResource(draft[flowId], resourceId)
+                ? 'pageGeneratorsMap'
+                : 'pageProcessorsMap'
+            ]) ||
+          {};
+
+        const stage = previewType;
+
+        if (resourceMap?.[resourceId]?.[stage]) {
+          resourceMap[resourceId][stage].status = 'received';
+        }
+        break;
+      }
       case actionTypes.FLOW_DATA.PREVIEW_DATA_RECEIVED: {
         if (!flowId || !resourceId || !previewType) return;
 

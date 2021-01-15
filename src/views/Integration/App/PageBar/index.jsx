@@ -151,8 +151,7 @@ export default function PageBar() {
   const integrationAppName = getIntegrationAppUrlName(integration?.name);
   const accessLevel = useSelector(
     state =>
-      selectors.resourcePermissions(state, 'integrations', integrationId)
-        .accessLevel
+      selectors.resourcePermissions(state, 'integrations', integrationId)?.accessLevel
   );
   const { supportsMultiStore, storeLabel } = integration?.settings || {};
 
@@ -204,7 +203,7 @@ export default function PageBar() {
 
     return integration.stores?.find(store => store.value === selectedStoreId)?.label || selectedStoreId;
   },
-  [integration]);
+  [integration.stores, storeLabel]);
 
   const storeItems = StoreMenuItems({ integration, integrationId });
   const allStoreItem = AllStoreItem({integrationId, storeLabel});

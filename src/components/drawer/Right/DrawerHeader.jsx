@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import { makeStyles, IconButton, Typography } from '@material-ui/core';
 import {matchPath, useHistory, useLocation} from 'react-router-dom';
 import CloseIcon from '../../icons/CloseIcon';
@@ -40,6 +41,7 @@ export default function DrawerHeader({
   onClose, // forwarded from parent (RightDrawer)
   CloseButton,
   disableClose,
+  className,
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -65,7 +67,7 @@ export default function DrawerHeader({
   };
 
   return (
-    <div data-public className={classes.drawerHeader}>
+    <div data-public className={clsx(classes.drawerHeader, className)}>
       {showBackButton && (
       <IconButton
         size="small"

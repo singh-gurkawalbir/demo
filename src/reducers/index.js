@@ -1,5 +1,4 @@
 /* eslint-disable no-param-reassign */
-import deepClone from 'lodash/cloneDeep';
 import uniqBy from 'lodash/uniqBy';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
@@ -50,9 +49,7 @@ import {
   JOB_STATUS,
 } from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
-import {
-  getFieldById,
-} from '../forms/formFactory/utils';
+import { getFieldById } from '../forms/formFactory/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
@@ -1735,197 +1732,6 @@ selectors.mkIntegrationAppConnectionList = () => {
 };
 selectors.integrationAppConnectionList = selectors.mkIntegrationAppConnectionList();
 
-selectors.pendingCategoryMappings = (state, integrationId, flowId) => {
-  const { response = [], mappings, deleted, uiAssistant } =
-    fromSession.categoryMapping(
-      state && state.session,
-      integrationId,
-      flowId
-    ) || {};
-  const mappingData = response.find(op => op.operation === 'mappingData');
-  const sessionMappedData =
-    mappingData && mappingData.data && mappingData.data.mappingData;
-  const categoryRelationshipData = fromSession.categoryMappingGeneratesMetadata(
-    state && state.session,
-    integrationId,
-    flowId
-  );
-  // SessionMappedData is a state object reference and setCategoryMappingData recursively mutates the parameter, hence deepClone the sessionData
-  const sessionMappings = deepClone(sessionMappedData);
-
-  mappingUtil.setCategoryMappingData(
-    flowId,
-    sessionMappings,
-    mappings,
-    deleted,
-    categoryRelationshipData,
-    uiAssistant !== 'jet'
-  );
-
-  return sessionMappings;
-};
-
-selectors.categoryMappingMetadata = (state, integrationId, flowId) => {
-  const categoryMappingData =
-    fromSession.categoryMapping(
-      state && state.session,
-      integrationId,
-      flowId
-    ) || emptyObject;
-  const categoryMappingMetadata = {};
-  const { response } = categoryMappingData;
-
-  if (!response) {
-    return categoryMappingMetadata;
-  }
-
-  const extractsMetadata = response.find(
-    sec => sec.operation === 'extractsMetaData'
-  );
-  const generatesMetadata = response.find(
-    sec => sec.operation === 'generatesMetaData'
-  );
-
-  if (extractsMetadata) {
-    categoryMappingMetadata.extractsMetadata = extractsMetadata.data;
-  }
-
-  if (generatesMetadata) {
-    categoryMappingMetadata.generatesMetadata =
-      generatesMetadata.data &&
-      generatesMetadata.data.generatesMetaData &&
-      generatesMetadata.data.generatesMetaData.fields;
-    categoryMappingMetadata.relationshipData =
-      generatesMetadata.data && generatesMetadata.data.categoryRelationshipData;
-  }
-
-  return categoryMappingMetadata;
-};
-
-selectors.mappedCategories = (state, integrationId, flowId) => {
-  const categoryMappingData =
-    fromSession.categoryMapping(
-      state && state.session,
-      integrationId,
-      flowId
-    ) || {};
-  let mappedCategories = emptyArray;
-  const { response } = categoryMappingData;
-
-  if (response) {
-    const mappingData = response.find(sec => sec.operation === 'mappingData');
-
-    if (mappingData) {
-      mappedCategories = mappingData.data.mappingData.basicMappings.recordMappings.map(
-        item => ({
-          id: item.id,
-          name: item.name === 'commonAttributes' ? 'Common' : item.name,
-          children: item.children,
-        })
-      );
-    }
-  }
-
-  return mappedCategories;
-};
-
-selectors.categoryMappingGenerateFields = (
-  state,
-  integrationId,
-  flowId,
-  options = emptyObject
-) => {
-  const { sectionId } = options;
-  const generatesMetadata =
-    fromSession.categoryMappingGeneratesMetadata(
-      state && state.session,
-      integrationId,
-      flowId
-    );
-
-  if (Array.isArray(generatesMetadata)) {
-    return generatesMetadata.find(sec => sec.id === sectionId);
-  }
-
-  return null;
-};
-
-selectors.mappingsForVariation = (state, integrationId, flowId, filters = emptyObject) => {
-  const { sectionId, variation, isVariationAttributes } = filters;
-  let mappings = {};
-  const recordMappings =
-    fromSession.variationMappingData(
-      state && state.session,
-      integrationId,
-      flowId
-    ) || emptyObject;
-
-  if (Array.isArray(recordMappings)) {
-    mappings = recordMappings.find(item => item.id === sectionId) || {};
-  }
-
-  if (isVariationAttributes) {
-    return mappings;
-  }
-
-  // propery being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
-  // eslint-disable-next-line camelcase
-  const { variation_themes = [] } = mappings;
-
-  return (
-    variation_themes.find(theme => theme.variation_theme === variation) ||
-    emptyObject
-  );
-};
-
-selectors.mappingsForCategory = (state, integrationId, flowId, filters = emptyObject) => {
-  const { sectionId, depth } = filters;
-  let mappings = emptyArray;
-  const { attributes = {}, mappingFilter = 'all' } =
-    selectors.categoryMappingFilters(state, integrationId, flowId) || {};
-  const recordMappings =
-    fromSession.categoryMappingData(
-      state && state.session,
-      integrationId,
-      flowId
-    ) || [];
-  const { fields = [] } =
-    selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
-      sectionId,
-    }) || {};
-
-  if (recordMappings) {
-    if (depth === undefined) {
-      mappings = recordMappings.find(item => item.id === sectionId);
-    } else {
-      mappings = recordMappings.find(item => item.id === sectionId && depth === item.depth);
-    }
-  }
-
-  // If no filters are passed, return all mapppings
-  if (!mappings || !attributes || !mappingFilter) {
-    return mappings;
-  }
-
-  const mappedFields = map(mappings.fieldMappings, 'generate');
-  // Filter all generateFields with filter which are not yet mapped
-  const filteredFields = fields
-    .filter(field => !mappedFields.includes(field.id))
-    .map(field => ({
-      generate: field.id,
-      extract: '',
-      discardIfEmpty: true,
-    }));
-  // Combine filtered mappings and unmapped fields and generate unmapped fields
-  const filteredMappings = [...mappings.fieldMappings, ...filteredFields];
-
-  // return mappings object by overriding field mappings with filtered mappings
-  return {
-    ...mappings,
-    fieldMappings: filteredMappings,
-  };
-};
-
 selectors.integrationAppName = () => createSelector(
   state => state?.data?.resources?.integrations,
   (state, integrationId) => integrationId,
@@ -2222,8 +2028,8 @@ selectors.makeIntegrationAppSectionFlows = () =>
         );
 
       selectedSections.forEach(sec => {
-        sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
-        sectionFlows.forEach(f => {
+        sectionFlows = options.excludeHiddenFlows ? (sec.flows || []).filter(f => !f.hidden) : sec.flows;
+        (sectionFlows || []).forEach(f => {
           const flow = requiredFlows.find(fi => fi.id === f._id);
 
           if (flow) {
@@ -2406,7 +2212,7 @@ selectors.availableUsersList = (state, integrationId) => {
     _users = selectors.integrationUsers(state, integrationId);
   }
 
-  if ((integrationId || isAccountOwnerOrAdmin) && _users && _users.length > 0) {
+  if ((integrationId || isAccountOwnerOrAdmin) && _users?.length > 0) {
     const accountOwner = selectors.accountOwner(state);
 
     _users = [
@@ -2439,6 +2245,7 @@ selectors.platformLicenseActionDetails = state => {
   if (!license) {
     return licenseActionDetails;
   }
+  const expiresInDays = license && Math.ceil((moment(license.expires) - moment()) / 1000 / 60 / 60 / 24);
 
   if (license.tier === 'none') {
     if (!license.trialEndDate) {
@@ -2472,6 +2279,14 @@ selectors.platformLicenseActionDetails = state => {
         licenseActionDetails.expiresSoon = license.expiresInDays < 10;
       }
     }
+  } else if (license?.resumable) {
+    licenseActionDetails = {
+      action: 'resume',
+    };
+  } else if (expiresInDays <= 0) {
+    licenseActionDetails = {
+      action: 'expired',
+    };
   }
 
   licenseActionDetails.upgradeRequested = license.upgradeRequested;
@@ -3086,22 +2901,22 @@ selectors.metadataOptionsAndResources = (state, {
   commMetaPath,
   filterKey,
 }) => (
-  selectors.optionsFromMetadata(state, {
+  selectors.optionsFromMetadata(state,
     connectionId,
     commMetaPath,
     filterKey,
-  }) || emptyObject
+  ) || emptyObject
 );
 
 selectors.getMetadataOptions = (
   state,
   { connectionId, commMetaPath, filterKey }
 ) => (
-  selectors.optionsFromMetadata(state, {
+  selectors.optionsFromMetadata(state,
     connectionId,
     commMetaPath,
     filterKey,
-  }) || emptyObject
+  ) || emptyObject
 );
 
 selectors.getSalesforceMasterRecordTypeInfo = (state, resourceId) => {
@@ -5010,14 +4825,14 @@ selectors.isLookUpExport = (state, { flowId, resourceId, resourceType }) => {
 
   // Incase of a new resource , check for isLookup flag on resource patched for new lookup exports
   // Also for existing exports ( newly created after Flow Builder feature ) have isLookup flag
-  const { merged: resourceObj = {} } = selectors.resourceData(
+  const { merged: resourceObj } = selectors.resourceData(
     state,
     'exports',
     resourceId
   );
 
   // If exists it is a lookup
-  if (resourceObj.isLookup) return true;
+  if (resourceObj?.isLookup) return true;
 
   // If it is an existing export with a flow context, search in pps to match this resource id
   const flow = selectors.resource(state, 'flows', flowId);
@@ -5037,7 +4852,7 @@ selectors.getCustomResourceLabel = (
   const isLookup = selectors.isLookUpExport(state, { flowId, resourceId, resourceType });
   const isDataloader = !!selectors.flowDetails(state, flowId).isSimpleImport;
   const isNewResource = isNewId(resourceId);
-  const { merged: resource = {} } = selectors.resourceData(
+  const { merged: resource } = selectors.resourceData(
     state,
     resourceType,
     resourceId
@@ -5054,16 +4869,17 @@ selectors.getCustomResourceLabel = (
     resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
   }
 
+  if (!resource) { return ''; }
   // Incase of Flow context, 2nd step of PG/PP creation resource labels handled here
   // The Below resource labels override the default labels above
   if (flowId && isNewResource) {
     if (resource.resourceType === 'exportRecords') {
       resourceLabel = 'Export';
     } else if (
-      ['transferFiles', 'lookupFiles'].indexOf(resource.resourceType) >= 0
+      ['transferFiles', 'lookupFiles'].includes(resource.resourceType)
     ) {
       resourceLabel = 'Transfer';
-    } else if (['webhook', 'realtime'].indexOf(resource.resourceType) >= 0) {
+    } else if (['webhook', 'realtime'].includes(resource.resourceType)) {
       resourceLabel = 'Listener';
     } else if (resource.resourceType === 'importRecords') {
       resourceLabel = 'Import';
@@ -5077,9 +4893,9 @@ selectors.getCustomResourceLabel = (
         'HTTPExport',
         'NetSuiteExport',
         'SalesforceExport',
-      ].indexOf(resource.adaptorType) >= 0 &&
+      ].includes(resource.adaptorType) &&
         resource.type === 'blob') ||
-      ['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0 ||
+      ['FTPExport', 'S3Export'].includes(resource.adaptorType) ||
       ([
         'RESTImport',
         'HTTPImport',
@@ -5087,7 +4903,7 @@ selectors.getCustomResourceLabel = (
         'SalesforceImport',
       ].indexOf(resource.adaptorType) >= 0 &&
         resource.blobKeyPath) ||
-      ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
+      ['FTPImport', 'S3Import'].includes(resource.adaptorType)
     ) {
       resourceLabel = 'Transfer';
     }
@@ -5104,6 +4920,19 @@ selectors.getCustomResourceLabel = (
   return resourceLabel;
 };
 // #endregion Flow builder selectors
+
+// #region connection log selectors
+
+selectors.flowConnectionsWithLogEntry = () => {
+  const flowConnections = selectors.mkFlowConnectionList();
+
+  return createSelector(
+    (state, flowId) => flowConnections(state, flowId),
+    state => selectors.allConnectionsLogs(state),
+    (flowConnections, allConnectionsLog) => flowConnections.filter(({_id}) => !!allConnectionsLog[_id])
+  );
+};
+// #endregion connection log selectors
 
 // #region AFE selectors
 

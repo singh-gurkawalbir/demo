@@ -46,8 +46,7 @@ export default function OnOffCell({
   const isFlowEnableLocked = !!actionProps.flowAttributes[flowId]?.isFlowEnableLocked;
   const accessLevel = useSelector(
     state =>
-      selectors.resourcePermissions(state, 'integrations', integrationId)
-        .accessLevel
+      selectors.resourcePermissions(state, 'integrations', integrationId)?.accessLevel
   );
   const isLicenseValidToEnableFlow = useSelector(
     state => selectors.isLicenseValidToEnableFlow(state),

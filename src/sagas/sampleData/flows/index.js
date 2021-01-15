@@ -202,6 +202,20 @@ export function* fetchPageProcessorPreview({
     previewData = processOneToManySampleData(previewData, resource);
   }
 
+  const {data: existingPreviewData} = yield select(selectors.getSampleDataContext,
+    { flowId, resourceId: _pageProcessorId, resourceType, stage: previewType });
+
+  // in case on hard refresh and flow preview doesnt return data,
+  // dont empty the state, rather use old preview data
+  if (flowDataState?.refresh && existingPreviewData && !previewData) {
+    return yield put(
+      actions.flowData.setStatusReceived(
+        flowId,
+        _pageProcessorId,
+        previewType
+      )
+    );
+  }
   yield put(
     actions.flowData.receivedPreviewData(
       flowId,
@@ -499,6 +513,7 @@ export function* requestProcessorData({
       resourceType,
       stage: 'flowInput',
       isInitialized: true,
+      noWrap: true,
     });
     const postResponseMapData = generatePostResponseMapData(
       flowData,

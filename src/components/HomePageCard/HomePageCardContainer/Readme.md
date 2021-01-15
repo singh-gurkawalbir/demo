@@ -14,7 +14,6 @@ const Tag = require('../Footer/Tag').default;
 const FooterActions = require('../Footer/FooterActions').default;
 const Manage = require('../Footer/Manage').default;
 const PermissionsManageIcon = require('../../icons/PermissionsManageIcon').default;
-// const TrialExpireNotification = require('../TrialExpireNotification').default;
 const ArrowPopper = require('../../ArrowPopper').default;
 const TooltipContent = require('../../TooltipContent').default;
 const Status = require('../../Status').default;
@@ -120,7 +119,6 @@ const handleOut = () => setState({ anchorEl: null });
         </FooterActions> 
         <Info variant="Integration app" label="celigo" />
       </Footer>
-      // <TrialExpireNotification content="your free trial expires in 15 days of notification, please contact the sales person or you can uninstall" />
     </HomePageCardContainer>
   </Grid>
 </Grid>

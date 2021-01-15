@@ -9,6 +9,7 @@ import {
 } from '../resource';
 import { emptyList, emptyObject, STANDALONE_INTEGRATION } from '../constants';
 import getRoutePath from '../routePaths';
+import {HOOKS_IN_IMPORT_EXPORT_RESOURCE} from '../scriptHookStubs';
 
 export const actionsMap = {
   as2Routing: 'as2Routing',
@@ -922,3 +923,82 @@ export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => !!(flow && (
     (
       flow.pageProcessors &&
     flow.pageProcessors.some(({_exportId, _importId}) => _exportId === resourceId || _importId === resourceId))));
+
+export function getScriptsReferencedInFlow(
+  {
+    flow = {},
+    exports = [],
+    imports = [],
+    scripts = [],
+  }
+) {
+  const scriptIdsUsed = [];
+  const checkForHookScripts = hooks => {
+    if (!hooks) {
+      return;
+    }
+    Object.keys(hooks).forEach(hookName => {
+      if (HOOKS_IN_IMPORT_EXPORT_RESOURCE.includes(hookName)) {
+        if (hooks[hookName]?._scriptId && scriptIdsUsed.indexOf(hooks[hookName]._scriptId) === -1) {
+          scriptIdsUsed.push(hooks[hookName]._scriptId);
+        }
+      }
+    });
+  };
+
+  flow?.pageGenerators?.forEach(({_exportId}) => {
+    const _export = exports?.find(({_id}) => _id === _exportId);
+
+    if (_export?.filter?.type === 'script' && _export?.filter?.script?._scriptId) {
+      scriptIdsUsed.push(_export.filter.script._scriptId);
+    }
+    if (_export?.inputFilter?.type === 'script' && _export?.inputFilter?.script?._scriptId) {
+      scriptIdsUsed.push(_export.inputFilter.script._scriptId);
+    }
+    if (_export?.responseTransform?.type === 'script' && _export?.responseTransform?.script?._scriptId) {
+      scriptIdsUsed.push(_export.responseTransform.script._scriptId);
+    }
+    if (_export?.transform?.type === 'script' && _export?.transform?.script?._scriptId) {
+      scriptIdsUsed.push(_export.transform.script._scriptId);
+    }
+
+    checkForHookScripts(_export?.hooks);
+  });
+  flow?.pageProcessors?.forEach(({hooks, type, _importId, _exportId}) => {
+    if (hooks?.postResponseMap?._scriptId && scriptIdsUsed.indexOf(hooks.postResponseMap._scriptId) === -1) {
+      scriptIdsUsed.push(hooks.postResponseMap._scriptId);
+    }
+    if (type === 'import') {
+      const _import = imports?.find(({_id}) => _id === _importId);
+
+      // todo: check if we need to check for filter.type ==='script'?
+      if (_import?.filter?.type === 'script' && _import?.filter?.script?._scriptId) {
+        scriptIdsUsed.push(_import.filter.script._scriptId);
+      }
+      if (_import?.responseTransform?.type === 'script' && _import?.responseTransform?.script?._scriptId) {
+        scriptIdsUsed.push(_import.responseTransform.script._scriptId);
+      }
+      checkForHookScripts(_import?.hooks);
+    } else if (type === 'export') {
+      const _export = exports.find(({_id}) => _id === _exportId);
+
+      if (_export?.filter?.type === 'script' && _export?.filter?.script?._scriptId) {
+        scriptIdsUsed.push(_export.filter.script._scriptId);
+      }
+      if (_export?.inputFilter?.type === 'script' && _export?.inputFilter?.script?._scriptId) {
+        scriptIdsUsed.push(_export.inputFilter.script._scriptId);
+      }
+      if (_export?.responseTransform?.type === 'script' && _export?.responseTransform?.script?._scriptId) {
+        scriptIdsUsed.push(_export.responseTransform.script._scriptId);
+      }
+      if (_export?.transform?.type === 'script' && _export?.transform?.script?._scriptId) {
+        scriptIdsUsed.push(_export.transform.script._scriptId);
+      }
+      checkForHookScripts(_export?.hooks);
+    }
+  });
+
+  const filtered = scripts.filter(({_id}) => scriptIdsUsed.includes(_id));
+
+  return filtered;
+}

@@ -2,12 +2,14 @@ import { useMemo } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import moment from 'moment';
 import { selectors } from '../../reducers';
+import { convertUtcToTimezone } from '../../utils/date';
 
 export default function DateTimeDisplay({ date, dateTime }) {
   const { dateFormat, timeFormat } = useSelector(
     state => selectors.userOwnPreferences(state),
     shallowEqual
   );
+  const timezone = useSelector(state => selectors.userProfile(state)?.timezone);
 
   const out = useMemo(() => {
     if (!dateFormat || !timeFormat || !(date || dateTime)) {
@@ -15,15 +17,13 @@ export default function DateTimeDisplay({ date, dateTime }) {
     }
 
     if (date) {
-      return moment(date).format(dateFormat);
+      return convertUtcToTimezone(moment(date), dateFormat, timeFormat, timezone, true);
     }
 
     if (dateTime) {
-      return moment(dateTime).format(
-        `${dateFormat} ${timeFormat}`
-      );
+      return convertUtcToTimezone(moment(dateTime), dateFormat, timeFormat, timezone);
     }
-  }, [date, dateTime, dateFormat, timeFormat]);
+  }, [dateFormat, timeFormat, date, dateTime, timezone]);
 
   return out;
 }

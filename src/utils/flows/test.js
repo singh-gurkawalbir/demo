@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 
-import { getFlowResources, getFlowType, flowbuilderUrl, getFlowListWithMetadata, getImportsFromFlow, isRunnable, showScheduleIcon, hasBatchExport, isRealtimeFlow, isSimpleImportFlow, getExportIdsFromFlow, getImportIdsFromFlow, isDeltaFlow, isIntegrationApp, isPageGeneratorResource, isFlowUpdatedWithPgOrPP, convertOldFlowSchemaToNewOne, isOldFlowSchema, getAllConnectionIdsUsedInTheFlow, getFirstExportFromFlow, isRealtimeExport} from '.';
+import { getFlowResources, getFlowType, flowbuilderUrl, getFlowListWithMetadata, getImportsFromFlow, isRunnable, showScheduleIcon, hasBatchExport, isRealtimeFlow, isSimpleImportFlow, getExportIdsFromFlow, getImportIdsFromFlow, isDeltaFlow, isIntegrationApp, isPageGeneratorResource, isFlowUpdatedWithPgOrPP, convertOldFlowSchemaToNewOne, isOldFlowSchema, getAllConnectionIdsUsedInTheFlow, getFirstExportFromFlow, isRealtimeExport, getScriptsReferencedInFlow} from '.';
 import getRoutePath from '../routePaths';
 
 const integration = {
@@ -624,5 +624,196 @@ describe('getFlowResources', () => {
     const expectedResources = [{ _id: emptyFlow._id, name: 'Flow-level' }];
 
     expect(getFlowResources(flows, exports, imports, emptyFlow._id)).toEqual(expectedResources);
+  });
+});
+
+describe('getScriptsReferencedInFlow', () => {
+  test('', () => {
+    const flow = {
+      _id: 'f1',
+      pageProcessors: [
+        {
+          _importId: 'i1',
+          type: 'import',
+        },
+        {
+          _exportId: 'e1',
+          type: 'export',
+          hooks: {
+            postResponseMap: {
+              _scriptId: 's1',
+              function: 'abc',
+            },
+          },
+        },
+      ],
+      pageGenerators: [{_exportId: 'e2'}],
+    };
+    const imports = [
+      {
+        _id: 'i1',
+        responseTransform: {
+          type: 'script',
+          script: {
+            _scriptId: 's2',
+            function: 'transform',
+          },
+        },
+        hooks: {
+          preMap: {
+            _scriptId: 's3',
+            function: 'preMap',
+          },
+        },
+        filter: {
+          type: 'script',
+          script: {
+            _scriptId: 's4',
+            function: 'filter',
+          },
+        },
+
+      },
+    ];
+    const exports = [
+      {
+        _id: 'e2',
+        hooks: {
+          preSavePage: {
+            _scriptId: 's5',
+            function: 'preSavePage',
+          },
+        },
+        transform: {
+          type: 'script',
+          script: {
+            _scriptId: 's6',
+            function: 'transform',
+          },
+        },
+        filter: {
+          type: 'script',
+          script: {
+            _scriptId: 's7',
+            function: 'filter',
+          },
+        },
+      },
+      {
+        _id: 'e1',
+        transform: {
+          type: 'script',
+          script: {
+            _scriptId: 's8',
+            function: 'transform',
+          },
+        },
+        filter: {
+          type: 'script',
+          script: {
+            _scriptId: 's9',
+            function: 'filter',
+          },
+        },
+        inputFilter: {
+          type: 'script',
+          script: {
+            _scriptId: 's10',
+            function: 'filter',
+          },
+        },
+      },
+    ];
+    const scripts = [
+      {
+        _id: 's1',
+        name: 'ns1',
+      },
+      {
+        _id: 's2',
+        name: 'ns2',
+      },
+      {
+        _id: 's3',
+        name: 'ns3',
+      },
+      {
+        _id: 's4',
+        name: 'ns4',
+      },
+      {
+        _id: 's5',
+        name: 'ns5',
+      },
+      {
+        _id: 's6',
+        name: 'ns6',
+      },
+      {
+        _id: 's7',
+        name: 'ns7',
+      },
+      {
+        _id: 's8',
+        name: 'ns8',
+      },
+      {
+        _id: 's9',
+        name: 'ns9',
+      },
+      {
+        _id: 's10',
+        name: 'ns10',
+      },
+      {
+        _id: 's11',
+        name: 'ns11',
+      },
+    ];
+
+    expect(getScriptsReferencedInFlow({flow, exports, imports, scripts})).toEqual(
+      [
+        {
+          _id: 's1',
+          name: 'ns1',
+        },
+        {
+          _id: 's2',
+          name: 'ns2',
+        },
+        {
+          _id: 's3',
+          name: 'ns3',
+        },
+        {
+          _id: 's4',
+          name: 'ns4',
+        },
+        {
+          _id: 's5',
+          name: 'ns5',
+        },
+        {
+          _id: 's6',
+          name: 'ns6',
+        },
+        {
+          _id: 's7',
+          name: 'ns7',
+        },
+        {
+          _id: 's8',
+          name: 'ns8',
+        },
+        {
+          _id: 's9',
+          name: 'ns9',
+        },
+        {
+          _id: 's10',
+          name: 'ns10',
+        },
+      ]
+    );
   });
 });

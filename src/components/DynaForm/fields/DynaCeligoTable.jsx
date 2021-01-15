@@ -13,6 +13,12 @@ const useStyles = makeStyles(theme => ({
   accordianDetails: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
+  accordianWrapper: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    marginBottom: theme.spacing(2),
+  },
+
 }));
 export default function DynaCeligoTable(props) {
   const classes = useStyles();
@@ -23,6 +29,7 @@ export default function DynaCeligoTable(props) {
     <Accordion
       elevation={0}
       square
+      className={classes.accordianWrapper}
       // eslint-disable-next-line react/no-array-index-key
       expanded={shouldExpand}>
       <AccordionSummary

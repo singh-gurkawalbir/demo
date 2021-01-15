@@ -29,8 +29,9 @@ export function dataAsString(data) {
     : JSON.stringify(data, null, 2);
 }
 
-export const getUniqueFieldId = fieldId => {
+export const getUniqueFieldId = (fieldId, resource) => {
   if (!fieldId) { return ''; }
+  const { ignoreExisting, ignoreMissing } = resource || {};
 
   // some field types have same field ids
   switch (fieldId) {
@@ -39,20 +40,37 @@ export const getUniqueFieldId = fieldId => {
     case 'rdbms.queryUpdate':
       return 'rdbms.query.0';
     case 'http.bodyCreate':
+      if (ignoreExisting || ignoreMissing) { return 'http.body'; }
+
       return 'http.body.1';
+
     case 'http.bodyUpdate':
+      if (ignoreExisting || ignoreMissing) { return 'http.body'; }
+
       return 'http.body.0';
     case 'http.relativeURIUpdate':
+      if (ignoreExisting || ignoreMissing) { return 'http.relativeURI'; }
+
       return 'http.relativeURI.0';
     case 'http.relativeURICreate':
+      if (ignoreExisting || ignoreMissing) { return 'http.relativeURI'; }
+
       return 'http.relativeURI.1';
     case 'rest.relativeURIUpdate':
+      if (ignoreExisting || ignoreMissing) { return 'rest.relativeURI'; }
+
       return 'rest.relativeURI.0';
     case 'rest.relativeURICreate':
+      if (ignoreExisting || ignoreMissing) { return 'rest.relativeURI'; }
+
       return 'rest.relativeURI.1';
     case 'rest.bodyUpdate':
+      if (ignoreExisting || ignoreMissing) { return 'rest.body'; }
+
       return 'rest.body.0';
     case 'rest.bodyCreate':
+      if (ignoreExisting || ignoreMissing) { return 'rest.body'; }
+
       return 'rest.body.1';
 
     default:

@@ -6264,6 +6264,15 @@ html-minifier-terser@^5.0.1:
     relateurl "^0.2.7"
     terser "^4.6.3"
 
+html-webpack-inject-attributes-plugin@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/html-webpack-inject-attributes-plugin/-/html-webpack-inject-attributes-plugin-1.0.5.tgz#e1a5c41a32cf22ce44fff66d25fe07de0edbae44"
+  integrity sha512-fcrN/c+opguYczwADEvUkN6r5JuMPV7SJhW+K5YB2vwTCRnlczGa4/+GYaLVTezz/eqa1DJgoHQeyIWfnqXrwA==
+  dependencies:
+    lodash.assign "^4.2.0"
+    lodash.foreach "^4.5.0"
+    safe-require "^1.0.3"
+
 html-webpack-plugin@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/html-webpack-plugin/-/html-webpack-plugin-4.3.0.tgz#53bf8f6d696c4637d5b656d3d9863d89ce8174fd"
@@ -7932,6 +7941,11 @@ lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
   integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
+
+lodash.foreach@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.foreach/-/lodash.foreach-4.5.0.tgz#1a6a35eace401280c7f06dddec35165ab27e3e53"
+  integrity sha1-Gmo16s5AEoDH8G3d7DUWWrJ+PlM=
 
 lodash.get@^4.4.2:
   version "4.4.2"
@@ -10661,6 +10675,11 @@ safe-regex@^1.1.0:
   integrity sha1-QKNmnzsHfR6UPURinhV91IAjvy4=
   dependencies:
     ret "~0.1.10"
+
+safe-require@^1.0.3:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/safe-require/-/safe-require-1.0.4.tgz#c72e1fb2820e31080e5f26fdde252a1cbffe08ad"
+  integrity sha512-1elAbSH1u7HVMfbuqktLWAN0wMOeT+FnJVqMhBgEJLvL95m+KT433tiJdGMV1e3TstQXRt1YrKQDRBu0Kpk4WA==
 
 "safer-buffer@>= 2.1.2 < 3", "safer-buffer@>= 2.1.2 < 3.0.0", safer-buffer@^2.0.2, safer-buffer@^2.1.0, safer-buffer@~2.1.0:
   version "2.1.2"

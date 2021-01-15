@@ -62,6 +62,7 @@ import latestFlowJobsSagas from './errorManagement/latestJobs/flows';
 import errorMetadataSagas from './errorManagement/metadata';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
+import {logsSagas} from './logs';
 import { APIException } from './api';
 
 export function* unauthenticateAndDeleteProfile() {
@@ -178,6 +179,7 @@ export function* allSagas() {
     ...customSettingsSagas,
     ...exportDataSagas,
     ...editorSampleData,
+    ...logsSagas,
   ]);
 }
 

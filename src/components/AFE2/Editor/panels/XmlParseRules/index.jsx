@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles }
-  from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import getForm from './formMeta';
@@ -19,21 +18,6 @@ const useStyles = makeStyles(theme => ({
       flexDirection: 'column',
     },
   },
-  helpText: {
-    whiteSpace: 'pre-line',
-    maxWidth: 450,
-  },
-  formControl: {
-    margin: theme.spacing(1),
-  },
-  textField: {
-    marginTop: theme.spacing(2),
-  },
-  input: {
-    backgroundColor: theme.palette.background.paper,
-    marginBottom: theme.spacing(1),
-  },
-
 }));
 
 export default function XmlParseRules({ editorId }) {

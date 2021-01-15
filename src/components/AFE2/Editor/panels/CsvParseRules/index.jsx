@@ -1,19 +1,12 @@
-import React, { useMemo } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
+import React, { useEffect, useMemo } from 'react';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
-import CeligoSelect from '../../../../CeligoSelect';
-import DynaText from '../../../../DynaForm/fields/DynaText';
-import options from '../../../../AFE/CsvConfigEditor/options';
-import DynaSelectWithInput from '../../../../DynaForm/fields/DynaSelectWithInput';
-import DynaMultiSelect from '../../../../DynaForm/fields/DynaMultiSelect';
-import { getFileColumns } from '../../../../../utils/file';
+import getForm from './formMeta';
+import DynaForm from '../../../../DynaForm';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import useFormContext from '../../../../Form/FormContext';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -25,182 +18,51 @@ const useStyles = makeStyles(theme => ({
       flexDirection: 'column',
     },
   },
-  formControl: {
-    margin: theme.spacing(1),
-  },
-  select: {
-    minWidth: 180,
-    padding: theme.spacing(1),
-  },
-  label: {
-    zIndex: 1,
-    padding: theme.spacing(0.6, 1),
-  },
-  menuItems: {
-    paddingRight: 0,
-    '&:before': {
-      display: 'none',
-    },
-  },
-  checkboxOffset: {
-    marginLeft: 6,
-  },
 }));
 
 export default function CsvParseRules({ editorId }) {
+  const formKey = `csvParse-${editorId}`;
   const classes = useStyles();
+  const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const rule = useSelector(state => selectors._editorRule(state, editorId));
-  const {result, sampleDataStatus} = useSelector(state => {
-    const {result, sampleDataStatus} = selectors._editor(state, editorId);
+  const { resourceId, resourceType } = useSelector(state => {
+    const editor = selectors._editor(state, editorId);
 
-    return {result, sampleDataStatus};
+    return {
+      resourceId: editor.resourceId,
+      resourceType: editor.resourceType,
+    };
   }, shallowEqual);
+  const formContext = useFormContext(formKey);
 
-  const {
-    columnDelimiter = '',
-    rowDelimiter = '',
-    keyColumns = [],
-    hasHeaderRow = false,
-    multipleRowsPerRecord = false,
-    trimSpaces = false,
-    rowsToSkip,
-  } = rule || {};
+  // Since the form metadata is used only once, we don't need to refresh the
+  // metadata cache on rule changes... we just need the original rule to set the
+  // starting values.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const fieldMeta = useMemo(() => getForm({...rule, resourceId, resourceType}), [resourceId]);
 
-  const dispatch = useDispatch();
-  const patchEditor = (field, value) => {
-    const newRule = {...rule, [field]: value};
+  useFormInitWithPermissions({
+    formKey,
+    disabled,
+    optionsHandler: fieldMeta?.optionsHandler,
+    fieldMeta,
+  });
 
-    if (field === 'multipleRowsPerRecord') {
-      newRule.keyColumns = [];
-    }
-    dispatch(actions._editor.patchRule(editorId, newRule));
-  };
-  const showKeyColumnsOptions = sampleDataStatus !== 'requested';
+  // any time the form value changes from a user interacting with the form,
+  // we dispatch an action to update the editor patch state with the current form value.
+  //  We do this because this form has no submit button. And this is the only way we
+  // can keep the editor state in sync with the form state.
+  useEffect(() => {
+    if (!formContext?.value) return;
 
-  const allColumns = useMemo(() => {
-    if (!showKeyColumnsOptions) {
-      return [];
-    }
-    const options = getFileColumns(result);
+    dispatch(actions._editor.patchRule(editorId, formContext.value));
+  },
+  [dispatch, editorId, formContext.value]);
 
-    if (Array.isArray(keyColumns)) {
-      keyColumns.forEach(val => {
-        if (!options.find(opt => opt === val)) {
-          options.push(val);
-        }
-      });
-    }
-
-    const formattedOptions = options.map(val => ({label: val, value: val}));
-
-    return [{ items: formattedOptions }];
-  }, [keyColumns, result, showKeyColumnsOptions]);
-
-  // TODO: Refactor to use dyna form
   return (
     <div className={classes.container}>
-      <FormGroup column="true">
-        <FormControl disabled={disabled} className={classes.formControl}>
-          <DynaSelectWithInput
-            label="Column delimiter"
-            value={columnDelimiter}
-            disabled={disabled}
-            isValid={columnDelimiter.length}
-            onFieldChange={(_id, value) =>
-              patchEditor('columnDelimiter', value)}
-            options={options.ColumnDelimiterOptions}
-          />
-        </FormControl>
-        <FormControl disabled={disabled} className={classes.formControl}>
-          <InputLabel shrink htmlFor="rowDelimiter">
-            Row delimiter
-          </InputLabel>
-          <CeligoSelect
-            native
-            value={rowDelimiter}
-            className={classes.select}
-            onChange={event => patchEditor('rowDelimiter', event.target.value)}
-            placeholder="Please select"
-            inputProps={{ id: 'rowDelimiter' }}>
-            {options.RowDelimiterOptions.map(opt => (
-              <option key={opt.value} value={opt.value} data-test={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </CeligoSelect>
-        </FormControl>
-
-        <FormControlLabel
-          disabled={disabled}
-          className={classes.checkboxOffset}
-          control={(
-            <Checkbox
-              color="primary"
-              checked={trimSpaces}
-              data-test="trimSpaces"
-              onChange={() => patchEditor('trimSpaces', !trimSpaces)}
-            />
-          )}
-          label="Trim spaces"
-        />
-        <FormControlLabel
-          disabled={disabled}
-          className={classes.checkboxOffset}
-          control={(
-            <Checkbox
-              color="primary"
-              checked={hasHeaderRow}
-              data-test="hasHeaderRow"
-              onChange={() => {
-                patchEditor('keyColumns', []);
-                // hasHeaderRow patch to be last patch made
-                patchEditor('hasHeaderRow', !hasHeaderRow);
-              }}
-            />
-          )}
-          label="File has header"
-        />
-        <FormControl disabled={disabled} className={classes.formControl}>
-          <DynaText
-            color="primary"
-            checked={rowsToSkip}
-            inputType="number"
-            value={rowsToSkip}
-            label="Number of rows to skip"
-            data-test="rowsToSkip"
-            disabled={disabled}
-            isValid={rowsToSkip >= 0}
-            onFieldChange={(id, value) => patchEditor('rowsToSkip', value)}
-          />
-        </FormControl>
-
-        <FormControlLabel
-          disabled={disabled || !result}
-          className={classes.checkboxOffset}
-          control={(
-            <Checkbox
-              color="primary"
-              checked={multipleRowsPerRecord}
-              data-test="multipleRowsPerRecord"
-              onChange={() => patchEditor('multipleRowsPerRecord', !multipleRowsPerRecord)}
-            />
-          )}
-          label="Multiple rows per record"
-        />
-        {multipleRowsPerRecord && allColumns && (
-          <FormControl disabled={disabled} className={classes.formControl}>
-            <DynaMultiSelect
-              id="keyColumns"
-              disabled={disabled}
-              label="Key columns"
-              value={keyColumns}
-              options={allColumns}
-              isValid
-              onFieldChange={(_id, val) => patchEditor('keyColumns', val)} />
-          </FormControl>
-        )}
-      </FormGroup>
+      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
     </div>
   );
 }

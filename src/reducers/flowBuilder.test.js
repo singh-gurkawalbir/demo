@@ -92,7 +92,7 @@ describe('Flow builder region selector testcases', () => {
 
   describe('selectors.getCustomResourceLabel test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.getCustomResourceLabel({}, {})).toEqual();
+      expect(selectors.getCustomResourceLabel({}, {})).toEqual('');
     });
   });
 });

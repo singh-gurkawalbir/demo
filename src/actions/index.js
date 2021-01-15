@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import actionTypes from './types';
 import suiteScript from './suiteScript';
 
@@ -31,8 +32,8 @@ function action(type, payload = {}) {
 
 // #region this form specific source code, please be careful when making changes to the interface
 const form = {
-  init: (formKey, formSpecificProps) =>
-    action(actionTypes.FORM.INIT, { formKey, formSpecificProps }),
+  init: (formKey, remountKey, formSpecificProps) =>
+    action(actionTypes.FORM.INIT, { formKey, remountKey, formSpecificProps }),
   clear: formKey => action(actionTypes.FORM.CLEAR, { formKey }),
   formUpdate: (formKey, formSpecificProps) =>
     action(actionTypes.FORM.UPDATE, { formKey, formSpecificProps }),
@@ -165,15 +166,6 @@ const connection = {
       iClients,
       connectionId,
     }),
-  requestDebugLogs: connectionId =>
-    action(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, { connectionId }),
-  receivedDebugLogs: (debugLogs, connectionId) =>
-    action(actionTypes.CONNECTION.DEBUG_LOGS_RECEIVED, {
-      debugLogs,
-      connectionId,
-    }),
-  clearDebugLogs: connectionId =>
-    action(actionTypes.CONNECTION.DEBUG_LOGS_CLEAR, { connectionId }),
   madeOnline: connectionId =>
     action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
   requestQueuedJobs: connectionId =>
@@ -1307,6 +1299,12 @@ const flowData = {
       previewData,
       previewType,
     }),
+  setStatusReceived: (flowId, resourceId, previewType) =>
+    action(actionTypes.FLOW_DATA.SET_STATUS_RECEIVED, {
+      flowId,
+      resourceId,
+      previewType,
+    }),
   requestProcessorData: (flowId, resourceId, resourceType, processor) =>
     action(actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST, {
       flowId,
@@ -2118,6 +2116,47 @@ const hooks = {
   save: context => action(actionTypes.HOOKS.SAVE, context),
 };
 
+const logs = {
+  scripts: {
+    request: ({ scriptId, flowId }) =>
+      action(actionTypes.LOGS.SCRIPTS.REQUEST, { scriptId, flowId }),
+    received: ({logs, nextPageURL, scriptId, flowId}) =>
+      action(actionTypes.LOGS.SCRIPTS.RECEIVED, {logs, nextPageURL, scriptId, flowId}),
+    requestFailed: ({flowId, scriptId}) =>
+      action(actionTypes.LOGS.SCRIPTS.REQUEST_FAILED, {scriptId, flowId}),
+    setDependency: ({resourceReferences, scriptId, flowId}) =>
+      action(actionTypes.LOGS.SCRIPTS.SET_DEPENDENCY, {resourceReferences, scriptId, flowId}),
+    patchFilter: ({scriptId, flowId, field, value}) =>
+      action(actionTypes.LOGS.SCRIPTS.PATCH_FILTER, {scriptId, flowId, field, value}),
+    refresh: ({ scriptId, flowId }) =>
+      action(actionTypes.LOGS.SCRIPTS.REFRESH, { scriptId, flowId }),
+    clear: ({ flowId, scriptId }) =>
+      action(actionTypes.LOGS.SCRIPTS.CLEAR, { flowId, scriptId }),
+    loadMore: ({ flowId, scriptId }) =>
+      action(actionTypes.LOGS.SCRIPTS.LOAD_MORE, { flowId, scriptId }),
+    startDebug: (scriptId, value) =>
+      action(actionTypes.LOGS.SCRIPTS.START_DEBUG, { scriptId, value }),
+  },
+  connections: {
+    request: connectionId =>
+      action(actionTypes.LOGS.CONNECTIONS.REQUEST, { connectionId }),
+    requestFailed: connectionId =>
+      action(actionTypes.LOGS.CONNECTIONS.REQUEST_FAILED, { connectionId }),
+    received: (connectionId, logs) =>
+      action(actionTypes.LOGS.CONNECTIONS.RECEIVED, { connectionId, logs }),
+    refresh: connectionId =>
+      action(actionTypes.LOGS.CONNECTIONS.REFRESH, { connectionId }),
+    clear: connectionId =>
+      action(actionTypes.LOGS.CONNECTIONS.CLEAR, { connectionId }),
+    delete: connectionId =>
+      action(actionTypes.LOGS.CONNECTIONS.DELETE, { connectionId }),
+    download: connectionId =>
+      action(actionTypes.LOGS.CONNECTIONS.DOWNLOAD, { connectionId }),
+    startDebug: (connectionId, value) =>
+      action(actionTypes.LOGS.CONNECTIONS.START_DEBUG, { connectionId, value }),
+  },
+};
+
 export default {
   form,
   postFeedback,
@@ -2169,4 +2208,5 @@ export default {
   exportData,
   editorSampleData,
   hooks,
+  logs,
 };

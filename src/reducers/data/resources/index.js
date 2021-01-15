@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import { createSelector } from 'reselect';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
-import { convertOldFlowSchemaToNewOne, getIAFlowSettings } from '../../../utils/flows';
+import { convertOldFlowSchemaToNewOne, getIAFlowSettings, getScriptsReferencedInFlow } from '../../../utils/flows';
 import { stringCompare } from '../../../utils/sort';
 import mappingUtil from '../../../utils/mapping';
 import getRoutePath from '../../../utils/routePaths';
@@ -547,6 +547,8 @@ selectors.connectionHasAs2Routing = (state, id) => {
 
 selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
   const importResource = selectors.resource(state, 'imports', importId);
+
+  if (!importResource) return;
   const {adaptorType} = importResource;
 
   if (!['NetSuiteImport', 'NetSuiteDistributedImport'].includes(adaptorType)) {
@@ -895,3 +897,30 @@ selectors.iaFlowSettings = (state, integrationId, flowId, childId) => {
 };
 
 // #endregion
+
+// #region script selectors
+const emptySet = [];
+
+selectors.scripts = createSelector(
+  state => state?.scripts || emptySet,
+  (state, flowId) => {
+    if (!flowId) {
+      return;
+    }
+
+    return state?.flows?.find(({_id}) => _id === flowId);
+  },
+  state => state?.imports || emptySet,
+  state => state?.exports || emptySet,
+  (scripts, flow, imports, exports) => {
+    if (!scripts) {
+      return emptySet;
+    }
+    if (!flow) {
+      return scripts;
+    }
+
+    return getScriptsReferencedInFlow({scripts, flow, imports, exports});
+  });
+
+// #endregion script selectors

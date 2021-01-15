@@ -69,6 +69,10 @@ export default function getRequestOptions(
         path = '/licenses/upgradeRequest';
       } else if (actionType === 'connectorRenewal') {
         path = `/connectors/${connectorId}/licenses/${licenseId}/renewRequest`;
+      } else if (actionType === 'ioRenewal') {
+        path = '/licenses/renewRequest';
+      } else if (actionType === 'ioResume') {
+        return {path: '/resume', opts: {method: 'PUT'}};
       }
 
       return {
