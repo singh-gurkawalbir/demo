@@ -145,7 +145,7 @@ export function* requestScriptLogs({isInit, field, ...props}) {
   }
   const logState = yield select(selectors.scriptLog, {scriptId, flowId});
   const fetchLogsPath = getFetchLogsPath({...logState, fetchNextPage });
-  const { errorMsg, logs, nextPageURL } = yield call(retryToFetchLogs, {...props, fetchLogsPath});
+  const { errorMsg, logs =[], nextPageURL } = yield call(retryToFetchLogs, {...props, fetchLogsPath});
 
   if (errorMsg) {
     return yield put(actions.logs.scripts.requestFailed({
