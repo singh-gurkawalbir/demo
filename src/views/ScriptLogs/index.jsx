@@ -90,13 +90,13 @@ const useStyles = makeStyles(theme => ({
 
 const rangeFilters = [
   {id: 'last15minutes', label: 'Last 15 minutes'},
-  {id: 'today', label: 'Today'},
+  {id: 'last24hours', label: 'Last 24 hours'},
   {id: 'last30minutes', label: 'Last 30 minutes'},
-  {id: 'yesterday', label: 'Yesterday'},
+  {id: 'today', label: 'Today'},
   {id: 'last1hour', label: 'Last hour'},
+  {id: 'yesterday', label: 'Yesterday'},
   {id: 'last4hours', label: 'Last 4 hours'},
   {id: 'custom', label: 'Custom'},
-  {id: 'last24hours', label: 'Last 24 hours'},
 ];
 const defaultRange = {
   startDate: addMinutes(new Date(), -15),
