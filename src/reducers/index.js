@@ -49,9 +49,7 @@ import {
   JOB_STATUS,
 } from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
-import {
-  getFieldById,
-} from '../forms/formFactory/utils';
+import { getFieldById } from '../forms/formFactory/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
@@ -2214,7 +2212,7 @@ selectors.availableUsersList = (state, integrationId) => {
     _users = selectors.integrationUsers(state, integrationId);
   }
 
-  if ((integrationId || isAccountOwnerOrAdmin) && _users && _users.length > 0) {
+  if ((integrationId || isAccountOwnerOrAdmin) && _users?.length > 0) {
     const accountOwner = selectors.accountOwner(state);
 
     _users = [
