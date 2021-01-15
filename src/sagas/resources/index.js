@@ -259,6 +259,9 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     if (options && options.action === 'flowEnableDisable') {
       yield put(actions.flow.isOnOffActionInprogress(false, id));
     }
+    if (resourceType === 'connectors') {
+      yield put(actions.connectors.publishError(id));
+    }
 
     return { error };
   }
@@ -365,6 +368,10 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
       { connectionId: merged._id,
         link: merged.netsuite.linkSuiteScriptIntegrator }
     );
+  }
+
+  if (resourceType === 'connectors') {
+    yield put(actions.connectors.publishSuccessful(id));
   }
 }
 

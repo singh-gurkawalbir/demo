@@ -1,4 +1,5 @@
 import actionTypes from '../../../actions/types';
+import { PING_STATES as PUBLISH_STATES } from '../../comms/ping';
 
 export default (state = {}, action) => {
   const { type, metadata, fieldName, fieldType, _integrationId } = action;
@@ -34,6 +35,18 @@ export default (state = {}, action) => {
       if (newState[_integrationId][fieldName]) {
         newState[_integrationId][fieldName].isLoading = false;
       }
+
+      return newState;
+    case actionTypes.CONNECTORS.PUBLISH_LOADING:
+      newState[_integrationId] = { status: PUBLISH_STATES.LOADING };
+
+      return newState;
+    case actionTypes.CONNECTORS.PUBLISH_SUCCESSFUL:
+      newState[_integrationId] = { status: PUBLISH_STATES.SUCCESS };
+
+      return newState;
+    case actionTypes.CONNECTORS.PUBLISH_ERROR:
+      newState[_integrationId] = { status: PUBLISH_STATES.ERROR };
 
       return newState;
     default:
@@ -94,4 +107,11 @@ selectors.connectorFieldOptions = (
   };
 };
 
+selectors.toggleOnOffStatus = (state, _integrationId) => {
+  if (!(state && state[_integrationId])) {
+    return { status: 'failed' };
+  }
+
+  return { status: state[_integrationId].status || 'failed' };
+};
 // #endregion

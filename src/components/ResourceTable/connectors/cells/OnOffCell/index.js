@@ -1,9 +1,11 @@
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
+import { selectors } from '../../../../../reducers';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import CeligoSwitch from '../../../../CeligoSwitch';
+import Spinner from '../../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   celigoSwitchOnOff: {
@@ -21,6 +23,8 @@ export default function OnOffCell({
 
   const { confirmDialog } = useConfirmDialog();
   const dispatch = useDispatch();
+  const [onOffInProgressStatus, setOnOffInProgressStatus] = useState(false);
+  const toggleStatus = useSelector(state => selectors.toggleOnOffStatus(state, resourceId)?.status);
   const togglePublish = useCallback(() => {
     const patchSet = [
       {
@@ -30,6 +34,8 @@ export default function OnOffCell({
       },
     ];
 
+    dispatch(actions.connectors.publishLoading(resourceId));
+    setOnOffInProgressStatus(true);
     dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
     dispatch(actions.resource.commitStaged(resourceType, resourceId));
   }, [dispatch, isPublished, resourceId, resourceType]);
@@ -51,6 +57,16 @@ export default function OnOffCell({
       ],
     });
   }, [confirmDialog, togglePublish, isPublished]);
+
+  useEffect(() => {
+    if (toggleStatus !== 'loading') {
+      setOnOffInProgressStatus(false);
+    }
+  }, [toggleStatus]);
+
+  if (onOffInProgressStatus) {
+    return <Spinner size={24} className={classes.spinnerOnOff} />;
+  }
 
   if (!(resourceType === 'templates' && !applications?.length)) {
     return (
