@@ -125,13 +125,13 @@ export default function CeligoAppBar() {
               </DebugOnly>
               */}
               <li>
+                <LicenseAction />
+              </li>
+              <li>
                 <EnvironmentToggle />
               </li>
               <li>
                 <Notifications />
-              </li>
-              <li>
-                <LicenseAction />
               </li>
               <li>
                 <ProfileMenuButton />

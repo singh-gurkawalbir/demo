@@ -1,16 +1,37 @@
-import React, { useCallback, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core';
+import React, { useCallback, useEffect, Fragment } from 'react';
+import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
+import ErrorIcon from '../../../components/icons/ErrorIcon';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   inTrial: {
     marginTop: -2,
   },
-});
+  wrapper: {
+    marginTop: -2,
+    display: 'flex',
+    flexDirection: 'row',
+    borderColor: theme.palette.error.main,
+    border: '1px solid',
+    borderRadius: 5,
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    paddingTop: theme.spacing(2),
+  },
+  titleStatusPanel: {
+    margin: 'auto',
+  },
+  renewNowBtn: {
+    color: theme.palette.primary.main,
+  },
+  icon: {
+
+  },
+}));
 
 export default function LicenseAction() {
   const classes = useStyles();
@@ -48,6 +69,12 @@ export default function LicenseAction() {
     if (licenseActionDetails.action === 'upgrade') {
       return dispatch(actions.user.org.accounts.requestLicenseUpgrade());
     }
+    if (licenseActionDetails.action === 'resume') {
+      return dispatch(actions.user.org.accounts.requestUpdate('ioResume'));
+    }
+    if (licenseActionDetails.action === 'expired') {
+      return dispatch(actions.user.org.accounts.requestUpdate('ioRenewal'));
+    }
   }, [dispatch, licenseActionDetails.action]);
 
   if (
@@ -60,15 +87,32 @@ export default function LicenseAction() {
   }
 
   return (
-    <Button
-      data-test={licenseActionDetails.label}
-      className={
-        classes.inTrial
-      }
-      variant="contained"
-      color="secondary"
-      onClick={handleClick}>
-      {licenseActionDetails.label}
-    </Button>
+    <>
+      {['resume', 'expired'].includes(licenseActionDetails.action) ? (
+        <div className={classes.wrapper}>
+          <ErrorIcon className={classes.icon} />
+          <Typography component="div" variant="subtitle2" className={classes.titleStatusPanel}>
+            {licenseActionDetails.action === 'expired' ? 'Your subscription has expired.' : 'Your license was renewed.'}
+          </Typography>
+          <Button
+            data-test="renewOrResumeNow"
+            className={classes.renewNowBtn}
+            onClick={handleClick}>
+            {licenseActionDetails.action === 'expired' ? 'Renew now' : 'Reactivate now'}
+          </Button>
+        </div>
+      ) : (
+        <Button
+          data-test={licenseActionDetails.label}
+          className={
+            classes.inTrial
+          }
+          variant="contained"
+          color="secondary"
+          onClick={handleClick}>
+          {licenseActionDetails.label}
+        </Button>
+      )};
+    </>
   );
 }

@@ -33,6 +33,8 @@ export default {
     type: 'uri',
     label: 'File name starts with',
     editorTitle: 'Build file name starts with',
+    showExtract: false,
+    showLookup: false,
     defaultValue: r => {
       if (r?.file?.filter?.rules) {
         if (r.file.filter.rules[0] === 'and') {
@@ -48,6 +50,8 @@ export default {
     type: 'uri',
     label: 'File name ends with',
     editorTitle: 'Build file name ends with',
+    showExtract: false,
+    showLookup: false,
     defaultValue: r => {
       if (r?.file?.filter?.rules) {
         if (r.file.filter.rules[0] === 'and') {

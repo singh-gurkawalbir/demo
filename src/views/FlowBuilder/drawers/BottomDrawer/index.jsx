@@ -399,7 +399,7 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
           <TabPanel value={tabValue} index={2} className={classes.tabPanel}>
             <AuditPanel flowId={flowId} />
           </TabPanel>
-          {flowScripts?.length && (
+          {!!flowScripts?.length && (
             <TabPanel value={tabValue} index={3} className={classes.tabPanel}>
               <ScriptPanel flowId={flowId} />
             </TabPanel>

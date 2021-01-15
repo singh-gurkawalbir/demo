@@ -26,9 +26,38 @@ export default {
       r.file.fileDefinition._fileDefinitionId,
   },
   'file.fileName': {
-    type: 'uri',
-    label: 'File name',
+    type: 'ftpfilenamewitheditor',
     editorTitle: 'Build file name',
+    label: 'File name',
+    required: true,
+    showAllSuggestions: true,
+    defaultValue: r => r && r.ftp && r.ftp.fileName,
+    refreshOptionsOnChangesTo: ['file.type'],
+    validWhen: {
+      someAreTrue: {
+        message:
+          'Please append date and time stamp, such as {{timestamp "YYYY-MM-DD hh:mm:ss" "America/Los_Angeles"}}.',
+        conditions: [
+          {
+            field: 'file.skipAggregation',
+            isNot: {
+              values: [true],
+            },
+          },
+          {
+            matchesRegEx: {
+              pattern: '{{timestamp "(?=.*x).*"}}|{{timestamp "(?=.*X).*"}}|{{timestamp "(?=.*mm)(?=.*ss).*"}}',
+            },
+          },
+        ],
+      },
+    },
+    visibleWhen: [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
   },
   'edix12.format': {
     type: 'filedefinitionselect',

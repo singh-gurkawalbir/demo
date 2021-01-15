@@ -547,6 +547,8 @@ selectors.connectionHasAs2Routing = (state, id) => {
 
 selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
   const importResource = selectors.resource(state, 'imports', importId);
+
+  if (!importResource) return;
   const {adaptorType} = importResource;
 
   if (!['NetSuiteImport', 'NetSuiteDistributedImport'].includes(adaptorType)) {
