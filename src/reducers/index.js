@@ -2245,6 +2245,7 @@ selectors.platformLicenseActionDetails = state => {
   if (!license) {
     return licenseActionDetails;
   }
+  const expiresInDays = license && Math.ceil((moment(license.expires) - moment()) / 1000 / 60 / 60 / 24);
 
   if (license.tier === 'none') {
     if (!license.trialEndDate) {
@@ -2278,6 +2279,14 @@ selectors.platformLicenseActionDetails = state => {
         licenseActionDetails.expiresSoon = license.expiresInDays < 10;
       }
     }
+  } else if (license?.resumable) {
+    licenseActionDetails = {
+      action: 'resume',
+    };
+  } else if (expiresInDays <= 0) {
+    licenseActionDetails = {
+      action: 'expired',
+    };
   }
 
   licenseActionDetails.upgradeRequested = license.upgradeRequested;
