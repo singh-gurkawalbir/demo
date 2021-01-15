@@ -60,7 +60,7 @@ const metadata = {
     },
     {
       heading: 'Flow step name',
-      value: r => <TextOverflowCell message={r.name} style={{maxWidth: 238}} />,
+      value: r => <TextOverflowCell message={r.name} />,
     },
     {
       heading: 'Errors',

@@ -150,8 +150,7 @@ export function* requestScriptLogs({isInit, field, ...props}) {
   const {dateFormat, timeFormat, timezone } = yield select(selectors.userProfilePreferencesProps);
 
   const formattedLogs = logs.map(({time = '', ...others}) => {
-    const timeArr = time.split(' ');
-    const utcISODateTime = `${timeArr[0]}T${timeArr[1]}Z`;
+    const utcISODateTime = moment(time, 'YYYY-MM-DD HH:mm:ss.SSS').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
     const localDateTime = convertUtcToTimezone(utcISODateTime, dateFormat, timeFormat, timezone);
 
     return {time: localDateTime, ...others };
