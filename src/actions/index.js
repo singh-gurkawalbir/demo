@@ -2106,8 +2106,8 @@ const hooks = {
 
 const logs = {
   scripts: {
-    request: ({ scriptId, flowId }) =>
-      action(actionTypes.LOGS.SCRIPTS.REQUEST, { scriptId, flowId, isInit: true }),
+    request: ({ scriptId, flowId, isInit }) =>
+      action(actionTypes.LOGS.SCRIPTS.REQUEST, { scriptId, flowId, isInit }),
     received: ({logs, nextPageURL, scriptId, flowId}) =>
       action(actionTypes.LOGS.SCRIPTS.RECEIVED, {logs, nextPageURL, scriptId, flowId}),
     requestFailed: ({flowId, scriptId, errorMsg}) =>
@@ -2122,8 +2122,8 @@ const logs = {
       action(actionTypes.LOGS.SCRIPTS.REFRESH, { scriptId, flowId }),
     clear: ({ flowId, scriptId }) =>
       action(actionTypes.LOGS.SCRIPTS.CLEAR, { flowId, scriptId }),
-    loadMore: ({ flowId, scriptId }) =>
-      action(actionTypes.LOGS.SCRIPTS.LOAD_MORE, { flowId, scriptId, fetchNextPage: true }),
+    loadMore: ({ flowId, scriptId, fetchNextPage }) =>
+      action(actionTypes.LOGS.SCRIPTS.LOAD_MORE, { flowId, scriptId, fetchNextPage }),
     startDebug: (scriptId, value) =>
       action(actionTypes.LOGS.SCRIPTS.START_DEBUG, { scriptId, value }),
   },

@@ -142,7 +142,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
   }, [patchFilter]);
   const loadMoreLogs = useCallback(
     () => {
-      dispatch(actions.logs.scripts.loadMore({scriptId, flowId}));
+      dispatch(actions.logs.scripts.loadMore({scriptId, flowId, fetchNextPage: true}));
     },
     [dispatch, flowId, scriptId],
   );
@@ -182,7 +182,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
 
   useEffect(() => {
     if (status === undefined) {
-      dispatch(actions.logs.scripts.request({scriptId, flowId}));
+      dispatch(actions.logs.scripts.request({scriptId, flowId, isInit: true}));
     }
   }, [dispatch, flowId, scriptId, status]);
 
