@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TemplatePreview({
+export default function DynaHandlebarPreview({
   id,
   label,
   value,

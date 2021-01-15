@@ -1,6 +1,6 @@
 export default {
   'rdbms.query': {
-    type: 'sqlquery',
+    type: 'sqlquerybuilder',
     label: 'SQL query',
     validWhen: {
       someAreTrue: {
@@ -24,9 +24,8 @@ export default {
     required: true,
   },
   'rdbms.once.query': {
-    type: 'sqlquery',
+    type: 'sqlquerybuilder',
     label: 'SQL once query',
-    editorTitile: 'Build SQL once query',
     required: true,
     visibleWhen: [
       {

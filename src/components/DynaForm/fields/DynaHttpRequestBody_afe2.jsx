@@ -5,7 +5,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
-import TemplatePreview from './TemplatePreview';
+import DynaHandlebarPreview from './DynaHandlebarPreview';
 
 export default function DynaHttpRequestBody_afe2(props) {
   const {
@@ -54,6 +54,6 @@ export default function DynaHttpRequestBody_afe2(props) {
   }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
 
   return (
-    <TemplatePreview {...props} onEditorClick={handleEditorClick} />
+    <DynaHandlebarPreview {...props} onEditorClick={handleEditorClick} />
   );
 }
