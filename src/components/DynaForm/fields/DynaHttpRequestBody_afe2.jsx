@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable react/jsx-pascal-case */
 import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
@@ -6,7 +7,7 @@ import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import TemplatePreview from './TemplatePreview';
 
-export default function _DynaHttpRequestBody_(props) {
+export default function DynaHttpRequestBody_afe2(props) {
   const {
     id,
     onFieldChange,

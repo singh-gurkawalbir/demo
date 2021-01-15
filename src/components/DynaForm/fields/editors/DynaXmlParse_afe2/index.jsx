@@ -13,7 +13,7 @@ import { isNewId } from '../../../../../utils/resource';
 import {useUpdateParentForm} from '../DynaCsvGenerate';
 import useSetSubFormShowValidations from '../../../../../hooks/useSetSubFormShowValidations';
 import { getValidRelativePath } from '../../../../../utils/routePaths';
-import FileDataChange from '../_DynaCsvParse/FileDataChange';
+import FileDataChange from '../DynaCsvParse_afe2/FileDataChange';
 
 const getParserValue = ({
   resourcePath,
@@ -71,7 +71,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function _DynaXmlParse_({
+export default function DynaXmlParse_afe2({
   id,
   value,
   onFieldChange,

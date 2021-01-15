@@ -47,7 +47,7 @@ const mapStateToProps = (state, { actionsToMonitor }) => {
         '[object Object]'
       ) {
         toMonitor[actionName].message =
-          toMonitor[actionName].message.errors[0].message;
+          toMonitor[actionName].message?.errors?.[0]?.message;
       }
     }
   });

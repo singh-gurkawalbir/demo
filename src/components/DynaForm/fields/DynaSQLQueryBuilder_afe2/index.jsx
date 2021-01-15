@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
@@ -5,7 +6,7 @@ import actions from '../../../../actions';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import TemplatePreview from '../TemplatePreview';
 
-export default function _DynaSQLQueryBuilder_(props) {
+export default function DynaSQLQueryBuilder_afe2(props) {
   const {
     id,
     resourceId,
