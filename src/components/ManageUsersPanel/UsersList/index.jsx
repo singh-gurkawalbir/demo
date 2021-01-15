@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useCallback } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import ResourceTable from '../../ResourceTable';
 import { selectors } from '../../../reducers';
@@ -17,21 +17,15 @@ export default function UsersList({ integrationId, storeId, className }) {
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
   const users = useSelector(state => selectors.availableUsersList(state, integrationId));
-  const requestIntegrationAShares = useCallback(() => {
-    if (integrationId) {
-      if (!users) {
-        dispatch(
-          actions.resource.requestCollection(
-            ['integrations', integrationId, 'ashares'].join('/')
-          )
-        );
-      }
-    }
-  }, [dispatch, integrationId, users]);
+  const isIntegrationUsersRequested = useSelector(state =>
+    !!selectors.integrationUsers(state, integrationId)
+  );
 
   useEffect(() => {
-    requestIntegrationAShares();
-  }, [requestIntegrationAShares]);
+    if (integrationId && !isIntegrationUsersRequested) {
+      dispatch(actions.resource.requestCollection(`integrations/${integrationId}/ashares`));
+    }
+  }, [isIntegrationUsersRequested, dispatch, integrationId]);
 
   const actionProps = useMemo(() => (
     {
