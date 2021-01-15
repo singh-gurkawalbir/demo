@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import IconTextButton from '../../IconTextButton';
 import ArrowRightIcon from '../../icons/ArrowRightIcon';
 import { getPreviewDataPageSizeInfo } from '../../../utils/exportPanel';
-import ErroredMessageComponent from '../../DynaForm/fields/ErroredMessageComponent';
+import FieldMessage from '../../DynaForm/fields/FieldMessage';
 import SelectPreviewRecordsSize from '../SelectPreviewRecordsSize';
 import { selectors } from '../../../reducers';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
@@ -101,7 +101,7 @@ export default function PreviewInfo(props) {
       const errorCount = error?.length || 0;
 
       return (
-        <ErroredMessageComponent
+        <FieldMessage
           errorMessages={`${errorCount} ${errorCount === 1 ? 'error' : 'errors'}`}
         />
       );

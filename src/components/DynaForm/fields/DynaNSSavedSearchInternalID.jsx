@@ -7,7 +7,7 @@ import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/ExitIcon';
 import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
@@ -101,7 +101,7 @@ export default function DynaNSSavedSearchInternalID(props) {
               variant="filled"
               onChange={handleFieldChange}
             />
-            <ErroredMessageComponent
+            <FieldMessage
               isValid={isValid}
               description={description}
               errorMessages={errorMessages}

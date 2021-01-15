@@ -10,7 +10,7 @@ import {
   updateFormValues,
   PARAMETER_LOCATION,
 } from '../../../../utils/assistant';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import FieldHelp from '../../FieldHelp';
 
@@ -165,7 +165,7 @@ export default function DynaAssistantSearchParams(props) {
           {'Launch'} {required && !isValid ? '*' : ''}
         </Button>
       </div>
-      <ErroredMessageComponent
+      <FieldMessage
         isValid={isValid}
         description=""
         errorMessages="Please enter required parameters"

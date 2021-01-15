@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import ActionButton from '../../ActionButton';
-import ScriptsIcon from '../../icons/ScriptsIcon';
+import AfeIcon from '../../icons/AfeIcon';
 import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
 import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
@@ -71,7 +71,7 @@ export default function DynaURI_afe2(props) {
           data-test={id}
           onClick={handleEditorClick}
           className={classes.dynaURIActionButton}>
-          <ScriptsIcon />
+          <AfeIcon />
         </ActionButton>
       </div>
     </>

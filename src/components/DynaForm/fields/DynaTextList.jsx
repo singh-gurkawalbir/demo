@@ -1,6 +1,6 @@
 import React from 'react';
 import TextFieldList from '../../TextFieldList';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 
 export default function DynaTextList({
   id,
@@ -23,7 +23,7 @@ export default function DynaTextList({
         helpKey={helpKey}
         dataTest={id}
         onChange={handleChange} />
-      <ErroredMessageComponent description={description} errorMessages={errorMessages} isValid={isValid} />
+      <FieldMessage description={description} errorMessages={errorMessages} isValid={isValid} />
     </>
   );
 }

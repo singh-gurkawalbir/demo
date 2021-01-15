@@ -12,7 +12,7 @@ import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import { makeStyles } from '@material-ui/core/styles';
 import FieldHelp from '../FieldHelp';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -215,7 +215,7 @@ export default function DynaAutoSuggest(props) {
             </Paper>
           )}
         />
-        <ErroredMessageComponent
+        <FieldMessage
           description={description}
           errorMessages={errorMessages}
           isValid={isValid}
