@@ -2,7 +2,6 @@ export default {
   'rdbms.query': {
     type: 'sqlquery',
     label: 'SQL query',
-    editorTitile: 'Build SQL query',
     validWhen: {
       someAreTrue: {
         message:

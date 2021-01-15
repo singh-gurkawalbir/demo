@@ -28,7 +28,8 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-const ErroredMessageComponent = ({ description, errorMessages, isValid }) => {
+
+export default function ErroredMessageComponent({ description, errorMessages, isValid }) {
   const classes = useStyles();
 
   return description || errorMessages ? (
@@ -39,6 +40,4 @@ const ErroredMessageComponent = ({ description, errorMessages, isValid }) => {
       {isValid ? description : errorMessages}
     </FormHelperText>
   ) : null;
-};
-
-export default ErroredMessageComponent;
+}

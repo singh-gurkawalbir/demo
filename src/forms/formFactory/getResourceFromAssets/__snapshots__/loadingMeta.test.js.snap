@@ -11983,7 +11983,7 @@ Object {
       "rdbms.query": Object {
         "arrayIndex": 0,
         "id": "rdbms.query",
-        "label": "Build SQL query",
+        "label": "SQL query",
         "querySetPos": 0,
         "required": true,
         "type": "sqlquerybuilder",
