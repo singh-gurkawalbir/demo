@@ -63,6 +63,7 @@ export default (state = {}, action) => {
         if (draft?.scripts?.[key]) {
           draft.scripts[key][field] = value;
           if (field !== 'logLevel') {
+            draft.scripts[key].status = 'requested';
             delete draft.scripts[key].logs;
             delete draft.scripts[key].nextPageURL;
           }

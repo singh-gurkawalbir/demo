@@ -66,7 +66,7 @@ export function* getScriptDependencies({scriptId = '',
       const resource = resourceReferences?.exports?.find(({id}) => id === _exportId);
 
       if (resource) {
-        references.push({type: RESOURCE_TYPE_PLURAL_TO_SINGULAR.exports, id: resource.id, name: resource.name});
+        references.push({type: 'export', id: resource.id, name: resource.name});
       }
     });
 
@@ -77,7 +77,7 @@ export function* getScriptDependencies({scriptId = '',
 
       if (resource) {
         references.push({
-          type: RESOURCE_TYPE_PLURAL_TO_SINGULAR[ppType === 'export' ? 'exports' : 'imports'],
+          type: ppType === 'export' ? 'export' : 'import',
           id: resource.id,
           name: resource.name,
         });
@@ -104,9 +104,9 @@ export function* retryToFetchLogs(props) {
     method: 'GET',
   };
 
-  if (retryCount > 4) {
+  if (retryCount > 3) {
     return {
-      nextPageUrl: fetchLogsPath,
+      nextPageURL: fetchLogsPath,
       logs: [],
     };
   }
@@ -128,7 +128,7 @@ export function* retryToFetchLogs(props) {
     return {logs, nextPageURL};
   }
 
-  return yield call(retryToFetchLogs, {...props, retryCount: retryCount + 1, fetchLogsPath: nextPageURL });
+  return yield call(retryToFetchLogs, {...props, retryCount: retryCount + 1, fetchLogsPath: nextPageURL.replace('/api', '') });
 }
 
 export function* requestScriptLogs({isInit, field, ...props}) {
@@ -145,6 +145,7 @@ export function* requestScriptLogs({isInit, field, ...props}) {
   const fetchLogsPath = getFetchLogsPath({...logState, fetchNextPage });
   const { logs = [], nextPageURL } = yield call(retryToFetchLogs, {...props, fetchLogsPath});
 
+  // dispatch error action
   // change logs utc datetime to local date time
   const {dateFormat, timeFormat, timezone } = yield select(selectors.userProfilePreferencesProps);
 

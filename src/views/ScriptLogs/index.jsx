@@ -148,15 +148,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
     },
     [dispatch, flowId, scriptId],
   );
-
-  const functionTypes = useMemo(() => {
-    if (flowId) {
-    // when accessed within a flow
-      return SCRIPT_FUNCTION_TYPES_FOR_FLOW;
-    }
-
-    return SCRIPT_FUNCTION_TYPES;
-  }, [flowId]);
+  const functionTypes = flowId ? SCRIPT_FUNCTION_TYPES_FOR_FLOW : SCRIPT_FUNCTION_TYPES;
   const paginationOptions = useMemo(
     () => ({
       loadMoreHandler: loadMoreLogs,
@@ -221,9 +213,9 @@ export default function ScriptLogs({ flowId, scriptId }) {
             displayEmpty
             value={functionType || ''}>
             <MenuItem value="">Function type</MenuItem>
-            {Object.keys(functionTypes).map(functionType => (
-              <MenuItem key={functionTypes[functionType]} value={functionTypes[functionType]}>
-                {functionTypes[functionType]}
+            {Object.values(functionTypes).map(functionValue => (
+              <MenuItem key={functionValue} value={functionValue}>
+                {functionValue}
               </MenuItem>
             ))}
           </CeligoSelect>
