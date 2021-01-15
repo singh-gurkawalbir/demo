@@ -2110,8 +2110,8 @@ const logs = {
       action(actionTypes.LOGS.SCRIPTS.REQUEST, { scriptId, flowId, isInit: true }),
     received: ({logs, nextPageURL, scriptId, flowId}) =>
       action(actionTypes.LOGS.SCRIPTS.RECEIVED, {logs, nextPageURL, scriptId, flowId}),
-    requestFailed: ({flowId, scriptId}) =>
-      action(actionTypes.LOGS.SCRIPTS.REQUEST_FAILED, {scriptId, flowId}),
+    requestFailed: ({flowId, scriptId, errorMsg}) =>
+      action(actionTypes.LOGS.SCRIPTS.REQUEST_FAILED, {scriptId, flowId, errorMsg}),
     getDependency: ({scriptId, flowId}) =>
       action(actionTypes.LOGS.SCRIPTS.GET_DEPENDENCY, {scriptId, flowId}),
     setDependency: ({resourceReferences, scriptId, flowId}) =>

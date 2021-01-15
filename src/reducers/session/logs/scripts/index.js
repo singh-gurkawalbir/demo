@@ -8,7 +8,10 @@ const emptySet = [];
 const emptyObj = {};
 
 export default (state = {}, action) => {
-  const { type, scriptId = '', resourceReferences, logs = emptySet, nextPageURL, field, value, flowId = '' } = action;
+  const { type, scriptId = '', resourceReferences, logs = emptySet, nextPageURL, field, value, flowId = '',
+  // as of now we dont show errorMsg in UI. but in case we want to show, we can utilize the errorMsg property
+  // errorMsg
+  } = action;
   const key = `${scriptId}-${flowId}`;
 
   return produce(state, draft => {
@@ -33,6 +36,8 @@ export default (state = {}, action) => {
       case actionTypes.LOGS.SCRIPTS.REQUEST_FAILED:
         if (draft?.scripts?.[key]) {
           draft.scripts[key].status = 'error';
+
+          // draft.scripts[key].errorMsg = errorMsg;
           delete draft.scripts[key].nextPageURL;
         }
 

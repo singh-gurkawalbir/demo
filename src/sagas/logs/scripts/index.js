@@ -107,7 +107,6 @@ export function* retryToFetchLogs(props) {
   if (retryCount > 3) {
     return {
       nextPageURL: fetchLogsPath,
-      logs: [],
     };
   }
 
@@ -119,11 +118,14 @@ export function* retryToFetchLogs(props) {
       opts,
     });
   } catch (e) {
-    response = {};
+    return {
+      errorMsg: 'Request failed',
+    };
   }
 
   const {logs, nextPageURL} = response;
 
+  // dont re-iterate in case logs are found or nextPageURL is not present. Return control to parent
   if (logs?.length || !nextPageURL) {
     return {logs, nextPageURL};
   }
@@ -143,9 +145,16 @@ export function* requestScriptLogs({isInit, field, ...props}) {
   }
   const logState = yield select(selectors.scriptLog, {scriptId, flowId});
   const fetchLogsPath = getFetchLogsPath({...logState, fetchNextPage });
-  const { logs = [], nextPageURL } = yield call(retryToFetchLogs, {...props, fetchLogsPath});
+  const { errorMsg, logs, nextPageURL } = yield call(retryToFetchLogs, {...props, fetchLogsPath});
 
-  // dispatch error action
+  if (errorMsg) {
+    return yield put(actions.logs.scripts.requestFailed({
+      scriptId,
+      flowId,
+      errorMsg,
+    }));
+  }
+
   // change logs utc datetime to local date time
   const {dateFormat, timeFormat, timezone } = yield select(selectors.userProfilePreferencesProps);
 
