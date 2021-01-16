@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,6 +11,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import CeligoDivider from '../../../CeligoDivider';
 import FieldHelp from '../../../DynaForm/FieldHelp';
 import LookupDrawer from '../../../drawer/Lookup';
+import * as completers from '../../../AFE/editorSetup/completers';
 
 const useStyles = makeStyles({
   button: {
@@ -24,14 +25,19 @@ export default function ManageLookup({ editorId }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
+  const handlebarHelperFunction = useSelector(state =>
+    selectors._editorHelperFunctions(state), shallowEqual
+  );
+
   const showLookup = useSelector(state => selectors.isEditorLookupSupported(state, editorId));
-  const {resourceType, formKey, resourceId, flowId} = useSelector(state => {
+  const {resourceType, formKey, resourceId, flowId, lastValidData} = useSelector(state => {
     const e = selectors._editor(state, editorId);
 
     return {resourceType: e.resourceType,
       formKey: e.formKey,
       resourceId: e.resourceId,
-      flowId: e.flowId};
+      flowId: e.flowId,
+      lastValidData: e.lastValidData};
   }, shallowEqual);
   const formContext = useFormContext(formKey);
   const { merged: resourceData = {} } = useSelectorMemo(
@@ -44,6 +50,12 @@ export default function ManageLookup({ editorId }) {
   const lookups = useMemo(() => resourceType === 'imports' &&
     lookupUtil.getLookupFromFormContext(formContext, adaptorType),
   [adaptorType, formContext, resourceType]);
+  const _lookups = useMemo(() => Array.isArray(lookups) ? lookups : [], [lookups]);
+
+  completers.handleBarsCompleters.setLookupCompleter(_lookups);
+  useEffect(() => {
+    completers.handleBarsCompleters.setJsonCompleter(lastValidData);
+  }, [lastValidData]);
 
   const lookupFieldId = lookupUtil.getLookupFieldId(adaptorType);
   const handleEditorClick = () => {
@@ -58,8 +70,13 @@ export default function ManageLookup({ editorId }) {
   };
 
   if (!showLookup || !lookupFieldId) {
+    // don't show lookup helper suggestion if lookups aren't supported
+    delete handlebarHelperFunction.lookup;
+    completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
+
     return null;
   }
+  completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
 
   return (
     <>
