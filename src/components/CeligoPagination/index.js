@@ -42,6 +42,14 @@ const useStyles = makeStyles(theme => ({
       marginRight: 0,
     },
   },
+  spinnerWrapper: {
+    width: 32,
+    height: 27,
+  },
+  spinner: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+  },
 }));
 
 const getPaginationLabel = (page, rowsPerPage, count, hasMore) => {
@@ -133,7 +141,14 @@ export default function Pagination(props) {
         </IconTextButton>
         <span className={classes.label}>{label}</span>
         {loading ? (
-          <Spinner size={24} />
+          <div className={classes.spinnerWrapper}>
+            <Spinner
+              className={classes.spinner}
+              size={24}
+              color="primary"
+              />
+          </div>
+
         ) : (
           <IconTextButton
             onClick={handleNextPage}

@@ -5,7 +5,7 @@ import SelectError from '../cells/SelectError';
 import SelectAllErrors from '../cells/SelectAllErrors';
 import UserName from '../cells/UserName';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
-import OverflowWrapper from '../cells/OverflowWrapper';
+import TextOverflowCell from '../cells/TextOverflowCell';
 import SelectSource from '../cells/SelectSource';
 import SelectDate from '../cells/SelectDate';
 
@@ -23,19 +23,19 @@ export default {
     {
       heading: 'Message',
       width: '25%',
-      value: r => <OverflowWrapper message={r.message} containsHtml />,
+      value: r => <TextOverflowCell message={r.message} containsHtml />,
     },
     {
       heading: 'Code',
       width: '18%',
-      value: r => <OverflowWrapper message={r.code} />,
+      value: r => <TextOverflowCell message={r.code} />,
     },
     {
       headerValue: function SelectResolvedSource(r, actionProps) {
         return <SelectSource {...actionProps} />;
       },
       width: '10%',
-      value: r => <OverflowWrapper message={r.source} />,
+      value: r => <TextOverflowCell message={r.source} />,
     },
     {
       headerValue: function SelectTimestamp(r, actionProps) {
