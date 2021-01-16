@@ -7,7 +7,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Chip from '@material-ui/core/Chip';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 import CeligoSelect from '../../CeligoSelect';
 import FieldHelp from '../FieldHelp';
 import Tag from '../../HomePageCard/Footer/Tag';
@@ -230,7 +230,7 @@ export default function DynaMultiSelect(props) {
         </CeligoSelect>
       </FormControl>
 
-      <ErroredMessageComponent {...props} />
+      <FieldMessage {...props} />
     </div>
   );
 }

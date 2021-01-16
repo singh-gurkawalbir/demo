@@ -8,7 +8,7 @@ import {
 } from '@material-ui/pickers';
 import {FormLabel} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
 import FieldHelp from '../../FieldHelp';
@@ -118,7 +118,7 @@ export default function DynaDate(props) {
           InputProps={{ className: classes.inputDate }}
           keyboardIcon={<CalendarIcon className={classes.iconWrapper} />}
           />
-        <ErroredMessageComponent {...props} />
+        <FieldMessage {...props} />
       </MuiPickersUtilsProvider>
     </>
   );

@@ -163,7 +163,7 @@ export default {
           connectionId: r => r && r._connectionId,
           defaultValue: lookup.body || '',
           required: true,
-          label: 'Build HTTP request body',
+          label: 'HTTP request body',
           // helpText not present
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },

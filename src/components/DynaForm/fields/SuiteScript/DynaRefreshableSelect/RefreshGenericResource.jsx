@@ -9,7 +9,7 @@ import DynaMultiSelect from '../../DynaMultiSelect';
 import ActionButton from '../../../../ActionButton';
 import ExitIcon from '../../../../icons/ExitIcon';
 import openExternalUrl from '../../../../../utils/window';
-import ErroredMessageComponent from '../../ErroredMessageComponent';
+import FieldMessage from '../../FieldMessage';
 
 const useStyles = makeStyles(theme => ({
   refreshGenericResourceWrapper: {
@@ -147,8 +147,8 @@ export default function RefreshGenericResource(props) {
           </ActionButton>
         )}
       </FormControl>
-      {fieldError && <ErroredMessageComponent errorMessages={fieldError} />}
-      {description && <ErroredMessageComponent description={description} />}
+      {fieldError && <FieldMessage errorMessages={fieldError} />}
+      {description && <FieldMessage description={description} />}
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import SalesforceEditorDrawer from '../../AFE/SalesforceQualificationCriteriaEditor/Drawer';
 import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/FilterIcon';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 import FieldHelp from '../FieldHelp';
 import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
@@ -92,7 +92,7 @@ export default function DynaSalesforceQualifier(props) {
             value={value || ''}
             variant="filled"
           />
-          <ErroredMessageComponent
+          <FieldMessage
             isValid={isValid}
             errorMessages={errorMessages}
           />

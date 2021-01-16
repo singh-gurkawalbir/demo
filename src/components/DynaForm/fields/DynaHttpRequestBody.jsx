@@ -11,7 +11,7 @@ import useFormContext from '../../Form/FormContext';
 import FieldHelp from '../FieldHelp';
 import DynaEditorWithFlowSampleData from './DynaEditorWithFlowSampleData';
 import DynaLookupEditor from './DynaLookupEditor';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 
 const useStyles = makeStyles({
   dynaHttpRequestBodyWrapper: {
@@ -176,7 +176,7 @@ const DynaHttpRequestBody = props => {
           Launch
         </Button>
       </div>
-      <ErroredMessageComponent {...props} />
+      <FieldMessage {...props} />
     </Fragment>
   );
 };

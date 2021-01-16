@@ -8,7 +8,7 @@ import { FixedSizeList } from 'react-window';
 import { stringCompare } from '../../../utils/sort';
 import CeligoSelect from '../../CeligoSelect';
 import FieldHelp from '../FieldHelp';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 
 const AUTO_CLEAR_SEARCH = 500;
 
@@ -309,7 +309,7 @@ export default function DynaSelect(props) {
         </CeligoSelect>
       </FormControl>
 
-      {!removeHelperText && <ErroredMessageComponent {...props} />}
+      {!removeHelperText && <FieldMessage {...props} />}
     </div>
   );
 }

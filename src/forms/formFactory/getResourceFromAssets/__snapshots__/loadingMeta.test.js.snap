@@ -8641,7 +8641,7 @@ Object {
         "defaultValue": [Function],
         "helpKey": "import.http.body",
         "id": "http.bodyCreate",
-        "label": "Build HTTP request body",
+        "label": "HTTP request body",
         "refreshOptionsOnChangesTo": Array [
           "http.requestMediaType",
         ],
@@ -8675,7 +8675,7 @@ Object {
         "defaultValue": [Function],
         "helpKey": "import.http.body",
         "id": "http.bodyUpdate",
-        "label": "Build HTTP request body",
+        "label": "HTTP request body",
         "refreshOptionsOnChangesTo": Array [
           "http.requestMediaType",
         ],
@@ -9760,7 +9760,7 @@ Object {
         "connectionId": [Function],
         "defaultValue": [Function],
         "id": "rest.bodyCreate",
-        "label": "Build HTTP request body",
+        "label": "HTTP request body",
         "refreshOptionsOnChangesTo": Array [
           "rest.lookups",
         ],
@@ -9792,7 +9792,7 @@ Object {
         "connectionId": [Function],
         "defaultValue": [Function],
         "id": "rest.bodyUpdate",
-        "label": "Build HTTP request body",
+        "label": "HTTP request body",
         "refreshOptionsOnChangesTo": Array [
           "rest.lookups",
         ],
@@ -11983,7 +11983,7 @@ Object {
       "rdbms.query": Object {
         "arrayIndex": 0,
         "id": "rdbms.query",
-        "label": "Build SQL query",
+        "label": "SQL query",
         "querySetPos": 0,
         "required": true,
         "type": "sqlquerybuilder",

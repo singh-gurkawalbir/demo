@@ -71,8 +71,6 @@ import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier from './DynaNetSuiteQualifier';
 import DynaSalesforceQualifier from './DynaSalesforceQualifier';
-import DynaQuery_afe2 from './DynaQuery_afe2';
-import DynaSqlQuery_afe2 from './DynaSqlQuery_afe2';
 import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
 import DynaSalesforceLookup from './DynaSalesforceLookup';
 import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
@@ -98,7 +96,6 @@ import DynaNetsuiteExportType from './DynaNetsuiteExportType';
 import SuiteScript from './SuiteScript';
 import DynaExportSelect from './DynaExportSelect';
 import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
-// import DynaNameWithEditor from './DynaNameWithEditor';
 import DynaSelectConditionalLookup from './DynaSelectConditionalLookup';
 import DynaURI_afe2 from './DynaURI_afe2';
 import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
@@ -223,10 +220,6 @@ export default {
   dynaiclient: DynaIclient,
   replaceconnection: DynaReplaceConnection,
   netsuitequalifier: DynaNetSuiteQualifier,
-  // query: DynaQuery,
-  query: DynaQuery_afe2,
-  // sqlquery: DynaSqlQuery,
-  sqlquery: DynaSqlQuery_afe2,
   salesforcelookupfilters: DynaSalesforceLookupFilters,
   salesforcelookup: DynaSalesforceLookup,
   timestampfilename: DynaTimestampFileName,

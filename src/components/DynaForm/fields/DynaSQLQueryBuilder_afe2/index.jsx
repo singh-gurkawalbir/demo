@@ -2,43 +2,13 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
-import { Button, FormLabel, FormHelperText } from '@material-ui/core';
-import FieldHelp from '../../FieldHelp';
 import actions from '../../../../actions';
 import { getValidRelativePath } from '../../../../utils/routePaths';
-
-const useStyles = makeStyles(theme => ({
-  sqlContainer: {
-    width: '100%',
-  },
-  sqlBtn: {
-    maxWidth: 100,
-  },
-  sqlLabel: {
-    marginBottom: 6,
-  },
-  sqlLabelWrapper: {
-    display: 'flex',
-  },
-  errorBtn: {
-    borderColor: theme.palette.error.dark,
-    color: theme.palette.error.dark,
-    '&:hover': {
-      borderColor: theme.palette.error.main,
-      color: theme.palette.error.main,
-    },
-  },
-}));
+import DynaHandlebarPreview from '../DynaHandlebarPreview';
 
 export default function DynaSQLQueryBuilder_afe2(props) {
   const {
     id,
-    label,
-    required,
-    isValid,
-    errorMessages,
     resourceId,
     resourceType,
     flowId,
@@ -46,8 +16,12 @@ export default function DynaSQLQueryBuilder_afe2(props) {
     onFieldChange,
     arrayIndex,
     value,
+    // TODO: Ashu, same as comment below: This was carried forward from the old DynaSQLQuery_afe2
+    // is it needed?
+    // DynaQuery was being used to Define Query under Database Lookup
+    sampleData,
+
   } = props;
-  const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
@@ -86,6 +60,10 @@ export default function DynaSQLQueryBuilder_afe2(props) {
 
   const handleEditorClick = useCallback(() => {
     dispatch(actions._editor.init(editorId, 'sql', {
+      // TODO: Ashu, this sampleData prop is carried forward from the old DynaQuery_afe2
+      // field. Is this necessary here? This is forDatabase lookup query... If possible,
+      // would be nice to remove this prop as it should be part of the init?
+      data: sampleData,
       formKey,
       flowId,
       resourceId,
@@ -96,25 +74,9 @@ export default function DynaSQLQueryBuilder_afe2(props) {
     }));
 
     history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
+  }, [dispatch, editorId, sampleData, formKey, flowId, resourceId, resourceType, id, handleSave, history, match.url]);
 
   return (
-    <>
-      <div className={classes.sqlContainer}>
-        <div className={classes.sqlLabelWrapper}>
-          <FormLabel className={classes.sqlLabel} required={required}>{label}</FormLabel>
-          <FieldHelp {...props} />
-        </div>
-        <Button
-          className={clsx(classes.sqlBtn, { [classes.errorBtn]: !isValid})}
-          data-test={id}
-          variant="outlined"
-          color="secondary"
-          onClick={handleEditorClick}>
-          Launch
-        </Button>
-        {!isValid && <FormHelperText error>{errorMessages}</FormHelperText>}
-      </div>
-    </>
+    <DynaHandlebarPreview {...props} onEditorClick={handleEditorClick} />
   );
 }
