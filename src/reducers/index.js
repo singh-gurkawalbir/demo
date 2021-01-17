@@ -5062,7 +5062,7 @@ selectors.isEditorLookupSupported = (state, editorId) => {
 // for passed stage and field
 selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   const editor = fromSession._editor(state?.session, editorId);
-  const {stage, resourceId, resourceType, flowId} = editor;
+  const {stage, resourceId, resourceType, flowId, fieldId} = editor;
   const { merged: resource = {} } = selectors.resourceData(
     state,
     resourceType,
@@ -5102,6 +5102,11 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   if (stage === 'transform' ||
   stage === 'postResponseMapHook' ||
   stage === 'sampleResponse') {
+    return {shouldGetContextFromBE: false, sampleData: _sampleData};
+  }
+
+  // for lookup fields, BE doesnt support v1/v2 yet
+  if (fieldId?.startsWith('_')) {
     return {shouldGetContextFromBE: false, sampleData: _sampleData};
   }
 

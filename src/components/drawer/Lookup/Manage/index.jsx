@@ -1,10 +1,8 @@
 import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import { selectors } from '../../../../reducers';
 import DynaForm from '../../../DynaForm';
 import defaultMetadata from '../../../Lookup/Manage/metadata/default';
-import getFormattedSampleData from '../../../../utils/sampleData';
 import netsuiteMetadata from '../../../Lookup/Manage/metadata/netsuite';
 import salesforceMetadata from '../../../Lookup/Manage/metadata/salesforce';
 import rdbmsMetadata from '../../../Lookup/Manage/metadata/rdbms';
@@ -35,27 +33,6 @@ export default function ManageLookup({
   );
 
   const { _connectionId: connectionId } = resource;
-  const sampleData = useSelector(state =>
-    selectors.getSampleDataContext(state, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage: 'flowInput',
-    }).data
-  );
-  // TODO: @aditya, check if we can get rid of getFormattedSampleData and use wrapSampleDataWithContext instead
-  const formattedSampleData = useMemo(
-    () =>
-      JSON.stringify(
-        getFormattedSampleData({
-          sampleData,
-          resourceType,
-        }),
-        null,
-        2
-      ),
-    [resourceType, sampleData]
-  );
 
   const fieldMeta = useMemo(() => {
     if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(resource.adaptorType)) {
@@ -78,8 +55,10 @@ export default function ManageLookup({
       return rdbmsMetadata.getLookupMetadata({
         lookup: value,
         showDynamicLookupOnly,
-        sampleData: formattedSampleData,
         connectionId,
+        resourceId,
+        resourceType,
+        flowId,
       });
     }
 
@@ -91,7 +70,7 @@ export default function ManageLookup({
       resourceType,
       flowId,
     });
-  }, [connectionId, extractFields, flowId, formattedSampleData, others, picklistOptions, resource.adaptorType, resourceId, resourceType, showDynamicLookupOnly, value]);
+  }, [connectionId, extractFields, flowId, others, picklistOptions, resource.adaptorType, resourceId, resourceType, showDynamicLookupOnly, value]);
 
   useFormInitWithPermissions({
     formKey,
