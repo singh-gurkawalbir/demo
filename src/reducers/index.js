@@ -87,6 +87,7 @@ import {
 } from '../utils/latestJobs';
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
+import { FLOW_STAGES } from '../utils/editor';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -3112,8 +3113,16 @@ selectors.sampleDataWrapper = createSelector(
         selectors.resource(state, 'integrations', flow._integrationId) || emptyObject
       );
     },
-    (state, { resourceId, resourceType }) =>
-      selectors.resource(state, resourceType, resourceId) || emptyObject,
+    (state, { resourceId, resourceType }) => {
+      const { merged } = selectors.resourceData(
+        state,
+        resourceType,
+        resourceId,
+        'value'
+      );
+
+      return merged || emptyObject;
+    },
     (state, { resourceId, resourceType }) => {
       const res = selectors.resource(state, resourceType, resourceId) || emptyObject;
 
@@ -5047,6 +5056,56 @@ selectors.isEditorLookupSupported = (state, editorId) => {
   }
 
   return true;
+};
+
+// this selector returns if BE supports the /getContext
+// for passed stage and field
+selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
+  const editor = fromSession._editor(state?.session, editorId);
+  const {stage, resourceId, resourceType, flowId} = editor;
+  const { merged: resource = {} } = selectors.resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
+  const connection = selectors.resource(state, 'connections', resource._connectionId);
+  let _sampleData = null;
+  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
+
+  if (FLOW_STAGES.includes(stage)) {
+    _sampleData = sampleData;
+  } else if (isPageGenerator) {
+    // for PGs, no sample data is shown
+    _sampleData = undefined;
+  } else {
+    // for all PPs, default sample data is shown in case its empty
+    _sampleData = { data: sampleData || { myField: 'sample' }};
+  }
+
+  // todo: BE should add support for native REST adaptor also
+  // remove this once done
+  if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
+    if (!connection.isHTTP && (stage === 'outputFilter' || stage === 'exportFilter' || stage === 'inputFilter')) {
+      // native REST adaptor filters
+      return {
+        shouldGetContextFromBE: false,
+        sampleData: Array.isArray(_sampleData) ? {
+          rows: _sampleData,
+        } : {
+          record: _sampleData,
+        },
+      };
+    }
+
+    return {shouldGetContextFromBE: connection.isHTTP, sampleData: _sampleData};
+  }
+  if (stage === 'transform' ||
+  stage === 'postResponseMapHook' ||
+  stage === 'sampleResponse') {
+    return {shouldGetContextFromBE: false, sampleData: _sampleData};
+  }
+
+  return {shouldGetContextFromBE: true};
 };
 
 // #endregion AFE selectors

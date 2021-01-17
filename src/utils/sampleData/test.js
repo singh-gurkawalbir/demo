@@ -915,10 +915,11 @@ describe('wrapSampleDataWithContext util', () => {
 
     expect(wrapSampleDataWithContext({sampleData, flow: {}, stage})).toEqual(sampleData);
   });
-  test('should return correctly wrapped sample data with connection details for http resource if stage = flowInput and version is 2', () => {
+  test('should return correctly wrapped sample data for native REST adaptor if stage = flowInput', () => {
     const stage = 'flowInput';
 
-    resource.adaptorType = 'HTTPExport';
+    resource.adaptorType = 'RESTExport';
+    connection.isHTTP = false;
 
     const sampleData = {
       status: 'received',
@@ -944,15 +945,6 @@ describe('wrapSampleDataWithContext util', () => {
           flow: {},
           export: {resourceSet: 'custom settings'},
           connection: {conn1: 'conn1'},
-        },
-        connection: {
-          name: 'dummy connection',
-          http: {
-            unencrypted: {
-              user: 'abcd',
-            },
-            encrypted: '****',
-          },
         },
       },
       status: 'received',
@@ -961,7 +953,7 @@ describe('wrapSampleDataWithContext util', () => {
 
     expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
   });
-  test('should return correctly wrapped sample data without connection details if stage is flowInput and resource is non http type', () => {
+  test('should return correctly wrapped sample data without connection details if stage is flowInput', () => {
     const stage = 'flowInput';
 
     const sampleData = {
@@ -980,14 +972,6 @@ describe('wrapSampleDataWithContext util', () => {
         record: {
           CONTRACT_PRICE: '89',
           CUSTOMER_NUMBER: 'C1234',
-        },
-        settings: {
-          integration: {
-            store: 'shopify',
-          },
-          flow: {},
-          export: {resourceSet: 'custom settings'},
-          connection: {conn1: 'conn1'},
         },
       },
       status: 'received',
@@ -1000,6 +984,7 @@ describe('wrapSampleDataWithContext util', () => {
     const stage = 'flowInput';
 
     resource.adaptorType = 'RESTExport';
+    connection.isHTTP = true;
     resource.http = {
       paging: {
         method: 'token',
@@ -1036,20 +1021,39 @@ describe('wrapSampleDataWithContext util', () => {
             },
           },
         },
-        settings: {
-          integration: {
-            store: 'shopify',
-          },
-          flow: {},
-          export: {resourceSet: 'custom settings'},
-          connection: {conn1: 'conn1'},
-        },
       },
       status: 'received',
       templateVersion: 2,
     };
 
     expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+  });
+  test('should return original data if field type is idLockTemplate', () => {
+    const stage = 'flowInput';
+
+    const sampleData = {
+      status: 'received',
+      data: {
+        record: {
+          CONTRACT_PRICE: '89',
+          CUSTOMER_NUMBER: 'C1234',
+        },
+      },
+      templateVersion: 2,
+    };
+
+    const expectedData = {
+      data: {
+        record: {
+          CONTRACT_PRICE: '89',
+          CUSTOMER_NUMBER: 'C1234',
+        },
+      },
+      status: 'received',
+      templateVersion: 2,
+    };
+
+    expect(wrapSampleDataWithContext({fieldType: 'idLockTemplate', sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
   });
   test('should return correctly wrapped sample data if stage is transform or sampleResponse or inputFilter', () => {
     const stages = ['transform', 'sampleResponse', 'inputFilter'];

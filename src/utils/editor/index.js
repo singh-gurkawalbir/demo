@@ -1,5 +1,14 @@
 import arrayUtil from '../array';
 
+export const FLOW_STAGES = [
+  'outputFilter',
+  'exportFilter',
+  'inputFilter',
+  'transform',
+  'postResponseMapHook',
+  'sampleResponse',
+];
+
 export const preSaveValidate = ({ editor = {}, enquesnackbar }) => {
   if (editor.processor === 'transform') {
     const duplicates = arrayUtil.getDuplicateValues(
