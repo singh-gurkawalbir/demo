@@ -61,6 +61,7 @@ const useStyles = makeStyles(theme => ({
   selectResourceItem: {
     display: 'flex',
     alignItems: 'flex-start',
+    textTransform: 'capitalize',
   },
   selectResourceCheck: {
     marginTop: theme.spacing(-0.5),
@@ -111,7 +112,7 @@ export default function SelectDependentResource({resources = emptySet, selectedR
     const filterChecked = Array.isArray(checked) ? checked.filter(item => resources.find(r => r._id === item)) : [];
 
     if (!checked || !filterChecked.length) {
-      return 'Resource';
+      return 'Step';
     }
     if (filterChecked.length === 1) {
       return resources.find(r => r._id === filterChecked[0])?.name;

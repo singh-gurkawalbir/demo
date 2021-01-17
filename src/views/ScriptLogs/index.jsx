@@ -12,13 +12,13 @@ import IconTextButton from '../../components/IconTextButton';
 import RefreshIcon from '../../components/icons/RefreshIcon';
 import CeligoPagination from '../../components/CeligoPagination';
 import CeligoTable from '../../components/CeligoTable';
-import metadata from './metadata';
+import metadata from '../../components/ResourceTable/scriptLogs/metadata';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import SelectDependentResource from '../../components/SelectDependentResource';
-import { LOG_LEVELS, SCRIPT_FUNCTION_TYPES } from '../../utils/script';
+import { LOG_LEVELS, SCRIPT_FUNCTION_TYPES, SCRIPT_FUNCTION_TYPES_FOR_FLOW } from '../../utils/script';
 import Spinner from '../../components/Spinner';
 import SearchIcon from '../../components/icons/SearchIcon';
-import ViewLogDetailDrawer from './metadata/actions/LogDetailDrawer';
+import ViewLogDetailDrawer from './DetailDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -88,14 +88,13 @@ const useStyles = makeStyles(theme => ({
 
 const rangeFilters = [
   {id: 'last15minutes', label: 'Last 15 minutes'},
-  {id: 'today', label: 'Today'},
+  {id: 'last24hours', label: 'Last 24 hours'},
   {id: 'last30minutes', label: 'Last 30 minutes'},
-  {id: 'yesterday', label: 'Yesterday'},
+  {id: 'today', label: 'Today'},
   {id: 'last1hour', label: 'Last hour'},
-  {id: 'last7days', label: 'Last 7 Days'},
+  {id: 'yesterday', label: 'Yesterday'},
   {id: 'last4hours', label: 'Last 4 hours'},
   {id: 'custom', label: 'Custom'},
-  {id: 'last24hours', label: 'Last 24 hours'},
 ];
 const defaultRange = {
   startDate: addMinutes(new Date(), -15),
@@ -143,10 +142,11 @@ export default function ScriptLogs({ flowId, scriptId }) {
   }, [patchFilter]);
   const loadMoreLogs = useCallback(
     () => {
-      dispatch(actions.logs.scripts.loadMore({scriptId, flowId}));
+      dispatch(actions.logs.scripts.loadMore({scriptId, flowId, fetchNextPage: true}));
     },
     [dispatch, flowId, scriptId],
   );
+  const functionTypes = flowId ? SCRIPT_FUNCTION_TYPES_FOR_FLOW : SCRIPT_FUNCTION_TYPES;
   const paginationOptions = useMemo(
     () => ({
       loadMoreHandler: loadMoreLogs,
@@ -182,7 +182,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
 
   useEffect(() => {
     if (status === undefined) {
-      dispatch(actions.logs.scripts.request({scriptId, flowId}));
+      dispatch(actions.logs.scripts.request({scriptId, flowId, isInit: true}));
     }
   }, [dispatch, flowId, scriptId, status]);
 
@@ -198,7 +198,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
             clearValue={defaultRange}
             onSave={handleDateRangeChange}
             fromDate={startOfDay(addDays(new Date(), -29))}
-            showTime={false} />
+            showTime />
           <SelectDependentResource
             selectedResources={selectedResources}
             resources={resourceReferences}
@@ -211,11 +211,23 @@ export default function ScriptLogs({ flowId, scriptId }) {
             displayEmpty
             value={functionType || ''}>
             <MenuItem value="">Function type</MenuItem>
-            {Object.keys(SCRIPT_FUNCTION_TYPES).map(functionType => (
-              <MenuItem key={SCRIPT_FUNCTION_TYPES[functionType]} value={SCRIPT_FUNCTION_TYPES[functionType]}>
-                {SCRIPT_FUNCTION_TYPES[functionType]}
+            {Object.values(functionTypes).map(functionValue => (
+              <MenuItem key={functionValue} value={functionValue}>
+                {functionValue}
               </MenuItem>
-
+            ))}
+          </CeligoSelect>
+          <CeligoSelect
+            data-test="selectLogLevel"
+            className={classes.filterButton}
+            onChange={handleLogLevelChange}
+            displayEmpty
+            value={logLevel || ''}>
+            <MenuItem value="">Log level</MenuItem>
+            {Object.keys(LOG_LEVELS).map(logLevel => (
+              <MenuItem key={logLevel} value={logLevel}>
+                {logLevel}
+              </MenuItem>
             ))}
           </CeligoSelect>
           <CeligoSelect
@@ -246,9 +258,10 @@ export default function ScriptLogs({ flowId, scriptId }) {
             />
           <IconTextButton
             onClick={handleRefreshClick}
-            data-test="refreshResource">
+            data-test="refreshResource"
+            disabled={status === 'requested'}>
             <RefreshIcon />
-            Refesh
+            Refresh
           </IconTextButton>
           <CeligoPagination
             {...paginationOptions}

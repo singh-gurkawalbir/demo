@@ -8,6 +8,7 @@ const useStyles = makeStyles(() => ({
     overflowY: 'auto',
     maxHeight: 90,
     wordBreak: 'break-word',
+    maxWidth: 238,
   },
   message: {
     height: '100%',
@@ -21,7 +22,7 @@ const useStyles = makeStyles(() => ({
 
 }));
 
-export default function OverflowWrapper({ message, containsHtml, style}) {
+export default function TextOverflowCell({ message, containsHtml, style}) {
   const classes = useStyles();
 
   return (

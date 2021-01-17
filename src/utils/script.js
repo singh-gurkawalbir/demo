@@ -32,7 +32,21 @@ export const SCRIPT_FUNCTION_TYPES = {
   INIT_CHILD: 'initChild',
   CHANGE_EDITION: 'changeEdition',
   // My API
-  HANDLE_REQUEST: 'handleRequest',
+  // HANDLE_REQUEST: 'handleRequest',
+};
+export const SCRIPT_FUNCTION_TYPES_FOR_FLOW = {
+  PRE_SAVE_PAGE: 'preSavePage',
+  PRE_MAP: 'preMap',
+  POST_MAP: 'postMap',
+  POST_SUBMIT: 'postSubmit',
+  POST_AGGREGATE: 'postAggregate',
+  POST_RESPONSE_MAP: 'postResponseMap',
+  // TransformFilter
+  FILTER: 'filter',
+  TRANSFORM: 'transform',
+
+  INIT_FORM: 'initForm',
+  PRE_SAVE: 'preSave',
 };
 
 export const LOG_LEVELS = {

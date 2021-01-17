@@ -15,7 +15,7 @@ import SpinnerWrapper from '../../../../components/SpinnerWrapper';
 import Spinner from '../../../../components/Spinner';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';
 import { resourceCategory } from '../../../../utils/resource';
-import OverflowWrapper from '../../../../components/ResourceTable/errorManagement/cells/OverflowWrapper';
+import TextOverflowCell from '../../../../components/ResourceTable/errorManagement/cells/TextOverflowCell';
 import ResourceButton from '../../../FlowBuilder/ResourceButton';
 
 const useStyles = makeStyles(theme => ({
@@ -60,7 +60,7 @@ const metadata = {
     },
     {
       heading: 'Flow step name',
-      value: r => <OverflowWrapper message={r.name} style={{maxWidth: 238}} />,
+      value: r => <TextOverflowCell message={r.name} />,
     },
     {
       heading: 'Errors',
