@@ -603,7 +603,7 @@ selectors.suiteScriptResourceList = (
   }
 
   if (resourceType === 'flows' && integrationId) {
-    return state[ssLinkedConnectionId][resourceType].filter(
+    return state[ssLinkedConnectionId][resourceType]?.filter(
       f => f._integrationId === integrationId
     );
   }
