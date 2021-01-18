@@ -203,7 +203,7 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
   const handleScriptLogsClose = useCallback(
     scriptId => event => {
       event.stopPropagation();
-      setTabValue(3);
+      setTabValue(2);
       dispatch(actions.logs.scripts.clear({scriptId, flowId}));
     },
     [dispatch, flowId, setTabValue]
@@ -320,9 +320,10 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
               }
               label="Connections"
             />
-            <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
             {flowScripts?.length &&
-            <Tab {...tabProps(3)} icon={<ScriptsIcon />} label="Scripts" />}
+            <Tab {...tabProps(2)} icon={<ScriptsIcon />} label="Scripts" />}
+            <Tab {...tabProps(flowScripts?.length ? 3 : 2)} icon={<AuditLogIcon />} label="Audit log" />
+
             {flowScriptsWithLogEntry.map((script, index) => (
               <Tab
                 className={classes.customTab}
@@ -401,14 +402,15 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
           <TabPanel value={tabValue} index={1} className={classes.tabPanel}>
             <ConnectionPanel flowId={flowId} />
           </TabPanel>
-          <TabPanel value={tabValue} index={2} className={classes.tabPanel}>
-            <AuditPanel flowId={flowId} />
-          </TabPanel>
           {!!flowScripts?.length && (
-            <TabPanel value={tabValue} index={3} className={classes.tabPanel}>
+            <TabPanel value={tabValue} index={2} className={classes.tabPanel}>
               <ScriptPanel flowId={flowId} />
             </TabPanel>
           )}
+
+          <TabPanel value={tabValue} index={flowScripts?.length ? 3 : 2} className={classes.tabPanel}>
+            <AuditPanel flowId={flowId} />
+          </TabPanel>
           {flowScriptsWithLogEntry.map((script, index) => (
             <TabPanel key={script.scriptId} value={tabValue} index={4 + index} className={classes.tabPanel}>
               <ScriptLogs flowId={flowId} scriptId={script.scriptId} />

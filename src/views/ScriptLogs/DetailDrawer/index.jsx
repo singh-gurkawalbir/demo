@@ -6,6 +6,7 @@ import DrawerHeader from '../../../components/drawer/Right/DrawerHeader';
 import { selectors } from '../../../reducers';
 import DrawerContent from '../../../components/drawer/Right/DrawerContent';
 import RightDrawer from '../../../components/drawer/Right';
+import CeligoTimeAgo from '../../../components/CeligoTimeAgo';
 
 const emptyObj = {};
 const useStyles = makeStyles(theme => ({
@@ -85,7 +86,7 @@ const ScriptLogDrawerBody = () => {
     <div className={classes.wrapper}>
       <div className={classes.container}>
         <div>
-          Timestamp: {time}
+          Timestamp: <CeligoTimeAgo date={time} />
         </div>
         <div>
           Type: {logLevel}
