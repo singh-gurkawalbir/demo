@@ -49,12 +49,20 @@ export function* pollForConnectionLogs({ connectionId }) {
 }
 export function* startPollingForConnectionDebugLogs({ connectionId }) {
   const watcher = yield fork(pollForConnectionLogs, {connectionId});
+  let abortWatcher = false;
 
-  yield take([
-    actionTypes.LOGS.CONNECTIONS.CLEAR,
-    actionTypes.LOGS.CONNECTIONS.REQUEST,
-  ]);
-  yield cancel(watcher);
+  while (!abortWatcher) {
+    const {connectionId: newRequestedConnectionId} = yield take([
+      actionTypes.LOGS.CONNECTIONS.CLEAR,
+      actionTypes.LOGS.CONNECTIONS.REQUEST,
+      actionTypes.LOGS.CONNECTIONS.REFRESH,
+    ]);
+
+    if (newRequestedConnectionId === connectionId) {
+      yield cancel(watcher);
+      abortWatcher = true;
+    }
+  }
 }
 export function* deleteConnectionDebugLogs({ connectionId}) {
   const path = `/connections/${connectionId}/debug`;
@@ -91,8 +99,10 @@ export function* startDebug({connectionId, value}) {
   yield put(actions.resource.patch('connections', connectionId, patchSet));
 }
 export const connectionsLogSagas = [
-  takeEvery(actionTypes.LOGS.CONNECTIONS.REQUEST, startPollingForConnectionDebugLogs),
-  takeLatest(actionTypes.LOGS.CONNECTIONS.REFRESH, startPollingForConnectionDebugLogs),
+  takeEvery([
+    actionTypes.LOGS.CONNECTIONS.REQUEST,
+    actionTypes.LOGS.CONNECTIONS.REFRESH,
+  ], startPollingForConnectionDebugLogs),
   takeLatest(actionTypes.LOGS.CONNECTIONS.DELETE, deleteConnectionDebugLogs),
   takeLatest(actionTypes.LOGS.CONNECTIONS.DOWNLOAD, downloadConnectionDebugLogs),
   takeLatest(actionTypes.LOGS.CONNECTIONS.START_DEBUG, startDebug),

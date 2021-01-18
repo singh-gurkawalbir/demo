@@ -10,10 +10,25 @@ import RightDrawer from '../../../components/drawer/Right';
 const emptyObj = {};
 const useStyles = makeStyles(theme => ({
   wrapper: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  container: {
     '& > div': {
       marginBottom: theme.spacing(2),
     },
-
+  },
+  messageContainer: {
+    height: '-webkit-fill-available',
+    display: 'flex',
+    flexDirection: 'column',
+    marginBottom: theme.spacing(3),
+    overflow: 'hidden',
+    '& > div': {
+      overflowY: 'auto',
+      wordBreak: 'break-word',
+    },
   },
 }));
 
@@ -46,7 +61,7 @@ const ScriptLogDrawerBody = () => {
   const history = useHistory();
   const classes = useStyles();
   const { scriptId, flowId, index } = match.params;
-  const {time, logLevel, message} = useSelector(state => {
+  const {time, logLevel, message, functionType} = useSelector(state => {
     const script = selectors.scriptLog(state, {scriptId, flowId});
 
     try {
@@ -68,16 +83,22 @@ const ScriptLogDrawerBody = () => {
 
   return (
     <div className={classes.wrapper}>
-      <div>
-        Timestamp: {time}
+      <div className={classes.container}>
+        <div>
+          Timestamp: {time}
+        </div>
+        <div>
+          Type: {logLevel}
+        </div>
+        <div>
+          Function type: {functionType}
+        </div>
       </div>
-      <div>
-        Type: {logLevel}
-      </div>
-      <div>
+      <div className={classes.messageContainer}>
         Message:
-        <br />
-        {message}
+        <div>
+          {message}
+        </div>
       </div>
     </div>
   );
