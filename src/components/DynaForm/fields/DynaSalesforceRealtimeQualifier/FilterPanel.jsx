@@ -164,8 +164,15 @@ export default function FilterPanel({
       const {
         rules: qbRules,
         referenceFieldsUsed,
+        error,
       } = convertSalesforceQualificationCriteria(rule, qbuilder.current);
 
+      if (error) {
+        return enqueueSnackbar({
+          message: error,
+          variant: 'error',
+        });
+      }
       if (
         qbRules &&
         qbRules.rules &&
