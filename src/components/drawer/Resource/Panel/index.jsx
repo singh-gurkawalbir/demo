@@ -277,6 +277,7 @@ export default function Panel(props) {
     // we don't show preview panel if it is the first step
     return shouldShow && !isFirstStep;
   });
+  const shouldNotRedactInLogRocket = flowId && resourceType === 'imports';
 
   return (
     <>
@@ -330,6 +331,7 @@ export default function Panel(props) {
             )}
           >
             <ResourceFormWithStatusPanel
+              data-public={shouldNotRedactInLogRocket}
               formKey={newId}
               className={classes.resourceFormWrapper}
               variant={variant}

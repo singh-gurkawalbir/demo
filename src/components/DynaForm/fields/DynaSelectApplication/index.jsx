@@ -318,6 +318,7 @@ export default function SelectApplication(props) {
 
   return (
     <FormControl
+      data-public
       data-test={id}
       key={id}
       disabled={disabled}

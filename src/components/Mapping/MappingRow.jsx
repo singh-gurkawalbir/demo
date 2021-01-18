@@ -247,6 +247,7 @@ export default function MappingRow({
               isSubRecordMapping || isNotEditable || disabled,
           })}>
           <DynaTypeableSelect
+            data-public
             key={extractValue}
             id={`fieldMappingExtract-${index}`}
             labelName="name"
@@ -271,6 +272,7 @@ export default function MappingRow({
               isSubRecordMapping || isRequired || disabled,
           })}>
           <DynaTypeableSelect
+            data-public
             key={generate}
             id={`fieldMappingGenerate-${index}`}
             value={generate}
