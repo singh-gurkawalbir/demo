@@ -285,9 +285,6 @@ fileApiIdentifier: {
 'ftp.directoryPath': {
   fieldId: 'ftp.directoryPath',
 },
-'ftp.fileName': {
-  fieldId: 'ftp.fileName',
-},
 'ftp.useTempFile': {
   fieldId: 'ftp.useTempFile',
 },
@@ -308,8 +305,5 @@ fileApiIdentifier: {
 },
 's3.bucket': {
   fieldId: 's3.bucket',
-},
-'s3.fileKey': {
-  fieldId: 's3.fileKey',
 },
 };

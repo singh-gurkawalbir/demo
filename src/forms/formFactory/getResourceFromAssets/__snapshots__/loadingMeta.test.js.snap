@@ -8419,9 +8419,6 @@ Object {
       "ftp.directoryPath": Object {
         "fieldId": "ftp.directoryPath",
       },
-      "ftp.fileName": Object {
-        "fieldId": "ftp.fileName",
-      },
       "ftp.inProgressFileName": Object {
         "fieldId": "ftp.inProgressFileName",
       },
@@ -8458,9 +8455,6 @@ Object {
       },
       "s3.bucket": Object {
         "fieldId": "s3.bucket",
-      },
-      "s3.fileKey": Object {
-        "fieldId": "s3.fileKey",
       },
       "s3.region": Object {
         "fieldId": "s3.region",
@@ -10570,9 +10564,6 @@ Object {
       "ftp.directoryPath": Object {
         "fieldId": "ftp.directoryPath",
       },
-      "ftp.fileName": Object {
-        "fieldId": "ftp.fileName",
-      },
       "ftp.inProgressFileName": Object {
         "fieldId": "ftp.inProgressFileName",
       },
@@ -10609,9 +10600,6 @@ Object {
       },
       "s3.bucket": Object {
         "fieldId": "s3.bucket",
-      },
-      "s3.fileKey": Object {
-        "fieldId": "s3.fileKey",
       },
       "s3.region": Object {
         "fieldId": "s3.region",

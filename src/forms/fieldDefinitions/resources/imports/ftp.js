@@ -44,7 +44,7 @@ export default {
     label: 'Build file name',
     required: true,
     showAllSuggestions: true,
-    defaultValue: r => r && r.ftp && r.ftp.fileName,
+    defaultValue: r => r && r.ftp && r.file.fileName,
     refreshOptionsOnChangesTo: ['file.type'],
     validWhen: {
       someAreTrue: {

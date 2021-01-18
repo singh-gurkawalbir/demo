@@ -71,7 +71,7 @@ export default {
     }
 
     if (newValues['/inputMode'] === 'blob') {
-      newValues['/ftp/fileName'] = newValues['/ftp/blobFileName'];
+      newValues['/file/fileName'] = newValues['/ftp/blobFileName'];
       newValues['/ftp/useTempFile'] = newValues['/ftp/blobUseTempFile'];
       newValues['/ftp/inProgressFileName'] =
         newValues['/ftp/blobInProgressFileName'];

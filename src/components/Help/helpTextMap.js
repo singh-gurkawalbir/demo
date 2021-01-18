@@ -1588,7 +1588,6 @@ export default {
     'Name of the nearest amazon s3 region to the location from where the request is being made. If not set, by default "us-east-1" is selected',
   'import.s3.bucket':
     'Name of the bucket in S3, where you want file to be saved',
-  'import.s3.fileKey': 'Name of the file',
   'import.wrapper.function':
     'The name of the extension wrapper function in your code that needs to be invoked as part of the import process.',
   'import.wrapper.configuration':
