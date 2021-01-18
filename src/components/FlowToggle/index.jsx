@@ -112,7 +112,7 @@ export default function FlowToggle({
   return onOffInProgressStatus ? (
     <Spinner size={20} color="primary" className={classes.spinnerFlowToggle} />
   ) : (
-    <Tooltip title="Off/On" placement="bottom">
+    <Tooltip data-public  title="Off/On" placement="bottom">
       <div>
         <CeligoSwitch
           disabled={disabled}

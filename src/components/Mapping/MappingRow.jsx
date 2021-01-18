@@ -192,6 +192,7 @@ export default function MappingRow({
 
   const RightIcon = ({title, Icon, className}) => (
     <Tooltip
+      data-public
       title={title}
       placement="bottom">
       <span className={clsx(classes.lockIcon, className)}>
