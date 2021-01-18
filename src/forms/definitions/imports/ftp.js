@@ -209,7 +209,7 @@ export default {
         label: 'Where would you like the files transferred?',
         fields: [
           'ftp.directoryPath',
-          'ftp.fileName',
+          'file.fileName',
           'file.xml.body',
           'ftp.blobFileName',
           'file.lookups',
@@ -223,7 +223,7 @@ export default {
           'ftp.inProgressFileName',
           'ftp.blobUseTempFile',
           'ftp.blobInProgressFileName',
-          'ftp.backupDirectoryPath',
+          'file.backupPath',
           'file.encoding',
           'blobKeyPath',
           'fileAdvancedSettings',

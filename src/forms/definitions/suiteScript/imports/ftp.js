@@ -4,8 +4,8 @@ export default {
     'import.ftp.directoryPath': {
       fieldId: 'import.ftp.directoryPath',
     },
-    'import.ftp.fileName': {
-      fieldId: 'import.ftp.fileName',
+    'import.file.fileName': {
+      fieldId: 'import.file.fileName',
     },
     'import.ftp.fileExtension': {
       fieldId: 'import.ftp.fileExtension',
@@ -25,7 +25,7 @@ export default {
         containers: [
           {
             label: 'How would you like to generate files?',
-            fields: ['import.ftp.fileName', 'import.ftp.fileExtension', 'import.file.csv.columnDelimiter', 'import.file.csv.includeHeader'],
+            fields: ['import.file.fileName', 'import.ftp.fileExtension', 'import.file.csv.columnDelimiter', 'import.file.csv.includeHeader'],
             collapsed: false,
           },
           {

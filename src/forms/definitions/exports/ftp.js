@@ -219,7 +219,7 @@ export default {
           'file.compressionFormat',
           'file.skipDelete',
           'fileMetadata',
-          'ftp.backupDirectoryPath',
+          'file.backupPath',
           'file.encoding',
           'pageSize',
           'dataURITemplate',
