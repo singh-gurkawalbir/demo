@@ -513,12 +513,17 @@ export const wrapSampleDataWithContext = ({
   }
 
   // standalone resource should not wrap the data
-  // also there is no 'data' variable for these 2 fields for AFE1, return sample data as such
-  if (!flow._id || ((fieldType === 'dataURITemplate' || fieldType === 'idLockTemplate') && templateVersion === 1)) {
+  // also for below fields, return sample data as such
+  if (!flow._id || ((fieldType === 'dataURITemplate' || fieldType === 'idLockTemplate'))) {
     return { status, data, templateVersion };
   }
 
   const isDeltaExport = resource.type === 'delta';
+  let isNativeRESTAdaptor = false;
+
+  if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
+    isNativeRESTAdaptor = !connection.isHTTP;
+  }
   const settings = {
     integration: integration.settings || {},
     flow: flow.settings || {},
@@ -549,20 +554,25 @@ export const wrapSampleDataWithContext = ({
     case 'flowInput': {
       const processedData = {
         ...data,
-        ...contextFields,
-        settings,
+        ...(isNativeRESTAdaptor ? contextFields : {}),
       };
 
-      // add connection object for http exports and imports, only for AFE2
-      if (resource.adaptorType?.includes('HTTP') && (resourceType === 'export' || templateVersion === 2)) {
-        processedData.connection = {
-          name: connection.name,
-          http: {
-            unencrypted: connection.http.unencrypted,
-            encrypted: connection.http.encrypted,
-          },
-        };
+      if (isNativeRESTAdaptor) {
+        processedData.settings = settings;
       }
+
+      // todo: remove this once BE is stable and correctly wraps the sample data
+      // add connection object for http exports and imports, only for AFE2
+      // if (resource.adaptorType?.includes('HTTP') && (resourceType === 'export' || templateVersion === 2)) {
+      //   processedData.connection = {
+      //     name: connection.name,
+      //     http: {
+      //       unencrypted: connection.http.unencrypted,
+      //       encrypted: connection.http.encrypted,
+      //     },
+      //   };
+      // }
+
       // add paging sub-object for both HTTP and REST API "exports" (i.e. Lookups, Exports -- but NOT transfers).
       if ((resource.adaptorType?.includes('HTTP') || resource.adaptorType?.includes('REST')) && resourceType === 'export' &&
       resource.http?.paging) {
