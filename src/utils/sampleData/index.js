@@ -552,6 +552,8 @@ export const wrapSampleDataWithContext = ({
 
   switch (stage) {
     case 'flowInput': {
+      // TODO: BE would be deprecating native REST adaptor as part of IO-19864
+      // we can remove this logic from UI as well once that is complete
       const processedData = {
         ...data,
         ...(isNativeRESTAdaptor ? contextFields : {}),

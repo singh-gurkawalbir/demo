@@ -5039,6 +5039,8 @@ selectors.isEditorLookupSupported = (state, editorId) => {
 
 // this selector returns if BE supports the /getContext
 // for passed stage and field
+// //TODO: update the logic here once BE trackers
+// IO-19867 and IO-19868 are complete
 selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   const editor = fromSession._editor(state?.session, editorId);
   const {stage, resourceId, resourceType, flowId, fieldId} = editor;
@@ -5061,8 +5063,8 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
     _sampleData = { data: sampleData || { myField: 'sample' }};
   }
 
-  // todo: BE should add support for native REST adaptor also
-  // remove this once done
+  // TODO: BE would be deprecating native REST adaptor as part of IO-19864
+  // we can remove this logic from UI as well once that is complete
   if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
     if (!connection.isHTTP && (stage === 'outputFilter' || stage === 'exportFilter' || stage === 'inputFilter')) {
       // native REST adaptor filters
