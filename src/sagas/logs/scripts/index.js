@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { call, takeEvery, put, select, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeLatest } from 'redux-saga/effects';
 import moment from 'moment';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
@@ -7,7 +7,43 @@ import { requestReferences } from '../../resources';
 import { apiCallWithRetry } from '../..';
 import { selectors } from '../../../reducers';
 import { convertUtcToTimezone } from '../../../utils/date';
+import {RESOURCE_TYPE_PLURAL_TO_SINGULAR} from '../../../constants/resource';
 
+function getFetchLogsPath({
+  dateRange,
+  selectedResources,
+  functionType,
+  nextPageURL,
+  flowId,
+  scriptId,
+  fetchNextPage = false,
+}) {
+  let path;
+
+  if (fetchNextPage && nextPageURL) {
+    path = nextPageURL.replace('/api', '');
+  } else {
+    path = `/scripts/${scriptId}/logs?time_gt=${dateRange?.startDate?.getTime()}&time_lte=${dateRange?.endDate?.getTime()}`;
+
+    if (flowId) {
+      path += `&_flowId=${flowId}`;
+    }
+    if (selectedResources?.length) {
+      selectedResources.forEach(res => {
+        if (res.type === 'flows') {
+          path += `&_flowId=${res.id}`;
+        } else {
+          path += `&_resourceId=${res.id}`;
+        }
+      });
+    }
+    if (functionType) {
+      path += `&functionType=${functionType}`;
+    }
+  }
+
+  return path;
+}
 export function* getScriptDependencies({scriptId = '',
   flowId = '',
 }) {
@@ -30,7 +66,7 @@ export function* getScriptDependencies({scriptId = '',
       const resource = resourceReferences?.exports?.find(({id}) => id === _exportId);
 
       if (resource) {
-        references.push({type: 'exports', id: resource.id, name: resource.name});
+        references.push({type: 'export', id: resource.id, name: resource.name});
       }
     });
 
@@ -41,7 +77,7 @@ export function* getScriptDependencies({scriptId = '',
 
       if (resource) {
         references.push({
-          type: ppType === 'export' ? 'exports' : 'imports',
+          type: ppType === 'export' ? 'export' : 'import',
           id: resource.id,
           name: resource.name,
         });
@@ -51,7 +87,7 @@ export function* getScriptDependencies({scriptId = '',
     Object.keys(resourceReferences).forEach(resourceType => {
       resourceReferences[resourceType].forEach(res => {
         // res.access => do we need it?
-        references.push({type: resourceType, id: res.id, name: res.name});
+        references.push({type: RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType], id: res.id, name: res.name});
       });
     });
   }
@@ -62,102 +98,85 @@ export function* getScriptDependencies({scriptId = '',
   }));
 }
 
-export function* fetchScriptLogs({scriptId = '', flowId = '', field, loadMore}) {
-  if (field === 'logLevel') {
-    // do not fetch data in case of log level change. Log level is a ui level filter
-    return;
-  }
-  const {
-    dateRange,
-    selectedResources,
-    functionType,
-    nextPageURL,
-  } = yield select(selectors.scriptLog, {scriptId, flowId});
-  let path;
-
-  if (loadMore && nextPageURL) {
-    path = nextPageURL.replace('/api', '');
-  } else {
-    path = `/scripts/${scriptId}/logs?time_gt=${dateRange?.startDate?.getTime()}&time_lte=${dateRange?.endDate?.getTime()}`;
-
-    if (flowId) {
-      path += `&_flowId=${flowId}`;
-    }
-    if (selectedResources?.length) {
-      selectedResources.forEach(res => {
-        if (res.type === 'flows') {
-          path += `&_flowId=${res.id}`;
-        } else {
-          path += `&_resourceId=${res.id}`;
-        }
-      });
-    }
-    if (functionType) {
-      path += `&functionType=${functionType}`;
-    }
-  }
-
-  // tmp fix
-  // path += `&searchGranularity=${10}`;
-
-  let response;
+export function* retryToFetchLogs(props) {
+  const {retryCount = 0, fetchLogsPath} = props;
   const opts = {
     method: 'GET',
   };
 
+  if (retryCount > 3) {
+    return {
+      nextPageURL: fetchLogsPath,
+    };
+  }
+
+  let response;
+
   try {
     response = yield call(apiCallWithRetry, {
-      path,
+      path: fetchLogsPath.replace('/api', ''),
       opts,
     });
   } catch (e) {
-    return yield put(actions.logs.scripts.requestFailed(
-      {
-        scriptId,
-        flowId,
-      }));
+    return {
+      errorMsg: 'Request failed',
+    };
+  }
+
+  const {logs, nextPageURL} = response;
+
+  // dont re-iterate in case logs are found or nextPageURL is not present. Return control to parent
+  if (logs?.length || !nextPageURL) {
+    return {logs, nextPageURL};
+  }
+
+  return yield call(retryToFetchLogs, {...props, retryCount: retryCount + 1, fetchLogsPath: nextPageURL });
+}
+
+export function* requestScriptLogs({isInit, field, ...props}) {
+  if (field === 'logLevel') {
+    // do not fetch data in case of log level change. Log level is a ui level filter
+    return;
+  }
+  const {scriptId, flowId, fetchNextPage} = props;
+
+  if (isInit) {
+    yield put(actions.logs.scripts.getDependency({scriptId, flowId}));
+  }
+  const logState = yield select(selectors.scriptLog, {scriptId, flowId});
+  const fetchLogsPath = getFetchLogsPath({...logState, fetchNextPage });
+  const { errorMsg, logs = [], nextPageURL } = yield call(retryToFetchLogs, {...props, fetchLogsPath});
+
+  if (errorMsg) {
+    return yield put(actions.logs.scripts.requestFailed({
+      scriptId,
+      flowId,
+      errorMsg,
+    }));
   }
 
   // change logs utc datetime to local date time
   const {dateFormat, timeFormat, timezone } = yield select(selectors.userProfilePreferencesProps);
 
-  const formattedLogs = response?.logs?.map(({time = '', ...others}) => {
-    const timeArr = time.split(' ');
-    const utcISODateTime = `${timeArr[0]}T${timeArr[1]}Z`;
+  const formattedLogs = logs.map(({time = '', ...others}) => {
+    const utcISODateTime = moment(time, 'YYYY-MM-DD HH:mm:ss.SSS').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
     const localDateTime = convertUtcToTimezone(utcISODateTime, dateFormat, timeFormat, timezone);
 
     return {time: localDateTime, ...others };
   });
 
-  return yield put(actions.logs.scripts.received({
+  yield put(actions.logs.scripts.received({
     scriptId,
     flowId,
     logs: formattedLogs || [],
-    nextPageURL: response?.nextPageURL,
+    nextPageURL,
   }));
-
-  // if no results then can automatically fetch next url
-  // if (response.nextPageURL) yield put(actions.logs.scripts.loadMore({scriptId, flowId}));
-}
-
-export function* requestScriptLogs({
-  scriptId = '',
-  flowId = ''}) {
-  // check if scripts not loaded. if not load from api
-  yield call(getScriptDependencies, {scriptId, flowId});
-  yield call(fetchScriptLogs, {scriptId, flowId});
-}
-export function* loadMoreLogs(opts) {
-  // check if scripts not loaded. if not load from api
-  yield call(fetchScriptLogs, {...opts, loadMore: true});
 }
 
 export function* startDebug({scriptId, value}) {
-  const { debugUntil } = yield select(selectors.resource, 'scripts', scriptId);
-
   const patchSet = [
     {
-      op: debugUntil ? 'replace' : 'remove',
+      op: value !== '0' ? 'replace' : 'remove',
       path: '/debugUntil',
       value: moment().add(value, 'm').toISOString(),
     },
@@ -165,10 +184,15 @@ export function* startDebug({scriptId, value}) {
 
   yield put(actions.resource.patch('scripts', scriptId, patchSet));
 }
+
 export const scriptsLogSagas = [
-  takeEvery(actionTypes.LOGS.SCRIPTS.REQUEST, requestScriptLogs),
-  takeEvery(actionTypes.LOGS.SCRIPTS.LOAD_MORE, loadMoreLogs),
-  takeLatest(actionTypes.LOGS.SCRIPTS.PATCH_FILTER, fetchScriptLogs),
-  takeLatest(actionTypes.LOGS.SCRIPTS.REFRESH, fetchScriptLogs),
+  takeLatest([
+    actionTypes.LOGS.SCRIPTS.REQUEST,
+    actionTypes.LOGS.SCRIPTS.LOAD_MORE,
+    actionTypes.LOGS.SCRIPTS.PATCH_FILTER,
+    actionTypes.LOGS.SCRIPTS.REFRESH,
+  ], requestScriptLogs),
   takeLatest(actionTypes.LOGS.SCRIPTS.START_DEBUG, startDebug),
+  takeLatest(actionTypes.LOGS.SCRIPTS.GET_DEPENDENCY, getScriptDependencies),
 ];
+

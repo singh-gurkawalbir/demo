@@ -247,7 +247,7 @@ describe('Script reducer', () => {
           scriptId: 's123',
           flowId: 'f123',
           functionType: 'xyz',
-          status: 'success',
+          status: 'requested',
         },
       },
     };

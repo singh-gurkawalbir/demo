@@ -80,11 +80,9 @@ export function* downloadConnectionDebugLogs({ connectionId}) {
   openExternalUrl({ url: _url });
 }
 export function* startDebug({connectionId, value}) {
-  const { debugDate } = yield select(selectors.resource, 'connections', connectionId);
-
   const patchSet = [
     {
-      op: debugDate ? 'replace' : 'remove',
+      op: value !== '0' ? 'replace' : 'remove',
       path: '/debugDate',
       value: moment().add(value, 'm').toISOString(),
     },
