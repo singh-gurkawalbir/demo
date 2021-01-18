@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import ActionButton from '../../ActionButton';
-import AfeIcon from '../../icons/AfeIcon';
+import EditScriptIcon from '../../icons/EditScriptIcon';
 import DynaTimestampFileName from './DynaTimestampFileName';
 import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
@@ -58,7 +58,7 @@ export default function DynaFTPFileNameWithEditor_afe2(props) {
           data-test={id}
           onClick={handleEditorClick}
           className={classes.dynaActionButton}>
-          <AfeIcon />
+          <EditScriptIcon />
         </ActionButton>
       </div>
     </>
