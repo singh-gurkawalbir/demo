@@ -230,20 +230,6 @@ export default function ScriptLogs({ flowId, scriptId }) {
               </MenuItem>
             ))}
           </CeligoSelect>
-          <CeligoSelect
-            data-test="selectLogLevel"
-            className={classes.filterButton}
-            onChange={handleLogLevelChange}
-            displayEmpty
-            value={logLevel || ''}>
-            <MenuItem value="">Log level</MenuItem>
-            {Object.keys(LOG_LEVELS).map(logLevel => (
-              <MenuItem key={logLevel} value={logLevel}>
-                {logLevel}
-              </MenuItem>
-            ))}
-          </CeligoSelect>
-
         </div>
         <div className={classes.rightActionContainer}>
           {flowId && (
