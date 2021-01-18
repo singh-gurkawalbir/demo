@@ -10,8 +10,8 @@ export default {
     'import.rakuten.method': {
       fieldId: 'import.rakuten.method',
     },
-    'import.file.fileName': {
-      fieldId: 'import.file.fileName',
+    'import.ftp.fileName': {
+      fieldId: 'import.ftp.fileName',
     },
     'import.ftp.fileExtension': {
       fieldId: 'import.ftp.fileExtension',
@@ -31,7 +31,7 @@ export default {
         containers: [
           {
             label: 'How would you like to generate files?',
-            fields: ['import.file.fileName', 'import.ftp.fileExtension', 'import.file.csv.columnDelimiter', 'import.file.csv.includeHeader'],
+            fields: ['import.ftp.fileName', 'import.ftp.fileExtension', 'import.file.csv.columnDelimiter', 'import.file.csv.includeHeader'],
           },
           {
             label: 'Where would you like the files transferred?',

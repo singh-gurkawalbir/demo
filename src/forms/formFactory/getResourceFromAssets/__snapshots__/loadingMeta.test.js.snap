@@ -13567,14 +13567,14 @@ Object {
       "import.file.csv.includeHeader": Object {
         "fieldId": "import.file.csv.includeHeader",
       },
-      "import.file.fileName": Object {
-        "fieldId": "import.file.fileName",
-      },
       "import.ftp.directoryPath": Object {
         "fieldId": "import.ftp.directoryPath",
       },
       "import.ftp.fileExtension": Object {
         "fieldId": "import.ftp.fileExtension",
+      },
+      "import.ftp.fileName": Object {
+        "fieldId": "import.ftp.fileName",
       },
     },
     "layout": Object {
@@ -13584,7 +13584,7 @@ Object {
             Object {
               "collapsed": false,
               "fields": Array [
-                "import.file.fileName",
+                "import.ftp.fileName",
                 "import.ftp.fileExtension",
                 "import.file.csv.columnDelimiter",
                 "import.file.csv.includeHeader",

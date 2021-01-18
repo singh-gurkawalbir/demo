@@ -12,8 +12,4 @@ export default {
     type: 'checkbox',
     label: 'Include header',
   },
-  'import.file.fileName': {
-    type: 'text',
-    label: 'File name',
-  },
 };
