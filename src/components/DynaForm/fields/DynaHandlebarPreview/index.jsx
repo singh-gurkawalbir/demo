@@ -5,7 +5,7 @@ import { makeStyles, FormLabel } from '@material-ui/core';
 import FieldHelp from '../../FieldHelp';
 import FieldMessage from '../FieldMessage';
 import ActionButton from '../../../ActionButton';
-import EditScriptIcon from '../../../icons/EditScriptIcon';
+import AfeIcon from '../../../icons/AfeIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -71,7 +71,7 @@ export default function DynaHandlebarPreview({
             variant="outlined"
             color="secondary"
             onClick={onEditorClick}>
-            <EditScriptIcon />
+            <AfeIcon />
           </ActionButton>
         </div>
       </div>
