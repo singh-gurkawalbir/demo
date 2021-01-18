@@ -331,13 +331,7 @@ selectors.integrationInstallSteps = (state, integrationId) => {
 const emptyStepsArr = [];
 
 selectors.integrationUninstallSteps = (state, { integrationId, isFrameWork2 }) => {
-  const uninstallData = isFrameWork2 ? fromSession.uninstall2Data(
-    state && state.session,
-    integrationId
-  ) : fromSession.uninstallData(
-    state && state.session,
-    integrationId
-  );
+  const uninstallData = isFrameWork2 ? fromSession.uninstall2Data(state?.session, integrationId) : fromSession.uninstallData(state?.session, integrationId);
   const { steps: uninstallSteps, error, isFetched, isComplete } = uninstallData;
 
   if (!uninstallSteps || !Array.isArray(uninstallSteps)) {
@@ -389,10 +383,7 @@ selectors.isIAV2UninstallComplete = (state, { integrationId }) => {
   if (!integration) return true;
   if (integration.mode !== 'uninstall') return false;
 
-  const uninstallData = fromSession.uninstall2Data(
-    state && state.session,
-    integrationId
-  );
+  const uninstallData = fromSession.uninstall2Data(state?.session, integrationId);
 
   const { steps: uninstallSteps, isFetched } = uninstallData;
 
@@ -2765,13 +2756,9 @@ selectors.formAccessLevel = (state, integrationId, resource, disabled) => {
   return { disableAllFields: !!disabled };
 };
 
-// TODO: @Ashu, we need to add tests for this once GA is done.  I extracted this
-// logic from the DynaSettings component since it needed to be used in multiple
-// places. Also, the logic below, now in one place could surely be cleaned up and made more
-// readable...I left as-is to minimize risk of regressions.
 selectors.canEditSettingsForm = (state, resourceType, resourceId, integrationId) => {
   const r = selectors.resource(state, resourceType, resourceId);
-  const isIAResource = !!(r && r._connectorId);
+  const isIAResource = !!r?._connectorId;
   const {allowedToPublish, developer} = selectors.userProfile(state) || emptyObject;
   const viewOnly = selectors.isFormAMonitorLevelAccess(state, integrationId);
 
@@ -3339,13 +3326,13 @@ selectors.suiteScriptResourceStatus = (
 
   const commKey = commKeyGen(path, resourceReqMethod);
   const method = resourceReqMethod;
-  const hasData = fromData.hasSuiteScriptData(state.data, {
+  const hasData = fromData.hasSuiteScriptData(state?.data, {
     resourceType,
     ssLinkedConnectionId,
     integrationId,
   });
-  const isLoading = fromComms.isLoading(state.comms, commKey);
-  const retryCount = fromComms.retryCount(state.comms, commKey);
+  const isLoading = fromComms.isLoading(state?.comms, commKey);
+  const retryCount = fromComms.retryCount(state?.comms, commKey);
   const isReady = method !== 'GET' || (hasData && !isLoading);
 
   return {
@@ -3507,10 +3494,10 @@ selectors.suiteScriptIntegrationConnectionList = (
 
   if (integrationId && flows) {
     flows.forEach(f => {
-      if (f.export && f.export._connectionId) {
+      if (f.export?._connectionId) {
         connectionIdsInUse.push(f.export._connectionId);
       }
-      if (f.import && f.import._connectionId) {
+      if (f.import?._connectionId) {
         connectionIdsInUse.push(f.import._connectionId);
       }
       if (isJavaFlow(f)) {
@@ -3529,16 +3516,8 @@ selectors.suiteScriptTestConnectionCommState = (
   resourceId,
   ssLinkedConnectionId
 ) => {
-  const status = fromComms.suiteScriptTestConnectionStatus(
-    state && state.comms,
-    resourceId,
-    ssLinkedConnectionId
-  );
-  const message = fromComms.suiteScriptTestConnectionMessage(
-    state && state.comms,
-    resourceId,
-    ssLinkedConnectionId
-  );
+  const status = fromComms.suiteScriptTestConnectionStatus(state?.comms, resourceId, ssLinkedConnectionId);
+  const message = fromComms.suiteScriptTestConnectionMessage(state?.comms, resourceId, ssLinkedConnectionId);
 
   return {
     commState: status,
@@ -3648,7 +3627,7 @@ selectors.isSuiteScriptIntegrationAppInstallComplete = (state, id) => {
     installer.steps.length &&
     !installer.steps.reduce((result, step) => result || !step.completed, false);
 
-  return isInstallComplete;
+  return !!isInstallComplete;
 };
 
 selectors.userHasManageAccessOnSuiteScriptAccount = (state, ssLinkedConnectionId) => !!selectors.resourcePermissions(state, 'connections', ssLinkedConnectionId)?.edit;
@@ -3660,7 +3639,7 @@ selectors.suiteScriptFlowDetail = (state, {ssLinkedConnectionId, integrationId, 
     ssLinkedConnectionId,
   });
 
-  return flows && flows.find(flow => flow._id === flowId);
+  return flows?.find(flow => flow._id === flowId);
 };
 
 selectors.suiteScriptNetsuiteMappingSubRecord = (state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}) => {
@@ -5060,6 +5039,8 @@ selectors.isEditorLookupSupported = (state, editorId) => {
 
 // this selector returns if BE supports the /getContext
 // for passed stage and field
+// //TODO: update the logic here once BE trackers
+// IO-19867 and IO-19868 are complete
 selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   const editor = fromSession._editor(state?.session, editorId);
   const {stage, resourceId, resourceType, flowId, fieldId} = editor;
@@ -5082,8 +5063,8 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
     _sampleData = { data: sampleData || { myField: 'sample' }};
   }
 
-  // todo: BE should add support for native REST adaptor also
-  // remove this once done
+  // TODO: BE would be deprecating native REST adaptor as part of IO-19864
+  // we can remove this logic from UI as well once that is complete
   if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
     if (!connection.isHTTP && (stage === 'outputFilter' || stage === 'exportFilter' || stage === 'inputFilter')) {
       // native REST adaptor filters

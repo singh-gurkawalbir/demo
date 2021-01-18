@@ -774,8 +774,95 @@ describe('Accounts region selector testcases', () => {
   });
 
   describe('selectors.canEditSettingsForm test cases', () => {
+    const resourceType = 'exports';
+    const resourceId = 'res-123';
+    const integrationId = 'int-123';
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.canEditSettingsForm()).toEqual();
+      expect(selectors.canEditSettingsForm({})).toEqual();
+    });
+    test('should return false if user has not enabled developer mode', () => {
+      const state = {
+        data: {
+          resources: {
+            exports: [{_id: 'res-123', _connectorId: 'connId'}],
+          },
+        },
+        user: {
+          profile: {
+            developer: false,
+          },
+        },
+      };
+
+      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toEqual(false);
+    });
+    test('should return false if user (with dev mode on) does not have manage permission to the resource', () => {
+      const state = {
+        user: {
+          org: {
+            accounts: [{_id: 'someid', accessLevel: 'monitor'}],
+          },
+          preferences: { defaultAShareId: 'someid' },
+          profile: {
+            developer: true,
+          },
+        },
+      };
+
+      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toEqual(false);
+    });
+    test('should return false if IA resource user does not have access to publish', () => {
+      const state = {
+        data: {
+          resources: {
+            exports: [{_id: 'res-123', _connectorId: 'connId'}],
+          },
+        },
+        user: {
+          profile: {
+            developer: true,
+            allowedToPublish: false,
+          },
+        },
+      };
+
+      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toEqual(false);
+    });
+    test('should return true for IA publisher with developer mode on', () => {
+      const state = {
+        data: {
+          resources: {
+            exports: [{_id: 'res-123', _connectorId: 'connId'}],
+          },
+        },
+        user: {
+          profile: {
+            developer: true,
+            allowedToPublish: true,
+          },
+        },
+      };
+
+      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toEqual(true);
+    });
+    test('should return true for non IA resource with developer mode on', () => {
+      const state = {
+        data: {
+          resources: {
+            exports: [{_id: 'res-123', name: 'some export'}],
+          },
+        },
+        user: {
+          profile: {
+            developer: true,
+            allowedToPublish: false,
+          },
+        },
+      };
+
+      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toEqual(true);
     });
   });
 
