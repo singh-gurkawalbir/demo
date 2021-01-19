@@ -472,14 +472,6 @@ const connectors = {
         connectorId,
       }),
   },
-  publish: _integrationId =>
-    action(actionTypes.CONNECTORS.PUBLISH_STATUS, {
-      _integrationId,
-    }),
-  publishSuccessful: _integrationId =>
-    action(actionTypes.CONNECTORS.PUBLISH_SUCCESSFUL, {
-      _integrationId,
-    }),
 };
 const metadata = {
   request: (connectionId, commMetaPath, addInfo) =>
