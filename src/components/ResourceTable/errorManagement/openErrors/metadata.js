@@ -8,7 +8,7 @@ import SelectAllErrors from '../cells/SelectAllErrors';
 import SelectSource from '../cells/SelectSource';
 import SelectDate from '../cells/SelectDate';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
-import OverflowWrapper from '../cells/OverflowWrapper';
+import TextOverflowCell from '../cells/TextOverflowCell';
 import ErrorMessage from '../cells/ErrorMessage';
 
 export default {
@@ -38,14 +38,14 @@ export default {
     },
     {
       heading: 'Code',
-      value: r => <OverflowWrapper message={r.code} />,
+      value: r => <TextOverflowCell message={r.code} />,
       width: '18%',
     },
     {
       headerValue: function SelectOpenSource(r, actionProps) {
         return <SelectSource {...actionProps} />;
       },
-      value: r => <OverflowWrapper message={r.source} />,
+      value: r => <TextOverflowCell message={r.source} />,
       width: '15%',
     },
     {

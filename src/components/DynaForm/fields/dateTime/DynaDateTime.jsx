@@ -10,7 +10,7 @@ import {
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import {FormLabel} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
 import FieldHelp from '../../FieldHelp';
@@ -210,7 +210,7 @@ export default function DateTimePicker(props) {
       />
           </div>
         </div>
-        <ErroredMessageComponent {...props} />
+        <FieldMessage {...props} />
       </MuiPickersUtilsProvider>
     </>
   );

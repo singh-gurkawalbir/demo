@@ -1,7 +1,7 @@
 import React from 'react';
-import ResourceName from '../../../components/ResourceName';
+import ResourceName from '../../ResourceName';
+import TextOverflowCell from '../errorManagement/cells/TextOverflowCell';
 import ViewLogDetail from './actions/ViewLogDetail';
-import Message from './MessageCell';
 
 export default {
   columns: () => {
@@ -30,7 +30,11 @@ export default {
       },
       {
         heading: 'Message',
-        value: r => <Message value={r.message} />,
+        value: r => (
+          <TextOverflowCell
+            message={r.message}
+            />
+        ),
       },
     ];
 

@@ -6,7 +6,7 @@ import timeStamps from '../../../utils/timeStamps';
 import getJSONPaths from '../../../utils/jsonPaths';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 import FieldHelp from '../FieldHelp';
 
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
@@ -223,7 +223,7 @@ export default function DynaTimestampFileName(props) {
         value={value}
         variant="filled"
       />
-      <ErroredMessageComponent
+      <FieldMessage
         isValid={isValid}
         description={description}
         errorMessages={errorMessages}

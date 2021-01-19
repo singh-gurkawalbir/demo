@@ -2,12 +2,13 @@ import produce from 'immer';
 import { addMinutes } from 'date-fns';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
+import { getSelectedRange } from '../../../../utils/flowMetrics';
 
 const emptySet = [];
 const emptyObj = {};
 
 export default (state = {}, action) => {
-  const { type, scriptId = '', resourceReferences, logs, nextPageURL, field, value, flowId = '' } = action;
+  const { type, scriptId = '', resourceReferences, logs = emptySet, nextPageURL, field, value, flowId = '', errorMsg } = action;
   const key = `${scriptId}-${flowId}`;
 
   return produce(state, draft => {
@@ -32,6 +33,9 @@ export default (state = {}, action) => {
       case actionTypes.LOGS.SCRIPTS.REQUEST_FAILED:
         if (draft?.scripts?.[key]) {
           draft.scripts[key].status = 'error';
+          if (errorMsg) {
+            draft.scripts[key].errorMsg = errorMsg;
+          }
           delete draft.scripts[key].nextPageURL;
         }
 
@@ -47,7 +51,6 @@ export default (state = {}, action) => {
           logs.forEach((log, index) => {
             draft.scripts[key].logs.push({...log, index: (oldLogCount + index)});
           });
-
           draft.scripts[key].status = 'success';
           draft.scripts[key].nextPageURL = nextPageURL;
         }
@@ -63,16 +66,27 @@ export default (state = {}, action) => {
         if (draft?.scripts?.[key]) {
           draft.scripts[key][field] = value;
           if (field !== 'logLevel') {
+            draft.scripts[key].status = 'requested';
             delete draft.scripts[key].logs;
             delete draft.scripts[key].nextPageURL;
+            delete draft.scripts[key].errorMsg;
           }
         }
         break;
       case actionTypes.LOGS.SCRIPTS.REFRESH:
         if (draft?.scripts?.[key]) {
           draft.scripts[key].status = 'requested';
+          if (draft.scripts[key].dateRange) {
+            const newDateRange = getSelectedRange({
+              preset: draft.scripts[key]?.dateRange?.preset,
+            });
+
+            draft.scripts[key].dateRange = newDateRange;
+          }
+
           delete draft.scripts[key].logs;
           delete draft.scripts[key].nextPageURL;
+          delete draft.scripts[key].errorMsg;
         }
 
         break;

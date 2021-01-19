@@ -5,7 +5,7 @@ import FormLabel from '@material-ui/core/FormLabel';
 import CodeEditor from '../../../CodeEditor';
 import ActionButton from '../../../ActionButton';
 import ExpandWindowIcon from '../../../icons/ExpandWindowIcon';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 import ExpandModeEditor from './ExpandModeEditor';
 
@@ -154,7 +154,7 @@ export default function DynaEditor(props) {
             onChange={handleUpdate}
           />
         </div>
-        <ErroredMessageComponent
+        <FieldMessage
           description={description}
           errorMessages={errorMessages}
           isValid={isValid}
