@@ -112,7 +112,7 @@ export default function DateRangeSelector({
   value = {},
   onSave,
   fromDate,
-  classProps,
+  classProps = {},
   customPresets = [],
   showTime = true,
   clearable = false,
