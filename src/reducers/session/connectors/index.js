@@ -37,11 +37,11 @@ export default (state = {}, action) => {
       }
 
       return newState;
-    case actionTypes.CONNECTORS.PUBLISH.LOADING:
+    case actionTypes.CONNECTORS.PUBLISH.REQUEST:
       newState[_integrationId].publishStatus = PUBLISH_STATES.LOADING;
 
       return newState;
-    case actionTypes.CONNECTORS.PUBLISH.SUCCESSFUL:
+    case actionTypes.CONNECTORS.PUBLISH.SUCCESS:
       newState[_integrationId].publishStatus = PUBLISH_STATES.SUCCESS;
 
       return newState;

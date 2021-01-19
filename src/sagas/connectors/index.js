@@ -111,12 +111,12 @@ export function* publishStatus({ _integrationId: connectorId, isPublished }) {
   if (resp?.error) {
     yield put(actions.connectors.publish.error(connectorId));
   } else {
-    yield put(actions.connectors.publish.successful(connectorId));
+    yield put(actions.connectors.publish.success(connectorId));
   }
 }
 
 export default [
   takeEvery(actionTypes.CONNECTORS.METADATA_REQUEST, fetchMetadata),
   takeEvery(actionTypes.CONNECTORS.INSTALLBASE.UPDATE, updateInstallBase),
-  takeEvery(actionTypes.CONNECTORS.PUBLISH.LOADING, publishStatus),
+  takeEvery(actionTypes.CONNECTORS.PUBLISH.REQUEST, publishStatus),
 ];

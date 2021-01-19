@@ -473,13 +473,13 @@ const connectors = {
       }),
   },
   publish: {
-    loading: (_integrationId, isPublished) =>
-      action(actionTypes.CONNECTORS.PUBLISH.LOADING, {
+    request: (_integrationId, isPublished) =>
+      action(actionTypes.CONNECTORS.PUBLISH.REQUEST, {
         _integrationId,
         isPublished,
       }),
-    successful: _integrationId =>
-      action(actionTypes.CONNECTORS.PUBLISH.SUCCESSFUL, {
+    success: _integrationId =>
+      action(actionTypes.CONNECTORS.PUBLISH.SUCCESS, {
         _integrationId,
       }),
     error: _integrationId =>
