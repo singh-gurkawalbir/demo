@@ -438,6 +438,13 @@ describe('makeSuiteScriptIASections selector', () => {
 
 describe('suiteScriptResourceStatus selector', () => {
   test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.suiteScriptResourceStatus(undefined, {})).toEqual({
+      hasData: false,
+      isLoading: false,
+      method: 'GET',
+      isReady: false,
+      retryCount: 0,
+    });
     expect(selectors.suiteScriptResourceStatus({}, {})).toEqual({
       hasData: false,
       isLoading: false,
@@ -446,11 +453,244 @@ describe('suiteScriptResourceStatus selector', () => {
       retryCount: 0,
     });
   });
+  test('should return correct resource status if resource has no data and is loading', () => {
+    const integrationId = 'int-id-123';
+    const ssLinkedConnectionId = 'linked-ns-id';
+    const state = {
+      comms: {
+        networkComms: {
+          'GET:/suitescript/connections/linked-ns-id/integrations/int-id-123/flows': {
+            status: 'loading',
+            retry: 2,
+          },
+        },
+      },
+      data: {
+        suiteScript: {
+          'linked-ns-id': {
+          },
+        },
+      },
+    };
+    const expectedOutput = {
+      resourceType: 'flows',
+      hasData: false,
+      isLoading: true,
+      retryCount: 2,
+      method: 'GET',
+      isReady: false,
+    };
+
+    expect(selectors.suiteScriptResourceStatus(state, {
+      resourceType: 'flows',
+      ssLinkedConnectionId,
+      integrationId })).toEqual(expectedOutput);
+  });
+  test('should return correct resource status if resource is loaded and ready', () => {
+    const integrationId = 'int-id-123';
+    const ssLinkedConnectionId = 'linked-ns-id';
+    const state = {
+      comms: {
+        networkComms: {
+          'GET:/suitescript/connections/linked-ns-id/integrations/int-id-123/flows': {
+            status: 'loading',
+            retry: 2,
+          },
+          'PUT:/suitescript/connections/linked-ns-id/integrations': {
+            status: 'success',
+          },
+        },
+      },
+      data: {
+        suiteScript: {
+          'linked-ns-id': {
+            integrations: [{_connectorId: 'suitescript-salesforce-netsuite', _id: '201'}],
+          },
+        },
+      },
+    };
+    const expectedOutput = {
+      resourceType: 'integrations',
+      hasData: true,
+      isLoading: false,
+      retryCount: 0,
+      method: 'PUT',
+      isReady: true,
+    };
+
+    expect(selectors.suiteScriptResourceStatus(state, {
+      resourceType: 'integrations',
+      ssLinkedConnectionId,
+      integrationId,
+      resourceReqMethod: 'PUT' })).toEqual(expectedOutput);
+  });
 });
 
 describe('suiteScriptResourceData selector', () => {
+  const resourceType = 'flows';
+  const id = 'ri3401';
+  const ssLinkedConnectionId = 'linked-ns-id';
+  const integrationId = 'int-id-456';
+  const suiteScriptResourceKey = 'linked-ns-id-flows-ri3401';
+
   test('should not throw any exception for invalid arguments', () => {
-    expect(selectors.suiteScriptResourceData(undefined, {})).toEqual({data: undefined, status: undefined});
+    expect(selectors.suiteScriptResourceData(undefined, {})).toEqual({});
+    expect(selectors.suiteScriptResourceData({}, {})).toEqual({});
+  });
+  test('should return empty merged object if both resource and its patch does not exist', () => {
+    const state = {
+      data: {
+        suiteScript: {
+          'linked-ns-id': {
+            integrations: [{_id: integrationId, _connectorId: 'suitescript-salesforce-netsuite'}],
+            flows: [{
+              name: 'Salesforce Account to Customer',
+              _id: 'ri3408',
+              _integrationId: integrationId,
+            }],
+          },
+        },
+      },
+      session: {
+        stage: {},
+      },
+    };
+
+    const expectedOutput = {
+      merged: {},
+    };
+
+    expect(selectors.suiteScriptResourceData(state, {resourceType, id, ssLinkedConnectionId, integrationId, scope: 'value'})).toEqual(expectedOutput);
+  });
+  test('should return original resource data if no patch exists', () => {
+    const state = {
+      data: {
+        suiteScript: {
+          'linked-ns-id': {
+            integrations: [{_id: integrationId, _connectorId: 'suitescript-salesforce-netsuite'}],
+            flows: [{
+              name: 'Salesforce Account to Customer',
+              _id: 'ri3401',
+              _integrationId: integrationId,
+            }],
+          },
+        },
+      },
+      session: {
+        stage: {},
+      },
+    };
+
+    const expectedOutput = {
+      master: {
+        name: 'Salesforce Account to Customer',
+        _id: 'ri3401',
+        _integrationId: integrationId,
+      },
+      merged: {
+        name: 'Salesforce Account to Customer',
+        _id: 'ri3401',
+        _integrationId: integrationId,
+      },
+    };
+
+    expect(selectors.suiteScriptResourceData(state, {resourceType, id, ssLinkedConnectionId, integrationId, scope: 'value'})).toEqual(expectedOutput);
+  });
+  test('should return original, patched and merged data along with lastChange if patch exists', () => {
+    const state = {
+      data: {
+        suiteScript: {
+          'linked-ns-id': {
+            integrations: [{_id: integrationId, _connectorId: 'suitescript-salesforce-netsuite'}],
+            flows: [{
+              name: 'Salesforce Account to Customer',
+              ssLinkedConnectionId,
+              type: 'REALTIME_IMPORT',
+              _flowId: '24',
+              _id: 'ri3401',
+              _integrationId: integrationId,
+              import: {
+                netsuite: {
+                  recordType: 'customer',
+                  subRecordImports: [],
+                },
+              },
+            }],
+          },
+        },
+      },
+      session: {
+        stage: {
+          [suiteScriptResourceKey]: {
+            patch: [
+              {op: 'replace',
+                path: '/import/netsuite/subRecordImports',
+                scope: 'value',
+                timestamp: 123455,
+                value: [
+                  {
+                    operation: 'add',
+                    recordType: 'account',
+                    referenceFieldId: 'contact',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    };
+
+    const expectedOutput = {
+      master: {
+        name: 'Salesforce Account to Customer',
+        ssLinkedConnectionId,
+        type: 'REALTIME_IMPORT',
+        _flowId: '24',
+        _id: 'ri3401',
+        _integrationId: integrationId,
+        import: {
+          netsuite: {
+            recordType: 'customer',
+            subRecordImports: [],
+          },
+        },
+      },
+      patch: [
+        {op: 'replace',
+          path: '/import/netsuite/subRecordImports',
+          scope: 'value',
+          timestamp: 123455,
+          value: [
+            {
+              operation: 'add',
+              recordType: 'account',
+              referenceFieldId: 'contact',
+            },
+          ],
+        },
+      ],
+      lastChange: 123455,
+      merged: {
+        name: 'Salesforce Account to Customer',
+        ssLinkedConnectionId,
+        type: 'REALTIME_IMPORT',
+        _flowId: '24',
+        _id: 'ri3401',
+        _integrationId: integrationId,
+        import: {
+          netsuite: {
+            recordType: 'customer',
+            subRecordImports: [{
+              operation: 'add',
+              recordType: 'account',
+              referenceFieldId: 'contact',
+            }],
+          },
+        } },
+    };
+
+    expect(selectors.suiteScriptResourceData(state, {resourceType, id, ssLinkedConnectionId, integrationId, scope: 'value'})).toEqual(expectedOutput);
   });
 });
 
@@ -469,18 +709,174 @@ describe('suiteScriptFlowSettings selector', () => {
 describe('suiteScriptFlowConnectionList selector', () => {
   test('should not throw any exception for invalid arguments', () => {
     expect(selectors.suiteScriptFlowConnectionList(undefined, {})).toEqual([]);
+    expect(selectors.suiteScriptFlowConnectionList({}, {})).toEqual([]);
+  });
+  test('should not include ACTIVITY_STREAM connection id in the returned list', () => {
+    const ssLinkedConnectionId = 'linked-ns-id';
+    const flowId = 'flow-123';
+    const state = {
+      data: {
+        suiteScript: {
+          'linked-ns-id': {
+            integrations: [{_connectorId: 'suitescript-salesforce-netsuite', _id: '201'}],
+            connections: [{id: 'ACTIVITY_STREAM', name: 'Activity Stream', type: 'ftp'}],
+          },
+        },
+      },
+    };
+
+    expect(selectors.suiteScriptFlowConnectionList(state, { ssLinkedConnectionId, flowId })).toEqual([]);
+  });
+  test('should return JAVA connection id if its a Java flow', () => {
+    const ssLinkedConnectionId = 'linked-ns-id';
+    const flowId = 'flow-123';
+    const state = {
+      data: {
+        suiteScript: {
+          'linked-ns-id': {
+            integrations: [{_connectorId: 'suitescript-salesforce-netsuite', _id: '201'}],
+            flows: [{_id: 'flow-123', type: 'REALTIME_EXPORT', export: {_connectionId: 'abc'}}],
+            connections: [
+              {id: 'ACTIVITY_STREAM', name: 'Activity Stream', type: 'ftp'},
+              {id: 'CELIGO_JAVA_INTEGRATOR_NETSUITE_CONNECTION', name: 'NetSuite Connection', type: 'netsuite'},
+              {id: 'abc', name: 'Export conn id'},
+            ],
+          },
+        },
+      },
+    };
+    const expectedConnections = [
+      {id: 'CELIGO_JAVA_INTEGRATOR_NETSUITE_CONNECTION', name: 'NetSuite Connection', type: 'netsuite'},
+      {id: 'abc', name: 'Export conn id'},
+    ];
+
+    expect(selectors.suiteScriptFlowConnectionList(state, { ssLinkedConnectionId, flowId })).toEqual(expectedConnections);
+  });
+  test('should return all exports and imports connections', () => {
+    const ssLinkedConnectionId = 'linked-ns-id';
+    const flowId = 'flow-123';
+    const state = {
+      data: {
+        suiteScript: {
+          'linked-ns-id': {
+            integrations: [{_connectorId: 'suitescript-salesforce-netsuite', _id: '201'}],
+            flows: [{_id: 'flow-123', export: {_connectionId: 'abc'}, import: {_connectionId: 'def'}}],
+            connections: [
+              {id: 'ACTIVITY_STREAM', name: 'Activity Stream', type: 'ftp'},
+              {id: 'CELIGO_JAVA_INTEGRATOR_NETSUITE_CONNECTION', name: 'NetSuite Connection', type: 'netsuite'},
+              {id: 'abc', name: 'Export conn id'},
+              {id: 'def', name: 'Import conn id'},
+            ],
+          },
+        },
+      },
+    };
+    const expectedConnections = [
+      {id: 'abc', name: 'Export conn id'},
+      {id: 'def', name: 'Import conn id'},
+    ];
+
+    expect(selectors.suiteScriptFlowConnectionList(state, { ssLinkedConnectionId, flowId })).toEqual(expectedConnections);
   });
 });
 
 describe('suiteScriptIntegrationConnectionList selector', () => {
   test('should not throw any exception for invalid arguments', () => {
     expect(selectors.suiteScriptIntegrationConnectionList(undefined, {})).toEqual([]);
+    expect(selectors.suiteScriptIntegrationConnectionList({}, {})).toEqual([]);
+  });
+  test('should return connections list if no integration id is passed and not include ACTIVITY_STREAM connection', () => {
+    const ssLinkedConnectionId = 'linked-ns-id';
+    const state = {
+      data: {
+        suiteScript: {
+          'linked-ns-id': {
+            integrations: [{_connectorId: 'suitescript-salesforce-netsuite', _id: '201'}],
+            connections: [{id: 'ACTIVITY_STREAM', name: 'Activity Stream', type: 'ftp'}],
+          },
+        },
+      },
+    };
+
+    expect(selectors.suiteScriptIntegrationConnectionList(state, { ssLinkedConnectionId })).toEqual([]);
+  });
+  test('should return exports and imports connections for all flows if integration id is passed', () => {
+    const ssLinkedConnectionId = 'linked-ns-id';
+    const integrationId = 'int-123';
+    const state = {
+      data: {
+        suiteScript: {
+          'linked-ns-id': {
+            flows: [
+              {
+                import: {_connectionId: 'SALESFORCE_CONNECTION', type: 'salesforce'},
+                name: 'Assembly Item To Salesforce Product',
+                ssLinkedConnectionId: 'linked-ns-id',
+                type: 'REALTIME_EXPORT',
+                _flowId: '1',
+                _id: 're2001',
+                _integrationId: 'int-123',
+              },
+              {
+                export: {_connectionId: 'NETSUITE_CONNECTION', type: 'netsuite'},
+                name: 'SO import',
+                ssLinkedConnectionId: 'linked-ns-id',
+                type: 'EXPORT',
+                _flowId: '3',
+                _id: 're2003',
+                _integrationId: 'int-123'},
+            ],
+            integrations: [{_connectorId: 'suitescript-salesforce-netsuite', _id: '201'}],
+            connections: [
+              {id: 'ACTIVITY_STREAM', name: 'Activity Stream', type: 'ftp'},
+              {id: 'CELIGO_JAVA_INTEGRATOR_NETSUITE_CONNECTION', name: 'NetSuite Connection', type: 'netsuite'},
+              {id: 'SALESFORCE_CONNECTION', name: 'Export conn id'},
+              {id: 'NETSUITE_CONNECTION', name: 'Import conn id'},
+            ],
+          },
+        },
+      },
+    };
+    const expectedConnections = [
+      {id: 'CELIGO_JAVA_INTEGRATOR_NETSUITE_CONNECTION', name: 'NetSuite Connection', type: 'netsuite'},
+      {id: 'SALESFORCE_CONNECTION', name: 'Export conn id'},
+      {id: 'NETSUITE_CONNECTION', name: 'Import conn id'},
+    ];
+
+    expect(selectors.suiteScriptIntegrationConnectionList(state, { ssLinkedConnectionId, integrationId })).toEqual(expectedConnections);
   });
 });
 
 describe('suiteScriptTestConnectionCommState selector', () => {
   test('should not throw any exception for invalid arguments', () => {
-    expect(selectors.suiteScriptTestConnectionCommState(undefined, {})).toEqual({commState: null, message: null});
+    expect(selectors.suiteScriptTestConnectionCommState(undefined)).toEqual({commState: null, message: null});
+    expect(selectors.suiteScriptTestConnectionCommState({})).toEqual({commState: null, message: null});
+  });
+  test('should return correct comm status and message', () => {
+    const ssLinkedConnectionId = 'ns-linked-id';
+    const resourceId = 'flow-123';
+    const state = {
+      comms: {
+        suiteScript: {
+          ping: {
+            'ns-linked-id': {
+              'flow-123': {
+                status: 'aborted',
+                message: 'Call Aborted',
+              },
+            },
+            'ns-linked-id2': {},
+          },
+        },
+      },
+    };
+    const expectedOutput = {
+      commState: 'aborted',
+      message: 'Call Aborted',
+    };
+
+    expect(selectors.suiteScriptTestConnectionCommState(state, resourceId, ssLinkedConnectionId)).toEqual(expectedOutput);
+    expect(selectors.suiteScriptTestConnectionCommState(state, 'someid', 'ns-linked-id2')).toEqual({commState: null, message: null});
   });
 });
 
@@ -511,12 +907,129 @@ describe('suiteScriptIntegratorLinkedConnectionId selector', () => {
 describe('suiteScriptIntegrationAppInstallerData selector', () => {
   test('should not throw any exception for invalid arguments', () => {
     expect(selectors.suiteScriptIntegrationAppInstallerData(undefined, {})).toEqual(null);
+    expect(selectors.suiteScriptIntegrationAppInstallerData({}, {})).toEqual({steps: []});
+  });
+  test('should correctly update the current step flag on install steps', () => {
+    const integrationId = 'sf-ns';
+    const state = {
+      session: {
+        suiteScript: {
+          installer: {
+            'sf-ns': {
+              steps: [{
+                name: 'NetSuite Connection',
+                type: 'connection',
+                completed: true,
+                __index: 1,
+              },
+              {
+                completed: false,
+                name: 'Integrator Bundle',
+                type: 'integrator-bundle',
+                __index: 2,
+              }],
+            },
+          },
+        },
+      },
+    };
+    const expectedOutput = {
+      steps: [{
+        name: 'NetSuite Connection',
+        type: 'connection',
+        completed: true,
+        __index: 1,
+      },
+      {
+        completed: false,
+        name: 'Integrator Bundle',
+        type: 'integrator-bundle',
+        __index: 2,
+        isCurrentStep: true,
+      }],
+    };
+
+    expect(selectors.suiteScriptIntegrationAppInstallerData(state, integrationId)).toEqual(expectedOutput);
+    expect(selectors.suiteScriptIntegrationAppInstallerData(state, 'dummyid')).toEqual({steps: []});
   });
 });
 
 describe('isSuiteScriptIntegrationAppInstallComplete selector', () => {
   test('should not throw any exception for invalid arguments', () => {
     expect(selectors.isSuiteScriptIntegrationAppInstallComplete(undefined, {})).toEqual(null);
+    expect(selectors.isSuiteScriptIntegrationAppInstallComplete({}, {})).toEqual(false);
+  });
+  test('should return false if install steps are empty or undefined', () => {
+    const integrationId = 'sf-ns';
+    const state = {
+      session: {
+        suiteScript: {
+          installer: {
+            'sf-ns': {
+              steps: [],
+            },
+            'svb-ns': {},
+          },
+        },
+      },
+    };
+
+    expect(selectors.isSuiteScriptIntegrationAppInstallComplete(state, integrationId)).toEqual(false);
+    expect(selectors.isSuiteScriptIntegrationAppInstallComplete(state, 'svb-ns')).toEqual(false);
+  });
+  test('should return false if any step is incomplete', () => {
+    const integrationId = 'sf-ns';
+    const state = {
+      session: {
+        suiteScript: {
+          installer: {
+            'sf-ns': {
+              steps: [{
+                name: 'NetSuite Connection',
+                type: 'connection',
+                completed: true,
+                __index: 1,
+              },
+              {
+                completed: false,
+                name: 'Integrator Bundle',
+                type: 'integrator-bundle',
+                __index: 2,
+              }],
+            },
+          },
+        },
+      },
+    };
+
+    expect(selectors.isSuiteScriptIntegrationAppInstallComplete(state, integrationId)).toEqual(false);
+  });
+  test('should return true if all steps are completed', () => {
+    const integrationId = 'sf-ns';
+    const state = {
+      session: {
+        suiteScript: {
+          installer: {
+            'sf-ns': {
+              steps: [{
+                name: 'NetSuite Connection',
+                type: 'connection',
+                completed: true,
+                __index: 1,
+              },
+              {
+                completed: true,
+                name: 'Integrator Bundle',
+                type: 'integrator-bundle',
+                __index: 2,
+              }],
+            },
+          },
+        },
+      },
+    };
+
+    expect(selectors.isSuiteScriptIntegrationAppInstallComplete(state, integrationId)).toEqual(true);
   });
 });
 
@@ -529,6 +1042,64 @@ describe('userHasManageAccessOnSuiteScriptAccount selector', () => {
 describe('suiteScriptFlowDetail selector', () => {
   test('should not throw any exception for invalid arguments', () => {
     expect(selectors.suiteScriptFlowDetail(undefined, {})).toEqual();
+    expect(selectors.suiteScriptFlowDetail({}, {})).toEqual();
+  });
+  test('should return undefined if flows list is empty', () => {
+    const ssLinkedConnectionId = 'linked-ns-id';
+    const integrationId = 'int-123';
+    const flowId = 'flow-123';
+    const state = {
+      data: {
+        suiteScript: {
+          'linked-ns-id': {
+            integrations: [{_id: integrationId, _connectorId: 'suitescript-salesforce-netsuite'}],
+          },
+        },
+      },
+    };
+
+    expect(selectors.suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId})).toEqual(undefined);
+  });
+  test('should return undefined if requested flow does not exist in flows list', () => {
+    const ssLinkedConnectionId = 'linked-ns-id';
+    const integrationId = 'int-123';
+    const flowId = 'flow-123';
+    const state = {
+      data: {
+        suiteScript: {
+          'linked-ns-id': {
+            integrations: [{_id: integrationId, _connectorId: 'suitescript-salesforce-netsuite'}],
+            flows: [
+              {_id: 'flow-768', type: 'REALTIME_IMPORT', ssLinkedConnectionId, _integrationId: integrationId},
+              {_id: 'flow-456', type: 'REALTIME_EXPORT', export: {_connectionId: 'abc'}, ssLinkedConnectionId, _integrationId: integrationId},
+            ],
+          },
+        },
+      },
+    };
+
+    expect(selectors.suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId})).toEqual(undefined);
+  });
+  test('should return requested flow details from flows list', () => {
+    const ssLinkedConnectionId = 'linked-ns-id';
+    const integrationId = 'int-123';
+    const flowId = 'flow-123';
+    const state = {
+      data: {
+        suiteScript: {
+          'linked-ns-id': {
+            integrations: [{_id: integrationId, _connectorId: 'suitescript-salesforce-netsuite'}],
+            flows: [
+              {_id: 'flow-768', type: 'REALTIME_IMPORT', ssLinkedConnectionId, _integrationId: integrationId},
+              {_id: 'flow-123', type: 'REALTIME_EXPORT', export: {_connectionId: 'abc'}, ssLinkedConnectionId, _integrationId: integrationId},
+            ],
+          },
+        },
+      },
+    };
+    const expectedFlow = {_id: 'flow-123', type: 'REALTIME_EXPORT', export: {_connectionId: 'abc'}, ssLinkedConnectionId, _integrationId: integrationId};
+
+    expect(selectors.suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId})).toEqual(expectedFlow);
   });
 });
 

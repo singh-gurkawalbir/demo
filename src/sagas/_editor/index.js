@@ -20,7 +20,8 @@ import { requestSampleData } from '../sampleData/flows';
 import { requestExportSampleData } from '../sampleData/exports';
 import { constructResourceFromFormValues } from '../utils';
 import { safeParse } from '../../utils/string';
-import { getUniqueFieldId, dataAsString } from '../../utils/editor';
+import { getUniqueFieldId, dataAsString, FLOW_STAGES } from '../../utils/editor';
+import { isNewId } from '../../utils/resource';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -363,7 +364,7 @@ export function* requestEditorSampleData({
 
   if (!editor) return;
 
-  const {editorType, flowId, resourceId, resourceType, fieldId, editorSupportsV1V2data, formKey, stage} = editor;
+  const {editorType, flowId, resourceId, resourceType, fieldId, formKey, stage} = editor;
   // for some fields only v2 data is supported (not v1)
   const editorSupportsOnlyV2Data = yield select(selectors.editorSupportsOnlyV2Data, id);
 
@@ -381,26 +382,6 @@ export function* requestEditorSampleData({
     resourceType,
   });
   let sampleData;
-
-  // no /getContext call for below FB actions yet
-  if (stage === 'transform' ||
-  stage === 'postResponseMapHook' ||
-  stage === 'sampleResponse') {
-    yield call(requestSampleData, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-    });
-    const { data } = yield select(selectors.sampleDataWrapper, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-    });
-
-    return {data};
-  }
 
   // for csv and xml parsers, simply get the file sample data
   if (editorType === 'csvParser' || editorType === 'xmlParser') {
@@ -438,9 +419,7 @@ export function* requestEditorSampleData({
     sampleData = flowSampleData?.data;
   }
 
-  if (!sampleData && (!isPageGenerator || stage === 'outputFilter' ||
-  stage === 'exportFilter' ||
-  stage === 'inputFilter')) {
+  if (!sampleData && (!isPageGenerator || FLOW_STAGES.includes(stage))) {
     // sample data not present, trigger action to get sample data
     yield call(requestSampleData, {
       flowId,
@@ -461,17 +440,22 @@ export function* requestEditorSampleData({
   let _sampleData = null;
   let templateVersion;
 
-  // dont make /getContext call when v2 data is not supported
-  if (!editorSupportsV1V2data && !editorSupportsOnlyV2Data) {
-    _sampleData = sampleData ? {
-      data: sampleData,
-    } : undefined;
+  const {shouldGetContextFromBE, sampleData: uiSampleData} = yield select(selectors.shouldGetContextFromBE, id, sampleData);
+
+  // BE doesn't support /getContext for some use cases
+  if (!shouldGetContextFromBE) {
+    _sampleData = uiSampleData;
   } else {
     const filterPath = (stage === 'inputFilter' && resourceType === 'exports') ? 'inputFilter' : 'filter';
+    const defaultData = (isPageGenerator && !stage.includes('Filter')) ? undefined : { myField: 'sample' };
     const body = {
-      sampleData: sampleData || { myField: 'sample' },
+      sampleData: sampleData || defaultData,
       templateVersion: editorSupportsOnlyV2Data ? 2 : requestedTemplateVersion,
     };
+
+    if (!isNewId(flowId)) {
+      body.flowId = flowId;
+    }
 
     body[resourceType === 'imports' ? 'import' : 'export'] = resource;
     body.fieldPath = fieldId || filterPath;

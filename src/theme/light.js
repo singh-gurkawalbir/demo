@@ -426,6 +426,7 @@ export default {
         position: 'relative',
         padding: [[10, 16]],
         borderBottomColor: colors.celigoNeutral3,
+        verticalAlign: 'top',
       },
       head: {
         fontFamily: 'source sans pro semibold',

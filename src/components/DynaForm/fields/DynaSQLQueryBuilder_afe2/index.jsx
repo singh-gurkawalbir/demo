@@ -16,11 +16,6 @@ export default function DynaSQLQueryBuilder_afe2(props) {
     onFieldChange,
     arrayIndex,
     value,
-    // TODO: Ashu, same as comment below: This was carried forward from the old DynaSQLQuery_afe2
-    // is it needed?
-    // DynaQuery was being used to Define Query under Database Lookup
-    sampleData,
-
   } = props;
   const dispatch = useDispatch();
   const history = useHistory();
@@ -60,10 +55,6 @@ export default function DynaSQLQueryBuilder_afe2(props) {
 
   const handleEditorClick = useCallback(() => {
     dispatch(actions._editor.init(editorId, 'sql', {
-      // TODO: Ashu, this sampleData prop is carried forward from the old DynaQuery_afe2
-      // field. Is this necessary here? This is forDatabase lookup query... If possible,
-      // would be nice to remove this prop as it should be part of the init?
-      data: sampleData,
       formKey,
       flowId,
       resourceId,
@@ -74,7 +65,7 @@ export default function DynaSQLQueryBuilder_afe2(props) {
     }));
 
     history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, editorId, sampleData, formKey, flowId, resourceId, resourceType, id, handleSave, history, match.url]);
+  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, history, match.url]);
 
   return (
     <DynaHandlebarPreview {...props} onEditorClick={handleEditorClick} />

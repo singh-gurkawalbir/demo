@@ -157,6 +157,8 @@ const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
     return `${opTitle} ${resourceLabel}`;
   }
 
+  if (!resourceLabel) { return ''; }
+
   return `${opTitle} ${resourceLabel.toLowerCase()}`;
 };
 
