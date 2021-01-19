@@ -322,7 +322,7 @@ export default function CeligoDrawer() {
                     <>
                       {drawerOpened ? <Icon />
                         : (
-                          <Tooltip data-public  placement="right-end" enterDelay={0} title={label}>
+                          <Tooltip data-public placement="right-end" enterDelay={0} title={label}>
                             <div>
                               <Icon />
                             </div>
@@ -376,7 +376,7 @@ export default function CeligoDrawer() {
                               {drawerOpened
                                 ? <Icon />
                                 : (
-                                  <Tooltip data-public  placement="right-end" enterDelay={0} title={label}>
+                                  <Tooltip data-public placement="right-end" enterDelay={0} title={label}>
                                     <div>
                                       <Icon />
                                     </div>

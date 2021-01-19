@@ -418,7 +418,7 @@ function JobErrorTable({
     if (!isEditable) return null;
 
     return (
-      <Tooltip data-public  title="Edit retry data">
+      <Tooltip data-public title="Edit retry data">
         <IconButton
           component={Link}
           size="small"
