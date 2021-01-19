@@ -725,6 +725,7 @@ describe('Field-list mapping to UI mapping utils', () => {
         extract: 'test test',
         internalId: false,
         useFirstRow: true,
+        useIterativeRow: true,
       },
       {
         generate: 'a[*].a2',
@@ -733,16 +734,19 @@ describe('Field-list mapping to UI mapping utils', () => {
         immutable: true,
         internalId: false,
         useFirstRow: true,
+        useIterativeRow: true,
       },
       {
         generate: 'a[*].a3',
         extract: 'test test',
         internalId: false,
+        useIterativeRow: true,
       },
       {
         generate: 'b[*].b1',
         extract: 'test test',
         internalId: false,
+        useIterativeRow: true,
       },
     ];
 
@@ -947,10 +951,14 @@ describe('Field-list mapping to UI mapping utils', () => {
       {
         extract: 'Amazon Product ASIN',
         generate: 'Test',
+        useIterativeRow: true,
+
       },
       {
         extract: 'Description',
         generate: 'test field3',
+        useIterativeRow: true,
+
       },
       {
         extract: 'Name',
@@ -1056,10 +1064,14 @@ describe('Field-list mapping to UI mapping utils', () => {
       {
         extract: 'Amazon Product ASIN',
         generate: 'Test',
+        useIterativeRow: true,
+
       },
       {
         extract: 'Description',
         generate: 'test field3',
+        useIterativeRow: true,
+
       },
       {
         extract: 'Name',
@@ -1340,6 +1352,8 @@ describe('Field-list mapping to UI mapping utils', () => {
       {
         extract: 'werfg',
         generate: 'asd[*].iuyt',
+        useIterativeRow: true,
+
       },
     ];
 
@@ -1504,6 +1518,8 @@ describe('Field-list mapping to UI mapping utils', () => {
       {
         extract: 'werfg',
         generate: 'asd[*].iuyt',
+        useIterativeRow: true,
+
       },
     ];
 
@@ -1794,6 +1810,8 @@ describe('Field-list mapping to UI mapping utils', () => {
         extract: 'test test',
         internalId: false,
         useFirstRow: true,
+        useIterativeRow: true,
+
       },
       {
         generate: 'a[*].a2',
@@ -1802,16 +1820,22 @@ describe('Field-list mapping to UI mapping utils', () => {
         immutable: true,
         internalId: false,
         useFirstRow: true,
+        useIterativeRow: true,
+
       },
       {
         generate: 'a[*].a3',
         extract: 'test test',
         internalId: false,
+        useIterativeRow: true,
+
       },
       {
         generate: 'b[*].b1',
         extract: 'test test',
         internalId: false,
+        useIterativeRow: true,
+
       },
     ];
 
@@ -1916,6 +1940,8 @@ describe('Field-list mapping to UI mapping utils', () => {
         generate: 'a[*].a1',
         extract: 'test test',
         internalId: false,
+        useIterativeRow: true,
+
       },
       {
         generate: 'a[*].a2',
@@ -1923,16 +1949,22 @@ describe('Field-list mapping to UI mapping utils', () => {
         discardIfEmpty: true,
         immutable: true,
         internalId: false,
+        useIterativeRow: true,
+
       },
       {
         generate: 'a[*].a3',
         extract: 'test test',
         internalId: false,
+        useIterativeRow: true,
+
       },
       {
         generate: 'b[*].b1',
         extract: 'test test',
         internalId: false,
+        useIterativeRow: true,
+
       },
     ];
 

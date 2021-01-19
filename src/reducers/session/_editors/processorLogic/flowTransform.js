@@ -82,6 +82,13 @@ export default {
 
     return javascript.processResult(editor, result);
   },
+  preSaveValidate: editor => {
+    if (editor.activeProcessor === 'transform') {
+      return transform.preSaveValidate({rule: editor.rule?.transform});
+    }
+
+    return {saveError: false};
+  },
   patchSet: editor => {
     const patches = {
       foregroundPatches: undefined,

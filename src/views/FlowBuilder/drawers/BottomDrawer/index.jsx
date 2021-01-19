@@ -320,9 +320,10 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
               }
               label="Connections"
             />
-            <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
+
             {flowScripts?.length &&
             <Tab {...tabProps(3)} icon={<ScriptsIcon />} label="Scripts" />}
+            <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
             {flowScriptsWithLogEntry.map((script, index) => (
               <Tab
                 className={classes.customTab}

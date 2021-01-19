@@ -47,13 +47,11 @@ const useStyles = makeStyles(theme => ({
   },
   rightActionContainer: {
     padding: theme.spacing(2, 0),
+    display: 'flex',
   },
   leftActionContainer: {
     padding: theme.spacing(2, 0),
-    // border: `solid 1px ${theme.palette.secondary.lightest}`,
-    // borderWidth: [[1, 0]],
     display: 'flex',
-    flexWrap: 'wrap',
     alignItems: 'center',
     '& > *': {
       marginRight: 10,
@@ -230,20 +228,6 @@ export default function ScriptLogs({ flowId, scriptId }) {
               </MenuItem>
             ))}
           </CeligoSelect>
-          <CeligoSelect
-            data-test="selectLogLevel"
-            className={classes.filterButton}
-            onChange={handleLogLevelChange}
-            displayEmpty
-            value={logLevel || ''}>
-            <MenuItem value="">Log level</MenuItem>
-            {Object.keys(LOG_LEVELS).map(logLevel => (
-              <MenuItem key={logLevel} value={logLevel}>
-                {logLevel}
-              </MenuItem>
-            ))}
-          </CeligoSelect>
-
         </div>
         <div className={classes.rightActionContainer}>
           {flowId && (

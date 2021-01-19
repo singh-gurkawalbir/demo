@@ -1,9 +1,11 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
+import { selectors } from '../../../../../reducers';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import CeligoSwitch from '../../../../CeligoSwitch';
+import Spinner from '../../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   celigoSwitchOnOff: {
@@ -21,18 +23,7 @@ export default function OnOffCell({
 
   const { confirmDialog } = useConfirmDialog();
   const dispatch = useDispatch();
-  const togglePublish = useCallback(() => {
-    const patchSet = [
-      {
-        op: 'replace',
-        path: '/published',
-        value: !isPublished,
-      },
-    ];
-
-    dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged(resourceType, resourceId));
-  }, [dispatch, isPublished, resourceId, resourceType]);
+  const toggleStatus = useSelector(state => selectors.connectorPublishStatus(state, resourceId));
   const handleTogglePublishConfirm = useCallback(() => {
     const label = isPublished ? 'unpublish' : 'publish';
 
@@ -42,7 +33,7 @@ export default function OnOffCell({
       buttons: [
         {
           label,
-          onClick: togglePublish,
+          onClick: () => dispatch(actions.connectors.publish.request(resourceId, isPublished)),
         },
         {
           label: 'Cancel',
@@ -50,17 +41,21 @@ export default function OnOffCell({
         },
       ],
     });
-  }, [confirmDialog, togglePublish, isPublished]);
+  }, [confirmDialog, isPublished, resourceId, dispatch]);
 
-  if (!(resourceType === 'templates' && !applications?.length)) {
-    return (
-      <CeligoSwitch
-        className={classes.celigoSwitchOnOff}
-        checked={isPublished}
-        onChange={handleTogglePublishConfirm}
-      />
-    );
+  if (resourceType !== 'connectors' && !applications?.length) {
+    return null;
   }
 
-  return null;
+  if (toggleStatus === 'loading') {
+    return <Spinner size={24} className={classes.spinnerOnOff} />;
+  }
+
+  return (
+    <CeligoSwitch
+      className={classes.celigoSwitchOnOff}
+      checked={isPublished}
+      onChange={handleTogglePublishConfirm}
+    />
+  );
 }

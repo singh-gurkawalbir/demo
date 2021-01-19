@@ -87,6 +87,7 @@ import {
 } from '../utils/latestJobs';
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
+import { FLOW_STAGES } from '../utils/editor';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -330,13 +331,7 @@ selectors.integrationInstallSteps = (state, integrationId) => {
 const emptyStepsArr = [];
 
 selectors.integrationUninstallSteps = (state, { integrationId, isFrameWork2 }) => {
-  const uninstallData = isFrameWork2 ? fromSession.uninstall2Data(
-    state && state.session,
-    integrationId
-  ) : fromSession.uninstallData(
-    state && state.session,
-    integrationId
-  );
+  const uninstallData = isFrameWork2 ? fromSession.uninstall2Data(state?.session, integrationId) : fromSession.uninstallData(state?.session, integrationId);
   const { steps: uninstallSteps, error, isFetched, isComplete } = uninstallData;
 
   if (!uninstallSteps || !Array.isArray(uninstallSteps)) {
@@ -388,10 +383,7 @@ selectors.isIAV2UninstallComplete = (state, { integrationId }) => {
   if (!integration) return true;
   if (integration.mode !== 'uninstall') return false;
 
-  const uninstallData = fromSession.uninstall2Data(
-    state && state.session,
-    integrationId
-  );
+  const uninstallData = fromSession.uninstall2Data(state?.session, integrationId);
 
   const { steps: uninstallSteps, isFetched } = uninstallData;
 
@@ -2764,13 +2756,9 @@ selectors.formAccessLevel = (state, integrationId, resource, disabled) => {
   return { disableAllFields: !!disabled };
 };
 
-// TODO: @Ashu, we need to add tests for this once GA is done.  I extracted this
-// logic from the DynaSettings component since it needed to be used in multiple
-// places. Also, the logic below, now in one place could surely be cleaned up and made more
-// readable...I left as-is to minimize risk of regressions.
 selectors.canEditSettingsForm = (state, resourceType, resourceId, integrationId) => {
   const r = selectors.resource(state, resourceType, resourceId);
-  const isIAResource = !!(r && r._connectorId);
+  const isIAResource = !!r?._connectorId;
   const {allowedToPublish, developer} = selectors.userProfile(state) || emptyObject;
   const viewOnly = selectors.isFormAMonitorLevelAccess(state, integrationId);
 
@@ -3112,8 +3100,16 @@ selectors.sampleDataWrapper = createSelector(
         selectors.resource(state, 'integrations', flow._integrationId) || emptyObject
       );
     },
-    (state, { resourceId, resourceType }) =>
-      selectors.resource(state, resourceType, resourceId) || emptyObject,
+    (state, { resourceId, resourceType }) => {
+      const { merged } = selectors.resourceData(
+        state,
+        resourceType,
+        resourceId,
+        'value'
+      );
+
+      return merged || emptyObject;
+    },
     (state, { resourceId, resourceType }) => {
       const res = selectors.resource(state, resourceType, resourceId) || emptyObject;
 
@@ -3330,13 +3326,13 @@ selectors.suiteScriptResourceStatus = (
 
   const commKey = commKeyGen(path, resourceReqMethod);
   const method = resourceReqMethod;
-  const hasData = fromData.hasSuiteScriptData(state.data, {
+  const hasData = fromData.hasSuiteScriptData(state?.data, {
     resourceType,
     ssLinkedConnectionId,
     integrationId,
   });
-  const isLoading = fromComms.isLoading(state.comms, commKey);
-  const retryCount = fromComms.retryCount(state.comms, commKey);
+  const isLoading = fromComms.isLoading(state?.comms, commKey);
+  const retryCount = fromComms.retryCount(state?.comms, commKey);
   const isReady = method !== 'GET' || (hasData && !isLoading);
 
   return {
@@ -3498,10 +3494,10 @@ selectors.suiteScriptIntegrationConnectionList = (
 
   if (integrationId && flows) {
     flows.forEach(f => {
-      if (f.export && f.export._connectionId) {
+      if (f.export?._connectionId) {
         connectionIdsInUse.push(f.export._connectionId);
       }
-      if (f.import && f.import._connectionId) {
+      if (f.import?._connectionId) {
         connectionIdsInUse.push(f.import._connectionId);
       }
       if (isJavaFlow(f)) {
@@ -3520,16 +3516,8 @@ selectors.suiteScriptTestConnectionCommState = (
   resourceId,
   ssLinkedConnectionId
 ) => {
-  const status = fromComms.suiteScriptTestConnectionStatus(
-    state && state.comms,
-    resourceId,
-    ssLinkedConnectionId
-  );
-  const message = fromComms.suiteScriptTestConnectionMessage(
-    state && state.comms,
-    resourceId,
-    ssLinkedConnectionId
-  );
+  const status = fromComms.suiteScriptTestConnectionStatus(state?.comms, resourceId, ssLinkedConnectionId);
+  const message = fromComms.suiteScriptTestConnectionMessage(state?.comms, resourceId, ssLinkedConnectionId);
 
   return {
     commState: status,
@@ -3639,7 +3627,7 @@ selectors.isSuiteScriptIntegrationAppInstallComplete = (state, id) => {
     installer.steps.length &&
     !installer.steps.reduce((result, step) => result || !step.completed, false);
 
-  return isInstallComplete;
+  return !!isInstallComplete;
 };
 
 selectors.userHasManageAccessOnSuiteScriptAccount = (state, ssLinkedConnectionId) => !!selectors.resourcePermissions(state, 'connections', ssLinkedConnectionId)?.edit;
@@ -3651,7 +3639,7 @@ selectors.suiteScriptFlowDetail = (state, {ssLinkedConnectionId, integrationId, 
     ssLinkedConnectionId,
   });
 
-  return flows && flows.find(flow => flow._id === flowId);
+  return flows?.find(flow => flow._id === flowId);
 };
 
 selectors.suiteScriptNetsuiteMappingSubRecord = (state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}) => {
@@ -4939,6 +4927,7 @@ selectors.flowConnectionsWithLogEntry = () => {
 selectors.editorHelperFunctions = state => state?.session?.editors?.helperFunctions || [];
 selectors._editorHelperFunctions = state => state?.session?._editors?.helperFunctions || {};
 
+// todo: below selector would be removed once AFE refactored code is stable
 selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enableEditorV2) => {
   const { merged: resource = {} } = selectors.resourceData(
     state,
@@ -4996,7 +4985,7 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enable
 
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
-  const {editorType, fieldId, flowId, resourceId, resourceType, stage} = fromSession._editor(state.session, editorId);
+  const {editorType, fieldId, flowId, resourceId, resourceType, stage} = fromSession._editor(state?.session, editorId);
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
   if (stage === 'outputFilter' ||
@@ -5047,6 +5036,63 @@ selectors.isEditorLookupSupported = (state, editorId) => {
   }
 
   return true;
+};
+
+// this selector returns if BE supports the /getContext
+// for passed stage and field
+// //TODO: update the logic here once BE trackers
+// IO-19867 and IO-19868 are complete
+selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
+  const editor = fromSession._editor(state?.session, editorId);
+  const {stage, resourceId, resourceType, flowId, fieldId} = editor;
+  const { merged: resource = {} } = selectors.resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
+  const connection = selectors.resource(state, 'connections', resource._connectionId);
+  let _sampleData = null;
+  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
+
+  if (FLOW_STAGES.includes(stage)) {
+    _sampleData = sampleData;
+  } else if (isPageGenerator) {
+    // for PGs, no sample data is shown
+    _sampleData = undefined;
+  } else {
+    // for all PPs, default sample data is shown in case its empty
+    _sampleData = { data: sampleData || { myField: 'sample' }};
+  }
+
+  // TODO: BE would be deprecating native REST adaptor as part of IO-19864
+  // we can remove this logic from UI as well once that is complete
+  if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
+    if (!connection.isHTTP && (stage === 'outputFilter' || stage === 'exportFilter' || stage === 'inputFilter')) {
+      // native REST adaptor filters
+      return {
+        shouldGetContextFromBE: false,
+        sampleData: Array.isArray(_sampleData) ? {
+          rows: _sampleData,
+        } : {
+          record: _sampleData,
+        },
+      };
+    }
+
+    return {shouldGetContextFromBE: connection.isHTTP, sampleData: _sampleData};
+  }
+  if (stage === 'transform' ||
+  stage === 'postResponseMapHook' ||
+  stage === 'sampleResponse') {
+    return {shouldGetContextFromBE: false, sampleData: _sampleData};
+  }
+
+  // for lookup fields, BE doesnt support v1/v2 yet
+  if (fieldId?.startsWith('_')) {
+    return {shouldGetContextFromBE: false, sampleData: _sampleData};
+  }
+
+  return {shouldGetContextFromBE: true};
 };
 
 // #endregion AFE selectors

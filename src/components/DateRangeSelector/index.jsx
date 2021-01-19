@@ -3,6 +3,7 @@ import { Button, List, ListItem, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import addYears from 'date-fns/addYears';
 import React, { useCallback, useMemo, useState } from 'react';
+import clsx from 'clsx';
 import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
@@ -12,6 +13,7 @@ import ArrowPopper from '../ArrowPopper';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import ButtonGroup from '../ButtonGroup';
 import ActionButton from '../ActionButton';
+import ArrowDownIcon from '../icons/ArrowDownIcon';
 
 const defaultPresets = [
   {id: 'last1hour', label: 'Last 1 hour'},
@@ -110,6 +112,7 @@ export default function DateRangeSelector({
   value = {},
   onSave,
   fromDate,
+  classProps = {},
   customPresets = [],
   showTime = true,
   clearable = false,
@@ -192,13 +195,17 @@ export default function DateRangeSelector({
             variant="outlined"
             color="secondary"
             className={classes.dateRangePopperBtn}>
-            {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || 'Select range'}
+            {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || 'Select range'}<ArrowDownIcon />
           </Button>
         )
       }
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
+        classes={{
+          popper: clsx(classProps.filterTimeStampPopper, {[classProps.filterTimeStampPopperExpand]: selectedRange.preset === 'custom' }),
+          arrow: clsx(classProps.filterTimeStampPopperArrow, {[classProps.filterTimeStampArrowPopperExpand]: selectedRange.preset === 'custom'}),
+        }}
         restrictToParent={false}
         placement={placement || 'bottom-end'}
         onClose={toggleClick}>

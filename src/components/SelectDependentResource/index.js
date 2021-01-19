@@ -153,6 +153,7 @@ export default function SelectDependentResource({resources = emptySet, selectedR
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
+        restrictToParent={false}
         placement="bottom-end"
         onClose={toggleClick}>
         {anchorEl && (
