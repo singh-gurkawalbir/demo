@@ -107,11 +107,5 @@ selectors.connectorFieldOptions = (
   };
 };
 
-selectors.connectorPublishStatus = (state, _integrationId) => {
-  if (!state || !state[_integrationId] || !state[_integrationId].publishStatus) {
-    return 'failed';
-  }
-
-  return state?.[_integrationId]?.publishStatus || 'failed';
-};
+selectors.connectorPublishStatus = (state, _integrationId) => state?.[_integrationId]?.publishStatus || 'failed';
 // #endregion
