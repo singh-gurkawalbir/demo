@@ -1103,13 +1103,13 @@ const template = {
       templateId,
     }),
   publish: {
-    loading: (templateId, isPublished) =>
-      action(actionTypes.TEMPLATE.PUBLISH.LOADING, {
+    request: (templateId, isPublished) =>
+      action(actionTypes.TEMPLATE.PUBLISH.REQUEST, {
         templateId,
         isPublished,
       }),
-    successful: templateId =>
-      action(actionTypes.TEMPLATE.PUBLISH.SUCCESSFUL, {
+    success: templateId =>
+      action(actionTypes.TEMPLATE.PUBLISH.SUCCESS, {
         templateId,
       }),
     error: templateId =>

@@ -34,7 +34,7 @@ export default function OnOffCell({
       buttons: [
         {
           label,
-          onClick: () => dispatch(actions.template.publish.loading(resourceId, isPublished)),
+          onClick: () => dispatch(actions.template.publish.request(resourceId, isPublished)),
         },
         {
           label: 'Cancel',

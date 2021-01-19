@@ -174,7 +174,7 @@ export function* publishStatus({ templateId, isPublished }) {
   if (resp?.error) {
     yield put(actions.template.publish.error(templateId));
   } else {
-    yield put(actions.template.publish.successful(templateId));
+    yield put(actions.template.publish.success(templateId));
   }
 }
 
@@ -186,5 +186,5 @@ export const templateSagas = [
     verifyBundleOrPackageInstall
   ),
   takeEvery(actionTypes.TEMPLATE.CREATE_COMPONENTS, createComponents),
-  takeEvery(actionTypes.TEMPLATE.PUBLISH.LOADING, publishStatus),
+  takeEvery(actionTypes.TEMPLATE.PUBLISH.REQUEST, publishStatus),
 ];
