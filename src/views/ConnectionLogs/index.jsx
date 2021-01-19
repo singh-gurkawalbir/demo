@@ -11,7 +11,7 @@ import IconTextButton from '../../components/IconTextButton';
 import CancelIcon from '../../components/icons/CancelIcon';
 import RefreshIcon from '../../components/icons/RefreshIcon';
 import DownloadDebugLogs from './DownloadDebugLogs';
-import CodePanel from '../../components/AFE/GenericEditor/CodePanel';
+import AutoScrollEditorTerminal from '../../components/AutoScrollEditorTerminal';
 
 const overrides = { useWorker: false };
 
@@ -135,11 +135,11 @@ export default function ConnectionLogs({ connectionId, flowId }) {
       </div>
       <div className={classes.editorContainer}>
         {['success', 'error'].includes(status) && (
-          <CodePanel
+          <AutoScrollEditorTerminal
             name="code"
             readOnly
             value={logs || emptyLogMessage}
-            mode="javascript"
+            mode="text"
             overrides={overrides}
         />
         )}
