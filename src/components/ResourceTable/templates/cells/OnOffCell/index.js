@@ -44,19 +44,19 @@ export default function OnOffCell({
     });
   }, [confirmDialog, isPublished, resourceId, dispatch]);
 
+  if (resourceType !== 'templates' && !applications?.length) {
+    return null;
+  }
+
   if (toggleStatus === 'loading') {
     return <Spinner size={24} className={classes.spinnerOnOff} />;
   }
 
-  if (resourceType === 'templates' || applications?.length) {
-    return (
-      <CeligoSwitch
-        className={classes.celigoSwitchOnOff}
-        checked={isPublished}
-        onChange={handleTogglePublishConfirm}
-      />
-    );
-  }
-
-  return null;
+  return (
+    <CeligoSwitch
+      className={classes.celigoSwitchOnOff}
+      checked={isPublished}
+      onChange={handleTogglePublishConfirm}
+    />
+  );
 }
