@@ -3,6 +3,7 @@ import { Button, List, ListItem, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import addYears from 'date-fns/addYears';
 import React, { useCallback, useMemo, useState } from 'react';
+import clsx from 'clsx';
 import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
@@ -111,6 +112,7 @@ export default function DateRangeSelector({
   value = {},
   onSave,
   fromDate,
+  classProps,
   customPresets = [],
   showTime = true,
   clearable = false,
@@ -200,6 +202,10 @@ export default function DateRangeSelector({
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
+        classes={{
+          popper: clsx(classProps.filterTimeStampPopper, {[classProps.filterTimeStampPopperExpand]: selectedRange.preset === 'custom' }),
+          arrow: clsx(classProps.filterTimeStampPopperArrow, {[classProps.filterTimeStampArrowPopperExpand]: selectedRange.preset === 'custom'}),
+        }}
         restrictToParent={false}
         placement={placement || 'bottom-end'}
         onClose={toggleClick}>
