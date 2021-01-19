@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import Select, { components } from 'react-select';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, FormLabel } from '@material-ui/core';
@@ -167,11 +167,18 @@ export default function MultiSelectApplication(props) {
     defaultValue,
     placeholder,
     isValid,
+    onFieldChange,
   } = props;
 
   const classes = useStyles();
   const ref = useRef(null);
   const processedValues = defaultValue.map(value => options[0].items.find(item => item.value === value));
+
+  const handleChange = useCallback(e => {
+    if (onFieldChange) {
+      onFieldChange(id, e.target.value);
+    }
+  }, [id, onFieldChange]);
 
   return (
     <div className={classes.multislectWrapper}>
@@ -194,6 +201,7 @@ export default function MultiSelectApplication(props) {
           components={{ Option, MultiValueLabel }}
           defaultValue={processedValues}
           options={options[0].items}
+          onChange={handleChange}
           closeMenuOnSelect={false}
           hideSelectedOptions={false}
           className={classes.wrapper}

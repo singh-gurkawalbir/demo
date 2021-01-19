@@ -2,6 +2,7 @@ import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import { INSTALL_STEP_TYPES } from '../../../utils/constants';
+import { COMM_STATES as PUBLISH_STATES } from '../../comms/networkComms';
 
 const defaultSteps = [];
 const emptyObject = {};
@@ -161,6 +162,18 @@ export default function reducer(state = {}, action) {
         }
         draft[templateId].isInstallFailed = true;
         break;
+      case actionTypes.TEMPLATE.PUBLISH.LOADING:
+        if (!draft[templateId]) {
+          draft[templateId] = {};
+        }
+        draft[templateId].publishStatus = PUBLISH_STATES.LOADING;
+        break;
+      case actionTypes.TEMPLATE.PUBLISH.SUCCESSFUL:
+        draft[templateId].publishStatus = PUBLISH_STATES.SUCCESS;
+        break;
+      case actionTypes.TEMPLATE.PUBLISH.ERROR:
+        draft[templateId].publishStatus = PUBLISH_STATES.ERROR;
+        break;
     }
   });
 }
@@ -218,4 +231,6 @@ selectors.connectionMap = (state, templateId) => {
 
   return state[templateId].connectionMap;
 };
+
+selectors.templatePublishStatus = (state, templateId) => state?.[templateId]?.publishStatus || 'failed';
 // #endregion

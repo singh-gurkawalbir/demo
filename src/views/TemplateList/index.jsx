@@ -1,8 +1,9 @@
-import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useMemo, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { selectors } from '../../reducers';
 import LoadResources from '../../components/LoadResources';
@@ -32,6 +33,7 @@ const defaultFilter = { take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) 
 export default function TemplateList(props) {
   const { location } = props;
   const classes = useStyles();
+  const dispatch = useDispatch();
   const filter =
     useSelector(state => selectors.filter(state, 'templates')) || defaultFilter;
   const templatesFilterConfig = useMemo(
@@ -45,6 +47,10 @@ export default function TemplateList(props) {
     selectors.makeResourceListSelector,
     templatesFilterConfig
   );
+
+  useEffect(() => {
+    dispatch(actions.patchFilter('templates', {sort: {order: 'asc', orderBy: 'name'}}));
+  }, []);
 
   return (
     <>

@@ -472,6 +472,14 @@ const connectors = {
         connectorId,
       }),
   },
+  publish: _integrationId =>
+    action(actionTypes.CONNECTORS.PUBLISH_STATUS, {
+      _integrationId,
+    }),
+  publishSuccessful: _integrationId =>
+    action(actionTypes.CONNECTORS.PUBLISH_SUCCESSFUL, {
+      _integrationId,
+    }),
 };
 const metadata = {
   request: (connectionId, commMetaPath, addInfo) =>
@@ -1102,6 +1110,21 @@ const template = {
       connection,
       templateId,
     }),
+  publish: {
+    loading: (templateId, isPublished) =>
+      action(actionTypes.TEMPLATE.PUBLISH.LOADING, {
+        templateId,
+        isPublished,
+      }),
+    successful: templateId =>
+      action(actionTypes.TEMPLATE.PUBLISH.SUCCESSFUL, {
+        templateId,
+      }),
+    error: templateId =>
+      action(actionTypes.TEMPLATE.PUBLISH.ERROR, {
+        templateId,
+      }),
+  },
 };
 const agent = {
   displayToken: id => action(actionTypes.AGENT.TOKEN_DISPLAY, { id }),
