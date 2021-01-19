@@ -4927,6 +4927,7 @@ selectors.flowConnectionsWithLogEntry = () => {
 selectors.editorHelperFunctions = state => state?.session?.editors?.helperFunctions || [];
 selectors._editorHelperFunctions = state => state?.session?._editors?.helperFunctions || {};
 
+// todo: below selector would be removed once AFE refactored code is stable
 selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enableEditorV2) => {
   const { merged: resource = {} } = selectors.resourceData(
     state,
@@ -4984,7 +4985,7 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enable
 
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
-  const {editorType, fieldId, flowId, resourceId, resourceType, stage} = fromSession._editor(state.session, editorId);
+  const {editorType, fieldId, flowId, resourceId, resourceType, stage} = fromSession._editor(state?.session, editorId);
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
   if (stage === 'outputFilter' ||

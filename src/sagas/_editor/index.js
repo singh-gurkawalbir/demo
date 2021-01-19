@@ -164,6 +164,7 @@ export function* evaluateExternalProcessor({ processorData }) {
 export function* save({ id, context }) {
   const editor = yield select(selectors._editor, id);
   const patches = processorLogic.getPatchSet(editor);
+  const preSaveValidate = processorLogic.preSaveValidate(editor);
 
   if (!editor) {
     return; // nothing to do
@@ -178,6 +179,15 @@ export function* save({ id, context }) {
           (evaluateResponse.error || evaluateResponse.violations)
     ) {
       return yield put(actions._editor.saveFailed(id));
+    }
+  }
+
+  // check for any pre save validations
+  if (preSaveValidate) {
+    const {saveError, message} = preSaveValidate(editor);
+
+    if (saveError) {
+      return yield put(actions._editor.saveFailed(id, message));
     }
   }
 
