@@ -1,5 +1,5 @@
 import actionTypes from '../../../actions/types';
-import { PING_STATES as PUBLISH_STATES } from '../../comms/ping';
+import { COMM_STATES as PUBLISH_STATES } from '../../comms/networkComms';
 
 export default (state = {}, action) => {
   const { type, metadata, fieldName, fieldType, _integrationId } = action;
@@ -37,16 +37,16 @@ export default (state = {}, action) => {
       }
 
       return newState;
-    case actionTypes.CONNECTORS.PUBLISH_LOADING:
-      newState[_integrationId] = { status: PUBLISH_STATES.LOADING };
+    case actionTypes.CONNECTORS.PUBLISH.LOADING:
+      newState[_integrationId].publishStatus = PUBLISH_STATES.LOADING;
 
       return newState;
-    case actionTypes.CONNECTORS.PUBLISH_SUCCESSFUL:
-      newState[_integrationId] = { status: PUBLISH_STATES.SUCCESS };
+    case actionTypes.CONNECTORS.PUBLISH.SUCCESSFUL:
+      newState[_integrationId].publishStatus = PUBLISH_STATES.SUCCESS;
 
       return newState;
-    case actionTypes.CONNECTORS.PUBLISH_ERROR:
-      newState[_integrationId] = { status: PUBLISH_STATES.ERROR };
+    case actionTypes.CONNECTORS.PUBLISH.ERROR:
+      newState[_integrationId].publishStatus = PUBLISH_STATES.ERROR;
 
       return newState;
     default:
@@ -107,11 +107,11 @@ selectors.connectorFieldOptions = (
   };
 };
 
-selectors.toggleOnOffStatus = (state, _integrationId) => {
-  if (!(state && state[_integrationId])) {
-    return { status: 'failed' };
+selectors.connectorPublishStatus = (state, _integrationId) => {
+  if (!state || !state[_integrationId] || !state[_integrationId].publishStatus) {
+    return 'failed';
   }
 
-  return { status: state[_integrationId].status || 'failed' };
+  return state[_integrationId].publishStatus;
 };
 // #endregion
