@@ -16,8 +16,10 @@ export default (state = {}, action) => {
         draft.connections[connectionId].status = 'requested';
         break;
       case actionTypes.LOGS.CONNECTIONS.RECEIVED:
-        draft.connections[connectionId].logs = logs;
-        draft.connections[connectionId].status = 'success';
+        if (draft.connections[connectionId]) {
+          draft.connections[connectionId].logs = logs;
+          draft.connections[connectionId].status = 'success';
+        }
         break;
       case actionTypes.LOGS.CONNECTIONS.REQUEST_FAILED:
         if (draft.connections[connectionId]) {
@@ -26,8 +28,10 @@ export default (state = {}, action) => {
 
         break;
       case actionTypes.LOGS.CONNECTIONS.REFRESH:
-        draft.connections[connectionId].status = 'requested';
-        delete draft.connections[connectionId].logs;
+        if (draft.connections[connectionId]) {
+          draft.connections[connectionId].status = 'requested';
+          delete draft.connections[connectionId].logs;
+        }
         break;
       case actionTypes.LOGS.CONNECTIONS.CLEAR:
         if (draft.connections) {
@@ -42,8 +46,10 @@ export default (state = {}, action) => {
 
         break;
       case actionTypes.LOGS.CONNECTIONS.DELETE:
-        delete draft.connections[connectionId].status;
-        delete draft.connections[connectionId].logs;
+        if (draft.connections[connectionId]) {
+          delete draft.connections[connectionId].status;
+          delete draft.connections[connectionId].logs;
+        }
         break;
       default:
     }

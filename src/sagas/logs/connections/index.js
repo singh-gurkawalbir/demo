@@ -19,7 +19,7 @@ export function* getConnectionDebugLogs({ connectionId }) {
     const {dateFormat, timeFormat, timezone } = yield select(selectors.userProfilePreferencesProps);
     const _logs = [];
 
-    logs.split('\n').forEach(log => {
+    logs?.split('\n').forEach(log => {
       let logTmp = log;
       const matchedUTCDateTime = logTmp.match(UTCDateTimeRegex)?.[0];
 
