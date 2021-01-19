@@ -189,7 +189,7 @@ export function* saveProcessor({ id, context }) {
         yield put(
           actions.resource.patchStaged(resourceId, patch, SCOPES.VALUE)
         );
-        const error = yield call(commitStagedChanges, {
+        const resp = yield call(commitStagedChanges, {
           resourceType,
           id: resourceId,
           scope: SCOPES.VALUE,
@@ -197,7 +197,7 @@ export function* saveProcessor({ id, context }) {
         });
 
         // trigger save failed in case of error
-        if (error) {
+        if (resp?.error) {
           return yield put(actions.editor.saveFailed(id));
         }
       } else {

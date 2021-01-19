@@ -78,14 +78,14 @@ export function* responseMappingSave() {
   });
 
   yield put(actions.resource.patchStaged(flowId, patchSet, SCOPES.VALUE));
-  const error = yield call(commitStagedChanges, {
+  const resp = yield call(commitStagedChanges, {
     resourceType: 'flows',
     id: flowId,
     scope: SCOPES.VALUE,
   });
 
   // trigger save failed in case of error
-  if (error) {
+  if (resp?.error) {
     return yield put(actions.responseMapping.saveFailed());
   }
 
