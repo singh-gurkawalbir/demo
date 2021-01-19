@@ -112,6 +112,6 @@ selectors.connectorPublishStatus = (state, _integrationId) => {
     return 'failed';
   }
 
-  return state[_integrationId].publishStatus;
+  return state?.[_integrationId]?.publishStatus || 'failed';
 };
 // #endregion
