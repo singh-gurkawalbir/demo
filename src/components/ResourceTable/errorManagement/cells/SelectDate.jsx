@@ -18,7 +18,7 @@ const useStyles = makeStyles({
     left: '340px !important',
   },
   filterTimeStampPopperExpand: {
-    left: '-0% !important',
+    left: '0% !important',
   },
   filterTimeStampArrowPopperExpand: {
     left: '98% !important',
