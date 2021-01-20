@@ -47,13 +47,11 @@ const useStyles = makeStyles(theme => ({
   },
   rightActionContainer: {
     padding: theme.spacing(2, 0),
+    display: 'flex',
   },
   leftActionContainer: {
     padding: theme.spacing(2, 0),
-    // border: `solid 1px ${theme.palette.secondary.lightest}`,
-    // borderWidth: [[1, 0]],
     display: 'flex',
-    flexWrap: 'wrap',
     alignItems: 'center',
     '& > *': {
       marginRight: 10,

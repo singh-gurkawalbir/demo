@@ -156,7 +156,8 @@ export function* requestScriptLogs({isInit, field, ...props}) {
   }
 
   // change logs utc datetime to local date time
-  const {dateFormat, timeFormat, timezone } = yield select(selectors.userProfilePreferencesProps);
+  const {dateFormat, timeFormat } = yield select(selectors.userProfilePreferencesProps);
+  const timezone = yield select(selectors.userTimezone);
 
   const formattedLogs = logs.map(({time = '', ...others}) => {
     const utcISODateTime = moment(time, 'YYYY-MM-DD HH:mm:ss.SSS').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');

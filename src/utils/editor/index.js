@@ -1,5 +1,16 @@
 import arrayUtil from '../array';
 
+export const FLOW_STAGES = [
+  'outputFilter',
+  'exportFilter',
+  'inputFilter',
+  'transform',
+  'postResponseMapHook',
+  'sampleResponse',
+];
+
+// todo: remove this when old AFE framework would be removed
+// it is now part of processorLogic
 export const preSaveValidate = ({ editor = {}, enquesnackbar }) => {
   if (editor.processor === 'transform') {
     const duplicates = arrayUtil.getDuplicateValues(
