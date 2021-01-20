@@ -323,6 +323,7 @@ export default {
             const extractFieldValue = isGroupedField ? extractField.value.substring(2) : extractField.value;
 
             expressionValue += `{{${isGroupedField ? '*.' : ''}${wrapTextForSpecialChars(extractFieldValue)}}}`;
+            extractField.value = '';
           } else if (functionsField.value) {
             expressionValue += functionsField.value;
             functionsField.value = '';
