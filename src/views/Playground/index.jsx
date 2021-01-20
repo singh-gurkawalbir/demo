@@ -82,7 +82,7 @@ export default function Editors() {
             <ExampleMenu onEditorChange={handleEditorChange} />
           </div>
           <div className={classes.menuSection}>
-            <Typography variant="h4">Flow Explorer</Typography>
+            <Typography variant="h4">Integration Explorer</Typography>
             <ExplorerMenu onEditorChange={handleEditorChange} />
           </div>
         </div>
@@ -98,7 +98,7 @@ export default function Editors() {
           ) : (
             <Typography variant="h4">
               <p>Get started by selecting an editor example on the left.</p>
-              <p>Alternatively, use the Flow Explorer to drill into your flows to find and manage your resources.</p>
+              <p>Alternatively, use the Integration Explorer to drill into your flows to find and manage your resources.</p>
             </Typography>
           )}
 
