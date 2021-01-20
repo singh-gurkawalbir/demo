@@ -56,7 +56,8 @@ export function* _getUIDataForResource({ resource, connection, flow, refresh }) 
     }
   }
 
-  if (isIntegrationApp(flow) && sampleData) return sampleData;
+  // if not hard refresh, then send sample data stored on resource, otherwise let preview handle it.
+  if (isIntegrationApp(flow) && sampleData && !refresh) return sampleData;
 }
 
 export default function* getPreviewOptionsForResource({ resource, flow, refresh, runOffline }) {
@@ -85,5 +86,6 @@ export default function* getPreviewOptionsForResource({ resource, flow, refresh,
     return type === 'delta' ? { runOfflineOptions, postData } : { runOfflineOptions };
   }
 
-  return type === 'delta' ? { ...(!refresh && { uiData }), postData } : { uiData };
+  // Do not send uiData in case of hard refresh
+  return type === 'delta' ? { uiData, postData } : { uiData };
 }
