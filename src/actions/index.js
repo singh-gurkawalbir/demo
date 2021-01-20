@@ -1117,6 +1117,21 @@ const template = {
       connection,
       templateId,
     }),
+  publish: {
+    request: (templateId, isPublished) =>
+      action(actionTypes.TEMPLATE.PUBLISH.REQUEST, {
+        templateId,
+        isPublished,
+      }),
+    success: templateId =>
+      action(actionTypes.TEMPLATE.PUBLISH.SUCCESS, {
+        templateId,
+      }),
+    error: templateId =>
+      action(actionTypes.TEMPLATE.PUBLISH.ERROR, {
+        templateId,
+      }),
+  },
 };
 const agent = {
   displayToken: id => action(actionTypes.AGENT.TOKEN_DISPLAY, { id }),
