@@ -85,5 +85,5 @@ export default function* getPreviewOptionsForResource({ resource, flow, refresh,
     return type === 'delta' ? { runOfflineOptions, postData } : { runOfflineOptions };
   }
 
-  return type === 'delta' ? { uiData, postData } : { uiData };
+  return type === 'delta' ? { ...(!refresh && { uiData }), postData } : { uiData };
 }

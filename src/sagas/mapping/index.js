@@ -166,6 +166,7 @@ export function* mappingInit({
     resourceType: 'imports',
   });
   const isGroupedSampleData = Array.isArray(flowSampleData);
+  const isPreviewSucess = !!flowSampleData;
   let formattedMappings = [];
   let lookups = [];
   const options = {};
@@ -227,6 +228,7 @@ export function* mappingInit({
       importResource,
       isFieldMapping: false,
       isGroupedSampleData,
+      isPreviewSucess,
       netsuiteRecordType: options.recordType,
       options,
       exportResource,

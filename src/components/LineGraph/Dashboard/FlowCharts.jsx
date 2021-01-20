@@ -242,7 +242,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
         left.dateFormat === right.dateFormat &&
         left.timeFormat === right.timeFormat
     );
-    const timezone = useSelector(state => selectors.userProfile(state)?.timezone);
+    const timezone = useSelector(state => selectors.userTimezone(state));
 
     if (active && Array.isArray(payload) && payload.length) {
       return (
