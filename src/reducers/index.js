@@ -4797,7 +4797,7 @@ selectors.shouldShowAddPageProcessor = (state, flowId) => {
 
   const showAddPageProcessor =
     !isDataLoaderFlow ||
-    (pageProcessors.length === 0 &&
+    !!(pageProcessors.length === 0 &&
       pageGenerators.length &&
       pageGenerators[0]._exportId);
 
