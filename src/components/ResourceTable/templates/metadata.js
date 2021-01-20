@@ -3,13 +3,21 @@ import Link from '@material-ui/core/Link';
 import Delete from '../commonActions/Delete';
 import UploadZipFile from './actions/UploadZipFile';
 import Download from '../commonActions/Download';
-import TogglePublish from '../commonActions/TogglePublish';
 import Edit from '../commonActions/Edit';
+import ApplicationImgCell from './cells/ApplicationImgCell';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
+import OnOffCell from './cells/OnOffCell';
 
 export default {
   columns: [
+    {
+      heading: 'Applications',
+      value: function Applications(r) {
+        return <ApplicationImgCell applications={r.applications} />;
+      },
+
+    },
     {
       heading: 'Name',
       value: function TemplatesDrawerLink(r) {
@@ -21,12 +29,6 @@ export default {
       heading: 'Last updated',
       value: r => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
-    },
-    {
-      heading: 'Image',
-      value(r) {
-        return <img src={r.imageURL} alt="" />;
-      },
     },
     {
       heading: 'Website',
@@ -42,8 +44,17 @@ export default {
     },
     {
       heading: 'Published',
-      value: r => (r.published ? 'Yes' : 'No'),
+      value: function Type(r) {
+        return (
+          <OnOffCell
+            templateId={r._id}
+            published={r.published}
+            applications={r.applications}
+            resourceType="templates"
+          />
+        );
+      },
     },
   ],
-  rowActions: [Edit, TogglePublish, UploadZipFile, Download, Delete],
+  rowActions: [Edit, UploadZipFile, Download, Delete],
 };

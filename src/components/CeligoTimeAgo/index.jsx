@@ -16,11 +16,12 @@ function LocalDateTime({ date }) {
   const { dateFormat, timeFormat, timezone } = useSelector(state => {
     if (!date) return null;
     const userPref = selectors.userProfilePreferencesProps(state);
+    const timezone = selectors.userTimezone(state);
 
     return {
       dateFormat: userPref.dateFormat,
       timeFormat: userPref.timeFormat,
-      timezone: userPref.timezone,
+      timezone,
     };
   }, shallowEqual);
 

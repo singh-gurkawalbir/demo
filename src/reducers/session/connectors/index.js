@@ -1,4 +1,5 @@
 import actionTypes from '../../../actions/types';
+import { COMM_STATES as PUBLISH_STATES } from '../../comms/networkComms';
 
 export default (state = {}, action) => {
   const { type, metadata, fieldName, fieldType, _integrationId } = action;
@@ -34,6 +35,18 @@ export default (state = {}, action) => {
       if (newState[_integrationId][fieldName]) {
         newState[_integrationId][fieldName].isLoading = false;
       }
+
+      return newState;
+    case actionTypes.CONNECTORS.PUBLISH.REQUEST:
+      newState[_integrationId].publishStatus = PUBLISH_STATES.LOADING;
+
+      return newState;
+    case actionTypes.CONNECTORS.PUBLISH.SUCCESS:
+      newState[_integrationId].publishStatus = PUBLISH_STATES.SUCCESS;
+
+      return newState;
+    case actionTypes.CONNECTORS.PUBLISH.ERROR:
+      newState[_integrationId].publishStatus = PUBLISH_STATES.ERROR;
 
       return newState;
     default:
@@ -94,4 +107,5 @@ selectors.connectorFieldOptions = (
   };
 };
 
+selectors.connectorPublishStatus = (state, _integrationId) => state?.[_integrationId]?.publishStatus || 'failed';
 // #endregion

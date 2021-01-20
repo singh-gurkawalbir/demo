@@ -2,6 +2,8 @@ import { call, put, all, takeEvery } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
+import { commitStagedChanges } from '../resources';
+import { SCOPES } from '../suiteScript/resourceForm';
 
 export function* fetchMetadata({
   fieldType,
@@ -89,7 +91,32 @@ export function* updateInstallBase({ _integrationIds, connectorId }) {
   }
 }
 
+export function* publishStatus({ _integrationId: connectorId, isPublished }) {
+  const patchSet = [
+    {
+      op: 'replace',
+      path: '/published',
+      value: !isPublished,
+    },
+  ];
+
+  yield put(actions.resource.patchStaged(connectorId, patchSet, SCOPES.VALUE));
+
+  const resp = yield call(commitStagedChanges, {
+    resourceType: 'connectors',
+    id: connectorId,
+    scope: SCOPES.VALUE,
+  });
+
+  if (resp?.error) {
+    yield put(actions.connectors.publish.error(connectorId));
+  } else {
+    yield put(actions.connectors.publish.success(connectorId));
+  }
+}
+
 export default [
   takeEvery(actionTypes.CONNECTORS.METADATA_REQUEST, fetchMetadata),
   takeEvery(actionTypes.CONNECTORS.INSTALLBASE.UPDATE, updateInstallBase),
+  takeEvery(actionTypes.CONNECTORS.PUBLISH.REQUEST, publishStatus),
 ];

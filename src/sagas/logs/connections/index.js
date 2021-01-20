@@ -16,7 +16,8 @@ export function* getConnectionDebugLogs({ connectionId }) {
 
   try {
     const logs = yield call(apiCallWithRetry, { path });
-    const {dateFormat, timeFormat, timezone } = yield select(selectors.userProfilePreferencesProps);
+    const {dateFormat, timeFormat } = yield select(selectors.userProfilePreferencesProps);
+    const timezone = yield select(selectors.userTimezone);
     const _logs = [];
 
     logs.split('\n').forEach(log => {

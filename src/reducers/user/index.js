@@ -259,9 +259,9 @@ selectors.accountOwner = createSelector(
   state => state && state.org && state.org.accounts,
   (userAccessLevel, preferences, profile, accounts) => {
     if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
-      const { name, email } = profile || {};
+      const { name, email, timezone } = profile || {};
 
-      return { name, email };
+      return { name, email, timezone };
     }
 
     if (preferences) {
@@ -274,6 +274,12 @@ selectors.accountOwner = createSelector(
       }
     }
   }
+);
+
+selectors.userTimezone = createSelector(
+  state => state && state.profile,
+  selectors.accountOwner,
+  (profile, accountOwner) => profile?.timezone || accountOwner.timezone
 );
 
 selectors.licenses = createSelector(

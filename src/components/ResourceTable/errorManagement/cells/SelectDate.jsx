@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 import { addDays, startOfDay } from 'date-fns';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
@@ -8,6 +9,22 @@ import ErrorFilterIcon from '../ErrorFilterIcon';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
 import { getSelectedRange } from '../../../../utils/flowMetrics';
 
+const useStyles = makeStyles({
+  filterTimeStampPopper: {
+    left: '110px !important',
+    top: '5px !important',
+  },
+  filterTimeStampPopperArrow: {
+    left: '340px !important',
+  },
+  filterTimeStampPopperExpand: {
+    left: '0% !important',
+  },
+  filterTimeStampArrowPopperExpand: {
+    left: '98% !important',
+  },
+
+});
 const defaultRange = {
   startDate: startOfDay(addDays(new Date(), -29)),
   endDate: new Date(),
@@ -22,6 +39,7 @@ export default function SelectDate({
   filterBy = 'occuredAt',
 }) {
   const dispatch = useDispatch();
+  const classes = useStyles();
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
   const filter = useSelector(state =>
     selectors.filter(state, filterKey),
@@ -71,6 +89,7 @@ export default function SelectDate({
     <div> {title}
       <DateRangeSelector
         clearable
+        classProps={classes}
         clearValue={defaultRange}
         onSave={handleDateFilter}
         Icon={FilterIcon}
