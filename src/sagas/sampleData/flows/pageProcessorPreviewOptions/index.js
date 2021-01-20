@@ -86,6 +86,5 @@ export default function* getPreviewOptionsForResource({ resource, flow, refresh,
     return type === 'delta' ? { runOfflineOptions, postData } : { runOfflineOptions };
   }
 
-  // Do not send uiData in case of hard refresh
   return type === 'delta' ? { uiData, postData } : { uiData };
 }
