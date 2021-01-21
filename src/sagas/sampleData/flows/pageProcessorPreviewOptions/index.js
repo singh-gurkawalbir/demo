@@ -56,7 +56,8 @@ export function* _getUIDataForResource({ resource, connection, flow, refresh }) 
     }
   }
 
-  if (isIntegrationApp(flow) && sampleData) return sampleData;
+  // if not hard refresh, then send sample data stored on resource, otherwise let preview handle it.
+  if (isIntegrationApp(flow) && sampleData && !refresh) return sampleData;
 }
 
 export default function* getPreviewOptionsForResource({ resource, flow, refresh, runOffline }) {

@@ -223,8 +223,8 @@ export default function ScriptLogs({ flowId, scriptId }) {
             value={logLevel || ''}>
             <MenuItem value="">Log level</MenuItem>
             {Object.keys(LOG_LEVELS).map(logLevel => (
-              <MenuItem key={logLevel} value={logLevel}>
-                {logLevel}
+              <MenuItem key={logLevel} value={logLevel} >
+                {LOG_LEVELS[logLevel]}
               </MenuItem>
             ))}
           </CeligoSelect>

@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
   message: {
     height: '100%',
     overflow: 'hidden',
+    paddingRight: theme.spacing(1),
   },
   htmlMessage: {
     display: 'inline',

@@ -136,6 +136,13 @@ const processResult = editor => {
   return logic.processResult;
 };
 
+const preSaveValidate = editor => {
+  if (!editor) return;
+  const logic = getLogic(editor);
+
+  return logic.preSaveValidate;
+};
+
 function getPatchSetLogic(editor) {
   const processorKey = editor.editorType;
 
@@ -189,7 +196,6 @@ export const featuresMap = options => ({
     fetchScriptContent: true,
   },
   transform: {
-    duplicateKeyToValidate: 'generate',
     layout: 'compact',
   },
   flowTransform: {
@@ -234,4 +240,5 @@ export default {
   processResult,
   getPatchSet,
   buildData,
+  preSaveValidate,
 };

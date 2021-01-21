@@ -2028,7 +2028,9 @@ selectors.makeIntegrationAppSectionFlows = () =>
             // If flow is present in two stores, then it is a commom flow and does not belong to any single store, so remove store information from flow
             delete flow.childId;
             delete flow.childName;
-          } else {
+          } else if (flows.find(fi => fi._id === f._id)) {
+            // Add only valid flows, the flow must be present in flows collection. This is possible when store is in uninstall mode.
+            // Flow may be deleted but store structure is intact on integration json.
             requiredFlows.push({id: f._id, childId: sec.childId, childName: sec.childName});
           }
         });
@@ -4927,6 +4929,7 @@ selectors.flowConnectionsWithLogEntry = () => {
 selectors.editorHelperFunctions = state => state?.session?.editors?.helperFunctions || [];
 selectors._editorHelperFunctions = state => state?.session?._editors?.helperFunctions || {};
 
+// todo: below selector would be removed once AFE refactored code is stable
 selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enableEditorV2) => {
   const { merged: resource = {} } = selectors.resourceData(
     state,
@@ -4984,7 +4987,7 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enable
 
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
-  const {editorType, fieldId, flowId, resourceId, resourceType, stage} = fromSession._editor(state.session, editorId);
+  const {editorType, fieldId, flowId, resourceId, resourceType, stage} = fromSession._editor(state?.session, editorId);
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
   if (stage === 'outputFilter' ||

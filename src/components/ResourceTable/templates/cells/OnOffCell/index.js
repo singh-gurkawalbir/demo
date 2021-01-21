@@ -2,9 +2,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import { selectors } from '../../../../../reducers';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import CeligoSwitch from '../../../../CeligoSwitch';
+import { selectors } from '../../../../../reducers';
 import Spinner from '../../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function OnOffCell({
-  connectorId: resourceId,
+  templateId: resourceId,
   published: isPublished,
   applications,
   resourceType,
@@ -23,17 +23,18 @@ export default function OnOffCell({
 
   const { confirmDialog } = useConfirmDialog();
   const dispatch = useDispatch();
-  const toggleStatus = useSelector(state => selectors.connectorPublishStatus(state, resourceId));
+
+  const toggleStatus = useSelector(state => selectors.templatePublishStatus(state, resourceId));
   const handleTogglePublishConfirm = useCallback(() => {
     const label = isPublished ? 'unpublish' : 'publish';
 
     confirmDialog({
       title: `Confirm ${label}`,
-      message: `Are you sure you want to ${label} this integration app?`,
+      message: `Are you sure you want to ${label} this template?`,
       buttons: [
         {
           label,
-          onClick: () => dispatch(actions.connectors.publish.request(resourceId, isPublished)),
+          onClick: () => dispatch(actions.template.publish.request(resourceId, isPublished)),
         },
         {
           label: 'Cancel',
@@ -43,7 +44,7 @@ export default function OnOffCell({
     });
   }, [confirmDialog, isPublished, resourceId, dispatch]);
 
-  if (resourceType !== 'connectors' && !applications?.length) {
+  if (resourceType !== 'templates' && !applications?.length) {
     return null;
   }
 
