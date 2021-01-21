@@ -21,7 +21,8 @@ export function* getConnectionDebugLogs({ connectionId }) {
   } catch (error) {
     return yield put(actions.logs.connections.requestFailed(connectionId));
   }
-  const {dateFormat, timeFormat, timezone } = yield select(selectors.userProfilePreferencesProps);
+  const {dateFormat, timeFormat } = yield select(selectors.userProfilePreferencesProps);
+  const timezone = yield select(selectors.userTimezone);
   const _logs = [];
 
     logs?.split('\n').forEach(log => {

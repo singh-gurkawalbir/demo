@@ -34,6 +34,7 @@ export default {
   validate: flowTransform.validate,
   dirty: flowTransform.dirty,
   processResult: flowTransform.processResult,
+  preSaveValidate: flowTransform.preSaveValidate,
   patchSet: editor => {
     const patches = {
       foregroundPatches: undefined,

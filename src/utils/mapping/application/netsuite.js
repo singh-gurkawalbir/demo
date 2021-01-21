@@ -23,6 +23,7 @@ export default {
     mappings = {},
     recordType,
     isGroupedSampleData,
+    isPreviewSuccess,
     resource,
   }) => {
     let toReturn = [];
@@ -199,6 +200,11 @@ export default {
             tempFm.generate += '.internalid';
           }
 
+          // If no sample data found, and extract starts with *. or 0. example *.abc or 0.abc, then assume export is grouped data.
+          if (!isPreviewSuccess && /^(0|\*)\./.test(tempFm.extract)) {
+            tempFm.useIterativeRow = true;
+          }
+
           if (/^\['.*']$/.test(tempFm.extract)) {
             // if extract starts with [' and ends with ']
             tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2'); // removing [' and '] at begining and end of extract that we added
@@ -306,7 +312,7 @@ export default {
         }
 
         if (
-          isGroupedSampleData &&
+          (isGroupedSampleData || mapping.useIterativeRow) &&
           mapping.extract &&
           mapping.extract.indexOf('[*].') === -1 &&
           !handlebarRegex.test(mapping.extract)

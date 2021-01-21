@@ -472,6 +472,21 @@ const connectors = {
         connectorId,
       }),
   },
+  publish: {
+    request: (_integrationId, isPublished) =>
+      action(actionTypes.CONNECTORS.PUBLISH.REQUEST, {
+        _integrationId,
+        isPublished,
+      }),
+    success: _integrationId =>
+      action(actionTypes.CONNECTORS.PUBLISH.SUCCESS, {
+        _integrationId,
+      }),
+    error: _integrationId =>
+      action(actionTypes.CONNECTORS.ERROR, {
+        _integrationId,
+      }),
+  },
 };
 const metadata = {
   request: (connectionId, commMetaPath, addInfo) =>
@@ -1102,6 +1117,21 @@ const template = {
       connection,
       templateId,
     }),
+  publish: {
+    request: (templateId, isPublished) =>
+      action(actionTypes.TEMPLATE.PUBLISH.REQUEST, {
+        templateId,
+        isPublished,
+      }),
+    success: templateId =>
+      action(actionTypes.TEMPLATE.PUBLISH.SUCCESS, {
+        templateId,
+      }),
+    error: templateId =>
+      action(actionTypes.TEMPLATE.PUBLISH.ERROR, {
+        templateId,
+      }),
+  },
 };
 const agent = {
   displayToken: id => action(actionTypes.AGENT.TOKEN_DISPLAY, { id }),
@@ -1410,7 +1440,7 @@ const _editor = {
   previewResponse: (id, result) =>
     action(actionTypes._EDITOR.PREVIEW.RESPONSE, { id, result }),
   saveRequest: (id, context) => action(actionTypes._EDITOR.SAVE.REQUEST, { id, context }),
-  saveFailed: id => action(actionTypes._EDITOR.SAVE.FAILED, { id }),
+  saveFailed: (id, saveMessage) => action(actionTypes._EDITOR.SAVE.FAILED, { id, saveMessage }),
   saveComplete: id => action(actionTypes._EDITOR.SAVE.COMPLETE, { id }),
   validateFailure: (id, violations) =>
     action(actionTypes._EDITOR.VALIDATE_FAILURE, { id, violations }),
