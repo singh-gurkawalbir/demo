@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom';
 import { Button, IconButton, makeStyles, Tooltip, Typography } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import Editor from '../../components/AFE2/Editor';
-import EditorPreviewButton from '../../components/AFE2/Drawer/actions/PreviewButtonGroup';
 import FullScreenOpenIcon from '../../components/icons/FullScreenOpenIcon';
 import ExampleMenu from './ExampleMenu';
 import ExplorerMenu from './ExplorerMenu';
@@ -37,10 +36,6 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     padding: theme.spacing(3),
     flexGrow: 1,
-  },
-  buttons: {
-    display: 'flex',
-    justifyContent: 'space-between',
   },
   menuSection: {
     marginBottom: theme.spacing(2),
@@ -96,7 +91,7 @@ export default function Editors() {
               <ActionsRibbon editorId={editorId} className={classes.playgroundRibbon} />
 
               <Editor editorId={editorId} />
-              <div className={classes.buttons}>
+              <div>
                 <Button onClick={handleCancelEditorClick}>Cancel</Button>
               </div>
             </>

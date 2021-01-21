@@ -104,15 +104,13 @@ export default function LicenseAction() {
       ) : (
         <Button
           data-test={licenseActionDetails.label}
-          className={
-            classes.inTrial
-          }
+          className={classes.inTrial}
           variant="contained"
           color="secondary"
           onClick={handleClick}>
           {licenseActionDetails.label}
         </Button>
-      )};
+      )}
     </>
   );
 }
