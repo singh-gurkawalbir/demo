@@ -17,6 +17,7 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     overflow: 'hidden',
     paddingRight: theme.spacing(1),
+    lineHeight: '24px',
   },
   htmlMessage: {
     display: 'inline',
@@ -25,8 +26,12 @@ const useStyles = makeStyles(theme => ({
     },
   },
   retryTag: {
-    background: theme.palette.background.paper2,
     marginRight: theme.spacing(1),
+    border: '1px solid',
+    borderRadius: 3,
+    fontSize: 12,
+    padding: '1px 5px 1px 5px',
+    borderColor: theme.palette.secondary.dark,
   },
 }));
 
