@@ -42,6 +42,10 @@ export default (state = {}, action) => {
 
         break;
       case actionTypes.LOGS.CONNECTIONS.DELETE:
+        /**
+         * assigning empty state instead of complete deleting the state, since flow builder uses selector to show active
+         * connection debugger tabs. Deleting state complete will result in closing the tab automatically.
+        */
         if (draft.connections) {
           draft.connections[connectionId] = {};
         }

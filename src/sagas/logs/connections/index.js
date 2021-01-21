@@ -23,25 +23,25 @@ export function* getConnectionDebugLogs({ connectionId }) {
   }
   const {dateFormat, timeFormat } = yield select(selectors.userProfilePreferencesProps);
   const timezone = yield select(selectors.userTimezone);
-  const _logs = [];
 
-    logs?.split('\n').forEach(log => {
-      let logTmp = log;
-      const matchedUTCDateTime = logTmp.match(UTCDateTimeRegex)?.[0];
+  logs?.split('\n').map(log => {
+    let logTmp = log;
+    const matchedUTCDateTime = logTmp.match(UTCDateTimeRegex)?.[0];
 
-      if (matchedUTCDateTime) {
-        const localDateTime = convertUtcToTimezone(matchedUTCDateTime, dateFormat, timeFormat, timezone);
+    if (matchedUTCDateTime) {
+      const localDateTime = convertUtcToTimezone(matchedUTCDateTime, dateFormat, timeFormat, timezone);
 
-        logTmp = logTmp.replace(matchedUTCDateTime, localDateTime);
-      }
-      _logs.push(logTmp || '');
-    });
-    yield put(
-      actions.logs.connections.received(
-        connectionId,
-        _logs.join('\n'),
-      )
-    );
+      logTmp = logTmp.replace(matchedUTCDateTime, localDateTime);
+    }
+
+    return logTmp || '';
+  }).join('\n');
+  yield put(
+    actions.logs.connections.received(
+      connectionId,
+      logs,
+    )
+  );
 }
 
 export function* pollForConnectionLogs({ connectionId }) {
