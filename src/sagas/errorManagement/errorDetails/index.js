@@ -8,7 +8,7 @@ import getRequestOptions from '../../../utils/requestOptions';
 import openExternalUrl from '../../../utils/window';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
 
-function* formatErrors({ errors, resourceId }) {
+export function* _formatErrors({ errors = [], resourceId }) {
   const application = yield select(selectors.applicationName, resourceId);
 
   const formattedErrors = errors.map(e => ({
@@ -18,7 +18,7 @@ function* formatErrors({ errors, resourceId }) {
 
   return formattedErrors;
 }
-function* requestErrorDetails({
+export function* requestErrorDetails({
   flowId,
   resourceId,
   loadMore = false,
@@ -38,7 +38,6 @@ function* requestErrorDetails({
       });
 
       nextPageURL = errors?.nextPageURL;
-
       if (!nextPageURL) return;
     }
 
@@ -48,14 +47,14 @@ function* requestErrorDetails({
     );
     const { path, opts } = requestOptions;
 
-    const errorDetails = yield apiCallWithRetry({
+    const errorDetails = yield call(apiCallWithRetry, {
       path,
       opts,
     });
 
     const errorKey = isResolved ? 'resolved' : 'errors';
 
-    errorDetails[errorKey] = yield call(formatErrors, { resourceId, errors: errorDetails[errorKey] });
+    errorDetails[errorKey] = yield call(_formatErrors, { resourceId, errors: errorDetails[errorKey] });
 
     yield put(
       actions.errorManager.flowErrorDetails.received({
@@ -67,15 +66,11 @@ function* requestErrorDetails({
       })
     );
   } catch (error) {
-    actions.errorManager.flowErrorDetails.error({
-      flowId,
-      error,
-      isResolved,
-    });
+    // handle errors
   }
 }
 
-function* selectAllErrorDetails({ flowId, resourceId, checked, isResolved }) {
+export function* selectAllErrorDetails({ flowId, resourceId, checked, isResolved }) {
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
   const errorFilter = yield select(selectors.filter, filterKey);
 
@@ -97,7 +92,7 @@ function* selectAllErrorDetails({ flowId, resourceId, checked, isResolved }) {
   );
 }
 
-function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
+export function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
   let retryDataKeys = retryIds;
 
   if (!retryIds.length) {
@@ -120,7 +115,7 @@ function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
     .map(error => error.errorId);
 
   try {
-    const response = yield apiCallWithRetry({
+    yield call(apiCallWithRetry, {
       path: `/flows/${flowId}/${resourceId}/retry`,
       opts: {
         method: 'POST',
@@ -135,7 +130,6 @@ function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
       actions.errorManager.flowErrorDetails.retryReceived({
         flowId,
         resourceId,
-        response,
         retryCount: retryDataKeys.length,
       })
     );
@@ -175,7 +169,7 @@ function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
   }
 }
 
-function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
+export function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
   let errors = errorIds;
 
   if (!errorIds.length) {
@@ -188,7 +182,7 @@ function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
   }
 
   try {
-    yield apiCallWithRetry({
+    yield call(apiCallWithRetry, {
       path: `/flows/${flowId}/${resourceId}/resolved`,
       opts: {
         method: 'PUT',
@@ -217,7 +211,7 @@ function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
   }
 }
 
-function* saveAndRetryError({ flowId, resourceId, retryId, retryData }) {
+export function* saveAndRetryError({ flowId, resourceId, retryId, retryData }) {
   try {
     yield call(updateRetryData, { flowId, resourceId, retryId, retryData });
     yield put(actions.errorManager.flowErrorDetails.retry({ flowId, resourceId, retryIds: [retryId]}));
@@ -226,7 +220,7 @@ function* saveAndRetryError({ flowId, resourceId, retryId, retryData }) {
   }
 }
 
-function* downloadErrors({ flowId, resourceId, isResolved, filters }) {
+export function* downloadErrors({ flowId, resourceId, isResolved, filters }) {
   const requestOptions = getRequestOptions(
     actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DOWNLOAD.REQUEST,
     { flowId, resourceId, isResolved, filters }

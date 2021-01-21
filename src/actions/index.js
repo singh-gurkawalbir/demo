@@ -1831,12 +1831,6 @@ const errorManager = {
         loadMore,
         isResolved,
       }),
-    error: ({ flowId, resourceId, isResolved = false }) =>
-      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ERROR, {
-        flowId,
-        resourceId,
-        isResolved,
-      }),
     selectErrors: ({
       flowId,
       resourceId,
@@ -1885,13 +1879,12 @@ const errorManager = {
           errorIds,
         }
       ),
-    retryReceived: ({ flowId, resourceId, retryCount, isResolved = false }) =>
+    retryReceived: ({ flowId, resourceId, retryCount}) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.RECEIVED,
         {
           flowId,
           resourceId,
-          isResolved,
           retryCount,
         }
       ),
