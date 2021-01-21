@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
   title: {
     flexGrow: 1,
     color: theme.palette.secondary.main,
+    whiteSpace: 'nowrap',
   },
   helpTextButton: {
     padding: 0,

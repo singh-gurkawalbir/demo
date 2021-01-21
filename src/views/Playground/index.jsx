@@ -11,6 +11,7 @@ import ExplorerMenu from './ExplorerMenu';
 import EditorDrawer from '../../components/AFE2/Drawer';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ExportExampleButton from './ExportExampleButton';
+import ActionsRibbon from '../../components/AFE2/Drawer/ActionsRibbon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -42,6 +43,9 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
   },
   menuSection: {
+    marginBottom: theme.spacing(2),
+  },
+  playgroundRibbon: {
     marginBottom: theme.spacing(2),
   },
 }));
@@ -89,10 +93,11 @@ export default function Editors() {
         <main className={classes.content}>
           {editorId ? (
             <>
+              <ActionsRibbon editorId={editorId} className={classes.playgroundRibbon} />
+
               <Editor editorId={editorId} />
               <div className={classes.buttons}>
                 <Button onClick={handleCancelEditorClick}>Cancel</Button>
-                <EditorPreviewButton editorId={editorId} />
               </div>
             </>
           ) : (
