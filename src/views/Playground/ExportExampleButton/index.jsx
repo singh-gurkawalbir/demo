@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions }
   from '@material-ui/core';
@@ -23,6 +23,7 @@ const emptyObj = {};
 export default function ExportExampleButton({ editorId }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [example, setExample] = useState();
   const canExport = useSelector(state => {
     if (!editorId) return false;
     const { developer, email = '' } = selectors.userProfile(state);
@@ -32,28 +33,36 @@ export default function ExportExampleButton({ editorId }) {
   });
 
   const { type, rule, data } = useSelector(state => {
+    let editorState = emptyObj;
+
     if (canExport && open) {
       const e = selectors._editor(state, editorId);
 
-      return {
+      editorState = {
         type: e.editorType,
         rule: e.rule,
         data: e.data,
       };
     }
 
-    return emptyObj;
+    return editorState;
   }, shallowEqual);
 
-  const getExample = () => ({
-    type,
-    key: `${type}-${shortid.generate()}`,
-    name: 'node text in example tree',
-    description: 'Not used yet.',
-    rule,
-    data,
-  });
-  const [example, setExample] = useState(getExample());
+  useEffect(() => {
+    if (open) {
+      setExample({
+        type,
+        key: `${type}-${shortid.generate()}`,
+        name: 'node text in example tree',
+        description: 'Not used yet.',
+        rule,
+        data,
+      });
+    }
+  // we ONLY want this to fire when the open flag changes, and
+  // new state is true (open)...
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   const handleOpen = () => { setOpen(true); };
   const handleClose = () => { setOpen(false); };
