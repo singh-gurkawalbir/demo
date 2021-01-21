@@ -24,7 +24,7 @@ export function* getConnectionDebugLogs({ connectionId }) {
   const {dateFormat, timeFormat } = yield select(selectors.userProfilePreferencesProps);
   const timezone = yield select(selectors.userTimezone);
 
-  logs?.split('\n').map(log => {
+  const updatedTimeZonelogs = logs?.split('\n').map(log => {
     let logTmp = log;
     const matchedUTCDateTime = logTmp.match(UTCDateTimeRegex)?.[0];
 
@@ -36,10 +36,11 @@ export function* getConnectionDebugLogs({ connectionId }) {
 
     return logTmp || '';
   }).join('\n');
+
   yield put(
     actions.logs.connections.received(
       connectionId,
-      logs,
+      updatedTimeZonelogs,
     )
   );
 }
@@ -58,8 +59,8 @@ export function* startPollingForConnectionDebugLogs({ connectionId }) {
       return true;
     }
     if (action.type === actionTypes.LOGS.CONNECTIONS.CLEAR) {
-      // in case of flow builder close, log clear is trigger with no connectionId. All connections logs to be stopped.
-      if (!action.connectionId) {
+      // in case of flow builder close, all connection logs are cleared
+      if (action.clearAllLogs) {
         return true;
       }
 

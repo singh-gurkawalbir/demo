@@ -3,7 +3,7 @@ import actionTypes from '../../../../actions/types';
 import { COMM_STATES } from '../../../comms/networkComms';
 
 export default (state = {}, action) => {
-  const { type, connectionId, logs } = action;
+  const { type, connectionId, logs, clearAllLogs } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -18,15 +18,13 @@ export default (state = {}, action) => {
 
         break;
       case actionTypes.LOGS.CONNECTIONS.RECEIVED:
-        if (!draft.connections[connectionId]) {
-          draft.connections[connectionId] = {};
+        if (draft.connections?.[connectionId]) {
+          draft.connections[connectionId].logs = logs;
+          draft.connections[connectionId].status = COMM_STATES.SUCCESS;
         }
-
-        draft.connections[connectionId].logs = logs;
-        draft.connections[connectionId].status = COMM_STATES.SUCCESS;
         break;
       case actionTypes.LOGS.CONNECTIONS.REQUEST_FAILED:
-        if (draft.connections[connectionId]) {
+        if (draft.connections?.[connectionId]) {
           draft.connections[connectionId].status = COMM_STATES.ERROR;
         }
 
@@ -35,11 +33,10 @@ export default (state = {}, action) => {
       case actionTypes.LOGS.CONNECTIONS.CLEAR:
 
         if (draft.connections) {
-          if (connectionId) {
-            delete draft.connections[connectionId];
-          } else {
-            // in case LOGS.CONNECTIONS.CLEAR action is triggered with no connectionId, it relates to flow builder being closed. In which case, we want to remove all connection logs from state.
+          if (clearAllLogs) {
             delete draft.connections;
+          } else if (connectionId) {
+            delete draft.connections[connectionId];
           }
         }
 

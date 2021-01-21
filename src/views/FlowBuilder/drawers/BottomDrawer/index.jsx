@@ -213,7 +213,7 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
     connectionId => event => {
       event.stopPropagation();
       setTabValue(1);
-      dispatch(actions.logs.connections.clear(connectionId));
+      dispatch(actions.logs.connections.clear({connectionId}));
     },
     [dispatch, setTabValue]
   );
@@ -226,7 +226,7 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
 
   useEffect(() =>
     () => {
-      dispatch(actions.logs.connections.clear());
+      dispatch(actions.logs.connections.clear({clearAllLogs: true}));
     },
   [dispatch]);
 
