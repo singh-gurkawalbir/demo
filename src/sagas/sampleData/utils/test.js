@@ -1504,6 +1504,7 @@ describe('Flow sample data utility sagas', () => {
           id: '',
           ignored: '',
           statusCode: '',
+          headers: '',
         };
 
         expect(getPreProcessedResponseMappingData({resourceType: 'imports', adaptorType: 'RESTImport'}))

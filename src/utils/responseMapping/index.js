@@ -22,7 +22,7 @@ export default {
    */
   getResponseMappingExtracts: (resourceType, adaptorType) => {
     if (resourceType === 'imports') {
-      if (adaptorType === 'HTTPImport') { return [...IMPORT_RESPONSE_MAPPING_EXTRACTS, 'headers']; }
+      if (['RESTImport', 'HTTPImport'].includes(adaptorType)) { return [...IMPORT_RESPONSE_MAPPING_EXTRACTS, 'headers']; }
 
       return IMPORT_RESPONSE_MAPPING_EXTRACTS;
     }
