@@ -12,6 +12,7 @@ import CancelIcon from '../../components/icons/CancelIcon';
 import RefreshIcon from '../../components/icons/RefreshIcon';
 import DownloadDebugLogs from './DownloadDebugLogs';
 import AutoScrollEditorTerminal from '../../components/AutoScrollEditorTerminal';
+import { COMM_STATES } from '../../reducers/comms/networkComms';
 
 const overrides = { useWorker: false };
 
@@ -80,7 +81,7 @@ export default function ConnectionLogs({ connectionId, flowId }) {
 
   const handleRefreshClick = useCallback(
     () => {
-      dispatch(actions.logs.connections.refresh(connectionId));
+      dispatch(actions.logs.connections.request(connectionId));
     },
     [dispatch, connectionId],
   );
@@ -121,20 +122,22 @@ export default function ConnectionLogs({ connectionId, flowId }) {
           )}
           <IconTextButton
             onClick={handleRefreshClick}
-            data-test="refreshResource">
+            data-test="refreshResource"
+            disabled={status === COMM_STATES.LOADING}>
             <RefreshIcon />
             Refresh
           </IconTextButton>
           <IconTextButton
             onClick={handleDeleteLogsClick}
-            data-test="clearLogs">
+            data-test="clearLogs"
+            disabled={status === COMM_STATES.LOADING}>
             <CancelIcon />
             Clear
           </IconTextButton>
         </div>
       </div>
       <div className={classes.editorContainer}>
-        {['success', 'error'].includes(status) && (
+        {[COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(status) && (
           <AutoScrollEditorTerminal
             name="code"
             readOnly

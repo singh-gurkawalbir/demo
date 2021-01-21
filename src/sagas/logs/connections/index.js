@@ -14,10 +14,15 @@ const UTCDateTimeRegex = '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}
 export function* getConnectionDebugLogs({ connectionId }) {
   const path = `/connections/${connectionId}/debug`;
 
+  let logs;
+
   try {
-    const logs = yield call(apiCallWithRetry, { path });
-    const {dateFormat, timeFormat, timezone } = yield select(selectors.userProfilePreferencesProps);
-    const _logs = [];
+    logs = yield call(apiCallWithRetry, { path });
+  } catch (error) {
+    return yield put(actions.logs.connections.requestFailed(connectionId));
+  }
+  const {dateFormat, timeFormat, timezone } = yield select(selectors.userProfilePreferencesProps);
+  const _logs = [];
 
     logs?.split('\n').forEach(log => {
       let logTmp = log;
@@ -36,9 +41,6 @@ export function* getConnectionDebugLogs({ connectionId }) {
         _logs.join('\n'),
       )
     );
-  } catch (error) {
-    actions.logs.connections.requestFailed(connectionId);
-  }
 }
 
 export function* pollForConnectionLogs({ connectionId }) {
@@ -49,20 +51,16 @@ export function* pollForConnectionLogs({ connectionId }) {
 }
 export function* startPollingForConnectionDebugLogs({ connectionId }) {
   const watcher = yield fork(pollForConnectionLogs, {connectionId});
-  let abortWatcher = false;
 
-  while (!abortWatcher) {
-    const {connectionId: newRequestedConnectionId} = yield take([
-      actionTypes.LOGS.CONNECTIONS.CLEAR,
+  yield take(action =>
+    ([
       actionTypes.LOGS.CONNECTIONS.REQUEST,
-      actionTypes.LOGS.CONNECTIONS.REFRESH,
-    ]);
+      actionTypes.LOGS.CONNECTIONS.CLEAR,
+    ].includes(action.type) &&
+      action.connectionId === connectionId
+    ));
 
-    if (newRequestedConnectionId === connectionId) {
-      yield cancel(watcher);
-      abortWatcher = true;
-    }
-  }
+  yield cancel(watcher);
 }
 export function* deleteConnectionDebugLogs({ connectionId}) {
   const path = `/connections/${connectionId}/debug`;
@@ -99,10 +97,7 @@ export function* startDebug({connectionId, value}) {
   yield put(actions.resource.patch('connections', connectionId, patchSet));
 }
 export const connectionsLogSagas = [
-  takeEvery([
-    actionTypes.LOGS.CONNECTIONS.REQUEST,
-    actionTypes.LOGS.CONNECTIONS.REFRESH,
-  ], startPollingForConnectionDebugLogs),
+  takeEvery(actionTypes.LOGS.CONNECTIONS.REQUEST, startPollingForConnectionDebugLogs),
   takeLatest(actionTypes.LOGS.CONNECTIONS.DELETE, deleteConnectionDebugLogs),
   takeLatest(actionTypes.LOGS.CONNECTIONS.DOWNLOAD, downloadConnectionDebugLogs),
   takeLatest(actionTypes.LOGS.CONNECTIONS.START_DEBUG, startDebug),

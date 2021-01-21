@@ -1,5 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../../../actions/types';
+import { COMM_STATES } from '../../../comms/networkComms';
 
 export default (state = {}, action) => {
   const { type, connectionId, logs } = action;
@@ -13,42 +14,36 @@ export default (state = {}, action) => {
         if (!draft.connections[connectionId]) {
           draft.connections[connectionId] = {};
         }
-        draft.connections[connectionId].status = 'requested';
+        draft.connections[connectionId].status = COMM_STATES.LOADING;
+
         break;
       case actionTypes.LOGS.CONNECTIONS.RECEIVED:
-        if (draft.connections[connectionId]) {
-          draft.connections[connectionId].logs = logs;
-          draft.connections[connectionId].status = 'success';
+        if (!draft.connections[connectionId]) {
+          draft.connections[connectionId] = {};
         }
+
+        draft.connections[connectionId].logs = logs;
+        draft.connections[connectionId].status = COMM_STATES.SUCCESS;
         break;
       case actionTypes.LOGS.CONNECTIONS.REQUEST_FAILED:
         if (draft.connections[connectionId]) {
-          draft.connections[connectionId].status = 'error';
+          draft.connections[connectionId].status = COMM_STATES.ERROR;
         }
 
-        break;
-      case actionTypes.LOGS.CONNECTIONS.REFRESH:
-        if (draft.connections[connectionId]) {
-          draft.connections[connectionId].status = 'requested';
-          delete draft.connections[connectionId].logs;
-        }
         break;
       case actionTypes.LOGS.CONNECTIONS.CLEAR:
         if (draft.connections) {
           if (connectionId) {
             delete draft.connections[connectionId];
           } else {
-            Object.keys(draft.connections).forEach(connectionId => {
-              delete draft.connections[connectionId];
-            });
+            draft.connections = {};
           }
         }
 
         break;
       case actionTypes.LOGS.CONNECTIONS.DELETE:
-        if (draft.connections[connectionId]) {
-          delete draft.connections[connectionId].status;
-          delete draft.connections[connectionId].logs;
+        if (draft.connections) {
+          draft.connections[connectionId] = {};
         }
         break;
       default:

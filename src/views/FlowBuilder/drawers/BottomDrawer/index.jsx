@@ -220,11 +220,9 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
 
   useEffect(() =>
     () => {
-      if (flowScriptsWithLogEntry.length) {
-        dispatch(actions.logs.scripts.clear({flowId}));
-      }
+      dispatch(actions.logs.scripts.clear({flowId}));
     },
-  [dispatch, flowId, flowScriptsWithLogEntry.length]);
+  [dispatch, flowId]);
 
   useEffect(() =>
     () => {
