@@ -1,8 +1,9 @@
 import produce from 'immer';
 import actionTypes from '../../../../actions/types';
+import { COMM_STATES } from '../../../comms/networkComms';
 
 export default (state = {}, action) => {
-  const { type, connectionId, logs } = action;
+  const { type, connectionId, logs, clearAllLogs } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -13,37 +14,42 @@ export default (state = {}, action) => {
         if (!draft.connections[connectionId]) {
           draft.connections[connectionId] = {};
         }
-        draft.connections[connectionId].status = 'requested';
+        draft.connections[connectionId].status = COMM_STATES.LOADING;
+
         break;
       case actionTypes.LOGS.CONNECTIONS.RECEIVED:
-        draft.connections[connectionId].logs = logs;
-        draft.connections[connectionId].status = 'success';
+        if (draft.connections?.[connectionId]) {
+          draft.connections[connectionId].logs = logs;
+          draft.connections[connectionId].status = COMM_STATES.SUCCESS;
+        }
         break;
       case actionTypes.LOGS.CONNECTIONS.REQUEST_FAILED:
-        if (draft.connections[connectionId]) {
-          draft.connections[connectionId].status = 'error';
+        if (draft.connections?.[connectionId]) {
+          draft.connections[connectionId].status = COMM_STATES.ERROR;
         }
 
         break;
-      case actionTypes.LOGS.CONNECTIONS.REFRESH:
-        draft.connections[connectionId].status = 'requested';
-        delete draft.connections[connectionId].logs;
-        break;
+      // LOGS.CONNECTIONS.CLEAR action will clear connection state from UI
       case actionTypes.LOGS.CONNECTIONS.CLEAR:
+
         if (draft.connections) {
-          if (connectionId) {
+          if (clearAllLogs) {
+            delete draft.connections;
+          } else if (connectionId) {
             delete draft.connections[connectionId];
-          } else {
-            Object.keys(draft.connections).forEach(connectionId => {
-              delete draft.connections[connectionId];
-            });
           }
         }
 
         break;
+      // LOGS.CONNECTIONS.DELETE action will delete connection debug log in backend.
       case actionTypes.LOGS.CONNECTIONS.DELETE:
-        delete draft.connections[connectionId].status;
-        delete draft.connections[connectionId].logs;
+        /**
+         * assigning empty state instead of deleting the state, since flow builder uses state value to show active
+         * connection debugger tabs. Deleting state complete will result in closing the tab automatically.
+        */
+        if (draft.connections) {
+          draft.connections[connectionId] = {};
+        }
         break;
       default:
     }
