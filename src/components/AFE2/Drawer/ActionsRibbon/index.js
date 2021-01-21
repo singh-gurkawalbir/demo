@@ -30,7 +30,6 @@ export default function ActionRibbon({ editorId, className }) {
   const leftActions = drawerActions.filter(a => a.position === 'left');
   // Note: we default to right. currently only the afe1/2 data toggle is left aligned.
   const rightActions = drawerActions.filter(a => a.position !== 'left');
-  // is it safe to clear the state when the drawer is closed??
 
   return (
     <div className={clsx(classes.ribbon, className)}>
