@@ -31,19 +31,23 @@ export default (state = {}, action) => {
         }
 
         break;
+      // LOGS.CONNECTIONS.CLEAR action will clear connection state from UI
       case actionTypes.LOGS.CONNECTIONS.CLEAR:
+
         if (draft.connections) {
           if (connectionId) {
             delete draft.connections[connectionId];
           } else {
-            draft.connections = {};
+            // in case LOGS.CONNECTIONS.CLEAR action is triggered with no connectionId, it relates to flow builder being closed. In which case, we want to remove all connection logs from state.
+            delete draft.connections;
           }
         }
 
         break;
+      // LOGS.CONNECTIONS.DELETE action will delete connection debug log in backend.
       case actionTypes.LOGS.CONNECTIONS.DELETE:
         /**
-         * assigning empty state instead of complete deleting the state, since flow builder uses selector to show active
+         * assigning empty state instead of deleting the state, since flow builder uses state value to show active
          * connection debugger tabs. Deleting state complete will result in closing the tab automatically.
         */
         if (draft.connections) {

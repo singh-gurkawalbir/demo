@@ -53,13 +53,20 @@ export function* pollForConnectionLogs({ connectionId }) {
 export function* startPollingForConnectionDebugLogs({ connectionId }) {
   const watcher = yield fork(pollForConnectionLogs, {connectionId});
 
-  yield take(action =>
-    ([
-      actionTypes.LOGS.CONNECTIONS.REQUEST,
-      actionTypes.LOGS.CONNECTIONS.CLEAR,
-    ].includes(action.type) &&
-      action.connectionId === connectionId
-    ));
+  yield take(action => {
+    if (action.type === actionTypes.LOGS.CONNECTIONS.REQUEST && action.connectionId === connectionId) {
+      return true;
+    }
+    if (action.type === actionTypes.LOGS.CONNECTIONS.CLEAR) {
+      // in case of flow builder close, log clear is trigger with no connectionId. All connections logs to be stopped.
+      if (!action.connectionId) {
+        return true;
+      }
+
+      // user can manually choose to close particular connection debug log.
+      return action.connectionId === connectionId;
+    }
+  });
 
   yield cancel(watcher);
 }
