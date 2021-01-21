@@ -71,6 +71,7 @@ export default {
     }
 
     if (newValues['/inputMode'] === 'blob') {
+      newValues['/blob'] = true;
       newValues['/ftp/fileName'] = newValues['/ftp/blobFileName'];
       newValues['/ftp/useTempFile'] = newValues['/ftp/blobUseTempFile'];
       newValues['/ftp/inProgressFileName'] =
@@ -80,6 +81,7 @@ export default {
       delete newValues['/ftp/blobInProgressFileName'];
     } else {
       delete newValues['/blobKeyPath'];
+      delete newValues['/blob'];
     }
 
     if (newValues['/ftp/useTempFile'] === false) {
