@@ -2028,7 +2028,9 @@ selectors.makeIntegrationAppSectionFlows = () =>
             // If flow is present in two stores, then it is a commom flow and does not belong to any single store, so remove store information from flow
             delete flow.childId;
             delete flow.childName;
-          } else {
+          } else if (flows.find(fi => fi._id === f._id)) {
+            // Add only valid flows, the flow must be present in flows collection. This is possible when store is in uninstall mode.
+            // Flow may be deleted but store structure is intact on integration json.
             requiredFlows.push({id: f._id, childId: sec.childId, childName: sec.childName});
           }
         });
