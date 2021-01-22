@@ -24,7 +24,7 @@ export default function FlowStartDateDialog(props) {
   ).data;
 
   if (timeZone) {
-    lastExportDateTime = convertUtcToTimezone(lastExportDateTime, preferences.dateFormat, preferences.timeFormat, timeZone, false, true);
+    lastExportDateTime = convertUtcToTimezone(lastExportDateTime, preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true});
   }
   const selectorStatus = useSelector(state =>
     selectors.getLastExportDateTime(state, flowId)
@@ -33,7 +33,7 @@ export default function FlowStartDateDialog(props) {
   if (!lastExportDateTime) {
     lastExportDateTime = new Date();
     if (timeZone) {
-      lastExportDateTime = convertUtcToTimezone(new Date(), preferences.dateFormat, preferences.timeFormat, timeZone, false, true);
+      lastExportDateTime = convertUtcToTimezone(new Date(), preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true});
     }
   }
 
