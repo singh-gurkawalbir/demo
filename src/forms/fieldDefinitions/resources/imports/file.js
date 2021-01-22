@@ -29,6 +29,13 @@ export default {
     type: 'ftpfilenamewitheditor',
     editorTitle: 'Build file name',
     label: r => r?.adaptorType === 'S3Import' ? 'Build file key' : 'Build file name',
+    helpText: r => {
+      if (r?.adaptorType === 'S3Import') {
+        return 'Name of the file.';
+      }
+
+      return `Use this field to specify how the files being uploaded to the ${r?.adaptorType === 'FTPImport' ? 'ftp' : 'google drive'} site should be named.  You can type '{{{' to include a predefined timestamp template in your file name.  For example, 'FileXYZ-{{{timestamp "YY-MM-DD" "America/Los_Angeles"}}}.txt' will upload files with the following pattern: 'FileXYZ-16-06-30.txt' in America/Los_Angeles time.  Please note also that you can include whatever file name extension you like, and the file name extension will never change the type of data being generated.`;
+    },
     required: true,
     showAllSuggestions: true,
     refreshOptionsOnChangesTo: ['file.type'],
@@ -174,7 +181,15 @@ export default {
   'file.backupPath': {
     type: 'uri',
     label: r => r?.adaptorType === 'S3Import' ? 'Backup bucket name' : 'Backup files path',
-    helpKey: 'import.file.backupPath',
+    helpText: r => {
+      if (r?.adaptorType === 'S3Import') {
+        return 'Specify the bucket name where files will be backed up after successful transfer.';
+      } if (r?.adaptorType === 'FTPImport') {
+        return 'Specify the directory path of the FTP folder where files will be backed up after successful transfer.';
+      }
+
+      return 'Specify the directory path of the Google Drive folder where files will be backed up after successful transfer.';
+    },
   },
   'file.skipAggregation': {
     type: 'checkbox',

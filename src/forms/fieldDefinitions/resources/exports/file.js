@@ -65,7 +65,15 @@ export default {
   'file.backupPath': {
     type: 'uri',
     label: r => r?.adaptorType === 'S3Export' ? 'Backup bucket name' : 'Backup files path',
-    helpKey: 'export.file.backupPath',
+    helpText: r => {
+      if (r?.adaptorType === 'S3Export') {
+        return 'Specify the bucket name where files will be backed up after successful transfer.';
+      } if (r?.adaptorType === 'FTPExport') {
+        return 'Specify the directory path of the FTP folder where files will be backed up after successful transfer.';
+      }
+
+      return 'Specify the directory path of the Google Driver folder where files will be backed up after successful transfer.';
+    },
   },
   'file.encoding': {
     type: 'select',

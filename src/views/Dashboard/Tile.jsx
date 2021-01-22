@@ -168,7 +168,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const expiresInDays = license && remainingDays(license.expires);
   let licenseMessageContent = '';
   let expired = false;
-  const resumable = license?.resumable && [INTEGRATION_ACCESS_LEVELS.MONITOR, USER_ACCESS_LEVELS].includes(accessLevel);
+  const resumable = license?.resumable && [INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel);
 
   if (resumable) {
     licenseMessageContent = `Your subscription was renewed on ${moment(license.expires).format('MMM Do, YYYY')}. Click Reactivate to continue.`;
