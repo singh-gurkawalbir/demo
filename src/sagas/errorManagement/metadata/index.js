@@ -5,9 +5,9 @@ import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { selectors } from '../../../reducers';
 
-function* requestRetryData({ flowId, resourceId, retryId }) {
+export function* requestRetryData({ flowId, resourceId, retryId }) {
   try {
-    const retryDataResponse = yield apiCallWithRetry({
+    const retryDataResponse = yield call(apiCallWithRetry, {
       path: `/flows/${flowId}/${resourceId}/${retryId}/data`,
       opts: {
         method: 'GET',
@@ -45,14 +45,13 @@ export function* updateRetryData({ flowId, resourceId, retryId, retryData }) {
 
   updatedRetryDataInfo.data = retryData;
   try {
-    yield apiCallWithRetry({
+    yield call(apiCallWithRetry, {
       path: `/flows/${flowId}/${resourceId}/${retryId}/data`,
       opts: {
         method: 'PUT',
         body: updatedRetryDataInfo,
       },
     });
-
     yield put(
       actions.errorManager.retryData.received({
         flowId,
@@ -78,7 +77,7 @@ export function* updateRetryData({ flowId, resourceId, retryId, retryData }) {
   }
 }
 
-function* requestRetryStatus({ flowId, resourceId }) {
+export function* _requestRetryStatus({ flowId, resourceId }) {
   let resourceType = 'exports';
   const importResource = yield select(selectors.resource, 'imports', resourceId);
 
@@ -89,7 +88,7 @@ function* requestRetryStatus({ flowId, resourceId }) {
   const path = `/jobs?_flowId=${flowId}&type=retry&status=queued&status=running&${resourceType === 'exports' ? '_exportId' : '_importId'}=${resourceId}`;
 
   try {
-    const pendingRetryList = yield apiCallWithRetry({
+    const pendingRetryList = yield call(apiCallWithRetry, {
       path,
       opts: {
         method: 'GET',
@@ -114,7 +113,7 @@ function* requestRetryStatus({ flowId, resourceId }) {
 function* pollForRetryStatus({ flowId, resourceId }) {
   yield put(actions.errorManager.retryStatus.request({ flowId, resourceId }));
   while (true) {
-    yield call(requestRetryStatus, { flowId, resourceId });
+    yield call(_requestRetryStatus, { flowId, resourceId });
     yield delay(5 * 1000);
   }
 }
@@ -128,7 +127,7 @@ function* startPollingForRetryStatus({ flowId, resourceId }) {
 
 export function* requestFilterMetadata() {
   try {
-    const metadata = yield apiCallWithRetry({
+    const metadata = yield call(apiCallWithRetry, {
       path: '/errors/filterMetadata',
       opts: {
         method: 'GET',
