@@ -7,8 +7,7 @@ const useStyles = makeStyles(theme => ({
   title: {
     padding: theme.spacing(1),
     backgroundColor: theme.palette.background.paper,
-    // color: theme.palette.text.main,
-    borderBottom: 'solid 1px rgb(0,0,0,0.3)',
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
 }));
 
