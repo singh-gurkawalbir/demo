@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core/styles';
+
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
@@ -7,20 +7,12 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import CeligoSwitch from '../../../../CeligoSwitch';
 import Spinner from '../../../../Spinner';
 
-const useStyles = makeStyles(theme => ({
-  celigoSwitchOnOff: {
-    marginTop: theme.spacing(1),
-  },
-}));
-
 export default function OnOffCell({
   connectorId: resourceId,
   published: isPublished,
   applications,
   resourceType,
 }) {
-  const classes = useStyles();
-
   const { confirmDialog } = useConfirmDialog();
   const dispatch = useDispatch();
   const toggleStatus = useSelector(state => selectors.connectorPublishStatus(state, resourceId));
@@ -48,12 +40,11 @@ export default function OnOffCell({
   }
 
   if (toggleStatus === 'loading') {
-    return <Spinner size={24} className={classes.spinnerOnOff} />;
+    return <Spinner size={24} />;
   }
 
   return (
     <CeligoSwitch
-      className={classes.celigoSwitchOnOff}
       checked={isPublished}
       onChange={handleTogglePublishConfirm}
     />
