@@ -97,6 +97,8 @@ export default {
     }
     delete newValues['/file/compressFiles'];
     delete newValues['/inputMode'];
+    newValues['/ftp/fileName'] = undefined;
+    newValues['/ftp/backupDirectoryPath'] = undefined;
 
     return {
       ...newValues,

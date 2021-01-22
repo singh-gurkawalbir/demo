@@ -114,6 +114,7 @@ export default {
     }
 
     delete newValues['/file/decompressFiles'];
+    newValues['/s3/backupBucket'] = undefined;
 
     return {
       ...newValues,

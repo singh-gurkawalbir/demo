@@ -115,6 +115,7 @@ export default {
     }
 
     delete newValues['/file/decompressFiles'];
+    newValues['/ftp/backupDirectoryPath'] = undefined;
 
     return {
       ...newValues,
