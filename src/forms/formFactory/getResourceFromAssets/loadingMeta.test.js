@@ -445,7 +445,7 @@ describe('getResourceFromAssets load correct form', () => {
         ['http', {id: 'something1', adaptorType: 'HTTPImport'}, 'dataMappings'],
         ['rest', {id: 'something1', adaptorType: 'RESTImport'}, 'rest.method'],
         ['mongodb', {id: 'something1', adaptorType: 'MongodbImport'}, 'mongodb.ignoreExtract'],
-        ['s3', {id: 'something1', adaptorType: 'S3Import'}, 's3.backupBucket'],
+        ['s3', {id: 'something1', adaptorType: 'S3Import'}, 'file.backupPath'],
         ['wrapper', {id: 'something1', adaptorType: 'WrapperImport'}, 'wrapper.function'],
         ['as2', {id: 'something1', adaptorType: 'AS2Import'}, 'as2.fileNameTemplate'],
         ['dynamodb', {id: 'something1', adaptorType: 'DynamodbImport'}, 'dynamodb.sortKey'],
