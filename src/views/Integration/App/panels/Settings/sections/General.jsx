@@ -7,6 +7,7 @@ import PanelHeader from '../../../../../../components/PanelHeader';
 import { IAFormStateManager, useActiveTab } from '../../Flows';
 import { SavingMask } from '../../../../../SuiteScript/Integration/App/panels/Settings/sections/ConfigureSettings';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
+import { FORM_SAVE_STATUS } from '../../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   configureform: {
@@ -56,7 +57,7 @@ export default function GeneralPanel({ integrationId, storeId }) {
       <PanelHeader title="General" />
       {hasGeneralSettings && (
       <>
-        {formState?.saveStatus && <SavingMask />}
+        {formState?.formSaveStatus === FORM_SAVE_STATUS.LOADING && <SavingMask />}
 
         <IAFormStateManager
           {...activeTabProps}

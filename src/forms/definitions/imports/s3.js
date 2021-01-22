@@ -75,6 +75,9 @@ export default {
 
     if (newValues['/inputMode'] !== 'blob') {
       delete newValues['/blobKeyPath'];
+      delete newValues['/blob'];
+    } else {
+      newValues['/blob'] = true;
     }
 
     if (!newValues['/file/encoding']) {
@@ -136,7 +139,7 @@ export default {
         fields: [
           's3.region',
           's3.bucket',
-          's3.fileKey',
+          'file.fileName',
           'file.xml.body',
           'file.lookups',
         ],
@@ -145,7 +148,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          's3.backupBucket',
+          'file.backupPath',
           'file.encoding',
           'blobKeyPath',
           'fileAdvancedSettings',

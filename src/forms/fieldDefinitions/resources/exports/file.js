@@ -64,7 +64,7 @@ export default {
   },
   'file.backupPath': {
     type: 'uri',
-    label: 'Backup files path',
+    label: r => r?.adaptorType === 'S3Export' ? 'Backup bucket name' : 'Backup files path',
     helpKey: 'export.file.backupPath',
   },
   'file.encoding': {

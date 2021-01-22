@@ -126,8 +126,7 @@ export default (state = {}, action) => {
         draft[flowId][resourceId].actions.resolve.status = 'requested';
         break;
 
-      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE
-        .RECEIVED: {
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.RECEIVED: {
         if (!draft[flowId] || !draft[flowId][resourceId]) {
           break;
         }
@@ -140,8 +139,7 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY
-        .RECEIVED: {
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.RECEIVED: {
         if (!draft[flowId] || !draft[flowId][resourceId]) {
           break;
         }

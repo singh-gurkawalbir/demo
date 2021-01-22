@@ -9,6 +9,14 @@ export default {
     if (newValues['/ftp/entryParser'] === '') {
       delete newValues['/ftp/entryParser'];
     }
+    if (!newValues['/ftp/usePgp']) {
+      newValues['/ftp/pgpEncryptKey'] = undefined;
+      newValues['/ftp/pgpDecryptKey'] = undefined;
+      newValues['/ftp/pgpPassphrase'] = undefined;
+      newValues['/ftp/pgpKeyAlgorithm'] = undefined;
+    } else if (!newValues['/ftp/useCustomPGPEncryptionAlgorithm']) {
+      newValues['/ftp/pgpKeyAlgorithm'] = undefined;
+    }
 
     return newValues;
   },
@@ -86,8 +94,9 @@ export default {
     'ftp.pgpKeyAlgorithm': {
       fieldId: 'ftp.pgpKeyAlgorithm',
       omitWhenHidden: true,
-      visibleWhen: [
+      visibleWhenAll: [
         { field: 'ftp.useCustomPGPEncryptionAlgorithm', is: [true] },
+        { field: 'ftp.usePgp', is: [true] },
       ],
     },
     'ftp.useCustomPGPEncryptionAlgorithm': {

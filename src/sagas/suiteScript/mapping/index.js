@@ -61,6 +61,7 @@ export function* refreshGenerates({ isInit = false }) {
 
   const {data: generateFields} = yield select(selectors.suiteScriptGenerates, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
 
+  if (!generateFields) { return; }
   if (importType === 'salesforce') {
     const { sObjectType } = importRes.salesforce;
     // getting all childRelationshipFields of parent sObject
