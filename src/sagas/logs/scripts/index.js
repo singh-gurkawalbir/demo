@@ -6,7 +6,6 @@ import actions from '../../../actions';
 import { requestReferences } from '../../resources';
 import { apiCallWithRetry } from '../..';
 import { selectors } from '../../../reducers';
-import { convertUtcToTimezone } from '../../../utils/date';
 import {RESOURCE_TYPE_PLURAL_TO_SINGULAR} from '../../../constants/resource';
 
 function getFetchLogsPath({
@@ -155,15 +154,10 @@ export function* requestScriptLogs({isInit, field, ...props}) {
     }));
   }
 
-  // change logs utc datetime to local date time
-  const {dateFormat, timeFormat } = yield select(selectors.userProfilePreferencesProps);
-  const timezone = yield select(selectors.userTimezone);
-
   const formattedLogs = logs.map(({time = '', ...others}) => {
     const utcISODateTime = moment(time, 'YYYY-MM-DD HH:mm:ss.SSS').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-    const localDateTime = convertUtcToTimezone(utcISODateTime, dateFormat, timeFormat, timezone);
 
-    return {time: localDateTime, ...others };
+    return {time: utcISODateTime, ...others };
   });
 
   yield put(actions.logs.scripts.received({

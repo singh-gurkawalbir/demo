@@ -2028,7 +2028,9 @@ selectors.makeIntegrationAppSectionFlows = () =>
             // If flow is present in two stores, then it is a commom flow and does not belong to any single store, so remove store information from flow
             delete flow.childId;
             delete flow.childName;
-          } else {
+          } else if (flows.find(fi => fi._id === f._id)) {
+            // Add only valid flows, the flow must be present in flows collection. This is possible when store is in uninstall mode.
+            // Flow may be deleted but store structure is intact on integration json.
             requiredFlows.push({id: f._id, childId: sec.childId, childName: sec.childName});
           }
         });
@@ -4995,7 +4997,7 @@ selectors.editorSupportsOnlyV2Data = (state, editorId) => {
   // no use case yet where any PG field supports only v2 data
   if (isPageGenerator) return false;
 
-  if (editorType === 'csvGenerator' || fieldId === 'ftp.backupDirectoryPath' || fieldId === 's3.backupBucket') return true;
+  if (editorType === 'csvGenerator' || fieldId === 'file.backupPath') return true;
 
   return false;
 };

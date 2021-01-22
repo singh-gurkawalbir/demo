@@ -278,6 +278,9 @@ export default {
 
     if (retValues['/inputMode'] !== 'blob') {
       delete retValues['/blobKeyPath'];
+      delete retValues['/blob'];
+    } else {
+      retValues['/blob'] = true;
     }
     if (retValues['/http/requestMediaType'] === 'csv') {
       retValues['/file/type'] = 'csv';
@@ -347,7 +350,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (r.resourceType === 'transferFiles' || r.blobKeyPath) return 'blob';
+        if (r.resourceType === 'transferFiles' || r.blob) return 'blob';
 
         return 'records';
       },
@@ -1315,7 +1318,7 @@ export default {
       {
         collapsed: true,
         label: r => {
-          if (r?.resourceType === 'transferFiles' || r?.blobKeyPath) {
+          if (r?.resourceType === 'transferFiles' || r?.blob) {
             return 'How would you like the files transferred?';
           }
 
