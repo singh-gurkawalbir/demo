@@ -318,7 +318,6 @@ export default function SelectApplication(props) {
 
   return (
     <FormControl
-      data-public
       data-test={id}
       key={id}
       disabled={disabled}
@@ -327,6 +326,7 @@ export default function SelectApplication(props) {
         {label}
       </InputLabel>
       <Select
+        data-public
         ref={ref}
         name={name}
         placeholder={placeholder}

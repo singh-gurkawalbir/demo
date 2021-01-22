@@ -231,6 +231,9 @@ export default function Panel(props) {
   }
 
   );
+
+  const isWebhookExport = useSelector(state =>
+    selectors.resourceData(state, resourceType, id)?.merged?.adaptorType === 'WebhookExport');
   const applicationType = useSelector(state => selectors.applicationType(state, resourceType, id));
 
   const app = applications.find(a => a.id === applicationType) || {};
@@ -277,7 +280,9 @@ export default function Panel(props) {
     // we don't show preview panel if it is the first step
     return shouldShow && !isFirstStep;
   });
-  const shouldNotRedactInLogRocket = flowId && resourceType === 'imports';
+
+  // only webhooks should not be redacted
+  const shouldNotRedactInLogRocket = !isWebhookExport;
 
   return (
     <>

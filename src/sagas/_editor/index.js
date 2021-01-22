@@ -243,7 +243,7 @@ export function* save({ id, context }) {
         yield put(
           actions.resource.patchStaged(resourceId, patch, SCOPES.VALUE)
         );
-        const resp = yield call(commitStagedChanges, {
+        const error = yield call(commitStagedChanges, {
           resourceType,
           id: resourceId,
           scope: SCOPES.VALUE,
@@ -251,7 +251,7 @@ export function* save({ id, context }) {
         });
 
         // trigger save failed in case of error
-        if (resp?.error) {
+        if (error) {
           return yield put(actions._editor.saveFailed(id));
         }
       } else {
