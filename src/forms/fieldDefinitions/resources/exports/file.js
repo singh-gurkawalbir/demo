@@ -72,7 +72,7 @@ export default {
         return 'Specify the directory path of the FTP folder where files will be backed up after successful transfer.';
       }
 
-      return 'Specify the directory path of the Google Driver folder where files will be backed up after successful transfer.';
+      return 'Specify the directory path of the google drive folder where files will be backed up after successful transfer.';
     },
   },
   'file.encoding': {
