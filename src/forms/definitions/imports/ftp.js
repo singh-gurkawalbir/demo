@@ -71,7 +71,8 @@ export default {
     }
 
     if (newValues['/inputMode'] === 'blob') {
-      newValues['/ftp/fileName'] = newValues['/ftp/blobFileName'];
+      newValues['/file/fileName'] = newValues['/ftp/blobFileName'];
+      newValues['/blob'] = true;
       newValues['/ftp/useTempFile'] = newValues['/ftp/blobUseTempFile'];
       newValues['/ftp/inProgressFileName'] =
         newValues['/ftp/blobInProgressFileName'];
@@ -80,6 +81,7 @@ export default {
       delete newValues['/ftp/blobInProgressFileName'];
     } else {
       delete newValues['/blobKeyPath'];
+      delete newValues['/blob'];
     }
 
     if (newValues['/ftp/useTempFile'] === false) {
@@ -209,7 +211,7 @@ export default {
         label: 'Where would you like the files transferred?',
         fields: [
           'ftp.directoryPath',
-          'ftp.fileName',
+          'file.fileName',
           'file.xml.body',
           'ftp.blobFileName',
           'file.lookups',
@@ -223,7 +225,7 @@ export default {
           'ftp.inProgressFileName',
           'ftp.blobUseTempFile',
           'ftp.blobInProgressFileName',
-          'ftp.backupDirectoryPath',
+          'file.backupPath',
           'file.encoding',
           'blobKeyPath',
           'fileAdvancedSettings',

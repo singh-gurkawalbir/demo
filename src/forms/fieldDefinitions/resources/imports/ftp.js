@@ -8,40 +8,6 @@ export default {
     showExtract: false,
     showLookup: false,
   },
-  'ftp.fileName': {
-    type: 'ftpfilenamewitheditor',
-    editorTitle: 'Build file name',
-    label: 'File name',
-    required: true,
-    showAllSuggestions: true,
-    defaultValue: r => r && r.ftp && r.ftp.fileName,
-    refreshOptionsOnChangesTo: ['file.type'],
-    validWhen: {
-      someAreTrue: {
-        message:
-          'Please append date and time stamp, such as {{timestamp "YYYY-MM-DD hh:mm:ss" "America/Los_Angeles"}}.',
-        conditions: [
-          {
-            field: 'file.skipAggregation',
-            isNot: {
-              values: [true],
-            },
-          },
-          {
-            matchesRegEx: {
-              pattern: '{{timestamp "(?=.*x).*"}}|{{timestamp "(?=.*X).*"}}|{{timestamp "(?=.*mm)(?=.*ss).*"}}',
-            },
-          },
-        ],
-      },
-    },
-    visibleWhen: [
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
-  },
   'ftp.useTempFile': {
     type: 'checkbox',
     label: 'Use temp file while upload in progress',
@@ -60,7 +26,7 @@ export default {
     showAllSuggestions: true,
     defaultValue: r =>
       (r && r.ftp && r.ftp.inProgressFileName),
-    refreshOptionsOnChangesTo: ['file.type', 'ftp.fileName'],
+    refreshOptionsOnChangesTo: ['file.type', 'file.fileName'],
     visibleWhenAll: [
       {
         field: 'ftp.useTempFile',
@@ -75,10 +41,10 @@ export default {
   'ftp.blobFileName': {
     type: 'ftpfilenamewitheditor',
     editorTitle: 'Build file name',
-    label: 'File name',
+    label: 'Build file name',
     required: true,
     showAllSuggestions: true,
-    defaultValue: r => r && r.ftp && r.ftp.fileName,
+    defaultValue: r => r && r.file && r.file.fileName,
     refreshOptionsOnChangesTo: ['file.type'],
     validWhen: {
       someAreTrue: {
@@ -132,12 +98,5 @@ export default {
         is: ['blob'],
       },
     ],
-  },
-  'ftp.backupDirectoryPath': {
-    type: 'uri',
-    label: 'Backup files path',
-    helpKey: 'import.ftp.backupDirectoryPath',
-    showExtract: false,
-    showLookup: false,
   },
 };

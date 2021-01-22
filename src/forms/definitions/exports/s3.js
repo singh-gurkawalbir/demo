@@ -219,7 +219,7 @@ export default {
           'file.compressionFormat',
           'file.skipDelete',
           'fileMetadata',
-          's3.backupBucket',
+          'file.backupPath',
           'file.encoding',
           'pageSize',
           'dataURITemplate',
