@@ -253,7 +253,7 @@ inputMode: {
     return false;
   },
 
-  defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
+  defaultValue: r => (r && r.blob ? 'blob' : 'records'),
 },
 'file.encoding': {
   fieldId: 'file.encoding',

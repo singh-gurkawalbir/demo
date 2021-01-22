@@ -9,7 +9,7 @@ export default function DateTimeDisplay({ date, dateTime }) {
     state => selectors.userOwnPreferences(state),
     shallowEqual
   );
-  const timezone = useSelector(state => selectors.userProfile(state)?.timezone);
+  const timezone = useSelector(state => selectors.userTimezone(state));
 
   const out = useMemo(() => {
     if (!dateFormat || !timeFormat || !(date || dateTime)) {

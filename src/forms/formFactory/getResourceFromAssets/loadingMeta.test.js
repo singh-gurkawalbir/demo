@@ -142,7 +142,7 @@ describe('getResourceFromAssets load correct form', () => {
       ['scripts', 'insertFunction'],
       ['agents', 'description'],
       ['connectors', 'installerFunction'],
-      ['templates', 'imageURL'],
+      ['templates', 'websiteURL'],
       ['stacks', 'lambda.accessKeyId'],
       ['pageProcessor', 'existingExport'],
       ['asyncHelpers', 'http.submit.transform'],

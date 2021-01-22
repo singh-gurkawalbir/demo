@@ -13104,9 +13104,6 @@ Object {
       "description": Object {
         "fieldId": "description",
       },
-      "imageURL": Object {
-        "fieldId": "imageURL",
-      },
       "name": Object {
         "fieldId": "name",
       },
@@ -13120,7 +13117,6 @@ Object {
           "fields": Array [
             "name",
             "description",
-            "imageURL",
             "websiteURL",
             "contactEmail",
             "applications",

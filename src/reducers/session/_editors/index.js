@@ -24,6 +24,7 @@ export default function reducer(state = {}, action) {
     autoPreview,
     sampleDataError,
     newLayout,
+    saveMessage,
   } = action;
 
   return produce(state, draft => {
@@ -212,6 +213,7 @@ export default function reducer(state = {}, action) {
       case actionTypes._EDITOR.SAVE.FAILED: {
         if (!draft[id]) break;
         draft[id].saveStatus = 'failed';
+        draft[id].saveMessage = saveMessage;
         break;
       }
 

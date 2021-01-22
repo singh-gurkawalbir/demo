@@ -52,6 +52,80 @@ describe('user selectors', () => {
       });
     });
   });
+  describe('userTimezone', () => {
+    test('should return correct user time zone for an org owner', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', timezone: 'Asia/Calcutta' },
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+        },
+        'some action'
+      );
+
+      expect(selectors.userTimezone(state)).toEqual('Asia/Calcutta');
+    });
+    test('should return correct user time zone info for an org user', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', timezone: 'Asia/Calcutta' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                _id: 'ashare1',
+                ownerUser: {
+                  email: 'owner@test.com',
+                  name: 'owner 1',
+                  timezone: 'America/LosAngeles',
+                },
+              },
+              {
+                _id: 'ashare2',
+                ownerUser: {
+                  email: 'owner2@test.com',
+                  name: 'owner 2',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.userTimezone(state)).toEqual('Asia/Calcutta');
+    });
+
+    test('should return owner user time zone info for an org user when user doesnt have timezone set', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                _id: 'ashare1',
+                ownerUser: {
+                  email: 'owner@test.com',
+                  name: 'owner 1',
+                  timezone: 'America/LosAngeles',
+                },
+              },
+              {
+                _id: 'ashare2',
+                ownerUser: {
+                  email: 'owner2@test.com',
+                  name: 'owner 2',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.userTimezone(state)).toEqual('America/LosAngeles');
+    });
+  });
   describe('accountSummary', () => {
     test('should return [] if state is undefined', () => {
       const state = reducer(undefined, 'some action');

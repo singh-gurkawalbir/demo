@@ -75,6 +75,9 @@ export default {
 
     if (newValues['/inputMode'] !== 'blob') {
       delete newValues['/blobKeyPath'];
+      delete newValues['/blob'];
+    } else {
+      newValues['/blob'] = true;
     }
 
     if (!newValues['/file/encoding']) {

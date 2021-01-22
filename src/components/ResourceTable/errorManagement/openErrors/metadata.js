@@ -39,7 +39,7 @@ export default {
     {
       heading: 'Code',
       value: r => <TextOverflowCell message={r.code} />,
-      width: '18%',
+      width: '15%',
     },
     {
       headerValue: function SelectOpenSource(r, actionProps) {
@@ -52,7 +52,7 @@ export default {
       headerValue: function SelectTimestamp(r, actionProps) {
         return <SelectDate {...actionProps} />;
       },
-      width: '12%',
+      width: '15%',
       value: r => <CeligoTimeAgo date={r.occurredAt} />,
     },
   ],
