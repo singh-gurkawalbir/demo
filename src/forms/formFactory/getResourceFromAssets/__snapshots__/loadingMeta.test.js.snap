@@ -769,9 +769,15 @@ Object {
       "ftp.pgpKeyAlgorithm": Object {
         "fieldId": "ftp.pgpKeyAlgorithm",
         "omitWhenHidden": true,
-        "visibleWhen": Array [
+        "visibleWhenAll": Array [
           Object {
             "field": "ftp.useCustomPGPEncryptionAlgorithm",
+            "is": Array [
+              true,
+            ],
+          },
+          Object {
+            "field": "ftp.usePgp",
             "is": Array [
               true,
             ],
@@ -3653,9 +3659,6 @@ Object {
       "fixed.format": Object {
         "fieldId": "fixed.format",
       },
-      "ftp.backupDirectoryPath": Object {
-        "fieldId": "ftp.backupDirectoryPath",
-      },
       "ftp.directoryPath": Object {
         "fieldId": "ftp.directoryPath",
       },
@@ -3721,9 +3724,6 @@ Object {
             ],
           },
         ],
-      },
-      "s3.backupBucket": Object {
-        "fieldId": "s3.backupBucket",
       },
       "s3.bucket": Object {
         "fieldId": "s3.bucket",
@@ -3802,7 +3802,7 @@ Object {
                 "file.compressionFormat",
                 "file.skipDelete",
                 "fileMetadata",
-                "ftp.backupDirectoryPath",
+                "file.backupPath",
                 "file.encoding",
                 "pageSize",
                 "dataURITemplate",
@@ -5386,9 +5386,6 @@ Object {
       "fixed.format": Object {
         "fieldId": "fixed.format",
       },
-      "ftp.backupDirectoryPath": Object {
-        "fieldId": "ftp.backupDirectoryPath",
-      },
       "ftp.directoryPath": Object {
         "fieldId": "ftp.directoryPath",
       },
@@ -5454,9 +5451,6 @@ Object {
             ],
           },
         ],
-      },
-      "s3.backupBucket": Object {
-        "fieldId": "s3.backupBucket",
       },
       "s3.bucket": Object {
         "fieldId": "s3.bucket",
@@ -5536,7 +5530,7 @@ Object {
                 "file.compressionFormat",
                 "file.skipDelete",
                 "fileMetadata",
-                "s3.backupBucket",
+                "file.backupPath",
                 "file.encoding",
                 "pageSize",
                 "dataURITemplate",
@@ -8413,9 +8407,6 @@ Object {
           },
         ],
       },
-      "ftp.backupDirectoryPath": Object {
-        "fieldId": "ftp.backupDirectoryPath",
-      },
       "ftp.blobFileName": Object {
         "fieldId": "ftp.blobFileName",
       },
@@ -8427,9 +8418,6 @@ Object {
       },
       "ftp.directoryPath": Object {
         "fieldId": "ftp.directoryPath",
-      },
-      "ftp.fileName": Object {
-        "fieldId": "ftp.fileName",
       },
       "ftp.inProgressFileName": Object {
         "fieldId": "ftp.inProgressFileName",
@@ -8465,14 +8453,8 @@ Object {
         ],
         "type": "mode",
       },
-      "s3.backupBucket": Object {
-        "fieldId": "s3.backupBucket",
-      },
       "s3.bucket": Object {
         "fieldId": "s3.bucket",
-      },
-      "s3.fileKey": Object {
-        "fieldId": "s3.fileKey",
       },
       "s3.region": Object {
         "fieldId": "s3.region",
@@ -8523,7 +8505,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "ftp.directoryPath",
-                "ftp.fileName",
+                "file.fileName",
                 "file.xml.body",
                 "ftp.blobFileName",
                 "file.lookups",
@@ -8537,7 +8519,7 @@ Object {
                 "ftp.inProgressFileName",
                 "ftp.blobUseTempFile",
                 "ftp.blobInProgressFileName",
-                "ftp.backupDirectoryPath",
+                "file.backupPath",
                 "file.encoding",
                 "blobKeyPath",
                 "fileAdvancedSettings",
@@ -10570,9 +10552,6 @@ Object {
           },
         ],
       },
-      "ftp.backupDirectoryPath": Object {
-        "fieldId": "ftp.backupDirectoryPath",
-      },
       "ftp.blobFileName": Object {
         "fieldId": "ftp.blobFileName",
       },
@@ -10584,9 +10563,6 @@ Object {
       },
       "ftp.directoryPath": Object {
         "fieldId": "ftp.directoryPath",
-      },
-      "ftp.fileName": Object {
-        "fieldId": "ftp.fileName",
       },
       "ftp.inProgressFileName": Object {
         "fieldId": "ftp.inProgressFileName",
@@ -10622,14 +10598,8 @@ Object {
         ],
         "type": "mode",
       },
-      "s3.backupBucket": Object {
-        "fieldId": "s3.backupBucket",
-      },
       "s3.bucket": Object {
         "fieldId": "s3.bucket",
-      },
-      "s3.fileKey": Object {
-        "fieldId": "s3.fileKey",
       },
       "s3.region": Object {
         "fieldId": "s3.region",
@@ -10681,7 +10651,7 @@ Object {
               "fields": Array [
                 "s3.region",
                 "s3.bucket",
-                "s3.fileKey",
+                "file.fileName",
                 "file.xml.body",
                 "file.lookups",
               ],
@@ -10690,7 +10660,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "s3.backupBucket",
+                "file.backupPath",
                 "file.encoding",
                 "blobKeyPath",
                 "fileAdvancedSettings",

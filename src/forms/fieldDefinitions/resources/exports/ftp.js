@@ -21,13 +21,6 @@ export default {
     showExtract: false,
     showLookup: false,
   },
-  'ftp.backupDirectoryPath': {
-    type: 'uri',
-    label: 'Backup files path',
-    helpKey: 'export.ftp.backupDirectoryPath',
-    showExtract: false,
-    showLookup: false,
-  },
   // #region transform
   'transform.expression.rules': {
     type: 'transformeditor',
