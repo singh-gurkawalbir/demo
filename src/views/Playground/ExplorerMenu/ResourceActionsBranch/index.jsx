@@ -33,8 +33,10 @@ function getValueFromPath(o, path) {
   return value;
 }
 
+const hideEditor = true;
+
 function getEditorsByResource(resource) {
-  if (!resource) return [];
+  if (!resource || hideEditor) return [];
 
   const { adaptorType } = resource;
 
