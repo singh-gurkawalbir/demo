@@ -11,7 +11,6 @@ const useStyles = makeStyles(theme => ({
   drawerHeader: {
     display: 'flex',
     alignItems: 'center',
-    background: theme.palette.background.paper,
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(2, 3),
     '& > :not(:last-child)': {
