@@ -66,7 +66,7 @@ export default function Editors() {
       <CeligoPageBar title="Developer playground">
         <ExportExampleButton editorId={editorId} />
         {editorId && (
-          <Tooltip title="Fullscreen mode" placement="right">
+          <Tooltip data-public title="Fullscreen mode" placement="right">
             <IconButton onClick={handleFullScreen} size="small">
               <FullScreenOpenIcon />
             </IconButton>

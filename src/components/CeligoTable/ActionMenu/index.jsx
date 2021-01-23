@@ -17,7 +17,7 @@ const Action = ({ label, Icon, disabledActionText, useHasAccess, actionProps, ro
 
   if (disabledActionTitle) {
     return (
-      <Tooltip key={label} title={disabledActionTitle} placement="bottom" >
+      <Tooltip data-public key={label} title={disabledActionTitle} placement="bottom" >
         <div>
           <MenuItem disabled>
             {actionIcon}

@@ -192,6 +192,7 @@ export default function MappingRow({
 
   const RightIcon = ({title, Icon, className}) => (
     <Tooltip
+      data-public
       title={title}
       placement="bottom">
       <span className={clsx(classes.lockIcon, className)}>
@@ -247,6 +248,7 @@ export default function MappingRow({
               isSubRecordMapping || isNotEditable || disabled,
           })}>
           <DynaTypeableSelect
+            data-public
             key={extractValue}
             id={`fieldMappingExtract-${index}`}
             labelName="name"
@@ -271,6 +273,7 @@ export default function MappingRow({
               isSubRecordMapping || isRequired || disabled,
           })}>
           <DynaTypeableSelect
+            data-public
             key={generate}
             id={`fieldMappingGenerate-${index}`}
             value={generate}
