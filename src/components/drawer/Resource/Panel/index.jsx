@@ -88,7 +88,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2, 3),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     position: 'relative',
-    background: theme.palette.background.paper,
   },
   titleText: {
     wordBreak: 'break-word',

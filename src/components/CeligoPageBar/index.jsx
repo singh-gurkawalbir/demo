@@ -5,9 +5,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Paper, Grid, IconButton } from '@material-ui/core';
 import ElevateOnScroll from '../ElevateOnScroll';
 import SlideOnScroll from '../SlideOnScroll';
-import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import { selectors } from '../../reducers';
 import InfoIconButton from '../InfoIconButton';
+import BackArrowIcon from '../icons/BackArrowIcon';
 
 const useStyles = makeStyles(theme => ({
   pageHeader: {
@@ -75,7 +75,7 @@ export default function CeligoPageBar(props) {
               {history && (
                 // eslint-disable-next-line react/jsx-handler-names
                 <IconButton size="small" onClick={history.goBack}>
-                  <ArrowLeftIcon />
+                  <BackArrowIcon />
                 </IconButton>
               )}
               <Typography className={classes.title} variant="h3">
