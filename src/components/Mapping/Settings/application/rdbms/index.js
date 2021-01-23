@@ -64,6 +64,9 @@ export default {
           type: 'checkbox',
           defaultValue: value.useFirstRow || false,
           label: 'Use first row',
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['standard'] },
+          ],
         },
         fieldMappingType: {
           id: 'fieldMappingType',
