@@ -189,7 +189,9 @@ export default function Subscription() {
   return (
     <>
       <UpgradeDrawer />
-      <div className={classes.root}>
+      <div
+        data-public
+        className={classes.root}>
         {licenseActionDetails && licenseActionDetails.isNone && (
         <div className={classes.block}>
           <Typography

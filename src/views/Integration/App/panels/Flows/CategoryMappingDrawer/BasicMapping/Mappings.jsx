@@ -361,6 +361,7 @@ export default function ImportMapping(props) {
                   />
                   {mapping.isRequired && (
                     <Tooltip
+                      data-public
                       title="This field is required by the application you are importing into"
                       placement="top">
                       <span className={classes.lockIcon}>

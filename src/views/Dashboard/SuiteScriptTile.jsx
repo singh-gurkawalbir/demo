@@ -129,7 +129,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
             <StatusCircle variant={status.variant} />
           </Status>
           {isConnectionDown && (
-          <Tooltip title="Connection down" placement="bottom" className={classes.tooltip}>
+          <Tooltip data-public title="Connection down" placement="bottom" className={classes.tooltip}>
             <IconButton size="small" color="inherit" onClick={handleConnectionDownStatusClick} className={classes.status}>
               <ConnectionDownIcon />
             </IconButton>
@@ -167,6 +167,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
             <Manage>
               {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR ? (
                 <Tooltip
+                  data-public
                   title="You have monitor permissions"
                   placement="bottom">
                   <Link
@@ -178,6 +179,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
                 </Tooltip>
               ) : (
                 <Tooltip
+                  data-public
                   title="You have manage permissions"
                   placement="bottom">
                   <Link

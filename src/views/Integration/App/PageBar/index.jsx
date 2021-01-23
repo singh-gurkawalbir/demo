@@ -241,6 +241,7 @@ export default function PageBar() {
         </IconTextButton>
         )}
         <Select
+          data-public
           displayEmpty
           data-test={`select${storeLabel}`}
           className={classes.storeSelect}
