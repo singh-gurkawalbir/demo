@@ -52,7 +52,6 @@ export default function ManageLookup({ editorId }) {
   [adaptorType, formContext, resourceType]);
   const _lookups = useMemo(() => Array.isArray(lookups) ? lookups : [], [lookups]);
 
-  completers.handleBarsCompleters.setLookupCompleter(_lookups);
   useEffect(() => {
     completers.handleBarsCompleters.setJsonCompleter(lastValidData);
   }, [lastValidData]);
@@ -73,9 +72,12 @@ export default function ManageLookup({ editorId }) {
     // don't show lookup helper suggestion if lookups aren't supported
     delete handlebarHelperFunction.lookup;
     completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
+    // reset and delete lookups from completers
+    completers.handleBarsCompleters.setLookupCompleter([]);
 
     return null;
   }
+  completers.handleBarsCompleters.setLookupCompleter(_lookups);
   completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
 
   return (

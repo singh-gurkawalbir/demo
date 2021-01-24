@@ -117,6 +117,7 @@ const FlowListingTable = ({
 
   return (
     <CeligoTable
+      data-public
       data={groupedFlows}
       filterKey={filterKey}
       {...flowTableMeta}
@@ -137,6 +138,7 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
   if (!flowGroupingsSections) {
     return (
       <CeligoTable
+        data-public
         data={flows}
         filterKey={filterKey}
         {...flowTableMeta}
@@ -157,6 +159,7 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
           {allSection.map(({ title, sectionId }) => (
             <ListItem key={sectionId} className={classes.flowTitle}>
               <NavLink
+                data-public
                 className={classes.listItem}
                 activeClassName={classes.activeListItem}
                 to={sectionId}

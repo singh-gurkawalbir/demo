@@ -400,6 +400,7 @@ export default function JobDashboard({
         commStatusHandler={handleCommsStatus}
       />
       <Filters
+        data-public
         filterKey={filterKey}
         integrationId={integrationId}
         flowId={flowId}
