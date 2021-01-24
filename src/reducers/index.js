@@ -1817,7 +1817,7 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
           }
         } else {
           sections.forEach(sec => {
-            if (sec.mode === 'settings') {
+            if (sec.mode === 'settings' || !sec.mode) {
               if (sectionId) {
                 const selectedSection = sec.sections.find(s => getTitleIdFromSection(s) === sectionId);
 
