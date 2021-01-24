@@ -51,9 +51,8 @@ const useStyles = makeStyles(theme => ({
   },
   baseFormWithPreview: {
     display: 'grid',
-    gridTemplateColumns: '55% 43%',
+    gridTemplateColumns: '50% 47%',
     gridColumnGap: theme.spacing(1),
-
   },
   resourceFormWrapper: {
     flexDirection: 'row',

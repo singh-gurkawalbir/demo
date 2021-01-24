@@ -1,11 +1,11 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import clsx from 'clsx';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
 import ClipBoardPanel from './clipBoardPanel';
 import { getBodyHeaderFieldsForPreviewData } from '../../../utils/exportPanel';
-import JsonContent from '../../JsonContent';
+import CodeEditor from '../../CodeEditor2';
+// import JsonContent from '../../JsonContent';
 
 const useStyles = makeStyles(theme => ({
   sampleDataWrapper: {
@@ -13,27 +13,22 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     background: theme.palette.background.paper,
     padding: theme.spacing(1),
-  },
-  sampleDataWrapperAlign: {
     marginTop: -18,
   },
   sampleDataContainer: {
     minHeight: theme.spacing(20),
+    marginTop: theme.spacing(2),
     position: 'relative',
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.background.paper,
     maxHeight: 400,
     overflow: 'auto',
-    maxWidth: 680,
     color: theme.palette.text.primary,
-    '& > div': {
-      wordBreak: 'break-word',
-    },
-  },
-  sampleDataContainerAlign: {
-    marginTop: theme.spacing(2),
   },
   tabbedPanelTabs: {
     borderBottom: `1px solid ${theme.palette.background.paper2}`,
+  },
+  codeEditorWrapper: {
+    height: '345px',
   },
 }));
 
@@ -67,16 +62,8 @@ export default function TabbedPanel(props) {
   ]);
 
   return (
-    <div
-      className={clsx(
-        classes.sampleDataWrapper,
-        classes.sampleDataWrapperAlign
-      )}>
-      <div
-        className={clsx(
-          classes.sampleDataContainer,
-          classes.sampleDataContainerAlign
-        )}>
+    <div className={classes.sampleDataWrapper}>
+      <div className={classes.sampleDataContainer}>
         <Tabs
           value={tabValue}
           onChange={handleTabChange}
@@ -104,9 +91,19 @@ export default function TabbedPanel(props) {
           />
           )
         </Tabs>
-        <div>
-          <JsonContent json={tabContent} />
-        </div>
+        {
+          tabContent && (
+            <div className={classes.codeEditorWrapper}>
+              <CodeEditor
+                value={tabContent}
+                mode="json"
+                readOnly
+                showGutter={false}
+              />
+            </div>
+          )
+        }
+
       </div>
       <ClipBoardPanel content={tabContent} />
     </div>

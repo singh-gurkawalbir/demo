@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import JsonContent from '../../JsonContent';
 import { safeParse } from '../../../utils/string';
@@ -11,15 +10,15 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     background: theme.palette.background.paper,
     padding: theme.spacing(1),
-  },
-  sampleDataWrapperAlign: {
     marginTop: -18,
   },
+
   sampleDataContainer: {
     minHeight: theme.spacing(20),
+    marginTop: theme.spacing(2),
     position: 'relative',
     backgroundColor: 'white',
-    maxHeight: 400,
+    height: 345,
     overflow: 'auto',
     maxWidth: 680,
     color: theme.palette.text.primary,
@@ -27,9 +26,7 @@ const useStyles = makeStyles(theme => ({
       wordBreak: 'break-word',
     },
   },
-  sampleDataContainerAlign: {
-    marginTop: theme.spacing(2),
-  },
+
   error: {
     position: 'relative',
     top: theme.spacing(2),
@@ -52,16 +49,8 @@ export default function ErrorPanel(props) {
   }, [resourceSampleData.error]);
 
   return (
-    <div
-      className={clsx(
-        classes.sampleDataWrapper,
-        classes.sampleDataWrapperAlign
-      )}>
-      <div
-        className={clsx(
-          classes.sampleDataContainer,
-          classes.sampleDataContainerAlign
-        )}>
+    <div className={classes.sampleDataWrapper}>
+      <div className={classes.sampleDataContainer}>
         {
           showDefaultErrorMessage
             ? <span className={classes.error}> { DEFAULT_ERROR } </span>

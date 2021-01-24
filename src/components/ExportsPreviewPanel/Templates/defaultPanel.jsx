@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 import { getFormattedPreviewData } from '../../../utils/exportPanel';
 import ClipBoardPanel from './clipBoardPanel';
-import JsonContent from '../../JsonContent';
+import CodeEditor from '../../CodeEditor';
+// import JsonContent from '../../JsonContent';
 
 const useStyles = makeStyles(theme => ({
   sampleDataWrapper: {
@@ -11,24 +11,20 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     background: theme.palette.background.paper,
     padding: theme.spacing(1),
-  },
-  sampleDataWrapperAlign: {
     marginTop: -18,
   },
   sampleDataContainer: {
+    marginTop: theme.spacing(2),
     minHeight: theme.spacing(20),
     position: 'relative',
     backgroundColor: 'white',
-    maxHeight: 400,
+    height: 345,
     overflow: 'auto',
-    maxWidth: 680,
+    // maxWidth: 680,
     color: theme.palette.text.primary,
     '& > div': {
       wordBreak: 'break-word',
     },
-  },
-  sampleDataContainerAlign: {
-    marginTop: theme.spacing(2),
   },
 }));
 
@@ -41,16 +37,16 @@ export default function DefaultPanel(props) {
 
   return (
     <div
-      className={clsx(
-        classes.sampleDataWrapper,
-        classes.sampleDataWrapperAlign
-      )}>
+      className={classes.sampleDataWrapper}>
       <div
-        className={clsx(
-          classes.sampleDataContainer,
-          classes.sampleDataContainerAlign
-        )}>
-        <JsonContent json={panelContent} />
+        className={classes.sampleDataContainer}>
+        {/* <JsonContent json={panelContent} /> */}
+        <CodeEditor
+          value={panelContent}
+          mode="json"
+          readOnly
+          showGutter={false}
+            />
       </div>
       <ClipBoardPanel content={panelContent} />
     </div>
