@@ -34,10 +34,11 @@ export default function InstallIntegrationDrawer() {
             <Preview />
           </Route>
           <Route path={`${match.url}/${rootPath}/setup/:templateId`}>
-            <Setup handleClose={handleClose} />
+            <Setup data-public handleClose={handleClose} />
           </Route>
           <Route path={`${match.url}/${rootPath}`}>
-            <UploadFile />
+            <UploadFile
+              data-public />
           </Route>
         </Switch>
       </DrawerContent>
