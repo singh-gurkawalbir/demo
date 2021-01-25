@@ -33,7 +33,7 @@ export default function DynaSelectConditionalLookup(props) {
   const dispatch = useDispatch();
 
   const lookupOptions = useSelector(state => {
-    const {lookups} = selectors.mapping(state);
+    const {lookups = []} = selectors.mapping(state);
 
     const conditionalLookups = lookups.filter(({isConditionalLookup}) => !!isConditionalLookup);
 

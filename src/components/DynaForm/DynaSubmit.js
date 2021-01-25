@@ -15,12 +15,12 @@ function FormButton({
 }) {
   const {
     fields,
-    isValid: formInValid,
+    isValid: formIsValid,
     disabled: formDisabled,
     value: formValue,
   } = useFormContext(props.formKey) || {};
   const {
-    isValid = formInValid,
+    isValid = formIsValid,
     disabled = formDisabled,
     value = formValue,
   } = props;
