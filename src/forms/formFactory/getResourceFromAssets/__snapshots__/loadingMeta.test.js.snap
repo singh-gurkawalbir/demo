@@ -12562,9 +12562,9 @@ Object {
         Object {
           "fields": Array [
             "email",
-            "opts",
             "expires",
             "sandbox",
+            "opts",
           ],
         },
       ],

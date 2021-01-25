@@ -5,18 +5,26 @@ export default {
   expires: {
     defaultValue: r => r.expires && moment(r.expires).format('L'),
     type: 'date',
-    label: 'Expiration date',
+    label: 'Expires',
   },
   opts: {
-    defaultValue: r => r.opts || {},
+    defaultValue: r => r.opts,
     type: 'editor',
     mode: 'json',
     saveMode: 'json',
     label: 'Options',
   },
   sandbox: {
-    type: 'checkbox',
-    label: 'Sandbox',
+    type: 'select',
+    label: 'Environment',
+    options: [
+      {
+        items: [
+          { label: 'Production', value: 'false' },
+          { label: 'Sandbox', value: 'true' },
+        ],
+      },
+    ],
     defaultDisabled: r => !isNewId(r._id),
   },
   email: {
@@ -25,5 +33,15 @@ export default {
     label: 'Email',
     required: true,
     disableText: r => !isNewId(r._id),
+  },
+  edition: {
+    type: 'text',
+    label: 'Edition',
+  },
+  childLicenses: {
+    type: 'childlicenses',
+    label: 'Child licenses',
+    connectorId: r => r._connectorId,
+    visible: r => !isNewId(r._id),
   },
 };

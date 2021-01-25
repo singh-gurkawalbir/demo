@@ -9,6 +9,10 @@ export default {
       return `Edit ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]}`;
     }
     if (actionProps?.resourceType?.indexOf('/licenses') >= 0) {
+      if (rowData._parentId) {
+        return 'Edit child license';
+      }
+
       return 'Edit license';
     }
 

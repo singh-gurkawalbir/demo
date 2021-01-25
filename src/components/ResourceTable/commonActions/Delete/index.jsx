@@ -13,6 +13,10 @@ export default {
       return `Delete ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]}`;
     }
     if (actionProps?.resourceType?.indexOf('/licenses') >= 0) {
+      if (rowData._parentId) {
+        return 'Delete child license';
+      }
+
       return 'Delete license';
     }
 
