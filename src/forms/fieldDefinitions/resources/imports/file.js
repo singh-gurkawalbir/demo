@@ -29,6 +29,16 @@ export default {
     type: 'ftpfilenamewitheditor',
     editorTitle: 'Build file name',
     label: r => r?.adaptorType === 'S3Import' ? 'Build file key' : 'Build file name',
+    helpKey: r => {
+      if (r?.adaptorType === 'S3Import') {
+        return 'import.s3.fileKey';
+      }
+      if (r?.adaptorType === 'FTPImport') {
+        return 'import.ftp.fileName';
+      }
+
+      return 'import.file.fileName';
+    },
     required: true,
     showAllSuggestions: true,
     refreshOptionsOnChangesTo: ['file.type'],
@@ -174,7 +184,15 @@ export default {
   'file.backupPath': {
     type: 'uri',
     label: r => r?.adaptorType === 'S3Import' ? 'Backup bucket name' : 'Backup files path',
-    helpKey: 'import.file.backupPath',
+    helpKey: r => {
+      if (r?.adaptorType === 'S3Import') {
+        return 'import.s3.backupBucket';
+      } if (r?.adaptorType === 'FTPImport') {
+        return 'import.ftp.backupDirectoryPath';
+      }
+
+      return 'import.file.backupPath';
+    },
   },
   'file.skipAggregation': {
     type: 'checkbox',
