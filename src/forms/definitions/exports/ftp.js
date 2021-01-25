@@ -115,7 +115,7 @@ export default {
     }
 
     delete newValues['/file/decompressFiles'];
-    newValues['/ftp/backupDirectoryPath'] = undefined;
+    newValues['/ftp/backupDirectoryPath'] = undefined; // TODO Ashok, This code can be removed once all backend issues are resolved.
 
     return {
       ...newValues,

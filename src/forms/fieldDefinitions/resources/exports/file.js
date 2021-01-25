@@ -65,14 +65,14 @@ export default {
   'file.backupPath': {
     type: 'uri',
     label: r => r?.adaptorType === 'S3Export' ? 'Backup bucket name' : 'Backup files path',
-    helpText: r => {
+    helpKey: r => {
       if (r?.adaptorType === 'S3Export') {
-        return 'Specify the bucket name where files will be backed up after successful transfer.';
+        return 'import.s3.backupBucket';
       } if (r?.adaptorType === 'FTPExport') {
-        return 'Specify the directory path of the FTP folder where files will be backed up after successful transfer.';
+        return 'export.ftp.backupDirectoryPath';
       }
 
-      return 'Specify the directory path of the google drive folder where files will be backed up after successful transfer.';
+      return 'export.file.backupPath';
     },
   },
   'file.encoding': {
