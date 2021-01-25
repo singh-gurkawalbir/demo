@@ -26,15 +26,14 @@ const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
 };
 
-export default function DynaChildLicense(props) {
+export default function DynaChildLicense({ connectorId, resourceId}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
-  const { connectorId, resourceId} = props;
   const sortFilterKey = 'connectorLicenses';
 
-  const parentLicense = useSelector(state => selectors.resource(state, 'connectorLicenses', resourceId));
+  const parentLicense = useSelectorMemo(selectors.makeResourceSelector, 'connectorLicenses', resourceId);
 
   const filter =
     useSelector(state => selectors.filter(state, sortFilterKey)) ||

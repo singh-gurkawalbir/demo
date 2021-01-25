@@ -12,7 +12,7 @@ export default {
     },
     {
       heading: 'Status',
-      value: r => (r._integrationId ? 'Installed' : 'Pending'),
+      value: r => r._integrationId ? 'Installed' : 'Pending',
     },
     {
       heading: 'Integration ID',
