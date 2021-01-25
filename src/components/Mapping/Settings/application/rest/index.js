@@ -1,5 +1,5 @@
 import dateTimezones from '../../../../../utils/dateTimezones';
-import mappingUtil from '../../../../../utils/mapping';
+import mappingUtil, { wrapTextForSpecialChars } from '../../../../../utils/mapping';
 import dateFormats from '../../../../../utils/dateFormats';
 import {
   isProduction,
@@ -34,6 +34,16 @@ export default {
       );
     }
 
+    const extractfieldsOpts = [];
+
+    if (extractFields) {
+      if (isGroupedSampleData && generate.indexOf('[*].') !== -1) {
+        extractFields.forEach(({name, id}) => {
+          extractfieldsOpts.push({name: `*.${name}`, id: `*.${id}`});
+        });
+      }
+      extractfieldsOpts.push(...extractFields);
+    }
     const fieldMeta = {
       fieldMap: {
         dataType: {
@@ -78,6 +88,9 @@ export default {
           type: 'checkbox',
           defaultValue: value.useFirstRow || false,
           label: 'Use first row',
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['standard'] },
+          ],
         },
         fieldMappingType: {
           id: 'fieldMappingType',
@@ -215,7 +228,6 @@ export default {
           helpKey: 'mapping.functions',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
-        // TODO (Aditya) : resetting Field after selection
         extract: {
           id: 'extract',
           name: 'extract',
@@ -224,11 +236,10 @@ export default {
           options: [
             {
               items:
-                (extractFields &&
-                  extractFields.map(field => ({
-                    label: field.name,
-                    value: field.id,
-                  }))) ||
+                (extractfieldsOpts?.map(field => ({
+                  label: field.name,
+                  value: field.id,
+                }))) ||
                 [],
             },
           ],
@@ -527,12 +538,10 @@ export default {
           if (expressionField.value) expressionValue = expressionField.value;
 
           if (extractField.value) {
-            const extractValue = extractField.value;
+            const isGroupedField = extractField.value.indexOf('*.') === 0;
+            const extractFieldValue = isGroupedField ? extractField.value.substring(2) : extractField.value;
 
-            expressionValue +=
-              extractValue.indexOf(' ') > -1
-                ? `{{[${extractValue}]}}`
-                : `{{${extractValue}}}`;
+            expressionValue += `{{${isGroupedField ? '*.' : ''}${wrapTextForSpecialChars(extractFieldValue)}}}`;
             extractField.value = '';
           } else if (functionsField.value) {
             expressionValue += functionsField.value;

@@ -88,7 +88,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2, 3),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     position: 'relative',
-    background: theme.palette.background.paper,
   },
   titleText: {
     wordBreak: 'break-word',
@@ -233,6 +232,9 @@ export default function Panel(props) {
   }
 
   );
+
+  const isWebhookExport = useSelector(state =>
+    selectors.resourceData(state, resourceType, id)?.merged?.adaptorType === 'WebhookExport');
   const applicationType = useSelector(state => selectors.applicationType(state, resourceType, id));
 
   const app = applications.find(a => a.id === applicationType) || {};
@@ -279,6 +281,9 @@ export default function Panel(props) {
     // we don't show preview panel if it is the first step
     return shouldShow && !isFirstStep;
   });
+
+  // only webhooks should not be redacted
+  const shouldNotRedactInLogRocket = !isWebhookExport;
 
   return (
     <>
@@ -332,6 +337,7 @@ export default function Panel(props) {
             )}
           >
             <ResourceFormWithStatusPanel
+              data-public={shouldNotRedactInLogRocket}
               formKey={newId}
               className={classes.resourceFormWrapper}
               variant={variant}

@@ -22,11 +22,11 @@ export function* _fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type
    * This applies only for imports and exports is expected to fetch data from rawDataKey
    * But for now exports follow same route of saving rawData in sampleData field as Imports do
    */
-  if (resourceObj.file.type === 'xlsx') {
+  if (resourceObj?.file?.type === 'xlsx') {
     // For xlsx file type csv content is stored in 'csv' stage of sample data
     stage = 'csv';
   }
-  if (resourceObj.file.type === 'json' && type === 'imports') {
+  if (resourceObj?.file?.type === 'json' && type === 'imports') {
     // For json file, in imports we expect data to be parsed before saving - as in Ampersand
     // TODO @Raghu: Revisit this after release, as ampersand app is going to be deprecated
     stage = 'parse';
@@ -38,7 +38,7 @@ export function* _fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type
     stage
   );
 
-  if (resourceObj.file.type === 'filedefinition') {
+  if (resourceObj?.file?.type === 'filedefinition') {
     // For Imports File definitions, sample data is the json format of structured file parser data
     const fileDefinitionData = rawData && rawData.body;
 

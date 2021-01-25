@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import ScriptLogs from '.';
@@ -7,6 +7,7 @@ import { selectors } from '../../reducers';
 import RightDrawer from '../../components/drawer/Right';
 import DrawerHeader from '../../components/drawer/Right/DrawerHeader';
 import LoadResources from '../../components/LoadResources';
+import actions from '../../actions';
 
 const useStyles = makeStyles(theme => ({
   scriptLogsDrawerHeader: {
@@ -15,7 +16,16 @@ const useStyles = makeStyles(theme => ({
 }));
 const ScriptLogsWrapper = () => {
   const match = useRouteMatch();
+  const dispatch = useDispatch();
+
   const { scriptId } = match.params;
+
+  useEffect(() =>
+    () => {
+      if (scriptId) {
+        dispatch(actions.logs.scripts.clear({scriptId}));
+      }
+    }, [dispatch, scriptId]);
 
   return (
     <ScriptLogs

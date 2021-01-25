@@ -40,7 +40,7 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
       return output ? 'records' : 'blob';
     },
   },
-  'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'uri'},
+  'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'uri', helpKey: 'export.gdrive.directoryPath'},
   'file.fileNameStartsWith': { fieldId: 'file.fileNameStartsWith' },
   'file.fileNameEndsWith': { fieldId: 'file.fileNameEndsWith' },
   'file.type': { fieldId: 'file.type' },
@@ -169,12 +169,11 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
   'ftp.directoryPath': { fieldId: 'ftp.directoryPath' },
   'ftp.fileNameStartsWith': { fieldId: 'ftp.fileNameStartsWith' },
   'ftp.fileNameEndsWith': { fieldId: 'ftp.fileNameEndsWith' },
-  'ftp.backupDirectoryPath': {fieldId: 'ftp.backupDirectoryPath'},
   's3.region': { fieldId: 's3.region' },
   's3.bucket': { fieldId: 's3.bucket' },
   's3.keyStartsWith': { fieldId: 's3.keyStartsWith' },
   's3.keyEndsWith': { fieldId: 's3.keyEndsWith' },
-  's3.backupBucket': { fieldId: 's3.backupBucket' } };
+};
 export const IMPORT_FILE_FIELD_MAP = {common: {
   formId: 'common',
 },
@@ -190,7 +189,7 @@ fileType: {
 blobKeyPath: {
   fieldId: 'blobKeyPath',
 },
-'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'uri' },
+'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'uri', helpKey: 'import.gdrive.directoryPath' },
 'file.fileName': {
   fieldId: 'file.fileName', required: true,
 },
@@ -254,7 +253,7 @@ inputMode: {
     return false;
   },
 
-  defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
+  defaultValue: r => (r && r.blob ? 'blob' : 'records'),
 },
 'file.encoding': {
   fieldId: 'file.encoding',
@@ -286,12 +285,6 @@ fileApiIdentifier: {
 'ftp.directoryPath': {
   fieldId: 'ftp.directoryPath',
 },
-'ftp.backupDirectoryPath': {
-  fieldId: 'ftp.backupDirectoryPath',
-},
-'ftp.fileName': {
-  fieldId: 'ftp.fileName',
-},
 'ftp.useTempFile': {
   fieldId: 'ftp.useTempFile',
 },
@@ -312,11 +305,5 @@ fileApiIdentifier: {
 },
 's3.bucket': {
   fieldId: 's3.bucket',
-},
-'s3.fileKey': {
-  fieldId: 's3.fileKey',
-},
-'s3.backupBucket': {
-  fieldId: 's3.backupBucket',
 },
 };

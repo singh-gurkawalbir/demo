@@ -1831,12 +1831,6 @@ const errorManager = {
         loadMore,
         isResolved,
       }),
-    error: ({ flowId, resourceId, isResolved = false }) =>
-      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ERROR, {
-        flowId,
-        resourceId,
-        isResolved,
-      }),
     selectErrors: ({
       flowId,
       resourceId,
@@ -1885,13 +1879,12 @@ const errorManager = {
           errorIds,
         }
       ),
-    retryReceived: ({ flowId, resourceId, retryCount, isResolved = false }) =>
+    retryReceived: ({ flowId, resourceId, retryCount}) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.RECEIVED,
         {
           flowId,
           resourceId,
-          isResolved,
           retryCount,
         }
       ),
@@ -2164,10 +2157,8 @@ const logs = {
       action(actionTypes.LOGS.CONNECTIONS.REQUEST_FAILED, { connectionId }),
     received: (connectionId, logs) =>
       action(actionTypes.LOGS.CONNECTIONS.RECEIVED, { connectionId, logs }),
-    refresh: connectionId =>
-      action(actionTypes.LOGS.CONNECTIONS.REFRESH, { connectionId }),
-    clear: connectionId =>
-      action(actionTypes.LOGS.CONNECTIONS.CLEAR, { connectionId }),
+    clear: ({connectionId, clearAllLogs}) =>
+      action(actionTypes.LOGS.CONNECTIONS.CLEAR, { connectionId, clearAllLogs }),
     delete: connectionId =>
       action(actionTypes.LOGS.CONNECTIONS.DELETE, { connectionId }),
     download: connectionId =>

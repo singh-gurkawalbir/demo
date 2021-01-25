@@ -17,7 +17,7 @@ export default function DateTimeDisplay({ date, dateTime }) {
     }
 
     if (date) {
-      return convertUtcToTimezone(moment(date), dateFormat, timeFormat, timezone, true);
+      return convertUtcToTimezone(moment(date), dateFormat, timeFormat, timezone, {dateOnly: true});
     }
 
     if (dateTime) {

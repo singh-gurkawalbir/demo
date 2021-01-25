@@ -75,7 +75,7 @@ export default function Notifications() {
     return (
       <>
         <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
-        <Tooltip title="No notifications" placement="bottom">
+        <Tooltip data-public title="No notifications" placement="bottom">
           <IconButton size="small" color="inherit">
             <NotificationsIcon />
           </IconButton>

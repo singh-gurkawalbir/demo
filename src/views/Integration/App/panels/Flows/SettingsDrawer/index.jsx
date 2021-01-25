@@ -47,9 +47,9 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  // settingsDrawerDetails: {
-  //   minHeight: 'calc(100% - 138px)',
-  // },
+  settingsDrawerDetails: {
+    minHeight: 'calc(100% - 138px)',
+  },
 }));
 
 function SettingsDrawer({ integrationId, storeId, parentUrl }) {

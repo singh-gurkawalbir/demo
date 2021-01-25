@@ -46,7 +46,7 @@ export default function ActionIconButton({
   const classes = useStyles();
 
   return (
-    <Tooltip title={helpText || (helpKey && getHelpTextMap()[helpKey])}>
+    <Tooltip data-public title={helpText || (helpKey && getHelpTextMap()[helpKey])}>
       <IconButton
         size="small"
         className={clsx(classes.button, className, classes[variant])}
