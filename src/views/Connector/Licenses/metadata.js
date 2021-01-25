@@ -33,7 +33,7 @@ export default {
     {
       heading: 'Environment',
       value: r => {
-        if (r._parentId) {
+        if (r.type === 'integrationAppChild') {
           return null;
         }
 
