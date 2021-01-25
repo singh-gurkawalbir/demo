@@ -870,6 +870,7 @@ describe('flow sample data sagas', () => {
           [call(getResource, {
             resourceType: 'scripts',
             id: 'script-123',
+            hidden: true,
           }), script],
         ])
         .call(_processData, {
