@@ -292,7 +292,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
             domain={[() => 0, dataMax => dataMax + 10]}
           />
 
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip data-public content={<CustomTooltip />} />
           <Legend align="center" content={<CustomLegend />} />
           {selectedResources.map((r, i) => (
             <Line

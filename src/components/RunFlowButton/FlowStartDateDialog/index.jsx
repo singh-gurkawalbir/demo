@@ -11,24 +11,30 @@ import Spinner from '../../Spinner';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import ButtonGroup from '../../ButtonGroup';
 import adjustTimezone from '../../../utils/adjustTimezone';
+import { convertUtcToTimezone } from '../../../utils/date';
 
 export default function FlowStartDateDialog(props) {
   const { flowId, onClose, disabled, onRun } = props;
   const dispatch = useDispatch();
   const preferences = useSelector(state => selectors.userOwnPreferences(state));
-  const profilePreferences = useSelector(state =>
-    selectors.userProfilePreferencesProps(state)
-  );
+  const timeZone = useSelector(state => selectors.userTimezone(state));
+
   let lastExportDateTime = useSelector(state =>
     selectors.getLastExportDateTime(state, flowId)
   ).data;
+
+  if (timeZone) {
+    lastExportDateTime = convertUtcToTimezone(lastExportDateTime, preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true});
+  }
   const selectorStatus = useSelector(state =>
     selectors.getLastExportDateTime(state, flowId)
   ).status;
-  const timeZone = profilePreferences?.timezone;
 
   if (!lastExportDateTime) {
     lastExportDateTime = new Date();
+    if (timeZone) {
+      lastExportDateTime = convertUtcToTimezone(new Date(), preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true});
+    }
   }
 
   const fetchLastExportDateTime = useCallback(() => {

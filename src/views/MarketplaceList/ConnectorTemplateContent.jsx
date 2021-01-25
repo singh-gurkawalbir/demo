@@ -42,6 +42,7 @@ export default function ConnectorTemplateContent({ resource, application }) {
         <Typography className={classes.name} variant="body2">
           {isTruncated ? (
             <Tooltip
+              data-public
               title={<span className={classes.tooltipNameFB}> {name}</span>}
               TransitionComponent={Zoom}
               placement="top"
