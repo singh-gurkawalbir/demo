@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import JsonContent from '../../JsonContent';
+// import JsonContent from '../../JsonContent';
 import { safeParse } from '../../../utils/string';
 import { HTTP_STAGES } from '../../../utils/exportPanel';
+import CodeEditor from '../../CodeEditor2';
 
 const useStyles = makeStyles(theme => ({
   sampleDataWrapper: {
@@ -17,10 +18,9 @@ const useStyles = makeStyles(theme => ({
     minHeight: theme.spacing(20),
     marginTop: theme.spacing(2),
     position: 'relative',
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.background.paper,
     height: 345,
     overflow: 'auto',
-    maxWidth: 680,
     color: theme.palette.text.primary,
     '& > div': {
       wordBreak: 'break-word',
@@ -54,7 +54,15 @@ export default function ErrorPanel(props) {
         {
           showDefaultErrorMessage
             ? <span className={classes.error}> { DEFAULT_ERROR } </span>
-            : <JsonContent json={error} />
+            // : <JsonContent json={error} />
+            : (
+              <CodeEditor
+                value={error}
+                mode="json"
+                readOnly
+                showGutter={false}
+        />
+            )
         }
 
       </div>

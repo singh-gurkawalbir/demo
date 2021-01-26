@@ -17,10 +17,11 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.common.white,
     padding: theme.spacing(2),
     width: '100%',
-    height: `calc(100vh - ${150}px)`,
+    height: `calc(100vh - ${200}px)`,
     overflowY: 'auto',
     float: 'left',
-    marginRight: theme.spacing(3),
+    display: 'flex',
+    flexDirection: 'column',
   },
   previewDataHeading: {
     fontSize: 18,
