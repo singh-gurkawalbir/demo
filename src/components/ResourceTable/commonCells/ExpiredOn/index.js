@@ -24,9 +24,10 @@ export default function ExpiredOn({date}) {
 
   const diff = moment(date).diff(moment(), 'days');
   const isLicenseExpiring = diff >= 0 && diff < 15;
+  const isLicenseExpired = diff < 0;
 
   return (
-    <Typography className={clsx(classes.primary, { [classes.warning]: isLicenseExpiring }, { [classes.error]: diff < 0})} >
+    <Typography className={clsx(classes.primary, { [classes.warning]: isLicenseExpiring }, { [classes.error]: isLicenseExpired})} >
       {moment(date).format('MMM D, YYYY')} (<CeligoTimeAgo date={date} />)
     </Typography>
   );
