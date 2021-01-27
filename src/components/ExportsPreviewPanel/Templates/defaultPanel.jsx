@@ -26,6 +26,10 @@ const useStyles = makeStyles(theme => ({
       wordBreak: 'break-word',
     },
   },
+  codeEditorWrapper: {
+    height: 345,
+    paddingTop: theme.spacing(1),
+  },
 }));
 
 export default function DefaultPanel(props) {
@@ -41,12 +45,14 @@ export default function DefaultPanel(props) {
       <div
         className={classes.sampleDataContainer}>
         {/* <JsonContent json={panelContent} /> */}
-        <CodeEditor
-          value={panelContent}
-          mode="json"
-          readOnly
-          showGutter={false}
+        <div className={classes.codeEditorWrapper}>
+          <CodeEditor
+            value={panelContent}
+            mode="json"
+            readOnly
+            showGutter={false}
             />
+        </div>
       </div>
       <ClipBoardPanel content={panelContent} />
     </div>

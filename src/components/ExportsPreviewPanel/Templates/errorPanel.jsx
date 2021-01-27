@@ -26,7 +26,10 @@ const useStyles = makeStyles(theme => ({
       wordBreak: 'break-word',
     },
   },
-
+  codeEditorWrapper: {
+    height: 345,
+    paddingTop: theme.spacing(1),
+  },
   error: {
     position: 'relative',
     top: theme.spacing(2),
@@ -56,12 +59,14 @@ export default function ErrorPanel(props) {
             ? <span className={classes.error}> { DEFAULT_ERROR } </span>
             // : <JsonContent json={error} />
             : (
-              <CodeEditor
-                value={error}
-                mode="json"
-                readOnly
-                showGutter={false}
+              <div className={classes.codeEditorWrapper}>
+                <CodeEditor
+                  value={error}
+                  mode="json"
+                  readOnly
+                  showGutter={false}
         />
+              </div>
             )
         }
 

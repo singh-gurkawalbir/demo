@@ -29,6 +29,7 @@ const useStyles = makeStyles(theme => ({
   },
   codeEditorWrapper: {
     height: '345px',
+    paddingTop: theme.spacing(1),
   },
 }));
 
