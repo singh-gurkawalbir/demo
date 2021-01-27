@@ -65,7 +65,15 @@ export default {
   'file.backupPath': {
     type: 'uri',
     label: r => r?.adaptorType === 'S3Export' ? 'Backup bucket name' : 'Backup files path',
-    helpKey: 'export.file.backupPath',
+    helpKey: r => {
+      if (r?.adaptorType === 'S3Export') {
+        return 'import.s3.backupBucket';
+      } if (r?.adaptorType === 'FTPExport') {
+        return 'export.ftp.backupDirectoryPath';
+      }
+
+      return 'export.file.backupPath';
+    },
   },
   'file.encoding': {
     type: 'select',
