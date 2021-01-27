@@ -1817,7 +1817,7 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
           }
         } else {
           sections.forEach(sec => {
-            if (sec.mode === 'settings') {
+            if (sec.mode === 'settings' || !sec.mode) {
               if (sectionId) {
                 const selectedSection = sec.sections.find(s => getTitleIdFromSection(s) === sectionId);
 
@@ -2194,9 +2194,11 @@ selectors.isProfileLoading = state => {
 
 selectors.availableUsersList = (state, integrationId) => {
   const isAccountOwnerOrAdmin = selectors.isAccountOwnerOrAdmin(state);
+  const userPermissions = selectors.userPermissions(state) || emptyObject;
+
   let _users = [];
 
-  if (isAccountOwnerOrAdmin) {
+  if (userPermissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
     if (integrationId) {
       _users = selectors.integrationUsersForOwner(state, integrationId);
     } else {
@@ -2644,7 +2646,9 @@ selectors.resourcePermissions = (
 
   const permissions = selectors.userPermissions(state);
 
-  if (!permissions) return emptyObject;
+  // TODO: userPermissions should be written to handle when there isnt a state and in those circumstances
+  // should return null rathern than an empty object for all cases
+  if (!permissions || isEmpty(permissions)) return emptyObject;
 
   // special case, where resourceType == integrations. Its childResource,
   // ie. connections, flows can be retrieved by passing childResourceType
