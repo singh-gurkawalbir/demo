@@ -31,15 +31,16 @@ export default function DynaChildLicense({ connectorId, resourceId}) {
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
-  const sortFilterKey = 'connectorLicenses';
+  const sortFilterKey = 'connectorChildLicenses';
 
   const parentLicense = useSelectorMemo(selectors.makeResourceSelector, 'connectorLicenses', resourceId);
 
   const filter =
-    useSelector(state => selectors.filter(state, sortFilterKey)) ||
-    defaultFilter;
+  useSelector(state => selectors.filter(state, sortFilterKey)) ||
+  defaultFilter;
   const connectorLicensesFilterConfig = useMemo(
     () => ({
+      ignoreEnvironmentFilter: true,
       type: 'connectorLicenses',
       ...defaultFilter,
       ...filter,
