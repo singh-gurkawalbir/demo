@@ -51,9 +51,8 @@ const useStyles = makeStyles(theme => ({
   },
   baseFormWithPreview: {
     display: 'grid',
-    gridTemplateColumns: '55% 43%',
+    gridTemplateColumns: '50% 48%',
     gridColumnGap: theme.spacing(1),
-
   },
   resourceFormWrapper: {
     flexDirection: 'row',
@@ -327,7 +326,6 @@ export default function Panel(props) {
             <Close />
           </IconButton>
         </div>
-
         <LoadResources required resources={requiredResources}>
           <div
             className={clsx({
@@ -377,7 +375,6 @@ export default function Panel(props) {
           </div>
         </LoadResources>
       </div>
-
       <EditorDrawer />
     </>
   );
