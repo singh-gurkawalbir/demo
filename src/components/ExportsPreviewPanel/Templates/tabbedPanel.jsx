@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2),
     position: 'relative',
     backgroundColor: theme.palette.background.paper,
-    height: 345,
+    // height: 345,
     overflow: 'auto',
     color: theme.palette.text.primary,
   },
