@@ -117,6 +117,7 @@ import DynaReplaceConnection from './DynaReplaceConnection';
 import DynaSelectRequestMediaType from './DynaSelectRequestMediaType';
 import DynaSelectMultiApplication from './DynaSelectMultiApplication';
 import DynaPreviewComponentsTable from './DynaPreviewComponentsTable';
+import DynaChildLicenses from './DynaChildLicenses';
 
 export default {
   suitescriptsettings: DynaRefreshableSettings,
@@ -258,4 +259,5 @@ export default {
   // ftpfilenamewitheditor: DynaFTPFileNameWithEditor,
   ftpfilenamewitheditor: DynaFTPFileNameWithEditor_afe2,
   as2Mode: DynaAs2Mode,
+  childlicenses: DynaChildLicenses,
 };

@@ -23,6 +23,9 @@ const useStyles = makeStyles(theme => ({
   resourceFormRadioGroupWrapper: {
     marginBottom: theme.spacing(2),
   },
+  doneBtn: {
+    margin: theme.spacing(0, 3),
+  },
 }));
 
 export default function AddOrSelect(props) {
@@ -156,7 +159,7 @@ export default function AddOrSelect(props) {
           connectionType={connectionType}
           onCancel={onClose} />
       ) : (
-        <DynaSubmit formKey={formKey} onClick={handleSubmit}>
+        <DynaSubmit formKey={formKey} onClick={handleSubmit} className={classes.doneBtn}>
           Done
         </DynaSubmit>
       )}
