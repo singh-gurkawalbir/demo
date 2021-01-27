@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-pascal-case */
 import clsx from 'clsx';
 import React from 'react';
+import isObject from 'lodash/isObject';
 import { makeStyles, FormLabel } from '@material-ui/core';
 import FieldHelp from '../../FieldHelp';
 import FieldMessage from '../FieldMessage';
@@ -63,7 +64,7 @@ export default function DynaHandlebarPreview({
         </div>
         <div className={classes.previewContainer}>
           <div className={classes.preview}>
-            <pre>{value}</pre>
+            <pre>{isObject(value) ? JSON.stringify(value) : value}</pre>
           </div>
           <ActionButton
             data-test={id}
