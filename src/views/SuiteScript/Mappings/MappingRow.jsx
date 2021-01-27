@@ -110,6 +110,7 @@ export default function MappingRow(props) {
       ssLinkedConnectionId,
       integrationId,
       flowId,
+      subRecordMappingId,
     } = selectors.suiteScriptMapping(state);
     const mapping = mappings.find(({key}) => key === mappingKey);
 
@@ -118,6 +119,7 @@ export default function MappingRow(props) {
       ssLinkedConnectionId,
       integrationId,
       flowId,
+      subRecordMappingId,
     };
   }, shallowEqual);
 
