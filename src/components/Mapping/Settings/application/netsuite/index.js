@@ -191,7 +191,7 @@ export default {
           label: 'Options',
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
-          requiredWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
+          requiredWhen: isCategoryMapping ? [] : [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
           helpKey: 'mapping.lookup.mode',
           options: [

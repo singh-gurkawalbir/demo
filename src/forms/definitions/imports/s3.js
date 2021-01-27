@@ -86,6 +86,11 @@ export default {
 
     delete newValues['/file/compressFiles'];
 
+    // TODO Ashok, This code can be removed once all backend issues are resolved.
+
+    newValues['/s3/fileKey'] = undefined;
+    newValues['/s3/backupBucket'] = undefined;
+
     return {
       ...newValues,
     };
