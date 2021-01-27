@@ -413,11 +413,11 @@ export function* normalizeFlow(flow) {
 
   return newFlow;
 }
-export function* getResource({ resourceType, id, message, hidden }) {
+export function* getResource({ resourceType, id, message }) {
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
 
   try {
-    let resource = yield call(apiCallWithRetry, { path, message, hidden});
+    let resource = yield call(apiCallWithRetry, { path, message });
 
     if (resourceType === 'flows') {
       resource = yield call(normalizeFlow, resource);

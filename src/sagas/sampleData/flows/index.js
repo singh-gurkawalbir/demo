@@ -398,7 +398,6 @@ export function* requestProcessorData({
         const script = yield call(getResource, {
           resourceType: 'scripts',
           id: _scriptId,
-          hidden: true,
         });
 
         processorData = {
@@ -432,7 +431,6 @@ export function* requestProcessorData({
       const script = yield call(getResource, {
         resourceType: 'scripts',
         id: scriptId,
-        hidden: true,
       });
       const context = yield select(selectors.getScriptContext, {
         flowId,
