@@ -243,12 +243,12 @@ export default function MappingRow({
           <GripperIcon />
         </div>
         <div
+          data-public
           className={clsx(classes.childHeader, classes.mapField, {
             [classes.disableChildRow]:
               isSubRecordMapping || isNotEditable || disabled,
           })}>
           <DynaTypeableSelect
-            data-public
             key={extractValue}
             id={`fieldMappingExtract-${index}`}
             labelName="name"
@@ -268,12 +268,12 @@ export default function MappingRow({
         </div>
         <span className={classes.mappingIcon} />
         <div
+          data-public
           className={clsx(classes.childHeader, classes.mapField, {
             [classes.disableChildRow]:
               isSubRecordMapping || isRequired || disabled,
           })}>
           <DynaTypeableSelect
-            data-public
             key={generate}
             id={`fieldMappingGenerate-${index}`}
             value={generate}
