@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-pascal-case */
 import clsx from 'clsx';
 import React from 'react';
-import isObject from 'lodash/isObject';
 import { makeStyles, FormLabel } from '@material-ui/core';
+import CodeEditor from '../../../CodeEditor2';
 import FieldHelp from '../../FieldHelp';
 import FieldMessage from '../FieldMessage';
 import ActionButton from '../../../ActionButton';
@@ -16,19 +16,15 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-start',
   },
-  previewContainer: {
+  editorBorder: {
+    border: '1px solid rgb(0,0,0,0.1)',
+    height: 82,
+    flexGrow: 1,
+  },
+  editorContainer: {
     width: '100%',
     display: 'flex',
     alignItems: 'flex-start',
-  },
-  preview: {
-    flexGrow: 1,
-    minHeight: 40,
-    maxHeight: 100,
-    overflow: 'auto',
-    border: `1px solid ${theme.palette.secondary.lightest}`,
-    backgroundColor: theme.palette.background.paper2,
-    padding: theme.spacing(0, 1),
   },
   afeButton: {
     marginTop: theme.spacing(0.75),
@@ -46,12 +42,16 @@ export default function DynaHandlebarPreview({
   helpText,
   helpKey,
   resourceContext,
+  onFieldChange,
   onEditorClick,
   description,
   errorMessages,
   isValid,
+  disabled,
 }) {
   const classes = useStyles();
+
+  const onChange = value => onFieldChange(id, value);
 
   return (
     <>
@@ -62,10 +62,17 @@ export default function DynaHandlebarPreview({
           </FormLabel>
           <FieldHelp {...{ id, label, helpText, helpKey, resourceContext}} />
         </div>
-        <div className={classes.previewContainer}>
-          <div className={classes.preview}>
-            <pre>{isObject(value) ? JSON.stringify(value) : value}</pre>
+        <div className={classes.editorContainer}>
+          <div className={classes.editorBorder}>
+            <CodeEditor
+              name={id}
+              value={value}
+              mode="handlebars"
+              readOnly={disabled}
+              onChange={onChange}
+          />
           </div>
+
           <ActionButton
             data-test={id}
             className={clsx(classes.afeButton, { [classes.errorBtn]: !isValid})}
