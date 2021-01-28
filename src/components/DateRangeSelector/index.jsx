@@ -119,7 +119,7 @@ export default function DateRangeSelector({
   clearValue,
   placement,
   Icon,
-  dateType,
+  toDate,
 }) {
   const defaultValue = getSelectedRange({preset: 'last30days'});
   const { startDate = defaultValue.startDate, endDate = defaultValue.endDate, preset = defaultValue.preset } = value;
@@ -130,8 +130,6 @@ export default function DateRangeSelector({
       preset,
     },
   );
-  const maxDate = dateType === 'forwardDates' ? addYears(new Date(), 1) : new Date();
-  const minDate = dateType === 'forwardDates' ? new Date() : fromDate || addYears(new Date(), -1);
   const [selectedRange, setSelectedRange] = useState(initalValue);
   const handleListItemClick = (event, id) => {
     setSelectedRange(state => ({...state, preset: id}));
@@ -247,8 +245,8 @@ export default function DateRangeSelector({
                   ranges={[{...selectedRange, key: 'selection'}]}
                   direction="horizontal"
                   showTime={showTime}
-                  maxDate={maxDate}
-                  minDate={minDate}
+                  maxDate={toDate || new Date()}
+                  minDate={fromDate || addYears(new Date(), -1)}
                   inputRanges={[]}
                   showPreview={false}
                 />
