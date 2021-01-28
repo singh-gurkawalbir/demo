@@ -2194,11 +2194,9 @@ selectors.isProfileLoading = state => {
 
 selectors.availableUsersList = (state, integrationId) => {
   const isAccountOwnerOrAdmin = selectors.isAccountOwnerOrAdmin(state);
-  const userPermissions = selectors.userPermissions(state) || emptyObject;
-
   let _users = [];
 
-  if (userPermissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+  if (isAccountOwnerOrAdmin) {
     if (integrationId) {
       _users = selectors.integrationUsersForOwner(state, integrationId);
     } else {
