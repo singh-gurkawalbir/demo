@@ -147,9 +147,26 @@ export const getPreviewBodyTemplateType = (resource = {}, panelType) => {
   return 'default';
 };
 
+const formatBodyForRequestStage = previewData => {
+  const formattedData = deepClone(previewData);
+  const requestBody = formattedData?.data?.[0]?.body;
+
+  if (requestBody && isJsonString(requestBody)) {
+    formattedData.data[0].body = JSON.parse(requestBody);
+  }
+
+  return formattedData;
+};
 export const getBodyHeaderFieldsForPreviewData = (previewData = {}, stage) => {
-  const parsedPreviewData =
-    stage === 'raw' ? formatBodyForRawStage(previewData) : previewData;
+  let parsedPreviewData;
+
+  if (stage === 'raw') {
+    parsedPreviewData = formatBodyForRawStage(previewData);
+  } else if (stage === 'request') {
+    parsedPreviewData = formatBodyForRequestStage(previewData);
+  } else {
+    parsedPreviewData = previewData;
+  }
   const bodyHeaderData = parsedPreviewData.data;
   const { headers, ...rest } = bodyHeaderData?.[0] || {};
   const { body, url, ...others} = rest || {};

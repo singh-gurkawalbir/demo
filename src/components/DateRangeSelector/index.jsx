@@ -119,6 +119,7 @@ export default function DateRangeSelector({
   clearValue,
   placement,
   Icon,
+  toDate,
 }) {
   const defaultValue = getSelectedRange({preset: 'last30days'});
   const { startDate = defaultValue.startDate, endDate = defaultValue.endDate, preset = defaultValue.preset } = value;
@@ -244,7 +245,7 @@ export default function DateRangeSelector({
                   ranges={[{...selectedRange, key: 'selection'}]}
                   direction="horizontal"
                   showTime={showTime}
-                  maxDate={new Date()}
+                  maxDate={toDate || new Date()}
                   minDate={fromDate || addYears(new Date(), -1)}
                   inputRanges={[]}
                   showPreview={false}

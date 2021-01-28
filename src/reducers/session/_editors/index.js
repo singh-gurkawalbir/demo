@@ -286,7 +286,7 @@ selectors._editorRule = (state, id) => {
 
   const editor = state[id];
 
-  if (!editor) return;
+  if (!editor) return emptyObj;
   const mode = editor.activeProcessor;
 
   if (mode) {
@@ -326,9 +326,5 @@ selectors._editorLayout = (state, id) => {
 selectors._editorViolations = (state, id) => processorLogic.validate(state?.[id]);
 
 selectors._isEditorDirty = (state, id) => processorLogic.isDirty(state?.[id]);
-
-// selectors._processorRequestOptions = (state, id) => processorLogic.requestOptions(state?.[id]);
-
-// selectors._editorPatchSet = (state, id) => processorLogic.getPatchSet(state?.[id]);
 
 // #endregion
