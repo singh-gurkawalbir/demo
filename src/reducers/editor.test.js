@@ -45,7 +45,7 @@ describe('AFE region selectors test cases', () => {
 
       expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(false);
     });
-    test('should return true for csv generator and backup fields', () => {
+    test('should return true for csv generator and backup path fields', () => {
       state.session._editors[editorId] = {
         id: editorId,
         editorType: 'csvGenerator',
@@ -59,7 +59,7 @@ describe('AFE region selectors test cases', () => {
         editorType: 'handlebars',
         resourceType: 'imports',
         resourceId: '123',
-        fieldId: 's3.backupBucket',
+        fieldId: 'file.backupPath',
         stage: 'flowInput',
       };
 
