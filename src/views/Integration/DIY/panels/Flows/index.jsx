@@ -18,6 +18,7 @@ import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 import StatusCircle from '../../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../reducers';
+import redirectToCorrectGroupingRoute from '../../../../../utils/flowgroupingsRedirectTo';
 import { getTemplateUrlName } from '../../../../../utils/template';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
@@ -131,9 +132,19 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
   const classes = useStyles();
   const history = useHistory();
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
-  const allSection = useMemo(() =>
+  const allSections = useMemo(() =>
     flowGroupingsSections && [...flowGroupingsSections, {title: 'Miscellaneous', sectionId: MISCELLANEOUS_SECTION_ID}],
   [flowGroupingsSections]);
+
+  const redirectTo = redirectToCorrectGroupingRoute(match, flowGroupingsSections, MISCELLANEOUS_SECTION_ID);
+
+  useEffect(() => {
+    const shouldRedirect = !!redirectTo;
+
+    if (shouldRedirect) {
+      history.replace(redirectTo);
+    }
+  }, [history, redirectTo]);
 
   if (!flowGroupingsSections) {
     return (
@@ -146,17 +157,14 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
 />
     );
   }
-  const sectionId = match.params?.sectionId;
 
-  if (!sectionId) {
-    history.replace(`${match.url}/sections/${MISCELLANEOUS_SECTION_ID}`);
-  }
+  const sectionId = match?.params?.sectionId;
 
   return (
     <Grid container wrap="nowrap">
       <Grid item className={classes.subNav}>
         <List>
-          {allSection.map(({ title, sectionId }) => (
+          {allSections.map(({ title, sectionId }) => (
             <ListItem key={sectionId} className={classes.flowTitle}>
               <NavLink
                 data-public
