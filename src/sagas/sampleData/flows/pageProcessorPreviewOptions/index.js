@@ -29,6 +29,7 @@ export function* _getUIDataForResource({ resource, connection, flow, refresh }) 
   if (isBlobTypeResource(resource)) return getBlobResourceSampleData();
 
   // Incase of Data Loader/ Rest CSV Exports, flow is same as File Adaptors
+  // ToDo: Ashok File adaptor checks should be enhanced.
   if (isRestCsvMediaTypeExport(resource, connection) || isDataLoader || isFileProviderAssistant(resource, connection)) return yield call(requestFileAdaptorSampleData, { resource });
 
   if (adaptorType) {
