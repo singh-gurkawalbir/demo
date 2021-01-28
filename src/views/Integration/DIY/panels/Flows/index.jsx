@@ -50,7 +50,8 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
   },
   content: {
-    padding: theme.spacing(3, 2),
+    // padding: theme.spacing(3, 2),
+    width: '100%',
   },
   flowTitle: {
     position: 'relative',
@@ -82,6 +83,9 @@ const useStyles = makeStyles(theme => ({
   },
   activeListItem: {
     color: theme.palette.primary.main,
+  },
+  flowsGroupContainer: {
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
 }));
 
@@ -153,7 +157,7 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
   }
 
   return (
-    <Grid container wrap="nowrap">
+    <Grid container wrap="nowrap" className={classes.flowsGroupContainer}>
       <Grid item className={classes.subNav}>
         <List>
           {allSection.map(({ title, sectionId }) => (
