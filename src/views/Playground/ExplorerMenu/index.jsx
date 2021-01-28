@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
@@ -49,7 +49,10 @@ export default function ExplorerMenu({ onEditorChange }) {
     .filter(f => f._integrationId === integrationId)
     .map(f => ({ id: f._id, name: f.name }));
 
-  const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
+  const allFlowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
+  // exclude flow-level resource...Open in Flow Builder takes care of opening the flow through the FB
+  // only show PGs and PPs
+  const flowResources = useMemo(() => allFlowResources.filter(e => e.name !== 'Flow-level'), [allFlowResources]);
 
   const ResourcesBranch = ({id}) => {
     if (id !== flowId) return null;
@@ -111,7 +114,7 @@ export default function ExplorerMenu({ onEditorChange }) {
   if (resourceId) expanded.push(resourceId);
 
   return (
-    <LoadResources resources="integrations,flows,imports,exports">
+    <LoadResources required resources="integrations,flows,imports,exports">
       <TreeView
         defaultCollapseIcon={<ArrowUpIcon />}
         defaultExpandIcon={<ArrowDownIcon />}

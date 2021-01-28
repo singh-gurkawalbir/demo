@@ -37,8 +37,9 @@ export default function InstallIntegrationDrawer() {
             <Setup data-public handleClose={handleClose} />
           </Route>
           <Route path={`${match.url}/${rootPath}`}>
-            <UploadFile
-              data-public />
+            <span data-public>
+              <UploadFile />
+            </span>
           </Route>
         </Switch>
       </DrawerContent>

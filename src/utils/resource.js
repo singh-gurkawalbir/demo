@@ -352,7 +352,7 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
     (['RESTImport', 'HTTPImport', 'NetSuiteImport', 'SalesforceImport'].indexOf(
       resource.adaptorType
     ) >= 0 &&
-      resource.blobKeyPath) ||
+      resource.blob) ||
     ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
   ) {
     blockType = 'importTransfer';
@@ -361,9 +361,9 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
   return blockType;
 }
 
-// All resources with type 'blob' is a Blob export and with 'blobKeyPath' is a blob import
+// All resources with type 'blob' is a Blob export and with blob as true are blob imports
 export const isBlobTypeResource = (resource = {}) =>
-  resource && (resource.type === 'blob' || !!resource.blobKeyPath);
+  resource?.type === 'blob' || resource?.blob;
 
 export const isAS2Resource = resource => {
   const { adaptorType } = resource || {};

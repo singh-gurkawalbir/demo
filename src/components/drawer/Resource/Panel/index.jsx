@@ -51,9 +51,8 @@ const useStyles = makeStyles(theme => ({
   },
   baseFormWithPreview: {
     display: 'grid',
-    gridTemplateColumns: '55% 43%',
+    gridTemplateColumns: '50% 48%',
     gridColumnGap: theme.spacing(1),
-
   },
   resourceFormWrapper: {
     flexDirection: 'row',
@@ -233,8 +232,6 @@ export default function Panel(props) {
 
   );
 
-  const isWebhookExport = useSelector(state =>
-    selectors.resourceData(state, resourceType, id)?.merged?.adaptorType === 'WebhookExport');
   const applicationType = useSelector(state => selectors.applicationType(state, resourceType, id));
 
   const app = applications.find(a => a.id === applicationType) || {};
@@ -282,9 +279,6 @@ export default function Panel(props) {
     return shouldShow && !isFirstStep;
   });
 
-  // only webhooks should not be redacted
-  const shouldNotRedactInLogRocket = !isWebhookExport;
-
   return (
     <>
       <div className={classes.root}>
@@ -327,7 +321,6 @@ export default function Panel(props) {
             <Close />
           </IconButton>
         </div>
-
         <LoadResources required resources={requiredResources}>
           <div
             className={clsx({
@@ -337,7 +330,6 @@ export default function Panel(props) {
             )}
           >
             <ResourceFormWithStatusPanel
-              data-public={shouldNotRedactInLogRocket}
               formKey={newId}
               className={classes.resourceFormWrapper}
               variant={variant}
@@ -377,7 +369,6 @@ export default function Panel(props) {
           </div>
         </LoadResources>
       </div>
-
       <EditorDrawer />
     </>
   );

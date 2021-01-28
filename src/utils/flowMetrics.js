@@ -109,6 +109,22 @@ export const getSelectedRange = range => {
       start = addMonths(new Date(), -12);
       end = new Date();
       break;
+    case 'after14days':
+      start = new Date();
+      end = endOfDay(addDays(new Date(), 13));
+      break;
+    case 'after30days':
+      start = new Date();
+      end = endOfDay(addDays(new Date(), 29));
+      break;
+    case 'after6months':
+      start = new Date();
+      end = addMonths(new Date(), 6);
+      break;
+    case 'after1year':
+      start = new Date();
+      end = addMonths(new Date(), 12);
+      break;
     case 'lastrun':
     default:
       break;
