@@ -57,11 +57,12 @@ export default {
     }
 
     return {
-      foregroundPatches: {
+      foregroundPatches: [{
         patch: patches,
         resourceType,
         resourceId,
-      }};
+      }],
+    };
   },
 };
 
