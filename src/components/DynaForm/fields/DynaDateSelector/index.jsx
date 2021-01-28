@@ -1,0 +1,89 @@
+import React, { useCallback } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
+import moment from 'moment';
+import { FormLabel, InputAdornment} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { endOfDay } from 'date-fns';
+import { selectors } from '../../../../reducers';
+import DateRangeSelector from '../../../DateRangeSelector';
+import { convertUtcToTimezone } from '../../../../utils/date';
+import { getSelectedRange } from '../../../../utils/flowMetrics';
+import FieldHelp from '../../FieldHelp';
+import CalendarIcon from '../../../icons/CalendarIcon';
+import DynaText from '../DynaText';
+
+const useStyles = makeStyles(theme => ({
+  iconWrapper: {
+    '&:hover': {
+      color: theme.palette.primary.main,
+      backgroundColor: 'transparent',
+    },
+  },
+}));
+const rangeFilters = [
+  {id: 'after14days', label: '14 days'},
+  {id: 'after30days', label: '30 days'},
+  {id: 'after6months', label: '6 months'},
+  {id: 'after1year', label: '1 year'},
+  {id: 'custom', label: 'Custom'},
+];
+const defaultRange = {
+  startDate: new Date(),
+  endDate: endOfDay(new Date()),
+  preset: null,
+};
+
+export default function DynaDateSelector(props) {
+  const classes = useStyles();
+  const { id, label, name, value, onFieldChange } = props;
+  const calendarIcon = () => <CalendarIcon className={classes.iconWrapper} />;
+  const { dateFormat, timezone } = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
+
+  const handleFieldChange = useCallback((id, value) => {
+    onFieldChange(id, value);
+  }, [onFieldChange]);
+
+  const handleDateRangeChange = useCallback(dateFilter => {
+    const filter = getSelectedRange(dateFilter);
+    const expireDate = convertUtcToTimezone(
+      moment(filter.endDate),
+      dateFormat,
+      null,
+      timezone,
+      {dateOnly: true}
+    );
+
+    onFieldChange(id, expireDate);
+  }, [id, onFieldChange, dateFormat, timezone]);
+  // TODO (Azhar): Need Styling changes for component endAdornment
+
+  return (
+    <>
+      <div className={classes.dynaDateLabelWrapper}>
+        <FormLabel>{label}</FormLabel>
+        <FieldHelp {...props} />
+      </div>
+      <DynaText
+        id={id}
+        name={name}
+        type="date"
+        placeholder="MM/DD/YYYY"
+        value={value}
+        onFieldChange={(id, value) => handleFieldChange(id, value)}
+        endAdornment={(
+          <InputAdornment position="end" >
+            <DateRangeSelector
+              dateType="forwardDates"
+              value={defaultRange}
+              clearable
+              Icon={calendarIcon}
+              customPresets={rangeFilters}
+              clearValue={defaultRange}
+              onSave={handleDateRangeChange}
+              showTime={false} />
+          </InputAdornment>
+        )}
+      />
+    </>
+  );
+}

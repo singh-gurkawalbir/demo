@@ -28,6 +28,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     marginRight: theme.spacing(1),
+    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+    paddingRight: theme.spacing(1),
   },
   selectRowsPage: {
     marginLeft: 5,
