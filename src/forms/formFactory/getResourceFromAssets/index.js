@@ -322,7 +322,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
     case 'connectorLicenses':
       meta = formMeta[resourceType];
 
-      if ((isNew && !resource.type) || resource.type === 'integrationApp') {
+      if (resource.type === 'integrationApp') {
         meta = meta.licenseTwoDotZero;
       } else if (resource.type === 'integrationAppChild') {
         meta = meta.childLicenseTwoDotZero;
