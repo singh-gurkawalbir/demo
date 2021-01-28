@@ -90,7 +90,7 @@ const PageProcessor = ({
     (['RESTImport', 'HTTPImport', 'NetSuiteImport', 'SalesforceImport'].indexOf(
       resource.adaptorType
     ) >= 0 &&
-      resource.blobKeyPath) ||
+      resource.blob) ||
     ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
   ) {
     blockType = 'importTransfer';
