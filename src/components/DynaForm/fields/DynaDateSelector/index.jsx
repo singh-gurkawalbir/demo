@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { FormLabel, InputAdornment} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { endOfDay } from 'date-fns';
+import { endOfDay, addYears } from 'date-fns';
 import { selectors } from '../../../../reducers';
 import DateRangeSelector from '../../../DateRangeSelector';
 import { convertUtcToTimezone } from '../../../../utils/date';
@@ -37,7 +37,8 @@ export default function DynaDateSelector(props) {
   const classes = useStyles();
   const { id, label, name, value, onFieldChange } = props;
   const calendarIcon = () => <CalendarIcon className={classes.iconWrapper} />;
-  const { dateFormat, timezone } = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
+  const { dateFormat } = useSelector(state => selectors.userProfilePreferencesProps(state));
+  const timezone = useSelector(state => selectors.userTimezone(state));
 
   const handleFieldChange = useCallback((id, value) => {
     onFieldChange(id, value);
@@ -67,14 +68,15 @@ export default function DynaDateSelector(props) {
         id={id}
         name={name}
         type="date"
-        placeholder="MM/DD/YYYY"
+        placeholder={dateFormat}
         value={value}
         onFieldChange={(id, value) => handleFieldChange(id, value)}
         endAdornment={(
           <InputAdornment position="end" >
             <DateRangeSelector
-              dateType="forwardDates"
               value={defaultRange}
+              toDate={addYears(new Date(), 1)}
+              fromDate={new Date()}
               clearable
               Icon={calendarIcon}
               customPresets={rangeFilters}
