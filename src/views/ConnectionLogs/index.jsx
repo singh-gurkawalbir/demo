@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const emptyObj = {};
-const emptyLogMessage = 'There are no logs available for this connection. Please run your flow so that we can record the outgoing and incoming traffic to this connection';
+const emptyLogMessage = 'Run your flow to see new debug logs.';
 export default function ConnectionLogs({ connectionId, flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
