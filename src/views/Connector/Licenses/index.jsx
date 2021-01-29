@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../../components/CeligoPageBar';
@@ -120,7 +119,6 @@ export default function Licenses(props) {
             defaultFilter={defaultFilter}
           />
           <IconTextButton
-            component={Link}
             onClick={handleClick}
             variant="text"
             color="primary">
