@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import { selectors } from '../../../reducers';
@@ -14,29 +14,34 @@ import adjustTimezone from '../../../utils/adjustTimezone';
 import { convertUtcToTimezone } from '../../../utils/date';
 
 export default function FlowStartDateDialog(props) {
+  const [defaultDate] = useState(new Date());
   const { flowId, onClose, disabled, onRun } = props;
   const dispatch = useDispatch();
   const preferences = useSelector(state => selectors.userOwnPreferences(state));
   const timeZone = useSelector(state => selectors.userTimezone(state));
-
-  let lastExportDateTime = useSelector(state =>
-    selectors.getLastExportDateTime(state, flowId)
-  ).data;
-
-  if (timeZone) {
-    lastExportDateTime = convertUtcToTimezone(lastExportDateTime, preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true});
-  }
   const selectorStatus = useSelector(state =>
     selectors.getLastExportDateTime(state, flowId)
   ).status;
 
-  if (!lastExportDateTime) {
-    lastExportDateTime = new Date();
-    if (timeZone) {
-      lastExportDateTime = convertUtcToTimezone(new Date(), preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true});
-    }
-  }
+  const origLastExportDateTime = useSelector(state =>
+    selectors.getLastExportDateTime(state, flowId)
+  ).data;
 
+  const lastExportDateTime = useMemo(() => {
+    if (!origLastExportDateTime) {
+      if (!timeZone) {
+        return defaultDate;
+      }
+
+      return convertUtcToTimezone(defaultDate, preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true});
+    }
+
+    if (!timeZone) {
+      return origLastExportDateTime;
+    }
+
+    return convertUtcToTimezone(origLastExportDateTime, preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true});
+  }, [defaultDate, origLastExportDateTime, preferences.dateFormat, preferences.timeFormat, timeZone]);
   const fetchLastExportDateTime = useCallback(() => {
     dispatch(actions.flow.requestLastExportDateTime({ flowId }));
   }, [dispatch, flowId]);
@@ -65,10 +70,12 @@ export default function FlowStartDateDialog(props) {
     startDate: lastExportDateTime,
     format: `${preferences.dateFormat} ${preferences.timeFormat}`,
   });
+
+  const metaValue = useMemo(() => ({startDateAutomatic: lastExportDateTime}), [lastExportDateTime]);
   const formKey = useFormInitWithPermissions({
     disabled,
     fieldMeta,
-    remount: lastExportDateTime,
+    metaValue,
   });
 
   if (!selectorStatus) {
