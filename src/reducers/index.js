@@ -5091,8 +5091,8 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
     return {shouldGetContextFromBE: false, sampleData: _sampleData};
   }
 
-  // for lookup fields, BE doesnt support v1/v2 yet
-  if (fieldId?.startsWith('_')) {
+  // for lookup fields, BE doesn't support v1/v2 yet
+  if (fieldId?.startsWith('lookup') || fieldId?.startsWith('_')) {
     return {shouldGetContextFromBE: false, sampleData: _sampleData};
   }
 
