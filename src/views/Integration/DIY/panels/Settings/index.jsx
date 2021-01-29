@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Grid, List, ListItem, makeStyles } from '@material-ui/core';
-import { generatePath, NavLink, useHistory, useRouteMatch } from 'react-router-dom';
+import { NavLink, useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../../reducers';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import actions from '../../../../../actions';
@@ -13,6 +13,7 @@ import FormBuilderButton from '../../../../../components/FormBuilderButton/afe2'
 import useSaveStatusIndicator from '../../../../../hooks/useSaveStatusIndicator';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import redirectToCorrectGroupingRoute from '../../../../../utils/flowgroupingsRedirectTo';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -186,6 +187,7 @@ function CustomSettings({ integrationId, sectionId }) {
     </div>
   );
 }
+
 export default function SettingsForm({integrationId: parentIntegrationId, childId}) {
   const integrationId = childId || parentIntegrationId;
 
@@ -194,6 +196,16 @@ export default function SettingsForm({integrationId: parentIntegrationId, childI
   const match = useRouteMatch();
   const {allSections, hasFlowGroupings} = useSelectorMemo(selectors.mkGetAllCustomFormsForAResource, 'integrations', integrationId) || emptyObj;
 
+  const redirectTo = redirectToCorrectGroupingRoute(match, hasFlowGroupings ? allSections : null, 'general');
+  const sectionId = match.params?.sectionId;
+
+  useEffect(() => {
+    const shouldRedirect = !!redirectTo;
+
+    if (shouldRedirect) {
+      history.replace(redirectTo);
+    }
+  }, [history, redirectTo]);
   // for integrations without any flowgroupings
   if (!hasFlowGroupings) {
     return (
@@ -202,18 +214,6 @@ export default function SettingsForm({integrationId: parentIntegrationId, childI
         sectionId="general"
       />
     );
-  }
-  const sectionId = match.params?.sectionId;
-
-  const isMatchingWithSectionId = allSections.some(ele => ele.sectionId === sectionId);
-
-  if (!isMatchingWithSectionId) {
-    const redirectToGeneralTab = generatePath(match.path, {
-
-      ...match.params, sectionId: 'general',
-    });
-
-    history.replace(redirectToGeneralTab);
   }
 
   return (

@@ -621,7 +621,7 @@ export function* initEditor({ id, editorType, options }) {
     editorType,
     ...formattedOptions,
     fieldId: getUniqueFieldId(fieldId, resource),
-    ...featuresMap(options)[editorType],
+    ...featuresMap(formattedOptions)[editorType],
     originalRule,
     lastChange: Date.now(),
     sampleDataStatus: 'requested',
