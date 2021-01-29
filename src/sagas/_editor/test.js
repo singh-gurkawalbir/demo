@@ -306,54 +306,59 @@ describe('editor sagas', () => {
       editor.onSave = () => {};
       const preSaveValidate = () => ({saveError: true, message: 'save failed error'});
 
+      processorLogic.preSaveValidate = jest.fn().mockImplementationOnce(() => preSaveValidate);
+
       return expectSaga(save, { id: editorId })
         .provide([
           [select(selectors._editor, editorId), editor],
-          [call(processorLogic.preSaveValidate, editor), preSaveValidate],
         ])
         .put(actions._editor.saveFailed(editorId, 'save failed error'))
         .run();
     });
     test('should call onSave handler when present in editor state and dispatch save complete action', () => {
-      editor.onSave = () => {};
+      editor.onSave = jest.fn().mockImplementationOnce(() => 'does some on save');
+
+      expectSaga(save, { id: editorId })
+        .provide([
+          [select(selectors._editor, editorId), editor],
+        ])
+        .put(actions._editor.saveComplete(editorId))
+        .run();
+
+      expect(editor.onSave.mock.calls.length).toBe(1);
+    });
+    test('should dispatch save failed action if no patch sets are given', () => {
+      processorLogic.getPatchSet = jest.fn().mockImplementationOnce(() => null);
 
       return expectSaga(save, { id: editorId })
         .provide([
           [select(selectors._editor, editorId), editor],
         ])
-        .call(editor.onSave, editor)
-        .put(actions._editor.saveComplete(editorId))
-        .run();
-    });
-    test('should dispatch save failed action if no patch sets are given', () =>
-      expectSaga(save, { id: editorId })
-        .provide([
-          [select(selectors._editor, editorId), editor],
-          [call(processorLogic.getPatchSet, editor), undefined],
-        ])
         .put(actions._editor.saveFailed(editorId))
-        .run());
+        .run();
+    }
+    );
 
     test('should dispatch save complete action if no foreground patch exists', async () => {
       delete patches.foregroundPatches;
+      processorLogic.getPatchSet = jest.fn().mockImplementationOnce(() => patches);
 
       const { effects } = await expectSaga(save, { id: editorId })
         .provide([
           [select(selectors._editor, editorId), editor],
-          [call(processorLogic.getPatchSet, editor), patches],
         ])
         .not.call.fn(commitStagedChanges)
         .put(actions._editor.saveComplete(editorId))
         .run();
 
-      expect(effects.call).toHaveLength(2);
+      expect(effects.call).toBeUndefined();
     });
 
     test('should not dispatch save complete action if ANY foregound patch fails', async () => {
+      processorLogic.getPatchSet = jest.fn().mockImplementationOnce(() => patches);
       const { effects } = await expectSaga(save, { id: editorId })
         .provide([
           [select(selectors._editor, editorId), editor],
-          [call(processorLogic.getPatchSet, editor), patches],
           [
             matchers.call(commitStagedChanges, {
               resourceType: 'imports',
@@ -378,31 +383,31 @@ describe('editor sagas', () => {
         .run();
 
       // 2nd call for 'scripts' patch will fail, hence the 3rd commit call should not happen
-      expect(effects.call).toHaveLength(4);
+      expect(effects.call).toHaveLength(2);
     });
 
     test('should dispatch save complete action only if ALL foregound patches succeed', async () => {
+      processorLogic.getPatchSet = jest.fn().mockImplementationOnce(() => patches);
       const { effects } = await expectSaga(save, { id: editorId })
         .provide([
           [select(selectors._editor, editorId), editor],
-          [call(processorLogic.getPatchSet, editor), patches],
           [matchers.call.fn(commitStagedChanges), undefined],
         ])
         .not.put(actions._editor.saveFailed(editorId))
         .run();
 
-      // since there are 3 foreground patches, total call to commitStagedChanges would be 3 and 2 initial processorlogic calls
-      expect(effects.call).toHaveLength(5);
+      // since there are 3 foreground patches, total call to commitStagedChanges would be 3
+      expect(effects.call).toHaveLength(3);
       expect(effects.put).toHaveLength(6);
       // 4th action would be editor savecomplete, after first 3 for foreground patchStaged
       expect(effects.put[3]).toEqual(put(actions._editor.saveComplete(editorId)));
     });
 
     test('should not dispatch save failed action even if background patches fail', async () => {
+      processorLogic.getPatchSet = jest.fn().mockImplementationOnce(() => patches);
       const { effects } = await expectSaga(save, { id: editorId })
         .provide([
           [select(selectors._editor, editorId), editor],
-          [call(processorLogic.getPatchSet, editor), patches],
           [matchers.call.fn(commitStagedChanges), undefined],
           [
             call(commitStagedChanges, {
@@ -416,8 +421,8 @@ describe('editor sagas', () => {
         .not.put(actions._editor.saveFailed(editorId))
         .run();
 
-      // since there are 3 foreground patches, total call to commitStagedChanges would be 3 and 2 processorLogic calls
-      expect(effects.call).toHaveLength(5);
+      // since there are 3 foreground patches, total call to commitStagedChanges would be 3
+      expect(effects.call).toHaveLength(3);
 
       // Note: if any effects' assertion(non-negated) is done while calling expectSaga API, then the returned Promise
       // contains that many less count of the effects

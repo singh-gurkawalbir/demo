@@ -168,8 +168,8 @@ export function* save({ id, context }) {
     return; // nothing to do
   }
 
-  const patches = yield call(processorLogic.getPatchSet, editor);
-  const preSaveValidate = yield call(processorLogic.preSaveValidate, editor);
+  const patches = processorLogic.getPatchSet(editor);
+  const preSaveValidate = processorLogic.preSaveValidate(editor);
 
   // if preview before saving the editor is on, call the evaluateProcessor
   if (editor.previewOnSave) {
@@ -193,8 +193,7 @@ export function* save({ id, context }) {
   }
 
   if (editor.onSave) {
-    // added yield call to be able to test this functionality
-    yield call(editor.onSave, editor);
+    editor.onSave(editor);
 
     // we might have use cases in future where onSave and patches , both need to be called
     // in that case we should not return from here and continue to run the patchSet also
