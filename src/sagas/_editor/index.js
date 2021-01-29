@@ -28,7 +28,7 @@ import { isNewId } from '../../utils/resource';
  * If user updated resourcePath, returns path from the value
  * Initially, returns resourcePath on saved resource
  */
-function extractResourcePath(value, initialResourcePath) {
+export function extractResourcePath(value, initialResourcePath) {
   if (value) {
     const jsonValue = safeParse(value) || {};
 
@@ -163,12 +163,13 @@ export function* evaluateExternalProcessor({ processorData }) {
 
 export function* save({ id, context }) {
   const editor = yield select(selectors._editor, id);
-  const patches = processorLogic.getPatchSet(editor);
-  const preSaveValidate = processorLogic.preSaveValidate(editor);
 
   if (!editor) {
     return; // nothing to do
   }
+
+  const patches = processorLogic.getPatchSet(editor);
+  const preSaveValidate = processorLogic.preSaveValidate(editor);
 
   // if preview before saving the editor is on, call the evaluateProcessor
   if (editor.previewOnSave) {
@@ -233,16 +234,9 @@ export function* save({ id, context }) {
           ];
          */
 
-  let { foregroundPatches } = patches || {};
-  const { backgroundPatches } = patches || {};
+  const { foregroundPatches, backgroundPatches } = patches || {};
 
-  // for backward compatibility
-  foregroundPatches =
-        foregroundPatches && !Array.isArray(foregroundPatches)
-          ? [foregroundPatches]
-          : foregroundPatches;
-
-  if (foregroundPatches) {
+  if (foregroundPatches && Array.isArray(foregroundPatches)) {
     for (let index = 0; index < foregroundPatches.length; index += 1) {
       const { action, patch, resourceType, resourceId } =
             foregroundPatches[index] || {};
@@ -312,8 +306,8 @@ export function* autoEvaluateProcessor({ id }) {
   return yield call(requestPreview, { id });
 }
 
-function* autoEvaluateProcessorWithCancel(params) {
-  const { id } = params;
+export function* autoEvaluateProcessorWithCancel(params) {
+  const { id } = params || {};
 
   yield race({
     editorEval: call(autoEvaluateProcessor, params),
@@ -534,6 +528,8 @@ export function* initSampleData({ id }) {
 // re-fetching the editor from state to get latest editor (in case init processorLogic made any changes)
   const editor = yield select(selectors._editor, id);
 
+  if (!editor) return;
+
   // if data is already passed during init, save it to state directly
   if (editor.data) {
     yield put(
@@ -561,8 +557,8 @@ export function* initSampleData({ id }) {
   return yield call(autoEvaluateProcessorWithCancel, { id });
 }
 
-export function* initEditor({ id, editorType, options = {} }) {
-  const { formKey, integrationId, resourceId, resourceType, flowId, sectionId, fieldId} = options;
+export function* initEditor({ id, editorType, options }) {
+  const { formKey, integrationId, resourceId, resourceType, flowId, sectionId, fieldId} = options || {};
 
   let fieldState = {};
   let formState = {};
@@ -640,7 +636,10 @@ export function* initEditor({ id, editorType, options = {} }) {
 }
 
 export function* toggleEditorVersion({ id, version }) {
-  const {data, templateVersion} = yield call(requestEditorSampleData, {id, requestedTemplateVersion: version});
+  const editorData = yield call(requestEditorSampleData, {id, requestedTemplateVersion: version});
+
+  if (!editorData) return;
+  const {data, templateVersion} = editorData;
 
   return yield put(
     actions._editor.sampleDataReceived(
