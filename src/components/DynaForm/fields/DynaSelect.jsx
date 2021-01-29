@@ -126,6 +126,9 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.secondary.lightest,
     transition: 'all .8s ease',
   },
+  dynaSelectMenuItem: {
+    wordBreak: 'break-word',
+  },
 }));
 
 const Row = ({ index, style, data }) => {
@@ -146,7 +149,7 @@ const Row = ({ index, style, data }) => {
       value={value}
       data-value={value}
       disabled={disabled}
-      className={clsx({
+      className={clsx(classes.dynaSelectMenuItem, {
         [classes.focusVisibleMenuItem]: matchMenuIndex === index,
       })}
       style={style}

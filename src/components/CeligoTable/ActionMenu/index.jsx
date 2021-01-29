@@ -100,6 +100,7 @@ export default function ActionMenu({ rowActions, rowData, actionProps, selectAct
 
       <ArrowPopper
         placement="bottom-end"
+        restrictToParent={false}
         classes={{
           popper: classes.actionsMenuPopper,
         }}
