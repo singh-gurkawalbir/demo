@@ -108,14 +108,13 @@ a{
 }
 .ace-tomorrow .ace_gutter-active-line,
 .ace-tomorrow .ace_marker-layer .ace_active-line{
-  /* background-color: #f0f5f9 !important; */
   background-color: #f0f8ff !important;
 }
  .ace-tomorrow .ace_marker-layer .ace_selection{
    background-color: #d6e4ed !important;
 } 
 .ace-tomorrow .ace_heading, .ace-tomorrow .ace_markup.ace_heading, .ace-tomorrow .ace_string{
-  color: #248f00;
+  color: #248f00 !important;
 }
 @supports (-moz-appearance:none) {
   .MuiTable-root {
