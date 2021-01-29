@@ -60,6 +60,7 @@ const metadata = {
     },
     {
       heading: 'Flow step name',
+      width: '25%',
       value: r => <TextOverflowCell message={r.name} />,
     },
     {

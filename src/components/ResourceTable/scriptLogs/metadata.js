@@ -31,6 +31,7 @@ export default {
       },
       {
         heading: 'Message',
+        width: '25%',
         value: r => (
           <TextOverflowCell
             message={r.message}

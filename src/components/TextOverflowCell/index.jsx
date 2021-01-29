@@ -8,7 +8,7 @@ const useStyles = makeStyles({
     overflowY: 'auto',
     maxHeight: 90,
     wordBreak: 'break-word',
-    maxWidth: props => props.maxWidth,
+    maxWidth: maxWidth => `${maxWidth}px`,
   },
   message: {
     height: '100%',
@@ -23,8 +23,8 @@ const useStyles = makeStyles({
 
 });
 
-export default function TextOverflowCell({ message, containsHtml, style}) {
-  const classes = useStyles();
+export default function TextOverflowCell({ message, containsHtml, style, maxWidth}) {
+  const classes = useStyles(maxWidth);
 
   return (
     <div className={classes.wrapper} style={style}>
