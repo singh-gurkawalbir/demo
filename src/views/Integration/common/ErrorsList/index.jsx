@@ -15,7 +15,7 @@ import SpinnerWrapper from '../../../../components/SpinnerWrapper';
 import Spinner from '../../../../components/Spinner';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';
 import { resourceCategory } from '../../../../utils/resource';
-import TextOverflowCell from '../../../../components/ResourceTable/errorManagement/cells/TextOverflowCell';
+import TextOverflowCell from '../../../../components/TextOverflowCell';
 import ResourceButton from '../../../FlowBuilder/ResourceButton';
 
 const useStyles = makeStyles(theme => ({

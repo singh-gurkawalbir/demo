@@ -1,13 +1,14 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import RawHtml from '../../../RawHtml';
+import RawHtml from '../RawHtml';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles({
   wrapper: {
     position: 'relative',
     overflowY: 'auto',
     maxHeight: 90,
     wordBreak: 'break-word',
+    maxWidth: props => props.maxWidth,
   },
   message: {
     height: '100%',
@@ -20,7 +21,7 @@ const useStyles = makeStyles(() => ({
     },
   },
 
-}));
+});
 
 export default function TextOverflowCell({ message, containsHtml, style}) {
   const classes = useStyles();

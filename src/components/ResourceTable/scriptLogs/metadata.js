@@ -1,7 +1,7 @@
 import React from 'react';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import ResourceName from '../../ResourceName';
-import TextOverflowCell from '../errorManagement/cells/TextOverflowCell';
+import TextOverflowCell from '../../TextOverflowCell';
 import ViewLogDetail from './actions/ViewLogDetail';
 
 export default {
