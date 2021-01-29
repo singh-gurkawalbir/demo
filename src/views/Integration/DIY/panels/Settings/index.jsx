@@ -17,12 +17,10 @@ import redirectToCorrectGroupingRoute from '../../../../../utils/flowgroupingsRe
 
 const useStyles = makeStyles(theme => ({
   form: {
-    padding: theme.spacing(0, 1, 2, 1),
+    padding: theme.spacing(0, 2, 2, 2),
   },
   root: {
     backgroundColor: theme.palette.common.white,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
   },
   noSettings: {
     margin: theme.spacing(1, 2, 4, 2),
@@ -40,8 +38,13 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main,
   },
   content: {
-    padding: theme.spacing(3, 2),
     width: '100%',
+  },
+  settingsGroupContainer: {
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    background: theme.palette.background.paper,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
 }));
 
@@ -214,7 +217,7 @@ export default function SettingsForm({integrationId: parentIntegrationId, childI
   }
 
   return (
-    <Grid container wrap="nowrap">
+    <Grid container wrap="nowrap" className={classes.settingsGroupContainer}>
       <Grid item className={classes.subNav}>
         <List>
           {allSections.map(({ title, sectionId }) => (

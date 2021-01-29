@@ -8,8 +8,10 @@ import ApplicationImgCell from './cells/ApplicationImgCell';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import OnOffCell from './cells/OnOffCell';
+import TextOverflowCell from '../errorManagement/cells/TextOverflowCell';
 
 export default {
+
   columns: [
     {
       heading: 'Applications',
@@ -20,8 +22,12 @@ export default {
     },
     {
       heading: 'Name',
+      width: '25%',
       value: function TemplatesDrawerLink(r) {
-        return <ResourceDrawerLink resourceType="templates" resource={r} />;
+        return (
+          <TextOverflowCell
+            message={<ResourceDrawerLink resourceType="templates" resource={r} />} />
+        );
       },
       orderBy: 'name',
     },
@@ -31,12 +37,12 @@ export default {
       orderBy: 'lastModified',
     },
     {
-      heading: 'Website',
+      heading: 'Website URL',
       value(r) {
         return (
           r.websiteURL && (
-            <Link href={r.websiteURL} target="_blank">
-              Website
+            <Link href={r.websiteURL} target="_blank" underline="none">
+              View
             </Link>
           )
         );
@@ -52,6 +58,7 @@ export default {
             applications={r.applications}
             resourceType="templates"
           />
+
         );
       },
     },

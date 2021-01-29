@@ -24,8 +24,8 @@ function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator
     // change this to true when lookup query supports toggle in future
     return false;
   }
-  // lookup fields dont support toggle yet
-  if (fieldId === '_body' || fieldId === '_relativeURI') return false;
+  // lookup fields don't support toggle yet
+  if (fieldId?.startsWith('lookup') || fieldId === '_body' || fieldId === '_relativeURI') return false;
 
   // for below fields,
   // the whole adaptor is not yet supported (except for native REST)

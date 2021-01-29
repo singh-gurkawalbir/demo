@@ -8,7 +8,6 @@ const useStyles = makeStyles(() => ({
     overflowY: 'auto',
     maxHeight: 90,
     wordBreak: 'break-word',
-    maxWidth: 238,
   },
   message: {
     height: '100%',

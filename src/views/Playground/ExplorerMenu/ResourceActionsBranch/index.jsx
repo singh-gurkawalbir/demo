@@ -76,6 +76,7 @@ export default function ResourceItemsBranch({onEditorChange, flowId, resourceId}
   // Without this, we must query both imports and exports collections
   // to find the flow resource details. If we have a better selector, we
   // should use it.
+
   const { resource, resourceType } = useSelector(state => {
     if (!resourceId) return {};
     const resource = selectors.resource(state, 'exports', resourceId);
@@ -124,7 +125,7 @@ export default function ResourceItemsBranch({onEditorChange, flowId, resourceId}
         nodeId={`${resourceId}-view-resource`}
         label={`View ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
         onClick={() => handleViewResource(resourceType, resourceId)} />
-
+      {/* every PG and PP must have a connectionId no null checks required here */}
       {resource._connectionId && (
       <OverflowTreeItem
         icon={<ConnectionsIcon />}

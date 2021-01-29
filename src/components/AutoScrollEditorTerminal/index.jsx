@@ -5,7 +5,7 @@ export default function AutoScrollEditorTerminal(props) {
   const aceEditor = useRef(null);
 
   const [isMouseInside, setIsMouseInside] = useState(false);
-  const [value, setValue] = useState(props.value);
+  const [value, setValue] = useState('');
   const handleMouseEnter = useCallback(() => {
     setIsMouseInside(true);
   }, []);
