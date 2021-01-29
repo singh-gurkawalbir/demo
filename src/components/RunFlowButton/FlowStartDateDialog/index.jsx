@@ -27,21 +27,11 @@ export default function FlowStartDateDialog(props) {
     selectors.getLastExportDateTime(state, flowId)
   ).data;
 
-  const lastExportDateTime = useMemo(() => {
-    if (!origLastExportDateTime) {
-      if (!timeZone) {
-        return defaultDate;
-      }
+  const lastExportDateTime = useMemo(() =>
+    convertUtcToTimezone(origLastExportDateTime || defaultDate, preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true}),
+  [defaultDate, origLastExportDateTime, preferences.dateFormat, preferences.timeFormat, timeZone]
+  );
 
-      return convertUtcToTimezone(defaultDate, preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true});
-    }
-
-    if (!timeZone) {
-      return origLastExportDateTime;
-    }
-
-    return convertUtcToTimezone(origLastExportDateTime, preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true});
-  }, [defaultDate, origLastExportDateTime, preferences.dateFormat, preferences.timeFormat, timeZone]);
   const fetchLastExportDateTime = useCallback(() => {
     dispatch(actions.flow.requestLastExportDateTime({ flowId }));
   }, [dispatch, flowId]);
