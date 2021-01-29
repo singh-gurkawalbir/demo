@@ -8,7 +8,7 @@ import Licenses from './actions/Licenses';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import OnOffCell from './cells/OnOffCell';
 import ApplicationImgCell from './cells/ApplicationImgCell';
-import TextOverflowCell from '../errorManagement/cells/TextOverflowCell';
+import TextOverflowCell from '../../TextOverflowCell';
 
 export default {
   columns: [
