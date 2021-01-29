@@ -5068,6 +5068,11 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
     _sampleData = { data: sampleData || { myField: 'sample' }};
   }
 
+  // for lookup fields, BE doesn't support v1/v2 yet
+  if (fieldId?.startsWith('lookup') || fieldId?.startsWith('_')) {
+    return {shouldGetContextFromBE: false, sampleData: _sampleData};
+  }
+
   // TODO: BE would be deprecating native REST adaptor as part of IO-19864
   // we can remove this logic from UI as well once that is complete
   if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
@@ -5088,11 +5093,6 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   if (stage === 'transform' ||
   stage === 'postResponseMapHook' ||
   stage === 'sampleResponse') {
-    return {shouldGetContextFromBE: false, sampleData: _sampleData};
-  }
-
-  // for lookup fields, BE doesn't support v1/v2 yet
-  if (fieldId?.startsWith('lookup') || fieldId?.startsWith('_')) {
     return {shouldGetContextFromBE: false, sampleData: _sampleData};
   }
 
