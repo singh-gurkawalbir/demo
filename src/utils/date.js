@@ -12,8 +12,6 @@ export function convertUtcToTimezone(
   const timeZoneDate = utcMoment.tz(timeZone || moment.tz.guess(true)); // timeZone could be null.
 
   if (dateOpts?.skipFormatting) {
-    if (!date) return null;
-
     return timeZoneDate;
   }
 
