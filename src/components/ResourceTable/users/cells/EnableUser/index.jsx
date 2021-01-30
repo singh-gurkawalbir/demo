@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import CeligoSwitch from '../../../../CeligoSwitch';
-import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../../../../utils/constants';
+import { ACCOUNT_IDS } from '../../../../../utils/constants';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import actions from '../../../../../actions';
 import actionTypes from '../../../../../actions/types';
@@ -9,7 +9,7 @@ import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import CommStatus from '../../../../CommStatus';
 
-export default function EnableUser({ user, integrationId, accessLevel}) {
+export default function EnableUser({ user }) {
   const { confirmDialog } = useConfirmDialog();
   const { sharedWithUser, disabled, _id: userId, accepted } = user;
   const dispatch = useDispatch();
@@ -74,7 +74,7 @@ export default function EnableUser({ user, integrationId, accessLevel}) {
       />
       <CeligoSwitch
         data-test="disableUser"
-        disabled={!accepted || ((integrationId || accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN) && (userId === ACCOUNT_IDS.OWN))}
+        disabled={!accepted || userId === ACCOUNT_IDS.OWN}
         checked={!disabled}
         onChange={handleSwitch}
       />
