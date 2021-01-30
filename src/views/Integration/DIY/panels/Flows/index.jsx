@@ -252,7 +252,8 @@ export default function FlowsPanel({ integrationId, childId }) {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const [showDialog, setShowDialog] = useState(false);
-  const filterKey = `${integrationId}-flows`;
+  const sectionId = match?.params?.sectionId;
+  const filterKey = `${integrationId}-flows${sectionId ? `-${sectionId}` : ''}`;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
   const integrationChildren = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
