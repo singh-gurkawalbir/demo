@@ -8,7 +8,7 @@ import SelectAllErrors from '../cells/SelectAllErrors';
 import SelectSource from '../cells/SelectSource';
 import SelectDate from '../cells/SelectDate';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
-import TextOverflowCell from '../cells/TextOverflowCell';
+import TextOverflowCell from '../../../TextOverflowCell';
 import ErrorMessage from '../cells/ErrorMessage';
 
 export default {

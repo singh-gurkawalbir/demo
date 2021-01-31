@@ -43,6 +43,7 @@ export default {
   editions: {
     type: 'text',
     label: 'Editions',
+    value: r => r?.twoDotZero?.editions,
     visibleWhen: [
       {
         field: 'framework',

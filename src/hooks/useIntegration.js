@@ -35,6 +35,8 @@ const useIntegration = (resourceType, resourceId) => {
     if (index !== -1) {
       // increase index by 1 to skip templateName
       index += 1;
+    } else {
+      return undefined;
     }
   }
 
