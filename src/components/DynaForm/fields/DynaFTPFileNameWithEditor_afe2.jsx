@@ -24,6 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const VALID_FILE_EXTENSIONS = ['csv', 'json', 'xlsx', 'xml', 'edi'];
 export default function DynaFTPFileNameWithEditor_afe2(props) {
   const {id, flowId, value, resourceId, resourceType, onFieldChange, formKey} = props;
   const {value: formValue} = useFormContext(formKey);
@@ -63,16 +64,28 @@ export default function DynaFTPFileNameWithEditor_afe2(props) {
     ].includes(fileType)
       ? 'edi'
       : fileType;
-    const lastDotPos = value.lastIndexOf('.');
-    const newFileName = `${lastDotPos !== -1 ? value.substr(0, lastDotPos) : value}.${newExtension}`;
+    let currentExtension;
 
+    if (value.lastIndexOf('.') !== -1) {
+      currentExtension = value.substr(value.lastIndexOf('.') + 1);
+    }
+    if (currentExtension === newExtension) {
+      return;
+    }
+    let newFileName = '';
+
+    if (VALID_FILE_EXTENSIONS.includes(currentExtension)) {
+      newFileName = `${value.substr(0, value.lastIndexOf('.'))}.${newExtension}`;
+    } else {
+      newFileName = `${value}.${newExtension}`;
+    }
     onFieldChange(id, newFileName);
     setSavedFileType(fileType);
   }, [fileType, id, onFieldChange, value]);
 
   useEffect(() => {
     if (fileType !== savedFileType) {
-      // change fileName extension
+      // update fileName extension
       updateFileNameExtension();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
