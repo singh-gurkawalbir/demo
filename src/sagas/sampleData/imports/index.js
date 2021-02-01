@@ -130,8 +130,10 @@ export function* _fetchIAMetaData({
 
   // makes refreshMetadata call incase of 'refresh' else updates with resource's sampleData
   try {
-    const iaMetadata = refreshMetadata
-      ? yield call(apiCallWithRetry, {
+    let iaMetadata;
+
+    if (refreshMetadata) {
+      const refreshMetadataResponse = yield call(apiCallWithRetry, {
         path: `/integrations/${_integrationId}/settings/refreshMetadata`,
         opts: {
           method: 'PUT',
@@ -140,8 +142,16 @@ export function* _fetchIAMetaData({
           },
         },
         hidden: true,
-      })
-      : sampleData;
+      });
+
+      if (!refreshMetadataResponse || refreshMetadataResponse?.errors?.length) {
+        iaMetadata = sampleData;
+      } else {
+        iaMetadata = refreshMetadataResponse;
+      }
+    } else {
+      iaMetadata = sampleData;
+    }
 
     yield put(
       actions.importSampleData.iaMetadataReceived({
