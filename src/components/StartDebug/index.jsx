@@ -48,9 +48,6 @@ const useStyles = makeStyles(theme => ({
   dateRangePopper: {
     zIndex: 1300,
   },
-  dropdown: {
-    marginTop: '0px !important',
-  },
 }));
 
 const debugOptions = [
@@ -128,6 +125,15 @@ export default function StartDebug({ resourceId, resourceType}) {
     setValue(value);
   }, []);
 
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        marginTop: 35,
+      },
+    },
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  };
+
   return (
     <>
       <IconTextButton
@@ -162,9 +168,10 @@ export default function StartDebug({ resourceId, resourceType}) {
                       className={classes.dropdown}
                       onChange={handleChange}
                       value={value || ''}
+                      MenuProps={MenuProps}
                     >
                       {debugOptions.map(opt => (
-                        <MenuItem key={opt.value} value={opt.value}>
+                        <MenuItem key={opt.value} value={opt.value} >
                           {opt.label}
                         </MenuItem>
                       ))}
