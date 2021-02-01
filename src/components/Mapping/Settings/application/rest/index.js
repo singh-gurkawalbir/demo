@@ -88,6 +88,9 @@ export default {
           type: 'checkbox',
           defaultValue: value.useFirstRow || false,
           label: 'Use first row',
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['standard'] },
+          ],
         },
         fieldMappingType: {
           id: 'fieldMappingType',
@@ -171,6 +174,9 @@ export default {
           name: '_body',
           type: 'httprequestbody',
           connectionId: r => r && r._connectionId,
+          resourceId,
+          flowId,
+          resourceType: 'imports',
           defaultValue: lookup.body || '',
           required: true,
           label: 'HTTP request body',

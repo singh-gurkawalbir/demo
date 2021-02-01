@@ -98,6 +98,11 @@ export default {
     delete newValues['/file/compressFiles'];
     delete newValues['/inputMode'];
 
+    // TODO Ashok, This code can be removed once all backend issues are resolved.
+
+    newValues['/ftp/fileName'] = undefined;
+    newValues['/ftp/backupDirectoryPath'] = undefined;
+
     return {
       ...newValues,
     };

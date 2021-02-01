@@ -5,7 +5,7 @@ export default {
     };
     const { code, scriptId } = editor;
 
-    patches.foregroundPatches = {
+    patches.foregroundPatches = [{
       patch: [
         {
           op: 'replace',
@@ -15,7 +15,7 @@ export default {
       ],
       resourceType: 'scripts',
       resourceId: scriptId,
-    };
+    }];
 
     return patches;
   },

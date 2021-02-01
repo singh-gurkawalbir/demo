@@ -285,13 +285,13 @@ function CategoryMappings({
             </div>
             <span>
               {expanded ? (
-                <Tooltip title="Hide categories" placement="bottom">
+                <Tooltip data-public title="Hide categories" placement="bottom">
                   <IconButton size="small" color="inherit">
                     <ShowContentIcon />
                   </IconButton>
                 </Tooltip>
               ) : (
-                <Tooltip title="Enable categories" placement="bottom">
+                <Tooltip data-public title="Enable categories" placement="bottom">
                   <IconButton size="small" color="inherit">
                     <HideContentIcon />
                   </IconButton>
@@ -301,7 +301,7 @@ function CategoryMappings({
           </div>
 
           {hasVariationMappings && (
-            <Tooltip title="Configure variations" placement="bottom">
+            <Tooltip data-public title="Configure variations" placement="bottom">
               <IconButton
                 onClick={handleVariation}
                 size="small"
@@ -314,7 +314,7 @@ function CategoryMappings({
           {!isCommonCategory && (
             <div>
               {deleted ? (
-                <Tooltip title="Restore category" placement="bottom">
+                <Tooltip data-public title="Restore category" placement="bottom">
                   <IconButton
                     onClick={handleRestore}
                     size="small"
@@ -324,7 +324,7 @@ function CategoryMappings({
                   </IconButton>
                 </Tooltip>
               ) : (
-                <Tooltip title="Delete category" placement="bottom">
+                <Tooltip data-public title="Delete category" placement="bottom">
                   <IconButton
                     onClick={handleDelete}
                     size="small"

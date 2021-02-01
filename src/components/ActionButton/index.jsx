@@ -1,8 +1,6 @@
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
-import IconButton from '@material-ui/core/IconButton';
 import clsx from 'clsx';
+import { makeStyles, IconButton, Tooltip } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   editorButton: {
@@ -24,12 +22,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ActionButton({ className, children, ...props }) {
+export default function ActionButton({ className, children, tooltip, ...props }) {
   const classes = useStyles();
 
   return (
-    <IconButton className={clsx(classes.editorButton, className)} {...props}>
-      <span>{children}</span>
-    </IconButton>
+    // The strange looking open property expression disables the tooltip for any action button
+    // which does not have a tooltip. If anyone has a more elegant way to do this, plmk. (Dave Riedl)
+    <Tooltip arrow open={tooltip ? undefined : false} placement="top" title={tooltip}>
+      <IconButton className={clsx(classes.editorButton, className)} {...props}>
+        <span>{children}</span>
+      </IconButton>
+    </Tooltip>
   );
 }

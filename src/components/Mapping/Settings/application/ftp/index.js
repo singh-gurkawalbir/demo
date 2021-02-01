@@ -51,6 +51,9 @@ export default {
           defaultValue: value.useFirstRow || false,
           // helpText not present
           label: 'Use first row',
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['standard'] },
+          ],
         },
         discardIfEmpty: {
           id: 'discardIfEmpty',

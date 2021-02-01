@@ -128,6 +128,15 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
     setValue(value);
   }, []);
 
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        marginTop: 35,
+      },
+    },
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  };
+
   return (
     <>
       <IconTextButton
@@ -164,6 +173,7 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
                       className={classes.dropdown}
                       onChange={handleChange}
                       value={value || ''}
+                      MenuProps={MenuProps}
                     >
                       {debugOptions.map(opt => (
                         <MenuItem key={opt.value} value={opt.value}>

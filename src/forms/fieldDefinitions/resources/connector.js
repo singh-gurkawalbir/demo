@@ -43,6 +43,7 @@ export default {
   editions: {
     type: 'text',
     label: 'Editions',
+    value: r => r?.twoDotZero?.editions,
     visibleWhen: [
       {
         field: 'framework',
@@ -99,6 +100,12 @@ export default {
         isNot: ['twoDotZero'],
       },
     ],
+    visibleWhen: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
   },
   uninstallerFunction: {
     type: 'text',
@@ -119,7 +126,18 @@ export default {
   updateFunction: {
     type: 'text',
     label: 'Update function',
-    required: true,
+    requiredWhen: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
   },
   applications: {
     type: 'selectmultiapplication',

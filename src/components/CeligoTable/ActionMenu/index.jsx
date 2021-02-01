@@ -4,12 +4,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
 import ArrowPopper from '../../ArrowPopper';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   actionsMenuPopper: {
     maxWidth: 250,
-    left: '15px !important',
+    top: `${theme.spacing(1)}px !important`,
   },
-});
+}));
 const Action = ({ label, Icon, disabledActionText, useHasAccess, actionProps, rowData, component, selectAction, handleMenuClose}) => {
   const handleActionClick = useCallback(() => {
     selectAction(component);
@@ -25,7 +25,7 @@ const Action = ({ label, Icon, disabledActionText, useHasAccess, actionProps, ro
 
   if (disabledActionTitle) {
     return (
-      <Tooltip key={label} title={disabledActionTitle} placement="bottom" >
+      <Tooltip data-public key={label} title={disabledActionTitle} placement="bottom" >
         <div>
           <MenuItem disabled>
             {actionIcon}
@@ -99,13 +99,14 @@ export default function ActionMenu({ rowActions, rowData, actionProps, selectAct
       </IconButton>
 
       <ArrowPopper
-        open={open}
-        anchorEl={anchorEl}
-        id={actionsPopoverId}
+        placement="bottom-end"
+        restrictToParent={false}
         classes={{
           popper: classes.actionsMenuPopper,
         }}
-        placement="bottom-end"
+        open={open}
+        anchorEl={anchorEl}
+        id={actionsPopoverId}
         onClose={handleMenuClose}>
         {actions.map(a => <Action key={a.label} {...a} />)}
       </ArrowPopper>

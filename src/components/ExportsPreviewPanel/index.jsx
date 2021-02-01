@@ -1,6 +1,5 @@
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
@@ -10,41 +9,27 @@ import Panels from './Panels';
 import { DEFAULT_RECORD_SIZE } from '../../utils/exportPanel';
 
 const useStyles = makeStyles(theme => ({
+  previewPanelWrapper: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
   container: {
     background: theme.palette.common.white,
     padding: theme.spacing(2),
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    width: 654,
-    height: `calc(100vh - ${150}px)`,
+    width: '100%',
+    height: `calc(100vh - ${200}px)`,
     overflowY: 'auto',
     float: 'left',
-    marginRight: theme.spacing(3),
-    [theme.breakpoints.up('xl')]: {
-      width: `calc(100% - ${theme.spacing(3)}px)`,
-    },
-    // [theme.breakpoints.up('xxl')]: {
-    //   width: 880,
-    // },
+    display: 'flex',
+    flexDirection: 'column',
   },
   previewDataHeading: {
     fontSize: 18,
-    margin: theme.spacing(-0.5, -2, 2, -2),
-    padding: theme.spacing(0, 2, 1, 2),
+    padding: theme.spacing(2, 2, 1, 2),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    background: theme.palette.background.paper,
   },
-  drawerShift: {
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    [theme.breakpoints.down('lg')]: {
-      maxWidth: 600,
-    },
-    [theme.breakpoints.down('md')]: {
-      width: `calc(100% - ${theme.spacing(3)}px)`,
-    },
-  },
+
 }));
 
 function PreviewInfo({
@@ -169,28 +154,26 @@ function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
   const handlePanelViewChange = useCallback(panelType => {
     setPanelType(panelType);
   }, []);
-  const isDrawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
     <div
-      className={clsx(classes.container, {
-        [classes.drawerShift]: isDrawerOpened,
-      })}>
+      className={classes.previewPanelWrapper}>
       <Typography className={classes.previewDataHeading}>
         Preview data
       </Typography>
-      <PreviewInfo
-        resourceSampleData={resourceSampleData}
-        previewStageDataList={previewStageDataList}
-        isPreviewDisabled={isPreviewDisabled}
-        flowId={flowId}
-        resourceId={resourceId}
-        formKey={formKey}
-        resourceType={resourceType}
-        setShowPreviewData={setShowPreviewData}
-        showPreviewData={showPreviewData}
+      <div className={classes.container}>
+        <PreviewInfo
+          resourceSampleData={resourceSampleData}
+          previewStageDataList={previewStageDataList}
+          isPreviewDisabled={isPreviewDisabled}
+          flowId={flowId}
+          resourceId={resourceId}
+          formKey={formKey}
+          resourceType={resourceType}
+          setShowPreviewData={setShowPreviewData}
+          showPreviewData={showPreviewData}
       />
-      {
+        {
         showPreviewData && (
         <Panels.PreviewBody
           resourceSampleData={resourceSampleData}
@@ -204,6 +187,7 @@ function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
       />
         )
 }
+      </div>
     </div>
   );
 }

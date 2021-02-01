@@ -844,22 +844,22 @@ describe('resource util tests', () => {
       })).toEqual('exportTransfer');
 
       expect(resourceCategory({
-        blobKeyPath: 'key',
+        blob: true,
         adaptorType: 'SalesforceImport',
       })).toEqual('importTransfer');
 
       expect(resourceCategory({
-        blobKeyPath: 'key',
+        blob: true,
         adaptorType: 'NetSuiteImport',
       })).toEqual('importTransfer');
 
       expect(resourceCategory({
-        blobKeyPath: 'key',
+        blob: true,
         adaptorType: 'HTTPImport',
       })).toEqual('importTransfer');
 
       expect(resourceCategory({
-        blobKeyPath: 'key',
+        blob: true,
         adaptorType: 'RESTImport',
       })).toEqual('importTransfer');
 
@@ -868,15 +868,15 @@ describe('resource util tests', () => {
       })).toEqual('importTransfer');
 
       expect(resourceCategory({
-        blobKeyPath: 'key',
+        blob: true,
         adaptorType: 'S3Import',
       })).toEqual('importTransfer');
     });
   });
 
   describe('tests for util isBlobTypeResource', () => {
-    test('should return false for undefined resource', () => {
-      expect(isBlobTypeResource()).toEqual(false);
+    test('should return undefined for undefined resource', () => {
+      expect(isBlobTypeResource()).toEqual(undefined);
     });
 
     test('should return true for blob exports', () => {
@@ -887,13 +887,14 @@ describe('resource util tests', () => {
 
     test('should return true for blob imports', () => {
       expect(isBlobTypeResource({
-        blobKeyPath: 'key',
+        blob: true,
       })).toEqual(true);
     });
 
     test('should return false for blob imports', () => {
       expect(isBlobTypeResource({
         type: 'distributed',
+        blob: false,
       })).toEqual(false);
     });
   });

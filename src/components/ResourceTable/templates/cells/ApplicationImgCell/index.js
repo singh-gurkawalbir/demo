@@ -31,7 +31,15 @@ export default function ApplicationImgCell({ applications }) {
 
   // we are rendering max of 4 logos as of now
   const apps = applications.slice(0, 4).map(application => {
-    const { value, type, icon} = connectors.find(connector => connector.value === application);
+    const connector = connectors.find(connector => connector.value === application);
+
+    if (!connector) {
+      // eslint-disable-next-line no-console
+      console.warn('Invalid application', application);
+
+      return null;
+    }
+    const { value, type, icon} = connector;
 
     return (
       <div key={value}>

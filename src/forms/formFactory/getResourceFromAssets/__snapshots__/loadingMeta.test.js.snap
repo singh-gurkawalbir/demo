@@ -3670,6 +3670,7 @@ Object {
       },
       "http.relativeURI": Object {
         "fieldId": "http.relativeURI",
+        "helpKey": "export.gdrive.directoryPath",
         "label": "Directory path",
         "required": true,
         "type": "uri",
@@ -5397,6 +5398,7 @@ Object {
       },
       "http.relativeURI": Object {
         "fieldId": "http.relativeURI",
+        "helpKey": "export.gdrive.directoryPath",
         "label": "Directory path",
         "required": true,
         "type": "uri",
@@ -8427,6 +8429,7 @@ Object {
       },
       "http.relativeURI": Object {
         "fieldId": "http.relativeURI",
+        "helpKey": "import.gdrive.directoryPath",
         "label": "Directory path",
         "required": true,
         "type": "uri",
@@ -10572,6 +10575,7 @@ Object {
       },
       "http.relativeURI": Object {
         "fieldId": "http.relativeURI",
+        "helpKey": "import.gdrive.directoryPath",
         "label": "Directory path",
         "required": true,
         "type": "uri",
@@ -12532,9 +12536,9 @@ Object {
         Object {
           "fields": Array [
             "email",
-            "opts",
             "expires",
             "sandbox",
+            "opts",
           ],
         },
       ],
@@ -12614,7 +12618,7 @@ Object {
   },
   "init": undefined,
   "optionsHandler": [Function],
-  "preSave": undefined,
+  "preSave": [Function],
   "validationHandler": undefined,
 }
 `;

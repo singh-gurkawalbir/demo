@@ -791,6 +791,7 @@ export default {
     MuiAccordionDetails: {
       root: {
         paddingBottom: 0,
+        borderTop: `1px solid ${colors.celigoNeutral3}`,
       },
     },
   },

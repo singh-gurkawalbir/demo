@@ -1815,12 +1815,6 @@ describe('resource region selector testcases', () => {
     });
   });
 
-  describe('selectors.isEditorV2Supported test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isEditorV2Supported()).toEqual(false);
-    });
-  });
-
   describe('selectors.resourceFormField test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.resourceFormField()).toEqual();

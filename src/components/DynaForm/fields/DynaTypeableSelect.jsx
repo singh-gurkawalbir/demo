@@ -115,7 +115,8 @@ const SelectStyle = theme => ({
       borderColor: theme.palette.primary.main,
     },
   }),
-  menu: () => ({
+  menu: provided => ({
+    ...provided,
     zIndex: 2,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
@@ -198,6 +199,7 @@ export default function DynaTypeableSelect(props) {
   } = props;
   const classes = useStyles();
   const ref = useRef(null);
+  const windowHeight = window.innerHeight;
   const suggestions = useMemo(() => options.map(option => ({
     label: option[labelName],
     value: option[valueName]?.toString(), // convert values to String
@@ -298,6 +300,10 @@ export default function DynaTypeableSelect(props) {
     return options.label.toLowerCase().includes(input) || options.value.toLowerCase().includes(input);
   };
 
+  const {y: elementPosFromTop = 0} = ref?.current?.getBoundingClientRect() || {};
+
+  const menuPlacement = windowHeight - elementPosFromTop > 350 ? 'bottom' : 'top';
+
   return (
     <FormControl
       ref={ref}
@@ -320,6 +326,8 @@ export default function DynaTypeableSelect(props) {
         styles={customStyles}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
+        menuPlacement={menuPlacement}
+        menuPosition="fixed"
         autoFocus
         openOnFocus
         components={components}
