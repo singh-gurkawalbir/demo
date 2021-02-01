@@ -399,6 +399,15 @@ describe('AFE region selectors test cases', () => {
       };
 
       expect(selectors.shouldGetContextFromBE(state, editorId, sampleData)).toEqual(expectedOutput);
+      state.session._editors.def = {
+        id: 'def',
+        resourceType: 'exports',
+        resourceId: '123',
+        flowId: 'flow-456',
+        fieldId: 'lookup.body',
+        stage: 'flowInput',
+      };
+      expect(selectors.shouldGetContextFromBE(state, 'def', sampleData)).toEqual(expectedOutput);
     });
     test('should return shouldGetContextFromBE as true for all other cases', () => {
       state.data.resources = {
