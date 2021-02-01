@@ -444,13 +444,12 @@ selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
 
 selectors.mappingImportSampleDataSupported = (state, importId) => {
   const importResource = selectors.resource(state, 'imports', importId);
-  const {adaptorType} = importResource;
 
   const isAssistant =
   !!importResource.assistant && importResource.assistant !== 'financialforce';
   const isIAResource = isIntegrationApp(importResource);
 
-  return isAssistant || isIAResource || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(adaptorType);
+  return isAssistant || isIAResource || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(importResource?.adaptorType);
 };
 
 selectors.redirectUrlToResourceListingPage = (

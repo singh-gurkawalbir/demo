@@ -145,10 +145,11 @@ export function* _fetchIAMetaData({
       });
 
       if (!refreshMetadataResponse || refreshMetadataResponse?.errors?.length) {
-        iaMetadata = sampleData;
-      } else {
-        iaMetadata = refreshMetadataResponse;
+        return yield put(
+          actions.importSampleData.iaMetadataFailed({_importId})
+        );
       }
+      iaMetadata = refreshMetadataResponse;
     } else {
       iaMetadata = sampleData;
     }

@@ -1305,6 +1305,10 @@ const importSampleData = {
       _importId,
       metadata,
     }),
+  iaMetadataFailed: ({ _importId }) =>
+    action(actionTypes.IMPORT_SAMPLEDATA.IA_METADATA_FAILED, {
+      _importId,
+    }),
 };
 const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
