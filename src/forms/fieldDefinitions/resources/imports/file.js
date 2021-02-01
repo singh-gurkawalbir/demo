@@ -31,7 +31,6 @@ export default {
     label: r => r?.adaptorType === 'S3Import' ? 'Build file key' : 'Build file name',
     required: true,
     showAllSuggestions: true,
-    refreshOptionsOnChangesTo: ['file.type'],
     validWhen: {
       someAreTrue: {
         message:
