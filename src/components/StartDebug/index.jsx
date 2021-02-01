@@ -78,7 +78,7 @@ const formatter = (value, unit, suffix) => {
   return `${value}${formattedUnit} remaining`;
 };
 const defaultValue = 15;
-export default function StartDebug({ resourceId, resourceType}) {
+export default function StartDebug({ resourceId, resourceType, disabled}) {
   const [value, setValue] = useState(defaultValue);
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
@@ -131,6 +131,7 @@ export default function StartDebug({ resourceId, resourceType}) {
   return (
     <>
       <IconTextButton
+        disabled={disabled}
         onClick={toggleClick}
         data-test="refreshResource">
         <DebugIcon />
@@ -139,6 +140,7 @@ export default function StartDebug({ resourceId, resourceType}) {
         ) : 'Start debug'}
       </IconTextButton>
       <ArrowPopper
+        disabled={disabled}
         open={!!anchorEl}
         anchorEl={anchorEl}
         restrictToParent={false}
