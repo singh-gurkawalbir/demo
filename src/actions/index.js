@@ -1950,6 +1950,12 @@ const errorManager = {
         retryId,
         error,
       }),
+    download: ({flowId, resourceId, retryDataKey}) =>
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.DOWNLOAD, {
+        flowId,
+        resourceId,
+        retryDataKey,
+      }),
     updateRequest: ({ flowId, resourceId, retryId, retryData }) =>
       action(actionTypes.ERROR_MANAGER.RETRY_DATA.UPDATE_REQUEST, {
         flowId,

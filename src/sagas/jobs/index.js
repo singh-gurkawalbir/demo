@@ -729,8 +729,9 @@ export function* downloadRetryData({ retryId }) {
   } catch (e) {
     return true;
   }
-
-  openExternalUrl({url: response?.signedURL});
+  if (response?.signedURL) {
+    openExternalUrl({url: response?.signedURL});
+  }
 }
 
 export function* retryProcessedErrors({ jobId, flowJobId, errorFileId }) {
