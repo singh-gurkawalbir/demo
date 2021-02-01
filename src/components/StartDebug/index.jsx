@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
     zIndex: 1300,
   },
   dropdown: {
-    marginTop: '0px important',
+    marginTop: '0px !important',
   },
 }));
 
