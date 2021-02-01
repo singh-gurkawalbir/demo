@@ -7,11 +7,9 @@ export default {
   },
 
   layout: {
-    type: 'collapse',
+    type: 'box',
     containers: [
       {
-        collapsed: true,
-        label: 'General',
         fields: ['email', 'expires', 'sandbox', 'opts'],
       },
     ],
