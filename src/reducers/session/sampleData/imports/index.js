@@ -24,7 +24,7 @@ export default function (state = {}, action) {
         break;
       case actionTypes.IMPORT_SAMPLEDATA.IA_METADATA_FAILED:
         if (!draft[_importId]) { draft[_importId] = {}; }
-        draft[_importId].status = 'received';
+        draft[_importId].status = 'error';
         break;
       default:
     }
