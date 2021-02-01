@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, Fragment } from 'react';
+import React, { useCallback, useEffect, Fragment, useState } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
@@ -48,6 +48,7 @@ export default function LicenseAction() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
+  const [upgradeRequested, setUpgradeRequested] = useState(false);
   const licenseActionDetails = useSelector(
     state => selectors.platformLicenseActionDetails(state),
     (left, right) =>
@@ -78,9 +79,13 @@ export default function LicenseAction() {
     }
 
     if (licenseActionDetails.action === 'upgrade') {
+      setUpgradeRequested(true);
+
       return dispatch(actions.user.org.accounts.requestLicenseUpgrade());
     }
     if (licenseActionDetails.action === 'resume') {
+      setUpgradeRequested(true);
+
       return dispatch(actions.user.org.accounts.requestUpdate('ioResume'));
     }
     if (licenseActionDetails.action === 'expired') {
@@ -110,6 +115,7 @@ export default function LicenseAction() {
           </Typography>
           <Button
             variant="text"
+            disabled={upgradeRequested}
             data-test="renewOrResumeNow"
             className={classes.actionBtn}
             onClick={handleClick}>

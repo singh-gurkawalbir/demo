@@ -8,7 +8,7 @@ import ApplicationImgCell from './cells/ApplicationImgCell';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import OnOffCell from './cells/OnOffCell';
-import TextOverflowCell from '../errorManagement/cells/TextOverflowCell';
+import TextOverflowCell from '../../TextOverflowCell';
 
 export default {
 

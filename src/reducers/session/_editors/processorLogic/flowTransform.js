@@ -117,11 +117,11 @@ export default {
       },
     };
 
-    patches.foregroundPatches = {
+    patches.foregroundPatches = [{
       patch: [{ op: 'replace', path, value }],
       resourceType,
       resourceId,
-    };
+    }];
 
     if (type === 'script') {
       patches.backgroundPatches.push({

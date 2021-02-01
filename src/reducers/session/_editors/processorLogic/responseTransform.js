@@ -63,7 +63,7 @@ export default {
       },
     };
 
-    patches.foregroundPatches = {
+    patches.foregroundPatches = [{
       patch: [
         {
           op: 'replace',
@@ -78,7 +78,7 @@ export default {
       ],
       resourceType,
       resourceId,
-    };
+    }];
 
     if (type === 'script') {
       patches.backgroundPatches.push({
