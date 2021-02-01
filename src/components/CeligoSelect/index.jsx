@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
     padding: '0px 12px',
     height: 38,
     justifyContent: 'flex-end',
-    borderRadius: theme.spacing(0.5),
+    borderRadius: 2,
     '& > .MuiInput-formControl': {
       height: 38,
       padding: '0px 15px',
