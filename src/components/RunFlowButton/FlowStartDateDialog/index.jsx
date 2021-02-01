@@ -87,7 +87,6 @@ export default function FlowStartDateDialog(props) {
         <ButtonGroup>
           <DynaSubmit
             formKey={formKey}
-            skipDisableButtonForFormTouched
             data-test="submit"
             onClick={handleSubmit}>
             Run
