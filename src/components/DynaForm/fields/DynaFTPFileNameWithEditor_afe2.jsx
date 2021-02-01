@@ -76,7 +76,7 @@ export default function DynaFTPFileNameWithEditor_afe2(props) {
       updateFileNameExtension();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fileType, savedFileType]);
+  }, [fileType]);
 
   return (
     <>
