@@ -48,6 +48,9 @@ const useStyles = makeStyles(theme => ({
   dateRangePopper: {
     zIndex: 1300,
   },
+  dropdown: {
+    marginTop: '0px important',
+  },
 }));
 
 const debugOptions = [
@@ -171,7 +174,7 @@ export default function StartDebug({ resourceId, resourceType}) {
                       MenuProps={MenuProps}
                     >
                       {debugOptions.map(opt => (
-                        <MenuItem key={opt.value} value={opt.value} >
+                        <MenuItem key={opt.value} value={opt.value}>
                           {opt.label}
                         </MenuItem>
                       ))}
