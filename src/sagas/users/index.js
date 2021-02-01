@@ -131,6 +131,7 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
     yield put(actions.resource.requestCollection('flows'));
     yield put(actions.resource.requestCollection('exports'));
     yield put(actions.resource.requestCollection('imports'));
+    yield put(actions.resource.requestCollection('licenses'));
   }
 
   yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
