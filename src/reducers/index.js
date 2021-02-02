@@ -5134,3 +5134,9 @@ selectors.sourceOptions = createSelector(
   (state, resourceId) => selectors.applicationName(state, resourceId),
   (sources, applicationName) => getSourceOptions(sources, applicationName)
 );
+
+selectors.isConnectionLogsNotSupported = (state, connectionId) => {
+  const connectionResource = selectors.resource(state, 'connections', connectionId);
+
+  return ['wrapper', 'dynamodb', 'mongodb'].includes(connectionResource?.type);
+};
