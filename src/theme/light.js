@@ -762,6 +762,7 @@ export default {
     MuiAccordion: {
       root: {
         borderRadius: '4px',
+        padding: '1px 0px',
         '&:before': {
           backgroundColor: 'none',
         },
@@ -779,12 +780,13 @@ export default {
       },
       expandIcon: {
         padding: 0,
-        margin: [[0, 4, 0, 0]],
+        margin: [[-2, 4, 0, 0]],
       },
+
       content: {
-        margin: '10px 0px',
+        margin: [[10, 0, 8, 0]],
         '&.Mui-expanded': {
-          margin: '10px 0px',
+          margin: [[10, 0, 8, 0]],
         },
       },
     },
