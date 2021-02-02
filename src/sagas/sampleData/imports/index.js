@@ -166,9 +166,8 @@ export function* _fetchIAMetaData({
     // on receiving error , update with resource's sampleData
     // TODO @Raghu: revisit once BE implementation done to support specific IAs
     yield put(
-      actions.importSampleData.iaMetadataReceived({
+      actions.importSampleData.iaMetadataFailed({
         _importId,
-        metadata: sampleData,
       })
     );
   }
