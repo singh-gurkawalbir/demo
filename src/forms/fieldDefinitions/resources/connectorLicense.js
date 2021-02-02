@@ -18,6 +18,7 @@ export default {
   sandbox: {
     type: 'select',
     label: 'Environment',
+    required: true,
     options: [
       {
         items: [
