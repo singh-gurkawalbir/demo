@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -8,6 +8,7 @@ import AfeIcon from '../../icons/AfeIcon';
 import DynaTimestampFileName from './DynaTimestampFileName';
 import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
+import useFormContext from '../../Form/FormContext';
 
 const useStyles = makeStyles(theme => ({
   dynaActionButton: {
@@ -23,8 +24,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const VALID_FILE_EXTENSIONS = ['csv', 'json', 'xlsx', 'xml', 'edi'];
 export default function DynaFTPFileNameWithEditor_afe2(props) {
-  const {id, flowId, resourceId, resourceType, onFieldChange, formKey} = props;
+  const {id, flowId, value, resourceId, resourceType, onFieldChange, formKey} = props;
+  const {value: formValue} = useFormContext(formKey);
+  const fileType = formValue['/file/type'];
+  const [savedFileType, setSavedFileType] = useState(fileType);
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -47,6 +52,43 @@ export default function DynaFTPFileNameWithEditor_afe2(props) {
 
     history.push(`${match.url}/editor/${editorId}`);
   }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, history, match.url]);
+
+  const updateFileNameExtension = useCallback(() => {
+    const newExtension = [
+      'filedefinition',
+      'fixed',
+      'delimited/edifact',
+    ].includes(fileType)
+      ? 'edi'
+      : fileType;
+    let currentExtension;
+
+    if (value.lastIndexOf('.') !== -1) {
+      currentExtension = value.substr(value.lastIndexOf('.') + 1);
+    }
+    if (currentExtension === newExtension) {
+      return;
+    }
+    let newFileName = '';
+
+    if (!value) {
+      newFileName = `file-{{timestamp}}.${newExtension}`;
+    } else if (VALID_FILE_EXTENSIONS.includes(currentExtension)) {
+      newFileName = `${value.substr(0, value.lastIndexOf('.'))}.${newExtension}`;
+    } else {
+      newFileName = `${value}.${newExtension}`;
+    }
+    onFieldChange(id, newFileName);
+    setSavedFileType(fileType);
+  }, [fileType, id, onFieldChange, value]);
+
+  useEffect(() => {
+    if (fileType && fileType !== savedFileType) {
+      // update fileName extension
+      updateFileNameExtension();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fileType]);
 
   return (
     <>
