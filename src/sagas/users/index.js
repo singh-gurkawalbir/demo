@@ -121,6 +121,7 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
   try {
     response = yield call(apiCallWithRetry, {
       path,
+      timeout: 5 * 60 * 1000,
       opts,
     });
   } catch (error) {
