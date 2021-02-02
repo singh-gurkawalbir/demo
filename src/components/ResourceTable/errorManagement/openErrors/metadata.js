@@ -60,12 +60,12 @@ export default {
   rowActions: ({retryDataKey, source}, { actionInProgress }) => {
     if (actionInProgress) return [];
     const actions = [
-      // IO-19304, for errors occuring at FTP bridge, retry data returned will be metadata and not actual retry data,
-      // hence show download option instead of edit
-      ...(retryDataKey && source !== 'ftp_bridge' ? [EditRetryData] : []),
+      ...(retryDataKey ? [EditRetryData] : []),
       Resolve,
       ...(retryDataKey ? [Retry] : []),
       ViewErrorDetails,
+      // IO-19304, for errors occuring at FTP bridge, retry data returned will be metadata and not actual retry data,
+      // hence show download option
       ...(retryDataKey && source === 'ftp_bridge' ? [DownloadRetryData] : []),
     ];
 
