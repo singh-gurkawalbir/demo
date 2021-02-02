@@ -54,9 +54,6 @@ export default function DynaFTPFileNameWithEditor_afe2(props) {
   }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, history, match.url]);
 
   const updateFileNameExtension = useCallback(() => {
-    if (!value) {
-      return;
-    }
     const newExtension = [
       'filedefinition',
       'fixed',
@@ -74,7 +71,9 @@ export default function DynaFTPFileNameWithEditor_afe2(props) {
     }
     let newFileName = '';
 
-    if (VALID_FILE_EXTENSIONS.includes(currentExtension)) {
+    if (!value) {
+      newFileName = `file-{{timestamp}}.${newExtension}`;
+    } else if (VALID_FILE_EXTENSIONS.includes(currentExtension)) {
       newFileName = `${value.substr(0, value.lastIndexOf('.'))}.${newExtension}`;
     } else {
       newFileName = `${value}.${newExtension}`;
@@ -84,7 +83,7 @@ export default function DynaFTPFileNameWithEditor_afe2(props) {
   }, [fileType, id, onFieldChange, value]);
 
   useEffect(() => {
-    if (fileType !== savedFileType) {
+    if (fileType && fileType !== savedFileType) {
       // update fileName extension
       updateFileNameExtension();
     }
