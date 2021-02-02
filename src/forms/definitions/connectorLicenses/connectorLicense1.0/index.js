@@ -5,6 +5,7 @@ export default {
     sandbox: { fieldId: 'sandbox' },
     opts: { fieldId: 'opts' },
   },
+
   layout: {
     type: 'box',
     containers: [

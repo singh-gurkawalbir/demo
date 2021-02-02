@@ -51,11 +51,10 @@ export default function DynaFTPFileNameWithEditor_afe2(props) {
   return (
     <>
       <div className={classes.dynaRowWrapper}>
-        <DynaTimestampFileName
-          {...props}
-    />
+        <DynaTimestampFileName {...props} />
         <ActionButton
           data-test={id}
+          tooltip="Open handlebars editor"
           onClick={handleEditorClick}
           className={classes.dynaActionButton}>
           <AfeIcon />
