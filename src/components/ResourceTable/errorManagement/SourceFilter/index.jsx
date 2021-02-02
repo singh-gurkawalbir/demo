@@ -20,7 +20,7 @@ export default function SourceFilter(props) {
       return selectedIds.filter(i => i !== id);
     }
 
-    if (selectedIds.includes('all')) return selectedIds;
+    if (selectedIds.includes('all')) return [...selectedIds.filter(i => i !== 'all'), id];
 
     return [...selectedIds, id];
   }, []);
