@@ -6,6 +6,7 @@ export default {
     defaultValue: r => r.expires && moment(r.expires).format('L'),
     type: 'dateselector',
     label: 'Expires',
+    required: true,
   },
   opts: {
     defaultValue: r => r.opts,
@@ -17,6 +18,7 @@ export default {
   sandbox: {
     type: 'select',
     label: 'Environment',
+    required: true,
     options: [
       {
         items: [
