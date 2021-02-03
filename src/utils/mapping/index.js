@@ -19,7 +19,8 @@ const isCsvOrXlsxResource = resource => {
 
   if (
     (adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.FTPImport ||
-      adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.S3Import) &&
+      adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.S3Import ||
+      adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.HTTPImport) &&
     (resourceFileType === 'xlsx' || resourceFileType === 'csv')
   ) return true;
 

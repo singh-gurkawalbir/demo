@@ -62,7 +62,6 @@ import {
   isQueryBuilderSupported,
   filterAndSortResources,
   getUserAccessLevelOnConnection,
-  isFileProviderAssistant,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -4724,13 +4723,6 @@ selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
 
   // Check for media type 'csv' from connection object
   return connection && connection.rest && connection.rest.mediaType === 'csv';
-};
-selectors.isFileProviderAssistant = (state, resourceId) => {
-  const { merged: resourceObj } = selectors.resourceData(state, 'exports', resourceId);
-  const { _connectionId: connectionId } = resourceObj || {};
-  const connection = selectors.resource(state, 'connections', connectionId);
-
-  return isFileProviderAssistant(resourceObj, connection);
 };
 
 selectors.isDataLoaderExport = (state, resourceId, flowId) => {
