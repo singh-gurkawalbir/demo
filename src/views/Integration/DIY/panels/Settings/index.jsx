@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Grid, List, ListItem, makeStyles } from '@material-ui/core';
 import { NavLink, useHistory, useRouteMatch } from 'react-router-dom';
@@ -64,7 +64,6 @@ const emptyObj = {};
 function CustomSettings({ integrationId, sectionId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const [formKey, setFormKey] = useState(0);
 
   const {settings} = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, 'integrations', integrationId, sectionId || 'general') || emptyObj;
 
@@ -92,10 +91,6 @@ function CustomSettings({ integrationId, sectionId }) {
     }),
     [sectionId, settings]
   );
-
-  useEffect(() => {
-    setFormKey(formKey => formKey + 1);
-  }, [fieldMeta]);
   const validationHandler = useCallback(field => {
     // Incase of invalid json throws error to be shown on the field
 
@@ -140,7 +135,6 @@ function CustomSettings({ integrationId, sectionId }) {
           SCOPES.VALUE
         )
       );
-      setFormKey(formKey => formKey + 1);
     },
     [dispatch, integrationId, patchPath]
   );
@@ -159,7 +153,7 @@ function CustomSettings({ integrationId, sectionId }) {
     resourceType: 'integrations',
     resourceId: integrationId,
     validationHandler,
-    remount: formKey,
+    remount: fieldMeta,
 
   });
 
