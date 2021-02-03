@@ -150,7 +150,7 @@ export default function DynaRefreshableStaticMap(props) {
       {...props}
       isLoading={isLoadingMap}
       metadata={metadata}
-      shouldReset={optionsMap}
+      shouldReset={metadata}
       optionsMap={optionsMap}
       value={computedValue}
       onFieldChange={handleFieldChange}
