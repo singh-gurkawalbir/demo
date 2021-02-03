@@ -141,6 +141,7 @@ export default {
   },
   applications: {
     type: 'selectmultiapplication',
+    placeholder: 'Choose applications',
     label: 'Applications',
     defaultValue: r => (r?.applications) || [],
     requiredWhen: [

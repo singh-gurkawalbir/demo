@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import Select, { components } from 'react-select';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl, FormLabel } from '@material-ui/core';
 import Chip from '@material-ui/core/Chip';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -8,6 +8,7 @@ import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import Tag from '../../../HomePageCard/Footer/Tag';
+import SearchIcon from '../../../icons/SearchIcon';
 
 const useStyles = makeStyles(theme => ({
   optionRoot: {
@@ -34,6 +35,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     padding: 0,
+
   },
   multiSelectWrapper: {
     width: '100%',
@@ -66,7 +68,15 @@ const useStyles = makeStyles(theme => ({
 
 const chipUseStyles = makeStyles(theme => ({
   chip: {
-    margin: 4,
+    margin: 0,
+    background: 'none',
+    borderRadius: 0,
+    border: 'none',
+    height: 'unset',
+    '& >.MuiChip-label': {
+      padding: 0,
+    },
+
   },
   tagWrapper: {
     color: theme.palette.secondary.light,
@@ -112,11 +122,16 @@ const filterOptions = (candidate, input) => {
   return true;
 };
 
+const DropdownIndicator = props => (
+  <components.DropdownIndicator {...props}>
+    <SearchIcon />
+  </components.DropdownIndicator>
+);
+
 const Option = props => {
   const classes = useStyles();
   const { type, icon, value, label } = props.data;
 
-  // TODO (Azhar): please do styling changes to options
   return (
     <div data-test={value} className={classes.menuItems}>
       <components.Option {...props}>
@@ -144,7 +159,6 @@ const MultiValueLabel = props => {
   const classes = useStyles();
   const value = typeof props.data === 'object' ? props.data.value : props.data;
 
-  // TODO (Azhar): please make styling changes to the chip
   return (
     <div data-test={value} className={classes.chips}>
       <components.MultiValueLabel {...props}>
@@ -169,11 +183,136 @@ export default function MultiSelectApplication(props) {
     isValid,
     onFieldChange,
   } = props;
-
+  const theme = useTheme();
   const classes = useStyles();
   const handleChange = useCallback(selectedOptions => {
     onFieldChange(id, selectedOptions?.map(opt => opt?.value ? opt.value : opt) || []);
   }, [id, onFieldChange]);
+
+  const customStylesMultiselect = {
+    option: (provided, state) => ({
+      ...provided,
+      padding: '0px',
+      color: state.isSelected
+        ? theme.palette.secondary.main
+        : theme.palette.secondary.light,
+      backgroundColor:
+        state.isSelected || state.isFocused
+          ? theme.palette.background.paper2
+          : theme.palette.background.paper,
+      border: 'none',
+      minHeight: '48px',
+      display: 'flex',
+      alignItems: 'center',
+      borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+      '&:active': {
+        backgroundColor: theme.palette.background.paper,
+        color: theme.palette.secondary.light,
+      },
+    }),
+    control: () => ({
+      minWidth: 365,
+      height: '38px',
+      border: '1px solid',
+      borderColor: theme.palette.divider,
+      borderRadius: '2px',
+      backgroundColor: theme.palette.background.paper,
+      alignItems: 'flex-start',
+      cursor: 'default',
+      display: 'flex',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      minHeight: '38px',
+      position: 'relative',
+      boxSizing: 'borderBox',
+      transition: 'all 100ms ease 0s',
+      outline: '0px !important',
+      '&:hover': {
+        borderColor: theme.palette.primary.main,
+      },
+    }),
+    indicatorsContainer: () => ({
+      height: '38px',
+      display: 'flex',
+    }),
+    menu: () => ({
+      zIndex: 2,
+      border: '1px solid',
+      borderColor: theme.palette.secondary.lightest,
+      position: 'absolute',
+      backgroundColor: theme.palette.background.paper,
+      width: '100%',
+      top: '38px',
+    }),
+    input: () => ({
+      color: theme.palette.secondary.light,
+      width: '100%',
+    }),
+    placeholder: () => ({
+      color: theme.palette.secondary.light,
+      position: 'absolute',
+
+    }),
+    indicatorSeparator: () => ({
+      display: 'none',
+    }),
+    menuList: () => ({
+      padding: '0px',
+      maxHeight: '260px',
+      overflowY: 'auto',
+    }),
+    group: () => ({
+      padding: '0px',
+    }),
+    valueContainer: () => ({
+      height: '100%',
+      alignItems: 'center',
+      display: 'flex',
+      flex: '1',
+      padding: '2px 8px',
+      position: 'relative',
+      overflow: 'hidden',
+    }),
+    groupHeading: () => ({
+      textAlign: 'center',
+      fontSize: '12px',
+      padding: '5px',
+      borderBottom: '1px solid',
+      borderColor: theme.palette.divider,
+      background: theme.palette.secondary.lightest,
+      color: theme.palette.text.secondary,
+    }),
+    dropdownIndicator: () => ({
+      color: theme.palette.secondary.light,
+      padding: theme.spacing(0.5, 1, 0, 1),
+      cursor: 'pointer',
+      '&:hover': {
+        color: fade(theme.palette.secondary.light, 0.8),
+      },
+    }),
+    multiValue: styles => ({
+      ...styles,
+      backgroundColor: 'white',
+      borderRadius: theme.spacing(3),
+      height: 28,
+      minWidth: 'unset',
+      padding: '1px 8px',
+      border: `1px solid ${theme.palette.secondary.lightest}`,
+    }),
+    multiValueLabel: styles => ({
+      ...styles,
+      borderRadius: 0,
+      padding: 0,
+    }),
+    multiValueRemove: styles => ({
+      ...styles,
+      paddingRight: 'unset',
+      color: theme.palette.text.secondary,
+      ':hover': {
+        color: theme.palette.secondary.main,
+      },
+    }),
+  };
 
   return (
     <div className={classes.multiSelectWrapper}>
@@ -191,7 +330,7 @@ export default function MultiSelectApplication(props) {
         <Select
           isMulti
           placeholder={placeholder}
-          components={{ Option, MultiValueLabel }}
+          components={{ Option, MultiValueLabel, DropdownIndicator }}
           defaultValue={value}
           options={options[0].items}
           onChange={handleChange}
@@ -199,6 +338,7 @@ export default function MultiSelectApplication(props) {
           hideSelectedOptions={false}
           className={classes.wrapper}
           filterOption={filterOptions}
+          styles={customStylesMultiselect}
         />
 
         {!removeHelperText && <FieldMessage {...props} />}
