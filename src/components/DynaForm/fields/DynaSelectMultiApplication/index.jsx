@@ -188,7 +188,7 @@ export default function MultiSelectApplication(props) {
   const handleChange = useCallback(selectedOptions => {
     onFieldChange(id, selectedOptions?.map(opt => opt?.value ? opt.value : opt) || []);
   }, [id, onFieldChange]);
-
+  // TODO: @Azhar optimize the code for this library.
   const customStylesMultiselect = {
     option: (provided, state) => ({
       ...provided,
