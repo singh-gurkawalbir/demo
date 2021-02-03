@@ -254,7 +254,15 @@ export default function FlowsPanel({ integrationId, childId }) {
   const [showDialog, setShowDialog] = useState(false);
   const sectionId = match?.params?.sectionId;
   const filterKey = `${integrationId}-flows${sectionId ? `-${sectionId}` : ''}`;
+
+  // Celigo table and Keyword components are patching the same time...the order of
+  // execution isn't consistent...we have to consider refactoring the code to patch only
+  // one config
+  useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  }, [dispatch, filterKey]);
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
+
   const integrationChildren = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
   const flows = useSelectorMemo(selectors.mkDIYIntegrationFlowList, integrationId, childId, flowFilter);
@@ -343,7 +351,6 @@ export default function FlowsPanel({ integrationId, childId }) {
         <div className={classes.actions}>
           <KeywordSearch
             filterKey={filterKey}
-            defaultFilter={defaultFilter}
         />
           {canCreate && !isIntegrationApp && (
           <IconTextButton
