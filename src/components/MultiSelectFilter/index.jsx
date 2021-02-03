@@ -68,6 +68,13 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(-0.5),
     marginRight: theme.spacing(0.5),
   },
+  multiSelectFilterPopper: {
+    left: '110px !important',
+    top: '5px !important',
+  },
+  multiSelectFilterPopperArrow: {
+    left: '150px !important',
+  },
 }));
 
 export default function MultiSelectFilter(props) {
@@ -119,6 +126,11 @@ export default function MultiSelectFilter(props) {
         open={!!anchorEl}
         anchorEl={anchorEl}
         placement="bottom-end"
+        restrictToParent={false}
+        classes={{
+          popper: classes.multiSelectFilterPopper,
+          arrow: classes.multiSelectFilterPopperArrow,
+        }}
         onClose={toggleClick}>
         {anchorEl && (
           <div className={classes.dateRangePickerWrapper}>

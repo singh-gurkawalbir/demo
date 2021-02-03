@@ -212,13 +212,13 @@ export default {
 
       if (['rest', 'http', 'salesforce', 'netsuite'].indexOf(app.type) >= 0) {
         if (resourceTypeField.value === 'importRecords') {
-          expression.push({ blobKeyPath: { $exists: false } });
+          expression.push({ blob: { $exists: false } });
 
           if (adaptorType === 'NetSuiteImport') {
             adaptorType = 'NetSuiteDistributedImport';
           }
         } else if (resourceTypeField.value === 'transferFiles') {
-          expression.push({ blobKeyPath: { $exists: true } });
+          expression.push({ blob: { $exists: true } });
         } else if (resourceTypeField.value === 'lookupRecords') {
           expression.push({ type: { $ne: 'blob' } });
         } else if (resourceTypeField.value === 'lookupFiles') {

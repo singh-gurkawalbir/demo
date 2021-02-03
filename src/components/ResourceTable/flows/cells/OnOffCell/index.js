@@ -11,7 +11,7 @@ import RemoveMargin from '../RemoveMargin';
 
 const useStyles = makeStyles(theme => ({
   celigoSwitchOnOff: {
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(2),
   },
   spinnerOnOff: {
     marginLeft: 12,

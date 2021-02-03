@@ -51,9 +51,8 @@ const useStyles = makeStyles(theme => ({
   },
   baseFormWithPreview: {
     display: 'grid',
-    gridTemplateColumns: '55% 43%',
+    gridTemplateColumns: '50% 48%',
     gridColumnGap: theme.spacing(1),
-
   },
   resourceFormWrapper: {
     flexDirection: 'row',
@@ -88,7 +87,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2, 3),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     position: 'relative',
-    background: theme.palette.background.paper,
   },
   titleText: {
     wordBreak: 'break-word',
@@ -156,6 +154,8 @@ const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
   if (['accesstokens', 'apis', 'connectors'].includes(resourceType)) {
     return `${opTitle} ${resourceLabel}`;
   }
+
+  if (!resourceLabel) { return ''; }
 
   return `${opTitle} ${resourceLabel.toLowerCase()}`;
 };
@@ -231,6 +231,7 @@ export default function Panel(props) {
   }
 
   );
+
   const applicationType = useSelector(state => selectors.applicationType(state, resourceType, id));
 
   const app = applications.find(a => a.id === applicationType) || {};
@@ -320,7 +321,6 @@ export default function Panel(props) {
             <Close />
           </IconButton>
         </div>
-
         <LoadResources required resources={requiredResources}>
           <div
             className={clsx({
@@ -369,7 +369,6 @@ export default function Panel(props) {
           </div>
         </LoadResources>
       </div>
-
       <EditorDrawer />
     </>
   );

@@ -90,13 +90,13 @@ const PageProcessor = ({
     (['RESTImport', 'HTTPImport', 'NetSuiteImport', 'SalesforceImport'].indexOf(
       resource.adaptorType
     ) >= 0 &&
-      resource.blobKeyPath) ||
+      resource.blob) ||
     ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
   ) {
     blockType = 'importTransfer';
   }
 
-  const showMapping = useMemo(() => flowDetails._connectorId ? flowDetails.showMapping : true, [flowDetails]);
+  const showMapping = flowDetails._connectorId ? flowDetails.showMapping : true;
 
   // Returns map of all possible actions with true/false whether actions performed on the resource
   const usedActions =
@@ -289,11 +289,11 @@ const PageProcessor = ({
 
       if (!isLast) {
         processorActions.push(
-          {
+          ...(showMapping ? [{
             ...responseMapping,
             isUsed: usedActions[actionsMap.responseMapping],
             helpKey: `fb.pp.${resourceType}.responseMapping`,
-          },
+          }] : []),
           {
             ...postResponseMapHook,
             isUsed: usedActions[actionsMap.postResponseMap],

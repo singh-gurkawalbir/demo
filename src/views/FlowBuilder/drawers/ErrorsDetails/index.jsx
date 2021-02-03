@@ -30,9 +30,11 @@ export default function ErrorDetailsDrawer({ flowId }) {
   });
 
   const handleClose = useCallback(() => {
-    // history.goBack() doesn't work when this url is redirected from another source
-    // TODO @Raghu: Check for any other places that can fall into this case
-    history.replace(match.url);
+    if (history.length > 2) {
+      history.goBack();
+    } else {
+      history.replace(match.url);
+    }
     setTimeout(() => setErrorType('open'), 1000);
   }, [history, match.url]);
 

@@ -96,6 +96,14 @@ export default function ResourceList(props) {
   const createResourceLabel = createdResouceLabelFn(resourceType, resourceName);
 
   useEffect(() => {
+    if (resourceType === 'connectors') {
+      dispatch(actions.patchFilter(resourceType, {
+        sort: { orderBy: 'name', order: 'asc' },
+      }));
+    }
+  }, []);
+
+  useEffect(() => {
     let int;
 
     dispatch(actions.resource.connections.refreshStatus());

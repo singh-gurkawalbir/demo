@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import { createSelector } from 'reselect';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
-import { convertOldFlowSchemaToNewOne, getIAFlowSettings, getScriptsReferencedInFlow } from '../../../utils/flows';
+import { convertOldFlowSchemaToNewOne, getIAFlowSettings, getScriptsReferencedInFlow, isIntegrationApp } from '../../../utils/flows';
 import { stringCompare } from '../../../utils/sort';
 import mappingUtil from '../../../utils/mapping';
 import getRoutePath from '../../../utils/routePaths';
@@ -444,11 +444,12 @@ selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
 
 selectors.mappingImportSampleDataSupported = (state, importId) => {
   const importResource = selectors.resource(state, 'imports', importId);
-  const {adaptorType} = importResource;
+
   const isAssistant =
   !!importResource.assistant && importResource.assistant !== 'financialforce';
+  const isIAResource = isIntegrationApp(importResource);
 
-  return isAssistant || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(adaptorType);
+  return isAssistant || isIAResource || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(importResource?.adaptorType);
 };
 
 selectors.redirectUrlToResourceListingPage = (

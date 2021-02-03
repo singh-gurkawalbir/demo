@@ -74,7 +74,9 @@ export default {
     switch (adaptorTypeMap[adaptorType]) {
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.RESTImport:
-        fieldMeta = restMappingSettings.getMetaData(params);
+        if (importResource?.http?.type === 'file') { fieldMeta = ftpMappingSettings.getMetaData(params); } else {
+          fieldMeta = restMappingSettings.getMetaData(params);
+        }
         break;
       case adaptorTypeMap.NetSuiteDistributedImport:
         fieldMeta = netsuiteMappingSettings.getMetaData(params);

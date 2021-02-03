@@ -20,14 +20,15 @@ import { requestSampleData } from '../sampleData/flows';
 import { requestExportSampleData } from '../sampleData/exports';
 import { constructResourceFromFormValues } from '../utils';
 import { safeParse } from '../../utils/string';
-import { getUniqueFieldId, dataAsString } from '../../utils/editor';
+import { getUniqueFieldId, dataAsString, FLOW_STAGES } from '../../utils/editor';
+import { isNewId } from '../../utils/resource';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
  * If user updated resourcePath, returns path from the value
  * Initially, returns resourcePath on saved resource
  */
-function extractResourcePath(value, initialResourcePath) {
+export function extractResourcePath(value, initialResourcePath) {
   if (value) {
     const jsonValue = safeParse(value) || {};
 
@@ -162,11 +163,13 @@ export function* evaluateExternalProcessor({ processorData }) {
 
 export function* save({ id, context }) {
   const editor = yield select(selectors._editor, id);
-  const patches = processorLogic.getPatchSet(editor);
 
   if (!editor) {
     return; // nothing to do
   }
+
+  const patches = processorLogic.getPatchSet(editor);
+  const preSaveValidate = processorLogic.preSaveValidate(editor);
 
   // if preview before saving the editor is on, call the evaluateProcessor
   if (editor.previewOnSave) {
@@ -177,6 +180,15 @@ export function* save({ id, context }) {
           (evaluateResponse.error || evaluateResponse.violations)
     ) {
       return yield put(actions._editor.saveFailed(id));
+    }
+  }
+
+  // check for any pre save validations
+  if (preSaveValidate) {
+    const {saveError, message} = preSaveValidate(editor);
+
+    if (saveError) {
+      return yield put(actions._editor.saveFailed(id, message));
     }
   }
 
@@ -222,16 +234,9 @@ export function* save({ id, context }) {
           ];
          */
 
-  let { foregroundPatches } = patches || {};
-  const { backgroundPatches } = patches || {};
+  const { foregroundPatches, backgroundPatches } = patches || {};
 
-  // for backward compatibility
-  foregroundPatches =
-        foregroundPatches && !Array.isArray(foregroundPatches)
-          ? [foregroundPatches]
-          : foregroundPatches;
-
-  if (foregroundPatches) {
+  if (foregroundPatches && Array.isArray(foregroundPatches)) {
     for (let index = 0; index < foregroundPatches.length; index += 1) {
       const { action, patch, resourceType, resourceId } =
             foregroundPatches[index] || {};
@@ -301,8 +306,8 @@ export function* autoEvaluateProcessor({ id }) {
   return yield call(requestPreview, { id });
 }
 
-function* autoEvaluateProcessorWithCancel(params) {
-  const { id } = params;
+export function* autoEvaluateProcessorWithCancel(params) {
+  const { id } = params || {};
 
   yield race({
     editorEval: call(autoEvaluateProcessor, params),
@@ -363,7 +368,7 @@ export function* requestEditorSampleData({
 
   if (!editor) return;
 
-  const {editorType, flowId, resourceId, resourceType, fieldId, editorSupportsV1V2data, formKey, stage} = editor;
+  const {editorType, flowId, resourceId, resourceType, fieldId, formKey, stage} = editor;
   // for some fields only v2 data is supported (not v1)
   const editorSupportsOnlyV2Data = yield select(selectors.editorSupportsOnlyV2Data, id);
 
@@ -381,26 +386,6 @@ export function* requestEditorSampleData({
     resourceType,
   });
   let sampleData;
-
-  // no /getContext call for below FB actions yet
-  if (stage === 'transform' ||
-  stage === 'postResponseMapHook' ||
-  stage === 'sampleResponse') {
-    yield call(requestSampleData, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-    });
-    const { data } = yield select(selectors.sampleDataWrapper, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-    });
-
-    return {data};
-  }
 
   // for csv and xml parsers, simply get the file sample data
   if (editorType === 'csvParser' || editorType === 'xmlParser') {
@@ -438,9 +423,7 @@ export function* requestEditorSampleData({
     sampleData = flowSampleData?.data;
   }
 
-  if (!sampleData && (!isPageGenerator || stage === 'outputFilter' ||
-  stage === 'exportFilter' ||
-  stage === 'inputFilter')) {
+  if (!sampleData && (!isPageGenerator || FLOW_STAGES.includes(stage))) {
     // sample data not present, trigger action to get sample data
     yield call(requestSampleData, {
       flowId,
@@ -461,17 +444,22 @@ export function* requestEditorSampleData({
   let _sampleData = null;
   let templateVersion;
 
-  // dont make /getContext call when v2 data is not supported
-  if (!editorSupportsV1V2data && !editorSupportsOnlyV2Data) {
-    _sampleData = sampleData ? {
-      data: sampleData,
-    } : undefined;
+  const {shouldGetContextFromBE, sampleData: uiSampleData} = yield select(selectors.shouldGetContextFromBE, id, sampleData);
+
+  // BE doesn't support /getContext for some use cases
+  if (!shouldGetContextFromBE) {
+    _sampleData = uiSampleData;
   } else {
     const filterPath = (stage === 'inputFilter' && resourceType === 'exports') ? 'inputFilter' : 'filter';
+    const defaultData = (isPageGenerator && !stage.includes('Filter')) ? undefined : { myField: 'sample' };
     const body = {
-      sampleData: sampleData || { myField: 'sample' },
+      sampleData: sampleData || defaultData,
       templateVersion: editorSupportsOnlyV2Data ? 2 : requestedTemplateVersion,
     };
+
+    if (!isNewId(flowId)) {
+      body.flowId = flowId;
+    }
 
     body[resourceType === 'imports' ? 'import' : 'export'] = resource;
     body.fieldPath = fieldId || filterPath;
@@ -540,6 +528,8 @@ export function* initSampleData({ id }) {
 // re-fetching the editor from state to get latest editor (in case init processorLogic made any changes)
   const editor = yield select(selectors._editor, id);
 
+  if (!editor) return;
+
   // if data is already passed during init, save it to state directly
   if (editor.data) {
     yield put(
@@ -567,8 +557,8 @@ export function* initSampleData({ id }) {
   return yield call(autoEvaluateProcessorWithCancel, { id });
 }
 
-export function* initEditor({ id, editorType, options = {} }) {
-  const { formKey, integrationId, resourceId, resourceType, flowId, sectionId, fieldId} = options;
+export function* initEditor({ id, editorType, options }) {
+  const { formKey, integrationId, resourceId, resourceType, flowId, sectionId, fieldId} = options || {};
 
   let fieldState = {};
   let formState = {};
@@ -630,7 +620,7 @@ export function* initEditor({ id, editorType, options = {} }) {
     editorType,
     ...formattedOptions,
     fieldId: getUniqueFieldId(fieldId, resource),
-    ...featuresMap(options)[editorType],
+    ...featuresMap(formattedOptions)[editorType],
     originalRule,
     lastChange: Date.now(),
     sampleDataStatus: 'requested',
@@ -646,7 +636,10 @@ export function* initEditor({ id, editorType, options = {} }) {
 }
 
 export function* toggleEditorVersion({ id, version }) {
-  const {data, templateVersion} = yield call(requestEditorSampleData, {id, requestedTemplateVersion: version});
+  const editorData = yield call(requestEditorSampleData, {id, requestedTemplateVersion: version});
+
+  if (!editorData) return;
+  const {data, templateVersion} = editorData;
 
   return yield put(
     actions._editor.sampleDataReceived(

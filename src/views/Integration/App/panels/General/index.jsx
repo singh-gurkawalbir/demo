@@ -54,7 +54,9 @@ export default function GeneralPanel({ integrationId, storeId }) {
   const activeTabProps = useActiveTab();
 
   return (
-    <div className={classes.root}>
+    <div
+      data-public
+      className={classes.root}>
       <PanelHeader title="General" />
 
       <div className={classes.formContent}>

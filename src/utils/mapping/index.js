@@ -905,6 +905,7 @@ export default {
     importResource,
     isFieldMapping = false,
     isGroupedSampleData,
+    isPreviewSucess,
     netsuiteRecordType,
     options = {},
     exportResource,
@@ -945,6 +946,7 @@ export default {
     return mappingUtil.getMappingsForApp({
       mappings: mappingCopy,
       isGroupedSampleData,
+      isPreviewSucess,
       resource: importResource,
       netsuiteRecordType,
       exportResource,
@@ -955,6 +957,7 @@ export default {
     mappings = {},
     resource = {},
     isGroupedSampleData,
+    isPreviewSucess,
     netsuiteRecordType,
     exportResource,
     options = {},
@@ -988,6 +991,7 @@ export default {
           mappings: _mappings,
           recordType: netsuiteRecordType,
           isGroupedSampleData,
+          isPreviewSucess,
           exportResource,
           resource,
         });
@@ -1004,6 +1008,7 @@ export default {
         return mappingUtil.getFieldsAndListMappings({
           mappings: _mappings,
           isGroupedSampleData,
+          isPreviewSucess,
           useFirstRowSupported: true,
           exportResource,
           resource,
@@ -1047,6 +1052,7 @@ export default {
   getFieldsAndListMappings: ({
     mappings = {},
     isGroupedSampleData,
+    isPreviewSucess,
     useFirstRowSupported = false,
     resource = {},
     exportResource,
@@ -1074,6 +1080,11 @@ export default {
             if (tempFm.extract && tempFm.extract && tempFm.extract.indexOf('*.') !== 0) {
               tempFm.useFirstRow = true;
             }
+          }
+
+          // If no sample data found, and extract starts with *. example *.abc, then assume export is grouped data.
+          if (!isPreviewSucess && /^\*\./.test(tempFm?.extract)) {
+            tempFm.useIterativeRow = true;
           }
           // remove *. if present after setting useFirstRow
           if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) { tempFm.extract = tempFm.extract.substr('*.'.length); }
@@ -1124,8 +1135,7 @@ export default {
         }
 
         if (
-          useFirstRowSupported &&
-          isGroupedSampleData &&
+          ((useFirstRowSupported && isGroupedSampleData) || mapping.useIterativeRow) &&
           !mapping.useFirstRow &&
           mapping.extract &&
           mapping.extract.indexOf('[*].') === -1 &&
@@ -1135,7 +1145,7 @@ export default {
         }
 
         delete mapping.useFirstRow;
-      } else if (isCsvOrXlsxResource(importResource) && isGroupedSampleData && isNetSuiteBatchExport(exportResource)) {
+      } else if (isCsvOrXlsxResource(importResource) && (isGroupedSampleData || mapping.useIterativeRow) && isNetSuiteBatchExport(exportResource)) {
         if (
           !mapping.useFirstRow &&
           mapping.extract &&

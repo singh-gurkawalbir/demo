@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { selectors } from '../../../reducers';
 import PanelGrid from '../../AFE/PanelGrid';
 import ErrorGridItem from './gridItems/ErrorGridItem';
@@ -24,6 +25,7 @@ const useStyles = makeStyles(layouts);
 
 export default function Editor({ editorId }) {
   const classes = useStyles();
+  const [enquesnackbar] = useEnqueueSnackbar();
   const editorContext = useSelector(state => {
     // we want to remove all volatile fields. If we take the
     // editor state directly, it causes re-renders since its ref changes
@@ -43,8 +45,15 @@ export default function Editor({ editorId }) {
       fieldId: e.fieldId,
       formKey: e.formKey,
       supportsDefaultData: e.supportsDefaultData,
+      saveError: e.saveMessage,
     };
   }, shallowEqual);
+
+  useEffect(() => {
+    if (editorContext.saveError) {
+      enquesnackbar({ message: editorContext.saveError, variant: 'error' });
+    }
+  }, [enquesnackbar, editorContext.saveError]);
 
   const {editorType, layout} = editorContext;
 

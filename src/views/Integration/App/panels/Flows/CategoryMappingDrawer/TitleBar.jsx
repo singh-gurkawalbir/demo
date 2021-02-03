@@ -14,7 +14,6 @@ import BackArrowIcon from '../../../../../../components/icons/BackArrowIcon';
 
 const useStyles = makeStyles(theme => ({
   titleBar: {
-    background: theme.palette.background.paper,
     display: 'flex',
     alignItems: 'center',
     padding: '14px 24px',

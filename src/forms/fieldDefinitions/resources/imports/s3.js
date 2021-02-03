@@ -20,20 +20,4 @@ export default {
     showExtract: false,
     showLookup: false,
   },
-  's3.fileKey': {
-    type: 'ftpfilenamewitheditor',
-    label: 'File key',
-    editorTitle: 'Build file key',
-    required: true,
-    showAllSuggestions: true,
-    defaultValue: r => r && r.s3 && r.s3.fileKey,
-    refreshOptionsOnChangesTo: ['file.type'],
-  },
-  's3.backupBucket': {
-    type: 'uri',
-    label: 'Backup bucket name',
-    helpKey: 'import.s3.backupBucket',
-    showExtract: false,
-    showLookup: false,
-  },
 };

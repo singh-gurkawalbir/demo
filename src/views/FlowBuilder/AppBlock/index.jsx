@@ -369,6 +369,7 @@ function AppBlock({
         <Typography className={classes.containerName}>
           {isTruncated ? (
             <Tooltip
+              data-public
               title={<span className={classes.tooltipNameFB}>{name}</span>}
               TransitionComponent={Zoom}
               placement="top"

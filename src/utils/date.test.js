@@ -52,8 +52,8 @@ describe('date util function test', () => {
     });
 
     test('should return in correct timezone when timezone is passed in params and date only when dateOnly is set to true and false', () => {
-      expect(convertUtcToTimezone(testDate, undefined, undefined, 'Asia/Riyadh', true)).toEqual('12/24/2018');
-      expect(convertUtcToTimezone(testDate, undefined, undefined, 'Asia/Baku', false)).toEqual('12/24/2018 9:03:30 am');
+      expect(convertUtcToTimezone(testDate, undefined, undefined, 'Asia/Riyadh', {dateOnly: true})).toEqual('12/24/2018');
+      expect(convertUtcToTimezone(testDate, undefined, undefined, 'Asia/Baku', {dateOnly: false})).toEqual('12/24/2018 9:03:30 am');
     });
 
     test('should return in system timezone when timezone not passed in params', () => {

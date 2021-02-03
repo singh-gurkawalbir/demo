@@ -34,6 +34,7 @@ export default {
   validate: flowTransform.validate,
   dirty: flowTransform.dirty,
   processResult: flowTransform.processResult,
+  preSaveValidate: flowTransform.preSaveValidate,
   patchSet: editor => {
     const patches = {
       foregroundPatches: undefined,
@@ -62,7 +63,7 @@ export default {
       },
     };
 
-    patches.foregroundPatches = {
+    patches.foregroundPatches = [{
       patch: [
         {
           op: 'replace',
@@ -77,7 +78,7 @@ export default {
       ],
       resourceType,
       resourceId,
-    };
+    }];
 
     if (type === 'script') {
       patches.backgroundPatches.push({

@@ -67,11 +67,11 @@ export default {
       });
     }
 
-    patches.foregroundPatches = {
+    patches.foregroundPatches = [{
       patch: foregroundPatchSet,
       resourceType: 'flows',
       resourceId: flowId,
-    };
+    }];
 
     patches.backgroundPatches.push({
       patch: [

@@ -242,7 +242,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
         left.dateFormat === right.dateFormat &&
         left.timeFormat === right.timeFormat
     );
-    const timezone = useSelector(state => selectors.userProfile(state)?.timezone);
+    const timezone = useSelector(state => selectors.userTimezone(state));
 
     if (active && Array.isArray(payload) && payload.length) {
       return (
@@ -292,7 +292,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
             domain={[() => 0, dataMax => dataMax + 10]}
           />
 
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip data-public content={<CustomTooltip />} />
           <Legend align="center" content={<CustomLegend />} />
           {selectedResources.map((r, i) => (
             <Line

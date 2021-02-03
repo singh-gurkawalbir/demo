@@ -399,17 +399,19 @@ export default function JobDashboard({
         autoClearOnComplete
         commStatusHandler={handleCommsStatus}
       />
-      <Filters
-        filterKey={filterKey}
-        integrationId={integrationId}
-        flowId={flowId}
-        numJobsSelected={numJobsSelected}
-        numRetriableJobsSelected={numRetriableJobsSelected}
-        onActionClick={handleActionClick}
-        disableResolve={disableResolve}
-        disableRetry={disableRetry}
-        isFlowBuilderView={isFlowBuilderView}
+      <span data-public>
+        <Filters
+          filterKey={filterKey}
+          integrationId={integrationId}
+          flowId={flowId}
+          numJobsSelected={numJobsSelected}
+          numRetriableJobsSelected={numRetriableJobsSelected}
+          onActionClick={handleActionClick}
+          disableResolve={disableResolve}
+          disableRetry={disableRetry}
+          isFlowBuilderView={isFlowBuilderView}
       />
+      </span>
       <JobTable
         classes={classes.jobTable}
         onSelectChange={handleSelectChange}

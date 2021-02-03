@@ -46,7 +46,7 @@ export default {
     const { integrationId, accessLevel } = actionProps;
     const actions = [];
 
-    if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN && user._id === ACCOUNT_IDS.OWN) {
+    if ([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(accessLevel) && user._id === ACCOUNT_IDS.OWN) {
       return [];
     }
 
