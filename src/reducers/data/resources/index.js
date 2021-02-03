@@ -53,7 +53,7 @@ function replaceOrInsertResource(state, resourceType, resourceValue) {
     return { ...state, [type]: [...collection, resource] };
   }
 
-  // no need to make an update when it is the same resource
+  // no need to make an update when it is the same resource...this helps in saving some render cycles
   if (isEqual(resource, collection[index])) {
     return state;
   }
