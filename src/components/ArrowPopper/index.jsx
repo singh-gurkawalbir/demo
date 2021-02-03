@@ -31,6 +31,8 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     borderRadius: '4px',
+    // adding this below to avoid jerking
+    top: `${theme.spacing(1)}px !important`,
     '&[x-placement*="bottom"] $arrow': {
       top: 0,
       left: 0,

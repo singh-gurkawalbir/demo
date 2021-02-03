@@ -19,6 +19,20 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: 'transparent',
     },
   },
+  dynaTextWithCalendarIcon: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    borderRadius: 2,
+    paddingRight: theme.spacing(2),
+    '& > * .MuiFilledInput-input': {
+      borderColor: 'transparent',
+      paddingRight: 0,
+    },
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+  },
+
 }));
 const rangeFilters = [
   {id: 'after14days', label: '14 days'},
@@ -35,7 +49,7 @@ const defaultRange = {
 
 export default function DynaDateSelector(props) {
   const classes = useStyles();
-  const { id, label, name, value, onFieldChange } = props;
+  const { id, label, name, value, onFieldChange, required } = props;
   const calendarIcon = () => <CalendarIcon className={classes.iconWrapper} />;
   const { dateFormat } = useSelector(state => selectors.userProfilePreferencesProps(state));
   const timezone = useSelector(state => selectors.userTimezone(state));
@@ -56,12 +70,11 @@ export default function DynaDateSelector(props) {
 
     onFieldChange(id, expireDate);
   }, [id, onFieldChange, dateFormat, timezone]);
-  // TODO (Azhar): Need Styling changes for component endAdornment
 
   return (
     <>
       <div className={classes.dynaDateLabelWrapper}>
-        <FormLabel>{label}</FormLabel>
+        <FormLabel required={required}>{label}</FormLabel>
         <FieldHelp {...props} />
       </div>
       <DynaText
@@ -70,9 +83,10 @@ export default function DynaDateSelector(props) {
         type="date"
         placeholder={dateFormat}
         value={value}
+        className={classes.dynaTextWithCalendarIcon}
         onFieldChange={(id, value) => handleFieldChange(id, value)}
         endAdornment={(
-          <InputAdornment position="end" >
+          <InputAdornment position="end">
             <DateRangeSelector
               value={defaultRange}
               toDate={addYears(new Date(), 1)}

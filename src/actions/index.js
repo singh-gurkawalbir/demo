@@ -1305,6 +1305,10 @@ const importSampleData = {
       _importId,
       metadata,
     }),
+  iaMetadataFailed: ({ _importId }) =>
+    action(actionTypes.IMPORT_SAMPLEDATA.IA_METADATA_FAILED, {
+      _importId,
+    }),
 };
 const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
@@ -1697,6 +1701,7 @@ const job = {
     action(actionTypes.JOB.ERROR.RECEIVED_RETRY_DATA, { retryData, retryId }),
   updateRetryData: ({ retryData, retryId }) =>
     action(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, { retryData, retryId }),
+  downloadRetryData: ({retryId}) => action(actionTypes.JOB.ERROR.DOWNLOAD_RETRY_DATA, {retryId}),
   retryForProcessedErrors: ({ jobId, flowJobId, errorFileId }) =>
     action(actionTypes.JOB.ERROR.RETRY_PROCESSED_ERRORS, {
       jobId,
@@ -1948,6 +1953,12 @@ const errorManager = {
         resourceId,
         retryId,
         error,
+      }),
+    download: ({flowId, resourceId, retryDataKey}) =>
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.DOWNLOAD, {
+        flowId,
+        resourceId,
+        retryDataKey,
       }),
     updateRequest: ({ flowId, resourceId, retryId, retryData }) =>
       action(actionTypes.ERROR_MANAGER.RETRY_DATA.UPDATE_REQUEST, {

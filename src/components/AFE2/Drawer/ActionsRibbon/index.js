@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   spaceBetween: { flexGrow: 100 },
 }));
 
-export default function ActionRibbon({ editorId, className }) {
+export default function ActionsRibbon({ editorId, className }) {
   const classes = useStyles();
   const editorType = useSelector(state => selectors._editor(state, editorId).editorType);
 
