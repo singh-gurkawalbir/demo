@@ -53,6 +53,7 @@ function replaceOrInsertResource(state, resourceType, resourceValue) {
     return { ...state, [type]: [...collection, resource] };
   }
 
+  // no need to make an update when it is the same resource
   if (isEqual(resource, collection[index])) {
     return state;
   }
