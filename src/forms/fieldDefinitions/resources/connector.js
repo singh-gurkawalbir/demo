@@ -76,6 +76,7 @@ export default {
   _integrationId: {
     type: 'selectresource',
     label: 'Source integration',
+    placeholder: 'Choose integration',
     resourceType: 'integrations',
     requiredWhen: [
       {
