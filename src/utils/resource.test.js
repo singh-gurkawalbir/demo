@@ -312,6 +312,7 @@ describe('resource util tests', () => {
     });
   });
   describe('tests for util getWebhookUrl', () => {
+    process.env.API_ENDPOINT = '';
     test('should return empty string for empty arguments', () => {
       expect(getWebhookUrl()).toEqual('');
     });
@@ -343,6 +344,7 @@ describe('resource util tests', () => {
   });
 
   describe('tests for util getDomain, getDomainUrl, getApiUrl', () => {
+    process.env.API_ENDPOINT = '';
     let windowSpy;
 
     beforeEach(() => {

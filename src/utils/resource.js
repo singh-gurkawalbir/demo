@@ -174,7 +174,13 @@ export const getDomainUrl = () => {
   return `https://${domain}`;
 };
 
-export const getApiUrl = () => getDomainUrl().replace('://', '://api.');
+export const getApiUrl = () => {
+  if (process?.env?.API_ENDPOINT) {
+    return process.env.API_ENDPOINT.replace('://', '://api.');
+  }
+
+  return getDomainUrl().replace('://', '://api.');
+};
 
 export const getWebhookUrl = (options = {}, resourceId) => {
   let whURL = '';
