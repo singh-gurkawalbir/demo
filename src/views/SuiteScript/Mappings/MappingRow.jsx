@@ -190,6 +190,7 @@ export default function MappingRow(props) {
     setIsActive(false);
   }, []);
   const extractValue = extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
+
   const disableDelete = !mappingKey || disabled;
 
   // generateFields and extractFields are passed as an array of field names
@@ -209,6 +210,7 @@ export default function MappingRow(props) {
             [classes.disableChildRow]: disabled,
           })}>
           <DynaTypeableSelect
+            key={extractValue}
             id={`fieldMappingExtract-${index}`}
             labelName="name"
             valueName="id"
@@ -225,6 +227,7 @@ export default function MappingRow(props) {
             [classes.disableChildRow]: disabled,
           })}>
           <DynaTypeableSelect
+            key={generate}
             id={`fieldMappingGenerate-${index}`}
             value={generate}
             labelName="name"
