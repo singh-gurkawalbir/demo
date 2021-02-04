@@ -109,6 +109,22 @@ export const getSelectedRange = range => {
       start = addMonths(new Date(), -12);
       end = new Date();
       break;
+    case 'after14days':
+      start = new Date();
+      end = endOfDay(addDays(new Date(), 13));
+      break;
+    case 'after30days':
+      start = new Date();
+      end = endOfDay(addDays(new Date(), 29));
+      break;
+    case 'after6months':
+      start = new Date();
+      end = addMonths(new Date(), 6);
+      break;
+    case 'after1year':
+      start = new Date();
+      end = addMonths(new Date(), 12);
+      break;
     case 'lastrun':
     default:
       break;
@@ -298,8 +314,8 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         (tables
             |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) =>
                 ({
-                  tc: accumulator.tc + r.tc,
-                  tt: accumulator.tt + r._value * r.tc,
+                  tc: if exists r.tc and exists r._value then accumulator.tc + r.tc else accumulator.tc,
+                  tt: if exists r.tc and exists r._value then accumulator.tt + r._value * r.tc else accumulator.tt,
                   attph: if (accumulator.tc + r.tc) > 0.0 then math.floor(x: (accumulator.tt + r._value * r.tc) / (accumulator.tc + r.tc)) else 0.0 
                 })
                 )
@@ -314,7 +330,13 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
         |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
         (tables
-        |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => ({tc: accumulator.tc + r.c, tt: accumulator.tt + r.att * r.c,  attph: math.floor(x: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c))}))
+        |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => 
+              ({
+                tc: if exists r.c and exists r.att then accumulator.tc + r.c else accumulator.tc,
+                tt: if exists r.c and exists r.att then accumulator.tt + r.att * r.c else accumulator.tt,  
+                attph: if exists r.c and exists r.att then math.floor(x: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c)) else accumulator.attph
+              })
+            )
         |> set(key: "_field", value: outputField)
         |> rename(columns: {attph: "_value"}))${timeSrcExpression})
         |> group(columns: ["_time", "f", "u"])
@@ -379,8 +401,8 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         (tables
             |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) =>
                 ({
-                  tc: accumulator.tc + r.tc,
-                  tt: accumulator.tt + r._value * r.tc,
+                  tc: if exists r.tc and exists r._value then accumulator.tc + r.tc else accumulator.tc,
+                  tt: if exists r.tc and exists r._value then accumulator.tt + r._value * r.tc else accumulator.tt,
                   attph: if (accumulator.tc + r.tc) > 0.0 then math.floor(x: (accumulator.tt + r._value * r.tc) / (accumulator.tc + r.tc)) else 0.0 
                 })
                 )
@@ -395,7 +417,13 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
         |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
         (tables
-        |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => ({tc: accumulator.tc + r.c, tt: accumulator.tt + r.att * r.c,  attph: math.floor(x: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c))}))
+        |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => 
+              ({
+                tc: if exists r.c and exists r.att then accumulator.tc + r.c else accumulator.tc, 
+                tt: if exists r.c and exists r.att then accumulator.tt + r.att * r.c else accumulator.tt, 
+                attph: if exists r.c and exists r.att then math.floor(x: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c)) else accumulator.attph 
+              })
+            )
         |> set(key: "_field", value: outputField)
         |> rename(columns: {attph: "_value"}))${timeSrcExpression})
 

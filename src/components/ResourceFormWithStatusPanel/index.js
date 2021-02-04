@@ -1,10 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core';
 import ReactResizeDetector from 'react-resize-detector';
+import { useSelector } from 'react-redux';
 import ConnectionStatusPanel from '../ConnectionStatusPanel';
 import ResourceForm from '../ResourceFormFactory';
 import GenericAdaptorNotification from '../GenericAdaptorNotification';
 import NetSuiteBundleInstallNotification from '../NetSuiteBundleInstallNotification';
+import { selectors } from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -25,9 +27,19 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const notRedactAttr = {'data-public': 'true'};
+
+const emptyObj = {};
 export default function ResourceFormWithStatusPanel({ isFlowBuilderView, className, showNotificationToaster, onCloseNotificationToaster, ...props }) {
   const { resourceType, resourceId } = props;
   const [notificationPanelHeight, setNotificationPanelHeight] = useState(0);
+
+  const isWebhookExport = useSelector(state =>
+     selectors.resourceData(state, resourceType, resourceId)?.merged?.adaptorType === 'WebhookExport');
+
+  // only webhooks should not be redacted
+  const shouldRedactLogRocket = isWebhookExport || resourceType === 'connections';
+
   const classes = useStyles({
     ...props,
     notificationPanelHeight,
@@ -35,6 +47,8 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
   const resize = useCallback((width, height) => {
     setNotificationPanelHeight(height + 16);
   }, []);
+
+  const shouldRedact = shouldRedactLogRocket ? emptyObj : notRedactAttr;
 
   return (
     <div className={className}>
@@ -52,7 +66,9 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
         <NetSuiteBundleInstallNotification className={classes.notification} resourceType={resourceType} resourceId={resourceId} />
         <ReactResizeDetector handleHeight onResize={resize} />
       </div>
-      <ResourceForm className={classes.form} {...props} />
+      <span {...shouldRedact}>
+        <ResourceForm className={classes.form} {...props} />
+      </span>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useCallback } from 'react';
 import Select, { components } from 'react-select';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, FormLabel } from '@material-ui/core';
@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'wrap',
     padding: 0,
   },
-  multislectWrapper: {
+  multiSelectWrapper: {
     width: '100%',
   },
   optionImg: {
@@ -164,17 +164,19 @@ export default function MultiSelectApplication(props) {
     required,
     options = [],
     removeHelperText = false,
-    defaultValue,
+    value = [],
     placeholder,
     isValid,
+    onFieldChange,
   } = props;
 
   const classes = useStyles();
-  const ref = useRef(null);
-  const processedValues = defaultValue.map(value => options[0].items.find(item => item.value === value));
+  const handleChange = useCallback(selectedOptions => {
+    onFieldChange(id, selectedOptions?.map(opt => opt?.value ? opt.value : opt) || []);
+  }, [id, onFieldChange]);
 
   return (
-    <div className={classes.multislectWrapper}>
+    <div className={classes.multiSelectWrapper}>
       <div className={classes.labelWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}
@@ -182,18 +184,17 @@ export default function MultiSelectApplication(props) {
         <FieldHelp {...props} />
       </div>
       <FormControl
-        ref={ref}
         error={!isValid}
         disabled={disabled}
         required={required}
-        className={classes.multislectWrapper}>
+        className={classes.multiSelectWrapper}>
         <Select
           isMulti
-          ref={ref}
           placeholder={placeholder}
           components={{ Option, MultiValueLabel }}
-          defaultValue={processedValues}
+          defaultValue={value}
           options={options[0].items}
+          onChange={handleChange}
           closeMenuOnSelect={false}
           hideSelectedOptions={false}
           className={classes.wrapper}

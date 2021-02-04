@@ -14,21 +14,31 @@ export default {
     },
     {
       heading: 'Status',
-      value: r => (r._integrationId ? 'Installed' : 'Pending'),
+      value: r => (r._integrationId ? 'Installed' : 'Pending install'),
     },
     {
-      heading: 'Created on',
+      heading: 'Created',
       value: r => <CeligoTimeAgo date={r.created} />,
       orderBy: 'created',
     },
     {
-      heading: 'Expires on',
+      heading: 'Integration ID',
+      value: r => r._integrationId,
+    },
+    {
+      heading: 'Expires',
       value: r => <ExpiresOn date={r.expires} />,
       orderBy: 'expires',
     },
     {
       heading: 'Environment',
-      value: r => (r.sandbox ? 'Sandbox' : 'Production'),
+      value: r => {
+        if (r.type === 'integrationAppChild') {
+          return null;
+        }
+
+        return r.sandbox ? 'Sandbox' : 'Production';
+      },
     },
   ],
   rowActions: [Edit, Delete],

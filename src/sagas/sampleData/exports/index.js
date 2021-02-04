@@ -65,6 +65,8 @@ export function* _hasSampleDataOnResource({ resourceId, resourceType, body }) {
 
 export function* _getProcessorOutput({ processorData }) {
   try {
+    // TODO: change this evaluateExternalProcessor to use refactored AFE code and
+    // add the property 'editorType' in processorData
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
     });

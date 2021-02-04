@@ -16,6 +16,7 @@ import {
   isBlobTypeResource,
   isRestCsvMediaTypeExport,
   isRealTimeOrDistributedResource,
+  isFileProviderAssistant,
 } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import { isIntegrationApp } from '../../../../utils/flows';
@@ -28,7 +29,8 @@ export function* _getUIDataForResource({ resource, connection, flow, refresh }) 
   if (isBlobTypeResource(resource)) return getBlobResourceSampleData();
 
   // Incase of Data Loader/ Rest CSV Exports, flow is same as File Adaptors
-  if (isRestCsvMediaTypeExport(resource, connection) || isDataLoader) return yield call(requestFileAdaptorSampleData, { resource });
+  // ToDo: Ashok File adaptor checks should be enhanced.
+  if (isRestCsvMediaTypeExport(resource, connection) || isDataLoader || isFileProviderAssistant(resource, connection)) return yield call(requestFileAdaptorSampleData, { resource });
 
   if (adaptorType) {
     switch (adaptorType) {
@@ -56,7 +58,8 @@ export function* _getUIDataForResource({ resource, connection, flow, refresh }) 
     }
   }
 
-  if (isIntegrationApp(flow) && sampleData) return sampleData;
+  // if not hard refresh, then send sample data stored on resource, otherwise let preview handle it.
+  if (isIntegrationApp(flow) && sampleData && !refresh) return sampleData;
 }
 
 export default function* getPreviewOptionsForResource({ resource, flow, refresh, runOffline }) {

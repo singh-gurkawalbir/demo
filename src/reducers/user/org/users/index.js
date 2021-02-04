@@ -94,7 +94,13 @@ selectors.integrationUsersForOwner = (state, integrationId) => {
   let integrationAccessLevel;
 
   aShares.forEach(u => {
-    if (u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MANAGE) {
+    if (u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN) {
+      integrationUsers.push({
+        ...u,
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+        integrationAccessLevel: undefined,
+      });
+    } else if (u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MANAGE) {
       integrationUsers.push({
         ...u,
         accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,

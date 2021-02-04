@@ -4,6 +4,7 @@ import { processJsonSampleData, processJsonPreviewData } from '../../../utils/sa
 import { getUnionObject } from '../../../utils/jsonPaths';
 
 export default function* requestFileAdaptorSampleData({ resource }) {
+  if (!resource?.file?.type) return;
   const { file, sampleData } = resource;
   const { type } = file;
 
@@ -32,6 +33,7 @@ export default function* requestFileAdaptorSampleData({ resource }) {
 }
 
 export function* requestFileAdaptorPreview({ resource }) {
+  if (!resource?.file?.type) return;
   const { file, sampleData } = resource;
   const { type } = file;
 

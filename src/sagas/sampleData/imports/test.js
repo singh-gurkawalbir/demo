@@ -181,9 +181,8 @@ describe('sampleData imports saga', () => {
         .provide([[matchers.call.fn(apiCallWithRetry), throwError({})]])
         .put(actions.importSampleData.iaMetadataRequest({ _importId }))
         .put(
-          actions.importSampleData.iaMetadataReceived({
+          actions.importSampleData.iaMetadataFailed({
             _importId,
-            metadata: sampleData,
           })
         )
         .run();

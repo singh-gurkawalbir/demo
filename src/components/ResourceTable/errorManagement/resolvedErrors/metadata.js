@@ -5,7 +5,7 @@ import SelectError from '../cells/SelectError';
 import SelectAllErrors from '../cells/SelectAllErrors';
 import UserName from '../cells/UserName';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
-import TextOverflowCell from '../cells/TextOverflowCell';
+import TextOverflowCell from '../../../TextOverflowCell';
 import SelectSource from '../cells/SelectSource';
 import SelectDate from '../cells/SelectDate';
 

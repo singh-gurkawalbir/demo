@@ -7,7 +7,6 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   clipBoardContainer: {
-    maxWidth: 680,
     borderTop: `1px solid ${theme.palette.background.paper2}`,
     minHeight: theme.spacing(6),
     position: 'relative',

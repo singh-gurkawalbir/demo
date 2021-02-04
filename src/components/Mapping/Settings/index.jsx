@@ -16,6 +16,7 @@ import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import ButtonGroup from '../../ButtonGroup';
+import EditorDrawer from '../../AFE2/Drawer';
 
 const emptySet = [];
 const emptyObject = {};
@@ -293,6 +294,8 @@ export default function SettingsDrawer(props) {
         </Route>
 
       </Switch>
+      <EditorDrawer />
+
     </RightDrawer>
   );
 }

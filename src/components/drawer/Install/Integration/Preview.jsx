@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   preview: {
     marginTop: theme.spacing(2),
     overflowY: 'auto',
-    maxHeight: `calc(100vh - ${theme.appBarHeight + 185}px)`,
+    maxHeight: `calc(100vh - ${theme.appBarHeight + 225}px)`,
   },
 }));
 
@@ -88,7 +88,7 @@ export default function IntegrationPreview() {
 
       <Button
         className={classes.installButton}
-        variant="contained"
+        variant="outlined"
         color="primary"
         onClick={handleInstallIntegration}>
         Install integration

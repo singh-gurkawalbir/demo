@@ -1,6 +1,7 @@
 import React from 'react';
+import CeligoTimeAgo from '../../CeligoTimeAgo';
 import ResourceName from '../../ResourceName';
-import TextOverflowCell from '../errorManagement/cells/TextOverflowCell';
+import TextOverflowCell from '../../TextOverflowCell';
 import ViewLogDetail from './actions/ViewLogDetail';
 
 export default {
@@ -8,7 +9,7 @@ export default {
     const columns = [
       {
         heading: 'Date',
-        value: r => r.time,
+        value: r => <CeligoTimeAgo date={r.time} />,
       },
       {
         heading: 'Step name',
@@ -30,6 +31,7 @@ export default {
       },
       {
         heading: 'Message',
+        width: '25%',
         value: r => (
           <TextOverflowCell
             message={r.message}

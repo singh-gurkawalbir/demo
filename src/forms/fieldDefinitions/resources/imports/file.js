@@ -28,11 +28,19 @@ export default {
   'file.fileName': {
     type: 'ftpfilenamewitheditor',
     editorTitle: 'Build file name',
-    label: 'File name',
+    label: r => r?.adaptorType === 'S3Import' ? 'Build file key' : 'Build file name',
+    helpKey: r => {
+      if (r?.adaptorType === 'S3Import') {
+        return 'import.s3.fileKey';
+      }
+      if (r?.adaptorType === 'FTPImport') {
+        return 'import.ftp.fileName';
+      }
+
+      return 'import.file.fileName';
+    },
     required: true,
     showAllSuggestions: true,
-    defaultValue: r => r && r.ftp && r.ftp.fileName,
-    refreshOptionsOnChangesTo: ['file.type'],
     validWhen: {
       someAreTrue: {
         message:
@@ -52,12 +60,16 @@ export default {
         ],
       },
     },
-    visibleWhen: [
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
+    visibleWhen: r => {
+      if (r?.adaptorType === 'FTPImport') {
+        return [{
+          field: 'inputMode',
+          is: ['records'],
+        }];
+      }
+
+      return [];
+    },
   },
   'edix12.format': {
     type: 'filedefinitionselect',
@@ -170,8 +182,16 @@ export default {
   },
   'file.backupPath': {
     type: 'uri',
-    label: 'Backup files path',
-    helpKey: 'import.file.backupPath',
+    label: r => r?.adaptorType === 'S3Import' ? 'Backup bucket name' : 'Backup files path',
+    helpKey: r => {
+      if (r?.adaptorType === 'S3Import') {
+        return 'import.s3.backupBucket';
+      } if (r?.adaptorType === 'FTPImport') {
+        return 'import.ftp.backupDirectoryPath';
+      }
+
+      return 'import.file.backupPath';
+    },
   },
   'file.skipAggregation': {
     type: 'checkbox',

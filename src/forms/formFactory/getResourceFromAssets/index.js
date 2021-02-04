@@ -319,15 +319,23 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
       }
 
       break;
+    case 'connectorLicenses':
+      meta = formMeta[resourceType];
 
+      if (resource.type === 'integrationApp') {
+        meta = meta.licenseTwoDotZero;
+      } else if (resource.type === 'integrationAppChild') {
+        meta = meta.childLicenseTwoDotZero;
+      } else {
+        meta = meta.licenseOneDotZero;
+      }
+
+      break;
     case 'agents':
     case 'apis':
     case 'scripts':
     case 'accesstokens':
-    case 'connectorLicenses':
     case 'integrations':
-      meta = formMeta[resourceType];
-      break;
     case 'stacks':
     case 'templates':
     case 'connectors':

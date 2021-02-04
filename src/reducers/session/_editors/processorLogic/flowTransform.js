@@ -82,6 +82,13 @@ export default {
 
     return javascript.processResult(editor, result);
   },
+  preSaveValidate: editor => {
+    if (editor.activeProcessor === 'transform') {
+      return transform.preSaveValidate({rule: editor.rule?.transform});
+    }
+
+    return {saveError: false};
+  },
   patchSet: editor => {
     const patches = {
       foregroundPatches: undefined,
@@ -110,11 +117,11 @@ export default {
       },
     };
 
-    patches.foregroundPatches = {
+    patches.foregroundPatches = [{
       patch: [{ op: 'replace', path, value }],
       resourceType,
       resourceId,
-    };
+    }];
 
     if (type === 'script') {
       patches.backgroundPatches.push({

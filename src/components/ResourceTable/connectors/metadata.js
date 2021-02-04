@@ -8,6 +8,7 @@ import Licenses from './actions/Licenses';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import OnOffCell from './cells/OnOffCell';
 import ApplicationImgCell from './cells/ApplicationImgCell';
+import TextOverflowCell from '../../TextOverflowCell';
 
 export default {
   columns: [
@@ -20,8 +21,9 @@ export default {
     },
     {
       heading: 'Name',
+      width: '25%',
       value: function ConnectorsDrawerLink(r) {
-        return <ResourceDrawerLink resourceType="connectors" resource={r} />;
+        return <TextOverflowCell message={<ResourceDrawerLink resourceType="connectors" resource={r} />} />;
       },
       orderBy: 'name',
     },
@@ -34,7 +36,7 @@ export default {
       heading: 'Website URL',
       value(r) {
         return r.websiteURL ? (
-          <Link href={r.websiteURL} target="_blank">
+          <Link href={r.websiteURL} target="_blank" underline="none">
             View
           </Link>
         ) : null;
