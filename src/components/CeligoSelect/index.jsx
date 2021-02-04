@@ -54,9 +54,9 @@ const useStyles = makeStyles(theme => ({
     '& svg': {
       right: theme.spacing(1),
     },
-    // '&:hover': {
-    //   borderColor: theme.palette.primary.main,
-    // },
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
   },
 }));
 const MenuComponent = React.forwardRef((props, ref) => {
