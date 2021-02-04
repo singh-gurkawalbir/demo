@@ -30,8 +30,8 @@ export default {
       code = '',
       fetchScriptContent,
       ...rest
-    } = rule;
-    const {fetchScriptContent: originalFetchScriptContent, ...originalRest} = originalRule;
+    } = rule || {};
+    const {fetchScriptContent: originalFetchScriptContent, ...originalRest} = originalRule || {};
 
     if (_init_code !== code) { return true; }
 
