@@ -31,8 +31,8 @@ export const stringCompare = (sortProperty, isDescending) => (a, b) => {
   }
 
   return isDescending
-    ? -firstEl.localeCompare(secondEl)
-    : firstEl.localeCompare(secondEl);
+    ? -firstEl.trim().localeCompare(secondEl.trim())
+    : firstEl.trim().localeCompare(secondEl.trim());
 };
 
 export const celigoListCompare = (a, b) => {

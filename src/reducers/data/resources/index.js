@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { get } from 'lodash';
+import { get, isEqual } from 'lodash';
 import { createSelector } from 'reselect';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
@@ -53,6 +53,10 @@ function replaceOrInsertResource(state, resourceType, resourceValue) {
     return { ...state, [type]: [...collection, resource] };
   }
 
+  // no need to make an update when it is the same resource...this helps in saving some render cycles
+  if (isEqual(resource, collection[index])) {
+    return state;
+  }
   const newCollection = [
     ...collection.slice(0, index),
     resource,

@@ -101,6 +101,7 @@ export default function ResourceList(props) {
         sort: { orderBy: 'name', order: 'asc' },
       }));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

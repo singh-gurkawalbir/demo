@@ -1,4 +1,5 @@
-import { put, call, takeLeading } from 'redux-saga/effects';
+import { put, call, takeEvery, race, take } from 'redux-saga/effects';
+import { isEqual } from 'lodash';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
@@ -83,4 +84,13 @@ function* getData({ kind, identifier: id, resource }) {
   }
 }
 
-export default [takeLeading(actionTypes.EXPORTDATA.REQUEST, getData)];
+function* takeLatestGetData(actionPayload) {
+  // Take latest of the getData and abort prior ones
+  yield race({
+    getData: call(getData, actionPayload),
+    abortGetData: take(
+      actPayload =>
+        isEqual(actPayload, actionPayload)),
+  });
+}
+export default [takeEvery(actionTypes.EXPORTDATA.REQUEST, takeLatestGetData)];
