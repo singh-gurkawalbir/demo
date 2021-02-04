@@ -182,6 +182,12 @@ export const getApiUrl = () => {
   return getDomainUrl().replace('://', '://api.');
 };
 
+export const getAS2Url = () => {
+  const apiUrl = getApiUrl();
+
+  return `${apiUrl.substr(apiUrl.indexOf('://'))}/v1/as2`;
+};
+
 export const getWebhookUrl = (options = {}, resourceId) => {
   let whURL = '';
   const { webHookProvider, webHookToken, webHookVerify} = options;
