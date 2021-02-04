@@ -110,7 +110,7 @@ export default {
     'dotdigital',
     'checkout',
     'pricefx',
-    'prestashop'
+    'prestashop',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

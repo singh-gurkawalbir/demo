@@ -1,99 +1,97 @@
 export default {
-    preSave: formValues => {
-      const retValues = { ...formValues };
-  
-      if (retValues['/mode'] === 'cloud') {
-        retValues['/_agentId'] = undefined;
-      }
-  
-      return {
-        ...retValues,
-        '/type': 'http',
-        '/assistant': 'prestashop',
-        '/http/auth/type': 'custom',
-        '/http/baseURI': `http://${formValues['/storeURL']}`,
-        '/http/mediaType': 'xml',
-        '/http/ping/relativeURI': '/api/customers',
-        '/http/ping/method': 'GET',
-        '/http/successMediaType': 'json',
-        '/http/headers': [
-          {
-            name: 'Authorization',
-            value:
-                  'Basic {{{base64Encode (join ":" connection.http.encrypted.apiKey "")}}}',
-          },
-          {
-            name: 'Io-Format',
-            value: 'JSON',
-          },
-        ],
-      };
-    },
-    fieldMap: {
-      name: { fieldId: 'name' },
-      storeURL: {
-        id: 'storeURL',
-        startAdornment: 'http://',
-        type: 'text',
-        label: 'Store URL',
-        required: true,
-        helpKey: 'prestashop.connection.storeURL',
-        validWhen: {
-          matchesRegEx: {
-            pattern: '^[\\S]+$',
-            message: 'Subdomain should not contain spaces.',
-          },
+  preSave: formValues => {
+    const retValues = { ...formValues };
+
+    if (retValues['/mode'] === 'cloud') {
+      retValues['/_agentId'] = undefined;
+    }
+
+    return {
+      ...retValues,
+      '/type': 'http',
+      '/assistant': 'prestashop',
+      '/http/auth/type': 'custom',
+      '/http/baseURI': `http://${formValues['/storeURL']}`,
+      '/http/mediaType': 'xml',
+      '/http/ping/relativeURI': '/api/customers',
+      '/http/ping/method': 'GET',
+      '/http/successMediaType': 'json',
+      '/http/headers': [
+        {
+          name: 'Authorization',
+          value:
+                'Basic {{{base64Encode (join ":" connection.http.encrypted.apiKey "")}}}',
         },
-        defaultValue: r => {
-          const baseUri = r && r.http && r.http.baseURI;
-          const subdomain =
-              baseUri && baseUri.substring(baseUri.indexOf('http://') + 7);
-  
-          return subdomain;
+        {
+          name: 'Io-Format',
+          value: 'JSON',
+        },
+      ],
+    };
+  },
+  fieldMap: {
+    name: { fieldId: 'name' },
+    storeURL: {
+      id: 'storeURL',
+      startAdornment: 'http://',
+      type: 'text',
+      label: 'Store URL',
+      required: true,
+      helpKey: 'prestashop.connection.storeURL',
+      validWhen: {
+        matchesRegEx: {
+          pattern: '^[\\S]+$',
+          message: 'Subdomain should not contain spaces.',
         },
       },
-      'http.encrypted.apiKey': {
-        id: 'http.encrypted.apiKey',
-        required: true,
-        type: 'text',
-        label: 'API key',
-        inputType: 'password',
-        defaultValue: '',
-        helpKey: 'prestashop.connection.http.encrypted.apiKey',
+      defaultValue: r => {
+        const baseUri = r && r.http && r.http.baseURI;
+        const subdomain =
+            baseUri && baseUri.substring(baseUri.indexOf('http://') + 7);
+
+        return subdomain;
       },
-      mode: {
-        id: 'mode',
-        type: 'radiogroup',
-        label: 'Mode',
-        defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
-        options: [
-          {
-            items: [
-              { label: 'Cloud', value: 'cloud' },
-              { label: 'On-premise', value: 'onpremise' },
-            ],
-          },
-        ],
-      },
-      _agentId: {
-        fieldId: '_agentId',
-        visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
-      },
-      application: {
-        fieldId: 'application',
-      },
-      httpAdvanced: { formId: 'httpAdvanced' },
     },
-    layout: {
-      type: 'collapse',
-      containers: [
-        { collapsed: true, label: 'General', fields: ['name', 'application', 'mode', '_agentId'] },
-        { collapsed: true,
-          label: 'Application details',
-          fields: ['storeURL', 'http.encrypted.apiKey'] },
-        { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
+    'http.encrypted.apiKey': {
+      id: 'http.encrypted.apiKey',
+      required: true,
+      type: 'text',
+      label: 'API key',
+      inputType: 'password',
+      defaultValue: '',
+      helpKey: 'prestashop.connection.http.encrypted.apiKey',
+    },
+    mode: {
+      id: 'mode',
+      type: 'radiogroup',
+      label: 'Mode',
+      defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
+      options: [
+        {
+          items: [
+            { label: 'Cloud', value: 'cloud' },
+            { label: 'On-premise', value: 'onpremise' },
+          ],
+        },
       ],
     },
-  };
-  
-  
+    _agentId: {
+      fieldId: '_agentId',
+      visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
+    },
+    application: {
+      fieldId: 'application',
+    },
+    httpAdvanced: { formId: 'httpAdvanced' },
+  },
+  layout: {
+    type: 'collapse',
+    containers: [
+      { collapsed: true, label: 'General', fields: ['name', 'application', 'mode', '_agentId'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['storeURL', 'http.encrypted.apiKey'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
+    ],
+  },
+};
