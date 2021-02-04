@@ -109,10 +109,130 @@ const suitescriptConnectors = [
 
 describe('resource region selector testcases', () => {
   describe('selectors.mkTileApplications test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          integrations: [{
+            _id: 'diyIntegration',
+            name: 'DIY integration',
+          }, {
+            _id: 'iaIntegration',
+            _connectorId: 'connector1',
+            name: 'DIY integration',
+          }, {
+            _id: 'ia2Integration',
+            _connectorId: 'connector2',
+            installSteps: ['1'],
+            initChild: () => {},
+            name: 'IA2.0 parent integration',
+          }, {
+            _id: 'ia2IntegrationChild',
+            _parentId: 'ia2Integration',
+            installSteps: ['1'],
+            _connectorId: 'connector2',
+            name: 'IA2.0 child integration',
+          }],
+          connections: [{
+            _id: 'connection1',
+            assistant: 'assistant1',
+            _integrationId: 'ia2IntegrationChild',
+          },
+          {
+            _id: 'connection2',
+            assistant: 'assistant2',
+            _integrationId: 'ia2IntegrationChild',
+
+          },
+          {
+            _id: 'connection3',
+            assistant: 'assistant3',
+            _integrationId: 'ia2IntegrationChild',
+
+          },
+          {
+            _id: 'connection4',
+            assistant: 'assistant4',
+            _integrationId: 'ia2Integration',
+
+          },
+          {
+            _id: 'connection5',
+            assistant: 'assistant5',
+            _integrationId: 'ia2Integration',
+
+          },
+          {
+            _id: 'connection6',
+            assistant: 'assistant1',
+            _integrationId: 'ia2IntegrationChild',
+
+          }],
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       const selector = selectors.mkTileApplications();
 
       expect(selector()).toEqual([]);
+      expect(selector({})).toEqual([]);
+      expect(selector({_connectorId: 'yes'})).toEqual([]);
+      expect(selector(null)).toEqual([]);
+      expect(selector(null, null)).toEqual([]);
+      expect(selector(null, {_connectorId: 'yes'})).toEqual([]);
+      expect(selector({}, {_connectorId: 'yes'})).toEqual([]);
+      expect(selector(null, {_integrationId: 'yes'})).toEqual([]);
+      expect(selector({}, {_integrationId: 'yes'})).toEqual([]);
+    });
+
+    test('should return empty array for diy integrations', () => {
+      const selector = selectors.mkTileApplications();
+
+      expect(selector(state, {_integrationId: 'diyIntegration'})).toEqual([]);
+      expect(selector(state, {_integrationId: 'none'})).toEqual([]);
+    });
+
+    test('should return correct application list for integrationApp', () => {
+      const selector = selectors.mkTileApplications();
+
+      expect(selector(state, {
+        _connectorId: 'connector1',
+        connector: {
+          applications: ['app1', 'app2'],
+        },
+      })).toEqual(['app1', 'app2']);
+
+      expect(selector(state, {
+        _connectorId: 'connector1',
+        connector: {
+          applications: ['app1', 'app2', 'app3', 'app4', 'app5'],
+        },
+      })).toEqual(['app1', 'app2', 'app3', 'app4']);
+
+      expect(selector(state, {
+        _connectorId: 'connector1',
+        name: 'Magento 1 - NetSuite',
+        connector: {
+          applications: ['magento', 'app2'],
+        },
+      })).toEqual(['magento1', 'app2']);
+    });
+
+    test('should return correct application list for integrationApp 2.0', () => {
+      const selector = selectors.mkTileApplications();
+
+      expect(selector(state, {
+        _connectorId: 'connector1',
+        _integrationId: 'ia2Integration',
+        connector: {
+          applications: ['app1', 'app2'],
+        },
+      })).toEqual(['assistant1', 'assistant2', 'assistant3', 'assistant4']);
+
+      expect(selector(state, {
+        _connectorId: 'connector1',
+        _integrationId: 'ia2Integration',
+      })).toEqual(['assistant1', 'assistant2', 'assistant3', 'assistant4']);
     });
   });
 

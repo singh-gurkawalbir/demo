@@ -562,7 +562,7 @@ selectors.mkTileApplications = () => createSelector(
     }
 
     // Make NetSuite always the last application
-    applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]);
+    if (applications.length) { applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]); }
     // Only consider up to four applications
     if (applications.length > 4) {
       applications.length = 4;
