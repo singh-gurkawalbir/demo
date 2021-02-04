@@ -190,7 +190,6 @@ export default function MappingRow(props) {
     setIsActive(false);
   }, []);
   const extractValue = extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
-
   const disableDelete = !mappingKey || disabled;
 
   // generateFields and extractFields are passed as an array of field names
