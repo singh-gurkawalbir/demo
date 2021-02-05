@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 import clsx from 'clsx';
 import { makeStyles, Drawer, IconButton, Tab, Tabs, useTheme } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -10,9 +11,10 @@ import CloseIcon from '../../../../components/icons/CloseIcon';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import DebugIcon from '../../../../components/icons/DebugIcon';
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
+import RunHistoryIcon from '../../../../components/icons/ViewResolvedHistoryIcon';
 import WarningIcon from '../../../../components/icons/WarningIcon';
 import { selectors } from '../../../../reducers';
-// import ConnectionPanel from './panels/Connection';
+import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/Dashboard/RunDashboardPanel';
 import RunDashboardV2 from '../../../../components/JobDashboard/RunDashboardV2';
 import RunHistory from '../../../../components/JobDashboard/RunHistory';
@@ -284,6 +286,9 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
     return 'Dashboard';
   }, [isUserInErrMgtTwoDotZero, classes.inProgress, isFlowRunInProgress]);
 
+  let tabIndex = 0;
+  let tabContentIndex = 0;
+
   return (
     <div>
       <Drawer
@@ -305,11 +310,17 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
             scrollButtons="auto"
             aria-label="scrollable auto tabs example">
             <Tab
-              {...tabProps(0)}
+              {...tabProps(tabIndex++)}
               icon={<DashboardIcon />}
               label={dashboardLabel} />
+            {isUserInErrMgtTwoDotZero && (
+              <Tab
+                {...tabProps(tabIndex++)}
+                icon={<RunHistoryIcon />}
+                label="Run history" />
+            )}
             <Tab
-              {...tabProps(1)}
+              {...tabProps(tabIndex++)}
               icon={
                 isAnyFlowConnectionOffline ? (
                   <WarningIcon className={classes.connectionWarning} />
@@ -320,14 +331,14 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
               label="Connections"
             />
             {flowScripts?.length &&
-            <Tab {...tabProps(2)} icon={<ScriptsIcon />} label="Scripts" />}
-            <Tab {...tabProps(flowScripts?.length ? 3 : 2)} icon={<AuditLogIcon />} label="Audit log" />
+            <Tab {...tabProps(tabIndex++)} icon={<ScriptsIcon />} label="Scripts" />}
+            <Tab {...tabProps(tabIndex++)} icon={<AuditLogIcon />} label="Audit log" />
 
-            {flowScriptsWithLogEntry.map((script, index) => (
+            {flowScriptsWithLogEntry.map(script => (
               <Tab
                 className={classes.customTab}
                 // TODO pass correct tabProp Index
-                {...tabProps(4 + index)}
+                {...tabProps(tabIndex++)}
                 icon={<AuditLogIcon />}
                 key={script.scriptId}
                 component="div"
@@ -348,11 +359,11 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
                     />
             ))}
             {flowConnectionsWithLogEntry?.map(
-                (connection, cIndex) =>
+                connection =>
                   (
                     <Tab
                       className={classes.customTab}
-                      {...tabProps(cIndex + 3 + (flowScripts?.length ? 1 : 0) + (flowScriptsWithLogEntry?.length || 0))}
+                      {...tabProps(tabIndex++)}
                       icon={<DebugIcon />}
                       key={connection._id}
                       component="div"
@@ -393,36 +404,43 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
           </div>
         </div>
         <>
-          <TabPanel value={tabValue} index={0} className={classes.tabPanel}>
+          <TabPanel value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
             { isUserInErrMgtTwoDotZero
               ? <RunDashboardV2 flowId={flowId} />
               : <RunDashboardPanel flowId={flowId} />}
           </TabPanel>
-          <TabPanel value={tabValue} index={1} className={classes.tabPanel}>
-            {/* <ConnectionPanel flowId={flowId} /> */}
-            <RunHistory flowId={flowId} />
+          {
+            isUserInErrMgtTwoDotZero &&
+            (
+              <TabPanel value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
+                <RunHistory flowId={flowId} />
+              </TabPanel>
+            )
+          }
+          <TabPanel value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
+            <ConnectionPanel flowId={flowId} />
           </TabPanel>
           {!!flowScripts?.length && (
-            <TabPanel value={tabValue} index={2} className={classes.tabPanel}>
+            <TabPanel value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
               <ScriptPanel flowId={flowId} />
             </TabPanel>
           )}
 
-          <TabPanel value={tabValue} index={flowScripts?.length ? 3 : 2} className={classes.tabPanel}>
+          <TabPanel value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
             <AuditPanel flowId={flowId} />
           </TabPanel>
-          {flowScriptsWithLogEntry.map((script, index) => (
-            <TabPanel key={script.scriptId} value={tabValue} index={4 + index} className={classes.tabPanel}>
+          {flowScriptsWithLogEntry.map(script => (
+            <TabPanel key={script.scriptId} value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
               <ScriptLogs flowId={flowId} scriptId={script.scriptId} />
             </TabPanel>
           ))}
           {flowConnectionsWithLogEntry?.map(
-              (connection, cIndex) =>
+              connection =>
                 (
                   <TabPanel
                     value={tabValue}
                     key={connection._id}
-                    index={cIndex + 3 + (flowScripts?.length ? 1 : 0) + (flowScriptsWithLogEntry?.length || 0)}
+                    index={tabContentIndex++}
                     className={classes.tabPanel}>
                     <>
                       <ConnectionLogs

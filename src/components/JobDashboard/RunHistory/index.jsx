@@ -31,6 +31,9 @@ const useStyles = makeStyles(theme => ({
   messageContainer: {
     padding: theme.spacing(3),
   },
+  rangeFilter: {
+    padding: 5,
+  },
 }));
 
 const defaultRange = {
@@ -92,7 +95,7 @@ export default function RunHistory({ flowId }) {
     setCurrentPage(0);
   }, [filter.range]);
 
-  const isLoading = !runHistoryContext.status || runHistoryContext.status === 'requested';
+  const isLoading = !isNewId(flowId) && (!runHistoryContext.status || runHistoryContext.status === 'requested');
 
   const handleDateFilter = useCallback(
     dateFilter => {
@@ -122,17 +125,18 @@ export default function RunHistory({ flowId }) {
     <>
       <div className={classes.filterContainer}>
         <div className={classes.actions}>
-          <DateRangeSelector
-            clearable
-            placement="right"
-            classProps={classes}
-            clearValue={defaultRange}
-            onSave={handleDateFilter}
-            value={selectedDate}
-            customPresets={rangeFilters}
-            fromDate={startOfDay(addDays(new Date(), -29))}
-            showTime={false}
+          <div className={classes.rangeFilter}>
+            <DateRangeSelector
+              clearable
+              placement="right"
+              clearValue={defaultRange}
+              onSave={handleDateFilter}
+              value={selectedDate}
+              customPresets={rangeFilters}
+              fromDate={startOfDay(addDays(new Date(), -29))}
+              showTime={false}
          />
+          </div>
           <div className={classes.actions}>
             {
           runHistoryContext.data?.length && !isLoading
