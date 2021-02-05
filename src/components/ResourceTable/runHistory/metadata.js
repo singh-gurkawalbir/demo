@@ -1,6 +1,7 @@
 import React from 'react';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import { getJobDuration, getJobStatus } from '../../../utils/errorManagement';
+import DownloadFiles from './actions/DownloadFiles';
 
 export default {
   columns: [
@@ -35,4 +36,13 @@ export default {
     },
 
   ],
+  rowActions: job => {
+    const actions = [];
+
+    if (job.files?.length) {
+      actions.push(DownloadFiles);
+    }
+
+    return actions;
+  },
 };

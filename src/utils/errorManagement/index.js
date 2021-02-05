@@ -150,7 +150,7 @@ export function getJobStatus(job) {
   const jobStatus = job.status;
   const statusMap = {
     completed: 'Completed',
-    cancelled: 'Cancelled',
+    canceled: 'Cancelled',
     failed: 'Failed',
   };
 

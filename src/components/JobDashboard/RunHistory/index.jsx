@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import { addDays, startOfDay, endOfDay } from 'date-fns';
 import CeligoPagination from '../../CeligoPagination';
 import { selectors } from '../../../reducers';
@@ -14,11 +14,22 @@ import { getSelectedRange } from '../../../utils/flowMetrics';
 import DateRangeSelector from '../../DateRangeSelector';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   actions: {
     margin: 10,
     display: 'flex',
     justifyContent: 'space-between',
+  },
+  noHistory: {
+    textAlign: 'center',
+    display: 'flex',
+  },
+  filterContainer: {
+    border: `solid 1px ${theme.palette.secondary.lightest}`,
+    borderWidth: [[1, 0]],
+  },
+  messageContainer: {
+    padding: theme.spacing(3),
   },
 }));
 
@@ -81,7 +92,7 @@ export default function RunHistory({ flowId }) {
     setCurrentPage(0);
   }, [filter.range]);
 
-  const isLoading = runHistoryContext.status === 'requested';
+  const isLoading = !runHistoryContext.status || runHistoryContext.status === 'requested';
 
   const handleDateFilter = useCallback(
     dateFilter => {
@@ -107,26 +118,23 @@ export default function RunHistory({ flowId }) {
     [runHistoryContext.data, currentPage]
   );
 
-  if (!runHistoryContext.data) {
-    return null;
-  }
-
   return (
     <>
-      <div className={classes.actions}>
-        <DateRangeSelector
-          clearable
-          placement="right"
-          classProps={classes}
-          clearValue={defaultRange}
-          onSave={handleDateFilter}
-          value={selectedDate}
-          customPresets={rangeFilters}
-          fromDate={startOfDay(addDays(new Date(), -29))}
-          showTime={false}
-         />
+      <div className={classes.filterContainer}>
         <div className={classes.actions}>
-          {
+          <DateRangeSelector
+            clearable
+            placement="right"
+            classProps={classes}
+            clearValue={defaultRange}
+            onSave={handleDateFilter}
+            value={selectedDate}
+            customPresets={rangeFilters}
+            fromDate={startOfDay(addDays(new Date(), -29))}
+            showTime={false}
+         />
+          <div className={classes.actions}>
+            {
           runHistoryContext.data?.length && !isLoading
             ? (
               <CeligoPagination
@@ -138,15 +146,22 @@ export default function RunHistory({ flowId }) {
             )
             : null
         }
-          <IconTextButton onClick={fetchFlowRunHistory} disabled={isLoading}>
-            <RefreshIcon /> Refresh
-          </IconTextButton>
+            <IconTextButton onClick={fetchFlowRunHistory} disabled={isLoading}>
+              <RefreshIcon /> Refresh
+            </IconTextButton>
+          </div>
         </div>
       </div>
+      { isLoading && <PanelLoader />}
+      { !isLoading && !runHistoryContext.data?.length &&
+        (
+        <Typography className={classes.messageContainer}>
+          You don&apos;t have any run history.
+        </Typography>
+        )}
       {
-          isLoading
-            ? <PanelLoader />
-            : <ResourceTable resources={jobsInCurrentPage} resourceType={FILTER_KEYS.RUN_HISTORY} />
+          !isLoading && !!runHistoryContext.data?.length &&
+          <ResourceTable resources={jobsInCurrentPage} resourceType={FILTER_KEYS.RUN_HISTORY} />
       }
     </>
   );
