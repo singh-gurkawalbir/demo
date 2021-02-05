@@ -691,7 +691,7 @@ export function getIAFlowSettings(integration, flowId, childId) {
     if (childId) {
       const section = integration.settings.sections.find(sec => sec.id === childId);
 
-      if (!section.sections) {
+      if (!section || !section.sections) {
         return;
       }
 

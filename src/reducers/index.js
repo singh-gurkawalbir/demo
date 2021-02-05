@@ -787,15 +787,11 @@ selectors.mkFlowAllowsScheduling = () => {
 selectors.flowUsesUtilityMapping = (state, id, childId) => {
   const flow = selectors.resource(state, 'flows', id);
 
-  if (!flow) return false;
+  if (!flow || !flow._connectorId) return false;
   const integration = selectors.resource(state, 'integrations', flow._integrationId);
-  const isApp = flow._connectorId;
-
-  if (!isApp) return false;
-
   const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
-  return !!flowSettings.showUtilityMapping;
+  return !!flowSettings?.showUtilityMapping;
 };
 
 selectors.flowSupportsMapping = (state, id, childId) => {

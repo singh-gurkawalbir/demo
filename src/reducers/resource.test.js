@@ -314,8 +314,88 @@ describe('resource region selector testcases', () => {
   });
 
   describe('selectors.flowUsesUtilityMapping test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          flows: [{
+            _id: 'flowId1',
+            name: 'flow 1',
+            _integrationId: 'integrationId1',
+            _connectorId: 'connector1',
+
+          }, {
+            _id: 'flowId2',
+            name: 'flow 2',
+            _integrationId: 'integrationId1',
+            _connectorId: 'connector1',
+
+          }, {
+            _id: 'flowId3',
+            name: 'flow 2',
+            _integrationId: 'integrationId2',
+            _connectorId: 'connector2',
+
+          }],
+          integrations: [{
+            _id: 'integrationId1',
+            _connectorId: 'connector1',
+            settings: {
+              supportsMultiStore: true,
+              sections: [{
+                id: 'child1',
+                sections: [
+                  {
+                    title: 'Title2',
+                    flows: [{
+                      _id: 'flowId1',
+                      settings: {},
+                    }, {
+                      _id: 'flowId2',
+                      showUtilityMapping: true,
+                      settings: {},
+                    }],
+                  },
+                ],
+              }],
+            },
+          }, {
+            _id: 'integration2',
+            _connectorId: 'connector2',
+            settings: {
+              sections: [
+                {
+                  title: 'Title',
+                  flows: [
+                    {
+                      _id: 'flowId3',
+                      settings: {},
+                    },
+                  ],
+                },
+              ],
+            },
+          }],
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.flowUsesUtilityMapping()).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping(null)).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping(null, null)).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping({}, {})).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping(123, 124)).toEqual(false);
+    });
+
+    test('should return correct value for single store connector', () => {
+      expect(selectors.flowUsesUtilityMapping(state, 'integration1')).toEqual(false);
+    });
+
+    test('should return correct value for mullti store connector', () => {
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId1', 'child1')).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId2')).toEqual(true);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId2', 'child1')).toEqual(true);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId2', 'child2')).toEqual(false);
     });
   });
 
