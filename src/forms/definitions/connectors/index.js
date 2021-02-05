@@ -3,8 +3,11 @@ export default {
     if (formValues['/framework'] === 'twoDotZero') {
       const twoDotZero = {
         _integrationId: formValues['/_integrationId'],
-        editions: formValues['/editions'],
       };
+
+      if (formValues['/editions']?.length !== 0) {
+        twoDotZero.editions = formValues['/editions'].split(',');
+      }
       const newValues = {
         ...formValues,
         '/twoDotZero': twoDotZero,
