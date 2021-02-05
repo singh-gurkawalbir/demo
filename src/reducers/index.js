@@ -809,7 +809,7 @@ selectors.flowSupportsMapping = (state, id, childId) => {
 
   const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
-  return !!flowSettings.showMapping;
+  return !!flowSettings?.showMapping;
 };
 
 selectors.flowSupportsSettings = (state, id, childId) => {

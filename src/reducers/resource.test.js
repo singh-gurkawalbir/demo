@@ -400,8 +400,132 @@ describe('resource region selector testcases', () => {
   });
 
   describe('selectors.flowSupportsMapping test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          flows: [{
+            _id: 'flowId1',
+            name: 'flow 1',
+            _integrationId: 'integrationId1',
+            _connectorId: 'connector1',
+
+          }, {
+            _id: 'flowId2',
+            name: 'flow 2',
+            _integrationId: 'integrationId1',
+            _connectorId: 'connector1',
+
+          }, {
+            _id: 'flowId3',
+            name: 'flow 2',
+            _integrationId: 'integrationId2',
+            _connectorId: 'connector2',
+
+          }, {
+            _id: 'flowId4',
+            name: 'flow 4',
+            _integrationId: 'integrationId2',
+            _connectorId: 'connector2',
+
+          }, {
+            _id: 'flowId5',
+            name: 'flow 5',
+            _integrationId: 'integrationId1',
+            _connectorId: 'connector2',
+
+          }, {
+            _id: 'flowId6',
+            name: 'flow 6',
+            _integrationId: 'integrationId1',
+            _connectorId: 'connector2',
+
+          }],
+          integrations: [{
+            _id: 'integrationId1',
+            _connectorId: 'connector1',
+            settings: {
+              supportsMultiStore: true,
+              sections: [{
+                id: 'child1',
+                sections: [
+                  {
+                    title: 'Title2',
+                    flows: [{
+                      _id: 'flowId1',
+                      settings: {},
+                    }, {
+                      _id: 'flowId2',
+                      showUtilityMapping: true,
+                      showMapping: true,
+                      settings: {},
+                    }],
+                  },
+                  {
+                    title: 'Title3',
+                    flows: [{
+                      _id: 'flowId5',
+                      settings: {},
+                      showMapping: false,
+                    }, {
+                      _id: 'flowId6',
+                      showUtilityMapping: true,
+                      showMapping: true,
+                      settings: {},
+                    }],
+                  },
+                ],
+              }],
+            },
+          }, {
+            _id: 'integrationId2',
+            _connectorId: 'connector2',
+            settings: {
+              sections: [
+                {
+                  title: 'Title',
+                  flows: [
+                    {
+                      _id: 'flowId3',
+                      settings: {},
+                    },
+                  ],
+                },
+                {
+                  title: 'Title2',
+                  flows: [
+                    {
+                      _id: 'flowId4',
+                      settings: {},
+                      showMapping: true,
+                    },
+                  ],
+                },
+              ],
+            },
+          }],
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.flowSupportsMapping()).toEqual(false);
+      expect(selectors.flowSupportsMapping(null)).toEqual(false);
+      expect(selectors.flowSupportsMapping(null, null)).toEqual(false);
+      expect(selectors.flowSupportsMapping({}, {})).toEqual(false);
+      expect(selectors.flowSupportsMapping(123, 124)).toEqual(false);
+    });
+
+    test('should return correct value for single store connector', () => {
+      expect(selectors.flowSupportsMapping(state, 'integrationId1')).toEqual(false);
+      expect(selectors.flowSupportsMapping(state, 'flowId4')).toEqual(true);
+      expect(selectors.flowSupportsMapping(state, 'flowId3')).toEqual(false);
+    });
+
+    test('should return correct value for mullti store connector', () => {
+      expect(selectors.flowSupportsMapping(state, 'flowId1', 'child1')).toEqual(false);
+      expect(selectors.flowSupportsMapping(state, 'flowId2')).toEqual(true);
+      expect(selectors.flowSupportsMapping(state, 'flowId2', 'child1')).toEqual(true);
+      expect(selectors.flowSupportsMapping(state, 'flowId2', 'child2')).toEqual(false);
     });
   });
 
