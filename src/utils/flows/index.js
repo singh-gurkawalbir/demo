@@ -367,8 +367,8 @@ export function flowSupportsSettings(flow, integration, childId) {
   const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
   return !!(
-    (flowSettings.settings && flowSettings.settings.length) ||
-    (flowSettings.sections && flowSettings.sections.length)
+    (flowSettings?.settings && flowSettings.settings.length) ||
+    (flowSettings?.sections && flowSettings.sections.length)
   );
 }
 
