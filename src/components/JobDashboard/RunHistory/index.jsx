@@ -48,8 +48,15 @@ export default function RunHistory({ flowId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [currentPage, setCurrentPage] = useState(0);
+  const isLoadingHistory = useSelector(state => {
+    if (isNewId(flowId)) return false;
+    const {status} = selectors.runHistoryContext(state, flowId);
 
-  const runHistoryContext = useSelector(state => selectors.runHistoryContext(state, flowId));
+    return !status || status === 'requested';
+  });
+
+  const runHistory = useSelector(state => selectors.runHistoryContext(state, flowId).data);
+
   const filter = useSelector(state =>
     selectors.filter(state, FILTER_KEYS.RUN_HISTORY),
   shallowEqual
@@ -85,7 +92,7 @@ export default function RunHistory({ flowId }) {
     setCurrentPage(0);
   }, [filter.range]);
 
-  const isLoading = !isNewId(flowId) && (!runHistoryContext.status || runHistoryContext.status === 'requested');
+  const hasFlowRunHistory = !isLoadingHistory && !!runHistory?.length;
 
   const handleDateFilter = useCallback(
     dateFilter => {
@@ -107,8 +114,8 @@ export default function RunHistory({ flowId }) {
   }, []);
 
   const jobsInCurrentPage = useMemo(
-    () => runHistoryContext.data?.slice(currentPage * ROWS_PER_PAGE, (currentPage + 1) * ROWS_PER_PAGE),
-    [runHistoryContext.data, currentPage]
+    () => runHistory?.slice(currentPage * ROWS_PER_PAGE, (currentPage + 1) * ROWS_PER_PAGE),
+    [runHistory, currentPage]
   );
 
   return (
@@ -128,33 +135,29 @@ export default function RunHistory({ flowId }) {
          />
           </div>
           <div className={classes.actions}>
-            {
-          runHistoryContext.data?.length && !isLoading
-            ? (
-              <CeligoPagination
-                count={runHistoryContext.data?.length}
-                page={currentPage}
-                rowsPerPage={ROWS_PER_PAGE}
-                onChangePage={handleChangePage}
+            { hasFlowRunHistory && (
+            <CeligoPagination
+              count={runHistory.length}
+              page={currentPage}
+              rowsPerPage={ROWS_PER_PAGE}
+              onChangePage={handleChangePage}
               />
-            )
-            : null
-        }
-            <IconTextButton onClick={fetchFlowRunHistory} disabled={isLoading}>
+            )}
+            <IconTextButton onClick={fetchFlowRunHistory} disabled={isLoadingHistory}>
               <RefreshIcon /> Refresh
             </IconTextButton>
           </div>
         </div>
       </div>
-      { isLoading && <PanelLoader />}
-      { !isLoading && !runHistoryContext.data?.length &&
+      { isLoadingHistory && <PanelLoader />}
+      { !hasFlowRunHistory &&
         (
         <Typography className={classes.messageContainer}>
           You don&apos;t have any run history.
         </Typography>
         )}
       {
-          !isLoading && !!runHistoryContext.data?.length &&
+          hasFlowRunHistory &&
           <ResourceTable resources={jobsInCurrentPage} resourceType={FILTER_KEYS.RUN_HISTORY} />
       }
     </>
