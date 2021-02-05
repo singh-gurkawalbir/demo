@@ -37,11 +37,16 @@ export default function MappingDrawerRoute(props) {
   const match = useRouteMatch();
   const integrationId = match.params?.integrationId || props.integrationId;
 
+  let importId;
+
   const isMappingPreviewAvailable = useSelector(state => {
-    const importId = selectors.mapping(state)?.importId;
+    importId = selectors.mapping(state)?.importId;
 
     return !!selectors.mappingPreviewType(state, importId);
   });
+
+  const importName = useSelector(state => selectors.resourceData(state, 'imports', importId).merged?.name);
+  const title = importName ? `Edit Mapping > ${importName}` : 'Edit Mapping';
 
   return (
     // TODO (Aditya/Raghu): Break it into 2 side drawer after changes to RightDrawer is done on exact property.
@@ -61,7 +66,7 @@ export default function MappingDrawerRoute(props) {
         width={isMappingPreviewAvailable ? 'full' : 'default'}
         variant="persistent"
       >
-        <DrawerHeader title="Edit mapping" />
+        <DrawerHeader title={title} />
         <Switch>
           <Route
             path={[
