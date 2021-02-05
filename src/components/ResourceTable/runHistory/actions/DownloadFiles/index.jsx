@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-// import DownloadIntegrationIcon from '../../../../icons/DownloadIntegrationIcon';
+import DownloadIntegrationIcon from '../../../../icons/DownloadIntegrationIcon';
 import JobFilesDownloadDialog from '../../../../JobDashboard/JobFilesDownloadDialog';
 import actions from '../../../../../actions';
 
 export default {
   label: 'Download files',
-  //   icon: DownloadIntegrationIcon,
+  icon: DownloadIntegrationIcon,
   component: function DownloadFiles(props) {
     const { rowData: job = {} } = props;
 
