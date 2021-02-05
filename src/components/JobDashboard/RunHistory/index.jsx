@@ -12,7 +12,7 @@ import RefreshIcon from '../../icons/RefreshIcon';
 import IconTextButton from '../../IconTextButton';
 import { getSelectedRange } from '../../../utils/flowMetrics';
 import DateRangeSelector from '../../DateRangeSelector';
-import { FILTER_KEYS } from '../../../utils/errorManagement';
+import { FILTER_KEYS, ERROR_MANAGEMENT_RANGE_FILTERS } from '../../../utils/errorManagement';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -41,16 +41,6 @@ const defaultRange = {
   endDate: endOfDay(new Date()),
   preset: null,
 };
-
-const rangeFilters = [
-  {id: 'today', label: 'Today'},
-  {id: 'yesterday', label: 'Yesterday'},
-  {id: 'last24hours', label: 'Last 24 hours'},
-  {id: 'last7days', label: 'Last 7 Days'},
-  {id: 'last15days', label: 'Last 15 Days'},
-  {id: 'last30days', label: 'Last 30 Days'},
-  {id: 'custom', label: 'Custom'},
-];
 
 const ROWS_PER_PAGE = 50;
 
@@ -132,7 +122,7 @@ export default function RunHistory({ flowId }) {
               clearValue={defaultRange}
               onSave={handleDateFilter}
               value={selectedDate}
-              customPresets={rangeFilters}
+              customPresets={ERROR_MANAGEMENT_RANGE_FILTERS}
               fromDate={startOfDay(addDays(new Date(), -29))}
               showTime={false}
          />
