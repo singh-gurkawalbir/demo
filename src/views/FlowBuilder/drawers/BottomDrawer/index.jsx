@@ -12,9 +12,10 @@ import DebugIcon from '../../../../components/icons/DebugIcon';
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
 import WarningIcon from '../../../../components/icons/WarningIcon';
 import { selectors } from '../../../../reducers';
-import ConnectionPanel from './panels/Connection';
+// import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/Dashboard/RunDashboardPanel';
 import RunDashboardV2 from '../../../../components/JobDashboard/RunDashboardV2';
+import RunHistory from '../../../../components/JobDashboard/RunHistory';
 import AuditPanel from './panels/Audit';
 import ScriptPanel from './panels/Script';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
@@ -398,7 +399,8 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
               : <RunDashboardPanel flowId={flowId} />}
           </TabPanel>
           <TabPanel value={tabValue} index={1} className={classes.tabPanel}>
-            <ConnectionPanel flowId={flowId} />
+            {/* <ConnectionPanel flowId={flowId} /> */}
+            <RunHistory flowId={flowId} />
           </TabPanel>
           {!!flowScripts?.length && (
             <TabPanel value={tabValue} index={2} className={classes.tabPanel}>

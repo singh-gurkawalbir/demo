@@ -1,8 +1,10 @@
 import { get, sortBy } from 'lodash';
+import moment from 'moment';
 
 export const FILTER_KEYS = {
   OPEN: 'openErrors',
   RESOLVED: 'resolvedErrors',
+  RUN_HISTORY: 'runHistory',
 };
 
 export const DEFAULT_FILTERS = {
@@ -124,3 +126,33 @@ export const getSourceOptions = (sourceList = [], applicationName) => {
 
   return [{ _id: 'all', name: 'All sources'}, ...sortedOptions];
 };
+
+export function getJobDuration(job) {
+  if (job.startedAt && job.endedAt) {
+    const dtDiff = moment(moment(job.endedAt) - moment(job.startedAt)).utc();
+    let duration = dtDiff.format('HH:mm:ss');
+
+    if (dtDiff.date() > 1) {
+      const durationParts = duration.split(':');
+
+      durationParts[0] =
+        parseInt(durationParts[0], 10) + (dtDiff.date() - 1) * 24;
+      duration = durationParts.join(':');
+    }
+
+    return duration;
+  }
+
+  return undefined;
+}
+
+export function getJobStatus(job) {
+  const jobStatus = job.status;
+  const statusMap = {
+    completed: 'Completed',
+    cancelled: 'Cancelled',
+    failed: 'Failed',
+  };
+
+  return statusMap[jobStatus] || jobStatus;
+}
