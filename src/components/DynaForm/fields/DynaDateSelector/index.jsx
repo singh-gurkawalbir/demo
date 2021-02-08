@@ -1,16 +1,17 @@
-import React, { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { FormLabel, InputAdornment} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { endOfDay, addYears } from 'date-fns';
 import { selectors } from '../../../../reducers';
 import DateRangeSelector from '../../../DateRangeSelector';
-import { convertUtcToTimezone } from '../../../../utils/date';
 import { getSelectedRange } from '../../../../utils/flowMetrics';
 import FieldHelp from '../../FieldHelp';
 import CalendarIcon from '../../../icons/CalendarIcon';
 import DynaText from '../DynaText';
+import actions from '../../../../actions';
+import FieldMessage from '../FieldMessage';
 
 const useStyles = makeStyles(theme => ({
   iconWrapper: {
@@ -46,30 +47,30 @@ const defaultRange = {
   endDate: endOfDay(new Date()),
   preset: null,
 };
-
 export default function DynaDateSelector(props) {
   const classes = useStyles();
-  const { id, label, name, value, onFieldChange, required } = props;
+  const dispatch = useDispatch();
+  const { id, label, name, value, onFieldChange, required, formKey } = props;
   const calendarIcon = () => <CalendarIcon className={classes.iconWrapper} />;
   const { dateFormat } = useSelector(state => selectors.userProfilePreferencesProps(state));
-  const timezone = useSelector(state => selectors.userTimezone(state));
+
+  useEffect(() => {
+    dispatch(actions.form.forceFieldState(formKey)(id, {isValid: moment(value).isValid(), errorMessages: 'Invalid date format'}));
+  }, [value, id, dispatch, formKey]);
 
   const handleFieldChange = useCallback((id, value) => {
-    onFieldChange(id, value);
-  }, [onFieldChange]);
+    if ((moment(value).isValid() && value?.length === dateFormat.length) || moment(value, moment.ISO_8601, true).isValid()) {
+      onFieldChange(id, moment(value).endOf('day').toISOString());
+    } else {
+      onFieldChange(id, value);
+    }
+  }, [dateFormat.length, onFieldChange]);
 
   const handleDateRangeChange = useCallback(dateFilter => {
     const filter = getSelectedRange(dateFilter);
-    const expireDate = convertUtcToTimezone(
-      moment(filter.endDate),
-      dateFormat,
-      null,
-      timezone,
-      {dateOnly: true}
-    );
 
-    onFieldChange(id, expireDate);
-  }, [id, onFieldChange, dateFormat, timezone]);
+    onFieldChange(id, moment(filter.endDate).toISOString());
+  }, [id, onFieldChange]);
 
   return (
     <>
@@ -82,16 +83,16 @@ export default function DynaDateSelector(props) {
         name={name}
         type="date"
         placeholder={dateFormat}
-        value={value}
+        value={((moment(value).isValid() && value?.length === dateFormat.length) || moment(value, moment.ISO_8601, true).isValid()) ? moment(value).format(dateFormat) : value}
         className={classes.dynaTextWithCalendarIcon}
         onFieldChange={(id, value) => handleFieldChange(id, value)}
         endAdornment={(
           <InputAdornment position="end">
             <DateRangeSelector
+              isCalendar
               value={defaultRange}
               toDate={addYears(new Date(), 1)}
               fromDate={new Date()}
-              clearable
               Icon={calendarIcon}
               customPresets={rangeFilters}
               clearValue={defaultRange}
@@ -100,6 +101,7 @@ export default function DynaDateSelector(props) {
           </InputAdornment>
         )}
       />
+      <FieldMessage {...props} />
     </>
   );
 }
