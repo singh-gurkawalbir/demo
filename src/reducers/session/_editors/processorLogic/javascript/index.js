@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import isEqual from 'lodash/isEqual';
-import util from '../../../../utils/json';
+import util from '../../../../../utils/json';
 
 export default {
   init: ({options}) => ({

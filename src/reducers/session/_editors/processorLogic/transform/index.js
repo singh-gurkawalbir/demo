@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import { differenceWith, isEqual } from 'lodash';
-import util from '../../../../utils/json';
-import arrayUtil from '../../../../utils/array';
+import util from '../../../../../utils/json';
+import arrayUtil from '../../../../../utils/array';
 
 export default {
   requestBody: editor => ({
@@ -47,12 +47,9 @@ export default {
   },
   processResult: (editor, result) => ({data: result?.data?.[0]}),
   preSaveValidate: editor => {
-    const duplicates = arrayUtil.getDuplicateValues(
-      editor.rule,
-      'generate'
-    );
+    const duplicates = arrayUtil.getDuplicateValues(editor.rule, 'generate');
 
-    if (duplicates && duplicates.length) {
+    if (duplicates?.length) {
       return {saveError: true, message: `You have duplicate mappings for the field(s): ${duplicates.join(',')}`};
     }
 
