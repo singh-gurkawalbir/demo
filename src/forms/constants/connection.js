@@ -110,6 +110,7 @@ export default {
     'dotdigital',
     'checkout',
     'pricefx',
+    'freshworks',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
