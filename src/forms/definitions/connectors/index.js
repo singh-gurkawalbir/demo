@@ -5,7 +5,7 @@ export default {
         _integrationId: formValues['/_integrationId'],
       };
 
-      if (formValues['/editions']?.length !== 0) {
+      if (formValues['/editions'] && formValues['/editions'].split) {
         twoDotZero.editions = formValues['/editions'].split(',');
       }
       const newValues = {
