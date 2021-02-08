@@ -1,5 +1,5 @@
-import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
-import javascript from './javascript';
+import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
+import javascript from '../javascript';
 
 export default {
   processor: 'javascript',
