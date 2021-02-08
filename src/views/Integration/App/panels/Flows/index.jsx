@@ -216,7 +216,7 @@ function FlowList({ integrationId, storeId }) {
 
   useEffect(() => {
     dispatch(actions.patchFilter(filterKey, {sort: {order: 'asc', orderBy: 'name'}}));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
