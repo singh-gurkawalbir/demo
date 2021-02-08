@@ -18,6 +18,8 @@ export default {
   sandbox: {
     type: 'select',
     label: 'Environment',
+    defaultValue: r => r.sandbox ? 'true' : 'false',
+    required: true,
     options: [
       {
         items: [

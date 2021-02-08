@@ -3,6 +3,7 @@ import {
   put,
   cancel,
   take,
+  takeLatest,
   takeEvery,
   delay,
   select,
@@ -711,6 +712,28 @@ export function* updateRetryData({ retryId, retryData }) {
   yield put(actions.job.receivedRetryData({ retryData, retryId }));
 }
 
+export function* downloadRetryData({ retryId }) {
+  let response;
+  const { path, opts } = getRequestOptions(
+    actionTypes.JOB.ERROR.DOWNLOAD_RETRY_DATA,
+    {
+      resourceId: retryId,
+    }
+  );
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+  } catch (e) {
+    return true;
+  }
+  if (response?.signedURL) {
+    openExternalUrl({url: response?.signedURL});
+  }
+}
+
 export function* retryProcessedErrors({ jobId, flowJobId, errorFileId }) {
   try {
     const body = { errorFile: { host: 's3', id: errorFileId } };
@@ -750,5 +773,6 @@ export const jobSagas = [
   takeEvery(actionTypes.JOB.ERROR.RETRY_SELECTED, retrySelectedRetries),
   takeEvery(actionTypes.JOB.ERROR.REQUEST_RETRY_DATA, requestRetryData),
   takeEvery(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, updateRetryData),
+  takeLatest(actionTypes.JOB.ERROR.DOWNLOAD_RETRY_DATA, downloadRetryData),
   takeEvery(actionTypes.JOB.ERROR.RETRY_PROCESSED_ERRORS, retryProcessedErrors),
 ];

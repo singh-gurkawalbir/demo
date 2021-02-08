@@ -4,7 +4,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
-import PanelHeader from '../../../PanelHeader';
 import IconTextButton from '../../../IconTextButton';
 import AddIcon from '../../../icons/AddIcon';
 import CeligoTable from '../../../CeligoTable';
@@ -14,8 +13,10 @@ import { generateNewId } from '../../../../utils/resource';
 import { SCOPES } from '../../../../sagas/resourceForm';
 
 const useStyles = makeStyles(theme => ({
-  actions: {
-    display: 'flex',
+  actionChildLicense: {
+    position: 'absolute',
+    top: theme.spacing(1),
+    right: 0,
   },
   resultContainer: {
     padding: theme.spacing(3, 3, 12, 3),
@@ -86,16 +87,14 @@ export default function DynaChildLicense({ connectorId, resourceId}) {
 
   return (
     <>
-      <PanelHeader>
-        <div className={classes.actions}>
-          <IconTextButton
-            onClick={handleClick}
-            variant="text"
-            color="primary">
-            <AddIcon /> Create child license
-          </IconTextButton>
-        </div>
-      </PanelHeader>
+      <div className={classes.actionChildLicense}>
+        <IconTextButton
+          onClick={handleClick}
+          variant="text"
+          color="primary">
+          <AddIcon /> Create child license
+        </IconTextButton>
+      </div>
       <div>
         <CeligoTable
           data={childLicenses}
