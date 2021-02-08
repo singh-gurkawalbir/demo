@@ -76,7 +76,7 @@ export default {
   init: props => {
     const {options, resource, fieldState, connection, isPageGenerator, formValues, ...rest} = props;
     const {fieldId} = options;
-    const {type, value, arrayIndex} = fieldState;
+    const {type, value, arrayIndex} = fieldState || {};
     let rule = value;
 
     if (type === 'relativeuri' || type === 'httprequestbody' || type === 'sqlquerybuilder') {
