@@ -40,8 +40,24 @@ describe('users region selector testcases', () => {
   });
 
   describe('selectors.userProfileEmail test cases', () => {
+    const state = {
+      user: {
+        profile: {
+          email: 'abc@celigo.com',
+          auth_type_google: {
+            id: 'google_id',
+          },
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.userProfileEmail()).toEqual();
+      expect(selectors.userProfileEmail(null)).toEqual();
+      expect(selectors.userProfileEmail({})).toEqual();
+    });
+    test('should return correct value when user profile email exists', () => {
+      expect(selectors.userProfileEmail(state)).toEqual('abc@celigo.com');
     });
   });
 
