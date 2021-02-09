@@ -826,7 +826,7 @@ selectors.flowSupportsSettings = (state, id, childId) => {
 *********************************************************************** */
 
 selectors.flowListWithMetadata = (state, options) => {
-  const flows = selectors.resourceList(state, options).resources || emptyArray;
+  const flows = selectors.resourceList(state, options || emptyObject).resources || emptyArray;
   const exports = selectors.resourceList(state, {
     type: 'exports',
   }).resources;
@@ -1571,7 +1571,7 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
 selectors.integrationAppSettings = selectors.mkIntegrationAppSettings();
 
 selectors.getFlowsAssociatedExportFromIAMetadata = (state, fieldMeta) => {
-  const { resource: flowResource, properties } = fieldMeta;
+  const { resource: flowResource, properties } = fieldMeta || {};
   let resourceId;
 
   if (properties && properties._exportId) {

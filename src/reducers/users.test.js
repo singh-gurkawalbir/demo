@@ -65,6 +65,13 @@ describe('users region selector testcases', () => {
   describe('selectors.hasProfile test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.hasProfile()).toEqual(false);
+      expect(selectors.hasProfile(null)).toEqual(false);
+      expect(selectors.hasProfile({})).toEqual(false);
+    });
+    test('should return correct value for user state', () => {
+      expect(selectors.hasProfile({user: {}})).toEqual(false);
+      expect(selectors.hasProfile({user: {profile: {}}})).toEqual(true);
+      expect(selectors.hasProfile({user: {profile: {name: 'User'}}})).toEqual(true);
     });
   });
 });

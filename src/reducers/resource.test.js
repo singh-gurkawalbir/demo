@@ -660,8 +660,111 @@ describe('resource region selector testcases', () => {
   });
 
   describe('selectors.flowListWithMetadata test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          exports: [{
+            _id: 'exp1',
+            type: 'distributed',
+          }, {
+            _id: 'exp2',
+            type: 'simple',
+          }],
+          flows: [{
+            _id: 'flow1',
+            pageGenerators: [{
+              _exportId: 'exp1',
+            }],
+            pageProcessors: [{
+              _importId: 'imp1',
+              type: 'import',
+            }],
+          },
+          {
+            _id: 'flow2',
+            pageGenerators: [{
+              _exportId: 'exp2',
+            }],
+            pageProcessors: [{
+              _importId: 'imp1',
+              type: 'import',
+            }],
+          },
+          {
+            _id: 'flow3',
+            schedule: '* 5 * * * *',
+            pageGenerators: [{
+              _exportId: 'exp3',
+            }],
+            pageProcessors: [{
+              _importId: 'imp1',
+              type: 'import',
+            }],
+          }],
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.flowListWithMetadata()).toEqual({resources: []});
+      expect(selectors.flowListWithMetadata({})).toEqual({resources: []});
+      expect(selectors.flowListWithMetadata(null)).toEqual({resources: []});
+      expect(selectors.flowListWithMetadata(null, null)).toEqual({resources: []});
+    });
+
+    test('should return correct flow list with metadata', () => {
+      expect(selectors.flowListWithMetadata(state, { type: 'flows' })).toEqual({
+        resources: [
+          {
+            _id: 'flow1',
+            isRealtime: true,
+            pageGenerators: [
+              {
+                _exportId: 'exp1',
+              },
+            ],
+            pageProcessors: [
+              {
+                _importId: 'imp1',
+                type: 'import',
+              },
+            ],
+          },
+          {
+            _id: 'flow2',
+            isRunnable: true,
+            isSimpleImport: true,
+            pageGenerators: [
+              {
+                _exportId: 'exp2',
+              },
+            ],
+            pageProcessors: [
+              {
+                _importId: 'imp1',
+                type: 'import',
+              },
+            ],
+          },
+          {
+            _id: 'flow3',
+            isRunnable: true,
+            showScheduleIcon: true,
+            schedule: '* 5 * * * *',
+            pageGenerators: [
+              {
+                _exportId: 'exp3',
+              },
+            ],
+            pageProcessors: [
+              {
+                _importId: 'imp1',
+                type: 'import',
+              },
+            ],
+          },
+        ],
+      });
     });
   });
 
@@ -1999,8 +2102,8 @@ describe('resource region selector testcases', () => {
 
   describe('resourceData', () => {
     test('should return {} on bad state or args.', () => {
-      expect(selectors.resourceData()).toEqual({});
-      expect(selectors.resourceData({ data: {} })).toEqual({});
+      expect(selectors.resourceData()).toEqual({sandbox: false});
+      expect(selectors.resourceData({ data: {} })).toEqual({sandbox: false});
     });
 
     test('should return correct data when no staged data exists.', () => {
@@ -2027,7 +2130,7 @@ describe('resource region selector testcases', () => {
       expect(
         selectors.resourceData(state, 'exports', 'new-resource-id')
       ).toEqual({
-        merged: {},
+        merged: {sandbox: false},
         staged: undefined,
         master: undefined,
       });
@@ -2074,7 +2177,7 @@ describe('resource region selector testcases', () => {
 
   describe('selectors.resourceDataModified test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.resourceDataModified()).toEqual({});
+      expect(selectors.resourceDataModified()).toEqual({sandbox: false});
     });
   });
 
@@ -2082,8 +2185,8 @@ describe('resource region selector testcases', () => {
     const resourceData = selectors.makeResourceDataSelector();
 
     test('should return {} on bad state or args.', () => {
-      expect(resourceData()).toEqual({});
-      expect(resourceData({ data: {} })).toEqual({});
+      expect(resourceData()).toEqual({sandbox: false});
+      expect(resourceData({ data: {} })).toEqual({sandbox: false});
     });
 
     test('should return correct data when no staged data exists.', () => {
@@ -2108,7 +2211,9 @@ describe('resource region selector testcases', () => {
       );
 
       expect(resourceData(state, 'exports', 'new-resource-id')).toEqual({
-        merged: {},
+        merged: {
+          sandbox: false,
+        },
         staged: undefined,
         master: undefined,
       });

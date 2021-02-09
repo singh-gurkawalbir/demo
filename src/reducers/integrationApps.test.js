@@ -1164,6 +1164,70 @@ describe('integrationApps selector testcases', () => {
   describe('selectors.getFlowsAssociatedExportFromIAMetadata test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.getFlowsAssociatedExportFromIAMetadata({}, {})).toBe(null);
+      expect(selectors.getFlowsAssociatedExportFromIAMetadata({})).toBe(null);
+      expect(selectors.getFlowsAssociatedExportFromIAMetadata(null, {})).toBe(null);
+    });
+    test('should return correct Export details from IA metadata', () => {
+      const state = {
+        data: {
+          resources: {
+            exports: [{
+              _id: 'exp1',
+              name: 'Export',
+            },
+            {
+              _id: 'exp2',
+              name: 'Export2',
+            }],
+          },
+        },
+      };
+      const metadata1 = {
+        properties: {
+          _exportId: 'exp1',
+        },
+      };
+      const metadata2 = {
+        properties: {
+          _exportId: 'exp1',
+        },
+        resource: {
+          _exportId: 'exp2',
+        },
+      };
+      const metadata3 = {
+        properties: {
+          _exportId: 'exp2',
+        },
+        resource: {
+          _exportId: 'exp1',
+        },
+      };
+      const metadata4 = {
+        resource: {
+          pageGenerators: [{
+            _exportId: 'exp2',
+          }],
+        },
+
+      };
+
+      expect(selectors.getFlowsAssociatedExportFromIAMetadata(state, metadata1)).toEqual({
+        _id: 'exp1',
+        name: 'Export',
+      });
+      expect(selectors.getFlowsAssociatedExportFromIAMetadata(state, metadata2)).toEqual({
+        _id: 'exp1',
+        name: 'Export',
+      });
+      expect(selectors.getFlowsAssociatedExportFromIAMetadata(state, metadata3)).toEqual({
+        _id: 'exp2',
+        name: 'Export2',
+      });
+      expect(selectors.getFlowsAssociatedExportFromIAMetadata(state, metadata4)).toEqual({
+        _id: 'exp2',
+        name: 'Export2',
+      });
     });
   });
 
@@ -1194,10 +1258,68 @@ describe('integrationApps selector testcases', () => {
   });
 
   describe('selectors.mkIntegrationAppStore test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          integrations: [{
+            _id: 'integration1',
+            name: 'Integration 1',
+            _connectorId: 'connector',
+            settings: {
+              supportsMultiStore: true,
+              sections: [{
+                id: 'child1',
+                mode: 'settings',
+                title: 'Child 1',
+                sections: [{
+                  flows: [{}],
+                  fields: [{}],
+                }],
+              },
+              {
+                id: 'child2',
+                mode: 'uninstall',
+                title: 'Child 2',
+                sections: [{
+                  flows: [{}],
+                  fields: [{}],
+                }],
+              }],
+            },
+          }, {
+            _id: 'integration2',
+            name: 'Integration 2',
+            _connectorId: 'connector2',
+            settings: {
+              sections: [{
+                flows: [{}],
+                fields: [{}],
+              }],
+            },
+          }],
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       const selector = selectors.mkIntegrationAppStore();
 
       expect(selector()).toEqual({});
+      expect(selector(null)).toEqual({});
+      expect(selector({})).toEqual({});
+      expect(selector({}, null)).toEqual({});
+    });
+
+    test('should return correct value for integration App with multistore and single store', () => {
+      const selector = selectors.mkIntegrationAppStore();
+
+      expect(selector(state, 'integration1', 'child1')).toEqual({
+        hidden: false,
+        label: 'Child 1',
+        mode: 'settings',
+        value: 'child1',
+      });
+      expect(selector(state, 'integration2', 'child1')).toEqual({});
     });
   });
 
