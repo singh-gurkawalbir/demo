@@ -1,15 +1,9 @@
-import { isProduction } from '../../../../formFactory/utils';
+import { getDomain } from '../../../../formFactory/utils';
 
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
-    let pingURI = '';
-
-    if (isProduction()) {
-      pingURI = '/users?source=integrator.io';
-    } else {
-      pingURI = '/users?source=staging.integrator.io';
-    }
+    const pingURI = `/users?source=${getDomain()}`;
 
     return {
       ...retValues,

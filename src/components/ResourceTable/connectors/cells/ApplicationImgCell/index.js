@@ -31,20 +31,24 @@ export default function ApplicationImgCell({ applications }) {
 
   // we are rendering max of 4 logos as of now
   const apps = applications.slice(0, 4).map(application => {
-    const { value, type, icon} = connectors.find(connector => connector.value === application);
+    const { value, type, icon} = connectors.find(connector => connector.value === application) || {};
 
-    return (
-      <div key={value}>
-        <span className={classes.optionImg}>
-          <ApplicationImg
-            markOnly
-            type={type === 'webhook' ? value : type}
-            assistant={icon}
-            className={classes.img}
+    if (value) {
+      return (
+        <div key={value}>
+          <span className={classes.optionImg}>
+            <ApplicationImg
+              markOnly
+              type={type === 'webhook' ? value : type}
+              assistant={icon}
+              className={classes.img}
           />
-        </span>
-      </div>
-    );
+          </span>
+        </div>
+      );
+    }
+
+    return null;
   });
 
   return (
