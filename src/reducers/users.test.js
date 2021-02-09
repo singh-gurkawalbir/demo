@@ -22,14 +22,41 @@ describe('users region selector testcases', () => {
   });
 
   describe('selectors.currentEnvironment test cases', () => {
+    const state = {
+      user: {
+        preferences: {
+          dateFormat: 'DD/MM/YYYY',
+          environment: 'production',
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.currentEnvironment()).toBe();
+      expect(selectors.currentEnvironment({})).toBe();
+      expect(selectors.currentEnvironment(null)).toBe();
+    });
+    test('should return correct environment value', () => {
+      expect(selectors.currentEnvironment(state)).toEqual('production');
     });
   });
 
   describe('selectors.userOwnPreferences test cases', () => {
+    const state = {
+      user: {
+        preferences: {
+          dateFormat: 'DD/MM/YYYY',
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.userOwnPreferences()).toEqual({});
+      expect(selectors.userOwnPreferences(null)).toEqual({});
+      expect(selectors.userOwnPreferences({})).toEqual({});
+    });
+    test('should return correct preferences object', () => {
+      expect(selectors.userOwnPreferences(state)).toEqual({dateFormat: 'DD/MM/YYYY'});
     });
   });
 
