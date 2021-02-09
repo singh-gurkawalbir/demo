@@ -52,8 +52,41 @@ describe('users region selector testcases', () => {
   });
 
   describe('selectors.testConnectionCommState test cases', () => {
+    const state = {
+      comms: {
+        ping: {
+          resource1: {
+            status: 'error',
+            message: 'message1',
+          },
+          resource2: {
+            status: 'error2',
+            message: 'message2',
+          },
+          resource3: {
+            status: 'success',
+            message: 'message3',
+          },
+          resource4: {
+            status: 'fail',
+          },
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.testConnectionCommState()).toEqual({commState: null, message: null});
+      expect(selectors.testConnectionCommState(null)).toEqual({commState: null, message: null});
+      expect(selectors.testConnectionCommState({})).toEqual({commState: null, message: null});
+      expect(selectors.testConnectionCommState({}, null)).toEqual({commState: null, message: null});
+      expect(selectors.testConnectionCommState(null, null)).toEqual({commState: null, message: null});
+    });
+
+    test('should return correct values for valid resourceIds', () => {
+      expect(selectors.testConnectionCommState(state, 'resource1')).toEqual({commState: 'error', message: 'message1'});
+      expect(selectors.testConnectionCommState(state, 'resource2')).toEqual({commState: 'error2', message: 'message2'});
+      expect(selectors.testConnectionCommState(state, 'resource3')).toEqual({commState: 'success', message: 'message3'});
+      expect(selectors.testConnectionCommState(state, 'resource4')).toEqual({commState: 'fail', message: null});
     });
   });
 
