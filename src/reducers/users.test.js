@@ -16,8 +16,37 @@ describe('users region selector testcases', () => {
   });
 
   describe('selectors.developerMode test cases', () => {
+    const state = {
+      user: {
+        profile: {
+          developer: true,
+        },
+        preferences: {
+          dateFormat: 'DD/MM/YYYY',
+          environment: 'production',
+        },
+      },
+    };
+    const state2 = {
+      user: {
+        profile: {
+          developer: false,
+        },
+        preferences: {
+          dateFormat: 'DD/MM/YYYY',
+          environment: 'production',
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.developerMode()).toBe();
+      expect(selectors.developerMode({})).toBe();
+      expect(selectors.developerMode(null)).toBe(null);
+    });
+    test('should return correct value for developer mode', () => {
+      expect(selectors.developerMode(state)).toBe(true);
+      expect(selectors.developerMode(state2)).toBe(false);
     });
   });
 
