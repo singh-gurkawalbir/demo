@@ -23,10 +23,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const defaultFilter = {
-  take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
-};
-
 export default function DynaChildLicense({ connectorId, resourceId}) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -36,14 +32,11 @@ export default function DynaChildLicense({ connectorId, resourceId}) {
 
   const parentLicense = useSelectorMemo(selectors.makeResourceSelector, 'connectorLicenses', resourceId);
 
-  const filter =
-  useSelector(state => selectors.filter(state, sortFilterKey)) ||
-  defaultFilter;
+  const filter = useSelector(state => selectors.filter(state, sortFilterKey));
   const connectorLicensesFilterConfig = useMemo(
     () => ({
       ignoreEnvironmentFilter: true,
       type: 'connectorLicenses',
-      ...defaultFilter,
       ...filter,
     }),
     [filter]
