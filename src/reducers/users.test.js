@@ -34,8 +34,36 @@ describe('users region selector testcases', () => {
   });
 
   describe('selectors.userProfilePreferencesProps test cases', () => {
+    const state = {
+      user: {
+        profile: {
+          _id: 'id1',
+          name: 'name',
+          email: 'email@celigo.com',
+          company: 'xyz',
+        },
+        preferences: {
+          environment: 'sandbox',
+          dateFormat: 'DD/MM/YYYY',
+          timeFormat: 'HH:mm',
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.userProfilePreferencesProps()).toEqual({});
+      expect(selectors.userProfilePreferencesProps(null)).toEqual({});
+      expect(selectors.userProfilePreferencesProps({})).toEqual({});
+    });
+    test('should return correct value for any user', () => {
+      expect(selectors.userProfilePreferencesProps(state)).toEqual({
+        _id: 'id1',
+        name: 'name',
+        email: 'email@celigo.com',
+        company: 'xyz',
+        dateFormat: 'DD/MM/YYYY',
+        timeFormat: 'HH:mm',
+      });
     });
   });
 
