@@ -46,8 +46,23 @@ describe('users region selector testcases', () => {
   });
 
   describe('selectors.userProfileLinkedWithGoogle test cases', () => {
+    const state = {
+      user: {
+        profile: {
+          auth_type_google: {
+            id: 'google_id',
+          },
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.userProfileLinkedWithGoogle()).toEqual(false);
+      expect(selectors.userProfileLinkedWithGoogle(null)).toEqual(false);
+      expect(selectors.userProfileLinkedWithGoogle({})).toEqual(false);
+    });
+    test('should return true when user profile has google link id', () => {
+      expect(selectors.userProfileLinkedWithGoogle(state)).toEqual(true);
     });
   });
 
