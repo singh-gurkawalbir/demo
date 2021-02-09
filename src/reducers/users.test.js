@@ -10,8 +10,26 @@ describe('users region selector testcases', () => {
   });
 
   describe('selectors.userProfile test cases', () => {
+    const state = {
+      user: {
+        profile: {
+          developer: true,
+        },
+        preferences: {
+          dateFormat: 'DD/MM/YYYY',
+          environment: 'production',
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.userProfile()).toBe();
+      expect(selectors.userProfile(null)).toBe();
+      expect(selectors.userProfile({})).toBe();
+    });
+
+    test('should return correcct profile object', () => {
+      expect(selectors.userProfile(state)).toBe(state.user.profile);
     });
   });
 
