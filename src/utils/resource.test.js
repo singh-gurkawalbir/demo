@@ -353,7 +353,41 @@ describe('resource util tests', () => {
       windowSpy.mockRestore();
     });
 
-    test('should return correct urls for staging integrator', () => {
+    test('should return correct urls for localhost (process.env.API_ENDPOINT not set)', () => {
+      process.env.API_ENDPOINT = '';
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'localhost.io',
+            host: 'localhost.io:4000',
+          },
+        },
+      }));
+
+      expect(getDomain()).toEqual('localhost.io');
+      expect(getDomainUrl()).toEqual('http://localhost.io:4000');
+      expect(getApiUrl()).toEqual('http://api.localhost.io:4000');
+    });
+
+    test('should return correct urls for localhost (process.env.API_ENDPOINT set)', () => {
+      process.env.API_ENDPOINT = 'https://something';
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'localhost.io',
+            host: 'localhost.io:4000',
+          },
+        },
+      }));
+
+      expect(getDomain()).toEqual('localhost.io');
+      expect(getDomainUrl()).toEqual('http://localhost.io:4000');
+      expect(getApiUrl()).toEqual('https://api.something');
+      process.env.API_ENDPOINT = '';
+    });
+
+    test('should return correct urls for staging integrator (process.env.API_ENDPOINT not set)', () => {
+      process.env.API_ENDPOINT = '';
       windowSpy.mockImplementation(() => ({
         document: {
           location: {
@@ -365,6 +399,22 @@ describe('resource util tests', () => {
       expect(getDomain()).toEqual('staging.integrator.io');
       expect(getDomainUrl()).toEqual('https://staging.integrator.io');
       expect(getApiUrl()).toEqual('https://api.staging.integrator.io');
+    });
+
+    test('should return correct urls for staging integrator (process.env.API_ENDPOINT set)', () => {
+      process.env.API_ENDPOINT = 'https://something';
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'www.staging.integrator.io',
+          },
+        },
+      }));
+
+      expect(getDomain()).toEqual('staging.integrator.io');
+      expect(getDomainUrl()).toEqual('https://staging.integrator.io');
+      expect(getApiUrl()).toEqual('https://api.staging.integrator.io');
+      process.env.API_ENDPOINT = '';
     });
 
     test('should return correct urls for integrator', () => {

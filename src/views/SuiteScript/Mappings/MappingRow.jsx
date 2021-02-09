@@ -209,6 +209,7 @@ export default function MappingRow(props) {
             [classes.disableChildRow]: disabled,
           })}>
           <DynaTypeableSelect
+            key={extractValue}
             id={`fieldMappingExtract-${index}`}
             labelName="name"
             valueName="id"
@@ -225,6 +226,7 @@ export default function MappingRow(props) {
             [classes.disableChildRow]: disabled,
           })}>
           <DynaTypeableSelect
+            key={generate}
             id={`fieldMappingGenerate-${index}`}
             value={generate}
             labelName="name"

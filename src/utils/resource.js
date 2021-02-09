@@ -174,7 +174,19 @@ export const getDomainUrl = () => {
   return `https://${domain}`;
 };
 
-export const getApiUrl = () => getDomainUrl().replace('://', '://api.');
+export const getApiUrl = () => {
+  if (getDomain() === 'localhost.io' && process?.env?.API_ENDPOINT) {
+    return process.env.API_ENDPOINT.replace('://', '://api.');
+  }
+
+  return getDomainUrl().replace('://', '://api.');
+};
+
+export const getAS2Url = () => {
+  const apiUrl = getApiUrl();
+
+  return `${apiUrl.substr(apiUrl.indexOf('://'))}/v1/as2`;
+};
 
 export const getWebhookUrl = (options = {}, resourceId) => {
   let whURL = '';
