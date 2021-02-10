@@ -3203,8 +3203,55 @@ describe('integrationApps selector testcases', () => {
   });
 
   describe('selectors.isIntegrationAppVersion2 test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          integrations: [{
+            _id: 'integration1',
+            name: 'Integration',
+            install: [{
+              isClone: true,
+            }],
+          }, {
+            _id: 'integration2',
+            name: 'Integration',
+            installSteps: [{}],
+            uninstallSteps: [{}],
+          }, {
+            _id: 'integration3',
+            name: 'Integration',
+            installSteps: [{}],
+          }, {
+            _id: 'integration4',
+            name: 'Integration',
+            uninstallSteps: [{}],
+          }],
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.isIntegrationAppVersion2()).toEqual(false);
+      expect(selectors.isIntegrationAppVersion2(null)).toEqual(false);
+      expect(selectors.isIntegrationAppVersion2({})).toEqual(false);
+      expect(selectors.isIntegrationAppVersion2({}, null)).toEqual(false);
+    });
+    test('should return false when integration not found', () => {
+      expect(selectors.isIntegrationAppVersion2(state, 'invalid')).toEqual(false);
+      expect(selectors.isIntegrationAppVersion2(state, 'invalid', true)).toEqual(false);
+      expect(selectors.isIntegrationAppVersion2(state, 'invalid', false)).toEqual(false);
+    });
+    test('should return true when integration found and is cloned when skipClone is false', () => {
+      expect(selectors.isIntegrationAppVersion2(state, 'integration1')).toEqual(true);
+      expect(selectors.isIntegrationAppVersion2(state, 'integration1', false)).toEqual(true);
+    });
+    test('should return false when integration found and is cloned when skipClone is true', () => {
+      expect(selectors.isIntegrationAppVersion2(state, 'integration1', true)).toEqual(false);
+    });
+    test('should return true when integration found and is a IA2.0 integration', () => {
+      expect(selectors.isIntegrationAppVersion2(state, 'integration2', true)).toEqual(true);
+      expect(selectors.isIntegrationAppVersion2(state, 'integration3', true)).toEqual(true);
+      expect(selectors.isIntegrationAppVersion2(state, 'integration4', true)).toEqual(true);
     });
   });
 
