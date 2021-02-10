@@ -767,6 +767,45 @@ describe('editor sagas', () => {
         .returns({ data: { record: { name: 'Bob' } }, templateVersion: 2 })
         .run();
     });
+    test('should make /getContext api call call with flow and integration id', () => {
+      const editor = {
+        id: 'eFilter',
+        editorType: 'exportFilter',
+        flowId,
+        resourceType: 'exports',
+        resourceId,
+        stage: 'exportFilter',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'eFilter' })
+        .provide([
+          [select(selectors._editor, 'eFilter'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.select.selector(selectors.getSampleDataContext), {data: {id: 999}}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {id: 999}}, templateVersion: 2}],
+          [select(selectors.resource, 'flows', flowId), {_integrationId: 'Integration-1234'}],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/handleBar/getContext',
+          opts: {
+            method: 'POST',
+            body: {
+              sampleData: {id: 999},
+              templateVersion: undefined,
+              flowId,
+              integrationId: 'Integration-1234',
+              export: {},
+              fieldPath: 'filter',
+            },
+          },
+          message: 'Loading',
+          hidden: false,
+        })
+        .not.put(actions._editor.sampleDataFailed('eFilter', '{"message":"invalid processor", "code":"code"}'))
+        .returns({ data: { record: {id: 999}}, templateVersion: 2 })
+        .run();
+    });
     test('should not call sampleDataWrapper selector for csv generator and filters stage and return data as is', () => {
       const editor = {
         id: 'filecsv',
