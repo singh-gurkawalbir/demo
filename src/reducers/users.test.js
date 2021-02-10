@@ -4,8 +4,26 @@ import { ACCOUNT_IDS } from '../utils/constants';
 
 describe('users region selector testcases', () => {
   describe('selectors.userState test cases', () => {
+    const state = {
+      user: {
+        profile: {
+          developer: true,
+        },
+        preferences: {
+          dateFormat: 'DD/MM/YYYY',
+          environment: 'production',
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.userState()).toBe();
+      expect(selectors.userState(null)).toBe(null);
+      expect(selectors.userState({})).toBe();
+    });
+
+    test('should return correct user object', () => {
+      expect(selectors.userState(state)).toBe(state.user);
     });
   });
 
