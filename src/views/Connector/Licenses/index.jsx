@@ -79,6 +79,11 @@ export default function Licenses(props) {
       dispatch(actions.resource.clearCollection('connectorLicenses'));
   }, [connectorId, dispatch]);
 
+  useEffect(() => {
+    dispatch(actions.patchFilter(sortFilterKey, { sort: { order: 'desc', orderBy: 'expires' } }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleClick = useCallback(() => {
     const newId = generateNewId();
     const patchSet = [

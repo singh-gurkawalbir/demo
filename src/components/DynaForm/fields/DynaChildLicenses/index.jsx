@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
@@ -48,6 +48,11 @@ export default function DynaChildLicense({ connectorId, resourceId}) {
   const childLicenses = useMemo(() => (
     list.resources.filter(license => license._parentId === parentLicense._id)
   ), [list, parentLicense]);
+
+  useEffect(() => {
+    dispatch(actions.patchFilter(sortFilterKey, { sort: { order: 'asc', orderBy: 'status' }}));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleClick = useCallback(() => {
     const newId = generateNewId();

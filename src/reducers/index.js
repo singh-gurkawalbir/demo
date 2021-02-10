@@ -4857,6 +4857,8 @@ selectors.getCustomResourceLabel = (
   } else if (isDataloader && resourceType === 'pageProcessor') {
     // Incase of data loader PP 1st step , we cannot add lookups so , resourceLabel is of imports type
     resourceLabel = MODEL_PLURAL_TO_LABEL.imports;
+  } else if (resourceType === 'connectorLicenses' && resource.type === 'integrationAppChild') {
+    resourceLabel = 'Child License';
   } else {
     resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
   }

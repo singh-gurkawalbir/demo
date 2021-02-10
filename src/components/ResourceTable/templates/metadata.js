@@ -61,6 +61,7 @@ export default {
 
         );
       },
+      orderBy: 'published',
     },
   ],
   rowActions: [Edit, UploadZipFile, Download, Delete],

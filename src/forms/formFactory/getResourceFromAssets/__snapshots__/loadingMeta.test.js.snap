@@ -12534,15 +12534,17 @@ Object {
     "layout": Object {
       "containers": Array [
         Object {
+          "collapsed": true,
           "fields": Array [
             "email",
             "expires",
             "sandbox",
             "opts",
           ],
+          "label": "General",
         },
       ],
-      "type": "box",
+      "type": "collapse",
     },
   },
   "init": undefined,
@@ -13121,9 +13123,9 @@ Object {
           "fields": Array [
             "name",
             "description",
-            "websiteURL",
-            "contactEmail",
             "applications",
+            "contactEmail",
+            "websiteURL",
           ],
         },
       ],
