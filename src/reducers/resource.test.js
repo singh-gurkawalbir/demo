@@ -331,8 +331,14 @@ describe('resource region selector testcases', () => {
 
           }, {
             _id: 'flowId3',
-            name: 'flow 2',
-            _integrationId: 'integrationId2',
+            name: 'flow 3',
+            _integrationId: 'integration2',
+            _connectorId: 'connector2',
+
+          }, {
+            _id: 'flowId4',
+            name: 'flow 4',
+            _integrationId: 'integration2',
             _connectorId: 'connector2',
 
           }],
@@ -370,6 +376,11 @@ describe('resource region selector testcases', () => {
                       _id: 'flowId3',
                       settings: {},
                     },
+                    {
+                      _id: 'flowId4',
+                      settings: {},
+                      showUtilityMapping: true,
+                    },
                   ],
                 },
               ],
@@ -388,7 +399,9 @@ describe('resource region selector testcases', () => {
     });
 
     test('should return correct value for single store connector', () => {
-      expect(selectors.flowUsesUtilityMapping(state, 'integration1')).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping(state, 'invalidFlowId')).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId3')).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId4')).toEqual(true);
     });
 
     test('should return correct value for mullti store connector', () => {
