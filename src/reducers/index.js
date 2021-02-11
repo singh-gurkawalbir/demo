@@ -562,7 +562,7 @@ selectors.mkTileApplications = () => createSelector(
     }
 
     // Make NetSuite always the last application
-    applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]);
+    if (applications.length) { applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]); }
     // Only consider up to four applications
     if (applications.length > 4) {
       applications.length = 4;
@@ -787,15 +787,11 @@ selectors.mkFlowAllowsScheduling = () => {
 selectors.flowUsesUtilityMapping = (state, id, childId) => {
   const flow = selectors.resource(state, 'flows', id);
 
-  if (!flow) return false;
+  if (!flow || !flow._connectorId) return false;
   const integration = selectors.resource(state, 'integrations', flow._integrationId);
-  const isApp = flow._connectorId;
-
-  if (!isApp) return false;
-
   const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
-  return !!flowSettings.showUtilityMapping;
+  return !!flowSettings?.showUtilityMapping;
 };
 
 selectors.flowSupportsMapping = (state, id, childId) => {
@@ -813,7 +809,7 @@ selectors.flowSupportsMapping = (state, id, childId) => {
 
   const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
-  return !!flowSettings.showMapping;
+  return !!flowSettings?.showMapping;
 };
 
 selectors.flowSupportsSettings = (state, id, childId) => {
@@ -830,7 +826,7 @@ selectors.flowSupportsSettings = (state, id, childId) => {
 *********************************************************************** */
 
 selectors.flowListWithMetadata = (state, options) => {
-  const flows = selectors.resourceList(state, options).resources || emptyArray;
+  const flows = selectors.resourceList(state, options || emptyObject).resources || emptyArray;
   const exports = selectors.resourceList(state, {
     type: 'exports',
   }).resources;
@@ -1575,7 +1571,7 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
 selectors.integrationAppSettings = selectors.mkIntegrationAppSettings();
 
 selectors.getFlowsAssociatedExportFromIAMetadata = (state, fieldMeta) => {
-  const { resource: flowResource, properties } = fieldMeta;
+  const { resource: flowResource, properties } = fieldMeta || {};
   let resourceId;
 
   if (properties && properties._exportId) {
