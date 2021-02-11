@@ -3,12 +3,13 @@ import Retry from '../actions/Retry';
 import Resolve from '../actions/Resolve';
 import ViewErrorDetails from '../actions/ViewErrorDetails';
 import EditRetryData from '../actions/EditRetry';
+import DownloadRetryData from '../actions/DownloadRetry';
 import SelectError from '../cells/SelectError';
 import SelectAllErrors from '../cells/SelectAllErrors';
 import SelectSource from '../cells/SelectSource';
 import SelectDate from '../cells/SelectDate';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
-import TextOverflowCell from '../cells/TextOverflowCell';
+import TextOverflowCell from '../../../TextOverflowCell';
 import ErrorMessage from '../cells/ErrorMessage';
 
 export default {
@@ -56,13 +57,16 @@ export default {
       value: r => <CeligoTimeAgo date={r.occurredAt} />,
     },
   ],
-  rowActions: ({ retryDataKey }, { actionInProgress }) => {
+  rowActions: ({retryDataKey, source}, { actionInProgress }) => {
     if (actionInProgress) return [];
     const actions = [
       ...(retryDataKey ? [EditRetryData] : []),
       Resolve,
       ...(retryDataKey ? [Retry] : []),
       ViewErrorDetails,
+      // IO-19304, for errors occuring at FTP bridge, retry data returned will be metadata and not actual retry data,
+      // hence show download option
+      ...(retryDataKey && source === 'ftp_bridge' ? [DownloadRetryData] : []),
     ];
 
     return actions;

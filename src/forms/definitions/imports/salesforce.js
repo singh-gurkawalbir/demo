@@ -57,6 +57,9 @@ export default {
 
     if (newValues['/inputMode'] !== 'blob') {
       delete newValues['/blobKeyPath'];
+      delete newValues['/blob'];
+    } else {
+      newValues['/blob'] = true;
     }
 
     delete newValues['/inputMode'];
@@ -71,7 +74,7 @@ export default {
       id: 'apiType',
       type: 'labeltitle',
       label: r => {
-        if (r?.resourceType === 'transferFiles' || r?.blobKeyPath) {
+        if (r?.resourceType === 'transferFiles' || r?.blob) {
           return 'Where would you like to transfer the files?';
         }
 
@@ -98,7 +101,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (r.resourceType === 'transferFiles' || r.blobKeyPath) return 'blob';
+        if (r.resourceType === 'transferFiles' || r.blob) return 'blob';
 
         return 'records';
       },

@@ -515,7 +515,7 @@ export default {
       },
     ],
     defaultValue: r => {
-      if (r && r.salesforce && r.salesforce.api !== 'compositerecord') {
+      if (r && r.salesforce && r.salesforce.api !== 'compositerecord' && !r.blob) {
         return r.salesforce.operation;
       }
 

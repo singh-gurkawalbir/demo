@@ -4,13 +4,13 @@ import { useHistory } from 'react-router-dom';
 import { Button, IconButton, makeStyles, Tooltip, Typography } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import Editor from '../../components/AFE2/Editor';
-import EditorPreviewButton from '../../components/AFE2/Drawer/actions/PreviewButtonGroup';
 import FullScreenOpenIcon from '../../components/icons/FullScreenOpenIcon';
 import ExampleMenu from './ExampleMenu';
 import ExplorerMenu from './ExplorerMenu';
 import EditorDrawer from '../../components/AFE2/Drawer';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ExportExampleButton from './ExportExampleButton';
+import ActionsRibbon from '../../components/AFE2/Drawer/ActionsRibbon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -37,11 +37,10 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
     flexGrow: 1,
   },
-  buttons: {
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
   menuSection: {
+    marginBottom: theme.spacing(2),
+  },
+  playgroundRibbon: {
     marginBottom: theme.spacing(2),
   },
 }));
@@ -67,7 +66,7 @@ export default function Editors() {
       <CeligoPageBar title="Developer playground">
         <ExportExampleButton editorId={editorId} />
         {editorId && (
-          <Tooltip title="Fullscreen mode" placement="right">
+          <Tooltip data-public title="Fullscreen mode" placement="right">
             <IconButton onClick={handleFullScreen} size="small">
               <FullScreenOpenIcon />
             </IconButton>
@@ -82,23 +81,24 @@ export default function Editors() {
             <ExampleMenu onEditorChange={handleEditorChange} />
           </div>
           <div className={classes.menuSection}>
-            <Typography variant="h4">Flow Explorer</Typography>
+            <Typography variant="h4">Integration Explorer</Typography>
             <ExplorerMenu onEditorChange={handleEditorChange} />
           </div>
         </div>
         <main className={classes.content}>
           {editorId ? (
             <>
+              <ActionsRibbon editorId={editorId} className={classes.playgroundRibbon} />
+
               <Editor editorId={editorId} />
-              <div className={classes.buttons}>
+              <div>
                 <Button onClick={handleCancelEditorClick}>Cancel</Button>
-                <EditorPreviewButton editorId={editorId} />
               </div>
             </>
           ) : (
             <Typography variant="h4">
               <p>Get started by selecting an editor example on the left.</p>
-              <p>Alternatively, use the Flow Explorer to drill into your flows to find and manage your resources.</p>
+              <p>Alternatively, use the Integration Explorer to drill into your flows to find and manage your resources.</p>
             </Typography>
           )}
 

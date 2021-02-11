@@ -1,4 +1,25 @@
 export default {
+  preSave: formValues => {
+    if (formValues['/framework'] === 'twoDotZero') {
+      const twoDotZero = {
+        _integrationId: formValues['/_integrationId'],
+      };
+
+      if (formValues['/editions'] && formValues['/editions'].split) {
+        twoDotZero.editions = formValues['/editions'].split(',');
+      }
+      const newValues = {
+        ...formValues,
+        '/twoDotZero': twoDotZero,
+      };
+
+      delete newValues['/editions'];
+
+      return newValues;
+    }
+
+    return formValues;
+  },
   fieldMap: {
     name: { fieldId: 'name' },
     description: { fieldId: 'description' },

@@ -237,6 +237,11 @@ export default function getRequestOptions(
         path: `/retries/${resourceId}/data`,
         opts: { method: 'PUT' },
       };
+    case actionTypes.JOB.ERROR.DOWNLOAD_RETRY_DATA:
+      return {
+        path: `/retries/${resourceId}/signedURL`,
+        opts: { method: 'GET' },
+      };
     case actionTypes.FLOW.RUN:
       return {
         path: `/flows/${resourceId}/run`,

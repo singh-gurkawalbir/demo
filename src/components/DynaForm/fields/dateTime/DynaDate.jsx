@@ -87,7 +87,7 @@ export default function DynaDate(props) {
         dateFormat,
         null,
         timezone,
-        true
+        {dateOnly: true}
       );
     }
     onFieldChange(id, formattedDate || '', !componentMounted);

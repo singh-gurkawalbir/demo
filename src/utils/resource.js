@@ -174,7 +174,19 @@ export const getDomainUrl = () => {
   return `https://${domain}`;
 };
 
-export const getApiUrl = () => getDomainUrl().replace('://', '://api.');
+export const getApiUrl = () => {
+  if (getDomain() === 'localhost.io' && process?.env?.API_ENDPOINT) {
+    return process.env.API_ENDPOINT.replace('://', '://api.');
+  }
+
+  return getDomainUrl().replace('://', '://api.');
+};
+
+export const getAS2Url = () => {
+  const apiUrl = getApiUrl();
+
+  return `${apiUrl.substr(apiUrl.indexOf('://'))}/v1/as2`;
+};
 
 export const getWebhookUrl = (options = {}, resourceId) => {
   let whURL = '';
@@ -352,7 +364,7 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
     (['RESTImport', 'HTTPImport', 'NetSuiteImport', 'SalesforceImport'].indexOf(
       resource.adaptorType
     ) >= 0 &&
-      resource.blobKeyPath) ||
+      resource.blob) ||
     ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
   ) {
     blockType = 'importTransfer';
@@ -361,9 +373,9 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
   return blockType;
 }
 
-// All resources with type 'blob' is a Blob export and with 'blobKeyPath' is a blob import
+// All resources with type 'blob' is a Blob export and with blob as true are blob imports
 export const isBlobTypeResource = (resource = {}) =>
-  resource && (resource.type === 'blob' || !!resource.blobKeyPath);
+  resource?.type === 'blob' || resource?.blob;
 
 export const isAS2Resource = resource => {
   const { adaptorType } = resource || {};

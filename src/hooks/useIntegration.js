@@ -23,12 +23,21 @@ const useIntegration = (resourceType, resourceId) => {
   const url = history.location.pathname;
   const urlExtractFields = url.split('/');
   // TODO: find a better way, prone to errors
-  const index = urlExtractFields.findIndex(
+  let index = urlExtractFields.findIndex(
     element => element === 'integrations'
   );
 
   if (index === -1) {
-    return undefined;
+    // for template integrations the url will be ....templates/:templateName/:integrationId/......
+    index = urlExtractFields.findIndex(
+      element => element === 'templates'
+    );
+    if (index !== -1) {
+      // increase index by 1 to skip templateName
+      index += 1;
+    } else {
+      return undefined;
+    }
   }
 
   return urlExtractFields[index + 1];

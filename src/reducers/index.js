@@ -562,7 +562,7 @@ selectors.mkTileApplications = () => createSelector(
     }
 
     // Make NetSuite always the last application
-    applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]);
+    if (applications.length) { applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]); }
     // Only consider up to four applications
     if (applications.length > 4) {
       applications.length = 4;
@@ -787,15 +787,11 @@ selectors.mkFlowAllowsScheduling = () => {
 selectors.flowUsesUtilityMapping = (state, id, childId) => {
   const flow = selectors.resource(state, 'flows', id);
 
-  if (!flow) return false;
+  if (!flow || !flow._connectorId) return false;
   const integration = selectors.resource(state, 'integrations', flow._integrationId);
-  const isApp = flow._connectorId;
-
-  if (!isApp) return false;
-
   const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
-  return !!flowSettings.showUtilityMapping;
+  return !!flowSettings?.showUtilityMapping;
 };
 
 selectors.flowSupportsMapping = (state, id, childId) => {
@@ -813,7 +809,7 @@ selectors.flowSupportsMapping = (state, id, childId) => {
 
   const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
-  return !!flowSettings.showMapping;
+  return !!flowSettings?.showMapping;
 };
 
 selectors.flowSupportsSettings = (state, id, childId) => {
@@ -830,7 +826,7 @@ selectors.flowSupportsSettings = (state, id, childId) => {
 *********************************************************************** */
 
 selectors.flowListWithMetadata = (state, options) => {
-  const flows = selectors.resourceList(state, options).resources || emptyArray;
+  const flows = selectors.resourceList(state, options || emptyObject).resources || emptyArray;
   const exports = selectors.resourceList(state, {
     type: 'exports',
   }).resources;
@@ -1575,7 +1571,7 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
 selectors.integrationAppSettings = selectors.mkIntegrationAppSettings();
 
 selectors.getFlowsAssociatedExportFromIAMetadata = (state, fieldMeta) => {
-  const { resource: flowResource, properties } = fieldMeta;
+  const { resource: flowResource, properties } = fieldMeta || {};
   let resourceId;
 
   if (properties && properties._exportId) {
@@ -1817,7 +1813,7 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
           }
         } else {
           sections.forEach(sec => {
-            if (sec.mode === 'settings') {
+            if (sec.mode === 'settings' || !sec.mode) {
               if (sectionId) {
                 const selectedSection = sec.sections.find(s => getTitleIdFromSection(s) === sectionId);
 
@@ -2028,7 +2024,9 @@ selectors.makeIntegrationAppSectionFlows = () =>
             // If flow is present in two stores, then it is a commom flow and does not belong to any single store, so remove store information from flow
             delete flow.childId;
             delete flow.childName;
-          } else {
+          } else if (flows.find(fi => fi._id === f._id)) {
+            // Add only valid flows, the flow must be present in flows collection. This is possible when store is in uninstall mode.
+            // Flow may be deleted but store structure is intact on integration json.
             requiredFlows.push({id: f._id, childId: sec.childId, childName: sec.childName});
           }
         });
@@ -2642,7 +2640,9 @@ selectors.resourcePermissions = (
 
   const permissions = selectors.userPermissions(state);
 
-  if (!permissions) return emptyObject;
+  // TODO: userPermissions should be written to handle when there isnt a state and in those circumstances
+  // should return null rathern than an empty object for all cases
+  if (!permissions || isEmpty(permissions)) return emptyObject;
 
   // special case, where resourceType == integrations. Its childResource,
   // ie. connections, flows can be retrieved by passing childResourceType
@@ -4890,7 +4890,7 @@ selectors.getCustomResourceLabel = (
         'NetSuiteImport',
         'SalesforceImport',
       ].indexOf(resource.adaptorType) >= 0 &&
-        resource.blobKeyPath) ||
+        resource.blob) ||
       ['FTPImport', 'S3Import'].includes(resource.adaptorType)
     ) {
       resourceLabel = 'Transfer';
@@ -4995,7 +4995,7 @@ selectors.editorSupportsOnlyV2Data = (state, editorId) => {
   // no use case yet where any PG field supports only v2 data
   if (isPageGenerator) return false;
 
-  if (editorType === 'csvGenerator' || fieldId === 'ftp.backupDirectoryPath' || fieldId === 's3.backupBucket') return true;
+  if (editorType === 'csvGenerator' || fieldId === 'file.backupPath') return true;
 
   return false;
 };
@@ -5064,6 +5064,11 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
     _sampleData = { data: sampleData || { myField: 'sample' }};
   }
 
+  // for lookup fields, BE doesn't support v1/v2 yet
+  if (fieldId?.startsWith('lookup') || fieldId?.startsWith('_')) {
+    return {shouldGetContextFromBE: false, sampleData: _sampleData};
+  }
+
   // TODO: BE would be deprecating native REST adaptor as part of IO-19864
   // we can remove this logic from UI as well once that is complete
   if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
@@ -5084,11 +5089,6 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   if (stage === 'transform' ||
   stage === 'postResponseMapHook' ||
   stage === 'sampleResponse') {
-    return {shouldGetContextFromBE: false, sampleData: _sampleData};
-  }
-
-  // for lookup fields, BE doesnt support v1/v2 yet
-  if (fieldId?.startsWith('_')) {
     return {shouldGetContextFromBE: false, sampleData: _sampleData};
   }
 
@@ -5130,3 +5130,9 @@ selectors.sourceOptions = createSelector(
   (state, resourceId) => selectors.applicationName(state, resourceId),
   (sources, applicationName) => getSourceOptions(sources, applicationName)
 );
+
+selectors.isConnectionLogsNotSupported = (state, connectionId) => {
+  const connectionResource = selectors.resource(state, 'connections', connectionId);
+
+  return ['wrapper', 'dynamodb', 'mongodb'].includes(connectionResource?.type);
+};

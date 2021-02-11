@@ -12,10 +12,6 @@ export default {
     maxRows: 5,
     label: 'Description',
   },
-  imageURL: {
-    type: 'text',
-    label: 'Image URL',
-  },
   websiteURL: {
     type: 'text',
     label: 'Website URL',
@@ -29,7 +25,8 @@ export default {
     label: 'Installer function',
   },
   applications: {
-    type: 'multiselect',
+    type: 'selectmultiapplication',
+    placeholder: 'Choose applications',
     label: 'Applications',
     valueDelimiter: ',',
     defaultValue: r => (r?.applications) || [],

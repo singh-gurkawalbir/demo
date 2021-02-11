@@ -353,7 +353,41 @@ describe('resource util tests', () => {
       windowSpy.mockRestore();
     });
 
-    test('should return correct urls for staging integrator', () => {
+    test('should return correct urls for localhost (process.env.API_ENDPOINT not set)', () => {
+      process.env.API_ENDPOINT = '';
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'localhost.io',
+            host: 'localhost.io:4000',
+          },
+        },
+      }));
+
+      expect(getDomain()).toEqual('localhost.io');
+      expect(getDomainUrl()).toEqual('http://localhost.io:4000');
+      expect(getApiUrl()).toEqual('http://api.localhost.io:4000');
+    });
+
+    test('should return correct urls for localhost (process.env.API_ENDPOINT set)', () => {
+      process.env.API_ENDPOINT = 'https://something';
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'localhost.io',
+            host: 'localhost.io:4000',
+          },
+        },
+      }));
+
+      expect(getDomain()).toEqual('localhost.io');
+      expect(getDomainUrl()).toEqual('http://localhost.io:4000');
+      expect(getApiUrl()).toEqual('https://api.something');
+      process.env.API_ENDPOINT = '';
+    });
+
+    test('should return correct urls for staging integrator (process.env.API_ENDPOINT not set)', () => {
+      process.env.API_ENDPOINT = '';
       windowSpy.mockImplementation(() => ({
         document: {
           location: {
@@ -365,6 +399,22 @@ describe('resource util tests', () => {
       expect(getDomain()).toEqual('staging.integrator.io');
       expect(getDomainUrl()).toEqual('https://staging.integrator.io');
       expect(getApiUrl()).toEqual('https://api.staging.integrator.io');
+    });
+
+    test('should return correct urls for staging integrator (process.env.API_ENDPOINT set)', () => {
+      process.env.API_ENDPOINT = 'https://something';
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'www.staging.integrator.io',
+          },
+        },
+      }));
+
+      expect(getDomain()).toEqual('staging.integrator.io');
+      expect(getDomainUrl()).toEqual('https://staging.integrator.io');
+      expect(getApiUrl()).toEqual('https://api.staging.integrator.io');
+      process.env.API_ENDPOINT = '';
     });
 
     test('should return correct urls for integrator', () => {
@@ -844,22 +894,22 @@ describe('resource util tests', () => {
       })).toEqual('exportTransfer');
 
       expect(resourceCategory({
-        blobKeyPath: 'key',
+        blob: true,
         adaptorType: 'SalesforceImport',
       })).toEqual('importTransfer');
 
       expect(resourceCategory({
-        blobKeyPath: 'key',
+        blob: true,
         adaptorType: 'NetSuiteImport',
       })).toEqual('importTransfer');
 
       expect(resourceCategory({
-        blobKeyPath: 'key',
+        blob: true,
         adaptorType: 'HTTPImport',
       })).toEqual('importTransfer');
 
       expect(resourceCategory({
-        blobKeyPath: 'key',
+        blob: true,
         adaptorType: 'RESTImport',
       })).toEqual('importTransfer');
 
@@ -868,15 +918,15 @@ describe('resource util tests', () => {
       })).toEqual('importTransfer');
 
       expect(resourceCategory({
-        blobKeyPath: 'key',
+        blob: true,
         adaptorType: 'S3Import',
       })).toEqual('importTransfer');
     });
   });
 
   describe('tests for util isBlobTypeResource', () => {
-    test('should return false for undefined resource', () => {
-      expect(isBlobTypeResource()).toEqual(false);
+    test('should return undefined for undefined resource', () => {
+      expect(isBlobTypeResource()).toEqual(undefined);
     });
 
     test('should return true for blob exports', () => {
@@ -887,13 +937,14 @@ describe('resource util tests', () => {
 
     test('should return true for blob imports', () => {
       expect(isBlobTypeResource({
-        blobKeyPath: 'key',
+        blob: true,
       })).toEqual(true);
     });
 
     test('should return false for blob imports', () => {
       expect(isBlobTypeResource({
         type: 'distributed',
+        blob: false,
       })).toEqual(false);
     });
   });

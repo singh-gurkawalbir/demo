@@ -14,32 +14,35 @@ const UTCDateTimeRegex = '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}
 export function* getConnectionDebugLogs({ connectionId }) {
   const path = `/connections/${connectionId}/debug`;
 
+  let logs;
+
   try {
-    const logs = yield call(apiCallWithRetry, { path });
-    const {dateFormat, timeFormat } = yield select(selectors.userProfilePreferencesProps);
-    const timezone = yield select(selectors.userTimezone);
-    const _logs = [];
-
-    logs.split('\n').forEach(log => {
-      let logTmp = log;
-      const matchedUTCDateTime = logTmp.match(UTCDateTimeRegex)?.[0];
-
-      if (matchedUTCDateTime) {
-        const localDateTime = convertUtcToTimezone(matchedUTCDateTime, dateFormat, timeFormat, timezone);
-
-        logTmp = logTmp.replace(matchedUTCDateTime, localDateTime);
-      }
-      _logs.push(logTmp || '');
-    });
-    yield put(
-      actions.logs.connections.received(
-        connectionId,
-        _logs.join('\n'),
-      )
-    );
+    logs = yield call(apiCallWithRetry, { path });
   } catch (error) {
-    actions.logs.connections.requestFailed(connectionId);
+    return yield put(actions.logs.connections.requestFailed(connectionId));
   }
+  const {dateFormat, timeFormat } = yield select(selectors.userProfilePreferencesProps);
+  const timezone = yield select(selectors.userTimezone);
+
+  const updatedTimeZonelogs = logs?.split('\n').map(log => {
+    let logTmp = log;
+    const matchedUTCDateTime = logTmp.match(UTCDateTimeRegex)?.[0];
+
+    if (matchedUTCDateTime) {
+      const localDateTime = convertUtcToTimezone(matchedUTCDateTime, dateFormat, timeFormat, timezone);
+
+      logTmp = logTmp.replace(matchedUTCDateTime, localDateTime);
+    }
+
+    return logTmp || '';
+  }).join('\n');
+
+  yield put(
+    actions.logs.connections.received(
+      connectionId,
+      updatedTimeZonelogs,
+    )
+  );
 }
 
 export function* pollForConnectionLogs({ connectionId }) {
@@ -49,12 +52,29 @@ export function* pollForConnectionLogs({ connectionId }) {
   }
 }
 export function* startPollingForConnectionDebugLogs({ connectionId }) {
+  const isConnectionLogsNotSupported = yield select(selectors.isConnectionLogsNotSupported, connectionId);
+
+  if (isConnectionLogsNotSupported) {
+    return yield put(actions.logs.connections.requestFailed(connectionId));
+  }
+
   const watcher = yield fork(pollForConnectionLogs, {connectionId});
 
-  yield take([
-    actionTypes.LOGS.CONNECTIONS.CLEAR,
-    actionTypes.LOGS.CONNECTIONS.REQUEST,
-  ]);
+  yield take(action => {
+    if (action.type === actionTypes.LOGS.CONNECTIONS.REQUEST && action.connectionId === connectionId) {
+      return true;
+    }
+    if (action.type === actionTypes.LOGS.CONNECTIONS.CLEAR) {
+      // in case of flow builder close, all connection logs are cleared
+      if (action.clearAllLogs) {
+        return true;
+      }
+
+      // user can manually choose to close particular connection debug log.
+      return action.connectionId === connectionId;
+    }
+  });
+
   yield cancel(watcher);
 }
 export function* deleteConnectionDebugLogs({ connectionId}) {
@@ -81,6 +101,11 @@ export function* downloadConnectionDebugLogs({ connectionId}) {
   openExternalUrl({ url: _url });
 }
 export function* startDebug({connectionId, value}) {
+  const isConnectionLogsNotSupported = yield select(selectors.isConnectionLogsNotSupported, connectionId);
+
+  if (isConnectionLogsNotSupported) {
+    return;
+  }
   const patchSet = [
     {
       op: value !== '0' ? 'replace' : 'remove',
@@ -93,7 +118,6 @@ export function* startDebug({connectionId, value}) {
 }
 export const connectionsLogSagas = [
   takeEvery(actionTypes.LOGS.CONNECTIONS.REQUEST, startPollingForConnectionDebugLogs),
-  takeLatest(actionTypes.LOGS.CONNECTIONS.REFRESH, startPollingForConnectionDebugLogs),
   takeLatest(actionTypes.LOGS.CONNECTIONS.DELETE, deleteConnectionDebugLogs),
   takeLatest(actionTypes.LOGS.CONNECTIONS.DOWNLOAD, downloadConnectionDebugLogs),
   takeLatest(actionTypes.LOGS.CONNECTIONS.START_DEBUG, startDebug),

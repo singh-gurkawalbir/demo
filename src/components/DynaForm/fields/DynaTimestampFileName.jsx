@@ -50,7 +50,7 @@ export default function DynaTimestampFileName(props) {
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const userTimezone = useSelector(state => selectors.userProfile(state)?.timezone);
+  const userTimezone = useSelector(state => selectors.userTimezone(state));
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [state, setState] = useState({
     cursorPosition: 0,

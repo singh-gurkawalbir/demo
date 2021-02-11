@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../../components/CeligoPageBar';
@@ -17,6 +16,7 @@ import metadata from './metadata';
 import { generateNewId } from '../../../utils/resource';
 import LoadResources from '../../../components/LoadResources';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { SCOPES } from '../../../sagas/resourceForm';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -79,6 +79,29 @@ export default function Licenses(props) {
       dispatch(actions.resource.clearCollection('connectorLicenses'));
   }, [connectorId, dispatch]);
 
+  const handleClick = useCallback(() => {
+    const newId = generateNewId();
+    const patchSet = [
+      {
+        op: 'add',
+        path: '/_connectorId',
+        value: connectorId,
+      },
+    ];
+
+    if (connector.framework === 'twoDotZero') {
+      patchSet.push({
+        op: 'add',
+        path: '/type',
+        value: 'integrationApp',
+      });
+    }
+
+    dispatch(actions.resource.patchStaged(newId, patchSet, SCOPES.VALUE));
+
+    history.push(`${location.pathname}/add/connectorLicenses/${newId}`);
+  }, [connectorId, connector, history, location, dispatch]);
+
   if (!connector) {
     return <LoadResources required resources="connectors" />;
   }
@@ -96,8 +119,7 @@ export default function Licenses(props) {
             defaultFilter={defaultFilter}
           />
           <IconTextButton
-            component={Link}
-            to={`${location.pathname}/add/connectorLicenses/${generateNewId()}`}
+            onClick={handleClick}
             variant="text"
             color="primary">
             <AddIcon /> New license

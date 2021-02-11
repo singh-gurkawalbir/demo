@@ -114,6 +114,7 @@ export default {
     }
 
     delete newValues['/file/decompressFiles'];
+    newValues['/s3/backupBucket'] = undefined;     // TODO Ashok, This code can be removed once all backend issues are resolved.
 
     return {
       ...newValues,
@@ -219,7 +220,7 @@ export default {
           'file.compressionFormat',
           'file.skipDelete',
           'fileMetadata',
-          's3.backupBucket',
+          'file.backupPath',
           'file.encoding',
           'pageSize',
           'dataURITemplate',

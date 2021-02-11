@@ -33,11 +33,4 @@ export default {
     showExtract: false,
     showLookup: false,
   },
-  's3.backupBucket': {
-    type: 'uri',
-    label: 'Backup bucket name',
-    helpKey: 'export.s3.backupBucket',
-    showExtract: false,
-    showLookup: false,
-  },
 };

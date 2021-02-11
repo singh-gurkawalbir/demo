@@ -367,8 +367,8 @@ export function flowSupportsSettings(flow, integration, childId) {
   const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
   return !!(
-    (flowSettings.settings && flowSettings.settings.length) ||
-    (flowSettings.sections && flowSettings.sections.length)
+    (flowSettings?.settings && flowSettings.settings.length) ||
+    (flowSettings?.sections && flowSettings.sections.length)
   );
 }
 
@@ -691,7 +691,7 @@ export function getIAFlowSettings(integration, flowId, childId) {
     if (childId) {
       const section = integration.settings.sections.find(sec => sec.id === childId);
 
-      if (!section.sections) {
+      if (!section || !section.sections) {
         return;
       }
 
