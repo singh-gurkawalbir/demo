@@ -139,7 +139,7 @@ describe('resource region selector testcases', () => {
           },
           {
             _id: 'connection2',
-            assistant: 'assistant2',
+            type: 'assistant2',
             _integrationId: 'ia2IntegrationChild',
 
           },
@@ -157,7 +157,7 @@ describe('resource region selector testcases', () => {
           },
           {
             _id: 'connection5',
-            assistant: 'assistant5',
+            type: 'assistant5',
             _integrationId: 'ia2Integration',
 
           },
@@ -1068,6 +1068,9 @@ describe('resource region selector testcases', () => {
         restConnection,
         assistantConnection,
       ]);
+      expect(selectors.matchingConnectionList(state, { assistant: 'zendesk' })).toEqual([
+        assistantConnection,
+      ]);
       expect(
         selectors.matchingConnectionList(state, { type: 'rdbms', rdbms: {type: 'postgresql'} })
       ).toEqual([postgresqlConnection]);
@@ -1099,6 +1102,9 @@ describe('resource region selector testcases', () => {
         selectors.matchingConnectionList(state, { type: 'salesforce' })
       ).toEqual([salesforceConnectionSandbox]);
       expect(selectors.matchingConnectionList(state, { type: 'rest' })).toEqual([
+        assistantConnectionSandbox,
+      ]);
+      expect(selectors.matchingConnectionList(state, { assistant: 'zendesk' })).toEqual([
         assistantConnectionSandbox,
       ]);
     });
