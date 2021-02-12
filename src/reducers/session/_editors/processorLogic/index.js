@@ -14,7 +14,7 @@ import filter from './filter';
 // import netsuiteQualificationCriteria from './netsuiteQualificationCriteria';
 // import salesforceQualifier from './salesforceQualifier';
 // import salesforceLookupFilter from './salesforceLookupFilter';
-// import readme from './readme';
+import readme from './readme';
 import postResponseMapHook from './postResponseMapHook';
 import exportFilter from './exportFilter';
 import inputFilter from './inputFilter';
@@ -42,6 +42,7 @@ const logicMap = {
   csvGenerator,
   structuredFileParser,
   structuredFileGenerator,
+  readme,
 };
 
 function getLogic(editor) {
@@ -226,6 +227,9 @@ export const featuresMap = options => ({
   postResponseMapHook: {
     layout: 'compact',
     insertStubKey: 'postResponseMap',
+  },
+  readme: {
+    layout: 'readme',
   },
 });
 
