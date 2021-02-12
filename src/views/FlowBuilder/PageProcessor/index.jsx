@@ -8,7 +8,7 @@ import itemTypes from '../itemTypes';
 import AppBlock from '../AppBlock';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import { getResourceSubType, generateNewId } from '../../../utils/resource';
+import { getResourceSubType, generateNewId, isFileAdaptor} from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
 import inputFilterAction from './actions/inputFilter_afe2';
 import pageProcessorHooksAction from './actions/pageProcessorHooks';
@@ -83,7 +83,7 @@ const PageProcessor = ({
       resource.adaptorType
     ) >= 0 &&
       resource.type === 'blob') ||
-    ['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0
+      (isFileAdaptor(resource) && resource.adaptorType.includes('Export'))
   ) {
     blockType = 'exportTransfer';
   } else if (
@@ -91,7 +91,7 @@ const PageProcessor = ({
       resource.adaptorType
     ) >= 0 &&
       resource.blob) ||
-    ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
+      (isFileAdaptor(resource) && resource.adaptorType.includes('Import'))
   ) {
     blockType = 'importTransfer';
   }
