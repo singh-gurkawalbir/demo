@@ -1,6 +1,10 @@
 /* global describe, expect, test */
 import reducer, { selectors } from '.';
 import actions from '../actions';
+import {
+  USER_ACCESS_LEVELS,
+  INTEGRATION_ACCESS_LEVELS,
+} from '../utils/constants';
 
 describe('tests for reducer selectors', () => {
   describe('tests for selector getResourceEditUrl', () => {
@@ -273,6 +277,150 @@ describe('tests for reducer selectors', () => {
         },
       ]);
     });
+    test('should return empty array for invalid flow id', () => {
+      const flow = {
+        _id: 'f1',
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+          {
+            _exportId: 'e2',
+          },
+        ],
+        pageProcessors: [
+          {
+            _importId: 'i1',
+          },
+          {
+            _importId: 'i2',
+          },
+        ],
+      };
+
+      const state = reducer(
+        undefined,
+        actions.resource.received('flows', flow)
+      );
+
+      const connectionListSelector = selectors.mkFlowConnectionList();
+
+      expect(connectionListSelector(state, 'if1')).toEqual([]);
+    });
+
+    test('should return connection ids used for dataloader flow', () => {
+      const conns = [{
+        _id: 'c1',
+      }, {
+        _id: 'c2',
+      }];
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('connections', conns)
+      );
+
+      const exp = {
+        _id: 'e1',
+        type: 'simple',
+        adaptorType: 'simpleExport',
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('exports', exp)
+      );
+
+      const imp = {
+        _id: 'i1',
+        _connectionId: 'c1',
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('imports', imp)
+      );
+
+      const flow = {
+        _id: 'f1',
+        _exportId: 'e1',
+        _importId: 'i1',
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('flows', flow)
+      );
+
+      const connectionListSelector = selectors.mkFlowConnectionList();
+
+      expect(connectionListSelector(state, 'f1')).toEqual([
+        {
+          _id: 'c1',
+        },
+      ]);
+    });
+
+    test('should return connection ids used for webhook flow', () => {
+      const conns = [{
+        _id: 'c1',
+      }, {
+        _id: 'c2',
+      }];
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('connections', conns)
+      );
+
+      const exp = {
+        _id: 'e1',
+        type: 'webhook',
+        adaptorType: 'WebhookExport',
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('exports', exp)
+      );
+
+      const imp = {
+        _id: 'i1',
+        _connectionId: 'c1',
+        type: 'netsuite',
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('imports', imp)
+      );
+
+      const flow = {
+        _id: 'f1',
+        pageProcessors: [
+          {
+            type: 'import',
+            _importId: 'i1',
+          },
+        ],
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+        ],
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('flows', flow)
+      );
+
+      const connectionListSelector = selectors.mkFlowConnectionList();
+
+      expect(connectionListSelector(state, 'f1')).toEqual([
+        {
+          _id: 'c1',
+        },
+      ]);
+    });
   });
 
   describe('tests for util mkIsAnyFlowConnectionOffline', () => {
@@ -280,6 +428,28 @@ describe('tests for reducer selectors', () => {
       const isAnyConnOfflineSelector = selectors.mkIsAnyFlowConnectionOffline();
 
       expect(isAnyConnOfflineSelector()).toEqual(false);
+    });
+    test('should return false for invalid connection id', () => {
+      const isAnyConnOfflineSelector = selectors.mkIsAnyFlowConnectionOffline();
+
+      const flow = {
+        _id: 'f1',
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+          {
+            _exportId: 'e2',
+          },
+        ],
+      };
+
+      const state = reducer(
+        undefined,
+        actions.resource.received('flows', flow)
+      );
+
+      expect(isAnyConnOfflineSelector(state, 'invalidConnId')).toEqual(false);
     });
     test('should return true if any conn used in flow is offline', () => {
       const conns = [
@@ -550,7 +720,7 @@ describe('tests for reducer selectors', () => {
       expect(selectors.isPageGenerator(undefined, 'f1', 'i1', 'imports')).toEqual(false);
     });
 
-    test('should return true if resource is not of lookup type', () => {
+    test('should return true if resource is new and not of lookup type', () => {
       const state = reducer(
         undefined,
         actions.resource.received('exports', {
@@ -606,6 +776,28 @@ describe('tests for reducer selectors', () => {
         })
       );
       expect(selectors.isPageGenerator(state, 'f1', 'e1', 'exports')).toEqual(true);
+    });
+
+    test('should search in flow doc and return false if passed export is of page processor type', () => {
+      let state = reducer(
+        undefined,
+        actions.resource.received('exports', {
+          _id: 'e1',
+        })
+      );
+
+      state = reducer(
+        state,
+        actions.resource.received('flows', {
+          _id: 'f1',
+          pageProcessors: [
+            {
+              _exportId: 'e1',
+            },
+          ],
+        })
+      );
+      expect(selectors.isPageGenerator(state, 'f1', 'e1', 'exports')).toEqual(false);
     });
   });
 
@@ -811,6 +1003,13 @@ describe('tests for reducer selectors', () => {
                 _id: 'i2',
                 name: 'test b',
               },
+              {
+                _id: 'none',
+                name: 'sf-ns int',
+              },
+              {
+                _id: 'i6',
+              },
             ],
           },
         },
@@ -864,9 +1063,16 @@ describe('tests for reducer selectors', () => {
                 _id: 'i2',
                 name: 'test b',
               },
+              {
+                _id: 'none',
+                name: 'sf-ns int',
+              },
+              {
+                _id: 'i6',
+              },
             ],
           },
-          integrations: 'test a (sample)\ntest b',
+          integrations: 'test a (sample)\ntest b\nStandalone flows\ni6',
         },
         {
           _id: 't2',
@@ -1081,6 +1287,63 @@ describe('tests for reducer selectors', () => {
           }
         )
       );
+
+      expect(selectors.isFlowViewMode(state, 'i1', 'f1')).toEqual(true);
+    });
+    test('should return true if accessLevel is monitor', () => {
+      const acc = {
+        _id: 'ashare1',
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      };
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('shared/ashares', [acc])
+      );
+
+      state = reducer(state,
+        actions.resource.received('preferences', {
+          defaultAShareId: 'ashare1',
+        }));
+
+      expect(selectors.isFlowViewMode(state, 'i1', 'f1')).toEqual(true);
+    });
+
+    test('should return true if access level is monitor for tile ashare', () => {
+      const ownAccount =
+        {
+          _id: 'aShare3',
+          accessLevel: USER_ACCESS_LEVELS.TILE,
+          integrationAccessLevel: [
+            {
+              _integrationId: 'i1',
+              accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+            },
+            {
+              _integrationId: 'i2',
+              accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+            },
+          ],
+        };
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('shared/ashares', [ownAccount])
+      );
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection(
+          'integrations',
+          [
+            { _id: 'i1', _registeredConnectionIds: ['c1', 'c2'] },
+            { _id: 'i2', _registeredConnectionIds: ['c2', 'c3'] },
+          ]
+        )
+      );
+
+      state = reducer(state,
+        actions.resource.received('preferences', {
+          defaultAShareId: 'aShare3',
+        }));
 
       expect(selectors.isFlowViewMode(state, 'i1', 'f1')).toEqual(true);
     });
@@ -1483,7 +1746,7 @@ describe('tests for reducer selectors', () => {
           'imports', {
             _id: 'i1',
             adaptorType: 'SalesforceImport',
-            blobKeyPath: 'key',
+            blob: true,
           }
         )
       );
@@ -1882,6 +2145,105 @@ describe('tests for reducer selectors', () => {
       );
 
       expect(selectors.suiteScriptIntegratorLinkedConnectionId(state, 'a2')).toEqual('c2');
+    });
+  });
+
+  describe('tests for util userHasManageAccessOnSuiteScriptAccount', () => {
+    test('should return false for empty state', () => {
+      expect(selectors.userHasManageAccessOnSuiteScriptAccount(undefined, 'c1')).toEqual(false);
+    });
+
+    test('should return true if account access Level is monitor', () => {
+      const acc = {
+        _id: 'ashare1',
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      };
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('shared/ashares', [acc])
+      );
+
+      state = reducer(state,
+        actions.resource.received('preferences', {
+          defaultAShareId: 'ashare1',
+        }));
+
+      state = reducer(state,
+        actions.resource.received('connections', {
+          _id: 'c1',
+          name: 'conn 1',
+        }
+        )
+      );
+
+      expect(selectors.userHasManageAccessOnSuiteScriptAccount(state, 'c1')).toEqual(false);
+    });
+
+    test('should return true if account access Level is manage', () => {
+      const acc = {
+        _id: 'ashare1',
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+      };
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('shared/ashares', [acc])
+      );
+
+      state = reducer(state,
+        actions.resource.received('preferences', {
+          defaultAShareId: 'ashare1',
+        }));
+
+      state = reducer(state,
+        actions.resource.received('connections', {
+          _id: 'c1',
+          name: 'conn 1',
+        }
+        )
+      );
+
+      expect(selectors.userHasManageAccessOnSuiteScriptAccount(state, 'c1')).toEqual(true);
+    });
+
+    test('should verify if account access Level is tile and integration has manage access', () => {
+      const ownAccount =
+      {
+        _id: 'aShare3',
+        accessLevel: USER_ACCESS_LEVELS.TILE,
+        integrationAccessLevel: [
+          {
+            _integrationId: 'i1',
+            accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+          },
+          {
+            _integrationId: 'i2',
+            accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+          },
+        ],
+      };
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('shared/ashares', [ownAccount])
+      );
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection(
+          'integrations',
+          [
+            { _id: 'i1', _registeredConnectionIds: ['c1', 'c2'] },
+            { _id: 'i2', _registeredConnectionIds: ['c2', 'c3'] },
+          ]
+        )
+      );
+
+      state = reducer(state,
+        actions.resource.received('preferences', {
+          defaultAShareId: 'aShare3',
+        }));
+      expect(selectors.userHasManageAccessOnSuiteScriptAccount(state, 'c1')).toEqual(false);
+      expect(selectors.userHasManageAccessOnSuiteScriptAccount(state, 'c2')).toEqual(true);
+      expect(selectors.userHasManageAccessOnSuiteScriptAccount(state, 'c3')).toEqual(true);
     });
   });
 
