@@ -4879,7 +4879,7 @@ selectors.getCustomResourceLabel = (
         'SalesforceExport',
       ].includes(resource.adaptorType) &&
         resource.type === 'blob') ||
-      ['FTPExport', 'S3Export'].includes(resource.adaptorType) ||
+        (isFileAdaptor(resource) && resource.adaptorType.includes('Export')) ||
       ([
         'RESTImport',
         'HTTPImport',
@@ -4887,7 +4887,7 @@ selectors.getCustomResourceLabel = (
         'SalesforceImport',
       ].indexOf(resource.adaptorType) >= 0 &&
         resource.blob) ||
-      ['FTPImport', 'S3Import'].includes(resource.adaptorType)
+        (isFileAdaptor(resource) && resource.adaptorType.includes('Import'))
     ) {
       resourceLabel = 'Transfer';
     }
