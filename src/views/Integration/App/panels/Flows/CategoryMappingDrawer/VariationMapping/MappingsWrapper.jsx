@@ -65,7 +65,7 @@ export default function VariationMappings(props) {
     variation,
     isVariationAttributes,
   }), [sectionId, variation, isVariationAttributes]);
-  const { fieldMappings } = useSelectorMemo(selectors.mappingsForVariation, integrationId, flowId, memoizedOptions) || {};
+  const { fieldMappings } = useSelectorMemo(selectors.mkMappingsForVariation, integrationId, flowId, memoizedOptions) || {};
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );

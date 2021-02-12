@@ -1574,7 +1574,7 @@ describe('integrationApps selector testcases', () => {
       expect(selector(null, null)).toEqual(null);
     });
 
-    test('should return correct value for integraionAppName', () => {
+    test('should return correct value for integrationAppName', () => {
       const selector = selectors.integrationAppName();
 
       expect(selector(state, 'i1')).toEqual('ABC');
