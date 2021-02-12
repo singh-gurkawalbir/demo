@@ -8,10 +8,10 @@ export default {
     '/http/baseURI': 'https://graph.microsoft.com/v1.0',
     '/http/auth/oauth/authURI':
         `https://login.microsoftonline.com/${
-          formValues['/http/unencrypted/tenantid']}/oauth2/v2.0/authorize?prompt=consent`,
+          formValues['/http/unencrypted/tenantId']}/oauth2/v2.0/authorize?prompt=consent`,
     '/http/auth/oauth/tokenURI':
         `https://login.microsoftonline.com/${
-          formValues['/http/unencrypted/tenantid']}/oauth2/v2.0/token`,
+          formValues['/http/unencrypted/tenantId']}/oauth2/v2.0/token`,
     '/http/auth/oauth/scope': [
       ...['openid', 'offline_access'],
       ...formValues['/http/auth/oauth/scope'],
@@ -22,11 +22,12 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'http.unencrypted.tenantid': {
-      id: 'http.unencrypted.tenantid',
+    'http.unencrypted.tenantId': {
+      id: 'http.unencrypted.tenantId',
       type: 'text',
       label: 'Tenant ID',
-      helpKey: 'ebay.connection.http.unencrypted.tenantid',
+      required: true,
+      helpKey: 'microsoftteams.connection.http.unencrypted.tenantId',
     },
     'http._iClientId': {
       fieldId: 'http._iClientId',
@@ -43,6 +44,7 @@ export default {
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
+      required: true,
       scopes: [
         'AppCatalog.Read.All',
         'AppCatalog.ReadWrite.All',
@@ -136,7 +138,7 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: [
-          'http.unencrypted.tenantid',
+          'http.unencrypted.tenantId',
           'http._iClientId',
           'http.auth.oauth.scope'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
