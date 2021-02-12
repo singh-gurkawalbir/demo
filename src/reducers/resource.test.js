@@ -109,10 +109,130 @@ const suitescriptConnectors = [
 
 describe('resource region selector testcases', () => {
   describe('selectors.mkTileApplications test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          integrations: [{
+            _id: 'diyIntegration',
+            name: 'DIY integration',
+          }, {
+            _id: 'iaIntegration',
+            _connectorId: 'connector1',
+            name: 'DIY integration',
+          }, {
+            _id: 'ia2Integration',
+            _connectorId: 'connector2',
+            installSteps: ['1'],
+            initChild: () => {},
+            name: 'IA2.0 parent integration',
+          }, {
+            _id: 'ia2IntegrationChild',
+            _parentId: 'ia2Integration',
+            installSteps: ['1'],
+            _connectorId: 'connector2',
+            name: 'IA2.0 child integration',
+          }],
+          connections: [{
+            _id: 'connection1',
+            assistant: 'assistant1',
+            _integrationId: 'ia2IntegrationChild',
+          },
+          {
+            _id: 'connection2',
+            type: 'assistant2',
+            _integrationId: 'ia2IntegrationChild',
+
+          },
+          {
+            _id: 'connection3',
+            assistant: 'assistant3',
+            _integrationId: 'ia2IntegrationChild',
+
+          },
+          {
+            _id: 'connection4',
+            assistant: 'assistant4',
+            _integrationId: 'ia2Integration',
+
+          },
+          {
+            _id: 'connection5',
+            type: 'assistant5',
+            _integrationId: 'ia2Integration',
+
+          },
+          {
+            _id: 'connection6',
+            assistant: 'assistant1',
+            _integrationId: 'ia2IntegrationChild',
+
+          }],
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       const selector = selectors.mkTileApplications();
 
       expect(selector()).toEqual([]);
+      expect(selector({})).toEqual([]);
+      expect(selector({_connectorId: 'yes'})).toEqual([]);
+      expect(selector(null)).toEqual([]);
+      expect(selector(null, null)).toEqual([]);
+      expect(selector(null, {_connectorId: 'yes'})).toEqual([]);
+      expect(selector({}, {_connectorId: 'yes'})).toEqual([]);
+      expect(selector(null, {_integrationId: 'yes'})).toEqual([]);
+      expect(selector({}, {_integrationId: 'yes'})).toEqual([]);
+    });
+
+    test('should return empty array for diy integrations', () => {
+      const selector = selectors.mkTileApplications();
+
+      expect(selector(state, {_integrationId: 'diyIntegration'})).toEqual([]);
+      expect(selector(state, {_integrationId: 'none'})).toEqual([]);
+    });
+
+    test('should return correct application list for integrationApp', () => {
+      const selector = selectors.mkTileApplications();
+
+      expect(selector(state, {
+        _connectorId: 'connector1',
+        connector: {
+          applications: ['app1', 'app2'],
+        },
+      })).toEqual(['app1', 'app2']);
+
+      expect(selector(state, {
+        _connectorId: 'connector1',
+        connector: {
+          applications: ['app1', 'app2', 'app3', 'app4', 'app5'],
+        },
+      })).toEqual(['app1', 'app2', 'app3', 'app4']);
+
+      expect(selector(state, {
+        _connectorId: 'connector1',
+        name: 'Magento 1 - NetSuite',
+        connector: {
+          applications: ['magento', 'app2'],
+        },
+      })).toEqual(['magento1', 'app2']);
+    });
+
+    test('should return correct application list for integrationApp 2.0', () => {
+      const selector = selectors.mkTileApplications();
+
+      expect(selector(state, {
+        _connectorId: 'connector1',
+        _integrationId: 'ia2Integration',
+        connector: {
+          applications: ['app1', 'app2'],
+        },
+      })).toEqual(['assistant1', 'assistant2', 'assistant3', 'assistant4']);
+
+      expect(selector(state, {
+        _connectorId: 'connector1',
+        _integrationId: 'ia2Integration',
+      })).toEqual(['assistant1', 'assistant2', 'assistant3', 'assistant4']);
     });
   });
 
@@ -194,26 +314,470 @@ describe('resource region selector testcases', () => {
   });
 
   describe('selectors.flowUsesUtilityMapping test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          flows: [{
+            _id: 'flowId1',
+            name: 'flow 1',
+            _integrationId: 'integrationId1',
+            _connectorId: 'connector1',
+
+          }, {
+            _id: 'flowId2',
+            name: 'flow 2',
+            _integrationId: 'integrationId1',
+            _connectorId: 'connector1',
+
+          }, {
+            _id: 'flowId3',
+            name: 'flow 3',
+            _integrationId: 'integration2',
+            _connectorId: 'connector2',
+
+          }, {
+            _id: 'flowId4',
+            name: 'flow 4',
+            _integrationId: 'integration2',
+            _connectorId: 'connector2',
+
+          }],
+          integrations: [{
+            _id: 'integrationId1',
+            _connectorId: 'connector1',
+            settings: {
+              supportsMultiStore: true,
+              sections: [{
+                id: 'child1',
+                sections: [
+                  {
+                    title: 'Title2',
+                    flows: [{
+                      _id: 'flowId1',
+                      settings: {},
+                    }, {
+                      _id: 'flowId2',
+                      showUtilityMapping: true,
+                      settings: {},
+                    }],
+                  },
+                ],
+              }],
+            },
+          }, {
+            _id: 'integration2',
+            _connectorId: 'connector2',
+            settings: {
+              sections: [
+                {
+                  title: 'Title',
+                  flows: [
+                    {
+                      _id: 'flowId3',
+                      settings: {},
+                    },
+                    {
+                      _id: 'flowId4',
+                      settings: {},
+                      showUtilityMapping: true,
+                    },
+                  ],
+                },
+              ],
+            },
+          }],
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.flowUsesUtilityMapping()).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping(null)).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping(null, null)).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping({}, {})).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping(123, 124)).toEqual(false);
+    });
+
+    test('should return correct value for single store connector', () => {
+      expect(selectors.flowUsesUtilityMapping(state, 'invalidFlowId')).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId3')).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId4')).toEqual(true);
+    });
+
+    test('should return correct value for mullti store connector', () => {
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId1', 'child1')).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId2')).toEqual(true);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId2', 'child1')).toEqual(true);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId2', 'child2')).toEqual(false);
     });
   });
 
   describe('selectors.flowSupportsMapping test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          flows: [{
+            _id: 'flowId1',
+            name: 'flow 1',
+            _integrationId: 'integrationId1',
+            _connectorId: 'connector1',
+
+          }, {
+            _id: 'flowId2',
+            name: 'flow 2',
+            _integrationId: 'integrationId1',
+            _connectorId: 'connector1',
+
+          }, {
+            _id: 'flowId3',
+            name: 'flow 2',
+            _integrationId: 'integrationId2',
+            _connectorId: 'connector2',
+
+          }, {
+            _id: 'flowId4',
+            name: 'flow 4',
+            _integrationId: 'integrationId2',
+            _connectorId: 'connector2',
+
+          }, {
+            _id: 'flowId5',
+            name: 'flow 5',
+            _integrationId: 'integrationId1',
+            _connectorId: 'connector2',
+
+          }, {
+            _id: 'flowId6',
+            name: 'flow 6',
+            _integrationId: 'integrationId1',
+            _connectorId: 'connector2',
+
+          }],
+          integrations: [{
+            _id: 'integrationId1',
+            _connectorId: 'connector1',
+            settings: {
+              supportsMultiStore: true,
+              sections: [{
+                id: 'child1',
+                sections: [
+                  {
+                    title: 'Title2',
+                    flows: [{
+                      _id: 'flowId1',
+                      settings: {},
+                    }, {
+                      _id: 'flowId2',
+                      showUtilityMapping: true,
+                      showMapping: true,
+                      settings: {},
+                    }],
+                  },
+                  {
+                    title: 'Title3',
+                    flows: [{
+                      _id: 'flowId5',
+                      settings: {},
+                      showMapping: false,
+                    }, {
+                      _id: 'flowId6',
+                      showUtilityMapping: true,
+                      showMapping: true,
+                      settings: {},
+                    }],
+                  },
+                ],
+              }],
+            },
+          }, {
+            _id: 'integrationId2',
+            _connectorId: 'connector2',
+            settings: {
+              sections: [
+                {
+                  title: 'Title',
+                  flows: [
+                    {
+                      _id: 'flowId3',
+                      settings: {},
+                    },
+                  ],
+                },
+                {
+                  title: 'Title2',
+                  flows: [
+                    {
+                      _id: 'flowId4',
+                      settings: {},
+                      showMapping: true,
+                    },
+                  ],
+                },
+              ],
+            },
+          }],
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.flowSupportsMapping()).toEqual(false);
+      expect(selectors.flowSupportsMapping(null)).toEqual(false);
+      expect(selectors.flowSupportsMapping(null, null)).toEqual(false);
+      expect(selectors.flowSupportsMapping({}, {})).toEqual(false);
+      expect(selectors.flowSupportsMapping(123, 124)).toEqual(false);
+    });
+
+    test('should return correct value for single store connector', () => {
+      expect(selectors.flowSupportsMapping(state, 'integrationId1')).toEqual(false);
+      expect(selectors.flowSupportsMapping(state, 'flowId4')).toEqual(true);
+      expect(selectors.flowSupportsMapping(state, 'flowId3')).toEqual(false);
+    });
+
+    test('should return correct value for mullti store connector', () => {
+      expect(selectors.flowSupportsMapping(state, 'flowId1', 'child1')).toEqual(false);
+      expect(selectors.flowSupportsMapping(state, 'flowId2')).toEqual(true);
+      expect(selectors.flowSupportsMapping(state, 'flowId2', 'child1')).toEqual(true);
+      expect(selectors.flowSupportsMapping(state, 'flowId2', 'child2')).toEqual(false);
     });
   });
 
   describe('selectors.flowSupportsSettings test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          flows: [{
+            _id: 'flowId1',
+            name: 'flow 1',
+            _integrationId: 'integrationId1',
+            _connectorId: 'connector1',
+
+          }, {
+            _id: 'flowId2',
+            name: 'flow 2',
+            _integrationId: 'integrationId1',
+            _connectorId: 'connector1',
+
+          }, {
+            _id: 'flowId3',
+            name: 'flow 2',
+            _integrationId: 'integrationId2',
+            _connectorId: 'connector2',
+
+          }, {
+            _id: 'flowId4',
+            name: 'flow 4',
+            _integrationId: 'integrationId2',
+            _connectorId: 'connector2',
+
+          }, {
+            _id: 'flowId5',
+            name: 'flow 5',
+            _integrationId: 'integrationId1',
+            _connectorId: 'connector2',
+
+          }, {
+            _id: 'flowId6',
+            name: 'flow 6',
+            _integrationId: 'integrationId1',
+            _connectorId: 'connector2',
+
+          }],
+          integrations: [{
+            _id: 'integrationId1',
+            _connectorId: 'connector1',
+            settings: {
+              supportsMultiStore: true,
+              sections: [{
+                id: 'child1',
+                sections: [
+                  {
+                    title: 'Title2',
+                    flows: [{
+                      _id: 'flowId1',
+                      settings: [],
+                    }, {
+                      _id: 'flowId2',
+                      showUtilityMapping: true,
+                      showMapping: true,
+                      settings: [{}],
+                    }],
+                  },
+                  {
+                    title: 'Title3',
+                    flows: [{
+                      _id: 'flowId5',
+                      settings: [],
+                      showMapping: false,
+                    }, {
+                      _id: 'flowId6',
+                      showUtilityMapping: true,
+                      showMapping: true,
+                      settings: [],
+                    }],
+                  },
+                ],
+              }],
+            },
+          }, {
+            _id: 'integrationId2',
+            _connectorId: 'connector2',
+            settings: {
+              sections: [
+                {
+                  title: 'Title',
+                  flows: [
+                    {
+                      _id: 'flowId3',
+                      settings: [],
+                    },
+                  ],
+                },
+                {
+                  title: 'Title2',
+                  flows: [
+                    {
+                      _id: 'flowId4',
+                      sections: [{}],
+                      showMapping: true,
+                    },
+                  ],
+                },
+              ],
+            },
+          }],
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.flowSupportsSettings()).toEqual(false);
+      expect(selectors.flowSupportsSettings(null)).toEqual(false);
+      expect(selectors.flowSupportsSettings(null, null)).toEqual(false);
+      expect(selectors.flowSupportsSettings({}, {})).toEqual(false);
+      expect(selectors.flowSupportsSettings(123, 124)).toEqual(false);
+    });
+
+    test('should return correct value for single store connector', () => {
+      expect(selectors.flowSupportsSettings(state, 'integrationId1')).toEqual(false);
+      expect(selectors.flowSupportsSettings(state, 'flowId4')).toEqual(true);
+      expect(selectors.flowSupportsSettings(state, 'flowId3')).toEqual(false);
+    });
+
+    test('should return correct value for mullti store connector', () => {
+      expect(selectors.flowSupportsSettings(state, 'flowId1', 'child1')).toEqual(false);
+      expect(selectors.flowSupportsSettings(state, 'flowId2')).toEqual(true);
+      expect(selectors.flowSupportsSettings(state, 'flowId2', 'child1')).toEqual(true);
+      expect(selectors.flowSupportsSettings(state, 'flowId2', 'child2')).toEqual(false);
     });
   });
 
   describe('selectors.flowListWithMetadata test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          exports: [{
+            _id: 'exp1',
+            type: 'distributed',
+          }, {
+            _id: 'exp2',
+            type: 'simple',
+          }],
+          flows: [{
+            _id: 'flow1',
+            pageGenerators: [{
+              _exportId: 'exp1',
+            }],
+            pageProcessors: [{
+              _importId: 'imp1',
+              type: 'import',
+            }],
+          },
+          {
+            _id: 'flow2',
+            pageGenerators: [{
+              _exportId: 'exp2',
+            }],
+            pageProcessors: [{
+              _importId: 'imp1',
+              type: 'import',
+            }],
+          },
+          {
+            _id: 'flow3',
+            schedule: '* 5 * * * *',
+            pageGenerators: [{
+              _exportId: 'exp3',
+            }],
+            pageProcessors: [{
+              _importId: 'imp1',
+              type: 'import',
+            }],
+          }],
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.flowListWithMetadata()).toEqual({resources: []});
+      expect(selectors.flowListWithMetadata({})).toEqual({resources: []});
+      expect(selectors.flowListWithMetadata(null)).toEqual({resources: []});
+      expect(selectors.flowListWithMetadata(null, null)).toEqual({resources: []});
+    });
+
+    test('should return correct flow list with metadata', () => {
+      expect(selectors.flowListWithMetadata(state, { type: 'flows' })).toEqual({
+        resources: [
+          {
+            _id: 'flow1',
+            isRealtime: true,
+            pageGenerators: [
+              {
+                _exportId: 'exp1',
+              },
+            ],
+            pageProcessors: [
+              {
+                _importId: 'imp1',
+                type: 'import',
+              },
+            ],
+          },
+          {
+            _id: 'flow2',
+            isRunnable: true,
+            isSimpleImport: true,
+            pageGenerators: [
+              {
+                _exportId: 'exp2',
+              },
+            ],
+            pageProcessors: [
+              {
+                _importId: 'imp1',
+                type: 'import',
+              },
+            ],
+          },
+          {
+            _id: 'flow3',
+            isRunnable: true,
+            showScheduleIcon: true,
+            schedule: '* 5 * * * *',
+            pageGenerators: [
+              {
+                _exportId: 'exp3',
+              },
+            ],
+            pageProcessors: [
+              {
+                _importId: 'imp1',
+                type: 'import',
+              },
+            ],
+          },
+        ],
+      });
     });
   });
 
@@ -504,6 +1068,9 @@ describe('resource region selector testcases', () => {
         restConnection,
         assistantConnection,
       ]);
+      expect(selectors.matchingConnectionList(state, { assistant: 'zendesk' })).toEqual([
+        assistantConnection,
+      ]);
       expect(
         selectors.matchingConnectionList(state, { type: 'rdbms', rdbms: {type: 'postgresql'} })
       ).toEqual([postgresqlConnection]);
@@ -535,6 +1102,9 @@ describe('resource region selector testcases', () => {
         selectors.matchingConnectionList(state, { type: 'salesforce' })
       ).toEqual([salesforceConnectionSandbox]);
       expect(selectors.matchingConnectionList(state, { type: 'rest' })).toEqual([
+        assistantConnectionSandbox,
+      ]);
+      expect(selectors.matchingConnectionList(state, { assistant: 'zendesk' })).toEqual([
         assistantConnectionSandbox,
       ]);
     });
@@ -1551,8 +2121,8 @@ describe('resource region selector testcases', () => {
 
   describe('resourceData', () => {
     test('should return {} on bad state or args.', () => {
-      expect(selectors.resourceData()).toEqual({});
-      expect(selectors.resourceData({ data: {} })).toEqual({});
+      expect(selectors.resourceData()).toEqual({sandbox: false});
+      expect(selectors.resourceData({ data: {} })).toEqual({sandbox: false});
     });
 
     test('should return correct data when no staged data exists.', () => {
@@ -1579,7 +2149,7 @@ describe('resource region selector testcases', () => {
       expect(
         selectors.resourceData(state, 'exports', 'new-resource-id')
       ).toEqual({
-        merged: {},
+        merged: {sandbox: false},
         staged: undefined,
         master: undefined,
       });
@@ -1626,7 +2196,7 @@ describe('resource region selector testcases', () => {
 
   describe('selectors.resourceDataModified test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.resourceDataModified()).toEqual({});
+      expect(selectors.resourceDataModified()).toEqual({sandbox: false});
     });
   });
 
@@ -1634,8 +2204,8 @@ describe('resource region selector testcases', () => {
     const resourceData = selectors.makeResourceDataSelector();
 
     test('should return {} on bad state or args.', () => {
-      expect(resourceData()).toEqual({});
-      expect(resourceData({ data: {} })).toEqual({});
+      expect(resourceData()).toEqual({sandbox: false});
+      expect(resourceData({ data: {} })).toEqual({sandbox: false});
     });
 
     test('should return correct data when no staged data exists.', () => {
@@ -1660,7 +2230,9 @@ describe('resource region selector testcases', () => {
       );
 
       expect(resourceData(state, 'exports', 'new-resource-id')).toEqual({
-        merged: {},
+        merged: {
+          sandbox: false,
+        },
         staged: undefined,
         master: undefined,
       });
