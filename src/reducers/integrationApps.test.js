@@ -1530,10 +1530,59 @@ describe('integrationApps selector testcases', () => {
   });
 
   describe('selectors.integrationAppName test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          integrations: [{
+            _id: 'i1',
+            name: 'ABC',
+            _connectorId: 'c',
+          }, {
+            _id: 'i2',
+            name: 'ABC DEF',
+            _connectorId: 'c',
+
+          }, {
+            _id: 'i3',
+            name: 'ABC DEF Connector',
+            _connectorId: 'c',
+
+          }, {
+            _id: 'i4',
+            name: 'ABC*',
+            _connectorId: 'c',
+
+          }, {
+            _id: 'i5',
+            name: 'ABC-DEF',
+            _connectorId: 'c',
+
+          }, {
+            _id: 'i6',
+            name: 'ABCD',
+          }],
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       const selector = selectors.integrationAppName();
 
       expect(selector()).toEqual(null);
+      expect(selector({})).toEqual(null);
+      expect(selector(null)).toEqual(null);
+      expect(selector(null, null)).toEqual(null);
+    });
+
+    test('should return correct value for integraionAppName', () => {
+      const selector = selectors.integrationAppName();
+
+      expect(selector(state, 'i1')).toEqual('ABC');
+      expect(selector(state, 'i2')).toEqual('ABCDEF');
+      expect(selector(state, 'i3')).toEqual('ABCDEF');
+      expect(selector(state, 'i4')).toEqual('ABC');
+      expect(selector(state, 'i5')).toEqual('ABCDEF');
+      expect(selector(state, 'i6')).toEqual(null);
     });
   });
 

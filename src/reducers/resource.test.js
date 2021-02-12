@@ -139,7 +139,7 @@ describe('resource region selector testcases', () => {
           },
           {
             _id: 'connection2',
-            assistant: 'assistant2',
+            type: 'assistant2',
             _integrationId: 'ia2IntegrationChild',
 
           },
@@ -157,7 +157,7 @@ describe('resource region selector testcases', () => {
           },
           {
             _id: 'connection5',
-            assistant: 'assistant5',
+            type: 'assistant5',
             _integrationId: 'ia2Integration',
 
           },
@@ -331,8 +331,14 @@ describe('resource region selector testcases', () => {
 
           }, {
             _id: 'flowId3',
-            name: 'flow 2',
-            _integrationId: 'integrationId2',
+            name: 'flow 3',
+            _integrationId: 'integration2',
+            _connectorId: 'connector2',
+
+          }, {
+            _id: 'flowId4',
+            name: 'flow 4',
+            _integrationId: 'integration2',
             _connectorId: 'connector2',
 
           }],
@@ -370,6 +376,11 @@ describe('resource region selector testcases', () => {
                       _id: 'flowId3',
                       settings: {},
                     },
+                    {
+                      _id: 'flowId4',
+                      settings: {},
+                      showUtilityMapping: true,
+                    },
                   ],
                 },
               ],
@@ -388,7 +399,9 @@ describe('resource region selector testcases', () => {
     });
 
     test('should return correct value for single store connector', () => {
-      expect(selectors.flowUsesUtilityMapping(state, 'integration1')).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping(state, 'invalidFlowId')).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId3')).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId4')).toEqual(true);
     });
 
     test('should return correct value for mullti store connector', () => {
@@ -1055,6 +1068,9 @@ describe('resource region selector testcases', () => {
         restConnection,
         assistantConnection,
       ]);
+      expect(selectors.matchingConnectionList(state, { assistant: 'zendesk' })).toEqual([
+        assistantConnection,
+      ]);
       expect(
         selectors.matchingConnectionList(state, { type: 'rdbms', rdbms: {type: 'postgresql'} })
       ).toEqual([postgresqlConnection]);
@@ -1086,6 +1102,9 @@ describe('resource region selector testcases', () => {
         selectors.matchingConnectionList(state, { type: 'salesforce' })
       ).toEqual([salesforceConnectionSandbox]);
       expect(selectors.matchingConnectionList(state, { type: 'rest' })).toEqual([
+        assistantConnectionSandbox,
+      ]);
+      expect(selectors.matchingConnectionList(state, { assistant: 'zendesk' })).toEqual([
         assistantConnectionSandbox,
       ]);
     });
