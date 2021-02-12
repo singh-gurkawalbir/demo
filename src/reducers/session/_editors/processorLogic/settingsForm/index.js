@@ -1,10 +1,10 @@
 import produce from 'immer';
 import { isEqual, isEmpty } from 'lodash';
-import util from '../../../../utils/json';
-import { safeParse, isJsonString } from '../../../../utils/string';
-import javascript from './javascript';
+import util from '../../../../../utils/json';
+import { safeParse, isJsonString } from '../../../../../utils/string';
+import javascript from '../javascript';
 
-function extractForm(data, mode) {
+export function extractForm(data, mode) {
   let parsedData = data;
 
   if (typeof data === 'string') {
@@ -62,7 +62,7 @@ export function toggleData(data, mode) {
 }
 
 // get correct patch path in case of flowgroupings sections for integration resource
-function generatePatchPath(sectionId, allSections, path) {
+export function generatePatchPath(sectionId, allSections, path) {
   if (!sectionId || sectionId === 'general' || !allSections) return path;
   // if sectionId is defined and its not general we are probably looking up a flow grouping
   const sectionsExcludingGeneral = allSections.filter(sec => sec.sectionId !== 'general');
@@ -75,7 +75,7 @@ function generatePatchPath(sectionId, allSections, path) {
 export default {
   processor: 'javascript',
   skipPreview: ({ rule }) => {
-    const { code, entryFunction } = rule.script || {};
+    const { code, entryFunction } = rule?.script || {};
 
     return !code || !entryFunction;
   },
@@ -113,7 +113,7 @@ export default {
   },
   requestBody: editor => {
     const { data, rule, context, activeProcessor } = editor;
-    const {code, entryFunction} = rule.script || {};
+    const {code, entryFunction} = rule?.script || {};
     let parsedData = typeof data === 'string' ? JSON.parse(data) : data;
 
     if (activeProcessor === 'json') {

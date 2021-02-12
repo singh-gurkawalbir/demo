@@ -46,7 +46,7 @@ const logicMap = {
   structuredFileGenerator,
 };
 
-function getLogic(editor) {
+export function getLogic(editor) {
   const logic = logicMap[editor.editorType];
 
   if (!logic) {
@@ -143,23 +143,7 @@ const preSaveValidate = editor => {
   return logic.preSaveValidate;
 };
 
-function getPatchSetLogic(editor) {
-  const processorKey = editor.editorType;
-
-  if (!processorKey) {
-    throw new Error('Not supported.');
-  }
-
-  const logic = logicMap[processorKey];
-
-  if (!logic) {
-    throw new Error(`Processor [${processorKey}] not supported.`);
-  }
-
-  return logic;
-}
-
-const getPatchSet = editor => getPatchSetLogic(editor).patchSet?.(editor);
+const getPatchSet = editor => getLogic(editor).patchSet?.(editor);
 
 export const featuresMap = options => ({
   handlebars: {

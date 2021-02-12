@@ -1,11 +1,11 @@
-import util from '../../../../utils/json';
+import util from '../../../../../utils/json';
 
 const processor = 'csvDataGenerator';
 
 const init = ({resource, options, fieldState}) => {
-  const {value} = fieldState;
+  const {value} = fieldState || {};
   const {resourceId, resourceType} = options;
-  const {customHeaderRows = [], ...others} = value;
+  const {customHeaderRows = [], ...others} = value || {};
   const opts = {...others, resourceId, resourceType};
 
   if (resource?.adaptorType === 'HTTPImport') {

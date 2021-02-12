@@ -1,10 +1,10 @@
 import isEqual from 'lodash/isEqual';
-import util from '../../../../utils/json';
+import util from '../../../../../utils/json';
 
 export default {
   init: ({options, fieldState, fileDefinitionData}) => {
     const {sampleData, rule} = fileDefinitionData || {};
-    const data = sampleData || fieldState.sampleData;
+    const data = sampleData || JSON.stringify(fieldState?.sampleData, null, 2);
 
     return {
       ...options,
@@ -22,12 +22,10 @@ export default {
   },
   requestBody: editor => ({
     rules: JSON.parse(editor.rule),
-    data: editor.data,
+    data: JSON.parse(editor.data),
   }),
   validate: editor => ({
     ruleError: util.validateJsonString(editor.rule),
-    dataError:
-      (!editor.data || (editor.data && !editor.data.length)) &&
-      'Must provide some sample data.',
+    dataError: util.validateJsonString(editor.data),
   }),
 };

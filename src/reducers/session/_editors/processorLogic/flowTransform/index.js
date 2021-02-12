@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
-import javascript from './javascript';
-import transform from './transform';
-import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
+import javascript from '../javascript';
+import transform from '../transform';
+import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
 
 export default {
   processor: ({activeProcessor}) => activeProcessor,
