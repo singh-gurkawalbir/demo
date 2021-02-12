@@ -1,7 +1,7 @@
 import deepClone from 'lodash/cloneDeep';
 import { uniqBy } from 'lodash';
 import isEqual from 'lodash/isEqual';
-import { adaptorTypeMap, isNetSuiteBatchExport } from '../resource';
+import { adaptorTypeMap, isNetSuiteBatchExport, isFileAdaptor} from '../resource';
 // eslint-disable-next-line import/no-self-import
 import mappingUtil from '.';
 import netsuiteMappingUtil from './application/netsuite';
@@ -14,15 +14,10 @@ import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
 
 const isCsvOrXlsxResource = resource => {
-  const { adaptorType: resourceAdapterType, file } = resource;
+  const { file } = resource;
   const resourceFileType = file && file.type;
 
-  if (
-    (adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.FTPImport ||
-      adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.S3Import ||
-      adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.HTTPImport) &&
-    (resourceFileType === 'xlsx' || resourceFileType === 'csv')
-  ) return true;
+  if (isFileAdaptor(resource) && (resourceFileType === 'xlsx' || resourceFileType === 'csv')) { return true; }
 
   return false;
 };

@@ -345,7 +345,7 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
       resource.adaptorType
     ) >= 0 &&
       resource.type === 'blob') ||
-    ['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0
+      (isFileAdaptor(resource) && resource.adaptorType.includes('Export'))
   ) {
     blockType = 'exportTransfer';
   } else if (
@@ -353,7 +353,7 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
       resource.adaptorType
     ) >= 0 &&
       resource.blob) ||
-    ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
+      (isFileAdaptor(resource) && resource.adaptorType.includes('Import'))
   ) {
     blockType = 'importTransfer';
   }
