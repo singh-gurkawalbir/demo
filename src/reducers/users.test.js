@@ -248,7 +248,7 @@ describe('users region selector testcases', () => {
       expect(selectors.hasPreferences({})).toEqual(true);
     });
 
-    test('should correct value for monitor user', () => {
+    test('should return correct value for monitor user', () => {
       const state = {
         profile: { email: 'something@test.com', name: 'First Last' },
         preferences: { defaultAShareId: 'ashare1' },
