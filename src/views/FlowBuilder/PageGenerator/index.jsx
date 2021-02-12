@@ -10,8 +10,7 @@ import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import {applicationsList} from '../../../constants/applications';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-
-import {
+import {isFileAdaptor,
   getResourceSubType,
   generateNewId,
   isRealTimeOrDistributedResource,
@@ -264,7 +263,7 @@ const PageGenerator = ({
         ? 'listener'
         : 'export';
 
-      if (['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0) {
+      if (isFileAdaptor(resource) && resource.adaptorType.includes('Export')) {
         blockType = 'exportTransfer';
       }
 
