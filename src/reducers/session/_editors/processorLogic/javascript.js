@@ -1,11 +1,18 @@
 /* eslint-disable camelcase */
 import isEqual from 'lodash/isEqual';
 import util from '../../../../utils/json';
+import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
 export default {
-  init: ({options}) => ({
+  init: ({options, scriptContext}) => ({
     ...options,
-    insertStubKey: options.stage, // todo ashu test this
+    insertStubKey: options.stage,
+    context: scriptContext,
+    rule: {
+      scriptId: options.rule?._scriptId,
+      entryFunction: options.rule?.function || hooksToFunctionNamesMap[options.stage],
+      fetchScriptContent: true,
+    },
   }),
 
   requestBody: ({ data, rule, context }) => ({
@@ -31,7 +38,10 @@ export default {
       fetchScriptContent,
       ...rest
     } = rule;
-    const {fetchScriptContent: originalFetchScriptContent, ...originalRest} = originalRule;
+    const {fetchScriptContent: originalFetchScriptContent,
+      _init_code: originalInitCode,
+      code: originalCode,
+      ...originalRest} = originalRule;
 
     if (_init_code !== code) { return true; }
 
@@ -42,4 +52,24 @@ export default {
     return false;
   },
   processResult: (editor, result) => ({data: result ? result.data : ''}),
+  patchSet: editor => {
+    const patches = {
+      foregroundPatches: undefined,
+    };
+    const { code, scriptId } = editor.rule || {};
+
+    patches.foregroundPatches = [{
+      patch: [
+        {
+          op: 'replace',
+          path: '/content',
+          value: code,
+        },
+      ],
+      resourceType: 'scripts',
+      resourceId: scriptId,
+    }];
+
+    return patches;
+  },
 };

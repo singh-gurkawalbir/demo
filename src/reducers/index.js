@@ -86,7 +86,7 @@ import {
 } from '../utils/latestJobs';
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
-import { FLOW_STAGES } from '../utils/editor';
+import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -5046,7 +5046,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   let _sampleData = null;
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
-  if (FLOW_STAGES.includes(stage)) {
+  if (FLOW_STAGES.includes(stage) || HOOK_STAGES.includes(stage)) {
     _sampleData = sampleData;
   } else if (isPageGenerator) {
     // for PGs, no sample data is shown
@@ -5079,8 +5079,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
     return {shouldGetContextFromBE: connection.isHTTP, sampleData: _sampleData};
   }
   if (stage === 'transform' ||
-  stage === 'postResponseMapHook' ||
-  stage === 'sampleResponse') {
+  stage === 'sampleResponse' || HOOK_STAGES.includes(stage)) {
     return {shouldGetContextFromBE: false, sampleData: _sampleData};
   }
 

@@ -5,8 +5,17 @@ export const FLOW_STAGES = [
   'exportFilter',
   'inputFilter',
   'transform',
-  'postResponseMapHook',
   'sampleResponse',
+];
+export const HOOK_STAGES = [
+  'postResponseMapHook',
+  'preSavePage',
+  'preMap',
+  'postMap',
+  'postSubmit',
+  'postAggregate',
+  'contentBasedFlowRouter',
+  'handleRequest',
 ];
 
 // todo: remove this when old AFE framework would be removed

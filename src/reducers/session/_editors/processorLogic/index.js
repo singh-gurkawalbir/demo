@@ -15,7 +15,6 @@ import filter from './filter';
 // import salesforceQualifier from './salesforceQualifier';
 // import salesforceLookupFilter from './salesforceLookupFilter';
 // import readme from './readme';
-import scriptEdit from './scriptEdit';
 import postResponseMapHook from './postResponseMapHook';
 import exportFilter from './exportFilter';
 import inputFilter from './inputFilter';
@@ -33,7 +32,6 @@ const logicMap = {
   sql,
   settingsForm,
   transform,
-  scriptEdit,
   postResponseMapHook,
   exportFilter,
   inputFilter,
@@ -193,7 +191,6 @@ export const featuresMap = options => ({
   javascript: {
     autoEvaluate: false,
     layout: 'compact',
-    fetchScriptContent: true,
   },
   transform: {
     layout: 'compact',

@@ -546,7 +546,6 @@ describe('editors reducers', () => {
           data: '{"id": "123"}',
           sampleDataStatus: 'received',
           lastValidData: '{"id": "123"}',
-          lastChange: expect.any(Number),
           rule: '{{abs newField}}',
         },
       };
@@ -583,7 +582,6 @@ describe('editors reducers', () => {
           data: 'name\tage-Bob\t30',
           sampleDataStatus: 'received',
           lastValidData: 'name\tage-Bob\t30',
-          lastChange: expect.any(Number),
           rule: {
             columnDelimiter: '\t',
             rowDelimiter: '-',
@@ -630,7 +628,6 @@ describe('editors reducers', () => {
           },
           sampleDataStatus: 'received',
           lastValidData: '{"id": "abc"}',
-          lastChange: expect.any(Number),
           rule: {
             filter: ['is', 'id', 'id'],
             javascript: {fetchScriptContent: true},
@@ -669,7 +666,6 @@ describe('editors reducers', () => {
           data: '{"id": "123"}',
           sampleDataStatus: 'received',
           lastValidData: '{"id": "123"}',
-          lastChange: expect.any(Number),
           dataVersion: 2,
           v2Rule: '{{abs newField}}',
           v1Rule: '{{abs oldField}}',
@@ -749,7 +745,6 @@ describe('editors reducers', () => {
           data: '{"id": "456"}',
           sampleDataStatus: 'received',
           lastValidData: '{"id": "456"}',
-          lastChange: expect.any(Number),
         },
       };
 
@@ -790,7 +785,6 @@ describe('editors reducers', () => {
             filter: '{"id": "abc", "name": "Bob"}',
             javascript: JSON.stringify({id: 'abc'}, null, 2),
           },
-          lastChange: expect.any(Number),
         },
       };
 
@@ -860,7 +854,6 @@ describe('editors reducers', () => {
           editorType: 'handlebars',
           stage: 'flowInput',
           layout: 'column',
-          lastChange: expect.any(Number),
         },
       };
 
@@ -893,7 +886,6 @@ describe('editors reducers', () => {
           sampleDataStatus: 'received',
           layout: 'jsonFormBuilder',
           lastValidData: '{"id": "123"}',
-          lastChange: expect.any(Number),
           activeProcessor: 'json',
         },
       };
