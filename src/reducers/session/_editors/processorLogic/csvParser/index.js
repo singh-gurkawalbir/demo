@@ -1,5 +1,5 @@
 
-import { wrapExportFileSampleData } from '../../../../utils/sampleData';
+import { wrapExportFileSampleData } from '../../../../../utils/sampleData';
 
 const requestBody = ({ rule, data }) => {
   const rules = {

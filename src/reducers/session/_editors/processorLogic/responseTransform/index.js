@@ -1,5 +1,5 @@
-import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
-import flowTransform from './flowTransform';
+import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
+import flowTransform from '../flowTransform';
 
 export default {
   processor: ({activeProcessor}) => activeProcessor,

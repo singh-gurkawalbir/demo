@@ -1,5 +1,5 @@
 import { isString } from 'lodash';
-import util from '../../../../utils/json';
+import util from '../../../../../utils/json';
 
 export default {
   requestBody: editor => {
