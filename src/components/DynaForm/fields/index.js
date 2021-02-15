@@ -24,7 +24,7 @@ import DynaRefreshableSelect from './DynaRefreshableSelect';
 import DynaTransformEditor from './editors/DynaTransformEditor';
 import DynaTextFtpPort from './DynaTextFtpPort';
 import DynaUploadFile from './DynaUploadFile';
-import DynaHook from './DynaHook';
+import DynaHook_afe2 from './DynaHook_afe2';
 import DynaSuiteScriptHook from './DynaSuiteScriptHook';
 import DynaScriptContent from './DynaScriptContent';
 import DynaSelectScopes from './DynaSelectScopes';
@@ -172,7 +172,7 @@ export default {
   labeltitle: DynaLabel,
   celigotable: DynaCeligoTable,
   previewcomponentstable: DynaPreviewComponentsTable,
-  hook: DynaHook,
+  hook: DynaHook_afe2,
   suitescripthook: DynaSuiteScriptHook,
   scriptcontent: DynaScriptContent,
   filedefinitionselect: DynaFileDefinitionSelect,

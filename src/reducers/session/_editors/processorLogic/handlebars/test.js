@@ -11,7 +11,7 @@ const {
 
 describe('handlebars processor logic', () => {
   describe('_constructEditorTitle util', () => {
-    test('should label if its falsy', () => {
+    test('should return passed label if its falsy', () => {
       expect(_constructEditorTitle('')).toEqual('');
     });
     test('should return original label if it starts with Build', () => {

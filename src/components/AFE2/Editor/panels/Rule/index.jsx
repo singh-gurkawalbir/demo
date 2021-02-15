@@ -4,7 +4,7 @@ import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import CodePanel from '../Code';
 
-export default function RulePanel({ editorId, mode }) {
+export default function RulePanel({ editorId, mode, attrName = 'rule' }) {
   const dispatch = useDispatch();
   const rule = useSelector(state => selectors._editorRule(state, editorId));
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
@@ -15,7 +15,7 @@ export default function RulePanel({ editorId, mode }) {
 
   return (
     <CodePanel
-      name="rule"
+      name={attrName}
       value={rule}
       mode={mode}
       readOnly={disabled}
