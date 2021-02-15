@@ -1,11 +1,11 @@
-import util from '../../../../utils/json';
+import util from '../../../../../utils/json';
 
 /* this util is used to read field label and generate editor title from it
 * eg, label = 'Build HTTP request body', editor title would be same i.e. 'Build HTTP request body'
 * label = 'HTTP body', editor title would be 'Build HTTP body'
 * label = 'Relative URI', editor title would be 'Build relative URI'
 */
-function _constructEditorTitle(label) {
+export function _constructEditorTitle(label) {
   if (!label) return label;
   const regexp = /^[A-Z]{2}/;
 
@@ -18,9 +18,9 @@ function _constructEditorTitle(label) {
 
   return `Build ${label[0].toLowerCase()}${label.slice(1)}`;
 }
-function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator}) {
+export function _editorSupportsV1V2data({resource = {}, fieldId, connection = {}, isPageGenerator}) {
   if (fieldId === '_query') {
-    // we dont get whole resource object in case of rdbms lookup query so
+    // we don't get whole resource object in case of rdbms lookup query so
     // change this to true when lookup query supports toggle in future
     return false;
   }
@@ -76,7 +76,7 @@ export default {
   init: props => {
     const {options, resource, fieldState, connection, isPageGenerator, formValues, ...rest} = props;
     const {fieldId} = options;
-    const {type, value, arrayIndex} = fieldState;
+    const {type, value, arrayIndex} = fieldState || {};
     let rule = value;
 
     if (type === 'relativeuri' || type === 'httprequestbody' || type === 'sqlquerybuilder') {

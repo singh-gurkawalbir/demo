@@ -1,15 +1,15 @@
-import actions from '../../../../actions';
-import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../../constants/resource';
-import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
-import exportFilter from './exportFilter';
+import actions from '../../../../../actions';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../../../constants/resource';
+import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
+import exportFilter from '../exportFilter';
 
 export default {
   processor: ({activeProcessor}) => activeProcessor,
   init: ({resource, options}) => {
     let activeProcessor = 'filter';
 
-    const filterObj = resource?.filter || {};
-    const { script = {}, expression = {} } = filterObj;
+    const filterObj = options.resourceType === 'imports' ? resource?.filter : resource?.inputFilter;
+    const { script = {}, expression = {} } = filterObj || {};
     const rule = {
       filter: expression.rules || [],
       javascript: {
@@ -52,7 +52,7 @@ export default {
     const {scriptId, code, entryFunction } = javascript || {};
 
     const type = activeProcessor === 'filter' ? 'expression' : 'script';
-    const path = '/filter';
+    const path = resourceType === 'imports' ? '/filter' : '/inputFilter';
     const value = {
       type,
       expression: {
@@ -92,7 +92,7 @@ export default {
           action: actions.analytics.gainsight.trackEvent(
             `${RESOURCE_TYPE_PLURAL_TO_SINGULAR[
               resourceType
-            ].toUpperCase()}_HAS_CONFIGURED_FILTER`
+            ].toUpperCase()}_HAS_CONFIGURED_INCOMING_FILTER`
           ),
         });
       }

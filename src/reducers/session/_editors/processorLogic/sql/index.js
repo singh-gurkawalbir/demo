@@ -1,14 +1,14 @@
 import { cloneDeep } from 'lodash';
-import util from '../../../../utils/json';
-import { dataAsString } from '../../../../utils/editor';
-import handlebars from './handlebars';
-import { getDefaultData } from '../../../../utils/sampleData';
-import { getUnionObject } from '../../../../utils/jsonPaths';
-import { safeParse } from '../../../../utils/string';
+import util from '../../../../../utils/json';
+import { dataAsString } from '../../../../../utils/editor';
+import handlebars from '../handlebars';
+import { getDefaultData } from '../../../../../utils/sampleData';
+import { getUnionObject } from '../../../../../utils/jsonPaths';
+import { safeParse } from '../../../../../utils/string';
 
 const { merge } = require('lodash');
 
-function _hasDefaultMetaData({fieldId, resourceType}) {
+export function _hasDefaultMetaData({fieldId, resourceType}) {
   const hideDefaultDataFields = [
     'dynamodb.expressionAttributeValues',
     'dynamodb.itemDocument',

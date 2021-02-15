@@ -1,9 +1,9 @@
 import isEqual from 'lodash/isEqual';
-import actions from '../../../../actions';
-import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
-import javascript from './javascript';
-import filter from './filter';
-import { safeParse } from '../../../../utils/string';
+import actions from '../../../../../actions';
+import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
+import javascript from '../javascript';
+import filter from '../filter';
+import { safeParse } from '../../../../../utils/string';
 
 export default {
   processor: ({activeProcessor}) => activeProcessor,

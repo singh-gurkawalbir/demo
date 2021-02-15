@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import isEqual from 'lodash/isEqual';
-import util from '../../../../utils/json';
-import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
+import util from '../../../../../utils/json';
+import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
 
 export default {
   init: ({options, scriptContext}) => ({
@@ -37,11 +37,11 @@ export default {
       code = '',
       fetchScriptContent,
       ...rest
-    } = rule;
+    } = rule || {};
     const {fetchScriptContent: originalFetchScriptContent,
       _init_code: originalInitCode,
       code: originalCode,
-      ...originalRest} = originalRule;
+      ...originalRest} = originalRule || {};
 
     if (_init_code !== code) { return true; }
 
