@@ -53,22 +53,21 @@ export default {
   },
   processResult: (editor, result) => ({data: result ? result.data : ''}),
   patchSet: editor => {
-    const patches = {
-      foregroundPatches: undefined,
-    };
     const { code, scriptId } = editor.rule || {};
 
-    patches.foregroundPatches = [{
-      patch: [
-        {
-          op: 'replace',
-          path: '/content',
-          value: code,
-        },
-      ],
-      resourceType: 'scripts',
-      resourceId: scriptId,
-    }];
+    const patches = {
+      foregroundPatches: [{
+        patch: [
+          {
+            op: 'replace',
+            path: '/content',
+            value: code,
+          },
+        ],
+        resourceType: 'scripts',
+        resourceId: scriptId,
+      }],
+    };
 
     return patches;
   },
