@@ -16,7 +16,7 @@ import {
   isBlobTypeResource,
   isRestCsvMediaTypeExport,
   isRealTimeOrDistributedResource,
-} from '../../../../utils/resource';
+  isFileAdaptor } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import { isIntegrationApp } from '../../../../utils/flows';
 import { EMPTY_RAW_DATA } from '../../../../utils/constants';
@@ -28,7 +28,7 @@ export function* _getUIDataForResource({ resource, connection, flow, refresh }) 
   if (isBlobTypeResource(resource)) return getBlobResourceSampleData();
 
   // Incase of Data Loader/ Rest CSV Exports, flow is same as File Adaptors
-  if (isRestCsvMediaTypeExport(resource, connection) || isDataLoader) return yield call(requestFileAdaptorSampleData, { resource });
+  if (isRestCsvMediaTypeExport(resource, connection) || isDataLoader || isFileAdaptor(resource)) return yield call(requestFileAdaptorSampleData, { resource });
 
   if (adaptorType) {
     switch (adaptorType) {
@@ -56,7 +56,8 @@ export function* _getUIDataForResource({ resource, connection, flow, refresh }) 
     }
   }
 
-  if (isIntegrationApp(flow) && sampleData) return sampleData;
+  // if not hard refresh, then send sample data stored on resource, otherwise let preview handle it.
+  if (isIntegrationApp(flow) && sampleData && !refresh) return sampleData;
 }
 
 export default function* getPreviewOptionsForResource({ resource, flow, refresh, runOffline }) {
@@ -85,5 +86,5 @@ export default function* getPreviewOptionsForResource({ resource, flow, refresh,
     return type === 'delta' ? { runOfflineOptions, postData } : { runOfflineOptions };
   }
 
-  return type === 'delta' ? { ...(!refresh && { uiData }), postData } : { uiData };
+  return type === 'delta' ? { uiData, postData } : { uiData };
 }

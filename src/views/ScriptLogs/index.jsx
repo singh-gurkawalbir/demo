@@ -48,6 +48,7 @@ const useStyles = makeStyles(theme => ({
   rightActionContainer: {
     padding: theme.spacing(2, 0),
     display: 'flex',
+    alignItems: 'center',
   },
   leftActionContainer: {
     padding: theme.spacing(2, 0),
@@ -81,6 +82,15 @@ const useStyles = makeStyles(theme => ({
   },
   searchMoreSpinner: {
     marginRight: theme.spacing(1),
+  },
+  divider: {
+    marginLeft: 0,
+  },
+  leftActionItems: {
+    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+    margin: 'auto',
+    marginRight: theme.spacing(2),
+    display: 'flex',
   },
 }));
 
@@ -223,30 +233,32 @@ export default function ScriptLogs({ flowId, scriptId }) {
             value={logLevel || ''}>
             <MenuItem value="">Log level</MenuItem>
             {Object.keys(LOG_LEVELS).map(logLevel => (
-              <MenuItem key={logLevel} value={logLevel}>
-                {logLevel}
+              <MenuItem key={logLevel} value={logLevel} >
+                {LOG_LEVELS[logLevel]}
               </MenuItem>
             ))}
           </CeligoSelect>
         </div>
         <div className={classes.rightActionContainer}>
-          {flowId && (
+          <div className={classes.leftActionItems}>
+            {flowId && (
             <RunFlowButton
               flowId={flowId}
               variant="iconText"
             />
-          )}
-          <StartDebug
-            resourceId={scriptId}
-            resourceType="scripts"
+            )}
+            <StartDebug
+              resourceId={scriptId}
+              resourceType="scripts"
             />
-          <IconTextButton
-            onClick={handleRefreshClick}
-            data-test="refreshResource"
-            disabled={status === 'requested'}>
-            <RefreshIcon />
-            Refresh
-          </IconTextButton>
+            <IconTextButton
+              onClick={handleRefreshClick}
+              data-test="refreshResource"
+              disabled={status === 'requested'}>
+              <RefreshIcon />
+              Refresh
+            </IconTextButton>
+          </div>
           <CeligoPagination
             {...paginationOptions}
             rowsPerPageOptions={rowsPerPageOptions}

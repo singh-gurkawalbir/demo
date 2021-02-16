@@ -24,7 +24,7 @@ import DynaRefreshableSelect from './DynaRefreshableSelect';
 import DynaTransformEditor from './editors/DynaTransformEditor';
 import DynaTextFtpPort from './DynaTextFtpPort';
 import DynaUploadFile from './DynaUploadFile';
-import DynaHook from './DynaHook';
+import DynaHook_afe2 from './DynaHook_afe2';
 import DynaSuiteScriptHook from './DynaSuiteScriptHook';
 import DynaScriptContent from './DynaScriptContent';
 import DynaSelectScopes from './DynaSelectScopes';
@@ -117,6 +117,8 @@ import DynaReplaceConnection from './DynaReplaceConnection';
 import DynaSelectRequestMediaType from './DynaSelectRequestMediaType';
 import DynaSelectMultiApplication from './DynaSelectMultiApplication';
 import DynaPreviewComponentsTable from './DynaPreviewComponentsTable';
+import DynaChildLicenses from './DynaChildLicenses';
+import DynaDateSelector from './DynaDateSelector';
 
 export default {
   suitescriptsettings: DynaRefreshableSettings,
@@ -170,7 +172,7 @@ export default {
   labeltitle: DynaLabel,
   celigotable: DynaCeligoTable,
   previewcomponentstable: DynaPreviewComponentsTable,
-  hook: DynaHook,
+  hook: DynaHook_afe2,
   suitescripthook: DynaSuiteScriptHook,
   scriptcontent: DynaScriptContent,
   filedefinitionselect: DynaFileDefinitionSelect,
@@ -258,4 +260,6 @@ export default {
   // ftpfilenamewitheditor: DynaFTPFileNameWithEditor,
   ftpfilenamewitheditor: DynaFTPFileNameWithEditor_afe2,
   as2Mode: DynaAs2Mode,
+  childlicenses: DynaChildLicenses,
+  dateselector: DynaDateSelector,
 };

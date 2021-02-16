@@ -132,7 +132,6 @@ export default function reducer(state = {}, action) {
         } else if (draft[id].dataVersion === 1) {
           draft[id].v1Rule = rulePatch;
         }
-        draft[id].lastChange = Date.now();
         if (draft[id].autoEvaluate) {
           draft[id].previewStatus = 'requested';
         }
@@ -149,7 +148,6 @@ export default function reducer(state = {}, action) {
         } else {
           draft[id].data = dataPatch;
         }
-        draft[id].lastChange = Date.now();
         draft[id].lastValidData = draft[id].data;
         if (draft[id].autoEvaluate) {
           draft[id].previewStatus = 'requested';
@@ -175,7 +173,6 @@ export default function reducer(state = {}, action) {
             delete draft[id].formOutput;
           }
         }
-        draft[id].lastChange = Date.now();
         break;
       }
 
@@ -286,7 +283,7 @@ selectors._editorRule = (state, id) => {
 
   const editor = state[id];
 
-  if (!editor) return;
+  if (!editor) return emptyObj;
   const mode = editor.activeProcessor;
 
   if (mode) {
@@ -326,9 +323,5 @@ selectors._editorLayout = (state, id) => {
 selectors._editorViolations = (state, id) => processorLogic.validate(state?.[id]);
 
 selectors._isEditorDirty = (state, id) => processorLogic.isDirty(state?.[id]);
-
-// selectors._processorRequestOptions = (state, id) => processorLogic.requestOptions(state?.[id]);
-
-// selectors._editorPatchSet = (state, id) => processorLogic.getPatchSet(state?.[id]);
 
 // #endregion

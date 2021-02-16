@@ -43,8 +43,4 @@ export default {
       },
     ],
   },
-  'ftp.fileName': {
-    type: 'text',
-    label: 'Ftp file name',
-  },
 };

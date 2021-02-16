@@ -39,7 +39,7 @@ export default function SelectImport() {
     flowId
   );
   const flowImports = useSelectorMemo(selectors.flowMappingsImportsList, flowId, importId);
-  const imports = useMemo(() => flowImports.filter(i => !i.blobKeyPath), [flowImports]);
+  const imports = useMemo(() => flowImports.filter(i => !i.blob), [flowImports]);
   const [subrecordImports, setSubrecordImports] = useState();
   const [selectedImportId, setSelectedImportId] = useState();
   const getMappingUrl = _impId => {

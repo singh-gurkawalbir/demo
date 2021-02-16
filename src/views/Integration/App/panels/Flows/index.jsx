@@ -216,7 +216,7 @@ function FlowList({ integrationId, storeId }) {
 
   useEffect(() => {
     dispatch(actions.patchFilter(filterKey, {sort: {order: 'asc', orderBy: 'name'}}));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
@@ -275,6 +275,7 @@ function FlowList({ integrationId, storeId }) {
         </div>
       </PanelHeader>
       <CeligoTable
+        data-public
         data={flows}
         filterKey={filterKey}
         {...flowTableMeta}
@@ -341,6 +342,7 @@ export default function FlowsPanel({ storeId, integrationId }) {
             {flowSections.map(({ title, titleId }) => (
               <ListItem key={titleId} className={classes.flowTitle}>
                 <NavLink
+                  data-public
                   className={classes.listItem}
                   activeClassName={classes.activeListItem}
                   to={titleId}

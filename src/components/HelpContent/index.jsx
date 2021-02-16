@@ -27,6 +27,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.text.primary,
     fontSize: '14px',
     lineHeight: '22px',
+    whiteSpace: 'normal',
     '& > div > pre': {
       background: theme.palette.background.paper2,
       border: '1px solid',

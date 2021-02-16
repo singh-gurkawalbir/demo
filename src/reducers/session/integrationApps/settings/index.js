@@ -4,6 +4,7 @@ import { createSelector } from 'reselect';
 import { deepClone } from 'fast-json-patch/lib/core';
 import actionTypes from '../../../../actions/types';
 import mappingUtil from '../../../../utils/mapping';
+import { FORM_SAVE_STATUS } from '../../../../utils/constants';
 
 const emptyObj = {};
 const emptySet = [];
@@ -99,9 +100,7 @@ export default (state = {}, action) => {
 
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE:
         if (!draft[key]) draft[key] = {};
-        delete draft[key].submitFailed;
-        draft[key].saveStatus = 'saving';
-        draft[key].submitComplete = false;
+        draft[key].formSaveStatus = FORM_SAVE_STATUS.LOADING;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA:
         if (!draft[addOnKey]) {
@@ -165,15 +164,11 @@ export default (state = {}, action) => {
 
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_COMPLETE:
         if (!draft[key]) draft[key] = {};
-        delete draft[key].submitFailed;
-        delete draft[key].saveStatus;
-        draft[key].submitComplete = true;
+        draft[key].formSaveStatus = FORM_SAVE_STATUS.COMPLETE;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED:
         if (!draft[key]) draft[key] = {};
-        delete draft[key].submitComplete;
-        delete draft[key].saveStatus;
-        draft[key].submitFailed = true;
+        draft[key].formSaveStatus = FORM_SAVE_STATUS.FAILED;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR:
         delete draft[key];

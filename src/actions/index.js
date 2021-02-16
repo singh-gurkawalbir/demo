@@ -1117,6 +1117,21 @@ const template = {
       connection,
       templateId,
     }),
+  publish: {
+    request: (templateId, isPublished) =>
+      action(actionTypes.TEMPLATE.PUBLISH.REQUEST, {
+        templateId,
+        isPublished,
+      }),
+    success: templateId =>
+      action(actionTypes.TEMPLATE.PUBLISH.SUCCESS, {
+        templateId,
+      }),
+    error: templateId =>
+      action(actionTypes.TEMPLATE.PUBLISH.ERROR, {
+        templateId,
+      }),
+  },
 };
 const agent = {
   displayToken: id => action(actionTypes.AGENT.TOKEN_DISPLAY, { id }),
@@ -1289,6 +1304,10 @@ const importSampleData = {
     action(actionTypes.IMPORT_SAMPLEDATA.IA_METADATA_RECEIVED, {
       _importId,
       metadata,
+    }),
+  iaMetadataFailed: ({ _importId }) =>
+    action(actionTypes.IMPORT_SAMPLEDATA.IA_METADATA_FAILED, {
+      _importId,
     }),
 };
 const flowData = {
@@ -1682,6 +1701,7 @@ const job = {
     action(actionTypes.JOB.ERROR.RECEIVED_RETRY_DATA, { retryData, retryId }),
   updateRetryData: ({ retryData, retryId }) =>
     action(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, { retryData, retryId }),
+  downloadRetryData: ({retryId}) => action(actionTypes.JOB.ERROR.DOWNLOAD_RETRY_DATA, {retryId}),
   retryForProcessedErrors: ({ jobId, flowJobId, errorFileId }) =>
     action(actionTypes.JOB.ERROR.RETRY_PROCESSED_ERRORS, {
       jobId,
@@ -1816,12 +1836,6 @@ const errorManager = {
         loadMore,
         isResolved,
       }),
-    error: ({ flowId, resourceId, isResolved = false }) =>
-      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ERROR, {
-        flowId,
-        resourceId,
-        isResolved,
-      }),
     selectErrors: ({
       flowId,
       resourceId,
@@ -1870,13 +1884,12 @@ const errorManager = {
           errorIds,
         }
       ),
-    retryReceived: ({ flowId, resourceId, retryCount, isResolved = false }) =>
+    retryReceived: ({ flowId, resourceId, retryCount}) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.RECEIVED,
         {
           flowId,
           resourceId,
-          isResolved,
           retryCount,
         }
       ),
@@ -1940,6 +1953,12 @@ const errorManager = {
         resourceId,
         retryId,
         error,
+      }),
+    download: ({flowId, resourceId, retryDataKey}) =>
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.DOWNLOAD, {
+        flowId,
+        resourceId,
+        retryDataKey,
       }),
     updateRequest: ({ flowId, resourceId, retryId, retryData }) =>
       action(actionTypes.ERROR_MANAGER.RETRY_DATA.UPDATE_REQUEST, {
@@ -2149,10 +2168,8 @@ const logs = {
       action(actionTypes.LOGS.CONNECTIONS.REQUEST_FAILED, { connectionId }),
     received: (connectionId, logs) =>
       action(actionTypes.LOGS.CONNECTIONS.RECEIVED, { connectionId, logs }),
-    refresh: connectionId =>
-      action(actionTypes.LOGS.CONNECTIONS.REFRESH, { connectionId }),
-    clear: connectionId =>
-      action(actionTypes.LOGS.CONNECTIONS.CLEAR, { connectionId }),
+    clear: ({connectionId, clearAllLogs}) =>
+      action(actionTypes.LOGS.CONNECTIONS.CLEAR, { connectionId, clearAllLogs }),
     delete: connectionId =>
       action(actionTypes.LOGS.CONNECTIONS.DELETE, { connectionId }),
     download: connectionId =>

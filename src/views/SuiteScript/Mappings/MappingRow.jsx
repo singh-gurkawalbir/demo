@@ -98,21 +98,37 @@ export default function MappingRow(props) {
   const ref = useRef(null);
   const dispatch = useDispatch();
   const [isActive, setIsActive] = useState(false);
-  const mapping = useSelector(state => {
-    const {mappings} = selectors.suiteScriptMapping(state);
-    const mapping = mappings.find(({key}) => key === mappingKey);
-
-    return mapping || emptyObject;
-  }, shallowEqual);
   const {
-    extract,
-    generate,
-    hardCodedValue,
+    mapping = emptyObject,
     ssLinkedConnectionId,
     integrationId,
     flowId,
     subRecordMappingId,
+  } = useSelector(state => {
+    const {
+      mappings,
+      ssLinkedConnectionId,
+      integrationId,
+      flowId,
+      subRecordMappingId,
+    } = selectors.suiteScriptMapping(state);
+    const mapping = mappings.find(({key}) => key === mappingKey);
+
+    return {
+      mapping,
+      ssLinkedConnectionId,
+      integrationId,
+      flowId,
+      subRecordMappingId,
+    };
+  }, shallowEqual);
+
+  const {
+    extract,
+    generate,
+    hardCodedValue,
   } = mapping;
+
   const generateFields = useSelector(state => selectors.suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}).data);
   const extractFields = useSelector(state => selectors.suiteScriptExtracts(state, {ssLinkedConnectionId, integrationId, flowId})).data;
   // isOver is set to true when hover happens over component
@@ -193,6 +209,7 @@ export default function MappingRow(props) {
             [classes.disableChildRow]: disabled,
           })}>
           <DynaTypeableSelect
+            key={extractValue}
             id={`fieldMappingExtract-${index}`}
             labelName="name"
             valueName="id"
@@ -209,6 +226,7 @@ export default function MappingRow(props) {
             [classes.disableChildRow]: disabled,
           })}>
           <DynaTypeableSelect
+            key={generate}
             id={`fieldMappingGenerate-${index}`}
             value={generate}
             labelName="name"

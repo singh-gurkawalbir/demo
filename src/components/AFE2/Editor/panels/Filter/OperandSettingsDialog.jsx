@@ -49,6 +49,7 @@ export default function OperandSettingsDialog({
               items: [
                 { label: 'Field', value: 'field' },
                 { label: 'Value', value: 'value' },
+                { label: 'Expression', value: 'expression' },
               ],
             },
           ],

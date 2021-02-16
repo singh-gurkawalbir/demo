@@ -1,16 +1,9 @@
+import licenseOneDotZero from './connectorLicense1.0';
+import licenseTwoDotZero from './connectorLicense2.0';
+import childLicenseTwoDotZero from './connectorChildLicense2.0';
+
 export default {
-  fieldMap: {
-    email: { fieldId: 'email' },
-    opts: { fieldId: 'opts' },
-    expires: { fieldId: 'expires' },
-    sandbox: { fieldId: 'sandbox' },
-  },
-  layout: {
-    type: 'box',
-    containers: [
-      {
-        fields: ['email', 'opts', 'expires', 'sandbox'],
-      },
-    ],
-  },
+  licenseOneDotZero,
+  licenseTwoDotZero,
+  childLicenseTwoDotZero,
 };

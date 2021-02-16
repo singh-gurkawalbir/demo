@@ -33,8 +33,9 @@ export default function DynaRefreshableStaticMap(props) {
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const { _connectionId: resConnectionId, _connectorId: resConnectorId } = useSelector(state => (selectors.resource(state, resourceType, resourceId) || {}));
-  const { kind: eKind, key: eKey, exportResource: eExportResource } = makeExportResource(keyResource, resConnectionId, resConnectorId);
-  const { kind: gKind, key: gKey, exportResource: gExportResource } = makeExportResource(valueResource, resConnectionId, resConnectorId);
+  const { kind: eKind, key: eKey, exportResource: eExportResource } = useMemo(() => makeExportResource(keyResource, resConnectionId, resConnectorId), [keyResource, resConnectionId, resConnectorId]);
+  const { kind: gKind, key: gKey, exportResource: gExportResource } = useMemo(() => makeExportResource(valueResource, resConnectionId, resConnectorId), [resConnectionId, resConnectorId, valueResource]);
+
   const { status: eStatus, data: eData } = useSelector(state => selectors.exportData(state, eKey));
   const { status: gStatus, data: gData } = useSelector(state => selectors.exportData(state, gKey));
 
@@ -47,7 +48,7 @@ export default function DynaRefreshableStaticMap(props) {
   const eOptions = ((eData?.length && eData) || []).filter(Boolean);
   const gOptions = ((gData?.length && gData) || []).filter(Boolean);
 
-  const optionsMap = [{
+  const optionsMap = useMemo(() => [{
     id: keyName,
     label: keyLabel,
     required: true,
@@ -62,10 +63,10 @@ export default function DynaRefreshableStaticMap(props) {
     optionsChangeIdentifer: 0,
     options: gOptions,
     supportsRefresh: !!connectionId || !!isExportRefresh(gKind, gKey, gExportResource),
-  }];
+  }], [connectionId, eExportResource, eKey, eKind, eOptions, gExportResource, gKey, gKind, gOptions, keyLabel, keyName, valueLabel, valueName]);
 
   const metadata = useMemo(() => {
-    if (isExportRefresh(gKind, gKey, gExportResource)) return null;
+    if (isExportRefresh(gKind, gKey, gExportResource)) return {optionsMap};
     if (refreshMetadata) {
       const optionsMapCopy = [...optionsMap];
 
@@ -149,7 +150,7 @@ export default function DynaRefreshableStaticMap(props) {
       {...props}
       isLoading={isLoadingMap}
       metadata={metadata}
-      shouldReset={!!metadata}
+      shouldReset={metadata}
       optionsMap={optionsMap}
       value={computedValue}
       onFieldChange={handleFieldChange}

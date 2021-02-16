@@ -47,7 +47,7 @@ import {
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
   JOB_STATUS,
-} from '../utils/constants';
+  FILE_PROVIDER_ASSISTANTS } from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { getFieldById } from '../forms/formFactory/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
@@ -62,7 +62,6 @@ import {
   isQueryBuilderSupported,
   filterAndSortResources,
   getUserAccessLevelOnConnection,
-  isFileProviderAssistant,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -87,7 +86,7 @@ import {
 } from '../utils/latestJobs';
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
-import { FLOW_STAGES } from '../utils/editor';
+import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -562,7 +561,7 @@ selectors.mkTileApplications = () => createSelector(
     }
 
     // Make NetSuite always the last application
-    applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]);
+    if (applications.length) { applications.push(applications.splice(applications.indexOf('netsuite'), 1)[0]); }
     // Only consider up to four applications
     if (applications.length > 4) {
       applications.length = 4;
@@ -787,15 +786,11 @@ selectors.mkFlowAllowsScheduling = () => {
 selectors.flowUsesUtilityMapping = (state, id, childId) => {
   const flow = selectors.resource(state, 'flows', id);
 
-  if (!flow) return false;
+  if (!flow || !flow._connectorId) return false;
   const integration = selectors.resource(state, 'integrations', flow._integrationId);
-  const isApp = flow._connectorId;
-
-  if (!isApp) return false;
-
   const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
-  return !!flowSettings.showUtilityMapping;
+  return !!flowSettings?.showUtilityMapping;
 };
 
 selectors.flowSupportsMapping = (state, id, childId) => {
@@ -813,7 +808,7 @@ selectors.flowSupportsMapping = (state, id, childId) => {
 
   const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
-  return !!flowSettings.showMapping;
+  return !!flowSettings?.showMapping;
 };
 
 selectors.flowSupportsSettings = (state, id, childId) => {
@@ -830,7 +825,7 @@ selectors.flowSupportsSettings = (state, id, childId) => {
 *********************************************************************** */
 
 selectors.flowListWithMetadata = (state, options) => {
-  const flows = selectors.resourceList(state, options).resources || emptyArray;
+  const flows = selectors.resourceList(state, options || emptyObject).resources || emptyArray;
   const exports = selectors.resourceList(state, {
     type: 'exports',
   }).resources;
@@ -1575,7 +1570,7 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
 selectors.integrationAppSettings = selectors.mkIntegrationAppSettings();
 
 selectors.getFlowsAssociatedExportFromIAMetadata = (state, fieldMeta) => {
-  const { resource: flowResource, properties } = fieldMeta;
+  const { resource: flowResource, properties } = fieldMeta || {};
   let resourceId;
 
   if (properties && properties._exportId) {
@@ -1817,7 +1812,7 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
           }
         } else {
           sections.forEach(sec => {
-            if (sec.mode === 'settings') {
+            if (sec.mode === 'settings' || !sec.mode) {
               if (sectionId) {
                 const selectedSection = sec.sections.find(s => getTitleIdFromSection(s) === sectionId);
 
@@ -2028,7 +2023,9 @@ selectors.makeIntegrationAppSectionFlows = () =>
             // If flow is present in two stores, then it is a commom flow and does not belong to any single store, so remove store information from flow
             delete flow.childId;
             delete flow.childName;
-          } else {
+          } else if (flows.find(fi => fi._id === f._id)) {
+            // Add only valid flows, the flow must be present in flows collection. This is possible when store is in uninstall mode.
+            // Flow may be deleted but store structure is intact on integration json.
             requiredFlows.push({id: f._id, childId: sec.childId, childName: sec.childName});
           }
         });
@@ -3023,7 +3020,7 @@ selectors.getImportSampleData = (state, resourceId, options = {}) => {
   const { assistant, adaptorType, sampleData, _connectorId } = resource;
   const isIntegrationApp = !!_connectorId;
 
-  if (assistant && assistant !== 'financialforce') {
+  if (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant))) {
     // get assistants sample data
     return selectors.assistantPreviewData(state, resourceId);
   }
@@ -3151,7 +3148,7 @@ selectors.isExportPreviewDisabled = (state, resourceId, resourceType) => {
     state,
     resourceType,
     resourceId,
-    'value'
+    'value',
   );
 
   // Incase of File adaptors(ftp, s3)/As2/Rest csv where file upload is supported
@@ -4723,13 +4720,6 @@ selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
   // Check for media type 'csv' from connection object
   return connection && connection.rest && connection.rest.mediaType === 'csv';
 };
-selectors.isFileProviderAssistant = (state, resourceId) => {
-  const { merged: resourceObj } = selectors.resourceData(state, 'exports', resourceId);
-  const { _connectionId: connectionId } = resourceObj || {};
-  const connection = selectors.resource(state, 'connections', connectionId);
-
-  return isFileProviderAssistant(resourceObj, connection);
-};
 
 selectors.isDataLoaderExport = (state, resourceId, flowId) => {
   if (isNewId(resourceId)) {
@@ -4799,7 +4789,7 @@ selectors.shouldShowAddPageProcessor = (state, flowId) => {
 
   const showAddPageProcessor =
     !isDataLoaderFlow ||
-    (pageProcessors.length === 0 &&
+    !!(pageProcessors.length === 0 &&
       pageGenerators.length &&
       pageGenerators[0]._exportId);
 
@@ -4885,15 +4875,15 @@ selectors.getCustomResourceLabel = (
         'SalesforceExport',
       ].includes(resource.adaptorType) &&
         resource.type === 'blob') ||
-      ['FTPExport', 'S3Export'].includes(resource.adaptorType) ||
+        (isFileAdaptor(resource) && resource.adaptorType.includes('Export')) ||
       ([
         'RESTImport',
         'HTTPImport',
         'NetSuiteImport',
         'SalesforceImport',
       ].indexOf(resource.adaptorType) >= 0 &&
-        resource.blobKeyPath) ||
-      ['FTPImport', 'S3Import'].includes(resource.adaptorType)
+        resource.blob) ||
+        (isFileAdaptor(resource) && resource.adaptorType.includes('Import'))
     ) {
       resourceLabel = 'Transfer';
     }
@@ -4997,7 +4987,7 @@ selectors.editorSupportsOnlyV2Data = (state, editorId) => {
   // no use case yet where any PG field supports only v2 data
   if (isPageGenerator) return false;
 
-  if (editorType === 'csvGenerator' || fieldId === 'ftp.backupDirectoryPath' || fieldId === 's3.backupBucket') return true;
+  if (editorType === 'csvGenerator' || fieldId === 'file.backupPath') return true;
 
   return false;
 };
@@ -5056,7 +5046,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   let _sampleData = null;
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
-  if (FLOW_STAGES.includes(stage)) {
+  if (FLOW_STAGES.includes(stage) || HOOK_STAGES.includes(stage)) {
     _sampleData = sampleData;
   } else if (isPageGenerator) {
     // for PGs, no sample data is shown
@@ -5064,6 +5054,11 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   } else {
     // for all PPs, default sample data is shown in case its empty
     _sampleData = { data: sampleData || { myField: 'sample' }};
+  }
+
+  // for lookup fields, BE doesn't support v1/v2 yet
+  if (fieldId?.startsWith('lookup') || fieldId?.startsWith('_')) {
+    return {shouldGetContextFromBE: false, sampleData: _sampleData};
   }
 
   // TODO: BE would be deprecating native REST adaptor as part of IO-19864
@@ -5084,13 +5079,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
     return {shouldGetContextFromBE: connection.isHTTP, sampleData: _sampleData};
   }
   if (stage === 'transform' ||
-  stage === 'postResponseMapHook' ||
-  stage === 'sampleResponse') {
-    return {shouldGetContextFromBE: false, sampleData: _sampleData};
-  }
-
-  // for lookup fields, BE doesnt support v1/v2 yet
-  if (fieldId?.startsWith('_')) {
+  stage === 'sampleResponse' || HOOK_STAGES.includes(stage)) {
     return {shouldGetContextFromBE: false, sampleData: _sampleData};
   }
 
@@ -5132,3 +5121,9 @@ selectors.sourceOptions = createSelector(
   (state, resourceId) => selectors.applicationName(state, resourceId),
   (sources, applicationName) => getSourceOptions(sources, applicationName)
 );
+
+selectors.isConnectionLogsNotSupported = (state, connectionId) => {
+  const connectionResource = selectors.resource(state, 'connections', connectionId);
+
+  return ['wrapper', 'dynamodb', 'mongodb'].includes(connectionResource?.type);
+};

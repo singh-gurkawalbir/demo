@@ -234,7 +234,7 @@ export default function TemplatePreview() {
             <Typography>{username}</Typography>
           </div>
           <div className={classes.listItem}>
-            <Typography variant="h4" className={classes.keyName}>CompanyCompany: </Typography>
+            <Typography variant="h4" className={classes.keyName}>Company: </Typography>
             <Typography>{company}</Typography>
           </div>
 

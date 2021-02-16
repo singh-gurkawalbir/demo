@@ -14,8 +14,7 @@ import filter from './filter';
 // import netsuiteQualificationCriteria from './netsuiteQualificationCriteria';
 // import salesforceQualifier from './salesforceQualifier';
 // import salesforceLookupFilter from './salesforceLookupFilter';
-// import readme from './readme';
-import scriptEdit from './scriptEdit';
+import readme from './readme';
 import postResponseMapHook from './postResponseMapHook';
 import exportFilter from './exportFilter';
 import inputFilter from './inputFilter';
@@ -33,7 +32,6 @@ const logicMap = {
   sql,
   settingsForm,
   transform,
-  scriptEdit,
   postResponseMapHook,
   exportFilter,
   inputFilter,
@@ -44,9 +42,10 @@ const logicMap = {
   csvGenerator,
   structuredFileParser,
   structuredFileGenerator,
+  readme,
 };
 
-function getLogic(editor) {
+export function getLogic(editor) {
   const logic = logicMap[editor.editorType];
 
   if (!logic) {
@@ -143,23 +142,7 @@ const preSaveValidate = editor => {
   return logic.preSaveValidate;
 };
 
-function getPatchSetLogic(editor) {
-  const processorKey = editor.editorType;
-
-  if (!processorKey) {
-    throw new Error('Not supported.');
-  }
-
-  const logic = logicMap[processorKey];
-
-  if (!logic) {
-    throw new Error(`Processor [${processorKey}] not supported.`);
-  }
-
-  return logic;
-}
-
-const getPatchSet = editor => getPatchSetLogic(editor).patchSet?.(editor);
+const getPatchSet = editor => getLogic(editor).patchSet?.(editor);
 
 export const featuresMap = options => ({
   handlebars: {
@@ -193,7 +176,6 @@ export const featuresMap = options => ({
   javascript: {
     autoEvaluate: false,
     layout: 'compact',
-    fetchScriptContent: true,
   },
   transform: {
     layout: 'compact',
@@ -229,6 +211,9 @@ export const featuresMap = options => ({
   postResponseMapHook: {
     layout: 'compact',
     insertStubKey: 'postResponseMap',
+  },
+  readme: {
+    layout: 'readme',
   },
 });
 

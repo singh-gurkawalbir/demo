@@ -12,7 +12,7 @@ describe('integrationApps reducer test cases', () => {
     describe('integrationApps settings update action', () => {
       test('should not affect the existing state when  update function  is called', () => {
         const state = reducer(
-          { '1-2': { submitComplete: true } },
+          { '1-2': { formSaveStatus: 'loading' } },
           actions.integrationApp.settings.update(
             'integrationId',
             'flowId',
@@ -23,8 +23,8 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
 
-          '1-2': { submitComplete: true },
-          'integrationId-flowId': { submitComplete: false, saveStatus: 'saving' },
+          '1-2': { formSaveStatus: 'loading' },
+          'integrationId-flowId': { formSaveStatus: 'loading' },
 
         };
 
@@ -32,7 +32,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should find the key by integrationId and flowId passed and set submitComplete flag to false', () => {
         const state = reducer(
-          { 'integrationId-flowId': { submitComplete: true } },
+          { 'integrationId-flowId': { formSaveStatus: 'complete' } },
           actions.integrationApp.settings.update(
             'integrationId',
             'flowId',
@@ -42,7 +42,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
-          'integrationId-flowId': { submitComplete: false, saveStatus: 'saving' },
+          'integrationId-flowId': { formSaveStatus: 'loading' },
         };
 
         expect(state).toEqual(expectedValue);
@@ -61,7 +61,7 @@ describe('integrationApps reducer test cases', () => {
         const expectedValue = {
 
           '1-2': { submitComplete: false },
-          'integrationId-flowId': { submitComplete: true },
+          'integrationId-flowId': { formSaveStatus: 'complete' },
 
         };
 
@@ -69,7 +69,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should find the key by integrationId and flowId passed and set submitComplete flag to true', () => {
         const state = reducer(
-          { 'integrationId-flowId': { submitComplete: false } },
+          { 'integrationId-flowId': { formSaveStatus: 'loading' } },
           actions.integrationApp.settings.submitComplete({
             integrationId: 'integrationId',
             flowId: 'flowId',
@@ -77,7 +77,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
 
-          'integrationId-flowId': { submitComplete: true },
+          'integrationId-flowId': { formSaveStatus: 'complete' },
 
         };
 

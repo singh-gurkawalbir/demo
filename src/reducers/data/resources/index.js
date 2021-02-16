@@ -1,13 +1,14 @@
 import produce from 'immer';
-import { get } from 'lodash';
+import { get, isEqual } from 'lodash';
 import { createSelector } from 'reselect';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
-import { convertOldFlowSchemaToNewOne, getIAFlowSettings, getScriptsReferencedInFlow } from '../../../utils/flows';
+import { convertOldFlowSchemaToNewOne, getIAFlowSettings, getScriptsReferencedInFlow, isIntegrationApp } from '../../../utils/flows';
 import { stringCompare } from '../../../utils/sort';
 import mappingUtil from '../../../utils/mapping';
 import getRoutePath from '../../../utils/routePaths';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
+import { FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
 
 const emptyObject = {};
 const emptyList = [];
@@ -53,6 +54,10 @@ function replaceOrInsertResource(state, resourceType, resourceValue) {
     return { ...state, [type]: [...collection, resource] };
   }
 
+  // no need to make an update when it is the same resource...this helps in saving some render cycles
+  if (isEqual(resource, collection[index])) {
+    return state;
+  }
   const newCollection = [
     ...collection.slice(0, index),
     resource,
@@ -444,11 +449,12 @@ selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
 
 selectors.mappingImportSampleDataSupported = (state, importId) => {
   const importResource = selectors.resource(state, 'imports', importId);
-  const {adaptorType} = importResource;
-  const isAssistant =
-  !!importResource.assistant && importResource.assistant !== 'financialforce';
 
-  return isAssistant || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(adaptorType);
+  const isAssistant =
+  !!importResource.assistant && importResource.assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(importResource.assistant));
+  const isIAResource = isIntegrationApp(importResource);
+
+  return isAssistant || isIAResource || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(importResource?.adaptorType);
 };
 
 selectors.redirectUrlToResourceListingPage = (
