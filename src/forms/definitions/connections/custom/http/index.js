@@ -194,6 +194,10 @@ import channelape from './channelape';
 import pricefx from './pricefx';
 import clover from './clover';
 import freshworks from './freshworks';
+import pipedrive from './pipedrive';
+import microsoftteams from './microsoftteams';
+import adobesign from './adobesign';
+import prestashop from './prestashop';
 
 export default {
   channelape,
@@ -392,4 +396,8 @@ export default {
   pricefx,
   clover,
   freshworks,
+  pipedrive,
+  microsoftteams,
+  adobesign,
+  prestashop,
 };

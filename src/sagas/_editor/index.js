@@ -460,6 +460,9 @@ export function* requestEditorSampleData({
     if (!isNewId(flowId)) {
       body.flowId = flowId;
     }
+    const flow = yield select(selectors.resource, 'flows', flowId);
+
+    body.integrationId = flow?._integrationId;
 
     body[resourceType === 'imports' ? 'import' : 'export'] = resource;
     body.fieldPath = fieldId || filterPath;

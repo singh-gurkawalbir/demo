@@ -111,6 +111,8 @@ export default {
     'checkout',
     'pricefx',
     'freshworks',
+    'pipedrive',
+    'prestashop',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -184,6 +186,9 @@ export default {
     'zendesksell',
     'microsoftdynamics365financeandoperation',
     'clover',
+    'pipedrive',
+    'microsoftteams',
+    'adobesign',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',
@@ -221,5 +226,7 @@ export default {
     'myobadvanced',
     'lexbizz',
     'googledrive',
+    'microsoftteams',
+    'adobesign',
   ],
 };
