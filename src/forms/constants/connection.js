@@ -110,6 +110,7 @@ export default {
     'dotdigital',
     'checkout',
     'pricefx',
+    'pipedrive',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -183,6 +184,7 @@ export default {
     'zendesksell',
     'microsoftdynamics365financeandoperation',
     'clover',
+    'pipedrive',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',
