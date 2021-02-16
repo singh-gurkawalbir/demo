@@ -71,13 +71,13 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r && r.http && r.http.baseURI;
+        const baseURI = r?.http?.baseURI;
         const subdomain =
-              baseUri &&
-              baseUri.substring(
-                baseUri.indexOf('https://') + 8,
-                baseUri.indexOf('.pipedrive.com')
-              );
+        baseURI &&
+        baseURI.substring(
+          baseURI.indexOf('https://') + 8,
+          baseURI.indexOf('.pipedrive.com')
+        );
 
         return subdomain;
       },
