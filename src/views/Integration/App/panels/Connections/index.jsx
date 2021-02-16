@@ -77,7 +77,7 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
 
   useEffect(() => {
     dispatch(actions.patchFilter(filterKey, defaultFilter));
-  }, []);
+  }, [filterKey, dispatch]);
   useEffect(() => {
     dispatch(actions.resource.connections.refreshStatus(integrationId));
     // For connections resource table, we need to poll the connection status and queueSize
