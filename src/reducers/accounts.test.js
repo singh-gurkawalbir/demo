@@ -1,6 +1,7 @@
 /* global describe, expect, test */
 import each from 'jest-each';
 import { deepClone } from 'fast-json-patch';
+import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../utils/constants';
@@ -938,21 +939,175 @@ describe('Accounts region selector testcases', () => {
     });
   });
 
+  describe('selectors.platformLicenseActionDetails test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.platformLicenseActionDetails(undefined, {})).toEqual({});
+    });
+    test('should return correct number of trail days left for trial license', () => {
+      const state =
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: ACCOUNT_IDS.OWN,
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                  ownerUser: {
+                    licenses: [{
+                      _id: 'license1',
+                      type: 'integrator',
+                      tier: 'free',
+                      trialEndDate: moment()
+                        .add(10, 'days')
+                        .toISOString(),
+                    }],
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        };
+      const expected = {
+        action: 'upgrade',
+        expiresSoon: false,
+        label: '10 DAYS LEFT UPGRADE NOW',
+      };
+
+      expect(selectors.platformLicenseActionDetails(state)).toEqual(expected);
+    });
+    test('should return upgrade now for trail license expired account', () => {
+      const state =
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: ACCOUNT_IDS.OWN,
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                  ownerUser: {
+                    licenses: [{
+                      _id: 'license1',
+                      type: 'integrator',
+                      tier: 'free',
+                      trialEndDate: moment()
+                        .subtract(2, 'days')
+                        .toISOString(),
+                    },
+                    ],
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        };
+      const expected = {
+        action: 'upgrade',
+        label: 'UPGRADE NOW',
+      };
+
+      expect(selectors.platformLicenseActionDetails(state)).toEqual(expected);
+    });
+    test('should return empty for valid license account', () => {
+      const state =
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: ACCOUNT_IDS.OWN,
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                  ownerUser: {
+                    licenses: [{
+                      _id: 'license1',
+                      type: 'integrator',
+                      tier: 'standard',
+                      expires: moment()
+                        .add(60, 'days')
+                        .toISOString(),
+                    },
+                    ],
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        };
+
+      expect(selectors.platformLicenseActionDetails(state)).toEqual({});
+    });
+    test('should return action expired for license expired account', () => {
+      const state =
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: ACCOUNT_IDS.OWN,
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'license1',
+                        type: 'integrator',
+                        tier: 'standard',
+                        expires: moment()
+                          .subtract(1, 'days')
+                          .toISOString(),
+                      },
+                    ],
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        };
+      const expected = {
+        action: 'expired',
+      };
+
+      expect(selectors.platformLicenseActionDetails(state)).toEqual(expected);
+    });
+    test('should return empty for invalid license or no license account', () => {
+      const state =
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: ACCOUNT_IDS.OWN,
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                  ownerUser: {
+                    licenses: [
+                    ],
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        };
+
+      expect(selectors.platformLicenseActionDetails(state)).toEqual({});
+    });
+  });
+
   describe('selectors.isLicenseValidToEnableFlow test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.isLicenseValidToEnableFlow(undefined, {})).toEqual({enable: true});
-    });
-  });
-
-  describe('selectors.hasAccounts test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.hasAccounts(undefined, {})).toEqual(false);
-    });
-  });
-
-  describe('selectors.hasAcceptedUsers test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.hasAcceptedUsers()).toEqual(false);
     });
   });
 
