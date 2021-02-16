@@ -10,11 +10,11 @@ import Filters from './Filters';
 import JobTable from './JobTable';
 import actionTypes from '../../actions/types';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
-import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 import { hashCode } from '../../utils/string';
 import { isNewId } from '../../utils/resource';
+import useCommStatus from '../../hooks/useCommStatus';
 
 const useStyles = makeStyles(({
   jobTable: {
@@ -392,13 +392,15 @@ export default function JobDashboard({
     [enqueueSnackbar]
   );
 
+  useCommStatus({
+    actionsToMonitor,
+    autoClearOnComplete: true,
+    commStatusHandler: handleCommsStatus,
+  });
+  console.log('see ');
+
   return (
     <LoadResources required resources="integrations,flows,exports,imports">
-      <CommStatus
-        actionsToMonitor={actionsToMonitor}
-        autoClearOnComplete
-        commStatusHandler={handleCommsStatus}
-      />
       <span data-public>
         <Filters
           filterKey={filterKey}
