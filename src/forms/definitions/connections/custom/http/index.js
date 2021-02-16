@@ -194,6 +194,7 @@ import channelape from './channelape';
 import pricefx from './pricefx';
 import clover from './clover';
 import pipedrive from './pipedrive';
+import microsoftteams from './microsoftteams';
 
 export default {
   channelape,
@@ -392,4 +393,5 @@ export default {
   pricefx,
   clover,
   pipedrive,
+  microsoftteams,
 };

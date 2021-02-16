@@ -185,6 +185,7 @@ export default {
     'microsoftdynamics365financeandoperation',
     'clover',
     'pipedrive',
+    'microsoftteams',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',
@@ -222,5 +223,6 @@ export default {
     'myobadvanced',
     'lexbizz',
     'googledrive',
+    'microsoftteams',
   ],
 };
