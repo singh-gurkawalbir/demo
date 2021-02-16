@@ -183,6 +183,7 @@ export default {
     'zendesksell',
     'microsoftdynamics365financeandoperation',
     'clover',
+    'microsoftteams',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',
@@ -220,5 +221,6 @@ export default {
     'myobadvanced',
     'lexbizz',
     'googledrive',
+    'microsoftteams',
   ],
 };
