@@ -775,6 +775,18 @@ describe('resource util tests', () => {
       expect(isFileAdaptor({
         adaptorType: 'FTPImport',
       })).toEqual(true);
+      expect(isFileAdaptor({
+        adaptorType: 'HTTPExport',
+        http: {
+          type: 'file',
+        },
+      })).toEqual(true);
+      expect(isFileAdaptor({
+        adaptorType: 'HTTPExport',
+        http: {
+          type: 'file',
+        },
+      })).toEqual(true);
     });
 
     test('should return false for valid file resources', () => {
