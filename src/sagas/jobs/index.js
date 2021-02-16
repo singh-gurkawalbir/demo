@@ -227,9 +227,6 @@ export function* downloadFiles({ jobId, fileType, fileIds = [] }) {
   const { opts } = requestOptions;
   let response;
 
-  // if (action === actionTypes.JOB.REQUEST_DOWNLOAD_FILES_URL && !fileType && fileIds.length > 100) {
-  //   opts.body = {fileIds};
-  // }
   if (!fileType && fileIds.length > 0) {
     path += `?${qs.stringify({ fileId: fileIds }, { indices: false })}`;
   }
