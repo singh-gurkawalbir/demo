@@ -1134,48 +1134,6 @@ describe('tests for reducer selectors', () => {
     });
   });
 
-  describe('tests for util isFileProviderAssistant', () => {
-    test('should return false if export is not of type Http', () => {
-      const exp = {
-        _id: 'e1',
-        adaptorType: 'RESTExport',
-      };
-
-      const state = reducer(
-        undefined,
-        actions.resource.received('exports', exp)
-      );
-
-      expect(selectors.isFileProviderAssistant(state, 'e1')).toEqual(false);
-    });
-
-    test('should return true if export is of type Http and conn of type googleDrive', () => {
-      const exp = {
-        _id: 'e1',
-        adaptorType: 'HTTPExport',
-        _connectionId: 'c1',
-      };
-
-      let state = reducer(
-        undefined,
-        actions.resource.received('exports', exp)
-      );
-
-      state = reducer(
-        state,
-        actions.resource.received(
-          'connections',
-          {
-            _id: 'c1',
-            assistant: 'googledrive',
-          }
-        )
-      );
-
-      expect(selectors.isFileProviderAssistant(state, 'e1')).toEqual(true);
-    });
-  });
-
   describe('tests for util isDataLoaderExport', () => {
     test('should return false if export is not of dataloader type', () => {
       const exp = {
