@@ -171,7 +171,7 @@ export default function DynaMultiSelect(props) {
         onFieldChange(id, processedValue.filter(val => optionItems.includes(val)));
       }
     }
-  }, [id, isLoading, onFieldChange, optionItems, processedValue, removeInvalidValues]);
+  }, [id, onFieldChange, optionItems, processedValue, removeInvalidValues]);
 
   useEffect(() => {
     // this is used to force 'multiselect' field act as a 'select' field temporarily.

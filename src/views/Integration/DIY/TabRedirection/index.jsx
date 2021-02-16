@@ -155,7 +155,7 @@ export default function TabRedirection({children: componentChildren}) {
         getRoutePath(`templates/${templateUrlName}/${integrationId}/${tab || 'flows'}`)
       );
     }
-  }, [history, integrationId, tab, templateName, templateUrlName]);
+  }, [history, integrationId, templateName, templateUrlName]);
   useEffect(() => {
     if (
       childIntegration?.mode === 'install'

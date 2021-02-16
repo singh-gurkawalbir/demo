@@ -72,7 +72,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
 
   useEffect(() => {
     dispatch(actions.patchFilter(filterKey, {sort: { order: 'asc', orderBy: 'name' }}));
-  }, [dispatch, filterKey]);
+  }, []);
   useEffect(() => {
     if (permission.register && newResourceId && !isStandalone) {
       dispatch(

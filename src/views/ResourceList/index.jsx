@@ -101,7 +101,7 @@ export default function ResourceList(props) {
         sort: { orderBy: 'name', order: 'asc' },
       }));
     }
-  }, [dispatch, resourceType]);
+  }, []);
 
   useEffect(() => {
     let int;
