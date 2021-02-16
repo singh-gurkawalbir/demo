@@ -61,20 +61,15 @@ export default {
         const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
-          if (baseUri.indexOf('.freshworks.com') === -1) {
-            const subdomainMyfreshwork =
-              baseUri.substring(
-                baseUri.indexOf('https://') + 8,
-                baseUri.indexOf('.myfreshworks.com'));
-
-            return subdomainMyfreshwork;
+          if (!baseUri.includes('.freshworks.com')) {
+            return baseUri.substring(
+              baseUri.indexOf('https://') + 8,
+              baseUri.indexOf('.myfreshworks.com'));
           }
-          const subdomain =
-              baseUri.substring(
-                baseUri.indexOf('https://') + 8,
-                baseUri.indexOf('.freshworks.com'));
 
-          return subdomain;
+          return baseUri.substring(
+            baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('.freshworks.com'));
         }
       },
       helpKey: 'freshworks.connection.http.freshworksSubdomain',
