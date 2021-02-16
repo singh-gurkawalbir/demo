@@ -782,7 +782,7 @@ describe('resource util tests', () => {
         },
       })).toEqual(true);
       expect(isFileAdaptor({
-        adaptorType: 'HTTPExport',
+        adaptorType: 'HTTPImport',
         http: {
           type: 'file',
         },
