@@ -193,6 +193,7 @@ import checkout from './checkout';
 import channelape from './channelape';
 import pricefx from './pricefx';
 import clover from './clover';
+import pipedrive from './pipedrive';
 import microsoftteams from './microsoftteams';
 
 export default {
@@ -391,5 +392,6 @@ export default {
   checkout,
   pricefx,
   clover,
+  pipedrive,
   microsoftteams,
 };
