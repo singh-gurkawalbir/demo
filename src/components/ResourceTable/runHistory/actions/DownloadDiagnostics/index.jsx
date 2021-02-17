@@ -12,7 +12,7 @@ export default {
 
     useEffect(() => {
       dispatch(actions.job.downloadFiles({ jobId: job._id, fileType: 'diagnostics' }));
-    }, [dispatch, job]);
+    }, [dispatch, job._id]);
 
     return null;
   },
