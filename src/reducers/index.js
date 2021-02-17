@@ -2518,8 +2518,6 @@ selectors.isLicenseValidToEnableFlow = state => {
   return licenseDetails;
 };
 
-selectors.hasAccounts = state => !!(state && state.user && state.user.accounts);
-
 selectors.hasAcceptedUsers = state => !!(
   state &&
     state.user &&
