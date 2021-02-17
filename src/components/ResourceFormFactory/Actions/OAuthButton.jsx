@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import { selectors } from '../../../reducers';
@@ -10,15 +10,16 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { useLoadIClientOnce } from '../../DynaForm/fields/DynaIclient';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   actionButton: {
     marginTop: theme.spacing.double,
     marginLeft: theme.spacing.double,
   },
-});
+}));
 
-function OAuthButton(props) {
-  const { label, classes, resourceType, disabled, resourceId, ...rest } = props;
+export default function OAuthButton(props) {
+  const { label, resourceType, disabled, resourceId, ...rest } = props;
+  const classes = useStyles();
   const resource = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,
@@ -153,4 +154,3 @@ function OAuthButton(props) {
   );
 }
 
-export default withStyles(styles)(OAuthButton);

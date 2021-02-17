@@ -1,4 +1,3 @@
-import { withStyles } from '@material-ui/core/styles';
 import React, { useCallback, useState, useEffect } from 'react';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,12 +8,6 @@ import {selectors} from '../../reducers';
 import Spinner from '../Spinner';
 import { useLoadingSnackbarOnSave } from '../ResourceFormFactory/Actions';
 
-const styles = theme => ({
-  actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
-  },
-});
 const MappingSaveButton = ({
   submitButtonLabel = 'Save',
   variant = 'outlined',
@@ -91,5 +84,4 @@ const MappingSaveButton = ({
     </Button>
   );
 };
-
-export default withStyles(styles)(MappingSaveButton);
+export default MappingSaveButton;

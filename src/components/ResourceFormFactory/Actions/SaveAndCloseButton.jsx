@@ -1,4 +1,4 @@
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
@@ -9,18 +9,17 @@ import { useLoadingSnackbarOnSave } from '.';
 import useConfirmDialog from '../../ConfirmDialog';
 import { isNewId } from '../../../utils/resource';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   actionButton: {
     marginTop: theme.spacing.double,
     marginLeft: theme.spacing.double,
   },
-});
+}));
 const SaveButton = props => {
   const {
     submitButtonLabel = 'Submit',
     resourceType,
     resourceId,
-    classes,
     disabled = false,
     isGenerate = false,
     skipCloseOnSave = false,
@@ -29,6 +28,7 @@ const SaveButton = props => {
     submitButtonColor = 'secondary',
     setDisableSaveOnClick,
   } = props;
+  const classes = useStyles();
   const { confirmDialog } = useConfirmDialog();
   const flow =
     useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
@@ -122,4 +122,4 @@ const SaveButton = props => {
   );
 };
 
-export default withStyles(styles)(SaveButton);
+export default SaveButton;

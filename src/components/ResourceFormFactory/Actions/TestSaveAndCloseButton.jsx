@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useReducer } from 'react';
 import { deepClone } from 'fast-json-patch';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers/index';
@@ -12,7 +12,7 @@ import { useLoadingSnackbarOnSave } from '.';
 
 // TODO @Surya: Below styles are no longer useful, but breaking styles when removed
 // Need to Revisit after form refactor - Same for other Save buttons
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   actions: {
     textAlign: 'right',
   },
@@ -20,7 +20,7 @@ const styles = theme => ({
     marginTop: theme.spacing.double,
     marginLeft: theme.spacing.double,
   },
-});
+}));
 const ConfirmDialog = props => {
   const {
     formValues,
@@ -94,7 +94,6 @@ function reducer(state, action) {
 const TestAndSaveButton = props => {
   const [formState, dispatchLocalAction] = useReducer(reducer, {});
   const {
-    classes,
     resourceType,
     resourceId,
     label,
@@ -104,6 +103,7 @@ const TestAndSaveButton = props => {
     skipCloseOnSave,
     submitButtonColor = 'secondary',
   } = props;
+  const classes = useStyles();
   const dispatch = useDispatch();
   const handleSaveForm = useCallback(
     values => {
@@ -240,4 +240,4 @@ const TestAndSaveButton = props => {
   );
 };
 
-export default withStyles(styles)(TestAndSaveButton);
+export default TestAndSaveButton;

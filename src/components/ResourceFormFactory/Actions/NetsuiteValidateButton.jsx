@@ -1,5 +1,5 @@
 import Button from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles} from '@material-ui/core/styles';
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
@@ -8,23 +8,23 @@ import { selectors } from '../../../reducers';
 import trim from '../../../utils/trim';
 import useFormContext from '../../Form/FormContext';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   actionButton: {
     marginTop: theme.spacing.double,
     marginLeft: theme.spacing.double,
   },
-});
+}));
 const NetsuiteValidateButton = props => {
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const {
     resourceId,
-    classes,
     id,
     visibleWhen,
     visibleWhenAll,
     formKey,
   } = props;
+  const classes = useStyles();
 
   const { fields, disabled: formDisabled, value } = useFormContext(formKey) || {};
   const { disabled = formDisabled } = props;
@@ -128,4 +128,4 @@ const NetsuiteValidateButton = props => {
   );
 };
 
-export default withStyles(styles)(NetsuiteValidateButton);
+export default NetsuiteValidateButton;

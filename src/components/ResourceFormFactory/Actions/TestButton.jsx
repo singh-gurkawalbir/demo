@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import PingMessageSnackbar from '../../PingMessageSnackbar';
 import actions from '../../../actions';
@@ -7,7 +7,7 @@ import { selectors } from '../../../reducers/index';
 import DynaAction from '../../DynaForm/DynaAction';
 import { PING_STATES } from '../../../reducers/comms/ping';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   actions: {
     textAlign: 'right',
   },
@@ -15,7 +15,7 @@ const styles = theme => ({
     marginTop: theme.spacing.double,
     marginLeft: theme.spacing.double,
   },
-});
+}));
 
 export const PingMessage = props => {
   const { resourceId } = props;
@@ -44,7 +44,8 @@ export const PingMessage = props => {
 };
 
 const TestButton = props => {
-  const { classes, resourceId } = props;
+  const { resourceId } = props;
+  const classes = useStyles();
   const [isTesting, setIsTesting] = useState(false);
   const dispatch = useDispatch();
   const handleTestConnection = useCallback(
@@ -87,4 +88,4 @@ const TestButton = props => {
   );
 };
 
-export default withStyles(styles)(TestButton);
+export default TestButton;

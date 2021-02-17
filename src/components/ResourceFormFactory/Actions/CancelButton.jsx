@@ -1,15 +1,16 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   actionButton: {
     marginTop: theme.spacing.double,
     marginLeft: theme.spacing.double,
   },
-});
+}));
 const CancelButton = props => {
-  const { onCancel, classes } = props;
+  const classes = useStyles();
+  const { onCancel} = props;
 
   return (
     <Button
@@ -23,4 +24,4 @@ const CancelButton = props => {
   );
 };
 
-export default withStyles(styles)(CancelButton);
+export default CancelButton;
