@@ -19,7 +19,50 @@ export default {
       data = {};
     }
 
-    const { record, settings, ...context } = data;
+    const { settings, ...context } = data;
+    /*
+      data will be in following formats:
+      For grouped records:
+         {
+          "rows": [
+            {
+              "id": "116",
+              "recordType": "salesorder",
+              "Date": "22/7/2013",
+            },
+            {
+              "id": "116",
+              "recordType": "salesorder",
+              "Date": "22/7/2013",
+            }
+          ],
+          "settings": {
+            "integration": {},
+            "flow": {},
+            "connection": {},
+            "export": {}
+          },
+          "lastExportDateTime": "2021-02-10T00:00:00.000Z",
+          "currentExportDateTime": "2021-02-16T00:00:00.000Z",
+        }
+      For non-grouped records:
+       {
+          "record": {
+            "id": "116",
+            "recordType": "salesorder",
+            "Date": "22/7/2013",
+          },
+          "settings": {
+            "integration": {},
+            "flow": {},
+            "connection": {},
+            "export": {}
+          },
+          "lastExportDateTime": "2021-02-10T00:00:00.000Z",
+          "currentExportDateTime": "2021-02-16T00:00:00.000Z",
+       }
+    */
+    const record = data.rows ? data.rows[0] : data.record;
 
     return {
       rules: { version: '1', rules: editor.rule || [] },
