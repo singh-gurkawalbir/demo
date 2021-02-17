@@ -1271,7 +1271,7 @@ describe('Accounts region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.getOneValidSharedAccountId()).toEqual();
     });
-    test('should return ashare1 if state contains account ashare1', () => {
+    test('should return valid shared account id', () => {
       const state =
         {
           user: {
