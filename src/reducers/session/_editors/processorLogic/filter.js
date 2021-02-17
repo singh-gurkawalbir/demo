@@ -62,7 +62,7 @@ export default {
           "currentExportDateTime": "2021-02-16T00:00:00.000Z",
        }
     */
-    const record = data.rows ? data.rows[0] : data.record;
+    const record = Array.isArray(data.rows) ? data.rows[0] : data.record;
 
     return {
       rules: { version: '1', rules: editor.rule || [] },
