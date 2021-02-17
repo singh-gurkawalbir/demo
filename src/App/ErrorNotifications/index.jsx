@@ -10,21 +10,27 @@ import ErrorContent from '../../components/ErrorContent';
 export default function ErrorNotifications() {
   const dispatch = useDispatch();
   const errors = useSelector(state => selectors.commsErrors(state), shallowEqual);
-  const [enqueueSnackbar] = useEnqueueSnackbar();
+  const [enqueueSnackbar, closeSnackbar] = useEnqueueSnackbar();
   // const hasWarning = useSelector(state => selectors.reqsHasRetriedTillFailure(state));
 
   useEffect(() => {
     if (!errors) return;
 
     Object.keys(errors).forEach(key => {
-      enqueueSnackbar({
-        message: <ErrorContent error={errors[key]} />,
-        variant: 'error',
-        persist: true,
-      });
+      closeSnackbar(key);
+
+      setTimeout(() => {
+        enqueueSnackbar({
+          message: <ErrorContent error={errors[key]} />,
+          variant: 'error',
+          persist: true,
+          key,
+        });
+      }, 800);
     });
+
     dispatch(actions.clearComms());
-  }, [errors, enqueueSnackbar, dispatch]);
+  }, [errors, enqueueSnackbar, dispatch, closeSnackbar]);
 
   // Commented out the intermittent network issues warning snackbar
   // TODO: Surya enable it after december MR
