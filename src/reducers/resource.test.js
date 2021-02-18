@@ -787,7 +787,6 @@ describe('resource region selector testcases', () => {
 
       expect(selector()).toEqual([]);
     });
-    // I will add here few cases
   });
 
   describe('selectors.isConnectionOffline test cases', () => {
