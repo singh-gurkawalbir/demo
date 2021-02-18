@@ -6,6 +6,7 @@ import reducer, { selectors } from '.';
 import actions from '../actions';
 import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../utils/constants';
 import { stringCompare } from '../utils/sort';
+import { LICENSE_EXPIRED } from '../utils/messageStore';
 
 describe('Accounts region selector testcases', () => {
   describe('isAccountOwnerOrAdmin selector', () => {
@@ -1108,6 +1109,71 @@ describe('Accounts region selector testcases', () => {
   describe('selectors.isLicenseValidToEnableFlow test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.isLicenseValidToEnableFlow(undefined, {})).toEqual({enable: true});
+    });
+    const expiredState =
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: ACCOUNT_IDS.OWN,
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'license1',
+                        type: 'integrator',
+                        tier: 'standard',
+                        expires: moment()
+                          .subtract(1, 'days')
+                          .toISOString(),
+                      },
+                    ],
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        };
+    const state =
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: ACCOUNT_IDS.OWN,
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'license1',
+                        type: 'integrator',
+                        tier: 'standard',
+                        expires: moment()
+                          .add(60, 'days')
+                          .toISOString(),
+                      },
+                    ],
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        };
+
+    const expected = {enable: false, message: LICENSE_EXPIRED};
+
+    test('should return false for expired license', () => {
+      expect(selectors.isLicenseValidToEnableFlow(expiredState)).toEqual(expected);
+    });
+    test('should return true for valid license', () => {
+      expect(selectors.isLicenseValidToEnableFlow(state)).toEqual({ enable: true });
     });
   });
 
