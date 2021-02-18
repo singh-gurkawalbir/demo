@@ -230,11 +230,9 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR:
         delete draft[cKey];
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .CLEAR_SAVE_STATUS:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR_SAVE_STATUS:
         delete draft[cKey].saveStatus;
         break;
-
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT:
         {
           const {
@@ -314,8 +312,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .UPDATE_GENERATES: {
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_GENERATES: {
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
           draft[cKey].mappings[id].generateFields = generateFields;
         }

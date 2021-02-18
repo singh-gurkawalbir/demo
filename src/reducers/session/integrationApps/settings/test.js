@@ -1191,6 +1191,7 @@ describe('integrationApps reducer test cases', () => {
         });
       });
     });
+
     describe('integrationApps settings upgrade requested action', () => {
       test('should set upgrade request on to the state and should not clear other data', () => {
         const state = reducer({
@@ -1206,7 +1207,7 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe('integrationApps settings category mappings save variation mappings', () => {
+    describe('integrationApps settings category mappings receivedCategoryMappingMetadata mappings', () => {
       test('should save variation mappings correctly for amazon categoory mappings', () => {
         const state = reducer({
           '1-3': { initComplete: true},
@@ -1712,270 +1713,6 @@ describe('integrationApps reducer test cases', () => {
             },
           },
         });
-      });
-    });
-
-    describe('integrationApps settings categoryMappings clear action', () => {
-      test('should clear categorymapping data correctly', () => {
-        let state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integrationId', 'flowId', amazonCategoryMappings));
-
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.clear('integrationId', 'flowId'));
-        expect(state).toEqual({});
-      });
-    });
-
-    describe('integrationApps settings categoryMappings clear action', () => {
-      test('should clear categorymapping save status data correctly', () => {
-        const state = reducer({
-          'flowId-integrationId': {saveStatus: 'success'},
-        }, actions.integrationApp.settings.categoryMappings.clearSaveStatus('integrationId', 'flowId'));
-
-        expect(state).toEqual({'flowId-integrationId': {}});
-      });
-    });
-
-    describe('integrationApps settings categoryMappings init action', () => {
-      test('should correctly set the mappings init object', () => {
-        let state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integrationId', 'flowId', amazonCategoryMappings));
-
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.init('integrationId', 'flowId', 'flowId-commonAttributes', {
-          adaptorType: 'netsuite',
-          application: 'netsuite',
-          isCategoryMapping: true,
-          lookups: [],
-          mappings: {
-            fields: [{
-              extract: 'SKU',
-              generate: 'item_sku',
-              discardIfEmpty: true,
-            },
-            {
-              extract: 'upccode',
-              generate: 'UPC',
-              discardIfEmpty: true,
-            },
-            {
-              extract: 'salesdescription',
-              generate: 'product_description',
-              discardIfEmpty: true,
-            }],
-          },
-          resourceData: {
-            adaptorType: 'WrapperImport',
-            mapping: {
-              fields: [{extract: 'SKU', generate: 'SKU'}],
-            },
-            _connectionId: 'connectionId',
-          },
-        }));
-        expect(state).toEqual({
-          'flowId-integrationId': {
-            filters: {
-              attributes: {
-                conditional: false,
-                optional: false,
-                preferred: false,
-                required: true,
-              },
-              mappingFilter: 'all',
-            },
-            generatesMetadata: [
-              {
-                children: [],
-                fields: [
-                  {
-                    description: 'A unique identifier for the product, assigned by the merchant.  The SKU must be unique for each product listed.  After you have established a SKU for a product, please do not change it without first deleting the original SKU from our systems through a delete feed.',
-                    filterType: 'required',
-                    id: 'item_sku',
-                    name: 'Seller SKU',
-                    options: [],
-                    type: 'input',
-                  },
-                  {
-                    description: 'A short title for the product. This will be displayed in bold on the product page and in the title bar of the browser window.',
-                    filterType: 'required',
-                    id: 'item_name',
-                    name: 'Product Name',
-                    options: [],
-                    type: 'input',
-                  },
-                  {
-                    description: 'A standard, alphanumeric string that uniquely identifies the product.',
-                    filterType: 'preferred',
-                    id: 'ASIN',
-                    name: 'ASIN',
-                    options: [],
-                    type: 'input',
-                  },
-                  {
-                    description: 'A standard, alphanumeric string that uniquely identifies the product.',
-                    filterType: 'preferred',
-                    id: 'UPC',
-                    name: 'UPC',
-                    options: [],
-                    type: 'input',
-                  },
-                  {
-                    description: 'The unit of measure used to describe the dimensions (width, length, height) of the product, expressed in centimeters, meters, inches, or feet. Required if item dimensions are provided.',
-                    filterType: 'optional',
-                    id: 'item_length_unit_of_measure',
-                    name: 'Item Length Unit Of Measure',
-                    options: [
-                      {
-                        id: 'CM',
-                        text: 'CM',
-                      },
-                      {
-                        id: 'FT',
-                        text: 'FT',
-                      },
-                      {
-                        id: 'IN',
-                        text: 'IN',
-                      },
-                      {
-                        id: 'M',
-                        text: 'M',
-                      },
-                      {
-                        id: 'MM',
-                        text: 'MM',
-                      },
-                    ],
-                    type: 'select',
-                  },
-                ],
-                id: 'commonAttributes',
-                isLeafNode: false,
-                marketplace_domain: 'US',
-                name: 'Common',
-                variation_attributes: [],
-                variation_themes: [],
-              },
-            ],
-            initMappingData: {
-              data: {
-                mappingData: {
-                  basicMappings: {
-                    recordMappings: [
-                      {
-                        children: [
-                          {
-                            children: [],
-                            fieldMappings: [],
-                            id: 'Dimensions',
-                            name: 'Dimensions',
-                          },
-                          {
-                            children: [],
-                            fieldMappings: [],
-                            id: 'Discovery',
-                            name: 'Discovery',
-                          },
-                          {
-                            children: [],
-                            fieldMappings: [],
-                            id: 'Images',
-                            name: 'Images',
-                          },
-                          {
-                            children: [],
-                            fieldMappings: [],
-                            id: 'Fulfillment',
-                            name: 'Fulfillment',
-                          },
-                        ],
-                        fieldMappings: [
-                          {
-                            discardIfEmpty: true,
-                            extract: 'SKU',
-                            generate: 'item_sku',
-                          },
-                          {
-                            discardIfEmpty: true,
-                            extract: 'upccode',
-                            generate: 'UPC',
-                          },
-                          {
-                            discardIfEmpty: true,
-                            extract: 'salesdescription',
-                            generate: 'product_description',
-                          },
-                          {
-                            discardIfEmpty: true,
-                            extract: 'displayname',
-                            generate: 'item_name',
-                          },
-                          {
-                            discardIfEmpty: true,
-                            extract: 'manufacturer',
-                            generate: 'brand_name',
-                          },
-                        ],
-                        id: 'commonAttributes',
-                        lookups: [],
-                        name: 'Common',
-                      },
-                    ],
-                  },
-                  variationMappings: {
-                    recordMappings: [],
-                  },
-                },
-              },
-              operation: 'mappingData',
-            },
-            mappings: {
-              'flowId-commonAttributes': {
-                adaptorType: 'netsuite',
-                application: 'netsuite',
-                flowSampleData: undefined,
-                generateFields: undefined,
-                incompleteGenerates: [],
-                initChangeIdentifier: 1,
-                isGroupedSampleData: undefined,
-                lastModifiedRow: -1,
-                lookups: [],
-                mappings: [
-                  {
-                    discardIfEmpty: true,
-                    extract: 'SKU',
-                    generate: 'item_sku',
-                    rowIdentifier: 0,
-                  },
-                  {
-                    discardIfEmpty: true,
-                    extract: 'upccode',
-                    generate: 'UPC',
-                    rowIdentifier: 0,
-                  },
-                  {
-                    discardIfEmpty: true,
-                    extract: 'salesdescription',
-                    generate: 'product_description',
-                    rowIdentifier: 0,
-                  },
-                ],
-                netsuiteRecordType: undefined,
-                resource: {
-                  _connectionId: 'connectionId',
-                  adaptorType: 'WrapperImport',
-                  mapping: {
-                    fields: [
-                      {
-                        extract: 'SKU',
-                        generate: 'SKU',
-                      },
-                    ],
-                  },
-                },
-                staged: undefined,
-                visible: true,
-              },
-            },
-            response: amazonCategoryMappings.response,
-            uiAssistant: 'amazon',
-          }});
       });
     });
 
@@ -3207,6 +2944,358 @@ describe('integrationApps reducer test cases', () => {
             props: 'value',
           },
         });
+      });
+    });
+
+    describe('integrationApps settings categoryMappings clear action', () => {
+      test('should clear the categoryMappings settings and should not affect other settings', () => {
+        let state = {
+          'other-flow': {
+            props: 'value',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [{
+                  id: 'oldLookup',
+                }],
+                mappings: {
+                  fields: [{
+                    a: 'c',
+                  }],
+                },
+                staged: {
+                  fields: [{
+                    a: 'b',
+                  }, {
+                    a: 'd',
+                  }],
+                },
+                stagedLookups: [{
+                  id: 'lookup1',
+                }],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.clear('integrationId', 'flowId'));
+        expect(state).toEqual({
+          'other-flow': {
+            props: 'value',
+          },
+        });
+      });
+    });
+
+    describe('integrationApps settings categoryMappings clear Save status action', () => {
+      test('should clear the categoryMappings settings saveStatus and should not affect other settings', () => {
+        let state = {
+          'other-flow': {
+            props: 'value',
+          },
+          'flowId-integrationId': {
+            saveStatus: 'saved',
+            mappings: {
+              mappingId: {
+                lookups: [{
+                  id: 'oldLookup',
+                }],
+                mappings: {
+                  fields: [{
+                    a: 'c',
+                  }],
+                },
+                staged: {
+                  fields: [{
+                    a: 'b',
+                  }, {
+                    a: 'd',
+                  }],
+                },
+                stagedLookups: [{
+                  id: 'lookup1',
+                }],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.clearSaveStatus('integrationId', 'flowId'));
+        expect(state).toEqual({
+          'other-flow': {
+            props: 'value',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [{
+                  id: 'oldLookup',
+                }],
+                mappings: {
+                  fields: [{
+                    a: 'c',
+                  }],
+                },
+                staged: {
+                  fields: [{
+                    a: 'b',
+                  }, {
+                    a: 'd',
+                  }],
+                },
+                stagedLookups: [{
+                  id: 'lookup1',
+                }],
+              },
+            },
+          },
+        });
+      });
+    });
+
+    describe('integrationApps settings categoryMappings init action', () => {
+      test('should correctly set the mappings init object', () => {
+        let state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integrationId', 'flowId', amazonCategoryMappings));
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.init('integrationId', 'flowId', 'flowId-commonAttributes', {
+          adaptorType: 'netsuite',
+          application: 'netsuite',
+          isCategoryMapping: true,
+          lookups: [],
+          mappings: {
+            fields: [{
+              extract: 'SKU',
+              generate: 'item_sku',
+              discardIfEmpty: true,
+            },
+            {
+              extract: 'upccode',
+              generate: 'UPC',
+              discardIfEmpty: true,
+            },
+            {
+              extract: 'salesdescription',
+              generate: 'product_description',
+              discardIfEmpty: true,
+            }],
+          },
+          resourceData: {
+            adaptorType: 'WrapperImport',
+            mapping: {
+              fields: [{extract: 'SKU', generate: 'SKU'}],
+            },
+            _connectionId: 'connectionId',
+          },
+        }));
+        expect(state).toEqual({
+          'flowId-integrationId': {
+            filters: {
+              attributes: {
+                conditional: false,
+                optional: false,
+                preferred: false,
+                required: true,
+              },
+              mappingFilter: 'all',
+            },
+            generatesMetadata: [
+              {
+                children: [],
+                fields: [
+                  {
+                    description: 'A unique identifier for the product, assigned by the merchant.  The SKU must be unique for each product listed.  After you have established a SKU for a product, please do not change it without first deleting the original SKU from our systems through a delete feed.',
+                    filterType: 'required',
+                    id: 'item_sku',
+                    name: 'Seller SKU',
+                    options: [],
+                    type: 'input',
+                  },
+                  {
+                    description: 'A short title for the product. This will be displayed in bold on the product page and in the title bar of the browser window.',
+                    filterType: 'required',
+                    id: 'item_name',
+                    name: 'Product Name',
+                    options: [],
+                    type: 'input',
+                  },
+                  {
+                    description: 'A standard, alphanumeric string that uniquely identifies the product.',
+                    filterType: 'preferred',
+                    id: 'ASIN',
+                    name: 'ASIN',
+                    options: [],
+                    type: 'input',
+                  },
+                  {
+                    description: 'A standard, alphanumeric string that uniquely identifies the product.',
+                    filterType: 'preferred',
+                    id: 'UPC',
+                    name: 'UPC',
+                    options: [],
+                    type: 'input',
+                  },
+                  {
+                    description: 'The unit of measure used to describe the dimensions (width, length, height) of the product, expressed in centimeters, meters, inches, or feet. Required if item dimensions are provided.',
+                    filterType: 'optional',
+                    id: 'item_length_unit_of_measure',
+                    name: 'Item Length Unit Of Measure',
+                    options: [
+                      {
+                        id: 'CM',
+                        text: 'CM',
+                      },
+                      {
+                        id: 'FT',
+                        text: 'FT',
+                      },
+                      {
+                        id: 'IN',
+                        text: 'IN',
+                      },
+                      {
+                        id: 'M',
+                        text: 'M',
+                      },
+                      {
+                        id: 'MM',
+                        text: 'MM',
+                      },
+                    ],
+                    type: 'select',
+                  },
+                ],
+                id: 'commonAttributes',
+                isLeafNode: false,
+                marketplace_domain: 'US',
+                name: 'Common',
+                variation_attributes: [],
+                variation_themes: [],
+              },
+            ],
+            initMappingData: {
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [
+                      {
+                        children: [
+                          {
+                            children: [],
+                            fieldMappings: [],
+                            id: 'Dimensions',
+                            name: 'Dimensions',
+                          },
+                          {
+                            children: [],
+                            fieldMappings: [],
+                            id: 'Discovery',
+                            name: 'Discovery',
+                          },
+                          {
+                            children: [],
+                            fieldMappings: [],
+                            id: 'Images',
+                            name: 'Images',
+                          },
+                          {
+                            children: [],
+                            fieldMappings: [],
+                            id: 'Fulfillment',
+                            name: 'Fulfillment',
+                          },
+                        ],
+                        fieldMappings: [
+                          {
+                            discardIfEmpty: true,
+                            extract: 'SKU',
+                            generate: 'item_sku',
+                          },
+                          {
+                            discardIfEmpty: true,
+                            extract: 'upccode',
+                            generate: 'UPC',
+                          },
+                          {
+                            discardIfEmpty: true,
+                            extract: 'salesdescription',
+                            generate: 'product_description',
+                          },
+                          {
+                            discardIfEmpty: true,
+                            extract: 'displayname',
+                            generate: 'item_name',
+                          },
+                          {
+                            discardIfEmpty: true,
+                            extract: 'manufacturer',
+                            generate: 'brand_name',
+                          },
+                        ],
+                        id: 'commonAttributes',
+                        lookups: [],
+                        name: 'Common',
+                      },
+                    ],
+                  },
+                  variationMappings: {
+                    recordMappings: [],
+                  },
+                },
+              },
+              operation: 'mappingData',
+            },
+            mappings: {
+              'flowId-commonAttributes': {
+                adaptorType: 'netsuite',
+                application: 'netsuite',
+                flowSampleData: undefined,
+                generateFields: undefined,
+                incompleteGenerates: [],
+                initChangeIdentifier: 1,
+                isGroupedSampleData: undefined,
+                lastModifiedRow: -1,
+                lookups: [],
+                mappings: [
+                  {
+                    discardIfEmpty: true,
+                    extract: 'SKU',
+                    generate: 'item_sku',
+                    rowIdentifier: 0,
+                  },
+                  {
+                    discardIfEmpty: true,
+                    extract: 'upccode',
+                    generate: 'UPC',
+                    rowIdentifier: 0,
+                  },
+                  {
+                    discardIfEmpty: true,
+                    extract: 'salesdescription',
+                    generate: 'product_description',
+                    rowIdentifier: 0,
+                  },
+                ],
+                netsuiteRecordType: undefined,
+                resource: {
+                  _connectionId: 'connectionId',
+                  adaptorType: 'WrapperImport',
+                  mapping: {
+                    fields: [
+                      {
+                        extract: 'SKU',
+                        generate: 'SKU',
+                      },
+                    ],
+                  },
+                },
+                staged: undefined,
+                visible: true,
+              },
+            },
+            response: amazonCategoryMappings.response,
+            uiAssistant: 'amazon',
+          }});
       });
     });
   });
