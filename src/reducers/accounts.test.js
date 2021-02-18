@@ -1273,6 +1273,72 @@ describe('Accounts region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.hasAcceptedUsers()).toEqual(false);
     });
+    const orgUserState = {
+      user: {
+        preferences: {
+          defaultAShareId: 'ashare1',
+        },
+        org: {
+          users: [
+            {
+              _id: 'user1',
+              accepted: true,
+              accessLevel: 'monitor',
+            },
+            {
+              _id: 'user2',
+              accepted: true,
+            },
+            {
+              _id: 'ashare1',
+              accepted: true,
+              accessLevel: 'monitor',
+              integrationAccessLevel: [],
+            },
+          ],
+          accounts: [
+            {
+              _id: 'ashare1',
+              accessLevel: 'owner',
+              ownerUser: {
+                licenses: [],
+              },
+            },
+          ],
+        },
+      },
+    };
+    const state = {
+      user: {
+        preferences: {
+          defaultAShareId: 'ashare1',
+        },
+        org: {
+          users: [
+            {
+              _id: 'user1',
+              accessLevel: 'monitor',
+            },
+          ],
+          accounts: [
+            {
+              _id: 'ashare1',
+              accessLevel: 'owner',
+              ownerUser: {
+                licenses: [],
+              },
+            },
+          ],
+        },
+      },
+    };
+
+    test('should return true if account has accepted users', () => {
+      expect(selectors.hasAcceptedUsers(orgUserState)).toEqual(true);
+    });
+    test('should return false if account does not have accepted users', () => {
+      expect(selectors.hasAcceptedUsers(state)).toEqual(false);
+    });
   });
 
   describe('selectors.isValidSharedAccountId test cases', () => {
