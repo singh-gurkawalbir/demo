@@ -110,8 +110,7 @@ export default (state = {}, action) => {
         draft[addOnKey].status = 'requested';
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS
-        .ADDON_LICENSES_METADATA_FAILURE:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA_FAILURE:
         if (!draft[addOnKey]) {
           draft[addOnKey] = {};
         }
@@ -161,7 +160,6 @@ export default (state = {}, action) => {
         }
 
         break;
-
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_COMPLETE:
         if (!draft[key]) draft[key] = {};
         draft[key].formSaveStatus = FORM_SAVE_STATUS.COMPLETE;
@@ -186,8 +184,7 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED:
         draft[licenseId] = true;
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .SAVE_VARIATION_MAPPINGS:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_VARIATION_MAPPINGS:
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
           mappingUtil.addVariation(draft, cKey, data);
           draft[cKey].mappings[id].staged = draft[cKey].mappings[id].mappings;
@@ -411,8 +408,7 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .PATCH_SETTINGS:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.PATCH_SETTINGS:
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
           const {
             generate,
@@ -466,8 +462,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .UPDATE_LOOKUP: {
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LOOKUP: {
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
           if (oldValue) {
             draft[cKey].mappings[id].lookups = draft[cKey].mappings[id].lookups.filter(l => l.name !== oldValue.name);
@@ -491,8 +486,7 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .CLEAR_VARIATION_MAPPINGS:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR_VARIATION_MAPPINGS:
         // Variation mappings have id structure as `${flowId}-${integrationId}-${sectionId}-${variation}`
         // ie,  all variations of one section will have same prefix `${flowId}-${integrationId}-${sectionId}`
         // so while deleting section we need to delete all variations of that section.
@@ -507,8 +501,7 @@ export default (state = {}, action) => {
 
         break;
 
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .SET_VISIBILITY:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SET_VISIBILITY:
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
           draft[cKey].mappings[id].visible = value;
         }
@@ -524,8 +517,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .SAVE_COMPLETE:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_COMPLETE:
         if (draft[cKey]) {
           draft[cKey].saveStatus = 'saved';
 
@@ -544,8 +536,7 @@ export default (state = {}, action) => {
       // the action loadFailed is empty for future use
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.LOAD_FAILED:
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS
-        .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA:
         ({ response: categoryMappingData } = metadata);
         generatesMetadata = categoryMappingData.find(
           data => data.operation === 'generatesMetaData'
@@ -604,8 +595,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS
-        .RECEIVED_CATEGORY_MAPPINGS_DATA:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_CATEGORY_MAPPINGS_DATA:
         if (draft[cKey]) {
           draft[cKey].saveStatus = 'saved';
 
@@ -623,8 +613,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS
-        .RECEIVED_CATEGORY_MAPPING_METADATA:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_CATEGORY_MAPPING_METADATA:
         ({ response: categoryMappingData } = metadata);
         generatesMetadata = categoryMappingData.find(
           data => data.operation === 'generatesMetaData'
@@ -670,8 +659,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .CLEAR_COLLAPSE_STATUS:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR_COLLAPSE_STATUS:
         if (draft[cKey] && draft[cKey].collapseStatus) {
           delete draft[cKey].collapseStatus.collapseAction;
         }

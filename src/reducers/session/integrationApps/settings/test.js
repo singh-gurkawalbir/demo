@@ -2055,6 +2055,46 @@ describe('integrationApps reducer test cases', () => {
         expect(state).toEqual(expectedValue);
       });
     });
+
+    describe('integrationApps settings categoryMappings saveVariationMappings action', () => {
+      test('should not affect existing state when action is called and state should not change if mapping with that id is not initialized', () => {
+        const state = {
+          'flow1-integration1': {
+            dummy: 'value',
+          },
+        };
+
+        expect(reducer(state, actions.integrationApp.settings.categoryMappings.saveVariationMappings('integrationId', 'flowId', 'variation', {}))).toEqual(
+          {
+            'flow1-integration1': {
+              dummy: 'value',
+            },
+          });
+      });
+
+      test('should save the variation mappings correctly', () => {
+        const state = {
+          'flow1-integration1': {
+            dummy: 'value',
+          },
+          'flowId-integrationId': {
+            variation: {
+
+            },
+          },
+        };
+
+        expect(reducer(state, actions.integrationApp.settings.categoryMappings.saveVariationMappings('integrationId', 'flowId', 'variation', {}))).toEqual(
+          {
+            'flow1-integration1': {
+              dummy: 'value',
+            },
+            'flowId-integrationId': {
+              variation: {},
+            },
+          });
+      });
+    });
   });
 });
 
