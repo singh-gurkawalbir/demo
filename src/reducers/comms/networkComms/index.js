@@ -121,12 +121,12 @@ selectors.commsErrors = createSelector(
     const errors = {};
 
     Object.keys(commsState).forEach(key => {
-      const c = commsState[key];
+      const {hidden, status, message, failedAtTimestamp} = commsState[key];
 
-      if (!c.hidden && c.status === COMM_STATES.ERROR) {
+      if (!hidden && status === COMM_STATES.ERROR) {
         errors[key] = {
-          message: inferErrorMessages(c.message),
-          key: c.failedAtTimestamp,
+          message: inferErrorMessages(message),
+          key: failedAtTimestamp,
         };
       }
     });
