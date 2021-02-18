@@ -2589,6 +2589,83 @@ describe('resource region selector testcases', () => {
 
       expect(selector()).toEqual([]);
     });
+    const state = {
+      data: {
+        resources: {
+          connections: [{
+            _id: 'conn1',
+            type: 'ftp',
+          }, {
+            _id: 'conn2',
+            type: 'http',
+          }, {
+            _id: 'conn3',
+            type: 'http',
+          }, {
+            _id: 'conn4',
+            type: 'ftp',
+          }, {
+            _id: 'conn5',
+            type: 'http',
+          }],
+          exports: [{
+            _id: 'exp1',
+            _connectionId: 'conn1',
+          }, {
+            _id: 'exp2',
+            _connectionId: 'conn2',
+          }],
+          imports: [{
+            _id: 'imp1',
+            _connectionId: 'conn3',
+          }, {
+            _id: 'imp2',
+            _connectionId: 'conn4',
+          }],
+          flows: [{
+            _id: 'flow1',
+            pageGenerators: [{
+              _exportId: 'exp1',
+            }],
+            pageProcessors: [{
+              _importId: 'imp1',
+              type: 'import',
+            }],
+          },
+          {
+            _id: 'flow2',
+            pageGenerators: [{
+              _exportId: 'exp2',
+            }],
+            pageProcessors: [{
+              _importId: 'imp2',
+              type: 'import',
+            }],
+          }],
+        },
+      },
+    };
+
+    test('should return connection ids used in selected flows', () => {
+      const selector = selectors.mkConnectionIdsUsedInSelectedFlows();
+
+      expect(selector(state, ['flow1', 'flow2'])).toEqual(['conn1', 'conn3', 'conn2', 'conn4']);
+    });
+    test('should return connection ids used in selected flows', () => {
+      const selector = selectors.mkConnectionIdsUsedInSelectedFlows();
+
+      expect(selector(state, ['flow1'])).toEqual(['conn1', 'conn3']);
+    });
+    test('should return connection ids used in selected flows', () => {
+      const selector = selectors.mkConnectionIdsUsedInSelectedFlows();
+
+      expect(selector(state, ['flow1'])).toEqual(['conn1', 'conn3']);
+    });
+    test('should return empty array if no flow is selected', () => {
+      const selector = selectors.mkConnectionIdsUsedInSelectedFlows();
+
+      expect(selector(state, [])).toEqual([]);
+    });
   });
 
   describe('selectors.getScriptContext test cases', () => {
