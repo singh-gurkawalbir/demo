@@ -97,7 +97,6 @@ export default (state = {}, action) => {
           initComplete: true,
         };
         break;
-
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE:
         if (!draft[key]) draft[key] = {};
         draft[key].formSaveStatus = FORM_SAVE_STATUS.LOADING;
@@ -193,8 +192,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .CANCEL_VARIATION_MAPPINGS:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CANCEL_VARIATION_MAPPINGS:
         if (
           draft[cKey] &&
           draft[cKey].mappings &&
