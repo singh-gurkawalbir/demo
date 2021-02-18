@@ -787,6 +787,7 @@ describe('resource region selector testcases', () => {
 
       expect(selector()).toEqual([]);
     });
+    // I will add here few cases
   });
 
   describe('selectors.isConnectionOffline test cases', () => {
@@ -2593,6 +2594,40 @@ describe('resource region selector testcases', () => {
   describe('selectors.getScriptContext test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.getScriptContext({}, {})).toEqual();
+    });
+    const state = reducer(
+      {
+        data: {
+          resources: {
+            flows: [{
+              name: 'flow name 1',
+              _id: 'flow1',
+            }, {
+              name: 'flow name 2',
+              _id: 'flow2',
+              _integrationId: 'integrationId1',
+            }],
+          },
+        },
+      },
+      'some action'
+    );
+
+    test('should return expected script context for valid state and flow id', () => {
+      expect(selectors.getScriptContext(state, {contextType: 'hook',
+        flowId: 'flow2'})).toEqual({_integrationId: 'integrationId1', container: 'integration', type: 'hook'});
+    });
+    test('should return nothing if given flow does not contains integrtion id', () => {
+      expect(selectors.getScriptContext(state, {contextType: 'hook',
+        flowId: 'flow1'})).toEqual();
+    });
+    test('should return nothing if given input does not contains context type', () => {
+      expect(selectors.getScriptContext(state, {
+        flowId: 'flow2'})).toEqual();
+    });
+    test('should return nothing if given input does not contains flow id', () => {
+      expect(selectors.getScriptContext(state, {contextType: 'hook',
+      })).toEqual();
     });
   });
 
