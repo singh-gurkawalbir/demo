@@ -19,7 +19,7 @@ export default {
       data = {};
     }
 
-    const { settings, ...context } = data;
+    const { record: dataRecord, rows, settings, ...context } = data;
     /*
       data will be in following formats:
       For grouped records:
@@ -62,7 +62,7 @@ export default {
           "currentExportDateTime": "2021-02-16T00:00:00.000Z",
        }
     */
-    const record = Array.isArray(data.rows) ? data.rows[0] : data.record;
+    const record = Array.isArray(rows) ? rows[0] : dataRecord;
 
     return {
       rules: { version: '1', rules: editor.rule || [] },
