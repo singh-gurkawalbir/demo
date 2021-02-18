@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
@@ -54,6 +55,7 @@ export default (state = initialState, action) => {
         if (!draft[commKey]) draft[commKey] = {};
         draft[commKey].status = COMM_STATES.ERROR;
         draft[commKey].message = inferErrorMessages(message)?.[0] || 'unknown error';
+        draft[commKey].failedAtTimestamp = timestamp;
 
         // if not defined it should be false
         draft[commKey].hidden = !!hidden;
@@ -112,20 +114,25 @@ selectors.timestampComms = (state, resourceName) => (state && state[resourceName
 
 selectors.retryCount = (state, resourceName) => (state && state[resourceName] && state[resourceName].retry) || 0;
 
-selectors.commsErrors = commsState => {
-  if (!commsState) return;
-  const errors = {};
+selectors.commsErrors = createSelector(
+  state => state,
+  commsState => {
+    if (!commsState) return;
+    const errors = {};
 
-  Object.keys(commsState).forEach(key => {
-    const c = commsState[key];
+    Object.keys(commsState).forEach(key => {
+      const c = commsState[key];
 
-    if (!c.hidden && c.status === COMM_STATES.ERROR) {
-      errors[key] = inferErrorMessages(c.message);
-    }
+      if (!c.hidden && c.status === COMM_STATES.ERROR) {
+        errors[key] = {
+          message: inferErrorMessages(c.message),
+          key: c.failedAtTimestamp,
+        };
+      }
+    });
+
+    return errors;
   });
-
-  return errors;
-};
 
 selectors.commsSummary = commsState => {
   let isLoading = false;
