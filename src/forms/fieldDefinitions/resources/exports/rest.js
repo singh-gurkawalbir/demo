@@ -143,7 +143,7 @@ export default {
   },
   'rest.pagingPostBody': {
     type: 'httprequestbody',
-    label: 'Build paging post body',
+    label: 'Paging post body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
     required: true,

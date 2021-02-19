@@ -7997,7 +7997,7 @@ Object {
       "file.xml.body": Object {
         "connectionId": [Function],
         "id": "file.xml.body",
-        "label": "Build XML document",
+        "label": "XML document",
         "refreshOptionsOnChangesTo": Array [
           "file.type",
         ],
@@ -8363,7 +8363,7 @@ Object {
       "file.xml.body": Object {
         "connectionId": [Function],
         "id": "file.xml.body",
-        "label": "Build XML document",
+        "label": "XML document",
         "refreshOptionsOnChangesTo": Array [
           "file.type",
         ],
@@ -10509,7 +10509,7 @@ Object {
       "file.xml.body": Object {
         "connectionId": [Function],
         "id": "file.xml.body",
-        "label": "Build XML document",
+        "label": "XML document",
         "refreshOptionsOnChangesTo": Array [
           "file.type",
         ],
