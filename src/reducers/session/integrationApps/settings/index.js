@@ -319,8 +319,7 @@ export default (state = {}, action) => {
 
         break;
       }
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .PATCH_FIELD: {
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.PATCH_FIELD: {
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
           if (draft[cKey].mappings[id].mappings[index]) {
             const objCopy = {
@@ -384,26 +383,8 @@ export default (state = {}, action) => {
 
         break;
       }
-
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .PATCH_INCOMPLETE_GENERATES: {
-        if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
-          const incompleteGeneObj = draft[cKey].mappings[
-            id
-          ].incompleteGenerates.find(gen => gen.index === index);
-
-          if (incompleteGeneObj) {
-            incompleteGeneObj.value = value;
-          } else {
-            draft[cKey].mappings[id].incompleteGenerates.push({ index, value });
-          }
-        }
-
-        break;
-      }
-
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.PATCH_SETTINGS:
-        if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
+        if (draft[cKey]?.mappings && draft[cKey].mappings[id] && draft[cKey].mappings[id].mappings && draft[cKey].mappings[id].mappings[index]) {
           const {
             generate,
             extract,
@@ -479,22 +460,6 @@ export default (state = {}, action) => {
 
         break;
       }
-
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR_VARIATION_MAPPINGS:
-        // Variation mappings have id structure as `${flowId}-${integrationId}-${sectionId}-${variation}`
-        // ie,  all variations of one section will have same prefix `${flowId}-${integrationId}-${sectionId}`
-        // so while deleting section we need to delete all variations of that section.
-        // hence searching by prefix and not strict id check.
-        if (draft[cKey] && draft[cKey].mappings) {
-          Object.keys(draft[cKey].mappings).forEach(_id => {
-            if (_id.startsWith(id)) {
-              delete draft[cKey].mappings[id];
-            }
-          });
-        }
-
-        break;
-
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SET_VISIBILITY:
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
           draft[cKey].mappings[id].visible = value;

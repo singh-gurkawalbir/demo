@@ -733,7 +733,6 @@ export default {
     let categoryMappings;
 
     if (mappingData?.data?.mappingData?.variationMappings?.recordMappings) {
-      console.log('first one passed');
       const { recordMappings } = mappingData.data.mappingData.variationMappings;
 
       categoryMappings = recordMappings.find(

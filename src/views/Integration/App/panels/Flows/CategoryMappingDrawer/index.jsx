@@ -186,7 +186,7 @@ function CategoryMappings({
   useEffect(() => {
     if (!generateFields && !requestedGenerateFields && isRoot) {
       dispatch(
-        actions.integrationApp.settings.requestCategoryMappingMetadata(
+        actions.integrationApp.settings.categoryMappings.requestMetadata(
           integrationId,
           flowId,
           sectionId,
@@ -373,7 +373,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const history = useHistory();
   const match = useRouteMatch();
   const { flowId, categoryId } = match.params;
-  const [requestedMetadata, setRequestedMetadata] = useState(false);
+  // const [requestedMetadata, setRequestedMetadata] = useState(false);
   const mappingsChanged = useSelectorMemo(selectors.mkCategoryMappingsChanged, integrationId, flowId);
   const mappingSaveStatus = useSelector(state =>
     selectors.categoryMappingSaveStatus(state, integrationId, flowId)
@@ -426,22 +426,20 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
       .name || categoryId;
 
   useEffect(() => {
-    if (!metadataLoaded && !requestedMetadata) {
+    if (!metadataLoaded) {
       dispatch(
-        actions.integrationApp.settings.requestCategoryMappingMetadata(
+        actions.integrationApp.settings.categoryMappings.requestMetadata(
           integrationId,
           flowId,
           categoryId
         )
       );
-      setRequestedMetadata(true);
     }
   }, [
     dispatch,
     flowId,
     integrationId,
     metadataLoaded,
-    requestedMetadata,
     categoryId,
   ]);
   useEffect(() => {

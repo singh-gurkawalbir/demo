@@ -2690,7 +2690,7 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe('integrationApps settings categoryMappings clearVariationMappings action', () => {
+    describe('integrationApps settings categoryMappings cancelVariationMappings action', () => {
       test('should set reset mapping and lookups with staged mappings and lookups on clear action', () => {
         let state = {
           'other-flow': {
@@ -3323,6 +3323,531 @@ describe('integrationApps reducer test cases', () => {
             mappings: {
               mappingId: {
                 generateFields: [{a: 'b'}],
+              },
+            },
+          },
+        });
+      });
+    });
+
+    describe('integrationApps settings categoryMappings mapping patchField action', () => {
+      test('should update the specific mapping in the category mappings with field patch for generate and index not found', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'generate', 0, 'value'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lastModifiedRow: 0,
+                mappings: [{
+                  rowIdentifier: 0,
+                  generate: 'value',
+                }],
+                validationErrMsg: 'Extract Fields missing for field(s): value',
+              },
+            },
+          },
+        });
+      });
+
+      test('should update the specific mapping in the category mappings with field patch for generate', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                mappings: [{
+                  extract: 'hello',
+                  generate: 'world',
+                }, {
+                  extract: 'hello1',
+                  generate: 'world1',
+                  useFirstRow: true,
+                  isKey: true,
+                }],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'generate', 1, 'value'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lastModifiedRow: 1,
+                mappings: [{
+                  extract: 'hello',
+                  generate: 'world',
+                }, {
+                  extract: 'hello1',
+                  generate: 'value',
+                  rowIdentifier: NaN,
+                }],
+                validationErrMsg: undefined,
+              },
+            },
+          },
+        });
+      });
+      test('should update the specific mapping in the category mappings with field patch for extract', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                mappings: [{
+                  hardCodedValue: 'hello',
+                  hardCodedValueTmp: '"hello"',
+                  generate: 'world',
+                  rowIdentifier: 0,
+                }, {
+                  extract: 'hello1',
+                  generate: 'world1',
+                }],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'extract', 0, 'value'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lastModifiedRow: 0,
+                mappings: [{
+                  extract: 'value',
+                  generate: 'world',
+                  rowIdentifier: 1,
+                }, {
+                  extract: 'hello1',
+                  generate: 'world1',
+                }],
+                validationErrMsg: undefined,
+              },
+            },
+          },
+        });
+      });
+
+      test('should update the specific mapping in the category mappings with field patch hardcoded value for extract', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                mappings: [{
+                  extract: 'hello',
+                  generate: 'world',
+                }, {
+                  extract: 'hello1',
+                  generate: 'world1',
+                }],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'extract', 1, '"value"'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lastModifiedRow: 1,
+                mappings: [{
+                  extract: 'hello',
+                  generate: 'world',
+                }, {
+                  hardCodedValue: 'value',
+                  hardCodedValueTmp: '"value"',
+                  generate: 'world1',
+                  rowIdentifier: NaN,
+                }],
+                validationErrMsg: undefined,
+              },
+            },
+          },
+        });
+      });
+
+      test('should update the specific mapping in the category mappings with field patch for generate and throw validation messages', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                mappings: [{
+                  generate: 'world',
+                }, {
+                  extract: 'hello1',
+                  generate: 'world1',
+                }],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'generate', 1, 'value'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lastModifiedRow: 1,
+                mappings: [{
+                  generate: 'world',
+                }, {
+                  extract: 'hello1',
+                  generate: 'value',
+                  rowIdentifier: NaN,
+                }],
+                validationErrMsg: 'Extract Fields missing for field(s): world',
+              },
+            },
+          },
+        });
+      });
+    });
+
+    describe('integrationApps settings categoryMappings mapping patchSettings action', () => {
+      test('should update the specific mapping in the category mappings with settings patch for generate and index not found', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchSettings('integrationId', 'flowId', 'mappingId', 0, 'value'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+
+      test('should update the specific mapping in the category mappings with settings patch', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                mappings: [{
+                  extract: 'hello',
+                  generate: 'world',
+                }, {
+                  extract: 'hello1',
+                  generate: 'world1',
+                  useFirstRow: true,
+                  isKey: true,
+                }],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchSettings('integrationId', 'flowId', 'mappingId', 1, {
+          dataType: 'number',
+          discardIfEmpty: true,
+          extract: 'manufacturer',
+          generate: 'manufacturer',
+          immutable: false,
+          useAsAnInitializeValue: false,
+        }));
+
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lastModifiedRow: 1,
+                mappings: [{
+                  extract: 'hello',
+                  generate: 'world',
+                }, {
+                  dataType: 'number',
+                  discardIfEmpty: true,
+                  extract: 'manufacturer',
+                  generate: 'manufacturer',
+                  immutable: false,
+                  index: undefined,
+                  isNotEditable: undefined,
+                  isRequired: undefined,
+                  rowIdentifier: NaN,
+                  useAsAnInitializeValue: false,
+                }],
+                validationErrMsg: undefined,
+              },
+            },
+          },
+        });
+      });
+      test('should update the specific mapping in the category mappings with settings patch for hardcodedvalue', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                mappings: [{
+                  hardCodedValue: 'hello',
+                  hardCodedValueTmp: '"hello"',
+                  generate: 'world',
+                  rowIdentifier: 0,
+                }, {
+                  extract: 'hello1',
+                  generate: 'world1',
+                }],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 0, {
+          discardIfEmpty: true,
+          generate: 'item_sku',
+          hardCodedValue: 'fghjkl',
+          immutable: false,
+          useAsAnInitializeValue: false,
+        }));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lastModifiedRow: {
+                  discardIfEmpty: true,
+                  generate: 'item_sku',
+                  hardCodedValue: 'fghjkl',
+                  immutable: false,
+                  useAsAnInitializeValue: false,
+                },
+                mappings: [{
+                  generate: 'world',
+                  hardCodedValue: 'hello',
+                  hardCodedValueTmp: '"hello"',
+                  rowIdentifier: 0,
+                }, {
+                  extract: 'hello1',
+                  generate: 'world1',
+                }],
+                validationErrMsg: undefined,
+              },
+            },
+          },
+        });
+      });
+
+      test('should update the specific mapping in the category mappings with patch settings for static lookup', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                mappings: [{
+                  extract: 'hello',
+                  generate: 'world',
+                }, {
+                  extract: 'hello1',
+                  generate: 'world1',
+                }],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 1, {
+          discardIfEmpty: true,
+          extract: undefined,
+          generate: 'item_sku',
+          immutable: false,
+          lookupName: 'SJ4yXwtIe',
+          useAsAnInitializeValue: false,
+        }));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lastModifiedRow: {
+                  discardIfEmpty: true,
+                  extract: undefined,
+                  generate: 'item_sku',
+                  immutable: false,
+                  lookupName: 'SJ4yXwtIe',
+                  useAsAnInitializeValue: false,
+                },
+                mappings: [{
+                  extract: 'hello',
+                  generate: 'world',
+                }, {
+                  generate: 'world1',
+                  extract: 'hello1',
+                }],
+                validationErrMsg: undefined,
+              },
+            },
+          },
+        });
+      });
+    });
+
+    describe('integrationApps settings categoryMappings mapping updateLookup action', () => {
+      test('should update the specific mapping in the category mappings with updateLookup for new lookups', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.updateLookup('integrationId', 'flowId', 'mappingId', undefined, {
+          name: 'xyz',
+          map: {a: 'b'},
+          allowFailures: false,
+        }));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [{
+                  allowFailures: false,
+                  map: {
+                    a: 'b',
+                  },
+                  name: 'xyz',
+                }],
+                validationErrMsg: undefined,
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+
+      test('should update the specific mapping in the category mappings with updateLookup for existing lookups', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [{
+                  name: 'xyz',
+                  map: {
+                    a: 'b',
+                  },
+                  allowFailures: false,
+                }],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.updateLookup('integrationId', 'flowId', 'mappingId',
+          {
+            name: 'xyz',
+            map: {
+              a: 'b',
+            },
+            allowFailures: false,
+          },
+          {
+            name: 'xyz',
+            map: {
+              a: 'b',
+              c: 'dd',
+            },
+            allowFailures: false,
+          }));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [{
+                  allowFailures: false,
+                  map: {
+                    a: 'b',
+                    c: 'dd',
+                  },
+                  name: 'xyz',
+                }],
+                validationErrMsg: undefined,
+                mappings: [],
               },
             },
           },

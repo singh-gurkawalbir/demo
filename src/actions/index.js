@@ -587,6 +587,16 @@ const fileDefinitions = {
 const integrationApp = {
   settings: {
     categoryMappings: {
+      requestMetadata: (
+        integrationId,
+        flowId,
+        categoryId,
+        options
+      ) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
+          { integrationId, flowId, categoryId, options }
+        ),
       init: (integrationId, flowId, id, options) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT, {
           integrationId,
@@ -677,18 +687,6 @@ const integrationApp = {
             .UPDATE_GENERATES,
           { integrationId, flowId, id, generateFields }
         ),
-      patchIncompleteGenerates: (integrationId, flowId, id, index, value) =>
-        action(
-          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-            .PATCH_INCOMPLETE_GENERATES,
-          {
-            integrationId,
-            flowId,
-            id,
-            index,
-            value,
-          }
-        ),
       saveVariationMappings: (integrationId, flowId, id, data = {}) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
@@ -758,16 +756,6 @@ const integrationApp = {
         actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_CATEGORY_MAPPINGS_DATA,
         { integrationId, flowId, mappingData }
       ),
-    requestCategoryMappingMetadata: (
-      integrationId,
-      flowId,
-      categoryId,
-      options
-    ) =>
-      action(
-        actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
-        { integrationId, flowId, categoryId, options }
-      ),
     receivedCategoryMappingMetadata: (integrationId, flowId, metadata) =>
       action(
         actionTypes.INTEGRATION_APPS.SETTINGS
@@ -789,12 +777,6 @@ const integrationApp = {
         integrationId,
         flowId,
         filters,
-      }),
-    clearVariationMappings: (integrationId, flowId, data) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_VARIATION_MAPPINGS, {
-        integrationId,
-        flowId,
-        data,
       }),
 
     addCategory: (integrationId, flowId, data) =>
