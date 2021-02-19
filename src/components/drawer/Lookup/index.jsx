@@ -121,9 +121,17 @@ export default function LookupDrawer({lookups, onSave, options, disabled, resour
       }
 
       setValue(lookupsTmp);
-      if (shouldClose) { history.goBack(); }
+      if (shouldClose) {
+        if (!value.length) {
+          // navigate to Manage lookups page when first lookup is created
+          history.replace(fullPath);
+        } else {
+          // if lookups already exist, Manage lookups path is already in the stack
+          history.goBack();
+        }
+      }
     },
-    [history, onSave, selectedLookup, value]
+    [fullPath, history, onSave, selectedLookup, value]
   );
 
   return (
