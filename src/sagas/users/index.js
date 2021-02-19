@@ -121,6 +121,7 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
   try {
     response = yield call(apiCallWithRetry, {
       path,
+      timeout: 5 * 60 * 1000,
       opts,
     });
   } catch (error) {
@@ -131,9 +132,10 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
     yield put(actions.resource.requestCollection('flows'));
     yield put(actions.resource.requestCollection('exports'));
     yield put(actions.resource.requestCollection('imports'));
+    yield put(actions.resource.requestCollection('licenses'));
+  } else {
+    yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
   }
-
-  yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
 }
 
 export function* updateProfile() {

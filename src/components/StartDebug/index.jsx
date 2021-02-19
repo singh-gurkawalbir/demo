@@ -78,7 +78,7 @@ const formatter = (value, unit, suffix) => {
   return `${value}${formattedUnit} remaining`;
 };
 const defaultValue = 15;
-export default function StartDebug({ resourceId, resourceType}) {
+export default function StartDebug({ resourceId, resourceType, disabled}) {
   const [value, setValue] = useState(defaultValue);
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
@@ -128,9 +128,19 @@ export default function StartDebug({ resourceId, resourceType}) {
     setValue(value);
   }, []);
 
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        marginTop: 35,
+      },
+    },
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  };
+
   return (
     <>
       <IconTextButton
+        disabled={disabled}
         onClick={toggleClick}
         data-test="refreshResource">
         <DebugIcon />
@@ -139,6 +149,7 @@ export default function StartDebug({ resourceId, resourceType}) {
         ) : 'Start debug'}
       </IconTextButton>
       <ArrowPopper
+        disabled={disabled}
         open={!!anchorEl}
         anchorEl={anchorEl}
         restrictToParent={false}
@@ -162,6 +173,7 @@ export default function StartDebug({ resourceId, resourceType}) {
                       className={classes.dropdown}
                       onChange={handleChange}
                       value={value || ''}
+                      MenuProps={MenuProps}
                     >
                       {debugOptions.map(opt => (
                         <MenuItem key={opt.value} value={opt.value}>

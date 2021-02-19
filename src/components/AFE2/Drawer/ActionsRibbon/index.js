@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   spaceBetween: { flexGrow: 100 },
 }));
 
-export default function ActionRibbon({ editorId, className }) {
+export default function ActionsRibbon({ editorId, className, hidePreview }) {
   const classes = useStyles();
   const editorType = useSelector(state => selectors._editor(state, editorId).editorType);
 
@@ -42,8 +42,8 @@ export default function ActionRibbon({ editorId, className }) {
       { // eslint-disable-next-line react/no-array-index-key
           rightActions.map((a, i) => <a.component key={i} editorId={editorId} />)
       }
-
-      <PreviewButtonGroup editorId={editorId} />
+      {!hidePreview &&
+      <PreviewButtonGroup editorId={editorId} />}
 
       { // TODO: Dave - replace layout toggle component with icon dropdown variant.
         showLayoutToggle && <ToggleLayout editorId={editorId} />

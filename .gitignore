@@ -15,3 +15,4 @@ dep-tree
 package-lock.json
 .lr_staging
 .lr_production
+.lr_production_eu

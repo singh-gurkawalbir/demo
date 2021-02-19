@@ -252,6 +252,33 @@ describe('Sort util function test', () => {
       ]
       );
     });
+    test('should return correct sorted data for array of strings with leading/trailing spaces in descending order', () => {
+      const sampleArray = [' 123Canada', 'Canada ', 'USSR', 456, 4567, '456New zealand', '876Bangladesh', '1233', 'USA', '456India', 'indonesia', 'India', 'china', 'australia', 'Austria', 'Sweden', 'sri Lanka', 'germany', 'Greenland'];
+
+      sampleArray.sort(stringCompare(null, true));
+      expect(sampleArray).toEqual([
+        'USSR',
+        'USA',
+        'Sweden',
+        'sri Lanka',
+        'indonesia',
+        'India',
+        'Greenland',
+        'germany',
+        'china',
+        'Canada ',
+        'Austria',
+        'australia',
+        '876Bangladesh',
+        '456New zealand',
+        '456India',
+        ' 123Canada',
+        4567,
+        '1233',
+        456,
+      ]
+      );
+    });
 
     test('should return correct sorted data for array of objects with all Capitals', () => {
       const sampleArray = [{id: 'Canada'}, {id: 'USA'}, {id: 'India'}, {id: 'China'}, {id: 'Australia'}, {id: 'Swden'}, {id: 'Sri Lanka'}, {id: 'Germany'}];

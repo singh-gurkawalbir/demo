@@ -43,12 +43,8 @@ export default (state = {}, action) => {
         break;
       // LOGS.CONNECTIONS.DELETE action will delete connection debug log in backend.
       case actionTypes.LOGS.CONNECTIONS.DELETE:
-        /**
-         * assigning empty state instead of deleting the state, since flow builder uses state value to show active
-         * connection debugger tabs. Deleting state complete will result in closing the tab automatically.
-        */
-        if (draft.connections) {
-          draft.connections[connectionId] = {};
+        if (draft.connections?.[connectionId]) {
+          delete draft.connections[connectionId].logs;
         }
         break;
       default:

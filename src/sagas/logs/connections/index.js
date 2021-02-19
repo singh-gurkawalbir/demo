@@ -52,6 +52,12 @@ export function* pollForConnectionLogs({ connectionId }) {
   }
 }
 export function* startPollingForConnectionDebugLogs({ connectionId }) {
+  const isConnectionLogsNotSupported = yield select(selectors.isConnectionLogsNotSupported, connectionId);
+
+  if (isConnectionLogsNotSupported) {
+    return yield put(actions.logs.connections.requestFailed(connectionId));
+  }
+
   const watcher = yield fork(pollForConnectionLogs, {connectionId});
 
   yield take(action => {
@@ -95,6 +101,11 @@ export function* downloadConnectionDebugLogs({ connectionId}) {
   openExternalUrl({ url: _url });
 }
 export function* startDebug({connectionId, value}) {
+  const isConnectionLogsNotSupported = yield select(selectors.isConnectionLogsNotSupported, connectionId);
+
+  if (isConnectionLogsNotSupported) {
+    return;
+  }
   const patchSet = [
     {
       op: value !== '0' ? 'replace' : 'remove',

@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
     padding: '0px 12px',
     height: 38,
     justifyContent: 'flex-end',
-    borderRadius: theme.spacing(0.5),
+    borderRadius: 2,
     '& > .MuiInput-formControl': {
       height: 38,
       padding: '0px 15px',
@@ -54,9 +54,9 @@ const useStyles = makeStyles(theme => ({
     '& svg': {
       right: theme.spacing(1),
     },
-    // '&:hover': {
-    //   borderColor: theme.palette.primary.main,
-    // },
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
   },
 }));
 const MenuComponent = React.forwardRef((props, ref) => {

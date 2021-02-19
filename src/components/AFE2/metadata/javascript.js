@@ -4,7 +4,7 @@ import JavaScriptPanel from '../Editor/panels/JavaScript';
 
 export default {
   type: 'javascript',
-  label: 'JavaScript editor',
+  label: 'Script editor',
   description: 'Run JavaScript safely in a secure runtime environment.',
   panels: [
     {

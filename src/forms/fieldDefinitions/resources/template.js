@@ -26,6 +26,7 @@ export default {
   },
   applications: {
     type: 'selectmultiapplication',
+    placeholder: 'Choose applications',
     label: 'Applications',
     valueDelimiter: ',',
     defaultValue: r => (r?.applications) || [],

@@ -41,7 +41,6 @@ export default {
     },
     required: true,
     showAllSuggestions: true,
-    refreshOptionsOnChangesTo: ['file.type'],
     validWhen: {
       someAreTrue: {
         message:

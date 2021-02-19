@@ -315,19 +315,27 @@ describe('editor sagas', () => {
         .put(actions._editor.saveFailed(editorId, 'save failed error'))
         .run();
     });
-    test('should call onSave handler when present in editor state and dispatch save complete action', () => {
+    test('should call onSave handler when present in editor state and dispatch save complete action after foreground patches are run', async () => {
       editor.onSave = jest.fn().mockImplementationOnce(() => 'does some on save');
+      processorLogic.getPatchSet = jest.fn().mockImplementationOnce(() => patches);
 
-      expectSaga(save, { id: editorId })
+      const { effects } = await expectSaga(save, { id: editorId })
         .provide([
           [select(selectors._editor, editorId), editor],
+          [matchers.call.fn(commitStagedChanges), undefined],
         ])
-        .put(actions._editor.saveComplete(editorId))
+        .not.put(actions._editor.saveFailed(editorId))
         .run();
 
       expect(editor.onSave.mock.calls.length).toBe(1);
+
+      // since there are 3 foreground patches, total call to commitStagedChanges would be 3
+      expect(effects.call).toHaveLength(3);
+      expect(effects.put).toHaveLength(6);
+      // 4th action would be editor savecomplete, after first 3 for foreground patchStaged
+      expect(effects.put[3]).toEqual(put(actions._editor.saveComplete(editorId)));
     });
-    test('should dispatch save failed action if no patch sets are given', () => {
+    test('should dispatch save failed action if no patch sets are given and onSave handler is also undefined', () => {
       processorLogic.getPatchSet = jest.fn().mockImplementationOnce(() => null);
 
       return expectSaga(save, { id: editorId })
@@ -612,6 +620,54 @@ describe('editor sagas', () => {
       ])
       .returns(undefined)
       .run());
+    test('should return empty data object if resource type is apis', () => {
+      const editor = {
+        id: 'script',
+        editorType: 'javascript',
+        resourceType: 'apis',
+        resourceId,
+        insertStubKey: 'handleRequest',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'script' })
+        .provide([
+          [select(selectors._editor, 'script'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+        ])
+        .returns({data: {}})
+        .run();
+    });
+    test('should return default sample data when stage is contentBasedFlowRouter', () => {
+      const editor = {
+        id: 'as2content',
+        editorType: 'javascript',
+        resourceType: 'connections',
+        resourceId,
+        formKey: 'new-123',
+        insertStubKey: 'contentBasedFlowRouter',
+        stage: 'contentBasedFlowRouter',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'as2content' })
+        .provide([
+          [select(selectors._editor, 'as2content'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+        ])
+        .returns({
+          data: {
+            httpHeaders: {
+              'as2-from': 'OpenAS2_appA',
+              'as2-to': 'OpenAS2_appB',
+            },
+            mimeHeaders: {
+              'content-type': 'application/edi-x12',
+              'content-disposition': 'Attachment; filename=rfc1767.dat',
+            },
+            rawMessageBody: 'sample message',
+          },
+        })
+        .run();
+    });
     test('should call fileSampleData selector and return data when editor type is csv or xml parser', () => {
       const editor = {
         id: 'filexml',
@@ -767,6 +823,45 @@ describe('editor sagas', () => {
         .returns({ data: { record: { name: 'Bob' } }, templateVersion: 2 })
         .run();
     });
+    test('should make /getContext api call call with flow and integration id', () => {
+      const editor = {
+        id: 'eFilter',
+        editorType: 'exportFilter',
+        flowId,
+        resourceType: 'exports',
+        resourceId,
+        stage: 'exportFilter',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'eFilter' })
+        .provide([
+          [select(selectors._editor, 'eFilter'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.select.selector(selectors.getSampleDataContext), {data: {id: 999}}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {id: 999}}, templateVersion: 2}],
+          [select(selectors.resource, 'flows', flowId), {_integrationId: 'Integration-1234'}],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/handleBar/getContext',
+          opts: {
+            method: 'POST',
+            body: {
+              sampleData: {id: 999},
+              templateVersion: undefined,
+              flowId,
+              integrationId: 'Integration-1234',
+              export: {},
+              fieldPath: 'filter',
+            },
+          },
+          message: 'Loading',
+          hidden: false,
+        })
+        .not.put(actions._editor.sampleDataFailed('eFilter', '{"message":"invalid processor", "code":"code"}'))
+        .returns({ data: { record: {id: 999}}, templateVersion: 2 })
+        .run();
+    });
     test('should not call sampleDataWrapper selector for csv generator and filters stage and return data as is', () => {
       const editor = {
         id: 'filecsv',
@@ -904,7 +999,6 @@ describe('editor sagas', () => {
         fieldId: '',
         autoEvaluate: false,
         layout: 'compact',
-        lastChange: expect.any(Number),
         sampleDataStatus: 'requested',
       };
 
@@ -942,7 +1036,6 @@ describe('editor sagas', () => {
         formKey: 'new-123',
         layout: 'compact',
         autoEvaluate: true,
-        lastChange: expect.any(Number),
         sampleDataStatus: 'requested',
         rule: {
           multipleRowsPerRecord: false,
@@ -994,7 +1087,6 @@ describe('editor sagas', () => {
         fieldId: 'query',
         formKey: 'new-123',
         layout: 'compact',
-        lastChange: expect.any(Number),
         sampleDataStatus: 'requested',
         supportsDefaultData: true,
         editorSupportsV1V2data: false,
@@ -1041,7 +1133,6 @@ describe('editor sagas', () => {
         layout: 'jsonFormBuilder',
         autoEvaluate: true,
         previewOnSave: true,
-        lastChange: expect.any(Number),
         sampleDataStatus: 'requested',
         insertStubKey: 'formInit',
         activeProcessor: 'json',
@@ -1115,7 +1206,6 @@ describe('editor sagas', () => {
         originalData: 'some data',
         rule: 'some rule',
         originalRule: 'some rule',
-        lastChange: expect.any(Number),
         sampleDataStatus: 'requested',
       };
 
@@ -1128,6 +1218,53 @@ describe('editor sagas', () => {
           [select(selectors.fieldState, 'new-123', 'file.filedefinition'), {}],
           [select(selectors.formState, 'new-123'), {fieldMap: {}}],
           [matchers.select.selector(selectors.fileDefinitionSampleData), {sampleData: 'some data', rule: 'some rule'}],
+        ])
+        .run()
+        .then(result => {
+          const { effects } = result;
+
+          expect(effects.put).toHaveLength(1);
+          expect(effects.call).toEqual(expect.arrayContaining([call(initSampleData, { id })]));
+
+          expect(effects.put[0]).toHaveProperty('payload.action.options', expectedOptions);
+        });
+    });
+    test('should correctly update init options with context if editor type is javascript and dispatch init complete action', () => {
+      const id = 'preMapscript';
+      const options = {
+        resourceId: 'res-123',
+        resourceType: 'imports',
+        flowId: 'flow-123',
+        stage: 'preMap',
+        rule: {},
+      };
+      const expectedOptions = {
+        editorType: 'javascript',
+        autoEvaluate: false,
+        layout: 'compact',
+        resourceId: 'res-123',
+        resourceType: 'imports',
+        flowId: 'flow-123',
+        stage: 'preMap',
+        rule: {
+          entryFunction: 'preMap',
+          fetchScriptContent: true,
+        },
+        originalRule: {
+          entryFunction: 'preMap',
+          fetchScriptContent: true,
+        },
+        insertStubKey: 'preMap',
+        sampleDataStatus: 'requested',
+        context: { context: 'hook' },
+        fieldId: '',
+      };
+
+      return expectSaga(initEditor, { id, editorType: 'javascript', options })
+        .provide([
+          [matchers.call.fn(initSampleData), undefined],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [select(selectors.getScriptContext, {flowId: 'flow-123', contextType: 'hook'}), {context: 'hook'}],
         ])
         .run()
         .then(result => {

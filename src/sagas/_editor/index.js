@@ -20,7 +20,7 @@ import { requestSampleData } from '../sampleData/flows';
 import { requestExportSampleData } from '../sampleData/exports';
 import { constructResourceFromFormValues } from '../utils';
 import { safeParse } from '../../utils/string';
-import { getUniqueFieldId, dataAsString, FLOW_STAGES } from '../../utils/editor';
+import { getUniqueFieldId, dataAsString, FLOW_STAGES, HOOK_STAGES } from '../../utils/editor';
 import { isNewId } from '../../utils/resource';
 
 /**
@@ -192,16 +192,12 @@ export function* save({ id, context }) {
     }
   }
 
-  if (editor.onSave) {
-    editor.onSave(editor);
-
-    // we might have use cases in future where onSave and patches , both need to be called
-    // in that case we should not return from here and continue to run the patchSet also
-    return yield put(actions._editor.saveComplete(id));
+  if (!editor.onSave && !patches) {
+    return yield put(actions._editor.saveFailed(id));
   }
 
-  if (!patches) {
-    return yield put(actions._editor.saveFailed(id));
+  if (editor.onSave) {
+    editor.onSave(editor);
   }
 
   /**
@@ -387,6 +383,26 @@ export function* requestEditorSampleData({
   });
   let sampleData;
 
+  // for my apis, no sample data is shown
+  if (resourceType === 'apis') {
+    return { data: {}};
+  }
+  // default sample data is shown for as2 routing rules
+  if (stage === 'contentBasedFlowRouter') {
+    return {
+      data: {
+        httpHeaders: {
+          'as2-from': 'OpenAS2_appA',
+          'as2-to': 'OpenAS2_appB',
+        },
+        mimeHeaders: {
+          'content-type': 'application/edi-x12',
+          'content-disposition': 'Attachment; filename=rfc1767.dat',
+        },
+        rawMessageBody: 'sample message',
+      },
+    };
+  }
   // for csv and xml parsers, simply get the file sample data
   if (editorType === 'csvParser' || editorType === 'xmlParser') {
     const fileType = editorType === 'csvParser' ? 'csv' : 'xml';
@@ -423,7 +439,7 @@ export function* requestEditorSampleData({
     sampleData = flowSampleData?.data;
   }
 
-  if (!sampleData && (!isPageGenerator || FLOW_STAGES.includes(stage))) {
+  if (!sampleData && (!isPageGenerator || FLOW_STAGES.includes(stage) || HOOK_STAGES.includes(stage))) {
     // sample data not present, trigger action to get sample data
     yield call(requestSampleData, {
       flowId,
@@ -460,6 +476,9 @@ export function* requestEditorSampleData({
     if (!isNewId(flowId)) {
       body.flowId = flowId;
     }
+    const flow = yield select(selectors.resource, 'flows', flowId);
+
+    body.integrationId = flow?._integrationId;
 
     body[resourceType === 'imports' ? 'import' : 'export'] = resource;
     body.fieldPath = fieldId || filterPath;
@@ -606,6 +625,10 @@ export function* initEditor({ id, editorType, options }) {
       });
 
       formattedOptions = init({options: formattedOptions, resource, fieldState, fileDefinitionData});
+    } else if (editorType === 'javascript') {
+      const scriptContext = yield select(selectors.getScriptContext, {flowId, contextType: 'hook'});
+
+      formattedOptions = init({options: formattedOptions, resource, fieldState, flow, scriptContext});
     } else {
       formattedOptions = init({options: formattedOptions, resource, fieldState, flow});
     }
@@ -622,7 +645,6 @@ export function* initEditor({ id, editorType, options }) {
     fieldId: getUniqueFieldId(fieldId, resource),
     ...featuresMap(formattedOptions)[editorType],
     originalRule,
-    lastChange: Date.now(),
     sampleDataStatus: 'requested',
     onSave,
   };

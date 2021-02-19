@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import ActionButton from '../../ActionButton';
@@ -69,6 +69,7 @@ export default function DynaURI_afe2(props) {
         />
         <ActionButton
           data-test={id}
+          tooltip="Open handlebars editor"
           onClick={handleEditorClick}
           className={classes.dynaURIActionButton}>
           <AfeIcon />

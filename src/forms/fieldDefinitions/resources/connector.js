@@ -43,6 +43,7 @@ export default {
   editions: {
     type: 'text',
     label: 'Editions',
+    placeholder: 'Comma seperated values',
     value: r => r?.twoDotZero?.editions,
     visibleWhen: [
       {
@@ -76,6 +77,7 @@ export default {
   _integrationId: {
     type: 'selectresource',
     label: 'Source integration',
+    placeholder: 'Choose integration',
     resourceType: 'integrations',
     requiredWhen: [
       {
@@ -141,6 +143,7 @@ export default {
   },
   applications: {
     type: 'selectmultiapplication',
+    placeholder: 'Choose applications',
     label: 'Applications',
     defaultValue: r => (r?.applications) || [],
     requiredWhen: [

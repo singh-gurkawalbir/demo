@@ -45,7 +45,6 @@ export default {
     required: true,
     showAllSuggestions: true,
     defaultValue: r => r && r.file && r.file.fileName,
-    refreshOptionsOnChangesTo: ['file.type'],
     validWhen: {
       someAreTrue: {
         message:

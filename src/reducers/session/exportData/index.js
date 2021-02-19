@@ -4,7 +4,6 @@ import actionTypes from '../../../actions/types';
 const EMPTY_OBJECT = {};
 const reset = (draft, id) => {
   draft[id] = draft[id] || {};
-  draft[id].data = [];
   draft[id].status = '';
   delete draft[id].error;
 };
@@ -19,15 +18,19 @@ export default function (state = {}, action) {
     switch (type) {
       case actionTypes.EXPORTDATA.REQUEST:
         reset(draft, id);
+        if (!draft[id].data) {
+          draft[id].data = [];
+        }
         draft[id].status = 'requested';
         break;
       case actionTypes.EXPORTDATA.RECEIVED:
         reset(draft, id);
-        draft[id].status = 'received';
         draft[id].data = data;
+        draft[id].status = 'received';
         break;
       case actionTypes.EXPORTDATA.ERROR_RECEIVED:
         reset(draft, id);
+        draft[id].data = [];
         draft[id].status = 'error';
         draft[id].error = error;
         break;

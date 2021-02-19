@@ -1,17 +1,15 @@
 import { isProduction } from '../../../../formFactory/utils';
+import { getApiUrl } from '../../../../../utils/resource';
 
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
-    let baseURI = '';
+    let baseURI = getApiUrl();
 
-    if (retValues['/integrator/region'] === 'europe') {
-      baseURI = 'https://api.eu.integrator.io';
-      retValues['/integrator/environment'] = undefined;
-    } else if (isProduction()) {
-      baseURI = 'https://api.integrator.io';
-    } else {
-      baseURI = 'https://api.staging.integrator.io';
+    if (isProduction()) {
+      if (retValues['/integrator/region'] === 'europe') {
+        baseURI = 'https://api.eu.integrator.io';
+      }
     }
     delete retValues['/integrator/environment'];
     delete retValues['/integrator/region'];

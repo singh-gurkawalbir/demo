@@ -18,7 +18,7 @@ import ActionsRibbon from './ActionsRibbon';
 // hideSave: This is currently only used for the playground where we do not
 // want the user to have any options to save the editor.
 // eslint-disable-next-line no-unused-vars
-function RouterWrappedContent({ hideSave, onClose, fullPath}) {
+function RouterWrappedContent({ hideSave, hidePreview, onClose, fullPath}) {
   const dispatch = useDispatch();
   const { editorId } = useParams();
   const editorType = useSelector(state => selectors._editor(state, editorId).editorType);
@@ -37,7 +37,7 @@ function RouterWrappedContent({ hideSave, onClose, fullPath}) {
   return (
     <>
       <DrawerHeader title={editorTitle || label} CloseButton={CloseButton} fullPath={fullPath}>
-        <ActionsRibbon editorId={editorId} />
+        <ActionsRibbon editorId={editorId} hidePreview={hidePreview} />
       </DrawerHeader>
 
       <DrawerContent>
@@ -53,14 +53,14 @@ function RouterWrappedContent({ hideSave, onClose, fullPath}) {
   );
 }
 
-export default function EditorDrawer({ hideSave, width = 'full' }) {
+export default function EditorDrawer({ hideSave, hidePreview, width = 'full' }) {
   return (
     <RightDrawer
       path="editor/:editorId"
       variant="temporary"
       height="tall"
       width={width}>
-      <RouterWrappedContent hideSave={hideSave} />
+      <RouterWrappedContent hideSave={hideSave} hidePreview={hidePreview} />
     </RightDrawer>
   );
 }

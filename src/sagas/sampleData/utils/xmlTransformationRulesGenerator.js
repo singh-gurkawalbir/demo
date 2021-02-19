@@ -77,6 +77,7 @@ export default function* saveTransformationRulesForNewXMLExport({
     resourceId,
     SCOPES.VALUE
   );
+
   const isXmlFileAdaptor =
     isFileAdaptor(resource) && resource.file.type === 'xml';
   const isXmlHttpAdaptor =

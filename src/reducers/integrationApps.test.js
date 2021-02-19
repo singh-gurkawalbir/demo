@@ -1164,6 +1164,70 @@ describe('integrationApps selector testcases', () => {
   describe('selectors.getFlowsAssociatedExportFromIAMetadata test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.getFlowsAssociatedExportFromIAMetadata({}, {})).toBe(null);
+      expect(selectors.getFlowsAssociatedExportFromIAMetadata({})).toBe(null);
+      expect(selectors.getFlowsAssociatedExportFromIAMetadata(null, {})).toBe(null);
+    });
+    test('should return correct Export details from IA metadata', () => {
+      const state = {
+        data: {
+          resources: {
+            exports: [{
+              _id: 'exp1',
+              name: 'Export',
+            },
+            {
+              _id: 'exp2',
+              name: 'Export2',
+            }],
+          },
+        },
+      };
+      const metadata1 = {
+        properties: {
+          _exportId: 'exp1',
+        },
+      };
+      const metadata2 = {
+        properties: {
+          _exportId: 'exp1',
+        },
+        resource: {
+          _exportId: 'exp2',
+        },
+      };
+      const metadata3 = {
+        properties: {
+          _exportId: 'exp2',
+        },
+        resource: {
+          _exportId: 'exp1',
+        },
+      };
+      const metadata4 = {
+        resource: {
+          pageGenerators: [{
+            _exportId: 'exp2',
+          }],
+        },
+
+      };
+
+      expect(selectors.getFlowsAssociatedExportFromIAMetadata(state, metadata1)).toEqual({
+        _id: 'exp1',
+        name: 'Export',
+      });
+      expect(selectors.getFlowsAssociatedExportFromIAMetadata(state, metadata2)).toEqual({
+        _id: 'exp1',
+        name: 'Export',
+      });
+      expect(selectors.getFlowsAssociatedExportFromIAMetadata(state, metadata3)).toEqual({
+        _id: 'exp2',
+        name: 'Export2',
+      });
+      expect(selectors.getFlowsAssociatedExportFromIAMetadata(state, metadata4)).toEqual({
+        _id: 'exp2',
+        name: 'Export2',
+      });
     });
   });
 
@@ -1194,10 +1258,68 @@ describe('integrationApps selector testcases', () => {
   });
 
   describe('selectors.mkIntegrationAppStore test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          integrations: [{
+            _id: 'integration1',
+            name: 'Integration 1',
+            _connectorId: 'connector',
+            settings: {
+              supportsMultiStore: true,
+              sections: [{
+                id: 'child1',
+                mode: 'settings',
+                title: 'Child 1',
+                sections: [{
+                  flows: [{}],
+                  fields: [{}],
+                }],
+              },
+              {
+                id: 'child2',
+                mode: 'uninstall',
+                title: 'Child 2',
+                sections: [{
+                  flows: [{}],
+                  fields: [{}],
+                }],
+              }],
+            },
+          }, {
+            _id: 'integration2',
+            name: 'Integration 2',
+            _connectorId: 'connector2',
+            settings: {
+              sections: [{
+                flows: [{}],
+                fields: [{}],
+              }],
+            },
+          }],
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       const selector = selectors.mkIntegrationAppStore();
 
       expect(selector()).toEqual({});
+      expect(selector(null)).toEqual({});
+      expect(selector({})).toEqual({});
+      expect(selector({}, null)).toEqual({});
+    });
+
+    test('should return correct value for integration App with multistore and single store', () => {
+      const selector = selectors.mkIntegrationAppStore();
+
+      expect(selector(state, 'integration1', 'child1')).toEqual({
+        hidden: false,
+        label: 'Child 1',
+        mode: 'settings',
+        value: 'child1',
+      });
+      expect(selector(state, 'integration2', 'child1')).toEqual({});
     });
   });
 
@@ -1408,10 +1530,59 @@ describe('integrationApps selector testcases', () => {
   });
 
   describe('selectors.integrationAppName test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          integrations: [{
+            _id: 'i1',
+            name: 'ABC',
+            _connectorId: 'c',
+          }, {
+            _id: 'i2',
+            name: 'ABC DEF',
+            _connectorId: 'c',
+
+          }, {
+            _id: 'i3',
+            name: 'ABC DEF Connector',
+            _connectorId: 'c',
+
+          }, {
+            _id: 'i4',
+            name: 'ABC*',
+            _connectorId: 'c',
+
+          }, {
+            _id: 'i5',
+            name: 'ABC-DEF',
+            _connectorId: 'c',
+
+          }, {
+            _id: 'i6',
+            name: 'ABCD',
+          }],
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       const selector = selectors.integrationAppName();
 
       expect(selector()).toEqual(null);
+      expect(selector({})).toEqual(null);
+      expect(selector(null)).toEqual(null);
+      expect(selector(null, null)).toEqual(null);
+    });
+
+    test('should return correct value for integraionAppName', () => {
+      const selector = selectors.integrationAppName();
+
+      expect(selector(state, 'i1')).toEqual('ABC');
+      expect(selector(state, 'i2')).toEqual('ABCDEF');
+      expect(selector(state, 'i3')).toEqual('ABCDEF');
+      expect(selector(state, 'i4')).toEqual('ABC');
+      expect(selector(state, 'i5')).toEqual('ABCDEF');
+      expect(selector(state, 'i6')).toEqual(null);
     });
   });
 
@@ -3081,8 +3252,55 @@ describe('integrationApps selector testcases', () => {
   });
 
   describe('selectors.isIntegrationAppVersion2 test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          integrations: [{
+            _id: 'integration1',
+            name: 'Integration',
+            install: [{
+              isClone: true,
+            }],
+          }, {
+            _id: 'integration2',
+            name: 'Integration',
+            installSteps: [{}],
+            uninstallSteps: [{}],
+          }, {
+            _id: 'integration3',
+            name: 'Integration',
+            installSteps: [{}],
+          }, {
+            _id: 'integration4',
+            name: 'Integration',
+            uninstallSteps: [{}],
+          }],
+        },
+      },
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.isIntegrationAppVersion2()).toEqual(false);
+      expect(selectors.isIntegrationAppVersion2(null)).toEqual(false);
+      expect(selectors.isIntegrationAppVersion2({})).toEqual(false);
+      expect(selectors.isIntegrationAppVersion2({}, null)).toEqual(false);
+    });
+    test('should return false when integration not found', () => {
+      expect(selectors.isIntegrationAppVersion2(state, 'invalid')).toEqual(false);
+      expect(selectors.isIntegrationAppVersion2(state, 'invalid', true)).toEqual(false);
+      expect(selectors.isIntegrationAppVersion2(state, 'invalid', false)).toEqual(false);
+    });
+    test('should return true when integration found and is cloned when skipClone is false', () => {
+      expect(selectors.isIntegrationAppVersion2(state, 'integration1')).toEqual(true);
+      expect(selectors.isIntegrationAppVersion2(state, 'integration1', false)).toEqual(true);
+    });
+    test('should return false when integration found and is cloned when skipClone is true', () => {
+      expect(selectors.isIntegrationAppVersion2(state, 'integration1', true)).toEqual(false);
+    });
+    test('should return true when integration found and is a IA2.0 integration', () => {
+      expect(selectors.isIntegrationAppVersion2(state, 'integration2', true)).toEqual(true);
+      expect(selectors.isIntegrationAppVersion2(state, 'integration3', true)).toEqual(true);
+      expect(selectors.isIntegrationAppVersion2(state, 'integration4', true)).toEqual(true);
     });
   });
 
