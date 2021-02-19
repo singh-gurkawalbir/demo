@@ -8,9 +8,8 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing.double,
   },
 }));
-const CancelButton = props => {
+export default function CancelButton({onCancel}) {
   const classes = useStyles();
-  const { onCancel} = props;
 
   return (
     <Button
@@ -22,6 +21,4 @@ const CancelButton = props => {
       Cancel
     </Button>
   );
-};
-
-export default CancelButton;
+}

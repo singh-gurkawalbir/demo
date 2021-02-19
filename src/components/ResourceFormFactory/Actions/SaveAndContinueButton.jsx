@@ -6,7 +6,7 @@ import DynaAction from '../../DynaForm/DynaAction';
 import { selectors } from '../../../reducers';
 import { useLoadingSnackbarOnSave } from '.';
 
-const SaveAndContinueButton = props => {
+export default function SaveAndContinueButton(props) {
   const {
     label,
     resourceType,
@@ -47,6 +47,5 @@ const SaveAndContinueButton = props => {
       {disableSave ? 'Saving' : label}
     </DynaAction>
   );
-};
+}
 
-export default SaveAndContinueButton;

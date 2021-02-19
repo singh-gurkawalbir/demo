@@ -32,7 +32,7 @@ export const PingMessage = props => {
   );
 };
 
-const TestButton = props => {
+export default function TestButton(props) {
   const { resourceId } = props;
   const [isTesting, setIsTesting] = useState(false);
   const dispatch = useDispatch();
@@ -73,6 +73,4 @@ const TestButton = props => {
       </DynaAction>
     </>
   );
-};
-
-export default TestButton;
+}

@@ -5,7 +5,7 @@ import DynaAction from '../../DynaForm/DynaAction';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { selectors } from '../../../reducers';
 
-const SaveAndCloseFileDefinitionButton = props => {
+export default function SaveAndCloseFileDefinitionButton(props) {
   const {
     submitButtonLabel = 'Submit',
     resourceType,
@@ -72,6 +72,5 @@ const SaveAndCloseFileDefinitionButton = props => {
       {isSaving ? 'Saving' : submitButtonLabel}
     </DynaAction>
   );
-};
+}
 
-export default SaveAndCloseFileDefinitionButton;

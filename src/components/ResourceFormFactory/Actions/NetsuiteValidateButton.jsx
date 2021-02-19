@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing.double,
   },
 }));
-const NetsuiteValidateButton = props => {
+export default function NetsuiteValidateButton(props) {
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const {
@@ -126,6 +126,5 @@ const NetsuiteValidateButton = props => {
       {(isValidatingNetsuiteUserRoles && !hideNotificationMessage) ? 'Testing' : 'Test Connection'}
     </Button>
   );
-};
+}
 
-export default NetsuiteValidateButton;

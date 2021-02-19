@@ -8,7 +8,7 @@ import { useLoadingSnackbarOnSave } from '.';
 import useConfirmDialog from '../../ConfirmDialog';
 import { isNewId } from '../../../utils/resource';
 
-const SaveButton = props => {
+export default function SaveButton(props) {
   const {
     submitButtonLabel = 'Submit',
     resourceType,
@@ -111,6 +111,5 @@ const SaveButton = props => {
       {(isSaving && disableSave) ? 'Saving' : submitButtonLabel}
     </DynaAction>
   );
-};
+}
 
-export default SaveButton;
