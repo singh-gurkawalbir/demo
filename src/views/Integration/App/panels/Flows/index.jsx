@@ -184,24 +184,20 @@ const defaultFilter = {
   ],
 };
 
-function FlowList({ integrationId, storeId }) {
+const FlowsTable = ({integrationId, storeId}) => {
   const match = useRouteMatch();
-  const classes = useStyles();
-  const { sectionId } = match.params;
-  const dispatch = useDispatch();
   const filterKey = `${integrationId}-flows`;
+  const { sectionId } = match.params;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey)) || defaultFilter;
   const flowsFilterConfig = useMemo(() => ({ ...flowFilter, excludeHiddenFlows: true }), [flowFilter]);
-
+  const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
+  const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, storeId, flowsFilterConfig);
-  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
+  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration, storeId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const section = flowSections.find(s => s.titleId === sectionId);
-  const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
-  const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
-  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration, storeId);
+
   const actionProps = useMemo(() => ({
     isIntegrationApp: true,
     storeId,
@@ -213,6 +209,29 @@ function FlowList({ integrationId, storeId }) {
     flowAttributes,
     integration,
   }), [storeId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration]);
+
+  return (
+    <CeligoTable
+      data-public
+      data={flows}
+      filterKey={filterKey}
+      {...flowTableMeta}
+      actionProps={actionProps}
+    />
+  );
+};
+
+function FlowList({ integrationId, storeId }) {
+  const filterKey = `${integrationId}-flows`;
+  const match = useRouteMatch();
+  const classes = useStyles();
+  const { sectionId } = match.params;
+  const dispatch = useDispatch();
+  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const section = flowSections.find(s => s.titleId === sectionId);
 
   useEffect(() => {
     dispatch(actions.patchFilter(filterKey, {sort: {order: 'asc', orderBy: 'name'}}));
@@ -274,13 +293,8 @@ function FlowList({ integrationId, storeId }) {
         />
         </div>
       </PanelHeader>
-      <CeligoTable
-        data-public
-        data={flows}
-        filterKey={filterKey}
-        {...flowTableMeta}
-        actionProps={actionProps}
-        />
+      <FlowsTable integrationId={integrationId} storeId={storeId} />
+
     </LoadResources>
   );
 }
