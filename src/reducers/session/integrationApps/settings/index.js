@@ -319,7 +319,6 @@ export default (state = {}, action) => {
 
         break;
       }
-
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
         .PATCH_FIELD: {
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {

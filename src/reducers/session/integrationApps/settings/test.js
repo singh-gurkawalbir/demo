@@ -3298,6 +3298,37 @@ describe('integrationApps reducer test cases', () => {
           }});
       });
     });
+
+    describe('integrationApps settings categoryMappings updateGenerates action', () => {
+      test('should update the specific mapping in the category mappings with updated generateFields', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.updateGenerates('integrationId', 'flowId', 'mappingId', [{a: 'b'}]));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                generateFields: [{a: 'b'}],
+              },
+            },
+          },
+        });
+      });
+    });
   });
 });
 
