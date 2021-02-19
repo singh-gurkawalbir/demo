@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
@@ -9,7 +9,7 @@ import ErrorContent from '../../components/ErrorContent';
 // its just a useEffect hook. (could call it: useGenericErrorHandler?)
 export default function ErrorNotifications() {
   const dispatch = useDispatch();
-  const errors = useSelector(state => selectors.commsErrors(state));
+  const errors = useSelector(state => selectors.commsErrors(state), shallowEqual);
   const [enqueueSnackbar, closeSnackbar] = useEnqueueSnackbar();
 
   // const hasWarning = useSelector(state => selectors.reqsHasRetriedTillFailure(state));
@@ -18,13 +18,13 @@ export default function ErrorNotifications() {
     if (!errors) return;
 
     Object.keys(errors).forEach(commKey => {
-      const {message, key} = errors[commKey];
+      const message = errors[commKey];
 
       enqueueSnackbar({
         message: <ErrorContent error={message} />,
         variant: 'error',
         persist: true,
-        key,
+        key: commKey,
       });
     });
 

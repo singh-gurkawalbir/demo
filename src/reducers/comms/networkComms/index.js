@@ -1,5 +1,4 @@
 import produce from 'immer';
-import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
@@ -114,25 +113,19 @@ selectors.timestampComms = (state, resourceName) => (state && state[resourceName
 
 selectors.retryCount = (state, resourceName) => (state && state[resourceName] && state[resourceName].retry) || 0;
 
-selectors.commsErrors = createSelector(
-  state => state,
-  commsState => {
-    if (!commsState) return;
-    const errors = {};
+selectors.commsErrors = commsState => {
+  if (!commsState) return;
 
-    Object.keys(commsState).forEach(key => {
-      const {hidden, status, message, failedAtTimestamp} = commsState[key];
+  return Object.values(commsState).reduce((acc, curr) => {
+    const {failedAtTimestamp, message, status, hidden} = curr;
 
-      if (!hidden && status === COMM_STATES.ERROR) {
-        errors[key] = {
-          message: inferErrorMessages(message),
-          key: failedAtTimestamp,
-        };
-      }
-    });
+    if (!hidden && status === COMM_STATES.ERROR) {
+      acc[failedAtTimestamp] = inferErrorMessages(message);
+    }
 
-    return errors;
-  });
+    return acc;
+  }, {});
+};
 
 selectors.commsSummary = commsState => {
   let isLoading = false;
