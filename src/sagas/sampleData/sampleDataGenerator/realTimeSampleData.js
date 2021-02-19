@@ -57,7 +57,7 @@ export default function* requestRealTimeMetadata({ resource, refresh }) {
     switch (adaptorType) {
       case 'NetSuiteExport': {
         const { _connectionId: connectionId, netsuite = {} } = resource;
-        const recordType = netsuite?.distributed?.recordType;
+        const recordType = netsuite.distributed?.recordType;
 
         if (!recordType) return;
         const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}`;
@@ -91,7 +91,7 @@ export default function* requestRealTimeMetadata({ resource, refresh }) {
 
         metadata = getSalesforceRealTimeSampleData(metadata);
         metadata = { ...metadata, ...getReferenceFieldsMap(referencedFields) };
-        if (!relatedLists?.length) {
+        if (!relatedLists.length) {
           return metadata;
         }
 
