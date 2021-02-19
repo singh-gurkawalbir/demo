@@ -1,21 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import PingMessageSnackbar from '../../PingMessageSnackbar';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers/index';
 import DynaAction from '../../DynaForm/DynaAction';
 import { PING_STATES } from '../../../reducers/comms/ping';
-
-const useStyles = makeStyles(theme => ({
-  actions: {
-    textAlign: 'right',
-  },
-  actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
-  },
-}));
 
 export const PingMessage = props => {
   const { resourceId } = props;
@@ -45,7 +34,6 @@ export const PingMessage = props => {
 
 const TestButton = props => {
   const { resourceId } = props;
-  const classes = useStyles();
   const [isTesting, setIsTesting] = useState(false);
   const dispatch = useDispatch();
   const handleTestConnection = useCallback(
@@ -78,7 +66,6 @@ const TestButton = props => {
         {...props}
         disabled={pingLoading}
         onClick={handleTestConnection}
-        className={classes.actionButton}
         size="small"
         variant="outlined"
         color="secondary">

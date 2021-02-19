@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import { selectors } from '../../../reducers';
@@ -10,16 +9,8 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { useLoadIClientOnce } from '../../DynaForm/fields/DynaIclient';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-const useStyles = makeStyles(theme => ({
-  actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
-  },
-}));
-
 export default function OAuthButton(props) {
   const { label, resourceType, disabled, resourceId, ...rest } = props;
-  const classes = useStyles();
   const resource = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,
@@ -146,7 +137,6 @@ export default function OAuthButton(props) {
       {...rest}
       resourceType={resourceType}
       disabled={disabled || isSaving}
-      className={classes.actionButton}
       ignoreFormTouchedCheck
       onClick={saveAndAuthorizeWhenScopesArePresent}>
       {isSaving ? 'Authorizing' : label || 'Save & authorize'}

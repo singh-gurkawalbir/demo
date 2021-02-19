@@ -1,4 +1,3 @@
-import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useState, useEffect, useCallback } from 'react';
 import actions from '../../../actions';
@@ -6,12 +5,6 @@ import DynaAction from '../../DynaForm/DynaAction';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { selectors } from '../../../reducers';
 
-const useStyles = makeStyles(theme => ({
-  actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
-  },
-}));
 const SaveAndCloseFileDefinitionButton = props => {
   const {
     submitButtonLabel = 'Submit',
@@ -25,7 +18,6 @@ const SaveAndCloseFileDefinitionButton = props => {
     setDisableSaveOnClick,
   } = props;
   const dispatch = useDispatch();
-  const classes = useStyles();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [isSaving, setIsSaving] = useState(false);
   const saveTerminated = useSelector(state =>
@@ -75,7 +67,6 @@ const SaveAndCloseFileDefinitionButton = props => {
     <DynaAction
       {...props}
       color={submitButtonColor}
-      className={classes.actionButton}
       disabled={disabled || disableSaveOnClick}
       onClick={handleSubmitForm}>
       {isSaving ? 'Saving' : submitButtonLabel}
