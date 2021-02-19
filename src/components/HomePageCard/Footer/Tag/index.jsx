@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Tag({ variant, className }) {
+export default function Tag({ variant, className }) {
   const classes = useStyles();
 
   return (
@@ -68,5 +68,3 @@ function Tag({ variant, className }) {
     </div>
   );
 }
-
-export default Tag;

@@ -79,7 +79,7 @@ function reducer(state, action) {
   }
 }
 // TODO @Raghu: Refactor this component and push complexity to sagas
-const TestAndSaveButton = props => {
+export default function TestAndSaveButton(props) {
   const [formState, dispatchLocalAction] = useReducer(reducer, {});
   const {
     resourceType,
@@ -232,6 +232,5 @@ const TestAndSaveButton = props => {
       </DynaAction>
     </>
   );
-};
+}
 
-export default TestAndSaveButton;

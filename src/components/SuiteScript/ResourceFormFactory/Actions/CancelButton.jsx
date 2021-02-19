@@ -9,7 +9,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const CancelButton = props => {
+export default function CancelButton(props) {
   const { onCancel, cancelButtonLabel } = props;
   const classes = useStyles();
 
@@ -23,6 +23,5 @@ const CancelButton = props => {
       {cancelButtonLabel || 'Reset'}
     </Button>
   );
-};
+}
 
-export default CancelButton;

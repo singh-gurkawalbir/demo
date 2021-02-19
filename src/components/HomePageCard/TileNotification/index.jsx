@@ -69,7 +69,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel}) {
+export default function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel}) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -151,5 +151,3 @@ function TileNotification({ content, expired, connectorId, licenseId, integratio
 
   );
 }
-
-export default TileNotification;

@@ -6,7 +6,7 @@ import DynaAction from '../../../DynaForm/DynaAction';
 import { selectors } from '../../../../reducers';
 import { useLoadingSnackbarOnSave } from '.';
 
-const SaveButton = props => {
+export default function SaveButton(props) {
   const {
     submitButtonLabel = 'Submit',
     resourceType,
@@ -64,6 +64,5 @@ const SaveButton = props => {
       {(isSaving && disableSave) ? 'Saving' : submitButtonLabel}
     </DynaAction>
   );
-};
+}
 
-export default SaveButton;

@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom';
 import UploadFileDialog from '../../InstallIntegration';
 
-const InstallZip = () => {
+export default function InstallZip() {
   const history = useHistory();
 
   const match = useRouteMatch();
@@ -28,6 +28,4 @@ const InstallZip = () => {
       </Route>
     </Switch>
   );
-};
-
-export default InstallZip;
+}

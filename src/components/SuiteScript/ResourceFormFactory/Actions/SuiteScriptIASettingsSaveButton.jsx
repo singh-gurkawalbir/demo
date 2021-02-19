@@ -23,7 +23,7 @@ function SiliconValleyDashboardLink({ssLinkedConnectionId, isSVBNSGeneralSection
   );
 }
 
-const SuiteScriptIASettingsSaveButton = props => {
+export default function SuiteScriptIASettingsSaveButton(props) {
   const {
     submitButtonLabel = 'Save',
     disabled = false,
@@ -60,6 +60,5 @@ const SuiteScriptIASettingsSaveButton = props => {
       </DynaAction>
     </>
   );
-};
+}
 
-export default SuiteScriptIASettingsSaveButton;

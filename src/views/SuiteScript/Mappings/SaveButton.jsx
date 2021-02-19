@@ -26,7 +26,7 @@ export const useLoadingSnackbarOnSave = props => {
   return { handleSubmitForm, disableSave };
 };
 
-const MappingSaveButton = props => {
+export default function MappingSaveButton(props) {
   const {
     submitButtonLabel = 'Save',
     variant = 'outlined',
@@ -98,5 +98,4 @@ const MappingSaveButton = props => {
       )}
     </Button>
   );
-};
-export default MappingSaveButton;
+}

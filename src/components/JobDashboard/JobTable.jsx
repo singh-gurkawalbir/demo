@@ -73,7 +73,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function JobTable({
+export default function JobTable({
   onSelectChange,
   jobsInCurrentPage,
   selectedJobs,
@@ -247,5 +247,3 @@ function JobTable({
     </>
   );
 }
-
-export default JobTable;

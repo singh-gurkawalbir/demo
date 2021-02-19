@@ -8,7 +8,7 @@ import {selectors} from '../../reducers';
 import Spinner from '../Spinner';
 import { useLoadingSnackbarOnSave } from '../ResourceFormFactory/Actions';
 
-const MappingSaveButton = ({
+export default function MappingSaveButton({
   submitButtonLabel = 'Save',
   variant = 'outlined',
   color = 'secondary',
@@ -16,7 +16,7 @@ const MappingSaveButton = ({
   dataTest,
   showOnlyOnChanges,
   onClose,
-}) => {
+}) {
   const [saveTrigerred, setSaveTriggered] = useState(false);
   const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
   const match = useRouteMatch();
@@ -83,5 +83,4 @@ const MappingSaveButton = ({
       )}
     </Button>
   );
-};
-export default MappingSaveButton;
+}

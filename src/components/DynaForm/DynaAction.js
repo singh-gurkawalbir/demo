@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function DynaAction(props) {
+export default function DynaAction(props) {
   const {
     disabled,
     children,
@@ -65,5 +65,3 @@ function DynaAction(props) {
     </Button>
   );
 }
-
-export default DynaAction;
