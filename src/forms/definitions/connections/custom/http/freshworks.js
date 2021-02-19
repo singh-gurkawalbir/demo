@@ -35,7 +35,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        const baseUri = r && r.http && r.http.baseURI;
+        const baseUri = r?.http?.baseURI;
 
         if (baseUri) {
           if (baseUri.indexOf('myfreshworks') === -1) {
@@ -58,7 +58,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r && r.http && r.http.baseURI;
+        const baseUri = r?.http?.baseURI;
 
         if (baseUri) {
           if (!baseUri.includes('.freshworks.com')) {
