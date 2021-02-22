@@ -169,6 +169,9 @@ export const featuresMap = options => ({
   sql: {
     layout: 'compact',
   },
+  databaseMapping: {
+    layout: 'compact',
+  },
   filter: {
     autoEvaluate: false,
     layout: 'compact',

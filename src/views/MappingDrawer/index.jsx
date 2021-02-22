@@ -8,8 +8,9 @@ import SelectImport from './SelectImport';
 import RightDrawer from '../../components/drawer/Right';
 import DrawerHeader from '../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../components/drawer/Right/DrawerContent';
-import DatabaseMapping from './DatabaseMapping';
+import DatabaseMapping from './DatabaseMapping_afe2';
 import SelectQueryType from './DatabaseMapping/SelectQueryType';
+import EditorDrawer from '../../components/AFE2/Drawer';
 
 const MappingWrapper = ({integrationId}) => {
   const history = useHistory();
@@ -105,10 +106,8 @@ export default function MappingDrawerRoute(props) {
 
       <Route
         path={`${match.url}/queryBuilder/:flowId/:importId/:index/view`}>
-        <DatabaseMapping
-          integrationId={integrationId}
-          {...props}
-          />
+        <DatabaseMapping />
+        <EditorDrawer />
       </Route>
     </LoadResources>
   );
