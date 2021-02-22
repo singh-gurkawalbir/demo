@@ -20,6 +20,7 @@ export default {
       heading: 'Last updated',
       value: r => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
+      width: '12%',
     },
   ],
   rowActions: (r, actionProps) => {
