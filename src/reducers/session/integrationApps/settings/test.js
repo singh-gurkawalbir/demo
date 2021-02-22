@@ -3854,6 +3854,256 @@ describe('integrationApps reducer test cases', () => {
         });
       });
     });
+
+    describe('integrationApps settings categoryMappings mapping setVisibility action', () => {
+      test('should set correctly the visibility property on mapping', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.setVisibility('integrationId', 'flowId', 'mappingId', true));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+                visible: true,
+              },
+            },
+          },
+        });
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.setVisibility('integrationId', 'flowId', 'mappingId', false));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+                visible: false,
+              },
+            },
+          },
+        });
+      });
+    });
+
+    describe('integrationApps settings categoryMappings mapping save action', () => {
+      test('should set correctly the closeOnSave and status property on mapping', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.save('integrationId', 'flowId', true));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            closeOnSave: true,
+            saveStatus: 'requested',
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+
+      test('should set correctly the closeOnSave and status property on mapping', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.save('integrationId', 'flowId', false));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            saveStatus: 'requested',
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+    });
+    describe('integrationApps settings categoryMappings mapping saveComplete action', () => {
+      test('should set correctly the closeOnSave and status property on mapping', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.saveComplete('integrationId', 'flowId', 'mappingId'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            saveStatus: 'saved',
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+
+      test('should set correctly the closeOnSave and status property on mapping', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            closeOnSave: true,
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.saveComplete('integrationId', 'flowId', false));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            saveStatus: 'close',
+            closeOnSave: true,
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+    });
+
+    describe('integrationApps settings categoryMappings mapping saveComplete action', () => {
+      test('should set correctly the closeOnSave and status property on mapping', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.saveFailed('integrationId', 'flowId', 'mappingId'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            saveStatus: 'failed',
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+    });
+
+    describe('integrationApps settings categoryMappings mapping loadFailed action', () => {
+      test('should not change the state', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.loadFailed('integrationId', 'flowId', 'mappingId'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+    });
   });
 });
 
