@@ -1601,7 +1601,7 @@ describe('Flow sample data utility sagas', () => {
           data: {test: 5},
         };
 
-        return expectSaga(fetchMetadata, { connectionId, commMetaPath, test: true })
+        return expectSaga(fetchMetadata, { connectionId, commMetaPath })
           .provide([
             [select(selectors.getMetadataOptions, {
               connectionId,
