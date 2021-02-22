@@ -11,7 +11,6 @@ const flowgroupingsRedirectTo = (match, flowGroupings, hasMiscellaneousSection, 
   // if there is no miscellaneous sectionId and the user has provided invalid section id for for the first sectionId of the flowGrouping
   const defaultOrFirstSectionId = hasMiscellaneousSection ? defaultSectionId : flowGroupings?.[0]?.sectionId;
 
-  console.log('check ', defaultOrFirstSectionId, hasMiscellaneousSection, defaultSectionId);
   if (path.endsWith(':sectionId')) {
     if (!flowGroupings) {
       // strip out /sections/:sectionId
