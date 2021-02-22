@@ -750,6 +750,29 @@ const integrationApp = {
           flowId,
           filters,
         }),
+      addCategory: (integrationId, flowId, data) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.ADD_CATEGORY, {
+          integrationId,
+          flowId,
+          data,
+        }),
+      deleteCategory: (integrationId, flowId, sectionId) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE_CATEGORY, {
+          integrationId,
+          flowId,
+          sectionId,
+        }),
+      restoreCategory: (integrationId, flowId, sectionId) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.RESTORE_CATEGORY, {
+          integrationId,
+          flowId,
+          sectionId,
+        }),
+      receivedUpdatedMappingData: (integrationId, flowId, mappingData) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.RECEIVED_UPDATED_MAPPING_DATA,
+          { integrationId, flowId, mappingData }
+        ),
     },
     initComplete: (integrationId, flowId, sectionId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE, {
@@ -767,36 +790,12 @@ const integrationApp = {
         integrationId,
         redirectTo,
       }),
-    receivedCategoryMappingData: (integrationId, flowId, mappingData) =>
-      action(
-        actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_CATEGORY_MAPPINGS_DATA,
-        { integrationId, flowId, mappingData }
-      ),
     receivedCategoryMappingMetadata: (integrationId, flowId, metadata) =>
       action(
         actionTypes.INTEGRATION_APPS.SETTINGS
           .RECEIVED_CATEGORY_MAPPING_METADATA,
         { integrationId, flowId, metadata }
       ),
-
-    addCategory: (integrationId, flowId, data) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY, {
-        integrationId,
-        flowId,
-        data,
-      }),
-    deleteCategory: (integrationId, flowId, sectionId) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.DELETE_CATEGORY, {
-        integrationId,
-        flowId,
-        sectionId,
-      }),
-    restoreCategory: (integrationId, flowId, sectionId) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.RESTORE_CATEGORY, {
-        integrationId,
-        flowId,
-        sectionId,
-      }),
     clearRedirect: integrationId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
         integrationId,

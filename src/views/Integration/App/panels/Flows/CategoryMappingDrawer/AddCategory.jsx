@@ -59,7 +59,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
   const handleSave = useCallback(
     ({ category, childCategory, grandchildCategory }) => {
       dispatch(
-        actions.integrationApp.settings.addCategory(integrationId, flowId, {
+        actions.integrationApp.settings.categoryMappings.addCategory(integrationId, flowId, {
           category,
           childCategory,
           grandchildCategory,

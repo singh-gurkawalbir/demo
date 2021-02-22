@@ -530,11 +530,11 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.ADD_CATEGORY:
         if (draft[cKey]) mappingUtil.addCategory(draft, integrationId, flowId, data);
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.DELETE_CATEGORY:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE_CATEGORY:
         if (draft[cKey]) {
           if (!draft[cKey].deleted) {
             draft[cKey].deleted = [];
@@ -544,7 +544,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.RESTORE_CATEGORY:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.RESTORE_CATEGORY:
         if (
           draft[cKey] &&
           draft[cKey].deleted &&
@@ -554,7 +554,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_CATEGORY_MAPPINGS_DATA:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.RECEIVED_UPDATED_MAPPING_DATA:
         if (draft[cKey]) {
           draft[cKey].saveStatus = 'saved';
 

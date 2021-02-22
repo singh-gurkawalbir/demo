@@ -1191,7 +1191,7 @@ describe('settings saga', () => {
         .call(apiCallWithRetry, args1)
         .call(apiCallWithRetry, args2)
         .put(
-          actions.integrationApp.settings.receivedCategoryMappingData(
+          actions.integrationApp.settings.categoryMappings.receivedUpdatedMappingData(
             integrationId,
             flowId,
             mappingData

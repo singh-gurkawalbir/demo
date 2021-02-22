@@ -245,7 +245,7 @@ export function* saveCategoryMappings({ integrationId, flowId }) {
   yield call(getResource, {resourceType: 'integrations', id: integrationId});
 
   yield put(
-    actions.integrationApp.settings.receivedCategoryMappingData(
+    actions.integrationApp.settings.categoryMappings.receivedUpdatedMappingData(
       integrationId,
       flowId,
       updatedMappings

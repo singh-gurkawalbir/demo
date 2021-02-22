@@ -228,7 +228,7 @@ function CategoryMappings({
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
     dispatch(
-      actions.integrationApp.settings.deleteCategory(
+      actions.integrationApp.settings.categoryMappings.deleteCategory(
         integrationId,
         flowId,
         sectionId
@@ -240,7 +240,7 @@ function CategoryMappings({
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
     dispatch(
-      actions.integrationApp.settings.restoreCategory(
+      actions.integrationApp.settings.categoryMappings.restoreCategory(
         integrationId,
         flowId,
         sectionId
