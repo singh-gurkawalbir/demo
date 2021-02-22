@@ -4104,6 +4104,342 @@ describe('integrationApps reducer test cases', () => {
         });
       });
     });
+
+    describe('integrationApps settings categoryMappings receivedGeneratesMetadata action', () => {
+      test('should read the metadata response and set appropriately on the state if not already present', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.receivedGeneratesMetadata('integrationId', 'flowId', {
+          uiAssistant: 'amazon',
+          response: [{
+            operation: 'generatesMetaData',
+            data: {
+              generatesMetaData: {
+                id: 'BookLoader',
+                name: 'Book Loader',
+                variation_themes: [],
+                variation_attributes: [],
+                children: [
+                  {
+                    id: 'Books',
+                    name: 'Books',
+                    variation_themes: [],
+                    variation_attributes: [],
+                    children: [],
+                    fields: [{
+                      id: 'field1',
+                      name: 'Field1',
+                      type: 'input',
+                    }, {
+                      id: 'field2',
+                      name: 'Field2',
+                      type: 'input',
+                    }],
+                    isLeafNode: true,
+                  },
+                  {
+                    id: 'Automation',
+                    name: 'Automation',
+                    variation_themes: [],
+                    variation_attributes: [],
+                    children: [],
+                    fields: [{
+                      id: 'field3',
+                      name: 'Field3',
+                      type: 'input',
+                    }, {
+                      id: 'field4',
+                      name: 'Field4',
+                      type: 'input',
+                    }],
+                    isLeafNode: true,
+                  },
+                ],
+                fields: [{
+                  id: 'field5',
+                  name: 'Field5',
+                  type: 'input',
+                }, {
+                  id: 'field6',
+                  name: 'Field6',
+                  type: 'input',
+                }],
+                isLeafNode: true,
+              },
+            },
+          }],
+        }));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            generatesMetadata: [
+              {
+                children: [
+                  {
+                    children: [],
+                    fields: [
+                      {
+                        id: 'field1',
+                        name: 'Field1',
+                        type: 'input',
+                      },
+                      {
+                        id: 'field2',
+                        name: 'Field2',
+                        type: 'input',
+                      },
+                    ],
+                    id: 'Books',
+                    isLeafNode: true,
+                    name: 'Books',
+                    variation_attributes: [],
+                    variation_themes: [],
+                  },
+                  {
+                    children: [],
+                    fields: [
+                      {
+                        id: 'field3',
+                        name: 'Field3',
+                        type: 'input',
+                      },
+                      {
+                        id: 'field4',
+                        name: 'Field4',
+                        type: 'input',
+                      },
+                    ],
+                    id: 'Automation',
+                    isLeafNode: true,
+                    name: 'Automation',
+                    variation_attributes: [],
+                    variation_themes: [],
+                  },
+                ],
+                fields: [
+                  {
+                    id: 'field5',
+                    name: 'Field5',
+                    type: 'input',
+                  },
+                  {
+                    id: 'field6',
+                    name: 'Field6',
+                    type: 'input',
+                  },
+                ],
+                id: 'BookLoader',
+                isLeafNode: true,
+                name: 'Book Loader',
+                variation_attributes: [],
+                variation_themes: [],
+              },
+            ],
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+
+      test('should read the metadata response and ignore the response if already present', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            generatesMetadata: [
+              {
+                children: [
+                  {
+                    children: [],
+                    fields: [
+                      {
+                        id: 'field1',
+                        name: 'Field1',
+                        type: 'input',
+                      },
+                      {
+                        id: 'field2',
+                        name: 'Field2',
+                        type: 'input',
+                      },
+                    ],
+                    id: 'Books',
+                    isLeafNode: true,
+                    name: 'Books',
+                    variation_attributes: [],
+                    variation_themes: [],
+                  },
+                  {
+                    children: [],
+                    fields: [
+                      {
+                        id: 'field3',
+                        name: 'Field3',
+                        type: 'input',
+                      },
+                      {
+                        id: 'field4',
+                        name: 'Field4',
+                        type: 'input',
+                      },
+                    ],
+                    id: 'Automation',
+                    isLeafNode: true,
+                    name: 'Automation',
+                    variation_attributes: [],
+                    variation_themes: [],
+                  },
+                ],
+                fields: [
+                  {
+                    id: 'field5',
+                    name: 'Field5',
+                    type: 'input',
+                  },
+                  {
+                    id: 'field6',
+                    name: 'Field6',
+                    type: 'input',
+                  },
+                ],
+                id: 'BookLoader',
+                isLeafNode: true,
+                name: 'Book Loader',
+                variation_attributes: [],
+                variation_themes: [],
+              },
+            ],
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.receivedGeneratesMetadata('integrationId', 'flowId', {
+          uiAssistant: 'amazon',
+          response: [{
+            operation: 'generatesMetaData',
+            data: {
+              generatesMetaData: {
+                id: 'BookLoader',
+                name: 'Book Loader',
+                variation_themes: [],
+                variation_attributes: [],
+                children: [],
+                fields: [{
+                  id: 'field5',
+                  name: 'Field5',
+                  type: 'input',
+                }, {
+                  id: 'field6',
+                  name: 'Field6',
+                  type: 'input',
+                }],
+                isLeafNode: true,
+              },
+            },
+          }],
+        }));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            generatesMetadata: [
+              {
+                children: [
+                  {
+                    children: [],
+                    fields: [
+                      {
+                        id: 'field1',
+                        name: 'Field1',
+                        type: 'input',
+                      },
+                      {
+                        id: 'field2',
+                        name: 'Field2',
+                        type: 'input',
+                      },
+                    ],
+                    id: 'Books',
+                    isLeafNode: true,
+                    name: 'Books',
+                    variation_attributes: [],
+                    variation_themes: [],
+                  },
+                  {
+                    children: [],
+                    fields: [
+                      {
+                        id: 'field3',
+                        name: 'Field3',
+                        type: 'input',
+                      },
+                      {
+                        id: 'field4',
+                        name: 'Field4',
+                        type: 'input',
+                      },
+                    ],
+                    id: 'Automation',
+                    isLeafNode: true,
+                    name: 'Automation',
+                    variation_attributes: [],
+                    variation_themes: [],
+                  },
+                ],
+                fields: [
+                  {
+                    id: 'field5',
+                    name: 'Field5',
+                    type: 'input',
+                  },
+                  {
+                    id: 'field6',
+                    name: 'Field6',
+                    type: 'input',
+                  },
+                ],
+                id: 'BookLoader',
+                isLeafNode: true,
+                name: 'Book Loader',
+                variation_attributes: [],
+                variation_themes: [],
+              },
+            ],
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+    });
   });
 });
 

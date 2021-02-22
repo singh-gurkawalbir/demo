@@ -162,7 +162,7 @@ export function* getCategoryMappingMetadata({
   if (response) {
     if (options.generatesMetadata) {
       yield put(
-        actions.integrationApp.settings.receivedCategoryMappingGeneratesMetadata(
+        actions.integrationApp.settings.categoryMappings.receivedGeneratesMetadata(
           integrationId,
           flowId,
           response

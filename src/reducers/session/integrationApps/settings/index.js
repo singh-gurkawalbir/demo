@@ -521,7 +521,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPING_FILTERS:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SET_FILTERS:
         if (draft[cKey]) {
           draft[cKey].filters = {
             ...draft[cKey].filters,

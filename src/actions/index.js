@@ -597,6 +597,16 @@ const integrationApp = {
           actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
           { integrationId, flowId, categoryId, options }
         ),
+      receivedGeneratesMetadata: (
+        integrationId,
+        flowId,
+        metadata
+      ) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS
+            .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA,
+          { integrationId, flowId, metadata }
+        ),
       init: (integrationId, flowId, id, options) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT, {
           integrationId,
@@ -734,6 +744,12 @@ const integrationApp = {
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.LOAD_FAILED,
           { integrationId, flowId, id }
         ),
+      setFilters: (integrationId, flowId, filters) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SET_FILTERS, {
+          integrationId,
+          flowId,
+          filters,
+        }),
     },
     initComplete: (integrationId, flowId, sectionId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE, {
@@ -762,22 +778,6 @@ const integrationApp = {
           .RECEIVED_CATEGORY_MAPPING_METADATA,
         { integrationId, flowId, metadata }
       ),
-    receivedCategoryMappingGeneratesMetadata: (
-      integrationId,
-      flowId,
-      metadata
-    ) =>
-      action(
-        actionTypes.INTEGRATION_APPS.SETTINGS
-          .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA,
-        { integrationId, flowId, metadata }
-      ),
-    setCategoryMappingFilters: (integrationId, flowId, filters) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPING_FILTERS, {
-        integrationId,
-        flowId,
-        filters,
-      }),
 
     addCategory: (integrationId, flowId, data) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY, {
