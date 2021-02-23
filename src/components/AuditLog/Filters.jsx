@@ -65,6 +65,7 @@ const sourceInput = {
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     borderWidth: [[1, 0]],
     display: 'flex',
+    position: 'sticky',
     flexWrap: 'wrap',
     alignItems: 'center',
 
