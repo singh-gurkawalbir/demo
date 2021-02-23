@@ -3297,6 +3297,139 @@ describe('integrationApps reducer test cases', () => {
             uiAssistant: 'amazon',
           }});
       });
+
+      test('should correctly set the mappings init object for variation mappings', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            filters: {
+              attributes: {
+                conditional: false,
+                optional: false,
+                preferred: true,
+                required: true,
+              },
+            },
+            collapseStatus: {
+              collapseAction: 'collapse',
+              collapseStatus: 'collapsed',
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.init('integrationId', 'flowId', 'flowId-commonAttributes', {
+          adaptorType: 'netsuite',
+          application: 'netsuite',
+          categoryId: 'autoaccessory',
+          childCategoryId: 'autoaccessorymisc',
+          isVariationAttributes: false,
+          isVariationMapping: true,
+          lookups: [],
+          mappings: {
+            fields: [{
+              extract: 'SKU',
+              generate: 'item_sku',
+              discardIfEmpty: true,
+            },
+            {
+              extract: 'upccode',
+              generate: 'UPC',
+              discardIfEmpty: true,
+            },
+            {
+              extract: 'salesdescription',
+              generate: 'product_description',
+              discardIfEmpty: true,
+            }],
+          },
+          resourceData: {
+            adaptorType: 'WrapperImport',
+            mapping: {
+              fields: [{extract: 'SKU', generate: 'SKU'}],
+            },
+            _connectionId: 'connectionId',
+          },
+        }));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            collapseStatus: {
+              collapseAction: 'collapse',
+              collapseStatus: 'collapsed',
+            },
+            filters: {
+              attributes: {
+                conditional: false,
+                optional: false,
+                preferred: true,
+                required: true,
+              },
+            },
+            mappings: {
+              'flowId-commonAttributes': {
+                adaptorType: 'netsuite',
+                application: 'netsuite',
+                flowSampleData: undefined,
+                generateFields: undefined,
+                incompleteGenerates: [],
+                initChangeIdentifier: 1,
+                isGroupedSampleData: undefined,
+                lastModifiedRow: -1,
+                lookups: [],
+                mappings: [
+                  {
+                    discardIfEmpty: true,
+                    extract: 'SKU',
+                    generate: 'item_sku',
+                    rowIdentifier: 0,
+                  },
+                  {
+                    discardIfEmpty: true,
+                    extract: 'upccode',
+                    generate: 'UPC',
+                    rowIdentifier: 0,
+                  },
+                  {
+                    discardIfEmpty: true,
+                    extract: 'salesdescription',
+                    generate: 'product_description',
+                    rowIdentifier: 0,
+                  },
+                ],
+                netsuiteRecordType: undefined,
+                resource: {
+                  _connectionId: 'connectionId',
+                  adaptorType: 'WrapperImport',
+                  mapping: {
+                    fields: [
+                      {
+                        extract: 'SKU',
+                        generate: 'SKU',
+                      },
+                    ],
+                  },
+                },
+                staged: undefined,
+                visible: true,
+              },
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
     });
 
     describe('integrationApps settings categoryMappings updateGenerates action', () => {
