@@ -193,6 +193,7 @@ import checkout from './checkout';
 import channelape from './channelape';
 import pricefx from './pricefx';
 import clover from './clover';
+import freshworks from './freshworks';
 import pipedrive from './pipedrive';
 import microsoftteams from './microsoftteams';
 import adobesign from './adobesign';
@@ -394,6 +395,7 @@ export default {
   checkout,
   pricefx,
   clover,
+  freshworks,
   pipedrive,
   microsoftteams,
   adobesign,
