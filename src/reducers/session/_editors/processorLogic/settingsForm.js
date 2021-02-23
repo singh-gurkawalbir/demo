@@ -107,7 +107,7 @@ export default {
       insertStubKey: 'formInit',
       activeProcessor: mode,
       originalData: data,
-      scriptPatchPath: generatePatchPath(options.sectionId, integrationAllSections, '/content'),
+      scriptPatchPath: '/content',
       settingsFormPatchPath: generatePatchPath(options.sectionId, integrationAllSections, '/settingsForm'),
     };
   },

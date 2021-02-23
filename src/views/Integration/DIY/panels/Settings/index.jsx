@@ -14,7 +14,6 @@ import useSaveStatusIndicator from '../../../../../hooks/useSaveStatusIndicator'
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import redirectToCorrectGroupingRoute from '../../../../../utils/flowgroupingsRedirectTo';
-import { shouldHaveMiscellaneousSection } from '../Flows';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -191,9 +190,7 @@ export default function SettingsForm({integrationId: parentIntegrationId, childI
   const match = useRouteMatch();
   const {allSections, hasFlowGroupings} = useSelectorMemo(selectors.mkGetAllCustomFormsForAResource, 'integrations', integrationId) || emptyObj;
 
-  const flows = useSelectorMemo(selectors.mkDIYIntegrationFlowList, integrationId, childId);
-  const hasMiscellaneousSection = shouldHaveMiscellaneousSection(flows);
-  const redirectTo = redirectToCorrectGroupingRoute(match, hasFlowGroupings ? allSections : null, hasMiscellaneousSection, 'general');
+  const redirectTo = redirectToCorrectGroupingRoute(match, hasFlowGroupings ? allSections : null, true, 'general');
   const sectionId = match.params?.sectionId;
 
   useEffect(() => {
