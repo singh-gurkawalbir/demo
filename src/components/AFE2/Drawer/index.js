@@ -1,6 +1,8 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import clsx from 'clsx';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
@@ -13,12 +15,27 @@ import CloseIconButton from './CloseIconButton';
 import actions from '../../../actions';
 import ActionsRibbon from './ActionsRibbon';
 
+const useStyles = makeStyles({
+  afe2DrawerHeader: {
+    background: '#fcd',
+    '& > h4': {
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+    },
+  },
+  longTitle: {
+    background: 'green',
+  },
+
+});
+
 // Note that props contain the forwarded 'fullPath' and 'onClose' handlers
 // proxied from the right drawer.
 // hideSave: This is currently only used for the playground where we do not
 // want the user to have any options to save the editor.
 // eslint-disable-next-line no-unused-vars
 function RouterWrappedContent({ hideSave, hidePreview, onClose, fullPath}) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const { editorId } = useParams();
   const editorType = useSelector(state => selectors._editor(state, editorId).editorType);
@@ -36,7 +53,7 @@ function RouterWrappedContent({ hideSave, hidePreview, onClose, fullPath}) {
 
   return (
     <>
-      <DrawerHeader title={editorTitle || label} CloseButton={CloseButton} fullPath={fullPath}>
+      <DrawerHeader title={editorTitle || label} CloseButton={CloseButton} fullPath={fullPath} className={clsx(classes.afe2DrawerHeader, {[classes.longTitle]: editorTitle.length > 30 || label})}>
         <ActionsRibbon editorId={editorId} hidePreview={hidePreview} />
       </DrawerHeader>
 

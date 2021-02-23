@@ -10,9 +10,10 @@ import ViewCompactIcon from '../../../icons/LayoutLgLeftSmrightIcon';
 import CeligoDivider from '../../../CeligoDivider';
 
 const useStyles = makeStyles(theme => ({
-  select: {
+  togglelLayoutSelect: {
     '& > div': {
-      paddingTop: theme.spacing(0.5),
+      paddingBottom: 0,
+      paddingTop: 4,
       color: theme.palette.secondary.light,
     },
   },
@@ -37,18 +38,19 @@ export default function ToggleLayout({ editorId }) {
     <>
       <CeligoDivider position="left" />
 
-      <div className={classes.select}>
+      <>
         <Select
           labelId="toggle-layout-label"
           id="toggle-layout"
           value={layout}
+          className={classes.togglelLayoutSelect}
           onChange={handleToggle2}
       >
           <MenuItem className={classes.item} value="column"><ViewColumnIcon /></MenuItem>
           <MenuItem className={classes.item} value="compact"><ViewCompactIcon /></MenuItem>
           <MenuItem className={classes.item} value="row"> <ViewRowIcon /></MenuItem>
         </Select>
-      </div>
+      </>
     </>
   );
 }

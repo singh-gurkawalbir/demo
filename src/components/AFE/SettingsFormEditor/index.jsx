@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
   },
   message: {
-    padding: theme.spacing(1),
+    margin: theme.spacing(1),
   },
 }));
 

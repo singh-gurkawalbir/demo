@@ -12,12 +12,12 @@ const useStyles = makeStyles(theme => ({
   ribbon: {
     display: 'flex',
     width: '100%',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     '& > :not(:last-child)': {
       marginRight: theme.spacing(2),
     },
   },
-  spaceBetween: { flexGrow: 100 },
+  spaceBetween: { flexGrow: 1 },
 }));
 
 export default function ActionsRibbon({ editorId, className, hidePreview }) {

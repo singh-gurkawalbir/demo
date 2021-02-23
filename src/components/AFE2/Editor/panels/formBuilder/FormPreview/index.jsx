@@ -24,6 +24,9 @@ const useStyles = makeStyles(theme => ({
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(1),
   },
+  message: {
+    padding: theme.spacing(1),
+  },
 }));
 
 export default function FormPreviewPanel({ editorId }) {
@@ -92,7 +95,7 @@ export default function FormPreviewPanel({ editorId }) {
   }
 
   return (
-    <Typography>
+    <Typography className={classes.message}>
       A preview of your settings form will appear once you add some valid
       form metadata or add an init hook.
     </Typography>
