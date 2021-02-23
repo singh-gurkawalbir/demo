@@ -6261,6 +6261,208 @@ describe('integrationApps reducer test cases', () => {
         });
       });
     });
+
+    describe('integrationApps settings categoryMappings receivedUpdatedData action', () => {
+      test('should set correctly update the mappings data', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            deleted: ['coins', 'batteries', 'clothing'],
+            response: [{
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [{a: 'b'}],
+                  },
+                  variationMappings: {
+                    recordMappings: [{c: 'd'}],
+                  },
+                },
+              },
+            }],
+            initMappingData: {
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [{a: 'b'}],
+                  },
+                  variationMappings: {
+                    recordMappings: [{c: 'd'}],
+                  },
+                },
+              },
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.receivedUpdatedMappingData('integrationId', 'flowId', {
+          operation: 'mappingData',
+          data: {
+            mappingData: {
+              basicMappings: {
+                recordMappings: [{updated: 'mappings'}],
+              },
+              variationMappings: {
+                recordMappings: [{new: 'data'}],
+              },
+            },
+          },
+        }));
+
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            saveStatus: 'saved',
+            deleted: ['coins', 'batteries', 'clothing'],
+            response: [{
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [{updated: 'mappings'}],
+                  },
+                  variationMappings: {
+                    recordMappings: [{new: 'data'}],
+                  },
+                },
+              },
+            }],
+            initMappingData: {
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [{updated: 'mappings'}],
+                  },
+                  variationMappings: {
+                    recordMappings: [{new: 'data'}],
+                  },
+                },
+              },
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+
+      test('should set correctly update the mappings data with appropriate save status', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            closeOnSave: true,
+            deleted: ['coins', 'batteries', 'clothing'],
+            response: [{
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [{a: 'b'}],
+                  },
+                  variationMappings: {
+                    recordMappings: [{c: 'd'}],
+                  },
+                },
+              },
+            }],
+            initMappingData: {
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [{a: 'b'}],
+                  },
+                  variationMappings: {
+                    recordMappings: [{c: 'd'}],
+                  },
+                },
+              },
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.receivedUpdatedMappingData('integrationId', 'flowId', {
+          operation: 'mappingData',
+          data: {
+            mappingData: {
+              basicMappings: {
+                recordMappings: [{updated: 'mappings'}],
+              },
+              variationMappings: {
+                recordMappings: [{new: 'data'}],
+              },
+            },
+          },
+        }));
+
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            saveStatus: 'close',
+            closeOnSave: true,
+            deleted: ['coins', 'batteries', 'clothing'],
+            response: [{
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [{updated: 'mappings'}],
+                  },
+                  variationMappings: {
+                    recordMappings: [{new: 'data'}],
+                  },
+                },
+              },
+            }],
+            initMappingData: {
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [{updated: 'mappings'}],
+                  },
+                  variationMappings: {
+                    recordMappings: [{new: 'data'}],
+                  },
+                },
+              },
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+    });
   });
 });
 
