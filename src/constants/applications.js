@@ -1,4 +1,5 @@
 import { stringCompare } from '../utils/sort';
+import {CONNECTORS_TO_IGNORE} from '../utils/constants';
 
 // Schema details:
 // ---------------
@@ -159,7 +160,6 @@ const connectors = [
   { id: 'sapariba', name: 'SAP Ariba', type: 'webhook', webhookOnly: true },
 
   { id: 'box', name: 'Box', type: 'http', webhookOnly: true, icon: 'box' },
-  { id: 'braintree', name: 'Braintree', marketPlaceOnly: true },
   {
     id: 'dropbox',
     name: 'Dropbox',
@@ -174,7 +174,6 @@ const connectors = [
     assistant: 'github',
     webhook: true,
   },
-  { id: 'google', name: 'Google', marketPlaceOnly: true },
   {
     id: 'hubspot',
     name: 'HubSpot',
@@ -275,7 +274,6 @@ const connectors = [
     webhookOnly: true,
     icon: 'travis',
   },
-  { id: 'yammer', name: 'Yammer', marketPlaceOnly: true},
   { id: 's3', name: 'Amazon S3', type: 's3'},
   // Metadata doesn't exist for below connectors. Only connections are available as of now.
   {id: 'amazonaws', name: 'Amazon AWS', type: 'http', assistant: 'amazonaws'},
@@ -329,15 +327,7 @@ export const groupApplications = (
   if (assistants) {
     assistants.forEach(asst => {
       if (
-        ![
-          'yammer',
-          'hybris',
-          'etsy',
-          'concur',
-          'concurall',
-          'concurv4',
-          'constantcontact',
-        ].includes(asst.id)
+        !CONNECTORS_TO_IGNORE.includes(asst.id)
       ) {
         assistantConnectors.push({
           id: asst.id,
@@ -355,10 +345,6 @@ export const groupApplications = (
   assistantConnectors.sort(stringCompare('name'));
 
   const filteredConnectors = assistantConnectors.filter(connector => {
-    if (connector.marketPlaceOnly) {
-      return false;
-    }
-
     if (
       connector.assistant &&
       assistants &&
@@ -431,7 +417,7 @@ export const applicationsList = () => {
   return applications;
 };
 
-export const getApplicationConnectors = () => connectors.filter(c => !c.group && !c.marketPlaceOnly);
+export const getApplicationConnectors = () => connectors.filter(c => !c.group);
 export const getWebhookConnectors = () => {
   const applications = applicationsList();
 
@@ -460,15 +446,7 @@ export const connectorsList = () => {
 
   applications.forEach(asst => {
     if (
-      ![
-        'yammer',
-        'hybris',
-        'etsy',
-        'concur',
-        'concurall',
-        'concurv4',
-        'constantcontact',
-      ].includes(asst.id)
+      !CONNECTORS_TO_IGNORE.includes(asst.id)
     ) {
       connectors.push({
         value: asst.id,
