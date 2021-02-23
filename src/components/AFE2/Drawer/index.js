@@ -18,6 +18,7 @@ import ActionsRibbon from './ActionsRibbon';
 // hideSave: This is currently only used for the playground where we do not
 // want the user to have any options to save the editor.
 // eslint-disable-next-line no-unused-vars
+
 function RouterWrappedContent({ hideSave, hidePreview, onClose, fullPath}) {
   const dispatch = useDispatch();
   const { editorId } = useParams();
