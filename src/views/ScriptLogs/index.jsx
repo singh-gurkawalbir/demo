@@ -29,7 +29,6 @@ const useStyles = makeStyles(theme => ({
   },
   filterContainer: {
     display: 'flex',
-    position: 'sticky',
     justifyContent: 'space-between',
     background: theme.palette.background.default,
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
