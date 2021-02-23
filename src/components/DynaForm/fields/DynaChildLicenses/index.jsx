@@ -11,6 +11,7 @@ import metadata from './metadata';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { generateNewId } from '../../../../utils/resource';
 import { SCOPES } from '../../../../sagas/resourceForm';
+import LoadResources from '../../../LoadResources';
 
 const useStyles = makeStyles(theme => ({
   actionChildLicense: {
@@ -98,14 +99,16 @@ export default function DynaChildLicense({ connectorId, resourceId, id, formKey}
         </IconTextButton>
       </div>
       <div>
-        <CeligoTable
-          data={childLicenses}
-          {...metadata}
-          filterKey={sortFilterKey}
-          actionProps={{
-            resourceType: `connectors/${connectorId}/licenses`,
-          }}
+        <LoadResources required resources="integrations,connectorLicenses,connectors" >
+          <CeligoTable
+            data={childLicenses}
+            {...metadata}
+            filterKey={sortFilterKey}
+            actionProps={{
+              resourceType: `connectors/${connectorId}/licenses`,
+            }}
           />
+        </LoadResources>
       </div>
     </>
   );
