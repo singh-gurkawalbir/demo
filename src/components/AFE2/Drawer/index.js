@@ -17,14 +17,13 @@ import ActionsRibbon from './ActionsRibbon';
 
 const useStyles = makeStyles({
   afe2DrawerHeader: {
-    background: '#fcd',
     '& > h4': {
       whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis',
     },
   },
   longTitle: {
-    background: 'green',
+    whiteSpace: 'normal',
+    wordBreak: 'break-word',
   },
 
 });
