@@ -111,7 +111,7 @@ export default function JobDashboard({
   }, [dispatch, rowsPerPage]);
 
   useEffect(() => {
-    if (!isNewId(flowId) && jobs.length === 0) {
+    if (!isNewId(flowId)) {
       dispatch(
         actions.job.requestCollection({
           integrationId,
@@ -121,8 +121,8 @@ export default function JobDashboard({
         })
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, integrationId, flowId, filterHash, jobs.length]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, integrationId, flowId, flowJobId, filterHash]);
 
   const disableResolve = isBulkRetryInProgress || numJobsWithErrors === 0;
   const disableRetry = isBulkRetryInProgress || numRetriableJobs === 0;
