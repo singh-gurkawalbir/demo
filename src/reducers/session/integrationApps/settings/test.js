@@ -6463,6 +6463,353 @@ describe('integrationApps reducer test cases', () => {
         });
       });
     });
+
+    describe('integrationApps settings categoryMappings expandAll action', () => {
+      test('should set correctly the expandAll property on mapping', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.expandAll('integrationId', 'flowId'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            collapseStatus: {
+              collapseAction: 'expand',
+              collapseStatus: 'expanded',
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+
+      test('should not change state if invalid integration or flowId is sent', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            filters: {
+              attributes: {
+                conditional: false,
+                optional: false,
+                preferred: true,
+                required: true,
+              },
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.expandAll('integrationIdInvalid', 'flowIdInvalid'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            filters: {
+              attributes: {
+                conditional: false,
+                optional: false,
+                preferred: true,
+                required: true,
+              },
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+    });
+
+    describe('integrationApps settings categoryMappings collapseAll action', () => {
+      test('should set correctly the colapseAll property on mapping', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.collapseAll('integrationId', 'flowId'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            collapseStatus: {
+              collapseAction: 'collapse',
+              collapseStatus: 'collapsed',
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+
+      test('should not change state if invalid integration or flowId is sent', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            filters: {
+              attributes: {
+                conditional: false,
+                optional: false,
+                preferred: true,
+                required: true,
+              },
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.expandAll('integrationIdInvalid', 'flowIdInvalid'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            filters: {
+              attributes: {
+                conditional: false,
+                optional: false,
+                preferred: true,
+                required: true,
+              },
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+    });
+
+    describe('integrationApps settings categoryMappings collapseAll action', () => {
+      test('should set correctly the colapseAll property on mapping', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.collapseAll('integrationId', 'flowId'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            collapseStatus: {
+              collapseAction: 'collapse',
+              collapseStatus: 'collapsed',
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+
+      test('should not change state if invalid integration or flowId is sent', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            filters: {
+              attributes: {
+                conditional: false,
+                optional: false,
+                preferred: true,
+                required: true,
+              },
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.expandAll('integrationIdInvalid', 'flowIdInvalid'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            filters: {
+              attributes: {
+                conditional: false,
+                optional: false,
+                preferred: true,
+                required: true,
+              },
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+    });
+
+    describe('integrationApps settings categoryMappings clearCollapseStatus action', () => {
+      test('should clear correctly the colapseAll property on mapping', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            collapseStatus: {
+              collapseAction: 'collapse',
+              collapseStatus: 'collapsed',
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.clearCollapseStatus('integrationId', 'flowId'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            collapseStatus: {
+              collapseStatus: 'collapsed',
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+
+      test('should not change state if invalid integration or flowId is sent', () => {
+        let state = {
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            filters: {
+              attributes: {
+                conditional: false,
+                optional: false,
+                preferred: true,
+                required: true,
+              },
+            },
+            collapseStatus: {
+              collapseAction: 'collapse',
+              collapseStatus: 'collapsed',
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        };
+
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.clearCollapseStatus('integrationIdInvalid', 'flowIdInvalid'));
+        expect(state).toEqual({
+          'flow1-integration1': {
+            data: 'dummy',
+          },
+          'flowId-integrationId': {
+            filters: {
+              attributes: {
+                conditional: false,
+                optional: false,
+                preferred: true,
+                required: true,
+              },
+            },
+            collapseStatus: {
+              collapseAction: 'collapse',
+              collapseStatus: 'collapsed',
+            },
+            mappings: {
+              mappingId: {
+                lookups: [],
+                mappings: [],
+              },
+            },
+          },
+        });
+      });
+    });
   });
 });
 
