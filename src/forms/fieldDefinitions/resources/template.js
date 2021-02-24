@@ -1,4 +1,5 @@
 import { templatesList } from '../../../constants/applications';
+import { URL_VALIDATION_PATTERN } from '../../../utils/constants';
 
 export default {
   name: {
@@ -15,6 +16,12 @@ export default {
   websiteURL: {
     type: 'text',
     label: 'Website URL',
+    validWhen: {
+      matchesRegEx: {
+        pattern: URL_VALIDATION_PATTERN,
+        message: 'Please enter a valid URL.',
+      },
+    },
   },
   contactEmail: {
     type: 'text',
