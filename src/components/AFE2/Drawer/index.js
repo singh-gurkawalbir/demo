@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useRouteMatch, Redirect } from 'react-router-dom';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
@@ -16,16 +16,26 @@ import { useDrawerContext } from '../../drawer/Right/DrawerContext';
 
 // hideSave: This is currently only used for the playground where we do not
 // want the user to have any options to save the editor.
-function RouterWrappedContent({ hideSave, hidePreview }) {
+function RouterWrappedContent({ hideSave }) {
   const dispatch = useDispatch();
+  const match = useRouteMatch();
   const { editorId } = useParams();
   const { onClose } = useDrawerContext();
   const editorType = useSelector(state => selectors._editor(state, editorId).editorType);
   const editorTitle = useSelector(state => selectors._editor(state, editorId).editorTitle);
 
-  // console.log('drawer editor', editorId, editor);
+  if (!editorType) {
+    // redirect to parent url
+    const urlFields = match.url.split('/');
+
+    // strip the '/editor...' suffix from the url
+    const redirectToParentRoute = urlFields.slice(0, urlFields.indexOf('editor')).join('/');
+
+    return <Redirect to={redirectToParentRoute} />;
+  }
+
   const { label } = editorMetadata[editorType] || {};
-  // is it safe to clear the state when the drawer is closed??
+
   const handleClose = () => {
     dispatch(actions._editor.clear(editorId));
     onClose();
@@ -36,7 +46,7 @@ function RouterWrappedContent({ hideSave, hidePreview }) {
   return (
     <>
       <DrawerHeader title={editorTitle || label} CloseButton={CloseButton}>
-        <ActionsRibbon editorId={editorId} hidePreview={hidePreview} />
+        <ActionsRibbon editorId={editorId} />
       </DrawerHeader>
 
       <DrawerContent>

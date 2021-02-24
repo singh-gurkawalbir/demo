@@ -298,6 +298,17 @@ describe('AFE region selectors test cases', () => {
       expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(true);
       expect(selectors.isEditorLookupSupported(state, 'def')).toEqual(true);
     });
+    test('should return true for editor type equal to databaseMapping for imports', () => {
+      state.session._editors[editorId] = {
+        id: editorId,
+        editorType: 'databaseMapping',
+        resourceType: 'imports',
+        resourceId: '123',
+        fieldId: 'rdbms.query',
+        resultMode: 'text',
+      };
+      expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(true);
+    });
   });
 
   describe('selectors.shouldGetContextFromBE test cases', () => {
