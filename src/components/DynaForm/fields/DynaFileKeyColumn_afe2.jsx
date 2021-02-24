@@ -83,7 +83,6 @@ export default function DynaFileKeyColumn_afe2(props) {
   }, []);
 
   useEffect(() => {
-    // csvData !== data pushed outside the useeffect and used simple boolean evaluation used(isCsvDataDifferent)
     if (csvData && csvData !== editorData) {
       dispatch(actions._editor.patchData(editorId, csvData));
 
@@ -92,7 +91,7 @@ export default function DynaFileKeyColumn_afe2(props) {
   }, [csvData, dispatch, id, editorData, onFieldChange]);
   useEffect(() => {
     dispatch(actions._editor.patchRule(editorId, { ...options }));
-  }, [dispatch, editorId, options]);
+  }, [dispatch, options]);
 
   return (
     <FormControl
