@@ -63,7 +63,7 @@ import DynaSQLQueryBuilder_afe2 from './DynaSQLQueryBuilder_afe2';
 import Salesforce from './DynaSalesforceExportComponents';
 import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaTreeModal';
 import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
-import DynaNetSuiteLookup from './DynaNetSuiteLookup';
+import DynaNetSuiteLookup_afe2 from './DynaNetSuiteLookup_afe2';
 import DynaIAExpression from './DynaIAExpression';
 import DynaIASelect from './DynaIASelect';
 import DynaUserEmail from './DynaUserEmail';
@@ -215,7 +215,8 @@ export default {
     Salesforce.IASettingsComponents.DynaReferencedFieldsIA,
   salesforcerelatedlistia: Salesforce.IASettingsComponents.DynaRelatedListIA,
   netsuitelookupfilters: DynaNetSuiteLookupFilters,
-  netsuitelookup: DynaNetSuiteLookup,
+  // netsuitelookup: DynaNetSuiteLookup,
+  netsuitelookup: DynaNetSuiteLookup_afe2,
   iaexpression: DynaIAExpression,
   useremail: DynaUserEmail,
   userpassword: DynaUserPassword,
