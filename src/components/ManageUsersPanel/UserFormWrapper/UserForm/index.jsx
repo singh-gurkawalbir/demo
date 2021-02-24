@@ -65,6 +65,12 @@ export default function UserForm({
         defaultDisabled: isEditMode,
         helpText:
           'Enter the email of the user you would like to invite to manage and/or monitor selected integrations.',
+        validWhen: {
+          matchesRegEx: {
+            pattern: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$',
+            message: 'Please enter a valid email address',
+          },
+        },
       },
       accessLevel: {
         id: 'accessLevel',

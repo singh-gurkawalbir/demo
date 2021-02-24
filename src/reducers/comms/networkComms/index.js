@@ -56,6 +56,7 @@ export default (state = initialState, action) => {
         if (!draft[commKey]) draft[commKey] = {};
         draft[commKey].status = COMM_STATES.ERROR;
         draft[commKey].message = inferErrorMessages(message)?.[0] || 'unknown error';
+        draft[commKey].failedAtTimestamp = timestamp;
 
         // if not defined it should be false
         draft[commKey].hidden = !!hidden;
@@ -116,17 +117,16 @@ selectors.retryCount = (state, resourceName) => (state && state[resourceName] &&
 
 selectors.commsErrors = commsState => {
   if (!commsState) return;
-  const errors = {};
 
-  Object.keys(commsState).forEach(key => {
-    const c = commsState[key];
+  return Object.values(commsState).reduce((acc, curr) => {
+    const {failedAtTimestamp, message, status, hidden} = curr;
 
-    if (!c.hidden && c.status === COMM_STATES.ERROR) {
-      errors[key] = inferErrorMessages(c.message);
+    if (!hidden && status === COMM_STATES.ERROR) {
+      acc[failedAtTimestamp] = inferErrorMessages(message);
     }
-  });
 
-  return errors;
+    return acc;
+  }, {});
 };
 
 selectors.commsSummary = commsState => {
