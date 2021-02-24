@@ -608,7 +608,7 @@ export function* initEditor({ id, editorType, options }) {
   if (init) {
     // for now we need all below props for handlebars init only
     if (editorType === 'handlebars' || editorType === 'sql' || editorType === 'databaseMapping') {
-      const { _connectionId: connectionId } = resource;
+      const { _connectionId: connectionId } = resource || {};
       const connection = yield select(selectors.resource, 'connections', connectionId);
       const isPageGenerator = yield select(selectors.isPageGenerator, flowId, resourceId, resourceType);
 
@@ -680,7 +680,9 @@ export function* toggleEditorVersion({ id, version }) {
 }
 
 export default [
-  takeLatest(
+  // we want takeEvery for preview as there can be 2 editors being affected at the same time
+  // eg, DynaFileKeyColumn and CSV parse launcher
+  takeEvery(
     [actionTypes._EDITOR.PATCH.DATA,
       actionTypes._EDITOR.PATCH.RULE,
       actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW],
