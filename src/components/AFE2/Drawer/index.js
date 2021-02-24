@@ -1,7 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
@@ -18,12 +17,8 @@ import ActionsRibbon from './ActionsRibbon';
 const useStyles = makeStyles({
   afe2DrawerHeader: {
     '& > h4': {
-      whiteSpace: 'nowrap',
+      minWidth: '19%',
     },
-  },
-  longTitle: {
-    whiteSpace: 'normal',
-    wordBreak: 'break-word',
   },
 
 });
@@ -52,7 +47,7 @@ function RouterWrappedContent({ hideSave, hidePreview, onClose, fullPath}) {
 
   return (
     <>
-      <DrawerHeader title={editorTitle || label} CloseButton={CloseButton} fullPath={fullPath} className={clsx(classes.afe2DrawerHeader, {[classes.longTitle]: editorTitle.length > 30 || label})}>
+      <DrawerHeader title={editorTitle || label} CloseButton={CloseButton} fullPath={fullPath} className={classes.afe2DrawerHeader}>
         <ActionsRibbon editorId={editorId} hidePreview={hidePreview} />
       </DrawerHeader>
 
