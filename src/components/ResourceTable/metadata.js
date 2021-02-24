@@ -15,6 +15,7 @@ import auditLogs from './auditLog/metadata';
 import openErrors from './errorManagement/openErrors/metadata';
 import resolvedErrors from './errorManagement/resolvedErrors/metadata';
 import latestJobs from './latestJobs/metadata';
+import runHistory from './runHistory/metadata';
 import orgOwnerUsers from './users/Metadata/orgOwnerUsers';
 import orgUsers from './users/Metadata/orgUsers';
 
@@ -35,6 +36,7 @@ const metadata = {
   openErrors,
   resolvedErrors,
   latestJobs,
+  runHistory,
   orgOwnerUsers,
   orgUsers,
 };
