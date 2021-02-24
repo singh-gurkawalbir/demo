@@ -9757,5 +9757,1001 @@ describe('integrationApps selectors test cases', () => {
       ]);
     });
   });
+
+  describe('integrationApps settings mkCategoryGeneratesData test', () => {
+    const selector = selectors.mkCategoryMappingGeneratesMetadata();
+
+    test('should not throw exception for bad params', () => {
+      expect(selector()).toEqual(null);
+      expect(selector({})).toEqual([]);
+      expect(selector(null)).toEqual(null);
+    });
+
+    test('should return correct form state for params passed for variationAttributes set as false', () => {
+      const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration1', 'flow1', amazonCategoryMappings));
+
+      expect(selector(state, 'integration1', 'flow1')).toEqual([
+        {
+          children: [],
+          deleted: false,
+          depth: 0,
+          fields: [
+            {
+              description: 'A unique identifier for the product, assigned by the merchant.  The SKU must be unique for each product listed.  After you have established a SKU for a product, please do not change it without first deleting the original SKU from our systems through a delete feed.',
+              filterType: 'required',
+              id: 'item_sku',
+              name: 'Seller SKU',
+              options: [],
+              type: 'input',
+            },
+            {
+              description: 'A short title for the product. This will be displayed in bold on the product page and in the title bar of the browser window.',
+              filterType: 'required',
+              id: 'item_name',
+              name: 'Product Name',
+              options: [],
+              type: 'input',
+            },
+            {
+              description: 'A standard, alphanumeric string that uniquely identifies the product.',
+              filterType: 'preferred',
+              id: 'ASIN',
+              name: 'ASIN',
+              options: [],
+              type: 'input',
+            },
+            {
+              description: 'A standard, alphanumeric string that uniquely identifies the product.',
+              filterType: 'preferred',
+              id: 'UPC',
+              name: 'UPC',
+              options: [],
+              type: 'input',
+            },
+            {
+              description: 'The unit of measure used to describe the dimensions (width, length, height) of the product, expressed in centimeters, meters, inches, or feet. Required if item dimensions are provided.',
+              filterType: 'optional',
+              id: 'item_length_unit_of_measure',
+              name: 'Item Length Unit Of Measure',
+              options: [
+                {
+                  id: 'CM',
+                  text: 'CM',
+                },
+                {
+                  id: 'FT',
+                  text: 'FT',
+                },
+                {
+                  id: 'IN',
+                  text: 'IN',
+                },
+                {
+                  id: 'M',
+                  text: 'M',
+                },
+                {
+                  id: 'MM',
+                  text: 'MM',
+                },
+              ],
+              type: 'select',
+            },
+          ],
+          id: 'commonAttributes',
+          isLeafNode: false,
+          isRoot: true,
+          marketplace_domain: 'US',
+          name: 'Common',
+          variation_attributes: [],
+          variation_themes: [],
+        },
+      ]);
+    });
+
+    test('should return correct form state for params passed for variationAttributes set as true', () => {
+      const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration1', 'flow1', walmartCategoryMappings));
+
+      expect(selector(state, 'integration1', 'flow1')).toEqual([
+        {
+          children: [
+            {
+              children: [],
+              fields: [
+                {
+                  description: 'Input the weight of the individual selling unit.',
+                  filterType: 'optional',
+                  id: 'ShippingWeight.measure',
+                  name: 'Shipping Weight > Measure',
+                  options: [
+                    {
+                      id: 'lb',
+                      text: 'lb',
+                    },
+                  ],
+                  type: 'select',
+                },
+                {
+                  description: 'The weight of the fully assembled product. NOTE: This information is shown on the item page.',
+                  filterType: 'optional',
+                  id: 'assembledProductWeight.unit',
+                  name: 'Assembled Product Weight > Unit',
+                  options: [
+                    {
+                      id: 'oz',
+                      text: 'oz',
+                    },
+                    {
+                      id: 'lb',
+                      text: 'lb',
+                    },
+                    {
+                      id: 'g',
+                      text: 'g',
+                    },
+                    {
+                      id: 'kg',
+                      text: 'kg',
+                    },
+                  ],
+                  type: 'select',
+                },
+              ],
+              id: 'Dimensions',
+              isLeafNode: false,
+              name: 'Dimensions',
+              variation_attributes: [],
+            },
+            {
+              children: [],
+              fields: [
+                {
+                  description: 'Attribute name corresponding to the swatch.',
+                  filterType: 'conditional',
+                  id: 'swatchImage.1.swatchVariantAttribute',
+                  name: 'Swatch Images > Swatch Variant Attribute 1',
+                  options: [],
+                  type: 'select',
+                },
+                {
+                  description: 'Attribute name corresponding to the swatch.',
+                  filterType: 'conditional',
+                  id: 'swatchImage.2.swatchVariantAttribute',
+                  name: 'Swatch Images > Swatch Variant Attribute 2',
+                  options: [],
+                  type: 'select',
+                },
+                {
+                  description: 'Attribute name corresponding to the swatch.',
+                  filterType: 'conditional',
+                  id: 'swatchImage.3.swatchVariantAttribute',
+                  name: 'Swatch Images > Swatch Variant Attribute 3',
+                  options: [],
+                  type: 'select',
+                },
+                {
+                  description: 'Attribute name corresponding to the swatch.',
+                  filterType: 'conditional',
+                  id: 'swatchImage.4.swatchVariantAttribute',
+                  name: 'Swatch Images > Swatch Variant Attribute 4',
+                  options: [],
+                  type: 'select',
+                },
+                {
+                  description: 'Attribute name corresponding to the swatch.',
+                  filterType: 'conditional',
+                  id: 'swatchImage.5.swatchVariantAttribute',
+                  name: 'Swatch Images > Swatch Variant Attribute 5',
+                  options: [],
+                  type: 'select',
+                },
+              ],
+              id: 'Variation',
+              isLeafNode: false,
+              name: 'Variation',
+              variation_attributes: [],
+            },
+          ],
+          deleted: false,
+          depth: 0,
+          fields: [
+            {
+              description: 'This is a seven digit code used in Taxware that enables customers to save money on sales tax based on their state of residence and the properties of the product. To learn how to select the correct code, you may watch this video: https://vimeo.com/164512893 ',
+              filterType: 'optional',
+              id: 'ProductTaxCode',
+              name: 'Product Tax Code',
+              options: [],
+              type: 'input',
+            },
+            {
+              description: 'Key features will appear as bulleted text on the item page and in search results. Key features help the user understand the benefits of the product with a simple and clean format. We highly recommended using three or more key features.',
+              filterType: 'preferred',
+              id: 'keyFeaturesValue.5',
+              name: 'Key Features 5',
+              options: [],
+              type: 'input',
+            },
+          ],
+          id: 'commonAttributes',
+          isLeafNode: false,
+          isRoot: true,
+          name: 'Common',
+          variation_attributes: [],
+        },
+        {
+          children: [],
+          deleted: false,
+          depth: 1,
+          fields: [
+            {
+              description: 'Input the weight of the individual selling unit.',
+              filterType: 'optional',
+              id: 'ShippingWeight.measure',
+              name: 'Shipping Weight > Measure',
+              options: [
+                {
+                  id: 'lb',
+                  text: 'lb',
+                },
+              ],
+              type: 'select',
+            },
+            {
+              description: 'The weight of the fully assembled product. NOTE: This information is shown on the item page.',
+              filterType: 'optional',
+              id: 'assembledProductWeight.unit',
+              name: 'Assembled Product Weight > Unit',
+              options: [
+                {
+                  id: 'oz',
+                  text: 'oz',
+                },
+                {
+                  id: 'lb',
+                  text: 'lb',
+                },
+                {
+                  id: 'g',
+                  text: 'g',
+                },
+                {
+                  id: 'kg',
+                  text: 'kg',
+                },
+              ],
+              type: 'select',
+            },
+          ],
+          id: 'Dimensions',
+          isLeafNode: false,
+          isRoot: false,
+          name: 'Dimensions',
+          variation_attributes: [],
+        },
+        {
+          children: [],
+          deleted: false,
+          depth: 1,
+          fields: [
+            {
+              description: 'Attribute name corresponding to the swatch.',
+              filterType: 'conditional',
+              id: 'swatchImage.1.swatchVariantAttribute',
+              name: 'Swatch Images > Swatch Variant Attribute 1',
+              options: [],
+              type: 'select',
+            },
+            {
+              description: 'Attribute name corresponding to the swatch.',
+              filterType: 'conditional',
+              id: 'swatchImage.2.swatchVariantAttribute',
+              name: 'Swatch Images > Swatch Variant Attribute 2',
+              options: [],
+              type: 'select',
+            },
+            {
+              description: 'Attribute name corresponding to the swatch.',
+              filterType: 'conditional',
+              id: 'swatchImage.3.swatchVariantAttribute',
+              name: 'Swatch Images > Swatch Variant Attribute 3',
+              options: [],
+              type: 'select',
+            },
+            {
+              description: 'Attribute name corresponding to the swatch.',
+              filterType: 'conditional',
+              id: 'swatchImage.4.swatchVariantAttribute',
+              name: 'Swatch Images > Swatch Variant Attribute 4',
+              options: [],
+              type: 'select',
+            },
+            {
+              description: 'Attribute name corresponding to the swatch.',
+              filterType: 'conditional',
+              id: 'swatchImage.5.swatchVariantAttribute',
+              name: 'Swatch Images > Swatch Variant Attribute 5',
+              options: [],
+              type: 'select',
+            },
+          ],
+          id: 'Variation',
+          isLeafNode: false,
+          isRoot: false,
+          name: 'Variation',
+          variation_attributes: [],
+        },
+      ]);
+    });
+  });
+
+  describe('integrationApps settings mkCategoryMappingsForSection test', () => {
+    const selector = selectors.mkCategoryMappingsForSection();
+
+    test('should not throw exception for bad params', () => {
+      expect(selector()).toEqual([]);
+      expect(selector({})).toEqual([]);
+      expect(selector(null)).toEqual([]);
+    });
+
+    test('should return emptyArray when state is empty', () => {
+      expect(selector({'flow-integration': {}}, 'integration', 'flow', 'mappingId')).toEqual([]);
+      expect(selector({'flow-integration': {mappings: {}}}, 'integration', 'flow', 'mappingId')).toEqual([]);
+    });
+
+    test('should not throw exception for bad params', () => {
+      const state = {
+        'flow-integration': {
+          mappings: {
+            mappingId: {
+              fields: [{
+                a: 'b',
+              }],
+              children: [{
+                id: 'child1',
+                name: 'Child',
+                fields: [{
+                  c: 'd',
+                }],
+              }],
+            },
+          },
+        },
+      };
+
+      expect(selector(state, 'integration', 'flow', 'mappingId')).toEqual({
+        fields: [{
+          a: 'b',
+        }],
+        children: [{
+          id: 'child1',
+          name: 'Child',
+          fields: [{
+            c: 'd',
+          }],
+        }],
+      });
+    });
+  });
+
+  describe('integrationApps settings mkCategoryMappingGenerateFields test', () => {
+    const selector = selectors.mkCategoryMappingGenerateFields();
+
+    test('should not throw exception for bad params', () => {
+      expect(selector()).toEqual();
+      expect(selector({})).toEqual();
+      expect(selector(null)).toEqual();
+    });
+
+    test('should return correct form state for params passed for variationAttributes set as false', () => {
+      const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration1', 'flow1', amazonCategoryMappings));
+
+      expect(selector(state, 'integration1', 'flow1', { sectionId: 'commonAttributes' })).toEqual(
+        {
+          children: [
+
+          ],
+          deleted: false,
+          depth: 0,
+          fields: [
+            {
+              description: 'A unique identifier for the product, assigned by the merchant.  The SKU must be unique for each product listed.  After you have established a SKU for a product, please do not change it without first deleting the original SKU from our systems through a delete feed.',
+              filterType: 'required',
+              id: 'item_sku',
+              name: 'Seller SKU',
+              options: [
+
+              ],
+              type: 'input',
+            },
+            {
+              description: 'A short title for the product. This will be displayed in bold on the product page and in the title bar of the browser window.',
+              filterType: 'required',
+              id: 'item_name',
+              name: 'Product Name',
+              options: [
+
+              ],
+              type: 'input',
+            },
+            {
+              description: 'A standard, alphanumeric string that uniquely identifies the product.',
+              filterType: 'preferred',
+              id: 'ASIN',
+              name: 'ASIN',
+              options: [
+
+              ],
+              type: 'input',
+            },
+            {
+              description: 'A standard, alphanumeric string that uniquely identifies the product.',
+              filterType: 'preferred',
+              id: 'UPC',
+              name: 'UPC',
+              options: [
+
+              ],
+              type: 'input',
+            },
+            {
+              description: 'The unit of measure used to describe the dimensions (width, length, height) of the product, expressed in centimeters, meters, inches, or feet. Required if item dimensions are provided.',
+              filterType: 'optional',
+              id: 'item_length_unit_of_measure',
+              name: 'Item Length Unit Of Measure',
+              options: [
+                {
+                  id: 'CM',
+                  text: 'CM',
+                },
+                {
+                  id: 'FT',
+                  text: 'FT',
+                },
+                {
+                  id: 'IN',
+                  text: 'IN',
+                },
+                {
+                  id: 'M',
+                  text: 'M',
+                },
+                {
+                  id: 'MM',
+                  text: 'MM',
+                },
+              ],
+              type: 'select',
+            },
+          ],
+          id: 'commonAttributes',
+          isLeafNode: false,
+          isRoot: true,
+          marketplace_domain: 'US',
+          name: 'Common',
+          variation_attributes: [
+
+          ],
+          variation_themes: [
+
+          ],
+        }
+      );
+    });
+
+    test('should return correct form state for params passed for variationAttributes set as true', () => {
+      const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration1', 'flow1', walmartCategoryMappings));
+
+      expect(selector(state, 'integration1', 'flow1', { sectionId: 'Variation' })).toEqual({
+        children: [
+
+        ],
+        deleted: false,
+        depth: 1,
+        fields: [
+          {
+            description: 'Attribute name corresponding to the swatch.',
+            filterType: 'conditional',
+            id: 'swatchImage.1.swatchVariantAttribute',
+            name: 'Swatch Images > Swatch Variant Attribute 1',
+            options: [
+
+            ],
+            type: 'select',
+          },
+          {
+            description: 'Attribute name corresponding to the swatch.',
+            filterType: 'conditional',
+            id: 'swatchImage.2.swatchVariantAttribute',
+            name: 'Swatch Images > Swatch Variant Attribute 2',
+            options: [
+
+            ],
+            type: 'select',
+          },
+          {
+            description: 'Attribute name corresponding to the swatch.',
+            filterType: 'conditional',
+            id: 'swatchImage.3.swatchVariantAttribute',
+            name: 'Swatch Images > Swatch Variant Attribute 3',
+            options: [
+
+            ],
+            type: 'select',
+          },
+          {
+            description: 'Attribute name corresponding to the swatch.',
+            filterType: 'conditional',
+            id: 'swatchImage.4.swatchVariantAttribute',
+            name: 'Swatch Images > Swatch Variant Attribute 4',
+            options: [
+
+            ],
+            type: 'select',
+          },
+          {
+            description: 'Attribute name corresponding to the swatch.',
+            filterType: 'conditional',
+            id: 'swatchImage.5.swatchVariantAttribute',
+            name: 'Swatch Images > Swatch Variant Attribute 5',
+            options: [
+
+            ],
+            type: 'select',
+          },
+        ],
+        id: 'Variation',
+        isLeafNode: false,
+        isRoot: false,
+        name: 'Variation',
+        variation_attributes: [
+
+        ],
+      });
+    });
+  });
+
+  describe('integrationApps settings mkMappingsForCategory test', () => {
+    const selector = selectors.mkMappingsForCategory();
+
+    test('should not throw exception for bad params', () => {
+      expect(selector()).toEqual({fieldMappings: []});
+      expect(selector({})).toEqual();
+      expect(selector(null)).toEqual({fieldMappings: []});
+    });
+
+    test('should return correct form state for params passed for variationAttributes set as false', () => {
+      const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration1', 'flow1', amazonCategoryMappings));
+
+      expect(selector(state, 'integration1', 'flow1', { sectionId: 'commonAttributes' })).toEqual(
+        {
+          children: [
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'Dimensions',
+              name: 'Dimensions',
+            },
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'Discovery',
+              name: 'Discovery',
+            },
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'Images',
+              name: 'Images',
+            },
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'Fulfillment',
+              name: 'Fulfillment',
+            },
+          ],
+          deleted: false,
+          depth: 0,
+          fieldMappings: [
+            {
+              discardIfEmpty: true,
+              extract: 'SKU',
+              generate: 'item_sku',
+            },
+            {
+              discardIfEmpty: true,
+              extract: 'upccode',
+              generate: 'UPC',
+            },
+            {
+              discardIfEmpty: true,
+              extract: 'salesdescription',
+              generate: 'product_description',
+            },
+            {
+              discardIfEmpty: true,
+              extract: 'displayname',
+              generate: 'item_name',
+            },
+            {
+              discardIfEmpty: true,
+              extract: 'manufacturer',
+              generate: 'brand_name',
+            },
+            {
+              discardIfEmpty: true,
+              extract: '',
+              generate: 'ASIN',
+            },
+            {
+              discardIfEmpty: true,
+              extract: '',
+              generate: 'item_length_unit_of_measure',
+            },
+          ],
+          id: 'commonAttributes',
+          isRoot: true,
+          lookups: [
+
+          ],
+          name: 'Common',
+        }
+      );
+    });
+
+    test('should return correct form state for params passed for variationAttributes set as true', () => {
+      const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration1', 'flow1', walmartCategoryMappings));
+
+      expect(selector(state, 'integration1', 'flow1', { sectionId: 'Variation' })).toEqual({
+        children: [
+
+        ],
+        deleted: false,
+        depth: 1,
+        fieldMappings: [
+          {
+            discardIfEmpty: true,
+            extract: '',
+            generate: 'swatchImage.1.swatchVariantAttribute',
+          },
+          {
+            discardIfEmpty: true,
+            extract: '',
+            generate: 'swatchImage.2.swatchVariantAttribute',
+          },
+          {
+            discardIfEmpty: true,
+            extract: '',
+            generate: 'swatchImage.3.swatchVariantAttribute',
+          },
+          {
+            discardIfEmpty: true,
+            extract: '',
+            generate: 'swatchImage.4.swatchVariantAttribute',
+          },
+          {
+            discardIfEmpty: true,
+            extract: '',
+            generate: 'swatchImage.5.swatchVariantAttribute',
+          },
+        ],
+        id: 'Variation',
+        isRoot: false,
+        name: 'Variation',
+      });
+    });
+  });
+
+  describe('integrationApps settings mkCategoryMappingMetadata', () => {
+    const selector = selectors.mkCategoryMappingMetadata();
+
+    test('should not throw exception for bad params', () => {
+      expect(selector()).toEqual({});
+      expect(selector({})).toEqual({});
+      expect(selector(null)).toEqual({});
+    });
+    test('should return correct data for amazon category mappings', () => {
+      const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration', 'flow', amazonCategoryMappings));
+
+      expect(selector(state, 'integration', 'flow')).toEqual({
+        extractsMetadata: [
+          {
+            id: 'hits',
+            name: '# Times Viewed',
+            type: 'integer',
+          },
+          {
+            id: 'atpleadtime',
+            name: 'ATP Lead Time',
+            type: 'float',
+          },
+          {
+            id: 'accountingbook',
+            name: 'Accounting Book',
+            type: 'select',
+          },
+          {
+            id: 'accountingbookamortization',
+            name: 'Accounting Book Amortization Schedule',
+            type: 'select',
+          },
+          {
+            id: 'accountingbookrevrecschedule',
+            name: 'Accounting Book Rev. Rec. Schedule',
+            type: 'select',
+          },
+          {
+            id: 'custitem_celigo_ebay_list_add_fee',
+            name: 'Add Listing Fee',
+            type: 'text',
+          },
+          {
+            id: 'custitem_celigo_etail_channel',
+            name: 'eTail Channel (2)',
+            type: 'multiselect',
+          },
+        ],
+        generatesMetadata: [
+          {
+            description: 'A unique identifier for the product, assigned by the merchant.  The SKU must be unique for each product listed.  After you have established a SKU for a product, please do not change it without first deleting the original SKU from our systems through a delete feed.',
+            filterType: 'required',
+            id: 'item_sku',
+            name: 'Seller SKU',
+            options: [],
+            type: 'input',
+          },
+          {
+            description: 'A short title for the product. This will be displayed in bold on the product page and in the title bar of the browser window.',
+            filterType: 'required',
+            id: 'item_name',
+            name: 'Product Name',
+            options: [],
+            type: 'input',
+          },
+          {
+            description: 'A standard, alphanumeric string that uniquely identifies the product.',
+            filterType: 'preferred',
+            id: 'ASIN',
+            name: 'ASIN',
+            options: [],
+            type: 'input',
+          },
+          {
+            description: 'A standard, alphanumeric string that uniquely identifies the product.',
+            filterType: 'preferred',
+            id: 'UPC',
+            name: 'UPC',
+            options: [],
+            type: 'input',
+          },
+          {
+            description: 'The unit of measure used to describe the dimensions (width, length, height) of the product, expressed in centimeters, meters, inches, or feet. Required if item dimensions are provided.',
+            filterType: 'optional',
+            id: 'item_length_unit_of_measure',
+            name: 'Item Length Unit Of Measure',
+            options: [
+              {
+                id: 'CM',
+                text: 'CM',
+              },
+              {
+                id: 'FT',
+                text: 'FT',
+              },
+              {
+                id: 'IN',
+                text: 'IN',
+              },
+              {
+                id: 'M',
+                text: 'M',
+              },
+              {
+                id: 'MM',
+                text: 'MM',
+              },
+            ],
+            type: 'select',
+          },
+        ],
+        relationshipData: [
+          {
+            children: [
+              {
+                id: 'autoaccessorymisc',
+                isLeafNode: true,
+                name: 'autoaccessorymisc',
+              },
+              {
+                id: 'autobattery',
+                isLeafNode: true,
+                name: 'autobattery',
+              },
+              {
+                id: 'autooil',
+                isLeafNode: true,
+                name: 'autooil',
+              },
+              {
+                id: 'Underwear',
+                isLeafNode: true,
+                name: 'Underwear [Moved to Clothing]',
+              },
+            ],
+            id: 'autoaccessory',
+            isLeafNode: false,
+            marketplace_domain: 'US',
+            name: 'Auto Accessory',
+          },
+          {
+            children: [
+              {
+                id: 'babyproducts',
+                isLeafNode: true,
+                name: 'babyproducts',
+              },
+              {
+                id: 'infanttoddlercarseat',
+                isLeafNode: true,
+                name: 'infanttoddlercarseat',
+              },
+              {
+                id: 'stroller',
+                isLeafNode: true,
+                name: 'stroller',
+              },
+            ],
+            id: 'baby',
+            isLeafNode: false,
+            marketplace_domain: 'US',
+            name: 'Baby',
+          },
+          {
+            children: [
+              {
+                id: 'beautymisc',
+                isLeafNode: true,
+                name: 'beautymisc',
+              },
+              {
+                id: 'bodycareproduct',
+                isLeafNode: true,
+                name: 'bodycareproduct',
+              },
+              {
+                id: 'conditioner',
+                isLeafNode: true,
+                name: 'conditioner',
+              },
+            ],
+            id: 'beauty',
+            isLeafNode: false,
+            marketplace_domain: 'US',
+            name: 'Beauty',
+          },
+          {
+            children: [],
+            id: 'BookLoader',
+            isLeafNode: true,
+            marketplace_domain: 'US',
+            name: 'Book Loader',
+          },
+          {
+            children: [
+              {
+                id: 'binocular',
+                isLeafNode: true,
+                name: 'binocular',
+              },
+              {
+                id: 'blankmediaforcameras',
+                isLeafNode: true,
+                name: 'blankmediaforcameras',
+              },
+              {
+                id: 'camcorder',
+                isLeafNode: true,
+                name: 'camcorder',
+              },
+              {
+                id: 'Tripod',
+                isLeafNode: true,
+                name: 'Tripod [Deprecated]',
+              },
+            ],
+            id: 'cameraandphoto',
+            isLeafNode: false,
+            marketplace_domain: 'US',
+            name: 'Camera and Photo',
+          },
+          {
+            children: [
+              {
+                id: 'PROTECTIVE_GLOVE',
+                isLeafNode: true,
+                name: 'PROTECTIVE_GLOVE',
+              },
+              {
+                id: 'accessory',
+                isLeafNode: true,
+                name: 'accessory',
+              },
+              {
+                id: 'childrenscostume',
+                isLeafNode: true,
+                name: 'childrenscostume',
+              },
+              {
+                id: 'vest',
+                isLeafNode: true,
+                name: 'vest',
+              },
+            ],
+            id: 'clothing',
+            isLeafNode: false,
+            marketplace_domain: 'US',
+            name: 'Clothing',
+          },
+          {
+            children: [
+              {
+                id: 'Bullion',
+                isLeafNode: true,
+                name: 'Bullion',
+              },
+              {
+                id: 'Coins',
+                isLeafNode: true,
+                name: 'Coins',
+              },
+              {
+                id: 'CollectibleCoins',
+                isLeafNode: true,
+                name: 'CollectibleCoins',
+              },
+            ],
+            id: 'coins',
+            isLeafNode: false,
+            marketplace_domain: 'US',
+            name: 'Coins',
+          },
+          {
+            children: [
+              {
+                id: 'FoodServiceSupply',
+                isLeafNode: true,
+                name: 'FoodServiceSupply',
+              },
+              {
+                id: 'JanitorialSupply',
+                isLeafNode: true,
+                name: 'JanitorialSupply',
+              },
+            ],
+            id: 'FoodServiceAndJanSan',
+            isLeafNode: false,
+            marketplace_domain: 'US',
+            name: 'Food Service and Jan San',
+          },
+        ],
+      });
+    });
+  });
 });
 

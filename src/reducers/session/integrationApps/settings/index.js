@@ -32,7 +32,7 @@ function flattenChildrenStructrue(
     }
 
     result.push({
-      ...meta,
+      ...(meta || {}),
       isRoot,
       depth,
       deleted:
@@ -852,7 +852,7 @@ selectors.mkMappingsForCategory = () => {
     (categoryMappingFilters = emptyObj, recordMappings = emptySet, generateFields = emptyObj, filters = emptyObj) => {
       const { sectionId, depth } = filters;
       let mappings = emptySet;
-      const { attributes = {}, mappingFilter = 'all' } = categoryMappingFilters;
+      const { attributes = {}, mappingFilter = 'all' } = categoryMappingFilters || emptyObj;
       const { fields = [] } = generateFields;
 
       if (recordMappings) {
@@ -878,7 +878,7 @@ selectors.mkMappingsForCategory = () => {
           discardIfEmpty: true,
         }));
       // Combine filtered mappings and unmapped fields and generate unmapped fields
-      const filteredMappings = [...mappings.fieldMappings, ...filteredFields];
+      const filteredMappings = [...(mappings.fieldMappings || []), ...filteredFields];
 
       // return mappings object by overriding field mappings with filtered mappings
       return {
