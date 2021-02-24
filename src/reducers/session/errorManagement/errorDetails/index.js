@@ -195,6 +195,12 @@ export const selectors = {};
 selectors.getErrors = (state, { flowId, resourceId, errorType }) =>
   state?.[flowId]?.[resourceId]?.[errorType] || defaultObject;
 
+selectors.hasResourceErrors = (state, options) => {
+  const errorsObj = selectors.getErrors(state, options);
+
+  return !!errorsObj.errors?.length;
+};
+
 selectors.errorActionsContext = (
   state,
   { flowId, resourceId, actionType = 'retry' }

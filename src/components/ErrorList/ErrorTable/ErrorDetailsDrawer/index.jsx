@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
 import {
   useRouteMatch,
   useHistory,
@@ -10,6 +9,7 @@ import RightDrawer from '../../../drawer/Right';
 import DrawerHeader from '../../../drawer/Right/DrawerHeader';
 import ErrorDetails from '../../ErrorDetails';
 import { selectors } from '../../../../reducers';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const emptySet = [];
 
@@ -17,15 +17,15 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   const match = useRouteMatch();
   const { pathname } = useLocation();
   const history = useHistory();
-  const allErrors = useSelector(
-    state =>
-      selectors.resourceErrors(state, {
-        flowId,
-        resourceId,
-        options: { isResolved },
-      }).errors || emptySet,
-    shallowEqual
-  );
+  const errorConfig = useMemo(() => ({
+    flowId,
+    resourceId,
+    options: { isResolved },
+  }), [isResolved, flowId, resourceId]);
+
+  const errorObj = useSelectorMemo(selectors.makeResourceErrorsSelector, errorConfig);
+  const allErrors = errorObj.errors || emptySet;
+
   // Controls the nested drawer to open error details only when it is a valid errorId
   // TODO : @Raghu check for a better way to control
   const showDrawer = useMemo(() => {

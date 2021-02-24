@@ -14,6 +14,8 @@ export const DEFAULT_FILTERS = {
   },
 };
 
+export const DEFAULT_ROWS_PER_PAGE = 50;
+
 export const getFilteredErrors = (errors = [], options = {}) => {
   const { keyword, searchBy = [] } = options;
 

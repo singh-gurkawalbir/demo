@@ -78,7 +78,7 @@ import { stringCompare } from '../utils/sort';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import { getFilteredErrors, FILTER_KEYS, getSourceOptions } from '../utils/errorManagement';
+import { getFilteredErrors, FILTER_KEYS, DEFAULT_ROWS_PER_PAGE, getSourceOptions } from '../utils/errorManagement';
 import {
   getFlowStepsYetToBeCreated,
   generatePendingFlowSteps,
@@ -4443,24 +4443,47 @@ selectors.isAnyErrorActionInProgress = (state, { flowId, resourceId }) => {
 
 selectors.errorDetails = (state, params) => {
   const { flowId, resourceId, options = {} } = params;
+  const errorType = options.isResolved ? 'resolved' : 'open';
 
   return selectors.getErrors(state, {
     flowId,
     resourceId,
-    errorType: options.isResolved ? 'resolved' : 'open',
+    errorType,
   });
 };
 
 selectors.makeResourceErrorsSelector = () => createSelector(
   selectors.errorDetails,
   (_1, params) => params.options,
-  (errorDetails, options) => ({
-    ...errorDetails,
-    errors: getFilteredErrors(errorDetails.errors, options),
-  })
+  (state, params) => selectors.filter(state, params?.options?.filterKey),
+  (errorDetails, options, filters) => {
+    const filterOptions = {...filters, ...options};
+
+    return {
+      ...errorDetails,
+      errors: getFilteredErrors(errorDetails.errors, filterOptions),
+    };
+  }
 );
 
 selectors.resourceErrors = selectors.makeResourceErrorsSelector();
+
+selectors.mkResourceErrorsInCurrPageSelector = () => {
+  const resourceErrors = selectors.makeResourceErrorsSelector();
+
+  return createSelector(
+    resourceErrors,
+    (state, params) => selectors.filter(state, params?.options?.filterKey),
+    (allErrors, filter) => {
+      const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = filter?.paging || {};
+      const {errors} = allErrors;
+
+      return errors.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
+    }
+  );
+};
+
+selectors.resourceErrorsInCurrPage = selectors.mkResourceErrorsInCurrPageSelector();
 
 /**
  * Returns error count per category in a store for IA 1.0

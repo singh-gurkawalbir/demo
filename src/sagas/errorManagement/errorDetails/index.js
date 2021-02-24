@@ -72,12 +72,11 @@ export function* requestErrorDetails({
 
 export function* selectAllErrorDetails({ flowId, resourceId, checked, isResolved }) {
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
-  const errorFilter = yield select(selectors.filter, filterKey);
 
   const { errors = [] } = yield select(selectors.resourceErrors, {
     flowId,
     resourceId,
-    options: { ...errorFilter, isResolved },
+    options: { filterKey, isResolved },
   });
   const errorIds = errors.map(error => error.errorId);
 
