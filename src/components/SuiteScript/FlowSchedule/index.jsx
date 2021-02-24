@@ -127,7 +127,6 @@ export default function FlowSchedule({ flow, onClose }) {
       <DrawerContent>
         <DynaForm
           formKey={formKey}
-          fieldMeta={fieldMeta}
        />
       </DrawerContent>
 
