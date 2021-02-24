@@ -196,12 +196,11 @@ function DynaAssistantOptions(props) {
   );
 }
 
-const WrappedContextConsumer = props => {
+export default function WrappedContextConsumer(props) {
   const form = useFormContext(props.formKey);
 
   if (!form) return null;
 
   return <DynaAssistantOptions {...form} {...props} />;
-};
+}
 
-export default WrappedContextConsumer;

@@ -200,26 +200,8 @@ export function* changeEmail({ updatedEmail }) {
         'Verification link sent to new email address.'
       )
     );
+  // eslint-disable-next-line no-empty
   } catch (e) {
-    if (e.status === 403) {
-      yield put(
-        actions.api.failure(
-          changeEmailParams.path,
-          changeEmailParams.opts.method,
-          'Existing email provided, Please try again.',
-          true
-        )
-      );
-    }
-
-    yield put(
-      actions.api.failure(
-        changeEmailParams.path,
-        changeEmailParams.opts.method,
-        'Cannot change user Email , Please try again.',
-        true
-      )
-    );
   }
 }
 

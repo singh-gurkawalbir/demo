@@ -1,12 +1,15 @@
-import React, { useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import useConfirmDialog from '../../../../ConfirmDialog';
 import actions from '../../../../../actions';
-import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import actionTypes from '../../../../../actions/types';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
-import CommStatus from '../../../../CommStatus';
+import useCommStatus from '../../../../../hooks/useCommStatus';
+import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
+import useConfirmDialog from '../../../../ConfirmDialog';
 
+const actionsToMonitor = {
+  makeOwner: { action: actionTypes.USER_MAKE_OWNER },
+};
 export default {
   label: 'Make account owner',
   component: function MakeAccountOwner({ rowData: user }) {
@@ -64,14 +67,12 @@ export default {
       [enquesnackbar, getStatusMessage]
     );
 
-    return (
-      <CommStatus
-        actionsToMonitor={{
-          makeOwner: { action: actionTypes.USER_MAKE_OWNER },
-        }}
-        autoClearOnComplete
-        commStatusHandler={commStatusHandler}
-      />
-    );
+    useCommStatus({
+      actionsToMonitor,
+      autoClearOnComplete: true,
+      commStatusHandler,
+    });
+
+    return null;
   },
 };

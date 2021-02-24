@@ -144,7 +144,7 @@ function ConnectionLoadingChip(props) {
   );
 }
 
-function DynaSelectResource(props) {
+export default function DynaSelectResource(props) {
   const {
     disabled,
     id,
@@ -361,5 +361,3 @@ function DynaSelectResource(props) {
     </div>
   );
 }
-
-export default DynaSelectResource;

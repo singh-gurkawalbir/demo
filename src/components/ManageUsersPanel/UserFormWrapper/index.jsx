@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import UserForm from './UserForm';
@@ -9,7 +9,7 @@ import {
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
-import CommStatus from '../../CommStatus';
+import useCommStatus from '../../../hooks/useCommStatus';
 
 export default function UserFormWrapper({ userId }) {
   const dispatch = useDispatch();
@@ -79,24 +79,21 @@ export default function UserFormWrapper({ userId }) {
     [handleClose, disableSave]
   );
 
+  const actionsToMonitor = useMemo(() => ({
+    createOrUpdate: {
+      action: userId ? actionTypes.USER_UPDATE : actionTypes.USER_CREATE,
+      resourceId: userId,
+    },
+  }), [userId]);
+
+  useCommStatus({actionsToClear, actionsToMonitor, commStatusHandler});
+
   return (
-    <>
-      <CommStatus
-        actionsToMonitor={{
-          createOrUpdate: {
-            action: userId ? actionTypes.USER_UPDATE : actionTypes.USER_CREATE,
-            resourceId: userId,
-          },
-        }}
-        actionsToClear={actionsToClear}
-        commStatusHandler={commStatusHandler}
-      />
-      <UserForm
-        id={userId}
-        disableSave={disableSave}
-        onSaveClick={handleSaveClick}
-        onCancelClick={handleClose}
+    <UserForm
+      id={userId}
+      disableSave={disableSave}
+      onSaveClick={handleSaveClick}
+      onCancelClick={handleClose}
     />
-    </>
   );
 }

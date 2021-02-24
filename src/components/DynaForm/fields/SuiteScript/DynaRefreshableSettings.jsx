@@ -5,7 +5,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import { DynaGenericSelect } from '../DynaRefreshableSelect/RefreshGenericResource';
 
-function DynaSalesforceSelectOptionsGenerator(props) {
+export default function DynaSalesforceSelectOptionsGenerator(props) {
   const {
     id, field: fieldId,
     sectionId,
@@ -35,5 +35,3 @@ function DynaSalesforceSelectOptionsGenerator(props) {
     />
   );
 }
-
-export default DynaSalesforceSelectOptionsGenerator;

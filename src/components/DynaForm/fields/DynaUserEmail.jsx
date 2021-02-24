@@ -23,7 +23,7 @@ const useStyles = makeStyles({
   },
 });
 
-function DynaUserEmail(props) {
+export default function DynaUserEmail(props) {
   const classes = useStyles();
   const [showChangeEmailModal, setShowChangeEmailModal] = useState(false);
   const dispatch = useDispatch();
@@ -66,5 +66,3 @@ function DynaUserEmail(props) {
     </FormControl>
   );
 }
-
-export default DynaUserEmail;
