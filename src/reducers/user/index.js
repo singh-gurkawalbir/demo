@@ -282,6 +282,24 @@ selectors.userTimezone = createSelector(
   (profile, accountOwner) => profile?.timezone || accountOwner.timezone
 );
 
+selectors.canUserPublish = createSelector(
+  state => state && state.profile,
+  selectors.userPreferences,
+  selectors.accountOwner,
+  selectors.userAccessLevel,
+  (profile, preferences = emptyObj, accountOwner, accessLevel) => {
+    const { defaultAShareId } = preferences;
+
+    if (defaultAShareId === ACCOUNT_IDS.OWN) {
+      return !!profile?.allowedToPublish;
+    } if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN) {
+      return !!accountOwner?.allowedToPublish;
+    }
+
+    return false;
+  }
+);
+
 selectors.licenses = createSelector(
   selectors.userPreferences,
   state => state && state.org && state.org.accounts,

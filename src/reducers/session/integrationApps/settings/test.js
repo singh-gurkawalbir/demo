@@ -7243,9 +7243,215 @@ describe('integrationApps selectors test cases', () => {
     });
 
     test('should return correct form state for params passed', () => {
-      let state = {
+      const state = {
         'flow1-integration1': {
-          response: [{}],
+          response: [{
+            operation: 'mappingData',
+            data: {
+              mappingData: {
+                basicMappings: {
+                  recordMappings: [
+                    {
+                      id: 'commonAttributes',
+                      name: 'commonAttributes',
+                      children: [
+                        {
+                          id: 'Dimensions',
+                          name: 'Dimensions',
+                          children: [
+
+                          ],
+                          fieldMappings: [
+
+                          ],
+                        },
+                        {
+                          id: 'Discovery',
+                          name: 'Discovery',
+                          children: [
+
+                          ],
+                          fieldMappings: [
+
+                          ],
+                        },
+                        {
+                          id: 'Images',
+                          name: 'Images',
+                          children: [
+
+                          ],
+                          fieldMappings: [
+
+                          ],
+                        },
+                        {
+                          id: 'Fulfillment',
+                          name: 'Fulfillment',
+                          children: [
+
+                          ],
+                          fieldMappings: [
+
+                          ],
+                        },
+                      ],
+                      fieldMappings: [
+                        {
+                          extract: 'upccode',
+                          generate: 'UPC',
+                          discardIfEmpty: true,
+                        },
+                        {
+                          extract: 'salesdescription',
+                          generate: 'product_description',
+                          discardIfEmpty: true,
+                        },
+                        {
+                          extract: 'displayname',
+                          generate: 'item_name',
+                          discardIfEmpty: true,
+                        },
+                        {
+                          extract: 'manufacturer',
+                          generate: 'brand_name',
+                          discardIfEmpty: true,
+                        },
+                        {
+                          extract: 'manufacturer',
+                          generate: 'manufacturer',
+                          discardIfEmpty: true,
+                        },
+                        {
+                          extract: 'mpn',
+                          generate: 'part_number',
+                          discardIfEmpty: true,
+                        },
+                        {
+                          generate: 'update_delete',
+                          hardCodedValue: 'Update',
+                          dataType: 'string',
+                        },
+                      ],
+                      lookups: [
+
+                      ],
+                    },
+                    {
+                      id: 'BookLoader',
+                      name: 'BookLoader',
+                      children: [
+
+                      ],
+                      fieldMappings: [
+
+                      ],
+                    },
+                    {
+                      id: 'autoaccessory',
+                      name: 'autoaccessory',
+                      children: [
+                        {
+                          id: 'autoaccessorymisc',
+                          name: 'autoaccessorymisc',
+                          children: [
+
+                          ],
+                          fieldMappings: [
+
+                          ],
+                        },
+                      ],
+                      fieldMappings: [
+
+                      ],
+                      lookups: [
+
+                      ],
+                    },
+                    {
+                      id: 'cameraandphoto',
+                      name: 'cameraandphoto',
+                      children: [
+                        {
+                          id: 'binocular',
+                          name: 'binocular',
+                          children: [
+
+                          ],
+                          fieldMappings: [
+
+                          ],
+                        },
+                      ],
+                      fieldMappings: [
+
+                      ],
+                      lookups: [
+
+                      ],
+                    },
+                  ],
+                },
+                variationMappings: {
+                  recordMappings: [
+                    {
+                      id: 'autoaccessory',
+                      children: [
+                        {
+                          id: 'autoaccessorymisc',
+                          children: [
+
+                          ],
+                          variation_themes: [
+                            {
+                              id: 'variation_theme',
+                              variation_theme: 'itempackagequantity',
+                              fieldMappings: [
+                                {
+                                  extract: 'hits',
+                                  generate: 'exterior_finish',
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                      ],
+                      variation_themes: [
+
+                      ],
+                    },
+                    {
+                      id: 'cameraandphoto',
+                      children: [
+                        {
+                          id: 'binocular',
+                          children: [
+
+                          ],
+                          variation_themes: [
+                            {
+                              id: 'variation_theme',
+                              variation_theme: 'SizeName',
+                              fieldMappings: [
+                                {
+                                  extract: 'hits',
+                                  generate: 'department_name1',
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                      ],
+                      variation_themes: [
+
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+          }],
           collapseStatus: {
             collapsed: true,
             collapseAction: 'collapse',
@@ -7265,11 +7471,2290 @@ describe('integrationApps selectors test cases', () => {
         'flow2-integration2': {},
       };
 
-      state = reducer(state, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration1', 'flow1', amazonCategoryMappings));
       expect(mappedVariationsSelector(state, 'integration1', 'flow1')).toEqual([
-
+        {
+          children: [
+            {
+              children: [],
+              id: 'autoaccessorymisc',
+              variation_themes: [
+                {
+                  fieldMappings: [
+                    {
+                      extract: 'hits',
+                      generate: 'exterior_finish',
+                    },
+                  ],
+                  id: 'variation_theme',
+                  variation_theme: 'itempackagequantity',
+                },
+              ],
+            },
+          ],
+          deleted: false,
+          depth: 0,
+          id: 'autoaccessory',
+          isRoot: true,
+          variation_themes: [],
+        },
+        {
+          children: [],
+          deleted: false,
+          depth: 1,
+          id: 'autoaccessorymisc',
+          isRoot: false,
+          variation_themes: [
+            {
+              fieldMappings: [
+                {
+                  extract: 'hits',
+                  generate: 'exterior_finish',
+                },
+              ],
+              id: 'variation_theme',
+              variation_theme: 'itempackagequantity',
+            },
+          ],
+        },
+        {
+          children: [
+            {
+              children: [],
+              id: 'binocular',
+              variation_themes: [
+                {
+                  fieldMappings: [
+                    {
+                      extract: 'hits',
+                      generate: 'department_name1',
+                    },
+                  ],
+                  id: 'variation_theme',
+                  variation_theme: 'SizeName',
+                },
+              ],
+            },
+          ],
+          deleted: false,
+          depth: 0,
+          id: 'cameraandphoto',
+          isRoot: true,
+          variation_themes: [],
+        },
+        {
+          children: [],
+          deleted: false,
+          depth: 1,
+          id: 'binocular',
+          isRoot: false,
+          variation_themes: [
+            {
+              fieldMappings: [
+                {
+                  extract: 'hits',
+                  generate: 'department_name1',
+                },
+              ],
+              id: 'variation_theme',
+              variation_theme: 'SizeName',
+            },
+          ],
+        },
       ]);
       expect(mappedVariationsSelector(state, 'integration2', 'flow2')).toEqual([]);
+    });
+  });
+
+  describe('integrationApps settings mkMappingsForVariation test', () => {
+    const selector = selectors.mkMappingsForVariation();
+
+    test('should not throw exception for bad params', () => {
+      expect(selector()).toEqual({});
+      expect(selector({})).toEqual({});
+      expect(selector(null)).toEqual({});
+    });
+
+    test('should return correct form state for params passed for variationAttributes set as false', () => {
+      const state = {
+        'flow1-integration1': {
+          response: [
+            {
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [
+                      {
+                        id: 'commonAttributes',
+                        name: 'commonAttributes',
+                        children: [
+                          {
+                            id: 'Dimensions',
+                            name: 'Dimensions',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                          {
+                            id: 'Discovery',
+                            name: 'Discovery',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                          {
+                            id: 'Images',
+                            name: 'Images',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                          {
+                            id: 'Fulfillment',
+                            name: 'Fulfillment',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+                          {
+                            extract: 'upccode',
+                            generate: 'UPC',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'salesdescription',
+                            generate: 'product_description',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'displayname',
+                            generate: 'item_name',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'manufacturer',
+                            generate: 'brand_name',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'manufacturer',
+                            generate: 'manufacturer',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'mpn',
+                            generate: 'part_number',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            generate: 'update_delete',
+                            hardCodedValue: 'Update',
+                            dataType: 'string',
+                          },
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                      {
+                        id: 'BookLoader',
+                        name: 'BookLoader',
+                        children: [
+
+                        ],
+                        fieldMappings: [
+
+                        ],
+                      },
+                      {
+                        id: 'autoaccessory',
+                        name: 'autoaccessory',
+                        children: [
+                          {
+                            id: 'autoaccessorymisc',
+                            name: 'autoaccessorymisc',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                      {
+                        id: 'cameraandphoto',
+                        name: 'cameraandphoto',
+                        children: [
+                          {
+                            id: 'binocular',
+                            name: 'binocular',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                    ],
+                  },
+                  variationMappings: {
+                    recordMappings: [
+                      {
+                        id: 'autoaccessory',
+                        children: [
+                          {
+                            id: 'autoaccessorymisc',
+                            children: [
+
+                            ],
+                            variation_themes: [
+                              {
+                                id: 'variation_theme',
+                                variation_theme: 'itempackagequantity',
+                                fieldMappings: [
+                                  {
+                                    extract: 'hits',
+                                    generate: 'exterior_finish',
+                                  },
+                                ],
+                              },
+                            ],
+                          },
+                        ],
+                        variation_themes: [
+
+                        ],
+                      },
+                      {
+                        id: 'cameraandphoto',
+                        children: [
+                          {
+                            id: 'binocular',
+                            children: [
+
+                            ],
+                            variation_themes: [
+                              {
+                                id: 'variation_theme',
+                                variation_theme: 'SizeName',
+                                fieldMappings: [
+                                  {
+                                    extract: 'hits',
+                                    generate: 'department_name1',
+                                  },
+                                ],
+                              },
+                            ],
+                          },
+                        ],
+                        variation_themes: [
+
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+            {
+              operation: 'generatesMetaData',
+              data: {
+                categoryRelationshipData: [
+                  {
+                    id: 'autoaccessory',
+                    name: 'Auto Accessory',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'autoaccessorymisc',
+                        name: 'autoaccessorymisc',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'autobattery',
+                        name: 'autobattery',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'autooil',
+                        name: 'autooil',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'Underwear',
+                        name: 'Underwear [Moved to Clothing]',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'baby',
+                    name: 'Baby',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'babyproducts',
+                        name: 'babyproducts',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'infanttoddlercarseat',
+                        name: 'infanttoddlercarseat',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'stroller',
+                        name: 'stroller',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'beauty',
+                    name: 'Beauty',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'beautymisc',
+                        name: 'beautymisc',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'bodycareproduct',
+                        name: 'bodycareproduct',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'conditioner',
+                        name: 'conditioner',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'BookLoader',
+                    name: 'Book Loader',
+                    isLeafNode: true,
+                    marketplace_domain: 'US',
+                    children: [
+
+                    ],
+                  },
+                  {
+                    id: 'cameraandphoto',
+                    name: 'Camera and Photo',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'binocular',
+                        name: 'binocular',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'blankmediaforcameras',
+                        name: 'blankmediaforcameras',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'camcorder',
+                        name: 'camcorder',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'Tripod',
+                        name: 'Tripod [Deprecated]',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'clothing',
+                    name: 'Clothing',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'PROTECTIVE_GLOVE',
+                        name: 'PROTECTIVE_GLOVE',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'accessory',
+                        name: 'accessory',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'childrenscostume',
+                        name: 'childrenscostume',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'vest',
+                        name: 'vest',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'coins',
+                    name: 'Coins',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'Bullion',
+                        name: 'Bullion',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'Coins',
+                        name: 'Coins',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'CollectibleCoins',
+                        name: 'CollectibleCoins',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'FoodServiceAndJanSan',
+                    name: 'Food Service and Jan San',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'FoodServiceSupply',
+                        name: 'FoodServiceSupply',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'JanitorialSupply',
+                        name: 'JanitorialSupply',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                ],
+
+              },
+            },
+          ],
+          collapseStatus: {
+            collapsed: true,
+            collapseAction: 'collapse',
+          },
+          filters: {
+            attributes: {
+              preferred: true,
+              optional: true,
+            },
+            mappingFilter: 'all',
+          },
+          uiAssistant: 'amazon',
+        },
+        'integrationId-flowId-sectionId': {
+          dummy: 'data',
+        },
+        'flow2-integration2': {},
+      };
+
+      expect(selector(state, 'integration1', 'flow1', {
+        isVariationAttributes: false,
+        sectionId: 'autoaccessorymisc',
+        variation: 'itempackagequantity',
+      })).toEqual({
+        fieldMappings: [
+          {
+            extract: 'hits',
+            generate: 'exterior_finish',
+          },
+        ],
+        id: 'variation_theme',
+        variation_theme: 'itempackagequantity',
+      });
+    });
+
+    test('should return correct form state for params passed for variationAttributes set as true', () => {
+      const state = {
+        'flow1-integration1': {
+          response: [
+            {
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [
+                      {
+                        id: 'commonAttributes',
+                        name: 'commonAttributes',
+                        children: [
+                          {
+                            id: 'Dimensions',
+                            name: 'Dimensions',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                          {
+                            id: 'Discovery',
+                            name: 'Discovery',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                          {
+                            id: 'Images',
+                            name: 'Images',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                          {
+                            id: 'Fulfillment',
+                            name: 'Fulfillment',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+                          {
+                            extract: 'upccode',
+                            generate: 'UPC',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'salesdescription',
+                            generate: 'product_description',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'displayname',
+                            generate: 'item_name',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'manufacturer',
+                            generate: 'brand_name',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'manufacturer',
+                            generate: 'manufacturer',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'mpn',
+                            generate: 'part_number',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            generate: 'update_delete',
+                            hardCodedValue: 'Update',
+                            dataType: 'string',
+                          },
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                      {
+                        id: 'BookLoader',
+                        name: 'BookLoader',
+                        children: [
+
+                        ],
+                        fieldMappings: [
+
+                        ],
+                      },
+                      {
+                        id: 'autoaccessory',
+                        name: 'autoaccessory',
+                        children: [
+                          {
+                            id: 'autoaccessorymisc',
+                            name: 'autoaccessorymisc',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                      {
+                        id: 'cameraandphoto',
+                        name: 'cameraandphoto',
+                        children: [
+                          {
+                            id: 'binocular',
+                            name: 'binocular',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                    ],
+                  },
+                  variationMappings: {
+                    recordMappings: [
+                      {
+                        id: 'Animal',
+                        children: [
+                          {
+                            id: 'AnimalAccessories',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+                              {
+                                extract: 'atpleadtime',
+                                generate: 'size',
+                                discardIfEmpty: true,
+                              },
+                              {
+                                extract: 'accountingbook',
+                                generate: 'color',
+                                discardIfEmpty: true,
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                      {
+                        id: 'ArtAndCraftCategory',
+                        children: [
+                          {
+                            id: 'ArtAndCraft',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+                              {
+                                extract: 'yes',
+                                generate: 'material',
+                                discardIfEmpty: true,
+                              },
+                              {
+                                extract: 'hits',
+                                generate: 'shape',
+                                discardIfEmpty: true,
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+            {
+              operation: 'generatesMetaData',
+              data: {
+                categoryRelationshipData: [
+                  {
+                    id: 'autoaccessory',
+                    name: 'Auto Accessory',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'autoaccessorymisc',
+                        name: 'autoaccessorymisc',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'autobattery',
+                        name: 'autobattery',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'autooil',
+                        name: 'autooil',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'Underwear',
+                        name: 'Underwear [Moved to Clothing]',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'baby',
+                    name: 'Baby',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'babyproducts',
+                        name: 'babyproducts',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'infanttoddlercarseat',
+                        name: 'infanttoddlercarseat',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'stroller',
+                        name: 'stroller',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'beauty',
+                    name: 'Beauty',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'beautymisc',
+                        name: 'beautymisc',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'bodycareproduct',
+                        name: 'bodycareproduct',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'conditioner',
+                        name: 'conditioner',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'BookLoader',
+                    name: 'Book Loader',
+                    isLeafNode: true,
+                    marketplace_domain: 'US',
+                    children: [
+
+                    ],
+                  },
+                  {
+                    id: 'cameraandphoto',
+                    name: 'Camera and Photo',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'binocular',
+                        name: 'binocular',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'blankmediaforcameras',
+                        name: 'blankmediaforcameras',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'camcorder',
+                        name: 'camcorder',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'Tripod',
+                        name: 'Tripod [Deprecated]',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'clothing',
+                    name: 'Clothing',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'PROTECTIVE_GLOVE',
+                        name: 'PROTECTIVE_GLOVE',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'accessory',
+                        name: 'accessory',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'childrenscostume',
+                        name: 'childrenscostume',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'vest',
+                        name: 'vest',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'coins',
+                    name: 'Coins',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'Bullion',
+                        name: 'Bullion',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'Coins',
+                        name: 'Coins',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'CollectibleCoins',
+                        name: 'CollectibleCoins',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'FoodServiceAndJanSan',
+                    name: 'Food Service and Jan San',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'FoodServiceSupply',
+                        name: 'FoodServiceSupply',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'JanitorialSupply',
+                        name: 'JanitorialSupply',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                ],
+
+              },
+            },
+          ],
+          collapseStatus: {
+            collapsed: true,
+            collapseAction: 'collapse',
+          },
+          filters: {
+            attributes: {
+              preferred: true,
+              optional: true,
+            },
+            mappingFilter: 'all',
+          },
+          uiAssistant: 'amazon',
+        },
+        'integrationId-flowId-sectionId': {
+          dummy: 'data',
+        },
+        'flow2-integration2': {},
+      };
+
+      expect(selector(state, 'integration1', 'flow1', {
+        isVariationAttributes: true,
+        sectionId: 'AnimalAccessories',
+        variation: undefined,
+      })).toEqual({
+        children: [],
+        deleted: false,
+        depth: 1,
+        fieldMappings: [
+          {
+            discardIfEmpty: true,
+            extract: 'atpleadtime',
+            generate: 'size',
+          },
+          {
+            discardIfEmpty: true,
+            extract: 'accountingbook',
+            generate: 'color',
+          },
+        ],
+        id: 'AnimalAccessories',
+        isRoot: false,
+      });
+    });
+  });
+
+  describe('integrationApps settings mkCategoryMappingData test', () => {
+    const selector = selectors.mkCategoryMappingData();
+
+    test('should not throw exception for bad params', () => {
+      expect(selector()).toEqual(null);
+      expect(selector({})).toEqual([]);
+      expect(selector(null)).toEqual(null);
+    });
+
+    test('should return correct form state for params passed for variationAttributes set as false', () => {
+      const state = {
+        'flow1-integration1': {
+          response: [
+            {
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [
+                      {
+                        id: 'commonAttributes',
+                        name: 'commonAttributes',
+                        children: [
+                          {
+                            id: 'Dimensions',
+                            name: 'Dimensions',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                          {
+                            id: 'Discovery',
+                            name: 'Discovery',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                          {
+                            id: 'Images',
+                            name: 'Images',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                          {
+                            id: 'Fulfillment',
+                            name: 'Fulfillment',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+                          {
+                            extract: 'upccode',
+                            generate: 'UPC',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'salesdescription',
+                            generate: 'product_description',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'displayname',
+                            generate: 'item_name',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'manufacturer',
+                            generate: 'brand_name',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'manufacturer',
+                            generate: 'manufacturer',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'mpn',
+                            generate: 'part_number',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            generate: 'update_delete',
+                            hardCodedValue: 'Update',
+                            dataType: 'string',
+                          },
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                      {
+                        id: 'BookLoader',
+                        name: 'BookLoader',
+                        children: [
+
+                        ],
+                        fieldMappings: [
+
+                        ],
+                      },
+                      {
+                        id: 'autoaccessory',
+                        name: 'autoaccessory',
+                        children: [
+                          {
+                            id: 'autoaccessorymisc',
+                            name: 'autoaccessorymisc',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                      {
+                        id: 'cameraandphoto',
+                        name: 'cameraandphoto',
+                        children: [
+                          {
+                            id: 'binocular',
+                            name: 'binocular',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                    ],
+                  },
+                  variationMappings: {
+                    recordMappings: [
+                      {
+                        id: 'autoaccessory',
+                        children: [
+                          {
+                            id: 'autoaccessorymisc',
+                            children: [
+
+                            ],
+                            variation_themes: [
+                              {
+                                id: 'variation_theme',
+                                variation_theme: 'itempackagequantity',
+                                fieldMappings: [
+                                  {
+                                    extract: 'hits',
+                                    generate: 'exterior_finish',
+                                  },
+                                ],
+                              },
+                            ],
+                          },
+                        ],
+                        variation_themes: [
+
+                        ],
+                      },
+                      {
+                        id: 'cameraandphoto',
+                        children: [
+                          {
+                            id: 'binocular',
+                            children: [
+
+                            ],
+                            variation_themes: [
+                              {
+                                id: 'variation_theme',
+                                variation_theme: 'SizeName',
+                                fieldMappings: [
+                                  {
+                                    extract: 'hits',
+                                    generate: 'department_name1',
+                                  },
+                                ],
+                              },
+                            ],
+                          },
+                        ],
+                        variation_themes: [
+
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+            {
+              operation: 'generatesMetaData',
+              data: {
+                categoryRelationshipData: [
+                  {
+                    id: 'autoaccessory',
+                    name: 'Auto Accessory',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'autoaccessorymisc',
+                        name: 'autoaccessorymisc',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'autobattery',
+                        name: 'autobattery',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'autooil',
+                        name: 'autooil',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'Underwear',
+                        name: 'Underwear [Moved to Clothing]',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'baby',
+                    name: 'Baby',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'babyproducts',
+                        name: 'babyproducts',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'infanttoddlercarseat',
+                        name: 'infanttoddlercarseat',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'stroller',
+                        name: 'stroller',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'beauty',
+                    name: 'Beauty',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'beautymisc',
+                        name: 'beautymisc',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'bodycareproduct',
+                        name: 'bodycareproduct',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'conditioner',
+                        name: 'conditioner',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'BookLoader',
+                    name: 'Book Loader',
+                    isLeafNode: true,
+                    marketplace_domain: 'US',
+                    children: [
+
+                    ],
+                  },
+                  {
+                    id: 'cameraandphoto',
+                    name: 'Camera and Photo',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'binocular',
+                        name: 'binocular',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'blankmediaforcameras',
+                        name: 'blankmediaforcameras',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'camcorder',
+                        name: 'camcorder',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'Tripod',
+                        name: 'Tripod [Deprecated]',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'clothing',
+                    name: 'Clothing',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'PROTECTIVE_GLOVE',
+                        name: 'PROTECTIVE_GLOVE',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'accessory',
+                        name: 'accessory',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'childrenscostume',
+                        name: 'childrenscostume',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'vest',
+                        name: 'vest',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'coins',
+                    name: 'Coins',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'Bullion',
+                        name: 'Bullion',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'Coins',
+                        name: 'Coins',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'CollectibleCoins',
+                        name: 'CollectibleCoins',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'FoodServiceAndJanSan',
+                    name: 'Food Service and Jan San',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'FoodServiceSupply',
+                        name: 'FoodServiceSupply',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'JanitorialSupply',
+                        name: 'JanitorialSupply',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                ],
+
+              },
+            },
+          ],
+          collapseStatus: {
+            collapsed: true,
+            collapseAction: 'collapse',
+          },
+          filters: {
+            attributes: {
+              preferred: true,
+              optional: true,
+            },
+            mappingFilter: 'all',
+          },
+          uiAssistant: 'amazon',
+        },
+        'integrationId-flowId-sectionId': {
+          dummy: 'data',
+        },
+        'flow2-integration2': {},
+      };
+
+      expect(selector(state, 'integration1', 'flow1')).toEqual([
+        {
+          children: [
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'Dimensions',
+              name: 'Dimensions',
+            },
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'Discovery',
+              name: 'Discovery',
+            },
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'Images',
+              name: 'Images',
+            },
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'Fulfillment',
+              name: 'Fulfillment',
+            },
+          ],
+          deleted: false,
+          depth: 0,
+          fieldMappings: [
+            {
+              discardIfEmpty: true,
+              extract: 'upccode',
+              generate: 'UPC',
+            },
+            {
+              discardIfEmpty: true,
+              extract: 'salesdescription',
+              generate: 'product_description',
+            },
+            {
+              discardIfEmpty: true,
+              extract: 'displayname',
+              generate: 'item_name',
+            },
+            {
+              discardIfEmpty: true,
+              extract: 'manufacturer',
+              generate: 'brand_name',
+            },
+            {
+              discardIfEmpty: true,
+              extract: 'manufacturer',
+              generate: 'manufacturer',
+            },
+            {
+              discardIfEmpty: true,
+              extract: 'mpn',
+              generate: 'part_number',
+            },
+            {
+              dataType: 'string',
+              generate: 'update_delete',
+              hardCodedValue: 'Update',
+            },
+          ],
+          id: 'commonAttributes',
+          isRoot: true,
+          lookups: [
+
+          ],
+          name: 'commonAttributes',
+        },
+        {
+          children: [
+
+          ],
+          deleted: false,
+          depth: 1,
+          fieldMappings: [
+
+          ],
+          id: 'Dimensions',
+          isRoot: false,
+          name: 'Dimensions',
+        },
+        {
+          children: [
+
+          ],
+          deleted: false,
+          depth: 1,
+          fieldMappings: [
+
+          ],
+          id: 'Discovery',
+          isRoot: false,
+          name: 'Discovery',
+        },
+        {
+          children: [
+
+          ],
+          deleted: false,
+          depth: 1,
+          fieldMappings: [
+
+          ],
+          id: 'Images',
+          isRoot: false,
+          name: 'Images',
+        },
+        {
+          children: [
+
+          ],
+          deleted: false,
+          depth: 1,
+          fieldMappings: [
+
+          ],
+          id: 'Fulfillment',
+          isRoot: false,
+          name: 'Fulfillment',
+        },
+        {
+          children: [
+
+          ],
+          deleted: false,
+          depth: 0,
+          fieldMappings: [
+
+          ],
+          id: 'BookLoader',
+          isRoot: true,
+          name: 'BookLoader',
+        },
+        {
+          children: [
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'autoaccessorymisc',
+              name: 'autoaccessorymisc',
+            },
+          ],
+          deleted: false,
+          depth: 0,
+          fieldMappings: [
+
+          ],
+          id: 'autoaccessory',
+          isRoot: true,
+          lookups: [
+
+          ],
+          name: 'autoaccessory',
+        },
+        {
+          children: [
+
+          ],
+          deleted: false,
+          depth: 1,
+          fieldMappings: [
+
+          ],
+          id: 'autoaccessorymisc',
+          isRoot: false,
+          name: 'autoaccessorymisc',
+        },
+        {
+          children: [
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'binocular',
+              name: 'binocular',
+            },
+          ],
+          deleted: false,
+          depth: 0,
+          fieldMappings: [
+
+          ],
+          id: 'cameraandphoto',
+          isRoot: true,
+          lookups: [
+
+          ],
+          name: 'cameraandphoto',
+        },
+        {
+          children: [
+
+          ],
+          deleted: false,
+          depth: 1,
+          fieldMappings: [
+
+          ],
+          id: 'binocular',
+          isRoot: false,
+          name: 'binocular',
+        },
+      ]);
+    });
+
+    test('should return correct form state for params passed for variationAttributes set as true', () => {
+      const state = {
+        'flow1-integration1': {
+          response: [
+            {
+              operation: 'mappingData',
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [
+                      {
+                        id: 'commonAttributes',
+                        name: 'commonAttributes',
+                        children: [
+                          {
+                            id: 'Dimensions',
+                            name: 'Dimensions',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                          {
+                            id: 'Discovery',
+                            name: 'Discovery',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                          {
+                            id: 'Images',
+                            name: 'Images',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                          {
+                            id: 'Fulfillment',
+                            name: 'Fulfillment',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+                          {
+                            extract: 'upccode',
+                            generate: 'UPC',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'salesdescription',
+                            generate: 'product_description',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'displayname',
+                            generate: 'item_name',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'manufacturer',
+                            generate: 'brand_name',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'manufacturer',
+                            generate: 'manufacturer',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            extract: 'mpn',
+                            generate: 'part_number',
+                            discardIfEmpty: true,
+                          },
+                          {
+                            generate: 'update_delete',
+                            hardCodedValue: 'Update',
+                            dataType: 'string',
+                          },
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                      {
+                        id: 'BookLoader',
+                        name: 'BookLoader',
+                        children: [
+
+                        ],
+                        fieldMappings: [
+
+                        ],
+                      },
+                      {
+                        id: 'autoaccessory',
+                        name: 'autoaccessory',
+                        children: [
+                          {
+                            id: 'autoaccessorymisc',
+                            name: 'autoaccessorymisc',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                      {
+                        id: 'cameraandphoto',
+                        name: 'cameraandphoto',
+                        children: [
+                          {
+                            id: 'binocular',
+                            name: 'binocular',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+
+                            ],
+                          },
+                        ],
+                        fieldMappings: [
+
+                        ],
+                        lookups: [
+
+                        ],
+                      },
+                    ],
+                  },
+                  variationMappings: {
+                    recordMappings: [
+                      {
+                        id: 'Animal',
+                        children: [
+                          {
+                            id: 'AnimalAccessories',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+                              {
+                                extract: 'atpleadtime',
+                                generate: 'size',
+                                discardIfEmpty: true,
+                              },
+                              {
+                                extract: 'accountingbook',
+                                generate: 'color',
+                                discardIfEmpty: true,
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                      {
+                        id: 'ArtAndCraftCategory',
+                        children: [
+                          {
+                            id: 'ArtAndCraft',
+                            children: [
+
+                            ],
+                            fieldMappings: [
+                              {
+                                extract: 'yes',
+                                generate: 'material',
+                                discardIfEmpty: true,
+                              },
+                              {
+                                extract: 'hits',
+                                generate: 'shape',
+                                discardIfEmpty: true,
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+            {
+              operation: 'generatesMetaData',
+              data: {
+                categoryRelationshipData: [
+                  {
+                    id: 'autoaccessory',
+                    name: 'Auto Accessory',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'autoaccessorymisc',
+                        name: 'autoaccessorymisc',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'autobattery',
+                        name: 'autobattery',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'autooil',
+                        name: 'autooil',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'Underwear',
+                        name: 'Underwear [Moved to Clothing]',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'baby',
+                    name: 'Baby',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'babyproducts',
+                        name: 'babyproducts',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'infanttoddlercarseat',
+                        name: 'infanttoddlercarseat',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'stroller',
+                        name: 'stroller',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'beauty',
+                    name: 'Beauty',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'beautymisc',
+                        name: 'beautymisc',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'bodycareproduct',
+                        name: 'bodycareproduct',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'conditioner',
+                        name: 'conditioner',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'BookLoader',
+                    name: 'Book Loader',
+                    isLeafNode: true,
+                    marketplace_domain: 'US',
+                    children: [
+
+                    ],
+                  },
+                  {
+                    id: 'cameraandphoto',
+                    name: 'Camera and Photo',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'binocular',
+                        name: 'binocular',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'blankmediaforcameras',
+                        name: 'blankmediaforcameras',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'camcorder',
+                        name: 'camcorder',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'Tripod',
+                        name: 'Tripod [Deprecated]',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'clothing',
+                    name: 'Clothing',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'PROTECTIVE_GLOVE',
+                        name: 'PROTECTIVE_GLOVE',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'accessory',
+                        name: 'accessory',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'childrenscostume',
+                        name: 'childrenscostume',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'vest',
+                        name: 'vest',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'coins',
+                    name: 'Coins',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'Bullion',
+                        name: 'Bullion',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'Coins',
+                        name: 'Coins',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'CollectibleCoins',
+                        name: 'CollectibleCoins',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: 'FoodServiceAndJanSan',
+                    name: 'Food Service and Jan San',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    children: [
+                      {
+                        id: 'FoodServiceSupply',
+                        name: 'FoodServiceSupply',
+                        isLeafNode: true,
+                      },
+                      {
+                        id: 'JanitorialSupply',
+                        name: 'JanitorialSupply',
+                        isLeafNode: true,
+                      },
+                    ],
+                  },
+                ],
+
+              },
+            },
+          ],
+          collapseStatus: {
+            collapsed: true,
+            collapseAction: 'collapse',
+          },
+          filters: {
+            attributes: {
+              preferred: true,
+              optional: true,
+            },
+            mappingFilter: 'all',
+          },
+          uiAssistant: 'amazon',
+        },
+        'integrationId-flowId-sectionId': {
+          dummy: 'data',
+        },
+        'flow2-integration2': {},
+      };
+
+      expect(selector(state, 'integration1', 'flow1')).toEqual([
+        {
+          children: [
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'Dimensions',
+              name: 'Dimensions',
+            },
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'Discovery',
+              name: 'Discovery',
+            },
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'Images',
+              name: 'Images',
+            },
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'Fulfillment',
+              name: 'Fulfillment',
+            },
+          ],
+          deleted: false,
+          depth: 0,
+          fieldMappings: [
+            {
+              discardIfEmpty: true,
+              extract: 'upccode',
+              generate: 'UPC',
+            },
+            {
+              discardIfEmpty: true,
+              extract: 'salesdescription',
+              generate: 'product_description',
+            },
+            {
+              discardIfEmpty: true,
+              extract: 'displayname',
+              generate: 'item_name',
+            },
+            {
+              discardIfEmpty: true,
+              extract: 'manufacturer',
+              generate: 'brand_name',
+            },
+            {
+              discardIfEmpty: true,
+              extract: 'manufacturer',
+              generate: 'manufacturer',
+            },
+            {
+              discardIfEmpty: true,
+              extract: 'mpn',
+              generate: 'part_number',
+            },
+            {
+              dataType: 'string',
+              generate: 'update_delete',
+              hardCodedValue: 'Update',
+            },
+          ],
+          id: 'commonAttributes',
+          isRoot: true,
+          lookups: [
+
+          ],
+          name: 'commonAttributes',
+        },
+        {
+          children: [
+
+          ],
+          deleted: false,
+          depth: 1,
+          fieldMappings: [
+
+          ],
+          id: 'Dimensions',
+          isRoot: false,
+          name: 'Dimensions',
+        },
+        {
+          children: [
+
+          ],
+          deleted: false,
+          depth: 1,
+          fieldMappings: [
+
+          ],
+          id: 'Discovery',
+          isRoot: false,
+          name: 'Discovery',
+        },
+        {
+          children: [
+
+          ],
+          deleted: false,
+          depth: 1,
+          fieldMappings: [
+
+          ],
+          id: 'Images',
+          isRoot: false,
+          name: 'Images',
+        },
+        {
+          children: [
+
+          ],
+          deleted: false,
+          depth: 1,
+          fieldMappings: [
+
+          ],
+          id: 'Fulfillment',
+          isRoot: false,
+          name: 'Fulfillment',
+        },
+        {
+          children: [
+
+          ],
+          deleted: false,
+          depth: 0,
+          fieldMappings: [
+
+          ],
+          id: 'BookLoader',
+          isRoot: true,
+          name: 'BookLoader',
+        },
+        {
+          children: [
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'autoaccessorymisc',
+              name: 'autoaccessorymisc',
+            },
+          ],
+          deleted: false,
+          depth: 0,
+          fieldMappings: [
+
+          ],
+          id: 'autoaccessory',
+          isRoot: true,
+          lookups: [
+
+          ],
+          name: 'autoaccessory',
+        },
+        {
+          children: [
+
+          ],
+          deleted: false,
+          depth: 1,
+          fieldMappings: [
+
+          ],
+          id: 'autoaccessorymisc',
+          isRoot: false,
+          name: 'autoaccessorymisc',
+        },
+        {
+          children: [
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'binocular',
+              name: 'binocular',
+            },
+          ],
+          deleted: false,
+          depth: 0,
+          fieldMappings: [
+
+          ],
+          id: 'cameraandphoto',
+          isRoot: true,
+          lookups: [
+
+          ],
+          name: 'cameraandphoto',
+        },
+        {
+          children: [
+
+          ],
+          deleted: false,
+          depth: 1,
+          fieldMappings: [
+
+          ],
+          id: 'binocular',
+          isRoot: false,
+          name: 'binocular',
+        },
+      ]);
     });
   });
 });
