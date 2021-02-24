@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Filters({ integrationId, flowId, uiAssistant }) {
+export default function Filters({ integrationId, flowId, uiAssistant }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -188,5 +188,3 @@ function Filters({ integrationId, flowId, uiAssistant }) {
     </ClickAwayListener>
   );
 }
-
-export default Filters;

@@ -32,7 +32,7 @@ describe('filter processor logic', () => {
 
       expect(requestBody(editor)).toEqual(expectedBody);
     });
-    test('should correctly return the request body if editor data if of object type', () => {
+    test('should correctly return the request body if editor data is of record object type', () => {
       editor.data = {
         record: {
           name: 'Bob',
@@ -41,6 +41,25 @@ describe('filter processor logic', () => {
       const expectedBody = {
         rules: { version: '1', rules: ['equals', ['string', ['extract', 'id']], '456'] },
         data: [{name: 'Bob'}],
+        options: { contextData: {} },
+      };
+
+      expect(requestBody(editor)).toEqual(expectedBody);
+    });
+    test('should correctly return the request body if editor data contains rows', () => {
+      editor.data = {
+        rows: [{
+          id: 123,
+          name: 'Bob',
+        },
+        {
+          id: 123,
+          name: 'Bob',
+        }],
+      };
+      const expectedBody = {
+        rules: { version: '1', rules: ['equals', ['string', ['extract', 'id']], '456'] },
+        data: [{id: 123, name: 'Bob'}],
         options: { contextData: {} },
       };
 

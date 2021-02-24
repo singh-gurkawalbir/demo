@@ -13,7 +13,7 @@ import PanelLoader from '../../PanelLoader';
 const useStyles = makeStyles(() => ({
   ...layouts,
 }));
-const Editor = props => {
+export default function Editor(props) {
   const {
     layout = 'compact',
     templateClassName,
@@ -92,7 +92,7 @@ const Editor = props => {
       ) }
     </PanelGrid>
   );
-};
+}
 
 Editor.propTypes = {
   rule: string,
@@ -104,4 +104,3 @@ Editor.propTypes = {
   handleDataChange: func.isRequired,
 };
 
-export default Editor;

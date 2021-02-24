@@ -105,7 +105,7 @@ const Tiles = ({ colors }) =>
     </div>
   ));
 
-function ColorPalette() {
+export default function ColorPalette() {
   const classes = useStyles();
 
   return (
@@ -137,5 +137,3 @@ function ColorPalette() {
     </>
   );
 }
-
-export default ColorPalette;

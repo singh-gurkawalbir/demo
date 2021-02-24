@@ -188,8 +188,8 @@ const FlowsTable = ({integrationId, storeId}) => {
   const match = useRouteMatch();
   const filterKey = `${integrationId}-flows`;
   const { sectionId } = match.params;
-  const flowFilter = useSelector(state => selectors.filter(state, filterKey)) || defaultFilter;
-  const flowsFilterConfig = useMemo(() => ({ ...flowFilter, excludeHiddenFlows: true }), [flowFilter]);
+  const flowFilter = useSelector(state => selectors.filter(state, filterKey));
+  const flowsFilterConfig = useMemo(() => ({ ...(flowFilter || {}), excludeHiddenFlows: true }), [flowFilter]);
   const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
   const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, storeId, flowsFilterConfig);
@@ -234,9 +234,10 @@ function FlowList({ integrationId, storeId }) {
   const section = flowSections.find(s => s.titleId === sectionId);
 
   useEffect(() => {
-    dispatch(actions.patchFilter(filterKey, {sort: {order: 'asc', orderBy: 'name'}}));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  },
+  [dispatch, filterKey]);
+
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
 
@@ -289,7 +290,6 @@ function FlowList({ integrationId, storeId }) {
         <div className={classes.action}>
           <KeywordSearch
             filterKey={filterKey}
-            defaultFilter={defaultFilter}
         />
         </div>
       </PanelHeader>
