@@ -15,14 +15,11 @@ import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
-import ButtonGroup from '../../ButtonGroup';
 
 import DrawerActions from './DrawerActions';
+import ActionGroup from '../../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
-  spaceBetween: {
-    flex: 1,
-  },
   divider: {
     margin: theme.spacing(0.5, 1, 0),
     height: 24,
@@ -191,7 +188,7 @@ export default function EditorDrawer(props) {
       </DrawerContent>
 
       <DrawerFooter>
-        <ButtonGroup>
+        <ActionGroup>
           {patchOnSave ? (
             <>
               <EditorSaveButton
@@ -242,9 +239,9 @@ export default function EditorDrawer(props) {
             onClick={handleCancelClick}>
             Cancel
           </Button>
-        </ButtonGroup>
-        <div className={classes.spaceBetween} />
-        <ButtonGroup>
+        </ActionGroup>
+
+        <ActionGroup position="right">
           {showPreviewAction && (
           <>
             <Button
@@ -268,7 +265,7 @@ export default function EditorDrawer(props) {
             value={!!editor.autoEvaluate}
           />
           )}
-        </ButtonGroup>
+        </ActionGroup>
       </DrawerFooter>
     </RightDrawer>
   );
