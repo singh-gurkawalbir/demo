@@ -6,6 +6,7 @@ import CloseIcon from '../../icons/CloseIcon';
 import BackArrowIcon from '../../icons/BackArrowIcon';
 import InfoIconButton from '../../InfoIconButton';
 import Help from '../../Help';
+import { useDrawerContext } from './DrawerContext';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {
@@ -38,8 +39,6 @@ export default function DrawerHeader({
   helpTitle,
   helpKey,
   hideBackButton = false,
-  fullPath, // forwarded from parent (RightDrawer)
-  onClose, // forwarded from parent (RightDrawer)
   CloseButton,
   disableClose,
   className,
@@ -47,6 +46,7 @@ export default function DrawerHeader({
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
+  const { fullPath, onClose } = useDrawerContext();
   const { isExact } = matchPath(location.pathname, fullPath) || {};
   const showBackButton = !isExact && !hideBackButton;
 

@@ -12,16 +12,15 @@ import SaveButtonGroup from '../SaveButtonGroup';
 import CloseIconButton from './CloseIconButton';
 import actions from '../../../actions';
 import ActionsRibbon from './ActionsRibbon';
+import { useDrawerContext } from '../../drawer/Right/DrawerContext';
 
-// Note that props contain the forwarded 'fullPath' and 'onClose' handlers
-// proxied from the right drawer.
 // hideSave: This is currently only used for the playground where we do not
 // want the user to have any options to save the editor.
-// eslint-disable-next-line no-unused-vars
-function RouterWrappedContent({ hideSave, onClose, fullPath}) {
+function RouterWrappedContent({ hideSave }) {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const { editorId } = useParams();
+  const { onClose } = useDrawerContext();
   const editorType = useSelector(state => selectors._editor(state, editorId).editorType);
   const editorTitle = useSelector(state => selectors._editor(state, editorId).editorTitle);
 
@@ -46,7 +45,7 @@ function RouterWrappedContent({ hideSave, onClose, fullPath}) {
 
   return (
     <>
-      <DrawerHeader title={editorTitle || label} CloseButton={CloseButton} fullPath={fullPath}>
+      <DrawerHeader title={editorTitle || label} CloseButton={CloseButton}>
         <ActionsRibbon editorId={editorId} />
       </DrawerHeader>
 
