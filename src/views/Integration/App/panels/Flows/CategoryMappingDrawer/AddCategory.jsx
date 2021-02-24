@@ -49,10 +49,10 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
     useSelector(state =>
       selectors.categoryRelationshipData(state, integrationId, flowId)
     ) || [];
-  const { uiAssistant = '' } =
+  const uiAssistant =
     useSelector(state =>
-      selectors.categoryMapping(state, integrationId, flowId)
-    ) || {};
+      selectors.categoryMapping(state, integrationId, flowId)?.uiAssistant || ''
+    );
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);

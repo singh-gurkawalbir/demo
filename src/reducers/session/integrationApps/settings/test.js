@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer from '.';
+import reducer, {selectors} from '.';
 import actions from '../../../../actions';
 
 const amazonCategoryMappings = {
@@ -6942,6 +6942,334 @@ describe('integrationApps reducer test cases', () => {
           },
         });
       });
+    });
+  });
+});
+
+describe('integrationApps selectors test cases', () => {
+  describe('integrationApps settings integrationAppSettingsFormState test', () => {
+    test('should not throw exception for bad params', () => {
+      expect(selectors.integrationAppSettingsFormState()).toEqual({});
+      expect(selectors.integrationAppSettingsFormState({})).toEqual({});
+      expect(selectors.integrationAppSettingsFormState(null)).toEqual({});
+      expect(selectors.integrationAppSettingsFormState(null, null, null, null)).toEqual({});
+    });
+
+    test('should return correct form state for params passed', () => {
+      const state = {
+        'flow1-integration1': {
+          response: [{}],
+          uiAssistant: 'amazon',
+        },
+        'integrationId-flowId-sectionId': {
+          dummy: 'data',
+        },
+      };
+
+      expect(selectors.integrationAppSettingsFormState(state, 'integrationId', 'flowId', 'sectionId')).toEqual({
+        dummy: 'data',
+      });
+      expect(selectors.integrationAppSettingsFormState(state, 'integrationId', 'flowId')).toEqual({});
+    });
+  });
+
+  describe('integrationApps settings mkCategoryMappingsCollapsedStatus test', () => {
+    const categoryMappingsCollapsedStatusSelector = selectors.mkCategoryMappingsCollapsedStatus();
+
+    test('should not throw exception for bad params', () => {
+      expect(categoryMappingsCollapsedStatusSelector()).toEqual({});
+      expect(categoryMappingsCollapsedStatusSelector({})).toEqual({});
+      expect(categoryMappingsCollapsedStatusSelector(null)).toEqual({});
+      expect(categoryMappingsCollapsedStatusSelector(null, null, null, null)).toEqual({});
+    });
+
+    test('should return correct form state for params passed', () => {
+      const state = {
+        'flow1-integration1': {
+          response: [{}],
+          collapseStatus: {
+            collapsed: true,
+            collapseAction: 'collapse',
+          },
+          uiAssistant: 'amazon',
+        },
+        'integrationId-flowId-sectionId': {
+          dummy: 'data',
+        },
+        'flow2-integration2': {},
+      };
+
+      expect(categoryMappingsCollapsedStatusSelector(state, 'integration1', 'flow1')).toEqual({
+        collapsed: true,
+        collapseAction: 'collapse',
+      });
+      expect(categoryMappingsCollapsedStatusSelector(state, 'integration2', 'flow2')).toEqual({
+      });
+    });
+  });
+
+  describe('integrationApps settings mkCategoryMappingFilters test', () => {
+    const cmFiltersSelector = selectors.mkCategoryMappingFilters();
+
+    test('should not throw exception for bad params', () => {
+      expect(cmFiltersSelector()).toEqual(null);
+      expect(cmFiltersSelector({})).toEqual(null);
+      expect(cmFiltersSelector(null)).toEqual(null);
+      expect(cmFiltersSelector(null, null, null, null)).toEqual(null);
+    });
+
+    test('should return correct form state for params passed', () => {
+      const state = {
+        'flow1-integration1': {
+          response: [{}],
+          collapseStatus: {
+            collapsed: true,
+            collapseAction: 'collapse',
+          },
+          filters: {
+            attributes: {
+              preferred: true,
+              optional: true,
+            },
+            mappingFilter: 'all',
+          },
+          uiAssistant: 'amazon',
+        },
+        'integrationId-flowId-sectionId': {
+          dummy: 'data',
+        },
+        'flow2-integration2': {},
+      };
+
+      expect(cmFiltersSelector(state, 'integration1', 'flow1')).toEqual({
+        attributes: {
+          preferred: true,
+          optional: true,
+        },
+        mappingFilter: 'all',
+      });
+      expect(cmFiltersSelector(state, 'integration2', 'flow2')).toEqual();
+    });
+  });
+
+  describe('integrationApps settings mkCategoryMappingFilters test', () => {
+    const cmFiltersSelector = selectors.mkCategoryMappingFilters();
+
+    test('should not throw exception for bad params', () => {
+      expect(cmFiltersSelector()).toEqual(null);
+      expect(cmFiltersSelector({})).toEqual(null);
+      expect(cmFiltersSelector(null)).toEqual(null);
+      expect(cmFiltersSelector(null, null, null, null)).toEqual(null);
+    });
+
+    test('should return correct form state for params passed', () => {
+      const state = {
+        'flow1-integration1': {
+          response: [{}],
+          collapseStatus: {
+            collapsed: true,
+            collapseAction: 'collapse',
+          },
+          filters: {
+            attributes: {
+              preferred: true,
+              optional: true,
+            },
+            mappingFilter: 'all',
+          },
+          uiAssistant: 'amazon',
+        },
+        'integrationId-flowId-sectionId': {
+          dummy: 'data',
+        },
+        'flow2-integration2': {},
+      };
+
+      expect(cmFiltersSelector(state, 'integration1', 'flow1')).toEqual({
+        attributes: {
+          preferred: true,
+          optional: true,
+        },
+        mappingFilter: 'all',
+      });
+      expect(cmFiltersSelector(state, 'integration2', 'flow2')).toEqual();
+    });
+  });
+
+  describe('integrationApps settings categoryMapping test', () => {
+    test('should not throw exception for bad params', () => {
+      expect(selectors.categoryMapping()).toEqual(null);
+      expect(selectors.categoryMapping({})).toEqual();
+      expect(selectors.categoryMapping(null)).toEqual(null);
+      expect(selectors.categoryMapping(null, null, null)).toEqual(null);
+    });
+
+    test('should return correct form state for params passed', () => {
+      const state = {
+        'flow1-integration1': {
+          response: [{}],
+          collapseStatus: {
+            collapsed: true,
+            collapseAction: 'collapse',
+          },
+          filters: {
+            attributes: {
+              preferred: true,
+              optional: true,
+            },
+            mappingFilter: 'all',
+          },
+          uiAssistant: 'amazon',
+        },
+        'integrationId-flowId-sectionId': {
+          dummy: 'data',
+        },
+        'flow2-integration2': {},
+      };
+
+      expect(selectors.categoryMapping(state, 'integration1', 'flow1')).toEqual({
+        response: [{}],
+        collapseStatus: {
+          collapsed: true,
+          collapseAction: 'collapse',
+        },
+        filters: {
+          attributes: {
+            preferred: true,
+            optional: true,
+          },
+          mappingFilter: 'all',
+        },
+        uiAssistant: 'amazon',
+      });
+      expect(selectors.categoryMapping(state, 'integration2', 'flow2')).toEqual({});
+    });
+  });
+
+  describe('integrationApps settings mkMappedcategories test', () => {
+    const mappedCategoriesSelector = selectors.mkMappedCategories();
+
+    test('should not throw exception for bad params', () => {
+      expect(mappedCategoriesSelector()).toEqual([]);
+      expect(mappedCategoriesSelector({})).toEqual([]);
+      expect(mappedCategoriesSelector(null)).toEqual([]);
+      expect(mappedCategoriesSelector(null, null, null, null)).toEqual([]);
+    });
+
+    test('should return correct form state for params passed', () => {
+      let state = {
+        'flow1-integration1': {
+          response: [{}],
+          collapseStatus: {
+            collapsed: true,
+            collapseAction: 'collapse',
+          },
+          filters: {
+            attributes: {
+              preferred: true,
+              optional: true,
+            },
+            mappingFilter: 'all',
+          },
+          uiAssistant: 'amazon',
+        },
+        'integrationId-flowId-sectionId': {
+          dummy: 'data',
+        },
+        'flow2-integration2': {},
+      };
+
+      state = reducer(state, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration1', 'flow1', amazonCategoryMappings));
+      expect(mappedCategoriesSelector(state, 'integration1', 'flow1')).toEqual([
+        {
+          children: [
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'Dimensions',
+              name: 'Dimensions',
+            },
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'Discovery',
+              name: 'Discovery',
+            },
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'Images',
+              name: 'Images',
+            },
+            {
+              children: [
+
+              ],
+              fieldMappings: [
+
+              ],
+              id: 'Fulfillment',
+              name: 'Fulfillment',
+            },
+          ],
+          id: 'commonAttributes',
+          name: 'Common',
+        },
+      ]);
+      expect(mappedCategoriesSelector(state, 'integration2', 'flow2')).toEqual([]);
+    });
+  });
+
+  describe('integrationApps settings mkVariationMappingData test', () => {
+    const mappedVariationsSelector = selectors.mkVariationMappingData();
+
+    test('should not throw exception for bad params', () => {
+      expect(mappedVariationsSelector()).toEqual([]);
+      expect(mappedVariationsSelector({})).toEqual([]);
+      expect(mappedVariationsSelector(null)).toEqual([]);
+      expect(mappedVariationsSelector(null, null, null, null)).toEqual([]);
+    });
+
+    test('should return correct form state for params passed', () => {
+      let state = {
+        'flow1-integration1': {
+          response: [{}],
+          collapseStatus: {
+            collapsed: true,
+            collapseAction: 'collapse',
+          },
+          filters: {
+            attributes: {
+              preferred: true,
+              optional: true,
+            },
+            mappingFilter: 'all',
+          },
+          uiAssistant: 'amazon',
+        },
+        'integrationId-flowId-sectionId': {
+          dummy: 'data',
+        },
+        'flow2-integration2': {},
+      };
+
+      state = reducer(state, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration1', 'flow1', amazonCategoryMappings));
+      expect(mappedVariationsSelector(state, 'integration1', 'flow1')).toEqual([
+
+      ]);
+      expect(mappedVariationsSelector(state, 'integration2', 'flow2')).toEqual([]);
     });
   });
 });
