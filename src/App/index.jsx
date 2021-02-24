@@ -154,9 +154,7 @@ export default function App() {
             <ConfirmDialogProvider>
               <SnackbarProvider
                 classes={snackbarClasses} maxSnack={3} ContentProps={{
-                  classes: {
-                    root: classes.root,
-                  },
+                  classes: { root: classes.root },
                 }}>
                 <FontStager />
                 <CssBaseline />
