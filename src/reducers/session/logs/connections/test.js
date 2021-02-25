@@ -145,7 +145,7 @@ describe('Connections logs reducer', () => {
 
     expect(state).toEqual(initialState);
   });
-  test('CONNECTIONS_LOGS_DELETE should empty the state corresponding to connectionId', () => {
+  test('CONNECTIONS_LOGS_DELETE should remove logs if present', () => {
     const connectionId = 's123';
     const initialState = {
       connections: {
@@ -163,7 +163,9 @@ describe('Connections logs reducer', () => {
 
     expect(state).toEqual({
       connections: {
-        s123: {},
+        s123: {
+          status: 'success',
+        },
         s78: {
           status: 'success',
           logs: '',
