@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { uniq } from 'lodash';
@@ -7,6 +7,7 @@ import { Card, Typography } from '@material-ui/core';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
+import {CONNECTORS_TO_IGNORE, WEBHOOK_ONLY_APPLICATIONS} from '../../utils/constants';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import {applicationsList} from '../../constants/applications';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
@@ -61,24 +62,34 @@ export default function ApplicationsList({ filter }) {
   );
   const connectorsMetadata = applicationsList();
   const templates = useSelector(state => selectors.marketplaceTemplatesByApp(state));
-  let applications = [];
-  const lowerCaseFilter = filter?.keyword?.toLowerCase();
 
-  connectors.forEach(c => { applications = applications.concat(c.applications); });
-  templates.forEach(t => { applications = applications.concat(t.applications); });
-  applications = uniq(applications.filter(Boolean).sort());
+  const applications = useMemo(() => {
+    let applications = [];
 
-  // do not filter the applications if user has not typed in any search string
-  if (lowerCaseFilter) {
-    applications = applications.filter(
-      a => {
-        const {name} = connectorsMetadata?.find(c => c.id === a) || {};
+    const lowerCaseFilter = filter?.keyword?.toLowerCase();
 
-        return a.toLowerCase().includes(lowerCaseFilter) ||
-               name?.toLowerCase().includes(lowerCaseFilter);
-      }
-    );
-  }
+    connectors.forEach(c => { applications = applications.concat(c.applications); });
+    templates.forEach(t => { applications = applications.concat(t.applications); });
+    connectorsMetadata.forEach(c => { applications = applications.concat(c.id); });
+    applications = applications.filter(a => !CONNECTORS_TO_IGNORE.includes(a) && !WEBHOOK_ONLY_APPLICATIONS.includes(a) && a !== 'other');
+
+    applications = uniq(applications.filter(Boolean).sort());
+
+    // do not filter the applications if user has not typed in any search string
+    if (lowerCaseFilter) {
+      applications = applications.filter(
+        a => {
+          const {name} = connectorsMetadata?.find(c => c.id === a) || {};
+
+          return a.toLowerCase().includes(lowerCaseFilter) ||
+                 name?.toLowerCase().includes(lowerCaseFilter);
+        }
+      );
+    }
+
+    return applications;
+  }, [connectors, connectorsMetadata, filter?.keyword, templates]);
+
   useEffect(() => {
     dispatch(actions.marketplace.requestConnectors());
     dispatch(actions.marketplace.requestTemplates());

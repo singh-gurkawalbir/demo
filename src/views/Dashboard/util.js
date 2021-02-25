@@ -49,7 +49,7 @@ export function tileStatus(tile) {
       variant = 'warning';
       break;
     case TILE_STATUS.HAS_ERRORS:
-      label = `${numError} Error${numError > 0 ? 's' : ''}`;
+      label = `${numError} Error${numError > 1 ? 's' : ''}`;
       variant = 'error';
       break;
     default:

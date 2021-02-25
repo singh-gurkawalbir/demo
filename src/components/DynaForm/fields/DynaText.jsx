@@ -9,7 +9,7 @@ import { isNaN } from 'lodash';
 import CopyIcon from '../../icons/CopyIcon';
 import ActionButton from '../../ActionButton';
 import FieldHelp from '../FieldHelp';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
@@ -178,7 +178,7 @@ function DynaText(props) {
         onChange={handleFieldChange}
         className={clsx(classes.formField, {[classes.textAreaField]: multiline }, className)}
       />
-      <ErroredMessageComponent
+      <FieldMessage
         isValid={isValid}
         description={description}
         errorMessages={errorMessages}

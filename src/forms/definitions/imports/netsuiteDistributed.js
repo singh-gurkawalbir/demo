@@ -8,8 +8,10 @@ export default {
       newValues['/netsuite/recordType'] = 'file';
       newValues['/distributed'] = false;
       newValues['/adaptorType'] = 'NetSuiteImport';
+      newValues['/blob'] = true;
     } else {
       delete newValues['/blobKeyPath'];
+      delete newValues['/blob'];
     }
 
     if (newValues['/netsuite_da/operation'] === 'add' && !newValues['/ignoreExisting']) {
@@ -50,7 +52,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (r.resourceType === 'transferFiles' || r.blobKeyPath) return 'blob';
+        if (r.resourceType === 'transferFiles' || r.blob) return 'blob';
 
         return 'records';
       },
@@ -88,7 +90,7 @@ export default {
     ignoreMissing: {
       fieldId: 'ignoreMissing',
       visibleWhenAll: [
-        { field: 'netsuite_da.operation', is: ['update'] },
+        { field: 'netsuite_da.operation', is: ['update', 'delete'] },
         {
           field: 'inputMode',
           is: ['records'],
@@ -151,7 +153,7 @@ export default {
       {
         collapsed: true,
         label: r => {
-          if (r?.resourceType === 'transferFiles' || r?.blobKeyPath) {
+          if (r?.resourceType === 'transferFiles' || r?.blob) {
             return 'How would you like the files transferred?';
           }
 

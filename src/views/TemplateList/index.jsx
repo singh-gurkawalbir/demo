@@ -27,7 +27,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const defaultFilter = { take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10 };
+const defaultFilter = {
+  take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
+  sort: { orderBy: 'name', order: 'asc' },
+};
 
 export default function TemplateList(props) {
   const { location } = props;
@@ -67,7 +70,7 @@ export default function TemplateList(props) {
               to={`${location.pathname}/add/templates/${generateNewId()}`}
               variant="text"
               color="primary">
-              <AddIcon /> Create listing
+              <AddIcon /> Create template
             </IconTextButton>
           </div>
         </CeligoPageBar>

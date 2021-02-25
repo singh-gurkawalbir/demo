@@ -55,7 +55,7 @@ export default function FormStep({ integrationId, formMeta, title, formSubmitHan
   //   <DynaForm fieldMeta={formMeta} formState={formState}>
   //     <DynaSubmit
   //       onClick={formSubmitHandler || handleSubmit}
-  //       showCustomFormValidations={showCustomFormValidations}>
+  //      >
   //       Submit
   //     </DynaSubmit>
   //   </DynaForm>

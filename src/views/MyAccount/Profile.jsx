@@ -54,14 +54,6 @@ const dateFormats = [{ value: 'MM/DD/YYYY', label: '12/31/1900' },
 export default function ProfileComponent() {
   const classes = useStyles();
 
-  const [formState, setFormState] = useState({
-    showFormValidationsBeforeTouch: false,
-  });
-  const showCustomFormValidations = useCallback(() => {
-    setFormState({
-      showFormValidationsBeforeTouch: true,
-    });
-  }, []);
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
@@ -254,7 +246,6 @@ export default function ProfileComponent() {
     fieldMeta,
     remount: count,
     skipMonitorLevelAccessCheck: true,
-    ...formState,
   });
 
   return (
@@ -263,7 +254,6 @@ export default function ProfileComponent() {
       <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
       <DynaSubmit
         formKey={formKey}
-        showCustomFormValidations={showCustomFormValidations}
         onClick={submitHandler()}
         className={classes.saveBtnProfile}
         disabled={disableSave}>

@@ -1,11 +1,11 @@
 import React, { useState, Fragment } from 'react';
-import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { List, ListItem, Typography, Collapse } from '@material-ui/core';
 import { selectors } from '../../../../../../reducers';
 import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
+import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   nested: {
@@ -31,10 +31,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function CategoryList({ integrationId, flowId }) {
   const classes = useStyles();
-  const mappedCategories =
-    useSelector(state =>
-      selectors.mappedCategories(state, integrationId, flowId)
-    ) || [];
+  const mappedCategories = useSelectorMemo(selectors.mkMappedCategories, integrationId, flowId) || [];
   const [listCollapseState, setListCollapseState] = useState({});
   const handleListClick = id => () => {
     setListCollapseState({

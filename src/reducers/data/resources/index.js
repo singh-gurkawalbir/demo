@@ -1,10 +1,13 @@
 import produce from 'immer';
-import { get } from 'lodash';
+import { get, isEqual } from 'lodash';
 import { createSelector } from 'reselect';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
-import { convertOldFlowSchemaToNewOne } from '../../../utils/flows';
+import { convertOldFlowSchemaToNewOne, getIAFlowSettings, getScriptsReferencedInFlow, isIntegrationApp } from '../../../utils/flows';
 import { stringCompare } from '../../../utils/sort';
+import mappingUtil from '../../../utils/mapping';
+import getRoutePath from '../../../utils/routePaths';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
 
 const emptyObject = {};
 const emptyList = [];
@@ -50,6 +53,10 @@ function replaceOrInsertResource(state, resourceType, resourceValue) {
     return { ...state, [type]: [...collection, resource] };
   }
 
+  // no need to make an update when it is the same resource...this helps in saving some render cycles
+  if (isEqual(resource, collection[index])) {
+    return state;
+  }
   const newCollection = [
     ...collection.slice(0, index),
     resource,
@@ -229,7 +236,7 @@ export default (state = {}, action) => {
     case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE:
       return getIntegrationAppsNextState(state, action);
     case actionTypes.STACK.USER_SHARING_TOGGLED:
-      resourceIndex = state.sshares.findIndex(user => user._id === id);
+      resourceIndex = state.sshares?.findIndex(user => user._id === id);
 
       if (resourceIndex > -1) {
         return produce(state, draft => {
@@ -256,7 +263,7 @@ export default (state = {}, action) => {
       return state;
     }
     case actionTypes.CONNECTION.DEREGISTER_COMPLETE:
-      resourceIndex = state.integrations.findIndex(
+      resourceIndex = state.integrations?.findIndex(
         r => r._id === integrationId
       );
 
@@ -273,7 +280,7 @@ export default (state = {}, action) => {
       return state;
 
     case actionTypes.CONNECTION.REGISTER_COMPLETE:
-      resourceIndex = state.integrations.findIndex(
+      resourceIndex = state.integrations?.findIndex(
         r => r._id === integrationId
       );
 
@@ -390,6 +397,97 @@ selectors.resource = (state, resourceType, id) => {
   return match;
 };
 
+/** returns 1st Page generator for a flow */
+selectors.firstFlowPageGenerator = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
+
+  if (flow?.pageGenerators?.length) {
+    const exportId = flow.pageGenerators[0]._exportId;
+
+    return selectors.resource(state, 'exports', exportId);
+  }
+
+  return emptyObject;
+};
+
+selectors.rdbmsConnectionType = (state, connectionId) => {
+  const connection = selectors.resource(state, 'connections', connectionId) || {};
+
+  return connection.rdbms && connection.rdbms.type;
+};
+
+selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
+  if (type === 'generate') {
+    /** generating generate Label */
+    const importResource = selectors.resource(state, 'imports', resourceId);
+    const importConn = selectors.resource(state, 'connections', importResource?._connectionId);
+
+    return `Import field (${mappingUtil.getApplicationName(
+      importResource,
+      importConn
+    )})`;
+  }
+  if (type === 'extract') {
+    /** generating extract Label */
+    const flow = selectors.resource(state, 'flows', flowId);
+
+    if (flow && flow.pageGenerators && flow.pageGenerators.length && flow.pageGenerators[0]._exportId) {
+      const {_exportId} = flow.pageGenerators[0];
+      const exportResource = selectors.resource(state, 'exports', _exportId);
+      const exportConn = selectors.resource(state, 'connections', exportResource?._connectionId);
+
+      return `Export field (${mappingUtil.getApplicationName(
+        exportResource,
+        exportConn
+      )})`;
+    }
+
+    return 'Source record field';
+  }
+};
+
+selectors.mappingImportSampleDataSupported = (state, importId) => {
+  const importResource = selectors.resource(state, 'imports', importId);
+
+  const isAssistant =
+  !!importResource.assistant && importResource.assistant !== 'financialforce';
+  const isIAResource = isIntegrationApp(importResource);
+
+  return isAssistant || isIAResource || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(importResource?.adaptorType);
+};
+
+selectors.redirectUrlToResourceListingPage = (
+  state,
+  resourceType,
+  resourceId
+) => {
+  if (resourceType === 'integration') {
+    return getRoutePath(`/integrations/${resourceId}/flows`);
+  }
+
+  if (resourceType === 'flow') {
+    const flow = selectors.resource(state, 'flows', resourceId);
+
+    if (flow) {
+      return getRoutePath(
+        `integrations/${flow._integrationId || 'none'}/flows`
+      );
+    }
+  }
+
+  return getRoutePath(RESOURCE_TYPE_SINGULAR_TO_PLURAL[resourceType]);
+};
+
+selectors.mappingSubRecordAndJSONPath = (state, importId, subRecordMappingId) => {
+  const importResource = selectors.resource(state, 'imports', importId);
+
+  if (subRecordMappingId && ['NetSuiteImport', 'NetSuiteDistributedImport'].includes(importResource.adaptorType)) {
+    return mappingUtil.getSubRecordRecordTypeAndJsonPath(importResource, subRecordMappingId);
+  }
+
+  return emptyObject;
+};
+
 // transformed from above selector
 function resourceTransformed(resourceIdState, resourceType) {
   if (!resourceIdState) return null;
@@ -452,6 +550,37 @@ selectors.connectionHasAs2Routing = (state, id) => {
   );
 };
 
+selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
+  const importResource = selectors.resource(state, 'imports', importId);
+
+  if (!importResource) return;
+  const {adaptorType} = importResource;
+
+  if (!['NetSuiteImport', 'NetSuiteDistributedImport'].includes(adaptorType)) {
+    return;
+  }
+  if (subRecordMappingId) {
+    const { recordType } = mappingUtil.getSubRecordRecordTypeAndJsonPath(
+      importResource,
+      subRecordMappingId
+    );
+
+    return recordType;
+  }
+
+  // give precedence to netsuite_da
+  return importResource.netsuite_da?.recordType || importResource.netsuite?.recordType;
+};
+
+selectors.isIntegrationApp = (state, integrationId) => {
+  const integration = selectors.resource(state,
+    'integrations',
+    integrationId
+  );
+
+  return !!(integration && integration._connectorId);
+};
+
 selectors.integrationInstallSteps = (state, id) => {
   const integration = selectors.resource(state, 'integrations', id);
 
@@ -486,6 +615,68 @@ selectors.integrationInstallSteps = (state, id) => {
   });
 };
 
+selectors.mkFlowGroupingsSections = () => {
+  const resourceSelector = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, integrationId) => resourceSelector(state, 'integrations', integrationId)?.flowGroupings,
+    groupings => {
+      if (!groupings || !groupings.length) { return null; }
+
+      return groupings.map(({name, _id}) => ({title: name, sectionId: _id }));
+    }
+  );
+};
+
+selectors.flowGroupingsSections = selectors.mkFlowGroupingsSections();
+selectors.mkGetAllCustomFormsForAResource = () => {
+  const resourceSelector = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, resourceType, resourceId) => resourceSelector(state, resourceType, resourceId),
+    (_1, resourceType) => resourceType,
+    (resource, resourceType) => {
+      if (!resource) return null;
+      const {settingsForm, settings, flowGroupings} = resource;
+      const settingsMeta = {settingsForm, settings, title: 'General', sectionId: 'general'};
+
+      const noFlowGroupings = {allSections: [settingsMeta], hasFlowGroupings: false};
+
+      // flowGroupings present for only in integrations
+      if (resourceType !== 'integrations') { return noFlowGroupings; }
+
+      // if the integration does not have it
+      if (!flowGroupings || !flowGroupings.length) {
+        return noFlowGroupings;
+      }
+
+      return {allSections: [settingsMeta, ...flowGroupings.map(({name, _id, settingsForm, settings}) =>
+        ({ title: name, sectionId: _id, settingsForm, settings }))],
+      hasFlowGroupings: true,
+      };
+    }
+  );
+};
+
+selectors.mkGetCustomFormPerSectionId = () => {
+  const sectionsMetadata = selectors.mkGetAllCustomFormsForAResource();
+
+  return createSelector(
+
+    (state, resourceType, resourceId) => sectionsMetadata(state, resourceType, resourceId),
+    (_1, _2, _3, sectionId) => sectionId,
+    (metadata, sectionId) => {
+      if (!metadata) return null;
+      const {allSections} = metadata;
+
+      if (!allSections) return null;
+
+      return allSections.find(ele => ele.sectionId === sectionId);
+    }
+  );
+};
+
+selectors.getSectionMetadata = selectors.mkGetCustomFormPerSectionId();
 // TODO: Santosh, All this selector does is transform the integration settings.
 // Its probably best if the component uses the resource selector directly
 // to fetch the integration, then use a util method to do the transform
@@ -543,6 +734,12 @@ selectors.defaultStoreId = (state, id, store) => {
   }
 
   return undefined;
+};
+
+selectors.resources = (state, resourceType) => {
+  if (!state || !resourceType) return emptyList;
+
+  return state[resourceType] || emptyList;
 };
 
 selectors.resourceList = (
@@ -681,10 +878,54 @@ selectors.resourceDetailsMap = createSelector(
   }
 );
 
-selectors.hasSettingsForm = (state, resourceType, resourceId) => {
+const hasFormData = settingsForm => !!(settingsForm && (settingsForm.form || settingsForm.init));
+
+const getSectionMetadata = selectors.mkGetCustomFormPerSectionId();
+
+selectors.hasSettingsForm = (state, resourceType, resourceId, sectionId) => {
+  if (sectionId) {
+    // it is an integration
+    const integrationSectionMetadata = getSectionMetadata(state, resourceType, resourceId, sectionId);
+
+    return hasFormData(integrationSectionMetadata?.settingsForm);
+  }
   const res = selectors.resource(state, resourceType, resourceId);
   const settingsForm = res && res.settingsForm;
 
-  return !!(settingsForm && (settingsForm.form || settingsForm.init));
+  return hasFormData(settingsForm);
 };
+
+selectors.iaFlowSettings = (state, integrationId, flowId, childId) => {
+  const integration = selectors.resource(state, 'integrations', integrationId);
+
+  return getIAFlowSettings(integration, flowId, childId);
+};
+
 // #endregion
+
+// #region script selectors
+const emptySet = [];
+
+selectors.scripts = createSelector(
+  state => state?.scripts || emptySet,
+  (state, flowId) => {
+    if (!flowId) {
+      return;
+    }
+
+    return state?.flows?.find(({_id}) => _id === flowId);
+  },
+  state => state?.imports || emptySet,
+  state => state?.exports || emptySet,
+  (scripts, flow, imports, exports) => {
+    if (!scripts) {
+      return emptySet;
+    }
+    if (!flow) {
+      return scripts;
+    }
+
+    return getScriptsReferencedInFlow({scripts, flow, imports, exports});
+  });
+
+// #endregion script selectors

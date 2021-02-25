@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -11,6 +11,7 @@ import LockIcon from '../../../../../../../components/icons/LockIcon';
 import TrashIcon from '../../../../../../../components/icons/TrashIcon';
 import DynaTypeableSelect from '../../../../../../../components/DynaForm/fields/DynaTypeableSelect';
 import MappingConnectorIcon from '../../../../../../../components/icons/MappingConnectorIcon';
+import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -96,12 +97,8 @@ export default function ImportMapping(props) {
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { mappings, initChangeIdentifier } = useSelector(state =>
-    selectors.categoryMappingsForSection(state, integrationId, flowId, editorId)
-  );
-  const { extractsMetadata: extractFields } = useSelector(state =>
-    selectors.categoryMappingMetadata(state, integrationId, flowId)
-  );
+  const { mappings, initChangeIdentifier } = useSelectorMemo(selectors.mkCategoryMappingsForSection, integrationId, flowId, editorId);
+  const { extractsMetadata: extractFields } = useSelectorMemo(selectors.mkCategoryMappingMetadata, integrationId, flowId);
   const mappingsCopy = mappings ? [...mappings] : [];
 
   mappingsCopy.push({});
@@ -173,6 +170,7 @@ export default function ImportMapping(props) {
                 />
                 {mapping.isRequired && (
                   <Tooltip
+                    data-public
                     title="This field is required by the application you are importing into"
                     placement="top">
                     <span className={classes.lockIcon}>

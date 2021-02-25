@@ -24,6 +24,7 @@ export default (state = {}, action) => {
     oldValue,
     newValue,
     isConditionalLookup,
+    isGroupedSampleData,
   } = action;
 
   return produce(state, draft => {
@@ -45,6 +46,7 @@ export default (state = {}, action) => {
           importId,
           subRecordMappingId,
           status: 'received',
+          isGroupedSampleData,
           mappingsCopy: deepClone(mappings),
           lookupsCopy: deepClone(lookups),
         };

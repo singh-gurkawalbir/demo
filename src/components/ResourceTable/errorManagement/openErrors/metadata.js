@@ -3,10 +3,14 @@ import Retry from '../actions/Retry';
 import Resolve from '../actions/Resolve';
 import ViewErrorDetails from '../actions/ViewErrorDetails';
 import EditRetryData from '../actions/EditRetry';
+import DownloadRetryData from '../actions/DownloadRetry';
 import SelectError from '../cells/SelectError';
 import SelectAllErrors from '../cells/SelectAllErrors';
+import SelectSource from '../cells/SelectSource';
+import SelectDate from '../cells/SelectDate';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
-import OverflowWrapper from '../cells/OverflowWrapper';
+import TextOverflowCell from '../../../TextOverflowCell';
+import ErrorMessage from '../cells/ErrorMessage';
 
 export default {
   columns: [
@@ -21,32 +25,48 @@ export default {
     },
     {
       heading: 'Message',
-      width: '50%',
-      value: r => <OverflowWrapper message={r.message} containsHtml />,
+      width: '40%',
+      value: (r, { flowId, resourceId }) => (
+        <ErrorMessage
+          message={r.message}
+          flowId={flowId}
+          resourceId={resourceId}
+          traceKey={r.traceKey}
+          exportDataURI={r.exportDataURI}
+          importDataURI={r.importDataURI}
+      />
+      ),
     },
     {
       heading: 'Code',
-      value: r => <OverflowWrapper message={r.code} />,
-      width: '20%',
-    },
-    {
-      heading: 'Source',
-      value: r => <OverflowWrapper message={r.source} />,
+      value: r => <TextOverflowCell message={r.code} />,
       width: '15%',
     },
     {
-      heading: 'Timestamp',
-      width: '10%',
+      headerValue: function SelectOpenSource(r, actionProps) {
+        return <SelectSource {...actionProps} />;
+      },
+      value: r => <TextOverflowCell message={r.source} />,
+      width: '15%',
+    },
+    {
+      headerValue: function SelectTimestamp(r, actionProps) {
+        return <SelectDate {...actionProps} />;
+      },
+      width: '15%',
       value: r => <CeligoTimeAgo date={r.occurredAt} />,
     },
   ],
-  rowActions: ({ retryDataKey }, { actionInProgress }) => {
+  rowActions: ({retryDataKey, source}, { actionInProgress }) => {
     if (actionInProgress) return [];
     const actions = [
       ...(retryDataKey ? [EditRetryData] : []),
       Resolve,
       ...(retryDataKey ? [Retry] : []),
       ViewErrorDetails,
+      // IO-19304, for errors occuring at FTP bridge, retry data returned will be metadata and not actual retry data,
+      // hence show download option
+      ...(retryDataKey && source === 'ftp_bridge' ? [DownloadRetryData] : []),
     ];
 
     return actions;

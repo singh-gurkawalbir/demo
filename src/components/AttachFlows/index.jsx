@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
@@ -20,20 +20,22 @@ export default function AttachFlows({ onClose, integrationId }) {
     allFlows,
   ]);
   const hasFlows = !!flows.length;
-
-  const [selected, setSelected] = useState({});
+  const [selected, setSelected] = useState([]);
   const handleSelectChange = flows => {
-    setSelected(flows);
-  };
+    const selectedFlows = [];
 
+    Object.entries(flows).forEach(([key, value]) => {
+      if (value) {
+        selectedFlows.push(key);
+      }
+    });
+    setSelected(selectedFlows);
+  };
   const dispatch = useDispatch();
-  const connectionIdsToRegister = useSelector(state => selectedFlowIds =>
-    selectors.getAllConnectionIdsUsedInSelectedFlows(state, selectedFlowIds)
-  );
+  const connectionIdsToRegister = useSelectorMemo(selectors.mkConnectionIdsUsedInSelectedFlows, selected);
   const handleAttachFlowsClick = useCallback(() => {
-    const flowIds = Object.keys(selected).filter(key => selected[key] === true);
     const selectedFlows =
-      flows && flows.filter(f => flowIds.indexOf(f._id) > -1);
+      flows && flows.filter(f => selected.indexOf(f._id) > -1);
 
     if (!selectedFlows) return;
     selectedFlows.forEach(flow => {
@@ -51,7 +53,7 @@ export default function AttachFlows({ onClose, integrationId }) {
 
     dispatch(
       actions.connection.requestRegister(
-        connectionIdsToRegister(selectedFlows),
+        connectionIdsToRegister,
         integrationId
       )
     );

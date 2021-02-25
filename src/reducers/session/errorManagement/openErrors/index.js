@@ -16,12 +16,18 @@ export default (state = {}, action) => {
   return produce(state, draft => {
     switch (type) {
       case actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.REQUEST:
+        if (!flowId) {
+          break;
+        }
         if (!draft[flowId]) {
           draft[flowId] = {};
         }
         draft[flowId].status = 'requested';
         break;
       case actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.RECEIVED: {
+        if (!flowId || !draft[flowId]) {
+          break;
+        }
         const flowErrors = (openErrors && openErrors.flowErrors) || [];
         const { data, total} = getErrorMapWithTotal(flowErrors, '_expOrImpId');
 
@@ -32,11 +38,18 @@ export default (state = {}, action) => {
       }
 
       case actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST:
+        if (!integrationId) {
+          break;
+        }
         if (!draft[integrationId]) {
           draft[integrationId] = {};
         }
+        draft[integrationId].status = 'requested';
         break;
       case actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.RECEIVED: {
+        if (!integrationId || !draft[integrationId]) {
+          break;
+        }
         const { data, total} = getErrorMapWithTotal(integrationErrors, '_flowId');
 
         draft[integrationId].status = 'received';

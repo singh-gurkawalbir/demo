@@ -1,33 +1,17 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 
 export const IntegrationAppCrumb = ({ integrationId }) => {
-  const history = useHistory();
   const integrationAppName = useSelector(state =>
-    selectors.resource(state, 'integrations', integrationId)?.name || 'Integration App'
+    selectors.resource(state, 'integrations', integrationId)?.name || 'Integration app'
   );
-  const defaultChildId = useSelector(state =>
-    selectors.defaultStoreId(state, integrationId)
-  );
-  const integrationAppUrlName = getIntegrationAppUrlName(integrationAppName);
-
-  const handleClick = useCallback(e => {
-    if (defaultChildId) {
-      e.preventDefault();
-      history.push(`/integrationapps/${integrationAppUrlName}/${integrationId}/child/${defaultChildId}`);
-    }
-  }, [defaultChildId, history, integrationAppUrlName, integrationId]);
 
   return (
     <LoadResources resources="integrations">
-      <span onClick={handleClick}>
-        {integrationAppName}
-      </span>
+      {integrationAppName}
     </LoadResources>
   );
 };

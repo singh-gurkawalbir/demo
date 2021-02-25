@@ -1,30 +1,25 @@
-/* global describe, test, expect */
+/* global describe, test */
 
-import { call, put } from 'redux-saga/effects';
+import { expectSaga } from 'redux-saga-test-plan';
+import * as matchers from 'redux-saga-test-plan/matchers';
+import { throwError } from 'redux-saga-test-plan/providers';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
-import { fetchMetadata } from '.';
+import { fetchMetadata, updateInstallBase } from '.';
 
-describe('evaluateProcessor saga', () => {
-  test('should return the correct selector and handle the respone correctly', () => {
-    const _integrationId = 1;
+describe('evaluate fetchMetadata saga', () => {
+  const fieldType = 'dummy';
+  const fieldName = 'dummy';
+  const _integrationId = 'dummy';
+
+  test('If api successful, should dispatch receivedMetadata while there is no options.autoPostBack', () => {
+    const options = {};
     const metadata = { a: 1 };
-    const path = `/integrations/${_integrationId}/settings/refreshMetadata`;
-    const fieldName = 'extract';
-    const fieldType = 'fieldId';
-    const saga = fetchMetadata({ fieldType, fieldName, _integrationId });
-    const apiCallEffect = saga.next().value;
 
-    expect(apiCallEffect).toEqual(
-      call(apiCallWithRetry, {
-        path,
-        opts: { body: { fieldName, type: fieldType }, method: 'PUT' },
-        message: 'Loading',
-      })
-    );
-
-    expect(saga.next(metadata).value).toEqual(
-      put(
+    return expectSaga(fetchMetadata, { fieldType, fieldName, _integrationId, options })
+      .provide([[matchers.call.fn(apiCallWithRetry), metadata]])
+      .call.fn(apiCallWithRetry)
+      .put(
         actions.connectors.receivedMetadata(
           metadata,
           fieldType,
@@ -32,29 +27,70 @@ describe('evaluateProcessor saga', () => {
           _integrationId
         )
       )
-    );
-    expect(saga.next().done).toEqual(true);
+      .run();
   });
+  test('If api successful, should dispatch multiple receivedMetadata while metadata is an array and options.autoPostBack is true', () => {
+    const options = { autoPostBack: true };
+    const metadata = [{ a: 1 }, { b: 2 }, { c: 3 }];
 
-  test('should call failedMetadata action when received error', () => {
-    const _integrationId = 1;
-    const path = `/integrations/${_integrationId}/settings/refreshMetadata`;
-    const fieldName = 'extract';
-    const fieldType = 'fieldId';
-    const saga = fetchMetadata({ fieldType, fieldName, _integrationId });
-    const apiCallEffect = saga.next().value;
+    const saga = expectSaga(fetchMetadata, { fieldType, fieldName, _integrationId, options })
+      .provide([[matchers.call.fn(apiCallWithRetry), metadata]])
+      .call.fn(apiCallWithRetry);
 
-    expect(apiCallEffect).toEqual(
-      call(apiCallWithRetry, {
-        path,
-        opts: { body: { type: fieldType, fieldName }, method: 'PUT' },
-        message: 'Loading',
-      })
+    metadata.map(fieldMeta =>
+      saga.put(
+        actions.connectors.receivedMetadata(
+          fieldMeta,
+          null,
+          fieldMeta.name,
+          _integrationId
+        )
+      )
     );
 
-    expect(saga.throw(new Error()).value).toEqual(
-      put(actions.connectors.failedMetadata(fieldName, _integrationId))
-    );
-    expect(saga.next().done).toEqual(true);
+    return saga.run();
   });
+  test('If api successful, should dispatch receivedMetadata while metadata is not an array and options.autoPostBack is true', () => {
+    const options = { autoPostBack: true };
+    const metadata = { name: 'dummy' };
+
+    return expectSaga(fetchMetadata, { fieldType, fieldName, _integrationId, options })
+      .provide([[matchers.call.fn(apiCallWithRetry), metadata]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.connectors.receivedMetadata(
+          metadata,
+          null,
+          metadata.name,
+          _integrationId
+        )
+      )
+      .run();
+  });
+  test('If api failed, should dispatch failedMetadata', () => {
+    const options = {};
+    const error = new Error('error');
+
+    return expectSaga(fetchMetadata, { fieldType, fieldName, _integrationId, options })
+      .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
+      .call.fn(apiCallWithRetry)
+      .put(actions.connectors.failedMetadata(fieldName, _integrationId))
+      .run();
+  });
+});
+
+describe('evaluate updateInstallBase saga', () => {
+  const connectorId = '123';
+
+  test('api call is success', () => expectSaga(updateInstallBase, connectorId)
+    .provide([[matchers.call.fn(apiCallWithRetry)]])
+    .call.fn(apiCallWithRetry)
+    .run());
+
+  test('api call failed', () => expectSaga(updateInstallBase, connectorId)
+    .provide([
+      [matchers.call.fn(apiCallWithRetry), throwError(new Error('error'))],
+    ])
+    .call.fn(apiCallWithRetry)
+    .run());
 });

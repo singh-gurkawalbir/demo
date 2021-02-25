@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { keys } from 'lodash';
+import { keys, map, uniq } from 'lodash';
 import mappingUtil from '../mapping';
 import {
   adaptorTypeMap,
@@ -9,6 +9,7 @@ import {
 } from '../resource';
 import { emptyList, emptyObject, STANDALONE_INTEGRATION } from '../constants';
 import getRoutePath from '../routePaths';
+import {HOOKS_IN_IMPORT_EXPORT_RESOURCE} from '../scriptHookStubs';
 
 export const actionsMap = {
   as2Routing: 'as2Routing',
@@ -247,9 +248,9 @@ export const isOldFlowSchema = ({
   _exportId,
   pageProcessors,
   _importId,
-}) => (!pageGenerators && _exportId) || (!pageProcessors && _importId);
+}) => !!((!pageGenerators && _exportId) || (!pageProcessors && _importId));
 
-export function getFirstExportFromFlow(flow, exports = []) {
+export function getFirstExportFromFlow(flow = {}, exports = []) {
   const exportId =
     flow.pageGenerators && flow.pageGenerators.length
       ? flow.pageGenerators[0]._exportId
@@ -289,10 +290,10 @@ export function hasBatchExport(flow, exports = [], flowExports) {
 
   if (flow && flow.pageGenerators && flow.pageGenerators.length) {
     if (flowExports?.length) {
-      return flowExports.some(exp => !isRealtimeExport(exp));
+      return !!flowExports.some(exp => !isRealtimeExport(exp));
     }
 
-    return flow.pageGenerators.some(pg => {
+    return !!flow.pageGenerators.some(pg => {
       const exp = exports.find(exp => exp._id === pg._exportId);
 
       return !isRealtimeExport(exp);
@@ -305,7 +306,7 @@ export function hasBatchExport(flow, exports = [], flowExports) {
 export function isSimpleImportFlow(flow, exports, flowExports) {
   const exp = (flowExports?.length && flowExports[0]) || getFirstExportFromFlow(flow, exports);
 
-  return exp && exp.type === 'simple';
+  return !!(exp && exp.type === 'simple');
 }
 
 export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationApp, isDataLoader, appName}) {
@@ -332,7 +333,7 @@ export function showScheduleIcon(flow, exports, flowExports) {
   return hasBatchExport(flow, exports, flowExports);
 }
 
-export function flowAllowsScheduling(flow, integration, allExports, isAppVersion2, flowExports) {
+export function flowAllowsScheduling(flow, integration, allExports, isAppVersion2, flowExports, childId) {
   if (!flow) return false;
   const isApp = flow._connectorId;
   const canSchedule = showScheduleIcon(flow, allExports, flowExports);
@@ -340,7 +341,7 @@ export function flowAllowsScheduling(flow, integration, allExports, isAppVersion
   // For IA2.0, 'showSchedule' is assumed true for now until we have more clarity
   if (!isApp || isAppVersion2) return canSchedule;
   // eslint-disable-next-line no-use-before-define
-  const flowSettings = getIAFlowSettings(integration, flow._id);
+  const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
   return canSchedule && !!flowSettings.showSchedule;
 }
@@ -357,13 +358,13 @@ export function getFlowType(flow, exports, flowExports) {
   return 'Scheduled';
 }
 
-export function flowSupportsSettings(flow, integration) {
+export function flowSupportsSettings(flow, integration, childId) {
   if (!flow) return false;
   const isApp = flow._connectorId;
 
   if (!isApp) return false;
   // eslint-disable-next-line no-use-before-define
-  const flowSettings = getIAFlowSettings(integration, flow._id);
+  const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
   return !!(
     (flowSettings.settings && flowSettings.settings.length) ||
@@ -557,7 +558,7 @@ export function getFlowListWithMetadata(flows = [], exports = []) {
   return { resources: flows };
 }
 
-export function getNextDataFlows(flows, flow) {
+export function getNextDataFlows(flows = emptyList, flow = emptyObject) {
   const { _integrationId } = flow;
   // Incase of standalone Integrations, _integrationId is undefined for flow resources
   const flowIntegrationId =
@@ -574,7 +575,106 @@ export function getNextDataFlows(flows, flow) {
   );
 }
 
-export function getIAFlowSettings(integration, flowId) {
+export function getAllConnectionIdsUsedInTheFlow(flow, connections, exports, imports, options = {}) {
+  const exportIds = getExportIdsFromFlow(flow);
+  const importIds = getImportIdsFromFlow(flow);
+  const connectionIds = [];
+
+  if (!flow) {
+    return [];
+  }
+
+  const attachedExports =
+    exports && exports.filter(e => exportIds.indexOf(e._id) > -1);
+  const attachedImports =
+    imports && imports.filter(i => importIds.indexOf(i._id) > -1);
+
+  attachedExports.forEach(exp => {
+    if (exp && exp._connectionId) {
+      connectionIds.push(exp._connectionId);
+    }
+  });
+  attachedImports.forEach(imp => {
+    if (imp && imp._connectionId) {
+      connectionIds.push(imp._connectionId);
+    }
+  });
+
+  const attachedConnections =
+    connections &&
+    connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
+
+  if (!options.ignoreBorrowedConnections) {
+    attachedConnections.forEach(conn => {
+      if (conn && conn._borrowConcurrencyFromConnectionId) {
+        connectionIds.push(conn._borrowConcurrencyFromConnectionId);
+      }
+    });
+  }
+
+  return uniq(connectionIds);
+}
+
+export function getIAResources(integrationResource = {}, allFlows, allConnections, allExports, allImports, options = {}) {
+  const { supportsMultiStore, sections } = integrationResource?.settings || {};
+  const { integrationId, storeId, ignoreUnusedConnections } = options;
+  const integrationConnections = allConnections.filter(c => c._integrationId === integrationId);
+  const integrationFlows = allFlows.filter(f => f._integrationId === integrationId);
+
+  if (!supportsMultiStore || !storeId) {
+    return {
+      connections: integrationConnections,
+      flows: integrationFlows,
+    };
+  }
+
+  const flows = [];
+  const flowIds = [];
+  const allFlowIds = [];
+  const connections = [];
+  const flowConnections = [];
+  const exports = [];
+  const imports = [];
+  const selectedStore = (sections || []).find(s => s.id === storeId) || {};
+
+  (selectedStore.sections || []).forEach(sec => {
+    flowIds.push(...map(sec.flows, '_id'));
+  });
+  (sections || []).forEach(store => {
+    (store.sections || []).forEach(sec => {
+      allFlowIds.push(...map(sec.flows, '_id'));
+    });
+  });
+  allFlowIds.forEach(fid => {
+    const flow = integrationFlows.find(f => f._id === fid) || {};
+
+    flowConnections.push(...getAllConnectionIdsUsedInTheFlow(flow, allConnections, allExports, allImports, options));
+  });
+  const unUsedConnections = integrationConnections.filter(c => !flowConnections.includes(c._id));
+
+  flowIds.forEach(fid => {
+    const flow = integrationFlows.find(f => f._id === fid);
+
+    if (flow) {
+      flows.push({_id: flow._id, name: flow.name});
+      connections.push(...getAllConnectionIdsUsedInTheFlow(flow, allConnections, allExports, allImports, options));
+      exports.push(...getExportIdsFromFlow(flow));
+      imports.push(...getImportIdsFromFlow(flow));
+    }
+  });
+
+  const usedConnections = integrationConnections.filter(c => connections.includes(c._id));
+  const connectionList = ignoreUnusedConnections ? usedConnections : [...usedConnections, ...unUsedConnections];
+
+  return {
+    connections: connectionList,
+    flows,
+    exports,
+    imports,
+  };
+}
+
+export function getIAFlowSettings(integration, flowId, childId) {
   const allFlows = [];
 
   // TODO: InstallSteps check here is temporary. Nees to to change this as part of IA2.o implementation.
@@ -588,7 +688,9 @@ export function getIAFlowSettings(integration, flowId) {
   }
 
   if (integration.settings && integration.settings.supportsMultiStore) {
-    integration.settings.sections.forEach(section => {
+    if (childId) {
+      const section = integration.settings.sections.find(sec => sec.id === childId);
+
       if (!section.sections) {
         return;
       }
@@ -598,7 +700,19 @@ export function getIAFlowSettings(integration, flowId) {
       }));
 
       allFlows.push(...(flows || []));
-    });
+    } else {
+      integration.settings.sections.forEach(section => {
+        if (!section.sections) {
+          return;
+        }
+
+        const { flows } = section.sections.reduce((a, b) => ({
+          flows: [...a.flows, ...b.flows],
+        }));
+
+        allFlows.push(...(flows || []));
+      });
+    }
   } else {
     const { flows } = integration.settings.sections.reduce((a, b) => ({
       flows: [...a.flows, ...b.flows],
@@ -672,7 +786,7 @@ export function getFlowResources(flows, exports, imports, flowId) {
 // yet its impossible to know which works for each flow type. For example,
 // showMapping is an IA only field, how do we determine if a DIY flow has mapping support?
 // Maybe its best to only hav common props here and remove all IA props to a separate selector.
-export function getFlowDetails(flow, integration, exports) {
+export function getFlowDetails(flow, integration, exports, childId) {
   if (!flow) return emptyObject;
 
   return produce(flow, draft => {
@@ -681,7 +795,7 @@ export function getFlowDetails(flow, integration, exports) {
     draft.isRunnable = isRunnable(flow, exports);
     draft.canSchedule = showScheduleIcon(flow, exports);
     draft.isDeltaFlow = isDeltaFlow(flow, exports);
-    const flowSettings = getIAFlowSettings(integration, flow._id);
+    const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
     draft.showMapping = flowSettings.showMapping;
     draft.hasSettings = !!(
@@ -693,6 +807,7 @@ export function getFlowDetails(flow, integration, exports) {
       : draft.canSchedule;
     draft.showStartDateDialog = flowSettings.showStartDateDialog;
     draft.disableSlider = flowSettings.disableSlider;
+    draft.disableRunFlow = !!flowSettings.disableRunFlow;
     draft.showUtilityMapping = flowSettings.showUtilityMapping;
   });
 }
@@ -802,9 +917,88 @@ export function convertOldFlowSchemaToNewOne(flow) {
   return updatedFlow;
 }
 
-export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => flow && (
+export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => !!(flow && (
   (flow.pageGenerators &&
      flow.pageGenerators.some(({_exportId}) => _exportId === resourceId)) ||
     (
       flow.pageProcessors &&
-    flow.pageProcessors.some(({_exportId, _importId}) => _exportId === resourceId || _importId === resourceId)));
+    flow.pageProcessors.some(({_exportId, _importId}) => _exportId === resourceId || _importId === resourceId))));
+
+export function getScriptsReferencedInFlow(
+  {
+    flow = {},
+    exports = [],
+    imports = [],
+    scripts = [],
+  }
+) {
+  const scriptIdsUsed = [];
+  const checkForHookScripts = hooks => {
+    if (!hooks) {
+      return;
+    }
+    Object.keys(hooks).forEach(hookName => {
+      if (HOOKS_IN_IMPORT_EXPORT_RESOURCE.includes(hookName)) {
+        if (hooks[hookName]?._scriptId && scriptIdsUsed.indexOf(hooks[hookName]._scriptId) === -1) {
+          scriptIdsUsed.push(hooks[hookName]._scriptId);
+        }
+      }
+    });
+  };
+
+  flow?.pageGenerators?.forEach(({_exportId}) => {
+    const _export = exports?.find(({_id}) => _id === _exportId);
+
+    if (_export?.filter?.type === 'script' && _export?.filter?.script?._scriptId) {
+      scriptIdsUsed.push(_export.filter.script._scriptId);
+    }
+    if (_export?.inputFilter?.type === 'script' && _export?.inputFilter?.script?._scriptId) {
+      scriptIdsUsed.push(_export.inputFilter.script._scriptId);
+    }
+    if (_export?.responseTransform?.type === 'script' && _export?.responseTransform?.script?._scriptId) {
+      scriptIdsUsed.push(_export.responseTransform.script._scriptId);
+    }
+    if (_export?.transform?.type === 'script' && _export?.transform?.script?._scriptId) {
+      scriptIdsUsed.push(_export.transform.script._scriptId);
+    }
+
+    checkForHookScripts(_export?.hooks);
+  });
+  flow?.pageProcessors?.forEach(({hooks, type, _importId, _exportId}) => {
+    if (hooks?.postResponseMap?._scriptId && scriptIdsUsed.indexOf(hooks.postResponseMap._scriptId) === -1) {
+      scriptIdsUsed.push(hooks.postResponseMap._scriptId);
+    }
+    if (type === 'import') {
+      const _import = imports?.find(({_id}) => _id === _importId);
+
+      // todo: check if we need to check for filter.type ==='script'?
+      if (_import?.filter?.type === 'script' && _import?.filter?.script?._scriptId) {
+        scriptIdsUsed.push(_import.filter.script._scriptId);
+      }
+      if (_import?.responseTransform?.type === 'script' && _import?.responseTransform?.script?._scriptId) {
+        scriptIdsUsed.push(_import.responseTransform.script._scriptId);
+      }
+      checkForHookScripts(_import?.hooks);
+    } else if (type === 'export') {
+      const _export = exports.find(({_id}) => _id === _exportId);
+
+      if (_export?.filter?.type === 'script' && _export?.filter?.script?._scriptId) {
+        scriptIdsUsed.push(_export.filter.script._scriptId);
+      }
+      if (_export?.inputFilter?.type === 'script' && _export?.inputFilter?.script?._scriptId) {
+        scriptIdsUsed.push(_export.inputFilter.script._scriptId);
+      }
+      if (_export?.responseTransform?.type === 'script' && _export?.responseTransform?.script?._scriptId) {
+        scriptIdsUsed.push(_export.responseTransform.script._scriptId);
+      }
+      if (_export?.transform?.type === 'script' && _export?.transform?.script?._scriptId) {
+        scriptIdsUsed.push(_export.transform.script._scriptId);
+      }
+      checkForHookScripts(_export?.hooks);
+    }
+  });
+
+  const filtered = scripts.filter(({_id}) => scriptIdsUsed.includes(_id));
+
+  return filtered;
+}

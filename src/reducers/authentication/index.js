@@ -73,6 +73,10 @@ export default function (state = defaultState, action) {
         break;
 
       case actionTypes.AUTH_WARNING:
+
+        // if user is not authenticated there can not be a session timeout warning
+        if (!draft.authenticated) { break; }
+
         draft.warning = true;
 
         break;
@@ -87,7 +91,8 @@ export default function (state = defaultState, action) {
 export const selectors = {};
 
 selectors.isAuthLoading = state => state?.commStatus === COMM_STATES.LOADING;
-
+// when we logout we clear the state...the reducer defaults it to COMM_STATE loading and authentication property is deleted
+// Hence we use state.authenticated undefined as an indication to ignore signin loading during logout
 selectors.isAuthenticating = state => selectors.isAuthLoading(state) && state?.authenticated === false;
 // show auth error when user is logged in
 selectors.showAuthError = state => state?.showAuthError;

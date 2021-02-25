@@ -12,6 +12,17 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 import { hashCode } from '../../../utils/string';
 
+const getNumJobsSelected = selectedJobs => {
+  let jobsSelected = 0;
+
+  Object.keys(selectedJobs).forEach(jobId => {
+    if (selectedJobs[jobId].selected) {
+      jobsSelected += 1;
+    }
+  });
+
+  return jobsSelected;
+};
 export default function JobDashboard({
   ssLinkedConnectionId,
   integrationId,
@@ -46,15 +57,8 @@ export default function JobDashboard({
 
   const numJobsWithErrors = jobs ? jobs.filter(j => j.numError > 0).length : 0;
   const [selectedJobs, setSelectedJobs] = useState({});
-  const [numJobsSelected, setNumJobsSelected] = useState(0);
-  const [disableActions, setDisableActions] = useState(true);
   const [actionsToMonitor, setActionsToMonitor] = useState({});
-  const patchFilter = useCallback(
-    (key, value) => {
-      dispatch(actions.patchFilter(filterKey, { [key]: value }));
-    },
-    [dispatch]
-  );
+
   const clearFilter = useCallback(() => {
     dispatch(actions.clearFilter(filterKey));
   }, [dispatch]);
@@ -65,7 +69,7 @@ export default function JobDashboard({
     () => () => {
       dispatch(actions.suiteScript.job.clear());
     },
-    [dispatch, filterHash, patchFilter]
+    [dispatch, filterHash]
   );
 
   useEffect(
@@ -112,23 +116,8 @@ export default function JobDashboard({
     jobs.length,
   ]);
 
-  useEffect(() => {
-    setDisableActions(numJobsWithErrors === 0);
-  }, [numJobsWithErrors]);
-
-  useEffect(() => {
-    let jobsSelected = 0;
-
-    Object.keys(selectedJobs).forEach(jobId => {
-      if (selectedJobs[jobId].selected) {
-        jobsSelected += 1;
-      }
-    });
-
-    if (jobsSelected !== numJobsSelected) {
-      setNumJobsSelected(jobsSelected);
-    }
-  }, [selectedJobs, numJobsSelected]);
+  const numJobsSelected = getNumJobsSelected(selectedJobs);
+  const disableActions = numJobsWithErrors === 0;
 
   function handleSelectChange(selJobs) {
     setSelectedJobs(selJobs);

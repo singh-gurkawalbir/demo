@@ -4,14 +4,16 @@ import { processJsonSampleData, processJsonPreviewData } from '../../../utils/sa
 import { getUnionObject } from '../../../utils/jsonPaths';
 
 export default function* requestFileAdaptorSampleData({ resource }) {
+  if (!resource?.file?.type) return;
   const { file, sampleData } = resource;
   const { type } = file;
 
   if (['csv', 'xlsx', 'xml'].includes(type)) {
-    const { data: fileSampleData = {} } = yield call(parseFileData, {
+    const parsedData = yield call(parseFileData, {
       sampleData,
       resource,
     });
+    const fileSampleData = parsedData?.data;
 
     return Array.isArray(fileSampleData) ? fileSampleData[0] : fileSampleData;
   }
@@ -21,26 +23,27 @@ export default function* requestFileAdaptorSampleData({ resource }) {
   }
   // Below are possible file types incase of file definition
   if (['filedefinition', 'fixed', 'delimited/edifact'].includes(type)) {
-    const { data: fileDefinitionSampleData } = yield call(parseFileDefinition, {
+    const fileDefinitionSampleData = yield call(parseFileDefinition, {
       sampleData,
       resource,
     });
 
-    return fileDefinitionSampleData;
+    return fileDefinitionSampleData?.data;
   }
 }
 
 export function* requestFileAdaptorPreview({ resource }) {
+  if (!resource?.file?.type) return;
   const { file, sampleData } = resource;
   const { type } = file;
 
   if (['csv', 'xlsx', 'xml'].includes(type)) {
-    const { data: fileSampleData = {} } = yield call(parseFileData, {
+    const parsedData = yield call(parseFileData, {
       sampleData,
       resource,
     });
 
-    return fileSampleData;
+    return parsedData?.data;
   }
 
   if (type === 'json') {
@@ -48,13 +51,13 @@ export function* requestFileAdaptorPreview({ resource }) {
   }
   // Below are possible file types incase of file definition
   if (['filedefinition', 'fixed', 'delimited/edifact'].includes(type)) {
-    const { data: fileDefinitionSampleData } = yield call(parseFileDefinition, {
+    const fileDefinitionSampleData = yield call(parseFileDefinition, {
       sampleData,
       resource,
       mode: 'preview',
     });
 
-    return fileDefinitionSampleData;
+    return fileDefinitionSampleData?.data;
   }
 }
 

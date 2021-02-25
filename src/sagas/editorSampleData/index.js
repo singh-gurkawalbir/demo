@@ -4,8 +4,8 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
-import { requestExportSampleData } from '../sampleData';
-import { constructResourceFromFormValues } from '../sampleData/utils/exportSampleDataUtils';
+import { requestExportSampleData } from '../sampleData/exports';
+import { constructResourceFromFormValues } from '../utils';
 import { isNewId } from '../../utils/resource';
 
 export function* requestEditorSampleData({
@@ -24,7 +24,23 @@ export function* requestEditorSampleData({
     resourceId,
     resourceType
   );
-  const { value: formValues } = yield select(selectors.formState, formKey) || {};
+
+  const {formSaveStatus} = yield select(
+    selectors.resourceFormState,
+    resourceType,
+    resourceId
+  );
+
+  // we are ignoring editor sample data class when the form's save is in progress
+  // TODO: sort of a hack for IO-19380 after Ashu's afe refactor
+  // we can remove this check
+
+  if (formSaveStatus === 'loading') {
+    return;
+  }
+  const formState = yield select(selectors.formState, formKey);
+  const formValues = formState?.value || {};
+
   const resource = yield call(constructResourceFromFormValues, {
     formValues,
     resourceId,

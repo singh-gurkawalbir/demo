@@ -1,14 +1,15 @@
 import { values, keyBy } from 'lodash';
 import shortid from 'shortid';
 import { isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS } from './constants';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject, FILE_PROVIDER_ASSISTANTS } from './constants';
+import { stringCompare } from './sort';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
   accesstokens: 'API token',
   asyncHelpers: 'Async helper',
   connections: 'Connection',
-  connectors: 'Integration App',
+  connectors: 'Integration app',
   exports: 'Export',
   filedefinitions: 'File definition',
   flows: 'Flow',
@@ -128,6 +129,27 @@ export function getResourceSubType(resource) {
   return out;
 }
 
+export function filterAndSortResources(resources = emptyList, config = emptyObject) {
+  if (!Array.isArray(resources)) {
+    return emptyList;
+  }
+  const { sort = emptyObject, searchBy, keyword } = config || {};
+  const stringTest = r => {
+    if (!keyword) return true;
+    const searchableText =
+      Array.isArray(searchBy) && searchBy.length
+        ? `${searchBy.map(key => r[key]).join('|')}`
+        : `${r._id}|${r.name}|${r.description}`;
+
+    return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
+  };
+
+  const comparer = ({ order = 'asc', orderBy = 'name' }) =>
+    order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
+
+  return resources.filter(stringTest).sort(comparer(sort));
+}
+
 export function getResourceSubTypeFromAdaptorType(adaptorType) {
   return {
     type: adaptorTypeMap[adaptorType],
@@ -244,10 +266,10 @@ export function isValidResourceReference(
   }
 }
 
-export function salesforceExportSelectOptions(data, fieldName) {
+export function salesforceExportSelectOptions(data, type) {
   let options;
 
-  switch (fieldName) {
+  switch (type) {
     case 'deltaExportDateFields':
       options = data.filter(f => ['datetime', 'date'].indexOf(f.type) > -1);
       break;
@@ -258,13 +280,13 @@ export function salesforceExportSelectOptions(data, fieldName) {
       options = data.filter(f => f.externalId || f.name === 'Id');
       break;
     case 'referenceFields':
-      options = data.filter(f => f.referenceTo.length !== 0);
+      options = data.filter(f => f.referenceTo?.length > 0);
       break;
     default:
       options = data;
   }
 
-  return options.map(op => ({ label: op.label, value: op.value }));
+  return options?.map(op => ({ label: op.label, value: op.value }));
 }
 
 /*
@@ -330,7 +352,7 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
     (['RESTImport', 'HTTPImport', 'NetSuiteImport', 'SalesforceImport'].indexOf(
       resource.adaptorType
     ) >= 0 &&
-      resource.blobKeyPath) ||
+      resource.blob) ||
     ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
   ) {
     blockType = 'importTransfer';
@@ -339,9 +361,9 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
   return blockType;
 }
 
-// All resources with type 'blob' is a Blob export and with 'blobKeyPath' is a blob import
+// All resources with type 'blob' is a Blob export and with blob as true are blob imports
 export const isBlobTypeResource = (resource = {}) =>
-  resource && (resource.type === 'blob' || !!resource.blobKeyPath);
+  resource?.type === 'blob' || resource?.blob;
 
 export const isAS2Resource = resource => {
   const { adaptorType } = resource || {};
@@ -359,6 +381,16 @@ export const isRestCsvMediaTypeExport = (resource, connection) => {
 
   // Check for media type 'csv' from connection object
   return connection && connection.rest && connection.rest.mediaType === 'csv';
+};
+export const isFileProviderAssistant = (resource, connection) => {
+  const { adaptorType } = resource || {};
+
+  // Returns false if it is not a http export
+  if (adaptorTypeMap[adaptorType] !== 'http') {
+    return false;
+  }
+
+  return connection && FILE_PROVIDER_ASSISTANTS.includes(connection.assistant);
 };
 
 export const isFlowResource = (flow, resourceId, resourceType) => {
@@ -380,6 +412,7 @@ export const isFlowResource = (flow, resourceId, resourceType) => {
 
 export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {
   const domain = getDomain();
+
   let toReturn = false;
   let filteredConnectors = [];
   const supportBaseUrl = `${HELP_CENTER_BASE_URL}/hc/en-us/categories/`;
@@ -507,6 +540,9 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
 export const getUniversityUrl = '/litmos/sso';
 
 export const getNetSuiteSubrecordLabel = (fieldId, subrecordType) => {
+  if (!fieldId) {
+    return '';
+  }
   const subrecordLabelMap = {
     inventorydetail: 'Inventory Details',
     componentinventorydetail: 'Inventory Details',
@@ -723,14 +759,10 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
 };
 
 export const isOauth = connectionDoc =>
-  connectionDoc &&
-  ((connectionDoc.rest && connectionDoc.rest.authType === 'oauth') ||
-    (connectionDoc.http &&
-      connectionDoc.http.auth &&
-      connectionDoc.http.auth.type === 'oauth') ||
-    (connectionDoc.salesforce && connectionDoc.salesforce.oauth2FlowType) ||
-    (connectionDoc.netsuite &&
-      connectionDoc.netsuite.authType === 'token-auto'));
+    connectionDoc?.rest?.authType === 'oauth' ||
+    connectionDoc?.http?.auth?.type === 'oauth' ||
+    !!connectionDoc?.salesforce?.oauth2FlowType ||
+    connectionDoc?.netsuite?.authType === 'token-auto';
 
 export function getConnectionType(resource) {
   const { assistant, type } = getResourceSubType(resource);
@@ -743,8 +775,6 @@ export function getConnectionType(resource) {
     ) {
       return `${assistant}-oauth`;
     }
-
-    return '';
   }
 
   if (assistant) return assistant;
@@ -757,13 +787,14 @@ export function getConnectionType(resource) {
 
   return type;
 }
-export function isTradingPartnerSupported({environment, licenseActionDetails, accessLevel}) {
+export function isTradingPartnerSupported({environment, licenseActionDetails, accessLevel} = {}) {
   const isSandbox = environment === 'sandbox';
   let enabled = false;
 
   if (
     [
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
     ].includes(accessLevel)
   ) {
@@ -772,12 +803,12 @@ export function isTradingPartnerSupported({environment, licenseActionDetails, ac
     } else {
       enabled = licenseActionDetails?.type === 'endpoint' && licenseActionDetails?.totalNumberofProductionTradingPartners > 0;
     }
-
-    return enabled;
   }
+
+  return enabled;
 }
 export function isNetSuiteBatchExport(exportRes) {
-  return ((exportRes.netsuite && exportRes.netsuite.type === 'search') || (exportRes.netsuite && exportRes.netsuite.restlet && exportRes.netsuite.restlet.searchId !== undefined));
+  return exportRes?.netsuite?.type === 'search' || exportRes?.netsuite?.restlet?.searchId !== undefined;
 }
 export const isQueryBuilderSupported = (importResource = {}) => {
   const {adaptorType} = importResource;
@@ -792,38 +823,7 @@ export const isQueryBuilderSupported = (importResource = {}) => {
   return false;
 };
 
-export const getUniqueFieldId = fieldId => {
-  if (!fieldId) { return ''; }
-
-  // some field types have same field ids
-  switch (fieldId) {
-    case 'rdbms.queryInsert':
-      return 'rdbms.query.1';
-    case 'rdbms.queryUpdate':
-      return 'rdbms.query.0';
-    case 'http.bodyCreate':
-      return 'http.body.1';
-    case 'http.bodyUpdate':
-      return 'http.body.0';
-    case 'http.relativeURIUpdate':
-      return 'http.relativeURI.0';
-    case 'http.relativeURICreate':
-      return 'http.relativeURI.1';
-    case 'rest.relativeURIUpdate':
-      return 'rest.relativeURI.0';
-    case 'rest.relativeURICreate':
-      return 'rest.relativeURI.1';
-    case 'rest.bodyUpdate':
-      return 'rest.body.0';
-    case 'rest.bodyCreate':
-      return 'rest.body.1';
-
-    default:
-      return fieldId;
-  }
-};
-
-export const getUserAccessLevelOnConnection = (permissions, ioIntegrations = [], connectionId) => {
+export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations = [], connectionId) => {
   let accessLevelOnConnection;
 
   if (
@@ -831,6 +831,7 @@ export const getUserAccessLevelOnConnection = (permissions, ioIntegrations = [],
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
       USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
     ].includes(permissions.accessLevel)
   ) {
     accessLevelOnConnection = permissions.accessLevel;

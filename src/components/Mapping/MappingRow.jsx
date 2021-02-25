@@ -92,8 +92,8 @@ const useStyles = makeStyles(theme => ({
   deleteMappingRow: {
     width: theme.spacing(4),
     marginRight: theme.spacing(1),
-
   },
+
   rowContainer: {
     '&:hover': {
 
@@ -192,6 +192,7 @@ export default function MappingRow({
 
   const RightIcon = ({title, Icon, className}) => (
     <Tooltip
+      data-public
       title={title}
       placement="bottom">
       <span className={clsx(classes.lockIcon, className)}>
@@ -242,6 +243,7 @@ export default function MappingRow({
           <GripperIcon />
         </div>
         <div
+          data-public
           className={clsx(classes.childHeader, classes.mapField, {
             [classes.disableChildRow]:
               isSubRecordMapping || isNotEditable || disabled,
@@ -266,6 +268,7 @@ export default function MappingRow({
         </div>
         <span className={classes.mappingIcon} />
         <div
+          data-public
           className={clsx(classes.childHeader, classes.mapField, {
             [classes.disableChildRow]:
               isSubRecordMapping || isRequired || disabled,

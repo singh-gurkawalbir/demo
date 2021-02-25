@@ -3,7 +3,7 @@ const batchSizePattern = /^([4-9]|[1-8][0-9]|9[0-9]|1[0-9]{2}|200)$/; // Regular
 export default {
   'salesforce.sObjectType': {
     type: 'text',
-    label: 'SObject type',
+    label: 'sObject type',
     required: true,
     visibleWhenAll: [
       {
@@ -51,7 +51,7 @@ export default {
     ],
   },
   'salesforce.distributed.sObjectType': {
-    label: 'SObject type',
+    label: 'sObject type',
     required: true,
     visibleWhenAll: [
       {
@@ -83,7 +83,7 @@ export default {
     ],
     visible: false,
   },
-  'salesforce.soql.query': {
+  'salesforce.soql.query': { // todo: this is probably a dead field, remove
     type: 'editor',
     mode: 'sql',
     label: 'SOQL query',
@@ -175,9 +175,11 @@ export default {
     ],
   },
   'salesforce.id': {
-    type: 'text',
+    type: 'uri',
     label: 'Id',
     required: true,
+    showExtract: false,
+    showLookup: false,
     visibleWhen: [
       {
         field: 'outputMode',
@@ -189,7 +191,7 @@ export default {
     type: 'select',
     required: true,
     defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,
-    label: 'SObject type',
+    label: 'sObject type',
     options: [
       {
         items: [

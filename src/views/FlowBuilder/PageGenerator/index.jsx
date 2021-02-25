@@ -9,6 +9,8 @@ import AppBlock from '../AppBlock';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import {applicationsList} from '../../../constants/applications';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+
 import {
   getResourceSubType,
   generateNewId,
@@ -16,9 +18,9 @@ import {
 } from '../../../utils/resource';
 import exportHooksAction from './actions/exportHooks';
 import as2RoutingAction from './actions/as2Routing';
-import transformationAction from './actions/transformation';
+import transformationAction from './actions/transformation_afe2';
 import scheduleAction from './actions/schedule';
-import exportFilterAction from './actions/exportFilter';
+import exportFilterAction from './actions/exportFilter_afe2';
 import { actionsMap } from '../../../utils/flows';
 
 /* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme.
@@ -72,6 +74,7 @@ const PageGenerator = ({
       ? emptyObj
       : selectors.resource(state, resourceType, resourceId) || emptyObj
   );
+  const allowSchedule = useSelectorMemo(selectors.mkFlowAllowsScheduling, flowId);
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pg._connectionId)
   );
@@ -304,7 +307,7 @@ const PageGenerator = ({
     let generatorActions = [];
 
     if (!pending) {
-      if (['export', 'exportTransfer'].indexOf(blockType) >= 0) {
+      if (allowSchedule && ['export', 'exportTransfer'].indexOf(blockType) >= 0) {
         generatorActions.push({
           ...scheduleAction,
           isUsed: usedActions[actionsMap.schedule],
@@ -336,6 +339,7 @@ const PageGenerator = ({
 
     return generatorActions;
   }, [
+    allowSchedule,
     blockType,
     connectionHasAs2Routing,
     exportNeedsRouting,

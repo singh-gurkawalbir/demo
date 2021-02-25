@@ -69,7 +69,7 @@ export default {
           ignoreCache: true,
           filterKey: 'salesforce-sObjects',
           commMetaPath: `suitescript/connections/${ssLinkedConnectionId}/connections/${connectionId}/sObjectTypes`,
-          label: 'SObject type',
+          label: 'sObject type',
           connectionId: ssLinkedConnectionId,
           helpKey: 'mapping.salesforce.lookup.sObjectType',
           visibleWhenAll: [

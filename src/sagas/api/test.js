@@ -10,9 +10,9 @@ import {
 } from './requestInterceptors';
 import {
   APIException,
-  introduceNetworkLatency,
   throwExceptionUsingTheResponse,
   checkToThrowSessionValidationException,
+  isCsrfExpired,
 } from './index';
 import * as apiConsts from './apiPaths';
 import { unauthenticateAndDeleteProfile } from '..';
@@ -119,7 +119,6 @@ describe('request interceptors...testing the various stages of an api request on
         put(actions.api.request(path, 'GET', path, false))
       );
       expect(saga.next().value).toEqual(select(selectors.accountShareHeader, path));
-      expect(saga.next().value).toEqual(call(introduceNetworkLatency));
     });
 
     test('should skip dispatching an apiRequest action when retrying', () => {
@@ -136,7 +135,6 @@ describe('request interceptors...testing the various stages of an api request on
       expect(saga.next({ retryCount: 1 }).value).toEqual(
         select(selectors.accountShareHeader, path)
       );
-      expect(saga.next().value).toEqual(call(introduceNetworkLatency));
     });
 
     test('should create a request payload which should have match the redux saga request specification and responseType being text', () => {
@@ -154,7 +152,6 @@ describe('request interceptors...testing the various stages of an api request on
         put(actions.api.request(path, 'POST', path, false))
       );
       expect(saga.next().value).toEqual(select(selectors.accountShareHeader, path));
-      expect(saga.next().value).toEqual(call(introduceNetworkLatency));
 
       // All request types are text
       const finalRequestPayload = {
@@ -195,16 +192,12 @@ describe('request interceptors...testing the various stages of an api request on
       expect(saga.next({ retryCount: 0 }).value).toEqual(
         put(actions.api.request(path, 'POST', path, false))
       );
+
       expect(saga.next().value).toEqual(select(selectors.accountShareHeader, path));
       const additionalHeaders = {
         'integrator-ashareid': 'some-ashare-id',
         'integrator-something': 'something else',
       };
-
-      expect(saga.next(additionalHeaders).value).toEqual(
-        call(introduceNetworkLatency)
-      );
-
       // All request types are text
       const finalRequestPayload = {
         url: `/api${path}`,
@@ -226,7 +219,7 @@ describe('request interceptors...testing the various stages of an api request on
         },
       };
 
-      expect(saga.next().value).toEqual(finalRequestPayload);
+      expect(saga.next(additionalHeaders).value).toEqual(finalRequestPayload);
     });
   });
   describe('onSuccessSaga', () => {
@@ -257,6 +250,18 @@ describe('request interceptors...testing the various stages of an api request on
           ...sessionError200Response,
           status: 201,
         });
+      });
+    });
+
+    describe('isCsrfExpired', () => {
+      test('should return true for a valid CSRF message body', () => {
+        expect(isCsrfExpired(some403Response)).toEqual(true);
+      });
+
+      test('should return false for a invalid CSRF message body', () => {
+        expect(isCsrfExpired(null)).toEqual(false);
+        expect(isCsrfExpired({})).toEqual(false);
+        expect(isCsrfExpired(some400Response)).toEqual(false);
       });
     });
 

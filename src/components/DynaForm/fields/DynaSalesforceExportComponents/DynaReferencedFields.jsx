@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import EditIcon from '../../../icons/EditIcon';
 import DynaText from '../DynaText';
@@ -12,6 +11,7 @@ import { useCallMetadataAndReturnStatus } from './DynaRelatedList';
 import Spinner from '../../../Spinner';
 import ActionButton from '../../../ActionButton';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   refrencedFieldWrapper: {
@@ -35,13 +35,9 @@ const FirstLevelModal = props => {
     onFieldChange,
     id,
   } = props;
-  const { data: options } = useSelector(state =>
-    selectors.optionsFromMetadata(state, {
-      connectionId,
-      commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
-      filterKey: 'salesforce-sObjects-referenceFields',
-    })
-  );
+
+  const options = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`, 'salesforce-sObjects-referenceFields')?.data;
+
   const optionsHandler = (fieldId, fields) => {
     if (fieldId === 'referencedFields') {
       const { value: selectedValue } = fields.find(
@@ -59,7 +55,7 @@ const FirstLevelModal = props => {
       parentSObjectType: {
         id: 'parentSObjectType',
         name: '/parentSObjectType',
-        label: 'Parent SObject type:',
+        label: 'Parent sObject type:',
         type: 'refreshableselect',
         helpKey: 'parentSObjectType',
         filterKey: 'salesforce-sObjects-referenceFields',

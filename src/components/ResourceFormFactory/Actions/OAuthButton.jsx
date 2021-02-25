@@ -31,7 +31,7 @@ function OAuthButton(props) {
     disableLoad:
       !resource._connectorId ||
       !(
-        ['shopify', 'squareup'].includes(resource.assistant) ||
+        ['shopify', 'squareup', 'hubspot'].includes(resource.assistant) ||
         (resource.type === 'salesforce' && resource.newIA)
       ),
   });
@@ -41,8 +41,7 @@ function OAuthButton(props) {
 
       if (
         resource._connectorId &&
-        (resource.assistant === 'shopify' ||
-          resource.assistant === 'squareup') &&
+        ['shopify', 'squareup', 'hubspot'].includes(resource.assistant) &&
         values['/http/auth/type'] === 'oauth'
       ) {
         newValues['/http/_iClientId'] =
@@ -96,8 +95,7 @@ function OAuthButton(props) {
 
         if (
           resource._connectorId &&
-          (resource.assistant === 'shopify' ||
-            resource.assistant === 'squareup') &&
+         ['shopify', 'squareup', 'hubspot'].includes(resource.assistant) &&
           values['/http/auth/type'] === 'oauth'
         ) {
           showError = false;

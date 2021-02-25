@@ -47,8 +47,16 @@ export default function getSettingsMetadata(props) {
       notifyOnFlowError: {
         id: 'notifyOnFlowError',
         name: 'notifyOnFlowError',
-        type: 'celigoswitch',
-        defaultValue: isFlowSubscribed,
+        type: 'radiogroup',
+        defaultValue: isFlowSubscribed ? 'true' : 'false',
+        options: [
+          {
+            items: [
+              { value: 'true', label: 'Yes' },
+              { value: 'false', label: 'No' },
+            ],
+          },
+        ],
         label: 'Notify me on flow errors',
       },
       settings: {

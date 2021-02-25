@@ -1,5 +1,5 @@
-import { isNewId } from '../../../utils/resource';
-import { alterFileDefinitionRulesVisibility } from '../../utils';
+import { EXPORT_FILE_FIELD_MAP } from '../../../utils/fileUtil';
+import { alterFileDefinitionRulesVisibility } from '../../formFactory/utils';
 
 export default {
   preSave: formValues => {
@@ -109,7 +109,12 @@ export default {
       newValues['/file/compressionFormat'] = undefined;
     }
 
+    if (!newValues['/file/encoding']) {
+      newValues['/file/encoding'] = undefined;
+    }
+
     delete newValues['/file/decompressFiles'];
+    newValues['/s3/backupBucket'] = undefined;     // TODO Ashok, This code can be removed once all backend issues are resolved.
 
     return {
       ...newValues,
@@ -167,169 +172,7 @@ export default {
     }
   },
   fieldMap: {
-    common: { formId: 'common' },
-    outputMode: {
-      id: 'outputMode',
-      type: 'mode',
-      label: 'Parse files being transferred',
-      helpKey: 'export.outputMode',
-      options: [
-        {
-          items: [
-            { label: 'Yes', value: 'records' },
-            { label: 'No', value: 'blob' },
-          ],
-        },
-      ],
-      visible: r => !(r && r.isLookup),
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
-
-      defaultValue: r => {
-        const isNew = isNewId(r._id);
-
-        if (r && r.isLookup) {
-          if (r?.resourceType === 'lookupRecords' || r?.file?.type) {
-            return 'records';
-          }
-
-          return 'blob';
-        }
-
-        // if its create
-        if (isNew) return 'records';
-
-        const output = r && r.file && r.file.type;
-
-        return output ? 'records' : 'blob';
-      },
-    },
-    's3.region': { fieldId: 's3.region' },
-    's3.bucket': { fieldId: 's3.bucket' },
-    's3.keyStartsWith': { fieldId: 's3.keyStartsWith' },
-    's3.keyEndsWith': { fieldId: 's3.keyEndsWith' },
-    's3.backupBucket': { fieldId: 's3.backupBucket' },
-    'file.type': { fieldId: 'file.type' },
-    uploadFile: {
-      fieldId: 'uploadFile',
-      refreshOptionsOnChangesTo: 'file.type',
-      placeholder: 'Sample file (that would be parsed)',
-    },
-    'file.csv': { fieldId: 'file.csv',
-      uploadSampleDataFieldName: 'uploadFile',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-        {
-          field: 'file.type',
-          is: ['csv'],
-        },
-      ] },
-    'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
-    'file.xlsx.rowsPerRecord': {
-      fieldId: 'file.xlsx.rowsPerRecord',
-      disabledWhenAll: r => {
-        if (isNewId(r._id)) {
-          return [{ field: 'uploadfile', is: [''] }];
-        }
-
-        return [];
-      },
-    },
-    'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
-    parsers: {
-      fieldId: 'parsers',
-      uploadSampleDataFieldName: 'uploadFile',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-        {
-          field: 'file.type',
-          is: ['xml'],
-        },
-      ],
-    },
-    'file.json.resourcePath': {
-      fieldId: 'file.json.resourcePath',
-    },
-    'edix12.format': { fieldId: 'edix12.format' },
-    'fixed.format': { fieldId: 'fixed.format' },
-    'edifact.format': { fieldId: 'edifact.format' },
-    'file.filedefinition.rules': {
-      fieldId: 'file.filedefinition.rules',
-      refreshOptionsOnChangesTo: [
-        'edix12.format',
-        'fixed.format',
-        'edifact.format',
-        'file.fileDefinition.resourcePath',
-        'file.type',
-      ],
-      required: true,
-    },
-    'file.fileDefinition.resourcePath': {
-      fieldId: 'file.fileDefinition.resourcePath',
-    },
-    fileMetadata: {
-      id: 'fileMetadata',
-      type: 'checkbox',
-      label: 'File metadata only',
-      visibleWhen: [
-        {
-          field: 'outputMode',
-          is: ['blob'],
-        },
-      ],
-      defaultValue: r => r && r.file && r.file.output === 'metadata',
-    },
-    'file.decompressFiles': {
-      id: 'file.decompressFiles',
-      type: 'checkbox',
-      label: 'Decompress files',
-      visibleWhen: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
-      defaultValue: r => !!(r && r.file && r.file.compressionFormat),
-    },
-    'file.compressionFormat': {
-      fieldId: 'file.compressionFormat',
-      visibleWhen: [{ field: 'file.decompressFiles', is: [true] }],
-    },
-    'file.skipDelete': { fieldId: 'file.skipDelete' },
-    'file.encoding': { fieldId: 'file.encoding' },
-    pageSize: {
-      fieldId: 'pageSize',
-      visibleWhen: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    dataURITemplate: {
-      fieldId: 'dataURITemplate',
-      visibleWhen: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    skipRetries: {
-      fieldId: 'skipRetries',
-    },
-    apiIdentifier: { fieldId: 'apiIdentifier' },
+    ...EXPORT_FILE_FIELD_MAP,
   },
   layout: {
     type: 'collapse',
@@ -377,7 +220,7 @@ export default {
           'file.compressionFormat',
           'file.skipDelete',
           'fileMetadata',
-          's3.backupBucket',
+          'file.backupPath',
           'file.encoding',
           'pageSize',
           'dataURITemplate',

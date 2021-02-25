@@ -6,6 +6,8 @@ import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import { selectors } from '../../../reducers';
 import { useLoadingSnackbarOnSave } from '.';
+import useConfirmDialog from '../../ConfirmDialog';
+import { isNewId } from '../../../utils/resource';
 
 const styles = theme => ({
   actionButton: {
@@ -27,14 +29,26 @@ const SaveButton = props => {
     submitButtonColor = 'secondary',
     setDisableSaveOnClick,
   } = props;
+  const { confirmDialog } = useConfirmDialog();
+  const flow =
+    useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
+  const integration = useSelector(state =>
+    selectors.resource(state, 'integrations', flow?._integrationId)
+  );
 
   const match = useRouteMatch();
+  const resource = useSelector(state =>
+    selectors.resource(state, resourceType, resourceId)
+  );
 
   const dispatch = useDispatch();
   const saveTerminated = useSelector(state =>
     selectors.resourceFormSaveProcessTerminated(state, resourceType, resourceId)
   );
-  const onSave = useCallback(
+  const onCancel = useCallback(() => {
+    setDisableSaveOnClick(false);
+  }, [setDisableSaveOnClick]);
+  const saveResource = useCallback(
     values => {
       const newValues = { ...values };
 
@@ -52,8 +66,39 @@ const SaveButton = props => {
           flowId
         )
       );
+    }, [dispatch, flowId, isGenerate, match, resourceId, resourceType, skipCloseOnSave]);
+  const onSave = useCallback(
+    values => {
+      if (!isNewId(resourceId) && ['exports', 'imports'].includes(resourceType) && resource?._connectionId !== values?.['/_connectionId']) {
+        confirmDialog({
+          title: 'Confirm replace',
+          message: 'Are you sure you want to replace the connection for this flow step? Replacing a connection will cancel all jobs currently running for this flow.',
+          onDialogClose: onCancel,
+          buttons: [
+            {
+              label: 'Replace',
+              onClick: () => {
+                if (integration?._id) {
+                  const registeredConnections = integration?._registeredConnectionIds || [];
+
+                  if (!(registeredConnections.includes(values?.['/_connectionId']))) {
+                    dispatch(actions.connection.completeRegister([values?.['/_connectionId']], integration._id));
+                  }
+                }
+
+                saveResource(values);
+              },
+            },
+            {
+              label: 'Cancel',
+              color: 'secondary',
+              onClick: onCancel,
+            },
+          ],
+        });
+      } else { saveResource(values); }
     },
-    [dispatch, flowId, isGenerate, match, resourceId, resourceType, skipCloseOnSave]
+    [confirmDialog, dispatch, integration, onCancel, resource?._connectionId, resourceId, resourceType, saveResource]
   );
   const { handleSubmitForm, disableSave, isSaving } = useLoadingSnackbarOnSave({
     saveTerminated,

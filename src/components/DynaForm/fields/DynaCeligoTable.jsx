@@ -1,31 +1,47 @@
 import {
-  ExpansionPanelSummary,
+  AccordionSummary,
   Typography,
-  ExpansionPanelDetails,
-  ExpansionPanel,
+  AccordionDetails,
+  Accordion,
 } from '@material-ui/core';
+import {makeStyles} from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import ExpandMoreIcon from '../../icons/ArrowDownIcon';
 import CeligoTable from '../../CeligoTable';
 
+const useStyles = makeStyles(theme => ({
+  accordianDetails: {
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+  accordianWrapper: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    marginBottom: theme.spacing(2),
+  },
+
+}));
 export default function DynaCeligoTable(props) {
-  const { title, collapsable = false } = props;
-  const [shouldExpand, setShouldExpand] = useState(false);
+  const classes = useStyles();
+  const { title, collapsable = false, defaultExpand = false } = props;
+  const [shouldExpand, setShouldExpand] = useState(defaultExpand);
 
   return collapsable ? (
-    <ExpansionPanel
+    <Accordion
+      elevation={0}
+      square
+      className={classes.accordianWrapper}
       // eslint-disable-next-line react/no-array-index-key
       expanded={shouldExpand}>
-      <ExpansionPanelSummary
+      <AccordionSummary
         data-test={title}
         onClick={() => setShouldExpand(expand => !expand)}
         expandIcon={<ExpandMoreIcon />}>
         <Typography>{title}</Typography>
-      </ExpansionPanelSummary>
-      <ExpansionPanelDetails>
+      </AccordionSummary>
+      <AccordionDetails className={classes.accordianDetails}>
         <CeligoTable {...props} />
-      </ExpansionPanelDetails>
-    </ExpansionPanel>
+      </AccordionDetails>
+    </Accordion>
   ) : (
     <CeligoTable {...props} />
   );

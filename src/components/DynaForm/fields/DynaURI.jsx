@@ -24,7 +24,7 @@ export default function DynaURI(props) {
   const {
     id,
     onFieldChange,
-    value,
+    value = '',
     editorTitle,
     resourceId,
     resourceType,

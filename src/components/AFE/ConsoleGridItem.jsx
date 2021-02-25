@@ -27,9 +27,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const overrides = { wrap: true };
-export default function ConsoleGridItem(props) {
-  const { logs } = props;
-  const classes = useStyles(props);
+export default function ConsoleGridItem({ logs }) {
+  const classes = useStyles();
 
   if (!logs && !Array.isArray(logs)) return null;
 

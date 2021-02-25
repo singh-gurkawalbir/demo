@@ -1,14 +1,16 @@
 import getFailedRecordDefault from './util';
 
 export default {
-  getLookupMetadata: ({ lookup, showDynamicLookupOnly, sampleData }) => {
+  getLookupMetadata: ({ lookup, showDynamicLookupOnly, sampleData, resourceId,
+    resourceType,
+    flowId }) => {
     const fieldMeta = {
       fieldMap: {
         _mode: {
           id: '_mode',
           name: '_mode',
           type: 'radiogroup',
-          label: 'Select',
+          label: 'Lookup type',
           required: true,
           helpKey: 'mapping.lookup.mode',
           defaultValue: lookup?.map ? 'static' : 'dynamic',
@@ -24,11 +26,14 @@ export default {
         _query: {
           id: '_query',
           name: '_query',
-          type: 'query',
-          label: 'Build SQL query',
+          type: 'sqlquerybuilder',
+          label: 'SQL query',
           required: true,
           helpText: 'The query that fetches records to be exported.',
           sampleData,
+          resourceId,
+          resourceType,
+          flowId,
           defaultValue: lookup.query,
           visibleWhen: [
             {

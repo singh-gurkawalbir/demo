@@ -26,7 +26,7 @@ export default function ConditionalLookup({onSave, disabled, importId, flowId, .
     if (!lookupName) {
       return emptySet;
     }
-    const {lookups} = selectors.mapping(state);
+    const {lookups = []} = selectors.mapping(state);
 
     const val = lookups.find(({isConditionalLookup, name}) => isConditionalLookup && name === lookupName);
 

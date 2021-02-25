@@ -1,4 +1,4 @@
-import {applicationsList} from '../../../../constants/applications';
+import {applicationsList, applicationsPlaceHolderText} from '../../../../constants/applications';
 
 export default {
   preSave: ({ application, ...rest }) => {
@@ -24,8 +24,7 @@ export default {
       name: 'application',
       type: 'selectapplication',
       label: 'Application',
-      placeholder:
-        'Choose application or start typing to browse 150+ applications',
+      placeholder: applicationsPlaceHolderText(),
       defaultValue: '',
       required: true,
       validWhen: {

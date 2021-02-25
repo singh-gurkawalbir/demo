@@ -11,6 +11,7 @@ export default function ErrorNotifications() {
   const dispatch = useDispatch();
   const errors = useSelector(state => selectors.commsErrors(state), shallowEqual);
   const [enqueueSnackbar] = useEnqueueSnackbar();
+  // const hasWarning = useSelector(state => selectors.reqsHasRetriedTillFailure(state));
 
   useEffect(() => {
     if (!errors) return;
@@ -25,5 +26,19 @@ export default function ErrorNotifications() {
     dispatch(actions.clearComms());
   }, [errors, enqueueSnackbar, dispatch]);
 
+  // Commented out the intermittent network issues warning snackbar
+  // TODO: Surya enable it after december MR
+  /*
+  useEffect(() => {
+    if (hasWarning) {
+      enqueueSnackbar({
+        message: <ErrorContent error="You may be experiencing intermittent network issues. Please check your internet connectivity." />,
+        variant: 'warning',
+        persist: true,
+        preventDuplicate: true,
+      });
+    }
+  }, [enqueueSnackbar, hasWarning]);
+*/
   return null;
 }

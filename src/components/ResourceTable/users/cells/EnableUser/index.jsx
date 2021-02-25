@@ -9,7 +9,7 @@ import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import CommStatus from '../../../../CommStatus';
 
-export default function EnableUser({ user, integrationId}) {
+export default function EnableUser({ user }) {
   const { confirmDialog } = useConfirmDialog();
   const { sharedWithUser, disabled, _id: userId, accepted } = user;
   const dispatch = useDispatch();
@@ -74,7 +74,7 @@ export default function EnableUser({ user, integrationId}) {
       />
       <CeligoSwitch
         data-test="disableUser"
-        disabled={!accepted || (integrationId && (userId === ACCOUNT_IDS.OWN))}
+        disabled={!accepted || userId === ACCOUNT_IDS.OWN}
         checked={!disabled}
         onChange={handleSwitch}
       />

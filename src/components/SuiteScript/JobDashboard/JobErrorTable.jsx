@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
     },
     '& span': {
       marginLeft: '10px',
-      color: '#fff',
+      color: theme.palette.background.paper,
     },
   },
   btnsWrappper: {

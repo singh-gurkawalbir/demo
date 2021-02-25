@@ -86,7 +86,7 @@ describe('clone sagas', () => {
 
       return expectSaga(createComponents, { resourceType, resourceId })
         .provide([
-          [select(selectors.cloneData, resourceType, resourceId), cloneData],
+          [select(selectors.template, `${resourceType}-${resourceId}`), cloneData],
           [matchers.call.fn(apiCallWithRetry), testComponents],
           [call(getResource, dependentResource), outputResource],
         ])
@@ -127,7 +127,7 @@ describe('clone sagas', () => {
 
       return expectSaga(createComponents, { resourceType, resourceId })
         .provide([
-          [select(selectors.cloneData, resourceType, resourceId), cloneData],
+          [select(selectors.template, `${resourceType}-${resourceId}`), cloneData],
           [matchers.call.fn(apiCallWithRetry), testComponents],
           [call(getResource, dependentResource), outputResource],
         ])
@@ -161,7 +161,7 @@ describe('clone sagas', () => {
 
       return expectSaga(createComponents, { resourceType, resourceId })
         .provide([
-          [select(selectors.cloneData, resourceType, resourceId), cloneData],
+          [select(selectors.template, `${resourceType}-${resourceId}`), cloneData],
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
         .call.fn(apiCallWithRetry)
@@ -185,7 +185,7 @@ describe('clone sagas', () => {
 
       return expectSaga(createComponents, { resourceType, resourceId })
         .provide([
-          [select(selectors.cloneData, resourceType, resourceId), cloneData],
+          [select(selectors.template, `${resourceType}-${resourceId}`), cloneData],
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
         .call.fn(apiCallWithRetry)

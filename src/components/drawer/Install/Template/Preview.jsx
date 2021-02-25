@@ -13,27 +13,48 @@ import getRoutePath from '../../../../utils/routePaths';
 const useStyles = makeStyles(theme => ({
   container: {
     overflow: 'auto',
-    border: `solid 1px ${theme.palette.secondary.lightest}`,
-    margin: theme.spacing(2, 0),
-    backgroundColor: theme.palette.background.paper,
+    margin: theme.spacing(2, 0, 2, 2),
     display: 'grid',
-    gridTemplateColumns: '1fr 4fr',
+    gridTemplateColumns: '33% 66%',
     gridTemplateRows: 'auto',
     height: `calc(100vh - ${theme.appBarHeight + 192}px)`,
+    gridColumnGap: '1%',
   },
   appDetails: {
-    borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
+    background: theme.palette.background.paper2,
     padding: theme.spacing(2),
     display: 'flex',
     flexDirection: 'column',
+    alignSelf: 'flex-start',
+    wordBreak: 'break-word',
+    border: `solid 1px ${theme.palette.secondary.lightest}`,
+    borderRadius: theme.spacing(0.5),
   },
   componentPreview: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(2.5, 2),
     overflowY: 'auto',
+    border: `solid 1px ${theme.palette.secondary.lightest}`,
+    background: theme.palette.background.paper,
   },
-  appLogos: {
+  appLogosContainer: {
     display: 'flex',
     alignItems: 'center',
+    position: 'relative',
+    height: 160,
+    top: theme.spacing(-2),
+    backgroundImage: 'url(https://www.celigo.com/wp-content/themes/Avada-Child-Theme/images/blue-bg.svg)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'right top',
+    backgroundRepeat: 'no-repeat',
+    padding: theme.spacing(0, 4),
+
+  },
+  applogos: {
+    background: theme.palette.background.paper,
+    borderRadius: theme.spacing(0.5),
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(0, 1),
   },
   appDetailsHeader: {
     borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
@@ -46,6 +67,22 @@ const useStyles = makeStyles(theme => ({
   plusIcon: {
     margin: theme.spacing(0, 1),
     color: theme.palette.text.hint,
+  },
+  appsTitle: {
+    color: theme.palette.common.white,
+    paddingLeft: theme.spacing(2),
+  },
+  componentPreviewHeading: {
+    paddingBottom: theme.spacing(3),
+  },
+  listItem: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gridColumnGap: theme.spacing(1),
+    marginBottom: theme.spacing(2),
+  },
+  keyName: {
+    fontSize: 15,
   },
 }));
 const emptyObject = {};
@@ -154,21 +191,22 @@ export default function TemplatePreview() {
 
   return (
     <>
-      <div data-public className={classes.appLogos}>
-        <ApplicationImg markOnly size="small" type={template.applications[0]} />
-        {template.applications[1] && (
+      <div data-public className={classes.appLogosContainer}>
+        <div className={classes.applogos}>
+          <ApplicationImg markOnly size="small" type={template.applications[0]} />
+          {template.applications[1] && (
           <>
             <AddIcon className={classes.plusIcon} />
             <ApplicationImg
               markOnly
-              size="small"
+              size="medium"
               type={template.applications[1]}
             />
           </>
-        )}
+          )}
+        </div>
+        <Typography data-public variant="h3" className={classes.appsTitle}>{name}</Typography>
       </div>
-
-      <Typography data-public variant="h2">{name}</Typography>
 
       <div data-public className={classes.container}>
         <div className={classes.appDetails}>
@@ -178,32 +216,36 @@ export default function TemplatePreview() {
             onClick={handleInstallIntegration}>
             Install now
           </Button>
-
-          <Divider variant="middle" className={classes.divider} />
-
-          <Typography>{description}</Typography>
-
-          <Divider variant="middle" className={classes.divider} />
-
-          <Typography>Created by: </Typography>
-          <Typography>{username}</Typography>
-          <br />
-          <Typography>Company: </Typography>
-          <Typography>{company}</Typography>
           <br />
           {hasReadMe && (
             <Button
-              color="primary"
+              color="secondary"
               variant="outlined"
               onClick={handleReadMeClick}>
               View Readme
             </Button>
           )}
+          <Divider variant="middle" className={classes.divider} />
+          <Typography>{description}</Typography>
+
+          <Divider variant="middle" className={classes.divider} />
+          <div className={classes.listItem}>
+            <Typography variant="h4" className={classes.keyName}>Created by: </Typography>
+            <Typography>{username}</Typography>
+          </div>
+          <div className={classes.listItem}>
+            <Typography variant="h4" className={classes.keyName}>Company: </Typography>
+            <Typography>{company}</Typography>
+          </div>
+
         </div>
         <div className={classes.componentPreview}>
           {status === 'failure' ? null : (
             <>
-              <Typography variant="body2">
+              <Typography variant="h4" className={classes.componentPreviewHeading}>
+                Components
+              </Typography>
+              <Typography variant="body2" >
                 The following components will be created in your account.
               </Typography>
 

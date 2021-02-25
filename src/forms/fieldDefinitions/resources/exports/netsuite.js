@@ -238,9 +238,11 @@ export default {
     label: 'NetSuite stats only',
   },
   'netsuite.internalId': {
-    type: 'text',
+    type: 'uri',
     required: true,
     label: 'File internal id',
+    showExtract: false,
+    showLookup: false,
   },
   'netsuite.blob.purgeFileAfterExport': {
     type: 'checkbox',

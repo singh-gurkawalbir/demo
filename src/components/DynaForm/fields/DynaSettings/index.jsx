@@ -1,13 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import { makeStyles, Typography, ExpansionPanelSummary, ExpansionPanelDetails, ExpansionPanel } from '@material-ui/core';
+import { makeStyles, Typography, AccordionSummary, AccordionDetails, Accordion } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import FormView from './FormView';
 import RawView from './RawView';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useIntegration from '../../../../hooks/useIntegration';
-import FormBuilderButton from '../../../FormBuilderButton';
+import FormBuilderButton from '../../../FormBuilderButton/afe2';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,6 +25,13 @@ const useStyles = makeStyles(theme => ({
     alignSelf: 'center',
     color: theme.palette.secondary.main,
   },
+  customWrapper: {
+    marginBottom: theme.spacing(2),
+    boxShadow: 'none',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    borderRadius: theme.spacing(0.5),
+  },
 }));
 
 export default function DynaSettings(props) {
@@ -33,6 +40,7 @@ export default function DynaSettings(props) {
     resourceContext,
     disabled,
     onFieldChange,
+    sectionId,
     label = 'Custom settings',
     collapsed = true,
     fieldsOnly = false,
@@ -47,8 +55,9 @@ export default function DynaSettings(props) {
   );
 
   const hasSettingsForm = useSelector(state =>
-    selectors.hasSettingsForm(state, resourceType, resourceId)
+    selectors.hasSettingsForm(state, resourceType, resourceId, sectionId)
   );
+
   const handleSettingFormChange = useCallback(
     (values, isValid) => {
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
@@ -91,6 +100,7 @@ export default function DynaSettings(props) {
           onFormChange={handleSettingFormChange}
           resourceId={resourceId}
           resourceType={resourceType}
+          sectionId={sectionId}
           disabled={disabled}
       />
       );
@@ -103,20 +113,22 @@ export default function DynaSettings(props) {
 
   // We are not in edit mode, devs and non-devs alike should see the settings form if it exists.
   return (
-    <ExpansionPanel expanded={!isCollapsed}>
-      <ExpansionPanelSummary
-        data-test={label}
-        className={classes.summaryContainer}
-        onClick={handleExpandClick}
-        expandIcon={<ExpandMoreIcon />}>
-        <Typography className={classes.summaryLabel}>{label}</Typography>
-        {!isCollapsed && (
-        <FormBuilderButton resourceType={resourceType} resourceId={resourceId} integrationId={integrationId} />
-        )}
-      </ExpansionPanelSummary>
-      <ExpansionPanelDetails >
-        {renderSettings()}
-      </ExpansionPanelDetails>
-    </ExpansionPanel>
+    <div className={classes.customWrapper}>
+      <Accordion expanded={!isCollapsed} elevation={0}>
+        <AccordionSummary
+          data-test={label}
+          className={classes.summaryContainer}
+          onClick={handleExpandClick}
+          expandIcon={<ExpandMoreIcon />}>
+          <Typography className={classes.summaryLabel}>{label}</Typography>
+          {!isCollapsed && (
+          <FormBuilderButton resourceType={resourceType} resourceId={resourceId} integrationId={integrationId} />
+          )}
+        </AccordionSummary>
+        <AccordionDetails >
+          {renderSettings()}
+        </AccordionDetails>
+      </Accordion>
+    </div>
   );
 }

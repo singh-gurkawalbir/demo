@@ -31,9 +31,8 @@ export function* requestPreview({ resourceType, resourceId }) {
 
 export function* createComponents({ resourceType, resourceId }) {
   const { cMap: connectionMap, stackId: _stackId, data = {} } = yield select(
-    selectors.cloneData,
-    resourceType,
-    resourceId
+    selectors.template,
+    `${resourceType}-${resourceId}`
   );
   const path = `/${resourceType}/${resourceId}/clone`;
   let components;

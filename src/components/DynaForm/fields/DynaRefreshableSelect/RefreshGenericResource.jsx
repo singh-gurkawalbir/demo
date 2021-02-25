@@ -9,7 +9,7 @@ import DynaMultiSelect from '../DynaMultiSelect';
 import ActionButton from '../../../ActionButton';
 import ExitIcon from '../../../icons/ExitIcon';
 import openExternalUrl from '../../../../utils/window';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 
 const useStyles = makeStyles(theme => ({
   refreshGenericResourceWrapper: {
@@ -37,6 +37,9 @@ const useStyles = makeStyles(theme => ({
 // TODO need to redesign this component to be flexible to read config and render
 // children in required sequence. Currently we are overloading this and child
 // components are hardcoded in it making this inflexible to extend.
+
+// multiselect default value is []
+const isValueEqualDefaultValue = value => (value === '');
 export default function RefreshGenericResource(props) {
   const {
     description,
@@ -44,6 +47,7 @@ export default function RefreshGenericResource(props) {
     disableOptionsLoad,
     id,
     resourceToFetch,
+    ignoreValueUnset = false,
     resetValue,
     multiselect,
     onFieldChange,
@@ -55,7 +59,9 @@ export default function RefreshGenericResource(props) {
     children,
     removeRefresh = false,
     urlToOpen,
+    value,
   } = props;
+
   const classes = useStyles();
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
   // component is in loading state in both request and refresh cases
@@ -99,6 +105,16 @@ export default function RefreshGenericResource(props) {
       setIsDefaultValueChanged(true);
     }
   }, [resourceToFetch, setIsDefaultValueChanged]);
+
+  const isSelectedValueInOptions = fieldData && fieldData.some(({value: optValue}) => value === optValue);
+
+  useEffect(() => {
+    // if selected option is not in options list then reset it to empty
+
+    if (!ignoreValueUnset && !isLoading && !multiselect && !isSelectedValueInOptions && !isValueEqualDefaultValue(value)) {
+      onFieldChange(id, '', true);
+    }
+  }, [id, isLoading, isSelectedValueInOptions, multiselect, onFieldChange, value, ignoreValueUnset]);
 
   const handleOpenResource = useCallback(() => {
     openExternalUrl({ url: urlToOpen });
@@ -147,18 +163,24 @@ export default function RefreshGenericResource(props) {
           </ActionButton>
         )}
       </FormControl>
-      {fieldError && <ErroredMessageComponent errorMessages={fieldError} />}
-      {description && <ErroredMessageComponent description={description} />}
+      {fieldError && <FieldMessage errorMessages={fieldError} />}
+      {description && <FieldMessage description={description} />}
     </div>
   );
 }
 
 export function DynaGenericSelect(props) {
-  const { multiselect } = props;
+  const { multiselect, ignoreValueUnset, disableOptionsLoad, fieldStatus } = props;
+  // component is in loading state in both request and refresh cases
+  const isLoading =
+    !disableOptionsLoad &&
+    (!fieldStatus ||
+      fieldStatus === 'requested' ||
+      fieldStatus === 'refreshed');
 
   return (
     <RefreshGenericResource {...props}>
-      {multiselect ? <DynaMultiSelect /> : <DynaSelect />}
+      {multiselect ? <DynaMultiSelect removeInvalidValues={!ignoreValueUnset} isLoading={isLoading} /> : <DynaSelect />}
     </RefreshGenericResource>
   );
 }

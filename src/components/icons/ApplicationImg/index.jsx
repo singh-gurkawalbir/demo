@@ -8,6 +8,9 @@ const useStyles = makeStyles(theme => ({
   small: {
     maxHeight: theme.spacing(4),
   },
+  medium: {
+    maxHeight: theme.spacing(7),
+  },
   large: {
     maxWidth: theme.spacing(16),
     maxHeight: theme.spacing(16),

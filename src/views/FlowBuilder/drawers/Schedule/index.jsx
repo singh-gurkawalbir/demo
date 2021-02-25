@@ -2,6 +2,7 @@ import React from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { Paper } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import RightDrawer from '../../../../components/drawer/Right';
 import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
@@ -18,6 +19,11 @@ const useStyle = makeStyles(theme => ({
       marginLeft: theme.spacing(-1),
       paddingRight: 0,
     },
+  },
+  paperDefault: {
+    padding: theme.spacing(2),
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
 }));
 
@@ -37,7 +43,9 @@ function DrawerForm(props) {
   return (
     <>
       <DrawerContent className={classes.scheduleContainer}>
-        <FlowScheduleForm formKey={formKey} flow={flow} />
+        <Paper elevation={0} className={classes.paperDefault}>
+          <FlowScheduleForm formKey={formKey} flow={flow} />
+        </Paper>
       </DrawerContent>
 
       <DrawerFooter>

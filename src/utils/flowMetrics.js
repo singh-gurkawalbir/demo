@@ -2,12 +2,33 @@ import startOfDay from 'date-fns/startOfDay';
 import addDays from 'date-fns/addDays';
 import endOfDay from 'date-fns/endOfDay';
 import addHours from 'date-fns/addHours';
+import addMinutes from 'date-fns/addMinutes';
 import moment from 'moment';
 import * as d3 from 'd3';
 import addMonths from 'date-fns/addMonths';
+import { convertUtcToTimezone } from './date';
 
 export const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
 
+export const getRoundedDate = (d = new Date(), offsetInMins, isFloor) => {
+  const ms = 1000 * 60 * offsetInMins; // convert minutes to ms
+
+  return new Date(isFloor ? (Math.floor(d.getTime() / ms) * ms) : (Math.ceil(d.getTime() / ms) * ms));
+};
+
+export const getDateTimeFormat = (range, epochTime, preferences = {}, timezone) => {
+  if (range && range.startDate && range.endDate) {
+    const days = moment(range.endDate).diff(moment(range.startDate), 'days');
+
+    if (days > 4 && days < 4 * 30) {
+      return `${moment(epochTime).format(preferences?.dateFormat || 'MM/DD/YYYY')} GMT`;
+    } if (days >= 4 * 30) {
+      return moment(epochTime).format('MMMM');
+    }
+  }
+
+  return convertUtcToTimezone(moment(epochTime).toISOString(), preferences?.dateFormat, preferences?.timeFormat, timezone);
+};
 export const getLineColor = index => {
   const colorSpectrum = [
     '#2B5B36',
@@ -32,6 +53,14 @@ export const getSelectedRange = range => {
   let end = endDate;
 
   switch (preset) {
+    case 'last15minutes':
+      start = addMinutes(new Date(), -15);
+      end = new Date();
+      break;
+    case 'last30minutes':
+      start = addMinutes(new Date(), -30);
+      end = new Date();
+      break;
     case 'last1hour':
       start = addHours(new Date(), -1);
       end = new Date();
@@ -79,6 +108,22 @@ export const getSelectedRange = range => {
     case 'lastyear':
       start = addMonths(new Date(), -12);
       end = new Date();
+      break;
+    case 'after14days':
+      start = new Date();
+      end = endOfDay(addDays(new Date(), 13));
+      break;
+    case 'after30days':
+      start = new Date();
+      end = endOfDay(addDays(new Date(), 29));
+      break;
+    case 'after6months':
+      start = new Date();
+      end = addMonths(new Date(), 6);
+      break;
+    case 'after1year':
+      start = new Date();
+      end = addMonths(new Date(), 12);
       break;
     case 'lastrun':
     default:
@@ -132,9 +177,9 @@ export const getTicks = (domainRange, srange, isValue) => {
   if (hours <= 4 * 24) {
     ticks = domainRange.ticks(d3.timeHour.every(1)).map(t => t.getTime());
   } else if (days < 90) {
-    ticks = domainRange.ticks(d3.timeHour.every(24)).map(t => t.getTime());
+    ticks = domainRange.ticks(d3.timeDay.every(1)).map(t => t.getTime());
   } else {
-    ticks = domainRange.ticks(d3.timeDay.every(30)).map(t => t.getTime());
+    ticks = domainRange.ticks(d3.timeMonth.every(1)).map(t => t.getTime());
   }
 
   return ticks;
@@ -170,6 +215,7 @@ const getISODateString = date => isDate(date) ? date.toISOString() : date;
 
 const getFlowMetricsQueryParams = (resourceType, resourceId, filters) => {
   const { range = {} } = filters;
+  let timeSrcExpression = '';
   const flowFilterExpression = getFlowFilterExpression(resourceType, resourceId, filters);
   let start = '-1d';
   let end = '-1s';
@@ -213,7 +259,11 @@ const getFlowMetricsQueryParams = (resourceType, resourceId, filters) => {
     duration = '1h';
   }
 
-  return { bucket, start, end, flowFilterExpression, duration };
+  if ((bucket === 'flowEvents' && duration === '1m') || (bucket === 'flowEvents_1hr' && duration === '1h')) {
+    timeSrcExpression = ', timeSrc: "_start"';
+  }
+
+  return { bucket, start, end, flowFilterExpression, timeSrcExpression, duration };
 };
 
 export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) => {
@@ -222,6 +272,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
     start,
     end,
     flowFilterExpression,
+    timeSrcExpression,
     duration,
   } = getFlowMetricsQueryParams(resourceType, resourceId, filters);
 
@@ -233,7 +284,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> filter(fn: (r) => r.u == "${userId}")
         ${flowFilterExpression}
         |> filter(fn: (r) => r._field == "c")
-        |> aggregateWindow(every: ${duration}, fn: sum)
+        |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
         |> fill(value: 0.0)
         |> group(columns: ["_time", "f", "u", "_measurement"], mode: "by")
         |> sum()
@@ -263,8 +314,8 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         (tables
             |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) =>
                 ({
-                  tc: accumulator.tc + r.tc,
-                  tt: accumulator.tt + r._value * r.tc,
+                  tc: if exists r.tc and exists r._value then accumulator.tc + r.tc else accumulator.tc,
+                  tt: if exists r.tc and exists r._value then accumulator.tt + r._value * r.tc else accumulator.tt,
                   attph: if (accumulator.tc + r.tc) > 0.0 then math.floor(x: (accumulator.tt + r._value * r.tc) / (accumulator.tc + r.tc)) else 0.0 
                 })
                 )
@@ -279,9 +330,15 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
         |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
         (tables
-        |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => ({tc: accumulator.tc + r.c, tt: accumulator.tt + r.att * r.c,  attph: math.floor(x: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c))}))
+        |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => 
+              ({
+                tc: if exists r.c and exists r.att then accumulator.tc + r.c else accumulator.tc,
+                tt: if exists r.c and exists r.att then accumulator.tt + r.att * r.c else accumulator.tt,  
+                attph: if exists r.c and exists r.att then math.floor(x: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c)) else accumulator.attph
+              })
+            )
         |> set(key: "_field", value: outputField)
-        |> rename(columns: {attph: "_value"})))
+        |> rename(columns: {attph: "_value"}))${timeSrcExpression})
         |> group(columns: ["_time", "f", "u"])
         |> calculateAttPerHour()
 
@@ -315,7 +372,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> filter(fn: (r) => r.u == "${userId}")
         |> filter(fn: (r) => r.f == "${resourceId}")
         |> filter(fn: (r) => r._field == "c")
-        |> aggregateWindow(every: ${duration}, fn: sum)
+        |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
 
     data1 = seiBaseData
         |> group()
@@ -344,8 +401,8 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         (tables
             |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) =>
                 ({
-                  tc: accumulator.tc + r.tc,
-                  tt: accumulator.tt + r._value * r.tc,
+                  tc: if exists r.tc and exists r._value then accumulator.tc + r.tc else accumulator.tc,
+                  tt: if exists r.tc and exists r._value then accumulator.tt + r._value * r.tc else accumulator.tt,
                   attph: if (accumulator.tc + r.tc) > 0.0 then math.floor(x: (accumulator.tt + r._value * r.tc) / (accumulator.tc + r.tc)) else 0.0 
                 })
                 )
@@ -360,9 +417,15 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
         |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
         (tables
-        |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => ({tc: accumulator.tc + r.c, tt: accumulator.tt + r.att * r.c,  attph: math.floor(x: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c))}))
+        |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => 
+              ({
+                tc: if exists r.c and exists r.att then accumulator.tc + r.c else accumulator.tc, 
+                tt: if exists r.c and exists r.att then accumulator.tt + r.att * r.c else accumulator.tt, 
+                attph: if exists r.c and exists r.att then math.floor(x: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c)) else accumulator.attph 
+              })
+            )
         |> set(key: "_field", value: outputField)
-        |> rename(columns: {attph: "_value"})))
+        |> rename(columns: {attph: "_value"}))${timeSrcExpression})
 
     data3 = attBaseData
         |> group()

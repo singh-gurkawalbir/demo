@@ -19,6 +19,10 @@ const useStyles = makeStyles(theme => ({
     width: 12,
     height: 12,
   },
+  mini: {
+    width: 9,
+    height: 9,
+  },
   success: {
     backgroundColor: theme.palette.success.main,
   },
@@ -45,7 +49,7 @@ function StatusCircle({ variant, size = 'large', className }) {
 
 StatusCircle.propTypes = {
   variant: PropTypes.oneOf(['error', 'info', 'success', 'warning']),
-  size: PropTypes.oneOf(['small', 'large']),
+  size: PropTypes.oneOf(['mini', 'small', 'large']),
 };
 
 export default StatusCircle;

@@ -1,12 +1,13 @@
 import { call, put, takeLatest, select } from 'redux-saga/effects';
 import * as d3 from 'd3';
+import moment from 'moment';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
-import { getFlowMetricsQuery } from '../../utils/flowMetrics';
+import { getFlowMetricsQuery, getRoundedDate } from '../../utils/flowMetrics';
 
-function* requestMetric({query}) {
+export function* requestMetric({query}) {
   let csvResponse;
   const path = '/stats/tsdb';
 
@@ -33,21 +34,47 @@ export function* requestFlowMetrics({resourceType, resourceId, filters }) {
   if (resourceType === 'integrations') {
     flowIds = yield select(selectors.integrationEnabledFlowIds, resourceId);
     if (!flowIds || !flowIds.length) {
-      yield put(actions.flowMetrics.received(resourceType, resourceId, []));
+      yield put(actions.flowMetrics.received(resourceId, []));
 
       return;
     }
     // eslint-disable-next-line no-param-reassign
     filters.selectedResources = flowIds;
   }
+  if (filters?.range?.preset === 'lastrun' && resourceType === 'flows') {
+    const flow = yield select(selectors.resource, 'flows', resourceId);
+    const latestJobDetails = yield select(selectors.latestJobMap, flow?._integrationId);
+    const latestJob = latestJobDetails?.data ? latestJobDetails.data.find(job => job._flowId === resourceId) : undefined;
+
+    if (latestJob) {
+      const startDate = getRoundedDate(new Date(latestJob.createdAt), 1, true);
+      const endDate = getRoundedDate(latestJob.endedAt ? new Date(latestJob.endedAt) : new Date(), 1);
+
+      // we aggregate data per hour when range is greater than 4 hours or run period is more than 7 days ago,
+      // so the actual flow start and end may miss the aggregate window.
+      // hence add -1 and +1 hour to actual flow run range
+      if (moment().diff(moment(startDate), 'days') > 7 ||
+       moment(endDate).diff(moment(startDate), 'hours') > 4) {
+        startDate.setHours(startDate.getHours() - 1);
+        endDate.setHours(endDate.getHours() + 1);
+      } else {
+        // Add -1 and +1 minute range if flow run is less than 4 hours and in last 7 days
+
+        startDate.setMinutes(startDate.getMinutes() - 2);
+        endDate.setMinutes(endDate.getMinutes() + 2);
+      }
+      // eslint-disable-next-line no-param-reassign
+      filters.range = { startDate, endDate, preset: 'lastrun' };
+    }
+  }
   const query = getFlowMetricsQuery(resourceType, resourceId, userId, filters);
 
   try {
     const data = yield call(requestMetric, { query });
 
-    yield put(actions.flowMetrics.received(resourceType, resourceId, data));
+    yield put(actions.flowMetrics.received(resourceId, data));
   } catch (e) {
-    yield put(actions.flowMetrics.failed(e));
+    yield put(actions.flowMetrics.failed(resourceId));
 
     return undefined;
   }

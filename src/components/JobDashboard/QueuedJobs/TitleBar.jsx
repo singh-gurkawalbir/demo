@@ -58,6 +58,7 @@ const connectionsFilterConfig = {
   type: 'connections',
 };
 
+const flowJobConnectionsOptions = {ignoreBorrowedConnections: true};
 export default function DrawerTitleBar({
   connectionId,
   flowId,
@@ -68,8 +69,7 @@ export default function DrawerTitleBar({
   const classes = useStyles();
   const history = useHistory();
   const connections = useSelector(
-    state => selectors.flowJobConnections(state, flowId),
-    (left, right) => left.length === right.length
+    state => selectors.flowJobConnections(state, flowId, flowJobConnectionsOptions)
   );
   const connectionsResourceList = useSelectorMemo(
     selectors.makeResourceListSelector,

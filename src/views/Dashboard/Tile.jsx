@@ -23,17 +23,19 @@ import Manage from '../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
 import ConnectionDownIcon from '../../components/icons/unLinkedIcon';
-import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
+import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS, USER_ACCESS_LEVELS } from '../../utils/constants';
 import { tileStatus, isTileStatusConnectionDown, dragTileConfig, dropTileConfig } from './util';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
-import { getIntegrationAppUrlName } from '../../utils/integrationApps';
+import { getIntegrationAppUrlName, isIntegrationAppVerion2 } from '../../utils/integrationApps';
 import { getTemplateUrlName } from '../../utils/template';
-import TrialExpireNotification from '../../components/HomePageCard/TrialExpireNotification';
+import TileNotification from '../../components/HomePageCard/TileNotification';
+import { useSelectorMemo } from '../../hooks';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
     color: theme.palette.secondary.main,
+    wordBreak: 'break-word',
     '&:hover': {
       color: theme.palette.primary.main,
     },
@@ -66,10 +68,39 @@ const useStyles = makeStyles(theme => ({
     top: 0,
   },
   tagExpire: {
-    bottom: 80,
+    bottom: 90,
     position: 'absolute',
   },
+  noAppImages: {
+    display: 'none',
+  },
 }));
+
+function AppLogosContainer({ tile }) {
+  const applications = useSelectorMemo(selectors.mkTileApplications, tile);
+
+  if (applications.length < 2) {
+    return null;
+  }
+
+  return (
+    <ApplicationImages noOfApps={applications.length}>
+      {
+        applications
+          .map(app => (<div key={app}><ApplicationImg type={app} /></div>))
+          .reduce((acc, x) => acc === null ? x : (
+            <>
+              {acc}
+              <span>
+                <AddIcon />
+              </span>
+              {x}
+            </>
+          ), null)
+      }
+    </ApplicationImages>
+  );
+}
 
 function Tile({ tile, history, onMove, onDrop, index }) {
   const classes = useStyles();
@@ -83,9 +114,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const defaultChildId = useSelector(state =>
-    selectors.defaultStoreId(state, tile._integrationId)
-  );
+  const isIntegrationV2 = isIntegrationAppVerion2(integration, true);
+
   const templateName = useSelector(state => {
     if (integration && integration._templateId) {
       const template = selectors.resource(
@@ -125,31 +155,34 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile._connectorId) {
-    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}${defaultChildId ? `/child/${defaultChildId}` : ''}`;
+    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
     urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
   }
+  const remainingDays = date =>
+    Math.ceil((moment(date) - moment()) / 1000 / 60 / 60 / 24);
+  const licenses = useSelector(state =>
+    selectors.licenses(state)
+  );
 
-  let app1;
-  let app2;
+  const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
+  const expiresInDays = license && remainingDays(license.expires);
+  let licenseMessageContent = '';
+  let expired = false;
+  const resumable = license?.resumable && [INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel);
 
-  if (
-    tile.connector &&
-    tile.connector.applications &&
-    tile.connector.applications.length
-  ) {
-    [app1, app2] = tile.connector.applications;
-
-    if (app1 === 'netsuite') {
-      // Make NetSuite always the second application
-      [app1, app2] = [app2, app1];
-    }
-    // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
-    if (tile.name && tile.name.indexOf('Magento 1') !== -1 && app1 === 'magento') {
-      app1 = 'magento1';
-    }
+  if (resumable) {
+    licenseMessageContent = `Your subscription was renewed on ${moment(license.expires).format('MMM Do, YYYY')}. Click Reactivate to continue.`;
+  } else if (expiresInDays <= 0) {
+    expired = true;
+    licenseMessageContent = `Your license expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your license.`;
+  } else if (expiresInDays > 0 && expiresInDays <= 30) {
+    licenseMessageContent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
   }
 
   const handleConnectionDownStatusClick = useCallback(event => {
+    if (expired) {
+      return;
+    }
     event.stopPropagation();
     if (tile._connectorId) {
       history.push(
@@ -164,15 +197,13 @@ function Tile({ tile, history, onMove, onDrop, index }) {
         )
       );
     }
-  }, [
-    history,
-    integrationAppTileName,
-    tile._connectorId,
-    tile._integrationId,
-  ]);
+  }, [expired, history, integrationAppTileName, tile._connectorId, tile._integrationId]);
 
   const handleStatusClick = useCallback(
     event => {
+      if (expired) {
+        return;
+      }
       if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         event.stopPropagation();
         if (tile._connectorId) {
@@ -209,49 +240,28 @@ function Tile({ tile, history, onMove, onDrop, index }) {
         }
       }
     },
-    [
-      dispatch,
-      history,
-      isUserInErrMgtTwoDotZero,
-      integrationAppTileName,
-      status.variant,
-      tile._connectorId,
-      tile._integrationId,
-      tile.status,
-      isCloned,
-    ]
+    [expired, tile.status, tile._connectorId, tile._integrationId, isUserInErrMgtTwoDotZero, history, isCloned, integrationAppTileName, dispatch, status.variant]
   );
 
   const handleUsersClick = useCallback(event => {
+    if (expired) {
+      return;
+    }
     event.stopPropagation();
     history.push(getRoutePath(urlToIntegrationUsers));
-  }, [history, urlToIntegrationUsers]);
+  }, [expired, history, urlToIntegrationUsers]);
 
   const handleTileClick = useCallback(
     event => {
+      if (expired) {
+        return;
+      }
       event.stopPropagation();
 
       history.push(getRoutePath(urlToIntegrationSettings));
     },
-    [history, urlToIntegrationSettings]
+    [expired, history, urlToIntegrationSettings]
   );
-  const remainingDays = date =>
-    Math.ceil((moment(date) - moment()) / 1000 / 60 / 60 / 24);
-  const licenses = useSelector(state =>
-    selectors.licenses(state)
-  );
-
-  const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
-  const expiresInDays = license && remainingDays(license.expires);
-  let licenseMessageContent = '';
-  let expired = false;
-
-  if (expiresInDays <= 0) {
-    expired = true;
-    licenseMessageContent = `Your license expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your license`;
-  } else if (expiresInDays > 0 && expiresInDays <= 30) {
-    licenseMessageContent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
-  }
 
   // #region Drag&Drop related
   const ref = useRef(null);
@@ -275,7 +285,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             <StatusCircle variant={status.variant} />
           </Status>
           {isConnectionDown && (
-          <Tooltip title="Connection down" placement="bottom" className={classes.tooltip}>
+          <Tooltip data-public title="Connection down" placement="bottom" className={classes.tooltip}>
             <IconButton size="small" color="inherit" onClick={handleConnectionDownStatusClick} className={classes.status}>
               <span><StatusCircle size="small" className={classes.connectionDownRedDot} variant="error" /></span><ConnectionDownIcon />
             </IconButton>
@@ -287,9 +297,10 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             <Typography variant="h3" className={classes.tileName}>
               {isTruncated ? (
                 <Tooltip
+                  data-public
                   title={<span className={classes.tooltipNameFB}> {tile.name}</span>}
                   TransitionComponent={Zoom}
-                  placement="top"
+                  placement="bottom"
                   enterDelay={100}>
                   <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
                     <Button
@@ -312,17 +323,9 @@ function Tile({ tile, history, onMove, onDrop, index }) {
               )}
             </Typography>
           </CardTitle>
-          {tile.connector &&
-              tile.connector.applications &&
-              tile.connector.applications.length > 1 && (
-                <ApplicationImages>
-                  <ApplicationImg type={app1} />
-                  <span>
-                    <AddIcon />
-                  </span>
-                  <ApplicationImg type={app2} />
-                </ApplicationImages>
-          )}
+
+          {!(expired && tile.tag) ? <AppLogosContainer tile={tile} /> : ''}
+
         </Content>
         <Footer>
           <FooterActions>
@@ -330,6 +333,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             <Manage>
               {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR ? (
                 <Tooltip
+                  data-public
                   title="You have monitor permissions"
                   placement="bottom">
                   <Button
@@ -341,6 +345,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
                 </Tooltip>
               ) : (
                 <Tooltip
+                  data-public
                   title="You have manage permissions"
                   placement="bottom">
                   <Button
@@ -362,10 +367,11 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             />
         </Footer>{
           tile._connectorId && licenseMessageContent && (
-          <TrialExpireNotification
+          <TileNotification
             content={licenseMessageContent} expired={expired} connectorId={tile._connectorId}
             licenseId={license._id}
-            single />
+            isIntegrationV2={isIntegrationV2} integrationId={tile._integrationId}
+            integrationAppTileName={integrationAppTileName} resumable={resumable} accessLevel={accessLevel} />
           )
         }
       </HomePageCardContainer>

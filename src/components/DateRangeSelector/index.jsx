@@ -3,6 +3,7 @@ import { Button, List, ListItem, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import addYears from 'date-fns/addYears';
 import React, { useCallback, useMemo, useState } from 'react';
+import clsx from 'clsx';
 import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
@@ -11,6 +12,8 @@ import endOfDay from 'date-fns/endOfDay';
 import ArrowPopper from '../ArrowPopper';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import ButtonGroup from '../ButtonGroup';
+import ActionButton from '../ActionButton';
+import ArrowDownIcon from '../icons/ArrowDownIcon';
 
 const defaultPresets = [
   {id: 'last1hour', label: 'Last 1 hour'},
@@ -82,19 +85,19 @@ const useStyles = makeStyles(theme => ({
       textAlign: 'center',
     },
     '&.Mui-selected': {
-      background: theme.palette.primary.light,
-      borderColor: theme.palette.primary.light,
+      background: theme.palette.primary.dark,
+      borderColor: theme.palette.primary.dark,
       '& > * .MuiTypography-root': {
         color: theme.palette.common.white,
       },
       '&:hover': {
-        background: theme.palette.primary.light,
-        borderColor: theme.palette.primary.light,
+        background: theme.palette.primary.dark,
+        borderColor: theme.palette.primary.dark,
       },
     },
     '&:hover': {
-      borderColor: theme.palette.primary.light,
-      background: theme.palette.primary.light,
+      borderColor: theme.palette.primary.dark,
+      background: theme.palette.primary.dark,
       '& > * .MuiTypography-root': {
         color: theme.palette.common.white,
       },
@@ -109,10 +112,14 @@ export default function DateRangeSelector({
   value = {},
   onSave,
   fromDate,
+  classProps = {},
   customPresets = [],
   showTime = true,
   clearable = false,
   clearValue,
+  placement,
+  Icon,
+  toDate,
 }) {
   const defaultValue = getSelectedRange({preset: 'last30days'});
   const { startDate = defaultValue.startDate, endDate = defaultValue.endDate, preset = defaultValue.preset } = value;
@@ -156,10 +163,15 @@ export default function DateRangeSelector({
   }, [initalValue]);
 
   const handleClear = useCallback(() => {
-    setSelectedRange(clearValue || {startDate: null, endDate: null, preset: null});
-    onSave && onSave(selectedRange);
+    setSelectedRange(() => {
+      const clearRangeValue = clearValue || {startDate: null, endDate: null, preset: null};
+
+      onSave && onSave(clearRangeValue);
+
+      return clearRangeValue;
+    });
     setAnchorEl(null);
-  }, [onSave, selectedRange, clearValue]);
+  }, [onSave, clearValue]);
 
   const handleDateRangeSelection = useCallback(range => {
     let { startDate, endDate } = range;
@@ -173,17 +185,30 @@ export default function DateRangeSelector({
 
   return (
     <>
-      <Button
-        onClick={toggleClick}
-        variant="outlined"
-        color="secondary"
-        className={classes.dateRangePopperBtn}>
-        {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || 'Select range'}
-      </Button>
+      {
+        Icon ? (
+          <ActionButton onClick={toggleClick}>
+            <Icon />
+          </ActionButton>
+        ) : (
+          <Button
+            onClick={toggleClick}
+            variant="outlined"
+            color="secondary"
+            className={classes.dateRangePopperBtn}>
+            {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || 'Select range'}<ArrowDownIcon />
+          </Button>
+        )
+      }
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
-        placement="bottom-end"
+        classes={{
+          popper: clsx(classProps.filterTimeStampPopper, {[classProps.filterTimeStampPopperExpand]: selectedRange.preset === 'custom' }),
+          arrow: clsx(classProps.filterTimeStampPopperArrow, {[classProps.filterTimeStampArrowPopperExpand]: selectedRange.preset === 'custom'}),
+        }}
+        restrictToParent={false}
+        placement={placement || 'bottom-end'}
         onClose={toggleClick}>
         {anchorEl && (
           <div className={classes.dateRangePickerWrapper}>
@@ -220,7 +245,7 @@ export default function DateRangeSelector({
                   ranges={[{...selectedRange, key: 'selection'}]}
                   direction="horizontal"
                   showTime={showTime}
-                  maxDate={new Date()}
+                  maxDate={toDate || new Date()}
                   minDate={fromDate || addYears(new Date(), -1)}
                   inputRanges={[]}
                   showPreview={false}

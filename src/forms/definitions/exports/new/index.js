@@ -1,9 +1,10 @@
 import {applicationsList,
   getWebhookConnectors,
   getWebhookOnlyConnectors,
+  applicationsPlaceHolderText,
 } from '../../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../../utils/resource';
-import { RDBMS_TYPES } from '../../../../utils/constants';
+import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../../utils/constants';
 
 export default {
   preSave: ({ type, application, executionType, apiType, ...rest }) => {
@@ -32,7 +33,7 @@ export default {
 
       // If there is no assistant for the export, we need to show generic adaptor form
       // we are patching useTechAdaptorForm field to not to show default assistant form
-      if (!app.export && app.assistant) {
+      if (!app.export && app.assistant && !FILE_PROVIDER_ASSISTANTS.includes(app.assistant)) {
         newValues['/useTechAdaptorForm'] = true;
       }
     }
@@ -46,8 +47,7 @@ export default {
       type: 'selectapplication',
       label: 'Application',
       appType: 'export',
-      placeholder:
-        'Choose application or start typing to browse 150+ applications',
+      placeholder: applicationsPlaceHolderText(),
       defaultValue: r => (r && r.application) || '',
       validWhen: {
         isNot: { values: [''], message: 'Please select an application' },

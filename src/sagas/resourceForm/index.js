@@ -1,4 +1,5 @@
 import { call, put, select, takeEvery, take, race } from 'redux-saga/effects';
+import { isEmpty } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -8,8 +9,7 @@ import {
   defaultPatchSetConverter,
   getPatchPathForCustomForms,
   getFieldWithReferenceById,
-} from '../../forms/utils';
-import factory from '../../forms/formFactory';
+} from '../../forms/formFactory/utils';
 import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
 import { getResource, commitStagedChanges } from '../resources';
 import connectionSagas, { createPayload } from './connections';
@@ -17,8 +17,11 @@ import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
-import { UI_FIELD_VALUES } from '../../utils/constants';
+import { UI_FIELD_VALUES, FORM_SAVE_STATUS} from '../../utils/constants';
 import { isIntegrationApp, isFlowUpdatedWithPgOrPP } from '../../utils/flows';
+import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
+import getFieldsWithoutFuncs from '../../forms/formFactory/getFieldsWithoutFuncs';
+import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
 
 export const SCOPES = {
   META: 'meta',
@@ -162,7 +165,7 @@ export function* createFormValuesPatchSet({
       );
     }
 
-    const { preSave } = factory.getResourceFormAssets({
+    const { preSave } = getResourceFormAssets({
       resourceType,
       resource,
       connection,
@@ -270,10 +273,10 @@ function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
 }
 
 export function* newIAFrameWorkPayload({ resourceId }) {
-  const { patch: allPatches } = yield select(
+  const { patch: allPatches } = (yield select(
     selectors.stagedResource,
     resourceId
-  );
+  )) || {};
   // TO DO: Ashok Needs to refactor this code
 
   if (
@@ -348,14 +351,22 @@ export function* submitFormValues({
       values: formValues,
     });
   }
+  let patchSet;
+  let finalValues;
 
-  const { patchSet, finalValues } = yield call(createFormValuesPatchSet, {
-    resourceType,
-    resourceId,
-    values: formValues,
-    scope: SCOPES.VALUE,
-  });
-
+  try {
+    // getResourceFrom assets can throw an error when it cannot pick up a matching form
+    ({ patchSet, finalValues } = yield call(createFormValuesPatchSet, {
+      resourceType,
+      resourceId,
+      values: formValues,
+      scope: SCOPES.VALUE,
+    }));
+  } catch (e) {
+    return yield put(
+      actions.resourceForm.submitFailed(resourceType, resourceId)
+    );
+  }
   if (patchSet && patchSet.length > 0) {
     yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
   }
@@ -380,11 +391,11 @@ export function* submitFormValues({
     );
   }
 
-  const { patch } = yield select(
+  const { patch } = (yield select(
     selectors.stagedResource,
     resourceId,
     SCOPES.VALUE
-  );
+  )) || {};
   // In most cases there would be no other pending staged changes, since most
   // times a patch is followed by an immediate commit.  If however some
   // component has staged some changes, even if the patchSet above is empty,
@@ -737,14 +748,14 @@ export function* submitResourceForm(params) {
   // perform submit cleanup
   if (cancelSave) return yield put(actions.resource.clearStaged(resourceId));
 
-  const { submitFailed, skipCommit } = yield select(
+  const { formSaveStatus, skipCommit } = yield select(
     selectors.resourceFormState,
     resourceType,
     resourceId
   );
 
   // if it fails return
-  if (submitFailed || !flowId) return;
+  if (formSaveStatus === FORM_SAVE_STATUS.FAILED || !flowId) return;
 
   const { merged: flow } = yield select(
     selectors.resourceData,
@@ -878,7 +889,13 @@ export function* initFormValues({
     resource._id = resourceId;
   }
 
-  if (!resource) return; // nothing to do.
+  // if resource is empty.... it could be a resource looked up with invalid Id
+  if (!resource || isEmpty(resource)) {
+    yield put(actions.resourceForm.initFailed(resourceType, resourceId));
+
+    return; // nothing to do.
+  }
+
   let assistantData;
 
   if (['exports', 'imports'].includes(resourceType) && resource.assistant) {
@@ -920,7 +937,7 @@ export function* initFormValues({
   }
 
   try {
-    const defaultFormAssets = factory.getResourceFormAssets({
+    const defaultFormAssets = getResourceFormAssets({
       resourceType,
       resource,
       isNew,
@@ -933,7 +950,7 @@ export function* initFormValues({
         ? customForm.form
         : defaultFormAssets.fieldMeta;
     //
-    const fieldMeta = factory.getFieldsWithDefaults(
+    const fieldMeta = getFieldsWithDefaults(
       form,
       resourceType,
       resource,
@@ -998,7 +1015,7 @@ export function* initCustomForm({ resourceType, resourceId }) {
     'connections',
     resource._connectionId
   );
-  const defaultFormAssets = factory.getResourceFormAssets({
+  const defaultFormAssets = getResourceFormAssets({
     connection,
     resourceType,
     resource,
@@ -1006,7 +1023,7 @@ export function* initCustomForm({ resourceType, resourceId }) {
   const {
     extractedInitFunctions,
     ...remainingMeta
-  } = factory.getFieldsWithoutFuncs(
+  } = getFieldsWithoutFuncs(
     defaultFormAssets && defaultFormAssets.fieldMeta,
     resource,
     resourceType

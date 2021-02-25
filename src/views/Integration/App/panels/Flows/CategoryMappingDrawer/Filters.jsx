@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
   ClickAwayListener,
   makeStyles,
@@ -17,6 +17,7 @@ import { selectors } from '../../../../../../reducers';
 import ArrowPopper from '../../../../../../components/ArrowPopper';
 import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
+import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   formControl: {
@@ -46,10 +47,7 @@ function Filters({ integrationId, flowId, uiAssistant }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
-  const { attributes = {}, mappingFilter = 'mapped' } =
-    useSelector(state =>
-      selectors.categoryMappingFilters(state, integrationId, flowId)
-    ) || {};
+  const { attributes = {}, mappingFilter = 'mapped' } = useSelectorMemo(selectors.mkCategoryMappingFilters, integrationId, flowId) || {};
   const handleMenu = useCallback(
     event => {
       if (anchorEl) {

@@ -129,7 +129,7 @@ export default {
       visibleWhen: [{ field: 'http.auth.type', isNot: [''] }],
       defaultValue: r =>
         (r?.http?.unencrypted?.endpointVersion) ||
-        '18.200.001',
+        '20.200.001',
     },
     'http.unencrypted.username': {
       id: 'http.unencrypted.username',
@@ -144,6 +144,7 @@ export default {
       type: 'text',
       inputType: 'password',
       label: 'Password',
+      defaultValue: '',
       required: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
       helpKey: 'lexbizz.connection.http.encrypted.password',

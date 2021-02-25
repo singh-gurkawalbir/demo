@@ -31,6 +31,8 @@ export default {
       resourceId,
       resourceType,
       mode,
+      settingsFormPatchPath,
+      scriptPatchPath,
     } = editor;
     const value = {};
 
@@ -76,7 +78,7 @@ export default {
         patch: [
           {
             op: 'replace',
-            path: '/content',
+            path: scriptPatchPath,
             value: code,
           },
         ],
@@ -89,7 +91,7 @@ export default {
       patch: [
         {
           op: 'replace',
-          path: '/settingsForm',
+          path: settingsFormPatchPath,
           value,
         },
       ],

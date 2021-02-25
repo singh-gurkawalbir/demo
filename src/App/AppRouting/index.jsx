@@ -30,6 +30,9 @@ const Permissions = loadable(() =>
 const Editors = loadable(() =>
   retry(() => import(/* webpackChunkName: 'Editors' */ '../../views/Editors'))
 );
+const Playground = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'Editors' */ '../../views/Playground'))
+);
 const FlowBuilder = loadable(() =>
   retry(() => import(/* webpackChunkName: 'FlowBuilder' */ '../../views/FlowBuilder'))
 );
@@ -189,14 +192,24 @@ export default function AppRouting() {
 
       <Route
         path={[
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab/sections/:sectionId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab/sections/:sectionId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
+          getRoutePath('/integrations/:integrationId/:tab/sections/:sectionId'),
           getRoutePath('/integrations/:integrationId/:tab'),
         ]}
         component={Integration}
         />
+      <Route
+        // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
+        // templateName has structure of application2-application2 will contain atleast 5 characters
+        path={getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/:tab/sections/:sectionId')}
+        component={Integration}
+        />
+
       <Route
         // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
         // templateName has structure of application2-application2 will contain atleast 5 characters
@@ -221,6 +234,7 @@ export default function AppRouting() {
       <Route path={getRoutePath('/dashboard')} component={Dashboard} />
       <Route path={getRoutePath('/recycleBin')} component={RecycleBin} />
       <Route path={getRoutePath('/editors')} component={Editors} />
+      <Route path={getRoutePath('/playground')} component={Playground} />
       <Route path={getRoutePath('/permissions')} component={Permissions} />
       <Route
         path={getRoutePath('/myAccount')}

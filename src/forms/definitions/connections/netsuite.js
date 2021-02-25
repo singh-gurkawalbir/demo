@@ -1,5 +1,5 @@
 import { isNewId } from '../../../utils/resource';
-import { isProduction } from '../../utils';
+import { isProduction } from '../../formFactory/utils';
 
 export default {
   preSave: formValues => {

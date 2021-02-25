@@ -24,7 +24,7 @@ import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTok
 import { isNewId } from '../../../utils/resource';
 import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
 import { REST_ASSISTANTS } from '../../../utils/constants';
-import inferErrorMessage from '../../../utils/inferErrorMessage';
+import inferErrorMessages from '../../../utils/inferErrorMessages';
 
 export function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
@@ -200,7 +200,7 @@ export function* requestToken({ resourceId, fieldId, values }) {
     yield put(
       actions.resource.connections.requestTokenFailed(
         resourceId,
-        inferErrorMessage(e.message)
+        inferErrorMessages(e.message)
       )
     );
 
@@ -267,7 +267,7 @@ export function* requestToken({ resourceId, fieldId, values }) {
   }
 }
 
-function* pingConnection({ resourceId, values }) {
+export function* pingConnection({ resourceId, values }) {
   const connectionPayload = yield call(createPayload, {
     values,
     resourceType: 'connections',
@@ -288,7 +288,7 @@ function* pingConnection({ resourceId, values }) {
     return yield put(
       actions.resource.connections.testErrored(
         resourceId,
-        inferErrorMessage(e.message)
+        inferErrorMessages(e.message)
       )
     );
   }
@@ -297,7 +297,7 @@ function* pingConnection({ resourceId, values }) {
     return yield put(
       actions.resource.connections.testErrored(
         resourceId,
-        inferErrorMessage(resp)
+        inferErrorMessages(resp)
       )
     );
   }
@@ -420,7 +420,7 @@ function* saveAndAuthorizeConnectionForm(params) {
   if (cancelSave) yield put(actions.resource.clearStaged(resourceId));
 }
 
-function* commitAndAuthorizeConnection({ resourceId }) {
+export function* commitAndAuthorizeConnection({ resourceId }) {
   const resp = yield call(commitStagedChanges, {
     resourceType: 'connections',
     id: resourceId,
@@ -441,7 +441,7 @@ function* commitAndAuthorizeConnection({ resourceId }) {
   }
 }
 
-function* requestIClients({ connectionId }) {
+export function* requestIClients({ connectionId }) {
   let path;
   const newIAConnDoc = yield call(newIAFrameWorkPayload, {
     resourceId: connectionId,
@@ -458,7 +458,7 @@ function* requestIClients({ connectionId }) {
   }
 
   try {
-    const { iclients } = yield apiCallWithRetry({
+    const { iclients } = yield call(apiCallWithRetry, {
       path,
       opts: {
         method: 'GET',

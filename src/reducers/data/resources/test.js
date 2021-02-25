@@ -112,6 +112,332 @@ describe('resources reducer', () => {
       });
     });
   });
+  describe('Toggle user sharing option', () => {
+    test('Should be able to toggle shared stack', () => {
+      const userId = '1234';
+      const defaultState = {sshares: [{_id: userId, accepted: true, disabled: false, _stackId: '123445'}]};
+      const expectedState = [{_id: userId, accepted: true, disabled: true, _stackId: '123445'}];
+      const state = reducer(
+        defaultState,
+        actions.stack.toggledUserStackSharing({ userId })
+      );
+
+      expect(state.sshares).toEqual(expectedState);
+    });
+    test('Should be able to handle empty state', () => {
+      const userId = '1234';
+      const defaultState = {};
+      const state = reducer(
+        defaultState,
+        actions.stack.toggledUserStackSharing({ userId })
+      );
+
+      expect(state).toEqual(defaultState);
+    });
+
+    test('Should be able to handle wrong id', () => {
+      const userId = '1234';
+      const defaultState = {sshares: [{_id: '12345', accepted: true, disabled: false, _stackId: '123445'}]};
+      const expectedState = [{_id: '12345', accepted: true, disabled: false, _stackId: '123445'}];
+      const state = reducer(
+        defaultState,
+        actions.stack.toggledUserStackSharing({ userId })
+      );
+
+      expect(state.sshares).toEqual(expectedState);
+    });
+  });
+  describe('Toggle trading partner values', () => {
+    test('Should be able to update toggle trading partner values', () => {
+      const connectionIds = [{_id: '12345'}, {_id: '12346'}];
+      const defaultState = {connections: [{_id: '12345', ftp: {tradingPartner: true}}, {_id: '12346', ftp: {tradingPartner: true}}, {_id: '12347', ftp: {tradingPartner: true}}]};
+      const expectedState = [{_id: '12345', ftp: {tradingPartner: false}}, {_id: '12346', ftp: {tradingPartner: false}}, {_id: '12347', ftp: {tradingPartner: true}}];
+      const state = reducer(
+        defaultState,
+        actions.connection.completeTradingPartner(connectionIds || [])
+      );
+
+      expect(state.connections).toEqual(expectedState);
+    });
+    test('Should be able to handle empty input', () => {
+      const defaultState = {connections: [{_id: '12345', ftp: {tradingPartner: true}}, {_id: '12346', ftp: {tradingPartner: true}}, {_id: '12347', ftp: {tradingPartner: true}}]};
+      const expectedState = [{_id: '12345', ftp: {tradingPartner: true}}, {_id: '12346', ftp: {tradingPartner: true}}, {_id: '12347', ftp: {tradingPartner: true}}];
+      const state = reducer(
+        defaultState,
+        actions.connection.completeTradingPartner([])
+      );
+
+      expect(state.connections).toEqual(expectedState);
+    });
+
+    test('Should be able to handle empty state', () => {
+      const defaultState = {};
+      const state = reducer(
+        defaultState,
+        actions.connection.completeTradingPartner([])
+      );
+
+      expect(state).toEqual(defaultState);
+    });
+  });
+  describe('Deregister connection', () => {
+    test('Should be able to deregister connection', () => {
+      const connectionId = '12';
+      const integrationId = '12345';
+      const defaultState = {integrations: [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}]};
+      const expectedState = [{_id: '12345', _registeredConnectionIds: ['34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}];
+      const state = reducer(
+        defaultState,
+        actions.connection.completeDeregister(connectionId, integrationId)
+      );
+
+      expect(state.integrations).toEqual(expectedState);
+    });
+    test('Should be able to handle empty or wrong integration Id', () => {
+      const connectionId = '12';
+      const integrationId = '';
+      const defaultState = {integrations: [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}]};
+      const state = reducer(
+        defaultState,
+        actions.connection.completeDeregister(connectionId, integrationId)
+      );
+
+      expect(state.integrations).toEqual(defaultState.integrations);
+    });
+    test('Should be able to handle empty or wrong connection Id', () => {
+      const connectionId = '121212';
+      const integrationId = '12345';
+      const defaultState = {integrations: [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}]};
+      const state = reducer(
+        defaultState,
+        actions.connection.completeDeregister(connectionId, integrationId)
+      );
+
+      expect(state).toEqual(defaultState);
+    });
+
+    test('Should be able to handle empty state', () => {
+      const connectionId = '121212';
+      const integrationId = '12345';
+      const defaultState = {};
+      const state = reducer(
+        defaultState,
+        actions.connection.completeDeregister(connectionId, integrationId)
+      );
+
+      expect(state).toEqual(defaultState);
+    });
+  });
+  describe('Register connections', () => {
+    test('Should be able to register connections', () => {
+      const integrationId = '12345';
+      const connectionIds = ['78', '79'];
+      const defaultState = {integrations: [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}]};
+      const expectedState = [{_id: '12345', _registeredConnectionIds: ['12', '34', '78', '79']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}];
+      const state = reducer(
+        defaultState,
+        actions.connection.completeRegister(connectionIds, integrationId)
+      );
+
+      expect(state.integrations).toEqual(expectedState);
+    });
+    test('Should be able to handle empty or wrong integration Id', () => {
+      const connectionIds = ['78', '79'];
+      const integrationId = '';
+      const defaultState = {integrations: [{_id: '12345', _registeredConnectionIds: ['12', '34']}, {_id: '12346', _registeredConnectionIds: ['56', '78']}]};
+      const state = reducer(
+        defaultState,
+        actions.connection.completeRegister(connectionIds, integrationId)
+      );
+
+      expect(state).toEqual(defaultState);
+    });
+    test('Should be able to handle empty state', () => {
+      const connectionIds = ['121212'];
+      const integrationId = '12345';
+      const defaultState = {};
+      const state = reducer(
+        defaultState,
+        actions.connection.completeRegister(connectionIds, integrationId)
+      );
+
+      expect(state).toEqual(defaultState);
+    });
+  });
+  describe('Clear collection', () => {
+    test('Should be able to clear collection', () => {
+      const resourceType = 'connectors/123/licenses';
+      const collection = [{ _id: '456' }, { _id: '678' }];
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection(resourceType, collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.resource.clearCollection('connectorLicenses')
+      );
+
+      expect(state.connectorLicenses).toEqual([]);
+    });
+
+    test('Should be able to handle empty state', () => {
+      const resourceType = 'connectors/123/licenses';
+      const collection = [];
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection(resourceType, collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.resource.clearCollection('connectorLicenses')
+      );
+
+      expect(state.connectorLicenses).toEqual([]);
+    });
+  });
+  describe('Cancelled transfer', () => {
+    test('Should be able to update cancelled transfer', () => {
+      const resourceType = 'transfers';
+      const collection = [{ _id: '456' }, { _id: '678' }];
+      const expected = [{ _id: '456', status: 'canceled' }, { _id: '678' }];
+
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection(resourceType, collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.transfer.canceledTransfer('456')
+      );
+
+      expect(state.transfers).toEqual(expected);
+    });
+
+    test('Should be able to handle empty state', () => {
+      const resourceType = 'transfers';
+      const collection = [];
+
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection(resourceType, collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.transfer.canceledTransfer('456')
+      );
+
+      expect(state.transfers).toEqual([]);
+    });
+  });
+  describe('Update connection status', () => {
+    test('Should be able to update connection status', () => {
+      const connStatus = [{ _id: '456', offline: true, queueSize: 10, name: 'conn1'}, { _id: '678', offline: false, queueSize: 11, name: 'conn2' }];
+      const collection = [{ _id: '456', offline: false, queues: [{size: 32}], name: 'conn4'}, { _id: '678', offline: true, queues: [{size: 99}], name: 'conn20' }];
+
+      const expected = [{ _id: '456', offline: false, queueSize: 32, name: 'conn1'}, { _id: '678', offline: true, queueSize: 99, name: 'conn2' }];
+
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection('connections', connStatus)
+      );
+      const state = reducer(
+        prevState,
+        actions.resource.connections.updateStatus(collection)
+      );
+
+      expect(state.connections).toEqual(expected);
+    });
+
+    test('Should be able to handle empty state', () => {
+      const collection = [];
+
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection('connections', collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.resource.connections.updateStatus(collection)
+      );
+
+      expect(state.connections).toEqual([]);
+    });
+  });
+  describe('Make connection online', () => {
+    test('Should be able to make connection online', () => {
+      const connectionId = '1234';
+
+      const collection = [{ _id: '456', offlineConnections: ['1234', '1236', '1238'], name: 'tile1'}, { _id: '457', offlineConnections: ['1234', '1239', '1231'], name: 'tile2'}];
+      const expected = [{ _id: '456', offlineConnections: ['1236', '1238'], name: 'tile1'}, { _id: '457', offlineConnections: ['1239', '1231'], name: 'tile2'}];
+
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection('tiles', collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.connection.madeOnline(connectionId)
+      );
+
+      expect(state.tiles).toEqual(expected);
+    });
+
+    test('Should be able to handle empty state', () => {
+      const connectionId = '1234';
+
+      const collection = [];
+
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection('tiles', collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.connection.madeOnline(connectionId)
+      );
+
+      expect(state.tiles).toEqual(collection);
+    });
+  });
+  describe('Access token auto purge', () => {
+    test('Should be able to filter out purged tokens', () => {
+      const tomorrow = new Date();
+      const yesterday = new Date();
+
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      const collection = [{ _id: '456', autoPurgeAt: tomorrow, name: 'token1'}, { _id: '678', autoPurgeAt: yesterday, name: 'token2' }];
+      const expected = [{ _id: '456', autoPurgeAt: tomorrow, name: 'token1'}];
+
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection('accesstokens', collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.accessToken.deletePurged()
+      );
+
+      expect(state.accesstokens).toEqual(expected);
+    });
+
+    test('Should be able to handle empty state', () => {
+      const collection = [];
+      const expected = [];
+
+      const prevState = reducer(
+        undefined,
+        actions.resource.receivedCollection('accesstokens', collection)
+      );
+      const state = reducer(
+        prevState,
+        actions.accessToken.deletePurged()
+      );
+
+      expect(state.accesstokens).toEqual(expected);
+    });
+  });
 });
 
 describe('resources reducer for special cases', () => {
@@ -222,7 +548,139 @@ describe('resources reducer for special cases', () => {
   });
 });
 
-describe('intetgrationApps installer reducer', () => {
+describe('integrationAppSettings reducer', () => {
+  const integrations = [
+    {
+      _id: 'integrationId',
+      name: 'integration Name',
+      _connectorId: 'connectorId',
+      settings: {
+        sections: [
+          {
+            id: 'store1',
+            sections: [
+              {
+                id: 'sectionTitle',
+                flows: [
+                  {
+                    _id: 'flowId',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        supportsMultiStore: true,
+      },
+    },
+    {
+      _id: 'integrationId2',
+      name: 'integration2 Name',
+      _connectorId: 'connectorId1',
+      settings: {
+        sections: [
+          {
+            id: 'sectionTitle',
+            flows: [
+              {
+                _id: 'flowId',
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ];
+
+  test('should not throw error for bad params', () => {
+    const integrationAppSettings = selectors.mkIntegrationAppSettings();
+
+    expect(integrationAppSettings({}, 'integrationId')).toEqual(null);
+    expect(integrationAppSettings(undefined, undefined)).toEqual(
+      null
+    );
+    expect(
+      integrationAppSettings(undefined, undefined, undefined)
+    ).toEqual(null);
+    expect(integrationAppSettings()).toEqual(null);
+  });
+
+  test('should return correct integration App settings for multistore integrationApp', () => {
+    const state = reducer(
+      {
+        data: {
+          resources: {
+            integrations,
+          },
+        },
+      },
+      'some_action'
+    );
+    const integrationAppSettings = selectors.mkIntegrationAppSettings();
+
+    expect(
+      integrationAppSettings(state, 'integrationId', 'store1')
+    ).toEqual({
+      _id: 'integrationId',
+      _connectorId: 'connectorId',
+      name: 'integration Name',
+      settings: {
+        sections: [
+          {
+            id: 'store1',
+            sections: [{ flows: [{ _id: 'flowId' }], id: 'sectionTitle' }],
+          },
+        ],
+        supportsMultiStore: true,
+      },
+      stores: [
+        { hidden: false, label: undefined, mode: 'settings', value: 'store1' },
+      ],
+    });
+
+    expect(integrationAppSettings(state, 'integrationId')).toEqual({
+      _connectorId: 'connectorId',
+      _id: 'integrationId',
+      name: 'integration Name',
+      settings: {
+        sections: [
+          {
+            id: 'store1',
+            sections: [{ flows: [{ _id: 'flowId' }], id: 'sectionTitle' }],
+          },
+        ],
+        supportsMultiStore: true,
+      },
+      stores: [
+        { hidden: false, label: undefined, mode: 'settings', value: 'store1' },
+      ],
+    });
+  });
+  test('should return correct integration App settings for single store integrationApp', () => {
+    const state = reducer(
+      {
+        data: {
+          resources: {
+            integrations,
+          },
+        },
+      },
+      'some_action'
+    );
+    const integrationAppSettings = selectors.mkIntegrationAppSettings();
+
+    expect(integrationAppSettings(state, 'integrationId2')).toEqual({
+      _id: 'integrationId2',
+      _connectorId: 'connectorId1',
+      name: 'integration2 Name',
+      settings: {
+        sections: [{ flows: [{ _id: 'flowId' }], id: 'sectionTitle' }],
+      },
+    });
+  });
+});
+
+describe('integrationApps installer reducer', () => {
   describe('integrationApps received installer install_inProgress action', () => {
     test('should find the integration with id and find the installation step with passed installerFunction and set isTriggered flag to true', () => {
       let state;
@@ -1053,5 +1511,366 @@ describe('resourceDetailsMap selector', () => {
         flow6: { name: 'flow_Six', _connectorId: 'connector4', numImports: 2 },
       },
     });
+  });
+});
+describe('Connection has as2 routing selector', () => {
+  const connections = [
+    { _id: '1234',
+      as2: {contentBasedFlowRouter: {_scriptId: '1234'}},
+      name: 'conn1',
+    },
+    { _id: '1235',
+      as2: {},
+      name: 'conn2',
+    },
+    { _id: '12357',
+      file: {csv: {}},
+      name: 'conn2',
+    },
+  ];
+
+  test('should return false when the state is undefined', () => {
+    const state = reducer(undefined, 'some action');
+
+    expect(selectors.connectionHasAs2Routing(state)).toEqual(false);
+  });
+  test('should return true if connection has as2 routing', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('connections', connections)
+    );
+
+    expect(selectors.connectionHasAs2Routing(state, '1234')).toEqual(true);
+  });
+  test('should return false if connection does not have as2 routing', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('connections', connections)
+    );
+
+    expect(selectors.connectionHasAs2Routing(state, '12357')).toEqual(false);
+  });
+});
+describe('Export needs routing selector', () => {
+  const exports = [
+    { _id: '1234',
+      adaptorType: 'AS2Export',
+      _connectionId: 'conn1',
+      name: 'exp1',
+    },
+    { _id: '1235',
+      adaptorType: 'AS2Export',
+      _connectionId: 'conn1',
+      name: 'exp2',
+    },
+    { _id: '12357',
+      adaptorType: 'AS2Export',
+      _connectionId: 'conn2',
+      name: 'exp3',
+    },
+    { _id: '12358',
+      adaptorType: 'FTPExport',
+      _connectionId: 'conn2',
+      name: 'exp4',
+    },
+  ];
+
+  test('should return false when the state is undefined', () => {
+    const state = reducer(undefined, 'some action');
+
+    expect(selectors.exportNeedsRouting(state)).toEqual(false);
+  });
+  test('should return true if export needs routing', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('exports', exports)
+    );
+
+    expect(selectors.exportNeedsRouting(state, '1234')).toEqual(true);
+  });
+  test('should return false if export does not need routing', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('exports', exports)
+    );
+
+    expect(selectors.exportNeedsRouting(state, '12358')).toEqual(false);
+  });
+});
+
+describe('Default store id selector', () => {
+  const integrations = [
+    { _id: 'int1',
+      _connectorId: 'connector3',
+      settings: {supportsMultiStore: true, sections: [{title: 'store1', id: '123'}, {title: 'store2', id: '143'}]},
+      name: 'int_One',
+      something: 'something' },
+    {
+      _id: 'int2',
+      name: 'int_Two',
+      settings: {supportsMultiStore: true, sections: [{title: 'store1', id: '1234'}]},
+      _connectorId: 'connector2',
+      something: 'something',
+    },
+  ];
+
+  test('should return undefined when the state is undefined', () => {
+    const state = reducer(undefined, 'some action');
+
+    expect(selectors.defaultStoreId(state)).toEqual(undefined);
+  });
+  test('should return default store id', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('integrations', integrations)
+    );
+
+    expect(selectors.defaultStoreId(state, 'int1')).toEqual('123');
+  });
+  test('should return correct store id', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('integrations', integrations)
+    );
+
+    expect(selectors.defaultStoreId(state, 'int1', '143')).toEqual('143');
+  });
+  test('should return undefined for invalid integration Id', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('integrations', integrations)
+    );
+
+    expect(selectors.defaultStoreId(state, 'int11234', '143')).toEqual(undefined);
+  });
+});
+
+describe('mkFlowGroupingsSections', () => {
+  const groupingsSelector = selectors.mkFlowGroupingsSections();
+
+  const state = {
+    integrations: [
+      {_id: '1',
+        flowGroupings: [
+          {name: 'Grouping1 name', _id: 'grouping1Id'},
+          {name: 'Grouping2 name', _id: 'grouping2Id'},
+        ]},
+    ],
+
+  };
+
+  test('should get groupings translated', () => {
+    expect(groupingsSelector(state, '1')).toEqual(
+      [
+        {title: 'Grouping1 name', sectionId: 'grouping1Id'},
+        {title: 'Grouping2 name', sectionId: 'grouping2Id'},
+      ]
+    );
+  });
+  test('should get null for non existent integration id', () => {
+    expect(groupingsSelector(state, '2')).toEqual(
+      null
+    );
+  });
+});
+const settingsForm = {
+  fieldMap: {},
+  layout: {},
+};
+const settings = {
+  val1: 'something',
+};
+
+describe('mkGetAllCustomFormsForAResource ', () => {
+  const customFormsSelector = selectors.mkGetAllCustomFormsForAResource();
+
+  test('should return null for a non existent resource', () => {
+    const state = {
+      exports: [
+        {_id: '1',
+          settingsForm,
+          settings,
+        },
+      ],
+
+    };
+    const received = customFormsSelector(state, 'exports', 'someotherResource');
+
+    expect(received).toEqual(null);
+  });
+
+  test('should just get the root custom form for any non integration as a collection', () => {
+    const state = {
+      exports: [
+        {_id: '1',
+          settingsForm,
+          settings,
+        },
+      ],
+
+    };
+    const received = customFormsSelector(state, 'exports', '1');
+    const expected = {allSections: [
+      { title: 'General',
+        sectionId: 'general',
+        settings,
+        settingsForm,
+      },
+    ],
+    hasFlowGroupings: false,
+    };
+
+    expect(received).toEqual(expected);
+  });
+
+  describe('integrations resources', () => {
+    test('should consolidate all custom form for an integration with flowgroupings as a collection', () => {
+      const state = {
+        integrations: [
+          {_id: '1',
+            settingsForm,
+            settings,
+            flowGroupings: [
+              {
+                name: 'Group1',
+                _id: 'groupId1',
+                settingsForm,
+                settings,
+              },
+              {
+                name: 'Group2',
+                _id: 'groupId2',
+                settingsForm,
+                settings,
+              },
+            ],
+          },
+        ],
+
+      };
+      const received = customFormsSelector(state, 'integrations', '1');
+      const expected = {allSections: [
+        { title: 'General',
+          sectionId: 'general',
+          settings,
+          settingsForm,
+        },
+        { title: 'Group1',
+          sectionId: 'groupId1',
+          settings,
+          settingsForm,
+        },
+        { title: 'Group2',
+          sectionId: 'groupId2',
+          settings,
+          settingsForm,
+        },
+      ],
+      hasFlowGroupings: true,
+      };
+
+      expect(received).toEqual(expected);
+    });
+    test('should consolidate all custom form for an integration without flowgroupings as a collection', () => {
+      const state = {
+        integrations: [
+          {_id: '1',
+            settingsForm,
+            settings,
+          },
+        ],
+
+      };
+      const received = customFormsSelector(state, 'integrations', '1');
+      const expected = {allSections: [
+        { title: 'General',
+          sectionId: 'general',
+          settings,
+          settingsForm,
+        }],
+      hasFlowGroupings: false,
+      };
+
+      expect(received).toEqual(expected);
+    });
+  });
+});
+
+describe('mkGetCustomFormPerSectionId', () => {
+  const customFormSelectorPerSectionId = selectors.mkGetCustomFormPerSectionId();
+
+  test('should return null for a non existent resourceId id', () => {
+    const state = {
+      exports: [
+        {_id: '1',
+          settingsForm,
+          settings,
+        },
+      ],
+
+    };
+
+    const received = customFormSelectorPerSectionId(state, 'exports', 'someId', 'someSectionId');
+
+    expect(received).toEqual(null);
+  });
+
+  test('should return the root level settings form when sectionId is general', () => {
+    const state = {
+      exports: [
+        {_id: '1',
+          settingsForm,
+          settings,
+        },
+      ],
+
+    };
+
+    const received = customFormSelectorPerSectionId(state, 'exports', '1', 'general');
+
+    const expected = {
+      sectionId: 'general',
+      title: 'General',
+      settingsForm,
+      settings,
+    };
+
+    expect(received).toEqual(expected);
+  });
+
+  test('should return the flowGroupSettings form when the integration does have flowGroupings', () => {
+    const state = {
+      integrations: [
+        {_id: '1',
+          settingsForm,
+          settings,
+          flowGroupings: [
+            {
+              name: 'Group1',
+              _id: 'groupId1',
+              settingsForm,
+              settings,
+            },
+            {
+              name: 'Group2',
+              _id: 'groupId2',
+              settingsForm,
+              settings,
+            },
+          ],
+        },
+      ],
+    };
+    // no sectionId has been provided
+    const received = customFormSelectorPerSectionId(state, 'integrations', '1', 'groupId1');
+
+    const expected = {
+      sectionId: 'groupId1',
+      title: 'Group1',
+      settingsForm,
+      settings,
+    };
+
+    expect(received).toEqual(expected);
   });
 });

@@ -14,6 +14,12 @@ const IMPORT_RESPONSE_MAPPING_EXTRACTS = [
 ];
 
 export default {
+  /**
+   *
+   * getResponseMappingExtracts: returns extract array list for response mapping.
+   * Also, used in flowData utils.
+   *
+   */
   getResponseMappingExtracts: (resourceType, adaptorType) => {
     if (resourceType === 'imports') {
       if (adaptorType === 'HTTPImport') { return [...IMPORT_RESPONSE_MAPPING_EXTRACTS, 'headers']; }
@@ -23,6 +29,13 @@ export default {
 
     return LOOKUP_RESPONSE_MAPPING_EXTRACTS;
   },
+
+  /**
+   *
+   * getResponseMappingDefaultExtracts: returns extract suggestions to be displayed
+   * in Response Mapping window
+   *
+   */
   getResponseMappingDefaultExtracts(resourceType, adaptorType) {
     const extractFields = this.getResponseMappingExtracts(resourceType, adaptorType);
 
@@ -31,6 +44,32 @@ export default {
       name: m,
     }));
   },
+
+  /**
+   * getFieldsAndListMappings takes response mapping as input as returns flattended mapping structure
+   * it into list and list mapping structure
+   *
+   * Ex: Input:
+   *  mapping = {
+   *      fields: [
+   *        {generate: 'fg1', extract: 'e1'},
+   *      ],
+   *      lists: [
+   *        {
+   *          generate: 'lg1',
+   *          fields: [
+   *            {generate: 'lfg1', extract: 'lge1'},
+   *            {generate: 'lfg2', extract: 'lge2'},
+   *          ],
+   *        },
+   *      ],
+   *    },
+   *    Output = [
+   *      {generate: 'fg1', extract: 'e1'},
+   *      {generate: 'lg1[*].lfg1', extract: 'lge1'},
+   *      {generate: 'lg1[*].lfg2', extract: 'lge2'},
+   *    ]
+   */
   getFieldsAndListMappings: _mappings => {
     const mappings = deepClone(_mappings);
     let tempFm;
@@ -54,6 +93,37 @@ export default {
 
     return toReturn;
   },
+
+  /**
+   * generateMappingFieldsAndList takes flattened response mapping list and converts
+   * it into list and list mapping structure
+   *
+   * Ex: Input:
+   * mapping = [
+   *            {generate: 'abc', extract: 'a'},
+   *            {generate: 'lg1[*].lfg1', extract: 'lge1'},
+   *            {generate: 'lg1[*].lfg2', extract: 'lge2'},
+   *            {generate: 'lg2[*].lfg21', extract: 'lge21'},
+   *           ]
+   * Output = {
+   *       fields: [{generate: 'abc', extract: 'a'}],
+   *      lists: [
+   *        {
+   *          generate: 'lg1',
+   *          fields: [
+   *            {generate: 'lfg1', extract: 'lge1'},
+   *            {generate: 'lfg2', extract: 'lge2'},
+   *          ],
+   *        },
+   *        {
+   *          generate: 'lg2',
+   *          fields: [
+   *            {generate: 'lfg21', extract: 'lge21'},
+   *          ],
+   *        },
+   *      ],
+   *    }
+   */
   generateMappingFieldsAndList: (mappings = []) => {
     let generateParts;
     const lists = [];
@@ -63,7 +133,7 @@ export default {
     mappings.forEach(mappingTmp => {
       const mapping = { ...mappingTmp };
 
-      delete mapping.rowIdentifier;
+      delete mapping.key;
 
       if (!mapping.generate) {
         return true;

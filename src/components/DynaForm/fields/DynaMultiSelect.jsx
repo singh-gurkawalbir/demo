@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import { FormLabel } from '@material-ui/core';
@@ -7,7 +7,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Chip from '@material-ui/core/Chip';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 import CeligoSelect from '../../CeligoSelect';
 import FieldHelp from '../FieldHelp';
 import Tag from '../../HomePageCard/Footer/Tag';
@@ -85,6 +85,7 @@ export default function DynaMultiSelect(props) {
     disabled,
     id,
     name,
+    isLoading,
     options = [],
     value = [],
     label,
@@ -147,7 +148,7 @@ export default function DynaMultiSelect(props) {
   /**
    * Get a list of option items to filter out invalid options from value, when removeInvalidValues prop is set
    */
-  const optionItems = options.reduce(
+  const optionItems = useMemo(() => options.reduce(
     (itemsSoFar, option) =>
       itemsSoFar.concat(
         option.items.map(item => {
@@ -159,10 +160,10 @@ export default function DynaMultiSelect(props) {
         })
       ),
     []
-  );
+  ), [options]);
 
   useEffect(() => {
-    if (removeInvalidValues) {
+    if (removeInvalidValues && !isLoading) {
       // If the value contains any item not present in the options array, remove it.
       if (Array.isArray(processedValue) &&
        processedValue.length &&
@@ -170,8 +171,7 @@ export default function DynaMultiSelect(props) {
         onFieldChange(id, processedValue.filter(val => optionItems.includes(val)));
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, optionItems, processedValue, removeInvalidValues]);
+  }, [id, onFieldChange, optionItems, processedValue, removeInvalidValues]);
 
   useEffect(() => {
     // this is used to force 'multiselect' field act as a 'select' field temporarily.
@@ -230,7 +230,7 @@ export default function DynaMultiSelect(props) {
         </CeligoSelect>
       </FormControl>
 
-      <ErroredMessageComponent {...props} />
+      <FieldMessage {...props} />
     </div>
   );
 }

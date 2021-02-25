@@ -10,7 +10,7 @@ import DynaText from './DynaText';
 import { isNewId, getWebhookUrl } from '../../../utils/resource';
 import useFormContext from '../../Form/FormContext';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import { getInvalidFields } from '../../../forms/utils';
+import { getInvalidFields } from '../../../forms/formFactory/utils';
 
 const hasInValidFields = (fields, fieldStates) => getInvalidFields(fieldStates).some(field => fields.includes(field.id));
 

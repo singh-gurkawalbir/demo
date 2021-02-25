@@ -8,7 +8,7 @@ import { FixedSizeList } from 'react-window';
 import { stringCompare } from '../../../utils/sort';
 import CeligoSelect from '../../CeligoSelect';
 import FieldHelp from '../FieldHelp';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 
 const AUTO_CLEAR_SEARCH = 500;
 
@@ -126,6 +126,9 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.secondary.lightest,
     transition: 'all .8s ease',
   },
+  dynaSelectMenuItem: {
+    wordBreak: 'break-word',
+  },
 }));
 
 const Row = ({ index, style, data }) => {
@@ -146,12 +149,11 @@ const Row = ({ index, style, data }) => {
       value={value}
       data-value={value}
       disabled={disabled}
-      className={clsx({
+      className={clsx(classes.dynaSelectMenuItem, {
         [classes.focusVisibleMenuItem]: matchMenuIndex === index,
       })}
       style={style}
       selected={value === finalTextValue}
-
       onClick={() => {
         if (value !== undefined) {
           onFieldChange(id, value);
@@ -263,6 +265,12 @@ export default function DynaSelect(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [classes, finalTextValue, id, items, matchMenuIndex, onFieldChange]);
 
+  // if there are fewer options the view port height then let height scale per number of options
+
+  const maxHeightOfSelect = items.length > NO_OF_OPTIONS
+    ? OPTIONS_VIEW_PORT_HEIGHT
+    : ITEM_SIZE * items.length;
+
   return (
     <div className={clsx(classes.dynaSelectWrapper, rootClassName)}>
       <div className={classes.fieldWrapper}>
@@ -281,6 +289,7 @@ export default function DynaSelect(props) {
           value={finalTextValue}
           disableUnderline
           displayEmpty
+          maxHeightOfSelect={maxHeightOfSelect}
           renderValue={renderValue}
           open={open}
           onOpen={openSelect}
@@ -292,11 +301,8 @@ export default function DynaSelect(props) {
             className={className}
             ref={listRef}
             itemSize={ITEM_SIZE}
-            // if there are fewer options the view port height then let height scale per number of options
             height={
-              items.length > NO_OF_OPTIONS
-                ? OPTIONS_VIEW_PORT_HEIGHT
-                : ITEM_SIZE * items.length
+              maxHeightOfSelect
             }
             itemCount={items.length}
             itemData={rowProps}
@@ -306,7 +312,7 @@ export default function DynaSelect(props) {
         </CeligoSelect>
       </FormControl>
 
-      {!removeHelperText && <ErroredMessageComponent {...props} />}
+      {!removeHelperText && <FieldMessage {...props} />}
     </div>
   );
 }

@@ -16,6 +16,7 @@ import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import ButtonGroup from '../../ButtonGroup';
+import EditorDrawer from '../../AFE2/Drawer';
 
 const emptySet = [];
 const emptyObject = {};
@@ -31,10 +32,9 @@ function MappingSettings({
 }) {
   const history = useHistory();
   const { sectionId, editorId, integrationId, mappingIndex} = categoryMappingOpts;
-
   const [enquesnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
-  const {importId, flowId, subRecordMappingId} = useSelector(state => {
+  const {importId, flowId, subRecordMappingId, isGroupedSampleData} = useSelector(state => {
     if (isCategoryMapping) {
       const {importId, flowId} = categoryMappingOpts;
 
@@ -96,11 +96,12 @@ function MappingSettings({
         isCategoryMapping,
         recordType: nsRecordType,
         importResource,
+        isGroupedSampleData,
       };
 
       return ApplicationMappingSettings.getMetaData(opts);
     },
-    [value, flowId, extractFields, generateFields, lookups, isCategoryMapping, nsRecordType, importResource]
+    [value, flowId, extractFields, generateFields, lookups, isCategoryMapping, nsRecordType, importResource, isGroupedSampleData]
   );
   const disableSave = useMemo(() => {
     // Disable all fields except useAsAnInitializeValue in case mapping is not editable
@@ -237,7 +238,7 @@ function MappingSettingsWrapper(props) {
   );
 }
 function CategoryMappingSettingsWrapper(props) {
-  const { integrationId, flowId, importId} = props;
+  const { integrationId, flowId, importId, sectionId} = props;
   const match = useRouteMatch();
   const { editorId, mappingIndex } = match.params;
   const isSettingsConfigured = useSelector(state => {
@@ -258,6 +259,7 @@ function CategoryMappingSettingsWrapper(props) {
       flowId={flowId}
       importId={importId}
       editorId={editorId}
+      sectionId={sectionId}
       mappingIndex={mappingIndex}
     />
   );
@@ -268,6 +270,8 @@ export default function SettingsDrawer(props) {
   return (
     <RightDrawer
       hideBackButton
+      variant="temporary"
+      disableBackdropClick
       path={[
         'settings/:mappingKey',
         'settings/category/:editorId/:mappingIndex',
@@ -280,7 +284,8 @@ export default function SettingsDrawer(props) {
         <Route
           path={`${match.url}/settings/category/:editorId/:mappingIndex`}>
           <CategoryMappingSettingsWrapper
-            {...props} />
+            {...props}
+            sectionId={match.params?.categoryId} />
         </Route>
         <Route
           path={`${match.url}/settings/:mappingKey`}>
@@ -289,6 +294,8 @@ export default function SettingsDrawer(props) {
         </Route>
 
       </Switch>
+      <EditorDrawer />
+
     </RightDrawer>
   );
 }

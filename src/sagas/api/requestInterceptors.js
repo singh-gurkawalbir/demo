@@ -3,7 +3,6 @@ import { sendRequest } from 'redux-saga-requests';
 import actions from '../../actions';
 import {
   normalizeUrlAndOptions,
-  introduceNetworkLatency,
   checkToThrowSessionValidationException,
   throwExceptionUsingTheResponse,
   // isUnauthorized,
@@ -12,8 +11,7 @@ import {
 import { unauthenticateAndDeleteProfile } from '..';
 import { selectors } from '../../reducers';
 import { isJsonString } from '../../utils/string';
-
-const tryCount = 3;
+import { RETRY_COUNT } from '../../reducers/comms/networkComms';
 
 function* isCurrentProfileDifferent() {
   const currentProfile = yield select(selectors.userProfile);
@@ -72,7 +70,6 @@ export function* onRequestSaga(request) {
   // for development only to slow down local api calls
   // lets built for a good UX that can deal with high latency calls...
 
-  yield call(introduceNetworkLatency);
   // TODO: proxing path so that resourceStatus selector can pick up
   // the right comm call status
   const requestPayload = yield {
@@ -164,7 +161,7 @@ export function* onErrorSaga(error, action) {
 
   const { retryCount = 0 } = yield select(selectors.resourceStatus, path, method);
 
-  if (retryCount < tryCount) {
+  if (retryCount < RETRY_COUNT) {
     yield delay(Number(process.env.REATTEMPT_INTERVAL));
     yield put(actions.api.retry(path, method));
 

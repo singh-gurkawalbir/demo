@@ -9,8 +9,7 @@ import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import useConfirmDialog from '../../components/ConfirmDialog';
-import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import { USER_ACCESS_LEVELS, ERROR_MANAGEMENT_DOC_URL } from '../../utils/constants';
+import { ERROR_MANAGEMENT_DOC_URL } from '../../utils/constants';
 import LoadResources from '../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
@@ -43,17 +42,13 @@ export default function UpgradeErrorManagement() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
   const isMigrationPageAccessible = useSelector(state => {
-    const isAccountOwner = selectors.resourcePermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
+    const isAccountOwner = selectors.isAccountOwnerOrAdmin(state);
     const isUserInErrMgtTwoDotZero = selectors.isOwnerUserInErrMgtTwoDotZero(state);
 
     return isAccountOwner && !isUserInErrMgtTwoDotZero;
   });
-  const canUserUpgradeToErrMgtTwoDotZero = useSelector(state =>
-    selectors.canUserUpgradeToErrMgtTwoDotZero(state)
-  );
 
   const commStatus = useSelector(state =>
     selectors.commStatusPerPath(state, '/profile', 'PUT')
@@ -69,7 +64,7 @@ export default function UpgradeErrorManagement() {
         buttons: [
           {
             label: 'Yes, upgrade',
-            dataTest: 'EM2.0_Confirm_Upgrade',
+            dataTest: 'em2.0_confirm_upgrade',
             onClick: () => {
               dispatch(actions.user.profile.update({ useErrMgtTwoDotZero: true }));
               setUpgradeRequested(true);
@@ -118,18 +113,8 @@ export default function UpgradeErrorManagement() {
     if (!isMigrationPageAccessible && !upgradeRequested) {
       // This page is not accessible to EM 2.0 / if not an Account owner.. so redirect him to dashboard page
       redirectToDashboard();
-
-      return;
     }
-    if (!canUserUpgradeToErrMgtTwoDotZero) {
-      // If the account has at least one IA , we redirect him to dashboard showing below notification
-      enqueueSnackbar({
-        message: 'The new error management is being rolled out on an opt-in basis (excluding accounts with Integration Apps or Integration App licenses at present).',
-        variant: 'error',
-      });
-      redirectToDashboard();
-    }
-  }, [isMigrationPageAccessible, upgradeRequested, redirectToDashboard, canUserUpgradeToErrMgtTwoDotZero, enqueueSnackbar]);
+  }, [isMigrationPageAccessible, upgradeRequested, redirectToDashboard]);
 
   return (
     <LoadResources resources="integrations">
@@ -166,7 +151,7 @@ export default function UpgradeErrorManagement() {
               color="primary"
               disabled={upgradeRequested}
               onClick={handleUpgrade}
-              data-test="EM2.0_Upgrade"
+              data-test="em2.0_upgrade"
               >
               {(upgradeRequested && commStatus === 'loading') ? 'Upgrading...' : 'Upgrade'}
             </Button>
@@ -174,7 +159,7 @@ export default function UpgradeErrorManagement() {
               variant="text"
               color="primary"
               onClick={redirectToDashboard}
-              data-test="EM2.0_Later">
+              data-test="em2.0_later">
               I&apos;ll do this later
             </Button>
           </ButtonGroup>

@@ -23,6 +23,9 @@ export default (state = {}, action) => {
         draft[flowId].status = refresh ? 'refresh' : 'request';
         break;
       case actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED: {
+        if (!draft[flowId]) {
+          draft[flowId] = {};
+        }
         draft[flowId].status = 'received';
         const jobChildrenMap = {};
 

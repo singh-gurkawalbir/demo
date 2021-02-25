@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { isEmpty } from 'lodash';
 import { Grid, Typography } from '@material-ui/core';
 import { selectors } from '../../reducers';
@@ -19,8 +19,8 @@ import CeligoPageBar from '../../components/CeligoPageBar';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import InfoIconButton from '../../components/InfoIconButton';
 import useConfirmDialog from '../../components/ConfirmDialog';
+import { hashCode } from '../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -94,7 +94,7 @@ export default function ClonePreview(props) {
     !!(resourceType === 'integrations' && resource._connectorId);
   const { createdComponents } =
     useSelector(state =>
-      selectors.cloneData(state, resourceType, resourceId)
+      selectors.template(state, `${resourceType}-${resourceId}`)
     ) || {};
   const { isCloned, integrationId, sandbox } = useSelector(
     state => selectors.integrationClonedDetails(state, resource._id),
@@ -118,22 +118,21 @@ export default function ClonePreview(props) {
     return selectedAccount?.hasSandbox || selectedAccount?.hasConnectorSandbox;
   });
   const { components } = useSelector(state =>
-    selectors.clonePreview(state, resourceType, resourceId)
+    selectors.previewTemplate(state, `${resourceType}-${resourceId}`)
   );
+
+  const remountKey = useMemo(() => hashCode(components), [components]);
   const columns = [
     {
       heading: 'Name',
-      value: function NameWithInfoicon(r) {
-        return (
-          <>
-            {r && (r.doc.name || r.doc._id)}
-            <InfoIconButton info={r.doc.description} size="xs" />
-          </>
-        );
-      },
-      orderBy: 'name',
+      width: '40%',
+      value: r => r?.doc?.name || r?.doc?._id,
     },
-    { heading: 'Type', value: r => r.model },
+    {
+      heading: 'Description',
+      width: '60%',
+      value: r => r.doc?.description,
+    },
   ];
 
   useEffect(() => {
@@ -277,11 +276,12 @@ export default function ClonePreview(props) {
       components: {
         id: 'components',
         name: 'components',
-        type: 'celigotable',
+        type: 'previewcomponentstable',
         data: objects.map((obj, index) => ({
           ...obj,
           _id: index,
         })),
+        resourceType,
         columns,
       },
     },
@@ -356,7 +356,7 @@ export default function ClonePreview(props) {
   const formKey = useFormInitWithPermissions({
     fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
-    remount: components,
+    remount: remountKey,
   });
 
   if (!components || isEmpty(components)) {

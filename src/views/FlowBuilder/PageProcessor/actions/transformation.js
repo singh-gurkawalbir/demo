@@ -67,6 +67,7 @@ function TransformationDrawer({ flowId, resource, isViewMode, onClose }) {
       insertStubKey="transform"
       onClose={onClose}
       optionalSaveParams={optionalSaveParams}
+      isSampleDataLoading={sampleDataStatus === 'requested'}
       path="lookupTransformation"
     />
   );

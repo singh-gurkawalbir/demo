@@ -70,7 +70,6 @@ export function* retrievingAssistantDetails() {
     'parseur',
     'postmark',
     'recurly',
-    'intercom',
     'segment',
     'shipwire',
     'integratorio',
@@ -94,7 +93,8 @@ export function* retrievingAssistantDetails() {
         assistant: asst._id,
         export: asst.export,
         import: asst.import,
-        webhook: webhookAssistants.indexOf(asst._id) >= 0,
+        helpURL: asst.helpURL,
+        webhook: webhookAssistants.some(assistantId => assistantId === asst._id),
       });
     });
     collection.rest.applications.forEach(asst => {
@@ -105,7 +105,8 @@ export function* retrievingAssistantDetails() {
         assistant: asst._id,
         export: asst.export,
         import: asst.import,
-        webhook: webhookAssistants.indexOf(asst._id) >= 0,
+        helpURL: asst.helpURL,
+        webhook: webhookAssistants.some(assistantId => assistantId === asst._id),
       });
     });
     assistantConnectors.push({
@@ -117,7 +118,6 @@ export function* retrievingAssistantDetails() {
       import: true,
     });
   }
-
   localStorage.setItem('assistants', JSON.stringify(assistantConnectors));
 }
 
@@ -152,9 +152,9 @@ export function* fetchUIVersion() {
 }
 
 export function* retrieveAppInitializationResources() {
+  yield call(retrievingUserDetails);
   yield all([
     call(retrievingOrgDetails),
-    call(retrievingUserDetails),
     call(retrievingAssistantDetails),
   ]);
 
@@ -183,13 +183,12 @@ export function* retrieveAppInitializationResources() {
 
   yield put(actions.auth.defaultAccountSet());
 }
-
 const getLogrocketId = () =>
   // LOGROCKET_IDENTIFIER and LOGROCKET_IDENTIFIER_EU are defined by webpack
   // eslint-disable-next-line no-undef
   (getDomain() === 'eu.integrator.io' ? LOGROCKET_IDENTIFIER_EU : LOGROCKET_IDENTIFIER);
 
-function* identifyLogRocketSession() {
+export function* identifyLogRocketSession() {
   const p = yield select(selectors.userProfile);
 
   // identify user with LogRocket
@@ -255,18 +254,23 @@ export function* initializeApp(opts) {
     // note the current saga `initializeApp` is killed as well
     // so that it needs to be called again after logrocket is initialized and sagas restarted
     // that happens in sagas/index.js
-    return yield put(actions.auth.abortAllSagasAndInitLR({opts}));
+    return yield put(actions.auth.abortAllSagasAndInitLR(opts));
+  }
+
+  // delete data state when reloading app...
+  // so that all components lazily fetches latest data
+  if (opts?.reload) {
+    yield put(actions.app.deleteDataState());
   }
   try {
-    // eslint-disable-next-line no-use-before-define
     yield call(retrieveAppInitializationResources);
-    // the following is moved from within auth*() to here to keep original impl
-    if (opts?.reload) {
-      // remount the component
-      yield put(actions.app.reload());
-    }
   } catch (e) {
     return yield put(actions.auth.logout());
+  }
+  // the following is moved from within auth*() to here to keep original impl
+  if (opts?.reload) {
+    // remount the component
+    yield put(actions.app.reload());
   }
 
   if (getLogrocketId()) {
@@ -406,6 +410,7 @@ export function* reSignInWithGoogle({ email }) {
 
 export function* linkWithGoogle({ returnTo }) {
   const _csrf = yield call(getCSRFTokenBackend);
+
   const form = document.createElement('form');
 
   form.id = 'linkWithGoogle';
@@ -415,6 +420,7 @@ export function* linkWithGoogle({ returnTo }) {
   form.innerHTML = `<input name="_csrf" value="${_csrf}">`;
   document.body.appendChild(form);
   form.submit();
+
   document.body.removeChild(form);
 }
 

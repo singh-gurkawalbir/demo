@@ -64,6 +64,7 @@ const HookIcon = require('../../src/components/icons/HookIcon').default;
 const InfoIcon = require('../../src/components/icons/InfoIcon').default;
 const InviteUsersIcon = require('../../src/components/icons/InviteUsersIcon').default;
 const InstallIcon = require('../../src/components/icons/InstallIcon').default;
+const InstallationGuideIcon = require('../../src/components/icons/InstallationGuideIcon').default;
 const InstallIntegrationIcon = require('../../src/components/icons/InstallIntegrationIcon').default;
 const IntegrationAppsIcon = require('../../src/components/icons/IntegrationAppsIcon').default;
 const ImportsIcon = require('../../src/components/icons/ImportsIcon').default;
@@ -403,6 +404,10 @@ const icon = {
     <div style={wrapper}>
       <InstallIcon style={icon} />
       <p>Install</p>
+    </div>
+    <div style={wrapper}>
+      <InstallationGuideIcon style={icon} />
+      <p>InstallationGuideIcon</p>
     </div>
     <div style={wrapper}>
       <InstallIntegrationIcon style={icon} />

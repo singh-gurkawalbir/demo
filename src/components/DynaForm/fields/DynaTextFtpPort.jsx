@@ -2,7 +2,7 @@ import React, { useEffect, useCallback } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles, FormLabel, FormControl } from '@material-ui/core';
 import FieldHelp from '../FieldHelp';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 import useFormContext from '../../Form/FormContext';
 
 const useStyle = makeStyles({
@@ -77,7 +77,7 @@ export default function DynaTextFtpPort(props) {
           onChange={handleFieldChange}
           className={classes.dynaTextFtpFied}
         />
-        <ErroredMessageComponent
+        <FieldMessage
           isValid={isValid}
           errorMessages={errorMessages}
           description={description}

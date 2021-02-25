@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import { useDispatch } from 'react-redux';
 import {
   Button,
@@ -7,26 +7,22 @@ import CeligoTable from '../CeligoTable';
 import actions from '../../actions';
 import ModalDialog from '../ModalDialog';
 
+const isDownloadButtonDisabled = selected => {
+  const selectedFileIds = Object.keys(selected).filter(
+    key => selected[key] === true
+  );
+  const disabled = selectedFileIds.length === 0;
+
+  return disabled;
+};
+
 export default function JobFilesDownloadDialog({
   job,
   onCloseClick,
 }) {
   const [selected, setSelected] = useState({});
-  const [downloadButtonState, setDownloadButtonState] = useState({
-    disabled: true,
-  });
 
-  useEffect(() => {
-    const selectedFileIds = Object.keys(selected).filter(
-      key => selected[key] === true
-    );
-    const disabled = selectedFileIds.length === 0;
-
-    setDownloadButtonState({
-      disabled,
-    });
-  }, [job.files.length, selected]);
-
+  const isDisabled = isDownloadButtonDisabled(selected);
   const dispatch = useDispatch();
   const handleSelectChange = fileIds => {
     setSelected(fileIds);
@@ -62,7 +58,7 @@ export default function JobFilesDownloadDialog({
       <div>
         <Button
           data-test="downloadJobFiles"
-          disabled={downloadButtonState.disabled}
+          disabled={isDisabled}
           variant="outlined"
           color="primary"
           onClick={handleDownloadClick}>

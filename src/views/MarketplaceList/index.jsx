@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     margin: '0 auto',
     borderRadius: '4px',
-    padding: theme.spacing(2),
+    padding: [[14, 18]],
     wordBreak: 'break-word',
   },
   connectorCard: {
@@ -99,6 +99,12 @@ const useStyles = makeStyles(theme => ({
   },
   link: {
     paddingLeft: theme.spacing(1),
+  },
+  rightSubtitle: {
+    paddingTop: theme.spacing(1),
+  },
+  noDataTitle: {
+    padding: theme.spacing(3),
   },
 }));
 
@@ -185,7 +191,15 @@ export default function MarketplaceList() {
             ? applicationName.charAt(0).toUpperCase() + applicationName.slice(1)
             : ''
         } Integrations`}
-      />
+        >
+        {(templates.length || connectors.length) ? (
+          <Typography component="div" variant="body2" className={classes.rightSubtitle}>Don’t see what you need? <a href="mailto:product_feedback@celigo.com" rel="noreferrer" target="_blank">Let us know.</a></Typography>
+        ) : ''}
+      </CeligoPageBar>
+
+      {(!templates.length && !connectors.length) && (
+        <Typography component="div" variant="body2" className={classes.noDataTitle}>Don’t see what you need? <a href="mailto:product_feedback@celigo.com" rel="noreferrer" target="_blank">Let us know.</a></Typography>
+      )}
       <div className={classes.root}>
         {connectors.map(connector => (
           <Card

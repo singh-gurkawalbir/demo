@@ -211,6 +211,7 @@ export default {
       tooltip: {
         backgroundColor: colors.celigoNeutral7,
         fontFamily: 'source sans pro',
+        fontSize: 13,
         color: colors.celigoWhite,
         border: '1px solid',
         borderColor: colors.celigoNeutral7,
@@ -380,7 +381,6 @@ export default {
         fontSize: '14px',
         lineHeight: '18px',
         letterSpacing: 'normal',
-        fontFamily: 'Roboto400',
       },
       overline: {
         fontSize: '12px',
@@ -426,21 +426,22 @@ export default {
         position: 'relative',
         padding: [[10, 16]],
         borderBottomColor: colors.celigoNeutral3,
+        verticalAlign: 'top',
       },
       head: {
-        fontFamily: 'Roboto500',
-        color: colors.celigoNeutral6,
-        fontSize: 15,
+        fontFamily: 'source sans pro semibold',
+        color: colors.celigoNeutral8,
+        fontSize: 16,
       },
       body: {
         fontFamily: 'source sans pro',
         position: 'relative',
-        fontSize: 15,
+        fontSize: 16,
       },
     },
     MuiSelect: {
       icon: {
-        color: colors.celigoNeutral5,
+        color: colors.celigoNeutral8,
       },
       select: {
         '&:focus': {
@@ -624,52 +625,6 @@ export default {
         background: colors.celigoNeutral1,
       },
     },
-    MuiExpansionPanel: {
-      root: {
-        background: colors.celigoWhite,
-        border: '1px solid',
-        borderColor: colors.celigoNeutral3,
-        borderRadius: 4,
-        boxShadow: 'none',
-        marginBottom: 24,
-        '&.Mui-expanded': {
-          '&:last-child': {
-            marginBottom: '24px !important',
-          },
-        },
-
-      },
-    },
-    MuiExpansionPanelDetails: {
-      root: {
-        padding: [[10, 16, 0, 16]],
-        borderTop: `1px solid ${colors.celigoNeutral3}`,
-      },
-    },
-    MuiExpansionPanelSummary: {
-      root: {
-        padding: '0px 12px',
-        height: 42,
-        display: 'inline-flex',
-        minHeight: 'unset',
-        paddingLeft: 16,
-        flexDirection: 'row-reverse',
-        '&.Mui-expanded': {
-          minHeight: 0,
-        },
-      },
-      content: {
-        paddingTop: 3,
-        margin: 0,
-        '&.Mui-expanded': {
-          margin: 0,
-        },
-      },
-      expandIcon: {
-        padding: 0,
-        margin: [[0, 4, 0, 0]],
-      },
-    },
     MuiChip: {
       root: {
         backgroundColor: colors.celigoWhite,
@@ -778,10 +733,10 @@ export default {
     // component used in the application's root component.
     MuiSnackbarContent: {
       action: {
-        color: colors.celigoNeutral6,
+        color: colors.celigoNeutral8,
       },
       message: {
-        color: colors.celigoNeutral6,
+        color: colors.celigoNeutral8,
         '& svg': {
           fontSize: '32px !important',
         },
@@ -804,8 +759,44 @@ export default {
         },
       },
     },
-  },
+    MuiAccordion: {
+      root: {
+        borderRadius: '4px',
+        padding: '1px 0px',
+        '&:before': {
+          backgroundColor: 'none',
+        },
+      },
+    },
+    MuiAccordionSummary: {
+      root: {
+        flexDirection: 'row-reverse',
+        display: 'inline-flex',
+        minHeight: 'unset',
+        '&.Mui-expanded': {
+          minHeight: '42px',
 
+        },
+      },
+      expandIcon: {
+        padding: 0,
+        margin: [[-2, 4, 0, 0]],
+      },
+
+      content: {
+        margin: [[10, 0, 8, 0]],
+        '&.Mui-expanded': {
+          margin: [[10, 0, 8, 0]],
+        },
+      },
+    },
+    MuiAccordionDetails: {
+      root: {
+        paddingBottom: 0,
+        borderTop: `1px solid ${colors.celigoNeutral3}`,
+      },
+    },
+  },
   props: {
     MuiCheckbox: {
       disableRipple: true,

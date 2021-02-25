@@ -23,6 +23,7 @@ import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import StackShareDrawer from '../../components/StackShare/Drawer';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
+import ScriptLogsDrawerRoute from '../ScriptLogs/Drawer';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -95,6 +96,15 @@ export default function ResourceList(props) {
   const createResourceLabel = createdResouceLabelFn(resourceType, resourceName);
 
   useEffect(() => {
+    if (resourceType === 'connectors') {
+      dispatch(actions.patchFilter(resourceType, {
+        sort: { orderBy: 'name', order: 'asc' },
+      }));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     let int;
 
     dispatch(actions.resource.connections.refreshStatus());
@@ -134,6 +144,7 @@ export default function ResourceList(props) {
       { resourceType === 'connections' && <ConfigConnectionDebugger />}
 
       <ResourceDrawer {...props} />
+      <ScriptLogsDrawerRoute />
 
       <CeligoPageBar
         title={`${resourceName}s`}

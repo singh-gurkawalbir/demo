@@ -17,7 +17,7 @@ export function* checkHasIntegrations({ connectionId }) {
   try {
     response = yield call(apiCallWithRetry, requestOptions);
   } catch (error) {
-    return true;
+    return;
   }
 
   const connection = yield select(
@@ -26,12 +26,14 @@ export function* checkHasIntegrations({ connectionId }) {
     connectionId
   );
 
-  yield put(
-    actions.suiteScript.account.receivedHasIntegrations(
-      connection.netsuite.account,
-      response.hasIntegrations
-    )
-  );
+  if (response) {
+    yield put(
+      actions.suiteScript.account.receivedHasIntegrations(
+        connection.netsuite.account,
+        response.hasIntegrations
+      )
+    );
+  }
 }
 
 export const accountSagas = [

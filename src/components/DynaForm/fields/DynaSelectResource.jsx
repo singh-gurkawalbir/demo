@@ -12,14 +12,12 @@ import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
 import resourceMeta from '../../../forms/definitions';
 import { generateNewId } from '../../../utils/resource';
-import {
-  defaultPatchSetConverter,
-  getMissingPatchSet,
-} from '../../../forms/utils';
 import ActionButton from '../../ActionButton';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import useIntegration from '../../../hooks/useIntegration';
 import StatusCircle from '../../StatusCircle';
 import { stringCompare } from '../../../utils/sort';
+import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/formFactory/utils';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -133,10 +131,6 @@ function ConnectionLoadingChip(props) {
     selectors.isConnectionOffline(state, connectionId)
   );
 
-  if (isConnectionOffline === undefined) {
-    return null;
-  }
-
   return isConnectionOffline ? (
     <div className={classes.connectionStatusWrapper}>
       <StatusCircle size="small" variant="error" />
@@ -160,6 +154,7 @@ function DynaSelectResource(props) {
     resourceType,
     allowNew,
     allowEdit,
+    checkPermissions = false,
     filter,
     hideOnEmptyList = false,
     appTypeIsStatic = false,
@@ -172,6 +167,7 @@ function DynaSelectResource(props) {
   const {options} = props;
   const classes = useStyles();
   const location = useLocation();
+  const integrationIdFromUrl = useIntegration(resourceType, id);
   const dispatch = useDispatch();
   const history = useHistory();
   const [newResourceId, setNewResourceId] = useState(generateNewId());
@@ -190,6 +186,7 @@ function DynaSelectResource(props) {
   const createdId = useSelector(state =>
     selectors.createdResourceId(state, newResourceId)
   );
+  const allRegisteredConnectionIdsFromManagedIntegrations = useSelector(state => selectors.allRegisteredConnectionIdsFromManagedIntegrations(state));
 
   useEffect(() => {
     if (!appTypeIsStatic && options.appType && !!value) {
@@ -221,12 +218,15 @@ function DynaSelectResource(props) {
         sift(options && options.filter ? options.filter : filter)
       );
     }
+    if (resourceType === 'connections' && checkPermissions) {
+      filteredResources = filteredResources.filter(r => allRegisteredConnectionIdsFromManagedIntegrations.includes(r._id));
+    }
 
     return filteredResources.map(conn => ({
       label: conn.offline ? `${conn.name || conn._id} - Offline` : conn.name || conn._id,
       value: conn._id,
     }));
-  }, [filter, options, resources]);
+  }, [filter, options, resources, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations, resourceType]);
   const { merged } =
     useSelectorMemo(
       selectors.makeResourceDataSelector,
@@ -252,7 +252,7 @@ function DynaSelectResource(props) {
         statusExport,
         expConnId,
         assistant,
-        integrationId,
+        integrationId: integrationId || integrationIdFromUrl,
       }),
     [
       dispatch,
@@ -265,6 +265,7 @@ function DynaSelectResource(props) {
       expConnId,
       assistant,
       integrationId,
+      integrationIdFromUrl,
     ]
   );
   const handleEditResource = useCallback(() => {
@@ -312,8 +313,6 @@ function DynaSelectResource(props) {
       optionSearch: i.label,
       value: i.value,
     }));
-
-  // console.log(truncatedItems(resourceItems || []));
 
   if (!resourceItems.length && hideOnEmptyList) {
     return null;

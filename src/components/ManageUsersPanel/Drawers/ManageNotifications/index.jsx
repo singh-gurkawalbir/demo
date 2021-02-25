@@ -27,16 +27,13 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
   const [enquesnackbar] = useEnqueueSnackbar();
   const { userEmail } = match.params;
   const users = useSelector(state => selectors.availableUsersList(state, integrationId));
-  const notificationsConfig = useMemo(() => ({ storeId, userEmail }), [storeId, userEmail]);
+  const notificationsConfig = useMemo(() => ({ storeId, userEmail, ignoreUnusedConnections: true }), [storeId, userEmail]);
   const notifications = useSelectorMemo(
     selectors.mkIntegrationNotificationResources,
     integrationId,
     notificationsConfig);
 
   const { flowValues = [], connectionValues = [], flows, connections } = notifications;
-
-  const flowHash = flowValues.sort().join('');
-  const connHash = connectionValues.sort().join('');
 
   const isValidUserEmail = !!users.find(user => user.sharedWithUser.email === userEmail);
 
@@ -94,7 +91,7 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
 
   useEffect(() => {
     setCount(count => count + 1);
-  }, [flowHash, connHash]);
+  }, [flowValues, connectionValues, flows, connections]);
 
   return (
     <LoadResources required resources="notifications,flows,connections">

@@ -71,6 +71,9 @@ export default function ConnectionsPanel({ integrationId, childId }) {
   const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
 
   useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, {sort: { order: 'asc', orderBy: 'name' }}));
+  }, []);
+  useEffect(() => {
     if (permission.register && newResourceId && !isStandalone) {
       dispatch(
         actions.connection.requestRegister([newResourceId], _integrationId)

@@ -77,11 +77,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function AddGenerator({flowId}) {
+function AddGenerator({integrationId, flowId}) {
   const classes = useStyles();
 
   const handleAddGenerator = useHandleAddGenerator();
-  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flowId));
+  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
 
   return (
 
@@ -94,11 +94,11 @@ function AddGenerator({flowId}) {
     </IconButton>
   );
 }
-function AddProcessor({flowId}) {
+function AddProcessor({ integrationId, flowId}) {
   const classes = useStyles();
 
   const handleAddProcessor = useHandleAddProcessor();
-  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flowId));
+  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
 
   return (
     <IconButton
@@ -142,7 +142,7 @@ function Canvas({flowId, integrationId}) {
             variant="overline">
             {isDataLoaderFlow ? 'SOURCE' : 'SOURCES'}
             {!isDataLoaderFlow && !isFreeFlow && (
-              <AddGenerator flowId={flowId} />
+              <AddGenerator integrationId={integrationId} flowId={flowId} />
             )}
           </Typography>
           <PageGenerators
@@ -160,7 +160,7 @@ function Canvas({flowId, integrationId}) {
               : 'DESTINATIONS & LOOKUPS '}
 
             {showAddPageProcessor && !isFreeFlow && (
-            <AddProcessor flowId={flowId} />
+            <AddProcessor integrationId={integrationId} flowId={flowId} />
             )}
           </Typography>
           <PageProcessors

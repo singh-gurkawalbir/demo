@@ -3,11 +3,12 @@ import clsx from 'clsx';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../../../../reducers';
-import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
+import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/formFactory/utils';
 import LoadResources from '../../../../../../../components/LoadResources';
 import { IAFormStateManager, useActiveTab } from '../../../Flows';
 import { SavingMask } from '../../../../../../SuiteScript/Integration/App/panels/Settings/sections/ConfigureSettings';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
+import { FORM_SAVE_STATUS } from '../../../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   configureform: {
@@ -65,7 +66,7 @@ export default function ConfigureSettings({ integrationId, storeId, sectionId })
     <LoadResources
       required
       resources={['flows', 'exports', 'imports', 'connections']}>
-      {formState?.saveStatus && <SavingMask />}
+      {formState?.formSaveStatus === FORM_SAVE_STATUS.LOADING && <SavingMask />}
       <IAFormStateManager
         {...activeTabProps}
         key={storeId}

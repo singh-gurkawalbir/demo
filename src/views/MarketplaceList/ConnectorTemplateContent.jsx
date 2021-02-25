@@ -6,17 +6,20 @@ import ApplicationImg from '../../components/icons/ApplicationImg';
 
 const useStyles = makeStyles(theme => ({
   description: {
-    maxHeight: '60px',
+    minHeight: 115,
+    maxHeight: 115,
     overflowY: 'auto',
-    margin: theme.spacing(1, 0, 1, 0),
+    marginBottom: theme.spacing(1),
+    fontSize: 15,
   },
   name: {
-    marginTop: theme.spacing(2),
+    fontFamily: 'Roboto400',
+    marginTop: theme.spacing(1),
   },
-  floatRight: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(3),
+  imgChip: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 }));
 
@@ -36,22 +39,10 @@ export default function ConnectorTemplateContent({ resource, application }) {
   return (
     <>
       <div className={classes.content}>
-        <ApplicationImg
-          assistant={assistant}
-          size="large"
-        />
-        {free && (
-          <Chip
-            variant="outlined"
-            color="primary"
-            size="small"
-            label="Free"
-            className={classes.floatRight}
-          />
-        )}
-        <Typography className={classes.name} variant="h3">
+        <Typography className={classes.name} variant="body2">
           {isTruncated ? (
             <Tooltip
+              data-public
               title={<span className={classes.tooltipNameFB}> {name}</span>}
               TransitionComponent={Zoom}
               placement="top"
@@ -66,6 +57,20 @@ export default function ConnectorTemplateContent({ resource, application }) {
             </Truncate>
           )}
         </Typography>
+        <div className={classes.imgChip}>
+          <ApplicationImg
+            assistant={assistant}
+            size="medium"
+        />
+          {free && (
+          <Chip
+            variant="outlined"
+            color="primary"
+            size="small"
+            label="Free"
+          />
+          )}
+        </div>
         <Typography variant="body2" className={classes.description}>
           {description}
         </Typography>

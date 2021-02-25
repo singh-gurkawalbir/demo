@@ -1,9 +1,10 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import Mappings from './Mappings';
+import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
 const emptySet = [];
 const useStyles = makeStyles(() => ({
@@ -59,14 +60,12 @@ export default function VariationMappings(props) {
 
     return null;
   });
-  const { fieldMappings } =
-    useSelector(state =>
-      selectors.mappingsForVariation(state, integrationId, flowId, {
-        sectionId,
-        variation,
-        isVariationAttributes,
-      })
-    ) || {};
+  const memoizedOptions = useMemo(() => ({
+    sectionId,
+    variation,
+    isVariationAttributes,
+  }), [sectionId, variation, isVariationAttributes]);
+  const { fieldMappings } = useSelectorMemo(selectors.mkMappingsForVariation, integrationId, flowId, memoizedOptions) || {};
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );

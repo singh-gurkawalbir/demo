@@ -4,7 +4,7 @@ import DynaSelect from './DynaSelect';
 import DynaSelectResource from './DynaSelectResource';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import { isProduction } from '../../../forms/utils';
+import { isProduction } from '../../../forms/formFactory/utils';
 
 export const useLoadIClientOnce = ({ connectionId, disableLoad = false }) => {
   const iClients = useSelector(state =>

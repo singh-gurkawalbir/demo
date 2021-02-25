@@ -1,4 +1,4 @@
-import { applicationsList } from '../../../constants/templates';
+import { templatesList } from '../../../constants/applications';
 
 export default {
   name: {
@@ -11,10 +11,6 @@ export default {
     multiline: true,
     maxRows: 5,
     label: 'Description',
-  },
-  imageURL: {
-    type: 'text',
-    label: 'Image URL',
   },
   websiteURL: {
     type: 'text',
@@ -29,13 +25,14 @@ export default {
     label: 'Installer function',
   },
   applications: {
-    type: 'multiselect',
+    type: 'selectmultiapplication',
+    placeholder: 'Choose applications',
     label: 'Applications',
     valueDelimiter: ',',
     defaultValue: r => (r?.applications) || [],
     options: [
       {
-        items: applicationsList(),
+        items: templatesList(),
       },
     ],
   },

@@ -91,7 +91,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
   });
 
   describe('clear app error message', () => {
-    test.skip('should clear the app error message on refresh', () => {
+    test('should clear the app error message on refresh', () => {
       const history = createMemoryHistory({
         initialEntries: [getRoutePath(someRoute)],
       });
@@ -136,7 +136,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     });
   });
   describe('test attempted Route state behavior', () => {
-    test.skip('should save the location state when the app is initialized for the very first', () => {
+    test('should save the location state when the app is initialized for the very first', () => {
       const history = createMemoryHistory({
         initialEntries: [getRoutePath(someRoute)],
       });

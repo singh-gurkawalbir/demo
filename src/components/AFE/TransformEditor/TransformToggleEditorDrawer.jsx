@@ -1,10 +1,11 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import EditorDrawer from '../EditorDrawer';
 import TransformEditor from '.';
 import JavaScriptEditor from '../JavaScriptEditor';
 import TextToggle from '../../TextToggle';
 import actions from '../../../actions';
+import { selectors } from '../../../reducers';
 
 const toggleEditorOptions = [
   { label: 'Rules', value: 'expression' },
@@ -32,6 +33,11 @@ export default function TransformToggleEditorDrawer({
       setActiveEditorIndex(value === 'expression' ? '0' : '1'),
     [setActiveEditorIndex]
   );
+  const saveInProgress = useSelector(
+    state => selectors.editorPatchStatus(state, `${id}-0`).saveInProgress ||
+      selectors.editorPatchStatus(state, `${id}-1`).saveInProgress
+  );
+
   const handleCloseEditor = useCallback(
     () => {
       // remove both editors from the state when the drawer is closed
@@ -45,13 +51,13 @@ export default function TransformToggleEditorDrawer({
   );
   const editorToggleAction = useMemo(() => (
     <TextToggle
-      disabled={disabled}
+      disabled={disabled || saveInProgress}
       value={activeEditorIndex === '0' ? 'expression' : 'script'}
       onChange={handleEditorToggle}
       exclusive
       options={toggleEditorOptions}
           />
-  ), [activeEditorIndex, disabled, handleEditorToggle]);
+  ), [activeEditorIndex, disabled, handleEditorToggle, saveInProgress]);
 
   return (
     <EditorDrawer

@@ -62,6 +62,7 @@ export default {
   'dynamodb.itemDocument': {
     type: 'sqlquerybuilder',
     querySetPos: 0,
+    arrayIndex: 0,
     hideDefaultData: true,
     label: 'Build DynamoDB query',
     visibleWhen: [

@@ -22,6 +22,7 @@ export function* pageProcessorPreview({
   throwOnError = false,
   refresh = false,
   includeStages = false,
+  runOffline = false,
 }) {
   if (!flowId || !_pageProcessorId) return;
   const { merged } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
@@ -35,11 +36,12 @@ export function* pageProcessorPreview({
     flow,
     type: 'pageGenerators',
     refresh,
+    runOffline,
   });
   const pageProcessorMap = yield call(fetchFlowResources, {
     flow,
     type: 'pageProcessors',
-    eliminateDataProcessors: true,
+    // runOffline, Run offline is currently not supported for PPs
   });
 
   // Override the map with provided document for this _pageProcessorId
@@ -84,20 +86,44 @@ export function* pageProcessorPreview({
 
       return pageProcessor;
     });
+  } else if (resourceType === 'exports' && pageProcessorMap[_pageProcessorId]?.doc) {
+    // remove tx,filters,hooks from PP Doc to get preview data for _pageProcessorId
+    const { transform, filter, hooks, ...rest } = pageProcessorMap[_pageProcessorId].doc;
+
+    pageProcessorMap[_pageProcessorId].doc = rest;
   }
 
   const body = { flow, _pageProcessorId, pageGeneratorMap, pageProcessorMap, includeStages };
+
+  const isRunOfflineConfigured = runOffline && Object.values(pageGeneratorMap)
+    .some(
+      pgInfo => pgInfo?.options?.runOfflineOptions
+    );
 
   try {
     const previewData = yield call(apiCallWithRetry, {
       path: '/pageProcessors/preview',
       opts: { method: 'POST', body },
       message: 'Loading',
-      hidden,
+      hidden: isRunOfflineConfigured ? true : hidden,
     });
 
     return previewData;
   } catch (e) {
+    // When runOffline mode fails make preview call without offlineMode and move further
+    if (isRunOfflineConfigured) {
+      return yield call(pageProcessorPreview, {
+        flowId,
+        _pageProcessorId,
+        _pageProcessorDoc,
+        previewType,
+        resourceType,
+        hidden,
+        throwOnError,
+        refresh,
+        includeStages,
+      });
+    }
     // Error handler
     if (throwOnError) {
       throw e;
@@ -111,10 +137,12 @@ export function* exportPreview({
   runOffline = false,
   throwOnError = false,
 }) {
+  if (!resourceId) return;
   const { merged: resource } = yield select(
     selectors.resourceData,
     'exports',
-    resourceId
+    resourceId,
+    SCOPES.VALUE
   );
   let body = deepClone(resource);
 
@@ -138,19 +166,20 @@ export function* exportPreview({
   }
 
   const path = '/exports/preview';
+  const isRunOfflineConfigured = runOffline && hasValidRawDataKey;
 
   try {
     const previewData = yield call(apiCallWithRetry, {
       path,
       opts: { method: 'POST', body },
       message: 'Loading',
-      hidden,
+      hidden: isRunOfflineConfigured ? true : hidden,
     });
 
     return previewData;
   } catch (e) {
     // When runOffline mode fails make preview call without offlineMode and move further
-    if (runOffline && hasValidRawDataKey) {
+    if (isRunOfflineConfigured) {
       return yield call(exportPreview, {
         resourceId,
         hidden,

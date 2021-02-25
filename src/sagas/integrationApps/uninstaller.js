@@ -31,7 +31,6 @@ export function* preUninstall({ storeId, id }) {
   yield put(
     actions.integrationApp.uninstaller.receivedUninstallSteps(
       uninstallSteps,
-      storeId,
       id
     )
   );

@@ -29,6 +29,52 @@ export default {
       },
     },
   },
+  'file.fileNameStartsWith': {
+    type: 'uri',
+    label: 'File name starts with',
+    editorTitle: 'Build file name starts with',
+    showExtract: false,
+    showLookup: false,
+    defaultValue: r => {
+      if (r?.file?.filter?.rules) {
+        if (r.file.filter.rules[0] === 'and') {
+          return r.file.filter.rules[1][2];
+        } if (r.file.filter.rules[0] === 'startswith') {
+          return r.file.filter.rules[2];
+        }
+      }
+    },
+
+  },
+  'file.fileNameEndsWith': {
+    type: 'uri',
+    label: 'File name ends with',
+    editorTitle: 'Build file name ends with',
+    showExtract: false,
+    showLookup: false,
+    defaultValue: r => {
+      if (r?.file?.filter?.rules) {
+        if (r.file.filter.rules[0] === 'and') {
+          return r.file.filter.rules[2][2];
+        } if (r.file.filter.rules[0] === 'endswith') {
+          return r.file.filter.rules[2];
+        }
+      }
+    },
+  },
+  'file.backupPath': {
+    type: 'uri',
+    label: r => r?.adaptorType === 'S3Export' ? 'Backup bucket name' : 'Backup files path',
+    helpKey: r => {
+      if (r?.adaptorType === 'S3Export') {
+        return 'import.s3.backupBucket';
+      } if (r?.adaptorType === 'FTPExport') {
+        return 'export.ftp.backupDirectoryPath';
+      }
+
+      return 'export.file.backupPath';
+    },
+  },
   'file.encoding': {
     type: 'select',
     label: 'File encoding',

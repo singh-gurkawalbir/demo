@@ -1,8 +1,10 @@
 import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
+import { COMM_STATES } from '../../comms/networkComms';
 import metadataFilterMap from './metadataFilterMap';
 
+const emptyObject = {};
 export default (
   state = {
     application: {},
@@ -35,47 +37,22 @@ export default (
         }
         draft.application[connectionId][key].status = 'requested';
         break;
-      case actionTypes.METADATA.ASSISTANT_PREVIEW_REQUESTED:
-        if (!draft.preview[resourceId]) {
-          draft.preview[resourceId] = {};
-        }
-
-        draft.preview[resourceId].status = 'requested';
-        break;
-      case actionTypes.METADATA.ASSISTANT_PREVIEW_FAILED:
-        if (!draft.preview[resourceId]) {
-          draft.preview[resourceId] = {};
-        }
-
-        draft.preview[resourceId].status = 'error';
-        break;
-      case actionTypes.METADATA.ASSISTANT_PREVIEW_RECEIVED:
-        if (!draft.preview[resourceId]) {
-          draft.preview[resourceId] = {};
-        }
-
-        draft.preview[resourceId].status = 'received';
-        draft.preview[resourceId].data = previewData;
-        break;
-      case actionTypes.METADATA.ASSISTANT_PREVIEW_RESET:
-        delete draft.preview[resourceId];
-        break;
       case actionTypes.METADATA.REFRESH:
         if (
           draft.application[connectionId] &&
-          draft.application[connectionId][key] &&
-          draft.application[connectionId][key].status
+            draft.application[connectionId][key] &&
+            draft.application[connectionId][key].status
         ) {
           draft.application[connectionId][key].status = 'refreshed';
         }
 
         break;
 
-      // This is quiet a deep object...ensuring i am creating
-      // new instances all the way to the children of the object.
-      // This is to ensure that a react component listening
-      // to just the root of the object realizes they are updates to
-      // the children and subsequently re-renders.
+        // This is quiet a deep object...ensuring i am creating
+        // new instances all the way to the children of the object.
+        // This is to ensure that a react component listening
+        // to just the root of the object realizes they are updates to
+        // the children and subsequently re-renders.
       case actionTypes.METADATA.RECEIVED: {
         let changeIdentifier = 1;
 
@@ -83,11 +60,11 @@ export default (
           draft.application[connectionId] = {};
         } else if (
           draft.application[connectionId] &&
-          draft.application[connectionId][key] &&
-          draft.application[connectionId][key].changeIdentifier
+            draft.application[connectionId][key] &&
+            draft.application[connectionId][key].changeIdentifier
         ) {
           changeIdentifier =
-            draft.application[connectionId][key].changeIdentifier + 1;
+              draft.application[connectionId][key].changeIdentifier + 1;
         }
 
         draft.application[connectionId][key] = {
@@ -109,11 +86,11 @@ export default (
         }
         if (
           draft.application[connectionId][key] &&
-          draft.application[connectionId][key].status === 'refreshed'
+            draft.application[connectionId][key].status === 'refreshed'
         ) {
-          draft.application[connectionId][key].status = 'error';
+          draft.application[connectionId][key].status = COMM_STATES.ERROR;
           draft.application[connectionId][key].errorMessage =
-            metadataError || defaultError;
+              metadataError || defaultError;
         } else {
           draft.application[connectionId][key] = {
             status: 'error',
@@ -128,16 +105,16 @@ export default (
       case actionTypes.METADATA.VALIDATION_ERROR: {
         if (
           draft.application[connectionId] &&
-          draft.application[connectionId][key] &&
-          draft.application[connectionId][key].status === 'refreshed'
+            draft.application[connectionId][key] &&
+            draft.application[connectionId][key].status === 'refreshed'
         ) {
-          draft.application[connectionId][key].status = 'error';
+          draft.application[connectionId][key].status = COMM_STATES.ERROR;
           draft.application[connectionId][
             key
           ].validationError = validationError;
         } else {
           draft.application[connectionId][key] = {
-            status: 'error',
+            status: COMM_STATES.ERROR,
             data: [],
             validationError,
           };
@@ -145,6 +122,31 @@ export default (
 
         break;
       }
+      case actionTypes.METADATA.ASSISTANT_PREVIEW_REQUESTED:
+        if (!draft.preview[resourceId]) {
+          draft.preview[resourceId] = {};
+        }
+
+        draft.preview[resourceId].status = 'requested';
+        break;
+      case actionTypes.METADATA.ASSISTANT_PREVIEW_FAILED:
+        if (!draft.preview[resourceId]) {
+          draft.preview[resourceId] = {};
+        }
+
+        draft.preview[resourceId].status = COMM_STATES.ERROR;
+        break;
+      case actionTypes.METADATA.ASSISTANT_PREVIEW_RECEIVED:
+        if (!draft.preview[resourceId]) {
+          draft.preview[resourceId] = {};
+        }
+
+        draft.preview[resourceId].status = 'received';
+        draft.preview[resourceId].data = previewData;
+        break;
+      case actionTypes.METADATA.ASSISTANT_PREVIEW_RESET:
+        delete draft.preview[resourceId];
+        break;
 
       case actionTypes.METADATA.ASSISTANT_RECEIVED: {
         const { adaptorType, assistant, metadata } = action;
@@ -199,19 +201,6 @@ const optionsFromMetadataTransformFunct = (
 // TODO: deprecate this function and use the makeOptionsFromMetadata
 export const selectors = {};
 
-selectors.optionsFromMetadata = (state, {
-  connectionId,
-  commMetaPath,
-  filterKey,
-}) => {
-  const applicationResource = (state && state.application) || null;
-
-  return optionsFromMetadataTransformFunct(applicationResource,
-    connectionId,
-    commMetaPath,
-    filterKey);
-};
-
 selectors.makeOptionsFromMetadata = () => createSelector(
   state => state?.application,
   (_1, connectionId) => connectionId,
@@ -219,6 +208,7 @@ selectors.makeOptionsFromMetadata = () => createSelector(
   (_1, _2, _3, filterKey) => filterKey,
   optionsFromMetadataTransformFunct
 );
+selectors.optionsFromMetadata = selectors.makeOptionsFromMetadata();
 
 selectors.assistantData = (state, { adaptorType, assistant }) => {
   if (
@@ -234,8 +224,8 @@ selectors.assistantData = (state, { adaptorType, assistant }) => {
 };
 
 selectors.assistantPreviewData = (state, resourceId) => {
-  if (!state || !state.preview) {
-    return null;
+  if (!state || !state.preview || !state.preview[resourceId]) {
+    return emptyObject;
   }
 
   return state.preview[resourceId];

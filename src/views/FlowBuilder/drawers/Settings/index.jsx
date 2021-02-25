@@ -18,6 +18,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import ButtonGroup from '../../../../components/ButtonGroup';
 import LoadResources from '../../../../components/LoadResources';
 import getSettingsMetadata from './metadata';
+import EditorDrawer from '../../../../components/AFE2/Drawer';
 
 function Settings({
   flowId,
@@ -49,13 +50,13 @@ function Settings({
       'integrations',
       integrationId
     );
-    const isIntegrationApp = selectors.isIAType(state, flowId);
+    const isIntegrationApp = !!flow?._connectorId;
 
     if (!isIntegrationApp) {
       return true;
     }
-    // Incase of Integration app, only owner & manage users have cLocked fields to edit
-    if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE].includes(accessLevelIntegration)) {
+    // Incase of Integration app, only owner, admin & manage users have cLocked fields to edit
+    if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevelIntegration)) {
       return true;
     }
 
@@ -83,16 +84,18 @@ function Settings({
     }
   };
 
-  const updateFlowNotification = useCallback(formVal => {
-    if (isFlowSubscribed !== formVal.notifyOnFlowError) {
-      dispatch(actions.resource.notifications.updateFlow(flow._id, formVal.notifyOnFlowError));
+  const updateFlowNotification = useCallback(notifyOnFlowError => {
+    if (isFlowSubscribed !== notifyOnFlowError) {
+      dispatch(actions.resource.notifications.updateFlow(flow._id, notifyOnFlowError));
     }
   }, [dispatch, isFlowSubscribed, flow._id]);
 
   const handleSubmit = useCallback(
     formVal => {
       if (isUserInErrMgtTwoDotZero) {
-        updateFlowNotification(formVal);
+        const notifyOnFlowError = formVal.notifyOnFlowError === 'true';
+
+        updateFlowNotification(notifyOnFlowError);
       }
       if (!hasFlowSettingsAccess) {
         return;
@@ -225,6 +228,7 @@ export default function SettingsDrawer(props) {
       width="medium">
       <DrawerHeader title="Settings" />
       <Settings {...props} />
+      <EditorDrawer />
     </RightDrawer>
   );
 }

@@ -6,7 +6,7 @@ import UrlEditorDrawer from '../../AFE/UrlEditor/Drawer';
 import CsvConfigEditorDrawer from '../../AFE/CsvConfigEditor/Drawer';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import { getUniqueFieldId } from '../../../utils/resource';
+import { getUniqueFieldId } from '../../../utils/editor';
 
 const DynaEditorWithFlowSampleData = ({
   fieldId,

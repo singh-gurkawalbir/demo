@@ -16,7 +16,7 @@ export default function RefreshableIntegrationAppSetting(props) {
     onFieldChange,
     disabled,
   } = props;
-  const [netSuiteSavedSearchUrl, setNetSuiteSavedSearchUrl] = useState();
+
   const dispatch = useDispatch();
   const [autofill, setAutofill] = useState(false);
   const handleFieldChange = useCallback((id, val) => {
@@ -88,15 +88,7 @@ export default function RefreshableIntegrationAppSetting(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newValue, autofill, fieldName, disabled]);
 
-  useEffect(() => {
-    if (netSuiteSystemDomain && value && value.id) {
-      setNetSuiteSavedSearchUrl(
-        `${netSuiteSystemDomain}/app/common/search/search.nl?id=${value.id}`
-      );
-    } else {
-      setNetSuiteSavedSearchUrl();
-    }
-  }, [netSuiteSystemDomain, value]);
+  const netSuiteSavedSearchUrl = netSuiteSystemDomain && value && value.id ? `${netSuiteSystemDomain}/app/common/search/search.nl?id=${value.id}` : null;
 
   return (
     <DynaGenericSelect

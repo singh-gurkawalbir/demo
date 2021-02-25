@@ -428,6 +428,7 @@ export default function ConnectorInstallation(props) {
             'inProgress'
           )
         );
+        // Below code should be reverted once https://celigo.atlassian.net/browse/IO-18981 is fixed.
         let bundleURL = installURL || url;
 
         if (
@@ -579,10 +580,10 @@ export default function ConnectorInstallation(props) {
           {helpUrl ? (
             <RawHtml
               className={classes.message}
-              html={` Complete the below steps to install your integration app.<br /> 
+              html={` Complete the below steps to install your ${_connectorId ? 'integration app' : 'template'}.<br /> 
             Need more help? <a href="${helpUrl}" target="_blank">Check out our help guide</a>`} />
           ) : (
-            <Typography className={classes.message}>Complete the below steps to install your integration app.</Typography>
+            <Typography className={classes.message}>{`Complete the below steps to install your ${_connectorId ? 'integration app' : 'template'}.`}</Typography>
           )}
           <div className={classes.installIntegrationSteps}>
             {installSteps.map((step, index) => (

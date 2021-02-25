@@ -24,6 +24,7 @@ import { flowMetricSagas } from './flowMetrics';
 import integrationAppsSagas from './integrationApps';
 import { flowSagas } from './flows';
 import editorSagas from './editor';
+import editorAfe2 from './_editor';
 import editorSampleData from './editorSampleData';
 import {
   onRequestSaga,
@@ -38,7 +39,7 @@ import { templateSagas } from './template';
 import { cloneSagas } from './clone';
 import { uploadFileSagas } from './uploadFile';
 import { stackSagas } from './stack';
-import sampleDataSagas from './sampleData';
+import exportsSampleDataSagas from './sampleData/exports';
 import flowDataSagas from './sampleData/flows';
 import rawDataUpdateSagas from './sampleData/rawDataUpdates';
 import importsSampleDataSagas from './sampleData/imports';
@@ -58,15 +59,38 @@ import openErrorsSagas from './errorManagement/openErrors';
 import errorDetailsSagas from './errorManagement/errorDetails';
 import latestIntegrationJobsSagas from './errorManagement/latestJobs/integrations';
 import latestFlowJobsSagas from './errorManagement/latestJobs/flows';
-import errorRetrySagas from './errorManagement/retryData';
+import errorMetadataSagas from './errorManagement/metadata';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
+import {logsSagas} from './logs';
+import { APIException } from './api';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
   yield put(actions.user.profile.delete());
 }
 
+export function* requestCleanup(path, reqMethod) {
+  // yield cancelled is true when the saga gets cancelled
+  // lets perform some cleanup here by completing any ongoing requests
+  const method = reqMethod || 'GET';
+
+  // deliberately delay the sampling of the state so that we capture the cancelled saga state accurately
+  // the select seems to be executed in the same cycle as the canceled sagas actions...by introducing a delay of 0 ms
+  // we are forcing the select to compute in the next cycle...thereby we have the state ready
+  yield delay(0);
+  const status = yield select(selectors.commStatusPerPath, path, method);
+
+  // only dispatch a completed action when the request state is not completed
+  if (status !== COMM_STATES.SUCCESS) {
+    yield put(actions.api.complete(path, method, 'Request Aborted'));
+  }
+}
+
+export const CANCELLED_REQ = {
+  status: 'Cancelled',
+  message: 'Cancelled request',
+};
 // TODO: decide if we this saga has to have takeLatest
 // api call
 export function* apiCallWithRetry(args) {
@@ -95,39 +119,34 @@ export function* apiCallWithRetry(args) {
       });
     }
 
+    if (timeoutEffect) {
+      yield call(requestCleanup, path, opts?.method);
+
+      throw new APIException(CANCELLED_REQ);
+    }
+
     // logout effect succeeded then the apiResp would be undefined
-    if (timeoutEffect || logout) return null;
+
+    if (logout) { return null; }
 
     const { data } = apiResp.response || {};
 
     return data;
   } finally {
     if (yield cancelled()) {
-      // yield cancelled is true when the saga gets cancelled
-      // lets perform some cleanup here by completing any ongoing requests
-      const method = (opts && opts.method) || 'GET';
-
-      // deliberately delay the sampling of the state so that we capture the cancelled saga state accurately
-      // the select seems to be executed in the same cycle as the canceled sagas actions...by intoducing a delay of 1 ms
-      // we are forcing the select to compute in the next cycle...thereby we have the state ready
-      yield delay(1);
-      const status = yield select(selectors.commStatusPerPath, path, method);
-
-      // only dispatch a completed action when the request state is not completed
-      if (status !== COMM_STATES.SUCCESS) {
-        yield put(actions.api.complete(path, method, 'Request Aborted'));
-      }
+      yield call(requestCleanup, path, opts?.method);
     }
   }
 }
 
-function* allSagas() {
+export function* allSagas() {
   yield all([
     ...resourceSagas,
     ...connectorSagas,
     ...templateSagas,
     ...cloneSagas,
     ...editorSagas,
+    ...editorAfe2,
     ...userSagas,
     ...authenticationSagas,
     ...resourceFormSagas,
@@ -138,7 +157,7 @@ function* allSagas() {
     ...agentSagas,
     ...uploadFileSagas,
     ...stackSagas,
-    ...sampleDataSagas,
+    ...exportsSampleDataSagas,
     ...flowDataSagas,
     ...rawDataUpdateSagas,
     ...importsSampleDataSagas,
@@ -156,10 +175,11 @@ function* allSagas() {
     ...errorDetailsSagas,
     ...latestIntegrationJobsSagas,
     ...latestFlowJobsSagas,
-    ...errorRetrySagas,
+    ...errorMetadataSagas,
     ...customSettingsSagas,
     ...exportDataSagas,
     ...editorSampleData,
+    ...logsSagas,
   ]);
 }
 
@@ -177,16 +197,18 @@ export default function* rootSaga() {
     onAbort: onAbortSaga,
   });
   const t = yield fork(allSagas);
-  const {logrocket, logout} = yield race({
+  const {logrocket, logout, switchAcc} = yield race({
     logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
     logout: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
+    switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC),
   });
+
+  // stop the main sagas
+  t.cancel();
 
   if (logrocket) {
     // initializeLogrocket init must be done prior to redux-saga-requests fetch wrapping and must be done synchronously
-    t.cancel();
     yield call(initializeLogrocket);
-    // yield requestWrapper();
     yield spawn(rootSaga);
     // initializeApp must be called(again) after initilizeLogrocket and saga restart
     // the only code path that leads here is by calling initializeApp after successful `auth` or `initializeSession`
@@ -194,11 +216,32 @@ export default function* rootSaga() {
     yield call(initializeApp, logrocket.opts);
   }
   if (logout) {
-    // stop the main sagas
-    t.cancel();
     // logout requires also reset the store
     yield put(actions.auth.clearStore());
     // restart the root saga again
     yield spawn(rootSaga);
+  }
+  // this effect originates from switching accounts...
+  // when switching accounts we would like to kill all outstanding
+  // api requests than updatePreferences to the selected account restart the saga and subsequently reinitilialize session
+
+  if (switchAcc) {
+    // restart the root saga again
+    yield spawn(rootSaga);
+    // this action updates the redux state as well as the preferences in the backend
+    // we need the preferences state before we clear it
+    // this action ensures that the selected account is tied to the user in the backend...
+    // so when we perform initialization the app knows which account to show
+    // TODO: we should wait for update preferences to complete...inorder to prevent a race
+    // with initSession to get preferences.
+    yield put(
+      actions.user.preferences.update({
+        defaultAShareId: switchAcc.accountToSwitchTo,
+        environment: 'production',
+      })
+    );
+    yield put(actions.auth.clearStore());
+
+    yield put(actions.auth.initSession());
   }
 }

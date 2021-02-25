@@ -6,7 +6,8 @@ export default {
       newValues['/salesforce/sObjectType'] =
         newValues['/salesforce/blobsObjectType'];
       newValues['/salesforce/operation'] =
-        newValues['/salesforce/blobOperation'];
+        newValues['/salesforce/blobsObjectType'] !== 'contentVersion'
+          ? newValues['/salesforce/blobOperation'] : newValues['/salesforce/blobContentVersionOperation'];
     } else if (newValues['/salesforce/api'] === 'compositerecord') {
       newValues['/salesforce/operation'] =
         newValues['/salesforce/compositeOperation'];
@@ -56,6 +57,9 @@ export default {
 
     if (newValues['/inputMode'] !== 'blob') {
       delete newValues['/blobKeyPath'];
+      delete newValues['/blob'];
+    } else {
+      newValues['/blob'] = true;
     }
 
     delete newValues['/inputMode'];
@@ -70,7 +74,7 @@ export default {
       id: 'apiType',
       type: 'labeltitle',
       label: r => {
-        if (r?.resourceType === 'transferFiles' || r?.blobKeyPath) {
+        if (r?.resourceType === 'transferFiles' || r?.blob) {
           return 'Where would you like to transfer the files?';
         }
 
@@ -97,7 +101,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (r.resourceType === 'transferFiles' || r.blobKeyPath) return 'blob';
+        if (r.resourceType === 'transferFiles' || r.blob) return 'blob';
 
         return 'records';
       },
@@ -157,6 +161,7 @@ export default {
     'salesforce.idLookup.extract': { fieldId: 'salesforce.idLookup.extract' },
     'salesforce.blobsObjectType': { fieldId: 'salesforce.blobsObjectType' },
     'salesforce.blobOperation': { fieldId: 'salesforce.blobOperation' },
+    'salesforce.blobContentVersionOperation': {fieldId: 'salesforce.blobContentVersionOperation'},
     'salesforce.attachment.isPrivate': {
       fieldId: 'salesforce.attachment.isPrivate',
     },
@@ -229,6 +234,7 @@ export default {
           'salesforce.operation',
           'salesforce.blobsObjectType',
           'salesforce.blobOperation',
+          'salesforce.blobContentVersionOperation',
           'salesforce.attachment.id',
           'salesforce.attachment.name',
           'salesforce.attachment.parentId',

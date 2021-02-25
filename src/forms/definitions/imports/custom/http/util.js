@@ -176,6 +176,7 @@ export function howToFindIdentifierFieldsMeta({
         id: `assistantMetadata.pathParams.${identifierPathParam.id}`,
         label: 'Which field?',
         type: 'textwithflowsuggestion',
+        showSuggestionsWithoutHandlebar: true,
         showLookup: false,
         required: true,
         value: pathParameterValues[identifierPathParam.id],

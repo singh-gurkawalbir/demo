@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { isEqual } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import actions from '../../../../actions';
@@ -14,7 +15,7 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function Actions({
   errorId,
-  retryData,
+  updatedRetryData,
   flowId,
   resourceId,
   onClose,
@@ -23,6 +24,11 @@ export default function Actions({
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
+
+  const isFlowDisabled = useSelector(state =>
+    !!(selectors.resource(state, 'flows', flowId)?.disabled)
+  );
+
   const retryId = useSelector(state =>
       selectors.resourceError(state, {
         flowId,
@@ -30,18 +36,22 @@ export default function Actions({
         errorId,
       })?.retryDataKey
   );
+
+  const retryData = useSelector(state => selectors.retryData(state, retryId));
+
   const updateRetry = useCallback(() => {
     dispatch(
       actions.errorManager.retryData.updateRequest({
         flowId,
         resourceId,
         retryId,
-        retryData,
+        retryData: updatedRetryData,
       })
     );
 
     if (onClose) onClose();
-  }, [dispatch, flowId, onClose, resourceId, retryData, retryId]);
+  }, [dispatch, flowId, onClose, resourceId, updatedRetryData, retryId]);
+
   const resolve = useCallback(() => {
     dispatch(
       actions.errorManager.flowErrorDetails.resolve({
@@ -60,26 +70,29 @@ export default function Actions({
         flowId,
         resourceId,
         retryId,
-        retryData,
+        retryData: updatedRetryData,
       })
     );
 
     if (onClose) onClose();
-  }, [dispatch, flowId, onClose, resourceId, retryId, retryData]);
+  }, [dispatch, flowId, onClose, resourceId, retryId, updatedRetryData]);
 
   if (isResolved) {
     return null;
   }
-  if (mode === 'edit') {
+
+  const isRetryDataChanged = updatedRetryData && !isEqual(retryData, updatedRetryData);
+
+  if (mode === 'edit' && !isFlowDisabled) {
     return (
       <div className={classes.action}>
-        <Button variant="outlined" color="primary" onClick={handleSaveAndRetry}>
+        <Button variant="outlined" color="primary" disabled={!isRetryDataChanged} onClick={handleSaveAndRetry}>
           Save &amp; retry
         </Button>
         <Button variant="outlined" color="secondary" onClick={resolve}>
           Mark resolved
         </Button>
-        <Button variant="outlined" color="secondary" disabled={!retryData} onClick={updateRetry}>
+        <Button variant="outlined" color="secondary" disabled={!isRetryDataChanged} onClick={updateRetry}>
           Save &amp; close
         </Button>
         <Button variant="text" color="primary" onClick={onClose}>

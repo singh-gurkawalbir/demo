@@ -121,13 +121,21 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
   try {
     response = yield call(apiCallWithRetry, {
       path,
+      timeout: 5 * 60 * 1000,
       opts,
     });
   } catch (error) {
     return yield put(actions.api.failure(path, 'POST', error, false));
   }
-
-  yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
+  if (actionType === 'ioResume') {
+    yield put(actions.resource.requestCollection('integrations'));
+    yield put(actions.resource.requestCollection('flows'));
+    yield put(actions.resource.requestCollection('exports'));
+    yield put(actions.resource.requestCollection('imports'));
+    yield put(actions.resource.requestCollection('licenses'));
+  } else {
+    yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
+  }
 }
 
 export function* updateProfile() {
@@ -218,24 +226,18 @@ export function* changeEmail({ updatedEmail }) {
 export function* switchAccount({ id }) {
   const userPreferences = yield select(selectors.userPreferences);
 
-  try {
-    yield put(
-      actions.user.preferences.update({
-        defaultAShareId: id,
-        environment: 'production',
-      })
-    );
-  } catch (ex) {
-    // is it put?
-    return yield put(
-      actions.api.failure('switch account', 'PUT', 'Could not switch account')
-    );
+  if (userPreferences.defaultAShareId !== id) {
+    // lazily update preferences when reinitializing with the new session
+    // because abortAllSagasAndReset will kill the preferences call
+    return yield put(actions.auth.abortAllSagasAndSwitchAcc(id));
   }
 
-  if (userPreferences.defaultAShareId !== id) {
-    yield put(actions.auth.clearStore());
-    yield put(actions.auth.initSession());
-  }
+  yield put(
+    actions.user.preferences.update({
+      defaultAShareId: id,
+      environment: 'production',
+    })
+  );
 }
 
 export function* leaveAccount({ id }) {

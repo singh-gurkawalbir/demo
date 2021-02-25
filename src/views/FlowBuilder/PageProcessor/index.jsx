@@ -10,13 +10,14 @@ import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import { getResourceSubType, generateNewId } from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
-import inputFilterAction from './actions/inputFilter';
+import inputFilterAction from './actions/inputFilter_afe2';
 import pageProcessorHooksAction from './actions/pageProcessorHooks';
-import outputFilterAction from './actions/outputFilter';
-import transformationAction from './actions/transformation';
+import outputFilterAction from './actions/outputFilter_afe2';
+// import transformationAction from './actions/transformation';
+import lookupTransformationAction from './actions/lookupTransformation_afe2';
 import responseMapping from './actions/responseMapping';
-import postResponseMapHook from './actions/postResponseMapHook';
-import responseTransformationAction from './actions/responseTransformation';
+import postResponseMapHook from './actions/postResponseMapHook_afe2';
+import responseTransformationAction from './actions/responseTransformation_afe2';
 import proceedOnFailureAction from './actions/proceedOnFailure';
 import { actionsMap, isImportMappingAvailable } from '../../../utils/flows';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
@@ -89,13 +90,13 @@ const PageProcessor = ({
     (['RESTImport', 'HTTPImport', 'NetSuiteImport', 'SalesforceImport'].indexOf(
       resource.adaptorType
     ) >= 0 &&
-      resource.blobKeyPath) ||
+      resource.blob) ||
     ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
   ) {
     blockType = 'importTransfer';
   }
 
-  const showMapping = useMemo(() => flowDetails._connectorId ? flowDetails.showMapping : true, [flowDetails]);
+  const showMapping = flowDetails._connectorId ? flowDetails.showMapping : true;
 
   // Returns map of all possible actions with true/false whether actions performed on the resource
   const usedActions =
@@ -247,7 +248,7 @@ const PageProcessor = ({
       if (pp.type === 'export') {
         processorActions.push(
           {
-            ...transformationAction,
+            ...lookupTransformationAction,
             isUsed: usedActions[actionsMap.transformation],
           },
           {
@@ -288,11 +289,11 @@ const PageProcessor = ({
 
       if (!isLast) {
         processorActions.push(
-          {
+          ...(showMapping ? [{
             ...responseMapping,
             isUsed: usedActions[actionsMap.responseMapping],
             helpKey: `fb.pp.${resourceType}.responseMapping`,
-          },
+          }] : []),
           {
             ...postResponseMapHook,
             isUsed: usedActions[actionsMap.postResponseMap],
@@ -308,7 +309,7 @@ const PageProcessor = ({
     }
 
     return processorActions;
-  }, [isLast, pending, pp.type, resource, resourceType, usedActions]);
+  }, [isLast, pending, pp.type, resource, resourceType, showMapping, usedActions]);
   // #endregion
   // console.log('render: <PageProcessor>');
   // console.log(pp, usedActions);

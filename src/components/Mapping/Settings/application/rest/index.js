@@ -1,11 +1,11 @@
 import dateTimezones from '../../../../../utils/dateTimezones';
-import mappingUtil from '../../../../../utils/mapping';
+import mappingUtil, { wrapTextForSpecialChars } from '../../../../../utils/mapping';
 import dateFormats from '../../../../../utils/dateFormats';
 import {
   isProduction,
   conditionalLookupOptionsforRest,
   conditionalLookupOptionsforRestProduction,
-} from '../../../../../forms/utils';
+} from '../../../../../forms/formFactory/utils';
 
 const emptyObject = {};
 export default {
@@ -15,12 +15,12 @@ export default {
     extractFields,
     lookups,
     importResource = {},
+    isGroupedSampleData,
   }) => {
     const {generate, lookupName} = value;
     const {_connectionId: connectionId, name: resourceName, adaptorType, _id: resourceId } = importResource;
 
     const isComposite = !!((adaptorType === 'HTTPImport' && importResource?.http?.method && importResource.http.method.length > 1) || (adaptorType === 'RESTImport' && importResource?.rest?.method && importResource.rest.method.length > 1));
-    const isGroupedSampleData = Array.isArray(extractFields);
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
 
     let conditionalWhenOptions = isProduction()
@@ -34,6 +34,16 @@ export default {
       );
     }
 
+    const extractfieldsOpts = [];
+
+    if (extractFields) {
+      if (isGroupedSampleData && generate.indexOf('[*].') !== -1) {
+        extractFields.forEach(({name, id}) => {
+          extractfieldsOpts.push({name: `*.${name}`, id: `*.${id}`});
+        });
+      }
+      extractfieldsOpts.push(...extractFields);
+    }
     const fieldMeta = {
       fieldMap: {
         dataType: {
@@ -78,6 +88,9 @@ export default {
           type: 'checkbox',
           defaultValue: value.useFirstRow || false,
           label: 'Use first row',
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['standard'] },
+          ],
         },
         fieldMappingType: {
           id: 'fieldMappingType',
@@ -161,9 +174,12 @@ export default {
           name: '_body',
           type: 'httprequestbody',
           connectionId: r => r && r._connectionId,
+          resourceId,
+          flowId,
+          resourceType: 'imports',
           defaultValue: lookup.body || '',
           required: true,
-          label: 'Build HTTP request body',
+          label: 'HTTP request body',
           // helpText not present
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -215,7 +231,6 @@ export default {
           helpKey: 'mapping.functions',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
-        // TODO (Aditya) : resetting Field after selection
         extract: {
           id: 'extract',
           name: 'extract',
@@ -224,11 +239,10 @@ export default {
           options: [
             {
               items:
-                (extractFields &&
-                  extractFields.map(field => ({
-                    label: field.name,
-                    value: field.id,
-                  }))) ||
+                (extractfieldsOpts?.map(field => ({
+                  label: field.name,
+                  value: field.id,
+                }))) ||
                 [],
             },
           ],
@@ -527,12 +541,10 @@ export default {
           if (expressionField.value) expressionValue = expressionField.value;
 
           if (extractField.value) {
-            const extractValue = extractField.value;
+            const isGroupedField = extractField.value.indexOf('*.') === 0;
+            const extractFieldValue = isGroupedField ? extractField.value.substring(2) : extractField.value;
 
-            expressionValue +=
-              extractValue.indexOf(' ') > -1
-                ? `{{[${extractValue}]}}`
-                : `{{${extractValue}}}`;
+            expressionValue += `{{${isGroupedField ? '*.' : ''}${wrapTextForSpecialChars(extractFieldValue)}}}`;
             extractField.value = '';
           } else if (functionsField.value) {
             expressionValue += functionsField.value;

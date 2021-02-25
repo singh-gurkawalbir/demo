@@ -3,18 +3,18 @@ import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import SalesforceEditorDrawer from '../../AFE/SalesforceQualificationCriteriaEditor/Drawer';
 import ActionButton from '../../ActionButton';
-import ExitIcon from '../../icons/FilterIcon';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FilterIcon from '../../icons/FilterIcon';
+import FieldMessage from './FieldMessage';
 import FieldHelp from '../FieldHelp';
 import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
-  dynaslsforceFormControl: {
+  salesforceFormControl: {
     display: 'flex',
     alignItems: 'flex-start',
     width: '100%',
   },
-  exitButtonsalsForceQualifier: {
+  exitButtonSalesforceQualifier: {
     alignSelf: 'flex-start',
     marginTop: theme.spacing(4),
   },
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   textField: {
     width: '100%',
   },
-  dynaSalesforceQualifierlabelWrapper: {
+  salesforceQualifierLabelWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
   },
@@ -73,14 +73,14 @@ export default function DynaSalesforceQualifier(props) {
         />
 
       <div className={classes.textField}>
-        <div className={classes.dynaSalesforceQualifierlabelWrapper}>
+        <div className={classes.salesforceQualifierLabelWrapper}>
           <FormLabel htmlFor={id} required={required} error={!isValid}>
             {label}
           </FormLabel>
           <FieldHelp {...props} />
           {/* TODO (Sravan) :Field Help is not rendering */}
         </div>
-        <FormControl className={classes.dynaslsforceFormControl}>
+        <FormControl className={classes.salesforceFormControl}>
           <TextField
             key={id}
             name={name}
@@ -92,7 +92,7 @@ export default function DynaSalesforceQualifier(props) {
             value={value || ''}
             variant="filled"
           />
-          <ErroredMessageComponent
+          <FieldMessage
             isValid={isValid}
             errorMessages={errorMessages}
           />
@@ -102,8 +102,8 @@ export default function DynaSalesforceQualifier(props) {
         disabled={!options?.hasSObjectType}
         data-test={id}
         onClick={handleOpenDrawer}
-        className={classes.exitButtonsalsForceQualifier}>
-        <ExitIcon />
+        className={classes.exitButtonSalesforceQualifier}>
+        <FilterIcon />
       </ActionButton>
     </div>
   );

@@ -3,6 +3,39 @@ const { stringCompare, celigoListCompare } = require('./sort');
 
 describe('Sort util function test', () => {
   describe('stringCompare function test', () => {
+    test('should return correct sorted data for array of objects with compare property and type number', () => {
+      const sampleArray = [
+        {
+          name: 'name3',
+          errors: 123,
+        }, {
+          name: 'name1',
+          errors: 0,
+        }, {
+          name: 'name4',
+          errors: 345,
+        }, {
+          name: 'name2',
+          errors: 0,
+        }];
+
+      sampleArray.sort(stringCompare('errors'));
+      expect(sampleArray).toEqual([
+        {
+          name: 'name1',
+          errors: 0,
+        }, {
+          name: 'name2',
+          errors: 0,
+        }, {
+          name: 'name3',
+          errors: 123,
+        }, {
+          name: 'name4',
+          errors: 345,
+        },
+      ]);
+    });
     test('should return correct sorted data for array of strings with all Capitals', () => {
       const sampleArray = ['Canada', 'USA', 'India', 'China', 'Australia', 'Swden', 'Sri Lanka', 'Germany'];
 
@@ -216,6 +249,33 @@ describe('Sort util function test', () => {
         123,
         3,
 
+      ]
+      );
+    });
+    test('should return correct sorted data for array of strings with leading/trailing spaces in descending order', () => {
+      const sampleArray = [' 123Canada', 'Canada ', 'USSR', 456, 4567, '456New zealand', '876Bangladesh', '1233', 'USA', '456India', 'indonesia', 'India', 'china', 'australia', 'Austria', 'Sweden', 'sri Lanka', 'germany', 'Greenland'];
+
+      sampleArray.sort(stringCompare(null, true));
+      expect(sampleArray).toEqual([
+        'USSR',
+        'USA',
+        'Sweden',
+        'sri Lanka',
+        'indonesia',
+        'India',
+        'Greenland',
+        'germany',
+        'china',
+        'Canada ',
+        'Austria',
+        'australia',
+        '876Bangladesh',
+        '456New zealand',
+        '456India',
+        ' 123Canada',
+        4567,
+        '1233',
+        456,
       ]
       );
     });
@@ -778,7 +838,6 @@ describe('Sort util function test', () => {
         {id: 'Greenland'}];
 
       sampleArray.sort(celigoListCompare);
-      console.log('sampleArray', sampleArray);
       expect(sampleArray).toEqual([
         { id: 3 },
         { id: 123 },

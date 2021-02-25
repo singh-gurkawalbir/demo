@@ -3,6 +3,7 @@ import {
   put,
   cancel,
   take,
+  takeLatest,
   takeEvery,
   delay,
   select,
@@ -77,7 +78,7 @@ export function* pollForInProgressJobs() {
 }
 
 export function* getJobDetails({ jobId }) {
-  const path = `/jobs/${jobId}`;
+  const path = `/jobs/${jobId}/family`;
   const opts = { method: 'GET' };
   let job;
 
@@ -171,6 +172,11 @@ export function* requestJobCollection({ integrationId, flowId, filters = {}, opt
     return true;
   }
 
+  if (!Array.isArray(collection)) {
+    // the jobs collection must be an array
+    collection = [];
+  }
+
   // flowJobId is sent in options when user clicks a error notification email and jobId is in url request parameters
   // If user requested job is not in first 1000 results, fetch particular job and merge it in collection.
   if (options.flowJobId && !collection.find(j => j._id === options.flowJobId)) {
@@ -178,7 +184,7 @@ export function* requestJobCollection({ integrationId, flowId, filters = {}, opt
       requestedJob = yield call(getJobDetails, { jobId: options.flowJobId });
     // eslint-disable-next-line no-empty
     } catch (e) {}
-    if (requestedJob && requestedJob._id) {
+    if (requestedJob && requestedJob._id && Array.isArray(collection)) {
       // Push if valid job is returned
       collection.push(requestedJob);
     }
@@ -706,7 +712,29 @@ export function* updateRetryData({ retryId, retryData }) {
   yield put(actions.job.receivedRetryData({ retryData, retryId }));
 }
 
-function* retryProcessedErrors({ jobId, flowJobId, errorFileId }) {
+export function* downloadRetryData({ retryId }) {
+  let response;
+  const { path, opts } = getRequestOptions(
+    actionTypes.JOB.ERROR.DOWNLOAD_RETRY_DATA,
+    {
+      resourceId: retryId,
+    }
+  );
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+  } catch (e) {
+    return true;
+  }
+  if (response?.signedURL) {
+    openExternalUrl({url: response?.signedURL});
+  }
+}
+
+export function* retryProcessedErrors({ jobId, flowJobId, errorFileId }) {
   try {
     const body = { errorFile: { host: 's3', id: errorFileId } };
 
@@ -745,5 +773,6 @@ export const jobSagas = [
   takeEvery(actionTypes.JOB.ERROR.RETRY_SELECTED, retrySelectedRetries),
   takeEvery(actionTypes.JOB.ERROR.REQUEST_RETRY_DATA, requestRetryData),
   takeEvery(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, updateRetryData),
+  takeLatest(actionTypes.JOB.ERROR.DOWNLOAD_RETRY_DATA, downloadRetryData),
   takeEvery(actionTypes.JOB.ERROR.RETRY_PROCESSED_ERRORS, retryProcessedErrors),
 ];

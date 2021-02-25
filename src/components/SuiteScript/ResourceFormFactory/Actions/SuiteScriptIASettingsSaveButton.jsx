@@ -63,11 +63,6 @@ const SuiteScriptIASettingsSaveButton = props => {
       <SiliconValleyDashboardLink {...props} />
       <DynaAction
         {...rest}
-        showCustomFormValidations={() => {
-          dispatch(
-            actions.suiteScript.iaForm.showFormValidations(ssLinkedConnectionId, integrationId)
-          );
-        }}
         className={classes.actionButton}
         disabled={disabled || saving}
         onClick={onSave}>

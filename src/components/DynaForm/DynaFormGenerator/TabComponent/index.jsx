@@ -1,15 +1,13 @@
 import { Tab, Tabs, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
 import FormGenerator from '..';
 import {selectors} from '../../../../reducers';
 import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
 import SuiteScriptSaveButton from '../../../SuiteScript/ResourceFormFactory/Actions/SuiteScriptIASettingsSaveButton';
-import { getAllFormValuesAssociatedToMeta } from '../../../../forms/utils';
-import actions from '../../../../actions';
-import useFormContext from '../../../Form/FormContext';
+import { getAllFormValuesAssociatedToMeta } from '../../../../forms/formFactory/utils';
 
 const useStyle = makeStyles(theme => ({
   root: {
@@ -137,9 +135,7 @@ function FormWithSave(props) {
         isValid: !isExpansionPanelErrored,
         isFormTouchedForMeta: isAnyFieldTouchedForMeta,
         postProcessValuesFn,
-
       })}
-
     </>
   );
 }
@@ -154,20 +150,6 @@ export function TabIAComponent(props) {
   );
 }
 
-// this may not be necessary
-const useInitializeFieldStateHook = ({ fieldMap, formKey}) => {
-  const dispatch = useDispatch();
-  const fields = useFormContext(formKey)?.fields;
-
-  useEffect(() => {
-    Object.values(fieldMap).forEach(field => {
-      // if field state missing force registration of fields
-      if (!fields[field?.id]) { dispatch(actions.form.registerField(formKey)(field)); }
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-};
-
 // this is necessary when we clone props we want all of its children to receive them
 function SuiteScriptWithCompleteSave(props) {
   return (
@@ -179,12 +161,7 @@ function SuiteScriptWithCompleteSave(props) {
 }
 
 export function SuiteScriptTabIACompleteSave(props) {
-  const {formKey, fieldMap} = props;
-
-  useInitializeFieldStateHook({formKey, fieldMap});
-
   return (
-
     <TabComponent
       {...props}
       orientation="horizontal"
@@ -206,10 +183,6 @@ function TabWithCompleteSave(props) {
 }
 
 export function TabComponentSimple(props) {
-  const {formKey, fieldMap} = props;
-
-  useInitializeFieldStateHook({formKey, fieldMap});
-
   return (
     <TabComponent {...props}>
       <TabWithCompleteSave />
@@ -219,10 +192,6 @@ export function TabComponentSimple(props) {
 }
 
 export function TabComponentWithoutSave({ index, ...rest }) {
-  const {formKey, fieldMap} = rest;
-
-  useInitializeFieldStateHook({formKey, fieldMap});
-
   return (
     <TabComponent
       {...rest}

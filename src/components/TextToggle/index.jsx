@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
       minWidth: 100,
       '& span': {
         color: theme.palette.secondary.light,
-        lineHeight: '24px',
+        lineHeight: '0px',
       },
     },
     '& button.Mui-selected': {
@@ -63,6 +63,7 @@ export default function TextToggle({
   variant,
   onChange,
   className,
+  disabled,
   ...rest
 }) {
   const classes = useStyles({ minWidth });
@@ -83,6 +84,7 @@ export default function TextToggle({
       onChange={handleChange}>
       {options.map(item => (
         <ToggleButton
+          disabled={disabled}
           data-test={item.label}
           key={item.value}
           value={item.value}

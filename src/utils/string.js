@@ -42,3 +42,5 @@ export const isJsonString = str => {
 };
 
 export default { hashCode, isJsonString, safeParse };
+export const isHTML = text => /<\/?[a-z][\s\S]*>/i.test(text);
+

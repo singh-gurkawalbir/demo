@@ -1,5 +1,5 @@
 import React, { useEffect} from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   preview: {
     marginTop: theme.spacing(2),
     overflowY: 'auto',
-    maxHeight: `calc(100vh - ${theme.appBarHeight + 185}px)`,
+    maxHeight: `calc(100vh - ${theme.appBarHeight + 225}px)`,
   },
 }));
 
@@ -34,12 +34,12 @@ export default function IntegrationPreview() {
     state => selectors.templateSetup(state, templateId) || emptyObject
   );
   const { isCloned, integrationId} = useSelector(
-    state => selectors.integrationClonedDetails(state, templateId),
-    (left, right) =>
-      left &&
-      right &&
-      left.isCloned === right.isCloned &&
-      left.integrationId === right.integrationId
+    state => {
+      const { isCloned, integrationId} = selectors.integrationClonedDetails(state, templateId);
+
+      return { isCloned, integrationId};
+    },
+    shallowEqual
   );
 
   useEffect(() => {
@@ -88,7 +88,7 @@ export default function IntegrationPreview() {
 
       <Button
         className={classes.installButton}
-        variant="contained"
+        variant="outlined"
         color="primary"
         onClick={handleInstallIntegration}>
         Install integration

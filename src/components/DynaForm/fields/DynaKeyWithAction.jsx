@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 import EditIcon from '../../icons/EditIcon';
 import DeleteOutlinedIcon from '../../icons/TrashIcon';
 
@@ -77,7 +77,7 @@ export default function DynaKeyWithAction(props) {
         </div>
       ))}
 
-      <ErroredMessageComponent {...props} />
+      <FieldMessage {...props} />
     </div>
   );
 }

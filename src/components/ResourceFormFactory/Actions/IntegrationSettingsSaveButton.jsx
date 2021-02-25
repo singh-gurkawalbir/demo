@@ -5,7 +5,8 @@ import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import { selectors } from '../../../reducers';
 import { useLoadingSnackbarOnSave } from '.';
-import { integrationSettingsToDynaFormMetadata } from '../../../forms/utils';
+import { integrationSettingsToDynaFormMetadata } from '../../../forms/formFactory/utils';
+import { FORM_SAVE_STATUS } from '../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   actionButton: {
@@ -27,7 +28,7 @@ export default function IntegrationSettingsSaveButton(props) {
   } = props;
   const dispatch = useDispatch();
   const { settings: fields, sections } = useSelector(
-    state => selectors.iaFlowSettings(state, integrationId, flowId),
+    state => selectors.iaFlowSettings(state, integrationId, flowId, storeId),
     shallowEqual
   );
   const flowSettingsMemo = useMemo(
@@ -90,17 +91,14 @@ export default function IntegrationSettingsSaveButton(props) {
     [dispatch, flowId, flowSettingsMemo?.fieldMap, integrationId, postProcessValuesFn, sectionId, storeId]
   );
   const submitCompleted = useSelector(state => {
-    const {
-      submitComplete,
-      submitFailed,
-    } = selectors.integrationAppSettingsFormState(
+    const formState = selectors.integrationAppSettingsFormState(
       state,
       integrationId,
       flowId,
       sectionId
     );
 
-    return submitComplete || submitFailed;
+    return [FORM_SAVE_STATUS.COMPLETE, FORM_SAVE_STATUS.FAILED].includes(formState.formSaveStatus);
   });
   const { handleSubmitForm, isSaving } = useLoadingSnackbarOnSave({
     resourceType: 'Integration Settings',

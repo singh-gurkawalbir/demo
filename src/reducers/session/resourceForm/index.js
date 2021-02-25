@@ -1,5 +1,8 @@
+import produce from 'immer';
+
 import actionTypes from '../../../actions/types';
-import { fieldsTouchedForMeta } from '../../../forms/utils';
+import { fieldsTouchedForMeta } from '../../../forms/formFactory/utils';
+import {FORM_SAVE_STATUS} from '../../../utils/constants';
 
 const emptyObj = {};
 
@@ -19,23 +22,23 @@ export default function reducer(state = {}, action) {
     bundleVersion,
   } = action;
   const key = `${resourceType}-${resourceId}`;
-  const stateCopy = { ...state, [key]: { ...state[key] } };
 
-  switch (type) {
-    case actionTypes.RESOURCE_FORM.INIT:
-      return {
-        ...state,
-        [key]: { initComplete: false, initData },
-      };
+  if (!resourceType || !resourceId) return state;
 
-    case actionTypes.RESOURCE_FORM.INIT_COMPLETE:
-      return {
-        ...state,
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.RESOURCE_FORM.INIT:
+
+        draft[key] = { initComplete: false, initData };
+        break;
+
+      case actionTypes.RESOURCE_FORM.INIT_COMPLETE:
+
         // Are there any issues with storing fn pointers here?
         // if the state is not serializable, will we recover properly from
         // refreshing session? Doing this makes the submit resource saga
         // easier as we dont need to lookup the preSave handler...
-        [key]: {
+        draft[key] = {
           initData:
             state[key] && state[key].initData
               ? fieldsTouchedForMeta(
@@ -49,76 +52,74 @@ export default function reducer(state = {}, action) {
           fieldMeta,
           flowId,
           showValidationBeforeTouched: false,
-        },
-      };
-    case actionTypes.RESOURCE_FORM.INIT_FAILED:
-      return {
-        ...state,
-        [key]: {
-          ...state[key],
-          initFailed: true,
-        },
-      };
+        };
+        break;
 
-    case actionTypes.RESOURCE_FORM.CLEAR_INIT_DATA:
-      stateCopy[key] && delete stateCopy[key].initData;
+      case actionTypes.RESOURCE_FORM.INIT_FAILED:
+        if (!draft[key]) {
+          draft[key] = {};
+        }
+        draft[key].initFailed = true;
+        break;
+      case actionTypes.RESOURCE_FORM.CLEAR_INIT_DATA:
+        draft[key] && delete draft[key].initData;
+        break;
+      case actionTypes.RESOURCE_FORM.SUBMIT:
+        if (!draft[key]) {
+          draft[key] = {};
+        }
+        draft[key].formSaveStatus = FORM_SAVE_STATUS.LOADING;
+        draft[key].formValues = undefined;
+        draft[key].skipClose = skipClose;
 
-      return stateCopy;
-    case actionTypes.RESOURCE_FORM.SUBMIT:
-      return {
-        ...state,
-        [key]: {
-          ...state[key],
-          submitAborted: false,
-          submitComplete: false,
-          submitFailed: false,
-          formValues: undefined,
-          skipClose,
-        },
-      };
+        break;
 
-    case actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION:
-      return {
-        ...state,
-        [key]: {
-          ...state[key],
-          bundleVersion,
-          bundleUrl,
-          showBundleInstallNotification: true,
-        },
-      };
+      case actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION:
+        if (!draft[key]) {
+          draft[key] = {};
+        }
 
-    case actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION:
-      return {
-        ...state,
-        [key]: {
-          ...state[key],
-          showBundleInstallNotification: false,
-        },
-      };
+        draft[key].bundleVersion = bundleVersion;
+        draft[key].bundleUrl = bundleUrl;
+        draft[key].showBundleInstallNotification = true;
+        break;
+      case actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION:
+        if (!draft[key]) {
+          draft[key] = {};
+        }
+        draft[key].showBundleInstallNotification = false;
+        break;
 
-    case actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE:
-      return {
-        ...state,
-        [key]: {
-          ...state[key],
-          submitComplete: true,
-          formValues,
-        },
-      };
-    case actionTypes.RESOURCE_FORM.SUBMIT_FAILED:
-      return {
-        ...state,
-        [key]: { ...state[key], submitFailed: true, formValues },
-      };
+      case actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE:
+        if (!draft[key]) {
+          draft[key] = {};
+        }
 
-    case actionTypes.RESOURCE_FORM.SUBMIT_ABORTED:
-      return { ...state, [key]: { submitAborted: true } };
-    case actionTypes.RESOURCE_FORM.CLEAR:
-      return { ...state, [key]: {} };
-    default:
-      return state;
-  }
+        draft[key].formSaveStatus = FORM_SAVE_STATUS.COMPLETE;
+        draft[key].formValues = formValues;
+        break;
+      case actionTypes.RESOURCE_FORM.SUBMIT_FAILED:
+        if (!draft[key]) {
+          draft[key] = {};
+        }
+
+        draft[key].formSaveStatus = FORM_SAVE_STATUS.FAILED;
+        draft[key].formValues = formValues;
+        break;
+
+      case actionTypes.RESOURCE_FORM.SUBMIT_ABORTED:
+        if (!draft[key]) {
+          draft[key] = {};
+        }
+        draft[key].formSaveStatus = FORM_SAVE_STATUS.ABORTED;
+        break;
+      case actionTypes.RESOURCE_FORM.CLEAR:
+        draft[key] = {};
+        break;
+      default:
+        break;
+    }
+  });
 }
 
 // #region PUBLIC SELECTORS
@@ -139,12 +140,8 @@ selectors.resourceFormSaveProcessTerminated = (
   resourceType,
   resourceId
 ) => {
-  if (!state) return false;
   const key = `${resourceType}-${resourceId}`;
 
-  if (!state[key]) return false;
-  const { submitFailed, submitComplete, submitAborted } = state[key];
-
-  return !!(submitFailed || submitComplete || submitAborted);
+  return [FORM_SAVE_STATUS.COMPLETE, FORM_SAVE_STATUS.FAILED, FORM_SAVE_STATUS.ABORTED].includes(state?.[key]?.formSaveStatus);
 };
 // #endregion

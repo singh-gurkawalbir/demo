@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
 import { selectors } from '../../../../reducers';
@@ -35,6 +35,9 @@ const NestedValueCheckbox = props => {
   } = props;
 
   const value = useMemo(() => selectedValues.some(v => {
+    if (!v) {
+      return false;
+    }
     if (typeof v === 'string') return v === attachedParentNode;
 
     return v.label === attachedParentNode;
@@ -67,31 +70,74 @@ const NestedValueCheckbox = props => {
   );
 };
 
+const RefreshButton = ({connectionId, nodeId, refreshNodes,
+  setRefreshNodes, selectedNodeBasePath, status}) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (refreshNodes.includes(nodeId) && status !== 'requested') {
+      setRefreshNodes(nodes => nodes.filter(node => node !== nodeId));
+    }
+  }, [nodeId, refreshNodes, setRefreshNodes, status]);
+
+  if (refreshNodes.includes(nodeId) && status === 'requested') return <Spinner />;
+
+  return (
+    <RefreshIcon
+      onClick={evt => {
+        setRefreshNodes(nodes => [...nodes, nodeId]);
+        dispatch(
+          actions.metadata.refresh(
+            connectionId,
+            selectedNodeBasePath,
+            {refreshCache: true}
+          ));
+        evt.preventDefault();
+      }} />
+  );
+};
+
 const RefreshTreeElement = props => {
   const {
     label,
     connectionId,
     metaBasePath,
     // setExpanded,
+    refreshNodes,
+    setRefreshNodes,
     expanded,
     selectedReferenceTo,
     selectedRelationshipName,
     level,
   } = props;
+
   const nodeId = `${selectedRelationshipName}${level},${selectedReferenceTo}`;
 
-  const { status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, `${metaBasePath}${selectedReferenceTo}`, 'salesforce-sObjects-referenceFields');
+  const selectedNodeBasePath = `${metaBasePath}${selectedReferenceTo}`;
+  const { status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, selectedNodeBasePath, 'salesforce-sObjects-referenceFields');
+
+  const LabelEle = () => (
+    <>
+      <span>{selectedRelationshipName} Fields...</span>
+      <RefreshButton
+        nodeId={nodeId}
+        refreshNodes={refreshNodes}
+        setRefreshNodes={setRefreshNodes}
+        connectionId={connectionId}
+        status={status}
+        selectedNodeBasePath={selectedNodeBasePath}
+         />
+    </>
+  );
 
   return (
     <TreeItem
       key={label}
-      label={`${selectedRelationshipName} Fields...`}
-      nodeId={nodeId}
-      expandIcon={
-        status === 'refreshed' ? <RefreshIcon /> : <ArrowDownIcon />
-      }>
+      label={<LabelEle />}
+      endIcon={<RefreshIcon />}
+      nodeId={nodeId}>
       {expanded.includes(nodeId) ? (
-        <TreeViewComponent {...props} key={label} />
+        (status === 'received' && <TreeViewComponent {...props} key={label} />) || <Spinner />
       ) : (
         <></>
       )}
@@ -183,42 +229,46 @@ export default function RefreshableTreeComponent(props) {
   } = props;
   const metaBasePath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/`;
   const [expanded, setExpanded] = useState([]);
+  const [refreshNodes, setRefreshNodes] = useState([]);
+  const [toggleOpenReferenceTo, setToggleOpenReferenceTo] = useState();
+
   const dispatch = useDispatch();
-  const statusSelector = useSelector(state => selectedReferenceTo =>
-    selectors.metadataOptionsAndResources(state, {
-      connectionId,
-      commMetaPath: `${metaBasePath}${selectedReferenceTo}`,
-      filterKey: 'salesforce-sObjects-referenceFields',
-    })
-  );
-  const onNodeToggle = (nodeId, expanded) => {
-    // check for node id
+  const { status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,
+    `${metaBasePath}${selectedReferenceTo}`, 'salesforce-sObjects-referenceFields');
 
-    const referenceTo = nodeId.split(',')[1];
-    const { status } = statusSelector(referenceTo);
-
-    if (expanded) {
-      if (status !== 'received') {
-        dispatch(
-          actions.metadata.refresh(
-            connectionId,
-            `${metaBasePath}${referenceTo}`,
-            {refreshCache: true}
-          )
-        );
-      }
-      setExpanded(openNodes => [...openNodes, nodeId]);
-    } else {
-      setExpanded(openNodes =>
-        openNodes.filter(openNode => openNode !== nodeId)
-      );
-    }
-  };
-
-  const [hasCalled, setHasCalled] = useState(false);
+  // get the status of the opened node status
+  const { status: toggleOpenNodeStatus } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,
+    `${metaBasePath}${toggleOpenReferenceTo}`, 'salesforce-sObjects-referenceFields');
 
   useEffect(() => {
-    if (!hasCalled && statusSelector(selectedReferenceTo) !== 'received') {
+    // if the opened node does not have metadata fetch it
+    if (toggleOpenReferenceTo && toggleOpenNodeStatus !== 'received') {
+      dispatch(
+        actions.metadata.refresh(
+          connectionId,
+          `${metaBasePath}${toggleOpenReferenceTo}`,
+          {refreshCache: true}
+        )
+      );
+    }
+  }, [connectionId, dispatch, metaBasePath, toggleOpenNodeStatus, toggleOpenReferenceTo]);
+  const onNodeToggle = (event, newExpandedNodes) => {
+    // get expanded node id
+
+    const newExpandedNode = newExpandedNodes.find(node => !expanded.includes(node));
+
+    if (newExpandedNode) {
+      const referenceTo = newExpandedNode.split(',')[1];
+
+      // newly opened toggle node
+      setToggleOpenReferenceTo(referenceTo);
+    }
+    setExpanded(newExpandedNodes);
+  };
+
+  useEffect(() => {
+    // on load get reference to metadata
+    if (status !== 'received') {
       dispatch(
         actions.metadata.refresh(
           connectionId,
@@ -226,33 +276,32 @@ export default function RefreshableTreeComponent(props) {
         )
       );
     }
-    setHasCalled(true);
-  }, [
-    dispatch,
-    connectionId,
-    hasCalled,
-    selectedReferenceTo,
-    metaBasePath,
-    statusSelector,
-  ]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <TreeView
-      expanded={expanded}
-      onNodeToggle={onNodeToggle}
-      defaultCollapseIcon={<ArrowUpIcon />}
-      defaultExpandIcon={<ArrowDownIcon />}>
-      <TreeViewComponent
-        setExpanded={setExpanded}
-        {...props}
-        setSelectedValues={setSelectedValues}
-        metaBasePath={metaBasePath}
-        selectedReferenceTo={selectedReferenceTo}
-        selectedRelationshipName={selectedRelationshipName}
-        nestedRelationShipNames={selectedRelationshipName}
-        expanded={expanded}
-        level={1}
+    status === 'received'
+      ? (
+        <TreeView
+          expanded={expanded}
+          onNodeToggle={onNodeToggle}
+          defaultCollapseIcon={<ArrowUpIcon />}
+          defaultExpandIcon={<ArrowDownIcon />}>
+          <TreeViewComponent
+            refreshNodes={refreshNodes}
+            setRefreshNodes={setRefreshNodes}
+            setExpanded={setExpanded}
+            {...props}
+            setSelectedValues={setSelectedValues}
+            metaBasePath={metaBasePath}
+            selectedReferenceTo={selectedReferenceTo}
+            selectedRelationshipName={selectedRelationshipName}
+            nestedRelationShipNames={selectedRelationshipName}
+            expanded={expanded}
+            level={1}
       />
-    </TreeView>
+        </TreeView>
+      )
+      : <Spinner />
   );
 }

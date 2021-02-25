@@ -1,10 +1,14 @@
 /* global describe, test, expect */
 import each from 'jest-each';
+import moment from 'moment-timezone';
 import actionTypes from '../actions/types';
 import getJsonPaths from './jsonPaths';
 import getRequestOptions from './requestOptions';
 import getRoutePath from './routePaths';
 import retry from './retry';
+import adjustTimezone from './adjustTimezone';
+import inferErrorMessages from './inferErrorMessages';
+import flowgroupingsRedirectTo from './flowgroupingsRedirectTo';
 
 const uiRoutePathPrefix = '';
 
@@ -248,5 +252,162 @@ describe('retry util', () => {
       expect(c).toEqual(1);
       expect(ex.message).toEqual('fail');
     });
+  });
+});
+
+describe('adjustTimezone', () => {
+  test('should return null when non utc time stamp is provided', () => {
+    const zone = 'America/Los_Angeles';
+    const corruptedDateTime = '2013-11-2';
+
+    expect(adjustTimezone(corruptedDateTime, zone)).toEqual(null);
+  });
+  test('should successfully adjust timezone for PST', () => {
+    const zone = 'America/Los_Angeles';
+    // local time stamp internally set in the component
+    const inputLocalTime = '2013-11-22T19:55:00.000';
+
+    // it gets offset internal to the browser local and converted to utc
+    const dateNow = moment(inputLocalTime).toISOString();
+    // check the expected output
+    const expectedOutTime = moment.tz(inputLocalTime, zone).toISOString();
+
+    expect(adjustTimezone(dateNow, zone)).toEqual(expectedOutTime);
+  });
+  describe('daylight saving time ', () => {
+    test('should successfully adjust timezone with daylight saving time -07:00 offset for PST', () => {
+      const zone = 'America/Los_Angeles';
+      // local time stamp internally set in the component
+      const inputLocalTime = '2020-10-18';
+
+      // it gets offset internal to the browser local and converted to utc
+      const dateNow = moment(inputLocalTime).toISOString();
+      // check the expected output
+      const expectedOutTime = moment.tz(inputLocalTime, zone).toISOString();
+
+      expect(adjustTimezone(dateNow, zone)).toEqual(expectedOutTime);
+    });
+    test('should successfully adjust timezone with daylight saving time -08:00 offset for PST', () => {
+      const zone = 'America/Los_Angeles';
+      // local time stamp internally set in the component
+      const inputLocalTime = '2020-11-18';
+
+      // it gets offset internal to the browser local and converted to utc
+      const dateNow = moment(inputLocalTime).toISOString();
+
+      // check the expected output
+      const expectedOutTime = moment.tz(inputLocalTime, zone).toISOString();
+
+      expect(adjustTimezone(dateNow, zone)).toEqual(expectedOutTime);
+    });
+  });
+  test('should successfully adjust timezone for Asia/Tokyo', () => {
+    const zone = 'Asia/Tokyo';
+    // local time stamp internally set in the component
+    const inputLocalTime = '2013-11-22T19:55:00.000';
+
+    // it gets offset internal to the browser local and converted to utc
+    const dateNow = moment(inputLocalTime).toISOString();
+    // check the expected output
+    const expectedOutTime = moment.tz(inputLocalTime, zone).toISOString();
+
+    expect(adjustTimezone(dateNow, zone)).toEqual(expectedOutTime);
+  });
+});
+
+describe('inferErrorMessages expect errored api message in this format { message, errors } ', () => {
+  describe('invalid inputs', () => {
+    test('should return [] for null or undefined inputs', () => {
+      expect(inferErrorMessages(null)).toEqual([]);
+      expect(inferErrorMessages(undefined)).toEqual([]);
+    });
+
+    test('should return just the input in an array for non parsable input messages', () => {
+      expect(inferErrorMessages('some error')).toEqual(['some error']);
+    });
+    test('should return [] for parsable input messages with non message or errors properties', () => {
+      expect(inferErrorMessages({a: 'something', b: 'something1'})).toEqual([]);
+    });
+  });
+  describe('valid { message, errors }', () => {
+    test('should parse { message} in api message and just return it, this is seen in csrf api errored calls', () => {
+      expect(inferErrorMessages({message: 'csrf error'})).toEqual(['csrf error']);
+    });
+    test('should parse stringified input messages consisting of { message} and just return it, this is seen in csrf api errored calls', () => {
+      expect(inferErrorMessages(JSON.stringify({message: 'csrf error'}))).toEqual(['csrf error']);
+    });
+    test('should parse { errors } property in api message, and translate it to a collection of error messages', () => {
+      expect(inferErrorMessages({errors: ['api failure1', 'api failure2']})).toEqual(['api failure1', 'api failure2']);
+      expect(inferErrorMessages({errors: [{message: 'api failure1'}, {message: 'api failure2'}]})).toEqual(['api failure1', 'api failure2']);
+    });
+
+    test('should parse be able to parse stringified inputs consisting of error property and return a collection of error messages', () => {
+      expect(inferErrorMessages(JSON.stringify({errors: ['api failure1', 'api failure2']}))).toEqual(['api failure1', 'api failure2']);
+      expect(inferErrorMessages(JSON.stringify({errors: [{message: 'api failure1'}, {message: 'api failure2'}]})))
+        .toEqual(['api failure1', 'api failure2']);
+    });
+  });
+});
+
+describe('flowgroupingsRedirectTo', () => {
+  const baseRoute = '/baseRoute';
+
+  test('should redirect the page to base route when attempting sectionId for an IA without flowgroupings', () => {
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+      },
+      url: `${baseRoute}/sections/someId`,
+    };
+
+    expect(flowgroupingsRedirectTo(match, null, 'GENERAl')).toEqual(baseRoute);
+  });
+  test('should redirect the page to the default section route when attempting an invalid sectionId for an IA with flowgroupings', () => {
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+        sectionId: 'inValidId',
+      },
+      url: `${baseRoute}/sections/inValidId`,
+    };
+    const flowGroupings = [{sectionId: 'general'}];
+
+    expect(flowgroupingsRedirectTo(match, flowGroupings, 'general')).toEqual(`${baseRoute}/sections/general`);
+  });
+
+  test('should return null when attempting a valid sectionId for an IA with flowgroupings', () => {
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+        sectionId: 'general',
+      },
+      url: `${baseRoute}/sections/general`,
+    };
+    const flowGroupings = [{sectionId: 'general'}];
+
+    expect(flowgroupingsRedirectTo(match, flowGroupings, 'general')).toEqual(null);
+  });
+
+  test('should return default sectionId route when attempting a route without a sectionId but has flowGroupings', () => {
+    const match = {
+      path: baseRoute,
+      params: {
+      },
+      url: baseRoute,
+    };
+    const flowGroupings = [{sectionId: 'general'}];
+
+    expect(flowgroupingsRedirectTo(match, flowGroupings, 'general')).toEqual(`${baseRoute}/sections/general`);
+  });
+  test('should return null when attempting a route without flowGroupings', () => {
+    const match = {
+      path: baseRoute,
+      params: {
+      },
+      url: baseRoute,
+    };
+    const flowGroupings = null;
+
+    expect(flowgroupingsRedirectTo(match, flowGroupings, 'general')).toEqual(null);
   });
 });

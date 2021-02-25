@@ -1,9 +1,8 @@
-import React, { useMemo, useEffect, useCallback } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import ResourceTable from '../../ResourceTable';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import { USER_ACCESS_LEVELS } from '../../../utils/constants';
 import ManagePermissionsDrawer from '../Drawers/ManagePermissions';
 import InviteUserDrawer from '../Drawers/InviteUser';
 import ViewNotificationsDrawer from '../Drawers/ViewNotifications';
@@ -12,36 +11,29 @@ import LoadResources from '../../LoadResources';
 
 export default function UsersList({ integrationId, storeId, className }) {
   const dispatch = useDispatch();
-  const isAccountOwner = useSelector(state =>
-    selectors.userPermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
-  );
-
+  const accessLevel = useSelector(state => selectors.resourcePermissions(state)?.accessLevel);
+  const isAccountOwner = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
   const users = useSelector(state => selectors.availableUsersList(state, integrationId));
-  const requestIntegrationAShares = useCallback(() => {
-    if (integrationId) {
-      if (!users) {
-        dispatch(
-          actions.resource.requestCollection(
-            ['integrations', integrationId, 'ashares'].join('/')
-          )
-        );
-      }
-    }
-  }, [dispatch, integrationId, users]);
+  const isIntegrationUsersRequested = useSelector(state =>
+    !!selectors.integrationUsers(state, integrationId)
+  );
 
   useEffect(() => {
-    requestIntegrationAShares();
-  }, [requestIntegrationAShares]);
+    if (integrationId && !isIntegrationUsersRequested) {
+      dispatch(actions.resource.requestCollection(`integrations/${integrationId}/ashares`));
+    }
+  }, [isIntegrationUsersRequested, dispatch, integrationId]);
 
   const actionProps = useMemo(() => (
     {
       integrationId,
       storeId,
+      accessLevel,
       isUserInErrMgtTwoDotZero,
-    }), [integrationId, storeId, isUserInErrMgtTwoDotZero]);
+    }), [integrationId, storeId, accessLevel, isUserInErrMgtTwoDotZero]);
 
   return (
     <>

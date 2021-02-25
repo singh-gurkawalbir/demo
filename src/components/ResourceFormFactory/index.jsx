@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
-import formFactory from '../../forms/formFactory';
+import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../reducers';
+import { FORM_SAVE_STATUS } from '../../utils/constants';
 import DynaForm from '../DynaForm';
 import Spinner from '../Spinner';
 import SpinnerWrapper from '../SpinnerWrapper';
@@ -32,12 +33,14 @@ export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
   const [count, setCount] = useState(0);
   const remountForm = useCallback(() => setCount(count => count + 1), []);
 
+  const isSubmitComplete = formState?.formSaveStatus === FORM_SAVE_STATUS.COMPLETE;
+
   useEffect(() => {
-    if (formState.submitComplete && onSubmitComplete) {
+    if (isSubmitComplete && onSubmitComplete) {
       onSubmitComplete('', false, formState.formValues);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formState.submitComplete]);
+  }, [isSubmitComplete]);
   useEffect(() => {
     remountForm();
   }, [fieldMeta, remountForm]);
@@ -113,14 +116,24 @@ export const ResourceFormFactory = props => {
   ]);
 
   const { optionsHandler, validationHandler } = useMemo(
-    () =>
-      formFactory.getResourceFormAssets({
-        resourceType,
-        resource,
-        isNew,
-        connection,
-        integrationId,
-      }),
+    () => {
+      let metadataAssets;
+
+      try {
+        // try to load the assets if it can't initForm saga should fail anyway
+        metadataAssets = getResourceFormAssets({
+          resourceType,
+          resource,
+          isNew,
+          connection,
+          integrationId,
+        });
+      } catch (e) {
+        metadataAssets = {};
+      }
+
+      return metadataAssets;
+    },
     [connection, isNew, resource, resourceType, integrationId]
   );
   const { fieldMeta } = formState;

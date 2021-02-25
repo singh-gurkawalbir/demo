@@ -202,4 +202,6 @@ selectors.processorRequestOptions = (state, id) => {
 
   return processorLogic.requestOptions(editor);
 };
+selectors.editorHelperFunctions = state => state?.helperFunctions || [];
+
 // #endregion

@@ -1,9 +1,10 @@
 /* global describe, test, expect, beforeAll */
 import actions from '../../../actions';
-import forms from '.';
+import forms, {selectors} from '.';
 
 describe('reducer expression test cases', () => {
   const formKey = '123';
+  const remountKey = '';
 
   describe('validation expression test case', () => {
     describe('shown validation errors immediately', () => {
@@ -45,7 +46,7 @@ describe('reducer expression test cases', () => {
       beforeAll(() => {
         formState = forms(
           undefined,
-          actions.form.init(formKey, {
+          actions.form.init(formKey, remountKey, {
             fieldMeta,
             showValidationBeforeTouched: true,
           })
@@ -133,7 +134,7 @@ describe('reducer expression test cases', () => {
       beforeAll(() => {
         formState = forms(
           undefined,
-          actions.form.init(formKey, {
+          actions.form.init(formKey, remountKey, {
             fieldMeta,
           })
         );
@@ -209,7 +210,7 @@ describe('reducer expression test cases', () => {
     beforeAll(() => {
       formState = forms(
         undefined,
-        actions.form.init(formKey, {
+        actions.form.init(formKey, remountKey, {
           fieldMeta,
         })
       );
@@ -277,7 +278,7 @@ describe('reducer expression test cases', () => {
     beforeAll(() => {
       formState = forms(
         undefined,
-        actions.form.init(formKey, {
+        actions.form.init(formKey, remountKey, {
           fieldMeta,
         })
       );
@@ -344,7 +345,7 @@ describe('reducer expression test cases', () => {
 
         const formState = forms(
           undefined,
-          actions.form.init(formKey, {
+          actions.form.init(formKey, remountKey, {
             fieldMeta,
           })
         );
@@ -384,7 +385,7 @@ describe('reducer expression test cases', () => {
       beforeAll(() => {
         formState = forms(
           undefined,
-          actions.form.init(formKey, {
+          actions.form.init(formKey, remountKey, {
             fieldMeta,
           })
         );
@@ -459,7 +460,7 @@ describe('reducer expression test cases', () => {
       beforeAll(() => {
         formState = forms(
           undefined,
-          actions.form.init(formKey, {
+          actions.form.init(formKey, remountKey, {
             fieldMeta,
             showValidationBeforeTouched: true,
           })
@@ -516,6 +517,473 @@ describe('reducer expression test cases', () => {
         expect(FIELD1.isValid).toBe(true);
         expect(FIELD1.errorMessages).toBe('');
       });
+    });
+  });
+});
+
+describe('selectors test cases', () => {
+  const remountKey = '';
+
+  const initialState = {
+    '3-4': {
+      fields: {},
+    },
+  };
+  const fieldMeta = {
+    fieldMap: {
+      field1: {
+        id: 'FIELD1',
+        type: 'text',
+        name: 'field1',
+        defaultValue: 'test',
+        label: 'field1',
+        validWhen: {
+          matchesRegEx: {
+            pattern: '^[\\d]+$',
+            message: 'Numbers only',
+          },
+        },
+      },
+
+      field2: {
+        id: 'FIELD2',
+        type: 'text',
+        name: 'field2',
+        defaultValue: 'abc',
+        label: 'field2',
+        validWhen: {
+          matchesRegEx: {
+            pattern: '^[\\d]+$',
+            message: 'Numbers only',
+          },
+        },
+      },
+    },
+
+    layout: { fields: ['field1', 'field2'] },
+  };
+  const formKey = '1-2';
+  const formState = forms(
+    initialState,
+    actions.form.init(formKey, remountKey, {
+      fieldMeta,
+      parentContext: {
+        resourceType: 'exports',
+        resourceId: 'someId',
+      },
+      showValidationBeforeTouched: true,
+    })
+  );
+
+  describe('formState', () => {
+    test('should pick up formState correctly for a existing form state', () => {
+      expect(selectors.formState(formState, '3-4')).toEqual({fields: {}});
+    });
+
+    test('should pick up null for a non existing form state', () => {
+      expect(selectors.formState(formState, 'someotherOne')).toEqual(null);
+    });
+  });
+
+  describe('formParentContext', () => {
+    test('should pick up formParentContext correctly for a existing form state', () => {
+      expect(selectors.formParentContext(formState, '1-2')).toEqual({
+        resourceType: 'exports',
+        resourceId: 'someId',
+      });
+    });
+
+    test('should return null for a non existing form parent context state', () => {
+      expect(selectors.formParentContext(formState, 'someotherOne')).toEqual(null);
+    });
+  });
+  describe('formParentContext', () => {
+    test('should pick up formParentContext correctly for a existing form state', () => {
+      expect(selectors.formParentContext(formState, '1-2')).toEqual({
+        resourceType: 'exports',
+        resourceId: 'someId',
+      });
+    });
+
+    test('should return null for a non existing form state', () => {
+      expect(selectors.formParentContext(formState, 'someotherOne')).toEqual(null);
+    });
+  });
+  describe('formFieldState', () => {
+    test('should pick up a fieldState for a form correctly', () => {
+      // check it if that fieldState exists
+      expect(selectors.fieldState(formState, formKey, 'FIELD1')).toBeTruthy();
+    });
+
+    test('should pick up null for a non existing field state', () => {
+      expect(selectors.fieldState(formState, formKey, 'FIELD3')).toEqual(null);
+    });
+  });
+  describe('isActionButtonVisible', () => {
+    const fieldMeta = {
+      fieldMap: {
+        field1: {
+          id: 'FIELD1',
+          type: 'text',
+          name: 'field1',
+          defaultValue: 'test',
+          label: 'field1',
+        },
+
+        field2: {
+          id: 'FIELD2',
+          type: 'text',
+          name: 'field2',
+          defaultValue: 'abc',
+          label: 'field2',
+        },
+      },
+
+      layout: { fields: ['field1', 'field2'] },
+    };
+    const formKey = '1-2';
+    const formState = forms(
+      initialState,
+      actions.form.init(formKey, remountKey, {
+        fieldMeta,
+        showValidationBeforeTouched: true,
+      })
+    );
+
+    test('should return false for a non existing form', () => {
+      expect(selectors.isActionButtonVisible(formState, 'someFormKey', {
+        visibleWhen: [
+          {field: 'FIELD2', is: ['def']},
+        ],
+      })).toBe(false);
+    });
+
+    test('should return false for an invisible field', () => {
+      expect(selectors.isActionButtonVisible(formState, formKey, {
+        visibleWhen: [
+          {field: 'FIELD2', is: ['def']},
+        ],
+      })).toBe(false);
+    });
+    test('should return true for a visible field', () => {
+      const formStateFullFilledRule = forms(
+        formState,
+        actions.form.fieldChange(formKey)('FIELD2', 'def')
+      );
+
+      expect(selectors.isActionButtonVisible(formStateFullFilledRule, formKey, {
+        visibleWhen: [
+          {field: 'FIELD2', is: ['def']},
+        ],
+      })).toBe(true);
+    });
+  });
+
+  describe('isAnyFieldVisibleForMetaForm', () => {
+    const fieldMeta = {
+      fieldMap: {
+        FIELD1: {
+          id: 'FIELD1',
+          type: 'text',
+          name: 'field1',
+          defaultValue: 'test',
+          label: 'field1',
+          visibleWhen: [
+            {field: 'FIELD2', is: ['abc']},
+          ],
+        },
+
+        FIELD2: {
+          id: 'FIELD2',
+          type: 'text',
+          name: 'field2',
+          defaultValue: 'abc',
+          label: 'field2',
+        },
+      },
+
+      layout: { fields: ['FIELD1', 'FIELD2'] },
+    };
+    const formKey = '1-2';
+    const formState = forms(
+      initialState,
+      actions.form.init(formKey, remountKey, {
+        fieldMeta,
+        showValidationBeforeTouched: true,
+      })
+    );
+
+    const subSegmentMeta = {
+      fieldMap: {
+        FIELD1: {
+          id: 'FIELD1',
+          type: 'text',
+          name: 'FIELD1',
+          defaultValue: 'test',
+          label: 'field1',
+          visibleWhen: [
+            {field: 'FIELD2', is: ['abc']},
+          ],
+        },
+      },
+      layout: {
+        fields: ['FIELD1'],
+      },
+    };
+
+    test('should return true when the given metadata segement is visible', () => {
+      expect(selectors
+        .isAnyFieldVisibleForMetaForm(formState, formKey, subSegmentMeta))
+        .toBe(true);
+    });
+    test('should return false when the given metadata segement is invisible', () => {
+      const updatedFormState = forms(
+        formState,
+        actions.form.fieldChange(formKey)('FIELD2', '456')
+
+      );
+
+      expect(selectors
+        .isAnyFieldVisibleForMetaForm(updatedFormState, formKey, subSegmentMeta))
+        .toBe(false);
+    });
+  });
+  describe('isExpansionPanelRequiredForMetaForm', () => {
+    const fieldMeta = {
+      fieldMap: {
+        FIELD1: {
+          id: 'FIELD1',
+          type: 'text',
+          name: 'field1',
+          defaultValue: 'testsdd',
+          label: 'field1',
+          visibleWhen: [
+            {field: 'FIELD2', is: ['abc']},
+          ],
+          requiredWhen: [
+            {field: 'FIELD1', is: ['test']},
+          ],
+        },
+
+        FIELD2: {
+          id: 'FIELD2',
+          type: 'text',
+          name: 'field2',
+          defaultValue: 'abc',
+          label: 'field2',
+        },
+      },
+
+      layout: { fields: ['FIELD1', 'FIELD2'] },
+    };
+    const formKey = '1-2';
+    const formState = forms(
+      initialState,
+      actions.form.init(formKey, remountKey, {
+        fieldMeta,
+        showValidationBeforeTouched: true,
+      })
+    );
+
+    const subSegmentMeta = {
+      fieldMap: {
+        FIELD1: {
+          id: 'FIELD1',
+          type: 'text',
+          name: 'field1',
+          defaultValue: 'testsdd',
+          label: 'field1',
+          visibleWhen: [
+            {field: 'FIELD2', is: ['abc']},
+          ],
+          requiredWhen: [
+            {field: 'FIELD1', is: ['test']},
+          ],
+        },
+      },
+      layout: {
+        fields: ['FIELD1'],
+      },
+    };
+
+    test('should return false when the given metadata segement is visible and required', () => {
+      expect(selectors
+        .isExpansionPanelRequiredForMetaForm(formState, formKey, subSegmentMeta))
+        .toBe(false);
+    });
+    test('should return true when the given metadata segement is required', () => {
+      const updatedFormState = forms(
+        formState,
+        actions.form.fieldChange(formKey)('FIELD1', 'test')
+
+      );
+
+      expect(selectors
+        .isExpansionPanelRequiredForMetaForm(updatedFormState, formKey, subSegmentMeta))
+        .toBe(true);
+    });
+    test('should return false when the given metadata segement is required but invisible', () => {
+      const updatedFormState = forms(
+        formState,
+        actions.form.fieldChange(formKey)('FIELD2', 'fdfdf')
+
+      );
+
+      expect(selectors
+        .isExpansionPanelRequiredForMetaForm(updatedFormState, formKey, subSegmentMeta))
+        .toBe(false);
+    });
+  });
+
+  describe('isExpansionPanelErroredForMetaForm', () => {
+    const fieldMeta = {
+      fieldMap: {
+        FIELD1: {
+          id: 'FIELD1',
+          type: 'text',
+          name: 'field1',
+          defaultValue: 'testsdd',
+          label: 'field1',
+          validWhen: {
+            matchesRegEx: {
+              pattern: '^[\\d]+$',
+              message: 'Numbers only',
+            },
+          },
+        },
+
+        FIELD2: {
+          id: 'FIELD2',
+          type: 'text',
+          name: 'field2',
+          defaultValue: 'abc',
+          label: 'field2',
+        },
+      },
+
+      layout: { fields: ['FIELD1', 'FIELD2'] },
+    };
+    const formKey = '1-2';
+    const formState = forms(
+      initialState,
+      actions.form.init(formKey, remountKey, {
+        fieldMeta,
+        showValidationBeforeTouched: true,
+      })
+    );
+
+    const subSegmentMeta = {
+      fieldMap: {
+        FIELD1: {
+          id: 'FIELD1',
+          type: 'text',
+          name: 'field1',
+          defaultValue: 'testsdd',
+          label: 'field1',
+          validWhen: {
+            matchesRegEx: {
+              pattern: '^[\\d]+$',
+              message: 'Numbers only',
+            },
+          },
+        },
+      },
+      layout: {
+        fields: ['FIELD1'],
+      },
+    };
+
+    test('should return false when the given metadata segement is visible and required', () => {
+      expect(selectors
+        .isExpansionPanelErroredForMetaForm(formState, formKey, subSegmentMeta))
+        .toBe(true);
+    });
+    test('should return true when the given metadata segement is required', () => {
+      const updatedFormState = forms(
+        formState,
+        actions.form.fieldChange(formKey)('FIELD1', '124')
+
+      );
+
+      expect(selectors
+        .isExpansionPanelErroredForMetaForm(updatedFormState, formKey, subSegmentMeta))
+        .toBe(false);
+    });
+  });
+
+  describe('isAnyFieldTouchedForMetaForm', () => {
+    const fieldMeta = {
+      fieldMap: {
+        FIELD1: {
+          id: 'FIELD1',
+          type: 'text',
+          name: 'field1',
+          defaultValue: 'testsdd',
+          label: 'field1',
+          validWhen: {
+            matchesRegEx: {
+              pattern: '^[\\d]+$',
+              message: 'Numbers only',
+            },
+          },
+        },
+
+        FIELD2: {
+          id: 'FIELD2',
+          type: 'text',
+          name: 'field2',
+          defaultValue: 'abc',
+          label: 'field2',
+        },
+      },
+
+      layout: { fields: ['FIELD1', 'FIELD2'] },
+    };
+    const formKey = '1-2';
+    const formState = forms(
+      initialState,
+      actions.form.init(formKey, remountKey, {
+        fieldMeta,
+        showValidationBeforeTouched: true,
+      })
+    );
+
+    const subSegmentMeta = {
+      fieldMap: {
+        FIELD1: {
+          id: 'FIELD1',
+          type: 'text',
+          name: 'field1',
+          defaultValue: 'testsdd',
+          label: 'field1',
+          validWhen: {
+            matchesRegEx: {
+              pattern: '^[\\d]+$',
+              message: 'Numbers only',
+            },
+          },
+        },
+      },
+      layout: {
+        fields: ['FIELD1'],
+      },
+    };
+
+    test('should return false when the given metadata segement is not touched', () => {
+      expect(selectors
+        .isAnyFieldTouchedForMetaForm(formState, formKey, subSegmentMeta))
+        .toBe(false);
+    });
+    test('should return true when the given metadata segement is touched', () => {
+      const updatedFormState = forms(
+        formState,
+        actions.form.fieldChange(formKey)('FIELD1', '124')
+
+      );
+
+      expect(selectors
+        .isAnyFieldTouchedForMetaForm(updatedFormState, formKey, subSegmentMeta))
+        .toBe(true);
     });
   });
 });

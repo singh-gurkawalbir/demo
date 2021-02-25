@@ -102,7 +102,7 @@ const WarningSessionContent = () => {
 };
 
 const ExpiredSessionContent = () => (
-  <ModalDialog show>
+  <ModalDialog show disableEnforceFocus>
     <div>
       <Typography>Your session has expired</Typography>
       <br />
@@ -115,18 +115,10 @@ const ExpiredSessionContent = () => (
 );
 
 export default function AlertDialog() {
-  const sessionValidTimestamp = useSelector(state =>
-    selectors.sessionValidTimestamp(state)
-  );
   const dispatch = useDispatch();
-  const showSessionStatus = useSelector(state =>
-    selectors.showSessionStatus(state)
-  );
-
-  const isAuthenticated = useSelector(state =>
-    selectors.isAuthenticated(state)
-  );
-
+  const sessionValidTimestamp = useSelector(state => selectors.sessionValidTimestamp(state));
+  const showSessionStatus = useSelector(state => selectors.showSessionStatus(state));
+  const isAuthenticated = useSelector(state => selectors.isAuthenticated(state));
   const isUiVersionDifferent = useSelector(selectors.isUiVersionDifferent);
 
   const isUserAcceptedAccountTransfer = useSelector(state =>

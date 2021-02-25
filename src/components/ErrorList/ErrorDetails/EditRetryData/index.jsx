@@ -4,8 +4,6 @@ import CodeEditor from '../../../CodeEditor';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 
-const emptyObject = {};
-
 export default function EditRetryData({
   retryId,
   flowId,
@@ -13,18 +11,25 @@ export default function EditRetryData({
   onChange,
 }) {
   const dispatch = useDispatch();
-  const { status, data: retryData = emptyObject } = useSelector(state =>
-    selectors.retryDataContext(state, retryId),
+
+  const retryStatus = useSelector(state =>
+    selectors.retryDataContext(state, retryId)?.status,
   shallowEqual
   );
 
+  const retryData = useSelector(state => selectors.retryData(state, retryId));
+
+  const isFlowDisabled = useSelector(state =>
+    !!(selectors.resource(state, 'flows', flowId)?.disabled)
+  );
+
   useEffect(() => {
-    if (!status && retryId) {
+    if (!retryStatus && retryId) {
       dispatch(
         actions.errorManager.retryData.request({ flowId, resourceId, retryId })
       );
     }
-  }, [dispatch, flowId, resourceId, retryId, status]);
+  }, [dispatch, flowId, resourceId, retryId, retryStatus]);
 
   return (
     <CodeEditor
@@ -32,6 +37,7 @@ export default function EditRetryData({
       value={retryData}
       mode="json"
       onChange={onChange}
+      readOnly={isFlowDisabled}
     />
   );
 }

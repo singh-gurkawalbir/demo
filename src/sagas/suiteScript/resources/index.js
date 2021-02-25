@@ -139,7 +139,7 @@ export function* requestSuiteScriptMetadata({
   return true;
 }
 
-function* featureCheck({
+export function* featureCheck({
   ssLinkedConnectionId,
   integrationId,
   featureName,

@@ -8,7 +8,7 @@ import { selectors } from '../../../../reducers';
 import { applicationsList, groupApplications } from '../../../../constants/applications';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import AppPill from './AppPill';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 import SearchIcon from '../../../icons/SearchIcon';
 import actions from '../../../../actions';
 import useFormContext from '../../../Form/FormContext';
@@ -326,6 +326,7 @@ export default function SelectApplication(props) {
         {label}
       </InputLabel>
       <Select
+        data-public
         ref={ref}
         name={name}
         placeholder={placeholder}
@@ -341,7 +342,7 @@ export default function SelectApplication(props) {
         filterOption={filterOptions}
       />
 
-      <ErroredMessageComponent {...props} />
+      <FieldMessage {...props} />
 
       {isMulti && value.length > 0 && (
         <div className={classes.selectedContainer}>

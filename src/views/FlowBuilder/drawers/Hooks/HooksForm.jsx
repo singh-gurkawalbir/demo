@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom';
-import { Button } from '@material-ui/core';
+import { Button, makeStyles, Paper } from '@material-ui/core';
 import actions from '../../../../actions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
@@ -23,7 +23,16 @@ import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
 import LoadResources from '../../../../components/LoadResources';
 
+const useStyles = makeStyles(theme => ({
+  paperDefault: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    padding: theme.spacing(2),
+    marginBottom: theme.spacing(3),
+  },
+}));
 export default function HooksForm({flowId}) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const history = useHistory();
@@ -151,7 +160,9 @@ export default function HooksForm({flowId}) {
   return (
     <LoadResources resources="scripts,stacks">
       <DrawerContent>
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <Paper elevation={0} className={classes.paperDefault}>
+          <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        </Paper>
       </DrawerContent>
 
       <DrawerFooter>

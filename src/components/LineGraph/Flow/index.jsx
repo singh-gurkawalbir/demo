@@ -22,6 +22,7 @@ import {
   getTicks,
   getLineColor,
   getLegend,
+  getDateTimeFormat,
 } from '../../../utils/flowMetrics';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -32,6 +33,7 @@ import OptionalIcon from '../../icons/OptionalIcon';
 import ConditionalIcon from '../../icons/ConditionalIcon';
 import PreferredIcon from '../../icons/PreferredIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import {COMM_STATES} from '../../../reducers/comms/networkComms';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -108,33 +110,17 @@ const DataIcon = ({index}) => {
   );
 };
 
-const Chart = ({ id, flowId, range, selectedResources }) => {
+const Chart = ({ id, flowId, range, selectedResources: selected }) => {
   const classes = useStyles();
   const [opacity, setOpacity] = useState({});
   let mouseHoverTimer;
   const { data = [] } =
     useSelector(state => selectors.flowMetricsData(state, flowId)) || {};
   const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
-
+  // Selected resources are read from previously saved resources in preferences which may not be valid anymore. pick only valid resources.
+  const selectedResources = selected.filter(r => flowResources.find(res => res._id === r));
   const { startDate, endDate } = range;
   const type = useMemo(() => id === 'averageTimeTaken' ? 'att' : 'sei', [id]);
-
-  let dateTimeFormat;
-  const userOwnPreferences = useSelector(
-    state => selectors.userOwnPreferences(state),
-    (left, right) =>
-      left &&
-      right &&
-      left.dateFormat === right.dateFormat &&
-      left.timeFormat === right.timeFormat
-  );
-
-  if (!userOwnPreferences) {
-    dateTimeFormat = 'MM/DD hh:mm';
-  } else {
-    dateTimeFormat = `${userOwnPreferences.dateFormat || 'MM/DD'} ${userOwnPreferences.timeFormat || 'hh:mm'} `;
-  }
-
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
   const ticks = getTicks(domainRange, range);
   const domain = [new Date(startDate).getTime(), new Date(endDate).getTime()];
@@ -233,11 +219,27 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
 
   function CustomTooltip({ payload, label, active }) {
     const classes = useStyles();
+    const preferences = useSelector(
+      state => selectors.userOwnPreferences(state),
+      (left, right) =>
+        left &&
+        right &&
+        left.dateFormat === right.dateFormat &&
+        left.timeFormat === right.timeFormat
+    );
+    const timezone = useSelector(state => selectors.userTimezone(state));
 
     if (active && Array.isArray(payload) && payload.length) {
+      payload.sort((a, b) => {
+        const aIndex = flowResources.findIndex(r => r._id === a?.payload?.resourceId) || -1;
+        const bIndex = flowResources.findIndex(r => r._id === b?.payload?.resourceId) || -1;
+
+        return aIndex - bIndex;
+      });
+
       return (
         <div className={classes.CustomTooltip}>
-          <p className="label">{`${moment(label).format(dateTimeFormat)}`} </p>
+          <p className="label">{getDateTimeFormat(range, label, preferences, timezone)} </p>
           {payload.map(
             p => (
               p && !!p.value && <p key={p.name}> {`${getResourceName(p.name)}: ${p.value}`} </p>
@@ -283,7 +285,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
             domain={[() => 0, dataMax => dataMax + 10]}
           />
 
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip data-public content={<CustomTooltip />} />
           <Legend content={<CustomLegend />} />
           {selectedResources.map((r, i) => (
             <Line
@@ -321,14 +323,14 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
     }
   }, [data, dispatch, flowId, range]);
 
-  if (data.status === 'requested') {
+  if (data.status === COMM_STATES.LOADING) {
     return (
       <SpinnerWrapper>
         <Spinner />
       </SpinnerWrapper>
     );
   }
-  if (data.status === 'error') {
+  if (data.status === COMM_STATES.ERROR) {
     return <Typography>Error occurred</Typography>;
   }
 

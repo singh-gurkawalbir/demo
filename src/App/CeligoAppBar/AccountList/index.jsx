@@ -209,7 +209,9 @@ export default function AccountList() {
         }}
         placement="bottom-end"
         onClose={handleClose}>
-        <List dense className={classes.listWrapper}>
+        <List
+          data-public
+          dense className={classes.listWrapper}>
           {accounts.map(a => (
             <ListItem
               button
@@ -225,7 +227,7 @@ export default function AccountList() {
               }}
               key={a.id}>
               <ListItemText className={classes.itemRootName}>{a.company}</ListItemText>
-              {a.canLeave && (
+              {a.company && a.canLeave && (
                 <ListItemSecondaryAction className={classes.secondaryAction}>
                   <Button
                     data-test="leaveAccount"

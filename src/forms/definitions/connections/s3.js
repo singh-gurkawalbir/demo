@@ -1,8 +1,8 @@
 export default {
   fieldMap: {
     name: { fieldId: 'name' },
-    's3.accessKeyId': { fieldId: 's3.accessKeyId' },
-    's3.secretAccessKey': { fieldId: 's3.secretAccessKey' },
+    's3.accessKeyId': { fieldId: 's3.accessKeyId', required: true },
+    's3.secretAccessKey': { fieldId: 's3.secretAccessKey', required: true },
     's3.pingBucket': { fieldId: 's3.pingBucket' },
     application: {
       fieldId: 'application',

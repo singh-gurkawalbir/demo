@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import { makeStyles, IconButton, Typography } from '@material-ui/core';
 import {matchPath, useHistory, useLocation} from 'react-router-dom';
 import CloseIcon from '../../icons/CloseIcon';
@@ -19,6 +20,7 @@ const useStyles = makeStyles(theme => ({
   title: {
     flexGrow: 1,
     color: theme.palette.secondary.main,
+    whiteSpace: 'nowrap',
   },
   helpTextButton: {
     padding: 0,
@@ -38,7 +40,9 @@ export default function DrawerHeader({
   hideBackButton = false,
   fullPath, // forwarded from parent (RightDrawer)
   onClose, // forwarded from parent (RightDrawer)
+  CloseButton,
   disableClose,
+  className,
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -46,8 +50,25 @@ export default function DrawerHeader({
   const { isExact } = matchPath(location.pathname, fullPath) || {};
   const showBackButton = !isExact && !hideBackButton;
 
+  const CloseIconButton = () => {
+    // If the parent drawer provided a custom close button, then use it.
+    if (CloseButton) return CloseButton;
+
+    // Otherwise return the default close button.
+    return (
+      <IconButton
+        size="small"
+        disabled={!!disableClose}
+        data-test="closeRightDrawer"
+        aria-label="Close"
+        onClick={onClose}>
+        <CloseIcon />
+      </IconButton>
+    );
+  };
+
   return (
-    <div data-public className={classes.drawerHeader}>
+    <div data-public className={clsx(classes.drawerHeader, className)}>
       {showBackButton && (
       <IconButton
         size="small"
@@ -74,14 +95,7 @@ export default function DrawerHeader({
       {/* Typically children are the action icons/buttons */}
       {children}
 
-      <IconButton
-        size="small"
-        disabled={!!disableClose}
-        data-test="closeRightDrawer"
-        aria-label="Close"
-        onClick={onClose}>
-        <CloseIcon />
-      </IconButton>
+      <CloseIconButton />
     </div>
 
   );

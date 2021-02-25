@@ -18,7 +18,7 @@ import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
 import WhatsNewIcon from '../../components/icons/KnowledgeBaseIcon';
 import { getHelpUrl, getUniversityUrl } from '../../utils/resource';
-import { SUBMIT_TICKET_URL, WHATS_NEW_URL } from '../../utils/constants';
+import { SUBMIT_TICKET_URL, USER_ACCESS_LEVELS, WHATS_NEW_URL } from '../../utils/constants';
 import UniversityIcon from '../../components/icons/UniversityIcon';
 import HelpCenterIcon from '../../components/icons/HelpCenterIcon';
 import HelpIcon from '../../components/icons/HelpIcon';
@@ -67,7 +67,7 @@ export default function menuItems(
         {
           label: 'Dev playground',
           Icon: EditorsPlaygroundIcon,
-          path: '/editors',
+          path: '/playground',
         },
       ],
     },
@@ -97,7 +97,7 @@ export default function menuItems(
         { label: 'My APIs', path: '/apis', Icon: MyApiIcon },
         { label: 'API tokens', path: '/accesstokens', Icon: TokensApiIcon },
         { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
-        { label: 'Integration Apps', Icon: IntegrationAppsIcon, path: '/connectors' },
+        { label: 'Integration apps', Icon: IntegrationAppsIcon, path: '/connectors' },
         { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
       ],
     },
@@ -110,6 +110,7 @@ export default function menuItems(
           Icon: HelpCenterIcon,
           component: 'a',
           href: getHelpUrl(integrations, marketplaceConnectors),
+          dataTest: 'help_center',
         },
         {
           label: "What's new",
@@ -130,6 +131,7 @@ export default function menuItems(
       Icon: UniversityIcon,
       href: getUniversityUrl,
       component: 'a',
+      dataTest: 'celigo_university',
     },
     {
       label: 'Marketplace',
@@ -156,11 +158,11 @@ export default function menuItems(
 
     if (!canPublish) {
       resourceItems.children = resourceItems.children.filter(
-        i => !(i.label === 'Templates' || i.label === 'Integration Apps')
+        i => !(i.label === 'Templates' || i.label === 'Integration apps')
       );
     }
 
-    if (accessLevel !== 'owner') {
+    if (accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_OWNER && accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_ADMIN) {
       resourceItems.children = resourceItems.children.filter(
         i => !(i.label === 'API tokens' || i.label === 'My APIs')
       );

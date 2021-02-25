@@ -13,12 +13,14 @@ export default function MappingSettingsButton(props) {
   const {
     dataTest,
     mappingKey,
+    disabled,
     isCategoryMapping,
   } = props;
   const history = useHistory();
   const {mappingIndex, integrationId, flowId, editorId} = props;
   const isDisabled = useSelector(state => {
     if (isCategoryMapping) {
+      if (disabled) return true;
       const {mappings} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId);
       const value = mappings?.[mappingIndex] || emptyObject;
 

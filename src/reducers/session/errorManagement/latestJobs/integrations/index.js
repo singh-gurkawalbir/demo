@@ -19,7 +19,7 @@ export default (state = {}, action) => {
         draft[integrationId].status = 'requested';
         break;
       }
-      case actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.FAILED: {
+      case actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.ERROR: {
         if (!draft[integrationId]) {
           draft[integrationId] = {};
         }

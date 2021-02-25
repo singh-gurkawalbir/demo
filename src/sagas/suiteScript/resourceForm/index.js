@@ -1,19 +1,21 @@
 import { call, put, select, takeEvery, take, race } from 'redux-saga/effects';
 import jsonPatch from 'fast-json-patch';
+import { isEmpty } from 'lodash';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { selectors } from '../../../reducers';
 import {
   sanitizePatchSet,
   defaultPatchSetConverter,
-} from '../../../forms/utils';
-import factory from '../../../forms/formFactory';
+} from '../../../forms/formFactory/utils';
 import { commitStagedChanges, requestSuiteScriptMetadata } from '../resources';
 import connectionSagas from './connections';
 import { isNewId } from '../../../utils/resource';
 import { suiteScriptResourceKey } from '../../../utils/suiteScript';
 import { apiCallWithRetry } from '../..';
-import inferErrorMessage from '../../../utils/inferErrorMessage';
+import inferErrorMessages from '../../../utils/inferErrorMessages';
+import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
+import getFieldsWithDefaults from '../../../forms/formFactory/getFieldsWithDefaults';
 
 export const SCOPES = {
   META: 'meta',
@@ -59,7 +61,7 @@ export function* createFormValuesPatchSet({
     });
   }
 
-  const { preSave } = factory.getResourceFormAssets({
+  const { preSave } = getResourceFormAssets({
     resourceType,
     resource,
     connection,
@@ -90,15 +92,24 @@ export function* submitFormValues({
   integrationId,
 }) {
   const formValues = { ...values };
-  const { patchSet, finalValues } = yield call(createFormValuesPatchSet, {
-    resourceType,
-    resourceId,
-    values: formValues,
-    scope: SCOPES.VALUE,
-    ssLinkedConnectionId,
-    integrationId,
-  });
+  let patchSet;
+  let finalValues;
 
+  try {
+    // getResourceFrom assets can throw an error when it cannot pick up a matching form
+    ({ patchSet, finalValues } = yield call(createFormValuesPatchSet, {
+      resourceType,
+      resourceId,
+      values: formValues,
+      scope: SCOPES.VALUE,
+      ssLinkedConnectionId,
+      integrationId,
+    }));
+  } catch (e) {
+    return yield put(
+      actions.resourceForm.submitFailed(resourceType, resourceId)
+    );
+  }
   if (patchSet && patchSet.length > 0) {
     yield put(
       actions.suiteScript.resource.patchStaged(
@@ -120,7 +131,7 @@ export function* submitFormValues({
 
   // fetch all possible pending patches.
   if (!skipCommit) {
-    const { patch } = yield select(
+    const { patch } = (yield select(
       selectors.stagedResource,
       suiteScriptResourceKey({
         ssLinkedConnectionId,
@@ -128,7 +139,7 @@ export function* submitFormValues({
         resourceId,
       }),
       SCOPES.VALUE
-    );
+    )) || {};
     // In most cases there would be no other pending staged changes, since most
     // times a patch is followed by an immediate commit.  If however some
     // component has staged some changes, even if the patchSet above is empty,
@@ -210,7 +221,14 @@ export function* initFormValues({
     resource._id = resourceId;
   }
 
-  if (!resource) return; // nothing to do.
+  // if resource is empty.... it could be a resource looked up with invalid Id
+  if (!resource || isEmpty(resource)) {
+    yield put(
+      actions.suiteScript.resourceForm.initFailed(ssLinkedConnectionId, resourceType, resourceId));
+
+    return; // nothing to do.
+  }
+
   let assistantData;
   let connection;
 
@@ -223,45 +241,49 @@ export function* initFormValues({
     });
   }
 
-  const defaultFormAssets = factory.getResourceFormAssets({
-    resourceType,
-    resource,
-    isNew,
-    assistantData,
-    connection,
-    ssLinkedConnectionId,
-  });
-  const { customForm } = resource;
-  const form =
+  try {
+    const defaultFormAssets = getResourceFormAssets({
+      resourceType,
+      resource,
+      isNew,
+      assistantData,
+      connection,
+      ssLinkedConnectionId,
+    });
+    const { customForm } = resource;
+    const form =
     customForm && customForm.form
       ? customForm.form
       : defaultFormAssets.fieldMeta;
-  //
-  const fieldMeta = factory.getFieldsWithDefaults(
-    form,
-    `ss-${resourceType}`,
-    resource,
-    { developerMode, flowId }
-  );
-  let finalFieldMeta = fieldMeta;
+    //
+    const fieldMeta = getFieldsWithDefaults(
+      form,
+      `ss-${resourceType}`,
+      resource,
+      { developerMode, flowId }
+    );
+    let finalFieldMeta = fieldMeta;
 
-  if (typeof defaultFormAssets.init === 'function') {
+    if (typeof defaultFormAssets.init === 'function') {
     // standard form init fn...
 
-    finalFieldMeta = defaultFormAssets.init(fieldMeta, resource, flow);
-  }
+      finalFieldMeta = defaultFormAssets.init(fieldMeta, resource, flow);
+    }
 
-  yield put(
-    actions.suiteScript.resourceForm.initComplete(
-      ssLinkedConnectionId,
-      resourceType,
-      resourceId,
-      finalFieldMeta,
-      isNew,
-      skipCommit,
-      flowId,
-    )
-  );
+    yield put(
+      actions.suiteScript.resourceForm.initComplete(
+        ssLinkedConnectionId,
+        resourceType,
+        resourceId,
+        finalFieldMeta,
+        isNew,
+        skipCommit,
+        flowId,
+      )
+    );
+  } catch (e) {
+    yield put(actions.suiteScript.resourceForm.initFailed(ssLinkedConnectionId, resourceType, resourceId));
+  }
 }
 
 function* suiteScriptSubmitIA({
@@ -289,7 +311,7 @@ function* suiteScriptSubmitIA({
     const resp = yield call(apiCallWithRetry, {path, opts});
 
     if (!resp?.success) {
-      yield put(actions.api.failure(path, 'GET', inferErrorMessage(resp)[0], false));
+      yield put(actions.api.failure(path, 'GET', inferErrorMessages(resp)[0], false));
 
       return yield put(actions.suiteScript.iaForm.submitFailed(ssLinkedConnectionId, integrationId));
     }

@@ -7,7 +7,7 @@ import actions from '../../../../actions';
 import useFormContext from '../../../Form/FormContext';
 import { selectors } from '../../../../reducers';
 import FieldHelp from '../../FieldHelp';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 
 const useStyles = makeStyles({
   dynaTextWithFlowFormControl: {
@@ -168,7 +168,7 @@ const DynaTextWithFlowSuggestion = props => {
             showLookupModal={handleLookupModalShown}
           />
         )}
-        <ErroredMessageComponent
+        <FieldMessage
           isValid={isValid}
           description={description}
           errorMessages={errorMessages}

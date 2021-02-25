@@ -11,6 +11,7 @@ import RunIcon from '../../../../../components/icons/RunIcon';
 import { selectors } from '../../../../../reducers';
 import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/RunDashboard';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -103,9 +104,7 @@ export default function BottomDrawer({
 }) {
   const classes = useStyles();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const isAnyFlowConnectionOffline = useSelector(state =>
-    selectors.isAnyFlowConnectionOffline(state, flowId)
-  );
+  const isAnyFlowConnectionOffline = useSelectorMemo(selectors.mkIsAnyFlowConnectionOffline, flowId);
   const maxStep = 3; // set maxStep to 4 to allow 100% drawer coverage.
   const handleSizeChange = useCallback(
     direction => () => {

@@ -3,7 +3,14 @@ export const emptyObject = {};
 export const ACCOUNT_IDS = Object.freeze({
   OWN: 'own',
 });
+export const FORM_SAVE_STATUS = Object.freeze({
+  COMPLETE: 'complete',
+  FAILED: 'failed',
+  ABORTED: 'aborted',
+  LOADING: 'loading',
+});
 export const USER_ACCESS_LEVELS = Object.freeze({
+  ACCOUNT_ADMIN: 'administrator',
   ACCOUNT_OWNER: 'owner',
   ACCOUNT_MANAGE: 'manage',
   ACCOUNT_MONITOR: 'monitor',
@@ -255,7 +262,6 @@ export const JOB_STATUS = Object.freeze({
   RETRYING: 'retrying',
 });
 export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
-  'ashares',
   'licenses',
   'preferences',
   'profile',
@@ -543,12 +549,12 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'netsuite.distributed.sublists',
     'netsuite.distributed.forceReload',
     'netsuite.distributed.qualifier',
-    'salesforce.relatedLists.referencedFields,',
-    'salesforce.relatedLists.parentField,',
-    'salesforce.relatedLists.sObjectType,',
-    'salesforce.relatedLists.filter,',
-    'salesforce.relatedLists.orderBy,',
-    'salesforce.relatedLists.userDefined,',
+    'salesforce.relatedLists.referencedFields',
+    'salesforce.relatedLists.parentField',
+    'salesforce.relatedLists.sObjectType',
+    'salesforce.relatedLists.filter',
+    'salesforce.relatedLists.orderBy',
+    'salesforce.relatedLists.userDefined',
     'salesforce.distributed.batchSize',
     'salesforce.soql.query',
     'schedule',
@@ -613,3 +619,17 @@ export const C_LOCKED_FIELDS = Object.freeze({
 export const CLONING_SUPPORTED_IAS = ['sfnsio'];
 export const ALLOWED_HTML_TAGS =
   ['p', 'pre', 's', 'b', 'a', 'small', 'i', 'font', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'br', 'big', 'center', 'del', 'em', 'strong', 'sub', 'sup', 'table', 'td', 'tr', 'th', 'tt', 'title'];
+export const LICENSE_TRIAL_ISSUED_MESSAGE = 'Congratulations! Your 30 days of unlimited flows starts now - what will you integrate next?';
+export const LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE = 'Your request has been received. We will contact you soon.';
+export const FILE_PROVIDER_ASSISTANTS = ['googledrive'];
+export const CONNECTORS_TO_IGNORE = ['yammer',
+  'hybris',
+  'etsy',
+  'concur',
+  'concurall',
+  'concurv4',
+  'constantcontact'];
+
+export const WEBHOOK_ONLY_APPLICATIONS = ['webhook', 'travis-org', 'helpscout', 'errorception', 'aha', 'pagerduty', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
+  'box', 'segment'];
+
