@@ -19,7 +19,6 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: '25% 75%',
   },
   leftNav: {
-    minWidth: 300,
     overflowY: 'auto',
     padding: theme.spacing(3),
     border: `solid 0 ${theme.palette.secondary.lightest}`,
