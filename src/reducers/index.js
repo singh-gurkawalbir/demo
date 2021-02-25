@@ -47,7 +47,7 @@ import {
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
   JOB_STATUS,
-} from '../utils/constants';
+  FILE_PROVIDER_ASSISTANTS } from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { getFieldById } from '../forms/formFactory/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
@@ -62,7 +62,6 @@ import {
   isQueryBuilderSupported,
   filterAndSortResources,
   getUserAccessLevelOnConnection,
-  isFileProviderAssistant,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -3025,7 +3024,7 @@ selectors.getImportSampleData = (state, resourceId, options = {}) => {
   const { assistant, adaptorType, sampleData, _connectorId } = resource;
   const isIntegrationApp = !!_connectorId;
 
-  if (assistant && assistant !== 'financialforce') {
+  if (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant))) {
     // get assistants sample data
     return selectors.assistantPreviewData(state, resourceId);
   }
@@ -3153,7 +3152,7 @@ selectors.isExportPreviewDisabled = (state, resourceId, resourceType) => {
     state,
     resourceType,
     resourceId,
-    'value'
+    'value',
   );
 
   // Incase of File adaptors(ftp, s3)/As2/Rest csv where file upload is supported
@@ -4725,13 +4724,6 @@ selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
   // Check for media type 'csv' from connection object
   return connection && connection.rest && connection.rest.mediaType === 'csv';
 };
-selectors.isFileProviderAssistant = (state, resourceId) => {
-  const { merged: resourceObj } = selectors.resourceData(state, 'exports', resourceId);
-  const { _connectionId: connectionId } = resourceObj || {};
-  const connection = selectors.resource(state, 'connections', connectionId);
-
-  return isFileProviderAssistant(resourceObj, connection);
-};
 
 selectors.isDataLoaderExport = (state, resourceId, flowId) => {
   if (isNewId(resourceId)) {
@@ -4887,7 +4879,7 @@ selectors.getCustomResourceLabel = (
         'SalesforceExport',
       ].includes(resource.adaptorType) &&
         resource.type === 'blob') ||
-      ['FTPExport', 'S3Export'].includes(resource.adaptorType) ||
+        (isFileAdaptor(resource) && resource.adaptorType.includes('Export')) ||
       ([
         'RESTImport',
         'HTTPImport',
@@ -4895,7 +4887,7 @@ selectors.getCustomResourceLabel = (
         'SalesforceImport',
       ].indexOf(resource.adaptorType) >= 0 &&
         resource.blob) ||
-      ['FTPImport', 'S3Import'].includes(resource.adaptorType)
+        (isFileAdaptor(resource) && resource.adaptorType.includes('Import'))
     ) {
       resourceLabel = 'Transfer';
     }

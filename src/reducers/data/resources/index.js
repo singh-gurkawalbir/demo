@@ -8,6 +8,7 @@ import { stringCompare } from '../../../utils/sort';
 import mappingUtil from '../../../utils/mapping';
 import getRoutePath from '../../../utils/routePaths';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
+import { FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
 
 const emptyObject = {};
 const emptyList = [];
@@ -450,7 +451,7 @@ selectors.mappingImportSampleDataSupported = (state, importId) => {
   const importResource = selectors.resource(state, 'imports', importId);
 
   const isAssistant =
-  !!importResource.assistant && importResource.assistant !== 'financialforce';
+  !!importResource.assistant && importResource.assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(importResource.assistant));
   const isIAResource = isIntegrationApp(importResource);
 
   return isAssistant || isIAResource || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(importResource?.adaptorType);
