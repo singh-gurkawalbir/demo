@@ -2227,62 +2227,6 @@ selectors.platformLicense = createSelector(
     fromUser.platformLicense(userStateObj, preferencesObj.defaultAShareId)
 );
 
-selectors.platformLicenseActionDetails = state => {
-  let licenseActionDetails = {};
-  const license = selectors.platformLicense(state);
-
-  if (!license) {
-    return licenseActionDetails;
-  }
-  const expiresInDays = license && Math.ceil((moment(license.expires) - moment()) / 1000 / 60 / 60 / 24);
-
-  if (license.tier === 'none') {
-    if (!license.trialEndDate) {
-      licenseActionDetails = {
-        action: 'startTrial',
-        label: 'GO UNLIMITED FOR 30 DAYS',
-      };
-    }
-  } else if (license.tier === 'free') {
-    if (!license.trialEndDate) {
-      licenseActionDetails = {
-        action: 'startTrial',
-        label: 'GO UNLIMITED FOR 30 DAYS',
-      };
-    } else if (license.status === 'TRIAL_EXPIRED') {
-      licenseActionDetails = {
-        action: 'upgrade',
-        label: 'UPGRADE NOW',
-      };
-    } else if (license.status === 'IN_TRIAL') {
-      if (license.expiresInDays < 1) {
-        licenseActionDetails = {
-          action: 'upgrade',
-          label: 'UPGRADE NOW',
-        };
-      } else {
-        licenseActionDetails = {
-          action: 'upgrade',
-          label: `${license.expiresInDays} DAYS LEFT UPGRADE NOW`,
-        };
-        licenseActionDetails.expiresSoon = license.expiresInDays < 10;
-      }
-    }
-  } else if (license?.resumable) {
-    licenseActionDetails = {
-      action: 'resume',
-    };
-  } else if (expiresInDays <= 0) {
-    licenseActionDetails = {
-      action: 'expired',
-    };
-  }
-
-  licenseActionDetails.upgradeRequested = license.upgradeRequested;
-
-  return licenseActionDetails;
-};
-
 function getTierToFlowsMap(license) {
   const flowsInTier = {
     none: 0,
