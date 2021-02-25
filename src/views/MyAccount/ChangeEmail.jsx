@@ -82,7 +82,6 @@ export default function ChangeEmail({ show, onClose }) {
     }
   }, [success, message, enqueueSnackbar, onClose]);
   const formKey = useFormInitWithPermissions({
-
     fieldMeta: changeEmailFieldMeta,
   });
 
@@ -97,8 +96,7 @@ export default function ChangeEmail({ show, onClose }) {
       {!success && (
         <div className={classes.container}>
           <DynaForm
-            formKey={formKey}
-            fieldMeta={changeEmailFieldMeta} />
+            formKey={formKey} />
           <DynaSubmit
             formKey={formKey}
             data-test="changeEmail"

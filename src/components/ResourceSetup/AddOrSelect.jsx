@@ -142,7 +142,7 @@ export default function AddOrSelect(props) {
 
           ) : (
 
-            <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+            <DynaForm formKey={formKey} />
 
           )}
         </div>

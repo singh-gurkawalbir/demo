@@ -11,11 +11,7 @@ import Spinner from '../Spinner';
 import SpinnerWrapper from '../SpinnerWrapper';
 
 const Form = props => {
-  const { fieldMeta } = props;
-  const formKey = useFormInitWithPermissions({
-    ...props,
-    fieldMeta,
-  });
+  const formKey = useFormInitWithPermissions(props);
 
   return <DynaForm {...props} formKey={formKey} />;
 };

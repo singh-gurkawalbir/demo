@@ -54,7 +54,7 @@ export default function OperandSettingsDialog({
     <ModalDialog show>
       <span>Operand Settings</span>
       <>
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaForm formKey={formKey} />
         <Button data-test="cancelOperandSettings" onClick={onClose}>
           Cancel
         </Button>
