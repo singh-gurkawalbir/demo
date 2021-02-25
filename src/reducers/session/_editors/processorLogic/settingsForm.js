@@ -107,7 +107,6 @@ export default {
       insertStubKey: 'formInit',
       activeProcessor: mode,
       originalData: data,
-      scriptPatchPath: '/content',
       settingsFormPatchPath: generatePatchPath(options.sectionId, integrationAllSections, '/settingsForm'),
     };
   },
@@ -215,7 +214,6 @@ export default {
       resourceId,
       resourceType,
       activeProcessor,
-      scriptPatchPath,
       settingsFormPatchPath,
     } = editor;
     const {code, scriptId, entryFunction} = rule?.script || {};
@@ -263,7 +261,7 @@ export default {
         patch: [
           {
             op: 'replace',
-            path: scriptPatchPath,
+            path: '/content',
             value: code,
           },
         ],

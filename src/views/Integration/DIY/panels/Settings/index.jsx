@@ -190,6 +190,7 @@ export default function SettingsForm({integrationId: parentIntegrationId, childI
   const match = useRouteMatch();
   const {allSections, hasFlowGroupings} = useSelectorMemo(selectors.mkGetAllCustomFormsForAResource, 'integrations', integrationId) || emptyObj;
 
+  //  hasMiscellaneousSection prop is considered true since general or root level section will always be present in settingsForm
   const redirectTo = redirectToCorrectGroupingRoute(match, hasFlowGroupings ? allSections : null, true, 'general');
   const sectionId = match.params?.sectionId;
 
