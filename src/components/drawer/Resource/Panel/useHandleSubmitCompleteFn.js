@@ -11,7 +11,7 @@ import { multiStepSaveResourceTypes } from '../../../../utils/resource';
 import getRoutePath from '../../../../utils/routePaths';
 import useDrawerEditUrl from './useDrawerEditUrl';
 
-const useHandleSubmitCompleteFn = (resourceType, id, onClose) => {
+export default function useHandleSubmitCompleteFn(resourceType, id, onClose) {
   const history = useHistory();
   const location = useLocation();
   const match = useRouteMatch();
@@ -95,5 +95,4 @@ const useHandleSubmitCompleteFn = (resourceType, id, onClose) => {
   }, [dispatch, editUrl, history, id, isMultiStepSaveResource, isNew, match.path, newResourceId, onClose, operation, resourceId, resourceType, skipFormClose]);
 
   return handleSubmitComplete;
-};
-export default useHandleSubmitCompleteFn;
+}

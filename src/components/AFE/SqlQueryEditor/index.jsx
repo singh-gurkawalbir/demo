@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles} from '@material-ui/core/styles';
 import { func, string } from 'prop-types';
 import PanelGrid from '../PanelGrid';
 import PanelTitle from '../PanelTitle';
@@ -11,11 +11,10 @@ import SqlRuleTabPanel from './SqlRuleTabPanel';
 import layouts from '../layout/defaultDialogLayout';
 import PanelLoader from '../../PanelLoader';
 
-const styles = layouts;
+const useStyles = makeStyles(layouts);
 const Editor = props => {
   const {
     handleInit,
-    classes,
     layout = 'compact',
     templateClassName,
     rule,
@@ -38,6 +37,7 @@ const Editor = props => {
     isSampleDataLoading,
     resultWarning,
   } = props;
+  const classes = useStyles();
 
   useEffect(() => {
     handleInit();
@@ -103,5 +103,3 @@ Editor.propTypes = {
   error: string,
   handleChange: func.isRequired,
 };
-
-export default withStyles(styles)(Editor);

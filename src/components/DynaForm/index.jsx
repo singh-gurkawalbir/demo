@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 
 const key = 'key';
 
-const DynaForm = props => {
+export default function DynaForm(props) {
   const {
     className,
     formKey,
@@ -84,6 +84,5 @@ const DynaForm = props => {
       </div>
     </>
   );
-};
+}
 
-export default DynaForm;

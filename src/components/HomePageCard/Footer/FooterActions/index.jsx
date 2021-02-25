@@ -12,11 +12,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function FooterActions(props) {
+export default function FooterActions({children}) {
   const classes = useStyles();
-  const { children } = props;
 
   return <div className={classes.wrapper}>{children}</div>;
 }
 
-export default FooterActions;
