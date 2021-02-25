@@ -174,12 +174,12 @@ describe('Connections logs reducer', () => {
 });
 
 describe('Connections logs selectors', () => {
-  test('selectors[allConnectionsLogs] should empty object if state is not defined', () => {
+  test('selectors[allConnectionsLogs] should return empty object if state is not defined', () => {
     const connectionLog = selectors.allConnectionsLogs(undefined, {});
 
     expect(connectionLog).toEqual({});
   });
-  test('selectors[allConnectionsLogs] should correct state', () => {
+  test('selectors[allConnectionsLogs] should return correct state', () => {
     const state = {
       connections: {
         c1: {status: 'error'},
