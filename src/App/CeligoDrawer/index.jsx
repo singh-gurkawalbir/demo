@@ -203,6 +203,7 @@ export default function CeligoDrawer() {
   const dispatch = useDispatch();
   const location = useLocation();
   const userProfile = useSelector(state => selectors.userProfile(state));
+  const canUserPublish = useSelector(state => selectors.canUserPublish(state));
   const accessLevel = useSelector(
     state => selectors.resourcePermissions(state).accessLevel
   );
@@ -245,11 +246,13 @@ export default function CeligoDrawer() {
     userProfile,
     accessLevel,
     integrations,
+    canUserPublish,
     marketplaceConnectors),
   [
 
     userProfile,
     accessLevel,
+    canUserPublish,
     integrations,
     marketplaceConnectors,
   ]);
