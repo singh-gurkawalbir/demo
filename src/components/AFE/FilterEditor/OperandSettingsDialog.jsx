@@ -49,7 +49,7 @@ export default function OperandSettingsDialog({
               items: [
                 { label: 'Field', value: 'field' },
                 { label: 'Value', value: 'value' },
-                // removing expression in order to be consistent with AFE2
+                { label: 'Expression', value: 'expression' },
               ],
             },
           ],
@@ -135,8 +135,7 @@ export default function OperandSettingsDialog({
       <span>Operand Settings</span>
       <>
         <DynaForm
-          formKey={formKey}
-          fieldMeta={fieldMeta} />
+          formKey={formKey} />
         <DynaSubmit
           formKey={formKey}
           data-test="saveOperandSettings"

@@ -18,6 +18,7 @@ import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 import StatusCircle from '../../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../reducers';
+import redirectToCorrectGroupingRoute from '../../../../../utils/flowgroupingsRedirectTo';
 import { getTemplateUrlName } from '../../../../../utils/template';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
@@ -50,7 +51,8 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
   },
   content: {
-    padding: theme.spacing(3, 2),
+    // padding: theme.spacing(3, 2),
+    width: '100%',
   },
   flowTitle: {
     position: 'relative',
@@ -82,6 +84,9 @@ const useStyles = makeStyles(theme => ({
   },
   activeListItem: {
     color: theme.palette.primary.main,
+  },
+  flowsGroupContainer: {
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
 }));
 
@@ -117,6 +122,7 @@ const FlowListingTable = ({
 
   return (
     <CeligoTable
+      data-public
       data={groupedFlows}
       filterKey={filterKey}
       {...flowTableMeta}
@@ -130,13 +136,24 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
   const classes = useStyles();
   const history = useHistory();
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
-  const allSection = useMemo(() =>
+  const allSections = useMemo(() =>
     flowGroupingsSections && [...flowGroupingsSections, {title: 'Miscellaneous', sectionId: MISCELLANEOUS_SECTION_ID}],
   [flowGroupingsSections]);
+
+  const redirectTo = redirectToCorrectGroupingRoute(match, flowGroupingsSections, MISCELLANEOUS_SECTION_ID);
+
+  useEffect(() => {
+    const shouldRedirect = !!redirectTo;
+
+    if (shouldRedirect) {
+      history.replace(redirectTo);
+    }
+  }, [history, redirectTo]);
 
   if (!flowGroupingsSections) {
     return (
       <CeligoTable
+        data-public
         data={flows}
         filterKey={filterKey}
         {...flowTableMeta}
@@ -144,19 +161,17 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
 />
     );
   }
-  const sectionId = match.params?.sectionId;
 
-  if (!sectionId) {
-    history.replace(`${match.url}/sections/${MISCELLANEOUS_SECTION_ID}`);
-  }
+  const sectionId = match?.params?.sectionId;
 
   return (
-    <Grid container wrap="nowrap">
+    <Grid container wrap="nowrap" className={classes.flowsGroupContainer}>
       <Grid item className={classes.subNav}>
         <List>
-          {allSection.map(({ title, sectionId }) => (
+          {allSections.map(({ title, sectionId }) => (
             <ListItem key={sectionId} className={classes.flowTitle}>
               <NavLink
+                data-public
                 className={classes.listItem}
                 activeClassName={classes.activeListItem}
                 to={sectionId}
@@ -237,8 +252,17 @@ export default function FlowsPanel({ integrationId, childId }) {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const [showDialog, setShowDialog] = useState(false);
-  const filterKey = `${integrationId}-flows`;
+  const sectionId = match?.params?.sectionId;
+  const filterKey = `${integrationId}-flows${sectionId ? `-${sectionId}` : ''}`;
+
+  // Celigo table and Keyword components are patching the same time...the order of
+  // execution isn't consistent...we have to consider refactoring the code to patch only
+  // one config
+  useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  }, [dispatch, filterKey]);
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
+
   const integrationChildren = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
   const flows = useSelectorMemo(selectors.mkDIYIntegrationFlowList, integrationId, childId, flowFilter);
@@ -327,7 +351,6 @@ export default function FlowsPanel({ integrationId, childId }) {
         <div className={classes.actions}>
           <KeywordSearch
             filterKey={filterKey}
-            defaultFilter={defaultFilter}
         />
           {canCreate && !isIntegrationApp && (
           <IconTextButton

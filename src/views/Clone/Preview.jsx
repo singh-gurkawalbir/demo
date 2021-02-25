@@ -125,9 +125,14 @@ export default function ClonePreview(props) {
   const columns = [
     {
       heading: 'Name',
+      width: '40%',
       value: r => r?.doc?.name || r?.doc?._id,
     },
-    { heading: 'Description', value: r => r.doc?.description },
+    {
+      heading: 'Description',
+      width: '60%',
+      value: r => r.doc?.description,
+    },
   ];
 
   useEffect(() => {
@@ -450,8 +455,7 @@ export default function ClonePreview(props) {
         <Grid container>
           <Grid className={classes.componentPadding} item xs={12}>
             <DynaForm
-              formKey={formKey}
-              fieldMeta={fieldMeta} />
+              formKey={formKey} />
             <DynaSubmit
               formKey={formKey}
               ignoreFormTouchedCheck

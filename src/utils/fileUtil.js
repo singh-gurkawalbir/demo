@@ -40,7 +40,7 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
       return output ? 'records' : 'blob';
     },
   },
-  'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'uri'},
+  'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'uri', helpKey: 'export.gdrive.directoryPath'},
   'file.fileNameStartsWith': { fieldId: 'file.fileNameStartsWith' },
   'file.fileNameEndsWith': { fieldId: 'file.fileNameEndsWith' },
   'file.type': { fieldId: 'file.type' },
@@ -189,7 +189,7 @@ fileType: {
 blobKeyPath: {
   fieldId: 'blobKeyPath',
 },
-'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'uri' },
+'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'uri', helpKey: 'import.gdrive.directoryPath' },
 'file.fileName': {
   fieldId: 'file.fileName', required: true,
 },

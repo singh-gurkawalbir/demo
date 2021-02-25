@@ -66,14 +66,12 @@ export default function ResourceList(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const filter =
-    useSelector(state => selectors.filter(state, resourceType)) ||
-    defaultFilter;
+    useSelector(state => selectors.filter(state, resourceType));
   const filterConfig = useMemo(
     () => ({
       type: resourceType,
       filter: connectorFilter(resourceType),
-      ...defaultFilter,
-      ...filter,
+      ...(filter || {}),
     }),
     [filter, resourceType]
   );
@@ -94,6 +92,16 @@ export default function ResourceList(props) {
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType] || '';
 
   const createResourceLabel = createdResouceLabelFn(resourceType, resourceName);
+
+  useEffect(() => {
+    let filter = defaultFilter;
+
+    if (resourceType === 'connectors') {
+      filter = {...filter, sort: { orderBy: 'name', order: 'asc' }};
+    }
+    dispatch(actions.patchFilter(resourceType, filter));
+  },
+  [dispatch, resourceType]);
 
   useEffect(() => {
     let int;
@@ -143,7 +151,6 @@ export default function ResourceList(props) {
         <div className={classes.actions}>
           <KeywordSearch
             filterKey={resourceType}
-            defaultFilter={defaultFilter}
           />
           <IconTextButton
             data-test="addNewResource"

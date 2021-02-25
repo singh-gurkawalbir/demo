@@ -130,8 +130,10 @@ export function* _fetchIAMetaData({
 
   // makes refreshMetadata call incase of 'refresh' else updates with resource's sampleData
   try {
-    const iaMetadata = refreshMetadata
-      ? yield call(apiCallWithRetry, {
+    let iaMetadata;
+
+    if (refreshMetadata) {
+      const refreshMetadataResponse = yield call(apiCallWithRetry, {
         path: `/integrations/${_integrationId}/settings/refreshMetadata`,
         opts: {
           method: 'PUT',
@@ -140,8 +142,17 @@ export function* _fetchIAMetaData({
           },
         },
         hidden: true,
-      })
-      : sampleData;
+      });
+
+      if (!refreshMetadataResponse || refreshMetadataResponse?.errors?.length) {
+        return yield put(
+          actions.importSampleData.iaMetadataFailed({_importId})
+        );
+      }
+      iaMetadata = refreshMetadataResponse;
+    } else {
+      iaMetadata = sampleData;
+    }
 
     yield put(
       actions.importSampleData.iaMetadataReceived({
@@ -155,9 +166,8 @@ export function* _fetchIAMetaData({
     // on receiving error , update with resource's sampleData
     // TODO @Raghu: revisit once BE implementation done to support specific IAs
     yield put(
-      actions.importSampleData.iaMetadataReceived({
+      actions.importSampleData.iaMetadataFailed({
         _importId,
-        metadata: sampleData,
       })
     );
   }

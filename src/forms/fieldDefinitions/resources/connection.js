@@ -1,6 +1,5 @@
 import { URI_VALIDATION_PATTERN, RDBMS_TYPES} from '../../../utils/constants';
-import { isProduction, isEuRegion } from '../../formFactory/utils';
-import { isNewId } from '../../../utils/resource';
+import { isNewId, getDomainUrl } from '../../../utils/resource';
 import { applicationsList } from '../../../constants/applications';
 
 export default {
@@ -844,17 +843,7 @@ export default {
     type: 'text',
     label: 'Callback URL',
     defaultDisabled: true,
-    defaultValue: () => {
-      if (isProduction()) {
-        if (isEuRegion()) {
-          return 'https://eu.integrator.io/connection/oauth2callback';
-        }
-
-        return 'https://integrator.io/connection/oauth2callback';
-      }
-
-      return 'https://staging.integrator.io/connection/oauth2callback';
-    },
+    defaultValue: () => `${getDomainUrl()}/connection/oauth2callback`,
   },
   'http.auth.oauth.type': {
     defaultValue: 'custom',

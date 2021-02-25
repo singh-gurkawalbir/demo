@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import JsonContent from '../../JsonContent';
+// import JsonContent from '../../JsonContent';
 import { safeParse } from '../../../utils/string';
 import { HTTP_STAGES } from '../../../utils/exportPanel';
+import CodeEditor from '../../CodeEditor2';
 
 const useStyles = makeStyles(theme => ({
   sampleDataWrapper: {
@@ -11,24 +11,24 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     background: theme.palette.background.paper,
     padding: theme.spacing(1),
-  },
-  sampleDataWrapperAlign: {
     marginTop: -18,
   },
+
   sampleDataContainer: {
     minHeight: theme.spacing(20),
+    marginTop: theme.spacing(2),
     position: 'relative',
-    backgroundColor: 'white',
-    maxHeight: 400,
+    backgroundColor: theme.palette.background.paper,
+    // height: 345,
     overflow: 'auto',
-    maxWidth: 680,
     color: theme.palette.text.primary,
     '& > div': {
       wordBreak: 'break-word',
     },
   },
-  sampleDataContainerAlign: {
-    marginTop: theme.spacing(2),
+  codeEditorWrapper: {
+    height: 345,
+    paddingTop: theme.spacing(1),
   },
   error: {
     position: 'relative',
@@ -52,20 +52,22 @@ export default function ErrorPanel(props) {
   }, [resourceSampleData.error]);
 
   return (
-    <div
-      className={clsx(
-        classes.sampleDataWrapper,
-        classes.sampleDataWrapperAlign
-      )}>
-      <div
-        className={clsx(
-          classes.sampleDataContainer,
-          classes.sampleDataContainerAlign
-        )}>
+    <div className={classes.sampleDataWrapper}>
+      <div className={classes.sampleDataContainer}>
         {
           showDefaultErrorMessage
             ? <span className={classes.error}> { DEFAULT_ERROR } </span>
-            : <JsonContent json={error} />
+            // : <JsonContent json={error} />
+            : (
+              <div className={classes.codeEditorWrapper}>
+                <CodeEditor
+                  value={error}
+                  mode="json"
+                  readOnly
+                  showGutter={false}
+        />
+              </div>
+            )
         }
 
       </div>

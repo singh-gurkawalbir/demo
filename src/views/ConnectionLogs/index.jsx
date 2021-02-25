@@ -61,7 +61,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const emptyObj = {};
-const emptyLogMessage = 'There are no logs available for this connection. Please run your flow so that we can record the outgoing and incoming traffic to this connection';
+const EMPTY_LOG_MESSAGE = 'Run your flow to see new debug logs.';
+const CONNECTION_LOG_NOT_SUPPORTED_MESSAGE = 'Debug logs not supported for this connection.';
 export default function ConnectionLogs({ connectionId, flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -72,6 +73,7 @@ export default function ConnectionLogs({ connectionId, flowId }) {
 
     return !!(debugDate && moment().isBefore(moment(debugDate)));
   });
+  const isConnectionLogsNotSupported = useSelector(state => selectors.isConnectionLogsNotSupported(state, connectionId));
   const handleDeleteLogsClick = useCallback(
     () => {
       dispatch(actions.logs.connections.delete(connectionId));
@@ -101,12 +103,21 @@ export default function ConnectionLogs({ connectionId, flowId }) {
     }
   }, [isDebugActive, isInitTriggered, startAutoDebug]);
 
+  let logsText;
+
+  if (isConnectionLogsNotSupported) {
+    logsText = CONNECTION_LOG_NOT_SUPPORTED_MESSAGE;
+  } else if ([COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(status)) {
+    logsText = logs || EMPTY_LOG_MESSAGE;
+  }
+
   return (
     <div className={classes.root}>
       <div className={classes.filterContainer}>
         <div className={classes.leftActionContainer} />
         <div className={classes.rightActionContainer}>
           <StartDebug
+            disabled={isConnectionLogsNotSupported}
             resourceId={connectionId}
             resourceType="connections"
             />
@@ -123,25 +134,25 @@ export default function ConnectionLogs({ connectionId, flowId }) {
           <IconTextButton
             onClick={handleRefreshClick}
             data-test="refreshResource"
-            disabled={status === COMM_STATES.LOADING}>
+            disabled={status === COMM_STATES.LOADING || isConnectionLogsNotSupported}>
             <RefreshIcon />
             Refresh
           </IconTextButton>
           <IconTextButton
             onClick={handleDeleteLogsClick}
             data-test="clearLogs"
-            disabled={status === COMM_STATES.LOADING}>
+            disabled={status === COMM_STATES.LOADING || isConnectionLogsNotSupported}>
             <CancelIcon />
             Clear
           </IconTextButton>
         </div>
       </div>
       <div className={classes.editorContainer}>
-        {[COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(status) && (
+        {logsText && (
           <AutoScrollEditorTerminal
             name="code"
             readOnly
-            value={logs || emptyLogMessage}
+            value={logsText}
             mode="text"
             overrides={overrides}
         />

@@ -1,40 +1,14 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
-import { withStyles } from '@material-ui/core';
-import { sortBy } from 'lodash';
-import {
-  RESOURCE_TYPE_SINGULAR_TO_LABEL,
-  RESOURCE_TYPE_SINGULAR_TO_PLURAL,
-} from '../../constants/resource';
+import { makeStyles } from '@material-ui/core';
 import { AUDIT_LOG_SOURCE_LABELS } from '../../constants/auditLog';
 import { selectors } from '../../reducers';
 import { ResourceTypeFilter, ResourceIdFilter } from './ResourceFilters';
 import CeligoSelect from '../CeligoSelect';
 
 const OPTION_ALL = { id: 'all', label: 'All' };
-
-const mapStateToProps = (state, { resourceType, resourceId }) => {
-  const {
-    affectedResources,
-    users,
-  } = selectors.affectedResourcesAndUsersFromAuditLogs(
-    state,
-    resourceType,
-    resourceId
-  );
-
-  return {
-    affectedResources,
-    users,
-  };
-};
-
-const resourceIdInput = {
-  name: '_resourceId',
-  id: '_resourceId',
-};
 
 const userInput = {
   name: 'byUser',
@@ -46,7 +20,7 @@ const sourceInput = {
   id: 'source',
 };
 
-@withStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -75,19 +49,31 @@ const sourceInput = {
       },
     },
   },
-}))
-class Filters extends Component {
-  state = {
-    filters: {
+}));
+
+export default function Filters(props) {
+  const {resourceType, resourceId, resourceDetails, onFiltersChange} = props;
+  const classes = useStyles();
+  const {
+    users,
+    affectedResources,
+  } = useSelector(state => selectors.affectedResourcesAndUsersFromAuditLogs(
+    state,
+    resourceType,
+    resourceId
+  ));
+
+  const [filters, setFilters] = useState(
+    {
+
       resourceType: OPTION_ALL.id,
       _resourceId: OPTION_ALL.id,
       byUser: OPTION_ALL.id,
       source: OPTION_ALL.id,
-    },
-  };
+    }
+  );
 
-  getResource = () => {
-    const { resourceType, resourceId, resourceDetails } = this.props;
+  const getResource = () => {
     const resource =
       resourceType &&
       resourceDetails[resourceType] &&
@@ -96,73 +82,14 @@ class Filters extends Component {
     return resource;
   };
 
-  getResourceIdFilter = () => {
-    const { filters } = this.state;
-    const {
-      classes,
-      affectedResources,
-      resourceDetails,
-      resourceType,
-    } = this.props;
-    const filterResourceType =
-      RESOURCE_TYPE_SINGULAR_TO_PLURAL[filters.resourceType];
-
-    if (
-      !filters.resourceType ||
-      filters.resourceType === OPTION_ALL.id ||
-      filterResourceType === resourceType
-    ) {
-      return null;
-    }
-
-    let options = [];
-
-    affectedResources[filters.resourceType] &&
-      affectedResources[filters.resourceType].forEach(ar => {
-        if (resourceDetails[filterResourceType]) {
-          options.push({
-            id: ar,
-            name:
-              resourceDetails[filterResourceType][ar] &&
-              resourceDetails[filterResourceType][ar].name,
-          });
-        }
-      });
-
-    options = sortBy(options, ['name']);
-
-    const menuOptions = options.map(opt => (
-      <MenuItem key={opt.id} value={opt.id}>
-        {opt.name || opt.id}
-      </MenuItem>
-    ));
-
-    return (
-      <FormControl className={classes.formControl}>
-        <CeligoSelect
-          inputProps={resourceIdInput}
-          value={filters._resourceId}
-          onChange={this.handleChange}>
-          <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
-            Select {RESOURCE_TYPE_SINGULAR_TO_LABEL[filters.resourceType]}
-          </MenuItem>
-          {menuOptions}
-        </CeligoSelect>
-      </FormControl>
-    );
-  };
-
-  handleChange = event => {
-    const { filters } = this.state;
+  const handleChange = event => {
     const toUpdate = { ...filters, [event.target.name]: event.target.value };
 
     if (event.target.name === 'resourceType') {
       toUpdate._resourceId = OPTION_ALL.id;
     }
+    setFilters(toUpdate);
 
-    this.setState({ filters: toUpdate });
-
-    const { onFiltersChange } = this.props;
     const updatedFilters = { ...toUpdate };
 
     Object.keys(updatedFilters).forEach(key => {
@@ -174,75 +101,71 @@ class Filters extends Component {
     onFiltersChange(updatedFilters);
   };
 
-  render() {
-    const { classes, users } = this.props;
-    const { byUser, source } = this.state.filters;
-    const resource = this.getResource();
+  const { byUser, source } = filters;
+  const resource = getResource();
 
-    return (
-      <div className={classes.filterContainer}>
-        <form className={classes.root} autoComplete="off">
-          <ResourceTypeFilter
-            {...this.props}
-            filters={this.state.filters}
-            onChange={this.handleChange}
-          />
-          <ResourceIdFilter
-            {...this.props}
-            filters={this.state.filters}
-            onChange={this.handleChange}
-          />
-          <FormControl className={classes.formControl}>
-            <CeligoSelect
-              inputProps={userInput}
-              onChange={this.handleChange}
-              value={byUser}>
-              <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
-                Select user
+  return (
+    <div className={classes.filterContainer}>
+      <form className={classes.root} autoComplete="off">
+        <ResourceTypeFilter
+          {...props}
+          classes={classes}
+          affectedResources={affectedResources}
+          filters={filters}
+          onChange={handleChange}
+        />
+        <ResourceIdFilter
+          {...props}
+          classes={classes}
+          affectedResources={affectedResources}
+          filters={filters}
+          onChange={handleChange}
+        />
+        <FormControl className={classes.formControl}>
+          <CeligoSelect
+            inputProps={userInput}
+            onChange={handleChange}
+            value={byUser}>
+            <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
+              Select user
+            </MenuItem>
+            {users.map(opt => (
+              <MenuItem key={opt._id} value={opt._id}>
+                {opt.name || opt.email}
               </MenuItem>
-              {users.map(opt => (
-                <MenuItem key={opt._id} value={opt._id}>
-                  {opt.name || opt.email}
-                </MenuItem>
-              ))}
-            </CeligoSelect>
-          </FormControl>
-          <FormControl className={classes.formControl}>
-            <CeligoSelect
-              inputProps={sourceInput}
-              onChange={this.handleChange}
-              value={source}>
-              <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
-                Select source
+            ))}
+          </CeligoSelect>
+        </FormControl>
+        <FormControl className={classes.formControl}>
+          <CeligoSelect
+            inputProps={sourceInput}
+            onChange={handleChange}
+            value={source}>
+            <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
+              Select source
+            </MenuItem>
+            {[
+              ...Object.keys(AUDIT_LOG_SOURCE_LABELS)
+                .filter(k => {
+                  if (!resource) {
+                    return true;
+                  }
+
+                  if (resource._connectorId) {
+                    return k !== 'stack';
+                  }
+
+                  return k !== 'connector';
+                })
+                .map(k => [k, AUDIT_LOG_SOURCE_LABELS[k]]),
+            ].map(opt => (
+              <MenuItem key={opt[0]} value={opt[0]}>
+                {opt[1]}
               </MenuItem>
-              {[
-                ...Object.keys(AUDIT_LOG_SOURCE_LABELS)
-                  .filter(k => {
-                    if (!resource) {
-                      return true;
-                    }
-
-                    if (resource._connectorId) {
-                      return k !== 'stack';
-                    }
-
-                    return k !== 'connector';
-                  })
-                  .map(k => [k, AUDIT_LOG_SOURCE_LABELS[k]]),
-              ].map(opt => (
-                <MenuItem key={opt[0]} value={opt[0]}>
-                  {opt[1]}
-                </MenuItem>
-              ))}
-            </CeligoSelect>
-          </FormControl>
-        </form>
-      </div>
-    );
-  }
+            ))}
+          </CeligoSelect>
+        </FormControl>
+      </form>
+    </div>
+  );
 }
-
-export default connect(
-  mapStateToProps,
-  null
-)(Filters);

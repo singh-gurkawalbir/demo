@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useMemo, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
@@ -17,6 +17,7 @@ import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import actions from '../../actions';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -35,12 +36,19 @@ const defaultFilter = {
 export default function TemplateList(props) {
   const { location } = props;
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const filterKey = 'templates';
   const filter =
-    useSelector(state => selectors.filter(state, 'templates')) || defaultFilter;
+    useSelector(state => selectors.filter(state, 'templates'));
+
+  useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  },
+  [dispatch]);
   const templatesFilterConfig = useMemo(
     () => ({
       type: 'templates',
-      ...filter,
+      ...(filter || {}),
     }),
     [filter]
   );
@@ -60,8 +68,7 @@ export default function TemplateList(props) {
         <CeligoPageBar title="Templates" infoText={InfoText.templates}>
           <div className={classes.actions}>
             <KeywordSearch
-              filterKey="templates"
-              defaultFilter={defaultFilter}
+              filterKey={filterKey}
             />
 
             <IconTextButton
@@ -70,7 +77,7 @@ export default function TemplateList(props) {
               to={`${location.pathname}/add/templates/${generateNewId()}`}
               variant="text"
               color="primary">
-              <AddIcon /> Create listing
+              <AddIcon /> Create template
             </IconTextButton>
           </div>
         </CeligoPageBar>

@@ -1,16 +1,6 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
-const styles = theme => ({
-  small: {
-    maxWidth: theme.spacing(4),
-    maxHeight: theme.spacing(4),
-  },
-  large: {
-    maxWidth: theme.spacing(8),
-    maxHeight: theme.spacing(8),
-  },
-});
 const mapTypes = type => {
   switch (type) {
     case 'exports':
@@ -23,9 +13,20 @@ const mapTypes = type => {
       return type;
   }
 };
+const useStyles = makeStyles(theme => ({
+  small: {
+    maxWidth: theme.spacing(4),
+    maxHeight: theme.spacing(4),
+  },
+  large: {
+    maxWidth: theme.spacing(8),
+    maxHeight: theme.spacing(8),
+  },
+}));
 
-function ResourceImg(props) {
-  const { size = 'small', resourceType, classes } = props;
+export default function ResourceImg(props) {
+  const { size = 'small', resourceType } = props;
+  const classes = useStyles();
 
   return (
     <img
@@ -37,5 +38,3 @@ function ResourceImg(props) {
     />
   );
 }
-
-export default withStyles(styles)(ResourceImg);

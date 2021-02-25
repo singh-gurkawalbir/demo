@@ -20,6 +20,19 @@ describe('response mapping utils', () => {
       {
         input: {
           resourceType: 'imports',
+          adaptorType: 'RESTImport',
+        },
+        result: [
+          'id',
+          'errors',
+          'ignored',
+          'statusCode',
+          'headers',
+        ],
+      },
+      {
+        input: {
+          resourceType: 'imports',
           adaptorType: 'NetsuiteImport',
         },
         result: [

@@ -170,7 +170,6 @@ function SubRecordDrawer(props) {
             <>
               <DynaForm
                 formKey={formKey}
-                fieldMeta={fieldMeta}
                 className={classes.subRecordDynaForm}
               />
               <DynaSubmit

@@ -52,7 +52,7 @@ const ManageLookup = props => {
   );
 };
 
-const DynaHttpRequestBody = props => {
+export default function DynaHttpRequestBody(props) {
   const {
     id,
     onFieldChange,
@@ -179,6 +179,5 @@ const DynaHttpRequestBody = props => {
       <FieldMessage {...props} />
     </Fragment>
   );
-};
+}
 
-export default DynaHttpRequestBody;

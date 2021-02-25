@@ -15,7 +15,7 @@ const useStyles = makeStyles({
   },
 });
 
-function TooltipContent({ children, className }) {
+export default function TooltipContent({ children, className }) {
   const classes = useStyles();
 
   return (
@@ -32,5 +32,3 @@ function TooltipContent({ children, className }) {
     </Typography>
   );
 }
-
-export default TooltipContent;

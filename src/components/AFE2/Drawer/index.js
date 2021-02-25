@@ -1,7 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
-import { useParams } from 'react-router-dom';
+import { useParams, useRouteMatch, Redirect } from 'react-router-dom';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
@@ -9,36 +8,34 @@ import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import Editor from '../Editor';
 import editorMetadata from '../metadata';
-import PreviewButtonGroup from './actions/PreviewButtonGroup';
 import SaveButtonGroup from '../SaveButtonGroup';
-import HelpIconButton from './actions/HelpIconButton';
 import CloseIconButton from './CloseIconButton';
 import actions from '../../../actions';
-import ToggleLayout from './actions/ToggleLayout';
+import ActionsRibbon from './ActionsRibbon';
+import { useDrawerContext } from '../../drawer/Right/DrawerContext';
 
-const useStyles = makeStyles({
-  spaceBetween: { flexGrow: 100 },
-});
-
-// Note that props contain the forwarded 'fullPath' and 'onClose' handlers
-// proxied from the right drawer.
 // hideSave: This is currently only used for the playground where we do not
 // want the user to have any options to save the editor.
-// eslint-disable-next-line no-unused-vars
-function RouterWrappedContent({ hideSave, onClose, fullPath}) {
-  const classes = useStyles();
+function RouterWrappedContent({ hideSave }) {
   const dispatch = useDispatch();
+  const match = useRouteMatch();
   const { editorId } = useParams();
+  const { onClose } = useDrawerContext();
   const editorType = useSelector(state => selectors._editor(state, editorId).editorType);
   const editorTitle = useSelector(state => selectors._editor(state, editorId).editorTitle);
 
-  // console.log('drawer editor', editorId, editor);
-  const { label, drawer = {} } = editorMetadata[editorType] || {};
-  const { showLayoutToggle, actions: drawerActions = [] } = drawer;
-  const leftActions = drawerActions.filter(a => a.position === 'left');
-  // Note: we default to right. currently only the afe1/2 data toggle is left aligned.
-  const rightActions = drawerActions.filter(a => a.position !== 'left');
-  // is it safe to clear the state when the drawer is closed??
+  if (!editorType) {
+    // redirect to parent url
+    const urlFields = match.url.split('/');
+
+    // strip the '/editor...' suffix from the url
+    const redirectToParentRoute = urlFields.slice(0, urlFields.indexOf('editor')).join('/');
+
+    return <Redirect to={redirectToParentRoute} />;
+  }
+
+  const { label } = editorMetadata[editorType] || {};
+
   const handleClose = () => {
     dispatch(actions._editor.clear(editorId));
     onClose();
@@ -48,44 +45,31 @@ function RouterWrappedContent({ hideSave, onClose, fullPath}) {
 
   return (
     <>
-      <DrawerHeader title={editorTitle || label} CloseButton={CloseButton} fullPath={fullPath}>
-        { // eslint-disable-next-line react/no-array-index-key
-          leftActions.map((a, i) => <a.component key={i} editorId={editorId} />)
-        }
-
-        <div className={classes.spaceBetween} />
-
-        { // eslint-disable-next-line react/no-array-index-key
-          rightActions.map((a, i) => <a.component key={i} editorId={editorId} />)
-        }
-
-        <PreviewButtonGroup editorId={editorId} />
-
-        {showLayoutToggle && <ToggleLayout editorId={editorId} />}
-        <HelpIconButton editorId={editorId} />
+      <DrawerHeader title={editorTitle || label} CloseButton={CloseButton}>
+        <ActionsRibbon editorId={editorId} />
       </DrawerHeader>
 
       <DrawerContent>
         <Editor editorId={editorId} />
       </DrawerContent>
 
+      {!hideSave && (
       <DrawerFooter>
-        {!hideSave && (
-          <SaveButtonGroup editorId={editorId} onClose={handleClose} />
-        )}
+        <SaveButtonGroup editorId={editorId} onClose={handleClose} />
       </DrawerFooter>
+      )}
     </>
   );
 }
 
-export default function EditorDrawer({ hideSave, width = 'full' }) {
+export default function EditorDrawer({ hideSave, hidePreview, width = 'full' }) {
   return (
     <RightDrawer
       path="editor/:editorId"
       variant="temporary"
       height="tall"
       width={width}>
-      <RouterWrappedContent hideSave={hideSave} />
+      <RouterWrappedContent hideSave={hideSave} hidePreview={hidePreview} />
     </RightDrawer>
   );
 }

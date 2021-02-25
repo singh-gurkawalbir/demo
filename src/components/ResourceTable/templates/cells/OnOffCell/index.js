@@ -33,7 +33,7 @@ export default function OnOffCell({
       message: `Are you sure you want to ${label} this template?`,
       buttons: [
         {
-          label,
+          label: isPublished ? 'Unpublish' : 'Publish',
           onClick: () => dispatch(actions.template.publish.request(resourceId, isPublished)),
         },
         {

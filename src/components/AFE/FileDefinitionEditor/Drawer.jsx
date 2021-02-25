@@ -2,7 +2,7 @@ import React from 'react';
 import EditorDrawer from '../EditorDrawer';
 import FileDefinitionEditor from './index';
 
-function FileDefinitionEditorDrawer(props) {
+export default function FileDefinitionEditorDrawer(props) {
   const {
     id,
     rule,
@@ -24,5 +24,3 @@ function FileDefinitionEditorDrawer(props) {
     </EditorDrawer>
   );
 }
-
-export default FileDefinitionEditorDrawer;

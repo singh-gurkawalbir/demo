@@ -1,6 +1,6 @@
 import moment from 'moment';
 import actionTypes from '../actions/types';
-import { JOB_TYPES } from './constants';
+import { JOB_TYPES, JOB_STATUS } from './constants';
 
 let path;
 
@@ -237,6 +237,11 @@ export default function getRequestOptions(
         path: `/retries/${resourceId}/data`,
         opts: { method: 'PUT' },
       };
+    case actionTypes.JOB.ERROR.DOWNLOAD_RETRY_DATA:
+      return {
+        path: `/retries/${resourceId}/signedURL`,
+        opts: { method: 'GET' },
+      };
     case actionTypes.FLOW.RUN:
       return {
         path: `/flows/${resourceId}/run`,
@@ -337,6 +342,25 @@ export default function getRequestOptions(
         queryParams.push(`resolvedAt_lte=${new Date(resolvedAt.endDate).toISOString()}`);
       }
       path += (nextPageURL ? `&${queryParams.join('&')}` : `?${queryParams.join('&')}`);
+
+      return {
+        path,
+        opts: { method: 'GET'},
+      };
+    }
+
+    case actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST: {
+      let path = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type_in[0]=flow`;
+      const statusFilter = [JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED];
+      const { range } = filters || {};
+      const queryParams = [];
+
+      statusFilter.forEach(status => queryParams.push(`status=${status}`));
+      if (range?.startDate && range?.endDate) {
+        queryParams.push(`createdAt_gte=${moment(range.startDate).toISOString()}`);
+        queryParams.push(`createdAt_lte=${moment(range.endDate).toISOString()}`);
+      }
+      path += `&${queryParams.join('&')}`;
 
       return {
         path,

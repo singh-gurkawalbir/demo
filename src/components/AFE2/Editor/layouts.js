@@ -29,4 +29,14 @@ export default {
     gridTemplateRows: '1fr 1fr 0fr',
     gridTemplateAreas: '"meta form" "hook values" "error error"',
   },
+  readme: {
+    gridTemplateColumns: '1fr',
+    gridTemplateRows: '1fr 1fr',
+    gridTemplateAreas: '"rule" "result"',
+  },
+  netsuiteLookupFilter: {
+    gridTemplateColumns: '1fr',
+    gridTemplateRows: '1fr',
+    gridTemplateAreas: '"rule"',
+  },
 };

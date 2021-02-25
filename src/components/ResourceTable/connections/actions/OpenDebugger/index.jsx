@@ -5,7 +5,7 @@ import actions from '../../../../../actions';
 import DebugIcon from '../../../../icons/DebugIcon';
 
 export default {
-  label: 'Debug Connection',
+  label: 'Debug connection',
   icon: DebugIcon,
   useHasAccess: ({ rowData }) => {
     const { _id: connectionId } = rowData;

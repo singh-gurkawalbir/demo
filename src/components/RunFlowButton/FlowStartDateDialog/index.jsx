@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import { selectors } from '../../../reducers';
@@ -11,25 +11,26 @@ import Spinner from '../../Spinner';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import ButtonGroup from '../../ButtonGroup';
 import adjustTimezone from '../../../utils/adjustTimezone';
+import { convertUtcToTimezone } from '../../../utils/date';
 
 export default function FlowStartDateDialog(props) {
+  const [defaultDate] = useState(new Date());
   const { flowId, onClose, disabled, onRun } = props;
   const dispatch = useDispatch();
   const preferences = useSelector(state => selectors.userOwnPreferences(state));
-  const profilePreferences = useSelector(state =>
-    selectors.userProfilePreferencesProps(state)
-  );
-  let lastExportDateTime = useSelector(state =>
-    selectors.getLastExportDateTime(state, flowId)
-  ).data;
+  const timeZone = useSelector(state => selectors.userTimezone(state));
   const selectorStatus = useSelector(state =>
     selectors.getLastExportDateTime(state, flowId)
   ).status;
-  const timeZone = profilePreferences?.timezone;
 
-  if (!lastExportDateTime) {
-    lastExportDateTime = new Date();
-  }
+  const origLastExportDateTime = useSelector(state =>
+    selectors.getLastExportDateTime(state, flowId)
+  ).data;
+
+  const lastExportDateTime = useMemo(() =>
+    convertUtcToTimezone(origLastExportDateTime || defaultDate, preferences.dateFormat, preferences.timeFormat, timeZone, {skipFormatting: true}),
+  [defaultDate, origLastExportDateTime, preferences.dateFormat, preferences.timeFormat, timeZone]
+  );
 
   const fetchLastExportDateTime = useCallback(() => {
     dispatch(actions.flow.requestLastExportDateTime({ flowId }));
@@ -59,10 +60,12 @@ export default function FlowStartDateDialog(props) {
     startDate: lastExportDateTime,
     format: `${preferences.dateFormat} ${preferences.timeFormat}`,
   });
+
+  const metaValue = useMemo(() => ({startDateAutomatic: lastExportDateTime}), [lastExportDateTime]);
   const formKey = useFormInitWithPermissions({
     disabled,
     fieldMeta,
-    remount: lastExportDateTime,
+    metaValue,
   });
 
   if (!selectorStatus) {
@@ -77,11 +80,10 @@ export default function FlowStartDateDialog(props) {
     <ModalDialog show onClose={onClose}>
       <div>Delta flow</div>
       <div>
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaForm formKey={formKey} />
         <ButtonGroup>
           <DynaSubmit
             formKey={formKey}
-            skipDisableButtonForFormTouched
             data-test="submit"
             onClick={handleSubmit}>
             Run

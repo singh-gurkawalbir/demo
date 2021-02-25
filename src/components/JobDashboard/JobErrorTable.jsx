@@ -19,6 +19,7 @@ import JobErrorPreviewDialogContent from './JobErrorPreviewDialogContent';
 import JobErrorMessage from './JobErrorMessage';
 import { UNDO_TIME } from './util';
 import SpinnerWrapper from '../SpinnerWrapper';
+import DownloadIcon from '../icons/DownloadIcon';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
@@ -91,7 +92,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function JobErrorTable({
+export default function JobErrorTable({
   rowsPerPage = 50,
   jobErrors,
   errorCount,
@@ -414,11 +415,30 @@ function JobErrorTable({
     setSelectedErrors(selected);
   };
 
-  function EditRetryCell({retryId, isEditable}) {
-    if (!isEditable) return null;
+  function EditRetryCell({retryId, isEditable, isDownloadable}) {
+    const dispatch = useDispatch();
+    const handleDownloadRetry = useCallback(() => {
+      dispatch(
+        actions.job.downloadRetryData({
+          retryId,
+        })
+      );
+    }, [dispatch, retryId]);
 
-    return (
-      <Tooltip title="Edit retry data">
+    if (!isEditable && !isDownloadable) return null;
+
+    return isDownloadable ? (
+      <Tooltip data-public title="Download retry data">
+        <IconButton
+          component={Link}
+          size="small"
+          data-test="download-retry"
+          onClick={handleDownloadRetry}>
+          <DownloadIcon />
+        </IconButton>
+      </Tooltip>
+    ) : (
+      <Tooltip data-public title="Edit retry data">
         <IconButton
           component={Link}
           size="small"
@@ -616,6 +636,7 @@ function JobErrorTable({
                         retryId={r._retryId}
                         isEditable={r.metadata?.isParent &&
                       r.retryObject?.isDataEditable}
+                        isDownloadable={r.retryObject?.isDownloadable}
                         dateTime={r.createdAt} />
                     ),
                   },
@@ -628,5 +649,3 @@ function JobErrorTable({
     </>
   );
 }
-
-export default JobErrorTable;

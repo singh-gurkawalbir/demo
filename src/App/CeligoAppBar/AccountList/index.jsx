@@ -209,7 +209,9 @@ export default function AccountList() {
         }}
         placement="bottom-end"
         onClose={handleClose}>
-        <List dense className={classes.listWrapper}>
+        <List
+          data-public
+          dense className={classes.listWrapper}>
           {accounts.map(a => (
             <ListItem
               button

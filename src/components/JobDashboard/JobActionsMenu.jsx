@@ -10,7 +10,6 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import useConfirmDialog from '../ConfirmDialog';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
-import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 import JobRetriesDialog from './JobRetriesDialog';
@@ -26,6 +25,7 @@ import DownloadIntegrationIcon from '../icons/DownloadIntegrationIcon';
 import CheckmarkIcon from '../icons/CheckmarkIcon';
 import CancelIcon from '../icons/CancelIcon';
 import DownloadIcon from '../icons/DownloadIcon';
+import useCommStatus from '../../hooks/useCommStatus';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -359,6 +359,11 @@ export default function JobActionsMenu({
   function handleJobFilesDownloadDialogCloseClick() {
     setShowFilesDownloadDialog(false);
   }
+  useCommStatus({
+    actionsToMonitor,
+    autoClearOnComplete: true,
+    commStatusHandler: handleCommsStatus,
+  });
 
   return (
     <>
@@ -376,11 +381,7 @@ export default function JobActionsMenu({
           integrationName={integrationName}
         />
       )}
-      <CommStatus
-        actionsToMonitor={actionsToMonitor}
-        autoClearOnComplete
-        commStatusHandler={handleCommsStatus}
-      />
+
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}

@@ -1,7 +1,7 @@
 import MomentDateFnsUtils from '@date-io/moment';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
@@ -15,6 +15,7 @@ import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
 import FieldHelp from '../../FieldHelp';
 import CalendarIcon from '../../../icons/CalendarIcon';
+import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   dynaDateTimeLabelWrapper: {
@@ -94,12 +95,12 @@ const getTimeMask = timeMask => {
 
 export default function DateTimePicker(props) {
   const classes = useStyles();
-  const { id, label, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId, skipTimezoneConversion} = props;
+  const { id, label, formKey, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId, skipTimezoneConversion} = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
   const [timeValue, setTimeValue] = useState(value || null);
-
+  const dispatch = useDispatch();
   const setFormatTimeValue = dateTimeValue => {
     if (dateTimeValue) {
       // some dummy year dates we only care about the time
@@ -133,6 +134,18 @@ export default function DateTimePicker(props) {
     return preferences?.ssConnectionIds?.includes(ssLinkedConnectionId);
   });
   const { dateFormat, timeFormat, timezone } = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
+  const isEnteredDateAndTimeValue = moment(dateValue)?.isValid?.() && moment(timeValue)?.isValid?.();
+
+  useEffect(() => {
+    if (isEnteredDateAndTimeValue) {
+      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
+
+      return;
+    }
+
+    dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: 'Invalid date time value'}));
+  },
+  [dispatch, formKey, id, isEnteredDateAndTimeValue]);
 
   useEffect(() => {
     let formattedDate = null;
@@ -143,7 +156,6 @@ export default function DateTimePicker(props) {
 
       return;
     }
-
     dataTimeValueFormatted.set('year', moment(dateValue)?.get('year') || 0);
     dataTimeValueFormatted.set('month', moment(dateValue)?.get('month') || 0);
     dataTimeValueFormatted.set('date', moment(dateValue)?.get('date') || 0);

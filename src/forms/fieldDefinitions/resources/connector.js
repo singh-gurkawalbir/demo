@@ -43,6 +43,8 @@ export default {
   editions: {
     type: 'text',
     label: 'Editions',
+    placeholder: 'Comma seperated values',
+    value: r => r?.twoDotZero?.editions,
     visibleWhen: [
       {
         field: 'framework',
@@ -75,6 +77,7 @@ export default {
   _integrationId: {
     type: 'selectresource',
     label: 'Source integration',
+    placeholder: 'Choose integration',
     resourceType: 'integrations',
     requiredWhen: [
       {
@@ -94,6 +97,12 @@ export default {
     label: 'Stack',
     resourceType: 'stacks',
     requiredWhen: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
+    visibleWhen: [
       {
         field: 'framework',
         isNot: ['twoDotZero'],
@@ -119,10 +128,22 @@ export default {
   updateFunction: {
     type: 'text',
     label: 'Update function',
-    required: true,
+    requiredWhen: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'framework',
+        isNot: ['twoDotZero'],
+      },
+    ],
   },
   applications: {
     type: 'selectmultiapplication',
+    placeholder: 'Choose applications',
     label: 'Applications',
     defaultValue: r => (r?.applications) || [],
     requiredWhen: [

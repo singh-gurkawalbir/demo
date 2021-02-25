@@ -30,7 +30,7 @@ export default function HandlebarGuide() {
           <Icon /> Handlebars guide
         </IconTextButton>
       ) : (
-        <Tooltip title="Handlebars guide" placement="bottom">
+        <Tooltip data-public title="Handlebars guide" placement="bottom">
           <IconButton {...anchorProps} className={classes.button} >
             <Icon />
           </IconButton>

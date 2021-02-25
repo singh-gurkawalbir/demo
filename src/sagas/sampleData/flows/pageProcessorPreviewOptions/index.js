@@ -16,7 +16,7 @@ import {
   isBlobTypeResource,
   isRestCsvMediaTypeExport,
   isRealTimeOrDistributedResource,
-} from '../../../../utils/resource';
+  isFileAdaptor } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import { isIntegrationApp } from '../../../../utils/flows';
 import { EMPTY_RAW_DATA } from '../../../../utils/constants';
@@ -28,7 +28,7 @@ export function* _getUIDataForResource({ resource, connection, flow, refresh }) 
   if (isBlobTypeResource(resource)) return getBlobResourceSampleData();
 
   // Incase of Data Loader/ Rest CSV Exports, flow is same as File Adaptors
-  if (isRestCsvMediaTypeExport(resource, connection) || isDataLoader) return yield call(requestFileAdaptorSampleData, { resource });
+  if (isRestCsvMediaTypeExport(resource, connection) || isDataLoader || isFileAdaptor(resource)) return yield call(requestFileAdaptorSampleData, { resource });
 
   if (adaptorType) {
     switch (adaptorType) {

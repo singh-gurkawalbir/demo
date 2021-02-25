@@ -3,7 +3,7 @@ const messages = {
   FILE_TYPE_INVALID: 'Please select valid {{{fileType}}} file',
 };
 
-const messageStore = (key, argsObj) => {
+export default function messageStore(key, argsObj) {
   let str = messages[key];
 
   if (!str) return '';
@@ -14,6 +14,5 @@ const messageStore = (key, argsObj) => {
   });
 
   return str;
-};
+}
 
-export default messageStore;

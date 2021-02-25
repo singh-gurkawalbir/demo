@@ -326,6 +326,7 @@ export default function SelectApplication(props) {
         {label}
       </InputLabel>
       <Select
+        data-public
         ref={ref}
         name={name}
         placeholder={placeholder}

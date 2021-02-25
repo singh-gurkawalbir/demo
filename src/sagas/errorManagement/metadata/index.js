@@ -4,6 +4,25 @@ import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { selectors } from '../../../reducers';
+import openExternalUrl from '../../../utils/window';
+
+export function* downloadRetryData({flowId, resourceId, retryDataKey}) {
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path: `/flows/${flowId}/${resourceId}/${retryDataKey}/signedURL`,
+      opts: {
+        method: 'GET',
+      },
+    });
+  } catch (e) {
+    return undefined;
+  }
+  if (response?.signedURL) {
+    openExternalUrl({url: response?.signedURL});
+  }
+}
 
 export function* requestRetryData({ flowId, resourceId, retryId }) {
   try {
@@ -142,6 +161,7 @@ export function* requestFilterMetadata() {
 
 export default [
   takeLatest(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, requestRetryData),
+  takeLatest(actionTypes.ERROR_MANAGER.RETRY_DATA.DOWNLOAD, downloadRetryData),
   takeLatest(
     actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST_FOR_POLL,
     startPollingForRetryStatus
