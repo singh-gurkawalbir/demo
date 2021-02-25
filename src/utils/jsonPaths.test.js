@@ -755,9 +755,11 @@ describe('jsonPaths util function test', () => {
       expect([
         {id: '*.price'},
         {id: '*.Base Price'},
+        {id: 'Test*.Base'},
       ].map(wrapSpecialChars)).toEqual([
         {id: '*.price'},
         {id: '[*.Base Price]'},
+        {id: '[Test*].Base'},
       ]);
     });
 
