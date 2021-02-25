@@ -4412,15 +4412,14 @@ selectors.selectedErrorIds = (state, { flowId, resourceId, options = {} }) => {
   return errors.filter(({ selected }) => selected).map(error => error.errorId);
 };
 
-selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved }) => {
+selectors.isAllErrorsSelectedInCurrPage = (state, { flowId, resourceId, isResolved }) => {
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
-  const errorFilter = selectors.filter(state, filterKey);
-  const { errors = [] } = selectors.resourceErrors(state, {
+  const errorsInCurrPage = selectors.resourceErrorsInCurrPage(state, {
     flowId,
     resourceId,
-    options: { ...errorFilter, isResolved },
+    options: { filterKey, isResolved },
   });
-  const errorIds = errors.map(error => error.errorId);
+  const errorIds = errorsInCurrPage.map(error => error.errorId);
 
   return fromSession.isAllErrorsSelected(state && state.session, {
     flowId,
@@ -4429,6 +4428,7 @@ selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved }) => {
     errorIds,
   });
 };
+
 selectors.isAnyErrorActionInProgress = (state, { flowId, resourceId }) => {
   const isRetryInProgress =
     selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
@@ -4475,9 +4475,8 @@ selectors.mkResourceErrorsInCurrPageSelector = () => {
     (state, params) => selectors.filter(state, params?.options?.filterKey),
     (allErrors, filter) => {
       const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = filter?.paging || {};
-      const {errors} = allErrors;
 
-      return errors.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
+      return allErrors.errors.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
     }
   );
 };

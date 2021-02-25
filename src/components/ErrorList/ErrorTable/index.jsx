@@ -236,6 +236,18 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowsPerPage, errorFilter.keyword]);
 
+  useEffect(() => {
+    // dispatch an action to deselect everything
+    dispatch(
+      actions.errorManager.flowErrorDetails.deselectAll({
+        flowId,
+        resourceId,
+        isResolved,
+      })
+    );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [errorFilter.keyword]);
+
   // TODO @Raghu: Refactor the pagination related code
   return (
     <div className={clsx(classes.errorTableWrapper, { [classes.hide]: !show })}>

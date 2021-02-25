@@ -70,10 +70,10 @@ export function* requestErrorDetails({
   }
 }
 
-export function* selectAllErrorDetails({ flowId, resourceId, checked, isResolved }) {
+export function* selectAllErrorDetailsInCurrPage({ flowId, resourceId, checked, isResolved }) {
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
 
-  const { errors = [] } = yield select(selectors.resourceErrors, {
+  const errors = yield select(selectors.resourceErrorsInCurrPage, {
     flowId,
     resourceId,
     options: { filterKey, isResolved },
@@ -89,6 +89,26 @@ export function* selectAllErrorDetails({ flowId, resourceId, checked, isResolved
       isResolved,
     })
   );
+}
+
+export function* deselectAllErrors({ flowId, resourceId, isResolved }) {
+  const errorIds = yield select(selectors.selectedErrorIds, {
+    flowId,
+    resourceId,
+    options: { isResolved },
+  });
+
+  if (errorIds.length) {
+    yield put(
+      actions.errorManager.flowErrorDetails.selectErrors({
+        flowId,
+        resourceId,
+        errorIds,
+        checked: false,
+        isResolved,
+      })
+    );
+  }
 }
 
 export function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
@@ -248,8 +268,12 @@ export default [
     requestErrorDetails
   ),
   takeLatest(
-    actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS,
-    selectAllErrorDetails
+    actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DESELECT_ALL_ERRORS,
+    deselectAllErrors
+  ),
+  takeLatest(
+    actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS_IN_CURR_PAGE,
+    selectAllErrorDetailsInCurrPage
   ),
   takeLatest(
     actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.REQUEST,

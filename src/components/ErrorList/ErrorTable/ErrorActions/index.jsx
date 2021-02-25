@@ -80,6 +80,9 @@ export default function ErrorActions(props) {
     );
   }, [dispatch, flowId, resourceId]);
 
+  // selector to return count of selected errors
+  // selector to return total count of errors without filter
+
   const handleRetry = useCallback(() => {
     if (!isResolved) {
       return retryErrors();
