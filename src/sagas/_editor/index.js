@@ -680,14 +680,16 @@ export function* toggleEditorVersion({ id, version }) {
 }
 
 export default [
-  // we want takeEvery for preview as there can be 2 editors being affected at the same time
-  // eg, DynaFileKeyColumn and CSV parse launcher
-  takeEvery(
+  takeLatest(
     [actionTypes._EDITOR.PATCH.DATA,
       actionTypes._EDITOR.PATCH.RULE,
       actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW],
     autoEvaluateProcessorWithCancel
   ),
+  // added a separate effect for DynaFileKeyColumn as
+  // both, csv parser and file key editor can be in use and would require
+  // the preview API call parallel
+  takeLatest(actionTypes._EDITOR.PATCH.FILE_KEY_COLUMN, autoEvaluateProcessorWithCancel),
   takeEvery(actionTypes._EDITOR.INIT, initEditor),
   takeLatest(actionTypes._EDITOR.TOGGLE_VERSION, toggleEditorVersion),
   takeLatest(actionTypes._EDITOR.PREVIEW.REQUEST, requestPreview),

@@ -84,13 +84,13 @@ export default function DynaFileKeyColumn_afe2(props) {
 
   useEffect(() => {
     if (csvData && csvData !== editorData) {
-      dispatch(actions._editor.patchData(editorId, csvData));
+      dispatch(actions._editor.patchFileKeyColumn(editorId, 'data', csvData));
 
       onFieldChange(id, []);
     }
   }, [csvData, dispatch, id, editorData, onFieldChange]);
   useEffect(() => {
-    dispatch(actions._editor.patchRule(editorId, { ...options }));
+    dispatch(actions._editor.patchFileKeyColumn(editorId, 'rule', { ...options }));
   }, [dispatch, options]);
 
   return (
