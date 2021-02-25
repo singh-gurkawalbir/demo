@@ -121,8 +121,8 @@ export default function JobDashboard({
         })
       );
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, integrationId, flowId, flowJobId, filterHash]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, integrationId, flowId, filterHash]);
 
   const disableResolve = isBulkRetryInProgress || numJobsWithErrors === 0;
   const disableRetry = isBulkRetryInProgress || numRetriableJobs === 0;
