@@ -455,8 +455,7 @@ export default function ClonePreview(props) {
         <Grid container>
           <Grid className={classes.componentPadding} item xs={12}>
             <DynaForm
-              formKey={formKey}
-              fieldMeta={fieldMeta} />
+              formKey={formKey} />
             <DynaSubmit
               formKey={formKey}
               ignoreFormTouchedCheck

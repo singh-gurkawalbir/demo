@@ -53,7 +53,7 @@ const ApiParametersModal = props => {
   return (
     <ModalDialog show onClose={onClose}>
       <span>API parameters</span>
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <DynaForm formKey={formKey} />
       <div>
         <DynaSubmit onClick={onSaveClick}>Save</DynaSubmit>
         <Button

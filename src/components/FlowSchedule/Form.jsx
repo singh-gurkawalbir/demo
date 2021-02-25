@@ -57,5 +57,5 @@ export default function FlowScheduleForm({
     optionsHandler: fieldMeta.optionsHandler,
   });
 
-  return <DynaForm formKey={formKey} fieldMeta={fieldMeta} />;
+  return <DynaForm formKey={formKey} />;
 }

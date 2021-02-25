@@ -78,11 +78,8 @@ export default function* saveTransformationRulesForNewXMLExport({
     SCOPES.VALUE
   );
 
-  // TODO: Ashok isFileProviderAssistant should be removed and should be add as part of isFileAdaptor
-  const isFileProviderAssistant = yield select(selectors.isFileProviderAssistant, resourceId);
-
   const isXmlFileAdaptor =
-    (isFileAdaptor(resource) || isFileProviderAssistant) && resource.file.type === 'xml';
+    isFileAdaptor(resource) && resource.file.type === 'xml';
   const isXmlHttpAdaptor =
     adaptorTypeMap[resource.adaptorType] === 'http' &&
     resource.http.successMediaType === 'xml';

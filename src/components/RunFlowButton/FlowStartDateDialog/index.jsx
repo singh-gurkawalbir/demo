@@ -80,7 +80,7 @@ export default function FlowStartDateDialog(props) {
     <ModalDialog show onClose={onClose}>
       <div>Delta flow</div>
       <div>
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaForm formKey={formKey} />
         <ButtonGroup>
           <DynaSubmit
             formKey={formKey}
