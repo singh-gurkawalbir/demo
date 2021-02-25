@@ -251,7 +251,7 @@ export default function ProfileComponent() {
   return (
     <>
       <PanelHeader title="Profile" />
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <DynaForm formKey={formKey} />
       <DynaSubmit
         formKey={formKey}
         onClick={submitHandler()}

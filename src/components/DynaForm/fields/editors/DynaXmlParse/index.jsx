@@ -272,7 +272,6 @@ export default function DynaXmlParse({
 
       <DynaForm
         formKey={formKeyComponent}
-        fieldMeta={form}
       />
     </>
   );

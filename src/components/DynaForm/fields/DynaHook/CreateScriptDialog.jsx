@@ -28,8 +28,7 @@ export default function CreateScriptDialog({ onClose, onSave, scriptId }) {
       <div>Create script</div>
       <div>
         <DynaForm
-          formKey={formKey}
-          fieldMeta={rest} />
+          formKey={formKey} />
         <DynaSubmit
           formKey={formKey}
           data-test="saveScript"
