@@ -318,11 +318,11 @@ export function wrapSpecialChars(item = {}) {
     // wrap remaining string in [ and ] if contains any special characters and escape closing brace ']' if id has it.
     id = id
       .split('[*].')
-      .map(el =>
-        el
-          .split('.')
-          .map(el => (/\W/.test(el) ? `[${el.replace(/\]/g, '\\]')}]` : el))
-          .join('.')
+      .map(el => el.replace('*.', '-*-')
+        .split('.')
+        .map(el => (/\W/.test(el) ? `[${el.replace(/\]/g, '\\]')}]` : el))
+        .join('.')
+        .replace('-*-', '*.')
       )
       .join('[*].');
   }
