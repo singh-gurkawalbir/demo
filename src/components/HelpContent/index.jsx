@@ -85,9 +85,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function HelpContent(props) {
+export default function HelpContent({ children, title, caption, fieldId, resourceType }) {
   const classes = useStyles();
-  const { children, title, caption, fieldId, resourceType } = props;
   const dispatch = useDispatch();
   const [feedbackText, setFeedbackText] = useState(false);
   const [feedbackTextValue, setFeedbackTextValue] = useState('');
@@ -168,5 +167,3 @@ function HelpContent(props) {
     </div>
   );
 }
-
-export default HelpContent;

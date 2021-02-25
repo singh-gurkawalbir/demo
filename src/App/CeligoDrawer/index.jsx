@@ -125,7 +125,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   itemIconRoot: {
-    minWidth: '45px',
+    minWidth: 45,
     marginRight: theme.spacing(1),
     color: theme.palette.background.paper,
 

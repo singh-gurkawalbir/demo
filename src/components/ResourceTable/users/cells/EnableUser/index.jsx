@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import CeligoSwitch from '../../../../CeligoSwitch';
 import { ACCOUNT_IDS } from '../../../../../utils/constants';
@@ -7,7 +7,7 @@ import actions from '../../../../../actions';
 import actionTypes from '../../../../../actions/types';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
-import CommStatus from '../../../../CommStatus';
+import useCommStatus from '../../../../../hooks/useCommStatus';
 
 export default function EnableUser({ user }) {
   const { confirmDialog } = useConfirmDialog();
@@ -61,23 +61,20 @@ export default function EnableUser({ user }) {
     [enquesnackbar, getStatusMessage]
   );
 
+  const actionsToMonitor = useMemo(() => ({disable: { action: actionTypes.USER_DISABLE, resourceId: userId }}), [userId]);
+
+  useCommStatus({
+    actionsToMonitor,
+    autoClearOnComplete: true,
+    commStatusHandler,
+  });
+
   return (
-    <>
-      <CommStatus
-        actionsToMonitor={{
-          disable: { action: actionTypes.USER_DISABLE, resourceId: userId },
-        }}
-        autoClearOnComplete
-        commStatusHandler={objStatus => {
-          commStatusHandler(objStatus);
-        }}
+    <CeligoSwitch
+      data-test="disableUser"
+      disabled={!accepted || userId === ACCOUNT_IDS.OWN}
+      checked={!disabled}
+      onChange={handleSwitch}
       />
-      <CeligoSwitch
-        data-test="disableUser"
-        disabled={!accepted || userId === ACCOUNT_IDS.OWN}
-        checked={!disabled}
-        onChange={handleSwitch}
-      />
-    </>
   );
 }

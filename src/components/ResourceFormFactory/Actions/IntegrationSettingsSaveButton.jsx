@@ -1,4 +1,3 @@
-import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import actions from '../../../actions';
@@ -8,15 +7,7 @@ import { useLoadingSnackbarOnSave } from '.';
 import { integrationSettingsToDynaFormMetadata } from '../../../forms/formFactory/utils';
 import { FORM_SAVE_STATUS } from '../../../utils/constants';
 
-const useStyles = makeStyles(theme => ({
-  actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
-  },
-}));
-
 export default function IntegrationSettingsSaveButton(props) {
-  const classes = useStyles();
   const {
     submitButtonLabel = 'Save',
     integrationId,
@@ -109,7 +100,6 @@ export default function IntegrationSettingsSaveButton(props) {
   return (
     <DynaAction
       {...props}
-      className={classes.actionButton}
       disabled={disabled || isSaving}
       onClick={handleSubmitForm}>
       {isSaving ? 'Saving' : submitButtonLabel}

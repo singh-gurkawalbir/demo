@@ -7,22 +7,19 @@ import editorMetadata from '../../metadata';
 import PreviewButtonGroup from '../actions/PreviewButtonGroup';
 import HelpIconButton from '../actions/HelpIconButton';
 import ToggleLayout from '../actions/ToggleLayout';
+import ActionGroup from '../../../ActionGroup';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   ribbon: {
     display: 'flex',
     width: '100%',
-    alignItems: 'flex-start',
-    '& > :not(:last-child)': {
-      marginRight: theme.spacing(2),
-    },
   },
-  spaceBetween: { flexGrow: 1 },
-}));
+});
 
-export default function ActionsRibbon({ editorId, className, hidePreview }) {
+export default function ActionsRibbon({ editorId, className }) {
   const classes = useStyles();
   const editorType = useSelector(state => selectors._editor(state, editorId).editorType);
+  const hidePreview = useSelector(state => selectors._editor(state, editorId).hidePreview);
 
   // console.log('drawer editor', editorId, editor);
   const { drawer = {} } = editorMetadata[editorType] || {};
@@ -33,23 +30,23 @@ export default function ActionsRibbon({ editorId, className, hidePreview }) {
 
   return (
     <div className={clsx(classes.ribbon, className)}>
-      { // eslint-disable-next-line react/no-array-index-key
+      <ActionGroup>
+        { // eslint-disable-next-line react/no-array-index-key
           leftActions.map((a, i) => <a.component key={i} editorId={editorId} />)
-      }
+        }
+      </ActionGroup>
 
-      <div className={classes.spaceBetween} />
-
-      { // eslint-disable-next-line react/no-array-index-key
+      <ActionGroup position="right">
+        { // eslint-disable-next-line react/no-array-index-key
           rightActions.map((a, i) => <a.component key={i} editorId={editorId} />)
-      }
-      {!hidePreview &&
-      <PreviewButtonGroup editorId={editorId} />}
+        }
+        {!hidePreview &&
+        <PreviewButtonGroup editorId={editorId} />}
 
-      { // TODO: Dave - replace layout toggle component with icon dropdown variant.
-        showLayoutToggle && <ToggleLayout editorId={editorId} />
-      }
+        { showLayoutToggle && <ToggleLayout editorId={editorId} /> }
 
-      <HelpIconButton editorId={editorId} />
+        <HelpIconButton editorId={editorId} />
+      </ActionGroup>
     </div>
   );
 }

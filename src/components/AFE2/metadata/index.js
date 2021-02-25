@@ -16,6 +16,8 @@ import structuredFileParser from './structuredFileParser';
 import postResponseMapHook from './postResponseMapHook';
 import responseTransform from './responseTransform';
 import readme from './readme';
+import databaseMapping from './databaseMapping';
+import netsuiteLookupFilter from './netsuiteLookupFilter';
 
 const map = {
   csvParser,
@@ -36,6 +38,8 @@ const map = {
   postResponseMapHook,
   responseTransform,
   readme,
+  databaseMapping,
+  netsuiteLookupFilter,
 };
 export default map;
 

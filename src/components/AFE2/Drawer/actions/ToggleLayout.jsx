@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
   togglelLayoutSelect: {
     '& > div': {
       paddingBottom: 0,
-      paddingTop: 4,
+      paddingTop: theme.spacing(0.5),
       color: theme.palette.secondary.light,
     },
   },

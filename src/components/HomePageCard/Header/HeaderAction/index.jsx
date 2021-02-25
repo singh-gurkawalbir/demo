@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function HeaderAction(props) {
+export default function HeaderAction(props) {
   const { variants } = props;
   const classes = useStyles();
   const options = variants;
@@ -107,5 +107,3 @@ function HeaderAction(props) {
     </div>
   );
 }
-
-export default HeaderAction;

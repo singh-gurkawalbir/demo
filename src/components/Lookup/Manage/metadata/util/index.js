@@ -1,4 +1,4 @@
-const getFailedRecordDefault = lookup => {
+export default function getFailedRecordDefault(lookup) {
   if (!lookup || !lookup.allowFailures) {
     return 'disallowFailure';
   }
@@ -11,6 +11,4 @@ const getFailedRecordDefault = lookup => {
     default:
       return 'default';
   }
-};
-
-export default getFailedRecordDefault;
+}
