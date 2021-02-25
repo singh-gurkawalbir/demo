@@ -360,7 +360,6 @@ export default function CronBuilder(props) {
   return (
     <DynaForm
       formKey={formKey}
-      fieldMeta={meta}
       externalTabState={externalTabState}
       setExternalTabState={setExternalTabState}
     />

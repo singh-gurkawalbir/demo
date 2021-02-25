@@ -88,7 +88,7 @@ const FirstLevelModal = props => {
     <ModalDialog show onClose={handleClose}>
       <div>Referenced fields</div>
 
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <DynaForm formKey={formKey} />
       <DynaSubmit
         formKey={formKey}
         onClick={values => {

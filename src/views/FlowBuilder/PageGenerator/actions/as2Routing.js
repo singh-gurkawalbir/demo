@@ -96,7 +96,7 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
     <ModalDialog show={open} onClose={onClose} disabled={isViewMode}>
       <div>AS2 connection routing rules</div>
       <LoadResources required resources="scripts">
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaForm formKey={formKey} />
         <ButtonGroup>
           <DynaSubmit
             formKey={formKey}

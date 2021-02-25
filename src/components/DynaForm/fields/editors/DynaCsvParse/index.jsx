@@ -235,7 +235,6 @@ export default function DynaCsvParse(props) {
       </div>
       <DynaForm
         formKey={formKeyComponent}
-        fieldMeta={form}
       />
     </>
   );

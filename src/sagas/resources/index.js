@@ -442,8 +442,16 @@ export function* updateIntegrationSettings({
   let payload = jsonPatch.applyPatch({}, defaultPatchSetConverter(values))
     .newDocument;
 
-  if (storeId) {
-    payload = { [storeId]: payload };
+  const integration = yield select(selectors.resource, 'integrations', integrationId);
+  const supportsMultiStore = integration?.settings?.supportsMultiStore;
+  let childId = storeId;
+
+  if (supportsMultiStore && !storeId && flowId) {
+    childId = yield select(selectors.integrationAppChildIdOfFlow, integrationId, flowId);
+  }
+
+  if (childId) {
+    payload = { [childId]: payload };
   }
 
   payload = {
@@ -470,7 +478,7 @@ export function* updateIntegrationSettings({
 
     return yield put(
       actions.integrationApp.settings.submitFailed({
-        storeId,
+        storeId: childId,
         integrationId,
         response,
         flowId,
@@ -535,7 +543,7 @@ export function* updateIntegrationSettings({
 
     yield put(
       actions.integrationApp.settings.submitComplete({
-        storeId,
+        storeId: childId,
         integrationId,
         response,
         flowId,

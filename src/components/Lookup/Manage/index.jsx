@@ -188,7 +188,6 @@ export default function ManageLookup({
     <div data-test="lookup-form">
       <DynaForm
         formKey={formKey}
-        fieldMeta={fieldMeta}
         />
       {error && (
         <div>
