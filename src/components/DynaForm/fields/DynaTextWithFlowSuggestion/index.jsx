@@ -18,7 +18,7 @@ const useStyles = makeStyles({
     alignItems: 'flex-start',
   },
 });
-const DynaTextWithFlowSuggestion = props => {
+export default function DynaTextWithFlowSuggestion(props) {
   const classes = useStyles();
   const {
     id,
@@ -176,6 +176,5 @@ const DynaTextWithFlowSuggestion = props => {
       </div>
     </FormControl>
   );
-};
+}
 
-export default DynaTextWithFlowSuggestion;

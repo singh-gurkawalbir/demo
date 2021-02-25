@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography, makeStyles } from '@material-ui/core';
 import actions from '../../actions';
@@ -52,6 +52,7 @@ export default function ChangePassword({ show, onClose }) {
   const error = useSelector(state => selectors.changePasswordFailure(state));
   const success = useSelector(state => selectors.changePasswordSuccess(state));
   const message = useSelector(state => selectors.changePasswordMsg(state));
+  const [isLoading, setIsLoading] = useState(false);
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const handleChangePasswordClick = useCallback(
     formVal => {
@@ -61,10 +62,19 @@ export default function ChangePassword({ show, onClose }) {
         newPassword,
       };
 
+      setIsLoading(true);
+
       dispatch(actions.auth.changePassword(payload));
     },
     [dispatch]
   );
+
+  useEffect(() => {
+    if (error || success) {
+      setIsLoading(false);
+    }
+  },
+  [error, success]);
 
   useEffect(() => {
     // Incase password change is successful, we should close changePassword form
@@ -80,9 +90,9 @@ export default function ChangePassword({ show, onClose }) {
   }, [success, message, enqueueSnackbar, onClose]);
 
   const formKey = useFormInitWithPermissions({
-
     fieldMeta: changePasswordFieldMeta,
-
+    // reset the form everytime we open this modal
+    remount: show,
   });
 
   return (
@@ -103,11 +113,12 @@ export default function ChangePassword({ show, onClose }) {
 
           <DynaForm formKey={formKey} fieldMeta={changePasswordFieldMeta} />
           <DynaSubmit
+            disabled={isLoading}
             formKey={formKey}
             data-test="changePassword"
             id="changePassword"
             onClick={handleChangePasswordClick}>
-            Change password
+            {isLoading ? 'Changing Password...' : 'Change password'}
           </DynaSubmit>
         </div>
       )}

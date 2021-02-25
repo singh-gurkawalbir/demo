@@ -44,9 +44,8 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-function ApplicationImages(props) {
+export default function ApplicationImages({ children, className, noOfApps }) {
   const classes = useStyles();
-  const { children, className, noOfApps } = props;
 
   return (
     <div
@@ -63,5 +62,3 @@ function ApplicationImages(props) {
     </div>
   );
 }
-
-export default ApplicationImages;

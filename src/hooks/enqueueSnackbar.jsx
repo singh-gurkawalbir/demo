@@ -12,6 +12,7 @@ export default function useEnqueueSnackbar() {
       variant = 'success',
       showUndo,
       handleClose,
+      key,
       preventDuplicate = false,
       autoHideDuration = 5000,
       persist = false,
@@ -19,6 +20,7 @@ export default function useEnqueueSnackbar() {
       enqueueSnackbar(message, {
         variant,
         persist,
+        key,
         preventDuplicate,
         style: { whiteSpace: 'pre-line' },
         anchorOrigin: {

@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Manage(props) {
+export default function Manage(props) {
   const classes = useStyles();
   const { children } = props;
 
@@ -32,4 +32,3 @@ function Manage(props) {
   );
 }
 
-export default Manage;

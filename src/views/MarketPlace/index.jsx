@@ -7,12 +7,13 @@ import { selectors } from '../../reducers';
 import { MARKETPLACE_HELPINFO } from '../../utils/helpInfo';
 
 export default function Marketplace() {
-  const filter = useSelector(state => selectors.filter(state, 'marketplace'));
+  const filterKey = 'marketplace';
+  const filter = useSelector(state => selectors.filter(state, filterKey));
 
   return (
     <>
       <CeligoPageBar title="Marketplace" infoText={MARKETPLACE_HELPINFO}>
-        <KeywordSearch filterKey="marketplace" />
+        <KeywordSearch filterKey={filterKey} />
       </CeligoPageBar>
       <ApplicationsList filter={filter} />
     </>

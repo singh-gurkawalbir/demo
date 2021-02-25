@@ -1,11 +1,11 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import Loadable from 'react-loadable';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import Loader from '../components/Loader';
 
-@withStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   view: {
     textAlign: 'center',
     margin: 100,
@@ -27,35 +27,43 @@ import Loader from '../components/Loader';
   errorIcon: {
     fontSize: 48,
   },
-}))
-class Loading extends PureComponent {
-  content() {
-    const { classes, error, timedOut, pastDelay } = this.props;
+}));
 
-    if (error) {
-      throw error;
-    } else if (timedOut || pastDelay) {
-      return (
-        <Loader open>
-          <Typography variant="h4">Loading</Typography>
-          <CircularProgress
-            size={24}
-            classes={{
-              circleIndeterminate: classes.spinner,
-            }}
-          />
-        </Loader>
-      );
-    }
-
-    return null;
+const Content = ({error, timedOut, pastDelay, classes}) => {
+  if (error) {
+    throw error;
+  } else if (timedOut || pastDelay) {
+    return (
+      <Loader open>
+        <Typography variant="h4">Loading</Typography>
+        <CircularProgress
+          size={24}
+          classes={{
+            circleIndeterminate: classes.spinner,
+          }}
+        />
+      </Loader>
+    );
   }
 
-  render() {
-    const { classes } = this.props;
+  return null;
+};
 
-    return <div className={classes.view}>{this.content()}</div>;
-  }
+function Loading({ error, timedOut, pastDelay }) {
+  const classes = useStyles();
+
+  return (
+
+    <div className={classes.view}>
+      <Content
+        error={error}
+        timedOut={timedOut}
+        pastDelay={pastDelay}
+        classes={classes}
+      />
+
+    </div>
+  );
 }
 
 export default loader =>
