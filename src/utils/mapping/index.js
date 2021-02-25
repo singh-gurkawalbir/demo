@@ -489,7 +489,7 @@ export default {
     relationshipData,
     deleteChildlessParent
   ) => {
-    const { basicMappings = {}, variationMappings = {} } = sessionMappedData;
+    const { basicMappings = {}, variationMappings = {} } = sessionMappedData || {};
 
     setMappingData(
       flowId,

@@ -10753,5 +10753,343 @@ describe('integrationApps selectors test cases', () => {
       });
     });
   });
+
+  describe('integrationApps settings mkPendingCategoryMappings', () => {
+    const selector = selectors.mkPendingCategoryMappings();
+
+    test('should not throw exception for bad params', () => {
+      expect(selector()).toEqual(null);
+      expect(selector({})).toEqual(null);
+      expect(selector(null)).toEqual(null);
+    });
+    test('should return correct data for amazon category mappings', () => {
+      const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration', 'flow', amazonCategoryMappings));
+
+      expect(selector(state, 'integration', 'flow')).toEqual({
+        basicMappings: {
+          recordMappings: [
+            {
+              children: [
+                {
+                  children: [
+
+                  ],
+                  fieldMappings: [
+
+                  ],
+                  id: 'Dimensions',
+                  name: 'Dimensions',
+                },
+                {
+                  children: [
+
+                  ],
+                  fieldMappings: [
+
+                  ],
+                  id: 'Discovery',
+                  name: 'Discovery',
+                },
+                {
+                  children: [
+
+                  ],
+                  fieldMappings: [
+
+                  ],
+                  id: 'Images',
+                  name: 'Images',
+                },
+                {
+                  children: [
+
+                  ],
+                  fieldMappings: [
+
+                  ],
+                  id: 'Fulfillment',
+                  name: 'Fulfillment',
+                },
+              ],
+              fieldMappings: [
+                {
+                  discardIfEmpty: true,
+                  extract: 'SKU',
+                  generate: 'item_sku',
+                },
+                {
+                  discardIfEmpty: true,
+                  extract: 'upccode',
+                  generate: 'UPC',
+                },
+                {
+                  discardIfEmpty: true,
+                  extract: 'salesdescription',
+                  generate: 'product_description',
+                },
+                {
+                  discardIfEmpty: true,
+                  extract: 'displayname',
+                  generate: 'item_name',
+                },
+                {
+                  discardIfEmpty: true,
+                  extract: 'manufacturer',
+                  generate: 'brand_name',
+                },
+              ],
+              id: 'commonAttributes',
+              lookups: [
+
+              ],
+              name: 'Common',
+            },
+          ],
+        },
+        variationMappings: {
+          recordMappings: [
+
+          ],
+        },
+      });
+    });
+
+    test('should return correct data for amazon category mappings', () => {
+      const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration', 'flow', amazonCategoryMappings));
+
+      state['flow-integration'].mappings = {
+        'flow-commonAttributes': {
+          mappings: [{
+            extract: 'first',
+            generate: 'second',
+          }],
+        },
+        'flow-Dimensions': {
+          mappings: [{
+            extract: 'dimensions_e',
+            generate: 'dimensions_g',
+          }],
+        },
+      };
+      expect(selector(state, 'integration', 'flow')).toEqual({
+        basicMappings: {
+          recordMappings: [
+            {
+              children: [
+                {
+                  children: [],
+                  fieldMappings: [
+                    {
+                      extract: 'dimensions_e',
+                      generate: 'dimensions_g',
+                    },
+                  ],
+                  id: 'Dimensions',
+                  name: 'Dimensions',
+                },
+                {
+                  children: [],
+                  fieldMappings: [],
+                  id: 'Discovery',
+                  name: 'Discovery',
+                },
+                {
+                  children: [],
+                  fieldMappings: [],
+                  id: 'Images',
+                  name: 'Images',
+                },
+                {
+                  children: [],
+                  fieldMappings: [],
+                  id: 'Fulfillment',
+                  name: 'Fulfillment',
+                },
+              ],
+              fieldMappings: [
+                {
+                  extract: 'first',
+                  generate: 'second',
+                },
+              ],
+              id: 'commonAttributes',
+              lookups: [],
+              name: 'Common',
+            },
+          ],
+        },
+        variationMappings: {
+          recordMappings: [],
+        },
+      });
+    });
+  });
+
+  describe('integrationApps settings mkCategoryMappingsChanged', () => {
+    const selector = selectors.mkCategoryMappingsChanged();
+
+    test('should not throw exception for bad params', () => {
+      expect(selector()).toEqual(false);
+      expect(selector({})).toEqual(false);
+      expect(selector(null)).toEqual(false);
+    });
+    test('should return false when mappings are not changed', () => {
+      const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration', 'flow', amazonCategoryMappings));
+
+      expect(selector(state, 'integration', 'flow')).toEqual(false);
+    });
+
+    test('should return true when mappings changed', () => {
+      const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration', 'flow', amazonCategoryMappings));
+
+      state['flow-integration'].mappings = {
+        'flow-commonAttributes': {
+          mappings: [{
+            extract: 'first',
+            generate: 'second',
+          }],
+        },
+        'flow-Dimensions': {
+          mappings: [{
+            extract: 'dimensions_e',
+            generate: 'dimensions_g',
+          }],
+        },
+      };
+      expect(selector(state, 'integration', 'flow')).toEqual(true);
+    });
+  });
+
+  describe('integrationApps settings categoryMappingSaveStatus test', () => {
+    test('should not throw exception for bad params', () => {
+      expect(selectors.categoryMappingSaveStatus()).toEqual(null);
+      expect(selectors.categoryMappingSaveStatus({})).toEqual(null);
+      expect(selectors.categoryMappingSaveStatus(null)).toEqual(null);
+    });
+
+    test('should return correct saveStatus value for valid integration and flow', () => {
+      const state = {
+        'flow-integration': {
+          saveStatus: 'saved',
+        },
+      };
+
+      expect(selectors.categoryMappingSaveStatus(state, 'integration', 'flow')).toEqual('saved');
+    });
+  });
+
+  describe('integrationApps settings integrationAppAddOnState test', () => {
+    test('should not throw exception for bad params', () => {
+      expect(selectors.integrationAppAddOnState()).toEqual({});
+      expect(selectors.integrationAppAddOnState({})).toEqual({});
+      expect(selectors.integrationAppAddOnState(null)).toEqual({});
+    });
+
+    test('should return correct saveStatus value for valid integration and flow', () => {
+      const state = {
+        'integration-addOns': {
+          addons: {
+            data: 'dummy',
+          },
+        },
+      };
+
+      expect(selectors.integrationAppAddOnState(state, 'integration', 'flow')).toEqual({
+        addons: {
+          data: 'dummy',
+        },
+      });
+    });
+  });
+
+  describe('integrationApps settings integrationAppMappingMetadata test', () => {
+    test('should not throw exception for bad params', () => {
+      expect(selectors.integrationAppMappingMetadata()).toEqual({});
+      expect(selectors.integrationAppMappingMetadata({})).toEqual({});
+      expect(selectors.integrationAppMappingMetadata(null)).toEqual({});
+    });
+
+    test('should return correct saveStatus value for valid integration and flow', () => {
+      const state = {
+        integration: {
+          meta: {
+            data: 'dummy',
+          },
+        },
+      };
+
+      expect(selectors.integrationAppMappingMetadata(state, 'integration', 'flow')).toEqual({
+        meta: {
+          data: 'dummy',
+        },
+      });
+    });
+  });
+
+  describe('integrationApps settings shouldRedirect test', () => {
+    test('should not throw exception for bad params', () => {
+      expect(selectors.shouldRedirect()).toEqual(null);
+      expect(selectors.shouldRedirect({})).toEqual(null);
+      expect(selectors.shouldRedirect(null)).toEqual(null);
+    });
+
+    test('should return correct saveStatus value for valid integration and flow', () => {
+      const state = {
+        integration: {
+          meta: {
+            data: 'dummy',
+          },
+          redirectTo: '/dashboard',
+        },
+      };
+
+      expect(selectors.shouldRedirect(state, 'integration')).toEqual('/dashboard');
+    });
+  });
+
+  describe('integrationApps settings shouldRedirect test', () => {
+    test('should not throw exception for bad params', () => {
+      expect(selectors.shouldRedirect()).toEqual(null);
+      expect(selectors.shouldRedirect({})).toEqual(null);
+      expect(selectors.shouldRedirect(null)).toEqual(null);
+    });
+
+    test('should return correct saveStatus value for valid integration and flow', () => {
+      const state = {
+        integration: {
+          meta: {
+            data: 'dummy',
+          },
+          redirectTo: '/dashboard',
+        },
+      };
+
+      expect(selectors.shouldRedirect(state, 'integration')).toEqual('/dashboard');
+    });
+  });
+
+  describe('integrationApps settings checkUpgradeRequested test', () => {
+    test('should not throw exception for bad params', () => {
+      expect(selectors.checkUpgradeRequested()).toEqual(false);
+      expect(selectors.checkUpgradeRequested({})).toEqual(false);
+      expect(selectors.checkUpgradeRequested(null)).toEqual(false);
+    });
+
+    test('should return correct saveStatus value for valid integration and flow', () => {
+      const state = {
+        integration: {
+          meta: {
+            data: 'dummy',
+          },
+          redirectTo: '/dashboard',
+        },
+        licenseId: true,
+        licenseId2: false,
+      };
+
+      expect(selectors.checkUpgradeRequested(state, 'licenseId')).toEqual(true);
+      expect(selectors.checkUpgradeRequested(state, 'licenseId2')).toEqual(false);
+    });
+  });
 });
 
