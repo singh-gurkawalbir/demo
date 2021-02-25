@@ -6,7 +6,7 @@ import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import DateRangeSelector from '../../../DateRangeSelector';
 import ErrorFilterIcon from '../ErrorFilterIcon';
-import { FILTER_KEYS } from '../../../../utils/errorManagement';
+import { FILTER_KEYS, ERROR_MANAGEMENT_RANGE_FILTERS } from '../../../../utils/errorManagement';
 import { getSelectedRange } from '../../../../utils/flowMetrics';
 
 const useStyles = makeStyles({
@@ -75,16 +75,6 @@ export default function SelectDate({
     preset: filter[filterBy].preset,
   } : defaultRange, [isDateFilterSelected, filter, filterBy]);
 
-  const rangeFilters = [
-    {id: 'today', label: 'Today'},
-    {id: 'yesterday', label: 'Yesterday'},
-    {id: 'last24hours', label: 'Last 24 hours'},
-    {id: 'last7days', label: 'Last 7 Days'},
-    {id: 'last15days', label: 'Last 15 Days'},
-    {id: 'last30days', label: 'Last 30 Days'},
-    {id: 'custom', label: 'Custom'},
-  ];
-
   return (
     <div> {title}
       <DateRangeSelector
@@ -94,7 +84,7 @@ export default function SelectDate({
         onSave={handleDateFilter}
         Icon={FilterIcon}
         value={selectedDate}
-        customPresets={rangeFilters}
+        customPresets={ERROR_MANAGEMENT_RANGE_FILTERS}
         showTime={false}
          />
     </div>
