@@ -4,13 +4,24 @@ import { addMinutes } from 'date-fns';
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 
-describe('Script reducer', () => {
+describe('Scripts logs reducer', () => {
   test('should return initial state when action is not matched', () => {
     const state = reducer(undefined, { type: 'RANDOM_ACTION' });
 
     expect(state).toEqual({});
   });
-  test('should set status=requested, initialise dateRange to 15 minutes by default', () => {
+  test('SCRIPTS_REQUEST should initialise script object if not initialized', () => {
+    const flowId = 'f123';
+    const scriptId = 's123';
+    const state = reducer(undefined, actions.logs.scripts.request({
+      flowId,
+      scriptId,
+    }));
+
+    expect(state.scripts).toBeDefined();
+  });
+
+  test('SCRIPTS_REQUEST should set status=requested, initialise dateRange to 15 minutes by default', () => {
     const flowId = 'f123';
     const scriptId = 's123';
     const now = new Date();
@@ -44,7 +55,7 @@ describe('Script reducer', () => {
     expect(state).toEqual(expectedState);
   });
 
-  test('should set status=error in case of request failure', () => {
+  test('SCRIPTS_REQUEST_FAILED should set status=error', () => {
     const flowId = 'f123';
     const scriptId = 's123';
     const currentState = {
@@ -66,6 +77,63 @@ describe('Script reducer', () => {
           scriptId: 's123',
           flowId: 'f123',
           status: 'error',
+        },
+      },
+    };
+
+    expect(state).toEqual(expectedState);
+  });
+
+  test('SCRIPTS_REQUEST_FAILED should set status = error and errorMsg if present.', () => {
+    const flowId = 'f123';
+    const scriptId = 's123';
+    const currentState = {
+      scripts: {
+        's123-f123': {
+          scriptId: 's123',
+          flowId: 'f123',
+          status: 'requested',
+        },
+      },
+    };
+    const state = reducer(currentState, actions.logs.scripts.requestFailed({
+      flowId,
+      scriptId,
+      errorMsg: 'Error Message',
+    }));
+    const expectedState = {
+      scripts: {
+        's123-f123': {
+          scriptId: 's123',
+          flowId: 'f123',
+          status: 'error',
+          errorMsg: 'Error Message',
+        },
+      },
+    };
+
+    expect(state).toEqual(expectedState);
+  });
+
+  test('SCRIPTS_REQUEST_FAILED should not make any change to state if respective key is not present in state', () => {
+    const flowId = 'f123';
+    const scriptId = 's123';
+    const currentState = {
+      scripts: {
+        other: {
+          scriptId: 's123',
+        },
+      },
+    };
+    const state = reducer(currentState, actions.logs.scripts.requestFailed({
+      flowId,
+      scriptId,
+      errorMsg: 'Error Message',
+    }));
+    const expectedState = {
+      scripts: {
+        other: {
+          scriptId: 's123',
         },
       },
     };
@@ -105,7 +173,7 @@ describe('Script reducer', () => {
     expect(state).toEqual(expectedState);
   });
 
-  test('LOGS_RECEIVED action should set state properly', () => {
+  test('SCRIPTS_LOGS_RECEIVED action should set state properly', () => {
     const flowId = 'f123';
     const scriptId = 's123';
     const currentState = {
@@ -138,7 +206,7 @@ describe('Script reducer', () => {
     expect(state).toEqual(expectedState);
   });
 
-  test('should add logs to array in case of LOGS_RECEIVED action if logs already present', () => {
+  test('should add logs to log list in case of LOGS_RECEIVED action if logs already present', () => {
     const flowId = 'f123';
     const scriptId = 's123';
     const currentState = {
@@ -297,7 +365,7 @@ describe('Script reducer', () => {
     expect(state).toEqual(expectedState);
   });
 
-  test('LOGS_REFRESH action should remove existing log and set status accordingly', () => {
+  test('SCRIPTS_LOGS_REFRESH action should remove existing log and set status accordingly', () => {
     const flowId = 'f123';
     const scriptId = 's123';
     const currentState = {
@@ -331,33 +399,64 @@ describe('Script reducer', () => {
     expect(state).toEqual(expectedState);
   });
 
-  // TODO add test cases
-  // test('LOGS_CLEAR action should delete state correctly', () => {
-  //   const flowId = 'f123';
-  //   const scriptId = 's123';
-  //   const currentState = {
-  //     scripts: {
-  //       's123-f123': {
-  //         scriptId: 's123',
-  //         flowId: 'f123',
-  //         logs: [
-  //           {a: 1, index: 0},
-  //           {a: 2, index: 1},
-  //         ],
-  //         nextPageURL: 'abc',
-  //         status: 'success',
-  //       },
-  //     },
-  //   };
-  //   const state = reducer(currentState, actions.logs.scripts.clear({
-  //     flowId,
-  //     scriptId,
-  //   }));
-  //   const expectedState = {
-  //   };
+  test('LOGS_CLEAR action should delete state correctly in case scriptId is passed', () => {
+    const flowId = 'f123';
+    const scriptId = 's123';
+    const currentState = {
+      scripts: {
+        's123-f123': {
+          a: 'b',
+        },
+        's2-f2': {
+          c: 'd',
+        },
+      },
+    };
+    const state = reducer(currentState, actions.logs.scripts.clear({
+      flowId,
+      scriptId,
+    }));
+    const expectedState = {
+      scripts: {
+        's2-f2': {
+          c: 'd',
+        },
+      },
+    };
 
-  //   expect(state).toEqual(expectedState);
-  // });
+    expect(state).toEqual(expectedState);
+  });
+
+  test('LOGS_CLEAR action should delete all scripts related to flow in case only flowId is passed', () => {
+    const flowId = 'f123';
+    const currentState = {
+      scripts: {
+        's123-f123': {
+          a: 'b',
+          flowId: 'f123',
+        },
+        's234-f123': {
+          a: 'b',
+          flowId: 'f123',
+        },
+        's2-f2': {
+          c: 'd',
+        },
+      },
+    };
+    const state = reducer(currentState, actions.logs.scripts.clear({
+      flowId,
+    }));
+    const expectedState = {
+      scripts: {
+        's2-f2': {
+          c: 'd',
+        },
+      },
+    };
+
+    expect(state).toEqual(expectedState);
+  });
 
   test('LOGS_LOAD_MORE action should set status correctly', () => {
     const flowId = 'f123';
