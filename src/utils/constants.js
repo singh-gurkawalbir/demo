@@ -633,3 +633,4 @@ export const CONNECTORS_TO_IGNORE = ['yammer',
 export const WEBHOOK_ONLY_APPLICATIONS = ['webhook', 'travis-org', 'helpscout', 'errorception', 'aha', 'pagerduty', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
   'box', 'segment'];
 
+export const CONNECTORS_TOBE_HIDDEN = ['amazonaws', 'banking', 'dcl', 'etsy', 'facebookads', 'jet', 'microsoftoffice365', 'nextag', 'osn', 'paychex', 'ramplogistics', 'ariba', 'skuvault', 'strata', 'svb', 'wiser', 'http', 'rest', 'wrapper', 'other', 'webhook', 'travis-org', 'helpscout', 'errorception', 'aha', 'pagerduty', 'mailparser-io', 'dropbox', 'travis', 'sapariba', 'box', 'segment', 'yammer', 'hybris', 'etsy', 'concur', 'concurall', 'concurv4', 'constantcontact'];

@@ -1,5 +1,5 @@
 import { stringCompare } from '../utils/sort';
-import {CONNECTORS_TO_IGNORE} from '../utils/constants';
+import {CONNECTORS_TO_IGNORE, CONNECTORS_TOBE_HIDDEN} from '../utils/constants';
 
 // Schema details:
 // ---------------
@@ -446,7 +446,7 @@ export const connectorsList = () => {
 
   applications.forEach(asst => {
     if (
-      !CONNECTORS_TO_IGNORE.includes(asst.id)
+      !CONNECTORS_TOBE_HIDDEN.includes(asst.id)
     ) {
       connectors.push({
         value: asst.id,
