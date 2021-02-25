@@ -384,7 +384,7 @@ export default (state = {}, action) => {
         break;
       }
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.PATCH_SETTINGS:
-        if (draft[cKey]?.mappings && draft[cKey].mappings[id] && draft[cKey].mappings[id].mappings && draft[cKey].mappings[id].mappings[index]) {
+        if (draft[cKey]?.mappings?.[id]?.mappings?.[index]) {
           const {
             generate,
             extract,
