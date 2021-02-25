@@ -942,7 +942,7 @@ describe('Accounts region selector testcases', () => {
 
   describe('selectors.platformLicenseActionDetails test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.platformLicenseActionDetails(undefined, {})).toEqual({});
+      expect(selectors.platformLicenseActionDetails(undefined)).toEqual({});
     });
     test('should return correct number of trail days left for trial license', () => {
       const state =

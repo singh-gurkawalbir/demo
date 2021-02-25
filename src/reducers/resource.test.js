@@ -826,13 +826,13 @@ describe('resource region selector testcases', () => {
     );
 
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isConnectionOffline()).toEqual(null);
+      expect(selectors.isConnectionOffline()).toEqual(false);
     });
     test('should return true if given connection is offline', () => {
       expect(selectors.isConnectionOffline(connState, 'connection1')).toEqual(true);
     });
     test('should return undefined if given connection is online', () => {
-      expect(selectors.isConnectionOffline(connState, 'connection2')).toEqual(undefined);
+      expect(selectors.isConnectionOffline(connState, 'connection2')).toEqual(false);
     });
   });
 
@@ -2693,17 +2693,17 @@ describe('resource region selector testcases', () => {
       expect(selectors.getScriptContext(state, {contextType: 'hook',
         flowId: 'flow2'})).toEqual({_integrationId: 'integrationId1', container: 'integration', type: 'hook'});
     });
-    test('should return nothing if given flow does not contains integrtion id', () => {
+    test('should return undefined if given flow does not contains integrtion id', () => {
       expect(selectors.getScriptContext(state, {contextType: 'hook',
-        flowId: 'flow1'})).toEqual();
+        flowId: 'flow1'})).toEqual(undefined);
     });
-    test('should return nothing if given input does not contains context type', () => {
+    test('should return undefined if given input does not contains context type', () => {
       expect(selectors.getScriptContext(state, {
-        flowId: 'flow2'})).toEqual();
+        flowId: 'flow2'})).toEqual(undefined);
     });
-    test('should return nothing if given input does not contains flow id', () => {
+    test('should return undefined if given input does not contains flow id', () => {
       expect(selectors.getScriptContext(state, {contextType: 'hook',
-      })).toEqual();
+      })).toEqual(undefined);
     });
   });
 

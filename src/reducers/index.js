@@ -845,7 +845,7 @@ selectors.mkNextDataFlowsForFlow = () => createSelector(
 selectors.isConnectionOffline = (state, id) => {
   const connection = selectors.resource(state, 'connections', id);
 
-  return connection && connection.offline;
+  return !!connection?.offline;
 };
 
 // TODO: could this be converted to re-select?
