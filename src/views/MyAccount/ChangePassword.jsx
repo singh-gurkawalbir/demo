@@ -111,7 +111,7 @@ export default function ChangePassword({ show, onClose }) {
           application, and you will need to sign back in with your new password.`}
           </Typography>
 
-          <DynaForm formKey={formKey} fieldMeta={changePasswordFieldMeta} />
+          <DynaForm formKey={formKey} />
           <DynaSubmit
             disabled={isLoading}
             formKey={formKey}

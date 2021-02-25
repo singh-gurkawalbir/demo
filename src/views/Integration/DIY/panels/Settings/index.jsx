@@ -167,8 +167,7 @@ function CustomSettings({ integrationId, sectionId }) {
 
       <div className={classes.form}>
         <DynaForm
-          formKey={formKeyRef}
-          fieldMeta={fieldMeta} />
+          formKey={formKeyRef} />
         <DynaSubmit
           formKey={formKeyRef}
           resourceType="integrations"

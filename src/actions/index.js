@@ -1799,6 +1799,11 @@ const errorManager = {
     cancelLatestJobs: ({ flowId, jobIds }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CANCEL, { flowId, jobIds}),
   },
+  runHistory: {
+    request: ({ flowId }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST, { flowId }),
+    received: ({ flowId, runHistory }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.RECEIVED, { flowId, runHistory }),
+    clear: ({ flowId }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.CLEAR, { flowId }),
+  },
   integrationErrors: {
     requestPoll: ({ integrationId }) =>
       action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST_FOR_POLL, { integrationId }),
