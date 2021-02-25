@@ -18,7 +18,7 @@ import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 import StatusCircle from '../../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../reducers';
-import redirectToCorrectGroupingRoute from '../../../../../utils/flowgroupingsRedirectTo';
+import { redirectToMiscellaneousOrFirstFlowGrouping } from '../../../../../utils/flowgroupingsRedirectTo';
 import { getTemplateUrlName } from '../../../../../utils/template';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
@@ -109,7 +109,7 @@ const getBasePath = match => {
 const tilesFilterConfig = { type: 'tiles'};
 
 export const shouldHaveMiscellaneousSection = flows => flows.some(flow => !flow._flowGroupingId);
-const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
+export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
 const FlowListingTable = ({
   flows,
   filterKey,
@@ -173,9 +173,8 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
   const match = useRouteMatch();
   const history = useHistory();
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
-  const hasMiscellaneousSection = shouldHaveMiscellaneousSection(flows);
 
-  const redirectTo = redirectToCorrectGroupingRoute(match, flowGroupingsSections, hasMiscellaneousSection, MISCELLANEOUS_SECTION_ID);
+  const redirectTo = redirectToMiscellaneousOrFirstFlowGrouping(flows, flowGroupingsSections, match);
 
   useEffect(() => {
     const shouldRedirect = !!redirectTo;

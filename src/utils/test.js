@@ -8,7 +8,8 @@ import getRoutePath from './routePaths';
 import retry from './retry';
 import adjustTimezone from './adjustTimezone';
 import inferErrorMessages from './inferErrorMessages';
-import flowgroupingsRedirectTo from './flowgroupingsRedirectTo';
+import flowgroupingsRedirectTo, {redirectToMiscellaneousOrFirstFlowGrouping} from './flowgroupingsRedirectTo';
+import { MISCELLANEOUS_SECTION_ID } from '../views/Integration/DIY/panels/Flows';
 
 const uiRoutePathPrefix = '';
 
@@ -351,130 +352,96 @@ describe('inferErrorMessages expect errored api message in this format { message
 
 describe('flowgroupingsRedirectTo', () => {
   const baseRoute = '/baseRoute';
+  const defaultSectionId = 'general';
 
-  describe('has micellaneous section (flows which are not tied to a flowGrouping for an integration) ', () => {
-    const hasMiscellaneousSection = true;
+  test('should redirect the page to base route when attempting sectionId for an IA without flowgroupings', () => {
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+      },
+      url: `${baseRoute}/sections/someId`,
+    };
 
-    test('should redirect the page to base route when attempting sectionId for an IA without flowgroupings', () => {
-      const match = {
-        path: `${baseRoute}/sections/:sectionId`,
-        params: {
-        },
-        url: `${baseRoute}/sections/someId`,
-      };
+    expect(flowgroupingsRedirectTo(match, null, defaultSectionId)).toEqual(baseRoute);
+  });
+  test('should redirect the page to the default section route when attempting an invalid sectionId for an IA with flowgroupings', () => {
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+        sectionId: 'inValidId',
+      },
+      url: `${baseRoute}/sections/inValidId`,
+    };
+    const flowGroupings = [{ sectionId: defaultSectionId}];
 
-      expect(flowgroupingsRedirectTo(match, null, hasMiscellaneousSection, 'general')).toEqual(baseRoute);
-    });
-    test('should redirect the page to the default section route when attempting an invalid sectionId for an IA with flowgroupings', () => {
-      const match = {
-        path: `${baseRoute}/sections/:sectionId`,
-        params: {
-          sectionId: 'inValidId',
-        },
-        url: `${baseRoute}/sections/inValidId`,
-      };
-      const flowGroupings = [{sectionId: 'general'}];
-
-      expect(flowgroupingsRedirectTo(match, flowGroupings, hasMiscellaneousSection, 'general')).toEqual(`${baseRoute}/sections/general`);
-    });
-
-    test('should return null when attempting a valid sectionId for an IA with flowgroupings', () => {
-      const match = {
-        path: `${baseRoute}/sections/:sectionId`,
-        params: {
-          sectionId: 'general',
-        },
-        url: `${baseRoute}/sections/general`,
-      };
-      const flowGroupings = [{sectionId: 'general'}];
-
-      expect(flowgroupingsRedirectTo(match, flowGroupings, hasMiscellaneousSection, 'general')).toEqual(null);
-    });
-
-    test('should return default sectionId route when attempting a route without a sectionId but has flowGroupings', () => {
-      const match = {
-        path: baseRoute,
-        params: {
-        },
-        url: baseRoute,
-      };
-      const flowGroupings = [{sectionId: 'general'}];
-
-      expect(flowgroupingsRedirectTo(match, flowGroupings, hasMiscellaneousSection, 'general')).toEqual(`${baseRoute}/sections/general`);
-    });
-    test('should return null when attempting a route without flowGroupings', () => {
-      const match = {
-        path: baseRoute,
-        params: {
-        },
-        url: baseRoute,
-      };
-      const flowGroupings = null;
-
-      expect(flowgroupingsRedirectTo(match, flowGroupings, hasMiscellaneousSection, 'general')).toEqual(null);
-    });
+    expect(flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId)).toEqual(`${baseRoute}/sections/general`);
   });
 
-  describe('does not have a miscelleanous sectionId(all flows are grouped for an integration) ', () => {
-    const hasMiscellaneousSection = false;
+  test('should return null when attempting a valid sectionId for an IA with flowgroupings', () => {
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+        sectionId: 'validSectionId',
+      },
+      url: `${baseRoute}/sections/validSectionId`,
+    };
+    const flowGroupings = [{ sectionId: defaultSectionId}, { sectionId: 'validSectionId' }];
 
-    test('should redirect the page to base route when attempting sectionId for an IA without flowgroupings', () => {
-      const match = {
-        path: `${baseRoute}/sections/:sectionId`,
-        params: {
-        },
-        url: `${baseRoute}/sections/someId`,
-      };
+    expect(flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId)).toEqual(null);
+  });
 
-      expect(flowgroupingsRedirectTo(match, null, hasMiscellaneousSection, 'general')).toEqual(baseRoute);
-    });
-    test('should redirect the page to the first flowGrouping section id when attempting an invalid sectionId for an IA with flowgroupings', () => {
-      const match = {
-        path: `${baseRoute}/sections/:sectionId`,
-        params: {
-          sectionId: 'inValidId',
-        },
-        url: `${baseRoute}/sections/inValidId`,
-      };
-      const flowGroupings = [{sectionId: 'validSectionId'}, {sectionId: 'validSectionId2'}];
+  test('should return default sectionId route when attempting a route without a sectionId but has flowGroupings', () => {
+    const match = {
+      path: baseRoute,
+      params: {
+      },
+      url: baseRoute,
+    };
+    const flowGroupings = [{ sectionId: defaultSectionId}];
 
-      expect(flowgroupingsRedirectTo(match, flowGroupings, hasMiscellaneousSection, 'general')).toEqual(`${baseRoute}/sections/validSectionId`);
-    });
+    expect(flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId)).toEqual(`${baseRoute}/sections/general`);
+  });
+  test('should return null when attempting a route without flowGroupings', () => {
+    const match = {
+      path: baseRoute,
+      params: {
+      },
+      url: baseRoute,
+    };
+    const flowGroupings = null;
 
-    test('should return null when attempting a valid sectionId for an IA with flowgroupings', () => {
-      const match = {
-        path: `${baseRoute}/sections/:sectionId`,
-        params: {
-          sectionId: 'validSectionId',
-        },
-        url: `${baseRoute}/sections/validSectionId`,
-      };
-      const flowGroupings = [{sectionId: 'validSectionId'}];
+    expect(flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId)).toEqual(null);
+  });
+});
 
-      expect(flowgroupingsRedirectTo(match, flowGroupings, hasMiscellaneousSection, 'general')).toEqual(null);
-    });
+describe('redirectToMiscellaneousOrFirstFlowGrouping', () => {
+  const baseRoute = '/baseRoute';
 
-    test('should return default sectionId route when attempting a route without a sectionId but has flowGroupings', () => {
-      const match = {
-        path: baseRoute,
-        params: {
-        },
-        url: baseRoute,
-      };
-      const flowGroupings = [{sectionId: 'validSectionId'}, {sectionId: 'validSectionId2'}];
+  test('when attempting an invalid route with flows that are all categorized should return path to redirect to first flowgrouping', () => {
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+        sectionId: 'inValidId',
+      },
+      url: `${baseRoute}/sections/inValidId`,
+    };
+    const flowGroupings = [{ sectionId: 'firstGroupId'}];
+    const flows = [{id: 'someId', _flowGroupingId: 'firstGroupId'}];
 
-      expect(flowgroupingsRedirectTo(match, flowGroupings, hasMiscellaneousSection, 'general')).toEqual(`${baseRoute}/sections/validSectionId`);
-    });
-    test('should return null when attempting a route without flowGroupings', () => {
-      const match = {
-        path: baseRoute,
-        params: {
-        },
-        url: baseRoute,
-      };
-      const flowGroupings = null;
+    expect(redirectToMiscellaneousOrFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}/sections/firstGroupId`);
+  });
 
-      expect(flowgroupingsRedirectTo(match, flowGroupings, hasMiscellaneousSection, 'general')).toEqual(null);
-    });
+  test('when attempting an invalid route with uncategorized flows then should return path to redirect to first miscellaneous sectionId', () => {
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+        sectionId: 'inValidId',
+      },
+      url: `${baseRoute}/sections/inValidId`,
+    };
+    const flowGroupings = [{ sectionId: 'firstGroupId'}];
+    const flows = [{id: 'someId', _flowGroupingId: 'firstGroupId'}, {id: 'someId2'}];
+
+    expect(redirectToMiscellaneousOrFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}/sections/${MISCELLANEOUS_SECTION_ID}`);
   });
 });
