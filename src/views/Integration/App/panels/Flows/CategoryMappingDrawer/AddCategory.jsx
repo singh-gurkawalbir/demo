@@ -220,7 +220,6 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         <>
           <DynaForm
             formKey={formKey}
-            fieldMeta={fieldMeta}
             className={classes.addCategoryDrawerForm} />
           <div className={classes.addCategoryDrawerFormActions}>
             <DynaSubmit

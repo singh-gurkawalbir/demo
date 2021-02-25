@@ -201,7 +201,6 @@ export default function DynaXmlParse_afe2({
 
       <DynaForm
         formKey={formKeyComponent}
-        fieldMeta={form}
       />
     </>
   );
