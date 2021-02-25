@@ -752,6 +752,13 @@ describe('jsonPaths util function test', () => {
         {id: 'second.[spaced field]'},
         {id: '[[third\\]].one'},
       ]);
+      expect([
+        {id: '*.price'},
+        {id: '*.Base Price'},
+      ].map(wrapSpecialChars)).toEqual([
+        {id: '*.price'},
+        {id: '[*.Base Price]'},
+      ]);
     });
 
     test('should not other properties in the object', () => {
