@@ -36,13 +36,15 @@ const flowgroupingsRedirectTo = (match, flowGroupings, defaultSectionId) => {
   return null;
 };
 
-export const redirectToMiscellaneousOrFirstFlowGrouping = (flows, flowGroupingsSections, match) => {
+export const redirectToFirstFlowGrouping = (flows, flowGroupingsSections, match) => {
   const firstFlowGroupingSectionId = flowGroupingsSections?.[0]?.sectionId;
 
   // if there is no miscellaneous sectionId and the user has provided invalid section id then
   // the first sectionId of the flowGrouping is considered the defaultSectionId
-  const defaultSectionId = shouldHaveMiscellaneousSection(flows) ? MISCELLANEOUS_SECTION_ID : firstFlowGroupingSectionId;
+  const defaultSectionId = firstFlowGroupingSectionId;
+  const flowGroupingsWithMiscSec = shouldHaveMiscellaneousSection(flowGroupingsSections, flows)
+    ? [...flowGroupingsSections, {sectionId: MISCELLANEOUS_SECTION_ID}] : flowGroupingsSections;
 
-  return flowgroupingsRedirectTo(match, flowGroupingsSections, defaultSectionId);
+  return flowgroupingsRedirectTo(match, flowGroupingsWithMiscSec, defaultSectionId);
 };
 export default flowgroupingsRedirectTo;

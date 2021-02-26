@@ -18,7 +18,7 @@ import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 import StatusCircle from '../../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../reducers';
-import { redirectToMiscellaneousOrFirstFlowGrouping } from '../../../../../utils/flowgroupingsRedirectTo';
+import { redirectToFirstFlowGrouping } from '../../../../../utils/flowgroupingsRedirectTo';
 import { getTemplateUrlName } from '../../../../../utils/template';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
@@ -107,8 +107,8 @@ const getBasePath = match => {
     .join('/');
 };
 const tilesFilterConfig = { type: 'tiles'};
-
-export const shouldHaveMiscellaneousSection = flows => flows.some(flow => !flow._flowGroupingId);
+// when there are flowGroupings and there are uncategorized flows do you have a MiscellaneousSection
+export const shouldHaveMiscellaneousSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId);
 export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
 const FlowListingTable = ({
   flows,
@@ -122,7 +122,7 @@ const FlowListingTable = ({
 
   const sectionId = match?.params?.sectionId;
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
-  const hasMiscellaneousSection = shouldHaveMiscellaneousSection(flows);
+  const hasMiscellaneousSection = shouldHaveMiscellaneousSection(flowGroupingsSections, flows);
 
   const allSections = useMemo(() => {
     if (hasMiscellaneousSection) {
@@ -174,7 +174,7 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
   const history = useHistory();
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
 
-  const redirectTo = redirectToMiscellaneousOrFirstFlowGrouping(flows, flowGroupingsSections, match);
+  const redirectTo = redirectToFirstFlowGrouping(flows, flowGroupingsSections, match);
 
   useEffect(() => {
     const shouldRedirect = !!redirectTo;

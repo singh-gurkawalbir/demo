@@ -8,7 +8,7 @@ import getRoutePath from './routePaths';
 import retry from './retry';
 import adjustTimezone from './adjustTimezone';
 import inferErrorMessages from './inferErrorMessages';
-import flowgroupingsRedirectTo, {redirectToMiscellaneousOrFirstFlowGrouping} from './flowgroupingsRedirectTo';
+import flowgroupingsRedirectTo, { redirectToFirstFlowGrouping } from './flowgroupingsRedirectTo';
 import { MISCELLANEOUS_SECTION_ID } from '../views/Integration/DIY/panels/Flows';
 
 const uiRoutePathPrefix = '';
@@ -417,6 +417,20 @@ describe('flowgroupingsRedirectTo', () => {
 describe('redirectToMiscellaneousOrFirstFlowGrouping', () => {
   const baseRoute = '/baseRoute';
 
+  test('when attempting an invalid route with no flowGrouping redirect to baseRoute ', () => {
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+        sectionId: 'inValidId',
+      },
+      url: `${baseRoute}/sections/inValidId`,
+    };
+    const flowGroupings = null;
+    const flows = [{id: 'someId', _flowGroupingId: 'firstGroupId'}, {id: 'someId2'}];
+
+    expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}`);
+  });
+
   test('when attempting an invalid route with flows that are all categorized should return path to redirect to first flowgrouping', () => {
     const match = {
       path: `${baseRoute}/sections/:sectionId`,
@@ -428,10 +442,10 @@ describe('redirectToMiscellaneousOrFirstFlowGrouping', () => {
     const flowGroupings = [{ sectionId: 'firstGroupId'}];
     const flows = [{id: 'someId', _flowGroupingId: 'firstGroupId'}];
 
-    expect(redirectToMiscellaneousOrFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}/sections/firstGroupId`);
+    expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}/sections/firstGroupId`);
   });
 
-  test('when attempting an invalid route with uncategorized flows then should return path to redirect to first miscellaneous sectionId', () => {
+  test('when attempting an invalid route with uncategorized flows then should return path to redirect to first flowgrouping', () => {
     const match = {
       path: `${baseRoute}/sections/:sectionId`,
       params: {
@@ -442,6 +456,35 @@ describe('redirectToMiscellaneousOrFirstFlowGrouping', () => {
     const flowGroupings = [{ sectionId: 'firstGroupId'}];
     const flows = [{id: 'someId', _flowGroupingId: 'firstGroupId'}, {id: 'someId2'}];
 
-    expect(redirectToMiscellaneousOrFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}/sections/${MISCELLANEOUS_SECTION_ID}`);
+    expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}/sections/firstGroupId`);
+  });
+  test('when attempting a miscellaneous section route with all cateogrized flows then should return null since it is a valid route', () => {
+    // this should not occur
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+        sectionId: MISCELLANEOUS_SECTION_ID,
+      },
+      url: `${baseRoute}/sections/${MISCELLANEOUS_SECTION_ID}`,
+    };
+    const flowGroupings = [{ sectionId: 'firstGroupId'}];
+    const flows = [{id: 'someId'}, {id: 'someId2'}];
+
+    expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(null);
+  });
+
+  test('when attempting a miscellaneous section route with no flows then should return firstFlowGroupId', () => {
+    // this should not occur
+    const match = {
+      path: `${baseRoute}/sections/:sectionId`,
+      params: {
+        sectionId: MISCELLANEOUS_SECTION_ID,
+      },
+      url: `${baseRoute}/sections/${MISCELLANEOUS_SECTION_ID}`,
+    };
+    const flowGroupings = [{ sectionId: 'firstGroupId'}];
+    const flows = null;
+
+    expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}/sections/firstGroupId`);
   });
 });
