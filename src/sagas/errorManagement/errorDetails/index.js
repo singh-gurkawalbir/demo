@@ -6,7 +6,7 @@ import { apiCallWithRetry } from '../../index';
 import { updateRetryData } from '../metadata';
 import getRequestOptions from '../../../utils/requestOptions';
 import openExternalUrl from '../../../utils/window';
-import { FILTER_KEYS } from '../../../utils/errorManagement';
+import { FILTER_KEYS, MAX_ERRORS_TO_RETRY_OR_RESOLVE } from '../../../utils/errorManagement';
 
 export function* _formatErrors({ errors = [], resourceId }) {
   const application = yield select(selectors.applicationName, resourceId);
@@ -111,25 +111,33 @@ export function* deselectAllErrors({ flowId, resourceId, isResolved }) {
   }
 }
 
-export function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
+export function* retryErrors({ flowId, resourceId, retryIds = [], isResolved, retryAll = false }) {
   let retryDataKeys = retryIds;
 
-  if (!retryIds.length) {
-    const retryIdList = yield select(selectors.selectedRetryIds, {
-      flowId,
-      resourceId,
-      options: { isResolved },
-    });
-
-    retryDataKeys = retryIdList;
-  }
-
-  const { errors } = yield select(selectors.resourceErrors, {
+  const { errors: allErrors } = yield select(selectors.resourceErrors, {
     flowId,
     resourceId,
     options: { isResolved },
   });
-  const errorIds = errors
+
+  if (!retryIds.length) {
+    if (retryAll) {
+      retryDataKeys = allErrors
+        .filter(error => !!error.retryDataKey)
+        .map(error => error.retryDataKey)
+        .slice(0, MAX_ERRORS_TO_RETRY_OR_RESOLVE);
+    } else {
+      const retryIdList = yield select(selectors.selectedRetryIds, {
+        flowId,
+        resourceId,
+        options: { isResolved },
+      });
+
+      retryDataKeys = retryIdList;
+    }
+  }
+
+  const errorIds = allErrors
     .filter(error => retryDataKeys.includes(error.retryDataKey))
     .map(error => error.errorId);
 
@@ -172,7 +180,7 @@ export function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) 
         errorIds,
       })
     );
-    const traceKeyList = errors
+    const traceKeyList = allErrors
       .filter(({errorId, traceKey }) => !!(errorIds.includes(errorId) && traceKey))
       .map(error => error.traceKey);
 
@@ -188,16 +196,22 @@ export function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) 
   }
 }
 
-export function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
+export function* resolveErrors({ flowId, resourceId, errorIds = [], resolveAll = false }) {
   let errors = errorIds;
 
   if (!errorIds.length) {
-    const errorIdList = yield select(selectors.selectedErrorIds, {
-      flowId,
-      resourceId,
-    });
+    if (resolveAll) {
+      const { errors: allErrors = [] } = yield select(selectors.resourceErrors, { flowId, resourceId });
 
-    errors = errorIdList;
+      errors = allErrors.map(error => error.errorId).slice(0, MAX_ERRORS_TO_RETRY_OR_RESOLVE);
+    } else {
+      const errorIdList = yield select(selectors.selectedErrorIds, {
+        flowId,
+        resourceId,
+      });
+
+      errors = errorIdList;
+    }
   }
 
   try {

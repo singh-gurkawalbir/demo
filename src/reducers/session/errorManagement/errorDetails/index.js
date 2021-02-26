@@ -206,6 +206,18 @@ selectors.errorActionsContext = (
   { flowId, resourceId, actionType = 'retry' }
 ) => state?.[flowId]?.[resourceId]?.actions?.[actionType] || defaultObject;
 
+selectors.isAnyActionInProgress = (state, { flowId, resourceId, actionType }) => {
+  if (!state?.[flowId]?.[resourceId]?.actions) return false;
+
+  const actionObj = state[flowId][resourceId].actions;
+
+  if (actionType) {
+    return actionObj[actionType]?.status === 'requested';
+  }
+
+  return actionObj.retry?.status === 'requested' || actionObj.resolve?.status === 'requested';
+};
+
 selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved, errorIds = [] }) => {
   const { errors = [] } = selectors.getErrors(state, {
     flowId,

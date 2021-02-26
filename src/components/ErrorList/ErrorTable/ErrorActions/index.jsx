@@ -1,12 +1,14 @@
-import React, { useCallback, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import actions from '../../../../actions';
+import MenuItem from '@material-ui/core/MenuItem';
+import clsx from 'clsx';
 import { selectors } from '../../../../reducers';
-import Spinner from '../../../Spinner';
+import CeligoSelect from '../../../CeligoSelect';
+import actions from '../../../../actions';
 import useConfirmDialog from '../../../ConfirmDialog';
-import ButtonGroup from '../../../ButtonGroup';
+import { MAX_ERRORS_TO_RETRY_OR_RESOLVE } from '../../../../utils/errorManagement';
+import Spinner from '../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   spinnerIcon: {
@@ -21,71 +23,144 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.primary.main,
     },
   },
+  flexContainer: {
+    display: 'flex',
+  },
+  actionBtn: {
+    borderRadius: theme.spacing(0.5),
+    height: theme.spacing(4),
+  },
+  retryBtn: {
+    minWidth: 90,
+    marginLeft: 10,
+  },
+  resolveBtn: {
+    minWidth: 100,
+  },
+  loading: {
+    marginLeft: 2,
+    verticalAlign: 'middle',
+  },
 }));
 
-export default function ErrorActions(props) {
-  const dispatch = useDispatch();
+function getAllErrorsLabel(count) {
+  if (count > MAX_ERRORS_TO_RETRY_OR_RESOLVE) {
+    return `${MAX_ERRORS_TO_RETRY_OR_RESOLVE} errors`;
+  }
+
+  return 'all errors';
+}
+
+const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable }) => {
   const classes = useStyles();
+  const allRetriableErrorCount = useSelector(state => {
+    const {errors = []} = selectors.errorDetails(state, {
+      flowId,
+      resourceId,
+      options: { isResolved },
+    });
+
+    return errors.filter(error => !!error.retryDataKey).length;
+  });
+
+  const selectedRetriableErrorCount = useSelector(state => selectors.selectedRetryIds(state, {
+    flowId,
+    resourceId,
+    options: { isResolved },
+  }).length);
+
+  const isRetryInProgress = useSelector(state =>
+    selectors.isAnyActionInProgress(state, { flowId, resourceId, actionType: 'retry' })
+  );
+
+  return (
+    <CeligoSelect
+      className={clsx(classes.actionBtn, classes.retryBtn)}
+      data-test="retryJobs"
+      onChange={onClick}
+      displayEmpty
+      value="">
+      <MenuItem value="" disabled>
+        Retry { isRetryInProgress && <Spinner size={16} className={classes.loading} />}
+      </MenuItem>
+      <MenuItem value="selected" disabled={disable || !selectedRetriableErrorCount}>
+        {selectedRetriableErrorCount} selected errors
+      </MenuItem>
+      <MenuItem value="all" disabled={disable || !allRetriableErrorCount}>
+        {getAllErrorsLabel(allRetriableErrorCount)}
+      </MenuItem>
+    </CeligoSelect>
+  );
+};
+
+const ResolveAction = ({ onClick, flowId, resourceId, disable }) => {
+  const classes = useStyles();
+  const allErrorCount = useSelector(state => {
+    const {errors = []} = selectors.errorDetails(state, {
+      flowId,
+      resourceId,
+    });
+
+    return errors.length;
+  });
+
+  const selectedErrorCount = useSelector(state => selectors.selectedErrorIds(state, {
+    flowId,
+    resourceId,
+  }).length);
+
+  const isResolveInProgress = useSelector(state =>
+    selectors.isAnyActionInProgress(state, { flowId, resourceId, actionType: 'resolve' })
+  );
+
+  return (
+    <CeligoSelect
+      className={clsx(classes.actionBtn, classes.resolveBtn)}
+      data-test="retryJobs"
+      onChange={onClick}
+      displayEmpty
+      value="">
+      <MenuItem value="" disabled>
+        Resolve  { isResolveInProgress && <Spinner size={16} className={classes.loading} />}
+
+      </MenuItem>
+      <MenuItem value="selected" disabled={disable || !selectedErrorCount}>
+        {selectedErrorCount} selected errors
+      </MenuItem>
+      <MenuItem value="all" disabled={disable || !allErrorCount}>
+        {getAllErrorsLabel(allErrorCount)}
+      </MenuItem>
+    </CeligoSelect>
+  );
+};
+
+export default function ErrorActions({ flowId, resourceId, isResolved, className }) {
+  const classes = useStyles();
+  const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
-  const { flowId, resourceId, isResolved, className } = props;
+
   const isFlowDisabled = useSelector(state =>
     selectors.resource(state, 'flows', flowId)?.disabled
   );
-  const isRetryInProgress = useSelector(
-    state =>
-      selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
-        .status === 'requested'
+
+  const isAnyActionInProgress = useSelector(
+    state => selectors.isAnyActionInProgress(state, { flowId, resourceId })
   );
-  const isResolveInProgress = useSelector(
-    state =>
-      !isResolved &&
-      selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'resolve' })
-        .status === 'requested'
-  );
-  const isActionInProgress = useMemo(
-    () => isRetryInProgress || isResolveInProgress,
-    [isResolveInProgress, isRetryInProgress]
-  );
-  const areSelectedErrorsRetriable = useSelector(
-    state =>
-      !!selectors.selectedRetryIds(state, {
-        flowId,
-        resourceId,
-        options: { isResolved },
-      }).length
-  );
-  const isAtleastOneErrorSelected = useSelector(
-    state =>
-      !!selectors.selectedErrorIds(state, {
-        flowId,
-        resourceId,
-        options: { isResolved },
-      }).length
-  );
-  const retryErrors = useCallback(() => {
+
+  const retryErrors = useCallback(type => {
     dispatch(
       actions.errorManager.flowErrorDetails.retry({
         flowId,
         resourceId,
         isResolved,
+        retryAll: type === 'all',
       })
     );
   }, [dispatch, flowId, isResolved, resourceId]);
-  const handleResolve = useCallback(() => {
-    dispatch(
-      actions.errorManager.flowErrorDetails.resolve({
-        flowId,
-        resourceId,
-      })
-    );
-  }, [dispatch, flowId, resourceId]);
 
-  // selector to return count of selected errors
-  // selector to return total count of errors without filter
-
-  const handleRetry = useCallback(() => {
+  const handleRetryAction = useCallback(e => {
     if (!isResolved) {
-      return retryErrors();
+      return retryErrors(e.target.value);
     }
     // show confirmation dialog for resolved errors trying to be retried
     confirmDialog({
@@ -95,7 +170,7 @@ export default function ErrorActions(props) {
         {
           label: 'Retry',
           onClick: () => {
-            retryErrors();
+            retryErrors(e.target.value);
           },
         },
         {
@@ -104,32 +179,38 @@ export default function ErrorActions(props) {
         },
       ],
     });
-  }, [isResolved, retryErrors, confirmDialog]);
+  }, [retryErrors, isResolved, confirmDialog]);
+
+  const handleResolveAction = useCallback(e => {
+    dispatch(
+      actions.errorManager.flowErrorDetails.resolve({
+        flowId,
+        resourceId,
+        resolveAll: e.target.value === 'all',
+      })
+    );
+  }, [dispatch, flowId, resourceId]);
+
+  const disableRetryAction = isFlowDisabled || isAnyActionInProgress;
+  const disableResolveAction = isAnyActionInProgress;
 
   return (
     <div className={className}>
-      <ButtonGroup>
-        {!isResolved && (
-        <Button
-          variant="outlined"
-          color="secondary"
-          className={classes.btnActions}
-          disabled={!isAtleastOneErrorSelected || isActionInProgress}
-          onClick={handleResolve}>
-          Resolve{isResolveInProgress ? <Spinner size={16} className={classes.spinnerIcon} /> : null}
-        </Button>
+      <div className={classes.flexContainer}>
+        { !isResolved && (
+        <ResolveAction
+          onClick={handleResolveAction}
+          flowId={flowId}
+          resourceId={resourceId}
+          disable={disableResolveAction} />
         )}
-
-        <Button
-          variant="outlined"
-          color="secondary"
-          className={classes.btnActions}
-          disabled={!areSelectedErrorsRetriable || isActionInProgress || isFlowDisabled}
-          onClick={handleRetry}>
-          Retry{isRetryInProgress ? <Spinner size={16} className={classes.spinnerIcon} /> : null}
-        </Button>
-      </ButtonGroup>
+        <RetryAction
+          onClick={handleRetryAction}
+          flowId={flowId}
+          resourceId={resourceId}
+          isResolved={isResolved}
+          disable={disableRetryAction} />
+      </div>
     </div>
-
   );
 }
