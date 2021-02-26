@@ -1,8 +1,6 @@
-// Regular Expression to Simple multiple email addresses separated by commas from regextester.com
-
 import { connectorsList } from '../../../constants/applications';
 import { isNewId } from '../../../utils/resource';
-import { MULTIPLE_EMAILS, URL_VALIDATION_PATTERN } from '../../../utils/constants';
+import { MULTIPLE_EMAILS } from '../../../utils/constants';
 
 export default {
   name: {
@@ -21,7 +19,8 @@ export default {
     label: 'Website URL',
     validWhen: {
       matchesRegEx: {
-        pattern: URL_VALIDATION_PATTERN,
+        pattern:
+          "^(?:http(s)?:\\/\\/)?[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$",
         message: 'Please enter a valid URL.',
       },
     },

@@ -1,5 +1,4 @@
 import { templatesList } from '../../../constants/applications';
-import { URL_VALIDATION_PATTERN } from '../../../utils/constants';
 
 export default {
   name: {
@@ -18,7 +17,8 @@ export default {
     label: 'Website URL',
     validWhen: {
       matchesRegEx: {
-        pattern: URL_VALIDATION_PATTERN,
+        pattern:
+          "^(?:http(s)?:\\/\\/)?[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$",
         message: 'Please enter a valid URL.',
       },
     },
