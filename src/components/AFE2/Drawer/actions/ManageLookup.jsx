@@ -30,14 +30,16 @@ export default function ManageLookup({ editorId }) {
   );
 
   const showLookup = useSelector(state => selectors.isEditorLookupSupported(state, editorId));
-  const {resourceType, formKey, resourceId, flowId, lastValidData} = useSelector(state => {
+  const {resourceType, formKey, resourceId, flowId, lastValidData, editorLookups} = useSelector(state => {
     const e = selectors._editor(state, editorId);
 
     return {resourceType: e.resourceType,
       formKey: e.formKey,
       resourceId: e.resourceId,
       flowId: e.flowId,
-      lastValidData: e.lastValidData};
+      lastValidData: e.lastValidData,
+      editorLookups: e.lookups,
+    };
   }, shallowEqual);
   const formContext = useFormContext(formKey);
   const { merged: resourceData = {} } = useSelectorMemo(
@@ -47,9 +49,17 @@ export default function ManageLookup({ editorId }) {
   );
   const { adaptorType } = resourceData;
 
-  const lookups = useMemo(() => resourceType === 'imports' &&
-    lookupUtil.getLookupFromFormContext(formContext, adaptorType),
-  [adaptorType, formContext, resourceType]);
+  const lookups = useMemo(() => {
+    if (resourceType === 'imports') {
+      if (formKey) {
+        return lookupUtil.getLookupFromFormContext(formContext, adaptorType);
+      }
+
+      return editorLookups;
+    }
+  },
+  [resourceType, formKey, editorLookups, formContext, adaptorType]);
+
   const _lookups = useMemo(() => Array.isArray(lookups) ? lookups : [], [lookups]);
 
   useEffect(() => {
@@ -65,7 +75,12 @@ export default function ManageLookup({ editorId }) {
     }
   };
   const handleUpdate = lookups => {
-    dispatch(actions.form.fieldChange(formKey)(lookupFieldId, lookups));
+    if (formKey) {
+      dispatch(actions.form.fieldChange(formKey)(lookupFieldId, lookups));
+    } else {
+      // save lookups in state
+      dispatch(actions._editor.patchFeatures(editorId, {lookups}));
+    }
   };
 
   if (!showLookup || !lookupFieldId) {

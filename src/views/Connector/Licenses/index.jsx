@@ -47,19 +47,24 @@ export default function Licenses(props) {
     selectors.makeAllResourceStatusSelector,
     ['connectorLicenses']
   );
-  const sortFilterKey = 'connectorLicenses';
+  const filterKey = 'connectorLicenses';
   const filter =
-    useSelector(state => selectors.filter(state, sortFilterKey)) ||
-    defaultFilter;
+    useSelector(state => selectors.filter(state, filterKey));
   const connectorLicensesFilterConfig = useMemo(
     () => ({
       ignoreEnvironmentFilter: true,
       type: 'connectorLicenses',
-      ...defaultFilter,
-      ...filter,
+      ...(filter || {}),
     }),
     [filter]
   );
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  },
+  [dispatch]);
   const list = useSelectorMemo(
     selectors.makeResourceListSelector,
     connectorLicensesFilterConfig
@@ -67,7 +72,6 @@ export default function Licenses(props) {
   const connector = useSelector(state =>
     selectors.resource(state, 'connectors', connectorId)
   );
-  const dispatch = useDispatch();
   const resourceLoaded = useMemo(() => resourceStatus && resourceStatus[0].isReady, [resourceStatus]);
 
   useEffect(() => {
@@ -115,8 +119,7 @@ export default function Licenses(props) {
         infoText={infoText.licenses}>
         <div className={classes.actions}>
           <KeywordSearch
-            filterKey="connectorLicenses"
-            defaultFilter={defaultFilter}
+            filterKey={filterKey}
           />
           <IconTextButton
             onClick={handleClick}
@@ -138,7 +141,7 @@ export default function Licenses(props) {
             <CeligoTable
               data={list.resources}
               {...metadata}
-              filterKey={sortFilterKey}
+              filterKey={filterKey}
               actionProps={{
                 resourceType: `connectors/${connectorId}/licenses`,
               }}
@@ -147,7 +150,7 @@ export default function Licenses(props) {
         </LoadResources>
       </div>
       <ShowMoreDrawer
-        filterKey="connectorLicenses"
+        filterKey={filterKey}
         count={list.count}
         maxCount={list.filtered}
       />

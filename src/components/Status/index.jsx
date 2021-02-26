@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Status({ children, label, className, onClick }) {
+export default function Status({ children, label, className, onClick }) {
   const classes = useStyles();
 
   return (
@@ -40,5 +40,3 @@ function Status({ children, label, className, onClick }) {
     </div>
   );
 }
-
-export default Status;

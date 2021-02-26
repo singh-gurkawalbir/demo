@@ -106,7 +106,7 @@ export default function GeneralSection({ integrationId }) {
       <PanelHeader title="General" />
 
       <div className={classes.form}>
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaForm formKey={formKey} />
         <DynaSubmit
           formKey={formKey}
           disabled={!canEditIntegration}

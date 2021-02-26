@@ -4,7 +4,7 @@ import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedFo
 import trim from '../../utils/trim';
 import useFormContext from '../Form/FormContext';
 
-function FormButton({
+export default function FormButton({
   onClick,
   children,
   id,
@@ -56,5 +56,3 @@ function FormButton({
     </Button>
   );
 }
-
-export default FormButton;

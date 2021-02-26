@@ -90,7 +90,7 @@ function DownloadErrors({ flowId, resourceId, onClose }) {
   return (
     <>
       <DrawerContent>
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaForm formKey={formKey} />
       </DrawerContent>
 
       <DrawerFooter>

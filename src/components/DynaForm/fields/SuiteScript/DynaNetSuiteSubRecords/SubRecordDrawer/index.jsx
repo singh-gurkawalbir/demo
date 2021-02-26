@@ -140,10 +140,8 @@ function SubRecordDrawer(props) {
     [flow?.import?.netsuite?.subRecordImports, referenceFieldId, dispatch, connectionId, resourceContext.resourceId, history]
   );
   const formKey = useFormInitWithPermissions({
-
     fieldMeta,
     optionsHandler,
-
   });
 
   return (
@@ -165,8 +163,7 @@ function SubRecordDrawer(props) {
             <>
               <DynaForm
                 formKey={formKey}
-                className={classes.subRecordDynaForm}
-                fieldMeta={fieldMeta} />
+                className={classes.subRecordDynaForm} />
 
               <DynaSubmit
                 formKey={formKey}

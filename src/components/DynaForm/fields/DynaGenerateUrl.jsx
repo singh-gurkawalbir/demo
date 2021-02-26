@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
 
 const webookRequiredFields = ['webhook.password', 'webhook.username', 'webhook.path'];
 
-function GenerateUrl(props) {
+export default function GenerateUrl(props) {
   const {
     options = {},
     onFieldChange,
@@ -127,5 +127,3 @@ function GenerateUrl(props) {
     </>
   );
 }
-
-export default GenerateUrl;
