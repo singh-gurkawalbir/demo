@@ -23,7 +23,6 @@ const useStyles = makeStyles(theme => ({
     },
   },
   longTitle: {
-    background: '#fcd',
     '& > h4': {
       whiteSpace: 'normal',
       wordBreak: 'break-word',
