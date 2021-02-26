@@ -11,6 +11,7 @@ import {
 import { makeStyles, Drawer } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import getRoutePath from '../../../utils/routePaths';
+import { DrawerProvider } from './DrawerContext';
 
 const bannerHeight = 57;
 const useStyles = makeStyles(theme => ({
@@ -97,10 +98,6 @@ export default function RightDrawer({
     return null;
   }
 
-  const childrenWithProps = React.Children.map(children, child =>
-    React.cloneElement(child, { fullPath, onClose: handleClose })
-  );
-
   return (
     <Switch>
       <Route path={fullPath}>
@@ -125,7 +122,9 @@ export default function RightDrawer({
           }}
           onClose={handleClose}>
           <div className={classes.childrenWrapper}>
-            {childrenWithProps}
+            <DrawerProvider height={height} fullPath={fullPath} onClose={handleClose}>
+              {children}
+            </DrawerProvider>
           </div>
         </Drawer>
       </Route>

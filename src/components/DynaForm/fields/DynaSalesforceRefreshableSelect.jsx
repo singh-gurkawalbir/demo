@@ -7,7 +7,7 @@ import { salesforceExportSelectOptions } from '../../../utils/resource';
 import useFormContext from '../../Form/FormContext';
 import { DynaGenericSelect } from './DynaRefreshableSelect/RefreshGenericResource';
 
-function DynaSalesforceSelectOptionsGenerator(props) {
+export default function DynaSalesforceSelectOptionsGenerator(props) {
   const { connectionId, filterKey, fieldName, formKey } = props;
   const formContext = useFormContext(formKey);
   const { value: formValues } = formContext;
@@ -38,5 +38,3 @@ function DynaSalesforceSelectOptionsGenerator(props) {
     />
   );
 }
-
-export default DynaSalesforceSelectOptionsGenerator;

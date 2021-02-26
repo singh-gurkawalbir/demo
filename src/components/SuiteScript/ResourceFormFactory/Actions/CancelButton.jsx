@@ -1,15 +1,17 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   actionButton: {
     marginTop: theme.spacing.double,
     marginLeft: theme.spacing.double,
   },
-});
-const CancelButton = props => {
-  const { onCancel, cancelButtonLabel, classes } = props;
+}));
+
+export default function CancelButton(props) {
+  const { onCancel, cancelButtonLabel } = props;
+  const classes = useStyles();
 
   return (
     <Button
@@ -21,6 +23,5 @@ const CancelButton = props => {
       {cancelButtonLabel || 'Reset'}
     </Button>
   );
-};
+}
 
-export default withStyles(styles)(CancelButton);

@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-function FileUploader(props) {
+export default function FileUploader(props) {
   const {
     disabled,
     id,
@@ -113,5 +113,3 @@ function FileUploader(props) {
     </FormControl>
   );
 }
-
-export default FileUploader;

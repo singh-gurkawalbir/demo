@@ -85,7 +85,7 @@ export default function FormView({
 
   return (
     <div className={classes.wrapper}>
-      <DynaForm formKey={formKey} fieldMeta={settingsFormState?.meta} />
+      <DynaForm formKey={formKey} />
     </div>
   );
 }
