@@ -132,7 +132,7 @@ const FlowListingTable = ({
     return flowGroupingsSections;
   },
   [flowGroupingsSections, hasMiscellaneousSection]);
-  const groupedFlows = useMemo(() => flows.filter(flow => sectionId === MISCELLANEOUS_SECTION_ID ? !flow._flowGroupingId
+  const groupedFlows = useMemo(() => flows.filter(flow => sectionId === MISCELLANEOUS_SECTION_ID ? flow._flowGroupingId === undefined
     : flow._flowGroupingId === sectionId
   ), [flows, sectionId]);
 
