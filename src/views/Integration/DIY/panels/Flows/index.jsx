@@ -108,7 +108,7 @@ const getBasePath = match => {
 };
 const tilesFilterConfig = { type: 'tiles'};
 // when there are flowGroupings and there are uncategorized flows do you have a MiscellaneousSection
-export const shouldHaveMiscellaneousSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => flow._flowGroupingId === undefined);
+export const shouldHaveMiscellaneousSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId);
 export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
 const FlowListingTable = ({
   flows,
@@ -132,7 +132,7 @@ const FlowListingTable = ({
     return flowGroupingsSections;
   },
   [flowGroupingsSections, hasMiscellaneousSection]);
-  const groupedFlows = useMemo(() => flows.filter(flow => sectionId === MISCELLANEOUS_SECTION_ID ? flow._flowGroupingId === undefined
+  const groupedFlows = useMemo(() => flows.filter(flow => sectionId === MISCELLANEOUS_SECTION_ID ? !flow._flowGroupingId
     : flow._flowGroupingId === sectionId
   ), [flows, sectionId]);
 
