@@ -126,7 +126,9 @@ const useStyles = makeStyles(theme => ({
   },
   itemIconRoot: {
     minWidth: 45,
+    marginRight: theme.spacing(1),
     color: theme.palette.background.paper,
+
   },
   menuList: {
     overflowY: 'auto',
@@ -182,6 +184,15 @@ const useStyles = makeStyles(theme => ({
   },
   collapsedArrowIcon: {
     width: 18,
+  },
+  listItemText: {
+    flex: 1,
+  },
+  listItemTextCollapsed: {
+    paddingLeft: theme.spacing(4),
+  },
+  tooltipLeft: {
+    left: '25px !important',
   },
 }));
 
@@ -322,7 +333,9 @@ export default function CeligoDrawer() {
                     <>
                       {drawerOpened ? <Icon />
                         : (
-                          <Tooltip data-public placement="right-end" enterDelay={0} title={label}>
+                          <Tooltip
+                            data-public placement="right" enterDelay={0} title={label}
+                            classes={{popper: classes.tooltipLeft}}>
                             <div>
                               <Icon />
                             </div>
@@ -334,6 +347,7 @@ export default function CeligoDrawer() {
                     </>
                   </ListItemIcon>
                   <ListItemText
+                    className={clsx(classes.listItemText, {[classes.listItemTextCollapsed]: !drawerOpened})}
                     primaryTypographyProps={{
                       className: classes.itemText,
                     }}
@@ -376,7 +390,9 @@ export default function CeligoDrawer() {
                               {drawerOpened
                                 ? <Icon />
                                 : (
-                                  <Tooltip data-public placement="right-end" enterDelay={0} title={label}>
+                                  <Tooltip
+                                    data-public placement="right" enterDelay={0} title={label}
+                                    classes={{popper: classes.tooltipLeft}}>
                                     <div>
                                       <Icon />
                                     </div>
@@ -384,6 +400,7 @@ export default function CeligoDrawer() {
                                 )}
                             </ListItemIcon>
                             <ListItemText
+                              className={clsx(classes.listItemText, {[classes.listItemTextCollapsed]: !drawerOpened})}
                               primary={label}
                               primaryTypographyProps={{
                                 className: classes.itemText,

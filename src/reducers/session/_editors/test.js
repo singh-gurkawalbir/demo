@@ -261,6 +261,34 @@ describe('editors reducers', () => {
 
       expect(newState).toEqual(expectedState);
     });
+    test('should store the defaultData along with data if editorType is databaseMapping', () => {
+      const options = {
+        fieldId: 'rdbms.query',
+        editorType: 'databaseMapping',
+        supportsDefaultData: true,
+      };
+      const initialState = reducer(
+        undefined,
+        actions._editor.initComplete('rdbmsquery', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions._editor.sampleDataReceived('rdbmsquery', '{"rows": [{"id": "123"}]}')
+      );
+      const expectedState = {
+        rdbmsquery: {
+          fieldId: 'rdbms.query',
+          editorType: 'databaseMapping',
+          supportsDefaultData: true,
+          data: '{"rows": [{"id": "123"}]}',
+          defaultData: JSON.stringify({row: {id: {default: ''}}}, null, 2),
+          sampleDataStatus: 'received',
+          lastValidData: '{"rows": [{"id": "123"}]}',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
     test('should not modify sibling state entries', () => {
       const initialState = {
         query: {id: 'query'},

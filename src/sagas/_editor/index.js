@@ -587,11 +587,18 @@ export function* initEditor({ id, editorType, options }) {
     formState = yield select(selectors.formState, formKey);
   }
   const { value: formValues } = formState;
-  const resource = yield call(constructResourceFromFormValues, {
-    formValues,
-    resourceId,
-    resourceType,
-  });
+  let resource = {};
+
+  if (formValues) {
+    resource = yield call(constructResourceFromFormValues, {
+      formValues,
+      resourceId,
+      resourceType,
+    });
+  } else {
+    resource = yield select(selectors.resource, resourceType, resourceId);
+  }
+
   const flow = yield select(selectors.resource, 'flows', flowId);
   const {onSave, ...rest} = options;
   let formattedOptions = deepClone(rest);
@@ -600,7 +607,7 @@ export function* initEditor({ id, editorType, options }) {
 
   if (init) {
     // for now we need all below props for handlebars init only
-    if (editorType === 'handlebars' || editorType === 'sql') {
+    if (editorType === 'handlebars' || editorType === 'sql' || editorType === 'databaseMapping') {
       const { _connectionId: connectionId } = resource;
       const connection = yield select(selectors.resource, 'connections', connectionId);
       const isPageGenerator = yield select(selectors.isPageGenerator, flowId, resourceId, resourceType);

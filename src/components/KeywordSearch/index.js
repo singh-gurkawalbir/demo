@@ -1,32 +1,27 @@
 import { useDispatch, useSelector } from 'react-redux';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import actions from '../../actions';
 import SearchInput from '../SearchInput';
 import { selectors } from '../../reducers';
 
-export default function KeywordSearch({ filterKey, defaultFilter }) {
+export default function KeywordSearch({ filterKey }) {
   const dispatch = useDispatch();
   const filter =
-    useSelector(state => selectors.filter(state, filterKey)) || defaultFilter;
+    useSelector(state => selectors.filter(state, filterKey));
   const handleKeywordChange = useCallback(
     e => {
       dispatch(
         actions.patchFilter(filterKey, {
-          ...defaultFilter,
           keyword: e.target.value,
         })
       );
     },
-    [defaultFilter, dispatch, filterKey]
+    [dispatch, filterKey]
   );
-
-  useEffect(() => handleKeywordChange({ target: { value: '' } }), [
-    handleKeywordChange,
-  ]);
 
   return (
     <SearchInput
-      value={(filter && filter.keyword) || ''}
+      value={filter?.keyword || ''}
       onChange={handleKeywordChange}
     />
   );

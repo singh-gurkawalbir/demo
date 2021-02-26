@@ -1,16 +1,23 @@
 import React, { useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core';
 import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedForm';
 import { selectors } from '../../reducers';
 import trim from '../../utils/trim';
 import useFormContext from '../Form/FormContext';
 
-function DynaAction(props) {
+const useStyles = makeStyles(theme => ({
+  actionButton: {
+    marginTop: theme.spacing.double,
+    marginLeft: theme.spacing.double,
+  },
+}));
+
+export default function DynaAction(props) {
   const {
     disabled,
     children,
-    className,
     id,
     dataTest,
     visible,
@@ -21,6 +28,7 @@ function DynaAction(props) {
     variant = 'outlined',
     color = 'primary',
   } = props;
+  const classes = useStyles();
   const { fields, value, disabled: formDisabled, isValid: formIsValidState } =
     useFormContext(formKey) || {};
   const formIsValid = isValid === undefined ? formIsValidState : isValid;
@@ -50,12 +58,10 @@ function DynaAction(props) {
       data-test={id || dataTest}
       variant={variant}
       color={color}
-      className={className}
+      className={classes.actionButton}
       disabled={!!(formDisabled || disabled) || !formTouched}
       onClick={onClick}>
       {children}
     </Button>
   );
 }
-
-export default DynaAction;

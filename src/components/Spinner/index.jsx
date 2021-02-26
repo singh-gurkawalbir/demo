@@ -12,7 +12,7 @@ const useStyles = makeStyles({
 /**
  * Render an indeterminate spinning indicator.
  */
-function Spinner(props) {
+export default function Spinner(props) {
   const classes = useStyles();
   const { loading, color, className, ...rest } = props;
   const progress = (
@@ -34,5 +34,3 @@ Spinner.propTypes = {
   size: PropTypes.number,
   thickness: PropTypes.number,
 };
-
-export default Spinner;

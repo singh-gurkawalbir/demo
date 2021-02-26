@@ -80,7 +80,7 @@ const MenuComponent = React.forwardRef((props, ref) => {
   );
 });
 
-function CeligoSelect({ className, maxHeightOfSelect, children, ...props }) {
+export default function CeligoSelect({ className, maxHeightOfSelect, children, ...props }) {
   const [open, setOpen] = useState(false);
   const classes = useStyles();
   const openSelect = useCallback(() => {
@@ -133,4 +133,3 @@ function CeligoSelect({ className, maxHeightOfSelect, children, ...props }) {
     </Select>
   );
 }
-export default CeligoSelect;

@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Info(props) {
+export default function Info(props) {
   const classes = useStyles();
   const { variant, label } = props;
 
@@ -29,4 +29,3 @@ function Info(props) {
   );
 }
 
-export default Info;

@@ -157,7 +157,6 @@ export default function DynaCsvGenerate_afe2(props) {
       </div>
       <DynaForm
         formKey={formKeyComponent}
-        fieldMeta={form}
       />
     </>
   );
