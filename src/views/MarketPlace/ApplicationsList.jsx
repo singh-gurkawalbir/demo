@@ -7,7 +7,7 @@ import { Card, Typography } from '@material-ui/core';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
-import {CONNECTORS_TOBE_HIDDEN} from '../../utils/constants';
+import {CONNECTORS_TO_IGNORE, WEBHOOK_ONLY_APPLICATIONS} from '../../utils/constants';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import {applicationsList} from '../../constants/applications';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
@@ -71,7 +71,7 @@ export default function ApplicationsList({ filter }) {
     connectors.forEach(c => { applications = applications.concat(c.applications); });
     templates.forEach(t => { applications = applications.concat(t.applications); });
     connectorsMetadata.forEach(c => { applications = applications.concat(c.id); });
-    applications = applications.filter(a => !CONNECTORS_TOBE_HIDDEN.includes(a));
+    applications = applications.filter(a => !CONNECTORS_TO_IGNORE.includes(a) && !WEBHOOK_ONLY_APPLICATIONS.includes(a));
     applications = uniq(applications.filter(Boolean));
 
     applications = applications.sort((a, b) => {

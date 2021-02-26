@@ -1,5 +1,5 @@
 import { stringCompare } from '../utils/sort';
-import {CONNECTORS_TO_IGNORE, CONNECTORS_TOBE_HIDDEN} from '../utils/constants';
+import {CONNECTORS_TO_IGNORE, WEBHOOK_ONLY_APPLICATIONS} from '../utils/constants';
 
 // Schema details:
 // ---------------
@@ -276,24 +276,12 @@ const connectors = [
   },
   { id: 's3', name: 'Amazon S3', type: 's3'},
   // Metadata doesn't exist for below connectors. Only connections are available as of now.
-  {id: 'amazonaws', name: 'Amazon AWS', type: 'http', assistant: 'amazonaws'},
   {id: 'banking', name: 'Banking', type: 'http', assistant: 'banking'},
   {id: 'clover', name: 'Clover', type: 'http', assistant: 'clover'},
   {id: 'dcl', name: 'DCL Logistics', type: 'http', assistant: 'dcl'},
-  {id: 'etsy', name: 'Etsy', type: 'http', assistant: 'etsy'},
   {id: 'facebookads', name: 'Facebook Ads', type: 'http', assistant: 'facebookads'},
-  {id: 'jet', name: 'Jet', type: 'rest', assistant: 'jet'},
-  {id: 'microsoftoffice365', name: 'Microsoft Office 365', type: 'http', assistant: 'microsoftoffice365'},
-  {id: 'nextag', name: 'Nextag', type: 'http', assistant: 'nextag'},
-  {id: 'osn', name: 'Osn', type: 'http', assistant: 'osn'},
-  {id: 'other', name: 'Other', type: 'http', assistant: 'other'},
-  {id: 'paychex', name: 'Paychex', type: 'http', assistant: 'paychex'},
   {id: 'ramplogistics', name: 'Ramp Logistics', type: 'http', assistant: 'ramplogistics'},
   {id: 'ariba', name: 'SAP Ariba', type: 'http', assistant: 'ariba'},
-  {id: 'skuvault', name: 'SkuVault', type: 'http', assistant: 'skuvault'},
-  {id: 'strata', name: 'Strata', type: 'rest', assistant: 'strata'},
-  {id: 'svb', name: 'SVB', type: 'http', assistant: 'svb'},
-  {id: 'wiser', name: 'Wiser', type: 'http', assistant: 'wiser'},
 ];
 // These can be removed once metadata gets updated.
 const newConnections = [{id: 'googledrive', name: 'Google Drive', type: 'http', assistant: 'googledrive'}];
@@ -446,7 +434,8 @@ export const connectorsList = () => {
 
   applications.forEach(asst => {
     if (
-      !CONNECTORS_TOBE_HIDDEN.includes(asst.id)
+      !CONNECTORS_TO_IGNORE.includes(asst.id) &&
+      !WEBHOOK_ONLY_APPLICATIONS.includes(asst.id)
     ) {
       connectors.push({
         value: asst.id,
