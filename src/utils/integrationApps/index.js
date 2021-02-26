@@ -166,6 +166,10 @@ export const getIntegrationApp = ({ _connectorId, name }) => {
       '5e8d6ca02387e356b6769bb8': 'shopify',
       '5e7d921e2387e356b67669ce': 'sfnsio',
       '5f1ad76d288b074c1a73fadd': 'zendesk',
+      '601c0115ec36e31f12bec565': 'magento2',
+      '601c018dec36e31f12bec575': 'eBay',
+      '601c01f51cad372eabaaafdf': 'bigcommerce',
+      '601c00abec36e31f12bec551': 'walmart',
     },
     'localhost.io': {
       'Zendesk - NetSuite Connector': 'zendesk',
