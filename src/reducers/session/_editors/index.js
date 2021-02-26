@@ -57,7 +57,7 @@ export default function reducer(state = {}, action) {
         const buildData = processorLogic.buildData(draft[id].editorType);
 
         if (buildData) {
-          if (draft[id].editorType === 'sql') {
+          if (draft[id].editorType === 'sql' || draft[id].editorType === 'databaseMapping') {
             const {data, defaultData} = buildData(original(draft[id]), sampleData);
 
             draft[id].data = data;

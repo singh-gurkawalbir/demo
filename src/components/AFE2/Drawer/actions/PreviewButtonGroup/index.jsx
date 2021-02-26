@@ -7,8 +7,10 @@ import DynaCheckbox from '../../../../DynaForm/fields/checkbox/DynaCheckbox';
 import ButtonGroup from '../../../../ButtonGroup';
 
 const useStyles = makeStyles(theme => ({
-  autoCheckbox: {
-    marginRight: theme.spacing(1),
+  previewButtonGroup: {
+    '& > :not(:last-child)': {
+      marginRight: theme.spacing(1),
+    },
   },
 }));
 
@@ -26,9 +28,8 @@ export default function PreviewButtonGroup({ editorId }) {
   const handleToggle = () => dispatch(actions._editor.toggleAutoPreview(editorId));
 
   return (
-    <ButtonGroup>
+    <ButtonGroup className={classes.previewButtonGroup}>
       <DynaCheckbox
-        className={classes.autoCheckbox}
         id="disableAutoPreview"
         onFieldChange={handleToggle}
         disabled={saveInProgress}

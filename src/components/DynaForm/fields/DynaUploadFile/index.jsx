@@ -23,7 +23,7 @@ function findRowDelimiter(sampleData) {
   return rowDelimiter;
 }
 
-function DynaUploadFile(props) {
+export default function DynaUploadFile(props) {
   const {
     options = '',
     id,
@@ -126,5 +126,3 @@ function DynaUploadFile(props) {
     />
   );
 }
-
-export default DynaUploadFile;

@@ -112,16 +112,14 @@ export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, fl
 
   const formKey = useFormInitWithPermissions({
     fieldMeta,
-
     disabled: isViewMode || isIntegrationApp,
-
   });
 
   return (
     <RightDrawer path="settings" width="medium">
       <DrawerHeader title="Settings" />
       <DrawerContent>
-        <DynaForm fieldMeta={fieldMeta} formKey={formKey} />
+        <DynaForm formKey={formKey} />
       </DrawerContent>
       <DrawerFooter>
         <ButtonGroup>

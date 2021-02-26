@@ -10,11 +10,9 @@ const useStyles = makeStyles({
   },
 });
 
-function Content(props) {
+export default function Content({children}) {
   const classes = useStyles();
-  const { children } = props;
 
   return <div className={classes.wrapper}>{children}</div>;
 }
 
-export default Content;

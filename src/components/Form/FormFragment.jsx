@@ -10,6 +10,9 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'flex-start',
     marginBottom: 16,
+    '& > div > div:last-child': {
+      marginBottom: 0,
+    },
   },
   fieldStyle: {
     flexGrow: '1',

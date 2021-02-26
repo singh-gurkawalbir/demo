@@ -77,10 +77,10 @@ export default function CeligoTable({
   const classes = useStyles();
   const dispatch = useDispatch();
   const [selectedAction, setSelectedAction] = useState(undefined);
-  const { sort = {} } = useSelector(state =>
+  const { sort } = useSelector(state =>
     selectors.filter(state, filterKey)
   );
-  const { order = 'desc', orderBy = 'lastModified' } = sort;
+  const { order, orderBy } = sort || emptyObj;
   const handleSort = useCallback(
     (order, orderBy) => {
       dispatch(actions.patchFilter(filterKey, { sort: { order, orderBy } }));
@@ -91,10 +91,11 @@ export default function CeligoTable({
   const [isAllSelected, setIsAllSelected] = useState(false);
 
   useEffect(() => {
-    if (filterKey) {
-      dispatch(actions.patchFilter(filterKey, { sort: { order, orderBy } }));
+    if (filterKey && !sort) {
+      // when no default order is defined then update lastModified to descending order
+      dispatch(actions.patchFilter(filterKey, {sort: { order: 'desc', orderBy: 'lastModified' }}));
     }
-  }, [dispatch, filterKey, order, orderBy]);
+  }, [dispatch, filterKey, sort]);
   useEffect(() => {
     const hasSelectableResources =
       !isSelectableRow ||

@@ -99,11 +99,7 @@ const SearchParamsModal = props => {
       <div>
         <DynaForm
           formKey={formKey}
-          className={classes.searchParamForm}
-          fieldMeta={{
-            fieldMap,
-            layout,
-          }} />
+          className={classes.searchParamForm} />
       </div>
       <div>
         <DynaSubmit formKey={formKey} onClick={onSaveClick}>Save</DynaSubmit>
