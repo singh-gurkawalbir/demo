@@ -79,7 +79,6 @@ export default function FormPreviewPanel({ editorId }) {
       <div className={classes.formPreviewContainer}>
         <DynaForm
           formKey={editorId}
-          fieldMeta={result.data}
           className={classes.form}
             />
         <div className={classes.testForm}>

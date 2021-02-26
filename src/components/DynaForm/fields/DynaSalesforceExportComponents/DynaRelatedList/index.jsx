@@ -172,7 +172,7 @@ function EditListItemModal(props) {
 
   return (
     <>
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <DynaForm formKey={formKey} />
 
       <DynaSubmit
         formKey={formKey}

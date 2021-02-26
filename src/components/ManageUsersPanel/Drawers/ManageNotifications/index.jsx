@@ -96,7 +96,7 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
   return (
     <LoadResources required resources="notifications,flows,connections">
       <DrawerContent>
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaForm formKey={formKey} />
       </DrawerContent>
 
       <DrawerFooter>

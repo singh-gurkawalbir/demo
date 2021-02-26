@@ -50,7 +50,7 @@ export default function XmlParseRules({ editorId }) {
 
   return (
     <div className={classes.container}>
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <DynaForm formKey={formKey} />
     </div>
   );
 }
