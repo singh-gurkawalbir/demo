@@ -66,8 +66,6 @@ function RouterWrappedContent({ hideSave }) {
     dispatch(actions._editor.clear(editorId));
     onClose();
   };
-    // eslint-disable-next-line
-  console.log('this is a editor title', editorTitle, editorTitle.length);
   const CloseButton = <CloseIconButton onClose={handleClose} editorId={editorId} />;
 
   return (
