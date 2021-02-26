@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +11,7 @@ import metadata from './metadata';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { generateNewId } from '../../../../utils/resource';
 import { SCOPES } from '../../../../sagas/resourceForm';
+import LoadResources from '../../../LoadResources';
 
 const useStyles = makeStyles(theme => ({
   actionChildLicense: {
@@ -23,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DynaChildLicense({ connectorId, resourceId}) {
+export default function DynaChildLicense({ connectorId, resourceId, id, formKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -31,6 +32,8 @@ export default function DynaChildLicense({ connectorId, resourceId}) {
   const sortFilterKey = 'connectorChildLicenses';
 
   const parentLicense = useSelectorMemo(selectors.makeResourceSelector, 'connectorLicenses', resourceId);
+  const parentConnector = useSelectorMemo(selectors.makeResourceSelector, 'connectors', parentLicense?._connectorId);
+  const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', parentConnector?.twoDotZero?._integrationId);
 
   const filter = useSelector(state => selectors.filter(state, sortFilterKey));
   const connectorLicensesFilterConfig = useMemo(
@@ -48,6 +51,13 @@ export default function DynaChildLicense({ connectorId, resourceId}) {
   const childLicenses = useMemo(() => (
     list.resources.filter(license => license._parentId === parentLicense._id)
   ), [list, parentLicense]);
+
+  useEffect(() => {
+    if (!integration?.initChild?.function) {
+      dispatch(actions.form.forceFieldState(formKey)(id, { visible: false}));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleClick = useCallback(() => {
     const newId = generateNewId();
@@ -89,14 +99,16 @@ export default function DynaChildLicense({ connectorId, resourceId}) {
         </IconTextButton>
       </div>
       <div>
-        <CeligoTable
-          data={childLicenses}
-          {...metadata}
-          filterKey={sortFilterKey}
-          actionProps={{
-            resourceType: `connectors/${connectorId}/licenses`,
-          }}
-        />
+        <LoadResources required resources="integrations,licenses,connectors" >
+          <CeligoTable
+            data={childLicenses}
+            {...metadata}
+            filterKey={sortFilterKey}
+            actionProps={{
+              resourceType: `connectors/${connectorId}/licenses`,
+            }}
+          />
+        </LoadResources>
       </div>
     </>
   );
