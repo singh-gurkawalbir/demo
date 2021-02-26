@@ -3096,7 +3096,7 @@ describe('mapping utils', () => {
   });
   test('getApplicationName util', () => {
     const testCases = [
-      {resource: {assistant: 'wiser'}, connection: {}, appName: 'Wiser'},
+      {resource: {assistant: 'clover'}, connection: {}, appName: 'Clover'},
       {resource: {adaptorType: 'FTPImport'}, connection: {}, appName: 'FTP'},
       {resource: {adaptorType: 'S3Import'}, connection: {}, appName: 'Amazon S3'},
       {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'mysql'}}, appName: 'MySQL'},
