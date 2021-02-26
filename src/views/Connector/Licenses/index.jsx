@@ -29,6 +29,7 @@ const useStyles = makeStyles(theme => ({
 
 const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
+  sort: { order: 'desc', orderBy: 'expires' },
   searchBy: [
     'user.email',
     '_integrationId',
@@ -82,11 +83,6 @@ export default function Licenses(props) {
     return () =>
       dispatch(actions.resource.clearCollection('connectorLicenses'));
   }, [connectorId, dispatch]);
-
-  useEffect(() => {
-    dispatch(actions.patchFilter(sortFilterKey, { sort: { order: 'desc', orderBy: 'expires' } }));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleClick = useCallback(() => {
     const newId = generateNewId();
