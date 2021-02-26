@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 import ButtonGroup from '../../ButtonGroup';
 import WarningIcon from '../../icons/WarningIcon';
+import ExpiredIcon from '../../icons/ErrorIcon';
 import actions from '../../../actions';
 import getRoutePath from '../../../utils/routePaths';
 import { INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../../utils/constants';
@@ -28,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     display: 'flex',
-    width: '90%',
+    width: '89%',
     height: 45,
     overflowY: 'auto',
     wordBreak: 'break-word',
@@ -39,7 +40,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-start',
     position: 'absolute',
     bottom: 10,
-    left: 22,
+    left: 42,
   },
   footerSingleBtn: {
     left: 0,
@@ -49,7 +50,7 @@ const useStyles = makeStyles(theme => ({
   warningIcon: {
     color: theme.palette.warning.main,
   },
-  warningIconRed: {
+  expiredIcon: {
     color: theme.palette.error.main,
   },
   closeIconBtn: {
@@ -68,7 +69,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel}) {
+export default function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel}) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -117,7 +118,10 @@ function TileNotification({ content, expired, connectorId, licenseId, integratio
   return (
     <div className={classes.trialExpireWrapper}>
       <div className={classes.contentWrapper}>
-        <WarningIcon className={clsx(classes.warningIcon, {[classes.warningIconRed]: expired})} />
+        {expired ? (
+          <ExpiredIcon className={classes.expiredIcon} />
+        )
+          : <WarningIcon className={classes.warningIcon} />}
         <div className={classes.content}>
           <Typography variant="body2" className={classes.details}>{content}</Typography>
         </div>
@@ -147,5 +151,3 @@ function TileNotification({ content, expired, connectorId, licenseId, integratio
 
   );
 }
-
-export default TileNotification;

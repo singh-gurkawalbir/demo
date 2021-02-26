@@ -99,6 +99,11 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE);
   const defaultFilter = isResolved ? DEFAULT_FILTERS.RESOLVED : DEFAULT_FILTERS.OPEN;
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
+
+  useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  },
+  [defaultFilter, dispatch, filterKey]);
   const errorFilter = useSelector(
     state => selectors.filter(state, filterKey)
   );
@@ -115,7 +120,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const errorConfig = useMemo(() => ({
     flowId,
     resourceId,
-    options: {...errorFilter, isResolved},
+    options: {...(errorFilter || {}), isResolved},
   }), [errorFilter, isResolved, flowId, resourceId]);
 
   const errorObj = useSelectorMemo(selectors.makeResourceErrorsSelector, errorConfig);
@@ -235,7 +240,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
             hasErrors &&
               (
                 <div className={classes.errorsKeywordSearch}>
-                  <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
+                  <KeywordSearch filterKey={filterKey} />
                 </div>
               )
             }

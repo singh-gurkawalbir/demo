@@ -114,7 +114,7 @@ function PreviewInfo({
   );
 }
 
-function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
+export default function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
   const classes = useStyles();
 
   const isPreviewDisabled = useSelector(state =>
@@ -191,5 +191,3 @@ function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
     </div>
   );
 }
-
-export default ExportsPreviewPanel;

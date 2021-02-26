@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function DynaLabel(props) {
+export default function DynaLabel(props) {
   const { label, helpKey, helpText, id, disablePopover = false } = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
@@ -75,4 +75,3 @@ function DynaLabel(props) {
 //   </FieldWrapper>
 // );
 
-export default DynaLabel;

@@ -40,6 +40,9 @@ const useStyles = makeStyles(theme => ({
   saveBtnProfile: {
     marginLeft: theme.spacing(1),
   },
+  profilePanelHeader: {
+    padding: theme.spacing(0, 3, 3, 0),
+  },
 }));
 
 const dateFormats = [{ value: 'MM/DD/YYYY', label: '12/31/1900' },
@@ -250,8 +253,8 @@ export default function ProfileComponent() {
 
   return (
     <>
-      <PanelHeader title="Profile" />
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <PanelHeader title="Profile" className={classes.profilePanelHeader} />
+      <DynaForm formKey={formKey} />
       <DynaSubmit
         formKey={formKey}
         onClick={submitHandler()}

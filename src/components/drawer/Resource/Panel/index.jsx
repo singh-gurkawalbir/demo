@@ -71,7 +71,7 @@ const useStyles = makeStyles(theme => ({
   },
   guideWrapper: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   guideLink: {
     marginRight: theme.spacing(2),

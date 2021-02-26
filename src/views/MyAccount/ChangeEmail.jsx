@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography, makeStyles } from '@material-ui/core';
 import { selectors } from '../../reducers';
@@ -56,6 +56,7 @@ export default function ChangeEmail({ show, onClose }) {
   const error = useSelector(state => selectors.changeEmailFailure(state));
   const success = useSelector(state => selectors.changeEmailSuccess(state));
   const message = useSelector(state => selectors.changeEmailMsg(state));
+  const [isLoading, setIsLoading] = useState(false);
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const handleEmailChangeClick = useCallback(
     formVal => {
@@ -64,11 +65,18 @@ export default function ChangeEmail({ show, onClose }) {
         password: formVal.password,
       };
 
+      setIsLoading(true);
       dispatch(actions.auth.changeEmail(payload));
     },
-    [dispatch]
+    [dispatch, setIsLoading]
   );
 
+  useEffect(() => {
+    if (error || success) {
+      setIsLoading(false);
+    }
+  },
+  [error, success]);
   useEffect(() => {
     // Incase email change is successful, we should close Change Email form
     // and Show notification on top with success message
@@ -82,7 +90,7 @@ export default function ChangeEmail({ show, onClose }) {
     }
   }, [success, message, enqueueSnackbar, onClose]);
   const formKey = useFormInitWithPermissions({
-
+    remount: show,
     fieldMeta: changeEmailFieldMeta,
   });
 
@@ -97,14 +105,14 @@ export default function ChangeEmail({ show, onClose }) {
       {!success && (
         <div className={classes.container}>
           <DynaForm
-            formKey={formKey}
-            fieldMeta={changeEmailFieldMeta} />
+            formKey={formKey} />
           <DynaSubmit
             formKey={formKey}
             data-test="changeEmail"
             id="changeEmail"
+            disabled={isLoading}
             onClick={handleEmailChangeClick}>
-            Change email
+            {isLoading ? 'Changing email...' : 'Change email'}
           </DynaSubmit>
         </div>
       )}

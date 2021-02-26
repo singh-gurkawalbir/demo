@@ -143,7 +143,7 @@ function MappingSettings({disabled, mappingKey}) {
   return (
     <>
       <DrawerContent>
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaForm formKey={formKey} />
       </DrawerContent>
       <DrawerFooter>
         <ButtonGroup>

@@ -55,7 +55,7 @@ export default function OperandSettingsDialog({
     <ModalDialog show>
       <span>Operand Settings</span>
       <>
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaForm formKey={formKey} />
         <DynaSubmit formKey={formKey} data-test="saveOperandSettings" onClick={handleSubmit}>
           Save
         </DynaSubmit>

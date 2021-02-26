@@ -57,7 +57,7 @@ export default function reducer(state = {}, action) {
         const buildData = processorLogic.buildData(draft[id].editorType);
 
         if (buildData) {
-          if (draft[id].editorType === 'sql') {
+          if (draft[id].editorType === 'sql' || draft[id].editorType === 'databaseMapping') {
             const {data, defaultData} = buildData(original(draft[id]), sampleData);
 
             draft[id].data = data;
@@ -132,7 +132,6 @@ export default function reducer(state = {}, action) {
         } else if (draft[id].dataVersion === 1) {
           draft[id].v1Rule = rulePatch;
         }
-        draft[id].lastChange = Date.now();
         if (draft[id].autoEvaluate) {
           draft[id].previewStatus = 'requested';
         }
@@ -149,7 +148,6 @@ export default function reducer(state = {}, action) {
         } else {
           draft[id].data = dataPatch;
         }
-        draft[id].lastChange = Date.now();
         draft[id].lastValidData = draft[id].data;
         if (draft[id].autoEvaluate) {
           draft[id].previewStatus = 'requested';
@@ -175,7 +173,6 @@ export default function reducer(state = {}, action) {
             delete draft[id].formOutput;
           }
         }
-        draft[id].lastChange = Date.now();
         break;
       }
 

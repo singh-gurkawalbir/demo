@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
   },
   message: {
-    padding: theme.spacing(1),
+    margin: theme.spacing(1),
   },
 }));
 
@@ -139,7 +139,6 @@ export default function SettingsFormEditor({
           <div className={classes.formPreviewContainer}>
             <DynaForm
               formKey={formKey}
-              fieldMeta={result.data}
               className={classes.form}
             />
             <div className={classes.testForm}>

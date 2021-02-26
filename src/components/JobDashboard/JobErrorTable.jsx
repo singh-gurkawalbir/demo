@@ -92,7 +92,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function JobErrorTable({
+export default function JobErrorTable({
   rowsPerPage = 50,
   jobErrors,
   errorCount,
@@ -649,5 +649,3 @@ function JobErrorTable({
     </>
   );
 }
-
-export default JobErrorTable;

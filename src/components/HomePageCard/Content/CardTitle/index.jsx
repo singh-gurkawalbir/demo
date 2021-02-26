@@ -11,11 +11,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function CardTitle(props) {
+export default function CardTitle({children}) {
   const classes = useStyles();
-  const { children } = props;
 
   return <div className={classes.root}>{children}</div>;
 }
 
-export default CardTitle;

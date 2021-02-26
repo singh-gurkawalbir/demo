@@ -22,6 +22,7 @@ const getFieldMeta = defaultValue => ({
       label:
         'Choose a script and function name to use for determining AS2 message routing',
       hookType: 'script',
+      hookStage: 'contentBasedFlowRouter',
       // we can "fake" sample data by piggy backing off the default hook and simply
       // override the sample data below.
       preHookData: {
@@ -95,7 +96,7 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
     <ModalDialog show={open} onClose={onClose} disabled={isViewMode}>
       <div>AS2 connection routing rules</div>
       <LoadResources required resources="scripts">
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaForm formKey={formKey} />
         <ButtonGroup>
           <DynaSubmit
             formKey={formKey}

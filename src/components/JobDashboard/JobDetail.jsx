@@ -114,7 +114,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function JobDetail({
+export default function JobDetail({
   job,
   selectedJobs,
   onSelectChange,
@@ -329,5 +329,3 @@ function JobDetail({
     </>
   );
 }
-
-export default JobDetail;

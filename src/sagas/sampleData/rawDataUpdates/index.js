@@ -13,12 +13,12 @@ import {
   isBlobTypeResource,
   isAS2Resource,
   isRestCsvMediaTypeExport,
-  isFileProviderAssistant,
 } from '../../../utils/resource';
 import { exportPreview } from '../utils/previewCalls';
 import { saveRawDataOnResource, removeRawDataOnResource } from './utils';
 import saveRawDataForFileAdaptors from './fileAdaptorUpdates';
 import saveTransformationRulesForNewXMLExport from '../utils/xmlTransformationRulesGenerator';
+import { FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
 
 export function* _fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
   const resourceObj = yield select(
@@ -51,7 +51,7 @@ export function* _fetchAndSaveRawDataForResource({ type, resourceId, tempResourc
   if (
     isFileAdaptor(resourceObj) ||
     isAS2Resource(resourceObj) ||
-    (type === 'exports' && (isRestCsvMediaTypeExport(resourceObj, connectionObj) || isFileProviderAssistant(resourceObj, connectionObj)))
+    (type === 'exports' && (isRestCsvMediaTypeExport(resourceObj, connectionObj)))
   ) {
     return yield call(saveRawDataForFileAdaptors, {
       resourceId,
@@ -186,7 +186,7 @@ export function* onResourceUpdate({
     );
 
     // Whenever an assistant import gets updated, its preview data ( sampleData ) needs to be reset
-    if (importResource.assistant) {
+    if (importResource.assistant && !FILE_PROVIDER_ASSISTANTS.includes(importResource.assistant)) {
       return yield put(
         actions.metadata.resetAssistantImportPreview(resourceId)
       );

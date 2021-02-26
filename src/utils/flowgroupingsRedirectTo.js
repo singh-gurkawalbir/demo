@@ -1,6 +1,6 @@
 import { generatePath } from 'react-router-dom';
 
-const flowgroupingsRedirectTo = (match, flowGroupings, defaultSectionId) => {
+export default function flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId) {
   // this component can only enter either with baseroute/sections/:sectionId or just baseroute
   if (!match) return null;
   const {url, path, params} = match;
@@ -32,6 +32,5 @@ const flowgroupingsRedirectTo = (match, flowGroupings, defaultSectionId) => {
   }
 
   return null;
-};
+}
 
-export default flowgroupingsRedirectTo;
