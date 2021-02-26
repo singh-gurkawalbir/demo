@@ -1108,7 +1108,6 @@ describe('editor sagas', () => {
             fetchScriptContent: true,
           },
         },
-        scriptPatchPath: '/content',
         settingsFormPatchPath: '/settingsForm',
       };
 
