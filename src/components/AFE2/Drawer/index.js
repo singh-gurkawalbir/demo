@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
       whiteSpace: 'nowrap',
     },
   },
-  longTitle: {
+  afe2DrawerHeaderLongTitle: {
     '& > h4': {
       whiteSpace: 'normal',
       wordBreak: 'break-word',
@@ -72,7 +72,7 @@ function RouterWrappedContent({ hideSave }) {
 
   return (
     <>
-      <DrawerHeader title={editorTitle || label} CloseButton={CloseButton} className={clsx(classes.afe2DrawerHeader, {[classes.longTitle]: editorTitle.length > 45 })}>
+      <DrawerHeader title={editorTitle || label} CloseButton={CloseButton} className={clsx(classes.afe2DrawerHeader, {[classes.afe2DrawerHeaderLongTitle]: editorTitle.length > 45 })}>
         <ActionsRibbon editorId={editorId} className={classes.afe2DrawerHeaderRibbon} />
       </DrawerHeader>
 
