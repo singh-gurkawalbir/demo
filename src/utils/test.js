@@ -414,7 +414,7 @@ describe('flowgroupingsRedirectTo', () => {
   });
 });
 
-describe('redirectToMiscellaneousOrFirstFlowGrouping', () => {
+describe('redirectFirstFlowGrouping', () => {
   const baseRoute = '/baseRoute';
 
   test('when attempting an invalid route with no flowGrouping redirect to baseRoute ', () => {
