@@ -100,6 +100,11 @@ export default {
       helpKey: 'pipedrive.connection.http.auth.token.token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
     application: {
       fieldId: 'application',
     },
@@ -120,6 +125,7 @@ export default {
       fields: ['http.auth.type',
         'http.subdomain',
         'http._iClientId',
+        'http.auth.oauth.callbackURL',
         'http.auth.token.token',
       ],
     },
