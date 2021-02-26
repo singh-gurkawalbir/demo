@@ -30,10 +30,10 @@ export default function menuItems(
   userProfile,
   accessLevel,
   integrations,
+  canUserPublish,
   marketplaceConnectors
 ) {
   const isDeveloper = userProfile && userProfile.developer;
-  const canPublish = userProfile && userProfile.allowedToPublish;
   let items = [
     {
       label: 'Home',
@@ -156,7 +156,7 @@ export default function menuItems(
       );
     }
 
-    if (!canPublish) {
+    if (!canUserPublish) {
       resourceItems.children = resourceItems.children.filter(
         i => !(i.label === 'Templates' || i.label === 'Integration apps')
       );
