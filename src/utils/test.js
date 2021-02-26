@@ -458,8 +458,9 @@ describe('redirectToMiscellaneousOrFirstFlowGrouping', () => {
 
     expect(redirectToFirstFlowGrouping(flows, flowGroupings, match)).toEqual(`${baseRoute}/sections/firstGroupId`);
   });
-  test('when attempting a miscellaneous section route with all cateogrized flows then should return null since it is a valid route', () => {
-    // this should not occur
+  test('when attempting a miscellaneous section route with all uncateogrized flows then should return null since it is a valid route', () => {
+    // in this case we will have a misc section
+    /// the util fn will return null since we are attempting a valid route
     const match = {
       path: `${baseRoute}/sections/:sectionId`,
       params: {
@@ -474,7 +475,7 @@ describe('redirectToMiscellaneousOrFirstFlowGrouping', () => {
   });
 
   test('when attempting a miscellaneous section route with no flows then should return firstFlowGroupId', () => {
-    // this should not occur
+    // we will still have all flowGrouping sections
     const match = {
       path: `${baseRoute}/sections/:sectionId`,
       params: {
