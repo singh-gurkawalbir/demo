@@ -1,5 +1,6 @@
 /* global describe, expect, test */
-import { selectors } from '.';
+import reducer, { selectors } from '.';
+import actions from '../actions';
 import { FILTER_KEYS } from '../utils/errorManagement';
 
 const flowId = 'flowId-1234';
@@ -41,6 +42,262 @@ describe('Error Management region selector testcases', () => {
       const selector = selectors.flowJobConnections();
 
       expect(selector(undefined, {})).toEqual([]);
+    });
+    test('should return all the connections used in a flow', () => {
+      const conns = [
+        {
+          _id: 'c1',
+          name: 'conn1',
+        },
+        {
+          _id: 'c2',
+          name: 'conn2',
+        },
+        {
+          _id: 'c3',
+          name: 'conn3',
+        },
+      ];
+
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('connections', conns)
+      );
+
+      const exps = [{
+        _id: 'e1',
+        _connectionId: 'c1',
+      }, {
+        _id: 'e2',
+        _connectionId: 'c2',
+      }];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('exports', exps)
+      );
+
+      const imps = [{
+        _id: 'i1',
+        _connectionId: 'c3',
+      }, {
+        _id: 'i2',
+        _connectionId: 'c1',
+      }];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('imports', imps)
+      );
+
+      const flows = [
+        {
+          _id: 'f1',
+          pageGenerators: [{
+            _exportId: 'e1',
+          }, {
+            _exportId: 'e2',
+          }],
+          pageProcessors: [
+            {
+              _importId: 'i1',
+            },
+          ],
+        },
+      ];
+
+      state = reducer(state,
+        actions.resource.receivedCollection('flows', flows));
+
+      const selector = selectors.flowJobConnections();
+
+      expect(selector(state, 'f1')).toEqual([{
+        id: 'c1',
+        name: 'conn1',
+      }, {
+        id: 'c2',
+        name: 'conn2',
+      }, {
+        id: 'c3',
+        name: 'conn3',
+      }]);
+    });
+
+    test('should return all the connections used in a data-loader flow', () => {
+      const conns = [
+        {
+          _id: 'c1',
+          name: 'conn1',
+        },
+      ];
+
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('connections', conns)
+      );
+
+      const exps = [{
+        _id: 'e1',
+        type: 'simple',
+      }];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('exports', exps)
+      );
+
+      const imps = [{
+        _id: 'i1',
+        _connectionId: 'c1',
+      }];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('imports', imps)
+      );
+
+      const flows = [
+        {
+          _id: 'f1',
+          _exportId: 'e1',
+          _importId: 'i1',
+        },
+      ];
+
+      state = reducer(state,
+        actions.resource.receivedCollection('flows', flows));
+
+      const selector = selectors.flowJobConnections();
+
+      expect(selector(state, 'f1')).toEqual([{
+        id: 'c1',
+        name: 'conn1',
+      }]);
+    });
+
+    test('should return all the connections used in a flow where export configured as pp', () => {
+      const conns = [
+        {
+          _id: 'c1',
+          name: 'conn1',
+        },
+        {
+          _id: 'c2',
+          name: 'conn2',
+        },
+        {
+          _id: 'c3',
+          name: 'conn3',
+        },
+      ];
+
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('connections', conns)
+      );
+
+      const exps = [{
+        _id: 'e1',
+        _connectionId: 'c2',
+      }, {
+        _id: 'e2',
+        _connectionId: 'c3',
+      }];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('exports', exps)
+      );
+
+      const imps = [{
+        _id: 'i1',
+        _connectionId: 'c1',
+      }];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('imports', imps)
+      );
+
+      const flows = [
+        {
+          _id: 'f1',
+          pageGenerators: [{
+            _exportId: 'e1',
+          }],
+          pageProcessors: [{
+            _exportId: 'e2',
+          }, {
+            _importId: 'i1',
+          }],
+        },
+      ];
+
+      state = reducer(state,
+        actions.resource.receivedCollection('flows', flows));
+
+      const selector = selectors.flowJobConnections();
+
+      expect(selector(state, 'f1')).toEqual([{
+        id: 'c1',
+        name: 'conn1',
+      }, {
+        id: 'c2',
+        name: 'conn2',
+      }, {
+        id: 'c3',
+        name: 'conn3',
+      }]);
+    });
+
+    test('should return empty array for invalid flow id', () => {
+      const conns = [
+        {
+          _id: 'c1',
+          name: 'conn1',
+        },
+      ];
+
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('connections', conns)
+      );
+
+      const exps = [{
+        _id: 'e1',
+        _connectionId: 'c2',
+      }];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('exports', exps)
+      );
+
+      const imps = [{
+        _id: 'i1',
+        _connectionId: 'c1',
+      }];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('imports', imps)
+      );
+
+      const flows = [
+        {
+          _id: 'f1',
+          pageGenerators: [{
+            _exportId: 'e1',
+          }],
+        },
+      ];
+
+      state = reducer(state,
+        actions.resource.receivedCollection('flows', flows));
+
+      const selector = selectors.flowJobConnections();
+
+      expect(selector(state, 'invalid-id')).toEqual([]);
     });
   });
 
@@ -551,11 +808,270 @@ describe('Error Management region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.integrationErrorsPerSection()).toEqual({});
     });
+    test('should return integration errors per Section excluding disabled flow', () => {
+      const integrations = [
+        {
+          _id: 'int1',
+          settings: {
+            sections: [{
+              title: 'T1',
+              id: 'secId',
+              flows: [{
+                _id: 'f1',
+              }, {
+                _id: 'f2',
+              }, {
+                _id: 'f3',
+              }, {
+                _id: 'f4',
+              }],
+            }],
+          },
+        },
+      ];
+
+      let state = reducer(undefined, actions.resource.receivedCollection('integrations', integrations));
+
+      const flows = [
+        {
+          _id: 'f1',
+        },
+        {
+          _id: 'f2',
+        },
+        {
+          _id: 'f3',
+        },
+        {
+          _id: 'f4',
+          disabled: true,
+        },
+      ];
+
+      state = reducer(state, actions.resource.receivedCollection('flows', flows));
+
+      state = reducer(state, actions.errorManager.integrationErrors.request({ integrationId: 'int1'}));
+      state = reducer(state, actions.errorManager.integrationErrors.received({ integrationId: 'int1',
+        integrationErrors: [
+          {
+            _flowId: 'f1',
+            numError: 10,
+          },
+          {
+            _flowId: 'f2',
+            numError: 20,
+          },
+          {
+            _flowId: 'f3',
+            numError: 5,
+          },
+          {
+            _flowId: 'f4',
+            numError: 50,
+          },
+        ],
+      }));
+
+      expect(selectors.integrationErrorsPerSection(state, 'int1')).toEqual({
+        T1: 35,
+      });
+    });
+
+    test('should return integration errors per Section if multiple sections exists', () => {
+      const integrations = [
+        {
+          _id: 'int1',
+          settings: {
+            sections: [{
+              title: 'Section1',
+              id: 'secId',
+              flows: [{
+                _id: 'f1',
+              }, {
+                _id: 'f2',
+              }],
+            }, {
+              title: 'Section2',
+              id: 'secId2',
+              flows: [{
+                _id: 'f3',
+              }, {
+                _id: 'f4',
+              }],
+            }],
+          },
+        },
+      ];
+
+      let state = reducer(undefined, actions.resource.receivedCollection('integrations', integrations));
+
+      const flows = [
+        {
+          _id: 'f1',
+        },
+        {
+          _id: 'f2',
+        },
+        {
+          _id: 'f3',
+        },
+        {
+          _id: 'f4',
+        },
+      ];
+
+      state = reducer(state, actions.resource.receivedCollection('flows', flows));
+
+      state = reducer(state, actions.errorManager.integrationErrors.request({ integrationId: 'int1'}));
+      state = reducer(state, actions.errorManager.integrationErrors.received({ integrationId: 'int1',
+        integrationErrors: [
+          {
+            _flowId: 'f1',
+            numError: 10,
+          },
+          {
+            _flowId: 'f2',
+            numError: 20,
+          },
+          {
+            _flowId: 'f3',
+            numError: 5,
+          },
+          {
+            _flowId: 'f4',
+            numError: 50,
+          },
+        ],
+      }));
+
+      expect(selectors.integrationErrorsPerSection(state, 'int1')).toEqual({
+        Section1: 30,
+        Section2: 55,
+      });
+    });
+
+    test('should return empty object if integration doesnot exist', () => {
+      const integrations = [
+        {
+          _id: 'int1',
+        },
+      ];
+
+      const state = reducer(undefined, actions.resource.receivedCollection('integrations', integrations));
+
+      expect(selectors.integrationErrorsPerSection(state, 'int2')).toEqual({});
+    });
   });
 
   describe('selectors.integrationErrorsPerStore test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.integrationErrorsPerStore()).toEqual({});
+    });
+
+    test('should return emptyObject if integration doesn\'t support multistore', () => {
+      const integrations = [{
+        _id: 'intid',
+        settings: {
+          supportsMultiStore: false,
+        },
+      }];
+
+      const state = actions.resource.receivedCollection('integrations', integrations);
+
+      expect(selectors.integrationErrorsPerStore(state, 'intid')).toEqual({});
+    });
+    test('should return integration errors per store if integration supports multiStore', () => {
+      const integrations = [{
+        _id: 'intid',
+        settings: {
+          supportsMultiStore: true,
+          sections: [{
+            title: 'DBA',
+            id: 'sec1',
+            sections: [{
+              title: 'T1',
+              id: 'secId',
+              flows: [{
+                _id: 'f1',
+              }, {
+                _id: 'f2',
+              }],
+            }],
+          }, {
+            title: 'WF',
+            id: 'sec2',
+            sections: [{
+              title: 'T2',
+              id: 'secId',
+              flows: [{
+                _id: 'f3',
+              }, {
+                _id: 'f4',
+              }],
+            }],
+          }],
+        },
+      }];
+
+      let state = reducer(undefined,
+        actions.resource.receivedCollection('integrations', integrations)
+      );
+      const flows = [
+        {
+          _id: 'f1',
+        },
+        {
+          _id: 'f2',
+        },
+        {
+          _id: 'f3',
+        },
+        {
+          _id: 'f4',
+          disabled: true,
+        },
+      ];
+
+      state = reducer(state, actions.resource.receivedCollection('flows', flows));
+
+      state = reducer(state, actions.errorManager.integrationErrors.request({ integrationId: 'intid'}));
+      state = reducer(state, actions.errorManager.integrationErrors.received({ integrationId: 'intid',
+        integrationErrors: [
+          {
+            _flowId: 'f1',
+            numError: 10,
+          },
+          {
+            _flowId: 'f2',
+            numError: 20,
+          },
+          {
+            _flowId: 'f3',
+            numError: 5,
+          },
+          {
+            _flowId: 'f4',
+            numError: 50,
+          },
+        ],
+      }));
+
+      expect(selectors.integrationErrorsPerStore(state, 'intid')).toEqual({
+        sec1: 30,
+        sec2: 5,
+      });
+    });
+
+    test('should return empty object if integration doesn\'t exist', () => {
+      const integrations = [
+        {
+          _id: 'int1',
+        },
+      ];
+
+      const state = reducer(undefined, actions.resource.receivedCollection('integrations', integrations));
+
+      expect(selectors.integrationErrorsPerStore(state, 'int2')).toEqual({});
     });
   });
 

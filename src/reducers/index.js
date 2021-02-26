@@ -2073,7 +2073,7 @@ selectors.integrationAppFlowIds = (state, integrationId, storeId) => {
 
         return flowStore
           ? flowStore === store.label
-          : flows.indexOf(f._id) > -1;
+          : map(flows, '_id').indexOf(f._id) > -1;
       });
 
       return map(storeFlows.length ? storeFlows : flows,
