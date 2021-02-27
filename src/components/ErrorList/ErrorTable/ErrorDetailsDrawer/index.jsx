@@ -20,7 +20,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   const errorConfig = useMemo(() => ({
     flowId,
     resourceId,
-    options: { isResolved },
+    isResolved,
   }), [isResolved, flowId, resourceId]);
 
   const errorObj = useSelectorMemo(selectors.makeResourceErrorsSelector, errorConfig);

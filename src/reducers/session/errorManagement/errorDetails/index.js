@@ -192,11 +192,14 @@ export default (state = {}, action) => {
 
 export const selectors = {};
 
-selectors.getErrors = (state, { flowId, resourceId, errorType }) =>
-  state?.[flowId]?.[resourceId]?.[errorType] || defaultObject;
+selectors.errorDetails = (state, { flowId, resourceId, isResolved }) => {
+  const errorType = isResolved ? 'resolved' : 'open';
+
+  return state?.[flowId]?.[resourceId]?.[errorType] || defaultObject;
+};
 
 selectors.hasResourceErrors = (state, options) => {
-  const errorsObj = selectors.getErrors(state, options);
+  const errorsObj = selectors.errorDetails(state, options);
 
   return !!errorsObj.errors?.length;
 };
@@ -219,10 +222,10 @@ selectors.isAnyActionInProgress = (state, { flowId, resourceId, actionType }) =>
 };
 
 selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved, errorIds = [] }) => {
-  const { errors = [] } = selectors.getErrors(state, {
+  const { errors = [] } = selectors.errorDetails(state, {
     flowId,
     resourceId,
-    errorType: isResolved ? 'resolved' : 'open',
+    isResolved,
   });
 
   if (!errorIds.length) return false;

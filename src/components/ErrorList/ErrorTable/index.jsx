@@ -104,10 +104,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = paging || {};
 
   const isAnyActionInProgress = useSelector(state =>
-    selectors.isAnyErrorActionInProgress(state, {
-      flowId,
-      resourceId,
-    })
+    selectors.isAnyActionInProgress(state, { flowId, resourceId })
   );
   const isFlowDisabled = useSelector(state =>
     selectors.resource(state, 'flows', flowId)?.disabled
@@ -116,7 +113,8 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const errorConfig = useMemo(() => ({
     flowId,
     resourceId,
-    options: {filterKey, isResolved},
+    isResolved,
+    filterKey,
   }), [filterKey, isResolved, flowId, resourceId]);
 
   const errorsInCurrPage = useSelectorMemo(selectors.mkResourceErrorsInCurrPageSelector, errorConfig);
@@ -124,7 +122,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const errorObj = useSelectorMemo(selectors.makeResourceErrorsSelector, errorConfig);
 
   const hasErrors = useSelector(
-    state => selectors.hasResourceErrors(state, { flowId, resourceId, errorType })
+    state => selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
   );
 
   if (!errorObj.errors) {

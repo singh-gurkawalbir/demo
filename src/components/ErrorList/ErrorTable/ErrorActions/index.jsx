@@ -57,7 +57,7 @@ const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable }) => {
     const {errors = []} = selectors.errorDetails(state, {
       flowId,
       resourceId,
-      options: { isResolved },
+      isResolved,
     });
 
     return errors.filter(error => !!error.retryDataKey).length;
@@ -66,7 +66,7 @@ const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable }) => {
   const selectedRetriableErrorCount = useSelector(state => selectors.selectedRetryIds(state, {
     flowId,
     resourceId,
-    options: { isResolved },
+    isResolved,
   }).length);
 
   const isRetryInProgress = useSelector(state =>
@@ -96,18 +96,14 @@ const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable }) => {
 const ResolveAction = ({ onClick, flowId, resourceId, disable }) => {
   const classes = useStyles();
   const allErrorCount = useSelector(state => {
-    const {errors = []} = selectors.errorDetails(state, {
-      flowId,
-      resourceId,
-    });
+    const {errors = []} = selectors.errorDetails(state, { flowId, resourceId });
 
     return errors.length;
   });
 
-  const selectedErrorCount = useSelector(state => selectors.selectedErrorIds(state, {
-    flowId,
-    resourceId,
-  }).length);
+  const selectedErrorCount = useSelector(state =>
+    selectors.selectedErrorIds(state, { flowId, resourceId }).length
+  );
 
   const isResolveInProgress = useSelector(state =>
     selectors.isAnyActionInProgress(state, { flowId, resourceId, actionType: 'resolve' })

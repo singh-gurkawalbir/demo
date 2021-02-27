@@ -1,6 +1,6 @@
 /* global describe, expect, test */
 import { selectors } from '.';
-// import { FILTER_KEYS } from '../utils/errorManagement';
+import { FILTER_KEYS } from '../utils/errorManagement';
 
 const flowId = 'flowId-1234';
 const resourceId = 'export-1234';
@@ -81,12 +81,12 @@ describe('Error Management region selector testcases', () => {
       expect(selectors.resourceError({}, {})).toEqual();
     });
     test('should return undefined if the errorId is not passed / passed error id does not exist', () => {
-      expect(selectors.resourceError(sampleState, { flowId, resourceId, options: {}, errorId: 'INVALID_ID'})).toBeUndefined();
-      expect(selectors.resourceError(sampleState, { flowId, resourceId, options: { isResolved: true }, errorId: 'INVALID_ID'})).toBeUndefined();
+      expect(selectors.resourceError(sampleState, { flowId, resourceId, errorId: 'INVALID_ID'})).toBeUndefined();
+      expect(selectors.resourceError(sampleState, { flowId, resourceId, isResolved: true, errorId: 'INVALID_ID'})).toBeUndefined();
     });
     test('should return matched  error object with the errorId passed for both open/resolved errors', () => {
-      expect(selectors.resourceError(sampleState, { flowId, resourceId, options: {}, errorId: '1234'})).toEqual(sampleOpenErrors[0]);
-      expect(selectors.resourceError(sampleState, { flowId, resourceId, options: { isResolved: true }, errorId: '3333'})).toEqual(sampleResolvedErrors[0]);
+      expect(selectors.resourceError(sampleState, { flowId, resourceId, errorId: '1234'})).toEqual(sampleOpenErrors[0]);
+      expect(selectors.resourceError(sampleState, { flowId, resourceId, isResolved: true, errorId: '3333'})).toEqual(sampleResolvedErrors[0]);
     });
   });
 
@@ -153,7 +153,7 @@ describe('Error Management region selector testcases', () => {
       };
 
       expect(selectors.selectedRetryIds(sampleState, { flowId, resourceId })).toEqual(['retry-123', 'retry-456']);
-      expect(selectors.selectedRetryIds(sampleState, { flowId, resourceId, options: { isResolved: true } })).toEqual(['retry-111']);
+      expect(selectors.selectedRetryIds(sampleState, { flowId, resourceId, isResolved: true })).toEqual(['retry-111']);
     });
     test('should return empty list if there are errors selected but not even one of them can be retried', () => {
       const sampleState = {
@@ -165,7 +165,7 @@ describe('Error Management region selector testcases', () => {
       };
 
       expect(selectors.selectedRetryIds(sampleState, { flowId, resourceId })).toEqual([]);
-      expect(selectors.selectedRetryIds(sampleState, { flowId, resourceId, options: { isResolved: true } })).toEqual([]);
+      expect(selectors.selectedRetryIds(sampleState, { flowId, resourceId, isResolved: true })).toEqual([]);
     });
   });
 
@@ -231,7 +231,7 @@ describe('Error Management region selector testcases', () => {
       };
 
       expect(selectors.selectedErrorIds(sampleState, { flowId, resourceId })).toEqual([]);
-      expect(selectors.selectedErrorIds(sampleState, { flowId, resourceId, options: { isResolved: true } })).toEqual([]);
+      expect(selectors.selectedErrorIds(sampleState, { flowId, resourceId, isResolved: true })).toEqual([]);
     });
     test('should return the errorIds for the errors that are selected', () => {
       const sampleState = {
@@ -243,257 +243,63 @@ describe('Error Management region selector testcases', () => {
       };
 
       expect(selectors.selectedErrorIds(sampleState, { flowId, resourceId })).toEqual(['1234', '1111']);
-      expect(selectors.selectedErrorIds(sampleState, { flowId, resourceId, options: { isResolved: true } })).toEqual(['3333', '4444']);
+      expect(selectors.selectedErrorIds(sampleState, { flowId, resourceId, isResolved: true})).toEqual(['3333', '4444']);
     });
   });
 
-  // describe('selectors.isAllErrorsSelected test cases', () => {
-  //   const sampleOpenErrors = [
-  //     { errorId: '1234', selected: true },
-  //     { errorId: '1111', selected: true },
-  //     { errorId: '2222' },
-  //   ];
-  //   const sampleResolvedErrors = [
-  //     { errorId: '3333', selected: true },
-  //     { errorId: '4444', selected: true },
-  //     { errorId: '5555' },
-  //   ];
+  describe('selectors.isAllErrorsSelected test cases', () => {
+    const sampleOpenErrors = [
+      { errorId: '1234', selected: true },
+      { errorId: '1111', selected: true },
+      { errorId: '2222' },
+    ];
+    const sampleResolvedErrors = [
+      { errorId: '3333', selected: true },
+      { errorId: '4444', selected: true },
+      { errorId: '5555' },
+    ];
 
-  //   const sampleOpenErrorsAllSelected = [
-  //     { errorId: '1234', selected: true },
-  //     { errorId: '1111', selected: true },
-  //   ];
-  //   const sampleResolvedErrorsAllSelected = [
-  //     { errorId: '3333', selected: true },
-  //     { errorId: '4444', selected: true },
-  //   ];
+    const sampleOpenErrorsAllSelected = [
+      { errorId: '1234', selected: true },
+      { errorId: '1111', selected: true },
+    ];
+    const sampleResolvedErrorsAllSelected = [
+      { errorId: '3333', selected: true },
+      { errorId: '4444', selected: true },
+    ];
 
-  //   const sampleErrorState = {
-  //     [flowId]: {
-  //       [resourceId]: {
-  //         open: {
-  //           status: 'received',
-  //           errors: sampleOpenErrors,
-  //         },
-  //         resolved: {
-  //           status: 'received',
-  //           errors: sampleResolvedErrors,
-  //         },
-  //       },
-  //     },
-  //   };
-
-  //   test('should not throw any exception for invalid arguments', () => {
-  //     expect(selectors.isAllErrorsSelected({}, {})).toBeFalsy();
-  //   });
-  //   test('should return false if the error list is empty', () => {
-  //     const sampleState = {
-  //       session: {
-  //         errorManagement: {
-  //           errorDetails: {
-  //             [flowId]: {
-  //               [resourceId]: {
-  //                 open: {
-  //                   status: 'received',
-  //                   errors: [],
-  //                 },
-  //                 resolved: {
-  //                   status: 'received',
-  //                   errors: [],
-  //                 },
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     };
-
-  //     expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId })).toBeFalsy();
-  //     expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
-  //   });
-  //   test('should return false if there is no filter and all errors are not selected', () => {
-  //     const sampleState = {
-  //       session: {
-  //         errorManagement: {
-  //           errorDetails: sampleErrorState,
-  //         },
-  //       },
-  //     };
-
-  //     expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId })).toBeFalsy();
-  //     expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
-  //   });
-  //   test('should return true if there is no filter and all errors are selected', () => {
-  //     const sampleState = {
-  //       session: {
-  //         errorManagement: {
-  //           errorDetails: {
-  //             [flowId]: {
-  //               [resourceId]: {
-  //                 open: {
-  //                   status: 'received',
-  //                   errors: sampleOpenErrorsAllSelected,
-  //                 },
-  //                 resolved: {
-  //                   status: 'received',
-  //                   errors: sampleResolvedErrorsAllSelected,
-  //                 },
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     };
-
-  //     expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId })).toBeTruthy();
-  //     expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId, isResolved: true })).toBeTruthy();
-  //   });
-  //   test('should return false if there is search filter and all the filtered errors are not selected ', () => {
-  //     const sampleState = {
-  //       session: {
-  //         errorManagement: {
-  //           errorDetails: {
-  //             [flowId]: {
-  //               [resourceId]: {
-  //                 open: {
-  //                   status: 'received',
-  //                   errors: [
-  //                     { errorId: '9999', message: 'retry failed', selected: true },
-  //                     { errorId: '8888', message: 'invalid hook' },
-  //                     { errorId: '7777', message: 'failed javascript hook', selected: true },
-  //                   ],
-  //                 },
-  //                 resolved: {
-  //                   status: 'received',
-  //                   errors: [
-  //                     { errorId: '1234', message: 'retry failed', selected: true },
-  //                     { errorId: '1111', message: 'invalid transform' },
-  //                     { errorId: '2222', message: 'failed transform', selected: true },
-  //                   ],
-  //                 },
-  //               },
-  //             },
-  //           },
-  //         },
-  //         filters: {
-  //           [FILTER_KEYS.OPEN]: {
-  //             searchBy: ['message'],
-  //             keyword: 'hook',
-  //           },
-  //           [FILTER_KEYS.RESOLVED]: {
-  //             searchBy: ['message'],
-  //             keyword: 'transform',
-  //           },
-  //         },
-  //       },
-  //     };
-
-  //     expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId })).toBeFalsy();
-  //     expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
-  //   });
-  //   test('should return true if there is search filter and all the filtered errors are selected ', () => {
-  //     const sampleState = {
-  //       session: {
-  //         errorManagement: {
-  //           errorDetails: {
-  //             [flowId]: {
-  //               [resourceId]: {
-  //                 open: {
-  //                   status: 'received',
-  //                   errors: [
-  //                     { errorId: '9999', message: 'retry failed'},
-  //                     { errorId: '8888', message: 'invalid hook', selected: true },
-  //                     { errorId: '7777', message: 'failed javascript hook', selected: true },
-  //                   ],
-  //                 },
-  //                 resolved: {
-  //                   status: 'received',
-  //                   errors: [
-  //                     { errorId: '1234', message: 'retry failed' },
-  //                     { errorId: '1111', message: 'invalid transform', selected: true },
-  //                     { errorId: '2222', message: 'failed transform', selected: true },
-  //                   ],
-  //                 },
-  //               },
-  //             },
-  //           },
-  //         },
-  //         filters: {
-  //           [FILTER_KEYS.OPEN]: {
-  //             searchBy: ['message'],
-  //             keyword: 'hook',
-  //           },
-  //           [FILTER_KEYS.RESOLVED]: {
-  //             searchBy: ['message'],
-  //             keyword: 'transform',
-  //           },
-  //         },
-  //       },
-  //     };
-
-  //     expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId })).toBeTruthy();
-  //     expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId, isResolved: true })).toBeTruthy();
-  //   });
-  // });
-
-  describe('selectors.isAnyErrorActionInProgress test cases', () => {
-    const errorDetails = {
-      open: {
-        status: 'received',
-        errors: [
-          { errorId: '9999', message: 'retry failed'},
-          { errorId: '8888', message: 'invalid hook', selected: true },
-          { errorId: '7777', message: 'failed javascript hook', selected: true },
-        ],
-      },
-      resolved: {
-        status: 'received',
-        errors: [
-          { errorId: '1234', message: 'retry failed' },
-          { errorId: '1111', message: 'invalid transform', selected: true },
-          { errorId: '2222', message: 'failed transform', selected: true },
-        ],
+    const sampleErrorState = {
+      [flowId]: {
+        [resourceId]: {
+          open: {
+            status: 'received',
+            errors: sampleOpenErrors,
+          },
+          resolved: {
+            status: 'received',
+            errors: sampleResolvedErrors,
+          },
+        },
       },
     };
 
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isAnyErrorActionInProgress({}, {})).toBeFalsy();
+      expect(selectors.isAllErrorsSelected({}, {})).toBeFalsy();
     });
-    test('should return false if the actions does not exist', () => {
+    test('should return false if the error list is empty', () => {
       const sampleState = {
         session: {
           errorManagement: {
             errorDetails: {
               [flowId]: {
                 [resourceId]: {
-                  ...errorDetails,
-                  actions: {},
-                },
-              },
-            },
-          },
-        },
-      };
-
-      expect(selectors.isAnyErrorActionInProgress(sampleState, { flowId, resourceId })).toBeFalsy();
-    });
-    test('should return false if neither of retry/resolve actions status is requested', () => {
-      const sampleState = {
-        session: {
-          errorManagement: {
-            errorDetails: {
-              [flowId]: {
-                [resourceId]: {
-                  ...errorDetails,
-                  actions: {
-                    retry: {
-                      status: 'received',
-                      count: 44,
-                    },
-                    resolve: {
-                      status: 'received',
-                      count: 50,
-                    },
+                  open: {
+                    status: 'received',
+                    errors: [],
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: [],
                   },
                 },
               },
@@ -502,25 +308,35 @@ describe('Error Management region selector testcases', () => {
         },
       };
 
-      expect(selectors.isAnyErrorActionInProgress(sampleState, { flowId, resourceId })).toBeFalsy();
+      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId })).toBeFalsy();
+      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
     });
-    test('should return true if either of retry/resolve actions status is requested', () => {
+    test('should return false if there is no filter and all errors are not selected', () => {
+      const sampleState = {
+        session: {
+          errorManagement: {
+            errorDetails: sampleErrorState,
+          },
+        },
+      };
+
+      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId })).toBeFalsy();
+      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
+    });
+    test('should return true if there is no filter and all errors are selected', () => {
       const sampleState = {
         session: {
           errorManagement: {
             errorDetails: {
               [flowId]: {
                 [resourceId]: {
-                  ...errorDetails,
-                  actions: {
-                    retry: {
-                      status: 'requested',
-                      count: 44,
-                    },
-                    resolve: {
-                      status: 'received',
-                      count: 50,
-                    },
+                  open: {
+                    status: 'received',
+                    errors: sampleOpenErrorsAllSelected,
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: sampleResolvedErrorsAllSelected,
                   },
                 },
               },
@@ -529,7 +345,94 @@ describe('Error Management region selector testcases', () => {
         },
       };
 
-      expect(selectors.isAnyErrorActionInProgress(sampleState, { flowId, resourceId })).toBeTruthy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeTruthy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeTruthy();
+    });
+    test('should return false if there is search filter and all the filtered errors are not selected ', () => {
+      const sampleState = {
+        session: {
+          errorManagement: {
+            errorDetails: {
+              [flowId]: {
+                [resourceId]: {
+                  open: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '9999', message: 'retry failed', selected: true },
+                      { errorId: '8888', message: 'invalid hook' },
+                      { errorId: '7777', message: 'failed javascript hook', selected: true },
+                    ],
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '1234', message: 'retry failed', selected: true },
+                      { errorId: '1111', message: 'invalid transform' },
+                      { errorId: '2222', message: 'failed transform', selected: true },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          filters: {
+            [FILTER_KEYS.OPEN]: {
+              searchBy: ['message'],
+              keyword: 'hook',
+            },
+            [FILTER_KEYS.RESOLVED]: {
+              searchBy: ['message'],
+              keyword: 'transform',
+            },
+          },
+        },
+      };
+
+      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId })).toBeFalsy();
+      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
+    });
+    test('should return true if there is search filter and all the filtered errors are selected ', () => {
+      const sampleState = {
+        session: {
+          errorManagement: {
+            errorDetails: {
+              [flowId]: {
+                [resourceId]: {
+                  open: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '9999', message: 'retry failed'},
+                      { errorId: '8888', message: 'invalid hook', selected: true },
+                      { errorId: '7777', message: 'failed javascript hook', selected: true },
+                    ],
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '1234', message: 'retry failed' },
+                      { errorId: '1111', message: 'invalid transform', selected: true },
+                      { errorId: '2222', message: 'failed transform', selected: true },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          filters: {
+            [FILTER_KEYS.OPEN]: {
+              searchBy: ['message'],
+              keyword: 'hook',
+            },
+            [FILTER_KEYS.RESOLVED]: {
+              searchBy: ['message'],
+              keyword: 'transform',
+            },
+          },
+        },
+      };
+
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeTruthy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeTruthy();
     });
   });
 

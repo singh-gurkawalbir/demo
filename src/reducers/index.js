@@ -4388,26 +4388,26 @@ selectors.flowJobConnections = () => createSelector(
 );
 
 // Given an errorId, gives back error doc
-selectors.resourceError = (state, { flowId, resourceId, options, errorId }) => {
+selectors.resourceError = (state, { flowId, resourceId, isResolved, errorId }) => {
   const { errors = [] } = selectors.resourceErrors(state, {
     flowId,
     resourceId,
-    options,
+    isResolved,
   });
 
   return errors.find(error => error.errorId === errorId);
 };
 
-selectors.selectedRetryIds = (state, { flowId, resourceId, options = {} }) => {
-  const { errors } = selectors.resourceErrors(state, { flowId, resourceId, options });
+selectors.selectedRetryIds = (state, { flowId, resourceId, isResolved }) => {
+  const { errors } = selectors.resourceErrors(state, { flowId, resourceId, isResolved });
 
   return errors
     .filter(({ selected, retryDataKey }) => selected && !!retryDataKey)
     .map(error => error.retryDataKey);
 };
 
-selectors.selectedErrorIds = (state, { flowId, resourceId, options = {} }) => {
-  const { errors } = selectors.resourceErrors(state, { flowId, resourceId, options });
+selectors.selectedErrorIds = (state, { flowId, resourceId, isResolved }) => {
+  const { errors } = selectors.resourceErrors(state, { flowId, resourceId, isResolved });
 
   return errors.filter(({ selected }) => selected).map(error => error.errorId);
 };
@@ -4417,7 +4417,8 @@ selectors.isAllErrorsSelectedInCurrPage = (state, { flowId, resourceId, isResolv
   const errorsInCurrPage = selectors.resourceErrorsInCurrPage(state, {
     flowId,
     resourceId,
-    options: { filterKey, isResolved },
+    filterKey,
+    isResolved,
   });
   const errorIds = errorsInCurrPage.map(error => error.errorId);
 
@@ -4429,32 +4430,10 @@ selectors.isAllErrorsSelectedInCurrPage = (state, { flowId, resourceId, isResolv
   });
 };
 
-selectors.isAnyErrorActionInProgress = (state, { flowId, resourceId }) => {
-  const isRetryInProgress =
-    selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
-      .status === 'requested';
-  const isResolveInProgress =
-    selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'resolve' })
-      .status === 'requested';
-
-  return isRetryInProgress || isResolveInProgress;
-};
-
-selectors.errorDetails = (state, params) => {
-  const { flowId, resourceId, options = {} } = params;
-  const errorType = options.isResolved ? 'resolved' : 'open';
-
-  return selectors.getErrors(state, {
-    flowId,
-    resourceId,
-    errorType,
-  });
-};
-
 selectors.makeResourceErrorsSelector = () => createSelector(
   selectors.errorDetails,
   (_1, params) => params.options,
-  (state, params) => selectors.filter(state, params?.options?.filterKey),
+  (state, params) => selectors.filter(state, params.filterKey),
   (errorDetails, options, filters) => {
     const filterOptions = {...filters, ...options};
 
@@ -4472,7 +4451,7 @@ selectors.mkResourceErrorsInCurrPageSelector = () => {
 
   return createSelector(
     resourceErrors,
-    (state, params) => selectors.filter(state, params?.options?.filterKey),
+    (state, params) => selectors.filter(state, params.filterKey),
     (allErrors, filter) => {
       const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = filter?.paging || {};
 

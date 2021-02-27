@@ -77,7 +77,7 @@ describe('errorDetails sagas', () => {
           [select(selectors.resourceErrors, {
             flowId,
             resourceId,
-            options: { isResolved: false },
+            isResolved: false,
           }), openErrors],
         ])
         .call(apiCallWithRetry, {
@@ -90,7 +90,7 @@ describe('errorDetails sagas', () => {
           [select(selectors.resourceErrors, {
             flowId,
             resourceId,
-            options: { isResolved: true },
+            isResolved: true,
           }), resolvedErrors],
         ])
         .call(apiCallWithRetry, {
@@ -138,7 +138,7 @@ describe('errorDetails sagas', () => {
           [select(selectors.resourceErrors, {
             flowId,
             resourceId,
-            options: { isResolved: false },
+            isResolved: false,
           }), openErrors],
         ])
         .call(apiCallWithRetry, {
@@ -152,7 +152,7 @@ describe('errorDetails sagas', () => {
           [select(selectors.resourceErrors, {
             flowId,
             resourceId,
-            options: { isResolved: true },
+            isResolved: true,
           }), resolvedErrors],
         ])
         .call(apiCallWithRetry, {
@@ -247,7 +247,7 @@ describe('errorDetails sagas', () => {
           [select(selectors.selectedRetryIds, {
             flowId,
             resourceId,
-            options: { isResolved: undefined },
+            isResolved: false,
           }), retryIds],
         ])
         .call(apiCallWithRetry, {
@@ -268,7 +268,7 @@ describe('errorDetails sagas', () => {
       const retryIds = ['id1', 'id2', 'id3'];
       const error = { status: 422, message: 'error'};
 
-      return expectSaga(retryErrors, { flowId, resourceId, retryIds })
+      return expectSaga(retryErrors, { flowId, resourceId, retryIds, retryAll: false })
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
@@ -295,7 +295,7 @@ describe('errorDetails sagas', () => {
           [select(selectors.resourceErrors, {
             flowId,
             resourceId,
-            options: { isResolved: true },
+            isResolved: true,
           }), { errors }],
         ])
         .put(actions.errorManager.flowErrorDetails.retryReceived({
@@ -329,7 +329,7 @@ describe('errorDetails sagas', () => {
           [select(selectors.resourceErrors, {
             flowId,
             resourceId,
-            options: { isResolved: undefined },
+            isResolved: false,
           }), { errors }],
         ])
         .put(actions.errorManager.flowErrorDetails.retryReceived({
