@@ -115,15 +115,17 @@ export function* deselectAllErrors({ flowId, resourceId, isResolved }) {
 export function* retryErrors({ flowId, resourceId, retryIds = [], isResolved = false, retryAll = false }) {
   let retryDataKeys = retryIds;
 
-  const { errors: allErrors } = yield select(selectors.resourceErrors, {
-    flowId,
-    resourceId,
-    isResolved,
-  });
-
   if (!retryIds.length) {
     if (retryAll) {
-      retryDataKeys = allErrors
+      const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
+      const { errors: allFilteredErrors = [] } = yield select(selectors.resourceErrors, {
+        flowId,
+        resourceId,
+        filterKey,
+        isResolved,
+      });
+
+      retryDataKeys = allFilteredErrors
         .filter(error => !!error.retryDataKey)
         .map(error => error.retryDataKey)
         .slice(0, MAX_ERRORS_TO_RETRY_OR_RESOLVE);
@@ -137,6 +139,12 @@ export function* retryErrors({ flowId, resourceId, retryIds = [], isResolved = f
       retryDataKeys = retryIdList;
     }
   }
+
+  const { errors: allErrors = [] } = yield select(selectors.resourceErrors, {
+    flowId,
+    resourceId,
+    isResolved,
+  });
 
   const errorIds = allErrors
     .filter(error => retryDataKeys.includes(error.retryDataKey))
@@ -202,7 +210,11 @@ export function* resolveErrors({ flowId, resourceId, errorIds = [], resolveAll =
 
   if (!errorIds.length) {
     if (resolveAll) {
-      const { errors: allErrors = [] } = yield select(selectors.resourceErrors, { flowId, resourceId });
+      const { errors: allErrors = [] } = yield select(selectors.resourceErrors, {
+        flowId,
+        resourceId,
+        filterKey: FILTER_KEYS.OPEN,
+      });
 
       errors = allErrors.map(error => error.errorId).slice(0, MAX_ERRORS_TO_RETRY_OR_RESOLVE);
     } else {

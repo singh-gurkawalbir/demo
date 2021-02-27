@@ -7,7 +7,7 @@ import { selectors } from '../../../../reducers';
 import CeligoSelect from '../../../CeligoSelect';
 import actions from '../../../../actions';
 import useConfirmDialog from '../../../ConfirmDialog';
-import { MAX_ERRORS_TO_RETRY_OR_RESOLVE } from '../../../../utils/errorManagement';
+import { MAX_ERRORS_TO_RETRY_OR_RESOLVE, FILTER_KEYS } from '../../../../utils/errorManagement';
 import Spinner from '../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
@@ -31,33 +31,46 @@ const useStyles = makeStyles(theme => ({
     height: theme.spacing(4),
   },
   retryBtn: {
-    minWidth: 90,
+    minWidth: 100,
     marginLeft: 10,
   },
   resolveBtn: {
-    minWidth: 100,
+    minWidth: 115,
   },
   loading: {
-    marginLeft: 2,
     verticalAlign: 'middle',
+  },
+  noPadding: {
+    '& >.MuiSelect-selectMenu': {
+      padding: 0,
+    },
   },
 }));
 
-function getAllErrorsLabel(count) {
+function getAllErrorsLabelToResolve(count) {
   if (count > MAX_ERRORS_TO_RETRY_OR_RESOLVE) {
     return `${MAX_ERRORS_TO_RETRY_OR_RESOLVE} errors`;
   }
 
-  return 'all errors';
+  return 'All errors';
+}
+function getAllErrorsLabelToRetry(count) {
+  if (count > MAX_ERRORS_TO_RETRY_OR_RESOLVE) {
+    return `${MAX_ERRORS_TO_RETRY_OR_RESOLVE} retriable errors`;
+  }
+
+  return 'All retriable errors';
 }
 
 const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable }) => {
   const classes = useStyles();
   const allRetriableErrorCount = useSelector(state => {
-    const {errors = []} = selectors.errorDetails(state, {
+    const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
+    const {errors = []} = selectors.resourceErrors(state, {
       flowId,
       resourceId,
       isResolved,
+      filterKey,
     });
 
     return errors.filter(error => !!error.retryDataKey).length;
@@ -75,19 +88,20 @@ const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable }) => {
 
   return (
     <CeligoSelect
-      className={clsx(classes.actionBtn, classes.retryBtn)}
+      className={clsx(classes.actionBtn, classes.retryBtn, { [classes.noPadding]: disable && !isRetryInProgress })}
       data-test="retryJobs"
       onChange={onClick}
+      disabled={disable}
       displayEmpty
       value="">
-      <MenuItem value="" disabled>
+      <MenuItem value="" disabled >
         Retry { isRetryInProgress && <Spinner size={16} className={classes.loading} />}
       </MenuItem>
       <MenuItem value="selected" disabled={disable || !selectedRetriableErrorCount}>
-        {selectedRetriableErrorCount} selected errors
+        {selectedRetriableErrorCount} retriable errors
       </MenuItem>
       <MenuItem value="all" disabled={disable || !allRetriableErrorCount}>
-        {getAllErrorsLabel(allRetriableErrorCount)}
+        {getAllErrorsLabelToRetry(allRetriableErrorCount)}
       </MenuItem>
     </CeligoSelect>
   );
@@ -96,7 +110,11 @@ const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable }) => {
 const ResolveAction = ({ onClick, flowId, resourceId, disable }) => {
   const classes = useStyles();
   const allErrorCount = useSelector(state => {
-    const {errors = []} = selectors.errorDetails(state, { flowId, resourceId });
+    const {errors = []} = selectors.resourceErrors(state, {
+      flowId,
+      resourceId,
+      filterKey: FILTER_KEYS.OPEN, // resolve action is available only to open errors
+    });
 
     return errors.length;
   });
@@ -111,9 +129,10 @@ const ResolveAction = ({ onClick, flowId, resourceId, disable }) => {
 
   return (
     <CeligoSelect
-      className={clsx(classes.actionBtn, classes.resolveBtn)}
+      className={clsx(classes.actionBtn, classes.resolveBtn, { [classes.noPadding]: disable && !isResolveInProgress })}
       data-test="retryJobs"
       onChange={onClick}
+      disabled={disable}
       displayEmpty
       value="">
       <MenuItem value="" disabled>
@@ -124,7 +143,7 @@ const ResolveAction = ({ onClick, flowId, resourceId, disable }) => {
         {selectedErrorCount} selected errors
       </MenuItem>
       <MenuItem value="all" disabled={disable || !allErrorCount}>
-        {getAllErrorsLabel(allErrorCount)}
+        {getAllErrorsLabelToResolve(allErrorCount)}
       </MenuItem>
     </CeligoSelect>
   );
