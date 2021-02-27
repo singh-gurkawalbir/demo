@@ -86,9 +86,11 @@ const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable }) => {
     selectors.isAnyActionInProgress(state, { flowId, resourceId, actionType: 'retry' })
   );
 
+  const disableRetry = disable || (!selectedRetriableErrorCount && !allRetriableErrorCount);
+
   return (
     <CeligoSelect
-      className={clsx(classes.actionBtn, classes.retryBtn, { [classes.noPadding]: disable && !isRetryInProgress })}
+      className={clsx(classes.actionBtn, classes.retryBtn, { [classes.noPadding]: disableRetry && !isRetryInProgress })}
       data-test="retryJobs"
       onChange={onClick}
       disabled={disable}
@@ -97,10 +99,10 @@ const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable }) => {
       <MenuItem value="" disabled >
         Retry { isRetryInProgress && <Spinner size={16} className={classes.loading} />}
       </MenuItem>
-      <MenuItem value="selected" disabled={disable || !selectedRetriableErrorCount}>
+      <MenuItem value="selected" disabled={!selectedRetriableErrorCount}>
         {selectedRetriableErrorCount} retriable errors
       </MenuItem>
-      <MenuItem value="all" disabled={disable || !allRetriableErrorCount}>
+      <MenuItem value="all" disabled={!allRetriableErrorCount}>
         {getAllErrorsLabelToRetry(allRetriableErrorCount)}
       </MenuItem>
     </CeligoSelect>
@@ -127,9 +129,11 @@ const ResolveAction = ({ onClick, flowId, resourceId, disable }) => {
     selectors.isAnyActionInProgress(state, { flowId, resourceId, actionType: 'resolve' })
   );
 
+  const disableResolve = disable || (!selectedErrorCount && !allErrorCount);
+
   return (
     <CeligoSelect
-      className={clsx(classes.actionBtn, classes.resolveBtn, { [classes.noPadding]: disable && !isResolveInProgress })}
+      className={clsx(classes.actionBtn, classes.resolveBtn, { [classes.noPadding]: disableResolve && !isResolveInProgress })}
       data-test="retryJobs"
       onChange={onClick}
       disabled={disable}
@@ -137,12 +141,11 @@ const ResolveAction = ({ onClick, flowId, resourceId, disable }) => {
       value="">
       <MenuItem value="" disabled>
         Resolve  { isResolveInProgress && <Spinner size={16} className={classes.loading} />}
-
       </MenuItem>
-      <MenuItem value="selected" disabled={disable || !selectedErrorCount}>
+      <MenuItem value="selected" disabled={!selectedErrorCount}>
         {selectedErrorCount} selected errors
       </MenuItem>
-      <MenuItem value="all" disabled={disable || !allErrorCount}>
+      <MenuItem value="all" disabled={!allErrorCount}>
         {getAllErrorsLabelToResolve(allErrorCount)}
       </MenuItem>
     </CeligoSelect>
