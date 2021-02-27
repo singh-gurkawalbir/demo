@@ -1410,7 +1410,7 @@ describe('isAllErrorsSelected selector', () => {
   });
 });
 
-describe('selectors.isAnyActionInProgress test cases', () => {
+describe('isAnyActionInProgress selector', () => {
   const errorDetails = {
     open: {
       status: 'received',
@@ -1554,3 +1554,12 @@ describe('selectors.isAnyActionInProgress test cases', () => {
     expect(selectors.isAnyActionInProgress(sampleState, { flowId, resourceId, actionType: 'INVALID_ACTION_TYPE' })).toBeFalsy();
   });
 });
+
+describe('hasResourceErrors selector', () => {
+
+});
+
+describe('isTraceKeyRetried selector', () => {
+
+});
+

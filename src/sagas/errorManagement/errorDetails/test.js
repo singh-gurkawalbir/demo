@@ -356,6 +356,9 @@ describe('errorDetails sagas', () => {
         }))
         .run();
     });
+    test('should handle retryAll case', () => {
+
+    });
   });
   describe('resolveErrors saga', () => {
     test('should invoke resolve api with passed errorIds or from the selected errors and dispatch resolveReceived action on api success', () => {
@@ -446,6 +449,9 @@ describe('errorDetails sagas', () => {
           errorIds,
         }))
         .run();
+    });
+    test('should handle resolveAll case', () => {
+
     });
   });
   describe('_formatErrors saga', () => {
@@ -600,5 +606,11 @@ describe('errorDetails sagas', () => {
         .call(openExternalUrl, { url: response.signedURL })
         .run();
     });
+  });
+  describe('selectAllErrorDetailsInCurrPage saga test cases', () => {
+
+  });
+  describe('deselectAllErrors saga test cases', () => {
+
   });
 });

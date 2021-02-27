@@ -434,12 +434,13 @@ describe('Error Management region selector testcases', () => {
       expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeTruthy();
       expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeTruthy();
     });
+    test('should handle when paging details are included in filters', () => {
+
+    });
   });
 
-  describe('selectors.errorDetails test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.errorDetails({}, {})).toEqual({});
-    });
+  describe('selectors.resourceErrorsInCurrPage test cases', () => {
+
   });
 
   describe('selectors.makeResourceErrorsSelector test cases', () => {
