@@ -100,8 +100,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const errorFilter = useSelector(
     state => selectors.filter(state, filterKey), shallowEqual
   );
-  const { paging, ...filters} = errorFilter;
-  const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = paging || {};
+  const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = errorFilter.paging || {};
 
   const isAnyActionInProgress = useSelector(state =>
     selectors.isAnyActionInProgress(state, { flowId, resourceId })
@@ -159,28 +158,26 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   );
   const fetchMoreErrors = useCallback(() => fetchErrors(true), [fetchErrors]);
 
-  const handleChangeRowsPerPage = useCallback(event => {
+  const handleChangeRowsPerPage = useCallback(e => {
     dispatch(
       actions.patchFilter(filterKey, {
-        ...filters,
         paging: {
-          ...paging,
-          rowsPerPage: parseInt(event.target.value, 10),
+          ...errorFilter.paging,
+          rowsPerPage: parseInt(e.target.value, 10),
         },
       })
     );
-  }, [dispatch, filters, filterKey, paging]);
+  }, [dispatch, filterKey, errorFilter.paging]);
   const handleChangePage = useCallback(
-    (event, newPage) => dispatch(
+    (e, newPage) => dispatch(
       actions.patchFilter(filterKey, {
-        ...filters,
         paging: {
-          ...paging,
+          ...errorFilter.paging,
           currPage: newPage,
         },
       })
     ),
-    [dispatch, filterKey, filters, paging]
+    [dispatch, filterKey, errorFilter.paging]
   );
   const handleDownload = useCallback(() => {
     history.push(`${match.url}/download/${errorType}`);
@@ -223,9 +220,8 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   useEffect(() => {
     dispatch(
       actions.patchFilter(filterKey, {
-        ...filters,
         paging: {
-          ...paging,
+          ...errorFilter.paging,
           currPage: 0,
         },
       })
@@ -244,6 +240,11 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
     );
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorFilter.keyword]);
+
+  useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // TODO @Raghu: Refactor the pagination related code
   return (
