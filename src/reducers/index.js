@@ -4428,7 +4428,7 @@ selectors.isAllErrorsSelectedInCurrPage = (state, { flowId, resourceId, isResolv
   });
 };
 
-selectors.errorFilter = (state, params) => {
+selectors.errorFilter = (state, params = {}) => {
   const filterKey = params.isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
 
   return selectors.filter(state, filterKey);
@@ -4452,7 +4452,7 @@ selectors.mkResourceFilteredErrorsInCurrPageSelector = () => {
     resourceFilteredErrorDetails,
     selectors.errorFilter,
     (allErrors, errorFilter) => {
-      const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = errorFilter?.paging || {};
+      const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = errorFilter.paging || {};
 
       return allErrors.errors.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
     }

@@ -247,7 +247,7 @@ describe('Error Management region selector testcases', () => {
     });
   });
 
-  describe('selectors.isAllErrorsSelected test cases', () => {
+  describe('selectors.isAllErrorsSelectedInCurrPage test cases', () => {
     const sampleOpenErrors = [
       { errorId: '1234', selected: true },
       { errorId: '1111', selected: true },
@@ -284,7 +284,7 @@ describe('Error Management region selector testcases', () => {
     };
 
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isAllErrorsSelected({}, {})).toBeFalsy();
+      expect(selectors.isAllErrorsSelectedInCurrPage({}, {})).toBeFalsy();
     });
     test('should return false if the error list is empty', () => {
       const sampleState = {
@@ -308,8 +308,8 @@ describe('Error Management region selector testcases', () => {
         },
       };
 
-      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId })).toBeFalsy();
-      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeFalsy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
     });
     test('should return false if there is no filter and all errors are not selected', () => {
       const sampleState = {
@@ -320,10 +320,10 @@ describe('Error Management region selector testcases', () => {
         },
       };
 
-      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId })).toBeFalsy();
-      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeFalsy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
     });
-    test('should return true if there is no filter and all errors are selected', () => {
+    test('should return true if there is no filter and all errors are selected in the first page', () => {
       const sampleState = {
         session: {
           errorManagement: {
@@ -348,7 +348,7 @@ describe('Error Management region selector testcases', () => {
       expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeTruthy();
       expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeTruthy();
     });
-    test('should return false if there is search filter and all the filtered errors are not selected ', () => {
+    test('should return false if there is search filter and all the filtered errors in the current page are not selected ', () => {
       const sampleState = {
         session: {
           errorManagement: {
@@ -388,10 +388,10 @@ describe('Error Management region selector testcases', () => {
         },
       };
 
-      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId })).toBeFalsy();
-      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeFalsy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
     });
-    test('should return true if there is search filter and all the filtered errors are selected ', () => {
+    test('should return true if there is search filter and all the filtered errors in the current page are selected ', () => {
       const sampleState = {
         session: {
           errorManagement: {
@@ -434,13 +434,27 @@ describe('Error Management region selector testcases', () => {
       expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeTruthy();
       expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeTruthy();
     });
-    test('should handle when paging details are included in filters', () => {
+    test('should return false if the current page errors are all not selected', () => {
+
+    });
+    test('should return true if the current page errors are all selected', () => {
 
     });
   });
 
   describe('selectors.resourceFilteredErrorsInCurrPage test cases', () => {
+    test('should return empty array incase of no errors', () => {
 
+    });
+    test('should return empty array incase of no errors in the current page', () => {
+
+    });
+    test('should return expected list of errors in the current page', () => {
+
+    });
+    test('should return expected list of errors filtered by search criteria in the current page', () => {
+
+    });
   });
 
   describe('selectors.mkResourceFilteredErrorDetailsSelector test cases', () => {

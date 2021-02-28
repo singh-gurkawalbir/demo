@@ -356,8 +356,43 @@ describe('errorDetails sagas', () => {
         }))
         .run();
     });
-    test('should handle retryAll case', () => {
+    test('should retry all the filtered errors using resourceFilteredErrorDetails selector when retryAll is true ', () => {
+      const response = { _jobId: 'job-123' };
+      const errors = [
+        { errorId: 'error1', message: 'application error', retryDataKey: 'id1' },
+        { errorId: 'error2', message: 'source error', retryDataKey: 'id2' },
+        { errorId: 'error3', message: 'invalid id', retryDataKey: 'id3' },
+      ];
+      const filteredErrors = [
+        { errorId: 'error1', message: 'application error', retryDataKey: 'id1' },
+        { errorId: 'error2', message: 'source error', retryDataKey: 'id2' },
+      ];
 
+      return expectSaga(retryErrors, { flowId, resourceId, retryAll: true })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), response],
+          [select(selectors.resourceFilteredErrorDetails, {
+            flowId,
+            resourceId,
+            isResolved: false,
+          }), { errors: filteredErrors }],
+          [select(selectors.allResourceErrorDetails, {
+            flowId,
+            resourceId,
+            isResolved: false,
+          }), { errors }],
+        ])
+        .put(actions.errorManager.flowErrorDetails.retryReceived({
+          flowId,
+          resourceId,
+          retryCount: filteredErrors.length,
+        }))
+        .put(actions.errorManager.flowErrorDetails.remove({
+          flowId,
+          resourceId,
+          errorIds: filteredErrors.map(e => e.errorId),
+        }))
+        .run();
     });
   });
   describe('resolveErrors saga', () => {
@@ -450,8 +485,28 @@ describe('errorDetails sagas', () => {
         }))
         .run();
     });
-    test('should handle resolveAll case', () => {
+    test('should resolve all the filtered errors using resourceFilteredErrorDetails selector when resolveAll is true, ', () => {
+      const filteredErrors = [
+        { errorId: 'error1', message: 'application error', retryDataKey: 'id1' },
+        { errorId: 'error2', message: 'source error', retryDataKey: 'id2' },
+      ];
 
+      return expectSaga(resolveErrors, { flowId, resourceId, resolveAll: true })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), undefined],
+          [select(selectors.resourceFilteredErrorDetails, { flowId, resourceId }), { errors: filteredErrors}],
+        ])
+        .put(actions.errorManager.flowErrorDetails.resolveReceived({
+          flowId,
+          resourceId,
+          resolveCount: filteredErrors.length,
+        }))
+        .put(actions.errorManager.flowErrorDetails.remove({
+          flowId,
+          resourceId,
+          errorIds: filteredErrors.map(e => e.errorId),
+        }))
+        .run();
     });
   });
   describe('_formatErrors saga', () => {
@@ -608,9 +663,19 @@ describe('errorDetails sagas', () => {
     });
   });
   describe('selectAllErrorDetailsInCurrPage saga test cases', () => {
+    test('should use resourceFilteredErrorsInCurrPage selector to get filtered errors in current page and dispatch selectErrors action', () => {
 
+    });
+    test('should dispatch selectErrors action with errorIds as empty array when there are no errors in current page', () => {
+
+    });
   });
   describe('deselectAllErrors saga test cases', () => {
+    test('should use selectedErrorIds selector to get all selected errorIds and dispatch selectErrors action for them', () => {
 
+    });
+    test('should not dispatch selectErrors action when there are no errors selected', () => {
+
+    });
   });
 });

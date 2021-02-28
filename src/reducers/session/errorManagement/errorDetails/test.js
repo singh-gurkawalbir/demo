@@ -1556,10 +1556,32 @@ describe('isAnyActionInProgress selector', () => {
 });
 
 describe('hasResourceErrors selector', () => {
+  test('should return false incase of invalid flow/resourceIds given', () => {
 
+  });
+  test('should return false if the passed resource has no open errors', () => {
+
+  });
+  test('should return false if the passed resource has no resolved errors', () => {
+
+  });
+  test('should return true if the passed resource has open errors', () => {
+
+  });
+  test('should return true if the passed resource has resolved errors', () => {
+
+  });
 });
 
 describe('isTraceKeyRetried selector', () => {
+  test('should return false when passed invalid flowId or resourceId or traceKey options', () => {
 
+  });
+  test('should return false if the passed traceKey has not yet been retried', () => {
+
+  });
+  test('should return true if the passed traceKey has already been retried and part of cached traceKey list', () => {
+
+  });
 });
 

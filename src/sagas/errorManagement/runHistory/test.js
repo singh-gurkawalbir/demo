@@ -10,7 +10,13 @@
 // import { requestRunHistory } from '.';
 
 describe('requestRunHistory saga test cases', () => {
-  test('should handle', () => {
+  test('should have updated url with request params if there are filters and make api request to get runHistory', () => {
     expect(true).toBe(true);
+  });
+  test('should make api request without filters and dispatch received action with response', () => {
+
+  });
+  test('should do nothing if the api throws error', () => {
+
   });
 });

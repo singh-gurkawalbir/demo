@@ -22,7 +22,9 @@ export default (state = {}, action) => {
         draft[flowId].data = runHistory || [];
         break;
       case actionTypes.ERROR_MANAGER.RUN_HISTORY.CLEAR:
-        draft[flowId] = {};
+        if (draft[flowId]) {
+          delete draft[flowId];
+        }
         break;
       default:
     }

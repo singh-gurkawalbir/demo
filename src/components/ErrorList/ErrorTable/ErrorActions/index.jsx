@@ -11,18 +11,6 @@ import { MAX_ERRORS_TO_RETRY_OR_RESOLVE } from '../../../../utils/errorManagemen
 import Spinner from '../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
-  spinnerIcon: {
-    marginLeft: theme.spacing(0.5),
-  },
-  btnActions: {
-    height: 32,
-    color: theme.palette.secondary.main,
-    borderColor: theme.palette.secondary.main,
-    '&:hover': {
-      color: theme.palette.primary.main,
-      borderColor: theme.palette.primary.main,
-    },
-  },
   flexContainer: {
     display: 'flex',
   },

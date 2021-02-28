@@ -198,8 +198,8 @@ selectors.allResourceErrorDetails = (state, { flowId, resourceId, isResolved }) 
   return state?.[flowId]?.[resourceId]?.[errorType] || defaultObject;
 };
 
-selectors.hasResourceErrors = (state, options) => {
-  const errorsObj = selectors.allResourceErrorDetails(state, options);
+selectors.hasResourceErrors = (state, { flowId, resourceId, isResolved }) => {
+  const errorsObj = selectors.allResourceErrorDetails(state, { flowId, resourceId, isResolved });
 
   return !!errorsObj.errors?.length;
 };
