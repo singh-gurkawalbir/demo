@@ -439,13 +439,13 @@ describe('Error Management region selector testcases', () => {
     });
   });
 
-  describe('selectors.resourceErrorsInCurrPage test cases', () => {
+  describe('selectors.resourceFilteredErrorsInCurrPage test cases', () => {
 
   });
 
-  describe('selectors.makeResourceErrorsSelector test cases', () => {
+  describe('selectors.mkResourceFilteredErrorDetailsSelector test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      const selector = selectors.makeResourceErrorsSelector();
+      const selector = selectors.mkResourceFilteredErrorDetailsSelector();
 
       expect(selector({}, {})).toEqual({errors: []});
     });

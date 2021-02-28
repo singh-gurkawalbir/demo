@@ -74,7 +74,7 @@ describe('errorDetails sagas', () => {
 
       const test1 = expectSaga(requestErrorDetails, { flowId, resourceId, loadMore: true })
         .provide([
-          [select(selectors.resourceErrors, {
+          [select(selectors.allResourceErrorDetails, {
             flowId,
             resourceId,
             isResolved: false,
@@ -87,7 +87,7 @@ describe('errorDetails sagas', () => {
         .run();
       const test2 = expectSaga(requestErrorDetails, { flowId, resourceId, loadMore: true, isResolved: true })
         .provide([
-          [select(selectors.resourceErrors, {
+          [select(selectors.allResourceErrorDetails, {
             flowId,
             resourceId,
             isResolved: true,
@@ -135,7 +135,7 @@ describe('errorDetails sagas', () => {
       const test1 = expectSaga(requestErrorDetails, { flowId, resourceId, loadMore: true })
         .provide([
           [select(selectors.filter, 'openErrors'), openFilters],
-          [select(selectors.resourceErrors, {
+          [select(selectors.allResourceErrorDetails, {
             flowId,
             resourceId,
             isResolved: false,
@@ -149,7 +149,7 @@ describe('errorDetails sagas', () => {
       const test2 = expectSaga(requestErrorDetails, { flowId, resourceId, loadMore: true, isResolved: true })
         .provide([
           [select(selectors.filter, 'resolvedErrors'), resolvedFilters],
-          [select(selectors.resourceErrors, {
+          [select(selectors.allResourceErrorDetails, {
             flowId,
             resourceId,
             isResolved: true,
@@ -292,7 +292,7 @@ describe('errorDetails sagas', () => {
       return expectSaga(retryErrors, { flowId, resourceId, retryIds, isResolved: true })
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
-          [select(selectors.resourceErrors, {
+          [select(selectors.allResourceErrorDetails, {
             flowId,
             resourceId,
             isResolved: true,
@@ -326,7 +326,7 @@ describe('errorDetails sagas', () => {
       return expectSaga(retryErrors, { flowId, resourceId, retryIds })
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
-          [select(selectors.resourceErrors, {
+          [select(selectors.allResourceErrorDetails, {
             flowId,
             resourceId,
             isResolved: false,

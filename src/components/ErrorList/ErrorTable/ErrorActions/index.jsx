@@ -7,7 +7,7 @@ import { selectors } from '../../../../reducers';
 import CeligoSelect from '../../../CeligoSelect';
 import actions from '../../../../actions';
 import useConfirmDialog from '../../../ConfirmDialog';
-import { MAX_ERRORS_TO_RETRY_OR_RESOLVE, FILTER_KEYS } from '../../../../utils/errorManagement';
+import { MAX_ERRORS_TO_RETRY_OR_RESOLVE } from '../../../../utils/errorManagement';
 import Spinner from '../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
@@ -65,12 +65,10 @@ function getAllErrorsLabelToRetry(count) {
 const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable }) => {
   const classes = useStyles();
   const allRetriableErrorCount = useSelector(state => {
-    const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
-    const {errors = []} = selectors.resourceErrors(state, {
+    const {errors = []} = selectors.resourceFilteredErrorDetails(state, {
       flowId,
       resourceId,
       isResolved,
-      filterKey,
     });
 
     return errors.filter(error => !!error.retryDataKey).length;
@@ -112,11 +110,7 @@ const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable }) => {
 const ResolveAction = ({ onClick, flowId, resourceId, disable }) => {
   const classes = useStyles();
   const allErrorCount = useSelector(state => {
-    const {errors = []} = selectors.resourceErrors(state, {
-      flowId,
-      resourceId,
-      filterKey: FILTER_KEYS.OPEN, // resolve action is available only to open errors
-    });
+    const {errors = []} = selectors.resourceFilteredErrorDetails(state, { flowId, resourceId });
 
     return errors.length;
   });

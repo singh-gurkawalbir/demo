@@ -114,12 +114,11 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
     flowId,
     resourceId,
     isResolved,
-    filterKey,
-  }), [filterKey, isResolved, flowId, resourceId]);
+  }), [isResolved, flowId, resourceId]);
 
-  const errorsInCurrPage = useSelectorMemo(selectors.mkResourceErrorsInCurrPageSelector, errorConfig);
+  const errorsInCurrPage = useSelectorMemo(selectors.mkResourceFilteredErrorsInCurrPageSelector, errorConfig);
 
-  const errorObj = useSelectorMemo(selectors.makeResourceErrorsSelector, errorConfig);
+  const errorObj = useSelectorMemo(selectors.mkResourceFilteredErrorDetailsSelector, errorConfig);
 
   const hasErrors = useSelector(
     state => selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })

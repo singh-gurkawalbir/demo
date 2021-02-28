@@ -1276,11 +1276,11 @@ describe(' Error details in EM 2.0 reducer ', () => {
   });
 });
 
-describe('errorDetails selector ', () => {
+describe('allResourceErrorDetails selector ', () => {
   test('should return default object if the state does not exist on any of the props are invalid', () => {
-    expect(selectors.errorDetails(undefined, {})).toEqual(defaultValue);
-    expect(selectors.errorDetails({}, { flowId, resourceId })).toEqual(defaultValue);
-    expect(selectors.errorDetails({}, { flowId, resourceId, isResolved: true })).toEqual(defaultValue);
+    expect(selectors.allResourceErrorDetails(undefined, {})).toEqual(defaultValue);
+    expect(selectors.allResourceErrorDetails({}, { flowId, resourceId })).toEqual(defaultValue);
+    expect(selectors.allResourceErrorDetails({}, { flowId, resourceId, isResolved: true })).toEqual(defaultValue);
   });
   test('should return the state error details open&resolved error details', () => {
     const expectedOpenErrors = {
@@ -1298,8 +1298,8 @@ describe('errorDetails selector ', () => {
       updated: true,
     };
 
-    expect(selectors.errorDetails(errorStateWithActions, { flowId, resourceId })).toEqual(expectedOpenErrors);
-    expect(selectors.errorDetails(errorStateWithActions, { flowId, resourceId, isResolved: true })).toEqual(expectedResolvedErrors);
+    expect(selectors.allResourceErrorDetails(errorStateWithActions, { flowId, resourceId })).toEqual(expectedOpenErrors);
+    expect(selectors.allResourceErrorDetails(errorStateWithActions, { flowId, resourceId, isResolved: true })).toEqual(expectedResolvedErrors);
   });
 });
 

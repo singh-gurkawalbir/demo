@@ -4389,7 +4389,7 @@ selectors.flowJobConnections = () => createSelector(
 
 // Given an errorId, gives back error doc
 selectors.resourceError = (state, { flowId, resourceId, isResolved, errorId }) => {
-  const { errors = [] } = selectors.resourceErrors(state, {
+  const { errors = [] } = selectors.allResourceErrorDetails(state, {
     flowId,
     resourceId,
     isResolved,
@@ -4399,7 +4399,7 @@ selectors.resourceError = (state, { flowId, resourceId, isResolved, errorId }) =
 };
 
 selectors.selectedRetryIds = (state, { flowId, resourceId, isResolved }) => {
-  const { errors } = selectors.resourceErrors(state, { flowId, resourceId, isResolved });
+  const { errors = [] } = selectors.allResourceErrorDetails(state, { flowId, resourceId, isResolved });
 
   return errors
     .filter(({ selected, retryDataKey }) => selected && !!retryDataKey)
@@ -4407,17 +4407,15 @@ selectors.selectedRetryIds = (state, { flowId, resourceId, isResolved }) => {
 };
 
 selectors.selectedErrorIds = (state, { flowId, resourceId, isResolved }) => {
-  const { errors } = selectors.resourceErrors(state, { flowId, resourceId, isResolved });
+  const { errors = [] } = selectors.allResourceErrorDetails(state, { flowId, resourceId, isResolved });
 
   return errors.filter(({ selected }) => selected).map(error => error.errorId);
 };
 
 selectors.isAllErrorsSelectedInCurrPage = (state, { flowId, resourceId, isResolved }) => {
-  const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
-  const errorsInCurrPage = selectors.resourceErrorsInCurrPage(state, {
+  const errorsInCurrPage = selectors.resourceFilteredErrorsInCurrPage(state, {
     flowId,
     resourceId,
-    filterKey,
     isResolved,
   });
   const errorIds = errorsInCurrPage.map(error => error.errorId);
@@ -4430,37 +4428,38 @@ selectors.isAllErrorsSelectedInCurrPage = (state, { flowId, resourceId, isResolv
   });
 };
 
-selectors.makeResourceErrorsSelector = () => createSelector(
-  selectors.errorDetails,
-  (_1, params) => params.options,
-  (state, params) => selectors.filter(state, params.filterKey),
-  (errorDetails, options, filters) => {
-    const filterOptions = {...filters, ...options};
+selectors.errorFilter = (state, params) => {
+  const filterKey = params.isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
 
-    return {
-      ...errorDetails,
-      errors: getFilteredErrors(errorDetails.errors, filterOptions),
-    };
-  }
+  return selectors.filter(state, filterKey);
+};
+
+selectors.mkResourceFilteredErrorDetailsSelector = () => createSelector(
+  selectors.allResourceErrorDetails,
+  selectors.errorFilter,
+  (errorDetails, errorFilter) => ({
+    ...errorDetails,
+    errors: getFilteredErrors(errorDetails.errors, errorFilter),
+  })
 );
 
-selectors.resourceErrors = selectors.makeResourceErrorsSelector();
+selectors.resourceFilteredErrorDetails = selectors.mkResourceFilteredErrorDetailsSelector();
 
-selectors.mkResourceErrorsInCurrPageSelector = () => {
-  const resourceErrors = selectors.makeResourceErrorsSelector();
+selectors.mkResourceFilteredErrorsInCurrPageSelector = () => {
+  const resourceFilteredErrorDetails = selectors.mkResourceFilteredErrorDetailsSelector();
 
   return createSelector(
-    resourceErrors,
-    (state, params) => selectors.filter(state, params.filterKey),
-    (allErrors, filter) => {
-      const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = filter?.paging || {};
+    resourceFilteredErrorDetails,
+    selectors.errorFilter,
+    (allErrors, errorFilter) => {
+      const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = errorFilter?.paging || {};
 
       return allErrors.errors.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
     }
   );
 };
 
-selectors.resourceErrorsInCurrPage = selectors.mkResourceErrorsInCurrPageSelector();
+selectors.resourceFilteredErrorsInCurrPage = selectors.mkResourceFilteredErrorsInCurrPageSelector();
 
 /**
  * Returns error count per category in a store for IA 1.0
