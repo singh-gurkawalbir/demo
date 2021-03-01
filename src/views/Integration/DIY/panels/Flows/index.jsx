@@ -18,7 +18,7 @@ import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 import StatusCircle from '../../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../reducers';
-import redirectToCorrectGroupingRoute from '../../../../../utils/flowgroupingsRedirectTo';
+import { redirectToFirstFlowGrouping } from '../../../../../utils/flowgroupingsRedirectTo';
 import { getTemplateUrlName } from '../../../../../utils/template';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
@@ -107,62 +107,34 @@ const getBasePath = match => {
     .join('/');
 };
 const tilesFilterConfig = { type: 'tiles'};
-
-const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
+// when there are flowGroupings and there are uncategorized flows do you have a MiscellaneousSection
+export const shouldHaveMiscellaneousSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId);
+export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
 const FlowListingTable = ({
   flows,
   filterKey,
   flowTableMeta,
   actionProps,
-  sectionId,
+  integrationId,
 }) => {
+  const match = useRouteMatch();
+  const classes = useStyles();
+
+  const sectionId = match?.params?.sectionId;
+  const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
+  const hasMiscellaneousSection = shouldHaveMiscellaneousSection(flowGroupingsSections, flows);
+
+  const allSections = useMemo(() => {
+    if (hasMiscellaneousSection) {
+      return [...flowGroupingsSections, {title: 'Miscellaneous', sectionId: MISCELLANEOUS_SECTION_ID}];
+    }
+
+    return flowGroupingsSections;
+  },
+  [flowGroupingsSections, hasMiscellaneousSection]);
   const groupedFlows = useMemo(() => flows.filter(flow => sectionId === MISCELLANEOUS_SECTION_ID ? !flow._flowGroupingId
     : flow._flowGroupingId === sectionId
   ), [flows, sectionId]);
-
-  return (
-    <CeligoTable
-      data-public
-      data={groupedFlows}
-      filterKey={filterKey}
-      {...flowTableMeta}
-      actionProps={actionProps}
-/>
-  );
-};
-
-const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
-  const match = useRouteMatch();
-  const classes = useStyles();
-  const history = useHistory();
-  const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
-  const allSections = useMemo(() =>
-    flowGroupingsSections && [...flowGroupingsSections, {title: 'Miscellaneous', sectionId: MISCELLANEOUS_SECTION_ID}],
-  [flowGroupingsSections]);
-
-  const redirectTo = redirectToCorrectGroupingRoute(match, flowGroupingsSections, MISCELLANEOUS_SECTION_ID);
-
-  useEffect(() => {
-    const shouldRedirect = !!redirectTo;
-
-    if (shouldRedirect) {
-      history.replace(redirectTo);
-    }
-  }, [history, redirectTo]);
-
-  if (!flowGroupingsSections) {
-    return (
-      <CeligoTable
-        data-public
-        data={flows}
-        filterKey={filterKey}
-        {...flowTableMeta}
-        actionProps={actionProps}
-/>
-    );
-  }
-
-  const sectionId = match?.params?.sectionId;
 
   return (
     <Grid container wrap="nowrap" className={classes.flowsGroupContainer}>
@@ -184,17 +156,54 @@ const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
       </Grid>
       <Grid item className={classes.content}>
         <LoadResources required resources="flows">
-
-          <FlowListingTable
-            flows={flows}
+          <CeligoTable
+            data-public
+            data={groupedFlows}
             filterKey={filterKey}
-            flowTableMeta={flowTableMeta}
+            {...flowTableMeta}
             actionProps={actionProps}
-            sectionId={sectionId}
-        />
+          />
         </LoadResources>
       </Grid>
     </Grid>
+  );
+};
+
+const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
+  const match = useRouteMatch();
+  const history = useHistory();
+  const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
+
+  const redirectTo = redirectToFirstFlowGrouping(flows, flowGroupingsSections, match);
+
+  useEffect(() => {
+    const shouldRedirect = !!redirectTo;
+
+    if (shouldRedirect) {
+      history.replace(redirectTo);
+    }
+  }, [history, redirectTo]);
+
+  if (!flowGroupingsSections) {
+    return (
+      <CeligoTable
+        data-public
+        data={flows}
+        filterKey={filterKey}
+        {...flowTableMeta}
+        actionProps={actionProps}
+/>
+    );
+  }
+
+  return (
+    <FlowListingTable
+      flows={flows}
+      filterKey={filterKey}
+      flowTableMeta={flowTableMeta}
+      actionProps={actionProps}
+      integrationId={integrationId}
+    />
   );
 };
 const defaultFilter = {
