@@ -162,7 +162,6 @@ describe('settingsForm processor logic', () => {
         },
         insertStubKey: 'formInit',
         originalData: { fieldMap: {}, layout: { fields: [] } },
-        scriptPatchPath: '/content',
         settingsFormPatchPath: '/settingsForm',
       };
 
@@ -209,7 +208,6 @@ describe('settingsForm processor logic', () => {
         },
         insertStubKey: 'formInit',
         originalData: JSON.stringify(parsedData, null, 2),
-        scriptPatchPath: '/content',
         settingsFormPatchPath: '/settingsForm',
       };
 
