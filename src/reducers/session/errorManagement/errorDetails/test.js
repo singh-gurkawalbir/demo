@@ -1556,32 +1556,119 @@ describe('isAnyActionInProgress selector', () => {
 });
 
 describe('hasResourceErrors selector', () => {
-  test('should return false incase of invalid flow/resourceIds given', () => {
+  const errorDetails = {
+    open: {
+      status: 'received',
+      errors: [
+        { errorId: '9999', message: 'retry failed'},
+        { errorId: '8888', message: 'invalid hook', selected: true },
+        { errorId: '7777', message: 'failed javascript hook', selected: true },
+      ],
+    },
+    resolved: {
+      status: 'received',
+      errors: [
+        { errorId: '1234', message: 'retry failed' },
+        { errorId: '1111', message: 'invalid transform', selected: true },
+        { errorId: '2222', message: 'failed transform', selected: true },
+      ],
+    },
+  };
 
+  test('should return false incase of invalid flow/resourceIds given', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {
+          ...errorDetails,
+        },
+      },
+    };
+
+    expect(selectors.hasResourceErrors(sampleState, {})).toBeFalsy();
+    expect(selectors.hasResourceErrors(sampleState, {flowId: 'INVALID_FLOW_ID', resourceId: 'INVALID_RESOURCE_ID'})).toBeFalsy();
   });
   test('should return false if the passed resource has no open errors', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {
+          open: { status: 'received', data: {}},
+          resolved: errorDetails.resolved,
+        },
+      },
+    };
 
+    expect(selectors.hasResourceErrors(sampleState, {flowId, resourceId})).toBeFalsy();
   });
   test('should return false if the passed resource has no resolved errors', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {
+          open: errorDetails.open,
+          resolved: { status: 'received', data: {}},
+        },
+      },
+    };
 
+    expect(selectors.hasResourceErrors(sampleState, {flowId, resourceId, isResolved: true})).toBeFalsy();
   });
   test('should return true if the passed resource has open errors', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {
+          ...errorDetails,
+        },
+      },
+    };
 
+    expect(selectors.hasResourceErrors(sampleState, {flowId, resourceId})).toBeTruthy();
   });
   test('should return true if the passed resource has resolved errors', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {
+          ...errorDetails,
+        },
+      },
+    };
 
+    expect(selectors.hasResourceErrors(sampleState, {flowId, resourceId, isResolved: true})).toBeTruthy();
   });
 });
 
 describe('isTraceKeyRetried selector', () => {
-  test('should return false when passed invalid flowId or resourceId or traceKey options', () => {
+  const sampleState = {
+    [flowId]: {
+      [resourceId]: {
+        open: {
+          status: 'received',
+          errors: openErrors,
+          nextPageURL: sampleOpenErrorsNextPageURL,
+        },
+        resolved: {
+          status: 'received',
+          errors: resolvedErrors,
+          nextPageURL: sampleResolvedErrorsNextPageURL,
+        },
+        actions: {
+          retry: {
+            traceKeys: ['id1', 'id2'],
+            count: 100,
+          },
+        },
+      },
+    },
+  };
 
+  test('should return false when passed invalid flowId or resourceId or traceKey options', () => {
+    expect(selectors.isTraceKeyRetried(sampleState, {})).toBeFalsy();
+    expect(selectors.isTraceKeyRetried(sampleState, {flowId: 'INVALID_FLOW_ID', resourceId: 'INVALID_RESOURCE_ID'})).toBeFalsy();
+    expect(selectors.isTraceKeyRetried(sampleState, { flowId, resourceId })).toBeFalsy();
   });
   test('should return false if the passed traceKey has not yet been retried', () => {
-
+    expect(selectors.isTraceKeyRetried(sampleState, { flowId, resourceId, traceKey: 'id4' })).toBeFalsy();
   });
   test('should return true if the passed traceKey has already been retried and part of cached traceKey list', () => {
-
+    expect(selectors.isTraceKeyRetried(sampleState, { flowId, resourceId, traceKey: 'id2' })).toBeTruthy();
   });
 });
 
