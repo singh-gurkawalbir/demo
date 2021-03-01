@@ -1,6 +1,8 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import clsx from 'clsx';
 import { useParams, useRouteMatch, Redirect } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
@@ -14,9 +16,33 @@ import actions from '../../../actions';
 import ActionsRibbon from './ActionsRibbon';
 import { useDrawerContext } from '../../drawer/Right/DrawerContext';
 
+const useStyles = makeStyles(theme => ({
+  afe2DrawerHeader: {
+    '& > h4': {
+      whiteSpace: 'nowrap',
+    },
+  },
+  afe2DrawerHeaderLongTitle: {
+    '& > h4': {
+      whiteSpace: 'normal',
+      wordBreak: 'break-word',
+    },
+  },
+  afe2DrawerHeaderRibbon: {
+    '& > * .MuiToggleButtonGroup-root': {
+      marginRight: theme.spacing(0.5),
+      '& > button': {
+        minWidth: 'unset',
+      },
+    },
+  },
+
+}));
+
 // hideSave: This is currently only used for the playground where we do not
 // want the user to have any options to save the editor.
 function RouterWrappedContent({ hideSave }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const { editorId } = useParams();
@@ -40,13 +66,12 @@ function RouterWrappedContent({ hideSave }) {
     dispatch(actions._editor.clear(editorId));
     onClose();
   };
-
   const CloseButton = <CloseIconButton onClose={handleClose} editorId={editorId} />;
 
   return (
     <>
-      <DrawerHeader title={editorTitle || label} CloseButton={CloseButton}>
-        <ActionsRibbon editorId={editorId} />
+      <DrawerHeader title={editorTitle || label} CloseButton={CloseButton} className={clsx(classes.afe2DrawerHeader, {[classes.afe2DrawerHeaderLongTitle]: editorTitle.length > 45 })}>
+        <ActionsRibbon editorId={editorId} className={classes.afe2DrawerHeaderRibbon} />
       </DrawerHeader>
 
       <DrawerContent>

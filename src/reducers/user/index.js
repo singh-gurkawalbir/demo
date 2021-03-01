@@ -224,13 +224,6 @@ selectors.accountSummary = createSelector(
 );
 // #endregion ACCOUNT
 
-selectors.userPermissions = createSelector(
-  state => selectors.userPreferences(state)?.defaultAShareId,
-  state => state?.profile?.allowedToPublish,
-  state => state?.org?.accounts,
-  (defaultAShareId, allowedToPublish, accounts) => fromAccounts.permissions(accounts, defaultAShareId, { allowedToPublish })
-);
-
 selectors.hasManageIntegrationAccess = (state, integrationId) => {
   const userPermissions = selectors.userPermissions(state);
   const isAccountOwner = [USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(userPermissions.accessLevel);
@@ -309,4 +302,12 @@ selectors.licenses = createSelector(
     return fromAccounts.licenses(accounts, defaultAShareId);
   }
 );
+
+selectors.userPermissions = createSelector(
+  state => selectors.userPreferences(state)?.defaultAShareId,
+  selectors.canUserPublish,
+  state => state?.org?.accounts,
+  (defaultAShareId, allowedToPublish, accounts) => fromAccounts.permissions(accounts, defaultAShareId, { allowedToPublish })
+);
+
 // #endregion PUBLIC USER SELECTORS
