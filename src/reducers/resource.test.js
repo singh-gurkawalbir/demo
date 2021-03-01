@@ -3468,6 +3468,278 @@ describe('resource region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.auditLogs({}, 'flows', 'id')).toEqual({count: 0, logs: [], totalCount: 0});
     });
+    const logs = [
+      {
+        _id: 'l1',
+        resourceType: 'flow',
+        resourceId: 'f1',
+      },
+      {
+        _id: 'l2',
+        resourceType: 'flow',
+        resourceId: 'f1',
+      },
+      {
+        _id: 'l3',
+        resourceType: 'flow',
+        resourceId: 'f1',
+      },
+      {
+        _id: 'l4',
+        resourceType: 'flow',
+        resourceId: 'f1',
+      },
+    ];
+
+    const expectedResult = [
+      {
+        _id: 'l1',
+        resourceType: 'flow',
+        resourceId: 'f1',
+        fieldChange: {},
+      },
+      {
+        _id: 'l2',
+        resourceType: 'flow',
+        resourceId: 'f1',
+        fieldChange: {},
+      },
+      {
+        _id: 'l3',
+        resourceType: 'flow',
+        resourceId: 'f1',
+        fieldChange: {},
+      },
+      {
+        _id: 'l4',
+        resourceType: 'flow',
+        resourceId: 'f1',
+        fieldChange: {},
+      },
+    ];
+
+    test('should return logs for provided resourceId', () => {
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('flows/f1/audit',
+          logs)
+      );
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('flows', [{
+          _id: 'f1',
+        }])
+      );
+
+      expect(selectors.auditLogs(state, 'flows', 'f1')).toEqual(
+        {
+          logs: expectedResult,
+          count: 4,
+          totalCount: 4,
+        }
+      );
+    });
+
+    test('should return logs for provided resourceId and with filtering', () => {
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('flows/f1/audit',
+          logs)
+      );
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('flows', [{
+          _id: 'f1',
+        }])
+      );
+
+      expect(selectors.auditLogs(state, 'flows', 'f1', undefined, {
+        take: 2,
+      })).toEqual(
+        {
+          logs: [
+            expectedResult[0],
+            expectedResult[1],
+          ],
+          count: 2,
+          totalCount: 4,
+        }
+      );
+    });
+
+    test('should return logs for IA if storeId is passed as argument', () => {
+      const conns = [{
+        _id: 'c1',
+        _integrationId: 'i1',
+      }, {
+        _id: 'c2',
+      }, {
+        _id: 'c3',
+        _integrationId: 'i2',
+      }, {
+        _id: 'c4',
+        _integrationId: 'i1',
+      }];
+
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('connections', conns)
+      );
+
+      const flows = [
+        {
+          _id: 'f1',
+          name: 'flow from a to b',
+          _integrationId: 'i1',
+          pageGenerators: [
+            {
+              _exportId: 'e1',
+            },
+          ],
+          pageProcessors: [
+            {
+              _importId: 'i1',
+            },
+          ],
+        },
+      ];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('flows', flows)
+      );
+
+      const integration = {
+        _id: 'i1',
+        settings: {
+          supportsMultiStore: true,
+          sections: [{
+            title: 'Section1',
+            id: 's1',
+            sections: [{
+              flows: [{
+                _id: 'f1',
+              }],
+            },
+            ],
+          }],
+        },
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('integrations', integration)
+      );
+
+      const exports = [
+        {
+          _id: 'e1',
+        },
+        {
+          _id: 'e2',
+        },
+      ];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('exports', exports)
+      );
+
+      const imports = [
+        {
+          _id: 'i1',
+        },
+        {
+          _id: 'i2',
+        },
+      ];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('imports', imports)
+      );
+
+      const logs = [
+        {
+          _id: 'l1',
+          resourceType: 'flow',
+          _resourceId: 'f1',
+        },
+        {
+          _id: 'l2',
+          resourceType: 'flow',
+          _resourceId: 'f2',
+        },
+        {
+          _id: 'l3',
+          resourceType: 'export',
+          _resourceId: 'e1',
+        },
+        {
+          _id: 'l4',
+          resourceType: 'import',
+          _resourceId: 'i1',
+        },
+        {
+          _id: 'l5',
+          resourceType: 'connection',
+          _resourceId: 'c1',
+        },
+        {
+          _id: 'l6',
+          resourceType: 'connection',
+          _resourceId: 'c2',
+        },
+      ];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('audit', logs)
+      );
+
+      expect(selectors.auditLogs(state, undefined, 'i1', undefined, {
+        storeId: 's1',
+      })).toEqual({
+        count: 4,
+        logs: [
+          {
+            _id: 'l1',
+            _resourceId: 'f1',
+            fieldChange: {
+
+            },
+            resourceType: 'flow',
+          },
+          {
+            _id: 'l3',
+            _resourceId: 'e1',
+            fieldChange: {
+
+            },
+            resourceType: 'export',
+          },
+          {
+            _id: 'l4',
+            _resourceId: 'i1',
+            fieldChange: {
+
+            },
+            resourceType: 'import',
+          },
+          {
+            _id: 'l5',
+            _resourceId: 'c1',
+            fieldChange: {
+
+            },
+            resourceType: 'connection',
+          },
+        ],
+        totalCount: 4,
+      });
+    });
   });
 
   describe('selectors.mkFlowResources test cases', () => {

@@ -1,4 +1,5 @@
 /* global describe, expect, test */
+import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
 
@@ -2341,6 +2342,191 @@ describe('integrationApps selector testcases', () => {
   describe('selectors.integrationAppLicense test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.integrationAppLicense()).toEqual({});
+    });
+
+    const integration = {
+      _id: 'i1',
+      settings: {
+        connectorEdition: 'standard',
+      },
+    };
+
+    test('should retun license details for the integration app for owneruser if expired and upgrade requested', () => {
+      let state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: '2020-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      state = reducer(
+        state,
+        actions.integrationApp.settings.requestedUpgrade('l1')
+      );
+
+      expect(selectors.integrationAppLicense(state, 'i1')).toEqual({
+        _id: 'l1',
+        _integrationId: 'i1',
+        created: '2018-07-10T10:03:02.169Z',
+        createdText: 'Started on Jul 10th, 2018',
+        expires: '2020-08-18T06:00:43.721Z',
+        expiresText: 'Expired on Aug 18th, 2020',
+        plan: 'Standard plan',
+        showLicenseExpiringWarning: true,
+        upgradeRequested: true,
+        upgradeText: 'UPGRADE REQUESTED',
+      });
+    });
+
+    test('should retun license details for the integration app for owneruser for non-expired', () => {
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: '2022-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.integrationAppLicense(state, 'i1')).toEqual({
+        _id: 'l1',
+        _integrationId: 'i1',
+        created: '2018-07-10T10:03:02.169Z',
+        createdText: 'Started on Jul 10th, 2018',
+        expires: '2022-08-18T06:00:43.721Z',
+        expiresText: 'Expires on Aug 18th, 2022',
+        plan: 'Standard plan',
+        showLicenseExpiringWarning: false,
+        upgradeRequested: false,
+        upgradeText: '',
+      });
+    });
+
+    test('should retun license details for the integration app for owneruser for expiring soon', () => {
+      const expiryDate = moment(new Date()).add(10, 'days').toISOString();
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: expiryDate,
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.integrationAppLicense(state, 'i1')).toEqual({
+        _id: 'l1',
+        _integrationId: 'i1',
+        created: '2018-07-10T10:03:02.169Z',
+        createdText: 'Started on Jul 10th, 2018',
+        expires: expiryDate,
+        expiresText: `Expires on ${moment(expiryDate).format('MMM Do, YYYY')} (10 Days)`,
+        plan: 'Standard plan',
+        showLicenseExpiringWarning: true,
+        upgradeRequested: false,
+        upgradeText: '',
+      });
+    });
+
+    test('should retun license details for the integration app for non owneruser for non-expired', () => {
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'as1',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: '2022-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'as1',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.integrationAppLicense(state, 'i1')).toEqual({
+        _id: 'l1',
+        _integrationId: 'i1',
+        created: '2018-07-10T10:03:02.169Z',
+        createdText: 'Started on Jul 10th, 2018',
+        expires: '2022-08-18T06:00:43.721Z',
+        expiresText: 'Expires on Aug 18th, 2022',
+        plan: 'Standard plan',
+        showLicenseExpiringWarning: false,
+        upgradeRequested: false,
+        upgradeText: '',
+      });
     });
   });
 
