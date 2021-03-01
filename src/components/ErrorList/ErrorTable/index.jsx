@@ -88,6 +88,7 @@ const useStyles = makeStyles(theme => ({
 
 const rowsPerPageOptions = [10, 25, 50];
 const emptySet = [];
+const emptyObj = {};
 
 export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const classes = useStyles();
@@ -100,7 +101,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const errorFilter = useSelector(
     state => selectors.filter(state, filterKey), shallowEqual
   );
-  const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = errorFilter.paging || {};
+  const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = errorFilter.paging || emptyObj;
 
   const isAnyActionInProgress = useSelector(state =>
     selectors.isAnyActionInProgress(state, { flowId, resourceId })

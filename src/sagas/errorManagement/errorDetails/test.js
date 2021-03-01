@@ -711,46 +711,6 @@ describe('errorDetails sagas', () => {
 
       return openErrorsTest && resolvedErrorsTest;
     });
-    test('should not dispatch selectErrors action when there are no errors in current page', () => {
-      const openErrorsTest = expectSaga(selectAllErrorDetailsInCurrPage, { flowId, resourceId, checked: true })
-        .provide([
-          [select(selectors.resourceFilteredErrorsInCurrPage, {
-            flowId,
-            resourceId,
-            isResolved: false,
-          }), []],
-        ])
-        .not.put(
-          actions.errorManager.flowErrorDetails.selectErrors({
-            flowId,
-            resourceId,
-            errorIds: [],
-            checked: true,
-            isResolved: false,
-          })
-        )
-        .run();
-      const resolvedErrorsTest = expectSaga(selectAllErrorDetailsInCurrPage, { flowId, resourceId, checked: true, isResolved: true })
-        .provide([
-          [select(selectors.resourceFilteredErrorsInCurrPage, {
-            flowId,
-            resourceId,
-            isResolved: true,
-          }), []],
-        ])
-        .not.put(
-          actions.errorManager.flowErrorDetails.selectErrors({
-            flowId,
-            resourceId,
-            errorIds: [],
-            checked: true,
-            isResolved: true,
-          })
-        )
-        .run();
-
-      return openErrorsTest && resolvedErrorsTest;
-    });
   });
   describe('deselectAllErrors saga test cases', () => {
     test('should use selectedErrorIds selector to get all selected errorIds and dispatch selectErrors action for them', () => {
@@ -789,46 +749,6 @@ describe('errorDetails sagas', () => {
             errorIds,
             checked: false,
             isResolved: true,
-          })
-        )
-        .run();
-
-      return openErrorsTest && resolvedErrorsTest;
-    });
-    test('should not dispatch selectErrors action when there are no errors selected', () => {
-      const openErrorsTest = expectSaga(deselectAllErrors, { flowId, resourceId })
-        .provide([
-          [select(selectors.selectedErrorIds, {
-            flowId,
-            resourceId,
-            isResolved: false,
-          }), []],
-        ])
-        .not.put(
-          actions.errorManager.flowErrorDetails.selectErrors({
-            flowId,
-            resourceId,
-            errorIds: [],
-            checked: false,
-            isResolved: false,
-          })
-        )
-        .run();
-      const resolvedErrorsTest = expectSaga(deselectAllErrors, { flowId, resourceId, isResolved: true })
-        .provide([
-          [select(selectors.selectedErrorIds, {
-            flowId,
-            resourceId,
-            isResolved: true,
-          }), []],
-        ])
-        .not.put(
-          actions.errorManager.flowErrorDetails.selectErrors({
-            flowId,
-            resourceId,
-            errorIds: [],
-            checked: false,
-            isResolved: false,
           })
         )
         .run();

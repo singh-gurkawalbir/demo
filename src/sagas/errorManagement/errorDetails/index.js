@@ -78,17 +78,15 @@ export function* selectAllErrorDetailsInCurrPage({ flowId, resourceId, checked, 
   });
   const errorIds = errors.map(error => error.errorId);
 
-  if (errorIds.length) {
-    yield put(
-      actions.errorManager.flowErrorDetails.selectErrors({
-        flowId,
-        resourceId,
-        errorIds,
-        checked,
-        isResolved,
-      })
-    );
-  }
+  yield put(
+    actions.errorManager.flowErrorDetails.selectErrors({
+      flowId,
+      resourceId,
+      errorIds,
+      checked,
+      isResolved,
+    })
+  );
 }
 
 export function* deselectAllErrors({ flowId, resourceId, isResolved = false }) {
@@ -98,17 +96,15 @@ export function* deselectAllErrors({ flowId, resourceId, isResolved = false }) {
     isResolved,
   });
 
-  if (errorIds.length) {
-    yield put(
-      actions.errorManager.flowErrorDetails.selectErrors({
-        flowId,
-        resourceId,
-        errorIds,
-        checked: false,
-        isResolved,
-      })
-    );
-  }
+  yield put(
+    actions.errorManager.flowErrorDetails.selectErrors({
+      flowId,
+      resourceId,
+      errorIds,
+      checked: false,
+      isResolved,
+    })
+  );
 }
 
 export function* retryErrors({ flowId, resourceId, retryIds = [], isResolved = false, retryAll = false }) {
