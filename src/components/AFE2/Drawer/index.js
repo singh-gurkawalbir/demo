@@ -17,12 +17,12 @@ import ActionsRibbon from './ActionsRibbon';
 import { useDrawerContext } from '../../drawer/Right/DrawerContext';
 
 const useStyles = makeStyles(theme => ({
-  afe2DrawerHeader: {
+  drawerHeader: {
     '& > h4': {
       whiteSpace: 'nowrap',
     },
   },
-  afe2DrawerHeaderLongTitle: {
+  headerLongTitle: {
     '& > h4': {
       whiteSpace: 'normal',
       wordBreak: 'break-word',
@@ -70,7 +70,7 @@ function RouterWrappedContent({ hideSave }) {
 
   return (
     <>
-      <DrawerHeader title={editorTitle || label} CloseButton={CloseButton} className={clsx(classes.afe2DrawerHeader, {[classes.afe2DrawerHeaderLongTitle]: editorTitle.length > 45 })}>
+      <DrawerHeader title={editorTitle || label} CloseButton={CloseButton} className={clsx(classes.drawerHeader, {[classes.headerLongTitle]: editorTitle.length > 45 })}>
         <ActionsRibbon editorId={editorId} className={classes.afe2DrawerHeaderRibbon} />
       </DrawerHeader>
 
