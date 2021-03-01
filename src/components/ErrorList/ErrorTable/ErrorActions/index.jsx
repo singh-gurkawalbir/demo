@@ -79,7 +79,7 @@ const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable }) => {
       className={clsx(classes.actionBtn, classes.retryBtn, { [classes.noPadding]: disableRetry && !isRetryInProgress })}
       data-test="retryJobs"
       onChange={onClick}
-      disabled={disable}
+      disabled={disableRetry}
       displayEmpty
       value="">
       <MenuItem value="" disabled >
@@ -118,7 +118,7 @@ const ResolveAction = ({ onClick, flowId, resourceId, disable }) => {
       className={clsx(classes.actionBtn, classes.resolveBtn, { [classes.noPadding]: disableResolve && !isResolveInProgress })}
       data-test="retryJobs"
       onChange={onClick}
-      disabled={disable}
+      disabled={disableResolve}
       displayEmpty
       value="">
       <MenuItem value="" disabled>
