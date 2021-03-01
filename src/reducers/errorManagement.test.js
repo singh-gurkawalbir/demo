@@ -435,25 +435,361 @@ describe('Error Management region selector testcases', () => {
       expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeTruthy();
     });
     test('should return false if the current page errors are all not selected', () => {
+      const sampleState = {
+        session: {
+          errorManagement: {
+            errorDetails: {
+              [flowId]: {
+                [resourceId]: {
+                  open: {
+                    status: 'received',
+                    errors: [
+                      // page 1 when searched with failed
+                      { errorId: '9999', message: 'retry failed', selected: true },
+                      { errorId: '5555', message: 'failed presavepage hook', selected: true },
+                      // page 2 when searched with failed with one error as un selected
+                      { errorId: '7777', message: 'failed javascript hook' },
+                      { errorId: '4444', message: 'failed transformation', selected: true },
+                      // other errors
+                      { errorId: '6666', message: 'invalid javascript hook', selected: true },
+                      { errorId: '8888', message: 'invalid hook' },
+                    ],
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '1234', message: 'retry failed', selected: true },
+                      { errorId: '1111', message: 'invalid transform' },
+                      { errorId: '2222', message: 'failed transform', selected: true },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          filters: {
+            [FILTER_KEYS.OPEN]: {
+              searchBy: ['message'],
+              keyword: 'failed',
+              paging: {
+                currPage: 1,
+                rowsPerPage: 2,
+              },
+            },
+            [FILTER_KEYS.RESOLVED]: {
+              searchBy: ['message'],
+              keyword: 'transform',
+            },
+          },
+        },
+      };
 
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeFalsy();
     });
     test('should return true if the current page errors are all selected', () => {
+      const sampleState = {
+        session: {
+          errorManagement: {
+            errorDetails: {
+              [flowId]: {
+                [resourceId]: {
+                  open: {
+                    status: 'received',
+                    errors: [
+                      // page 0 when searched with failed with both selected
+                      { errorId: '9999', message: 'retry failed', selected: true },
+                      { errorId: '5555', message: 'failed presavepage hook', selected: true },
+                      // page 1 when searched with failed with one error as un selected
+                      { errorId: '7777', message: 'failed javascript hook' },
+                      { errorId: '4444', message: 'failed transformation', selected: true },
+                      // other errors
+                      { errorId: '6666', message: 'invalid javascript hook', selected: true },
+                      { errorId: '8888', message: 'invalid hook' },
+                    ],
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '1234', message: 'retry failed', selected: true },
+                      { errorId: '1111', message: 'invalid transform' },
+                      { errorId: '2222', message: 'failed transform', selected: true },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          filters: {
+            [FILTER_KEYS.OPEN]: {
+              searchBy: ['message'],
+              keyword: 'failed',
+              paging: {
+                currPage: 0,
+                rowsPerPage: 2,
+              },
+            },
+            [FILTER_KEYS.RESOLVED]: {
+              searchBy: ['message'],
+              keyword: 'transform',
+            },
+          },
+        },
+      };
 
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeTruthy();
     });
   });
 
   describe('selectors.resourceFilteredErrorsInCurrPage test cases', () => {
     test('should return empty array incase of no errors', () => {
+      const sampleState = {
+        session: {
+          errorManagement: {
+            errorDetails: {
+              [flowId]: {
+                [resourceId]: {
+                  open: {
+                    status: 'received',
+                    errors: [],
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '1234', message: 'retry failed', selected: true },
+                      { errorId: '1111', message: 'invalid transform' },
+                      { errorId: '2222', message: 'failed transform', selected: true },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
 
+      expect(selectors.resourceFilteredErrorsInCurrPage(sampleState, { flowId, resourceId })).toEqual([]);
     });
-    test('should return empty array incase of no errors in the current page', () => {
+    test('should return empty array incase of no errors in the current page - page that exceeds error count', () => {
+      const sampleState = {
+        session: {
+          errorManagement: {
+            errorDetails: {
+              [flowId]: {
+                [resourceId]: {
+                  open: {
+                    status: 'received',
+                    errors: [
+                      // page 0
+                      { errorId: '9999', message: 'retry failed', selected: true },
+                      { errorId: '5555', message: 'failed presavepage hook', selected: true },
+                      // page 1
+                      { errorId: '7777', message: 'failed javascript hook' },
+                      { errorId: '4444', message: 'failed transformation', selected: true },
+                      // page 2
+                      { errorId: '6666', message: 'invalid javascript hook', selected: true },
+                      { errorId: '8888', message: 'invalid hook' },
+                    ],
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '1234', message: 'retry failed', selected: true },
+                      { errorId: '1111', message: 'invalid transform' },
+                      { errorId: '2222', message: 'failed transform', selected: true },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          filters: {
+            [FILTER_KEYS.OPEN]: {
+              searchBy: ['message'],
+              keyword: '',
+              paging: {
+                currPage: 4, // invalid current page
+                rowsPerPage: 2,
+              },
+            },
+            [FILTER_KEYS.RESOLVED]: {
+              searchBy: ['message'],
+              keyword: '',
+            },
+          },
+        },
+      };
 
+      expect(selectors.resourceFilteredErrorsInCurrPage(sampleState, { flowId, resourceId })).toEqual([]);
     });
     test('should return expected list of errors in the current page', () => {
+      const sampleState = {
+        session: {
+          errorManagement: {
+            errorDetails: {
+              [flowId]: {
+                [resourceId]: {
+                  open: {
+                    status: 'received',
+                    errors: [
+                      // page 0
+                      { errorId: '9999', message: 'retry failed', selected: true },
+                      { errorId: '8888', message: 'invalid hook' },
+                      // page 1
+                      { errorId: '5555', message: 'failed presavepage hook', selected: true },
+                      { errorId: '7777', message: 'failed javascript hook' },
+                      // page 2
+                      { errorId: '4444', message: 'failed transformation', selected: true },
+                      { errorId: '6666', message: 'invalid javascript hook', selected: true },
+                    ],
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '1234', message: 'retry failed', selected: true },
+                      { errorId: '1111', message: 'invalid transform' },
+                      { errorId: '2222', message: 'failed transform', selected: true },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          filters: {
+            [FILTER_KEYS.OPEN]: {
+              searchBy: ['message'],
+              keyword: '',
+              paging: {
+                currPage: 1, // invalid current page
+                rowsPerPage: 2,
+              },
+            },
+            [FILTER_KEYS.RESOLVED]: {
+              searchBy: ['message'],
+              keyword: '',
+            },
+          },
+        },
+      };
+      const expectedErrorsInCurrPage = [
+        { errorId: '5555', message: 'failed presavepage hook', selected: true },
+        { errorId: '7777', message: 'failed javascript hook' },
+      ];
 
+      expect(selectors.resourceFilteredErrorsInCurrPage(sampleState, { flowId, resourceId })).toEqual(expectedErrorsInCurrPage);
     });
     test('should return expected list of errors filtered by search criteria in the current page', () => {
+      const sampleState = {
+        session: {
+          errorManagement: {
+            errorDetails: {
+              [flowId]: {
+                [resourceId]: {
+                  open: {
+                    status: 'received',
+                    errors: [
+                      // page 0 when searched with failed
+                      { errorId: '9999', message: 'retry failed' },
+                      { errorId: '5555', message: 'failed presavepage hook' },
+                      // page 1 when searched with failed
+                      { errorId: '7777', message: 'failed javascript hook' },
+                      { errorId: '4444', message: 'failed transformation' },
+                      // other errors
+                      { errorId: '6666', message: 'invalid javascript hook' },
+                      { errorId: '8888', message: 'invalid hook' },
+                    ],
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '1234', message: 'retry failed' },
+                      { errorId: '1111', message: 'invalid transform' },
+                      { errorId: '2222', message: 'failed transform' },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          filters: {
+            [FILTER_KEYS.OPEN]: {
+              searchBy: ['message'],
+              keyword: 'failed',
+              paging: {
+                currPage: 1,
+                rowsPerPage: 2,
+              },
+            },
+            [FILTER_KEYS.RESOLVED]: {
+              searchBy: ['message'],
+              keyword: 'transform',
+            },
+          },
+        },
+      };
 
+      const expectedFilteredErrorsInCurrPage = [
+        { errorId: '7777', message: 'failed javascript hook' },
+        { errorId: '4444', message: 'failed transformation' },
+      ];
+
+      expect(selectors.resourceFilteredErrorsInCurrPage(sampleState, { flowId, resourceId })).toEqual(expectedFilteredErrorsInCurrPage);
+    });
+    test('should return expected list of resolved errors filtered by search criteria in the current page', () => {
+      const sampleState = {
+        session: {
+          errorManagement: {
+            errorDetails: {
+              [flowId]: {
+                [resourceId]: {
+                  open: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '1234', message: 'retry failed' },
+                      { errorId: '1111', message: 'invalid transform' },
+                      { errorId: '2222', message: 'failed transform' },
+                    ],
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: [
+                      // page 0 when searched with error
+                      { errorId: '9999', message: 'retry error' },
+                      { errorId: '5555', message: 'invalid hook error' },
+                      // page 1 when searched with error
+                      { errorId: '7777', message: 'error in javascript hook' },
+                      { errorId: '4444', message: 'error in transformation' },
+                      // other errors
+                      { errorId: '6666', message: 'invalid javascript hook' },
+                      { errorId: '8888', message: 'invalid hook' },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          filters: {
+            [FILTER_KEYS.OPEN]: {
+              searchBy: ['message'],
+              keyword: 'failed',
+            },
+            [FILTER_KEYS.RESOLVED]: {
+              searchBy: ['message'],
+              keyword: 'error',
+              paging: {
+                currPage: 1,
+                rowsPerPage: 2,
+              },
+            },
+          },
+        },
+      };
+
+      const expectedFilteredResolvedErrorsInCurrPage = [
+        { errorId: '7777', message: 'error in javascript hook' },
+        { errorId: '4444', message: 'error in transformation' },
+      ];
+
+      expect(selectors.resourceFilteredErrorsInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toEqual(expectedFilteredResolvedErrorsInCurrPage);
     });
   });
 
