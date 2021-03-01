@@ -31,9 +31,9 @@ import { APIException } from '../api/index';
 import { USER_ACCESS_LEVELS, ACCOUNT_IDS } from '../../utils/constants';
 import getRequestOptions from '../../utils/requestOptions';
 
-const status403 = new APIException({
+const changeEmailError = new APIException({
   status: 403,
-  message: 'User Forbidden action',
+  message: 'Cannot change existing email id',
 });
 
 describe('all modal sagas', () => {
@@ -122,7 +122,7 @@ describe('all modal sagas', () => {
       );
     });
 
-    test('should generate appropriate error message when user attempts to change an existing email', () => {
+    test('should throw an error when the user attempts to change an existing email or with incorrect password', () => {
       const updatedEmail = {
         newEmail: 'something@gmail.com',
         password: 'abc',
@@ -137,45 +137,8 @@ describe('all modal sagas', () => {
           hidden: true,
         }),
       );
-
-      expect(saga.throw(status403).value).toEqual(
-        put(
-          actions.api.failure(
-            changeEmailParams.path,
-            changeEmailParams.opts.method,
-            'Existing email provided, Please try again.',
-            true,
-          ),
-        ),
-      );
-    });
-
-    test('should generate appropriate error message for any other error', () => {
-      const updatedEmail = {
-        newEmail: 'something@gmail.com',
-        password: 'abc',
-      };
-      const saga = changeEmail({ updatedEmail });
-
-      expect(saga.next().value).toEqual(
-        call(apiCallWithRetry, {
-          path: changeEmailParams.path,
-          opts: { ...changeEmailParams.opts, body: updatedEmail },
-          message: "Changing user's Email",
-          hidden: true,
-        }),
-      );
-
-      expect(saga.throw(new Error()).value).toEqual(
-        put(
-          actions.api.failure(
-            changeEmailParams.path,
-            changeEmailParams.opts.method,
-            'Cannot change user Email , Please try again.',
-            true,
-          ),
-        ),
-      );
+      saga.throw(changeEmailError);
+      expect(saga.next().done).toEqual(true);
     });
   });
   describe('update user and profile preferences sagas', () => {

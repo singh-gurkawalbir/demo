@@ -10,7 +10,7 @@ describe('Connector metadata', () => {
     expect(state).toEqual({});
   });
 
-  test('should return isLoading flag set to true when metdata request is sent', () => {
+  test('should return isLoading flag set to true when metadata request is sent', () => {
     const fieldId = 'rest.headers';
     const id = 'id';
     const _integrationId = 1;

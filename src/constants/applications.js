@@ -1,4 +1,5 @@
 import { stringCompare } from '../utils/sort';
+import {CONNECTORS_TO_IGNORE, WEBHOOK_ONLY_APPLICATIONS} from '../utils/constants';
 
 // Schema details:
 // ---------------
@@ -159,7 +160,6 @@ const connectors = [
   { id: 'sapariba', name: 'SAP Ariba', type: 'webhook', webhookOnly: true },
 
   { id: 'box', name: 'Box', type: 'http', webhookOnly: true, icon: 'box' },
-  { id: 'braintree', name: 'Braintree', marketPlaceOnly: true },
   {
     id: 'dropbox',
     name: 'Dropbox',
@@ -174,7 +174,6 @@ const connectors = [
     assistant: 'github',
     webhook: true,
   },
-  { id: 'google', name: 'Google', marketPlaceOnly: true },
   {
     id: 'hubspot',
     name: 'HubSpot',
@@ -275,27 +274,14 @@ const connectors = [
     webhookOnly: true,
     icon: 'travis',
   },
-  { id: 'yammer', name: 'Yammer', marketPlaceOnly: true},
   { id: 's3', name: 'Amazon S3', type: 's3'},
   // Metadata doesn't exist for below connectors. Only connections are available as of now.
-  {id: 'amazonaws', name: 'Amazon AWS', type: 'http', assistant: 'amazonaws'},
   {id: 'banking', name: 'Banking', type: 'http', assistant: 'banking'},
   {id: 'clover', name: 'Clover', type: 'http', assistant: 'clover'},
   {id: 'dcl', name: 'DCL Logistics', type: 'http', assistant: 'dcl'},
-  {id: 'etsy', name: 'Etsy', type: 'http', assistant: 'etsy'},
   {id: 'facebookads', name: 'Facebook Ads', type: 'http', assistant: 'facebookads'},
-  {id: 'jet', name: 'Jet', type: 'rest', assistant: 'jet'},
-  {id: 'microsoftoffice365', name: 'Microsoft Office 365', type: 'http', assistant: 'microsoftoffice365'},
-  {id: 'nextag', name: 'Nextag', type: 'http', assistant: 'nextag'},
-  {id: 'osn', name: 'Osn', type: 'http', assistant: 'osn'},
-  {id: 'other', name: 'Other', type: 'http', assistant: 'other'},
-  {id: 'paychex', name: 'Paychex', type: 'http', assistant: 'paychex'},
   {id: 'ramplogistics', name: 'Ramp Logistics', type: 'http', assistant: 'ramplogistics'},
   {id: 'ariba', name: 'SAP Ariba', type: 'http', assistant: 'ariba'},
-  {id: 'skuvault', name: 'SkuVault', type: 'http', assistant: 'skuvault'},
-  {id: 'strata', name: 'Strata', type: 'rest', assistant: 'strata'},
-  {id: 'svb', name: 'SVB', type: 'http', assistant: 'svb'},
-  {id: 'wiser', name: 'Wiser', type: 'http', assistant: 'wiser'},
 ];
 // These can be removed once metadata gets updated.
 const newConnections = [{id: 'googledrive', name: 'Google Drive', type: 'http', assistant: 'googledrive'}];
@@ -329,15 +315,7 @@ export const groupApplications = (
   if (assistants) {
     assistants.forEach(asst => {
       if (
-        ![
-          'yammer',
-          'hybris',
-          'etsy',
-          'concur',
-          'concurall',
-          'concurv4',
-          'constantcontact',
-        ].includes(asst.id)
+        !CONNECTORS_TO_IGNORE.includes(asst.id)
       ) {
         assistantConnectors.push({
           id: asst.id,
@@ -355,10 +333,6 @@ export const groupApplications = (
   assistantConnectors.sort(stringCompare('name'));
 
   const filteredConnectors = assistantConnectors.filter(connector => {
-    if (connector.marketPlaceOnly) {
-      return false;
-    }
-
     if (
       connector.assistant &&
       assistants &&
@@ -431,7 +405,7 @@ export const applicationsList = () => {
   return applications;
 };
 
-export const getApplicationConnectors = () => connectors.filter(c => !c.group && !c.marketPlaceOnly);
+export const getApplicationConnectors = () => connectors.filter(c => !c.group);
 export const getWebhookConnectors = () => {
   const applications = applicationsList();
 
@@ -460,15 +434,8 @@ export const connectorsList = () => {
 
   applications.forEach(asst => {
     if (
-      ![
-        'yammer',
-        'hybris',
-        'etsy',
-        'concur',
-        'concurall',
-        'concurv4',
-        'constantcontact',
-      ].includes(asst.id)
+      !CONNECTORS_TO_IGNORE.includes(asst.id) &&
+      !WEBHOOK_ONLY_APPLICATIONS.includes(asst.id)
     ) {
       connectors.push({
         value: asst.id,

@@ -47,7 +47,6 @@ export default function InviteUser() {
   );
 
   const formKey = useFormInitWithPermissions({
-
     fieldMeta,
   });
 
@@ -55,8 +54,7 @@ export default function InviteUser() {
     <>
       <DrawerContent>
         <DynaForm
-          formKey={formKey}
-          fieldMeta={fieldMeta} />
+          formKey={formKey} />
       </DrawerContent>
 
       <DrawerFooter>

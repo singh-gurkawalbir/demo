@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Help(props) {
+export default function Help(props) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const handleMenu = useCallback(
@@ -76,5 +76,3 @@ function Help(props) {
     </>
   );
 }
-
-export default Help;

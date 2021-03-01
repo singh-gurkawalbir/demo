@@ -1,4 +1,3 @@
-import { withStyles } from '@material-ui/core/styles';
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
@@ -7,18 +6,11 @@ import DynaAction from '../../../DynaForm/DynaAction';
 import { selectors } from '../../../../reducers';
 import { useLoadingSnackbarOnSave } from '.';
 
-const styles = theme => ({
-  actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
-  },
-});
-const SaveButton = props => {
+export default function SaveButton(props) {
   const {
     submitButtonLabel = 'Submit',
     resourceType,
     resourceId,
-    classes,
     disabled = false,
     skipCloseOnSave = false,
     disableSaveOnClick,
@@ -67,12 +59,10 @@ const SaveButton = props => {
     <DynaAction
       {...props}
       color={submitButtonColor}
-      className={classes.actionButton}
       disabled={disabled || disableSave}
       onClick={handleSubmitForm}>
       {(isSaving && disableSave) ? 'Saving' : submitButtonLabel}
     </DynaAction>
   );
-};
+}
 
-export default withStyles(styles)(SaveButton);

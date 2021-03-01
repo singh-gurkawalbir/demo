@@ -7,7 +7,7 @@ import useFormContext from '../../../Form/FormContext';
 
 const uploadFileType = 'csv';
 
-function DynaSuiteScriptUploadFile(props) {
+export default function DynaSuiteScriptUploadFile(props) {
   const {
     id,
     maxSize,
@@ -95,4 +95,4 @@ function DynaSuiteScriptUploadFile(props) {
     />
   );
 }
-export default DynaSuiteScriptUploadFile;
+

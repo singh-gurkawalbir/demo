@@ -130,7 +130,6 @@ export default function ConnectionDrawer({
   }, [account, confirmDialog, handleConnectionSubmit, linkedConnectionId, linkedConnectionName]);
   const formKey = useFormInitWithPermissions({
     fieldMeta,
-
   });
 
   return (
@@ -145,7 +144,7 @@ export default function ConnectionDrawer({
           infoText="This is used to verify if there is an existing connection already linked to NetSuite."
       />
         <DrawerContent>
-          <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+          <DynaForm formKey={formKey} />
         </DrawerContent>
 
         <DrawerFooter>

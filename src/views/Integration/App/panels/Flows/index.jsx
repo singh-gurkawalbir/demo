@@ -190,8 +190,8 @@ function FlowList({ integrationId, storeId }) {
   const { sectionId } = match.params;
   const dispatch = useDispatch();
   const filterKey = `${integrationId}-flows`;
-  const flowFilter = useSelector(state => selectors.filter(state, filterKey)) || defaultFilter;
-  const flowsFilterConfig = useMemo(() => ({ ...flowFilter, excludeHiddenFlows: true }), [flowFilter]);
+  const flowFilter = useSelector(state => selectors.filter(state, filterKey));
+  const flowsFilterConfig = useMemo(() => ({ ...(flowFilter || {}), excludeHiddenFlows: true }), [flowFilter]);
 
   const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, storeId, flowsFilterConfig);
   const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
@@ -215,9 +215,10 @@ function FlowList({ integrationId, storeId }) {
   }), [storeId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration]);
 
   useEffect(() => {
-    dispatch(actions.patchFilter(filterKey, {sort: {order: 'asc', orderBy: 'name'}}));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  },
+  [dispatch, filterKey]);
+
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
 
@@ -270,7 +271,6 @@ function FlowList({ integrationId, storeId }) {
         <div className={classes.action}>
           <KeywordSearch
             filterKey={filterKey}
-            defaultFilter={defaultFilter}
         />
         </div>
       </PanelHeader>

@@ -115,7 +115,7 @@ export const ResourceFormFactory = props => {
   );
 };
 
-const SuiteScriptFormComponent = props => {
+export default function SuiteScriptFormComponent(props) {
   const [formKey] = useState(generateNewId());
 
   return (
@@ -127,6 +127,5 @@ const SuiteScriptFormComponent = props => {
 
     </>
   );
-};
+}
 
-export default SuiteScriptFormComponent;
