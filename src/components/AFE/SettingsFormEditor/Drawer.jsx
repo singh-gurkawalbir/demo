@@ -96,7 +96,6 @@ export default function EditorDrawer({
   const settings = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, resourceType, resourceId, sectionId || 'general')?.settings;
 
   const settingsFormPatchPath = useSettingsPatch(resourceId, sectionId, '/settingsForm');
-  const scriptPatchPath = useSettingsPatch(resourceId, sectionId, '/content');
 
   const editor = useSelector(state => selectors.editor(state, editorId));
   const saveInProgress = useSelector(
@@ -178,7 +177,6 @@ export default function EditorDrawer({
         autoEvaluateDelay: 200,
         resourceId,
         resourceType,
-        scriptPatchPath,
         settingsFormPatchPath,
         settings,
         previewOnSave: true,
