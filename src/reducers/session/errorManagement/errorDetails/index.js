@@ -61,7 +61,7 @@ export default (state = {}, action) => {
       }
 
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ERRORS:
-        if (!draft[flowId] || !draft[flowId][resourceId]) {
+        if (!draft[flowId] || !draft[flowId][resourceId] || !errorIds.length) {
           break;
         }
         draft[flowId][resourceId][errorType].errors.forEach(error => {
