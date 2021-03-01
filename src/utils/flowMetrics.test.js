@@ -19,7 +19,7 @@ const {
 describe('flowMetrics util function test', () => {
   let dateNowSpy;
   let momentSpy;
-  const mockDate = new Date('2020-06-05T00:00:00.000+00:00');
+  const mockDate = new Date('2020-06-05T00:00:00.000+05:30');
 
   beforeAll(() => {
   // Lock Time
@@ -58,10 +58,10 @@ describe('flowMetrics util function test', () => {
 
   describe('getDateTimeFormat function test', () => {
     test('should not throw any exception for bad params', () => {
-      expect(getDateTimeFormat()).toEqual('06/05/2020 12:00:00 am');
-      expect(getDateTimeFormat(null)).toEqual('06/05/2020 12:00:00 am');
-      expect(getDateTimeFormat(null, null, null, null)).toEqual('Invalid date');
-      expect(getDateTimeFormat('string', 123, '123')).toEqual('01/01/1970 12:00:00 am');
+      expect(() => getDateTimeFormat()).not.toThrow();
+      expect(() => getDateTimeFormat(null)).not.toThrow();
+      expect(() => getDateTimeFormat(null, null, null, null)).not.toThrow();
+      expect(() => getDateTimeFormat('string', 123, '123')).not.toThrow();
     });
 
     test('should return correct formatted date for respective params', () => {
@@ -521,8 +521,8 @@ describe('flowMetrics util function test', () => {
 
         const {startDate, endDate} = getSelectedRange(testRange);
 
-        expect(startDate.toISOString()).toEqual('2020-06-04T23:45:00.000Z');
-        expect(endDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+        expect(startDate.toISOString()).toEqual('2020-06-04T18:15:00.000Z');
+        expect(endDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
       });
       test('getSelectedRange last30minutes test', () => {
         const testRange = {
@@ -533,8 +533,8 @@ describe('flowMetrics util function test', () => {
 
         const {startDate, endDate} = getSelectedRange(testRange);
 
-        expect(startDate.toISOString()).toEqual('2020-06-04T23:30:00.000Z');
-        expect(endDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+        expect(startDate.toISOString()).toEqual('2020-06-04T18:00:00.000Z');
+        expect(endDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
       });
 
       test('getSelectedRange last1hour test', () => {
@@ -546,8 +546,8 @@ describe('flowMetrics util function test', () => {
 
         const {startDate, endDate} = getSelectedRange(testRange);
 
-        expect(startDate.toISOString()).toEqual('2020-06-04T23:00:00.000Z');
-        expect(endDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+        expect(startDate.toISOString()).toEqual('2020-06-04T17:30:00.000Z');
+        expect(endDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
       });
 
       test('getSelectedRange last4hours test', () => {
@@ -559,8 +559,8 @@ describe('flowMetrics util function test', () => {
 
         const {startDate, endDate} = getSelectedRange(testRange);
 
-        expect(startDate.toISOString()).toEqual('2020-06-04T20:00:00.000Z');
-        expect(endDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+        expect(startDate.toISOString()).toEqual('2020-06-04T14:30:00.000Z');
+        expect(endDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
       });
 
       test('getSelectedRange last24hours test', () => {
@@ -572,8 +572,8 @@ describe('flowMetrics util function test', () => {
 
         const {startDate, endDate} = getSelectedRange(testRange);
 
-        expect(startDate.toISOString()).toEqual('2020-06-04T00:00:00.000Z');
-        expect(endDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+        expect(startDate.toISOString()).toEqual('2020-06-03T18:30:00.000Z');
+        expect(endDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
       });
 
       test('getSelectedRange today test', () => {
@@ -586,7 +586,7 @@ describe('flowMetrics util function test', () => {
         const {startDate, endDate} = getSelectedRange(testRange);
 
         expect(startDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
-        expect(endDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+        expect(endDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
       });
 
       test('getSelectedRange yesterday test', () => {
@@ -612,7 +612,7 @@ describe('flowMetrics util function test', () => {
         const {startDate, endDate} = getSelectedRange(testRange);
 
         expect(startDate.toISOString()).toEqual('2020-05-29T18:30:00.000Z');
-        expect(endDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+        expect(endDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
       });
 
       test('getSelectedRange last15days test', () => {
@@ -625,7 +625,7 @@ describe('flowMetrics util function test', () => {
         const {startDate, endDate} = getSelectedRange(testRange);
 
         expect(startDate.toISOString()).toEqual('2020-05-21T18:30:00.000Z');
-        expect(endDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+        expect(endDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
       });
 
       test('getSelectedRange last30days test', () => {
@@ -638,7 +638,7 @@ describe('flowMetrics util function test', () => {
         const {startDate, endDate} = getSelectedRange(testRange);
 
         expect(startDate.toISOString()).toEqual('2020-05-06T18:30:00.000Z');
-        expect(endDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+        expect(endDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
       });
 
       test('getSelectedRange last3months test', () => {
@@ -651,7 +651,7 @@ describe('flowMetrics util function test', () => {
         const {startDate, endDate} = getSelectedRange(testRange);
 
         expect(startDate.toISOString()).toEqual('2020-03-04T18:30:00.000Z');
-        expect(endDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+        expect(endDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
       });
 
       test('getSelectedRange last6months test', () => {
@@ -664,7 +664,7 @@ describe('flowMetrics util function test', () => {
         const {startDate, endDate} = getSelectedRange(testRange);
 
         expect(startDate.toISOString()).toEqual('2019-12-04T18:30:00.000Z');
-        expect(endDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+        expect(endDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
       });
 
       test('getSelectedRange last9months test', () => {
@@ -677,7 +677,7 @@ describe('flowMetrics util function test', () => {
         const {startDate, endDate} = getSelectedRange(testRange);
 
         expect(startDate.toISOString()).toEqual('2019-09-04T18:30:00.000Z');
-        expect(endDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+        expect(endDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
       });
 
       test('getSelectedRange lastyear test', () => {
@@ -690,7 +690,7 @@ describe('flowMetrics util function test', () => {
         const {startDate, endDate} = getSelectedRange(testRange);
 
         expect(startDate.toISOString()).toEqual('2019-06-04T18:30:00.000Z');
-        expect(endDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+        expect(endDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
       });
 
       test('getSelectedRange after14days test', () => {
@@ -702,7 +702,7 @@ describe('flowMetrics util function test', () => {
 
         const {startDate, endDate} = getSelectedRange(testRange);
 
-        expect(startDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+        expect(startDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
         expect(endDate.toISOString()).toEqual('2020-06-18T18:29:59.999Z');
       });
 
@@ -715,7 +715,7 @@ describe('flowMetrics util function test', () => {
 
         const {startDate, endDate} = getSelectedRange(testRange);
 
-        expect(startDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+        expect(startDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
         expect(endDate.toISOString()).toEqual('2020-07-04T18:29:59.999Z');
       });
 
@@ -728,7 +728,7 @@ describe('flowMetrics util function test', () => {
 
         const {startDate, endDate} = getSelectedRange(testRange);
 
-        expect(startDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+        expect(startDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
         expect(endDate.toISOString()).toEqual('2020-12-05T18:29:59.999Z');
       });
 
@@ -741,7 +741,7 @@ describe('flowMetrics util function test', () => {
 
         const {startDate, endDate} = getSelectedRange(testRange);
 
-        expect(startDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+        expect(startDate.toISOString()).toEqual('2020-06-04T18:30:00.000Z');
         expect(endDate.toISOString()).toEqual('2021-06-05T18:29:59.999Z');
       });
 
