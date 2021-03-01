@@ -1,16 +1,11 @@
-import startOfDay from 'date-fns/startOfDay';
-import addDays from 'date-fns/addDays';
-import endOfDay from 'date-fns/endOfDay';
-import addHours from 'date-fns/addHours';
-import addMinutes from 'date-fns/addMinutes';
 import moment from 'moment';
 import * as d3 from 'd3';
-import addMonths from 'date-fns/addMonths';
 import { convertUtcToTimezone } from './date';
 
 export const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
 
 export const getRoundedDate = (d = new Date(), offsetInMins, isFloor) => {
+  if (!d) return d;
   const ms = 1000 * 60 * offsetInMins; // convert minutes to ms
 
   return new Date(isFloor ? (Math.floor(d.getTime() / ms) * ms) : (Math.ceil(d.getTime() / ms) * ms));
@@ -51,79 +46,80 @@ export const getSelectedRange = range => {
   const { startDate, endDate, preset = 'custom' } = range;
   let start = startDate;
   let end = endDate;
+  const currentDate = moment().toDate();
 
   switch (preset) {
     case 'last15minutes':
-      start = addMinutes(new Date(), -15);
-      end = new Date();
+      start = moment().subtract(15, 'minutes').toDate();
+      end = currentDate;
       break;
     case 'last30minutes':
-      start = addMinutes(new Date(), -30);
-      end = new Date();
+      start = moment().subtract(30, 'minutes').toDate();
+      end = currentDate;
       break;
     case 'last1hour':
-      start = addHours(new Date(), -1);
-      end = new Date();
+      start = moment().subtract(1, 'hours').toDate();
+      end = currentDate;
       break;
     case 'last4hours':
-      start = addHours(new Date(), -4);
-      end = new Date();
+      start = moment().subtract(4, 'hours').toDate();
+      end = currentDate;
       break;
     case 'last24hours':
-      start = addHours(new Date(), -24);
-      end = new Date();
+      start = moment().subtract(24, 'hours').toDate();
+      end = currentDate;
       break;
     case 'today':
-      start = startOfDay(new Date());
-      end = new Date();
+      start = moment().startOf('day').toDate();
+      end = currentDate;
       break;
     case 'yesterday':
-      start = startOfDay(addDays(new Date(), -1));
-      end = endOfDay(addDays(new Date(), -1));
+      start = moment().subtract(1, 'days').startOf('day').toDate();
+      end = moment().subtract(1, 'days').endOf('day').toDate();
       break;
     case 'last7days':
-      start = startOfDay(addDays(new Date(), -6));
-      end = new Date();
+      start = moment().subtract(6, 'days').startOf('day').toDate();
+      end = currentDate;
       break;
     case 'last15days':
-      start = startOfDay(addDays(new Date(), -14));
-      end = new Date();
+      start = moment().subtract(14, 'days').startOf('day').toDate();
+      end = currentDate;
       break;
     case 'last30days':
-      start = startOfDay(addDays(new Date(), -29));
-      end = new Date();
+      start = moment().subtract(29, 'days').startOf('day').toDate();
+      end = currentDate;
       break;
     case 'last3months':
-      start = addMonths(new Date(), -3);
-      end = new Date();
+      start = moment().subtract(3, 'months').startOf('day').toDate();
+      end = currentDate;
       break;
     case 'last6months':
-      start = addMonths(new Date(), -6);
-      end = new Date();
+      start = moment().subtract(6, 'months').startOf('day').toDate();
+      end = currentDate;
       break;
     case 'last9months':
-      start = addMonths(new Date(), -9);
-      end = new Date();
+      start = moment().subtract(9, 'months').startOf('day').toDate();
+      end = currentDate;
       break;
     case 'lastyear':
-      start = addMonths(new Date(), -12);
-      end = new Date();
+      start = moment().subtract(1, 'years').startOf('day').toDate();
+      end = currentDate;
       break;
     case 'after14days':
-      start = new Date();
-      end = endOfDay(addDays(new Date(), 13));
+      start = currentDate;
+      end = moment().add(13, 'days').endOf('day').toDate();
       break;
     case 'after30days':
-      start = new Date();
-      end = endOfDay(addDays(new Date(), 29));
+      start = currentDate;
+      end = moment().add(29, 'days').endOf('day').toDate();
       break;
     case 'after6months':
-      start = new Date();
-      end = addMonths(new Date(), 6);
+      start = currentDate;
+      end = moment().add(6, 'months').endOf('day').toDate();
       break;
     case 'after1year':
-      start = new Date();
-      end = addMonths(new Date(), 12);
+      start = currentDate;
+      end = moment().add(1, 'years').endOf('day').toDate();
       break;
     case 'lastrun':
     default:
@@ -152,6 +148,10 @@ export const getLegend = index => {
 
 export const getTicks = (domainRange, srange, isValue) => {
   let ticks;
+
+  if (!domainRange || !domainRange.ticks) {
+    return [];
+  }
   const range = getSelectedRange(srange);
 
   const startDateFromNowInDays = moment().diff(moment(range.startDate), 'days');
@@ -185,6 +185,9 @@ export const getTicks = (domainRange, srange, isValue) => {
   return ticks;
 };
 export const getXAxisFormat = range => {
+  if (!range || typeof range !== 'object') {
+    return '';
+  }
   const hours = moment(range.endDate).diff(moment(range.startDate), 'hours');
   let xAxisFormat;
 
@@ -306,6 +309,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
             success: if exists r.s then r.s else 0.0,
             error: if exists r.e then r.e else 0.0,
             ignored: if exists r.i then r.i else 0.0,
+            resolved: if exists r.r then r.r else 0.0,
             averageTimeTaken: if exists r._value then r._value else 0.0,
             type: "sei"
           }))
@@ -358,6 +362,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
             success: if exists r.s then r.s else 0.0,
             error: if exists r.e then r.e else 0.0,
             ignored: if exists r.i then r.i else 0.0,
+            resolved: if exists r.r then r.r else 0.0,
             averageTimeTaken: if exists r._value then r._value else 0.0,
             type: "att"
           }))
@@ -393,6 +398,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         success: if exists r.s then r.s else 0.0,
         error: if exists r.e then r.e else 0.0,
         ignored: if exists r.i then r.i else 0.0,
+        resolved: if exists r.r then r.r else 0.0,
         averageTimeTaken: if exists r._value then r._value else 0.0,
         type: "sei"
       }))
@@ -444,6 +450,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         success: if exists r.s then r.s else 0.0,
         error: if exists r.e then r.e else 0.0,
         ignored: if exists r.i then r.i else 0.0,
+        resolved: if exists r.r then r.r else 0.0,
         averageTimeTaken: if exists r._value then r._value else 0.0,
         type: "att"
     }))
@@ -459,6 +466,8 @@ export const getLabel = key => {
       return 'Flow: Errors';
     case 'ignored':
       return 'Flow: Ignored';
+    case 'resolved':
+      return 'Flow: Resolved';
     default:
       return 'Average processing time/success record';
   }
@@ -472,6 +481,8 @@ export const getAxisLabel = key => {
       return '# of Errors';
     case 'ignored':
       return '# of Ignores';
+    case 'resolved':
+      return '# of Resolved';
     default:
       return 'Average processing time (ms)';
   }
