@@ -18,19 +18,21 @@ const {
 
 describe('flowMetrics util function test', () => {
   let dateNowSpy;
-  let momentSpy;
   const mockDate = new Date('2020-06-05T00:00:00.000+05:30');
 
   beforeAll(() => {
   // Lock Time
     dateNowSpy = jest.spyOn(Date, 'now').mockImplementation(() => +mockDate);
-    momentSpy = jest.spyOn(momenttz.tz, 'guess').mockImplementation(() => 'GMT');
+    momenttz.tz.setDefault('GMT');
+    // momentSpy = jest.spyOn(momenttz.tz, 'guess').mockImplementation(() => 'GMT');
   });
 
   afterAll(() => {
   // Unlock Time
     dateNowSpy.mockRestore();
-    momentSpy.mockRestore();
+    momenttz.tz.setDefault();
+
+    // momentSpy.mockRestore();
   });
   describe('isDate function test', () => {
     test('should return correct result for isDate', () => {
@@ -132,7 +134,7 @@ describe('flowMetrics util function test', () => {
         },
         epochTime: 1609664979229,
         preferences: {dateFormat: 'MM/DD/YYYY', timeFormat: 'HH:MM:ss'},
-        result: '01/03/2021 09:01:39',
+        result: '01/03/2021 14:01:39',
       }];
 
       testCases.forEach(test => {
