@@ -1276,12 +1276,11 @@ describe(' Error details in EM 2.0 reducer ', () => {
   });
 });
 
-describe('getErrors selector ', () => {
+describe('allResourceErrorDetails selector ', () => {
   test('should return default object if the state does not exist on any of the props are invalid', () => {
-    expect(selectors.getErrors(undefined, {})).toEqual(defaultValue);
-    expect(selectors.getErrors({}, { flowId, resourceId, errorType: 'open' })).toEqual(defaultValue);
-    expect(selectors.getErrors({}, { flowId, resourceId, errorType: 'resolved' })).toEqual(defaultValue);
-    expect(selectors.getErrors(errorStateWithActions, { flowId, resourceId, errorType: 'INVALID_ERROR_TYPE' })).toEqual(defaultValue);
+    expect(selectors.allResourceErrorDetails(undefined, {})).toEqual(defaultValue);
+    expect(selectors.allResourceErrorDetails({}, { flowId, resourceId })).toEqual(defaultValue);
+    expect(selectors.allResourceErrorDetails({}, { flowId, resourceId, isResolved: true })).toEqual(defaultValue);
   });
   test('should return the state error details open&resolved error details', () => {
     const expectedOpenErrors = {
@@ -1299,8 +1298,8 @@ describe('getErrors selector ', () => {
       updated: true,
     };
 
-    expect(selectors.getErrors(errorStateWithActions, { flowId, resourceId, errorType: 'open' })).toEqual(expectedOpenErrors);
-    expect(selectors.getErrors(errorStateWithActions, { flowId, resourceId, errorType: 'resolved' })).toEqual(expectedResolvedErrors);
+    expect(selectors.allResourceErrorDetails(errorStateWithActions, { flowId, resourceId })).toEqual(expectedOpenErrors);
+    expect(selectors.allResourceErrorDetails(errorStateWithActions, { flowId, resourceId, isResolved: true })).toEqual(expectedResolvedErrors);
   });
 });
 
@@ -1410,3 +1409,266 @@ describe('isAllErrorsSelected selector', () => {
     })).toBeTruthy();
   });
 });
+
+describe('isAnyActionInProgress selector', () => {
+  const errorDetails = {
+    open: {
+      status: 'received',
+      errors: [
+        { errorId: '9999', message: 'retry failed'},
+        { errorId: '8888', message: 'invalid hook', selected: true },
+        { errorId: '7777', message: 'failed javascript hook', selected: true },
+      ],
+    },
+    resolved: {
+      status: 'received',
+      errors: [
+        { errorId: '1234', message: 'retry failed' },
+        { errorId: '1111', message: 'invalid transform', selected: true },
+        { errorId: '2222', message: 'failed transform', selected: true },
+      ],
+    },
+  };
+
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.isAnyActionInProgress({}, {})).toBeFalsy();
+  });
+  test('should return false if the actions does not exist', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {
+          ...errorDetails,
+          actions: {},
+        },
+
+      },
+    };
+
+    expect(selectors.isAnyActionInProgress(sampleState, { flowId, resourceId })).toBeFalsy();
+  });
+  test('should return false if neither of retry/resolve actions status is requested', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {
+          ...errorDetails,
+          actions: {
+            retry: {
+              status: 'received',
+              count: 44,
+            },
+            resolve: {
+              status: 'received',
+              count: 50,
+            },
+
+          },
+        },
+      },
+    };
+
+    expect(selectors.isAnyActionInProgress(sampleState, { flowId, resourceId })).toBeFalsy();
+  });
+  test('should return true if either of retry/resolve actions status is requested', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {
+          ...errorDetails,
+          actions: {
+            retry: {
+              status: 'requested',
+              count: 44,
+            },
+            resolve: {
+              status: 'received',
+              count: 50,
+            },
+          },
+        },
+      },
+    };
+
+    expect(selectors.isAnyActionInProgress(sampleState, { flowId, resourceId })).toBeTruthy();
+  });
+  test('should return true when actionType is passed as retry if retry action status is requested', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {
+          ...errorDetails,
+          actions: {
+            retry: {
+              status: 'requested',
+              count: 44,
+            },
+            resolve: {
+              status: 'received',
+              count: 50,
+            },
+          },
+        },
+      },
+    };
+
+    expect(selectors.isAnyActionInProgress(sampleState, { flowId, resourceId, actionType: 'retry' })).toBeTruthy();
+  });
+
+  test('should return false when actionType is passed as resolve if resolve action status is not requested', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {
+          ...errorDetails,
+          actions: {
+            retry: {
+              status: 'requested',
+              count: 44,
+            },
+            resolve: {
+              status: 'received',
+              count: 50,
+            },
+          },
+        },
+      },
+    };
+
+    expect(selectors.isAnyActionInProgress(sampleState, { flowId, resourceId, actionType: 'resolve' })).toBeFalsy();
+  });
+  test('should return false when actionType passed is invalid', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {
+          ...errorDetails,
+          actions: {
+            retry: {
+              status: 'requested',
+              count: 44,
+            },
+            resolve: {
+              status: 'received',
+              count: 50,
+            },
+          },
+        },
+      },
+    };
+
+    expect(selectors.isAnyActionInProgress(sampleState, { flowId, resourceId, actionType: 'INVALID_ACTION_TYPE' })).toBeFalsy();
+  });
+});
+
+describe('hasResourceErrors selector', () => {
+  const errorDetails = {
+    open: {
+      status: 'received',
+      errors: [
+        { errorId: '9999', message: 'retry failed'},
+        { errorId: '8888', message: 'invalid hook', selected: true },
+        { errorId: '7777', message: 'failed javascript hook', selected: true },
+      ],
+    },
+    resolved: {
+      status: 'received',
+      errors: [
+        { errorId: '1234', message: 'retry failed' },
+        { errorId: '1111', message: 'invalid transform', selected: true },
+        { errorId: '2222', message: 'failed transform', selected: true },
+      ],
+    },
+  };
+
+  test('should return false incase of invalid flow/resourceIds given', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {
+          ...errorDetails,
+        },
+      },
+    };
+
+    expect(selectors.hasResourceErrors(sampleState, {})).toBeFalsy();
+    expect(selectors.hasResourceErrors(sampleState, {flowId: 'INVALID_FLOW_ID', resourceId: 'INVALID_RESOURCE_ID'})).toBeFalsy();
+  });
+  test('should return false if the passed resource has no open errors', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {
+          open: { status: 'received', data: {}},
+          resolved: errorDetails.resolved,
+        },
+      },
+    };
+
+    expect(selectors.hasResourceErrors(sampleState, {flowId, resourceId})).toBeFalsy();
+  });
+  test('should return false if the passed resource has no resolved errors', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {
+          open: errorDetails.open,
+          resolved: { status: 'received', data: {}},
+        },
+      },
+    };
+
+    expect(selectors.hasResourceErrors(sampleState, {flowId, resourceId, isResolved: true})).toBeFalsy();
+  });
+  test('should return true if the passed resource has open errors', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {
+          ...errorDetails,
+        },
+      },
+    };
+
+    expect(selectors.hasResourceErrors(sampleState, {flowId, resourceId})).toBeTruthy();
+  });
+  test('should return true if the passed resource has resolved errors', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {
+          ...errorDetails,
+        },
+      },
+    };
+
+    expect(selectors.hasResourceErrors(sampleState, {flowId, resourceId, isResolved: true})).toBeTruthy();
+  });
+});
+
+describe('isTraceKeyRetried selector', () => {
+  const sampleState = {
+    [flowId]: {
+      [resourceId]: {
+        open: {
+          status: 'received',
+          errors: openErrors,
+          nextPageURL: sampleOpenErrorsNextPageURL,
+        },
+        resolved: {
+          status: 'received',
+          errors: resolvedErrors,
+          nextPageURL: sampleResolvedErrorsNextPageURL,
+        },
+        actions: {
+          retry: {
+            traceKeys: ['id1', 'id2'],
+            count: 100,
+          },
+        },
+      },
+    },
+  };
+
+  test('should return false when passed invalid flowId or resourceId or traceKey options', () => {
+    expect(selectors.isTraceKeyRetried(sampleState, {})).toBeFalsy();
+    expect(selectors.isTraceKeyRetried(sampleState, {flowId: 'INVALID_FLOW_ID', resourceId: 'INVALID_RESOURCE_ID'})).toBeFalsy();
+    expect(selectors.isTraceKeyRetried(sampleState, { flowId, resourceId })).toBeFalsy();
+  });
+  test('should return false if the passed traceKey has not yet been retried', () => {
+    expect(selectors.isTraceKeyRetried(sampleState, { flowId, resourceId, traceKey: 'id4' })).toBeFalsy();
+  });
+  test('should return true if the passed traceKey has already been retried and part of cached traceKey list', () => {
+    expect(selectors.isTraceKeyRetried(sampleState, { flowId, resourceId, traceKey: 'id2' })).toBeTruthy();
+  });
+});
+

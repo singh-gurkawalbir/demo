@@ -1,4 +1,4 @@
-import { put, takeLatest, select } from 'redux-saga/effects';
+import { put, takeLatest, select, call } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
@@ -18,7 +18,7 @@ export function* requestRunHistory({ flowId }) {
   const { path, opts } = requestOptions;
 
   try {
-    const runHistory = yield apiCallWithRetry({
+    const runHistory = yield call(apiCallWithRetry, {
       path,
       opts,
       hidden: true,
