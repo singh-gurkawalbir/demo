@@ -19,7 +19,7 @@ const {
 describe('flowMetrics util function test', () => {
   let dateNowSpy;
   let momentSpy;
-  const mockDate = new Date('2020-06-05T00:00:00.000Z');
+  const mockDate = new Date('2020-06-05T00:00:00.000+00:00');
 
   beforeAll(() => {
   // Lock Time
