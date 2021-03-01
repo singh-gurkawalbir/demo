@@ -333,7 +333,6 @@ describe('settingsForm processor logic', () => {
         },
         insertStubKey: 'formInit',
         originalData: { fieldMap: {}, layout: { fields: [] } },
-        scriptPatchPath: '/content',
         settingsFormPatchPath: '/settingsForm',
       };
 
@@ -364,7 +363,6 @@ describe('settingsForm processor logic', () => {
         },
         insertStubKey: 'formInit',
         originalData: { fieldMap: {}, layout: { fields: [] } },
-        scriptPatchPath: '/content',
         settingsFormPatchPath: '/settingsForm',
       };
 
@@ -394,7 +392,6 @@ describe('settingsForm processor logic', () => {
         },
         insertStubKey: 'formInit',
         originalData: { fieldMap: {}, layout: { fields: [] } },
-        scriptPatchPath: '/content',
         settingsFormPatchPath: '/settingsForm',
       };
 
@@ -674,7 +671,6 @@ describe('settingsForm processor logic', () => {
         },
         originalData: JSON.stringify(parsedData, null, 2),
         insertStubKey: 'formInit',
-        scriptPatchPath: '/content',
         settingsFormPatchPath: '/settingsForm',
       };
       const expectedPatches = {
@@ -728,7 +724,6 @@ describe('settingsForm processor logic', () => {
         },
         originalData: JSON.stringify({ fieldMap: {}, layout: { fields: [] } }, null, 2),
         insertStubKey: 'formInit',
-        scriptPatchPath: '/content',
         settingsFormPatchPath: '/settingsForm',
       };
       const expectedPatches = {
