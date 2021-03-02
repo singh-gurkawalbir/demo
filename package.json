@@ -17,7 +17,7 @@
     "release": "./release.sh",
     "build-analyze": "env NODE_ENV=production webpack --mode=production --analyze",
     "lint": "eslint --ext .js --ext .jsx ./src",
-    "test": "env NODE_ENV=tests TZ=UTC jest",
+    "test": "env NODE_ENV=test TZ=UTC jest",
     "coverage": "env NODE_ENV=test jest --coverage",
     "styleguide": "env NODE_ENV=styleguide styleguidist server",
     "styleguide-build": "env NODE_ENV=styleguide styleguidist build"
