@@ -262,7 +262,8 @@ export default function FlowsPanel({ integrationId, childId }) {
   const match = useRouteMatch();
   const [showDialog, setShowDialog] = useState(false);
   const sectionId = match?.params?.sectionId;
-  const filterKey = `${integrationId}-flows${sectionId ? `-${sectionId}` : ''}`;
+  const currentIntegrationId = childId || integrationId;
+  const filterKey = `${currentIntegrationId}-flows${sectionId ? `-${sectionId}` : ''}`;
 
   // Celigo table and Keyword components are patching the same time...the order of
   // execution isn't consistent...we have to consider refactoring the code to patch only
@@ -356,7 +357,7 @@ export default function FlowsPanel({ integrationId, childId }) {
       <ScheduleDrawer />
       <QueuedJobsDrawer />
 
-      <PanelHeader title={<Title flows={flows} integrationId={integrationId} />} infoText={infoTextFlow}>
+      <PanelHeader title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoTextFlow}>
         <div className={classes.actions}>
           <KeywordSearch
             filterKey={filterKey}
@@ -390,7 +391,7 @@ export default function FlowsPanel({ integrationId, childId }) {
 
       <LoadResources required resources="flows, exports">
         <FlowListing
-          integrationId={integrationId}
+          integrationId={currentIntegrationId}
           filterKey={filterKey}
           actionProps={actionProps}
           flows={flows}
