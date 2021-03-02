@@ -8452,9 +8452,9 @@ describe('integrationApps selectors test cases', () => {
     const selector = selectors.mkCategoryMappingData();
 
     test('should not throw exception for bad params', () => {
-      expect(selector()).toEqual(null);
+      expect(selector()).toEqual([]);
       expect(selector({})).toEqual([]);
-      expect(selector(null)).toEqual(null);
+      expect(selector(null)).toEqual([]);
     });
 
     test('should return correct form state for params passed for variationAttributes set as false', () => {
@@ -10314,9 +10314,9 @@ describe('integrationApps selectors test cases', () => {
     const selector = selectors.mkMappingsForCategory();
 
     test('should not throw exception for bad params', () => {
-      expect(selector()).toEqual({fieldMappings: []});
+      expect(selector()).toEqual();
       expect(selector({})).toEqual();
-      expect(selector(null)).toEqual({fieldMappings: []});
+      expect(selector(null)).toEqual();
     });
 
     test('should return correct form state for params passed for variationAttributes set as false', () => {

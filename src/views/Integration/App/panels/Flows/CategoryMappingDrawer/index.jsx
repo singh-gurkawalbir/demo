@@ -373,12 +373,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const history = useHistory();
   const match = useRouteMatch();
   const { flowId, categoryId } = match.params;
-  // const [requestedMetadata, setRequestedMetadata] = useState(false);
-  const mappingsChanged = useSelectorMemo(selectors.mkCategoryMappingsChanged, integrationId, flowId);
-  const mappingSaveStatus = useSelector(state =>
-    selectors.categoryMappingSaveStatus(state, integrationId, flowId)
-  );
-  const isSaving = mappingSaveStatus === 'requested';
+
   const integrationName = useSelector(state => {
     const integration = selectors.resource(
       state,
@@ -392,7 +387,6 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
     state => !!selectors.categoryMapping(state, integrationId, flowId)
   );
   const { collapseStatus = 'collapsed' } = useSelectorMemo(selectors.mkCategoryMappingsCollapsedStatus, integrationId, flowId) || {};
-
   const uiAssistant = useSelector(state => {
     const categoryMappingMetadata =
       selectors.categoryMapping(state, integrationId, flowId) || {};
@@ -400,13 +394,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
 
     return `${uiAssistant.charAt(0).toUpperCase()}${uiAssistant.slice(1)}`;
   });
-  const isCurrentCategoryDeleted = useSelector(state => {
-    const categoryMappingMetadata =
-      selectors.categoryMapping(state, integrationId, flowId) || {};
-    const { deleted = [] } = categoryMappingMetadata;
 
-    return deleted.includes(categoryId);
-  });
   const importId = useSelector(state => {
     const flow = selectors.resource(state, 'flows', flowId);
 
@@ -424,6 +412,150 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const currentSectionLabel =
     (mappedCategories.find(category => category.id === categoryId) || {})
       .name || categoryId;
+
+  const handleClose = useCallback(() => {
+    history.push(parentUrl);
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.clear(
+        integrationId,
+        flowId
+      )
+    );
+  }, [dispatch, flowId, history, integrationId, parentUrl]);
+
+  const handleCollapseAll = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.collapseAll(
+        integrationId,
+        flowId
+      )
+    );
+  }, [dispatch, flowId, integrationId]);
+  const handleExpandAll = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.expandAll(
+        integrationId,
+        flowId
+      )
+    );
+  }, [dispatch, flowId, integrationId]);
+
+  if (!integrationName) {
+    return <LoadResources required resources="integrations" />;
+  }
+
+  return (
+    <>
+      <Drawer
+        anchor="right"
+        open={!!match}
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+        onClose={handleClose}>
+        <InitializationComp
+          integrationId={integrationId}
+          flowId={flowId}
+          categoryId={categoryId}
+          parentUrl={parentUrl} />
+
+        <DrawerTitleBar flowId={flowId} parentUrl={parentUrl} />
+        {metadataLoaded ? (
+          <div className={classes.root}>
+            <div className={classes.categoryMapWrapper}>
+              <div className={classes.subNav}>
+                <CategoryList integrationId={integrationId} flowId={flowId} />
+              </div>
+              <div className={classes.content}>
+                <PanelHeader
+                  className={classes.header}
+                  title={currentSectionLabel}>
+                  <Filters
+                    integrationId={integrationId}
+                    flowId={flowId}
+                    uiAssistant={uiAssistant}
+                  />
+                  {collapseStatus === 'collapsed' ? (
+                    <IconTextButton
+                      variant="text"
+                      onClick={handleExpandAll}
+                      className={classes.expCollBtn}>
+                      <ExpandWindowIcon /> Expand All
+                    </IconTextButton>
+                  ) : (
+                    <IconTextButton
+                      variant="text"
+                      onClick={handleCollapseAll}
+                      className={classes.expCollBtn}>
+                      <CollapseWindowIcon /> Collapse All
+                    </IconTextButton>
+                  )}
+                </PanelHeader>
+                <div className={classes.mappingHeader}>
+                  <div className={classes.mappingChild}>
+                    <Typography variant="h5" className={classes.childHeader}>
+                      {uiAssistant}
+                    </Typography>
+                    <ApplicationImg
+                      assistant={uiAssistant.toLowerCase()}
+                      size="small"
+                    />
+                  </div>
+                  <div className={classes.mappingChild}>
+                    <Typography variant="h5" className={classes.childHeader}>
+                      NetSuite
+                    </Typography>
+                    <ApplicationImg assistant="netsuite" />
+                  </div>
+                </div>
+                <CategoryMappings
+                  integrationId={integrationId}
+                  flowId={flowId}
+                  sectionId={categoryId}
+                />
+                <ButtonComp
+                  flowId={flowId}
+                  integrationId={integrationId}
+                  parentUrl={parentUrl} />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <Loader open hideBackDrop>
+            Loading
+            <Spinner />
+          </Loader>
+        )}
+      </Drawer>
+      <SettingsDrawer
+        integrationId={integrationId}
+        flowId={flowId}
+        importId={importId}
+      />
+    </>
+  );
+}
+
+const InitializationComp = ({integrationId, flowId, categoryId, parentUrl}) => {
+  const history = useHistory();
+
+  const dispatch = useDispatch();
+  const match = useRouteMatch();
+  const metadataLoaded = useSelector(
+    state => !!selectors.categoryMapping(state, integrationId, flowId)
+  );
+
+  const mappingSaveStatus = useSelector(state =>
+    selectors.categoryMappingSaveStatus(state, integrationId, flowId)
+  );
+  const mappedCategories = useSelectorMemo(selectors.mkMappedCategories, integrationId, flowId) || [];
+  const isCurrentCategoryDeleted = useSelector(state => {
+    const categoryMappingMetadata =
+      selectors.categoryMapping(state, integrationId, flowId) || {};
+    const { deleted = [] } = categoryMappingMetadata;
+
+    return deleted.includes(categoryId);
+  });
 
   useEffect(() => {
     if (!metadataLoaded) {
@@ -489,15 +621,19 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryId, isCurrentCategoryDeleted, mappingSaveStatus, parentUrl]);
 
-  const handleClose = useCallback(() => {
-    history.push(parentUrl);
-    dispatch(
-      actions.integrationApp.settings.categoryMappings.clear(
-        integrationId,
-        flowId
-      )
-    );
-  }, [dispatch, flowId, history, integrationId, parentUrl]);
+  return null;
+};
+const ButtonComp = ({flowId, integrationId, parentUrl}) => {
+  const classes = useStyles();
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const mappingsChanged = useSelectorMemo(selectors.mkCategoryMappingsChanged, integrationId, flowId);
+  const mappingSaveStatus = useSelector(state =>
+    selectors.categoryMappingSaveStatus(state, integrationId, flowId)
+  );
+
+  const isSaving = mappingSaveStatus === 'requested';
+
   const handleSave = useCallback(() => {
     dispatch(
       actions.integrationApp.settings.categoryMappings.save(
@@ -515,138 +651,49 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
       )
     );
   }, [dispatch, flowId, integrationId]);
-  const handleCollapseAll = useCallback(() => {
+  const handleClose = useCallback(() => {
+    history.push(parentUrl);
     dispatch(
-      actions.integrationApp.settings.categoryMappings.collapseAll(
+      actions.integrationApp.settings.categoryMappings.clear(
         integrationId,
         flowId
       )
     );
-  }, [dispatch, flowId, integrationId]);
-  const handleExpandAll = useCallback(() => {
-    dispatch(
-      actions.integrationApp.settings.categoryMappings.expandAll(
-        integrationId,
-        flowId
-      )
-    );
-  }, [dispatch, flowId, integrationId]);
-
-  if (!integrationName) {
-    return <LoadResources required resources="integrations" />;
-  }
+  }, [dispatch, flowId, history, integrationId, parentUrl]);
 
   return (
-    <>
-      <Drawer
-        anchor="right"
-        open={!!match}
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-        onClose={handleClose}>
-        <DrawerTitleBar flowId={flowId} parentUrl={parentUrl} />
-        {metadataLoaded ? (
-          <div className={classes.root}>
-            <div className={classes.categoryMapWrapper}>
-              <div className={classes.subNav}>
-                <CategoryList integrationId={integrationId} flowId={flowId} />
-              </div>
-              <div className={classes.content}>
-                <PanelHeader
-                  className={classes.header}
-                  title={currentSectionLabel}>
-                  <Filters
-                    integrationId={integrationId}
-                    flowId={flowId}
-                    uiAssistant={uiAssistant}
-                  />
-                  {collapseStatus === 'collapsed' ? (
-                    <IconTextButton
-                      variant="text"
-                      onClick={handleExpandAll}
-                      className={classes.expCollBtn}>
-                      <ExpandWindowIcon /> Expand All
-                    </IconTextButton>
-                  ) : (
-                    <IconTextButton
-                      variant="text"
-                      onClick={handleCollapseAll}
-                      className={classes.expCollBtn}>
-                      <CollapseWindowIcon /> Collapse All
-                    </IconTextButton>
-                  )}
-                </PanelHeader>
-                <div className={classes.mappingHeader}>
-                  <div className={classes.mappingChild}>
-                    <Typography variant="h5" className={classes.childHeader}>
-                      {uiAssistant}
-                    </Typography>
-                    <ApplicationImg
-                      assistant={uiAssistant.toLowerCase()}
-                      size="small"
-                    />
-                  </div>
-                  <div className={classes.mappingChild}>
-                    <Typography variant="h5" className={classes.childHeader}>
-                      NetSuite
-                    </Typography>
-                    <ApplicationImg assistant="netsuite" />
-                  </div>
-                </div>
-                <CategoryMappings
-                  integrationId={integrationId}
-                  flowId={flowId}
-                  sectionId={categoryId}
-                />
-                <ButtonGroup className={classes.saveButtonGroup}>
-                  <Button
-                    id={flowId}
-                    variant="outlined"
-                    color="primary"
-                    disabled={!mappingsChanged || isSaving}
-                    data-test="saveCategoryMappings"
-                    onClick={handleSave}>
-                    {isSaving ? 'Saving...' : 'Save'}
-                  </Button>
-                  {(mappingsChanged || isSaving) && (
-                    <Button
-                      id={flowId}
-                      variant="outlined"
-                      color="secondary"
-                      disabled={isSaving}
-                      data-test="saveAndCloseImportMapping"
-                      onClick={handleSaveAndClose}>
-                      Save & close
-                    </Button>
-                  )}
-                  <Button
-                    variant="text"
-                    data-test="saveImportMapping"
-                    disabled={isSaving}
-                    onClick={handleClose}>
-                    Close
-                  </Button>
-                </ButtonGroup>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <Loader open hideBackDrop>
-            Loading
-            <Spinner />
-          </Loader>
-        )}
-      </Drawer>
-      <SettingsDrawer
-        integrationId={integrationId}
-        flowId={flowId}
-        importId={importId}
-      />
-    </>
-  );
-}
 
+    <ButtonGroup className={classes.saveButtonGroup}>
+      <Button
+        id={flowId}
+        variant="outlined"
+        color="primary"
+        disabled={!mappingsChanged || isSaving}
+        data-test="saveCategoryMappings"
+        onClick={handleSave}>
+        {isSaving ? 'Saving...' : 'Save'}
+      </Button>
+      {(mappingsChanged || isSaving) && (
+      <Button
+        id={flowId}
+        variant="outlined"
+        color="secondary"
+        disabled={isSaving}
+        data-test="saveAndCloseImportMapping"
+        onClick={handleSaveAndClose}>
+        Save & close
+      </Button>
+      )}
+      <Button
+        variant="text"
+        data-test="saveImportMapping"
+        disabled={isSaving}
+        onClick={handleClose}>
+        Close
+      </Button>
+    </ButtonGroup>
+  );
+};
 export default function CategoryMappingDrawerRoute(props) {
   const match = useRouteMatch();
 
