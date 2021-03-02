@@ -53,8 +53,11 @@ export default function SelectDate({
 
       dispatch(
         actions.patchFilter(filterKey, {
-          ...filter,
           [filterBy]: selectedRange,
+          paging: {
+            ...filter.paging,
+            currPage: 0,
+          },
         })
       );
       dispatch(

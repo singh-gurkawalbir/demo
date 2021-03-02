@@ -530,7 +530,7 @@ describe('Sample data region selector testcases', () => {
     };
 
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isExportPreviewDisabled()).toEqual(null);
+      expect(selectors.isExportPreviewDisabled()).toEqual(false);
     });
     test('should return false if the resource is a file type resource as we always allow user to preview', () => {
       expect(selectors.isExportPreviewDisabled(sampleState, '1111', 'exports')).toBeFalsy();

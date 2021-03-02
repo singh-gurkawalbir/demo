@@ -10,7 +10,7 @@ export default function ViewErrorDetails({ flowId, resourceId, errorId, isResolv
       flowId,
       resourceId,
       errorId,
-      options: {isResolved},
+      isResolved,
     }) || {},
     shallowEqual
   );
