@@ -10,7 +10,8 @@ const useStyles = makeStyles(theme => ({
     top: `${theme.spacing(1)}px !important`,
   },
 }));
-const Action = ({ label, Icon, disabledActionText, useHasAccess, actionProps, rowData, component, selectAction, handleMenuClose}) => {
+
+const Action = ({ isSingleAction, label, Icon, disabledActionText, useHasAccess, actionProps, rowData, component, selectAction, handleMenuClose}) => {
   const handleActionClick = useCallback(() => {
     selectAction(component);
     handleMenuClose();
@@ -22,6 +23,22 @@ const Action = ({ label, Icon, disabledActionText, useHasAccess, actionProps, ro
   }
   const disabledActionTitle = disabledActionText?.({ ...actionProps, rowData });
   const actionIcon = Icon ? <Icon /> : null;
+
+  if (isSingleAction) {
+    return (
+      <Tooltip data-public title={disabledActionTitle || label} placement="bottom" >
+        {/* The <div> below seems to be redundant as it does not provide any presentation benefit.
+            However, without this wrapper div, if the action is disabled, the <Tooltip> wrapper
+            doesn't recognize the hover state and thus doesn't show the tooltip message.
+        */}
+        <div>
+          <IconButton size="small" disabled={!!disabledActionTitle} onClick={handleActionClick}>
+            {actionIcon}
+          </IconButton>
+        </div>
+      </Tooltip>
+    );
+  }
 
   if (disabledActionTitle) {
     return (
@@ -43,6 +60,7 @@ const Action = ({ label, Icon, disabledActionText, useHasAccess, actionProps, ro
     </MenuItem>
   );
 };
+
 export default function ActionMenu({ rowActions, rowData, actionProps, selectAction }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -86,6 +104,10 @@ export default function ActionMenu({ rowActions, rowData, actionProps, selectAct
 
   if (!actions || !actions.length) return null;
 
+  if (actions.length === 1) {
+    return (<Action isSingleAction {...actions[0]} />);
+  }
+
   return (
     <>
       <IconButton
@@ -101,9 +123,7 @@ export default function ActionMenu({ rowActions, rowData, actionProps, selectAct
       <ArrowPopper
         placement="bottom-end"
         restrictToParent={false}
-        classes={{
-          popper: classes.actionsMenuPopper,
-        }}
+        classes={{ popper: classes.actionsMenuPopper }}
         open={open}
         anchorEl={anchorEl}
         id={actionsPopoverId}
