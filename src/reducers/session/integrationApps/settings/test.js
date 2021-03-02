@@ -10458,19 +10458,19 @@ describe('integrationApps selectors test cases', () => {
     });
   });
 
-  describe('integrationApps settings mkCategoryMappingMetadata', () => {
-    const selector = selectors.mkCategoryMappingMetadata();
+  describe('integrationApps settings mkCategoryMappingsExtractsMetadata', () => {
+    const selector = selectors.mkCategoryMappingsExtractsMetadata();
 
     test('should not throw exception for bad params', () => {
-      expect(selector()).toEqual({});
-      expect(selector({})).toEqual({});
-      expect(selector(null)).toEqual({});
+      expect(selector()).toEqual([]);
+      expect(selector({})).toEqual([]);
+      expect(selector(null)).toEqual([]);
     });
     test('should return correct data for amazon category mappings', () => {
       const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration', 'flow', amazonCategoryMappings));
 
-      expect(selector(state, 'integration', 'flow')).toEqual({
-        extractsMetadata: [
+      expect(selector(state, 'integration', 'flow')).toEqual(
+        [
           {
             id: 'hits',
             name: '# Times Viewed',
@@ -10506,251 +10506,8 @@ describe('integrationApps selectors test cases', () => {
             name: 'eTail Channel (2)',
             type: 'multiselect',
           },
-        ],
-        generatesMetadata: [
-          {
-            description: 'A unique identifier for the product, assigned by the merchant.  The SKU must be unique for each product listed.  After you have established a SKU for a product, please do not change it without first deleting the original SKU from our systems through a delete feed.',
-            filterType: 'required',
-            id: 'item_sku',
-            name: 'Seller SKU',
-            options: [],
-            type: 'input',
-          },
-          {
-            description: 'A short title for the product. This will be displayed in bold on the product page and in the title bar of the browser window.',
-            filterType: 'required',
-            id: 'item_name',
-            name: 'Product Name',
-            options: [],
-            type: 'input',
-          },
-          {
-            description: 'A standard, alphanumeric string that uniquely identifies the product.',
-            filterType: 'preferred',
-            id: 'ASIN',
-            name: 'ASIN',
-            options: [],
-            type: 'input',
-          },
-          {
-            description: 'A standard, alphanumeric string that uniquely identifies the product.',
-            filterType: 'preferred',
-            id: 'UPC',
-            name: 'UPC',
-            options: [],
-            type: 'input',
-          },
-          {
-            description: 'The unit of measure used to describe the dimensions (width, length, height) of the product, expressed in centimeters, meters, inches, or feet. Required if item dimensions are provided.',
-            filterType: 'optional',
-            id: 'item_length_unit_of_measure',
-            name: 'Item Length Unit Of Measure',
-            options: [
-              {
-                id: 'CM',
-                text: 'CM',
-              },
-              {
-                id: 'FT',
-                text: 'FT',
-              },
-              {
-                id: 'IN',
-                text: 'IN',
-              },
-              {
-                id: 'M',
-                text: 'M',
-              },
-              {
-                id: 'MM',
-                text: 'MM',
-              },
-            ],
-            type: 'select',
-          },
-        ],
-        relationshipData: [
-          {
-            children: [
-              {
-                id: 'autoaccessorymisc',
-                isLeafNode: true,
-                name: 'autoaccessorymisc',
-              },
-              {
-                id: 'autobattery',
-                isLeafNode: true,
-                name: 'autobattery',
-              },
-              {
-                id: 'autooil',
-                isLeafNode: true,
-                name: 'autooil',
-              },
-              {
-                id: 'Underwear',
-                isLeafNode: true,
-                name: 'Underwear [Moved to Clothing]',
-              },
-            ],
-            id: 'autoaccessory',
-            isLeafNode: false,
-            marketplace_domain: 'US',
-            name: 'Auto Accessory',
-          },
-          {
-            children: [
-              {
-                id: 'babyproducts',
-                isLeafNode: true,
-                name: 'babyproducts',
-              },
-              {
-                id: 'infanttoddlercarseat',
-                isLeafNode: true,
-                name: 'infanttoddlercarseat',
-              },
-              {
-                id: 'stroller',
-                isLeafNode: true,
-                name: 'stroller',
-              },
-            ],
-            id: 'baby',
-            isLeafNode: false,
-            marketplace_domain: 'US',
-            name: 'Baby',
-          },
-          {
-            children: [
-              {
-                id: 'beautymisc',
-                isLeafNode: true,
-                name: 'beautymisc',
-              },
-              {
-                id: 'bodycareproduct',
-                isLeafNode: true,
-                name: 'bodycareproduct',
-              },
-              {
-                id: 'conditioner',
-                isLeafNode: true,
-                name: 'conditioner',
-              },
-            ],
-            id: 'beauty',
-            isLeafNode: false,
-            marketplace_domain: 'US',
-            name: 'Beauty',
-          },
-          {
-            children: [],
-            id: 'BookLoader',
-            isLeafNode: true,
-            marketplace_domain: 'US',
-            name: 'Book Loader',
-          },
-          {
-            children: [
-              {
-                id: 'binocular',
-                isLeafNode: true,
-                name: 'binocular',
-              },
-              {
-                id: 'blankmediaforcameras',
-                isLeafNode: true,
-                name: 'blankmediaforcameras',
-              },
-              {
-                id: 'camcorder',
-                isLeafNode: true,
-                name: 'camcorder',
-              },
-              {
-                id: 'Tripod',
-                isLeafNode: true,
-                name: 'Tripod [Deprecated]',
-              },
-            ],
-            id: 'cameraandphoto',
-            isLeafNode: false,
-            marketplace_domain: 'US',
-            name: 'Camera and Photo',
-          },
-          {
-            children: [
-              {
-                id: 'PROTECTIVE_GLOVE',
-                isLeafNode: true,
-                name: 'PROTECTIVE_GLOVE',
-              },
-              {
-                id: 'accessory',
-                isLeafNode: true,
-                name: 'accessory',
-              },
-              {
-                id: 'childrenscostume',
-                isLeafNode: true,
-                name: 'childrenscostume',
-              },
-              {
-                id: 'vest',
-                isLeafNode: true,
-                name: 'vest',
-              },
-            ],
-            id: 'clothing',
-            isLeafNode: false,
-            marketplace_domain: 'US',
-            name: 'Clothing',
-          },
-          {
-            children: [
-              {
-                id: 'Bullion',
-                isLeafNode: true,
-                name: 'Bullion',
-              },
-              {
-                id: 'Coins',
-                isLeafNode: true,
-                name: 'Coins',
-              },
-              {
-                id: 'CollectibleCoins',
-                isLeafNode: true,
-                name: 'CollectibleCoins',
-              },
-            ],
-            id: 'coins',
-            isLeafNode: false,
-            marketplace_domain: 'US',
-            name: 'Coins',
-          },
-          {
-            children: [
-              {
-                id: 'FoodServiceSupply',
-                isLeafNode: true,
-                name: 'FoodServiceSupply',
-              },
-              {
-                id: 'JanitorialSupply',
-                isLeafNode: true,
-                name: 'JanitorialSupply',
-              },
-            ],
-            id: 'FoodServiceAndJanSan',
-            isLeafNode: false,
-            marketplace_domain: 'US',
-            name: 'Food Service and Jan San',
-          },
-        ],
-      });
+        ]
+      );
     });
   });
 

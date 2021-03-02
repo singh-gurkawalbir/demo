@@ -880,39 +880,16 @@ selectors.mkMappingsForCategory = () => {
     });
 };
 
-selectors.mkCategoryMappingMetadata = () => createSelector(
-  (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)],
-  (categoryMappingData = emptyObj) => {
-    const categoryMappingMetadata = {};
-    const { response } = categoryMappingData;
-
-    if (!response) {
-      return categoryMappingMetadata;
-    }
-
+selectors.mkCategoryMappingsExtractsMetadata = () => createSelector(
+  (state, integrationId, flowId) => {
+    const {response = [] } = state?.[getCategoryKey(integrationId, flowId)] || emptyObj;
     const extractsMetadata = response.find(
       sec => sec.operation === 'extractsMetaData'
     );
-    const generatesMetadata = response.find(
-      sec => sec.operation === 'generatesMetaData'
-    );
 
-    if (extractsMetadata) {
-      categoryMappingMetadata.extractsMetadata = extractsMetadata.data;
-    }
-
-    if (generatesMetadata) {
-      categoryMappingMetadata.generatesMetadata =
-      generatesMetadata.data &&
-      generatesMetadata.data.generatesMetaData &&
-      generatesMetadata.data.generatesMetaData.fields;
-      categoryMappingMetadata.relationshipData =
-      generatesMetadata.data && generatesMetadata.data.categoryRelationshipData;
-    }
-
-    return categoryMappingMetadata;
-  });
-selectors.categoryMappingMetadata = selectors.mkCategoryMappingMetadata();
+    return extractsMetadata?.data || emptySet;
+  },
+  (extractsMetadata = emptySet) => extractsMetadata);
 
 selectors.mkPendingCategoryMappings = () => {
   const categoryMappingsGeneratesSelector = selectors.mkCategoryMappingGeneratesMetadata();

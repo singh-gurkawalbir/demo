@@ -98,7 +98,7 @@ export default function ImportMapping(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { mappings, initChangeIdentifier } = useSelectorMemo(selectors.mkCategoryMappingsForSection, integrationId, flowId, editorId);
-  const { extractsMetadata: extractFields } = useSelectorMemo(selectors.mkCategoryMappingMetadata, integrationId, flowId);
+  const extractFields = useSelectorMemo(selectors.mkCategoryMappingsExtractsMetadata, integrationId, flowId);
   const mappingsCopy = mappings ? [...mappings] : [];
 
   mappingsCopy.push({});
