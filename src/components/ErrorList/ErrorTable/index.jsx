@@ -1,5 +1,5 @@
-import React, { useMemo, useEffect, useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useMemo, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,7 +14,7 @@ import { selectors } from '../../../reducers';
 import CeligPagination from '../../CeligoPagination';
 import ResourceTable from '../../ResourceTable';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { FILTER_KEYS, DEFAULT_FILTERS } from '../../../utils/errorManagement';
+import { FILTER_KEYS, DEFAULT_FILTERS, DEFAULT_ROWS_PER_PAGE } from '../../../utils/errorManagement';
 
 const useStyles = makeStyles(theme => ({
   errorsKeywordSearch: {
@@ -87,16 +87,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const rowsPerPageOptions = [10, 25, 50];
-const DEFAULT_ROWS_PER_PAGE = 50;
 const emptySet = [];
+const emptyObj = {};
 
 export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const history = useHistory();
   const dispatch = useDispatch();
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE);
   const defaultFilter = isResolved ? DEFAULT_FILTERS.RESOLVED : DEFAULT_FILTERS.OPEN;
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
 
@@ -104,14 +102,14 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
     dispatch(actions.patchFilter(filterKey, defaultFilter));
   },
   [defaultFilter, dispatch, filterKey]);
+  const errorType = isResolved ? 'resolved' : 'open';
   const errorFilter = useSelector(
-    state => selectors.filter(state, filterKey)
+    state => selectors.filter(state, filterKey), shallowEqual
   );
+  const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = errorFilter.paging || emptyObj;
+
   const isAnyActionInProgress = useSelector(state =>
-    selectors.isAnyErrorActionInProgress(state, {
-      flowId,
-      resourceId,
-    })
+    selectors.isAnyActionInProgress(state, { flowId, resourceId })
   );
   const isFlowDisabled = useSelector(state =>
     selectors.resource(state, 'flows', flowId)?.disabled
@@ -120,27 +118,23 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const errorConfig = useMemo(() => ({
     flowId,
     resourceId,
-    options: {...(errorFilter || {}), isResolved},
-  }), [errorFilter, isResolved, flowId, resourceId]);
+    isResolved,
+  }), [isResolved, flowId, resourceId]);
 
-  const errorObj = useSelectorMemo(selectors.makeResourceErrorsSelector, errorConfig);
+  const errorsInCurrPage = useSelectorMemo(selectors.mkResourceFilteredErrorsInCurrPageSelector, errorConfig);
+
+  const errorObj = useSelectorMemo(selectors.mkResourceFilteredErrorDetailsSelector, errorConfig);
 
   const hasErrors = useSelector(
-    state => {
-      const errors = selectors.getErrors(state, {
-        flowId,
-        resourceId,
-        errorType: isResolved ? 'resolved' : 'open',
-      })?.errors || [];
-
-      return !!errors.length;
-    });
+    state => selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
+  );
 
   if (!errorObj.errors) {
     errorObj.errors = emptySet;
   }
 
   const isFreshDataLoad = !!((!errorObj.status || errorObj.status === 'requested') && !errorObj.nextPageURL);
+
   const actionProps = useMemo(
     () => ({
       resourceId,
@@ -151,6 +145,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
     }),
     [flowId, isAnyActionInProgress, resourceId, isResolved, isFlowDisabled]
   );
+
   const fetchErrors = useCallback(
     loadMore => {
       if (!loadMore) {
@@ -167,20 +162,32 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
     },
     [dispatch, flowId, resourceId, isResolved, filterKey]
   );
-  const fetchMoreErrors = useCallback(() => fetchErrors(true), [
-    fetchErrors,
-  ]);
+  const fetchMoreErrors = useCallback(() => fetchErrors(true), [fetchErrors]);
 
-  const handleChangeRowsPerPage = useCallback(event => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-  }, []);
+  const handleChangeRowsPerPage = useCallback(e => {
+    dispatch(
+      actions.patchFilter(filterKey, {
+        paging: {
+          ...errorFilter.paging,
+          rowsPerPage: parseInt(e.target.value, 10),
+        },
+      })
+    );
+  }, [dispatch, filterKey, errorFilter.paging]);
   const handleChangePage = useCallback(
-    (event, newPage) => setPage(newPage),
-    []
+    (e, newPage) => dispatch(
+      actions.patchFilter(filterKey, {
+        paging: {
+          ...errorFilter.paging,
+          currPage: newPage,
+        },
+      })
+    ),
+    [dispatch, filterKey, errorFilter.paging]
   );
   const handleDownload = useCallback(() => {
-    history.push(`${match.url}/download/${isResolved ? 'resolved' : 'open'}`);
-  }, [match.url, history, isResolved]);
+    history.push(`${match.url}/download/${errorType}`);
+  }, [match.url, history, errorType]);
 
   const paginationOptions = useMemo(
     () => ({
@@ -189,11 +196,6 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
       loading: errorObj.status === 'requested',
     }),
     [fetchMoreErrors, errorObj.nextPageURL, errorObj.status]
-  );
-
-  const errorsInCurrentPage = useMemo(
-    () => errorObj.errors.slice(page * rowsPerPage, (page + 1) * rowsPerPage),
-    [errorObj.errors, page, rowsPerPage]
   );
 
   useEffect(() => {
@@ -222,8 +224,33 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   ]);
 
   useEffect(() => {
-    setPage(0);
-  }, [errorFilter, rowsPerPage]);
+    dispatch(
+      actions.patchFilter(filterKey, {
+        paging: {
+          ...errorFilter.paging,
+          currPage: 0,
+        },
+      })
+    );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rowsPerPage, errorFilter.keyword]);
+
+  useEffect(() => {
+    // dispatch an action to deselect everything
+    dispatch(
+      actions.errorManager.flowErrorDetails.deselectAll({
+        flowId,
+        resourceId,
+        isResolved,
+      })
+    );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [errorFilter.keyword]);
+
+  useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // TODO @Raghu: Refactor the pagination related code
   return (
@@ -260,7 +287,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
                 rowsPerPageOptions={rowsPerPageOptions}
                 className={classes.tablePaginationRoot}
                 count={errorObj.errors.length}
-                page={page}
+                page={currPage}
                 rowsPerPage={rowsPerPage}
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
@@ -281,7 +308,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
             </div>
           </div>
           <ResourceTable
-            resources={errorsInCurrentPage}
+            resources={errorsInCurrPage}
             className={classes.errorDetailsTable}
             resourceType={filterKey}
             actionProps={actionProps}

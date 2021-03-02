@@ -1855,8 +1855,14 @@ const errorManager = {
         checked,
         isResolved,
       }),
-    selectAll: ({ flowId, resourceId, checked, isResolved }) =>
-      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS, {
+    deselectAll: ({ flowId, resourceId, isResolved }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DESELECT_ALL_ERRORS, {
+        flowId,
+        resourceId,
+        isResolved,
+      }),
+    selectAllInCurrPage: ({ flowId, resourceId, checked, isResolved }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS_IN_CURR_PAGE, {
         flowId,
         resourceId,
         checked,
@@ -1870,7 +1876,7 @@ const errorManager = {
         retryData,
       }
     ),
-    retry: ({ flowId, resourceId, retryIds = [], isResolved = false }) =>
+    retry: ({ flowId, resourceId, retryIds = [], isResolved = false, retryAll = false }) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.REQUEST,
         {
@@ -1878,15 +1884,17 @@ const errorManager = {
           resourceId,
           retryIds,
           isResolved,
+          retryAll,
         }
       ),
-    resolve: ({ flowId, resourceId, errorIds = [] }) =>
+    resolve: ({ flowId, resourceId, errorIds = [], resolveAll = false }) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.REQUEST,
         {
           flowId,
           resourceId,
           errorIds,
+          resolveAll,
         }
       ),
     retryReceived: ({ flowId, resourceId, retryCount}) =>
