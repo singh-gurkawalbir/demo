@@ -137,7 +137,7 @@ export default function ImportMapping(props) {
   const { attributes = {}, mappingFilter = 'mapped' } = useSelectorMemo(selectors.mkCategoryMappingFilters, integrationId, flowId) || {};
   const { mappings, initChangeIdentifier } = useSelectorMemo(selectors.mkCategoryMappingsForSection, integrationId, flowId, editorId);
   const { fields = [] } = useSelectorMemo(selectors.mkCategoryMappingGenerateFields, integrationId, flowId, memoizedOptions) || {};
-  const { extractsMetadata: extractFields } = useSelectorMemo(selectors.mkCategoryMappingMetadata, integrationId, flowId);
+  const extractFields = useSelectorMemo(selectors.mkCategoryMappingsExtractsMetadata, integrationId, flowId);
   const mappingsCopy = mappings ? [...mappings] : [];
 
   mappingsCopy.push({});
