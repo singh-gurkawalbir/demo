@@ -2,7 +2,6 @@
 import moment from 'moment';
 import addDays from 'date-fns/addDays';
 import * as d3 from 'd3';
-import mockdate from 'mockdate';
 
 const {
   isDate,
@@ -19,14 +18,16 @@ const {
 describe('flowMetrics util function test', () => {
   const mockDate = new Date('2020-06-05');
 
+  let dateSpy;
+
   beforeAll(() => {
-    // Lock Time
-    mockdate.set(mockDate);
+    // Lock time
+    dateSpy = jest.spyOn(global.Date, 'now').mockImplementation(() => mockDate);
   });
 
   afterAll(() => {
     // Unlock Time
-    mockdate.reset();
+    dateSpy.mockRestore();
   });
   describe('isDate function test', () => {
     test('should return correct result for isDate', () => {
