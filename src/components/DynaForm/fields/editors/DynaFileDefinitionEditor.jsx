@@ -53,7 +53,7 @@ function extractResourcePath(value, initialResourcePath) {
  * fileDefinitionResourcePath : same as above, contains saved resourcePath
  * options: format & definitionId selected in the form is passed through OptionsHandler as options
  */
-function DynaFileDefinitionEditor(props) {
+export default function DynaFileDefinitionEditor(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const {
@@ -199,5 +199,3 @@ function DynaFileDefinitionEditor(props) {
     </>
   );
 }
-
-export default DynaFileDefinitionEditor;

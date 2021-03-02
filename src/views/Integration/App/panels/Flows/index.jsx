@@ -1,10 +1,9 @@
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
-  Route,
   NavLink,
-  Redirect,
   useRouteMatch,
+  useHistory,
 } from 'react-router-dom';
 import { makeStyles, Grid, List, ListItem } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
@@ -29,6 +28,7 @@ import StatusCircle from '../../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import ResponseMappingDrawer from '../../../../../components/ResponseMapping/Drawer';
 import KeywordSearch from '../../../../../components/KeywordSearch';
+import flowgroupingsRedirectTo from '../../../../../utils/flowgroupingsRedirectTo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -190,8 +190,8 @@ function FlowList({ integrationId, storeId }) {
   const { sectionId } = match.params;
   const dispatch = useDispatch();
   const filterKey = `${integrationId}-flows`;
-  const flowFilter = useSelector(state => selectors.filter(state, filterKey)) || defaultFilter;
-  const flowsFilterConfig = useMemo(() => ({ ...flowFilter, excludeHiddenFlows: true }), [flowFilter]);
+  const flowFilter = useSelector(state => selectors.filter(state, filterKey));
+  const flowsFilterConfig = useMemo(() => ({ ...(flowFilter || {}), excludeHiddenFlows: true }), [flowFilter]);
 
   const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, storeId, flowsFilterConfig);
   const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
@@ -215,9 +215,10 @@ function FlowList({ integrationId, storeId }) {
   }), [storeId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration]);
 
   useEffect(() => {
-    dispatch(actions.patchFilter(filterKey, {sort: {order: 'asc', orderBy: 'name'}}));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  },
+  [dispatch, filterKey]);
+
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
 
@@ -270,7 +271,6 @@ function FlowList({ integrationId, storeId }) {
         <div className={classes.action}>
           <KeywordSearch
             filterKey={filterKey}
-            defaultFilter={defaultFilter}
         />
         </div>
       </PanelHeader>
@@ -324,15 +324,18 @@ export default function FlowsPanel({ storeId, integrationId }) {
   const match = useRouteMatch();
   const classes = useStyles();
   const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
-
+  const history = useHistory();
   // If someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can
   // not hard-code this because different sections exist across IAs.
-  if (match.isExact && flowSections && flowSections.length) {
-    return (
-      <Redirect push={false} to={`${match.url}/${flowSections[0].titleId}`} />
-    );
-  }
+
+  useEffect(() => {
+    if (match.isExact && flowSections && flowSections.length) {
+      const redirectTo = flowgroupingsRedirectTo(match, flowSections.map(({titleId}) => ({sectionId: titleId})), flowSections[0].titleId);
+
+      if (redirectTo) { history.replace(redirectTo); }
+    }
+  }, [flowSections, history, match]);
 
   return (
     <div className={classes.root}>
@@ -359,9 +362,7 @@ export default function FlowsPanel({ storeId, integrationId }) {
         </Grid>
         <Grid item className={classes.content}>
           <LoadResources required resources="flows">
-            <Route path={`${match.url}/:sectionId`}>
-              <FlowList integrationId={integrationId} storeId={storeId} />
-            </Route>
+            <FlowList integrationId={integrationId} storeId={storeId} />
           </LoadResources>
         </Grid>
       </Grid>

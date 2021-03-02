@@ -1,8 +1,12 @@
 import { get, sortBy } from 'lodash';
+import moment from 'moment';
+
+export const MAX_ERRORS_TO_RETRY_OR_RESOLVE = 1000;
 
 export const FILTER_KEYS = {
   OPEN: 'openErrors',
   RESOLVED: 'resolvedErrors',
+  RUN_HISTORY: 'runHistory',
 };
 
 export const DEFAULT_FILTERS = {
@@ -13,6 +17,18 @@ export const DEFAULT_FILTERS = {
     searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey', 'errorId', 'resolvedAt', 'resolvedBy'],
   },
 };
+
+export const DEFAULT_ROWS_PER_PAGE = 50;
+
+export const ERROR_MANAGEMENT_RANGE_FILTERS = [
+  {id: 'today', label: 'Today'},
+  {id: 'yesterday', label: 'Yesterday'},
+  {id: 'last24hours', label: 'Last 24 hours'},
+  {id: 'last7days', label: 'Last 7 Days'},
+  {id: 'last15days', label: 'Last 15 Days'},
+  {id: 'last30days', label: 'Last 30 Days'},
+  {id: 'custom', label: 'Custom'},
+];
 
 export const getFilteredErrors = (errors = [], options = {}) => {
   const { keyword, searchBy = [] } = options;
@@ -124,3 +140,33 @@ export const getSourceOptions = (sourceList = [], applicationName) => {
 
   return [{ _id: 'all', name: 'All sources'}, ...sortedOptions];
 };
+
+export function getJobDuration(job) {
+  if (job.startedAt && job.endedAt) {
+    const dtDiff = moment(moment(job.endedAt) - moment(job.startedAt)).utc();
+    let duration = dtDiff.format('HH:mm:ss');
+
+    if (dtDiff.date() > 1) {
+      const durationParts = duration.split(':');
+
+      durationParts[0] =
+        parseInt(durationParts[0], 10) + (dtDiff.date() - 1) * 24;
+      duration = durationParts.join(':');
+    }
+
+    return duration;
+  }
+
+  return undefined;
+}
+
+export function getJobStatus(job) {
+  const jobStatus = job.status;
+  const statusMap = {
+    completed: 'Completed',
+    canceled: 'Cancelled',
+    failed: 'Failed',
+  };
+
+  return statusMap[jobStatus] || jobStatus;
+}

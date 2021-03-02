@@ -6,7 +6,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import useFormContext from '../../../Form/FormContext';
 import { selectors } from '../../../../reducers';
 
-function DynaSalesforceSelectOptionsGenerator(props) {
+export default function DynaSalesforceSelectOptionsGenerator(props) {
   const {
     filterKey,
     fieldName,
@@ -46,5 +46,3 @@ function DynaSalesforceSelectOptionsGenerator(props) {
     />
   );
 }
-
-export default DynaSalesforceSelectOptionsGenerator;

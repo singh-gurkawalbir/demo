@@ -46,6 +46,50 @@ describe('initSettingsForm saga', () => {
       .run();
   });
 
+  describe('init hook settingsForm base path', () => {
+    const resourceState = {
+      settingsForm: {
+        form: { fieldMap: { store: { name: 'store' } } },
+        init: { function: 'main'},
+      },
+      settings: { store: 'test', currency: 'us' },
+    };
+
+    test('should call root level settingsForm initialization path when sectionId is not passed', () =>
+      expectSaga(initSettingsForm, { resourceType, resourceId })
+        .provide([
+          [select(selectors.getSectionMetadata, resourceType, resourceId, 'general'), resourceState],
+        ])
+        .call.fn(apiCallWithRetry, {path: `/${resourceType}/${resourceId}/settingsForm/init`,
+          opts: { method: 'POST' } })
+        .run());
+    test('should call root level settingsForm initialization path when `general` sectionId is passed', () =>
+      expectSaga(initSettingsForm, { resourceType, resourceId, sectionId: 'general' })
+        .provide([
+          [select(selectors.getSectionMetadata, resourceType, resourceId, 'general'), resourceState],
+        ])
+        .call.fn(apiCallWithRetry, {path: `/${resourceType}/${resourceId}/settingsForm/init`,
+          opts: { method: 'POST' } })
+        .run());
+
+    test('should not call settingsForm initialization when invalid sectionId is passed', () =>
+      expectSaga(initSettingsForm, { resourceType, resourceId, sectionId: 'invalidId'})
+        .provide([
+          [select(selectors.getSectionMetadata, resourceType, resourceId, 'invalidId'), null],
+        ])
+        .not.call.fn(apiCallWithRetry)
+        .run());
+
+    test('should call correct flowGrouping form initialization path when valid sectionId is passed', () => {
+      expectSaga(initSettingsForm, { resourceType, resourceId, sectionId: 'validId'})
+        .provide([
+          [select(selectors.getSectionMetadata, resourceType, resourceId, 'validId'), resourceState],
+        ])
+        .call.fn(apiCallWithRetry, {path: `/${resourceType}/${resourceId}/flowGroupings/validId/settingsForm/init`,
+          opts: { method: 'POST' } })
+        .run();
+    });
+  });
   test('should make API call when init hook present and update form metadata', () => {
     const resourceState = {
       settingsForm: {

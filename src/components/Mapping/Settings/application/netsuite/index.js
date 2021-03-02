@@ -233,7 +233,7 @@ export default {
             { field: 'lookup.recordType', isNot: [''] },
           ],
           value: lookup.expression,
-          data: extractFields,
+          data: extractfieldsOpts,
         },
         'lookup.expressionText': {
           id: 'lookup.expressionText',
@@ -471,7 +471,7 @@ export default {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
           label: 'Lookup name',
-          extractFields,
+          extractFields: extractfieldsOpts,
           type: 'selectconditionallookup',
           flowId,
           importId: resourceId,

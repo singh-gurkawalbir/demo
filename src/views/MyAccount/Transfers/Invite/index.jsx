@@ -110,7 +110,7 @@ export default function Invite(props) {
         flows manually, and then retry/resolve all open errors, and then
         initiate the transfer process again.
       </div>
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <DynaForm formKey={formKey} />
       <DynaSubmit formKey={formKey} onClick={handleSubmit}>Next</DynaSubmit>
 
       {!!error && <> {error} </>}

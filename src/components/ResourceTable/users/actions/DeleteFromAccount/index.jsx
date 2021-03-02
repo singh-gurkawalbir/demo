@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import useConfirmDialog from '../../../../ConfirmDialog';
 import actions from '../../../../../actions';
-import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import actionTypes from '../../../../../actions/types';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
-import CommStatus from '../../../../CommStatus';
+import useCommStatus from '../../../../../hooks/useCommStatus';
+import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
+import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
   label: 'Remove user from account',
@@ -50,14 +50,18 @@ export default {
       [enquesnackbar, sharedWithUser]
     );
 
+    const actionsToMonitor = useMemo(() => ({
+      delete: { action: actionTypes.USER_DELETE, resourceId: userId},
+    }), [userId]);
+
+    useCommStatus({
+      actionsToMonitor,
+      autoClearOnComplete: true,
+      commStatusHandler,
+    });
+
     return (
-      <CommStatus
-        actionsToMonitor={{
-          delete: { action: actionTypes.USER_DELETE, resourceId: userId},
-        }}
-        autoClearOnComplete
-        commStatusHandler={commStatusHandler}
-      />
+      null
     );
   },
 };

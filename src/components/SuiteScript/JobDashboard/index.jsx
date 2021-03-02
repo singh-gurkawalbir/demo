@@ -7,10 +7,10 @@ import Filters from './Filters';
 import JobTable from './JobTable';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
-import CommStatus from '../../CommStatus';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 import { hashCode } from '../../../utils/string';
+import useCommStatus from '../../../hooks/useCommStatus';
 
 const getNumJobsSelected = selectedJobs => {
   let jobsSelected = 0;
@@ -280,17 +280,14 @@ export default function JobDashboard({
     [enqueueSnackbar]
   );
 
+  useCommStatus({actionsToMonitor, autoClearOnComplete: true, commStatusHandler: handleCommsStatus});
+
   return (
     <LoadResources
       required
       ssLinkedConnectionId={ssLinkedConnectionId}
       integrationId={integrationId}
       resources="flows">
-      <CommStatus
-        actionsToMonitor={actionsToMonitor}
-        autoClearOnComplete
-        commStatusHandler={handleCommsStatus}
-      />
       <Filters
         filterKey={filterKey}
         ssLinkedConnectionId={ssLinkedConnectionId}

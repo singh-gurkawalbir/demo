@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Loader({ className, children, hideBackDrop, ...props }) {
+export default function Loader({ className, children, hideBackDrop, ...props }) {
   const classes = useStyles();
 
   return (
@@ -50,5 +50,3 @@ function Loader({ className, children, hideBackDrop, ...props }) {
     </div>
   );
 }
-
-export default Loader;

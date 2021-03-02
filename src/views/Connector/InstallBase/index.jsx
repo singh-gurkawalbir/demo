@@ -31,20 +31,24 @@ const defaultFilter = {
 export default function InstallBase(props) {
   const { match, history } = props;
   const { connectorId } = match.params;
-  const sortFilterKey = 'connectorInstallBase';
+  const filterKey = 'connectorInstallBase';
   const classes = useStyles();
   const filter =
-    useSelector(state => selectors.filter(state, sortFilterKey)) ||
-    defaultFilter;
+    useSelector(state => selectors.filter(state, filterKey));
   const connectorInstallBaseConfig = useMemo(
     () => ({
       type: 'connectorInstallBase',
       ignoreEnvironmentFilter: true,
-      ...defaultFilter,
-      ...filter,
+      ...(filter || {}),
     }),
     [filter]
   );
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  },
+  [dispatch]);
   const list = useSelectorMemo(
     selectors.makeResourceListSelector,
     connectorInstallBaseConfig
@@ -63,7 +67,6 @@ export default function InstallBase(props) {
   });
   const [selected, setSelected] = useState({});
   const [selectedUsers, setSelectedUsers] = useState(0);
-  const dispatch = useDispatch();
   const handleSelectChange = (installBaseItems = {}) => {
     setSelected(installBaseItems);
     const count = Object.keys(installBaseItems).reduce(
@@ -124,8 +127,7 @@ export default function InstallBase(props) {
         title={`View / Update Install Base: ${connector.name}`}>
         <div className={classes.actions}>
           <KeywordSearch
-            filterKey="connectorInstallBase"
-            defaultFilter={defaultFilter}
+            filterKey={filterKey}
           />
           <IconTextButton onClick={handleUpdateClick} variant="text">
             {selectedUsers ? `Update ${selectedUsers} user(s)` : 'Update'}
@@ -142,7 +144,7 @@ export default function InstallBase(props) {
         ) : (
           <CeligoTable
             data={resources}
-            filterKey={sortFilterKey}
+            filterKey={filterKey}
             onSelectChange={handleSelectChange}
             {...metadata}
             selectableRows
@@ -150,7 +152,7 @@ export default function InstallBase(props) {
         )}
       </div>
       <ShowMoreDrawer
-        filterKey="connectorInstallBase"
+        filterKey={filterKey}
         count={list.count}
         maxCount={list.filtered}
       />

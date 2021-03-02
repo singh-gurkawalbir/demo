@@ -15,11 +15,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Footer(props) {
+export default function Footer({children}) {
   const classes = useStyles();
-  const { children } = props;
 
   return <div className={classes.wrapper}>{children}</div>;
 }
 
-export default Footer;

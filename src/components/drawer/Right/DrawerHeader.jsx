@@ -12,7 +12,8 @@ import { useDrawerContext } from './DrawerContext';
 const useStyles = makeStyles(theme => ({
   drawerHeader: {
     display: 'flex',
-    alignItems: 'center',
+    // alignItems: 'center',
+    alignItems: 'flex-start',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(2, 3),
     '& > :not(:last-child)': {
@@ -22,7 +23,8 @@ const useStyles = makeStyles(theme => ({
   title: {
     flexGrow: 1,
     color: theme.palette.secondary.main,
-    whiteSpace: 'nowrap',
+    wordBreak: 'break-word',
+    // whiteSpace: 'nowrap',
   },
   helpTextButton: {
     padding: 0,

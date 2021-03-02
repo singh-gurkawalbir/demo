@@ -790,8 +790,49 @@ describe('resource region selector testcases', () => {
   });
 
   describe('selectors.isConnectionOffline test cases', () => {
+    const connState = reducer(
+      {
+        user: {
+          profile: {},
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                _id: 'ashare1',
+                accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+              },
+              {
+                _id: 'ashare2',
+                accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+              },
+            ],
+            users: [],
+          },
+        },
+        data: {
+          resources: {
+            connections: [{
+              _id: 'connection1',
+              name: 'connection 1',
+              offline: true,
+            }, {
+              _id: 'connection2',
+              name: 'connection2',
+            }],
+          },
+        },
+      },
+      'some action'
+    );
+
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isConnectionOffline()).toEqual(null);
+      expect(selectors.isConnectionOffline()).toEqual(false);
+    });
+    test('should return true if given connection is offline', () => {
+      expect(selectors.isConnectionOffline(connState, 'connection1')).toEqual(true);
+    });
+    test('should return undefined if given connection is online', () => {
+      expect(selectors.isConnectionOffline(connState, 'connection2')).toEqual(false);
     });
   });
 
@@ -2408,8 +2449,136 @@ describe('resource region selector testcases', () => {
   });
 
   describe('selectors.accessTokenList test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          accesstokens: [{
+            _id: 'token1',
+            name: 'AuditlogTest',
+            description: 'asdasda',
+            revoked: false,
+            fullAccess: true,
+            legacyNetSuite: false,
+            _exportIds: [
+
+            ],
+            _importIds: [
+
+            ],
+            _apiIds: [
+
+            ],
+            _connectionIds: [
+
+            ],
+          },
+          {
+            _id: 'token2',
+            name: 'Connector',
+            revoked: false,
+            fullAccess: false,
+            legacyNetSuite: false,
+            _exportIds: [
+              'exp1',
+            ],
+            _importIds: [
+              'imp1',
+            ],
+            _apiIds: [
+              'api1',
+            ],
+            _connectionIds: [
+              'conn1',
+            ],
+            _integrationId: 'int1',
+            _connectorId: 'conn1',
+          }],
+        },
+      },
+    };
+    const expected1 = {count: 2,
+      filtered: 1,
+      resources: [
+        {
+          _apiIds: [],
+          _connectionIds: [],
+          _exportIds: [],
+          _id: 'token1',
+          _importIds: [],
+          description: 'asdasda',
+          fullAccess: true,
+          isEmbeddedToken: false,
+          legacyNetSuite: false,
+          name: 'AuditlogTest',
+          permissionReasons: {
+            delete: 'To delete this api token you need to revoke it first.',
+          },
+          permissions: {
+            activate: false,
+            delete: false,
+            displayToken: true,
+            edit: true,
+            generateToken: true,
+            revoke: true,
+          },
+          revoked: false,
+        },
+      ],
+      total: 2,
+      type: 'accesstokens',
+    };
+    const expected2 = {
+      count: 2,
+      filtered: 1,
+      resources: [
+        {
+          _apiIds: [
+            'api1',
+          ],
+          _connectionIds: [
+            'conn1',
+          ],
+          _connectorId: 'conn1',
+          _exportIds: [
+            'exp1',
+          ],
+          _id: 'token2',
+          _importIds: [
+            'imp1',
+          ],
+          _integrationId: 'int1',
+          fullAccess: false,
+          isEmbeddedToken: true,
+          legacyNetSuite: false,
+          name: 'Connector',
+          permissionReasons: {
+            delete: 'This api token is owned by a SmartConnector and cannot be edited or deleted here.',
+            displayToken: 'Embedded Token',
+            edit: 'This api token is owned by a SmartConnector and cannot be edited or deleted here.',
+            generateToken: 'This api token is owned by a SmartConnector and cannot be regenerated.',
+          },
+          permissions: {
+            activate: false,
+            delete: false,
+            displayToken: false,
+            edit: false,
+            generateToken: false,
+            revoke: true,
+          },
+          revoked: false,
+          token: undefined,
+        },
+      ],
+      total: 2,
+      type: 'accesstokens',
+    };
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.accessTokenList({}, {})).toEqual({count: 0, filtered: 0, resources: [], total: 0, type: 'accesstokens'});
+    });
+    test('should return correct access tokens list for given arguments', () => {
+      expect(selectors.accessTokenList(state, {})).toEqual(expected1);
+      expect(selectors.accessTokenList(state, {integrationId: 'int1'})).toEqual(expected2);
     });
   });
 
@@ -2419,11 +2588,122 @@ describe('resource region selector testcases', () => {
 
       expect(selector()).toEqual([]);
     });
+    const state = {
+      data: {
+        resources: {
+          connections: [{
+            _id: 'conn1',
+            type: 'ftp',
+          }, {
+            _id: 'conn2',
+            type: 'http',
+          }, {
+            _id: 'conn3',
+            type: 'http',
+          }, {
+            _id: 'conn4',
+            type: 'ftp',
+          }, {
+            _id: 'conn5',
+            type: 'http',
+          }],
+          exports: [{
+            _id: 'exp1',
+            _connectionId: 'conn1',
+          }, {
+            _id: 'exp2',
+            _connectionId: 'conn2',
+          }],
+          imports: [{
+            _id: 'imp1',
+            _connectionId: 'conn3',
+          }, {
+            _id: 'imp2',
+            _connectionId: 'conn4',
+          }],
+          flows: [{
+            _id: 'flow1',
+            pageGenerators: [{
+              _exportId: 'exp1',
+            }],
+            pageProcessors: [{
+              _importId: 'imp1',
+              type: 'import',
+            }],
+          },
+          {
+            _id: 'flow2',
+            pageGenerators: [{
+              _exportId: 'exp2',
+            }],
+            pageProcessors: [{
+              _importId: 'imp2',
+              type: 'import',
+            }],
+          }],
+        },
+      },
+    };
+
+    test('should return connection ids used in selected flows', () => {
+      const selector = selectors.mkConnectionIdsUsedInSelectedFlows();
+
+      expect(selector(state, ['flow1', 'flow2'])).toEqual(['conn1', 'conn3', 'conn2', 'conn4']);
+    });
+    test('should return connection ids used in selected flows', () => {
+      const selector = selectors.mkConnectionIdsUsedInSelectedFlows();
+
+      expect(selector(state, ['flow1'])).toEqual(['conn1', 'conn3']);
+    });
+    test('should return connection ids used in selected flows', () => {
+      const selector = selectors.mkConnectionIdsUsedInSelectedFlows();
+
+      expect(selector(state, ['flow1'])).toEqual(['conn1', 'conn3']);
+    });
+    test('should return empty array if no flow is selected', () => {
+      const selector = selectors.mkConnectionIdsUsedInSelectedFlows();
+
+      expect(selector(state, [])).toEqual([]);
+    });
   });
 
   describe('selectors.getScriptContext test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.getScriptContext({}, {})).toEqual();
+    });
+    const state = reducer(
+      {
+        data: {
+          resources: {
+            flows: [{
+              name: 'flow name 1',
+              _id: 'flow1',
+            }, {
+              name: 'flow name 2',
+              _id: 'flow2',
+              _integrationId: 'integrationId1',
+            }],
+          },
+        },
+      },
+      'some action'
+    );
+
+    test('should return expected script context for valid state and flow id', () => {
+      expect(selectors.getScriptContext(state, {contextType: 'hook',
+        flowId: 'flow2'})).toEqual({_integrationId: 'integrationId1', container: 'integration', type: 'hook'});
+    });
+    test('should return undefined if given flow does not contains integrtion id', () => {
+      expect(selectors.getScriptContext(state, {contextType: 'hook',
+        flowId: 'flow1'})).toEqual(undefined);
+    });
+    test('should return undefined if given input does not contains context type', () => {
+      expect(selectors.getScriptContext(state, {
+        flowId: 'flow2'})).toEqual(undefined);
+    });
+    test('should return undefined if given input does not contains flow id', () => {
+      expect(selectors.getScriptContext(state, {contextType: 'hook',
+      })).toEqual(undefined);
     });
   });
 
@@ -2664,3 +2944,74 @@ describe('resource region selector testcases', () => {
   });
 });
 
+describe('selectors.tradingPartnerConnections test cases', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.tradingPartnerConnections(undefined, {})).toEqual([]);
+  });
+  const state = {
+    data: {
+      resources: {
+        connections: [{
+          _id: 'conn1',
+          type: 'ftp',
+          name: 'FTP',
+          ftp: {
+            type: 'sftp',
+            hostURI: 'celigo.brickftp.com',
+            port: 22,
+          },
+        },
+        {
+          _id: 'conn2',
+          type: 'http',
+          name: 'HTTP',
+        },
+        {
+          _id: 'conn3',
+          type: 'ftp',
+          name: 'FTP2',
+          ftp: {
+            type: 'sftp',
+            hostURI: 'celigo.brickftp.com',
+            port: 22,
+          },
+        },
+        {
+          _id: 'conn4',
+          type: 'ftp',
+          name: 'FTP3',
+          ftp: {
+            type: 'sftp',
+            hostURI: 'celigo.brickftp.com',
+            port: 21,
+          },
+        },
+        ],
+      },
+    },
+  };
+  const expected = [{
+    _id: 'conn1',
+    type: 'ftp',
+    name: 'FTP',
+    ftp: {
+      type: 'sftp',
+      hostURI: 'celigo.brickftp.com',
+      port: 22,
+    },
+  },
+  {
+    _id: 'conn3',
+    type: 'ftp',
+    name: 'FTP2',
+    ftp: {
+      type: 'sftp',
+      hostURI: 'celigo.brickftp.com',
+      port: 22,
+    },
+  }];
+
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.tradingPartnerConnections(state, 'conn1')).toEqual(expected);
+  });
+});

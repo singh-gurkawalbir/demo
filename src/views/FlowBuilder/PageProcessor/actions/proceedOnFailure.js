@@ -101,8 +101,7 @@ function ProceedOnFailureDialog(props) {
       </div>
       <div>
         <DynaForm
-          formKey={formKey}
-          fieldMeta={fieldMeta} />
+          formKey={formKey} />
         <DynaSubmit
           formKey={formKey}
           disabled={disableSave}

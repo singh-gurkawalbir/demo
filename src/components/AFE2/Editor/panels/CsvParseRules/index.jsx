@@ -62,7 +62,7 @@ export default function CsvParseRules({ editorId }) {
 
   return (
     <div className={classes.container}>
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <DynaForm formKey={formKey} />
     </div>
   );
 }

@@ -77,7 +77,7 @@ import { stringCompare } from '../utils/sort';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import { getFilteredErrors, FILTER_KEYS, getSourceOptions } from '../utils/errorManagement';
+import { getFilteredErrors, FILTER_KEYS, DEFAULT_ROWS_PER_PAGE, getSourceOptions } from '../utils/errorManagement';
 import {
   getFlowStepsYetToBeCreated,
   generatePendingFlowSteps,
@@ -845,7 +845,7 @@ selectors.mkNextDataFlowsForFlow = () => createSelector(
 selectors.isConnectionOffline = (state, id) => {
   const connection = selectors.resource(state, 'connections', id);
 
-  return connection && connection.offline;
+  return !!connection?.offline;
 };
 
 // TODO: could this be converted to re-select?
@@ -2227,62 +2227,6 @@ selectors.platformLicense = createSelector(
     fromUser.platformLicense(userStateObj, preferencesObj.defaultAShareId)
 );
 
-selectors.platformLicenseActionDetails = state => {
-  let licenseActionDetails = {};
-  const license = selectors.platformLicense(state);
-
-  if (!license) {
-    return licenseActionDetails;
-  }
-  const expiresInDays = license && Math.ceil((moment(license.expires) - moment()) / 1000 / 60 / 60 / 24);
-
-  if (license.tier === 'none') {
-    if (!license.trialEndDate) {
-      licenseActionDetails = {
-        action: 'startTrial',
-        label: 'GO UNLIMITED FOR 30 DAYS',
-      };
-    }
-  } else if (license.tier === 'free') {
-    if (!license.trialEndDate) {
-      licenseActionDetails = {
-        action: 'startTrial',
-        label: 'GO UNLIMITED FOR 30 DAYS',
-      };
-    } else if (license.status === 'TRIAL_EXPIRED') {
-      licenseActionDetails = {
-        action: 'upgrade',
-        label: 'UPGRADE NOW',
-      };
-    } else if (license.status === 'IN_TRIAL') {
-      if (license.expiresInDays < 1) {
-        licenseActionDetails = {
-          action: 'upgrade',
-          label: 'UPGRADE NOW',
-        };
-      } else {
-        licenseActionDetails = {
-          action: 'upgrade',
-          label: `${license.expiresInDays} DAYS LEFT UPGRADE NOW`,
-        };
-        licenseActionDetails.expiresSoon = license.expiresInDays < 10;
-      }
-    }
-  } else if (license?.resumable) {
-    licenseActionDetails = {
-      action: 'resume',
-    };
-  } else if (expiresInDays <= 0) {
-    licenseActionDetails = {
-      action: 'expired',
-    };
-  }
-
-  licenseActionDetails.upgradeRequested = license.upgradeRequested;
-
-  return licenseActionDetails;
-};
-
 function getTierToFlowsMap(license) {
   const flowsInTier = {
     none: 0,
@@ -2517,8 +2461,6 @@ selectors.isLicenseValidToEnableFlow = state => {
 
   return licenseDetails;
 };
-
-selectors.hasAccounts = state => !!(state && state.user && state.user.accounts);
 
 selectors.hasAcceptedUsers = state => !!(
   state &&
@@ -4384,39 +4326,37 @@ selectors.flowJobConnections = () => createSelector(
 );
 
 // Given an errorId, gives back error doc
-selectors.resourceError = (state, { flowId, resourceId, options, errorId }) => {
-  const { errors = [] } = selectors.resourceErrors(state, {
+selectors.resourceError = (state, { flowId, resourceId, isResolved, errorId }) => {
+  const { errors = [] } = selectors.allResourceErrorDetails(state, {
     flowId,
     resourceId,
-    options,
+    isResolved,
   });
 
   return errors.find(error => error.errorId === errorId);
 };
 
-selectors.selectedRetryIds = (state, { flowId, resourceId, options = {} }) => {
-  const { errors } = selectors.resourceErrors(state, { flowId, resourceId, options });
+selectors.selectedRetryIds = (state, { flowId, resourceId, isResolved }) => {
+  const { errors = [] } = selectors.allResourceErrorDetails(state, { flowId, resourceId, isResolved });
 
   return errors
     .filter(({ selected, retryDataKey }) => selected && !!retryDataKey)
     .map(error => error.retryDataKey);
 };
 
-selectors.selectedErrorIds = (state, { flowId, resourceId, options = {} }) => {
-  const { errors } = selectors.resourceErrors(state, { flowId, resourceId, options });
+selectors.selectedErrorIds = (state, { flowId, resourceId, isResolved }) => {
+  const { errors = [] } = selectors.allResourceErrorDetails(state, { flowId, resourceId, isResolved });
 
   return errors.filter(({ selected }) => selected).map(error => error.errorId);
 };
 
-selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved }) => {
-  const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
-  const errorFilter = selectors.filter(state, filterKey);
-  const { errors = [] } = selectors.resourceErrors(state, {
+selectors.isAllErrorsSelectedInCurrPage = (state, { flowId, resourceId, isResolved }) => {
+  const errorsInCurrPage = selectors.resourceFilteredErrorsInCurrPage(state, {
     flowId,
     resourceId,
-    options: { ...errorFilter, isResolved },
+    isResolved,
   });
-  const errorIds = errors.map(error => error.errorId);
+  const errorIds = errorsInCurrPage.map(error => error.errorId);
 
   return fromSession.isAllErrorsSelected(state && state.session, {
     flowId,
@@ -4425,37 +4365,39 @@ selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved }) => {
     errorIds,
   });
 };
-selectors.isAnyErrorActionInProgress = (state, { flowId, resourceId }) => {
-  const isRetryInProgress =
-    selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
-      .status === 'requested';
-  const isResolveInProgress =
-    selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'resolve' })
-      .status === 'requested';
 
-  return isRetryInProgress || isResolveInProgress;
+selectors.errorFilter = (state, params = {}) => {
+  const filterKey = params.isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
+
+  return selectors.filter(state, filterKey);
 };
 
-selectors.errorDetails = (state, params) => {
-  const { flowId, resourceId, options = {} } = params;
-
-  return selectors.getErrors(state, {
-    flowId,
-    resourceId,
-    errorType: options.isResolved ? 'resolved' : 'open',
-  });
-};
-
-selectors.makeResourceErrorsSelector = () => createSelector(
-  selectors.errorDetails,
-  (_1, params) => params.options,
-  (errorDetails, options) => ({
+selectors.mkResourceFilteredErrorDetailsSelector = () => createSelector(
+  selectors.allResourceErrorDetails,
+  selectors.errorFilter,
+  (errorDetails, errorFilter) => ({
     ...errorDetails,
-    errors: getFilteredErrors(errorDetails.errors, options),
+    errors: getFilteredErrors(errorDetails.errors, errorFilter),
   })
 );
 
-selectors.resourceErrors = selectors.makeResourceErrorsSelector();
+selectors.resourceFilteredErrorDetails = selectors.mkResourceFilteredErrorDetailsSelector();
+
+selectors.mkResourceFilteredErrorsInCurrPageSelector = () => {
+  const resourceFilteredErrorDetails = selectors.mkResourceFilteredErrorDetailsSelector();
+
+  return createSelector(
+    resourceFilteredErrorDetails,
+    selectors.errorFilter,
+    (allErrors, errorFilter) => {
+      const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = errorFilter.paging || {};
+
+      return allErrors.errors.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
+    }
+  );
+};
+
+selectors.resourceFilteredErrorsInCurrPage = selectors.mkResourceFilteredErrorsInCurrPageSelector();
 
 /**
  * Returns error count per category in a store for IA 1.0
@@ -5023,7 +4965,7 @@ selectors.isEditorLookupSupported = (state, editorId) => {
   const {resultMode, fieldId, editorType, resourceType} = editor;
 
   // lookups are only valid for http request body and sql query fields (not for uri fields)
-  if (fieldId === '_body' || fieldId === '_query' || resourceType !== 'imports' || (resultMode === 'text' && editorType !== 'sql')) {
+  if (fieldId === '_body' || fieldId === '_query' || resourceType !== 'imports' || (resultMode === 'text' && editorType !== 'sql' && editorType !== 'databaseMapping')) {
     return false;
   }
 
