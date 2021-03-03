@@ -35,22 +35,29 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function getAllErrorsLabelToResolve(count) {
-  if (count > MAX_ERRORS_TO_RETRY_OR_RESOLVE) {
-    return `${MAX_ERRORS_TO_RETRY_OR_RESOLVE} errors`;
+function getAllErrorsLabelToResolve(count, hasSearchFilter) {
+  if (count >= MAX_ERRORS_TO_RETRY_OR_RESOLVE) {
+    return `${MAX_ERRORS_TO_RETRY_OR_RESOLVE} ${hasSearchFilter ? 'matching' : ''} errors`;
+  }
+
+  if (hasSearchFilter) {
+    return 'All matching errors';
   }
 
   return 'All errors';
 }
-function getAllErrorsLabelToRetry(count) {
-  if (count > MAX_ERRORS_TO_RETRY_OR_RESOLVE) {
-    return `${MAX_ERRORS_TO_RETRY_OR_RESOLVE} retriable errors`;
+function getAllErrorsLabelToRetry(count, hasSearchFilter) {
+  if (count >= MAX_ERRORS_TO_RETRY_OR_RESOLVE) {
+    return `${MAX_ERRORS_TO_RETRY_OR_RESOLVE} retriable ${hasSearchFilter ? 'matching' : ''} errors`;
+  }
+  if (hasSearchFilter) {
+    return 'All matching retriable errors';
   }
 
   return 'All retriable errors';
 }
 
-const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable }) => {
+const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable, isSearchFilterApplied }) => {
   const classes = useStyles();
   const allRetriableErrorCount = useSelector(state => {
     const {errors = []} = selectors.resourceFilteredErrorDetails(state, {
@@ -89,13 +96,13 @@ const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable }) => {
         {selectedRetriableErrorCount} retriable errors
       </MenuItem>
       <MenuItem value="all" disabled={!allRetriableErrorCount}>
-        {getAllErrorsLabelToRetry(allRetriableErrorCount)}
+        {getAllErrorsLabelToRetry(allRetriableErrorCount, isSearchFilterApplied)}
       </MenuItem>
     </CeligoSelect>
   );
 };
 
-const ResolveAction = ({ onClick, flowId, resourceId, disable }) => {
+const ResolveAction = ({ onClick, flowId, resourceId, disable, isSearchFilterApplied }) => {
   const classes = useStyles();
   const allErrorCount = useSelector(state => {
     const {errors = []} = selectors.resourceFilteredErrorDetails(state, { flowId, resourceId });
@@ -128,7 +135,7 @@ const ResolveAction = ({ onClick, flowId, resourceId, disable }) => {
         {selectedErrorCount} selected errors
       </MenuItem>
       <MenuItem value="all" disabled={!allErrorCount}>
-        {getAllErrorsLabelToResolve(allErrorCount)}
+        {getAllErrorsLabelToResolve(allErrorCount, isSearchFilterApplied)}
       </MenuItem>
     </CeligoSelect>
   );
@@ -146,6 +153,16 @@ export default function ErrorActions({ flowId, resourceId, isResolved, className
   const isAnyActionInProgress = useSelector(
     state => selectors.isAnyActionInProgress(state, { flowId, resourceId })
   );
+
+  const isSearchFilterApplied = useSelector(state => {
+    const errorFilter = selectors.errorFilter(state, {
+      flowId,
+      resourceId,
+      isResolved,
+    });
+
+    return !!errorFilter.keyword?.length;
+  });
 
   const retryErrors = useCallback(type => {
     dispatch(
@@ -202,6 +219,7 @@ export default function ErrorActions({ flowId, resourceId, isResolved, className
           onClick={handleResolveAction}
           flowId={flowId}
           resourceId={resourceId}
+          isSearchFilterApplied={isSearchFilterApplied}
           disable={disableResolveAction} />
         )}
         <RetryAction
@@ -209,6 +227,7 @@ export default function ErrorActions({ flowId, resourceId, isResolved, className
           flowId={flowId}
           resourceId={resourceId}
           isResolved={isResolved}
+          isSearchFilterApplied={isSearchFilterApplied}
           disable={disableRetryAction} />
       </div>
     </div>
