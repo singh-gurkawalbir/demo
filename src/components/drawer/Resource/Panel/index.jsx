@@ -309,6 +309,7 @@ export default function Panel(props) {
                 size="small"
                 type={applicationType}
                 alt={applicationType || 'Application image'}
+                assistant={app?.assistant}
             />
             </div>
             )}
