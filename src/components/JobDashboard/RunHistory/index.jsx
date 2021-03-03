@@ -71,6 +71,7 @@ export default function RunHistory({ flowId }) {
   const fetchFlowRunHistory = useCallback(
     () => {
       if (flowId && !isNewId(flowId)) {
+        setCurrentPage(0);
         dispatch(actions.errorManager.runHistory.request({ flowId }));
       }
     },
@@ -87,10 +88,6 @@ export default function RunHistory({ flowId }) {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [filter.range]);
 
   const hasFlowRunHistory = !isLoadingHistory && !!runHistory?.length;
 

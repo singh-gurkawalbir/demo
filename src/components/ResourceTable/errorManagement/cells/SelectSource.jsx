@@ -21,8 +21,11 @@ export default function SelectSource({
     sourceIds => {
       dispatch(
         actions.patchFilter(filterKey, {
-          ...filter,
           sources: sourceIds,
+          paging: {
+            ...filter.paging,
+            currPage: 0,
+          },
         })
       );
       dispatch(
