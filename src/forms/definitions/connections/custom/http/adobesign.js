@@ -14,7 +14,7 @@ export default {
     '/http/auth/token/location': 'header',
     '/http/auth/token/scheme': 'Bearer',
     '/http/auth/token/headerName': 'Authorization',
-    '/http/auth/oauth/scopeDelimiter': '+',
+    '/http/auth/oauth/scopeDelimiter': ' ',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/headers': [{ name: 'x-api-user', value: '{{{join ":" "email" connection.http.unencrypted.email}}}' }],
