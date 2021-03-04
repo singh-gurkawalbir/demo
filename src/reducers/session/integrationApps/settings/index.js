@@ -890,6 +890,7 @@ selectors.mkCategoryMappingsExtractsMetadata = () => createSelector(
     return extractsMetadata?.data || emptySet;
   },
   (extractsMetadata = emptySet) => extractsMetadata);
+selectors.categoryMappingsExtractsMetadata = selectors.mkCategoryMappingsExtractsMetadata();
 
 selectors.mkPendingCategoryMappings = () => {
   const categoryMappingsGeneratesSelector = selectors.mkCategoryMappingGeneratesMetadata();

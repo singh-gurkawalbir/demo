@@ -70,7 +70,7 @@ function MappingSettings({
 
   const extractFields = useSelector(state => {
     if (isCategoryMapping) {
-      return selectors.categoryMappingMetadata(state, integrationId, flowId).extractsMetadata;
+      return selectors.categoryMappingsExtractsMetadata(state, integrationId, flowId);
     }
 
     return selectors.mappingExtracts(state, importId, flowId, subRecordMappingId);
