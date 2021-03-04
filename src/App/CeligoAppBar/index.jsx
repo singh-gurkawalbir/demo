@@ -96,6 +96,7 @@ export default function CeligoAppBar() {
       data-public
       color="inherit"
       position="fixed"
+      elevation={0}
       className={clsx(classes.appBar, {
         [classes.appBarShift]: drawerOpened,
       })}>
