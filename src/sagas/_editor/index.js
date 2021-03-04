@@ -45,7 +45,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
   // for correct HTML/URL encoding
   if (processor === 'handlebars' && editorId) {
     const editor = yield select(selectors._editor, editorId);
-    const {formKey, fieldId, resourceId, resourceType} = editor;
+    const {formKey, fieldId, resourceId, resourceType, supportsDefaultData} = editor;
     const formState = yield select(selectors.formState, formKey);
     const { value: formValues } = formState || {};
     const resource = yield call(constructResourceFromFormValues, {
@@ -64,6 +64,12 @@ export function* invokeProcessor({ editorId, processor, body }) {
         fieldPath: fieldId,
       },
     };
+    // for sql editors, modelMetadata needs to be passed inside options
+    if (supportsDefaultData) {
+      const parsedDefaults = editor.defaultData ? JSON.parse(editor.defaultData) : {};
+
+      reqBody.options.modelMetadata = parsedDefaults.data || parsedDefaults.record || parsedDefaults.row || {};
+    }
   }
   const path = `/processors/${processor}`;
   const opts = {
@@ -691,4 +697,3 @@ export default [
   takeLatest(actionTypes._EDITOR.PREVIEW.REQUEST, requestPreview),
   takeLatest(actionTypes._EDITOR.SAVE.REQUEST, save),
 ];
-

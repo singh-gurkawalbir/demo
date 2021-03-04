@@ -6,8 +6,6 @@ import { getDefaultData } from '../../../../../utils/sampleData';
 import { getUnionObject } from '../../../../../utils/jsonPaths';
 import { safeParse } from '../../../../../utils/string';
 
-const { merge } = require('lodash');
-
 export function _hasDefaultMetaData({fieldId, resourceType}) {
   const hideDefaultDataFields = [
     'dynamodb.expressionAttributeValues',
@@ -96,11 +94,7 @@ export default {
   },
   requestBody: editor => ({
     rules: { strict: !!editor.strict, template: editor.rule },
-    data: merge(
-      {},
-      editor.defaultData ? JSON.parse(editor.defaultData) : {},
-      editor.data ? JSON.parse(editor.data) : {}
-    ),
+    data: editor.data ? JSON.parse(editor.data) : {},
   }),
   validate: editor => {
     const getDataError = () => {
