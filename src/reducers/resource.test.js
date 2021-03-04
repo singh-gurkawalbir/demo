@@ -703,7 +703,7 @@ describe('resource region selector testcases', () => {
       expect(selectors.isDataLoader(state, 'f1')).toEqual(true);
     });
 
-    test('should return true for dataLoader flow if flow is in other format', () => {
+    test('should return true for dataLoader flow if flow is in OLD DL format', () => {
       const exp = {
         _id: 'e1',
         type: 'simple',
@@ -1057,7 +1057,7 @@ describe('resource region selector testcases', () => {
       expect(selectors.flowType()).toEqual('');
     });
 
-    test('should return empty string if export doesnot exist', () => {
+    test('should return empty string if export does not exist', () => {
       const flow = {
         _id: 'f1',
         pageGenerators: [
