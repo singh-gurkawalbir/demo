@@ -61,7 +61,7 @@ export default (state = {}, action) => {
       }
 
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ERRORS:
-        if (!draft[flowId] || !draft[flowId][resourceId]) {
+        if (!draft[flowId] || !draft[flowId][resourceId] || !errorIds.length) {
           break;
         }
         draft[flowId][resourceId][errorType].errors.forEach(error => {
@@ -192,19 +192,40 @@ export default (state = {}, action) => {
 
 export const selectors = {};
 
-selectors.getErrors = (state, { flowId, resourceId, errorType }) =>
-  state?.[flowId]?.[resourceId]?.[errorType] || defaultObject;
+selectors.allResourceErrorDetails = (state, { flowId, resourceId, isResolved }) => {
+  const errorType = isResolved ? 'resolved' : 'open';
+
+  return state?.[flowId]?.[resourceId]?.[errorType] || defaultObject;
+};
+
+selectors.hasResourceErrors = (state, { flowId, resourceId, isResolved }) => {
+  const errorsObj = selectors.allResourceErrorDetails(state, { flowId, resourceId, isResolved });
+
+  return !!errorsObj.errors?.length;
+};
 
 selectors.errorActionsContext = (
   state,
   { flowId, resourceId, actionType = 'retry' }
 ) => state?.[flowId]?.[resourceId]?.actions?.[actionType] || defaultObject;
 
+selectors.isAnyActionInProgress = (state, { flowId, resourceId, actionType }) => {
+  if (!state?.[flowId]?.[resourceId]?.actions) return false;
+
+  const actionObj = state[flowId][resourceId].actions;
+
+  if (actionType) {
+    return actionObj[actionType]?.status === 'requested';
+  }
+
+  return actionObj.retry?.status === 'requested' || actionObj.resolve?.status === 'requested';
+};
+
 selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved, errorIds = [] }) => {
-  const { errors = [] } = selectors.getErrors(state, {
+  const { errors = [] } = selectors.allResourceErrorDetails(state, {
     flowId,
     resourceId,
-    errorType: isResolved ? 'resolved' : 'open',
+    isResolved,
   });
 
   if (!errorIds.length) return false;
