@@ -109,7 +109,7 @@ export default function PreviewPanel({importId, subRecordMappingId, disabled}) {
         )}
         {mappingPreviewType === 'http' && (
         <HttpMappingAssistant
-          resourceId={importId}
+          importId={importId}
              />
         )}
       </div>

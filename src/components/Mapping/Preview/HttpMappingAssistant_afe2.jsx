@@ -21,18 +21,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function HttpMappingAssistant_afe2({ resourceId }) {
+export default function HttpMappingAssistant_afe2({ importId }) {
   const editorId = 'httpPreview';
   const dispatch = useDispatch();
   const classes = useStyles();
   const { data: editorData, result, autoEvaluate } = useSelector(state => selectors._editor(state, editorId), shallowEqual);
-  const dataInput = useSelector(state => selectors.mappingHttpAssistantPreviewData(state, resourceId)?.data);
-  const rule = useSelector(state => selectors.mappingHttpAssistantPreviewData(state, resourceId)?.rule);
+  const dataInput = useSelector(state => selectors.mappingHttpAssistantPreviewData(state, importId)?.data);
+  const rule = useSelector(state => selectors.mappingHttpAssistantPreviewData(state, importId)?.rule);
 
   useEffect(() => {
     // this component requires editor only to view the evaluated result of the handlebars processor
     dispatch(actions._editor.init(editorId, 'handlebars', {
-      resourceId,
+      resourceId: importId,
       resourceType: 'imports',
       rule,
       data: dataInput,
