@@ -58,6 +58,9 @@ export default {
     skipRetries: { fieldId: 'skipRetries' },
     exportOneToMany: { formId: 'exportOneToMany' },
     apiIdentifier: { fieldId: 'apiIdentifier' },
+    traceKeyTemplate: {
+      fieldId: 'traceKeyTemplate',
+    },
   },
   layout: {
     type: 'collapse',
@@ -76,7 +79,7 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['pageSize', 'dataURITemplate', 'skipRetries', 'apiIdentifier'],
+        fields: ['pageSize', 'dataURITemplate', 'skipRetries', 'apiIdentifier', 'traceKeyTemplate'],
       },
     ],
   },

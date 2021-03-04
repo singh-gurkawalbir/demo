@@ -3162,6 +3162,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
     },
     "layout": Object {
       "containers": Array [
@@ -3204,6 +3207,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "advancedSettings",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -3372,6 +3376,9 @@ Object {
       "skipRetries": Object {
         "fieldId": "skipRetries",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -3443,6 +3450,7 @@ Object {
               "fields": Array [
                 "dataURITemplate",
                 "skipRetries",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -3744,6 +3752,9 @@ Object {
       "skipRetries": Object {
         "fieldId": "skipRetries",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "uploadFile": Object {
         "fieldId": "uploadFile",
         "placeholder": "Sample file (that would be parsed)",
@@ -3810,6 +3821,7 @@ Object {
                 "skipRetries",
                 "apiIdentifier",
                 "file.batchSize",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -4030,6 +4042,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -4168,6 +4183,7 @@ Object {
                 "advancedSettings",
                 "configureAsyncHelper",
                 "http._asyncHelperId",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -4220,6 +4236,9 @@ Object {
       },
       "settings": Object {
         "fieldId": "settings",
+      },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
       },
       "type": Object {
         "defaultValue": [Function],
@@ -4285,6 +4304,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "advancedSettings",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -5024,6 +5044,9 @@ Object {
       "skipRetries": Object {
         "fieldId": "skipRetries",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -5143,6 +5166,7 @@ Object {
                     "netsuite.restlet.batchSize",
                     "skipRetries",
                     "apiIdentifier",
+                    "traceKeyTemplate",
                   ],
                 },
               ],
@@ -5472,6 +5496,9 @@ Object {
       "skipRetries": Object {
         "fieldId": "skipRetries",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "uploadFile": Object {
         "fieldId": "uploadFile",
         "placeholder": "Sample file (that would be parsed)",
@@ -5538,6 +5565,7 @@ Object {
                 "dataURITemplate",
                 "skipRetries",
                 "apiIdentifier",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -5783,6 +5811,9 @@ Object {
       "skipRetries": Object {
         "fieldId": "skipRetries",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -5874,6 +5905,7 @@ Object {
                 "dataURITemplate",
                 "skipRetries",
                 "apiIdentifier",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -5991,6 +6023,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "uploadFile": Object {
         "helpKey": "export.uploadFile",
         "id": "uploadFile",
@@ -6050,6 +6085,7 @@ Object {
                 "file.encoding",
                 "pageSize",
                 "dataURITemplate",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -6090,6 +6126,9 @@ Object {
       },
       "skipRetries": Object {
         "fieldId": "skipRetries",
+      },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
       },
       "webhook.algorithm": Object {
         "fieldId": "webhook.algorithm",
@@ -6185,6 +6224,7 @@ Object {
                 "pageSize",
                 "dataURITemplate",
                 "skipRetries",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -6228,6 +6268,9 @@ Object {
       },
       "settings": Object {
         "fieldId": "settings",
+      },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
       },
       "type": Object {
         "defaultValue": [Function],
@@ -6298,6 +6341,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "advancedSettings",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -6407,6 +6451,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "uploadFile": Object {
         "id": "uploadFile",
         "options": "csv",
@@ -6476,6 +6523,7 @@ Object {
               "collapsed": "true",
               "fields": Array [
                 "advancedSettings",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -6721,6 +6769,9 @@ Object {
       "skipRetries": Object {
         "fieldId": "skipRetries",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -6812,6 +6863,7 @@ Object {
                 "dataURITemplate",
                 "skipRetries",
                 "apiIdentifier",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -6997,6 +7049,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -7105,6 +7160,7 @@ Object {
               "collapsed": "true",
               "fields": Array [
                 "advancedSettings",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -7517,6 +7573,9 @@ Object {
       "skipRetries": Object {
         "fieldId": "skipRetries",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -7608,6 +7667,7 @@ Object {
                 "dataURITemplate",
                 "skipRetries",
                 "apiIdentifier",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -7669,6 +7729,9 @@ Object {
       "skipRetries": Object {
         "fieldId": "skipRetries",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -7733,6 +7796,7 @@ Object {
                 "dataURITemplate",
                 "skipRetries",
                 "apiIdentifier",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -7794,6 +7858,9 @@ Object {
       "skipRetries": Object {
         "fieldId": "skipRetries",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -7858,6 +7925,7 @@ Object {
                 "dataURITemplate",
                 "skipRetries",
                 "apiIdentifier",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },

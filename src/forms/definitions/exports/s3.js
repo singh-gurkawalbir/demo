@@ -173,6 +173,9 @@ export default {
   },
   fieldMap: {
     ...EXPORT_FILE_FIELD_MAP,
+    traceKeyTemplate: {
+      fieldId: 'traceKeyTemplate',
+    },
   },
   layout: {
     type: 'collapse',
@@ -225,7 +228,8 @@ export default {
           'pageSize',
           'dataURITemplate',
           'skipRetries',
-          'apiIdentifier'],
+          'apiIdentifier',
+          'traceKeyTemplate'],
       },
     ],
   },
