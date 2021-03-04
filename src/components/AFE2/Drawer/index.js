@@ -67,10 +67,11 @@ function RouterWrappedContent({ hideSave }) {
     onClose();
   };
   const CloseButton = <CloseIconButton onClose={handleClose} editorId={editorId} />;
+  const drawerTitle = editorTitle || label;
 
   return (
     <>
-      <DrawerHeader title={editorTitle || label} CloseButton={CloseButton} className={clsx(classes.drawerHeader, {[classes.headerLongTitle]: editorTitle.length > 45 })}>
+      <DrawerHeader title={drawerTitle} CloseButton={CloseButton} className={clsx(classes.drawerHeader, {[classes.headerLongTitle]: drawerTitle?.length > 45 })}>
         <ActionsRibbon editorId={editorId} className={classes.afe2DrawerHeaderRibbon} />
       </DrawerHeader>
 
