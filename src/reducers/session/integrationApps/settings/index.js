@@ -927,35 +927,39 @@ selectors.mkCategoryMappingsChanged = () => {
   const categoryMappingsGeneratesSelector = selectors.mkCategoryMappingGeneratesMetadata();
 
   return createSelector(
-    (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)],
+    (state, integrationId, flowId) => {
+      const categoryMappingData = state?.[getCategoryKey(integrationId, flowId)];
+      const { response = emptySet } = categoryMappingData || emptyObj;
+      const mappingData = response.find(op => op.operation === 'mappingData');
+      const sessionMappedData = mappingData?.data?.mappingData;
+      const sessionMappings = deepClone(sessionMappedData);
+
+      return sessionMappings;
+    },
     categoryMappingsGeneratesSelector,
     (_1, _2, flowId) => flowId,
-    (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)]?.initMappingData,
-    (categoryMappingData = emptyObj, categoryRelationshipData, flowId, initData) => {
+    (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)]?.mappings,
+    (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)]?.deleted,
+    (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)]?.initMappingData?.data?.mappingData,
+    (sessionMappings, categoryRelationshipData, flowId, userMappings, deletedMappings, initData) => {
       const isMappingsEqual = false;
 
-      if (!categoryMappingData || !categoryMappingData.response) {
+      if (!sessionMappings) {
         return isMappingsEqual;
       }
-
-      const { response, mappings, deleted } = categoryMappingData;
-      const mappingData = response.find(op => op.operation === 'mappingData');
-      const sessionMappedData = mappingData && mappingData.data && mappingData.data.mappingData;
-      const clonedData = deepClone(sessionMappedData);
-
       mappingUtil.setCategoryMappingData(
         flowId,
-        clonedData,
-        mappings,
-        deleted,
+        sessionMappings,
+        userMappings,
+        deletedMappings,
         categoryRelationshipData
       );
 
-      if (!initData || !initData.data || !initData.data.mappingData) {
-        return isMappingsEqual;
+      if (!initData) {
+        return !isMappingsEqual;
       }
 
-      return !mappingUtil.isEqual(initData.data.mappingData, clonedData);
+      return !mappingUtil.isEqual(initData, sessionMappings);
     });
 };
 
