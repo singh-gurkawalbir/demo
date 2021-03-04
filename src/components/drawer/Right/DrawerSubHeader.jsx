@@ -1,9 +1,10 @@
 import React from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core';
+// import BackgroundToggle from './BackgroundToggle';
 
 const useStyles = makeStyles(theme => ({
-  drawerHeader: {
+  drawerSubHeader: {
     display: 'flex',
     alignItems: 'center',
     backgroundColor: theme.palette.background.paper,
@@ -16,9 +17,11 @@ export default function DrawerSubHeader({ children, className }) {
   const classes = useStyles();
 
   return (
-    <div data-public className={clsx(classes.drawerHeader, className)}>
+  // <BackgroundToggle reverse>
+    <div data-public className={clsx(classes.drawerSubHeader, className)}>
       {/* Typically children are the action icons/buttons */}
       {children}
     </div>
+  // </BackgroundToggle>
   );
 }
