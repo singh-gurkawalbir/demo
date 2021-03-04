@@ -701,20 +701,16 @@ selectors.mkMappedCategories = () => createSelector(
 );
 
 selectors.mkVariationMappingData = () => createSelector(
-  (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)]?.response,
-  (response = emptySet) => {
+  (state, integrationId, flowId) => {
+    const response = state?.[getCategoryKey(integrationId, flowId)]?.response || emptySet;
+    const basicMappingData = response.find(sec => sec.operation === 'mappingData');
+
+    return basicMappingData?.data?.mappingData?.variationMappings?.recordMappings;
+  },
+  (variationMappingData = emptySet) => {
     const mappings = [];
-    let mappingMetadata = [];
-    const basicMappingData = response.find(
-      sec => sec.operation === 'mappingData'
-    );
 
-    if (basicMappingData) {
-      mappingMetadata =
-      basicMappingData.data.mappingData.variationMappings.recordMappings;
-    }
-
-    mappingMetadata.forEach(meta => {
+    variationMappingData.forEach(meta => {
       flattenChildrenStructrue(mappings, meta);
     });
 
