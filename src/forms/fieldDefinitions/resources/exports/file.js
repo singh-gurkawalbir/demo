@@ -32,7 +32,6 @@ export default {
   'file.fileNameStartsWith': {
     type: 'uri',
     label: 'File name starts with',
-    editorTitle: 'Build file name starts with',
     showExtract: false,
     showLookup: false,
     defaultValue: r => {
@@ -49,7 +48,6 @@ export default {
   'file.fileNameEndsWith': {
     type: 'uri',
     label: 'File name ends with',
-    editorTitle: 'Build file name ends with',
     showExtract: false,
     showLookup: false,
     defaultValue: r => {

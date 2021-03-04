@@ -53,8 +53,7 @@ export default {
   },
   'dynamodb.expressionAttributeValues': {
     type: 'sqlquerybuilder',
-    label: 'Build expression attribute values',
-    hideDefaultData: true,
+    label: 'Expression attribute values',
     required: true,
     defaultValue: r => r?.dynamodb?.expressionAttributeValues,
   },
