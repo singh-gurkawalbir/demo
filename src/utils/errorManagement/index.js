@@ -1,6 +1,8 @@
 import { get, sortBy } from 'lodash';
 import moment from 'moment';
 
+export const MAX_ERRORS_TO_RETRY_OR_RESOLVE = 1000;
+
 export const FILTER_KEYS = {
   OPEN: 'openErrors',
   RESOLVED: 'resolvedErrors',
@@ -15,6 +17,8 @@ export const DEFAULT_FILTERS = {
     searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey', 'errorId', 'resolvedAt', 'resolvedBy'],
   },
 };
+
+export const DEFAULT_ROWS_PER_PAGE = 50;
 
 export const ERROR_MANAGEMENT_RANGE_FILTERS = [
   {id: 'today', label: 'Today'},
