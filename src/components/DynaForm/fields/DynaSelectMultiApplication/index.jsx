@@ -192,7 +192,6 @@ export default function MultiSelectApplication(props) {
   const customStylesMultiselect = {
     option: (provided, state) => ({
       ...provided,
-
       padding: '0px',
       color: state.isSelected
         ? theme.palette.secondary.main

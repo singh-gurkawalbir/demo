@@ -73,10 +73,10 @@ export default function CeligoPageBar(props) {
 
             <Grid item container wrap="nowrap">
               {history && (
-              // eslint-disable-next-line react/jsx-handler-names
-              <IconButton size="small" onClick={history.goBack}>
-                <BackArrowIcon />
-              </IconButton>
+                // eslint-disable-next-line react/jsx-handler-names
+                <IconButton size="small" onClick={history.goBack}>
+                  <BackArrowIcon />
+                </IconButton>
               )}
               <Typography className={classes.title} variant="h3">
                 {title}
