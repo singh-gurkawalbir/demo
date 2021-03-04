@@ -17,6 +17,8 @@ export default {
     '/http/auth/oauth/scopeDelimiter': ' ',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
+    '/http/auth/token/refreshRelativeURI': `https://secure.${formValues['/http/unencrypted/subdomain']}.echosign.com/oauth/refresh`,
+    '/http/auth/token/refreshBody': '{ "client_id": "{{{clientId}}}", "client_secret": "{{{clientSecret}}}", "grant_type": "refresh_token", "refresh_token": "{{{connection.http.auth.token.refreshToken}}}" }',
     '/http/headers': [{ name: 'x-api-user', value: '{{{join ":" "email" connection.http.unencrypted.email}}}' }],
   }),
   fieldMap: {
