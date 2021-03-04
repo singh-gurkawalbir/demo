@@ -1800,6 +1800,11 @@ const errorManager = {
     cancelLatestJobs: ({ flowId, jobIds }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CANCEL, { flowId, jobIds}),
   },
+  runHistory: {
+    request: ({ flowId }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST, { flowId }),
+    received: ({ flowId, runHistory }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.RECEIVED, { flowId, runHistory }),
+    clear: ({ flowId }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.CLEAR, { flowId }),
+  },
   integrationErrors: {
     requestPoll: ({ integrationId }) =>
       action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST_FOR_POLL, { integrationId }),
@@ -1851,8 +1856,14 @@ const errorManager = {
         checked,
         isResolved,
       }),
-    selectAll: ({ flowId, resourceId, checked, isResolved }) =>
-      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS, {
+    deselectAll: ({ flowId, resourceId, isResolved }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DESELECT_ALL_ERRORS, {
+        flowId,
+        resourceId,
+        isResolved,
+      }),
+    selectAllInCurrPage: ({ flowId, resourceId, checked, isResolved }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS_IN_CURR_PAGE, {
         flowId,
         resourceId,
         checked,
@@ -1866,7 +1877,7 @@ const errorManager = {
         retryData,
       }
     ),
-    retry: ({ flowId, resourceId, retryIds = [], isResolved = false }) =>
+    retry: ({ flowId, resourceId, retryIds = [], isResolved = false, retryAll = false }) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.REQUEST,
         {
@@ -1874,15 +1885,17 @@ const errorManager = {
           resourceId,
           retryIds,
           isResolved,
+          retryAll,
         }
       ),
-    resolve: ({ flowId, resourceId, errorIds = [] }) =>
+    resolve: ({ flowId, resourceId, errorIds = [], resolveAll = false }) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.REQUEST,
         {
           flowId,
           resourceId,
           errorIds,
+          resolveAll,
         }
       ),
     retryReceived: ({ flowId, resourceId, retryCount}) =>

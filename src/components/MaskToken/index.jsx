@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function MaskToken({ count }) {
+export default function MaskToken({ count }) {
   const len = parseInt(count, 0);
   const classes = useStyles();
   const items = [];
@@ -37,5 +37,3 @@ function MaskToken({ count }) {
 MaskToken.propTypes = {
   count: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
-
-export default MaskToken;

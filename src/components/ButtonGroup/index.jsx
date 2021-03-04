@@ -16,7 +16,7 @@ const useStyles = makeStyles({
   },
 });
 
-function ButtonGroup(props) {
+export default function ButtonGroup(props) {
   const { className } = props;
   const classes = useStyles();
 
@@ -24,5 +24,3 @@ function ButtonGroup(props) {
     <div className={clsx(classes.wrapper, className)}>{props.children}</div>
   );
 }
-
-export default ButtonGroup;

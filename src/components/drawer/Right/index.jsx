@@ -111,11 +111,9 @@ export default function RightDrawer({
               classes.drawerPaper,
               classes[height],
               {
-                [classes.banner]:
-                  bannerOpened && showBanner && height === 'short',
+                [classes.banner]: bannerOpened && showBanner && height === 'short',
                 [classes[width]]: width !== 'full',
-                [classes.fullWidthDrawerClose]:
-                  width === 'full' && !drawerOpened,
+                [classes.fullWidthDrawerClose]: width === 'full' && !drawerOpened,
                 [classes.fullWidthDrawerOpen]: width === 'full' && drawerOpened,
               }
             ),

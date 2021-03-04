@@ -39,7 +39,7 @@ function FBComponent({flowId, integrationId, childId}) {
     </>
   );
 }
-function FlowBuilder() {
+export default function FlowBuilder() {
   const match = useRouteMatch();
 
   const { flowId, integrationId, childId } = match.params;
@@ -77,5 +77,3 @@ function FlowBuilder() {
     </LoadResources>
   );
 }
-
-export default FlowBuilder;

@@ -14,6 +14,7 @@ const useStyles = makeStyles({
     height: '100%',
     overflow: 'hidden',
     lineHeight: '24px',
+    fontSize: 16,
   },
   htmlMessage: {
     '& > pre': {
