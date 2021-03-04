@@ -91,6 +91,19 @@ describe('installer,uninstaller, clone and template region selector testcases', 
         resourceId: 'i1',
       })).toEqual(false);
     });
+
+    test('should return false if empty install steps received for template', () => {
+      const installSteps = [
+      ];
+      const state = reducer(
+        undefined,
+        actions.template.installStepsReceived(installSteps, undefined, 't1')
+      );
+
+      expect(selectors.isSetupComplete(state, {
+        templateId: 't1',
+      })).toEqual(false);
+    });
   });
 
   describe('selectors.isIAConnectionSetupPending test cases', () => {
@@ -198,7 +211,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
 
   describe('selectors.isUninstallComplete test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isUninstallComplete(undefined, {})).toBe(0);
+      expect(selectors.isUninstallComplete(undefined, {})).toBe(false);
     });
     test('should return true if uninstallSteps are completed', () => {
       const uninstallSteps = [{
@@ -231,6 +244,19 @@ describe('installer,uninstaller, clone and template region selector testcases', 
         id: 'sid2',
         completed: false,
       }];
+
+      const state = reducer(
+        undefined,
+        actions.integrationApp.uninstaller.receivedUninstallSteps(uninstallSteps, 'i1')
+      );
+
+      expect(selectors.isUninstallComplete(state, {
+        integrationId: 'i1',
+      })).toEqual(false);
+    });
+
+    test('should return false for empty uninstall steps', () => {
+      const uninstallSteps = [];
 
       const state = reducer(
         undefined,
@@ -280,7 +306,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
       },
     ];
 
-    test('should return installSteps for v2 integration', () => {
+    test('should return installSteps for IA2.0 integration', () => {
       const integration = {
         _id: 'i1',
         installSteps,
@@ -314,12 +340,22 @@ describe('installer,uninstaller, clone and template region selector testcases', 
 
       state = reducer(
         state,
-        actions.integrationApp.installer.updateStep('i1', 'installFunc', 'inProgress', {
-          a: 'b',
-        })
+        actions.integrationApp.installer.updateStep('i1', 'installFunc', 'verify')
       );
 
-      expect(selectors.integrationInstallSteps(state, 'i1')).toEqual(expected);
+      expect(selectors.integrationInstallSteps(state, 'i1')).toEqual([
+        {
+          completed: true,
+          stepId: 's1',
+        },
+        {
+          completed: false,
+          isCurrentStep: true,
+          verifying: true,
+          isTriggered: true,
+          stepId: 's3',
+        },
+      ]);
     });
   });
 
@@ -467,23 +503,14 @@ describe('installer,uninstaller, clone and template region selector testcases', 
         }]});
     });
 
-    test('should not add isCurrentStep if steps are already completed for newStoreSteps selector', () => {
-      const steps = [{
-        stepId: 'sid1',
-        completed: true,
-      }, {
-        stepId: 'sid2',
-        completed: true,
-      }];
-
+    test('should return empty array when install steps are empty', () => {
       const state = reducer(
         undefined,
-        actions.integrationApp.store.receivedNewStoreSteps('i1', steps)
+        actions.integrationApp.store.receivedNewStoreSteps('i1', [])
       );
 
       expect(selectors.addNewStoreSteps(state, 'i1')).toEqual({
-        steps,
-      });
+        steps: []});
     });
   });
 
@@ -650,7 +677,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
       );
     });
 
-    test('should redirectTo to integrations if resourceType is integrations', () => {
+    test('should return redirectTo correctly when resourceType is integrations', () => {
       const state = reducer(
         undefined,
         actions.template.createdComponents([{
@@ -669,7 +696,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
       );
     });
 
-    test('should redirectTo to flow if resourceType is flow and environment is sandbox', () => {
+    test('should return redirectTo correctly when resourceType is flow and environment is sandbox', () => {
       let state = reducer(
         undefined,
         actions.template.createdComponents([{
@@ -697,7 +724,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
       );
     });
 
-    test('should redirectTo to flow if resourceType is flow and environment is production', () => {
+    test('should return redirectTo correctly when resourceType is flow and environment is production', () => {
       let state = reducer(
         undefined,
         actions.template.createdComponents([{
@@ -724,7 +751,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
       );
     });
 
-    test('should redirectTo to flow if resourceType is flow and if linked to an integration', () => {
+    test('should return redirectTo correctly when resourceType is flow and if linked to an integration', () => {
       let state = reducer(
         undefined,
         actions.template.createdComponents([{
@@ -750,7 +777,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
         }
       );
     });
-    test('should redirectTo to exports if resourceType is exports', () => {
+    test('should return redirectTo correctly when resourceType is exports', () => {
       const state = reducer(
         undefined,
         actions.template.createdComponents([{
@@ -768,7 +795,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
         }
       );
     });
-    test('should redirectTo to imports if resourceType is imports', () => {
+    test('should return redirectTo correctly when resourceType is imports', () => {
       const state = reducer(
         undefined,
         actions.template.createdComponents([{
@@ -832,6 +859,25 @@ describe('installer,uninstaller, clone and template region selector testcases', 
           }],
         }
       );
+    });
+
+    test('should return empty object if state doesn\'t have resource or template', () => {
+      const state = reducer(
+        undefined,
+        actions.template.installStepsReceived(
+          [{
+            stepId: 'sid',
+          }], undefined, 'exports-e1'
+        )
+      );
+
+      expect(selectors.installSetup(state, {
+        resourceType: 'exports',
+        resourceId: 'e2',
+      })).toEqual({});
+      expect(selectors.installSetup(state, {
+        templateId: 't1',
+      })).toEqual({});
     });
   });
 

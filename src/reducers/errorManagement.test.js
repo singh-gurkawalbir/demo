@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+/* global describe, expect, test, beforeAll */
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import { FILTER_KEYS } from '../utils/errorManagement';
@@ -38,20 +38,19 @@ describe('Error Management region selector testcases', () => {
   });
 
   describe('selectors.flowJobConnections test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      const selector = selectors.flowJobConnections();
+    let state;
 
-      expect(selector(undefined, {})).toEqual([]);
-    });
-    test('should return all the connections used in a flow', () => {
+    beforeAll(() => {
       const conns = [
         {
           _id: 'c1',
           name: 'conn1',
+          type: 'ns',
         },
         {
           _id: 'c2',
           name: 'conn2',
+          type: 'sf',
         },
         {
           _id: 'c3',
@@ -59,7 +58,7 @@ describe('Error Management region selector testcases', () => {
         },
       ];
 
-      let state = reducer(
+      state = reducer(
         undefined,
         actions.resource.receivedCollection('connections', conns)
       );
@@ -70,6 +69,9 @@ describe('Error Management region selector testcases', () => {
       }, {
         _id: 'e2',
         _connectionId: 'c2',
+      }, {
+        _id: 'e3',
+        type: 'simple',
       }];
 
       state = reducer(
@@ -104,11 +106,34 @@ describe('Error Management region selector testcases', () => {
             },
           ],
         },
+        {
+          _id: 'f2',
+          _exportId: 'e3',
+          _importId: 'i1',
+          name: 'data-loader flow',
+        },
+        {
+          _id: 'f3',
+          pageGenerators: [{
+            _exportId: 'e1',
+          }],
+          pageProcessors: [{
+            _exportId: 'e2',
+          }, {
+            _importId: 'i1',
+          }],
+        },
       ];
 
       state = reducer(state,
         actions.resource.receivedCollection('flows', flows));
+    });
+    test('should not throw any exception for invalid arguments', () => {
+      const selector = selectors.flowJobConnections();
 
+      expect(selector(undefined, {})).toEqual([]);
+    });
+    test('should return all the connections used in a flow', () => {
       const selector = selectors.flowJobConnections();
 
       expect(selector(state, 'f1')).toEqual([{
@@ -124,121 +149,18 @@ describe('Error Management region selector testcases', () => {
     });
 
     test('should return all the connections used in a data-loader flow', () => {
-      const conns = [
-        {
-          _id: 'c1',
-          name: 'conn1',
-        },
-      ];
-
-      let state = reducer(
-        undefined,
-        actions.resource.receivedCollection('connections', conns)
-      );
-
-      const exps = [{
-        _id: 'e1',
-        type: 'simple',
-      }];
-
-      state = reducer(
-        state,
-        actions.resource.receivedCollection('exports', exps)
-      );
-
-      const imps = [{
-        _id: 'i1',
-        _connectionId: 'c1',
-      }];
-
-      state = reducer(
-        state,
-        actions.resource.receivedCollection('imports', imps)
-      );
-
-      const flows = [
-        {
-          _id: 'f1',
-          _exportId: 'e1',
-          _importId: 'i1',
-        },
-      ];
-
-      state = reducer(state,
-        actions.resource.receivedCollection('flows', flows));
-
       const selector = selectors.flowJobConnections();
 
-      expect(selector(state, 'f1')).toEqual([{
-        id: 'c1',
-        name: 'conn1',
+      expect(selector(state, 'f2')).toEqual([{
+        id: 'c3',
+        name: 'conn3',
       }]);
     });
 
     test('should return all the connections used in a flow where export configured as pp', () => {
-      const conns = [
-        {
-          _id: 'c1',
-          name: 'conn1',
-        },
-        {
-          _id: 'c2',
-          name: 'conn2',
-        },
-        {
-          _id: 'c3',
-          name: 'conn3',
-        },
-      ];
-
-      let state = reducer(
-        undefined,
-        actions.resource.receivedCollection('connections', conns)
-      );
-
-      const exps = [{
-        _id: 'e1',
-        _connectionId: 'c2',
-      }, {
-        _id: 'e2',
-        _connectionId: 'c3',
-      }];
-
-      state = reducer(
-        state,
-        actions.resource.receivedCollection('exports', exps)
-      );
-
-      const imps = [{
-        _id: 'i1',
-        _connectionId: 'c1',
-      }];
-
-      state = reducer(
-        state,
-        actions.resource.receivedCollection('imports', imps)
-      );
-
-      const flows = [
-        {
-          _id: 'f1',
-          pageGenerators: [{
-            _exportId: 'e1',
-          }],
-          pageProcessors: [{
-            _exportId: 'e2',
-          }, {
-            _importId: 'i1',
-          }],
-        },
-      ];
-
-      state = reducer(state,
-        actions.resource.receivedCollection('flows', flows));
-
       const selector = selectors.flowJobConnections();
 
-      expect(selector(state, 'f1')).toEqual([{
+      expect(selector(state, 'f3')).toEqual([{
         id: 'c1',
         name: 'conn1',
       }, {
@@ -251,50 +173,6 @@ describe('Error Management region selector testcases', () => {
     });
 
     test('should return empty array for invalid flow id', () => {
-      const conns = [
-        {
-          _id: 'c1',
-          name: 'conn1',
-        },
-      ];
-
-      let state = reducer(
-        undefined,
-        actions.resource.receivedCollection('connections', conns)
-      );
-
-      const exps = [{
-        _id: 'e1',
-        _connectionId: 'c2',
-      }];
-
-      state = reducer(
-        state,
-        actions.resource.receivedCollection('exports', exps)
-      );
-
-      const imps = [{
-        _id: 'i1',
-        _connectionId: 'c1',
-      }];
-
-      state = reducer(
-        state,
-        actions.resource.receivedCollection('imports', imps)
-      );
-
-      const flows = [
-        {
-          _id: 'f1',
-          pageGenerators: [{
-            _exportId: 'e1',
-          }],
-        },
-      ];
-
-      state = reducer(state,
-        actions.resource.receivedCollection('flows', flows));
-
       const selector = selectors.flowJobConnections();
 
       expect(selector(state, 'invalid-id')).toEqual([]);
@@ -805,10 +683,9 @@ describe('Error Management region selector testcases', () => {
   });
 
   describe('selectors.integrationErrorsPerSection test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.integrationErrorsPerSection()).toEqual({});
-    });
-    test('should return integration errors per Section excluding disabled flow', () => {
+    let state;
+
+    beforeAll(() => {
       const integrations = [
         {
           _id: 'int1',
@@ -828,9 +705,37 @@ describe('Error Management region selector testcases', () => {
             }],
           },
         },
+        {
+          _id: 'int2',
+          settings: {
+            sections: [{
+              title: 'Section1',
+              id: 'secId',
+              flows: [{
+                _id: 'f5',
+              }, {
+                _id: 'f6',
+              }],
+            }, {
+              title: 'Section2',
+              id: 'secId2',
+              flows: [{
+                _id: 'f7',
+              }, {
+                _id: 'f8',
+              }],
+            }],
+          },
+        },
+        {
+          _id: 'int3',
+          settings: {
+            supportsMultiStore: false,
+          },
+        },
       ];
 
-      let state = reducer(undefined, actions.resource.receivedCollection('integrations', integrations));
+      state = reducer(undefined, actions.resource.receivedCollection('integrations', integrations));
 
       const flows = [
         {
@@ -846,6 +751,18 @@ describe('Error Management region selector testcases', () => {
           _id: 'f4',
           disabled: true,
         },
+        {
+          _id: 'f5',
+        },
+        {
+          _id: 'f6',
+        },
+        {
+          _id: 'f7',
+        },
+        {
+          _id: 'f8',
+        },
       ];
 
       state = reducer(state, actions.resource.receivedCollection('flows', flows));
@@ -872,148 +789,108 @@ describe('Error Management region selector testcases', () => {
         ],
       }));
 
+      state = reducer(state, actions.resource.receivedCollection('flows', flows));
+
+      state = reducer(state, actions.errorManager.integrationErrors.request({ integrationId: 'int2'}));
+      state = reducer(state, actions.errorManager.integrationErrors.received({ integrationId: 'int2',
+        integrationErrors: [
+          {
+            _flowId: 'f5',
+            numError: 10,
+          },
+          {
+            _flowId: 'f6',
+            numError: 20,
+          },
+          {
+            _flowId: 'f7',
+            numError: 5,
+          },
+          {
+            _flowId: 'f8',
+            numError: 50,
+          },
+        ],
+      }));
+    });
+
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.integrationErrorsPerSection()).toEqual({});
+    });
+
+    test('should return integration errors per Section excluding disabled flow', () => {
       expect(selectors.integrationErrorsPerSection(state, 'int1')).toEqual({
         T1: 35,
       });
     });
 
     test('should return integration errors per Section if multiple sections exists', () => {
-      const integrations = [
-        {
-          _id: 'int1',
-          settings: {
-            sections: [{
-              title: 'Section1',
-              id: 'secId',
-              flows: [{
-                _id: 'f1',
-              }, {
-                _id: 'f2',
-              }],
-            }, {
-              title: 'Section2',
-              id: 'secId2',
-              flows: [{
-                _id: 'f3',
-              }, {
-                _id: 'f4',
-              }],
-            }],
-          },
-        },
-      ];
-
-      let state = reducer(undefined, actions.resource.receivedCollection('integrations', integrations));
-
-      const flows = [
-        {
-          _id: 'f1',
-        },
-        {
-          _id: 'f2',
-        },
-        {
-          _id: 'f3',
-        },
-        {
-          _id: 'f4',
-        },
-      ];
-
-      state = reducer(state, actions.resource.receivedCollection('flows', flows));
-
-      state = reducer(state, actions.errorManager.integrationErrors.request({ integrationId: 'int1'}));
-      state = reducer(state, actions.errorManager.integrationErrors.received({ integrationId: 'int1',
-        integrationErrors: [
-          {
-            _flowId: 'f1',
-            numError: 10,
-          },
-          {
-            _flowId: 'f2',
-            numError: 20,
-          },
-          {
-            _flowId: 'f3',
-            numError: 5,
-          },
-          {
-            _flowId: 'f4',
-            numError: 50,
-          },
-        ],
-      }));
-
-      expect(selectors.integrationErrorsPerSection(state, 'int1')).toEqual({
+      expect(selectors.integrationErrorsPerSection(state, 'int2')).toEqual({
         Section1: 30,
         Section2: 55,
       });
     });
 
-    test('should return empty object if integration doesnot exist', () => {
-      const integrations = [
-        {
-          _id: 'int1',
-        },
-      ];
+    test('should return empty object if integration does not exist', () => {
+      expect(selectors.integrationErrorsPerSection(state, 'int-not-exists')).toEqual({});
+    });
 
-      const state = reducer(undefined, actions.resource.receivedCollection('integrations', integrations));
+    test('should return empty object if sections does not exist on integration', () => {
+      expect(selectors.integrationErrorsPerSection(state, 'int3')).toEqual({});
+    });
 
-      expect(selectors.integrationErrorsPerSection(state, 'int2')).toEqual({});
+    test('should return empty object if flows resource is empty in the state', () => {
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('flows', [])
+      );
+      expect(selectors.integrationErrorsPerSection(state, 'int1')).toEqual({});
     });
   });
 
   describe('selectors.integrationErrorsPerStore test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.integrationErrorsPerStore()).toEqual({});
-    });
+    let state;
 
-    test('should return emptyObject if integration doesn\'t support multistore', () => {
-      const integrations = [{
-        _id: 'intid',
-        settings: {
-          supportsMultiStore: false,
-        },
-      }];
-
-      const state = actions.resource.receivedCollection('integrations', integrations);
-
-      expect(selectors.integrationErrorsPerStore(state, 'intid')).toEqual({});
-    });
-    test('should return integration errors per store if integration supports multiStore', () => {
-      const integrations = [{
-        _id: 'intid',
-        settings: {
-          supportsMultiStore: true,
-          sections: [{
-            title: 'DBA',
-            id: 'sec1',
+    beforeAll(() => {
+      const integrations = [
+        {
+          _id: 'intid1',
+          settings: {
+            supportsMultiStore: false,
+          },
+        }, {
+          _id: 'intid2',
+          settings: {
+            supportsMultiStore: true,
             sections: [{
-              title: 'T1',
-              id: 'secId',
-              flows: [{
-                _id: 'f1',
-              }, {
-                _id: 'f2',
+              title: 'DBA',
+              id: 'sec1',
+              sections: [{
+                title: 'T1',
+                id: 'secId',
+                flows: [{
+                  _id: 'f1',
+                }, {
+                  _id: 'f2',
+                }],
+              }],
+            }, {
+              title: 'WF',
+              id: 'sec2',
+              sections: [{
+                title: 'T2',
+                id: 'secId',
+                flows: [{
+                  _id: 'f3',
+                }, {
+                  _id: 'f4',
+                }],
               }],
             }],
-          }, {
-            title: 'WF',
-            id: 'sec2',
-            sections: [{
-              title: 'T2',
-              id: 'secId',
-              flows: [{
-                _id: 'f3',
-              }, {
-                _id: 'f4',
-              }],
-            }],
-          }],
-        },
-      }];
+          },
+        }];
 
-      let state = reducer(undefined,
+      state = reducer(undefined,
         actions.resource.receivedCollection('integrations', integrations)
       );
       const flows = [
@@ -1034,8 +911,8 @@ describe('Error Management region selector testcases', () => {
 
       state = reducer(state, actions.resource.receivedCollection('flows', flows));
 
-      state = reducer(state, actions.errorManager.integrationErrors.request({ integrationId: 'intid'}));
-      state = reducer(state, actions.errorManager.integrationErrors.received({ integrationId: 'intid',
+      state = reducer(state, actions.errorManager.integrationErrors.request({ integrationId: 'intid2'}));
+      state = reducer(state, actions.errorManager.integrationErrors.received({ integrationId: 'intid2',
         integrationErrors: [
           {
             _flowId: 'f1',
@@ -1055,22 +932,22 @@ describe('Error Management region selector testcases', () => {
           },
         ],
       }));
+    });
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.integrationErrorsPerStore()).toEqual({});
+    });
 
-      expect(selectors.integrationErrorsPerStore(state, 'intid')).toEqual({
+    test('should return emptyObject if integration doesn\'t support multistore', () => {
+      expect(selectors.integrationErrorsPerStore(state, 'intid1')).toEqual({});
+    });
+    test('should return integration errors per store if integration supports multiStore', () => {
+      expect(selectors.integrationErrorsPerStore(state, 'intid2')).toEqual({
         sec1: 30,
         sec2: 5,
       });
     });
 
     test('should return empty object if integration doesn\'t exist', () => {
-      const integrations = [
-        {
-          _id: 'int1',
-        },
-      ];
-
-      const state = reducer(undefined, actions.resource.receivedCollection('integrations', integrations));
-
       expect(selectors.integrationErrorsPerStore(state, 'int2')).toEqual({});
     });
   });

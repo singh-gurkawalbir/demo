@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+/* global describe, expect, test, beforeAll */
 import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
@@ -1234,249 +1234,135 @@ describe('integrationApps selector testcases', () => {
   });
 
   describe('selectors.integrationConnectionList test cases', () => {
+    const conns = [
+      {
+        _id: 'c1',
+      },
+      {
+        _id: 'c2',
+        _integrationId: 'i1',
+      },
+      {
+        _id: 'c3',
+        _integrationId: 'i2',
+      },
+      {
+        _id: 'c4',
+      },
+      {
+        _id: 'c5',
+      },
+      {
+        _id: 'c6',
+      },
+      {
+        _id: 'c7',
+      },
+      {
+        _id: 'c8',
+        _integrationId: 'i4',
+      },
+      {
+        _id: 'c9',
+        _integrationId: 'i5',
+      },
+      {
+        _id: 'c10',
+        _integrationId: 'i6',
+      }];
+
+    let state;
+
+    beforeAll(() => {
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('connections', conns)
+      );
+
+      const integrations = [
+        {
+          _id: 'i1',
+          _registeredConnectionIds: ['c5'],
+        },
+        {
+          _id: 'i2',
+          _parentId: 'i1',
+          _registeredConnectionIds: ['c6'],
+        },
+        {
+          _id: 'i3',
+          _parentId: 'i1',
+          _registeredConnectionIds: ['c7'],
+        },
+        {
+          _id: 'i4',
+          _connectorId: 'cnc1',
+          _registeredConnectionIds: ['c8'],
+        },
+        {
+          _id: 'i5',
+          _parentId: 'i4',
+          _connectorId: 'cnc1',
+          _registeredConnectionIds: ['c9'],
+        },
+        {
+          _id: 'i6',
+          _parentId: 'i4',
+          _connectorId: 'cnc1',
+          _registeredConnectionIds: ['c10'],
+        },
+      ];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('integrations', integrations)
+      );
+    });
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.integrationConnectionList()).toEqual([]);
     });
 
     test('should return all the connections for stand-alone integration', () => {
-      const conns = [
-        {
-          _id: 'c1',
-        },
-        {
-          _id: 'c2',
-          _integrationId: 'i1',
-        },
-        {
-          _id: 'c3',
-          _integrationId: 'i2',
-        },
-      ];
-
-      const state = reducer(
-        undefined,
-        actions.resource.receivedCollection('connections', conns)
-      );
-
       expect(selectors.integrationConnectionList(state, 'none')).toEqual(
         conns
       );
     });
 
-    test('should return all the registered connections for integration and child id not passed', () => {
-      const conns = [
-        {
-          _id: 'c1',
-        },
-        {
-          _id: 'c2',
-        },
-        {
-          _id: 'c3',
-        },
-        {
-          _id: 'c4',
-        },
-      ];
-
-      let state = reducer(
-        undefined,
-        actions.resource.receivedCollection('connections', conns)
-      );
-
-      const integrations = [
-        {
-          _id: 'i1',
-          _registeredConnectionIds: ['c1'],
-        },
-        {
-          _id: 'i2',
-          _parentId: 'i1',
-          _registeredConnectionIds: ['c2'],
-        },
-        {
-          _id: 'i3',
-          _parentId: 'i1',
-          _registeredConnectionIds: ['c3'],
-        },
-      ];
-
-      state = reducer(
-        state,
-        actions.resource.receivedCollection('integrations', integrations)
-      );
-
+    test('should return all the registered connections for integration and all its children if child id is not passed', () => {
       expect(selectors.integrationConnectionList(state, 'i1')).toEqual(
         [
-          conns[0],
-          conns[1],
-          conns[2],
+          conns[4],
+          conns[5],
+          conns[6],
         ]
       );
     });
 
-    test('should return all the registered connections for integration and child id passed', () => {
-      const conns = [
-        {
-          _id: 'c1',
-        },
-        {
-          _id: 'c2',
-        },
-        {
-          _id: 'c3',
-        },
-        {
-          _id: 'c4',
-        },
-      ];
-
-      let state = reducer(
-        undefined,
-        actions.resource.receivedCollection('connections', conns)
-      );
-
-      const integrations = [
-        {
-          _id: 'i1',
-          _registeredConnectionIds: ['c1'],
-        },
-        {
-          _id: 'i2',
-          _parentId: 'i1',
-          _registeredConnectionIds: ['c2'],
-        },
-        {
-          _id: 'i3',
-          _parentId: 'i1',
-          _registeredConnectionIds: ['c3'],
-        },
-      ];
-
-      state = reducer(
-        state,
-        actions.resource.receivedCollection('integrations', integrations)
-      );
-
+    test('should return all the registered connections for integration\'s child if child id passed', () => {
       expect(selectors.integrationConnectionList(state, 'i1', 'i2')).toEqual(
         [
-          conns[0],
-          conns[1],
+          conns[4],
+          conns[5],
         ]
       );
     });
 
-    test('should return all the connections for connector integration and child id not passed', () => {
-      const conns = [
-        {
-          _id: 'c1',
-          _integrationId: 'i1',
-        },
-        {
-          _id: 'c2',
-          _integrationId: 'i2',
-        },
-        {
-          _id: 'c3',
-          _integrationId: 'i3',
-        },
-        {
-          _id: 'c4',
-        },
-      ];
-
-      let state = reducer(
-        undefined,
-        actions.resource.receivedCollection('connections', conns)
-      );
-
-      const integrations = [
-        {
-          _id: 'i1',
-          _connectorId: 'cnc1',
-          _registeredConnectionIds: ['c1'],
-        },
-        {
-          _id: 'i2',
-          _parentId: 'i1',
-          _connectorId: 'cnc1',
-          _registeredConnectionIds: ['c2'],
-        },
-        {
-          _id: 'i3',
-          _parentId: 'i1',
-          _connectorId: 'cnc1',
-          _registeredConnectionIds: ['c3'],
-        },
-      ];
-
-      state = reducer(
-        state,
-        actions.resource.receivedCollection('integrations', integrations)
-      );
-
-      expect(selectors.integrationConnectionList(state, 'i1')).toEqual(
+    test('should return all the connections for connector integration and all its children if child id not passed', () => {
+      expect(selectors.integrationConnectionList(state, 'i4')).toEqual(
         [
-          conns[0],
-          conns[1],
-          conns[2],
+          conns[7],
+          conns[8],
+          conns[9],
         ]
       );
     });
 
-    test('should return all the connections for connector integration and child id passed', () => {
-      const conns = [
-        {
-          _id: 'c1',
-          _integrationId: 'i1',
-        },
-        {
-          _id: 'c2',
-          _integrationId: 'i2',
-        },
-        {
-          _id: 'c3',
-          _integrationId: 'i3',
-        },
-        {
-          _id: 'c4',
-        },
-      ];
-
-      let state = reducer(
-        undefined,
-        actions.resource.receivedCollection('connections', conns)
-      );
-
-      const integrations = [
-        {
-          _id: 'i1',
-          _connectorId: 'cnc1',
-          _registeredConnectionIds: ['c1'],
-        },
-        {
-          _id: 'i2',
-          _parentId: 'i1',
-          _connectorId: 'cnc1',
-          _registeredConnectionIds: ['c2'],
-        },
-        {
-          _id: 'i3',
-          _parentId: 'i1',
-          _connectorId: 'cnc1',
-          _registeredConnectionIds: ['c3'],
-        },
-      ];
-
-      state = reducer(
-        state,
-        actions.resource.receivedCollection('integrations', integrations)
-      );
-
-      expect(selectors.integrationConnectionList(state, 'i1', 'i2')).toEqual(
+    test('should return all the connections for connector integration\'s child if child id passed', () => {
+      expect(selectors.integrationConnectionList(state, 'i4', 'i5')).toEqual(
         [
-          conns[0],
-          conns[1],
+          conns[7],
+          conns[8],
         ]
       );
     });
@@ -1511,6 +1397,17 @@ describe('integrationApps selector testcases', () => {
           flows[0],
           flows[1],
         ]
+      );
+    });
+
+    test('should return empty array if flows list is empty', () => {
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection('flows', [])
+      );
+
+      expect(selectors.integrationAppV2FlowList(state, undefined, 'i1')).toEqual(
+        []
       );
     });
   });
@@ -1563,6 +1460,16 @@ describe('integrationApps selector testcases', () => {
     );
     test('should return all the connections for given integration and childs', () => {
       expect(selectors.integrationAppV2ConnectionList(state, 'i1', 'i1')).toEqual(
+        [
+          conns[0],
+          conns[1],
+          conns[2],
+        ]
+      );
+    });
+
+    test('should return all the connections for the integration when child id not passed', () => {
+      expect(selectors.integrationAppV2ConnectionList(state, 'i1')).toEqual(
         [
           conns[0],
           conns[1],
@@ -2259,7 +2166,7 @@ describe('integrationApps selector testcases', () => {
       expect(selector(null, null)).toEqual(null);
     });
 
-    test('should return correct value for integraionAppName', () => {
+    test('should return correct value for integrationAppName', () => {
       const selector = selectors.integrationAppName();
 
       expect(selector(state, 'i1')).toEqual('ABC');
@@ -2351,7 +2258,7 @@ describe('integrationApps selector testcases', () => {
       },
     };
 
-    test('should retun license details for the integration app for owneruser if expired and upgrade requested', () => {
+    test('should retun license details for the integration app for owner user if expired and upgrade requested', () => {
       let state = reducer(
         {
           user: {
@@ -2399,7 +2306,7 @@ describe('integrationApps selector testcases', () => {
       });
     });
 
-    test('should retun license details for the integration app for owneruser for non-expired', () => {
+    test('should retun license details for the integration app for owner user for non-expired', () => {
       const state = reducer(
         {
           user: {
@@ -2442,7 +2349,7 @@ describe('integrationApps selector testcases', () => {
       });
     });
 
-    test('should retun license details for the integration app for owneruser for expiring soon', () => {
+    test('should retun license details for the integration app for owner user for expiring soon', () => {
       const expiryDate = moment(new Date()).add(10, 'days').toISOString();
       const state = reducer(
         {
@@ -2486,7 +2393,7 @@ describe('integrationApps selector testcases', () => {
       });
     });
 
-    test('should retun license details for the integration app for non owneruser for non-expired', () => {
+    test('should retun license details for the integration app for non owner user for non-expired', () => {
       const state = reducer(
         {
           user: {
@@ -4284,6 +4191,8 @@ describe('integrationApps selector testcases', () => {
       expect(selector(state, 'i1', 'c1sec2', 'c1')).toEqual(integrations[0].settings.sections[0].sections[1]);
       expect(selector(state, 'i1', 'c2sec1', 'c2')).toEqual(integrations[0].settings.sections[1].sections[0]);
       expect(selector(state, 'i1', 'c2sec2', 'c2')).toEqual(integrations[0].settings.sections[1].sections[1]);
+      expect(selector(state, 'i1')).toEqual({});
+      expect(selector(state)).toEqual({});
     });
 
     test('should return correct section for single store integrations', () => {
@@ -4291,6 +4200,8 @@ describe('integrationApps selector testcases', () => {
 
       expect(selector(state, 'i2', 'i2sec1')).toEqual(integrations[1].settings.sections[0]);
       expect(selector(state, 'i2', 'i2sec2')).toEqual(integrations[1].settings.sections[1]);
+      expect(selector(state, 'i2')).toEqual({});
+      expect(selector(state)).toEqual({});
     });
   });
 
