@@ -955,6 +955,120 @@ describe('editors reducers', () => {
       expect(newState).toHaveProperty('query', {id: 'query'});
     });
   });
+  describe('PATCH.FILE_KEY_COLUMN action', () => {
+    test('should not throw error if state does not exist', () => {
+      const state = reducer(
+        undefined,
+        actions._editor.patchFileKeyColumn('filekeycolumns', 'data', '{}')
+      );
+
+      expect(state).toEqual({});
+    });
+    test('should update the editor data if patch type is data', () => {
+      const options = {
+        id: 'filekeycolumns',
+        editorType: 'csvParser',
+        resourceType: 'exports',
+        autoEvaluate: true,
+        data: 'old data',
+        rule: {},
+      };
+      const initialState = reducer(
+        undefined,
+        actions._editor.initComplete('filekeycolumns', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions._editor.patchFileKeyColumn('filekeycolumns', 'data', 'new data')
+      );
+      const expectedState = {
+        filekeycolumns: {
+          id: 'filekeycolumns',
+          editorType: 'csvParser',
+          resourceType: 'exports',
+          autoEvaluate: true,
+          data: 'new data',
+          rule: {},
+          previewStatus: 'requested',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should update the editor rule if patch type is rule', () => {
+      const options = {
+        id: 'filekeycolumns',
+        editorType: 'csvParser',
+        resourceType: 'exports',
+        data: 'csv data',
+        rule: {
+          hasHeader: true,
+          columnDelimiter: ',',
+        },
+      };
+      const initialState = reducer(
+        undefined,
+        actions._editor.initComplete('filekeycolumns', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions._editor.patchFileKeyColumn('filekeycolumns', 'rule', {
+          hasHeader: true,
+          columnDelimiter: '|',
+        })
+      );
+      const expectedState = {
+        filekeycolumns: {
+          id: 'filekeycolumns',
+          editorType: 'csvParser',
+          resourceType: 'exports',
+          data: 'csv data',
+          rule: {
+            hasHeader: true,
+            columnDelimiter: '|',
+          },
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should not modify editor state if patch type is neither data nor rule', () => {
+      const initialState = {
+        filekeycolumns: {
+          id: 'filekeycolumns',
+          editorType: 'csvParser',
+          resourceType: 'exports',
+          data: 'csv data',
+          rule: {
+            hasHeader: true,
+            columnDelimiter: ',',
+          },
+        },
+      };
+
+      const newState = reducer(
+        initialState,
+        actions._editor.patchFileKeyColumn('filekeycolumns', 'dummyType', {
+          hasHeader: true,
+          columnDelimiter: '|',
+        })
+      );
+
+      expect(newState).toBe(initialState);
+    });
+    test('should not modify any other editor state', () => {
+      const initialState = {
+        query: {id: 'query'},
+        filekeycolumns: {id: 'filekeycolumns'},
+      };
+      const newState = reducer(
+        initialState,
+        actions._editor.patchFileKeyColumn('filekeycolumns', 'data', 'new data')
+      );
+
+      expect(newState).toHaveProperty('query', {id: 'query'});
+    });
+  });
   describe('PREVIEW.RESPONSE action', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
