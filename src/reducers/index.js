@@ -302,7 +302,7 @@ selectors.isUninstallComplete = (state, { integrationId, storeId }) => {
     uninstallSteps.length &&
     !uninstallSteps.reduce((result, step) => result || !step.completed, false);
 
-  return isSetupComplete;
+  return !!isSetupComplete;
 };
 
 selectors.integrationInstallSteps = (state, integrationId) => {
@@ -1647,7 +1647,7 @@ selectors.integrationAppV2FlowList = (state, integrationId, childId) => {
 
 selectors.integrationAppV2ConnectionList = (state, integrationId, childId) => {
   if (!state) return null;
-  const isParent = integrationId === childId;
+  const isParent = (integrationId === childId) || !childId;
   let integrations;
 
   if (isParent) {
@@ -2073,7 +2073,7 @@ selectors.integrationAppFlowIds = (state, integrationId, storeId) => {
 
         return flowStore
           ? flowStore === store.label
-          : flows.indexOf(f._id) > -1;
+          : map(flows, '_id').indexOf(f._id) > -1;
       });
 
       return map(storeFlows.length ? storeFlows : flows,
