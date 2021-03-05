@@ -130,10 +130,11 @@ export default function ImportMapping(props) {
     disabled,
     sectionId,
     options = {},
+    depth,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const memoizedOptions = useMemo(() => ({ sectionId }), [sectionId]);
+  const memoizedOptions = useMemo(() => ({ sectionId, depth }), [sectionId]);
   const { attributes = {}, mappingFilter = 'mapped' } = useSelectorMemo(selectors.mkCategoryMappingFilters, integrationId, flowId) || {};
   const { mappings, initChangeIdentifier } = useSelectorMemo(selectors.mkCategoryMappingsForSection, integrationId, flowId, editorId);
   const { fields = [] } = useSelectorMemo(selectors.mkCategoryMappingGenerateFields, integrationId, flowId, memoizedOptions) || {};
@@ -416,6 +417,7 @@ export default function ImportMapping(props) {
                       mappingIndex={mapping.index}
                       integrationId={integrationId}
                       flowId={flowId}
+                      depth={depth}
                       editorId={editorId}
                       {...options}
                     />

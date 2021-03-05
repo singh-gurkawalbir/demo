@@ -813,14 +813,19 @@ selectors.mkCategoryMappingGenerateFields = () => createSelector(
     return generatesMetadata;
   },
   (_1, _2, _3, options = emptyObj) => options.sectionId,
-  (generatesMetadata, sectionId) => {
+  (_1, _2, _3, options = emptyObj) => options.depth,
+  (generatesMetadata, sectionId, depth) => {
     const generates = [];
 
     generatesMetadata.forEach(meta => {
       flattenChildrenStructrue(generates, meta);
     });
     if (Array.isArray(generates)) {
-      return generates.find(sec => sec.id === sectionId);
+      if (depth === undefined) {
+        return generates.find(sec => sec.id === sectionId);
+      }
+
+      return generates.find(sec => sec.id === sectionId && depth === sec.depth);
     }
 
     return null;
