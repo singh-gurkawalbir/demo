@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
 
 function getAllErrorsLabelToResolve(count, hasSearchFilter) {
   if (count >= MAX_ERRORS_TO_RETRY_OR_RESOLVE) {
-    return `${MAX_ERRORS_TO_RETRY_OR_RESOLVE} ${hasSearchFilter ? 'matching' : ''} errors`;
+    return `${MAX_ERRORS_TO_RETRY_OR_RESOLVE}${hasSearchFilter ? ' matching' : ''} errors`;
   }
 
   if (hasSearchFilter) {
@@ -48,7 +48,7 @@ function getAllErrorsLabelToResolve(count, hasSearchFilter) {
 }
 function getAllErrorsLabelToRetry(count, hasSearchFilter) {
   if (count >= MAX_ERRORS_TO_RETRY_OR_RESOLVE) {
-    return `${MAX_ERRORS_TO_RETRY_OR_RESOLVE} retriable ${hasSearchFilter ? 'matching' : ''} errors`;
+    return `${MAX_ERRORS_TO_RETRY_OR_RESOLVE}${hasSearchFilter ? ' matching' : ''} retriable errors`;
   }
   if (hasSearchFilter) {
     return 'All matching retriable errors';
