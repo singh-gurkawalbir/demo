@@ -825,7 +825,7 @@ selectors.mkCategoryMappingGenerateFields = () => createSelector(
         return generates.find(sec => sec.id === sectionId);
       }
 
-      return generates.find(sec => sec.id === sectionId && depth === sec.depth);
+      return generates.find(sec => sec.id === sectionId && +depth === sec.depth);
     }
 
     return null;
