@@ -5,6 +5,7 @@ import { components } from 'react-select';
 import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import ListIcon from '@material-ui/icons/List';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import ActionButton from '../../../../../../../components/ActionButton';
@@ -19,7 +20,6 @@ import RequiredIcon from '../../../../../../../components/icons/RequiredIcon';
 import MappingConnectorIcon from '../../../../../../../components/icons/MappingConnectorIcon';
 import DynaText from '../../../../../../../components/DynaForm/fields/DynaText';
 import Help from '../../../../../../../components/Help';
-import KnowledgeBaseIcon from '../../../../../../../components/icons/KnowledgeBaseIcon';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
 // TODO Azhar style header
@@ -278,7 +278,7 @@ export default function ImportMapping(props) {
       generateField.options &&
       generateField.options.length ? (
       // TODO: @Azhar should be replaced by a ListIcon
-        <KnowledgeBaseIcon />
+        <ListIcon />
       ) : null;
   };
 

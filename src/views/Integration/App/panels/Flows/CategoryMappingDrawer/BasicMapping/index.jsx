@@ -109,6 +109,7 @@ export default function MappingWrapper(props) {
       integrationId={integrationId}
       flowId={flowId}
       sectionId={sectionId}
+      depth={depth}
       options={options}
     />
   );
