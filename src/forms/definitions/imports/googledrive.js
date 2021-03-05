@@ -84,6 +84,15 @@ export default {
     if (!newValues['/file/encoding']) {
       newValues['/file/encoding'] = undefined;
     }
+    if (!newValues['/file/encrypt']) {
+      newValues['/file/encrypt'] = undefined;
+    }
+    if (!newValues['/file/pgp/symmetricKeyAlgorithm']) {
+      newValues['/file/pgp/symmetricKeyAlgorithm'] = undefined;
+    }
+    if (!newValues['/file/pgp/hashAlgorithm']) {
+      newValues['/file/pgp/hashAlgorithm'] = undefined;
+    }
     delete newValues['/file/compressFiles'];
     delete newValues['/inputMode'];
     newValues['/http/method'] = 'POST';
@@ -154,6 +163,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
+          'fileAdvanced',
           'file.encoding',
           'blobKeyPath',
           'fileAdvancedSettings',

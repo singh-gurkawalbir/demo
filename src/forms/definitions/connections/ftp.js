@@ -17,6 +17,18 @@ export default {
     } else if (!newValues['/ftp/useCustomPGPEncryptionAlgorithm']) {
       newValues['/ftp/pgpKeyAlgorithm'] = undefined;
     }
+    if (!newValues['/usePgp']) {
+      delete newValues['/pgp/publicKey'];
+      delete newValues['/pgp/privateKey'];
+      delete newValues['/pgp/passphrase'];
+      delete newValues['/pgp/compressionAlgorithm'];
+      delete newValues['/pgp/asciiArmored'];
+      newValues['/pgp'] = undefined;
+    } else if (newValues['/pgp/asciiArmored'] === 'false') {
+      newValues['/pgp/asciiArmored'] = false;
+    } else {
+      newValues['/pgp/asciiArmored'] = true;
+    }
 
     return newValues;
   },
@@ -75,37 +87,7 @@ export default {
       fieldId: 'ftp.requireSocketReUse',
       visibleWhen: [{ field: 'ftp.type', is: ['ftps'] }],
     },
-    'ftp.usePgp': { fieldId: 'ftp.usePgp' },
-    'ftp.pgpEncryptKey': {
-      fieldId: 'ftp.pgpEncryptKey',
-      omitWhenHidden: true,
-      visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],
-    },
-    'ftp.pgpDecryptKey': {
-      fieldId: 'ftp.pgpDecryptKey',
-      omitWhenHidden: true,
-      visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],
-    },
-    'ftp.pgpPassphrase': {
-      fieldId: 'ftp.pgpPassphrase',
-      omitWhenHidden: true,
-      visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],
-    },
-    'ftp.pgpKeyAlgorithm': {
-      fieldId: 'ftp.pgpKeyAlgorithm',
-      omitWhenHidden: true,
-      visibleWhenAll: [
-        { field: 'ftp.useCustomPGPEncryptionAlgorithm', is: [true] },
-        { field: 'ftp.usePgp', is: [true] },
-      ],
-    },
-    'ftp.useCustomPGPEncryptionAlgorithm': {
-      id: 'ftp.useCustomPGPEncryptionAlgorithm',
-      label: 'Use custom PGP encryption algorithm',
-      type: 'checkbox',
-      defaultValue: r => !!(r && r.ftp && r.ftp.pgpKeyAlgorithm),
-      visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],
-    },
+    fileAdvanced: {formId: 'fileAdvanced'},
     application: {
       fieldId: 'application',
     },
@@ -142,12 +124,7 @@ export default {
           'ftp.userDirectoryIsRoot',
           'ftp.entryParser',
           'ftp.requireSocketReUse',
-          'ftp.usePgp',
-          'ftp.pgpEncryptKey',
-          'ftp.pgpDecryptKey',
-          'ftp.pgpPassphrase',
-          'ftp.useCustomPGPEncryptionAlgorithm',
-          'ftp.pgpKeyAlgorithm',
+          'fileAdvanced',
           'ftp.concurrencyLevel',
         ],
       },

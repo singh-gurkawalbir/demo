@@ -155,6 +155,9 @@ export default {
     } else {
       newValues['/file/filter'] = undefined;
     }
+    if (!newValues['/file/decrypt']) {
+      newValues['/file/decrypt'] = undefined;
+    }
 
     return {
       ...newValues,
@@ -255,6 +258,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
+          'fileAdvanced',
           'file.decompressFiles',
           'file.compressionFormat',
           'file.skipDelete',

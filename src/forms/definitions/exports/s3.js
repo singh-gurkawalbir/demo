@@ -115,6 +115,9 @@ export default {
 
     delete newValues['/file/decompressFiles'];
     newValues['/s3/backupBucket'] = undefined;     // TODO Ashok, This code can be removed once all backend issues are resolved.
+    if (!newValues['/file/decrypt']) {
+      newValues['/file/decrypt'] = undefined;
+    }
 
     return {
       ...newValues,
@@ -216,6 +219,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
+          'fileAdvanced',
           'file.decompressFiles',
           'file.compressionFormat',
           'file.skipDelete',

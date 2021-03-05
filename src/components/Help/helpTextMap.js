@@ -911,6 +911,16 @@ export default {
     'Specify a private key for use with PGP file transfers.  If you set this field then all files exported to integrator.io will be decrypted with this private key during file download.  If you do not want to use PGP decryption in your FTP Export then leave this field blank.  The key must be in ASCII Armor format.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your authentication key safe.',
   'connection.ftp.pgpPassphrase':
     'Set this field if your PGP private key is secured with a passphrase.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your passphrase safe.',
+  'connection.pgp.publicKey':
+    'The public key to use for encryption and verifying signatures.',
+  'connection.pgp.privateKey':
+    'The private key to use for decryption and signing files.',
+  'connection.pgp.passphrase':
+    'The private key’s passphrase.  It cannot be set if “privateKey” is blank.',
+  'connection.pgp.compressionAlgorithm':
+    'If an algorithm is specified, then files will be compressed during encryption, and decompressed during decryption, with the specified algorithm.  If left blank the files will not be compressed.',
+  'connection.pgp.asciiArmored':
+    'Select “Yes” when the files are in text  (ASCII Armored) format; and “No” when they are in binary format. In an Export step, this setting tells the incoming file format for parsing. In an Import step, the setting will dictate the output format of the encrypted file.',
   'connection.ftp.concurrencyLevel': 'Set this field to limit the number of concurrent/parallel requests allowed by the connection at any one time.',
   'connection.as2.as2Id':
     'This is the AS2 Identifier your trading partners will use as the "To" identifier when sending you documents, and the identifier integrator.io will use as the "From" identifier when you send documents to your trading partners. This field must be unique across all integrator.io users to ensure that inbound documents from your trading partners are routed to the correct integration flows. In addition, you should use a different identifier for production vs. sandbox.',
@@ -1270,6 +1280,8 @@ export default {
     'The script record that contains your preSavePage hook function.',
   'export.file.filedefinition.rules':
     'File definition rules are used by our platform to understand how to parse custom files. The file parser helper allows you to modify our templated rules to solve more specific file parsing requirements. Within the editor, you can use the rules panel to describe how a custom file should be parsed into JSON records, and then you can use the sample file and output panels to test your rules.',
+  'export.pgpdecrypt': 'Use this option to decrypt files. This option is enabled only when you have configured at least one cryptographic system in the connection and selected parse file option. If it is unchecked, then decryption will not be performed when parsing files.',
+  'export.file.decrypt': 'Select the algorithm to decrypt files. Make sure you choose the same algorithm that is used to encrypt the files.',
   'export.file.encoding':
     'The file encoding indicates how the individual characters in your data are represented on the file system. The default encoding is utf-8. Depending on the source system of the data, the encoding can take on different formats. Current supported formats are: utf-8, win-1254 and utf-16le. If you do not know what encoding your data is, in most cases it will be utf-8.',
   'export.file.output':
@@ -1418,6 +1430,10 @@ export default {
     'Set this field to true if you would like to delete the blob content which is intermittently stored during the transit. On successful import, intermittently stored blob content will be deleted.',
   'import.filter.rules':
     'Important: only records where your filter expression evaluates to true will get processed by this import.  All other records will be marked as ignored.  Defining a filter on your import allows you to skip processing for specific records. For example, if you have an import that posts messages to Slack for all web orders that come in throughout the day you could add an import filter to instead only post orders that are above a certain amount. Please note that unlike export filters, import filters do not discard data traveling through your flow. Records that get ignored will still get passed along to subsequent processors in your flow.',
+  'import.pgpencrypt': 'Use this cryptographic system to encrypt generated files.  This option is enabled only when you have configured at least one cryptographic system in the connection. If it is unchecked, then encryption will not be performed on generated files.',
+  'import.file.encrypt': 'Select the algorithm to encrypt the transferred files.',
+  'import.file.pgp.symmetricKeyAlgorithm': 'The symmetric key algorithm to use for encryption.',
+  'import.file.pgp.hashAlgorithm': 'The hashing algorithm to use when signing files. If this field is not set, then integrator.io will not sign files after encrypting them. ',
   'import.file.filedefinition.rules':
     'File definition rules are used by our platform to generate custom files. The file generator helper allows you to modify our templated rules to solve more specific file generation requirements. Within the editor, you can use the rules panel to describe how a custom file should be generated from the JSON records/rows being processed by your flow, and then you can use the sample flow data and generated file panels to test your rules.',
   'import.hooks.preMap': `Invoke this function before the fields are mapped to their respective fields in the objects to be imported. You can use this to reformat the record’s field to anything you like. <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039655111-Hooks-for-integrator-io#preMapHook" target="_blank"/> Get more info</a>`,

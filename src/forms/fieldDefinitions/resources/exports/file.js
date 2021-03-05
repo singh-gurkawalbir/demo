@@ -140,6 +140,21 @@ export default {
     ],
     options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
   },
+  pgpdecrypt: {
+    type: 'fileencryptdecrypt',
+    label: 'Decrypt files',
+    connectionId: r => r && r._connectionId,
+    defaultValue: r => !!(r?.file?.decrypt),
+  },
+  'file.decrypt': {
+    type: 'select',
+    label: 'Decrypt a file',
+    resourceType: 'exports',
+    connectionId: r => r && r._connectionId,
+    options: [{ items: [{ label: 'pgp', value: 'pgp' }] }],
+    omitWhenHidden: true,
+    visibleWhen: [{ field: 'pgpdecrypt', is: [true] }],
+  },
   'file.purgeInternalBackup': {
     type: 'checkbox',
     label: 'File purge internal backup',

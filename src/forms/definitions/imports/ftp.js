@@ -102,6 +102,15 @@ export default {
 
     newValues['/ftp/fileName'] = undefined;
     newValues['/ftp/backupDirectoryPath'] = undefined;
+    if (!newValues['/file/encrypt']) {
+      newValues['/file/encrypt'] = undefined;
+    }
+    if (!newValues['/file/pgp/symmetricKeyAlgorithm']) {
+      newValues['/file/pgp/symmetricKeyAlgorithm'] = undefined;
+    }
+    if (!newValues['/file/pgp/hashAlgorithm']) {
+      newValues['/file/pgp/hashAlgorithm'] = undefined;
+    }
 
     return {
       ...newValues,
@@ -226,6 +235,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
+          'fileAdvanced',
           'ftp.useTempFile',
           'ftp.inProgressFileName',
           'ftp.blobUseTempFile',
