@@ -199,7 +199,7 @@ fileAdvanced: { formId: 'fileAdvanced' },
   id: 'file.xml.body',
   type: 'httprequestbody',
   connectionId: r => r && r._connectionId,
-  label: 'Build XML document',
+  label: 'XML document',
   refreshOptionsOnChangesTo: ['file.type'],
   required: true,
   visibleWhenAll: [

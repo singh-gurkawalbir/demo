@@ -2956,7 +2956,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 60+ applications",
+        "placeholder": "Choose application or start typing to browse 40+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -7086,7 +7086,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 60+ applications",
+        "placeholder": "Choose application or start typing to browse 40+ applications",
         "type": "selectapplication",
         "validWhen": Object {
           "isNot": Object {
@@ -7946,7 +7946,7 @@ Object {
       "file.xml.body": Object {
         "connectionId": [Function],
         "id": "file.xml.body",
-        "label": "Build XML document",
+        "label": "XML document",
         "refreshOptionsOnChangesTo": Array [
           "file.type",
         ],
@@ -8312,7 +8312,7 @@ Object {
       "file.xml.body": Object {
         "connectionId": [Function],
         "id": "file.xml.body",
-        "label": "Build XML document",
+        "label": "XML document",
         "refreshOptionsOnChangesTo": Array [
           "file.type",
         ],
@@ -10462,7 +10462,7 @@ Object {
       "file.xml.body": Object {
         "connectionId": [Function],
         "id": "file.xml.body",
-        "label": "Build XML document",
+        "label": "XML document",
         "refreshOptionsOnChangesTo": Array [
           "file.type",
         ],
@@ -10743,7 +10743,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 60+ applications",
+        "placeholder": "Choose application or start typing to browse 40+ applications",
         "required": true,
         "type": "selectapplication",
         "validWhen": Object {
@@ -12665,7 +12665,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 60+ applications",
+        "placeholder": "Choose application or start typing to browse 40+ applications",
         "required": true,
         "type": "selectapplication",
       },
@@ -12790,7 +12790,7 @@ Object {
         "id": "application",
         "label": "Application",
         "name": "application",
-        "placeholder": "Choose application or start typing to browse 60+ applications",
+        "placeholder": "Choose application or start typing to browse 40+ applications",
         "refreshOptionsOnChangesTo": Array [
           "resourceType",
         ],

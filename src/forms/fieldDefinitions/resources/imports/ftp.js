@@ -2,7 +2,6 @@ export default {
   'ftp.directoryPath': {
     type: 'uri',
     label: 'Directory path',
-    // editorTitle: 'Build directory path',
     placeholder: 'Enter FTP folder path, such as: MySite/Orders',
     required: true,
     showExtract: false,
@@ -21,7 +20,6 @@ export default {
   },
   'ftp.inProgressFileName': {
     type: 'ftpfilenamewitheditor',
-    editorTitle: 'Build in progress file name',
     label: 'In progress file name',
     showAllSuggestions: true,
     defaultValue: r =>
@@ -40,8 +38,7 @@ export default {
   },
   'ftp.blobFileName': {
     type: 'ftpfilenamewitheditor',
-    editorTitle: 'Build file name',
-    label: 'Build file name',
+    label: 'File name',
     required: true,
     showAllSuggestions: true,
     defaultValue: r => r && r.file && r.file.fileName,
@@ -84,7 +81,6 @@ export default {
   },
   'ftp.blobInProgressFileName': {
     type: 'ftpfilenamewitheditor',
-    editorTitle: 'Build in progress file name',
     label: 'In progress file name',
     defaultValue: r => r && r.ftp && r.ftp.inProgressFileName,
     visibleWhenAll: [

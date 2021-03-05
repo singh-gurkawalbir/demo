@@ -27,8 +27,7 @@ export default {
   },
   'file.fileName': {
     type: 'ftpfilenamewitheditor',
-    editorTitle: 'Build file name',
-    label: r => r?.adaptorType === 'S3Import' ? 'Build file key' : 'Build file name',
+    label: r => r?.adaptorType === 'S3Import' ? 'File key' : 'File name',
     helpKey: r => {
       if (r?.adaptorType === 'S3Import') {
         return 'import.s3.fileKey';

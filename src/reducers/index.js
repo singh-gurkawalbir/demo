@@ -77,7 +77,7 @@ import { stringCompare } from '../utils/sort';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import { getFilteredErrors, FILTER_KEYS, getSourceOptions } from '../utils/errorManagement';
+import { getFilteredErrors, FILTER_KEYS, DEFAULT_ROWS_PER_PAGE, getSourceOptions } from '../utils/errorManagement';
 import {
   getFlowStepsYetToBeCreated,
   generatePendingFlowSteps,
@@ -302,7 +302,7 @@ selectors.isUninstallComplete = (state, { integrationId, storeId }) => {
     uninstallSteps.length &&
     !uninstallSteps.reduce((result, step) => result || !step.completed, false);
 
-  return isSetupComplete;
+  return !!isSetupComplete;
 };
 
 selectors.integrationInstallSteps = (state, integrationId) => {
@@ -1647,7 +1647,7 @@ selectors.integrationAppV2FlowList = (state, integrationId, childId) => {
 
 selectors.integrationAppV2ConnectionList = (state, integrationId, childId) => {
   if (!state) return null;
-  const isParent = integrationId === childId;
+  const isParent = (integrationId === childId) || !childId;
   let integrations;
 
   if (isParent) {
@@ -2073,7 +2073,7 @@ selectors.integrationAppFlowIds = (state, integrationId, storeId) => {
 
         return flowStore
           ? flowStore === store.label
-          : flows.indexOf(f._id) > -1;
+          : map(flows, '_id').indexOf(f._id) > -1;
       });
 
       return map(storeFlows.length ? storeFlows : flows,
@@ -4326,39 +4326,37 @@ selectors.flowJobConnections = () => createSelector(
 );
 
 // Given an errorId, gives back error doc
-selectors.resourceError = (state, { flowId, resourceId, options, errorId }) => {
-  const { errors = [] } = selectors.resourceErrors(state, {
+selectors.resourceError = (state, { flowId, resourceId, isResolved, errorId }) => {
+  const { errors = [] } = selectors.allResourceErrorDetails(state, {
     flowId,
     resourceId,
-    options,
+    isResolved,
   });
 
   return errors.find(error => error.errorId === errorId);
 };
 
-selectors.selectedRetryIds = (state, { flowId, resourceId, options = {} }) => {
-  const { errors } = selectors.resourceErrors(state, { flowId, resourceId, options });
+selectors.selectedRetryIds = (state, { flowId, resourceId, isResolved }) => {
+  const { errors = [] } = selectors.allResourceErrorDetails(state, { flowId, resourceId, isResolved });
 
   return errors
     .filter(({ selected, retryDataKey }) => selected && !!retryDataKey)
     .map(error => error.retryDataKey);
 };
 
-selectors.selectedErrorIds = (state, { flowId, resourceId, options = {} }) => {
-  const { errors } = selectors.resourceErrors(state, { flowId, resourceId, options });
+selectors.selectedErrorIds = (state, { flowId, resourceId, isResolved }) => {
+  const { errors = [] } = selectors.allResourceErrorDetails(state, { flowId, resourceId, isResolved });
 
   return errors.filter(({ selected }) => selected).map(error => error.errorId);
 };
 
-selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved }) => {
-  const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
-  const errorFilter = selectors.filter(state, filterKey);
-  const { errors = [] } = selectors.resourceErrors(state, {
+selectors.isAllErrorsSelectedInCurrPage = (state, { flowId, resourceId, isResolved }) => {
+  const errorsInCurrPage = selectors.resourceFilteredErrorsInCurrPage(state, {
     flowId,
     resourceId,
-    options: { ...errorFilter, isResolved },
+    isResolved,
   });
-  const errorIds = errors.map(error => error.errorId);
+  const errorIds = errorsInCurrPage.map(error => error.errorId);
 
   return fromSession.isAllErrorsSelected(state && state.session, {
     flowId,
@@ -4367,37 +4365,39 @@ selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved }) => {
     errorIds,
   });
 };
-selectors.isAnyErrorActionInProgress = (state, { flowId, resourceId }) => {
-  const isRetryInProgress =
-    selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
-      .status === 'requested';
-  const isResolveInProgress =
-    selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'resolve' })
-      .status === 'requested';
 
-  return isRetryInProgress || isResolveInProgress;
+selectors.errorFilter = (state, params = {}) => {
+  const filterKey = params.isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
+
+  return selectors.filter(state, filterKey);
 };
 
-selectors.errorDetails = (state, params) => {
-  const { flowId, resourceId, options = {} } = params;
-
-  return selectors.getErrors(state, {
-    flowId,
-    resourceId,
-    errorType: options.isResolved ? 'resolved' : 'open',
-  });
-};
-
-selectors.makeResourceErrorsSelector = () => createSelector(
-  selectors.errorDetails,
-  (_1, params) => params.options,
-  (errorDetails, options) => ({
+selectors.mkResourceFilteredErrorDetailsSelector = () => createSelector(
+  selectors.allResourceErrorDetails,
+  selectors.errorFilter,
+  (errorDetails, errorFilter) => ({
     ...errorDetails,
-    errors: getFilteredErrors(errorDetails.errors, options),
+    errors: getFilteredErrors(errorDetails.errors, errorFilter),
   })
 );
 
-selectors.resourceErrors = selectors.makeResourceErrorsSelector();
+selectors.resourceFilteredErrorDetails = selectors.mkResourceFilteredErrorDetailsSelector();
+
+selectors.mkResourceFilteredErrorsInCurrPageSelector = () => {
+  const resourceFilteredErrorDetails = selectors.mkResourceFilteredErrorDetailsSelector();
+
+  return createSelector(
+    resourceFilteredErrorDetails,
+    selectors.errorFilter,
+    (allErrors, errorFilter) => {
+      const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = errorFilter.paging || {};
+
+      return allErrors.errors.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
+    }
+  );
+};
+
+selectors.resourceFilteredErrorsInCurrPage = selectors.mkResourceFilteredErrorsInCurrPageSelector();
 
 /**
  * Returns error count per category in a store for IA 1.0
