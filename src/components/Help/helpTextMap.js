@@ -253,7 +253,7 @@ export default {
   'jira.connection.http.auth.basic.username':
     'The username of your JIRA account.',
   'jira.connection.http.auth.basic.password':
-    'To create an API token for Atlassian account:Login to your Atlassian account– >Go to User management– >Go to Your profile --> Security – > API token',
+    'To create an API token for your Atlassian account, log in to your Atlassian account and navigate to <b>Profile</b> > <b>Manage your account</b> > <b>Security</b>.',
   'jobvite.connection.environment':
     'Select either Production or Sandbox based on your requirement.',
   'jobvite.connection.http.unencrypted.companyId':
