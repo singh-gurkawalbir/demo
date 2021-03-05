@@ -24,10 +24,18 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     display: 'flex',
   },
-  filterContainer: {
+  filterContainerRunHistory: {
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     borderWidth: [[1, 0]],
+    display: 'flex',
+    position: 'sticky',
+    top: 0,
+    padding: theme.spacing(1),
+    zIndex: 1,
+    justifyContent: 'space-between',
+    background: theme.palette.background.default,
   },
+
   messageContainer: {
     padding: theme.spacing(3),
   },
@@ -117,8 +125,8 @@ export default function RunHistory({ flowId }) {
 
   return (
     <>
-      <div className={classes.filterContainer}>
-        <div className={classes.actions}>
+      <div className={classes.filterContainerRunHistory}>
+        <>
           <div className={classes.rangeFilter}>
             <DateRangeSelector
               clearable
@@ -144,7 +152,7 @@ export default function RunHistory({ flowId }) {
               <RefreshIcon /> Refresh
             </IconTextButton>
           </div>
-        </div>
+        </>
       </div>
       { isLoadingHistory && <PanelLoader />}
       { !hasFlowRunHistory &&
