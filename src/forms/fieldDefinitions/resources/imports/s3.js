@@ -14,7 +14,6 @@ export default {
   's3.bucket': {
     type: 'uri',
     label: 'Bucket name',
-    // editorTitle: 'Build bucket name',
     placeholder: 'Enter S3 folder path,such as:MySite/Orders',
     required: true,
     showExtract: false,

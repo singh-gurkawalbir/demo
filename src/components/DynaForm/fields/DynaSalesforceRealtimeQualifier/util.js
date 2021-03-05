@@ -73,6 +73,10 @@ const getFilterTypeAndOperators = field => {
       case 'int':
         type = 'integer';
         break;
+      case 'currency':
+      case 'percent':
+        type = 'double';
+        break;
       default:
         ({ type } = field);
     }
