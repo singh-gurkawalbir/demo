@@ -1,4 +1,5 @@
 import { templatesList } from '../../../constants/applications';
+import { ABS_URL_VALIDATION_PATTERN } from '../../../utils/constants';
 
 export default {
   name: {
@@ -17,8 +18,7 @@ export default {
     label: 'Website URL',
     validWhen: {
       matchesRegEx: {
-        pattern:
-          "^(?:http(s)?:\\/\\/)?[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$",
+        pattern: ABS_URL_VALIDATION_PATTERN,
         message: 'Please enter a valid URL.',
       },
     },
