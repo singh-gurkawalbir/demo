@@ -25,6 +25,8 @@ export default function reducer(state = {}, action) {
     sampleDataError,
     newLayout,
     saveMessage,
+    fileKeyPatchType,
+    fileKeyPatch,
   } = action;
 
   return produce(state, draft => {
@@ -172,6 +174,21 @@ export default function reducer(state = {}, action) {
             // if metadata is updated, reset form output
             delete draft[id].formOutput;
           }
+        }
+        break;
+      }
+
+      case actionTypes._EDITOR.PATCH.FILE_KEY_COLUMN: {
+        // this action is specific to DynaFileKeyColumn component
+        if (!draft[id]) break;
+        if (fileKeyPatchType === 'data') {
+          draft[id].data = fileKeyPatch;
+        } else if (fileKeyPatchType === 'rule') {
+          Object.assign(draft[id].rule, deepClone(fileKeyPatch));
+        }
+
+        if (draft[id].autoEvaluate) {
+          draft[id].previewStatus = 'requested';
         }
         break;
       }

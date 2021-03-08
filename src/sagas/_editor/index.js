@@ -614,7 +614,7 @@ export function* initEditor({ id, editorType, options }) {
   if (init) {
     // for now we need all below props for handlebars init only
     if (editorType === 'handlebars' || editorType === 'sql' || editorType === 'databaseMapping') {
-      const { _connectionId: connectionId } = resource;
+      const { _connectionId: connectionId } = resource || {};
       const connection = yield select(selectors.resource, 'connections', connectionId);
       const isPageGenerator = yield select(selectors.isPageGenerator, flowId, resourceId, resourceType);
 
@@ -692,6 +692,10 @@ export default [
       actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW],
     autoEvaluateProcessorWithCancel
   ),
+  // added a separate effect for DynaFileKeyColumn as
+  // both, csv parser and file key editor can be in use and would require
+  // the preview API call parallel
+  takeLatest(actionTypes._EDITOR.PATCH.FILE_KEY_COLUMN, autoEvaluateProcessorWithCancel),
   takeEvery(actionTypes._EDITOR.INIT, initEditor),
   takeLatest(actionTypes._EDITOR.TOGGLE_VERSION, toggleEditorVersion),
   takeLatest(actionTypes._EDITOR.PREVIEW.REQUEST, requestPreview),
