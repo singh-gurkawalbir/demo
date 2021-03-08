@@ -2048,7 +2048,7 @@ export default {
   'flow.endTime':
     'This field lets you control the last scheduled execution time for your flow each day.',
   'flow.daysToRunOn':
-    'This field lets you configure the specific day(s) you would like this integration flow to run on.',
+    'Choose the specific day when you would like this integration flow to run.',
   'flow.type':
     "Please select 'Use Presets' if you would like to use one of the more popular frequency options, and then the UI will guide you through the setup for each. If you need something more custom then please select 'Use Cron Expression', and then the UI will display a simple cron builder to help you define a custom frequency.",
   'asynchelper.rules':
