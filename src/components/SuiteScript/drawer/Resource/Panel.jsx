@@ -53,10 +53,15 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     padding: '14px 24px',
+    wordBreak: 'break-word',
+    position: 'relative',
+    '& > h3': {
+      paddingRight: theme.spacing(1),
+    },
   },
   closeButton: {
     position: 'absolute',
-    right: theme.spacing(2),
+    right: theme.spacing(1),
     top: theme.spacing(2),
     padding: 0,
   },
