@@ -29,7 +29,7 @@ export default {
         retValues['/rdbms/updateLookupName'] = undefined;
       }
     } else if (retValues['/rdbms/queryType'] === 'INSERT') {
-      retValues['/rdbms/query'] = [retValues['/rdbms/query']];
+      retValues['/rdbms/query'] = [retValues['/rdbms/query1']];
       retValues['/rdbms/queryType'] = [retValues['/rdbms/queryType']];
       retValues['/ignoreMissing'] = false;
       retValues['/rdbms/updateLookupName'] = undefined;
@@ -43,7 +43,7 @@ export default {
         retValues['/rdbms/ignoreLookupName'] = undefined;
       }
     } else {
-      retValues['/rdbms/query'] = [retValues['/rdbms/query']];
+      retValues['/rdbms/query'] = [retValues['/rdbms/query2']];
       retValues['/rdbms/queryType'] = [retValues['/rdbms/queryType']];
       retValues['/ignoreExisting'] = false;
       retValues['/rdbms/updateLookupName'] = undefined;
@@ -58,6 +58,8 @@ export default {
       }
     }
 
+    delete retValues['/rdbms/query1'];
+    delete retValues['/rdbms/query2'];
     delete retValues['/rdbms/queryUpdate'];
     delete retValues['/rdbms/queryInsert'];
 
@@ -70,34 +72,72 @@ export default {
     modelMetadata: { fieldId: 'modelMetadata', visible: false },
     'rdbms.lookups': { fieldId: 'rdbms.lookups', visible: false },
     advancedSettings: { formId: 'advancedSettings' },
-    'rdbms.query': {
-      fieldId: 'rdbms.query',
+    'rdbms.query1': {
+      fieldId: 'rdbms.query1',
       required: true,
-      defaultValue: r => r && r.rdbms && r.rdbms.query && r.rdbms.query[0],
+      defaultValue: r => {
+        if (!r?.rdbms?.query) {
+          return '';
+        }
+        if (r.rdbms.query.length === 1 && r.rdbms.queryType?.[0] === 'INSERT') {
+          return r.rdbms.query[0];
+        }
+        if (r.rdbms.query.length > 1) {
+          return r.rdbms.query[1];
+        }
+
+        return '';
+      },
+    },
+    'rdbms.query2': {
+      fieldId: 'rdbms.query2',
+      required: true,
+      defaultValue: r => {
+        if (!r?.rdbms?.query) {
+          return '';
+        }
+
+        if (r.rdbms.query.length === 1 && r.rdbms.queryType?.[0] === 'UPDATE') {
+          return r.rdbms.query[0];
+        }
+        if (r.rdbms.query.length > 1) {
+          return r.rdbms.query[0];
+        }
+
+        return '';
+      },
     },
     'rdbms.queryInsert': {
       fieldId: 'rdbms.queryInsert',
       required: true,
       defaultValue: r => {
-        if (!r || !r.rdbms || !r.rdbms.query) {
+        if (!r?.rdbms?.query) {
           return '';
+        }
+        if (r.rdbms.query.length === 1 && r.rdbms.queryType?.[0] === 'INSERT') {
+          return r.rdbms.query[0];
         }
 
         if (r.rdbms.query.length > 1) {
-          return r.rdbms.query && r.rdbms.query[1];
+          return r.rdbms.query[1];
         }
+
+        return '';
       },
     },
     'rdbms.queryUpdate': {
       fieldId: 'rdbms.queryUpdate',
       required: true,
       defaultValue: r => {
-        if (!r || !r.rdbms || !r.rdbms.query) {
+        if (!r?.rdbms?.query) {
           return '';
         }
 
-        if (r.rdbms.query.length > 0) {
-          return r.rdbms.query && r.rdbms.query[0];
+        if (r.rdbms.query.length === 1 && r.rdbms.queryType?.[0] === 'UPDATE') {
+          return r.rdbms.query[0];
+        }
+        if (r.rdbms.query.length > 1) {
+          return r.rdbms.query[0];
         }
 
         return '';
@@ -146,7 +186,8 @@ export default {
           'rdbms.ignoreExtract',
           'rdbms.updateExtract',
           'rdbms.lookups',
-          'rdbms.query',
+          'rdbms.query1',
+          'rdbms.query2',
           'rdbms.queryInsert',
           'rdbms.queryUpdate',
         ],
