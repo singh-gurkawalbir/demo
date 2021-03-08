@@ -2044,9 +2044,9 @@ export default {
   'flow.frequency':
     'This field dictates how often your integration flow is run. Please log a support ticket if there is a specific preset frequency that you would like to see added to this list.',
   'flow.startTime':
-    'This field lets you control the first scheduled execution time for your flow each day. \n\nPlease note that the start time represents when a flow will get placed into your queue for processing, but the actual run time of your flow may differ based on the load of your queue, or other flows ahead of you in the global integrator.io scheduler. Please note also that the list of available start times is subject to change over time (i.e. this allows Celigo to maintain a global balance across all customers regarding the number of flows starting at any given time).',
+    'Set the first time that you want your flow to run each day. <br>Note that the start time represents when a flow will get placed into your queue for processing, but the actual run time of your flow may differ based on the load of your queue. The list of available start times is also subject to change to allow Celigo to maintain a global balance across all customers regarding the number of flows starting at any given time.',
   'flow.endTime':
-    'This field lets you control the last scheduled execution time for your flow each day.',
+    'Set the final time that you want your flow to run each day.',
   'flow.daysToRunOn':
     'Choose the specific day when you would like this integration flow to run.',
   'flow.type':
