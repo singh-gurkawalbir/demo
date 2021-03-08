@@ -17,9 +17,9 @@ export default function ConnectorCrumb({ connectorId }) {
 
   return (
     <LoadResources resources="connectors">
-      <div onClick={handleClick} >
+      <span onClick={handleClick} >
         {connector?.name || 'Integration app'}
-      </div>
+      </span>
     </LoadResources>
   );
 }
