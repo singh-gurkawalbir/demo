@@ -28,6 +28,7 @@ const useStyles = makeStyles(theme => ({
     fontSize: '14px',
     lineHeight: '22px',
     whiteSpace: 'normal',
+    wordBreak: 'break-word',
     '& > div > pre': {
       background: theme.palette.background.paper2,
       border: '1px solid',

@@ -77,7 +77,7 @@ import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMappi
 import DynaTimestampFileName from './DynaTimestampFileName';
 import DynaMode from './DynaMode';
 import DynaCsvGenerate_afe2 from './editors/DynaCsvGenerate_afe2';
-import DynaFileKeyColumn from './DynaFileKeyColumn';
+import DynaFileKeyColumn_afe2 from './DynaFileKeyColumn_afe2';
 import DynaRadioGroupForResetFields from './radiogroup/DynaRadioGroupForResetFields';
 import DynaTextWithFlowContext from './text/DynaTextWithFlowContext';
 import DynaCheckboxForResetFields from './checkbox/DynaCheckboxForResetFields';
@@ -226,7 +226,8 @@ export default {
   salesforcelookupfilters: DynaSalesforceLookupFilters,
   salesforcelookup: DynaSalesforceLookup,
   timestampfilename: DynaTimestampFileName,
-  filekeycolumn: DynaFileKeyColumn,
+  // filekeycolumn: DynaFileKeyColumn,
+  filekeycolumn: DynaFileKeyColumn_afe2,
   radiogroupforresetfields: DynaRadioGroupForResetFields,
   textwithflowcontext: DynaTextWithFlowContext,
   checkboxforresetfields: DynaCheckboxForResetFields,

@@ -43,10 +43,10 @@ describe('template util function test', () => {
 
     test('should return correct application details when connection is passed and has assistant', () => {
       expect(getApplication({assistant: 'ariba'})).toEqual({id: 'ariba', name: 'SAP Ariba'});
-      expect(getApplication({assistant: 'skuvault'})).toEqual({id: 'skuvault', name: 'SkuVault'});
-      expect(getApplication({assistant: 'strata'})).toEqual({id: 'strata', name: 'Strata'});
-      expect(getApplication({assistant: 'svb'})).toEqual({id: 'svb', name: 'SVB'});
-      expect(getApplication({assistant: 'wiser', type: 'rest'})).toEqual({id: 'wiser', name: 'Wiser'});
+      expect(getApplication({assistant: 'ramplogistics'})).toEqual({id: 'ramplogistics', name: 'Ramp Logistics'});
+      expect(getApplication({assistant: 'facebookads'})).toEqual({id: 'facebookads', name: 'Facebook Ads'});
+      expect(getApplication({assistant: 'clover'})).toEqual({id: 'clover', name: 'Clover'});
+      expect(getApplication({assistant: 'dcl', type: 'http'})).toEqual({id: 'dcl', name: 'DCL Logistics'});
     });
 
     test('should return correct application details when connection is passed and doesnt have assistant', () => {

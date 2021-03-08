@@ -40,7 +40,7 @@ function RouterWrappedContent() {
 
 export default function ExampleDrawer() {
   return (
-    <RightDrawer path="example">
+    <RightDrawer path="example" height="tall">
       <DrawerHeader title="Example Drawer">
         <Spinner size={16} /> Refreshing
         <ActionGroup position="right">

@@ -36,7 +36,6 @@ export default {
       type: 'dynaiclient',
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
-      helpKey: 'precisely.http._iClientId',
       ignoreEnvironmentFilter: true,
       visibleWhen: [
         { field: 'accountType', is: ['generic'] },
@@ -129,6 +128,10 @@ export default {
     application: {
       fieldId: 'application',
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
@@ -140,6 +143,7 @@ export default {
         fields: [
           'http.unencrypted.tenantId',
           'http._iClientId',
+          'http.auth.oauth.callbackURL',
           'http.auth.oauth.scope'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],

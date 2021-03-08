@@ -14,9 +14,11 @@ export default {
     '/http/auth/token/location': 'header',
     '/http/auth/token/scheme': 'Bearer',
     '/http/auth/token/headerName': 'Authorization',
-    '/http/auth/oauth/scopeDelimiter': '+',
+    '/http/auth/oauth/scopeDelimiter': ' ',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
+    '/http/auth/token/refreshRelativeURI': `https://secure.${formValues['/http/unencrypted/subdomain']}.echosign.com/oauth/refresh`,
+    '/http/auth/token/refreshBody': '{ "client_id": "{{{clientId}}}", "client_secret": "{{{clientSecret}}}", "grant_type": "refresh_token", "refresh_token": "{{{connection.http.auth.token.refreshToken}}}" }',
     '/http/headers': [{ name: 'x-api-user', value: '{{{join ":" "email" connection.http.unencrypted.email}}}' }],
   }),
   fieldMap: {
@@ -117,6 +119,10 @@ export default {
         },
       ],
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
     application: {
       fieldId: 'application',
@@ -128,9 +134,11 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.unencrypted.subdomain',
+        fields: [
+          'http.unencrypted.subdomain',
           'http.unencrypted.email',
           'http._iClientId',
+          'http.auth.oauth.callbackURL',
           'http.auth.oauth.scope'],
       },
       {
