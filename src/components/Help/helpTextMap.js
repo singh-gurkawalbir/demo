@@ -4,7 +4,7 @@ export default {
   formView: 'The application specific form is customized to help configure your resource for this particular application. However, if you would like more flexibility, choose the universal connector form (e.g. REST or HTTP) instead, which is a generic form.',
   'afe.handlebar.data': 'This is sample help for handlebar afe, data panel',
   'afe.handlebar.rule.relaviveUri': 'This is sample help for handlebar afe, rule panel, relativeUri fieldId',
-  previewPanelRecords: 'Define the number of records to return in the preview. You can select a predefined value, of manually enter a custom value between 1 and 100.',
+  previewPanelRecords: 'Enter or select the maximum number of records – up to 100 – to preview. Then, click <b>Preview</b> to see the records that match your query in the order that they’re received.',
   settingsForm:
     'Use the form builder to expose user friendly custom fields for your raw JSON custom settings.  Your forms can expose any field types that you see elsewhere in the UI.  Forms and custom fields make it much easier for less technical users to work with your custom settings.',
   settings:
