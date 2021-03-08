@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextToggle from '../../TextToggle';
+import { useTabContext } from '../CeligoTabWrapper';
 
 const useStyles = makeStyles(theme => ({
   textToggleContainer: {
@@ -46,15 +47,20 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function CeligoTabs(props) {
-  const { onChange, tabs, value } = props;
+  const { tabs, defaultValue } = props;
   const classes = useStyles(props);
+  const {activeTab, setActiveTab} = useTabContext();
+
+  useEffect(() => {
+    setActiveTab(defaultValue || tabs?.[0]?.value);
+  }, [defaultValue, tabs, setActiveTab]);
 
   return (
     <div className={classes.textToggleContainer}>
       <TextToggle
-        value={value}
+        value={activeTab}
         className={classes.toggleButtons}
-        onChange={onChange}
+        onChange={setActiveTab}
         exclusive
         options={tabs}
       />

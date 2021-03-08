@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import PanelLoader from '../../PanelLoader';
 import Templates from '../Templates';
 import { getPreviewBodyTemplateType, HTTP_STAGES, getFormattedPreviewData, getBodyHeaderFieldsForPreviewData } from '../../../utils/exportPanel';
 import { selectors } from '../../../reducers';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import CeligoTabWrapper from '../../CeligoTabLayout/CeligoTabWrapper';
+import { CeligoTabWrapper } from '../../CeligoTabLayout/CeligoTabWrapper';
 import CeligoTabs from '../../CeligoTabLayout/CeligoTabs';
 import DefaultPanel from '../../CeligoTabLayout/CustomPanels/DefaultPanel';
 import RequestResponsePanel from '../../CeligoTabLayout/CustomPanels/RequestResponsePanel';
@@ -14,17 +14,26 @@ export default function PreviewBody(props) {
   const {
     resourceSampleData,
     handlePanelViewChange,
-    panelType,
-    defaultPanel,
     availablePreviewStages,
     previewStageDataList,
     resourceId,
     resourceType,
   } = props;
-  const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId)?.merged;
+  // Default panel is the panel shown by default when export panel is launched
+  // We can configure it in the metadata with 'default' as true
+  // Else the last stage being the Parse stage till now is taken as the default stage
+  const defaultPanel = useMemo(() => {
+    if (!availablePreviewStages.length) return;
+    const defaultStage = availablePreviewStages.find(stage => stage.default === true);
+    const lastStage = availablePreviewStages[availablePreviewStages.length - 1];
 
-  const previewBodyTemplate = getPreviewBodyTemplateType(resource, panelType);
-  const panelContent = useMemo(() => {
+    return defaultStage ? defaultStage.value : lastStage.value;
+  }, [availablePreviewStages]);
+  const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId)?.merged;
+  const [defaultTab, setDefaultTab] = useState();
+  const panelContent = useCallback(panelType => {
+    const previewBodyTemplate = getPreviewBodyTemplateType(resource, panelType);
+
     if (previewBodyTemplate === 'default') {
       return getFormattedPreviewData(previewStageDataList[panelType]);
     }
@@ -34,15 +43,15 @@ export default function PreviewBody(props) {
         panelType
       );
     }
-  }, [panelType, previewStageDataList, previewBodyTemplate]);
+  }, [previewStageDataList, resource]);
 
   // Always default to defaultPanel whenever sample data is refreshed
   useEffect(() => {
     if (resourceSampleData.status === 'received') {
-      handlePanelViewChange(defaultPanel);
+      setDefaultTab(defaultPanel);
     }
     if (resourceSampleData.status === 'error' && availablePreviewStages === HTTP_STAGES) {
-      handlePanelViewChange('raw');
+      setDefaultTab('raw');
     }
   }, [resourceSampleData.status, defaultPanel, handlePanelViewChange, availablePreviewStages]);
 
@@ -61,19 +70,18 @@ export default function PreviewBody(props) {
           <CeligoTabWrapper>
             <CeligoTabs
               tabs={availablePreviewStages}
-              onChange={handlePanelViewChange}
-              value={panelType}
+              defaultValue={defaultTab}
             />
-            <CeligoTabPanel value={panelType} panelId="preview">
+            <CeligoTabPanel panelId="preview">
               { resourceSampleData.status === 'error'
                 ? <Templates.ErrorPanel resourceSampleData={resourceSampleData} availablePreviewStages={availablePreviewStages} />
-                : <DefaultPanel value={panelContent} />}
+                : <DefaultPanel value={panelContent('preview')} />}
             </CeligoTabPanel>
-            <CeligoTabPanel value={panelType} panelId="request">
-              <RequestResponsePanel value={panelContent} />
+            <CeligoTabPanel panelId="request">
+              <RequestResponsePanel value={panelContent('request')} />
             </CeligoTabPanel>
-            <CeligoTabPanel value={panelType} panelId="raw">
-              <RequestResponsePanel value={panelContent} />
+            <CeligoTabPanel panelId="raw">
+              <RequestResponsePanel value={panelContent('raw')} />
             </CeligoTabPanel>
           </CeligoTabWrapper>
         </>

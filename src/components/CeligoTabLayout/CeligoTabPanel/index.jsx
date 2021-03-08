@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
+import { useTabContext } from '../CeligoTabWrapper';
 
 const useStyles = makeStyles(theme => ({
   tabPanel: {
@@ -12,12 +13,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 export default function CeligoTabPanel(props) {
-  const { children, value, panelId, ...other } = props;
+  const { children, panelId, ...other } = props;
   const classes = useStyles();
+  const tabsContext = useTabContext();
+  const activeTab = tabsContext?.activeTab;
 
   return (
-    <div hidden={value !== panelId} {...other} >
-      {value === panelId && (<div className={classes.tabPanel}> {children} </div>) }
+    <div hidden={activeTab !== panelId} {...other} >
+      {activeTab === panelId && (<div className={classes.tabPanel}> {children} </div>) }
     </div>
   );
 }
@@ -25,5 +28,4 @@ export default function CeligoTabPanel(props) {
 CeligoTabPanel.propTypes = {
   children: PropTypes.node,
   panelId: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
 };

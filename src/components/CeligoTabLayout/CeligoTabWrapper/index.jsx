@@ -1,9 +1,22 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 
-export default function CeligoTabWrapper({ children }) {
+const TabContext = React.createContext();
+
+export const CeligoTabWrapper = ({ children }) => {
+  const [activeTab, setActiveTab] = useState();
+
   return (
-    <div>
+    <TabContext.Provider value={{activeTab, setActiveTab}}>
       {children}
-    </div>
+    </TabContext.Provider>
   );
+};
+
+export function useTabContext() {
+  return useContext(TabContext);
 }
+
+export default {
+  CeligoTabWrapper,
+  useTabContext,
+};
