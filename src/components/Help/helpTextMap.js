@@ -2126,7 +2126,7 @@ export default {
   'fb.pp.imports.inputFilter':
     'Define an ‘input filter’ here to specify which source records should get processed by the import. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
   'mapping.dataType':
-    'This field represents the respective datatype of the mapping field. Ex: string, boolean, number.',
+    'Select the data type of the import field, such as Boolean, string, or number array.',
   'mapping.discardIfEmpty':
     'Please check this checkbox if you would like to discard this mapping when the result of the mapping is empty. If you are mapping a list field and all the fields in the list are mapped to empty values then the whole list will be discarded.',
   'mapping.fieldMappingType':
