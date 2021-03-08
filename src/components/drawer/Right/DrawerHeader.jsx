@@ -7,6 +7,7 @@ import BackArrowIcon from '../../icons/BackArrowIcon';
 import InfoIconButton from '../../InfoIconButton';
 import Help from '../../Help';
 import { useDrawerContext } from './DrawerContext';
+// import BackgroundToggle from './BackgroundToggle';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {
@@ -70,25 +71,26 @@ export default function DrawerHeader({
   };
 
   return (
+  // <BackgroundToggle>
     <div data-public className={clsx(classes.drawerHeader, className)}>
       {showBackButton && (
-      <IconButton
-        size="small"
-        data-test="backRightDrawer"
-        aria-label="Close"
+        <IconButton
+          size="small"
+          data-test="backRightDrawer"
+          aria-label="Close"
         // eslint-disable-next-line react/jsx-handler-names
-        onClick={history.goBack}>
-        <BackArrowIcon />
-      </IconButton>
+          onClick={history.goBack}>
+          <BackArrowIcon />
+        </IconButton>
       )}
       <Typography variant="h4" className={classes.title}>
         {title}
         {helpKey && (
-        <Help
-          title={helpTitle}
-          className={classes.helpTextButton}
-          helpKey={helpKey}
-          fieldId={helpKey}
+          <Help
+            title={helpTitle}
+            className={classes.helpTextButton}
+            helpKey={helpKey}
+            fieldId={helpKey}
       />
         )}
         {infoText && <InfoIconButton info={infoText} />}
@@ -99,6 +101,6 @@ export default function DrawerHeader({
 
       <CloseIconButton />
     </div>
-
+  // </BackgroundToggle>
   );
 }

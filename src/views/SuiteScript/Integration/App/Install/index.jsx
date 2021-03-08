@@ -25,7 +25,7 @@ import CeligoPageBar from '../../../../../components/CeligoPageBar';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    marginTop: theme.spacing(2),
+    margin: theme.spacing(2),
     flexGrow: 1,
     width: '100%',
   },

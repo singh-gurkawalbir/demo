@@ -1,5 +1,6 @@
-/* global describe, expect, test */
-import { selectors } from '.';
+/* global describe, expect, test, beforeAll */
+import reducer, { selectors } from '.';
+import actions from '../actions';
 import { FILTER_KEYS } from '../utils/errorManagement';
 
 const flowId = 'flowId-1234';
@@ -37,10 +38,144 @@ describe('Error Management region selector testcases', () => {
   });
 
   describe('selectors.flowJobConnections test cases', () => {
+    let state;
+
+    beforeAll(() => {
+      const conns = [
+        {
+          _id: 'c1',
+          name: 'conn1',
+          type: 'ns',
+        },
+        {
+          _id: 'c2',
+          name: 'conn2',
+          type: 'sf',
+        },
+        {
+          _id: 'c3',
+          name: 'conn3',
+        },
+      ];
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('connections', conns)
+      );
+
+      const exps = [{
+        _id: 'e1',
+        _connectionId: 'c1',
+      }, {
+        _id: 'e2',
+        _connectionId: 'c2',
+      }, {
+        _id: 'e3',
+        type: 'simple',
+      }];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('exports', exps)
+      );
+
+      const imps = [{
+        _id: 'i1',
+        _connectionId: 'c3',
+      }, {
+        _id: 'i2',
+        _connectionId: 'c1',
+      }];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('imports', imps)
+      );
+
+      const flows = [
+        {
+          _id: 'f1',
+          pageGenerators: [{
+            _exportId: 'e1',
+          }, {
+            _exportId: 'e2',
+          }],
+          pageProcessors: [
+            {
+              _importId: 'i1',
+            },
+          ],
+        },
+        {
+          _id: 'f2',
+          _exportId: 'e3',
+          _importId: 'i1',
+          name: 'data-loader flow',
+        },
+        {
+          _id: 'f3',
+          pageGenerators: [{
+            _exportId: 'e1',
+          }],
+          pageProcessors: [{
+            _exportId: 'e2',
+          }, {
+            _importId: 'i1',
+          }],
+        },
+      ];
+
+      state = reducer(state,
+        actions.resource.receivedCollection('flows', flows));
+    });
     test('should not throw any exception for invalid arguments', () => {
       const selector = selectors.flowJobConnections();
 
       expect(selector(undefined, {})).toEqual([]);
+    });
+    test('should return all the connections used in a flow', () => {
+      const selector = selectors.flowJobConnections();
+
+      expect(selector(state, 'f1')).toEqual([{
+        id: 'c1',
+        name: 'conn1',
+      }, {
+        id: 'c2',
+        name: 'conn2',
+      }, {
+        id: 'c3',
+        name: 'conn3',
+      }]);
+    });
+
+    test('should return all the connections used in a data-loader flow', () => {
+      const selector = selectors.flowJobConnections();
+
+      expect(selector(state, 'f2')).toEqual([{
+        id: 'c3',
+        name: 'conn3',
+      }]);
+    });
+
+    test('should return all the connections used in a flow where export configured as pp', () => {
+      const selector = selectors.flowJobConnections();
+
+      expect(selector(state, 'f3')).toEqual([{
+        id: 'c1',
+        name: 'conn1',
+      }, {
+        id: 'c2',
+        name: 'conn2',
+      }, {
+        id: 'c3',
+        name: 'conn3',
+      }]);
+    });
+
+    test('should return empty array for invalid flow id', () => {
+      const selector = selectors.flowJobConnections();
+
+      expect(selector(state, 'invalid-id')).toEqual([]);
     });
   });
 
@@ -81,12 +216,12 @@ describe('Error Management region selector testcases', () => {
       expect(selectors.resourceError({}, {})).toEqual();
     });
     test('should return undefined if the errorId is not passed / passed error id does not exist', () => {
-      expect(selectors.resourceError(sampleState, { flowId, resourceId, options: {}, errorId: 'INVALID_ID'})).toBeUndefined();
-      expect(selectors.resourceError(sampleState, { flowId, resourceId, options: { isResolved: true }, errorId: 'INVALID_ID'})).toBeUndefined();
+      expect(selectors.resourceError(sampleState, { flowId, resourceId, errorId: 'INVALID_ID'})).toBeUndefined();
+      expect(selectors.resourceError(sampleState, { flowId, resourceId, isResolved: true, errorId: 'INVALID_ID'})).toBeUndefined();
     });
     test('should return matched  error object with the errorId passed for both open/resolved errors', () => {
-      expect(selectors.resourceError(sampleState, { flowId, resourceId, options: {}, errorId: '1234'})).toEqual(sampleOpenErrors[0]);
-      expect(selectors.resourceError(sampleState, { flowId, resourceId, options: { isResolved: true }, errorId: '3333'})).toEqual(sampleResolvedErrors[0]);
+      expect(selectors.resourceError(sampleState, { flowId, resourceId, errorId: '1234'})).toEqual(sampleOpenErrors[0]);
+      expect(selectors.resourceError(sampleState, { flowId, resourceId, isResolved: true, errorId: '3333'})).toEqual(sampleResolvedErrors[0]);
     });
   });
 
@@ -153,7 +288,7 @@ describe('Error Management region selector testcases', () => {
       };
 
       expect(selectors.selectedRetryIds(sampleState, { flowId, resourceId })).toEqual(['retry-123', 'retry-456']);
-      expect(selectors.selectedRetryIds(sampleState, { flowId, resourceId, options: { isResolved: true } })).toEqual(['retry-111']);
+      expect(selectors.selectedRetryIds(sampleState, { flowId, resourceId, isResolved: true })).toEqual(['retry-111']);
     });
     test('should return empty list if there are errors selected but not even one of them can be retried', () => {
       const sampleState = {
@@ -165,7 +300,7 @@ describe('Error Management region selector testcases', () => {
       };
 
       expect(selectors.selectedRetryIds(sampleState, { flowId, resourceId })).toEqual([]);
-      expect(selectors.selectedRetryIds(sampleState, { flowId, resourceId, options: { isResolved: true } })).toEqual([]);
+      expect(selectors.selectedRetryIds(sampleState, { flowId, resourceId, isResolved: true })).toEqual([]);
     });
   });
 
@@ -231,7 +366,7 @@ describe('Error Management region selector testcases', () => {
       };
 
       expect(selectors.selectedErrorIds(sampleState, { flowId, resourceId })).toEqual([]);
-      expect(selectors.selectedErrorIds(sampleState, { flowId, resourceId, options: { isResolved: true } })).toEqual([]);
+      expect(selectors.selectedErrorIds(sampleState, { flowId, resourceId, isResolved: true })).toEqual([]);
     });
     test('should return the errorIds for the errors that are selected', () => {
       const sampleState = {
@@ -243,11 +378,11 @@ describe('Error Management region selector testcases', () => {
       };
 
       expect(selectors.selectedErrorIds(sampleState, { flowId, resourceId })).toEqual(['1234', '1111']);
-      expect(selectors.selectedErrorIds(sampleState, { flowId, resourceId, options: { isResolved: true } })).toEqual(['3333', '4444']);
+      expect(selectors.selectedErrorIds(sampleState, { flowId, resourceId, isResolved: true})).toEqual(['3333', '4444']);
     });
   });
 
-  describe('selectors.isAllErrorsSelected test cases', () => {
+  describe('selectors.isAllErrorsSelectedInCurrPage test cases', () => {
     const sampleOpenErrors = [
       { errorId: '1234', selected: true },
       { errorId: '1111', selected: true },
@@ -284,7 +419,7 @@ describe('Error Management region selector testcases', () => {
     };
 
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isAllErrorsSelected({}, {})).toBeFalsy();
+      expect(selectors.isAllErrorsSelectedInCurrPage({}, {})).toBeFalsy();
     });
     test('should return false if the error list is empty', () => {
       const sampleState = {
@@ -308,8 +443,8 @@ describe('Error Management region selector testcases', () => {
         },
       };
 
-      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId })).toBeFalsy();
-      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeFalsy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
     });
     test('should return false if there is no filter and all errors are not selected', () => {
       const sampleState = {
@@ -320,10 +455,10 @@ describe('Error Management region selector testcases', () => {
         },
       };
 
-      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId })).toBeFalsy();
-      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeFalsy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
     });
-    test('should return true if there is no filter and all errors are selected', () => {
+    test('should return true if there is no filter and all errors are selected in the first page', () => {
       const sampleState = {
         session: {
           errorManagement: {
@@ -345,10 +480,10 @@ describe('Error Management region selector testcases', () => {
         },
       };
 
-      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId })).toBeTruthy();
-      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId, isResolved: true })).toBeTruthy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeTruthy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeTruthy();
     });
-    test('should return false if there is search filter and all the filtered errors are not selected ', () => {
+    test('should return false if there is search filter and all the filtered errors in the current page are not selected ', () => {
       const sampleState = {
         session: {
           errorManagement: {
@@ -388,10 +523,10 @@ describe('Error Management region selector testcases', () => {
         },
       };
 
-      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId })).toBeFalsy();
-      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeFalsy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
     });
-    test('should return true if there is search filter and all the filtered errors are selected ', () => {
+    test('should return true if there is search filter and all the filtered errors in the current page are selected ', () => {
       const sampleState = {
         session: {
           errorManagement: {
@@ -431,69 +566,134 @@ describe('Error Management region selector testcases', () => {
         },
       };
 
-      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId })).toBeTruthy();
-      expect(selectors.isAllErrorsSelected(sampleState, { flowId, resourceId, isResolved: true })).toBeTruthy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeTruthy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeTruthy();
     });
-  });
-
-  describe('selectors.isAnyErrorActionInProgress test cases', () => {
-    const errorDetails = {
-      open: {
-        status: 'received',
-        errors: [
-          { errorId: '9999', message: 'retry failed'},
-          { errorId: '8888', message: 'invalid hook', selected: true },
-          { errorId: '7777', message: 'failed javascript hook', selected: true },
-        ],
-      },
-      resolved: {
-        status: 'received',
-        errors: [
-          { errorId: '1234', message: 'retry failed' },
-          { errorId: '1111', message: 'invalid transform', selected: true },
-          { errorId: '2222', message: 'failed transform', selected: true },
-        ],
-      },
-    };
-
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isAnyErrorActionInProgress({}, {})).toBeFalsy();
-    });
-    test('should return false if the actions does not exist', () => {
+    test('should return false if the current page errors are all not selected', () => {
       const sampleState = {
         session: {
           errorManagement: {
             errorDetails: {
               [flowId]: {
                 [resourceId]: {
-                  ...errorDetails,
-                  actions: {},
+                  open: {
+                    status: 'received',
+                    errors: [
+                      // page 1 when searched with failed
+                      { errorId: '9999', message: 'retry failed', selected: true },
+                      { errorId: '5555', message: 'failed presavepage hook', selected: true },
+                      // page 2 when searched with failed with one error as un selected
+                      { errorId: '7777', message: 'failed javascript hook' },
+                      { errorId: '4444', message: 'failed transformation', selected: true },
+                      // other errors
+                      { errorId: '6666', message: 'invalid javascript hook', selected: true },
+                      { errorId: '8888', message: 'invalid hook' },
+                    ],
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '1234', message: 'retry failed', selected: true },
+                      { errorId: '1111', message: 'invalid transform' },
+                      { errorId: '2222', message: 'failed transform', selected: true },
+                    ],
+                  },
                 },
               },
+            },
+          },
+          filters: {
+            [FILTER_KEYS.OPEN]: {
+              searchBy: ['message'],
+              keyword: 'failed',
+              paging: {
+                currPage: 1,
+                rowsPerPage: 2,
+              },
+            },
+            [FILTER_KEYS.RESOLVED]: {
+              searchBy: ['message'],
+              keyword: 'transform',
             },
           },
         },
       };
 
-      expect(selectors.isAnyErrorActionInProgress(sampleState, { flowId, resourceId })).toBeFalsy();
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeFalsy();
     });
-    test('should return false if neither of retry/resolve actions status is requested', () => {
+    test('should return true if the current page errors are all selected', () => {
       const sampleState = {
         session: {
           errorManagement: {
             errorDetails: {
               [flowId]: {
                 [resourceId]: {
-                  ...errorDetails,
-                  actions: {
-                    retry: {
-                      status: 'received',
-                      count: 44,
-                    },
-                    resolve: {
-                      status: 'received',
-                      count: 50,
-                    },
+                  open: {
+                    status: 'received',
+                    errors: [
+                      // page 0 when searched with failed with both selected
+                      { errorId: '9999', message: 'retry failed', selected: true },
+                      { errorId: '5555', message: 'failed presavepage hook', selected: true },
+                      // page 1 when searched with failed with one error as un selected
+                      { errorId: '7777', message: 'failed javascript hook' },
+                      { errorId: '4444', message: 'failed transformation', selected: true },
+                      // other errors
+                      { errorId: '6666', message: 'invalid javascript hook', selected: true },
+                      { errorId: '8888', message: 'invalid hook' },
+                    ],
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '1234', message: 'retry failed', selected: true },
+                      { errorId: '1111', message: 'invalid transform' },
+                      { errorId: '2222', message: 'failed transform', selected: true },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          filters: {
+            [FILTER_KEYS.OPEN]: {
+              searchBy: ['message'],
+              keyword: 'failed',
+              paging: {
+                currPage: 0,
+                rowsPerPage: 2,
+              },
+            },
+            [FILTER_KEYS.RESOLVED]: {
+              searchBy: ['message'],
+              keyword: 'transform',
+            },
+          },
+        },
+      };
+
+      expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeTruthy();
+    });
+  });
+
+  describe('selectors.resourceFilteredErrorsInCurrPage test cases', () => {
+    test('should return empty array incase of no errors', () => {
+      const sampleState = {
+        session: {
+          errorManagement: {
+            errorDetails: {
+              [flowId]: {
+                [resourceId]: {
+                  open: {
+                    status: 'received',
+                    errors: [],
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '1234', message: 'retry failed', selected: true },
+                      { errorId: '1111', message: 'invalid transform' },
+                      { errorId: '2222', message: 'failed transform', selected: true },
+                    ],
                   },
                 },
               },
@@ -502,60 +702,507 @@ describe('Error Management region selector testcases', () => {
         },
       };
 
-      expect(selectors.isAnyErrorActionInProgress(sampleState, { flowId, resourceId })).toBeFalsy();
+      expect(selectors.resourceFilteredErrorsInCurrPage(sampleState, { flowId, resourceId })).toEqual([]);
     });
-    test('should return true if either of retry/resolve actions status is requested', () => {
+    test('should return empty array incase of no errors in the current page - page that exceeds error count', () => {
       const sampleState = {
         session: {
           errorManagement: {
             errorDetails: {
               [flowId]: {
                 [resourceId]: {
-                  ...errorDetails,
-                  actions: {
-                    retry: {
-                      status: 'requested',
-                      count: 44,
-                    },
-                    resolve: {
-                      status: 'received',
-                      count: 50,
-                    },
+                  open: {
+                    status: 'received',
+                    errors: [
+                      // page 0
+                      { errorId: '9999', message: 'retry failed', selected: true },
+                      { errorId: '5555', message: 'failed presavepage hook', selected: true },
+                      // page 1
+                      { errorId: '7777', message: 'failed javascript hook' },
+                      { errorId: '4444', message: 'failed transformation', selected: true },
+                      // page 2
+                      { errorId: '6666', message: 'invalid javascript hook', selected: true },
+                      { errorId: '8888', message: 'invalid hook' },
+                    ],
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '1234', message: 'retry failed', selected: true },
+                      { errorId: '1111', message: 'invalid transform' },
+                      { errorId: '2222', message: 'failed transform', selected: true },
+                    ],
                   },
                 },
+              },
+            },
+          },
+          filters: {
+            [FILTER_KEYS.OPEN]: {
+              searchBy: ['message'],
+              keyword: '',
+              paging: {
+                currPage: 4, // invalid current page
+                rowsPerPage: 2,
+              },
+            },
+            [FILTER_KEYS.RESOLVED]: {
+              searchBy: ['message'],
+              keyword: '',
+            },
+          },
+        },
+      };
+
+      expect(selectors.resourceFilteredErrorsInCurrPage(sampleState, { flowId, resourceId })).toEqual([]);
+    });
+    test('should return expected list of errors in the current page', () => {
+      const sampleState = {
+        session: {
+          errorManagement: {
+            errorDetails: {
+              [flowId]: {
+                [resourceId]: {
+                  open: {
+                    status: 'received',
+                    errors: [
+                      // page 0
+                      { errorId: '9999', message: 'retry failed', selected: true },
+                      { errorId: '8888', message: 'invalid hook' },
+                      // page 1
+                      { errorId: '5555', message: 'failed presavepage hook', selected: true },
+                      { errorId: '7777', message: 'failed javascript hook' },
+                      // page 2
+                      { errorId: '4444', message: 'failed transformation', selected: true },
+                      { errorId: '6666', message: 'invalid javascript hook', selected: true },
+                    ],
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '1234', message: 'retry failed', selected: true },
+                      { errorId: '1111', message: 'invalid transform' },
+                      { errorId: '2222', message: 'failed transform', selected: true },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          filters: {
+            [FILTER_KEYS.OPEN]: {
+              searchBy: ['message'],
+              keyword: '',
+              paging: {
+                currPage: 1, // invalid current page
+                rowsPerPage: 2,
+              },
+            },
+            [FILTER_KEYS.RESOLVED]: {
+              searchBy: ['message'],
+              keyword: '',
+            },
+          },
+        },
+      };
+      const expectedErrorsInCurrPage = [
+        { errorId: '5555', message: 'failed presavepage hook', selected: true },
+        { errorId: '7777', message: 'failed javascript hook' },
+      ];
+
+      expect(selectors.resourceFilteredErrorsInCurrPage(sampleState, { flowId, resourceId })).toEqual(expectedErrorsInCurrPage);
+    });
+    test('should return expected list of errors filtered by search criteria in the current page', () => {
+      const sampleState = {
+        session: {
+          errorManagement: {
+            errorDetails: {
+              [flowId]: {
+                [resourceId]: {
+                  open: {
+                    status: 'received',
+                    errors: [
+                      // page 0 when searched with failed
+                      { errorId: '9999', message: 'retry failed' },
+                      { errorId: '5555', message: 'failed presavepage hook' },
+                      // page 1 when searched with failed
+                      { errorId: '7777', message: 'failed javascript hook' },
+                      { errorId: '4444', message: 'failed transformation' },
+                      // other errors
+                      { errorId: '6666', message: 'invalid javascript hook' },
+                      { errorId: '8888', message: 'invalid hook' },
+                    ],
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '1234', message: 'retry failed' },
+                      { errorId: '1111', message: 'invalid transform' },
+                      { errorId: '2222', message: 'failed transform' },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          filters: {
+            [FILTER_KEYS.OPEN]: {
+              searchBy: ['message'],
+              keyword: 'failed',
+              paging: {
+                currPage: 1,
+                rowsPerPage: 2,
+              },
+            },
+            [FILTER_KEYS.RESOLVED]: {
+              searchBy: ['message'],
+              keyword: 'transform',
+            },
+          },
+        },
+      };
+
+      const expectedFilteredErrorsInCurrPage = [
+        { errorId: '7777', message: 'failed javascript hook' },
+        { errorId: '4444', message: 'failed transformation' },
+      ];
+
+      expect(selectors.resourceFilteredErrorsInCurrPage(sampleState, { flowId, resourceId })).toEqual(expectedFilteredErrorsInCurrPage);
+    });
+    test('should return expected list of resolved errors filtered by search criteria in the current page', () => {
+      const sampleState = {
+        session: {
+          errorManagement: {
+            errorDetails: {
+              [flowId]: {
+                [resourceId]: {
+                  open: {
+                    status: 'received',
+                    errors: [
+                      { errorId: '1234', message: 'retry failed' },
+                      { errorId: '1111', message: 'invalid transform' },
+                      { errorId: '2222', message: 'failed transform' },
+                    ],
+                  },
+                  resolved: {
+                    status: 'received',
+                    errors: [
+                      // page 0 when searched with error
+                      { errorId: '9999', message: 'retry error' },
+                      { errorId: '5555', message: 'invalid hook error' },
+                      // page 1 when searched with error
+                      { errorId: '7777', message: 'error in javascript hook' },
+                      { errorId: '4444', message: 'error in transformation' },
+                      // other errors
+                      { errorId: '6666', message: 'invalid javascript hook' },
+                      { errorId: '8888', message: 'invalid hook' },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          filters: {
+            [FILTER_KEYS.OPEN]: {
+              searchBy: ['message'],
+              keyword: 'failed',
+            },
+            [FILTER_KEYS.RESOLVED]: {
+              searchBy: ['message'],
+              keyword: 'error',
+              paging: {
+                currPage: 1,
+                rowsPerPage: 2,
               },
             },
           },
         },
       };
 
-      expect(selectors.isAnyErrorActionInProgress(sampleState, { flowId, resourceId })).toBeTruthy();
+      const expectedFilteredResolvedErrorsInCurrPage = [
+        { errorId: '7777', message: 'error in javascript hook' },
+        { errorId: '4444', message: 'error in transformation' },
+      ];
+
+      expect(selectors.resourceFilteredErrorsInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toEqual(expectedFilteredResolvedErrorsInCurrPage);
     });
   });
 
-  describe('selectors.errorDetails test cases', () => {
+  describe('selectors.mkResourceFilteredErrorDetailsSelector test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.errorDetails({}, {})).toEqual({});
-    });
-  });
-
-  describe('selectors.makeResourceErrorsSelector test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      const selector = selectors.makeResourceErrorsSelector();
+      const selector = selectors.mkResourceFilteredErrorDetailsSelector();
 
       expect(selector({}, {})).toEqual({errors: []});
     });
   });
 
   describe('selectors.integrationErrorsPerSection test cases', () => {
+    let state;
+
+    beforeAll(() => {
+      const integrations = [
+        {
+          _id: 'int1',
+          settings: {
+            sections: [{
+              title: 'T1',
+              id: 'secId',
+              flows: [{
+                _id: 'f1',
+              }, {
+                _id: 'f2',
+              }, {
+                _id: 'f3',
+              }, {
+                _id: 'f4',
+              }],
+            }],
+          },
+        },
+        {
+          _id: 'int2',
+          settings: {
+            sections: [{
+              title: 'Section1',
+              id: 'secId',
+              flows: [{
+                _id: 'f5',
+              }, {
+                _id: 'f6',
+              }],
+            }, {
+              title: 'Section2',
+              id: 'secId2',
+              flows: [{
+                _id: 'f7',
+              }, {
+                _id: 'f8',
+              }],
+            }],
+          },
+        },
+        {
+          _id: 'int3',
+          settings: {
+            supportsMultiStore: false,
+          },
+        },
+      ];
+
+      state = reducer(undefined, actions.resource.receivedCollection('integrations', integrations));
+
+      const flows = [
+        {
+          _id: 'f1',
+        },
+        {
+          _id: 'f2',
+        },
+        {
+          _id: 'f3',
+        },
+        {
+          _id: 'f4',
+          disabled: true,
+        },
+        {
+          _id: 'f5',
+        },
+        {
+          _id: 'f6',
+        },
+        {
+          _id: 'f7',
+        },
+        {
+          _id: 'f8',
+        },
+      ];
+
+      state = reducer(state, actions.resource.receivedCollection('flows', flows));
+
+      state = reducer(state, actions.errorManager.integrationErrors.request({ integrationId: 'int1'}));
+      state = reducer(state, actions.errorManager.integrationErrors.received({ integrationId: 'int1',
+        integrationErrors: [
+          {
+            _flowId: 'f1',
+            numError: 10,
+          },
+          {
+            _flowId: 'f2',
+            numError: 20,
+          },
+          {
+            _flowId: 'f3',
+            numError: 5,
+          },
+          {
+            _flowId: 'f4',
+            numError: 50,
+          },
+        ],
+      }));
+
+      state = reducer(state, actions.resource.receivedCollection('flows', flows));
+
+      state = reducer(state, actions.errorManager.integrationErrors.request({ integrationId: 'int2'}));
+      state = reducer(state, actions.errorManager.integrationErrors.received({ integrationId: 'int2',
+        integrationErrors: [
+          {
+            _flowId: 'f5',
+            numError: 10,
+          },
+          {
+            _flowId: 'f6',
+            numError: 20,
+          },
+          {
+            _flowId: 'f7',
+            numError: 5,
+          },
+          {
+            _flowId: 'f8',
+            numError: 50,
+          },
+        ],
+      }));
+    });
+
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.integrationErrorsPerSection()).toEqual({});
+    });
+
+    test('should return integration errors per Section excluding disabled flow', () => {
+      expect(selectors.integrationErrorsPerSection(state, 'int1')).toEqual({
+        T1: 35,
+      });
+    });
+
+    test('should return integration errors per Section if multiple sections exists', () => {
+      expect(selectors.integrationErrorsPerSection(state, 'int2')).toEqual({
+        Section1: 30,
+        Section2: 55,
+      });
+    });
+
+    test('should return empty object if integration does not exist', () => {
+      expect(selectors.integrationErrorsPerSection(state, 'int-not-exists')).toEqual({});
+    });
+
+    test('should return empty object if sections does not exist on integration', () => {
+      expect(selectors.integrationErrorsPerSection(state, 'int3')).toEqual({});
+    });
+
+    test('should return empty object if flows resource is empty in the state', () => {
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('flows', [])
+      );
+      expect(selectors.integrationErrorsPerSection(state, 'int1')).toEqual({});
     });
   });
 
   describe('selectors.integrationErrorsPerStore test cases', () => {
+    let state;
+
+    beforeAll(() => {
+      const integrations = [
+        {
+          _id: 'intid1',
+          settings: {
+            supportsMultiStore: false,
+          },
+        }, {
+          _id: 'intid2',
+          settings: {
+            supportsMultiStore: true,
+            sections: [{
+              title: 'DBA',
+              id: 'sec1',
+              sections: [{
+                title: 'T1',
+                id: 'secId',
+                flows: [{
+                  _id: 'f1',
+                }, {
+                  _id: 'f2',
+                }],
+              }],
+            }, {
+              title: 'WF',
+              id: 'sec2',
+              sections: [{
+                title: 'T2',
+                id: 'secId',
+                flows: [{
+                  _id: 'f3',
+                }, {
+                  _id: 'f4',
+                }],
+              }],
+            }],
+          },
+        }];
+
+      state = reducer(undefined,
+        actions.resource.receivedCollection('integrations', integrations)
+      );
+      const flows = [
+        {
+          _id: 'f1',
+        },
+        {
+          _id: 'f2',
+        },
+        {
+          _id: 'f3',
+        },
+        {
+          _id: 'f4',
+          disabled: true,
+        },
+      ];
+
+      state = reducer(state, actions.resource.receivedCollection('flows', flows));
+
+      state = reducer(state, actions.errorManager.integrationErrors.request({ integrationId: 'intid2'}));
+      state = reducer(state, actions.errorManager.integrationErrors.received({ integrationId: 'intid2',
+        integrationErrors: [
+          {
+            _flowId: 'f1',
+            numError: 10,
+          },
+          {
+            _flowId: 'f2',
+            numError: 20,
+          },
+          {
+            _flowId: 'f3',
+            numError: 5,
+          },
+          {
+            _flowId: 'f4',
+            numError: 50,
+          },
+        ],
+      }));
+    });
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.integrationErrorsPerStore()).toEqual({});
+    });
+
+    test('should return emptyObject if integration doesn\'t support multistore', () => {
+      expect(selectors.integrationErrorsPerStore(state, 'intid1')).toEqual({});
+    });
+    test('should return integration errors per store if integration supports multiStore', () => {
+      expect(selectors.integrationErrorsPerStore(state, 'intid2')).toEqual({
+        sec1: 30,
+        sec2: 5,
+      });
+    });
+
+    test('should return empty object if integration doesn\'t exist', () => {
+      expect(selectors.integrationErrorsPerStore(state, 'int2')).toEqual({});
     });
   });
 

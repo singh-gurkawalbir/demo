@@ -133,7 +133,7 @@ export default function LookupDrawer({lookups, onSave, options, disabled, resour
       width="default"
       variant="temporary"
       onClose={history.goBack}>
-      <DrawerHeader title={drawerTitle} />
+      <DrawerHeader title={drawerTitle} hideBackButton={!value.length} />
       <DrawerContent>
         <Switch>
           <Route path={[`${match.url}/${rootPath}/add`, `${match.url}/${rootPath}/edit`]}>

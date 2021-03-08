@@ -7,6 +7,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import NotificationToaster from '../../../components/NotificationToaster';
+import { platformLicenseActionDetails } from '../../../utils/license';
 
 const useStyles = makeStyles(theme => ({
   inTrial: {
@@ -49,13 +50,8 @@ export default function LicenseAction() {
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
-  const licenseActionDetails = useSelector(
-    state => selectors.platformLicenseActionDetails(state),
-    (left, right) =>
-      left.action === right.action &&
-      left.label === right.label &&
-      left.upgradeRequested === right.upgradeRequested
-  );
+  const platformLicense = useSelector(state => selectors.platformLicense(state));
+  const licenseActionDetails = platformLicenseActionDetails(platformLicense);
   const platformLicenseActionMessage = useSelector(state =>
     selectors.platformLicenseActionMessage(state)
   );

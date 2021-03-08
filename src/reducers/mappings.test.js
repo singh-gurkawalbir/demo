@@ -46,12 +46,6 @@ describe('Mappings region selector testcases', () => {
     });
   });
 
-  describe('selectors.tradingPartnerConnections test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.tradingPartnerConnections(undefined, {})).toEqual([]);
-    });
-  });
-
   describe('selectors.mappingGenerates test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.mappingGenerates()).toEqual([]);

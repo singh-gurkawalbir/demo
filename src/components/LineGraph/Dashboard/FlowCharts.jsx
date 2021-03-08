@@ -352,7 +352,7 @@ export default function FlowCharts({ integrationId, range, selectedResources, re
 
   return (
     <div className={classes.root}>
-      {['success', 'averageTimeTaken', 'error', 'ignored'].map(m => (
+      {['success', 'averageTimeTaken', 'error', 'ignored', 'resolved'].map(m => (
         <Chart
           key={m}
           id={m}
