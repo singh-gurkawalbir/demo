@@ -21,7 +21,7 @@ export default function PreviewBody(props) {
   } = props;
   // Default panel is the panel shown by default when export panel is launched
   // We can configure it in the metadata with 'default' as true
-  // Else the last stage being the Parse stage till now is taken as the default stage
+  // Else the last stage is taken as the default stage
   const defaultPanel = useMemo(() => {
     if (!availablePreviewStages.length) return;
     const defaultStage = availablePreviewStages.find(stage => stage.default === true);
