@@ -4,8 +4,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
   IconButton,
-  Grid,
-  Paper,
   Breadcrumbs,
 } from '@material-ui/core';
 import ArrowBackIcon from '../icons/ArrowLeftIcon';
@@ -33,19 +31,21 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     width: '100%',
+    margin: theme.spacing(2),
   },
   formHead: {
     borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
     marginBottom: 29,
+    display: 'flex',
+    alignItems: 'center',
   },
-
   stepTable: { maxWidth: 750 },
-  floatRight: {
-    float: 'right',
-  },
   paper: {
     padding: theme.spacing(1, 2),
     background: theme.palette.background.default,
+  },
+  arrowBackButton: {
+    padding: theme.spacing(1),
   },
 }));
 
@@ -301,25 +301,23 @@ export default function InstallationWizard(props) {
       )}
       <div className={classes.root}>
         {variant !== 'new' && (
-          <Grid container className={classes.formHead}>
-            <Grid item xs={1}>
-              <IconButton onClick={handleBackClick} size="medium">
-                <ArrowBackIcon fontSize="inherit" />
-              </IconButton>
-            </Grid>
-            <Grid item xs>
-              <Paper elevation={0} className={classes.paper}>
-                <Breadcrumbs separator={<ArrowRightIcon />}>
-                  <Typography color="textPrimary">Setup</Typography>
-                  <Typography color="textPrimary">
-                    {resource.name ||
+          <div className={classes.formHead}>
+
+            <IconButton onClick={handleBackClick} size="medium" className={classes.arrowBackButton}>
+              <ArrowBackIcon />
+            </IconButton>
+
+            <div>
+              <Breadcrumbs separator={<ArrowRightIcon />}>
+                <Typography color="textPrimary">Setup</Typography>
+                <Typography color="textPrimary">
+                  {resource.name ||
                       MODEL_PLURAL_TO_LABEL[resourceType] ||
                       'Template'}
-                  </Typography>
-                </Breadcrumbs>
-              </Paper>
-            </Grid>
-          </Grid>
+                </Typography>
+              </Breadcrumbs>
+            </div>
+          </div>
         )}
         <div className={classes.stepTable}>
           {installSteps.map((step, index) => (

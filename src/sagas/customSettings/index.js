@@ -23,7 +23,15 @@ export function* initSettingsForm({ resourceType, resourceId, sectionId }) {
   if (initFunc) {
     // If so, make an API call to initialize the form,
 
-    const path = `/${resourceType}/${resourceId}/settingsForm/init`;
+    let baseRoute = `/${resourceType}/${resourceId}`;
+
+    // sectionId is flowGroupingId...if it is defined then we will call the flowGrouping init
+    const isFlowGroupingRoute = sectionId && sectionId !== 'general';
+
+    if (isFlowGroupingRoute) {
+      baseRoute += `/flowGroupings/${sectionId}`;
+    }
+    const path = `${baseRoute}/settingsForm/init`;
 
     try {
       metadata = yield call(apiCallWithRetry, {

@@ -1431,6 +1431,7 @@ const _editor = {
   patchFeatures: (id, featuresPatch) => action(actionTypes._EDITOR.PATCH.FEATURES, { id, featuresPatch }),
   patchRule: (id, rulePatch) => action(actionTypes._EDITOR.PATCH.RULE, { id, rulePatch }),
   patchData: (id, dataPatch) => action(actionTypes._EDITOR.PATCH.DATA, { id, dataPatch }),
+  patchFileKeyColumn: (id, fileKeyPatchType, fileKeyPatch) => action(actionTypes._EDITOR.PATCH.FILE_KEY_COLUMN, { id, fileKeyPatchType, fileKeyPatch }),
   clear: id => action(actionTypes._EDITOR.CLEAR, { id }),
   toggleVersion: (id, version) => action(actionTypes._EDITOR.TOGGLE_VERSION, { id, version }),
   sampleDataReceived: (id, sampleData, templateVersion) => action(actionTypes._EDITOR.SAMPLEDATA.RECEIVED, { id, sampleData, templateVersion }),
@@ -1855,8 +1856,14 @@ const errorManager = {
         checked,
         isResolved,
       }),
-    selectAll: ({ flowId, resourceId, checked, isResolved }) =>
-      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS, {
+    deselectAll: ({ flowId, resourceId, isResolved }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DESELECT_ALL_ERRORS, {
+        flowId,
+        resourceId,
+        isResolved,
+      }),
+    selectAllInCurrPage: ({ flowId, resourceId, checked, isResolved }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS_IN_CURR_PAGE, {
         flowId,
         resourceId,
         checked,
@@ -1870,7 +1877,7 @@ const errorManager = {
         retryData,
       }
     ),
-    retry: ({ flowId, resourceId, retryIds = [], isResolved = false }) =>
+    retry: ({ flowId, resourceId, retryIds = [], isResolved = false, retryAll = false }) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.REQUEST,
         {
@@ -1878,15 +1885,17 @@ const errorManager = {
           resourceId,
           retryIds,
           isResolved,
+          retryAll,
         }
       ),
-    resolve: ({ flowId, resourceId, errorIds = [] }) =>
+    resolve: ({ flowId, resourceId, errorIds = [], resolveAll = false }) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.REQUEST,
         {
           flowId,
           resourceId,
           errorIds,
+          resolveAll,
         }
       ),
     retryReceived: ({ flowId, resourceId, retryCount}) =>

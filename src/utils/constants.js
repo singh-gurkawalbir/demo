@@ -634,6 +634,6 @@ export const CONNECTORS_TO_IGNORE = ['yammer',
   'concurv4',
   'constantcontact'];
 
-export const WEBHOOK_ONLY_APPLICATIONS = ['webhook', 'travis-org', 'helpscout', 'errorception', 'aha', 'pagerduty', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
+export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'pagerduty', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
   'box', 'segment'];
 
