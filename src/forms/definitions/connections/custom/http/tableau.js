@@ -13,6 +13,12 @@ export default {
     '/http/auth/token/location': 'header',
     '/http/ping/relativeURI': '/groups',
     '/http/ping/method': 'GET',
+    '/http/auth/token/refreshRelativeURI': `https://${
+      formValues['/http/myServer']}.online.tableau.com/api/2.7/auth/signin`,
+    '/http/auth/token/refreshBody': '{"credentials": {"name":"{{{connection.http.auth.basic.username}}}", "password": "{{{connection.http.auth.basic.password}}}", "site": {"contentUrl": "{{{connection.http.unencrypted.contentUrl}}}"}} }',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'json',
+    '/http/auth/token/refreshTokenPath': 'credentials.token',
     '/http/headers': [
       {
         name: 'X-Tableau-Auth',

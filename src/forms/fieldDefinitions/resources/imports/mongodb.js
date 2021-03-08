@@ -69,9 +69,8 @@ export default {
   'mongodb.document': {
     id: 'mongodb.document',
     type: 'sqlquerybuilder',
-    hideDefaultData: true,
     refreshOptionsOnChangesTo: ['mongodb.method'],
-    label: 'Build MongoDB document',
+    label: 'MongoDB document',
     visibleWhen: [
       {
         field: 'mongodb.method',
@@ -82,9 +81,8 @@ export default {
   'mongodb.update': {
     id: 'mongodb.update',
     type: 'sqlquerybuilder',
-    hideDefaultData: true,
     refreshOptionsOnChangesTo: ['mongodb.method'],
-    label: 'Build MongoDB document',
+    label: 'MongoDB document',
     visibleWhen: [
       {
         field: 'mongodb.method',
@@ -95,8 +93,7 @@ export default {
   'mongodb.ignoreLookupFilter': {
     id: 'mongodb.ignoreLookupFilter',
     type: 'sqlquerybuilder',
-    hideDefaultData: true,
-    label: 'Build MongoDB filter',
+    label: 'MongoDB filter',
     visibleWhenAll: [
       {
         field: 'ignoreExisting',
@@ -111,8 +108,7 @@ export default {
   'mongodb.filter': {
     id: 'mongodb.filter',
     type: 'sqlquerybuilder',
-    hideDefaultData: true,
-    label: 'Build MongoDB filter',
+    label: 'MongoDB filter',
     visibleWhen: [
       {
         field: 'mongodb.method',

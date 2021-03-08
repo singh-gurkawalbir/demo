@@ -17,12 +17,10 @@ export default function AuditPanel({ flowId }) {
   const classes = useStyles();
 
   return (
-    <div>
-      <AuditLog
-        resourceType="flows"
-        resourceId={flowId}
-        className={classes.auditLog}
+    <AuditLog
+      resourceType="flows"
+      resourceId={flowId}
+      className={classes.auditLog}
       />
-    </div>
   );
 }

@@ -135,7 +135,7 @@ export default function ConfigConnectionDebugger() {
   return (
     <RightDrawer
       height="tall"
-      width="small"
+      width="medium"
       path="configDebugger/:connectionId">
       <DrawerHeader
         title="Debug connection"
