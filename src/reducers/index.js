@@ -4015,20 +4015,6 @@ selectors.applicationType = (state, resourceType, id) => {
   return assistant || adaptorType;
 };
 
-selectors.tradingPartnerConnections = (
-  state,
-  connectionId,
-) => {
-  const connections = selectors.resourceList(state, { type: 'connections' }).resources;
-  const currConnection = selectors.resource(state, 'connections', connectionId);
-
-  return connections?.filter(c => (c.type === 'ftp' &&
-      c.ftp.hostURI === currConnection.ftp.hostURI &&
-      c.ftp.port === currConnection.ftp.port &&
-      c.sandbox === currConnection.sandbox
-  ));
-};
-
 selectors.mappingGenerates = createSelector([
   (state, importId) => selectors.resource(state, 'imports', importId)?.adaptorType,
   (state, importId, subRecordMappingId) => {

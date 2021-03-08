@@ -166,6 +166,11 @@ const connection = {
       iClients,
       connectionId,
     }),
+  receivedTradingPartnerConnections: (connectionId, connections) =>
+    action(actionTypes.CONNECTION.TRADING_PARTNER_CONNECTIONS_RECEIVED, {
+      connectionId,
+      connections,
+    }),
   madeOnline: connectionId =>
     action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
   requestQueuedJobs: connectionId =>
@@ -391,6 +396,8 @@ const resource = {
     clearToken: resourceId => action(actionTypes.TOKEN.CLEAR, { resourceId }),
     requestIClients: connectionId =>
       action(actionTypes.ICLIENTS, { connectionId }),
+    requestTradingPartnerConnections: connectionId =>
+      action(actionTypes.CONNECTION.TRADING_PARTNER_CONNECTIONS_REQUEST, { connectionId }),
 
     netsuite: {
       requestUserRoles: (connectionId, values) =>
