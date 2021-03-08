@@ -231,7 +231,7 @@ export default {
   'bigcommerce.connection.http.unencrypted.clientId':
     'This Client ID works together with the Access Token to grant authorization.',
   'connection.storeHash':
-    'The base api path will look something like this: https://api.bigcommerce.com/stores/123456/. In the base path, the store hash is the 123456.',
+    'The BigCommerce store hash is a unique identifier for your store comprised of a short sequence of lower-case letters and numbers. It can be found in the URLs assigned to your store by BigCommerce. The base API path will look something like this: https://api.bigcommerce.com/stores/123456/, where the store hash is 123456.',
   'certify.connection.http.encrypted.apiKey':
     'The API Key of your Certify account.',
   'certify.connection.http.encrypted.apiSecret':
