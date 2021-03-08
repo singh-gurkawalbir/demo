@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { cloneElement } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { useTabContext } from '../CeligoTabWrapper';
@@ -16,11 +16,15 @@ export default function CeligoTabPanel(props) {
   const { children, panelId, ...other } = props;
   const classes = useStyles();
   const tabsContext = useTabContext();
-  const activeTab = tabsContext?.activeTab;
+  const {activeTab, height} = tabsContext;
 
   return (
     <div hidden={activeTab !== panelId} {...other} >
-      {activeTab === panelId && (<div className={classes.tabPanel}> {children} </div>) }
+      {activeTab === panelId && (
+      <div className={classes.tabPanel}>
+        {cloneElement(children, { height })}
+      </div>
+      ) }
     </div>
   );
 }

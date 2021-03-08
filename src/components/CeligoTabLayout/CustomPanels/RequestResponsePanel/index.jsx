@@ -18,13 +18,13 @@ const useStyles = makeStyles(theme => ({
     borderBottom: `1px solid ${theme.palette.background.paper2}`,
   },
   codeEditorWrapper: {
-    height: '345px',
+    height: props => props.height || 345,
     paddingTop: theme.spacing(1),
   },
 }));
 
-export default function RequestResponsePanel({ value = {}, hideClipboard = false }) {
-  const classes = useStyles();
+export default function RequestResponsePanel({ value = {}, hideClipboard = false, height }) {
+  const classes = useStyles({ height });
   const [tabValue, setTabValue] = useState('body');
 
   const handleTabChange = useCallback((event, newValue) => {

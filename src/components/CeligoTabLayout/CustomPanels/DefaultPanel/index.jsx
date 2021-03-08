@@ -16,13 +16,13 @@ const useStyles = makeStyles(theme => ({
     },
   },
   codeEditorWrapper: {
-    height: 345,
+    height: props => props.height || 345,
     paddingTop: theme.spacing(1),
   },
 }));
 
-export default function DefaultPanel({ value, hideClipboard = false }) {
-  const classes = useStyles();
+export default function DefaultPanel({ value, hideClipboard = false, height }) {
+  const classes = useStyles({ height });
 
   return (
     <>
