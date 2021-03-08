@@ -699,7 +699,7 @@ export default function CategoryMappingDrawerRoute(props) {
 
   return (
     <Route path={`${match.url}/:flowId/utilitymapping/:categoryId`}>
-      <LoadResources required resources="flows,exports,imports,connections">
+      <LoadResources required resources="exports,imports,connections">
         <CategoryMappingDrawer {...props} parentUrl={match.url} />
       </LoadResources>
     </Route>
