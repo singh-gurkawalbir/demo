@@ -65,24 +65,14 @@ export default function TabRedirection({children}) {
   useEffect(() => {
     if (redirectTo) {
       const path = generatePath(match.path, {
-        integrationId,
-        integrationAppName,
-        storeId,
+        ...match.params,
         tab: redirectTo,
       });
 
       dispatch(actions.integrationApp.settings.clearRedirect(integrationId));
       history.push(path);
     }
-  }, [
-    dispatch,
-    history,
-    integrationAppName,
-    integrationId,
-    match.path,
-    redirectTo,
-    storeId,
-  ]);
+  }, [dispatch, history, integrationAppName, integrationId, match.path, redirectTo, storeId, match.params]);
 
   const supportsMultiStore = integration?.settings?.supportsMultiStore;
 

@@ -9,7 +9,7 @@ export default {
     '/http/ping/method': 'GET',
     '/http/baseURI': `https://${
       formValues['/http/freshworksSubdomain']
-    }.${formValues['/domain'] === 'myfreshworks' ? 'myfreshworks' : 'freshworks'}.com/crm/sales`,
+    }.myfreshworks.com/crm/sales`,
     '/http/headers': [
       {
         name: 'Authorization',
@@ -20,36 +20,12 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    domain: {
-      id: 'domain',
-      type: 'select',
-      label: 'Domain',
-      required: true,
-      helpKey: 'freshworks.connection.domain',
-      options: [
-        {
-          items: [
-            { label: 'myfreshworks', value: 'myfreshworks' },
-            { label: 'freshworks', value: 'freshworks' },
-          ],
-        },
-      ],
-      defaultValue: r => {
-        const baseUri = r?.http?.baseURI;
-
-        if (baseUri) {
-          if (baseUri.indexOf('myfreshworks') === -1) {
-            return 'freshworks';
-          }
-
-          return 'myfreshworks';
-        }
-      },
-    },
     'http.freshworksSubdomain': {
       type: 'text',
       id: 'http.freshworksSubdomain',
       label: 'Subdomain',
+      startAdornment: 'https://',
+      endAdornment: '.myfreshworks.com/crm/sales',
       required: true,
       validWhen: {
         matchesRegEx: {
@@ -59,18 +35,14 @@ export default {
       },
       defaultValue: r => {
         const baseUri = r?.http?.baseURI;
-
-        if (baseUri) {
-          if (!baseUri.includes('.freshworks.com')) {
-            return baseUri.substring(
-              baseUri.indexOf('https://') + 8,
-              baseUri.indexOf('.myfreshworks.com'));
-          }
-
-          return baseUri.substring(
+        const subdomain =
+          baseUri &&
+          baseUri.substring(
             baseUri.indexOf('https://') + 8,
-            baseUri.indexOf('.freshworks.com'));
-        }
+            baseUri.indexOf('.myfreshworks.com')
+          );
+
+        return subdomain;
       },
       helpKey: 'freshworks.connection.http.freshworksSubdomain',
     },
@@ -95,7 +67,6 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: ['http.freshworksSubdomain',
-          'domain',
           'http.encrypted.apiKey'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
