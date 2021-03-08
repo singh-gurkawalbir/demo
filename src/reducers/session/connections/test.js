@@ -97,7 +97,7 @@ describe('Connections API', () => {
         expect(state).toEqual({
           tradingPartnerConnections: {
             conn3: {
-              status: 'loading',
+              status: COMM_STATES.LOADING,
             },
           },
         });
@@ -129,16 +129,16 @@ describe('Connections API', () => {
                 'c1',
                 'c2',
               ],
-              status: 'success',
+              status: COMM_STATES.SUCCESS,
             },
             conn2: {
               connections: [
                 'c3',
               ],
-              status: 'success',
+              status: COMM_STATES.SUCCESS,
             },
             conn3: {
-              status: 'loading',
+              status: COMM_STATES.LOADING,
             },
           },
         });
