@@ -6,13 +6,6 @@ import ClipBoardPanel from '../ClipboardPanel';
 import CodeEditor from '../../../CodeEditor2';
 
 const useStyles = makeStyles(theme => ({
-  panelWrapper: {
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    background: theme.palette.background.paper,
-    padding: theme.spacing(1),
-    marginTop: -18,
-  },
   panelContainer: {
     minHeight: theme.spacing(20),
     marginTop: theme.spacing(2),
@@ -30,7 +23,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function RequestResponsePanel({ value = {} }) {
+export default function RequestResponsePanel({ value = {}, hideClipboard = false }) {
   const classes = useStyles();
   const [tabValue, setTabValue] = useState('body');
 
@@ -39,7 +32,7 @@ export default function RequestResponsePanel({ value = {} }) {
   }, []);
 
   return (
-    <div className={classes.panelWrapper}>
+    <>
       <div className={classes.panelContainer}>
         <Tabs
           value={tabValue}
@@ -82,7 +75,7 @@ export default function RequestResponsePanel({ value = {} }) {
         }
 
       </div>
-      <ClipBoardPanel content={value[tabValue]} />
-    </div>
+      { !hideClipboard && <ClipBoardPanel content={value[tabValue]} /> }
+    </>
   );
 }

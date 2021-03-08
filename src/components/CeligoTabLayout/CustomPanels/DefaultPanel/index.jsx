@@ -4,13 +4,6 @@ import ClipBoardPanel from '../ClipboardPanel';
 import CodeEditor from '../../../CodeEditor';
 
 const useStyles = makeStyles(theme => ({
-  defaultPanelWrapper: {
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    background: theme.palette.background.paper,
-    padding: theme.spacing(1),
-    marginTop: -18,
-  },
   defaultPanelContainer: {
     marginTop: theme.spacing(2),
     minHeight: theme.spacing(20),
@@ -28,12 +21,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DefaultPanel({ value }) {
+export default function DefaultPanel({ value, hideClipboard = false }) {
   const classes = useStyles();
 
   return (
-    <div
-      className={classes.defaultPanelWrapper}>
+    <>
       <div
         className={classes.defaultPanelContainer}>
         <div className={classes.codeEditorWrapper}>
@@ -45,7 +37,7 @@ export default function DefaultPanel({ value }) {
             />
         </div>
       </div>
-      <ClipBoardPanel content={value} />
-    </div>
+      { !hideClipboard && <ClipBoardPanel content={value} /> }
+    </>
   );
 }

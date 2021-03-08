@@ -151,10 +151,6 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
   shallowEqual
   );
 
-  const handlePanelViewChange = useCallback(panelType => {
-    setPanelType(panelType);
-  }, []);
-
   return (
     <div
       className={classes.previewPanelWrapper}>
@@ -181,7 +177,7 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
           panelType={panelType}
           defaultPanel={defaultPanel}
           availablePreviewStages={availablePreviewStages}
-          handlePanelViewChange={handlePanelViewChange}
+          handlePanelViewChange={setPanelType}
           resourceId={resourceId}
           resourceType={resourceType}
       />
