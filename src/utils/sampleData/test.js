@@ -895,25 +895,25 @@ describe('wrapSampleDataWithContext util', () => {
     };
     const stage = 'flowInput';
 
-    expect(wrapSampleDataWithContext({sampleData, stage})).toEqual({status: 'requested'});
-    expect(wrapSampleDataWithContext({sampleData: {}, stage})).toEqual({status: undefined});
+    expect(wrapSampleDataWithContext({sampleData, stage, resource: {}})).toEqual({status: 'requested'});
+    expect(wrapSampleDataWithContext({sampleData: {}, stage, resource: {}})).toEqual({status: undefined});
   });
   test('should return same sample data if resource is not attached to any flow', () => {
     const flow = {};
     const stage = 'flowInput';
 
-    expect(wrapSampleDataWithContext({sampleData, flow, stage})).toEqual(sampleData);
+    expect(wrapSampleDataWithContext({sampleData, flow, stage, resource: {}})).toEqual(sampleData);
   });
   test('should return same sample data if field is dataURITemplate/idLockTemplate and template version is 1', () => {
     const stage = 'flowInput';
 
-    expect(wrapSampleDataWithContext({sampleData, flow: {}, fieldType: 'dataURITemplate', stage})).toEqual(sampleData);
-    expect(wrapSampleDataWithContext({sampleData, flow: {}, fieldType: 'idLockTemplate', stage})).toEqual(sampleData);
+    expect(wrapSampleDataWithContext({sampleData, flow: {}, fieldType: 'dataURITemplate', stage, resource: {}})).toEqual(sampleData);
+    expect(wrapSampleDataWithContext({sampleData, flow: {}, fieldType: 'idLockTemplate', stage, resource: {}})).toEqual(sampleData);
   });
   test('should return same sample data if stage is not supported', () => {
     const stage = 'importMappingExtract';
 
-    expect(wrapSampleDataWithContext({sampleData, flow: {}, stage})).toEqual(sampleData);
+    expect(wrapSampleDataWithContext({sampleData, flow: {}, stage, resource: {}})).toEqual(sampleData);
   });
   test('should return correctly wrapped sample data for native REST adaptor if stage = flowInput', () => {
     const stage = 'flowInput';

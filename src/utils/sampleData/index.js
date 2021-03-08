@@ -500,11 +500,7 @@ export const wrapSampleDataWithContext = ({
 
   let resourceType = 'export';
 
-  if (
-    resource &&
-      resource.adaptorType &&
-      resource.adaptorType.includes('Import')
-  ) {
+  if (resource.adaptorType?.includes('Import')) {
     resourceType = 'import';
   }
 
