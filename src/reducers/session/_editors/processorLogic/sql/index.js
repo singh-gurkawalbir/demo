@@ -94,7 +94,7 @@ export default {
   },
   requestBody: editor => ({
     rules: { strict: !!editor.strict, template: editor.rule },
-    data: editor.data ? JSON.parse(editor.data) : {},
+    data: safeParse(editor.data) || {},
   }),
   validate: editor => {
     const getDataError = () => {
