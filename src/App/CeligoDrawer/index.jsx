@@ -125,10 +125,13 @@ const useStyles = makeStyles(theme => ({
     },
   },
   itemIconRoot: {
-    minWidth: 45,
+    minWidth: 'unset',
     marginRight: theme.spacing(1),
     color: theme.palette.background.paper,
-
+  },
+  itemIconRootCollapsed: {
+    minWidth: 45,
+    marginRight: theme.spacing(1),
   },
   menuList: {
     overflowY: 'auto',
@@ -332,7 +335,9 @@ export default function CeligoDrawer() {
                   {...getHrefProps(href, path)}
                   data-test={dataTest || label}
                   onClick={children ? handleExpandClick(label) : null}>
-                  <ListItemIcon classes={{ root: classes.itemIconRoot }}>
+                  <ListItemIcon
+                    className={clsx(classes.itemIconRoot, {[classes.itemIconRootCollapsed]: !drawerOpened})}>
+
                     <>
                       {drawerOpened ? <Icon />
                         : (
@@ -389,7 +394,7 @@ export default function CeligoDrawer() {
                             {...getHrefProps(href, path)}
                             button>
                             <ListItemIcon
-                              classes={{ root: classes.itemIconRoot }}>
+                              className={clsx(classes.itemIconRoot, {[classes.itemIconRootCollapsed]: !drawerOpened})}>
                               {drawerOpened
                                 ? <Icon />
                                 : (
