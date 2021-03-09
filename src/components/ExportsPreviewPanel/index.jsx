@@ -123,21 +123,9 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
     selectors.getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId),
   shallowEqual
   );
-  // Default panel is the panel shown by default when export panel is launched
-  // We can configure it in the metadata with 'default' as true
-  // Else the last stage being the Parse stage till now is taken as the default stage
-  const defaultPanel = useMemo(() => {
-    if (!availablePreviewStages.length) return;
-    const defaultStage = availablePreviewStages.find(stage => stage.default === true);
-    const lastStage = availablePreviewStages[availablePreviewStages.length - 1];
-
-    return defaultStage ? defaultStage.value : lastStage.value;
-  }, [availablePreviewStages]);
   // TODO @Raghu: Refactor preview state as it is currently using sample data state
   // this local state controls view to show sample data only when user requests by clicking preview
   const [showPreviewData, setShowPreviewData] = useState(false);
-  // set the panel type with the default panel
-  const [panelType, setPanelType] = useState(defaultPanel);
   // get the map of all the stages with their respective sampleData for the stages
   const previewStages = useMemo(() => availablePreviewStages.map(({value}) => value), [availablePreviewStages]);
 
@@ -150,10 +138,6 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
     selectors.getResourceSampleDataWithStatus(state, resourceId, 'raw'),
   shallowEqual
   );
-
-  const handlePanelViewChange = useCallback(panelType => {
-    setPanelType(panelType);
-  }, []);
 
   return (
     <div
@@ -175,18 +159,14 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
       />
         {
         showPreviewData && (
-        <Panels.PreviewBody
-          resourceSampleData={resourceSampleData}
-          previewStageDataList={previewStageDataList}
-          panelType={panelType}
-          defaultPanel={defaultPanel}
-          availablePreviewStages={availablePreviewStages}
-          handlePanelViewChange={handlePanelViewChange}
-          resourceId={resourceId}
-          resourceType={resourceType}
-      />
+          <Panels.PreviewBody
+            resourceSampleData={resourceSampleData}
+            previewStageDataList={previewStageDataList}
+            availablePreviewStages={availablePreviewStages}
+            resourceId={resourceId}
+            resourceType={resourceType} />
         )
-}
+      }
       </div>
     </div>
   );
