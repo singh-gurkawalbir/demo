@@ -129,7 +129,7 @@ describe('sql processor logic', () => {
     });
   });
   describe('requestBody util', () => {
-    test('should return correct body if defaultData also exists', () => {
+    test('should return correct body and not merge default data', () => {
       const editor = {
         fieldId: 'rdbms.query',
         resourceType: 'imports',
@@ -138,6 +138,9 @@ describe('sql processor logic', () => {
         defaultData: JSON.stringify({data: {
           id: {
             default: '',
+          },
+          name: {
+            default: 'default name',
           },
         }}, null, 2),
         rule: 'some rule',
