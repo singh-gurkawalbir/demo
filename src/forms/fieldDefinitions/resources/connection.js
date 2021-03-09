@@ -1329,7 +1329,7 @@ export default {
   },
   'pgp.passphrase': {
     type: 'text',
-    label: 'Private key',
+    label: 'Private key passphrase',
     defaultValue: '',
     requiredWhen: [
       {
