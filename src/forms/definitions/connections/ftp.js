@@ -1,10 +1,12 @@
+import { updatePGPFormValues } from '../../metaDataUtils/fileUtil';
+
 export default {
   // TODO: options handler forces a values when text field is empty
   // it should only do that when the user selects another protocol type
   // as well
   // The optionsHandler handler runs for every field
   preSave: formValues => {
-    const newValues = formValues;
+    const newValues = updatePGPFormValues(formValues);
 
     if (newValues['/ftp/entryParser'] === '') {
       delete newValues['/ftp/entryParser'];
@@ -16,18 +18,6 @@ export default {
       newValues['/ftp/pgpKeyAlgorithm'] = undefined;
     } else if (!newValues['/ftp/useCustomPGPEncryptionAlgorithm']) {
       newValues['/ftp/pgpKeyAlgorithm'] = undefined;
-    }
-    if (!newValues['/usePgp']) {
-      delete newValues['/pgp/publicKey'];
-      delete newValues['/pgp/privateKey'];
-      delete newValues['/pgp/passphrase'];
-      delete newValues['/pgp/compressionAlgorithm'];
-      delete newValues['/pgp/asciiArmored'];
-      newValues['/pgp'] = undefined;
-    } else if (newValues['/pgp/asciiArmored'] === 'false') {
-      newValues['/pgp/asciiArmored'] = false;
-    } else {
-      newValues['/pgp/asciiArmored'] = true;
     }
 
     return newValues;

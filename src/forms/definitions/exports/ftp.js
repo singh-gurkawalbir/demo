@@ -1,4 +1,4 @@
-import { EXPORT_FILE_FIELD_MAP } from '../../../utils/fileUtil';
+import { EXPORT_FILE_FIELD_MAP } from '../../metaDataUtils/fileUtil';
 
 import { alterFileDefinitionRulesVisibility } from '../../formFactory/utils';
 

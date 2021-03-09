@@ -148,10 +148,12 @@ export default {
     type: 'select',
     label: 'Decrypt a file',
     resourceType: 'exports',
+    defaultValue: 'pgp',
     connectionId: r => r && r._connectionId,
     options: [{ items: [{ label: 'pgp', value: 'pgp' }] }],
     omitWhenHidden: true,
     visibleWhen: [{ field: 'pgpdecrypt', is: [true] }],
+    requiredWhen: [{ field: 'pgpdecrypt', is: [true] }],
   },
   'file.purgeInternalBackup': {
     type: 'checkbox',

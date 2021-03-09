@@ -189,9 +189,11 @@ export default {
     type: 'select',
     label: 'Encryption algorithm',
     connectionId: r => r && r._connectionId,
+    defaultValue: 'pgp',
     options: [{ items: [{ label: 'pgp', value: 'pgp' }] }],
     omitWhenHidden: true,
     visibleWhen: [{ field: 'pgpencrypt', is: [true] }],
+    requiredWhen: [{ field: 'pgpencrypt', is: [true] }],
   },
   'file.pgp.symmetricKeyAlgorithm': {
     type: 'select',

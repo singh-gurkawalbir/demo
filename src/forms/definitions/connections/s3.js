@@ -1,19 +1,8 @@
+import { updatePGPFormValues } from '../../metaDataUtils/fileUtil';
+
 export default {
   preSave: formValues => {
-    const newValues = formValues;
-
-    if (!newValues['/usePgp']) {
-      delete newValues['/pgp/publicKey'];
-      delete newValues['/pgp/privateKey'];
-      delete newValues['/pgp/passphrase'];
-      delete newValues['/pgp/compressionAlgorithm'];
-      delete newValues['/pgp/asciiArmored'];
-      newValues['/pgp'] = undefined;
-    } else if (newValues['/pgp/asciiArmored'] === 'false') {
-      newValues['/pgp/asciiArmored'] = false;
-    } else {
-      newValues['/pgp/asciiArmored'] = true;
-    }
+    const newValues = updatePGPFormValues(formValues);
 
     return newValues;
   },

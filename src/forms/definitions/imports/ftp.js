@@ -1,4 +1,4 @@
-import { IMPORT_FILE_FIELD_MAP } from '../../../utils/fileUtil';
+import { IMPORT_FILE_FIELD_MAP } from '../../metaDataUtils/fileUtil';
 
 export default {
   preSave: formValues => {
