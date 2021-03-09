@@ -73,7 +73,7 @@ describe('flowMetrics saga', () => {
           [call(requestMetric, args), data],
         ])
         .call(requestMetric, args)
-        .put(actions.flowMetrics.received(resourceType, resourceId, data))
+        .put(actions.flowMetrics.received(resourceId, data))
         .run();
     });
     test('should dispatch received action with corresponding data, if resource is not an integration and api call is successful', () => {
@@ -93,7 +93,7 @@ describe('flowMetrics saga', () => {
           [call(requestMetric, args), data],
         ])
         .call(requestMetric, args)
-        .put(actions.flowMetrics.received(resourceType, resourceId, data))
+        .put(actions.flowMetrics.received(resourceId, data))
         .run();
     });
     test('should dispatch received action with empty data, if resource is an integration without flowIds and api call is successful', () => {
@@ -110,7 +110,7 @@ describe('flowMetrics saga', () => {
           [select(selectors.integrationEnabledFlowIds, resourceId), flowIds],
         ])
         .not.call.fn(requestMetric)
-        .put(actions.flowMetrics.received(resourceType, resourceId, []))
+        .put(actions.flowMetrics.received(resourceId, []))
         .run();
     });
     test('should dispatch failed action, if the api call failed', () => {
@@ -134,7 +134,7 @@ describe('flowMetrics saga', () => {
           [call(requestMetric, args), throwError(e)],
         ])
         .call(requestMetric, args)
-        .put(actions.flowMetrics.failed(e))
+        .put(actions.flowMetrics.failed(resourceId))
         .run();
     });
   });

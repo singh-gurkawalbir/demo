@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import clsx from 'clsx';
 import actions, { auditResourceTypePath } from '../../actions';
 import { selectors } from '../../reducers';
 import commKeyGenerator from '../../utils/commKeyGenerator';
@@ -8,15 +9,21 @@ import LoadResources from '../LoadResources';
 import Spinner from '../Spinner';
 import AuditLogTable from './AuditLogTable';
 import Filters from './Filters';
+import { isNewId } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '98%',
+    width: '100%',
     wordBreak: 'break-word',
+    height: '100%',
   },
   title: {
     marginBottom: theme.spacing(2),
     float: 'left',
+  },
+  tableContainer: {
+    height: 'calc(100% - 69px)',
+    overflowY: 'auto',
   },
 }));
 
@@ -41,7 +48,7 @@ export default function AuditLog({
   const [filters, handleFiltersChange] = useState({});
 
   useEffect(() => {
-    requestAuditLogs(resourceType, resourceId);
+    if (!isNewId(resourceId)) { requestAuditLogs(resourceType, resourceId); }
 
     return clearAuditLogs;
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -58,8 +65,8 @@ export default function AuditLog({
       resources="integrations, flows, exports, imports, connections">
       <>
         {isLoadingAuditLog
-          ? <Spinner /> : (
-            <div className={(classes.root, className)}>
+          ? <Spinner loading /> : (
+            <div className={clsx(classes.root, className)}>
               <Filters
                 affectedResources={affectedResources}
                 resourceDetails={resourceDetails}
@@ -74,6 +81,7 @@ export default function AuditLog({
                 filters={filters}
                 childId={childId}
                 onClick={onClick}
+                className={classes.tableContainer}
             />
             </div>
           )}

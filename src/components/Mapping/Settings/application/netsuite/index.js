@@ -1,11 +1,11 @@
 import dateTimezones from '../../../../../utils/dateTimezones';
 import dateFormats from '../../../../../utils/dateFormats';
-import mappingUtil from '../../../../../utils/mapping';
+import mappingUtil, { wrapTextForSpecialChars } from '../../../../../utils/mapping';
 import {
   isProduction,
   conditionalLookupOptionsforNetsuite,
   conditionalLookupOptionsforNetsuiteProduction,
-} from '../../../../../forms/utils';
+} from '../../../../../forms/formFactory/utils';
 
 const emptyObject = {};
 const getNetsuiteSelectFieldValueUrl = ({
@@ -85,6 +85,16 @@ export default {
       generateFieldType = 'checkbox';
     }
 
+    const extractfieldsOpts = [];
+
+    if (extractFields) {
+      if (isGroupedSampleData && generate.indexOf('[*].') !== -1) {
+        extractFields.forEach(({name, id}) => {
+          extractfieldsOpts.push({name: `*.${name}`, id: `*.${id}`});
+        });
+      }
+      extractfieldsOpts.push(...extractFields);
+    }
     const fieldMeta = {
       fieldMap: {
         dataType: {
@@ -129,6 +139,9 @@ export default {
           defaultValue: value.useFirstRow || false,
           // helpText not present
           label: 'Use first row',
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['standard'] },
+          ],
         },
         useAsAnInitializeValue: {
           id: 'useAsAnInitializeValue',
@@ -178,7 +191,7 @@ export default {
           label: 'Options',
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
-          requiredWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
+          requiredWhen: isCategoryMapping ? [] : [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
           helpKey: 'mapping.lookup.mode',
           options: [
@@ -220,7 +233,7 @@ export default {
             { field: 'lookup.recordType', isNot: [''] },
           ],
           value: lookup.expression,
-          data: extractFields,
+          data: extractfieldsOpts,
         },
         'lookup.expressionText': {
           id: 'lookup.expressionText',
@@ -311,11 +324,10 @@ export default {
           options: [
             {
               items:
-                (extractFields &&
-                  extractFields.map(field => ({
-                    label: field.name,
-                    value: field.id,
-                  }))) ||
+                (extractfieldsOpts?.map(field => ({
+                  label: field.name,
+                  value: field.id,
+                }))) ||
                 [],
             },
           ],
@@ -459,7 +471,7 @@ export default {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
           label: 'Lookup name',
-          extractFields,
+          extractFields: extractfieldsOpts,
           type: 'selectconditionallookup',
           flowId,
           importId: resourceId,
@@ -520,12 +532,10 @@ export default {
           if (expressionField.value) expressionValue = expressionField.value;
 
           if (extractField.value) {
-            const extractValue = extractField.value;
+            const isGroupedField = extractField.value.indexOf('*.') === 0;
+            const extractFieldValue = isGroupedField ? extractField.value.substring(2) : extractField.value;
 
-            expressionValue +=
-              extractValue.indexOf(' ') > -1
-                ? `{{[${extractValue}]}}`
-                : `{{${extractValue}}}`;
+            expressionValue += `{{${isGroupedField ? '*.' : ''}${wrapTextForSpecialChars(extractFieldValue)}}}`;
             extractField.value = '';
           } else if (functionsField.value) {
             expressionValue += functionsField.value;

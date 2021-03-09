@@ -1,9 +1,9 @@
+/* eslint-disable no-plusplus */
 import clsx from 'clsx';
 import { makeStyles, Drawer, IconButton, Tab, Tabs, useTheme } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
-import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
 import AuditLogIcon from '../../../../components/icons/AuditLogIcon';
@@ -11,18 +11,22 @@ import CloseIcon from '../../../../components/icons/CloseIcon';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import DebugIcon from '../../../../components/icons/DebugIcon';
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
+import RunHistoryIcon from '../../../../components/icons/ViewResolvedHistoryIcon';
 import WarningIcon from '../../../../components/icons/WarningIcon';
 import { selectors } from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/Dashboard/RunDashboardPanel';
 import RunDashboardV2 from '../../../../components/JobDashboard/RunDashboardV2';
+import RunHistory from '../../../../components/JobDashboard/RunHistory';
 import AuditPanel from './panels/Audit';
-import RefreshIcon from '../../../../components/icons/RefreshIcon';
-import IconTextButton from '../../../../components/IconTextButton';
+import ScriptPanel from './panels/Script';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RunDashboardActions from './panels/Dashboard/RunDashboardActions';
 import useBottomDrawer from './useBottomDrawer';
 import Spinner from '../../../../components/Spinner';
+import ScriptLogs from '../../../ScriptLogs';
+import ScriptsIcon from '../../../../components/icons/ScriptsIcon';
+import ConnectionLogs from '../../../ConnectionLogs';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -70,6 +74,11 @@ const useStyles = makeStyles(theme => ({
   closeBtn: {
     padding: 0,
     marginLeft: theme.spacing(1),
+    '& > * svg': {
+      width: theme.spacing(2),
+      height: theme.spacing(2),
+      marginTop: -3,
+    },
   },
   connectionWarning: {
     color: theme.palette.error.main,
@@ -95,6 +104,16 @@ const preventEvent = e => {
 };
 export const DRAGGABLE_SECTION_DIV_ID = 'draggableSectionDivId';
 
+const TabTitleWithResourceName = ({resourceId, resourceType, postfix}) => {
+  const resourceName = useSelector(state => {
+    const resource = selectors.resource(state, resourceType, resourceId);
+
+    return resource?.name || '';
+  });
+
+  return <span>{resourceName} {postfix}</span>;
+};
+
 function TabPanel({ children, value, index, className }) {
   const hidden = value !== index;
 
@@ -109,12 +128,6 @@ function TabPanel({ children, value, index, className }) {
     </div>
   );
 }
-
-const connectionsFilterConfig = {
-  type: 'connections',
-};
-const overrides = { useWorker: false };
-
 export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -132,19 +145,12 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
-  const connections = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    connectionsFilterConfig
-  ).resources;
-  const connectionIdNameMap = useMemo(() => {
-    const resourceIdNameMap = {};
+  const flowConnectionsWithLogEntry = useSelectorMemo(selectors.flowConnectionsWithLogEntry, flowId);
 
-    connections.forEach(r => { resourceIdNameMap[r._id] = r.name || r._id; });
+  const flowScripts = useSelector(state => selectors.scripts(state, flowId), shallowEqual);
+  const flowScriptsWithLogEntry = useSelector(state => selectors.flowExecutionLogScripts(state, flowId), shallowEqual);
 
-    return resourceIdNameMap;
-  }, [connections]);
-  const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
+  // const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
   const minDrawerHeight = 41;
   const maxHeight = window.innerHeight - theme.appBarHeight - theme.pageBarHeight + 1; // border 1px
   const stepSize = parseInt((maxHeight - minDrawerHeight) / 4, 10);
@@ -197,31 +203,35 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
     },
     [setDrawerHeight, setTabValue, drawerHeight]
   );
+  const handleScriptLogsClose = useCallback(
+    scriptId => event => {
+      event.stopPropagation();
+      setTabValue(2);
+      dispatch(actions.logs.scripts.clear({scriptId, flowId}));
+    },
+    [dispatch, flowId, setTabValue]
+  );
+
   const handleDebugLogsClose = useCallback(
     connectionId => event => {
       event.stopPropagation();
-      setTabValue(0);
-      dispatch(actions.connection.clearDebugLogs(connectionId));
+      setTabValue(1);
+      dispatch(actions.logs.connections.clear({connectionId}));
     },
     [dispatch, setTabValue]
   );
-  const handleDebugLogsRefresh = useCallback(
-    connectionId => event => {
-      event.stopPropagation();
-      dispatch(actions.connection.requestDebugLogs(connectionId));
-    },
-    [dispatch]
-  );
 
-  useEffect(() => {
-    if (clearConnectionLogs) {
-      connectionDebugLogs &&
-        Object.keys(connectionDebugLogs).forEach(connectionId =>
-          dispatch(actions.connection.clearDebugLogs(connectionId))
-        );
-      setClearConnectionLogs(false);
-    }
-  }, [clearConnectionLogs, connectionDebugLogs, dispatch]);
+  useEffect(() =>
+    () => {
+      dispatch(actions.logs.scripts.clear({flowId}));
+    },
+  [dispatch, flowId]);
+
+  useEffect(() =>
+    () => {
+      dispatch(actions.logs.connections.clear({clearAllLogs: true}));
+    },
+  [dispatch]);
 
   useEffect(() => {
     if (isDragging === false) {
@@ -276,6 +286,9 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
     return 'Dashboard';
   }, [isUserInErrMgtTwoDotZero, classes.inProgress, isFlowRunInProgress]);
 
+  let tabIndex = 0;
+  let tabContentIndex = 0;
+
   return (
     <div>
       <Drawer
@@ -297,11 +310,17 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
             scrollButtons="auto"
             aria-label="scrollable auto tabs example">
             <Tab
-              {...tabProps(0)}
+              {...tabProps(tabIndex++)}
               icon={<DashboardIcon />}
               label={dashboardLabel} />
+            {isUserInErrMgtTwoDotZero && (
+              <Tab
+                {...tabProps(tabIndex++)}
+                icon={<RunHistoryIcon />}
+                label="Run history" />
+            )}
             <Tab
-              {...tabProps(1)}
+              {...tabProps(tabIndex++)}
               icon={
                 isAnyFlowConnectionOffline ? (
                   <WarningIcon className={classes.connectionWarning} />
@@ -311,23 +330,49 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
               }
               label="Connections"
             />
-            <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
-            {connectionDebugLogs &&
-              Object.keys(connectionDebugLogs).map(
-                (connectionId, cIndex) =>
-                  connectionDebugLogs[connectionId] && (
+            {flowScripts?.length &&
+            <Tab {...tabProps(tabIndex++)} icon={<ScriptsIcon />} label="Scripts" />}
+            <Tab {...tabProps(tabIndex++)} icon={<AuditLogIcon />} label="Audit log" />
+
+            {flowScriptsWithLogEntry.map(script => (
+              <Tab
+                className={classes.customTab}
+                // TODO pass correct tabProp Index
+                {...tabProps(tabIndex++)}
+                icon={<AuditLogIcon />}
+                key={script.scriptId}
+                component="div"
+                label={(
+                  <div className={classes.customTabContainer}>
+                    <TabTitleWithResourceName
+                      resourceId={script.scriptId}
+                      resourceType="scripts"
+                      postfix=" - Execution log"
+                    />
+                    <IconButton
+                      className={classes.closeBtn}
+                      onClick={handleScriptLogsClose(script.scriptId)}>
+                      <CloseIcon />
+                    </IconButton>
+                  </div>
+                      )}
+                    />
+            ))}
+            {flowConnectionsWithLogEntry?.map(
+                connection =>
+                  (
                     <Tab
                       className={classes.customTab}
-                      {...tabProps(cIndex + 3)}
+                      {...tabProps(tabIndex++)}
                       icon={<DebugIcon />}
-                      key={connectionId}
+                      key={connection._id}
                       component="div"
                       label={(
                         <div className={classes.customTabContainer}>
-                          {connectionIdNameMap[connectionId]} - DEBUG
+                          {connection.name} - DEBUG
                           <IconButton
                             className={classes.closeBtn}
-                            onClick={handleDebugLogsClose(connectionId)}>
+                            onClick={handleDebugLogsClose(connection._id)}>
                             <CloseIcon />
                           </IconButton>
                         </div>
@@ -335,6 +380,7 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
                     />
                   )
               )}
+
           </Tabs>
           {
          isUserInErrMgtTwoDotZero && tabValue === 0 &&
@@ -358,40 +404,48 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
           </div>
         </div>
         <>
-          <TabPanel value={tabValue} index={0} className={classes.tabPanel}>
+          <TabPanel value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
             { isUserInErrMgtTwoDotZero
               ? <RunDashboardV2 flowId={flowId} />
               : <RunDashboardPanel flowId={flowId} />}
           </TabPanel>
-          <TabPanel value={tabValue} index={1} className={classes.tabPanel}>
+          {
+            isUserInErrMgtTwoDotZero &&
+            (
+              <TabPanel value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
+                <RunHistory flowId={flowId} />
+              </TabPanel>
+            )
+          }
+          <TabPanel value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
             <ConnectionPanel flowId={flowId} />
           </TabPanel>
-          <TabPanel value={tabValue} index={2} className={classes.tabPanel}>
+          {!!flowScripts?.length && (
+            <TabPanel value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
+              <ScriptPanel flowId={flowId} />
+            </TabPanel>
+          )}
+
+          <TabPanel value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
             <AuditPanel flowId={flowId} />
           </TabPanel>
-          {connectionDebugLogs &&
-            Object.keys(connectionDebugLogs).map(
-              (connectionId, cIndex) =>
-                connectionDebugLogs[connectionId] && (
+          {flowScriptsWithLogEntry.map(script => (
+            <TabPanel key={script.scriptId} value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
+              <ScriptLogs flowId={flowId} scriptId={script.scriptId} />
+            </TabPanel>
+          ))}
+          {flowConnectionsWithLogEntry?.map(
+              connection =>
+                (
                   <TabPanel
                     value={tabValue}
-                    key={connectionId}
-                    index={cIndex + 3}
+                    key={connection._id}
+                    index={tabContentIndex++}
                     className={classes.tabPanel}>
                     <>
-                      <div className={classes.rightActionContainer}>
-                        <IconTextButton
-                          className={classes.refreshButton}
-                          onClick={handleDebugLogsRefresh(connectionId)}>
-                          <RefreshIcon /> Refresh
-                        </IconTextButton>
-                      </div>
-                      <CodePanel
-                        name="code"
-                        readOnly
-                        value={connectionDebugLogs[connectionId]}
-                        mode="javascript"
-                        overrides={overrides}
+                      <ConnectionLogs
+                        connectionId={connection._id}
+                        flowId={flowId}
                       />
                     </>
                   </TabPanel>

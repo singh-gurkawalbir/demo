@@ -20,6 +20,7 @@ export function upgradeStatus(license, integration = {}) {
   const highestEditionForConnector = integrationAppUtil.getHighestEditionForIntegrationApp(
     integration
   );
+
   const editionArray = [
     'starter',
     'standard',
@@ -73,7 +74,7 @@ export function upgradeButtonText(license, integration = {}, upgradeRequested) {
 }
 
 export function expiresInfo(license) {
-  const { expires } = license;
+  const { expires } = license || {};
   const hasExpired = moment(expires) - moment() < 0;
   let expiresText = '';
   const dtExpires = moment(expires);
@@ -105,4 +106,59 @@ export function expiresInfo(license) {
   }
 
   return expiresText;
+}
+
+export function platformLicenseActionDetails(license) {
+  let licenseActionDetails = {};
+
+  if (!license) {
+    return licenseActionDetails;
+  }
+  const expiresInDays = license && Math.ceil((moment(license.expires) - moment()) / 1000 / 60 / 60 / 24);
+
+  if (license.tier === 'none') {
+    if (!license.trialEndDate) {
+      licenseActionDetails = {
+        action: 'startTrial',
+        label: 'GO UNLIMITED FOR 30 DAYS',
+      };
+    }
+  } else if (license.tier === 'free') {
+    if (!license.trialEndDate) {
+      licenseActionDetails = {
+        action: 'startTrial',
+        label: 'GO UNLIMITED FOR 30 DAYS',
+      };
+    } else if (license.status === 'TRIAL_EXPIRED') {
+      licenseActionDetails = {
+        action: 'upgrade',
+        label: 'UPGRADE NOW',
+      };
+    } else if (license.status === 'IN_TRIAL') {
+      if (license.expiresInDays < 1) {
+        licenseActionDetails = {
+          action: 'upgrade',
+          label: 'UPGRADE NOW',
+        };
+      } else {
+        licenseActionDetails = {
+          action: 'upgrade',
+          label: `${license.expiresInDays} DAYS LEFT UPGRADE NOW`,
+        };
+        licenseActionDetails.expiresSoon = license.expiresInDays < 10;
+      }
+    }
+  } else if (license?.resumable) {
+    licenseActionDetails = {
+      action: 'resume',
+    };
+  } else if (expiresInDays <= 0) {
+    licenseActionDetails = {
+      action: 'expired',
+    };
+  }
+
+  licenseActionDetails.upgradeRequested = license.upgradeRequested;
+
+  return licenseActionDetails;
 }

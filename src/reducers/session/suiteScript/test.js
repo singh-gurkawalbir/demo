@@ -14,7 +14,7 @@ describe('suiteScript reducers test cases', () => {
       iaForm: {},
       installer: {},
       account: {},
-      mappings: {},
+      mapping: {},
       flowSampleData: {},
       importSampleData: {},
     });

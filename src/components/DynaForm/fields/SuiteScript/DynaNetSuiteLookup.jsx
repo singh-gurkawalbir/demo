@@ -8,7 +8,7 @@ import actions from '../../../../actions';
 import ActionButton from '../../../ActionButton';
 import FilterIcon from '../../../icons/FilterIcon';
 import FieldHelp from '../../FieldHelp';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 import usePushRightDrawer from '../../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
@@ -133,7 +133,7 @@ export default function DynaNetSuiteLookup(props) {
               value={value}
               variant="filled"
             />
-            <ErroredMessageComponent
+            <FieldMessage
               isValid={isValid}
               description=""
               errorMessages={errorMessages}

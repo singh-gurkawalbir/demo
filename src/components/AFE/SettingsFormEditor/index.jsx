@@ -7,9 +7,9 @@ import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermission
 import { hashCode } from '../../../utils/string';
 import { selectors } from '../../../reducers';
 import DynaForm from '../../DynaForm';
+import DynaSubmit from '../../DynaForm/DynaSubmit';
 import ConsoleGridItem from '../ConsoleGridItem';
 import ErrorGridItem from '../ErrorGridItem';
-import DynaSubmit from '../../DynaForm/DynaSubmit';
 import CodePanel from '../GenericEditor/CodePanel';
 import JavaScriptPanel from '../JavaScriptEditor/JavaScriptPanel';
 import PanelGrid from '../PanelGrid';
@@ -60,6 +60,9 @@ const useStyles = makeStyles(theme => ({
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(1),
   },
+  message: {
+    margin: theme.spacing(1),
+  },
 }));
 
 const overrides = { showGutter: false };
@@ -71,9 +74,6 @@ export default function SettingsFormEditor({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [formState, setFormState] = useState({
-    showFormValidationsBeforeTouch: false,
-  });
   const [settingsPreview, setSettingsPreview] = useState();
   const editor = useSelector(state => selectors.editor(state, editorId));
   const { data, result, error, lastChange, mode, status } = editor;
@@ -88,11 +88,6 @@ export default function SettingsFormEditor({
   );
   const handleFormPreviewChange = useCallback(values => {
     setSettingsPreview(values);
-  }, []);
-  const showCustomFormValidations = useCallback(() => {
-    setFormState({
-      showFormValidationsBeforeTouch: true,
-    });
   }, []);
 
   // any time the form metadata updates, we need to reset the settings since
@@ -109,7 +104,6 @@ export default function SettingsFormEditor({
     remount: key,
     resourceId,
     resourceType,
-    ...formState,
   });
 
   return (
@@ -145,20 +139,19 @@ export default function SettingsFormEditor({
           <div className={classes.formPreviewContainer}>
             <DynaForm
               formKey={formKey}
-              fieldMeta={result.data}
               className={classes.form}
             />
             <div className={classes.testForm}>
               <DynaSubmit
                 formKey={formKey}
                 onClick={handleFormPreviewChange}
-                showCustomFormValidations={showCustomFormValidations}>
+                >
                 Test form
               </DynaSubmit>
             </div>
           </div>
         ) : (
-          <Typography>
+          <Typography className={classes.message}>
             A preview of your settings form will appear once you add some valid
             form metadata or add an init hook.
           </Typography>
@@ -177,7 +170,7 @@ export default function SettingsFormEditor({
           />
         ) : (
           status !== 'error' && (
-            <Typography>
+            <Typography className={classes.message}>
               Click the ‘test form’ button above to preview form output.
             </Typography>
           )

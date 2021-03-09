@@ -1,7 +1,7 @@
 import deepClone from 'lodash/cloneDeep';
 import { uniqBy } from 'lodash';
 import isEqual from 'lodash/isEqual';
-import { adaptorTypeMap, isNetSuiteBatchExport } from '../resource';
+import { adaptorTypeMap, isNetSuiteBatchExport, isFileAdaptor} from '../resource';
 // eslint-disable-next-line import/no-self-import
 import mappingUtil from '.';
 import netsuiteMappingUtil from './application/netsuite';
@@ -12,16 +12,13 @@ import getJSONPaths, {
 import { isJsonString } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
+import { emptyObject } from '../constants';
 
 const isCsvOrXlsxResource = resource => {
-  const { adaptorType: resourceAdapterType, file } = resource;
+  const { file } = resource;
   const resourceFileType = file && file.type;
 
-  if (
-    (adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.FTPImport ||
-      adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.S3Import) &&
-    (resourceFileType === 'xlsx' || resourceFileType === 'csv')
-  ) return true;
+  if (isFileAdaptor(resource) && (resourceFileType === 'xlsx' || resourceFileType === 'csv')) { return true; }
 
   return false;
 };
@@ -492,7 +489,7 @@ export default {
     relationshipData,
     deleteChildlessParent
   ) => {
-    const { basicMappings = {}, variationMappings = {} } = sessionMappedData;
+    const { basicMappings = {}, variationMappings = {} } = sessionMappedData || {};
 
     setMappingData(
       flowId,
@@ -730,17 +727,12 @@ export default {
     }
   },
   addVariation: (draft, cKey, data) => {
-    const { categoryId, subCategoryId, isVariationAttributes } = data;
-    const { response = [] } = draft[cKey];
+    const { categoryId, subCategoryId, isVariationAttributes } = data || emptyObject;
+    const { response = [] } = draft[cKey] || emptyObject;
     const mappingData = response.find(sec => sec.operation === 'mappingData');
     let categoryMappings;
 
-    if (
-      mappingData.data &&
-      mappingData.data.mappingData &&
-      mappingData.data.mappingData.variationMappings &&
-      mappingData.data.mappingData.variationMappings.recordMappings
-    ) {
+    if (mappingData?.data?.mappingData?.variationMappings?.recordMappings) {
       const { recordMappings } = mappingData.data.mappingData.variationMappings;
 
       categoryMappings = recordMappings.find(
@@ -905,6 +897,7 @@ export default {
     importResource,
     isFieldMapping = false,
     isGroupedSampleData,
+    isPreviewSucess,
     netsuiteRecordType,
     options = {},
     exportResource,
@@ -945,6 +938,7 @@ export default {
     return mappingUtil.getMappingsForApp({
       mappings: mappingCopy,
       isGroupedSampleData,
+      isPreviewSucess,
       resource: importResource,
       netsuiteRecordType,
       exportResource,
@@ -955,6 +949,7 @@ export default {
     mappings = {},
     resource = {},
     isGroupedSampleData,
+    isPreviewSucess,
     netsuiteRecordType,
     exportResource,
     options = {},
@@ -988,6 +983,7 @@ export default {
           mappings: _mappings,
           recordType: netsuiteRecordType,
           isGroupedSampleData,
+          isPreviewSucess,
           exportResource,
           resource,
         });
@@ -1004,6 +1000,7 @@ export default {
         return mappingUtil.getFieldsAndListMappings({
           mappings: _mappings,
           isGroupedSampleData,
+          isPreviewSucess,
           useFirstRowSupported: true,
           exportResource,
           resource,
@@ -1047,6 +1044,7 @@ export default {
   getFieldsAndListMappings: ({
     mappings = {},
     isGroupedSampleData,
+    isPreviewSucess,
     useFirstRowSupported = false,
     resource = {},
     exportResource,
@@ -1074,6 +1072,11 @@ export default {
             if (tempFm.extract && tempFm.extract && tempFm.extract.indexOf('*.') !== 0) {
               tempFm.useFirstRow = true;
             }
+          }
+
+          // If no sample data found, and extract starts with *. example *.abc, then assume export is grouped data.
+          if (!isPreviewSucess && /^\*\./.test(tempFm?.extract)) {
+            tempFm.useIterativeRow = true;
           }
           // remove *. if present after setting useFirstRow
           if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) { tempFm.extract = tempFm.extract.substr('*.'.length); }
@@ -1124,8 +1127,7 @@ export default {
         }
 
         if (
-          useFirstRowSupported &&
-          isGroupedSampleData &&
+          ((useFirstRowSupported && isGroupedSampleData) || mapping.useIterativeRow) &&
           !mapping.useFirstRow &&
           mapping.extract &&
           mapping.extract.indexOf('[*].') === -1 &&
@@ -1135,7 +1137,7 @@ export default {
         }
 
         delete mapping.useFirstRow;
-      } else if (isCsvOrXlsxResource(importResource) && isGroupedSampleData && isNetSuiteBatchExport(exportResource)) {
+      } else if (isCsvOrXlsxResource(importResource) && (isGroupedSampleData || mapping.useIterativeRow) && isNetSuiteBatchExport(exportResource)) {
         if (
           !mapping.useFirstRow &&
           mapping.extract &&

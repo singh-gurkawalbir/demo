@@ -25,8 +25,22 @@ export function* requestEditorSampleData({
     resourceType
   );
 
+  const {formSaveStatus} = yield select(
+    selectors.resourceFormState,
+    resourceType,
+    resourceId
+  );
+
+  // we are ignoring editor sample data class when the form's save is in progress
+  // TODO: sort of a hack for IO-19380 after Ashu's afe refactor
+  // we can remove this check
+
+  if (formSaveStatus === 'loading') {
+    return;
+  }
   const formState = yield select(selectors.formState, formKey);
   const formValues = formState?.value || {};
+
   const resource = yield call(constructResourceFromFormValues, {
     formValues,
     resourceId,

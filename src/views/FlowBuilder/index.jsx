@@ -14,6 +14,7 @@ import ChartsDrawer from './drawers/LineGraph';
 import ReplaceConnectionDrawer from './drawers/ReplaceConnection';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
+import EditorDrawer from '../../components/AFE2/Drawer';
 import FlowBuilderBody from './FlowBuilderBody';
 import Redirection from './Redirection';
 
@@ -38,7 +39,7 @@ function FBComponent({flowId, integrationId, childId}) {
     </>
   );
 }
-function FlowBuilder() {
+export default function FlowBuilder() {
   const match = useRouteMatch();
 
   const { flowId, integrationId, childId } = match.params;
@@ -49,7 +50,7 @@ function FlowBuilder() {
   // #endregion
 
   return (
-    <LoadResources required resources="imports, exports, flows">
+    <LoadResources required resources="imports, exports, flows, scripts">
       <Redirection>
         <ResourceDrawer flowId={flowId} integrationId={integrationId} />
         <ConfigConnectionDebugger />
@@ -57,6 +58,7 @@ function FlowBuilder() {
         <ScheduleDrawer flowId={flowId} />
         <ChartsDrawer flowId={flowId} />
         <QueuedJobsDrawer />
+        <EditorDrawer />
         <ErrorDetailsDrawer flowId={flowId} />
         <SettingsDrawer
           integrationId={integrationId}
@@ -75,5 +77,3 @@ function FlowBuilder() {
     </LoadResources>
   );
 }
-
-export default FlowBuilder;

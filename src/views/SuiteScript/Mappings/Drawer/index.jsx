@@ -3,7 +3,6 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import RightDrawer from '../../../../components/drawer/Right';
 import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
-import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import { selectors } from '../../../../reducers';
 import MappingWrapper from './MappingWrapper';
 
@@ -17,7 +16,7 @@ export default function SuiteScriptMappingDrawer(props) {
   );
   const isMappingLoaded = useSelector(
     state => {
-      const {mappings} = selectors.suiteScriptMappings(state);
+      const {mappings} = selectors.suiteScriptMapping(state);
 
       return !!mappings;
     }
@@ -35,13 +34,11 @@ export default function SuiteScriptMappingDrawer(props) {
       variant="temporary"
       >
       <DrawerHeader title="Import Mapping" />
-      <DrawerContent>
-        <MappingWrapper
-          ssLinkedConnectionId={ssLinkedConnectionId}
-          integrationId={integrationId}
-          flowId={flowId}
-          onClose={handleClose} />
-      </DrawerContent>
+      <MappingWrapper
+        ssLinkedConnectionId={ssLinkedConnectionId}
+        integrationId={integrationId}
+        flowId={flowId}
+        onClose={handleClose} />
     </RightDrawer>
   );
 }

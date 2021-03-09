@@ -13,9 +13,10 @@ import { generateNewId } from '../../../../../utils/resource';
 import useFormContext from '../../../../Form/FormContext';
 import useSetSubFormShowValidations from '../../../../../hooks/useSetSubFormShowValidations';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   csvContainer: {
     width: '100%',
+    marginBottom: theme.spacing(2),
   },
   csvBtn: {
     maxWidth: 100,
@@ -27,7 +28,7 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'flex-start',
   },
-});
+}));
 const getParserValue = ({
   includeHeader,
   columnDelimiter,
@@ -172,7 +173,6 @@ export default function DynaCsvGenerate(props) {
       </div>
       <DynaForm
         formKey={formKeyComponent}
-        fieldMeta={form}
       />
     </>
   );

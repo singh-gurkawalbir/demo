@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
     },
     '& span': {
       marginLeft: '10px',
-      color: '#fff',
+      color: theme.palette.background.paper,
     },
   },
   btnsWrappper: {
@@ -79,7 +79,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function JobErrorTable({
+export default function JobErrorTable({
   rowsPerPage = 10,
   jobErrors,
   job,
@@ -288,4 +288,3 @@ function JobErrorTable({
   );
 }
 
-export default JobErrorTable;

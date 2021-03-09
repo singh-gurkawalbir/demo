@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
-import OverflowWrapper from './OverflowWrapper';
+import TextOverflowCell from '../../../TextOverflowCell';
 
 export default function UserName({ userId, flowId }) {
   const userName = useSelector(state =>
@@ -12,5 +12,5 @@ export default function UserName({ userId, flowId }) {
     return 'Autopilot';
   }
 
-  return <OverflowWrapper message={userName || userId} />;
+  return <TextOverflowCell message={userName || userId} maxWidth={240} />;
 }

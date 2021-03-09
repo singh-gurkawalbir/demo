@@ -9,7 +9,6 @@ export default {
   iaForm: {
     initComplete: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.INIT_COMPLETE, {ssLinkedConnectionId, integrationId}),
     initClear: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.INIT_CLEAR, {ssLinkedConnectionId, integrationId}),
-    showFormValidations: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.SHOW_FORM_VALIDATION_ERRORS, {ssLinkedConnectionId, integrationId}),
     submit: (ssLinkedConnectionId, integrationId, sectionId, values) => action(actionTypes.SUITESCRIPT.IA_FORM.SUBMIT, {ssLinkedConnectionId, integrationId, sectionId, values}),
     submitComplete: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.SUBMIT_COMPLETE, {ssLinkedConnectionId, integrationId}),
     submitFailed: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.SUBMIT_FAILED, {ssLinkedConnectionId, integrationId}),
@@ -21,6 +20,12 @@ export default {
     clear: (ssLinkedConnectionId, integrationId, featureName) => action(actionTypes.SUITESCRIPT.FEATURE_CHECK.CLEAR, {ssLinkedConnectionId, integrationId, featureName}),
   },
   resourceForm: {
+    initFailed: (ssLinkedConnectionId, resourceType, resourceId) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT_FAILED, {
+        ssLinkedConnectionId,
+        resourceType,
+        resourceId,
+      }),
     init: (
       ssLinkedConnectionId,
       resourceType,
@@ -140,10 +145,9 @@ export default {
           message,
           ssLinkedConnectionId,
         }),
-      testSuccessful: (resourceId, message, ssLinkedConnectionId) =>
+      testSuccessful: (resourceId, ssLinkedConnectionId) =>
         action(actionTypes.SUITESCRIPT.CONNECTION.TEST_SUCCESSFUL, {
           resourceId,
-          message,
           ssLinkedConnectionId,
         }),
       testClear: (resourceId, retainStatus, ssLinkedConnectionId) =>
@@ -521,30 +525,29 @@ export default {
       action(actionTypes.SUITESCRIPT.MAPPING.INIT, {
         ssLinkedConnectionId, integrationId, flowId, subRecordMappingId,
       }),
-    initComplete: ({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, subRecordFields, lookups, options }) =>
+    initComplete: ({ ssLinkedConnectionId, integrationId, flowId, mappings, subRecordFields, lookups, options }) =>
       action(actionTypes.SUITESCRIPT.MAPPING.INIT_COMPLETE, {
-        ssLinkedConnectionId, integrationId, flowId, generatedMappings, subRecordFields, lookups, options,
+        ssLinkedConnectionId, integrationId, flowId, mappings, subRecordFields, lookups, options,
       }),
-    patchField: ({ field, key, value }) =>
+    initFailed: () => action(actionTypes.SUITESCRIPT.MAPPING.INIT_FAILED, {}),
+    patchFieldRequest: (field, key, value) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.PATCH_FIELD_REQUEST, { field, key, value }),
+    patchField: (field, key, value) =>
       action(actionTypes.SUITESCRIPT.MAPPING.PATCH_FIELD, { field, key, value }),
+
     patchGenerateThroughAssistant: value =>
       action(actionTypes.SUITESCRIPT.MAPPING.PATCH_GENERATE_THROUGH_ASSISTANT, { value }),
     delete: key =>
       action(actionTypes.SUITESCRIPT.MAPPING.DELETE, {
         key,
       }),
-    patchSettings: (key, settings) =>
+    patchSettings: (key, value) =>
       action(actionTypes.SUITESCRIPT.MAPPING.PATCH_SETTINGS, {
-        key, settings,
+        key, value,
       }),
-
-    updateLookups: lookups =>
-      action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_LOOKUPS, {
-        lookups,
-      }),
-    changeOrder: mappings =>
-      action(actionTypes.SUITESCRIPT.MAPPING.CHANGE_ORDER, {
-        mappings,
+    updateLookup: ({oldValue, newValue}) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_LOOKUP, {
+        oldValue, newValue,
       }),
     save: () =>
       action(actionTypes.SUITESCRIPT.MAPPING.SAVE, {}),
@@ -552,8 +555,8 @@ export default {
       action(actionTypes.SUITESCRIPT.MAPPING.SAVE_FAILED, { }),
     saveComplete: () =>
       action(actionTypes.SUITESCRIPT.MAPPING.SAVE_COMPLETE, {}),
-    refreshGenerates: () =>
-      action(actionTypes.SUITESCRIPT.MAPPING.REFRESH_GENEREATES, {}),
+    refreshGenerates: opts =>
+      action(actionTypes.SUITESCRIPT.MAPPING.REFRESH_GENEREATES, opts),
     patchIncompleteGenerates: (
       {key, value},
     ) => action(actionTypes.SUITESCRIPT.MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value }),
@@ -565,5 +568,7 @@ export default {
     checkForSFSublistExtractPatch: (key, value) => action(actionTypes.SUITESCRIPT.MAPPING.CHECK_FOR_SF_SUBLIST_EXTRACT_PATCH, {key, value}),
     setSFSubListFieldName: value => action(actionTypes.SUITESCRIPT.MAPPING.SET_SF_SUBLIST_FIELD_NAME, {value}),
     patchExtractList: value => action(actionTypes.SUITESCRIPT.MAPPING.PATCH_EXTRACT_LIST, {value}),
+    shiftOrder: (key, shiftIndex) => action(actionTypes.SUITESCRIPT.MAPPING.SHIFT_ORDER, { key, shiftIndex }),
+    setValidationMsg: value => action(actionTypes.SUITESCRIPT.MAPPING.SET_VALIDATION_MSG, { value }),
   },
 };

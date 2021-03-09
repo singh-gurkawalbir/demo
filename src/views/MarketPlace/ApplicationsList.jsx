@@ -7,6 +7,7 @@ import { Card, Typography } from '@material-ui/core';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
+import {CONNECTORS_TO_IGNORE, WEBHOOK_ONLY_APPLICATIONS} from '../../utils/constants';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import {applicationsList} from '../../constants/applications';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
@@ -69,7 +70,20 @@ export default function ApplicationsList({ filter }) {
 
     connectors.forEach(c => { applications = applications.concat(c.applications); });
     templates.forEach(t => { applications = applications.concat(t.applications); });
-    applications = uniq(applications.filter(Boolean).sort());
+    connectorsMetadata.forEach(c => { applications = applications.concat(c.id); });
+    applications = applications.filter(a => !CONNECTORS_TO_IGNORE.includes(a) && !WEBHOOK_ONLY_APPLICATIONS.includes(a));
+    applications = uniq(applications.filter(Boolean));
+
+    applications = applications.sort((a, b) => {
+      const nameA = (connectorsMetadata?.find(c => c.id === a) || {}).name || a;
+      const nameB = (connectorsMetadata?.find(c => c.id === b) || {}).name || b;
+
+      if (nameA.toLowerCase() < nameB.toLowerCase()) return -1;
+
+      if (nameA.toLowerCase() > nameB.toLowerCase()) return 1;
+
+      return 0; // names must be equal
+    });
 
     // do not filter the applications if user has not typed in any search string
     if (lowerCaseFilter) {

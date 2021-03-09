@@ -6,10 +6,11 @@ import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import inferErrorMessages from '../../utils/inferErrorMessages';
 
-export function* initSettingsForm({ resourceType, resourceId }) {
-  const resource = yield select(selectors.resource, resourceType, resourceId);
+export function* initSettingsForm({ resourceType, resourceId, sectionId }) {
+  const resource = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
 
   if (!resource) return; // nothing to do.
+
   let initScriptId; let
     initFunc;
 
@@ -22,7 +23,15 @@ export function* initSettingsForm({ resourceType, resourceId }) {
   if (initFunc) {
     // If so, make an API call to initialize the form,
 
-    const path = `/${resourceType}/${resourceId}/settingsForm/init`;
+    let baseRoute = `/${resourceType}/${resourceId}`;
+
+    // sectionId is flowGroupingId...if it is defined then we will call the flowGrouping init
+    const isFlowGroupingRoute = sectionId && sectionId !== 'general';
+
+    if (isFlowGroupingRoute) {
+      baseRoute += `/flowGroupings/${sectionId}`;
+    }
+    const path = `${baseRoute}/settingsForm/init`;
 
     try {
       metadata = yield call(apiCallWithRetry, {

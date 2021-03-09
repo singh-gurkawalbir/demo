@@ -127,7 +127,7 @@ export default function DynaNSSavedSearch(props) {
                 name="searchType"
                 defaultValue="public"
                 value={searchType}
-                data-test={id}
+                data-test="netsuite.restlet.searchType"
                 onChange={handleChange}>
                 <FormControlLabel
                   value="public"

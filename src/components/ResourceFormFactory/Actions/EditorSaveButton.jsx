@@ -43,7 +43,7 @@ export default function EditorSaveButton(props) {
   const onSave = useCallback(() => {
     dispatch(actions.editor.save(id, { flowId, match, editor }));
     setSaveTriggered(true);
-  }, [dispatch, id, flowId, match]);
+  }, [dispatch, id, flowId, match, editor]);
   const { handleSubmitForm, disableSave, isSaving } = useLoadingSnackbarOnSave({
     saveTerminated,
     onSave,

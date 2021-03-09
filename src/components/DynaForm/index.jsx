@@ -1,8 +1,10 @@
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import DynaFormGenerator from './DynaFormGenerator';
-import { generateSimpleLayout } from '../Form';
+import { selectors } from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
@@ -15,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     display: 'block',
     paddingRight: theme.spacing(1),
   },
-  expansionPanel: {
+  Accordion: {
     width: '100%',
     overflow: 'hidden',
   },
@@ -29,13 +31,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const DynaForm = props => {
+const key = 'key';
+
+export default function DynaForm(props) {
   const {
     className,
-    children,
-    showValidationBeforeTouched,
-    fieldMeta,
-    full,
     formKey,
     autoFocus,
     ...rest
@@ -50,6 +50,7 @@ const DynaForm = props => {
   // useTraceUpdate(props);
   const formRef = useRef();
 
+  // TODO: deprecate this code no one is using it
   useEffect(() => {
     if (!autoFocus) return;
 
@@ -61,10 +62,12 @@ const DynaForm = props => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formRef.current]);
 
-  const updatedFieldMeta = useMemo(() => generateSimpleLayout(fieldMeta), [fieldMeta]);
+  const fieldMeta = useSelector(state => selectors.formState(state, formKey)?.fieldMeta, shallowEqual);
 
-  if (!formKey || !updatedFieldMeta) return null;
-  const {layout, fieldMap} = updatedFieldMeta;
+  const remountKey = useSelector(state => selectors.formRemountKey(state, formKey)) || key;
+
+  if (!formKey || !fieldMeta) return null;
+  const {layout, fieldMap} = fieldMeta;
 
   if (!fieldMap) return null;
 
@@ -76,10 +79,10 @@ const DynaForm = props => {
           layout={layout}
           fieldMap={fieldMap}
           formKey={formKey}
+          key={remountKey}
         />
       </div>
     </>
   );
-};
+}
 
-export default DynaForm;

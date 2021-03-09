@@ -1,3 +1,4 @@
+import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
 import {
   USER_ACCESS_LEVELS,
@@ -68,18 +69,20 @@ export default (state = [], action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.usersList = state => {
-  if (!state || !state.length) {
-    return [];
-  }
+selectors.usersList = createSelector(
+  state => state,
+  state => {
+    if (!state || !state.length) {
+      return [];
+    }
 
-  const aShares = state.map(share => ({
-    ...share,
-    accessLevel: share.accessLevel || USER_ACCESS_LEVELS.TILE,
-  }));
+    const aShares = state.map(share => ({
+      ...share,
+      accessLevel: share.accessLevel || USER_ACCESS_LEVELS.TILE,
+    }));
 
-  return aShares;
-};
+    return aShares;
+  });
 
 selectors.integrationUsersForOwner = (state, integrationId) => {
   if (!state || !state.length) {
@@ -91,7 +94,13 @@ selectors.integrationUsersForOwner = (state, integrationId) => {
   let integrationAccessLevel;
 
   aShares.forEach(u => {
-    if (u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MANAGE) {
+    if (u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN) {
+      integrationUsers.push({
+        ...u,
+        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+        integrationAccessLevel: undefined,
+      });
+    } else if (u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MANAGE) {
       integrationUsers.push({
         ...u,
         accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,

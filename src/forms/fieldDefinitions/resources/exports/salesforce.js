@@ -83,7 +83,7 @@ export default {
     ],
     visible: false,
   },
-  'salesforce.soql.query': {
+  'salesforce.soql.query': { // todo: this is probably a dead field, remove
     type: 'editor',
     mode: 'sql',
     label: 'SOQL query',
@@ -175,9 +175,11 @@ export default {
     ],
   },
   'salesforce.id': {
-    type: 'text',
+    type: 'uri',
     label: 'Id',
     required: true,
+    showExtract: false,
+    showLookup: false,
     visibleWhen: [
       {
         field: 'outputMode',

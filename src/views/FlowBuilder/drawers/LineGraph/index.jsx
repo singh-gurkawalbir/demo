@@ -15,13 +15,7 @@ import SelectResource from '../../../../components/LineGraph/SelectResource';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
 import IconTextButton from '../../../../components/IconTextButton';
-import { getSelectedRange } from '../../../../utils/flowMetrics';
-
-const getRoundedDate = (d = new Date(), offsetInMins, isFloor) => {
-  const ms = 1000 * 60 * offsetInMins; // convert minutes to ms
-
-  return new Date(isFloor ? (Math.floor(d.getTime() / ms) * ms) : (Math.ceil(d.getTime() / ms) * ms));
-};
+import { getRoundedDate, getSelectedRange } from '../../../../utils/flowMetrics';
 
 const defaultPresets = [
   {id: 'last1hour', label: 'Last 1 hour'},
@@ -147,7 +141,7 @@ export default function LineGraphDrawer({ flowId }) {
         );
       }
     },
-    [dispatch, flowId, integrationId, preferences, range, selectedResources]
+    [dispatch, flowId, preferences, range, selectedResources]
   );
 
   return (

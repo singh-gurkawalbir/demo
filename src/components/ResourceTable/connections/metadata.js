@@ -70,16 +70,16 @@ export default {
   onRowOut: (r, dispatch) => dispatch(actions.connection.setActive()),
 
   rowActions: (r, actionProps) => {
-    const actions = [Edit, ConfigureDebugger];
+    const actions = [Edit];
 
-    if (r.debugDate && moment().isBefore(moment(r.debugDate))) {
-      if (actionProps.type === 'flowBuilder') {
-        actions.push(OpenDebugger);
-      } else {
+    if (actionProps.type === 'flowBuilder') {
+      actions.push(OpenDebugger);
+    } else {
+      actions.push(ConfigureDebugger);
+      if (r.debugDate && moment().isBefore(moment(r.debugDate))) {
         actions.push(DownloadDebugLogs);
       }
     }
-
     actions.push(AuditLogs);
     actions.push(References);
 

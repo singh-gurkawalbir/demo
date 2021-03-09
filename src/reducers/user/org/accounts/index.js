@@ -468,7 +468,7 @@ selectors.permissions = (
     'users',
   ];
 
-  if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+  if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(userAccessLevel)) {
     permissions.subscriptions.view = true;
     permissions.audits.view = true;
 
@@ -496,6 +496,7 @@ selectors.permissions = (
   if (
     [
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
     ].includes(userAccessLevel)
   ) {
@@ -525,6 +526,7 @@ selectors.permissions = (
     [
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
     ].includes(userAccessLevel)
   ) {
     permissions.integrations.create = true;

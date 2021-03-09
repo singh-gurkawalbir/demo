@@ -7,7 +7,7 @@ import preferences, { selectors as fromPreferences } from './preferences';
 import notifications, { selectors as fromNotifications } from './notifications';
 import profile, { selectors as fromProfile } from './profile';
 import debug, { selectors as fromDebug } from './debug';
-import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
+import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../utils/constants';
 import { genSelectors } from '../util';
 
 export const DEFAULT_EDITOR_THEME = 'tomorrow';
@@ -224,12 +224,26 @@ selectors.accountSummary = createSelector(
 );
 // #endregion ACCOUNT
 
-selectors.userPermissions = createSelector(
-  state => selectors.userPreferences(state)?.defaultAShareId,
-  state => state?.profile?.allowedToPublish,
-  state => state?.org?.accounts,
-  (defaultAShareId, allowedToPublish, accounts) => fromAccounts.permissions(accounts, defaultAShareId, { allowedToPublish })
-);
+selectors.hasManageIntegrationAccess = (state, integrationId) => {
+  const userPermissions = selectors.userPermissions(state);
+  const isAccountOwner = [USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(userPermissions.accessLevel);
+
+  if (isAccountOwner) {
+    return true;
+  }
+  const manageIntegrationAccessLevels = [
+    INTEGRATION_ACCESS_LEVELS.OWNER,
+    INTEGRATION_ACCESS_LEVELS.MANAGE,
+  ];
+
+  const integrationPermissions = userPermissions.integrations;
+
+  if (manageIntegrationAccessLevels.includes(integrationPermissions.all?.accessLevel)) {
+    return true;
+  }
+
+  return manageIntegrationAccessLevels.includes(integrationPermissions[integrationId]?.accessLevel);
+};
 
 selectors.accountOwner = createSelector(
   selectors.userAccessLevel,
@@ -238,9 +252,9 @@ selectors.accountOwner = createSelector(
   state => state && state.org && state.org.accounts,
   (userAccessLevel, preferences, profile, accounts) => {
     if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
-      const { name, email } = profile || {};
+      const { name, email, timezone } = profile || {};
 
-      return { name, email };
+      return { name, email, timezone };
     }
 
     if (preferences) {
@@ -255,6 +269,30 @@ selectors.accountOwner = createSelector(
   }
 );
 
+selectors.userTimezone = createSelector(
+  state => state && state.profile,
+  selectors.accountOwner,
+  (profile, accountOwner) => profile?.timezone || accountOwner.timezone
+);
+
+selectors.canUserPublish = createSelector(
+  state => state && state.profile,
+  selectors.userPreferences,
+  selectors.accountOwner,
+  selectors.userAccessLevel,
+  (profile, preferences = emptyObj, accountOwner, accessLevel) => {
+    const { defaultAShareId } = preferences;
+
+    if (defaultAShareId === ACCOUNT_IDS.OWN) {
+      return !!profile?.allowedToPublish;
+    } if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN) {
+      return !!accountOwner?.allowedToPublish;
+    }
+
+    return false;
+  }
+);
+
 selectors.licenses = createSelector(
   selectors.userPreferences,
   state => state && state.org && state.org.accounts,
@@ -264,4 +302,12 @@ selectors.licenses = createSelector(
     return fromAccounts.licenses(accounts, defaultAShareId);
   }
 );
+
+selectors.userPermissions = createSelector(
+  state => selectors.userPreferences(state)?.defaultAShareId,
+  selectors.canUserPublish,
+  state => state?.org?.accounts,
+  (defaultAShareId, allowedToPublish, accounts) => fromAccounts.permissions(accounts, defaultAShareId, { allowedToPublish })
+);
+
 // #endregion PUBLIC USER SELECTORS

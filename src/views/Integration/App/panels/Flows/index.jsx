@@ -1,13 +1,11 @@
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, Fragment } from 'react';
 import {
-  Route,
   NavLink,
-  Redirect,
   useRouteMatch,
+  useHistory,
 } from 'react-router-dom';
-import { makeStyles, Grid, List, ListItem, Typography, Divider } from '@material-ui/core';
-import clsx from 'clsx';
+import { makeStyles, Grid, List, ListItem } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
@@ -27,10 +25,10 @@ import MappingDrawer from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import StatusCircle from '../../../../../components/StatusCircle';
-import { getEmptyMessage, isParentViewSelected } from '../../../../../utils/integrationApps';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import { getTemplateUrlName } from '../../../../../utils/template';
 import ResponseMappingDrawer from '../../../../../components/ResponseMapping/Drawer';
+import KeywordSearch from '../../../../../components/KeywordSearch';
+import flowgroupingsRedirectTo from '../../../../../utils/flowgroupingsRedirectTo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,12 +36,16 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
+  action: {
+    display: 'flex',
+  },
   container: {
     display: 'flex',
   },
   subNav: {
     minWidth: 200,
     maxWidth: 240,
+    paddingTop: theme.spacing(2),
     borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
   },
   divider: {
@@ -174,38 +176,66 @@ export const IAFormStateManager = props => {
     </>
   );
 };
-const integrationAppSectionFlowsOptions = { excludeHiddenFlows: true};
+const defaultFilter = {
+  take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
+  sort: { orderBy: 'name', order: 'asc' },
+  searchBy: [
+    'name',
+  ],
+};
 
-function FlowList({ integrationId, storeId }) {
+const FlowsTable = ({integrationId, storeId}) => {
   const match = useRouteMatch();
+  const filterKey = `${integrationId}-flows`;
   const { sectionId } = match.params;
-  const dispatch = useDispatch();
-  const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, storeId, integrationAppSectionFlowsOptions);
-  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
+  const flowFilter = useSelector(state => selectors.filter(state, filterKey));
+  const flowsFilterConfig = useMemo(() => ({ ...(flowFilter || {}), excludeHiddenFlows: true }), [flowFilter]);
+  const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
+  const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
+  const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, storeId, flowsFilterConfig);
+  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration, storeId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const section = flowSections.find(s => s.titleId === sectionId);
-  const filterKey = `${integrationId}-flows`;
-  const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
-  const templateName = useSelector(state => {
-    if (!integration || !integration._templateId) return null;
-    const t = selectors.resource(state, 'marketplacetemplates', integration._templateId);
 
-    return getTemplateUrlName(t && t.applications);
-  });
-  const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
-  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration);
   const actionProps = useMemo(() => ({
     isIntegrationApp: true,
     storeId,
     resourceType: 'flows',
     isUserInErrMgtTwoDotZero,
+    showChild: (integration?.settings?.supportsMultiStore && !storeId),
     appName,
+    childHeader: integration?.settings?.storeLabel,
     flowAttributes,
     integration,
-    templateName,
-  }), [storeId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration, templateName]);
+  }), [storeId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration]);
+
+  return (
+    <LoadResources required resources="flows,exports">
+      <CeligoTable
+        data-public
+        data={flows}
+        filterKey={filterKey}
+        {...flowTableMeta}
+        actionProps={actionProps}
+    />
+    </LoadResources>
+  );
+};
+
+function FlowList({ integrationId, storeId }) {
+  const filterKey = `${integrationId}-flows`;
+  const match = useRouteMatch();
+  const { sectionId } = match.params;
+  const dispatch = useDispatch();
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+
+  useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  },
+  [dispatch, filterKey]);
 
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
@@ -220,7 +250,7 @@ function FlowList({ integrationId, storeId }) {
   }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
 
   return (
-    <LoadResources required resources="flows,exports">
+    <>
       <ScheduleDrawer />
       <QueuedJobsDrawer />
       <SettingsDrawer
@@ -255,16 +285,30 @@ function FlowList({ integrationId, storeId }) {
         sectionId={sectionId}
         // flowId={flowId}
       />
-      <PanelHeader title={`${section?.title} flows`} />
-      <CeligoTable
-        data={flows}
-        filterKey={filterKey}
-        {...flowTableMeta}
-        actionProps={actionProps}
-        />
-    </LoadResources>
+      <Header integrationId={integrationId} storeId={storeId} />
+      <FlowsTable integrationId={integrationId} storeId={storeId} />
+    </>
   );
 }
+
+const Header = ({integrationId, storeId}) => {
+  const classes = useStyles();
+  const filterKey = `${integrationId}-flows`;
+  const match = useRouteMatch();
+  const { sectionId } = match.params;
+  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
+  const section = flowSections.find(s => s.titleId === sectionId);
+
+  return (
+    <PanelHeader title={`${section?.title} flows`} >
+      <div className={classes.action}>
+        <KeywordSearch
+          filterKey={filterKey}
+        />
+      </div>
+    </PanelHeader>
+  );
+};
 
 const SectionTitle = ({integrationId, storeId, title, titleId}) => {
   const classes = useStyles();
@@ -304,36 +348,19 @@ const SectionTitle = ({integrationId, storeId, title, titleId}) => {
 export default function FlowsPanel({ storeId, integrationId }) {
   const match = useRouteMatch();
   const classes = useStyles();
-  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
-  const isParentView = isParentViewSelected(integration, storeId);
   const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
-
+  const history = useHistory();
   // If someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can
   // not hard-code this because different sections exist across IAs.
-  if (match.isExact && flowSections && flowSections.length && !isParentView) {
-    return (
-      <Redirect push={false} to={`${match.url}/${flowSections[0].titleId}`} />
-    );
-  }
 
-  if (isParentView) {
-    return (
-      <div className={clsx(classes.root, classes.emptyMessageWrapper)}>
-        <div className={classes.container}>
-          <Typography variant="h4">
-            Flows
-          </Typography>
-        </div>
-        <Divider className={classes.divider} />
-        <div className={classes.content}>
-          <span>
-            {getEmptyMessage(integration.settings?.storeLabel, 'view flows')}
-          </span>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (match.isExact && flowSections && flowSections.length) {
+      const redirectTo = flowgroupingsRedirectTo(match, flowSections.map(({titleId}) => ({sectionId: titleId})), flowSections[0].titleId);
+
+      if (redirectTo) { history.replace(redirectTo); }
+    }
+  }, [flowSections, history, match]);
 
   return (
     <div className={classes.root}>
@@ -343,6 +370,7 @@ export default function FlowsPanel({ storeId, integrationId }) {
             {flowSections.map(({ title, titleId }) => (
               <ListItem key={titleId} className={classes.flowTitle}>
                 <NavLink
+                  data-public
                   className={classes.listItem}
                   activeClassName={classes.activeListItem}
                   to={titleId}
@@ -358,11 +386,7 @@ export default function FlowsPanel({ storeId, integrationId }) {
           </List>
         </Grid>
         <Grid item className={classes.content}>
-          <LoadResources required resources="flows">
-            <Route path={`${match.url}/:sectionId`}>
-              <FlowList integrationId={integrationId} storeId={storeId} />
-            </Route>
-          </LoadResources>
+          <FlowList integrationId={integrationId} storeId={storeId} />
         </Grid>
       </Grid>
     </div>

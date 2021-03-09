@@ -75,6 +75,29 @@ describe('session.suiteScript.resourceForm form reducers', () => {
       expect(state).toEqual(expected);
     });
   });
+  describe('RESOURCE_FORM.INIT action', () => {
+    test('should store the failed form data', () => {
+      let state = reducer(undefined, actions.suiteScript.resourceForm.init(
+        ssLinkedConnectionId,
+        resourceType,
+        resourceId,
+        isNew,
+        skipCommit,
+        flowId,
+        initData,
+      ));
+
+      state = reducer(state, actions.suiteScript.resourceForm.initFailed(ssLinkedConnectionId, resourceType, resourceId));
+
+      const expected = {
+        [key]: {
+          initComplete: false,
+          initFailed: true,
+        }};
+
+      expect(state).toEqual(expected);
+    });
+  });
   describe('RESOURCE_FORM.INIT_COMPLETE action', () => {
     test('should store the completed form data', () => {
       const oldState = { [key]: {} };
@@ -95,8 +118,7 @@ describe('session.suiteScript.resourceForm form reducers', () => {
           skipCommit,
           initComplete: true,
           fieldMeta,
-          flowId,
-          showFormValidationsBeforeTouch: false }};
+          flowId }};
 
       expect(state).toEqual(expected);
     });

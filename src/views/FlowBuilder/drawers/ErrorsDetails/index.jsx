@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory, useRouteMatch, useLocation, matchPath } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
 import RightDrawer from '../../../../components/drawer/Right';
 import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
@@ -12,9 +12,14 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const history = useHistory();
   const match = useRouteMatch();
   const [errorType, setErrorType] = useState('open');
-  const { resourceId } = match?.params || {};
+  const { pathname } = useLocation();
+  const matchErrorDrawerPath = matchPath(pathname, {
+    path: `${match.url}/errors/:resourceId`,
+  });
 
   const resourceName = useSelector(state => {
+    const { resourceId } = matchErrorDrawerPath?.params || {};
+
     if (!resourceId) return;
 
     const exportObj = selectors.resource(state, 'exports', resourceId);
@@ -25,9 +30,11 @@ export default function ErrorDetailsDrawer({ flowId }) {
   });
 
   const handleClose = useCallback(() => {
-    // history.goBack() doesn't work when this url is redirected from another source
-    // TODO @Raghu: Check for any other places that can fall into this case
-    history.replace(match.url);
+    if (history.length > 2) {
+      history.goBack();
+    } else {
+      history.replace(match.url);
+    }
     setTimeout(() => setErrorType('open'), 1000);
   }, [history, match.url]);
 
@@ -38,7 +45,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
       onClose={handleClose}
       variant="temporary">
 
-      <DrawerHeader title={`Errors: ${resourceName}`}>
+      <DrawerHeader title={`Errors: ${resourceName}`} hideBackButton>
         <ErrorDrawerAction
           flowId={flowId}
           errorType={errorType}

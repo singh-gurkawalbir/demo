@@ -1,4 +1,4 @@
-/* global describe, test */
+/* global describe, test, jest */
 
 import { select, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -21,6 +21,12 @@ import {
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import { pageProcessorPreview } from '../utils/previewCalls';
 import { requestFileAdaptorPreview } from '../sampleDataGenerator/fileAdaptorSampleData';
+import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
+
+jest.mock('../../../forms/formFactory/getResourceFromAssets');
+
+// fake the return value of getResourceFormAssets when createFormValuesPatchSet calls this fn
+getResourceFormAssets.mockReturnValue({fieldMap: {field1: {fieldId: 'something'}}, preSave: null});
 
 describe('sampleData exports saga', () => {
   const resourceId = '123';
@@ -209,7 +215,7 @@ describe('sampleData exports saga', () => {
           runOffline: true,
           runOfflineSource: 'db',
         },
-        test: {limit: 10},
+        test: {limit: DEFAULT_RECORD_SIZE},
       };
 
       return expectSaga(_getPreviewData, { resourceId, resourceType, runOffline: true })
@@ -241,7 +247,7 @@ describe('sampleData exports saga', () => {
           runOffline: true,
           runOfflineSource: 'db',
         },
-        test: {limit: 10},
+        test: {limit: DEFAULT_RECORD_SIZE},
       };
 
       return expectSaga(_getPreviewData, { resourceId, resourceType, runOffline: true })
@@ -551,6 +557,7 @@ describe('sampleData exports saga', () => {
       const body = {
         adaptorType: 'FTPExport',
       };
+      const previewRecordSize = 2;
       const previewData = [{
         Column0: 'CUSTOMER_NUMBER|VENDOR_NAME|VENDOR_PART_NUM|DISTRIBUTOR_PART_NUM|LIST_PRICE|DESCRIPTION|CONTRACT_PRICE|QUANTITY_AVAILABLE',
       }, {
@@ -591,6 +598,7 @@ describe('sampleData exports saga', () => {
             resourceId,
             resourceType,
           }), body],
+          [call(_getSampleDataRecordSize, { resourceId }), previewRecordSize],
           [select(selectors.getResourceSampleDataWithStatus, resourceId, 'rawFile'), {}],
           [call(_hasSampleDataOnResource, { resourceId, resourceType, body}), true],
           [call(requestFileAdaptorPreview, { resource: body }), previewData],

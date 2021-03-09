@@ -26,6 +26,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const defaultFilter = { sort: {order: 'asc', orderBy: 'name'}};
+
 export default function ConnectionsPanel({ integrationId, storeId }) {
   const classes = useStyles();
   const [showRegister, setShowRegister] = useState(false);
@@ -33,7 +35,7 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const filterKey = `${integrationId}${`+${storeId}` || ''}+connections`;
-  const tableConfig = useSelector(state => selectors.filter(state, filterKey));
+  const tableConfig = useSelector(state => selectors.filter(state, filterKey)) || defaultFilter;
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
   const connections = useSelector(state =>
     selectors.integrationAppConnectionList(
@@ -73,6 +75,9 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
   );
   const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
 
+  useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  }, []);
   useEffect(() => {
     dispatch(actions.resource.connections.refreshStatus(integrationId));
     // For connections resource table, we need to poll the connection status and queueSize

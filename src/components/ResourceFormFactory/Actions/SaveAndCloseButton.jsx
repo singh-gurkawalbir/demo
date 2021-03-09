@@ -1,4 +1,3 @@
-import { withStyles } from '@material-ui/core/styles';
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
@@ -9,18 +8,11 @@ import { useLoadingSnackbarOnSave } from '.';
 import useConfirmDialog from '../../ConfirmDialog';
 import { isNewId } from '../../../utils/resource';
 
-const styles = theme => ({
-  actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
-  },
-});
-const SaveButton = props => {
+export default function SaveButton(props) {
   const {
     submitButtonLabel = 'Submit',
     resourceType,
     resourceId,
-    classes,
     disabled = false,
     isGenerate = false,
     skipCloseOnSave = false,
@@ -30,6 +22,11 @@ const SaveButton = props => {
     setDisableSaveOnClick,
   } = props;
   const { confirmDialog } = useConfirmDialog();
+  const flow =
+    useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
+  const integration = useSelector(state =>
+    selectors.resource(state, 'integrations', flow?._integrationId)
+  );
 
   const match = useRouteMatch();
   const resource = useSelector(state =>
@@ -73,6 +70,14 @@ const SaveButton = props => {
             {
               label: 'Replace',
               onClick: () => {
+                if (integration?._id) {
+                  const registeredConnections = integration?._registeredConnectionIds || [];
+
+                  if (!(registeredConnections.includes(values?.['/_connectionId']))) {
+                    dispatch(actions.connection.completeRegister([values?.['/_connectionId']], integration._id));
+                  }
+                }
+
                 saveResource(values);
               },
             },
@@ -85,7 +90,7 @@ const SaveButton = props => {
         });
       } else { saveResource(values); }
     },
-    [confirmDialog, onCancel, resource?._connectionId, resourceId, resourceType, saveResource]
+    [confirmDialog, dispatch, integration, onCancel, resource?._connectionId, resourceId, resourceType, saveResource]
   );
   const { handleSubmitForm, disableSave, isSaving } = useLoadingSnackbarOnSave({
     saveTerminated,
@@ -101,12 +106,10 @@ const SaveButton = props => {
     <DynaAction
       {...props}
       color={submitButtonColor}
-      className={classes.actionButton}
       disabled={disabled || disableSave}
       onClick={handleSubmitForm}>
       {(isSaving && disableSave) ? 'Saving' : submitButtonLabel}
     </DynaAction>
   );
-};
+}
 
-export default withStyles(styles)(SaveButton);

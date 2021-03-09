@@ -95,7 +95,7 @@ export default function DynaIAExpression(props) {
     commMetaPath = `netsuite/metadata/suitescript/connections/${connection._id}/recordTypes/${recordType}/searchFilters?includeJoinFilters=true`;
   }
 
-  const options = { commMetaPath, disableFetch: false, sObjectType: resource?.salesforce?.sObjectType };
+  const options = { commMetaPath, disableFetch: false, sObjectType: resource?.salesforce?.sObjectType, hasSObjectType: !!resource?.salesforce?.sObjectType };
 
   switch (filterType) {
     case 'netsuiteImportLookup':

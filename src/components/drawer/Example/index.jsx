@@ -1,17 +1,13 @@
-import { makeStyles, Button, Typography } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import React from 'react';
 import { Switch, Route, useRouteMatch, Link } from 'react-router-dom';
 import RightDrawer from '../Right';
 import DrawerHeader from '../Right/DrawerHeader';
 import DrawerContent from '../Right/DrawerContent';
 import DrawerFooter from '../Right/DrawerFooter';
-import ButtonGroup from '../../ButtonGroup';
 import Spinner from '../../Spinner';
-
-const useStyles = makeStyles(
-  {
-    spaceBetween: { flexGrow: 100 },
-  });
+import DrawerSubHeader from '../Right/DrawerSubHeader';
+import ActionGroup from '../../ActionGroup';
 
 function RouterWrappedContent() {
   const match = useRouteMatch();
@@ -43,29 +39,37 @@ function RouterWrappedContent() {
 }
 
 export default function ExampleDrawer() {
-  const classes = useStyles();
-
   return (
-    <RightDrawer path="example">
+    <RightDrawer path="example" height="tall">
       <DrawerHeader title="Example Drawer">
         <Spinner size={16} /> Refreshing
-        <div className={classes.spaceBetween} />
-        <Button variant="text">Normal Action</Button>
+        <ActionGroup position="right">
+          <Button variant="text">Normal Action</Button>
+        </ActionGroup>
       </DrawerHeader>
-
+      <DrawerSubHeader>
+        <ActionGroup>
+          <Button variant="text">Left 1</Button>
+          <Button variant="text">Left 2</Button>
+        </ActionGroup>
+        <ActionGroup position="right">
+          <Button variant="text">Right 1</Button>
+          <Button variant="text">Right 2</Button>
+        </ActionGroup>
+      </DrawerSubHeader>
       <DrawerContent>
         <RouterWrappedContent />
       </DrawerContent>
 
       <DrawerFooter>
-        <ButtonGroup>
+        <ActionGroup>
           <Button variant="contained" color="primary"> OK </Button>
           <Button variant="text" color="primary"> Cancel </Button>
-        </ButtonGroup>
+        </ActionGroup>
 
-        <div className={classes.spaceBetween} />
-
-        <Button variant="contained" color="secondary"> Preview </Button>
+        <ActionGroup position="right">
+          <Button variant="contained" color="secondary"> Preview </Button>
+        </ActionGroup>
       </DrawerFooter>
     </RightDrawer>
   );

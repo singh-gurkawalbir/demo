@@ -1,5 +1,8 @@
 /* global describe,  expect */
 import each from 'jest-each';
+import recurly from './recurly';
+import servicenow from './servicenow';
+import restAssistantData from './restAssistantData';
 import {
   getMatchingRoute,
   mergeHeaders,
@@ -15,6 +18,11 @@ import {
   convertToExport,
   PARAMETER_LOCATION,
   DEFAULT_PROPS,
+  routeToRegExp,
+  extractParameters,
+  convertFromExport,
+  convertFromImport,
+  convertToImport,
 } from '.';
 
 describe('getMatchingRoute', () => {
@@ -121,10 +129,15 @@ describe('getMatchingRoute', () => {
 
 describe('mergeHeaders', () => {
   const testCases = [
+    [{}, undefined, null],
     [{}, null, null],
     [{}, {}, {}],
     [{ a: 'b', c: 'd', e: 'f' }, { a: 'b', c: 'd' }, { e: 'f' }],
     [{ a: 'x', c: 'd', e: 'f' }, { a: 'b', c: 'd' }, { e: 'f', a: 'x' }],
+    [{ e: 'f' }, [{ a: 'b', c: 'd' }, {g: 'h'}], { e: 'f' }],
+    [{ }, [{ a: 'b', c: 'd' }, {a: 'b', g: 'h'}], [{ e: 'f' }, {i: 'k'}]],
+    [{ a: 'b', c: 'd' }, { a: 'b', c: 'd' }, [{ e: 'f' }, {i: 'k'}]],
+
   ];
 
   each(testCases).test(
@@ -138,6 +151,7 @@ describe('mergeHeaders', () => {
 describe('mergeQueryParameters', () => {
   const testCases = [
     [[], null, null],
+    [[], undefined, null],
     [[], [], []],
     [
       [
@@ -2042,3 +2056,1143 @@ describe('convertToExport', () => {
     }
   );
 });
+describe('routeToRegExp', () => {
+  const testCases = [
+
+    [/^\/v1\/connections(?:\?([\s\S]*))?$/, '/v1/connections'],
+    [/^\/v1\/connections\/([^/?]+)(?:\?([\s\S]*))?$/, '/v1/connections/:_id'],
+    [/^\/v1\/integrations\/([^/?]+)\/connections(?:\?([\s\S]*))?$/, '/v1/integrations/:_integrationId/connections'],
+    [/^\/v1\/integrations(?:\?([\s\S]*))?$/, '/v1/integrations'],
+    [/^\/v1\/integrations\/([^/?]+)(?:\?([\s\S]*))?$/, '/v1/integrations/:_id'],
+    [/^\/v1\/integrations\/([^/?]+)\/exports(?:\?([\s\S]*))?$/, '/v1/integrations/:_integrationId/exports'],
+  ];
+
+  each(testCases).test(
+    'should return %o when route = %o',
+    (expected, route) => {
+      expect(routeToRegExp(route)).toEqual(expected);
+    }
+  );
+});
+
+describe('extractParameters', () => {
+  const testCases = [
+
+    [[null], /^\/v1\/connections(?:\?([\s\S]*))?$/, '/v1/connections', '/v1/connections'],
+    [[':_id', null], /^\/v1\/connections\/([^/?]+)(?:\?([\s\S]*))?$/, '/v1/connections/:_id', '/v1/connections/someConnectionId?some=thing&someThing=else'],
+    [[':_integrationId', null], /^\/v1\/integrations\/([^/?]+)\/connections(?:\?([\s\S]*))?$/, '/v1/integrations/:_integrationId/connections', '/v1/integrations/someIntegrationId/connections'],
+    [[null], /^\/v1\/integrations(?:\?([\s\S]*))?$/, '/v1/integrations', '/v1/integrations'],
+    [[':_id', null], /^\/v1\/integrations\/([^/?]+)(?:\?([\s\S]*))?$/, '/v1/integrations/:_id', '/v1/integrations/someIntegrationId'],
+    [[':_integrationId', null], /^\/v1\/integrations\/([^/?]+)\/exports(?:\?([\s\S]*))?$/, '/v1/integrations/:_integrationId/exports', '/v1/integrations/someIntegrationId/exports'],
+    [[':_integrationId', null], /^\/v1\/integrations\/([^/?]+)\/exports(?:\?([\s\S]*))?$/, '/v1/integrations/:_integrationId/exports', '/v1/integrations/someIntegrationId/exports?some=:_thing&someThing=:_else'],
+
+  ];
+
+  each(testCases).test(
+    'should return %o when route = %o',
+    (expected, routeRegex, fragment, route) => {
+      expect(extractParameters(routeRegex, fragment, route)).toEqual(expected);
+    }
+  );
+});
+
+describe('convertFromExport', () => {
+  const testCases = [
+    [{bodyParams: {}, exportType: undefined, operation: undefined, pathParams: {}, queryParams: {}, resource: undefined, version: undefined}, {}, undefined, ''],
+    [
+      {
+        resource: 'r1',
+        bodyParams: {},
+        exportType: undefined,
+        operation: 'ep1',
+
+        operationDetails: {
+          pathParameters: [],
+          queryParameters: [],
+          url: 'some/thing',
+          headers: {},
+          id: 'ep1',
+        },
+        pathParams: {},
+        queryParams: {},
+
+        version: 'v1',
+      },
+      {
+        assistant: 'someAssistant',
+        adaptorType: 'RESTExport',
+        assistantMetadata: {
+          resource: 'r1',
+          operation: 'ep1',
+          version: 'v1',
+        },
+        rest: {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          method: 'GET',
+          headers: [],
+          relativeURI: 'some/thing',
+          allowUndefinedResource: false,
+        },
+      },
+      assistantData,
+      'rest',
+    ],
+    [
+      {
+        bodyParams: {},
+        exportType: undefined,
+        pathParams: {},
+        queryParams: {},
+
+      },
+      {
+        assistant: 'someAssistant',
+        adaptorType: 'RESTExport',
+        assistantMetadata: {
+          resource: 'r1',
+          version: 'v1',
+        },
+        rest: {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          method: 'GET',
+          headers: [],
+          relativeURI: 'some/thing',
+          allowUndefinedResource: false,
+        },
+      },
+      assistantData,
+      'rest',
+    ],
+    [
+      {
+        bodyParams: {},
+        exportType: undefined,
+        operation: 'some/unique/url',
+        operationDetails: {
+          headers: {},
+          pathParameters: [],
+          queryParameters: [],
+          url: 'some/unique/url',
+        },
+        pathParams: {},
+        queryParams: {},
+        resource: 'r1',
+        version: 'v1',
+      },
+      {
+        assistant: 'someAssistant',
+        adaptorType: 'RESTExport',
+        assistantMetadata: {
+          resource: 'r1',
+          operation: 'some/unique/url',
+          version: 'v1',
+        },
+        rest: {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          method: 'GET',
+          headers: [],
+          relativeURI: 'some/unique/url',
+          allowUndefinedResource: false,
+        },
+      },
+      assistantData,
+      'rest',
+    ],
+    [
+      {
+        bodyParams: {},
+        exportType: undefined,
+        operation: 'ep2',
+        operationDetails: {
+          headers: {},
+          id: 'ep2',
+          paging: {
+            nextPagePath: 'npp',
+            pagingMethod: 'nextpageurl',
+          },
+          pathParameters: [
+            {
+              config: {
+                prefix: "(guid'",
+                suffix: "')",
+              },
+              id: 'id',
+            },
+            {
+              id: 'action',
+            },
+          ],
+          queryParameters: [],
+          url: 'some/lists:_id/thing/:_action/some/other/:_action',
+        },
+        pathParams: {
+          action: 'XYZ',
+          id: 'ABC',
+        },
+        queryParams: {},
+        resource: 'r2',
+        version: 'v1',
+      },
+      {
+        assistant: 'someAssistant',
+        adaptorType: 'RESTExport',
+        assistantMetadata: {
+          resource: 'r2',
+          operation: 'ep2',
+          version: 'v1',
+        },
+        rest: {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          method: 'GET',
+          headers: [],
+          relativeURI: "some/lists(guid'ABC')/thing/XYZ/some/other/XYZ",
+          allowUndefinedResource: false,
+          pagingMethod: 'nextpageurl',
+          nextPagePath: 'npp',
+        },
+      },
+      assistantData,
+      'rest',
+    ],
+  ];
+
+  each(testCases).test(
+    'should return %o when exportDoc =  %o and assistantData = %o and adaptorType = %o',
+    (expected, exportDoc, assistantData, adaptorType) => {
+      expect(convertFromExport({ exportDoc, assistantData, adaptorType })).toEqual(
+        expected
+      );
+    }
+  );
+});
+describe('convertFromImport', () => {
+  const testCases = [
+    [{bodyParams: {}, pathParams: {}, queryParams: {}}, {}, undefined, ''],
+    [{bodyParams: {}, pathParams: {}, queryParams: {}}, {}, restAssistantData, ''],
+    [{bodyParams: {}, pathParams: {}, queryParams: {}}, {adaptorType: 'RESTImport',
+      assistant: 'atera',
+      name: 'Atera Latest',
+      _connectionId: 'connId',
+      _id: 'id'}, restAssistantData, 'rest'],
+
+    [{bodyParams: {},
+      resource: 'contacts',
+      version: 'v3',
+      lookupType: 'source',
+      operation: 'create_or_update_contacts',
+      operationDetails: {
+        headers: {},
+        howToFindIdentifier: {},
+        id: 'create_or_update_contacts',
+        method: [
+          'PUT',
+          'POST',
+        ],
+        name: 'Create or Update',
+        parameters: [
+          {
+            id: 'contactId',
+            in: 'path',
+            isIdentifier: true,
+            required: true,
+          },
+        ],
+        pathParameters: [],
+        queryParameters: [],
+        responseIdPath: [
+          '',
+          '',
+        ],
+        sampleData: {
+          CreatedOn: '2017-10-10T13:03:08Z',
+          CustomerID: 2,
+          CustomerName: 'cust1',
+          Email: 'cust1c@gmail.com',
+          EndUserID: 8,
+          Firstname: null,
+          InIgnoreMode: false,
+          IsContactPerson: false,
+          JobTitle: null,
+          LastModified: '2017-10-10T13:03:08Z',
+          Lastname: null,
+          Phone: null,
+        },
+        url: [
+          '/v3/contacts/:_contactId',
+          '/v3/contacts',
+        ],
+      },
+      pathParams: {
+        contactId: 'id',
+      },
+      queryParams: {}}, {
+      name: 'Atera Latest1',
+
+      distributed: false,
+      apiIdentifier: '***',
+      assistant: 'atera',
+      assistantMetadata: {
+        resource: 'contacts',
+        version: 'v3',
+        operation: 'create_or_update_contacts',
+
+      },
+
+      http: {
+        relativeURI: [
+          '/v3/contacts/{{{id}}}',
+          '/v3/contacts',
+        ],
+        method: [
+          'PUT',
+          'POST',
+        ],
+        body: [
+          null,
+          null,
+        ],
+        headers: [
+
+        ],
+        batchSize: 1,
+        ignoreExtract: 'id',
+        requestMediaType: 'json',
+        successMediaType: 'json',
+        errorMediaType: 'json',
+        requestType: [
+          'UPDATE',
+          'CREATE',
+        ],
+        strictHandlebarEvaluation: true,
+        sendPostMappedData: true,
+
+      },
+      rest: {
+        relativeURI: [
+          '/v3/contacts/{{{id}}}',
+          '/v3/contacts',
+        ],
+        method: [
+          'PUT',
+          'POST',
+        ],
+        body: [
+          null,
+          null,
+        ],
+        headers: [
+
+        ],
+        ignoreExtract: 'id',
+        requestType: [
+          'UPDATE',
+          'CREATE',
+        ],
+      },
+      adaptorType: 'RESTImport',
+
+    }, restAssistantData, 'rest'],
+
+    [
+      {bodyParams: {},
+        resource: 'contacts',
+        version: 'v3',
+        lookupType: 'source',
+        ignoreExisting: false,
+        ignoreMissing: false,
+        operation: 'delete_contacts',
+        operationDetails: {
+          askForHowToGetIdentifier: true,
+          headers: {},
+          howToFindIdentifier: {},
+          id: 'delete_contacts',
+          method: 'DELETE',
+          name: 'Delete',
+          parameters: [
+            {
+              id: 'contactId',
+              in: 'path',
+              isIdentifier: true,
+              required: true,
+            },
+          ],
+          pathParameters: [],
+          queryParameters: [],
+          responseIdPath: '',
+          sampleData: {
+            CreatedOn: '2017-10-10T13:03:08Z',
+            CustomerID: 2,
+            CustomerName: 'cust1',
+            Email: 'cust1c@gmail.com',
+            EndUserID: 8,
+            Firstname: null,
+            InIgnoreMode: false,
+            IsContactPerson: false,
+            JobTitle: null,
+            LastModified: '2017-10-10T13:03:08Z',
+            Lastname: null,
+            Phone: null,
+          },
+          url: '/v3/contacts/:_contactId',
+        },
+        pathParams: {
+          contactId: 'id',
+        },
+        queryParams: {}}, {
+        name: 'Atera Latest1',
+
+        distributed: false,
+        apiIdentifier: '***',
+        assistant: 'atera',
+        assistantMetadata: {
+          resource: 'contacts',
+          version: 'v3',
+          operation: 'delete_contacts',
+          ignoreExisting: false,
+          ignoreMissing: false,
+        },
+        http: {
+          relativeURI: [
+            '/v3/contacts/{{{id}}}',
+          ],
+          method: [
+            'DELETE',
+          ],
+          batchSize: 1,
+          ignoreExtract: 'id',
+          requestMediaType: 'json',
+          successMediaType: 'json',
+          errorMediaType: 'json',
+          strictHandlebarEvaluation: true,
+          sendPostMappedData: true,
+        },
+        rest: {
+          relativeURI: [
+            '/v3/contacts/{{{id}}}',
+          ],
+          method: [
+            'DELETE',
+          ],
+
+          ignoreExtract: 'id',
+
+        },
+        adaptorType: 'RESTImport',
+
+      }, restAssistantData, 'rest'],
+    [
+      {bodyParams: {},
+        resource: 'contacts',
+        sampleData: {
+          CreatedOn: '2017-10-10T13:03:08Z',
+          CustomerID: 2,
+          CustomerName: 'cust1',
+          Email: 'cust1c@gmail.com',
+          EndUserID: 8,
+          Firstname: null,
+          InIgnoreMode: false,
+          IsContactPerson: false,
+          JobTitle: null,
+          LastModified: '2017-10-10T13:03:08Z',
+          Lastname: null,
+          Phone: null,
+        },
+        version: 'v3',
+        lookupType: 'source',
+        operation: 'delete_contacts',
+        operationDetails: {
+          askForHowToGetIdentifier: true,
+          headers: {},
+          howToFindIdentifier: {},
+          id: 'delete_contacts',
+          method: 'DELETE',
+          name: 'Delete',
+          parameters: [
+            {
+              id: 'contactId',
+              in: 'path',
+              isIdentifier: true,
+              required: true,
+            },
+          ],
+          pathParameters: [],
+          queryParameters: [],
+          responseIdPath: '',
+          sampleData: {
+            CreatedOn: '2017-10-10T13:03:08Z',
+            CustomerID: 2,
+            CustomerName: 'cust1',
+            Email: 'cust1c@gmail.com',
+            EndUserID: 8,
+            Firstname: null,
+            InIgnoreMode: false,
+            IsContactPerson: false,
+            JobTitle: null,
+            LastModified: '2017-10-10T13:03:08Z',
+            Lastname: null,
+            Phone: null,
+          },
+          url: '/v3/contacts/:_contactId',
+        },
+        pathParams: {
+          contactId: 'id',
+        },
+        queryParams: {}}, {
+        name: 'Atera Latest1',
+
+        distributed: false,
+        apiIdentifier: '***',
+        assistant: 'atera',
+        assistantMetadata: {
+          resource: 'contacts',
+          version: 'v3',
+        },
+        http: {
+          relativeURI: [
+            '/v3/contacts/{{{id}}}',
+          ],
+          method: [
+            'DELETE',
+          ],
+          batchSize: 1,
+          ignoreExtract: 'id',
+          requestMediaType: 'json',
+          successMediaType: 'json',
+          errorMediaType: 'json',
+          strictHandlebarEvaluation: true,
+          sendPostMappedData: true,
+        },
+        rest: {
+          relativeURI: [
+            '/v3/contacts/{{{id}}}',
+          ],
+          method: [
+            'DELETE',
+          ],
+
+          ignoreExtract: 'id',
+
+        },
+        adaptorType: 'RESTImport',
+
+      }, restAssistantData, 'rest'],
+    [{bodyParams: {},
+      resource: 'contacts',
+      sampleData: {
+        CreatedOn: '2017-10-10T13:03:08Z',
+        CustomerID: 2,
+        CustomerName: 'cust1',
+        Email: 'cust1c@gmail.com',
+        EndUserID: 8,
+        Firstname: null,
+        InIgnoreMode: false,
+        IsContactPerson: false,
+        JobTitle: null,
+        LastModified: '2017-10-10T13:03:08Z',
+        Lastname: null,
+        Phone: null,
+      },
+      version: 'v3',
+      lookupType: 'source',
+      operation: 'create_or_update_contacts',
+      operationDetails: {
+        headers: {},
+        howToFindIdentifier: {},
+        id: 'create_or_update_contacts',
+        method: [
+          'PUT',
+          'POST',
+        ],
+        name: 'Create or Update',
+        parameters: [
+          {
+            id: 'contactId',
+            in: 'path',
+            isIdentifier: true,
+            required: true,
+          },
+        ],
+        pathParameters: [],
+        queryParameters: [],
+        responseIdPath: [
+          '',
+          '',
+        ],
+        sampleData: {
+          CreatedOn: '2017-10-10T13:03:08Z',
+          CustomerID: 2,
+          CustomerName: 'cust1',
+          Email: 'cust1c@gmail.com',
+          EndUserID: 8,
+          Firstname: null,
+          InIgnoreMode: false,
+          IsContactPerson: false,
+          JobTitle: null,
+          LastModified: '2017-10-10T13:03:08Z',
+          Lastname: null,
+          Phone: null,
+        },
+        url: [
+          '/v3/contacts/:_contactId',
+          '/v3/contacts',
+        ],
+      },
+      pathParams: {
+        contactId: 'id',
+      },
+      queryParams: {}}, {
+      name: 'Atera Latest1',
+
+      distributed: false,
+      apiIdentifier: '***',
+      assistant: 'atera',
+      assistantMetadata: {
+        operation: 'create_or_update_contacts',
+      },
+
+      http: {
+        relativeURI: [
+          '/v3/contacts/{{{id}}}',
+          '/v3/contacts',
+        ],
+        method: [
+          'PUT',
+          'POST',
+        ],
+        body: [
+          null,
+          null,
+        ],
+        headers: [
+
+        ],
+        batchSize: 1,
+        ignoreExtract: 'id',
+        requestMediaType: 'json',
+        successMediaType: 'json',
+        errorMediaType: 'json',
+        requestType: [
+          'UPDATE',
+          'CREATE',
+        ],
+        strictHandlebarEvaluation: true,
+        sendPostMappedData: true,
+
+      },
+      rest: {
+        relativeURI: [
+          '/v3/contacts/{{{id}}}',
+          '/v3/contacts',
+        ],
+        method: [
+          'PUT',
+          'POST',
+        ],
+        body: [
+          null,
+          null,
+        ],
+        headers: [
+
+        ],
+        ignoreExtract: 'id',
+        requestType: [
+          'UPDATE',
+          'CREATE',
+        ],
+      },
+      adaptorType: 'RESTImport',
+
+    }, restAssistantData, 'rest'],
+    [{ bodyParams: {},
+      operation: 'create_or_update_cont',
+      pathParams: {},
+      queryParams: {},
+      resource: undefined,
+      sampleData: undefined,
+      version: undefined}, {
+      name: 'Atera Latest1',
+
+      distributed: false,
+      apiIdentifier: '***',
+      assistant: 'atera',
+      assistantMetadata: {
+        operation: 'create_or_update_cont',
+      },
+
+      http: {
+        relativeURI: [
+          '/v3/contacts/{{{id}}}',
+          '/v3/contacts',
+        ],
+        method: [
+          'PUT',
+          'POST',
+        ],
+        body: [
+          null,
+          null,
+        ],
+        headers: [
+
+        ],
+        batchSize: 1,
+        ignoreExtract: 'id',
+        requestMediaType: 'json',
+        successMediaType: 'json',
+        errorMediaType: 'json',
+        requestType: [
+          'UPDATE',
+          'CREATE',
+        ],
+        strictHandlebarEvaluation: true,
+        sendPostMappedData: true,
+
+      },
+      rest: {
+        relativeURI: [
+          '/v3/contacts/{{{id}}}',
+          '/v3/contacts',
+        ],
+        method: [
+          'PUT',
+          'POST',
+        ],
+        body: [
+          null,
+          null,
+        ],
+        headers: [
+
+        ],
+        ignoreExtract: 'id',
+        requestType: [
+          'UPDATE',
+          'CREATE',
+        ],
+      },
+      adaptorType: 'RESTImport',
+
+    }, restAssistantData, 'rest'],
+  ];
+
+  each(testCases).test(
+    'should return %o when importDoc =  %o and assistantData = %o and adaptorType = %o',
+    (expected, importDoc, assistantData, adaptorType) => {
+      expect(convertFromImport({ importDoc, assistantData, adaptorType })).toEqual(
+        expected
+      );
+    }
+  );
+});
+
+describe('convertToImport', () => {
+  const testCases = [
+    [undefined, {}, undefined],
+    [{'/assistant': 'atera', '/assistantMetadata': {lookups: {}, operation: 'create_contacts', resource: 'contacts', version: 'v3'}, '/file': undefined, '/ignoreExisting': false, '/ignoreMissing': false, '/rest': {body: [null], headers: [], ignoreExisting: false, ignoreExtract: undefined, ignoreLookupName: undefined, ignoreMissing: false, lookups: [], method: ['POST'], relativeURI: ['/v3/contacts'], responseIdPath: [''], successPath: [undefined], successValues: [1, 2, 3, 4]}}, {
+      adaptorType: 'rest',
+      assistant: 'atera',
+      ignoreExisting: false,
+      ignoreMissing: undefined,
+      lookupQueryParams: undefined,
+      lookupType: '',
+      lookups: [],
+      operation: 'create_contacts',
+      pathParams: {contactId: ''},
+      resource: 'contacts',
+      version: 'v3',
+    }, restAssistantData],
+    [{
+      '/assistant': 'atera',
+      '/assistantMetadata': {
+        lookups: {},
+        operation: 'create_or_update_contacts',
+        resource: 'contacts',
+        version: 'v3',
+      },
+      '/file': undefined,
+      '/ignoreExisting': false,
+      '/ignoreMissing': false,
+      '/rest': {
+        body: [
+          null,
+          null,
+        ],
+        headers: [],
+        ignoreExisting: false,
+        ignoreExtract: 'id',
+        ignoreLookupName: undefined,
+        ignoreMissing: false,
+        lookups: [],
+        method: [
+          'PUT',
+          'POST',
+        ],
+        relativeURI: [
+          '/v3/contacts/{{{id}}}',
+          '/v3/contacts',
+        ],
+        requestType: [
+          'UPDATE',
+          'CREATE',
+        ],
+        responseIdPath: [
+          '',
+          '',
+        ],
+
+      },
+    }, {
+      adaptorType: 'rest',
+      assistant: 'atera',
+      lookupType: 'source',
+      lookups: {},
+      operation: 'create_or_update_contacts',
+      pathParams: {contactId: 'id'},
+      resource: 'contacts',
+      version: 'v3',
+    }, restAssistantData],
+    [{
+      '/assistant': 'atera',
+      '/assistantMetadata': {
+        lookups: {},
+        operationUrl: ':',
+        resource: 'customers',
+        version: 'v3',
+      },
+      '/ignoreExisting': false,
+      '/ignoreMissing': false,
+      '/rest': {
+        body: [
+          null,
+        ],
+        headers: [],
+        ignoreExisting: false,
+        ignoreExtract: undefined,
+        ignoreLookupName: undefined,
+        ignoreMissing: false,
+        lookups: [],
+        method: [
+          undefined,
+        ],
+        relativeURI: [
+          undefined,
+        ],
+        responseIdPath: [
+          undefined,
+        ],
+        successPath: [
+          undefined,
+        ],
+        successValues: [
+          undefined,
+        ],
+      },
+    }, {adaptorType: 'rest',
+      assistant: 'atera',
+      lookupType: 'source',
+      lookups: '',
+      operation: 'delete_customers',
+      pathParams: {customerId: 'id1'},
+      resource: 'customers',
+      version: 'v3'}, restAssistantData],
+    [{
+      '/assistant': 'recurly',
+      '/assistantMetadata': {
+        lookups: {
+
+        },
+        operation: 'update_account',
+        resource: 'accounts',
+        version: 'v2.13',
+      },
+
+      '/http': {
+        body: ['<?xml version="1.0" encoding="UTF-8"?>\n<account>\n{{#each data}}\n\t<account_code>{{account_code}}</account_code>\n\t<email>{{email}}</email>\n\t<first_name>{{first_name}}</first_name>\n\t<last_name>{{last_name}}</last_name>\n\t<username>{{username}}</username>\n\t<cc_emails>{{cc_emails}}</cc_emails>\n\t<company_name>{{company_name}}</company_name>\n\t<vat_number>{{vat_number}}</vat_number>\n\t<tax_exempt>{{tax_exempt}}</tax_exempt>\n\t<entity_use_code>{{entity_use_code}}</entity_use_code>\n\t<accept_language>{{accept_language}}</accept_language>\n\t<preferred_locale>{{preferred_locale}}</preferred_locale>\n\t<address>\n\t\t<address1>{{address.address1}}</address1>\n\t\t<address2>{{address.address2}}</address2>\n\t\t<city>{{address.city}}</city>\n\t\t<state>{{address.province}}</state>\n\t\t<zip>{{address.zip}}</zip>\n\t\t<country>{{address.country}}</country>\n\t\t<phone>{{address.phone}}</phone>\n\t</address>\n\t<account_acquisition>\n\t\t<cost_in_cents>{{account_acquisition.cost_in_cents}}</cost_in_cents>\n\t\t<currency>{{account_acquisition.currency}}</currency>\n\t\t<channel>{{account_acquisition.channel}}</channel>\n\t\t<subchannel>{{account_acquisition.subchannel}}</subchannel>\n\t\t<campaign>{{account_acquisition.campaign}}</campaign>\n\t</account_acquisition>\n\t<shipping_addresses>\n      {{#each shipping_address}}\n\t\t<shipping_address>\n\t\t\t<nickname>{{nickname}}</nickname>\n\t\t\t<first_name>{{first_name}}</first_name>\n\t\t\t<last_name>{{last_name}}</last_name>\n\t\t\t<company>{{company}}</company>\n\t\t\t<phone>{{phone}}</phone>\n\t\t\t<email>{{email}}</email>\n\t\t\t<address1>{{address1}}</address1>\n\t\t\t<address2>{{address2}}</address2>\n\t\t\t<city>{{city}}</city>\n\t\t\t<state>{{state}}</state>\n\t\t\t<zip>{{zip}}</zip>\n\t\t\t<country>{{country}}</country>\n\t\t</shipping_address>\n      {{/each}}\n\t</shipping_addresses>\n\t<billing_info>\n\t\t<first_name>{{billing_info.first_name}}</first_name>\n\t\t<last_name>{{billing_info.last_name}}</last_name>\n\t\t<company>{{billing_info.company}}</company>\n\t\t<address1>{{billing_info.address1}}</address1>\n\t\t<address2>{{billing_info.address2}}</address2>\n\t\t<city>{{billing_info.city}}</city>\n\t\t<state>{{billing_info.state}}</state>\n\t\t<zip>{{billing_info.zip}}</zip>\n\t\t<country>{{billing_info.country}}</country>\n\t\t<phone>{{billing_info.phone}}</phone>\n\t\t<vat_number>{{billing_info.vat_number}}</vat_number>\n\t\t<year type="integer">{{billing_info.year}}</year>\n\t\t<month type="integer">{{billing_info.month}}</month>\n\t</billing_info>\n{{/each}}\n</account>\n\n'],
+        errorMediaType: 'xml',
+        headers: [
+          {
+            name: 'X-Api-Version',
+            value: '2.13',
+          },
+        ],
+        ignoreEmptyNodes: true,
+        ignoreExisting: false,
+        ignoreExtract: 'id',
+        ignoreMissing: false,
+        lookups: [
+
+        ],
+        method: [
+          'PUT',
+        ],
+        relativeURI: [
+          'v2/accounts/{{{data.0.id}}}',
+        ],
+        requestMediaType: 'xml',
+        response: {
+          resourceIdPath: undefined,
+          successPath: undefined,
+        },
+        strictHandlebarEvaluation: false,
+        successMediaType: 'xml',
+      },
+      '/ignoreExisting': false,
+      '/ignoreMissing': true,
+    }, {adaptorType: 'http',
+      assistant: 'recurly',
+      ignoreMissing: true,
+      lookupQueryParams: undefined,
+      lookupType: 'source',
+      lookups: '',
+      operation: 'update_account',
+      pathParams: {account_code: 'id'},
+      resource: 'accounts',
+      version: 'v2.13'}, recurly],
+    [{
+      '/assistant': 'recurly',
+      '/assistantMetadata': {
+        lookups: {
+
+        },
+        operation: 'create_or_update',
+        resource: 'accounts',
+        version: 'v2.13',
+      },
+
+      '/http': {
+        body: ['<?xml version="1.0" encoding="UTF-8"?>\n<account>\n{{#each data}}\n\t<account_code>{{account_code}}</account_code>\n\t<email>{{email}}</email>\n\t<first_name>{{first_name}}</first_name>\n\t<last_name>{{last_name}}</last_name>\n\t<username>{{username}}</username>\n\t<cc_emails>{{cc_emails}}</cc_emails>\n\t<company_name>{{company_name}}</company_name>\n\t<vat_number>{{vat_number}}</vat_number>\n\t<tax_exempt>{{tax_exempt}}</tax_exempt>\n\t<entity_use_code>{{entity_use_code}}</entity_use_code>\n\t<accept_language>{{accept_language}}</accept_language>\n\t<preferred_locale>{{preferred_locale}}</preferred_locale>\n\t<address>\n\t\t<address1>{{address.address1}}</address1>\n\t\t<address2>{{address.address2}}</address2>\n\t\t<city>{{address.city}}</city>\n\t\t<state>{{address.province}}</state>\n\t\t<zip>{{address.zip}}</zip>\n\t\t<country>{{address.country}}</country>\n\t\t<phone>{{address.phone}}</phone>\n\t</address>\n\t<account_acquisition>\n\t\t<cost_in_cents>{{account_acquisition.cost_in_cents}}</cost_in_cents>\n\t\t<currency>{{account_acquisition.currency}}</currency>\n\t\t<channel>{{account_acquisition.channel}}</channel>\n\t\t<subchannel>{{account_acquisition.subchannel}}</subchannel>\n\t\t<campaign>{{account_acquisition.campaign}}</campaign>\n\t</account_acquisition>\n\t<shipping_addresses>\n      {{#each shipping_address}}\n\t\t<shipping_address>\n\t\t\t<nickname>{{nickname}}</nickname>\n\t\t\t<first_name>{{first_name}}</first_name>\n\t\t\t<last_name>{{last_name}}</last_name>\n\t\t\t<company>{{company}}</company>\n\t\t\t<phone>{{phone}}</phone>\n\t\t\t<email>{{email}}</email>\n\t\t\t<address1>{{address1}}</address1>\n\t\t\t<address2>{{address2}}</address2>\n\t\t\t<city>{{city}}</city>\n\t\t\t<state>{{state}}</state>\n\t\t\t<zip>{{zip}}</zip>\n\t\t\t<country>{{country}}</country>\n\t\t</shipping_address>\n      {{/each}}\n\t</shipping_addresses>\n\t<billing_info>\n\t\t<first_name>{{billing_info.first_name}}</first_name>\n\t\t<last_name>{{billing_info.last_name}}</last_name>\n\t\t<company>{{billing_info.company}}</company>\n\t\t<address1>{{billing_info.address1}}</address1>\n\t\t<address2>{{billing_info.address2}}</address2>\n\t\t<city>{{billing_info.city}}</city>\n\t\t<state>{{billing_info.state}}</state>\n\t\t<zip>{{billing_info.zip}}</zip>\n\t\t<country>{{billing_info.country}}</country>\n\t\t<phone>{{billing_info.phone}}</phone>\n\t\t<vat_number>{{billing_info.vat_number}}</vat_number>\n\t\t<year type="integer">{{billing_info.year}}</year>\n\t\t<month type="integer">{{billing_info.month}}</month>\n\t</billing_info>\n{{/each}}\n</account>\n\n'],
+        errorMediaType: 'xml',
+        headers: [
+          {
+            name: 'X-Api-Version',
+            value: '2.13',
+          },
+        ],
+        ignoreExisting: false,
+        ignoreExtract: 'idd',
+        ignoreMissing: false,
+        lookups: [
+
+        ],
+        method: [
+          'PUT',
+          'POST',
+        ],
+        relativeURI: [
+          'v2/accounts/{{{data.0.idd}}}',
+          'v2/accounts',
+        ],
+        requestType: [
+          'UPDATE',
+          'CREATE',
+        ],
+        requestMediaType: 'xml',
+        response: {
+          resourceIdPath: undefined,
+          successPath: undefined,
+        },
+        strictHandlebarEvaluation: false,
+        successMediaType: 'xml',
+      },
+      '/ignoreExisting': false,
+      '/ignoreMissing': false,
+
+    }, {adaptorType: 'http',
+      assistant: 'recurly',
+      lookupType: 'source',
+      lookups: '',
+      operation: 'create_or_update',
+      pathParams: {account_code: 'idd'},
+      resource: 'accounts',
+      version: 'v2.13'}, recurly],
+    [{
+      '/assistant': 'recurly',
+      '/assistantMetadata': {
+        lookups: {},
+        operation: 'create_account',
+        resource: 'accounts',
+        version: 'v2.13',
+      },
+
+      '/http': {
+        body: ['<?xml version="1.0" encoding="UTF-8"?>\n<account>\n{{#each data}}\n\t<account_code>{{account_code}}</account_code>\n\t<email>{{email}}</email>\n\t<first_name>{{first_name}}</first_name>\n\t<last_name>{{last_name}}</last_name>\n\t<username>{{username}}</username>\n\t<cc_emails>{{cc_emails}}</cc_emails>\n\t<company_name>{{company_name}}</company_name>\n\t<vat_number>{{vat_number}}</vat_number>\n\t<tax_exempt>{{tax_exempt}}</tax_exempt>\n\t<entity_use_code>{{entity_use_code}}</entity_use_code>\n\t<accept_language>{{accept_language}}</accept_language>\n\t<preferred_locale>{{preferred_locale}}</preferred_locale>\n\t<address>\n\t\t<address1>{{address.address1}}</address1>\n\t\t<address2>{{address.address2}}</address2>\n\t\t<city>{{address.city}}</city>\n\t\t<state>{{address.province}}</state>\n\t\t<zip>{{address.zip}}</zip>\n\t\t<country>{{address.country}}</country>\n\t\t<phone>{{address.phone}}</phone>\n\t</address>\n\t<account_acquisition>\n\t\t<cost_in_cents>{{account_acquisition.cost_in_cents}}</cost_in_cents>\n\t\t<currency>{{account_acquisition.currency}}</currency>\n\t\t<channel>{{account_acquisition.channel}}</channel>\n\t\t<subchannel>{{account_acquisition.subchannel}}</subchannel>\n\t\t<campaign>{{account_acquisition.campaign}}</campaign>\n\t</account_acquisition>\n\t<shipping_addresses>\n      {{#each shipping_address}}\n\t\t<shipping_address>\n\t\t\t<nickname>{{nickname}}</nickname>\n\t\t\t<first_name>{{first_name}}</first_name>\n\t\t\t<last_name>{{last_name}}</last_name>\n\t\t\t<company>{{company}}</company>\n\t\t\t<phone>{{phone}}</phone>\n\t\t\t<email>{{email}}</email>\n\t\t\t<address1>{{address1}}</address1>\n\t\t\t<address2>{{address2}}</address2>\n\t\t\t<city>{{city}}</city>\n\t\t\t<state>{{state}}</state>\n\t\t\t<zip>{{zip}}</zip>\n\t\t\t<country>{{country}}</country>\n\t\t</shipping_address>\n      {{/each}}\n\t</shipping_addresses>\n\t<billing_info>\n\t\t<first_name>{{billing_info.first_name}}</first_name>\n\t\t<last_name>{{billing_info.last_name}}</last_name>\n\t\t<company>{{billing_info.company}}</company>\n\t\t<address1>{{billing_info.address1}}</address1>\n\t\t<address2>{{billing_info.address2}}</address2>\n\t\t<city>{{billing_info.city}}</city>\n\t\t<state>{{billing_info.state}}</state>\n\t\t<zip>{{billing_info.zip}}</zip>\n\t\t<country>{{billing_info.country}}</country>\n\t\t<phone>{{billing_info.phone}}</phone>\n\t\t<vat_number>{{billing_info.vat_number}}</vat_number>\n\t\t<year type="integer">{{billing_info.year}}</year>\n\t\t<month type="integer">{{billing_info.month}}</month>\n\t</billing_info>\n{{/each}}\n</account>\n\n'],
+        errorMediaType: 'xml',
+        headers: [
+          {
+            name: 'X-Api-Version',
+            value: '2.13',
+          },
+        ],
+        ignoreEmptyNodes: true,
+        ignoreExisting: false,
+        ignoreMissing: false,
+        ignoreLookupName: 'account_code',
+        lookups: [{id: 'lid',
+          name: 'lp1' }, {
+          extract: 'accounts[0].id',
+          method: 'GET',
+          name: 'account_code',
+          postBody: '',
+          relativeURI: 'undefined?state=active',
+        }],
+        method: [
+          'POST',
+        ],
+        relativeURI: [
+          'v2/accounts',
+        ],
+        requestMediaType: 'xml',
+        response: {
+          resourceIdPath: undefined,
+          successPath: undefined,
+        },
+        strictHandlebarEvaluation: false,
+        successMediaType: 'xml',
+      },
+      '/ignoreExisting': true,
+      '/ignoreMissing': false,
+
+    }, {adaptorType: 'http',
+      assistant: 'recurly',
+      lookupType: 'lookup',
+      ignoreExisting: true,
+      lookups: [{name: 'lp1', id: 'lid'}],
+      lookupQueryParams: {
+        state: 'active',
+      },
+      operation: 'create_account',
+      pathParams: {account_code: 'idd'},
+      resource: 'accounts',
+      version: 'v2.13'}, recurly],
+    [{
+      '/assistant': 'recurly',
+      '/assistantMetadata': {
+        lookups: {
+
+        },
+        operation: 'create_account',
+        resource: 'accounts',
+        version: 'v2.13',
+      },
+
+      '/http': {
+        errorMediaType: 'xml',
+        body: ['<?xml version="1.0" encoding="UTF-8"?>\n<account>\n{{#each data}}\n\t<account_code>{{account_code}}</account_code>\n\t<email>{{email}}</email>\n\t<first_name>{{first_name}}</first_name>\n\t<last_name>{{last_name}}</last_name>\n\t<username>{{username}}</username>\n\t<cc_emails>{{cc_emails}}</cc_emails>\n\t<company_name>{{company_name}}</company_name>\n\t<vat_number>{{vat_number}}</vat_number>\n\t<tax_exempt>{{tax_exempt}}</tax_exempt>\n\t<entity_use_code>{{entity_use_code}}</entity_use_code>\n\t<accept_language>{{accept_language}}</accept_language>\n\t<preferred_locale>{{preferred_locale}}</preferred_locale>\n\t<address>\n\t\t<address1>{{address.address1}}</address1>\n\t\t<address2>{{address.address2}}</address2>\n\t\t<city>{{address.city}}</city>\n\t\t<state>{{address.province}}</state>\n\t\t<zip>{{address.zip}}</zip>\n\t\t<country>{{address.country}}</country>\n\t\t<phone>{{address.phone}}</phone>\n\t</address>\n\t<account_acquisition>\n\t\t<cost_in_cents>{{account_acquisition.cost_in_cents}}</cost_in_cents>\n\t\t<currency>{{account_acquisition.currency}}</currency>\n\t\t<channel>{{account_acquisition.channel}}</channel>\n\t\t<subchannel>{{account_acquisition.subchannel}}</subchannel>\n\t\t<campaign>{{account_acquisition.campaign}}</campaign>\n\t</account_acquisition>\n\t<shipping_addresses>\n      {{#each shipping_address}}\n\t\t<shipping_address>\n\t\t\t<nickname>{{nickname}}</nickname>\n\t\t\t<first_name>{{first_name}}</first_name>\n\t\t\t<last_name>{{last_name}}</last_name>\n\t\t\t<company>{{company}}</company>\n\t\t\t<phone>{{phone}}</phone>\n\t\t\t<email>{{email}}</email>\n\t\t\t<address1>{{address1}}</address1>\n\t\t\t<address2>{{address2}}</address2>\n\t\t\t<city>{{city}}</city>\n\t\t\t<state>{{state}}</state>\n\t\t\t<zip>{{zip}}</zip>\n\t\t\t<country>{{country}}</country>\n\t\t</shipping_address>\n      {{/each}}\n\t</shipping_addresses>\n\t<billing_info>\n\t\t<first_name>{{billing_info.first_name}}</first_name>\n\t\t<last_name>{{billing_info.last_name}}</last_name>\n\t\t<company>{{billing_info.company}}</company>\n\t\t<address1>{{billing_info.address1}}</address1>\n\t\t<address2>{{billing_info.address2}}</address2>\n\t\t<city>{{billing_info.city}}</city>\n\t\t<state>{{billing_info.state}}</state>\n\t\t<zip>{{billing_info.zip}}</zip>\n\t\t<country>{{billing_info.country}}</country>\n\t\t<phone>{{billing_info.phone}}</phone>\n\t\t<vat_number>{{billing_info.vat_number}}</vat_number>\n\t\t<year type="integer">{{billing_info.year}}</year>\n\t\t<month type="integer">{{billing_info.month}}</month>\n\t</billing_info>\n{{/each}}\n</account>\n\n'],
+
+        headers: [{
+          name: 'X-Api-Version',
+          value: '2.13',
+        },
+        ],
+        ignoreExisting: false,
+        ignoreMissing: false,
+        ignoreEmptyNodes: true,
+        lookups: [
+
+        ],
+        method: [
+          'POST',
+        ],
+        relativeURI: [
+          'v2/accounts',
+        ],
+        requestMediaType: 'xml',
+        response: {
+          resourceIdPath: undefined,
+          successPath: undefined,
+        },
+        strictHandlebarEvaluation: false,
+        successMediaType: 'xml',
+      },
+      '/ignoreExisting': false,
+      '/ignoreMissing': false,
+
+    }, {adaptorType: 'http',
+      assistant: 'recurly',
+      lookupType: 'source',
+      lookups: '',
+      operation: 'POST:v2/accounts',
+      pathParams: {account_code: 'idd'},
+      resource: 'accounts',
+      version: 'v2.13'}, recurly],
+    [{
+      '/assistant': 'recurly',
+      '/assistantMetadata': {
+        lookups: {
+
+        },
+        operation: 'create_or_update',
+        resource: 'accounts',
+        version: 'v2.13',
+      },
+
+      '/http': {
+        body: ['<?xml version="1.0" encoding="UTF-8"?>\n<account>\n{{#each data}}\n\t<account_code>{{account_code}}</account_code>\n\t<email>{{email}}</email>\n\t<first_name>{{first_name}}</first_name>\n\t<last_name>{{last_name}}</last_name>\n\t<username>{{username}}</username>\n\t<cc_emails>{{cc_emails}}</cc_emails>\n\t<company_name>{{company_name}}</company_name>\n\t<vat_number>{{vat_number}}</vat_number>\n\t<tax_exempt>{{tax_exempt}}</tax_exempt>\n\t<entity_use_code>{{entity_use_code}}</entity_use_code>\n\t<accept_language>{{accept_language}}</accept_language>\n\t<preferred_locale>{{preferred_locale}}</preferred_locale>\n\t<address>\n\t\t<address1>{{address.address1}}</address1>\n\t\t<address2>{{address.address2}}</address2>\n\t\t<city>{{address.city}}</city>\n\t\t<state>{{address.province}}</state>\n\t\t<zip>{{address.zip}}</zip>\n\t\t<country>{{address.country}}</country>\n\t\t<phone>{{address.phone}}</phone>\n\t</address>\n\t<account_acquisition>\n\t\t<cost_in_cents>{{account_acquisition.cost_in_cents}}</cost_in_cents>\n\t\t<currency>{{account_acquisition.currency}}</currency>\n\t\t<channel>{{account_acquisition.channel}}</channel>\n\t\t<subchannel>{{account_acquisition.subchannel}}</subchannel>\n\t\t<campaign>{{account_acquisition.campaign}}</campaign>\n\t</account_acquisition>\n\t<shipping_addresses>\n      {{#each shipping_address}}\n\t\t<shipping_address>\n\t\t\t<nickname>{{nickname}}</nickname>\n\t\t\t<first_name>{{first_name}}</first_name>\n\t\t\t<last_name>{{last_name}}</last_name>\n\t\t\t<company>{{company}}</company>\n\t\t\t<phone>{{phone}}</phone>\n\t\t\t<email>{{email}}</email>\n\t\t\t<address1>{{address1}}</address1>\n\t\t\t<address2>{{address2}}</address2>\n\t\t\t<city>{{city}}</city>\n\t\t\t<state>{{state}}</state>\n\t\t\t<zip>{{zip}}</zip>\n\t\t\t<country>{{country}}</country>\n\t\t</shipping_address>\n      {{/each}}\n\t</shipping_addresses>\n\t<billing_info>\n\t\t<first_name>{{billing_info.first_name}}</first_name>\n\t\t<last_name>{{billing_info.last_name}}</last_name>\n\t\t<company>{{billing_info.company}}</company>\n\t\t<address1>{{billing_info.address1}}</address1>\n\t\t<address2>{{billing_info.address2}}</address2>\n\t\t<city>{{billing_info.city}}</city>\n\t\t<state>{{billing_info.state}}</state>\n\t\t<zip>{{billing_info.zip}}</zip>\n\t\t<country>{{billing_info.country}}</country>\n\t\t<phone>{{billing_info.phone}}</phone>\n\t\t<vat_number>{{billing_info.vat_number}}</vat_number>\n\t\t<year type="integer">{{billing_info.year}}</year>\n\t\t<month type="integer">{{billing_info.month}}</month>\n\t</billing_info>\n{{/each}}\n</account>\n\n'],
+        errorMediaType: 'xml',
+        headers: [
+          {
+            name: 'X-Api-Version',
+            value: '2.13',
+          },
+        ],
+        ignoreExisting: false,
+        ignoreExtract: 'idd',
+        ignoreMissing: false,
+        lookups: [
+
+        ],
+        method: [
+          'PUT',
+          'POST',
+        ],
+        relativeURI: [
+          'v2/accounts/{{{data.0.idd}}}',
+          'v2/accounts',
+        ],
+        requestType: [
+          'UPDATE',
+          'CREATE',
+        ],
+        requestMediaType: 'xml',
+        response: {
+          resourceIdPath: undefined,
+          successPath: undefined,
+        },
+        strictHandlebarEvaluation: false,
+        successMediaType: 'xml',
+      },
+      '/ignoreExisting': false,
+      '/ignoreMissing': false,
+
+    }, {adaptorType: 'http',
+      assistant: 'recurly',
+      lookupType: 'source',
+      lookups: '',
+      operation: 'PUT:POST:v2/accounts/:_account_code:v2/accounts',
+      pathParams: {account_code: 'idd'},
+      resource: 'accounts',
+      version: 'v2.13'}, recurly],
+    [{'/assistant': 'servicenow', '/assistantMetadata': {lookups: {sys_id: {operation: 'get_contact'}}, operation: 'create_contact', resource: 'contact', version: 'latest'}, '/file': undefined, '/ignoreExisting': true, '/ignoreMissing': false, '/rest': {body: [null], headers: [], ignoreExisting: false, ignoreExtract: undefined, ignoreLookupName: 'sys_id', ignoreMissing: false, lookups: [{extract: 'result[0].sys_id', method: 'GET', name: 'sys_id', postBody: '', relativeURI: '/api/now/contact?sysparm_query=abc&sysparm_display_value=false&sysparm_exclude_reference_link=false&sysparm_fields=sys_id&sysparm_view=asdsa'}], method: ['POST'], relativeURI: ['/api/now/contact'], responseIdPath: [undefined], successPath: [undefined], successValues: [undefined]}}, {adaptorType: 'rest',
+      assistant: 'servicenow',
+      ignoreExisting: true,
+      ignoreMissing: undefined,
+      lookupQueryParams: {sysparm_query: 'abc', sysparm_display_value: 'false', sysparm_exclude_reference_link: 'false', sysparm_fields: 'sys_id', sysparm_view: 'asdsa'},
+      lookupType: 'lookup',
+      lookups: '',
+      operation: 'create_contact',
+      pathParams: {sys_id: ''},
+      resource: 'contact',
+      version: 'latest'}, servicenow],
+  ];
+
+  each(testCases).test(
+    'should return %o when assistantConfig =  %o and assistantData = %o',
+    (expected, assistantConfig, assistantData) => {
+      expect(convertToImport({ assistantConfig, assistantData })).toEqual(
+        expected
+      );
+    }
+  );
+});
+

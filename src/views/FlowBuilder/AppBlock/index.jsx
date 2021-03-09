@@ -18,7 +18,6 @@ import ApplicationImg from '../../../components/icons/ApplicationImg';
 import ResourceButton from '../ResourceButton';
 import BubbleSvg from '../BubbleSvg';
 import CloseIcon from '../../../components/icons/CloseIcon';
-import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 import ErrorStatus from '../ErrorStatus';
 
 const blockHeight = 170;
@@ -152,15 +151,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const DRAWER_ACTIONS_LIST = ['exportFilter',
-  'transformation',
-  'exportTransformation',
-  'inputFilter',
-  'outputFilter',
-  'postResponseMapHook',
-  'responseTransformation',
-  'lookupTransformation'];
-
 function AppBlock({
   className,
   onDelete,
@@ -188,7 +178,6 @@ function AppBlock({
   ...rest
 }) {
   const classes = useStyles();
-  const handleOpenDrawer = usePushRightDrawer();
   const [expanded, setExpanded] = useState(false);
   const [isOver, setIsOver] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
@@ -272,13 +261,6 @@ function AppBlock({
     return { leftActions, middleActions, rightActions };
   }, [actions, hasActions]);
 
-  const handleActionClick = actionName => {
-    setActiveAction(actionName);
-    if (DRAWER_ACTIONS_LIST.includes(actionName)) {
-      handleOpenDrawer(actionName);
-    }
-  };
-
   function renderActions(actions) {
     if (!actions || !actions.length) return null;
 
@@ -292,7 +274,7 @@ function AppBlock({
             [classes.isNotOverActions]: !expanded && !a.isUsed,
             [classes.actionIsNew]: expanded && !a.isUsed,
           })}
-          onClick={() => handleActionClick(a.name)}
+          onClick={() => setActiveAction(a.name)}
           data-test={a.name}>
           <a.Icon />
         </ActionIconButton>
@@ -387,6 +369,7 @@ function AppBlock({
         <Typography className={classes.containerName}>
           {isTruncated ? (
             <Tooltip
+              data-public
               title={<span className={classes.tooltipNameFB}>{name}</span>}
               TransitionComponent={Zoom}
               placement="top"

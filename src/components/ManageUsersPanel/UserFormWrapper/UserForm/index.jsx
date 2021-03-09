@@ -42,7 +42,8 @@ export default function UserForm({
       USER_ACCESS_LEVELS.TILE,
       USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
     ].includes(data.accessLevel) &&
-    data.integrationAccessLevel.length
+    // integrationAccessLevel is expected to be an array but can be undefined
+    data.integrationAccessLevel?.length
   ) {
     integrationsToManage = data.integrationAccessLevel
       .filter(ial => ial.accessLevel === INTEGRATION_ACCESS_LEVELS.MANAGE)
@@ -64,6 +65,12 @@ export default function UserForm({
         defaultDisabled: isEditMode,
         helpText:
           'Enter the email of the user you would like to invite to manage and/or monitor selected integrations.',
+        validWhen: {
+          matchesRegEx: {
+            pattern: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$',
+            message: 'Please enter a valid email address',
+          },
+        },
       },
       accessLevel: {
         id: 'accessLevel',
@@ -76,6 +83,10 @@ export default function UserForm({
         options: [
           {
             items: [
+              {
+                label: 'Administer account',
+                value: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+              },
               {
                 label: 'Manage all integrations',
                 value: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
@@ -177,8 +188,7 @@ export default function UserForm({
     <LoadResources required resources="integrations">
       <DrawerContent>
         <DynaForm
-          formKey={formKey}
-          fieldMeta={fieldMeta} />
+          formKey={formKey} />
       </DrawerContent>
       <DrawerFooter>
         <ButtonGroup>

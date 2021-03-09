@@ -3,7 +3,7 @@ import moment from 'moment';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
-import { sanitizePatchSet } from '../../forms/utils';
+import { sanitizePatchSet } from '../../forms/formFactory/utils';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 import { selectors } from '../../reducers';

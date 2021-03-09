@@ -91,7 +91,7 @@ function ConfigConnForm() {
   return (
     <>
       <DrawerContent>
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaForm formKey={formKey} />
 
         {minutes > 1 && (
           <Typography variant="body2" className={classes.remaining}>
@@ -135,7 +135,7 @@ export default function ConfigConnectionDebugger() {
   return (
     <RightDrawer
       height="tall"
-      width="small"
+      width="medium"
       path="configDebugger/:connectionId">
       <DrawerHeader
         title="Debug connection"

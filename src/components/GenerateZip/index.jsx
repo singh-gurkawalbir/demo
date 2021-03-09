@@ -22,6 +22,9 @@ const useStyles = makeStyles(theme => ({
   dynaSelectWrapper: {
     width: '100%',
   },
+  generateZipMenuItem: {
+    maxWidth: 760,
+  },
 }));
 const integrationFilterConfig = { type: 'integrations' };
 
@@ -62,12 +65,12 @@ export default function GenerateZip({ onClose, invalid = 'invalid' }) {
           data-test="selectIntegration"
           onChange={e => setSelectedIntegrationId(e.target.value)}
           margin="dense">
-          <MenuItem key={invalid} value={invalid}>
+          <MenuItem key={invalid} value={invalid} className={classes.generateZipMenuItem}>
             Please select
           </MenuItem>
           {filteredIntegrations &&
             filteredIntegrations.map(integration => (
-              <MenuItem key={integration._id} value={integration._id}>
+              <MenuItem key={integration._id} value={integration._id} className={classes.generateZipMenuItem}>
                 {integration.name}
               </MenuItem>
             ))}

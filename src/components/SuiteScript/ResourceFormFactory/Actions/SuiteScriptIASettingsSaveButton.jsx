@@ -1,16 +1,8 @@
-import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import DynaAction from '../../../DynaForm/DynaAction';
-
-const useStyles = makeStyles(theme => ({
-  actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
-  },
-}));
 
 const URL = '/app/site/hosting/scriptlet.nl?script=customscript_celigo_svb_dashboard&deploy=customdeploy_celigo_svb_dashboard';
 
@@ -31,7 +23,7 @@ function SiliconValleyDashboardLink({ssLinkedConnectionId, isSVBNSGeneralSection
   );
 }
 
-const SuiteScriptIASettingsSaveButton = props => {
+export default function SuiteScriptIASettingsSaveButton(props) {
   const {
     submitButtonLabel = 'Save',
     disabled = false,
@@ -40,7 +32,6 @@ const SuiteScriptIASettingsSaveButton = props => {
     integrationId,
     ...rest
   } = props;
-  const classes = useStyles();
   const dispatch = useDispatch();
   const saving = useSelector(state =>
     selectors.suiteScriptIAFormSaving(state, {
@@ -63,18 +54,11 @@ const SuiteScriptIASettingsSaveButton = props => {
       <SiliconValleyDashboardLink {...props} />
       <DynaAction
         {...rest}
-        showCustomFormValidations={() => {
-          dispatch(
-            actions.suiteScript.iaForm.showFormValidations(ssLinkedConnectionId, integrationId)
-          );
-        }}
-        className={classes.actionButton}
         disabled={disabled || saving}
         onClick={onSave}>
         {saving ? 'Saving' : submitButtonLabel}
       </DynaAction>
     </>
   );
-};
+}
 
-export default SuiteScriptIASettingsSaveButton;

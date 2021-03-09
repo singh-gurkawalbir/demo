@@ -18,12 +18,13 @@ import { generateNewId } from '../../utils/resource';
 const useStyles = makeStyles(theme => ({
   resourceFormWrapper: {
     padding: theme.spacing(3),
-    borderColor: 'rgb(0,0,0,0.1)',
-    borderStyle: 'solid',
-    borderWidth: '1px 0 0 0',
+    overflowY: 'auto',
   },
   resourceFormRadioGroupWrapper: {
     marginBottom: theme.spacing(2),
+  },
+  doneBtn: {
+    margin: theme.spacing(0, 3),
   },
 }));
 
@@ -129,35 +130,39 @@ export default function AddOrSelect(props) {
         {/* div wrapping is imp. since child component is reusable component and it inherits parent top parent. Validate before removing */}
         <div>
           {useNew ? (
-            <>
-              <ResourceFormWithStatusPanel
-                formKey={newFormId}
-                heightOffset="250"
-                occupyFullWidth
-                resourceType={resourceType}
-                resourceId={resourceId}
-                onSubmitComplete={handleSubmitComplete}
+
+            <ResourceFormWithStatusPanel
+              formKey={newFormId}
+              heightOffset="250"
+              occupyFullWidth
+              resourceType={resourceType}
+              resourceId={resourceId}
+              onSubmitComplete={handleSubmitComplete}
             />
-              <ResourceFormActionsPanel
-                formKey={newFormId}
-                resourceType={resourceType}
-                resourceId={resourceId}
-                submitButtonLabel="Save & close"
-                cancelButtonLabel="Cancel"
-                onSubmitComplete={handleSubmitComplete}
-                connectionType={connectionType}
-                onCancel={onClose} />
-            </>
+
           ) : (
-            <>
-              <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
-              <DynaSubmit formKey={formKey} onClick={handleSubmit}>
-                Done
-              </DynaSubmit>
-            </>
+
+            <DynaForm formKey={formKey} />
+
           )}
         </div>
       </div>
+
+      {useNew ? (
+        <ResourceFormActionsPanel
+          formKey={newFormId}
+          resourceType={resourceType}
+          resourceId={resourceId}
+          submitButtonLabel="Save & close"
+          cancelButtonLabel="Cancel"
+          onSubmitComplete={handleSubmitComplete}
+          connectionType={connectionType}
+          onCancel={onClose} />
+      ) : (
+        <DynaSubmit formKey={formKey} onClick={handleSubmit} className={classes.doneBtn}>
+          Done
+        </DynaSubmit>
+      )}
     </LoadResources>
   );
 }

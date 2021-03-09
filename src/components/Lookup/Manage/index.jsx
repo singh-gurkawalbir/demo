@@ -142,6 +142,9 @@ export default function ManageLookup({
         connectionId,
         staticLookupCommMetaPath,
         extractFields,
+        resourceId,
+        resourceType,
+        flowId,
       });
     } if (resource.adaptorType === 'SalesforceImport') {
       return salesforceMetadata.getLookupMetadata({
@@ -149,6 +152,9 @@ export default function ManageLookup({
         connectionId,
         extractFields,
         picklistOptions,
+        resourceId,
+        resourceType,
+        flowId,
       });
     } if (resource.adaptorType === 'RDBMSImport') {
       return rdbmsMetadata.getLookupMetadata({
@@ -156,6 +162,9 @@ export default function ManageLookup({
         showDynamicLookupOnly,
         sampleData: formattedSampleData,
         connectionId,
+        resourceId,
+        resourceType,
+        flowId,
       });
     }
 
@@ -179,7 +188,6 @@ export default function ManageLookup({
     <div data-test="lookup-form">
       <DynaForm
         formKey={formKey}
-        fieldMeta={fieldMeta}
         />
       {error && (
         <div>

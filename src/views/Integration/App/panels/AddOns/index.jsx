@@ -3,11 +3,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Button, Card, CardActions, Typography } from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
+import RawHtml from '../../../../../components/RawHtml';
 import PanelHeader from '../../../../../components/PanelHeader';
 import { LICENSE_UPGRADE_REQUEST_RECEIVED } from '../../../../../utils/messageStore';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import ModalDialog from '../../../../../components/ModalDialog';
+import {isHTML} from '../../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,7 +46,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'left',
   },
   header: {
-    padding: theme.spacing(2, 0),
+    marginBottom: theme.spacing(2),
     '&:before': {
       content: '""',
       width: '100%',
@@ -56,9 +58,11 @@ const useStyles = makeStyles(theme => ({
     },
   },
   description: {
-    width: '200px',
-    maxHeight: '100px',
+    minHeight: '160px',
+    maxHeight: '175px',
     overflowY: 'auto',
+    paddingRight: theme.spacing(2),
+    wordBreak: 'break-word',
   },
   cardAction: {
     position: 'absolute',
@@ -120,7 +124,7 @@ export default function AddOnsPanel({ integrationId }) {
               <div className={classes.header}>
                 <Typography variant="h4">{data.name}</Typography>
               </div>
-              <Typography variant="body2">{data.description}</Typography>
+              <Typography variant="body2" className={classes.description}>{isHTML(data.description) ? <RawHtml html={data.description} /> : data.description}</Typography>
               <CardActions className={classes.cardAction}>
                 <Button
                   data-test="contactSales"

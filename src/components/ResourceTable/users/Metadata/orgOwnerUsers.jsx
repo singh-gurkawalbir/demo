@@ -6,7 +6,7 @@ import Notifications from '../cells/Notifications';
 import AccessLevelHeader from '../cells/AccessLevelHeader';
 import EnableUserHeader from '../cells/EnableUserHeader';
 import StatusHeader from '../cells/StatusHeader';
-import { ACCOUNT_IDS } from '../../../../utils/constants';
+import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../../../utils/constants';
 import ManagePermissions from '../actions/ManagePermissions';
 import MakeAccountOwner from '../actions/MakeAccountOwner';
 import DeleteFromAccount from '../actions/DeleteFromAccount';
@@ -29,8 +29,8 @@ export default {
       {
         headerValue: EnableUserHeader,
         align: 'center',
-        value: (r, { integrationId}) =>
-          <EnableUser user={r} integrationId={integrationId} />,
+        value: (r, { integrationId, accessLevel}) =>
+          <EnableUser user={r} integrationId={integrationId} accessLevel={accessLevel} />,
       },
       ...((integrationId && isUserInErrMgtTwoDotZero) ? [{
         heading: 'Notifications',
@@ -43,15 +43,19 @@ export default {
     return columns;
   },
   rowActions: (user, actionProps = {}) => {
-    const { integrationId } = actionProps;
+    const { integrationId, accessLevel } = actionProps;
     const actions = [];
+
+    if ([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(accessLevel) && user._id === ACCOUNT_IDS.OWN) {
+      return [];
+    }
 
     if (integrationId && user._id !== ACCOUNT_IDS.OWN) {
       actions.push(ManagePermissions);
     }
     if (!integrationId) {
       actions.push(ManagePermissions);
-      if (user.accepted) {
+      if (user.accepted && accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
         actions.push(MakeAccountOwner);
       }
       actions.push(DeleteFromAccount);

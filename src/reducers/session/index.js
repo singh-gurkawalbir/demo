@@ -3,6 +3,7 @@ import form, {selectors as fromForm} from './form';
 import stage, { selectors as fromStage } from './stage';
 import filters, { selectors as fromFilters } from './filters';
 import editors, { selectors as fromEditors } from './editors';
+import _editors, { selectors as fromEditorsAfe2 } from './_editors';
 import metadata, { selectors as fromMetadata } from './metadata';
 import editorSampleData, { selectors as fromEditorSampleData } from './editorSampleData';
 import connectors, { selectors as fromConnectors } from './connectors';
@@ -33,6 +34,7 @@ import errorManagement, { selectors as fromErrorManagement } from './errorManage
 import exportDataReducer, { selectors as fromExportData } from './exportData';
 import customSettings, { selectors as fromCustomSettings } from './customSettings';
 import recycleBin, { selectors as fromRecycleBin } from './recycleBin';
+import logs, {selectors as fromLogs} from './logs';
 import { genSelectors } from '../util';
 
 export default combineReducers({
@@ -41,6 +43,7 @@ export default combineReducers({
   stage,
   filters,
   editors,
+  _editors,
   metadata,
   connectors,
   connections,
@@ -70,6 +73,7 @@ export default combineReducers({
   customSettings,
   exportData: exportDataReducer,
   editorSampleData,
+  logs,
 });
 
 // #region PUBLIC SELECTORS
@@ -79,6 +83,7 @@ const subSelectors = {
   stage: fromStage,
   filters: fromFilters,
   editors: fromEditors,
+  _editors: fromEditorsAfe2,
   metadata: fromMetadata,
   editorSampleData: fromEditorSampleData,
   connectors: fromConnectors,
@@ -109,6 +114,7 @@ const subSelectors = {
   exportData: fromExportData,
   customSettings: fromCustomSettings,
   recycleBin: fromRecycleBin,
+  logs: fromLogs,
 };
 
 genSelectors(selectors, subSelectors);

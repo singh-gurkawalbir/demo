@@ -1,6 +1,6 @@
-import {applicationsList} from '../../../constants/applications';
+import {applicationsList, applicationsPlaceHolderText} from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
-import { RDBMS_TYPES } from '../../../utils/constants';
+import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
 
 export default {
   init: meta => meta,
@@ -44,7 +44,7 @@ export default {
     }
     // If there is no assistant for the import, we need to show generic adaptor form
     // we are patching useTechAdaptorForm field to not to show default assistant form
-    if ((!app.import || !app.export) && app.assistant) {
+    if ((!app.import && !app.export) && app.assistant && !FILE_PROVIDER_ASSISTANTS.includes(app.assistant)) {
       newValues['/useTechAdaptorForm'] = true;
     }
 
@@ -74,8 +74,7 @@ export default {
       type: 'selectapplication',
       label: 'Application',
       refreshOptionsOnChangesTo: ['resourceType'],
-      placeholder:
-        'Choose application or start typing to browse 150+ applications',
+      placeholder: applicationsPlaceHolderText(),
       defaultValue: r => {
         if (!r) return '';
 
@@ -213,13 +212,13 @@ export default {
 
       if (['rest', 'http', 'salesforce', 'netsuite'].indexOf(app.type) >= 0) {
         if (resourceTypeField.value === 'importRecords') {
-          expression.push({ blobKeyPath: { $exists: false } });
+          expression.push({ blob: { $exists: false } });
 
           if (adaptorType === 'NetSuiteImport') {
             adaptorType = 'NetSuiteDistributedImport';
           }
         } else if (resourceTypeField.value === 'transferFiles') {
-          expression.push({ blobKeyPath: { $exists: true } });
+          expression.push({ blob: { $exists: true } });
         } else if (resourceTypeField.value === 'lookupRecords') {
           expression.push({ type: { $ne: 'blob' } });
         } else if (resourceTypeField.value === 'lookupFiles') {

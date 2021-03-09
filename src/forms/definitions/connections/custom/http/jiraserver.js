@@ -1,12 +1,20 @@
 export default {
-  preSave: formValues => ({
-    ...formValues,
-    '/type': 'http',
-    '/assistant': 'jiraserver',
-    '/http/auth/type': 'basic',
-    '/http/mediaType': 'json',
-    '/http/ping/relativeURI': '/rest/api/2/customFields',
-  }),
+  preSave: formValues => {
+    const newValues = { ...formValues};
+
+    if (newValues['/mode'] === 'cloud') {
+      newValues['/_agentId'] = undefined;
+    }
+
+    return {
+      ...newValues,
+      '/type': 'http',
+      '/assistant': 'jiraserver',
+      '/http/auth/type': 'basic',
+      '/http/mediaType': 'json',
+      '/http/ping/relativeURI': '/rest/api/2/customFields',
+    };
+  },
   fieldMap: {
     name: { fieldId: 'name' },
     _agentId: {

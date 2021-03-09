@@ -27,13 +27,10 @@ const useStyles = makeStyles(theme => ({
     padding: '30px 30px 30px 0',
   },
   container: {
-    padding: '0 0 30px 30px',
+    padding: '0 0 16px 16px',
   },
   button: {
     margin: theme.spacing(1),
-  },
-  item: {
-    float: 'left',
   },
   planContent: {
     margin: 0,
@@ -90,24 +87,24 @@ export default function SubscriptionSection({ storeId, integrationId }) {
           <div className={classes.planContent}>
             <Grid container className={classes.container}>
               <Grid item xs={2}>
-                <Typography data-test="iaPlan" className={classes.item}>
+                <Typography data-test="iaPlan" >
                   {' '}
                   {plan}{' '}
                 </Typography>
               </Grid>
               <Grid item xs={4}>
-                <Typography data-test="iaVersion" className={classes.item}>
+                <Typography data-test="iaVersion">
                   {`Version ${integration.version}`}
                 </Typography>
-                <Typography data-test="integrationId" className={classes.item}>
+                <Typography data-test="integrationId" >
                   {`Integration ID ${integrationId}`}
                 </Typography>
               </Grid>
-              <Grid item xs={3}>
-                <Typography className={classes.item}>{createdText}</Typography>
-                <Typography className={classes.item}>{expiresText}</Typography>
+              <Grid item xs={4}>
+                <Typography >{createdText}</Typography>
+                <Typography >{expiresText}</Typography>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={4}>
                 {upgradeText && (
                 <Button
                   variant="contained"

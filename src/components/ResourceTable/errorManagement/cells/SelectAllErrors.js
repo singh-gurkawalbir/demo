@@ -10,33 +10,26 @@ export default function SelectAllErrors({
   flowId,
   resourceId,
   isResolved,
-  filterKey,
-  defaultFilter,
   actionInProgress,
 }) {
   const dispatch = useDispatch();
+
   const isAllSelected = useSelector(state =>
-    selectors.isAllErrorsSelected(state, {
+    selectors.isAllErrorsSelectedInCurrPage(state, {
       flowId,
       resourceId,
       isResolved,
-      filterKey,
-      defaultFilter,
     })
   );
   const handleChange = event => {
     const { checked } = event.target;
 
     dispatch(
-      actions.errorManager.flowErrorDetails.selectAll({
+      actions.errorManager.flowErrorDetails.selectAllInCurrPage({
         flowId,
         resourceId,
         checked,
-        options: {
-          filterKey,
-          defaultFilter,
-          isResolved,
-        },
+        isResolved,
       })
     );
   };

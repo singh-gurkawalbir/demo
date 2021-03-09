@@ -35,8 +35,10 @@ export default {
     },
   },
   'salesforce.document.id': {
-    type: 'text',
+    type: 'uri',
     label: 'Document ID',
+    showExtract: false,
+    showLookup: false,
     required: true,
     visibleWhenAll: [
       {
@@ -54,8 +56,10 @@ export default {
     ],
   },
   'salesforce.attachment.id': {
-    type: 'text',
+    type: 'uri',
     label: 'Attachment ID',
+    showExtract: false,
+    showLookup: false,
     required: true,
     visibleWhenAll: [
       {
@@ -73,9 +77,11 @@ export default {
     ],
   },
   'salesforce.document.name': {
-    type: 'text',
+    type: 'uri',
     label: 'Document name',
     required: true,
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -92,9 +98,11 @@ export default {
     ],
   },
   'salesforce.attachment.name': {
-    type: 'text',
+    type: 'uri',
     label: 'Attachment name',
     required: true,
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -129,9 +137,11 @@ export default {
     ],
   },
   'salesforce.document.folderId': {
-    type: 'text',
+    type: 'uri',
     label: 'Folder ID',
     required: true,
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -148,8 +158,10 @@ export default {
     ],
   },
   'salesforce.contentVersion.contentDocumentId': {
-    type: 'text',
+    type: 'uri',
     label: 'Content document ID',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -166,8 +178,10 @@ export default {
     ],
   },
   'salesforce.contentVersion.title': {
-    type: 'text',
+    type: 'uri',
     label: 'Title',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -184,8 +198,10 @@ export default {
     ],
   },
   'salesforce.contentVersion.tagCsv': {
-    type: 'text',
+    type: 'uri',
     label: 'Tag csv',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -228,8 +244,10 @@ export default {
     ],
   },
   'salesforce.contentVersion.pathOnClient': {
-    type: 'text',
+    type: 'uri',
     label: 'Path on client',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -246,9 +264,11 @@ export default {
     ],
   },
   'salesforce.attachment.parentId': {
-    type: 'text',
+    type: 'uri',
     label: 'Parent ID',
     required: true,
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -265,8 +285,10 @@ export default {
     ],
   },
   'salesforce.document.contentType': {
-    type: 'text',
+    type: 'uri',
     label: 'Content type',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -283,8 +305,10 @@ export default {
     ],
   },
   'salesforce.attachment.contentType': {
-    type: 'text',
+    type: 'uri',
     label: 'Content type',
+    showExtract: false,
+    showLookup: false,
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -491,7 +515,7 @@ export default {
       },
     ],
     defaultValue: r => {
-      if (r && r.salesforce && r.salesforce.api !== 'compositerecord') {
+      if (r && r.salesforce && r.salesforce.api !== 'compositerecord' && !r.blob) {
         return r.salesforce.operation;
       }
 

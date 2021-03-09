@@ -1,8 +1,8 @@
 import produce from 'immer';
 import actionTypes from '../../../../actions/types';
-import { fieldsTouchedForMeta } from '../../../../forms/utils';
 import { suiteScriptResourceKey } from '../../../../utils/suiteScript';
 import {FORM_SAVE_STATUS} from '../../../../utils/constants';
+import { fieldsTouchedForMeta } from '../../../../forms/formFactory/utils';
 
 export default (state = {}, action) => {
   const {
@@ -32,6 +32,11 @@ export default (state = {}, action) => {
       case actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT:
         draft[key] = { initComplete: false, initData };
         break;
+      case actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT_FAILED:
+
+        draft[key] = {initFailed: true,
+          initComplete: false};
+        break;
 
       case actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT_COMPLETE:
 
@@ -52,7 +57,6 @@ export default (state = {}, action) => {
           initComplete: true,
           fieldMeta,
           flowId,
-          showFormValidationsBeforeTouch: false,
         };
         break;
 

@@ -1,25 +1,16 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
-import CeligoTable from '../../../CeligoTable';
-import InfoIconButton from '../../../InfoIconButton';
+import DynaPreviewComponentsTable from '../../../DynaForm/fields/DynaPreviewComponentsTable';
 import Spinner from '../../../Spinner';
 import SpinnerWrapper from '../../../SpinnerWrapper';
 
 const columns = [
   {
     heading: 'Name',
-    value: function NameWithInfoicon(r) {
-      return (
-        <>
-          {r?.doc?.name || r?.doc?._id}
-          <InfoIconButton info={r.doc.description} size="xs" />
-        </>
-      );
-    },
-    orderBy: 'name',
+    value: r => r?.doc?.name || r?.doc?._id,
   },
-  { heading: 'Type', value: r => r.model },
+  { heading: 'Description', value: r => r.doc?.description },
 ];
 
 export default function PreviewTable({ templateId }) {
@@ -49,5 +40,5 @@ export default function PreviewTable({ templateId }) {
     );
   }
 
-  return <CeligoTable data={data} columns={columns} />;
+  return <DynaPreviewComponentsTable data={data} columns={columns} />;
 }

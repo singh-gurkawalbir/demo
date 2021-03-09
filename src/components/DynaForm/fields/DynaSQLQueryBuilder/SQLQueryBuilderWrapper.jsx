@@ -6,7 +6,7 @@ import actions from '../../../../actions';
 import SqlQueryBuilderEditorDrawer from '../../../AFE/SqlQueryBuilderEditor/Drawer';
 import { getDefaultData } from '../../../../utils/sampleData';
 import { getUnionObject } from '../../../../utils/jsonPaths';
-import { getUniqueFieldId } from '../../../../utils/resource';
+import { getUniqueFieldId } from '../../../../utils/editor';
 import DynaLookupEditor from '../DynaLookupEditor';
 
 export default function SQLQueryBuilderWrapper(props) {

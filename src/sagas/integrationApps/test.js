@@ -26,6 +26,7 @@ import {
   getMappingMetadata,
 } from './settings';
 import {initUninstall, uninstallStep, requestSteps} from './uninstaller2.0';
+import {resumeIntegration} from './resume';
 
 describe('installer saga', () => {
   describe('installStep generator', () => {
@@ -1092,7 +1093,7 @@ describe('settings saga', () => {
         .run();
     });
 
-    test('should make api call and dispatch receivedCategoryMappingGeneratesMetadata if options,generatesMetadata is true', () => {
+    test('should make api call and dispatch receivedGeneratesMetadata if options,generatesMetadata is true', () => {
       const options = {
         generatesMetadata: true,
       };
@@ -1116,7 +1117,7 @@ describe('settings saga', () => {
         .provide([[call(apiCallWithRetry, args), response]])
         .call(apiCallWithRetry, args)
         .put(
-          actions.integrationApp.settings.receivedCategoryMappingGeneratesMetadata(
+          actions.integrationApp.settings.categoryMappings.receivedGeneratesMetadata(
             integrationId,
             flowId,
             response
@@ -1190,7 +1191,7 @@ describe('settings saga', () => {
         .call(apiCallWithRetry, args1)
         .call(apiCallWithRetry, args2)
         .put(
-          actions.integrationApp.settings.receivedCategoryMappingData(
+          actions.integrationApp.settings.categoryMappings.receivedUpdatedMappingData(
             integrationId,
             flowId,
             mappingData
@@ -1426,5 +1427,26 @@ describe('uninstaller2.0 saga', () => {
         )
         .run();
     });
+  });
+});
+describe('resumeIntegration Saga', () => {
+  const integrationId = 'intId';
+
+  test('should make API call and dispatch received steps action', () => expectSaga(resumeIntegration, { integrationId })
+    .provide([[matchers.call.fn(apiCallWithRetry), {}]])
+    .call.fn(apiCallWithRetry)
+    .put(actions.resource.request('integrations', integrationId))
+    .put(actions.resource.requestCollection('flows'))
+    .put(actions.resource.requestCollection('exports'))
+    .put(actions.resource.requestCollection('imports'))
+    .run());
+
+  test('should dispatch failed action if API call throws error', () => {
+    const error = { message: 'Resume error' };
+
+    return expectSaga(resumeIntegration, { integrationId })
+      .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
+      .call.fn(apiCallWithRetry)
+      .run();
   });
 });

@@ -25,6 +25,51 @@ export default {
       r.file.fileDefinition &&
       r.file.fileDefinition._fileDefinitionId,
   },
+  'file.fileName': {
+    type: 'ftpfilenamewitheditor',
+    label: r => r?.adaptorType === 'S3Import' ? 'File key' : 'File name',
+    helpKey: r => {
+      if (r?.adaptorType === 'S3Import') {
+        return 'import.s3.fileKey';
+      }
+      if (r?.adaptorType === 'FTPImport') {
+        return 'import.ftp.fileName';
+      }
+
+      return 'import.file.fileName';
+    },
+    required: true,
+    showAllSuggestions: true,
+    validWhen: {
+      someAreTrue: {
+        message:
+          'Please append date and time stamp, such as {{timestamp "YYYY-MM-DD hh:mm:ss" "America/Los_Angeles"}}.',
+        conditions: [
+          {
+            field: 'file.skipAggregation',
+            isNot: {
+              values: [true],
+            },
+          },
+          {
+            matchesRegEx: {
+              pattern: '{{timestamp "(?=.*x).*"}}|{{timestamp "(?=.*X).*"}}|{{timestamp "(?=.*mm)(?=.*ss).*"}}',
+            },
+          },
+        ],
+      },
+    },
+    visibleWhen: r => {
+      if (r?.adaptorType === 'FTPImport') {
+        return [{
+          field: 'inputMode',
+          is: ['records'],
+        }];
+      }
+
+      return [];
+    },
+  },
   'edix12.format': {
     type: 'filedefinitionselect',
     label: 'EDI x12 format',
@@ -132,7 +177,20 @@ export default {
   'file.compressionFormat': {
     type: 'select',
     label: 'Compression format',
-    options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
+    options: [{ items: [{ label: 'gzip', value: 'gzip' }, { label: 'zip', value: 'zip' }] }],
+  },
+  'file.backupPath': {
+    type: 'uri',
+    label: r => r?.adaptorType === 'S3Import' ? 'Backup bucket name' : 'Backup files path',
+    helpKey: r => {
+      if (r?.adaptorType === 'S3Import') {
+        return 'import.s3.backupBucket';
+      } if (r?.adaptorType === 'FTPImport') {
+        return 'import.ftp.backupDirectoryPath';
+      }
+
+      return 'import.file.backupPath';
+    },
   },
   'file.skipAggregation': {
     type: 'checkbox',

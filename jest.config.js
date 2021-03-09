@@ -30,4 +30,12 @@ module.exports = {
       lines: 80,
     },
   },
+  // these variables are injected through webpack definePlugin and
+  // are not injected in out test case, hence generating undefined errors
+  // through globals we are able to inject these variables
+  globals: {
+    RELEASE_VERSION: 'some release version',
+    LOGROCKET_IDENTIFIER: 'some logrocket identifier',
+    LOGROCKET_IDENTIFIER_EU: 'some logrocket identifier europe',
+  },
 };

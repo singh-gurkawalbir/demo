@@ -1,7 +1,10 @@
 import produce from 'immer';
+import map from 'lodash/map';
+import { createSelector } from 'reselect';
 import { deepClone } from 'fast-json-patch/lib/core';
 import actionTypes from '../../../../actions/types';
 import mappingUtil from '../../../../utils/mapping';
+import { FORM_SAVE_STATUS } from '../../../../utils/constants';
 
 const emptyObj = {};
 const emptySet = [];
@@ -29,7 +32,7 @@ function flattenChildrenStructrue(
     }
 
     result.push({
-      ...meta,
+      ...(meta || {}),
       isRoot,
       depth,
       deleted:
@@ -92,20 +95,11 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE:
         draft[key] = {
           initComplete: true,
-          showValidationBeforeTouched: false,
         };
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.FORM
-        .SHOW_FORM_VALIDATION_ERRORS:
-        if (!draft[key]) draft[key] = {};
-        draft[key].showValidationBeforeTouched = true;
-        break;
-
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE:
         if (!draft[key]) draft[key] = {};
-        delete draft[key].submitFailed;
-        draft[key].saveStatus = 'saving';
-        draft[key].submitComplete = false;
+        draft[key].formSaveStatus = FORM_SAVE_STATUS.LOADING;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA:
         if (!draft[addOnKey]) {
@@ -115,8 +109,7 @@ export default (state = {}, action) => {
         draft[addOnKey].status = 'requested';
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS
-        .ADDON_LICENSES_METADATA_FAILURE:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA_FAILURE:
         if (!draft[addOnKey]) {
           draft[addOnKey] = {};
         }
@@ -166,18 +159,13 @@ export default (state = {}, action) => {
         }
 
         break;
-
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_COMPLETE:
         if (!draft[key]) draft[key] = {};
-        delete draft[key].submitFailed;
-        delete draft[key].saveStatus;
-        draft[key].submitComplete = true;
+        draft[key].formSaveStatus = FORM_SAVE_STATUS.COMPLETE;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED:
         if (!draft[key]) draft[key] = {};
-        delete draft[key].submitComplete;
-        delete draft[key].saveStatus;
-        draft[key].submitFailed = true;
+        draft[key].formSaveStatus = FORM_SAVE_STATUS.FAILED;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR:
         delete draft[key];
@@ -195,8 +183,7 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED:
         draft[licenseId] = true;
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .SAVE_VARIATION_MAPPINGS:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_VARIATION_MAPPINGS:
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
           mappingUtil.addVariation(draft, cKey, data);
           draft[cKey].mappings[id].staged = draft[cKey].mappings[id].mappings;
@@ -205,8 +192,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .CANCEL_VARIATION_MAPPINGS:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CANCEL_VARIATION_MAPPINGS:
         if (
           draft[cKey] &&
           draft[cKey].mappings &&
@@ -244,11 +230,9 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR:
         delete draft[cKey];
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .CLEAR_SAVE_STATUS:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR_SAVE_STATUS:
         delete draft[cKey].saveStatus;
         break;
-
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT:
         {
           const {
@@ -328,17 +312,14 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .UPDATE_GENERATES: {
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_GENERATES: {
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
           draft[cKey].mappings[id].generateFields = generateFields;
         }
 
         break;
       }
-
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .PATCH_FIELD: {
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.PATCH_FIELD: {
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
           if (draft[cKey].mappings[id].mappings[index]) {
             const objCopy = {
@@ -402,27 +383,8 @@ export default (state = {}, action) => {
 
         break;
       }
-
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .PATCH_INCOMPLETE_GENERATES: {
-        if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
-          const incompleteGeneObj = draft[cKey].mappings[
-            id
-          ].incompleteGenerates.find(gen => gen.index === index);
-
-          if (incompleteGeneObj) {
-            incompleteGeneObj.value = value;
-          } else {
-            draft[cKey].mappings[id].incompleteGenerates.push({ index, value });
-          }
-        }
-
-        break;
-      }
-
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .PATCH_SETTINGS:
-        if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.PATCH_SETTINGS:
+        if (draft[cKey]?.mappings?.[id]?.mappings?.[index]) {
           const {
             generate,
             extract,
@@ -475,8 +437,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .UPDATE_LOOKUP: {
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LOOKUP: {
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
           if (oldValue) {
             draft[cKey].mappings[id].lookups = draft[cKey].mappings[id].lookups.filter(l => l.name !== oldValue.name);
@@ -499,25 +460,7 @@ export default (state = {}, action) => {
 
         break;
       }
-
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .CLEAR_VARIATION_MAPPINGS:
-        // Variation mappings have id structure as `${flowId}-${integrationId}-${sectionId}-${variation}`
-        // ie,  all variations of one section will have same prefix `${flowId}-${integrationId}-${sectionId}`
-        // so while deleting section we need to delete all variations of that section.
-        // hence searching by prefix and not strict id check.
-        if (draft[cKey] && draft[cKey].mappings) {
-          Object.keys(draft[cKey].mappings).forEach(_id => {
-            if (_id.startsWith(id)) {
-              delete draft[cKey].mappings[id];
-            }
-          });
-        }
-
-        break;
-
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .SET_VISIBILITY:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SET_VISIBILITY:
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
           draft[cKey].mappings[id].visible = value;
         }
@@ -533,8 +476,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .SAVE_COMPLETE:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_COMPLETE:
         if (draft[cKey]) {
           draft[cKey].saveStatus = 'saved';
 
@@ -553,8 +495,7 @@ export default (state = {}, action) => {
       // the action loadFailed is empty for future use
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.LOAD_FAILED:
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS
-        .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA:
         ({ response: categoryMappingData } = metadata);
         generatesMetadata = categoryMappingData.find(
           data => data.operation === 'generatesMetaData'
@@ -580,7 +521,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPING_FILTERS:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SET_FILTERS:
         if (draft[cKey]) {
           draft[cKey].filters = {
             ...draft[cKey].filters,
@@ -589,11 +530,11 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.ADD_CATEGORY:
         if (draft[cKey]) mappingUtil.addCategory(draft, integrationId, flowId, data);
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.DELETE_CATEGORY:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE_CATEGORY:
         if (draft[cKey]) {
           if (!draft[cKey].deleted) {
             draft[cKey].deleted = [];
@@ -603,7 +544,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.RESTORE_CATEGORY:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.RESTORE_CATEGORY:
         if (
           draft[cKey] &&
           draft[cKey].deleted &&
@@ -613,8 +554,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS
-        .RECEIVED_CATEGORY_MAPPINGS_DATA:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.RECEIVED_UPDATED_MAPPING_DATA:
         if (draft[cKey]) {
           draft[cKey].saveStatus = 'saved';
 
@@ -632,8 +572,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS
-        .RECEIVED_CATEGORY_MAPPING_METADATA:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_CATEGORY_MAPPING_METADATA:
         ({ response: categoryMappingData } = metadata);
         generatesMetadata = categoryMappingData.find(
           data => data.operation === 'generatesMetaData'
@@ -679,8 +618,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-        .CLEAR_COLLAPSE_STATUS:
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR_COLLAPSE_STATUS:
         if (draft[cKey] && draft[cKey].collapseStatus) {
           delete draft[cKey].collapseStatus.collapseAction;
         }
@@ -708,25 +646,28 @@ selectors.integrationAppSettingsFormState = (
   return state[key] || emptyObj;
 };
 
-selectors.categoryMappingsCollapsedStatus = (state, integrationId, flowId) => {
-  const cKey = getCategoryKey(integrationId, flowId);
+selectors.mkCategoryMappingsCollapsedStatus = () => createSelector(
+  (state, integrationId, flowId) => {
+    const cKey = getCategoryKey(integrationId, flowId);
 
-  if (!state || !state[cKey]) {
-    return emptyObj;
-  }
+    if (!state || !state[cKey]) {
+      return emptyObj;
+    }
 
-  return state[cKey].collapseStatus || emptyObj;
-};
+    return state[cKey].collapseStatus || emptyObj;
+  },
+  collapseStatus => collapseStatus);
 
-selectors.categoryMappingFilters = (state, integrationId, flowId) => {
-  const cKey = getCategoryKey(integrationId, flowId);
+selectors.mkCategoryMappingFilters = () => createSelector(
+  (state, integrationId, flowId) => {
+    const cKey = getCategoryKey(integrationId, flowId);
 
-  if (!state || !state[cKey]) {
-    return null;
-  }
+    if (!state || !state[cKey]) {
+      return null;
+    }
 
-  return state[cKey].filters;
-};
+    return state[cKey].filters;
+  }, filters => filters);
 
 selectors.categoryMapping = (state, integrationId, flowId) => {
   const cKey = getCategoryKey(integrationId, flowId);
@@ -738,120 +679,289 @@ selectors.categoryMapping = (state, integrationId, flowId) => {
   return state[cKey];
 };
 
-selectors.variationMappingData = (state, integrationId, flowId) => {
-  const cKey = getCategoryKey(integrationId, flowId);
+selectors.mkMappedCategories = () => createSelector(
+  (state, integrationId, flowId) => {
+    const {response} = state?.[getCategoryKey(integrationId, flowId)] || emptyObj;
 
-  if (!state) return null;
-  const { response = [] } = state[cKey] || emptyObj;
-  const mappings = [];
-  let mappingMetadata = [];
-  const basicMappingData = response.find(
-    sec => sec.operation === 'mappingData'
-  );
+    if (response) {
+      const mappingData = response.find(sec => sec.operation === 'mappingData');
 
-  if (basicMappingData) {
-    mappingMetadata =
-      basicMappingData.data.mappingData.variationMappings.recordMappings;
-  }
+      return mappingData?.data?.mappingData?.basicMappings?.recordMappings || emptySet;
+    }
 
-  mappingMetadata.forEach(meta => {
-    flattenChildrenStructrue(mappings, meta);
-  });
-
-  return mappings;
-};
-
-selectors.categoryMappingData = (state, integrationId, flowId) => {
-  const cKey = getCategoryKey(integrationId, flowId);
-
-  if (!state) {
-    return null;
-  }
-
-  const { response = [], deleted = [], uiAssistant } = state[cKey] || emptyObj;
-  const mappings = [];
-  let mappingMetadata = [];
-  const basicMappingData = response.find(
-    sec => sec.operation === 'mappingData'
-  );
-
-  if (basicMappingData) {
-    mappingMetadata =
-      basicMappingData.data.mappingData.basicMappings.recordMappings;
-  }
-
-  mappingMetadata.forEach(meta => {
-    flattenChildrenStructrue(mappings, meta, true, {
-      deleted,
-      deleteChildlessParent: uiAssistant !== 'jet',
-    });
-  });
-
-  return mappings;
-};
-
-selectors.categoryMappingGeneratesMetadata = (state, integrationId, flowId) => {
-  const cKey = getCategoryKey(integrationId, flowId);
-
-  if (!state) {
-    return null;
-  }
-
-  const { generatesMetadata = [] } = state[cKey] || emptyObj;
-  const generates = [];
-
-  generatesMetadata.forEach(meta => {
-    flattenChildrenStructrue(generates, meta);
-  });
-
-  return generates;
-};
-
-selectors.categoryMappingsForSection = (state, integrationId, flowId, id) => {
-  const cKey = getCategoryKey(integrationId, flowId);
-
-  if (!state || !state[cKey] || !state[cKey].mappings) {
     return emptySet;
-  }
+  },
+  (mappedCategories = emptySet) => mappedCategories.map(
+    item => ({
+      id: item.id,
+      name: item.name === 'commonAttributes' ? 'Common' : item.name,
+      children: item.children,
+    })
+  )
+);
 
-  return state[cKey].mappings[id] || emptySet;
+selectors.mkVariationMappingData = () => createSelector(
+  (state, integrationId, flowId) => {
+    const response = state?.[getCategoryKey(integrationId, flowId)]?.response || emptySet;
+    const basicMappingData = response.find(sec => sec.operation === 'mappingData');
+
+    return basicMappingData?.data?.mappingData?.variationMappings?.recordMappings;
+  },
+  (variationMappingData = emptySet) => {
+    const mappings = [];
+
+    variationMappingData.forEach(meta => {
+      flattenChildrenStructrue(mappings, meta);
+    });
+
+    return mappings;
+  }
+);
+
+selectors.mkMappingsForVariation = () => {
+  const variationMappingsSelector = selectors.mkVariationMappingData();
+
+  return createSelector(
+    variationMappingsSelector,
+    (_1, _2, _3, filters) => filters,
+    (recordMappings = emptyObj, filters = emptyObj) => {
+      const { sectionId, variation, isVariationAttributes } = filters;
+      let mappings = {};
+
+      if (Array.isArray(recordMappings)) {
+        mappings = recordMappings.find(item => item.id === sectionId) || {};
+      }
+
+      if (isVariationAttributes) {
+        return mappings;
+      }
+
+      // propery being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
+      // eslint-disable-next-line camelcase
+      const { variation_themes = [] } = mappings;
+
+      return (
+        variation_themes.find(theme => theme.variation_theme === variation) || emptyObj
+      );
+    });
 };
+
+selectors.mkCategoryMappingData = () => createSelector(
+  (state, integrationId, flowId) => {
+    const cKey = getCategoryKey(integrationId, flowId);
+    const { response = [] } = state?.[cKey] || emptyObj;
+    const basicMappingData = response.find(
+      sec => sec.operation === 'mappingData'
+    );
+
+    return basicMappingData?.data?.mappingData?.basicMappings?.recordMappings || emptySet;
+  },
+  (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)]?.deleted || emptySet,
+  (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)]?.uiAssistant || '',
+  (mappingMetadata, deleted, uiAssistant) => {
+    const mappings = [];
+
+    mappingMetadata.forEach(meta => {
+      flattenChildrenStructrue(mappings, meta, true, {
+        deleted,
+        deleteChildlessParent: uiAssistant !== 'jet',
+      });
+    });
+
+    return mappings;
+  });
+selectors.categoryMappingData = selectors.mkCategoryMappingData();
+
+selectors.mkCategoryMappingGeneratesMetadata = () => createSelector(
+  (state, integrationId, flowId) => {
+    const cKey = getCategoryKey(integrationId, flowId);
+
+    if (!state) {
+      return null;
+    }
+
+    const { generatesMetadata = [] } = state[cKey] || emptyObj;
+    const generates = [];
+
+    generatesMetadata.forEach(meta => {
+      flattenChildrenStructrue(generates, meta);
+    });
+
+    return generates;
+  }, generates => generates
+);
+selectors.categoryMappingGeneratesMetadata = selectors.mkCategoryMappingGeneratesMetadata();
+
+selectors.mkCategoryMappingsForSection = () => createSelector(
+  (state, integrationId, flowId, id) => {
+    const cKey = getCategoryKey(integrationId, flowId);
+
+    if (!state || !state[cKey] || !state[cKey].mappings) {
+      return emptySet;
+    }
+
+    return state[cKey].mappings[id] || emptySet;
+  }, mappings => mappings
+);
+selectors.categoryMappingsForSection = selectors.mkCategoryMappingsForSection();
+
+selectors.mkCategoryMappingGenerateFields = () => createSelector(
+  (state, integrationId, flowId) => {
+    const cKey = getCategoryKey(integrationId, flowId);
+    const { generatesMetadata = [] } = state?.[cKey] || emptyObj;
+
+    return generatesMetadata;
+  },
+  (_1, _2, _3, options = emptyObj) => options.sectionId,
+  (_1, _2, _3, options = emptyObj) => options.depth,
+  (generatesMetadata, sectionId, depth) => {
+    const generates = [];
+
+    generatesMetadata.forEach(meta => {
+      flattenChildrenStructrue(generates, meta);
+    });
+    if (Array.isArray(generates)) {
+      if (depth === undefined) {
+        return generates.find(sec => sec.id === sectionId);
+      }
+
+      return generates.find(sec => sec.id === sectionId && +depth === sec.depth);
+    }
+
+    return null;
+  });
+selectors.categoryMappingGenerateFields = selectors.mkCategoryMappingGenerateFields();
+
+selectors.mkMappingsForCategory = () => {
+  const categoryMappingFiltersSelector = selectors.mkCategoryMappingFilters();
+  const categoryMappingDataSelector = selectors.mkCategoryMappingData();
+  const categoryMappingGenerateFieldsSelector = selectors.mkCategoryMappingGenerateFields();
+
+  return createSelector(
+    categoryMappingFiltersSelector,
+    categoryMappingDataSelector,
+    categoryMappingGenerateFieldsSelector,
+    (_1, _2, _3, filters) => filters,
+    (categoryMappingFilters = emptyObj, recordMappings = emptySet, generateFields = emptyObj, filters = emptyObj) => {
+      const { sectionId, depth } = filters;
+      let mappings = emptySet;
+      const { attributes = {}, mappingFilter = 'all' } = categoryMappingFilters || emptyObj;
+      const { fields = [] } = generateFields;
+
+      if (recordMappings) {
+        if (depth === undefined) {
+          mappings = recordMappings.find(item => item.id === sectionId);
+        } else {
+          mappings = recordMappings.find(item => item.id === sectionId && depth === item.depth);
+        }
+      }
+
+      // If no filters are passed, return all mapppings
+      if (!mappings || !attributes || !mappingFilter) {
+        return mappings;
+      }
+
+      const mappedFields = map(mappings.fieldMappings, 'generate');
+      // Filter all generateFields with filter which are not yet mapped
+      const filteredFields = fields
+        .filter(field => !mappedFields.includes(field.id))
+        .map(field => ({
+          generate: field.id,
+          extract: '',
+          discardIfEmpty: true,
+        }));
+      // Combine filtered mappings and unmapped fields and generate unmapped fields
+      const filteredMappings = [...(mappings.fieldMappings || []), ...filteredFields];
+
+      // return mappings object by overriding field mappings with filtered mappings
+      return {
+        ...mappings,
+        fieldMappings: filteredMappings,
+      };
+    });
+};
+
+selectors.mkCategoryMappingsExtractsMetadata = () => createSelector(
+  (state, integrationId, flowId) => {
+    const {response = [] } = state?.[getCategoryKey(integrationId, flowId)] || emptyObj;
+    const extractsMetadata = response.find(
+      sec => sec.operation === 'extractsMetaData'
+    );
+
+    return extractsMetadata?.data || emptySet;
+  },
+  (extractsMetadata = emptySet) => extractsMetadata);
+selectors.categoryMappingsExtractsMetadata = selectors.mkCategoryMappingsExtractsMetadata();
+
+selectors.mkPendingCategoryMappings = () => {
+  const categoryMappingsGeneratesSelector = selectors.mkCategoryMappingGeneratesMetadata();
+
+  return createSelector(
+    (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)],
+    categoryMappingsGeneratesSelector,
+    (_1, _2, flowId) => flowId,
+    (categoryMappingData = emptyObj, categoryRelationshipData, flowId) => {
+      const { response = [], mappings, deleted, uiAssistant } = categoryMappingData;
+      const mappingData = response.find(op => op.operation === 'mappingData');
+      const sessionMappedData =
+    mappingData && mappingData.data && mappingData.data.mappingData;
+
+      // SessionMappedData is a state object reference and setCategoryMappingData recursively mutates the parameter, hence deepClone the sessionData
+      const sessionMappings = deepClone(sessionMappedData);
+
+      mappingUtil.setCategoryMappingData(
+        flowId,
+        sessionMappings,
+        mappings,
+        deleted,
+        categoryRelationshipData,
+        uiAssistant !== 'jet'
+      );
+
+      return sessionMappings;
+    });
+};
+selectors.pendingCategoryMappings = selectors.mkPendingCategoryMappings();
 
 // #region PUBLIC SELECTORS
-selectors.categoryMappingsChanged = (state, integrationId, flowId) => {
-  const cKey = getCategoryKey(integrationId, flowId);
-  const isMappingsEqual = false;
+selectors.mkCategoryMappingsChanged = () => {
+  const categoryMappingsGeneratesSelector = selectors.mkCategoryMappingGeneratesMetadata();
 
-  if (!state || !state[cKey] || !state[cKey].response) {
-    return isMappingsEqual;
-  }
+  return createSelector(
+    (state, integrationId, flowId) => {
+      const categoryMappingData = state?.[getCategoryKey(integrationId, flowId)];
+      const { response = emptySet } = categoryMappingData || emptyObj;
+      const mappingData = response.find(op => op.operation === 'mappingData');
+      const sessionMappedData = mappingData?.data?.mappingData;
+      const sessionMappings = deepClone(sessionMappedData);
 
-  const { response, mappings, deleted } =
-    selectors.categoryMapping(state, integrationId, flowId) || {};
-  const mappingData = response.find(op => op.operation === 'mappingData');
-  const sessionMappedData =
-    mappingData && mappingData.data && mappingData.data.mappingData;
-  const clonedData = deepClone(sessionMappedData);
-  const categoryRelationshipData = selectors.categoryMappingGeneratesMetadata(
-    state,
-    integrationId,
-    flowId
-  );
+      return sessionMappings;
+    },
+    categoryMappingsGeneratesSelector,
+    (_1, _2, flowId) => flowId,
+    (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)]?.mappings,
+    (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)]?.deleted,
+    (state, integrationId, flowId) => state?.[getCategoryKey(integrationId, flowId)]?.initMappingData?.data?.mappingData,
+    (sessionMappings, categoryRelationshipData, flowId, userMappings, deletedMappings, initData) => {
+      const isMappingsEqual = false;
 
-  mappingUtil.setCategoryMappingData(
-    flowId,
-    clonedData,
-    mappings,
-    deleted,
-    categoryRelationshipData
-  );
-  const initData = state[cKey].initMappingData;
+      if (!sessionMappings) {
+        return isMappingsEqual;
+      }
+      mappingUtil.setCategoryMappingData(
+        flowId,
+        sessionMappings,
+        userMappings,
+        deletedMappings,
+        categoryRelationshipData
+      );
 
-  if (!initData || !initData.data || !initData.data.mappingData) {
-    return isMappingsEqual;
-  }
+      if (!initData) {
+        return !isMappingsEqual;
+      }
 
-  return !mappingUtil.isEqual(initData.data.mappingData, clonedData);
+      return !mappingUtil.isEqual(initData, sessionMappings);
+    });
 };
 
 selectors.categoryMappingSaveStatus = (state, integrationId, flowId) => {

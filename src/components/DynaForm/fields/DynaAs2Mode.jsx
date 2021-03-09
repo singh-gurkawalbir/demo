@@ -2,7 +2,7 @@ import React, { useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import DynaRadio from './radiogroup/DynaRadioGroup';
-import { isProduction } from '../../../forms/utils';
+import { getAS2Url } from '../../../utils/resource';
 import DynaLabelValueElement from './DynaLabelValueElement';
 import FieldHelp from '../FieldHelp';
 
@@ -37,9 +37,9 @@ export default function AS2url() {
       <div className={classes.inlineElements}>
         <DynaLabelValueElement
           label="AS2 URL"
-          value={as2Url === 'http' ? ((isProduction() && 'http://api.integrator.io/v1/as2') || ('http://api.staging.integrator.io/v1/as2')) : ((isProduction() && 'https://api.integrator.io/v1/as2') || ('https://api.staging.integrator.io/v1/as2'))}
-/>
-        <FieldHelp helpText="This is the URL to which your trading partners will send AS2 documents. This URL is driven by your choice of AS2 mode above and can’t be edited." />
+          value={`${as2Url === 'http' ? 'http' : 'https'}${getAS2Url()}`}
+        />
+        <FieldHelp helpText="Specify the URL to which your trading partners will send AS2 documents. Since these URLs are shared by all integrator.io accounts, the <b>AS2 identifier</b> below must be unique. Choose the <b>HTTPS</b> protocol if your software has an HTTPS/SSL CA certificate, provided by Amazon Trust Services Repository." />
       </div>
     </>
 

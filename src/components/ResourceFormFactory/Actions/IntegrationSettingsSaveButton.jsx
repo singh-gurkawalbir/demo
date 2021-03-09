@@ -1,21 +1,13 @@
-import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import { selectors } from '../../../reducers';
 import { useLoadingSnackbarOnSave } from '.';
-import { integrationSettingsToDynaFormMetadata } from '../../../forms/utils';
-
-const useStyles = makeStyles(theme => ({
-  actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
-  },
-}));
+import { integrationSettingsToDynaFormMetadata } from '../../../forms/formFactory/utils';
+import { FORM_SAVE_STATUS } from '../../../utils/constants';
 
 export default function IntegrationSettingsSaveButton(props) {
-  const classes = useStyles();
   const {
     submitButtonLabel = 'Save',
     integrationId,
@@ -27,7 +19,7 @@ export default function IntegrationSettingsSaveButton(props) {
   } = props;
   const dispatch = useDispatch();
   const { settings: fields, sections } = useSelector(
-    state => selectors.iaFlowSettings(state, integrationId, flowId),
+    state => selectors.iaFlowSettings(state, integrationId, flowId, storeId),
     shallowEqual
   );
   const flowSettingsMemo = useMemo(
@@ -90,17 +82,14 @@ export default function IntegrationSettingsSaveButton(props) {
     [dispatch, flowId, flowSettingsMemo?.fieldMap, integrationId, postProcessValuesFn, sectionId, storeId]
   );
   const submitCompleted = useSelector(state => {
-    const {
-      submitComplete,
-      submitFailed,
-    } = selectors.integrationAppSettingsFormState(
+    const formState = selectors.integrationAppSettingsFormState(
       state,
       integrationId,
       flowId,
       sectionId
     );
 
-    return submitComplete || submitFailed;
+    return [FORM_SAVE_STATUS.COMPLETE, FORM_SAVE_STATUS.FAILED].includes(formState.formSaveStatus);
   });
   const { handleSubmitForm, isSaving } = useLoadingSnackbarOnSave({
     resourceType: 'Integration Settings',
@@ -111,7 +100,6 @@ export default function IntegrationSettingsSaveButton(props) {
   return (
     <DynaAction
       {...props}
-      className={classes.actionButton}
       disabled={disabled || isSaving}
       onClick={handleSubmitForm}>
       {isSaving ? 'Saving' : submitButtonLabel}

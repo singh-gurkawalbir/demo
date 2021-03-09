@@ -1,8 +1,17 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { IconButton, MenuItem, Menu, Tooltip } from '@material-ui/core';
+import { IconButton, MenuItem, Tooltip } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
+import ArrowPopper from '../../ArrowPopper';
 
-const Action = ({ label, Icon, disabledActionText, useHasAccess, actionProps, rowData, component, selectAction, handleMenuClose}) => {
+const useStyles = makeStyles(theme => ({
+  actionsMenuPopper: {
+    maxWidth: 250,
+    top: `${theme.spacing(1)}px !important`,
+  },
+}));
+
+const Action = ({ isSingleAction, label, Icon, disabledActionText, useHasAccess, actionProps, rowData, component, selectAction, handleMenuClose}) => {
   const handleActionClick = useCallback(() => {
     selectAction(component);
     handleMenuClose();
@@ -15,9 +24,25 @@ const Action = ({ label, Icon, disabledActionText, useHasAccess, actionProps, ro
   const disabledActionTitle = disabledActionText?.({ ...actionProps, rowData });
   const actionIcon = Icon ? <Icon /> : null;
 
+  if (isSingleAction) {
+    return (
+      <Tooltip data-public title={disabledActionTitle || label} placement="bottom" >
+        {/* The <div> below seems to be redundant as it does not provide any presentation benefit.
+            However, without this wrapper div, if the action is disabled, the <Tooltip> wrapper
+            doesn't recognize the hover state and thus doesn't show the tooltip message.
+        */}
+        <div>
+          <IconButton size="small" disabled={!!disabledActionTitle} onClick={handleActionClick}>
+            {actionIcon}
+          </IconButton>
+        </div>
+      </Tooltip>
+    );
+  }
+
   if (disabledActionTitle) {
     return (
-      <Tooltip key={label} title={disabledActionTitle} placement="bottom" >
+      <Tooltip data-public key={label} title={disabledActionTitle} placement="bottom" >
         <div>
           <MenuItem disabled>
             {actionIcon}
@@ -35,7 +60,9 @@ const Action = ({ label, Icon, disabledActionText, useHasAccess, actionProps, ro
     </MenuItem>
   );
 };
+
 export default function ActionMenu({ rowActions, rowData, actionProps, selectAction }) {
+  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   // We are passing state to action items where each Action item would check if it has got permission.
   const open = Boolean(anchorEl);
@@ -77,6 +104,10 @@ export default function ActionMenu({ rowActions, rowData, actionProps, selectAct
 
   if (!actions || !actions.length) return null;
 
+  if (actions.length === 1) {
+    return (<Action isSingleAction {...actions[0]} />);
+  }
+
   return (
     <>
       <IconButton
@@ -89,15 +120,16 @@ export default function ActionMenu({ rowActions, rowData, actionProps, selectAct
         <EllipsisIcon />
       </IconButton>
 
-      <Menu
-        elevation={2}
-        variant="menu"
-        id={actionsPopoverId}
-        anchorEl={anchorEl}
+      <ArrowPopper
+        placement="bottom-end"
+        restrictToParent={false}
+        classes={{ popper: classes.actionsMenuPopper }}
         open={open}
+        anchorEl={anchorEl}
+        id={actionsPopoverId}
         onClose={handleMenuClose}>
         {actions.map(a => <Action key={a.label} {...a} />)}
-      </Menu>
+      </ArrowPopper>
     </>
   );
 }

@@ -55,7 +55,7 @@ export default function FormStep({ integrationId, formMeta, title, formSubmitHan
   //   <DynaForm fieldMeta={formMeta} formState={formState}>
   //     <DynaSubmit
   //       onClick={formSubmitHandler || handleSubmit}
-  //       showCustomFormValidations={showCustomFormValidations}>
+  //      >
   //       Submit
   //     </DynaSubmit>
   //   </DynaForm>
@@ -69,7 +69,7 @@ export default function FormStep({ integrationId, formMeta, title, formSubmitHan
       }}
       >
       <DrawerTitleBar title={title} onClose={formCloseHandler || onClose} />
-      <DynaForm fieldMeta={formMeta} formKey={formKey} />
+      <DynaForm formKey={formKey} />
       <DynaSubmit
         formKey={formKey}
         onClick={formSubmitHandler || handleSubmit}>

@@ -1,4 +1,5 @@
-import { applicationsList } from '../../../constants/templates';
+import { templatesList } from '../../../constants/applications';
+import { ABS_URL_VALIDATION_PATTERN } from '../../../utils/constants';
 
 export default {
   name: {
@@ -12,13 +13,15 @@ export default {
     maxRows: 5,
     label: 'Description',
   },
-  imageURL: {
-    type: 'text',
-    label: 'Image URL',
-  },
   websiteURL: {
     type: 'text',
     label: 'Website URL',
+    validWhen: {
+      matchesRegEx: {
+        pattern: ABS_URL_VALIDATION_PATTERN,
+        message: 'Please enter a valid URL.',
+      },
+    },
   },
   contactEmail: {
     type: 'text',
@@ -29,13 +32,14 @@ export default {
     label: 'Installer function',
   },
   applications: {
-    type: 'multiselect',
+    type: 'selectmultiapplication',
+    placeholder: 'Choose applications',
     label: 'Applications',
     valueDelimiter: ',',
     defaultValue: r => (r?.applications) || [],
     options: [
       {
-        items: applicationsList(),
+        items: templatesList(),
       },
     ],
   },

@@ -52,6 +52,80 @@ describe('user selectors', () => {
       });
     });
   });
+  describe('userTimezone', () => {
+    test('should return correct user time zone for an org owner', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', timezone: 'Asia/Calcutta' },
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+        },
+        'some action'
+      );
+
+      expect(selectors.userTimezone(state)).toEqual('Asia/Calcutta');
+    });
+    test('should return correct user time zone info for an org user', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', timezone: 'Asia/Calcutta' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                _id: 'ashare1',
+                ownerUser: {
+                  email: 'owner@test.com',
+                  name: 'owner 1',
+                  timezone: 'America/LosAngeles',
+                },
+              },
+              {
+                _id: 'ashare2',
+                ownerUser: {
+                  email: 'owner2@test.com',
+                  name: 'owner 2',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.userTimezone(state)).toEqual('Asia/Calcutta');
+    });
+
+    test('should return owner user time zone info for an org user when user doesnt have timezone set', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                _id: 'ashare1',
+                ownerUser: {
+                  email: 'owner@test.com',
+                  name: 'owner 1',
+                  timezone: 'America/LosAngeles',
+                },
+              },
+              {
+                _id: 'ashare2',
+                ownerUser: {
+                  email: 'owner2@test.com',
+                  name: 'owner 2',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.userTimezone(state)).toEqual('America/LosAngeles');
+    });
+  });
   describe('accountSummary', () => {
     test('should return [] if state is undefined', () => {
       const state = reducer(undefined, 'some action');
@@ -669,6 +743,224 @@ describe('user selectors', () => {
       expect(selectors.userAccessLevel(state)).toEqual('owner');
     });
   });
+
+  describe('canUserPublish selector', () => {
+    test('should return false if no state exists', () => {
+      expect(selectors.canUserPublish(undefined)).toEqual(false);
+    });
+
+    test('should return false for an account owner user if user cant publish', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+          org: {
+            accounts: [
+              {
+                _id: ACCOUNT_IDS.OWN,
+                accessLevel: 'owner',
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.canUserPublish(state)).toEqual(false);
+    });
+
+    test('should return true for an account owner user if user can publish', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', allowedToPublish: true },
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+          org: {
+            accounts: [
+              {
+                _id: ACCOUNT_IDS.OWN,
+                accessLevel: 'owner',
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.canUserPublish(state)).toEqual(true);
+    });
+
+    test('should return false for an org monitor user', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                _id: 'ashare1',
+                accessLevel: 'monitor',
+                ownerUser: {
+                  email: 'owner@test.com',
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.canUserPublish(state)).toEqual(false);
+    });
+
+    test('should return false for an org monitor user even owner can publish', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                _id: 'ashare1',
+                accessLevel: 'monitor',
+                ownerUser: {
+                  allowedToPublish: true,
+                  email: 'owner@test.com',
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.canUserPublish(state)).toEqual(false);
+    });
+    test('should return false for manage level user', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                accessLevel: 'manage',
+                _id: 'ashare1',
+                ownerUser: {
+                  allowedToPublish: false,
+                  email: 'owner@test.com',
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.canUserPublish(state)).toEqual(false);
+    });
+    test('should return false for manage level user even when account owner can publish', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                accessLevel: 'manage',
+                _id: 'ashare1',
+                ownerUser: {
+                  allowedToPublish: true,
+                  email: 'owner@test.com',
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.canUserPublish(state)).toEqual(false);
+    });
+    test('should return false for an admin user when account owner doesnt have permission to publish', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last' },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                accessLevel: 'administrator',
+                _id: 'ashare1',
+                ownerUser: {
+                  email: 'owner@test.com',
+                  allowedToPublish: false,
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.canUserPublish(state)).toEqual(false);
+    });
+
+    test('should return false for an admin user when account owner doesnt have permission to publish and user can publish', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', allowedToPublish: true },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                accessLevel: 'administrator',
+                _id: 'ashare1',
+                ownerUser: {
+                  email: 'owner@test.com',
+                  allowedToPublish: false,
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.canUserPublish(state)).toEqual(false);
+    });
+
+    test('should return true for an admin user when account owner have permission to publish', () => {
+      const state = reducer(
+        {
+          profile: { email: 'something@test.com', name: 'First Last', allowedToPublish: false },
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                accessLevel: 'administrator',
+                _id: 'ashare1',
+                ownerUser: {
+                  email: 'owner@test.com',
+                  allowedToPublish: true,
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.canUserPublish(state)).toEqual(true);
+    });
+  });
+
   describe('userPermissions selector', () => {
     const defaultObject = {
       accesstokens: {},

@@ -548,7 +548,139 @@ describe('resources reducer for special cases', () => {
   });
 });
 
-describe('intetgrationApps installer reducer', () => {
+describe('integrationAppSettings reducer', () => {
+  const integrations = [
+    {
+      _id: 'integrationId',
+      name: 'integration Name',
+      _connectorId: 'connectorId',
+      settings: {
+        sections: [
+          {
+            id: 'store1',
+            sections: [
+              {
+                id: 'sectionTitle',
+                flows: [
+                  {
+                    _id: 'flowId',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        supportsMultiStore: true,
+      },
+    },
+    {
+      _id: 'integrationId2',
+      name: 'integration2 Name',
+      _connectorId: 'connectorId1',
+      settings: {
+        sections: [
+          {
+            id: 'sectionTitle',
+            flows: [
+              {
+                _id: 'flowId',
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ];
+
+  test('should not throw error for bad params', () => {
+    const integrationAppSettings = selectors.mkIntegrationAppSettings();
+
+    expect(integrationAppSettings({}, 'integrationId')).toEqual(null);
+    expect(integrationAppSettings(undefined, undefined)).toEqual(
+      null
+    );
+    expect(
+      integrationAppSettings(undefined, undefined, undefined)
+    ).toEqual(null);
+    expect(integrationAppSettings()).toEqual(null);
+  });
+
+  test('should return correct integration App settings for multistore integrationApp', () => {
+    const state = reducer(
+      {
+        data: {
+          resources: {
+            integrations,
+          },
+        },
+      },
+      'some_action'
+    );
+    const integrationAppSettings = selectors.mkIntegrationAppSettings();
+
+    expect(
+      integrationAppSettings(state, 'integrationId', 'store1')
+    ).toEqual({
+      _id: 'integrationId',
+      _connectorId: 'connectorId',
+      name: 'integration Name',
+      settings: {
+        sections: [
+          {
+            id: 'store1',
+            sections: [{ flows: [{ _id: 'flowId' }], id: 'sectionTitle' }],
+          },
+        ],
+        supportsMultiStore: true,
+      },
+      stores: [
+        { hidden: false, label: undefined, mode: 'settings', value: 'store1' },
+      ],
+    });
+
+    expect(integrationAppSettings(state, 'integrationId')).toEqual({
+      _connectorId: 'connectorId',
+      _id: 'integrationId',
+      name: 'integration Name',
+      settings: {
+        sections: [
+          {
+            id: 'store1',
+            sections: [{ flows: [{ _id: 'flowId' }], id: 'sectionTitle' }],
+          },
+        ],
+        supportsMultiStore: true,
+      },
+      stores: [
+        { hidden: false, label: undefined, mode: 'settings', value: 'store1' },
+      ],
+    });
+  });
+  test('should return correct integration App settings for single store integrationApp', () => {
+    const state = reducer(
+      {
+        data: {
+          resources: {
+            integrations,
+          },
+        },
+      },
+      'some_action'
+    );
+    const integrationAppSettings = selectors.mkIntegrationAppSettings();
+
+    expect(integrationAppSettings(state, 'integrationId2')).toEqual({
+      _id: 'integrationId2',
+      _connectorId: 'connectorId1',
+      name: 'integration2 Name',
+      settings: {
+        sections: [{ flows: [{ _id: 'flowId' }], id: 'sectionTitle' }],
+      },
+    });
+  });
+});
+
+describe('integrationApps installer reducer', () => {
   describe('integrationApps received installer install_inProgress action', () => {
     test('should find the integration with id and find the installation step with passed installerFunction and set isTriggered flag to true', () => {
       let state;
@@ -1510,5 +1642,235 @@ describe('Default store id selector', () => {
     );
 
     expect(selectors.defaultStoreId(state, 'int11234', '143')).toEqual(undefined);
+  });
+});
+
+describe('mkFlowGroupingsSections', () => {
+  const groupingsSelector = selectors.mkFlowGroupingsSections();
+
+  const state = {
+    integrations: [
+      {_id: '1',
+        flowGroupings: [
+          {name: 'Grouping1 name', _id: 'grouping1Id'},
+          {name: 'Grouping2 name', _id: 'grouping2Id'},
+        ]},
+    ],
+
+  };
+
+  test('should get groupings translated', () => {
+    expect(groupingsSelector(state, '1')).toEqual(
+      [
+        {title: 'Grouping1 name', sectionId: 'grouping1Id'},
+        {title: 'Grouping2 name', sectionId: 'grouping2Id'},
+      ]
+    );
+  });
+  test('should get null for non existent integration id', () => {
+    expect(groupingsSelector(state, '2')).toEqual(
+      null
+    );
+  });
+});
+const settingsForm = {
+  fieldMap: {},
+  layout: {},
+};
+const settings = {
+  val1: 'something',
+};
+
+describe('mkGetAllCustomFormsForAResource ', () => {
+  const customFormsSelector = selectors.mkGetAllCustomFormsForAResource();
+
+  test('should return null for a non existent resource', () => {
+    const state = {
+      exports: [
+        {_id: '1',
+          settingsForm,
+          settings,
+        },
+      ],
+
+    };
+    const received = customFormsSelector(state, 'exports', 'someotherResource');
+
+    expect(received).toEqual(null);
+  });
+
+  test('should just get the root custom form for any non integration as a collection', () => {
+    const state = {
+      exports: [
+        {_id: '1',
+          settingsForm,
+          settings,
+        },
+      ],
+
+    };
+    const received = customFormsSelector(state, 'exports', '1');
+    const expected = {allSections: [
+      { title: 'General',
+        sectionId: 'general',
+        settings,
+        settingsForm,
+      },
+    ],
+    hasFlowGroupings: false,
+    };
+
+    expect(received).toEqual(expected);
+  });
+
+  describe('integrations resources', () => {
+    test('should consolidate all custom form for an integration with flowgroupings as a collection', () => {
+      const state = {
+        integrations: [
+          {_id: '1',
+            settingsForm,
+            settings,
+            flowGroupings: [
+              {
+                name: 'Group1',
+                _id: 'groupId1',
+                settingsForm,
+                settings,
+              },
+              {
+                name: 'Group2',
+                _id: 'groupId2',
+                settingsForm,
+                settings,
+              },
+            ],
+          },
+        ],
+
+      };
+      const received = customFormsSelector(state, 'integrations', '1');
+      const expected = {allSections: [
+        { title: 'General',
+          sectionId: 'general',
+          settings,
+          settingsForm,
+        },
+        { title: 'Group1',
+          sectionId: 'groupId1',
+          settings,
+          settingsForm,
+        },
+        { title: 'Group2',
+          sectionId: 'groupId2',
+          settings,
+          settingsForm,
+        },
+      ],
+      hasFlowGroupings: true,
+      };
+
+      expect(received).toEqual(expected);
+    });
+    test('should consolidate all custom form for an integration without flowgroupings as a collection', () => {
+      const state = {
+        integrations: [
+          {_id: '1',
+            settingsForm,
+            settings,
+          },
+        ],
+
+      };
+      const received = customFormsSelector(state, 'integrations', '1');
+      const expected = {allSections: [
+        { title: 'General',
+          sectionId: 'general',
+          settings,
+          settingsForm,
+        }],
+      hasFlowGroupings: false,
+      };
+
+      expect(received).toEqual(expected);
+    });
+  });
+});
+
+describe('mkGetCustomFormPerSectionId', () => {
+  const customFormSelectorPerSectionId = selectors.mkGetCustomFormPerSectionId();
+
+  test('should return null for a non existent resourceId id', () => {
+    const state = {
+      exports: [
+        {_id: '1',
+          settingsForm,
+          settings,
+        },
+      ],
+
+    };
+
+    const received = customFormSelectorPerSectionId(state, 'exports', 'someId', 'someSectionId');
+
+    expect(received).toEqual(null);
+  });
+
+  test('should return the root level settings form when sectionId is general', () => {
+    const state = {
+      exports: [
+        {_id: '1',
+          settingsForm,
+          settings,
+        },
+      ],
+
+    };
+
+    const received = customFormSelectorPerSectionId(state, 'exports', '1', 'general');
+
+    const expected = {
+      sectionId: 'general',
+      title: 'General',
+      settingsForm,
+      settings,
+    };
+
+    expect(received).toEqual(expected);
+  });
+
+  test('should return the flowGroupSettings form when the integration does have flowGroupings', () => {
+    const state = {
+      integrations: [
+        {_id: '1',
+          settingsForm,
+          settings,
+          flowGroupings: [
+            {
+              name: 'Group1',
+              _id: 'groupId1',
+              settingsForm,
+              settings,
+            },
+            {
+              name: 'Group2',
+              _id: 'groupId2',
+              settingsForm,
+              settings,
+            },
+          ],
+        },
+      ],
+    };
+    // no sectionId has been provided
+    const received = customFormSelectorPerSectionId(state, 'integrations', '1', 'groupId1');
+
+    const expected = {
+      sectionId: 'groupId1',
+      title: 'Group1',
+      settingsForm,
+      settings,
+    };
+
+    expect(received).toEqual(expected);
   });
 });

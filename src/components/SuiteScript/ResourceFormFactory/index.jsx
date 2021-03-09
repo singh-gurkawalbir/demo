@@ -2,10 +2,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import formFactory from '../../../forms/formFactory';
 import { FormStateManager } from '../../ResourceFormFactory';
 import SuiteScriptActionsPanel from './SuiteScriptActionsPanel';
 import { generateNewId } from '../../../utils/resource';
+import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
 
 export const ResourceFormFactory = props => {
   const {
@@ -82,14 +82,24 @@ export const ResourceFormFactory = props => {
   ]);
 
   const { optionsHandler, validationHandler } = useMemo(
-    () =>
-      formFactory.getResourceFormAssets({
-        resourceType,
-        resource,
-        isNew,
-        connection,
-        ssLinkedConnectionId,
-      }),
+    () => {
+      let metadataAssets;
+
+      try {
+        // try to load the assets if it can't initForm saga should fail anyway
+        metadataAssets = getResourceFormAssets({
+          resourceType,
+          resource,
+          isNew,
+          connection,
+          ssLinkedConnectionId,
+        });
+      } catch (e) {
+        metadataAssets = {};
+      }
+
+      return metadataAssets;
+    },
     [connection, isNew, resource, resourceType, ssLinkedConnectionId]
   );
   const { fieldMeta } = formState;
@@ -105,7 +115,7 @@ export const ResourceFormFactory = props => {
   );
 };
 
-const SuiteScriptFormComponent = props => {
+export default function SuiteScriptFormComponent(props) {
   const [formKey] = useState(generateNewId());
 
   return (
@@ -117,6 +127,5 @@ const SuiteScriptFormComponent = props => {
 
     </>
   );
-};
+}
 
-export default SuiteScriptFormComponent;

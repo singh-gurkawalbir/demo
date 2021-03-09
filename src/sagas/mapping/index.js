@@ -80,7 +80,8 @@ export function* refreshGenerates({ isInit = false }) {
         const childObjectName = id.split('[*].')[0];
         const childRelationshipObject = childRelationshipFields.find(field => field.value === childObjectName);
 
-        if (sObjectList.indexOf(childRelationshipObject.childSObject) === -1) {
+        if (!childRelationshipObject) return;
+        if (!sObjectList.includes(childRelationshipObject.childSObject)) {
           sObjectList.push(childRelationshipObject.childSObject);
         }
       }
@@ -165,6 +166,7 @@ export function* mappingInit({
     resourceType: 'imports',
   });
   const isGroupedSampleData = Array.isArray(flowSampleData);
+  const isPreviewSucess = !!flowSampleData;
   let formattedMappings = [];
   let lookups = [];
   const options = {};
@@ -226,6 +228,7 @@ export function* mappingInit({
       importResource,
       isFieldMapping: false,
       isGroupedSampleData,
+      isPreviewSucess,
       netsuiteRecordType: options.recordType,
       options,
       exportResource,
@@ -597,4 +600,5 @@ export const mappingSagas = [
     actionTypes.MAPPING.UPDATE_LOOKUP,
     actionTypes.MAPPING.PATCH_SETTINGS,
   ], validateMappings),
+
 ];

@@ -10,17 +10,16 @@ import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import {applicationsList} from '../../../constants/applications';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-
-import {
+import {isFileAdaptor,
   getResourceSubType,
   generateNewId,
   isRealTimeOrDistributedResource,
 } from '../../../utils/resource';
 import exportHooksAction from './actions/exportHooks';
 import as2RoutingAction from './actions/as2Routing';
-import transformationAction from './actions/transformation';
+import transformationAction from './actions/transformation_afe2';
 import scheduleAction from './actions/schedule';
-import exportFilterAction from './actions/exportFilter';
+import exportFilterAction from './actions/exportFilter_afe2';
 import { actionsMap } from '../../../utils/flows';
 
 /* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme.
@@ -264,7 +263,7 @@ const PageGenerator = ({
         ? 'listener'
         : 'export';
 
-      if (['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0) {
+      if (isFileAdaptor(resource) && resource.adaptorType.includes('Export')) {
         blockType = 'exportTransfer';
       }
 

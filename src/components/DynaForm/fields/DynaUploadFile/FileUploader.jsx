@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, FormLabel } from '@material-ui/core';
 import clsx from 'clsx';
 import FieldHelp from '../../FieldHelp';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
@@ -46,9 +46,10 @@ const useStyles = makeStyles(theme => ({
   fileUploaderContainer: {
     width: '100%',
   },
+
 }));
 
-function FileUploader(props) {
+export default function FileUploader(props) {
   const {
     disabled,
     id,
@@ -76,7 +77,7 @@ function FileUploader(props) {
     <FormControl className={clsx(classes.fileUploaderContainer, classProps.root)}>
       <div className={classProps.actionContainer}>
         <div className={clsx(classes.fileUploadLabelWrapper, classProps.labelWrapper)}>
-          <FormLabel required={required}>
+          <FormLabel required={required} className={clsx(classProps.label)}>
             {label}
           </FormLabel>
           <FieldHelp {...props} />
@@ -106,11 +107,9 @@ function FileUploader(props) {
         </div>
       </div>
       <div className={classProps.errorContainer}>
-        {!isValid && <ErroredMessageComponent errorMessages={errorMessages} />}
-        {uploadError && <ErroredMessageComponent errorMessages={uploadError} />}
+        {!isValid && <FieldMessage errorMessages={errorMessages} />}
+        {uploadError && <FieldMessage errorMessages={uploadError} />}
       </div>
     </FormControl>
   );
 }
-
-export default FileUploader;

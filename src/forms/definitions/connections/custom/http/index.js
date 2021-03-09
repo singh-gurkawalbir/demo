@@ -53,7 +53,7 @@ import accelo from './accelo';
 import acumatica from './acumatica';
 import tsheets from './tsheets';
 import etsy from './etsy';
-// import googledrive from './googledrive';
+import googledrive from './googledrive';
 import namely from './namely';
 import newegg from './newegg';
 import asana from './asana';
@@ -130,7 +130,6 @@ import postmark from './postmark';
 import klaviyo from './klaviyo';
 import returnly from './returnly';
 import aptrinsic from './aptrinsic';
-// import cardknox from './cardknox';
 import coupa from './coupa';
 import microsoftdynamics365 from './microsoftdynamics365';
 import microsoftbusinesscentral from './microsoftbusinesscentral';
@@ -192,6 +191,13 @@ import gainsight from './gainsight';
 import dotdigital from './dotdigital';
 import checkout from './checkout';
 import channelape from './channelape';
+import pricefx from './pricefx';
+import clover from './clover';
+import freshworks from './freshworks';
+import pipedrive from './pipedrive';
+import microsoftteams from './microsoftteams';
+import adobesign from './adobesign';
+import prestashop from './prestashop';
 
 export default {
   channelape,
@@ -254,7 +260,7 @@ export default {
   splunk,
   anaplan,
   etsy,
-  // googledrive,
+  googledrive,
   namely,
   newegg,
   asana,
@@ -387,4 +393,11 @@ export default {
   gainsight,
   dotdigital,
   checkout,
+  pricefx,
+  clover,
+  freshworks,
+  pipedrive,
+  microsoftteams,
+  adobesign,
+  prestashop,
 };

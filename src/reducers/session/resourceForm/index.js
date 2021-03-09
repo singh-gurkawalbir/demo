@@ -1,7 +1,7 @@
 import produce from 'immer';
 
 import actionTypes from '../../../actions/types';
-import { fieldsTouchedForMeta } from '../../../forms/utils';
+import { fieldsTouchedForMeta } from '../../../forms/formFactory/utils';
 import {FORM_SAVE_STATUS} from '../../../utils/constants';
 
 const emptyObj = {};

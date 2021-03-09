@@ -57,7 +57,8 @@ export function pathParameterFieldsMeta({ operationParameters = [], values }) {
       const pathParamField = {
         id: `assistantMetadata.pathParams.${pathParam.id}`,
         label: pathParam.name,
-        type: 'text',
+        type: 'textwithflowsuggestion',
+        showLookup: false,
         value: values[pathParam.id],
         required: !!pathParam.required,
         helpText: pathParam.description,
@@ -176,6 +177,7 @@ export function howToFindIdentifierFieldsMeta({
         id: `assistantMetadata.pathParams.${identifierPathParam.id}`,
         label: 'Which field?',
         type: 'textwithflowsuggestion',
+        showSuggestionsWithoutHandlebar: true,
         showLookup: false,
         required: true,
         value: pathParameterValues[identifierPathParam.id],

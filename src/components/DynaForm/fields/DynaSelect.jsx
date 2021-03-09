@@ -8,7 +8,7 @@ import { FixedSizeList } from 'react-window';
 import { stringCompare } from '../../../utils/sort';
 import CeligoSelect from '../../CeligoSelect';
 import FieldHelp from '../FieldHelp';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 
 const AUTO_CLEAR_SEARCH = 500;
 
@@ -126,6 +126,9 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.secondary.lightest,
     transition: 'all .8s ease',
   },
+  dynaSelectMenuItem: {
+    wordBreak: 'break-word',
+  },
 }));
 
 const Row = ({ index, style, data }) => {
@@ -146,12 +149,11 @@ const Row = ({ index, style, data }) => {
       value={value}
       data-value={value}
       disabled={disabled}
-      className={clsx({
+      className={clsx(classes.dynaSelectMenuItem, {
         [classes.focusVisibleMenuItem]: matchMenuIndex === index,
       })}
       style={style}
       selected={value === finalTextValue}
-
       onClick={() => {
         if (value !== undefined) {
           onFieldChange(id, value);
@@ -310,7 +312,7 @@ export default function DynaSelect(props) {
         </CeligoSelect>
       </FormControl>
 
-      {!removeHelperText && <ErroredMessageComponent {...props} />}
+      {!removeHelperText && <FieldMessage {...props} />}
     </div>
   );
 }

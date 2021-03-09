@@ -9,6 +9,7 @@ import {
 } from '../resource';
 import { emptyList, emptyObject, STANDALONE_INTEGRATION } from '../constants';
 import getRoutePath from '../routePaths';
+import {HOOKS_IN_IMPORT_EXPORT_RESOURCE} from '../scriptHookStubs';
 
 export const actionsMap = {
   as2Routing: 'as2Routing',
@@ -332,7 +333,7 @@ export function showScheduleIcon(flow, exports, flowExports) {
   return hasBatchExport(flow, exports, flowExports);
 }
 
-export function flowAllowsScheduling(flow, integration, allExports, isAppVersion2, flowExports) {
+export function flowAllowsScheduling(flow, integration, allExports, isAppVersion2, flowExports, childId) {
   if (!flow) return false;
   const isApp = flow._connectorId;
   const canSchedule = showScheduleIcon(flow, allExports, flowExports);
@@ -340,7 +341,7 @@ export function flowAllowsScheduling(flow, integration, allExports, isAppVersion
   // For IA2.0, 'showSchedule' is assumed true for now until we have more clarity
   if (!isApp || isAppVersion2) return canSchedule;
   // eslint-disable-next-line no-use-before-define
-  const flowSettings = getIAFlowSettings(integration, flow._id);
+  const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
   return canSchedule && !!flowSettings.showSchedule;
 }
@@ -357,17 +358,17 @@ export function getFlowType(flow, exports, flowExports) {
   return 'Scheduled';
 }
 
-export function flowSupportsSettings(flow, integration) {
+export function flowSupportsSettings(flow, integration, childId) {
   if (!flow) return false;
   const isApp = flow._connectorId;
 
   if (!isApp) return false;
   // eslint-disable-next-line no-use-before-define
-  const flowSettings = getIAFlowSettings(integration, flow._id);
+  const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
   return !!(
-    (flowSettings.settings && flowSettings.settings.length) ||
-    (flowSettings.sections && flowSettings.sections.length)
+    (flowSettings?.settings && flowSettings.settings.length) ||
+    (flowSettings?.sections && flowSettings.sections.length)
   );
 }
 
@@ -557,7 +558,7 @@ export function getFlowListWithMetadata(flows = [], exports = []) {
   return { resources: flows };
 }
 
-export function getNextDataFlows(flows, flow) {
+export function getNextDataFlows(flows = emptyList, flow = emptyObject) {
   const { _integrationId } = flow;
   // Incase of standalone Integrations, _integrationId is undefined for flow resources
   const flowIntegrationId =
@@ -673,7 +674,7 @@ export function getIAResources(integrationResource = {}, allFlows, allConnection
   };
 }
 
-export function getIAFlowSettings(integration, flowId) {
+export function getIAFlowSettings(integration, flowId, childId) {
   const allFlows = [];
 
   // TODO: InstallSteps check here is temporary. Nees to to change this as part of IA2.o implementation.
@@ -687,8 +688,10 @@ export function getIAFlowSettings(integration, flowId) {
   }
 
   if (integration.settings && integration.settings.supportsMultiStore) {
-    integration.settings.sections.forEach(section => {
-      if (!section.sections) {
+    if (childId) {
+      const section = integration.settings.sections.find(sec => sec.id === childId);
+
+      if (!section || !section.sections) {
         return;
       }
 
@@ -697,7 +700,19 @@ export function getIAFlowSettings(integration, flowId) {
       }));
 
       allFlows.push(...(flows || []));
-    });
+    } else {
+      integration.settings.sections.forEach(section => {
+        if (!section.sections) {
+          return;
+        }
+
+        const { flows } = section.sections.reduce((a, b) => ({
+          flows: [...a.flows, ...b.flows],
+        }));
+
+        allFlows.push(...(flows || []));
+      });
+    }
   } else {
     const { flows } = integration.settings.sections.reduce((a, b) => ({
       flows: [...a.flows, ...b.flows],
@@ -771,7 +786,7 @@ export function getFlowResources(flows, exports, imports, flowId) {
 // yet its impossible to know which works for each flow type. For example,
 // showMapping is an IA only field, how do we determine if a DIY flow has mapping support?
 // Maybe its best to only hav common props here and remove all IA props to a separate selector.
-export function getFlowDetails(flow, integration, exports) {
+export function getFlowDetails(flow, integration, exports, childId) {
   if (!flow) return emptyObject;
 
   return produce(flow, draft => {
@@ -780,7 +795,7 @@ export function getFlowDetails(flow, integration, exports) {
     draft.isRunnable = isRunnable(flow, exports);
     draft.canSchedule = showScheduleIcon(flow, exports);
     draft.isDeltaFlow = isDeltaFlow(flow, exports);
-    const flowSettings = getIAFlowSettings(integration, flow._id);
+    const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
     draft.showMapping = flowSettings.showMapping;
     draft.hasSettings = !!(
@@ -792,6 +807,7 @@ export function getFlowDetails(flow, integration, exports) {
       : draft.canSchedule;
     draft.showStartDateDialog = flowSettings.showStartDateDialog;
     draft.disableSlider = flowSettings.disableSlider;
+    draft.disableRunFlow = !!flowSettings.disableRunFlow;
     draft.showUtilityMapping = flowSettings.showUtilityMapping;
   });
 }
@@ -907,3 +923,82 @@ export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => !!(flow && (
     (
       flow.pageProcessors &&
     flow.pageProcessors.some(({_exportId, _importId}) => _exportId === resourceId || _importId === resourceId))));
+
+export function getScriptsReferencedInFlow(
+  {
+    flow = {},
+    exports = [],
+    imports = [],
+    scripts = [],
+  }
+) {
+  const scriptIdsUsed = [];
+  const checkForHookScripts = hooks => {
+    if (!hooks) {
+      return;
+    }
+    Object.keys(hooks).forEach(hookName => {
+      if (HOOKS_IN_IMPORT_EXPORT_RESOURCE.includes(hookName)) {
+        if (hooks[hookName]?._scriptId && scriptIdsUsed.indexOf(hooks[hookName]._scriptId) === -1) {
+          scriptIdsUsed.push(hooks[hookName]._scriptId);
+        }
+      }
+    });
+  };
+
+  flow?.pageGenerators?.forEach(({_exportId}) => {
+    const _export = exports?.find(({_id}) => _id === _exportId);
+
+    if (_export?.filter?.type === 'script' && _export?.filter?.script?._scriptId) {
+      scriptIdsUsed.push(_export.filter.script._scriptId);
+    }
+    if (_export?.inputFilter?.type === 'script' && _export?.inputFilter?.script?._scriptId) {
+      scriptIdsUsed.push(_export.inputFilter.script._scriptId);
+    }
+    if (_export?.responseTransform?.type === 'script' && _export?.responseTransform?.script?._scriptId) {
+      scriptIdsUsed.push(_export.responseTransform.script._scriptId);
+    }
+    if (_export?.transform?.type === 'script' && _export?.transform?.script?._scriptId) {
+      scriptIdsUsed.push(_export.transform.script._scriptId);
+    }
+
+    checkForHookScripts(_export?.hooks);
+  });
+  flow?.pageProcessors?.forEach(({hooks, type, _importId, _exportId}) => {
+    if (hooks?.postResponseMap?._scriptId && scriptIdsUsed.indexOf(hooks.postResponseMap._scriptId) === -1) {
+      scriptIdsUsed.push(hooks.postResponseMap._scriptId);
+    }
+    if (type === 'import') {
+      const _import = imports?.find(({_id}) => _id === _importId);
+
+      // todo: check if we need to check for filter.type ==='script'?
+      if (_import?.filter?.type === 'script' && _import?.filter?.script?._scriptId) {
+        scriptIdsUsed.push(_import.filter.script._scriptId);
+      }
+      if (_import?.responseTransform?.type === 'script' && _import?.responseTransform?.script?._scriptId) {
+        scriptIdsUsed.push(_import.responseTransform.script._scriptId);
+      }
+      checkForHookScripts(_import?.hooks);
+    } else if (type === 'export') {
+      const _export = exports.find(({_id}) => _id === _exportId);
+
+      if (_export?.filter?.type === 'script' && _export?.filter?.script?._scriptId) {
+        scriptIdsUsed.push(_export.filter.script._scriptId);
+      }
+      if (_export?.inputFilter?.type === 'script' && _export?.inputFilter?.script?._scriptId) {
+        scriptIdsUsed.push(_export.inputFilter.script._scriptId);
+      }
+      if (_export?.responseTransform?.type === 'script' && _export?.responseTransform?.script?._scriptId) {
+        scriptIdsUsed.push(_export.responseTransform.script._scriptId);
+      }
+      if (_export?.transform?.type === 'script' && _export?.transform?.script?._scriptId) {
+        scriptIdsUsed.push(_export.transform.script._scriptId);
+      }
+      checkForHookScripts(_export?.hooks);
+    }
+  });
+
+  const filtered = scripts.filter(({_id}) => scriptIdsUsed.includes(_id));
+
+  return filtered;
+}

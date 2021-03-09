@@ -109,6 +109,10 @@ export default {
     'gainsight',
     'dotdigital',
     'checkout',
+    'pricefx',
+    'freshworks',
+    'pipedrive',
+    'prestashop',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -181,6 +185,10 @@ export default {
     'financialforce',
     'zendesksell',
     'microsoftdynamics365financeandoperation',
+    'clover',
+    'pipedrive',
+    'microsoftteams',
+    'adobesign',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',
@@ -198,7 +206,6 @@ export default {
     'googlecontacts',
     'googlemail',
     'acumatica',
-    'googledrive',
     'googleanalytics',
     'lightspeed',
     'accelo',
@@ -218,5 +225,8 @@ export default {
     'slack',
     'myobadvanced',
     'lexbizz',
+    'googledrive',
+    'microsoftteams',
+    'adobesign',
   ],
 };

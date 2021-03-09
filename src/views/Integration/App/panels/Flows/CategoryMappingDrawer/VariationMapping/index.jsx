@@ -184,7 +184,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
         }}
         onClose={handleClose}>
         <DrawerTitleBar
-          title={`Configure ${uiAssistant} variation themes: ${uiAssistant} - NetSuie`}
+          title={`Configure ${uiAssistant} variation themes: ${uiAssistant} - NetSuite`}
           flowId={flowId}
           addCategory
           backToParent

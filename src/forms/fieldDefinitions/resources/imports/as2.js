@@ -9,8 +9,6 @@ export default {
     defaultValue: r =>
       (r && r.as2 && r.as2.fileNameTemplate) || 'file-{{timestamp}}',
     refreshOptionsOnChangesTo: ['file.type'],
-    editorTitle:
-      'Build file name',
     connectionId: r => r && r._connectionId,
   },
   'as2.messageIdTemplate': {
@@ -18,8 +16,6 @@ export default {
     showLookup: false,
     showExtract: false,
     label: 'Message ID',
-    editorTitle:
-      'Build message ID',
     connectionId: r => r && r._connectionId,
   },
   'as2.headers': {

@@ -6,15 +6,18 @@ const useStyles = makeStyles(theme => ({
   textToggleContainer: {
     textAlign: 'center',
     position: 'relative',
-    zIndex: 1,
   },
   toggleButtons: {
     backgroundColor: theme.palette.background.paper,
     border: '1px solid',
     padding: 1,
     borderColor: theme.palette.secondary.lightest,
+    maxWidth: '100%',
     '& > button': {
       height: 30,
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
       padding: theme.spacing(0, 5),
       '&:first-child': {
         borderRadius: props => props.availablePreviewStages.length > 1 ? [[24, 0, 0, 24]] : 'none',
@@ -54,7 +57,6 @@ export default function HeaderPanel(props) {
         onChange={handlePanelViewChange}
         exclusive
         options={availablePreviewStages}
-
       />
     </div>
   );

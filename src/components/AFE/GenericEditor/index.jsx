@@ -13,7 +13,7 @@ import PanelLoader from '../../PanelLoader';
 const useStyles = makeStyles(() => ({
   ...layouts,
 }));
-const Editor = props => {
+export default function Editor(props) {
   const {
     layout = 'compact',
     templateClassName,
@@ -40,7 +40,9 @@ const Editor = props => {
   const classes = useStyles();
 
   useEffect(() => {
-    handleInit();
+    if (handleInit) {
+      handleInit();
+    }
   }, [handleInit]);
   // favor custom template over pre-defined layouts.
   const gridTemplate = templateClassName || classes[`${layout}Template`];
@@ -90,7 +92,7 @@ const Editor = props => {
       ) }
     </PanelGrid>
   );
-};
+}
 
 Editor.propTypes = {
   rule: string,
@@ -102,4 +104,3 @@ Editor.propTypes = {
   handleDataChange: func.isRequired,
 };
 
-export default Editor;

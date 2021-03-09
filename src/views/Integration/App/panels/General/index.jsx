@@ -3,7 +3,7 @@ import { useSelector, shallowEqual } from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { selectors } from '../../../../../reducers';
-import { integrationSettingsToDynaFormMetadata } from '../../../../../forms/utils';
+import { integrationSettingsToDynaFormMetadata } from '../../../../../forms/formFactory/utils';
 import PanelHeader from '../../../../../components/PanelHeader';
 import { IAFormStateManager, useActiveTab} from '../Flows';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
@@ -54,7 +54,9 @@ export default function GeneralPanel({ integrationId, storeId }) {
   const activeTabProps = useActiveTab();
 
   return (
-    <div className={classes.root}>
+    <div
+      data-public
+      className={classes.root}>
       <PanelHeader title="General" />
 
       <div className={classes.formContent}>

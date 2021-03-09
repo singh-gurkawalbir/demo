@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import { selectors } from '../../../reducers';
@@ -10,15 +9,8 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { useLoadIClientOnce } from '../../DynaForm/fields/DynaIclient';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-const styles = theme => ({
-  actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
-  },
-});
-
-function OAuthButton(props) {
-  const { label, classes, resourceType, disabled, resourceId, ...rest } = props;
+export default function OAuthButton(props) {
+  const { label, resourceType, disabled, resourceId, ...rest } = props;
   const resource = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,
@@ -31,7 +23,7 @@ function OAuthButton(props) {
     disableLoad:
       !resource._connectorId ||
       !(
-        ['shopify', 'squareup'].includes(resource.assistant) ||
+        ['shopify', 'squareup', 'hubspot'].includes(resource.assistant) ||
         (resource.type === 'salesforce' && resource.newIA)
       ),
   });
@@ -41,8 +33,7 @@ function OAuthButton(props) {
 
       if (
         resource._connectorId &&
-        (resource.assistant === 'shopify' ||
-          resource.assistant === 'squareup') &&
+        ['shopify', 'squareup', 'hubspot'].includes(resource.assistant) &&
         values['/http/auth/type'] === 'oauth'
       ) {
         newValues['/http/_iClientId'] =
@@ -96,8 +87,7 @@ function OAuthButton(props) {
 
         if (
           resource._connectorId &&
-          (resource.assistant === 'shopify' ||
-            resource.assistant === 'squareup') &&
+         ['shopify', 'squareup', 'hubspot'].includes(resource.assistant) &&
           values['/http/auth/type'] === 'oauth'
         ) {
           showError = false;
@@ -147,7 +137,6 @@ function OAuthButton(props) {
       {...rest}
       resourceType={resourceType}
       disabled={disabled || isSaving}
-      className={classes.actionButton}
       ignoreFormTouchedCheck
       onClick={saveAndAuthorizeWhenScopesArePresent}>
       {isSaving ? 'Authorizing' : label || 'Save & authorize'}
@@ -155,4 +144,3 @@ function OAuthButton(props) {
   );
 }
 
-export default withStyles(styles)(OAuthButton);

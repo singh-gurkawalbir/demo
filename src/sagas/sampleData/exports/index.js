@@ -65,6 +65,8 @@ export function* _hasSampleDataOnResource({ resourceId, resourceType, body }) {
 
 export function* _getProcessorOutput({ processorData }) {
   try {
+    // TODO: change this evaluateExternalProcessor to use refactored AFE code and
+    // add the property 'editorType' in processorData
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
     });
@@ -137,7 +139,9 @@ export function* _getPreviewData({ resourceId, resourceType, values, runOffline 
     if (isRealTimeOrDistributedResource(body)) {
       // Handles SF/NS : Fetches metadata for the real time adaptors
       // @Raghu: Update this when we support other real time adaptors like Webhooks
-      previewData = yield call(requestRealTimeMetadata, { resource: body });
+      const data = yield call(requestRealTimeMetadata, { resource: body });
+
+      previewData = [data];
     } else {
       // Makes base preview calls for all other adaptors
       previewData = yield call(apiCallWithRetry, {

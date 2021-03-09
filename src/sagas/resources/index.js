@@ -8,9 +8,9 @@ import { selectors } from '../../reducers';
 import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
 import getRequestOptions from '../../utils/requestOptions';
-import { defaultPatchSetConverter } from '../../forms/utils';
+import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
-import { REST_ASSISTANTS, USER_ACCESS_LEVELS } from '../../utils/constants';
+import { REST_ASSISTANTS } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
@@ -78,9 +78,9 @@ export function* linkUnlinkSuiteScriptIntegrator({ connectionId, link }) {
   const isLinked = userPreferences &&
     userPreferences.ssConnectionIds &&
     userPreferences.ssConnectionIds.includes(connectionId);
-  const userAccessLevel = yield select(selectors.userAccessLevel);
+  const isAccountOwnerOrAdmin = yield select(selectors.isAccountOwnerOrAdmin);
 
-  if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+  if (isAccountOwnerOrAdmin) {
     if (link) {
       if (!isLinked) {
         yield put(
@@ -274,6 +274,13 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     updated.content = merged.content;
   }
 
+  // when data is posted /integrations/:integrationId/connections, connection created will be auto-registered to integration.
+  // Refetch the integration
+  if (resourceType === 'connections' && merged.integrationId && isNew) {
+    // eslint-disable-next-line no-use-before-define
+    yield call(getResource, {resourceType: 'integrations', id: merged.integrationId});
+  }
+
   /*
      connections can be saved with valid or invalid credentials(i.e whether ping succeeded or failed)
      calling ping after connection save sets the offline flag appropriately in the backend.
@@ -435,8 +442,16 @@ export function* updateIntegrationSettings({
   let payload = jsonPatch.applyPatch({}, defaultPatchSetConverter(values))
     .newDocument;
 
-  if (storeId) {
-    payload = { [storeId]: payload };
+  const integration = yield select(selectors.resource, 'integrations', integrationId);
+  const supportsMultiStore = integration?.settings?.supportsMultiStore;
+  let childId = storeId;
+
+  if (supportsMultiStore && !storeId && flowId) {
+    childId = yield select(selectors.integrationAppChildIdOfFlow, integrationId, flowId);
+  }
+
+  if (childId) {
+    payload = { [childId]: payload };
   }
 
   payload = {
@@ -463,7 +478,7 @@ export function* updateIntegrationSettings({
 
     return yield put(
       actions.integrationApp.settings.submitFailed({
-        storeId,
+        storeId: childId,
         integrationId,
         response,
         flowId,
@@ -528,7 +543,7 @@ export function* updateIntegrationSettings({
 
     yield put(
       actions.integrationApp.settings.submitComplete({
-        storeId,
+        storeId: childId,
         integrationId,
         response,
         flowId,
@@ -575,7 +590,7 @@ export function* patchResource({ resourceType, id, patchSet, options = {} }) {
   }
 }
 
-export function* requestReferences({ resourceType, id, options = {} }) {
+export function* requestReferences({ resourceType, id, skipSave = false, options = {} }) {
   const path = `/${resourceType}/${id}/dependencies`;
 
   try {
@@ -584,7 +599,7 @@ export function* requestReferences({ resourceType, id, options = {} }) {
       hidden: !!options.ignoreError,
     });
 
-    yield put(actions.resource.receivedReferences(resourceReferences));
+    if (!skipSave) yield put(actions.resource.receivedReferences(resourceReferences));
 
     return resourceReferences;
   } catch (error) {
@@ -631,8 +646,8 @@ export function* getResourceCollection({ resourceType }) {
   /** hide the error that GET SuiteScript tiles throws when connection is offline */
   if (
     resourceType &&
-    resourceType.includes('suitescript/connections/') &&
-    resourceType.includes('/tiles')
+    ((resourceType.includes('suitescript/connections/') && resourceType.includes('/tiles')) ||
+    resourceType.includes('ashares'))
   ) {
     hideNetWorkSnackbar = true;
   }
@@ -845,24 +860,6 @@ export function* updateTradingPartner({ connectionId }) {
   }
 }
 
-export function* requestDebugLogs({ connectionId }) {
-  let response;
-  const path = `/connections/${connectionId}/debug`;
-
-  try {
-    response = yield call(apiCallWithRetry, { path });
-    yield put(
-      actions.connection.receivedDebugLogs(
-        response ||
-          'There are no logs available for this connection. Please run your flow so that we can record the outgoing and incoming traffic to this connection.',
-        connectionId
-      )
-    );
-  } catch (error) {
-    return undefined;
-  }
-}
-
 export function* receivedResource({ resourceType, resource }) {
   if (resourceType === 'connections' && resource && !resource.offline) {
     yield put(actions.connection.madeOnline(resource._id));
@@ -876,11 +873,12 @@ export function* authorizedConnection({ connectionId }) {
     'connections',
     connectionId
   );
+  const isOauthOfflineResource = [connectionResource?.http?.auth?.type, connectionResource?.rest?.authType].includes('oauth') && !!(connectionResource?.offline);
 
   if (
     connectionResource &&
     (connectionResource.type === 'netsuite' ||
-      connectionResource.type === 'salesforce')
+      connectionResource.type === 'salesforce' || isOauthOfflineResource)
   ) {
     yield put(actions.resource.request('connections', connectionId));
   }
@@ -986,7 +984,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, updateFlowNotification),
   takeEvery(actionTypes.CONNECTION.DEREGISTER_REQUEST, requestDeregister),
   takeEvery(actionTypes.CONNECTION.TRADING_PARTNER_UPDATE, updateTradingPartner),
-  takeEvery(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, requestDebugLogs),
+
   takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
   takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),

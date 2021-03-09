@@ -24,13 +24,72 @@ describe('initSettingsForm saga', () => {
 
     return expectSaga(initSettingsForm, { resourceType, resourceId })
       .provide([
-        [select(selectors.resource, resourceType, resourceId), resourceState],
+        [select(selectors.getSectionMetadata, resourceType, resourceId, 'general'), resourceState],
       ])
       .not.call.fn(apiCallWithRetry)
       .put(actions.customSettings.formReceived(resourceId, expectedMeta))
       .run();
   });
 
+  test('should not make api call when section metadata isn\'t present', () => {
+    const error = { code: 422, message: 'unprocessable entity' };
+    const resourceState = null;
+    const sectionId = 'unknownSectionId';
+
+    return expectSaga(initSettingsForm, { resourceType, resourceId, sectionId})
+      .provide([
+        // mock for unknown sectionId
+        [select(selectors.getSectionMetadata, resourceType, resourceId, sectionId), resourceState],
+        [matchers.call.fn(apiCallWithRetry), throwError(error)],
+      ])
+      .not.call.fn(apiCallWithRetry)
+      .run();
+  });
+
+  describe('init hook settingsForm base path', () => {
+    const resourceState = {
+      settingsForm: {
+        form: { fieldMap: { store: { name: 'store' } } },
+        init: { function: 'main'},
+      },
+      settings: { store: 'test', currency: 'us' },
+    };
+
+    test('should call root level settingsForm initialization path when sectionId is not passed', () =>
+      expectSaga(initSettingsForm, { resourceType, resourceId })
+        .provide([
+          [select(selectors.getSectionMetadata, resourceType, resourceId, 'general'), resourceState],
+        ])
+        .call.fn(apiCallWithRetry, {path: `/${resourceType}/${resourceId}/settingsForm/init`,
+          opts: { method: 'POST' } })
+        .run());
+    test('should call root level settingsForm initialization path when `general` sectionId is passed', () =>
+      expectSaga(initSettingsForm, { resourceType, resourceId, sectionId: 'general' })
+        .provide([
+          [select(selectors.getSectionMetadata, resourceType, resourceId, 'general'), resourceState],
+        ])
+        .call.fn(apiCallWithRetry, {path: `/${resourceType}/${resourceId}/settingsForm/init`,
+          opts: { method: 'POST' } })
+        .run());
+
+    test('should not call settingsForm initialization when invalid sectionId is passed', () =>
+      expectSaga(initSettingsForm, { resourceType, resourceId, sectionId: 'invalidId'})
+        .provide([
+          [select(selectors.getSectionMetadata, resourceType, resourceId, 'invalidId'), null],
+        ])
+        .not.call.fn(apiCallWithRetry)
+        .run());
+
+    test('should call correct flowGrouping form initialization path when valid sectionId is passed', () => {
+      expectSaga(initSettingsForm, { resourceType, resourceId, sectionId: 'validId'})
+        .provide([
+          [select(selectors.getSectionMetadata, resourceType, resourceId, 'validId'), resourceState],
+        ])
+        .call.fn(apiCallWithRetry, {path: `/${resourceType}/${resourceId}/flowGroupings/validId/settingsForm/init`,
+          opts: { method: 'POST' } })
+        .run();
+    });
+  });
   test('should make API call when init hook present and update form metadata', () => {
     const resourceState = {
       settingsForm: {
@@ -51,7 +110,7 @@ describe('initSettingsForm saga', () => {
 
     return expectSaga(initSettingsForm, { resourceType, resourceId })
       .provide([
-        [select(selectors.resource, resourceType, resourceId), resourceState],
+        [select(selectors.getSectionMetadata, resourceType, resourceId, 'general'), resourceState],
         [matchers.call.fn(apiCallWithRetry), initHookMeta],
       ])
       .call.fn(apiCallWithRetry)
@@ -77,7 +136,7 @@ describe('initSettingsForm saga', () => {
 
     return expectSaga(initSettingsForm, { resourceType, resourceId })
       .provide([
-        [select(selectors.resource, resourceType, resourceId), resourceState],
+        [select(selectors.getSectionMetadata, resourceType, resourceId, 'general'), resourceState],
         [matchers.call.fn(apiCallWithRetry), throwError(error)],
       ])
       .put(actions.customSettings.formError(resourceId, [error.message]))

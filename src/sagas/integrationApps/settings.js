@@ -3,6 +3,7 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
+import { getResourceCollection, getResource } from '../resources';
 
 export function* requestUpgrade({ integrationId, options }) {
   const { licenseId, addOnName } = options;
@@ -161,7 +162,7 @@ export function* getCategoryMappingMetadata({
   if (response) {
     if (options.generatesMetadata) {
       yield put(
-        actions.integrationApp.settings.receivedCategoryMappingGeneratesMetadata(
+        actions.integrationApp.settings.categoryMappings.receivedGeneratesMetadata(
           integrationId,
           flowId,
           response
@@ -239,8 +240,12 @@ export function* saveCategoryMappings({ integrationId, flowId }) {
 
   const updatedMappings = response.find(op => op.operation === 'mappingData');
 
+  // On change of categoryMappings IA may add/remove flows in the integration.
+  yield call(getResourceCollection, { resourceType: 'flows' });
+  yield call(getResource, {resourceType: 'integrations', id: integrationId});
+
   yield put(
-    actions.integrationApp.settings.receivedCategoryMappingData(
+    actions.integrationApp.settings.categoryMappings.receivedUpdatedMappingData(
       integrationId,
       flowId,
       updatedMappings

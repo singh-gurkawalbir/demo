@@ -1,5 +1,6 @@
+import moment from 'moment';
 import actionTypes from '../actions/types';
-import { JOB_TYPES } from './constants';
+import { JOB_TYPES, JOB_STATUS } from './constants';
 
 let path;
 
@@ -17,6 +18,7 @@ export default function getRequestOptions(
     licenseId,
     flowId,
     isResolved,
+    nextPageURL,
   } = {}
 ) {
   switch (action) {
@@ -67,6 +69,10 @@ export default function getRequestOptions(
         path = '/licenses/upgradeRequest';
       } else if (actionType === 'connectorRenewal') {
         path = `/connectors/${connectorId}/licenses/${licenseId}/renewRequest`;
+      } else if (actionType === 'ioRenewal') {
+        path = '/licenses/renewRequest';
+      } else if (actionType === 'ioResume') {
+        return {path: '/resume', opts: {method: 'PUT'}};
       }
 
       return {
@@ -231,6 +237,11 @@ export default function getRequestOptions(
         path: `/retries/${resourceId}/data`,
         opts: { method: 'PUT' },
       };
+    case actionTypes.JOB.ERROR.DOWNLOAD_RETRY_DATA:
+      return {
+        path: `/retries/${resourceId}/signedURL`,
+        opts: { method: 'GET' },
+      };
     case actionTypes.FLOW.RUN:
       return {
         path: `/flows/${resourceId}/run`,
@@ -304,6 +315,52 @@ export default function getRequestOptions(
       } else if (toDate) {
         path += `?${toKey}=${toDate}`;
       }
+
+      return {
+        path,
+        opts: { method: 'GET'},
+      };
+    }
+
+    case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST: {
+      let path = nextPageURL
+        ? nextPageURL.replace('/api', '')
+        : `/flows/${flowId}/${resourceId}/${isResolved ? 'resolved' : 'errors'}`;
+      const queryParams = [];
+
+      const { sources = [], occuredAt, resolvedAt } = filters;
+
+      if (!sources.includes('all')) {
+        sources.forEach(source => queryParams.push(`source=${source}`));
+      }
+      if (occuredAt?.startDate && occuredAt?.endDate) {
+        queryParams.push(`occurredAt_gte=${moment(occuredAt.startDate).toISOString()}`);
+        queryParams.push(`occurredAt_lte=${moment(occuredAt.endDate).toISOString()}`);
+      }
+      if (resolvedAt?.startDate && resolvedAt?.endDate) {
+        queryParams.push(`resolvedAt_gte=${new Date(resolvedAt.startDate).toISOString()}`);
+        queryParams.push(`resolvedAt_lte=${new Date(resolvedAt.endDate).toISOString()}`);
+      }
+      path += (nextPageURL ? `&${queryParams.join('&')}` : `?${queryParams.join('&')}`);
+
+      return {
+        path,
+        opts: { method: 'GET'},
+      };
+    }
+
+    case actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST: {
+      let path = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type_in[0]=flow`;
+      const statusFilter = [JOB_STATUS.COMPLETED, JOB_STATUS.CANCELED, JOB_STATUS.FAILED];
+      const { range } = filters || {};
+      const queryParams = [];
+
+      statusFilter.forEach(status => queryParams.push(`status=${status}`));
+      if (range?.startDate && range?.endDate) {
+        queryParams.push(`createdAt_gte=${moment(range.startDate).toISOString()}`);
+        queryParams.push(`createdAt_lte=${moment(range.endDate).toISOString()}`);
+      }
+      path += `&${queryParams.join('&')}`;
 
       return {
         path,

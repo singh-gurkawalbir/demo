@@ -97,14 +97,13 @@ function* pingConnection({ resourceId, values, ssLinkedConnectionId }) {
   yield put(
     actions.suiteScript.resource.connections.testSuccessful(
       resourceId,
-      'Connection is working fine!',
       ssLinkedConnectionId
     )
   );
 }
 
 export function* pingConnectionWithAbort(params) {
-  const { resourceId } = params;
+  const { resourceId, ssLinkedConnectionId } = params;
   const { abortPing } = yield race({
     testConn: call(pingConnection, params),
     abortPing: take(
@@ -119,7 +118,8 @@ export function* pingConnectionWithAbort(params) {
     yield put(
       actions.suiteScript.resource.connections.testCancelled(
         resourceId,
-        'Request Cancelled'
+        'Request Cancelled',
+        ssLinkedConnectionId
       )
     );
   }

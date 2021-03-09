@@ -120,7 +120,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose }
 
       <DrawerFooter>
         <ErrorDetailActions
-          retryData={retryData}
+          updatedRetryData={retryData}
           flowId={flowId}
           resourceId={resourceId}
           errorId={errorId}

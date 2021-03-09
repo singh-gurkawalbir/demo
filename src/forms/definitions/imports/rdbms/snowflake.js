@@ -41,9 +41,10 @@ export default {
     'rdbms.query': {
       id: 'rdbms.query',
       type: 'sqlquerybuilder',
-      querySetPos: 0,
+      querySetPos: 0, // todo: remove this
+      arrayIndex: 0,
       required: true,
-      label: 'Build SQL query',
+      label: 'SQL query',
       visibleWhen: [
         {
           field: 'rdbms.queryType',

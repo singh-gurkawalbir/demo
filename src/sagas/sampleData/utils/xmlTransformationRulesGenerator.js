@@ -6,12 +6,15 @@ import { generateTransformationRulesOnXMLData } from '../../../utils/sampleData'
 import { parseFileData } from './fileParserUtils';
 import { pageProcessorPreview, exportPreview } from './previewCalls';
 import { getPreviewStageData } from '../../../utils/flowData';
+import { SCOPES } from '../../resourceForm';
 
 /*
  * Incase of File adaptors XML type, fetch sampleData from the state that has uploaded XML file
  * Parse XML content to JSON to get sampleData
  */
-function* getXmlFileAdaptorSampleData({ resource, newResourceId }) {
+export function* _getXmlFileAdaptorSampleData({ resource, newResourceId }) {
+  if (!resource || !newResourceId) return;
+
   const { data: sampleData } = yield select(
     selectors.getResourceSampleDataWithStatus,
     newResourceId,
@@ -25,13 +28,15 @@ function* getXmlFileAdaptorSampleData({ resource, newResourceId }) {
   });
 
   // processor calls return data wrapped inside 'data' array
-  return processedData && processedData.data && processedData.data[0];
+  return processedData?.data?.[0];
 }
 
 /*
  * Incase of Http SuccessMediaType XML, we make a preview call and get sample data for the same
  */
-function* getXmlHttpAdaptorSampleData({ resource, newResourceId }) {
+export function* _getXmlHttpAdaptorSampleData({ resource, newResourceId }) {
+  if (!resource || !newResourceId) return;
+
   if (resource.isLookup) {
     // Make a pageProcessorPreview call incase of a lookup
     const { flowId } = yield select(
@@ -70,8 +75,9 @@ export default function* saveTransformationRulesForNewXMLExport({
     selectors.resourceData,
     'exports',
     resourceId,
-    'value'
+    SCOPES.VALUE
   );
+
   const isXmlFileAdaptor =
     isFileAdaptor(resource) && resource.file.type === 'xml';
   const isXmlHttpAdaptor =
@@ -87,11 +93,11 @@ export default function* saveTransformationRulesForNewXMLExport({
   // Calls related saga for XML/FileAdaptor type
   // newResourceId is a temporary Id which is not part of 'resource' fetched from patches. So need to send explicitly
   const convertedXmlToJSON = isXmlFileAdaptor
-    ? yield call(getXmlFileAdaptorSampleData, {
+    ? yield call(_getXmlFileAdaptorSampleData, {
       resource,
       newResourceId: tempResourceId,
     })
-    : yield call(getXmlHttpAdaptorSampleData, {
+    : yield call(_getXmlHttpAdaptorSampleData, {
       resource,
       newResourceId: tempResourceId,
     });
@@ -104,6 +110,6 @@ export default function* saveTransformationRulesForNewXMLExport({
   };
   const patchSet = [{ op: 'replace', path: '/transform', value }];
 
-  yield put(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-  yield put(actions.resource.commitStaged('exports', resourceId, 'value'));
+  yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
+  yield put(actions.resource.commitStaged('exports', resourceId, SCOPES.VALUE));
 }

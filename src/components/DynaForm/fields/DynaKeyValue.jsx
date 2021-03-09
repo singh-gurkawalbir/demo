@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { FormLabel, FormControl } from '@material-ui/core';
 import shortid from 'shortid';
 import { isEqual } from 'lodash';
-import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldMessage from './FieldMessage';
 import TrashIcon from '../../icons/TrashIcon';
 import AutoSuggest from './DynaAutoSuggest';
 import ActionButton from '../../ActionButton';
@@ -253,6 +253,7 @@ export function KeyValueComponent(props) {
     </FormControl>
   );
 }
+
 export default function DynaKeyValue(props) {
   const { id, onFieldChange } = props;
   const onUpdate = values => {
@@ -269,7 +270,7 @@ export default function DynaKeyValue(props) {
         onUpdate={onUpdate}
         classes={classes}
       />
-      <ErroredMessageComponent {...props} />
+      <FieldMessage {...props} />
     </>
   );
 }

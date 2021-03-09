@@ -136,7 +136,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     });
   });
   describe('test attempted Route state behavior', () => {
-    test.skip('should save the location state when the app is initialized for the very first', () => {
+    test('should save the location state when the app is initialized for the very first', () => {
       const history = createMemoryHistory({
         initialEntries: [getRoutePath(someRoute)],
       });

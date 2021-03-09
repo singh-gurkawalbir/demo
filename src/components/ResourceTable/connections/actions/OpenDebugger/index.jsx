@@ -5,7 +5,7 @@ import actions from '../../../../../actions';
 import DebugIcon from '../../../../icons/DebugIcon';
 
 export default {
-  label: 'Open debugger',
+  label: 'Debug connection',
   icon: DebugIcon,
   useHasAccess: ({ rowData }) => {
     const { _id: connectionId } = rowData;
@@ -21,7 +21,7 @@ export default {
     const { _id: connectionId } = rowData;
     const dispatch = useDispatch();
     const openDebugger = useCallback(() => {
-      dispatch(actions.connection.requestDebugLogs(connectionId));
+      dispatch(actions.logs.connections.request(connectionId));
     }, [connectionId, dispatch]);
 
     useEffect(() => {

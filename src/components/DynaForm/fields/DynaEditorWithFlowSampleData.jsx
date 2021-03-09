@@ -6,9 +6,9 @@ import UrlEditorDrawer from '../../AFE/UrlEditor/Drawer';
 import CsvConfigEditorDrawer from '../../AFE/CsvConfigEditor/Drawer';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import { getUniqueFieldId } from '../../../utils/resource';
+import { getUniqueFieldId } from '../../../utils/editor';
 
-const DynaEditorWithFlowSampleData = ({
+export default function DynaEditorWithFlowSampleData({
   fieldId,
   editorType,
   flowId,
@@ -18,7 +18,7 @@ const DynaEditorWithFlowSampleData = ({
   enableEditorV2,
   rule,
   ...props
-}) => {
+}) {
   const fieldType = getUniqueFieldId(fieldId);
   const dispatch = useDispatch();
   const isEditorV2Supported = useSelector(state => {
@@ -118,6 +118,5 @@ const DynaEditorWithFlowSampleData = ({
       )}
     </>
   );
-};
+}
 
-export default DynaEditorWithFlowSampleData;

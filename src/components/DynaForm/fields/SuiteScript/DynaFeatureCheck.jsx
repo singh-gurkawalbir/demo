@@ -9,10 +9,11 @@ import { LoadingMask } from '../../../../views/RecycleBin';
 import useConfirmDialog from '../../../ConfirmDialog';
 import DynaCheckbox from '../checkbox/DynaCheckbox';
 
+const emptyObj = {};
 export default function DynaFeatureCheck(props) {
   const dispatch = useDispatch();
   const { ssLinkedConnectionId, _integrationId: integrationId, featureName, onFieldChange: fieldChange, id, value, featureDisabledMessage} = props;
-  const {status, message} = useSelector(state => selectors.suiteScriptIAFeatureCheckState(state, { ssLinkedConnectionId, integrationId, featureName})) || {};
+  const {status, message} = useSelector(state => selectors.suiteScriptIAFeatureCheckState(state, { ssLinkedConnectionId, integrationId, featureName})) || emptyObj;
   const [enquesnackbar] = useEnqueueSnackbar();
   const {confirmDialog} = useConfirmDialog();
 

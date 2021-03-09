@@ -9,7 +9,7 @@ import DynaSubmit from '../../DynaSubmit';
 import {
   convertToReactFormFields,
 } from './util';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 import { selectors } from '../../../../reducers';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
@@ -53,7 +53,7 @@ const ApiParametersModal = props => {
   return (
     <ModalDialog show onClose={onClose}>
       <span>API parameters</span>
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <DynaForm formKey={formKey} />
       <div>
         <DynaSubmit onClick={onSaveClick}>Save</DynaSubmit>
         <Button
@@ -114,7 +114,7 @@ export default function DynaApiParameters(props) {
           {'Launch'} {required && !isValid ? '*' : ''}
         </Button>
       </div>
-      <ErroredMessageComponent
+      <FieldMessage
         isValid={isValid}
         description=""
         errorMessages="Please enter required parameters"

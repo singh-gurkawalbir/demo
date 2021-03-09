@@ -10,7 +10,7 @@ import {
   updateFormValues,
   PARAMETER_LOCATION,
 } from '../../../../utils/assistant';
-import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldMessage from '../FieldMessage';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import FieldHelp from '../../FieldHelp';
 
@@ -99,11 +99,7 @@ const SearchParamsModal = props => {
       <div>
         <DynaForm
           formKey={formKey}
-          className={classes.searchParamForm}
-          fieldMeta={{
-            fieldMap,
-            layout,
-          }} />
+          className={classes.searchParamForm} />
       </div>
       <div>
         <DynaSubmit formKey={formKey} onClick={onSaveClick}>Save</DynaSubmit>
@@ -165,7 +161,7 @@ export default function DynaAssistantSearchParams(props) {
           {'Launch'} {required && !isValid ? '*' : ''}
         </Button>
       </div>
-      <ErroredMessageComponent
+      <FieldMessage
         isValid={isValid}
         description=""
         errorMessages="Please enter required parameters"

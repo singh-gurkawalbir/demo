@@ -39,6 +39,15 @@ export default {
         },
         orderBy: 'name',
       },
+      ...(actionProps.showChild ? [{
+        heading: actionProps.childHeader || 'App',
+        value: function ChildName(r, actionProps) {
+          const {integrationChildren = []} = actionProps;
+
+          return r.childName || integrationChildren.find(i => i.value === r._integrationId)?.label || '';
+        },
+        orderBy: actionProps.childHeader ? 'childName' : '_integrationId',
+      }] : []),
       {
         heading: 'Errors',
         value: function Errors(r) {
@@ -67,7 +76,7 @@ export default {
         heading: 'Mapping',
         align: 'center',
         value: function Mapping(r) {
-          return <MappingCell flowId={r._id} />;
+          return <MappingCell flowId={r._id} childId={actionProps?.storeId} />;
         },
       },
       {
@@ -85,7 +94,7 @@ export default {
     }
 
     if (actionProps.isIntegrationApp) {
-      columns = columns.map(col => pick(col, ['heading', 'align', 'value']));
+      columns = columns.map(col => pick(col, ['heading', 'align', 'value', 'orderBy']));
 
       columns.push(
         {

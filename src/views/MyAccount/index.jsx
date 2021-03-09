@@ -27,6 +27,7 @@ const Audit = loadable(() =>
 const Transfers = loadable(() =>
   retry(() => import(/* webpackChunkName: 'MyAccount.Transfers' */ './Transfers/index'))
 );
+
 const tabs = [
   {
     path: 'profile',
@@ -71,6 +72,7 @@ const useStyles = makeStyles(theme => ({
 export default function MyAccount({ match }) {
   const classes = useStyles();
   const permissions = useSelector(state => selectors.userPermissions(state));
+  const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
 
   return (
     <>
@@ -81,7 +83,7 @@ export default function MyAccount({ match }) {
               : 'My profile'
           }
         />
-      {permissions.accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_OWNER ? (
+      {!isAccountOwnerOrAdmin ? (
         <div className={classes.wrapperProfile}>
           <Profile />
         </div>

@@ -41,7 +41,7 @@ export default {
   },
   'rest.postBody': {
     type: 'httprequestbody',
-    label: 'Build HTTP request body',
+    label: 'HTTP request body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
     required: true,
@@ -143,7 +143,7 @@ export default {
   },
   'rest.pagingPostBody': {
     type: 'httprequestbody',
-    label: 'Build paging post body',
+    label: 'Paging post body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
     required: true,
@@ -367,6 +367,6 @@ export default {
         is: ['records'],
       },
     ],
-    label: 'Build HTTP request body',
+    label: 'HTTP request body',
   },
 };

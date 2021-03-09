@@ -9,7 +9,8 @@ import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPerm
 import Spinner from '../../../../Spinner';
 import SpinnerWrapper from '../../../../SpinnerWrapper';
 import useFormContext from '../../../../Form/FormContext';
-import { isFormTouched } from '../../../../../forms/utils';
+import { isFormTouched } from '../../../../../forms/formFactory/utils';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -20,6 +21,7 @@ const useStyles = makeStyles({
 export default function FormView({
   resourceId,
   resourceType,
+  sectionId,
   disabled,
   onFormChange,
 }) {
@@ -29,20 +31,23 @@ export default function FormView({
     selectors.customSettingsForm(state, resourceId)
   );
 
+  const settingsForm = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, resourceType, resourceId, sectionId) ?.settingsForm;
+  const settings = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, resourceType, resourceId, sectionId) ?.settings;
+
   useEffect(() => {
     // use effect will fire any time formState changes but...
     // Only if the formState is missing do we need to perform an init.
     if (!settingsFormState) {
-      dispatch(actions.customSettings.formRequest(resourceType, resourceId));
+      dispatch(actions.customSettings.formRequest(resourceType, resourceId, sectionId));
     }
-  }, [dispatch, settingsFormState, resourceId, resourceType]);
+  }, [dispatch, settingsFormState, resourceId, resourceType, sectionId]);
 
   useEffect(
     () => () => {
-      // console.log('cleaned up');
+      // reload settings form when the settingsForm or settings changes
       dispatch(actions.customSettings.formClear(resourceId));
     },
-    [dispatch, resourceId]
+    [dispatch, resourceId, settingsForm, settings]
   );
 
   // TODO:verify this behaviour
@@ -80,7 +85,7 @@ export default function FormView({
 
   return (
     <div className={classes.wrapper}>
-      <DynaForm formKey={formKey} fieldMeta={settingsFormState?.meta} />
+      <DynaForm formKey={formKey} />
     </div>
   );
 }

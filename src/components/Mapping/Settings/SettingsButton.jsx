@@ -13,12 +13,14 @@ export default function MappingSettingsButton(props) {
   const {
     dataTest,
     mappingKey,
+    disabled,
     isCategoryMapping,
   } = props;
   const history = useHistory();
-  const {mappingIndex, integrationId, flowId, editorId} = props;
+  const { mappingIndex, integrationId, flowId, editorId, depth } = props;
   const isDisabled = useSelector(state => {
     if (isCategoryMapping) {
+      if (disabled) return true;
       const {mappings} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId);
       const value = mappings?.[mappingIndex] || emptyObject;
 
@@ -32,11 +34,11 @@ export default function MappingSettingsButton(props) {
   });
   const handleBtnClick = useCallback(() => {
     if (isCategoryMapping) {
-      history.push(`${history.location.pathname}/settings/category/${editorId}/${mappingIndex}`);
+      history.push(`${history.location.pathname}/settings/category/${editorId}/${depth}/${mappingIndex}`);
     } else {
       history.push(`${history.location.pathname}/settings/${mappingKey}`);
     }
-  }, [editorId, history, isCategoryMapping, mappingIndex, mappingKey]);
+  }, [editorId, history, isCategoryMapping, mappingIndex, mappingKey, depth]);
 
   return (
     <ActionButton

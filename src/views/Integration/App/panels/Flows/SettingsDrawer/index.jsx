@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import clsx from 'clsx';
 import { selectors } from '../../../../../../reducers';
-import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
+import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/formFactory/utils';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
 import { IAFormStateManager, useActiveTab } from '..';
@@ -24,6 +24,7 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.appBarHeight,
   },
   settingsDrawerForm: {
+    overflowY: 'auto',
     padding: theme.spacing(2, 3),
     '& + div': {
       margin: theme.spacing(0, 3),
@@ -33,17 +34,16 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(-2),
       marginLeft: theme.spacing(-3),
       marginRight: theme.spacing(2),
-      minHeight: '100%',
+      '& > * button > span': {
+        justifyContent: 'flex-start',
+      },
     },
   },
   settingsDrawerCamForm: {
-    minHeight: 'calc(100% - 65px)',
-    marginBottom: theme.spacing(4),
     '& > div': {
       height: '100%',
       '& > div': {
-        height: '100%',
-        paddingBottom: theme.spacing(5),
+        paddingBottom: theme.spacing(3),
       },
     },
   },
@@ -68,7 +68,7 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
   // We have a data-layer for a reason. There is absolutely no reason to proxy data-layer
   // results deeply through many nested components.
   const { settings: fields, sections } = useSelector(
-    state => selectors.iaFlowSettings(state, integrationId, flowId),
+    state => selectors.iaFlowSettings(state, integrationId, flowId, storeId),
     shallowEqual
 
   );
@@ -93,6 +93,7 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
   );
   const activeTabProps = useActiveTab();
 
+  // Todo: Sravan, we should use Rightdrawer here
   return (
     <Drawer
       // variant="persistent"

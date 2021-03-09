@@ -2,7 +2,6 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { makeStyles, Drawer, List } from '@material-ui/core';
 import UrlEditorDrawer from '../../components/AFE/UrlEditor/Drawer';
-import MergeEditorDrawer from '../../components/AFE/MergeEditor/Drawer';
 import FileDefinitionEditorDrawer from '../../components/AFE/FileDefinitionEditor/Drawer';
 import HttpRequestBodyEditorDrawer from '../../components/AFE/HttpRequestBodyEditor/Drawer';
 import CsvConfigEditorDrawer from '../../components/AFE/CsvConfigEditor/Drawer';
@@ -30,12 +29,6 @@ const editors = [
     label: 'Build HTTP request body',
     description:
       'This editor lets you create and test JSON or XML templates against your raw data.',
-  },
-  {
-    name: 'MergeEditor',
-    label: 'Merge editor',
-    description:
-      'This editor lets you merge two objects, such as when you want to apply defaults to a record.',
   },
   {
     name: 'CsvParseEditor',
@@ -161,16 +154,6 @@ export default function Editors() {
         return (
           <HttpRequestBodyEditorDrawer
             title="Create HTTP request body"
-            id={editorName}
-            data={rawData}
-            onSave={handleSave}
-            onClose={handleClose}
-          />
-        );
-      case 'MergeEditor':
-        return (
-          <MergeEditorDrawer
-            title="Apply default values"
             id={editorName}
             data={rawData}
             onSave={handleSave}

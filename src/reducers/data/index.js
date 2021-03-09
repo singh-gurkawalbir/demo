@@ -37,9 +37,9 @@ const subSelectors = {
 genSelectors(selectors, subSelectors);
 
 selectors.auditLogs = (state, resourceType, resourceId, filters) => {
-  const allResources = fromResources.resourceDetailsMap(state.resources);
+  const allResources = fromResources.resourceDetailsMap(state?.resources);
   const logs = fromAudit.auditLogs(
-    state.audit,
+    state?.audit,
     resourceType,
     resourceId,
     filters

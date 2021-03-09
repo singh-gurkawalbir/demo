@@ -1,4 +1,4 @@
-import { isNewId } from '../../../utils/resource';
+import { IMPORT_FILE_FIELD_MAP } from '../../../utils/fileUtil';
 
 export default {
   preSave: formValues => {
@@ -75,9 +75,21 @@ export default {
 
     if (newValues['/inputMode'] !== 'blob') {
       delete newValues['/blobKeyPath'];
+      delete newValues['/blob'];
+    } else {
+      newValues['/blob'] = true;
+    }
+
+    if (!newValues['/file/encoding']) {
+      newValues['/file/encoding'] = undefined;
     }
 
     delete newValues['/file/compressFiles'];
+
+    // TODO Ashok, This code can be removed once all backend issues are resolved.
+
+    newValues['/s3/fileKey'] = undefined;
+    newValues['/s3/backupBucket'] = undefined;
 
     return {
       ...newValues,
@@ -108,117 +120,7 @@ export default {
 
     return null;
   },
-  fieldMap: {
-    common: {
-      formId: 'common',
-    },
-    inputMode: {
-      id: 'inputMode',
-      type: 'mode',
-      label: 'Generate files from records:',
-      helpKey: 'import.inputMode',
-      options: [
-        {
-          items: [
-            { label: 'Yes', value: 'records' },
-            { label: 'No', value: 'blob' },
-          ],
-        },
-      ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
-      defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
-    },
-    's3.region': {
-      fieldId: 's3.region',
-    },
-    's3.bucket': {
-      fieldId: 's3.bucket',
-    },
-    fileType: {
-      formId: 'fileType',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    's3.fileKey': {
-      fieldId: 's3.fileKey',
-    },
-    's3.backupBucket': {
-      fieldId: 's3.backupBucket',
-    },
-    blobKeyPath: {
-      fieldId: 'blobKeyPath',
-    },
-    'file.xml.body': {
-      id: 'file.xml.body',
-      type: 'httprequestbody',
-      connectionId: r => r && r._connectionId,
-      label: 'Build XML document',
-      refreshOptionsOnChangesTo: ['file.type'],
-      required: true,
-      visibleWhenAll: [
-        {
-          field: 'file.type',
-          is: ['xml'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    uploadFile: {
-      fieldId: 'uploadFile',
-      refreshOptionsOnChangesTo: ['file.type'],
-      placeholder: 'Sample file (that would be generated)',
-      helpKey: 'import.uploadFile',
-    },
-    'file.csv': { fieldId: 'file.csv' },
-    'file.xlsx.includeHeader': { fieldId: 'file.xlsx.includeHeader' },
-    dataMappings: {
-      formId: 'dataMappings',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    'file.lookups': {
-      fieldId: 'file.lookups',
-      visible: false,
-    },
-    deleteAfterImport: {
-      fieldId: 'deleteAfterImport',
-      visibleWhen: [
-        {
-          field: 'inputMode',
-          is: ['blob'],
-        },
-      ],
-    },
-    fileAdvancedSettings: {
-      formId: 'fileAdvancedSettings',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    fileApiIdentifier: {
-      formId: 'fileApiIdentifier',
-    },
-  },
+  fieldMap: {...IMPORT_FILE_FIELD_MAP},
   layout: {
     type: 'collapse',
     containers: [
@@ -242,7 +144,7 @@ export default {
         fields: [
           's3.region',
           's3.bucket',
-          's3.fileKey',
+          'file.fileName',
           'file.xml.body',
           'file.lookups',
         ],
@@ -251,7 +153,8 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          's3.backupBucket',
+          'file.backupPath',
+          'file.encoding',
           'blobKeyPath',
           'fileAdvancedSettings',
           'deleteAfterImport',

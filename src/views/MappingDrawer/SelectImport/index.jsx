@@ -10,6 +10,7 @@ const emptyObject = {};
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
+    padding: theme.spacing(3),
   },
   button: {
     // color: theme.palette.primary.main,
@@ -38,7 +39,7 @@ export default function SelectImport() {
     flowId
   );
   const flowImports = useSelectorMemo(selectors.flowMappingsImportsList, flowId, importId);
-  const imports = useMemo(() => flowImports.filter(i => !i.blobKeyPath), [flowImports]);
+  const imports = useMemo(() => flowImports.filter(i => !i.blob), [flowImports]);
   const [subrecordImports, setSubrecordImports] = useState();
   const [selectedImportId, setSelectedImportId] = useState();
   const getMappingUrl = _impId => {
@@ -85,7 +86,7 @@ export default function SelectImport() {
   }), [flow.pageProcessors, imports]);
 
   if (!flow) {
-    return <Typography>No flow exists with id: {flowId}</Typography>;
+    return <Typography className={classes.root}>No flow exists with id: {flowId}</Typography>;
   }
 
   // If there is only one import then we can safely
@@ -98,7 +99,7 @@ export default function SelectImport() {
 
   if (sortedImports.length === 0) {
     // eslint-disable-next-line react/no-unescaped-entities
-    return <Typography>The flow "{flowName}", contains no imports.</Typography>;
+    return <Typography className={classes.root}>The flow "{flowName}", contains no imports.</Typography>;
   }
 
   // Finally, render a table of imports to choose from...

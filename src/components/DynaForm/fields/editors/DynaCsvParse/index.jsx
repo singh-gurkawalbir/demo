@@ -55,6 +55,9 @@ const useStyles = makeStyles(theme => ({
   uploadFileErrorContainer: {
     marginBottom: 4,
   },
+  fileUploadBtnLabel: {
+    fontSize: 17,
+  },
 }));
 
 const getParserValue = ({
@@ -170,6 +173,7 @@ export default function DynaCsvParse(props) {
               {
                 root: classes.fileUploadRoot,
                 labelWrapper: classes.fileUploadLabelWrapper,
+                label: classes.fileUploadBtnLabel,
                 uploadFile: classes.uploadContainer,
                 actionContainer: classes.actionContainer,
                 errorContainer: classes.uploadFileErrorContainer,
@@ -231,7 +235,6 @@ export default function DynaCsvParse(props) {
       </div>
       <DynaForm
         formKey={formKeyComponent}
-        fieldMeta={form}
       />
     </>
   );

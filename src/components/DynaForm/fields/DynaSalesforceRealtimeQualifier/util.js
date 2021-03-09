@@ -52,7 +52,13 @@ export function convertSalesforceQualificationCriteria(sql, queryBuilder) {
       dt => `'${dt}'`
     );
     sql = sql.replace(/\d{4}-\d{2}-\d{2}(?!T)/g, dt => `'${dt}'`);
-    rules = jQuery(queryBuilder).queryBuilder('getRulesFromSQL', sql);
+    try {
+      // try to get the rules from the given sql text
+      rules = jQuery(queryBuilder).queryBuilder('getRulesFromSQL', sql);
+    } catch (e) {
+      // if enable to extract return the error message
+      return { error: e.message };
+    }
     referenceFieldsUsed = updateRulesForSOQL(rules);
   }
 
@@ -66,6 +72,10 @@ const getFilterTypeAndOperators = field => {
     switch (field.type) {
       case 'int':
         type = 'integer';
+        break;
+      case 'currency':
+      case 'percent':
+        type = 'double';
         break;
       default:
         ({ type } = field);

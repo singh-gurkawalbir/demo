@@ -23,6 +23,7 @@ export default (
       actionTypes.SUITESCRIPT.JOB.RECEIVED,
       actionTypes.SUITESCRIPT.JOB.RECEIVED_COLLECTION,
       actionTypes.SUITESCRIPT.PAGING.JOB.SET_CURRENT_PAGE,
+      actionTypes.SUITESCRIPT.PAGING.JOB.SET_ROWS_PER_PAGE,
       actionTypes.SUITESCRIPT.JOB.CLEAR,
       actionTypes.SUITESCRIPT.JOB.ERROR.CLEAR,
       actionTypes.SUITESCRIPT.JOB.ERROR.RECEIVED_COLLECTION,
@@ -441,7 +442,7 @@ selectors.suiteScriptIntegrations = (state, ssLinkedConnectionId) => {
   return state[ssLinkedConnectionId].integrations;
 };
 
-selectors.suiteScriptResource = (state, { resourceType, id, ssLinkedConnectionId }) => {
+selectors.suiteScriptResource = (state, { resourceType, id, ssLinkedConnectionId } = {}) => {
   if (
     !state ||
     !ssLinkedConnectionId ||
@@ -552,7 +553,7 @@ selectors.suiteScriptJobsPagingDetails = state => {
   return state.paging.jobs;
 };
 
-selectors.jobs = (state, { ssLinkedConnectionId, integrationId }) => {
+selectors.jobs = (state, { ssLinkedConnectionId, integrationId } = {}) => {
   if (!state || !state.jobs) {
     return emptyList;
   }
@@ -602,7 +603,7 @@ selectors.suiteScriptResourceList = (
   }
 
   if (resourceType === 'flows' && integrationId) {
-    return state[ssLinkedConnectionId][resourceType].filter(
+    return state[ssLinkedConnectionId][resourceType]?.filter(
       f => f._integrationId === integrationId
     );
   }
@@ -612,7 +613,7 @@ selectors.suiteScriptResourceList = (
 
 selectors.hasSuiteScriptData = (
   state,
-  { resourceType, integrationId, ssLinkedConnectionId }
+  { resourceType, integrationId, ssLinkedConnectionId } = {}
 ) => {
   if (
     !state ||
@@ -632,7 +633,7 @@ selectors.hasSuiteScriptData = (
   return resources.length > 0;
 };
 
-selectors.suiteScriptJobErrors = (state, { jobId, jobType }) => {
+selectors.suiteScriptJobErrors = (state, { jobId, jobType } = {}) => {
   if (!state || !state.jobErrors) {
     return undefined;
   }

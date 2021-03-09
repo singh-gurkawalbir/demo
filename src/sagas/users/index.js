@@ -121,13 +121,21 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
   try {
     response = yield call(apiCallWithRetry, {
       path,
+      timeout: 5 * 60 * 1000,
       opts,
     });
   } catch (error) {
     return yield put(actions.api.failure(path, 'POST', error, false));
   }
-
-  yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
+  if (actionType === 'ioResume') {
+    yield put(actions.resource.requestCollection('integrations'));
+    yield put(actions.resource.requestCollection('flows'));
+    yield put(actions.resource.requestCollection('exports'));
+    yield put(actions.resource.requestCollection('imports'));
+    yield put(actions.resource.requestCollection('licenses'));
+  } else {
+    yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
+  }
 }
 
 export function* updateProfile() {
@@ -192,26 +200,8 @@ export function* changeEmail({ updatedEmail }) {
         'Verification link sent to new email address.'
       )
     );
+  // eslint-disable-next-line no-empty
   } catch (e) {
-    if (e.status === 403) {
-      yield put(
-        actions.api.failure(
-          changeEmailParams.path,
-          changeEmailParams.opts.method,
-          'Existing email provided, Please try again.',
-          true
-        )
-      );
-    }
-
-    yield put(
-      actions.api.failure(
-        changeEmailParams.path,
-        changeEmailParams.opts.method,
-        'Cannot change user Email , Please try again.',
-        true
-      )
-    );
   }
 }
 

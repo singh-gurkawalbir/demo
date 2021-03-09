@@ -1,14 +1,15 @@
 import { values, keyBy } from 'lodash';
 import shortid from 'shortid';
 import { isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS } from './constants';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from './constants';
+import { stringCompare } from './sort';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
   accesstokens: 'API token',
   asyncHelpers: 'Async helper',
   connections: 'Connection',
-  connectors: 'Integration App',
+  connectors: 'Integration app',
   exports: 'Export',
   filedefinitions: 'File definition',
   flows: 'Flow',
@@ -128,6 +129,27 @@ export function getResourceSubType(resource) {
   return out;
 }
 
+export function filterAndSortResources(resources = emptyList, config = emptyObject) {
+  if (!Array.isArray(resources)) {
+    return emptyList;
+  }
+  const { sort = emptyObject, searchBy, keyword } = config || {};
+  const stringTest = r => {
+    if (!keyword) return true;
+    const searchableText =
+      Array.isArray(searchBy) && searchBy.length
+        ? `${searchBy.map(key => r[key]).join('|')}`
+        : `${r._id}|${r.name}|${r.description}`;
+
+    return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
+  };
+
+  const comparer = ({ order = 'asc', orderBy = 'name' }) =>
+    order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
+
+  return resources.filter(stringTest).sort(comparer(sort));
+}
+
 export function getResourceSubTypeFromAdaptorType(adaptorType) {
   return {
     type: adaptorTypeMap[adaptorType],
@@ -152,7 +174,19 @@ export const getDomainUrl = () => {
   return `https://${domain}`;
 };
 
-export const getApiUrl = () => getDomainUrl().replace('://', '://api.');
+export const getApiUrl = () => {
+  if (getDomain() === 'localhost.io' && process?.env?.API_ENDPOINT) {
+    return process.env.API_ENDPOINT.replace('://', '://api.');
+  }
+
+  return getDomainUrl().replace('://', '://api.');
+};
+
+export const getAS2Url = () => {
+  const apiUrl = getApiUrl();
+
+  return `${apiUrl.substr(apiUrl.indexOf('://'))}/v1/as2`;
+};
 
 export const getWebhookUrl = (options = {}, resourceId) => {
   let whURL = '';
@@ -278,7 +312,7 @@ export function isFileAdaptor(resource) {
 
   return (
     ['ftp', 's3'].includes(adaptorTypeMap[resource.adaptorType]) ||
-      resource.type === 'simple'
+      resource.type === 'simple' || (adaptorTypeMap[resource.adaptorType] === 'http' && resource?.http?.type === 'file')
   );
 }
 
@@ -323,15 +357,15 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
       resource.adaptorType
     ) >= 0 &&
       resource.type === 'blob') ||
-    ['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0
+      (isFileAdaptor(resource) && resource.adaptorType.includes('Export'))
   ) {
     blockType = 'exportTransfer';
   } else if (
     (['RESTImport', 'HTTPImport', 'NetSuiteImport', 'SalesforceImport'].indexOf(
       resource.adaptorType
     ) >= 0 &&
-      resource.blobKeyPath) ||
-    ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
+      resource.blob) ||
+      (isFileAdaptor(resource) && resource.adaptorType.includes('Import'))
   ) {
     blockType = 'importTransfer';
   }
@@ -339,9 +373,9 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
   return blockType;
 }
 
-// All resources with type 'blob' is a Blob export and with 'blobKeyPath' is a blob import
+// All resources with type 'blob' is a Blob export and with blob as true are blob imports
 export const isBlobTypeResource = (resource = {}) =>
-  resource && (resource.type === 'blob' || !!resource.blobKeyPath);
+  resource?.type === 'blob' || resource?.blob;
 
 export const isAS2Resource = resource => {
   const { adaptorType } = resource || {};
@@ -762,6 +796,7 @@ export function isTradingPartnerSupported({environment, licenseActionDetails, ac
   if (
     [
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
     ].includes(accessLevel)
   ) {
@@ -790,37 +825,6 @@ export const isQueryBuilderSupported = (importResource = {}) => {
   return false;
 };
 
-export const getUniqueFieldId = fieldId => {
-  if (!fieldId) { return ''; }
-
-  // some field types have same field ids
-  switch (fieldId) {
-    case 'rdbms.queryInsert':
-      return 'rdbms.query.1';
-    case 'rdbms.queryUpdate':
-      return 'rdbms.query.0';
-    case 'http.bodyCreate':
-      return 'http.body.1';
-    case 'http.bodyUpdate':
-      return 'http.body.0';
-    case 'http.relativeURIUpdate':
-      return 'http.relativeURI.0';
-    case 'http.relativeURICreate':
-      return 'http.relativeURI.1';
-    case 'rest.relativeURIUpdate':
-      return 'rest.relativeURI.0';
-    case 'rest.relativeURICreate':
-      return 'rest.relativeURI.1';
-    case 'rest.bodyUpdate':
-      return 'rest.body.0';
-    case 'rest.bodyCreate':
-      return 'rest.body.1';
-
-    default:
-      return fieldId;
-  }
-};
-
 export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations = [], connectionId) => {
   let accessLevelOnConnection;
 
@@ -829,6 +833,7 @@ export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations 
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
       USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
     ].includes(permissions.accessLevel)
   ) {
     accessLevelOnConnection = permissions.accessLevel;

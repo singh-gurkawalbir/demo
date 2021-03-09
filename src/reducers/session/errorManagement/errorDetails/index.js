@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { union } from 'lodash';
 import actionTypes from '../../../../actions/types';
 
 const defaultObject = {};
@@ -8,14 +9,15 @@ export default (state = {}, action) => {
     type,
     flowId,
     resourceId,
-    errorDetails,
+    errorDetails = {},
     loadMore,
     isResolved,
     checked,
-    errorIds,
+    errorIds = [],
     retryCount,
     resolveCount,
     diff: errorCountDiff,
+    traceKeys = [],
   } = action;
 
   return produce(state, draft => {
@@ -44,6 +46,9 @@ export default (state = {}, action) => {
         const errors =
           (isResolved ? errorDetails.resolved : errorDetails.errors) || [];
 
+        if (!draft[flowId] || !draft[flowId][resourceId]) {
+          break;
+        }
         draft[flowId][resourceId][errorType] = {
           ...draft[flowId][resourceId][errorType],
           status: 'received',
@@ -56,6 +61,9 @@ export default (state = {}, action) => {
       }
 
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ERRORS:
+        if (!draft[flowId] || !draft[flowId][resourceId] || !errorIds.length) {
+          break;
+        }
         draft[flowId][resourceId][errorType].errors.forEach(error => {
           if (errorIds.includes(error.errorId)) {
             // eslint-disable-next-line no-param-reassign
@@ -63,23 +71,31 @@ export default (state = {}, action) => {
           }
         });
         break;
-      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RESET_SELECTION:
-        draft[flowId][resourceId][errorType].errors.forEach(error => {
-          // eslint-disable-next-line no-param-reassign
-          delete error.selected;
-        });
-        break;
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REMOVE: {
-        const { errors = [] } = draft[flowId][resourceId][errorType];
+        if (!draft[flowId] || !draft[flowId][resourceId]) {
+          break;
+        }
+        const { errors: prevErrors = [] } = draft[flowId][resourceId][errorType];
 
-        draft[flowId][resourceId][errorType].errors = errors.filter(
+        if (!errorIds.length || !prevErrors.length) {
+          break;
+        }
+
+        draft[flowId][resourceId][errorType].errors = prevErrors.filter(
           error => !errorIds.includes(error.errorId)
         );
-        draft[flowId][resourceId][errorType].outdated = true;
+        const updatedErrors = draft[flowId][resourceId][errorType].errors;
+
+        if (prevErrors.length !== updatedErrors.length) {
+          draft[flowId][resourceId][errorType].outdated = true;
+        }
         break;
       }
 
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.REQUEST:
+        if (!draft[flowId] || !draft[flowId][resourceId]) {
+          break;
+        }
         if (!draft[flowId][resourceId].actions) {
           draft[flowId][resourceId].actions = {};
         }
@@ -94,6 +110,9 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.REQUEST:
+        if (!draft[flowId] || !draft[flowId][resourceId]) {
+          break;
+        }
         if (!draft[flowId][resourceId].actions) {
           draft[flowId][resourceId].actions = {};
         }
@@ -107,21 +126,40 @@ export default (state = {}, action) => {
         draft[flowId][resourceId].actions.resolve.status = 'requested';
         break;
 
-      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE
-        .RECEIVED: {
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.RECEIVED: {
+        if (!draft[flowId] || !draft[flowId][resourceId]) {
+          break;
+        }
         draft[flowId][resourceId].actions.resolve.status = 'received';
         const count = draft[flowId][resourceId].actions.resolve.count || 0;
 
-        draft[flowId][resourceId].actions.resolve.count = count + resolveCount;
+        if (typeof resolveCount === 'number') {
+          draft[flowId][resourceId].actions.resolve.count = count + resolveCount;
+        }
         break;
       }
 
-      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY
-        .RECEIVED: {
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.RECEIVED: {
+        if (!draft[flowId] || !draft[flowId][resourceId]) {
+          break;
+        }
         draft[flowId][resourceId].actions.retry.status = 'received';
         const count = draft[flowId][resourceId].actions.retry.count || 0;
 
-        draft[flowId][resourceId].actions.retry.count = count + retryCount;
+        if (typeof retryCount === 'number') {
+          draft[flowId][resourceId].actions.retry.count = count + retryCount;
+        }
+        break;
+      }
+
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.TRACK_RETRIED_TRACE_KEYS: {
+        if (!draft?.[flowId]?.[resourceId]?.actions?.retry || !traceKeys.length) {
+          break;
+        }
+        const prevTraceKeys = draft[flowId][resourceId].actions.retry.traceKeys || [];
+        const updatedTraceKeys = union(prevTraceKeys, traceKeys);
+
+        draft[flowId][resourceId].actions.retry.traceKeys = updatedTraceKeys;
         break;
       }
 
@@ -139,9 +177,13 @@ export default (state = {}, action) => {
         }
         break;
       }
+
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.CLEAR:
-        draft[flowId][resourceId][errorType] = {};
-        draft[flowId][resourceId].actions = {};
+        if (!draft[flowId] || !draft[flowId][resourceId]) {
+          break;
+        }
+        draft[flowId][resourceId].open = {};
+        draft[flowId][resourceId].resolved = {};
         break;
       default:
     }
@@ -150,31 +192,40 @@ export default (state = {}, action) => {
 
 export const selectors = {};
 
-selectors.getErrors = (state, { flowId, resourceId, errorType }) => (
-  (state &&
-      state[flowId] &&
-      state[flowId][resourceId] &&
-      state[flowId][resourceId][errorType]) ||
-    defaultObject
-);
+selectors.allResourceErrorDetails = (state, { flowId, resourceId, isResolved }) => {
+  const errorType = isResolved ? 'resolved' : 'open';
+
+  return state?.[flowId]?.[resourceId]?.[errorType] || defaultObject;
+};
+
+selectors.hasResourceErrors = (state, { flowId, resourceId, isResolved }) => {
+  const errorsObj = selectors.allResourceErrorDetails(state, { flowId, resourceId, isResolved });
+
+  return !!errorsObj.errors?.length;
+};
 
 selectors.errorActionsContext = (
   state,
   { flowId, resourceId, actionType = 'retry' }
-) => (
-  (state &&
-      state[flowId] &&
-      state[flowId][resourceId] &&
-      state[flowId][resourceId].actions &&
-      state[flowId][resourceId].actions[actionType]) ||
-    defaultObject
-);
+) => state?.[flowId]?.[resourceId]?.actions?.[actionType] || defaultObject;
 
-selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved, errorIds }) => {
-  const { errors = [] } = selectors.getErrors(state, {
+selectors.isAnyActionInProgress = (state, { flowId, resourceId, actionType }) => {
+  if (!state?.[flowId]?.[resourceId]?.actions) return false;
+
+  const actionObj = state[flowId][resourceId].actions;
+
+  if (actionType) {
+    return actionObj[actionType]?.status === 'requested';
+  }
+
+  return actionObj.retry?.status === 'requested' || actionObj.resolve?.status === 'requested';
+};
+
+selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved, errorIds = [] }) => {
+  const { errors = [] } = selectors.allResourceErrorDetails(state, {
     flowId,
     resourceId,
-    errorType: isResolved ? 'resolved' : 'open',
+    isResolved,
   });
 
   if (!errorIds.length) return false;
@@ -182,4 +233,12 @@ selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved, errorI
   return !errors.some(
     error => errorIds.includes(error.errorId) && !error.selected
   );
+};
+
+selectors.isTraceKeyRetried = (state, { flowId, resourceId, traceKey }) => {
+  if (!traceKey || !state?.[flowId]?.[resourceId]?.actions?.retry?.traceKeys) {
+    return false;
+  }
+
+  return state[flowId][resourceId].actions.retry.traceKeys.includes(traceKey);
 };
