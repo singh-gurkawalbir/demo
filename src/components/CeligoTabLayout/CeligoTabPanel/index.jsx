@@ -13,13 +13,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 export default function CeligoTabPanel(props) {
-  const { children, panelId, ...other } = props;
+  const { children, panelId } = props;
   const classes = useStyles();
   const tabsContext = useTabContext();
   const {activeTab, height} = tabsContext;
 
   return (
-    <div hidden={activeTab !== panelId} {...other} >
+    <div hidden={activeTab !== panelId} >
       {activeTab === panelId && (
       <div className={classes.tabPanel}>
         {cloneElement(children, { height })}

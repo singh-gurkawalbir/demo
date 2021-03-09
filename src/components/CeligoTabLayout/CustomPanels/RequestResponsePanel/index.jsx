@@ -2,8 +2,7 @@ import React, { useState, useCallback } from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
-import ClipBoardPanel from '../ClipboardPanel';
-import CodeEditor from '../../../CodeEditor2';
+import DefaultPanel from '../DefaultPanel';
 
 const useStyles = makeStyles(theme => ({
   panelContainer: {
@@ -11,15 +10,10 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2),
     position: 'relative',
     backgroundColor: theme.palette.background.paper,
-    overflow: 'auto',
     color: theme.palette.text.primary,
   },
   panelTabs: {
     borderBottom: `1px solid ${theme.palette.background.paper2}`,
-  },
-  codeEditorWrapper: {
-    height: props => props.height || 345,
-    paddingTop: theme.spacing(1),
   },
 }));
 
@@ -63,19 +57,10 @@ export default function RequestResponsePanel({ value = {}, hideClipboard = false
         </Tabs>
         {
           value[tabValue] && (
-            <div className={classes.codeEditorWrapper}>
-              <CodeEditor
-                value={value[tabValue]}
-                mode="json"
-                readOnly
-                showGutter={false}
-              />
-            </div>
+            <DefaultPanel value={value[tabValue]} hideClipboard={hideClipboard} height={height} />
           )
         }
-
       </div>
-      { !hideClipboard && <ClipBoardPanel content={value[tabValue]} /> }
     </>
   );
 }
