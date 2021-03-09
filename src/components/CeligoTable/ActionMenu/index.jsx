@@ -61,7 +61,7 @@ const Action = ({ isSingleAction, label, Icon, disabledActionText, useHasAccess,
   );
 };
 
-export default function ActionMenu({ rowActions, rowData, actionProps, selectAction }) {
+export default function ActionMenu({ variant, rowActions, rowData, actionProps, selectAction }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   // We are passing state to action items where each Action item would check if it has got permission.
@@ -104,7 +104,11 @@ export default function ActionMenu({ rowActions, rowData, actionProps, selectAct
 
   if (!actions || !actions.length) return null;
 
-  if (actions.length === 1) {
+  if (actions.length === 1 && variant === 'slim') {
+    // lets keep the isSingleAction mechanism so 'slim' variants of CeligoTable
+    // will still intelligently render single actions, or multiple under an ellipsis.
+    // "Slim" variants currently have only  action, but possibly future use cases
+    // want a slim treatment but preserve ellipsis for multi-action rows.
     return (<Action isSingleAction {...actions[0]} />);
   }
 
