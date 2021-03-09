@@ -60,7 +60,7 @@ export default function Filters({ integrationId, flowId, uiAssistant }) {
   );
   const handleChange = e => {
     dispatch(
-      actions.integrationApp.settings.setCategoryMappingFilters(
+      actions.integrationApp.settings.categoryMappings.setFilters(
         integrationId,
         flowId,
         { mappingFilter: e.target.value }
@@ -70,7 +70,7 @@ export default function Filters({ integrationId, flowId, uiAssistant }) {
 
   const handleAttributeChange = name => event => {
     dispatch(
-      actions.integrationApp.settings.setCategoryMappingFilters(
+      actions.integrationApp.settings.categoryMappings.setFilters(
         integrationId,
         flowId,
         {
