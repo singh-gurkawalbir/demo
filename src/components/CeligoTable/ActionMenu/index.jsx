@@ -106,7 +106,7 @@ export default function ActionMenu({ variant, rowActions, rowData, actionProps, 
 
   if (actions.length === 1 && variant === 'slim') {
     // lets keep the isSingleAction mechanism so 'slim' variants of CeligoTable
-    // will still intelligently render single action when possible, or group 
+    // will still intelligently render single action when possible, or group
     // multiple under an ellipsis.
     // "Slim" variants currently have at most 1 action, but possibly future tables
     // want a slim treatment but preserve ellipsis for multi-action rows.
