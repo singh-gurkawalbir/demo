@@ -1295,7 +1295,7 @@ export default {
         items: [
           { label: 'zip', value: 'zip' },
           { label: 'zlib', value: 'zlib' },
-          { label: 'bzip', value: 'bzip' },
+          { label: 'bzip2', value: 'bzip2' },
         ],
       },
     ],
@@ -1329,7 +1329,7 @@ export default {
   },
   'pgp.passphrase': {
     type: 'text',
-    label: 'PGP passphrase',
+    label: 'Private key',
     defaultValue: '',
     requiredWhen: [
       {
