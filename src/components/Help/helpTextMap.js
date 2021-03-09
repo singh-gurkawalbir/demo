@@ -1432,7 +1432,7 @@ export default {
   'import.pgpencrypt': 'Use this cryptographic system to encrypt generated files.  This option is enabled only when you have configured at least one cryptographic system in the connection. If it is unchecked, then encryption will not be performed on generated files.',
   'import.file.encrypt': 'Select the algorithm to encrypt the transferred files.',
   'import.file.pgp.symmetricKeyAlgorithm': 'The symmetric key algorithm to use for encryption.',
-  'import.file.pgp.hashAlgorithm': 'The hashing algorithm to use when signing files. If this field is not set, then integrator.io will not sign files after encrypting them. ',
+  'import.file.pgp.hashAlgorithm': 'The hashing algorithm to use when signing files. If this field is not set, then integrator.io will not sign files after encrypting them.',
   'import.file.filedefinition.rules':
     'File definition rules are used by our platform to generate custom files. The file generator helper allows you to modify our templated rules to solve more specific file generation requirements. Within the editor, you can use the rules panel to describe how a custom file should be generated from the JSON records/rows being processed by your flow, and then you can use the sample flow data and generated file panels to test your rules.',
   'import.hooks.preMap': `Invoke this function before the fields are mapped to their respective fields in the objects to be imported. You can use this to reformat the record’s field to anything you like. <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039655111-Hooks-for-integrator-io#preMapHook" target="_blank"/> Get more info</a>`,
