@@ -82,9 +82,6 @@ export default {
         if (r.rdbms.query.length === 1 && r.rdbms.queryType?.[0] === 'INSERT') {
           return r.rdbms.query[0];
         }
-        if (r.rdbms.query.length > 1) {
-          return r.rdbms.query[1];
-        }
 
         return '';
       },
@@ -100,9 +97,6 @@ export default {
         if (r.rdbms.query.length === 1 && r.rdbms.queryType?.[0] === 'UPDATE') {
           return r.rdbms.query[0];
         }
-        if (r.rdbms.query.length > 1) {
-          return r.rdbms.query[0];
-        }
 
         return '';
       },
@@ -113,9 +107,6 @@ export default {
       defaultValue: r => {
         if (!r?.rdbms?.query) {
           return '';
-        }
-        if (r.rdbms.query.length === 1 && r.rdbms.queryType?.[0] === 'INSERT') {
-          return r.rdbms.query[0];
         }
 
         if (r.rdbms.query.length > 1) {
@@ -133,9 +124,6 @@ export default {
           return '';
         }
 
-        if (r.rdbms.query.length === 1 && r.rdbms.queryType?.[0] === 'UPDATE') {
-          return r.rdbms.query[0];
-        }
         if (r.rdbms.query.length > 1) {
           return r.rdbms.query[0];
         }

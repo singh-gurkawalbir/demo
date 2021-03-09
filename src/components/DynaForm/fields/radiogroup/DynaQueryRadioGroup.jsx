@@ -1,30 +1,41 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import useFormContext from '../../../Form/FormContext';
-import { isFormTouched } from '../../../../forms/formFactory/utils';
 import DynaRadioGroupForResetFields from './DynaRadioGroupForResetFields';
 
+const emptyObj = {};
 export default function DynaQueryRadioGroup(props) {
-  const { onFieldChange, value, formKey } = props;
-  const {fields: formFields, value: formValues } = useFormContext(formKey);
-  const isTouched = (formFields && isFormTouched(Object.values(formFields))) || false;
+  const { onFieldChange, value, formKey, touched } = props;
+  const [latestInsertField, setLatestInsertField] = useState();
+  const [latestUpdateField, setLatestUpdateField] = useState();
+
+  const {value: formValues = emptyObj, lastFieldUpdated } = useFormContext(formKey);
 
   useEffect(() => {
-    if (isTouched) {
-      const queryValue1 = formValues['/rdbms/query1'];
-      const queryValue2 = formValues['/rdbms/query2'];
-      const insertQueryValue = formValues['/rdbms/queryInsert'];
-      const updateQueryValue = formValues['/rdbms/queryUpdate'];
+    // we want to keep track of the recently modified insert/update fields
+    // and then use the latest field during onFieldChange below
+    if (lastFieldUpdated === 'rdbms.query1') {
+      setLatestInsertField('/rdbms/query1');
+    } else if (lastFieldUpdated === 'rdbms.queryInsert') {
+      setLatestInsertField('/rdbms/queryInsert');
+    } else if (lastFieldUpdated === 'rdbms.query2') {
+      setLatestUpdateField('/rdbms/query2');
+    } else if (lastFieldUpdated === 'rdbms.queryUpdate') {
+      setLatestUpdateField('/rdbms/queryUpdate');
+    }
+  }, [lastFieldUpdated]);
 
+  useEffect(() => {
+    if (touched) {
       if (value === 'INSERT') {
-      // read from /rdbms/queryInsert and do onFieldChange for rdbms.query1
-        onFieldChange('rdbms.query1', insertQueryValue, !insertQueryValue);
+      // read from last modified insert field and do onFieldChange for rdbms.query1
+        onFieldChange('rdbms.query1', formValues[latestInsertField || '/rdbms/queryInsert'], true);
       } else if (value === 'UPDATE') {
-      // read from /rdbms/queryUpdate and do onFieldChange for rdbms.query2
-        onFieldChange('rdbms.query2', updateQueryValue, !updateQueryValue);
+      // read from last modified update field and do onFieldChange for rdbms.query2
+        onFieldChange('rdbms.query2', formValues[latestUpdateField || '/rdbms/queryUpdate'], true);
       } else if (value === 'COMPOSITE') {
-      // read from /rdbms/query1, query2 and do onFieldChange for rdbms.queryInsert and rdbms.queryInsert
-        onFieldChange('rdbms.queryInsert', queryValue1, !queryValue1);
-        onFieldChange('rdbms.queryUpdate', queryValue2, !queryValue2);
+      // read from last modified insert and update fields and do onFieldChange for rdbms.queryInsert and rdbms.queryInsert
+        onFieldChange('rdbms.queryInsert', formValues[latestInsertField || '/rdbms/query1'], true);
+        onFieldChange('rdbms.queryUpdate', formValues[latestUpdateField || '/rdbms/query2'], true);
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
