@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
       return props.match.isExact ? 660 : 150;
     },
     overflowX: 'hidden',
-    overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
+    // overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
   },
   formContainer: {
@@ -36,9 +36,10 @@ const useStyles = makeStyles(theme => ({
     borderColor: 'rgb(0,0,0,0.1)',
     borderStyle: 'solid',
     borderWidth: '1px 0 0 0',
+    overflowY: 'auto',
   },
   form: {
-    height: props => `calc(100vh - 136px - ${props.notificationPanelHeight}px)`,
+    height: props => `calc(100vh - 172px - ${props.notificationPanelHeight}px)`,
     width: props => {
       if (props.occupyFullWidth) return '100%';
 
@@ -46,7 +47,6 @@ const useStyles = makeStyles(theme => ({
     },
     maxHeight: 'unset',
     padding: 0,
-    overflowY: 'auto',
   },
   appLogo: {
     paddingRight: '25px',
@@ -77,7 +77,6 @@ const useSuiteScriptFormRedirectionToParentRoute = (ssLinkedConnectionId, resour
 
   useRedirectToParentRoute(initFailed);
 };
-
 export default function Panel(props) {
   const {
     match,
@@ -97,9 +96,7 @@ export default function Panel(props) {
       id = flowId;
     }
   }
-
   useSuiteScriptFormRedirectionToParentRoute(ssLinkedConnectionId, resourceType, id);
-
   const isNew = operation === 'add';
   const dispatch = useDispatch();
   const [notificationPanelHeight, setNotificationPanelHeight] = useState(0);
@@ -175,11 +172,10 @@ export default function Panel(props) {
             <ResourceFormFactory
               {...allProps}
             />
-            <SuiteScriptActionsPanel {...allProps} />
           </div>
+          <SuiteScriptActionsPanel {...allProps} />
         </LoadSuiteScriptResources>
       </div>
-
       <Route
         path={`${match.url}/:operation(add|edit)/:resourceType/:id`}
         render={props => (
