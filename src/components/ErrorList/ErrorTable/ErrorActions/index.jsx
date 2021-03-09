@@ -177,7 +177,7 @@ const ResolveAction = ({ onClick, flowId, resourceId, disable, isSearchFilterApp
   return (
     <CeligoSelect
       className={clsx(classes.actionBtn, classes.resolveBtn, { [classes.noPadding]: disableResolve && !isResolveInProgress })}
-      data-test="retryJobs"
+      data-test="resolveJobs"
       onChange={handleResolve}
       disabled={disableResolve}
       displayEmpty
