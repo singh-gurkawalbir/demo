@@ -1,9 +1,9 @@
 import React, {useCallback} from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { makeStyles } from '@material-ui/core/styles';
-import CopyIcon from '../../icons/CopyIcon';
-import IconTextButton from '../../IconTextButton';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import CopyIcon from '../../../icons/CopyIcon';
+import IconTextButton from '../../../IconTextButton';
+import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   clipBoardContainer: {

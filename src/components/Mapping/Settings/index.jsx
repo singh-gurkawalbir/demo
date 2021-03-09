@@ -31,7 +31,7 @@ function MappingSettings({
   ...categoryMappingOpts
 }) {
   const history = useHistory();
-  const { sectionId, editorId, integrationId, mappingIndex} = categoryMappingOpts;
+  const { editorId, integrationId, mappingIndex, depth } = categoryMappingOpts;
   const [enquesnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const {importId, flowId, subRecordMappingId, isGroupedSampleData} = useSelector(state => {
@@ -58,8 +58,11 @@ function MappingSettings({
 
   const generateFields = useSelector(state => {
     if (isCategoryMapping) {
+      const category = editorId?.split?.('-')[1];
+
       const {fields: generateFields} = selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
-        sectionId,
+        sectionId: category,
+        depth,
       }) || emptyObject;
 
       return generateFields || emptySet;
@@ -70,7 +73,7 @@ function MappingSettings({
 
   const extractFields = useSelector(state => {
     if (isCategoryMapping) {
-      return selectors.categoryMappingMetadata(state, integrationId, flowId).extractsMetadata;
+      return selectors.categoryMappingsExtractsMetadata(state, integrationId, flowId);
     }
 
     return selectors.mappingExtracts(state, importId, flowId, subRecordMappingId);
@@ -238,9 +241,9 @@ function MappingSettingsWrapper(props) {
   );
 }
 function CategoryMappingSettingsWrapper(props) {
-  const { integrationId, flowId, importId, sectionId} = props;
+  const { integrationId, flowId, importId, sectionId } = props;
   const match = useRouteMatch();
-  const { editorId, mappingIndex } = match.params;
+  const { editorId, mappingIndex, depth } = match.params;
   const isSettingsConfigured = useSelector(state => {
     const {mappings} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId);
 
@@ -260,6 +263,7 @@ function CategoryMappingSettingsWrapper(props) {
       importId={importId}
       editorId={editorId}
       sectionId={sectionId}
+      depth={depth}
       mappingIndex={mappingIndex}
     />
   );
@@ -274,7 +278,7 @@ export default function SettingsDrawer(props) {
       disableBackdropClick
       path={[
         'settings/:mappingKey',
-        'settings/category/:editorId/:mappingIndex',
+        'settings/category/:editorId/:depth/:mappingIndex',
       ]}
       height="tall"
     >
@@ -282,7 +286,7 @@ export default function SettingsDrawer(props) {
 
       <Switch>
         <Route
-          path={`${match.url}/settings/category/:editorId/:mappingIndex`}>
+          path={`${match.url}/settings/category/:editorId/:depth/:mappingIndex`}>
           <CategoryMappingSettingsWrapper
             {...props}
             sectionId={match.params?.categoryId} />
