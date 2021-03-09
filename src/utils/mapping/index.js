@@ -12,6 +12,7 @@ import getJSONPaths, {
 import { isJsonString } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
+import { emptyObject } from '../constants';
 
 const isCsvOrXlsxResource = resource => {
   const { file } = resource;
@@ -488,7 +489,7 @@ export default {
     relationshipData,
     deleteChildlessParent
   ) => {
-    const { basicMappings = {}, variationMappings = {} } = sessionMappedData;
+    const { basicMappings = {}, variationMappings = {} } = sessionMappedData || {};
 
     setMappingData(
       flowId,
@@ -726,17 +727,12 @@ export default {
     }
   },
   addVariation: (draft, cKey, data) => {
-    const { categoryId, subCategoryId, isVariationAttributes } = data;
-    const { response = [] } = draft[cKey];
+    const { categoryId, subCategoryId, isVariationAttributes } = data || emptyObject;
+    const { response = [] } = draft[cKey] || emptyObject;
     const mappingData = response.find(sec => sec.operation === 'mappingData');
     let categoryMappings;
 
-    if (
-      mappingData.data &&
-      mappingData.data.mappingData &&
-      mappingData.data.mappingData.variationMappings &&
-      mappingData.data.mappingData.variationMappings.recordMappings
-    ) {
+    if (mappingData?.data?.mappingData?.variationMappings?.recordMappings) {
       const { recordMappings } = mappingData.data.mappingData.variationMappings;
 
       categoryMappings = recordMappings.find(

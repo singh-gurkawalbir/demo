@@ -1093,7 +1093,7 @@ describe('settings saga', () => {
         .run();
     });
 
-    test('should make api call and dispatch receivedCategoryMappingGeneratesMetadata if options,generatesMetadata is true', () => {
+    test('should make api call and dispatch receivedGeneratesMetadata if options,generatesMetadata is true', () => {
       const options = {
         generatesMetadata: true,
       };
@@ -1117,7 +1117,7 @@ describe('settings saga', () => {
         .provide([[call(apiCallWithRetry, args), response]])
         .call(apiCallWithRetry, args)
         .put(
-          actions.integrationApp.settings.receivedCategoryMappingGeneratesMetadata(
+          actions.integrationApp.settings.categoryMappings.receivedGeneratesMetadata(
             integrationId,
             flowId,
             response
@@ -1191,7 +1191,7 @@ describe('settings saga', () => {
         .call(apiCallWithRetry, args1)
         .call(apiCallWithRetry, args2)
         .put(
-          actions.integrationApp.settings.receivedCategoryMappingData(
+          actions.integrationApp.settings.categoryMappings.receivedUpdatedMappingData(
             integrationId,
             flowId,
             mappingData
