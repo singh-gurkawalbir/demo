@@ -587,6 +587,26 @@ const fileDefinitions = {
 const integrationApp = {
   settings: {
     categoryMappings: {
+      requestMetadata: (
+        integrationId,
+        flowId,
+        categoryId,
+        options
+      ) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
+          { integrationId, flowId, categoryId, options }
+        ),
+      receivedGeneratesMetadata: (
+        integrationId,
+        flowId,
+        metadata
+      ) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS
+            .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA,
+          { integrationId, flowId, metadata }
+        ),
       init: (integrationId, flowId, id, options) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT, {
           integrationId,
@@ -677,18 +697,6 @@ const integrationApp = {
             .UPDATE_GENERATES,
           { integrationId, flowId, id, generateFields }
         ),
-      patchIncompleteGenerates: (integrationId, flowId, id, index, value) =>
-        action(
-          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-            .PATCH_INCOMPLETE_GENERATES,
-          {
-            integrationId,
-            flowId,
-            id,
-            index,
-            value,
-          }
-        ),
       saveVariationMappings: (integrationId, flowId, id, data = {}) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
@@ -736,6 +744,35 @@ const integrationApp = {
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.LOAD_FAILED,
           { integrationId, flowId, id }
         ),
+      setFilters: (integrationId, flowId, filters) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SET_FILTERS, {
+          integrationId,
+          flowId,
+          filters,
+        }),
+      addCategory: (integrationId, flowId, data) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.ADD_CATEGORY, {
+          integrationId,
+          flowId,
+          data,
+        }),
+      deleteCategory: (integrationId, flowId, sectionId) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE_CATEGORY, {
+          integrationId,
+          flowId,
+          sectionId,
+        }),
+      restoreCategory: (integrationId, flowId, sectionId) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.RESTORE_CATEGORY, {
+          integrationId,
+          flowId,
+          sectionId,
+        }),
+      receivedUpdatedMappingData: (integrationId, flowId, mappingData) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.RECEIVED_UPDATED_MAPPING_DATA,
+          { integrationId, flowId, mappingData }
+        ),
     },
     initComplete: (integrationId, flowId, sectionId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE, {
@@ -753,68 +790,12 @@ const integrationApp = {
         integrationId,
         redirectTo,
       }),
-    receivedCategoryMappingData: (integrationId, flowId, mappingData) =>
-      action(
-        actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_CATEGORY_MAPPINGS_DATA,
-        { integrationId, flowId, mappingData }
-      ),
-    requestCategoryMappingMetadata: (
-      integrationId,
-      flowId,
-      categoryId,
-      options
-    ) =>
-      action(
-        actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
-        { integrationId, flowId, categoryId, options }
-      ),
     receivedCategoryMappingMetadata: (integrationId, flowId, metadata) =>
       action(
         actionTypes.INTEGRATION_APPS.SETTINGS
           .RECEIVED_CATEGORY_MAPPING_METADATA,
         { integrationId, flowId, metadata }
       ),
-    receivedCategoryMappingGeneratesMetadata: (
-      integrationId,
-      flowId,
-      metadata
-    ) =>
-      action(
-        actionTypes.INTEGRATION_APPS.SETTINGS
-          .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA,
-        { integrationId, flowId, metadata }
-      ),
-    setCategoryMappingFilters: (integrationId, flowId, filters) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPING_FILTERS, {
-        integrationId,
-        flowId,
-        filters,
-      }),
-    clearVariationMappings: (integrationId, flowId, data) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_VARIATION_MAPPINGS, {
-        integrationId,
-        flowId,
-        data,
-      }),
-
-    addCategory: (integrationId, flowId, data) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY, {
-        integrationId,
-        flowId,
-        data,
-      }),
-    deleteCategory: (integrationId, flowId, sectionId) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.DELETE_CATEGORY, {
-        integrationId,
-        flowId,
-        sectionId,
-      }),
-    restoreCategory: (integrationId, flowId, sectionId) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.RESTORE_CATEGORY, {
-        integrationId,
-        flowId,
-        sectionId,
-      }),
     clearRedirect: integrationId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
         integrationId,
