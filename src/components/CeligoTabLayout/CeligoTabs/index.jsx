@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
       textOverflow: 'ellipsis',
       padding: theme.spacing(0, 5),
       '&:first-child': {
-        borderRadius: props => props.tabs.length > 1 ? [[24, 0, 0, 24]] : 'none',
+        borderRadius: props => props.tabs?.length > 1 ? [[24, 0, 0, 24]] : 'none',
       },
       '&:last-child': {
         height: 30,
@@ -54,6 +54,10 @@ export default function CeligoTabs(props) {
   useEffect(() => {
     setActiveTab(defaultValue || tabs?.[0]?.value);
   }, [defaultValue, tabs, setActiveTab]);
+
+  if (!tabs || !tabs.length) {
+    return null;
+  }
 
   return (
     <div className={classes.textToggleContainer}>

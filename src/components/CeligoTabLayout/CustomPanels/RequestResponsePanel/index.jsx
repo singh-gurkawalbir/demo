@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
-import ClipBoardPanel from '../ClipboardPanel';
+import ClipboardPanel from '../ClipboardPanel';
 import CodeEditor from '../../../CodeEditor2';
 
 const useStyles = makeStyles(theme => ({
@@ -75,7 +75,7 @@ export default function RequestResponsePanel({ value = {}, hideClipboard = false
         }
 
       </div>
-      { !hideClipboard && <ClipBoardPanel content={value[tabValue]} /> }
+      { !hideClipboard && <ClipboardPanel content={value[tabValue]} /> }
     </>
   );
 }
