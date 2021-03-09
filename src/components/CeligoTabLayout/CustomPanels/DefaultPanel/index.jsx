@@ -26,8 +26,7 @@ export default function DefaultPanel({ value, hideClipboard = false, height }) {
 
   return (
     <>
-      <div
-        className={classes.defaultPanelContainer}>
+      <div className={classes.defaultPanelContainer}>
         <div className={classes.codeEditorWrapper}>
           <CodeEditor
             value={value}
