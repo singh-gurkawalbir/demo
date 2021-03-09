@@ -1976,6 +1976,16 @@ const errorManager = {
     received: (metadata = []) =>
       action(actionTypes.ERROR_MANAGER.FILTER_METADATA.RECEIVED, { metadata }),
   },
+  errorHttpDoc: {
+    request: (errorId, flowId, resourceId, reqAndResKey) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.REQUEST, { errorId, flowId, resourceId, reqAndResKey }),
+    received: (errorId, errorHttpDoc) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.RECEIVED, { errorId, errorHttpDoc }),
+    error: (errorId, error) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.ERROR, { errorId, error }),
+    downloadBlobDoc: (flowId, resourceId, s3BlobKey) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.DOWNLOAD_BLOB_DOC, { flowId, resourceId, s3BlobKey }),
+  },
 };
 const flow = {
   run: ({ flowId, customStartDate, options }) =>

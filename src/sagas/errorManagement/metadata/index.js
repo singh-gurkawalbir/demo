@@ -159,6 +159,38 @@ export function* requestFilterMetadata() {
   }
 }
 
+export function* requestErrorHttpDocument({ flowId, resourceId, reqAndResKey, errorId }) {
+  try {
+    const errorHttpDoc = yield call(apiCallWithRetry, {
+      path: `flows/${flowId}/${resourceId}/requests/${reqAndResKey} `,
+      opts: {
+        method: 'GET',
+      },
+    });
+
+    yield put(actions.errorManager.errorHttpDoc.received(errorId, errorHttpDoc));
+  } catch (e) {
+    // handle errors
+    yield put(actions.errorManager.errorHttpDoc.error(errorId, e));
+  }
+}
+
+export function* downloadBlobDocument({ flowId, resourceId, s3BlobKey }) {
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path: `/flows/${flowId}/${resourceId}/${s3BlobKey}/signedURL`,
+      opts: {
+        method: 'GET',
+      },
+    });
+
+    if (response?.signedURL) {
+      yield call(openExternalUrl, { url: response.signedURL });
+    }
+  // eslint-disable-next-line no-empty
+  } catch (e) {}
+}
+
 export default [
   takeLatest(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, requestRetryData),
   takeLatest(actionTypes.ERROR_MANAGER.RETRY_DATA.DOWNLOAD, downloadRetryData),
@@ -171,4 +203,6 @@ export default [
     updateRetryData
   ),
   takeLatest(actionTypes.ERROR_MANAGER.FILTER_METADATA.REQUEST, requestFilterMetadata),
+  takeLatest(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.REQUEST, requestErrorHttpDocument),
+  takeLatest(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.DOWNLOAD_BLOB_DOC, downloadBlobDocument),
 ];
