@@ -29,6 +29,7 @@ const useStyles = makeStyles(theme => ({
 
 const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
+  sort: { order: 'desc', orderBy: 'expires' },
   searchBy: [
     'user.email',
     '_integrationId',
