@@ -55,7 +55,7 @@ export default function CeligoPillTabs(props) {
     setActiveTab(defaultTab || tabs?.[0]?.value);
   }, [defaultTab, tabs, setActiveTab]);
 
-  if (!tabs || !tabs.length) {
+  if (!tabs?.length) {
     return null;
   }
 
