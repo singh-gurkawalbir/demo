@@ -2,9 +2,9 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     description: { fieldId: 'description' },
-    websiteURL: { fieldId: 'websiteURL' },
-    contactEmail: { fieldId: 'contactEmail' },
     applications: { fieldId: 'applications' },
+    contactEmail: { fieldId: 'contactEmail' },
+    websiteURL: { fieldId: 'websiteURL' },
   },
   layout: {
     type: 'box',
@@ -13,9 +13,9 @@ export default {
         fields: [
           'name',
           'description',
-          'websiteURL',
-          'contactEmail',
           'applications',
+          'contactEmail',
+          'websiteURL',
         ],
       },
     ],

@@ -39,6 +39,7 @@ export default {
 
         return r.sandbox ? 'Sandbox' : 'Production';
       },
+      orderBy: 'sandbox',
     },
   ],
   rowActions: [Edit, Delete],

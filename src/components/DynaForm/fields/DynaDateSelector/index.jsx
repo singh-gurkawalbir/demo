@@ -53,18 +53,23 @@ export default function DynaDateSelector(props) {
   const { id, label, name, value, onFieldChange, required, formKey } = props;
   const calendarIcon = () => <CalendarIcon className={classes.iconWrapper} />;
   const { dateFormat } = useSelector(state => selectors.userProfilePreferencesProps(state));
+  const isValueParsableByMoment = useCallback(value =>
+    (moment(value).isValid() && value?.length === dateFormat.length) || moment(value, moment.ISO_8601, true).isValid(), [dateFormat.length]);
 
   useEffect(() => {
-    dispatch(actions.form.forceFieldState(formKey)(id, {isValid: moment(value).isValid(), errorMessages: 'Invalid date format'}));
+    const isValid = moment(value).isValid();
+
+    dispatch(actions.form.forceFieldState(formKey)(id, {isValid, errorMessages: 'Invalid date format'}));
   }, [value, id, dispatch, formKey]);
 
   const handleFieldChange = useCallback((id, value) => {
-    if ((moment(value).isValid() && value?.length === dateFormat.length) || moment(value, moment.ISO_8601, true).isValid()) {
+    // isValueParsableByMoment checks for an incomplete form value or invalid date
+    if (isValueParsableByMoment(value)) {
       onFieldChange(id, moment(value).endOf('day').toISOString());
     } else {
       onFieldChange(id, value);
     }
-  }, [dateFormat.length, onFieldChange]);
+  }, [isValueParsableByMoment, onFieldChange]);
 
   const handleDateRangeChange = useCallback(dateFilter => {
     const filter = getSelectedRange(dateFilter);
@@ -83,7 +88,7 @@ export default function DynaDateSelector(props) {
         name={name}
         type="date"
         placeholder={dateFormat}
-        value={((moment(value).isValid() && value?.length === dateFormat.length) || moment(value, moment.ISO_8601, true).isValid()) ? moment(value).format(dateFormat) : value}
+        value={isValueParsableByMoment(value) ? moment(value).format(dateFormat) : value}
         className={classes.dynaTextWithCalendarIcon}
         onFieldChange={(id, value) => handleFieldChange(id, value)}
         endAdornment={(
