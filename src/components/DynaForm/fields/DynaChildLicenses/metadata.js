@@ -13,6 +13,7 @@ export default {
     {
       heading: 'Status',
       value: r => r._integrationId ? 'Installed' : 'Pending',
+      orderBy: 'status',
     },
     {
       heading: 'Integration ID',
