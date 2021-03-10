@@ -7,6 +7,9 @@ import CodeEditor from '../../../CodeEditor2';
 
 const useStyles = makeStyles(theme => ({
   panelContainer: {
+    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'column',
     minHeight: theme.spacing(20),
     marginTop: theme.spacing(2),
     position: 'relative',
@@ -17,8 +20,8 @@ const useStyles = makeStyles(theme => ({
   panelTabs: {
     borderBottom: `1px solid ${theme.palette.background.paper2}`,
   },
-  codeEditorWrapper: {
-    height: props => props.height || 345,
+  codeContainer: {
+    flexGrow: 1,
     paddingTop: theme.spacing(1),
   },
 }));
@@ -61,19 +64,16 @@ export default function RequestResponsePanel({ value = {}, hideClipboard = false
           />
           )
         </Tabs>
-        {
-          value[tabValue] && (
-            <div className={classes.codeEditorWrapper}>
-              <CodeEditor
-                value={value[tabValue]}
-                mode="json"
-                readOnly
-                showGutter={false}
-              />
-            </div>
-          )
-        }
-
+        <div className={classes.codeContainer}>
+          { value[tabValue] && (
+          <CodeEditor
+            value={value[tabValue]}
+            mode="json"
+            readOnly
+            showGutter={false}
+          />
+          )}
+        </div>
       </div>
       { !hideClipboard && <ClipBoardPanel content={value[tabValue]} /> }
     </>

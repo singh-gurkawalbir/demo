@@ -5,6 +5,7 @@ import CodeEditor from '../../../CodeEditor';
 
 const useStyles = makeStyles(theme => ({
   defaultPanelContainer: {
+    flexGrow: 1,
     marginTop: theme.spacing(2),
     minHeight: theme.spacing(20),
     position: 'relative',
@@ -15,10 +16,6 @@ const useStyles = makeStyles(theme => ({
       wordBreak: 'break-word',
     },
   },
-  codeEditorWrapper: {
-    height: props => props.height || 345,
-    paddingTop: theme.spacing(1),
-  },
 }));
 
 export default function DefaultPanel({ value, hideClipboard = false, height }) {
@@ -26,16 +23,13 @@ export default function DefaultPanel({ value, hideClipboard = false, height }) {
 
   return (
     <>
-      <div
-        className={classes.defaultPanelContainer}>
-        <div className={classes.codeEditorWrapper}>
-          <CodeEditor
-            value={value}
-            mode="json"
-            readOnly
-            showGutter={false}
+      <div className={classes.defaultPanelContainer}>
+        <CodeEditor
+          value={value}
+          mode="json"
+          readOnly
+          showGutter={false}
             />
-        </div>
       </div>
       { !hideClipboard && <ClipBoardPanel content={value} /> }
     </>
