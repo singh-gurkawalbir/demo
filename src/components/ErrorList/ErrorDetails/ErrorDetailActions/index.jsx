@@ -89,14 +89,14 @@ export default function Actions({
         <Button variant="outlined" color="primary" disabled={!isRetryDataChanged} onClick={handleSaveAndRetry}>
           Save &amp; retry
         </Button>
-        <Button variant="outlined" color="secondary" onClick={resolve}>
-          Mark resolved
-        </Button>
         <Button variant="outlined" color="secondary" disabled={!isRetryDataChanged} onClick={updateRetry}>
           Save &amp; close
         </Button>
+        <Button variant="outlined" color="secondary" onClick={resolve}>
+          Resolve
+        </Button>
         <Button variant="text" color="primary" onClick={onClose}>
-          Cancel
+          Close
         </Button>
       </div>
     );
@@ -105,10 +105,10 @@ export default function Actions({
   return (
     <div className={classes.action}>
       <Button variant="outlined" color="primary" onClick={resolve}>
-        Mark resolved
+        Resolve
       </Button>
       <Button variant="text" color="primary" onClick={onClose}>
-        Cancel
+        Close
       </Button>
     </div>
   );
