@@ -6,6 +6,8 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import { selectors } from '../../../../../reducers';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 
+const emptyArray = [];
+
 export default {
   label: rowData => `Mark as ${rowData?.ftp?.tradingPartner ? 'not' : ''} trading partner`,
   icon: TradingPartnerIcon,
@@ -14,7 +16,7 @@ export default {
     const dispatch = useDispatch();
     const [tradingPartnerConnectionsRequested, setTradingPartnerConnectionsRequested] = useState(false);
     const { confirmDialog } = useConfirmDialog();
-    const { connections = [], status } = useSelector(state =>
+    const { connections = emptyArray, status } = useSelector(state =>
       selectors.tradingPartnerConnections(state, connectionId)
     );
     let connectionsList = '';
