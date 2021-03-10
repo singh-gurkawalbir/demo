@@ -11956,6 +11956,7 @@ Object {
       },
       "rdbms.query": Object {
         "arrayIndex": 0,
+        "defaultValue": [Function],
         "id": "rdbms.query",
         "label": "SQL query",
         "querySetPos": 0,
@@ -12106,9 +12107,14 @@ Object {
         "fieldId": "rdbms.lookups",
         "visible": false,
       },
-      "rdbms.query": Object {
+      "rdbms.query1": Object {
         "defaultValue": [Function],
-        "fieldId": "rdbms.query",
+        "fieldId": "rdbms.query1",
+        "required": true,
+      },
+      "rdbms.query2": Object {
+        "defaultValue": [Function],
+        "fieldId": "rdbms.query2",
         "required": true,
       },
       "rdbms.queryInsert": Object {
@@ -12155,7 +12161,8 @@ Object {
                 "rdbms.ignoreExtract",
                 "rdbms.updateExtract",
                 "rdbms.lookups",
-                "rdbms.query",
+                "rdbms.query1",
+                "rdbms.query2",
                 "rdbms.queryInsert",
                 "rdbms.queryUpdate",
               ],
