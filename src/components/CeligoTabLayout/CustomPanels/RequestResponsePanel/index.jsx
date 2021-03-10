@@ -6,7 +6,9 @@ import DefaultPanel from '../DefaultPanel';
 
 const useStyles = makeStyles(theme => ({
   panelContainer: {
-    minHeight: theme.spacing(20),
+    display: 'flex',
+    flexGrow: 1,
+    flexDirection: 'column',
     marginTop: theme.spacing(2),
     position: 'relative',
     backgroundColor: theme.palette.background.paper,
@@ -17,8 +19,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function RequestResponsePanel({ value = {}, hideClipboard = false, height }) {
-  const classes = useStyles({ height });
+export default function RequestResponsePanel({ value = {}, hideClipboard = false }) {
+  const classes = useStyles();
   const [tabValue, setTabValue] = useState('body');
 
   const handleTabChange = useCallback((event, newValue) => {
@@ -26,41 +28,37 @@ export default function RequestResponsePanel({ value = {}, hideClipboard = false
   }, []);
 
   return (
-    <>
-      <div className={classes.panelContainer}>
-        <Tabs
-          value={tabValue}
-          onChange={handleTabChange}
-          textColor="primary"
-          centered
-          className={classes.panelTabs}
-          indicatorColor="primary">
-          <Tab
-            label="Body"
-            value="body"
-            id="tab-body"
-            aria-controls="tab-body"
+    <div className={classes.panelContainer}>
+      <Tabs
+        value={tabValue}
+        onChange={handleTabChange}
+        textColor="primary"
+        centered
+        className={classes.panelTabs}
+        indicatorColor="primary">
+        <Tab
+          label="Body"
+          value="body"
+          id="tab-body"
+          aria-controls="tab-body"
           />
-          <Tab
-            label="Headers"
-            value="headers"
-            id="tab-header"
-            aria-controls="tab-header"
+        <Tab
+          label="Headers"
+          value="headers"
+          id="tab-header"
+          aria-controls="tab-header"
           />
-          <Tab
-            label="Other"
-            value="others"
-            id="tab-others"
-            aria-controls="tab-others"
+        <Tab
+          label="Other"
+          value="others"
+          id="tab-others"
+          aria-controls="tab-others"
           />
-          )
-        </Tabs>
-        {
-          value[tabValue] && (
-            <DefaultPanel value={value[tabValue]} hideClipboard={hideClipboard} height={height} />
-          )
-        }
-      </div>
-    </>
+        )
+      </Tabs>
+      { value[tabValue] && (
+        <DefaultPanel value={value[tabValue]} hideClipboard={hideClipboard} />
+      )}
+    </div>
   );
 }
