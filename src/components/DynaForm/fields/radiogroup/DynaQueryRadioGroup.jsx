@@ -3,6 +3,7 @@ import { useSelector, shallowEqual } from 'react-redux';
 import DynaRadioGroupForResetFields from './DynaRadioGroupForResetFields';
 import { selectors } from '../../../../reducers';
 
+const emptyObj = {};
 export default function DynaQueryRadioGroup(props) {
   const { onFieldChange, value, formKey, touched } = props;
   const [latestInsertField, setLatestInsertField] = useState();
@@ -12,7 +13,7 @@ export default function DynaQueryRadioGroup(props) {
     const {value, lastFieldUpdated } = selectors.formState(state, formKey) || {};
 
     return {
-      formValues: value || {},
+      formValues: value || emptyObj,
       lastFieldUpdated };
   }, shallowEqual);
 
