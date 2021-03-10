@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import useFormContext from '../../../Form/FormContext';
+import { useSelector, shallowEqual } from 'react-redux';
 import DynaRadioGroupForResetFields from './DynaRadioGroupForResetFields';
+import { selectors } from '../../../../reducers';
 
-const emptyObj = {};
 export default function DynaQueryRadioGroup(props) {
   const { onFieldChange, value, formKey, touched } = props;
   const [latestInsertField, setLatestInsertField] = useState();
   const [latestUpdateField, setLatestUpdateField] = useState();
 
-  const {value: formValues = emptyObj, lastFieldUpdated } = useFormContext(formKey);
+  const {formValues, lastFieldUpdated } = useSelector(state => {
+    const {value, lastFieldUpdated } = selectors.formState(state, formKey) || {};
+
+    return {
+      formValues: value || {},
+      lastFieldUpdated };
+  }, shallowEqual);
 
   useEffect(() => {
     // we want to keep track of the recently modified insert/update fields
