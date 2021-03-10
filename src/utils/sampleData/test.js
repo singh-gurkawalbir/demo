@@ -895,25 +895,25 @@ describe('wrapSampleDataWithContext util', () => {
     };
     const stage = 'flowInput';
 
-    expect(wrapSampleDataWithContext({sampleData, stage})).toEqual({status: 'requested'});
-    expect(wrapSampleDataWithContext({sampleData: {}, stage})).toEqual({status: undefined});
+    expect(wrapSampleDataWithContext({sampleData, stage, resource: {}})).toEqual({status: 'requested'});
+    expect(wrapSampleDataWithContext({sampleData: {}, stage, resource: {}})).toEqual({status: undefined});
   });
   test('should return same sample data if resource is not attached to any flow', () => {
     const flow = {};
     const stage = 'flowInput';
 
-    expect(wrapSampleDataWithContext({sampleData, flow, stage})).toEqual(sampleData);
+    expect(wrapSampleDataWithContext({sampleData, flow, stage, resource: {}})).toEqual(sampleData);
   });
   test('should return same sample data if field is dataURITemplate/idLockTemplate and template version is 1', () => {
     const stage = 'flowInput';
 
-    expect(wrapSampleDataWithContext({sampleData, flow: {}, fieldType: 'dataURITemplate', stage})).toEqual(sampleData);
-    expect(wrapSampleDataWithContext({sampleData, flow: {}, fieldType: 'idLockTemplate', stage})).toEqual(sampleData);
+    expect(wrapSampleDataWithContext({sampleData, flow: {}, fieldType: 'dataURITemplate', stage, resource: {}})).toEqual(sampleData);
+    expect(wrapSampleDataWithContext({sampleData, flow: {}, fieldType: 'idLockTemplate', stage, resource: {}})).toEqual(sampleData);
   });
   test('should return same sample data if stage is not supported', () => {
     const stage = 'importMappingExtract';
 
-    expect(wrapSampleDataWithContext({sampleData, flow: {}, stage})).toEqual(sampleData);
+    expect(wrapSampleDataWithContext({sampleData, flow: {}, stage, resource: {}})).toEqual(sampleData);
   });
   test('should return correctly wrapped sample data for native REST adaptor if stage = flowInput', () => {
     const stage = 'flowInput';
@@ -942,6 +942,7 @@ describe('wrapSampleDataWithContext util', () => {
           integration: {
             store: 'shopify',
           },
+          flowGrouping: {},
           flow: {},
           export: {resourceSet: 'custom settings'},
           connection: {conn1: 'conn1'},
@@ -1068,6 +1069,7 @@ describe('wrapSampleDataWithContext util', () => {
           integration: {
             store: 'shopify',
           },
+          flowGrouping: {},
           flow: {},
           export: {resourceSet: 'custom settings'},
           connection: {conn1: 'conn1'},
@@ -1092,6 +1094,7 @@ describe('wrapSampleDataWithContext util', () => {
           integration: {
             store: 'shopify',
           },
+          flowGrouping: {},
           flow: {},
           export: {resourceSet: 'custom settings'},
           connection: {conn1: 'conn1'},
@@ -1128,6 +1131,7 @@ describe('wrapSampleDataWithContext util', () => {
           integration: {
             store: 'shopify',
           },
+          flowGrouping: {},
           flow: {},
           export: {resourceSet: 'custom settings'},
           connection: {conn1: 'conn1'},
@@ -1162,6 +1166,7 @@ describe('wrapSampleDataWithContext util', () => {
           integration: {
             store: 'shopify',
           },
+          flowGrouping: {},
           flow: {},
           export: {resourceSet: 'custom settings'},
           connection: {conn1: 'conn1'},
@@ -1199,6 +1204,7 @@ describe('wrapSampleDataWithContext util', () => {
           integration: {
             store: 'shopify',
           },
+          flowGrouping: {},
           flow: {},
           export: {resourceSet: 'custom settings'},
           connection: {conn1: 'conn1'},
@@ -1262,6 +1268,7 @@ describe('wrapSampleDataWithContext util', () => {
           integration: {
             store: 'shopify',
           },
+          flowGrouping: {},
           flow: {},
           export: {resourceSet: 'custom settings'},
           connection: {conn1: 'conn1'},
@@ -1292,6 +1299,7 @@ describe('wrapSampleDataWithContext util', () => {
           integration: {
             store: 'shopify',
           },
+          flowGrouping: {},
           flow: {},
           export: {resourceSet: 'custom settings'},
           connection: {conn1: 'conn1'},
@@ -1332,6 +1340,48 @@ describe('wrapSampleDataWithContext util', () => {
           integration: {
             store: 'shopify',
           },
+          flowGrouping: {},
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+      },
+    };
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+  });
+  test('should include flowGrouping settings if flow is part of a flow grouping', () => {
+    flow._flowGroupingId = '12345';
+    integration.flowGroupings = [
+      {
+        name: 'section 1',
+        _id: '93844',
+        settings: {store: 'shopify'},
+      },
+      {
+        name: 'section 2',
+        _id: '12345',
+        settings: {category: 'apparel'},
+      },
+    ];
+    const stage = 'preMap';
+
+    const expectedData = {
+      status: 'received',
+      data: {
+        data: [{
+          id: 333,
+          phone: '1234',
+        }],
+        _exportId: 'some resource id',
+        _connectionId: 'some connection id',
+        _flowId: 'some flow id',
+        _integrationId: 'some integration id',
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flowGrouping: {category: 'apparel'},
           flow: {},
           export: {resourceSet: 'custom settings'},
           connection: {conn1: 'conn1'},
