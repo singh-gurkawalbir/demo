@@ -15,7 +15,7 @@ export default {
     const history = useHistory();
     const match = useRouteMatch();
     const handleClick = useCallback(() => {
-      history.push(`${match.url}/details/${errorId}/edit`);
+      history.push(`${match.url}/details/${errorId}/editRetry`);
     }, [errorId, history, match.url]);
 
     useEffect(() => {

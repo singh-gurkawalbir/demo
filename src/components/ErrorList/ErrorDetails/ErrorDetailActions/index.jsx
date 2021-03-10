@@ -83,7 +83,7 @@ export default function Actions({
 
   const isRetryDataChanged = updatedRetryData && !isEqual(retryData, updatedRetryData);
 
-  if (mode === 'edit' && !isFlowDisabled) {
+  if (mode === 'editRetry' && !isFlowDisabled) {
     return (
       <div className={classes.action}>
         <Button variant="outlined" color="primary" disabled={!isRetryDataChanged} onClick={handleSaveAndRetry}>

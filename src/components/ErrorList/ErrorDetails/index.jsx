@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import Tabs from '@material-ui/core/Tabs';
@@ -10,7 +10,6 @@ import { selectors } from '../../../reducers';
 import { safeParse } from '../../../utils/string';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
-
 import ErrorDetailActions from './ErrorDetailActions';
 
 const useStyles = makeStyles(theme => ({
@@ -31,47 +30,43 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const TabContent = ({ retryId, errorId, flowId, resourceId, recordMode, onChange, isResolved }) => {
-  if (!retryId || recordMode === 'view' || isResolved) {
-    return (
-      <ViewErrorDetails
-        errorId={errorId}
-        flowId={flowId}
-        resourceId={resourceId}
-        isResolved={isResolved}
-      />
-    );
-  }
-
-  // Incase of recordMode = 'edit' show edit retry data content
-  return (
-    <EditRetryData
-      retryId={retryId}
-      onChange={onChange}
-      flowId={flowId}
-      resourceId={resourceId}
-    />
-  );
+const ERROR_DETAILS_TABS = {
+  VIEW_FIELDS: { type: 'view', label: 'View error fields' },
+  EDIT_RETRY_DATA: { type: 'editRetry', label: 'Edit retry data' },
+  VIEW_RETRY_DATA: { type: 'viewRetry', label: 'Retry data' },
+  REQUEST: { type: 'request', label: 'View HTTP request' },
+  RESPONSE: { type: 'response', label: 'View HTTP response' },
 };
 
-export default function ErrorDetails({ flowId, resourceId, isResolved, onClose }) {
+function TabPanel({ children, value, type, className }) {
+  const hidden = value !== type;
+
+  return (
+    <div
+      role="tabpanel"
+      className={className}
+      hidden={hidden}
+      id={type}
+      aria-labelledby={type}>
+      {!hidden && children}
+    </div>
+  );
+}
+
+export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, onTabChange }) {
   const match = useRouteMatch();
   const classes = useStyles();
   const { mode, errorId } = match.params;
   const [retryData, setRetryData] = useState();
-  const [recordMode, setRecordMode] = useState(mode);
   const isFlowDisabled = useSelector(state =>
     selectors.resource(state, 'flows', flowId)?.disabled
   );
-  const retryId = useSelector(state => {
-    const errorDoc =
-      selectors.resourceError(state, { flowId, resourceId, errorId }) || {};
+  const errorDoc = useSelector(state =>
+    selectors.resourceError(state, { flowId, resourceId, errorId })
+  );
 
-    return errorDoc.retryDataKey;
-  });
-  const handleModeChange = useCallback((event, newMode) => {
-    setRecordMode(newMode);
-  }, []);
+  const { retryDataKey: retryId, reqAndResKey} = errorDoc || {};
+
   const onRetryDataChange = useCallback(
     data =>
       // Editor onChange returns string format, so parse it to get updated retryData
@@ -79,42 +74,76 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose }
     []
   );
 
+  const availableTabs = useMemo(() => {
+    const tabs = [ERROR_DETAILS_TABS.VIEW_FIELDS];
+
+    if (retryId && !isResolved) {
+      if (isFlowDisabled) {
+        tabs.push(ERROR_DETAILS_TABS.VIEW_RETRY_DATA);
+      } else {
+        tabs.push(ERROR_DETAILS_TABS.EDIT_RETRY_DATA);
+      }
+    }
+    if (reqAndResKey) {
+      tabs.push(ERROR_DETAILS_TABS.REQUEST, ERROR_DETAILS_TABS.RESPONSE);
+    }
+
+    return tabs;
+  }, [isResolved, retryId, reqAndResKey, isFlowDisabled]);
+
+  if (!mode || !availableTabs.map(tab => tab.type).includes(mode)) {
+    // Incase of invalid url , redirects user to View Error fields tab
+    onTabChange(errorId, 'view');
+  }
+
+  const handleModeChange = (evt, newValue) => onTabChange(errorId, newValue);
+
   return (
     <>
       <DrawerContent>
         <div className={classes.detailsContainer}>
-          {(retryId && !isResolved) ? (
-            <Tabs
-              className={classes.tabHeader}
-              value={recordMode}
-              onChange={handleModeChange}
-              textColor="primary"
-              indicatorColor="primary">
-              <Tab label={isFlowDisabled ? 'Retry data' : 'Edit retry data'} value="edit" id="tab-2" aria-controls="tab-2" />
-              <Tab label="Error fields" value="view" id="tab-1" aria-controls="tab-1" />
-            </Tabs>
-          ) : (
-            <Tabs
-              className={classes.tabHeader}
-              value={recordMode}
-              onChange={handleModeChange}
-              textColor="primary"
-              indicatorColor="primary">
-
-              <Tab label="Error fields" value="view" id="tab-1" aria-controls="tab-1" />
-            </Tabs>
-          )}
-          <div className={classes.tabContent}>
-            <TabContent
+          <Tabs
+            value={mode}
+            onChange={handleModeChange}
+            className={classes.tabHeader}
+            textColor="primary"
+            indicatorColor="primary"
+            >
+            {
+                availableTabs.map(({ label, type }) =>
+                  <Tab key={type} label={label} id={type} value={type} />)
+            }
+          </Tabs>
+          <TabPanel value={mode} type="view" className={classes.tabContent}>
+            <ViewErrorDetails
+              errorId={errorId}
               flowId={flowId}
               resourceId={resourceId}
-              retryId={retryId}
-              errorId={errorId}
-              onChange={onRetryDataChange}
-              recordMode={recordMode}
               isResolved={isResolved}
-          />
-          </div>
+            />
+          </TabPanel>
+          <TabPanel value={mode} type="editRetry" className={classes.tabContent}>
+            <EditRetryData
+              retryId={retryId}
+              onChange={onRetryDataChange}
+              flowId={flowId}
+              resourceId={resourceId}
+            />
+          </TabPanel>
+          <TabPanel value={mode} type="viewRetry" className={classes.tabContent}>
+            <EditRetryData
+              retryId={retryId}
+              onChange={onRetryDataChange}
+              flowId={flowId}
+              resourceId={resourceId}
+            />
+          </TabPanel>
+          <TabPanel value={mode} type="request">
+            Item Three
+          </TabPanel>
+          <TabPanel value={mode} type="response">
+            Item Four
+          </TabPanel>
         </div>
       </DrawerContent>
 
@@ -125,7 +154,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose }
           resourceId={resourceId}
           errorId={errorId}
           onClose={onClose}
-          mode={recordMode}
+          mode={mode}
           isResolved={isResolved}
         />
       </DrawerFooter>
