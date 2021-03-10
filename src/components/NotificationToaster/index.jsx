@@ -22,8 +22,9 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 2),
     minHeight: 50,
     transition: 'max-height .5s ease',
+    alignItems: 'flex-start',
     '& > div:first-child': {
-      width: props => (props.fullWidth ? '100%' : '85%'),
+      // width: props => (props.fullWidth ? '100%' : '85%'),
       display: 'flex',
       justifyContent: 'center',
     },
@@ -104,9 +105,13 @@ const useStyles = makeStyles(theme => ({
   },
   actionButton: {
     padding: 0,
+    marginTop: theme.spacing(1),
     '& svg': {
       color: theme.palette.secondary.main,
     },
+  },
+  icon: {
+    alignSelf: 'flex-start',
   },
 }));
 const variantIcon = {
