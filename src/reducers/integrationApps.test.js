@@ -2532,7 +2532,7 @@ describe('integrationApps selector testcases', () => {
       expect(selector()).toEqual([]);
     });
 
-    test('should return section flows for multi store integrations', () => {
+    test('should return correct value for integrationAppName', () => {
       const selector = selectors.makeIntegrationSectionFlows();
 
       expect(selector(state, 'i1', 'c1', 'c1sec1')).toEqual([

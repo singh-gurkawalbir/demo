@@ -5,6 +5,7 @@ import { useTabContext } from '../CeligoTabWrapper';
 
 const useStyles = makeStyles(theme => ({
   tabPanel: {
+    display: 'flex',
     flexGrow: 1,
     flexDirection: 'column',
     border: '1px solid',
@@ -13,7 +14,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
     marginTop: -18,
     height: '100%',
-    display: 'flex',
   },
 }));
 export default function CeligoTabPanel(props) {

@@ -1,13 +1,12 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import ClipBoardPanel from '../ClipboardPanel';
-import CodeEditor from '../../../CodeEditor';
+import ClipboardPanel from '../ClipboardPanel';
+import CodeEditor from '../../../CodeEditor2';
 
 const useStyles = makeStyles(theme => ({
   defaultPanelContainer: {
     flexGrow: 1,
     marginTop: theme.spacing(2),
-    minHeight: theme.spacing(20),
     position: 'relative',
     backgroundColor: theme.palette.background.paper,
     overflow: 'auto',
@@ -31,7 +30,7 @@ export default function DefaultPanel({ value, hideClipboard = false, height }) {
           showGutter={false}
             />
       </div>
-      { !hideClipboard && <ClipBoardPanel content={value} /> }
+      { !hideClipboard && <ClipboardPanel content={value} /> }
     </>
   );
 }

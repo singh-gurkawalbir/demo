@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ClipBoardPanel({ content }) {
+export default function ClipboardPanel({ content }) {
   const classes = useStyles();
   const clipBoardText = typeof content !== 'string' ? JSON.stringify(content, null, 2) : content;
 
