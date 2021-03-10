@@ -5,7 +5,7 @@ import { getPreviewBodyTemplateType, HTTP_STAGES, getFormattedPreviewData, getBo
 import { selectors } from '../../../reducers';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { CeligoTabWrapper } from '../../CeligoTabLayout/CeligoTabWrapper';
-import CeligoTabs from '../../CeligoTabLayout/CeligoTabs';
+import CeligoPillTabs from '../../CeligoTabLayout/CeligoPillTabs';
 import DefaultPanel from '../../CeligoTabLayout/CustomPanels/DefaultPanel';
 import RequestResponsePanel from '../../CeligoTabLayout/CustomPanels/RequestResponsePanel';
 import CeligoTabPanel from '../../CeligoTabLayout/CeligoTabPanel';
@@ -68,10 +68,7 @@ export default function PreviewBody(props) {
             resourceType={resourceType}
           />
           <CeligoTabWrapper>
-            <CeligoTabs
-              tabs={availablePreviewStages}
-              defaultValue={defaultTab}
-            />
+            <CeligoPillTabs tabs={availablePreviewStages} defaultTab={defaultTab} />
             <CeligoTabPanel panelId="preview">
               { resourceSampleData.status === 'error'
                 ? <Templates.ErrorPanel resourceSampleData={resourceSampleData} availablePreviewStages={availablePreviewStages} />
