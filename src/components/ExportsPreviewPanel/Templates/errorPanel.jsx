@@ -43,9 +43,8 @@ export default function ErrorPanel(props) {
   }, [resourceSampleData.error]);
 
   return (
-    <>
-      <div className={classes.sampleDataContainer}>
-        {
+    <div className={classes.sampleDataContainer}>
+      {
           showDefaultErrorMessage
             ? <span className={classes.error}> { DEFAULT_ERROR } </span>
             : (
@@ -58,7 +57,6 @@ export default function ErrorPanel(props) {
               </div>
             )
         }
-      </div>
-    </>
+    </div>
   );
 }

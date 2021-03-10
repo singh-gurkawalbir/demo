@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import ClipBoardPanel from '../ClipboardPanel';
-import CodeEditor from '../../../CodeEditor';
+import ClipboardPanel from '../ClipboardPanel';
+import CodeEditor from '../../../CodeEditor2';
 
 const useStyles = makeStyles(theme => ({
   defaultPanelContainer: {
@@ -26,8 +26,7 @@ export default function DefaultPanel({ value, hideClipboard = false, height }) {
 
   return (
     <>
-      <div
-        className={classes.defaultPanelContainer}>
+      <div className={classes.defaultPanelContainer}>
         <div className={classes.codeEditorWrapper}>
           <CodeEditor
             value={value}
@@ -37,7 +36,7 @@ export default function DefaultPanel({ value, hideClipboard = false, height }) {
             />
         </div>
       </div>
-      { !hideClipboard && <ClipBoardPanel content={value} /> }
+      { !hideClipboard && <ClipboardPanel content={value} /> }
     </>
   );
 }

@@ -1,6 +1,6 @@
 export default {
   'rdbms.queryType': {
-    type: 'radiogroupforresetfields',
+    type: 'queryradiogroup',
     label: 'Query type',
     fieldsToReset: [
       { id: 'ignoreExisting', type: 'checkbox' },
@@ -35,16 +35,31 @@ export default {
       return toReturn;
     },
   },
-  'rdbms.query': {
-    id: 'rdbms.query',
+  'rdbms.query1': {
+    id: 'rdbms.query1',
     type: 'sqlquerybuilder',
+    helpKey: 'import.rdbms.query',
     querySetPos: 0,
     arrayIndex: 0,
     label: 'SQL query',
     visibleWhen: [
       {
         field: 'rdbms.queryType',
-        is: ['INSERT', 'UPDATE'],
+        is: ['INSERT'],
+      },
+    ],
+  },
+  'rdbms.query2': {
+    id: 'rdbms.query2',
+    type: 'sqlquerybuilder',
+    helpKey: 'import.rdbms.query',
+    querySetPos: 0,
+    arrayIndex: 0,
+    label: 'SQL query',
+    visibleWhen: [
+      {
+        field: 'rdbms.queryType',
+        is: ['UPDATE'],
       },
     ],
   },
