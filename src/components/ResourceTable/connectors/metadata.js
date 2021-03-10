@@ -57,6 +57,7 @@ export default {
           />
         );
       },
+      orderBy: 'published',
     },
   ],
   rowActions: [Edit, InstallBase, Licenses, Delete],

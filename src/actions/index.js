@@ -166,6 +166,13 @@ const connection = {
       iClients,
       connectionId,
     }),
+  receivedTradingPartnerConnections: (connectionId, connections) =>
+    action(actionTypes.CONNECTION.TRADING_PARTNER_CONNECTIONS_RECEIVED, {
+      connectionId,
+      connections,
+    }),
+  requestTradingPartnerConnections: connectionId =>
+    action(actionTypes.CONNECTION.TRADING_PARTNER_CONNECTIONS_REQUEST, { connectionId }),
   madeOnline: connectionId =>
     action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
   requestQueuedJobs: connectionId =>
