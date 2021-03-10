@@ -12,7 +12,6 @@ export default {
   component: function TradingPartner({ rowData = {}}) {
     const { _id: connectionId } = rowData;
     const dispatch = useDispatch();
-    const [openDialog, setOpenDialog] = useState(false);
     const [tradingPartnerConnectionsRequested, setTradingPartnerConnectionsRequested] = useState(false);
     const { confirmDialog } = useConfirmDialog();
     const { connections = [], status } = useSelector(state =>
@@ -50,14 +49,12 @@ export default {
 
     useEffect(() => {
       if (!tradingPartnerConnectionsRequested) {
-        dispatch(actions.resource.connections.requestTradingPartnerConnections(connectionId));
+        dispatch(actions.connection.requestTradingPartnerConnections(connectionId));
         setTradingPartnerConnectionsRequested(true);
-      }
-      if (status === COMM_STATES.SUCCESS && !openDialog) {
+      } else if (status === COMM_STATES.SUCCESS) {
         confirmTradingPartner();
-        setOpenDialog(true);
       }
-    }, [confirmTradingPartner, openDialog, dispatch, connectionId, status, tradingPartnerConnectionsRequested]);
+    }, [confirmTradingPartner, dispatch, connectionId, status, tradingPartnerConnectionsRequested]);
 
     return null;
   },

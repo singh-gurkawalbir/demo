@@ -248,7 +248,7 @@ describe('requestTradingPartnerConnections saga tests', () => {
     },
   ];
 
-  test('should able to get tradingPartner connections and call received action', () => expectSaga(requestTradingPartnerConnections, { connectionId })
+  test('should make an api call to get trading partner connections and dispatch received action', () => expectSaga(requestTradingPartnerConnections, { connectionId })
     .provide([
       [call(apiCallWithRetry, {
         path,
@@ -286,7 +286,7 @@ describe('requestTradingPartnerConnections saga tests', () => {
           method: 'GET',
         },
       })
-      .not.put(actions.connection.receivedTradingPartnerConnections(connectionId, response))
+      .not.put(actions.connection.receivedTradingPartnerConnections())
       .run();
   });
 });

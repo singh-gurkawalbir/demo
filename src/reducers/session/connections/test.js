@@ -91,7 +91,7 @@ describe('Connections API', () => {
       test('should add connection with status as loading if trading partner connections are requested if prevState is undefined', () => {
         const state = reducer(
           undefined,
-          actions.resource.connections.requestTradingPartnerConnections('conn3')
+          actions.connection.requestTradingPartnerConnections('conn3')
         );
 
         expect(state).toEqual({
@@ -119,7 +119,7 @@ describe('Connections API', () => {
 
         const nextState = reducer(
           prevState,
-          actions.resource.connections.requestTradingPartnerConnections('conn3')
+          actions.connection.requestTradingPartnerConnections('conn3')
         );
 
         expect(nextState).toEqual({
@@ -185,6 +185,51 @@ describe('Connections API', () => {
             conn3: {
               status: COMM_STATES.SUCCESS,
               connections: ['c3'],
+            },
+          },
+        });
+      });
+
+      test('should correctly update the state with status and connections when trading partner connections requested/received for existing connection in state', () => {
+        const prevState = {
+          tradingPartnerConnections: {
+            conn1: {
+              status: COMM_STATES.SUCCESS,
+              connections: ['c1'],
+            },
+            conn2: {
+              status: COMM_STATES.SUCCESS,
+              connections: ['c2'],
+            },
+          },
+        };
+        let state = reducer(prevState, actions.connection.requestTradingPartnerConnections('conn1'));
+
+        expect(state).toEqual({
+          tradingPartnerConnections: {
+            conn1: {
+              status: COMM_STATES.LOADING,
+            },
+            conn2: {
+              status: COMM_STATES.SUCCESS,
+              connections: ['c2'],
+            },
+          },
+        });
+
+        state = reducer(prevState, actions.connection.receivedTradingPartnerConnections('conn1', [
+          'c11', 'c12',
+        ]));
+
+        expect(state).toEqual({
+          tradingPartnerConnections: {
+            conn1: {
+              status: COMM_STATES.SUCCESS,
+              connections: ['c11', 'c12'],
+            },
+            conn2: {
+              status: COMM_STATES.SUCCESS,
+              connections: ['c2'],
             },
           },
         });
@@ -277,7 +322,7 @@ describe('Connections API', () => {
 
         state = reducer(
           state,
-          actions.resource.connections.requestTradingPartnerConnections('conn4')
+          actions.connection.requestTradingPartnerConnections('conn4')
         );
 
         expect(selectors.tradingPartnerConnections(state, 'conn1')).toEqual({
