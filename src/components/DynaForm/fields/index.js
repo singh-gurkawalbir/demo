@@ -119,6 +119,7 @@ import DynaSelectMultiApplication from './DynaSelectMultiApplication';
 import DynaPreviewComponentsTable from './DynaPreviewComponentsTable';
 import DynaChildLicenses from './DynaChildLicenses';
 import DynaDateSelector from './DynaDateSelector';
+import DynaQueryRadioGroup from './radiogroup/DynaQueryRadioGroup';
 
 export default {
   suitescriptsettings: DynaRefreshableSettings,
@@ -229,6 +230,7 @@ export default {
   // filekeycolumn: DynaFileKeyColumn,
   filekeycolumn: DynaFileKeyColumn_afe2,
   radiogroupforresetfields: DynaRadioGroupForResetFields,
+  queryradiogroup: DynaQueryRadioGroup,
   textwithflowcontext: DynaTextWithFlowContext,
   checkboxforresetfields: DynaCheckboxForResetFields,
   crongenerator: DynaCronGenerator,
