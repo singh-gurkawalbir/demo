@@ -3,6 +3,13 @@ import produce from 'immer';
 import masterFieldHash from '../../fieldDefinitions';
 import formMeta from '../../definitions';
 
+const resolveAllFnsInFieldMeta = (field, resource) => Object.keys(field).reduce((acc, key) => {
+  if (typeof field[key] === 'function') {
+    acc[key] = field[key](resource);
+  } else { acc[key] = field[key]; }
+
+  return acc;
+}, {});
 const applyVisibilityRulesToSubForm = (f, resourceType) => {
   // subforms containers are not supported
   if (
@@ -24,10 +31,12 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
   const fieldMapFromSubForm =
       formMeta[resourceType].subForms[f.formId].fieldMap;
 
-  // todo: cannot support visibleWhen rule....there is no point propogating that rule
-  if (f.visibleWhen && f.visibleWhenAll) {
+  // there is no point supporting visibleWhen ....which is an 'OR' condition of visible rules..
+  // if it is true here it doesn't matter with the subform rule here
+  // we give the subform the maximum precedence in deciding its visibility
+  if (f.visibleWhen || f.visible) {
     throw new Error(
-      'Incorrect rule, cannot have both a visibleWhen and visibleWhenAll rule in the field view definitions'
+      'Incorrect rule, cannot support a visibleWhen rule'
     );
   }
 
@@ -40,11 +49,12 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
 
       field = { ...masterFields, ...field };
 
-      if (field.visibleWhen && field.visibleWhenAll) {
-        throw new Error(
-          'Incorrect rule, master fieldFields cannot have both a visibleWhen and visibleWhenAll rule'
-        );
-      }
+      // //  subform fields cannot have visibleWhen conditions...
+      // if (field.visibleWhen) {
+      //   throw new Error(
+      //     'Incorrect rule, subform fields cannot have visibleWhen rule', field.id
+      //   );
+      // }
       const fieldCopy = produce(field, draft => {
         if (f.visibleWhen) {
           draft.visibleWhen = draft.visibleWhen || [];
@@ -76,14 +86,10 @@ const applyingMissedOutFieldMetaProperties = (
   resourceType,
   ignoreFunctionTransformations
 ) => {
-  const field = incompleteField;
+  let field = incompleteField;
 
   if (!ignoreFunctionTransformations) {
-    Object.keys(field).forEach(key => {
-      if (typeof field[key] === 'function') {
-        field[key] = field[key](resource);
-      }
-    });
+    field = resolveAllFnsInFieldMeta(field, resource);
   }
 
   if (!field.id) {

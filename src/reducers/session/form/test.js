@@ -183,138 +183,363 @@ describe('reducer expression test cases', () => {
   });
   // couldn't apply verify new field instances behaviour for both required and visible test suite since any change should affect both the fields
   describe('required expression test case', () => {
-    let formState;
-    const fieldMeta = {
-      fieldMap: {
-        requiredField: {
-          id: 'FIELD1',
-          type: 'text',
-          name: 'field1',
-          defaultValue: 'test',
-          label: 'field1',
-          requiredWhen: [{ field: 'FIELD2', is: ['standard'] }],
+    describe('single expression test suite', () => {
+      let formState;
+      const fieldMeta = {
+        fieldMap: {
+          requiredField: {
+            id: 'FIELD1',
+            type: 'text',
+            name: 'field1',
+            defaultValue: 'test',
+            label: 'field1',
+            requiredWhen: [{ field: 'FIELD2', is: ['standard'] }],
+          },
+
+          validField: {
+            id: 'FIELD2',
+            type: 'text',
+            name: 'field2',
+            defaultValue: '123',
+            label: 'field2',
+          },
         },
 
-        validField: {
-          id: 'FIELD2',
-          type: 'text',
-          name: 'field2',
-          defaultValue: '123',
-          label: 'field2',
-        },
-      },
+        layout: { fields: ['requiredField', 'validField'] },
+      };
 
-      layout: { fields: ['requiredField', 'validField'] },
-    };
+      beforeAll(() => {
+        formState = forms(
+          undefined,
+          actions.form.init(formKey, remountKey, {
+            fieldMeta,
+          })
+        );
+      });
 
-    beforeAll(() => {
-      formState = forms(
-        undefined,
-        actions.form.init(formKey, remountKey, {
-          fieldMeta,
-        })
-      );
-    });
+      test('requiredField should be initially not required since it does not meet its requiredWhen expression criteria', () => {
+        const { FIELD1 } = formState[formKey].fields;
 
-    test('requiredField should be initially not required since it does not meet its requiredWhen expression criteria', () => {
-      const { FIELD1 } = formState[formKey].fields;
+        expect(FIELD1.required).toBe(false);
+      });
 
-      expect(FIELD1.required).toBe(false);
-    });
+      test('requiredField should be required after its requiredWhen expression criteria is met ', () => {
+        formState = forms(
+          formState,
+          actions.form.fieldChange(formKey)('FIELD2', 'standard')
+        );
 
-    test('requiredField should be required after its requiredWhen expression criteria is met ', () => {
-      formState = forms(
-        formState,
-        actions.form.fieldChange(formKey)('FIELD2', 'standard')
-      );
+        const { FIELD1, FIELD2 } = formState[formKey].fields;
 
-      const { FIELD1, FIELD2 } = formState[formKey].fields;
+        expect(FIELD2.value).toBe('standard');
 
-      expect(FIELD2.value).toBe('standard');
+        expect(FIELD1.required).toBe(true);
+      });
 
-      expect(FIELD1.required).toBe(true);
-    });
-
-    test('requiredField should be again not required after its required expression criteria is not met ', () => {
+      test('requiredField should be again not required after its required expression criteria is not met ', () => {
       // find a field with that default value
-      formState = forms(
-        formState,
-        actions.form.fieldChange(formKey)('FIELD2', 'some other value')
-      );
+        formState = forms(
+          formState,
+          actions.form.fieldChange(formKey)('FIELD2', 'some other value')
+        );
 
-      const { FIELD1, FIELD2 } = formState[formKey].fields;
+        const { FIELD1, FIELD2 } = formState[formKey].fields;
 
-      expect(FIELD2.value).toBe('some other value');
+        expect(FIELD2.value).toBe('some other value');
 
-      expect(FIELD1.required).toBe(false);
+        expect(FIELD1.required).toBe(false);
+      });
+    });
+    describe('single expression and defaultstate conditions AND behaviour test suite', () => {
+      let formState;
+      const fieldMeta = {
+        fieldMap: {
+          requiredField: {
+            id: 'FIELD1',
+            type: 'text',
+            name: 'field1',
+            defaultValue: 'test',
+            label: 'field1',
+            // both expression and default state
+            requiredWhen: [{ field: 'FIELD2', is: ['standard'] }],
+            required: true,
+          },
+          validField: {
+            id: 'FIELD2',
+            type: 'text',
+            name: 'field2',
+            defaultValue: '123',
+            label: 'field2',
+          },
+        },
+
+        layout: { fields: ['requiredField', 'validField'] },
+      };
+
+      beforeAll(() => {
+        formState = forms(
+          undefined,
+          actions.form.init(formKey, remountKey, {
+            fieldMeta,
+          })
+        );
+      });
+
+      test('requiredField should be initially not required since it does not meet its requiredWhen expression although the defaultState is true criteria', () => {
+        const { FIELD1 } = formState[formKey].fields;
+
+        expect(FIELD1.required).toBe(false);
+      });
+
+      test('requiredField should be required after its requiredWhen expression criteria is met ', () => {
+        formState = forms(
+          formState,
+          actions.form.fieldChange(formKey)('FIELD2', 'standard')
+        );
+
+        const { FIELD1, FIELD2 } = formState[formKey].fields;
+
+        expect(FIELD2.value).toBe('standard');
+
+        expect(FIELD1.required).toBe(true);
+      });
+
+      test('requiredField should be again not required after its required expression criteria is not met even though the default state is true', () => {
+      // find a field with that default value
+        formState = forms(
+          formState,
+          actions.form.fieldChange(formKey)('FIELD2', 'some other value')
+        );
+
+        const { FIELD1, FIELD2 } = formState[formKey].fields;
+
+        expect(FIELD2.value).toBe('some other value');
+
+        expect(FIELD1.required).toBe(false);
+      });
+
+      test('the requiredField should return false irrespective of it meeting the expression condition since the default state is always false', () => {
+        // find a field with that default value
+
+        formState = forms(
+          undefined,
+          actions.form.init(formKey, remountKey, {
+            fieldMeta: {
+              fieldMap: {
+                requiredField: {
+                  id: 'FIELD1',
+                  type: 'text',
+                  name: 'field1',
+                  defaultValue: 'test',
+                  label: 'field1',
+                  // both expression and default state
+                  requiredWhen: [{ field: 'FIELD2', is: ['standard'] }],
+                  required: false,
+                },
+                validField: {
+                  id: 'FIELD2',
+                  type: 'text',
+                  name: 'field2',
+                  defaultValue: '123',
+                  label: 'field2',
+                },
+              },
+
+              layout: { fields: ['requiredField', 'validField'] },
+            }
+            ,
+          })
+        );
+
+        const { FIELD1} = formState[formKey].fields;
+
+        expect(FIELD1.required).toBe(false);
+
+        formState = forms(
+          formState,
+          actions.form.fieldChange(formKey)('FIELD2', 'standard')
+        );
+        expect(FIELD1.required).toBe(false);
+      });
     });
   });
 
   describe('visible expression test case', () => {
-    let formState;
-    const fieldMeta = {
-      fieldMap: {
-        visibleField: {
-          id: 'FIELD1',
-          type: 'text',
-          name: 'field1',
-          defaultValue: 'test',
-          label: 'field1',
-          visibleWhen: [{ field: 'FIELD2', is: ['standard'] }],
+    describe('single expression test suite', () => {
+      let formState;
+
+      const fieldMeta = {
+        fieldMap: {
+          visibleField: {
+            id: 'FIELD1',
+            type: 'text',
+            name: 'field1',
+            defaultValue: 'test',
+            label: 'field1',
+            visibleWhen: [{ field: 'FIELD2', is: ['standard'] }],
+          },
+
+          validField: {
+            id: 'FIELD2',
+            type: 'text',
+            name: 'field2',
+            defaultValue: '123',
+            label: 'field2',
+          },
         },
 
-        validField: {
-          id: 'FIELD2',
-          type: 'text',
-          name: 'field2',
-          defaultValue: '123',
-          label: 'field2',
-        },
-      },
+        layout: { fields: ['visibleField', 'validField'] },
+      };
 
-      layout: { fields: ['visibleField', 'validField'] },
-    };
+      beforeAll(() => {
+        formState = forms(
+          undefined,
+          actions.form.init(formKey, remountKey, {
+            fieldMeta,
+          })
+        );
+      });
 
-    beforeAll(() => {
-      formState = forms(
-        undefined,
-        actions.form.init(formKey, remountKey, {
-          fieldMeta,
-        })
-      );
-    });
+      test('visibleField should be initially not visible since it does not meet its visibleWhen expression criteria', () => {
+        const { FIELD1 } = formState[formKey].fields;
 
-    test('visibleField should be initially not visible since it does not meet its visibleWhen expression criteria', () => {
-      const { FIELD1 } = formState[formKey].fields;
+        expect(FIELD1.visible).toBe(false);
+      });
 
-      expect(FIELD1.visible).toBe(false);
-    });
+      test('visibleField should be visible after its visibleWhen expression criteria is met ', () => {
+        formState = forms(
+          formState,
+          actions.form.fieldChange(formKey)('FIELD2', 'standard')
+        );
 
-    test('visibleField should be visible after its visibleWhen expression criteria is met ', () => {
-      formState = forms(
-        formState,
-        actions.form.fieldChange(formKey)('FIELD2', 'standard')
-      );
+        const { FIELD1, FIELD2 } = formState[formKey].fields;
 
-      const { FIELD1, FIELD2 } = formState[formKey].fields;
+        expect(FIELD2.value).toBe('standard');
 
-      expect(FIELD2.value).toBe('standard');
+        expect(FIELD1.visible).toBe(true);
+      });
 
-      expect(FIELD1.visible).toBe(true);
-    });
-
-    test('visibleField should be again not visible after its visible expression criteria is not met ', () => {
+      test('visibleField should be again not visible after its visible expression criteria is not met ', () => {
       // find a field with that default value
-      formState = forms(
-        formState,
-        actions.form.fieldChange(formKey)('FIELD2', 'some other value')
-      );
+        formState = forms(
+          formState,
+          actions.form.fieldChange(formKey)('FIELD2', 'some other value')
+        );
 
-      const { FIELD1, FIELD2 } = formState[formKey].fields;
+        const { FIELD1, FIELD2 } = formState[formKey].fields;
 
-      expect(FIELD2.value).toBe('some other value');
+        expect(FIELD2.value).toBe('some other value');
 
-      expect(FIELD1.visible).toBe(false);
+        expect(FIELD1.visible).toBe(false);
+      });
+    });
+
+    describe('single expression and defaultstate conditions AND behaviour test suite', () => {
+      let formState;
+
+      const fieldMeta = {
+        fieldMap: {
+          visibleField: {
+            id: 'FIELD1',
+            type: 'text',
+            name: 'field1',
+            defaultValue: 'test',
+            label: 'field1',
+            visibleWhen: [{ field: 'FIELD2', is: ['standard'] }],
+            visible: true,
+          },
+
+          validField: {
+            id: 'FIELD2',
+            type: 'text',
+            name: 'field2',
+            defaultValue: '123',
+            label: 'field2',
+          },
+        },
+
+        layout: { fields: ['visibleField', 'validField'] },
+      };
+
+      beforeAll(() => {
+        formState = forms(
+          undefined,
+          actions.form.init(formKey, remountKey, {
+            fieldMeta,
+          })
+        );
+      });
+
+      test('visibleField should be initially not visible since it does not meet its visibleWhen expression criteria even though the default state is true', () => {
+        const { FIELD1 } = formState[formKey].fields;
+
+        expect(FIELD1.visible).toBe(false);
+      });
+
+      test('visibleField should be visible after its visibleWhen expression criteria is met ', () => {
+        formState = forms(
+          formState,
+          actions.form.fieldChange(formKey)('FIELD2', 'standard')
+        );
+
+        const { FIELD1, FIELD2 } = formState[formKey].fields;
+
+        expect(FIELD2.value).toBe('standard');
+
+        expect(FIELD1.visible).toBe(true);
+      });
+
+      test('visibleField should be again not visible after its visible expression criteria is not met even though the default state is true', () => {
+        formState = forms(
+          formState,
+          actions.form.fieldChange(formKey)('FIELD2', 'some other value')
+        );
+
+        const { FIELD1, FIELD2 } = formState[formKey].fields;
+
+        expect(FIELD2.value).toBe('some other value');
+
+        expect(FIELD1.visible).toBe(false);
+      });
+      test('visibleField should be invisible irrespective of it meeting the visible criteria', () => {
+        formState = forms(
+          undefined,
+          actions.form.init(formKey, remountKey, {
+            fieldMeta: {
+              fieldMap: {
+                visibleField: {
+                  id: 'FIELD1',
+                  type: 'text',
+                  name: 'field1',
+                  defaultValue: 'test',
+                  label: 'field1',
+                  visibleWhen: [{ field: 'FIELD2', is: ['standard'] }],
+                  // field default visible state is false
+                  visible: false,
+                },
+
+                validField: {
+                  id: 'FIELD2',
+                  type: 'text',
+                  name: 'field2',
+                  defaultValue: '123',
+                  label: 'field2',
+                },
+              },
+              layout: { fields: ['visibleField', 'validField'] },
+            },
+          })
+        );
+        const { FIELD1 } = formState[formKey].fields;
+
+        expect(FIELD1.visible).toBe(false);
+        formState = forms(
+          formState,
+          actions.form.fieldChange(formKey)('FIELD2', 'standard')
+        );
+
+        expect(formState[formKey].fields.FIELD1.visible).toBe(false);
+      });
     });
   });
 
