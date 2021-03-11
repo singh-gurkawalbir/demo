@@ -140,13 +140,13 @@ export default {
   },
   pgpdecrypt: {
     type: 'fileencryptdecrypt',
-    label: 'Decryption algorithm',
+    label: 'Decrypt files',
     connectionId: r => r && r._connectionId,
     defaultValue: r => !!(r?.file?.decrypt),
   },
   'file.decrypt': {
     type: 'select',
-    label: 'Decrypt a file',
+    label: 'Decryption algorithm',
     resourceType: 'exports',
     defaultValue: 'pgp',
     connectionId: r => r && r._connectionId,
