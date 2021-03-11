@@ -7,6 +7,7 @@ import { CeligoTabWrapper } from '../../../CeligoTabLayout/CeligoTabWrapper';
 import CeligoPillTabs from '../../../CeligoTabLayout/CeligoPillTabs';
 import CeligoTabPanel from '../../../CeligoTabLayout/CeligoTabPanel';
 import DefaultPanel from '../../../CeligoTabLayout/CustomPanels/DefaultPanel';
+import DownloadBlobPanel from './DownloadBlobPanel';
 import PanelLoader from '../../../PanelLoader';
 
 const TABS = [
@@ -14,12 +15,6 @@ const TABS = [
   { label: 'Headers', value: 'headers' },
   { label: 'Other', value: 'others' },
 ];
-
-const HTTP_DOC = {
-  body: { test: 5 },
-  headers: { 'content-type': 'application/json' },
-  others: { status: 200 },
-};
 
 const useStyles = makeStyles(theme => ({
   error: {
@@ -33,6 +28,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const defaultObj = {};
+
 export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResKey, isRequest }) {
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -40,10 +37,14 @@ export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResK
     selectors.errorHttpDocStatus(state, reqAndResKey)
   );
   const errorHttpDoc = useSelector(state =>
-    HTTP_DOC || selectors.errorHttpDoc(state, reqAndResKey, isRequest)
+    selectors.errorHttpDoc(state, reqAndResKey, isRequest) || defaultObj
   );
   const errorHttpDocError = useSelector(state =>
     'S3 key is expired' || selectors.errorHttpDocError(state, reqAndResKey)
+  );
+
+  const s3BlobKey = useSelector(state =>
+    selectors.s3HttpBlobKey(state, reqAndResKey, isRequest)
   );
 
   useEffect(() => {
@@ -65,7 +66,11 @@ export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResK
       <CeligoTabWrapper>
         <CeligoPillTabs tabs={TABS} />
         <CeligoTabPanel panelId="body">
-          <DefaultPanel value={errorHttpDoc.body} />
+          {
+            s3BlobKey
+              ? <DownloadBlobPanel flowId={flowId} resourceId={resourceId} s3BlobKey={s3BlobKey} />
+              : <DefaultPanel value={errorHttpDoc.body} />
+          }
         </CeligoTabPanel>
         <CeligoTabPanel panelId="headers">
           <DefaultPanel value={errorHttpDoc.headers} />

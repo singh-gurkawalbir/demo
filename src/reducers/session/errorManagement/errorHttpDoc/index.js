@@ -57,8 +57,5 @@ selectors.errorHttpDocError = (state, reqAndResKey) => {
   return state[reqAndResKey].error;
 };
 
-selectors.isBlobRequest = (state, errorId) =>
-  !!state?.[errorId]?.data?.request?.bodyKey;
-
-selectors.isBlobResponse = (state, errorId) =>
-  !!state?.[errorId]?.data?.response?.bodyKey;
+selectors.s3HttpBlobKey = (state, reqAndResKey, isRequest) =>
+  state?.[reqAndResKey]?.data?.[isRequest ? 'request' : 'response']?.body?.bodyKey;

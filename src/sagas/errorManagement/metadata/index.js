@@ -168,7 +168,23 @@ export function* requestErrorHttpDocument({ flowId, resourceId, reqAndResKey }) 
       },
     });
 
-    yield put(actions.errorManager.errorHttpDoc.received(reqAndResKey, errorHttpDoc));
+    const MOCK_HTTP_BLOB_DOC = {
+      body: { test: 5, bodyKey: 'blob-1234' },
+      headers: { 'content-type': 'application/json' },
+      others: { status: 200 },
+    };
+    const MOCK_HTTP_DOC = {
+      body: { test: 5, users: [] },
+      headers: { 'content-type': 'application/json' },
+      others: { status: 200 },
+    };
+
+    const MOCK_HTTP_DOC_RESPONSE = {
+      request: MOCK_HTTP_BLOB_DOC,
+      response: MOCK_HTTP_DOC,
+    };
+
+    yield put(actions.errorManager.errorHttpDoc.received(reqAndResKey, MOCK_HTTP_DOC_RESPONSE || errorHttpDoc));
   } catch (e) {
     // handle errors
     yield put(actions.errorManager.errorHttpDoc.error(reqAndResKey, e));
