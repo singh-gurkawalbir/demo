@@ -63,6 +63,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
     <RightDrawer
       path="details/:errorId/:mode"
       variant="temporary"
+      width="large"
       hideBackButton>
       <DrawerHeader title="View error details" />
       <ErrorDetails

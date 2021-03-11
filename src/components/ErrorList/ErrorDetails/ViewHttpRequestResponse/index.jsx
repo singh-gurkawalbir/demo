@@ -27,6 +27,10 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     color: theme.palette.error.main,
   },
+  container: {
+    height: '95%',
+    margin: theme.spacing(2),
+  },
 }));
 
 export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResKey, isRequest }) {
@@ -57,17 +61,19 @@ export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResK
   }
 
   return (
-    <CeligoTabWrapper>
-      <CeligoPillTabs tabs={TABS} />
-      <CeligoTabPanel panelId="body">
-        <DefaultPanel value={errorHttpDoc.body} />
-      </CeligoTabPanel>
-      <CeligoTabPanel panelId="headers">
-        <DefaultPanel value={errorHttpDoc.headers} />
-      </CeligoTabPanel>
-      <CeligoTabPanel panelId="others">
-        <DefaultPanel value={errorHttpDoc.others} />
-      </CeligoTabPanel>
-    </CeligoTabWrapper>
+    <div className={classes.container}>
+      <CeligoTabWrapper>
+        <CeligoPillTabs tabs={TABS} />
+        <CeligoTabPanel panelId="body">
+          <DefaultPanel value={errorHttpDoc.body} />
+        </CeligoTabPanel>
+        <CeligoTabPanel panelId="headers">
+          <DefaultPanel value={errorHttpDoc.headers} />
+        </CeligoTabPanel>
+        <CeligoTabPanel panelId="others">
+          <DefaultPanel value={errorHttpDoc.others} />
+        </CeligoTabPanel>
+      </CeligoTabWrapper>
+    </div>
   );
 }

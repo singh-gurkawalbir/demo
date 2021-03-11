@@ -15,19 +15,18 @@ import ErrorDetailActions from './ErrorDetailActions';
 
 const useStyles = makeStyles(theme => ({
   detailsContainer: {
-    height: 'calc(100% - 38px)',
+    height: '100%',
     backgroundColor: 'white',
+    border: `1px solid ${theme.palette.secondary.lightest}`,
     color: theme.palette.text.hint,
   },
   tabContent: {
-    height: '100%',
-    border: `1px solid ${theme.palette.secondary.lightest}`,
+    height: 'calc(100% - 54px)',
     borderTop: 'none',
     borderBottom: 'none',
-    overflow: 'auto',
   },
   tabHeader: {
-    border: `1px solid ${theme.palette.secondary.lightest}`,
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
 }));
 
