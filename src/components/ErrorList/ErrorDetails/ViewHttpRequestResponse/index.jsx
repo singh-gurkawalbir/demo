@@ -12,7 +12,7 @@ import PanelLoader from '../../../PanelLoader';
 const TABS = [
   { label: 'Body', value: 'body' },
   { label: 'Headers', value: 'headers' },
-  { label: 'Others', value: 'others' },
+  { label: 'Other', value: 'others' },
 ];
 
 const HTTP_DOC = {
