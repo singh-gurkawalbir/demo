@@ -17,8 +17,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DefaultPanel({ value, hideClipboard = false, height }) {
-  const classes = useStyles({ height });
+export default function DefaultPanel({ value, hideClipboard = false }) {
+  const classes = useStyles();
 
   if (!value) {
     return null;
