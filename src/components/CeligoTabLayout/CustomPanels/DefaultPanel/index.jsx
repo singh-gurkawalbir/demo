@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DefaultPanel({ value, hideClipboard = false }) {
+export default function DefaultPanel({ value, hideClipboard = false, contentType = 'json' }) {
   const classes = useStyles();
 
   if (!value) {
@@ -29,7 +29,7 @@ export default function DefaultPanel({ value, hideClipboard = false }) {
       <div className={classes.defaultPanelContainer}>
         <CodeEditor
           value={value}
-          mode="json"
+          mode={contentType}
           readOnly
           showGutter={false}
             />
