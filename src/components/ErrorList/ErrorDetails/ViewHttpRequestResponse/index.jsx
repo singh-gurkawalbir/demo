@@ -40,7 +40,7 @@ export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResK
     selectors.errorHttpDoc(state, reqAndResKey, isRequest) || defaultObj
   );
   const errorHttpDocError = useSelector(state =>
-    'S3 key is expired' || selectors.errorHttpDocError(state, reqAndResKey)
+    selectors.errorHttpDocError(state, reqAndResKey)
   );
 
   const s3BlobKey = useSelector(state =>
