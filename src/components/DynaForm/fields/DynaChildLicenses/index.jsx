@@ -53,6 +53,7 @@ export default function DynaChildLicense({ connectorId, resourceId, id, formKey}
   ), [list, parentLicense]);
 
   useEffect(() => {
+    dispatch(actions.patchFilter(sortFilterKey, { sort: { order: 'asc', orderBy: 'status' }}));
     if (!integration?.initChild?.function) {
       dispatch(actions.form.forceFieldState(formKey)(id, { visible: false}));
     }

@@ -107,7 +107,39 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
   },
 }));
+const DateRange = props => {
+  const { isCalendar, setSelectedRange } = props;
+  const handleDateRangeSelection = useCallback(range => {
+    let { startDate, endDate } = range;
 
+    if (startDate.getTime() === endDate.getTime() && endDate.getTime() === startOfDay(endDate).getTime()) {
+      startDate = startOfDay(startDate);
+      endDate = endOfDay(endDate);
+    }
+    setSelectedRange({ preset: 'custom', startDate, endDate });
+  }, [setSelectedRange]);
+  const handleCalendardateSelection = useCallback(endDate => {
+    setSelectedRange({ preset: 'custom', endDate: endOfDay(endDate)});
+  }, [setSelectedRange]);
+
+  if (isCalendar) {
+    return (
+      <Calendar
+        {...props}
+        onChange={handleCalendardateSelection}
+        months={1}
+     />
+    );
+  }
+
+  return (
+    <DateRangePicker
+      {...props}
+      onChange={item => handleDateRangeSelection(item.selection)}
+      months={2}
+  />
+  );
+};
 export default function DateRangeSelector({
   value = {},
   onSave,
@@ -174,20 +206,6 @@ export default function DateRangeSelector({
     setAnchorEl(null);
   }, [onSave, clearValue]);
 
-  const handleDateRangeSelection = useCallback((range, isCalendar) => {
-    if (isCalendar) {
-      setSelectedRange({ preset: 'custom', endDate: range});
-    } else {
-      let { startDate, endDate } = range;
-
-      if (startDate.getTime() === endDate.getTime() && endDate.getTime() === startOfDay(endDate).getTime()) {
-        startDate = startOfDay(startDate);
-        endDate = endOfDay(endDate);
-      }
-      setSelectedRange({ preset: 'custom', startDate, endDate });
-    }
-  }, []);
-
   return (
     <>
       {
@@ -238,44 +256,23 @@ export default function DateRangeSelector({
               </div>
               {selectedRange.preset === 'custom' && (
               <div className={classes.rightCalendar}>
-                {isCalendar ? (
-                  <Calendar
-                    staticRanges={[]}
-                    showSelectionPreview
-                    onChange={item => handleDateRangeSelection(item, isCalendar)}
-                    moveRangeOnFirstSelection={false}
-                    months={1}
-                    showMonthAndYearPickers={false}
-                    editableDateInputs={false}
-                    className={classes.child}
-                    ranges={[{...selectedRange, key: 'selection'}]}
-                    direction="horizontal"
-                    showTime={showTime}
-                    maxDate={toDate || new Date()}
-                    minDate={fromDate || addYears(new Date(), -1)}
-                    inputRanges={[]}
-                    showPreview={false}
-                 />
-                )
-                  : (
-                    <DateRangePicker
-                      staticRanges={[]}
-                      showSelectionPreview
-                      onChange={item => handleDateRangeSelection(item.selection, isCalendar)}
-                      moveRangeOnFirstSelection={false}
-                      months={2}
-                      showMonthAndYearPickers={false}
-                      editableDateInputs={false}
-                      className={classes.child}
-                      ranges={[{...selectedRange, key: 'selection'}]}
-                      direction="horizontal"
-                      showTime={showTime}
-                      maxDate={toDate || new Date()}
-                      minDate={fromDate || addYears(new Date(), -1)}
-                      inputRanges={[]}
-                      showPreview={false}
-              />
-                  )}
+                <DateRange
+                  isCalendar={isCalendar}
+                  setSelectedRange={setSelectedRange}
+                  staticRanges={[]}
+                  showSelectionPreview
+                  moveRangeOnFirstSelection={false}
+                  showMonthAndYearPickers={false}
+                  editableDateInputs={false}
+                  className={classes.child}
+                  ranges={[{...selectedRange, key: 'selection'}]}
+                  direction="horizontal"
+                  showTime={showTime}
+                  maxDate={toDate || new Date()}
+                  minDate={fromDate || addYears(new Date(), -1)}
+                  inputRanges={[]}
+                  showPreview={false}
+                />
               </div>
               )}
             </div>

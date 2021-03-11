@@ -1,5 +1,5 @@
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, Fragment } from 'react';
 import {
   NavLink,
   useRouteMatch,
@@ -184,24 +184,20 @@ const defaultFilter = {
   ],
 };
 
-function FlowList({ integrationId, storeId }) {
+const FlowsTable = ({integrationId, storeId}) => {
   const match = useRouteMatch();
-  const classes = useStyles();
-  const { sectionId } = match.params;
-  const dispatch = useDispatch();
   const filterKey = `${integrationId}-flows`;
+  const { sectionId } = match.params;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
   const flowsFilterConfig = useMemo(() => ({ ...(flowFilter || {}), excludeHiddenFlows: true }), [flowFilter]);
-
+  const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
+  const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, storeId, flowsFilterConfig);
-  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
+  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration, storeId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const section = flowSections.find(s => s.titleId === sectionId);
-  const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
-  const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
-  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration, storeId);
+
   const actionProps = useMemo(() => ({
     isIntegrationApp: true,
     storeId,
@@ -213,6 +209,28 @@ function FlowList({ integrationId, storeId }) {
     flowAttributes,
     integration,
   }), [storeId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration]);
+
+  return (
+    <LoadResources required resources="flows,exports">
+      <CeligoTable
+        data-public
+        data={flows}
+        filterKey={filterKey}
+        {...flowTableMeta}
+        actionProps={actionProps}
+    />
+    </LoadResources>
+  );
+};
+
+function FlowList({ integrationId, storeId }) {
+  const filterKey = `${integrationId}-flows`;
+  const match = useRouteMatch();
+  const { sectionId } = match.params;
+  const dispatch = useDispatch();
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
 
   useEffect(() => {
     dispatch(actions.patchFilter(filterKey, defaultFilter));
@@ -232,7 +250,7 @@ function FlowList({ integrationId, storeId }) {
   }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
 
   return (
-    <LoadResources required resources="flows,exports">
+    <>
       <ScheduleDrawer />
       <QueuedJobsDrawer />
       <SettingsDrawer
@@ -267,23 +285,30 @@ function FlowList({ integrationId, storeId }) {
         sectionId={sectionId}
         // flowId={flowId}
       />
-      <PanelHeader title={`${section?.title} flows`} >
-        <div className={classes.action}>
-          <KeywordSearch
-            filterKey={filterKey}
-        />
-        </div>
-      </PanelHeader>
-      <CeligoTable
-        data-public
-        data={flows}
-        filterKey={filterKey}
-        {...flowTableMeta}
-        actionProps={actionProps}
-        />
-    </LoadResources>
+      <Header integrationId={integrationId} storeId={storeId} />
+      <FlowsTable integrationId={integrationId} storeId={storeId} />
+    </>
   );
 }
+
+const Header = ({integrationId, storeId}) => {
+  const classes = useStyles();
+  const filterKey = `${integrationId}-flows`;
+  const match = useRouteMatch();
+  const { sectionId } = match.params;
+  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
+  const section = flowSections.find(s => s.titleId === sectionId);
+
+  return (
+    <PanelHeader title={`${section?.title} flows`} >
+      <div className={classes.action}>
+        <KeywordSearch
+          filterKey={filterKey}
+        />
+      </div>
+    </PanelHeader>
+  );
+};
 
 const SectionTitle = ({integrationId, storeId, title, titleId}) => {
   const classes = useStyles();
@@ -361,9 +386,7 @@ export default function FlowsPanel({ storeId, integrationId }) {
           </List>
         </Grid>
         <Grid item className={classes.content}>
-          <LoadResources required resources="flows">
-            <FlowList integrationId={integrationId} storeId={storeId} />
-          </LoadResources>
+          <FlowList integrationId={integrationId} storeId={storeId} />
         </Grid>
       </Grid>
     </div>

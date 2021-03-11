@@ -75,6 +75,75 @@ describe('editor sagas', () => {
           hidden: true })
         .run();
     });
+    test('should add modelMetadata in the options if processor is handlebars and supports default data for sql editors', () => {
+      const body = {rule: '{{abc}}',
+        data: {
+          data: {
+            id: 123,
+          },
+        }};
+      const editorState = {
+        formKey: 'new-123',
+        fieldId: 'rdbms.query',
+        resourceId: 'res-123',
+        resourceType: 'imports',
+        supportsDefaultData: true,
+        defaultData: JSON.stringify({data: {
+          id: {
+            default: '',
+          },
+          name: {
+            default: 'default name',
+          },
+        }}, null, 2),
+      };
+      const resource = {
+        _id: 'res-123',
+        adaptorType: 'RDBMSImport',
+        _connectionId: 'conn-123',
+      };
+      const connection = {
+        _id: 'conn-123',
+        type: 'rdbms',
+      };
+      const expectedBody = {
+        rule: '{{abc}}',
+        data: {
+          data: {
+            id: 123,
+          },
+        },
+        options: {
+          connection,
+          import: resource,
+          fieldPath: 'rdbms.query',
+          modelMetadata: {
+            id: {
+              default: '',
+            },
+            name: {
+              default: 'default name',
+            },
+          },
+        },
+      };
+
+      return expectSaga(invokeProcessor, { editorId, processor: 'handlebars', body })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), undefined],
+          [select(selectors._editor, editorId), editorState],
+          [matchers.call.fn(constructResourceFromFormValues), resource],
+          [select(selectors.resource, 'connections', 'conn-123'), connection],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/handlebars',
+          opts: {
+            method: 'POST',
+            body: expectedBody,
+          },
+          hidden: true })
+        .run();
+    });
     test('should make api call with passed arguments', () => {
       const body = 'somebody';
 
