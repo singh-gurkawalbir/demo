@@ -70,36 +70,37 @@ export default function AttachFlows({ onClose, integrationId }) {
   return (
     <ModalDialog show maxWidth={false} onClose={onClose}>
       <div>Attach flows</div>
-      {hasFlows ? (
-        <>
-          <div>
-            <LoadResources
-              required
-              resources="flows, connections, exports, imports">
-              <CeligoTable
-                data={flows}
-                onSelectChange={handleSelectChange}
-                {...metadata}
-                selectableRows
+      {hasFlows && (
+
+      <div>
+        <LoadResources
+          required
+          resources="flows, connections, exports, imports">
+          <CeligoTable
+            data={flows}
+            onSelectChange={handleSelectChange}
+            {...metadata}
+            selectableRows
           />
-            </LoadResources>
-          </div>
-          <div>
-            <Button
-              data-test="attachFlows"
-              onClick={handleAttachFlowsClick}
-              variant="outlined"
-              color="primary">
-              Attach
-            </Button>
-            <Button
-              variant="text"
-              color="primary"
-              onClick={onClose}>
-              Cancel
-            </Button>
-          </div>
-        </>
+        </LoadResources>
+      </div>
+      )}
+      {hasFlows ? (
+        <div>
+          <Button
+            data-test="attachFlows"
+            onClick={handleAttachFlowsClick}
+            variant="outlined"
+            color="primary">
+            Attach
+          </Button>
+          <Button
+            variant="text"
+            color="primary"
+            onClick={onClose}>
+            Cancel
+          </Button>
+        </div>
       ) : <div>No flows found</div>}
     </ModalDialog>
   );

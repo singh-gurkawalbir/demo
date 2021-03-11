@@ -2,6 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 const emptyObj = {};
+const emptySet = [];
 
 export default (state = {}, action) => {
   const { type, integrationId, flowId, metadata } = action;
@@ -13,12 +14,12 @@ export default (state = {}, action) => {
     switch (type) {
       case actionTypes.INTEGRATION_APPS.SETTINGS
         .RECEIVED_CATEGORY_MAPPING_METADATA:
-        ({ response: categoryMappingData } = metadata);
+        ({ response: categoryMappingData = emptySet } = metadata || emptyObj);
         generatesMetadata = categoryMappingData.find(
           data => data.operation === 'generatesMetaData'
         );
         draft[`${flowId}-${integrationId}`] = {
-          uiAssistant: metadata.uiAssistant,
+          uiAssistant: metadata?.uiAssistant,
           response: categoryMappingData,
           filters: {
             attributes: {
@@ -29,7 +30,7 @@ export default (state = {}, action) => {
             },
             mappingFilter: 'mapped',
           },
-          generatesMetadata: [generatesMetadata.data.generatesMetaData],
+          generatesMetadata: [generatesMetadata?.data?.generatesMetaData],
         };
         break;
     }

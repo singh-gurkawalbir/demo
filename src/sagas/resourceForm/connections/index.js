@@ -489,6 +489,23 @@ export function* pingAndUpdateConnection({ connectionId }) {
   }
 }
 
+export function* requestTradingPartnerConnections({ connectionId }) {
+  const path = `/connections/${connectionId}/tradingPartner`;
+
+  try {
+    const conns = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'GET',
+      },
+    });
+
+    yield put(actions.connection.receivedTradingPartnerConnections(connectionId, conns));
+  } catch (e) {
+    // exception handler
+  }
+}
+
 export default [
   takeLatest(actionTypes.CONNECTION.PING_AND_UPDATE, pingAndUpdateConnection),
   takeEvery(actionTypes.CONNECTION.TEST, pingConnectionWithAbort),
@@ -503,4 +520,5 @@ export default [
     commitAndAuthorizeConnection
   ),
   takeLatest(actionTypes.ICLIENTS, requestIClients),
+  takeLatest(actionTypes.CONNECTION.TRADING_PARTNER_CONNECTIONS_REQUEST, requestTradingPartnerConnections),
 ];
