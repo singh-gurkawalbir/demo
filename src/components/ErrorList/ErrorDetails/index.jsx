@@ -6,6 +6,7 @@ import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
 import EditRetryData from './EditRetryData';
 import ViewErrorDetails from './ViewErrorDetails';
+import ViewHttpRequestResponse from './ViewHttpRequestResponse';
 import { selectors } from '../../../reducers';
 import { safeParse } from '../../../utils/string';
 import DrawerContent from '../../drawer/Right/DrawerContent';
@@ -38,13 +39,14 @@ const ERROR_DETAILS_TABS = {
   RESPONSE: { type: 'response', label: 'View HTTP response' },
 };
 
-function TabPanel({ children, value, type, className }) {
+function TabPanel({ children, value, type }) {
+  const classes = useStyles();
   const hidden = value !== type;
 
   return (
     <div
       role="tabpanel"
-      className={className}
+      className={classes.tabContent}
       hidden={hidden}
       id={type}
       aria-labelledby={type}>
@@ -114,7 +116,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
                   <Tab key={type} label={label} id={type} value={type} />)
             }
           </Tabs>
-          <TabPanel value={mode} type="view" className={classes.tabContent}>
+          <TabPanel value={mode} type="view">
             <ViewErrorDetails
               errorId={errorId}
               flowId={flowId}
@@ -122,7 +124,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
               isResolved={isResolved}
             />
           </TabPanel>
-          <TabPanel value={mode} type="editRetry" className={classes.tabContent}>
+          <TabPanel value={mode} type="editRetry">
             <EditRetryData
               retryId={retryId}
               onChange={onRetryDataChange}
@@ -130,7 +132,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
               resourceId={resourceId}
             />
           </TabPanel>
-          <TabPanel value={mode} type="viewRetry" className={classes.tabContent}>
+          <TabPanel value={mode} type="viewRetry">
             <EditRetryData
               retryId={retryId}
               onChange={onRetryDataChange}
@@ -139,10 +141,19 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
             />
           </TabPanel>
           <TabPanel value={mode} type="request">
-            Item Three
+            <ViewHttpRequestResponse
+              reqAndResKey={reqAndResKey}
+              flowId={flowId}
+              resourceId={resourceId}
+              isRequest
+            />
           </TabPanel>
           <TabPanel value={mode} type="response">
-            Item Four
+            <ViewHttpRequestResponse
+              reqAndResKey={reqAndResKey}
+              flowId={flowId}
+              resourceId={resourceId}
+            />
           </TabPanel>
         </div>
       </DrawerContent>

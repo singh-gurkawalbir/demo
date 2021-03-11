@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-// import JsonContent from '../../JsonContent';
 import { safeParse } from '../../../utils/string';
 import { HTTP_STAGES } from '../../../utils/exportPanel';
 import CodeEditor from '../../CodeEditor2';

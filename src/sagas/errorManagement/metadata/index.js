@@ -159,19 +159,19 @@ export function* requestFilterMetadata() {
   }
 }
 
-export function* requestErrorHttpDocument({ flowId, resourceId, reqAndResKey, errorId }) {
+export function* requestErrorHttpDocument({ flowId, resourceId, reqAndResKey }) {
   try {
     const errorHttpDoc = yield call(apiCallWithRetry, {
-      path: `flows/${flowId}/${resourceId}/requests/${reqAndResKey} `,
+      path: `/flows/${flowId}/${resourceId}/requests/${reqAndResKey}`,
       opts: {
         method: 'GET',
       },
     });
 
-    yield put(actions.errorManager.errorHttpDoc.received(errorId, errorHttpDoc));
+    yield put(actions.errorManager.errorHttpDoc.received(reqAndResKey, errorHttpDoc));
   } catch (e) {
     // handle errors
-    yield put(actions.errorManager.errorHttpDoc.error(errorId, e));
+    yield put(actions.errorManager.errorHttpDoc.error(reqAndResKey, e));
   }
 }
 

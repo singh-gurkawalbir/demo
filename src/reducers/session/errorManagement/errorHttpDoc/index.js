@@ -2,29 +2,29 @@ import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, errorId, errorHttpDoc, error } = action;
+  const { type, reqAndResKey, errorHttpDoc, error } = action;
 
   return produce(state, draft => {
     switch (type) {
       case actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.REQUEST:
-        if (!draft[errorId]) {
-          draft[errorId] = {};
+        if (!draft[reqAndResKey]) {
+          draft[reqAndResKey] = {};
         }
-        draft[errorId].status = 'requested';
+        draft[reqAndResKey].status = 'requested';
         break;
       case actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.RECEIVED:
-        if (!draft[errorId]) {
+        if (!draft[reqAndResKey]) {
           break;
         }
-        draft[errorId].status = 'received';
-        draft[errorId].data = errorHttpDoc || {};
+        draft[reqAndResKey].status = 'received';
+        draft[reqAndResKey].data = errorHttpDoc;
         break;
       case actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.ERROR:
-        if (!draft[errorId]) {
+        if (!draft[reqAndResKey]) {
           break;
         }
-        draft[errorId].status = 'error';
-        draft[errorId].error = error;
+        draft[reqAndResKey].status = 'error';
+        draft[reqAndResKey].error = error;
         break;
       default:
     }
@@ -33,20 +33,28 @@ export default (state = {}, action) => {
 
 export const selectors = {};
 
-selectors.errorHttpDocStatus = (state, errorId) => {
-  if (!state || !errorId || !state[errorId]) {
+selectors.errorHttpDocStatus = (state, reqAndResKey) => {
+  if (!state || !reqAndResKey || !state[reqAndResKey]) {
     return;
   }
 
-  return state[errorId].status;
+  return state[reqAndResKey].status;
 };
 
-selectors.errorHttpDoc = (state, errorId) => {
-  if (!state || !errorId || !state[errorId]) {
+selectors.errorHttpDoc = (state, reqAndResKey, isRequest = false) => {
+  if (!state || !reqAndResKey || !state[reqAndResKey]?.data) {
     return;
   }
 
-  return state[errorId].data;
+  return state[reqAndResKey].data[isRequest ? 'request' : 'response'];
+};
+
+selectors.errorHttpDocError = (state, reqAndResKey) => {
+  if (!state || !reqAndResKey || !state[reqAndResKey]) {
+    return;
+  }
+
+  return state[reqAndResKey].error;
 };
 
 selectors.isBlobRequest = (state, errorId) =>
