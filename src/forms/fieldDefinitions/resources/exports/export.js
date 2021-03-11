@@ -115,6 +115,12 @@ export default {
     // enableEditorV2: true,
     showLookup: false,
   },
+  traceKeyTemplate: {
+    id: 'traceKeyTemplate',
+    type: 'uri',
+    label: 'Tracekey template',
+    visible: r => !(r?.isLookup),
+  },
   oneToMany: {
     type: 'radiogroup',
     label: 'One to many',
