@@ -727,7 +727,15 @@ export default {
   'connection.rest.tokenLocation':
     "Use this field to specify where in the HTTP request the API token should be located.  If both 'URL Parameter' and 'Header' are supported by the REST API then 'Header' is the preferred option because HTTP header data is slightly less likely to end up in an access log file (i.e. in the REST API's server logs).",
   'connection.configureTokenRefresh':
-    'If your token is going to expire, you set up automatic refresh though integrator.io. You’ll need to get some info from the API documentation for the app or system that you’re working with for refresh token paths and any custom headers for the token request.',
+    'Check this box if your token expires after a period of time. A series of new fields will appear in the form.',
+  'connection.http.auth.token.refreshMediaType':
+    'Choose the media type for the refresh token request body.',
+  'connection.http.auth.cookie.method':
+    'Select GET or POST for the session cookie request.',
+  'connection.http.auth.cookie.uri':
+    'Provide the URI where the session cookie is obtained.',
+  'connection.http.auth.cookie.successStatusCode':
+    'Specify the server’s status code if it is not a standard 2xx code for successful requests.',
   'connection.rest.tokenParam':
     "Use this field to specify the name of the URL parameter that will hold the API token value.  For example, if you specify 'myAPITokenURLParam' then all HTTP requests will include the following: '?myAPITokenURLParam=bearerToken'.",
   'connection.rest.refreshTokenURI':
@@ -811,7 +819,8 @@ export default {
   'connection.http.auth.token.token':
     "The authentication token provided to you from the service provider. Some service providers use other names for this value such as 'bearer token', or 'secret key', etc.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your token safe. In some cases, a service may have a token request process, or tokens that expire after a given time. Use the refresh fields to instruct integrator.io on how to request and extract the token form the response.",
   'connection.http.auth.token.location': 'This determines where your application’s API expects to find the authentication token.</br>Choose URL if the authentication token is located in the URL. You can then specify the query string parameter name that holds the token value.</br> Choose Header and specify the header name and authentication scheme to use when constructing the HTTP request. </br>Choose Body if your API requires the token to be embedded in the body structure of your HTTP request. In such cases, place the token in your body template using the placeholder: {connection.http.token.token}.',
-  'connection.http.auth.token.headerName': 'By default, integrator.io sends all authentication type info in the authorization HTTP header field. If the API you are connecting to requires a different HTTP header, use this field to provide an override.',
+  'connection.http.auth.oauth.headerName': 'By default, integrator.io sends all authentication type info in the authorization HTTP header field. If the API you are connecting to requires a different HTTP header, use this field to provide an override.',
+  'connection.http.auth.wsse.headerName': 'Provide “header name”, where the hash token generated needs to be added in the request headers. By default, the name is going to be <b>X-WSSE</b>.',
   'connection.http.auth.token.scheme': 'By default, integrator.io follows the HTTP specs for authentication scheme names (for example: Bearer, OAuth, MAC). If the API you are connecting to doesn\'t follow the specs exactly, use this field to provide an override.',
   'connection.http.auth.token.paramName': 'Use this field to specify the name of the URL parameter that holds the API token value. For example, if you specify myAPITokenURLParam, then all HTTP requests will include ?myAPITokenURLParam=[token]',
   'connection.http.auth.token.refreshMethod':
