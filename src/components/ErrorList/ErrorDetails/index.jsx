@@ -42,14 +42,17 @@ function TabPanel({ children, value, type }) {
   const classes = useStyles();
   const hidden = value !== type;
 
+  if (hidden) {
+    return null;
+  }
+
   return (
     <div
       role="tabpanel"
       className={classes.tabContent}
-      hidden={hidden}
       id={type}
       aria-labelledby={type}>
-      {!hidden && children}
+      {children}
     </div>
   );
 }
