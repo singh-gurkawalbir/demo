@@ -53,14 +53,11 @@ export default {
       fieldId: 'rdbms.once.query',
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
-    pageSize: { fieldId: 'pageSize' },
-    dataURITemplate: { fieldId: 'dataURITemplate' },
-    skipRetries: { fieldId: 'skipRetries' },
     exportOneToMany: { formId: 'exportOneToMany' },
-    apiIdentifier: { fieldId: 'apiIdentifier' },
     traceKeyTemplate: {
       fieldId: 'traceKeyTemplate',
     },
+    advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
     type: 'collapse',
@@ -79,7 +76,7 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['pageSize', 'dataURITemplate', 'skipRetries', 'apiIdentifier', 'traceKeyTemplate'],
+        fields: ['advancedSettings', 'traceKeyTemplate'],
       },
     ],
   },

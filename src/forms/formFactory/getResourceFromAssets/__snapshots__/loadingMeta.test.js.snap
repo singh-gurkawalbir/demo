@@ -3302,11 +3302,11 @@ Object {
   "fieldMeta": Object {
     "actions": undefined,
     "fieldMap": Object {
+      "advancedSettings": Object {
+        "formId": "advancedSettings",
+      },
       "common": Object {
         "formId": "common",
-      },
-      "dataURITemplate": Object {
-        "fieldId": "dataURITemplate",
       },
       "delta.dateField": Object {
         "fieldId": "delta.dateField",
@@ -3372,9 +3372,6 @@ Object {
       },
       "settings": Object {
         "fieldId": "settings",
-      },
-      "skipRetries": Object {
-        "fieldId": "skipRetries",
       },
       "traceKeyTemplate": Object {
         "fieldId": "traceKeyTemplate",
@@ -3448,8 +3445,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "dataURITemplate",
-                "skipRetries",
+                "advancedSettings",
                 "traceKeyTemplate",
               ],
               "label": "Advanced",
@@ -7694,20 +7690,14 @@ Object {
   "fieldMeta": Object {
     "actions": undefined,
     "fieldMap": Object {
-      "apiIdentifier": Object {
-        "fieldId": "apiIdentifier",
+      "advancedSettings": Object {
+        "formId": "advancedSettings",
       },
       "common": Object {
         "formId": "common",
       },
-      "dataURITemplate": Object {
-        "fieldId": "dataURITemplate",
-      },
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
-      },
-      "pageSize": Object {
-        "fieldId": "pageSize",
       },
       "rdbms.once.query": Object {
         "fieldId": "rdbms.once.query",
@@ -7725,9 +7715,6 @@ Object {
       },
       "settings": Object {
         "fieldId": "settings",
-      },
-      "skipRetries": Object {
-        "fieldId": "skipRetries",
       },
       "traceKeyTemplate": Object {
         "fieldId": "traceKeyTemplate",
@@ -7792,10 +7779,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "pageSize",
-                "dataURITemplate",
-                "skipRetries",
-                "apiIdentifier",
+                "advancedSettings",
                 "traceKeyTemplate",
               ],
               "label": "Advanced",
@@ -7823,20 +7807,14 @@ Object {
   "fieldMeta": Object {
     "actions": undefined,
     "fieldMap": Object {
-      "apiIdentifier": Object {
-        "fieldId": "apiIdentifier",
+      "advancedSettings": Object {
+        "formId": "advancedSettings",
       },
       "common": Object {
         "formId": "common",
       },
-      "dataURITemplate": Object {
-        "fieldId": "dataURITemplate",
-      },
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
-      },
-      "pageSize": Object {
-        "fieldId": "pageSize",
       },
       "rdbms.once.query": Object {
         "fieldId": "rdbms.once.query",
@@ -7854,9 +7832,6 @@ Object {
       },
       "settings": Object {
         "fieldId": "settings",
-      },
-      "skipRetries": Object {
-        "fieldId": "skipRetries",
       },
       "traceKeyTemplate": Object {
         "fieldId": "traceKeyTemplate",
@@ -7921,10 +7896,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "pageSize",
-                "dataURITemplate",
-                "skipRetries",
-                "apiIdentifier",
+                "advancedSettings",
                 "traceKeyTemplate",
               ],
               "label": "Advanced",
