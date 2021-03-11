@@ -1112,9 +1112,50 @@ describe('Accounts region selector testcases', () => {
           },
         },
         user: {
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+          org: {
+            accounts: [
+              {
+                _id: ACCOUNT_IDS.OWN,
+                accessLevel: 'owner',
+              },
+            ],
+          },
           profile: {
             developer: true,
             allowedToPublish: true,
+          },
+        },
+      };
+
+      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toEqual(true);
+    });
+
+    test('should return true for admin with account of IA publisher with developer mode on', () => {
+      const state = {
+        data: {
+          resources: {
+            exports: [{_id: 'res-123', _connectorId: 'connId'}],
+          },
+        },
+        user: {
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                _id: 'ashare1',
+                accessLevel: 'administrator',
+                ownerUser: {
+                  email: 'owner@test.com',
+                  allowedToPublish: true,
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+          profile: {
+            developer: true,
+            allowedToPublish: false,
           },
         },
       };

@@ -113,7 +113,17 @@ export default {
   requestBody: editor => {
     const { data, rule, context, activeProcessor } = editor;
     const {code, entryFunction} = rule.script || {};
-    let parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+    let parsedData;
+
+    if (typeof data === 'string') {
+      try {
+        parsedData = JSON.parse(data);
+      } catch (e) {
+        parsedData = {};
+      }
+    } else {
+      parsedData = data;
+    }
 
     if (activeProcessor === 'json') {
       parsedData = {
