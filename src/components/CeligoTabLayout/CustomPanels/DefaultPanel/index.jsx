@@ -20,6 +20,10 @@ const useStyles = makeStyles(theme => ({
 export default function DefaultPanel({ value, hideClipboard = false, height }) {
   const classes = useStyles({ height });
 
+  if (!value) {
+    return null;
+  }
+
   return (
     <>
       <div className={classes.defaultPanelContainer}>
@@ -30,7 +34,7 @@ export default function DefaultPanel({ value, hideClipboard = false, height }) {
           showGutter={false}
             />
       </div>
-      { !hideClipboard && value && <ClipboardPanel content={value} /> }
+      { !hideClipboard && <ClipboardPanel content={value} /> }
     </>
   );
 }
