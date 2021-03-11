@@ -24,11 +24,13 @@ export default function CreateScriptDialog({ onClose, onSave, scriptId }) {
   });
 
   return (
-    <ModalDialog show onClose={onClose}>
+    <ModalDialog show onClose={onClose} minWidth="sm">
       <div>Create script</div>
       <div>
         <DynaForm
           formKey={formKey} />
+      </div>
+      <div>
         <DynaSubmit
           formKey={formKey}
           data-test="saveScript"

@@ -290,6 +290,10 @@ export function fieldMeta({ resource, assistantData }) {
     fieldId: 'settings',
   };
 
+  fieldMap.traceKeyTemplate = {
+    fieldId: 'traceKeyTemplate',
+  };
+
   return {
     fieldMap,
     layout: {
@@ -313,7 +317,7 @@ export function fieldMeta({ resource, assistantData }) {
         {
           collapsed: true,
           label: 'Advanced',
-          fields: ['pageSize', 'skipRetries', 'apiIdentifier'],
+          fields: ['pageSize', 'skipRetries', 'apiIdentifier', 'traceKeyTemplate'],
         },
       ],
     },

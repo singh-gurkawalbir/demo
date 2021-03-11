@@ -105,6 +105,9 @@ export default {
       ],
     },
     formView: { fieldId: 'formView' },
+    traceKeyTemplate: {
+      fieldId: 'traceKeyTemplate',
+    },
   },
   layout: {
     type: 'collapse',
@@ -146,7 +149,7 @@ export default {
         label: 'Non-standard API response patterns',
         fields: ['rest.resourcePath'],
       },
-      { collapsed: 'true', label: 'Advanced', fields: ['advancedSettings'] },
+      { collapsed: 'true', label: 'Advanced', fields: ['advancedSettings', 'traceKeyTemplate'] },
     ],
   },
 };

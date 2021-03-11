@@ -75,6 +75,9 @@ export default {
     },
     exportOneToMany: { formId: 'exportOneToMany' },
     advancedSettings: { formId: 'advancedSettings' },
+    traceKeyTemplate: {
+      fieldId: 'traceKeyTemplate',
+    },
   },
   layout: {
     type: 'collapse',
@@ -94,7 +97,7 @@ export default {
         label: 'Configure export type',
         fields: ['type', 'delta.dateField', 'once.booleanField'],
       },
-      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
+      { collapsed: true, label: 'Advanced', fields: ['advancedSettings', 'traceKeyTemplate'] },
     ],
   },
 };
