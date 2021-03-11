@@ -5,6 +5,7 @@ import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
+import { getMockHttpErrorDoc } from '../../../utils/errorManagement';
 
 export function* downloadRetryData({flowId, resourceId, retryDataKey}) {
   let response;
@@ -168,23 +169,7 @@ export function* requestErrorHttpDocument({ flowId, resourceId, reqAndResKey }) 
       },
     });
 
-    const MOCK_HTTP_BLOB_DOC = {
-      body: { test: 5, bodyKey: 'blob-1234' },
-      headers: { 'content-type': 'application/json' },
-      others: { status: 200 },
-    };
-    const MOCK_HTTP_DOC = {
-      body: { test: 5, users: [] },
-      headers: { 'content-type': 'application/json' },
-      others: { status: 200 },
-    };
-
-    const MOCK_HTTP_DOC_RESPONSE = {
-      request: MOCK_HTTP_BLOB_DOC,
-      response: MOCK_HTTP_DOC,
-    };
-
-    yield put(actions.errorManager.errorHttpDoc.received(reqAndResKey, MOCK_HTTP_DOC_RESPONSE || errorHttpDoc));
+    yield put(actions.errorManager.errorHttpDoc.received(reqAndResKey, getMockHttpErrorDoc() || errorHttpDoc));
   } catch (e) {
     // handle errors
     yield put(actions.errorManager.errorHttpDoc.error(reqAndResKey, e));

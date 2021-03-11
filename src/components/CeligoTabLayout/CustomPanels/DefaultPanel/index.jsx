@@ -30,7 +30,7 @@ export default function DefaultPanel({ value, hideClipboard = false, height }) {
           showGutter={false}
             />
       </div>
-      { !hideClipboard && <ClipboardPanel content={value} /> }
+      { !hideClipboard && value && <ClipboardPanel content={value} /> }
     </>
   );
 }

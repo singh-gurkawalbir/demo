@@ -56,9 +56,7 @@ export default function RequestResponsePanel({ value = {}, hideClipboard = false
           />
         )
       </Tabs>
-      { value[tabValue] && (
-        <DefaultPanel value={value[tabValue]} hideClipboard={hideClipboard} />
-      )}
+      <DefaultPanel value={value[tabValue]} hideClipboard={hideClipboard} />
     </div>
   );
 }
