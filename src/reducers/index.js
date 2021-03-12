@@ -2762,7 +2762,8 @@ selectors.formAccessLevel = (state, integrationId, resource, disabled) => {
 selectors.canEditSettingsForm = (state, resourceType, resourceId, integrationId) => {
   const r = selectors.resource(state, resourceType, resourceId);
   const isIAResource = !!r?._connectorId;
-  const {allowedToPublish, developer} = selectors.userProfile(state) || emptyObject;
+  const { developer } = selectors.userProfile(state) || emptyObject;
+  const allowedToPublish = selectors.canUserPublish(state);
   const viewOnly = selectors.isFormAMonitorLevelAccess(state, integrationId);
 
   // if the resource belongs to an IA and the user cannot publish, then
