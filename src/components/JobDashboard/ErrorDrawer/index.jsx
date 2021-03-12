@@ -9,7 +9,6 @@ import DrawerContent from '../../drawer/Right/DrawerContent';
 import JobErrorTable from '../JobErrorTable';
 import Spinner from '../../Spinner';
 import RetryDrawer from '../RetryDrawer';
-import SpinnerWrapper from '../../SpinnerWrapper';
 import { JOB_STATUS } from '../../../utils/constants';
 
 const useStyles = makeStyles({
@@ -116,9 +115,7 @@ export default function ErrorDrawer({
       <DrawerContent>
         <div className={classes.wrapperErrorDrawer}>
           {(!flowJobChildrenLoaded || anyChildJobsAreInProgress) && (
-            <SpinnerWrapper>
-              <Spinner /> <span>{anyChildJobsAreInProgress ? 'Child jobs are still in progress and the errors will be shown as soon as the child jobs are completed.' : 'Loading child jobs...'}</span>
-            </SpinnerWrapper>
+          <Spinner centerAll message={<span>{anyChildJobsAreInProgress ? 'Child jobs are still in progress and the errors will be shown as soon as the child jobs are completed.' : 'Loading child jobs...'}</span>} />
           )}
           {(flowJobChildrenLoaded && !anyChildJobsAreInProgress && !jobWithErrors) && (
             <span>No jobs with errors</span>

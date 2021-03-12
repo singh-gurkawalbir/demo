@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../reducers';
 import Spinner from '../Spinner';
-import SpinnerWrapper from '../SpinnerWrapper';
 import actions from '../../actions';
 import DrawerContent from '../drawer/Right/DrawerContent';
 import DrawerFooter from '../drawer/Right/DrawerFooter';
@@ -121,9 +120,7 @@ export default function ResponseMappingWrapper({integrationId}) {
   }
   if (mappingStatus !== 'received') {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+      <Spinner centerALl />
     );
   }
 

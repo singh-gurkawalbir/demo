@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import Spinner from '../../../components/Spinner';
-import SpinnerWrapper from '../../../components/SpinnerWrapper';
 import DrawerContent from '../../../components/drawer/Right/DrawerContent';
 import TopPanel from './TopPanel';
 import DragContainer from './DragContainer';
@@ -98,9 +97,7 @@ export default function SuiteScriptMappingWrapper(props) {
   }
   if (mappingStatus !== 'received') {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+      <Spinner centerAll />
     );
   }
 
