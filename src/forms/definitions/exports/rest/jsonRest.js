@@ -247,6 +247,9 @@ export default {
       ],
     },
     formView: { fieldId: 'formView' },
+    traceKeyTemplate: {
+      fieldId: 'traceKeyTemplate',
+    },
   },
   layout: {
     type: 'collapse',
@@ -311,7 +314,7 @@ export default {
       {
         collapsed: 'true',
         label: 'Advanced',
-        fields: ['advancedSettings'],
+        fields: ['advancedSettings', 'traceKeyTemplate'],
       },
     ],
   },

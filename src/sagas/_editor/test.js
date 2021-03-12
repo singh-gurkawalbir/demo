@@ -777,7 +777,7 @@ describe('editor sagas', () => {
         .returns({})
         .run();
     });
-    test('should call requestExportSampleData if preview stage data is required', () => {
+    test('should call requestExportSampleData and get preview stage data for dataURITemplate field', () => {
       const editor = {
         id: 'dataURITemplate',
         editorType: 'handlebars',
@@ -791,6 +791,29 @@ describe('editor sagas', () => {
       return expectSaga(requestEditorSampleData, { id: 'dataURITemplate' })
         .provide([
           [select(selectors._editor, 'dataURITemplate'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.call.fn(requestExportSampleData)],
+          [matchers.call.fn(requestSampleData), {}],
+          [matchers.call.fn(apiCallWithRetry), {}],
+        ])
+        .call(requestExportSampleData, { resourceId, resourceType: 'exports', values: undefined })
+        .returns({data: undefined, templateVersion: undefined})
+        .run();
+    });
+    test('should call requestExportSampleData and get preview stage data for traceKeyTemplate field', () => {
+      const editor = {
+        id: 'traceKeyTemplate',
+        editorType: 'handlebars',
+        flowId,
+        resourceType: 'exports',
+        resourceId,
+        fieldId: 'traceKeyTemplate',
+        formKey: 'new-123',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'traceKeyTemplate' })
+        .provide([
+          [select(selectors._editor, 'traceKeyTemplate'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
           [matchers.call.fn(requestExportSampleData)],
           [matchers.call.fn(requestSampleData), {}],
