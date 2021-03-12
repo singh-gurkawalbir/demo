@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 const useStyles = makeStyles(theme => ({
   center: {
     textAlign: 'center',
-    background: 'blue',
   },
   spinnerWrapper: {
     display: 'flex',
