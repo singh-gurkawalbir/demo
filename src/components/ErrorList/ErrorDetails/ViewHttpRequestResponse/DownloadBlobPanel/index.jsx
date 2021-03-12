@@ -7,7 +7,7 @@ import actions from '../../../../../actions';
 const useStyles = makeStyles(() => ({
   container: {
     display: 'flex',
-    height: '100%',
+    flexGrow: 1,
     '&>button': {
       margin: 'auto',
     },

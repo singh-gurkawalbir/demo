@@ -1,7 +1,11 @@
 import { isJsonString } from '../../../../utils/string';
 
 export const getContentType = payload => {
-  const applicationType = payload.headers['content-type'];
+  const applicationType = payload.headers?.['content-type'];
+
+  if (!applicationType) {
+    return;
+  }
 
   if (applicationType.includes('json') || isJsonString(payload.body)) {
     return 'json';

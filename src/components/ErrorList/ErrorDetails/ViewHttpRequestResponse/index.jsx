@@ -23,8 +23,10 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.error.main,
   },
   container: {
-    height: '95%',
     margin: theme.spacing(2),
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1,
   },
 }));
 

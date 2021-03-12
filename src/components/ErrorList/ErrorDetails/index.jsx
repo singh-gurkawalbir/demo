@@ -19,9 +19,12 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: 'white',
     border: `1px solid ${theme.palette.secondary.lightest}`,
     color: theme.palette.text.hint,
+    display: 'flex',
+    flexDirection: 'column',
   },
   tabContent: {
-    height: 'calc(100% - 54px)',
+    flexGrow: 1,
+    display: 'flex',
     borderTop: 'none',
     borderBottom: 'none',
   },
