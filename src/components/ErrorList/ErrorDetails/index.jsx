@@ -25,6 +25,7 @@ const useStyles = makeStyles(theme => ({
   tabContent: {
     flexGrow: 1,
     display: 'flex',
+    flexDirection: 'column',
     borderTop: 'none',
     borderBottom: 'none',
   },
