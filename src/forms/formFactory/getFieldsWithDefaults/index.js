@@ -34,9 +34,10 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
   // there is no point supporting visibleWhen ....which is an 'OR' condition of visible rules..
   // if it is true here it doesn't matter with the subform rule here
   // we give the subform the maximum precedence in deciding its visibility
+  // we support only visibleWhenAll rule
   if (f.visibleWhen || f.visible) {
     throw new Error(
-      'Incorrect rule, cannot support a visibleWhen rule'
+      'Incorrect rule, cannot support a visibleWhen rule or visible defaultState rule'
     );
   }
 
@@ -49,17 +50,8 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
 
       field = { ...masterFields, ...field };
 
-      // //  subform fields cannot have visibleWhen conditions...
-      // if (field.visibleWhen) {
-      //   throw new Error(
-      //     'Incorrect rule, subform fields cannot have visibleWhen rule', field.id
-      //   );
-      // }
       const fieldCopy = produce(field, draft => {
-        if (f.visibleWhen) {
-          draft.visibleWhen = draft.visibleWhen || [];
-          draft.visibleWhen.push(...f.visibleWhen);
-        } else if (f.visibleWhenAll) {
+        if (f.visibleWhenAll) {
           draft.visibleWhenAll = draft.visibleWhenAll || [];
 
           draft.visibleWhenAll.push(...f.visibleWhenAll);
