@@ -7,10 +7,8 @@ const useStyles = makeStyles(theme => ({
   defaultPanelContainer: {
     flexGrow: 1,
     marginTop: theme.spacing(2),
-    position: 'relative',
     backgroundColor: theme.palette.background.paper,
     overflow: 'auto',
-    color: theme.palette.text.primary,
     '& > div': {
       wordBreak: 'break-word',
     },

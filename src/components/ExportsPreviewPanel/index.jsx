@@ -16,10 +16,8 @@ const useStyles = makeStyles(theme => ({
   container: {
     background: theme.palette.common.white,
     padding: theme.spacing(2),
-    width: '100%',
     height: `calc(100vh - ${200}px)`,
     overflowY: 'auto',
-    float: 'left',
     display: 'flex',
     flexDirection: 'column',
   },
