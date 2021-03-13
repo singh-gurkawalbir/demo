@@ -15,7 +15,7 @@ export const getContentType = payload => {
   }
 };
 
-export const getHttpReqResFields = (payload, variant = false) => {
+export const getHttpReqResFields = (payload, variant = 'basic') => {
   const { headers, body: reqResBody, url, ...otherPayloadDetails} = payload || {};
   let formattedBody = reqResBody;
 
