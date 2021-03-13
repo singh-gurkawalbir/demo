@@ -262,7 +262,7 @@ export default {
       // };
     }
 
-    if (scriptId) {
+    if (scriptId && activeProcessor === 'script') {
       value.init = {
         function: entryFunction,
         _scriptId: scriptId,
