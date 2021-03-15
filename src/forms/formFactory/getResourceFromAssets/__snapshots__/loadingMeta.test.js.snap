@@ -131,6 +131,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "fileAdvanced": Object {
+        "formId": "fileAdvanced",
+      },
       "http._iClientId": Object {
         "connectionId": [Function],
         "connectorId": [Function],
@@ -198,6 +201,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "fileAdvanced",
                 "httpAdvanced",
               ],
               "label": "Advanced",
@@ -718,6 +722,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "fileAdvanced": Object {
+        "formId": "fileAdvanced",
+      },
       "ftp.authKey": Object {
         "fieldId": "ftp.authKey",
         "visibleWhen": Array [
@@ -741,60 +748,6 @@ Object {
       },
       "ftp.password": Object {
         "fieldId": "ftp.password",
-      },
-      "ftp.pgpDecryptKey": Object {
-        "fieldId": "ftp.pgpDecryptKey",
-        "omitWhenHidden": true,
-        "visibleWhen": Array [
-          Object {
-            "field": "ftp.usePgp",
-            "is": Array [
-              true,
-            ],
-          },
-        ],
-      },
-      "ftp.pgpEncryptKey": Object {
-        "fieldId": "ftp.pgpEncryptKey",
-        "omitWhenHidden": true,
-        "visibleWhen": Array [
-          Object {
-            "field": "ftp.usePgp",
-            "is": Array [
-              true,
-            ],
-          },
-        ],
-      },
-      "ftp.pgpKeyAlgorithm": Object {
-        "fieldId": "ftp.pgpKeyAlgorithm",
-        "omitWhenHidden": true,
-        "visibleWhenAll": Array [
-          Object {
-            "field": "ftp.useCustomPGPEncryptionAlgorithm",
-            "is": Array [
-              true,
-            ],
-          },
-          Object {
-            "field": "ftp.usePgp",
-            "is": Array [
-              true,
-            ],
-          },
-        ],
-      },
-      "ftp.pgpPassphrase": Object {
-        "fieldId": "ftp.pgpPassphrase",
-        "omitWhenHidden": true,
-        "visibleWhen": Array [
-          Object {
-            "field": "ftp.usePgp",
-            "is": Array [
-              true,
-            ],
-          },
-        ],
       },
       "ftp.port": Object {
         "fieldId": "ftp.port",
@@ -823,20 +776,6 @@ Object {
       "ftp.type": Object {
         "fieldId": "ftp.type",
       },
-      "ftp.useCustomPGPEncryptionAlgorithm": Object {
-        "defaultValue": [Function],
-        "id": "ftp.useCustomPGPEncryptionAlgorithm",
-        "label": "Use custom PGP encryption algorithm",
-        "type": "checkbox",
-        "visibleWhen": Array [
-          Object {
-            "field": "ftp.usePgp",
-            "is": Array [
-              true,
-            ],
-          },
-        ],
-      },
       "ftp.useImplicitFtps": Object {
         "fieldId": "ftp.useImplicitFtps",
         "visibleWhen": Array [
@@ -859,9 +798,6 @@ Object {
             ],
           },
         ],
-      },
-      "ftp.usePgp": Object {
-        "fieldId": "ftp.usePgp",
       },
       "ftp.userDirectoryIsRoot": Object {
         "fieldId": "ftp.userDirectoryIsRoot",
@@ -908,12 +844,7 @@ Object {
                 "ftp.userDirectoryIsRoot",
                 "ftp.entryParser",
                 "ftp.requireSocketReUse",
-                "ftp.usePgp",
-                "ftp.pgpEncryptKey",
-                "ftp.pgpDecryptKey",
-                "ftp.pgpPassphrase",
-                "ftp.useCustomPGPEncryptionAlgorithm",
-                "ftp.pgpKeyAlgorithm",
+                "fileAdvanced",
                 "ftp.concurrencyLevel",
               ],
               "label": "Advanced",
@@ -1476,6 +1407,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "fileAdvanced": Object {
+        "formId": "fileAdvanced",
+      },
       "name": Object {
         "fieldId": "name",
       },
@@ -1514,6 +1448,13 @@ Object {
                 "s3.pingBucket",
               ],
               "label": "Application details",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "fileAdvanced",
+              ],
+              "label": "Advanced",
             },
           ],
           "type": "collapse",
@@ -3646,6 +3587,9 @@ Object {
         "disabledWhenAll": [Function],
         "fieldId": "file.xlsx.rowsPerRecord",
       },
+      "fileAdvanced": Object {
+        "formId": "fileAdvanced",
+      },
       "fileMetadata": Object {
         "defaultValue": [Function],
         "id": "fileMetadata",
@@ -3806,6 +3750,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "fileAdvanced",
                 "file.decompressFiles",
                 "file.compressionFormat",
                 "file.skipDelete",
@@ -5390,6 +5335,9 @@ Object {
         "disabledWhenAll": [Function],
         "fieldId": "file.xlsx.rowsPerRecord",
       },
+      "fileAdvanced": Object {
+        "formId": "fileAdvanced",
+      },
       "fileMetadata": Object {
         "defaultValue": [Function],
         "id": "fileMetadata",
@@ -5551,6 +5499,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "fileAdvanced",
                 "file.decompressFiles",
                 "file.compressionFormat",
                 "file.skipDelete",
@@ -8424,6 +8373,9 @@ Object {
           },
         ],
       },
+      "fileAdvanced": Object {
+        "formId": "fileAdvanced",
+      },
       "fileAdvancedSettings": Object {
         "formId": "fileAdvancedSettings",
         "visibleWhenAll": Array [
@@ -8558,6 +8510,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "fileAdvanced",
                 "ftp.useTempFile",
                 "ftp.inProgressFileName",
                 "ftp.blobUseTempFile",
@@ -10570,6 +10523,9 @@ Object {
           },
         ],
       },
+      "fileAdvanced": Object {
+        "formId": "fileAdvanced",
+      },
       "fileAdvancedSettings": Object {
         "formId": "fileAdvancedSettings",
         "visibleWhenAll": Array [
@@ -10704,6 +10660,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "fileAdvanced",
                 "file.backupPath",
                 "file.encoding",
                 "blobKeyPath",

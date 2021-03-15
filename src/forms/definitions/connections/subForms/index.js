@@ -10,6 +10,7 @@ import rdbmsAdvanced from './rdbmsAdvanced';
 import wrapperAdvanced from './wrapperAdvanced';
 import httpCookie from './httpCookie';
 import genericOauthConnector from './genericOauthConnector';
+import fileAdvanced from './fileAdvanced';
 
 export default {
   genericOauthConnector,
@@ -24,4 +25,5 @@ export default {
   rdbmsFields,
   rdbmsAdvanced,
   wrapperAdvanced,
+  fileAdvanced,
 };
