@@ -2700,7 +2700,8 @@ selectors.formAccessLevel = (state, integrationId, resource, disabled) => {
 selectors.canEditSettingsForm = (state, resourceType, resourceId, integrationId) => {
   const r = selectors.resource(state, resourceType, resourceId);
   const isIAResource = !!r?._connectorId;
-  const {allowedToPublish, developer} = selectors.userProfile(state) || emptyObject;
+  const { developer } = selectors.userProfile(state) || emptyObject;
+  const allowedToPublish = selectors.canUserPublish(state);
   const viewOnly = selectors.isFormAMonitorLevelAccess(state, integrationId);
 
   // if the resource belongs to an IA and the user cannot publish, then
@@ -4013,20 +4014,6 @@ selectors.applicationType = (state, resourceType, id) => {
   }
 
   return assistant || adaptorType;
-};
-
-selectors.tradingPartnerConnections = (
-  state,
-  connectionId,
-) => {
-  const connections = selectors.resourceList(state, { type: 'connections' }).resources;
-  const currConnection = selectors.resource(state, 'connections', connectionId);
-
-  return connections?.filter(c => (c.type === 'ftp' &&
-      c.ftp.hostURI === currConnection.ftp.hostURI &&
-      c.ftp.port === currConnection.ftp.port &&
-      c.sandbox === currConnection.sandbox
-  ));
 };
 
 selectors.mappingGenerates = createSelector([
