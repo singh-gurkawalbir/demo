@@ -1,5 +1,6 @@
 import React from 'react';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
+import Delete from '../commonActions/Delete';
 import AuditLogs from '../commonActions/AuditLogs';
 import Reactivate from './actions/Reactivate';
 import Revoke from './actions/Revoke';
@@ -54,6 +55,7 @@ export default {
   ],
   rowActions: r => {
     let actionItems = [];
+    const isOTT = r._connectorId && !r.autoPurgeAt;
 
     if (r.revoked) {
       actionItems = [AuditLogs, Reactivate, Regenerate];
@@ -61,6 +63,9 @@ export default {
       actionItems = [AuditLogs, Revoke, Regenerate];
     }
 
+    if (!isOTT) {
+      actionItems.push(Delete);
+    }
     actionItems = [Edit, ...actionItems];
 
     return actionItems;
