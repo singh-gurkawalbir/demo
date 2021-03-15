@@ -513,6 +513,9 @@ export default {
       fieldId: 'netsuite.blob.purgeFileAfterExport',
       visibleWhenAll: [{ field: 'outputMode', is: ['blob'] }],
     },
+    traceKeyTemplate: {
+      fieldId: 'traceKeyTemplate',
+    },
   },
   layout: {
     type: 'collapse',
@@ -595,6 +598,7 @@ export default {
               'netsuite.restlet.batchSize',
               'skipRetries',
               'apiIdentifier',
+              'traceKeyTemplate',
             ],
           },
         ],
