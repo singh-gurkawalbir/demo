@@ -180,9 +180,6 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   }
 
   const handleConnectionDownStatusClick = useCallback(event => {
-    if (expired) {
-      return;
-    }
     event.stopPropagation();
     if (tile._connectorId) {
       history.push(
@@ -197,13 +194,10 @@ function Tile({ tile, history, onMove, onDrop, index }) {
         )
       );
     }
-  }, [expired, history, integrationAppTileName, tile._connectorId, tile._integrationId]);
+  }, [history, integrationAppTileName, tile._connectorId, tile._integrationId]);
 
   const handleStatusClick = useCallback(
     event => {
-      if (expired) {
-        return;
-      }
       if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         event.stopPropagation();
         if (tile._connectorId) {
@@ -240,27 +234,21 @@ function Tile({ tile, history, onMove, onDrop, index }) {
         }
       }
     },
-    [expired, tile.status, tile._connectorId, tile._integrationId, isUserInErrMgtTwoDotZero, history, isCloned, integrationAppTileName, dispatch, status.variant]
+    [tile.status, tile._connectorId, tile._integrationId, isUserInErrMgtTwoDotZero, history, isCloned, integrationAppTileName, dispatch, status.variant]
   );
 
   const handleUsersClick = useCallback(event => {
-    if (expired) {
-      return;
-    }
     event.stopPropagation();
     history.push(getRoutePath(urlToIntegrationUsers));
-  }, [expired, history, urlToIntegrationUsers]);
+  }, [history, urlToIntegrationUsers]);
 
   const handleTileClick = useCallback(
     event => {
-      if (expired) {
-        return;
-      }
       event.stopPropagation();
 
       history.push(getRoutePath(urlToIntegrationSettings));
     },
-    [expired, history, urlToIntegrationSettings]
+    [history, urlToIntegrationSettings]
   );
 
   // #region Drag&Drop related
