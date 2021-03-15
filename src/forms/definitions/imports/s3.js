@@ -1,4 +1,4 @@
-import { IMPORT_FILE_FIELD_MAP } from '../../../utils/fileUtil';
+import { IMPORT_FILE_FIELD_MAP } from '../../metaDataUtils/fileUtil';
 
 export default {
   preSave: formValues => {
@@ -90,6 +90,15 @@ export default {
 
     newValues['/s3/fileKey'] = undefined;
     newValues['/s3/backupBucket'] = undefined;
+    if (!newValues['/file/encrypt']) {
+      newValues['/file/encrypt'] = undefined;
+    }
+    if (!newValues['/file/pgp/symmetricKeyAlgorithm']) {
+      newValues['/file/pgp/symmetricKeyAlgorithm'] = undefined;
+    }
+    if (!newValues['/file/pgp/hashAlgorithm']) {
+      newValues['/file/pgp/hashAlgorithm'] = undefined;
+    }
 
     return {
       ...newValues,
@@ -153,6 +162,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
+          'fileAdvanced',
           'file.backupPath',
           'file.encoding',
           'blobKeyPath',
