@@ -167,6 +167,7 @@ export function* requestErrorHttpDocument({ flowId, resourceId, reqAndResKey }) 
       opts: {
         method: 'GET',
       },
+      hidden: true,
     });
 
     yield put(actions.errorManager.errorHttpDoc.received(reqAndResKey, getMockHttpErrorDoc() || errorHttpDoc));

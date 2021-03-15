@@ -5,8 +5,17 @@ import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
 import actions from '../../../actions';
 import { apiCallWithRetry } from '../../index';
-import { updateRetryData, _requestRetryStatus, requestRetryData, requestFilterMetadata } from './index';
+import {
+  updateRetryData,
+  _requestRetryStatus,
+  requestRetryData,
+  requestFilterMetadata,
+  requestErrorHttpDocument,
+  downloadBlobDocument,
+} from './index';
 import { selectors } from '../../../reducers';
+import { getMockHttpErrorDoc } from '../../../utils/errorManagement';
+import openExternalUrl from '../../../utils/window';
 
 const flowId = 'flow-123';
 const resourceId = 'id-123';
@@ -305,6 +314,75 @@ describe('EM2.0 metadata sagas', () => {
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
         .not.put(actions.errorManager.filterMetadata.received(undefined))
+        .run();
+    });
+  });
+  describe('requestErrorHttpDocument saga', () => {
+    const reqAndResKey = 'key-123';
+
+    test('should invoke api to get http document and the response is dispatched as a received action on success', () => {
+      const mockResponse = getMockHttpErrorDoc();
+
+      return expectSaga(requestErrorHttpDocument, { flowId, resourceId, reqAndResKey })
+        .provide([
+          [call(apiCallWithRetry, {
+            path: `/flows/${flowId}/${resourceId}/requests/${reqAndResKey}`,
+            opts: {
+              method: 'GET',
+            },
+            hidden: true,
+          }), mockResponse],
+        ])
+        .put(actions.errorManager.errorHttpDoc.received(reqAndResKey, mockResponse))
+        .run();
+    });
+    test('should invoke api and dispatch error action on failure', () => {
+      const errorMessage = { message: 'S3 key is expired' };
+      const error = { status: 500, message: errorMessage};
+
+      return expectSaga(requestErrorHttpDocument, { flowId, resourceId, reqAndResKey })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), throwError(error)],
+        ])
+        .put(actions.errorManager.errorHttpDoc.error(reqAndResKey, error))
+        .run();
+    });
+  });
+  describe('downloadBlobDocument saga', () => {
+    const s3BlobKey = 'blob-123';
+
+    test('should make api call and do nothing if the response does not contain signedURL', () => expectSaga(downloadBlobDocument, { flowId, resourceId, s3BlobKey })
+      .provide([
+        [call(apiCallWithRetry, {
+          path: `/flows/${flowId}/${resourceId}/${s3BlobKey}/signedURL`,
+          opts: {
+            method: 'GET',
+          },
+          hidden: true,
+        }), {}],
+      ])
+      .not.call.fn(openExternalUrl)
+      .run());
+    test('should make api call and do nothing if the api call fails', () => expectSaga(downloadBlobDocument, { flowId, resourceId, s3BlobKey })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), throwError({ status: 500, message: 'invalid id'})],
+      ])
+      .not.call.fn(openExternalUrl)
+      .run());
+    test('should make api call and call openExternalURL with the signedURL from the response', () => {
+      const response = { signedURL: 'https://www.samplesignedurl.com/s3/asdfg'};
+
+      expectSaga(downloadBlobDocument, { flowId, resourceId, s3BlobKey })
+        .provide([
+          [call(apiCallWithRetry, {
+            path: `/flows/${flowId}/${resourceId}/${s3BlobKey}/signedURL`,
+            opts: {
+              method: 'GET',
+            },
+            hidden: true,
+          }), response],
+        ])
+        .call(openExternalUrl, { url: response.signedURL })
         .run();
     });
   });
