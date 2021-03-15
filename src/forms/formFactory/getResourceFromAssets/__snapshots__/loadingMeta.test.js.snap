@@ -12610,7 +12610,6 @@ Object {
             "_integrationId",
             "contactEmail",
             "websiteURL",
-            "editions",
             "_stackId",
             "installerFunction",
             "uninstallerFunction",

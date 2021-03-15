@@ -122,6 +122,7 @@ import DynaDateSelector from './DynaDateSelector';
 import DynaFileEncryptDecrypt from './DynaFileEncryptDecrypt';
 import DynaHashAlogorithm from './DynaHashAlogorithm';
 import DynaQueryRadioGroup from './radiogroup/DynaQueryRadioGroup';
+import DynaLicenseEdition from './DynaLicenseEdition';
 
 export default {
   suitescriptsettings: DynaRefreshableSettings,
@@ -270,4 +271,5 @@ export default {
   dateselector: DynaDateSelector,
   fileencryptdecrypt: DynaFileEncryptDecrypt,
   hashalgorithm: DynaHashAlogorithm,
+  licenseedition: DynaLicenseEdition,
 };

@@ -38,8 +38,9 @@ export default {
     disableText: r => !isNewId(r._id),
   },
   edition: {
-    type: 'text',
+    type: 'licenseedition',
     label: 'Edition',
+    connectorId: r => r?._connectorId,
   },
   childLicenses: {
     type: 'childlicenses',

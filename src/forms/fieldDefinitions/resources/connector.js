@@ -36,18 +36,6 @@ export default {
       },
     },
   },
-  editions: {
-    type: 'text',
-    label: 'Editions',
-    placeholder: 'Comma seperated values',
-    value: r => r?.twoDotZero?.editions,
-    visibleWhen: [
-      {
-        field: 'framework',
-        is: ['twoDotZero'],
-      },
-    ],
-  },
   framework: {
     type: 'text',
     label: 'Framework',
