@@ -5,7 +5,7 @@ import ViewDetailsIcon from '../../../icons/ViewDetailsIcon';
 export default {
   label: 'View HTTP request',
   icon: ViewDetailsIcon,
-  component: function ViewErrorDetails({ rowData = {} }) {
+  component: function ViewHttpRequest({ rowData = {} }) {
     const { errorId } = rowData;
     const history = useHistory();
     const match = useRouteMatch();
