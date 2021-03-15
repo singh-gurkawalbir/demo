@@ -179,6 +179,9 @@ export default {
     'file.encoding': { fieldId: 'file.encoding' },
     pageSize: { fieldId: 'pageSize' },
     dataURITemplate: { fieldId: 'dataURITemplate' },
+    traceKeyTemplate: {
+      fieldId: 'traceKeyTemplate',
+    },
   },
   layout: {
     type: 'collapse',
@@ -214,7 +217,7 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['file.encoding', 'pageSize', 'dataURITemplate'],
+        fields: ['file.encoding', 'pageSize', 'dataURITemplate', 'traceKeyTemplate'],
       },
     ],
   },

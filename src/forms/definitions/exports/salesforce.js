@@ -290,6 +290,9 @@ export default {
       formId: 'advancedSettings',
       visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
     },
+    traceKeyTemplate: {
+      fieldId: 'traceKeyTemplate',
+    },
   },
   layout: {
     type: 'collapse',
@@ -350,6 +353,7 @@ export default {
           'dataURITemplate',
           'skipRetries',
           'apiIdentifier',
+          'traceKeyTemplate',
         ],
       },
     ],

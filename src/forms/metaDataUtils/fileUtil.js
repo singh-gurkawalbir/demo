@@ -159,6 +159,9 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
       },
     ],
   },
+  traceKeyTemplate: {
+    fieldId: 'traceKeyTemplate',
+  },
   skipRetries: {
     fieldId: 'skipRetries',
   },
