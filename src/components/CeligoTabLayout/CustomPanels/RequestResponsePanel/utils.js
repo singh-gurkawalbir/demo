@@ -1,22 +1,27 @@
 import { isJsonString } from '../../../../utils/string';
 
-export const getContentType = payload => {
-  const applicationType = payload.headers?.['content-type'];
-
-  if (!applicationType) {
+export const getContentType = httpPayload => {
+  if (!httpPayload || !httpPayload.headers?.['content-type']) {
     return;
   }
+  const contentType = httpPayload.headers?.['content-type'];
 
-  if (applicationType.includes('json') || isJsonString(payload.body)) {
+  if (contentType.includes('json') || isJsonString(httpPayload.body)) {
     return 'json';
   }
-  if (applicationType.includes('xml')) {
+  if (contentType.includes('xml')) {
     return 'xml';
+  }
+  if (contentType.includes('csv')) {
+    return 'csv';
   }
 };
 
-export const getHttpReqResFields = (payload, variant = 'basic') => {
-  const { headers, body: reqResBody, url, ...otherPayloadDetails} = payload || {};
+export const getHttpReqResFields = (httpPayload, variant = 'basic') => {
+  if (!httpPayload) {
+    return {};
+  }
+  const { headers, body: reqResBody, url, ...otherPayloadDetails} = httpPayload;
   let formattedBody = reqResBody;
 
   if (isJsonString(reqResBody)) {
