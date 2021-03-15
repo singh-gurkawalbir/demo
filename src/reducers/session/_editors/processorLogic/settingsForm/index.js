@@ -112,8 +112,18 @@ export default {
   },
   requestBody: editor => {
     const { data, rule, context, activeProcessor } = editor;
-    const {code, entryFunction} = rule?.script || {};
-    let parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+    const {code, entryFunction} = rule.script || {};
+    let parsedData;
+
+    if (typeof data === 'string') {
+      try {
+        parsedData = JSON.parse(data);
+      } catch (e) {
+        parsedData = {};
+      }
+    } else {
+      parsedData = data;
+    }
 
     if (activeProcessor === 'json') {
       parsedData = {
@@ -252,7 +262,7 @@ export default {
       // };
     }
 
-    if (scriptId) {
+    if (scriptId && activeProcessor === 'script') {
       value.init = {
         function: entryFunction,
         _scriptId: scriptId,
