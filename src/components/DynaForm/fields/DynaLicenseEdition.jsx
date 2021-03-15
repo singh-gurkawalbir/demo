@@ -5,7 +5,9 @@ import { selectors } from '../../../reducers';
 
 export default function DynaLicenseEdition(props) {
   const { connectorId } = props;
-  const editions = useSelector(state => selectors.resource(state, 'connectors', connectorId)?.twoDotZero?.editions) || [];
+  const editions = useSelector(state => selectors.resource(state, 'connectors', connectorId)?.twoDotZero?.editions);
+
+  if (!editions) return null;
 
   const options = editions.map(edition => ({
     label: edition.displayName || edition._id,

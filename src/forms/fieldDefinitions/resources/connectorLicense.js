@@ -40,6 +40,7 @@ export default {
   _editionId: {
     type: 'licenseedition',
     label: 'Edition',
+    required: true,
     connectorId: r => r?._connectorId,
   },
   childLicenses: {
