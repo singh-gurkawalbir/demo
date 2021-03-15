@@ -70,7 +70,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
     selectors.resource(state, 'flows', flowId)?.disabled
   );
   const errorDoc = useSelector(state =>
-    selectors.resourceError(state, { flowId, resourceId, errorId })
+    selectors.resourceError(state, { flowId, resourceId, errorId, isResolved })
   );
 
   const { retryDataKey: retryId, reqAndResKey} = errorDoc || {};
