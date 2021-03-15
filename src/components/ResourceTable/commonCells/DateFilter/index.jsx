@@ -5,8 +5,7 @@ import { addDays, startOfDay } from 'date-fns';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import DateRangeSelector from '../../../DateRangeSelector';
-import ErrorFilterIcon from '../ErrorFilterIcon';
-import { FILTER_KEYS, ERROR_MANAGEMENT_RANGE_FILTERS } from '../../../../utils/errorManagement';
+import FilterIconWrapper from '../FilterIconWrapper';
 import { getSelectedRange } from '../../../../utils/flowMetrics';
 
 const useStyles = makeStyles({
@@ -32,19 +31,15 @@ const defaultRange = {
 };
 
 export default function SelectDate({
-  flowId,
-  resourceId,
-  isResolved,
   title = 'Timestamp',
   filterBy = 'occuredAt',
+  filterKey,
+  handleChange,
+  customPresets,
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
-  const filter = useSelector(state =>
-    selectors.filter(state, filterKey),
-  shallowEqual
-  );
+  const filter = useSelector(state => selectors.filter(state, filterKey), shallowEqual);
   const isDateFilterSelected = !!(filter[filterBy] && filter[filterBy].preset !== defaultRange.preset);
 
   const handleDateFilter = useCallback(
@@ -60,17 +55,11 @@ export default function SelectDate({
           },
         })
       );
-      dispatch(
-        actions.errorManager.flowErrorDetails.request({
-          flowId,
-          resourceId,
-          isResolved,
-        })
-      );
+      handleChange?.();
     },
-    [dispatch, flowId, resourceId, isResolved, filterKey, filterBy, filter],
+    [dispatch, filter, filterBy, filterKey, handleChange],
   );
-  const FilterIcon = () => <ErrorFilterIcon selected={isDateFilterSelected} />;
+  const FilterIcon = () => <FilterIconWrapper selected={isDateFilterSelected} />;
 
   const selectedDate = useMemo(() => isDateFilterSelected ? {
     startDate: new Date(filter[filterBy].startDate),
@@ -87,7 +76,7 @@ export default function SelectDate({
         onSave={handleDateFilter}
         Icon={FilterIcon}
         value={selectedDate}
-        customPresets={ERROR_MANAGEMENT_RANGE_FILTERS}
+        customPresets={customPresets}
         showTime={false}
          />
     </div>
