@@ -2112,7 +2112,7 @@ export default {
     ],
   },
   'netsuite.linkSuiteScriptIntegrator': {
-    label: 'Link suitescript integrator',
+    label: 'Link SuiteScript integrator',
     type: 'linksuitescriptintegrator',
   },
   'netsuite._iClientId': {
