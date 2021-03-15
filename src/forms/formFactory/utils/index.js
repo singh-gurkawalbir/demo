@@ -706,11 +706,11 @@ export const conditionalLookupOptionsforNetsuite = [
     value: 'extract_not_empty',
   },
   {
-    label: 'Lookup finds a record',
+    label: 'Look up finds a record',
     value: 'lookup_not_empty',
   },
   {
-    label: 'Lookup finds no records',
+    label: 'Look up finds no records',
     value: 'lookup_empty',
   },
   {
@@ -744,11 +744,11 @@ export const conditionalLookupOptionsforSalesforce = [
     value: 'extract_not_empty',
   },
   {
-    label: 'Lookup finds a record',
+    label: 'Look up finds a record',
     value: 'lookup_not_empty',
   },
   {
-    label: 'Lookup finds no records',
+    label: 'Look up finds no records',
     value: 'lookup_empty',
   },
 ];
@@ -772,11 +772,11 @@ export const conditionalLookupOptionsforRest = [
     value: 'extract_not_empty',
   },
   {
-    label: 'Lookup finds a record',
+    label: 'Look up finds a record',
     value: 'lookup_not_empty',
   },
   {
-    label: 'Lookup finds no records',
+    label: 'Look up finds no records',
     value: 'lookup_empty',
   },
 ];
@@ -859,7 +859,7 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup additional files (per record)',
+      label: 'Look up additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -869,7 +869,7 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup additional files (per record)',
+      label: 'Look up additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -879,7 +879,7 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup additional files (per record)',
+      label: 'Look up additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -893,11 +893,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup additional records (per record)',
+      label: 'Look up additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup additional files (per record)',
+      label: 'Look up additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -911,11 +911,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup additional records (per record)',
+      label: 'Look up additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup additional files (per record)',
+      label: 'Look up additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -929,11 +929,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup additional records (per record)',
+      label: 'Look up additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup additional files (per record)',
+      label: 'Look up additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -947,11 +947,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup additional records (per record)',
+      label: 'Look up additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup additional files (per record)',
+      label: 'Look up additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -968,7 +968,7 @@ export const destinationOptions = {
       value: 'importRecords',
     },
     {
-      label: 'Lookup additional records (per record)',
+      label: 'Look up additional records (per record)',
       value: 'lookupRecords',
     },
   ],
