@@ -586,6 +586,79 @@ export function* patchGenerateThroughAssistant({value}) {
     );
   }
 }
+export function* getAutoMapperSuggestion() {
+  const {mappings, flowId, importId, subRecordMappingId} = yield select(selectors.mapping);
+  const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
+  const importResource = yield select(selectors.resource, 'imports', importId);
+  const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);
+  const extractFields = yield select(selectors.mappingExtracts, importId, flowId, subRecordMappingId);
+  const reqBody = {};
+
+  reqBody.source_application = yield select(selectors.applicationName, importResource._id);
+  reqBody.source_fields = extractFields;
+  reqBody.source_record_type = '';
+  reqBody.dest_application = yield select(selectors.applicationName, exportResource._id);
+  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType) && subRecordMappingId) {
+    reqBody.dest_record_type = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
+  } else if (importResource.adaptorType === 'SalesforceImport') {
+    const { sObjectType } = importResource.salesforce;
+
+    reqBody.dest_record_type = sObjectType;
+  } else {
+    reqBody.dest_record_type = '';
+  }
+
+  reqBody.dest_fields = generateFields;
+  const path = '/mappingSuggestion';
+  const opts = {
+    method: 'PUT',
+    body: reqBody,
+  };
+
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: 'Loading',
+      hidden: false,
+    });
+
+    if (response) {
+      // eslint-disable-next-line camelcase
+      const {mapping, suggested_threshold} = response;
+      const suggestedMapping = [];
+
+      mapping?.fields?.forEach(({extract, generate, weight}) => {
+        // eslint-disable-next-line camelcase
+        if (weight >= suggested_threshold) {
+          const itemWithSameGenerateIndex = suggestedMapping.findIndex((field => field.generate === generate));
+
+          if (itemWithSameGenerateIndex === -1 || weight > suggestedMapping[itemWithSameGenerateIndex]?.weight) {
+            if (!mappings.find(item => item.generate === generate)) {
+              suggestedMapping.push({extract, generate});
+            }
+          }
+        }
+      });
+      if (suggestedMapping?.length) {
+        suggestedMapping.map(m => ({
+          ...m,
+          key: shortid.generate(),
+        }));
+        yield put(actions.mapping.autoMapper.received(suggestedMapping));
+      } else {
+        yield put(actions.mapping.autoMapper.failed('No additional suggestions'));
+      }
+    } else {
+      yield put(actions.mapping.autoMapper.failed());
+    }
+  } catch (e) {
+    // yield put(actions.mapping.autoMapper.received(suggestedMapping));
+
+    // TODO: How do we show error in case getContext api fails with some response
+    yield put(actions.mapping.autoMapper.failed());
+  }
+}
 
 export const mappingSagas = [
   takeEvery(actionTypes.MAPPING.INIT, mappingInit),
@@ -600,5 +673,5 @@ export const mappingSagas = [
     actionTypes.MAPPING.UPDATE_LOOKUP,
     actionTypes.MAPPING.PATCH_SETTINGS,
   ], validateMappings),
-
+  takeLatest(actionTypes.MAPPING.AUTO_MAPPER.REQUEST, getAutoMapperSuggestion),
 ];

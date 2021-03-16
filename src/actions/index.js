@@ -1487,7 +1487,12 @@ const mapping = {
   clear: () => action(actionTypes.MAPPING.CLEAR, {}),
   shiftOrder: (key, shiftIndex) => action(actionTypes.MAPPING.SHIFT_ORDER, { key, shiftIndex }),
   setValidationMsg: value => action(actionTypes.MAPPING.SET_VALIDATION_MSG, { value }),
-
+  autoMapper: {
+    request: () => action(actionTypes.MAPPING.AUTO_MAPPER.REQUEST, {}),
+    received: value => action(actionTypes.MAPPING.AUTO_MAPPER.RECEIVED, {value}),
+    failed: errorMsg => action(actionTypes.MAPPING.AUTO_MAPPER.FAILED, {errorMsg}),
+    clearStartKey: () => action(actionTypes.MAPPING.AUTO_MAPPER.RESET_START_KEY, {}),
+  },
 };
 
 const searchCriteria = {
