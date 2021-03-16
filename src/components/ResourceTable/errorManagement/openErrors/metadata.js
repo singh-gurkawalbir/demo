@@ -1,20 +1,16 @@
-import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import actions from '../../../../actions';
-import { selectors } from '../../../../reducers';
+import React from 'react';
 import Retry from '../actions/Retry';
 import Resolve from '../actions/Resolve';
 import ViewErrorDetails from '../actions/ViewErrorDetails';
 import EditRetryData from '../actions/EditRetry';
 import DownloadRetryData from '../actions/DownloadRetry';
 import SelectError from '../cells/SelectError';
+import SelectSource from '../cells/SelectSource';
+import SelectDate from '../cells/SelectDate';
 import SelectAllErrors from '../cells/SelectAllErrors';
-import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
-import DateFilter from '../../commonCells/DateFilter';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import TextOverflowCell from '../../../TextOverflowCell';
 import ErrorMessage from '../cells/ErrorMessage';
-import { FILTER_KEYS, ERROR_MANAGEMENT_RANGE_FILTERS } from '../../../../utils/errorManagement';
 
 export default {
   columns: [
@@ -47,58 +43,15 @@ export default {
       width: '15%',
     },
     {
-      headerValue: function SelectOpenSource(r, { flowId, resourceId, isResolved }) {
-        const dispatch = useDispatch();
-        const sourceOptions = useSelector(state => selectors.sourceOptions(state, resourceId));
-
-        const handleSave = useCallback(
-          () => {
-            dispatch(
-              actions.errorManager.flowErrorDetails.request({
-                flowId,
-                resourceId,
-                isResolved,
-              })
-            );
-          },
-          [dispatch, flowId, isResolved, resourceId],
-        );
-        const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
-
-        return (
-          <MultiSelectColumnFilter
-            filterKey={filterKey}
-            handleSave={handleSave}
-            options={sourceOptions} />
-        );
+      headerValue: function SelectOpenSource(r, actionProps) {
+        <SelectSource {...actionProps} />;
       },
       value: r => <TextOverflowCell message={r.source} />,
       width: '15%',
     },
     {
-      headerValue: function SelectTimestamp(r, {flowId, resourceId, isResolved}) {
-        const dispatch = useDispatch();
-
-        const handleChange = useCallback(
-          () => {
-            dispatch(
-              actions.errorManager.flowErrorDetails.request({
-                flowId,
-                resourceId,
-                isResolved,
-              })
-            );
-          },
-          [dispatch, flowId, isResolved, resourceId],
-        );
-        const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
-
-        return (
-          <DateFilter
-            filterKey={filterKey}
-            handleChange={handleChange}
-            customPresets={ERROR_MANAGEMENT_RANGE_FILTERS} />
-        );
+      headerValue: function SelectTimestamp(r, actionProps) {
+        <SelectDate {...actionProps} />;
       },
       width: '15%',
       value: r => <CeligoTimeAgo date={r.occurredAt} />,
