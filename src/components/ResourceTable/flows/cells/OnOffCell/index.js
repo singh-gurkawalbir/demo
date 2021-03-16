@@ -42,7 +42,7 @@ export default function OnOffCell({
     state => selectors.isOnOffInProgress(state, flowId).onOffInProgress
   );
   const istwoDotZeroFrameWork = actionProps.integration?.installSteps?.length;
-  const isDataLoader = !!actionProps?.flowAttributes[flowId]?.isDataLoader;
+  const isDataLoader = !!actionProps.flowAttributes[flowId]?.isDataLoader;
   const isFlowEnableLocked = !!actionProps.flowAttributes[flowId]?.isFlowEnableLocked;
   const accessLevel = useSelector(
     state =>
