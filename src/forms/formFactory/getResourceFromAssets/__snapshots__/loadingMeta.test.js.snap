@@ -8309,7 +8309,7 @@ Object {
       },
       "dataMappings": Object {
         "formId": "dataMappings",
-        "visibleWhenAll": Array [
+        "visibleWhen": Array [
           Object {
             "field": "inputMode",
             "is": Array [
@@ -10459,7 +10459,7 @@ Object {
       },
       "dataMappings": Object {
         "formId": "dataMappings",
-        "visibleWhenAll": Array [
+        "visibleWhen": Array [
           Object {
             "field": "inputMode",
             "is": Array [

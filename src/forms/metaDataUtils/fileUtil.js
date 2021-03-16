@@ -226,7 +226,7 @@ uploadFile: {
 'file.xlsx.includeHeader': { fieldId: 'file.xlsx.includeHeader' },
 dataMappings: {
   formId: 'dataMappings',
-  visibleWhenAll: [
+  visibleWhen: [
     {
       field: 'inputMode',
       is: ['records'],
