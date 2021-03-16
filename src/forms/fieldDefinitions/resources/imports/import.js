@@ -88,7 +88,7 @@ export default {
     label: 'Path to many',
     helpKey: 'pathToMany',
     placeholder: 'Not needed for array/row based data',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'oneToMany',
         is: ['true'],
