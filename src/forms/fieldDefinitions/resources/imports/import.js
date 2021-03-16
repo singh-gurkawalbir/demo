@@ -89,7 +89,7 @@ export default {
     helpKey: 'pathToMany',
     omitWhenHidden: true,
     placeholder: 'Not needed for array/row based data',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'oneToMany',
         is: ['true'],
