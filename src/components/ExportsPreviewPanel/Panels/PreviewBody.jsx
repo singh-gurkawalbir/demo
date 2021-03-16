@@ -1,14 +1,23 @@
 import React, { useEffect, useCallback, useState, useMemo } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import PanelLoader from '../../PanelLoader';
 import Templates from '../Templates';
 import { getPreviewBodyTemplateType, HTTP_STAGES, getFormattedPreviewData, getBodyHeaderFieldsForPreviewData } from '../../../utils/exportPanel';
 import { selectors } from '../../../reducers';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { CeligoTabWrapper } from '../../CeligoTabLayout/CeligoTabWrapper';
-import CeligoTabs from '../../CeligoTabLayout/CeligoTabs';
+import CeligoPillTabs from '../../CeligoTabLayout/CeligoPillTabs';
 import DefaultPanel from '../../CeligoTabLayout/CustomPanels/DefaultPanel';
 import RequestResponsePanel from '../../CeligoTabLayout/CustomPanels/RequestResponsePanel';
 import CeligoTabPanel from '../../CeligoTabLayout/CeligoTabPanel';
+
+const useStyles = makeStyles({
+  previewBodyContainer: {
+    display: 'flex',
+    flexGrow: 1,
+    flexDirection: 'column',
+  },
+});
 
 export default function PreviewBody(props) {
   const {
@@ -22,6 +31,7 @@ export default function PreviewBody(props) {
   // Default panel is the panel shown by default when export panel is launched
   // We can configure it in the metadata with 'default' as true
   // Else the last stage is taken as the default stage
+  const classes = useStyles(props);
   const defaultPanel = useMemo(() => {
     if (!availablePreviewStages.length) return;
     const defaultStage = availablePreviewStages.find(stage => stage.default === true);
@@ -56,7 +66,7 @@ export default function PreviewBody(props) {
   }, [resourceSampleData.status, defaultPanel, handlePanelViewChange, availablePreviewStages]);
 
   return (
-    <div>
+    <div className={classes.previewBodyContainer}>
       {resourceSampleData.status === 'requested' && (
         <PanelLoader />
       )}
@@ -68,10 +78,7 @@ export default function PreviewBody(props) {
             resourceType={resourceType}
           />
           <CeligoTabWrapper>
-            <CeligoTabs
-              tabs={availablePreviewStages}
-              defaultValue={defaultTab}
-            />
+            <CeligoPillTabs tabs={availablePreviewStages} defaultTab={defaultTab} />
             <CeligoTabPanel panelId="preview">
               { resourceSampleData.status === 'error'
                 ? <Templates.ErrorPanel resourceSampleData={resourceSampleData} availablePreviewStages={availablePreviewStages} />

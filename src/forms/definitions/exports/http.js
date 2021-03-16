@@ -408,6 +408,9 @@ export default {
     },
     formView: { fieldId: 'formView' },
     semiassistantoperationselect: {fieldId: 'semiassistantoperationselect', visibleWhenAll: [{field: 'formView', isNot: ['true']}]},
+    traceKeyTemplate: {
+      fieldId: 'traceKeyTemplate',
+    },
   },
 
   layout: {
@@ -507,6 +510,7 @@ export default {
           'advancedSettings',
           'configureAsyncHelper',
           'http._asyncHelperId',
+          'traceKeyTemplate',
         ],
       },
     ],

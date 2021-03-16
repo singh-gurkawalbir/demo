@@ -92,7 +92,7 @@ const SearchParamsModal = props => {
   const classes = useStyles();
 
   return (
-    <ModalDialog show onClose={onClose} className={classes.searchParamModalContent}>
+    <ModalDialog show onClose={onClose} className={classes.searchParamModalContent} minWidth="sm">
       <>
         <span>Search parameters</span>
       </>

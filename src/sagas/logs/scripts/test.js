@@ -1,6 +1,7 @@
-/* global describe, test */
+/* global describe, test, jest */
 import { expectSaga } from 'redux-saga-test-plan';
 import { call, select } from 'redux-saga/effects';
+import moment from 'moment';
 // import { addMinutes } from 'date-fns';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -8,240 +9,300 @@ import { requestReferences } from '../../resources';
 import {
   // fetchScriptLogs,
   getScriptDependencies,
-  // requestScriptLogs,
-  // loadMoreLogs,
+  retryToFetchLogs,
+  requestScriptLogs,
+  startDebug,
 } from '.';
-// import { apiCallWithRetry } from '../..';
+import { apiCallWithRetry } from '../..';
 
-describe('getScriptDependencies saga', () => {
-  test('should dispatch setDependency action after fetching depedency', () => {
-    // const flowId = 'f1';
-    const scriptId = 's1';
+describe('Scripts logs sagas', () => {
+  describe('getScriptDependencies saga', () => {
+    test('should dispatch setDependency action after fetching depedencies', () => {
+      const scriptId = 's1';
 
-    return expectSaga(getScriptDependencies, { scriptId })
-      .provide([
-        [call(requestReferences, {
-          resourceType: 'scripts',
-          id: scriptId,
-        }), {
-          exports: [
-            {id: 'e1', name: 'ne1'},
-            {id: 'e2', name: 'ne2'},
+      return expectSaga(getScriptDependencies, { scriptId })
+        .provide([
+          [call(requestReferences, {
+            resourceType: 'scripts',
+            id: scriptId,
+          }), {
+            exports: [
+              {id: 'e1', name: 'ne1'},
+              {id: 'e2', name: 'ne2'},
+            ],
+            imports: [
+              {id: 'i1', name: 'ni1'},
+              {id: 'i2', name: 'ni2'},
+            ],
+            flows: [
+              {id: 'f1', name: 'nf1'},
+              {id: 'f2', name: 'nf2'},
+            ],
+          }],
+        ]).put(actions.logs.scripts.setDependency({
+          scriptId,
+          flowId: '',
+          resourceReferences: [
+            {id: 'e1', name: 'ne1', type: 'export'},
+            {id: 'e2', name: 'ne2', type: 'export'},
+            {id: 'i1', name: 'ni1', type: 'import'},
+            {id: 'i2', name: 'ni2', type: 'import'},
+            {id: 'f1', name: 'nf1', type: 'flow'},
+            {id: 'f2', name: 'nf2', type: 'flow'},
           ],
-          imports: [
-            {id: 'i1', name: 'ni1'},
-            {id: 'i2', name: 'ni2'},
+        }))
+        .run();
+    });
+
+    test('should dispatch setDependency action after fetching depedency for particular flowId', () => {
+      const flowId = 'f1';
+      const scriptId = 's1';
+
+      return expectSaga(getScriptDependencies, { flowId, scriptId })
+        .provide([
+          [call(requestReferences, {
+            resourceType: 'scripts',
+            id: scriptId,
+          }), {
+            exports: [
+              {id: 'e1', name: 'ne1'},
+              {id: 'e2', name: 'ne2'},
+            ],
+            imports: [
+              {id: 'i1', name: 'ni1'},
+              {id: 'i2', name: 'ni2'},
+            ],
+            flows: [
+              {id: 'f1', name: 'nf1'},
+              {id: 'f2', name: 'nf2'},
+            ],
+          }],
+          [call(requestReferences, {
+            resourceType: 'scripts',
+            id: scriptId,
+          }), {
+            exports: [
+              {id: 'e1', name: 'ne1'},
+              {id: 'e2', name: 'ne2'},
+              {id: 'e3', name: 'ne3'},
+            ],
+            imports: [
+              {id: 'i1', name: 'ni1'},
+              {id: 'i2', name: 'ni2'},
+            ],
+            flows: [
+              {id: 'f1', name: 'nf1'},
+              {id: 'f2', name: 'nf2'},
+            ],
+          }],
+          [select(selectors.resource, 'flows', flowId),
+            {
+              pageGenerators: [
+                {_exportId: 'e1', type: 'export'},
+              ],
+              pageProcessors: [
+                {_exportId: 'e2', type: 'export'},
+                {_importId: 'i2', type: 'import'},
+
+              ],
+            },
           ],
-          flows: [
-            {id: 'f1', name: 'nf1'},
-            {id: 'f2', name: 'nf2'},
+        ]).put(actions.logs.scripts.setDependency({
+          scriptId,
+          flowId,
+          resourceReferences: [
+            {id: 'e1', name: 'ne1', type: 'export'},
+            {id: 'e2', name: 'ne2', type: 'export'},
+            {id: 'i2', name: 'ni2', type: 'import'},
           ],
-        }],
-      ]).put(actions.logs.scripts.setDependency({
-        scriptId,
-        flowId: '',
-        resourceReferences: [
-          {id: 'e1', name: 'ne1', type: 'export'},
-          {id: 'e2', name: 'ne2', type: 'export'},
-          {id: 'i1', name: 'ni1', type: 'import'},
-          {id: 'i2', name: 'ni2', type: 'import'},
-          {id: 'f1', name: 'nf1', type: 'flow'},
-          {id: 'f2', name: 'nf2', type: 'flow'},
-        ],
-      }))
-      .run();
+        }))
+        .run();
+    });
   });
 
-  test('should dispatch setDependency action after fetching depedency for particular flowId', () => {
-    const flowId = 'f1';
-    const scriptId = 's1';
-
-    return expectSaga(getScriptDependencies, { flowId, scriptId })
+  describe('retryToFetchLogs saga', () => {
+    test('should retry fetching logs maximum of 4 times if there is a response', () => expectSaga(retryToFetchLogs, { fetchLogsPath: '/somePath' })
       .provide([
-        [call(requestReferences, {
-          resourceType: 'scripts',
-          id: scriptId,
-        }), {
-          exports: [
-            {id: 'e1', name: 'ne1'},
-            {id: 'e2', name: 'ne2'},
-          ],
-          imports: [
-            {id: 'i1', name: 'ni1'},
-            {id: 'i2', name: 'ni2'},
-          ],
-          flows: [
-            {id: 'f1', name: 'nf1'},
-            {id: 'f2', name: 'nf2'},
-          ],
-        }],
-        [call(requestReferences, {
-          resourceType: 'scripts',
-          id: scriptId,
-        }), {
-          exports: [
-            {id: 'e1', name: 'ne1'},
-            {id: 'e2', name: 'ne2'},
-            {id: 'e3', name: 'ne3'},
-          ],
-          imports: [
-            {id: 'i1', name: 'ni1'},
-            {id: 'i2', name: 'ni2'},
-          ],
-          flows: [
-            {id: 'f1', name: 'nf1'},
-            {id: 'f2', name: 'nf2'},
-          ],
-        }],
-        [select(selectors.resource, 'flows', flowId),
-          {
-            pageGenerators: [
-              {_exportId: 'e1', type: 'export'},
-            ],
-            pageProcessors: [
-              {_exportId: 'e2', type: 'export'},
-              {_importId: 'i2', type: 'import'},
-
-            ],
+        [call(apiCallWithRetry, {
+          path: '/somePath',
+          opts: {
+            method: 'GET',
           },
-        ],
-      ]).put(actions.logs.scripts.setDependency({
-        scriptId,
-        flowId,
-        resourceReferences: [
-          {id: 'e1', name: 'ne1', type: 'export'},
-          {id: 'e2', name: 'ne2', type: 'export'},
-          {id: 'i2', name: 'ni2', type: 'import'},
-        ],
-      }))
-      .run();
+        }), {
+          logs: [],
+          nextPageURL: '/nextURL2',
+        }],
+        [call(apiCallWithRetry, {
+          path: '/nextURL2',
+          opts: {
+            method: 'GET',
+          },
+        }), {
+          logs: [],
+          nextPageURL: '/nextURL3',
+        }],
+        [call(apiCallWithRetry, {
+          path: '/nextURL3',
+          opts: {
+            method: 'GET',
+          },
+        }), {
+          logs: [],
+          nextPageURL: '/nextURL4',
+        }],
+        [call(apiCallWithRetry, {
+          path: '/nextURL4',
+          opts: {
+            method: 'GET',
+          },
+        }), {
+          logs: [],
+          nextPageURL: '/nextURL5',
+        }],
+      ])
+      .call(retryToFetchLogs, {retryCount: 1, fetchLogsPath: '/nextURL2'})
+      .call(retryToFetchLogs, {retryCount: 2, fetchLogsPath: '/nextURL3'})
+      .call(retryToFetchLogs, {retryCount: 3, fetchLogsPath: '/nextURL4'})
+      .call(retryToFetchLogs, {retryCount: 4, fetchLogsPath: '/nextURL5'})
+      .run());
+
+    test('should stop retying fetching logs if logs are found', () => expectSaga(retryToFetchLogs, { fetchLogsPath: '/somePath' })
+      .provide([
+        [call(apiCallWithRetry, {
+          path: '/somePath',
+          opts: {
+            method: 'GET',
+          },
+        }), {
+          logs: [],
+          nextPageURL: '/nextURL2',
+        }],
+        [call(apiCallWithRetry, {
+          path: '/nextURL2',
+          opts: {
+            method: 'GET',
+          },
+        }), {
+          logs: [{message: 'xyz', others: {}}],
+          nextPageURL: '/nextURL3',
+        }],
+
+      ])
+      .call(retryToFetchLogs, {retryCount: 1, fetchLogsPath: '/nextURL2'})
+      .run());
   });
-});
+  describe('requestScriptLogs saga', () => {
+    test('should not fetch logs if case logLevel field is changed', () => expectSaga(requestScriptLogs, { field: 'logLevel'})
+      .not.call(retryToFetchLogs, {fetchLogsPath: 'something'})
+      .run());
 
-describe('fetchScriptLogs saga', () => {
-  // test('should not dispatch receivedLogs action while patching filter[logLevel]', () => {
-  //   const flowId = 'f1';
-  //   const scriptId = 's1';
+    test('should fetch logs and trigger SCRIPT_LOGS_RECEIVED action on success', () => {
+      const scriptId = 's1';
+      const flowId = 'f1';
 
-  //   return expectSaga(fetchScriptLogs, { flowId, scriptId, field: 'logLevel' })
-  //     .not.put(actions.logs.scripts.setDependency({
-  //       scriptId,
-  //       flowId,
-  //     }))
-  //     .run();
-  // });
+      return expectSaga(requestScriptLogs, { scriptId, flowId, fetchNextPage: true })
+        .provide([
+          [select(selectors.scriptLog, {
+            flowId,
+            scriptId,
+          }), {
+            nextPageURL: '/nextPage1',
+          }],
+          [call(retryToFetchLogs, {
+            scriptId,
+            flowId,
+            fetchNextPage: true,
+            fetchLogsPath: '/nextPage1',
+          }), {
+            logs: [{message: 'text', time: '2020-10-10 10:10:10.100', other: 'something'}],
+            nextPageURL: '/nextPage2',
+          }],
+        ]).put(actions.logs.scripts.received({
+          scriptId,
+          flowId,
+          logs: [
+            {message: 'text', time: '2020-10-10T10:10:10.100Z', other: 'something'},
+          ],
+          nextPageURL: '/nextPage2',
+        }))
+        .run();
+    });
+    test('should call getDepedency incase of init', () => {
+      const scriptId = 's1';
+      const flowId = 'f1';
 
-  // test('should dispatch receivedLogs action while fetching script logs', () => {
-  //   const flowId = 'f1';
-  //   const scriptId = 's1';
+      return expectSaga(requestScriptLogs, { scriptId, flowId, isInit: true })
+        .put(actions.logs.scripts.getDependency({
+          scriptId,
+          flowId,
+        }))
+        .run();
+    });
+    test('should trigger SCRIPT_LOGS_FAILED action in case of error while fetching logs', () => {
+      const scriptId = 's1';
+      const flowId = 'f1';
 
-  //   const nextPageURL = '/api/abcd/xyz';
+      return expectSaga(requestScriptLogs, { scriptId, flowId, fetchNextPage: true })
+        .provide([
+          [select(selectors.scriptLog, {
+            flowId,
+            scriptId,
+          }), {
+            nextPageURL: '/nextPage1',
+          }],
+        ]).put(actions.logs.scripts.requestFailed({
+          scriptId,
+          flowId,
+          errorMsg: 'Request failed',
+        }))
+        .run();
+    });
+  });
 
-  //   expectSaga(fetchScriptLogs, { flowId, scriptId, loadMore: true })
-  //     .provide([
-  //       [select(selectors.scriptLog, {
-  //         scriptId, flowId,
-  //       }), {
-  //         nextPageURL,
-  //       }],
-  //       [
-  //         call(apiCallWithRetry, {
-  //           path: nextPageURL.replace('/api', ''),
-  //           opts: {method: 'GET'},
-  //         }), {
-  //           logs: [{message: 'abc', time: expect.anything()}],
-  //           nextPageURL: '/api/abcd/uvw',
-  //         },
-  //       ],
-  //     ])
-  //     .put(actions.logs.scripts.receivedLogs({
-  //       scriptId,
-  //       flowId,
-  //       logs: [{message: 'abc'}],
-  //       nextPageURL: '/api/abcd/uvw',
-  //     }))
-  //     .run();
-  //   const startDate = new Date();
-  //   const endDate = addMinutes(startDate, -15);
+  describe('startDebug saga', () => {
+    test('should remove debugUntil if debug value = 0', () => {
+      const now = new Date();
+      const mock = jest
+        .spyOn(global, 'Date')
+        .mockImplementation(() => now);
 
-  //   return expectSaga(fetchScriptLogs, { flowId, scriptId, loadMore: true })
-  //     .provide([
-  //       [select(selectors.scriptLog, {
-  //         scriptId, flowId,
-  //       }), {
-  //         functionType: 'preMap',
-  //         dateRange: {
-  //           startDate,
-  //           endDate,
-  //         },
-  //         selectedResources: [
-  //           {type: 'flows', id: 'f1'},
-  //           {type: 'exports', id: 'e1'},
-  //           {type: 'exports', id: 'e2'},
-  //           {type: 'imports', id: 'i1'},
-  //         ],
-  //       }],
-  //       [
-  //         call(apiCallWithRetry, {
-  //           path: `/scripts/s1/logs?time_gt=${startDate.getTime()}&time_lte=${endDate.getTime()}&_flowId=f1&_flowId=f1&_resourceId=e1&_resourceId=e2&_resourceId=i1&functionType=preMap`,
-  //           opts: {method: 'GET'},
-  //         }), {
-  //           logs: [{message: 'abc'}],
-  //           nextPageURL: '/api/abcd/uvw',
-  //         },
-  //       ],
-  //     ])
-  //     .put(actions.logs.scripts.receivedLogs({
-  //       scriptId,
-  //       flowId,
-  //       logs: [{message: 'abc'}],
-  //       nextPageURL: '/api/abcd/uvw',
-  //     }))
-  //     .run();
-  // });
+      mock.mockReturnValue(now);
 
-  //   test('should dispatch requestFailed action when fetch script log failed', () => {
-  //     const flowId = 'f1';
-  //     const scriptId = 's1';
+      expectSaga(startDebug, { scriptId: 's1', value: '0'})
+        .put(actions.resource.patch('scripts', 's1',
+          [
+            {
+              op: 'remove',
+              path: '/debugUntil',
+              value: moment(new Date()).add('0', 'm').toISOString(),
+            },
+          ]
+        ))
+        .run();
+      mock.mockRestore();
+    });
+    test('should set debugUntil correctly', () => {
+      const now = new Date();
+      const newDebugDate = moment(now).add('30', 'm').toISOString();
 
-  //     const nextPageURL = '/api/abcd/xyz';
+      const mock = jest
+        .spyOn(global, 'Date')
+        .mockImplementation(() => now);
 
-  //     expectSaga(fetchScriptLogs, { flowId, scriptId, loadMore: true })
-  //       .provide([
-  //         [select(selectors.scriptLog, {
-  //           scriptId, flowId,
-  //         }), {
-  //           nextPageURL,
-  //         }],
-  //       ])
-  //       .put(actions.logs.scripts.requestFailed({
-  //         scriptId,
-  //         flowId,
-  //       }))
-  //       .run();
-  //   });
-  // });
+      mock.mockReturnValue(now);
 
-  // TODO
-  // describe('requestScriptLogs saga', () => {
-  //   test('should call dependent sagas correctly on requestScriptLogs', () => {
-  //     const flowId = 'f1';
-  //     const scriptId = 's1';
-
-  //     return expectSaga(requestScriptLogs, { flowId, scriptId, loadMore: true })
-  //       .call(getScriptDependencies, {scriptId, flowId})
-  //       .call(fetchScriptLogs, {scriptId, flowId})
-  //       .run();
-  //   });
-  // });
-
-  // describe('loadMoreLogs saga', () => {
-  //   test('should call fetchScriptLogs with loadMore = true', () => {
-  //     const flowId = 'f1';
-  //     const scriptId = 's1';
-
-//     return expectSaga(loadMoreLogs, { flowId, scriptId, loadMore: true })
-//       .call(fetchScriptLogs, {scriptId, flowId, loadMore: true})
-//       .run();
-//   });
+      expectSaga(startDebug, { scriptId: 's1', value: '30'})
+        .put(actions.resource.patch('scripts', 's1',
+          [
+            {
+              op: 'replace',
+              path: '/debugUntil',
+              value: newDebugDate,
+            },
+          ]
+        ))
+        .run();
+      mock.mockRestore();
+    });
+  });
 });
