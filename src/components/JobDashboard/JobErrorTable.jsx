@@ -481,7 +481,9 @@ export default function JobErrorTable({
       </ul>
       {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
 
-        <Spinner centerAll message="Loading job errors" />
+        <Spinner centerAll>
+          <Typography variant="body2">Loading job errors</Typography>
+        </Spinner>
 
       ) : (
         <>
