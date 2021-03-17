@@ -44,14 +44,14 @@ export default {
     },
     {
       headerValue: function SelectOpenSource(r, actionProps) {
-        <SelectSource {...actionProps} />;
+        return <SelectSource {...actionProps} />;
       },
       value: r => <TextOverflowCell message={r.source} />,
       width: '15%',
     },
     {
       headerValue: function SelectTimestamp(r, actionProps) {
-        <SelectDate {...actionProps} />;
+        return <SelectDate {...actionProps} />;
       },
       width: '15%',
       value: r => <CeligoTimeAgo date={r.occurredAt} />,

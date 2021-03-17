@@ -32,14 +32,14 @@ export default {
     },
     {
       headerValue: function SelectResolvedSource(r, actionProps) {
-        <SelectSource {...actionProps} />;
+        return <SelectSource {...actionProps} />;
       },
       width: '10%',
       value: r => <TextOverflowCell message={r.source} />,
     },
     {
       headerValue: function SelectTimestamp(r, actionProps) {
-        <SelectDate {...actionProps} />;
+        return <SelectDate {...actionProps} />;
       },
       width: '12%',
       value: r => <CeligoTimeAgo date={r.occurredAt} />,
@@ -51,10 +51,12 @@ export default {
     },
     {
       headerValue: function SelectResolvedAt(r, actionProps) {
-        <SelectDate
-          {...actionProps}
-          title="Resolved at"
-          filterBy="resolvedAt" />;
+        return (
+          <SelectDate
+            {...actionProps}
+            title="Resolved at"
+            filterBy="resolvedAt" />
+        );
       },
       width: '12%',
       value: r => <CeligoTimeAgo date={r.resolvedAt} />,
