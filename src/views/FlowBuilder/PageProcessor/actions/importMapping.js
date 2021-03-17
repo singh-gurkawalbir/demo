@@ -15,11 +15,11 @@ function ImportMapping({
 
   useEffect(() => {
     if (open && match.path.indexOf('mapping') === -1) {
-      history.push(`${history.location.pathname}/mapping/${flowId}/${importId}`);
+      history.push(`${match.url}/mapping/${flowId}/${importId}`);
       onClose();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flowId, history, importId, onClose, open]);
+  }, [flowId, match, history, importId, onClose, open]);
 
   return null;
 }
