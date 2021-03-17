@@ -117,7 +117,7 @@ const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable, isSearc
       displayEmpty
       value="">
       <MenuItem value="" disabled >
-        Retry { isRetryInProgress && <Spinner size={16} className={classes.loading} />}
+        Retry { isRetryInProgress && <Spinner size="extraSmall" className={classes.loading} />}
       </MenuItem>
       <MenuItem value="selected" disabled={!selectedRetriableErrorCount}>
         {selectedRetriableErrorCount} retriable {selectedRetriableErrorCount === 1 ? 'error' : 'errors'}
@@ -183,7 +183,7 @@ const ResolveAction = ({ onClick, flowId, resourceId, disable, isSearchFilterApp
       displayEmpty
       value="">
       <MenuItem value="" disabled>
-        Resolve  { isResolveInProgress && <Spinner size={16} className={classes.loading} />}
+        Resolve  { isResolveInProgress && <Spinner size="extraSmall" className={classes.loading} />}
       </MenuItem>
       <MenuItem value="selected" disabled={!selectedErrorCount}>
         {selectedErrorCount} selected {selectedErrorCount === 1 ? 'error' : 'errors'}

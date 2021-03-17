@@ -49,7 +49,7 @@ export default function OnOffCell({
   }
 
   if (toggleStatus === 'loading') {
-    return <Spinner size={24} />;
+    return <Spinner />;
   }
 
   return (

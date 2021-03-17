@@ -18,7 +18,7 @@ export default function PanelLoader({ message }) {
   return (
     <div className={classes.spinnerWrapper}>
       <div>
-        <span>{message}</span> <Spinner size={48} />
+        <span>{message}</span> <Spinner size="large" />
       </div>
     </div>
   );

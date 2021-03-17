@@ -90,7 +90,7 @@ export default function MappingSaveButton(props) {
       onClick={handleButtonClick}>
       {disableSave ? (
         <>
-          <Spinner size={16} />
+          <Spinner size="extraSmall" />
           Saving
         </>
       ) : (

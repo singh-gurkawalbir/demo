@@ -21,6 +21,18 @@ const useStyles = makeStyles(theme => ({
   spinnerChildren: {
     paddingLeft: theme.spacing(1),
   },
+  small: {
+    width: theme.spacing(2),
+    height: theme.spacing(2),
+  },
+  medium: {
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+  },
+  large: {
+    width: theme.spacing(6),
+    height: theme.spacing(6),
+  },
 }));
 
 /**
@@ -28,12 +40,13 @@ const useStyles = makeStyles(theme => ({
  */
 export default function Spinner(props) {
   const classes = useStyles();
-  const { loading, color = 'primary', children, centerAll, className, ...rest } = props;
+  const { loading, color = 'primary', children, centerAll, className, size = 'medium' } = props;
+
   const progress = (
     <CircularProgress
       color={color || 'inherit'}
-      className={className}
-      {...rest}
+      className={clsx(classes[size], className)}
+      size={size}
     />
   );
 
@@ -51,8 +64,6 @@ export default function Spinner(props) {
 }
 
 Spinner.propTypes = {
-  size: PropTypes.number,
-  thickness: PropTypes.number,
-  variant: PropTypes.string,
+  size: PropTypes.oneOf(['small', 'medium', 'large']),
 };
 
