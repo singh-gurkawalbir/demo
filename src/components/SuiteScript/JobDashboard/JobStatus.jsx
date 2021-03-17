@@ -40,7 +40,7 @@ export default function JobStatus({ job }) {
     return (
       <div className={classes.state}>
         <div className={classes.spinnerWrapper}>
-          <Spinner size={24} color="primary" />
+          <Spinner size={24} />
         </div>
         {jobStatusDetails.status}
       </div>

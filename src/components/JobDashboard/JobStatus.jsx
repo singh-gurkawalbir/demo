@@ -56,7 +56,7 @@ export default function JobStatus({ job }) {
         {!isJobInQueuedStatus && (
           <div className={classes.state}>
             <div className={classes.spinnerWrapper}>
-              <Spinner size={18} color="primary" />
+              <Spinner size={18} />
             </div>
             {jobStatusDetails.status}
           </div>
@@ -64,7 +64,7 @@ export default function JobStatus({ job }) {
         {isJobInQueuedStatus && (
           <div className={classes.state}>
             <div className={classes.spinnerWrapper}>
-              <Spinner size={18} color="primary" />
+              <Spinner size={18} />
             </div>
             <Button
               variant="text"

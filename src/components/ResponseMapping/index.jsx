@@ -120,7 +120,7 @@ export default function ResponseMappingWrapper({integrationId}) {
   }
   if (mappingStatus !== 'received') {
     return (
-      <Spinner centerALl />
+      <Spinner centerAll />
     );
   }
 

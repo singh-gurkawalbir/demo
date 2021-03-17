@@ -69,7 +69,7 @@ export default function FlowStartDateDialog(props) {
   });
 
   if (!selectorStatus) {
-    return <Spinner size={24} color="primary" />;
+    return <Spinner size={24} />;
   }
 
   if (selectorStatus === 'error') {
