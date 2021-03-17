@@ -23,20 +23,29 @@ const Action = ({ isSingleAction, label, Icon, disabledActionText, useHasAccess,
   }
   const disabledActionTitle = disabledActionText?.({ ...actionProps, rowData });
   const actionIcon = Icon ? <Icon /> : null;
+  const title = disabledActionTitle || label;
 
   if (isSingleAction) {
+    if (title) {
+      return (
+        <Tooltip data-public title={title} placement="bottom" >
+          {/* The <div> below seems to be redundant as it does not provide any presentation benefit.
+              However, without this wrapper div, if the action is disabled, the <Tooltip> wrapper
+              doesn't recognize the hover state and thus doesn't show the tooltip message.
+          */}
+          <div>
+            <IconButton size="small" disabled={!!disabledActionTitle} onClick={handleActionClick}>
+              {actionIcon}
+            </IconButton>
+          </div>
+        </Tooltip>
+      );
+    }
+
     return (
-      <Tooltip data-public title={disabledActionTitle || label} placement="bottom" >
-        {/* The <div> below seems to be redundant as it does not provide any presentation benefit.
-            However, without this wrapper div, if the action is disabled, the <Tooltip> wrapper
-            doesn't recognize the hover state and thus doesn't show the tooltip message.
-        */}
-        <div>
-          <IconButton size="small" disabled={!!disabledActionTitle} onClick={handleActionClick}>
-            {actionIcon}
-          </IconButton>
-        </div>
-      </Tooltip>
+      <IconButton size="small" onClick={handleActionClick}>
+        {actionIcon}
+      </IconButton>
     );
   }
 
