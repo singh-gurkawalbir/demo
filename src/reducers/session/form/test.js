@@ -436,86 +436,240 @@ describe('reducer expression test cases', () => {
     });
 
     describe('valid behavior', () => {
-      let formState;
-      const fieldMeta = {
-        fieldMap: {
-          field1: {
-            id: 'FIELD1',
-            type: 'text',
-            name: 'field1',
-            defaultValue: '123',
-            label: 'field1',
-            validWhen: {
-              matchesRegEx: {
-                pattern: '^[\\d]+$',
-                message: 'Numbers only',
+      describe('regular valid override behavior', () => {
+        let formState;
+        const fieldMeta = {
+          fieldMap: {
+            field1: {
+              id: 'FIELD1',
+              type: 'text',
+              name: 'field1',
+              defaultValue: '123',
+              label: 'field1',
+              validWhen: {
+                matchesRegEx: {
+                  pattern: '^[\\d]+$',
+                  message: 'Numbers only',
+                },
               },
             },
           },
-        },
 
-        layout: { fields: ['field1'] },
-      };
+          layout: { fields: ['field1'] },
+        };
 
-      beforeAll(() => {
-        formState = forms(
-          undefined,
-          actions.form.init(formKey, remountKey, {
-            fieldMeta,
-            showValidationBeforeTouched: true,
-          })
-        );
+        beforeAll(() => {
+          formState = forms(
+            undefined,
+            actions.form.init(formKey, remountKey, {
+              fieldMeta,
+              showValidationBeforeTouched: true,
+            })
+          );
+        });
+
+        test('FIELD1 should be valid because it has met its validWhen criteria', () => {
+          const { FIELD1 } = formState[formKey].fields;
+
+          expect(FIELD1.isValid).toBe(true);
+        });
+
+        test('FIELD1 should be invalid because the field state has been forced', () => {
+          formState = forms(
+            formState,
+            actions.form.forceFieldState(formKey)(
+              'FIELD1', {
+                isValid: false,
+                errorMessages: 'some error',
+              }
+
+            )
+          );
+
+          const { FIELD1 } = formState[formKey].fields;
+
+          expect(FIELD1.isValid).toBe(false);
+
+          expect(FIELD1.errorMessages).toBe('some error');
+
+          expect(formState[formKey].isValid).toBe(false);
+        });
+
+        test('FIELD1 should be invalid even after its validWhen criteria has been met', () => {
+          formState = forms(
+            formState,
+            actions.form.fieldChange(formKey)('FIELD1', '123')
+          );
+          const { FIELD1 } = formState[formKey].fields;
+
+          expect(FIELD1.isValid).toBe(false);
+
+          expect(FIELD1.errorMessages).toBe('some error');
+
+          expect(formState[formKey].isValid).toBe(false);
+        });
+
+        test('FIELD1 validWhen should kick start again after we clear the force computaion', () => {
+          formState = forms(
+            formState,
+            actions.form.clearForceFieldState(formKey)('FIELD1')
+          );
+          formState = forms(
+            formState,
+            actions.form.fieldChange(formKey)('FIELD1', '235')
+          );
+          const { FIELD1 } = formState[formKey].fields;
+
+          expect(FIELD1.isValid).toBe(true);
+          expect(FIELD1.errorMessages).toBe('');
+          expect(formState[formKey].isValid).toBe(true);
+        });
       });
 
-      test('FIELD1 should be valid because it has met its validWhen criteria', () => {
-        const { FIELD1 } = formState[formKey].fields;
+      describe('combinations with other expressions', () => {
+        let formState;
+        const fieldMeta = {
+          fieldMap: {
+            field1: {
+              id: 'FIELD1',
+              type: 'text',
+              name: 'field1',
+              defaultValue: '123',
+              label: 'field1',
+              required: true,
+              validWhen: {
+                matchesRegEx: {
+                  pattern: '^[\\d]+$',
+                  message: 'Numbers only',
+                },
+              },
+              visibleWhen: [
+                {
+                  field: 'FIELD2',
+                  is: ['abc'],
+                },
+              ],
+            },
+            field2: {
+              id: 'FIELD2',
+              type: 'text',
+              name: 'field2',
+              defaultValue: '123',
+              label: 'field2',
+            },
+          },
 
-        expect(FIELD1.isValid).toBe(true);
-      });
+          layout: { fields: ['field1'] },
+        };
 
-      test('FIELD1 should be invalid because the field state has been forced', () => {
-        formState = forms(
-          formState,
-          actions.form.forceFieldState(formKey)(
-            'FIELD1', {
-              isValid: false,
-              errorMessages: 'some error',
-            }
+        beforeAll(() => {
+          formState = forms(
+            undefined,
+            actions.form.init(formKey, remountKey, {
+              fieldMeta,
+              showValidationBeforeTouched: false,
+            })
+          );
+        });
+        test('should respect the showValidations behavior and not show any errors and be valid inspite of the state being forced', () => {
+          const { FIELD1 } = formState[formKey].fields;
 
-          )
-        );
-        const { FIELD1 } = formState[formKey].fields;
+          expect(FIELD1.isValid).toBe(true);
+          expect(formState[formKey].isValid).toBe(true);
+          formState = forms(
+            formState,
+            actions.form.forceFieldState(formKey)(
+              'FIELD1', {
+                isValid: false,
+                errorMessages: 'some error',
+              }
+            )
+          );
 
-        expect(FIELD1.isValid).toBe(false);
+          // form and field is valid inspite of it being forced
+          expect(formState[formKey].fields.FIELD1.isValid).toBe(true);
+          expect(formState[formKey].fields.FIELD1.errorMessages).toBe('');
 
-        expect(FIELD1.errorMessages).toBe('some error');
-      });
+          // form is invalid because it is discretly invalid till we showValidationError
+          expect(formState[formKey].isValid).toBe(false);
+        });
+        test('should now show all validation errors after showFormValidations action, and also forceFieldAction isValid state takes precedence over required', () => {
+          formState = forms(
+            formState,
+            actions.form.showFormValidations(formKey)
+          );
 
-      test('FIELD1 should be invalid even after its validWhen criteria has been met', () => {
-        formState = forms(
-          formState,
-          actions.form.fieldChange(formKey)('FIELD1', '123')
-        );
-        const { FIELD1 } = formState[formKey].fields;
+          const { FIELD1 } = formState[formKey].fields;
 
-        expect(FIELD1.isValid).toBe(false);
+          expect(FIELD1.isValid).toBe(false);
+          // required rule is ignored , it should be managed by the forcedFieldAction
+          expect(formState[formKey].fields.FIELD1.errorMessages).toBe('some error');
 
-        expect(FIELD1.errorMessages).toBe('some error');
-      });
+          // form is invalid
+          expect(formState[formKey].isValid).toBe(false);
+        });
+        test('visible expression should work as normal FIELD1 should be visible now', () => {
+          expect(formState[formKey].fields.FIELD1.visible).toBe(false);
+          formState = forms(
+            formState,
+            actions.form.fieldChange(formKey)('FIELD2', 'abc')
+          );
+          const { FIELD1 } = formState[formKey].fields;
 
-      test('FIELD1 validWhen should kick start again after we clear the force computaion', () => {
-        formState = forms(
-          formState,
-          actions.form.clearForceFieldState(formKey)('FIELD1')
-        );
-        formState = forms(
-          formState,
-          actions.form.fieldChange(formKey)('FIELD1', '235')
-        );
-        const { FIELD1 } = formState[formKey].fields;
+          expect(FIELD1.visible).toBe(true);
 
-        expect(FIELD1.isValid).toBe(true);
-        expect(FIELD1.errorMessages).toBe('');
+          expect(FIELD1.isValid).toBe(false);
+          // required rule is ignored , it should be managed by the forcedFieldAction
+          expect(FIELD1.errorMessages).toBe('some error');
+
+          // form is invalid
+          expect(formState[formKey].isValid).toBe(false);
+        });
+        test('should delete error messages when isValid is true ', () => {
+          formState = forms(
+            formState,
+            actions.form.forceFieldState(formKey)(
+              'FIELD1', {
+                isValid: true,
+                // reducer ignores the message
+                errorMessages: 'ignored Message',
+              }
+            )
+          );
+          const { FIELD1 } = formState[formKey].fields;
+
+          expect(FIELD1.visible).toBe(true);
+
+          expect(FIELD1.isValid).toBe(true);
+          // required rule is ignored , it should be managed by the forcedFieldAction
+          expect(FIELD1.errorMessages).toBe('');
+
+          // form is invalid
+          expect(formState[formKey].isValid).toBe(true);
+        });
+        test('clearForceField should remove the isValid forceComputation and isValid expression should continue to work', () => {
+          formState = forms(
+            formState,
+            actions.form.fieldChange(formKey)('FIELD1', 'surya')
+          );
+          expect(formState[formKey].fields.FIELD1.isValid).toBe(true);
+
+          formState = forms(
+            formState,
+            actions.form.clearForceFieldState(formKey)('FIELD1')
+          );
+
+          const {FIELD1} = formState[formKey].fields;
+
+          expect(FIELD1.visible).toBe(true);
+
+          // isValid computation should kickstart
+          expect(FIELD1.isValid).toBe(false);
+          expect(FIELD1.errorMessages).toBe('Numbers only');
+
+          // form is invalid
+          expect(formState[formKey].isValid).toBe(false);
+        });
       });
     });
   });

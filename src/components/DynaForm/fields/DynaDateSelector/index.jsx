@@ -56,11 +56,15 @@ export default function DynaDateSelector(props) {
   const isValueParsableByMoment = useCallback(value =>
     (moment(value).isValid() && value?.length === dateFormat.length) || moment(value, moment.ISO_8601, true).isValid(), [dateFormat.length]);
 
-  useEffect(() => {
-    const isValid = moment(value).isValid();
+  const isValid = isValueParsableByMoment(value);
 
-    dispatch(actions.form.forceFieldState(formKey)(id, {isValid, errorMessages: 'Invalid date format'}));
-  }, [value, id, dispatch, formKey]);
+  useEffect(() => {
+    if (isValid) {
+      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
+    } else {
+      dispatch(actions.form.forceFieldState(formKey)(id, {isValid, errorMessages: !value ? 'A value must be provided' : 'Invalid date format'}));
+    }
+  }, [id, dispatch, formKey, isValid, value]);
 
   const handleFieldChange = useCallback((id, value) => {
     // isValueParsableByMoment checks for an incomplete form value or invalid date

@@ -920,15 +920,15 @@ export default {
   'connection.ftp.pgpPassphrase':
     'Set this field if your PGP private key is secured with a passphrase.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your passphrase safe.',
   'connection.pgp.publicKey':
-    'The public key to use for encryption and verifying signatures.',
+    'Enter the public key to use for encryption and verifying signatures.',
   'connection.pgp.privateKey':
-    'The private key to use for decryption and signing files.',
+    'Enter the private key to use for decryption and signing files.',
   'connection.pgp.passphrase':
-    'The private key’s passphrase.  It cannot be set if “privateKey” is blank.',
+    'Enter the private key’s passphrase',
   'connection.pgp.compressionAlgorithm':
-    'If an algorithm is specified, then files will be compressed during encryption, and decompressed during decryption, with the specified algorithm.  If left blank the files will not be compressed.',
+    'Select an algorithm to use to compress files during encryption and decompress files during decryption. If this field is empty, files are left uncompressed.',
   'connection.pgp.asciiArmored':
-    'Select “Yes” when the files are in text  (ASCII Armored) format; and “No” when they are in binary format. In an Export step, this setting tells the incoming file format for parsing. In an Import step, the setting will dictate the output format of the encrypted file.',
+    'In an Export step, this setting indicates the incoming file format for parsing. In an Import step, it dictates the output format of the encrypted file. Select “Yes” for text (ASCII-armored) format. Select "No" for binary format.',
   'connection.ftp.concurrencyLevel': 'Set this field to limit the number of concurrent/parallel requests allowed by the connection at any one time.',
   'connection.as2.as2Id':
     'This is the AS2 Identifier your trading partners will use as the "To" identifier when sending you documents, and the identifier integrator.io will use as the "From" identifier when you send documents to your trading partners. This field must be unique across all integrator.io users to ensure that inbound documents from your trading partners are routed to the correct integration flows. In addition, you should use a different identifier for production vs. sandbox.',
@@ -1290,7 +1290,7 @@ export default {
     'The script record that contains your preSavePage hook function.',
   'export.file.filedefinition.rules':
     'File definition rules are used by our platform to understand how to parse custom files. The file parser helper allows you to modify our templated rules to solve more specific file parsing requirements. Within the editor, you can use the rules panel to describe how a custom file should be parsed into JSON records, and then you can use the sample file and output panels to test your rules.',
-  'export.pgpdecrypt': 'Use this option to decrypt files. This option is enabled only when you have configured at least one cryptographic system in the connection and selected parse file option. If it is unchecked, then decryption will not be performed when parsing files.',
+  'export.pgpdecrypt': 'Use this option to decrypt files. This option is enabled only when you have configured at least one cryptographic system in the connection and selected the parse file option. If it is unchecked, then decryption will not be performed when files are parsed.',
   'export.file.decrypt': 'Select the algorithm to decrypt files. Make sure you choose the same algorithm that is used to encrypt the files.',
   'export.file.encoding':
     'The file encoding indicates how the individual characters in your data are represented on the file system. The default encoding is utf-8. Depending on the source system of the data, the encoding can take on different formats. Current supported formats are: utf-8, win-1254 and utf-16le. If you do not know what encoding your data is, in most cases it will be utf-8.',
@@ -1367,6 +1367,8 @@ export default {
     'The name of the extension wrapper function in your code that needs to be invoked as part of the export process.',
   'export.wrapper.configuration':
     'This field can be used to provide custom information which will be passed to the wrapper function whenever it is invoked. This can be useful if the same wrapper function is used for different exports and it needs to be configured differently per export.',
+  'exports.previewData':
+    'This section allows you to verify that you have configured the request correctly and that the data is successfully retrieved. When exporting records, you can view the HTTP request, the HTTP response, and the number of records you specify in JSON format, along with any errors.',
   'flow._id':
     'System generated primary unique identifier for your connection.  For API users, this value should be used for GET and PUT requests.',
   'flow.name':
@@ -1441,8 +1443,8 @@ export default {
   'import.filter.rules':
     'Important: only records where your filter expression evaluates to true will get processed by this import.  All other records will be marked as ignored.  Defining a filter on your import allows you to skip processing for specific records. For example, if you have an import that posts messages to Slack for all web orders that come in throughout the day you could add an import filter to instead only post orders that are above a certain amount. Please note that unlike export filters, import filters do not discard data traveling through your flow. Records that get ignored will still get passed along to subsequent processors in your flow.',
   'import.pgpencrypt': 'Use this cryptographic system to encrypt generated files.  This option is enabled only when you have configured at least one cryptographic system in the connection. If it is unchecked, then encryption will not be performed on generated files.',
-  'import.file.encrypt': 'Select the algorithm to encrypt the transferred files.',
-  'import.file.pgp.symmetricKeyAlgorithm': 'The symmetric key algorithm to use for encryption.',
+  'import.file.encrypt': 'Select the algorithm to use to encrypt the files before transfer.',
+  'import.file.pgp.symmetricKeyAlgorithm': 'Select the symmetric key algorithm to use for encryption.',
   'import.file.pgp.hashAlgorithm': 'The hashing algorithm to use when signing files. If this field is not set, then integrator.io will not sign files after encrypting them.',
   'import.file.filedefinition.rules':
     'File definition rules are used by our platform to generate custom files. The file generator helper allows you to modify our templated rules to solve more specific file generation requirements. Within the editor, you can use the rules panel to describe how a custom file should be generated from the JSON records/rows being processed by your flow, and then you can use the sample flow data and generated file panels to test your rules.',
@@ -2260,6 +2262,15 @@ export default {
   'stack.sharing':
     'Invite users from any integrator.io account to share your stack, which will allow them to invoke the functions in your stack from their integration flows. You may revoke their access from this screen at any time.',
   parentSObjectType: 'Use this field to specify the additional referencelist (child sObjects of parent sObject) that you would like to add to the export data. Ex: Contact is a childSObjectType for the parentSObject type Account.',
+  'pageGenerator.application': 'Choose an application, database, or universal connector.',
+  'pageGenerator.type': 'The source options presented – or automatically selected for you – depend on the features available in the application that you chose.',
+  'pageGenerator.connection': 'Choose an existing connection to this application, or click the <b>+</b> icon to create a new connection. You can always change your connection later.',
+  'pageGenerator.exportId': 'Select an existing export, listener, or transfer that you have already created in your account for this application, in order to add that same resource to the current flow. To set up a new resource, leave this field blank and click <b>Next</b>.',
+  'pageProcessor.application': 'Choose an application, database, or universal connector.',
+  'pageProcessor.connection': 'Choose an existing connection to this application, or click the <b>+</b> icon to create a new connection. You can always change your connection later.',
+  'pageProcessor.resourceType': 'The destination options presented – or automatically selected for you – depend on the features available in the application that you chose.',
+  'pageProcessor.importId': 'Select an existing import, lookup, or transfer that you have already created in your account for this application, in order to add that same resource to the current flow. To set up a new resource, leave this field blank and click <b>Next</b>.',
+  'pageProcessor.exportId': 'Select an existing import, lookup, or transfer that you have already created in your account for this application, in order to add that same resource to the current flow. To set up a new resource, leave this field blank and click <b>Next</b>.',
   referencedFields: 'Use this setting to add additional fields on the childSObject to the export data defined as lookup fields on Salesforce. Ex: If Contact is set as the childSObjectType, this setting allows users to pull data from the reference fields (such as Created By, Account Name) on the Contact sObject.',
   childRelationship: 'Use this field to specify the additional referencelist (child sObjects of parent sObject) that you would like to add to the export data. Ex: Contact is a childSObjectType for the parentSObject type Account.',
   'salesforce.referencedFields': 'Use this setting to add additional fields on the childSObject to the export data defined as lookup fields on Salesforce. Ex: If Contact is set as the childSObjectType, this setting allows users to pull data from the reference fields (such as Created By, Account Name) on the Contact sObject.',
