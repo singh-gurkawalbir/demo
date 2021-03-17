@@ -36,6 +36,7 @@ export default function SelectDate({
   filterKey,
   handleChange,
   customPresets,
+  showTime = false,
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -77,7 +78,7 @@ export default function SelectDate({
         Icon={FilterIcon}
         value={selectedDate}
         customPresets={customPresets}
-        showTime={false}
+        showTime={showTime}
          />
     </div>
   );
