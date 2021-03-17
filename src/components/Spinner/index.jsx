@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles, CircularProgress, Typography } from '@material-ui/core';
+import { makeStyles, CircularProgress } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     left: 0,
     margin: 'auto',
   },
-  textSpinner: {
+  spinnerChildren: {
     paddingLeft: theme.spacing(1),
   },
 }));
@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
  */
 export default function Spinner(props) {
   const classes = useStyles();
-  const { loading, color = 'primary', centerAll, message, className, ...rest } = props;
+  const { loading, color = 'primary', children, centerAll, className, ...rest } = props;
   const progress = (
     <CircularProgress
       color={color || 'inherit'}
@@ -44,7 +44,7 @@ export default function Spinner(props) {
   return (
     centerAll ? (
       <div className={clsx(classes.spinnerWrapper, className)}>
-        {progress} <Typography component="span" className={classes.textSpinner}>{message}</Typography>
+        {progress} <div className={classes.spinnerChildren}>{children}</div>
       </div>
     ) : progress
   );
@@ -53,5 +53,6 @@ export default function Spinner(props) {
 Spinner.propTypes = {
   size: PropTypes.number,
   thickness: PropTypes.number,
+  variant: PropTypes.string,
 };
 
