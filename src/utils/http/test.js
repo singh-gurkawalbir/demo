@@ -1,5 +1,5 @@
 /* global expect, describe, test */
-import { getContentType, getHttpReqResFields } from './utils';
+import { getContentType, getHttpReqResFields } from '.';
 
 describe('getHttpReqResFields util', () => {
   test('should return empty object incase of null/undefined httpPayload', () => {
@@ -23,25 +23,7 @@ describe('getHttpReqResFields util', () => {
 
     expect(getHttpReqResFields(httpPayload)).toEqual(expectedHttpFields);
   });
-  test('should return parsed json in body with headers and others when httpPayload consists of stringified JSON in the body', () => {
-    const httpPayloadWithBody = {
-      body: '{"test":5}',
-      headers: { 'content-type': 'application/json' },
-      status: 200,
-      url: 'https://www.mockurl.com/api/v2/users',
-    };
-    const expectedHttpFields = {
-      body: { test: 5},
-      headers: { 'content-type': 'application/json' },
-      others: {
-        status: 200,
-        url: 'https://www.mockurl.com/api/v2/users',
-      },
-    };
-
-    expect(getHttpReqResFields(httpPayloadWithBody)).toEqual(expectedHttpFields);
-  });
-  test('should return with body, headers and others as in httpPayload if the body is not a stringified JSON', () => {
+  test('should return with body, headers and all other properties from httpPayload included in others ', () => {
     const httpPayloadWithBody = {
       body: { test: 5},
       headers: { 'content-type': 'application/json' },
@@ -67,7 +49,7 @@ describe('getHttpReqResFields util', () => {
       url: 'https://www.mockurl.com/api/v2/users',
     };
     const expectedHttpPreviewPanelFields = {
-      body: { test: 5},
+      body: '{"test":5}',
       headers: { 'content-type': 'application/json' },
       others: {
         status: 200,
@@ -79,10 +61,10 @@ describe('getHttpReqResFields util', () => {
 });
 
 describe('getContentType util', () => {
-  test('should return undefined incase of invalid httpPayload', () => {
-    expect(getContentType()).toBeUndefined();
-    expect(getContentType(null)).toBeUndefined();
-    expect(getContentType({})).toBeUndefined();
+  test('should return json incase of invalid httpPayload', () => {
+    expect(getContentType()).toBe('json');
+    expect(getContentType(null)).toBe('json');
+    expect(getContentType({})).toBe('json');
   });
   test('should return json if the body is stringified JSON irrespective of the content type in the headers', () => {
     const httpPayload = {

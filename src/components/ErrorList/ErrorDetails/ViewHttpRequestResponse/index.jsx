@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch} from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../reducers';
@@ -9,6 +9,7 @@ import CeligoTabPanel from '../../../CeligoTabLayout/CeligoTabPanel';
 import DefaultPanel from '../../../CeligoTabLayout/CustomPanels/DefaultPanel';
 import DownloadBlobPanel from './DownloadBlobPanel';
 import PanelLoader from '../../../PanelLoader';
+import { getHttpReqResFields } from '../../../../utils/http';
 
 const TABS = [
   { label: 'Body', value: 'body' },
@@ -41,6 +42,9 @@ export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResK
   const errorHttpDoc = useSelector(state =>
     selectors.errorHttpDoc(state, reqAndResKey, isRequest) || defaultObj
   );
+
+  const formattedErrorHttpDoc = useMemo(() => getHttpReqResFields(errorHttpDoc), [errorHttpDoc]);
+
   const errorHttpDocError = useSelector(state =>
     selectors.errorHttpDocError(state, reqAndResKey)
   );
@@ -71,14 +75,14 @@ export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResK
           {
             s3BlobKey
               ? <DownloadBlobPanel flowId={flowId} resourceId={resourceId} s3BlobKey={s3BlobKey} />
-              : <DefaultPanel value={errorHttpDoc.body} />
+              : <DefaultPanel value={formattedErrorHttpDoc.body} />
           }
         </CeligoTabPanel>
         <CeligoTabPanel panelId="headers">
-          <DefaultPanel value={errorHttpDoc.headers} />
+          <DefaultPanel value={formattedErrorHttpDoc.headers} />
         </CeligoTabPanel>
         <CeligoTabPanel panelId="others">
-          <DefaultPanel value={errorHttpDoc.others} />
+          <DefaultPanel value={formattedErrorHttpDoc.others} />
         </CeligoTabPanel>
       </CeligoTabWrapper>
     </div>

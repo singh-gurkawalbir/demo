@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import ClipboardPanel from '../ClipboardPanel';
 import CodeEditor from '../../../CodeEditor2';
+import { isJsonString } from '../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   defaultPanelContainer: {
@@ -22,17 +23,23 @@ export default function DefaultPanel({ value, hideClipboard = false, contentType
     return null;
   }
 
+  let content = value;
+
+  if (contentType === 'json' && isJsonString(value)) {
+    content = JSON.parse(value);
+  }
+
   return (
     <>
       <div className={classes.defaultPanelContainer}>
         <CodeEditor
-          value={value}
+          value={content}
           mode={contentType}
           readOnly
           showGutter={false}
             />
       </div>
-      { !hideClipboard && <ClipboardPanel content={value} /> }
+      { !hideClipboard && <ClipboardPanel content={content} /> }
     </>
   );
 }
