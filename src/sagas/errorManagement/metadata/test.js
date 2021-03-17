@@ -345,6 +345,7 @@ describe('EM2.0 metadata sagas', () => {
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
         .put(actions.errorManager.errorHttpDoc.error(reqAndResKey, error))
+        .not.put(actions.errorManager.errorHttpDoc.received(reqAndResKey, undefined))
         .run();
     });
   });

@@ -2,11 +2,11 @@
 import { getContentType, getHttpReqResFields } from '.';
 
 describe('getHttpReqResFields util', () => {
-  test('should return empty object incase of null/undefined httpPayload', () => {
+  test('should return empty object in case of null/undefined httpPayload', () => {
     expect(getHttpReqResFields()).toEqual({});
     expect(getHttpReqResFields(null)).toEqual({});
   });
-  test('should return undefined body with headers and all other fields as others incase of httpPayload without body', () => {
+  test('should return undefined body with headers and all other fields as others in case of httpPayload without body', () => {
     const httpPayload = {
       headers: { 'content-type': 'application/json' },
       status: 200,
