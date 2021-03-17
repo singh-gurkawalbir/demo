@@ -7,7 +7,7 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
 import Panels from './Panels';
 import { DEFAULT_RECORD_SIZE } from '../../utils/exportPanel';
-import FieldHelp from '../DynaForm/FieldHelp';
+// import FieldHelp from '../DynaForm/FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   previewPanelWrapper: {
@@ -145,7 +145,7 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
       className={classes.previewPanelWrapper}>
       <Typography className={classes.previewDataHeading}>
         Preview data
-        <FieldHelp label="Preview data" helpKey="exports.previewData" />
+        {/* <FieldHelp label="Preview data" helpKey="exports.previewData" /> */}
       </Typography>
       <div className={classes.container}>
         <PreviewInfo
