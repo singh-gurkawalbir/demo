@@ -189,6 +189,7 @@ export default {
     'pipedrive',
     'microsoftteams',
     'adobesign',
+    'mavenlink',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',

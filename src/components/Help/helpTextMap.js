@@ -1367,6 +1367,8 @@ export default {
     'The name of the extension wrapper function in your code that needs to be invoked as part of the export process.',
   'export.wrapper.configuration':
     'This field can be used to provide custom information which will be passed to the wrapper function whenever it is invoked. This can be useful if the same wrapper function is used for different exports and it needs to be configured differently per export.',
+  'exports.previewData':
+    'This section allows you to verify that you have configured the request correctly and that the data is successfully retrieved. When exporting records, you can view the HTTP request, the HTTP response, and the number of records you specify in JSON format, along with any errors.',
   'flow._id':
     'System generated primary unique identifier for your connection.  For API users, this value should be used for GET and PUT requests.',
   'flow.name':
@@ -2260,6 +2262,15 @@ export default {
   'stack.sharing':
     'Invite users from any integrator.io account to share your stack, which will allow them to invoke the functions in your stack from their integration flows. You may revoke their access from this screen at any time.',
   parentSObjectType: 'Use this field to specify the additional referencelist (child sObjects of parent sObject) that you would like to add to the export data. Ex: Contact is a childSObjectType for the parentSObject type Account.',
+  'pageGenerator.application': 'Choose an application, database, or universal connector.',
+  'pageGenerator.type': 'The source options presented – or automatically selected for you – depend on the features available in the application that you chose.',
+  'pageGenerator.connection': 'Choose an existing connection to this application, or click the <b>+</b> icon to create a new connection. You can always change your connection later.',
+  'pageGenerator.exportId': 'Select an existing export, listener, or transfer that you have already created in your account for this application, in order to add that same resource to the current flow. To set up a new resource, leave this field blank and click <b>Next</b>.',
+  'pageProcessor.application': 'Choose an application, database, or universal connector.',
+  'pageProcessor.connection': 'Choose an existing connection to this application, or click the <b>+</b> icon to create a new connection. You can always change your connection later.',
+  'pageProcessor.resourceType': 'The destination options presented – or automatically selected for you – depend on the features available in the application that you chose.',
+  'pageProcessor.importId': 'Select an existing import, lookup, or transfer that you have already created in your account for this application, in order to add that same resource to the current flow. To set up a new resource, leave this field blank and click <b>Next</b>.',
+  'pageProcessor.exportId': 'Select an existing import, lookup, or transfer that you have already created in your account for this application, in order to add that same resource to the current flow. To set up a new resource, leave this field blank and click <b>Next</b>.',
   referencedFields: 'Use this setting to add additional fields on the childSObject to the export data defined as lookup fields on Salesforce. Ex: If Contact is set as the childSObjectType, this setting allows users to pull data from the reference fields (such as Created By, Account Name) on the Contact sObject.',
   childRelationship: 'Use this field to specify the additional referencelist (child sObjects of parent sObject) that you would like to add to the export data. Ex: Contact is a childSObjectType for the parentSObject type Account.',
   'salesforce.referencedFields': 'Use this setting to add additional fields on the childSObject to the export data defined as lookup fields on Salesforce. Ex: If Contact is set as the childSObjectType, this setting allows users to pull data from the reference fields (such as Created By, Account Name) on the Contact sObject.',
