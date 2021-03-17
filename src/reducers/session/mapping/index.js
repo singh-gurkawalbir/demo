@@ -9,6 +9,7 @@ const { deepClone } = require('fast-json-patch');
 const emptySet = [];
 const emptyObj = {};
 
+const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
 export default (state = {}, action) => {
   const {
     type,
@@ -85,10 +86,16 @@ export default (state = {}, action) => {
           if (field === 'extract') {
             if (value.indexOf('"') === 0) {
               delete mapping.extract;
+              // delete lookup in case user changes extract to hardcoded value
+              delete mapping.lookupName;
               mapping.hardCodedValue = value.replace(/(^")|("$)/g, '');
             } else {
               delete mapping.hardCodedValue;
               mapping.extract = value;
+              // delete lookupName in case user changes extract to multiField
+              if (handlebarRegex.test(value)) {
+                delete mapping.lookupName;
+              }
             }
           } else {
             mapping[field] = value;
@@ -155,8 +162,12 @@ export default (state = {}, action) => {
 
           Object.assign(mapping, value);
 
-          // removing lookups
-          if (!value.lookupName) {
+          if (value.lookupName) {
+            // in case user has already set multifield expression and later changes
+            // setting mode to lookup. Remove multifield expression from extract
+            if (handlebarRegex.test(mapping?.extract)) delete mapping.extract;
+          } else {
+            // removing lookup
             delete mapping.lookupName;
           }
           if (!value.conditional?.when && mapping?.conditional?.when) {
