@@ -154,6 +154,7 @@ export default (state = {}, action) => {
           const mapping = draft.mapping.mappings[index];
 
           Object.assign(mapping, value);
+
           // removing lookups
           if (!value.lookupName) {
             delete mapping.lookupName;
