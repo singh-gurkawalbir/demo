@@ -4,13 +4,13 @@ import { Button, MenuItem, InputLabel, FormControl} from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import moment from 'moment';
 import TimeAgo from 'react-timeago';
-import { useDispatch, useSelector } from 'react-redux';
-import actions from '../../actions';
+import { useSelector, shallowEqual } from 'react-redux';
 import { selectors } from '../../reducers';
 import ArrowPopper from '../ArrowPopper';
 import ButtonGroup from '../ButtonGroup';
 import CeligoSelect from '../CeligoSelect';
 import DebugIcon from '../icons/DebugIcon';
+import CancelIcon from '../icons/CancelIcon';
 import IconTextButton from '../IconTextButton';
 
 const useStyles = makeStyles(theme => ({
@@ -51,10 +51,23 @@ const useStyles = makeStyles(theme => ({
   dropdown: {
     marginTop: '0px !important',
   },
+  lastDebug: {
+    fontSize: '13px',
+    lineHeight: '16px',
+    marginTop: theme.spacing(1),
+    color: theme.palette.secondary.light,
+  },
 }));
 
+const MenuProps = {
+  PaperProps: {
+    style: {
+      marginTop: 35,
+    },
+  },
+};
+
 const debugOptions = [
-  { label: 'Off', value: '0' },
   { label: 'Next 15 mins', value: '15' },
   { label: 'Next 30 mins', value: '30' },
   { label: 'Next 45 mins', value: '45' },
@@ -77,30 +90,49 @@ const formatter = (value, unit, suffix) => {
 
   return `${value}${formattedUnit} remaining`;
 };
+const lastRunFormatter = (value, unit, suffix, epochSeconds, nextFormatter) => {
+  if (suffix === 'ago') {
+    let formattedUnit = '';
 
-// there is a new enhanced component 'StartDebugEnhanced' which takes care
-// of the improvements around this Debug button. Please use that, if needed
+    if (unit === 'second') {
+      formattedUnit = 's';
+    } else if (unit === 'minute') {
+      formattedUnit = 'm';
+    } else {
+      formattedUnit = unit;
+    }
+
+    return `${value}${formattedUnit} ago`;
+  }
+
+  // we use the default formatter for all other units.
+  return nextFormatter();
+};
+
 const defaultValue = 15;
-export default function StartDebug({ resourceId, resourceType, disabled}) {
+export default function StartDebugEnhanced({
+  resourceId,
+  resourceType,
+  disabled,
+  startDebugHandler,
+  stopDebugHandler,
+}) {
   const [value, setValue] = useState(defaultValue);
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const debugUntil = useSelector(state => {
+  const { activeDebugUntil, pastDebugUntil } = useSelector(state => {
     const resource = selectors.resource(state, resourceType, resourceId);
-    let debugUntil;
+    const {debugUntil} = resource;
 
-    if (resourceType === 'connections') {
-      debugUntil = resource.debugDate;
-    } else {
-      debugUntil = resource.debugUntil;
+    if (!debugUntil) {
+      return {};
     }
-    if (!debugUntil || moment().isAfter(moment(debugUntil))) {
-      return;
+    if (moment().isAfter(moment(debugUntil))) {
+      return {pastDebugUntil: debugUntil};
     }
 
-    return debugUntil;
-  });
+    return {activeDebugUntil: debugUntil};
+  }, shallowEqual);
 
   const toggleClick = useCallback(event => {
     if (anchorEl) {
@@ -109,15 +141,15 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
     setAnchorEl(state => (state ? null : event.currentTarget));
   }, [anchorEl]);
 
-  const handleSave = useCallback(() => {
-    if (resourceType === 'connections') {
-      dispatch(actions.logs.connections.startDebug(resourceId, value));
-    } else if (resourceType === 'scripts') {
-      dispatch(actions.logs.scripts.startDebug(resourceId, value));
-    }
+  const updateTimeHandler = useCallback(() => {
+    startDebugHandler?.(value);
 
     setAnchorEl(null);
-  }, [dispatch, resourceId, resourceType, value]);
+  }, [startDebugHandler, value]);
+
+  const handleStopDebug = useCallback(() => {
+    stopDebugHandler?.();
+  }, [stopDebugHandler]);
 
   const handleClose = useCallback(() => {
     setValue(defaultValue);
@@ -131,15 +163,6 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
     setValue(value);
   }, []);
 
-  const MenuProps = {
-    PaperProps: {
-      style: {
-        marginTop: 35,
-      },
-    },
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  };
-
   return (
     <>
       <IconTextButton
@@ -147,10 +170,17 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
         onClick={toggleClick}
         data-test="refreshResource">
         <DebugIcon />
-        {debugUntil ? (
-          <TimeAgo date={debugUntil} formatter={formatter} style={{marginLeft: 0 }} />
+        {activeDebugUntil ? (
+          <TimeAgo date={activeDebugUntil} formatter={formatter} style={{marginLeft: 0 }} />
         ) : 'Start debug'}
       </IconTextButton>
+      {activeDebugUntil && (
+      <IconTextButton
+        onClick={handleStopDebug} >
+        <CancelIcon />
+        Stop debug
+      </IconTextButton>
+      )}
       <ArrowPopper
         disabled={disabled}
         open={!!anchorEl}
@@ -167,7 +197,7 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
               <div className={classes.wrapper}>
                 <div className={classes.row}>
                   <InputLabel className={classes.formLabel}>
-                    Start debug log level for:
+                    Capture debug logs:
                   </InputLabel>
                   <FormControl className={classes.formControl}>
 
@@ -183,18 +213,24 @@ export default function StartDebug({ resourceId, resourceType, disabled}) {
                           {opt.label}
                         </MenuItem>
                       ))}
+
                     </CeligoSelect>
                   </FormControl>
+                  {pastDebugUntil && (
+                    <div className={classes.lastDebug}>
+                      Last debug: <TimeAgo date={pastDebugUntil} formatter={lastRunFormatter} />
+                    </div>
+                  )}
 
                 </div>
               </div>
               <div className={classes.actions}>
                 <ButtonGroup>
-                  <Button variant="outlined" color="primary" onClick={handleSave}>
+                  <Button variant="outlined" color="primary" onClick={updateTimeHandler}>
                     Apply
                   </Button>
                   <Button variant="text" color="primary" onClick={handleClose}>
-                    Cancel
+                    Close
                   </Button>
                 </ButtonGroup>
               </div>
