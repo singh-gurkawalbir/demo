@@ -13,6 +13,8 @@ dep-tree
 .vscode
 .DS_Store
 package-lock.json
-.lr_staging
-.lr_production
-.lr_production_eu
+.env_staging
+.env_production
+.env_production_eu
+.env_qa
+version.pyc

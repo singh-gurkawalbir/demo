@@ -110,7 +110,7 @@ export default function DynaNetSuiteDefaultValue(props) {
             disabled={disabled}
             onBlur={handleBlur}
     />
-          {status === 'refreshed' ? <Spinner size={24} />
+          {status === 'refreshed' ? <Spinner />
 
             : (
               <ActionButton
