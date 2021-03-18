@@ -1,7 +1,7 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import Select, { components } from 'react-select';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
-import { FormControl, FormLabel } from '@material-ui/core';
+import { Button, FormControl, FormLabel } from '@material-ui/core';
 import Chip from '@material-ui/core/Chip';
 import Checkbox from '@material-ui/core/Checkbox';
 import FieldMessage from '../FieldMessage';
@@ -63,6 +63,15 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     paddingRight: '5px',
     height: '100%',
+  },
+  doneButton: {
+    width: '100%',
+    minHeight: 42,
+    margin: 0,
+    padding: 0,
+    border: '1px solid',
+    borderColor: `${theme.palette.secondary.lightest} !important`,
+    borderRadius: 0,
   },
 }));
 
@@ -170,6 +179,30 @@ const MultiValueLabel = props => {
   );
 };
 
+const Menu = props => {
+  const classes = useStyles();
+  const { menuIsOpen, onMenuClose } = props.selectProps;
+  const closeSelect = () => {
+    if (menuIsOpen) {
+      onMenuClose();
+    }
+  };
+
+  return (
+    <components.Menu {...props}>
+      {props.children}
+      <Button
+        id="select-multi-close"
+        variant="outlined"
+        color="secondary"
+        onClick={closeSelect}
+        className={classes.doneButton}>
+        Done
+      </Button>
+    </components.Menu>
+  );
+};
+
 export default function MultiSelectApplication(props) {
   const {
     disabled,
@@ -185,6 +218,16 @@ export default function MultiSelectApplication(props) {
   } = props;
   const theme = useTheme();
   const classes = useStyles();
+  const [open, setOpen] = useState(false);
+  const openSelect = useCallback(() => {
+    setOpen(true);
+  }, []);
+  const closeSelect = useCallback(
+    () => {
+      setOpen(false);
+    }, []
+  );
+  const defaultValue = useMemo(() => value.map(val => options[0].items.find(opt => opt.value === val)), [options, value]);
   const handleChange = useCallback(selectedOptions => {
     onFieldChange(id, selectedOptions?.map(opt => opt?.value ? opt.value : opt) || []);
   }, [id, onFieldChange]);
@@ -330,8 +373,8 @@ export default function MultiSelectApplication(props) {
         <Select
           isMulti
           placeholder={placeholder}
-          components={{ Option, MultiValueLabel, DropdownIndicator }}
-          defaultValue={value}
+          components={{ Option, MultiValueLabel, DropdownIndicator, Menu }}
+          defaultValue={defaultValue}
           options={options[0].items}
           onChange={handleChange}
           closeMenuOnSelect={false}
@@ -339,6 +382,9 @@ export default function MultiSelectApplication(props) {
           className={classes.wrapper}
           filterOption={filterOptions}
           styles={customStylesMultiselect}
+          menuIsOpen={open}
+          onMenuOpen={openSelect}
+          onMenuClose={closeSelect}
         />
 
         {!removeHelperText && <FieldMessage {...props} />}
