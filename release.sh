@@ -5,7 +5,7 @@ env_vars=$1
 [[ -f $env_vars ]] || (echo "env file $env_vars invalid" && exit 1)
 echo $env_vars
 . $env_vars
-if [ -z "$LOGROCKET_IDENTIFIER" ] || [ -z "$CDN_BASE_URI" ]; then
+if [ -z "$LOGROCKET_IDENTIFIER" ] || [ -z "$LOGROCKET_API_KEY" ] || [ -z "$CDN_BASE_URI" ] || [ -z "$S3_BUCKET" ]; then
   echo 'one or more variables are undefined'        
   exit 1
 fi
