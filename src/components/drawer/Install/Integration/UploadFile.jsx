@@ -71,7 +71,7 @@ export default function UploadFile() {
     setUploadInProgress(true);
   };
 
-  if (!uploadInProgress) {
+  if (uploadInProgress) {
     return (
       <Spinner centerAll />
     );
