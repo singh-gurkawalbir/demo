@@ -119,6 +119,9 @@ import DynaSelectMultiApplication from './DynaSelectMultiApplication';
 import DynaPreviewComponentsTable from './DynaPreviewComponentsTable';
 import DynaChildLicenses from './DynaChildLicenses';
 import DynaDateSelector from './DynaDateSelector';
+import DynaFileEncryptDecrypt from './DynaFileEncryptDecrypt';
+import DynaHashAlogorithm from './DynaHashAlogorithm';
+import DynaQueryRadioGroup from './radiogroup/DynaQueryRadioGroup';
 
 export default {
   suitescriptsettings: DynaRefreshableSettings,
@@ -229,6 +232,7 @@ export default {
   // filekeycolumn: DynaFileKeyColumn,
   filekeycolumn: DynaFileKeyColumn_afe2,
   radiogroupforresetfields: DynaRadioGroupForResetFields,
+  queryradiogroup: DynaQueryRadioGroup,
   textwithflowcontext: DynaTextWithFlowContext,
   checkboxforresetfields: DynaCheckboxForResetFields,
   crongenerator: DynaCronGenerator,
@@ -264,4 +268,6 @@ export default {
   as2Mode: DynaAs2Mode,
   childlicenses: DynaChildLicenses,
   dateselector: DynaDateSelector,
+  fileencryptdecrypt: DynaFileEncryptDecrypt,
+  hashalgorithm: DynaHashAlogorithm,
 };

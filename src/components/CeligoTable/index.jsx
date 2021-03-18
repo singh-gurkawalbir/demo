@@ -32,7 +32,6 @@ const useStyles = makeStyles(theme => ({
     top: 20,
     width: 1,
   },
-
   row: {
     '& > td:last-child': {
       minWidth: '125px',
@@ -72,6 +71,7 @@ export default function CeligoTable({
   filterKey,
   className,
   actionProps = emptyObj,
+  variant = 'standard',  // slim | standard
 }) {
   const history = useHistory();
   const classes = useStyles();
@@ -218,7 +218,9 @@ export default function CeligoTable({
               )
             )}
             {rowActions && (
-              <TableCell align="center" className={classes.actionColHead}>Actions</TableCell>
+              <TableCell align="center" className={classes.actionColHead}>
+                {variant === 'slim' ? '' : 'Actions'}
+              </TableCell>
             )}
           </TableRow>
         </TableHead>
@@ -267,6 +269,7 @@ export default function CeligoTable({
                     actionProps={actionProps}
                     rowActions={rowActions}
                     rowData={rowData}
+                    variant={variant}
                   />
                 </TableCell>
               )}

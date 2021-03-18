@@ -1,4 +1,4 @@
-import { EXPORT_FILE_FIELD_MAP } from '../../../utils/fileUtil';
+import { EXPORT_FILE_FIELD_MAP } from '../../metaDataUtils/fileUtil';
 import { alterFileDefinitionRulesVisibility } from '../../formFactory/utils';
 
 export default {
@@ -115,6 +115,9 @@ export default {
 
     delete newValues['/file/decompressFiles'];
     newValues['/s3/backupBucket'] = undefined;     // TODO Ashok, This code can be removed once all backend issues are resolved.
+    if (!newValues['/file/decrypt']) {
+      newValues['/file/decrypt'] = undefined;
+    }
 
     return {
       ...newValues,
@@ -216,6 +219,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
+          'fileAdvanced',
           'file.decompressFiles',
           'file.compressionFormat',
           'file.skipDelete',
@@ -225,7 +229,8 @@ export default {
           'pageSize',
           'dataURITemplate',
           'skipRetries',
-          'apiIdentifier'],
+          'apiIdentifier',
+          'traceKeyTemplate'],
       },
     ],
   },

@@ -510,7 +510,7 @@ export default function ConnectorInstallation(props) {
   return (
     <LoadResources required resources="connections,integrations,published">
       <CeligoPageBar
-        title={`Install app: ${integrationName}`}
+        title={`Install integration: ${integrationName}`}
         // Todo: (Mounika) please add the helpText
         // infoText="we need to have the help text for the following."
         >

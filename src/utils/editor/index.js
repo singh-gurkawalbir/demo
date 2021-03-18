@@ -55,6 +55,10 @@ export const getUniqueFieldId = (fieldId, resource) => {
 
   // some field types have same field ids
   switch (fieldId) {
+    case 'rdbms.query1':
+      return 'rdbms.query';
+    case 'rdbms.query2':
+      return 'rdbms.query';
     case 'rdbms.queryInsert':
       return 'rdbms.query.1';
     case 'rdbms.queryUpdate':

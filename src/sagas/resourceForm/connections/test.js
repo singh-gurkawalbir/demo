@@ -1,5 +1,4 @@
 /* global describe, test, expect, jest */
-
 import { call, put, select, race, take } from 'redux-saga/effects';
 import { throwError } from 'redux-saga-test-plan/providers';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -8,7 +7,7 @@ import actions from '../../../actions';
 import { apiCallWithRetry } from '../../index';
 import {newIAFrameWorkPayload, submitFormValues, createFormValuesPatchSet} from '../index';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
-import { pingConnectionWithAbort, requestToken, requestIClients, pingAndUpdateConnection, pingConnection, createPayload, openOAuthWindowForConnection, commitAndAuthorizeConnection, saveAndAuthorizeConnection, netsuiteUserRoles } from '.';
+import { pingConnectionWithAbort, requestToken, requestIClients, pingAndUpdateConnection, pingConnection, createPayload, openOAuthWindowForConnection, commitAndAuthorizeConnection, saveAndAuthorizeConnection, netsuiteUserRoles, requestTradingPartnerConnections } from '.';
 import { commitStagedChanges } from '../../resources';
 import { selectors } from '../../../reducers/index';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
@@ -234,6 +233,61 @@ describe('request IClients saga', () => {
 
     expect(saga.throw(new Error()).value).toEqual(undefined);
     expect(saga.next().done).toEqual(true);
+  });
+});
+
+describe('requestTradingPartnerConnections saga tests', () => {
+  const connectionId = 'c1';
+  const path = `/connections/${connectionId}/tradingPartner`;
+  const response = [
+    {
+      _id: 'c2',
+    },
+    {
+      _id: 'c3',
+    },
+  ];
+
+  test('should make an api call to get trading partner connections and dispatch received action', () => expectSaga(requestTradingPartnerConnections, { connectionId })
+    .provide([
+      [call(apiCallWithRetry, {
+        path,
+        opts: {
+          method: 'GET',
+        },
+      }), response],
+    ])
+    .call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'GET',
+      },
+    })
+    .put(actions.connection.receivedTradingPartnerConnections(connectionId, response))
+    .run());
+
+  test('should not call received action if api call fails with an error', () => {
+    const error = {
+      code: 404,
+    };
+
+    return expectSaga(requestTradingPartnerConnections, { connectionId })
+      .provide([
+        [call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'GET',
+          },
+        }), throwError(error)],
+      ])
+      .call(apiCallWithRetry, {
+        path,
+        opts: {
+          method: 'GET',
+        },
+      })
+      .not.put(actions.connection.receivedTradingPartnerConnections())
+      .run();
   });
 });
 
