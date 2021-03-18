@@ -36,6 +36,7 @@ import {
   flowAllowsScheduling,
   getFlowType,
   flowSupportsSettings,
+  isRealtimeExport,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -87,6 +88,7 @@ import {
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
+import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -5058,3 +5060,42 @@ selectors.isConnectionLogsNotSupported = (state, connectionId) => {
 
   return ['wrapper', 'dynamodb', 'mongodb'].includes(connectionResource?.type);
 };
+
+// #region listener request logs selectors
+selectors.hasLogsAccess = (state, resourceId, resourceType, isNew) => {
+  if (resourceType !== 'exports') return false;
+  const resource = selectors.resource(state, 'exports', resourceId);
+
+  if (!isRealtimeExport(resource)) return false;
+
+  return !isNew;
+};
+
+selectors.canEnableDebug = (state, exportId, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
+
+  const userPermissionsOnIntegration = selectors.resourcePermissions(state, 'integrations', flow?._integrationId)?.accessLevel;
+
+  if (userPermissionsOnIntegration !== INTEGRATION_ACCESS_LEVELS.MONITOR) return true;
+
+  const resource = selectors.resource(state, 'exports', exportId) || {};
+
+  // webhook exports have no attached connection
+  if (resource.type === 'webhook') {
+    return false;
+  }
+
+  const userPermissionsOnConnection = selectors.resourcePermissions(state, 'connections', resource._connectionId)?.edit;
+
+  return userPermissionsOnConnection;
+};
+
+selectors.logsInCurrPageSelector = (state, exportId) => {
+  const debugLogsList = selectors.logsSummary(state, exportId);
+  const filterOptions = selectors.filter(state, LISTENER_LOG_FILTER_KEY);
+  const { currPage = 0 } = filterOptions.paging || {};
+
+  return debugLogsList.slice(currPage * LISTENER_LOG_DEFAULT_ROWS_PER_PAGE, (currPage + 1) * LISTENER_LOG_DEFAULT_ROWS_PER_PAGE);
+};
+
+// #endregion listener request logs selectors
