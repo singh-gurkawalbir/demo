@@ -1,5 +1,0 @@
-export LOGROCKET_IDENTIFIER="foo/bar"
-export LOGROCKET_API_KEY="foo:bar:aaaaaaaaa"
-
-export LOGROCKET_IDENTIFIER_EU="foo/bar"
-export LOGROCKET_API_KEY_EU="foo:bar:aaaaaaaaa"
