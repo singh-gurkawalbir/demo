@@ -5,7 +5,7 @@ env_vars=$1
 [[ -f $env_vars ]] || (echo "env file $env_vars invalid" && exit 1)
 echo $env_vars
 . $env_vars
-if [ -z "$LOGROCKET_IDENTIFIER" ] || [ -z "$LOGROCKET_API_KEY" ] || [ -z "$CDN_BASE_URI" ] || [ -z "$S3_BUCKET" ]; then
+if [ -z "$LOGROCKET_IDENTIFIER" ] || [ -z "$LOGROCKET_API_KEY" ] || [ -z "$CDN_BASE_URI" ] || [ -z "$S3_BUCKET" ] || [ -z "$ACCESS_KEY_ID" ] || [ -z "$SECRET_ACCESS_KEY" ]; then
   echo 'one or more variables are undefined'        
   exit 1
 fi
@@ -27,5 +27,7 @@ logrocket upload build/ --release=$version --apikey=$LOGROCKET_API_KEY --url-pre
 # move the source map files into a separate folder
 mkdir -p build/sourcemaps && mv build/*.js.map build/sourcemaps/
 # upload the build files to s3 bucket
+aws configure set aws_access_key_id $ACCESS_KEY_ID
+aws configure set aws_secret_access_key $SECRET_ACCESS_KEY
 aws s3 cp build/ s3://$S3_BUCKET/react/$version/ --recursive --acl public-read
 aws s3 cp build/index.html s3://$S3_BUCKET/react/index.html --acl public-read
