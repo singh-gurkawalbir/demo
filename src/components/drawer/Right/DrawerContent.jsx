@@ -17,7 +17,7 @@ export default function DrawerContent({ children, noPadding }) {
 
   return (
     <div
-      className={clsx(classes.drawerContent, { [classes.padding]: !noPadding })}>
+      className={clsx(classes.drawerContent, { [classes.withPadding]: !noPadding })}>
       {children}
     </div>
   );
