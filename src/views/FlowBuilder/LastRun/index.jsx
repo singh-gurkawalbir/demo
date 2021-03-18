@@ -63,7 +63,7 @@ export default function LastRun({ flowId }) {
     if ([FLOW_RUNNING_STATUS, FLOW_IN_QUEUE_STATUS].includes(lastRunStatus)) {
       return (
         <>
-          <Spinner color="primary" size={16} className={classes.icon} />
+          <Spinner size={16} className={classes.icon} />
           <span>{lastRunStatus}</span>
         </>
       );
