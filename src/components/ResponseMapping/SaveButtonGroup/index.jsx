@@ -50,7 +50,7 @@ const SaveButton = ({
       onClick={handleSave}>
       {showSpinner ? (
         <>
-          <Spinner size="extraSmall" />
+          <Spinner size="small" />
           Saving
         </>
       ) : (

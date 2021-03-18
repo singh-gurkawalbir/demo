@@ -42,7 +42,7 @@ export default function ExampleDrawer() {
   return (
     <RightDrawer path="example" height="tall">
       <DrawerHeader title="Example Drawer">
-        <Spinner size="extraSmall" /> Refreshing
+        <Spinner size="small" /> Refreshing
         <ActionGroup position="right">
           <Button variant="text">Normal Action</Button>
         </ActionGroup>

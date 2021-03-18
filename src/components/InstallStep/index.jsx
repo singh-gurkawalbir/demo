@@ -242,13 +242,13 @@ export default function InstallationStep(props) {
               color="primary"
               className={clsx(classes.installActionBtn, {[classes.installBtn]: (step.isCurrentStep && !step.completed)})}
               >
-              {showSpinner && <Spinner size="extraSmall" />} {stepText}
+              {showSpinner && <Spinner size="small" />} {stepText}
             </IconTextButton>
             )}
             {step.completed && (
             <>
               <Typography onClick={onStepClick} className={classes.completedText}>
-                {showSpinner && <Spinner size="extraSmall" />}  {stepText}
+                {showSpinner && <Spinner size="small" />}  {stepText}
               </Typography>
             </>
             )}
