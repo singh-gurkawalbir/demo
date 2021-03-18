@@ -6,7 +6,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import Spinner from '../../../Spinner';
-import SpinnerWrapper from '../../../SpinnerWrapper';
 
 const useStyles = makeStyles(theme => ({
   uploadButton: {
@@ -74,9 +73,7 @@ export default function UploadFile() {
 
   if (uploadInProgress) {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+      <Spinner centerAll />
     );
   }
 

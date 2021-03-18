@@ -11,7 +11,6 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import actions from '../../../../actions';
 import CeligoTable from '../../../../components/CeligoTable';
 import { flowbuilderUrl } from '../../../../utils/flows';
-import SpinnerWrapper from '../../../../components/SpinnerWrapper';
 import Spinner from '../../../../components/Spinner';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';
 import { resourceCategory } from '../../../../utils/resource';
@@ -147,7 +146,7 @@ const ErrorsList = ({integrationId, childId}) => {
     return <Typography>No flow exists with id: {flowId}</Typography>;
   }
   if (status !== 'received') {
-    return <SpinnerWrapper><Spinner /></SpinnerWrapper>;
+    return <Spinner centerAll />;
   }
 
   return (

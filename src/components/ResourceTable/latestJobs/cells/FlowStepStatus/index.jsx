@@ -24,7 +24,7 @@ export default function FlowStepStatus({ job }) {
     return (
       <div className={classes.flexContainer}>
         <div className={classes.spinnerWrapper}>
-          <Spinner size={18} color="primary" />
+          <Spinner size={18} />
         </div>
         {JOB_UI_STATUS[job.status]}
       </div>

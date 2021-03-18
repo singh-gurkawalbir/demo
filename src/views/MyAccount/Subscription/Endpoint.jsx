@@ -15,7 +15,6 @@ import DrawerContent from '../../../components/drawer/Right/DrawerContent';
 import CheckMarkIcon from '../../../components/icons/CheckmarkIcon';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import Spinner from '../../../components/Spinner';
-import SpinnerWrapper from '../../../components/SpinnerWrapper';
 import LoadResources from '../../../components/LoadResources';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
@@ -218,9 +217,7 @@ export default function Endpoint() {
 
   if (!licenseEntitlementUsage) {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+      <Spinner centerAll />
     );
   }
 

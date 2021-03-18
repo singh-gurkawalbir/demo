@@ -169,7 +169,7 @@ function TreeViewComponent(props) {
   return (
     <>
       {status === 'refreshed' ? (
-        <Spinner size={24} />
+        <Spinner />
       ) : (
         (!skipNonReferencedFields &&
           nonReferenceFields &&

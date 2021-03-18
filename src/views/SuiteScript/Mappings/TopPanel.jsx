@@ -55,7 +55,7 @@ const RefreshButton = ({className, ...props}) => (
 );
 const SpinnerLoader = ({className}) => (
   <span className={className}>
-    <Spinner size={24} color="primary" />
+    <Spinner />
   </span>
 );
 export default function TopPanel({disabled}) {

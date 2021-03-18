@@ -106,7 +106,7 @@ export default function DynaNetSuiteAPIVersion(props) {
       {(isLoading && isNew && !errorMessage) ? (
         <span
           className={classes.refreshLoader}>
-          <Spinner size={24} />
+          <Spinner />
         </span>
       )
         : (
