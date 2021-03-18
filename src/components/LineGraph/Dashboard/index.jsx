@@ -38,8 +38,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(-5),
   },
 }));
-const flowsConfig = { type: 'flows'};
-const emptySet = [];
 const defaultRange = {
   startDate: startOfDay(addDays(new Date(), -29)).toISOString(),
   endDate: new Date().toISOString(),
@@ -51,17 +49,15 @@ export default function LineGraphDrawer({ integrationId, childId }) {
   const dispatch = useDispatch();
   const [refresh, setRefresh] = useState();
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
+  const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
+  const isIntegrationAppV2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId));
+  const hasGrouping = useMemo(() => {
+    if (flowGroupingsSections) return true;
+
+    return isIntegrationApp && !isIntegrationAppV2;
+  }, [flowGroupingsSections, isIntegrationApp, isIntegrationAppV2]);
   const [flowCategory, setFlowCategory] = useState();
-  const integrationSectionFlows = useSelectorMemo(selectors.makeIntegrationSectionFlows, integrationId, childId, flowCategory);
-  const integrationAppFlowSections = useSelector(state => {
-    if (!isIntegrationApp) {
-      return emptySet;
-    }
-
-    return selectors.integrationAppFlowSections(state, integrationId, childId);
-  }, (left, right) => left.length === right.length);
-
-  const validFlows = useMemo(() => isIntegrationApp ? integrationSectionFlows : [], [integrationSectionFlows, isIntegrationApp]);
+  const groupings = useSelectorMemo(selectors.mkIntegrationFlowGroups, integrationId);
   const preferences = useSelector(state => selectors.userPreferences(state)?.linegraphs) || {};
   const { rangePreference, resourcePreference } = useMemo(() => {
     const preference = preferences[integrationId] || {};
@@ -75,35 +71,29 @@ export default function LineGraphDrawer({ integrationId, childId }) {
   const [selectedResources, setSelectedResources] = useState(resourcePreference);
   const [range, setRange] = useState(rangePreference);
 
-  const resourceList = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    flowsConfig
-  );
+  const flowResources = useSelectorMemo(selectors.mkIntegrationFlowsByGroup, integrationId, childId, flowCategory);
+  const filteredFlowResources = useMemo(() => {
+    const flows = flowResources.map(f => ({_id: f._id, name: f.name || `Unnamed (id: ${f._id})`}));
 
-  const flowResources = useMemo(
-    () => {
-      const flows = resourceList.resources &&
-      resourceList.resources.filter(flow =>
-        (flow._integrationId === integrationId && !flow.disabled && (!isIntegrationApp || validFlows.includes(flow._id))))
-        .map(f => ({_id: f._id, name: f.name}));
+    return [{_id: integrationId, name: 'Integration-level'}, ...flows];
+  }, [flowResources, integrationId]);
 
-      return [{_id: integrationId, name: 'Integration-level'}, ...flows];
-    },
-    [resourceList.resources, integrationId, isIntegrationApp, validFlows]
-  );
   const validResources = useMemo(() => {
     if (selectedResources && selectedResources.length) {
-      return selectedResources.filter(sr => flowResources.find(r => r._id === sr));
+      return selectedResources.filter(sr => filteredFlowResources.find(r => r._id === sr));
     }
 
     return selectedResources;
-  }, [flowResources, selectedResources]);
+  }, [filteredFlowResources, selectedResources]);
+
   const handleRefreshClick = useCallback(() => {
     setRefresh(new Date().getTime());
   }, []);
+
   const handleFlowCategoryChange = useCallback(e => {
     setFlowCategory(e.target.value);
   }, []);
+
   const handleDateRangeChange = useCallback(
     range => {
       dispatch(actions.flowMetrics.clear(integrationId));
@@ -122,6 +112,7 @@ export default function LineGraphDrawer({ integrationId, childId }) {
     },
     [dispatch, integrationId, preferences, selectedResources]
   );
+
   const handleResourcesChange = useCallback(
     val => {
       setSelectedResources(val);
@@ -139,7 +130,8 @@ export default function LineGraphDrawer({ integrationId, childId }) {
     },
     [dispatch, integrationId, preferences, range]
   );
-  const sections = useMemo(() => integrationAppFlowSections.map(s => <MenuItem key={s.titleId} value={s.titleId}>{s.title}</MenuItem>), [integrationAppFlowSections]);
+
+  const sections = useMemo(() => groupings.map(s => <MenuItem key={s.titleId || s.sectionId} value={s.titleId || s.sectionId}>{s.title}</MenuItem>), [groupings]);
 
   return (
     <div className={classes.linegraphContainer}>
@@ -157,7 +149,7 @@ export default function LineGraphDrawer({ integrationId, childId }) {
               preset: rangePreference.preset,
             }}
            />
-          {isIntegrationApp && (
+          {hasGrouping && (
           <CeligoSelect
             data-test="selectFlowCategory"
             className={classes.categorySelect}
@@ -171,7 +163,7 @@ export default function LineGraphDrawer({ integrationId, childId }) {
           <SelectResource
             integrationId={integrationId}
             selectedResources={selectedResources}
-            flowResources={flowResources}
+            flowResources={filteredFlowResources}
             onSave={handleResourcesChange}
         />
         </ButtonGroup>

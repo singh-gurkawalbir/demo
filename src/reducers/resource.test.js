@@ -4332,4 +4332,292 @@ describe('resource region selector testcases', () => {
       });
     });
   });
+
+  describe('selectors.makeIntegrationFlowsByGroup test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          flows: [{
+            _id: 'flow1',
+            name: 'Flow Name1',
+            _integrationId: 'integration4',
+            _connectorId: 'connectorId3',
+          }, {
+            _id: 'flow2',
+            name: 'Flow Name2',
+            _integrationId: 'integration4',
+            _connectorId: 'connectorId3',
+          }, {
+            _id: 'flow3',
+            name: 'Flow Name3',
+            _integrationId: 'integration4',
+            _connectorId: 'connectorId3',
+          }, {
+            _id: 'flow4',
+            name: 'Flow Name5',
+            _integrationId: 'integration4',
+            _connectorId: 'connectorId3',
+          }, {
+            _id: 'flow6',
+            name: 'Flow Name6',
+          }, {
+            _id: 'flow7',
+            name: 'Flow Name7',
+            _integrationId: 'integration6',
+            _connectorId: 'connectorId2',
+          }, {
+            _id: 'flow8',
+            name: 'Flow Name8',
+            _integrationId: 'integration5',
+          }, {
+            _id: 'flow9',
+            name: 'Flow Name9',
+            _integrationId: 'integration4',
+          }, {
+            _id: 'flow10',
+            name: 'Flow Name10',
+            _integrationId: 'integration3',
+          }, {
+            _id: 'flow11',
+            name: 'Flow Name11',
+          }, {
+            _id: 'flow12',
+            name: 'Flow Name12',
+            _integrationId: 'integration2',
+          }, {
+            _id: 'flow13',
+            name: 'Flow Name13',
+            _integrationId: 'integration1',
+          }, {
+            _id: 'flow14',
+            name: 'flow 14',
+            sandbox: true,
+          }, {
+            _id: 'flow15',
+            name: 'Flow Name15',
+            _integrationId: 'integration7',
+            _connectorId: 'connectorId3',
+          }, {
+            _id: 'flow16',
+            name: 'Flow Name16',
+            _integrationId: 'integration7',
+            _connectorId: 'connectorId3',
+          }],
+          integrations: [{
+            _id: 'integration1',
+            name: 'Diy Integration1',
+          }, {
+            _id: 'integration2',
+            name: 'Diy Integration2',
+          }, {
+            _id: 'integration3',
+            name: 'IA2.0 Integration Parent',
+            _connectorId: 'connectorId',
+            installSteps: [{}],
+          }, {
+            _id: 'integration4',
+            name: 'IA2.0 Integration Child',
+            _parentId: 'integration3',
+            _connectorId: 'connectorId',
+            installSteps: [{}],
+          }, {
+            _id: 'integration4',
+            name: 'IA2.0 Integration Child',
+            _parentId: 'integration3',
+            _connectorId: 'connectorId',
+            installSteps: [{}],
+          }, {
+            _id: 'integration5',
+            name: 'IA2.0 Integration Child2',
+            _connectorId: 'connectorId',
+            _parentId: 'integration3',
+            installSteps: [{}],
+          }, {
+            _id: 'integration6',
+            name: 'IA1.0 integration',
+            _connectorId: 'connectorId2',
+          }, {
+            _id: 'integration7',
+            name: 'IA1.0 integration',
+            _connectorId: 'connectorId3',
+            install: [{}],
+            settings: {
+              supportsMultiStore: true,
+              sections: [{
+                mode: 'settings',
+                title: 'group1',
+                id: 'group1',
+                sections: [{
+                  title: 'section1',
+                  flows: [{
+                    _id: 'flow1',
+                  }, {
+                    _id: 'flow2',
+                  }],
+                }, {
+                  title: 'section2',
+                  flows: [{
+                    _id: 'flow3',
+                  }, {
+                    _id: 'flow4',
+                  }],
+                }],
+              }, {
+                mode: 'settings',
+                title: 'group2',
+                id: 'group2',
+                sections: [{
+                  title: 'section1',
+                  flows: [{
+                    _id: 'flow16',
+                  }],
+                }, {
+                  title: 'section2',
+                  flows: [{
+                    _id: 'flow15',
+                  }],
+                }],
+              }],
+            },
+          }],
+        },
+      },
+    };
+    const integrationFlowsByGroup = selectors.mkIntegrationFlowsByGroup();
+
+    test('should not throw any exceptions for invalid params', () => {
+      expect(() => integrationFlowsByGroup()).not.toThrow();
+      expect(() => integrationFlowsByGroup(null)).not.toThrow();
+      expect(() => integrationFlowsByGroup({})).not.toThrow();
+      expect(() => integrationFlowsByGroup(null, null, null, null)).not.toThrow();
+    });
+    test('should return correct flows for standalone integration', () => {
+      expect(integrationFlowsByGroup(state)).toEqual([
+        {_id: 'flow6', name: 'Flow Name6'},
+        {_id: 'flow11', name: 'Flow Name11'},
+      ]);
+    });
+
+    test('should return correct flows for standalone integration for sandbox environment', () => {
+      expect(integrationFlowsByGroup({...state, user: {preferences: { environment: 'sandbox'}}})).toEqual([
+        {_id: 'flow14', name: 'flow 14', sandbox: true},
+      ]);
+    });
+
+    test('should return correct flows for diy integration', () => {
+      expect(integrationFlowsByGroup(state, 'integration1')).toEqual([
+        {_id: 'flow13', name: 'Flow Name13', _integrationId: 'integration1'},
+      ]);
+    });
+
+    test('should return correct flows for IA1.0 integration with no childId', () => {
+      expect(integrationFlowsByGroup(state, 'integration7')).toEqual([
+        {
+          _connectorId: 'connectorId3',
+          _id: 'flow1',
+          _integrationId: 'integration4',
+          name: 'Flow Name1',
+        },
+        {
+          _connectorId: 'connectorId3',
+          _id: 'flow2',
+          _integrationId: 'integration4',
+          name: 'Flow Name2',
+        },
+        {
+          _connectorId: 'connectorId3',
+          _id: 'flow3',
+          _integrationId: 'integration4',
+          name: 'Flow Name3',
+        },
+        {
+          _connectorId: 'connectorId3',
+          _id: 'flow4',
+          _integrationId: 'integration4',
+          name: 'Flow Name5',
+        },
+        {
+          _connectorId: 'connectorId3',
+          _id: 'flow15',
+          _integrationId: 'integration7',
+          name: 'Flow Name15',
+        },
+        {
+          _connectorId: 'connectorId3',
+          _id: 'flow16',
+          _integrationId: 'integration7',
+          name: 'Flow Name16',
+        },
+      ]);
+    });
+
+    test('should return correct flows for IA1.0 integration with childId', () => {
+      expect(integrationFlowsByGroup(state, 'integration7', 'group1')).toEqual([
+        {
+          _connectorId: 'connectorId3',
+          _id: 'flow1',
+          _integrationId: 'integration4',
+          name: 'Flow Name1',
+        },
+        {
+          _connectorId: 'connectorId3',
+          _id: 'flow2',
+          _integrationId: 'integration4',
+          name: 'Flow Name2',
+        },
+        {
+          _connectorId: 'connectorId3',
+          _id: 'flow3',
+          _integrationId: 'integration4',
+          name: 'Flow Name3',
+        },
+        {
+          _connectorId: 'connectorId3',
+          _id: 'flow4',
+          _integrationId: 'integration4',
+          name: 'Flow Name5',
+        },
+      ]);
+    });
+
+    test('should return correct flows for IA1.0 integration with childId and sectionId', () => {
+      expect(integrationFlowsByGroup(state, 'integration7', 'group1', 'section1')).toEqual([
+        {
+          _connectorId: 'connectorId3',
+          _id: 'flow1',
+          _integrationId: 'integration4',
+          name: 'Flow Name1',
+        },
+        {
+          _connectorId: 'connectorId3',
+          _id: 'flow2',
+          _integrationId: 'integration4',
+          name: 'Flow Name2',
+        },
+      ]);
+    });
+
+    test('should return correct flows for IA1.0 integration with no childId and sectionId', () => {
+      expect(integrationFlowsByGroup(state, 'integration7', null, 'section1')).toEqual([
+        {
+          _connectorId: 'connectorId3',
+          _id: 'flow1',
+          _integrationId: 'integration4',
+          name: 'Flow Name1',
+        },
+        {
+          _connectorId: 'connectorId3',
+          _id: 'flow2',
+          _integrationId: 'integration4',
+          name: 'Flow Name2',
+        },
+        {
+          _connectorId: 'connectorId3',
+          _id: 'flow16',
+          _integrationId: 'integration7',
+          name: 'Flow Name16',
+        },
+      ]);
+    });
+  });
 });
