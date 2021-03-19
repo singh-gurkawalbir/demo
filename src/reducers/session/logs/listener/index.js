@@ -22,7 +22,7 @@ export default (state = {}, action) => {
         draft[exportId].nextPageURL = nextPageURL;
 
         draft[exportId].logsSummary = loadMore
-          ? [...draft[exportId].logsSummary, ...logs]
+          ? [...draft[exportId]?.logsSummary || [], ...logs]
           : logs;
         break;
 
@@ -59,15 +59,17 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.LOGS.LISTENER.LOG.DELETED: {
-        if (!draft[exportId] || !deletedLogs[0]) break;
+        // user can only delete one log at a time from UI
+        // hence we pick first index from 'deletedLogs'
+        if (!draft[exportId] || !deletedLogs[0] || !draft[exportId].logsSummary) break;
         delete draft[exportId].error;
         const logs = draft[exportId].logsSummary;
-        const index = logs?.findIndex(l => l.key === deletedLogs[0]);
+        const index = logs.findIndex(l => l.key === deletedLogs[0]);
 
-        if (index !== -1) {
+        if (index && index !== -1) {
           logs.splice(index, 1);
         }
-        delete draft[exportId].logsDetails[deletedLogs[0]];
+        delete draft[exportId].logsDetails?.[deletedLogs[0]];
 
         break;
       }
