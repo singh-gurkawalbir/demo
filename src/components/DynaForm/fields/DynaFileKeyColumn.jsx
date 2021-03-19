@@ -116,7 +116,7 @@ export default function DynaFileKeyColumn(props) {
         required={required}
         onFieldChange={onFieldChange}
     />
-      {csvParseStatus === 'requested' && (<Spinner className={classes.spinnerWrapper} size={24} />)}
+      {csvParseStatus === 'requested' && (<Spinner className={classes.spinnerWrapper} />)}
     </FormControl>
   );
 }

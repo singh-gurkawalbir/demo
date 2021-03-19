@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
 export const SavingMask = () => (
   <Loader open>
     <Typography variant="h4">Saving...</Typography>
-    <Spinner color="primary" />
+    <Spinner />
   </Loader>
 );
 

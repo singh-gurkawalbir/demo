@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 function RunFlowLabel({ isRequested, disabled, onRunClick, variant, label}) {
   const classes = useStyles();
 
-  if (isRequested) return <Spinner size={24} />;
+  if (isRequested) return <Spinner />;
 
   if (variant === 'icon') {
     if (disabled) {
