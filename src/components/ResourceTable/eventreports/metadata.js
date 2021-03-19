@@ -70,6 +70,8 @@ const metadata = {
     if (r.status === 'completed') {
       return [ViewReport, DownloadResults];
     }
+
+    return [];
   },
 };
 

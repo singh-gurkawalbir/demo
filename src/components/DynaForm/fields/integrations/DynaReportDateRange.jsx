@@ -61,18 +61,19 @@ export default function DynaReportDateRange(props) {
     const {startDate, endDate, preset } = selectedRange;
 
     if (preset !== 'custom') {
+      const {startDate: presetStartDate, endDate: presetEndDate} = getSelectedRange(preset);
+
       onFieldChange(id, {
-        startDate: startDate.toISOString(),
+        startDate: presetStartDate.toISOString(),
         preset,
         timezone,
-        endDate: endDate.toISOString() });
+        endDate: presetEndDate.toISOString() });
     }
-    const {startDate: presetStartDate, endDate: presetEndDate} = getSelectedRange(preset);
 
-    return onFieldChange(id, {startDate: presetStartDate.toISOString(),
+    return onFieldChange(id, {startDate: startDate.toISOString(),
       timezone,
       preset,
-      endDate: presetEndDate.toISOString()});
+      endDate: endDate.toISOString()});
   }, [id, onFieldChange, timezone]);
 
   const selectedRangeConstrain = (startDate, endDate) => {

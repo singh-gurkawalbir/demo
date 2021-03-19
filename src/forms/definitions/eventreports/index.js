@@ -1,12 +1,14 @@
+import { convertUtcToTimezone } from '../../../utils/date';
+
 export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
     newValues['/type'] = 'flow_events';
-    const {startDate, endDate} = newValues['/range'];
+    const {startDate, timezone, endDate} = newValues['/range'];
 
-    newValues['/startTime'] = startDate;
-    newValues['/endTime'] = endDate;
+    newValues['/startTime'] = convertUtcToTimezone(startDate, null, null, timezone, {skipFormatting: true});
+    newValues['/endTime'] = convertUtcToTimezone(endDate, null, null, timezone, {skipFormatting: true});
     delete newValues['/range'];
 
     return newValues;
