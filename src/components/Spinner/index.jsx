@@ -17,6 +17,10 @@ const useStyles = makeStyles(theme => ({
     bottom: 0,
     left: 0,
     margin: 'auto',
+    '& >.MuiCircularProgress-root': {
+      width: props => props.centerAll && !props.size ? '48px' : '',
+      height: props => props.centerAll && !props.size ? '48px' : '',
+    },
   },
   spinnerChildren: {
     paddingLeft: theme.spacing(1),
@@ -39,7 +43,7 @@ const useStyles = makeStyles(theme => ({
  * Render an indeterminate spinning indicator.
  */
 export default function Spinner(props) {
-  const classes = useStyles();
+  const classes = useStyles(props);
   const { loading, color = 'primary', children, centerAll, className, size = 'medium' } = props;
 
   const progress = (
