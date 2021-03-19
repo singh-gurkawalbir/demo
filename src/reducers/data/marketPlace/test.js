@@ -100,8 +100,8 @@ describe('marketplace selectors', () => {
       expect(
         selectors.connectors(state, 'some application', false, licenses)
       ).toEqual([
-        { _id: '123', applications: ['some application'], canInstall: true },
-        { _id: '456', applications: ['some application'], canInstall: false },
+        { _id: '123', applications: ['some application'], canInstall: true, usedTrialLicenseExists: false },
+        { _id: '456', applications: ['some application'], canInstall: false, usedTrialLicenseExists: false },
       ]);
     });
   });

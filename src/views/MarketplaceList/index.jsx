@@ -180,6 +180,14 @@ export default function MarketplaceList() {
     dispatch(actions.marketplace.contactSales(connector.name, connector._id));
     setShowMessage(true);
   };
+  const handletrialEnabledClick = connector => {
+    if (connector.usedTrialLicenseExists) {
+      handleContactSalesClick(connector);
+      // You have already used up your trial license
+    } else {
+      handleConnectorInstallClick(connector);
+    }
+  };
 
   return (
     <LoadResources required resources="integrations">
@@ -213,7 +221,7 @@ export default function MarketplaceList() {
               type="connector"
             />
             <CardActions className={classes.cardAction}>
-              {connector.canInstall ? (
+              {connector.canInstall && (
                 <Button
                   data-test="installConnector"
                   onClick={() => handleConnectorInstallClick(connector)}
@@ -221,7 +229,17 @@ export default function MarketplaceList() {
                   color="primary">
                   Install
                 </Button>
-              ) : (
+              )}
+              {!connector.canInstall && connector.trialEnabled && (
+                <Button
+                  data-test="contactSales"
+                  onClick={() => handletrialEnabledClick(connector)}
+                  variant="outlined"
+                  color="primary">
+                  Start free trial
+                </Button>
+              )}
+              {!connector.canInstall && !connector.trialEnabled && (
                 <Button
                   data-test="contactSales"
                   onClick={() => handleContactSalesClick(connector)}

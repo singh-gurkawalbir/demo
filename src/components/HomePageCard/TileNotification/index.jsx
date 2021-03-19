@@ -69,14 +69,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel}) {
+export default function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel, showTrialLicenseMessage}) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
-  const single = isIntegrationV2 || !expired;
+  const single = isIntegrationV2 || !expired || showTrialLicenseMessage;
 
   const onClickRenewOrReactivateButton = useCallback(event => {
     event.stopPropagation();
@@ -87,6 +87,11 @@ export default function TileNotification({ content, expired, connectorId, licens
       dispatch(actions.user.org.accounts.requestUpdate('connectorRenewal', connectorId, licenseId));
     }
   }, [connectorId, dispatch, integrationId, licenseId, resumable]);
+  const onClickBuyButton = useCallback(event => {
+    event.stopPropagation();
+    setUpgradeRequested(true);
+    dispatch(actions.user.org.accounts.requestUpdate('connectorRenewal', connectorId, licenseId));
+  }, [connectorId, dispatch, licenseId]);
   const handleUninstall = useCallback(event => {
     event.stopPropagation();
     if (![INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel)) {
@@ -127,23 +132,31 @@ export default function TileNotification({ content, expired, connectorId, licens
         </div>
       </div>
       <div className={clsx(classes.footer, {[classes.footerSingleBtn]: single})}>
-        {single ? (
+        {single && !showTrialLicenseMessage && (
           <Button
             disabled={upgradeRequested} onClick={onClickRenewOrReactivateButton} data-test="RenewOrReactivate" variant="outlined"
             color="primary">
             {resumable ? 'Reactivate' : 'Renew'}
           </Button>
-        ) : (
-          <ButtonGroup>
-            <Button
-              disabled={upgradeRequested} onClick={onClickRenewOrReactivateButton} data-test="RenewOrReactivateDouble" variant="outlined"
-              color="primary">
-              Renew
-            </Button>
-            <Button data-test="uninstall" variant="text" color="primary" onClick={handleUninstall}>
-              Uninstall
-            </Button>
-          </ButtonGroup>
+        )}
+        {single && showTrialLicenseMessage && (
+          <Button
+            disabled={upgradeRequested} onClick={onClickBuyButton} data-test="buy" variant="outlined"
+            color="primary">
+            Buy
+          </Button>
+        )}
+        {!single && (
+        <ButtonGroup>
+          <Button
+            disabled={upgradeRequested} onClick={onClickRenewOrReactivateButton} data-test="RenewOrReactivateDouble" variant="outlined"
+            color="primary">
+            Renew
+          </Button>
+          <Button data-test="uninstall" variant="text" color="primary" onClick={handleUninstall}>
+            Uninstall
+          </Button>
+        </ButtonGroup>
         )}
       </div>
       <div />

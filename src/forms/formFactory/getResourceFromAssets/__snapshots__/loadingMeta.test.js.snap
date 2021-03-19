@@ -12534,6 +12534,9 @@ Object {
       "sandbox": Object {
         "fieldId": "sandbox",
       },
+      "trialEndDate": Object {
+        "fieldId": "trialEndDate",
+      },
     },
     "layout": Object {
       "containers": Array [
@@ -12541,6 +12544,7 @@ Object {
           "collapsed": true,
           "fields": Array [
             "email",
+            "trialEndDate",
             "expires",
             "sandbox",
             "opts",
@@ -12569,6 +12573,26 @@ Object {
       "_stackId": Object {
         "fieldId": "_stackId",
       },
+      "_trialLicenseId": Object {
+        "fieldId": "_trialLicenseId",
+        "omitWhenHidden": true,
+        "requiredWhen": Array [
+          Object {
+            "field": "trialEnabled",
+            "is": Array [
+              false,
+            ],
+          },
+        ],
+        "visibleWhen": Array [
+          Object {
+            "field": "trialEnabled",
+            "is": Array [
+              true,
+            ],
+          },
+        ],
+      },
       "applications": Object {
         "fieldId": "applications",
       },
@@ -12589,6 +12613,29 @@ Object {
       },
       "name": Object {
         "fieldId": "name",
+      },
+      "trialEnabled": Object {
+        "fieldId": "trialEnabled",
+      },
+      "trialPeriod": Object {
+        "fieldId": "trialPeriod",
+        "omitWhenHidden": true,
+        "requiredWhen": Array [
+          Object {
+            "field": "trialEnabled",
+            "is": Array [
+              true,
+            ],
+          },
+        ],
+        "visibleWhen": Array [
+          Object {
+            "field": "trialEnabled",
+            "is": Array [
+              true,
+            ],
+          },
+        ],
       },
       "uninstallerFunction": Object {
         "fieldId": "uninstallerFunction",
@@ -12617,6 +12664,15 @@ Object {
             "updateFunction",
             "framework",
           ],
+        },
+        Object {
+          "collapsed": true,
+          "fields": Array [
+            "trialEnabled",
+            "trialPeriod",
+            "_trialLicenseId",
+          ],
+          "label": "Trials",
         },
       ],
       "type": "box",

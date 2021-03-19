@@ -166,8 +166,11 @@ function Tile({ tile, history, onMove, onDrop, index }) {
 
   const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
   const expiresInDays = license && remainingDays(license.expires);
+  const trialExpiresInDays = license && remainingDays(license.trialEndDate);
+
   let licenseMessageContent = '';
   let expired = false;
+  let showTrialLicenseMessage = false;
   const resumable = license?.resumable && [INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel);
 
   if (resumable) {
@@ -177,6 +180,12 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     licenseMessageContent = `Your license expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your license.`;
   } else if (expiresInDays > 0 && expiresInDays <= 30) {
     licenseMessageContent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
+  } else if (trialExpiresInDays <= 0) {
+    licenseMessageContent = `Trial expired on ${moment(license.trialEndDate).format('MMM Do, YYYY')}`;
+    showTrialLicenseMessage = true;
+  } else if (trialExpiresInDays > 0) {
+    licenseMessageContent = `Trial expires in ${trialExpiresInDays} days.`;
+    showTrialLicenseMessage = true;
   }
 
   const handleConnectionDownStatusClick = useCallback(event => {
@@ -356,7 +365,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
         </Footer>{
           tile._connectorId && licenseMessageContent && (
           <TileNotification
-            content={licenseMessageContent} expired={expired} connectorId={tile._connectorId}
+            content={licenseMessageContent} showTrialLicenseMessage={showTrialLicenseMessage} expired={expired} connectorId={tile._connectorId}
             licenseId={license._id}
             isIntegrationV2={isIntegrationV2} integrationId={tile._integrationId}
             integrationAppTileName={integrationAppTileName} resumable={resumable} accessLevel={accessLevel} />

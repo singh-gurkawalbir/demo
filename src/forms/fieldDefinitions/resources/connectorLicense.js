@@ -6,7 +6,13 @@ export default {
     defaultValue: r => r.expires && moment(r.expires).format('L'),
     type: 'dateselector',
     label: 'Expires',
-    required: true,
+    connectorId: r => r._connectorId,
+    setRequired: true,
+  },
+  trialEndDate: {
+    defaultValue: r => r.expires && moment(r.trialEndDate).format('L'),
+    type: 'dateselector',
+    label: 'Trial expires',
   },
   opts: {
     defaultValue: r => r.opts,

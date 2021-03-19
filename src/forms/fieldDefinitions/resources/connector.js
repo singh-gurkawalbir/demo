@@ -154,4 +154,30 @@ export default {
       },
     ],
   },
+  trialEnabled: {
+    type: 'checkbox',
+    label: 'Enable trials',
+    defaultDisabled: r => isNewId(r._id),
+  },
+  trialPeriod: {
+    type: 'select',
+    label: 'Trial period',
+    options: [
+      {
+        items: [
+          { label: '14 days', value: 14 },
+          { label: '30 days', value: 30 },
+          { label: '60 days', value: 60 },
+        ],
+      },
+    ],
+  },
+  _trialLicenseId: {
+    type: 'triallicense',
+    label: 'Trial license template',
+    resourceType: 'connectorLicenses',
+    allowNew: true,
+    allowEdit: true,
+    connectorId: r => r._id,
+  },
 };
