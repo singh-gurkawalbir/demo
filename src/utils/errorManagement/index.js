@@ -161,10 +161,10 @@ export function getJobDuration(job) {
 }
 
 export function getJobStatus(job) {
-  const jobStatus = job.status;
+  const jobStatus = job?.status;
   const statusMap = {
     completed: 'Completed',
-    canceled: 'Cancelled',
+    canceled: 'Canceled',
     failed: 'Failed',
   };
 

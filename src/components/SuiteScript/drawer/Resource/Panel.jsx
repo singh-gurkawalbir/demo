@@ -1,17 +1,18 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactResizeDetector from 'react-resize-detector';
 import { Route } from 'react-router-dom';
 import { Typography, IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import LoadSuiteScriptResources from '../../LoadResources';
-import ResourceForm from '../../ResourceFormFactory';
+import {ResourceFormFactory} from '../../ResourceFormFactory';
 import actions from '../../../../actions';
 import Close from '../../../icons/CloseIcon';
 import ConnectionStatusPanel from '../../ConnectionStatusPanel';
-import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
+import { generateNewId, MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import { useRedirectToParentRoute } from '../../../drawer/Resource/Panel';
+import SuiteScriptActionsPanel from '../../ResourceFormFactory/SuiteScriptActionsPanel';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -26,7 +27,7 @@ const useStyles = makeStyles(theme => ({
       return props.match.isExact ? 660 : 150;
     },
     overflowX: 'hidden',
-    overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
+    // overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
   },
   formContainer: {
@@ -35,9 +36,10 @@ const useStyles = makeStyles(theme => ({
     borderColor: 'rgb(0,0,0,0.1)',
     borderStyle: 'solid',
     borderWidth: '1px 0 0 0',
+    overflowY: 'auto',
   },
   form: {
-    height: props => `calc(100vh - 136px - ${props.notificationPanelHeight}px)`,
+    height: props => `calc(100vh - 172px - ${props.notificationPanelHeight}px)`,
     width: props => {
       if (props.occupyFullWidth) return '100%';
 
@@ -53,10 +55,15 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     padding: '14px 24px',
+    wordBreak: 'break-word',
+    position: 'relative',
+    '& > h3': {
+      paddingRight: theme.spacing(1),
+    },
   },
   closeButton: {
     position: 'absolute',
-    right: theme.spacing(2),
+    right: theme.spacing(1),
     top: theme.spacing(2),
     padding: 0,
   },
@@ -70,7 +77,6 @@ const useSuiteScriptFormRedirectionToParentRoute = (ssLinkedConnectionId, resour
 
   useRedirectToParentRoute(initFailed);
 };
-
 export default function Panel(props) {
   const {
     match,
@@ -83,15 +89,14 @@ export default function Panel(props) {
   } = props;
   const { resourceType, operation } = match.params;
   let { id } = match.params;
+  const [formKey] = useState(generateNewId());
 
   if (['exports', 'imports'].includes(resourceType)) {
     if (!id) {
       id = flowId;
     }
   }
-
   useSuiteScriptFormRedirectionToParentRoute(ssLinkedConnectionId, resourceType, id);
-
   const isNew = operation === 'add';
   const dispatch = useDispatch();
   const [notificationPanelHeight, setNotificationPanelHeight] = useState(0);
@@ -119,6 +124,21 @@ export default function Panel(props) {
     setNotificationPanelHeight(height);
   };
   const isViewMode = useSelector(state => !selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId));
+  const allProps = useMemo(() => ({
+    className: classes.form,
+    variant: match.isExact ? 'edit' : 'view',
+    isNew,
+    resourceType,
+    resourceId: id,
+    cancelButtonLabel: 'Cancel',
+    submitButtonLabel,
+    submitButtonColor: 'secondary',
+    onSubmitComplete: handleSubmitComplete,
+    onCancel: abortAndClose,
+    ...props,
+    disabled: isViewMode,
+    formKey,
+  }), [abortAndClose, classes.form, formKey, handleSubmitComplete, id, isNew, isViewMode, match.isExact, props, resourceType]);
 
   return (
     <>
@@ -149,24 +169,13 @@ export default function Panel(props) {
               )}
               <ReactResizeDetector handleHeight onResize={resize} />
             </div>
-            <ResourceForm
-              className={classes.form}
-              variant={match.isExact ? 'edit' : 'view'}
-              isNew={isNew}
-              resourceType={resourceType}
-              resourceId={id}
-              cancelButtonLabel="Cancel"
-              submitButtonLabel={submitButtonLabel}
-              submitButtonColor="secondary"
-              onSubmitComplete={handleSubmitComplete}
-              onCancel={abortAndClose}
-              {...props}
-              disabled={isViewMode}
+            <ResourceFormFactory
+              {...allProps}
             />
           </div>
+          <SuiteScriptActionsPanel {...allProps} />
         </LoadSuiteScriptResources>
       </div>
-
       <Route
         path={`${match.url}/:operation(add|edit)/:resourceType/:id`}
         render={props => (

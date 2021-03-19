@@ -14,7 +14,6 @@ export default {
   's3.bucket': {
     type: 'uri',
     label: 'Bucket name',
-    // editorTitle: 'Build bucket name',
     required: true,
     showExtract: false,
     showLookup: false,
@@ -22,14 +21,12 @@ export default {
   's3.keyStartsWith': {
     type: 'uri',
     label: 'Key starts with',
-    // editorTitle: 'Build Key starts with',
     showExtract: false,
     showLookup: false,
   },
   's3.keyEndsWith': {
     type: 'uri',
     label: 'Key ends with',
-    // editorTitle: 'Build Key ends with',
     showExtract: false,
     showLookup: false,
   },

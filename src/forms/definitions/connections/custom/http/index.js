@@ -199,6 +199,7 @@ import microsoftteams from './microsoftteams';
 import adobesign from './adobesign';
 import prestashop from './prestashop';
 import yotpo from './yotpo';
+import mavenlink from './mavenlink';
 
 export default {
   channelape,
@@ -402,4 +403,5 @@ export default {
   adobesign,
   prestashop,
   yotpo,
+  mavenlink,
 };

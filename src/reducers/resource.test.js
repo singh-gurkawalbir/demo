@@ -256,9 +256,276 @@ describe('resource region selector testcases', () => {
     });
   });
 
-  describe('selectors.flowDetails test cases', () => {
+  describe('selectors.flowDetails, mkflowDetails test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.flowDetails()).toEqual({});
+    });
+    test('should verify flowDetails for real-time flow', () => {
+      const exp = {
+        _id: 'e1',
+        type: 'distributed',
+        adaptorType: 'SalesforceExport',
+      };
+
+      let state = reducer(
+        undefined,
+        actions.resource.received('exports', exp)
+      );
+
+      const imp = {
+        _id: 'i1',
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('imports', imp)
+      );
+
+      const flow = {
+        _id: 'f1',
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+        ],
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('flows', flow)
+      );
+
+      expect(selectors.flowDetails(state, 'f1').isRealtime).toEqual(true);
+      expect(selectors.flowDetails(state, 'f1').isRunnable).toEqual(false);
+      expect(selectors.flowDetails(state, 'f1').canSchedule).toEqual(false);
+      expect(selectors.flowDetails(state, 'f1').isSimpleImport).toEqual(false);
+      expect(selectors.flowDetails(state, 'f1').isDeltaFlow).toEqual(false);
+
+      const selector = selectors.mkFlowDetails();
+
+      expect(selector(state, 'f1').isRealtime).toEqual(true);
+      expect(selector(state, 'f1').isRunnable).toEqual(false);
+      expect(selector(state, 'f1').canSchedule).toEqual(false);
+      expect(selector(state, 'f1').isSimpleImport).toEqual(false);
+      expect(selector(state, 'f1').isDeltaFlow).toEqual(false);
+    });
+
+    test('should verify flowDetails for data-loader flow', () => {
+      const exp = {
+        _id: 'e1',
+        type: 'simple',
+        adaptorType: 'SimpleExport',
+      };
+
+      let state = reducer(
+        undefined,
+        actions.resource.received('exports', exp)
+      );
+
+      const imp = {
+        _id: 'i1',
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('imports', imp)
+      );
+
+      const flow = {
+        _id: 'f1',
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+        ],
+        pageProcessors: [
+          {
+            _importId: 'i1',
+          },
+        ],
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('flows', flow)
+      );
+
+      expect(selectors.flowDetails(state, 'f1').isRealtime).toEqual(false);
+      expect(selectors.flowDetails(state, 'f1').isRunnable).toEqual(true);
+      expect(selectors.flowDetails(state, 'f1').canSchedule).toEqual(false);
+      expect(selectors.flowDetails(state, 'f1').isSimpleImport).toEqual(true);
+      expect(selectors.flowDetails(state, 'f1').isDeltaFlow).toEqual(false);
+
+      const selector = selectors.mkFlowDetails();
+
+      expect(selector(state, 'f1').isRealtime).toEqual(false);
+      expect(selector(state, 'f1').isRunnable).toEqual(true);
+      expect(selector(state, 'f1').canSchedule).toEqual(false);
+      expect(selector(state, 'f1').isSimpleImport).toEqual(true);
+      expect(selector(state, 'f1').isDeltaFlow).toEqual(false);
+    });
+
+    test('should verify flowDetails for batch delta flow', () => {
+      const exp = {
+        _id: 'e1',
+        adaptorType: 'SalesforceExport',
+        salesforce: {
+          type: 'soql',
+        },
+        type: 'delta',
+      };
+
+      let state = reducer(
+        undefined,
+        actions.resource.received('exports', exp)
+      );
+
+      const imp = {
+        _id: 'i1',
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('imports', imp)
+      );
+
+      const flow = {
+        _id: 'f1',
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+        ],
+        pageProcessors: [
+          {
+            _importId: 'i1',
+          },
+        ],
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('flows', flow)
+      );
+
+      expect(selectors.flowDetails(state, 'f1').isRealtime).toEqual(false);
+      expect(selectors.flowDetails(state, 'f1').isRunnable).toEqual(true);
+      expect(selectors.flowDetails(state, 'f1').canSchedule).toEqual(true);
+      expect(selectors.flowDetails(state, 'f1').isSimpleImport).toEqual(false);
+      expect(selectors.flowDetails(state, 'f1').isDeltaFlow).toEqual(true);
+
+      const selector = selectors.mkFlowDetails();
+
+      expect(selector(state, 'f1').isRealtime).toEqual(false);
+      expect(selector(state, 'f1').isRunnable).toEqual(true);
+      expect(selector(state, 'f1').canSchedule).toEqual(true);
+      expect(selector(state, 'f1').isSimpleImport).toEqual(false);
+      expect(selector(state, 'f1').isDeltaFlow).toEqual(true);
+    });
+    test('should verify flowDetails for IA flow', () => {
+      const exp = {
+        _id: 'e1',
+        adaptorType: 'SalesforceExport',
+        salesforce: {
+          type: 'soql',
+        },
+        type: 'delta',
+      };
+
+      let state = reducer(
+        undefined,
+        actions.resource.received('exports', exp)
+      );
+
+      const imp = {
+        _id: 'i1',
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('imports', imp)
+      );
+
+      const flow = {
+        _id: 'f1',
+        _integrationId: 'i1',
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+        ],
+        pageProcessors: [
+          {
+            _importId: 'i1',
+          },
+        ],
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('flows', flow)
+      );
+
+      const integration = {
+        _id: 'i1',
+        _connectorId: 'ctr1',
+        settings: {
+          sections: [
+            {
+              title: 't1',
+              flows: [
+                {
+                  _id: 'f1',
+                  showMapping: true,
+                  showSchedule: true,
+                  showStartDateDialog: true,
+                  disableSlider: true,
+                  disableRunFlow: true,
+                  showUtilityMapping: true,
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('integrations', integration)
+      );
+
+      const expected = {
+        _id: 'f1',
+        _integrationId: 'i1',
+        canSchedule: true,
+        disableRunFlow: true,
+        disableSlider: true,
+        hasSettings: false,
+        isDeltaFlow: true,
+        isRealtime: false,
+        isRunnable: true,
+        isSimpleImport: false,
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+        ],
+        pageProcessors: [
+          {
+            _importId: 'i1',
+          },
+        ],
+        showMapping: true,
+        showSchedule: true,
+        showStartDateDialog: true,
+        showUtilityMapping: true,
+      };
+
+      expect(selectors.flowDetails(state, 'f1')).toEqual(expected);
+
+      const selector = selectors.mkFlowDetails();
+
+      expect(selector(state, 'f1')).toEqual(expected);
     });
   });
 
@@ -283,11 +550,205 @@ describe('resource region selector testcases', () => {
 
       expect(sel(state, 123)).not.toBeNull();
     });
+
+    test('should verify flowDetails for IA flow with childId passed', () => {
+      const exp = {
+        _id: 'e1',
+        adaptorType: 'SalesforceExport',
+        salesforce: {
+          type: 'soql',
+        },
+        type: 'delta',
+      };
+
+      let state = reducer(
+        undefined,
+        actions.resource.received('exports', exp)
+      );
+
+      const imp = {
+        _id: 'i1',
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('imports', imp)
+      );
+
+      const flow = {
+        _id: 'f1',
+        _integrationId: 'i1',
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+        ],
+        pageProcessors: [
+          {
+            _importId: 'i1',
+          },
+        ],
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('flows', flow)
+      );
+
+      const integration = {
+        _id: 'i1',
+        _connectorId: 'ctr1',
+        settings: {
+          supportsMultiStore: true,
+          sections: [
+            {
+              title: 't1',
+              id: 'secId',
+              sections: [
+                {
+                  flows: [
+                    {
+                      _id: 'f1',
+                      showMapping: true,
+                      showSchedule: true,
+                      showStartDateDialog: true,
+                      disableSlider: false,
+                      disableRunFlow: true,
+                      showUtilityMapping: true,
+                    },
+                  ],
+                },
+                {
+                  flows: [
+                    {
+                      _id: 'f2',
+                      showMapping: true,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('integrations', integration)
+      );
+
+      const expected = {
+        _id: 'f1',
+        _integrationId: 'i1',
+        canSchedule: true,
+        disableRunFlow: true,
+        disableSlider: false,
+        hasSettings: false,
+        isDeltaFlow: true,
+        isRealtime: false,
+        isRunnable: true,
+        isSimpleImport: false,
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+        ],
+        pageProcessors: [
+          {
+            _importId: 'i1',
+          },
+        ],
+        showMapping: true,
+        showSchedule: true,
+        showStartDateDialog: true,
+        showUtilityMapping: true,
+      };
+
+      const selector = selectors.mkFlowDetails();
+
+      expect(selector(state, 'f1')).toEqual(expected);
+    });
   });
 
   describe('selectors.isDataLoader test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.isDataLoader()).toEqual(false);
+    });
+
+    test('should return true for dataLoader flow', () => {
+      const exp = {
+        _id: 'e1',
+        type: 'simple',
+      };
+
+      let state = reducer(
+        undefined,
+        actions.resource.received('exports', exp)
+      );
+
+      const flow = {
+        _id: 'f1',
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+        ],
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('flows', flow)
+      );
+
+      expect(selectors.isDataLoader(state, 'f1')).toEqual(true);
+    });
+
+    test('should return true for dataLoader flow if flow is in OLD DL format', () => {
+      const exp = {
+        _id: 'e1',
+        type: 'simple',
+      };
+
+      let state = reducer(
+        undefined,
+        actions.resource.received('exports', exp)
+      );
+
+      const flow = {
+        _id: 'f1',
+        _exportId: 'e1',
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('flows', flow)
+      );
+
+      expect(selectors.isDataLoader(state, 'f1')).toEqual(true);
+    });
+
+    test('should return false for non-dataLoader flow', () => {
+      const exp = {
+        _id: 'e1',
+        type: 'distributed',
+      };
+
+      let state = reducer(
+        undefined,
+        actions.resource.received('exports', exp)
+      );
+
+      const flow = {
+        _id: 'f1',
+        _exportId: 'e1',
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('flows', flow)
+      );
+
+      expect(selectors.isDataLoader(state, 'f1')).toEqual(false);
     });
   });
 
@@ -297,11 +758,405 @@ describe('resource region selector testcases', () => {
 
       expect(selector(undefined, {})).toEqual({});
     });
+    test('should return empty object if exports doesn\'t exist', () => {
+      const exps = [
+      ];
+
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', exps)
+      );
+
+      const flows = [
+        {
+          _id: 'f1',
+          _integrationId: 'i1',
+          pageGenerators: [{
+            _exportId: 'e1',
+          }],
+          pageProcessors: [
+            {
+              _importId: 'i1',
+            },
+          ],
+        },
+      ];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('flows', flows)
+      );
+
+      const selector = selectors.mkFlowAttributes();
+
+      expect(selector(state, flows, undefined)).toEqual({});
+    });
+    test('should generate flow attributes for the provided flows for stand-alone integration', () => {
+      const exps = [
+        {
+          type: 'simple',
+          _id: 'e1',
+        },
+        {
+          _id: 'e2',
+          type: 'distributed',
+        },
+        {
+          _id: 'e3',
+          type: 'rest',
+        },
+      ];
+
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', exps)
+      );
+
+      const flows = [
+        {
+          _id: 'f1',
+          _integrationId: 'i1',
+          pageGenerators: [{
+            _exportId: 'e1',
+          }],
+          pageProcessors: [
+            {
+              _importId: 'i1',
+            },
+          ],
+        },
+        {
+          _id: 'f2',
+          _integrationId: 'i1',
+          pageGenerators: [{
+            _exportId: 'e2',
+          }],
+          pageProcessors: [
+            {
+              _importId: 'i1',
+            },
+          ],
+        },
+        {
+          _id: 'f3',
+          _integrationId: 'i1',
+          pageGenerators: [{
+            _exportId: 'e3',
+          }],
+          pageProcessors: [
+            {
+              _importId: 'i1',
+            },
+          ],
+        },
+      ];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('flows', flows)
+      );
+
+      state = reducer(
+        state,
+        actions.resource.received('imports', {
+          _id: 'i1',
+        })
+      );
+
+      const integration = {
+        _id: 'i1',
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('integrations', integration)
+      );
+
+      const selector = selectors.mkFlowAttributes();
+
+      expect(selector(state, flows, integration)).toEqual(
+        {
+          f1: {
+            isDataLoader: true,
+            disableRunFlow: true,
+            isFlowEnableLocked: false,
+            allowSchedule: false,
+            type: 'Data Loader',
+            supportsSettings: false,
+          },
+          f2: {
+            isDataLoader: false,
+            disableRunFlow: true,
+            isFlowEnableLocked: false,
+            allowSchedule: false,
+            type: 'Realtime',
+            supportsSettings: false,
+          },
+          f3: {
+            isDataLoader: false,
+            disableRunFlow: true,
+            isFlowEnableLocked: false,
+            allowSchedule: true,
+            type: 'Scheduled',
+            supportsSettings: false,
+          },
+        }
+      );
+    });
+
+    test('should generate flow attributes for the provided flows for connector integration', () => {
+      const exps = [
+        {
+          type: 'simple',
+          _id: 'e1',
+        },
+        {
+          _id: 'e2',
+          type: 'distributed',
+        },
+        {
+          _id: 'e3',
+          type: 'rest',
+        },
+      ];
+
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', exps)
+      );
+
+      const flows = [
+        {
+          _id: 'f1',
+          _integrationId: 'i1',
+          _connectorId: 'ctr1',
+          pageGenerators: [{
+            _exportId: 'e1',
+          }],
+          pageProcessors: [
+            {
+              _importId: 'i1',
+            },
+          ],
+        },
+        {
+          _id: 'f2',
+          _integrationId: 'i1',
+          _connectorId: 'ctr1',
+          pageGenerators: [{
+            _exportId: 'e2',
+          }],
+          pageProcessors: [
+            {
+              _importId: 'i1',
+            },
+          ],
+        },
+        {
+          _id: 'f3',
+          _integrationId: 'i1',
+          _connectorId: 'ctr1',
+          pageGenerators: [{
+            _exportId: 'e3',
+          }],
+          pageProcessors: [
+            {
+              _importId: 'i1',
+            },
+          ],
+        },
+      ];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('flows', flows)
+      );
+
+      state = reducer(
+        state,
+        actions.resource.received('imports', {
+          _id: 'i1',
+        })
+      );
+
+      const integration = {
+        _id: 'i1',
+        _connectorId: 'ctr1',
+        settings: {
+          supportsMultiStore: true,
+          sections: [
+            {
+              id: 'secid',
+              sections: [
+                {
+                  flows: [
+                    {
+                      _id: 'f1',
+                      disableSlider: true,
+                      disableRunFlow: true,
+                    },
+                    {
+                      _id: 'f2',
+                      disableSlider: false,
+                      disableRunFlow: true,
+                    },
+                    {
+                      _id: 'f3',
+                      disableSlider: false,
+                      disableRunFlow: false,
+                      showSchedule: true,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('integrations', integration)
+      );
+
+      const selector = selectors.mkFlowAttributes();
+
+      expect(selector(state, flows, integration, 'secid')).toEqual(
+        {
+          f1: {
+            isDataLoader: true,
+            disableRunFlow: false,
+            isFlowEnableLocked: true,
+            allowSchedule: false,
+            type: 'Data Loader',
+            supportsSettings: false,
+          },
+          f2: {
+            isDataLoader: false,
+            disableRunFlow: false,
+            isFlowEnableLocked: false,
+            allowSchedule: false,
+            type: 'Realtime',
+            supportsSettings: false,
+          },
+          f3: {
+            isDataLoader: false,
+            disableRunFlow: true,
+            isFlowEnableLocked: false,
+            allowSchedule: true,
+            type: 'Scheduled',
+            supportsSettings: false,
+          },
+        }
+      );
+    });
   });
 
   describe('selectors.flowType test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.flowType()).toEqual('');
+    });
+
+    test('should return empty string if export does not exist', () => {
+      const flow = {
+        _id: 'f1',
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+        ],
+      };
+
+      const state = reducer(
+        undefined,
+        actions.resource.received('flows', flow)
+      );
+
+      expect(selectors.flowType(state, 'f1')).toEqual('');
+    });
+
+    test('should return real-time if flow is real-time', () => {
+      const flow = {
+        _id: 'f1',
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+        ],
+      };
+
+      let state = reducer(
+        undefined,
+        actions.resource.received('flows', flow)
+      );
+
+      const exp = {
+        _id: 'e1',
+        type: 'distributed',
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('exports', exp)
+      );
+
+      expect(selectors.flowType(state, 'f1')).toEqual('Realtime');
+    });
+
+    test('should return dataloader if flow is of simple type', () => {
+      const flow = {
+        _id: 'f1',
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+        ],
+      };
+
+      let state = reducer(
+        undefined,
+        actions.resource.received('flows', flow)
+      );
+
+      const exp = {
+        _id: 'e1',
+        type: 'simple',
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('exports', exp)
+      );
+
+      expect(selectors.flowType(state, 'f1')).toEqual('Data Loader');
+    });
+
+    test('should return Scheduled for normal flow', () => {
+      const flow = {
+        _id: 'f1',
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+        ],
+      };
+
+      let state = reducer(
+        undefined,
+        actions.resource.received('flows', flow)
+      );
+
+      const exp = {
+        _id: 'e1',
+        type: 'rest',
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('exports', exp)
+      );
+
+      expect(selectors.flowType(state, 'f1')).toEqual('Scheduled');
     });
   });
 
@@ -310,6 +1165,161 @@ describe('resource region selector testcases', () => {
       const selector = selectors.mkFlowAllowsScheduling();
 
       expect(selector()).toEqual(false);
+    });
+    test('should return true for standalone batch flow', () => {
+      const exp = {
+        type: 'rest',
+        _id: 'e1',
+      };
+
+      let state = reducer(
+        undefined,
+        actions.resource.received('exports', exp)
+      );
+
+      const flow = {
+        _id: 'f1',
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+        ],
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('flows', flow)
+      );
+
+      const selector = selectors.mkFlowAllowsScheduling();
+
+      expect(selector(state, 'f1')).toEqual(true);
+    });
+
+    test('should return false for standalone real-time flow', () => {
+      const exp = {
+        type: 'distributed',
+        _id: 'e1',
+      };
+
+      let state = reducer(
+        undefined,
+        actions.resource.received('exports', exp)
+      );
+
+      const flow = {
+        _id: 'f1',
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+        ],
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('flows', flow)
+      );
+
+      const selector = selectors.mkFlowAllowsScheduling();
+
+      expect(selector(state, 'f1')).toEqual(false);
+    });
+
+    test('should return true for v2 scheduled flow', () => {
+      const exp = {
+        type: 'rest',
+        _id: 'e1',
+      };
+
+      let state = reducer(
+        undefined,
+        actions.resource.received('exports', exp)
+      );
+
+      const flow = {
+        _id: 'f1',
+        _connectorId: 'c1',
+        _integrationId: 'i1',
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+        ],
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('flows', flow)
+      );
+
+      state = reducer(
+        state,
+        actions.resource.received('integrations', {
+          _id: 'i1',
+          installSteps: [
+            {
+              stepId: 's1',
+            },
+          ],
+        })
+      );
+
+      const selector = selectors.mkFlowAllowsScheduling();
+
+      expect(selector(state, 'f1')).toEqual(true);
+    });
+
+    test('should return from IA setting for IA flow', () => {
+      const exp = {
+        type: 'rest',
+        _id: 'e1',
+      };
+
+      let state = reducer(
+        undefined,
+        actions.resource.received('exports', exp)
+      );
+
+      const flow = {
+        _id: 'f1',
+        _connectorId: 'c1',
+        _integrationId: 'i1',
+        pageGenerators: [
+          {
+            _exportId: 'e1',
+          },
+        ],
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('flows', flow)
+      );
+
+      state = reducer(
+        state,
+        actions.resource.received('integrations', {
+          _id: 'i1',
+          _connectorId: 'ctr1',
+          settings: {
+            sections: [
+              {
+                flows: [
+                  {
+                    _id: 'f1',
+                    showSchedule: false,
+                  },
+                ],
+              },
+            ],
+          },
+        })
+      );
+
+      const selector = selectors.mkFlowAllowsScheduling();
+
+      expect(selector(state, 'f1')).toEqual(false);
     });
   });
 
@@ -998,7 +2008,7 @@ describe('resource region selector testcases', () => {
     });
   });
 
-  describe('matchingConnectionList selector', () => {
+  describe('filteredResourceList selector tests', () => {
     const netsuiteConnection = {
       _id: 'netsuiteId',
       type: 'netsuite',
@@ -1082,76 +2092,6 @@ describe('resource region selector testcases', () => {
       snowflakeConnection,
     ];
 
-    test('should not throw any error when params are bad', () => {
-      const state = {};
-
-      expect(selectors.matchingConnectionList(state, {})).toEqual([]);
-      expect(selectors.matchingConnectionList(state, undefined)).toEqual([]);
-      expect(selectors.matchingConnectionList(undefined, {})).toEqual([]);
-      expect(selectors.matchingConnectionList(undefined, undefined)).toEqual([]);
-    });
-    test('should return correct values in production environment', () => {
-      const state = reducer(
-        {
-          data: {
-            resources: {
-              connections,
-            },
-          },
-        },
-        'some_action'
-      );
-
-      expect(
-        selectors.matchingConnectionList(state, { type: 'salesforce' })
-      ).toEqual([salesforceConnection]);
-      expect(selectors.matchingConnectionList(state, { type: 'rest' })).toEqual([
-        restConnection,
-        assistantConnection,
-      ]);
-      expect(selectors.matchingConnectionList(state, { assistant: 'zendesk' })).toEqual([
-        assistantConnection,
-      ]);
-      expect(
-        selectors.matchingConnectionList(state, { type: 'rdbms', rdbms: {type: 'postgresql'} })
-      ).toEqual([postgresqlConnection]);
-      expect(selectors.matchingConnectionList(state, { type: 'rdbms', rdbms: {type: 'snowflake'} })).toEqual([
-        snowflakeConnection,
-      ]);
-    });
-    test('should return correct values in sandbox environment', () => {
-      const state = reducer(
-        {
-          data: {
-            resources: {
-              connections,
-            },
-          },
-          user: {
-            preferences: {
-              environment: 'sandbox',
-            },
-          },
-        },
-        'some_action'
-      );
-
-      expect(
-        selectors.matchingConnectionList(state, { type: 'netsuite' })
-      ).toEqual([]);
-      expect(
-        selectors.matchingConnectionList(state, { type: 'salesforce' })
-      ).toEqual([salesforceConnectionSandbox]);
-      expect(selectors.matchingConnectionList(state, { type: 'rest' })).toEqual([
-        assistantConnectionSandbox,
-      ]);
-      expect(selectors.matchingConnectionList(state, { assistant: 'zendesk' })).toEqual([
-        assistantConnectionSandbox,
-      ]);
-    });
-  });
-
-  describe('matchingStackList selector', () => {
     const stack1 = {
       _id: '57bfd7d06260d08f1ea6b831',
       name: 'Hightech connectors',
@@ -1179,46 +2119,183 @@ describe('resource region selector testcases', () => {
     };
     const stacks = [stack1, stack2];
 
-    test('should not throw any error when params are bad', () => {
-      const state = {};
+    let combinedState = reducer(
+      undefined,
+      actions.resource.receivedCollection('connections', connections)
+    );
 
-      expect(selectors.matchingStackList(state, {})).toEqual([]);
-      expect(selectors.matchingStackList(state, undefined)).toEqual([]);
-      expect(selectors.matchingStackList(undefined, {})).toEqual([]);
-      expect(selectors.matchingStackList(undefined, undefined)).toEqual([]);
+    combinedState = reducer(
+      combinedState,
+      actions.resource.receivedCollection('stacks', stacks)
+    );
+
+    describe('matchingConnectionList selector', () => {
+      test('should not throw any error when params are bad', () => {
+        const state = {};
+
+        expect(selectors.matchingConnectionList(state, {})).toEqual([]);
+        expect(selectors.matchingConnectionList(state, undefined)).toEqual([]);
+        expect(selectors.matchingConnectionList(undefined, {})).toEqual([]);
+        expect(selectors.matchingConnectionList(undefined, undefined)).toEqual([]);
+      });
+      test('should return correct values in production environment', () => {
+        const state = reducer(
+          {
+            data: {
+              resources: {
+                connections,
+              },
+            },
+          },
+          'some_action'
+        );
+
+        expect(
+          selectors.matchingConnectionList(state, { type: 'salesforce' })
+        ).toEqual([salesforceConnection]);
+        expect(selectors.matchingConnectionList(state, { type: 'rest' })).toEqual([
+          restConnection,
+          assistantConnection,
+        ]);
+        expect(selectors.matchingConnectionList(state, { assistant: 'zendesk' })).toEqual([
+          assistantConnection,
+        ]);
+        expect(
+          selectors.matchingConnectionList(state, { type: 'rdbms', rdbms: {type: 'postgresql'} })
+        ).toEqual([postgresqlConnection]);
+        expect(selectors.matchingConnectionList(state, { type: 'rdbms', rdbms: {type: 'snowflake'} })).toEqual([
+          snowflakeConnection,
+        ]);
+      });
+      test('should return correct values in sandbox environment', () => {
+        const state = reducer(
+          {
+            data: {
+              resources: {
+                connections,
+              },
+            },
+            user: {
+              preferences: {
+                environment: 'sandbox',
+              },
+            },
+          },
+          'some_action'
+        );
+
+        expect(
+          selectors.matchingConnectionList(state, { type: 'netsuite' })
+        ).toEqual([]);
+        expect(
+          selectors.matchingConnectionList(state, { type: 'salesforce' })
+        ).toEqual([salesforceConnectionSandbox]);
+        expect(selectors.matchingConnectionList(state, { type: 'rest' })).toEqual([
+          assistantConnectionSandbox,
+        ]);
+        expect(selectors.matchingConnectionList(state, { assistant: 'zendesk' })).toEqual([
+          assistantConnectionSandbox,
+        ]);
+      });
     });
-    test('should return correct values in production environment', () => {
-      const state = reducer(
-        {
-          data: {
-            resources: {
-              stacks,
+
+    describe('matchingStackList selector', () => {
+      test('should not throw any error when params are bad', () => {
+        const state = {};
+
+        expect(selectors.matchingStackList(state, {})).toEqual([]);
+        expect(selectors.matchingStackList(state, undefined)).toEqual([]);
+        expect(selectors.matchingStackList(undefined, {})).toEqual([]);
+        expect(selectors.matchingStackList(undefined, undefined)).toEqual([]);
+      });
+      test('should return correct values in production environment', () => {
+        const state = reducer(
+          {
+            data: {
+              resources: {
+                stacks,
+              },
             },
           },
-        },
-        'some_action'
-      );
+          'some_action'
+        );
 
-      expect(selectors.matchingStackList(state)).toEqual([stack1]);
+        expect(selectors.matchingStackList(state)).toEqual([stack1]);
+      });
+      test('should return correct values in sandbox environment', () => {
+        const state = reducer(
+          {
+            data: {
+              resources: {
+                stacks,
+              },
+            },
+            user: {
+              preferences: {
+                environment: 'sandbox',
+              },
+            },
+          },
+          'some_action'
+        );
+
+        expect(selectors.matchingStackList(state)).toEqual([stack1]);
+      });
     });
-    test('should return correct values in sandbox environment', () => {
-      const state = reducer(
-        {
-          data: {
-            resources: {
-              stacks,
-            },
-          },
-          user: {
-            preferences: {
-              environment: 'sandbox',
-            },
-          },
-        },
-        'some_action'
-      );
+    describe('selectors.filteredResourceList test cases', () => {
+      test('should not throw any exception for invalid arguments', () => {
+        expect(selectors.filteredResourceList()).toEqual([]);
+      });
 
-      expect(selectors.matchingStackList(state)).toEqual([stack1]);
+      test('should return connections in production environment', () => {
+        expect(selectors.filteredResourceList(combinedState, {
+          type: 'salesforce',
+        }, 'connections', 'production')).toEqual([salesforceConnection]);
+
+        expect(selectors.filteredResourceList(combinedState, {
+          type: 'rest',
+        }, 'connections', 'production')).toEqual([restConnection, assistantConnection]);
+
+        expect(selectors.filteredResourceList(combinedState, {
+          assistant: 'zendesk',
+        }, 'connections', 'production')).toEqual([assistantConnection]);
+
+        expect(selectors.filteredResourceList(combinedState, {
+          type: 'rdbms',
+          rdbms: {type: 'postgresql'},
+        }, 'connections', 'production')).toEqual([postgresqlConnection]);
+
+        expect(selectors.filteredResourceList(combinedState, {
+          type: 'rdbms',
+          rdbms: {type: 'snowflake'},
+        }, 'connections', 'production')).toEqual([snowflakeConnection]);
+
+        expect(selectors.filteredResourceList(combinedState, {
+          type: 'netsuite',
+        }, 'connections', 'production')).toEqual([netsuiteConnection, validNetsuiteConnection]);
+      });
+
+      test('should return connections in sandbox environment', () => {
+        expect(selectors.filteredResourceList(combinedState, {
+          type: 'salesforce',
+        }, 'connections', 'sandbox')).toEqual([salesforceConnectionSandbox]);
+
+        expect(selectors.filteredResourceList(combinedState, {
+          type: 'rest',
+        }, 'connections', 'sandbox')).toEqual([assistantConnectionSandbox]);
+
+        expect(selectors.filteredResourceList(combinedState, {
+          assistant: 'zendesk',
+        }, 'connections', 'sandbox')).toEqual([assistantConnectionSandbox]);
+
+        expect(selectors.filteredResourceList(combinedState, {
+          type: 'netsuite',
+        }, 'connections', 'sandbox')).toEqual([]);
+      });
+
+      test('should return stacks if resourceType is stacks', () => {
+        expect(selectors.filteredResourceList(combinedState, undefined, 'stacks', 'sandbox')).toEqual([stack1]);
+      });
     });
   });
 
@@ -1260,12 +2337,6 @@ describe('resource region selector testcases', () => {
   describe('selectors.integrationEnabledFlowIds test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.integrationEnabledFlowIds()).toEqual([]);
-    });
-  });
-
-  describe('selectors.filteredResourceList test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.filteredResourceList()).toEqual([]);
     });
   });
 
@@ -2438,6 +3509,278 @@ describe('resource region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.auditLogs({}, 'flows', 'id')).toEqual({count: 0, logs: [], totalCount: 0});
     });
+    const logs = [
+      {
+        _id: 'l1',
+        resourceType: 'flow',
+        resourceId: 'f1',
+      },
+      {
+        _id: 'l2',
+        resourceType: 'flow',
+        resourceId: 'f1',
+      },
+      {
+        _id: 'l3',
+        resourceType: 'flow',
+        resourceId: 'f1',
+      },
+      {
+        _id: 'l4',
+        resourceType: 'flow',
+        resourceId: 'f1',
+      },
+    ];
+
+    const expectedResult = [
+      {
+        _id: 'l1',
+        resourceType: 'flow',
+        resourceId: 'f1',
+        fieldChange: {},
+      },
+      {
+        _id: 'l2',
+        resourceType: 'flow',
+        resourceId: 'f1',
+        fieldChange: {},
+      },
+      {
+        _id: 'l3',
+        resourceType: 'flow',
+        resourceId: 'f1',
+        fieldChange: {},
+      },
+      {
+        _id: 'l4',
+        resourceType: 'flow',
+        resourceId: 'f1',
+        fieldChange: {},
+      },
+    ];
+
+    test('should return logs for provided resourceId', () => {
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('flows/f1/audit',
+          logs)
+      );
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('flows', [{
+          _id: 'f1',
+        }])
+      );
+
+      expect(selectors.auditLogs(state, 'flows', 'f1')).toEqual(
+        {
+          logs: expectedResult,
+          count: 4,
+          totalCount: 4,
+        }
+      );
+    });
+
+    test('should return logs for provided resourceId and with filtering', () => {
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('flows/f1/audit',
+          logs)
+      );
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('flows', [{
+          _id: 'f1',
+        }])
+      );
+
+      expect(selectors.auditLogs(state, 'flows', 'f1', undefined, {
+        take: 2,
+      })).toEqual(
+        {
+          logs: [
+            expectedResult[0],
+            expectedResult[1],
+          ],
+          count: 2,
+          totalCount: 4,
+        }
+      );
+    });
+
+    test('should return logs for IA if storeId is passed as argument', () => {
+      const conns = [{
+        _id: 'c1',
+        _integrationId: 'i1',
+      }, {
+        _id: 'c2',
+      }, {
+        _id: 'c3',
+        _integrationId: 'i2',
+      }, {
+        _id: 'c4',
+        _integrationId: 'i1',
+      }];
+
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('connections', conns)
+      );
+
+      const flows = [
+        {
+          _id: 'f1',
+          name: 'flow from a to b',
+          _integrationId: 'i1',
+          pageGenerators: [
+            {
+              _exportId: 'e1',
+            },
+          ],
+          pageProcessors: [
+            {
+              _importId: 'i1',
+            },
+          ],
+        },
+      ];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('flows', flows)
+      );
+
+      const integration = {
+        _id: 'i1',
+        settings: {
+          supportsMultiStore: true,
+          sections: [{
+            title: 'Section1',
+            id: 's1',
+            sections: [{
+              flows: [{
+                _id: 'f1',
+              }],
+            },
+            ],
+          }],
+        },
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('integrations', integration)
+      );
+
+      const exports = [
+        {
+          _id: 'e1',
+        },
+        {
+          _id: 'e2',
+        },
+      ];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('exports', exports)
+      );
+
+      const imports = [
+        {
+          _id: 'i1',
+        },
+        {
+          _id: 'i2',
+        },
+      ];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('imports', imports)
+      );
+
+      const logs = [
+        {
+          _id: 'l1',
+          resourceType: 'flow',
+          _resourceId: 'f1',
+        },
+        {
+          _id: 'l2',
+          resourceType: 'flow',
+          _resourceId: 'f2',
+        },
+        {
+          _id: 'l3',
+          resourceType: 'export',
+          _resourceId: 'e1',
+        },
+        {
+          _id: 'l4',
+          resourceType: 'import',
+          _resourceId: 'i1',
+        },
+        {
+          _id: 'l5',
+          resourceType: 'connection',
+          _resourceId: 'c1',
+        },
+        {
+          _id: 'l6',
+          resourceType: 'connection',
+          _resourceId: 'c2',
+        },
+      ];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('audit', logs)
+      );
+
+      expect(selectors.auditLogs(state, undefined, 'i1', undefined, {
+        storeId: 's1',
+      })).toEqual({
+        count: 4,
+        logs: [
+          {
+            _id: 'l1',
+            _resourceId: 'f1',
+            fieldChange: {
+
+            },
+            resourceType: 'flow',
+          },
+          {
+            _id: 'l3',
+            _resourceId: 'e1',
+            fieldChange: {
+
+            },
+            resourceType: 'export',
+          },
+          {
+            _id: 'l4',
+            _resourceId: 'i1',
+            fieldChange: {
+
+            },
+            resourceType: 'import',
+          },
+          {
+            _id: 'l5',
+            _resourceId: 'c1',
+            fieldChange: {
+
+            },
+            resourceType: 'connection',
+          },
+        ],
+        totalCount: 4,
+      });
+    });
   });
 
   describe('selectors.mkFlowResources test cases', () => {
@@ -2713,6 +4056,53 @@ describe('resource region selector testcases', () => {
 
       expect(selector()).toEqual();
     });
+
+    test('should return child integration for a parent integration', () => {
+      const integrations = [
+        {
+          _id: 'i1',
+          name: 'parent integration',
+        },
+        {
+          _id: 'i2',
+          name: 'child integration',
+        },
+      ];
+
+      let state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', integrations)
+      );
+
+      state = reducer(
+        state,
+        actions.resource.updateChildIntegration('i1', 'i2')
+      );
+
+      const selector = selectors.mkChildIntegration();
+
+      expect(selector(state, 'i1')).toEqual(
+        integrations[1]
+      );
+    });
+
+    test('should return undefined if child integration doesn\'t exist', () => {
+      const integrations = [
+        {
+          _id: 'i1',
+          name: 'parent integration',
+        },
+      ];
+
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection('integrations', integrations)
+      );
+
+      const selector = selectors.mkChildIntegration();
+
+      expect(selector(state, 'i1')).toEqual();
+    });
   });
 
   describe('selectors.mkDIYIntegrationFlowList test cases', () => {
@@ -2941,77 +4331,5 @@ describe('resource region selector testcases', () => {
         ]);
       });
     });
-  });
-});
-
-describe('selectors.tradingPartnerConnections test cases', () => {
-  test('should not throw any exception for invalid arguments', () => {
-    expect(selectors.tradingPartnerConnections(undefined, {})).toEqual([]);
-  });
-  const state = {
-    data: {
-      resources: {
-        connections: [{
-          _id: 'conn1',
-          type: 'ftp',
-          name: 'FTP',
-          ftp: {
-            type: 'sftp',
-            hostURI: 'celigo.brickftp.com',
-            port: 22,
-          },
-        },
-        {
-          _id: 'conn2',
-          type: 'http',
-          name: 'HTTP',
-        },
-        {
-          _id: 'conn3',
-          type: 'ftp',
-          name: 'FTP2',
-          ftp: {
-            type: 'sftp',
-            hostURI: 'celigo.brickftp.com',
-            port: 22,
-          },
-        },
-        {
-          _id: 'conn4',
-          type: 'ftp',
-          name: 'FTP3',
-          ftp: {
-            type: 'sftp',
-            hostURI: 'celigo.brickftp.com',
-            port: 21,
-          },
-        },
-        ],
-      },
-    },
-  };
-  const expected = [{
-    _id: 'conn1',
-    type: 'ftp',
-    name: 'FTP',
-    ftp: {
-      type: 'sftp',
-      hostURI: 'celigo.brickftp.com',
-      port: 22,
-    },
-  },
-  {
-    _id: 'conn3',
-    type: 'ftp',
-    name: 'FTP2',
-    ftp: {
-      type: 'sftp',
-      hostURI: 'celigo.brickftp.com',
-      port: 22,
-    },
-  }];
-
-  test('should not throw any exception for invalid arguments', () => {
-    expect(selectors.tradingPartnerConnections(state, 'conn1')).toEqual(expected);
   });
 });

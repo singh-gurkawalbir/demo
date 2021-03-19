@@ -302,7 +302,7 @@ selectors.isUninstallComplete = (state, { integrationId, storeId }) => {
     uninstallSteps.length &&
     !uninstallSteps.reduce((result, step) => result || !step.completed, false);
 
-  return isSetupComplete;
+  return !!isSetupComplete;
 };
 
 selectors.integrationInstallSteps = (state, integrationId) => {
@@ -1647,7 +1647,7 @@ selectors.integrationAppV2FlowList = (state, integrationId, childId) => {
 
 selectors.integrationAppV2ConnectionList = (state, integrationId, childId) => {
   if (!state) return null;
-  const isParent = integrationId === childId;
+  const isParent = (integrationId === childId) || !childId;
   let integrations;
 
   if (isParent) {
@@ -2073,7 +2073,7 @@ selectors.integrationAppFlowIds = (state, integrationId, storeId) => {
 
         return flowStore
           ? flowStore === store.label
-          : flows.indexOf(f._id) > -1;
+          : map(flows, '_id').indexOf(f._id) > -1;
       });
 
       return map(storeFlows.length ? storeFlows : flows,
@@ -2700,7 +2700,8 @@ selectors.formAccessLevel = (state, integrationId, resource, disabled) => {
 selectors.canEditSettingsForm = (state, resourceType, resourceId, integrationId) => {
   const r = selectors.resource(state, resourceType, resourceId);
   const isIAResource = !!r?._connectorId;
-  const {allowedToPublish, developer} = selectors.userProfile(state) || emptyObject;
+  const { developer } = selectors.userProfile(state) || emptyObject;
+  const allowedToPublish = selectors.canUserPublish(state);
   const viewOnly = selectors.isFormAMonitorLevelAccess(state, integrationId);
 
   // if the resource belongs to an IA and the user cannot publish, then
@@ -4015,20 +4016,6 @@ selectors.applicationType = (state, resourceType, id) => {
   return assistant || adaptorType;
 };
 
-selectors.tradingPartnerConnections = (
-  state,
-  connectionId,
-) => {
-  const connections = selectors.resourceList(state, { type: 'connections' }).resources;
-  const currConnection = selectors.resource(state, 'connections', connectionId);
-
-  return connections?.filter(c => (c.type === 'ftp' &&
-      c.ftp.hostURI === currConnection.ftp.hostURI &&
-      c.ftp.port === currConnection.ftp.port &&
-      c.sandbox === currConnection.sandbox
-  ));
-};
-
 selectors.mappingGenerates = createSelector([
   (state, importId) => selectors.resource(state, 'imports', importId)?.adaptorType,
   (state, importId, subRecordMappingId) => {
@@ -4787,6 +4774,8 @@ selectors.getCustomResourceLabel = (
   } else if (isDataloader && resourceType === 'pageProcessor') {
     // Incase of data loader PP 1st step , we cannot add lookups so , resourceLabel is of imports type
     resourceLabel = MODEL_PLURAL_TO_LABEL.imports;
+  } else if (resourceType === 'connectorLicenses' && resource.type === 'integrationAppChild') {
+    resourceLabel = 'Child License';
   } else {
     resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
   }

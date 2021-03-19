@@ -3,8 +3,9 @@ Default inline spinner with sizes:
 const SpacedContainer = require('../../styleguide/SpacedContainer').default;
     <SpacedContainer>
     <Spinner color="primary" />
-    <Spinner size={24}  color="secondary" />
-    <Spinner size={16} />
+    <Spinner size="medium" color="secondary" />
+    <Spinner size="small" />
+    <Spinner size="large" />
 </SpacedContainer>
 ```
 Block-centered "loading" spinner with thicknes:
@@ -12,6 +13,6 @@ Block-centered "loading" spinner with thicknes:
 const SpacedContainer = require('../../styleguide/SpacedContainer').default;
 <SpacedContainer >
 <Spinner loading  />
-<Spinner loading thickness={1.2} />
+<Spinner loading size="large" color="secondary" />
 </SpacedContainer>
 ```

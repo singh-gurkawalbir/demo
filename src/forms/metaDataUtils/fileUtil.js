@@ -1,4 +1,4 @@
-import { isNewId } from './resource';
+import { isNewId } from '../../utils/resource';
 
 export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
   outputMode: {
@@ -40,6 +40,7 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
       return output ? 'records' : 'blob';
     },
   },
+  fileAdvanced: { formId: 'fileAdvanced' },
   'http.relativeURI': { fieldId: 'http.relativeURI', label: 'Directory path', required: true, type: 'uri', helpKey: 'export.gdrive.directoryPath'},
   'file.fileNameStartsWith': { fieldId: 'file.fileNameStartsWith' },
   'file.fileNameEndsWith': { fieldId: 'file.fileNameEndsWith' },
@@ -158,6 +159,9 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
       },
     ],
   },
+  traceKeyTemplate: {
+    fieldId: 'traceKeyTemplate',
+  },
   skipRetries: {
     fieldId: 'skipRetries',
   },
@@ -193,11 +197,12 @@ blobKeyPath: {
 'file.fileName': {
   fieldId: 'file.fileName', required: true,
 },
+fileAdvanced: { formId: 'fileAdvanced' },
 'file.xml.body': {
   id: 'file.xml.body',
   type: 'httprequestbody',
   connectionId: r => r && r._connectionId,
-  label: 'Build XML document',
+  label: 'XML document',
   refreshOptionsOnChangesTo: ['file.type'],
   required: true,
   visibleWhenAll: [
@@ -306,4 +311,22 @@ fileApiIdentifier: {
 's3.bucket': {
   fieldId: 's3.bucket',
 },
+};
+export const updatePGPFormValues = formValues => {
+  const newValues = { ...formValues };
+
+  if (!newValues['/usePgp']) {
+    delete newValues['/pgp/publicKey'];
+    delete newValues['/pgp/privateKey'];
+    delete newValues['/pgp/passphrase'];
+    delete newValues['/pgp/compressionAlgorithm'];
+    delete newValues['/pgp/asciiArmored'];
+    newValues['/pgp'] = undefined;
+  } else if (newValues['/pgp/asciiArmored'] === 'false') {
+    newValues['/pgp/asciiArmored'] = false;
+  } else {
+    newValues['/pgp/asciiArmored'] = true;
+  }
+
+  return newValues;
 };

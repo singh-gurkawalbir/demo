@@ -77,7 +77,7 @@ import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMappi
 import DynaTimestampFileName from './DynaTimestampFileName';
 import DynaMode from './DynaMode';
 import DynaCsvGenerate_afe2 from './editors/DynaCsvGenerate_afe2';
-import DynaFileKeyColumn from './DynaFileKeyColumn';
+import DynaFileKeyColumn_afe2 from './DynaFileKeyColumn_afe2';
 import DynaRadioGroupForResetFields from './radiogroup/DynaRadioGroupForResetFields';
 import DynaTextWithFlowContext from './text/DynaTextWithFlowContext';
 import DynaCheckboxForResetFields from './checkbox/DynaCheckboxForResetFields';
@@ -119,6 +119,9 @@ import DynaSelectMultiApplication from './DynaSelectMultiApplication';
 import DynaPreviewComponentsTable from './DynaPreviewComponentsTable';
 import DynaChildLicenses from './DynaChildLicenses';
 import DynaDateSelector from './DynaDateSelector';
+import DynaFileEncryptDecrypt from './DynaFileEncryptDecrypt';
+import DynaHashAlogorithm from './DynaHashAlogorithm';
+import DynaQueryRadioGroup from './radiogroup/DynaQueryRadioGroup';
 
 export default {
   suitescriptsettings: DynaRefreshableSettings,
@@ -226,8 +229,10 @@ export default {
   salesforcelookupfilters: DynaSalesforceLookupFilters,
   salesforcelookup: DynaSalesforceLookup,
   timestampfilename: DynaTimestampFileName,
-  filekeycolumn: DynaFileKeyColumn,
+  // filekeycolumn: DynaFileKeyColumn,
+  filekeycolumn: DynaFileKeyColumn_afe2,
   radiogroupforresetfields: DynaRadioGroupForResetFields,
+  queryradiogroup: DynaQueryRadioGroup,
   textwithflowcontext: DynaTextWithFlowContext,
   checkboxforresetfields: DynaCheckboxForResetFields,
   crongenerator: DynaCronGenerator,
@@ -263,4 +268,6 @@ export default {
   as2Mode: DynaAs2Mode,
   childlicenses: DynaChildLicenses,
   dateselector: DynaDateSelector,
+  fileencryptdecrypt: DynaFileEncryptDecrypt,
+  hashalgorithm: DynaHashAlogorithm,
 };

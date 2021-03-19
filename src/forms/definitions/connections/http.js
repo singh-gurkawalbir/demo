@@ -236,7 +236,6 @@ export default {
       id: 'http.auth.wsse.headerName',
       type: 'text',
       label: 'Header name',
-      helpKey: 'connection.http.auth.token.headerName',
       defaultValue: r =>
         (r &&
           r.http &&
@@ -417,7 +416,6 @@ export default {
       id: 'http.auth.oauth.headerName',
       type: 'text',
       label: 'Header name',
-      helpKey: 'connection.http.auth.token.headerName',
       defaultValue: r =>
         (r &&
           r.http &&
@@ -490,7 +488,7 @@ export default {
       id: 'http.auth.oauth.refreshBody',
       type: 'httprequestbody',
       contentType: 'json',
-      label: 'Build refresh token body',
+      label: 'Refresh token body',
       visibleWhenAll: [
         { field: 'http.auth.type', is: ['oauth'] },
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextToggle from '../../TextToggle';
+import { useTabContext } from '../CeligoTabWrapper';
 
 const useStyles = makeStyles(theme => ({
   textToggleContainer: {
@@ -20,7 +21,7 @@ const useStyles = makeStyles(theme => ({
       textOverflow: 'ellipsis',
       padding: theme.spacing(0, 5),
       '&:first-child': {
-        borderRadius: props => props.availablePreviewStages.length > 1 ? [[24, 0, 0, 24]] : 'none',
+        borderRadius: props => props.tabs?.length > 1 ? [[24, 0, 0, 24]] : 'none',
       },
       '&:last-child': {
         height: 30,
@@ -45,19 +46,29 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function HeaderPanel(props) {
-  const { handlePanelViewChange, availablePreviewStages, panelType } = props;
+export default function CeligoPillTabs(props) {
+  const { tabs, defaultTab } = props;
   const classes = useStyles(props);
+  const {activeTab, setActiveTab} = useTabContext();
+
+  useEffect(() => {
+    setActiveTab(defaultTab || tabs?.[0]?.value);
+  }, [defaultTab, tabs, setActiveTab]);
+
+  if (!tabs?.length) {
+    return null;
+  }
 
   return (
     <div className={classes.textToggleContainer}>
       <TextToggle
-        value={panelType}
+        value={activeTab}
         className={classes.toggleButtons}
-        onChange={handlePanelViewChange}
+        onChange={setActiveTab}
         exclusive
-        options={availablePreviewStages}
+        options={tabs}
       />
     </div>
   );
 }
+

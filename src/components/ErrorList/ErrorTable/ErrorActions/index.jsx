@@ -35,23 +35,32 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function getAllErrorsLabelToResolve(count) {
-  if (count > MAX_ERRORS_TO_RETRY_OR_RESOLVE) {
-    return `${MAX_ERRORS_TO_RETRY_OR_RESOLVE} errors`;
+function getAllErrorsLabelToResolve(count, hasSearchFilter) {
+  if (count >= MAX_ERRORS_TO_RETRY_OR_RESOLVE) {
+    return `${MAX_ERRORS_TO_RETRY_OR_RESOLVE}${hasSearchFilter ? ' matching' : ''} errors`;
+  }
+
+  if (hasSearchFilter) {
+    return 'All matching errors';
   }
 
   return 'All errors';
 }
-function getAllErrorsLabelToRetry(count) {
-  if (count > MAX_ERRORS_TO_RETRY_OR_RESOLVE) {
-    return `${MAX_ERRORS_TO_RETRY_OR_RESOLVE} retriable errors`;
+function getAllErrorsLabelToRetry(count, hasSearchFilter) {
+  if (count >= MAX_ERRORS_TO_RETRY_OR_RESOLVE) {
+    return `${MAX_ERRORS_TO_RETRY_OR_RESOLVE}${hasSearchFilter ? ' matching' : ''} retriable errors`;
+  }
+  if (hasSearchFilter) {
+    return 'All matching retriable errors';
   }
 
   return 'All retriable errors';
 }
 
-const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable }) => {
+const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable, isSearchFilterApplied }) => {
   const classes = useStyles();
+  const { confirmDialog } = useConfirmDialog();
+
   const allRetriableErrorCount = useSelector(state => {
     const {errors = []} = selectors.resourceFilteredErrorDetails(state, {
       flowId,
@@ -74,29 +83,56 @@ const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable }) => {
 
   const disableRetry = disable || (!selectedRetriableErrorCount && !allRetriableErrorCount);
 
+  const allErrorsLabel = getAllErrorsLabelToRetry(allRetriableErrorCount, isSearchFilterApplied);
+
+  const handleRetry = useCallback(e => {
+    if (isResolved || e.target.value === 'selected') {
+      return onClick(e);
+    }
+
+    confirmDialog({
+      title: 'Confirm retry',
+      message: `Are you sure you want to retry ${allErrorsLabel.toLowerCase()}?`,
+      buttons: [
+        {
+          label: 'Retry',
+          onClick: () => {
+            onClick(e);
+          },
+        },
+        {
+          label: 'Cancel',
+          color: 'secondary',
+        },
+      ],
+    });
+  }, [confirmDialog, isResolved, onClick, allErrorsLabel]);
+
   return (
     <CeligoSelect
       className={clsx(classes.actionBtn, classes.retryBtn, { [classes.noPadding]: disableRetry && !isRetryInProgress })}
       data-test="retryJobs"
-      onChange={onClick}
+      onChange={handleRetry}
       disabled={disableRetry}
       displayEmpty
       value="">
       <MenuItem value="" disabled >
-        Retry { isRetryInProgress && <Spinner size={16} className={classes.loading} />}
+        Retry { isRetryInProgress && <Spinner size="small" className={classes.loading} />}
       </MenuItem>
       <MenuItem value="selected" disabled={!selectedRetriableErrorCount}>
-        {selectedRetriableErrorCount} retriable errors
+        {selectedRetriableErrorCount} retriable {selectedRetriableErrorCount === 1 ? 'error' : 'errors'}
       </MenuItem>
       <MenuItem value="all" disabled={!allRetriableErrorCount}>
-        {getAllErrorsLabelToRetry(allRetriableErrorCount)}
+        {allErrorsLabel}
       </MenuItem>
     </CeligoSelect>
   );
 };
 
-const ResolveAction = ({ onClick, flowId, resourceId, disable }) => {
+const ResolveAction = ({ onClick, flowId, resourceId, disable, isSearchFilterApplied }) => {
   const classes = useStyles();
+  const { confirmDialog } = useConfirmDialog();
+
   const allErrorCount = useSelector(state => {
     const {errors = []} = selectors.resourceFilteredErrorDetails(state, { flowId, resourceId });
 
@@ -113,22 +149,47 @@ const ResolveAction = ({ onClick, flowId, resourceId, disable }) => {
 
   const disableResolve = disable || (!selectedErrorCount && !allErrorCount);
 
+  const allErrorsLabel = getAllErrorsLabelToResolve(allErrorCount, isSearchFilterApplied);
+
+  const handleResolve = useCallback(e => {
+    if (e.target.value === 'selected') {
+      return onClick(e);
+    }
+
+    confirmDialog({
+      title: 'Confirm resolve',
+      message: `Are you sure you want to resolve ${allErrorsLabel.toLowerCase()}?`,
+      buttons: [
+        {
+          label: 'Resolve',
+          onClick: () => {
+            onClick(e);
+          },
+        },
+        {
+          label: 'Cancel',
+          color: 'secondary',
+        },
+      ],
+    });
+  }, [confirmDialog, onClick, allErrorsLabel]);
+
   return (
     <CeligoSelect
       className={clsx(classes.actionBtn, classes.resolveBtn, { [classes.noPadding]: disableResolve && !isResolveInProgress })}
-      data-test="retryJobs"
-      onChange={onClick}
+      data-test="resolveJobs"
+      onChange={handleResolve}
       disabled={disableResolve}
       displayEmpty
       value="">
       <MenuItem value="" disabled>
-        Resolve  { isResolveInProgress && <Spinner size={16} className={classes.loading} />}
+        Resolve  { isResolveInProgress && <Spinner size="small" className={classes.loading} />}
       </MenuItem>
       <MenuItem value="selected" disabled={!selectedErrorCount}>
-        {selectedErrorCount} selected errors
+        {selectedErrorCount} selected {selectedErrorCount === 1 ? 'error' : 'errors'}
       </MenuItem>
       <MenuItem value="all" disabled={!allErrorCount}>
-        {getAllErrorsLabelToResolve(allErrorCount)}
+        {allErrorsLabel}
       </MenuItem>
     </CeligoSelect>
   );
@@ -146,6 +207,16 @@ export default function ErrorActions({ flowId, resourceId, isResolved, className
   const isAnyActionInProgress = useSelector(
     state => selectors.isAnyActionInProgress(state, { flowId, resourceId })
   );
+
+  const isSearchFilterApplied = useSelector(state => {
+    const errorFilter = selectors.errorFilter(state, {
+      flowId,
+      resourceId,
+      isResolved,
+    });
+
+    return !!errorFilter.keyword?.length;
+  });
 
   const retryErrors = useCallback(type => {
     dispatch(
@@ -202,6 +273,7 @@ export default function ErrorActions({ flowId, resourceId, isResolved, className
           onClick={handleResolveAction}
           flowId={flowId}
           resourceId={resourceId}
+          isSearchFilterApplied={isSearchFilterApplied}
           disable={disableResolveAction} />
         )}
         <RetryAction
@@ -209,6 +281,7 @@ export default function ErrorActions({ flowId, resourceId, isResolved, className
           flowId={flowId}
           resourceId={resourceId}
           isResolved={isResolved}
+          isSearchFilterApplied={isSearchFilterApplied}
           disable={disableRetryAction} />
       </div>
     </div>

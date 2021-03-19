@@ -8,7 +8,6 @@ import KeywordSearch from '../../KeywordSearch';
 import RefreshCard from './RefreshCard';
 import ErrorActions from './ErrorActions';
 import Spinner from '../../Spinner';
-import SpinnerWrapper from '../../SpinnerWrapper';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import CeligPagination from '../../CeligoPagination';
@@ -97,11 +96,6 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const dispatch = useDispatch();
   const defaultFilter = isResolved ? DEFAULT_FILTERS.RESOLVED : DEFAULT_FILTERS.OPEN;
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
-
-  useEffect(() => {
-    dispatch(actions.patchFilter(filterKey, defaultFilter));
-  },
-  [defaultFilter, dispatch, filterKey]);
   const errorType = isResolved ? 'resolved' : 'open';
   const errorFilter = useSelector(
     state => selectors.filter(state, filterKey), shallowEqual
@@ -249,16 +243,15 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
 
   useEffect(() => {
     dispatch(actions.patchFilter(filterKey, defaultFilter));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [defaultFilter, filterKey, dispatch]);
 
   // TODO @Raghu: Refactor the pagination related code
   return (
     <div className={clsx(classes.errorTableWrapper, { [classes.hide]: !show })}>
       {isFreshDataLoad ? (
-        <SpinnerWrapper>
-          <Spinner />
-        </SpinnerWrapper>
+
+        <Spinner centerAll />
+
       ) : (
         <>
           <div className={classes.filtersErrorTable}>
