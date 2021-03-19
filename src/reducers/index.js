@@ -2583,8 +2583,8 @@ selectors.resourcePermissions = (
 
   const permissions = selectors.userPermissions(state);
 
-  // TODO: userPermissions should be written to handle when there isnt a state and in those circumstances
-  // should return null rathern than an empty object for all cases
+  // TODO: userPermissions should be written to handle when there isn't a state and in those circumstances
+  // should return null rather than an empty object for all cases
   if (!permissions || isEmpty(permissions)) return emptyObject;
 
   // special case, where resourceType == integrations. Its childResource,
@@ -5072,11 +5072,13 @@ selectors.hasLogsAccess = (state, resourceId, resourceType, isNew) => {
 };
 
 selectors.canEnableDebug = (state, exportId, flowId) => {
+  if (!exportId || !flowId) return false;
+
   const flow = selectors.resource(state, 'flows', flowId);
 
   const userPermissionsOnIntegration = selectors.resourcePermissions(state, 'integrations', flow?._integrationId)?.accessLevel;
 
-  if (userPermissionsOnIntegration !== INTEGRATION_ACCESS_LEVELS.MONITOR) return true;
+  if (userPermissionsOnIntegration && userPermissionsOnIntegration !== INTEGRATION_ACCESS_LEVELS.MONITOR) return true;
 
   const resource = selectors.resource(state, 'exports', exportId) || {};
 
@@ -5087,7 +5089,7 @@ selectors.canEnableDebug = (state, exportId, flowId) => {
 
   const userPermissionsOnConnection = selectors.resourcePermissions(state, 'connections', resource._connectionId)?.edit;
 
-  return userPermissionsOnConnection;
+  return !!userPermissionsOnConnection;
 };
 
 selectors.logsInCurrPageSelector = (state, exportId) => {
