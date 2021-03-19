@@ -139,6 +139,10 @@ export default {
               value: 'A19VAU5U5O7RUS',
               label: 'A19VAU5U5O7RUS (SG)',
             },
+            {
+              value: 'A1C3SOZRARQ6R3',
+              label: 'A1C3SOZRARQ6R3 (PL)',
+            },
           ],
         },
       ],

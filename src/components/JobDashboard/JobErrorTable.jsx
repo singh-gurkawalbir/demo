@@ -18,7 +18,6 @@ import useConfirmDialog from '../ConfirmDialog';
 import JobErrorPreviewDialogContent from './JobErrorPreviewDialogContent';
 import JobErrorMessage from './JobErrorMessage';
 import { UNDO_TIME } from './util';
-import SpinnerWrapper from '../SpinnerWrapper';
 import DownloadIcon from '../icons/DownloadIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -481,9 +480,11 @@ export default function JobErrorTable({
         </li>
       </ul>
       {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
-        <SpinnerWrapper>
-          <Spinner /> <span>Loading job errors</span>
-        </SpinnerWrapper>
+
+        <Spinner centerAll>
+          <Typography variant="body2">Loading job errors</Typography>
+        </Spinner>
+
       ) : (
         <>
           <ButtonsGroup className={classes.btnsWrappper}>

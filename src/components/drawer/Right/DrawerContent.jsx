@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -7,13 +8,21 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
     overflow: 'auto',
   },
+  drawerContentWithoutPadding: {
+    flex: 1,
+    overflow: 'auto',
+  },
 }));
 
-export default function DrawerContent({ children }) {
+export default function DrawerContent({ children, fullWidth }) {
   const classes = useStyles();
 
   return (
-    <div className={classes.drawerContent}>
+    <div
+      className={clsx({
+        [classes.drawerContent]: !fullWidth,
+        [classes.drawerContentWithoutPadding]: fullWidth,
+      })}>
       {children}
     </div>
   );
