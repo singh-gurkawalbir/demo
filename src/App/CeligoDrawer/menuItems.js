@@ -49,6 +49,7 @@ export default function menuItems(
       routeProps: [
         getRoutePath('/integrations/:integrationId/flowBuilder'),
         getRoutePath('/integrations/:integrationId/dataLoader'),
+        getRoutePath('/eventreports'),
       ],
       Icon: ToolsIcon,
       children: [
@@ -63,6 +64,12 @@ export default function menuItems(
           Icon: DataLoaderIcon,
           path: '/integrations/none/dataLoader/new',
           routeProps: getRoutePath('/integrations/:integrationId/dataloader'),
+        },
+        {
+          label: 'Reports',
+          Icon: DataLoaderIcon,
+          path: '/reports',
+          routeProps: getRoutePath('/reports'),
         },
         {
           label: 'Dev playground',

@@ -1346,6 +1346,9 @@ describe('Accounts region selector testcases', () => {
         users: {
 
         },
+        eventreports: {
+
+        },
 
       });
     });

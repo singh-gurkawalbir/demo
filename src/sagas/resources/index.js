@@ -966,7 +966,41 @@ export function* replaceConnection({ _resourceId, _connectionId, _newConnectionI
   yield put(actions.resource.requestCollection('imports'));
 }
 
+export function* eventReportCancel({reportId}) {
+  const path = `/eventreports/${reportId}/cancel`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'PUT',
+      },
+    });
+  } catch (e) {
+    return;
+  }
+
+  yield put(actions.resource.request('eventreports', reportId));
+}
+
+export function* downloadReport({reportId}) {
+  const path = `/eventreports/${reportId}/signedURL`;
+
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+
+    });
+
+    window.open(response.signedURL, 'target=_blank', response.options, false);
+  // eslint-disable-next-line no-empty
+  } catch (e) {
+
+  }
+}
 export const resourceSagas = [
+  takeEvery(actionTypes.EVENT_REPORT.CANCEL, eventReportCancel),
+  takeEvery(actionTypes.EVENT_REPORT.DOWNLOAD, downloadReport),
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
   takeEvery(
     actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE,

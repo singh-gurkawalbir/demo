@@ -715,7 +715,8 @@ selectors.mkIntegrationAppSettings = subState => {
     }
   );
 };
-const integrationAppSettings = selectors.mkIntegrationAppSettings(true);
+
+export const integrationAppSettings = selectors.mkIntegrationAppSettings(true);
 
 selectors.defaultStoreId = (state, id, store) => {
   const settings = integrationAppSettings(state, id);

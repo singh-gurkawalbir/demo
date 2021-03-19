@@ -147,6 +147,9 @@ const useDetermineRequiredResources = type => useMemo(() => {
 }, [type]);
 
 const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
+  if (resourceType === 'eventreports') {
+    return 'Run Report';
+  }
   if (resourceType === 'pageGenerator') {
     return 'Create source';
   }
@@ -237,7 +240,11 @@ export default function Panel(props) {
   const app = applications.find(a => a.id === applicationType) || {};
   // Incase of a multi step resource, with isNew flag indicates first step and shows Next button
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
-  const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save & close';
+  let submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save & close';
+
+  if (resourceType === 'eventreports') {
+    submitButtonLabel = 'Run report';
+  }
   const submitButtonColor = isNew && isMultiStepSaveResource ? 'primary' : 'secondary';
   const handleSubmitComplete = useHandleSubmitCompleteFn(resourceType, id, onClose);
   const showApplicationLogo =

@@ -634,6 +634,106 @@ selectors.makeResourceListSelector = () =>
       selectors.resourceListModified(userState, resourcesState, options)
   );
 
+const integrationsFilter = {
+  type: 'integrations',
+  sort: { orderBy: 'name', order: 'asc' },
+};
+
+selectors.mkGetChildIntegrations = () => {
+  const resourceListSel = selectors.makeResourceListSelector();
+
+  const integrationAppSettingSel = selectors.mkIntegrationAppSettings();
+
+  return createSelector(
+    state => resourceListSel(state, integrationsFilter)?.resources,
+    (state, integrationId) => integrationAppSettingSel(state, integrationId),
+    (state, integrationId) => selectors.isIntegrationAppVersion2(state, integrationId, true),
+    (_1, integrationId) => integrationId,
+    (allIntegrations, integrationSettings, isV2, integrationId) => {
+      if (!integrationId) return null;
+      if (isV2) {
+        // slight component layer support adding label value props
+        return allIntegrations.filter(i => i._parentId === integrationId).map(int => ({...int,
+          label: int.name,
+          value: int._id}));
+      }
+
+      return integrationSettings?.stores;
+    }
+
+  );
+};
+
+const flowsFilter = {
+  type: 'flows',
+  sort: { orderBy: 'name', order: 'asc' },
+};
+
+selectors.mkGetChildIntegrationsTiedToFlows = () => {
+  const getChildIntegrations = selectors.mkGetChildIntegrations();
+  const resourceListSel = selectors.makeResourceListSelector();
+
+  return createSelector(
+    (state, integrationId) => getChildIntegrations(state, integrationId),
+    (state, integrationId) => selectors.isIntegrationAppVersion2(state, integrationId, true),
+    state => resourceListSel(state, flowsFilter).resources,
+    (_1, _2, flowIds) => flowIds,
+
+    (childIntegrations, isV2, allFlows, flowIds) => {
+      if (!childIntegrations || !allFlows || !flowIds || !flowIds.length) return null;
+
+      const selectedFlows = flowIds.map(id => allFlows.some(({ _id}) => _id === id));
+
+      if (isV2) {
+        // slight component layer support adding label value props
+        return childIntegrations.filter(int => selectedFlows.some(({_integrationId}) => int._id === _integrationId));
+      }
+
+      return childIntegrations.filter(({flows}) => flows.some(({_id: flowId}) =>
+        selectedFlows.some(({id}) => flowId === id)
+      )
+      );
+    }
+
+  );
+};
+
+const resourceListSel = selectors.makeResourceListSelector();
+
+selectors.getAllValidIntegrations = createSelector(
+  state => resourceListSel(state, integrationsFilter)?.resources,
+  selectors.integrationLicenseExpirationInDays,
+  (integrations, intLicenseExp) => {
+    if (!integrations) return null;
+
+    return integrations.filter(({mode, _id, _connectorId }) => {
+      // DIY
+      if (!_connectorId && mode !== 'install' && mode !== 'uninstall') return true;
+
+      // integrationApp
+      if (_connectorId) {
+        const isIntegrationNotExpired = intLicenseExp.find(l => l.integrationId === _id)?.expiresInDays > 0;
+
+        return mode === 'settings' && isIntegrationNotExpired;
+      }
+
+      return false;
+    });
+  }
+);
+selectors.mkAllFlowsTiedToIntegrations = () => {
+  const resourceListSel = selectors.makeResourceListSelector();
+
+  return createSelector(
+    state => resourceListSel(state, flowsFilter).resources,
+    (_1, integrationIds) => integrationIds,
+    (flows, integrationIds) => {
+      if (!flows || !integrationIds) return null;
+
+      return flows.filter(({_integrationId}) => integrationIds.includes(_integrationId)).sort((ele1, ele2) => ele1 > ele2);
+    }
+  );
+};
 // TODO: The object returned from this selector needs to be overhauled.
 // It is shared between IA and DIY flows,
 // yet its impossible to know which works for each flow type. For example,

@@ -17,6 +17,7 @@ export const availableResources = [
   'flows',
   'templates',
   'apis',
+  'eventreports',
 ];
 
 export const availableOSTypes = ['windows', 'linux', 'macOS'];
@@ -431,6 +432,15 @@ const resource = {
       action(actionTypes.RESOURCE.UPDATE_TILE_NOTIFICATIONS, { resourcesToUpdate, integrationId, ...options }),
     updateFlow: (flowId, isSubscribed) =>
       action(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, {flowId, isSubscribed }),
+  },
+  eventreports: {
+    cancelReport: reportId => action(actionTypes.EVENT_REPORT.CANCEL, {
+      reportId,
+    }),
+    downloadReport: reportId => action(actionTypes.EVENT_REPORT.DOWNLOAD, {
+      reportId,
+    }),
+
   },
 };
 // #endregion

@@ -144,6 +144,8 @@ export default function ResourceFormActionsPanel(props) {
       } else {
         actionButtons = ['testandsave', 'testsaveandclose', 'cancel', 'test'];
       }
+    } else if (resourceType === 'eventreports') {
+      actionButtons = ['saveandclose', 'cancel'];
     } else if (!isNew || (isNew && !isMultiStepSaveResource)) {
       actionButtons = ['save', 'saveandclose', 'cancel'];
     } else {

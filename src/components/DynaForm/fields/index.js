@@ -120,8 +120,16 @@ import DynaPreviewComponentsTable from './DynaPreviewComponentsTable';
 import DynaChildLicenses from './DynaChildLicenses';
 import DynaDateSelector from './DynaDateSelector';
 import DynaQueryRadioGroup from './radiogroup/DynaQueryRadioGroup';
+import DynaAllIntegrations from './integrations/DynaAllIntegrations';
+import DynaChildIntegrations from './integrations/DynaChildIntegrations';
+import DynaFlowsTiedToIntegrations from './integrations/DynaFlowsTiedToIntegrations';
+import DynaReportDateRange from './integrations/DynaReportDateRange';
 
 export default {
+  reportdaterange: DynaReportDateRange,
+  flowstiedtointegrations: DynaFlowsTiedToIntegrations,
+  allintegrations: DynaAllIntegrations,
+  childintegrations: DynaChildIntegrations,
   suitescriptsettings: DynaRefreshableSettings,
   refreshabletext: DynaRefreshableText,
   matchingcriteria: DynaMatchingCriteriaWithModal,

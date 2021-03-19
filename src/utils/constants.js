@@ -99,6 +99,10 @@ export const PERMISSIONS = Object.freeze({
     edit: 'scripts.edit',
     delete: 'scripts.delete',
   },
+  eventreports: {
+    view: 'eventreports.view',
+    create: 'eventreports.create',
+  },
   stacks: {
     view: 'stacks.view',
     create: 'stacks.create',

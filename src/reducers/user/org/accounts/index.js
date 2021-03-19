@@ -130,7 +130,7 @@ export default (state = [], action) => {
   }
 };
 
-const remainingDays = date =>
+export const remainingDays = date =>
   Math.ceil((moment(date) - moment()) / 1000 / 60 / 60 / 24);
 
 // #region PUBLIC SELECTORS
@@ -443,6 +443,7 @@ selectors.permissions = (
     'exports',
     'imports',
     'apis',
+    'eventreports',
   ];
   const permissions = {};
 

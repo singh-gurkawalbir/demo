@@ -140,6 +140,7 @@ const DateRange = props => {
   />
   );
 };
+
 export default function DateRangeSelector({
   value = {},
   onSave,
@@ -151,10 +152,13 @@ export default function DateRangeSelector({
   clearValue,
   placement,
   Icon,
+  defaultPreset = {preset: 'last30days'},
+  selectedRangeConstrain,
+  CustomTextFields,
   toDate,
   isCalendar,
 }) {
-  const defaultValue = getSelectedRange({preset: 'last30days'});
+  const defaultValue = getSelectedRange(defaultPreset);
   const { startDate = defaultValue.startDate, endDate = defaultValue.endDate, preset = defaultValue.preset } = value;
   const [initalValue, setInitialValue] = useState(
     {
@@ -163,7 +167,14 @@ export default function DateRangeSelector({
       preset,
     },
   );
-  const [selectedRange, setSelectedRange] = useState(initalValue);
+  const [selectedRange, setSelectedRangeState] = useState(initalValue);
+
+  const setSelectedRange = useCallback(selected => {
+    const {startDate, endDate} = selected;
+
+    if (selectedRangeConstrain && !selectedRangeConstrain(startDate, endDate)) { return; }
+    setSelectedRangeState(selected);
+  }, [selectedRangeConstrain]);
   const handleListItemClick = (event, id) => {
     setSelectedRange(state => ({...state, preset: id}));
   };
@@ -175,7 +186,7 @@ export default function DateRangeSelector({
       setSelectedRange(initalValue);
     }
     setAnchorEl(state => (state ? null : event.currentTarget));
-  }, [anchorEl, initalValue]);
+  }, [anchorEl, setSelectedRange, initalValue]);
 
   const handleSave = useCallback(() => {
     if (selectedRange.preset === 'lastrun') {
@@ -193,7 +204,7 @@ export default function DateRangeSelector({
   const handleClose = useCallback(() => {
     setSelectedRange(initalValue);
     setAnchorEl(null);
-  }, [initalValue]);
+  }, [initalValue, setSelectedRange]);
 
   const handleClear = useCallback(() => {
     setSelectedRange(() => {
@@ -204,7 +215,7 @@ export default function DateRangeSelector({
       return clearRangeValue;
     });
     setAnchorEl(null);
-  }, [onSave, clearValue]);
+  }, [setSelectedRange, clearValue, onSave]);
 
   return (
     <>
@@ -253,6 +264,9 @@ export default function DateRangeSelector({
                   ))}
 
                 </List>
+                {selectedRange.preset === 'custom' &&
+                CustomTextFields &&
+                <CustomTextFields selectedRange={selectedRange} setSelectedRange={setSelectedRange} />}
               </div>
               {selectedRange.preset === 'custom' && (
               <div className={classes.rightCalendar}>
