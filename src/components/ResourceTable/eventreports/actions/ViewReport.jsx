@@ -1,10 +1,10 @@
-import { ListItemIcon } from '@material-ui/core';
 import { useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import ViewDetailsIcon from '../../../icons/ViewDetailsIcon';
 
 export default {
   label: 'View Report Details',
-  icon: ListItemIcon,
+  icon: ViewDetailsIcon,
   component: function CancelReport({ rowData = {} }) {
     const { _id } = rowData;
     const history = useHistory();

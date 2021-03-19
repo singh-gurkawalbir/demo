@@ -7,6 +7,8 @@ import { selectors } from '../../../../reducers';
 import { getSelectedRange } from '../../../../utils/flowMetrics';
 import DateRangeSelector from '../../../DateRangeSelector';
 import DynaDateTime from '../dateTime/DynaDateTime';
+import FieldMessage from '../FieldMessage';
+import FieldHelp from '../../FieldHelp';
 
 const defaultPresets = [
   {id: 'lastmin', label: 'Last minute'},
@@ -61,7 +63,8 @@ export default function DynaReportDateRange(props) {
     const {startDate, endDate, preset } = selectedRange;
 
     if (preset !== 'custom') {
-      const {startDate: presetStartDate, endDate: presetEndDate} = getSelectedRange(preset);
+      const r = getSelectedRange({preset});
+      const {startDate: presetStartDate, endDate: presetEndDate} = r;
 
       onFieldChange(id, {
         startDate: presetStartDate.toISOString(),
@@ -84,15 +87,20 @@ export default function DynaReportDateRange(props) {
   };
 
   return (
-    <DateRangeSelector
-      {...props}
-      customPresets={ranges}
-      editableDateInputs={false}
-      defaultPreset={value || {preset: 'last24hours'}}
-      selectedRangeConstrain={selectedRangeConstrain}
-      onSave={onSave}
+    <>
+      <FieldHelp {...props} />
+      <DateRangeSelector
+        {...props}
+        customPresets={ranges}
+        editableDateInputs={false}
+        defaultPreset={value || {preset: 'last24hours'}}
+        selectedRangeConstrain={selectedRangeConstrain}
+        onSave={onSave}
       // CustomTextFields={CustomTextFields}
       />
+      <FieldMessage {...props} />
+
+    </>
   );
 }
 

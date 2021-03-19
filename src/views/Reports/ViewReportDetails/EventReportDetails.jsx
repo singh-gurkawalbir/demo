@@ -80,12 +80,12 @@ const eventReportDetailRows = [
   {
     heading: 'Requested By',
     value: function RequestedByUser(r) {
-      const users = useSelector(state => selectors.usersList(state));
+      const users = useSelector(state => selectors.availableUsersList(state));
 
       if (!r || !users) return null;
 
-      const {sharedWithUser} = users.find(u => u?._id === r._requestedByUserId) || {};
-      const {name, email} = sharedWithUser;
+      const {sharedWithUser} = users.find(u => u?.sharedWithUser?._id === r._requestedByUserId) || {};
+      const {name, email} = sharedWithUser || {};
 
       return name || email || r._requestedByUserId;
     },

@@ -252,9 +252,9 @@ selectors.accountOwner = createSelector(
   state => state && state.org && state.org.accounts,
   (userAccessLevel, preferences, profile, accounts) => {
     if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
-      const { name, email, timezone } = profile || {};
+      const { name, email, timezone, _id} = profile || {};
 
-      return { name, email, timezone };
+      return { name, email, timezone, _id };
     }
 
     if (preferences) {
