@@ -12580,7 +12580,7 @@ Object {
           Object {
             "field": "trialEnabled",
             "is": Array [
-              false,
+              true,
             ],
           },
         ],
