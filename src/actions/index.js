@@ -118,8 +118,8 @@ const auth = {
   sessionTimestamp: () => action(actionTypes.AUTH_TIMESTAMP),
 };
 const api = {
-  request: (path, method, message, hidden) =>
-    action(actionTypes.API_REQUEST, { path, message, hidden, method }),
+  request: (path, method, message, hidden, refresh) =>
+    action(actionTypes.API_REQUEST, { path, message, hidden, method, refresh }),
   retry: (path, method) => action(actionTypes.API_RETRY, { path, method }),
   complete: (path, method, message) =>
     action(actionTypes.API_COMPLETE, { path, method, message }),
@@ -251,8 +251,8 @@ const resource = {
     action(actionTypes.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
   clearChildIntegration: () => action(actionTypes.CLEAR_CHILD_INTEGRATION),
 
-  requestCollection: (resourceType, message) =>
-    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message }),
+  requestCollection: (resourceType, message, refresh) =>
+    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh }),
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),

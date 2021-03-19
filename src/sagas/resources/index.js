@@ -639,7 +639,7 @@ export function* deleteResource({ resourceType, id }) {
   }
 }
 
-export function* getResourceCollection({ resourceType }) {
+export function* getResourceCollection({ resourceType, refresh}) {
   let path = `/${resourceType}`;
   let hideNetWorkSnackbar;
 
@@ -663,11 +663,13 @@ export function* getResourceCollection({ resourceType }) {
     let collection = yield call(apiCallWithRetry, {
       path,
       hidden: hideNetWorkSnackbar,
+      refresh,
     });
 
     if (resourceType === 'stacks') {
       let sharedStacks = yield call(apiCallWithRetry, {
         path: '/shared/stacks',
+        refresh,
       });
 
       sharedStacks = sharedStacks.map(stack => ({ ...stack, shared: true }));
@@ -679,6 +681,7 @@ export function* getResourceCollection({ resourceType }) {
     if (resourceType === 'transfers') {
       const invitedTransfers = yield call(apiCallWithRetry, {
         path: '/transfers/invited',
+        refresh,
       });
 
       if (!collection) collection = invitedTransfers;

@@ -1289,8 +1289,9 @@ selectors.resourceStatusModified = (
   const method = resourceReqMethod;
   const hasData = fromResources.hasData(resourceState, origResourceType);
   const isLoading = fromNetworkComms.isLoading(networkCommState, commKey);
+  const refresh = fromNetworkComms.isRefreshing(networkCommState, commKey);
   const retryCount = fromNetworkComms.retryCount(networkCommState, commKey);
-  const isReady = method !== 'GET' || (hasData && !isLoading);
+  const isReady = method !== 'GET' || (refresh ? hasData : (hasData && !isLoading));
 
   return {
     resourceType: origResourceType,

@@ -59,7 +59,7 @@ const usePollLatestResourceCollection = resourceType => {
 
     if (resourceType) {
       timerId = setInterval(() => {
-        dispatch(actions.resource.requestCollection(resourceType));
+        dispatch(actions.resource.requestCollection(resourceType, null, true));
       }, timerValue);
     }
 
@@ -92,8 +92,6 @@ export default function Reports() {
 
   useEffect(() => {
     dispatch(actions.patchFilter(resourceType, defaultFilter));
-    dispatch(actions.resource.requestCollection(resourceType));
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const filter =
@@ -173,7 +171,7 @@ export default function Reports() {
             <AddIcon /> Create {resourceTypeToLabel[resourceType]}
           </IconTextButton>
         </div>
-        <LoadResources required resources="integrations,flows">
+        <LoadResources required resources={`${resourceType || defaultEventReportType},integrations,flows`}>
           {list.total === 0 ? (
             <Typography>
               {'You don\'t have any report results'}
