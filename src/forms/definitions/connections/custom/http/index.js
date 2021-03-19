@@ -198,6 +198,7 @@ import pipedrive from './pipedrive';
 import microsoftteams from './microsoftteams';
 import adobesign from './adobesign';
 import prestashop from './prestashop';
+import yotpo from './yotpo';
 
 export default {
   channelape,
@@ -400,4 +401,5 @@ export default {
   microsoftteams,
   adobesign,
   prestashop,
+  yotpo,
 };
