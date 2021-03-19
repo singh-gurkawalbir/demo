@@ -46,7 +46,7 @@ function CustomTextFields({selectedRange, setSelectedRange}) {
           onFieldChange={onFieldChange('endDate')}
           value={endDate} skipTimezoneConversion label="End date" />
       </div>
-      <Typography> You can generate a Report for upto 3 days of Data</Typography>
+      <Typography>You can generate a Report for upto 3 days of Data</Typography>
     </>
 
   );
@@ -91,7 +91,6 @@ export default function DynaReportDateRange(props) {
       selectedRangeConstrain={selectedRangeConstrain}
       onSave={onSave}
       // CustomTextFields={CustomTextFields}
-
       />
   );
 }
