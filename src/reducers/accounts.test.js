@@ -808,6 +808,7 @@ describe('Accounts region selector testcases', () => {
           sharedWithUser: {
             email: 'raghuvamsi.chandrabhatla@celigo.com',
             name: 'Raghuvamsi User',
+            _id: '5cadc8b42b10347a2708bf29',
           },
         },
         ...integrationUserList,
@@ -841,7 +842,10 @@ describe('Accounts region selector testcases', () => {
           _id: 'own',
           accepted: true,
           accessLevel: 'owner',
-          sharedWithUser: {name: 'Raghuvamsi Owner', email: 'raghuvamsi.chandrabhatla@celigo.com'},
+          sharedWithUser: {name: 'Raghuvamsi Owner',
+            email: 'raghuvamsi.chandrabhatla@celigo.com',
+            _id: '5cadc8b42b10347a2708bf29',
+          },
         },
         {
           _id: '5f7011605b2e3244837309f9',
@@ -880,7 +884,10 @@ describe('Accounts region selector testcases', () => {
           _id: 'own',
           accepted: true,
           accessLevel: 'owner',
-          sharedWithUser: {name: 'Raghuvamsi Owner', email: 'raghuvamsi.chandrabhatla@celigo.com'},
+          sharedWithUser: {name: 'Raghuvamsi Owner',
+            email: 'raghuvamsi.chandrabhatla@celigo.com',
+            _id: '5cadc8b42b10347a2708bf29',
+          },
         },
         ...orgOwnerState.user.org.users,
       ];
