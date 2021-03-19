@@ -669,33 +669,43 @@ const flowsFilter = {
   sort: { orderBy: 'name', order: 'asc' },
 };
 
-selectors.mkGetChildIntegrationsTiedToFlows = () => {
-  const getChildIntegrations = selectors.mkGetChildIntegrations();
-  const resourceListSel = selectors.makeResourceListSelector();
+const getChildIntegrations = selectors.mkGetChildIntegrations();
 
-  return createSelector(
-    (state, integrationId) => getChildIntegrations(state, integrationId),
-    (state, integrationId) => selectors.isIntegrationAppVersion2(state, integrationId, true),
-    state => resourceListSel(state, flowsFilter).resources,
-    (_1, _2, flowIds) => flowIds,
+selectors.getChildIntegrationLabelsTiedToFlows = (state, integrationId, flowIds) => {
+  if (!state || !integrationId) {
+    return null;
+  }
+  const integration = fromData.resource(state.data, 'integrations', integrationId);
 
-    (childIntegrations, isV2, allFlows, flowIds) => {
-      if (!childIntegrations || !allFlows || !flowIds || !flowIds.length) return null;
+  if (integration?.settings?.supportsMultiStore) {
+    const { stores } = selectors.integrationAppSettings(state, integrationId);
 
-      const selectedFlows = flowIds.map(id => allFlows.some(({ _id}) => _id === id));
-
-      if (isV2) {
-        // slight component layer support adding label value props
-        return childIntegrations.filter(int => selectedFlows.some(({_integrationId}) => int._id === _integrationId));
-      }
-
-      return childIntegrations.filter(({flows}) => flows.some(({_id: flowId}) =>
-        selectedFlows.some(({id}) => flowId === id)
-      )
-      );
+    if (!flowIds) {
+      return null;
     }
 
-  );
+    return stores.filter(store => {
+      const allFlowIds = selectors.integrationAppFlowIds(state, integrationId, store?.value);
+
+      return flowIds?.some(flowId => allFlowIds?.includes(flowId));
+    }).reduce((acc, store) => {
+      if (store?.label && !acc.includes(store.label)) {
+        acc.push(store.label);
+      }
+
+      return acc;
+    }, []);
+  }
+  if (selectors.isIntegrationAppVersion2(state, integrationId, true)) {
+    if (!flowIds) return null;
+
+    const allChildIntegrations = getChildIntegrations(state, integrationId);
+    const allFlowsIntegrationIds = flowIds.map(flowId => fromData.resource(state.data, 'flows', flowId)?._integrationId).filter(intId => intId);
+
+    return allChildIntegrations.filter(({value}) => allFlowsIntegrationIds.includes(value)).map(({label}) => label);
+  }
+
+  return null;
 };
 
 const resourceListSel = selectors.makeResourceListSelector();

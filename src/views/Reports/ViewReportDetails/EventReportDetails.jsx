@@ -1,6 +1,6 @@
 import { Typography } from '@material-ui/core';
 import React, { Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import { shallowEqual, useSelector } from 'react-redux';
 import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
 
@@ -21,9 +21,9 @@ const eventReportDetailRows = [
     value: function StoreNames(r) {
       const integrationId = useSelector(state => selectors.resource(state, 'flows', r?._flowIds[0])?._integrationId);
 
-      const childIntegrations = useSelectorMemo(selectors.mkGetChildIntegrationsTiedToFlows, integrationId, r?._flowIds);
+      const childIntegrationsLabels = useSelector(state => selectors.getChildIntegrationLabelsTiedToFlows(state, integrationId, r?._flowIds), shallowEqual);
 
-      return childIntegrations?.map(({label}) => (
+      return childIntegrationsLabels?.map(label => (
         <Fragment key={label}>
           <div />
           <Typography>{label}</Typography>

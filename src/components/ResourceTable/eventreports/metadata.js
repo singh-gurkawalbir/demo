@@ -54,11 +54,15 @@ const metadata = {
     },
     {
       heading: 'Requested By',
-      Value: function RequestedByUser() {
-        // what is the merit of _requestedByUserId
-        const userName = useSelector(state => selectors.userProfilePreferencesProps(state))?.name;
+      Value: function RequestedByUser({r}) {
+        const users = useSelector(state => selectors.availableUsersList(state));
 
-        return userName;
+        if (!r || !users) return null;
+
+        const {sharedWithUser} = users.find(u => u?.sharedWithUser?._id === r._requestedByUserId) || {};
+        const {name, email} = sharedWithUser || {};
+
+        return name || email || r._requestedByUserId;
       },
       orderBy: 'lastModified',
     },
