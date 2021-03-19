@@ -213,7 +213,7 @@ export default function MultiSelectApplication(props) {
     control: () => ({
       minWidth: 365,
       border: '1px solid',
-      borderColor: theme.palette.divider,
+      borderColor: theme.palette.secondary.lightest,
       borderRadius: '2px',
       backgroundColor: theme.palette.background.paper,
       alignItems: 'flex-start',
