@@ -168,8 +168,12 @@ export default function MappingRow(props) {
   }, [dispatch, mappingKey]);
 
   const handleExtractBlur = useCallback((_id, value) => {
-    handleBlur('extract', value);
-  }, [handleBlur]);
+    if (value.indexOf('_child_') > -1) {
+      dispatch(actions.suiteScript.mapping.checkForSFSublistExtractPatch(mappingKey, value));
+    } else {
+      handleBlur('extract', value);
+    }
+  }, [dispatch, handleBlur, mappingKey]);
 
   const handleGenerateBlur = useCallback((_id, value) => {
     handleBlur('generate', value);
