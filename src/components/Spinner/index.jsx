@@ -65,5 +65,6 @@ export default function Spinner(props) {
 
 Spinner.propTypes = {
   size: PropTypes.oneOf(['small', 'medium', 'large']),
+  centerAll: PropTypes.bool,
 };
 
