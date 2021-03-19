@@ -162,6 +162,7 @@ export default {
   trialPeriod: {
     type: 'select',
     label: 'Trial period',
+    defaultValue: r => r?.trialPeriod || 30,
     options: [
       {
         items: [
@@ -178,6 +179,8 @@ export default {
     resourceType: 'connectorLicenses',
     allowNew: true,
     allowEdit: true,
+    helpKey: 'license._trialLicenseId',
+    // helpKey: 'connection.http.auth.token.location',
     connectorId: r => r._id,
   },
 };
