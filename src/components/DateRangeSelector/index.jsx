@@ -167,6 +167,8 @@ export default function DateRangeSelector({
       preset,
     },
   );
+  const [reset, setReset] = useState(false);
+
   const [selectedRange, setSelectedRangeState] = useState(initalValue);
 
   const setSelectedRange = useCallback(selected => {
@@ -174,6 +176,7 @@ export default function DateRangeSelector({
 
     if (selectedRangeConstrain && !selectedRangeConstrain(startDate, endDate)) { return; }
     setSelectedRangeState(selected);
+    setReset(state => !state);
   }, [selectedRangeConstrain]);
   const handleListItemClick = (event, id) => {
     setSelectedRange(state => ({...state, preset: id}));
@@ -265,8 +268,11 @@ export default function DateRangeSelector({
 
                 </List>
                 {selectedRange.preset === 'custom' &&
-                CustomTextFields &&
-                <CustomTextFields selectedRange={selectedRange} setSelectedRange={setSelectedRange} />}
+                CustomTextFields && (
+                <CustomTextFields
+                  key={reset} setReset={setReset} selectedRange={selectedRange}
+                  setSelectedRange={setSelectedRangeState} />
+                )}
               </div>
               {selectedRange.preset === 'custom' && (
               <div className={classes.rightCalendar}>

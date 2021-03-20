@@ -1,6 +1,6 @@
 
 import { Typography } from '@material-ui/core';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { selectors } from '../../../../reducers';
@@ -22,15 +22,38 @@ const defaultPresets = [
   {id: 'custom', label: 'Custom'},
 ];
 
-function CustomTextFields({selectedRange, setSelectedRange}) {
+const selectedRangeConstrain = (startDate, endDate) => {
+  if (!endDate || !startDate) return true;
+  const diffDays = moment(endDate).diff(moment(startDate), 'days');
+
+  return diffDays < 3 && diffDays >= 0;
+};
+
+function CustomTextFields({selectedRange, setSelectedRange, reset, setReset}) {
   const {startDate, preset, endDate} = selectedRange;
 
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    setLoaded(true);
+  }, []);
+
   if (preset !== 'custom') { return null; }
-  const onFieldChange = key => (id, value) => {
+
+  const onFieldChange = key => (id, value, mounted, isValid) => {
     setSelectedRange(state => {
+      if (!loaded) return state;
       const stateCopy = {...state};
 
-      stateCopy[key] = moment(value);
+      if (!isValid) { return state; }
+      stateCopy[key] = moment(value)?.toDate?.();
+      const {startDate, endDate} = stateCopy;
+
+      if (!selectedRangeConstrain(startDate, endDate)) {
+        setReset(state => !state);
+
+        return state;
+      }
 
       return stateCopy;
     });
@@ -40,11 +63,13 @@ function CustomTextFields({selectedRange, setSelectedRange}) {
     <>
       <div>
         <DynaDateTime
+          key={reset}
           onFieldChange={onFieldChange('startDate')}
           value={startDate} skipTimezoneConversion label="Start date" />
       </div>
       <div>
         <DynaDateTime
+          key={reset}
           onFieldChange={onFieldChange('endDate')}
           value={endDate} skipTimezoneConversion label="End date" />
       </div>
@@ -79,13 +104,6 @@ export default function DynaReportDateRange(props) {
       endDate: endDate.toISOString()});
   }, [id, onFieldChange, timezone]);
 
-  const selectedRangeConstrain = (startDate, endDate) => {
-    if (!endDate || !startDate) return true;
-    const diffDays = moment(endDate).diff(moment(startDate), 'days');
-
-    return diffDays <= 3;
-  };
-
   return (
     <>
       <FieldHelp {...props} />
@@ -96,7 +114,7 @@ export default function DynaReportDateRange(props) {
         defaultPreset={value || {preset: 'last24hours'}}
         selectedRangeConstrain={selectedRangeConstrain}
         onSave={onSave}
-      // CustomTextFields={CustomTextFields}
+        CustomTextFields={CustomTextFields}
       />
       <FieldMessage {...props} />
 
