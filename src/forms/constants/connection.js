@@ -113,6 +113,7 @@ export default {
     'freshworks',
     'pipedrive',
     'prestashop',
+    'yotpo',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
