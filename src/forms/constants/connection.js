@@ -113,6 +113,7 @@ export default {
     'freshworks',
     'pipedrive',
     'prestashop',
+    'yotpo',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -189,6 +190,7 @@ export default {
     'pipedrive',
     'microsoftteams',
     'adobesign',
+    'mavenlink',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',

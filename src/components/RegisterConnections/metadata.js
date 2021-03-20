@@ -19,10 +19,12 @@ export default {
     },
     { heading: 'Status',
       value: r => <OnlineStatus offline={r.offline} />,
+      width: '10%',
     },
     {
       heading: 'Connector',
       value: r => <ConnectorName resource={r} />,
+      width: '10%',
     },
     {
       heading: 'API',
@@ -38,6 +40,7 @@ export default {
       heading: 'Last updated',
       value: r => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
+      width: '10%',
     },
     {
       heading: 'Queue size',

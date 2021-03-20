@@ -91,7 +91,7 @@ export default function DynaSalesforceRealtimeQualifier(props) {
         <Typography className={classes.loaderSObjectText}>
           Loading
         </Typography>
-        <Spinner size={24} />
+        <Spinner />
       </div>
     );
   }
