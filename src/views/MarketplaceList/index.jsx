@@ -185,7 +185,7 @@ export default function MarketplaceList() {
       confirmDialog({
         title: 'You have already used up your trial license',
         isHtml: true,
-        message: 'Click <b>Request a demo</b> to send an email alert to the app developer.',
+        message: 'Click <b>Request a demo</b> to have someone contact you to learn more about your needs.',
         buttons: [
           {
             label: 'Request a demo',

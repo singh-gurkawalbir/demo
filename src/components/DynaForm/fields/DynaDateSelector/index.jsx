@@ -50,8 +50,9 @@ const defaultRange = {
 export default function DynaDateSelector(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { id, label, name, value, onFieldChange, required, formKey, connectorId } = props;
-  const customRequired = useSelector(state => selectors.resource(state, 'connectors', connectorId)?.trialEnabled);
+  const { id, label, name, value, onFieldChange, required, formKey, connectorId, hideifnottrial } = props;
+  const trialEnabled = useSelector(state => selectors.resource(state, 'connectors', connectorId)?.trialEnabled);
+  const customRequired = !trialEnabled && id === 'expires';
 
   const calendarIcon = () => <CalendarIcon className={classes.iconWrapper} />;
   const { dateFormat } = useSelector(state => selectors.userProfilePreferencesProps(state));
@@ -84,6 +85,10 @@ export default function DynaDateSelector(props) {
 
     onFieldChange(id, moment(filter.endDate).toISOString());
   }, [id, onFieldChange]);
+
+  if (hideifnottrial && !trialEnabled) {
+    return null;
+  }
 
   return (
     <>

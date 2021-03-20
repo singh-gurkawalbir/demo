@@ -7,12 +7,13 @@ export default {
     type: 'dateselector',
     label: 'Expires',
     connectorId: r => r._connectorId,
-    setRequired: true,
   },
   trialEndDate: {
     defaultValue: r => r.expires && moment(r.trialEndDate).format('L'),
     type: 'dateselector',
     label: 'Trial expires',
+    connectorId: r => r._connectorId,
+    hideifnottrial: true,
   },
   opts: {
     defaultValue: r => r.opts,
