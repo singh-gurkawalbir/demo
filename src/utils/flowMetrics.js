@@ -294,23 +294,19 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
 
     data1 = baseData
         |> group()
-        |> pivot(rowKey: ["_time", "u", "f"], columnKey: ["_measurement"], valueColumn: "_value")
     data2 = baseData
         |> group(columns: ["_time", "_measurement", "u"], mode: "by")
         |> sum()
         |> group()
-        |> pivot(rowKey: ["_time", "u"], columnKey: ["_measurement"], valueColumn: "_value")
 
     seiData = union(tables: [data1, data2])
         |> map(fn: (r) => ({
             _time: r._time,
             timeInMills: int(v: r._time)/1000000,
             flowId: if exists r.f then r.f else "_integrationId",
-            success: if exists r.s then r.s else 0.0,
-            error: if exists r.e then r.e else 0.0,
-            ignored: if exists r.i then r.i else 0.0,
-            resolved: if exists r.r then r.r else 0.0,
-            averageTimeTaken: if exists r._value then r._value else 0.0,
+            value: if exists r._value then r._value else 0.0,
+            attribute: if exists r._measurement then r._measurement else "unknown",
+            by: r.by,
             type: "sei"
           }))
 
@@ -359,11 +355,9 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
             _time: r._time,
             timeInMills: int(v: r._time)/1000000,
             flowId: if exists r.f then r.f else "_integrationId",
-            success: if exists r.s then r.s else 0.0,
-            error: if exists r.e then r.e else 0.0,
-            ignored: if exists r.i then r.i else 0.0,
-            resolved: if exists r.r then r.r else 0.0,
-            averageTimeTaken: if exists r._value then r._value else 0.0,
+            value: if exists r._value then r._value else 0.0,
+            attribute: "att",
+            by: "",
             type: "att"
           }))
 
@@ -381,13 +375,11 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
 
     data1 = seiBaseData
         |> group()
-        |> pivot(rowKey: ["_time", "u", "f", "ei"], columnKey: ["_measurement"], valueColumn: "_value")
 
     data2 = seiBaseData
         |> group(columns: ["_time", "_measurement", "u"])
         |> sum()
         |> group()
-        |> pivot(rowKey: ["_time", "u"], columnKey: ["_measurement"], valueColumn: "_value")
 
     seiData = union(tables: [data1, data2])
     |> map(fn: (r) => ({
@@ -395,11 +387,9 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         timeInMills: int(v: r._time)/1000000,
         flowId: if exists r.f then r.f else "_flowId",
         resourceId: if exists r.ei then r.ei else "_flowId",
-        success: if exists r.s then r.s else 0.0,
-        error: if exists r.e then r.e else 0.0,
-        ignored: if exists r.i then r.i else 0.0,
-        resolved: if exists r.r then r.r else 0.0,
-        averageTimeTaken: if exists r._value then r._value else 0.0,
+        attribute: if exists r._measurement then r._measurement else "unknown",
+        value: if exists r._value then r._value else 0.0,
+        by: r.by,
         type: "sei"
       }))
     
@@ -447,11 +437,9 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         timeInMills: int(v: r._time)/1000000,
         flowId: if exists r.ei then r.f else "_flowId",
         resourceId: if exists r.ei then r.ei else "_flowId",
-        success: if exists r.s then r.s else 0.0,
-        error: if exists r.e then r.e else 0.0,
-        ignored: if exists r.i then r.i else 0.0,
-        resolved: if exists r.r then r.r else 0.0,
-        averageTimeTaken: if exists r._value then r._value else 0.0,
+        value: if exists r._value then r._value else 0.0,
+        attribute: "att",
+        by: r.by,
         type: "att"
     }))
 
@@ -470,6 +458,21 @@ export const getLabel = key => {
       return 'Flow: Resolved';
     default:
       return 'Average processing time/success record';
+  }
+};
+
+export const getShortIdofMeasurement = key => {
+  switch (key) {
+    case 'success':
+      return 's';
+    case 'error':
+      return 'e';
+    case 'ignored':
+      return 'i';
+    case 'resolved':
+      return 'r';
+    default:
+      return 'att';
   }
 };
 

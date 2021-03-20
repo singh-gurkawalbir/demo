@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import uniq from 'lodash/uniq';
 import moment from 'moment';
 import {
   LineChart,
@@ -23,6 +24,7 @@ import {
   getLineColor,
   getLegend,
   getDateTimeFormat,
+  getShortIdofMeasurement,
 } from '../../../utils/flowMetrics';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -118,30 +120,50 @@ const Chart = ({ id, flowId, range, selectedResources: selected }) => {
   const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
   // Selected resources are read from previously saved resources in preferences which may not be valid anymore. pick only valid resources.
   const selectedResources = selected.filter(r => flowResources.find(res => res._id === r));
+  const availableUsers = useSelector(state => selectors.availableUsersList(state));
+  // const availableUsers = [];
   const { startDate, endDate } = range;
-  const type = useMemo(() => id === 'averageTimeTaken' ? 'att' : 'sei', [id]);
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
   const ticks = getTicks(domainRange, range);
   const domain = [new Date(startDate).getTime(), new Date(endDate).getTime()];
   const flowData = {};
+  const users = Array.isArray(data) ? uniq(data.map(item => item.by)).filter(Boolean) : [];
+  const lineData = id === 'resolved' ? users : selectedResources;
 
   if (Array.isArray(data)) {
-    selectedResources.forEach(r => {
-      flowData[r] = data.filter(d => (r === flowId ? d.resourceId === '_flowId' : d.resourceId === r) && d.type === type);
-      flowData[r] = sortBy(flowData[r], ['timeInMills']);
-    });
+    if (id === 'resolved') {
+      users.forEach(user => {
+        flowData[user] = data.filter(d => d.by === user && d.attribute === 'r');
+        flowData[user] = sortBy(flowData[user], ['timeInMills']);
+      });
+    } else {
+      selectedResources.forEach(r => {
+        flowData[r] = data.filter(d => (r === flowId ? d.resourceId === '_flowId' : d.resourceId === r) && d.attribute === getShortIdofMeasurement(id));
+        flowData[r] = sortBy(flowData[r], ['timeInMills']);
+      });
+    }
   }
+  const currentUser = useSelector(state => selectors.userProfile(state));
 
   const getResourceName = name => {
     if (!name || typeof name !== 'string') {
       return name || '';
     }
     const resourceId = name.split('-')[0];
+
+    if (resourceId === 'autopilot') {
+      return 'Auto resolved';
+    }
     let modifiedName = resourceId;
     const resource = flowResources.find(r => r._id === resourceId);
+    const user = availableUsers.find(user => user._id === resourceId);
 
     if (resource) {
       modifiedName = resource.name;
+    } else if (user) {
+      modifiedName = user.name;
+    } else if (currentUser._id === resourceId) {
+      modifiedName = currentUser.name || currentUser.emailId;
     }
 
     return modifiedName;
@@ -286,10 +308,10 @@ const Chart = ({ id, flowId, range, selectedResources: selected }) => {
 
           <Tooltip data-public content={<CustomTooltip />} />
           <Legend content={<CustomLegend />} />
-          {selectedResources.map((r, i) => (
+          {lineData.map((r, i) => (
             <Line
               key={`${r}-${id}`}
-              dataKey={id}
+              dataKey="value"
               name={`${r}-${id}`}
               data={flowData[r]}
               yAxisId={id}

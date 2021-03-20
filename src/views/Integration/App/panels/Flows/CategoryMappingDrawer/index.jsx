@@ -157,6 +157,7 @@ function CategoryMappings({
   depth = 0,
   isParentCommonCategory = false,
 }) {
+  console.log('Category Mappings base function');
   const [requestedGenerateFields, setRequestedGenerateFields] = useState(false);
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -224,7 +225,7 @@ function CategoryMappings({
   const handleChange = useCallback(() => {
     setExpanded(!expanded);
   }, [expanded]);
-  const handleDelete = e => {
+  const handleDelete = useCallback(e => {
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
     dispatch(
@@ -234,9 +235,9 @@ function CategoryMappings({
         sectionId
       )
     );
-  };
+  }, [dispatch, flowId, integrationId, sectionId]);
 
-  const handleRestore = e => {
+  const handleRestore = useCallback(e => {
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
     dispatch(
@@ -246,13 +247,13 @@ function CategoryMappings({
         sectionId
       )
     );
-  };
+  }, [dispatch, flowId, integrationId, sectionId]);
 
-  const handleVariation = e => {
+  const handleVariation = useCallback(e => {
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
     history.push(`${match.url}/variations/${sectionId}`);
-  };
+  }, [history, match.url, sectionId]);
 
   if (!generateFields) {
     return (
@@ -368,6 +369,7 @@ function CategoryMappings({
 }
 
 function CategoryMappingDrawer({ integrationId, parentUrl }) {
+  console.log('CategoryMapping drawer render');
   const dispatch = useDispatch();
   const classes = useStyles();
   const history = useHistory();
