@@ -170,6 +170,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
 
   let licenseMessageContent = '';
   let expired = false;
+  let inTrial = false;
   let showTrialLicenseMessage = false;
   const resumable = license?.resumable && [INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel);
 
@@ -180,12 +181,13 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     licenseMessageContent = `Your license expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your license.`;
   } else if (expiresInDays > 0 && expiresInDays <= 30) {
     licenseMessageContent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
-  } else if (trialExpiresInDays <= 0) {
+  } else if (license?.trialEndDate && trialExpiresInDays <= 0) {
     licenseMessageContent = `Trial expired on ${moment(license.trialEndDate).format('MMM Do, YYYY')}`;
     showTrialLicenseMessage = true;
-  } else if (trialExpiresInDays > 0) {
+  } else if (license?.trialEndDate && trialExpiresInDays > 0) {
     licenseMessageContent = `Trial expires in ${trialExpiresInDays} days.`;
     showTrialLicenseMessage = true;
+    inTrial = true;
   }
 
   const handleConnectionDownStatusClick = useCallback(event => {
@@ -366,6 +368,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
           tile._connectorId && licenseMessageContent && (
           <TileNotification
             content={licenseMessageContent} showTrialLicenseMessage={showTrialLicenseMessage} expired={expired} connectorId={tile._connectorId}
+            inTrial={inTrial}
             licenseId={license._id}
             isIntegrationV2={isIntegrationV2} integrationId={tile._integrationId}
             integrationAppTileName={integrationAppTileName} resumable={resumable} accessLevel={accessLevel} />

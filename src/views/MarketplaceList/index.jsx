@@ -182,10 +182,41 @@ export default function MarketplaceList() {
   };
   const handletrialEnabledClick = connector => {
     if (connector.usedTrialLicenseExists) {
-      handleContactSalesClick(connector);
-      // You have already used up your trial license
+      confirmDialog({
+        title: 'You have already used up your trial license',
+        isHtml: true,
+        message: 'Click <b>Request a demo</b> to send an email alert to the app developer.',
+        buttons: [
+          {
+            label: 'Request a demo',
+            onClick: () => {
+              handleContactSalesClick(connector);
+            },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
+          },
+        ],
+      });
     } else {
-      handleConnectorInstallClick(connector);
+      confirmDialog({
+        title: `This will start your ${connector.trialPeriod} days free trial plan`,
+        isHtml: true,
+        message: `Click <b>Start free trial</b> to start your free trial of ${connector.name} Integration App.`,
+        buttons: [
+          {
+            label: 'Start free trial',
+            onClick: () => {
+              handleConnectorInstallClick(connector);
+            },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
+          },
+        ],
+      });
     }
   };
 
@@ -232,7 +263,7 @@ export default function MarketplaceList() {
               )}
               {!connector.canInstall && connector.trialEnabled && (
                 <Button
-                  data-test="contactSales"
+                  data-test="startFreeTrial"
                   onClick={() => handletrialEnabledClick(connector)}
                   variant="outlined"
                   color="primary">

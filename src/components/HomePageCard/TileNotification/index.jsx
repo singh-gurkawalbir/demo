@@ -69,14 +69,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel, showTrialLicenseMessage}) {
+export default function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel, showTrialLicenseMessage, inTrial}) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
-  const single = isIntegrationV2 || !expired || showTrialLicenseMessage;
+  const single = isIntegrationV2 || !expired || inTrial;
 
   const onClickRenewOrReactivateButton = useCallback(event => {
     event.stopPropagation();
@@ -151,7 +151,7 @@ export default function TileNotification({ content, expired, connectorId, licens
           <Button
             disabled={upgradeRequested} onClick={onClickRenewOrReactivateButton} data-test="RenewOrReactivateDouble" variant="outlined"
             color="primary">
-            Renew
+            {showTrialLicenseMessage ? 'Buy' : 'Renew'}
           </Button>
           <Button data-test="uninstall" variant="text" color="primary" onClick={handleUninstall}>
             Uninstall
