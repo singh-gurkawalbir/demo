@@ -38,8 +38,10 @@ export function* requestFlowMetrics({resourceType, resourceId, filters }) {
 
       return;
     }
-    // eslint-disable-next-line no-param-reassign
-    filters.selectedResources = flowIds;
+    if (filters.selectedResources?.includes?.(resourceId)) {
+      // eslint-disable-next-line no-param-reassign
+      filters.selectedResources = flowIds;
+    }
   }
   if (filters?.range?.preset === 'lastrun' && resourceType === 'flows') {
     const flow = yield select(selectors.resource, 'flows', resourceId);

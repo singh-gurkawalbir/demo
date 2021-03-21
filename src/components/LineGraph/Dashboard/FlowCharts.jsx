@@ -123,7 +123,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
     selectors.makeResourceListSelector,
     flowsConfig
   );
-  const availableUsers = useSelector(state => selectors.availableUsersList(state));
+  const availableUsers = useSelector(state => selectors.availableUsersList(state, integrationId));
   const flowResources = useMemo(
     () => {
       const flows = resourceList.resources &&
@@ -140,9 +140,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
   const domain = [new Date(startDate).getTime(), new Date(endDate).getTime()];
   const ticks = getTicks(domainRange, range);
   const flowData = {};
-  const currentUser = useSelector(state => selectors.userProfile(state));
-
-  const users = Array.isArray(data) ? uniq(data.map(item => item.by)).filter(Boolean) : [];
+  const users = Array.isArray(data) ? uniq(data.map(item => item.attribute === 'r' && item.by)).filter(Boolean) : [];
 
   if (Array.isArray(data)) {
     if (id === 'resolved') {
@@ -157,8 +155,6 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
       });
     }
   }
-  console.log('data', data);
-  console.log('flowData', flowData);
 
   const getResourceName = name => {
     if (!name || typeof name !== 'string') {
@@ -171,14 +167,12 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
     }
     let modifiedName = resourceId;
     const resource = flowResources.find(r => r._id === resourceId);
-    const user = availableUsers.find(user => user._id === resourceId);
+    const user = availableUsers.find(user => user?.sharedWithUser._id === resourceId)?.sharedWithUser;
 
     if (resource) {
       modifiedName = resource.name;
     } else if (user) {
       modifiedName = user.name;
-    } else if (currentUser._id === resourceId) {
-      modifiedName = currentUser.name || currentUser.emailId;
     }
 
     return modifiedName;
@@ -282,9 +276,6 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
   }
   const lineData = id === 'resolved' ? users : selectedResources;
 
-  console.log('lineData', lineData);
-  console.log('users', availableUsers);
-
   return (
     <div className={classes.responsiveContainer}>
       <PanelHeader title={getLabel(id)} />
@@ -351,6 +342,15 @@ export default function FlowCharts({ integrationId, range, selectedResources, re
       state => selectors.flowMetricsData(state, integrationId),
       shallowEqual
     ) || {};
+  const isIntegrationUsersRequested = useSelector(state =>
+    !!selectors.integrationUsers(state, integrationId)
+  );
+
+  useEffect(() => {
+    if (integrationId && !isIntegrationUsersRequested) {
+      dispatch(actions.resource.requestCollection(`integrations/${integrationId}/ashares`));
+    }
+  }, [isIntegrationUsersRequested, dispatch, integrationId]);
 
   useEffect(() => {
     if (selectedResources.length) {

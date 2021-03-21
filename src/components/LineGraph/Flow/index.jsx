@@ -111,7 +111,7 @@ const DataIcon = ({index}) => {
   );
 };
 
-const Chart = ({ id, flowId, range, selectedResources: selected }) => {
+const Chart = ({ id, integrationId, flowId, range, selectedResources: selected }) => {
   const classes = useStyles();
   const [opacity, setOpacity] = useState({});
   let mouseHoverTimer;
@@ -120,8 +120,7 @@ const Chart = ({ id, flowId, range, selectedResources: selected }) => {
   const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
   // Selected resources are read from previously saved resources in preferences which may not be valid anymore. pick only valid resources.
   const selectedResources = selected.filter(r => flowResources.find(res => res._id === r));
-  const availableUsers = useSelector(state => selectors.availableUsersList(state));
-  // const availableUsers = [];
+  const availableUsers = useSelector(state => selectors.availableUsersList(state, integrationId));
   const { startDate, endDate } = range;
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
   const ticks = getTicks(domainRange, range);
@@ -143,7 +142,6 @@ const Chart = ({ id, flowId, range, selectedResources: selected }) => {
       });
     }
   }
-  const currentUser = useSelector(state => selectors.userProfile(state));
 
   const getResourceName = name => {
     if (!name || typeof name !== 'string') {
@@ -156,14 +154,12 @@ const Chart = ({ id, flowId, range, selectedResources: selected }) => {
     }
     let modifiedName = resourceId;
     const resource = flowResources.find(r => r._id === resourceId);
-    const user = availableUsers.find(user => user._id === resourceId);
+    const user = availableUsers.find(user => user?.sharedWithUser._id === resourceId)?.sharedWithUser;
 
     if (resource) {
       modifiedName = resource.name;
     } else if (user) {
       modifiedName = user.name;
-    } else if (currentUser._id === resourceId) {
-      modifiedName = currentUser.name || currentUser.emailId;
     }
 
     return modifiedName;
@@ -329,7 +325,7 @@ const Chart = ({ id, flowId, range, selectedResources: selected }) => {
   );
 };
 
-export default function FlowCharts({ flowId, range, selectedResources }) {
+export default function FlowCharts({ flowId, integrationId, range, selectedResources }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const data =
@@ -363,6 +359,7 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
           id={m}
           range={range}
           flowId={flowId}
+          integrationId={integrationId}
           selectedResources={selectedResources}
         />
       ))}

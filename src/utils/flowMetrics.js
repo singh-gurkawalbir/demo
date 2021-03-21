@@ -287,19 +287,33 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> filter(fn: (r) => r.u == "${userId}")
         ${flowFilterExpression}
         |> filter(fn: (r) => r._field == "c")
+    
+    seiBaseData = baseData
+        |> filter(fn: (r) => r._measurement != "r")
         |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
         |> fill(value: 0.0)
         |> group(columns: ["_time", "f", "u", "_measurement"], mode: "by")
         |> sum()
+  
+    resolvedBaseData = baseData
+        |> filter(fn: (r) => r._field == "c" and r._measurement == "r")
+        |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
+        |> fill(value: 0.0)
+        
 
-    data1 = baseData
+    flowsData = seiBaseData
         |> group()
-    data2 = baseData
+    resolvedData = resolvedBaseData
+        |> group(columns: ["_time", "u", "_measurement", "by"], mode: "by")
+        |> sum()
+        |> group()
+    integrationData = seiBaseData
         |> group(columns: ["_time", "_measurement", "u"], mode: "by")
         |> sum()
         |> group()
 
-    seiData = union(tables: [data1, data2])
+    seiData = union(tables: [flowsData, integrationData])
+    seirData = union(tables: [seiData, resolvedData])
         |> map(fn: (r) => ({
             _time: r._time,
             timeInMills: int(v: r._time)/1000000,
@@ -361,7 +375,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
             type: "att"
           }))
 
-    union(tables: [seiData, attData])`;
+    union(tables: [seirData, attData])`;
   }
 
   return `import "math"
