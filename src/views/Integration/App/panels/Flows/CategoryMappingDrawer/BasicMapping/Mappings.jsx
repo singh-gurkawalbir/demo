@@ -303,7 +303,7 @@ export default function ImportMapping(props) {
     obj.visible = visible;
 
     return obj;
-  }), [mappings]);
+  }), [mappings, attributes, mappingFilter]);
 
   const handleFieldUpdate = useCallback(
     (rowIndex, event, field) => {

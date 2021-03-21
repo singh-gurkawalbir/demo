@@ -157,7 +157,6 @@ function CategoryMappings({
   depth = 0,
   isParentCommonCategory = false,
 }) {
-  console.log('Category Mappings base function');
   const [requestedGenerateFields, setRequestedGenerateFields] = useState(false);
   const dispatch = useDispatch();
   const classes = useStyles();
