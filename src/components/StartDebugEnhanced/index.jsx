@@ -1,8 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, MenuItem, InputLabel, FormControl} from '@material-ui/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import moment from 'moment';
 import TimeAgo from 'react-timeago';
 import { useSelector, shallowEqual } from 'react-redux';
@@ -105,7 +104,7 @@ const defaultValue = 15;
 export default function StartDebugEnhanced({
   resourceId,
   resourceType,
-  disabled,
+  disabled = false,
   startDebugHandler,
   stopDebugHandler,
 }) {
@@ -114,7 +113,7 @@ export default function StartDebugEnhanced({
   const classes = useStyles();
   const { activeDebugUntil, pastDebugUntil } = useSelector(state => {
     const resource = selectors.resource(state, resourceType, resourceId);
-    const {debugUntil} = resource;
+    const {debugUntil} = resource || {};
 
     if (!debugUntil) {
       return {};
@@ -150,9 +149,7 @@ export default function StartDebugEnhanced({
 
   const handleChange = useCallback(evt => {
     evt.stopPropagation();
-    const {value} = evt.target;
-
-    setValue(value);
+    setValue(evt.target.value);
   }, []);
 
   return (
@@ -166,7 +163,7 @@ export default function StartDebugEnhanced({
           <TimeAgo date={activeDebugUntil} formatter={formatter} style={{marginLeft: 0 }} />
         ) : 'Start debug'}
       </IconTextButton>
-      {activeDebugUntil && (
+      {!!activeDebugUntil && (
       <IconTextButton
         onClick={handleStopDebug} >
         <CancelIcon />
@@ -208,7 +205,7 @@ export default function StartDebugEnhanced({
 
                     </CeligoSelect>
                   </FormControl>
-                  {pastDebugUntil && (
+                  {!!pastDebugUntil && (
                     <div className={classes.lastDebug}>
                       Last debug: <TimeAgo date={pastDebugUntil} formatter={lastRunFormatter} />
                     </div>
