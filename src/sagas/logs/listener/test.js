@@ -203,9 +203,23 @@ describe('Listener logs sagas', () => {
           requests: [{key: 'key1', others: {}}],
           nextPageURL: '/nextURL2',
         }],
-
       ])
       .returns({requests: [{key: 'key1', others: {}}], nextPageURL: '/nextURL2'})
+      .run());
+
+    test('should return empty object in case of error', () => expectSaga(retryToFetchRequests, { fetchRequestsPath: '/somepath' })
+      .provide([
+        [call(apiCallWithRetry, {
+          path: '/somepath',
+          opts: {
+            method: 'GET',
+          },
+        }), throwError(new APIException({
+          status: 422,
+          message: '{"message":"Invalid or Missing Field: time_lte", "code":"invalid_or_missing_field"}',
+        }))],
+      ])
+      .returns({})
       .run());
   });
 
@@ -250,19 +264,16 @@ describe('Listener logs sagas', () => {
   });
 
   describe('requestLogDetails saga', () => {
-    test('should do nothing and return if log details already exist', () => {
-      const logKey = '123';
+    const logKey = '123';
 
-      return expectSaga(requestLogDetails, { flowId, exportId, logKey })
-        .provide([
-          [select(selectors.logDetails, exportId, logKey), {key: logKey}],
-        ])
-        .not.call.fn(apiCallWithRetry)
-        .returns(undefined)
-        .run();
-    });
+    test('should do nothing and return if log details already exist', () => expectSaga(requestLogDetails, { flowId, exportId, logKey })
+      .provide([
+        [select(selectors.logDetails, exportId, logKey), {key: logKey}],
+      ])
+      .not.call.fn(apiCallWithRetry)
+      .returns(undefined)
+      .run());
     test('should call apiCallWithRetry and dispatch log received action if log details do not exist', () => {
-      const logKey = '123';
       const logDetails = { key: '123',
         id: 'a27751bdc2e143cb94988b39ea8aede9' };
 
@@ -281,6 +292,22 @@ describe('Listener logs sagas', () => {
         )
         .run();
     });
+    test('should not dispatch received action in case of error', () => expectSaga(requestLogDetails, { flowId, exportId, logKey })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), throwError(new APIException({
+          status: 422,
+          message: '{"message":"Invalid or Missing Field: time_lte", "code":"invalid_or_missing_field"}',
+        }))],
+      ])
+      .not.put(
+        actions.logs.listener.receivedLogDetails(
+          exportId,
+          logKey,
+          {}
+        )
+      )
+      .returns(undefined)
+      .run());
   });
 
   describe('toggleDebug saga', () => {
