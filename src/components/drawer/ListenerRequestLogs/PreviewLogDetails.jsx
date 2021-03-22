@@ -6,7 +6,7 @@ import CeligoPillTabs from '../../CeligoTabLayout/CeligoPillTabs';
 import RequestResponsePanel from '../../CeligoTabLayout/CustomPanels/RequestResponsePanel';
 import CeligoTabPanel from '../../CeligoTabLayout/CeligoTabPanel';
 import actions from '../../../actions';
-import PanelLoader from '../../PanelLoader';
+import Spinner from '../../Spinner';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const tabs = [
@@ -19,8 +19,7 @@ export default function PreviewLogDetails({ flowId, exportId }) {
   const dispatch = useDispatch();
   const activeLogKey = useSelector(state => selectors.activeLogKey(state, exportId));
   const logDetails = useSelector(state => selectors.logDetails(state, exportId, activeLogKey), shallowEqual);
-  const errorMsg = useSelector(state => selectors.listenerErrorMsg(state, exportId));
-  const { status } = logDetails;
+  const {changeIdentifier, key: errorKey, error: errorMsg} = useSelector(state => selectors.listenerErrorMsg(state, exportId), shallowEqual);
 
   useEffect(() => {
     if (activeLogKey) {
@@ -28,16 +27,22 @@ export default function PreviewLogDetails({ flowId, exportId }) {
     }
   }, [dispatch, exportId, flowId, activeLogKey]);
 
+  useEffect(() => {
+    if (errorKey && errorMsg) {
+      enqueueSnackbar({
+        message: `${errorKey}: ${errorMsg}`,
+        variant: 'error',
+      });
+    }
+    // only if we have the failed action again, we show the error msg
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [changeIdentifier]);
+
+  const { status } = logDetails;
   const { request, response } = logDetails;
 
-  if (errorMsg) {
-    enqueueSnackbar({
-      message: `${errorMsg.key}: ${errorMsg.error}`,
-      variant: 'error',
-    });
-  }
   if (status === 'requested') {
-    return <PanelLoader />;
+    return <Spinner />;
   }
 
   return (

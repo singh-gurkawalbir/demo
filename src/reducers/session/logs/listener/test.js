@@ -36,7 +36,6 @@ describe('Listener logs reducer', () => {
       const initialState = {
         [exportId]: {
           logsStatus: 'received',
-          error: {key: 123},
         },
       };
       const newState = reducer(
@@ -113,7 +112,6 @@ describe('Listener logs reducer', () => {
         [exportId]: {
           logsStatus: 'requested',
           logsSummary: [{key: 1}, {key: 2}],
-          error: [{key: 1}],
         },
       };
       const tempState = reducer(
@@ -187,7 +185,6 @@ describe('Listener logs reducer', () => {
       const initialState = {
         [exportId]: {
           logsStatus: 'requested',
-          error: {key: 123},
         },
       };
       const tempState = reducer(
@@ -248,7 +245,6 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           logsSummary: [{key: logKey, time: 1234}],
           nextPageURL: '/v1(api)/flows/:_flowId',
-          error: {key: 123},
         },
       };
       const tempState = reducer(
@@ -315,7 +311,6 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           logsSummary: [{key: 123, time: 1234}],
           nextPageURL: '/v1(api)/flows/:_flowId',
-          error: {key: 123},
         },
       };
 
@@ -409,7 +404,6 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           logsSummary: [{key: '5642310475121', time: 1234}, {key: '200-POST', time: 3453}, {key: '200-GET', time: 3453}],
           nextPageURL: '/v1(api)/flows/:_flowId',
-          error: {key: 89},
         },
       };
 
@@ -478,7 +472,6 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           logsSummary: [{key: '5642310475121', time: 1234}],
           nextPageURL: '/v1(api)/flows/:_flowId',
-          error: {},
         },
       };
 
@@ -547,7 +540,6 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           logsSummary: [{key: '5642310475121', time: 1234}],
           nextPageURL: '/v1(api)/flows/:_flowId',
-          error: {},
         },
       };
 
@@ -615,7 +607,6 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           logsSummary: [{key: '5642310475121', time: 1234}],
           nextPageURL: '/v1(api)/flows/:_flowId',
-          error: {},
         },
       };
 
@@ -672,7 +663,7 @@ describe('Listener logs reducer', () => {
 
       expect(newState).toEqual({});
     });
-    test('should correctly update the state with the error', () => {
+    test('should correctly update the state with the error and change identifier', () => {
       const initialState = {
         [exportId]: {
           activeLogKey: '5642310475121',
@@ -702,7 +693,10 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           logsSummary: [{key: '5642310475121', time: 1234}],
           nextPageURL: '/v1(api)/flows/:_flowId',
-          error,
+          error: {
+            changeIdentifier: 1,
+            ...error,
+          },
         },
       };
 
@@ -738,7 +732,6 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           logsSummary: [{key: '123', time: 1234}],
           nextPageURL: '/v1(api)/flows/:_flowId',
-          error: {key: 123},
         },
       };
 
@@ -811,6 +804,7 @@ describe('Listener logs selectors', () => {
         logsDetails: {[logKey]: {status: 'received', ...logDetails}},
         logsSummary: [{key: logKey, time: 1234}],
         nextPageURL: '/v1(api)/flows/:_flowId',
+        error: {key: logKey},
       };
 
       expect(selectors.listenerLogs(newState, exportId)).toEqual(expectedOutput);
@@ -839,10 +833,10 @@ describe('Listener logs selectors', () => {
     });
   });
   describe('hasNewLogs', () => {
-    test('should return undefined when no match found', () => {
-      expect(selectors.hasNewLogs(undefined, exportId)).toBeUndefined();
-      expect(selectors.hasNewLogs({}, exportId)).toBeUndefined();
-      expect(selectors.hasNewLogs({[exportId]: {}}, exportId)).toBeUndefined();
+    test('should return false when no match found', () => {
+      expect(selectors.hasNewLogs(undefined, exportId)).toEqual(false);
+      expect(selectors.hasNewLogs({}, exportId)).toEqual(false);
+      expect(selectors.hasNewLogs({[exportId]: {}}, exportId)).toEqual(false);
     });
     test('should return correct state prop when a match is found', () => {
       expect(selectors.hasNewLogs(newState, exportId)).toEqual(false);
@@ -867,10 +861,10 @@ describe('Listener logs selectors', () => {
     });
   });
   describe('isDebugEnabled', () => {
-    test('should return undefined when no match found', () => {
-      expect(selectors.isDebugEnabled(undefined, exportId)).toBeUndefined();
-      expect(selectors.isDebugEnabled({}, exportId)).toBeUndefined();
-      expect(selectors.isDebugEnabled({[exportId]: {}}, exportId)).toBeUndefined();
+    test('should return false when no match found', () => {
+      expect(selectors.isDebugEnabled(undefined, exportId)).toEqual(false);
+      expect(selectors.isDebugEnabled({}, exportId)).toEqual(false);
+      expect(selectors.isDebugEnabled({[exportId]: {}}, exportId)).toEqual(false);
     });
     test('should return correct state prop when a match is found', () => {
       const finalState = reducer(
@@ -892,10 +886,10 @@ describe('Listener logs selectors', () => {
     });
   });
   describe('listenerErrorMsg', () => {
-    test('should return undefined when no match found', () => {
-      expect(selectors.listenerErrorMsg(undefined, exportId)).toBeUndefined();
-      expect(selectors.listenerErrorMsg({}, exportId)).toBeUndefined();
-      expect(selectors.listenerErrorMsg({[exportId]: {}}, exportId)).toBeUndefined();
+    test('should return empty object when no match found', () => {
+      expect(selectors.listenerErrorMsg(undefined, exportId)).toEqual({});
+      expect(selectors.listenerErrorMsg({}, exportId)).toEqual({});
+      expect(selectors.listenerErrorMsg({[exportId]: {}}, exportId)).toEqual({});
     });
     test('should return correct state error when a match is found', () => {
       const finalState = reducer(
@@ -903,7 +897,7 @@ describe('Listener logs selectors', () => {
         actions.logs.listener.failed(exportId, {key: '200-POST', error: 'NoSuchKey'})
       );
 
-      expect(selectors.listenerErrorMsg(finalState, exportId)).toEqual({key: '200-POST', error: 'NoSuchKey'});
+      expect(selectors.listenerErrorMsg(finalState, exportId)).toEqual({changeIdentifier: 1, key: '200-POST', error: 'NoSuchKey'});
     });
   });
 });

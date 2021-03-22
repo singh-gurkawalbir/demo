@@ -10,13 +10,11 @@ export default (state = {}, action) => {
         if (!draft[exportId]) {
           draft[exportId] = {};
         }
-        delete draft[exportId].error;
         draft[exportId].logsStatus = 'requested';
         break;
 
       case actionTypes.LOGS.LISTENER.RECEIVED:
         if (!draft[exportId]) break;
-        delete draft[exportId].error;
         draft[exportId].logsStatus = 'received';
         draft[exportId].hasNewLogs = false;
         draft[exportId].nextPageURL = nextPageURL;
@@ -28,7 +26,6 @@ export default (state = {}, action) => {
 
       case actionTypes.LOGS.LISTENER.LOG.REQUEST:
         if (!draft[exportId]) break;
-        delete draft[exportId].error;
         if (!draft[exportId].logsDetails) {
           draft[exportId].logsDetails = {};
         }
@@ -42,7 +39,6 @@ export default (state = {}, action) => {
 
       case actionTypes.LOGS.LISTENER.LOG.RECEIVED:
         if (!draft[exportId] || !draft[exportId].logsDetails) break;
-        delete draft[exportId].error;
 
         draft[exportId].logsDetails[logKey] = {
           status: 'received',
@@ -52,13 +48,11 @@ export default (state = {}, action) => {
 
       case actionTypes.LOGS.LISTENER.ACTIVE_LOG:
         if (!draft[exportId]) break;
-        delete draft[exportId].error;
         draft[exportId].activeLogKey = activeLogKey;
         break;
 
       case actionTypes.LOGS.LISTENER.LOG.DELETED: {
         if (!draft[exportId] || !deletedLogKey || !draft[exportId].logsSummary) break;
-        delete draft[exportId].error;
         const logs = draft[exportId].logsSummary;
         const index = logs.findIndex(l => l.key === deletedLogKey);
 
@@ -71,26 +65,26 @@ export default (state = {}, action) => {
       }
       case actionTypes.LOGS.LISTENER.DEBUG.START:
         if (!draft[exportId]) break;
-        delete draft[exportId].error;
         draft[exportId].debugOn = true;
         break;
 
       case actionTypes.LOGS.LISTENER.DEBUG.STOP:
         if (!draft[exportId]) break;
-        delete draft[exportId].error;
         draft[exportId].debugOn = false;
         break;
 
       case actionTypes.LOGS.LISTENER.STOP_POLL:
         if (!draft[exportId]) break;
-        delete draft[exportId].error;
         draft[exportId].hasNewLogs = hasNewLogs;
         break;
 
-      case actionTypes.LOGS.LISTENER.FAILED:
+      case actionTypes.LOGS.LISTENER.FAILED: {
         if (!draft[exportId]) break;
-        draft[exportId].error = error;
+        const changeIdentifier = draft[exportId].error?.changeIdentifier || 0;
+
+        draft[exportId].error = {changeIdentifier: changeIdentifier + 1, ...error};
         break;
+      }
 
       case actionTypes.LOGS.LISTENER.CLEAR:
         delete draft[exportId];
@@ -128,11 +122,11 @@ selectors.logsStatus = (state, id) => {
 };
 
 selectors.hasNewLogs = (state, id) => {
-  if (!state) return;
+  if (!state) return false;
 
   const exportLogs = state[id];
 
-  return exportLogs?.hasNewLogs;
+  return !!exportLogs?.hasNewLogs;
 };
 
 selectors.logDetails = (state, id, key) => {
@@ -144,11 +138,11 @@ selectors.logDetails = (state, id, key) => {
 };
 
 selectors.isDebugEnabled = (state, id) => {
-  if (!state) return;
+  if (!state) return false;
 
   const exportLogs = state[id];
 
-  return exportLogs?.debugOn;
+  return !!exportLogs?.debugOn;
 };
 
 selectors.activeLogKey = (state, id) => {
@@ -160,9 +154,9 @@ selectors.activeLogKey = (state, id) => {
 };
 
 selectors.listenerErrorMsg = (state, id) => {
-  if (!state) return;
+  if (!state) return emptyObj;
 
   const exportLogs = state[id];
 
-  return exportLogs?.error;
+  return exportLogs?.error || emptyObj;
 };

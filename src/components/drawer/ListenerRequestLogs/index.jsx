@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import RightDrawer from '../Right';
@@ -75,12 +75,18 @@ function RouterWrappedContent({ flowId, exportId, handleClose }) {
 
 export default function ListenerRequestLogs({ flowId, exportId }) {
   const history = useHistory();
+  const match = useRouteMatch();
   const dispatch = useDispatch();
+
   const handleClose = useCallback(() => {
     dispatch(actions.logs.listener.clear(exportId));
     dispatch(actions.clearFilter(FILTER_KEY));
-    history.goBack();
-  }, [dispatch, exportId, history]);
+    if (history.length > 2) {
+      history.goBack();
+    } else {
+      history.replace(match.url);
+    }
+  }, [dispatch, exportId, history, match.url]);
 
   return (
     <RightDrawer

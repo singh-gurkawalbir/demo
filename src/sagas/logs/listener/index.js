@@ -4,8 +4,7 @@ import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { apiCallWithRetry } from '../..';
 import { selectors } from '../../../reducers';
-// import getRequestOptions from '../../../utils/requestOptions';
-import { getMockRequests, getMockLogDetails, getMockDeleteResponse } from '../../../utils/listenerLogs';
+import getRequestOptions from '../../../utils/requestOptions';
 
 export function* fetchNewLogs({ flowId, exportId, timeGt }) {
   const opts = {
@@ -20,19 +19,18 @@ export function* fetchNewLogs({ flowId, exportId, timeGt }) {
       path,
       opts,
     });
+    const {requests} = response || {};
+
+    if (requests?.length) {
+      yield put(
+        actions.logs.listener.stopLogsPoll(
+          exportId,
+          true,
+        )
+      );
+    }
+  // eslint-disable-next-line no-empty
   } catch (e) {
-    return;
-  }
-
-  const {requests} = response;
-
-  if (requests?.length) {
-    yield put(
-      actions.logs.listener.stopLogsPoll(
-        exportId,
-        true,
-      )
-    );
   }
 }
 
@@ -64,13 +62,13 @@ export function* startPollingForRequestLogs({flowId, exportId}) {
   }
 }
 
-export function* retryToFetchRequests({retryCount = 0, fetchRequestsPath}) {
+export function* retryToFetchRequests({retryCount = 0, fetchRequestsPath, isFilterApplied}) {
   const opts = {
     method: 'GET',
   };
 
-  // we try 3 times as BE route may not give all the results on first try (s3 limitation)
-  if (retryCount > 3) {
+  // we try max of 4 times (to cover 1 hour window) as BE route may not give all the results on first try or after that (s3 limitation)
+  if (!isFilterApplied && retryCount > 3) {
     return {
       nextPageURL: fetchRequestsPath,
     };
@@ -84,16 +82,18 @@ export function* retryToFetchRequests({retryCount = 0, fetchRequestsPath}) {
       opts,
     });
   } catch (e) {
-    return;
+    return {};
   }
 
+  // when we are making direct /requests call without time_gt, time_lte filter
+  // no need to make 4 retry calls to BE
+  if (!isFilterApplied) {
+    return response;
+  }
   const {requests, nextPageURL} = response;
 
-  if (requests?.length === 1000) {
-    return {requests, nextPageURL};
-  }
-  // don't re-iterate in case nextPageURL is not present. Return control to parent
-  if (!nextPageURL) {
+  // don't re-iterate in case logs are found or nextPageURL is not present. Return control to parent
+  if (requests?.length || !nextPageURL) {
     return {requests, nextPageURL};
   }
 
@@ -103,20 +103,16 @@ export function* retryToFetchRequests({retryCount = 0, fetchRequestsPath}) {
 export function* requestLogs({ flowId, exportId, loadMore }) {
   const logsState = yield select(selectors.listenerLogs, exportId);
 
-  // todo uncomment this once BE is live
-  // const filters = yield select(selectors.filter, 'listenerLogs');
+  const filters = yield select(selectors.filter, 'listenerLogs');
 
-  // const requestOptions = getRequestOptions(
-  //   actionTypes.LOGS.LISTENER.REQUEST,
-  //   { flowId, exportId, filters, nextPageURL: logsState.nextPageURL, loadMore }
-  // );
-  // const { path } = requestOptions;
-  // const { requests = [], nextPageURL } = yield call(retryToFetchRequests, {fetchRequestsPath: path});
+  const requestOptions = getRequestOptions(
+    actionTypes.LOGS.LISTENER.REQUEST,
+    { flowId, exportId, filters, nextPageURL: logsState.nextPageURL, loadMore }
+  );
+  const { path } = requestOptions;
+  const { requests = [], nextPageURL } = yield call(retryToFetchRequests, {fetchRequestsPath: path, isFilterApplied: !!(filters.time?.startDate && filters.time?.endDate) });
 
-  const requestsTemp = getMockRequests();
-  const nextPageURLTemp = '/v1(api)/flows/:_flowId/:_exportId/requests?nextPageToken=NextContinuation';
-
-  const formattedLogs = requestsTemp.map(({time = '', ...others}) => {
+  const formattedLogs = requests.map(({time = '', ...others}) => {
     const utcDateTime = moment(time);
 
     return { utcDateTime, time, ...others };
@@ -126,7 +122,7 @@ export function* requestLogs({ flowId, exportId, loadMore }) {
     actions.logs.listener.received(
       exportId,
       formattedLogs,
-      nextPageURLTemp,
+      nextPageURL,
       loadMore
     )
   );
@@ -137,21 +133,18 @@ export function* requestLogs({ flowId, exportId, loadMore }) {
   }
 }
 
-export function* requestLogDetails({ exportId, logKey }) {
+export function* requestLogDetails({ flowId, exportId, logKey }) {
   const logDetails = yield select(selectors.logDetails, exportId, logKey);
 
   // if log details already exists, no need to call API again
   if (logDetails.key) return;
 
-  // todo uncomment this once BE is live
-  // const path = `/flows/${flowId}/${exportId}/requests/${logKey}`;
+  const path = `/flows/${flowId}/${exportId}/requests/${logKey}`;
 
   let log;
 
   try {
-    // todo: fix this once BE is live
-    // log = yield call(apiCallWithRetry, { path });
-    log = getMockLogDetails(logKey);
+    log = yield call(apiCallWithRetry, { path });
   } catch (error) {
     return;
   }
@@ -183,33 +176,30 @@ export function* toggleDebug({ flowId, exportId, minutes }) {
   }
 }
 
-export function* removeLogs({ exportId, logsToRemove }) {
+export function* removeLogs({ flowId, exportId, logsToRemove }) {
   if (!logsToRemove || logsToRemove.length === 0) {
     return;
   }
 
-  // todo uncomment this once BE is live
-  // const path = `/flows/${flowId}/${exportId}/requests`;
-  // const opts = {
-  //   method: 'DELETE',
-  //   body: {
-  //     keys: logsToRemove,
-  //   },
-  // };
+  const path = `/flows/${flowId}/${exportId}/requests`;
+  const opts = {
+    method: 'DELETE',
+    body: {
+      keys: logsToRemove,
+    },
+  };
 
   let response;
 
   try {
-    // todo: fix this once BE is live
-    // response = yield call(apiCallWithRetry, { path, opts });
-    response = getMockDeleteResponse(logsToRemove);
+    response = yield call(apiCallWithRetry, { path, opts });
   } catch (error) {
     return;
   }
   const { deleted = [], errors = [] } = response || {};
 
   // user can only delete one log at a time from UI
-  // hence we pick first index from 'deleted' array
+  // hence we pick first index from 'deleted' and 'errors' array
   yield put(actions.logs.listener.logDeleted(exportId, deleted[0]));
   if (errors.length) {
     yield put(actions.logs.listener.failed(exportId, errors[0]));

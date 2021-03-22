@@ -18,7 +18,7 @@ export default function LogsDrawerActions({ flowId, exportId }) {
     const l = selectors.listenerLogs(state, exportId);
 
     return {
-      hasMore: l.nextPageURL,
+      hasMore: !!l.nextPageURL,
       logsLength: l.logsSummary?.length,
       logsStatus: l.logsStatus,
     };
