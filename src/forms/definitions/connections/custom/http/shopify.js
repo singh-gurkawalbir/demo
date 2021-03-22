@@ -175,7 +175,7 @@ export default {
       required: true,
       defaultValue: r =>
         (r && r.http && r.http.unencrypted && r.http.unencrypted.version) ||
-        '2020-07',
+        '2021-04',
       visible: r => !(r?._connectorId),
       options: [
         {

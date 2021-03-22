@@ -114,6 +114,7 @@ export default {
     'pipedrive',
     'prestashop',
     'yotpo',
+    'fulfilment.com',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

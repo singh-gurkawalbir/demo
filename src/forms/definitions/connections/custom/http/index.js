@@ -200,6 +200,7 @@ import adobesign from './adobesign';
 import prestashop from './prestashop';
 import yotpo from './yotpo';
 import mavenlink from './mavenlink';
+import fulfilment from './fulfilment';
 
 export default {
   channelape,
@@ -404,4 +405,5 @@ export default {
   prestashop,
   yotpo,
   mavenlink,
+  'fulfilment.com': fulfilment,
 };
