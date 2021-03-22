@@ -212,9 +212,8 @@ export default function MultiSelectApplication(props) {
     }),
     control: () => ({
       minWidth: 365,
-      height: '38px',
       border: '1px solid',
-      borderColor: theme.palette.divider,
+      borderColor: theme.palette.secondary.lightest,
       borderRadius: '2px',
       backgroundColor: theme.palette.background.paper,
       alignItems: 'flex-start',
@@ -234,6 +233,7 @@ export default function MultiSelectApplication(props) {
     indicatorsContainer: () => ({
       height: '38px',
       display: 'flex',
+      alignItems: 'center',
     }),
     menu: () => ({
       zIndex: 2,
@@ -242,11 +242,10 @@ export default function MultiSelectApplication(props) {
       position: 'absolute',
       backgroundColor: theme.palette.background.paper,
       width: '100%',
-      top: '38px',
     }),
     input: () => ({
       color: theme.palette.secondary.light,
-      width: '100%',
+      minWidth: theme.spacing(10),
     }),
     placeholder: () => ({
       color: theme.palette.secondary.light,
@@ -265,13 +264,15 @@ export default function MultiSelectApplication(props) {
       padding: '0px',
     }),
     valueContainer: () => ({
-      height: '100%',
+      minHeight: '38px',
+      maxHeight: '100%',
       alignItems: 'center',
       display: 'flex',
       flex: '1',
       padding: '2px 8px',
       position: 'relative',
       overflow: 'hidden',
+      flexWrap: 'wrap',
     }),
     groupHeading: () => ({
       textAlign: 'center',
