@@ -31,7 +31,7 @@ const Editors = loadable(() =>
   retry(() => import(/* webpackChunkName: 'Editors' */ '../../views/Editors'))
 );
 const Reports = loadable(() =>
-  retry(() => import(/* webpackChunkName: 'Editors' */ '../../views/Reports'))
+  retry(() => import(/* webpackChunkName: 'Reports' */ '../../views/Reports'))
 );
 
 const Playground = loadable(() =>

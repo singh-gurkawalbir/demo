@@ -251,12 +251,7 @@ const routes = [
   { path: getRoutePath('/playground'), breadcrumb: 'Developer playground' },
   { path: getRoutePath('/permissions'), breadcrumb: 'Permission explorer' },
   { path: getRoutePath('/migrate'), breadcrumb: 'Our new error management' },
-  { path: getRoutePath('/reports'),
-    breadcrumb: 'Reports',
-    childRoutes: [
-      { path: '/:reportType', breadcrumb: ({reportType}) => modelLabelToPlural(reportType) },
-    ],
-  },
+  { path: getRoutePath('/reports'), breadcrumb: 'Reports' },
   {
     path: getRoutePath('/:resourceType'),
     breadcrumb: ({ resourceType }) => modelLabelToPlural(resourceType),

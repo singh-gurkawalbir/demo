@@ -6,7 +6,7 @@ import DownloadIcon from '../../../icons/DownloadIcon';
 export default {
   label: 'Download Results',
   icon: DownloadIcon,
-  component: function CancelReport({ rowData = {} }) {
+  component: function DownloadReport({ rowData = {} }) {
     const {_id } = rowData;
     const dispatch = useDispatch();
 

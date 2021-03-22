@@ -712,9 +712,9 @@ const resourceListSel = selectors.makeResourceListSelector();
 
 selectors.getAllValidIntegrations = createSelector(
   state => resourceListSel(state, integrationsFilter)?.resources,
-  selectors.integrationLicenseExpirationInDays,
-  (integrations, intLicenseExp) => {
-    if (!integrations) return null;
+  selectors.licenses,
+  (integrations, allLicenses) => {
+    if (!integrations || !allLicenses) return null;
 
     return integrations.filter(({mode, _id, _connectorId }) => {
       // DIY
@@ -722,7 +722,7 @@ selectors.getAllValidIntegrations = createSelector(
 
       // integrationApp
       if (_connectorId) {
-        const isIntegrationNotExpired = intLicenseExp.find(l => l.integrationId === _id)?.expiresInDays > 0;
+        const isIntegrationNotExpired = allLicenses.find(l => l.integrationId === _id)?.remainingDays > 0;
 
         return mode === 'settings' && isIntegrationNotExpired;
       }

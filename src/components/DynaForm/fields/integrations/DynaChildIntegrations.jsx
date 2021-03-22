@@ -11,16 +11,16 @@ const selectAll = {
   value: 'selectAll',
 };
 
-export const useResetWhenParentIntegrationChanges = (formKey, onFieldChange, id) => {
-  const selectedIntegrationTouched = useSelector(state => selectors.formState(state, formKey)?.fields?.integration?.touched);
-  const selectedIntegration = useSelector(state => selectors.formState(state, formKey)?.fields?.integration?.value);
+export const useResetWhenParentIntegrationChanges = (formKey, parentFieldId, onFieldChange, id) => {
+  const selectedParentIntegrationTouched = useSelector(state => selectors.formState(state, formKey)?.fields?.[parentFieldId]?.touched);
+  const selectedParentIntegrationValue = useSelector(state => selectors.formState(state, formKey)?.fields?.[parentFieldId]?.value);
 
   useEffect(() => {
     // reset selected child integrations when the user changes a parent integration
-    if (selectedIntegration && selectedIntegrationTouched) {
+    if (selectedParentIntegrationValue && selectedParentIntegrationTouched) {
       onFieldChange(id, [], true);
     }
-  }, [id, onFieldChange, selectedIntegration, selectedIntegrationTouched]);
+  }, [id, onFieldChange, selectedParentIntegrationValue, selectedParentIntegrationTouched]);
 };
 export default function DynaChildIntegrations(props) {
   const {formKey, id, onFieldChange, value, label} = props;
@@ -29,7 +29,7 @@ export default function DynaChildIntegrations(props) {
 
   const childIntegrations = useSelectorMemo(selectors.mkGetChildIntegrations, selectedIntegration);
 
-  useResetWhenParentIntegrationChanges(formKey, onFieldChange, id);
+  useResetWhenParentIntegrationChanges(formKey, 'integration', onFieldChange, id);
   const childIntegrationsStoreLabel = useSelector(state => selectors.integrationAppSettings(state, selectedIntegration)?.settings?.storeLabel);
 
   useEffect(() => {

@@ -5,8 +5,7 @@ import MarketplaceIcon from '../../components/icons/MarketplaceIcon';
 import ExportsIcon from '../../components/icons/ExportsIcon';
 import FlowBuilderIcon from '../../components/icons/FlowBuilderIcon';
 import DataLoaderIcon from '../../components/icons/DataLoaderIcon';
-// import AppBuilderIcon from '../../components/icons/AppBuilderIcon';
-// import PermissionExplorerIcon from '../../components/icons/PermissionExplorerIcon';
+import FileIcon from '../../components/icons/FileIcon';
 import EditorsPlaygroundIcon from '../../components/icons/EditorsPlaygroundIcon';
 import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
 import AgentsIcon from '../../components/icons/AgentsIcon';
@@ -67,7 +66,7 @@ export default function menuItems(
         },
         {
           label: 'Reports',
-          Icon: DataLoaderIcon,
+          Icon: FileIcon,
           path: '/reports',
           routeProps: getRoutePath('/reports'),
         },

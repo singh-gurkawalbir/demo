@@ -68,8 +68,11 @@ const metadata = {
     },
   ],
   rowActions: r => {
-    if (r.status === 'running' || r.status === 'queued') {
+    if ( r.status === 'queued') {
       return [CancelReport];
+    }
+    if (r.status === 'running') {
+      return [ViewReport, CancelReport];
     }
     if (r.status === 'completed') {
       return [ViewReport, DownloadResults];

@@ -170,6 +170,7 @@ export const GenericTypeableSelect = props => {
         <FieldHelp {...props} />
       </div>
       <FormControl
+        className={classes.fullWidth}
         error={!isValid}
         disabled={disabled}
         required={required}>
@@ -207,14 +208,17 @@ export default function DynaFlowsTiedToIntegration(props) {
     .flat().filter(val => !!val)), [childIntegrations, selectedIntegration]);
   const flowsTiedToIntegrations = useSelectorMemo(selectors.mkAllFlowsTiedToIntegrations, allIntegrationIds);
 
-  useResetWhenParentIntegrationChanges(formKey, onFieldChange, id);
+  // reset flows list when either integration or childIntegrations changes
+  useResetWhenParentIntegrationChanges(formKey, 'integration', onFieldChange, id);
+  useResetWhenParentIntegrationChanges(formKey, 'childIntegrations', onFieldChange, id);
   const options = useMemo(() => flowsTiedToIntegrations.map(({_id, name}) => ({ label: name, value: _id})), [flowsTiedToIntegrations]);
 
   return (
+
     <LoadResources required resources="flows" >
       <TypeableSelect {...props} options={options} />
-
     </LoadResources>
+
   );
 }
 

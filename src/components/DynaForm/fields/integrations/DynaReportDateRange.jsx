@@ -1,5 +1,5 @@
 
-import { Typography } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import React, { useCallback, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
@@ -11,6 +11,7 @@ import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 
 const defaultPresets = [
+  {id: 'pleaseSelect', label: 'Please select range'},
   {id: 'lastmin', label: 'Last minute'},
   {id: 'last5min', label: 'Last 5 minutes'},
   {id: 'last15minutes', label: 'Last 15 minutes'},
@@ -21,7 +22,11 @@ const defaultPresets = [
   {id: 'last24hours', label: 'Last 24 hours'},
   {id: 'custom', label: 'Custom'},
 ];
-
+const useStyles = makeStyles(theme => ({
+  infoText: {
+    marginTop: theme.spacing(2),
+  },
+}));
 const selectedRangeConstrain = (startDate, endDate) => {
   if (!endDate || !startDate) return true;
   const diffDays = moment(endDate).diff(moment(startDate), 'days');
@@ -30,6 +35,7 @@ const selectedRangeConstrain = (startDate, endDate) => {
 };
 
 function CustomTextFields({selectedRange, setSelectedRange, reset, setReset}) {
+  const classes = useStyles();
   const {startDate, preset, endDate} = selectedRange;
 
   const [loaded, setLoaded] = useState(false);
@@ -73,7 +79,7 @@ function CustomTextFields({selectedRange, setSelectedRange, reset, setReset}) {
           onFieldChange={onFieldChange('endDate')}
           value={endDate} skipTimezoneConversion label="End date" />
       </div>
-      <Typography>You can generate a Report for upto 3 days of Data</Typography>
+      <Typography className={classes.infoText}>You can generate a Report for upto 3 days of Data</Typography>
     </>
 
   );

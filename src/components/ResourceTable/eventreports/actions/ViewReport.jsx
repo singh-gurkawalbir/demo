@@ -5,7 +5,7 @@ import ViewDetailsIcon from '../../../icons/ViewDetailsIcon';
 export default {
   label: 'View Report Details',
   icon: ViewDetailsIcon,
-  component: function CancelReport({ rowData = {} }) {
+  component: function ViewReport({ rowData = {} }) {
     const { _id } = rowData;
     const history = useHistory();
     const match = useRouteMatch();

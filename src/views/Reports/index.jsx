@@ -6,7 +6,6 @@ import { generatePath, Link, useHistory, useLocation, useRouteMatch } from 'reac
 import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import CeligoSelect from '../../components/CeligoSelect';
-import CheckPermissions from '../../components/CheckPermissions';
 import ResourceDrawer from '../../components/drawer/Resource';
 import AddIcon from '../../components/icons/AddIcon';
 import ArrowDownIcon from '../../components/icons/ArrowDownIcon';
@@ -15,14 +14,14 @@ import LoadResources from '../../components/LoadResources';
 import ResourceTable from '../../components/ResourceTable';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
-import { PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
 import ViewReportDetails from './ViewReportDetails';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
+import infoText from '../ResourceList/infoText';
+import InfoIconButton from '../../components/InfoIconButton';
 
 const useStyles = makeStyles(theme => ({
   reportTypes: {
-
     fontSize: 16,
   },
   emptySpace: {
@@ -42,14 +41,11 @@ const defaultFilter = {
 
 };
 
-const resourceTypeToLabel = {
-  eventreports: 'Flow Events',
-};
-const defaultEventReportType = 'eventreports';
-const reportTypes = [{label: resourceTypeToLabel[defaultEventReportType], value: defaultEventReportType}];
+const EVENT_REPORT_TYPE_VALUE = 'eventreports';
+const VALID_REPORT_TYPES = [{label: 'Flow Events', value: EVENT_REPORT_TYPE_VALUE}];
 
 // poll for 5 seconds
-const timerValue = 5000;
+const REPORTS_REFRESH_TIMER = 5000;
 
 const usePollLatestResourceCollection = resourceType => {
   const dispatch = useDispatch();
@@ -60,7 +56,7 @@ const usePollLatestResourceCollection = resourceType => {
     if (resourceType) {
       timerId = setInterval(() => {
         dispatch(actions.resource.requestCollection(resourceType, null, true));
-      }, timerValue);
+      }, REPORTS_REFRESH_TIMER);
     }
 
     return () => {
@@ -76,24 +72,26 @@ export default function Reports() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const location = useLocation();
+  const isValidReportType = resourceType && VALID_REPORT_TYPES.some(({value}) => value === resourceType);
 
   useEffect(() => {
-    if (!resourceType) {
+    const url = resourceType === undefined ? `${match.path}/:reportType` : match.path;
+
+    if (!isValidReportType) {
+      // EVENT_REPORT_TYPE is the default report type
       const defaultEventReportPath =
-        generatePath(`${match.path}/:reportType`, {
+        generatePath(url, {
           ...match.params,
-          reportType: defaultEventReportType,
+          reportType: EVENT_REPORT_TYPE_VALUE,
         });
 
       history.replace(defaultEventReportPath);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [history, isValidReportType, match.params, match.path, resourceType]);
 
   useEffect(() => {
     dispatch(actions.patchFilter(resourceType, defaultFilter));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dispatch, resourceType]);
   const filter =
     useSelector(state => selectors.filter(state, resourceType));
   const filterConfig = useMemo(
@@ -120,14 +118,15 @@ export default function Reports() {
   );
 
   usePollLatestResourceCollection(resourceType);
-  const selectedReportTypeLabel = () => reportTypes.find(({value}) => value === resourceType)?.label;
+  const selectedReportTypeLabel = () => VALID_REPORT_TYPES.find(({value}) => value === resourceType)?.label;
+  const info = infoText[resourceType];
+
+  const reportTypeLabel = VALID_REPORT_TYPES.find(({value}) => value === resourceType)?.label;
+
+  if (!isValidReportType) { return null; }
 
   return (
-    <CheckPermissions
-      permission={
-         PERMISSIONS.eventreports.view
-       }>
-
+    <>
       <ResourceDrawer />
       <ViewReportDetails />
       <CeligoPageBar
@@ -143,7 +142,7 @@ export default function Reports() {
             onChange={selectNewReportType}
 
           >
-            {reportTypes.map(({label, value}) => (
+            {VALID_REPORT_TYPES.map(({label, value}) => (
               <MenuItem
                 key={value}
                 value={value} >
@@ -158,7 +157,7 @@ export default function Reports() {
         <div className={classes.actions}>
           <Typography
             className={classes.reportTypes}>
-            {resourceTypeToLabel[resourceType]} report results
+            {reportTypeLabel} report results  {info && <InfoIconButton info={info} />}
           </Typography>
           <div className={classes.emptySpace} />
 
@@ -168,10 +167,10 @@ export default function Reports() {
             to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
             variant="text"
             color="primary">
-            <AddIcon /> Create {resourceTypeToLabel[resourceType]}
+            <AddIcon /> Create {reportTypeLabel}
           </IconTextButton>
         </div>
-        <LoadResources required resources={`${resourceType || defaultEventReportType},integrations,flows`}>
+        <LoadResources required resources={`${resourceType},integrations,flows`}>
           {list.total === 0 ? (
             <Typography>
               {'You don\'t have any report results'}
@@ -190,6 +189,6 @@ export default function Reports() {
         count={list.count}
         maxCount={list.filtered}
       />
-    </CheckPermissions>
+    </>
   );
 }

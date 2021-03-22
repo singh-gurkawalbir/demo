@@ -66,11 +66,6 @@ describe('selectors.mkGetChildIntegrations ', () => {
 
     expect(result).toEqual(undefined);
   });
-  test('should return null for a an empty integrationId', () => {
-    const result = childIntegrationSel(state, null);
-
-    expect(result).toEqual(null);
-  });
   test('should return all v2 childIntegrations', () => {
     const result = childIntegrationSel(state, someParentIntegrationIdv2);
 
