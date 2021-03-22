@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useCallback } from 'react';
-import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ResourceTable from '../../ResourceTable';
@@ -9,6 +9,7 @@ import Spinner from '../../Spinner';
 import PreviewLogDetails from './PreviewLogDetails';
 import SearchIcon from '../../icons/SearchIcon';
 import IconTextButton from '../../IconTextButton';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   listContainer: {
@@ -47,7 +48,7 @@ export default function LogsTable({ flowId, exportId }) {
   const nextPageURL = useSelector(state => selectors.listenerLogs(state, exportId).nextPageURL);
   const hasDebugLogs = useSelector(state => !!selectors.logsSummary(state, exportId).length);
   const logsStatus = useSelector(state => selectors.logsStatus(state, exportId));
-  const logsInCurrPage = useSelector(state => selectors.logsInCurrPageSelector(state, exportId), shallowEqual);
+  const logsInCurrPage = useSelectorMemo(selectors.mkLogsInCurrPageSelector, exportId);
   const currPageFirstKey = logsInCurrPage[0]?.key;
 
   useEffect(() => {

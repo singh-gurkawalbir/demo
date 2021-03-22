@@ -5092,12 +5092,14 @@ selectors.canEnableDebug = (state, exportId, flowId) => {
   return !!userPermissionsOnConnection;
 };
 
-selectors.logsInCurrPageSelector = (state, exportId) => {
-  const debugLogsList = selectors.logsSummary(state, exportId);
-  const filterOptions = selectors.filter(state, LISTENER_LOG_FILTER_KEY);
-  const { currPage = 0 } = filterOptions.paging || {};
+selectors.mkLogsInCurrPageSelector = () => createSelector(
+  selectors.logsSummary,
+  state => selectors.filter(state, LISTENER_LOG_FILTER_KEY),
+  (debugLogsList, filterOptions) => {
+    const { currPage = 0 } = filterOptions.paging || {};
 
-  return debugLogsList.slice(currPage * LISTENER_LOG_DEFAULT_ROWS_PER_PAGE, (currPage + 1) * LISTENER_LOG_DEFAULT_ROWS_PER_PAGE);
-};
+    return debugLogsList.slice(currPage * LISTENER_LOG_DEFAULT_ROWS_PER_PAGE, (currPage + 1) * LISTENER_LOG_DEFAULT_ROWS_PER_PAGE);
+  }
+);
 
 // #endregion listener request logs selectors

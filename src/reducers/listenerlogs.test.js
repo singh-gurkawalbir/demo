@@ -118,9 +118,11 @@ describe('Listener request logs region selectors test cases', () => {
       expect(selectors.canEnableDebug(state, 'exp-999', 'flow-456')).toEqual(true);
     });
   });
-  describe('selectors.logsInCurrPageSelector test cases', () => {
+  describe('selectors.mkLogsInCurrPageSelector test cases', () => {
+    const selector = selectors.mkLogsInCurrPageSelector();
+
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.logsInCurrPageSelector()).toEqual([]);
+      expect(selector()).toEqual([]);
     });
     test('should return empty array incase of no logs', () => {
       const state = {
@@ -137,7 +139,7 @@ describe('Listener request logs region selectors test cases', () => {
         },
       };
 
-      expect(selectors.logsInCurrPageSelector(state, exportId)).toEqual([]);
+      expect(selector(state, exportId)).toEqual([]);
     });
     test('should return empty array in case of no logs on the current page', () => {
       const state = {
@@ -161,7 +163,7 @@ describe('Listener request logs region selectors test cases', () => {
         },
       };
 
-      expect(selectors.logsInCurrPageSelector(state, exportId)).toEqual([]);
+      expect(selector(state, exportId)).toEqual([]);
     });
     test('should return correct logs list for the current page', () => {
       const state = {
@@ -185,7 +187,7 @@ describe('Listener request logs region selectors test cases', () => {
         },
       };
 
-      expect(selectors.logsInCurrPageSelector(state, exportId)).toEqual([{
+      expect(selector(state, exportId)).toEqual([{
         key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-200-POST',
         time: 1615807924879,
         method: 'POST',
