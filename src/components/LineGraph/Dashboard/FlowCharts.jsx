@@ -124,6 +124,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
     flowsConfig
   );
   const availableUsers = useSelector(state => selectors.availableUsersList(state, integrationId));
+  const currentUser = useSelector(state => selectors.userProfile(state));
   const flowResources = useMemo(
     () => {
       const flows = resourceList.resources &&
@@ -173,22 +174,25 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
       modifiedName = resource.name;
     } else if (user) {
       modifiedName = user.name;
+    } else if (resourceId === currentUser?._id) {
+      modifiedName = currentUser?.name || currentUser?.email;
     }
 
     return modifiedName;
   };
 
   const handleMouseEnter = e => {
-    const id = e?.target?.id;
+    const targetId = e?.target?.id;
 
-    if (!id || typeof id !== 'string') {
+    if (!targetId || typeof targetId !== 'string') {
       return false;
     }
-    const resourceId = id.split('-')[0];
+    const resourceId = targetId.split('-')[0];
 
     if (resourceId) {
       mouseHoverTimer = setTimeout(() => {
-        const object = selectedResources.reduce((acc, cur) => {
+        const collection = id === 'resolved' ? users : selectedResources;
+        const object = collection.reduce((acc, cur) => {
           acc[cur] = resourceId === cur ? 1 : 0.2;
 
           return acc;
