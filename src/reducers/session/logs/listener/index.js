@@ -2,7 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, exportId, logKey, logDetails, logs, nextPageURL, loadMore, deletedLogs, hasNewLogs, activeLogKey, error } = action;
+  const { type, exportId, logKey, logDetails, logs, nextPageURL, loadMore, deletedLogKey, hasNewLogs, activeLogKey, error } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -22,7 +22,7 @@ export default (state = {}, action) => {
         draft[exportId].nextPageURL = nextPageURL;
 
         draft[exportId].logsSummary = loadMore
-          ? [...draft[exportId]?.logsSummary || [], ...logs]
+          ? [...logs, ...draft[exportId]?.logsSummary || []]
           : logs;
         break;
 
@@ -41,11 +41,9 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.LOGS.LISTENER.LOG.RECEIVED:
-        if (!draft[exportId]) break;
+        if (!draft[exportId] || !draft[exportId].logsDetails) break;
         delete draft[exportId].error;
-        if (!draft[exportId].logsDetails) {
-          draft[exportId].logsDetails = {};
-        }
+
         draft[exportId].logsDetails[logKey] = {
           status: 'received',
           ...logDetails,
@@ -59,17 +57,15 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.LOGS.LISTENER.LOG.DELETED: {
-        // user can only delete one log at a time from UI
-        // hence we pick first index from 'deletedLogs'
-        if (!draft[exportId] || !deletedLogs[0] || !draft[exportId].logsSummary) break;
+        if (!draft[exportId] || !deletedLogKey || !draft[exportId].logsSummary) break;
         delete draft[exportId].error;
         const logs = draft[exportId].logsSummary;
-        const index = logs.findIndex(l => l.key === deletedLogs[0]);
+        const index = logs.findIndex(l => l.key === deletedLogKey);
 
-        if (index && index !== -1) {
+        if (index !== -1) {
           logs.splice(index, 1);
         }
-        delete draft[exportId].logsDetails?.[deletedLogs[0]];
+        delete draft[exportId].logsDetails?.[deletedLogKey];
 
         break;
       }

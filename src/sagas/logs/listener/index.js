@@ -208,7 +208,9 @@ export function* removeLogs({ exportId, logsToRemove }) {
   }
   const { deleted = [], errors = [] } = response || {};
 
-  yield put(actions.logs.listener.logDeleted(exportId, deleted));
+  // user can only delete one log at a time from UI
+  // hence we pick first index from 'deleted' array
+  yield put(actions.logs.listener.logDeleted(exportId, deleted[0]));
   if (errors.length) {
     yield put(actions.logs.listener.failed(exportId, errors[0]));
   }

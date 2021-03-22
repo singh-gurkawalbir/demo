@@ -357,12 +357,12 @@ describe('Listener logs reducer', () => {
     });
   });
   describe('LISTENER.LOG.DELETED action', () => {
-    const deletedLogs = ['200-POST'];
+    const deletedLogKey = '200-POST';
 
     test('should exit and not throw error if the listener state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.logDeleted(exportId, deletedLogs)
+        actions.logs.listener.logDeleted(exportId, deletedLogKey)
       );
 
       expect(newState).toEqual({});
@@ -385,7 +385,7 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.logDeleted(exportId, deletedLogs)
+        actions.logs.listener.logDeleted(exportId, deletedLogKey)
       );
 
       expect(newState).toBe(initialState);
@@ -415,7 +415,7 @@ describe('Listener logs reducer', () => {
 
       const newState = reducer(
         initialState,
-        actions.logs.listener.logDeleted(exportId, deletedLogs)
+        actions.logs.listener.logDeleted(exportId, deletedLogKey)
       );
       const expectedState = {
         [exportId]: {
@@ -447,7 +447,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.logDeleted(exportId, deletedLogs)
+        actions.logs.listener.logDeleted(exportId, deletedLogKey)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -787,9 +787,13 @@ describe('Listener logs selectors', () => {
       error: {key: logKey},
     },
   };
+  const tempState = reducer(
+    initialState,
+    actions.logs.listener.requestLogDetails(flowId, exportId, logKey)
+  );
 
   const newState = reducer(
-    initialState,
+    tempState,
     actions.logs.listener.receivedLogDetails(exportId, logKey, logDetails)
   );
 
