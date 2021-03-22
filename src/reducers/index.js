@@ -1569,16 +1569,13 @@ selectors.mkIntegrationFlowGroups = () => {
   const flowGroupings = selectors.mkFlowGroupingsSections();
 
   return createSelector(
-    state => state?.data?.resources?.integrations,
     state => state?.data?.resources?.flows,
     (_, integrationId) => integrationId,
-    selectors.isIntegrationAppVersion2,
+    selectors.isIntegrationAppV1,
     (state, integrationId) => integrationAppFlowSections(state, integrationId),
     (state, integrationId) => flowGroupings(state, integrationId),
-    (integrations = emptyArray, flows = emptyArray, integrationId, isIAV2, flowSections, flowGroupings) => {
-      const integration = integrations.find(i => i._id === integrationId);
-
-      if (integration?._connectorId && !isIAV2) {
+    (flows = emptyArray, integrationId, isIAV1, flowSections, flowGroupings) => {
+      if (isIAV1) {
         return flowSections;
       }
 
@@ -1606,18 +1603,17 @@ selectors.mkIntegrationFlowsByGroup = () => {
     (_1, _2, childId) => childId,
     (_1, _2, _3, groupId) => groupId,
     selectors.currentEnvironment,
-    selectors.isIntegrationAppVersion2,
+    selectors.isIntegrationAppV1,
     (state, integrationId, childId, sectionId) => integrationAppV1Flows(state, integrationId, childId, sectionId),
-    (integrations = emptyArray, flows = emptyArray, integrationId, childId, groupId, currentEnvironment, isIAV2, IAV1Flows) => {
+    (integrations = emptyArray, flows = emptyArray, integrationId, childId, groupId, currentEnvironment, isIAV1, IAV1Flows) => {
       if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
         return flows.filter(flow => (!flow._integrationId && !!flow.sandbox === (currentEnvironment === 'sandbox')));
       }
-      const integration = integrations.find(i => i._id === integrationId);
       const childIntegrations = integrations
         .filter(integration => (integration._parentId === integrationId || integration._id === integrationId))
         .map(integration => integration._id);
 
-      if (integration?._connectorId && !isIAV2) {
+      if (isIAV1) {
         return flows.filter(flow => IAV1Flows.includes(flow._id));
       }
 
