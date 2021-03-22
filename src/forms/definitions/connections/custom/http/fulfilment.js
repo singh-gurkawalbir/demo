@@ -79,6 +79,10 @@ export default {
         label: 'Application details',
         fields: [
           'http.unencrypted.clientId',
+          'http.encrypted.clientSecret',
+          'http.unencrypted.username',
+          'http.encrypted.password',
+          'http.auth.token.token',
         ]},
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
