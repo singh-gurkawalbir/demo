@@ -37,25 +37,25 @@ export default {
             showTime />
         );
       },
-      value: function LogDetailsLink(l, {exportId}) {
+      value: function LogDetailsLink(log, {exportId}) {
         const classes = useStyles();
         const dispatch = useDispatch();
         const handleActionClick = useCallback(() => {
-          dispatch(actions.logs.listener.setActiveLog(exportId, l.key));
-        }, [dispatch, exportId, l.key]);
+          dispatch(actions.logs.listener.setActiveLog(exportId, log.key));
+        }, [dispatch, exportId, log.key]);
 
         return (
           <IconTextButton
             className={classes.textColor}
             onClick={handleActionClick}>
-            <CeligoTimeAgo date={l.utcDateTime} />
+            <CeligoTimeAgo date={log.utcDateTime} />
           </IconTextButton>
         );
       },
     },
     {
       heading: 'Method',
-      value: l => l.method,
+      value: log => log.method,
     },
     {
       headerValue: function SelectResponseCode(_, { flowId, exportId }) {
@@ -75,15 +75,15 @@ export default {
             options={LISTENER_LOGS_STATUS_CODES} />
         );
       },
-      value: l => l.statusCode,
+      value: log => log.statusCode,
     },
   ],
-  rowActions: (r, {flowId, exportId}) => ([
+  rowActions: (log, {flowId, exportId}) => ([
     {
       icon: TrashIcon,
       onClick: (dispatch, confirmDialog) => {
         const handleClick = () => {
-          dispatch(actions.logs.listener.removeLog(flowId, exportId, [r?.key]));
+          dispatch(actions.logs.listener.removeLog(flowId, exportId, [log?.key]));
         };
 
         confirmDialog({
