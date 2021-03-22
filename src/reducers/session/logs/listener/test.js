@@ -129,7 +129,7 @@ describe('Listener logs reducer', () => {
           logsStatus: 'received',
           hasNewLogs: false,
           nextPageURL: '/api/url',
-          logsSummary: [{key: 1}, {key: 2}, ...logsSummary],
+          logsSummary: [...logsSummary, {key: 1}, {key: 2}],
         },
       };
 

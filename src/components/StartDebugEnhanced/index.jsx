@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Button, MenuItem, InputLabel, FormControl} from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
@@ -74,35 +75,26 @@ const debugOptions = [
   { label: 'Next 60 mins', value: '60' },
 ];
 
+const getFormattedUnit = unit => {
+  if (unit === 'second') {
+    return 's';
+  } if (unit === 'minute') {
+    return 'm';
+  }
+
+  return unit;
+};
+
 const formatter = (value, unit, suffix) => {
   if (suffix === 'ago') {
     return 'Start debug';
   }
-  let formattedUnit = '';
 
-  if (unit === 'second') {
-    formattedUnit = 's';
-  } else if (unit === 'minute') {
-    formattedUnit = 'm';
-  } else {
-    formattedUnit = unit;
-  }
-
-  return `${value}${formattedUnit} remaining`;
+  return `${value}${getFormattedUnit(unit)} remaining`;
 };
 const lastRunFormatter = (value, unit, suffix, epochSeconds, nextFormatter) => {
   if (suffix === 'ago') {
-    let formattedUnit = '';
-
-    if (unit === 'second') {
-      formattedUnit = 's';
-    } else if (unit === 'minute') {
-      formattedUnit = 'm';
-    } else {
-      formattedUnit = unit;
-    }
-
-    return `${value}${formattedUnit} ago`;
+    return `${value}${getFormattedUnit(unit)} ago`;
   }
 
   // we use the default formatter for all other units.
@@ -241,3 +233,11 @@ export default function StartDebugEnhanced({
     </>
   );
 }
+
+StartDebugEnhanced.propTypes = {
+  resourceId: PropTypes.string.isRequired,
+  resourceType: PropTypes.string.isRequired,
+  disabled: PropTypes.bool,
+  startDebugHandler: PropTypes.func,
+  stopDebugHandler: PropTypes.func,
+};
