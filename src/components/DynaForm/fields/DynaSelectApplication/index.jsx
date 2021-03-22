@@ -13,8 +13,13 @@ import SearchIcon from '../../../icons/SearchIcon';
 import actions from '../../../../actions';
 import useFormContext from '../../../Form/FormContext';
 import { isNewId } from '../../../../utils/resource';
+import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
+  fieldWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
   optionRoot: {
     display: 'flex',
     borderBottom: `1px solid ${theme.palette.divider}`,
@@ -322,9 +327,12 @@ export default function SelectApplication(props) {
       key={id}
       disabled={disabled}
       className={classes.formControl}>
-      <InputLabel shrink className={classes.inputLabel} htmlFor={id}>
-        {label}
-      </InputLabel>
+      <div className={classes.fieldWrapper}>
+        <InputLabel shrink className={classes.inputLabel} htmlFor={id}>
+          {label}
+        </InputLabel>
+        <FieldHelp {...props} />
+      </div>
       <Select
         data-public
         ref={ref}

@@ -12,7 +12,6 @@ import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../../components/LoadResources';
 import Spinner from '../../../../../../components/Spinner';
-import SpinnerWrapper from '../../../../../../components/SpinnerWrapper';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 import DrawerTitleBar from './TitleBar';
 
@@ -234,9 +233,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
           </div>
         </>
       ) : (
-        <SpinnerWrapper>
-          <Spinner />
-        </SpinnerWrapper>
+        <Spinner centerAll />
       )}
     </Drawer>
   );

@@ -389,7 +389,7 @@ export default function DynaRelatedList(props) {
           </div>
           <div>
             {status === 'refreshed' ? (
-              <Spinner size={24} />
+              <Spinner />
             ) : (
               <>
                 <ActionButton

@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import DynaPreviewComponentsTable from '../../../DynaForm/fields/DynaPreviewComponentsTable';
 import Spinner from '../../../Spinner';
-import SpinnerWrapper from '../../../SpinnerWrapper';
 
 const columns = [
   {
@@ -33,10 +32,7 @@ export default function PreviewTable({ templateId }) {
   }
   if (status === 'requested') {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
-
+      <Spinner centerAll />
     );
   }
 

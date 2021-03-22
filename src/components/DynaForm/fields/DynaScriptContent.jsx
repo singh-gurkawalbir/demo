@@ -70,7 +70,7 @@ export default function DynaScriptContent(props) {
   if (scriptContent === undefined) {
     return (
       <span className={classes.spinner}>
-        <Spinner size={24} />
+        <Spinner />
       </span>
     );
   }

@@ -104,7 +104,7 @@ export default function DynaSalesforceLookupFilters(props) {
         <Typography className={classes.loaderSObjectText}>
           Loading
         </Typography>
-        <Spinner size={24} />
+        <Spinner />
       </div>
 
     );

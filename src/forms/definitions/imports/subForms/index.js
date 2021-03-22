@@ -6,6 +6,7 @@ import compressFiles from './compressFiles';
 import dataMappings from './dataMappings';
 import advancedSettings from './advancedSettings';
 import fileApiIdentifier from './fileApiIdentifier';
+import fileAdvanced from './fileAdvanced';
 
 export default {
   common,
@@ -16,4 +17,5 @@ export default {
   compressFiles,
   advancedSettings,
   fileApiIdentifier,
+  fileAdvanced,
 };

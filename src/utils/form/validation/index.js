@@ -201,6 +201,19 @@ export const getValueFromField = field => {
   return trimmedValue;
 };
 
+const isValidResultantComputation = (field, {showValidationBeforeTouched, touched, isValid, errorMessages}) => {
+  if (!showValidationBeforeTouched && !touched) {
+    field.isValid = true;
+    field.isDiscretelyInvalid = !isValid;
+    field.errorMessages = '';
+
+    return;
+  }
+
+  field.isValid = isValid;
+  field.isDiscretelyInvalid = !isValid;
+  field.errorMessages = errorMessages;
+};
 // validate field  will mutate field argument...this is to leverage immer capabilities
 export const validateField = (
   field,
@@ -215,12 +228,18 @@ export const validateField = (
     validWhen = {},
     touched = false,
     forceComputation,
+    forcedErrorMessages,
+    forcedIsValid,
   } = field;
   let isValid = true;
   const errorMessages = [];
   const formattedErrorMessage = () => errorMessages.join('. ');
 
+  // forcing isValid affects ignores required true computation
   if (isValueForceComputed(forceComputation, 'isValid')) {
+    isValidResultantComputation(field,
+      {showValidationBeforeTouched, touched, isValid: forcedIsValid, errorMessages: forcedErrorMessages || ''});
+
     return;
   }
 
@@ -285,17 +304,8 @@ export const validateField = (
     }
   }
 
-  if (!showValidationBeforeTouched && !touched) {
-    field.isValid = true;
-    field.isDiscretelyInvalid = !isValid;
-    field.errorMessages = '';
-
-    return;
-  }
-
-  field.isValid = isValid;
-  field.isDiscretelyInvalid = !isValid;
-  field.errorMessages = formattedErrorMessage();
+  isValidResultantComputation(field,
+    {showValidationBeforeTouched, touched, isValid, errorMessages: formattedErrorMessage()});
 };
 
 export const validateAllFields = ({

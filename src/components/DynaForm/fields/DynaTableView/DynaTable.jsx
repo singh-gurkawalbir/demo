@@ -318,7 +318,7 @@ export const DynaTable = props => {
                   <RefreshIcon className={classes.refreshIcon} onClick={onFetchResource(r.id)} />
                 )}
                 {r.supportsRefresh && isLoading?.[r.id] && (
-                  <Spinner size={24} />
+                  <Spinner />
                 )}
               </div>
             ))}
