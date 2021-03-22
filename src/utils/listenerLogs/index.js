@@ -3,12 +3,13 @@ export const FILTER_KEY = 'listenerLogs';
 export const DEFAULT_ROWS_PER_PAGE = 2;
 
 export const LISTENER_LOGS_RANGE_FILTERS = [
-  {id: 'today', label: 'Today'},
-  {id: 'yesterday', label: 'Yesterday'},
+  {id: 'last15minutes', label: 'Last 15 minutes'},
   {id: 'last24hours', label: 'Last 24 hours'},
-  {id: 'last7days', label: 'Last 7 Days'},
-  {id: 'last15days', label: 'Last 15 Days'},
-  {id: 'last30days', label: 'Last 30 Days'},
+  {id: 'last30minutes', label: 'Last 30 minutes'},
+  {id: 'today', label: 'Today'},
+  {id: 'last1hour', label: 'Last hour'},
+  {id: 'yesterday', label: 'Yesterday'},
+  {id: 'last4hours', label: 'Last 4 hours'},
   {id: 'custom', label: 'Custom'},
 ];
 

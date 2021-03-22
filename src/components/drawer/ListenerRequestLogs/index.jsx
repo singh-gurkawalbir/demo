@@ -54,7 +54,7 @@ function RouterWrappedContent({ flowId, exportId, handleClose }) {
         <LogsDrawerActions flowId={flowId} exportId={exportId} />
       </DrawerSubHeader>
 
-      <DrawerContent fullWidth >
+      <DrawerContent noPadding >
         <LogsTable flowId={flowId} exportId={exportId} />
       </DrawerContent>
 

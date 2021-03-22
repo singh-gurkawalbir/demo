@@ -33,7 +33,8 @@ export default {
             filterBy="time"
             filterKey={FILTER_KEY}
             handleChange={handleChange}
-            customPresets={LISTENER_LOGS_RANGE_FILTERS} />
+            customPresets={LISTENER_LOGS_RANGE_FILTERS}
+            showTime />
         );
       },
       value: function LogDetailsLink(l, {exportId}) {
