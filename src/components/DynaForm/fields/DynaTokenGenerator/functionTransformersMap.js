@@ -281,4 +281,20 @@ export default {
       },
     }),
   },
+  'fulfilment.com': {
+    responseParser: resp => ({
+      'http.auth.token.token': resp && resp.access_token,
+    }),
+    payloadTransformer: form => ({
+      baseURI: 'https://api.fulfillment.com',
+      body: { username: form['/http/unencrypted/username'],
+        password: form['/http/encrypted/password'],
+        grant_type: 'password',
+        client_id:
+        form['/http/unencrypted/clientId'],
+        client_secret:
+        form['/http/encrypted/clientSecret'],
+        scope: 'oms'},
+    }),
+  },
 };
