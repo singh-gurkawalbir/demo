@@ -368,7 +368,6 @@ function CategoryMappings({
 }
 
 function CategoryMappingDrawer({ integrationId, parentUrl }) {
-  console.log('CategoryMapping drawer render');
   const dispatch = useDispatch();
   const classes = useStyles();
   const history = useHistory();

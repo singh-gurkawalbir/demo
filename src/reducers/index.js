@@ -2176,6 +2176,13 @@ selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
   return isIntegrationAppVerion2(integration, skipCloneCheck);
 };
 
+selectors.isIntegrationAppV1 = (state, integrationId) => {
+  const isIntegrationAppV2 = selectors.isIntegrationAppVersion2(state, integrationId);
+  const integration = selectors.resource(state, 'integrations', integrationId);
+
+  return !!integration?._connectorId && !isIntegrationAppV2;
+};
+
 selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {
   if (!state || !integrationId) {
     return null;
