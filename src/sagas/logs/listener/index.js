@@ -5,6 +5,7 @@ import actions from '../../../actions';
 import { apiCallWithRetry } from '../..';
 import { selectors } from '../../../reducers';
 import getRequestOptions from '../../../utils/requestOptions';
+import { FILTER_KEY } from '../../../utils/listenerLogs';
 
 export function* fetchNewLogs({ flowId, exportId, timeGt }) {
   const opts = {
@@ -68,7 +69,7 @@ export function* retryToFetchRequests({retryCount = 0, fetchRequestsPath, isFilt
   };
 
   // we try max of 4 times (to cover 1 hour window) as BE route may not give all the results on first try or after that (s3 limitation)
-  if (!isFilterApplied && retryCount > 3) {
+  if (isFilterApplied && retryCount > 3) {
     return {
       nextPageURL: fetchRequestsPath,
     };
@@ -97,13 +98,13 @@ export function* retryToFetchRequests({retryCount = 0, fetchRequestsPath, isFilt
     return {requests, nextPageURL};
   }
 
-  return yield call(retryToFetchRequests, {retryCount: retryCount + 1, fetchRequestsPath: nextPageURL });
+  return yield call(retryToFetchRequests, {retryCount: retryCount + 1, fetchRequestsPath: nextPageURL, isFilterApplied: true });
 }
 
 export function* requestLogs({ flowId, exportId, loadMore }) {
   const logsState = yield select(selectors.listenerLogs, exportId);
 
-  const filters = yield select(selectors.filter, 'listenerLogs');
+  const filters = yield select(selectors.filter, FILTER_KEY);
 
   const requestOptions = getRequestOptions(
     actionTypes.LOGS.LISTENER.REQUEST,
@@ -145,7 +146,7 @@ export function* requestLogDetails({ flowId, exportId, logKey }) {
 
   try {
     log = yield call(apiCallWithRetry, { path });
-  } catch (error) {
+  } catch (e) {
     return;
   }
 
@@ -193,7 +194,7 @@ export function* removeLogs({ flowId, exportId, logsToRemove }) {
 
   try {
     response = yield call(apiCallWithRetry, { path, opts });
-  } catch (error) {
+  } catch (e) {
     return;
   }
   const { deleted = [], errors = [] } = response || {};
