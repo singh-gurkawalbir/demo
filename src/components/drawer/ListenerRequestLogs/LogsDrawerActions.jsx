@@ -14,13 +14,13 @@ const emptyObj = {};
 export default function LogsDrawerActions({ flowId, exportId }) {
   const dispatch = useDispatch();
   const canEnableDebug = useSelector(state => selectors.canEnableDebug(state, exportId, flowId));
-  const { hasMore, logsLength, logsStatus } = useSelector(state => {
+  const { hasMore, logsCount, loadMoreStatus } = useSelector(state => {
     const l = selectors.listenerLogs(state, exportId);
 
     return {
       hasMore: !!l.nextPageURL,
-      logsLength: l.logsSummary?.length,
-      logsStatus: l.logsStatus,
+      logsCount: l.logsSummary?.length,
+      loadMoreStatus: l.loadMoreStatus,
     };
   }, shallowEqual);
   const filterOptions = useSelector(state => selectors.filter(state, FILTER_KEY), shallowEqual);
@@ -52,13 +52,14 @@ export default function LogsDrawerActions({ flowId, exportId }) {
     [dispatch, exportId, flowId]
   );
   const fetchMoreLogs = useCallback(() => fetchLogs(true), [fetchLogs]);
+  const refreshLogs = useCallback(() => fetchLogs(), [fetchLogs]);
   const paginationOptions = useMemo(
     () => ({
       loadMoreHandler: fetchMoreLogs,
       hasMore,
-      loading: logsStatus === 'requested',
+      loading: loadMoreStatus === 'requested',
     }),
-    [hasMore, logsStatus, fetchMoreLogs]
+    [hasMore, loadMoreStatus, fetchMoreLogs]
   );
 
   const startDebugHandler = useCallback(value => {
@@ -70,11 +71,11 @@ export default function LogsDrawerActions({ flowId, exportId }) {
 
   return (
     <>
-      {logsLength ? (
+      {logsCount ? (
         <ActionGroup>
           <CeligoPagination
             {...paginationOptions}
-            count={logsLength}
+            count={logsCount}
             page={currPage}
             rowsPerPage={DEFAULT_ROWS_PER_PAGE}
             onChangePage={handleChangePage} />
@@ -89,7 +90,7 @@ export default function LogsDrawerActions({ flowId, exportId }) {
           startDebugHandler={startDebugHandler}
           stopDebugHandler={stopDebugHandler} />
         <IconTextButton
-          onClick={fetchLogs}
+          onClick={refreshLogs}
           ata-test="refreshLogs"
           disabled={!enableRefresh} >
           <RefreshIcon />

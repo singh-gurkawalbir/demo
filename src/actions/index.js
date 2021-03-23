@@ -2190,6 +2190,7 @@ const logs = {
     received: (exportId, logs, nextPageURL, loadMore) => action(actionTypes.LOGS.LISTENER.RECEIVED, { exportId, logs, nextPageURL, loadMore }),
     failed: (exportId, error) => action(actionTypes.LOGS.LISTENER.FAILED, { exportId, error }),
     clear: exportId => action(actionTypes.LOGS.LISTENER.CLEAR, { exportId }),
+    startLogsPoll: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.START_POLL, { flowId, exportId }),
     stopLogsPoll: (exportId, hasNewLogs) => action(actionTypes.LOGS.LISTENER.STOP_POLL, { exportId, hasNewLogs }),
     setActiveLog: (exportId, activeLogKey) => action(actionTypes.LOGS.LISTENER.ACTIVE_LOG, { exportId, activeLogKey }),
   },

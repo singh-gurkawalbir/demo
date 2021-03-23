@@ -10,17 +10,22 @@ export default (state = {}, action) => {
         if (!draft[exportId]) {
           draft[exportId] = {};
         }
-        draft[exportId].logsStatus = 'requested';
+        if (loadMore) {
+          draft[exportId].loadMoreStatus = 'requested';
+        } else {
+          draft[exportId].logsStatus = 'requested';
+        }
         break;
 
       case actionTypes.LOGS.LISTENER.RECEIVED:
         if (!draft[exportId]) break;
         draft[exportId].logsStatus = 'received';
+        draft[exportId].loadMoreStatus = 'received';
         draft[exportId].hasNewLogs = false;
         draft[exportId].nextPageURL = nextPageURL;
 
         draft[exportId].logsSummary = loadMore
-          ? [...logs, ...draft[exportId]?.logsSummary || []]
+          ? [...draft[exportId]?.logsSummary || [], ...logs]
           : logs;
         break;
 
@@ -71,6 +76,11 @@ export default (state = {}, action) => {
       case actionTypes.LOGS.LISTENER.DEBUG.STOP:
         if (!draft[exportId]) break;
         draft[exportId].debugOn = false;
+        break;
+
+      case actionTypes.LOGS.LISTENER.START_POLL:
+        if (!draft[exportId]) break;
+        draft[exportId].debugOn = true;
         break;
 
       case actionTypes.LOGS.LISTENER.STOP_POLL:

@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import moment from 'moment';
 import ResourceTable from '../../ResourceTable';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -15,44 +16,77 @@ const useStyles = makeStyles(theme => ({
   listContainer: {
     height: '100%',
     display: 'flex',
-    overflowY: 'auto',
   },
   tableWrapper: {
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     flexGrow: 1,
+    overflowY: 'auto',
+  },
+  textWrapper: {
+    padding: theme.spacing(3),
   },
   previewWrapper: {
     flexDirection: 'column',
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     flexGrow: 4,
     padding: theme.spacing(2),
+    position: 'relative',
   },
   searchMoreWrapper: {
     textAlign: 'center',
     '& > button': {
-      minWidth: 70,
+      fontFamily: 'Roboto400',
+      minWidth: 190,
       color: theme.palette.common.white,
       marginBottom: theme.spacing(2),
       marginTop: theme.spacing(2),
-      padding: theme.spacing(1, 1, 1, 1),
+      padding: theme.spacing(1, 5, 1, 5),
     },
   },
   searchMoreIcon: {
     height: 18,
+  },
+  searchMoreSpinner: {
+    marginRight: theme.spacing(1),
+    color: theme.palette.common.white,
   },
 }));
 
 export default function LogsTable({ flowId, exportId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const nextPageURL = useSelector(state => selectors.listenerLogs(state, exportId).nextPageURL);
+  const debugUntil = useSelector(state => {
+    const resource = selectors.resource(state, 'exports', exportId);
+    const {debugUntil} = resource;
+
+    if (!debugUntil) {
+      return;
+    }
+    if (moment().isAfter(moment(debugUntil))) {
+      return;
+    }
+
+    return debugUntil;
+  });
+  const { hasNextPage, loadMoreStatus, logsStatus } = useSelector(state => {
+    const l = selectors.listenerLogs(state, exportId);
+
+    return {
+      hasNextPage: !!l.nextPageURL,
+      loadMoreStatus: l.loadMoreStatus,
+      logsStatus: l.logsStatus,
+    };
+  }, shallowEqual);
+
   const hasDebugLogs = useSelector(state => !!selectors.logsSummary(state, exportId).length);
-  const logsStatus = useSelector(state => selectors.logsStatus(state, exportId));
   const logsInCurrPage = useSelectorMemo(selectors.mkLogsInCurrPageSelector, exportId);
   const currPageFirstKey = logsInCurrPage[0]?.key;
 
   useEffect(() => {
     dispatch(actions.logs.listener.request(flowId, exportId));
+    if (debugUntil) {
+      dispatch(actions.logs.listener.startLogsPoll(flowId, exportId));
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -75,35 +109,43 @@ export default function LogsTable({ flowId, exportId }) {
 
   return (
     <>
-      {!hasDebugLogs && !nextPageURL ? (
-        <Typography variant="h5">
-          You don’t have any debug log entries.
-        </Typography>
-      ) : (
-        <div className={classes.listContainer}>
-          <div className={classes.tableWrapper}>
-            <ResourceTable
-              resources={logsInCurrPage}
-              resourceType="listenerLogs"
-              actionProps={actionProps}
-              variant="slim" />
-            {!hasDebugLogs && nextPageURL && (
-              <div className={classes.searchMoreWrapper}>
-                <IconTextButton
-                  variant="outlined" color="primary"
-                  onClick={loadMoreLogs}>
-                  <><SearchIcon className={classes.searchMoreIcon} />
-                    Search more
-                  </>
-                </IconTextButton>
-              </div>
-            )}
+      <div className={classes.listContainer}>
+        <div className={classes.tableWrapper}>
+          <ResourceTable
+            resources={logsInCurrPage}
+            resourceType="listenerLogs"
+            actionProps={actionProps}
+            variant="slim" />
+          {!hasDebugLogs && !hasNextPage && (
+          <Typography variant="h4" className={classes.textWrapper}>
+            You don’t have any debug log entries.
+          </Typography>
+          )}
+          {hasNextPage && (
+          <div className={classes.searchMoreWrapper}>
+            <IconTextButton
+              variant="outlined" color="primary"
+              onClick={loadMoreLogs}>
+              {loadMoreStatus === 'requested' ? (
+                <>
+                  <Spinner className={classes.searchMoreSpinner} size={18} />
+                  Searching
+                </>
+              ) : (
+                <><SearchIcon className={classes.searchMoreIcon} />
+                  Search more
+                </>
+              )}
+            </IconTextButton>
           </div>
+          )}
+        </div>
+        {hasDebugLogs && (
           <div className={classes.previewWrapper}>
             <PreviewLogDetails flowId={flowId} exportId={exportId} />
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </>
   );
 }

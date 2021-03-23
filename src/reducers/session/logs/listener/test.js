@@ -87,7 +87,7 @@ describe('Listener logs reducer', () => {
 
       expect(newState).toEqual(expectedState);
     });
-    test('should update existing state with requested status and delete any error references', () => {
+    test('should update existing state with logsStatus as requested status if loadMore is false', () => {
       const initialState = {
         [exportId]: {
           logsStatus: 'received',
@@ -100,6 +100,25 @@ describe('Listener logs reducer', () => {
       const expectedState = {
         [exportId]: {
           logsStatus: 'requested',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should update existing state with loadMoreStatus as requested status if loadMore is true', () => {
+      const initialState = {
+        [exportId]: {
+          logsStatus: 'received',
+        },
+      };
+      const newState = reducer(
+        initialState,
+        actions.logs.listener.request(flowId, exportId, true)
+      );
+      const expectedState = {
+        [exportId]: {
+          logsStatus: 'received',
+          loadMoreStatus: 'requested',
         },
       };
 
@@ -154,6 +173,7 @@ describe('Listener logs reducer', () => {
       const expectedState = {
         [exportId]: {
           logsStatus: 'received',
+          loadMoreStatus: 'received',
           hasNewLogs: false,
           nextPageURL: '/api/url',
           logsSummary,
@@ -180,9 +200,10 @@ describe('Listener logs reducer', () => {
       const expectedState = {
         [exportId]: {
           logsStatus: 'received',
+          loadMoreStatus: 'received',
           hasNewLogs: false,
           nextPageURL: '/api/url',
-          logsSummary: [...logsSummary, {key: 1}, {key: 2}],
+          logsSummary: [{key: 1}, {key: 2}, ...logsSummary],
         },
       };
 
@@ -255,6 +276,7 @@ describe('Listener logs reducer', () => {
           hasNewLogs: false,
           logsDetails: {5642310475121: {status: 'requested'}},
           logsStatus: 'received',
+          loadMoreStatus: 'received',
           logsSummary,
           nextPageURL: '/v1(api)/flows/:_flowId',
         },
@@ -633,6 +655,74 @@ describe('Listener logs reducer', () => {
       const newState = reducer(
         initialState,
         actions.logs.listener.stopDebug(flowId, exportId)
+      );
+
+      expect(newState).toHaveProperty('sibling-export', {
+        logsStatus: 'received',
+        error: {key: 123},
+      });
+    });
+  });
+  describe('LISTENER.START.POLL action', () => {
+    test('should exit and not throw error if the listener state does not exist', () => {
+      const newState = reducer(
+        undefined,
+        actions.logs.listener.startLogsPoll(flowId, exportId)
+      );
+
+      expect(newState).toEqual({});
+    });
+    test('should correctly update the exiting state with debugOn as true', () => {
+      const initialState = {
+        [exportId]: {
+          activeLogKey: '5642310475121',
+          hasNewLogs: false,
+          logsDetails: {5642310475121: {
+            status: 'received',
+            request: {},
+            response: {},
+          }},
+          logsStatus: 'received',
+          logsSummary: [{key: '5642310475121', time: 1234}],
+          nextPageURL: '/v1(api)/flows/:_flowId',
+        },
+      };
+
+      const newState = reducer(
+        initialState,
+        actions.logs.listener.startLogsPoll(flowId, exportId)
+      );
+      const expectedState = {
+        [exportId]: {
+          activeLogKey: '5642310475121',
+          hasNewLogs: false,
+          logsDetails: {5642310475121: {
+            status: 'received',
+            request: {},
+            response: {},
+          }},
+          logsStatus: 'received',
+          logsSummary: [{key: '5642310475121', time: 1234}],
+          nextPageURL: '/v1(api)/flows/:_flowId',
+          debugOn: true,
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should not alter any other sibling state', () => {
+      const initialState = {
+        'sibling-export': {
+          logsStatus: 'received',
+          error: {key: 123},
+        },
+        [exportId]: {
+          logsStatus: 'received',
+        },
+      };
+      const newState = reducer(
+        initialState,
+        actions.logs.listener.startLogsPoll(flowId, exportId)
       );
 
       expect(newState).toHaveProperty('sibling-export', {
