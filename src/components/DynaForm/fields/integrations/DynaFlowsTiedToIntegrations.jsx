@@ -33,14 +33,12 @@ Object.freeze(REACT_SELECT_ACTION_TYPES);
 
 const OptionCheckbox = props => {
   const {
-
     onClick,
     checked,
     label,
   } = props;
 
   return (
-
     <>
       <Checkbox
         onClick={onClick}
@@ -80,7 +78,6 @@ const Option = props => {
 };
 
 const SelectedValueChips = ({value, label}) => (
-
   <Chip
     value={value}
     label={label}

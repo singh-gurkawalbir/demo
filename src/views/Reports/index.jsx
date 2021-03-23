@@ -21,9 +21,6 @@ import infoText from '../ResourceList/infoText';
 import InfoIconButton from '../../components/InfoIconButton';
 
 const useStyles = makeStyles(theme => ({
-  reportTypes: {
-    fontSize: 16,
-  },
   emptySpace: {
     flexGrow: 1,
     minWidth: theme.spacing(10),
@@ -156,7 +153,7 @@ export default function Reports() {
       <div className={classes.resultContainer}>
         <div className={classes.actions}>
           <Typography
-            className={classes.reportTypes}>
+            variant="h4">
             {reportTypeLabel} report results  {info && <InfoIconButton info={info} />}
           </Typography>
           <div className={classes.emptySpace} />

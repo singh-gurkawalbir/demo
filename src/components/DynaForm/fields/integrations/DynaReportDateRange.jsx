@@ -11,7 +11,6 @@ import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 
 const defaultPresets = [
-  {id: 'pleaseSelect', label: 'Please select range'},
   {id: 'lastmin', label: 'Last minute'},
   {id: 'last5min', label: 'Last 5 minutes'},
   {id: 'last15minutes', label: 'Last 15 minutes'},
@@ -27,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2),
   },
 }));
-const selectedRangeConstrain = (startDate, endDate) => {
+const selectedRangeConstraint = (startDate, endDate) => {
   if (!endDate || !startDate) return true;
   const diffDays = moment(endDate).diff(moment(startDate), 'days');
 
@@ -41,7 +40,12 @@ function CustomTextFields({selectedRange, setSelectedRange, reset, setReset}) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    if (!startDate && !endDate) {
+      setSelectedRange({...getSelectedRange({preset: 'last24hours'}), preset: 'custom' });
+      setReset(state => !state);
+    }
     setLoaded(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (preset !== 'custom') { return null; }
@@ -55,7 +59,7 @@ function CustomTextFields({selectedRange, setSelectedRange, reset, setReset}) {
       stateCopy[key] = moment(value)?.toDate?.();
       const {startDate, endDate} = stateCopy;
 
-      if (!selectedRangeConstrain(startDate, endDate)) {
+      if (!selectedRangeConstraint(startDate, endDate)) {
         setReset(state => !state);
 
         return state;
@@ -91,24 +95,29 @@ export default function DynaReportDateRange(props) {
   const timezone = useSelector(state => selectors.userTimezone(state));
 
   const onSave = useCallback(selectedRange => {
-    const {startDate, endDate, preset } = selectedRange;
-
-    if (preset !== 'custom') {
-      const r = getSelectedRange({preset});
-      const {startDate: presetStartDate, endDate: presetEndDate} = r;
-
-      onFieldChange(id, {
-        startDate: presetStartDate.toISOString(),
-        preset,
-        timezone,
-        endDate: presetEndDate.toISOString() });
+    if (!selectedRange || !selectedRange.preset) {
+      return onFieldChange(id, value);
     }
 
-    return onFieldChange(id, {startDate: startDate.toISOString(),
-      timezone,
+    const {startDate, endDate, preset } = selectedRange;
+
+    if (preset === 'custom') {
+      if (!startDate && !endDate) { return onFieldChange(id, null); }
+
+      return onFieldChange(id, {startDate: startDate.toISOString(),
+        timezone,
+        preset,
+        endDate: endDate.toISOString()});
+    }
+    const r = getSelectedRange({preset});
+    const {startDate: presetStartDate, endDate: presetEndDate} = r;
+
+    return onFieldChange(id, {
+      startDate: presetStartDate.toISOString(),
       preset,
-      endDate: endDate.toISOString()});
-  }, [id, onFieldChange, timezone]);
+      timezone,
+      endDate: presetEndDate.toISOString() });
+  }, [id, onFieldChange, timezone, value]);
 
   return (
     <>
@@ -117,8 +126,8 @@ export default function DynaReportDateRange(props) {
         {...props}
         customPresets={ranges}
         editableDateInputs={false}
-        defaultPreset={value || {preset: 'last24hours'}}
-        selectedRangeConstrain={selectedRangeConstrain}
+        defaultPreset={value}
+        selectedRangeConstraint={selectedRangeConstraint}
         onSave={onSave}
         CustomTextFields={CustomTextFields}
       />

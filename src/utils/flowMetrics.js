@@ -49,8 +49,6 @@ export const getSelectedRange = range => {
   const currentDate = moment().toDate();
 
   switch (preset) {
-    case 'pleaseSelect':
-      break;
     case 'lastmin':
       start = moment().subtract(1, 'minutes').toDate();
       end = currentDate;

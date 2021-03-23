@@ -35,7 +35,7 @@ const Reports = loadable(() =>
 );
 
 const Playground = loadable(() =>
-  retry(() => import(/* webpackChunkName: 'Editors' */ '../../views/Playground'))
+  retry(() => import(/* webpackChunkName: 'Playground' */ '../../views/Playground'))
 );
 const FlowBuilder = loadable(() =>
   retry(() => import(/* webpackChunkName: 'FlowBuilder' */ '../../views/FlowBuilder'))

@@ -153,7 +153,7 @@ export default function DateRangeSelector({
   placement,
   Icon,
   defaultPreset = {preset: 'last30days'},
-  selectedRangeConstrain,
+  selectedRangeConstraint,
   CustomTextFields,
   toDate,
   isCalendar,
@@ -169,27 +169,27 @@ export default function DateRangeSelector({
   );
   const [reset, setReset] = useState(false);
 
-  const [selectedRange, setSelectedRangeState] = useState(initalValue);
+  const [selectedRange, setSelectedRange] = useState(initalValue);
 
-  const setSelectedRange = useCallback(selected => {
+  const setSelectedRangeWithConstraint = useCallback(selected => {
     const {startDate, endDate} = selected;
 
-    if (selectedRangeConstrain && !selectedRangeConstrain(startDate, endDate)) { return; }
-    setSelectedRangeState(selected);
+    if (selectedRangeConstraint && !selectedRangeConstraint(startDate, endDate)) { return; }
+    setSelectedRange(selected);
     setReset(state => !state);
-  }, [selectedRangeConstrain]);
+  }, [selectedRangeConstraint]);
   const handleListItemClick = (event, id) => {
-    setSelectedRange(state => ({...state, preset: id}));
+    setSelectedRangeWithConstraint(state => ({...state, preset: id}));
   };
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const presets = useMemo(() => customPresets.length ? customPresets : defaultPresets, [customPresets]);
   const toggleClick = useCallback(event => {
     if (anchorEl) {
-      setSelectedRange(initalValue);
+      setSelectedRangeWithConstraint(initalValue);
     }
     setAnchorEl(state => (state ? null : event.currentTarget));
-  }, [anchorEl, setSelectedRange, initalValue]);
+  }, [anchorEl, setSelectedRangeWithConstraint, initalValue]);
 
   const handleSave = useCallback(() => {
     if (selectedRange.preset === 'lastrun') {
@@ -205,12 +205,12 @@ export default function DateRangeSelector({
   }, [customPresets, onSave, selectedRange]);
 
   const handleClose = useCallback(() => {
-    setSelectedRange(initalValue);
+    setSelectedRangeWithConstraint(initalValue);
     setAnchorEl(null);
-  }, [initalValue, setSelectedRange]);
+  }, [initalValue, setSelectedRangeWithConstraint]);
 
   const handleClear = useCallback(() => {
-    setSelectedRange(() => {
+    setSelectedRangeWithConstraint(() => {
       const clearRangeValue = clearValue || {startDate: null, endDate: null, preset: null};
 
       onSave && onSave(clearRangeValue);
@@ -218,7 +218,7 @@ export default function DateRangeSelector({
       return clearRangeValue;
     });
     setAnchorEl(null);
-  }, [setSelectedRange, clearValue, onSave]);
+  }, [setSelectedRangeWithConstraint, clearValue, onSave]);
 
   return (
     <>
@@ -270,15 +270,16 @@ export default function DateRangeSelector({
                 {selectedRange.preset === 'custom' &&
                 CustomTextFields && (
                 <CustomTextFields
-                  key={reset} setReset={setReset} selectedRange={selectedRange}
-                  setSelectedRange={setSelectedRangeState} />
+                  reset={reset}
+                  setReset={setReset} selectedRange={selectedRange}
+                  setSelectedRange={setSelectedRange} />
                 )}
               </div>
               {selectedRange.preset === 'custom' && (
               <div className={classes.rightCalendar}>
                 <DateRange
                   isCalendar={isCalendar}
-                  setSelectedRange={setSelectedRange}
+                  setSelectedRange={setSelectedRangeWithConstraint}
                   staticRanges={[]}
                   showSelectionPreview
                   moveRangeOnFirstSelection={false}

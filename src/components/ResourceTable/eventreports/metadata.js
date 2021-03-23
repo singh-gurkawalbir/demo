@@ -68,7 +68,7 @@ const metadata = {
     },
   ],
   rowActions: r => {
-    if ( r.status === 'queued') {
+    if (r.status === 'queued') {
       return [CancelReport];
     }
     if (r.status === 'running') {
