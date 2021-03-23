@@ -1,4 +1,4 @@
-import { call, takeEvery, put, select, takeLatest, take, fork, cancel, delay} from 'redux-saga/effects';
+import { call, takeEvery, put, select, takeLatest, take, fork, cancel, delay, race} from 'redux-saga/effects';
 import moment from 'moment';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
@@ -11,7 +11,7 @@ export function* fetchNewLogs({ flowId, exportId, timeGt }) {
   const opts = {
     method: 'GET',
   };
-  const path = `/flows/${flowId}/${exportId}/requests?time_gt=${timeGt || Date.now() - (70 * 1000)}&time_lte=${Date.now()}`;
+  const path = `/flows/${flowId}/${exportId}/requests?time_gt=${timeGt || Date.now() - (20 * 1000)}&time_lte=${Date.now()}`;
 
   let response;
 
@@ -43,7 +43,7 @@ export function* pollForLatestLogs({ flowId, exportId }) {
   while (true) {
     yield call(fetchNewLogs, { flowId, exportId, timeGt });
     timeGt = '';
-    yield delay(60 * 1000);
+    yield delay(15 * 1000);
   }
 }
 
@@ -63,13 +63,13 @@ export function* startPollingForRequestLogs({flowId, exportId}) {
   }
 }
 
-export function* retryToFetchRequests({retryCount = 0, fetchRequestsPath, isFilterApplied}) {
+export function* retryToFetchRequests({retryCount = 0, fetchRequestsPath}) {
   const opts = {
     method: 'GET',
   };
 
   // we try max of 4 times (to cover 1 hour window) as BE route may not give all the results on first try or after that (s3 limitation)
-  if (isFilterApplied && retryCount > 3) {
+  if (retryCount > 3) {
     return {
       nextPageURL: fetchRequestsPath,
     };
@@ -86,11 +86,6 @@ export function* retryToFetchRequests({retryCount = 0, fetchRequestsPath, isFilt
     return {};
   }
 
-  // when we are making direct /requests call without time_gt, time_lte filter
-  // no need to make 4 retry calls to BE
-  if (!isFilterApplied) {
-    return response;
-  }
   const {requests, nextPageURL} = response;
 
   // don't re-iterate in case logs are found or nextPageURL is not present. Return control to parent
@@ -98,7 +93,7 @@ export function* retryToFetchRequests({retryCount = 0, fetchRequestsPath, isFilt
     return {requests, nextPageURL};
   }
 
-  return yield call(retryToFetchRequests, {retryCount: retryCount + 1, fetchRequestsPath: nextPageURL, isFilterApplied: true });
+  return yield call(retryToFetchRequests, {retryCount: retryCount + 1, fetchRequestsPath: nextPageURL });
 }
 
 export function* requestLogs({ flowId, exportId, loadMore }) {
@@ -111,7 +106,7 @@ export function* requestLogs({ flowId, exportId, loadMore }) {
     { flowId, exportId, filters, nextPageURL: logsState.nextPageURL, loadMore }
   );
   const { path } = requestOptions;
-  const { requests = [], nextPageURL } = yield call(retryToFetchRequests, {fetchRequestsPath: path, isFilterApplied: !!(filters.time?.startDate && filters.time?.endDate) });
+  const { requests = [], nextPageURL } = yield call(retryToFetchRequests, {fetchRequestsPath: path });
 
   const formattedLogs = requests.map(({time = '', ...others}) => {
     const utcDateTime = moment(time);
@@ -132,6 +127,15 @@ export function* requestLogs({ flowId, exportId, loadMore }) {
   if (logsState.debugOn) {
     yield call(startPollingForRequestLogs, {flowId, exportId});
   }
+}
+
+export function* requestLogsWithCancel(params) {
+  yield race({
+    callAPI: call(requestLogs, params),
+    cancelCallAPI: take(action =>
+      action.type === actionTypes.LOGS.LISTENER.CLEAR
+    ),
+  });
 }
 
 export function* requestLogDetails({ flowId, exportId, logKey }) {
@@ -208,9 +212,10 @@ export function* removeLogs({ flowId, exportId, logsToRemove }) {
 }
 
 export default [
-  takeLatest(actionTypes.LOGS.LISTENER.REQUEST, requestLogs),
+  takeLatest(actionTypes.LOGS.LISTENER.REQUEST, requestLogsWithCancel),
   takeEvery(actionTypes.LOGS.LISTENER.LOG.REQUEST, requestLogDetails),
   takeLatest(actionTypes.LOGS.LISTENER.DEBUG.START, toggleDebug),
   takeLatest(actionTypes.LOGS.LISTENER.DEBUG.STOP, toggleDebug),
   takeEvery(actionTypes.LOGS.LISTENER.LOG.REMOVE, removeLogs),
+  takeLatest(actionTypes.LOGS.LISTENER.START_POLL, startPollingForRequestLogs),
 ];

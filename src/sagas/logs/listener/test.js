@@ -95,12 +95,12 @@ describe('Listener logs sagas', () => {
         expect(effects.call[0]).toEqual(call(fetchNewLogs, { flowId, exportId, timeGt: 45678 }));
       }));
 
-    test('should call fetchNewLogs after 1 minute delay continuously', () => {
+    test('should call fetchNewLogs after 15 seconds delay continuously', () => {
       const saga = pollForLatestLogs({ flowId, exportId });
 
       saga.next();
       expect(saga.next([{time: ''}]).value).toEqual(call(fetchNewLogs, { flowId, exportId, timeGt: '' }));
-      expect(saga.next().value).toEqual(delay(60000));
+      expect(saga.next().value).toEqual(delay(15000));
 
       expect(saga.next().done).toEqual(false);
     });
@@ -145,7 +145,7 @@ describe('Listener logs sagas', () => {
   });
 
   describe('retryToFetchRequests saga', () => {
-    test('should retry fetching logs maximum of 4 times if there is a response and filter is applied', () => expectSaga(retryToFetchRequests, {fetchRequestsPath: '/somepath', isFilterApplied: true})
+    test('should retry fetching logs maximum of 4 times if there is a response', () => expectSaga(retryToFetchRequests, {fetchRequestsPath: '/somepath'})
       .provide([
         [call(apiCallWithRetry, {
           path: '/somepath',
@@ -184,15 +184,15 @@ describe('Listener logs sagas', () => {
           nextPageURL: '/nextURL5',
         }],
       ])
-      .call(retryToFetchRequests, {retryCount: 1, fetchRequestsPath: '/nextURL2', isFilterApplied: true})
-      .call(retryToFetchRequests, {retryCount: 2, fetchRequestsPath: '/nextURL3', isFilterApplied: true})
-      .call(retryToFetchRequests, {retryCount: 3, fetchRequestsPath: '/nextURL4', isFilterApplied: true})
-      .call(retryToFetchRequests, {retryCount: 4, fetchRequestsPath: '/nextURL5', isFilterApplied: true})
+      .call(retryToFetchRequests, {retryCount: 1, fetchRequestsPath: '/nextURL2'})
+      .call(retryToFetchRequests, {retryCount: 2, fetchRequestsPath: '/nextURL3'})
+      .call(retryToFetchRequests, {retryCount: 3, fetchRequestsPath: '/nextURL4'})
+      .call(retryToFetchRequests, {retryCount: 4, fetchRequestsPath: '/nextURL5'})
       .returns({
         nextPageURL: '/nextURL5',
       })
       .run());
-    test('should return requests and nextPageURL is logs are found or no filter is applied', () => expectSaga(retryToFetchRequests, { fetchRequestsPath: '/somepath' })
+    test('should return requests and nextPageURL is logs are found', () => expectSaga(retryToFetchRequests, { fetchRequestsPath: '/somepath' })
       .provide([
         [call(apiCallWithRetry, {
           path: '/somepath',
@@ -233,7 +233,7 @@ describe('Listener logs sagas', () => {
           message: '{"message":"Invalid or Missing Field: time_lte", "code":"invalid_or_missing_field"}',
         }))],
       ])
-      .call(retryToFetchRequests, {fetchRequestsPath: '/flows/flow-123/exp-123/requests', isFilterApplied: false })
+      .call(retryToFetchRequests, {fetchRequestsPath: '/flows/flow-123/exp-123/requests' })
       .put(
         actions.logs.listener.received(
           exportId,
@@ -252,7 +252,7 @@ describe('Listener logs sagas', () => {
         }))],
         [matchers.call.fn(startPollingForRequestLogs), undefined],
       ])
-      .call(retryToFetchRequests, {fetchRequestsPath: '/flows/flow-123/exp-123/requests', isFilterApplied: false })
+      .call(retryToFetchRequests, {fetchRequestsPath: '/flows/flow-123/exp-123/requests' })
       .put(
         actions.logs.listener.received(
           exportId,
