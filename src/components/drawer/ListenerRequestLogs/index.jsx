@@ -25,6 +25,11 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(2),
     borderRight: `1px solid ${theme.palette.secondary.lightest}`,
   },
+  titleHeader: {
+    '& > h4': {
+      marginRight: '0px !important',
+    },
+  },
 }));
 
 function RouterWrappedContent({ flowId, exportId, handleClose }) {
@@ -33,7 +38,7 @@ function RouterWrappedContent({ flowId, exportId, handleClose }) {
 
   return (
     <>
-      <DrawerHeader title="View listener debug logs" hideBackButton >
+      <DrawerHeader title="View listener debug logs" hideBackButton className={classes.titleHeader} >
         <ActionGroup>
           <Help
             title="Debug logs"
