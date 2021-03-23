@@ -598,11 +598,11 @@ export function* getAutoMapperSuggestion() {
   const extractFields = yield select(selectors.mappingExtracts, importId, flowId, subRecordMappingId);
   const reqBody = {};
 
-  const sourceApplication = yield select(selectors.applicationName, importResource._id);
+  const sourceApplication = yield select(selectors.applicationName, exportResource._id);
 
   reqBody.source_application = sourceApplication?.toLowerCase() || '';
   reqBody.source_fields = extractFields;
-  const destApplication = yield select(selectors.applicationName, exportResource._id);
+  const destApplication = yield select(selectors.applicationName, importResource._id);
 
   reqBody.dest_application = destApplication?.toLowerCase() || '';
   if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType) && subRecordMappingId) {
@@ -641,7 +641,7 @@ export function* getAutoMapperSuggestion() {
     });
 
     if (response) {
-      const {mappings: _mappings, suggested_threshold: suggestedThreshold} = response.body;
+      const {mappings: _mappings, suggested_threshold: suggestedThreshold} = response;
       const suggestedMapping = [];
 
       _mappings?.fields?.forEach(({extract, generate, weight}) => {
