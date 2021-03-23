@@ -9,6 +9,7 @@ const transformations = {
   number: [
     { value: 'ceiling', label: 'Ceiling' },
     { value: 'floor', label: 'Floor' },
+    { value: 'abs', label: 'Absolute' },
   ],
   string: [
     { value: 'lowercase', label: 'Lowercase' },
