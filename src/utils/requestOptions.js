@@ -372,24 +372,28 @@ export default function getRequestOptions(
     }
 
     case actionTypes.LOGS.LISTENER.REQUEST: {
-      let path = loadMore && nextPageURL
-        ? nextPageURL.replace('/api', '')
-        : `/flows/${flowId}/${exportId}/requests`;
-      const queryParams = [];
+      let path;
 
-      const { codes = [], time } = filters;
+      if (loadMore && nextPageURL) {
+        path = nextPageURL.replace('/api', '');
+      } else {
+        path = `/flows/${flowId}/${exportId}/requests`;
+        const queryParams = [];
+        const { codes = [], time } = filters;
 
-      const codesList = getStaticCodesList(codes);
+        const codesList = getStaticCodesList(codes);
 
-      if (!codesList.includes('all')) {
-        codesList.forEach(c => queryParams.push(`statusCode=${c}`));
-      }
-      if (time?.startDate && time?.endDate) {
-        queryParams.push(`time_gt=${time.startDate.getTime()}`);
-        queryParams.push(`time_lte=${time.endDate.getTime()}`);
-      }
-      if (queryParams.length !== 0) {
-        path += (nextPageURL ? `&${queryParams.join('&')}` : `?${queryParams.join('&')}`);
+        if (!codesList.includes('all')) {
+          codesList.forEach(c => queryParams.push(`statusCode=${c}`));
+        }
+        if (time?.startDate && time?.endDate) {
+          queryParams.push(`time_gt=${time.startDate.getTime()}`);
+          queryParams.push(`time_lte=${time.endDate.getTime()}`);
+        }
+
+        if (queryParams.length !== 0) {
+          path += `?${queryParams.join('&')}`;
+        }
       }
 
       return {
