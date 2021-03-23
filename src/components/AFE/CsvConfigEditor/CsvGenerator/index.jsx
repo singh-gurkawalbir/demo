@@ -10,7 +10,7 @@ import ErrorGridItem from '../../ErrorGridItem';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import CsvGeneratePanel from './Panel';
-import PanelLoader from '../../../PanelLoader';
+import Spinner from '../../../Spinner';
 
 const useStyles = makeStyles({
   template: {
@@ -82,9 +82,8 @@ export default function CsvGenerateEditor(props) {
       </PanelGridItem>
       <PanelGridItem gridArea="data" key={isSampleDataLoading}>
         <PanelTitle title="Sample flow data" />
-        {/* show spinner instead of data panel when sample data is loading */}
         {isSampleDataLoading ? (
-          <PanelLoader />
+          <Spinner />
         ) : (
           <CodePanel
             name="data"

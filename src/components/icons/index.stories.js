@@ -296,6 +296,12 @@ export default {
         ],
       },
     },
+    component: {
+      control: {
+        type: 'elementType',
+        options: ['span', 'p'],
+      },
+    },
   },
 };
 
@@ -307,7 +313,8 @@ const useStyles = makeStyles(theme => ({
   iconContainer: {
     margin: theme.spacing(1),
     padding: theme.spacing(1),
-    border: `solid 1px ${theme.palette.secondary.lightest}`,
+    border: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
     textAlign: 'center',
   },
 }));

@@ -1,19 +1,15 @@
 import React, { useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import Button from '@material-ui/core/Button';
+import { TextField, FormLabel, MenuItem, FormControl, Button } from '@material-ui/core';
 import LoadResources from '../../LoadResources';
 import CodePanel from '../GenericEditor/CodePanel';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import PanelLoader from '../../PanelLoader';
 import { hooksLabelMap, getScriptHookStub } from '../../../utils/hooks';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import CeligoSelect from '../../CeligoSelect';
+import Spinner from '../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -23,20 +19,27 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
   },
   textField: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-    // Changing this from 50% to 33% to accomodate 3 elements
-    // TODO:@Azhar Make this flexible layout to fix  multiple elements instead of having width
-    width: '33%',
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1),
-  },
-  label: {
-    paddingLeft: theme.spacing(1),
+    marginTop: '0px !important',
   },
   scriptPanel: {
     width: '100%',
     height: '100%',
+  },
+  headerContainer: {
+    display: 'flex',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-start',
+    padding: theme.spacing(0.5),
+    '& > *:nth-child(n)': {
+      width: '100%',
+    },
+  },
+  jsPanelFormControl: {
+    width: '100%',
+    paddingRight: theme.spacing(0.5),
+  },
+  btnAction: {
+    marginTop: theme.spacing(3),
   },
 }));
 const scriptFilterConfig = { type: 'scripts' };
@@ -138,41 +141,55 @@ export default function JavaScriptPanel(props) {
   const handleAceEditorLoad = useCallback(e => {
     aceEditor.current = e;
   }, []);
+  const menuProps = {
+    PaperProps: {
+      style: {
+        maxWidth: 320,
+        wordBreak: 'break-word',
+      },
+
+    },
+  };
 
   return (
     <LoadResources required resources={['scripts']}>
       <div className={classes.container}>
-        <div data-public >
-          <FormControl className={classes.textField}>
-            <InputLabel className={classes.label} htmlFor="scriptId">
+        <div data-public className={classes.headerContainer}>
+          <FormControl className={classes.jsPanelFormControl}>
+            <FormLabel htmlFor="scriptId">
               Script
-            </InputLabel>
-            <Select
+            </FormLabel>
+            <CeligoSelect
               id="scriptId"
               margin="dense"
               value={scriptId}
+              className={classes.textField}
               displayEmpty
               disabled={disabled}
+              MenuProps={menuProps}
               onChange={handleScriptChange}>
               {[defaultItem, ...scriptOptions]}
-            </Select>
+            </CeligoSelect>
           </FormControl>
-          <TextField
-            id="entryFunction"
-            disabled={disabled}
-            InputLabelProps={{ className: classes.label }}
-            className={classes.textField}
-            value={entryFunction}
-            onChange={event =>
-              patchEditor({ entryFunction: event.target.value })}
-            label="Function"
-            margin="dense"
+          <FormControl className={classes.jsPanelFormControl}>
+            <FormLabel htmlFor="entryFunction">
+              Function
+            </FormLabel>
+            <TextField
+              id="entryFunction"
+              disabled={disabled}
+              variant="filled"
+              className={classes.textField}
+              value={entryFunction}
+              onChange={event =>
+                patchEditor({ entryFunction: event.target.value })}
           />
+          </FormControl>
           {scriptId && insertStubKey && (
             <Button
-              variant="contained"
-              color="primary"
-              className={classes.textField}
+              variant="outlined"
+              color="secondary"
+              className={classes.btnAction}
               onClick={handleInsertStubClick}
               disabled={disabled}
               data-test={insertStubKey}>
@@ -182,9 +199,7 @@ export default function JavaScriptPanel(props) {
         </div>
         <div className={classes.scriptPanel}>
           {scriptContent === undefined && scriptId ? (
-            // Removed retrieving message to make it consistent as we do not show specific messages
-            // pass message if need to show any
-            <PanelLoader />
+            <Spinner />
           ) : (
             <CodePanel
               name="code"

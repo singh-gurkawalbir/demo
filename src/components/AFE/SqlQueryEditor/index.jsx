@@ -9,7 +9,7 @@ import WarningGridItem from '../WarningGridItem';
 import CodePanel from '../GenericEditor/CodePanel';
 import SqlRuleTabPanel from './SqlRuleTabPanel';
 import layouts from '../layout/defaultDialogLayout';
-import PanelLoader from '../../PanelLoader';
+import Spinner from '../../Spinner';
 
 const useStyles = makeStyles(layouts);
 const Editor = props => {
@@ -64,7 +64,7 @@ const Editor = props => {
       <PanelGridItem gridArea="data" key={isSampleDataLoading}>
         <PanelTitle title={dataTitle} />
         {isSampleDataLoading ? (
-          <PanelLoader />
+          <Spinner />
         ) : (
           <CodePanel
             name="sampleData"

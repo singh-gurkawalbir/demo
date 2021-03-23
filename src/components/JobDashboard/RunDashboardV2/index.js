@@ -3,8 +3,8 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ResourceTable from '../../ResourceTable';
-import PanelLoader from '../../PanelLoader';
 import { isNewId } from '../../../utils/resource';
+import Spinner from '../../Spinner';
 
 export default function RunDashboardV2({ flowId }) {
   const dispatch = useDispatch();
@@ -22,7 +22,7 @@ export default function RunDashboardV2({ flowId }) {
   if (latestFlowJobs?.status === 'refresh') {
     // Only when the dashboard is entirely refreshed , show loading
     // it can be updated in between to get latest job status in which case, no need to show loader
-    return <PanelLoader />;
+    return <Spinner />;
   }
 
   return (

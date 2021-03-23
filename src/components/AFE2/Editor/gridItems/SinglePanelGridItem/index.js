@@ -11,7 +11,7 @@ const useStyles = makeStyles({
     alignItems: 'stretch',
   },
   title: { flex: '0 0 auto' },
-  panel: { flex: '1 1 100px', minHeight: 50 },
+  panel: { flex: '1 1 100px', minHeight: 50, position: 'relative' },
 });
 
 export default function SinglePanelGridItem({area, title, children, helpKey}) {

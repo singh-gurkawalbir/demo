@@ -12,7 +12,7 @@ import { selectors } from '../../../reducers';
 import ErrorGridItem from '../ErrorGridItem';
 import layouts from '../layout/defaultDialogLayout';
 import { isJsonString } from '../../../utils/string';
-import PanelLoader from '../../PanelLoader';
+import Spinner from '../../Spinner';
 
 const useStyles = makeStyles({
   ...layouts,
@@ -103,7 +103,7 @@ export default function FilterEditor(props) {
       <PanelGridItem gridArea="data">
         <PanelTitle title="Input" />
         {isSampleDataLoading ? (
-          <PanelLoader />
+          <Spinner />
         ) : (
           <CodePanel
             name="data"
