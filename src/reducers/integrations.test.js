@@ -4,7 +4,7 @@ import {integrations as v1Integrations} from './integrationApps.test';
 
 const someParentIntegrationIdv2 = 'abc';
 const v2Integrations = [
-  {_id: 'abc',
+  {_id: someParentIntegrationIdv2,
     installSteps: [{someStep1: 'someprops'}],
   },
   {
@@ -106,12 +106,12 @@ describe('selectors.getChildIntegrationLabelsTiedToFlows ', () => {
 
     expect(result).toEqual(null);
   });
-  test('should return all v2 childIntegrations tied to the flows', () => {
-    const result = selectors.getChildIntegrationLabelsTiedToFlows(state, 'abc', ['flow1']);
+  test('should return all v2 childIntegrations labels tied to the flows', () => {
+    const result = selectors.getChildIntegrationLabelsTiedToFlows(state, someParentIntegrationIdv2, ['flow1']);
 
     expect(result).toEqual(['int1']);
   });
-  test('should return all v1 childIntegrations', () => {
+  test('should return all v1 childIntegrations labels', () => {
     const result = selectors.getChildIntegrationLabelsTiedToFlows(state, 'integrationId', ['5d9f70b98a71fc911a4068bd']);
 
     expect(result).toEqual(
@@ -163,6 +163,73 @@ describe('selectors.mkAllFlowsTiedToIntegrations ', () => {
         _integrationId: 'integrationId2',
       },
     ]);
+  });
+});
+
+describe('selectors.getAllValidIntegrations', () => {
+  const usersState = {
+    preferences: { defaultAShareId: 'ashare1' },
+    org: {
+      accounts: [
+        {
+          _id: 'ashare1',
+          accepted: true,
+          ownerUser: {
+            company: 'Company One',
+            licenses: [
+              {
+
+                created: '2015-10-28T11:30:15.533Z',
+                expires: '2030-11-27T11:30:15.533Z',
+                lastModified: '2021-01-06T09:28:31.494Z',
+                opts: {connectorEdition: 'standard'},
+                resumable: false,
+                type: 'connector',
+                _connectorId: '5666865f67c1650309224904',
+                _integrationId: 'integrationId',
+                _id: '5dc0481af0222c1c4b566f99',
+              },
+              {
+
+                created: '2015-10-28T11:30:15.533Z',
+                // integration expired
+                expires: '2020-11-27T11:30:15.533Z',
+                lastModified: '2021-01-06T09:28:31.494Z',
+                opts: {connectorEdition: 'standard'},
+                resumable: false,
+                type: 'connector',
+                _connectorId: '5666865f67c1650309224904',
+                _integrationId: 'integrationId2',
+                _id: '5dc0481af0222c1c4b566f30',
+              },
+            ],
+          },
+        },
+      ],
+    },
+  };
+
+  const stateCopy = {
+
+    ...state,
+    user: usersState,
+
+  };
+
+  test('should return [] when integrations hasn`t loaded ', () => {
+    const result = selectors.getAllValidIntegrations({user: usersState});
+
+    expect(result).toEqual([]);
+  });
+  test('should return correct installed and not expired integrations ', () => {
+    const result = selectors.getAllValidIntegrations(stateCopy);
+    const notExpiredV1Int = v1Integrations.find(({_id}) => _id === 'integrationId');
+    const sortById = ({_id: id1}, {_id: id2}) => id1.localeCompare(id2);
+
+    expect(result.sort(sortById)).toEqual([
+      notExpiredV1Int,
+      ...v2Integrations,
+    ].sort(sortById));
   });
 });
 

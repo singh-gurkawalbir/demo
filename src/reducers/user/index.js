@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
 import { selectors as fromOrg } from './org';
 import users from './org/users';
-import accounts, { selectors as fromAccounts, remainingDays } from './org/accounts';
+import accounts, { selectors as fromAccounts } from './org/accounts';
 import preferences, { selectors as fromPreferences } from './preferences';
 import notifications, { selectors as fromNotifications } from './notifications';
 import profile, { selectors as fromProfile } from './profile';
@@ -302,13 +302,6 @@ selectors.licenses = createSelector(
     return fromAccounts.licenses(accounts, defaultAShareId);
   }
 );
-
-selectors.integrationLicenseExpirationInDays = createSelector(
-  selectors.licenses,
-  licenses => licenses?.map(license => ({
-    integrationId: license._integrationId,
-    remainingDays: remainingDays(license?.expires),
-  })));
 
 selectors.userPermissions = createSelector(
   state => selectors.userPreferences(state)?.defaultAShareId,

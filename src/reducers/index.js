@@ -87,6 +87,7 @@ import {
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
+import { remainingDays } from './user/org/accounts';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -714,7 +715,7 @@ selectors.getAllValidIntegrations = createSelector(
   state => resourceListSel(state, integrationsFilter)?.resources,
   selectors.licenses,
   (integrations, allLicenses) => {
-    if (!integrations || !allLicenses) return null;
+    if (!integrations || !integrations.length) return [];
 
     return integrations.filter(({mode, _id, _connectorId }) => {
       // DIY
@@ -722,7 +723,10 @@ selectors.getAllValidIntegrations = createSelector(
 
       // integrationApp
       if (_connectorId) {
-        const isIntegrationNotExpired = allLicenses.find(l => l.integrationId === _id)?.remainingDays > 0;
+        const expiresTimeStamp = allLicenses?.find(l => l._integrationId === _id)?.expires;
+
+        if (!expiresTimeStamp) return false;
+        const isIntegrationNotExpired = remainingDays(expiresTimeStamp) > 0;
 
         return mode === 'settings' && isIntegrationNotExpired;
       }
