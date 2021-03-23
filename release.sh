@@ -1,5 +1,5 @@
 #!/bin/zsh
-set -e
+set -e  
 
 env_vars=$1
 [[ -f $env_vars ]] || (echo "env file $env_vars invalid" && exit 1)
