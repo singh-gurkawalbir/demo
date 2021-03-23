@@ -1,6 +1,39 @@
 /* global describe, expect, beforeEach, test */
 import { selectors } from '.';
-import { FILTER_KEY, getMockRequests} from '../utils/listenerLogs';
+import { FILTER_KEY } from '../utils/listenerLogs';
+import * as constants from '../utils/listenerLogs';
+
+const getMockRequests = () => [{
+  key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-401-POST',
+  time: 1615807924879,
+  method: 'POST',
+  statusCode: '401',
+},
+{
+  key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-200-GET',
+  time: 1615807924879,
+  method: 'GET',
+  statusCode: '200',
+},
+{
+  key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-201-GET',
+  time: 1615807924879,
+  method: 'GET',
+  statusCode: '201',
+},
+{
+  key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-201-PUT',
+  time: 1615807924879,
+  method: 'PUT',
+  statusCode: '201',
+},
+{
+  key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-200-POST',
+  time: 1615807924879,
+  method: 'POST',
+  statusCode: '200',
+},
+];
 
 describe('Listener request logs region selectors test cases', () => {
   const exportId = 'exp-123';
@@ -166,6 +199,7 @@ describe('Listener request logs region selectors test cases', () => {
       expect(selector(state, exportId)).toEqual([]);
     });
     test('should return correct logs list for the current page', () => {
+      constants.DEFAULT_ROWS_PER_PAGE = 2;
       const state = {
         session: {
           filters: {

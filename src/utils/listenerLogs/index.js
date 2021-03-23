@@ -1,6 +1,6 @@
 export const FILTER_KEY = 'listenerLogs';
 
-export const DEFAULT_ROWS_PER_PAGE = 2;
+export const DEFAULT_ROWS_PER_PAGE = 50;
 
 export const LISTENER_LOGS_RANGE_FILTERS = [
   {id: 'last15minutes', label: 'Last 15 minutes'},
@@ -53,67 +53,3 @@ export const getStaticCodesList = codes => {
     }
   });
 };
-
-export const getMockRequests = () => [{
-  key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-401-POST',
-  time: 1615807924879,
-  method: 'POST',
-  statusCode: '401',
-},
-{
-  key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-200-GET',
-  time: 1615807924879,
-  method: 'GET',
-  statusCode: '200',
-},
-{
-  key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-201-GET',
-  time: 1615807924879,
-  method: 'GET',
-  statusCode: '201',
-},
-{
-  key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-201-PUT',
-  time: 1615807924879,
-  method: 'PUT',
-  statusCode: '201',
-},
-{
-  key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-200-POST',
-  time: 1615807924879,
-  method: 'POST',
-  statusCode: '200',
-},
-];
-
-export const getMockLogDetails = logKey => ({
-  time: 1615807924879,
-  request: {
-    headers: {
-      host: 'api.localhost.io:5000',
-      'user-agent': 'insomnia/2021.1.1',
-      'content-type': 'application/json',
-      authorization: 'Bearer 5309c90cfdfd44699c0632a97e40867e',
-      accept: '*/*',
-      'content-length': '8',
-    },
-    body: logKey,
-    httpVersion: '1.1',
-    method: 'POST',
-    url: '/v1/shopify/exports/60486a72e285921bc32283d4/data',
-    clientAddress: '::ffff:127.0.0.1',
-    size: 16,
-  },
-  response: {
-    statusCode: 401,
-    status: 'there',
-    body: 'Unauthorized',
-  },
-  key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-401-POST',
-  id: 'a27751bdc2e143cb94988b39ea8aede9',
-});
-
-export const getMockDeleteResponse = keys => ({
-  deleted: keys,
-  // errors: [{key: '123', error: 'NoSuchKey'}],
-});

@@ -1,13 +1,68 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
-import { getMockRequests, getMockLogDetails } from '../../../../utils/listenerLogs';
 
 const flowId = 'flow-123';
 const exportId = 'exp-123';
 const logKey = 'mock-key';
-const logDetails = getMockLogDetails(logKey);
-const logsSummary = getMockRequests();
+const logDetails = {
+  time: 1615807924879,
+  request: {
+    headers: {
+      host: 'api.localhost.io:5000',
+      'user-agent': 'insomnia/2021.1.1',
+      'content-type': 'application/json',
+      authorization: 'Bearer 5309c90cfdfd44699c0632a97e40867e',
+      accept: '*/*',
+      'content-length': '8',
+    },
+    body: logKey,
+    httpVersion: '1.1',
+    method: 'POST',
+    url: '/v1/shopify/exports/60486a72e285921bc32283d4/data',
+    clientAddress: '::ffff:127.0.0.1',
+    size: 16,
+  },
+  response: {
+    statusCode: 401,
+    status: 'there',
+    body: 'Unauthorized',
+  },
+  key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-401-POST',
+  id: 'a27751bdc2e143cb94988b39ea8aede9',
+};
+
+const logsSummary = [{
+  key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-401-POST',
+  time: 1615807924879,
+  method: 'POST',
+  statusCode: '401',
+},
+{
+  key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-200-GET',
+  time: 1615807924879,
+  method: 'GET',
+  statusCode: '200',
+},
+{
+  key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-201-GET',
+  time: 1615807924879,
+  method: 'GET',
+  statusCode: '201',
+},
+{
+  key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-201-PUT',
+  time: 1615807924879,
+  method: 'PUT',
+  statusCode: '201',
+},
+{
+  key: '5642310475121-a27751bdc2e143cb94988b39ea8aede9-200-POST',
+  time: 1615807924879,
+  method: 'POST',
+  statusCode: '200',
+},
+];
 
 describe('Listener logs reducer', () => {
   test('should return previous state if action is not handled.', () => {
