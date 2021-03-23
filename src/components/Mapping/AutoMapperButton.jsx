@@ -31,7 +31,7 @@ export default function AutoMapperButton({disabled}) {
   }, [dispatch]);
 
   useEffect(() => {
-    // autoMapperErrorMsg
+    // show error message in case of autoMapper error
     if (autoMapperErrorMsg) {
       enquesnackbar({ message: autoMapperErrorMsg, variant: 'error' });
     }

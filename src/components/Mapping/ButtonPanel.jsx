@@ -25,6 +25,10 @@ export default function ButtonPanel({flowId, importId, disabled, onClose}) {
   const saveInProgress = useSelector(
     state => selectors.mappingSaveStatus(state).saveInProgress
   );
+  const hasAutoPilotLicense = useSelector(state =>
+    selectors.platformLicenseWithMetadata(state).autopilot
+  );
+
   const isNSAssistantFormLoaded = useSelector(state => selectors.mapping(state).isNSAssistantFormLoaded);
   const mappingPreviewType = useSelector(state =>
     selectors.mappingPreviewType(state, importId)
@@ -64,7 +68,7 @@ export default function ButtonPanel({flowId, importId, disabled, onClose}) {
           Cancel
         </Button>
 
-        <AutoMapperButton />
+        {hasAutoPilotLicense && (<AutoMapperButton />)}
         {showPreviewButton && (
         <Button
           variant="outlined"
