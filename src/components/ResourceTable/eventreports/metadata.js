@@ -7,6 +7,7 @@ import downloadResults from './actions/downloadResults';
 import ViewReport from './actions/ViewReport';
 import DateTimeDisplay from '../../DateTimeDisplay';
 
+const STRING_LIMIT_SIZE = 250;
 const flowsConfig = {type: 'flows'};
 const metadata = {
   columns: [
@@ -29,6 +30,13 @@ const metadata = {
         ).resources;
 
         const concatenedFlowNames = r._flowIds.map(id => allFlows.find(f => f._id === id)?.name).join(',');
+
+        if (concatenedFlowNames?.length > STRING_LIMIT_SIZE) {
+          const truncatedString = concatenedFlowNames.substring(0, 250);
+          const strWithRemovedLeadingWord = truncatedString.split(' ').slice(0, -1).join(' ');
+
+          return `${strWithRemovedLeadingWord}...`;
+        }
 
         return concatenedFlowNames;
       },
