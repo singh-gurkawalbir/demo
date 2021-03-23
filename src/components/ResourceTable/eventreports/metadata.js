@@ -28,9 +28,9 @@ const metadata = {
           flowsConfig
         ).resources;
 
-        const toReturn = r._flowIds.map(id => allFlows.find(f => f._id === id)?.name).join(',');
+        const concatenedFlowNames = r._flowIds.map(id => allFlows.find(f => f._id === id)?.name).join(',');
 
-        return toReturn;
+        return concatenedFlowNames;
       },
 
     },
