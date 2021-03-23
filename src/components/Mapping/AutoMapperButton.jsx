@@ -9,7 +9,16 @@ import Spinner from '../Spinner';
 export default function AutoMapperButton({disabled}) {
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
+  const flowHasExport = useSelector(state => {
+    const {flowId} = selectors.mapping(state);
 
+    if (!flowId) {
+      return false;
+    }
+    const {adaptorType} = selectors.firstFlowPageGenerator(state, flowId);
+
+    return !!adaptorType;
+  });
   const isMappingSaveInProgress = useSelector(state => selectors.mappingSaveStatus(state).saveInProgress);
   const {autoMapperErrorMsg, isFetchingAutoSuggestions} = useSelector(state => {
     const {status, errorMsg} = selectors.autoMapper(state);
@@ -28,9 +37,13 @@ export default function AutoMapperButton({disabled}) {
     }
   }, [autoMapperErrorMsg, enquesnackbar]);
 
+  if (!flowHasExport) {
+    return null;
+  }
+
   return (
     <Button
-      color="primary"
+      color="secondary"
       variant="outlined"
       dataTest="autoMapper"
       disabled={disabled || isMappingSaveInProgress || isFetchingAutoSuggestions}

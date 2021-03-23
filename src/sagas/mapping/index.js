@@ -589,15 +589,22 @@ export function* patchGenerateThroughAssistant({value}) {
 export function* getAutoMapperSuggestion() {
   const {mappings, flowId, importId, subRecordMappingId} = yield select(selectors.mapping);
   const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
+
+  if (!exportResource.adaptorType) {
+    return yield put(actions.mapping.autoMapper.failed('Failed to fetch mapping suggestions'));
+  }
   const importResource = yield select(selectors.resource, 'imports', importId);
   const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);
   const extractFields = yield select(selectors.mappingExtracts, importId, flowId, subRecordMappingId);
   const reqBody = {};
 
-  reqBody.source_application = yield select(selectors.applicationName, importResource._id);
+  const sourceApplication = yield select(selectors.applicationName, importResource._id);
+
+  reqBody.source_application = sourceApplication?.toLowerCase() || '';
   reqBody.source_fields = extractFields;
-  reqBody.source_record_type = '';
-  reqBody.dest_application = yield select(selectors.applicationName, exportResource._id);
+  const destApplication = yield select(selectors.applicationName, exportResource._id);
+
+  reqBody.dest_application = destApplication?.toLowerCase() || '';
   if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType) && subRecordMappingId) {
     reqBody.dest_record_type = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
   } else if (importResource.adaptorType === 'SalesforceImport') {
@@ -608,8 +615,18 @@ export function* getAutoMapperSuggestion() {
     reqBody.dest_record_type = '';
   }
 
+  if (exportResource.adaptorType === 'NetSuiteExport') {
+    reqBody.source_record_type = exportResource.netsuite[exportResource.type === 'distributed' ? 'distributed' : 'restlet'].recordType;
+  } else if (exportResource.adaptorType === 'SalesforceExport') {
+    const { sObjectType } = exportResource.salesforce;
+
+    reqBody.dest_record_type = sObjectType;
+  } else {
+    reqBody.dest_record_type = '';
+  }
+
   reqBody.dest_fields = generateFields;
-  const path = '/mappingSuggestion';
+  const path = '/autoMapperSuggestions';
   const opts = {
     method: 'PUT',
     body: reqBody,
@@ -624,18 +641,16 @@ export function* getAutoMapperSuggestion() {
     });
 
     if (response) {
-      // eslint-disable-next-line camelcase
-      const {mapping, suggested_threshold} = response;
+      const {mappings: _mappings, suggested_threshold: suggestedThreshold} = response.body;
       const suggestedMapping = [];
 
-      mapping?.fields?.forEach(({extract, generate, weight}) => {
-        // eslint-disable-next-line camelcase
-        if (weight >= suggested_threshold) {
+      _mappings?.fields?.forEach(({extract, generate, weight}) => {
+        if (weight >= suggestedThreshold) {
           const itemWithSameGenerateIndex = suggestedMapping.findIndex((field => field.generate === generate));
 
           if (itemWithSameGenerateIndex === -1 || weight > suggestedMapping[itemWithSameGenerateIndex]?.weight) {
             if (!mappings.find(item => item.generate === generate)) {
-              suggestedMapping.push({extract, generate});
+              suggestedMapping.push({extract, generate, key: shortid.generate()});
             }
           }
         }
@@ -650,13 +665,11 @@ export function* getAutoMapperSuggestion() {
         yield put(actions.mapping.autoMapper.failed('No additional suggestions'));
       }
     } else {
-      yield put(actions.mapping.autoMapper.failed());
+      yield put(actions.mapping.autoMapper.failed('Failed to fetch mapping suggestions'));
     }
   } catch (e) {
-    // yield put(actions.mapping.autoMapper.received(suggestedMapping));
-
     // TODO: How do we show error in case getContext api fails with some response
-    yield put(actions.mapping.autoMapper.failed());
+    yield put(actions.mapping.autoMapper.failed('Failed to fetch mapping suggestions'));
   }
 }
 
