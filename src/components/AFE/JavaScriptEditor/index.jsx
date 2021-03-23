@@ -11,7 +11,7 @@ import ErrorGridItem from '../ErrorGridItem';
 import { selectors } from '../../../reducers';
 import layouts from '../layout/defaultDialogLayout';
 import ConsoleGridItem from '../ConsoleGridItem';
-import PanelLoader from '../../PanelLoader';
+import Spinner from '../../Spinner';
 
 const useStyles = makeStyles({
   ...layouts,
@@ -113,7 +113,7 @@ export default function JavaScriptEditor(props) {
       <PanelGridItem gridArea="data">
         <PanelTitle title="Function input" />
         {isSampleDataLoading ? (
-          <PanelLoader />
+          <Spinner centerAll />
         ) : (
           <CodePanel
             id="data"

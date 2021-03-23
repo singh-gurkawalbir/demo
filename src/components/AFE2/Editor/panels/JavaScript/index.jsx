@@ -1,21 +1,21 @@
-import clsx from 'clsx';
 import React, { useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles,
+import { makeStyles } from '@material-ui/core/styles';
+import {
   TextField,
-  InputLabel,
   MenuItem,
   FormControl,
-  Select,
+  FormLabel,
   Button } from '@material-ui/core';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import LoadResources from '../../../../LoadResources';
 import CodePanel from '../Code';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
-import PanelLoader from '../../../../PanelLoader';
 import { hooksLabelMap, getScriptHookStub } from '../../../../../utils/hooks';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import Spinner from '../../../../Spinner';
+import CeligoSelect from '../../../../CeligoSelect';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -24,25 +24,28 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
   },
-  formControls: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    margin: theme.spacing(0, 1),
-  },
-  textField: {
-    flexGrow: 1,
-    marginRight: theme.spacing(1),
-  },
-  entryFn: {
-    marginBottom: theme.spacing(1),
-  },
-  label: {
-    paddingLeft: theme.spacing(1),
-  },
   scriptPanel: {
     width: '100%',
     height: '100%',
+  },
+  textField: {
+    marginTop: '0px !important',
+  },
+  headerContainer: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    padding: theme.spacing(0.5),
+    '& > *:nth-child(n)': {
+      width: '100%',
+    },
+  },
+  jsPanelFormControl: {
+    width: '100%',
+    paddingRight: theme.spacing(0.5),
+  },
+  btnAction: {
+    marginTop: theme.spacing(3),
   },
 }));
 const scriptFilterConfig = { type: 'scripts' };
@@ -127,41 +130,56 @@ export default function JavaScriptPanel({ editorId }) {
   const handleAceEditorLoad = useCallback(e => {
     aceEditor.current = e;
   }, []);
+  const menuProps = {
+    PaperProps: {
+      style: {
+        maxWidth: 320,
+        wordBreak: 'break-word',
+      },
+
+    },
+  };
 
   return (
     <LoadResources required resources={['scripts']}>
       <div className={classes.container}>
-        <div data-public className={classes.formControls}>
-          <FormControl className={classes.textField}>
-            <InputLabel className={classes.label} htmlFor="scriptId">
+        <div data-public className={classes.headerContainer}>
+          <FormControl className={classes.jsPanelFormControl}>
+            <FormLabel htmlFor="scriptId">
               Script
-            </InputLabel>
-            <Select
+            </FormLabel>
+            <CeligoSelect
               id="scriptId"
               margin="dense"
               value={scriptId}
+              className={classes.textField}
               displayEmpty
               disabled={disabled}
+              MenuProps={menuProps}
               onChange={handleScriptChange}>
               {[defaultItem, ...scriptOptions]}
-            </Select>
+            </CeligoSelect>
           </FormControl>
-          <TextField
-            id="entryFunction"
-            disabled={disabled}
-            InputLabelProps={{ className: classes.label }}
-            className={clsx(classes.textField, classes.entryFn)}
-            value={entryFunction}
-            onChange={event => patchRule({ entryFunction: event.target.value })}
-            label="Function"
-            margin="dense"
+          <FormControl className={classes.jsPanelFormControl}>
+            <FormLabel htmlFor="entryFunction">
+              Function
+            </FormLabel>
+            <TextField
+              id="entryFunction"
+              disabled={disabled}
+              variant="filled"
+              className={classes.textField}
+              value={entryFunction}
+              onChange={event => patchRule({ entryFunction: event.target.value })}
           />
+          </FormControl>
           {scriptId && insertStubKey && (
           <Button
             variant="outlined"
             color="secondary"
             onClick={handleInsertStubClick}
             disabled={disabled}
+            className={classes.btnAction}
             data-test={insertStubKey}>
             {`Insert ${hooksLabelMap[insertStubKey].toLowerCase()} stub`}
           </Button>
@@ -169,9 +187,7 @@ export default function JavaScriptPanel({ editorId }) {
         </div>
         <div className={classes.scriptPanel}>
           {scriptContent === undefined && scriptId ? (
-            // Removed retrieving message to make it consistent as we do not show specific messages
-            // pass message if need to show any
-            <PanelLoader />
+            <Spinner centerAll />
           ) : (
             <CodePanel
               name="code"
