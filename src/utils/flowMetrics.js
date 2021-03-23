@@ -281,11 +281,13 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
 
   if (resourceType === 'integrations') {
     return `import "math"
-
-    baseData = from(bucket: "${bucket}")
+    
+    integrationData = from(bucket: "${bucket}")
         |> range(start: ${start}, stop: ${end})
         |> filter(fn: (r) => r.u == "${userId}")
         ${flowFilterExpression}
+  
+    baseData = integrationData
         |> filter(fn: (r) => r._field == "c")
     
     seiBaseData = baseData
@@ -336,10 +338,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
             |> set(key: "_field", value: "attph")
             |> rename(columns: {attph: "_value"}))
 
-    attBaseData = from(bucket: "${bucket}")
-        |> range(start: ${start}, stop: ${end})
-        |> filter(fn: (r) => r.u == "${userId}")
-        ${flowFilterExpression}
+    attBaseData = integrationData
         |> filter(fn: (r) => (r._measurement == "s"))
         |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
         |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
@@ -380,10 +379,12 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
 
   return `import "math"
 
-    seiBaseData = from(bucket: "${bucket}")
+    flowData = from(bucket: "${bucket}")
         |> range(start: ${start}, stop: ${end})
         |> filter(fn: (r) => r.u == "${userId}")
         |> filter(fn: (r) => r.f == "${resourceId}")
+
+    seiBaseData = flowData
         |> filter(fn: (r) => r._field == "c")
         |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
 
@@ -419,10 +420,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
             |> set(key: "_field", value: "attph")
             |> rename(columns: {attph: "_value"}))
 
-    attBaseData = from(bucket: "${bucket}")
-        |> range(start: ${start}, stop: ${end})
-        |> filter(fn: (r) => r.u == "${userId}")
-        |> filter(fn: (r) => r.f == "${resourceId}")
+    attBaseData = flowData
         |> filter(fn: (r) => (r._measurement == "s"))
         |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
         |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>

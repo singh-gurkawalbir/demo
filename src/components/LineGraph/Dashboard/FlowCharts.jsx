@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
-import uniq from 'lodash/uniq';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
 import {
@@ -35,6 +34,7 @@ import ConditionalIcon from '../../icons/ConditionalIcon';
 import PreferredIcon from '../../icons/PreferredIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import {COMM_STATES} from '../../../reducers/comms/networkComms';
+import { LINE_GRAPH_TYPES, RESOLVED_GRAPH_DATAPOINTS } from '../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -116,6 +116,7 @@ const flowsConfig = { type: 'flows' };
 const Chart = ({ id, integrationId, range, selectedResources }) => {
   const classes = useStyles();
   const [opacity, setOpacity] = useState({});
+  const isResolvedGraph = id === LINE_GRAPH_TYPES.RESOLVED;
   let mouseHoverTimer;
   const { data = [] } =
     useSelector(state => selectors.flowMetricsData(state, integrationId)) || {};
@@ -123,8 +124,6 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
     selectors.makeResourceListSelector,
     flowsConfig
   );
-  const availableUsers = useSelector(state => selectors.availableUsersList(state, integrationId));
-  const currentUser = useSelector(state => selectors.userProfile(state));
   const flowResources = useMemo(
     () => {
       const flows = resourceList.resources &&
@@ -141,12 +140,11 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
   const domain = [new Date(startDate).getTime(), new Date(endDate).getTime()];
   const ticks = getTicks(domainRange, range);
   const flowData = {};
-  const users = Array.isArray(data) ? uniq(data.map(item => item.attribute === 'r' && item.by)).filter(Boolean) : [];
 
   if (Array.isArray(data)) {
-    if (id === 'resolved') {
-      users.forEach(user => {
-        flowData[user] = data.filter(d => d.by === user && d.attribute === 'r');
+    if (isResolvedGraph) {
+      RESOLVED_GRAPH_DATAPOINTS.forEach(user => {
+        flowData[user] = data.filter(d => ((user === 'autopilot' ? d.by === 'autopilot' : d.by !== 'autopilot') && d.attribute === 'r'));
         flowData[user] = sortBy(flowData[user], ['timeInMills']);
       });
     } else {
@@ -163,19 +161,14 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
     }
     const resourceId = name.split('-')[0];
 
-    if (resourceId === 'autopilot') {
-      return 'Auto resolved';
+    if (isResolvedGraph) {
+      return resourceId === 'autopilot' ? 'Auto resolved' : 'All users';
     }
     let modifiedName = resourceId;
     const resource = flowResources.find(r => r._id === resourceId);
-    const user = availableUsers.find(user => user?.sharedWithUser._id === resourceId)?.sharedWithUser;
 
     if (resource) {
       modifiedName = resource.name;
-    } else if (user) {
-      modifiedName = user.name;
-    } else if (resourceId === currentUser?._id) {
-      modifiedName = currentUser?.name || currentUser?.email;
     }
 
     return modifiedName;
@@ -191,7 +184,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
 
     if (resourceId) {
       mouseHoverTimer = setTimeout(() => {
-        const collection = id === 'resolved' ? users : selectedResources;
+        const collection = isResolvedGraph ? RESOLVED_GRAPH_DATAPOINTS : selectedResources;
         const object = collection.reduce((acc, cur) => {
           acc[cur] = resourceId === cur ? 1 : 0.2;
 
@@ -278,7 +271,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
 
     return null;
   }
-  const lineData = id === 'resolved' ? users : selectedResources;
+  const lineData = isResolvedGraph ? RESOLVED_GRAPH_DATAPOINTS : selectedResources;
 
   return (
     <div className={classes.responsiveContainer}>
