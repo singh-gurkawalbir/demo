@@ -165,6 +165,7 @@ export default function StartDebugEnhanced({
       </IconTextButton>
       {!!activeDebugUntil && (
       <IconTextButton
+        disabled={disabled}
         onClick={handleStopDebug} >
         <CancelIcon />
         Stop debug
