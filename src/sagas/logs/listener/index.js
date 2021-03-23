@@ -97,16 +97,16 @@ export function* retryToFetchRequests({retryCount = 0, fetchRequestsPath}) {
 }
 
 export function* requestLogs({ flowId, exportId, loadMore }) {
-  const logsState = yield select(selectors.listenerLogs, exportId);
+  const { nextPageURL, debugOn, hasNewLogs } = yield select(selectors.listenerLogs, exportId);
 
   const filters = yield select(selectors.filter, FILTER_KEY);
 
   const requestOptions = getRequestOptions(
     actionTypes.LOGS.LISTENER.REQUEST,
-    { flowId, exportId, filters, nextPageURL: logsState.nextPageURL, loadMore }
+    { flowId, exportId, filters, nextPageURL, loadMore }
   );
   const { path } = requestOptions;
-  const { requests = [], nextPageURL } = yield call(retryToFetchRequests, {fetchRequestsPath: path });
+  const { requests = [], nextPageURL: nextPageURLResponse } = yield call(retryToFetchRequests, {fetchRequestsPath: path });
 
   const formattedLogs = requests.map(({time = '', ...others}) => {
     const utcDateTime = moment(time);
@@ -118,13 +118,13 @@ export function* requestLogs({ flowId, exportId, loadMore }) {
     actions.logs.listener.received(
       exportId,
       formattedLogs,
-      nextPageURL,
+      nextPageURLResponse,
       loadMore
     )
   );
 
-  // only when the debugger is on, we do the polling
-  if (logsState.debugOn) {
+  // only when the debugger is on and there are no new logs, we do the polling
+  if (debugOn && !hasNewLogs) {
     yield call(startPollingForRequestLogs, {flowId, exportId});
   }
 }
@@ -165,6 +165,7 @@ export function* requestLogDetails({ flowId, exportId, logKey }) {
 
 export function* toggleDebug({ flowId, exportId, minutes }) {
   const isDebugEnabled = yield select(selectors.isDebugEnabled, exportId);
+  const hasNewLogs = yield select(selectors.hasNewLogs, exportId);
 
   const patchSet = [
     {
@@ -175,8 +176,8 @@ export function* toggleDebug({ flowId, exportId, minutes }) {
   ];
 
   yield put(actions.resource.patch('exports', exportId, patchSet));
-  // only when the debugger is on, we do the polling
-  if (isDebugEnabled) {
+  // only when the debugger is on and there are no new logs, we do the polling
+  if (isDebugEnabled && !hasNewLogs) {
     yield call(startPollingForRequestLogs, {flowId, exportId});
   }
 }

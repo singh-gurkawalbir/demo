@@ -242,7 +242,7 @@ describe('Listener logs sagas', () => {
       )
       .not.call.fn(startPollingForRequestLogs)
       .run());
-    test('should call startPollingForRequestLogs if debugOn is set', () => expectSaga(requestLogs, { flowId, exportId })
+    test('should call startPollingForRequestLogs if debugOn is set and hasNewLogs is false', () => expectSaga(requestLogs, { flowId, exportId })
       .provide([
         [select(selectors.listenerLogs, exportId), {debugOn: true, nextPageURL: '/nexturl1'}],
         [select(selectors.filter, FILTER_KEY), {time: {}}],
@@ -260,6 +260,25 @@ describe('Listener logs sagas', () => {
         )
       )
       .call(startPollingForRequestLogs, {flowId, exportId})
+      .run());
+    test('should not call startPollingForRequestLogs if hasNewLogs is true', () => expectSaga(requestLogs, { flowId, exportId })
+      .provide([
+        [select(selectors.listenerLogs, exportId), {debugOn: true, hasNewLogs: true, nextPageURL: '/nexturl1'}],
+        [select(selectors.filter, FILTER_KEY), {time: {}}],
+        [matchers.call.fn(apiCallWithRetry), throwError(new APIException({
+          status: 422,
+          message: '{"message":"Invalid or Missing Field: time_lte", "code":"invalid_or_missing_field"}',
+        }))],
+        [matchers.call.fn(startPollingForRequestLogs), undefined],
+      ])
+      .call(retryToFetchRequests, {fetchRequestsPath: '/flows/flow-123/exp-123/requests' })
+      .put(
+        actions.logs.listener.received(
+          exportId,
+          [],
+        )
+      )
+      .not.call(startPollingForRequestLogs, {flowId, exportId})
       .run());
   });
 
@@ -334,7 +353,7 @@ describe('Listener logs sagas', () => {
           expect(effects.call).toBeUndefined();
         });
     });
-    test('should call startPollingForRequestLogs if debugOn is set', () => {
+    test('should call startPollingForRequestLogs if debugOn is true and hasNewLogs is false', () => {
       const minutes = '30';
 
       return expectSaga(toggleDebug, { flowId, exportId, minutes })
@@ -356,6 +375,31 @@ describe('Listener logs sagas', () => {
 
           expect(effects.put[0]).toHaveProperty('payload.action.patchSet', patchSet);
           expect(effects.call[0]).toEqual(call(startPollingForRequestLogs, {flowId, exportId}));
+        });
+    });
+    test('should not call startPollingForRequestLogs if hasNewLogs is true', () => {
+      const minutes = '30';
+
+      return expectSaga(toggleDebug, { flowId, exportId, minutes })
+        .provide([
+          [select(selectors.isDebugEnabled, exportId), true],
+          [select(selectors.hasNewLogs, exportId), true],
+          [matchers.call.fn(startPollingForRequestLogs), undefined],
+        ])
+        .run()
+        .then(result => {
+          const { effects } = result;
+
+          const patchSet = [
+            {
+              op: minutes !== '0' ? 'replace' : 'remove',
+              path: '/debugUntil',
+              value: expect.any(String),
+            },
+          ];
+
+          expect(effects.put[0]).toHaveProperty('payload.action.patchSet', patchSet);
+          expect(effects.call).toBeUndefined();
         });
     });
   });

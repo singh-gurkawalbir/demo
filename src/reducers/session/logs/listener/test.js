@@ -201,7 +201,6 @@ describe('Listener logs reducer', () => {
         [exportId]: {
           logsStatus: 'received',
           loadMoreStatus: 'received',
-          hasNewLogs: false,
           nextPageURL: '/api/url',
           logsSummary: [{key: 1}, {key: 2}, ...logsSummary],
         },
@@ -273,7 +272,6 @@ describe('Listener logs reducer', () => {
       );
       const expectedState = {
         [exportId]: {
-          hasNewLogs: false,
           logsDetails: {5642310475121: {status: 'requested'}},
           logsStatus: 'received',
           loadMoreStatus: 'received',
@@ -439,7 +437,7 @@ describe('Listener logs reducer', () => {
 
       expect(newState).toEqual({});
     });
-    test('should not modify the state if deleted log key is not present and there is no existing error', () => {
+    test('should not modify the state if deleted log key is not present', () => {
       const initialState = {
         [exportId]: {
           activeLogKey: '5642310475121',
@@ -491,6 +489,49 @@ describe('Listener logs reducer', () => {
       const expectedState = {
         [exportId]: {
           activeLogKey: '5642310475121',
+          hasNewLogs: false,
+          logsDetails: {5642310475121: {
+            status: 'received',
+            request: {},
+            response: {},
+          },
+          },
+          logsStatus: 'received',
+          logsSummary: [{key: '5642310475121', time: 1234}, {key: '200-GET', time: 3453}],
+          nextPageURL: '/v1(api)/flows/:_flowId',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should modify the state and remove deleted log key from active key also if it matches deleted key', () => {
+      const initialState = {
+        [exportId]: {
+          activeLogKey: '200-POST',
+          hasNewLogs: false,
+          logsDetails: {5642310475121: {
+            status: 'received',
+            request: {},
+            response: {},
+          },
+          '200-POST': {
+            status: 'received',
+            request: {},
+            response: {},
+          },
+          },
+          logsStatus: 'received',
+          logsSummary: [{key: '5642310475121', time: 1234}, {key: '200-POST', time: 3453}, {key: '200-GET', time: 3453}],
+          nextPageURL: '/v1(api)/flows/:_flowId',
+        },
+      };
+
+      const newState = reducer(
+        initialState,
+        actions.logs.listener.logDeleted(exportId, deletedLogKey)
+      );
+      const expectedState = {
+        [exportId]: {
           hasNewLogs: false,
           logsDetails: {5642310475121: {
             status: 'received',

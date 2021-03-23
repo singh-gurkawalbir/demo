@@ -21,7 +21,9 @@ export default (state = {}, action) => {
         if (!draft[exportId]) break;
         draft[exportId].logsStatus = 'received';
         draft[exportId].loadMoreStatus = 'received';
-        draft[exportId].hasNewLogs = false;
+        if (!loadMore) {
+          draft[exportId].hasNewLogs = false;
+        }
         draft[exportId].nextPageURL = nextPageURL;
 
         draft[exportId].logsSummary = loadMore
@@ -65,6 +67,9 @@ export default (state = {}, action) => {
           logs.splice(index, 1);
         }
         delete draft[exportId].logsDetails?.[deletedLogKey];
+        if (draft[exportId].activeLogKey === deletedLogKey) {
+          delete draft[exportId].activeLogKey;
+        }
 
         break;
       }
