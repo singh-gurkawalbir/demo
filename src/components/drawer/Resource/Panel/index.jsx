@@ -71,7 +71,7 @@ const useStyles = makeStyles(theme => ({
   },
   guideWrapper: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   guideLink: {
     marginRight: theme.spacing(2),
@@ -309,6 +309,7 @@ export default function Panel(props) {
                 size="small"
                 type={applicationType}
                 alt={applicationType || 'Application image'}
+                assistant={app?.assistant}
             />
             </div>
             )}

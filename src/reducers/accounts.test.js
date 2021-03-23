@@ -1,10 +1,12 @@
 /* global describe, expect, test */
 import each from 'jest-each';
 import { deepClone } from 'fast-json-patch';
+import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../utils/constants';
 import { stringCompare } from '../utils/sort';
+import { LICENSE_EXPIRED } from '../utils/messageStore';
 
 describe('Accounts region selector testcases', () => {
   describe('isAccountOwnerOrAdmin selector', () => {
@@ -942,17 +944,70 @@ describe('Accounts region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.isLicenseValidToEnableFlow(undefined, {})).toEqual({enable: true});
     });
-  });
+    const expiredState =
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: ACCOUNT_IDS.OWN,
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'license1',
+                        type: 'integrator',
+                        tier: 'standard',
+                        expires: moment()
+                          .subtract(1, 'days')
+                          .toISOString(),
+                      },
+                    ],
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        };
+    const state =
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: ACCOUNT_IDS.OWN,
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'license1',
+                        type: 'integrator',
+                        tier: 'standard',
+                        expires: moment()
+                          .add(60, 'days')
+                          .toISOString(),
+                      },
+                    ],
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        };
 
-  describe('selectors.hasAccounts test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.hasAccounts(undefined, {})).toEqual(false);
+    const expected = {enable: false, message: LICENSE_EXPIRED};
+
+    test('should return false for expired license', () => {
+      expect(selectors.isLicenseValidToEnableFlow(expiredState)).toEqual(expected);
     });
-  });
-
-  describe('selectors.hasAcceptedUsers test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.hasAcceptedUsers()).toEqual(false);
+    test('should return true for valid license', () => {
+      expect(selectors.isLicenseValidToEnableFlow(state)).toEqual({ enable: true });
     });
   });
 
@@ -960,17 +1015,278 @@ describe('Accounts region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.hasAcceptedAccounts()).toEqual(false);
     });
+    test('should return true if state contains accepted account', () => {
+      const state =
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: 'ashare1',
+                  accepted: true,
+                  ownerUser: {
+                    company: 'Company One',
+                    licenses: [
+                      { _id: 'license1', type: 'integrator', sandbox: true },
+                    ],
+                  },
+                },
+                {
+                  _id: 'ashare2',
+                  accepted: true,
+                  ownerUser: {
+                    name: 'Owner Two',
+                    licenses: [{ _id: 'license1', type: 'integrator' }],
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        };
+
+      expect(selectors.hasAcceptedAccounts(state)).toEqual(true);
+    });
+    test('should return false if state contains disabled account', () => {
+      const state =
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: 'ashare1',
+                  accepted: true,
+                  disabled: true,
+                  ownerUser: {
+                    company: 'Company One',
+                    licenses: [
+                      { _id: 'license1', type: 'integrator', sandbox: true },
+                    ],
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        };
+
+      expect(selectors.hasAcceptedAccounts(state)).toEqual(false);
+    });
+    test('should return false if state contains only owner account', () => {
+      const state =
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: ACCOUNT_IDS.OWN,
+                  ownerUser: {
+                    company: 'Company One',
+                    licenses: [
+                      { _id: 'license1', type: 'integrator', sandbox: true },
+                    ],
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        };
+
+      expect(selectors.hasAcceptedAccounts(state)).toEqual(false);
+    });
+  });
+
+  describe('selectors.hasAcceptedUsers test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.hasAcceptedUsers()).toEqual(false);
+    });
+    const orgUserState = {
+      user: {
+        preferences: {
+          defaultAShareId: 'ashare1',
+        },
+        org: {
+          users: [
+            {
+              _id: 'user1',
+              accepted: true,
+              accessLevel: 'monitor',
+            },
+            {
+              _id: 'user2',
+              accepted: true,
+            },
+            {
+              _id: 'ashare1',
+              accepted: true,
+              accessLevel: 'monitor',
+              integrationAccessLevel: [],
+            },
+          ],
+          accounts: [
+            {
+              _id: 'ashare1',
+              accessLevel: 'owner',
+              ownerUser: {
+                licenses: [],
+              },
+            },
+          ],
+        },
+      },
+    };
+    const state = {
+      user: {
+        preferences: {
+          defaultAShareId: 'ashare1',
+        },
+        org: {
+          users: [
+            {
+              _id: 'user1',
+              accessLevel: 'monitor',
+            },
+          ],
+          accounts: [
+            {
+              _id: 'ashare1',
+              accessLevel: 'owner',
+              ownerUser: {
+                licenses: [],
+              },
+            },
+          ],
+        },
+      },
+    };
+
+    test('should return true if account has accepted users', () => {
+      expect(selectors.hasAcceptedUsers(orgUserState)).toEqual(true);
+    });
+    test('should return false if account does not have accepted users', () => {
+      expect(selectors.hasAcceptedUsers(state)).toEqual(false);
+    });
   });
 
   describe('selectors.isValidSharedAccountId test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.isValidSharedAccountId()).toEqual(false);
     });
+    test('should return true if state contains valid account', () => {
+      const state =
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: 'ashare1',
+                  accepted: true,
+                  ownerUser: {
+                    company: 'Company One',
+                    licenses: [
+                      { _id: 'license1', type: 'integrator', sandbox: true },
+                    ],
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        };
+
+      expect(selectors.isValidSharedAccountId(state, 'ashare1')).toEqual(true);
+    });
+    test('should return false if state does not contains valid account', () => {
+      const state =
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: 'ashare2',
+                  accepted: true,
+                  ownerUser: {
+                    company: 'Company One',
+                    licenses: [
+                      { _id: 'license1', type: 'integrator', sandbox: true },
+                    ],
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        };
+
+      expect(selectors.isValidSharedAccountId(state, 'ashare1')).toEqual(false);
+    });
   });
 
   describe('selectors.getOneValidSharedAccountId test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.getOneValidSharedAccountId()).toEqual();
+    });
+    test('should return valid shared account id', () => {
+      const state =
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: 'ashare1',
+                  accepted: true,
+                  ownerUser: {
+                    company: 'Company One',
+                    licenses: [
+                      { _id: 'license1', type: 'integrator', sandbox: true },
+                    ],
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        };
+
+      expect(selectors.getOneValidSharedAccountId(state)).toEqual('ashare1');
+    });
+    test('should return undefined if state does not contains valid shared account id', () => {
+      const state =
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: 'ashare1',
+                  ownerUser: {
+                    company: 'Company One',
+                    licenses: [
+                      { _id: 'license1', type: 'integrator', sandbox: true },
+                    ],
+                  },
+                },
+              ],
+              users: [],
+            },
+          },
+        };
+
+      expect(selectors.getOneValidSharedAccountId(state)).toEqual(undefined);
     });
   });
 
@@ -1112,9 +1428,50 @@ describe('Accounts region selector testcases', () => {
           },
         },
         user: {
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+          org: {
+            accounts: [
+              {
+                _id: ACCOUNT_IDS.OWN,
+                accessLevel: 'owner',
+              },
+            ],
+          },
           profile: {
             developer: true,
             allowedToPublish: true,
+          },
+        },
+      };
+
+      expect(selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)).toEqual(true);
+    });
+
+    test('should return true for admin with account of IA publisher with developer mode on', () => {
+      const state = {
+        data: {
+          resources: {
+            exports: [{_id: 'res-123', _connectorId: 'connId'}],
+          },
+        },
+        user: {
+          preferences: { defaultAShareId: 'ashare1' },
+          org: {
+            accounts: [
+              {
+                _id: 'ashare1',
+                accessLevel: 'administrator',
+                ownerUser: {
+                  email: 'owner@test.com',
+                  allowedToPublish: true,
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+          profile: {
+            developer: true,
+            allowedToPublish: false,
           },
         },
       };
@@ -1143,6 +1500,47 @@ describe('Accounts region selector testcases', () => {
   describe('selectors.availableConnectionsToRegister test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.availableConnectionsToRegister()).toEqual([]);
+    });
+    test('should return list of available connections to register', () => {
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+            org: {
+              accounts: [
+                {
+                  _id: ACCOUNT_IDS.OWN,
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                },
+              ],
+              users: [],
+            },
+          },
+          data: {
+            resources: {
+              integrations: [{
+                _id: 'integrationId1',
+                _registeredConnectionIds: ['connection1'],
+              }, {
+                _id: 'integrationId2',
+                _registeredConnectionIds: ['connection2'],
+              }],
+              connections: [{
+                _id: 'connection1',
+                name: 'connection 1',
+              }, {
+                _id: 'connection2',
+                name: 'connection 2',
+              }],
+            },
+          },
+        },
+        'some action'
+      );
+
+      expect(selectors.availableConnectionsToRegister(state, 'integrationId1')).toEqual([{_id: 'connection2', name: 'connection 2'}]);
+      expect(selectors.availableConnectionsToRegister(state, 'integrationId2')).toEqual([{_id: 'connection1', name: 'connection 1'}]);
     });
   });
 });

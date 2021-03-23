@@ -1,30 +1,16 @@
 import React, { useCallback } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import actions from '../../../../actions';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
-import SourceFilter from '../SourceFilter';
+import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
+import actions from '../../../../actions';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
-export default function SelectSource({
-  flowId,
-  resourceId,
-  isResolved,
-}) {
+export default function SelectSource({ flowId, resourceId, isResolved }) {
   const dispatch = useDispatch();
-  const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
+  const sourceOptions = useSelector(state => selectors.sourceOptions(state, resourceId));
 
-  const filter = useSelector(state =>
-    selectors.filter(state, filterKey),
-  shallowEqual
-  );
   const handleSave = useCallback(
-    sourceIds => {
-      dispatch(
-        actions.patchFilter(filterKey, {
-          ...filter,
-          sources: sourceIds,
-        })
-      );
+    () => {
       dispatch(
         actions.errorManager.flowErrorDetails.request({
           flowId,
@@ -33,16 +19,14 @@ export default function SelectSource({
         })
       );
     },
-    [dispatch, filter, filterKey, flowId, isResolved, resourceId],
+    [dispatch, flowId, isResolved, resourceId],
   );
+  const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
 
   return (
-    <div> Source
-      <SourceFilter
-        onSave={handleSave}
-        selectedSources={filter.sources}
-        resourceId={resourceId}
-      />
-    </div>
+    <MultiSelectColumnFilter
+      filterKey={filterKey}
+      handleSave={handleSave}
+      options={sourceOptions} />
   );
 }

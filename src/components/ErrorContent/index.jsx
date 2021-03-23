@@ -8,6 +8,8 @@ const useStyles = makeStyles({
   errorText: {
     overflow: 'hidden',
     maxWidth: 500,
+    overflowY: 'auto',
+    maxHeight: 'calc(100vh - 118px)',
     paddingLeft: 12,
     wordBreak: 'break-word',
     '& > * ': {

@@ -107,14 +107,23 @@ export default {
       insertStubKey: 'formInit',
       activeProcessor: mode,
       originalData: data,
-      scriptPatchPath: generatePatchPath(options.sectionId, integrationAllSections, '/content'),
       settingsFormPatchPath: generatePatchPath(options.sectionId, integrationAllSections, '/settingsForm'),
     };
   },
   requestBody: editor => {
     const { data, rule, context, activeProcessor } = editor;
-    const {code, entryFunction} = rule?.script || {};
-    let parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+    const {code, entryFunction} = rule.script || {};
+    let parsedData;
+
+    if (typeof data === 'string') {
+      try {
+        parsedData = JSON.parse(data);
+      } catch (e) {
+        parsedData = {};
+      }
+    } else {
+      parsedData = data;
+    }
 
     if (activeProcessor === 'json') {
       parsedData = {
@@ -215,7 +224,6 @@ export default {
       resourceId,
       resourceType,
       activeProcessor,
-      scriptPatchPath,
       settingsFormPatchPath,
     } = editor;
     const {code, scriptId, entryFunction} = rule?.script || {};
@@ -254,7 +262,7 @@ export default {
       // };
     }
 
-    if (scriptId) {
+    if (scriptId && activeProcessor === 'script') {
       value.init = {
         function: entryFunction,
         _scriptId: scriptId,
@@ -263,7 +271,7 @@ export default {
         patch: [
           {
             op: 'replace',
-            path: scriptPatchPath,
+            path: '/content',
             value: code,
           },
         ],

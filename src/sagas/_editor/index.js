@@ -45,7 +45,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
   // for correct HTML/URL encoding
   if (processor === 'handlebars' && editorId) {
     const editor = yield select(selectors._editor, editorId);
-    const {formKey, fieldId, resourceId, resourceType} = editor;
+    const {formKey, fieldId, resourceId, resourceType, supportsDefaultData} = editor;
     const formState = yield select(selectors.formState, formKey);
     const { value: formValues } = formState || {};
     const resource = yield call(constructResourceFromFormValues, {
@@ -64,6 +64,12 @@ export function* invokeProcessor({ editorId, processor, body }) {
         fieldPath: fieldId,
       },
     };
+    // for sql editors, modelMetadata needs to be passed inside options
+    if (supportsDefaultData) {
+      const parsedDefaults = safeParse(editor.defaultData) || {};
+
+      reqBody.options.modelMetadata = parsedDefaults.data || parsedDefaults.record || parsedDefaults.row || {};
+    }
   }
   const path = `/processors/${processor}`;
   const opts = {
@@ -417,7 +423,7 @@ export function* requestEditorSampleData({
   if (editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') { return {}; }
 
   // for exports resource with 'once' type fields, exported preview data is shown and not the flow input data
-  const fetchPreviewStageData = resourceType === 'exports' && (fieldId?.includes('once') || fieldId === 'dataURITemplate');
+  const fetchPreviewStageData = resourceType === 'exports' && (fieldId?.includes('once') || fieldId === 'dataURITemplate' || fieldId === 'traceKeyTemplate');
 
   if (fetchPreviewStageData) {
     yield call(requestExportSampleData, { resourceId, resourceType, values: formValues });
@@ -608,7 +614,7 @@ export function* initEditor({ id, editorType, options }) {
   if (init) {
     // for now we need all below props for handlebars init only
     if (editorType === 'handlebars' || editorType === 'sql' || editorType === 'databaseMapping') {
-      const { _connectionId: connectionId } = resource;
+      const { _connectionId: connectionId } = resource || {};
       const connection = yield select(selectors.resource, 'connections', connectionId);
       const isPageGenerator = yield select(selectors.isPageGenerator, flowId, resourceId, resourceType);
 
@@ -686,9 +692,12 @@ export default [
       actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW],
     autoEvaluateProcessorWithCancel
   ),
+  // added a separate effect for DynaFileKeyColumn as
+  // both, csv parser and file key editor can be in use and would require
+  // the preview API call parallel
+  takeLatest(actionTypes._EDITOR.PATCH.FILE_KEY_COLUMN, autoEvaluateProcessorWithCancel),
   takeEvery(actionTypes._EDITOR.INIT, initEditor),
   takeLatest(actionTypes._EDITOR.TOGGLE_VERSION, toggleEditorVersion),
   takeLatest(actionTypes._EDITOR.PREVIEW.REQUEST, requestPreview),
   takeLatest(actionTypes._EDITOR.SAVE.REQUEST, save),
 ];
-

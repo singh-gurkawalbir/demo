@@ -1,9 +1,9 @@
 import React, {useCallback} from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { makeStyles } from '@material-ui/core/styles';
-import CopyIcon from '../../icons/CopyIcon';
-import IconTextButton from '../../IconTextButton';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import CopyIcon from '../../../icons/CopyIcon';
+import IconTextButton from '../../../IconTextButton';
+import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   clipBoardContainer: {
@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ClipBoardPanel({ content }) {
+export default function ClipboardPanel({ content }) {
   const classes = useStyles();
   const clipBoardText = typeof content !== 'string' ? JSON.stringify(content, null, 2) : content;
 

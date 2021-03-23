@@ -298,8 +298,8 @@ export default function MappingRow({
               onTouch={handleFieldTouch}
           />
             {isLookup && <RightIcon title="Lookup" Icon={LookupIcon} />}
-            {isMultiField && <RightIcon title="Multi-field" Icon={MultiFieldIcon} />}
-            {isHardCodedValue && <RightIcon title="Hard-coded" Icon={HardCodedIcon} />}
+            {isMultiField && !isLookup && <RightIcon title="Multi-field" Icon={MultiFieldIcon} />}
+            {isHardCodedValue && !isLookup && <RightIcon title="Hard-coded" Icon={HardCodedIcon} />}
             {(isSubRecordMapping || isRequired) && (
             <RightIcon
               title={`${

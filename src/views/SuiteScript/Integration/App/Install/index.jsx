@@ -17,7 +17,6 @@ import ResourceForm from '../../../../../components/SuiteScript/ResourceFormFact
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import Spinner from '../../../../../components/Spinner';
-import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 import getRoutePath from '../../../../../utils/routePaths';
 import LoadResources from '../../../../../components/LoadResources';
 import ConnectionDrawer from '../drawer/Connection';
@@ -25,7 +24,7 @@ import CeligoPageBar from '../../../../../components/CeligoPageBar';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    marginTop: theme.spacing(2),
+    margin: theme.spacing(2),
     flexGrow: 1,
     width: '100%',
   },
@@ -310,9 +309,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
   }
   if (isInstallComplete && !setupDone) {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+      <Spinner centerAll />
     );
   }
 
@@ -328,9 +325,9 @@ export default function SuiteScriptIntegrationAppInstallation() {
       <div className={classes.root}>
         <div className={classes.innerContent}>
           { packageCommStatus === COMM_STATES.LOADING && (
-          <SpinnerWrapper>
-            <Spinner size={24} />
-          </SpinnerWrapper>
+
+            <Spinner />
+
           )}
           <ConnectionDrawer
             connectorId={connectorId}

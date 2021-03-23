@@ -1,34 +1,35 @@
 #!/bin/zsh
 set -e
 
-LR_vars=$1
-echo $LR_vars
-[[ -n $1 ]] || LR_vars="./.lr_staging" #defaulting to staging.
-[[ -f $LR_vars ]] || (echo "logrocket env file invalid $LR_vars" && exit 1)
-version=`cat package.json | python -c 'import json,sys,datetime; from datetime import time; d = datetime.datetime.now(); obj=json.load(sys.stdin); version = obj["gitRevision"]; dateString = d.strftime("%d-%m-%H-%M"); print({version.find("release") == 0: version[8:-2] + "." + dateString}.get(True, version + "." + dateString));'`
-echo "building version $version ..."
-echo $LR_vars
-export RELEASE_VERSION="$version"
-. $LR_vars
-NODE_ENV=production webpack --mode=production
-URL_PREFIX="~/react/$version/"
-echo $URL_PREFIX
-
-if [ ! -z "$LOGROCKET_IDENTIFIER" ] 
-then
-    echo "creating logrocket release and uploading source maps for $LOGROCKET_IDENTIFIER in NA ..."
-    logrocket release $version --apikey=$LOGROCKET_API_KEY
-    logrocket upload build/ --release=$version --apikey=$LOGROCKET_API_KEY --url-prefix=$URL_PREFIX
-elif [ ! -z "$LOGROCKET_IDENTIFIER_EU" ] 
-then
-    echo "creating logrocket release and uploading source maps for $LOGROCKET_IDENTIFIER_EU in EU ..."
-    logrocket release $version --apikey=$LOGROCKET_API_KEY_EU
-    logrocket upload build/ --release=$version --apikey=$LOGROCKET_API_KEY_EU --url-prefix=$URL_PREFIX
-else
-    (echo "Neither of LOGROCKET_API_KEY nor LOGROCKET_API_KEY_EU set so exiting" && exit 1)
+env_vars=$1
+[[ -f $env_vars ]] || (echo "env file $env_vars invalid" && exit 1)
+echo $env_vars
+. $env_vars
+if [ -z "$LOGROCKET_IDENTIFIER" ] || [ -z "$LOGROCKET_API_KEY" ] || [ -z "$CDN_BASE_URI" ] || [ -z "$S3_BUCKET" ] || [ -z "$ACCESS_KEY_ID" ] || [ -z "$SECRET_ACCESS_KEY" ]; then
+  echo 'one or more variables are undefined'        
+  exit 1
 fi
+
+version=`python -c 'import version; print version.get_version_number()'`
+echo "building version $version ..."
+export RELEASE_VERSION="$version"
+
+URL_PREFIX="~/react/$version/"
+echo "LogRocket URL prefix $URL_PREFIX ..."
+echo "S3 bucket name $S3_BUCKET ..."
+yarn install
+NODE_ENV=production webpack --mode=production
+
+echo "creating logrocket release and uploading source maps for $LOGROCKET_IDENTIFIER ..."
+logrocket release $version --apikey=$LOGROCKET_API_KEY
+logrocket upload build/ --release=$version --apikey=$LOGROCKET_API_KEY --url-prefix=$URL_PREFIX
 
 # move the source map files into a separate folder
 mkdir -p build/sourcemaps && mv build/*.js.map build/sourcemaps/
-aws s3 cp build/ s3://integrator-staging-ui-resources/react/$version/ --recursive --acl public-read
-aws s3 cp build/index.html s3://integrator-staging-ui-resources/react/index.html --acl public-read
+# upload the build files to s3 bucket
+aws configure set aws_access_key_id $ACCESS_KEY_ID
+aws configure set aws_secret_access_key $SECRET_ACCESS_KEY
+aws s3 cp build/ s3://$S3_BUCKET/react/$version/ --recursive --acl public-read
+aws s3 cp build/index.html s3://$S3_BUCKET/react/index.html --acl public-read
+aws configure set aws_access_key_id ''
+aws configure set aws_secret_access_key ''

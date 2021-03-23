@@ -24,10 +24,18 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     display: 'flex',
   },
-  filterContainer: {
+  filterContainerRunHistory: {
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     borderWidth: [[1, 0]],
+    display: 'flex',
+    position: 'sticky',
+    top: 0,
+    padding: theme.spacing(1),
+    zIndex: 1,
+    justifyContent: 'space-between',
+    background: theme.palette.background.default,
   },
+
   messageContainer: {
     padding: theme.spacing(3),
   },
@@ -71,6 +79,7 @@ export default function RunHistory({ flowId }) {
   const fetchFlowRunHistory = useCallback(
     () => {
       if (flowId && !isNewId(flowId)) {
+        setCurrentPage(0);
         dispatch(actions.errorManager.runHistory.request({ flowId }));
       }
     },
@@ -87,10 +96,6 @@ export default function RunHistory({ flowId }) {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [filter.range]);
 
   const hasFlowRunHistory = !isLoadingHistory && !!runHistory?.length;
 
@@ -120,8 +125,8 @@ export default function RunHistory({ flowId }) {
 
   return (
     <>
-      <div className={classes.filterContainer}>
-        <div className={classes.actions}>
+      <div className={classes.filterContainerRunHistory}>
+        <>
           <div className={classes.rangeFilter}>
             <DateRangeSelector
               clearable
@@ -147,7 +152,7 @@ export default function RunHistory({ flowId }) {
               <RefreshIcon /> Refresh
             </IconTextButton>
           </div>
-        </div>
+        </>
       </div>
       { isLoadingHistory && <PanelLoader />}
       { !hasFlowRunHistory &&

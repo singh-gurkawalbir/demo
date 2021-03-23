@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
+import clsx from 'clsx';
 import { selectors } from '../../reducers';
 import ResourceTable from '../ResourceTable';
 import ShowMoreDrawer from '../drawer/ShowMore';
@@ -16,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AuditLogTable({ resourceType, resourceId, filters, childId }) {
+export default function AuditLogTable({ resourceType, resourceId, filters, childId, className }) {
   const classes = useStyles();
   const filterKey = `${resourceType}-${resourceId}-auditLogs`;
   const { take = 100 } = useSelector(state => selectors.filter(state, filterKey));
@@ -32,7 +33,7 @@ export default function AuditLogTable({ resourceType, resourceId, filters, child
   const actionProps = useMemo(() => ({ childId }), [childId]);
 
   return (
-    <div className={classes.root}>
+    <div className={clsx(classes.root, className)}>
       {totalCount > 0
         ? (
           <ResourceTable

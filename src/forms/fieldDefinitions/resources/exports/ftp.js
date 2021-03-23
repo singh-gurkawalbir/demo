@@ -2,7 +2,6 @@ export default {
   'ftp.directoryPath': {
     type: 'uri',
     label: 'Directory path',
-    // editorTitle: 'Build directory path',
     required: true,
     showExtract: false,
     showLookup: false,
@@ -10,14 +9,12 @@ export default {
   'ftp.fileNameStartsWith': {
     type: 'uri',
     label: 'File name starts with',
-    // editorTitle: 'Build file name starts with',
     showExtract: false,
     showLookup: false,
   },
   'ftp.fileNameEndsWith': {
     type: 'uri',
     label: 'File name ends with',
-    // editorTitle: 'Build file name ends with',
     showExtract: false,
     showLookup: false,
   },

@@ -136,7 +136,7 @@ export default function OnOffCell({
   }, [onOffInProgress]);
 
   if (onOffInProgressStatus) {
-    return <Spinner size={24} className={classes.spinnerOnOff} />;
+    return <Spinner className={classes.spinnerOnOff} />;
   }
 
   if (!isFlowEnableLocked) {

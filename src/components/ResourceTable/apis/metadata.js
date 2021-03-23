@@ -23,7 +23,7 @@ export default {
     },
     {
       heading: 'Script',
-      value: r => <ResourceName resourceType="scripts" resourceId={r._id} />,
+      value: r => <ResourceName resourceType="scripts" resourceId={r._scriptId} />,
     },
     {
       heading: 'Last updated',

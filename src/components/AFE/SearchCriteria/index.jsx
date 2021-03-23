@@ -110,7 +110,7 @@ export default function SearchCriteriaEditor(props) {
           <div className={classes.childHeader} key={header.name}>
             <span>{header.name}</span>
             {header.refreshable && status !== 'requested' && <RefreshIcon onClick={handleRefresh} />}
-            {header.refreshable && status === 'requested' && <Spinner size={24} />}
+            {header.refreshable && status === 'requested' && <Spinner />}
           </div>
         ))}
       </div>

@@ -269,4 +269,32 @@ export default {
       return { base64EncodedToken};
     },
   },
+  yotpo: {
+    responseParser: resp => ({
+      'http.auth.token.token': resp && resp.access_token,
+    }),
+    payloadTransformer: form => ({
+      baseURI: 'https://api.yotpo.com',
+      body: { grant_type: 'client_credentials',
+        client_id: form['/http/unencrypted/clientId'],
+        client_secret: form['/http/encrypted/clientSecret'],
+      },
+    }),
+  },
+  'fulfilment.com': {
+    responseParser: resp => ({
+      'http.auth.token.token': resp && resp.access_token,
+    }),
+    payloadTransformer: form => ({
+      baseURI: 'https://api.fulfillment.com',
+      body: { username: form['/http/unencrypted/username'],
+        password: form['/http/encrypted/password'],
+        grant_type: 'password',
+        client_id:
+        form['/http/unencrypted/clientId'],
+        client_secret:
+        form['/http/encrypted/clientSecret'],
+        scope: 'oms'},
+    }),
+  },
 };
