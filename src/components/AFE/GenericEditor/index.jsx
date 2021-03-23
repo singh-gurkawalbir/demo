@@ -63,9 +63,8 @@ export default function Editor(props) {
       </PanelGridItem>
       <PanelGridItem gridArea="data" key={isSampleDataLoading}>
         <PanelTitle title={dataTitle} />
-        {/* show spinner instead of data panel when sample data is loading */}
         {isSampleDataLoading ? (
-          <Spinner />
+          <Spinner centerAll />
         ) : (
           <CodePanel
             name="data"

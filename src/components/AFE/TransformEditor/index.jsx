@@ -106,7 +106,7 @@ export default function TransformEditor(props) {
       <PanelGridItem gridArea="data">
         <PanelTitle title="Input" />
         {isSampleDataLoading ? (
-          <Spinner />
+          <Spinner centerAll />
         ) : (
           <CodePanel
             name="data"

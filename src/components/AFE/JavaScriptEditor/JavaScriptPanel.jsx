@@ -199,7 +199,7 @@ export default function JavaScriptPanel(props) {
         </div>
         <div className={classes.scriptPanel}>
           {scriptContent === undefined && scriptId ? (
-            <Spinner />
+            <Spinner centerAll />
           ) : (
             <CodePanel
               name="code"

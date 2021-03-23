@@ -64,7 +64,7 @@ const Editor = props => {
       <PanelGridItem gridArea="data" key={isSampleDataLoading}>
         <PanelTitle title={dataTitle} />
         {isSampleDataLoading ? (
-          <Spinner />
+          <Spinner centerAll />
         ) : (
           <CodePanel
             name="sampleData"

@@ -113,7 +113,7 @@ export default function JavaScriptEditor(props) {
       <PanelGridItem gridArea="data">
         <PanelTitle title="Function input" />
         {isSampleDataLoading ? (
-          <Spinner />
+          <Spinner centerAll />
         ) : (
           <CodePanel
             id="data"

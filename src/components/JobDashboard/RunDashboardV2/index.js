@@ -22,7 +22,7 @@ export default function RunDashboardV2({ flowId }) {
   if (latestFlowJobs?.status === 'refresh') {
     // Only when the dashboard is entirely refreshed , show loading
     // it can be updated in between to get latest job status in which case, no need to show loader
-    return <Spinner />;
+    return <Spinner loading size={48} />;
   }
 
   return (

@@ -103,7 +103,7 @@ export default function FilterEditor(props) {
       <PanelGridItem gridArea="data">
         <PanelTitle title="Input" />
         {isSampleDataLoading ? (
-          <Spinner />
+          <Spinner centerAll />
         ) : (
           <CodePanel
             name="data"

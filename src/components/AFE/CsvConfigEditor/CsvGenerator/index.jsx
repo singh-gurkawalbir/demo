@@ -83,7 +83,7 @@ export default function CsvGenerateEditor(props) {
       <PanelGridItem gridArea="data" key={isSampleDataLoading}>
         <PanelTitle title="Sample flow data" />
         {isSampleDataLoading ? (
-          <Spinner />
+          <Spinner centerAll />
         ) : (
           <CodePanel
             name="data"
