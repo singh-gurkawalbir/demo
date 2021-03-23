@@ -11,7 +11,6 @@ import Spinner from '../../../Spinner';
 import { wrapSpecialChars } from '../../../../utils/jsonPaths';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import SpinnerWrapper from '../../../SpinnerWrapper';
 
 /**
  * TODO: Azhar to check and update the button styles
@@ -107,9 +106,8 @@ export default function DynaNetSuiteLookupFilters(props) {
 
   if (!filters) {
     return (
-      <SpinnerWrapper>
-        <Spinner color="primary" />
-      </SpinnerWrapper>
+
+      <Spinner centerAll />
 
     );
   }

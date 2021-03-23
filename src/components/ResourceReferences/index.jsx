@@ -44,7 +44,7 @@ export default function ResourceReferences({ onClose, resourceType, resourceId, 
           <Typography variant="h4">
             {`Retrieving ${resourceTypeLabel} references`}
           </Typography>
-          <Spinner color="primary" />
+          <Spinner />
         </Loader>
       )}
       {resourceReferences && resourceReferences.length === 0 && (

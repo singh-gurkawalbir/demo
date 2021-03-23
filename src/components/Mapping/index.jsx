@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import {selectors} from '../../reducers';
 import Spinner from '../Spinner';
-import SpinnerWrapper from '../SpinnerWrapper';
 import TopPanel from './TopPanel';
 import ButtonPanel from './ButtonPanel';
 import PreviewPanel from './Preview/Panel';
@@ -106,9 +105,9 @@ export default function MappingWrapper(props) {
   }
   if (mappingStatus !== 'received') {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+
+      <Spinner centerAll />
+
     );
   }
 

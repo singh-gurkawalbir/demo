@@ -27,7 +27,6 @@ import {
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import Spinner from '../../Spinner';
-import SpinnerWrapper from '../../SpinnerWrapper';
 import RequiredIcon from '../../icons/RequiredIcon';
 import OptionalIcon from '../../icons/OptionalIcon';
 import ConditionalIcon from '../../icons/ConditionalIcon';
@@ -325,9 +324,9 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
 
   if (data.status === COMM_STATES.LOADING) {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+
+      <Spinner centerAll />
+
     );
   }
   if (data.status === COMM_STATES.ERROR) {

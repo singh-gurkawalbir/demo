@@ -159,7 +159,7 @@ export default function IntegrationAppAddNewStore(props) {
   if (!addNewStoreSteps || !addNewStoreSteps.length) {
     return (
       <Loader open>
-        <Spinner color="primary" />
+        <Spinner />
         <Typography variant="h5">Loading</Typography>
       </Loader>
     );

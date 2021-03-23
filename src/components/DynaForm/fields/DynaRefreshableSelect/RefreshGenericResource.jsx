@@ -122,7 +122,7 @@ export default function RefreshGenericResource(props) {
 
   const options = useMemo(() => [{ items: fieldData || [] }], [fieldData]);
 
-  if (!fieldData && !disableOptionsLoad) return <Spinner size={24} />;
+  if (!fieldData && !disableOptionsLoad) return <Spinner />;
 
   return (
     <div>
@@ -151,7 +151,7 @@ export default function RefreshGenericResource(props) {
               classes.refreshGenericResourceActionBtn,
               classes.refreshLoader
             )}>
-            <Spinner size={24} />
+            <Spinner />
           </span>
         )}
         {urlToOpen && (

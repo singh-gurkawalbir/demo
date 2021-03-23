@@ -363,7 +363,7 @@ export default function ClonePreview(props) {
     return (
       <Loader open>
         <Typography variant="h4">Loading</Typography>
-        <Spinner color="primary" />
+        <Spinner />
       </Loader>
     );
   }
@@ -372,7 +372,7 @@ export default function ClonePreview(props) {
     return (
       <Loader open>
         <Typography variant="h4">Loading Clone Preview</Typography>
-        <Spinner color="primary" />
+        <Spinner />
       </Loader>
     );
   }
@@ -443,7 +443,7 @@ export default function ClonePreview(props) {
     return (
       <Loader open>
         <Typography variant="h4">Loading</Typography>
-        <Spinner color="primary" />
+        <Spinner />
       </Loader>
     );
   }
