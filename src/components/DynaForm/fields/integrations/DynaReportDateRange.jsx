@@ -40,6 +40,7 @@ function CustomTextFields({selectedRange, setSelectedRange, reset, setReset}) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    // when opening custom text field without a selected range default it to 24hrs
     if (!startDate && !endDate) {
       setSelectedRange({...getSelectedRange({preset: 'last24hours'}), preset: 'custom' });
       setReset(state => !state);

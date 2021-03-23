@@ -2,8 +2,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../reducers';
 import { useSelectorMemo } from '../../../hooks';
-import CancelReport from './actions/CancelReport';
-import DownloadResults from './actions/DownloadResults';
+import cancelReport from './actions/cancelReport';
+import downloadResults from './actions/downloadResults';
 import ViewReport from './actions/ViewReport';
 import DateTimeDisplay from '../../DateTimeDisplay';
 
@@ -69,13 +69,13 @@ const metadata = {
   ],
   rowActions: r => {
     if (r.status === 'queued') {
-      return [CancelReport];
+      return [cancelReport(r)];
     }
     if (r.status === 'running') {
-      return [ViewReport, CancelReport];
+      return [ViewReport, cancelReport(r)];
     }
     if (r.status === 'completed') {
-      return [ViewReport, DownloadResults];
+      return [ViewReport, downloadResults(r)];
     }
 
     return [];
