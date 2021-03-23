@@ -1,32 +1,12 @@
 import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
+import { useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import DateFilter from '../commonCells/DateFilter';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
 import { LISTENER_LOGS_RANGE_FILTERS, FILTER_KEY, LISTENER_LOGS_STATUS_CODES } from '../../../utils/listenerLogs';
 import TrashIcon from '../../icons/TrashIcon';
-import IconTextButton from '../../IconTextButton';
-import { selectors } from '../../../reducers';
 
-const useStyles = makeStyles(theme => ({
-  textColor: {
-    color: theme.palette.primary.main,
-  },
-  rowClicked: {
-    '&:before': {
-      content: '""',
-      width: 6,
-      height: 'calc(100% + 20px)',
-      position: 'absolute',
-      left: -16,
-      top: -10,
-      backgroundColor: theme.palette.primary.main,
-    },
-  },
-}));
+import LogDetailsLink from './cells/LogDetailsLink';
 
 export default {
   columns: [
@@ -49,24 +29,8 @@ export default {
             showTime />
         );
       },
-      value: function LogDetailsLink(log, {exportId}) {
-        const classes = useStyles();
-        const dispatch = useDispatch();
-        const activeLogKey = useSelector(state => selectors.activeLogKey(state, exportId));
-
-        const handleActionClick = useCallback(() => {
-          dispatch(actions.logs.listener.setActiveLog(exportId, log.key));
-        }, [dispatch, exportId, log.key]);
-
-        return (
-          <IconTextButton
-            className={clsx(classes.textColor, {
-              [classes.rowClicked]: activeLogKey === log.key,
-            })}
-            onClick={handleActionClick}>
-            <CeligoTimeAgo date={log.utcDateTime} />
-          </IconTextButton>
-        );
+      value: function LogDetails(log, {exportId}) {
+        return <LogDetailsLink logKey={log.key} exportId={exportId} time={log.utcDateTime} />;
       },
     },
     {
@@ -91,6 +55,7 @@ export default {
             options={LISTENER_LOGS_STATUS_CODES} />
         );
       },
+      align: 'right',
       value: log => log.statusCode,
     },
   ],
