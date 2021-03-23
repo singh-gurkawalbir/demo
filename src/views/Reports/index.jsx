@@ -46,11 +46,12 @@ const REPORTS_REFRESH_TIMER = 5000;
 
 const usePollLatestResourceCollection = resourceType => {
   const dispatch = useDispatch();
+  const isReportTypeRunningOrQueued = useSelector(state => selectors.isAnyReportRunningOrQueued(state, resourceType));
 
   useEffect(() => {
     let timerId;
 
-    if (resourceType) {
+    if (resourceType && isReportTypeRunningOrQueued) {
       timerId = setInterval(() => {
         dispatch(actions.resource.requestCollection(resourceType, null, true));
       }, REPORTS_REFRESH_TIMER);
@@ -59,7 +60,7 @@ const usePollLatestResourceCollection = resourceType => {
     return () => {
       clearInterval(timerId);
     };
-  }, [dispatch, resourceType]);
+  }, [dispatch, isReportTypeRunningOrQueued, resourceType]);
 };
 export default function Reports() {
   const match = useRouteMatch();
