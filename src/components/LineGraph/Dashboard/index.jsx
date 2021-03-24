@@ -50,11 +50,7 @@ export default function LineGraphDrawer({ integrationId, childId }) {
   const [refresh, setRefresh] = useState();
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
   const isIntegrationAppV1 = useSelector(state => selectors.isIntegrationAppV1(state, integrationId));
-  const hasGrouping = useMemo(() => {
-    if (flowGroupingsSections) return true;
-
-    return isIntegrationAppV1;
-  }, [flowGroupingsSections, isIntegrationAppV1]);
+  const hasGrouping = !!flowGroupingsSections || isIntegrationAppV1;
   const [flowCategory, setFlowCategory] = useState();
   const groupings = useSelectorMemo(selectors.mkIntegrationFlowGroups, integrationId);
   const preferences = useSelector(state => selectors.userPreferences(state)?.linegraphs) || {};
