@@ -1,15 +1,17 @@
-import React, { useMemo, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { FormControl, FormLabel, makeStyles } from '@material-ui/core';
+import React, { useCallback } from 'react';
 import Select, { components } from 'react-select';
-import Checkbox from '@material-ui/core/Checkbox';
-import { makeStyles, FormControl, FormLabel, Chip } from '@material-ui/core';
-import { useSelectorMemo } from '../../../../hooks';
-import { selectors } from '../../../../reducers';
-import LoadResources from '../../../LoadResources';
-import { useResetWhenParentIntegrationChanges } from './DynaChildIntegrations';
-import FieldHelp from '../../FieldHelp';
-import FieldMessage from '../FieldMessage';
-import SearchIcon from '../../../icons/SearchIcon';
+import SearchIcon from '../../../../icons/SearchIcon';
+import FieldHelp from '../../../FieldHelp';
+import FieldMessage from '../../FieldMessage';
+
+const REACT_SELECT_ACTION_TYPES = {
+  CLEAR: 'clear',
+  SELECT_VALUE: 'selectProps',
+  REMOVE_VALUE: 'remove-value',
+};
+
+Object.freeze(REACT_SELECT_ACTION_TYPES);
 
 const useStyles = makeStyles(theme => ({
   option: {
@@ -23,32 +25,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const REACT_SELECT_ACTION_TYPES = {
-  CLEAR: 'clear',
-  SELECT_VALUE: 'selectProps',
-  REMOVE_VALUE: 'remove-value',
-};
-
-Object.freeze(REACT_SELECT_ACTION_TYPES);
-
-const OptionCheckbox = props => {
-  const {
-    onClick,
-    checked,
-    label,
-  } = props;
-
-  return (
-    <>
-      <Checkbox
-        onClick={onClick}
-        checked={checked}
-        color="primary"
-      />
-      <span >{label}</span>
-    </>
-  );
-};
 const Option = props => {
   const classes = useStyles();
 
@@ -77,21 +53,13 @@ const Option = props => {
   );
 };
 
-const SelectedValueChips = ({value, label}) => (
-  <Chip
-    value={value}
-    label={label}
-  />
-);
-
 const MultiValueLabel = props => {
-  const classes = useStyles();
   const {data, selectProps, children} = props;
 
   const correspondingLabel = selectProps.options.find(ele => ele.value === data)?.label;
 
   return (
-    <div data-test={data} key={data} className={classes.chips}>
+    <div data-test={data} key={data} >
       <components.MultiValueLabel>
 
         {React.cloneElement(children, {
@@ -122,7 +90,9 @@ export const GenericTypeableSelect = props => {
     onFieldChange,
     id,
     options,
+    // these prop give you the ability to provide the selected values jsx implementations
     SelectedValueImpl,
+    // these prop give you the ability to provide the dropdown options jsx implementations
     SelectedOptionImpl,
   } = props;
 
@@ -180,42 +150,11 @@ export const GenericTypeableSelect = props => {
           onChange={handleChange}
           closeMenuOnSelect={false}
           hideSelectedOptions={false}
-  />
+    />
 
         <FieldMessage {...props} />
       </FormControl>
     </>
   );
 };
-
-const TypeableSelect = props => (
-
-  <GenericTypeableSelect
-    {...props}
-    SelectedOptionImpl={OptionCheckbox}
-    SelectedValueImpl={SelectedValueChips}
-  />
-);
-export default function DynaFlowsTiedToIntegration(props) {
-  const {formKey, id, onFieldChange} = props;
-
-  const selectedIntegration = useSelector(state => selectors.formState(state, formKey)?.fields?.integration?.value);
-  const childIntegrations = useSelector(state => selectors.formState(state, formKey)?.fields?.childIntegrations?.value);
-  const allIntegrationIds = useMemo(() => ([selectedIntegration, childIntegrations]
-    .flat().filter(val => !!val)), [childIntegrations, selectedIntegration]);
-  const flowsTiedToIntegrations = useSelectorMemo(selectors.mkAllFlowsTiedToIntegrations, allIntegrationIds);
-
-  // reset flows list when either integration or childIntegrations changes
-  useResetWhenParentIntegrationChanges(formKey, 'integration', onFieldChange, id);
-  useResetWhenParentIntegrationChanges(formKey, 'childIntegrations', onFieldChange, id);
-  const options = useMemo(() => flowsTiedToIntegrations.map(({_id, name}) => ({ label: name, value: _id})), [flowsTiedToIntegrations]);
-
-  return (
-
-    <LoadResources required resources="flows" >
-      <TypeableSelect {...props} options={options} />
-    </LoadResources>
-
-  );
-}
 

@@ -21,16 +21,11 @@ export default {
     range: { fieldId: 'range' },
   },
   layout: {
-    type: 'box',
-    containers: [
-      {
-        fields: [
-          'integration',
-          'childIntegrations',
-          '_flowIds',
-          'range',
-        ],
-      },
+    fields: [
+      'integration',
+      'childIntegrations',
+      '_flowIds',
+      'range',
     ],
   },
 };

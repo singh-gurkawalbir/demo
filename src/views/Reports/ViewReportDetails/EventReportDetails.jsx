@@ -1,6 +1,7 @@
 import { Typography } from '@material-ui/core';
 import React, { Fragment } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
+import DateTimeDisplay from '../../../components/DateTimeDisplay';
 import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
 
@@ -58,16 +59,16 @@ const eventReportDetailRows = [
   {
     heading: 'Date Range',
     value: function EventReportStartDate(r) {
-      return <Typography>  {r.startTime} - { r.endTime}</Typography>;
+      return <Typography> <DateTimeDisplay dateTime={r.startTime} /> -  <DateTimeDisplay dateTime={r.endTime} /></Typography>;
     },
 
   },
 
   {
     heading: 'Last Run',
-    value: function EventReportStartDate(r) {
+    value: function EventReportLastRun(r) {
       // check if this is the last run value
-      return <Typography>  {r.startedAt}</Typography>;
+      return <DateTimeDisplay dateTime={r?.startedAt} />;
     },
 
   },

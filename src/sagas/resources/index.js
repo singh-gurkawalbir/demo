@@ -995,7 +995,7 @@ export function* downloadReport({reportId}) {
 
     });
 
-    window.open(response.signedURL, 'target=_blank', response.options, false);
+    window.open(response.signedURL, 'target=_blank', 'noopener,noreferrer');
   // eslint-disable-next-line no-empty
   } catch (e) {
 

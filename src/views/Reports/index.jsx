@@ -165,7 +165,7 @@ export default function Reports() {
             to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
             variant="text"
             color="primary">
-            <AddIcon /> Create {reportTypeLabel}
+            <AddIcon /> Run Report
           </IconTextButton>
         </div>
         <LoadResources required resources={`${resourceType},integrations,flows`}>

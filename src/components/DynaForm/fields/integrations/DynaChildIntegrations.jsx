@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect } from 'react';
-
 import { useSelector } from 'react-redux';
+import {useResetWhenParentIntegrationChanges} from './hooks';
 import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
 import LoadResources from '../../../LoadResources';
@@ -11,17 +11,6 @@ const selectAll = {
   value: 'selectAll',
 };
 
-export const useResetWhenParentIntegrationChanges = (formKey, parentFieldId, onFieldChange, id) => {
-  const selectedParentIntegrationTouched = useSelector(state => selectors.formState(state, formKey)?.fields?.[parentFieldId]?.touched);
-  const selectedParentIntegrationValue = useSelector(state => selectors.formState(state, formKey)?.fields?.[parentFieldId]?.value);
-
-  useEffect(() => {
-    // reset selected child integrations when the user changes a parent integration
-    if (selectedParentIntegrationValue && selectedParentIntegrationTouched) {
-      onFieldChange(id, [], true);
-    }
-  }, [id, onFieldChange, selectedParentIntegrationValue, selectedParentIntegrationTouched]);
-};
 export default function DynaChildIntegrations(props) {
   const {formKey, id, onFieldChange, value, label} = props;
 
@@ -31,6 +20,7 @@ export default function DynaChildIntegrations(props) {
 
   useResetWhenParentIntegrationChanges(formKey, 'integration', onFieldChange, id);
   const childIntegrationsStoreLabel = useSelector(state => selectors.integrationAppSettings(state, selectedIntegration)?.settings?.storeLabel);
+  const isParentChildIntegration = useSelector(state => selectors.isParentChildIntegration(state, selectedIntegration));
 
   useEffect(() => {
     // when the users select's all flows then all flows are selected
@@ -50,6 +40,8 @@ export default function DynaChildIntegrations(props) {
   },
 
   [childIntegrations]);
+
+  if (!isParentChildIntegration) { return null; }
 
   return (
     <LoadResources required resources="integrations">

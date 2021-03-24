@@ -708,7 +708,6 @@ selectors.getChildIntegrationLabelsTiedToFlows = (state, integrationId, flowIds)
 
   return null;
 };
-
 const resourceListSel = selectors.makeResourceListSelector();
 
 selectors.getAllValidIntegrations = createSelector(
@@ -735,16 +734,56 @@ selectors.getAllValidIntegrations = createSelector(
     });
   }
 );
+const integrationSettingsSel = selectors.mkIntegrationAppSettings();
+
+selectors.isParentChildIntegration = (state, integrationId) => {
+  const integrations = resourceListSel(state, integrationsFilter)?.resources;
+  const integrationSettings = integrationSettingsSel(state, integrationId);
+  const isV2 = selectors.isIntegrationAppVersion2(state, integrationId, true);
+
+  if (!integrations) {
+    return false;
+  }
+
+  if (isV2) {
+    const selectedIntegration = integrations.find(({_id}) => _id === integrationId);
+
+    return !!selectedIntegration?.initChild?.function;
+  }
+
+  return !!integrationSettings?.settings?.supportsMultiStore;
+};
 selectors.mkAllFlowsTiedToIntegrations = () => {
   const resourceListSel = selectors.makeResourceListSelector();
 
+  const allFlowsFromSections = selectors.makeIntegrationAppSectionFlows();
+
   return createSelector(
     state => resourceListSel(state, flowsFilter).resources,
-    (_1, integrationIds) => integrationIds,
-    (flows, integrationIds) => {
-      if (!flows || !integrationIds) return null;
+    (_1, parentIntegration) => parentIntegration,
+    (state, parentIntegration) => selectors.isIntegrationAppVersion2(state, parentIntegration, true),
+    (state, parentIntegration) => !selectors.isIntegrationApp(state, parentIntegration),
+    (state, parentIntegration) => allFlowsFromSections(state, parentIntegration),
+    (_1, _2, childIntegrationIds) => childIntegrationIds,
+    (flows, parentIntegration, isV2, isDiy, flowsFromAllStores, childIntegrationIds) => {
+      if (!flows || !parentIntegration) return null;
 
-      return flows.filter(({_integrationId}) => integrationIds.includes(_integrationId)).sort((ele1, ele2) => ele1 > ele2);
+      if (isV2 || isDiy) {
+        const consolidatedIntegrationIds = [parentIntegration, ...(childIntegrationIds || [])];
+
+        return flows.filter(({_integrationId}) => consolidatedIntegrationIds.includes(_integrationId));
+      }
+      // v1
+
+      if (!childIntegrationIds || childIntegrationIds?.length === 0) {
+        // no store filter in this case...just return all parent integrations
+
+        return flowsFromAllStores;
+      }
+
+      // filter based on selected childIntegrations
+
+      return flowsFromAllStores.filter(({childId}) => childIntegrationIds.includes(childId));
     }
   );
 };

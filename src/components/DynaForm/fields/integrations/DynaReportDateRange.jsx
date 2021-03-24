@@ -1,7 +1,8 @@
 
-import { makeStyles, Typography } from '@material-ui/core';
+import { FormControl, FormLabel, makeStyles, Typography } from '@material-ui/core';
 import React, { useCallback, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import subMonths from 'date-fns/subMonths';
 import moment from 'moment';
 import { selectors } from '../../../../reducers';
 import { getSelectedRange } from '../../../../utils/flowMetrics';
@@ -26,8 +27,12 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2),
   },
 }));
+const WINDOW_LIMIT = 30;
 const selectedRangeConstraint = (startDate, endDate) => {
   if (!endDate || !startDate) return true;
+  // start date and end date should not exceed more than 30 days from today
+  if (moment().diff(moment(startDate), 'days') > WINDOW_LIMIT) return false;
+  if (moment().diff(moment(endDate), 'days') > WINDOW_LIMIT) return false;
   const diffDays = moment(endDate).diff(moment(startDate), 'days');
 
   return diffDays < 3 && diffDays >= 0;
@@ -89,9 +94,8 @@ function CustomTextFields({selectedRange, setSelectedRange, reset, setReset}) {
 
   );
 }
-
 export default function DynaReportDateRange(props) {
-  const {id, onFieldChange, value} = props;
+  const {id, onFieldChange, disabled, required, label, value, isValid} = props;
   const ranges = defaultPresets.map(({id, ...rest}) => ({...rest, id, ...getSelectedRange({preset: id})}));
   const timezone = useSelector(state => selectors.userTimezone(state));
 
@@ -121,7 +125,17 @@ export default function DynaReportDateRange(props) {
   }, [id, onFieldChange, timezone, value]);
 
   return (
-    <>
+    <FormControl
+      disabled={disabled}
+      required={required}
+      error={!isValid}
+    >
+      <FormLabel
+        disabled={disabled}
+        required={required}
+        error={!isValid}
+      > {label}
+      </FormLabel>
       <FieldHelp {...props} />
       <DateRangeSelector
         {...props}
@@ -130,11 +144,12 @@ export default function DynaReportDateRange(props) {
         defaultPreset={value}
         selectedRangeConstraint={selectedRangeConstraint}
         onSave={onSave}
+        fromDate={subMonths(new Date(), 1)}
         CustomTextFields={CustomTextFields}
       />
       <FieldMessage {...props} />
 
-    </>
+    </FormControl>
   );
 }
 

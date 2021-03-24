@@ -10,12 +10,12 @@ export default {
   },
   _flowIds: {
     type: 'flowstiedtointegrations',
-    label: 'Flow Ids',
+    label: 'Flows',
     required: true,
   },
   range: {
     type: 'reportdaterange',
-    label: 'Range',
+    label: 'Date Range',
     defaultValue: '',
     required: true,
   },
