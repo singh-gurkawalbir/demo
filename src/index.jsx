@@ -71,7 +71,6 @@ const GAKey1 = GA_KEY_1;
 // eslint-disable-next-line no-undef
 const GAKey2 = GA_KEY_2;
 
-
 if (env !== 'development' && GAKey1?.length > 1) {
   const ga4react = new GA4React(GAKey1);
 

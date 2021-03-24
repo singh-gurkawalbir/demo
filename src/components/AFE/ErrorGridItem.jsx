@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     alignItems: 'stretch',
   },
-  panel: { flex: '1 1 100px', minHeight: 50 },
+  panel: { flex: '1 1 100px', minHeight: 50, position: 'relative' },
 }));
 
 const overrides = { wrap: true };

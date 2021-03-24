@@ -46,6 +46,7 @@ import ExitIcon from './ExitIcon';
 import ExportsIcon from './ExportsIcon';
 import ExpandWindowIcon from './ExpandWindowIcon';
 import FilterIcon from './FilterIcon';
+import FileIcon from './FileIcon';
 import FlowBuilderIcon from './FlowBuilderIcon';
 import FlowsIcon from './FlowsIcon';
 import FlowBuilderAppIcon from './FlowBuilderAppIcon';
@@ -184,6 +185,7 @@ const icons =
       ExportsIcon,
       ExpandWindowIcon,
       FilterIcon,
+      FileIcon,
       FlowBuilderIcon,
       FlowsIcon,
       FlowBuilderAppIcon,
