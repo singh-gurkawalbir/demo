@@ -1,4 +1,5 @@
 import React, { useState} from 'react';
+import PropTypes from 'prop-types';
 import { makeStyles, Tooltip, Zoom } from '@material-ui/core';
 import Truncate from 'react-truncate';
 
@@ -42,3 +43,20 @@ export default function CeligoTruncate({
     </Truncate>
   );
 }
+
+CeligoTruncate.propTypes = {
+  children: PropTypes.element.isRequired,
+  ellipsis: PropTypes.string,
+  placement: PropTypes.string,
+  lines: PropTypes.number,
+  delay: PropTypes.number,
+  dataPublic: PropTypes.bool,
+};
+
+CeligoTruncate.defaultProps = {
+  ellipsis: '...',
+  placement: 'top',
+  lines: 1,
+  delay: 500,
+  dataPublic: false,
+};
