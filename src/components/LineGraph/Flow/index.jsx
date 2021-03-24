@@ -149,7 +149,7 @@ const Chart = ({ id, flowId, range, selectedResources: selected }) => {
     const resourceId = name.split('-')[0];
 
     if (isResolvedGraph) {
-      return resourceId === 'autopilot' ? 'Auto resolved' : 'All users';
+      return resourceId === 'autopilot' ? 'Auto resolved' : 'Users';
     }
     let modifiedName = resourceId;
     const resource = flowResources.find(r => r._id === resourceId);
@@ -333,9 +333,9 @@ export default function FlowCharts({ flowId, integrationId, range, selectedResou
 
   useEffect(() => {
     if (!data.data && !data.status) {
-      dispatch(actions.flowMetrics.request('flows', flowId, { range }));
+      dispatch(actions.flowMetrics.request('flows', flowId, { range, selectedResources }));
     }
-  }, [data, dispatch, flowId, range]);
+  }, [data, dispatch, flowId, range, selectedResources]);
 
   if (data.status === COMM_STATES.LOADING) {
     return (

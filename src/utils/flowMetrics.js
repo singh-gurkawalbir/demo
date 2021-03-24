@@ -211,7 +211,12 @@ const getFlowFilterExpression = (resourceType, resourceId, filters) => {
     return `|> filter(fn: (r) => ${selectedResources.map(r => `r.f == "${r}"`).join(' or ')})`;
   }
 
-  return `|> filter(fn: (r) => r.f == "${resourceId}")`;
+  if (selectedResources.includes(resourceId)) {
+    return `|> filter(fn: (r) => r.f == "${resourceId}")`;
+  }
+
+  return `|> filter(fn: (r) => r.f == "${resourceId}")
+          |> filter(fn: (r) => ${selectedResources.map(r => `r.ei == "${r}"`).join(' or ')})`;
 };
 
 const getISODateString = date => isDate(date) ? date.toISOString() : date;
@@ -298,7 +303,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> sum()
   
     resolvedBaseData = baseData
-        |> filter(fn: (r) => r._field == "c" and r._measurement == "r")
+        |> filter(fn: (r) => r._measurement == "r")
         |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
         |> fill(value: 0.0)
         
@@ -382,11 +387,19 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
     flowData = from(bucket: "${bucket}")
         |> range(start: ${start}, stop: ${end})
         |> filter(fn: (r) => r.u == "${userId}")
-        |> filter(fn: (r) => r.f == "${resourceId}")
+        ${flowFilterExpression}
 
     seiBaseData = flowData
-        |> filter(fn: (r) => r._field == "c")
+        |> filter(fn: (r) => r._field == "c" and r._measurement != "r")
         |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
+
+    resolvedData = flowData
+        |> filter(fn: (r) => r._measurement == "r")
+        |> map(fn: (r) => ({ r with by: if r.by == "autopilot" then "autopilot" else "users"}))
+        |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
+        |> group(columns: ["_time", "u", "_measurement", "by"], mode: "by")
+        |> sum()
+        |> group()
 
     data1 = seiBaseData
         |> group()
@@ -397,6 +410,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> group()
 
     seiData = union(tables: [data1, data2])
+    seirData = union(tables: [seiData, resolvedData])
     |> map(fn: (r) => ({
         _time: r._time,
         timeInMills: int(v: r._time)/1000000,
@@ -455,7 +469,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         type: "att"
     }))
 
-    union(tables: [seiData, attData])`;
+    union(tables: [seirData, attData])`;
 };
 
 export const getLabel = key => {
