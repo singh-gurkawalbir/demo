@@ -27,6 +27,10 @@ export default {
       connectorId: r => r && r._connectorId,
       ignoreEnvironmentFilter: true,
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+    },
     application: {
       fieldId: 'application',
     },
@@ -39,7 +43,8 @@ export default {
       {
         collapsed: true,
         label: 'Application details',
-        fields: ['http._iClientId'],
+        fields: ['http._iClientId',
+          'http.auth.oauth.callbackURL'],
       },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],

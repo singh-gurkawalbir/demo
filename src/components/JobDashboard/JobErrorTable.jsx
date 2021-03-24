@@ -453,7 +453,7 @@ export default function JobErrorTable({
     <>
       {jobErrorsPreview && jobErrorsPreview.status === 'requested' && (
         <div data-public className={classes.spinner}>
-          <Spinner size={20} /> <span>Uploading...</span>
+          <Spinner /> <span>Uploading...</span>
         </div>
       )}
       <ul data-public className={classes.statusWrapper}>
