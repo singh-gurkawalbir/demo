@@ -4,16 +4,17 @@ import { isNewId } from '../../../utils/resource';
 export default {
   expires: {
     defaultValue: r => r.expires && moment(r.expires).format('L'),
-    type: 'dateselector',
+    type: 'licenseexpires',
     label: 'Expires',
     connectorId: r => r._connectorId,
+    trialLicenseTemplate: r => r.trialLicenseTemplate,
   },
   trialEndDate: {
     defaultValue: r => r.trialEndDate && moment(r.trialEndDate).format('L'),
-    type: 'dateselector',
+    type: 'licenseexpires',
     label: 'Trial expires',
     connectorId: r => r._connectorId,
-    hideifnottrial: true,
+    trialLicenseTemplate: r => r.trialLicenseTemplate,
   },
   opts: {
     defaultValue: r => r.opts,

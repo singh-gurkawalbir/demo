@@ -63,6 +63,7 @@ const handleAddNewResource = args => {
       values = {
         ...values,
         '/_connectorId': connectorId,
+        '/trialLicenseTemplate': true,
       };
       if (isFrameWork2) {
         values = {
@@ -307,6 +308,11 @@ export default function DynaSelectResource(props) {
           op: 'add',
           path: '/_connectorId',
           value: connectorId,
+        },
+        {
+          op: 'add',
+          path: '/trialLicenseTemplate',
+          value: true,
         },
       ];
 
