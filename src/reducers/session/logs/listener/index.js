@@ -21,11 +21,13 @@ export default (state = {}, action) => {
         if (!draft[exportId]) break;
         draft[exportId].logsStatus = 'received';
         draft[exportId].loadMoreStatus = 'received';
+        // if loadMore is true, we only call nextPageURl so hasNewLogs should not reset
         if (!loadMore) {
           draft[exportId].hasNewLogs = false;
         }
         draft[exportId].nextPageURL = nextPageURL;
 
+        // adding existing logs first to maintain the sorting order
         draft[exportId].logsSummary = loadMore
           ? [...draft[exportId]?.logsSummary || [], ...logs]
           : logs;
@@ -67,6 +69,8 @@ export default (state = {}, action) => {
           logs.splice(index, 1);
         }
         delete draft[exportId].logsDetails?.[deletedLogKey];
+
+        // delete the activeLogKey also if it matches the deleted key
         if (draft[exportId].activeLogKey === deletedLogKey) {
           delete draft[exportId].activeLogKey;
         }
@@ -95,6 +99,7 @@ export default (state = {}, action) => {
 
       case actionTypes.LOGS.LISTENER.FAILED: {
         if (!draft[exportId]) break;
+        // adding changeIdentifier to know if a new failed action was dispatched
         const changeIdentifier = draft[exportId].error?.changeIdentifier || 0;
 
         draft[exportId].error = {changeIdentifier: changeIdentifier + 1, ...error};

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useCallback } from 'react';
+import clsx from 'clsx';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,24 +12,26 @@ import PreviewLogDetails from './PreviewLogDetails';
 import SearchIcon from '../../icons/SearchIcon';
 import IconTextButton from '../../IconTextButton';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { FILTER_KEY } from '../../../utils/listenerLogs';
 
 const useStyles = makeStyles(theme => ({
   listContainer: {
     height: '100%',
-    display: 'flex',
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+  },
+  noResultColumn: {
+    gridTemplateColumns: '1fr',
   },
   tableWrapper: {
     border: `solid 1px ${theme.palette.secondary.lightest}`,
-    flexGrow: 1,
     overflowY: 'auto',
   },
   textWrapper: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(2),
   },
   previewWrapper: {
-    flexDirection: 'column',
     border: `solid 1px ${theme.palette.secondary.lightest}`,
-    flexGrow: 4,
     padding: theme.spacing(2),
     position: 'relative',
   },
@@ -57,7 +60,7 @@ export default function LogsTable({ flowId, exportId }) {
   const dispatch = useDispatch();
   const debugUntil = useSelector(state => {
     const resource = selectors.resource(state, 'exports', exportId);
-    const {debugUntil} = resource;
+    const {debugUntil} = resource || {};
 
     if (!debugUntil) {
       return;
@@ -81,6 +84,11 @@ export default function LogsTable({ flowId, exportId }) {
   const hasDebugLogs = useSelector(state => !!selectors.logsSummary(state, exportId).length);
   const logsInCurrPage = useSelectorMemo(selectors.mkLogsInCurrPageSelector, exportId);
   const currPageFirstKey = logsInCurrPage[0]?.key;
+
+  useEffect(() => () => {
+    dispatch(actions.logs.listener.clear(exportId));
+    dispatch(actions.clearFilter(FILTER_KEY));
+  }, [dispatch, exportId]);
 
   useEffect(() => {
     dispatch(actions.logs.listener.request(flowId, exportId));
@@ -109,7 +117,10 @@ export default function LogsTable({ flowId, exportId }) {
 
   return (
     <>
-      <div className={classes.listContainer}>
+      <div
+        className={clsx(classes.listContainer, {
+          [classes.noResultColumn]: !hasDebugLogs,
+        })}>
         <div className={classes.tableWrapper}>
           <ResourceTable
             resources={logsInCurrPage}
@@ -117,7 +128,7 @@ export default function LogsTable({ flowId, exportId }) {
             actionProps={actionProps}
             variant="slim" />
           {!hasDebugLogs && !hasNextPage && (
-          <Typography variant="h4" className={classes.textWrapper}>
+          <Typography className={classes.textWrapper}>
             You don’t have any debug log entries.
           </Typography>
           )}
@@ -132,7 +143,8 @@ export default function LogsTable({ flowId, exportId }) {
                   Searching
                 </>
               ) : (
-                <><SearchIcon className={classes.searchMoreIcon} />
+                <>
+                  <SearchIcon className={classes.searchMoreIcon} />
                   Search more
                 </>
               )}

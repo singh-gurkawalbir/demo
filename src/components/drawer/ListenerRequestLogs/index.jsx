@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,8 +14,6 @@ import LogsTable from './LogsTable';
 import Help from '../../Help';
 import ApplicationImg from '../../icons/ApplicationImg';
 import { selectors } from '../../../reducers';
-import actions from '../../../actions';
-import { FILTER_KEY } from '../../../utils/listenerLogs';
 
 const useStyles = makeStyles(theme => ({
   helpTextButton: {
@@ -81,17 +79,14 @@ function RouterWrappedContent({ flowId, exportId, handleClose }) {
 export default function ListenerRequestLogs({ flowId, exportId }) {
   const history = useHistory();
   const match = useRouteMatch();
-  const dispatch = useDispatch();
 
   const handleClose = useCallback(() => {
-    dispatch(actions.logs.listener.clear(exportId));
-    dispatch(actions.clearFilter(FILTER_KEY));
     if (history.length > 2) {
       history.goBack();
     } else {
       history.replace(match.url);
     }
-  }, [dispatch, exportId, history, match.url]);
+  }, [history, match.url]);
 
   return (
     <RightDrawer
