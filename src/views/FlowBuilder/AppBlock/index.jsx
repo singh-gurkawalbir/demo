@@ -362,7 +362,7 @@ function AppBlock({
       </div>
       <div className={clsx(classes.name, {[classes.pgContainerName]: isPageGenerator})}>
         <Typography className={classes.containerName}>
-          <CeligoTruncate dataPublic lines={2}>{name}</CeligoTruncate>
+          <CeligoTruncate lines={2}>{name}</CeligoTruncate>
         </Typography>
       </div>
     </div>

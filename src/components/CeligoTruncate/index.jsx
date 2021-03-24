@@ -23,7 +23,9 @@ export default function CeligoTruncate({
     return (
       <Tooltip
         title={<span className={classes.tooltipText}>{children}</span>}
-        data-public={dataPublic}
+        // explicitly setting a prop to null will force React to
+        // remove it from the DOM.
+        data-public={dataPublic ? true : null}
         TransitionComponent={Zoom}
         placement={placement}
         enterDelay={delay}>
