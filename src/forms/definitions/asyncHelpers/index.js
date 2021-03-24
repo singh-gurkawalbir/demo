@@ -5,6 +5,9 @@ export default {
   preSave: formValues => {
     const values = { ...formValues };
 
+    values['/http/status/inProgressValues'] = values['/http/status/inProgressValues'].split(',');
+    values['/http/status/doneWithoutDataValues'] = values['/http/status/doneWithoutDataValues'].split(',');
+    values['/http/status/doneValues'] = values['/http/status/doneValues'].split(',');
     delete values._connectionId;
 
     return values;
