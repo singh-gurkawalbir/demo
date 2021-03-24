@@ -76,6 +76,7 @@ export default function TileNotification({ content, expired, connectorId, licens
   const { confirmDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
+  // Single means only button displayed here (Buy or renew), unistall button will be added if it is not single.
   const single = tileStatus === TILE_STATUS.IS_PENDING_SETUP || (!trialExpired && (isIntegrationV2 || !expired));
 
   const onClickRenewOrReactivateButton = useCallback(event => {
