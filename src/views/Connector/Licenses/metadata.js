@@ -31,6 +31,11 @@ export default {
       orderBy: 'expires',
     },
     {
+      heading: 'Trial Expires',
+      value: r => <ExpiresOn date={r.trialEndDate} />,
+      orderBy: 'expires',
+    },
+    {
       heading: 'Environment',
       value: r => {
         if (r.type === 'integrationAppChild') {

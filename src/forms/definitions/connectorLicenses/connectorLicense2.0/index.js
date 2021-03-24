@@ -22,7 +22,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['email', 'edition', 'trialEndDate', 'expires', 'sandbox', 'opts'],
+        fields: ['email', 'edition', 'expires', 'trialEndDate', 'sandbox', 'opts'],
       },
       {
         collapsed: true,
