@@ -298,11 +298,6 @@ export default (state = {}, action) => {
           draft.mapping.autoMapper.errorMsg = errorMsg;
         }
         break;
-      case actionTypes.MAPPING.AUTO_MAPPER.RESET_START_KEY:
-        if (draft?.mapping?.autoMapper) {
-          delete draft.mapping.autoMapper.startKey;
-        }
-        break;
 
       default:
     }

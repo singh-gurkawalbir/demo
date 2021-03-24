@@ -1,12 +1,18 @@
 import React, { useCallback, useEffect } from 'react';
-import { Button } from '@material-ui/core';
-import { useSelector, useDispatch } from 'react-redux';
+import { Button, makeStyles } from '@material-ui/core';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
 import Spinner from '../Spinner';
 
+const useStyles = makeStyles(theme => ({
+  spinner: {
+    marginRight: theme.spacing(1),
+  },
+}));
 export default function AutoMapperButton({disabled}) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const flowHasExport = useSelector(state => {
@@ -24,14 +30,13 @@ export default function AutoMapperButton({disabled}) {
     const {status, errorMsg} = selectors.autoMapper(state);
 
     return { isFetchingAutoSuggestions: status === 'requested', autoMapperErrorMsg: errorMsg};
-  });
+  }, shallowEqual);
 
   const handleButtonClick = useCallback(() => {
     dispatch(actions.mapping.autoMapper.request());
   }, [dispatch]);
 
   useEffect(() => {
-    // show error message in case of autoMapper error
     if (autoMapperErrorMsg) {
       enquesnackbar({ message: autoMapperErrorMsg, variant: 'error' });
     }
@@ -51,7 +56,7 @@ export default function AutoMapperButton({disabled}) {
       >
       {isFetchingAutoSuggestions && (
         <>
-          <Spinner size={16} />
+          <Spinner size="small" className={classes.spinner} />
           Saving
         </>
       )}
