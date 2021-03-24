@@ -31,11 +31,11 @@ export default {
       _integrationId,
       'flows'
     ))?.delete;
-    const connector = useSelector(state =>
-      selectors.resource(state, 'connectors', _connectorId)
+    const isTrialLicense = useSelector(state =>
+      selectors.resource(state, 'connectors', _connectorId)?._trialLicenseId === rowData?._id
     );
 
-    if (connector && connector._trialLicenseId === rowData?._id) {
+    if (isTrialLicense) {
       return false;
     }
     // only check permissions for integration flows as only those can be shared

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import DynaDateSelecor from './DynaDateSelector';
 import { selectors } from '../../../reducers';
 
-export default function DynaHashAlogithm(props) {
+export default function DynaLicenseExpires(props) {
   const { connectorId, id, trialLicenseTemplate } = props;
 
   const trialEnabled = useSelector(state => selectors.resource(state, 'connectors', connectorId)?.trialEnabled);

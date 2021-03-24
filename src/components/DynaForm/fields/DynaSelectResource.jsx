@@ -199,8 +199,8 @@ export default function DynaSelectResource(props) {
     selectors.makeResourceListSelector,
     filterConfig
   );
-  const connector = useSelector(state =>
-    selectors.resource(state, 'connectors', connectorId)
+  const isFrameWork2 = useSelector(state =>
+    selectors.resource(state, 'connectors', connectorId)?.framework === 'twoDotZero'
   );
   const createdId = useSelector(state =>
     selectors.createdResourceId(state, newResourceId)
@@ -273,9 +273,9 @@ export default function DynaSelectResource(props) {
         assistant,
         integrationId: integrationId || integrationIdFromUrl,
         connectorId,
-        isFrameWork2: connector?.framework === 'twoDotZero',
+        isFrameWork2,
       }),
-    [dispatch, history, location, resourceType, options, newResourceId, statusExport, expConnId, assistant, integrationId, integrationIdFromUrl, connectorId, connector?.framework]
+    [dispatch, history, location, resourceType, options, newResourceId, statusExport, expConnId, assistant, integrationId, integrationIdFromUrl, connectorId, isFrameWork2]
   );
   const handleEditResource = useCallback(() => {
     if (
@@ -315,7 +315,7 @@ export default function DynaSelectResource(props) {
         },
       ];
 
-      if (connector?.framework === 'twoDotZero') {
+      if (isFrameWork2) {
         patchSet.push({
           op: 'add',
           path: '/type',
@@ -327,7 +327,7 @@ export default function DynaSelectResource(props) {
     }
 
     history.push(`${location.pathname}/edit/${resourceType}/${value}`);
-  }, [connector?.framework, connectorId, dispatch, expConnId, history, location.pathname, resourceType, statusExport, value]);
+  }, [isFrameWork2, connectorId, dispatch, expConnId, history, location.pathname, resourceType, statusExport, value]);
   const truncatedItems = items =>
     items.sort(stringCompare('label')).map(i => ({
       label: (
