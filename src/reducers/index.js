@@ -2372,6 +2372,18 @@ selectors.availableUsersList = (state, integrationId) => {
   return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
 };
 
+selectors.mkGetUserById = () => createSelector(
+  selectors.availableUsersList,
+  (_1, userId) => userId,
+  (users, userId) => {
+    if (!userId || !users) return null;
+
+    const {sharedWithUser} = users.find(u => u?.sharedWithUser?._id === userId) || {};
+
+    return sharedWithUser || {};
+  }
+);
+
 selectors.platformLicense = createSelector(
   selectors.userPreferences,
   // TODO: Surya make it even more granular the selector
