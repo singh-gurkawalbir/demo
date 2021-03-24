@@ -90,6 +90,8 @@ import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
 
 const emptyArray = [];
 const emptyObject = {};
+const remainingDays = date =>
+  Math.ceil((moment(date) - moment()) / 1000 / 60 / 60 / 24);
 const combinedReducers = combineReducers({
   app,
   session,
@@ -5057,4 +5059,39 @@ selectors.isConnectionLogsNotSupported = (state, connectionId) => {
   const connectionResource = selectors.resource(state, 'connections', connectionId);
 
   return ['wrapper', 'dynamodb', 'mongodb'].includes(connectionResource?.type);
+};
+selectors.tileLicenseDetails = (state, tile) => {
+  const licenses = selectors.licenses(state);
+  const accessLevel =
+    tile.integration &&
+    tile.integration.permissions &&
+    tile.integration.permissions.accessLevel;
+
+  const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
+  const expiresInDays = license && remainingDays(license.expires);
+  const trialExpiresInDays = license && remainingDays(license.trialEndDate);
+
+  let licenseMessageContent = '';
+  let expired = false;
+  let trialExpired = false;
+  let showTrialLicenseMessage = false;
+  const resumable = license?.resumable && [INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel);
+
+  if (resumable) {
+    licenseMessageContent = `Your subscription was renewed on ${moment(license.expires).format('MMM Do, YYYY')}. Click Reactivate to continue.`;
+  } else if (license?.trialEndDate && trialExpiresInDays <= 0) {
+    licenseMessageContent = `Trial expired on ${moment(license.trialEndDate).format('MMM Do, YYYY')}`;
+    showTrialLicenseMessage = true;
+    trialExpired = true;
+  } else if (license?.trialEndDate && trialExpiresInDays > 0) {
+    licenseMessageContent = `Trial expires in ${trialExpiresInDays} days.`;
+    showTrialLicenseMessage = true;
+  } else if (expiresInDays <= 0) {
+    expired = true;
+    licenseMessageContent = `Your license expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your license.`;
+  } else if (expiresInDays > 0 && expiresInDays <= 30) {
+    licenseMessageContent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
+  }
+
+  return {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, license, resumable};
 };
