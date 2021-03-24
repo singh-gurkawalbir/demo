@@ -643,7 +643,6 @@ export function* getAutoMapperSuggestion() {
       message: 'Loading',
     });
   } catch (e) {
-    // TODO: How do we show error in case getContext api fails with some response
     return yield put(actions.mapping.autoMapper.failed('Failed to fetch mapping suggestions'));
   }
   if (response) {
