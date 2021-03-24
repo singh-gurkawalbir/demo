@@ -11,7 +11,7 @@ export function* fetchNewLogs({ flowId, exportId, timeGt }) {
   const opts = {
     method: 'GET',
   };
-  const path = `/flows/${flowId}/${exportId}/requests?time_gt=${timeGt || Date.now() - (20 * 1000)}&time_lte=${Date.now()}`;
+  const path = `/flows/${flowId}/${exportId}/requests?time_gt=${timeGt || Date.now() - (20 * 1000)}`;
 
   let response;
 
@@ -20,9 +20,8 @@ export function* fetchNewLogs({ flowId, exportId, timeGt }) {
       path,
       opts,
     });
-    const {requests} = response || {};
 
-    if (requests?.length) {
+    if (response?.requests?.length) {
       yield put(
         actions.logs.listener.stopLogsPoll(
           exportId,

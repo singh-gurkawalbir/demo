@@ -91,7 +91,7 @@ export default function LogsDrawerActions({ flowId, exportId }) {
           stopDebugHandler={stopDebugHandler} />
         <IconTextButton
           onClick={refreshLogs}
-          ata-test="refreshLogs"
+          data-test="refreshLogs"
           disabled={!enableRefresh} >
           <RefreshIcon />
           Refresh logs

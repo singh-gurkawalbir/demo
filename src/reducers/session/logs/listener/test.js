@@ -932,7 +932,7 @@ describe('Listener logs reducer', () => {
 
       expect(newState).not.toHaveProperty(exportId);
     });
-    test('should not alter any other editor state', () => {
+    test('should not alter any other listener state', () => {
       const initialState = {
         'sibling-export': {
           logsStatus: 'received',
