@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => ({
   toggleButtons: {
     backgroundColor: theme.palette.background.paper,
     border: '1px solid',
-    padding: 1,
+    padding: 0,
     borderColor: theme.palette.secondary.lightest,
     maxWidth: '100%',
     '& > button': {
