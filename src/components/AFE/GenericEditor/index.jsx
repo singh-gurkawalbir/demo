@@ -8,7 +8,7 @@ import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
 import WarningGridItem from '../WarningGridItem';
 import layouts from '../layout/defaultDialogLayout';
-import PanelLoader from '../../PanelLoader';
+import Spinner from '../../Spinner';
 
 const useStyles = makeStyles(() => ({
   ...layouts,
@@ -63,9 +63,8 @@ export default function Editor(props) {
       </PanelGridItem>
       <PanelGridItem gridArea="data" key={isSampleDataLoading}>
         <PanelTitle title={dataTitle} />
-        {/* show spinner instead of data panel when sample data is loading */}
         {isSampleDataLoading ? (
-          <PanelLoader />
+          <Spinner centerAll />
         ) : (
           <CodePanel
             name="data"
