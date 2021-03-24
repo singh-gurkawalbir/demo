@@ -51,7 +51,6 @@ export default function DynaDateSelector(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { id, label, name, value, onFieldChange, required, formKey} = props;
-
   const calendarIcon = () => <CalendarIcon className={classes.iconWrapper} />;
   const { dateFormat } = useSelector(state => selectors.userProfilePreferencesProps(state));
   const isValueParsableByMoment = useCallback(value =>

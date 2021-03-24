@@ -86,7 +86,6 @@ const handleAddNewResource = args => {
       if (resourceType === 'connections' && integrationId && integrationId !== 'none') {
         values = { ...values, '/integrationId': integrationId};
       }
-      //
 
       if (statusExport) {
         values = { ...values, '/statusExport': true };

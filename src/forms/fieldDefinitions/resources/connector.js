@@ -180,7 +180,6 @@ export default {
     allowNew: true,
     allowEdit: true,
     helpKey: 'license._trialLicenseId',
-    // helpKey: 'connection.http.auth.token.location',
     connectorId: r => r._id,
   },
 };
