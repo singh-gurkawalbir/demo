@@ -7,10 +7,8 @@ import React, {
 } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton, Tooltip, Zoom } from '@material-ui/core';
+import { Typography, IconButton } from '@material-ui/core';
 import clsx from 'clsx';
-// import LinesEllipsis from 'react-lines-ellipsis';
-import Truncate from 'react-truncate';
 import { selectors } from '../../../reducers';
 import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
@@ -19,6 +17,7 @@ import ResourceButton from '../ResourceButton';
 import BubbleSvg from '../BubbleSvg';
 import CloseIcon from '../../../components/icons/CloseIcon';
 import ErrorStatus from '../ErrorStatus';
+import CeligoTruncate from '../../../components/CeligoTruncate';
 
 const blockHeight = 170;
 const blockWidth = 275;
@@ -135,9 +134,6 @@ const useStyles = makeStyles(theme => ({
     // marginTop: -theme.spacing(1),
     // marginLeft: -theme.spacing(1),
   },
-  tooltipNameFB: {
-    wordWrap: 'break-word',
-  },
   deleteButton: {
     position: 'absolute',
     right: -theme.spacing(0.5),
@@ -180,7 +176,6 @@ function AppBlock({
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
   const [isOver, setIsOver] = useState(false);
-  const [isTruncated, setIsTruncated] = useState(false);
   const [activeAction, setActiveAction] = useState(null);
   const isNew = blockType.startsWith('new');
   const isActive = useSelector(state => {
@@ -367,25 +362,9 @@ function AppBlock({
       </div>
       <div className={clsx(classes.name, {[classes.pgContainerName]: isPageGenerator})}>
         <Typography className={classes.containerName}>
-          {isTruncated ? (
-            <Tooltip
-              data-public
-              title={<span className={classes.tooltipNameFB}>{name}</span>}
-              TransitionComponent={Zoom}
-              placement="top"
-              enterDelay={1000}>
-              <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
-                {name}
-              </Truncate>
-            </Tooltip>
-          ) : (
-            <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
-              {name}
-            </Truncate>
-          )}
+          <CeligoTruncate dataPublic lines={2}>{name}</CeligoTruncate>
         </Typography>
       </div>
-
     </div>
   );
 }
