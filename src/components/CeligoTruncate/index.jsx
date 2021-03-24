@@ -9,14 +9,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function CeligoTruncate({
-  ellipsis = '...',
-  placement = 'top',
-  lines = 1,
-  delay = 500,
-  children,
-  dataPublic = false,
-}) {
+export default function CeligoTruncate({ ellipsis, placement, lines, delay, dataPublic, children }) {
   const classes = useStyles();
   const [isTruncated, setIsTruncated] = useState(false);
 
@@ -47,7 +40,7 @@ export default function CeligoTruncate({
 CeligoTruncate.propTypes = {
   children: PropTypes.element.isRequired,
   ellipsis: PropTypes.string,
-  placement: PropTypes.string,
+  placement: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
   lines: PropTypes.number,
   delay: PropTypes.number,
   dataPublic: PropTypes.bool,
