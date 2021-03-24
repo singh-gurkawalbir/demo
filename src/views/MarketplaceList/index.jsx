@@ -120,6 +120,7 @@ export default function MarketplaceList() {
   const userPreferences = useSelector(state =>
     selectors.userPreferences(state)
   );
+  const isAccountOwner = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
   const sandbox = userPreferences.environment === 'sandbox';
   const connectors = useSelectorMemo(
     selectors.makeMarketPlaceConnectorsSelector,
@@ -261,7 +262,7 @@ export default function MarketplaceList() {
                   Install
                 </Button>
               )}
-              {!connector.canInstall && connector.trialEnabled && (
+              {!connector.canInstall && connector.trialEnabled && isAccountOwner && (
                 <Button
                   data-test="startFreeTrial"
                   onClick={() => handletrialEnabledClick(connector)}
@@ -270,7 +271,7 @@ export default function MarketplaceList() {
                   Start free trial
                 </Button>
               )}
-              {!connector.canInstall && !connector.trialEnabled && (
+              {!connector.canInstall && !(connector.trialEnabled && isAccountOwner) && (
                 <Button
                   data-test="contactSales"
                   onClick={() => handleContactSalesClick(connector)}

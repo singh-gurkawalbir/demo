@@ -11,7 +11,7 @@ import WarningIcon from '../../icons/WarningIcon';
 import ExpiredIcon from '../../icons/ErrorIcon';
 import actions from '../../../actions';
 import getRoutePath from '../../../utils/routePaths';
-import { INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../../utils/constants';
+import { INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS, TILE_STATUS } from '../../../utils/constants';
 import useConfirmDialog from '../../ConfirmDialog';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
@@ -69,14 +69,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel, showTrialLicenseMessage, trialExpired}) {
+export default function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel, showTrialLicenseMessage, tileStatus, trialExpired}) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
-  const single = !trialExpired && (isIntegrationV2 || !expired);
+  const single = tileStatus === TILE_STATUS.IS_PENDING_SETUP || (!trialExpired && (isIntegrationV2 || !expired));
 
   const onClickRenewOrReactivateButton = useCallback(event => {
     event.stopPropagation();

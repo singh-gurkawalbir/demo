@@ -31,7 +31,7 @@ export default {
       orderBy: 'expires',
     },
     {
-      heading: 'Trial Expires',
+      heading: 'Trial expires',
       value: r => <ExpiresOn date={r.trialEndDate} />,
       orderBy: 'expires',
     },

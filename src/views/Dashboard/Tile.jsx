@@ -370,6 +370,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             content={licenseMessageContent} showTrialLicenseMessage={showTrialLicenseMessage} expired={expired} connectorId={tile._connectorId}
             trialExpired={trialExpired}
             licenseId={license._id}
+            tileStatus={tile.status}
             isIntegrationV2={isIntegrationV2} integrationId={tile._integrationId}
             integrationAppTileName={integrationAppTileName} resumable={resumable} accessLevel={accessLevel} />
           )

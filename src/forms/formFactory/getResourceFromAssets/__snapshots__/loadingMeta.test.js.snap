@@ -12650,6 +12650,7 @@ Object {
     "layout": Object {
       "containers": Array [
         Object {
+          "collapsed": true,
           "fields": Array [
             "name",
             "description",
@@ -12664,6 +12665,7 @@ Object {
             "updateFunction",
             "framework",
           ],
+          "label": "General",
         },
         Object {
           "collapsed": true,
@@ -12675,7 +12677,7 @@ Object {
           "label": "Trials",
         },
       ],
-      "type": "box",
+      "type": "collapse",
     },
   },
   "init": undefined,

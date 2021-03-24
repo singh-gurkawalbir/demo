@@ -158,6 +158,7 @@ export default {
     type: 'checkbox',
     label: 'Enable trials',
     defaultDisabled: r => isNewId(r._id),
+    helpKey: 'license.trialEnabled',
   },
   trialPeriod: {
     type: 'select',
