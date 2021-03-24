@@ -2,35 +2,44 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import ClipboardPanel from '../ClipboardPanel';
 import CodeEditor from '../../../CodeEditor2';
+import { isJsonString } from '../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   defaultPanelContainer: {
     flexGrow: 1,
     marginTop: theme.spacing(2),
-    position: 'relative',
     backgroundColor: theme.palette.background.paper,
     overflow: 'auto',
-    color: theme.palette.text.primary,
     '& > div': {
       wordBreak: 'break-word',
     },
   },
 }));
 
-export default function DefaultPanel({ value, hideClipboard = false, height }) {
-  const classes = useStyles({ height });
+export default function DefaultPanel({ value, hideClipboard = false, contentType = 'json' }) {
+  const classes = useStyles();
+
+  if (!value) {
+    return null;
+  }
+
+  let content = value;
+
+  if (contentType === 'json' && isJsonString(value)) {
+    content = JSON.parse(value);
+  }
 
   return (
     <>
       <div className={classes.defaultPanelContainer}>
         <CodeEditor
-          value={value}
-          mode="json"
+          value={content}
+          mode={contentType}
           readOnly
           showGutter={false}
             />
       </div>
-      { !hideClipboard && <ClipboardPanel content={value} /> }
+      { !hideClipboard && <ClipboardPanel content={content} /> }
     </>
   );
 }

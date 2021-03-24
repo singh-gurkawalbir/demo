@@ -2,10 +2,7 @@
 
 import {
   getAvailablePreviewStages,
-  getFormattedPreviewData,
   getPreviewDataPageSizeInfo,
-  getPreviewBodyTemplateType,
-  getBodyHeaderFieldsForPreviewData,
   previewFileData,
   HTTP_STAGES,
   PREVIEW_STAGE,
@@ -93,37 +90,6 @@ describe('isPreviewPanelAvailable util', () => {
   });
 });
 
-describe('getFormattedPreviewData util', () => {
-  test('should return empty pageOfRecords for invalid/empty preview data', () => {
-    expect(getFormattedPreviewData(undefined)).toEqual({
-      page_of_records: [
-        {
-          record: {},
-        },
-      ],
-    });
-  });
-  test('should return result for valid preview data', () => {
-    const previewData = {
-      data: {
-        id: 5,
-        name: 'user1',
-      },
-    };
-
-    expect(getFormattedPreviewData(previewData)).toEqual({
-      page_of_records: [
-        {
-          record: {
-            id: 5,
-            name: 'user1',
-          },
-        },
-      ],
-    });
-  });
-});
-
 describe('getPreviewDataPageSizeInfo util', () => {
   test('should return 1 Page and O records for invalid/empty preview data', () => {
     expect(getPreviewDataPageSizeInfo(undefined)).toBe('1 Page, 0 Records');
@@ -158,97 +124,6 @@ describe('getPreviewDataPageSizeInfo util', () => {
       ]};
 
     expect(getPreviewDataPageSizeInfo(previewData)).toBe('1 Page, 3 Records');
-  });
-});
-
-describe('getPreviewBodyTemplateType util', () => {
-  test('should return default for adaptors other than http/rest', () => {
-    const randomValidAdaptorTypes = ['SalesforceExport', 'MongodbExport', 'FTPExport'];
-    const resource = {
-      _id: 1,
-      adaptorType: randomValidAdaptorTypes[Math.floor(Math.random() * randomValidAdaptorTypes.length)],
-    };
-
-    expect(getPreviewBodyTemplateType(resource)).toBe('default');
-  });
-  test('should return default for http/rest incase of tabs other than request/response', () => {
-    const randomValidAdaptorTypes = ['HTTPExport', 'RESTExport'];
-    const resource = {
-      _id: 1,
-      adaptorType: randomValidAdaptorTypes[Math.floor(Math.random() * randomValidAdaptorTypes.length)],
-    };
-
-    expect(getPreviewBodyTemplateType(resource, 'preview')).toBe('default');
-  });
-  test('should return tab for http/rest for request/response tabs', () => {
-    const randomValidAdaptorTypes = ['HTTPExport', 'RESTExport'];
-    const resource = {
-      _id: 1,
-      adaptorType: randomValidAdaptorTypes[Math.floor(Math.random() * randomValidAdaptorTypes.length)],
-    };
-
-    expect(getPreviewBodyTemplateType(resource, 'raw')).toBe('tab');
-  });
-});
-
-describe('getBodyHeaderFieldsForPreviewData util', () => {
-  test('should return empty body header fields incase of invalid preview data', () => {
-    expect(getBodyHeaderFieldsForPreviewData(undefined)).toEqual({
-      body: undefined,
-      headers: undefined,
-      others: {},
-    });
-  });
-  test('should return body header fields for valid preview data for stages other than raw', () => {
-    const previewData = {
-      data: [{
-        method: 'GET',
-        headers: {
-          'content-type': 'application/json',
-          accept: 'application/json',
-          authorization: 'Basic *****',
-        },
-        url: 'https://celigohelp.zendesk.com/api/v2/tickets',
-      }],
-    };
-
-    expect(getBodyHeaderFieldsForPreviewData(previewData)).toEqual({
-      body: undefined,
-      headers: {
-        'content-type': 'application/json',
-        accept: 'application/json',
-        authorization: 'Basic *****',
-      },
-      others: {
-        method: 'GET',
-      },
-    });
-  });
-  test('should return parsed body with header fields for raw stage', () => {
-    const previewData = {
-      data: [{
-        method: 'POST',
-        body: '{"test": 5}',
-        headers: {
-          'content-type': 'application/json',
-          accept: 'application/json',
-          authorization: 'Basic *****',
-        },
-        url: 'https://celigohelp.zendesk.com/api/v2/tickets',
-      }],
-    };
-
-    expect(getBodyHeaderFieldsForPreviewData(previewData, 'raw')).toEqual({
-      body: { test: 5 },
-      headers: {
-        'content-type': 'application/json',
-        accept: 'application/json',
-        authorization: 'Basic *****',
-      },
-      others: {
-        method: 'POST',
-      },
-    });
   });
 });
 
