@@ -69,14 +69,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel, showTrialLicenseMessage, inTrial}) {
+export default function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel, showTrialLicenseMessage, trialExpired}) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
-  const single = isIntegrationV2 || !expired || inTrial;
+  const single = !trialExpired && (isIntegrationV2 || !expired);
 
   const onClickRenewOrReactivateButton = useCallback(event => {
     event.stopPropagation();
