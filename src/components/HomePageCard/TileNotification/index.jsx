@@ -123,7 +123,7 @@ export default function TileNotification({ content, expired, connectorId, licens
   return (
     <div className={classes.trialExpireWrapper}>
       <div className={classes.contentWrapper}>
-        {expired ? (
+        {expired || trialExpired ? (
           <ExpiredIcon className={classes.expiredIcon} />
         )
           : <WarningIcon className={classes.warningIcon} />}
