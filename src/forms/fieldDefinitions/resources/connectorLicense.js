@@ -9,7 +9,7 @@ export default {
     connectorId: r => r._connectorId,
   },
   trialEndDate: {
-    defaultValue: r => r.expires && moment(r.trialEndDate).format('L'),
+    defaultValue: r => r.trialEndDate && moment(r.trialEndDate).format('L'),
     type: 'dateselector',
     label: 'Trial expires',
     connectorId: r => r._connectorId,

@@ -176,11 +176,6 @@ function Tile({ tile, history, onMove, onDrop, index }) {
 
   if (resumable) {
     licenseMessageContent = `Your subscription was renewed on ${moment(license.expires).format('MMM Do, YYYY')}. Click Reactivate to continue.`;
-  } else if (expiresInDays <= 0) {
-    expired = true;
-    licenseMessageContent = `Your license expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your license.`;
-  } else if (expiresInDays > 0 && expiresInDays <= 30) {
-    licenseMessageContent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
   } else if (license?.trialEndDate && trialExpiresInDays <= 0) {
     licenseMessageContent = `Trial expired on ${moment(license.trialEndDate).format('MMM Do, YYYY')}`;
     showTrialLicenseMessage = true;
@@ -188,6 +183,11 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     licenseMessageContent = `Trial expires in ${trialExpiresInDays} days.`;
     showTrialLicenseMessage = true;
     inTrial = true;
+  } else if (expiresInDays <= 0) {
+    expired = true;
+    licenseMessageContent = `Your license expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your license.`;
+  } else if (expiresInDays > 0 && expiresInDays <= 30) {
+    licenseMessageContent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
   }
 
   const handleConnectionDownStatusClick = useCallback(event => {
