@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'stretch',
   },
   tabContainer: { flex: '0 0 auto' },
-  panel: { flex: '1 1 100px', minHeight: 50 },
+  panel: { flex: '1 1 100px', minHeight: 50, position: 'relative' },
 
   tabPanel: {
     height: '100%',

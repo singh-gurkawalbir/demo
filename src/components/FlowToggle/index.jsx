@@ -110,7 +110,7 @@ export default function FlowToggle({
   if (flow.disableSlider) return null;
 
   return onOffInProgressStatus ? (
-    <Spinner size={20} color="primary" className={classes.spinnerFlowToggle} />
+    <Spinner className={classes.spinnerFlowToggle} />
   ) : (
     <Tooltip data-public title="Off/On" placement="bottom">
       <div>
