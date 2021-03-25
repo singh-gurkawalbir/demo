@@ -126,6 +126,8 @@ import DynaAllIntegrations from './integrations/DynaAllIntegrations';
 import DynaChildIntegrations from './integrations/DynaChildIntegrations';
 import DynaFlowsTiedToIntegrations from './integrations/DynaFlowsTiedToIntegrations';
 import DynaReportDateRange from './integrations/DynaReportDateRange';
+import DynaTrialLicense from './DynaTrialLicense';
+import DynaLicenseExpires from './DynaLicenseExpires';
 
 export default {
   reportdaterange: DynaReportDateRange,
@@ -278,4 +280,6 @@ export default {
   dateselector: DynaDateSelector,
   fileencryptdecrypt: DynaFileEncryptDecrypt,
   hashalgorithm: DynaHashAlogorithm,
+  triallicense: DynaTrialLicense,
+  licenseexpires: DynaLicenseExpires,
 };
