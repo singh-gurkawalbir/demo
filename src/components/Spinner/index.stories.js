@@ -1,13 +1,7 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 import Spinner from '.';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    margin: theme.spacing(2),
-  },
-
-}));
 export default {
   title: 'Spinner',
   component: Spinner,
@@ -30,31 +24,21 @@ export default {
         type: 'radio',
         options: ['inherit', 'primary', 'secondary'],
       },
-
     },
   },
 };
 
-const Template = args => {
-  const classes = useStyles();
-
-  return (
-    <div className={classes.root}>
-      <Spinner {...args}>Loading</Spinner>
-    </div>
-  );
-};
+const Template = args => (
+  <Spinner {...args} />
+);
 
 export const Loading = Template.bind({});
-
-Loading.args = {
-  color: 'primary',
-  size: 'large',
-};
 
 export const centerAll = Template.bind({});
 
 centerAll.args = {
   centerAll: true,
+  color: 'secondary',
+  children: <Typography> Loading</Typography>,
 };
 
