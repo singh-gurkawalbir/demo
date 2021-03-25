@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import Select, { components } from 'react-select';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { Button, FormControl, FormLabel } from '@material-ui/core';
@@ -218,15 +218,6 @@ export default function MultiSelectApplication(props) {
   } = props;
   const theme = useTheme();
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
-  const openSelect = useCallback(() => {
-    setOpen(true);
-  }, []);
-  const closeSelect = useCallback(
-    () => {
-      setOpen(false);
-    }, []
-  );
   const defaultValue = useMemo(() => value.map(val => options[0].items.find(opt => opt.value === val)), [options, value]);
   const handleChange = useCallback(selectedOptions => {
     onFieldChange(id, selectedOptions?.map(opt => opt?.value ? opt.value : opt) || []);
@@ -382,9 +373,6 @@ export default function MultiSelectApplication(props) {
           className={classes.wrapper}
           filterOption={filterOptions}
           styles={customStylesMultiselect}
-          menuIsOpen={open}
-          onMenuOpen={openSelect}
-          onMenuClose={closeSelect}
         />
 
         {!removeHelperText && <FieldMessage {...props} />}
