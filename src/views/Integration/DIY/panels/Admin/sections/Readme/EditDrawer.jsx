@@ -63,15 +63,15 @@ export default function ReadmeEditor({ value, integrationId }) {
     }
 
     confirmDialog({
-      title: 'Confirm cancel',
-      message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
+      title: 'You’ve got unsaved changes',
+      message: 'Are you sure you want to leave this page and lose your unsaved changes?',
       buttons: [
         {
-          label: 'Yes, cancel',
+          label: 'Save Changes',
           onClick: handleClose,
         },
         {
-          label: 'No, go back',
+          label: 'Discard Changes',
           color: 'secondary',
         },
       ],
