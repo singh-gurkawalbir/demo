@@ -109,11 +109,16 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', tile && tile._integrationId)
   );
+  const licenses = useSelector(state =>
+    selectors.licenses(state)
+  );
+
+  const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
   const isCloned = integration?.install?.find(step => step?.isClone);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, license, resumable} = useSelector(state =>
+  const {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable} = useSelector(state =>
     selectors.tileLicenseDetails(state, tile)
   );
   const isIntegrationV2 = isIntegrationAppVerion2(integration, true);
