@@ -34,6 +34,9 @@ const useStyles = makeStyles(theme => ({
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(2),
     position: 'relative',
+    display: 'flex',
+    flexGrow: 1,
+    flexDirection: 'column',
   },
   searchMoreWrapper: {
     textAlign: 'center',
@@ -125,8 +128,7 @@ export default function LogsTable({ flowId, exportId }) {
           <ResourceTable
             resources={logsInCurrPage}
             resourceType="listenerLogs"
-            actionProps={actionProps}
-            variant="slim" />
+            actionProps={actionProps} />
           {!hasDebugLogs && !hasNextPage && (
           <Typography className={classes.textWrapper}>
             You don’t have any debug log entries.
