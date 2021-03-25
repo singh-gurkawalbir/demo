@@ -18,6 +18,7 @@ import suiteScriptRoutes from './suiteScript';
 import getRoutePath from '../../../utils/routePaths';
 import ConnectorCrumb from './crumbs/Connector';
 
+const modelLabelToPlural = resourceType => MODEL_PLURAL_TO_LABEL[resourceType] ? `${MODEL_PLURAL_TO_LABEL[resourceType]}s` : '';
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
     flexGrow: 1,
@@ -250,9 +251,10 @@ const routes = [
   { path: getRoutePath('/playground'), breadcrumb: 'Developer playground' },
   { path: getRoutePath('/permissions'), breadcrumb: 'Permission explorer' },
   { path: getRoutePath('/migrate'), breadcrumb: 'Our new error management' },
+  { path: getRoutePath('/reports'), breadcrumb: 'Reports' },
   {
     path: getRoutePath('/:resourceType'),
-    breadcrumb: ({ resourceType }) => MODEL_PLURAL_TO_LABEL[resourceType] ? `${MODEL_PLURAL_TO_LABEL[resourceType]}s` : '',
+    breadcrumb: ({ resourceType }) => modelLabelToPlural(resourceType),
   },
 ];
 const commonChildRoutes = [
@@ -268,6 +270,9 @@ const commonChildRoutes = [
   {
     path: '/edit/:resourceType/:id',
     breadcrumb: EditResourceTypeCrumb,
+    childRoutes: [
+      { path: '/logs', breadcrumb: 'View listener debug logs' },
+    ],
   },
 ];
 
@@ -334,7 +339,6 @@ function parseUrl(pathname, routes, url = '', params = {}) {
 
   return crumbs;
 }
-
 export default function CeligoBreadcrumb() {
   const { pathname } = useLocation();
 

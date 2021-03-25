@@ -13,7 +13,6 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.paper,
     padding: theme.spacing(1),
     marginTop: -18,
-    height: '100%',
   },
 }));
 export default function CeligoTabPanel(props) {

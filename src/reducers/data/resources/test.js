@@ -1874,3 +1874,54 @@ describe('mkGetCustomFormPerSectionId', () => {
     expect(received).toEqual(expected);
   });
 });
+
+describe('isAnyReportRunningOrQueued', () => {
+  test('should return false when no eventreports are loaded', () => {
+    const state = {};
+
+    expect(selectors.isAnyReportRunningOrQueued(state, 'eventreports')).toBe(false);
+  });
+  test('should return true since an eventReport is queued', () => {
+    const state = {
+      eventreports: [
+        {_id: '1',
+          status: 'queued',
+        },
+        {_id: '2',
+          status: 'completed',
+        },
+      ],
+    };
+
+    expect(selectors.isAnyReportRunningOrQueued(state, 'eventreports')).toBe(true);
+  });
+
+  test('should return true since an eventReport is running', () => {
+    const state = {
+      eventreports: [
+        {_id: '1',
+          status: 'running',
+        },
+        {_id: '2',
+          status: 'completed',
+        },
+      ],
+    };
+
+    expect(selectors.isAnyReportRunningOrQueued(state, 'eventreports')).toBe(true);
+  });
+  test('should return false when there are completed reports', () => {
+    const state = {
+      eventreports: [
+        {_id: '1',
+          status: 'failed',
+        },
+        {_id: '2',
+          status: 'completed',
+        },
+      ],
+    };
+
+    expect(selectors.isAnyReportRunningOrQueued(state, 'eventreports')).toBe(false);
+  });
+});

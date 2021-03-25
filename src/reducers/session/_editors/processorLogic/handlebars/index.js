@@ -18,7 +18,10 @@ export function _constructEditorTitle(label) {
 
   return `Build ${label[0].toLowerCase()}${label.slice(1)}`;
 }
-export function _editorSupportsV1V2data({resource = {}, fieldId, connection = {}, isPageGenerator}) {
+export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGenerator}) {
+  const {adaptorType} = resource || {};
+  const {isHTTP} = connection || {};
+
   if (fieldId === '_query') {
     // we don't get whole resource object in case of rdbms lookup query so
     // change this to true when lookup query supports toggle in future
@@ -33,8 +36,8 @@ export function _editorSupportsV1V2data({resource = {}, fieldId, connection = {}
   if (fieldId === 'idLockTemplate' ||
   fieldId === 'dataURITemplate' ||
   fieldId?.includes('once')) {
-    if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-      return connection.isHTTP;
+    if (['RESTImport', 'RESTExport'].includes(adaptorType)) {
+      return isHTTP;
     }
 
     return true;
@@ -46,8 +49,8 @@ export function _editorSupportsV1V2data({resource = {}, fieldId, connection = {}
   }
 
   // AFE 2.0 not supported for Native REST Adaptor for any fields
-  if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-    return connection.isHTTP;
+  if (['RESTImport', 'RESTExport'].includes(adaptorType)) {
+    return isHTTP;
   }
 
   return [
@@ -69,7 +72,7 @@ export function _editorSupportsV1V2data({resource = {}, fieldId, connection = {}
     'SalesforceExport',
     'NetSuiteImport',
     'NetSuiteExport',
-  ].includes(resource.adaptorType);
+  ].includes(adaptorType);
 }
 
 export default {

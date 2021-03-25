@@ -24,14 +24,20 @@ export default {
   },
   icon: TrashIcon,
   useHasAccess: ({ rowData, resourceType }) => {
-    const { _integrationId } = rowData;
+    const { _integrationId, _connectorId } = rowData;
     const canDelete = useSelector(state => selectors.resourcePermissions(
       state,
       'integrations',
       _integrationId,
       'flows'
     ))?.delete;
+    const isTrialLicense = useSelector(state =>
+      selectors.resource(state, 'connectors', _connectorId)?._trialLicenseId === rowData?._id
+    );
 
+    if (isTrialLicense) {
+      return false;
+    }
     // only check permissions for integration flows as only those can be shared
     if (resourceType !== 'flows' || !_integrationId) { return true; }
 

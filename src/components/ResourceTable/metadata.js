@@ -2,6 +2,7 @@ import accesstokens from './accesstokens/metadata';
 import agents from './agents/metadata';
 import connections from './connections/metadata';
 import connectors from './connectors/metadata';
+import eventreports from './eventreports/metadata';
 import defaultResource from './default/metadata';
 import exports from './exports/metadata';
 import imports from './imports/metadata';
@@ -18,6 +19,7 @@ import latestJobs from './latestJobs/metadata';
 import runHistory from './runHistory/metadata';
 import orgOwnerUsers from './users/Metadata/orgOwnerUsers';
 import orgUsers from './users/Metadata/orgUsers';
+import listenerLogs from './listenerLogs/metadata';
 
 const metadata = {
   agents,
@@ -39,6 +41,8 @@ const metadata = {
   runHistory,
   orgOwnerUsers,
   orgUsers,
+  eventreports,
+  listenerLogs,
 };
 
 export default function (resourceType) {

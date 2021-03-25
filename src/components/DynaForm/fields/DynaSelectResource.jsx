@@ -32,6 +32,8 @@ const handleAddNewResource = args => {
     statusExport,
     assistant,
     integrationId,
+    connectorId,
+    isFrameWork2,
   } = args;
 
   if (
@@ -43,6 +45,7 @@ const handleAddNewResource = args => {
       'pageGenerator',
       'asyncHelpers',
       'iClients',
+      'connectorLicenses',
     ].includes(resourceType)
   ) {
     let values;
@@ -56,6 +59,18 @@ const handleAddNewResource = args => {
         ...values,
         '/assistant': assistant,
       };
+    } else if (['connectorLicenses'].includes(resourceType)) {
+      values = {
+        ...values,
+        '/_connectorId': connectorId,
+        '/trialLicenseTemplate': true,
+      };
+      if (isFrameWork2) {
+        values = {
+          ...values,
+          '/type': 'integrationApp',
+        };
+      }
     } else {
       values = resourceMeta[resourceType].new.preSave({
         application: options.appType,
@@ -163,6 +178,7 @@ export default function DynaSelectResource(props) {
     resourceContext,
     skipPingConnection,
     integrationId,
+    connectorId,
   } = props;
   const {options} = props;
   const classes = useStyles();
@@ -182,6 +198,9 @@ export default function DynaSelectResource(props) {
   const { resources = emptyArray } = useSelectorMemo(
     selectors.makeResourceListSelector,
     filterConfig
+  );
+  const isFrameWork2 = useSelector(state =>
+    selectors.resource(state, 'connectors', connectorId)?.framework === 'twoDotZero'
   );
   const createdId = useSelector(state =>
     selectors.createdResourceId(state, newResourceId)
@@ -253,20 +272,10 @@ export default function DynaSelectResource(props) {
         expConnId,
         assistant,
         integrationId: integrationId || integrationIdFromUrl,
+        connectorId,
+        isFrameWork2,
       }),
-    [
-      dispatch,
-      history,
-      location,
-      resourceType,
-      options,
-      newResourceId,
-      statusExport,
-      expConnId,
-      assistant,
-      integrationId,
-      integrationIdFromUrl,
-    ]
+    [dispatch, history, location, resourceType, options, newResourceId, statusExport, expConnId, assistant, integrationId, integrationIdFromUrl, connectorId, isFrameWork2]
   );
   const handleEditResource = useCallback(() => {
     if (
@@ -292,17 +301,33 @@ export default function DynaSelectResource(props) {
       // this not an actual value we would like to commit...this is just to load the right form
       dispatch(actions.resource.patchStaged(value, patchSet, 'value'));
     }
+    if (resourceType === 'connectorLicenses') {
+      const patchSet = [
+        {
+          op: 'add',
+          path: '/_connectorId',
+          value: connectorId,
+        },
+        {
+          op: 'add',
+          path: '/trialLicenseTemplate',
+          value: true,
+        },
+      ];
+
+      if (isFrameWork2) {
+        patchSet.push({
+          op: 'add',
+          path: '/type',
+          value: 'integrationApp',
+        });
+      }
+
+      dispatch(actions.resource.patchStaged(value, patchSet, 'value'));
+    }
 
     history.push(`${location.pathname}/edit/${resourceType}/${value}`);
-  }, [
-    dispatch,
-    expConnId,
-    history,
-    location.pathname,
-    resourceType,
-    statusExport,
-    value,
-  ]);
+  }, [isFrameWork2, connectorId, dispatch, expConnId, history, location.pathname, resourceType, statusExport, value]);
   const truncatedItems = items =>
     items.sort(stringCompare('label')).map(i => ({
       label: (
@@ -320,7 +345,7 @@ export default function DynaSelectResource(props) {
 
   return (
     <div className={classes.root}>
-      <LoadResources required resources={resourceType}>
+      <LoadResources required resources={resourceType !== 'connectorLicenses' ? resourceType : ''}>
         {multiselect ? (
           <DynaMultiSelect
             {...props}

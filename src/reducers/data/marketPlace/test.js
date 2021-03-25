@@ -69,6 +69,9 @@ describe('marketplace selectors', () => {
     const testConnectors = [
       { _id: '123', applications: ['some application'] },
       { _id: '456', applications: ['some application'] },
+      { _id: '567', applications: ['some application'] },
+      { _id: '789', applications: ['some application'], framework: 'twoDotZero' },
+      { _id: 'abc', applications: ['some application'], framework: 'twoDotZero' },
     ];
     const licenses = [
       {
@@ -85,6 +88,28 @@ describe('marketplace selectors', () => {
         type: 'connector',
         _connectorId: '123',
       },
+      {
+        trialEndDate: moment()
+          .subtract(1, 'days')
+          .toISOString(),
+        type: 'connector',
+        _connectorId: '567',
+      },
+      {
+        trialEndDate: moment()
+          .subtract(2, 'days')
+          .toISOString(),
+        type: 'integrationApp',
+        _connectorId: '789',
+      },
+      {
+        trialEndDate: moment()
+          .subtract(2, 'days')
+          .toISOString(),
+        type: 'integrationApp',
+        _connectorId: 'abc',
+        _integrationId: '123',
+      },
     ];
 
     test('should return empty array on empty/undefined state', () => {
@@ -100,8 +125,11 @@ describe('marketplace selectors', () => {
       expect(
         selectors.connectors(state, 'some application', false, licenses)
       ).toEqual([
-        { _id: '123', applications: ['some application'], canInstall: true },
-        { _id: '456', applications: ['some application'], canInstall: false },
+        { _id: '123', applications: ['some application'], canInstall: true, usedTrialLicenseExists: false },
+        { _id: '456', applications: ['some application'], canInstall: false, usedTrialLicenseExists: false },
+        { _id: '567', applications: ['some application'], canInstall: false, usedTrialLicenseExists: true },
+        { _id: '789', applications: ['some application'], framework: 'twoDotZero', canInstall: false, usedTrialLicenseExists: true },
+        { _id: 'abc', applications: ['some application'], framework: 'twoDotZero', canInstall: false, usedTrialLicenseExists: true },
       ]);
     });
   });
