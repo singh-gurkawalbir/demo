@@ -1,3 +1,5 @@
+import {invert} from 'lodash';
+
 export const emptyList = [];
 export const emptyObject = {};
 export const ACCOUNT_IDS = Object.freeze({
@@ -645,4 +647,21 @@ export const LINE_GRAPH_TYPES = Object.freeze({
   IGNORED: 'ignored',
   RESOLVED: 'resolved',
 });
+export const LINE_GRAPH_CATEGORIES = [
+  LINE_GRAPH_TYPES.SUCCESS,
+  LINE_GRAPH_TYPES.AVERAGE_TIME_TAKEN,
+  LINE_GRAPH_TYPES.ERROR,
+  LINE_GRAPH_TYPES.IGNORED,
+  LINE_GRAPH_TYPES.RESOLVED,
+];
+export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
+  [LINE_GRAPH_TYPES.SUCCESS]: 's',
+  [LINE_GRAPH_TYPES.AVERAGE_TIME_TAKEN]: 'att',
+  [LINE_GRAPH_TYPES.ERROR]: 'e',
+  [LINE_GRAPH_TYPES.IGNORED]: 'i',
+  [LINE_GRAPH_TYPES.RESOLVED]: 'r',
+});
+export const LINE_GRAPH_TYPE_LONG = Object.freeze(
+  invert(LINE_GRAPH_TYPE_SHORTID)
+);
 

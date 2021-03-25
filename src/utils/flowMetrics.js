@@ -489,21 +489,6 @@ export const getLabel = key => {
   }
 };
 
-export const getShortIdofMeasurement = key => {
-  switch (key) {
-    case 'success':
-      return 's';
-    case 'error':
-      return 'e';
-    case 'ignored':
-      return 'i';
-    case 'resolved':
-      return 'r';
-    default:
-      return 'att';
-  }
-};
-
 export const getAxisLabel = key => {
   switch (key) {
     case 'success':

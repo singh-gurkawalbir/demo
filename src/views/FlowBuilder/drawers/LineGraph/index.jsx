@@ -91,15 +91,6 @@ export default function LineGraphDrawer({ flowId }) {
 
     return [];
   }, [latestJob]);
-  const isIntegrationUsersRequested = useSelector(state =>
-    !!selectors.integrationUsers(state, integrationId)
-  );
-
-  useEffect(() => {
-    if (integrationId && !isIntegrationUsersRequested) {
-      dispatch(actions.resource.requestCollection(`integrations/${integrationId}/ashares`));
-    }
-  }, [isIntegrationUsersRequested, dispatch, integrationId]);
 
   useEffect(() => {
     if (!latestJobDetails || !latestJobDetails.status) {

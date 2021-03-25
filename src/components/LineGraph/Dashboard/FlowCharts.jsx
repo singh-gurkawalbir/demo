@@ -23,18 +23,14 @@ import {
   getLineColor,
   getLegend,
   getDateTimeFormat,
-  getShortIdofMeasurement,
 } from '../../../utils/flowMetrics';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import Spinner from '../../Spinner';
-import RequiredIcon from '../../icons/RequiredIcon';
-import OptionalIcon from '../../icons/OptionalIcon';
-import ConditionalIcon from '../../icons/ConditionalIcon';
-import PreferredIcon from '../../icons/PreferredIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import {COMM_STATES} from '../../../reducers/comms/networkComms';
-import { LINE_GRAPH_TYPES, RESOLVED_GRAPH_DATAPOINTS } from '../../../utils/constants';
+import { LINE_GRAPH_CATEGORIES, LINE_GRAPH_TYPES, LINE_GRAPH_TYPE_SHORTID, RESOLVED_GRAPH_DATAPOINTS } from '../../../utils/constants';
+import { getIcon, DataIcon, getResourceName } from '../Common';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -95,22 +91,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const getIcon = index => {
-  const Symbols = [OptionalIcon, ConditionalIcon, PreferredIcon, RequiredIcon];
-
-  return Symbols[index % 4];
-};
-
-const DataIcon = ({index}) => {
-  const Icon = getIcon(index);
-  const classes = useStyles();
-
-  return (
-    <Icon
-      className={clsx(classes.legendIcon, classes[`${(index % 8) + 1}Color`])}
-    />
-  );
-};
+const AUTO_PILOT = 'autopilot';
 const flowsConfig = { type: 'flows' };
 
 const Chart = ({ id, integrationId, range, selectedResources }) => {
@@ -144,35 +125,16 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
   if (Array.isArray(data)) {
     if (isResolvedGraph) {
       RESOLVED_GRAPH_DATAPOINTS.forEach(user => {
-        flowData[user] = data.filter(d => ((user === 'autopilot' ? d.by === 'autopilot' : d.by !== 'autopilot') && d.attribute === 'r'));
+        flowData[user] = data.filter(d => ((user === AUTO_PILOT ? d.by === AUTO_PILOT : d.by !== AUTO_PILOT) && d.attribute === LINE_GRAPH_TYPE_SHORTID[LINE_GRAPH_TYPES.RESOLVED]));
         flowData[user] = sortBy(flowData[user], ['timeInMills']);
       });
     } else {
       selectedResources.forEach(r => {
-        flowData[r] = data.filter(d => (r === integrationId ? d.flowId === '_integrationId' : d.flowId === r) && d.attribute === getShortIdofMeasurement(id));
+        flowData[r] = data.filter(d => (r === integrationId ? d.flowId === '_integrationId' : d.flowId === r) && d.attribute === LINE_GRAPH_TYPE_SHORTID[id]);
         flowData[r] = sortBy(flowData[r], ['timeInMills']);
       });
     }
   }
-
-  const getResourceName = name => {
-    if (!name || typeof name !== 'string') {
-      return name || '';
-    }
-    const resourceId = name.split('-')[0];
-
-    if (isResolvedGraph) {
-      return resourceId === 'autopilot' ? 'Auto resolved' : 'Users';
-    }
-    let modifiedName = resourceId;
-    const resource = flowResources.find(r => r._id === resourceId);
-
-    if (resource) {
-      modifiedName = resource.name;
-    }
-
-    return modifiedName;
-  };
 
   const handleMouseEnter = e => {
     const targetId = e?.target?.id;
@@ -217,7 +179,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
                 id={entry.value}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}>
-                {getResourceName(entry.value)}
+                {getResourceName({name: entry.value, isResolvedGraph, flowResources})}
               </span>
             </>
           ))
@@ -263,7 +225,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
           <p className="label">{getDateTimeFormat(range, label, preferences, timezone)} </p>
           {payload.map(
             p => (
-              p && !!p.value && <p key={p.name}> {`${getResourceName(p.name)}: ${p.value}`} </p>
+              p && !!p.value && <p key={p.name}> {`${getResourceName({name: p.name, isResolvedGraph, flowResources})}: ${p.value}`} </p>
             ))}
         </div>
       );
@@ -339,15 +301,6 @@ export default function FlowCharts({ integrationId, range, selectedResources, re
       state => selectors.flowMetricsData(state, integrationId),
       shallowEqual
     ) || {};
-  const isIntegrationUsersRequested = useSelector(state =>
-    !!selectors.integrationUsers(state, integrationId)
-  );
-
-  useEffect(() => {
-    if (integrationId && !isIntegrationUsersRequested) {
-      dispatch(actions.resource.requestCollection(`integrations/${integrationId}/ashares`));
-    }
-  }, [isIntegrationUsersRequested, dispatch, integrationId]);
 
   useEffect(() => {
     if (selectedResources.length) {
@@ -375,7 +328,7 @@ export default function FlowCharts({ integrationId, range, selectedResources, re
 
   return (
     <div className={classes.root}>
-      {['success', 'averageTimeTaken', 'error', 'ignored', 'resolved'].map(m => (
+      {LINE_GRAPH_CATEGORIES.map(m => (
         <Chart
           key={m}
           id={m}
