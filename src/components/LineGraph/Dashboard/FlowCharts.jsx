@@ -92,10 +92,10 @@ const useStyles = makeStyles(theme => ({
 
 const flowsConfig = { type: 'flows' };
 
-const Chart = ({ id, integrationId, range, selectedResources }) => {
+const Chart = ({ attribute, integrationId, range, selectedResources }) => {
   const classes = useStyles();
   const [opacity, setOpacity] = useState({});
-  const isResolvedGraph = id === LINE_GRAPH_TYPES.RESOLVED;
+  const isResolvedGraph = attribute === LINE_GRAPH_TYPES.RESOLVED;
   let mouseHoverTimer;
   const resourceList = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -116,7 +116,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
   const domain = [new Date(startDate).getTime(), new Date(endDate).getTime()];
   const ticks = getTicks(domainRange, range);
-  const flowData = useSelectorMemo(selectors.mkLineGraphData, 'integrations', integrationId, id, selectedResources);
+  const flowData = useSelectorMemo(selectors.mkLineGraphData, 'integrations', integrationId, attribute, selectedResources);
 
   const handleMouseEnter = e => {
     const targetId = e?.target?.id;
@@ -191,14 +191,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
 
   function CustomTooltip({ payload, label, active }) {
     const classes = useStyles();
-    const preferences = useSelector(
-      state => selectors.userOwnPreferences(state),
-      (left, right) =>
-        left &&
-        right &&
-        left.dateFormat === right.dateFormat &&
-        left.timeFormat === right.timeFormat
-    );
+    const preferences = useSelector(state => selectors.userOwnPreferences(state));
     const timezone = useSelector(state => selectors.userTimezone(state));
 
     if (active && Array.isArray(payload) && payload.length) {
@@ -219,7 +212,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
 
   return (
     <div className={classes.responsiveContainer}>
-      <PanelHeader title={getLabel(id)} />
+      <PanelHeader title={getLabel(attribute)} />
       <ResponsiveContainer width="100%" height={400} >
         <LineChart
           margin={{
@@ -238,10 +231,10 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
             tickFormatter={unixTime => unixTime ? moment(unixTime).format(getXAxisFormat(range)) : ''}
           />
           <YAxis
-            yAxisId={id}
+            yAxisId={attribute}
             type="number"
             label={{
-              value: getAxisLabel(id),
+              value: getAxisLabel(attribute),
               angle: -90,
               offset: -20,
               position: 'insideLeft',
@@ -254,11 +247,11 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
           <Legend align="center" content={<CustomLegend />} />
           {lineData.map((r, i) => (
             <Line
-              key={`${r}-${id}`}
+              key={`${r}-${attribute}`}
               dataKey="value"
-              name={`${r}-${id}`}
+              name={`${r}-${attribute}`}
               data={flowData[r]}
-              yAxisId={id}
+              yAxisId={attribute}
               dot={false}
               activeDot={<CustomizedDot idx={i} />}
               strokeWidth="2"
@@ -310,10 +303,10 @@ export default function FlowCharts({ integrationId, range, selectedResources, re
 
   return (
     <div className={classes.root}>
-      {LINE_GRAPH_CATEGORIES.map(m => (
+      {LINE_GRAPH_CATEGORIES.map(category => (
         <Chart
-          key={m}
-          id={m}
+          key={category}
+          attribute={category}
           range={range}
           integrationId={integrationId}
           selectedResources={selectedResources}

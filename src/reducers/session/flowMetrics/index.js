@@ -58,22 +58,22 @@ selectors.mkLineGraphData = () => createSelector(
   (state, _, resourceId) => state?.[resourceId]?.data,
   (_, resourceType) => resourceType,
   (_1, _2, resourceId) => resourceId,
-  (_1, _2, _3, id) => id,
+  (_1, _2, _3, attribute) => attribute,
   (_1, _2, _3, _4, resources) => resources,
-  (data, resourceType, resourceId, id, resources = emptyList) => {
+  (data, resourceType, resourceId, attribute, resources = emptyList) => {
     const flowData = {};
     const RESOURCE_ID_VAR = resourceType === 'integrations' ? '_integrationId' : '_flowId';
     const RESOURCE_NAME_VAR = resourceType === 'integrations' ? 'flowId' : 'resourceId';
 
     if (Array.isArray(data)) {
-      if (id === LINE_GRAPH_TYPES.RESOLVED) {
+      if (attribute === LINE_GRAPH_TYPES.RESOLVED) {
         RESOLVED_GRAPH_DATAPOINTS.forEach(user => {
           flowData[user] = data.filter(d => ((user === AUTO_PILOT ? d.by === AUTO_PILOT : d.by !== AUTO_PILOT) && d.attribute === LINE_GRAPH_TYPE_SHORTID[LINE_GRAPH_TYPES.RESOLVED]));
           flowData[user] = sortBy(flowData[user], ['timeInMills']);
         });
       } else {
         resources.forEach(r => {
-          flowData[r] = data.filter(d => (r === resourceId ? d[RESOURCE_NAME_VAR] === RESOURCE_ID_VAR : d[RESOURCE_NAME_VAR] === r) && d.attribute === LINE_GRAPH_TYPE_SHORTID[id]);
+          flowData[r] = data.filter(d => (r === resourceId ? d[RESOURCE_NAME_VAR] === RESOURCE_ID_VAR : d[RESOURCE_NAME_VAR] === r) && d.attribute === LINE_GRAPH_TYPE_SHORTID[attribute]);
           flowData[r] = sortBy(flowData[r], ['timeInMills']);
         });
       }
