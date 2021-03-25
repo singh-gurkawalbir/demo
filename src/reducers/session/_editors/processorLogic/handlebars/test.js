@@ -25,6 +25,9 @@ describe('handlebars processor logic', () => {
     });
   });
   describe('_editorSupportsV1V2data util', () => {
+    test('should not throw error for invalid arguments', () => {
+      expect(_editorSupportsV1V2data({})).toEqual(false);
+    });
     test('should return false for all lookup fields', () => {
       expect(_editorSupportsV1V2data({fieldId: '_query'})).toEqual(false);
       expect(_editorSupportsV1V2data({fieldId: '_body'})).toEqual(false);
