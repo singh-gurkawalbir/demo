@@ -1,6 +1,7 @@
 import moment from 'moment';
 import actionTypes from '../actions/types';
 import { JOB_TYPES, JOB_STATUS } from './constants';
+import { getStaticCodesList } from './listenerLogs';
 
 let path;
 
@@ -17,8 +18,10 @@ export default function getRequestOptions(
     connectorId,
     licenseId,
     flowId,
+    exportId,
     isResolved,
     nextPageURL,
+    loadMore,
   } = {}
 ) {
   switch (action) {
@@ -361,6 +364,37 @@ export default function getRequestOptions(
         queryParams.push(`createdAt_lte=${moment(range.endDate).toISOString()}`);
       }
       path += `&${queryParams.join('&')}`;
+
+      return {
+        path,
+        opts: { method: 'GET'},
+      };
+    }
+
+    case actionTypes.LOGS.LISTENER.REQUEST: {
+      let path;
+
+      if (loadMore && nextPageURL) {
+        path = nextPageURL.replace('/api', '');
+      } else {
+        path = `/flows/${flowId}/${exportId}/requests`;
+        const queryParams = [];
+        const { codes = [], time } = filters;
+
+        const codesList = getStaticCodesList(codes);
+
+        if (!codesList.includes('all')) {
+          codesList.forEach(c => queryParams.push(`statusCode=${c}`));
+        }
+        if (time?.startDate && time?.endDate) {
+          queryParams.push(`time_gt=${time.startDate.getTime()}`);
+          queryParams.push(`time_lte=${time.endDate.getTime()}`);
+        }
+
+        if (queryParams.length !== 0) {
+          path += `?${queryParams.join('&')}`;
+        }
+      }
 
       return {
         path,

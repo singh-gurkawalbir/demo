@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
 import DefaultPanel from '../DefaultPanel';
+import { getHttpReqResFields, getContentType } from '../../../../utils/http';
 
 const useStyles = makeStyles(theme => ({
   panelContainer: {
@@ -19,13 +20,17 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function RequestResponsePanel({ value = {}, hideClipboard = false }) {
+export default function RequestResponsePanel({ value = {}, hideClipboard = false, variant}) {
   const classes = useStyles();
   const [tabValue, setTabValue] = useState('body');
 
   const handleTabChange = useCallback((event, newValue) => {
     setTabValue(newValue);
   }, []);
+
+  const bodyHeaderFields = useMemo(() => getHttpReqResFields(value, variant), [value, variant]);
+
+  const contentType = getContentType(value);
 
   return (
     <div className={classes.panelContainer}>
@@ -56,9 +61,11 @@ export default function RequestResponsePanel({ value = {}, hideClipboard = false
           />
         )
       </Tabs>
-      { value[tabValue] && (
-        <DefaultPanel value={value[tabValue]} hideClipboard={hideClipboard} />
-      )}
+      <DefaultPanel
+        value={bodyHeaderFields[tabValue]}
+        hideClipboard={hideClipboard}
+        contentType={tabValue === 'body' ? contentType : 'json'}
+        />
     </div>
   );
 }
