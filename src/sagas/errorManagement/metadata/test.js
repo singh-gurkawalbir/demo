@@ -337,14 +337,14 @@ describe('EM2.0 metadata sagas', () => {
         .run();
     });
     test('should invoke api and dispatch error action on failure', () => {
-      const errorMessage = { message: 'S3 key is expired' };
-      const error = { status: 500, message: errorMessage};
+      const errorMessage = {errors: [{ message: 'S3 key is expired' }]};
+      const error = { status: 402, message: JSON.stringify(errorMessage) };
 
       return expectSaga(requestErrorHttpDocument, { flowId, resourceId, reqAndResKey })
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
-        .put(actions.errorManager.errorHttpDoc.error(reqAndResKey, error))
+        .put(actions.errorManager.errorHttpDoc.error(reqAndResKey, errorMessage.errors[0].message))
         .not.put(actions.errorManager.errorHttpDoc.received(reqAndResKey, undefined))
         .run();
     });

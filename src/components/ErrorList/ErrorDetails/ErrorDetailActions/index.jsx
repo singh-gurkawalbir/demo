@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { isEqual } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -29,13 +29,23 @@ export default function Actions({
     !!(selectors.resource(state, 'flows', flowId)?.disabled)
   );
 
-  const retryId = useSelector(state =>
-      selectors.resourceError(state, {
-        flowId,
-        resourceId,
-        errorId,
-      })?.retryDataKey
+  const {retryDataKey: retryId, reqAndResKey} = useSelector(state =>
+    selectors.resourceError(state, {
+      flowId,
+      resourceId,
+      errorId,
+    }),
+  shallowEqual
   );
+
+  const s3BlobKey = useSelector(state => {
+    if (!['request', 'response'].includes(mode)) {
+      return;
+    }
+    const isHttpRequestMode = mode === 'request';
+
+    return selectors.s3HttpBlobKey(state, reqAndResKey, isHttpRequestMode);
+  });
 
   const retryData = useSelector(state => selectors.retryData(state, retryId));
 
@@ -77,6 +87,13 @@ export default function Actions({
     if (onClose) onClose();
   }, [dispatch, flowId, onClose, resourceId, retryId, updatedRetryData]);
 
+  const handleDownloadBlob = useCallback(
+    () => {
+      dispatch(actions.errorManager.errorHttpDoc.downloadBlobDoc(flowId, resourceId, s3BlobKey));
+    },
+    [flowId, resourceId, s3BlobKey, dispatch],
+  );
+
   if (isResolved) {
     return null;
   }
@@ -107,6 +124,13 @@ export default function Actions({
       <Button variant="outlined" color="primary" onClick={resolve}>
         Resolve
       </Button>
+      {
+        !!s3BlobKey && (
+        <Button variant="outlined" color="secondary" onClick={handleDownloadBlob}>
+          Download file
+        </Button>
+        )
+      }
       <Button variant="text" color="primary" onClick={onClose}>
         Close
       </Button>

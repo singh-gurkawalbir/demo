@@ -1,10 +1,10 @@
 import { useCallback, useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import ViewDetailsIcon from '../../../icons/ViewDetailsIcon';
+import HttpIcon from '../../../icons/HttpIcon';
 
 export default {
   label: 'View HTTP request',
-  icon: ViewDetailsIcon,
+  icon: HttpIcon,
   component: function ViewHttpRequest({ rowData = {} }) {
     const { errorId } = rowData;
     const history = useHistory();

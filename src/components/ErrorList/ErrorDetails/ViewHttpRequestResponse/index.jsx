@@ -7,8 +7,7 @@ import { CeligoTabWrapper } from '../../../CeligoTabLayout/CeligoTabWrapper';
 import CeligoPillTabs from '../../../CeligoTabLayout/CeligoPillTabs';
 import CeligoTabPanel from '../../../CeligoTabLayout/CeligoTabPanel';
 import DefaultPanel from '../../../CeligoTabLayout/CustomPanels/DefaultPanel';
-import DownloadBlobPanel from './DownloadBlobPanel';
-import PanelLoader from '../../../PanelLoader';
+import Spinner from '../../../Spinner';
 import { getHttpReqResFields } from '../../../../utils/http';
 
 const TABS = [
@@ -49,10 +48,6 @@ export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResK
     selectors.errorHttpDocError(state, reqAndResKey)
   );
 
-  const s3BlobKey = useSelector(state =>
-    selectors.s3HttpBlobKey(state, reqAndResKey, isRequest)
-  );
-
   useEffect(() => {
     if (!httpDocStatus) {
       dispatch(actions.errorManager.errorHttpDoc.request(flowId, resourceId, reqAndResKey));
@@ -60,7 +55,7 @@ export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResK
   }, [dispatch, flowId, resourceId, httpDocStatus, reqAndResKey]);
 
   if (httpDocStatus === 'requested') {
-    return <PanelLoader />;
+    return <Spinner centerAll />;
   }
 
   if (httpDocStatus === 'error' && errorHttpDocError) {
@@ -72,11 +67,7 @@ export default function ViewHttpRequestResponse({ flowId, resourceId, reqAndResK
       <CeligoTabWrapper>
         <CeligoPillTabs tabs={TABS} />
         <CeligoTabPanel panelId="body">
-          {
-            s3BlobKey
-              ? <DownloadBlobPanel flowId={flowId} resourceId={resourceId} s3BlobKey={s3BlobKey} />
-              : <DefaultPanel value={formattedErrorHttpDoc.body} />
-          }
+          <DefaultPanel value={formattedErrorHttpDoc.body} />
         </CeligoTabPanel>
         <CeligoTabPanel panelId="headers">
           <DefaultPanel value={formattedErrorHttpDoc.headers} />
