@@ -227,7 +227,12 @@ const getFlowFilterExpression = (resourceType, resourceId, filters) => {
     return `|> filter(fn: (r) => ${selectedResources.map(r => `r.f == "${r}"`).join(' or ')})`;
   }
 
-  return `|> filter(fn: (r) => r.f == "${resourceId}")`;
+  if (selectedResources.includes(resourceId)) {
+    return `|> filter(fn: (r) => r.f == "${resourceId}")`;
+  }
+
+  return `|> filter(fn: (r) => r.f == "${resourceId}")
+          |> filter(fn: (r) => ${selectedResources.map(r => `r.ei == "${r}"`).join(' or ')})`;
 };
 
 const getISODateString = date => isDate(date) ? date.toISOString() : date;
@@ -303,30 +308,41 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> filter(fn: (r) => r.u == "${userId}")
         ${flowFilterExpression}
         |> filter(fn: (r) => r._field == "c")
+    
+    seiBaseData = baseData
+        |> filter(fn: (r) => r._measurement != "r")
         |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
         |> fill(value: 0.0)
         |> group(columns: ["_time", "f", "u", "_measurement"], mode: "by")
         |> sum()
+  
+    resolvedBaseData = baseData
+        |> filter(fn: (r) => r._measurement == "r")
+        |> map(fn: (r) => ({ r with by: if r.by == "autopilot" then "autopilot" else "users"}))
+        |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
+        |> fill(value: 0.0)
+        
 
-    data1 = baseData
+    flowsData = seiBaseData
         |> group()
-        |> pivot(rowKey: ["_time", "u", "f"], columnKey: ["_measurement"], valueColumn: "_value")
-    data2 = baseData
+    resolvedData = resolvedBaseData
+        |> group(columns: ["_time", "u", "_measurement", "by"], mode: "by")
+        |> sum()
+        |> group()
+    integrationData = seiBaseData
         |> group(columns: ["_time", "_measurement", "u"], mode: "by")
         |> sum()
         |> group()
-        |> pivot(rowKey: ["_time", "u"], columnKey: ["_measurement"], valueColumn: "_value")
 
-    seiData = union(tables: [data1, data2])
+    seiData = union(tables: [flowsData, integrationData])
+    seirData = union(tables: [seiData, resolvedData])
         |> map(fn: (r) => ({
             _time: r._time,
             timeInMills: int(v: r._time)/1000000,
             flowId: if exists r.f then r.f else "_integrationId",
-            success: if exists r.s then r.s else 0.0,
-            error: if exists r.e then r.e else 0.0,
-            ignored: if exists r.i then r.i else 0.0,
-            resolved: if exists r.r then r.r else 0.0,
-            averageTimeTaken: if exists r._value then r._value else 0.0,
+            value: if exists r._value then r._value else 0.0,
+            attribute: if exists r._measurement then r._measurement else "unknown",
+            by: r.by,
             type: "sei"
           }))
 
@@ -375,47 +391,52 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
             _time: r._time,
             timeInMills: int(v: r._time)/1000000,
             flowId: if exists r.f then r.f else "_integrationId",
-            success: if exists r.s then r.s else 0.0,
-            error: if exists r.e then r.e else 0.0,
-            ignored: if exists r.i then r.i else 0.0,
-            resolved: if exists r.r then r.r else 0.0,
-            averageTimeTaken: if exists r._value then r._value else 0.0,
+            value: if exists r._value then r._value else 0.0,
+            attribute: "att",
+            by: "",
             type: "att"
           }))
 
-    union(tables: [seiData, attData])`;
+    union(tables: [seirData, attData])`;
   }
 
   return `import "math"
 
-    seiBaseData = from(bucket: "${bucket}")
+    flowData = from(bucket: "${bucket}")
         |> range(start: ${start}, stop: ${end})
         |> filter(fn: (r) => r.u == "${userId}")
-        |> filter(fn: (r) => r.f == "${resourceId}")
-        |> filter(fn: (r) => r._field == "c")
+        ${flowFilterExpression}
+
+    seiBaseData = flowData
+        |> filter(fn: (r) => r._field == "c" and r._measurement != "r")
         |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
+
+    resolvedData = flowData
+        |> filter(fn: (r) => r._measurement == "r")
+        |> map(fn: (r) => ({ r with by: if r.by == "autopilot" then "autopilot" else "users"}))
+        |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
+        |> group(columns: ["_time", "u", "_measurement", "by"], mode: "by")
+        |> sum()
+        |> group()
 
     data1 = seiBaseData
         |> group()
-        |> pivot(rowKey: ["_time", "u", "f", "ei"], columnKey: ["_measurement"], valueColumn: "_value")
 
     data2 = seiBaseData
         |> group(columns: ["_time", "_measurement", "u"])
         |> sum()
         |> group()
-        |> pivot(rowKey: ["_time", "u"], columnKey: ["_measurement"], valueColumn: "_value")
 
     seiData = union(tables: [data1, data2])
+    seirData = union(tables: [seiData, resolvedData])
     |> map(fn: (r) => ({
         _time: r._time,
         timeInMills: int(v: r._time)/1000000,
         flowId: if exists r.f then r.f else "_flowId",
         resourceId: if exists r.ei then r.ei else "_flowId",
-        success: if exists r.s then r.s else 0.0,
-        error: if exists r.e then r.e else 0.0,
-        ignored: if exists r.i then r.i else 0.0,
-        resolved: if exists r.r then r.r else 0.0,
-        averageTimeTaken: if exists r._value then r._value else 0.0,
+        attribute: if exists r._measurement then r._measurement else "unknown",
+        value: if exists r._value then r._value else 0.0,
+        by: r.by,
         type: "sei"
       }))
     
@@ -431,10 +452,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
             |> set(key: "_field", value: "attph")
             |> rename(columns: {attph: "_value"}))
 
-    attBaseData = from(bucket: "${bucket}")
-        |> range(start: ${start}, stop: ${end})
-        |> filter(fn: (r) => r.u == "${userId}")
-        |> filter(fn: (r) => r.f == "${resourceId}")
+    attBaseData = flowData
         |> filter(fn: (r) => (r._measurement == "s"))
         |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
         |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
@@ -463,15 +481,13 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         timeInMills: int(v: r._time)/1000000,
         flowId: if exists r.ei then r.f else "_flowId",
         resourceId: if exists r.ei then r.ei else "_flowId",
-        success: if exists r.s then r.s else 0.0,
-        error: if exists r.e then r.e else 0.0,
-        ignored: if exists r.i then r.i else 0.0,
-        resolved: if exists r.r then r.r else 0.0,
-        averageTimeTaken: if exists r._value then r._value else 0.0,
+        value: if exists r._value then r._value else 0.0,
+        attribute: "att",
+        by: r.by,
         type: "att"
     }))
 
-    union(tables: [seiData, attData])`;
+    union(tables: [seirData, attData])`;
 };
 
 export const getLabel = key => {
