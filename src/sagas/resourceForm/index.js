@@ -405,7 +405,7 @@ export function* submitFormValues({
 
   if (resourceType === 'connectorLicenses') {
     // construct url for licenses
-    const connectorUrlStr = '/connectors/';
+    const connectorUrlStr = match.url.indexOf('/connectors/edit/connectors/') >= 0 ? '/connectors/edit/connectors/' : '/connectors/';
     const startIndex =
       match.url.indexOf(connectorUrlStr) + connectorUrlStr.length;
 

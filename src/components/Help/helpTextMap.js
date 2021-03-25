@@ -9,6 +9,8 @@ export default {
     'Use the form builder to expose user friendly custom fields for your raw JSON custom settings.  Your forms can expose any field types that you see elsewhere in the UI.  Forms and custom fields make it much easier for less technical users to work with your custom settings.',
   settings:
     'This same JSON settings field is exposed on many of the core resource types: integration, flow, export, import, connection, etc... Generally speaking, this settings field can be used to parameterize the logic within your resource. Hooks, filters, handlebars, etc... are all given access to the settings fields when they run, and can incorporate the settings values into their logic. It is worth highlighting that the settings fields stored on linked/related resources are also accessible at runtime. For example, the settings field defined at the integration tile level will be accessible to all flows running within the same integration tile. \n\nIt is recommended that you create a custom form to expose and manage your settings fields, so that less technical users do not need to work with raw JSON. Be sure to check out the "Launch form builder" button!.',
+  'license._trialLicenseId': 'Create or select a license record that would serve as the default license configuration for any trial licenses.',
+  'license.trialEnabled': 'You must create the integration app listing before you can enable the trials.',
   // fieldDefinitions
   'connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
     'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
@@ -728,7 +730,7 @@ export default {
   'connection.rest.mediaType':
     'The data format that should be used for all HTTP requests sent to the REST API.  Typically a REST API will only support one media type and will publish this info right at the top of their API guides.',
   'connection.rest.baseURI':
-    "The common part of an API's URL that can be used across all the different HTTP/REST API endpoints that you invoke. Using a base URI in your connection makes it easier to configure all your exports and imports because all you need then is the Relative URI, and using a Base URI also makes it easier to manage upgrading versions of the HTTP/REST API because all you typically need to change is the version value in the Base URI. Assuming that the new version of the REST API is mostly backward compatible, very few of your exports and imports should need to be changed.\nTypically, a Base URI will have the following format: https://< api.domain.com>/<version>. For example, 'https://api.stripe.com/v1' is the Base URI you would use for Stripe's v1 API. Another example, 'https://www.googleapis.com/calendar/v3' is the Base URI you would use for Google's v3 calendar API.",
+    'Enter the common part of the path to the app’s API, as documented in the API guide, to be used for all endpoints that you invoke. Providing a base URI for this connection makes it easier to configure your exports and imports, where you can specify simply a relative URI. Using a base URI also makes it easier to manage upgrading API versions, because then you can update the version value in one place. Assuming that the new version of the REST API is backward compatible, your exports and imports should continue to work.<br>Typically, base URIs have the format https://api.domain.com/version, such as https://api.stripe.com/v1 for the Stripe v1 API. Or for the Google calendar v3 API, enter https://www.googleapis.com/calendar/v3.',
   'connection.rest.bearerToken':
     'Please enter your API token here.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
   'connection.rest.tokenLocation':
@@ -1066,6 +1068,8 @@ export default {
   'connector.oAuthServerFlow._iClientId': '.',
   'connector.oAuthServerFlow.putConnection': '.',
   'connector.repository.name': '.',
+  'connection.ftp.type':
+    'Choose the protocol to use for your FTP connection. Choose <b>FTP</b> (basic File Transfer Protocol) if your data is sent and received unencrypted. Choose <b>SFTP</b> if your data is transferred over the encrypted Secure Shell (SSH2) protocol. <b>FTPS</b> is similar to basic FTP, but data is encrypted via the Transport Layer Security (TLS) protocol before transfer.',
   'export._id':
     'System generated primary unique identifier for your export.  For API users, this value should be used for GET, PUT and DELETE requests.',
   'editor.xml.simple':
@@ -1347,7 +1351,7 @@ export default {
   'export.webhook.verify':
     'Please specify the method that should be used to verify the authenticity of the data being sent to this webhook export.',
   'export.webhook.token':
-    'Please provide a secret token that will be used to verify the authenticity of the data sent to this webhook export.  This token value should only be shared with the webhook provider, and ideally should be generated by some sort of industry standard password tool.',
+    'Generate a new token or enter your own token, which will be sent by the webhook origin so that integrator.io can authenticate that it is allowed to receive data from that endpoint. You should share this token only with the webhook provider.',
   'export.webhook.path':
     "Please use this field to specify the JSON path of the field in the request body that will contain the token value.  For example, 'myAuth.token'.",
   'export.webhook.algorithm':
@@ -2300,4 +2304,5 @@ export default {
   'fb.pp.inputFilter':
     'Define an \'input filter\' here to specify which source records should get processed. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
   'afe.lookups': 'Lookups can be used to dynamically retrieve information from the destination application for the purpose of setting fields that cannot be set directly from the fields provided by the source application. For example, if the destination application requires \'customer_id\' values, but the source application only gives you email addresses, then you can define a lookup to search for \'customer_id\' values using the email addresses, and then inject the \'customer_id\' values into your final API requests.',
+  'listener.debugLogs': 'Enable debug logs to store all requests for the selected period of time. Debug log entries are kept for 30 days by default, and can be deleted manually as needed.',
 };
