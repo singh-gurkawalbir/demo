@@ -87,7 +87,7 @@ import {
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
-import { MISCELLANEOUS_SECTION_ID } from '../views/Integration/DIY/panels/Flows';
+import { MISCELLANEOUS_SECTION_ID, shouldHaveMiscellaneousSection } from '../views/Integration/DIY/panels/Flows';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -1581,9 +1581,8 @@ selectors.mkIntegrationFlowGroups = () => {
 
       if (flowGroupings) {
         const integrationFlows = flows.filter(f => f._integrationId === integrationId);
-        const hasMiscellaneousSection = integrationFlows.some(flow => !flow._flowGroupingId);
 
-        if (hasMiscellaneousSection) {
+        if (shouldHaveMiscellaneousSection(flowGroupings, integrationFlows)) {
           return [...flowGroupings, {title: 'Miscellaneous', sectionId: MISCELLANEOUS_SECTION_ID}];
         }
       }

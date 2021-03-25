@@ -12,7 +12,6 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import * as d3 from 'd3';
-import { sortBy } from 'lodash';
 import { makeStyles, Typography } from '@material-ui/core';
 import PanelHeader from '../../PanelHeader';
 import {
@@ -29,7 +28,7 @@ import actions from '../../../actions';
 import Spinner from '../../Spinner';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import {COMM_STATES} from '../../../reducers/comms/networkComms';
-import { LINE_GRAPH_CATEGORIES, LINE_GRAPH_TYPES, LINE_GRAPH_TYPE_SHORTID, RESOLVED_GRAPH_DATAPOINTS } from '../../../utils/constants';
+import { LINE_GRAPH_CATEGORIES, LINE_GRAPH_TYPES, RESOLVED_GRAPH_DATAPOINTS } from '../../../utils/constants';
 import { getIcon, DataIcon, getResourceName } from '../Common';
 
 const useStyles = makeStyles(theme => ({
@@ -86,15 +85,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const AUTO_PILOT = 'autopilot';
+// const AUTO_PILOT = 'autopilot';
 
 const Chart = ({ id, flowId, range, selectedResources: selected }) => {
   const classes = useStyles();
   const [opacity, setOpacity] = useState({});
   const isResolvedGraph = id === LINE_GRAPH_TYPES.RESOLVED;
   let mouseHoverTimer;
-  const { data = [] } =
-    useSelector(state => selectors.flowMetricsData(state, flowId)) || {};
   const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
   // Selected resources are read from previously saved resources in preferences which may not be valid anymore. pick only valid resources.
   const selectedResources = selected.filter(r => flowResources.find(res => res._id === r));
@@ -102,23 +99,8 @@ const Chart = ({ id, flowId, range, selectedResources: selected }) => {
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
   const ticks = getTicks(domainRange, range);
   const domain = [new Date(startDate).getTime(), new Date(endDate).getTime()];
-  const flowData = {};
   const lineData = isResolvedGraph ? RESOLVED_GRAPH_DATAPOINTS : selectedResources;
-
-  if (Array.isArray(data)) {
-    if (isResolvedGraph) {
-      RESOLVED_GRAPH_DATAPOINTS.forEach(user => {
-        flowData[user] = data.filter(d => ((user === AUTO_PILOT ? d.by === AUTO_PILOT : d.by !== AUTO_PILOT) && d.attribute === LINE_GRAPH_TYPE_SHORTID[LINE_GRAPH_TYPES.RESOLVED]));
-        flowData[user] = sortBy(flowData[user], ['timeInMills']);
-      });
-    } else {
-      selectedResources.forEach(r => {
-        flowData[r] = data.filter(d => (r === flowId ? d.resourceId === '_flowId' : d.resourceId === r) && d.attribute === LINE_GRAPH_TYPE_SHORTID[id]);
-        flowData[r] = sortBy(flowData[r], ['timeInMills']);
-      });
-    }
-  }
-
+  const flowData = useSelectorMemo(selectors.lineGraphData, 'flows', flowId, id, selectedResources);
   const handleMouseEnter = e => {
     const targetId = e?.target?.id;
 
@@ -214,7 +196,7 @@ const Chart = ({ id, flowId, range, selectedResources: selected }) => {
           <p className="label">{getDateTimeFormat(range, label, preferences, timezone)} </p>
           {payload.map(
             p => (
-              p && !!p.value && <p key={p.name}> {`${getResourceName(p.name)}: ${p.value}`} </p>
+              p && !!p.value && <p key={p.name}> {`${getResourceName({name: p.name, isResolvedGraph, flowResources})}: ${p.value}`} </p>
             ))}
         </div>
       );

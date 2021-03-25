@@ -12,7 +12,6 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import * as d3 from 'd3';
-import { sortBy } from 'lodash';
 import { makeStyles, Typography } from '@material-ui/core';
 import PanelHeader from '../../PanelHeader';
 import {
@@ -29,7 +28,7 @@ import actions from '../../../actions';
 import Spinner from '../../Spinner';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import {COMM_STATES} from '../../../reducers/comms/networkComms';
-import { LINE_GRAPH_CATEGORIES, LINE_GRAPH_TYPES, LINE_GRAPH_TYPE_SHORTID, RESOLVED_GRAPH_DATAPOINTS } from '../../../utils/constants';
+import { LINE_GRAPH_CATEGORIES, LINE_GRAPH_TYPES, RESOLVED_GRAPH_DATAPOINTS } from '../../../utils/constants';
 import { getIcon, DataIcon, getResourceName } from '../Common';
 
 const useStyles = makeStyles(theme => ({
@@ -91,7 +90,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const AUTO_PILOT = 'autopilot';
 const flowsConfig = { type: 'flows' };
 
 const Chart = ({ id, integrationId, range, selectedResources }) => {
@@ -99,8 +97,6 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
   const [opacity, setOpacity] = useState({});
   const isResolvedGraph = id === LINE_GRAPH_TYPES.RESOLVED;
   let mouseHoverTimer;
-  const { data = [] } =
-    useSelector(state => selectors.flowMetricsData(state, integrationId)) || {};
   const resourceList = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsConfig
@@ -120,21 +116,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
   const domain = [new Date(startDate).getTime(), new Date(endDate).getTime()];
   const ticks = getTicks(domainRange, range);
-  const flowData = {};
-
-  if (Array.isArray(data)) {
-    if (isResolvedGraph) {
-      RESOLVED_GRAPH_DATAPOINTS.forEach(user => {
-        flowData[user] = data.filter(d => ((user === AUTO_PILOT ? d.by === AUTO_PILOT : d.by !== AUTO_PILOT) && d.attribute === LINE_GRAPH_TYPE_SHORTID[LINE_GRAPH_TYPES.RESOLVED]));
-        flowData[user] = sortBy(flowData[user], ['timeInMills']);
-      });
-    } else {
-      selectedResources.forEach(r => {
-        flowData[r] = data.filter(d => (r === integrationId ? d.flowId === '_integrationId' : d.flowId === r) && d.attribute === LINE_GRAPH_TYPE_SHORTID[id]);
-        flowData[r] = sortBy(flowData[r], ['timeInMills']);
-      });
-    }
-  }
+  const flowData = useSelectorMemo(selectors.lineGraphData, 'integrations', integrationId, id, selectedResources);
 
   const handleMouseEnter = e => {
     const targetId = e?.target?.id;

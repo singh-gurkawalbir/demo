@@ -1,7 +1,9 @@
 import produce from 'immer';
+import sortBy from 'lodash/sortBy';
 import { createSelector } from 'reselect';
 import {COMM_STATES } from '../../comms/networkComms';
 import actionTypes from '../../../actions/types';
+import { emptyList, emptyObject, LINE_GRAPH_TYPES, LINE_GRAPH_TYPE_SHORTID, RESOLVED_GRAPH_DATAPOINTS } from '../../../utils/constants';
 
 function updateStatus(draft, flowId, status) {
   if (!draft[flowId]) {
@@ -39,6 +41,7 @@ export default (state = {}, action) => {
 
 // #region PUBLIC SELECTORS
 export const selectors = {};
+const AUTO_PILOT = 'autopilot';
 
 selectors.flowMetricsData = createSelector(
   state => state,
@@ -50,5 +53,34 @@ selectors.flowMetricsData = createSelector(
 
     return state[resourceId];
   });
+
+selectors.lineGraphData = () => createSelector(
+  (state, _, resourceId) => state?.session?.flowMetrics?.[resourceId]?.data,
+  (_, resourceType) => resourceType,
+  (_1, _2, resourceId) => resourceId,
+  (_1, _2, _3, id) => id,
+  (_1, _2, _3, _4, resources) => resources,
+  (data, resourceType, resourceId, id, resources = emptyList) => {
+    const flowData = {};
+    const RESOURCE_ID_VAR = resourceType === 'integrations' ? '_integrationId' : '_flowId';
+    const RESOURCE_NAME_VAR = resourceType === 'integrations' ? 'flowId' : 'resourceId';
+
+    if (Array.isArray(data)) {
+      if (id === LINE_GRAPH_TYPES.RESOLVED) {
+        RESOLVED_GRAPH_DATAPOINTS.forEach(user => {
+          flowData[user] = data.filter(d => ((user === AUTO_PILOT ? d.by === AUTO_PILOT : d.by !== AUTO_PILOT) && d.attribute === LINE_GRAPH_TYPE_SHORTID[LINE_GRAPH_TYPES.RESOLVED]));
+          flowData[user] = sortBy(flowData[user], ['timeInMills']);
+        });
+      } else {
+        resources.forEach(r => {
+          flowData[r] = data.filter(d => (r === resourceId ? d[RESOURCE_NAME_VAR] === RESOURCE_ID_VAR : d[RESOURCE_NAME_VAR] === r) && d.attribute === LINE_GRAPH_TYPE_SHORTID[id]);
+          flowData[r] = sortBy(flowData[r], ['timeInMills']);
+        });
+      }
+    }
+
+    return flowData || emptyObject;
+  }
+);
 
 // #endregion

@@ -4607,7 +4607,7 @@ describe('integrationApps selector testcases', () => {
     test('should return false when integration found and is a DIY integration', () => {
       expect(selectors.isIntegrationAppV1(state, 'integration6')).toEqual(false);
     });
-    test('should return false when integration found and is a IA1.0 integration', () => {
+    test('should return true when integration found and is a IA1.0 integration', () => {
       expect(selectors.isIntegrationAppV1(state, 'integration5')).toEqual(true);
     });
   });
