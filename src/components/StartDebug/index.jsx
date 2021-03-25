@@ -77,6 +77,9 @@ const formatter = (value, unit, suffix) => {
 
   return `${value}${formattedUnit} remaining`;
 };
+
+// there is a new enhanced component 'StartDebugEnhanced' which takes care
+// of the improvements around this Debug button. Please use that, if needed
 const defaultValue = 15;
 export default function StartDebug({ resourceId, resourceType, disabled}) {
   const [value, setValue] = useState(defaultValue);

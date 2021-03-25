@@ -1,13 +1,20 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import { useSelectorMemo } from '../../../hooks';
 import cancelReport from './actions/cancelReport';
 import downloadResults from './actions/downloadResults';
 import ViewReport from './actions/ViewReport';
 import DateTimeDisplay from '../../DateTimeDisplay';
+import Spinner from '../../Spinner';
+import CeligoTruncate from '../../CeligoTruncate';
 
-const STRING_LIMIT_SIZE = 250;
+const useStyles = makeStyles(() => ({
+  flex: {
+    display: 'flex',
+  },
+}));
 const flowsConfig = {type: 'flows'};
 const metadata = {
   columns: [
@@ -31,16 +38,12 @@ const metadata = {
 
         const concatenedFlowNames = r._flowIds.map(id => allFlows.find(f => f._id === id)?.name).join(',');
 
-        if (concatenedFlowNames?.length > STRING_LIMIT_SIZE) {
-          const truncatedString = concatenedFlowNames.substring(0, 250);
-          const strWithRemovedLeadingWord = truncatedString.split(' ').slice(0, -1).join(' ');
-
-          return `${strWithRemovedLeadingWord}...`;
-        }
-
-        return concatenedFlowNames;
+        return (
+          <CeligoTruncate dataPublic placement="top" lines={3} >
+            {concatenedFlowNames}
+          </CeligoTruncate>
+        );
       },
-
     },
     {
       heading: 'Start Date',
@@ -57,6 +60,12 @@ const metadata = {
     {
       heading: 'Status',
       Value: function EventReportStatus({r}) {
+        const classes = useStyles();
+
+        if (['queued', 'running'].includes(r.status)) {
+          return <div className={classes.flex}><Spinner /> {r?.status} </div>;
+        }
+
         return r?.status;
       },
     },

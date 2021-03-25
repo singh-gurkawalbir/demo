@@ -1,8 +1,7 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import Truncate from 'react-truncate';
-import { Typography, Tooltip, makeStyles, Zoom, Button, IconButton } from '@material-ui/core';
+import { Typography, Tooltip, makeStyles, Button, IconButton } from '@material-ui/core';
 import { useDrag, useDrop } from 'react-dnd-cjs';
 import moment from 'moment';
 import { selectors } from '../../reducers';
@@ -31,6 +30,7 @@ import { getIntegrationAppUrlName, isIntegrationAppVerion2 } from '../../utils/i
 import { getTemplateUrlName } from '../../utils/template';
 import TileNotification from '../../components/HomePageCard/TileNotification';
 import { useSelectorMemo } from '../../hooks';
+import CeligoTruncate from '../../components/CeligoTruncate';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -105,7 +105,6 @@ function AppLogosContainer({ tile }) {
 function Tile({ tile, history, onMove, onDrop, index }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [isTruncated, setIsTruncated] = useState(false);
   const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', tile && tile._integrationId)
@@ -283,32 +282,11 @@ function Tile({ tile, history, onMove, onDrop, index }) {
         <Content>
           <CardTitle>
             <Typography variant="h3" className={classes.tileName}>
-              {isTruncated ? (
-                <Tooltip
-                  data-public
-                  title={<span className={classes.tooltipNameFB}> {tile.name}</span>}
-                  TransitionComponent={Zoom}
-                  placement="bottom"
-                  enterDelay={100}>
-                  <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
-                    <Button
-                      color="inherit"
-                      onClick={handleTileClick}
-                      className={classes.tileName}>
-                      {tile.name}
-                    </Button>
-                  </Truncate>
-                </Tooltip>
-              ) : (
-                <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
-                  <Button
-                    color="inherit"
-                    onClick={handleTileClick}
-                    className={classes.tileName}>
-                    {tile.name}
-                  </Button>
-                </Truncate>
-              )}
+              <div onClick={handleTileClick}>
+                <CeligoTruncate dataPublic delay={100} lines={2} placement="bottom">
+                  {tile.name}
+                </CeligoTruncate>
+              </div>
             </Typography>
           </CardTitle>
 

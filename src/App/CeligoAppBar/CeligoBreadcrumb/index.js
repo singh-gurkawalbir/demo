@@ -270,6 +270,9 @@ const commonChildRoutes = [
   {
     path: '/edit/:resourceType/:id',
     breadcrumb: EditResourceTypeCrumb,
+    childRoutes: [
+      { path: '/logs', breadcrumb: 'View listener debug logs' },
+    ],
   },
 ];
 

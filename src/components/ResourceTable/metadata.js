@@ -19,6 +19,7 @@ import latestJobs from './latestJobs/metadata';
 import runHistory from './runHistory/metadata';
 import orgOwnerUsers from './users/Metadata/orgOwnerUsers';
 import orgUsers from './users/Metadata/orgUsers';
+import listenerLogs from './listenerLogs/metadata';
 
 const metadata = {
   agents,
@@ -41,6 +42,7 @@ const metadata = {
   orgOwnerUsers,
   orgUsers,
   eventreports,
+  listenerLogs,
 };
 
 export default function (resourceType) {

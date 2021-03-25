@@ -21,6 +21,9 @@ import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
 import {applicationsList} from '../../../../constants/applications';
 import InstallationGuideIcon from '../../../icons/InstallationGuideIcon';
 import { KBDocumentation } from '../../../../utils/connections';
+import DebugIcon from '../../../icons/DebugIcon';
+import IconTextButton from '../../../IconTextButton';
+import ListenerRequestLogsDrawer from '../../ListenerRequestLogs';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 const isNestedDrawer = url => !!matchPath(url, {
@@ -192,7 +195,7 @@ const useResourceFormRedirectionToParentRoute = (resourceType, id) => {
 export default function Panel(props) {
   const { onClose, occupyFullWidth, flowId, integrationId } = props;
   const [newId] = useState(generateNewId());
-
+  const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
   const match = useRouteMatch();
@@ -208,6 +211,7 @@ export default function Panel(props) {
     match,
   });
 
+  const hasListenerLogsAccess = useSelector(state => selectors.hasLogsAccess(state, id, resourceType, isNew));
   const resourceLabel = useSelector(state =>
     selectors.getCustomResourceLabel(state, {
       resourceId: id,
@@ -286,6 +290,10 @@ export default function Panel(props) {
     return shouldShow && !isFirstStep;
   });
 
+  const listenerDrawerHandler = useCallback(() => {
+    history.push(`${match.url}/logs`);
+  }, [match.url, history]);
+
   return (
     <>
       <div className={classes.root}>
@@ -311,6 +319,16 @@ export default function Panel(props) {
                 {app.name || applicationType} connection guide
               </a>
               )}
+              {hasListenerLogsAccess && (
+                <IconTextButton
+                  onClick={listenerDrawerHandler}
+                  color="primary"
+                  data-test="listenerLogs">
+                  <DebugIcon />
+                  View debug logs
+                </IconTextButton>
+              )}
+
               <ApplicationImg
                 className={classes.appLogo}
                 size="small"
@@ -378,6 +396,7 @@ export default function Panel(props) {
         </LoadResources>
       </div>
       <EditorDrawer />
+      <ListenerRequestLogsDrawer flowId={flowId} exportId={id} />
     </>
   );
 }

@@ -36,6 +36,7 @@ import {
   flowAllowsScheduling,
   getFlowType,
   flowSupportsSettings,
+  isRealtimeExport,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -88,6 +89,7 @@ import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
 import { remainingDays } from './user/org/accounts';
+import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -2747,8 +2749,8 @@ selectors.resourcePermissions = (
 
   const permissions = selectors.userPermissions(state);
 
-  // TODO: userPermissions should be written to handle when there isnt a state and in those circumstances
-  // should return null rathern than an empty object for all cases
+  // TODO: userPermissions should be written to handle when there isn't a state and in those circumstances
+  // should return null rather than an empty object for all cases
   if (!permissions || isEmpty(permissions)) return emptyObject;
 
   // special case, where resourceType == integrations. Its childResource,
@@ -5224,3 +5226,46 @@ selectors.isConnectionLogsNotSupported = (state, connectionId) => {
 
   return ['wrapper', 'dynamodb', 'mongodb'].includes(connectionResource?.type);
 };
+
+// #region listener request logs selectors
+selectors.hasLogsAccess = (state, resourceId, resourceType, isNew) => {
+  if (resourceType !== 'exports') return false;
+  const resource = selectors.resource(state, 'exports', resourceId);
+
+  if (!isRealtimeExport(resource)) return false;
+
+  return !isNew;
+};
+
+selectors.canEnableDebug = (state, exportId, flowId) => {
+  if (!exportId || !flowId) return false;
+
+  const flow = selectors.resource(state, 'flows', flowId);
+
+  const userPermissionsOnIntegration = selectors.resourcePermissions(state, 'integrations', flow?._integrationId)?.accessLevel;
+
+  if (userPermissionsOnIntegration && userPermissionsOnIntegration !== INTEGRATION_ACCESS_LEVELS.MONITOR) return true;
+
+  const resource = selectors.resource(state, 'exports', exportId) || {};
+
+  // webhook exports have no attached connection
+  if (resource.type === 'webhook') {
+    return false;
+  }
+
+  const userPermissionsOnConnection = selectors.resourcePermissions(state, 'connections', resource._connectionId)?.edit;
+
+  return !!userPermissionsOnConnection;
+};
+
+selectors.mkLogsInCurrPageSelector = () => createSelector(
+  selectors.logsSummary,
+  state => selectors.filter(state, LISTENER_LOG_FILTER_KEY),
+  (debugLogsList, filterOptions) => {
+    const { currPage = 0 } = filterOptions.paging || {};
+
+    return debugLogsList.slice(currPage * LISTENER_LOG_DEFAULT_ROWS_PER_PAGE, (currPage + 1) * LISTENER_LOG_DEFAULT_ROWS_PER_PAGE);
+  }
+);
+
+// #endregion listener request logs selectors

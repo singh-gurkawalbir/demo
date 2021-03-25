@@ -1,5 +1,5 @@
 
-import { FormControl, FormLabel, makeStyles, Typography } from '@material-ui/core';
+import { FormLabel, makeStyles, Typography } from '@material-ui/core';
 import React, { useCallback, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import subMonths from 'date-fns/subMonths';
@@ -125,11 +125,7 @@ export default function DynaReportDateRange(props) {
   }, [id, onFieldChange, timezone, value]);
 
   return (
-    <FormControl
-      disabled={disabled}
-      required={required}
-      error={!isValid}
-    >
+    <>
       <FormLabel
         disabled={disabled}
         required={required}
@@ -137,19 +133,21 @@ export default function DynaReportDateRange(props) {
       > {label}
       </FormLabel>
       <FieldHelp {...props} />
-      <DateRangeSelector
-        {...props}
-        customPresets={ranges}
-        editableDateInputs={false}
-        defaultPreset={value}
-        selectedRangeConstraint={selectedRangeConstraint}
-        onSave={onSave}
-        fromDate={subMonths(new Date(), 1)}
-        CustomTextFields={CustomTextFields}
+      <div>
+        <DateRangeSelector
+          {...props}
+          customPresets={ranges}
+          editableDateInputs={false}
+          defaultPreset={value}
+          selectedRangeConstraint={selectedRangeConstraint}
+          onSave={onSave}
+          fromDate={subMonths(new Date(), 1)}
+          CustomTextFields={CustomTextFields}
       />
-      <FieldMessage {...props} />
+        <FieldMessage {...props} />
+      </div>
 
-    </FormControl>
+    </>
   );
 }
 
