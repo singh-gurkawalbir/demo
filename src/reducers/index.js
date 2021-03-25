@@ -88,12 +88,12 @@ import {
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
+import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
 
 const emptyArray = [];
 const emptyObject = {};
-const remainingDays = date =>
-  Math.ceil((moment(date) - moment()) / 1000 / 60 / 60 / 24);
+
 const combinedReducers = combineReducers({
   app,
   session,
@@ -638,6 +638,158 @@ selectors.makeResourceListSelector = () =>
       selectors.resourceListModified(userState, resourcesState, options)
   );
 
+const integrationsFilter = {
+  type: 'integrations',
+  sort: { orderBy: 'name', order: 'asc' },
+};
+
+selectors.mkGetChildIntegrations = () => {
+  const resourceListSel = selectors.makeResourceListSelector();
+
+  const integrationAppSettingSel = selectors.mkIntegrationAppSettings();
+
+  return createSelector(
+    state => resourceListSel(state, integrationsFilter)?.resources,
+    (state, integrationId) => integrationAppSettingSel(state, integrationId),
+    (state, integrationId) => selectors.isIntegrationAppVersion2(state, integrationId, true),
+    (_1, integrationId) => integrationId,
+    (allIntegrations, integrationSettings, isV2, integrationId) => {
+      if (!integrationId) return null;
+      if (isV2) {
+        // slight component layer support adding label value props
+        return allIntegrations.filter(i => i._parentId === integrationId).map(int => ({...int,
+          label: int.name,
+          value: int._id}));
+      }
+
+      return integrationSettings?.stores;
+    }
+
+  );
+};
+
+const flowsFilter = {
+  type: 'flows',
+  sort: { orderBy: 'name', order: 'asc' },
+};
+
+const getChildIntegrations = selectors.mkGetChildIntegrations();
+
+selectors.getChildIntegrationLabelsTiedToFlows = (state, integrationId, flowIds) => {
+  if (!state || !integrationId) {
+    return null;
+  }
+  const integration = fromData.resource(state.data, 'integrations', integrationId);
+
+  if (integration?.settings?.supportsMultiStore) {
+    const { stores } = selectors.integrationAppSettings(state, integrationId);
+
+    if (!flowIds) {
+      return null;
+    }
+
+    return stores.filter(store => {
+      const allFlowIds = selectors.integrationAppFlowIds(state, integrationId, store?.value);
+
+      return flowIds?.some(flowId => allFlowIds?.includes(flowId));
+    }).reduce((acc, store) => {
+      if (store?.label && !acc.includes(store.label)) {
+        acc.push(store.label);
+      }
+
+      return acc;
+    }, []);
+  }
+  if (selectors.isIntegrationAppVersion2(state, integrationId, true)) {
+    if (!flowIds) return null;
+
+    const allChildIntegrations = getChildIntegrations(state, integrationId);
+    const allFlowsIntegrationIds = flowIds.map(flowId => fromData.resource(state.data, 'flows', flowId)?._integrationId).filter(intId => intId);
+
+    return allChildIntegrations.filter(({value}) => allFlowsIntegrationIds.includes(value)).map(({label}) => label);
+  }
+
+  return null;
+};
+const resourceListSel = selectors.makeResourceListSelector();
+
+selectors.getAllValidIntegrations = createSelector(
+  state => resourceListSel(state, integrationsFilter)?.resources,
+  selectors.licenses,
+  (integrations, allLicenses) => {
+    if (!integrations || !integrations.length) return [];
+
+    return integrations.filter(({mode, _id, _connectorId }) => {
+      // DIY
+      if (!_connectorId && mode !== 'install' && mode !== 'uninstall') return true;
+
+      // integrationApp
+      if (_connectorId) {
+        const expiresTimeStamp = allLicenses?.find(l => l._integrationId === _id)?.expires;
+
+        if (!expiresTimeStamp) return false;
+        const isIntegrationNotExpired = remainingDays(expiresTimeStamp) > 0;
+
+        return mode === 'settings' && isIntegrationNotExpired;
+      }
+
+      return false;
+    });
+  }
+);
+const integrationSettingsSel = selectors.mkIntegrationAppSettings();
+
+selectors.isParentChildIntegration = (state, integrationId) => {
+  const integrations = resourceListSel(state, integrationsFilter)?.resources;
+  const integrationSettings = integrationSettingsSel(state, integrationId);
+  const isV2 = selectors.isIntegrationAppVersion2(state, integrationId, true);
+
+  if (!integrations) {
+    return false;
+  }
+
+  if (isV2) {
+    const selectedIntegration = integrations.find(({_id}) => _id === integrationId);
+
+    return !!selectedIntegration?.initChild?.function;
+  }
+
+  return !!integrationSettings?.settings?.supportsMultiStore;
+};
+selectors.mkAllFlowsTiedToIntegrations = () => {
+  const resourceListSel = selectors.makeResourceListSelector();
+
+  const allFlowsFromSections = selectors.makeIntegrationAppSectionFlows();
+
+  return createSelector(
+    state => resourceListSel(state, flowsFilter).resources,
+    (_1, parentIntegration) => parentIntegration,
+    (state, parentIntegration) => selectors.isIntegrationAppVersion2(state, parentIntegration, true),
+    (state, parentIntegration) => !selectors.isIntegrationApp(state, parentIntegration),
+    (state, parentIntegration) => allFlowsFromSections(state, parentIntegration),
+    (_1, _2, childIntegrationIds) => childIntegrationIds,
+    (flows, parentIntegration, isV2, isDiy, flowsFromAllStores, childIntegrationIds) => {
+      if (!flows || !parentIntegration) return null;
+
+      if (isV2 || isDiy) {
+        const consolidatedIntegrationIds = [parentIntegration, ...(childIntegrationIds || [])];
+
+        return flows.filter(({_integrationId}) => consolidatedIntegrationIds.includes(_integrationId));
+      }
+      // v1
+
+      if (!childIntegrationIds || childIntegrationIds?.length === 0) {
+        // no store filter in this case...just return all parent integrations
+
+        return flowsFromAllStores;
+      }
+
+      // filter based on selected childIntegrations
+
+      return flowsFromAllStores.filter(({childId}) => childIntegrationIds.includes(childId));
+    }
+  );
+};
 // TODO: The object returned from this selector needs to be overhauled.
 // It is shared between IA and DIY flows,
 // yet its impossible to know which works for each flow type. For example,
@@ -1193,8 +1345,9 @@ selectors.resourceStatusModified = (
   const method = resourceReqMethod;
   const hasData = fromResources.hasData(resourceState, origResourceType);
   const isLoading = fromNetworkComms.isLoading(networkCommState, commKey);
+  const refresh = fromNetworkComms.isRefreshing(networkCommState, commKey);
   const retryCount = fromNetworkComms.retryCount(networkCommState, commKey);
-  const isReady = method !== 'GET' || (hasData && !isLoading);
+  const isReady = method !== 'GET' || (refresh ? hasData : (hasData && !isLoading));
 
   return {
     resourceType: origResourceType,
@@ -2221,6 +2374,18 @@ selectors.availableUsersList = (state, integrationId) => {
 
   return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
 };
+
+selectors.mkGetUserById = () => createSelector(
+  selectors.availableUsersList,
+  (_1, userId) => userId,
+  (users, userId) => {
+    if (!userId || !users) return null;
+
+    const {sharedWithUser} = users.find(u => u?.sharedWithUser?._id === userId) || {};
+
+    return sharedWithUser || {};
+  }
+);
 
 selectors.platformLicense = createSelector(
   selectors.userPreferences,

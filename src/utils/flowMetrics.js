@@ -49,6 +49,14 @@ export const getSelectedRange = range => {
   const currentDate = moment().toDate();
 
   switch (preset) {
+    case 'lastmin':
+      start = moment().subtract(1, 'minutes').toDate();
+      end = currentDate;
+      break;
+    case 'last5min':
+      start = moment().subtract(5, 'minutes').toDate();
+      end = currentDate;
+      break;
     case 'last15minutes':
       start = moment().subtract(15, 'minutes').toDate();
       end = currentDate;
@@ -63,6 +71,14 @@ export const getSelectedRange = range => {
       break;
     case 'last4hours':
       start = moment().subtract(4, 'hours').toDate();
+      end = currentDate;
+      break;
+    case 'last6hours':
+      start = moment().subtract(6, 'hours').toDate();
+      end = currentDate;
+      break;
+    case 'last12hours':
+      start = moment().subtract(12, 'hours').toDate();
       end = currentDate;
       break;
     case 'last24hours':

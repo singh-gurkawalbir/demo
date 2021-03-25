@@ -42,7 +42,7 @@ export function* isCurrentUserAndLatestUserTheSame() {
   return true;
 }
 export function* onRequestSaga(request) {
-  const { path, opts = {}, message = path, hidden = false } = request.args;
+  const { path, opts = {}, message = path, hidden = false, refresh = false } = request.args;
   const method = (opts && opts.method) || 'GET';
 
   const shouldMakeRequest = yield call(isCurrentUserAndLatestUserTheSame);
@@ -54,7 +54,7 @@ export function* onRequestSaga(request) {
   // check if you are retrying ...if you are not retrying make a brand new request
   if (retryCount === 0) {
     // console.log(path, method, hidden);
-    yield put(actions.api.request(path, method, message, hidden));
+    yield put(actions.api.request(path, method, message, hidden, refresh));
   }
 
   const { options, url } = normalizeUrlAndOptions(path, opts);

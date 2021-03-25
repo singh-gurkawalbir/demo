@@ -173,7 +173,7 @@ export default function DateTimePicker(props) {
         timezone
       );
     }
-    onFieldChange(id, formattedDate || '', !componentMounted);
+    onFieldChange(id, formattedDate || '', !componentMounted, isEnteredDateAndTimeValue);
     setComponentMounted(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateValue, timeValue]);
