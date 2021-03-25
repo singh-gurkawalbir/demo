@@ -1592,6 +1592,7 @@ describe('Accounts region selector testcases', () => {
         expired: false,
         trialExpired: false,
         showTrialLicenseMessage: true,
+        licenseId: '605b100f1562e664f50e8a23',
       };
 
       expect(selectors.tileLicenseDetails(orgOwnerState, tile)).toEqual(expected);
@@ -1641,6 +1642,7 @@ describe('Accounts region selector testcases', () => {
       expired: false,
       trialExpired: true,
       showTrialLicenseMessage: true,
+      licenseId: '605b100f1562e664f50e8a23',
       };
 
       expect(selectors.tileLicenseDetails(orgOwnerState, tile)).toEqual(expected);
@@ -1688,6 +1690,7 @@ describe('Accounts region selector testcases', () => {
         expired: false,
         trialExpired: false,
         showTrialLicenseMessage: false,
+        licenseId: '605b100f1562e664f50e8a23',
       };
 
       expect(selectors.tileLicenseDetails(orgOwnerState, tile)).toEqual(expected);
@@ -1737,6 +1740,7 @@ describe('Accounts region selector testcases', () => {
       expired: true,
       trialExpired: false,
       showTrialLicenseMessage: false,
+      licenseId: '605b100f1562e664f50e8a23',
       };
 
       expect(selectors.tileLicenseDetails(orgOwnerState, tile)).toEqual(expected);
@@ -1789,6 +1793,7 @@ describe('Accounts region selector testcases', () => {
         resumable: true,
         trialExpired: false,
         showTrialLicenseMessage: false,
+        licenseId: '605b100f1562e664f50e8a23',
       };
 
       expect(selectors.tileLicenseDetails(orgOwnerState, tile)).toEqual(expected);

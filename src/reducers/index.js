@@ -5096,7 +5096,7 @@ selectors.tileLicenseDetails = (state, tile) => {
     licenseMessageContent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
   }
 
-  return {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable};
+  return {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable, licenseId: license?._id};
 };
 
 // #region listener request logs selectors

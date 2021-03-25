@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import Truncate from 'react-truncate';
 import { Typography, Tooltip, makeStyles, Zoom, Button, IconButton } from '@material-ui/core';
@@ -109,17 +109,12 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', tile && tile._integrationId)
   );
-  const licenses = useSelector(state =>
-    selectors.licenses(state)
-  );
-
-  const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
   const isCloned = integration?.install?.find(step => step?.isClone);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable} = useSelector(state =>
-    selectors.tileLicenseDetails(state, tile)
+  const {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable, licenseId} = useSelector(state =>
+    selectors.tileLicenseDetails(state, tile), shallowEqual
   );
   const isIntegrationV2 = isIntegrationAppVerion2(integration, true);
 
@@ -344,7 +339,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
           <TileNotification
             content={licenseMessageContent} showTrialLicenseMessage={showTrialLicenseMessage} expired={expired} connectorId={tile._connectorId}
             trialExpired={trialExpired}
-            licenseId={license._id}
+            licenseId={licenseId}
             tileStatus={tile.status}
             isIntegrationV2={isIntegrationV2} integrationId={tile._integrationId}
             integrationAppTileName={integrationAppTileName} resumable={resumable} accessLevel={accessLevel} />
