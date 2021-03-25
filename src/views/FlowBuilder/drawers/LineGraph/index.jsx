@@ -173,6 +173,7 @@ export default function LineGraphDrawer({ flowId }) {
       <DrawerContent>
         <FlowCharts
           flowId={flowId}
+          integrationId={integrationId}
           selectedResources={selectedResources}
           range={range} />
       </DrawerContent>
