@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ErrorFilterIcon({ selected }) {
+export default function FilterIconWrapper({ selected }) {
   const classes = useStyles();
 
   return <FilterIcon className={clsx(classes.filter, {[classes.filterSelected]: selected})} />;

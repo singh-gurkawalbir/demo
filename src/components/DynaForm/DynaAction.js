@@ -37,6 +37,7 @@ export default function DynaAction(props) {
     fields,
     formIsValid,
   });
+
   const onClick = useCallback(() => {
     onClickWhenValid(trim(value));
   }, [onClickWhenValid, value]);

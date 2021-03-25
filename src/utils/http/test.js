@@ -98,4 +98,3 @@ describe('getContentType util', () => {
     expect(getContentType(httpJsonPayload)).toBe('json');
   });
 });
-

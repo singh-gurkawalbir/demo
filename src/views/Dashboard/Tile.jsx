@@ -1,10 +1,9 @@
-import React, { useState, useCallback, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+
+import React, { useCallback, useRef } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import Truncate from 'react-truncate';
-import { Typography, Tooltip, makeStyles, Zoom, Button, IconButton } from '@material-ui/core';
+import { Typography, Tooltip, makeStyles, Button, IconButton } from '@material-ui/core';
 import { useDrag, useDrop } from 'react-dnd-cjs';
-import moment from 'moment';
 import { selectors } from '../../reducers';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
@@ -23,7 +22,7 @@ import Manage from '../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
 import ConnectionDownIcon from '../../components/icons/unLinkedIcon';
-import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS, USER_ACCESS_LEVELS } from '../../utils/constants';
+import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
 import { tileStatus, isTileStatusConnectionDown, dragTileConfig, dropTileConfig } from './util';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
@@ -31,6 +30,7 @@ import { getIntegrationAppUrlName, isIntegrationAppVerion2 } from '../../utils/i
 import { getTemplateUrlName } from '../../utils/template';
 import TileNotification from '../../components/HomePageCard/TileNotification';
 import { useSelectorMemo } from '../../hooks';
+import CeligoTruncate from '../../components/CeligoTruncate';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -105,7 +105,6 @@ function AppLogosContainer({ tile }) {
 function Tile({ tile, history, onMove, onDrop, index }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [isTruncated, setIsTruncated] = useState(false);
   const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', tile && tile._integrationId)
@@ -113,6 +112,9 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const isCloned = integration?.install?.find(step => step?.isClone);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable, licenseId} = useSelector(state =>
+    selectors.tileLicenseDetails(state, tile), shallowEqual
   );
   const isIntegrationV2 = isIntegrationAppVerion2(integration, true);
 
@@ -158,31 +160,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
     urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
   }
-  const remainingDays = date =>
-    Math.ceil((moment(date) - moment()) / 1000 / 60 / 60 / 24);
-  const licenses = useSelector(state =>
-    selectors.licenses(state)
-  );
-
-  const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
-  const expiresInDays = license && remainingDays(license.expires);
-  let licenseMessageContent = '';
-  let expired = false;
-  const resumable = license?.resumable && [INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel);
-
-  if (resumable) {
-    licenseMessageContent = `Your subscription was renewed on ${moment(license.expires).format('MMM Do, YYYY')}. Click Reactivate to continue.`;
-  } else if (expiresInDays <= 0) {
-    expired = true;
-    licenseMessageContent = `Your license expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your license.`;
-  } else if (expiresInDays > 0 && expiresInDays <= 30) {
-    licenseMessageContent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
-  }
-
   const handleConnectionDownStatusClick = useCallback(event => {
-    if (expired) {
-      return;
-    }
     event.stopPropagation();
     if (tile._connectorId) {
       history.push(
@@ -197,13 +175,10 @@ function Tile({ tile, history, onMove, onDrop, index }) {
         )
       );
     }
-  }, [expired, history, integrationAppTileName, tile._connectorId, tile._integrationId]);
+  }, [history, integrationAppTileName, tile._connectorId, tile._integrationId]);
 
   const handleStatusClick = useCallback(
     event => {
-      if (expired) {
-        return;
-      }
       if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         event.stopPropagation();
         if (tile._connectorId) {
@@ -240,27 +215,21 @@ function Tile({ tile, history, onMove, onDrop, index }) {
         }
       }
     },
-    [expired, tile.status, tile._connectorId, tile._integrationId, isUserInErrMgtTwoDotZero, history, isCloned, integrationAppTileName, dispatch, status.variant]
+    [tile.status, tile._connectorId, tile._integrationId, isUserInErrMgtTwoDotZero, history, isCloned, integrationAppTileName, dispatch, status.variant]
   );
 
   const handleUsersClick = useCallback(event => {
-    if (expired) {
-      return;
-    }
     event.stopPropagation();
     history.push(getRoutePath(urlToIntegrationUsers));
-  }, [expired, history, urlToIntegrationUsers]);
+  }, [history, urlToIntegrationUsers]);
 
   const handleTileClick = useCallback(
     event => {
-      if (expired) {
-        return;
-      }
       event.stopPropagation();
 
       history.push(getRoutePath(urlToIntegrationSettings));
     },
-    [expired, history, urlToIntegrationSettings]
+    [history, urlToIntegrationSettings]
   );
 
   // #region Drag&Drop related
@@ -295,32 +264,11 @@ function Tile({ tile, history, onMove, onDrop, index }) {
         <Content>
           <CardTitle>
             <Typography variant="h3" className={classes.tileName}>
-              {isTruncated ? (
-                <Tooltip
-                  data-public
-                  title={<span className={classes.tooltipNameFB}> {tile.name}</span>}
-                  TransitionComponent={Zoom}
-                  placement="bottom"
-                  enterDelay={100}>
-                  <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
-                    <Button
-                      color="inherit"
-                      onClick={handleTileClick}
-                      className={classes.tileName}>
-                      {tile.name}
-                    </Button>
-                  </Truncate>
-                </Tooltip>
-              ) : (
-                <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
-                  <Button
-                    color="inherit"
-                    onClick={handleTileClick}
-                    className={classes.tileName}>
-                    {tile.name}
-                  </Button>
-                </Truncate>
-              )}
+              <div onClick={handleTileClick}>
+                <CeligoTruncate dataPublic delay={100} lines={2} placement="bottom">
+                  {tile.name}
+                </CeligoTruncate>
+              </div>
             </Typography>
           </CardTitle>
 
@@ -368,8 +316,10 @@ function Tile({ tile, history, onMove, onDrop, index }) {
         </Footer>{
           tile._connectorId && licenseMessageContent && (
           <TileNotification
-            content={licenseMessageContent} expired={expired} connectorId={tile._connectorId}
-            licenseId={license._id}
+            content={licenseMessageContent} showTrialLicenseMessage={showTrialLicenseMessage} expired={expired} connectorId={tile._connectorId}
+            trialExpired={trialExpired}
+            licenseId={licenseId}
+            tileStatus={tile.status}
             isIntegrationV2={isIntegrationV2} integrationId={tile._integrationId}
             integrationAppTileName={integrationAppTileName} resumable={resumable} accessLevel={accessLevel} />
           )

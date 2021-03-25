@@ -53,7 +53,12 @@ export default {
     },
     {
       headerValue: function SelectResolvedAt(r, actionProps) {
-        return <SelectDate {...actionProps} title="Resolved at" filterBy="resolvedAt" />;
+        return (
+          <SelectDate
+            {...actionProps}
+            title="Resolved at"
+            filterBy="resolvedAt" />
+        );
       },
       width: '12%',
       value: r => <CeligoTimeAgo date={r.resolvedAt} />,

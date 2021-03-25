@@ -7,15 +7,9 @@ import DrawerHeader from '../drawer/Right/DrawerHeader';
 import ResponseMappingWrapper from '.';
 
 export default function ResponseMappingDrawer({integrationId}) {
-  const helpKey = useSelector(state => {
-    const {resourceType} = selectors.responseMapping(state);
-
-    if (!resourceType) {
-      return '';
-    }
-
-    return resourceType === 'exports' ? 'lookup.response.mapping' : 'import.response.mapping';
-  });
+  const resourceType = useSelector(state => selectors.responseMapping(state).resourceType);
+  const helpKey = resourceType === 'exports' ? 'lookup.response.mapping' : 'import.response.mapping';
+  const mappingType = resourceType === 'exports' ? 'results' : 'response';
 
   return (
     <LoadResources
@@ -30,7 +24,7 @@ export default function ResponseMappingDrawer({integrationId}) {
         variant="persistent"
         >
         <DrawerHeader
-          title="Define response mapping"
+          title={`Define ${mappingType} mapping`}
           helpKey={helpKey}
         />
         <ResponseMappingWrapper

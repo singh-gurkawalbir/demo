@@ -72,7 +72,6 @@ export default {
   oneToMany: {
     type: 'radiogroup',
     label: 'One to many',
-    helpKey: 'oneToMany',
     defaultValue: r => ((r?.oneToMany && r?.oneToMany !== 'false') ? 'true' : 'false'),
     options: [
       {
@@ -87,8 +86,9 @@ export default {
     type: 'text',
     label: 'Path to many',
     helpKey: 'pathToMany',
+    omitWhenHidden: true,
     placeholder: 'Not needed for array/row based data',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'oneToMany',
         is: ['true'],

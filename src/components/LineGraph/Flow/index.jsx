@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
@@ -12,7 +12,6 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import * as d3 from 'd3';
-import { sortBy } from 'lodash';
 import { makeStyles, Typography } from '@material-ui/core';
 import PanelHeader from '../../PanelHeader';
 import {
@@ -27,21 +26,14 @@ import {
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import Spinner from '../../Spinner';
-import SpinnerWrapper from '../../SpinnerWrapper';
-import RequiredIcon from '../../icons/RequiredIcon';
-import OptionalIcon from '../../icons/OptionalIcon';
-import ConditionalIcon from '../../icons/ConditionalIcon';
-import PreferredIcon from '../../icons/PreferredIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import {COMM_STATES} from '../../../reducers/comms/networkComms';
+import { LINE_GRAPH_CATEGORIES, LINE_GRAPH_TYPES, RESOLVED_GRAPH_DATAPOINTS } from '../../../utils/constants';
+import { getIcon, DataIcon, getResourceName } from '../Common';
 
 const useStyles = makeStyles(theme => ({
   root: {
     background: theme.palette.background.default,
-  },
-  legendIcon: {
-    width: '12px',
-    height: '12px',
   },
   legendText: {
     margin: theme.spacing(0, 1),
@@ -93,72 +85,34 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const getIcon = index => {
-  const Symbols = [OptionalIcon, ConditionalIcon, PreferredIcon, RequiredIcon];
+// const AUTO_PILOT = 'autopilot';
 
-  return Symbols[index % 4];
-};
-
-const DataIcon = ({index}) => {
-  const Icon = getIcon(index);
-  const classes = useStyles();
-
-  return (
-    <Icon
-      className={clsx(classes.legendIcon, classes[`${(index % 8) + 1}Color`])}
-    />
-  );
-};
-
-const Chart = ({ id, flowId, range, selectedResources: selected }) => {
+const Chart = ({ attribute, flowId, range, selectedResources: selected }) => {
   const classes = useStyles();
   const [opacity, setOpacity] = useState({});
+  const isResolvedGraph = attribute === LINE_GRAPH_TYPES.RESOLVED;
   let mouseHoverTimer;
-  const { data = [] } =
-    useSelector(state => selectors.flowMetricsData(state, flowId)) || {};
   const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
   // Selected resources are read from previously saved resources in preferences which may not be valid anymore. pick only valid resources.
   const selectedResources = selected.filter(r => flowResources.find(res => res._id === r));
   const { startDate, endDate } = range;
-  const type = useMemo(() => id === 'averageTimeTaken' ? 'att' : 'sei', [id]);
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
   const ticks = getTicks(domainRange, range);
   const domain = [new Date(startDate).getTime(), new Date(endDate).getTime()];
-  const flowData = {};
-
-  if (Array.isArray(data)) {
-    selectedResources.forEach(r => {
-      flowData[r] = data.filter(d => (r === flowId ? d.resourceId === '_flowId' : d.resourceId === r) && d.type === type);
-      flowData[r] = sortBy(flowData[r], ['timeInMills']);
-    });
-  }
-
-  const getResourceName = name => {
-    if (!name || typeof name !== 'string') {
-      return name || '';
-    }
-    const resourceId = name.split('-')[0];
-    let modifiedName = resourceId;
-    const resource = flowResources.find(r => r._id === resourceId);
-
-    if (resource) {
-      modifiedName = resource.name;
-    }
-
-    return modifiedName;
-  };
-
+  const lineData = isResolvedGraph ? RESOLVED_GRAPH_DATAPOINTS : selectedResources;
+  const flowData = useSelectorMemo(selectors.mkLineGraphData, 'flows', flowId, attribute, selectedResources);
   const handleMouseEnter = e => {
-    const id = e?.target?.id;
+    const targetId = e?.target?.id;
 
-    if (!id || typeof id !== 'string') {
+    if (!targetId || typeof targetId !== 'string') {
       return false;
     }
-    const resourceId = id.split('-')[0];
+    const resourceId = targetId.split('-')[0];
 
     if (resourceId) {
       mouseHoverTimer = setTimeout(() => {
-        const object = selectedResources.reduce((acc, cur) => {
+        const collection = isResolvedGraph ? RESOLVED_GRAPH_DATAPOINTS : selectedResources;
+        const object = collection.reduce((acc, cur) => {
           acc[cur] = resourceId === cur ? 1 : 0.2;
 
           return acc;
@@ -189,7 +143,7 @@ const Chart = ({ id, flowId, range, selectedResources: selected }) => {
                 id={entry.value}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}>
-                {getResourceName(entry.value)}
+                {getResourceName({name: entry.value, isResolvedGraph, flowResources})}
               </span>
             </>
           ))
@@ -219,14 +173,7 @@ const Chart = ({ id, flowId, range, selectedResources: selected }) => {
 
   function CustomTooltip({ payload, label, active }) {
     const classes = useStyles();
-    const preferences = useSelector(
-      state => selectors.userOwnPreferences(state),
-      (left, right) =>
-        left &&
-        right &&
-        left.dateFormat === right.dateFormat &&
-        left.timeFormat === right.timeFormat
-    );
+    const preferences = useSelector(state => selectors.userOwnPreferences(state));
     const timezone = useSelector(state => selectors.userTimezone(state));
 
     if (active && Array.isArray(payload) && payload.length) {
@@ -242,7 +189,7 @@ const Chart = ({ id, flowId, range, selectedResources: selected }) => {
           <p className="label">{getDateTimeFormat(range, label, preferences, timezone)} </p>
           {payload.map(
             p => (
-              p && !!p.value && <p key={p.name}> {`${getResourceName(p.name)}: ${p.value}`} </p>
+              p && !!p.value && <p key={p.name}> {`${getResourceName({name: p.name, isResolvedGraph, flowResources})}: ${p.value}`} </p>
             ))}
         </div>
       );
@@ -253,7 +200,7 @@ const Chart = ({ id, flowId, range, selectedResources: selected }) => {
 
   return (
     <div className={classes.responsiveContainer}>
-      <PanelHeader title={getLabel(id)} />
+      <PanelHeader title={getLabel(attribute)} />
       <ResponsiveContainer width="100%" height={400} >
         <LineChart
           // data={flowData}
@@ -273,10 +220,10 @@ const Chart = ({ id, flowId, range, selectedResources: selected }) => {
             tickFormatter={unixTime => unixTime ? moment(unixTime).format(getXAxisFormat(range)) : ''}
           />
           <YAxis
-            yAxisId={id}
+            yAxisId={attribute}
             type="number"
             label={{
-              value: getAxisLabel(id),
+              value: getAxisLabel(attribute),
               angle: -90,
               offset: -20,
               position: 'insideLeft',
@@ -287,13 +234,13 @@ const Chart = ({ id, flowId, range, selectedResources: selected }) => {
 
           <Tooltip data-public content={<CustomTooltip />} />
           <Legend content={<CustomLegend />} />
-          {selectedResources.map((r, i) => (
+          {lineData.map((r, i) => (
             <Line
-              key={`${r}-${id}`}
-              dataKey={id}
-              name={`${r}-${id}`}
+              key={`${r}-${attribute}`}
+              dataKey="value"
+              name={`${r}-${attribute}`}
               data={flowData[r]}
-              yAxisId={id}
+              yAxisId={attribute}
               dot={false}
               activeDot={<CustomizedDot idx={i} />}
               strokeWidth="2"
@@ -308,7 +255,7 @@ const Chart = ({ id, flowId, range, selectedResources: selected }) => {
   );
 };
 
-export default function FlowCharts({ flowId, range, selectedResources }) {
+export default function FlowCharts({ flowId, integrationId, range, selectedResources }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const data =
@@ -319,15 +266,15 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
 
   useEffect(() => {
     if (!data.data && !data.status) {
-      dispatch(actions.flowMetrics.request('flows', flowId, { range }));
+      dispatch(actions.flowMetrics.request('flows', flowId, { range, selectedResources }));
     }
-  }, [data, dispatch, flowId, range]);
+  }, [data, dispatch, flowId, range, selectedResources]);
 
   if (data.status === COMM_STATES.LOADING) {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+
+      <Spinner centerAll />
+
     );
   }
   if (data.status === COMM_STATES.ERROR) {
@@ -336,12 +283,13 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
 
   return (
     <div className={classes.root}>
-      {['success', 'averageTimeTaken', 'error', 'ignored', 'resolved'].map(m => (
+      {LINE_GRAPH_CATEGORIES.map(category => (
         <Chart
-          key={m}
-          id={m}
+          key={category}
+          attribute={category}
           range={range}
           flowId={flowId}
+          integrationId={integrationId}
           selectedResources={selectedResources}
         />
       ))}

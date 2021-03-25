@@ -1,19 +1,23 @@
 import React from 'react';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   drawerContent: {
-    padding: theme.spacing(3, 3, 0),
     flex: 1,
     overflow: 'auto',
   },
+  withPadding: {
+    padding: theme.spacing(3, 3, 0),
+  },
 }));
 
-export default function DrawerContent({ children }) {
+export default function DrawerContent({ children, noPadding }) {
   const classes = useStyles();
 
   return (
-    <div className={classes.drawerContent}>
+    <div
+      className={clsx(classes.drawerContent, { [classes.withPadding]: !noPadding })}>
       {children}
     </div>
   );

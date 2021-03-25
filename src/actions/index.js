@@ -17,6 +17,7 @@ export const availableResources = [
   'flows',
   'templates',
   'apis',
+  'eventreports',
 ];
 
 export const availableOSTypes = ['windows', 'linux', 'macOS'];
@@ -117,8 +118,8 @@ const auth = {
   sessionTimestamp: () => action(actionTypes.AUTH_TIMESTAMP),
 };
 const api = {
-  request: (path, method, message, hidden) =>
-    action(actionTypes.API_REQUEST, { path, message, hidden, method }),
+  request: (path, method, message, hidden, refresh) =>
+    action(actionTypes.API_REQUEST, { path, message, hidden, method, refresh }),
   retry: (path, method) => action(actionTypes.API_RETRY, { path, method }),
   complete: (path, method, message) =>
     action(actionTypes.API_COMPLETE, { path, method, message }),
@@ -250,8 +251,8 @@ const resource = {
     action(actionTypes.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
   clearChildIntegration: () => action(actionTypes.CLEAR_CHILD_INTEGRATION),
 
-  requestCollection: (resourceType, message) =>
-    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message }),
+  requestCollection: (resourceType, message, refresh) =>
+    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh }),
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
@@ -431,6 +432,15 @@ const resource = {
       action(actionTypes.RESOURCE.UPDATE_TILE_NOTIFICATIONS, { resourcesToUpdate, integrationId, ...options }),
     updateFlow: (flowId, isSubscribed) =>
       action(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, {flowId, isSubscribed }),
+  },
+  eventreports: {
+    cancelReport: reportId => action(actionTypes.EVENT_REPORT.CANCEL, {
+      reportId,
+    }),
+    downloadReport: reportId => action(actionTypes.EVENT_REPORT.DOWNLOAD, {
+      reportId,
+    }),
+
   },
 };
 // #endregion
@@ -2188,6 +2198,21 @@ const logs = {
       action(actionTypes.LOGS.CONNECTIONS.DOWNLOAD, { connectionId }),
     startDebug: (connectionId, value) =>
       action(actionTypes.LOGS.CONNECTIONS.START_DEBUG, { connectionId, value }),
+  },
+  listener: {
+    startDebug: (flowId, exportId, minutes) => action(actionTypes.LOGS.LISTENER.DEBUG.START, { flowId, exportId, minutes }),
+    stopDebug: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.DEBUG.STOP, { flowId, exportId }),
+    requestLogDetails: (flowId, exportId, logKey) => action(actionTypes.LOGS.LISTENER.LOG.REQUEST, { flowId, exportId, logKey }),
+    receivedLogDetails: (exportId, logKey, logDetails) => action(actionTypes.LOGS.LISTENER.LOG.RECEIVED, { exportId, logKey, logDetails }),
+    removeLog: (flowId, exportId, logsToRemove) => action(actionTypes.LOGS.LISTENER.LOG.REMOVE, { flowId, exportId, logsToRemove }),
+    logDeleted: (exportId, deletedLogKey) => action(actionTypes.LOGS.LISTENER.LOG.DELETED, { exportId, deletedLogKey }),
+    request: (flowId, exportId, loadMore) => action(actionTypes.LOGS.LISTENER.REQUEST, { flowId, exportId, loadMore }),
+    received: (exportId, logs, nextPageURL, loadMore) => action(actionTypes.LOGS.LISTENER.RECEIVED, { exportId, logs, nextPageURL, loadMore }),
+    failed: (exportId, error) => action(actionTypes.LOGS.LISTENER.FAILED, { exportId, error }),
+    clear: exportId => action(actionTypes.LOGS.LISTENER.CLEAR, { exportId }),
+    startLogsPoll: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.START_POLL, { flowId, exportId }),
+    stopLogsPoll: (exportId, hasNewLogs) => action(actionTypes.LOGS.LISTENER.STOP_POLL, { exportId, hasNewLogs }),
+    setActiveLog: (exportId, activeLogKey) => action(actionTypes.LOGS.LISTENER.ACTIVE_LOG, { exportId, activeLogKey }),
   },
 };
 

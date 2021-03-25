@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import PanelLoader from '../../PanelLoader';
 import Templates from '../Templates';
 import { HTTP_STAGES } from '../../../utils/exportPanel';
 import { wrapExportFileSampleData } from '../../../utils/sampleData';
@@ -9,12 +8,14 @@ import CeligoPillTabs from '../../CeligoTabLayout/CeligoPillTabs';
 import DefaultPanel from '../../CeligoTabLayout/CustomPanels/DefaultPanel';
 import RequestResponsePanel from '../../CeligoTabLayout/CustomPanels/RequestResponsePanel';
 import CeligoTabPanel from '../../CeligoTabLayout/CeligoTabPanel';
+import Spinner from '../../Spinner';
 
 const useStyles = makeStyles({
   previewBodyContainer: {
     display: 'flex',
     flexGrow: 1,
     flexDirection: 'column',
+    position: 'relative',
   },
 });
 
@@ -55,7 +56,7 @@ export default function PreviewBody(props) {
   return (
     <div className={classes.previewBodyContainer}>
       {resourceSampleData.status === 'requested' && (
-        <PanelLoader />
+        <Spinner centerAll />
       )}
       {['received', 'error'].includes(resourceSampleData.status) && (
         <>
