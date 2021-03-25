@@ -54,8 +54,8 @@ selectors.flowMetricsData = createSelector(
     return state[resourceId];
   });
 
-selectors.lineGraphData = () => createSelector(
-  (state, _, resourceId) => state?.session?.flowMetrics?.[resourceId]?.data,
+selectors.mkLineGraphData = () => createSelector(
+  (state, _, resourceId) => state?.[resourceId]?.data,
   (_, resourceType) => resourceType,
   (_1, _2, resourceId) => resourceId,
   (_1, _2, _3, id) => id,

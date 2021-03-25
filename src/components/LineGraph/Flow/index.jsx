@@ -100,7 +100,7 @@ const Chart = ({ id, flowId, range, selectedResources: selected }) => {
   const ticks = getTicks(domainRange, range);
   const domain = [new Date(startDate).getTime(), new Date(endDate).getTime()];
   const lineData = isResolvedGraph ? RESOLVED_GRAPH_DATAPOINTS : selectedResources;
-  const flowData = useSelectorMemo(selectors.lineGraphData, 'flows', flowId, id, selectedResources);
+  const flowData = useSelectorMemo(selectors.mkLineGraphData, 'flows', flowId, id, selectedResources);
   const handleMouseEnter = e => {
     const targetId = e?.target?.id;
 

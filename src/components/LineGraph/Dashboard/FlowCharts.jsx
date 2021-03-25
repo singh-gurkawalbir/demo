@@ -116,7 +116,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
   const domain = [new Date(startDate).getTime(), new Date(endDate).getTime()];
   const ticks = getTicks(domainRange, range);
-  const flowData = useSelectorMemo(selectors.lineGraphData, 'integrations', integrationId, id, selectedResources);
+  const flowData = useSelectorMemo(selectors.mkLineGraphData, 'integrations', integrationId, id, selectedResources);
 
   const handleMouseEnter = e => {
     const targetId = e?.target?.id;
