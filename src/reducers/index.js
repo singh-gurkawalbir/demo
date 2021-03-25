@@ -93,8 +93,7 @@ import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENE
 
 const emptyArray = [];
 const emptyObject = {};
-const remainingDays = date =>
-  Math.ceil((moment(date) - moment()) / 1000 / 60 / 60 / 24);
+
 const combinedReducers = combineReducers({
   app,
   session,
