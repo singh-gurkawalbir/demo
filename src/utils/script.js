@@ -49,9 +49,10 @@ export const SCRIPT_FUNCTION_TYPES_FOR_FLOW = {
   PRE_SAVE: 'preSave',
 };
 
+// Be cautious while changing the order of LOG_LEVELS. The same could effect their display order in UI
 export const LOG_LEVELS = {
-  ERROR: 'error',
-  INFO: 'info',
   DEBUG: 'debug',
+  INFO: 'info',
   WARN: 'warn',
+  ERROR: 'error',
 };

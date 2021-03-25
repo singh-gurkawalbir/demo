@@ -11,7 +11,7 @@ import WarningIcon from '../../icons/WarningIcon';
 import ExpiredIcon from '../../icons/ErrorIcon';
 import actions from '../../../actions';
 import getRoutePath from '../../../utils/routePaths';
-import { INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../../utils/constants';
+import { INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS, TILE_STATUS } from '../../../utils/constants';
 import useConfirmDialog from '../../ConfirmDialog';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
@@ -69,14 +69,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel}) {
+export default function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel, showTrialLicenseMessage, tileStatus, trialExpired}) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
-  const single = isIntegrationV2 || !expired;
+  // Single means only button displayed here (Buy or renew), unistall button will be added if it is not single.
+  const single = tileStatus === TILE_STATUS.IS_PENDING_SETUP || (!trialExpired && (isIntegrationV2 || !expired));
 
   const onClickRenewOrReactivateButton = useCallback(event => {
     event.stopPropagation();
@@ -87,6 +88,11 @@ export default function TileNotification({ content, expired, connectorId, licens
       dispatch(actions.user.org.accounts.requestUpdate('connectorRenewal', connectorId, licenseId));
     }
   }, [connectorId, dispatch, integrationId, licenseId, resumable]);
+  const onClickBuyButton = useCallback(event => {
+    event.stopPropagation();
+    setUpgradeRequested(true);
+    dispatch(actions.user.org.accounts.requestUpdate('connectorRenewal', connectorId, licenseId));
+  }, [connectorId, dispatch, licenseId]);
   const handleUninstall = useCallback(event => {
     event.stopPropagation();
     if (![INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel)) {
@@ -118,7 +124,7 @@ export default function TileNotification({ content, expired, connectorId, licens
   return (
     <div className={classes.trialExpireWrapper}>
       <div className={classes.contentWrapper}>
-        {expired ? (
+        {expired || trialExpired ? (
           <ExpiredIcon className={classes.expiredIcon} />
         )
           : <WarningIcon className={classes.warningIcon} />}
@@ -127,23 +133,31 @@ export default function TileNotification({ content, expired, connectorId, licens
         </div>
       </div>
       <div className={clsx(classes.footer, {[classes.footerSingleBtn]: single})}>
-        {single ? (
+        {single && !showTrialLicenseMessage && (
           <Button
             disabled={upgradeRequested} onClick={onClickRenewOrReactivateButton} data-test="RenewOrReactivate" variant="outlined"
             color="primary">
             {resumable ? 'Reactivate' : 'Renew'}
           </Button>
-        ) : (
-          <ButtonGroup>
-            <Button
-              disabled={upgradeRequested} onClick={onClickRenewOrReactivateButton} data-test="RenewOrReactivateDouble" variant="outlined"
-              color="primary">
-              Renew
-            </Button>
-            <Button data-test="uninstall" variant="text" color="primary" onClick={handleUninstall}>
-              Uninstall
-            </Button>
-          </ButtonGroup>
+        )}
+        {single && showTrialLicenseMessage && (
+          <Button
+            disabled={upgradeRequested} onClick={onClickBuyButton} data-test="buy" variant="outlined"
+            color="primary">
+            Buy
+          </Button>
+        )}
+        {!single && (
+        <ButtonGroup>
+          <Button
+            disabled={upgradeRequested} onClick={onClickRenewOrReactivateButton} data-test="RenewOrReactivateDouble" variant="outlined"
+            color="primary">
+            {showTrialLicenseMessage ? 'Buy' : 'Renew'}
+          </Button>
+          <Button data-test="uninstall" variant="text" color="primary" onClick={handleUninstall}>
+            Uninstall
+          </Button>
+        </ButtonGroup>
         )}
       </div>
       <div />

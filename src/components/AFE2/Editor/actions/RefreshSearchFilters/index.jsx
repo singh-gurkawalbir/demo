@@ -8,7 +8,6 @@ import actions from '../../../../../actions';
 import Spinner from '../../../../Spinner';
 import RefreshIcon from '../../../../icons/RefreshIcon';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import SpinnerWrapper from '../../../../SpinnerWrapper';
 
 const useStyles = makeStyles(theme => ({
   refreshFiltersButton: {
@@ -68,9 +67,7 @@ export default function RefreshSearchFilters({ editorId }) {
 
   if (!filters) {
     return (
-      <SpinnerWrapper>
-        <Spinner color="primary" />
-      </SpinnerWrapper>
+      <Spinner centerAll />
     );
   }
 

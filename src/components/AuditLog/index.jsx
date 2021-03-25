@@ -65,7 +65,7 @@ export default function AuditLog({
       resources="integrations, flows, exports, imports, connections">
       <>
         {isLoadingAuditLog
-          ? <Spinner loading /> : (
+          ? <Spinner loading size="large" /> : (
             <div className={clsx(classes.root, className)}>
               <Filters
                 affectedResources={affectedResources}

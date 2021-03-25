@@ -6,7 +6,6 @@ import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import FilterPanel from './FilterPanel';
 import Spinner from '../../../Spinner';
-import SpinnerWrapper from '../../../SpinnerWrapper';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
@@ -81,9 +80,9 @@ export default function DynaNetSuiteQualificationCriteria(props) {
 
   if (!filters) {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+
+      <Spinner centerAll />
+
     );
   }
 

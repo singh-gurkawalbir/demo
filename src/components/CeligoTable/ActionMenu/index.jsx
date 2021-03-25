@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 import { IconButton, MenuItem, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import useConfirmDialog from '../../ConfirmDialog';
 import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
 import ArrowPopper from '../../ArrowPopper';
 
@@ -11,11 +13,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Action = ({ isSingleAction, label, Icon, disabledActionText, useHasAccess, actionProps, rowData, component, selectAction, handleMenuClose}) => {
-  const handleActionClick = useCallback(() => {
-    selectAction(component);
+const Action = ({ isSingleAction, label, Icon, disabledActionText, useHasAccess, actionProps, rowData, onClick, component, selectAction, handleMenuClose}) => {
+  const dispatch = useDispatch();
+  const { confirmDialog } = useConfirmDialog();
+  const handleActionClick = () => {
+    if (onClick && typeof onClick === 'function') {
+      onClick(dispatch, confirmDialog);
+    } else {
+      selectAction(component);
+    }
     handleMenuClose();
-  }, [component, handleMenuClose, selectAction]);
+  };
+
   const hasAccess = useHasAccess({...actionProps, rowData });
 
   if (!hasAccess) {
@@ -23,20 +32,29 @@ const Action = ({ isSingleAction, label, Icon, disabledActionText, useHasAccess,
   }
   const disabledActionTitle = disabledActionText?.({ ...actionProps, rowData });
   const actionIcon = Icon ? <Icon /> : null;
+  const title = disabledActionTitle || label;
 
   if (isSingleAction) {
+    if (title) {
+      return (
+        <Tooltip data-public title={title} placement="bottom" >
+          {/* The <div> below seems to be redundant as it does not provide any presentation benefit.
+              However, without this wrapper div, if the action is disabled, the <Tooltip> wrapper
+              doesn't recognize the hover state and thus doesn't show the tooltip message.
+          */}
+          <div>
+            <IconButton size="small" disabled={!!disabledActionTitle} onClick={handleActionClick}>
+              {actionIcon}
+            </IconButton>
+          </div>
+        </Tooltip>
+      );
+    }
+
     return (
-      <Tooltip data-public title={disabledActionTitle || label} placement="bottom" >
-        {/* The <div> below seems to be redundant as it does not provide any presentation benefit.
-            However, without this wrapper div, if the action is disabled, the <Tooltip> wrapper
-            doesn't recognize the hover state and thus doesn't show the tooltip message.
-        */}
-        <div>
-          <IconButton size="small" disabled={!!disabledActionTitle} onClick={handleActionClick}>
-            {actionIcon}
-          </IconButton>
-        </div>
-      </Tooltip>
+      <IconButton size="small" onClick={handleActionClick}>
+        {actionIcon}
+      </IconButton>
     );
   }
 
@@ -85,7 +103,7 @@ export default function ActionMenu({ variant, rowActions, rowData, actionProps, 
       ? rowActions(rowData, actionProps)
       : rowActions;
 
-    return meta.map(({ icon, label, disabledActionText, useHasAccess, component: Action }) => ({
+    return meta.map(({ icon, label, disabledActionText, useHasAccess, component: Action, onClick }) => ({
       Icon: icon,
       disabledActionText,
       selectAction,
@@ -98,7 +116,8 @@ export default function ActionMenu({ variant, rowActions, rowData, actionProps, 
       typeof label === 'function'
         ? label(rowData, actionProps)
         : label,
-      component: <Action {...actionProps} rowData={rowData} />,
+      onClick,
+      component: Action ? <Action {...actionProps} rowData={rowData} /> : undefined,
     }));
   }, [actionProps, handleMenuClose, rowActions, rowData, selectAction]);
 

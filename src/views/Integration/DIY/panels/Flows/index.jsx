@@ -14,7 +14,6 @@ import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
 import flowTableMeta from '../../../../../components/ResourceTable/flows/metadata';
 import Spinner from '../../../../../components/Spinner';
-import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 import StatusCircle from '../../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../reducers';
@@ -334,9 +333,7 @@ export default function FlowsPanel({ integrationId, childId }) {
 
   if (!flowErrorCountStatus && isUserInErrMgtTwoDotZero) {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+      <Spinner centerAll />
     );
   }
   const infoTextFlow =

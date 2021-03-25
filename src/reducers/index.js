@@ -36,6 +36,7 @@ import {
   flowAllowsScheduling,
   getFlowType,
   flowSupportsSettings,
+  isRealtimeExport,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -87,9 +88,12 @@ import {
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
+import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
 
 const emptyArray = [];
 const emptyObject = {};
+const remainingDays = date =>
+  Math.ceil((moment(date) - moment()) / 1000 / 60 / 60 / 24);
 const combinedReducers = combineReducers({
   app,
   session,
@@ -2581,8 +2585,8 @@ selectors.resourcePermissions = (
 
   const permissions = selectors.userPermissions(state);
 
-  // TODO: userPermissions should be written to handle when there isnt a state and in those circumstances
-  // should return null rathern than an empty object for all cases
+  // TODO: userPermissions should be written to handle when there isn't a state and in those circumstances
+  // should return null rather than an empty object for all cases
   if (!permissions || isEmpty(permissions)) return emptyObject;
 
   // special case, where resourceType == integrations. Its childResource,
@@ -5058,3 +5062,82 @@ selectors.isConnectionLogsNotSupported = (state, connectionId) => {
 
   return ['wrapper', 'dynamodb', 'mongodb'].includes(connectionResource?.type);
 };
+
+selectors.tileLicenseDetails = (state, tile) => {
+  const licenses = selectors.licenses(state);
+  const accessLevel =
+    tile.integration &&
+    tile.integration.permissions &&
+    tile.integration.permissions.accessLevel;
+
+  const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
+  const expiresInDays = license && remainingDays(license.expires);
+  const trialExpiresInDays = license && remainingDays(license.trialEndDate);
+
+  let licenseMessageContent = '';
+  let expired = false;
+  let trialExpired = false;
+  let showTrialLicenseMessage = false;
+  const resumable = license?.resumable && [INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel);
+
+  if (resumable) {
+    licenseMessageContent = `Your subscription was renewed on ${moment(license.expires).format('MMM Do, YYYY')}. Click Reactivate to continue.`;
+  } else if (license?.trialEndDate && trialExpiresInDays <= 0) {
+    licenseMessageContent = `Trial expired on ${moment(license.trialEndDate).format('MMM Do, YYYY')}`;
+    showTrialLicenseMessage = true;
+    trialExpired = true;
+  } else if (license?.trialEndDate && trialExpiresInDays > 0) {
+    licenseMessageContent = `Trial expires in ${trialExpiresInDays} days.`;
+    showTrialLicenseMessage = true;
+  } else if (expiresInDays <= 0) {
+    expired = true;
+    licenseMessageContent = `Your license expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your license.`;
+  } else if (expiresInDays > 0 && expiresInDays <= 30) {
+    licenseMessageContent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
+  }
+
+  return {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable, licenseId: license?._id};
+};
+
+// #region listener request logs selectors
+selectors.hasLogsAccess = (state, resourceId, resourceType, isNew) => {
+  if (resourceType !== 'exports') return false;
+  const resource = selectors.resource(state, 'exports', resourceId);
+
+  if (!isRealtimeExport(resource)) return false;
+
+  return !isNew;
+};
+
+selectors.canEnableDebug = (state, exportId, flowId) => {
+  if (!exportId || !flowId) return false;
+
+  const flow = selectors.resource(state, 'flows', flowId);
+
+  const userPermissionsOnIntegration = selectors.resourcePermissions(state, 'integrations', flow?._integrationId)?.accessLevel;
+
+  if (userPermissionsOnIntegration && userPermissionsOnIntegration !== INTEGRATION_ACCESS_LEVELS.MONITOR) return true;
+
+  const resource = selectors.resource(state, 'exports', exportId) || {};
+
+  // webhook exports have no attached connection
+  if (resource.type === 'webhook') {
+    return false;
+  }
+
+  const userPermissionsOnConnection = selectors.resourcePermissions(state, 'connections', resource._connectionId)?.edit;
+
+  return !!userPermissionsOnConnection;
+};
+
+selectors.mkLogsInCurrPageSelector = () => createSelector(
+  selectors.logsSummary,
+  state => selectors.filter(state, LISTENER_LOG_FILTER_KEY),
+  (debugLogsList, filterOptions) => {
+    const { currPage = 0 } = filterOptions.paging || {};
+
+    return debugLogsList.slice(currPage * LISTENER_LOG_DEFAULT_ROWS_PER_PAGE, (currPage + 1) * LISTENER_LOG_DEFAULT_ROWS_PER_PAGE);
+  }
+);
+
+// #endregion listener request logs selectors

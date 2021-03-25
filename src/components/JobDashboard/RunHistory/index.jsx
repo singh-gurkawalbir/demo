@@ -6,13 +6,13 @@ import CeligoPagination from '../../CeligoPagination';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ResourceTable from '../../ResourceTable';
-import PanelLoader from '../../PanelLoader';
 import { isNewId } from '../../../utils/resource';
 import RefreshIcon from '../../icons/RefreshIcon';
 import IconTextButton from '../../IconTextButton';
 import { getSelectedRange } from '../../../utils/flowMetrics';
 import DateRangeSelector from '../../DateRangeSelector';
 import { FILTER_KEYS, ERROR_MANAGEMENT_RANGE_FILTERS } from '../../../utils/errorManagement';
+import Spinner from '../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -154,7 +154,7 @@ export default function RunHistory({ flowId }) {
           </div>
         </>
       </div>
-      { isLoadingHistory && <PanelLoader />}
+      { isLoadingHistory && <Spinner />}
       { !hasFlowRunHistory &&
         (
         <Typography className={classes.messageContainer}>

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import CodePanel from '../Code';
-import PanelLoader from '../../../../PanelLoader';
+import Spinner from '../../../../Spinner';
 
 export default function DataPanel({ editorId, mode }) {
   const dispatch = useDispatch();
@@ -19,7 +19,7 @@ export default function DataPanel({ editorId, mode }) {
   return (
     <>
       {sampleDataStatus === 'requested' ? (
-        <PanelLoader />
+        <Spinner centerAll />
       ) : (
         <CodePanel
           name="data"

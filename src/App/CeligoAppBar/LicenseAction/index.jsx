@@ -31,6 +31,7 @@ const useStyles = makeStyles(theme => ({
     },
     '& > * svg': {
       fontSize: '17px !important',
+      alignSelf: 'center',
     },
     '& > div:first-child': {
       padding: 0,

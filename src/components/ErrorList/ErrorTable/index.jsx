@@ -8,7 +8,6 @@ import KeywordSearch from '../../KeywordSearch';
 import RefreshCard from './RefreshCard';
 import ErrorActions from './ErrorActions';
 import Spinner from '../../Spinner';
-import SpinnerWrapper from '../../SpinnerWrapper';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import CeligPagination from '../../CeligoPagination';
@@ -250,9 +249,9 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   return (
     <div className={clsx(classes.errorTableWrapper, { [classes.hide]: !show })}>
       {isFreshDataLoad ? (
-        <SpinnerWrapper>
-          <Spinner />
-        </SpinnerWrapper>
+
+        <Spinner centerAll />
+
       ) : (
         <>
           <div className={classes.filtersErrorTable}>

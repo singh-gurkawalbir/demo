@@ -7,6 +7,7 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
 import Panels from './Panels';
 import { DEFAULT_RECORD_SIZE } from '../../utils/exportPanel';
+// import FieldHelp from '../DynaForm/FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   previewPanelWrapper: {
@@ -16,10 +17,8 @@ const useStyles = makeStyles(theme => ({
   container: {
     background: theme.palette.common.white,
     padding: theme.spacing(2),
-    width: '100%',
     height: `calc(100vh - ${200}px)`,
     overflowY: 'auto',
-    float: 'left',
     display: 'flex',
     flexDirection: 'column',
   },
@@ -144,6 +143,7 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
       className={classes.previewPanelWrapper}>
       <Typography className={classes.previewDataHeading}>
         Preview data
+        {/* <FieldHelp label="Preview data" helpKey="exports.previewData" /> */}
       </Typography>
       <div className={classes.container}>
         <PreviewInfo
