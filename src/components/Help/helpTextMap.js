@@ -2129,7 +2129,7 @@ export default {
   'fb.pp.exports.hooks':
     'Define a ‘hook’ here to use custom code to process records returned by the lookup before the records are merged back into the source record.',
   'fb.pp.exports.responseMapping':
-    'Configure "results mapping" to specify where data returned by the lookup should be merged back into the source record.',
+    'Configure ‘results mapping‘ to specify where data returned by the lookup should be merged back into the source record.',
   'fb.pp.exports.postResponseMap':
     'Define a ‘hook’ here to use custom code to process records after the response/results mapping is complete, but before the records are passed along to downstream applications.',
   'fb.pp.exports.proceedOnFailure':
