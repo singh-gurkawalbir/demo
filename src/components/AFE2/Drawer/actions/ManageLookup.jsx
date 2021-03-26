@@ -30,7 +30,7 @@ export default function ManageLookup({ editorId }) {
   );
 
   const showLookup = useSelector(state => selectors.isEditorLookupSupported(state, editorId));
-  const {resourceType, formKey, resourceId, flowId, lastValidData, editorLookups} = useSelector(state => {
+  const {resourceType, formKey, resourceId, flowId, lastValidData, editorLookups, fieldId} = useSelector(state => {
     const e = selectors._editor(state, editorId);
 
     return {resourceType: e.resourceType,
@@ -39,6 +39,7 @@ export default function ManageLookup({ editorId }) {
       flowId: e.flowId,
       lastValidData: e.lastValidData,
       editorLookups: e.lookups,
+      fieldId: e.fieldId,
     };
   }, shallowEqual);
   const formContext = useFormContext(formKey);
@@ -92,7 +93,7 @@ export default function ManageLookup({ editorId }) {
 
     return null;
   }
-  completers.handleBarsCompleters.setLookupCompleter(_lookups);
+  completers.handleBarsCompleters.setLookupCompleter(_lookups, fieldId === 'http.relativeURI' || fieldId === 'rest.relativeURI');
   completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
 
   return (
