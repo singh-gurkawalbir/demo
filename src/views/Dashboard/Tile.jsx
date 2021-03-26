@@ -245,7 +245,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
 
   return (
     <div ref={ref}>
-      <HomePageCardContainer onClick={handleTileClick} drag={drag} isCardSelected={isCardSelected} >
+      <HomePageCardContainer drag={drag} isCardSelected={isCardSelected} >
         <Header>
           <Status
             label={status.label}
@@ -263,12 +263,10 @@ function Tile({ tile, history, onMove, onDrop, index }) {
         </Header>
         <Content>
           <CardTitle>
-            <Typography variant="h3" className={classes.tileName}>
-              <div onClick={handleTileClick}>
-                <CeligoTruncate dataPublic delay={100} lines={2} placement="bottom">
-                  {tile.name}
-                </CeligoTruncate>
-              </div>
+            <Typography variant="h3" className={classes.tileName} onClick={handleTileClick}>
+              <CeligoTruncate dataPublic delay={100} lines={2} placement="bottom">
+                {tile.name}
+              </CeligoTruncate>
             </Typography>
           </CardTitle>
 

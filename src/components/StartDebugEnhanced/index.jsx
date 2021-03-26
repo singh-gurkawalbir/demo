@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
+import clsx from 'clsx';
 import { Button, MenuItem, InputLabel, FormControl} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import moment from 'moment';
@@ -56,6 +57,14 @@ const useStyles = makeStyles(theme => ({
     lineHeight: '16px',
     marginTop: theme.spacing(1),
     color: theme.palette.secondary.light,
+  },
+  debugButton: {
+    marginRight: '0px !important',
+  },
+  stopDebugButton: {
+    '& > * svg': {
+      fontSize: 18,
+    },
   },
 }));
 
@@ -157,6 +166,7 @@ export default function StartDebugEnhanced({
       <IconTextButton
         disabled={disabled}
         onClick={toggleClick}
+        className={classes.debugButton}
         data-test="refreshResource">
         <DebugIcon />
         {activeDebugUntil ? (
@@ -166,6 +176,7 @@ export default function StartDebugEnhanced({
       {!!activeDebugUntil && (
       <IconTextButton
         disabled={disabled}
+        className={clsx(classes.debugButton, classes.stopDebugButton)}
         onClick={handleStopDebug} >
         <CancelIcon />
         Stop debug
