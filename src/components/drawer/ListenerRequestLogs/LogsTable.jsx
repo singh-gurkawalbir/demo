@@ -34,13 +34,8 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
   },
   previewWrapper: {
-    // border: `solid 1px ${theme.palette.secondary.lightest}`,
-    // padding: theme.spacing(2),
     position: 'relative',
     padding: theme.spacing(3, 2),
-    // display: 'flex',
-    // flexGrow: 1,
-    // flexDirection: 'column',
   },
   searchMoreWrapper: {
     textAlign: 'center',
