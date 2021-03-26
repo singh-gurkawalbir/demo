@@ -42,18 +42,20 @@ export default function PreviewLogDetails({ flowId, exportId }) {
   const { request, response } = logDetails;
 
   if (status === 'requested') {
-    return <Spinner centerAll />;
+    return <Spinner centerAll color="secondary" />;
   }
 
   return (
-    <CeligoTabWrapper>
-      <CeligoPillTabs tabs={tabs} />
-      <CeligoTabPanel panelId="request">
-        <RequestResponsePanel value={request} />
-      </CeligoTabPanel>
-      <CeligoTabPanel panelId="response">
-        <RequestResponsePanel value={response} />
-      </CeligoTabPanel>
-    </CeligoTabWrapper>
+    <div style={{display: 'flex', flexDirection: 'column', height: '100%', position: 'relative' }}>
+      <CeligoTabWrapper>
+        <CeligoPillTabs tabs={tabs} />
+        <CeligoTabPanel panelId="request">
+          <RequestResponsePanel value={request} />
+        </CeligoTabPanel>
+        <CeligoTabPanel panelId="response">
+          <RequestResponsePanel value={response} />
+        </CeligoTabPanel>
+      </CeligoTabWrapper>
+    </div>
   );
 }

@@ -67,10 +67,10 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
   },
   appLogo: {
-    paddingRight: theme.spacing(2),
-    marginTop: theme.spacing(-0.5),
-    marginRight: theme.spacing(4),
+    padding: theme.spacing(0, 1),
+    margin: theme.spacing(-0.5, 4, 0, 0),
     borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
   },
   guideWrapper: {
     display: 'flex',
@@ -107,7 +107,6 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.secondary.dark,
     },
   },
-
   backButton: {
     marginRight: theme.spacing(1),
     padding: 0,
@@ -125,7 +124,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
   },
-
+  debugLogButton: {
+    padding: '0px 8px',
+  },
 }));
 const useDetermineRequiredResources = type => useMemo(() => {
   const resourceType = [];
@@ -323,6 +324,7 @@ export default function Panel(props) {
                 <IconTextButton
                   onClick={listenerDrawerHandler}
                   color="primary"
+                  className={classes.debugLogButton}
                   data-test="listenerLogs">
                   <DebugIcon />
                   View debug logs

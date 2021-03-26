@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import {makeStyles} from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ActionGroup from '../../ActionGroup';
@@ -9,9 +10,15 @@ import IconTextButton from '../../IconTextButton';
 import RefreshIcon from '../../icons/RefreshIcon';
 import { FILTER_KEY, DEFAULT_ROWS_PER_PAGE } from '../../../utils/listenerLogs';
 
+const useStyles = makeStyles(theme => ({
+  refreshLogsButton: {
+    marginRight: theme.spacing(-2),
+  },
+}));
 const emptyObj = {};
 
 export default function LogsDrawerActions({ flowId, exportId }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const canEnableDebug = useSelector(state => selectors.canEnableDebug(state, exportId, flowId));
   const { hasMore, logsCount, loadMoreStatus } = useSelector(state => {
@@ -92,6 +99,7 @@ export default function LogsDrawerActions({ flowId, exportId }) {
         <IconTextButton
           onClick={refreshLogs}
           data-test="refreshLogs"
+          className={classes.refreshLogsButton}
           disabled={!enableRefresh} >
           <RefreshIcon />
           Refresh logs

@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
   titleHeader: {
     '& > h4': {
-      marginRight: '0px !important',
+      marginRight: `${theme.spacing(-0.5)}px !important`,
     },
   },
 }));
