@@ -68,7 +68,7 @@ export default function ConfigureDebugger(props) {
   const classes = useStyles();
   const match = useRouteMatch();
   const { id, debugDate, onClose } = props;
-  const { confirmDialog } = useConfirmDialog();
+  const { cancelDialog } = useConfirmDialog();
   const [debugValue, setDebugValue] = useState(0);
   const dispatch = useDispatch();
   const handleSaveClick = useCallback(() => {
@@ -100,21 +100,8 @@ export default function ConfigureDebugger(props) {
     }
   }, [debugDate]);
   const handleCancelClick = useCallback(() => {
-    confirmDialog({
-      title: 'You’ve got unsaved changes',
-      message: 'Are you sure you want to leave this page and lose your unsaved changes?',
-      buttons: [
-        {
-          label: 'Save Changes',
-          onClick: onClose,
-        },
-        {
-          label: 'Discard Changes',
-          color: 'secondary',
-        },
-      ],
-    });
-  }, [onClose, confirmDialog]);
+    cancelDialog({onSave: onClose});
+  }, [onClose, cancelDialog]);
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {

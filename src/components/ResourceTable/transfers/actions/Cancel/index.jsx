@@ -9,26 +9,13 @@ export default {
   icon: CancelIcon,
   component: function Cancel({ rowData: transfer }) {
     const dispatch = useDispatch();
-    const { confirmDialog } = useConfirmDialog();
+    const { cancelDialog } = useConfirmDialog();
     const cancelTransfer = useCallback(() => {
       dispatch(actions.transfer.cancel(transfer._id));
     }, [dispatch, transfer._id]);
     const handleClick = useCallback(() => {
-      confirmDialog({
-        title: 'You’ve got unsaved changes',
-        message: 'Are you sure you want to leave this page and lose your unsaved changes?',
-        buttons: [
-          {
-            label: 'Save Changes',
-            onClick: cancelTransfer,
-          },
-          {
-            label: 'Discard Changes',
-            color: 'secondary',
-          },
-        ],
-      });
-    }, [confirmDialog, cancelTransfer]);
+      cancelDialog({onSave: cancelTransfer});
+    }, [cancelDialog, cancelTransfer]);
 
     useEffect(() => {
       handleClick();

@@ -91,7 +91,7 @@ export default function EditorDrawer({
   const { form, init = emptyObj } = settingsForm;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { confirmDialog } = useConfirmDialog();
+  const { cancelDialog } = useConfirmDialog();
 
   const settings = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, resourceType, resourceId, sectionId || 'general')?.settings;
 
@@ -130,21 +130,8 @@ export default function EditorDrawer({
       return onClose();
     }
 
-    confirmDialog({
-      title: 'You’ve got unsaved changes',
-      message: 'Are you sure you want to leave this page and lose your unsaved changes?',
-      buttons: [
-        {
-          label: 'Save Changes',
-          onClick: onClose,
-        },
-        {
-          label: 'Discard Changes',
-          color: 'secondary',
-        },
-      ],
-    });
-  }, [confirmDialog, isEditorDirty, onClose]);
+    cancelDialog({onSave: onClose});
+  }, [cancelDialog, isEditorDirty, onClose]);
   const handlePreviewChange = useCallback(
     () =>
       dispatch(

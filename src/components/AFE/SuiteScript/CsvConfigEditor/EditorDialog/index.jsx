@@ -106,7 +106,7 @@ export default function EditorDialog(props) {
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { confirmDialog } = useConfirmDialog();
+  const { cancelDialog } = useConfirmDialog();
   const [state, setState] = useState({
     layout: props.layout || 'compact',
     fullScreen: props.fullScreen || false,
@@ -149,24 +149,11 @@ export default function EditorDialog(props) {
   );
   const handleCancelClick = useCallback(() => {
     if (isEditorDirty) {
-      confirmDialog({
-        title: 'You’ve got unsaved changes',
-        message: 'Are you sure you want to leave this page and lose your unsaved changes?',
-        buttons: [
-          {
-            label: 'Save Changes',
-            onClick: onClose,
-          },
-          {
-            label: 'Discard Changes',
-            color: 'secondary',
-          },
-        ],
-      });
+      cancelDialog({onSave: onClose});
     } else {
       onClose();
     }
-  }, [confirmDialog, isEditorDirty, onClose]);
+  }, [cancelDialog, isEditorDirty, onClose]);
   const handleFullScreenClick = useCallback(() => {
     patchEditorLayoutChange();
     setState({ ...state, fullScreen: !fullScreen });
