@@ -41,7 +41,7 @@ export default function ReadmeEditor({ value, integrationId }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const editorId = 'readme-editor';
-  const { confirmDialog } = useConfirmDialog();
+  const { cancelDialog } = useConfirmDialog();
   const handleClose = history.goBack;
   const data = useSelector(state => selectors.editor(state, editorId).data);
   const handleChange = useCallback(
@@ -62,21 +62,8 @@ export default function ReadmeEditor({ value, integrationId }) {
       return handleClose();
     }
 
-    confirmDialog({
-      title: 'Confirm cancel',
-      message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
-      buttons: [
-        {
-          label: 'Yes, cancel',
-          onClick: handleClose,
-        },
-        {
-          label: 'No, go back',
-          color: 'secondary',
-        },
-      ],
-    });
-  }, [confirmDialog, isEditorDirty, handleClose]);
+    cancelDialog({onSave: handleClose});
+  }, [cancelDialog, isEditorDirty, handleClose]);
 
   useEffect(() => {
     dispatch(
