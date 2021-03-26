@@ -122,8 +122,18 @@ import DynaDateSelector from './DynaDateSelector';
 import DynaFileEncryptDecrypt from './DynaFileEncryptDecrypt';
 import DynaHashAlogorithm from './DynaHashAlogorithm';
 import DynaQueryRadioGroup from './radiogroup/DynaQueryRadioGroup';
+import DynaAllIntegrations from './integrations/DynaAllIntegrations';
+import DynaChildIntegrations from './integrations/DynaChildIntegrations';
+import DynaFlowsTiedToIntegrations from './integrations/DynaFlowsTiedToIntegrations';
+import DynaReportDateRange from './integrations/DynaReportDateRange';
+import DynaTrialLicense from './DynaTrialLicense';
+import DynaLicenseExpires from './DynaLicenseExpires';
 
 export default {
+  reportdaterange: DynaReportDateRange,
+  flowstiedtointegrations: DynaFlowsTiedToIntegrations,
+  allintegrations: DynaAllIntegrations,
+  childintegrations: DynaChildIntegrations,
   suitescriptsettings: DynaRefreshableSettings,
   refreshabletext: DynaRefreshableText,
   matchingcriteria: DynaMatchingCriteriaWithModal,
@@ -270,4 +280,6 @@ export default {
   dateselector: DynaDateSelector,
   fileencryptdecrypt: DynaFileEncryptDecrypt,
   hashalgorithm: DynaHashAlogorithm,
+  triallicense: DynaTrialLicense,
+  licenseexpires: DynaLicenseExpires,
 };

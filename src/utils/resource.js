@@ -25,6 +25,7 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   pageGenerator: 'Source',
   pageProcessor: 'Destination / lookup',
   apis: 'My API',
+  eventreports: 'Event Report',
 });
 
 export const appTypeToAdaptorType = {

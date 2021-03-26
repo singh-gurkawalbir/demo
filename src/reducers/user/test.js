@@ -977,6 +977,7 @@ describe('user selectors', () => {
       imports: {},
       integrations: {},
       recyclebin: {},
+      eventreports: {},
       scripts: {},
       stacks: {} };
 

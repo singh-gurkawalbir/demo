@@ -172,6 +172,21 @@ export default function DynaHook_afe2({
     label: stack.name,
     value: stack._id,
   }));
+
+  // Below code is to make myapi resource form invalid if script or function is
+  // not provided. If form is invalid, user can not save the resource.
+  useEffect(() => {
+    if (resourceType === 'apis') {
+      const isValid = value.function && value._scriptId;
+
+      if (isValid) {
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
+      } else {
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: 'A value must be provided '}));
+      }
+    }
+  }, [id, dispatch, formKey, value, resourceType]);
+
   const isValidHookField = useCallback(
     field => {
       const { function: func, _scriptId, _stackId } = value;

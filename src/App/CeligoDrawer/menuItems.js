@@ -5,8 +5,7 @@ import MarketplaceIcon from '../../components/icons/MarketplaceIcon';
 import ExportsIcon from '../../components/icons/ExportsIcon';
 import FlowBuilderIcon from '../../components/icons/FlowBuilderIcon';
 import DataLoaderIcon from '../../components/icons/DataLoaderIcon';
-// import AppBuilderIcon from '../../components/icons/AppBuilderIcon';
-// import PermissionExplorerIcon from '../../components/icons/PermissionExplorerIcon';
+import FileIcon from '../../components/icons/FileIcon';
 import EditorsPlaygroundIcon from '../../components/icons/EditorsPlaygroundIcon';
 import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
 import AgentsIcon from '../../components/icons/AgentsIcon';
@@ -49,6 +48,7 @@ export default function menuItems(
       routeProps: [
         getRoutePath('/integrations/:integrationId/flowBuilder'),
         getRoutePath('/integrations/:integrationId/dataLoader'),
+        getRoutePath('/eventreports'),
       ],
       Icon: ToolsIcon,
       children: [
@@ -63,6 +63,12 @@ export default function menuItems(
           Icon: DataLoaderIcon,
           path: '/integrations/none/dataLoader/new',
           routeProps: getRoutePath('/integrations/:integrationId/dataloader'),
+        },
+        {
+          label: 'Reports',
+          Icon: FileIcon,
+          path: '/reports',
+          routeProps: getRoutePath('/reports'),
         },
         {
           label: 'Dev playground',

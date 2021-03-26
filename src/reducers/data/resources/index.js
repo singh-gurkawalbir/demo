@@ -715,7 +715,8 @@ selectors.mkIntegrationAppSettings = subState => {
     }
   );
 };
-const integrationAppSettings = selectors.mkIntegrationAppSettings(true);
+
+export const integrationAppSettings = selectors.mkIntegrationAppSettings(true);
 
 selectors.defaultStoreId = (state, id, store) => {
   const settings = integrationAppSettings(state, id);
@@ -930,3 +931,16 @@ selectors.scripts = createSelector(
   });
 
 // #endregion script selectors
+
+// #region eventReports selectors
+selectors.isAnyReportRunningOrQueued = (state, reportType) => {
+  if (!state) { return false; }
+
+  const eventReports = selectors.resources(state, reportType);
+
+  if (!eventReports) { return false; }
+
+  return eventReports.some(eventReport => ['running', 'queued'].includes(eventReport?.status));
+};
+
+// #endregion eventReports selectors
