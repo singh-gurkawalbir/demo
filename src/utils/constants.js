@@ -268,6 +268,8 @@ export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
   'published',
   'shared/ashares',
 ];
+export const EMAIL_REGEX = /^[\w\-.+]+@(?:[A-Za-z0-9-]+\.)+[a-zA-Z0-9]{2,63}$/;
+
 // Regular Expression to Simple multiple email addresses separated by commas from regextester.com
 export const MULTIPLE_EMAILS = /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/;
 // Regular Expression to absolute url, e.g: (https|http)://abc.com but not relative urls such as www.abc.com or abc.com
