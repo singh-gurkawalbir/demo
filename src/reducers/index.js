@@ -1974,6 +1974,8 @@ selectors.mkIntegrationChildren = () => createSelector(
     const integration = integrations.find(int => int._id === integrationId) || {};
     const childIntegrations = integrations.filter(int => int._parentId === integrationId);
 
+    childIntegrations.sort(stringCompare('createdAt'));
+
     children.push({ value: integrationId, label: integration.name });
     childIntegrations.forEach(ci => {
       children.push({ value: ci._id, label: ci.name, mode: ci.mode });

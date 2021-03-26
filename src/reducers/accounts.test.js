@@ -1564,9 +1564,9 @@ describe('Accounts region selector testcases', () => {
         user: {
           preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
           profile: {
-            _id: '5cadc8b42b10347a2708bf29',
-            name: 'Raghuvamsi User',
-            email: 'raghuvamsi.chandrabhatla@celigo.com',
+            _id: '4534534534',
+            name: 'Raghu',
+            email: 'rr@celigo.com',
           },
           org: {
             users: [
@@ -1612,9 +1612,9 @@ describe('Accounts region selector testcases', () => {
         user: {
           preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
           profile: {
-            _id: '5cadc8b42b10347a2708bf29',
-            name: 'Raghuvamsi User',
-            email: 'raghuvamsi.chandrabhatla@celigo.com',
+            _id: '4534534534',
+            name: 'Raghu',
+            email: 'rr@celigo.com',
           },
           org: {
             users: [
@@ -1662,9 +1662,9 @@ describe('Accounts region selector testcases', () => {
         user: {
           preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
           profile: {
-            _id: '5cadc8b42b10347a2708bf29',
-            name: 'Raghuvamsi User',
-            email: 'raghuvamsi.chandrabhatla@celigo.com',
+            _id: '4534534534',
+            name: 'Raghu',
+            email: 'rr@celigo.com',
           },
           org: {
             users: [
@@ -1710,9 +1710,9 @@ describe('Accounts region selector testcases', () => {
         user: {
           preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
           profile: {
-            _id: '5cadc8b42b10347a2708bf29',
-            name: 'Raghuvamsi User',
-            email: 'raghuvamsi.chandrabhatla@celigo.com',
+            _id: '4534534534',
+            name: 'Raghu',
+            email: 'rr@celigo.com',
           },
           org: {
             users: [
@@ -1760,9 +1760,9 @@ describe('Accounts region selector testcases', () => {
         user: {
           preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
           profile: {
-            _id: '5cadc8b42b10347a2708bf29',
-            name: 'Raghuvamsi User',
-            email: 'raghuvamsi.chandrabhatla@celigo.com',
+            _id: '4534534534',
+            name: 'Raghu',
+            email: 'rr@celigo.com',
           },
           org: {
             users: [
