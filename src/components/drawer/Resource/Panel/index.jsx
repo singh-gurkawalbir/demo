@@ -1,4 +1,4 @@
-import { IconButton, makeStyles, Typography } from '@material-ui/core';
+import { IconButton, makeStyles, Typography, Divider } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -68,9 +68,7 @@ const useStyles = makeStyles(theme => ({
   },
   appLogo: {
     padding: theme.spacing(0, 1),
-    margin: theme.spacing(-0.5, 4, 0, 0),
-    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
-    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+    margin: theme.spacing(-0.5, 0),
   },
   guideWrapper: {
     display: 'flex',
@@ -126,6 +124,17 @@ const useStyles = makeStyles(theme => ({
   },
   debugLogButton: {
     padding: '0px 8px',
+    borderRadius: 0,
+    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+  appLogoWrapper: {
+    position: 'relative',
+    display: 'flex',
+    marginRight: theme.spacing(3),
+  },
+  divider: {
+    height: 24,
+    width: 1,
   },
 }));
 const useDetermineRequiredResources = type => useMemo(() => {
@@ -330,14 +339,16 @@ export default function Panel(props) {
                   View debug logs
                 </IconTextButton>
               )}
-
-              <ApplicationImg
-                className={classes.appLogo}
-                size="small"
-                type={applicationType}
-                alt={applicationType || 'Application image'}
-                assistant={app?.assistant}
+              <div className={classes.appLogoWrapper}>
+                <ApplicationImg
+                  className={classes.appLogo}
+                  size="small"
+                  type={applicationType}
+                  alt={applicationType || 'Application image'}
+                  assistant={app?.assistant}
             />
+                <Divider orientation="vertical" className={classes.divider} />
+              </div>
             </div>
             )}
           </div>
