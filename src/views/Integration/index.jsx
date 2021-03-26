@@ -8,10 +8,9 @@ import IntegrationDIY from './DIY';
 export default function Integration() {
   const match = useRouteMatch();
   const { integrationId} = match.params;
-  const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
-  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
+  const isIntegrationAppV1 = useSelector(state => selectors.isIntegrationAppV1(state, integrationId));
 
-  return isIntegrationApp && !isFrameWork2
+  return isIntegrationAppV1
     ? <IntegrationApp />
     : <IntegrationDIY />;
 }

@@ -128,8 +128,22 @@ export default function useConfirmDialog() {
     },
     [setConfirmDialogProps]
   );
+  const defaultCancelDialog = useCallback(
+    ({onSave}) => {
+      setConfirmDialogProps({
+        title: 'You’ve got unsaved changes',
+        message: 'Are you sure you want to leave this page and lose your unsaved changes?',
+        buttons: [
+          { label: 'Save Changes', color: 'primary', onClick: onSave },
+          { label: 'Discard Changes', variant: 'text', color: 'secondary' },
+        ],
+      });
+    },
+    [setConfirmDialogProps]
+  );
 
   return {
+    cancelDialog: defaultCancelDialog,
     confirmDialog: setConfirmDialogProps,
     defaultConfirmDialog,
   };

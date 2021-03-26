@@ -88,6 +88,7 @@ import {
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
+import { MISCELLANEOUS_SECTION_ID, shouldHaveMiscellaneousSection } from '../views/Integration/DIY/panels/Flows';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
 
@@ -1720,6 +1721,81 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
   }
 );
 
+selectors.mkIntegrationFlowGroups = () => {
+  const integrationAppFlowSections = selectors.mkIntegrationAppFlowSections();
+  const flowGroupings = selectors.mkFlowGroupingsSections();
+
+  return createSelector(
+    state => state?.data?.resources?.flows,
+    (_, integrationId) => integrationId,
+    selectors.isIntegrationAppV1,
+    (state, integrationId) => integrationAppFlowSections(state, integrationId),
+    (state, integrationId) => flowGroupings(state, integrationId),
+    (flows = emptyArray, integrationId, isIAV1, flowSections, flowGroupings) => {
+      if (isIAV1) {
+        return flowSections;
+      }
+
+      if (flowGroupings) {
+        const integrationFlows = flows.filter(f => f._integrationId === integrationId);
+
+        if (shouldHaveMiscellaneousSection(flowGroupings, integrationFlows)) {
+          return [...flowGroupings, {title: 'Miscellaneous', sectionId: MISCELLANEOUS_SECTION_ID}];
+        }
+      }
+
+      return flowGroupings || emptyArray;
+    }
+  );
+};
+
+selectors.mkIntegrationFlowsByGroup = () => {
+  const integrationAppV1Flows = selectors.makeIntegrationSectionFlows();
+
+  return createSelector(
+    state => state?.data?.resources?.integrations,
+    state => state?.data?.resources?.flows,
+    (_, integrationId) => integrationId,
+    (_1, _2, childId) => childId,
+    (_1, _2, _3, groupId) => groupId,
+    selectors.currentEnvironment,
+    selectors.isIntegrationAppV1,
+    (state, integrationId, childId, sectionId) => integrationAppV1Flows(state, integrationId, childId, sectionId),
+    (integrations = emptyArray, flows = emptyArray, integrationId, childId, groupId, currentEnvironment, isIAV1, IAV1Flows) => {
+      if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+        return flows.filter(flow => (!flow._integrationId && !!flow.sandbox === (currentEnvironment === 'sandbox')));
+      }
+      const childIntegrations = integrations
+        .filter(integration => (integration._parentId === integrationId || integration._id === integrationId))
+        .map(integration => integration._id);
+
+      if (isIAV1) {
+        return flows.filter(flow => IAV1Flows.includes(flow._id));
+      }
+
+      return flows.filter(flow => {
+        let isValid = !flow.disabled;
+
+        if (!childId || childId === integrationId) {
+          isValid = isValid && childIntegrations.includes(flow._integrationId);
+        } else {
+          isValid = isValid && flow._integrationId === childId;
+        }
+
+        if (groupId) {
+          if (groupId === MISCELLANEOUS_SECTION_ID) {
+            isValid = isValid && !flow._flowGroupingId;
+          } else {
+            isValid = isValid && flow._flowGroupingId === groupId;
+          }
+        }
+
+        return isValid;
+      });
+    }
+  );
+};
+
 // #endregion resource selectors
 
 // #region integrationApps selectors
@@ -2250,6 +2326,13 @@ selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
   const integration = selectors.resource(state, 'integrations', integrationId);
 
   return isIntegrationAppVerion2(integration, skipCloneCheck);
+};
+
+selectors.isIntegrationAppV1 = (state, integrationId) => {
+  const isIntegrationAppV2 = selectors.isIntegrationAppVersion2(state, integrationId);
+  const integration = selectors.resource(state, 'integrations', integrationId);
+
+  return !!integration?._connectorId && !isIntegrationAppV2;
 };
 
 selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {

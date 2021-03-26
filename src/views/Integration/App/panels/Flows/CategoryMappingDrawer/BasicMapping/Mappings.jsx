@@ -2,14 +2,12 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { components } from 'react-select';
-import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import ListIcon from '@material-ui/icons/List';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import ActionButton from '../../../../../../../components/ActionButton';
-import LockIcon from '../../../../../../../components/icons/LockIcon';
 import MappingSettings from '../../../../../../../components/Mapping/Settings/SettingsButton';
 import TrashIcon from '../../../../../../../components/icons/TrashIcon';
 import DynaTypeableSelect from '../../../../../../../components/DynaForm/fields/DynaTypeableSelect';
@@ -120,6 +118,144 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const ListIconComponent = ({ mapping, generateFields = [] }) => {
+  const { generate } = mapping;
+  const generateField = generateFields.find(f => f.id === generate);
+
+  return generateField &&
+    generateField.options &&
+    generateField.options.length ? (
+    // TODO: @Azhar should be replaced by a ListIcon
+      <ListIcon />
+    ) : null;
+};
+
+const TextContainer = ({ options, onFieldChange, ...props }) => {
+  const classes = useStyles();
+  const [textvalue, setValue] = useState(props.value);
+  const handleValueChange = (id, val) => {
+    onFieldChange(id, val);
+    setValue(val);
+  };
+
+  const { filterType } =
+    options.find(option => option.name === textvalue) || {};
+  let icon;
+
+  switch (filterType) {
+    case 'preferred':
+      icon = (
+        <PreferredIcon
+          className={clsx(classes.filterTypeIcon, classes.PreferredIcon)}
+        />
+      );
+      break;
+    case 'optional':
+      icon = (
+        <OptionalIcon
+          className={clsx(classes.filterTypeIcon, classes.OptionalIcon)}
+        />
+      );
+      break;
+    case 'required':
+      icon = (
+        <RequiredIcon
+          className={clsx(classes.filterTypeIcon, classes.RequiredIcon)}
+        />
+      );
+      break;
+    case 'conditional':
+      icon = (
+        <ConditionalIcon
+          className={clsx(classes.filterTypeIcon, classes.ConditionalIcon)}
+        />
+      );
+      break;
+    default:
+      icon = null;
+      break;
+  }
+
+  return (
+    <DynaText
+      {...props}
+      startAdornment={icon}
+      onFieldChange={handleValueChange}
+      className={classes.dynaTextContainer}
+    />
+  );
+};
+
+const FieldHelp = ({ integrationId, flowId, sectionId, depth, id }) => {
+  const classes = useStyles();
+  const memoizedOptions = useMemo(() => ({ sectionId, depth }), [sectionId]);
+  const { fields = [] } = useSelectorMemo(selectors.mkCategoryMappingGenerateFields, integrationId, flowId, memoizedOptions) || {};
+
+  const field = fields.find(f => f.id === id);
+  const { name: title, description = 'No Description available.' } =
+    field || {};
+
+  return (
+    <Help
+      title={title}
+      disabled={!field}
+      className={classes.helpTextButtonCategroryMapping}
+      helpKey={`categoryMappings-${id}`}
+      helpText={description}
+    />
+  );
+};
+
+const ValueContainer = ({ children, ...props }) => {
+  const classes = useStyles();
+  const value = props.selectProps.inputValue;
+  const { filterType } =
+    props.options.find(option => option.label === value) || {};
+
+  return (
+    <components.ValueContainer {...props}>
+      {(() => {
+        // TODO: Azhar Replace these arrow icons with new icons for ["Preferred", "optional", "conditional", "required"]
+        switch (filterType) {
+          case 'preferred':
+            return (
+              <PreferredIcon
+                className={clsx(
+                  classes.filterTypeIcon,
+                  classes.PreferredIcon
+                )}
+              />
+            );
+          case 'optional':
+            return (
+              <OptionalIcon
+                className={clsx(classes.filterTypeIcon, classes.OptionalIcon)}
+              />
+            );
+          case 'conditional':
+            return (
+              <ConditionalIcon
+                className={clsx(
+                  classes.filterTypeIcon,
+                  classes.ConditionalIcon
+                )}
+              />
+            );
+          case 'required':
+            return (
+              <RequiredIcon
+                className={clsx(classes.filterTypeIcon, classes.RequiredIcon)}
+              />
+            );
+          default:
+            return null;
+        }
+      })()}
+      {children}
+    </components.ValueContainer>
+  );
+};
+
 export default function ImportMapping(props) {
   // generateFields and extractFields are passed as an array of field names
   const {
@@ -142,7 +278,7 @@ export default function ImportMapping(props) {
   const mappingsCopy = mappings ? [...mappings] : [];
 
   mappingsCopy.push({});
-  const tableData = (mappingsCopy || []).map((value, index) => {
+  const tableData = useMemo(() => (mappingsCopy || []).map((value, index) => {
     const obj = value;
 
     obj.index = index;
@@ -167,7 +303,8 @@ export default function ImportMapping(props) {
     obj.visible = visible;
 
     return obj;
-  });
+  }), [mappings, attributes, mappingFilter]);
+
   const handleFieldUpdate = useCallback(
     (rowIndex, event, field) => {
       const { value } = event.target;
@@ -185,7 +322,7 @@ export default function ImportMapping(props) {
     },
     [dispatch, editorId]
   );
-  const handleDelete = row => {
+  const handleDelete = useCallback(row => {
     dispatch(
       actions.integrationApp.settings.categoryMappings.delete(
         integrationId,
@@ -194,143 +331,11 @@ export default function ImportMapping(props) {
         row
       )
     );
-  };
+  }, [integrationId, flowId, editorId]);
 
-  const handleGenerateUpdate = mapping => (id, val) => {
+  const handleGenerateUpdate = useCallback(mapping => (id, val) => {
     handleFieldUpdate(mapping.index, { target: { value: val } }, 'generate');
-  };
-
-  const TextContainer = ({ options, onFieldChange, ...props }) => {
-    const [textvalue, setValue] = useState(props.value);
-    const handleValueChange = (id, val) => {
-      onFieldChange(id, val);
-      setValue(val);
-    };
-
-    const { filterType } =
-      options.find(option => option.name === textvalue) || {};
-    let icon;
-
-    switch (filterType) {
-      case 'preferred':
-        icon = (
-          <PreferredIcon
-            className={clsx(classes.filterTypeIcon, classes.PreferredIcon)}
-          />
-        );
-        break;
-      case 'optional':
-        icon = (
-          <OptionalIcon
-            className={clsx(classes.filterTypeIcon, classes.OptionalIcon)}
-          />
-        );
-        break;
-      case 'required':
-        icon = (
-          <RequiredIcon
-            className={clsx(classes.filterTypeIcon, classes.RequiredIcon)}
-          />
-        );
-        break;
-      case 'conditional':
-        icon = (
-          <ConditionalIcon
-            className={clsx(classes.filterTypeIcon, classes.ConditionalIcon)}
-          />
-        );
-        break;
-      default:
-        icon = null;
-        break;
-    }
-
-    return (
-      <DynaText
-        {...props}
-        startAdornment={icon}
-        onFieldChange={handleValueChange}
-        className={classes.dynaTextContainer}
-      />
-    );
-  };
-
-  const FieldHelp = ({ id }) => {
-    const field = generateFields.find(f => f.id === id);
-    const { name: title, description = 'No Description available.' } =
-      field || {};
-
-    return (
-      <Help
-        title={title}
-        disabled={!field}
-        className={classes.helpTextButtonCategroryMapping}
-        helpKey={`categoryMappings-${id}`}
-        helpText={description}
-      />
-    );
-  };
-
-  const ListIconComponent = ({ mapping, generateFields = [] }) => {
-    const { generate } = mapping;
-    const generateField = generateFields.find(f => f.id === generate);
-
-    return generateField &&
-      generateField.options &&
-      generateField.options.length ? (
-      // TODO: @Azhar should be replaced by a ListIcon
-        <ListIcon />
-      ) : null;
-  };
-
-  const ValueContainer = ({ children, ...props }) => {
-    const value = props.selectProps.inputValue;
-    const { filterType } =
-      props.options.find(option => option.label === value) || {};
-
-    return (
-      <components.ValueContainer {...props}>
-        {(() => {
-          // TODO: Azhar Replace these arrow icons with new icons for ["Preferred", "optional", "conditional", "required"]
-          switch (filterType) {
-            case 'preferred':
-              return (
-                <PreferredIcon
-                  className={clsx(
-                    classes.filterTypeIcon,
-                    classes.PreferredIcon
-                  )}
-                />
-              );
-            case 'optional':
-              return (
-                <OptionalIcon
-                  className={clsx(classes.filterTypeIcon, classes.OptionalIcon)}
-                />
-              );
-            case 'conditional':
-              return (
-                <ConditionalIcon
-                  className={clsx(
-                    classes.filterTypeIcon,
-                    classes.ConditionalIcon
-                  )}
-                />
-              );
-            case 'required':
-              return (
-                <RequiredIcon
-                  className={clsx(classes.filterTypeIcon, classes.RequiredIcon)}
-                />
-              );
-            default:
-              return null;
-          }
-        })()}
-        {children}
-      </components.ValueContainer>
-    );
-  };
+  }, []);
 
   return (
     <div
@@ -360,16 +365,7 @@ export default function ImportMapping(props) {
                     disabled={mapping.isRequired || disabled}
                     onBlur={handleGenerateUpdate(mapping)}
                   />
-                  {mapping.isRequired && (
-                    <Tooltip
-                      data-public
-                      title="This field is required by the application you are importing into"
-                      placement="top">
-                      <span className={classes.lockIcon}>
-                        <LockIcon />
-                      </span>
-                    </Tooltip>
-                  )}
+
                 </div>
                 <MappingConnectorIcon className={classes.mappingIcon} />
                 <div
@@ -402,11 +398,6 @@ export default function ImportMapping(props) {
                     }}
                   />
 
-                  {mapping.isNotEditable && (
-                    <span className={classes.lockIcon}>
-                      <LockIcon />
-                    </span>
-                  )}
                 </div>
                 <div className={classes.mappingActionsCategory}>
                   <div>
@@ -436,7 +427,12 @@ export default function ImportMapping(props) {
                     </ActionButton>
                   </div>
                   <div>
-                    <FieldHelp id={mapping.generate} />
+                    <FieldHelp
+                      id={mapping.generate}
+                      integrationId={integrationId}
+                      flowId={flowId}
+                      sectionId={sectionId}
+                      depth={depth} />
                   </div>
                 </div>
               </div>
