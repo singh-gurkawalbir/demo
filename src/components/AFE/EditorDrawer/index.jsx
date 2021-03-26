@@ -53,7 +53,7 @@ export default function EditorDrawer(props) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { confirmDialog } = useConfirmDialog();
+  const { cancelDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
 
   const [layout, setLayout] = useState(props.layout || 'compact');
@@ -124,24 +124,11 @@ export default function EditorDrawer(props) {
   );
   const handleCancelClick = useCallback(() => {
     if (isEditorDirty) {
-      confirmDialog({
-        title: 'Confirm cancel',
-        message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
-        buttons: [
-          {
-            label: 'Yes, cancel',
-            onClick: handleClose,
-          },
-          {
-            label: 'No, go back',
-            color: 'secondary',
-          },
-        ],
-      });
+      cancelDialog({onSave: handleClose});
     } else {
       handleClose();
     }
-  }, [confirmDialog, isEditorDirty, handleClose]);
+  }, [cancelDialog, isEditorDirty, handleClose]);
 
   const showPreviewAction = !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate;
   const disableSave =
