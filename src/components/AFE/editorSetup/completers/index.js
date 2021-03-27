@@ -72,7 +72,7 @@ export const LookupCompleter = {
           caption: hint.name,
           value: hint.name,
           meta: 'lookup',
-          matchingResult: `lookup "${hint.name}" this`,
+          matchingResult: this.useDotFormat ? `lookup.${hint.name}` : `lookup "${hint.name}" this`,
           completer: {
             insertMatch,
           },
@@ -135,8 +135,9 @@ export const handleBarsCompleters = {
   setJsonCompleter: jsonData => {
     JsonCompleter.jsonHints = loadJsonHints(jsonData);
   },
-  setLookupCompleter: lookups => {
+  setLookupCompleter: (lookups, useDotFormat) => {
     LookupCompleter.lookupsHints = lookups;
+    LookupCompleter.useDotFormat = useDotFormat;
   },
   getCompleters: () => ({
     JsonCompleter,
