@@ -1070,6 +1070,8 @@ export default {
   'connector.repository.name': '.',
   'connection.ftp.type':
     'Choose the protocol to use for your FTP connection. Choose <b>FTP</b> (basic File Transfer Protocol) if your data is sent and received unencrypted. Choose <b>SFTP</b> if your data is transferred over the encrypted Secure Shell (SSH2) protocol. <b>FTPS</b> is similar to basic FTP, but data is encrypted via the Transport Layer Security (TLS) protocol before transfer.',
+  'connection.usePgp':
+    'Set this field to configure PGP cryptographic information used for encrypting and decrypting files.',
   'export._id':
     'System generated primary unique identifier for your export.  For API users, this value should be used for GET, PUT and DELETE requests.',
   'editor.xml.simple':
