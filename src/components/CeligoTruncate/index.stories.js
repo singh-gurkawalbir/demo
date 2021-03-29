@@ -45,9 +45,9 @@ const Template = args => {
 
 export const Defaults = Template.bind({});
 
-export const Overrides = Template.bind({});
+export const TwoLines = Template.bind({});
 
-Overrides.args = {
+TwoLines.args = {
   lines: 2,
   delay: 1000,
   placement: 'right',
