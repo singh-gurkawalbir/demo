@@ -19,6 +19,7 @@ import { generateNewId } from '../../utils/resource';
 import ViewReportDetails from './ViewReportDetails';
 import infoText from '../ResourceList/infoText';
 import InfoIconButton from '../../components/InfoIconButton';
+import RefreshIcon from '../../components/icons/RefreshIcon';
 
 const useStyles = makeStyles(theme => ({
   emptySpace: {
@@ -123,16 +124,9 @@ export default function Reports() {
   };
 
   const list = useSelectorMemo(
-    selectors.makeResourceListSelector,
+    selectors.mkEventReportsFiltered,
     filterConfig
   );
-  const reportsResult = useSelector(
-    state => selectors.filter(state, resourceType), shallowEqual
-  );
-  const { currPage, rowsPerPage } = reportsResult.paging || {};
-
-  const paginatedList = useMemo(() => list.resources.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage),
-    [currPage, list.resources, rowsPerPage]);
 
   usePollLatestResourceCollection(resourceType);
   const selectedReportTypeLabel = () => VALID_REPORT_TYPES.find(({value}) => value === resourceType)?.label;
@@ -186,6 +180,12 @@ export default function Reports() {
             color="primary">
             <AddIcon /> Run Report
           </IconTextButton>
+          <IconTextButton
+            data-test="refreshReports"
+            onClick={() => dispatch(actions.resource.requestCollection(resourceType, null, true))}
+          >
+            <RefreshIcon />Refresh
+          </IconTextButton>
           <Pagination filterKey={resourceType} count={list.count} />
         </div>
         <LoadResources required resources={`${resourceType},integrations,flows`}>
@@ -197,7 +197,7 @@ export default function Reports() {
           ) : (
             <ResourceTable
               resourceType={resourceType}
-              resources={paginatedList}
+              resources={list.resources}
             />
           )}
         </LoadResources>

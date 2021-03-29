@@ -121,18 +121,18 @@ const useStyles = makeStyles(theme => ({
     color: '#836A49',
   },
 }));
+export const capitalize = s => {
+  if (typeof s !== 'string') return '';
 
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
 export default function Endpoint() {
   const dispatch = useDispatch();
   const classes = useStyles();
   const match = useRouteMatch();
   const history = useHistory();
   const { confirmDialog } = useConfirmDialog();
-  const capitalize = s => {
-    if (typeof s !== 'string') return '';
 
-    return s.charAt(0).toUpperCase() + s.slice(1);
-  };
   const titleMap = {
     endpoints: 'Endpoint apps',
     flows: 'Integration flows',
