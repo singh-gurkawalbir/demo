@@ -56,12 +56,14 @@ describe('editor sagas', () => {
           connection,
           export: resource,
           fieldPath: 'http.body',
+          timezone: 'Asia/Calcutta',
         },
       };
 
       return expectSaga(invokeProcessor, { editorId, processor: 'handlebars', body })
         .provide([
           [matchers.call.fn(apiCallWithRetry), undefined],
+          [select(selectors.userTimezone), 'Asia/Calcutta'],
           [select(selectors._editor, editorId), editorState],
           [matchers.call.fn(constructResourceFromFormValues), resource],
           [select(selectors.resource, 'connections', 'conn-123'), connection],
@@ -125,12 +127,14 @@ describe('editor sagas', () => {
               default: 'default name',
             },
           },
+          timezone: null,
         },
       };
 
       return expectSaga(invokeProcessor, { editorId, processor: 'handlebars', body })
         .provide([
           [matchers.call.fn(apiCallWithRetry), undefined],
+          [select(selectors.userTimezone), null],
           [select(selectors._editor, editorId), editorState],
           [matchers.call.fn(constructResourceFromFormValues), resource],
           [select(selectors.resource, 'connections', 'conn-123'), connection],

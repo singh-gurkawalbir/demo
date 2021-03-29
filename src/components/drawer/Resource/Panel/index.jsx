@@ -1,4 +1,4 @@
-import { IconButton, makeStyles, Typography } from '@material-ui/core';
+import { IconButton, makeStyles, Typography, Divider } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -67,10 +67,8 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
   },
   appLogo: {
-    paddingRight: theme.spacing(2),
-    marginTop: theme.spacing(-0.5),
-    marginRight: theme.spacing(4),
-    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+    padding: theme.spacing(0, 1),
+    margin: theme.spacing(-0.5, 0),
   },
   guideWrapper: {
     display: 'flex',
@@ -107,7 +105,6 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.secondary.dark,
     },
   },
-
   backButton: {
     marginRight: theme.spacing(1),
     padding: 0,
@@ -125,7 +122,20 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
   },
-
+  debugLogButton: {
+    padding: '0px 8px',
+    borderRadius: 0,
+    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+  appLogoWrapper: {
+    position: 'relative',
+    display: 'flex',
+    marginRight: theme.spacing(3),
+  },
+  divider: {
+    height: 24,
+    width: 1,
+  },
 }));
 const useDetermineRequiredResources = type => useMemo(() => {
   const resourceType = [];
@@ -323,19 +333,22 @@ export default function Panel(props) {
                 <IconTextButton
                   onClick={listenerDrawerHandler}
                   color="primary"
+                  className={classes.debugLogButton}
                   data-test="listenerLogs">
                   <DebugIcon />
                   View debug logs
                 </IconTextButton>
               )}
-
-              <ApplicationImg
-                className={classes.appLogo}
-                size="small"
-                type={applicationType}
-                alt={applicationType || 'Application image'}
-                assistant={app?.assistant}
+              <div className={classes.appLogoWrapper}>
+                <ApplicationImg
+                  className={classes.appLogo}
+                  size="small"
+                  type={applicationType}
+                  alt={applicationType || 'Application image'}
+                  assistant={app?.assistant}
             />
+                <Divider orientation="vertical" className={classes.divider} />
+              </div>
             </div>
             )}
           </div>
