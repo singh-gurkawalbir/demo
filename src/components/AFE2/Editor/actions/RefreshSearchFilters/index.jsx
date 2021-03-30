@@ -21,14 +21,16 @@ export default function RefreshSearchFilters({ editorId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const {resourceType, formKey, resourceId, fieldId} = useSelector(state => {
+  const {resourceType, formKey, resourceId, fieldId, editorType} = useSelector(state => {
     const e = selectors._editor(state, editorId);
 
     return {resourceType: e.resourceType,
       formKey: e.formKey,
       resourceId: e.resourceId,
       flowId: e.flowId,
-      fieldId: e.fieldId};
+      fieldId: e.fieldId,
+      editorType: e.editorType,
+    };
   }, shallowEqual);
 
   const connectionId = useSelector(state => {
@@ -42,7 +44,7 @@ export default function RefreshSearchFilters({ editorId }) {
 
   const { disableFetch, commMetaPath } = options;
 
-  const filters = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath)?.data;
+  const filters = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, editorType === 'salesforceLookupFilter' ? 'salesforce-recordType' : undefined)?.data;
 
   useEffect(() => {
     if (!disableFetch && commMetaPath) {
