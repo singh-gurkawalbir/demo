@@ -70,7 +70,7 @@ import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier_afe2 from './DynaNetSuiteQualifier_afe2';
-import DynaSalesforceQualifier from './DynaSalesforceQualifier';
+import DynaSalesforceQualifier_afe2 from './DynaSalesforceQualifier_afe2';
 import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
 import DynaSalesforceLookup_afe2 from './DynaSalesforceLookup_afe2';
 import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
@@ -218,7 +218,8 @@ export default {
   datetime: DynaDateTime,
   // sqlquerybuilder: DynaSQLQueryBuilder,
   sqlquerybuilder: DynaSQLQueryBuilder_afe2,
-  salesforcequalifier: DynaSalesforceQualifier,
+  // salesforcequalifier: DynaSalesforceQualifier,
+  salesforcequalifier: DynaSalesforceQualifier_afe2,
   salesforcerequiredtrigger: Salesforce.DynaRequiredTrigger,
   salesforcereferencedfields: Salesforce.DynaReferencedFields,
   salesforcerelatedlistmodal: ReferencedFieldsModal,

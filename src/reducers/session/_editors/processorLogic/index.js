@@ -12,7 +12,7 @@ import sql from './sql';
 import filter from './filter';
 import netsuiteLookupFilter from './netsuiteLookupFilter';
 import netsuiteQualificationCriteria from './netsuiteQualificationCriteria';
-// import salesforceQualifier from './salesforceQualifier';
+import salesforceQualificationCriteria from './salesforceQualificationCriteria';
 import salesforceLookupFilter from './salesforceLookupFilter';
 import readme from './readme';
 import postResponseMapHook from './postResponseMapHook';
@@ -46,6 +46,7 @@ const logicMap = {
   netsuiteLookupFilter,
   salesforceLookupFilter,
   netsuiteQualificationCriteria,
+  salesforceQualificationCriteria,
 };
 
 export function getLogic(editor) {
@@ -230,6 +231,10 @@ export const featuresMap = options => ({
     hidePreview: true,
   },
   netsuiteQualificationCriteria: {
+    layout: 'lookupFilter',
+    hidePreview: true,
+  },
+  salesforceQualificationCriteria: {
     layout: 'lookupFilter',
     hidePreview: true,
   },

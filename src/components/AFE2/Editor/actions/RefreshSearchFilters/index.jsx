@@ -45,7 +45,7 @@ export default function RefreshSearchFilters({ editorId }) {
   const { disableFetch, commMetaPath } = options;
   let filterKey;
 
-  if (editorType === 'salesforceLookupFilter') {
+  if (editorType === 'salesforceLookupFilter' || editorType === 'salesforceQualificationCriteria') {
     filterKey = 'salesforce-recordType';
   } else if (editorType === 'netsuiteQualificationCriteria') {
     filterKey = 'suitescript-bodyField';
