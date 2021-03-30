@@ -2331,7 +2331,7 @@ selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
 };
 
 selectors.isIntegrationAppV1 = (state, integrationId) => {
-  const isIntegrationAppV2 = selectors.isIntegrationAppVersion2(state, integrationId);
+  const isIntegrationAppV2 = selectors.isIntegrationAppVersion2(state, integrationId, true);
   const integration = selectors.resource(state, 'integrations', integrationId);
 
   return !!integration?._connectorId && !isIntegrationAppV2;
