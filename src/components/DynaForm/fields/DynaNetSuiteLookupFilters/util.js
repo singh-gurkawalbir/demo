@@ -356,6 +356,7 @@ export function validateFilterRule(rule) {
     'ceiling',
     'floor',
     'number',
+    'abs',
   ];
   const r = rule.data;
   const validation = {

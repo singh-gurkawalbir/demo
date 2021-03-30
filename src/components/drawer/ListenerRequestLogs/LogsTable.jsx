@@ -18,41 +18,36 @@ const useStyles = makeStyles(theme => ({
   listContainer: {
     height: '100%',
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
+    gridTemplateColumns: '1fr 2fr',
   },
   noResultColumn: {
     gridTemplateColumns: '1fr',
   },
   tableWrapper: {
-    border: `solid 1px ${theme.palette.secondary.lightest}`,
+    border: 'solid 1px',
+    borderTop: 'none',
+    borderColor: theme.palette.secondary.lightest,
     overflowY: 'auto',
+    minWidth: '560px',
   },
   textWrapper: {
     padding: theme.spacing(2),
   },
   previewWrapper: {
-    border: `solid 1px ${theme.palette.secondary.lightest}`,
-    padding: theme.spacing(2),
     position: 'relative',
+    padding: theme.spacing(3, 2),
   },
   searchMoreWrapper: {
     textAlign: 'center',
-    '& > button': {
-      fontFamily: 'Roboto400',
-      minWidth: 190,
-      color: theme.palette.common.white,
-      marginBottom: theme.spacing(2),
-      marginTop: theme.spacing(2),
-      padding: theme.spacing(1, 5, 1, 5),
+    margin: theme.spacing(2, 0),
+  },
+  searchButton: {
+    color: theme.palette.common.white,
+    '& > * svg': {
+      fontSize: theme.spacing(2),
     },
   },
-  searchMoreIcon: {
-    height: 18,
-  },
-  searchMoreSpinner: {
-    marginRight: theme.spacing(1),
-    color: theme.palette.common.white,
-  },
+
 }));
 
 export default function LogsTable({ flowId, exportId }) {
@@ -125,8 +120,7 @@ export default function LogsTable({ flowId, exportId }) {
           <ResourceTable
             resources={logsInCurrPage}
             resourceType="listenerLogs"
-            actionProps={actionProps}
-            variant="slim" />
+            actionProps={actionProps} />
           {!hasDebugLogs && !hasNextPage && (
           <Typography className={classes.textWrapper}>
             You don’t have any debug log entries.
@@ -135,11 +129,13 @@ export default function LogsTable({ flowId, exportId }) {
           {hasNextPage && (
           <div className={classes.searchMoreWrapper}>
             <IconTextButton
-              variant="outlined" color="primary"
+              variant="outlined"
+              color="primary"
+              className={classes.searchButton}
               onClick={loadMoreLogs}>
               {loadMoreStatus === 'requested' ? (
                 <>
-                  <Spinner className={classes.searchMoreSpinner} size={18} />
+                  <Spinner className={classes.searchMoreSpinner} size="small" />
                   Searching
                 </>
               ) : (

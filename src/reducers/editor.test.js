@@ -273,7 +273,7 @@ describe('AFE region selectors test cases', () => {
         id: editorId,
         resourceType: 'imports',
         resourceId: '123',
-        fieldId: 'realtiveUri',
+        fieldId: 'ftp.body',
         resultMode: 'text',
       };
       expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(false);
@@ -297,6 +297,17 @@ describe('AFE region selectors test cases', () => {
       };
       expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(true);
       expect(selectors.isEditorLookupSupported(state, 'def')).toEqual(true);
+    });
+    test('should return true for relative uri field', () => {
+      state.session._editors[editorId] = {
+        id: editorId,
+        editorType: 'handlebars',
+        resourceType: 'imports',
+        resourceId: '123',
+        fieldId: 'http.relativeURI',
+        resultMode: 'text',
+      };
+      expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(true);
     });
     test('should return true for editor type equal to databaseMapping for imports', () => {
       state.session._editors[editorId] = {
