@@ -1909,12 +1909,6 @@ const errorManager = {
           retryCount,
         }
       ),
-    trackTraceKeys: ({ flowId, resourceId, traceKeys }) =>
-      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.TRACK_RETRIED_TRACE_KEYS, {
-        flowId,
-        resourceId,
-        traceKeys,
-      }),
     resolveReceived: ({ flowId, resourceId, resolveCount }) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.RECEIVED,

@@ -1975,6 +1975,8 @@ selectors.mkIntegrationChildren = () => createSelector(
     const integration = integrations.find(int => int._id === integrationId) || {};
     const childIntegrations = integrations.filter(int => int._parentId === integrationId);
 
+    childIntegrations.sort(stringCompare('createdAt'));
+
     children.push({ value: integrationId, label: integration.name });
     childIntegrations.forEach(ci => {
       children.push({ value: ci._id, label: ci.name, mode: ci.mode });
@@ -5205,9 +5207,27 @@ selectors.isEditorDisabled = (state, editorId) => {
 selectors.isEditorLookupSupported = (state, editorId) => {
   const editor = fromSession._editor(state?.session, editorId);
   const {resultMode, fieldId, editorType, resourceType} = editor;
+  const lookupFields = [
+    '_body',
+    '_postBody',
+    '_relativeURI',
+    '_query',
+  ];
+  const uriFields = [
+    'http.relativeURI',
+    'rest.relativeURI',
+  ];
 
-  // lookups are only valid for http request body and sql query fields (not for uri fields)
-  if (fieldId === '_body' || fieldId === '_query' || resourceType !== 'imports' || (resultMode === 'text' && editorType !== 'sql' && editorType !== 'databaseMapping')) {
+  // lookups are only valid for http request body and sql query import fields (but not for lookup fields inside those)
+  // and other text result fields
+  if (resourceType !== 'imports') {
+    return false;
+  }
+  if (uriFields.includes(fieldId)) {
+    return true;
+  }
+
+  if (lookupFields.includes(fieldId) || (resultMode === 'text' && editorType !== 'sql' && editorType !== 'databaseMapping')) {
     return false;
   }
 

@@ -44,6 +44,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
   // options should be passed to BE for handlebars processor
   // for correct HTML/URL encoding
   if (processor === 'handlebars' && editorId) {
+    const timezone = yield select(selectors.userTimezone);
     const editor = yield select(selectors._editor, editorId);
     const {formKey, fieldId, resourceId, resourceType, supportsDefaultData} = editor;
     const formState = yield select(selectors.formState, formKey);
@@ -62,6 +63,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
         connection,
         [resourceType === 'imports' ? 'import' : 'export']: resource,
         fieldPath: fieldId,
+        timezone,
       },
     };
     // for sql editors, modelMetadata needs to be passed inside options

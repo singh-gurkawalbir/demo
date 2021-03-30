@@ -147,6 +147,10 @@ export default function DateTimePicker(props) {
   },
   [dispatch, formKey, id, isEnteredDateAndTimeValue]);
 
+  // suspend force field state compuation once the component turns invisble
+  useEffect(() => () => {
+    dispatch(actions.form.clearForceFieldState(formKey)(id));
+  }, [dispatch, formKey, id]);
   useEffect(() => {
     let formattedDate = null;
     const dataTimeValueFormatted = moment();
