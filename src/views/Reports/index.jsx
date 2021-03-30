@@ -44,11 +44,9 @@ const useStyles = makeStyles(theme => ({
 const defaultFilter = {
   sort: { order: 'desc', orderBy: 'createdAt' },
   paging: {
-    rowsPerPage: 5,
+    rowsPerPage: 25,
     currPage: 0,
-
   },
-
 };
 
 const EVENT_REPORT_TYPE_VALUE = 'eventreports';

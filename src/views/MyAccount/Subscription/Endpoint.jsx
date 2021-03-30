@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles, Typography } from '@material-ui/core';
+import { capitalize, makeStyles, Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
@@ -121,11 +121,7 @@ const useStyles = makeStyles(theme => ({
     color: '#836A49',
   },
 }));
-export const capitalize = s => {
-  if (typeof s !== 'string') return '';
 
-  return s.charAt(0).toUpperCase() + s.slice(1);
-};
 export default function Endpoint() {
   const dispatch = useDispatch();
   const classes = useStyles();

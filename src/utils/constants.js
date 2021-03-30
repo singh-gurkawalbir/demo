@@ -273,7 +273,7 @@ export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
 
 // email regex is used in our backend as well and is
 // referenced from this repo https://github.com/celigo/integrator-adaptor/blob/master/util/validator.js
-export const EMAIL_REGEX = /^[\w\-.+]+@(?:[A-Za-z0-9-]+\.)+[a-zA-Z0-9]{2,63}$/;
+export const EMAIL_REGEX = /^[\w\-.+]+@[a-zA-Z0-9.-]+\.[a-zA-z0-9]{2,10}$/;
 
 // Regular Expression to Simple multiple email addresses separated by commas from regextester.com
 export const MULTIPLE_EMAILS = /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/;

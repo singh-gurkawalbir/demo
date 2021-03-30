@@ -1,10 +1,9 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import { capitalize, makeStyles } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import { useSelectorMemo } from '../../../hooks';
 import DateFilter from '../commonCells/DateFilter';
-
 import cancelReport from './actions/cancelReport';
 import downloadResults from './actions/downloadResults';
 import ViewReport from './actions/ViewReport';
@@ -12,7 +11,6 @@ import DateTimeDisplay from '../../DateTimeDisplay';
 import Spinner from '../../Spinner';
 import CeligoTruncate from '../../CeligoTruncate';
 import {EVENT_REPORTS_DEFAULT} from '../../DynaForm/fields/integrations/DynaReportDateRange';
-import { capitalize } from '../../../views/MyAccount/Subscription/Endpoint';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
 
 const EVENT_REPORT_STATUS = {
@@ -136,7 +134,7 @@ const metadata = {
         const classes = useStyles();
 
         if ([EVENT_REPORT_STATUS.QUEUED, EVENT_REPORT_STATUS.RUNNING].includes(r.status)) {
-          return <div className={classes.flex}><Spinner /> {r?.status} </div>;
+          return <div className={classes.flex}><Spinner /> {capitalize(r?.status)} </div>;
         }
 
         return capitalize(r?.status);
@@ -145,9 +143,11 @@ const metadata = {
     {
       heading: 'Requested By',
       Value: function RequestedByUser({r}) {
-        const {name, email} = useSelectorMemo(selectors.mkGetUserById, r._requestedByUserId) || {};
+        const {requestedByUser} = r;
 
-        return name || email || r._requestedByUserId;
+        if (!requestedByUser) return null;
+
+        return requestedByUser.name || requestedByUser.email;
       },
       orderBy: 'lastModified',
     },

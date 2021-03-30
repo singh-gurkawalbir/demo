@@ -841,7 +841,6 @@ selectors.mkEventReportsFiltered = () => {
     (_1, options) => options,
     (allEventReports, allUniqueFlowsTiedToEventReports, options) => {
       if (!(allEventReports?.resources) || !allUniqueFlowsTiedToEventReports) { return null; }
-
       const {paging, ...filterParams} = options || {};
 
       const {integrationId: integrationIdFilter, flowIds: flowIdsFilter, status: statusFilter, startDate: startDateFilter, endDate: endDateFilter } = filterParams;
@@ -854,6 +853,7 @@ selectors.mkEventReportsFiltered = () => {
 
         return statusCriteria && flowIdCriteria && startDateStatus && endDateStatus;
       });
+      // checking filtering by integration
 
       filteredEventReports = (!integrationIdFilter || !integrationIdFilter.length) ? filteredEventReports : filteredEventReports.filter(({_flowIds}) => {
         const flow = allUniqueFlowsTiedToEventReports.find(({_id}) => _flowIds?.[0] === _id);
@@ -2549,18 +2549,6 @@ selectors.availableUsersList = (state, integrationId) => {
 
   return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
 };
-
-selectors.mkGetUserById = () => createSelector(
-  selectors.availableUsersList,
-  (_1, userId) => userId,
-  (users, userId) => {
-    if (!userId || !users) return null;
-
-    const {sharedWithUser} = users.find(u => u?.sharedWithUser?._id === userId) || {};
-
-    return sharedWithUser || {};
-  }
-);
 
 selectors.platformLicense = createSelector(
   selectors.userPreferences,
