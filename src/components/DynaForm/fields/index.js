@@ -69,7 +69,7 @@ import DynaIASelect from './DynaIASelect';
 import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
-import DynaNetSuiteQualifier from './DynaNetSuiteQualifier';
+import DynaNetSuiteQualifier_afe2 from './DynaNetSuiteQualifier_afe2';
 import DynaSalesforceQualifier from './DynaSalesforceQualifier';
 import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
 import DynaSalesforceLookup_afe2 from './DynaSalesforceLookup_afe2';
@@ -235,7 +235,8 @@ export default {
   userpassword: DynaUserPassword,
   dynaiclient: DynaIclient,
   replaceconnection: DynaReplaceConnection,
-  netsuitequalifier: DynaNetSuiteQualifier,
+  // netsuitequalifier: DynaNetSuiteQualifier,
+  netsuitequalifier: DynaNetSuiteQualifier_afe2,
   salesforcelookupfilters: DynaSalesforceLookupFilters,
   // salesforcelookup: DynaSalesforceLookup,
   salesforcelookup: DynaSalesforceLookup_afe2,

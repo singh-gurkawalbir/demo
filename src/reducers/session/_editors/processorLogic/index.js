@@ -11,7 +11,7 @@ import structuredFileGenerator from './structuredFileGenerator';
 import sql from './sql';
 import filter from './filter';
 import netsuiteLookupFilter from './netsuiteLookupFilter';
-// import netsuiteQualificationCriteria from './netsuiteQualificationCriteria';
+import netsuiteQualificationCriteria from './netsuiteQualificationCriteria';
 // import salesforceQualifier from './salesforceQualifier';
 import salesforceLookupFilter from './salesforceLookupFilter';
 import readme from './readme';
@@ -45,6 +45,7 @@ const logicMap = {
   readme,
   netsuiteLookupFilter,
   salesforceLookupFilter,
+  netsuiteQualificationCriteria,
 };
 
 export function getLogic(editor) {
@@ -225,6 +226,10 @@ export const featuresMap = options => ({
     hidePreview: true,
   },
   salesforceLookupFilter: {
+    layout: 'lookupFilter',
+    hidePreview: true,
+  },
+  netsuiteQualificationCriteria: {
     layout: 'lookupFilter',
     hidePreview: true,
   },

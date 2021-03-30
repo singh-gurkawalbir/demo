@@ -19,6 +19,7 @@ import readme from './readme';
 import databaseMapping from './databaseMapping';
 import netsuiteLookupFilter from './netsuiteLookupFilter';
 import salesforceLookupFilter from './salesforceLookupFilter';
+import netsuiteQualificationCriteria from './netsuiteQualificationCriteria';
 
 const map = {
   csvParser,
@@ -42,6 +43,7 @@ const map = {
   databaseMapping,
   netsuiteLookupFilter,
   salesforceLookupFilter,
+  netsuiteQualificationCriteria,
 };
 export default map;
 

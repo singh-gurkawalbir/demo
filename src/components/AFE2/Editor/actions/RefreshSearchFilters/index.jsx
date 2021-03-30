@@ -43,8 +43,15 @@ export default function RefreshSearchFilters({ editorId }) {
   const {required, options = {}} = fieldState || {};
 
   const { disableFetch, commMetaPath } = options;
+  let filterKey;
 
-  const filters = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, editorType === 'salesforceLookupFilter' ? 'salesforce-recordType' : undefined)?.data;
+  if (editorType === 'salesforceLookupFilter') {
+    filterKey = 'salesforce-recordType';
+  } else if (editorType === 'netsuiteQualificationCriteria') {
+    filterKey = 'suitescript-bodyField';
+  }
+
+  const filters = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey)?.data;
 
   useEffect(() => {
     if (!disableFetch && commMetaPath) {

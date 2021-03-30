@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
@@ -26,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DynaSalesforceLookup(props) {
+export default function DynaSalesforceLookup_afe2(props) {
   const classes = useStyles();
   const {
     errorMessages,
