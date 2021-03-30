@@ -27,7 +27,7 @@ function FBComponent({flowId, integrationId, childId}) {
         flowId={flowId}
         integrationId={integrationId}
         setTabValue={setTabValue}
-   />
+      />
 
       <BottomDrawer
         flowId={flowId}
@@ -35,7 +35,7 @@ function FBComponent({flowId, integrationId, childId}) {
         setTabValue={setTabValue}
         integrationId={integrationId}
         childId={childId}
-/>
+      />
     </>
   );
 }

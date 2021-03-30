@@ -269,7 +269,7 @@ export default function ConnectorInstallation(props) {
           );
         } else if (parentId) {
           props.history.push(
-            getRoutePath(`/integrationapps/${integrationAppName}/${parentId}`)
+            getRoutePath(`/integrationapps/${integrationAppName}/${parentId}/child/${integrationId}/flows`)
           );
         } else if (integrationInstallSteps && integrationInstallSteps.length > 0) {
           if (_connectorId) {
