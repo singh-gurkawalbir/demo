@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import DynaApiMethod from './DynaApiMethod';
-import DynaCsvParse from './editors/DynaCsvParse';
+import DynaCsvParse_afe2 from './editors/DynaCsvParse_afe2';
 import DynaNetSuiteFolderPath from './DynaNetSuiteFolderPath';
 import DynaSoqlQuery from './DynaSoqlQuery';
 import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
@@ -14,7 +14,8 @@ import DynaNetSuiteSubRecords from './DynaNetSuiteSubRecords';
 
 export default {
   suitescriptapimethod: DynaApiMethod,
-  suitescriptcsvparse: DynaCsvParse,
+  // suitescriptcsvparse: DynaCsvParse,
+  suitescriptcsvparse: DynaCsvParse_afe2,
   suitescriptnetsuitefolderpath: DynaNetSuiteFolderPath,
   suitescriptsoqlquery: DynaSoqlQuery,
   suitescriptsalesforcerefreshableselect: DynaSalesforceRefreshableSelect,

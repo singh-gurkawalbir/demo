@@ -3272,7 +3272,9 @@ selectors.fileDefinitionSampleData = (state, { userDefinitionId, resourceType, o
  * Note : Incase of xlsx 'csv' stage is requested as the raw stage contains xlsx format which is not used
  * Modify this if we need xlsx content any where to show
  */
-selectors.fileSampleData = (state, { resourceId, resourceType, fileType}) => {
+selectors.fileSampleData = (state, { resourceId, resourceType, fileType, ssLinkedConnectionId}) => {
+  if (ssLinkedConnectionId) return selectors.suiteScriptFileExportSampleData(state, {resourceId, resourceType, ssLinkedConnectionId});
+
   const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
   const { data: rawData } = selectors.getResourceSampleDataWithStatus(
     state,

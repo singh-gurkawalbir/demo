@@ -372,7 +372,7 @@ export function* requestEditorSampleData({
 
   if (!editor) return;
 
-  const {editorType, flowId, resourceId, resourceType, fieldId, formKey, stage} = editor;
+  const {editorType, flowId, resourceId, resourceType, fieldId, formKey, stage, ssLinkedConnectionId} = editor;
   // for some fields only v2 data is supported (not v1)
   const editorSupportsOnlyV2Data = yield select(selectors.editorSupportsOnlyV2Data, id);
 
@@ -415,7 +415,7 @@ export function* requestEditorSampleData({
   if (editorType === 'csvParser' || editorType === 'xmlParser') {
     const fileType = editorType === 'csvParser' ? 'csv' : 'xml';
 
-    const fileData = yield select(selectors.fileSampleData, { resourceId, resourceType, fileType});
+    const fileData = yield select(selectors.fileSampleData, { resourceId, resourceType, fileType, ssLinkedConnectionId});
 
     return { data: fileData};
   }
