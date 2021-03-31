@@ -112,13 +112,18 @@ export default {
           return [...selectedScopes, ...scopes];
         }
       },
+      visible: r => !(r?._connectorId),
       visibleWhenAll: r => {
+        if (r?._connectorId) {
+          return [];
+        }
         if (r?.http?._iClientId) {
           return [{ field: 'http.auth.type', isNot: ['oauth'] },
             { field: 'http.auth.type', isNot: ['token'] }];
         }
-
-        return [{ field: 'http.auth.type', is: ['oauth'] }];
+        if (!(r?._connectorId)) {
+          return [{ field: 'http.auth.type', is: ['oauth'] }];
+        }
       },
     },
     application: {

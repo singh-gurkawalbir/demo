@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles, Typography } from '@material-ui/core';
+import { capitalize, makeStyles, Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
@@ -128,11 +128,7 @@ export default function Endpoint() {
   const match = useRouteMatch();
   const history = useHistory();
   const { confirmDialog } = useConfirmDialog();
-  const capitalize = s => {
-    if (typeof s !== 'string') return '';
 
-    return s.charAt(0).toUpperCase() + s.slice(1);
-  };
   const titleMap = {
     endpoints: 'Endpoint apps',
     flows: 'Integration flows',

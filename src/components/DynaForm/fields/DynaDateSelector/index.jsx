@@ -72,6 +72,7 @@ export default function DynaDateSelector(props) {
   useEffect(() => () => {
     dispatch(actions.form.clearForceFieldState(formKey)(id));
   }, [dispatch, formKey, id]);
+
   const handleFieldChange = useCallback((id, value) => {
     // isValueParsableByMoment checks for an incomplete form value or invalid date
     if (isValueParsableByMoment(value)) {

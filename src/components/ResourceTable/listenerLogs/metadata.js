@@ -55,7 +55,6 @@ export default {
             options={LISTENER_LOGS_STATUS_CODES} />
         );
       },
-      align: 'right',
       value: log => log.statusCode,
     },
   ],
