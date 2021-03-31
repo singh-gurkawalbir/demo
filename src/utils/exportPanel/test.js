@@ -178,6 +178,7 @@ describe('getRequestURL util', () => {
 describe('getRecordSizeOptions util', () => {
   test('should return 10 options to select in the record size field', () => {
     const options = [
+      { label: '1', value: '1'},
       { label: '10', value: '10'},
       { label: '20', value: '20'},
       { label: '30', value: '30'},

@@ -56,6 +56,7 @@ export default function SelectPreviewRecordsSize({ isValidRecordSize, setIsValid
       options={recordSizeOptions}
       onFieldChange={onRecordChange}
       errorMessages={errorMessage}
+      showAllSuggestions
 />
   );
 }

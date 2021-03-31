@@ -3,7 +3,7 @@
  */
 import { adaptorTypeMap } from '../resource';
 
-export const DEFAULT_RECORD_SIZE = 1;
+export const DEFAULT_RECORD_SIZE = 10;
 
 // Applications list which include Preview panel as part of the resource drawer
 
@@ -108,8 +108,10 @@ export const previewFileData = (previewData, recordSize) => {
   return previewData.slice(0, recordSize);
 };
 
-export const getRecordSizeOptions = () => Array.from(Array(10), (val, index) => {
-  const stringifiedValue = `${(index + 1) * 10}`;
+export const getRecordSizeOptions = () => Array.from(Array(11), (val, index) => {
+  let stringifiedValue = '1';
+
+  if (index > 0) stringifiedValue = `${(index) * 10}`;
 
   return { label: stringifiedValue, value: stringifiedValue};
 });
