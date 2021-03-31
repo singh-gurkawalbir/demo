@@ -117,6 +117,22 @@ describe('users (ashares) reducers', () => {
       },
     ]);
   });
+  test('should update the state properly when an user reinvited', () => {
+    const someState = [
+      { _id: 'ashare1', something: 'something1', dismissed: true },
+      {
+        _id: 'ashare2',
+      },
+    ];
+    const UserReinviteAction = actions.user.org.users.reinvited('ashare1');
+    const newState = reducer(someState, UserReinviteAction);
+    const expected = [{ _id: 'ashare1', something: 'something1', dismissed: false },
+      {
+        _id: 'ashare2',
+      }];
+
+    expect(newState).toEqual(expected);
+  });
   test('list should return [] when the state undefined', () => {
     const newState = reducer(undefined, 'someaction');
 
