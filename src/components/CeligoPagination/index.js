@@ -100,7 +100,7 @@ export default function Pagination(props) {
       const startOfNextPage = nextPage * rowsPerPage + 1;
       const endOfNextPage = (nextPage + 1) * rowsPerPage;
       const shouldLoadMore = hasMore && endOfNextPage > count;
-      const canNavigateToNextPage = startOfNextPage < count;
+      const canNavigateToNextPage = startOfNextPage <= count;
 
       if (shouldLoadMore && typeof loadMoreHandler === 'function') {
         loadMoreHandler();
