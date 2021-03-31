@@ -43,6 +43,7 @@ const useStyles = makeStyles(theme => ({
   },
   searchButton: {
     color: theme.palette.common.white,
+    // Has to update with the base svg
     '& > * svg': {
       fontSize: theme.spacing(2),
     },
