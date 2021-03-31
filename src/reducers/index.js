@@ -48,7 +48,8 @@ import {
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
   JOB_STATUS,
-  FILE_PROVIDER_ASSISTANTS } from '../utils/constants';
+  FILE_PROVIDER_ASSISTANTS,
+  MISCELLANEOUS_SECTION_ID} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { getFieldById } from '../forms/formFactory/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
@@ -63,6 +64,7 @@ import {
   isQueryBuilderSupported,
   filterAndSortResources,
   getUserAccessLevelOnConnection,
+  shouldHaveMiscellaneousSection,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -88,7 +90,6 @@ import {
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
-import { MISCELLANEOUS_SECTION_ID, shouldHaveMiscellaneousSection } from '../views/Integration/DIY/panels/Flows';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
 
