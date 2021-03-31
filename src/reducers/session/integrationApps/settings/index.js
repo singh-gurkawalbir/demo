@@ -833,19 +833,17 @@ selectors.mkCategoryMappingGenerateFields = () => createSelector(
 selectors.categoryMappingGenerateFields = selectors.mkCategoryMappingGenerateFields();
 
 selectors.mkMappingsForCategory = () => {
-  const categoryMappingFiltersSelector = selectors.mkCategoryMappingFilters();
   const categoryMappingDataSelector = selectors.mkCategoryMappingData();
   const categoryMappingGenerateFieldsSelector = selectors.mkCategoryMappingGenerateFields();
 
   return createSelector(
-    categoryMappingFiltersSelector,
     categoryMappingDataSelector,
     categoryMappingGenerateFieldsSelector,
     (_1, _2, _3, filters) => filters,
-    (categoryMappingFilters = emptyObj, recordMappings = emptySet, generateFields = emptyObj, filters = emptyObj) => {
+    (recordMappings = emptySet, generateFields = emptyObj, filters = emptyObj) => {
       const { sectionId, depth } = filters;
       let mappings = emptySet;
-      const { attributes = {}, mappingFilter = 'all' } = categoryMappingFilters || emptyObj;
+
       const { fields = [] } = generateFields;
 
       if (recordMappings) {
@@ -857,7 +855,7 @@ selectors.mkMappingsForCategory = () => {
       }
 
       // If no filters are passed, return all mapppings
-      if (!mappings || !attributes || !mappingFilter) {
+      if (!mappings) {
         return mappings;
       }
 

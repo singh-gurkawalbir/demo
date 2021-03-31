@@ -16,6 +16,7 @@ import asyncHelpers from './asyncHelpers';
 import iClients from './iClients';
 import suiteScript from './suiteScript';
 import apis from './apis';
+import eventreports from './eventreports';
 
 export default {
   default: defaultMeta,
@@ -36,4 +37,5 @@ export default {
   integrations,
   suiteScript,
   apis,
+  eventreports,
 };

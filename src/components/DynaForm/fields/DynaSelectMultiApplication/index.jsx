@@ -1,7 +1,7 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import Select, { components } from 'react-select';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
-import { FormControl, FormLabel } from '@material-ui/core';
+import { Button, FormControl, FormLabel } from '@material-ui/core';
 import Chip from '@material-ui/core/Chip';
 import Checkbox from '@material-ui/core/Checkbox';
 import FieldMessage from '../FieldMessage';
@@ -63,6 +63,15 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     paddingRight: '5px',
     height: '100%',
+  },
+  doneButton: {
+    width: '100%',
+    minHeight: 42,
+    margin: 0,
+    padding: 0,
+    border: '1px solid',
+    borderColor: `${theme.palette.secondary.lightest} !important`,
+    borderRadius: 0,
   },
 }));
 
@@ -170,6 +179,30 @@ const MultiValueLabel = props => {
   );
 };
 
+const Menu = props => {
+  const classes = useStyles();
+  const { menuIsOpen, onMenuClose } = props.selectProps;
+  const closeSelect = () => {
+    if (menuIsOpen) {
+      onMenuClose();
+    }
+  };
+
+  return (
+    <components.Menu {...props}>
+      {props.children}
+      <Button
+        id="select-multi-close"
+        variant="outlined"
+        color="secondary"
+        onClick={closeSelect}
+        className={classes.doneButton}>
+        Done
+      </Button>
+    </components.Menu>
+  );
+};
+
 export default function MultiSelectApplication(props) {
   const {
     disabled,
@@ -185,6 +218,7 @@ export default function MultiSelectApplication(props) {
   } = props;
   const theme = useTheme();
   const classes = useStyles();
+  const defaultValue = useMemo(() => value.map(val => options[0].items.find(opt => opt.value === val)), [options, value]);
   const handleChange = useCallback(selectedOptions => {
     onFieldChange(id, selectedOptions?.map(opt => opt?.value ? opt.value : opt) || []);
   }, [id, onFieldChange]);
@@ -212,9 +246,8 @@ export default function MultiSelectApplication(props) {
     }),
     control: () => ({
       minWidth: 365,
-      height: '38px',
       border: '1px solid',
-      borderColor: theme.palette.divider,
+      borderColor: theme.palette.secondary.lightest,
       borderRadius: '2px',
       backgroundColor: theme.palette.background.paper,
       alignItems: 'flex-start',
@@ -234,6 +267,7 @@ export default function MultiSelectApplication(props) {
     indicatorsContainer: () => ({
       height: '38px',
       display: 'flex',
+      alignItems: 'center',
     }),
     menu: () => ({
       zIndex: 2,
@@ -242,11 +276,10 @@ export default function MultiSelectApplication(props) {
       position: 'absolute',
       backgroundColor: theme.palette.background.paper,
       width: '100%',
-      top: '38px',
     }),
     input: () => ({
       color: theme.palette.secondary.light,
-      width: '100%',
+      minWidth: theme.spacing(10),
     }),
     placeholder: () => ({
       color: theme.palette.secondary.light,
@@ -265,13 +298,15 @@ export default function MultiSelectApplication(props) {
       padding: '0px',
     }),
     valueContainer: () => ({
-      height: '100%',
+      minHeight: '38px',
+      maxHeight: '100%',
       alignItems: 'center',
       display: 'flex',
       flex: '1',
       padding: '2px 8px',
       position: 'relative',
       overflow: 'hidden',
+      flexWrap: 'wrap',
     }),
     groupHeading: () => ({
       textAlign: 'center',
@@ -330,8 +365,8 @@ export default function MultiSelectApplication(props) {
         <Select
           isMulti
           placeholder={placeholder}
-          components={{ Option, MultiValueLabel, DropdownIndicator }}
-          defaultValue={value}
+          components={{ Option, MultiValueLabel, DropdownIndicator, Menu }}
+          defaultValue={defaultValue}
           options={options[0].items}
           onChange={handleChange}
           closeMenuOnSelect={false}

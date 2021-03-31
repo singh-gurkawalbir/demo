@@ -5,9 +5,9 @@ import ViewErrorDetails from '../actions/ViewErrorDetails';
 import EditRetryData from '../actions/EditRetry';
 import DownloadRetryData from '../actions/DownloadRetry';
 import SelectError from '../cells/SelectError';
-import SelectAllErrors from '../cells/SelectAllErrors';
 import SelectSource from '../cells/SelectSource';
 import SelectDate from '../cells/SelectDate';
+import SelectAllErrors from '../cells/SelectAllErrors';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import TextOverflowCell from '../../../TextOverflowCell';
 import ErrorMessage from '../cells/ErrorMessage';
@@ -29,9 +29,9 @@ export default {
       value: (r, { flowId, resourceId }) => (
         <ErrorMessage
           message={r.message}
+          errorId={r.errorId}
           flowId={flowId}
           resourceId={resourceId}
-          traceKey={r.traceKey}
           exportDataURI={r.exportDataURI}
           importDataURI={r.importDataURI}
       />

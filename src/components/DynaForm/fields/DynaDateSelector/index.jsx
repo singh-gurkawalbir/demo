@@ -50,7 +50,7 @@ const defaultRange = {
 export default function DynaDateSelector(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { id, label, name, value, onFieldChange, required, formKey } = props;
+  const { id, label, name, value, onFieldChange, required, formKey} = props;
   const calendarIcon = () => <CalendarIcon className={classes.iconWrapper} />;
   const { dateFormat } = useSelector(state => selectors.userProfilePreferencesProps(state));
   const isValueParsableByMoment = useCallback(value =>
@@ -59,12 +59,19 @@ export default function DynaDateSelector(props) {
   const isValid = isValueParsableByMoment(value);
 
   useEffect(() => {
-    if (isValid) {
-      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
-    } else {
-      dispatch(actions.form.forceFieldState(formKey)(id, {isValid, errorMessages: !value ? 'A value must be provided' : 'Invalid date format'}));
+    if (required || value) {
+      if (isValid) {
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
+      } else {
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid, errorMessages: !value ? 'A value must be provided' : 'Invalid date format'}));
+      }
     }
-  }, [id, dispatch, formKey, isValid, value]);
+  }, [id, dispatch, formKey, isValid, value, required]);
+
+  // suspend force field state compuation once the component turns invisible
+  useEffect(() => () => {
+    dispatch(actions.form.clearForceFieldState(formKey)(id));
+  }, [dispatch, formKey, id]);
 
   const handleFieldChange = useCallback((id, value) => {
     // isValueParsableByMoment checks for an incomplete form value or invalid date

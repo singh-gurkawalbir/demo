@@ -1,5 +1,4 @@
 /* global describe, test, expect */
-import { deepClone } from 'fast-json-patch';
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 import actionTypes from '../../../../actions/types';
@@ -1050,91 +1049,6 @@ describe(' Error details in EM 2.0 reducer ', () => {
       expect(currState).toEqual(expectedState);
     });
   });
-  describe('FLOW_ERROR_DETAILS.ACTIONS.RETRY.TRACK_RETRIED_TRACE_KEYS action', () => {
-    const errorStateWithTraceKeys = {
-      [flowId]: {
-        [resourceId]: {
-          open: {
-            status: 'received',
-            errors: openErrors,
-            nextPageURL: sampleOpenErrorsNextPageURL,
-            outdated: true,
-            updated: true,
-          },
-          resolved: {
-            status: 'received',
-            errors: resolvedErrors,
-            nextPageURL: sampleResolvedErrorsNextPageURL,
-            outdated: true,
-            updated: true,
-          },
-          actions: {
-            retry: {
-              status: 'received',
-              count: 44,
-              traceKeys: ['tk1234', 'tk5678'],
-            },
-            resolve: {
-              status: 'received',
-              count: 50,
-            },
-          },
-        },
-      },
-    };
-
-    test('should retain existing state when retry action state does not exist', () => {
-      const currState1 = reducer(errorStateWithoutActions, actions.errorManager.flowErrorDetails.trackTraceKeys({
-        flowId,
-        resourceId,
-        traceKeys: ['traceKey1234'],
-      }));
-      const currState2 = reducer(errorStateWithoutActions, actions.errorManager.flowErrorDetails.trackTraceKeys({
-        flowId: 'INVALID_FLOWID',
-        resourceId: 'INVALID_RESOURCEID',
-        traceKeys: ['traceKey1234'],
-      }));
-
-      expect(currState1).toBe(errorStateWithoutActions);
-      expect(currState2).toBe(errorStateWithoutActions);
-    });
-    test('should retain existing state when traceKeys are empty or already exist', () => {
-      const currState1 = reducer(errorStateWithTraceKeys, actions.errorManager.flowErrorDetails.trackTraceKeys({
-        flowId,
-        resourceId,
-        traceKeys: [],
-      }));
-      const currState2 = reducer(errorStateWithTraceKeys, actions.errorManager.flowErrorDetails.trackTraceKeys({
-        flowId,
-        resourceId,
-        traceKeys: ['tk1234'],
-      }));
-
-      expect(currState1).toBe(errorStateWithTraceKeys);
-      expect(currState2).toEqual(errorStateWithTraceKeys);
-    });
-    test('should update state with passed traceKeys', () => {
-      const currState1 = reducer(errorStateWithTraceKeys, actions.errorManager.flowErrorDetails.trackTraceKeys({
-        flowId,
-        resourceId,
-        traceKeys: ['tk111'],
-      }));
-      const currState2 = reducer(errorStateWithActions, actions.errorManager.flowErrorDetails.trackTraceKeys({
-        flowId,
-        resourceId,
-        traceKeys: ['tk111'],
-      }));
-
-      const updatedStateWithTraceKeys1 = deepClone(errorStateWithTraceKeys);
-      const updatedStateWithTraceKeys2 = deepClone(errorStateWithTraceKeys);
-
-      updatedStateWithTraceKeys1[flowId][resourceId].actions.retry.traceKeys = ['tk1234', 'tk5678', 'tk111'];
-      updatedStateWithTraceKeys2[flowId][resourceId].actions.retry.traceKeys = ['tk111'];
-
-      expect(currState1).toEqual(updatedStateWithTraceKeys1);
-      expect(currState2).toEqual(updatedStateWithTraceKeys2);
-    });
-  });
 
   describe('FLOW_ERROR_DETAILS.NOTIFY_UPDATE action', () => {
     const errorStateBeforeNotification = {
@@ -1632,43 +1546,6 @@ describe('hasResourceErrors selector', () => {
     };
 
     expect(selectors.hasResourceErrors(sampleState, {flowId, resourceId, isResolved: true})).toBeTruthy();
-  });
-});
-
-describe('isTraceKeyRetried selector', () => {
-  const sampleState = {
-    [flowId]: {
-      [resourceId]: {
-        open: {
-          status: 'received',
-          errors: openErrors,
-          nextPageURL: sampleOpenErrorsNextPageURL,
-        },
-        resolved: {
-          status: 'received',
-          errors: resolvedErrors,
-          nextPageURL: sampleResolvedErrorsNextPageURL,
-        },
-        actions: {
-          retry: {
-            traceKeys: ['id1', 'id2'],
-            count: 100,
-          },
-        },
-      },
-    },
-  };
-
-  test('should return false when passed invalid flowId or resourceId or traceKey options', () => {
-    expect(selectors.isTraceKeyRetried(sampleState, {})).toBeFalsy();
-    expect(selectors.isTraceKeyRetried(sampleState, {flowId: 'INVALID_FLOW_ID', resourceId: 'INVALID_RESOURCE_ID'})).toBeFalsy();
-    expect(selectors.isTraceKeyRetried(sampleState, { flowId, resourceId })).toBeFalsy();
-  });
-  test('should return false if the passed traceKey has not yet been retried', () => {
-    expect(selectors.isTraceKeyRetried(sampleState, { flowId, resourceId, traceKey: 'id4' })).toBeFalsy();
-  });
-  test('should return true if the passed traceKey has already been retried and part of cached traceKey list', () => {
-    expect(selectors.isTraceKeyRetried(sampleState, { flowId, resourceId, traceKey: 'id2' })).toBeTruthy();
   });
 });
 

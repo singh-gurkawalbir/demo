@@ -33,7 +33,7 @@ export default {
     },
 
     {
-      heading: 'Child SObject',
+      heading: 'Child sObject',
       value: r => r && r.sObjectType,
     },
     {

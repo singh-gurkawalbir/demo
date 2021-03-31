@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
 export const LoadingMask = ({message}) => (
   <Loader open>
     <Typography variant="h4">{message}</Typography>
-    <Spinner color="primary" />
+    <Spinner />
   </Loader>
 );
 const defaultFilter = {

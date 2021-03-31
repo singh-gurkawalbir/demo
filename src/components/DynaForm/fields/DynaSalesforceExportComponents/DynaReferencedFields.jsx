@@ -127,7 +127,7 @@ export default function DynaReferencedFields(props) {
         className={classes.refrencedFieldDynaText}
       />
       {status === 'refreshed' ? (
-        <Spinner size={24} />
+        <Spinner />
       ) : (
         <ActionButton
           data-test="editReferencedFields"

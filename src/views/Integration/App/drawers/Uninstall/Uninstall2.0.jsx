@@ -10,7 +10,6 @@ import InstallationStep from '../../../../../components/InstallStep';
 import { UNINSTALL_STEP_TYPES } from '../../../../../utils/constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import Spinner from '../../../../../components/Spinner';
-import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 
 const useStyles = makeStyles(theme => ({
@@ -137,9 +136,7 @@ export default function Uninstaller2({ integration, integrationId }) {
   }
   if (!uninstallSteps || uninstallSteps.length === 0) {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+      <Spinner centerAll />
     );
   }
 

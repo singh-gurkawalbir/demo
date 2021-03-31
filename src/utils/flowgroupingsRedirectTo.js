@@ -1,5 +1,6 @@
 import { generatePath } from 'react-router-dom';
-import { shouldHaveMiscellaneousSection, MISCELLANEOUS_SECTION_ID} from '../views/Integration/DIY/panels/Flows';
+import { MISCELLANEOUS_SECTION_ID } from './constants';
+import { shouldHaveMiscellaneousSection } from './resource';
 
 export default function flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId) {
   // this component can only enter either with baseroute/sections/:sectionId or just baseroute

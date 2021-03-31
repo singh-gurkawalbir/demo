@@ -111,7 +111,7 @@ export default function DynaFileKeyColumn_afe2(props) {
         required={required}
         onFieldChange={onFieldChange}
     />
-      {previewStatus === 'requested' && (<Spinner className={classes.spinnerWrapper} size={24} />)}
+      {previewStatus === 'requested' && (<Spinner className={classes.spinnerWrapper} />)}
     </FormControl>
   );
 }

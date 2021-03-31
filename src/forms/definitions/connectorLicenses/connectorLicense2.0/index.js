@@ -10,6 +10,7 @@ export default {
   fieldMap: {
     email: { fieldId: 'email' },
     _editionId: { fieldId: '_editionId' },
+    trialEndDate: { fieldId: 'trialEndDate' },
     expires: { fieldId: 'expires' },
     sandbox: { fieldId: 'sandbox' },
     opts: { fieldId: 'opts' },
@@ -21,7 +22,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['email', '_editionId', 'expires', 'sandbox', 'opts'],
+        fields: ['email', '_editionId', 'expires', 'trialEndDate', 'sandbox', 'opts'],
       },
       {
         collapsed: true,

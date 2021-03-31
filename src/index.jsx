@@ -66,18 +66,26 @@ store = createStore(
 
 sagaMiddleware.run(rootSaga);
 
-const GA4key = process.env.GA4_KEY;
+// eslint-disable-next-line no-undef
+const GAKey1 = GA_KEY_1;
+// eslint-disable-next-line no-undef
+const GAKey2 = GA_KEY_2;
 
-if (env !== 'development' && GA4key) {
-  const ga4react = new GA4React(GA4key);
+if (env !== 'development' && GAKey1?.length > 1) {
+  const ga4react = new GA4React(GAKey1);
 
+  // We do this asynchronously so that we ensure GA script is loaded
+  // before we "attach" the React app to the DOM. This ensures we don't lose any
+  // tracked events.
   (async () => {
-    await ga4react.initialize();
-    // If we want to register multiple GA analytics buckets,
-    // we can register them with the code below.
-    // .then(ga4 => {
-    //   ga4.gtag('config', 'UA-123'); // old tracker
-    // });
+    await ga4react.initialize()
+      .then(ga4 => {
+        // If we want to connect a subordinate GA tracker, we simply need to add
+        // a ref by pushing a new config entry which is monitored by the GA script.
+        if (GAKey2?.length > 1) {
+          ga4.gtag('config', GAKey2);
+        }
+      });
 
     render(
       <Provider store={store}>
