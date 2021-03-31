@@ -19,6 +19,9 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     display: 'grid',
     gridTemplateColumns: '1fr 2fr',
+    [theme.breakpoints.down('md')]: {
+      gridTemplateColumns: '1fr 1fr',
+    },
   },
   noResultColumn: {
     gridTemplateColumns: '1fr',
@@ -29,6 +32,9 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     overflowY: 'auto',
     minWidth: '560px',
+    [theme.breakpoints.down('md')]: {
+      minWidth: 'unset',
+    },
   },
   textWrapper: {
     padding: theme.spacing(2),

@@ -56,6 +56,7 @@ export default {
         );
       },
       value: log => log.statusCode,
+      align: 'right',
     },
   ],
   rowActions: (log, {flowId, exportId}) => ([
