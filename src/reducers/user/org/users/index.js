@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 import {
   USER_ACCESS_LEVELS,
@@ -49,6 +50,17 @@ export default (state = [], action) => {
         },
         ...state.slice(index + 1),
       ];
+    }
+    case actionTypes.USER_REINVITED: {
+      const index = state.findIndex(u => u._id === _id);
+
+      if (index > -1) {
+        return produce(state, draft => {
+          draft[index].dismissed = false;
+        });
+      }
+
+      return state;
     }
 
     case actionTypes.USER_DELETED: {

@@ -327,6 +327,24 @@ export function* disableUser({ _id, disabled }) {
 
   yield put(actions.user.org.users.disabled(_id));
 }
+export function* reinviteUser({ _id }) {
+  const requestOptions = getRequestOptions(actionTypes.USER_REINVITE, {
+    resourceId: _id,
+  });
+  const { path, opts } = requestOptions;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: 'Reinviting User',
+    });
+  } catch (e) {
+    return true;
+  }
+
+  yield put(actions.user.org.users.reinvited(_id));
+}
 
 export function* makeOwner({ email }) {
   const requestOptions = getRequestOptions(actionTypes.USER_MAKE_OWNER);
@@ -560,4 +578,5 @@ export const userSagas = [
     actionTypes.ACCOUNT_DELETE_SUITESCRIPT_LINKED_CONNECTION,
     deleteSuiteScriptLinkedConnection
   ),
+  takeLatest(actionTypes.USER_REINVITE, reinviteUser),
 ];
