@@ -113,6 +113,11 @@ export default function CeligoSelect({ className, maxHeightOfSelect, children, .
       closeSelect: showCloseOption && closeSelect,
       component: MenuComponent,
     },
+    getContentAnchorEl: null,
+    anchorOrigin: {
+      vertical: 'bottom',
+      horizontal: 'left',
+    },
     MenuListProps: {
       style: {
         overflowY: 'auto',
