@@ -25,7 +25,6 @@ export default function OperandSettingsDialog({
             items: [
               { label: 'Field', value: 'field' },
               { label: 'Value', value: 'value' },
-              { label: 'Expression', value: 'expression' },
             ],
           },
         ],
@@ -36,6 +35,7 @@ export default function OperandSettingsDialog({
       fields: ['operandType'],
     },
   }), [ruleData.type]);
+
   const handleSubmit = useCallback(
     formValues => {
       const updatedFormValues = {
@@ -53,7 +53,7 @@ export default function OperandSettingsDialog({
 
   return (
     <ModalDialog show>
-      <span>Operand Settings</span>
+      <span>Operand settings</span>
       <>
         <DynaForm formKey={formKey} />
         <DynaSubmit formKey={formKey} data-test="saveOperandSettings" onClick={handleSubmit}>

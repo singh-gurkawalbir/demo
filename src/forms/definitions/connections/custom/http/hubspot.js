@@ -9,7 +9,7 @@ export default {
       retValues['/http/auth/oauth/tokenURI'] = undefined;
       retValues['/http/_iClientId'] = undefined;
     } else {
-      const scopes = retValues['/http/auth/oauth/scope'].filter(s => s !== 'oauth');
+      const scopes = retValues['/http/auth/oauth/scope'] ? retValues['/http/auth/oauth/scope'].filter(s => s !== 'oauth') : [];
 
       retValues['/http/auth/oauth/authURI'] =
         `https://app.hubspot.com/oauth/authorize?optional_scope=${encodeURIComponent(scopes.join(' '))}`;

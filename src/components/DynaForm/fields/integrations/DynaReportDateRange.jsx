@@ -136,6 +136,7 @@ export default function DynaReportDateRange(props) {
       <div>
         <DateRangeSelector
           {...props}
+          showDateDisplay={false}
           customPresets={ranges}
           editableDateInputs={false}
           defaultPreset={value}

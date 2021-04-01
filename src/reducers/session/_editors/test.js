@@ -580,6 +580,39 @@ describe('editors reducers', () => {
 
       expect(newState).toEqual(expectedState);
     });
+    test('should replace the editor rule if the patch is null or undefined', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        rule: '{{abs oldField}}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions._editor.initComplete('httpbody', options)
+      );
+      const tempState = reducer(
+        initialState,
+        actions._editor.sampleDataReceived('httpbody', '{"id": "123"}')
+      );
+      const newState = reducer(
+        tempState,
+        actions._editor.patchRule('httpbody', null)
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          data: '{"id": "123"}',
+          sampleDataStatus: 'received',
+          lastValidData: '{"id": "123"}',
+          rule: null,
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
     test('should add the props in the rule if rule patch is of object type', () => {
       const options = {
         id: 'file.csv',

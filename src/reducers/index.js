@@ -5363,7 +5363,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
     return {shouldGetContextFromBE: connection.isHTTP, sampleData: _sampleData};
   }
   if (stage === 'transform' ||
-  stage === 'sampleResponse' || HOOK_STAGES.includes(stage)) {
+  stage === 'sampleResponse' || stage === 'importMappingExtract' || HOOK_STAGES.includes(stage)) {
     return {shouldGetContextFromBE: false, sampleData: _sampleData};
   }
 
