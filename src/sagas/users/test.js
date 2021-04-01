@@ -26,6 +26,7 @@ import {
   disableUser,
   makeOwner,
   requestTrialLicense,
+  reinviteUser,
 } from '.';
 import { APIException } from '../api/index';
 import { USER_ACCESS_LEVELS, ACCOUNT_IDS } from '../../utils/constants';
@@ -761,6 +762,46 @@ describe('all modal sagas', () => {
           }),
         );
         expect(saga.throw(new Error()).value).toEqual(true);
+        expect(saga.next().done).toEqual(true);
+      });
+    });
+    describe('reinviteUser user', () => {
+      test('should reinvite user successfully', () => {
+        const userId = 'something';
+        const saga = reinviteUser({ _id: userId });
+        const requestOptions = getRequestOptions(actionTypes.USER_REINVITE, {
+          resourceId: userId,
+        });
+        const { path, opts } = requestOptions;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Reinviting User',
+          }),
+        );
+        expect(saga.next({}).value).toEqual(
+          put(actions.user.org.users.reinvited(userId)),
+        );
+        expect(saga.next().done).toEqual(true);
+      });
+      test('should handle api error properly while reinviting user', () => {
+        const userId = 'something';
+        const saga = reinviteUser({ _id: userId });
+        const requestOptions = getRequestOptions(actionTypes.USER_REINVITE, {
+          resourceId: userId,
+        });
+        const { path, opts } = requestOptions;
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Reinviting User',
+          }),
+        );
+        expect(saga.throw(new Error()).value).toEqual(put(actions.user.org.users.reinviteError(userId)));
         expect(saga.next().done).toEqual(true);
       });
     });
