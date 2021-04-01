@@ -1,13 +1,19 @@
 export default {
   preSave: formValues => {
+    const newValues = {
+      ...formValues,
+    };
+
+    if (!newValues['/trialEnabled']) {
+      newValues['/trialPeriod'] = undefined;
+      newValues['/_trialLicenseId'] = undefined;
+    }
+
     if (formValues['/framework'] === 'twoDotZero') {
       const twoDotZero = {
         _integrationId: formValues['/_integrationId'],
       };
 
-      if (formValues['/editions'] && formValues['/editions'].split) {
-        twoDotZero.editions = formValues['/editions'].split(',');
-      }
       const newValues = {
         ...formValues,
         '/twoDotZero': twoDotZero,
@@ -18,7 +24,7 @@ export default {
       return newValues;
     }
 
-    return formValues;
+    return newValues;
   },
   fieldMap: {
     name: { fieldId: 'name' },
@@ -33,10 +39,26 @@ export default {
     uninstallerFunction: { fieldId: 'uninstallerFunction' },
     updateFunction: { fieldId: 'updateFunction' },
     framework: { fieldId: 'framework' },
+    trialEnabled: { fieldId: 'trialEnabled' },
+    trialPeriod: {
+      fieldId: 'trialPeriod',
+      omitWhenHidden: true,
+      visibleWhen: [{ field: 'trialEnabled', is: [true] }],
+      requiredWhen: [{ field: 'trialEnabled', is: [true] }],
+
+    },
+    _trialLicenseId: {
+      fieldId: '_trialLicenseId',
+      omitWhenHidden: true,
+      visibleWhen: [{ field: 'trialEnabled', is: [true] }],
+      requiredWhen: [{ field: 'trialEnabled', is: [true] }],
+    },
   },
   layout: {
-    type: 'box',
+    type: 'collapse',
     containers: [{
+      collapsed: true,
+      label: 'General',
       fields: [
         'name',
         'description',
@@ -44,12 +66,19 @@ export default {
         '_integrationId',
         'contactEmail',
         'websiteURL',
-        'editions',
         '_stackId',
         'installerFunction',
         'uninstallerFunction',
         'updateFunction',
         'framework',
+      ],
+    }, {
+      collapsed: true,
+      label: 'Trials',
+      fields: [
+        'trialEnabled',
+        'trialPeriod',
+        '_trialLicenseId',
       ],
     }],
   },

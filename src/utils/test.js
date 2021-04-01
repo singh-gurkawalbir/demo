@@ -9,7 +9,7 @@ import retry from './retry';
 import adjustTimezone from './adjustTimezone';
 import inferErrorMessages from './inferErrorMessages';
 import flowgroupingsRedirectTo, { redirectToFirstFlowGrouping } from './flowgroupingsRedirectTo';
-import { MISCELLANEOUS_SECTION_ID } from '../views/Integration/DIY/panels/Flows';
+import { MISCELLANEOUS_SECTION_ID } from './constants';
 
 const uiRoutePathPrefix = '';
 

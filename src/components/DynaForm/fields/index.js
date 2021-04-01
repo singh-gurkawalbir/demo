@@ -69,10 +69,10 @@ import DynaIASelect from './DynaIASelect';
 import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
-import DynaNetSuiteQualifier from './DynaNetSuiteQualifier';
-import DynaSalesforceQualifier from './DynaSalesforceQualifier';
+import DynaNetSuiteQualifier_afe2 from './DynaNetSuiteQualifier_afe2';
+import DynaSalesforceQualifier_afe2 from './DynaSalesforceQualifier_afe2';
 import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
-import DynaSalesforceLookup from './DynaSalesforceLookup';
+import DynaSalesforceLookup_afe2 from './DynaSalesforceLookup_afe2';
 import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
 import DynaTimestampFileName from './DynaTimestampFileName';
 import DynaMode from './DynaMode';
@@ -122,8 +122,19 @@ import DynaDateSelector from './DynaDateSelector';
 import DynaFileEncryptDecrypt from './DynaFileEncryptDecrypt';
 import DynaHashAlogorithm from './DynaHashAlogorithm';
 import DynaQueryRadioGroup from './radiogroup/DynaQueryRadioGroup';
+import DynaLicenseEdition from './DynaLicenseEdition';
+import DynaAllIntegrations from './integrations/DynaAllIntegrations';
+import DynaChildIntegrations from './integrations/DynaChildIntegrations';
+import DynaFlowsTiedToIntegrations from './integrations/DynaFlowsTiedToIntegrations';
+import DynaReportDateRange from './integrations/DynaReportDateRange';
+import DynaTrialLicense from './DynaTrialLicense';
+import DynaLicenseExpires from './DynaLicenseExpires';
 
 export default {
+  reportdaterange: DynaReportDateRange,
+  flowstiedtointegrations: DynaFlowsTiedToIntegrations,
+  allintegrations: DynaAllIntegrations,
+  childintegrations: DynaChildIntegrations,
   suitescriptsettings: DynaRefreshableSettings,
   refreshabletext: DynaRefreshableText,
   matchingcriteria: DynaMatchingCriteriaWithModal,
@@ -208,7 +219,8 @@ export default {
   datetime: DynaDateTime,
   // sqlquerybuilder: DynaSQLQueryBuilder,
   sqlquerybuilder: DynaSQLQueryBuilder_afe2,
-  salesforcequalifier: DynaSalesforceQualifier,
+  // salesforcequalifier: DynaSalesforceQualifier,
+  salesforcequalifier: DynaSalesforceQualifier_afe2,
   salesforcerequiredtrigger: Salesforce.DynaRequiredTrigger,
   salesforcereferencedfields: Salesforce.DynaReferencedFields,
   salesforcerelatedlistmodal: ReferencedFieldsModal,
@@ -225,9 +237,11 @@ export default {
   userpassword: DynaUserPassword,
   dynaiclient: DynaIclient,
   replaceconnection: DynaReplaceConnection,
-  netsuitequalifier: DynaNetSuiteQualifier,
+  // netsuitequalifier: DynaNetSuiteQualifier,
+  netsuitequalifier: DynaNetSuiteQualifier_afe2,
   salesforcelookupfilters: DynaSalesforceLookupFilters,
-  salesforcelookup: DynaSalesforceLookup,
+  // salesforcelookup: DynaSalesforceLookup,
+  salesforcelookup: DynaSalesforceLookup_afe2,
   timestampfilename: DynaTimestampFileName,
   // filekeycolumn: DynaFileKeyColumn,
   filekeycolumn: DynaFileKeyColumn_afe2,
@@ -270,4 +284,7 @@ export default {
   dateselector: DynaDateSelector,
   fileencryptdecrypt: DynaFileEncryptDecrypt,
   hashalgorithm: DynaHashAlogorithm,
+  licenseedition: DynaLicenseEdition,
+  triallicense: DynaTrialLicense,
+  licenseexpires: DynaLicenseExpires,
 };

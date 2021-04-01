@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import FilterPanel from './FilterPanel';
 import { selectors } from '../../../../../reducers';
-import PanelLoader from '../../../../PanelLoader';
+import Spinner from '../../../../Spinner';
 
 export default function FilterPanelWrapper({editorId}) {
   const sampleDataStatus = useSelector(state => selectors._editor(state, editorId).sampleDataStatus);
@@ -12,7 +12,7 @@ export default function FilterPanelWrapper({editorId}) {
   return (
     <>
       {sampleDataStatus === 'requested' ? (
-        <PanelLoader />
+        <Spinner centerAll />
       ) : (
         <FilterPanel
           editorId={editorId}

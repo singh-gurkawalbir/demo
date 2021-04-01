@@ -7,7 +7,6 @@ import { JOB_STATUS } from '../../utils/constants';
 import JobDetail from './JobDetail';
 import ErrorDrawer from './ErrorDrawer';
 import actions from '../../actions';
-import SpinnerWrapper from '../SpinnerWrapper';
 import Spinner from '../Spinner';
 import { selectors } from '../../reducers';
 
@@ -186,9 +185,9 @@ export default function JobTable({
   return (
     <>
       {isFlowJobsCollectionLoading ? (
-        <SpinnerWrapper>
-          <Spinner />
-        </SpinnerWrapper>
+
+        <Spinner centerAll />
+
       ) : (
         <Table className={classes.table}>
           <TableHead>

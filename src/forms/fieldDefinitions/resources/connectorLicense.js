@@ -4,9 +4,17 @@ import { isNewId } from '../../../utils/resource';
 export default {
   expires: {
     defaultValue: r => r.expires && moment(r.expires).format('L'),
-    type: 'dateselector',
+    type: 'licenseexpires',
     label: 'Expires',
-    required: true,
+    connectorId: r => r._connectorId,
+    trialLicenseTemplate: r => r.trialLicenseTemplate,
+  },
+  trialEndDate: {
+    defaultValue: r => r.trialEndDate && moment(r.trialEndDate).format('L'),
+    type: 'licenseexpires',
+    label: 'Trial expires',
+    connectorId: r => r._connectorId,
+    trialLicenseTemplate: r => r.trialLicenseTemplate,
   },
   opts: {
     defaultValue: r => r.opts,
@@ -37,9 +45,11 @@ export default {
     required: true,
     disableText: r => !isNewId(r._id),
   },
-  edition: {
-    type: 'text',
+  _editionId: {
+    type: 'licenseedition',
     label: 'Edition',
+    required: true,
+    connectorId: r => r?._connectorId,
   },
   childLicenses: {
     type: 'childlicenses',

@@ -38,7 +38,7 @@ export function getFilterRuleId(rule) {
 
 export function convertIOFilterExpression(filterExpression = []) {
   const dataTypes = ['boolean', 'epochtime', 'number', 'string'];
-  const transformations = ['ceiling', 'floor', 'lowercase', 'uppercase'];
+  const transformations = ['ceiling', 'floor', 'lowercase', 'uppercase', 'abs'];
 
   function iterate(exp) {
     const toReturn = {};
@@ -366,6 +366,7 @@ export function validateFilterRule(rule) {
     'ceiling',
     'floor',
     'number',
+    'abs',
   ];
   const r = rule.data;
   const toReturn = {

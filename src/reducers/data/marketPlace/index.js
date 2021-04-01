@@ -1,5 +1,4 @@
 import produce from 'immer';
-import moment from 'moment';
 import actionTypes from '../../../actions/types';
 import { stringCompare } from '../../../utils/sort';
 import { SUITESCRIPT_CONNECTORS, SUITESCRIPT_CONNECTOR_IDS } from '../../../utils/constants';
@@ -48,23 +47,27 @@ selectors.connectors = (state, application, sandbox, licenses) => {
     if (conn._id === SUITESCRIPT_CONNECTOR_IDS.salesforce) {
       return conn;
     }
-    let hasLicense = false;
+    const connectorLicenses = licenses.filter(l => (((conn.framework === 'twoDotZero') ? (l.type === 'integrationApp') : (l.type === 'connector')) && l._connectorId === conn._id && (l.expires || l.trialEndDate)));
 
-    licenses &&
-      licenses.forEach(l => {
-        if (
-          !hasLicense &&
-          moment(l.expires) - moment() > 0 &&
-          ((conn.framework === 'twoDotZero') ? (l.type === 'integrationApp') : (l.type === 'connector')) &&
-          l._connectorId === conn._id &&
-          !l._integrationId &&
-          !!l.sandbox === sandbox
-        ) {
-          hasLicense = true;
+    let unusedPaidLicenseExists = false;
+    let usedTrialLicenseExists = false;
+
+    connectorLicenses &&
+    connectorLicenses.forEach(l => {
+      if (!l._integrationId) {
+        if (l.expires) {
+          if (new Date(l.expires).getTime() > Date.now()) {
+            unusedPaidLicenseExists = true;
+          }
+        } else if (new Date(l.trialEndDate).getTime() <= Date.now()) {
+          usedTrialLicenseExists = true;
         }
-      });
+      } else if (!l.expires) {
+        usedTrialLicenseExists = true;
+      }
+    });
 
-    return { ...conn, canInstall: hasLicense };
+    return { ...conn, canInstall: unusedPaidLicenseExists, usedTrialLicenseExists };
   });
 
   if (application) {

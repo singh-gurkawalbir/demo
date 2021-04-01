@@ -639,7 +639,7 @@ export function* deleteResource({ resourceType, id }) {
   }
 }
 
-export function* getResourceCollection({ resourceType }) {
+export function* getResourceCollection({ resourceType, refresh}) {
   let path = `/${resourceType}`;
   let hideNetWorkSnackbar;
 
@@ -663,11 +663,13 @@ export function* getResourceCollection({ resourceType }) {
     let collection = yield call(apiCallWithRetry, {
       path,
       hidden: hideNetWorkSnackbar,
+      refresh,
     });
 
     if (resourceType === 'stacks') {
       let sharedStacks = yield call(apiCallWithRetry, {
         path: '/shared/stacks',
+        refresh,
       });
 
       sharedStacks = sharedStacks.map(stack => ({ ...stack, shared: true }));
@@ -679,6 +681,7 @@ export function* getResourceCollection({ resourceType }) {
     if (resourceType === 'transfers') {
       const invitedTransfers = yield call(apiCallWithRetry, {
         path: '/transfers/invited',
+        refresh,
       });
 
       if (!collection) collection = invitedTransfers;
@@ -961,12 +964,46 @@ export function* replaceConnection({ _resourceId, _connectionId, _newConnectionI
 
     return undefined;
   }
-  yield put(actions.resource.requestCollection('flows'));
-  yield put(actions.resource.requestCollection('exports'));
-  yield put(actions.resource.requestCollection('imports'));
+  yield put(actions.resource.requestCollection('flows', null, true));
+  yield put(actions.resource.requestCollection('exports', null, true));
+  yield put(actions.resource.requestCollection('imports', null, true));
 }
 
+export function* eventReportCancel({reportId}) {
+  const path = `/eventreports/${reportId}/cancel`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'PUT',
+      },
+    });
+  } catch (e) {
+    return;
+  }
+
+  yield put(actions.resource.request('eventreports', reportId));
+}
+
+export function* downloadReport({reportId}) {
+  const path = `/eventreports/${reportId}/signedURL`;
+
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+
+    });
+
+    window.open(response.signedURL, 'target=_blank', 'noopener,noreferrer');
+  // eslint-disable-next-line no-empty
+  } catch (e) {
+
+  }
+}
 export const resourceSagas = [
+  takeEvery(actionTypes.EVENT_REPORT.CANCEL, eventReportCancel),
+  takeEvery(actionTypes.EVENT_REPORT.DOWNLOAD, downloadReport),
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
   takeEvery(
     actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE,

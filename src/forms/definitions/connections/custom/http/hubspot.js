@@ -9,7 +9,7 @@ export default {
       retValues['/http/auth/oauth/tokenURI'] = undefined;
       retValues['/http/_iClientId'] = undefined;
     } else {
-      const scopes = retValues['/http/auth/oauth/scope'].filter(s => s !== 'oauth');
+      const scopes = retValues['/http/auth/oauth/scope'] ? retValues['/http/auth/oauth/scope'].filter(s => s !== 'oauth') : [];
 
       retValues['/http/auth/oauth/authURI'] =
         `https://app.hubspot.com/oauth/authorize?optional_scope=${encodeURIComponent(scopes.join(' '))}`;
@@ -112,13 +112,18 @@ export default {
           return [...selectedScopes, ...scopes];
         }
       },
+      visible: r => !(r?._connectorId),
       visibleWhenAll: r => {
+        if (r?._connectorId) {
+          return [];
+        }
         if (r?.http?._iClientId) {
           return [{ field: 'http.auth.type', isNot: ['oauth'] },
             { field: 'http.auth.type', isNot: ['token'] }];
         }
-
-        return [{ field: 'http.auth.type', is: ['oauth'] }];
+        if (!(r?._connectorId)) {
+          return [{ field: 'http.auth.type', is: ['oauth'] }];
+        }
       },
     },
     application: {

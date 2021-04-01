@@ -29,10 +29,12 @@ import {
 } from './util';
 import getRoutePath from '../../utils/routePaths';
 import { selectors } from '../../reducers';
+import CeligoTruncate from '../../components/CeligoTruncate';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
     color: theme.palette.secondary.main,
+    wordBreak: 'break-word',
     '&:hover': {
       color: theme.palette.primary.main,
     },
@@ -76,6 +78,14 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/flows`;
   }
 
+  const handleTileClick = useCallback(
+    event => {
+      event.stopPropagation();
+
+      history.push(getRoutePath(urlToIntegrationSettings));
+    },
+    [history, urlToIntegrationSettings]
+  );
   const handleConnectionDownStatusClick = useCallback(event => {
     event.stopPropagation();
     // TODO - open connection edit
@@ -120,7 +130,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
   // #endregion
   return (
     <div ref={ref}>
-      <HomePageCardContainer isCardSelected={isCardSelected}>
+      <HomePageCardContainer onClick={handleTileClick} drag={drag} isCardSelected={isCardSelected}>
         <Header>
           <Status
             label={status.label}
@@ -138,13 +148,10 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
         </Header>
         <Content>
           <CardTitle>
-            <Typography variant="h3">
-              <Link
-                color="inherit"
-                to={getRoutePath(urlToIntegrationSettings)}
-                className={classes.tileName}>
-                {tile.displayName}
-              </Link>
+            <Typography variant="h3" className={classes.tileName} onClick={handleTileClick}>
+              <CeligoTruncate dataPublic delay={100} lines={2} placement="bottom">
+                {tile.name}
+              </CeligoTruncate>
             </Typography>
           </CardTitle>
           {tile.connector && tile.connector.applications && (

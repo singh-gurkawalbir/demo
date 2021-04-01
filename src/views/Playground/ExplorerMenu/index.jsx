@@ -58,7 +58,7 @@ export default function ExplorerMenu({ onEditorChange }) {
     if (id !== flowId) return null;
 
     const handleFbClick = () => {
-      history.push(history.push(`/integrations/${integrationId}/flowBuilder/${flowId}`));
+      history.push(`/integrations/${integrationId}/flowBuilder/${flowId}`);
     };
 
     const ResourceIcon = ({resourceType}) =>

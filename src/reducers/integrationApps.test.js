@@ -3,7 +3,7 @@ import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
 
-const integrations = [
+export const integrations = [
   {
     _id: 'integrationId',
     name: 'Cash Application Manager for NetSuite',
@@ -4547,6 +4547,79 @@ describe('integrationApps selector testcases', () => {
       expect(selectors.isIntegrationAppVersion2(state, 'integration2', true)).toEqual(true);
       expect(selectors.isIntegrationAppVersion2(state, 'integration3', true)).toEqual(true);
       expect(selectors.isIntegrationAppVersion2(state, 'integration4', true)).toEqual(true);
+    });
+  });
+
+  describe('selectors.isIntegrationAppV1 test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          integrations: [{
+            _id: 'integration1',
+            name: 'Integration',
+            install: [{
+              isClone: true,
+            }],
+          }, {
+            _id: 'integration2',
+            name: 'Integration',
+            _connectorId: 'connector1',
+            installSteps: [{}],
+            uninstallSteps: [{}],
+          }, {
+            _id: 'integration3',
+            name: 'Integration',
+            install: [{}],
+            _connectorId: 'connector2',
+          }, {
+            _id: 'integration4',
+            name: 'Integration',
+            uninstallSteps: [{}],
+          }, {
+            _id: 'integration5',
+            name: 'Integration',
+            _connectorId: 'connector2',
+          }, {
+            _id: 'integration6',
+            name: 'Integration',
+          }, {
+            _id: 'integration7',
+            _connectorId: 'abc',
+            name: 'IA1.0 Cloned integration',
+            install: [{
+              isClone: true,
+            }],
+          }],
+        },
+      },
+    };
+
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.isIntegrationAppV1()).toEqual(false);
+      expect(selectors.isIntegrationAppV1(null)).toEqual(false);
+      expect(selectors.isIntegrationAppV1({})).toEqual(false);
+      expect(selectors.isIntegrationAppV1({}, null)).toEqual(false);
+    });
+    test('should return false when integration not found', () => {
+      expect(selectors.isIntegrationAppV1(state, 'invalid')).toEqual(false);
+      expect(selectors.isIntegrationAppV1(state, 'invalid')).toEqual(false);
+      expect(selectors.isIntegrationAppV1(state, 'invalid')).toEqual(false);
+    });
+
+    test('should return false when integration found and is a IA2.0 integration', () => {
+      expect(selectors.isIntegrationAppV1(state, 'integration2')).toEqual(false);
+      expect(selectors.isIntegrationAppV1(state, 'integration4')).toEqual(false);
+    });
+
+    test('should return false when integration found and is a DIY integration', () => {
+      expect(selectors.isIntegrationAppV1(state, 'integration6')).toEqual(false);
+    });
+    test('should return true when integration found and is a IA1.0 integration', () => {
+      expect(selectors.isIntegrationAppV1(state, 'integration5')).toEqual(true);
+    });
+
+    test('should return true when integration found and is a IA1.0 cloned integration', () => {
+      expect(selectors.isIntegrationAppV1(state, 'integration7')).toEqual(true);
     });
   });
 
