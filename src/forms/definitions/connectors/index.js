@@ -14,10 +14,10 @@ export default {
         _integrationId: formValues['/_integrationId'],
       };
 
-      if (formValues['/editions'] && formValues['/editions'].split) {
-        twoDotZero.editions = formValues['/editions'].split(',');
-      }
-      newValues['/twoDotZero'] = twoDotZero;
+      const newValues = {
+        ...formValues,
+        '/twoDotZero': twoDotZero,
+      };
 
       delete newValues['/editions'];
 
@@ -66,7 +66,6 @@ export default {
         '_integrationId',
         'contactEmail',
         'websiteURL',
-        'editions',
         '_stackId',
         'installerFunction',
         'uninstallerFunction',
