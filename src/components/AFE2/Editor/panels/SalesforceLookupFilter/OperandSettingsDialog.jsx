@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Button } from '@material-ui/core';
 import ModalDialog from '../../../../ModalDialog';
 import DynaForm from '../../../../DynaForm';
@@ -11,7 +11,7 @@ export default function OperandSettingsDialog({
   onSubmit,
   disabled,
 }) {
-  const fieldMeta = {
+  const fieldMeta = useMemo(() => ({
     fieldMap: {
       operandType: {
         id: 'type',
@@ -34,7 +34,8 @@ export default function OperandSettingsDialog({
     layout: {
       fields: ['operandType'],
     },
-  };
+  }), [ruleData.type]);
+
   const handleSubmit = useCallback(
     formValues => {
       const updatedFormValues = {
@@ -54,7 +55,7 @@ export default function OperandSettingsDialog({
     <ModalDialog show>
       <span>Operand settings</span>
       <>
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaForm formKey={formKey} />
         <DynaSubmit formKey={formKey} data-test="saveOperandSettings" onClick={handleSubmit}>
           Save
         </DynaSubmit>
