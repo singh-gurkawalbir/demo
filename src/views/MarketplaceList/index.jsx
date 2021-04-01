@@ -313,7 +313,7 @@ export default function MarketplaceList() {
                 color="primary"
                 component={Link}
                 to={`${location.pathname}/installTemplate/preview/${template._id}`}>
-                Install
+                Preview
               </Button>
             </CardActions>
             <div className={classes.cardFooter}>
