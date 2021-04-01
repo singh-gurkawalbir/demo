@@ -146,8 +146,7 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
   const flowConnectionsWithLogEntry = useSelectorMemo(selectors.flowConnectionsWithLogEntry, flowId);
-
-  const flowScripts = useSelector(state => selectors.scripts(state, flowId), shallowEqual);
+  const flowScripts = useSelectorMemo(selectors.mkGetScriptsTiedToFlow, flowId);
   const flowScriptsWithLogEntry = useSelector(state => selectors.flowExecutionLogScripts(state, flowId), shallowEqual);
 
   // const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
