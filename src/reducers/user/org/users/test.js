@@ -134,6 +134,38 @@ describe('users (ashares) reducers', () => {
 
     expect(newState).toEqual(expected);
   });
+  test('should update the state properly when an user reinvite requested', () => {
+    const someState = [
+      { _id: 'ashare1', something: 'something1', dismissed: true },
+      {
+        _id: 'ashare2',
+      },
+    ];
+    const UserReinviteAction = actions.user.org.users.reinvite('ashare1');
+    const newState = reducer(someState, UserReinviteAction);
+    const expected = [{ _id: 'ashare1', something: 'something1', dismissed: true, reinviteStatus: REINVITE_STATES.LOADING },
+      {
+        _id: 'ashare2',
+      }];
+
+    expect(newState).toEqual(expected);
+  });
+  test('should update the state properly when an user reinvite error received', () => {
+    const someState = [
+      { _id: 'ashare1', something: 'something1', dismissed: true },
+      {
+        _id: 'ashare2',
+      },
+    ];
+    const UserReinviteAction = actions.user.org.users.reinviteError('ashare1');
+    const newState = reducer(someState, UserReinviteAction);
+    const expected = [{ _id: 'ashare1', something: 'something1', dismissed: true, reinviteStatus: REINVITE_STATES.ERROR },
+      {
+        _id: 'ashare2',
+      }];
+
+    expect(newState).toEqual(expected);
+  });
   test('list should return [] when the state undefined', () => {
     const newState = reducer(undefined, 'someaction');
 
@@ -222,6 +254,26 @@ describe('users (ashares) reducers', () => {
         { _id: 'one', accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE },
         { _id: 'two', accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR },
       ]);
+    });
+  });
+  describe('userReinviteStatus selector', () => {
+    test('should return [] when the state undefined', () => {
+      const newState = reducer(undefined, 'someaction');
+
+      expect(selectors.userReinviteStatus(newState)).toEqual(null);
+    });
+    test('should return correct user details', () => {
+      const newState = reducer(
+        [
+          { _id: 'one', accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE, reinviteStatus: 'loading' },
+          { _id: 'two', accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR },
+        ],
+        'someaction'
+      );
+
+      expect(selectors.userReinviteStatus(newState, 'one')).toEqual(REINVITE_STATES.LOADING);
+
+      expect(selectors.userReinviteStatus(newState, 'two')).toEqual(undefined);
     });
   });
 });
