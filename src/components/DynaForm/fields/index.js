@@ -122,6 +122,7 @@ import DynaDateSelector from './DynaDateSelector';
 import DynaFileEncryptDecrypt from './DynaFileEncryptDecrypt';
 import DynaHashAlogorithm from './DynaHashAlogorithm';
 import DynaQueryRadioGroup from './radiogroup/DynaQueryRadioGroup';
+import DynaLicenseEdition from './DynaLicenseEdition';
 import DynaAllIntegrations from './integrations/DynaAllIntegrations';
 import DynaChildIntegrations from './integrations/DynaChildIntegrations';
 import DynaFlowsTiedToIntegrations from './integrations/DynaFlowsTiedToIntegrations';
@@ -283,6 +284,7 @@ export default {
   dateselector: DynaDateSelector,
   fileencryptdecrypt: DynaFileEncryptDecrypt,
   hashalgorithm: DynaHashAlogorithm,
+  licenseedition: DynaLicenseEdition,
   triallicense: DynaTrialLicense,
   licenseexpires: DynaLicenseExpires,
 };

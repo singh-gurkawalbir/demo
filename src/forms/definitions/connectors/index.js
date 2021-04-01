@@ -11,12 +11,9 @@ export default {
 
     if (formValues['/framework'] === 'twoDotZero') {
       const twoDotZero = {
-        _integrationId: formValues['/_integrationId'],
+        _integrationId: newValues['/_integrationId'],
       };
 
-      if (formValues['/editions'] && formValues['/editions'].split) {
-        twoDotZero.editions = formValues['/editions'].split(',');
-      }
       newValues['/twoDotZero'] = twoDotZero;
 
       delete newValues['/editions'];
@@ -66,7 +63,6 @@ export default {
         '_integrationId',
         'contactEmail',
         'websiteURL',
-        'editions',
         '_stackId',
         'installerFunction',
         'uninstallerFunction',
