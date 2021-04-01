@@ -3,8 +3,7 @@ import each from 'jest-each';
 import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
-import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, TILE_STATUS, USER_ACCESS_LEVELS } from '../utils/constants';
-import { MISCELLANEOUS_SECTION_ID } from '../views/Integration/DIY/panels/Flows';
+import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, MISCELLANEOUS_SECTION_ID, TILE_STATUS, USER_ACCESS_LEVELS } from '../utils/constants';
 
 const suitescriptConnectors = [
   {
