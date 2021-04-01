@@ -156,6 +156,8 @@ export default function DateRangeSelector({
   selectedRangeConstraint,
   CustomTextFields,
   toDate,
+  // default Date display to be shown in all cases
+  showDateDisplay = true,
   isCalendar,
 }) {
   const defaultValue = getSelectedRange(defaultPreset);
@@ -282,6 +284,7 @@ export default function DateRangeSelector({
                   setSelectedRange={setSelectedRangeWithConstraint}
                   staticRanges={[]}
                   showSelectionPreview
+                  showDateDisplay={showDateDisplay}
                   moveRangeOnFirstSelection={false}
                   showMonthAndYearPickers={false}
                   editableDateInputs={false}
