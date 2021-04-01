@@ -6,7 +6,7 @@ import DynaSoqlQuery from './DynaSoqlQuery';
 import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
 import DynaApiParameters from './DynaApiParameters';
 import DynaNetSuiteUpsertField from './DynaNetSuiteUpsertField';
-import DynaNetSuiteLookup from './DynaNetSuiteLookup';
+import DynaNetSuiteLookup_afe2 from './DynaNetSuiteLookup_afe2';
 import DynaFileKeyColumn_afe2 from './DynaFileKeyColumn_afe2';
 import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
@@ -21,7 +21,8 @@ export default {
   suitescriptsalesforcerefreshableselect: DynaSalesforceRefreshableSelect,
   suitescriptapiparameters: DynaApiParameters,
   suitescriptnetsuiteupsertfield: DynaNetSuiteUpsertField,
-  suitescriptnetsuitelookup: DynaNetSuiteLookup,
+  // suitescriptnetsuitelookup: DynaNetSuiteLookup,
+  suitescriptnetsuitelookup: DynaNetSuiteLookup_afe2,
   // suitescriptfilekeycolumn: DynaFileKeyColumn,
   suitescriptfilekeycolumn: DynaFileKeyColumn_afe2,
   suitescriptsalesforcelookupfilters: DynaSalesforceLookupFilters,

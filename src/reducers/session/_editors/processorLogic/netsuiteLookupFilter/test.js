@@ -30,8 +30,8 @@ describe('netsuiteLookupFilter processor logic', () => {
   });
   describe('buildData util', () => {
     test('should return passed sample data if empty', () => {
-      expect(buildData()).toEqual([]);
-      expect(buildData(undefined, [])).toEqual([]);
+      expect(buildData({})).toBeUndefined();
+      expect(buildData({}, [])).toEqual([]);
     });
     test('should correctly generate the data paths if sample data is of array type', () => {
       const sampleData = [{
@@ -44,7 +44,7 @@ describe('netsuiteLookupFilter processor logic', () => {
         {name: 'recordType', id: 'recordType'},
       ];
 
-      expect(buildData(undefined, JSON.stringify(sampleData))).toEqual(expectedOutput);
+      expect(buildData({}, JSON.stringify(sampleData))).toEqual(expectedOutput);
     });
     test('should correctly generate the data paths if sample data is of object type', () => {
       const sampleData = {
@@ -57,7 +57,20 @@ describe('netsuiteLookupFilter processor logic', () => {
         {name: 'recordType', id: 'recordType'},
       ];
 
-      expect(buildData(undefined, JSON.stringify(sampleData))).toEqual(expectedOutput);
+      expect(buildData({}, JSON.stringify(sampleData))).toEqual(expectedOutput);
+    });
+    test('should return the json sample data if editor contains ssLinkedConnectionId', () => {
+      const sampleData = JSON.stringify([
+        {name: 'id', id: 'id'},
+        {name: 'recordType', id: 'recordType'},
+      ]);
+
+      const expectedOutput = [
+        {name: 'id', id: 'id'},
+        {name: 'recordType', id: 'recordType'},
+      ];
+
+      expect(buildData({ssLinkedConnectionId: '123'}, sampleData)).toEqual(expectedOutput);
     });
   });
 });
