@@ -130,8 +130,11 @@ export default function EditorDrawer({
       return onClose();
     }
 
-    cancelDialog({onSave: onClose});
-  }, [cancelDialog, isEditorDirty, onClose]);
+    cancelDialog({
+      onSave: handleSave,
+      onDiscard: onClose,
+    });
+  }, [cancelDialog, handleSave, isEditorDirty, onClose]);
   const handlePreviewChange = useCallback(
     () =>
       dispatch(

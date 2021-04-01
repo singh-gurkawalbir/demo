@@ -8,7 +8,6 @@ import useCancelConfirm from '../useCancelConfirm';
 
 export default function SaveButtonGroup({ editorId, onClose }) {
   const dispatch = useDispatch();
-  const handleCancelClick = useCancelConfirm(editorId, onClose);
   const [closeTriggered, setCloseTriggered] = useState(false);
   const { saveStatus, disabled } = useSelector(state => selectors._editor(state, editorId));
   const editorViolations = useSelector(state => selectors._editorViolations(state, editorId));
@@ -22,6 +21,7 @@ export default function SaveButtonGroup({ editorId, onClose }) {
     handleSave();
     setCloseTriggered(true);
   };
+  const handleCancelClick = useCancelConfirm(editorId, onClose, handleSaveAndClose);
 
   useEffect(() => {
     if (closeTriggered && saveSuccessful) onClose();

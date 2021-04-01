@@ -73,11 +73,11 @@ export const ConfirmDialog = props => {
         <ButtonsGroup>
           {buttons.map(button => (
             <Button
-              variant={button.color === 'secondary' ? 'text' : 'outlined'}
+              variant={button.variant || (button.color === 'secondary' ? 'text' : 'outlined')}
               data-test={button.dataTest || button.label}
               key={button.label}
               className={clsx({[classes.btnRight]: buttons.length > 2 && button.label === 'Cancel'})}
-              color={button.color === 'secondary' ? '' : 'primary'}
+              color={button.color === 'secondary' ? 'secondary' : 'primary'}
               onClick={handleButtonClick(button)}>
               {button.label}
             </Button>
@@ -129,13 +129,13 @@ export default function useConfirmDialog() {
     [setConfirmDialogProps]
   );
   const defaultCancelDialog = useCallback(
-    ({onSave}) => {
+    ({onSave, onDiscard}) => {
       setConfirmDialogProps({
         title: 'You’ve got unsaved changes',
         message: 'Are you sure you want to leave this page and lose your unsaved changes?',
         buttons: [
           { label: 'Save Changes', color: 'primary', onClick: onSave },
-          { label: 'Discard Changes', variant: 'text', color: 'secondary' },
+          { label: 'Discard Changes', variant: 'outlined', color: 'secondary', onClick: onDiscard },
         ],
       });
     },

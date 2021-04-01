@@ -99,9 +99,6 @@ export default function ConfigureDebugger(props) {
       return moment(debugDate).diff(moment(), 'minutes');
     }
   }, [debugDate]);
-  const handleCancelClick = useCallback(() => {
-    cancelDialog({onSave: onClose});
-  }, [onClose, cancelDialog]);
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {
@@ -111,6 +108,12 @@ export default function ConfigureDebugger(props) {
       onClose,
     }
   );
+  const handleCancelClick = useCallback(() => {
+    cancelDialog({
+      onSave: submitHandler(true),
+      onDiscard: onClose,
+    });
+  }, [cancelDialog, submitHandler, onClose]);
 
   // TODO @Raghu: Convert this into a Right Drawer
   return (

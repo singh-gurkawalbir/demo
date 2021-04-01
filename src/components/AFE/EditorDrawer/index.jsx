@@ -124,11 +124,14 @@ export default function EditorDrawer(props) {
   );
   const handleCancelClick = useCallback(() => {
     if (isEditorDirty) {
-      cancelDialog({onSave: handleClose});
+      cancelDialog({
+        onSave: handleSaveAndClose,
+        onDiscard: handleClose,
+      });
     } else {
       handleClose();
     }
-  }, [cancelDialog, isEditorDirty, handleClose]);
+  }, [isEditorDirty, cancelDialog, handleSaveAndClose, handleClose]);
 
   const showPreviewAction = !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate;
   const disableSave =
