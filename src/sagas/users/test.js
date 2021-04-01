@@ -801,7 +801,7 @@ describe('all modal sagas', () => {
             message: 'Reinviting User',
           }),
         );
-        expect(saga.throw(new Error()).value).toEqual(true);
+        expect(saga.throw(new Error()).value).toEqual(put(actions.user.org.users.reinviteError(userId)));
         expect(saga.next().done).toEqual(true);
       });
     });

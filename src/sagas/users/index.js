@@ -340,6 +340,8 @@ export function* reinviteUser({ _id }) {
       message: 'Reinviting User',
     });
   } catch (e) {
+    yield put(actions.user.org.users.reinviteError(_id));
+
     return true;
   }
 

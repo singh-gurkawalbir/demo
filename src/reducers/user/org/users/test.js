@@ -5,6 +5,7 @@ import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
 } from '../../../../utils/constants';
+import { COMM_STATES as REINVITE_STATES } from '../../../comms/networkComms';
 
 describe('users (ashares) reducers', () => {
   test('any other action return default state', () => {
@@ -126,7 +127,7 @@ describe('users (ashares) reducers', () => {
     ];
     const UserReinviteAction = actions.user.org.users.reinvited('ashare1');
     const newState = reducer(someState, UserReinviteAction);
-    const expected = [{ _id: 'ashare1', something: 'something1', dismissed: false },
+    const expected = [{ _id: 'ashare1', something: 'something1', dismissed: false, reinviteStatus: REINVITE_STATES.SUCCESS },
       {
         _id: 'ashare2',
       }];
