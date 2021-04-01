@@ -5,11 +5,7 @@ export default {
     '/assistant': 'tableau',
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://${
-      formValues['/http/myServer']
-    }.online.tableau.com/api/2.7/sites/${
-      formValues['/http/unencrypted/siteId']
-    }`,
+    '/http/baseURI': `https://${formValues['/http/myServer']}.online.tableau.com/api/${formValues['/http/unencrypted/version']}/sites/${formValues['/http/unencrypted/siteId']}`,
     '/http/auth/token/location': 'header',
     '/http/ping/relativeURI': '/groups',
     '/http/ping/method': 'GET',
@@ -54,6 +50,25 @@ export default {
           );
 
         return subdomain;
+      },
+    },
+    'http.unencrypted.version': {
+      id: 'http.unencrypted.version',
+      type: 'text',
+      label: 'API version',
+      required: true,
+      helpKey: 'tableau.connection.http.unencrypted.version',
+      defaultValue: r => {
+        const baseUri = r && r.http && r.http.baseURI;
+
+        const versions =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('api/') + 4,
+            baseUri.indexOf('/sites')
+          );
+
+        return versions || '3.10';
       },
     },
     'http.auth.basic.username': {
@@ -104,6 +119,7 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: ['http.myServer',
+          'http.unencrypted.version',
           'http.auth.basic.username',
           'http.auth.basic.password',
           'http.unencrypted.contentUrl',
