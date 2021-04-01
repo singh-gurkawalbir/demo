@@ -113,6 +113,7 @@ export default function reducer(state = {}, action) {
         const ap = draft[id].activeProcessor;
         const draftRule = ap ? draft[id].rule[ap] : draft[id].rule;
         const shouldReplace =
+          !rulePatch ||
           typeof rulePatch === 'string' ||
           Array.isArray(rulePatch) ||
           draftRule === undefined;

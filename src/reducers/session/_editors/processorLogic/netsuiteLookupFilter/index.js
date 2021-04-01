@@ -1,4 +1,5 @@
 import getJSONPaths, { pickFirstObject, wrapSpecialChars } from '../../../../../utils/jsonPaths';
+import { safeParse } from '../../../../../utils/string';
 
 export default {
   /**
@@ -11,7 +12,7 @@ export default {
   }),
   init: props => {
     const {options, fieldState} = props;
-    const {value} = fieldState;
+    const {value} = fieldState || {};
     let rule = [];
 
     if (value) {
@@ -31,7 +32,7 @@ export default {
     let formattedData = [];
 
     if (sampleData) {
-      const extractPaths = getJSONPaths(pickFirstObject(sampleData));
+      const extractPaths = getJSONPaths(pickFirstObject(safeParse(sampleData)));
 
       formattedData =
           extractPaths?.map(obj => ({ name: obj.id, id: obj.id })) || [];
