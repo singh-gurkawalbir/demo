@@ -1095,7 +1095,7 @@ export default {
   'export.dataURITemplate':
     "When your flow runs but has data errors this field can be really helpful in that it allows you to make sure that all the errors in your job dashboard have a link to the original data in the export application.  This field uses a handlebars template to generate the dynamic links based on the data being exported.  For example, if you are exporting a customer record from Shopify, you would most likely set this field to the following value 'https://your-store.myshopify.com/admin/customers/{{{id}}}'.  Or, if you are just exporting a CSV file from an FTP site then this field could simply be one or more columns from the file: {{{internal_id}}, {{{email}}}, etc...",
   'export.traceKeyTemplate':
-    'Set this field to define field(s) that IO uses to identify a unique record. You can use a single field such as {{{field1}}} or use a handlebar expression. For example, this syntax {{join “_” field1 field2}} will generate a Tracekey template field1_field2. When this field is set, you will override the platform default tracekey field.',
+    'Set this field to override default trace key field(s) that are used to identify a unique record. You can use a single field such as {{field1}} or use a handlebar expression. For example, this syntax {{join “_” field1 field2}} will generate a trace key template field1_field2.',
   'export.sampleData':
     'Enter a sample destination record here so that integrator.io can help you later map fields between source and destination applications. The sample destination record should ideally contain all fields that you want to process in this flow, and should follow the exact same formatting rules that the destination application/API requires.',
   'export.description':

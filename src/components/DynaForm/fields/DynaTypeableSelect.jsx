@@ -296,8 +296,10 @@ export default function DynaTypeableSelect(props) {
   const filterOption = (options, rawInput) => {
     if (!options.label || !options.value) return false;
     const input = rawInput?.toString().toLowerCase();
+    const label = options.label.toString?.().toLowerCase?.();
+    const value = options.value.toString?.().toLowerCase?.();
 
-    return options.label.toLowerCase().includes(input) || options.value.toLowerCase().includes(input);
+    return label.includes(input) || value.includes(input);
   };
 
   const {y: elementPosFromTop = 0} = ref?.current?.getBoundingClientRect() || {};

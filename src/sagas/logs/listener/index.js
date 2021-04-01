@@ -96,7 +96,7 @@ export function* retryToFetchRequests({retryCount = 0, fetchRequestsPath}) {
 }
 
 export function* requestLogs({ flowId, exportId, loadMore }) {
-  const { nextPageURL, debugOn, hasNewLogs } = yield select(selectors.listenerLogs, exportId);
+  const { nextPageURL, debugOn } = yield select(selectors.listenerLogs, exportId);
 
   const filters = yield select(selectors.filter, FILTER_KEY);
 
@@ -121,6 +121,8 @@ export function* requestLogs({ flowId, exportId, loadMore }) {
       loadMore
     )
   );
+  // get the hasNewLogs again from the state once logs are received
+  const hasNewLogs = yield select(selectors.hasNewLogs, exportId);
 
   // only when the debugger is on and there are no new logs, we do the polling
   if (debugOn && !hasNewLogs) {

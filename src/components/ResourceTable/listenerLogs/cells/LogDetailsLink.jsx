@@ -10,6 +10,7 @@ import actions from '../../../../actions';
 const useStyles = makeStyles(theme => ({
   textColor: {
     color: theme.palette.primary.main,
+    paddingLeft: 10,
   },
   rowClicked: {
     '&:before': {
