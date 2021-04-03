@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import clsx from 'clsx';
 import {selectors} from '../../reducers';
 import Spinner from '../Spinner';
 import TopPanel from './TopPanel';
@@ -12,59 +11,60 @@ import actions from '../../actions';
 import SettingsDrawer from './Settings';
 import DrawerContent from '../drawer/Right/DrawerContent';
 import DrawerFooter from '../drawer/Right/DrawerFooter';
+import AutoMapperButton from './AutoMapperButton';
 
-const useStyles = makeStyles({
-  root: {
+const useStyles = makeStyles(theme => ({
+  mappingDrawerContent: {
     height: '100%',
     display: 'flex',
   },
-  mappingContainer: {
-    flex: '1 1 0',
+  mappingColumn: {
     width: 'calc(100% + 24px)',
     overflow: 'hidden',
     flexDirection: 'column',
     display: 'flex',
     marginLeft: -24,
   },
-  mappingsBody: {
-    height: '100%',
+  mappingTable: {
     overflow: 'auto',
   },
-});
+  autoMapper: {
+    marginLeft: theme.spacing(3),
+    marginBottom: theme.spacing(1),
+    marginTop: theme.spacing(1),
+  },
+}));
 const Mapping = props => {
   const {flowId, importId, subRecordMappingId, disabled, onClose} = props;
   const classes = useStyles();
 
   return (
     <>
+      <SettingsDrawer disabled={disabled} />
       <DrawerContent>
-        <div className={classes.root}>
-          <div className={clsx(classes.mappingContainer)}>
-            <TopPanel
-              flowId={flowId}
-              importId={importId}
+        <div className={classes.mappingDrawerContent}>
+          <div className={classes.mappingColumn}>
+            <TopPanel flowId={flowId} importId={importId} disabled={disabled} />
+
+            <DragContainer
+              className={classes.mappingTable}
               disabled={disabled}
-          />
-            <div className={classes.mappingsBody}>
-              <DragContainer
-                disabled={disabled}
-                importId={importId}
-                flowId={flowId}
-                subRecordMappingId={subRecordMappingId}
-            />
+              importId={importId}
+              flowId={flowId}
+              subRecordMappingId={subRecordMappingId}
+              />
+            <div className={classes.autoMapper}>
+              <AutoMapperButton />
             </div>
           </div>
 
           <PreviewPanel
             importId={importId}
             disabled={disabled}
-            subRecordMappingId={subRecordMappingId}
-        />
-          <SettingsDrawer
-            disabled={disabled}
-        />
+            subRecordMappingId={subRecordMappingId} />
         </div>
       </DrawerContent>
+
       <DrawerFooter>
         <ButtonPanel
           flowId={flowId}
