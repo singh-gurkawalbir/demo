@@ -21,6 +21,7 @@ const useStyles = makeStyles(theme => ({
   },
   swatch: {
     flexGrow: 1,
+    marginBottom: theme.spacing(0.5),
   },
 }));
 
