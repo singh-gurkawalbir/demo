@@ -1263,6 +1263,7 @@ describe('pageProcessorPreviewOptions sagas', () => {
       const uiData = { test: 5 };
       const postData = {
         lastExportDateTime: expect.any(String),
+        currentExportDateTime: expect.any(String),
       };
 
       const { returnValue } = await expectSaga(getPreviewOptionsForResource, { resource: iaDeltaResource, flow })

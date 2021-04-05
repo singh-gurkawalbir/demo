@@ -360,6 +360,7 @@ export default {
     'The access token of your Tableau account.',
   'tableau.connection.http.unencrypted.siteId':
     'The Site ID of your Tableau account.',
+  'tableau.connection.http.unencrypted.version': 'Please enter the version of the API to use, such as 3.10. For more information, see <a href="https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api_concepts_versions.htm">REST API and Resource Versions</a>.',
   'tesco.connection.http.encrypted.apiKey':
     'The subscription key of your Tesco account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
   'fieldaware.connection.http.encrypted.apiKey':
@@ -1072,6 +1073,8 @@ export default {
     'Choose the protocol to use for your FTP connection. Choose <b>FTP</b> (basic File Transfer Protocol) if your data is sent and received unencrypted. Choose <b>SFTP</b> if your data is transferred over the encrypted Secure Shell (SSH2) protocol. <b>FTPS</b> is similar to basic FTP, but data is encrypted via the Transport Layer Security (TLS) protocol before transfer.',
   'connection.usePgp':
     'Set this field to configure PGP cryptographic information used for encrypting and decrypting files.',
+  'connection.as2.userStationInfo.mdn.mdnEncoding':
+    'You can tell integrator.io which character encoding to use when we send an MDN back to your trading partner. You can choose between base64 or binary. Base64 will be the default.',
   'export._id':
     'System generated primary unique identifier for your export.  For API users, this value should be used for GET, PUT and DELETE requests.',
   'editor.xml.simple':

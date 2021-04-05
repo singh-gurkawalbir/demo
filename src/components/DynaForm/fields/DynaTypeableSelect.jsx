@@ -196,6 +196,7 @@ export default function DynaTypeableSelect(props) {
       DropdownIndicator: () => null,
       IndicatorSeparator: () => null,
     },
+    showAllSuggestions = false,
   } = props;
   const classes = useStyles();
   const ref = useRef(null);
@@ -294,6 +295,7 @@ export default function DynaTypeableSelect(props) {
   const inputVal = (!isTyping && selectedValue?.label) || value;
   const customStyles = SelectStyle(useTheme());
   const filterOption = (options, rawInput) => {
+    if (showAllSuggestions) return true;
     if (!options.label || !options.value) return false;
     const input = rawInput?.toString().toLowerCase();
     const label = options.label.toString?.().toLowerCase?.();
