@@ -40,16 +40,16 @@ function ResourceDrawer(props) {
   // TODO: This code need to be revisited as there might be othercases as well where
   // flowId need not to be passed.
   const isAsyncHelper = resourceType === 'asyncHelpers';
-
   const handleClose = useCallback(() => {
+    // TODO: remove it ...need it to analyse history length size
     // eslint-disable-next-line no-console
     console.log('history', history);
     if (history.length > 2) {
-      return history.goBack();
+      history.goBack();
     }
     const listingPageUrl = redirectURlToParentListing(match.url);
 
-    return history.push(listingPageUrl);
+    history.push(listingPageUrl);
   }, [history, match.url]);
   const isPreviewPanelAvailableForResource = useSelector(state =>
     // Returns a bool whether the resource has a preview panel or not
