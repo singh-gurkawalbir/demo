@@ -19,7 +19,7 @@ export default {
 
     if (isString(filterValue)) {
       try {
-        rule = JSON.parse(value);
+        rule = JSON.parse(filterValue);
       } catch (e) {
       // do nothing
       }
