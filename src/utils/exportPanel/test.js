@@ -7,7 +7,6 @@ import {
   HTTP_STAGES,
   PREVIEW_STAGE,
   getRequestURL,
-  getRecordSizeOptions,
   isPreviewPanelAvailable,
 } from '.';
 
@@ -172,24 +171,5 @@ describe('getRequestURL util', () => {
     };
 
     expect(getRequestURL(requestData)).toBe('https://celigohelp.zendesk.com/api/v2/tickets');
-  });
-});
-
-describe('getRecordSizeOptions util', () => {
-  test('should return 10 options to select in the record size field', () => {
-    const options = [
-      { label: '10', value: '10'},
-      { label: '20', value: '20'},
-      { label: '30', value: '30'},
-      { label: '40', value: '40'},
-      { label: '50', value: '50'},
-      { label: '60', value: '60'},
-      { label: '70', value: '70'},
-      { label: '80', value: '80'},
-      { label: '90', value: '90'},
-      { label: '100', value: '100'},
-    ];
-
-    expect(getRecordSizeOptions()).toEqual(options);
   });
 });
