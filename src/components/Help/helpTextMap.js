@@ -360,6 +360,7 @@ export default {
     'The access token of your Tableau account.',
   'tableau.connection.http.unencrypted.siteId':
     'The Site ID of your Tableau account.',
+  'tableau.connection.http.unencrypted.version': 'Please enter the version of the API to use, such as 3.10. For more information, see <a href="https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api_concepts_versions.htm">REST API and Resource Versions</a>.',
   'tesco.connection.http.encrypted.apiKey':
     'The subscription key of your Tesco account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
   'fieldaware.connection.http.encrypted.apiKey':
