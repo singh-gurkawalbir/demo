@@ -4,7 +4,7 @@ import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import Panel from './Panel';
+import Panel, { redirectURlToParentListing } from './Panel';
 import { selectors } from '../../../reducers';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
@@ -42,8 +42,15 @@ function ResourceDrawer(props) {
   const isAsyncHelper = resourceType === 'asyncHelpers';
 
   const handleClose = useCallback(() => {
-    history.goBack();
-  }, [history]);
+    // eslint-disable-next-line no-console
+    console.log('history', history);
+    if (history.length > 2) {
+      return history.goBack();
+    }
+    const listingPageUrl = redirectURlToParentListing(match.url);
+
+    return history.push(listingPageUrl);
+  }, [history, match.url]);
   const isPreviewPanelAvailableForResource = useSelector(state =>
     // Returns a bool whether the resource has a preview panel or not
     selectors.isPreviewPanelAvailableForResource(
