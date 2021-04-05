@@ -1,6 +1,7 @@
 import React from 'react';
 import AccessLevel from '../cells/AccessLevel';
 import EnableUser from '../cells/EnableUser';
+import ReinviteUser from '../cells/ReinviteUser';
 import Status from '../cells/Status';
 import Notifications from '../cells/Notifications';
 import AccessLevelHeader from '../cells/AccessLevelHeader';
@@ -29,8 +30,13 @@ export default {
       {
         headerValue: EnableUserHeader,
         align: 'center',
-        value: (r, { integrationId, accessLevel}) =>
-          <EnableUser user={r} integrationId={integrationId} accessLevel={accessLevel} />,
+        value: (r, { integrationId, accessLevel}) => {
+          if (!r.dismissed) {
+            return <EnableUser user={r} integrationId={integrationId} accessLevel={accessLevel} />;
+          }
+
+          return <ReinviteUser user={r} />;
+        },
       },
       ...((integrationId && isUserInErrMgtTwoDotZero) ? [{
         heading: 'Notifications',

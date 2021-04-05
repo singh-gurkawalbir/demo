@@ -50,7 +50,7 @@ const defaultRange = {
 export default function DynaDateSelector(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { id, label, name, value, onFieldChange, required, formKey} = props;
+  const { id, label, name, value, onFieldChange, required, isValid: isValidState, formKey} = props;
   const calendarIcon = () => <CalendarIcon className={classes.iconWrapper} />;
   const { dateFormat } = useSelector(state => selectors.userProfilePreferencesProps(state));
   const isValueParsableByMoment = useCallback(value =>
@@ -72,6 +72,7 @@ export default function DynaDateSelector(props) {
   useEffect(() => () => {
     dispatch(actions.form.clearForceFieldState(formKey)(id));
   }, [dispatch, formKey, id]);
+
   const handleFieldChange = useCallback((id, value) => {
     // isValueParsableByMoment checks for an incomplete form value or invalid date
     if (isValueParsableByMoment(value)) {
@@ -90,7 +91,7 @@ export default function DynaDateSelector(props) {
   return (
     <>
       <div className={classes.dynaDateLabelWrapper}>
-        <FormLabel required={required}>{label}</FormLabel>
+        <FormLabel error={!isValidState} required={required}>{label}</FormLabel>
         <FieldHelp {...props} />
       </div>
       <DynaText

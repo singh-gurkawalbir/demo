@@ -48,7 +48,8 @@ import {
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
   JOB_STATUS,
-  FILE_PROVIDER_ASSISTANTS } from '../utils/constants';
+  FILE_PROVIDER_ASSISTANTS,
+  MISCELLANEOUS_SECTION_ID} from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { getFieldById } from '../forms/formFactory/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
@@ -63,6 +64,7 @@ import {
   isQueryBuilderSupported,
   filterAndSortResources,
   getUserAccessLevelOnConnection,
+  shouldHaveMiscellaneousSection,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -88,7 +90,6 @@ import {
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
-import { MISCELLANEOUS_SECTION_ID, shouldHaveMiscellaneousSection } from '../views/Integration/DIY/panels/Flows';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
 
@@ -788,6 +789,96 @@ selectors.mkAllFlowsTiedToIntegrations = () => {
       // filter based on selected childIntegrations
 
       return flowsFromAllStores.filter(({childId}) => childIntegrationIds.includes(childId));
+    }
+  );
+};
+
+const reportsFilter = {
+  type: 'eventreports',
+};
+
+selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
+  const eventReports = resourceListSel(state, reportsFilter)?.resources;
+
+  if (!eventReports) { return emptyArray; }
+
+  const allIntegrations = eventReports.map(r => {
+    const integrationId = selectors.resource(state, 'flows', r?._flowIds[0])?._integrationId;
+    const integration = selectors.resource(state, 'integrations', integrationId);
+
+    return integration;
+  }).filter(Boolean);
+
+  // get soreted integrations
+  return uniqBy(allIntegrations, '_id').sort((e1, e2) => e1.name < e2.name);
+},
+integrations => integrations
+);
+
+selectors.getAllFlowsTiedToEventReports = createSelector(state => {
+  const eventReports = resourceListSel(state, reportsFilter)?.resources;
+  const flows = resourceListSel(state, flowsFilter)?.resources;
+
+  if (!eventReports) { return emptyArray; }
+
+  const allFlowIdsTiedToEvenReports = uniq(eventReports.flatMap(r =>
+    r?._flowIds || []
+  ).filter(Boolean));
+
+  if (!allFlowIdsTiedToEvenReports) { return emptyArray; }
+
+  return flows.filter(({_id: flowId}) =>
+    allFlowIdsTiedToEvenReports.includes(flowId)).sort((e1, e2) => e1.name < e2.name);
+},
+flows => flows
+);
+
+selectors.mkEventReportsFiltered = () => {
+  const resourceListSelector = selectors.makeResourceListSelector();
+
+  return createSelector(
+    state => resourceListSelector(state, reportsFilter),
+    selectors.getAllFlowsTiedToEventReports,
+    (_1, options) => options,
+    (allEventReports, allUniqueFlowsTiedToEventReports, options) => {
+      if (!(allEventReports?.resources) || !allUniqueFlowsTiedToEventReports) { return null; }
+      const {paging, ...filterParams} = options || {};
+
+      const {integrationId: integrationIdFilter, flowIds: flowIdsFilter, status: statusFilter, startDate: startDateFilter, endDate: endDateFilter } = filterParams;
+
+      let filteredEventReports = allEventReports.resources.filter(({startTime, endTime, status, _flowIds}) => {
+        const statusCriteria = (!statusFilter || !statusFilter.length) ? true : statusFilter.includes(status);
+        const flowIdCriteria = (!flowIdsFilter || !flowIdsFilter.length) ? true : flowIdsFilter.some(flowId => _flowIds.includes(flowId));
+        const startDateStatus = !startDateFilter ? true : moment(startTime).isBetween(moment(startDateFilter.startDate), moment(startDateFilter.endDate));
+        const endDateStatus = !endDateFilter ? true : moment(endTime).isBetween(moment(endDateFilter.startDate), moment(endDateFilter.endDate));
+
+        return statusCriteria && flowIdCriteria && startDateStatus && endDateStatus;
+      });
+      // checking filtering by integration
+
+      filteredEventReports = (!integrationIdFilter || !integrationIdFilter.length) ? filteredEventReports : filteredEventReports.filter(({_flowIds}) => {
+        const flow = allUniqueFlowsTiedToEventReports.find(({_id}) => _flowIds?.[0] === _id);
+
+        return integrationIdFilter.includes(flow._integrationId);
+      });
+
+      if (!paging) {
+        return {
+          ...allEventReports,
+          resources: filteredEventReports,
+          count: filteredEventReports.length,
+        };
+      }
+
+      const {currPage, rowsPerPage} = paging;
+      const startIndex = currPage * rowsPerPage;
+      const endIndex = (currPage + 1) * rowsPerPage;
+
+      return {
+        ...allEventReports,
+        resources: filteredEventReports.slice(startIndex, endIndex),
+        count: filteredEventReports.length,
+      };
     }
   );
 };
@@ -2331,7 +2422,7 @@ selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
 };
 
 selectors.isIntegrationAppV1 = (state, integrationId) => {
-  const isIntegrationAppV2 = selectors.isIntegrationAppVersion2(state, integrationId);
+  const isIntegrationAppV2 = selectors.isIntegrationAppVersion2(state, integrationId, true);
   const integration = selectors.resource(state, 'integrations', integrationId);
 
   return !!integration?._connectorId && !isIntegrationAppV2;
@@ -2459,18 +2550,6 @@ selectors.availableUsersList = (state, integrationId) => {
 
   return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
 };
-
-selectors.mkGetUserById = () => createSelector(
-  selectors.availableUsersList,
-  (_1, userId) => userId,
-  (users, userId) => {
-    if (!userId || !users) return null;
-
-    const {sharedWithUser} = users.find(u => u?.sharedWithUser?._id === userId) || {};
-
-    return sharedWithUser || {};
-  }
-);
 
 selectors.platformLicense = createSelector(
   selectors.userPreferences,
@@ -5282,7 +5361,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
     return {shouldGetContextFromBE: connection.isHTTP, sampleData: _sampleData};
   }
   if (stage === 'transform' ||
-  stage === 'sampleResponse' || HOOK_STAGES.includes(stage)) {
+  stage === 'sampleResponse' || stage === 'importMappingExtract' || HOOK_STAGES.includes(stage)) {
     return {shouldGetContextFromBE: false, sampleData: _sampleData};
   }
 
@@ -5349,7 +5428,7 @@ selectors.tileLicenseDetails = (state, tile) => {
   const resumable = license?.resumable && [INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel);
 
   if (resumable) {
-    licenseMessageContent = `Your subscription was renewed on ${moment(license.expires).format('MMM Do, YYYY')}. Click Reactivate to continue.`;
+    licenseMessageContent = 'Your subscription has been renewed. Click Reactivate to continue.';
   } else if (license?.trialEndDate && trialExpiresInDays <= 0) {
     licenseMessageContent = `Trial expired on ${moment(license.trialEndDate).format('MMM Do, YYYY')}`;
     showTrialLicenseMessage = true;

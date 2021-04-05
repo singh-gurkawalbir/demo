@@ -51,6 +51,11 @@ export default function getRequestOptions(
         path: `/ashares/${resourceId}/disable`,
         opts: { method: 'PUT' },
       };
+    case actionTypes.USER_REINVITE:
+      return {
+        path: `/ashares/${resourceId}/reinvite`,
+        opts: { method: 'PUT' },
+      };
     case actionTypes.USER_MAKE_OWNER:
       return { path: '/transfers/invite', opts: { method: 'POST' } };
     case actionTypes.LICENSE_TRIAL_REQUEST:
