@@ -20,7 +20,6 @@ export default {
     defaultValue: r => r.opts,
     type: 'licenseeditor',
     mode: 'json',
-    saveMode: 'json',
     label: 'Options',
   },
   sandbox: {
