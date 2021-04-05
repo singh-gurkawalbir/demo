@@ -1072,6 +1072,8 @@ export default {
     'Choose the protocol to use for your FTP connection. Choose <b>FTP</b> (basic File Transfer Protocol) if your data is sent and received unencrypted. Choose <b>SFTP</b> if your data is transferred over the encrypted Secure Shell (SSH2) protocol. <b>FTPS</b> is similar to basic FTP, but data is encrypted via the Transport Layer Security (TLS) protocol before transfer.',
   'connection.usePgp':
     'Set this field to configure PGP cryptographic information used for encrypting and decrypting files.',
+  'connection.as2.userStationInfo.mdn.mdnEncoding':
+    'You can tell integrator.io which character encoding to use when we send an MDN back to your trading partner. You can choose between base64 or binary. Base64 will be the default.',
   'export._id':
     'System generated primary unique identifier for your export.  For API users, this value should be used for GET, PUT and DELETE requests.',
   'editor.xml.simple':
