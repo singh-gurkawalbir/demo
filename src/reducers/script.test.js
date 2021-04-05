@@ -13,7 +13,7 @@ describe('Scripts region selector testcases', () => {
         exports: []}},
       };
 
-      expect(scriptsSelector(state)).toEqual(null);
+      expect(scriptsSelector(state)).toBeNull();
     });
 
     test('should return null if no flow id match', () => {
@@ -53,7 +53,7 @@ describe('Scripts region selector testcases', () => {
           }},
       };
 
-      expect(scriptsSelector(state, 'f2')).toEqual(null);
+      expect(scriptsSelector(state, 'f2')).toBeNull();
     });
 
     test('should return all scripts used in a flow', () => {
