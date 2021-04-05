@@ -107,11 +107,3 @@ export const previewFileData = (previewData, recordSize) => {
   // if preview data is an array
   return previewData.slice(0, recordSize);
 };
-
-export const getRecordSizeOptions = () => Array.from(Array(11), (val, index) => {
-  let stringifiedValue = '1';
-
-  if (index > 0) stringifiedValue = `${(index) * 10}`;
-
-  return { label: stringifiedValue, value: stringifiedValue};
-});
