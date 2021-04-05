@@ -58,10 +58,8 @@ function MappingSettings({
 
   const generateFields = useSelector(state => {
     if (isCategoryMapping) {
-      const category = editorId?.split?.('-')[1];
-
       const {fields: generateFields} = selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
-        sectionId: category,
+        sectionId: editorId,
         depth,
       }) || emptyObject;
 
