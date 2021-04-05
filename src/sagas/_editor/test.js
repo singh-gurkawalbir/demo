@@ -984,6 +984,31 @@ describe('editor sagas', () => {
         .returns({ data: { record: { name: 'Bob' } }, templateVersion: 2 })
         .run();
     });
+    test('should not call sampleDataWrapper selector for importMappingExtract stage and return data as is', () => {
+      const editor = {
+        id: 'salesforceid',
+        editorType: 'salesforceLookupFilter',
+        flowId,
+        resourceType: 'imports',
+        resourceId,
+        stage: 'importMappingExtract',
+        formKey: 'new-123',
+        fieldId: 'whereclause',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'salesforceid' })
+        .provide([
+          [select(selectors._editor, 'salesforceid'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.call.fn(requestSampleData), {}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: false, sampleData: {name: 'Bob'}}],
+        ])
+        .call(requestSampleData, {flowId, resourceId, resourceType: 'imports', stage: 'importMappingExtract'})
+        .not.call.fn(apiCallWithRetry)
+        .not.select.selector(selectors.sampleDataWrapper)
+        .returns({ data: { name: 'Bob' }, templateVersion: undefined })
+        .run();
+    });
     test('should call sampleDataWrapper selector to wrap the data with context and then return the data', () => {
       const editor = {
         id: 'tx-123',
