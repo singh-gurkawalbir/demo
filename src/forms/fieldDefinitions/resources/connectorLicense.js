@@ -18,7 +18,7 @@ export default {
   },
   opts: {
     defaultValue: r => r.opts,
-    type: 'editor',
+    type: 'licenseeditor',
     mode: 'json',
     saveMode: 'json',
     label: 'Options',
