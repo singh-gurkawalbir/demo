@@ -24,7 +24,7 @@ export default {
       // do nothing
       }
     } else {
-      rule = filterValue;
+      rule = filterValue || [];
     }
 
     return {

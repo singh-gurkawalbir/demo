@@ -74,9 +74,7 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
     const qbRules = convertNetSuiteLookupFilterExpression(rule, data);
 
     if (
-      qbRules &&
-        qbRules.rules &&
-        qbRules.rules.length === 1 &&
+        qbRules?.rules?.length === 1 &&
         !qbRules.rules[0].id
     ) {
       qbRules.rules = [];

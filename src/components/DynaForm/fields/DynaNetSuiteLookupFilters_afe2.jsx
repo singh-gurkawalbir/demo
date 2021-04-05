@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useEffect, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -48,6 +48,7 @@ export default function DynaNetSuiteLookupFilters_afe2(props) {
   } = props;
   const editorId = 'ns-mappingLookupFilter';
   const { disableFetch, commMetaPath } = options;
+  const isEditorInitialized = useSelector(state => selectors._editor(state, editorId).fieldId);
 
   useEffect(() => {
     dispatch(actions._editor.init(editorId, 'netsuiteLookupFilter', {
@@ -106,12 +107,14 @@ export default function DynaNetSuiteLookupFilters_afe2(props) {
           <RefreshIcon />
         </Button>
       </div>
+      {isEditorInitialized && (
       <FilterPanel
         id={id}
         editorId={editorId}
         filters={filters}
         onFieldChange={onFieldChange}
       />
+      )}
     </>
   );
 }
