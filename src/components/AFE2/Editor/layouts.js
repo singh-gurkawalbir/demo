@@ -34,7 +34,7 @@ export default {
     gridTemplateRows: '1fr 1fr',
     gridTemplateAreas: '"rule" "result"',
   },
-  netsuiteLookupFilter: {
+  lookupFilter: {
     gridTemplateColumns: '1fr',
     gridTemplateRows: '1fr',
     gridTemplateAreas: '"rule"',

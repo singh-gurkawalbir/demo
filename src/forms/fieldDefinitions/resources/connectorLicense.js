@@ -45,9 +45,11 @@ export default {
     required: true,
     disableText: r => !isNewId(r._id),
   },
-  edition: {
-    type: 'text',
+  _editionId: {
+    type: 'licenseedition',
     label: 'Edition',
+    required: true,
+    connectorId: r => r?._connectorId,
   },
   childLicenses: {
     type: 'childlicenses',
