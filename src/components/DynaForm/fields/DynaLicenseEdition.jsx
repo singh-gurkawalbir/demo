@@ -5,7 +5,7 @@ import { selectors } from '../../../reducers';
 
 const emptyArr = [];
 export default function DynaLicenseEdition(props) {
-  const { connectorId } = props;
+  const { connectorId, isNewId } = props;
   const editions = useSelector(state => selectors.resource(state, 'connectors', connectorId)?.twoDotZero?.editions || emptyArr);
 
   const options = useMemo(() => editions.map(edition => ({
@@ -17,7 +17,7 @@ export default function DynaLicenseEdition(props) {
 
   return (
     <DynaSelect
-      {...props} options={[{ items: options || [] }]}
+      {...props} required={isNewId} options={[{ items: options || [] }]}
 
   />
   );
