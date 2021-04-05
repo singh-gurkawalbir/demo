@@ -2393,8 +2393,9 @@ selectors.integrationAppFlowIds = (state, integrationId, storeId) => {
         // there is no good way to extract this
         // Extract store from the flow name. (Regex extracts store label from flow name)
         // Flow name usually follows this format: <Flow Name> [<StoreLabel>]
-        const flowStore = /\s\[(.*)\]$/.test(f.name)
-          ? /\s\[(.*)\]$/.exec(f.name)[1]
+        const regex = new RegExp(`\\s\\[(${integration.stores.map(s => s.label).join('|')})\\]$`);
+        const flowStore = regex.test(f.name)
+          ? regex.exec(f.name)[1]
           : null;
 
         return flowStore
