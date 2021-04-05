@@ -37,10 +37,13 @@ const TabLabel = ({layout, formKey, fieldMap, label, tabType }) => {
     selectors.isExpansionPanelErroredForMetaForm(state, formKey, {
       layout,
       fieldMap,
-    })
+    }, true,
+    )
   );
 
-  return (tabType !== 'tabIA' && isExpansionPanelErrored ? <Typography color="error" style={{fontSize: 15, lineHeight: '19px' }}>{label}</Typography> : label);
+  return (tabType !== 'tabIA' && isExpansionPanelErrored
+    ? <Typography color="error" style={{fontSize: 15, lineHeight: '19px' }}>{label}</Typography>
+    : label);
 };
 
 function TabComponent(props) {
