@@ -908,7 +908,7 @@ selectors.iaFlowSettings = (state, integrationId, flowId, childId) => {
 // #region script selectors
 
 selectors.mkGetScriptsTiedToFlow = () => createSelector(
-  state => state?.scripts || null,
+  state => state?.scripts,
   (state, flowId) => {
     if (!flowId) {
       return;
@@ -916,8 +916,8 @@ selectors.mkGetScriptsTiedToFlow = () => createSelector(
 
     return state?.flows?.find(({_id}) => _id === flowId);
   },
-  state => state?.imports || null,
-  state => state?.exports || null,
+  state => state?.imports,
+  state => state?.exports,
   (scripts, flow, imports, exports) => {
     if (!scripts || !flow) {
       return null;
