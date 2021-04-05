@@ -118,7 +118,7 @@ export default {
   traceKeyTemplate: {
     id: 'traceKeyTemplate',
     type: 'uri',
-    label: 'Tracekey template',
+    label: 'Override trace key template',
     visible: r => !(r?.isLookup),
   },
   oneToMany: {

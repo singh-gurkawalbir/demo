@@ -16,8 +16,7 @@ export default {
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
       ignoreEnvironmentFilter: true,
-      visibleWhenAll: [{ field: 'genericOauth', is: ['true'] },
-        { field: 'http.auth.type', is: ['oauth'] }],
+      visibleWhenAll: [{ field: 'genericOauth', is: ['true'] }],
     },
     'http.auth.oauth.callbackURL': {
       fieldId: 'http.auth.oauth.callbackURL',

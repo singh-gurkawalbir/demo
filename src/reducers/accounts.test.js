@@ -1796,9 +1796,7 @@ describe('Accounts region selector testcases', () => {
       };
       const tile = {_integrationId: '605b5fd2fddc8259d923d23d', numError: 0, offlineConnections: [], _connectorId: '605b0c867904202f317413c2', name: 'IA Testing', sandbox: false, numFlows: 0, _parentId: null, status: 'is_pending_setup', integration: {mode: 'install', permissions: {accessLevel: 'owner', connections: {edit: true}}}, connector: {owner: 'Celigo', applications: ['netsuite']}};
       const expected = {
-        licenseMessageContent: `Your subscription was renewed on ${moment(moment()
-          .add(20, 'days')
-          .toISOString()).format('MMM Do, YYYY')}. Click Reactivate to continue.`,
+        licenseMessageContent: 'Your subscription has been renewed. Click Reactivate to continue.',
         expired: false,
         resumable: true,
         trialExpired: false,

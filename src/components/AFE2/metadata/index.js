@@ -18,6 +18,9 @@ import responseTransform from './responseTransform';
 import readme from './readme';
 import databaseMapping from './databaseMapping';
 import netsuiteLookupFilter from './netsuiteLookupFilter';
+import salesforceLookupFilter from './salesforceLookupFilter';
+import netsuiteQualificationCriteria from './netsuiteQualificationCriteria';
+import salesforceQualificationCriteria from './salesforceQualificationCriteria';
 
 const map = {
   csvParser,
@@ -40,6 +43,9 @@ const map = {
   readme,
   databaseMapping,
   netsuiteLookupFilter,
+  salesforceLookupFilter,
+  netsuiteQualificationCriteria,
+  salesforceQualificationCriteria,
 };
 export default map;
 

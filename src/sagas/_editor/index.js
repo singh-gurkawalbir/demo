@@ -531,7 +531,8 @@ export function* requestEditorSampleData({
   if (editorType !== 'csvGenerator' &&
   stage !== 'outputFilter' &&
   stage !== 'exportFilter' &&
-  stage !== 'inputFilter') {
+  stage !== 'inputFilter' &&
+  stage !== 'importMappingExtract') {
     const { data } = yield select(selectors.sampleDataWrapper, {
       sampleData: {
         data: _sampleData,
