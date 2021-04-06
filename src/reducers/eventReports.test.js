@@ -27,11 +27,10 @@ const state = {
 
 describe('selectors.mkEventReportsFiltered', () => {
   const eventReportsSelector = selectors.mkEventReportsFiltered();
-  //   const filterConfig = {
-  //       integrationId, flowIds, status, startDate, endDate};
 
   test('should return filtered int1 reports when integration filter is provided', () => {
     const filterConfig = {
+      type: 'eventreports',
       integrationId: ['int1']};
     const result = eventReportsSelector(state, filterConfig);
 
@@ -45,6 +44,7 @@ describe('selectors.mkEventReportsFiltered', () => {
   });
   test('should return filtered int1 reports belonging to flow2 when integration and flow filter is provided', () => {
     const filterConfig = {
+      type: 'eventreports',
       integrationId: ['int1'],
       flowIds: ['flow2'],
     };
@@ -60,6 +60,7 @@ describe('selectors.mkEventReportsFiltered', () => {
 
   test('should return reports belonging to a valid start range', () => {
     const filterConfig = {
+      type: 'eventreports',
       startDate: {
         startDate: '2021-03-08T00:00:00.000Z',
         endDate: '2021-03-10T00:00:00.000Z',
@@ -76,6 +77,7 @@ describe('selectors.mkEventReportsFiltered', () => {
   });
   test('should return reports belonging to a valid end range', () => {
     const filterConfig = {
+      type: 'eventreports',
       endDate: {
         startDate: '2021-03-12T00:00:00.000Z',
         endDate: '2021-03-13T00:00:00.000Z',
@@ -92,6 +94,7 @@ describe('selectors.mkEventReportsFiltered', () => {
   });
   test('should return reports belonging to a completed status', () => {
     const filterConfig = {
+      type: 'eventreports',
       status: 'completed',
     };
     const result = eventReportsSelector(state, filterConfig);
@@ -106,6 +109,7 @@ describe('selectors.mkEventReportsFiltered', () => {
   });
   test('should paginate reports belonging to a completed status and a pagination range ', () => {
     const filterConfig = {
+      type: 'eventreports',
       status: 'completed',
       paging: {
         rowsPerPage: 2,

@@ -837,7 +837,7 @@ selectors.mkEventReportsFiltered = () => {
   const resourceListSelector = selectors.makeResourceListSelector();
 
   return createSelector(
-    state => resourceListSelector(state, reportsFilter),
+    (state, options) => resourceListSelector(state, options),
     selectors.getAllFlowsTiedToEventReports,
     (_1, options) => options,
     (allEventReports, allUniqueFlowsTiedToEventReports, options) => {
