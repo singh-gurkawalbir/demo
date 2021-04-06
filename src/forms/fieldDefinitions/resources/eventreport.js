@@ -15,7 +15,7 @@ export default {
   },
   range: {
     type: 'reportdaterange',
-    label: 'Date Range',
+    label: 'Date range',
     defaultValue: '',
     required: true,
     description: 'You can only report across 3 days of data.',

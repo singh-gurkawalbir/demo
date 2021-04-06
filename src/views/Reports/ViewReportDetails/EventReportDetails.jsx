@@ -57,7 +57,7 @@ const eventReportDetailRows = [
     },
   },
   {
-    heading: 'Date Range',
+    heading: 'Date range',
     value: function EventReportStartDate(r) {
       return <Typography> <DateTimeDisplay dateTime={r.startTime} /> -  <DateTimeDisplay dateTime={r.endTime} /></Typography>;
     },
@@ -65,7 +65,7 @@ const eventReportDetailRows = [
   },
 
   {
-    heading: 'Last Run',
+    heading: 'Last run',
     value: function EventReportLastRun(r) {
       // check if this is the last run value
       return <DateTimeDisplay dateTime={r?.startedAt} />;
@@ -79,7 +79,7 @@ const eventReportDetailRows = [
     },
   },
   {
-    heading: 'Requested By',
+    heading: 'Requested by',
     value: function RequestedByUser(r) {
       const {requestedByUser} = r;
 

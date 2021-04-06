@@ -161,7 +161,7 @@ const useDetermineRequiredResources = type => useMemo(() => {
 
 const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
   if (resourceType === 'eventreports') {
-    return 'Run Report';
+    return 'Run report';
   }
   if (resourceType === 'pageGenerator') {
     return 'Create source';
