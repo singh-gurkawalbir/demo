@@ -270,6 +270,11 @@ export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
   'published',
   'shared/ashares',
 ];
+
+// email regex is used in our backend as well and is
+// referenced from this repo https://github.com/celigo/integrator-adaptor/blob/master/util/validator.js
+export const EMAIL_REGEX = /^[\w\-.+]+@[a-zA-Z0-9.-]+\.[a-zA-z0-9]{2,10}$/;
+
 // Regular Expression to Simple multiple email addresses separated by commas from regextester.com
 export const MULTIPLE_EMAILS = /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/;
 // Regular Expression to absolute url, e.g: (https|http)://abc.com but not relative urls such as www.abc.com or abc.com
@@ -664,4 +669,5 @@ export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
 export const LINE_GRAPH_TYPE_LONG = Object.freeze(
   invert(LINE_GRAPH_TYPE_SHORTID)
 );
+export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
 

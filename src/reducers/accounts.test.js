@@ -1564,9 +1564,9 @@ describe('Accounts region selector testcases', () => {
         user: {
           preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
           profile: {
-            _id: '5cadc8b42b10347a2708bf29',
-            name: 'Raghuvamsi User',
-            email: 'raghuvamsi.chandrabhatla@celigo.com',
+            _id: '4534534534',
+            name: 'Raghu',
+            email: 'rr@celigo.com',
           },
           org: {
             users: [
@@ -1612,9 +1612,9 @@ describe('Accounts region selector testcases', () => {
         user: {
           preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
           profile: {
-            _id: '5cadc8b42b10347a2708bf29',
-            name: 'Raghuvamsi User',
-            email: 'raghuvamsi.chandrabhatla@celigo.com',
+            _id: '4534534534',
+            name: 'Raghu',
+            email: 'rr@celigo.com',
           },
           org: {
             users: [
@@ -1662,9 +1662,9 @@ describe('Accounts region selector testcases', () => {
         user: {
           preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
           profile: {
-            _id: '5cadc8b42b10347a2708bf29',
-            name: 'Raghuvamsi User',
-            email: 'raghuvamsi.chandrabhatla@celigo.com',
+            _id: '4534534534',
+            name: 'Raghu',
+            email: 'rr@celigo.com',
           },
           org: {
             users: [
@@ -1710,9 +1710,9 @@ describe('Accounts region selector testcases', () => {
         user: {
           preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
           profile: {
-            _id: '5cadc8b42b10347a2708bf29',
-            name: 'Raghuvamsi User',
-            email: 'raghuvamsi.chandrabhatla@celigo.com',
+            _id: '4534534534',
+            name: 'Raghu',
+            email: 'rr@celigo.com',
           },
           org: {
             users: [
@@ -1760,9 +1760,9 @@ describe('Accounts region selector testcases', () => {
         user: {
           preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
           profile: {
-            _id: '5cadc8b42b10347a2708bf29',
-            name: 'Raghuvamsi User',
-            email: 'raghuvamsi.chandrabhatla@celigo.com',
+            _id: '4534534534',
+            name: 'Raghu',
+            email: 'rr@celigo.com',
           },
           org: {
             users: [
@@ -1796,9 +1796,7 @@ describe('Accounts region selector testcases', () => {
       };
       const tile = {_integrationId: '605b5fd2fddc8259d923d23d', numError: 0, offlineConnections: [], _connectorId: '605b0c867904202f317413c2', name: 'IA Testing', sandbox: false, numFlows: 0, _parentId: null, status: 'is_pending_setup', integration: {mode: 'install', permissions: {accessLevel: 'owner', connections: {edit: true}}}, connector: {owner: 'Celigo', applications: ['netsuite']}};
       const expected = {
-        licenseMessageContent: `Your subscription was renewed on ${moment(moment()
-          .add(20, 'days')
-          .toISOString()).format('MMM Do, YYYY')}. Click Reactivate to continue.`,
+        licenseMessageContent: 'Your subscription has been renewed. Click Reactivate to continue.',
         expired: false,
         resumable: true,
         trialExpired: false,

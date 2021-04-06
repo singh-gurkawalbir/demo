@@ -6,6 +6,7 @@ export const FLOW_STAGES = [
   'inputFilter',
   'transform',
   'sampleResponse',
+  'importMappingExtract',
 ];
 export const HOOK_STAGES = [
   'postResponseMapHook',

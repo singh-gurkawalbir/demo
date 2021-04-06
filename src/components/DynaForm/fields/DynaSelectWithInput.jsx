@@ -34,6 +34,7 @@ export default function DynaSelectWithInput(props) {
     isValid,
     options = [],
     errorMessages,
+    showAllSuggestions = false,
   } = props;
   const classes = useStyles();
   const handleBlur = useCallback(
@@ -66,6 +67,7 @@ export default function DynaSelectWithInput(props) {
           isValid={isValid}
           placeholder={placeholder}
           errorMessages={errorMessages}
+          showAllSuggestions={showAllSuggestions}
         />
       </FormControl>
     </div>

@@ -152,10 +152,14 @@ export default function DateRangeSelector({
   clearValue,
   placement,
   Icon,
+  disabled,
+  placeholder = 'Select range',
   defaultPreset = {preset: 'last30days'},
   selectedRangeConstraint,
   CustomTextFields,
   toDate,
+  // default Date display to be shown in all cases
+  showDateDisplay = true,
   isCalendar,
 }) {
   const defaultValue = getSelectedRange(defaultPreset);
@@ -224,16 +228,17 @@ export default function DateRangeSelector({
     <>
       {
         Icon ? (
-          <ActionButton onClick={toggleClick}>
+          <ActionButton disabled={!!disabled} onClick={toggleClick}>
             <Icon />
           </ActionButton>
         ) : (
           <Button
+            disabled={!!disabled}
             onClick={toggleClick}
             variant="outlined"
             color="secondary"
             className={classes.dateRangePopperBtn}>
-            {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || 'Select range'}<ArrowDownIcon />
+            {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || placeholder}<ArrowDownIcon />
           </Button>
         )
       }
@@ -282,6 +287,7 @@ export default function DateRangeSelector({
                   setSelectedRange={setSelectedRangeWithConstraint}
                   staticRanges={[]}
                   showSelectionPreview
+                  showDateDisplay={showDateDisplay}
                   moveRangeOnFirstSelection={false}
                   showMonthAndYearPickers={false}
                   editableDateInputs={false}

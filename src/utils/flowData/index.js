@@ -168,6 +168,8 @@ export const getLastExportDateTime = () =>
     .add(-1, 'y')
     .toISOString();
 
+export const getCurrentExportDateTime = () => moment().toISOString();
+
 export const getAddedLookupIdInFlow = (patchSet = []) => {
   const pageProcessorsPatch = patchSet.find(
     patch => pathRegex.lookupAddition.test(patch.path) &&
@@ -306,6 +308,7 @@ export const getFormattedResourceForPreview = (
   if (isPostDataNeededInResource(resource)) {
     resource.postData = {
       lastExportDateTime: getLastExportDateTime(),
+      currentExportDateTime: getCurrentExportDateTime(),
     };
   }
 

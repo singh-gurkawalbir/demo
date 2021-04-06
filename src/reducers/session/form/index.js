@@ -122,11 +122,12 @@ selectors.isExpansionPanelRequiredForMetaForm = (state, formKey, fieldMeta) => {
 selectors.isExpansionPanelErroredForMetaForm = (
   state,
   formKey,
-  fieldMeta
+  fieldMeta,
+  shouldShowPurelyInvalid
 ) => {
   const { fields } = selectors.formState(state, formKey) || {};
 
-  return isExpansionPanelErrored(fieldMeta, fields || []);
+  return isExpansionPanelErrored(fieldMeta, fields || [], shouldShowPurelyInvalid);
 };
 
 selectors.isAnyFieldTouchedForMetaForm = (state, formKey, fieldMeta) => {

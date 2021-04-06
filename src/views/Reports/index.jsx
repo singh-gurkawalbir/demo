@@ -1,7 +1,7 @@
 import { MenuItem, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useMemo, useCallback } from 'react';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { generatePath, Link, useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
@@ -11,14 +11,15 @@ import AddIcon from '../../components/icons/AddIcon';
 import ArrowDownIcon from '../../components/icons/ArrowDownIcon';
 import IconTextButton from '../../components/IconTextButton';
 import LoadResources from '../../components/LoadResources';
+import CeligoPagination from '../../components/CeligoPagination';
 import ResourceTable from '../../components/ResourceTable';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
 import { generateNewId } from '../../utils/resource';
 import ViewReportDetails from './ViewReportDetails';
-import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import infoText from '../ResourceList/infoText';
 import InfoIconButton from '../../components/InfoIconButton';
+import RefreshIcon from '../../components/icons/RefreshIcon';
 
 const useStyles = makeStyles(theme => ({
   emptySpace: {
@@ -31,15 +32,25 @@ const useStyles = makeStyles(theme => ({
   resultContainer: {
     padding: theme.spacing(3, 3, 12, 3),
   },
+  tablePaginationRoot: {
+    float: 'right',
+    display: 'flex',
+    alignItems: 'center',
+    paddingBottom: 18,
+    whiteSpace: 'nowrap',
+    marginLeft: theme.spacing(2),
+  },
 }));
 const defaultFilter = {
-  take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
   sort: { order: 'desc', orderBy: 'createdAt' },
-
+  paging: {
+    rowsPerPage: 25,
+    currPage: 0,
+  },
 };
 
 const EVENT_REPORT_TYPE_VALUE = 'eventreports';
-const VALID_REPORT_TYPES = [{label: 'Flow Events', value: EVENT_REPORT_TYPE_VALUE}];
+const VALID_REPORT_TYPES = [{label: 'Flow events', value: EVENT_REPORT_TYPE_VALUE}];
 
 // poll for 5 seconds
 const REPORTS_REFRESH_TIMER = 5000;
@@ -111,7 +122,7 @@ export default function Reports() {
   };
 
   const list = useSelectorMemo(
-    selectors.makeResourceListSelector,
+    selectors.mkEventReportsFiltered,
     filterConfig
   );
 
@@ -165,8 +176,15 @@ export default function Reports() {
             to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
             variant="text"
             color="primary">
-            <AddIcon /> Run Report
+            <AddIcon /> Run report
           </IconTextButton>
+          <IconTextButton
+            data-test="refreshReports"
+            onClick={() => dispatch(actions.resource.requestCollection(resourceType, null, true))}
+          >
+            <RefreshIcon />Refresh
+          </IconTextButton>
+          <Pagination filterKey={resourceType} count={list.count} />
         </div>
         <LoadResources required resources={`${resourceType},integrations,flows`}>
           {list.total === 0 ? (
@@ -182,11 +200,40 @@ export default function Reports() {
           )}
         </LoadResources>
       </div>
-      <ShowMoreDrawer
-        filterKey={resourceType}
-        count={list.count}
-        maxCount={list.filtered}
-      />
     </>
   );
 }
+
+const Pagination = ({ filterKey, count}) => {
+  const reportsResult = useSelector(
+    state => selectors.filter(state, filterKey), shallowEqual
+  );
+  const dispatch = useDispatch();
+
+  const handleChangePage = useCallback(
+    (e, newPage) => dispatch(
+      actions.patchFilter(filterKey, {
+        paging: {
+          ...reportsResult.paging,
+          currPage: newPage,
+        },
+      })
+    ),
+    [dispatch, filterKey, reportsResult.paging]
+  );
+  const classes = useStyles();
+
+  const { currPage, rowsPerPage } = reportsResult.paging || {};
+
+  return (
+
+    <CeligoPagination
+      className={classes.tablePaginationRoot}
+      count={count}
+      page={currPage}
+      rowsPerPage={rowsPerPage}
+      onChangePage={handleChangePage}
+      />
+
+  );
+};

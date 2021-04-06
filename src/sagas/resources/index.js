@@ -964,9 +964,9 @@ export function* replaceConnection({ _resourceId, _connectionId, _newConnectionI
 
     return undefined;
   }
-  yield put(actions.resource.requestCollection('flows'));
-  yield put(actions.resource.requestCollection('exports'));
-  yield put(actions.resource.requestCollection('imports'));
+  yield put(actions.resource.requestCollection('flows', null, true));
+  yield put(actions.resource.requestCollection('exports', null, true));
+  yield put(actions.resource.requestCollection('imports', null, true));
 }
 
 export function* eventReportCancel({reportId}) {

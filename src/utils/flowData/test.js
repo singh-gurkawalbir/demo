@@ -742,6 +742,7 @@ describe('getFormattedResourceForPreview util', () => {
       adaptorType: 'RESTExport',
       postData: {
         lastExportDateTime: expect.any(String),
+        currentExportDateTime: expect.any(String),
       },
     };
 

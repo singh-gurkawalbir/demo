@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { capitalize, Typography } from '@material-ui/core';
 import React, { Fragment } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import DateTimeDisplay from '../../../components/DateTimeDisplay';
@@ -57,7 +57,7 @@ const eventReportDetailRows = [
     },
   },
   {
-    heading: 'Date Range',
+    heading: 'Date range',
     value: function EventReportStartDate(r) {
       return <Typography> <DateTimeDisplay dateTime={r.startTime} /> -  <DateTimeDisplay dateTime={r.endTime} /></Typography>;
     },
@@ -65,7 +65,7 @@ const eventReportDetailRows = [
   },
 
   {
-    heading: 'Last Run',
+    heading: 'Last run',
     value: function EventReportLastRun(r) {
       // check if this is the last run value
       return <DateTimeDisplay dateTime={r?.startedAt} />;
@@ -75,15 +75,17 @@ const eventReportDetailRows = [
   {
     heading: 'Status',
     value: function EventReportStatus(r) {
-      return r?.status;
+      return capitalize(r?.status);
     },
   },
   {
-    heading: 'Requested By',
+    heading: 'Requested by',
     value: function RequestedByUser(r) {
-      const {name, email} = useSelectorMemo(selectors.mkGetUserById, r._requestedByUserId) || {};
+      const {requestedByUser} = r;
 
-      return name || email || r._requestedByUserId;
+      if (!requestedByUser) return null;
+
+      return requestedByUser.name || requestedByUser.email;
     },
   },
 

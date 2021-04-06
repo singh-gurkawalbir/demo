@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, LinearProgress } from '@material-ui/core';
+import { Typography, LinearProgress, capitalize } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
@@ -84,12 +84,6 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 0,
   },
 }));
-
-const capitalize = s => {
-  if (typeof s !== 'string') return '';
-
-  return s.charAt(0).toUpperCase() + s.slice(1);
-};
 
 export default function Subscription() {
   const dispatch = useDispatch();

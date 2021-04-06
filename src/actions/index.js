@@ -1212,7 +1212,10 @@ const user = {
       disable: (_id, disabled) =>
         action(actionTypes.USER_DISABLE, { _id, disabled }),
       disabled: _id => action(actionTypes.USER_DISABLED, { _id }),
+      reinvited: _id => action(actionTypes.USER_REINVITED, { _id }),
       makeOwner: email => action(actionTypes.USER_MAKE_OWNER, { email }),
+      reinvite: _id => action(actionTypes.USER_REINVITE, { _id }),
+      reinviteError: _id => action(actionTypes.USER_REINVITE_ERROR, { _id }),
     },
     accounts: {
       requestCollection: message =>
@@ -1486,7 +1489,11 @@ const mapping = {
   clear: () => action(actionTypes.MAPPING.CLEAR, {}),
   shiftOrder: (key, shiftIndex) => action(actionTypes.MAPPING.SHIFT_ORDER, { key, shiftIndex }),
   setValidationMsg: value => action(actionTypes.MAPPING.SET_VALIDATION_MSG, { value }),
-
+  autoMapper: {
+    request: () => action(actionTypes.MAPPING.AUTO_MAPPER.REQUEST),
+    received: value => action(actionTypes.MAPPING.AUTO_MAPPER.RECEIVED, {value}),
+    failed: errorMsg => action(actionTypes.MAPPING.AUTO_MAPPER.FAILED, {errorMsg}),
+  },
 };
 
 const searchCriteria = {
@@ -1905,12 +1912,6 @@ const errorManager = {
           retryCount,
         }
       ),
-    trackTraceKeys: ({ flowId, resourceId, traceKeys }) =>
-      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.TRACK_RETRIED_TRACE_KEYS, {
-        flowId,
-        resourceId,
-        traceKeys,
-      }),
     resolveReceived: ({ flowId, resourceId, resolveCount }) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.RECEIVED,

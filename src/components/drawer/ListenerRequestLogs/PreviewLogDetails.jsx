@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
 import { CeligoTabWrapper } from '../../CeligoTabLayout/CeligoTabWrapper';
 import CeligoPillTabs from '../../CeligoTabLayout/CeligoPillTabs';
@@ -9,12 +10,21 @@ import actions from '../../../actions';
 import Spinner from '../../Spinner';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
+const useStyles = makeStyles({
+  previewWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    position: 'relative',
+  },
+});
 const tabs = [
   { label: 'HTTP request', value: 'request' },
   { label: 'HTTP response', value: 'response' },
 ];
 
 export default function PreviewLogDetails({ flowId, exportId }) {
+  const classes = useStyles();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const activeLogKey = useSelector(state => selectors.activeLogKey(state, exportId));
@@ -42,18 +52,20 @@ export default function PreviewLogDetails({ flowId, exportId }) {
   const { request, response } = logDetails;
 
   if (status === 'requested') {
-    return <Spinner centerAll />;
+    return <Spinner centerAll color="secondary" />;
   }
 
   return (
-    <CeligoTabWrapper>
-      <CeligoPillTabs tabs={tabs} />
-      <CeligoTabPanel panelId="request">
-        <RequestResponsePanel value={request} />
-      </CeligoTabPanel>
-      <CeligoTabPanel panelId="response">
-        <RequestResponsePanel value={response} />
-      </CeligoTabPanel>
-    </CeligoTabWrapper>
+    <div className={classes.previewWrapper}>
+      <CeligoTabWrapper>
+        <CeligoPillTabs tabs={tabs} />
+        <CeligoTabPanel panelId="request">
+          <RequestResponsePanel value={request} />
+        </CeligoTabPanel>
+        <CeligoTabPanel panelId="response">
+          <RequestResponsePanel value={response} />
+        </CeligoTabPanel>
+      </CeligoTabWrapper>
+    </div>
   );
 }

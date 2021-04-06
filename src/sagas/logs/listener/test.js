@@ -261,14 +261,33 @@ describe('Listener logs sagas', () => {
       )
       .call(startPollingForRequestLogs, {flowId, exportId})
       .run());
-    test('should not call startPollingForRequestLogs if hasNewLogs is true', () => expectSaga(requestLogs, { flowId, exportId })
+    test('should not call startPollingForRequestLogs if hasNewLogs is true and loadMore is true', () => expectSaga(requestLogs, { flowId, exportId, loadMore: true })
       .provide([
         [select(selectors.listenerLogs, exportId), {debugOn: true, hasNewLogs: true, nextPageURL: '/nexturl1'}],
+        [select(selectors.hasNewLogs, exportId), true],
         [select(selectors.filter, FILTER_KEY), {time: {}}],
         [matchers.call.fn(apiCallWithRetry), throwError(new APIException({
           status: 422,
           message: '{"message":"Invalid or Missing Field: time_lte", "code":"invalid_or_missing_field"}',
         }))],
+        [matchers.call.fn(startPollingForRequestLogs), undefined],
+      ])
+      .call(retryToFetchRequests, {fetchRequestsPath: '/nexturl1' })
+      .put(
+        actions.logs.listener.received(
+          exportId,
+          [],
+          undefined,
+          true
+        )
+      )
+      .not.call.fn(startPollingForRequestLogs)
+      .run());
+    test('should continue poll and call startPollingForRequestLogs if hasNewLogs was true but logs received action is dispatched with loadMore as false', () => expectSaga(requestLogs, { flowId, exportId })
+      .provide([
+        [select(selectors.listenerLogs, exportId), {debugOn: true, nextPageURL: '/nexturl1', hasNewLogs: true}],
+        [select(selectors.filter, FILTER_KEY), {time: {}}],
+        [matchers.call.fn(apiCallWithRetry), {}],
         [matchers.call.fn(startPollingForRequestLogs), undefined],
       ])
       .call(retryToFetchRequests, {fetchRequestsPath: '/flows/flow-123/exp-123/requests' })
@@ -278,7 +297,7 @@ describe('Listener logs sagas', () => {
           [],
         )
       )
-      .not.call(startPollingForRequestLogs, {flowId, exportId})
+      .call(startPollingForRequestLogs, {flowId, exportId})
       .run());
   });
 

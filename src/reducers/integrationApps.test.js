@@ -4431,6 +4431,12 @@ describe('integrationApps selector testcases', () => {
           name: 'flow5 [store1]',
           _integrationId: 'i1',
         },
+
+        {
+          _id: 'f6',
+          name: 'flow5 [random_string]',
+          _integrationId: 'i1',
+        },
       ];
 
       let state = reducer(
@@ -4453,6 +4459,8 @@ describe('integrationApps selector testcases', () => {
                     _id: 'f1',
                   }, {
                     _id: 'f2',
+                  }, {
+                    _id: 'f6',
                   }],
                 },
               ],
@@ -4485,6 +4493,7 @@ describe('integrationApps selector testcases', () => {
           'f1',
           'f2',
           'f5',
+          'f6',
         ]
       );
 
@@ -4582,6 +4591,13 @@ describe('integrationApps selector testcases', () => {
           }, {
             _id: 'integration6',
             name: 'Integration',
+          }, {
+            _id: 'integration7',
+            _connectorId: 'abc',
+            name: 'IA1.0 Cloned integration',
+            install: [{
+              isClone: true,
+            }],
           }],
         },
       },
@@ -4609,6 +4625,10 @@ describe('integrationApps selector testcases', () => {
     });
     test('should return true when integration found and is a IA1.0 integration', () => {
       expect(selectors.isIntegrationAppV1(state, 'integration5')).toEqual(true);
+    });
+
+    test('should return true when integration found and is a IA1.0 cloned integration', () => {
+      expect(selectors.isIntegrationAppV1(state, 'integration7')).toEqual(true);
     });
   });
 

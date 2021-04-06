@@ -31,9 +31,9 @@ export default {
       value: (r, { flowId, resourceId }) => (
         <ErrorMessage
           message={r.message}
+          errorId={r.errorId}
           flowId={flowId}
           resourceId={resourceId}
-          traceKey={r.traceKey}
           exportDataURI={r.exportDataURI}
           importDataURI={r.importDataURI}
       />
