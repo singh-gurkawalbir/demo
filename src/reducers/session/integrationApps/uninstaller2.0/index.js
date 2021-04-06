@@ -65,6 +65,9 @@ export default (state = {}, action) => {
             step.completed = false;
           } else if (update === 'inProgress') {
             step.isTriggered = true;
+          } else if (update === 'verify') {
+            step.verifying = true;
+            step.isTriggered = true;
           }
         }
 

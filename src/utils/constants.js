@@ -31,6 +31,7 @@ export const INSTALL_STEP_TYPES = Object.freeze({
 });
 export const UNINSTALL_STEP_TYPES = Object.freeze({
   FORM: 'form',
+  URL: 'url',
   HIDDEN: 'hidden',
 });
 export const TILE_STATUS = Object.freeze({
