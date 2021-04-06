@@ -120,6 +120,7 @@ export default function MarketplaceList() {
   const userPreferences = useSelector(state =>
     selectors.userPreferences(state)
   );
+  const isAccountOwner = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
   const sandbox = userPreferences.environment === 'sandbox';
   const connectors = useSelectorMemo(
     selectors.makeMarketPlaceConnectorsSelector,
@@ -180,6 +181,45 @@ export default function MarketplaceList() {
     dispatch(actions.marketplace.contactSales(connector.name, connector._id));
     setShowMessage(true);
   };
+  const handletrialEnabledClick = connector => {
+    if (connector.usedTrialLicenseExists) {
+      confirmDialog({
+        title: 'You have already used up your trial license',
+        isHtml: true,
+        message: 'Click <b>Request a demo</b> to have someone contact you to learn more about your needs.',
+        buttons: [
+          {
+            label: 'Request a demo',
+            onClick: () => {
+              handleContactSalesClick(connector);
+            },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
+          },
+        ],
+      });
+    } else {
+      confirmDialog({
+        title: `This will start your ${connector.trialPeriod} days free trial plan`,
+        isHtml: true,
+        message: `Click <b>Start free trial</b> to start your free trial of ${connector.name} Integration App.`,
+        buttons: [
+          {
+            label: 'Start free trial',
+            onClick: () => {
+              handleConnectorInstallClick(connector);
+            },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
+          },
+        ],
+      });
+    }
+  };
 
   return (
     <LoadResources required resources="integrations">
@@ -213,7 +253,7 @@ export default function MarketplaceList() {
               type="connector"
             />
             <CardActions className={classes.cardAction}>
-              {connector.canInstall ? (
+              {connector.canInstall && (
                 <Button
                   data-test="installConnector"
                   onClick={() => handleConnectorInstallClick(connector)}
@@ -221,7 +261,17 @@ export default function MarketplaceList() {
                   color="primary">
                   Install
                 </Button>
-              ) : (
+              )}
+              {!connector.canInstall && connector.trialEnabled && isAccountOwner && (
+                <Button
+                  data-test="startFreeTrial"
+                  onClick={() => handletrialEnabledClick(connector)}
+                  variant="outlined"
+                  color="primary">
+                  Start free trial
+                </Button>
+              )}
+              {!connector.canInstall && !(connector.trialEnabled && isAccountOwner) && (
                 <Button
                   data-test="contactSales"
                   onClick={() => handleContactSalesClick(connector)}
@@ -263,7 +313,7 @@ export default function MarketplaceList() {
                 color="primary"
                 component={Link}
                 to={`${location.pathname}/installTemplate/preview/${template._id}`}>
-                Install
+                Preview
               </Button>
             </CardActions>
             <div className={classes.cardFooter}>

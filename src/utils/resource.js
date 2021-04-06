@@ -25,6 +25,7 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   pageGenerator: 'Source',
   pageProcessor: 'Destination / lookup',
   apis: 'My API',
+  eventreports: 'Event Report',
 });
 
 export const appTypeToAdaptorType = {
@@ -769,7 +770,7 @@ export const isOauth = connectionDoc =>
 export function getConnectionType(resource) {
   const { assistant, type } = getResourceSubType(resource);
 
-  if (['acumatica', 'shopify'].includes(assistant)) {
+  if (['acumatica', 'shopify', 'hubspot'].includes(assistant)) {
     if (
       resource.http &&
       resource.http.auth &&
@@ -824,6 +825,9 @@ export const isQueryBuilderSupported = (importResource = {}) => {
 
   return false;
 };
+
+// when there are flowGroupings and there are uncategorized flows do you have a MiscellaneousSection
+export const shouldHaveMiscellaneousSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId);
 
 export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations = [], connectionId) => {
   let accessLevelOnConnection;

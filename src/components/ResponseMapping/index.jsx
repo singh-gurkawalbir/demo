@@ -65,7 +65,7 @@ const ResponseMapping = ({ flowId, resourceId, integrationId}) => {
               variant="h5"
               className={classes.headerChild}
               key="heading_extract">
-              {resourceType === 'imports' ? 'Import' : 'Lookup'} response field
+              {resourceType === 'imports' ? 'Import response' : 'Lookup results'} field
             </Typography>
 
             <Typography
@@ -101,6 +101,7 @@ export default function ResponseMappingWrapper({integrationId}) {
   const { flowId, resourceId } = match.params;
   const dispatch = useDispatch();
   const mappingStatus = useSelector(state => selectors.responseMapping(state).status);
+  const resourceType = useSelector(state => selectors.responseMapping(state).resourceType);
 
   useEffect(() => {
     /** initiate a response mapping init each time user opens */
@@ -116,7 +117,7 @@ export default function ResponseMappingWrapper({integrationId}) {
   }, [dispatch, flowId, resourceId]);
 
   if (mappingStatus === 'error') {
-    return (<Typography>Failed to load response mapping.</Typography>);
+    return (<Typography>Failed to load {resourceType === 'exports' ? 'results' : 'response'} mapping.</Typography>);
   }
   if (mappingStatus !== 'received') {
     return (

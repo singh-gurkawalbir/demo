@@ -9,6 +9,8 @@ export default {
     'Use the form builder to expose user friendly custom fields for your raw JSON custom settings.  Your forms can expose any field types that you see elsewhere in the UI.  Forms and custom fields make it much easier for less technical users to work with your custom settings.',
   settings:
     'This same JSON settings field is exposed on many of the core resource types: integration, flow, export, import, connection, etc... Generally speaking, this settings field can be used to parameterize the logic within your resource. Hooks, filters, handlebars, etc... are all given access to the settings fields when they run, and can incorporate the settings values into their logic. It is worth highlighting that the settings fields stored on linked/related resources are also accessible at runtime. For example, the settings field defined at the integration tile level will be accessible to all flows running within the same integration tile. \n\nIt is recommended that you create a custom form to expose and manage your settings fields, so that less technical users do not need to work with raw JSON. Be sure to check out the "Launch form builder" button!.',
+  'license._trialLicenseId': 'Create or select a license record that would serve as the default license configuration for any trial licenses.',
+  'license.trialEnabled': 'You must create the integration app listing before you can enable the trials.',
   // fieldDefinitions
   'connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
     'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
@@ -294,6 +296,11 @@ export default {
   'shopify.connection.http.auth.basic.password': 'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the password can be found next to the "Authentication" section.',
   'concurinvoice.connection.http.unencrypted.username': 'Please enter the value of <b>id</b> which appears in the redirected popup page URL after signin to integrator.io.',
   'concurinvoice.connection.http.encrypted.password': 'Please enter the value of <b>requestToken</b> which appears in the redirected popup page URL after signin to integrator.io.',
+  'fulfilment.connection.http.unencrypted.clientId': 'Please enter Client ID of your Fulfillment.com account. <br> Note: To obtain an OAuth Client ID contact your account executive.',
+  'fulfilment.connection.http.encrypted.clientSecret': 'Please enter Client Secret of your Fulfillment.com account. <br>Note: To obtain an OAuth Client Secret contact your account executive.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'fulfilment.connection.http.unencrypted.username': 'Enter the username of your Fulfillment.com account.',
+  'fulfilment.connection.http.encrypted.password': 'Enter the password of your Fulfillment.com account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'fulfilment.connection.http.auth.token.token': 'The Access Token of your Fulfillment.com account',
   'stripe.connection.http.auth.token.token':
     'The secret key of your Stripe account.',
   'twilio.connection.http.auth.basic.username':
@@ -353,6 +360,7 @@ export default {
     'The access token of your Tableau account.',
   'tableau.connection.http.unencrypted.siteId':
     'The Site ID of your Tableau account.',
+  'tableau.connection.http.unencrypted.version': 'Please enter the version of the API to use, such as 3.10. For more information, see <a href="https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api_concepts_versions.htm">REST API and Resource Versions</a>.',
   'tesco.connection.http.encrypted.apiKey':
     'The subscription key of your Tesco account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
   'fieldaware.connection.http.encrypted.apiKey':
@@ -726,7 +734,7 @@ export default {
   'connection.rest.mediaType':
     'The data format that should be used for all HTTP requests sent to the REST API.  Typically a REST API will only support one media type and will publish this info right at the top of their API guides.',
   'connection.rest.baseURI':
-    "The common part of an API's URL that can be used across all the different HTTP/REST API endpoints that you invoke. Using a base URI in your connection makes it easier to configure all your exports and imports because all you need then is the Relative URI, and using a Base URI also makes it easier to manage upgrading versions of the HTTP/REST API because all you typically need to change is the version value in the Base URI. Assuming that the new version of the REST API is mostly backward compatible, very few of your exports and imports should need to be changed.\nTypically, a Base URI will have the following format: https://< api.domain.com>/<version>. For example, 'https://api.stripe.com/v1' is the Base URI you would use for Stripe's v1 API. Another example, 'https://www.googleapis.com/calendar/v3' is the Base URI you would use for Google's v3 calendar API.",
+    'Enter the common part of the path to the app’s API, as documented in the API guide, to be used for all endpoints that you invoke. Providing a base URI for this connection makes it easier to configure your exports and imports, where you can specify simply a relative URI. Using a base URI also makes it easier to manage upgrading API versions, because then you can update the version value in one place. Assuming that the new version of the REST API is backward compatible, your exports and imports should continue to work.<br>Typically, base URIs have the format https://api.domain.com/version, such as https://api.stripe.com/v1 for the Stripe v1 API. Or for the Google calendar v3 API, enter https://www.googleapis.com/calendar/v3.',
   'connection.rest.bearerToken':
     'Please enter your API token here.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
   'connection.rest.tokenLocation':
@@ -1064,6 +1072,12 @@ export default {
   'connector.oAuthServerFlow._iClientId': '.',
   'connector.oAuthServerFlow.putConnection': '.',
   'connector.repository.name': '.',
+  'connection.ftp.type':
+    'Choose the protocol to use for your FTP connection. Choose <b>FTP</b> (basic File Transfer Protocol) if your data is sent and received unencrypted. Choose <b>SFTP</b> if your data is transferred over the encrypted Secure Shell (SSH2) protocol. <b>FTPS</b> is similar to basic FTP, but data is encrypted via the Transport Layer Security (TLS) protocol before transfer.',
+  'connection.usePgp':
+    'Set this field to configure PGP cryptographic information used for encrypting and decrypting files.',
+  'connection.as2.userStationInfo.mdn.mdnEncoding':
+    'You can tell integrator.io which character encoding to use when we send an MDN back to your trading partner. You can choose between base64 or binary. Base64 will be the default.',
   'export._id':
     'System generated primary unique identifier for your export.  For API users, this value should be used for GET, PUT and DELETE requests.',
   'editor.xml.simple':
@@ -1087,7 +1101,7 @@ export default {
   'export.dataURITemplate':
     "When your flow runs but has data errors this field can be really helpful in that it allows you to make sure that all the errors in your job dashboard have a link to the original data in the export application.  This field uses a handlebars template to generate the dynamic links based on the data being exported.  For example, if you are exporting a customer record from Shopify, you would most likely set this field to the following value 'https://your-store.myshopify.com/admin/customers/{{{id}}}'.  Or, if you are just exporting a CSV file from an FTP site then this field could simply be one or more columns from the file: {{{internal_id}}, {{{email}}}, etc...",
   'export.traceKeyTemplate':
-    'Set this field to define field(s) that IO uses to identify a unique record. You can use a single field such as {{{field1}}} or use a handlebar expression. For example, this syntax {{join “_” field1 field2}} will generate a Tracekey template field1_field2. When this field is set, you will override the platform default tracekey field.',
+    'Set this field to override default trace key field(s) that are used to identify a unique record. You can use a single field such as {{field1}} or use a handlebar expression. For example, this syntax {{join “_” field1 field2}} will generate a trace key template field1_field2.',
   'export.sampleData':
     'Enter a sample destination record here so that integrator.io can help you later map fields between source and destination applications. The sample destination record should ideally contain all fields that you want to process in this flow, and should follow the exact same formatting rules that the destination application/API requires.',
   'export.description':
@@ -1314,7 +1328,7 @@ export default {
   'export.file.csv.keyColumns':
     'If multiple rows of data represent a single object (sales order line items for example), it is possible to group these rows into a single transfer record. If this behavior is desired, this field should be used to provide 1 or more columns in the source data that should be used to group related records. Typically this would be the id column of the parent object. In our example above, this would be the sales order id.',
   'export.file.csv.hasHeaderRow':
-    'Set this field to true if the files you are transferring contain a top level header row.  Saying this another way, if the very first row in the CSV files being transferred is reserved for column names (and not actual data) then set this field to true.',
+    'Check this checkbox if the files you are transferring contain a top level header row that is used for column names (and not actual data).',
   'export.file.csv.trimSpaces':
     'Set this field to true if you would like to remove all leading and trailing whitespaces in your column data. Please note that header row values are not affected by this setting. Leading and trailing whitespaces in the header row (if one is present) are always trimmed. For example:\nHeader1 , Header 2,Header3 \nCol 11 , Col 12 , Col 13\nCol21, Col22, Col23 \n\n Would look like:\n[\n{ "Header1": "Col 11", "Header 2": "Col 12", "Header3": "Col 13" },\n{ "Header1": "Col21", "Header 2": "Col22", "Header3": "Col23" }\n]',
   'export.file.csv.rowsToSkip':
@@ -1345,7 +1359,7 @@ export default {
   'export.webhook.verify':
     'Please specify the method that should be used to verify the authenticity of the data being sent to this webhook export.',
   'export.webhook.token':
-    'Please provide a secret token that will be used to verify the authenticity of the data sent to this webhook export.  This token value should only be shared with the webhook provider, and ideally should be generated by some sort of industry standard password tool.',
+    'Generate a new token or enter your own token, which will be sent by the webhook origin so that integrator.io can authenticate that it is allowed to receive data from that endpoint. You should share this token only with the webhook provider.',
   'export.webhook.path':
     "Please use this field to specify the JSON path of the field in the request body that will contain the token value.  For example, 'myAuth.token'.",
   'export.webhook.algorithm':
@@ -1916,7 +1930,7 @@ export default {
   'import.mongodb.lookupType':
     'There are two ways to identify existing records. Either by testing for the existence of a field value on the export record (such as id), or by performing a lookup against the destination application. Choose the option, "Records have a specific field populated" if you can identify existing records by examining the content of your export records. If on the other hand a lookup is necessary, select the "Run a dynamic search against MongoDB" option. After making this selection, other fields will become available to describe how to define your lookup.',
   'import.oneToMany':
-    "There are advanced use cases where a parent record is being passed around in a flow, but you actually need to process child records contained within the parent record context. For example, if you're exporting Sales Order records out of NetSuite and importing them into Salesforce as Opportunity and Opportunity Line Item records, then you will need to import the Opportunity Line Item records using this option.",
+    "There are advanced use cases where a parent record is being passed around in a flow, but you actually need to process child records contained within the parent record context. For example, if you're exporting Sales Order records out of NetSuite and importing them into Salesforce as Opportunity and Opportunity Line Item records, then you will need to import the Opportunity Line Item records using this option.<b>One to many</b> is used in cases where you have a single record which internally needs to create multiple records. This field cannot be used when importing a CSV file.",
   'import.pathToMany':
     "If the parent record is represented by a JSON object then this field should be used to specify the JSON path of the child records. If the parent record is represented by a JSON array (where each entry in the array is a child record) then this field does not need to be set. If you are unsure how parent records are being represented in your flow then please view the 'Sample Data' field for the 'Export' resource that is generating the data. Following are two examples also to hopefully help clarify how data can be represented differently depending on the export context. Example 1: If you are exporting Sales Orders out of NetSuite in real-time then NetSuite sends integrator.io a JSON object for each Sales Order, and if you want to process the line items in that Sales Order then you need to specify the JSON path for the line items field. There is no way to tell NetSuite to send an array for real-time data. Example 2: But, if you are exporting Sales Orders out of NetSuite via a scheduled flow then in this case NetSuite represents each order via an array where each entry in the array represents a line item in the order. There is no way to tell NetSuite to give you an object for batch data.",
   'import.restImportFieldMappingLookupType':
@@ -2225,7 +2239,7 @@ export default {
   'lookup.response.mapping':
     'The primary reason for defining a results mapping is to specify where the ‘data’ returned by the lookup should be merged back into the source record.  You can merge ‘data’ into any existing field in the source record, or you can specify a brand new field in which case integrator.io will create the field on the fly.  By default, integrator.io will add this mapping for you, and will create a brand new field in the source record following the naming convention ‘lookupResultsN’, but it is recommended that you change this name to match the type of data being returned (i.e. relatedContacts, linkedItems, etc…) so that your source records are more intuitive to read and map later.  Though much less common, you can also merge the results field ‘errors’ back into the source record if you want to manually process errors downstream in your flow logic.',
   'users.user': 'All users who have access to your account and integrations, or who have been invited to join your account.',
-  'users.accesslevel': 'Users with manage level access can make changes to the integration. Users with monitor level access can only view the integration for the purpose of running flows and troubleshooting integration errors. The owner user is responsible for provisioning access to the integration. Find out more about role and permissions.',
+  'users.accesslevel': 'Users with administer-level access can perform all the same actions as an account Owner, with the exception of transferring account ownership to another user, and will have full access to all integrations in the account. Users with manage level access can make changes to the integration. Users with monitor level access can view the integration only for the purpose of running flows and troubleshooting integration errors. Owner and Administrator users are responsible for provisioning access to the integration. <a href="https://docs.celigo.com/hc/en-us/articles/115003929872" target="_blank">Find out more about role and permissions.</a>',
   'users.status': "'Pending' means the user has not yet accepted the invite to your account.  'Accepted' means the user has accepted the invite to your account.  'Dismissed' means the user dismissed the invite to your account.",
   'users.enable': 'This enables you to revoke access without deleting the user from the account. If Off, then the user will no longer be able to switch to this account - it will no longer show up in their <b>Accounts</b> drop-down.',
   'users.actions': 'These are actions the account owner can perform, like <b>Make account owner</b>, which will make that user the owner of the selected account. <b>Change permissions</b> enables the account owner to manage each user’s access level. <b>Delete</b> will delete the user from the account and they will no longer have access.',
@@ -2298,4 +2312,5 @@ export default {
   'fb.pp.inputFilter':
     'Define an \'input filter\' here to specify which source records should get processed. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
   'afe.lookups': 'Lookups can be used to dynamically retrieve information from the destination application for the purpose of setting fields that cannot be set directly from the fields provided by the source application. For example, if the destination application requires \'customer_id\' values, but the source application only gives you email addresses, then you can define a lookup to search for \'customer_id\' values using the email addresses, and then inject the \'customer_id\' values into your final API requests.',
+  'listener.debugLogs': 'Enable debug logs to store all requests for the selected period of time. Debug log entries are kept for 30 days by default, and can be deleted manually as needed.',
 };

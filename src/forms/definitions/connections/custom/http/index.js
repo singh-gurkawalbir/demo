@@ -201,6 +201,7 @@ import prestashop from './prestashop';
 import yotpo from './yotpo';
 import mavenlink from './mavenlink';
 import googleads from './googleads';
+import fulfilment from './fulfilment';
 
 export default {
   channelape,
@@ -406,4 +407,5 @@ export default {
   yotpo,
   mavenlink,
   googleads,
+  'fulfilment.com': fulfilment,
 };

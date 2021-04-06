@@ -66,8 +66,10 @@ store = createStore(
 
 sagaMiddleware.run(rootSaga);
 
-const GAKey1 = process.env.GA_KEY_1;
-const GAKey2 = process.env.GA_KEY_2;
+// eslint-disable-next-line no-undef
+const GAKey1 = GA_KEY_1;
+// eslint-disable-next-line no-undef
+const GAKey2 = GA_KEY_2;
 
 if (env !== 'development' && GAKey1?.length > 1) {
   const ga4react = new GA4React(GAKey1);

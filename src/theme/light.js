@@ -505,7 +505,7 @@ export default {
         lineHeight: '24px',
         color: colors.celigoNeutral8,
         '&.Mui-required': {
-          fontWeight: 'bold',
+          fontFamily: 'source sans pro semibold',
         },
       },
     },
@@ -723,7 +723,7 @@ export default {
       },
       textColorPrimary: {
         '&.Mui-selected': {
-          fontWeight: 'bold',
+          fontFamily: 'source sans pro semibold',
         },
       },
       labelIcon: {

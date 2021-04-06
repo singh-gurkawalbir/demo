@@ -19,14 +19,19 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const infoTextUsers =
-  `Invite users to either Manage or Monitor your integrations. 
-  A user that has been invited to Manage an integration will have 
-  permissions to edit and make changes to the existing flows, or 
-  create new flows within an integration tile. A user that has Monitor 
-  permissions will only be allowed to view the integration, they do not 
-  have permissions to make any changes. They are however allowed to run 
-  the flows within the integration. The user will only see your 
-  integrations that you have invited them to.`;
+  `Invite users to either Administer your account, 
+  or Manage or Monitor your integrations. A user who 
+  has been invited to Administer an account will have 
+  all the same permissions as the account Owner, 
+  including inviting users and changing their access 
+  rights. A user who has been invited to Manage an 
+  integration will have permissions to edit existing 
+  flows or create flows within an integration tile. A 
+  user who has Monitor permissions will only be allowed 
+  to view the integration, they do not have permissions 
+  to make any changes. They are however allowed to run 
+  the flows within the integration. The user will see 
+  only those integrations that you have invited them to.`;
 
 export default function ManageUsersPanel({ integrationId, storeId }) {
   const classes = useStyles();

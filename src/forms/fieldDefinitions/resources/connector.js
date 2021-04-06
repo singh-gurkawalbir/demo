@@ -36,18 +36,6 @@ export default {
       },
     },
   },
-  editions: {
-    type: 'text',
-    label: 'Editions',
-    placeholder: 'Comma seperated values',
-    value: r => r?.twoDotZero?.editions,
-    visibleWhen: [
-      {
-        field: 'framework',
-        is: ['twoDotZero'],
-      },
-    ],
-  },
   framework: {
     type: 'text',
     label: 'Framework',
@@ -153,5 +141,34 @@ export default {
         items: connectorsList(),
       },
     ],
+  },
+  trialEnabled: {
+    type: 'checkbox',
+    label: 'Enable trials',
+    defaultDisabled: r => isNewId(r._id),
+    helpKey: 'license.trialEnabled',
+  },
+  trialPeriod: {
+    type: 'select',
+    label: 'Trial period',
+    defaultValue: r => r?.trialPeriod || 30,
+    options: [
+      {
+        items: [
+          { label: '14 days', value: 14 },
+          { label: '30 days', value: 30 },
+          { label: '60 days', value: 60 },
+        ],
+      },
+    ],
+  },
+  _trialLicenseId: {
+    type: 'triallicense',
+    label: 'Trial license template',
+    resourceType: 'connectorLicenses',
+    allowNew: true,
+    allowEdit: true,
+    helpKey: 'license._trialLicenseId',
+    connectorId: r => r._id,
   },
 };

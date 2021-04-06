@@ -367,6 +367,7 @@ export default function FilterPanel({
             'ceiling',
             'floor',
             'number',
+            'abs',
           ].includes(op)
         ) {
           r.lhs.dataType = 'number';
@@ -410,6 +411,7 @@ export default function FilterPanel({
             'ceiling',
             'floor',
             'number',
+            'abs',
           ].includes(op)
         ) {
           r.rhs.dataType = 'number';

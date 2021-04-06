@@ -715,7 +715,8 @@ selectors.mkIntegrationAppSettings = subState => {
     }
   );
 };
-const integrationAppSettings = selectors.mkIntegrationAppSettings(true);
+
+export const integrationAppSettings = selectors.mkIntegrationAppSettings(true);
 
 selectors.defaultStoreId = (state, id, store) => {
   const settings = integrationAppSettings(state, id);
@@ -905,10 +906,9 @@ selectors.iaFlowSettings = (state, integrationId, flowId, childId) => {
 // #endregion
 
 // #region script selectors
-const emptySet = [];
 
-selectors.scripts = createSelector(
-  state => state?.scripts || emptySet,
+selectors.mkGetScriptsTiedToFlow = () => createSelector(
+  state => state?.scripts,
   (state, flowId) => {
     if (!flowId) {
       return;
@@ -916,17 +916,27 @@ selectors.scripts = createSelector(
 
     return state?.flows?.find(({_id}) => _id === flowId);
   },
-  state => state?.imports || emptySet,
-  state => state?.exports || emptySet,
+  state => state?.imports,
+  state => state?.exports,
   (scripts, flow, imports, exports) => {
-    if (!scripts) {
-      return emptySet;
-    }
-    if (!flow) {
-      return scripts;
+    if (!scripts || !flow) {
+      return null;
     }
 
     return getScriptsReferencedInFlow({scripts, flow, imports, exports});
   });
 
 // #endregion script selectors
+
+// #region eventReports selectors
+selectors.isAnyReportRunningOrQueued = (state, reportType) => {
+  if (!state) { return false; }
+
+  const eventReports = selectors.resources(state, reportType);
+
+  if (!eventReports) { return false; }
+
+  return eventReports.some(eventReport => ['running', 'queued'].includes(eventReport?.status));
+};
+
+// #endregion eventReports selectors
