@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import LoadResources from '../../../../../../components/LoadResources';
 import CeligoTable from '../../../../../../components/CeligoTable';
 import metadata from '../../../../../../components/ResourceTable/scripts/metadata';
 import { selectors } from '../../../../../../reducers';
+import { useSelectorMemo } from '../../../../../../hooks';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -15,7 +16,7 @@ const useStyles = makeStyles(theme => ({
 export default function ScriptPanel({ flowId }) {
   const classes = useStyles();
   const integrationId = useSelector(state => selectors.resource(state, 'flows', flowId)?._integrationId);
-  const flowScripts = useSelector(state => selectors.scripts(state, flowId), shallowEqual);
+  const flowScripts = useSelectorMemo(selectors.mkGetScriptsTiedToFlow, flowId);
 
   const actionProps = useMemo(() => ({
     type: 'flowBuilder',
