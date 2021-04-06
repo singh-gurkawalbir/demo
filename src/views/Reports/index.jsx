@@ -50,7 +50,7 @@ const defaultFilter = {
 };
 
 const EVENT_REPORT_TYPE_VALUE = 'eventreports';
-const VALID_REPORT_TYPES = [{label: 'Flow Events', value: EVENT_REPORT_TYPE_VALUE}];
+const VALID_REPORT_TYPES = [{label: 'Flow events', value: EVENT_REPORT_TYPE_VALUE}];
 
 // poll for 5 seconds
 const REPORTS_REFRESH_TIMER = 5000;
@@ -176,7 +176,7 @@ export default function Reports() {
             to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
             variant="text"
             color="primary">
-            <AddIcon /> Run Report
+            <AddIcon /> Run report
           </IconTextButton>
           <IconTextButton
             data-test="refreshReports"
