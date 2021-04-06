@@ -71,7 +71,7 @@ import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier_afe2 from './DynaNetSuiteQualifier_afe2';
 import DynaSalesforceQualifier_afe2 from './DynaSalesforceQualifier_afe2';
-import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
+import DynaSalesforceLookupFilters_afe2 from './DynaSalesforceLookupFilters_afe2';
 import DynaSalesforceLookup_afe2 from './DynaSalesforceLookup_afe2';
 import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
 import DynaTimestampFileName from './DynaTimestampFileName';
@@ -240,7 +240,8 @@ export default {
   replaceconnection: DynaReplaceConnection,
   // netsuitequalifier: DynaNetSuiteQualifier,
   netsuitequalifier: DynaNetSuiteQualifier_afe2,
-  salesforcelookupfilters: DynaSalesforceLookupFilters,
+  // salesforcelookupfilters: DynaSalesforceLookupFilters,
+  salesforcelookupfilters: DynaSalesforceLookupFilters_afe2,
   // salesforcelookup: DynaSalesforceLookup,
   salesforcelookup: DynaSalesforceLookup_afe2,
   timestampfilename: DynaTimestampFileName,

@@ -21,6 +21,7 @@ import {
   generateRulesState,
   generateSalesforceLookupFilterExpression,
   getFilterRuleId,
+  convertValueToSuiteScriptSupportedExpression,
 } from './util';
 import { selectors } from '../../../../../reducers';
 import OperandSettingsDialog from './OperandSettingsDialog';
@@ -37,7 +38,7 @@ const useStyles = makeStyles(theme => ({
 const defaultData = [];
 const defaultFilters = [];
 
-export default function SalesforceLookupFilterPanel({ editorId }) {
+export default function SalesforceLookupFilterPanel({ id, editorId, filters: propFilters, onFieldChange, ssLinkedConnectionId }) {
   const qbuilder = useRef(null);
   const classes = useStyles();
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
@@ -47,14 +48,22 @@ export default function SalesforceLookupFilterPanel({ editorId }) {
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const data = useSelector(state => selectors._editorData(state, editorId) || defaultData);
   const rule = useSelector(state => selectors._editorRule(state, editorId));
-  const filters = useSelector(state => selectors._editor(state, editorId).filters || defaultFilters);
+  const filters = useSelector(state => selectors._editor(state, editorId).filters || propFilters || defaultFilters);
 
   const dispatch = useDispatch();
   const patchEditor = useCallback(
     value => {
-      dispatch(actions._editor.patchRule(editorId, value || ''));
+      if (editorId) {
+        dispatch(actions._editor.patchRule(editorId, value || ''));
+      }
+      if (onFieldChange) {
+        // convert value to suiteScript supported format if its a ss resource
+        const formattedVal = ssLinkedConnectionId ? convertValueToSuiteScriptSupportedExpression(value) : value;
+
+        onFieldChange(id, formattedVal);
+      }
     },
-    [dispatch, editorId]
+    [dispatch, editorId, id, onFieldChange, ssLinkedConnectionId]
   );
   const jsonPathsFromData = useMemo(
     () =>
@@ -78,9 +87,7 @@ export default function SalesforceLookupFilterPanel({ editorId }) {
     const qbRules = convertSalesforceLookupFilterExpression(rule, data);
 
     if (
-      qbRules &&
-        qbRules.rules &&
-        qbRules.rules.length === 1 &&
+        qbRules?.rules?.length === 1 &&
         !qbRules.rules[0].id
     ) {
       qbRules.rules = [];
