@@ -33,10 +33,10 @@ export default {
     };
   },
   buildData: (editor, sampleData) => {
-    const {wrapData} = editor || {};
+    const {wrapData, ssLinkedConnectionId} = editor || {};
     let formattedData = safeParse(sampleData);
 
-    if (sampleData && !wrapData) {
+    if (sampleData && !ssLinkedConnectionId && !wrapData) {
       const extractPaths = getJSONPaths(pickFirstObject(safeParse(sampleData)));
 
       formattedData =

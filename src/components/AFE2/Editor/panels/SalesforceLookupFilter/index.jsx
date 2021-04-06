@@ -38,7 +38,13 @@ const useStyles = makeStyles(theme => ({
 const defaultData = [];
 const defaultFilters = [];
 
-export default function SalesforceLookupFilterPanel({ id, editorId, filters: propFilters, onFieldChange, ssLinkedConnectionId }) {
+export default function SalesforceLookupFilterPanel({
+  id,
+  filters: propFilters,
+  editorId,
+  onFieldChange,
+  ssLinkedConnectionId,
+}) {
   const qbuilder = useRef(null);
   const classes = useStyles();
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
