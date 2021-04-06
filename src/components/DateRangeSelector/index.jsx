@@ -152,6 +152,7 @@ export default function DateRangeSelector({
   clearValue,
   placement,
   Icon,
+  placeholder = 'Select range',
   defaultPreset = {preset: 'last30days'},
   selectedRangeConstraint,
   CustomTextFields,
@@ -235,7 +236,7 @@ export default function DateRangeSelector({
             variant="outlined"
             color="secondary"
             className={classes.dateRangePopperBtn}>
-            {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || 'Select range'}<ArrowDownIcon />
+            {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || placeholder}<ArrowDownIcon />
           </Button>
         )
       }
