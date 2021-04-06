@@ -191,6 +191,7 @@ export default {
     'microsoftteams',
     'adobesign',
     'mavenlink',
+    'googleads',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',
