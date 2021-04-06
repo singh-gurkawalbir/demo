@@ -152,6 +152,7 @@ export default function DateRangeSelector({
   clearValue,
   placement,
   Icon,
+  disabled,
   placeholder = 'Select range',
   defaultPreset = {preset: 'last30days'},
   selectedRangeConstraint,
@@ -227,11 +228,12 @@ export default function DateRangeSelector({
     <>
       {
         Icon ? (
-          <ActionButton onClick={toggleClick}>
+          <ActionButton disabled={!!disabled} onClick={toggleClick}>
             <Icon />
           </ActionButton>
         ) : (
           <Button
+            disabled={!!disabled}
             onClick={toggleClick}
             variant="outlined"
             color="secondary"

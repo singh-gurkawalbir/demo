@@ -58,7 +58,7 @@ export default function DynaFlowsTiedToIntegration(props) {
   return (
 
     <LoadResources required resources="flows" >
-      <TypeableSelect {...props} options={options} />
+      <TypeableSelect {...props} disabled={!selectedIntegration} options={options} />
     </LoadResources>
 
   );
