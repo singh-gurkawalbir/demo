@@ -42,12 +42,14 @@ export default function DynaChildIntegrations(props) {
   [childIntegrations]);
 
   if (!isParentChildIntegration) { return null; }
+  const labelText = (childIntegrationsStoreLabel && `${childIntegrationsStoreLabel}s`) || label;
 
   return (
     <LoadResources required resources="integrations">
       <DynaMultiSelect
         {...props}
-        label={(childIntegrationsStoreLabel && `${childIntegrationsStoreLabel}s`) || label}
+        placeholder={`Choose ${labelText.toLowerCase()}`}
+        label={labelText}
         options={options}
      />
     </LoadResources>
