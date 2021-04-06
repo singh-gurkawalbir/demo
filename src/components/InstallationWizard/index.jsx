@@ -68,6 +68,7 @@ export default function InstallationWizard(props) {
       'netsuite-oauth',
       'shopify-oauth',
       'acumatica-oauth',
+      'hubspot-oauth',
     ],
     []
   );

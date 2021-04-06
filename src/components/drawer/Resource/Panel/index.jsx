@@ -161,7 +161,7 @@ const useDetermineRequiredResources = type => useMemo(() => {
 
 const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
   if (resourceType === 'eventreports') {
-    return 'Run Report';
+    return 'Run report';
   }
   if (resourceType === 'pageGenerator') {
     return 'Create source';
@@ -176,6 +176,9 @@ const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
   return `${opTitle} ${resourceLabel.toLowerCase()}`;
 };
 
+export const redirectURlToParentListing = url => url.split('/')
+  .slice(0, -3)
+  .join('/');
 export const useRedirectToParentRoute = initFailed => {
   const history = useHistory();
   const match = useRouteMatch();
@@ -184,10 +187,7 @@ export const useRedirectToParentRoute = initFailed => {
     if (initFailed) {
       // remove the last 3 segments from the route ...
       // /:operation(add|edit)/:resourceType/:id
-      const stripedRoute = match.url
-        .split('/')
-        .slice(0, -3)
-        .join('/');
+      const stripedRoute = redirectURlToParentListing(match.url);
 
       history.replace(stripedRoute);
     }

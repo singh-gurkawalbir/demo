@@ -92,7 +92,7 @@ const metadata = {
       headerValue: function StartDateTimestamp() {
         return (
           <DateFilter
-            title="Start Date"
+            title="Start date"
             filterBy="startDate"
             filterKey={FILTER_KEY}
             customPresets={EVENT_REPORTS_DEFAULT}
@@ -108,7 +108,7 @@ const metadata = {
       headerValue: function EndDateTimestamp() {
         return (
           <DateFilter
-            title="End Date"
+            title="End date"
             filterBy="endDate"
             filterKey={FILTER_KEY}
             customPresets={EVENT_REPORTS_DEFAULT}
@@ -141,7 +141,7 @@ const metadata = {
       },
     },
     {
-      heading: 'Requested By',
+      heading: 'Requested by',
       Value: function RequestedByUser({r}) {
         const {requestedByUser} = r;
 
@@ -149,7 +149,6 @@ const metadata = {
 
         return requestedByUser.name || requestedByUser.email;
       },
-      orderBy: 'lastModified',
     },
   ],
   rowActions: r => {
