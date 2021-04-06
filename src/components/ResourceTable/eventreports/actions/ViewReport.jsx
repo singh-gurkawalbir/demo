@@ -3,7 +3,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import ViewDetailsIcon from '../../../icons/ViewDetailsIcon';
 
 export default {
-  label: 'View Report Details',
+  label: 'View report details',
   icon: ViewDetailsIcon,
   component: function ViewReport({ rowData = {} }) {
     const { _id } = rowData;
