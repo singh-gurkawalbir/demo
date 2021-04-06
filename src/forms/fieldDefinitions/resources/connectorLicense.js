@@ -49,7 +49,6 @@ export default {
     type: 'licenseedition',
     label: 'Edition',
     defaultDisabled: r => !isNewId(r._id),
-    isNewId: r => isNewId(r._id),
     connectorId: r => r?._connectorId,
   },
   childLicenses: {
