@@ -34,6 +34,7 @@ export default function Actions({
       flowId,
       resourceId,
       errorId,
+      isResolved,
     }),
   shallowEqual
   );
@@ -95,6 +96,19 @@ export default function Actions({
   );
 
   if (isResolved) {
+    if (s3BlobKey) {
+      return (
+        <>
+          <Button variant="outlined" color="secondary" onClick={handleDownloadBlob}>
+            Download file
+          </Button>
+          <Button variant="text" color="primary" onClick={onClose}>
+            Close
+          </Button>
+        </>
+      );
+    }
+
     return null;
   }
 
