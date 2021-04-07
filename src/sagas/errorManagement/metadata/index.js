@@ -5,7 +5,6 @@ import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
-import { getMockHttpErrorDoc } from '../../../utils/errorManagement';
 import { safeParse } from '../../../utils/string';
 
 export function* downloadRetryData({flowId, resourceId, retryDataKey}) {
@@ -171,7 +170,7 @@ export function* requestErrorHttpDocument({ flowId, resourceId, reqAndResKey }) 
       hidden: true,
     });
 
-    yield put(actions.errorManager.errorHttpDoc.received(reqAndResKey, getMockHttpErrorDoc() || errorHttpDoc));
+    yield put(actions.errorManager.errorHttpDoc.received(reqAndResKey, errorHttpDoc));
   } catch (e) {
     if (e.status >= 400 && e.status < 500) {
       const errJSON = safeParse(e.message);
