@@ -283,7 +283,7 @@ const getFlowMetricsQueryParams = (resourceType, resourceId, filters) => {
     duration = '1h';
   }
 
-  if ((bucket === 'flowEvents' && duration === '1m') || (bucket === 'flowEvents_1hr' && duration === '1h')) {
+  if ((bucket === 'flowEvents' && duration === '1m') || (bucket === 'flowEvents_1hr' && duration === '1h') || ['1d', '1mo'].includes(duration)) {
     timeSrcExpression = ', timeSrc: "_start"';
   }
 

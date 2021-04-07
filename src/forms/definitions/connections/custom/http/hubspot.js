@@ -20,6 +20,8 @@ export default {
         'https://api.hubapi.com/oauth/v1/token';
       retValues['/http/auth/oauth/scopeDelimiter'] = ' ';
       retValues['/http/auth/oauth/scope'] = ['oauth'];
+      retValues['/http/auth/token/location'] = undefined;
+      retValues['/http/auth/token/paramName'] = undefined;
       if (
         resource &&
         !resource._connectorId &&

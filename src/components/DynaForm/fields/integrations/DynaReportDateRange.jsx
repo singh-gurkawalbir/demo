@@ -95,9 +95,10 @@ function CustomTextFields({selectedRange, setSelectedRange, reset, setReset}) {
   );
 }
 export default function DynaReportDateRange(props) {
-  const {id, onFieldChange, disabled, required, label, value, isValid} = props;
+  const {id, onFieldChange, required, label, value, formKey, isValid} = props;
   const ranges = EVENT_REPORTS_DEFAULT.map(({id, ...rest}) => ({...rest, id, ...getSelectedRange({preset: id})}));
   const timezone = useSelector(state => selectors.userTimezone(state));
+  const selectedIntegration = useSelector(state => selectors.formState(state, formKey)?.fields?.integration?.value);
 
   const onSave = useCallback(selectedRange => {
     if (!selectedRange || !selectedRange.preset) {
@@ -123,6 +124,7 @@ export default function DynaReportDateRange(props) {
       timezone,
       endDate: presetEndDate.toISOString() });
   }, [id, onFieldChange, timezone, value]);
+  const disabled = !selectedIntegration;
 
   return (
     <>
@@ -136,6 +138,7 @@ export default function DynaReportDateRange(props) {
       <div>
         <DateRangeSelector
           {...props}
+          disabled={disabled}
           showDateDisplay={false}
           customPresets={ranges}
           editableDateInputs={false}

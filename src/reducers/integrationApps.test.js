@@ -4431,6 +4431,12 @@ describe('integrationApps selector testcases', () => {
           name: 'flow5 [store1]',
           _integrationId: 'i1',
         },
+
+        {
+          _id: 'f6',
+          name: 'flow5 [random_string]',
+          _integrationId: 'i1',
+        },
       ];
 
       let state = reducer(
@@ -4453,6 +4459,8 @@ describe('integrationApps selector testcases', () => {
                     _id: 'f1',
                   }, {
                     _id: 'f2',
+                  }, {
+                    _id: 'f6',
                   }],
                 },
               ],
@@ -4485,6 +4493,7 @@ describe('integrationApps selector testcases', () => {
           'f1',
           'f2',
           'f5',
+          'f6',
         ]
       );
 

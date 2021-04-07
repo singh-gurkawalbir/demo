@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import getForm from './formMeta';
+import getSuiteScriptForm from './suitescript/formMeta';
 import DynaForm from '../../../../DynaForm';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useFormContext from '../../../../Form/FormContext';
@@ -26,12 +27,14 @@ export default function CsvParseRules({ editorId }) {
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const rule = useSelector(state => selectors._editorRule(state, editorId));
-  const { resourceId, resourceType } = useSelector(state => {
+  const { resourceId, resourceType, isSuiteScriptData, ssLinkedConnectionId } = useSelector(state => {
     const editor = selectors._editor(state, editorId);
 
     return {
       resourceId: editor.resourceId,
       resourceType: editor.resourceType,
+      isSuiteScriptData: editor.isSuiteScriptData,
+      ssLinkedConnectionId: editor.ssLinkedConnectionId,
     };
   }, shallowEqual);
   const formContext = useFormContext(formKey);
@@ -40,7 +43,7 @@ export default function CsvParseRules({ editorId }) {
   // metadata cache on rule changes... we just need the original rule to set the
   // starting values.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const fieldMeta = useMemo(() => getForm({...rule, resourceId, resourceType}), [resourceId]);
+  const fieldMeta = useMemo(() => isSuiteScriptData ? getSuiteScriptForm({...rule, resourceId, resourceType, ssLinkedConnectionId}) : getForm({...rule, resourceId, resourceType}), [resourceId, ssLinkedConnectionId]);
 
   useFormInitWithPermissions({
     formKey,
