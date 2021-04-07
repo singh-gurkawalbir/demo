@@ -376,6 +376,7 @@ export default function Panel(props) {
               resourceType={resourceType}
               resourceId={id}
               flowId={flowId}
+              skipMonitorLevelAccessCheck={resourceType === 'eventreports'}
               integrationId={integrationId}
               isFlowBuilderView={!!flowId}
               onSubmitComplete={handleSubmitComplete}
