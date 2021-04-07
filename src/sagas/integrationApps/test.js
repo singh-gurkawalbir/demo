@@ -1354,7 +1354,7 @@ describe('uninstaller2.0 saga', () => {
         )
       )
       .run());
-    test('should dispatch failed action if API call throws error', () => {
+    test('should dispatch update action if API call throws error', () => {
       const error = { code: 404, message: 'integration not found' };
 
       return expectSaga(uninstallStep, { id })
