@@ -201,6 +201,7 @@ import prestashop from './prestashop';
 import yotpo from './yotpo';
 import mavenlink from './mavenlink';
 import fulfilment from './fulfilment';
+import walmartmexico from './walmartmexico';
 
 export default {
   channelape,
@@ -406,4 +407,5 @@ export default {
   yotpo,
   mavenlink,
   'fulfilment.com': fulfilment,
+  walmartmexico,
 };
