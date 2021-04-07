@@ -54,9 +54,6 @@ export default {
       type: 'text',
       label: 'Login customer ID',
       required: true,
-      visibleWhen: [
-        { field: 'accountType', isNot: ['managerAccount'] },
-      ],
       helpKey: 'googleads.connection.http.unencrypted.loginCustomerId',
     },
     'http.auth.oauth.callbackURL': {
@@ -75,10 +72,10 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: [
-          'http._iClientId',
           'http.encrypted.developerToken',
           'http.unencrypted.customerId',
           'http.unencrypted.loginCustomerId',
+          'http._iClientId',
           'http.auth.oauth.callbackURL',
         ],
       },
