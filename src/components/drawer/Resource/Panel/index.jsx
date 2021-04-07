@@ -376,6 +376,7 @@ export default function Panel(props) {
               resourceType={resourceType}
               resourceId={id}
               flowId={flowId}
+              // All users have access to reports
               skipMonitorLevelAccessCheck={resourceType === 'eventreports'}
               integrationId={integrationId}
               isFlowBuilderView={!!flowId}
