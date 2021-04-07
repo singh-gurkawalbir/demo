@@ -18,9 +18,8 @@ export default {
   },
   opts: {
     defaultValue: r => r.opts,
-    type: 'editor',
+    type: 'licenseeditor',
     mode: 'json',
-    saveMode: 'json',
     label: 'Options',
   },
   sandbox: {
@@ -49,7 +48,6 @@ export default {
     type: 'licenseedition',
     label: 'Edition',
     defaultDisabled: r => !isNewId(r._id),
-    required: r => isNewId(r._id),
     connectorId: r => r?._connectorId,
   },
   childLicenses: {

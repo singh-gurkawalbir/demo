@@ -4,7 +4,7 @@ import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import Panel from './Panel';
+import Panel, { redirectURlToParentListing } from './Panel';
 import { selectors } from '../../../reducers';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
@@ -40,10 +40,14 @@ function ResourceDrawer(props) {
   // TODO: This code need to be revisited as there might be othercases as well where
   // flowId need not to be passed.
   const isAsyncHelper = resourceType === 'asyncHelpers';
-
   const handleClose = useCallback(() => {
-    history.goBack();
-  }, [history]);
+    if (history.length > 2) {
+      history.goBack();
+    }
+    const listingPageUrl = redirectURlToParentListing(match.url);
+
+    history.replace(listingPageUrl);
+  }, [history, match.url]);
   const isPreviewPanelAvailableForResource = useSelector(state =>
     // Returns a bool whether the resource has a preview panel or not
     selectors.isPreviewPanelAvailableForResource(
