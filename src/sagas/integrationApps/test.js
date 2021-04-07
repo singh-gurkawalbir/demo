@@ -1367,9 +1367,9 @@ describe('uninstaller2.0 saga', () => {
           )
         )
         .put(
-          actions.integrationApp.uninstaller2.failed(
+          actions.integrationApp.uninstaller2.updateStep(
             id,
-            error.message
+            'reset'
           )
         )
         .run();
