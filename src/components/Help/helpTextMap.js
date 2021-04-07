@@ -603,7 +603,7 @@ export default {
   'gorgias.connection.http.auth.basic.password':
     'Please enter the Password of your Gorgias account',
   'walmart.connection.environment':
-    'Please select the enviornment of your Walmart account here.',
+    'Please select the environment of your Walmart account here.',
   'walmart.connection.http.unencrypted.clientId':
     'Please enter Client ID of your Walmart Account.',
   'walmart.connection.http.encrypted.clientSecret':
@@ -654,7 +654,7 @@ export default {
   'checkout.connection.environment': 'Please select the environment of your Checkout.com account.',
   'checkout.connection.http.auth.token.token': 'Please enter the API key of Checkout.com account here.Login to your Sandbox/Live account, under Settings > Channels, you will find your API keys. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
   'walmartmexico.connection.environment':
-    'Please select the enviornment of your Walmart account here.',
+    'Please select the environment of your Walmart account here.',
   'walmartmexico.connection.http.unencrypted.clientId':
     'Please enter Client ID of your Walmart Account.',
   'walmartmexico.connection.http.encrypted.clientSecret':
