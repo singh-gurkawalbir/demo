@@ -237,6 +237,9 @@ export default function DynaSelectResource(props) {
         sift(options && options.filter ? options.filter : filter)
       );
     }
+    if (resourceContext.resourceType === 'connectors') {
+      filteredResources = filteredResources.filter(r => !(r._templateId || r._connectorId));
+    }
     if (resourceType === 'connections' && checkPermissions) {
       filteredResources = filteredResources.filter(r => allRegisteredConnectionIdsFromManagedIntegrations.includes(r._id));
     }
@@ -245,7 +248,7 @@ export default function DynaSelectResource(props) {
       label: conn.offline ? `${conn.name || conn._id} - Offline` : conn.name || conn._id,
       value: conn._id,
     }));
-  }, [filter, options, resources, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations, resourceType]);
+  }, [resources, options, filter, resourceContext.resourceType, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
   const { merged } =
     useSelectorMemo(
       selectors.makeResourceDataSelector,
