@@ -60,9 +60,11 @@ export default (state = {}, action) => {
           if (update === 'completed') {
             step.isTriggered = false;
             step.completed = true;
+            step.verifying = false;
           } else if (update === 'reset') {
             step.isTriggered = false;
             step.completed = false;
+            step.verifying = false;
           } else if (update === 'inProgress') {
             step.isTriggered = true;
           } else if (update === 'verify') {

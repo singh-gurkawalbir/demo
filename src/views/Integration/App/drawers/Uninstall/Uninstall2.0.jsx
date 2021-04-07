@@ -94,10 +94,10 @@ export default function Uninstaller2({ integration, integrationId }) {
   }, [dispatch, history, integrationId, isComplete]);
 
   const handleStepClick = useCallback(step => {
-    const { type, isTriggered, form, url } = step;
+    const { type, isTriggered, form, url, verifying } = step;
 
     if (type === UNINSTALL_STEP_TYPES.URL) {
-      if (!step.isTriggered) {
+      if (!isTriggered) {
         dispatch(
           actions.integrationApp.uninstaller2.updateStep(
             integrationId,
@@ -107,7 +107,7 @@ export default function Uninstaller2({ integration, integrationId }) {
 
         openExternalUrl({ url });
       } else {
-        if (step.verifying) {
+        if (verifying) {
           return false;
         }
 

@@ -192,6 +192,7 @@ describe('integrationApps reducer test cases', () => {
         );
 
         state[123].steps[0].isTriggered = false;
+        state[123].steps[0].verifying = false;
         expect(newState).toEqual(state);
       });
       test('should not modify already completed steps', () => {
@@ -206,6 +207,7 @@ describe('integrationApps reducer test cases', () => {
 
         state[123].steps[2].isTriggered = false;
         state[123].steps[2].completed = true;
+        state[123].steps[2].verifying = false;
         expect(newState).toEqual(state);
       });
       test('should do nothing if all steps are completed', () => {
