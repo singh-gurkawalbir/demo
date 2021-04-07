@@ -54,7 +54,7 @@ const defaultFilter = {
 };
 
 const EVENT_REPORT_TYPE_VALUE = 'eventreports';
-const VALID_REPORT_TYPES = [{label: 'Flow events', value: EVENT_REPORT_TYPE_VALUE}];
+export const VALID_REPORT_TYPES = [{label: 'Flow events', value: EVENT_REPORT_TYPE_VALUE}];
 
 // poll for 5 seconds
 const REPORTS_REFRESH_TIMER = 5000;

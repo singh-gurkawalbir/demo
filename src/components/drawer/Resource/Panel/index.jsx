@@ -24,6 +24,7 @@ import { KBDocumentation } from '../../../../utils/connections';
 import DebugIcon from '../../../icons/DebugIcon';
 import IconTextButton from '../../../IconTextButton';
 import ListenerRequestLogsDrawer from '../../ListenerRequestLogs';
+import { VALID_REPORT_TYPES } from '../../../../views/Reports';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 const isNestedDrawer = url => !!matchPath(url, {
@@ -303,6 +304,7 @@ export default function Panel(props) {
   const listenerDrawerHandler = useCallback(() => {
     history.push(`${match.url}/logs`);
   }, [match.url, history]);
+  const isReportType = VALID_REPORT_TYPES.some(({value}) => value === resourceType);
 
   return (
     <>
@@ -377,7 +379,7 @@ export default function Panel(props) {
               resourceId={id}
               flowId={flowId}
               // All users have access to reports
-              skipMonitorLevelAccessCheck={resourceType === 'eventreports'}
+              skipMonitorLevelAccessCheck={isReportType}
               integrationId={integrationId}
               isFlowBuilderView={!!flowId}
               onSubmitComplete={handleSubmitComplete}
