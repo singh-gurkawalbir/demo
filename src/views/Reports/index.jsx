@@ -79,12 +79,12 @@ const usePollLatestResourceCollection = resourceType => {
 };
 
 const Pagination = ({ filterKey}) => {
-  const reportsResult = useSelector(
+  const reportsResultFilter = useSelector(
     state => selectors.filter(state, filterKey), shallowEqual
   );
   const list = useSelectorMemo(
     selectors.mkEventReportsFiltered,
-    reportsResult
+    reportsResultFilter
   );
   const dispatch = useDispatch();
 
@@ -92,16 +92,16 @@ const Pagination = ({ filterKey}) => {
     (e, newPage) => dispatch(
       actions.patchFilter(filterKey, {
         paging: {
-          ...reportsResult.paging,
+          ...reportsResultFilter.paging,
           currPage: newPage,
         },
       })
     ),
-    [dispatch, filterKey, reportsResult.paging]
+    [dispatch, filterKey, reportsResultFilter.paging]
   );
   const classes = useStyles();
 
-  const { currPage, rowsPerPage } = reportsResult.paging || {};
+  const { currPage, rowsPerPage } = reportsResultFilter.paging || {};
 
   return (
 
