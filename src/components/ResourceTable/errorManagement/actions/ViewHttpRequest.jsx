@@ -11,7 +11,8 @@ export default {
     const match = useRouteMatch();
     const handleClick = useCallback(() => {
       history.push(`${match.url}/details/${errorId}/request`);
-    }, [errorId, history, match.url]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [errorId, history]);
 
     useEffect(() => {
       handleClick();
