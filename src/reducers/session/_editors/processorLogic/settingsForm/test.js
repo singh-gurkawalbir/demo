@@ -78,7 +78,7 @@ describe('settingsForm processor logic', () => {
         sandbox: false,
       }, null, 2);
 
-      expect(toggleData(data, 'script')).toEqual(formData);
+      expect(toggleData(data, 'script', {}, {})).toEqual(formData);
     });
   });
   describe('generatePatchPath util', () => {
@@ -187,7 +187,6 @@ describe('settingsForm processor logic', () => {
             form: { fieldMap: {}, layout: { fields: [] } },
           },
         },
-        parentResource: {},
         license: {},
         parentLicense: {},
         sandbox: false,
@@ -207,11 +206,12 @@ describe('settingsForm processor logic', () => {
           },
         },
         insertStubKey: 'formInit',
-        originalData: JSON.stringify(parsedData, null, 2),
+        originalData: { fieldMap: {}, layout: { fields: [] } },
         settingsFormPatchPath: '/settingsForm',
+        resourceDocs: {},
       };
 
-      expect(init({options, settingsForm})).toEqual(expectedOutput);
+      expect(init({options, settingsForm, resourceDocs: {}})).toEqual(expectedOutput);
     });
   });
   describe('requestBody util', () => {
@@ -232,6 +232,7 @@ describe('settingsForm processor logic', () => {
           },
         },
         originalData: { fieldMap: {}, layout: { fields: [] } },
+        resourceDocs: {},
       };
       const expectedBody = {
         rules: {
@@ -243,7 +244,6 @@ describe('settingsForm processor logic', () => {
               form: { fieldMap: {}, layout: { fields: [] } },
             },
           },
-          parentResource: {},
           license: {},
           parentLicense: {},
           sandbox: false,

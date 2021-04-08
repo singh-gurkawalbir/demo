@@ -165,9 +165,9 @@ export default function reducer(state = {}, action) {
 
         // toggle form definition data when view is changed
         if (draft[id].editorType === 'settingsForm') {
-          // if view was toggled, update form defintion
+          // if view was toggled, update form definition
           if (mode) {
-            const formData = toggleData(draft[id].data, mode);
+            const formData = toggleData(draft[id].data, mode, draft[id].flowGrouping, draft[id].resourceDocs);
 
             draft[id].data = formData;
             draft[id].layout = `${mode}FormBuilder`;

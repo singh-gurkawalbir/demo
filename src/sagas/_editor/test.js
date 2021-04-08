@@ -1282,6 +1282,10 @@ describe('editor sagas', () => {
           },
         },
         settingsFormPatchPath: '/settingsForm',
+        resourceDocs: {
+          parentResource: {},
+          resource: null,
+        },
       };
 
       return expectSaga(initEditor, { id, editorType: 'settingsForm', options })
