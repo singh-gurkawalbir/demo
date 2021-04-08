@@ -7,10 +7,15 @@ import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
 import Spinner from '../Spinner';
+import Help from '../Help';
 
 const useStyles = makeStyles(theme => ({
   spinner: {
     marginRight: theme.spacing(1),
+  },
+  helpTextButton: {
+    padding: 0,
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -37,6 +42,9 @@ export default function AutoMapperButton({disabled}) {
     return { isFetchingAutoSuggestions: status === 'requested', autoMapperErrorMsg: errorMsg};
   }, shallowEqual);
 
+  const handleAutoMapperRequest = useCallback(() =>
+    dispatch(actions.mapping.autoMapper.request()), [dispatch]);
+
   const onSave = useCallback(() => {
     setSaveTriggered(true);
     dispatch(actions.mapping.save({ match }));
@@ -44,27 +52,30 @@ export default function AutoMapperButton({disabled}) {
 
   const handleButtonClick = useCallback(() => {
     if (!mappingsChanged) {
-      return dispatch(actions.mapping.autoMapper.request());
+      return handleAutoMapperRequest();
     }
 
     confirmDialog({
-      title: 'Confirm auto-mapping',
-      message: 'Do you want to save changes before proceeding with Auto-mapping',
+      title: 'Save changes and auto-map fields?',
+      message: `Auto-mapping automatically adds export fields mapped to suggested import fields, 
+                but will not change any fields that you have already mapped. You can manually 
+                delete or modify fields after they have been auto-mapped.`,
       buttons: [
         {
-          label: 'Yes',
-          color: 'primary',
+          label: 'Save changes & auto-map fields',
+          variant: 'primary',
           onClick: onSave,
         },
         {
-          label: 'No',
-          onClick: () => dispatch(actions.mapping.autoMapper.request()),
+          label: 'Discard changes & auto-map fields',
+          variant: 'secondary',
+          onClick: handleAutoMapperRequest,
         },
-        { label: 'Cancel', color: 'secondary' },
+        { label: 'Cancel', variant: 'tertiary' },
       ],
     });
   },
-  [confirmDialog, dispatch, mappingsChanged, onSave]
+  [confirmDialog, handleAutoMapperRequest, mappingsChanged, onSave]
   );
 
   useEffect(() => {
@@ -90,22 +101,26 @@ export default function AutoMapperButton({disabled}) {
   }
 
   const inProgress = saveInProgress || isFetchingAutoSuggestions;
-  const progressMessage = saveInProgress ? 'Saving' : 'Auto-mapping';
 
   return (
-    <Button
-      color="secondary"
-      variant="outlined"
-      dataTest="autoMapper"
-      disabled={disabled || inProgress}
-      onClick={handleButtonClick}
+    <>
+      <Button
+        color="primary"
+        variant="outlined"
+        dataTest="autoMapper"
+        disabled={disabled || inProgress}
+        onClick={handleButtonClick}
       >
-      {(isFetchingAutoSuggestions || inProgress) ? (
-        <>
-          <Spinner size="small" className={classes.spinner} />
-          { progressMessage }
-        </>
-      ) : 'Auto-map'}
-    </Button>
+        {(isFetchingAutoSuggestions || inProgress) ? (
+          <>
+            <Spinner size="small" className={classes.spinner} />
+            Auto-mapping fields
+          </>
+        ) : 'Auto-map fields'}
+      </Button>
+      <Help
+        title="Auto-map fields" helpKey="autoMapFields" className={classes.helpTextButton}
+ />
+    </>
   );
 }

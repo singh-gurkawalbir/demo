@@ -29,9 +29,7 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
   },
   autoMapper: {
-    marginLeft: theme.spacing(3),
-    marginBottom: theme.spacing(1),
-    marginTop: theme.spacing(1),
+    margin: theme.spacing(2, 3),
   },
 }));
 const Mapping = props => {
@@ -46,15 +44,16 @@ const Mapping = props => {
           <div className={classes.mappingColumn}>
             <TopPanel flowId={flowId} importId={importId} disabled={disabled} />
 
-            <DragContainer
-              className={classes.mappingTable}
-              disabled={disabled}
-              importId={importId}
-              flowId={flowId}
-              subRecordMappingId={subRecordMappingId}
+            <div className={classes.mappingTable}>
+              <DragContainer
+                disabled={disabled}
+                importId={importId}
+                flowId={flowId}
+                subRecordMappingId={subRecordMappingId}
               />
-            <div className={classes.autoMapper}>
-              <AutoMapperButton />
+              <div className={classes.autoMapper}>
+                <AutoMapperButton />
+              </div>
             </div>
           </div>
 
