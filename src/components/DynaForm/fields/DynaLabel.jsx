@@ -12,11 +12,9 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1, 2),
     overflow: 'auto',
   },
-
   textField: {
     width: 'fit-content',
-    fontSize: 18,
-    padding: theme.spacing(2, 1, 2, 0),
+    padding: theme.spacing(1, 1, 1, 0),
   },
   label: {
     fontSize: 14,
@@ -56,6 +54,7 @@ export default function DynaLabel(props) {
         data-test={id}
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
+        variant="body2"
         className={classes.textField}>
         {label}
         <FieldHelp {...props} />

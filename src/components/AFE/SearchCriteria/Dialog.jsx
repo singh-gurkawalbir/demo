@@ -6,6 +6,7 @@ import {
   DialogContent,
   Typography,
 } from '@material-ui/core';
+import { isEmpty } from 'lodash';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
@@ -67,6 +68,20 @@ export default function SearchCriteriaDialog(props) {
   const { searchCriteria } = useSelector(state =>
     selectors.searchCriteria(state, id)
   );
+  const invalidFields = {};
+
+  searchCriteria?.forEach((criteria, index) => {
+    if (!criteria.field) {
+      invalidFields[index] = [...invalidFields[index] || [], 'field'];
+    }
+    if (!criteria.operator) {
+      invalidFields[index] = [...invalidFields[index] || [], 'operator'];
+    }
+    if (!criteria.searchValue) {
+      invalidFields[index] = [...invalidFields[index] || [], 'searchValue'];
+    }
+  });
+
   const handleSave = useCallback(() => {
     if (onSave) {
       if (searchCriteria && searchCriteria.length) {
@@ -123,13 +138,14 @@ export default function SearchCriteriaDialog(props) {
           connectionId={connectionId}
           commMetaPath={commMetaPath}
           filterKey={filterKey}
+          invalidFields={invalidFields}
         />
       </DialogContent>
       <DialogActions className={classes.actions}>
         <Button
           variant="outlined"
           data-test="saveEditor"
-          disabled={disabled}
+          disabled={disabled || !isEmpty(invalidFields)}
           color="primary"
           onClick={handleSave}>
           Save
@@ -137,7 +153,7 @@ export default function SearchCriteriaDialog(props) {
         <Button
           variant="outlined"
           data-test="saveEditor"
-          disabled={disabled}
+          disabled={disabled || !isEmpty(invalidFields)}
           color="secondary"
           onClick={handleSaveAndClose}>
           Save & close

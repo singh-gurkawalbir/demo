@@ -758,7 +758,7 @@ describe('editor sagas', () => {
           [matchers.call.fn(constructResourceFromFormValues), {}],
           [matchers.select.selector(selectors.fileSampleData), '<xml>some data</xml>'],
         ])
-        .select(selectors.fileSampleData, { resourceId, resourceType: 'exports', fileType: 'xml'})
+        .select(selectors.fileSampleData, { resourceId, resourceType: 'exports', fileType: 'xml', ssLinkedConnectionId: undefined})
         .returns({ data: '<xml>some data</xml>'})
         .run();
     });

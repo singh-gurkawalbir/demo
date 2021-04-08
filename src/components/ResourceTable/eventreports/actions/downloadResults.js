@@ -3,7 +3,7 @@ import DownloadIcon from '../../../icons/DownloadIcon';
 
 const downloadResults = rowData => ({
 
-  label: 'Download Results',
+  label: 'Download results',
   icon: DownloadIcon,
   onClick: dispatch => {
     const {_id } = rowData;

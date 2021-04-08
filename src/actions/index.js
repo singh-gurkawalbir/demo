@@ -1212,7 +1212,10 @@ const user = {
       disable: (_id, disabled) =>
         action(actionTypes.USER_DISABLE, { _id, disabled }),
       disabled: _id => action(actionTypes.USER_DISABLED, { _id }),
+      reinvited: _id => action(actionTypes.USER_REINVITED, { _id }),
       makeOwner: email => action(actionTypes.USER_MAKE_OWNER, { email }),
+      reinvite: _id => action(actionTypes.USER_REINVITE, { _id }),
+      reinviteError: _id => action(actionTypes.USER_REINVITE_ERROR, { _id }),
     },
     accounts: {
       requestCollection: message =>

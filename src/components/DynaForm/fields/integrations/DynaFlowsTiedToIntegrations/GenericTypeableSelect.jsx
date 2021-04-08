@@ -142,6 +142,7 @@ export const GenericTypeableSelect = props => {
         disabled={disabled}
         required={required}>
         <Select
+          isDisabled={disabled}
           isMulti
           placeholder={placeholder}
           components={{DropdownIndicator, MultiValueLabel: MultiValueLabelImpl, Option: OptionImpl}}

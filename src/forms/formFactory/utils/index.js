@@ -114,12 +114,12 @@ export const getFieldByIdFromLayout = (layout, fieldMap, id) => {
   );
 };
 
-export const getInvalidFields = fieldStates => fieldsStateToArray(fieldStates).filter(
-  field => !field.isValid || field.isDiscretelyInvalid
+export const getInvalidFields = (fieldStates, shouldShowPurelyInvalid) => fieldsStateToArray(fieldStates).filter(
+  field => shouldShowPurelyInvalid ? !field.isValid : !field.isValid || field.isDiscretelyInvalid
 );
 
-export const isExpansionPanelErrored = (meta, fieldStates) => {
-  const invalidFields = getInvalidFields(fieldStates);
+export const isExpansionPanelErrored = (meta, fieldStates, shouldShowPurelyInvalid) => {
+  const invalidFields = getInvalidFields(fieldStates, shouldShowPurelyInvalid);
   const { layout, fieldMap } = meta;
 
   return invalidFields.some(

@@ -27,9 +27,8 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: '1fr',
   },
   tableWrapper: {
-    border: 'solid 1px',
-    borderTop: 'none',
-    borderColor: theme.palette.secondary.lightest,
+    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
     overflowY: 'auto',
     minWidth: '560px',
     [theme.breakpoints.down('md')]: {
@@ -52,9 +51,13 @@ const useStyles = makeStyles(theme => ({
     // Has to update with the base svg
     '& > * svg': {
       fontSize: theme.spacing(2),
+      // check why position is not working when there is a parent wrapper
+      marginRight: theme.spacing(1),
     },
   },
-
+  searchMoreSpinner: {
+    color: theme.palette.common.white,
+  },
 }));
 
 export default function LogsTable({ flowId, exportId }) {

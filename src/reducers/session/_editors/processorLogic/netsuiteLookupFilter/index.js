@@ -28,16 +28,16 @@ export default {
       rule,
     };
   },
-  buildData: (_, sampleData) => {
-    let formattedData = [];
+  buildData: ({ssLinkedConnectionId}, sampleData) => {
+    let formattedData = safeParse(sampleData);
 
-    if (sampleData) {
+    if (sampleData && !ssLinkedConnectionId) {
       const extractPaths = getJSONPaths(pickFirstObject(safeParse(sampleData)));
 
       formattedData =
           extractPaths?.map(obj => ({ name: obj.id, id: obj.id })) || [];
     }
-    const modifiedData = formattedData.map(wrapSpecialChars);
+    const modifiedData = Array.isArray(formattedData) ? formattedData.map(wrapSpecialChars) : formattedData;
 
     return modifiedData;
   },

@@ -2,8 +2,10 @@
 import { selectors } from '.';
 
 describe('Scripts region selector testcases', () => {
-  describe('selectors.scripts test cases', () => {
-    test('should return empty set in case scripts is not present', () => {
+  describe('selectors.mkGetScriptsTiedToFlow test cases', () => {
+    const scriptsSelector = selectors.mkGetScriptsTiedToFlow();
+
+    test('should return null in case scripts is not present', () => {
       const state = {
         data: {resources: {imports: [
           {_id: 'i1'},
@@ -11,9 +13,10 @@ describe('Scripts region selector testcases', () => {
         exports: []}},
       };
 
-      expect(selectors.scripts(state)).toEqual([]);
+      expect(scriptsSelector(state)).toBeNull();
     });
-    test('should return all scripts in no flow id match', () => {
+
+    test('should return null if no flow id match', () => {
       const state = {
         data: {
           resources: {
@@ -50,12 +53,7 @@ describe('Scripts region selector testcases', () => {
           }},
       };
 
-      expect(selectors.scripts(state, 'f2')).toEqual(
-        [
-          {_id: 's1', name: 'xyz'},
-          {_id: 's2', name: 'abc'},
-        ]
-      );
+      expect(scriptsSelector(state, 'f2')).toBeNull();
     });
 
     test('should return all scripts used in a flow', () => {
@@ -102,7 +100,7 @@ describe('Scripts region selector testcases', () => {
           }},
       };
 
-      expect(selectors.scripts(state, 'f1')).toEqual(
+      expect(scriptsSelector(state, 'f1')).toEqual(
         [
           {
             _id: 's1',
@@ -170,7 +168,7 @@ describe('Scripts region selector testcases', () => {
           }},
       };
 
-      expect(selectors.scripts(state, 'f1')).toEqual(
+      expect(scriptsSelector(state, 'f1')).toEqual(
         [
           {_id: 's1', name: 'xyz'},
           {_id: 's3', name: 'xyz2'},
