@@ -17,7 +17,7 @@ export default function OperandSettingsDialog({
         id: 'type',
         name: 'type',
         type: 'radiogroup',
-        label: 'Operand Type',
+        label: 'Operand type',
         showOptionsHorizontally: true,
         fullWidth: true,
         options: [
@@ -53,7 +53,7 @@ export default function OperandSettingsDialog({
 
   return (
     <ModalDialog show>
-      <span>Operand Settings</span>
+      <span>Operand settings</span>
       <>
         <DynaForm formKey={formKey} />
         <DynaSubmit formKey={formKey} data-test="saveOperandSettings" onClick={handleSubmit}>

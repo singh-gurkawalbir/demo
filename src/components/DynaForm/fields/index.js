@@ -129,6 +129,7 @@ import DynaFlowsTiedToIntegrations from './integrations/DynaFlowsTiedToIntegrati
 import DynaReportDateRange from './integrations/DynaReportDateRange';
 import DynaTrialLicense from './DynaTrialLicense';
 import DynaLicenseExpires from './DynaLicenseExpires';
+import DynaLicenseEditor from './DynaLicenseEditor';
 
 export default {
   reportdaterange: DynaReportDateRange,
@@ -289,4 +290,5 @@ export default {
   licenseedition: DynaLicenseEdition,
   triallicense: DynaTrialLicense,
   licenseexpires: DynaLicenseExpires,
+  licenseeditor: DynaLicenseEditor,
 };
