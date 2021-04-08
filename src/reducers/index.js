@@ -4332,9 +4332,9 @@ selectors.applicationType = (state, resourceType, id) => {
       (resourceObj && resourceObj.webhook && resourceObj.webhook.provider)
     );
   }
-  // For Data Loader cases, there is no image.
+
   if (getStagedValue('/type') === 'simple' || resourceObj?.type === 'simple') {
-    return '';
+    return 'dataLoader';
   }
 
   if (adaptorType?.toUpperCase().startsWith('RDBMS')) {
