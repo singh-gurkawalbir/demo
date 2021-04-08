@@ -1994,6 +1994,16 @@ const errorManager = {
     received: (metadata = []) =>
       action(actionTypes.ERROR_MANAGER.FILTER_METADATA.RECEIVED, { metadata }),
   },
+  errorHttpDoc: {
+    request: (flowId, resourceId, reqAndResKey) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.REQUEST, { flowId, resourceId, reqAndResKey }),
+    received: (reqAndResKey, errorHttpDoc) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.RECEIVED, { reqAndResKey, errorHttpDoc }),
+    error: (reqAndResKey, error) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.ERROR, { reqAndResKey, error }),
+    downloadBlobDoc: (flowId, resourceId, s3BlobKey) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.DOWNLOAD_BLOB_DOC, { flowId, resourceId, s3BlobKey }),
+  },
 };
 const flow = {
   run: ({ flowId, customStartDate, options }) =>
