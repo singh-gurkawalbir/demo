@@ -28,11 +28,11 @@ const useStyles = makeStyles(theme => ({
       wordBreak: 'break-word',
     },
   },
-  afe2DrawerHeaderRibbon: {
+  drawerHeaderRibbon: {
     '& > * .MuiToggleButtonGroup-root': {
       marginRight: theme.spacing(0.5),
       '& > button': {
-        minWidth: 'unset',
+        minWidth: '70px',
       },
     },
   },
@@ -72,7 +72,7 @@ function RouterWrappedContent({ hideSave }) {
   return (
     <>
       <DrawerHeader title={drawerTitle} CloseButton={CloseButton} className={clsx(classes.drawerHeader, {[classes.headerLongTitle]: drawerTitle?.length > 45 })}>
-        <ActionsRibbon editorId={editorId} className={classes.afe2DrawerHeaderRibbon} />
+        <ActionsRibbon editorId={editorId} className={classes.drawerHeaderRibbon} />
       </DrawerHeader>
 
       <DrawerContent>

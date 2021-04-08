@@ -48,6 +48,7 @@ export default function DynaHandlebarPreview({
   errorMessages,
   isValid,
   disabled,
+  dataTest,
 }) {
   const classes = useStyles();
 
@@ -73,7 +74,7 @@ export default function DynaHandlebarPreview({
           />
           </div>
           <ActionButton
-            data-test={id}
+            data-test={dataTest || id}
             tooltip="Open handlebars editor"
             className={clsx(classes.afeButton, { [classes.errorBtn]: !isValid})}
             variant="outlined"

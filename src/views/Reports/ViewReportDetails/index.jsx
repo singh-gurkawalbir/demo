@@ -35,7 +35,7 @@ export default function ViewReportDetails() {
     <RightDrawer path="view/reportDetails/:reportId" >
 
       <DrawerHeader title="View report details" />
-      <DrawerContent>
+      <DrawerContent noPadding>
         <LoadResources required resources="integrations,flows">
           <RowDetails reportType={reportType} />
         </LoadResources>
