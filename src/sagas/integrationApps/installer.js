@@ -236,6 +236,10 @@ export function* installStoreStep({ id, installerFunction }) {
 
   if (stepCompleteResponse && stepCompleteResponse.success) {
     yield call(getResource, { resourceType: 'integrations', id });
+
+    yield put(
+      actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
+    );
     yield put(
       actions.integrationApp.store.completedStepInstall(
         id,
