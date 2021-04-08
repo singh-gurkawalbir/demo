@@ -14,6 +14,8 @@ export function* _formatErrors({ errors = [], resourceId }) {
   const formattedErrors = errors.map(e => ({
     ...e,
     source: (e.source === 'application' && application) ? application : e.source,
+    // TODO: Remove this once actual API is updated to get reqAndResKey
+    // reqAndResKey: (index % 2 === 0) ? index : undefined,
   }));
 
   return formattedErrors;

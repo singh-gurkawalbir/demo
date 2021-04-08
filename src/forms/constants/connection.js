@@ -115,6 +115,7 @@ export default {
     'prestashop',
     'yotpo',
     'fulfilment.com',
+    'walmartmexico',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

@@ -51,6 +51,10 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
     history.goBack();
   }, [history]);
 
+  const handleTabChange = useCallback((errorId, newValue) => {
+    history.replace(`${match.url}/details/${errorId}/${newValue}`);
+  }, [history, match.url]);
+
   if (!showDrawer) {
     return null;
   }
@@ -59,6 +63,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
     <RightDrawer
       path="details/:errorId/:mode"
       variant="temporary"
+      width="large"
       hideBackButton>
       <DrawerHeader title="View error details" />
       <ErrorDetails
@@ -66,6 +71,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
         resourceId={resourceId}
         isResolved={isResolved}
         onClose={handleClose}
+        onTabChange={handleTabChange}
           />
     </RightDrawer>
   );
