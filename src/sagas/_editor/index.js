@@ -630,9 +630,9 @@ export function* initEditor({ id, editorType, options }) {
       formattedOptions = init({options: formattedOptions, resource, formValues, fieldState, connection, isPageGenerator});
     } else if (editorType === 'settingsForm') {
       let parentResource = {};
-      const sectionMeta = yield select(selectors.mkGetCustomFormPerSectionId(), resourceType, resourceId, sectionId || 'general');
+      const sectionMeta = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
       const { settingsForm, settings} = sectionMeta || {};
-      const integrationAllSections = yield select(selectors.mkGetAllCustomFormsForAResource(), 'integrations', integrationId);
+      const integrationAllSections = yield select(selectors.getAllSections, 'integrations', integrationId);
 
       if (resource?._parentId) {
         parentResource = yield select(selectors.resource, resourceType, resource._parentId);

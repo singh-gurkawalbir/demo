@@ -5,7 +5,7 @@ import { safeParse, isJsonString } from '../../../../../utils/string';
 import javascript from '../javascript';
 
 export function generateScriptInput(parsedData, flowGrouping, resourceDocs, defaultMeta) {
-  const {resource, parentResource, license, parentLicense} = resourceDocs;
+  const {resource, parentResource, license, parentLicense} = resourceDocs || {};
 
   const input = {
     resource: {
@@ -100,7 +100,7 @@ export default {
     let flowGrouping;
 
     if (isFlowGroupingSection) {
-      flowGrouping = integrationAllSections.find(sec => sec.sectionId === options.sectionId);
+      flowGrouping = integrationAllSections?.find(sec => sec.sectionId === options.sectionId);
     }
 
     const { form, init = {} } = settingsForm || {};
