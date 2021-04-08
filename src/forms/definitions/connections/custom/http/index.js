@@ -200,6 +200,7 @@ import adobesign from './adobesign';
 import prestashop from './prestashop';
 import yotpo from './yotpo';
 import mavenlink from './mavenlink';
+import googleads from './googleads';
 import fulfilment from './fulfilment';
 
 export default {
@@ -405,5 +406,6 @@ export default {
   prestashop,
   yotpo,
   mavenlink,
+  googleads,
   'fulfilment.com': fulfilment,
 };

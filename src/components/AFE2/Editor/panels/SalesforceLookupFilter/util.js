@@ -215,3 +215,13 @@ export function generateSalesforceLookupFilterExpression(
 
   return salesforceFilterExpression;
 }
+
+export function convertValueToSuiteScriptSupportedExpression(expression) {
+  return expression.replace(/{{{[a-zA-Z]*\s/g, '')
+    .replace(/}}}/g, '').replace(/\(/g, '[').replace(/\)/g, ']')
+    .replace(/OR/g, ',or,')
+    .replace(/AND/g, ',and,')
+    .replace(/[a-zA-Z_.]+/g, '"$&"')
+    .replace(/[=!<>]+/g, ',"$&",')
+    .replace(/\s/g, '');
+}

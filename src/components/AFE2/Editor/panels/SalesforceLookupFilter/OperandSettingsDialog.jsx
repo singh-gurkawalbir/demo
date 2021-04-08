@@ -17,7 +17,7 @@ export default function OperandSettingsDialog({
         id: 'type',
         name: 'type',
         type: 'radiogroup',
-        label: 'Operand Type',
+        label: 'Operand type',
         showOptionsHorizontally: true,
         fullWidth: true,
         options: [
