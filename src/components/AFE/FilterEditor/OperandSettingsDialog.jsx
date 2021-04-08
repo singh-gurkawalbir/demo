@@ -60,7 +60,7 @@ export default function OperandSettingsDialog({
           id: 'dataType',
           name: 'dataType',
           type: 'select',
-          label: 'Data Type',
+          label: 'Data type',
           options: [
             {
               items: [
@@ -87,7 +87,7 @@ export default function OperandSettingsDialog({
           id: 'transformations',
           name: 'transformations',
           type: 'multiselect',
-          label: 'Apply Functions',
+          label: 'Apply functions',
           refreshOptionsOnChangesTo: ['dataType'],
           options: [
             {

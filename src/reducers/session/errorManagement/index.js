@@ -6,6 +6,7 @@ import latestFlowJobs, { selectors as fromLatestFlowJobs } from './latestJobs/fl
 import runHistory, { selectors as fromRunHistory } from './runHistory';
 import retryData, { selectors as fromRetryData } from './retryData';
 import metadata, { selectors as fromMetadata } from './metadata';
+import errorHttpDoc, { selectors as fromErrorHttpDoc } from './errorHttpDoc';
 import { genSelectors } from '../../util';
 
 export default combineReducers({
@@ -16,6 +17,7 @@ export default combineReducers({
   runHistory,
   retryData,
   metadata,
+  errorHttpDoc,
 });
 
 export const selectors = {};
@@ -27,6 +29,7 @@ const subSelectors = {
   latestIntegrationJobDetails: fromLatestIntegrationJobs,
   latestFlowJobs: fromLatestFlowJobs,
   runHistory: fromRunHistory,
+  errorHttpDoc: fromErrorHttpDoc,
 };
 
 genSelectors(selectors, subSelectors);

@@ -2,6 +2,8 @@ import React from 'react';
 import Retry from '../actions/Retry';
 import Resolve from '../actions/Resolve';
 import ViewErrorDetails from '../actions/ViewErrorDetails';
+import ViewHttpRequest from '../actions/ViewHttpRequest';
+import ViewHttpResponse from '../actions/ViewHttpResponse';
 import EditRetryData from '../actions/EditRetry';
 import DownloadRetryData from '../actions/DownloadRetry';
 import SelectError from '../cells/SelectError';
@@ -57,17 +59,21 @@ export default {
       value: r => <CeligoTimeAgo date={r.occurredAt} />,
     },
   ],
-  rowActions: ({retryDataKey, source}, { actionInProgress }) => {
+  rowActions: ({retryDataKey, source, reqAndResKey}, { actionInProgress }) => {
     if (actionInProgress) return [];
     const actions = [
-      ...(retryDataKey ? [EditRetryData] : []),
       Resolve,
       ...(retryDataKey ? [Retry] : []),
       ViewErrorDetails,
+      ...(retryDataKey ? [EditRetryData] : []),
       // IO-19304, for errors occuring at FTP bridge, retry data returned will be metadata and not actual retry data,
       // hence show download option
       ...(retryDataKey && source === 'ftp_bridge' ? [DownloadRetryData] : []),
     ];
+
+    if (reqAndResKey) {
+      actions.push(ViewHttpRequest, ViewHttpResponse);
+    }
 
     return actions;
   },

@@ -23,6 +23,7 @@ const useStyles = makeStyles(theme => ({
 
 const emptySet = [];
 const emptyObj = {};
+const editorId = 'ssfilekeycolumns';
 
 export default function DynaFileKeyColumn_afe2(props) {
   const {
@@ -44,7 +45,6 @@ export default function DynaFileKeyColumn_afe2(props) {
   } = props;
   const dispatch = useDispatch();
   const classes = useStyles();
-  const editorId = 'ssfilekeycolumns';
   const { data: editorData, previewStatus, result } = useSelector(state =>
     selectors._editor(state, editorId)
   );
@@ -93,6 +93,7 @@ export default function DynaFileKeyColumn_afe2(props) {
       onFieldChange(id, []);
     }
   }, [csvData, dispatch, id, editorData, onFieldChange]);
+
   useEffect(() => {
     dispatch(actions._editor.patchFileKeyColumn(editorId, 'rule', { ...options }));
   }, [dispatch, options]);

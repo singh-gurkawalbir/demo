@@ -22,16 +22,9 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     marginLeft: theme.spacing(1),
   },
-  loading: {
-    display: 'flex',
-    flexDirection: 'row !important',
-    alignItems: 'center',
-    padding: theme.spacing(1, 0),
-  },
-  heading: {
-    paddingRight: theme.spacing(1),
-  },
 }));
+
+const editorId = 'ns-mappingLookupFilter';
 
 export default function DynaNetSuiteLookupFilters_afe2(props) {
   const dispatch = useDispatch();
@@ -46,7 +39,6 @@ export default function DynaNetSuiteLookupFilters_afe2(props) {
     required,
     disabled,
   } = props;
-  const editorId = 'ns-mappingLookupFilter';
   const { disableFetch, commMetaPath } = options;
   const isEditorInitialized = useSelector(state => selectors._editor(state, editorId).fieldId);
 
@@ -58,15 +50,10 @@ export default function DynaNetSuiteLookupFilters_afe2(props) {
       data,
       wrapData: true,
     }));
+
+    return () => dispatch(actions._editor.clear(editorId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(
-    () => () => {
-      dispatch(actions._editor.clear(editorId));
-    },
-    [dispatch, editorId]
-  );
 
   const filters = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath)?.data;
 
@@ -88,7 +75,7 @@ export default function DynaNetSuiteLookupFilters_afe2(props) {
 
   if (!filters) {
     return (
-      <Spinner centerAll />
+      <Spinner />
     );
   }
 
