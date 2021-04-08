@@ -2,7 +2,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Button } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import FilterPanel from '../../../AFE2/Editor/panels/SalesforceLookupFilter';
@@ -18,12 +18,6 @@ const useStyles = makeStyles(theme => ({
   refreshFiltersButton: {
     minWidth: 0,
     padding: 0,
-  },
-  loaderSObject: {
-    flexDirection: 'row !important',
-  },
-  loaderSObjectText: {
-    marginRight: theme.spacing(2),
   },
   salesForceLookupFilterIcon: {
     marginLeft: theme.spacing(1),
@@ -57,14 +51,9 @@ export default function DynaSalesforceLookupFilters_afe(props) {
       isGroupedSampleData: opts.isGroupedSampleData,
     }));
 
+    return () => dispatch(actions._editor.clear(editorId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  useEffect(
-    () => () => {
-      dispatch(actions._editor.clear(editorId));
-    },
-    [dispatch, editorId]
-  );
 
   const filters = useSelector(
     state =>
@@ -94,13 +83,7 @@ export default function DynaSalesforceLookupFilters_afe(props) {
 
   if (!filters) {
     return (
-      <div className={classes.loaderSObject}>
-        <Typography className={classes.loaderSObjectText}>
-          Loading
-        </Typography>
-        <Spinner />
-      </div>
-
+      <Spinner />
     );
   }
 
