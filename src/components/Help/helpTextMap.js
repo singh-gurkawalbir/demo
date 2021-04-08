@@ -438,7 +438,7 @@ export default {
   'greenhouse.connection.http.auth.basic.username':
     'Please enter your API token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe. You can go to Configure >> Dev Center >> API Credential Management and from there, you can create a Harvest API key and choose which endpoints it may access.',
   'greenhouse.connection.http.unencrypted.userID':
-    'Please enter the Greenhouse user id used for integration here. This is required by Greenhouse for auditing purposes for all write requests and can be obtained by using List Users API.',
+    'Enter the unique user ID for a Greenhouse developer account with “Can manage ALL organization’s API credentials“ permissions. You can view the ID by signing into Greenhouse, viewing the page source in the browser’s Inspector (right-click and choose Inspect), and searching for “USER_ID“ in the HTML code.',
   'connection.http.unencrypted.adminUser':
     'Please check this if you are The Power BI Service Administrator. The Power BI Service Administrator role can be assigned to users who should have access to the Power BI Admin Portal without also granting them other Office 365 administrative access.',
   'mailgun.connection.http.auth.basic.password':
