@@ -2,12 +2,12 @@ export default {
   preSave: formValues => ({
     ...formValues,
     '/type': 'http',
-    '/assistant': 'walmart',
+    '/assistant': 'walmartmexico',
     '/http/auth/type': 'token',
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'WM_SEC.ACCESS_TOKEN',
     '/http/auth/token/scheme': ' ',
-    '/http/mediaType': 'xml',
+    '/http/mediaType': 'json',
     '/http/baseURI': `https://${
       formValues['/environment'] === 'sandbox' ? 'sandbox' : 'marketplace'
     }.walmartapis.com/v3`,
@@ -17,15 +17,19 @@ export default {
       {
         name: 'Authorization',
         value:
-          'Basic {{{base64Encode (join ":" connection.http.unencrypted.clientId connection.http.encrypted.clientSecret)}}}',
+            'Basic {{{base64Encode (join ":" connection.http.unencrypted.clientId connection.http.encrypted.clientSecret)}}}',
       },
       {
-        name: 'wm_svc.name',
+        name: 'WM_SVC.NAME',
         value: 'Walmart Marketplace',
       },
       {
-        name: 'wm_qos.correlation_id',
+        name: 'WM_QOS.CORRELATION_ID',
         value: "{{{dateFormat 'X'}}}",
+      },
+      {
+        name: 'WM_MARKET',
+        value: 'mx',
       },
       {
         name: 'WM_CONSUMER.CHANNEL.TYPE',
@@ -51,15 +55,19 @@ export default {
       {
         name: 'Authorization',
         value:
-          'Basic {{{base64Encode (join ":" connection.http.unencrypted.clientId connection.http.encrypted.clientSecret)}}}',
+            'Basic {{{base64Encode (join ":" connection.http.unencrypted.clientId connection.http.encrypted.clientSecret)}}}',
       },
       {
-        name: 'wm_svc.name',
+        name: 'WM_SVC.NAME',
         value: 'Walmart Marketplace',
       },
       {
-        name: 'wm_qos.correlation_id',
+        name: 'WM_QOS.CORRELATION_ID',
         value: "{{{dateFormat 'X'}}}",
+      },
+      {
+        name: 'WM_MARKET',
+        value: 'mx',
       },
       {
         name: 'WM_CONSUMER.CHANNEL.TYPE',
@@ -74,7 +82,7 @@ export default {
       type: 'select',
       label: 'Environment',
       required: true,
-      helpKey: 'walmart.connection.environment',
+      helpKey: 'walmartmexico.connection.environment',
       options: [
         {
           items: [
@@ -99,19 +107,19 @@ export default {
       id: 'http.unencrypted.clientId',
       type: 'text',
       label: 'Client ID',
-      helpKey: 'walmart.connection.http.unencrypted.clientId',
+      helpKey: 'walmartmexico.connection.http.unencrypted.clientId',
       required: true,
     },
     'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
       type: 'text',
       label: 'Client secret',
-      helpKey: 'walmart.connection.http.encrypted.clientSecret',
+      helpKey: 'walmartmexico.connection.http.encrypted.clientSecret',
       required: true,
       inputType: 'password',
       defaultValue: '',
       description:
-        'Note: for security reasons this field must always be re-entered.',
+          'Note: for security reasons this field must always be re-entered.',
     },
     application: {
       fieldId: 'application',

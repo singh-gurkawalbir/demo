@@ -63,6 +63,10 @@ export default {
     label: 'Source integration',
     placeholder: 'Choose integration',
     resourceType: 'integrations',
+    filter: () => ({
+      _connectorId: { $exists: false },
+      _templateId: { $exists: false },
+    }),
     requiredWhen: [
       {
         field: 'framework',

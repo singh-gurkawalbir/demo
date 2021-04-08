@@ -120,6 +120,12 @@ const metadata = {
       },
     },
     {
+      heading: 'Timestamp',
+      Value: function Timestamp({r}) {
+        return <DateTimeDisplay dateTime={r?.createdAt} />;
+      },
+    },
+    {
       heading: 'Status',
       headerValue: function SelectResponseCode() {
         return (

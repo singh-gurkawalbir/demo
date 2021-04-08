@@ -42,9 +42,9 @@ export function* uninstallStep({ id, formVal }) {
     });
   } catch (error) {
     yield put(
-      actions.integrationApp.uninstaller2.failed(
+      actions.integrationApp.uninstaller2.updateStep(
         id,
-        error.message || 'Failed to post steps'
+        'reset'
       )
     );
 

@@ -179,8 +179,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
 
   const handleStatusClick = useCallback(
     event => {
+      event.stopPropagation();
       if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-        event.stopPropagation();
         if (tile._connectorId) {
           history.push(
             getRoutePath(
@@ -194,8 +194,9 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             )
           );
         }
-      } else if (!isUserInErrMgtTwoDotZero) {
-        event.stopPropagation();
+      } else if (isUserInErrMgtTwoDotZero) {
+        history.push(getRoutePath(urlToIntegrationSettings));
+      } else {
         dispatch(
           actions.patchFilter('jobs', {
             status: status.variant === 'error' ? 'error' : 'all',
@@ -215,7 +216,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
         }
       }
     },
-    [tile.status, tile._connectorId, tile._integrationId, isUserInErrMgtTwoDotZero, history, isCloned, integrationAppTileName, dispatch, status.variant]
+    [tile.status, tile._connectorId, tile._integrationId, isUserInErrMgtTwoDotZero, history, isCloned, integrationAppTileName, dispatch, status.variant, urlToIntegrationSettings]
   );
 
   const handleUsersClick = useCallback(event => {

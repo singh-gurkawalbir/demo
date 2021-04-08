@@ -147,6 +147,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'lookup.sObjectType', isNot: [''] },
           ],
         },
         'lookup.mapList': {
