@@ -93,9 +93,7 @@ export default function SalesforceLookupFilterPanel({
     const qbRules = convertSalesforceLookupFilterExpression(rule, data);
 
     if (
-      qbRules &&
-        qbRules.rules &&
-        qbRules.rules.length === 1 &&
+        qbRules?.rules?.length === 1 &&
         !qbRules.rules[0].id
     ) {
       qbRules.rules = [];

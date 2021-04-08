@@ -1,3 +1,4 @@
+import { isString } from 'lodash';
 import getJSONPaths, { pickFirstObject, wrapSpecialChars } from '../../../../../utils/jsonPaths';
 import { safeParse } from '../../../../../utils/string';
 
@@ -13,14 +14,17 @@ export default {
   init: props => {
     const {options, fieldState} = props;
     const {value} = fieldState || {};
+    const filterValue = options.rule || value;
     let rule = [];
 
-    if (value) {
+    if (isString(filterValue)) {
       try {
-        rule = JSON.parse(value);
+        rule = JSON.parse(filterValue);
       } catch (e) {
       // do nothing
       }
+    } else {
+      rule = filterValue || [];
     }
 
     return {
@@ -28,10 +32,11 @@ export default {
       rule,
     };
   },
-  buildData: ({ssLinkedConnectionId}, sampleData) => {
+  buildData: (editor, sampleData) => {
+    const {wrapData, ssLinkedConnectionId} = editor || {};
     let formattedData = safeParse(sampleData);
 
-    if (sampleData && !ssLinkedConnectionId) {
+    if (sampleData && !ssLinkedConnectionId && !wrapData) {
       const extractPaths = getJSONPaths(pickFirstObject(safeParse(sampleData)));
 
       formattedData =
