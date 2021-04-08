@@ -603,7 +603,7 @@ export default {
   'gorgias.connection.http.auth.basic.password':
     'Please enter the Password of your Gorgias account',
   'walmart.connection.environment':
-    'Please select the enviornment of your Walmart account here.',
+    'Please select the environment of your Walmart account here.',
   'walmart.connection.http.unencrypted.clientId':
     'Please enter Client ID of your Walmart Account.',
   'walmart.connection.http.encrypted.clientSecret':
@@ -656,6 +656,12 @@ export default {
   'channelape.connection.http.auth.token.token': 'To generate a new private key visit ChannelApe and create an API Account for your business. If you want to access the API\'s via a user account, you can use the Users - Create session request, and use that Session ID as the X-Channel-Ape-Authorization-Token.',
   'checkout.connection.environment': 'Please select the environment of your Checkout.com account.',
   'checkout.connection.http.auth.token.token': 'Please enter the API key of Checkout.com account here.Login to your Sandbox/Live account, under Settings > Channels, you will find your API keys. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
+  'walmartmexico.connection.environment':
+    'Please select the environment of your Walmart account here.',
+  'walmartmexico.connection.http.unencrypted.clientId':
+    'Please enter Client ID of your Walmart Account.',
+  'walmartmexico.connection.http.encrypted.clientSecret':
+    'Please enter Client Secret of your Walmart Account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your client secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
