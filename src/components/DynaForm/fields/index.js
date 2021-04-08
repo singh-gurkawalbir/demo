@@ -62,7 +62,7 @@ import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder_afe2 from './DynaSQLQueryBuilder_afe2';
 import Salesforce from './DynaSalesforceExportComponents';
 import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaTreeModal';
-import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
+import DynaNetSuiteLookupFilters_afe2 from './DynaNetSuiteLookupFilters_afe2';
 import DynaNetSuiteLookup_afe2 from './DynaNetSuiteLookup_afe2';
 import DynaIAExpression from './DynaIAExpression';
 import DynaIASelect from './DynaIASelect';
@@ -71,7 +71,7 @@ import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier_afe2 from './DynaNetSuiteQualifier_afe2';
 import DynaSalesforceQualifier_afe2 from './DynaSalesforceQualifier_afe2';
-import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
+import DynaSalesforceLookupFilters_afe2 from './DynaSalesforceLookupFilters_afe2';
 import DynaSalesforceLookup_afe2 from './DynaSalesforceLookup_afe2';
 import DynaMultiSubsidiaryMapping from './DynaTableView/DynaMultiSubsidiaryMapping';
 import DynaTimestampFileName from './DynaTimestampFileName';
@@ -230,7 +230,8 @@ export default {
   salesforcereferencedfieldsia:
     Salesforce.IASettingsComponents.DynaReferencedFieldsIA,
   salesforcerelatedlistia: Salesforce.IASettingsComponents.DynaRelatedListIA,
-  netsuitelookupfilters: DynaNetSuiteLookupFilters,
+  // netsuitelookupfilters: DynaNetSuiteLookupFilters,
+  netsuitelookupfilters: DynaNetSuiteLookupFilters_afe2,
   // netsuitelookup: DynaNetSuiteLookup,
   netsuitelookup: DynaNetSuiteLookup_afe2,
   iaexpression: DynaIAExpression,
@@ -240,7 +241,8 @@ export default {
   replaceconnection: DynaReplaceConnection,
   // netsuitequalifier: DynaNetSuiteQualifier,
   netsuitequalifier: DynaNetSuiteQualifier_afe2,
-  salesforcelookupfilters: DynaSalesforceLookupFilters,
+  // salesforcelookupfilters: DynaSalesforceLookupFilters,
+  salesforcelookupfilters: DynaSalesforceLookupFilters_afe2,
   // salesforcelookup: DynaSalesforceLookup,
   salesforcelookup: DynaSalesforceLookup_afe2,
   timestampfilename: DynaTimestampFileName,

@@ -1,13 +1,14 @@
 /* eslint-disable camelcase */
 import React, { useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
-import { selectors } from '../../../../reducers';
-import actions from '../../../../actions';
-import FilterPanel from '../../../AFE2/Editor/panels/SalesforceLookupFilter';
-import Spinner from '../../../Spinner';
-import RefreshIcon from '../../../icons/RefreshIcon';
+import { selectors } from '../../../reducers';
+import actions from '../../../actions';
+import FilterPanel from '../../AFE2/Editor/panels/SalesforceLookupFilter';
+import Spinner from '../../Spinner';
+import RefreshIcon from '../../icons/RefreshIcon';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   refreshFilters: {
@@ -24,50 +25,39 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DynaSalesforceLookupFilters_afe(props) {
+export default function DynaSalesforceLookupFilters_afe2(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const {
     id,
-    data,
     value,
     connectionId,
+    data,
     options = {},
-    editorId,
-    opts,
     onFieldChange,
   } = props;
-  const newEditorId = editorId || 'ss-sfLookupFilter';
-
+  const editorId = 'sf-mappingLookupFilter';
   const { disableFetch, commMetaPath } = options;
+  const isEditorInitialized = useSelector(state => selectors._editor(state, editorId).fieldId);
 
   useEffect(() => {
-    dispatch(actions._editor.init(newEditorId, 'salesforceLookupFilter', {
+    dispatch(actions._editor.init(editorId, 'salesforceLookupFilter', {
       fieldId: id,
-      data,
       rule: value,
       stage: 'importMappingExtract',
-      ssLinkedConnectionId: connectionId,
-      isGroupedSampleData: opts.isGroupedSampleData,
+      data,
+      wrapData: true,
     }));
 
     return () => dispatch(actions._editor.clear(editorId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const filters = useSelector(
-    state =>
-      selectors.metadataOptionsAndResources(state, {
-        connectionId,
-        commMetaPath,
-        filterKey: 'salesforce-recordType',
-      }).data,
-    (left, right) => left.length === right.length
-  );
+  const filters = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, 'salesforce-recordType')?.data;
 
   useEffect(() => {
     if (!disableFetch && commMetaPath) {
-      dispatch(actions.metadata.request(connectionId, commMetaPath, {ignoreCache: true}));
+      dispatch(actions.metadata.request(connectionId, commMetaPath));
     }
   }, [commMetaPath, connectionId, disableFetch, dispatch]);
 
@@ -75,7 +65,7 @@ export default function DynaSalesforceLookupFilters_afe(props) {
     if (!disableFetch && commMetaPath) {
       dispatch(
         actions.metadata.request(connectionId, commMetaPath, {
-          ignoreCache: true,
+          refreshCache: true,
         })
       );
     }
@@ -101,13 +91,14 @@ export default function DynaSalesforceLookupFilters_afe(props) {
         </Button>
 
       </div>
+      {isEditorInitialized && (
       <FilterPanel
         id={id}
-        editorId={newEditorId}
-        onFieldChange={onFieldChange}
-        ssLinkedConnectionId={connectionId}
+        editorId={editorId}
         filters={filters}
+        onFieldChange={onFieldChange}
       />
+      )}
     </>
   );
 }

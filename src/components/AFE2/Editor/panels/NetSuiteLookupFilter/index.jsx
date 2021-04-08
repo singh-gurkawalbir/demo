@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
 const defaultData = [];
 const defaultFilters = [];
 
-export default function NetSuiteLookupFilterPanel({ editorId }) {
+export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propFilters, onFieldChange }) {
   const qbuilder = useRef(null);
   const classes = useStyles();
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
@@ -47,14 +47,19 @@ export default function NetSuiteLookupFilterPanel({ editorId }) {
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const data = useSelector(state => selectors._editorData(state, editorId) || defaultData);
   const rule = useSelector(state => selectors._editorRule(state, editorId));
-  const filters = useSelector(state => selectors._editor(state, editorId).filters || defaultFilters);
+  const filters = useSelector(state => selectors._editor(state, editorId).filters || propFilters || defaultFilters);
 
   const dispatch = useDispatch();
   const patchEditor = useCallback(
     value => {
-      dispatch(actions._editor.patchRule(editorId, value || []));
+      if (editorId) {
+        dispatch(actions._editor.patchRule(editorId, value || []));
+      }
+      if (onFieldChange) {
+        onFieldChange(id, JSON.stringify(value));
+      }
     },
-    [dispatch, editorId]
+    [dispatch, editorId, id, onFieldChange]
   );
   const jsonPathsFromData = useMemo(
     () =>
@@ -69,9 +74,7 @@ export default function NetSuiteLookupFilterPanel({ editorId }) {
     const qbRules = convertNetSuiteLookupFilterExpression(rule, data);
 
     if (
-      qbRules &&
-        qbRules.rules &&
-        qbRules.rules.length === 1 &&
+        qbRules?.rules?.length === 1 &&
         !qbRules.rules[0].id
     ) {
       qbRules.rules = [];
