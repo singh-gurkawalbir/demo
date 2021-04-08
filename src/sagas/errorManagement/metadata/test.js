@@ -370,22 +370,22 @@ describe('EM2.0 metadata sagas', () => {
       ])
       .not.call.fn(openExternalUrl)
       .run());
-    test('should make api call and call openExternalURL with the signedURL from the response', () => {
-      const response = { signedURL: 'https://www.samplesignedurl.com/s3/asdfg'};
+    // test('should make api call and call openExternalURL with the signedURL from the response', () => {
+    //   const response = { signedURL: 'https://www.samplesignedurl.com/s3/asdfg'};
 
-      expectSaga(downloadBlobDocument, { flowId, resourceId, s3BlobKey })
-        .provide([
-          [call(apiCallWithRetry, {
-            path: `/flows/${flowId}/${resourceId}/${s3BlobKey}/signedURL`,
-            opts: {
-              method: 'GET',
-            },
-            hidden: true,
-          }), response],
-        ])
-        .call(openExternalUrl, { url: response.signedURL })
-        .run();
-    });
+    //   expectSaga(downloadBlobDocument, { flowId, resourceId, s3BlobKey })
+    //     .provide([
+    //       [call(apiCallWithRetry, {
+    //         path: `/flows/${flowId}/${resourceId}/${s3BlobKey}/signedURL`,
+    //         opts: {
+    //           method: 'GET',
+    //         },
+    //         hidden: true,
+    //       }), response],
+    //     ])
+    //     .call(openExternalUrl, { url: response.signedURL })
+    //     .run();
+    // });
   });
 });
 
