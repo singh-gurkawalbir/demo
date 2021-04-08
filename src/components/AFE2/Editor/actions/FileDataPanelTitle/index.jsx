@@ -37,7 +37,7 @@ export default function FileDataPanelTitle({editorId, fileType}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const { resourceId, resourceType, formKey, fieldId } = useSelector(state => {
+  const { resourceId, resourceType, formKey, fieldId, isSuiteScriptData } = useSelector(state => {
     const e = selectors._editor(state, editorId);
 
     return ({
@@ -45,6 +45,7 @@ export default function FileDataPanelTitle({editorId, fileType}) {
       resourceType: e.resourceType,
       formKey: e.formKey,
       fieldId: e.fieldId,
+      isSuiteScriptData: e.isSuiteScriptData,
     });
   }, shallowEqual);
   const resource = useSelector(state => selectors.resource(state, resourceType, resourceId));
@@ -54,7 +55,7 @@ export default function FileDataPanelTitle({editorId, fileType}) {
   };
 
   // upload file option is only available for file adaptors (ftp, s3, simple)
-  if (!fieldId || !formKey || resourceType !== 'exports' || !isFileAdaptor(resource)) {
+  if (!isSuiteScriptData && (!fieldId || !formKey || resourceType !== 'exports' || !isFileAdaptor(resource))) {
     return `Sample ${fileType.toUpperCase()} file`;
   }
 

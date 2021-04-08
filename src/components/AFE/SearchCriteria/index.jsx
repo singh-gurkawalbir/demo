@@ -53,7 +53,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function SearchCriteriaEditor(props) {
-  const { editorId, disabled, value, onRefresh, connectionId, commMetaPath, filterKey } = props;
+  const { editorId, disabled, value, onRefresh, connectionId, commMetaPath, filterKey, invalidFields = {} } = props;
   const { data: fields, status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey);
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -71,6 +71,11 @@ export default function SearchCriteriaEditor(props) {
 
   const handleFieldUpdate = (row, _value, field) => {
     dispatch(actions.searchCriteria.patchField(editorId, field, row, _value));
+    // operator should be cleared on changing field
+    // available operators for a field will be based on its type
+    if (field === 'field') {
+      dispatch(actions.searchCriteria.patchField(editorId, 'operator', row, null));
+    }
   };
 
   const handleDelete = row => {
@@ -130,6 +135,8 @@ export default function SearchCriteriaEditor(props) {
                   data-test={`field-${r.index}`}
                   value={r.field}
                   options={fields}
+                  isValid={!invalidFields[r.index]?.includes('field')}
+                  errorMessages="Please select a field"
                   disabled={disabled}
                   onBlur={(_, _value) => {
                     handleFieldUpdate(r.index, _value, 'field');
@@ -146,6 +153,8 @@ export default function SearchCriteriaEditor(props) {
                   value={r.operator}
                   options={[{ items: operators.filter(op => (operatorsByFieldType[r.fieldType] || operatorsByFieldType.text).includes(op.value)) }]}
                   disabled={disabled}
+                  isValid={!invalidFields[r.index]?.includes('operator')}
+                  errorMessages="Please select a operator"
                   onFieldChange={(id, _value) => {
                     handleFieldUpdate(r.index, _value, 'operator');
                   }}
@@ -161,6 +170,8 @@ export default function SearchCriteriaEditor(props) {
                   onBlur={(_id, _value) => {
                     handleFieldUpdate(r.index, _value, 'searchValue');
                   }}
+                  isValid={!invalidFields[r.index]?.includes('searchValue')}
+                  errorMessages="Please enter a value"
                   disabled={disabled}
                   value={r.searchValue}
                 />
@@ -176,6 +187,8 @@ export default function SearchCriteriaEditor(props) {
                   onBlur={(_id, _value) => {
                     handleFieldUpdate(r.index, _value, 'searchValue2');
                   }}
+                  isValid={!r.searchValue2Enabled || r.searchValue2}
+                  errorMessages="Please enter a value"
                   value={r.searchValue2}
                 />
               </div>
