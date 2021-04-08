@@ -192,6 +192,7 @@ export default function ConnectorInstallation(props) {
       'netsuite-oauth',
       'shopify-oauth',
       'acumatica-oauth',
+      'hubspot-oauth',
     ],
     []
   );

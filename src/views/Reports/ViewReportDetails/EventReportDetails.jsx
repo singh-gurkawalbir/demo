@@ -1,4 +1,7 @@
-import { capitalize, Typography } from '@material-ui/core';
+import { capitalize, makeStyles, Tab, Tabs, Typography } from '@material-ui/core';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import React, { Fragment } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import DateTimeDisplay from '../../../components/DateTimeDisplay';
@@ -57,7 +60,7 @@ const eventReportDetailRows = [
     },
   },
   {
-    heading: 'Date Range',
+    heading: 'Date range',
     value: function EventReportStartDate(r) {
       return <Typography> <DateTimeDisplay dateTime={r.startTime} /> -  <DateTimeDisplay dateTime={r.endTime} /></Typography>;
     },
@@ -65,7 +68,7 @@ const eventReportDetailRows = [
   },
 
   {
-    heading: 'Last Run',
+    heading: 'Last run',
     value: function EventReportLastRun(r) {
       // check if this is the last run value
       return <DateTimeDisplay dateTime={r?.startedAt} />;
@@ -79,7 +82,7 @@ const eventReportDetailRows = [
     },
   },
   {
-    heading: 'Requested By',
+    heading: 'Requested by',
     value: function RequestedByUser(r) {
       const {requestedByUser} = r;
 
@@ -91,15 +94,50 @@ const eventReportDetailRows = [
 
 ];
 
-export default function ViewReportDetails({resource}) {
-//   if (!resource) { return null; }
+const useStyles = makeStyles(theme => ({
+  listItem: {
+    display: 'inline-flex',
+  },
+  listHeading: {
+    width: '135px',
+  },
+  listValue: {
+    paddingLeft: theme.spacing(1),
+  },
+  listRoot: {
+    padding: theme.spacing(2),
+  },
+}));
+
+function Details({resource}) {
+  const classes = useStyles();
 
   return (
-    eventReportDetailRows.map(({heading, value}) => (
-      <div key={heading} >
-        {heading} :{value(resource)}
-      </div>
+    <List className={classes.listRoot} >
+      {eventReportDetailRows.map(({heading, value}) => (
+        <ListItem key={heading} >
+          <ListItemText>
+            <div className={classes.listItem}><Typography className={classes.listHeading}>{heading}:</Typography>  <Typography className={classes.listValue}>{value(resource)}</Typography></div>
+          </ListItemText>
+        </ListItem>
+      ))}
+    </List>
+  );
+}
 
-    ))
+export default function ViewReportDetails({resource}) {
+  return (
+    <>
+      <Tabs
+        value="viewDetails"
+        textColor="primary"
+        indicatorColor="primary" >
+        <Tab
+          label="View Details"
+          value="viewDetails"
+        />
+      </Tabs>
+      <Details resource={resource} />
+    </>
   );
 }

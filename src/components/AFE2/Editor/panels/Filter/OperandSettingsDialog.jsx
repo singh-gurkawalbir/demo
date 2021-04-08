@@ -43,7 +43,7 @@ export default function OperandSettingsDialog({
           id: 'type',
           name: 'type',
           type: 'radiogroup',
-          label: 'Operand Type',
+          label: 'Operand type',
           fullWidth: true,
           options: [
             {
@@ -60,7 +60,7 @@ export default function OperandSettingsDialog({
           id: 'dataType',
           name: 'dataType',
           type: 'select',
-          label: 'Data Type',
+          label: 'Data type',
           options: [
             {
               items: [
@@ -87,7 +87,7 @@ export default function OperandSettingsDialog({
           id: 'transformations',
           name: 'transformations',
           type: 'multiselect',
-          label: 'Apply Functions',
+          label: 'Apply functions',
           refreshOptionsOnChangesTo: ['dataType'],
           options: [
             {
@@ -133,7 +133,7 @@ export default function OperandSettingsDialog({
 
   return (
     <ModalDialog show>
-      <span>Operand Settings</span>
+      <span>Operand settings</span>
       <>
         <DynaForm
           formKey={formKey} />

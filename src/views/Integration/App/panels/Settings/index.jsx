@@ -25,6 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     display: 'flex',
+    paddingTop: theme.spacing(1),
   },
   subNav: {
     minWidth: 200,

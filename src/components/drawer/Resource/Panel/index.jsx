@@ -24,6 +24,7 @@ import { KBDocumentation } from '../../../../utils/connections';
 import DebugIcon from '../../../icons/DebugIcon';
 import IconTextButton from '../../../IconTextButton';
 import ListenerRequestLogsDrawer from '../../ListenerRequestLogs';
+import { VALID_REPORT_TYPES } from '../../../../views/Reports';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 const isNestedDrawer = url => !!matchPath(url, {
@@ -161,7 +162,7 @@ const useDetermineRequiredResources = type => useMemo(() => {
 
 const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
   if (resourceType === 'eventreports') {
-    return 'Run Report';
+    return 'Run report';
   }
   if (resourceType === 'pageGenerator') {
     return 'Create source';
@@ -176,6 +177,9 @@ const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
   return `${opTitle} ${resourceLabel.toLowerCase()}`;
 };
 
+export const redirectURlToParentListing = url => url.split('/')
+  .slice(0, -3)
+  .join('/');
 export const useRedirectToParentRoute = initFailed => {
   const history = useHistory();
   const match = useRouteMatch();
@@ -184,10 +188,7 @@ export const useRedirectToParentRoute = initFailed => {
     if (initFailed) {
       // remove the last 3 segments from the route ...
       // /:operation(add|edit)/:resourceType/:id
-      const stripedRoute = match.url
-        .split('/')
-        .slice(0, -3)
-        .join('/');
+      const stripedRoute = redirectURlToParentListing(match.url);
 
       history.replace(stripedRoute);
     }
@@ -303,6 +304,7 @@ export default function Panel(props) {
   const listenerDrawerHandler = useCallback(() => {
     history.push(`${match.url}/logs`);
   }, [match.url, history]);
+  const isReportType = VALID_REPORT_TYPES.some(({value}) => value === resourceType);
 
   return (
     <>
@@ -376,6 +378,8 @@ export default function Panel(props) {
               resourceType={resourceType}
               resourceId={id}
               flowId={flowId}
+              // All users have access to reports
+              skipMonitorLevelAccessCheck={isReportType}
               integrationId={integrationId}
               isFlowBuilderView={!!flowId}
               onSubmitComplete={handleSubmitComplete}

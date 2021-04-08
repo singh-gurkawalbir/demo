@@ -837,7 +837,7 @@ selectors.mkEventReportsFiltered = () => {
   const resourceListSelector = selectors.makeResourceListSelector();
 
   return createSelector(
-    state => resourceListSelector(state, reportsFilter),
+    (state, options) => resourceListSelector(state, options),
     selectors.getAllFlowsTiedToEventReports,
     (_1, options) => options,
     (allEventReports, allUniqueFlowsTiedToEventReports, options) => {
@@ -2393,8 +2393,9 @@ selectors.integrationAppFlowIds = (state, integrationId, storeId) => {
         // there is no good way to extract this
         // Extract store from the flow name. (Regex extracts store label from flow name)
         // Flow name usually follows this format: <Flow Name> [<StoreLabel>]
-        const flowStore = /\s\[(.*)\]$/.test(f.name)
-          ? /\s\[(.*)\]$/.exec(f.name)[1]
+        const regex = new RegExp(`\\s\\[(${integration.stores.map(s => s.label).join('|')})\\]$`);
+        const flowStore = regex.test(f.name)
+          ? regex.exec(f.name)[1]
           : null;
 
         return flowStore
@@ -3272,7 +3273,9 @@ selectors.fileDefinitionSampleData = (state, { userDefinitionId, resourceType, o
  * Note : Incase of xlsx 'csv' stage is requested as the raw stage contains xlsx format which is not used
  * Modify this if we need xlsx content any where to show
  */
-selectors.fileSampleData = (state, { resourceId, resourceType, fileType}) => {
+selectors.fileSampleData = (state, { resourceId, resourceType, fileType, ssLinkedConnectionId}) => {
+  if (ssLinkedConnectionId) return selectors.suiteScriptFileExportSampleData(state, {resourceId, resourceType, ssLinkedConnectionId});
+
   const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
   const { data: rawData } = selectors.getResourceSampleDataWithStatus(
     state,
