@@ -170,3 +170,24 @@ export function getJobStatus(job) {
 
   return statusMap[jobStatus] || jobStatus;
 }
+
+export function getMockHttpErrorDoc() {
+  const MOCK_HTTP_BLOB_DOC = {
+    body: { test: 5, bodyKey: 'blob-1234' },
+    headers: { 'content-type': 'application/json' },
+    status: 200,
+  };
+  const MOCK_HTTP_DOC = {
+    body: { test: 5, users: [] },
+    headers: { 'content-type': 'application/json' },
+    status: 200,
+    url: 'http://www.testurl.com/api/v2/users',
+  };
+
+  const MOCK_HTTP_DOC_RESPONSE = {
+    request: MOCK_HTTP_BLOB_DOC,
+    response: MOCK_HTTP_DOC,
+  };
+
+  return MOCK_HTTP_DOC_RESPONSE;
+}

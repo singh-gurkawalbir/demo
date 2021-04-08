@@ -144,6 +144,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
     loadMore => {
       if (!loadMore) {
         dispatch(actions.clearFilter(filterKey));
+        dispatch(actions.patchFilter(filterKey, defaultFilter));
       }
       dispatch(
         actions.errorManager.flowErrorDetails.request({
@@ -154,6 +155,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
         })
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [dispatch, flowId, resourceId, isResolved, filterKey]
   );
   const fetchMoreErrors = useCallback(() => fetchErrors(true), [fetchErrors]);
@@ -240,10 +242,6 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
     );
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorFilter.keyword]);
-
-  useEffect(() => {
-    dispatch(actions.patchFilter(filterKey, defaultFilter));
-  }, [defaultFilter, filterKey, dispatch]);
 
   // TODO @Raghu: Refactor the pagination related code
   return (
