@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
@@ -12,10 +12,10 @@ export default function EditorDrawerCloseIconButton({editorId, onClose}) {
   const { saveStatus } = useSelector(state => selectors._editor(state, editorId));
   const saveSuccessful = saveStatus === 'success';
 
-  const handleSaveAndClose = () => {
+  const handleSaveAndClose = useCallback(() => {
     dispatch(actions._editor.saveRequest(editorId));
     setCloseTriggered(true);
-  };
+  }, [dispatch, editorId]);
 
   useEffect(() => {
     if (closeTriggered && saveSuccessful) onClose();
