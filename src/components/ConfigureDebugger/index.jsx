@@ -68,7 +68,7 @@ export default function ConfigureDebugger(props) {
   const classes = useStyles();
   const match = useRouteMatch();
   const { id, debugDate, onClose } = props;
-  const { cancelDialog } = useConfirmDialog();
+  const { saveDiscardDialog } = useConfirmDialog();
   const [debugValue, setDebugValue] = useState(0);
   const dispatch = useDispatch();
   const handleSaveClick = useCallback(() => {
@@ -99,9 +99,6 @@ export default function ConfigureDebugger(props) {
       return moment(debugDate).diff(moment(), 'minutes');
     }
   }, [debugDate]);
-  const handleCancelClick = useCallback(() => {
-    cancelDialog({onSave: onClose});
-  }, [onClose, cancelDialog]);
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {
@@ -111,6 +108,12 @@ export default function ConfigureDebugger(props) {
       onClose,
     }
   );
+  const handleCancelClick = useCallback(() => {
+    saveDiscardDialog({
+      onSave: submitHandler(true),
+      onDiscard: onClose,
+    });
+  }, [saveDiscardDialog, submitHandler, onClose]);
 
   // TODO @Raghu: Convert this into a Right Drawer
   return (

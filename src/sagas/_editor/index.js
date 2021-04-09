@@ -372,7 +372,7 @@ export function* requestEditorSampleData({
 
   if (!editor) return;
 
-  const {editorType, flowId, resourceId, resourceType, fieldId, formKey, stage} = editor;
+  const {editorType, flowId, resourceId, resourceType, fieldId, formKey, stage, ssLinkedConnectionId} = editor;
   // for some fields only v2 data is supported (not v1)
   const editorSupportsOnlyV2Data = yield select(selectors.editorSupportsOnlyV2Data, id);
 
@@ -384,11 +384,17 @@ export function* requestEditorSampleData({
   );
   const formState = yield select(selectors.formState, formKey);
   const { value: formValues } = formState || {};
-  const resource = yield call(constructResourceFromFormValues, {
-    formValues,
-    resourceId,
-    resourceType,
-  });
+  let resource = {};
+
+  if (formValues && !ssLinkedConnectionId) {
+    resource = yield call(constructResourceFromFormValues, {
+      formValues,
+      resourceId,
+      resourceType,
+    });
+  } else {
+    resource = yield select(selectors.resource, resourceType, resourceId);
+  }
   let sampleData;
 
   // for my apis, no sample data is shown
@@ -415,7 +421,7 @@ export function* requestEditorSampleData({
   if (editorType === 'csvParser' || editorType === 'xmlParser') {
     const fileType = editorType === 'csvParser' ? 'csv' : 'xml';
 
-    const fileData = yield select(selectors.fileSampleData, { resourceId, resourceType, fileType});
+    const fileData = yield select(selectors.fileSampleData, { resourceId, resourceType, fileType, ssLinkedConnectionId});
 
     return { data: fileData};
   }
@@ -488,7 +494,7 @@ export function* requestEditorSampleData({
 
     body.integrationId = flow?._integrationId;
 
-    body[resourceType === 'imports' ? 'import' : 'export'] = resource;
+    body[resourceType === 'imports' ? 'import' : 'export'] = resource || {};
     body.fieldPath = fieldId || filterPath;
 
     const opts = {
@@ -586,7 +592,7 @@ export function* initSampleData({ id }) {
 }
 
 export function* initEditor({ id, editorType, options }) {
-  const { formKey, integrationId, resourceId, resourceType, flowId, sectionId, fieldId} = options || {};
+  const { formKey, integrationId, resourceId, resourceType, flowId, sectionId, fieldId, ssLinkedConnectionId} = options || {};
 
   let fieldState = {};
   let formState = {};
@@ -598,7 +604,7 @@ export function* initEditor({ id, editorType, options }) {
   const { value: formValues } = formState;
   let resource = {};
 
-  if (formValues) {
+  if (formValues && !ssLinkedConnectionId) {
     resource = yield call(constructResourceFromFormValues, {
       formValues,
       resourceId,
@@ -623,11 +629,36 @@ export function* initEditor({ id, editorType, options }) {
 
       formattedOptions = init({options: formattedOptions, resource, formValues, fieldState, connection, isPageGenerator});
     } else if (editorType === 'settingsForm') {
-      const sectionMeta = yield select(selectors.mkGetCustomFormPerSectionId(), resourceType, resourceId, sectionId || 'general');
+      let parentResource = {};
+      const sectionMeta = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
       const { settingsForm, settings} = sectionMeta || {};
-      const integrationAllSections = yield select(selectors.mkGetAllCustomFormsForAResource(), 'integrations', integrationId);
+      const integrationAllSections = yield select(selectors.getAllSections, 'integrations', integrationId);
 
-      formattedOptions = init({options: formattedOptions, settingsForm, settings, integrationAllSections: integrationAllSections?.allSections});
+      if (resource?._parentId) {
+        parentResource = yield select(selectors.resource, resourceType, resource._parentId);
+      }
+      const isIAResource = !!(resource?._connectorId);
+      let license;
+      let parentLicense;
+
+      // license is only available for IAs
+      if (isIAResource) {
+        const licenses = yield select(selectors.licenses);
+
+        license = licenses.find(l => l._integrationId === integrationId);
+
+        if (license?._parentId) {
+          parentLicense = licenses.find(l => l._id === license._parentId);
+        }
+      }
+
+      formattedOptions = init({
+        options: formattedOptions,
+        settingsForm,
+        settings,
+        integrationAllSections: integrationAllSections?.allSections,
+        resourceDocs: {resource, parentResource, license, parentLicense},
+      });
     } else if (editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') {
       const {userDefinitionId, fileDefinitionResourcePath, value: fieldValue, options: fieldOptions} = fieldState;
       const { format, definitionId } = fieldOptions || {};

@@ -12,6 +12,8 @@ const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.common.white,
     overflow: 'visible',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
   userListWrapper: {
     overflow: 'visible',

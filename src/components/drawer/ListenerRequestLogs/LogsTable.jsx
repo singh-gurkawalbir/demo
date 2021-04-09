@@ -27,9 +27,8 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: '1fr',
   },
   tableWrapper: {
-    border: 'solid 1px',
-    borderTop: 'none',
-    borderColor: theme.palette.secondary.lightest,
+    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
     overflowY: 'auto',
     minWidth: '560px',
     [theme.breakpoints.down('md')]: {
@@ -49,10 +48,13 @@ const useStyles = makeStyles(theme => ({
   },
   searchButton: {
     color: theme.palette.common.white,
-    // Has to update with the base svg
-    '& > * svg': {
-      fontSize: theme.spacing(2),
-    },
+    minWidth: 190,
+    padding: theme.spacing(1, 5),
+  },
+  iconSearchBtn: {
+    fontSize: 16,
+    marginRight: theme.spacing(1),
+    color: theme.palette.common.white,
   },
 
 }));
@@ -142,12 +144,12 @@ export default function LogsTable({ flowId, exportId }) {
               onClick={loadMoreLogs}>
               {loadMoreStatus === 'requested' ? (
                 <>
-                  <Spinner className={classes.searchMoreSpinner} size="small" />
+                  <Spinner className={classes.iconSearchBtn} size="small" />
                   Searching
                 </>
               ) : (
                 <>
-                  <SearchIcon className={classes.searchMoreIcon} />
+                  <SearchIcon className={classes.iconSearchBtn} />
                   Search more
                 </>
               )}

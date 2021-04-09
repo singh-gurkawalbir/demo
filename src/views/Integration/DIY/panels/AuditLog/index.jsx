@@ -14,6 +14,7 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',
+    minHeight: 124,
   },
 }));
 

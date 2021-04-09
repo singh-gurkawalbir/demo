@@ -758,7 +758,7 @@ describe('editor sagas', () => {
           [matchers.call.fn(constructResourceFromFormValues), {}],
           [matchers.select.selector(selectors.fileSampleData), '<xml>some data</xml>'],
         ])
-        .select(selectors.fileSampleData, { resourceId, resourceType: 'exports', fileType: 'xml'})
+        .select(selectors.fileSampleData, { resourceId, resourceType: 'exports', fileType: 'xml', ssLinkedConnectionId: undefined})
         .returns({ data: '<xml>some data</xml>'})
         .run();
     });
@@ -1282,6 +1282,10 @@ describe('editor sagas', () => {
           },
         },
         settingsFormPatchPath: '/settingsForm',
+        resourceDocs: {
+          parentResource: {},
+          resource: null,
+        },
       };
 
       return expectSaga(initEditor, { id, editorType: 'settingsForm', options })
@@ -1290,6 +1294,214 @@ describe('editor sagas', () => {
           [select(selectors.formState, 'new-123'), {fieldMap: {}}],
           [matchers.call.fn(initSampleData), undefined],
           [matchers.call.fn(constructResourceFromFormValues), {}],
+        ])
+        .run()
+        .then(result => {
+          const { effects } = result;
+
+          expect(effects.put).toHaveLength(1);
+          expect(effects.call).toEqual(expect.arrayContaining([call(initSampleData, { id })]));
+
+          expect(effects.put[0]).toHaveProperty('payload.action.options', expectedOptions);
+        });
+    });
+    test('should correctly update init options with flow grouping sections if editor type is settingsForm and dispatch init complete action', () => {
+      const id = 'settings';
+      const options = {
+        sectionId: 'Cus-1234567',
+        resourceId: 'res-123',
+        resourceType: 'imports',
+        flowId: 'flow-123',
+        stage: 'flowInput',
+        fieldId: 'settings',
+        formKey: 'new-123',
+        integrationId: 'intId',
+      };
+      const integrationAllSections = {
+        allSections: [
+          {settingsForm: {}, title: 'General', sectionId: 'general'},
+          { title: 'Customers', sectionId: 'Cus-1234567', settingsForm: {} },
+        ],
+      };
+      const expectedOptions = {
+        editorType: 'settingsForm',
+        resourceId: 'res-123',
+        resourceType: 'imports',
+        flowId: 'flow-123',
+        stage: 'flowInput',
+        fieldId: 'settings',
+        formKey: 'new-123',
+        layout: 'jsonFormBuilder',
+        integrationId: 'intId',
+        sectionId: 'Cus-1234567',
+        autoEvaluate: true,
+        previewOnSave: true,
+        sampleDataStatus: 'requested',
+        insertStubKey: 'formInit',
+        activeProcessor: 'json',
+        data: {
+          fieldMap: {},
+          layout: {
+            fields: [],
+          },
+        },
+        originalData: {
+          fieldMap: {},
+          layout: {
+            fields: [],
+          },
+        },
+        rule: {
+          script: {
+            entryFunction: 'main',
+            fetchScriptContent: true,
+          },
+        },
+        originalRule: {
+          script: {
+            entryFunction: 'main',
+            fetchScriptContent: true,
+          },
+        },
+        settingsFormPatchPath: '/flowGroupings/0/settingsForm',
+        resourceDocs: {
+          parentResource: {},
+          resource: null,
+        },
+        flowGrouping: { title: 'Customers', sectionId: 'Cus-1234567', settingsForm: {} },
+      };
+
+      return expectSaga(initEditor, { id, editorType: 'settingsForm', options })
+        .provide([
+          [select(selectors.fieldState, 'new-123', 'settings'), {}],
+          [select(selectors.formState, 'new-123'), {fieldMap: {}}],
+          [select(selectors.getAllSections, 'integrations', 'intId'), integrationAllSections],
+          [matchers.call.fn(initSampleData), undefined],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+        ])
+        .run()
+        .then(result => {
+          const { effects } = result;
+
+          expect(effects.put).toHaveLength(1);
+          expect(effects.call).toEqual(expect.arrayContaining([call(initSampleData, { id })]));
+
+          expect(effects.put[0]).toHaveProperty('payload.action.options', expectedOptions);
+        });
+    });
+    test('should correctly update init options with resource and license docs if editor type is settingsForm and dispatch init complete action', () => {
+      const id = 'settings';
+      const options = {
+        sectionId: 'Cus-1234567',
+        resourceId: 'intId',
+        resourceType: 'integrations',
+        flowId: 'flow-123',
+        stage: 'flowInput',
+        fieldId: 'settings',
+        formKey: 'new-123',
+        integrationId: 'intId',
+      };
+      const integrationAllSections = {
+        allSections: [
+          {settingsForm: {}, title: 'General', sectionId: 'general'},
+          { title: 'Customers', sectionId: 'Cus-1234567', settingsForm: {} },
+        ],
+      };
+      const expectedData = {
+        resource: {
+          name: 'Customers',
+          _id: 'Cus-1234567',
+          settingsForm: {
+            form: {
+              fieldMap: {},
+              layout: {
+                fields: [],
+              },
+            }}},
+        parentResource: {
+          name: 'Resource name',
+          _parentId: 'parentId',
+
+          _connectorId: 'connId',
+
+        },
+        grandParentResource: {
+          name: 'Parent Resource name',
+        },
+        license: {
+          _integrationId: 'intId',
+          name: 'license',
+        },
+        parentLicense: {},
+        sandbox: false,
+      };
+      const expectedOptions = {
+        editorType: 'settingsForm',
+        resourceId: 'intId',
+        resourceType: 'integrations',
+        flowId: 'flow-123',
+        stage: 'flowInput',
+        fieldId: 'settings',
+        formKey: 'new-123',
+        layout: 'scriptFormBuilder',
+        integrationId: 'intId',
+        sectionId: 'Cus-1234567',
+        autoEvaluate: true,
+        previewOnSave: true,
+        sampleDataStatus: 'requested',
+        insertStubKey: 'formInit',
+        activeProcessor: 'script',
+        data: JSON.stringify(expectedData, null, 2),
+        originalData: {
+          fieldMap: {},
+          layout: {
+            fields: [],
+          },
+        },
+        rule: {
+          script: {
+            entryFunction: 'main',
+            fetchScriptContent: true,
+            scriptId: '888',
+          },
+        },
+        originalRule: {
+          script: {
+            entryFunction: 'main',
+            fetchScriptContent: true,
+            scriptId: '888',
+          },
+        },
+        settingsFormPatchPath: '/flowGroupings/0/settingsForm',
+        resourceDocs: {
+          license: {
+            _integrationId: 'intId',
+            name: 'license',
+          },
+          parentResource: {
+            name: 'Parent Resource name',
+          },
+          resource: {
+            _connectorId: 'connId',
+            _parentId: 'parentId',
+            name: 'Resource name',
+          },
+        },
+        flowGrouping: { title: 'Customers', sectionId: 'Cus-1234567', settingsForm: {} },
+      };
+
+      return expectSaga(initEditor, { id, editorType: 'settingsForm', options })
+        .provide([
+          [select(selectors.fieldState, 'new-123', 'settings'), {}],
+          [select(selectors.formState, 'new-123'), {fieldMap: {}}],
+          [select(selectors.getSectionMetadata, 'integrations', 'intId', 'Cus-1234567'), {settingsForm: {init: {_scriptId: '888'}}}],
+          [select(selectors.getAllSections, 'integrations', 'intId'), integrationAllSections],
+          [matchers.call.fn(initSampleData), undefined],
+          [select(selectors.resource, 'integrations', 'intId'), {name: 'Resource name', _parentId: 'parentId', _connectorId: 'connId'}],
+
+          [matchers.call.fn(constructResourceFromFormValues), {name: 'Resource name', _parentId: 'parentId', _connectorId: 'connId'}],
+          [select(selectors.resource, 'integrations', 'parentId'), {name: 'Parent Resource name'}],
+          [select(selectors.licenses), [{_integrationId: 'intId', name: 'license'}]],
         ])
         .run()
         .then(result => {
