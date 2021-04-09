@@ -128,7 +128,7 @@ export default function useConfirmDialog() {
     },
     [setConfirmDialogProps]
   );
-  const defaultCancelDialog = useCallback(
+  const saveDiscardDialog = useCallback(
     ({onSave, onDiscard}) => {
       setConfirmDialogProps({
         title: 'You’ve got unsaved changes',
@@ -143,7 +143,7 @@ export default function useConfirmDialog() {
   );
 
   return {
-    cancelDialog: defaultCancelDialog,
+    saveDiscardDialog,
     confirmDialog: setConfirmDialogProps,
     defaultConfirmDialog,
   };

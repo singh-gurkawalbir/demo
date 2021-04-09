@@ -91,7 +91,7 @@ export default function EditorDrawer({
   const { form, init = emptyObj } = settingsForm;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { cancelDialog } = useConfirmDialog();
+  const { saveDiscardDialog } = useConfirmDialog();
 
   const settings = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, resourceType, resourceId, sectionId || 'general')?.settings;
 
@@ -130,11 +130,11 @@ export default function EditorDrawer({
       return onClose();
     }
 
-    cancelDialog({
+    saveDiscardDialog({
       onSave: handleSave,
       onDiscard: onClose,
     });
-  }, [cancelDialog, handleSave, isEditorDirty, onClose]);
+  }, [saveDiscardDialog, handleSave, isEditorDirty, onClose]);
   const handlePreviewChange = useCallback(
     () =>
       dispatch(

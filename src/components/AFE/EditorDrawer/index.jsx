@@ -53,7 +53,7 @@ export default function EditorDrawer(props) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { cancelDialog } = useConfirmDialog();
+  const { saveDiscardDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
 
   const [layout, setLayout] = useState(props.layout || 'compact');
@@ -124,14 +124,14 @@ export default function EditorDrawer(props) {
   );
   const handleCancelClick = useCallback(() => {
     if (isEditorDirty) {
-      cancelDialog({
+      saveDiscardDialog({
         onSave: handleSaveAndClose,
         onDiscard: handleClose,
       });
     } else {
       handleClose();
     }
-  }, [isEditorDirty, cancelDialog, handleSaveAndClose, handleClose]);
+  }, [isEditorDirty, saveDiscardDialog, handleSaveAndClose, handleClose]);
 
   const showPreviewAction = !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate;
   const disableSave =
