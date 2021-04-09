@@ -10,7 +10,7 @@ import FieldHelp from '../../../FieldHelp';
 import getForm from '../../../../AFE2/Editor/panels/XmlParseRules/formMeta';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import { isNewId } from '../../../../../utils/resource';
-import {useUpdateParentForm} from '../DynaCsvGenerate';
+import {useUpdateParentForm} from '../DynaCsvGenerate_afe2';
 import useSetSubFormShowValidations from '../../../../../hooks/useSetSubFormShowValidations';
 import { getValidRelativePath } from '../../../../../utils/routePaths';
 import FileDataChange from '../DynaCsvParse_afe2/FileDataChange';
