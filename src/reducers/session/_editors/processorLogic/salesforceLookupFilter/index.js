@@ -20,10 +20,10 @@ export default {
     };
   },
   buildData: (editor, sampleData) => {
-    const {isGroupedSampleData, ssLinkedConnectionId} = editor || {};
+    const {wrapData, isGroupedSampleData, ssLinkedConnectionId} = editor || {};
     let formattedData = safeParse(sampleData);
 
-    if (sampleData && !ssLinkedConnectionId) {
+    if (sampleData && !ssLinkedConnectionId && !wrapData) {
       const extractPaths = getJSONPaths(
         pickFirstObject(safeParse(sampleData), null, {
           wrapSpecialChars: true,

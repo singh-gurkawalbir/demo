@@ -3,8 +3,6 @@ import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Paper, Grid, IconButton } from '@material-ui/core';
-import ElevateOnScroll from '../ElevateOnScroll';
-import SlideOnScroll from '../SlideOnScroll';
 import { selectors } from '../../reducers';
 import InfoIconButton from '../InfoIconButton';
 import BackArrowIcon from '../icons/BackArrowIcon';
@@ -61,39 +59,37 @@ export default function CeligoPageBar(props) {
 
   return (
     <>
-      <SlideOnScroll threshold={250}>
-        <ElevateOnScroll threshold={0}>
-          <Paper
-            data-public
-            className={clsx(classes.pageHeader, className, {
-              [classes.pageHeaderShift]: drawerOpened,
-            })}
-            elevation={0}
-            square>
+      {/* <SlideOnScroll threshold={250}>
+        <ElevateOnScroll threshold={0}> */}
+      <Paper
+        data-public
+        className={clsx(classes.pageHeader, className, {
+          [classes.pageHeaderShift]: drawerOpened,
+        })}
+        elevation={0}
+        square>
 
-            <Grid item container wrap="nowrap">
-              {history && (
-              // eslint-disable-next-line react/jsx-handler-names
-              <IconButton size="small" onClick={history.goBack}>
-                <BackArrowIcon />
-              </IconButton>
-              )}
-              <Typography className={classes.title} variant="h3">
-                {title}
-              </Typography>
-              {titleTag && <span>{titleTag}</span>}
-              {infoText && <InfoIconButton info={infoText} />}
-              <div className={classes.emptySpace} />
-              {children}
-            </Grid>
-            <Typography
-              variant="caption"
-              className={clsx({ [classes.subTitleShift]: history })}>
-              {subtitle}
-            </Typography>
-          </Paper>
-        </ElevateOnScroll>
-      </SlideOnScroll>
+        <Grid item container wrap="nowrap">
+          {history && (
+          // eslint-disable-next-line react/jsx-handler-names
+          <IconButton size="small" onClick={history.goBack}>
+            <BackArrowIcon />
+          </IconButton>
+          )}
+          <Typography className={classes.title} variant="h3">
+            {title}
+          </Typography>
+          {titleTag && <span>{titleTag}</span>}
+          {infoText && <InfoIconButton info={infoText} />}
+          <div className={classes.emptySpace} />
+          {children}
+        </Grid>
+        <Typography
+          variant="caption"
+          className={clsx({ [classes.subTitleShift]: history })}>
+          {subtitle}
+        </Typography>
+      </Paper>
       <div
         className={clsx(classes.pageBarOffset)}
       />

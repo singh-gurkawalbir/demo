@@ -95,5 +95,18 @@ describe('salesforceLookupFilter processor logic', () => {
 
       expect(buildData({ssLinkedConnectionId: 123, isGroupedSampleData: true}, JSON.stringify(sampleData))).toEqual(expectedOutput);
     });
+    test('should correctly extract the sample data if wrapData is true', () => {
+      const sampleData = [{name: 'id', id: 'id'},
+        {name: 'recordType', id: 'recordType'}];
+
+      const expectedOutput = [
+        {name: 'id', id: 'id'},
+        {name: 'recordType', id: 'recordType'},
+        {name: '*.id', id: '*.id'},
+        {name: '*.recordType', id: '*.recordType'},
+      ];
+
+      expect(buildData({wrapData: true}, JSON.stringify(sampleData))).toEqual(expectedOutput);
+    });
   });
 });
