@@ -9,7 +9,7 @@ export default function useCancelConfirm(editorId, onClose) {
   const { saveDiscardDialog } = useConfirmDialog();
   const [closeTriggered, setCloseTriggered] = useState(false);
   const isEditorDirty = useSelector(state => selectors._isEditorDirty(state, editorId));
-  const { saveStatus } = useSelector(state => selectors._editor(state, editorId));
+  const saveStatus = useSelector(state => selectors._editor(state, editorId).saveStatus);
   const saveSuccessful = saveStatus === 'success';
   const saveInProgress = saveStatus === 'requested';
 
