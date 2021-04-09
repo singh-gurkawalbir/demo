@@ -16,7 +16,7 @@ import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 import jQuery from 'jquery';
 import { isEmpty } from 'lodash';
 import config from './config';
-import './queryBuilder.css';
+import '../Filter/queryBuilder.css';
 import {
   convertSalesforceQualificationCriteria,
   getFilterList,
