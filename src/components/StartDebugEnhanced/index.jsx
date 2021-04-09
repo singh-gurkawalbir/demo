@@ -34,6 +34,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     padding: theme.spacing(2),
+    minWidth: 224,
   },
   actions: {
     marginTop: theme.spacing(2),
@@ -48,6 +49,8 @@ const useStyles = makeStyles(theme => ({
   },
   dateRangePopper: {
     zIndex: 1300,
+    left: '45px !important',
+    top: '5px !important',
   },
   dropdown: {
     marginTop: '0px !important',
@@ -66,6 +69,10 @@ const useStyles = makeStyles(theme => ({
       fontSize: 18,
     },
   },
+  dateRangePopperArrow: {
+    left: '110px !important',
+  },
+
 }));
 
 const MenuProps = {
@@ -77,10 +84,10 @@ const MenuProps = {
 };
 
 const debugOptions = [
-  { label: 'Next 15 mins', value: '15' },
-  { label: 'Next 30 mins', value: '30' },
-  { label: 'Next 45 mins', value: '45' },
-  { label: 'Next 60 mins', value: '60' },
+  { label: 'Next 15 minutes', value: '15' },
+  { label: 'Next 30 minutes', value: '30' },
+  { label: 'Next 45 minutes', value: '45' },
+  { label: 'Next 60 minutes', value: '60' },
 ];
 
 const getFormattedUnit = unit => {
@@ -189,6 +196,7 @@ export default function StartDebugEnhanced({
         restrictToParent={false}
         classes={{
           popper: classes.dateRangePopper,
+          arrow: classes.dateRangePopperArrow,
         }}
         placement="bottom-end"
         onClose={toggleClick}>
