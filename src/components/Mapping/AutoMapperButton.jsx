@@ -45,7 +45,7 @@ export default function AutoMapperButton({disabled}) {
   const handleAutoMapperRequest = useCallback(() =>
     dispatch(actions.mapping.autoMapper.request()), [dispatch]);
 
-  const onSave = useCallback(() => {
+  const onSaveAndMap = useCallback(() => {
     setSaveTriggered(true);
     dispatch(actions.mapping.save({ match }));
   }, [dispatch, match]);
@@ -64,10 +64,10 @@ export default function AutoMapperButton({disabled}) {
         {
           label: 'Save changes & auto-map fields',
           variant: 'primary',
-          onClick: onSave,
+          onClick: onSaveAndMap,
         },
         {
-          label: 'Discard changes & auto-map fields',
+          label: 'Auto-map fields',
           variant: 'secondary',
           onClick: handleAutoMapperRequest,
         },
@@ -75,7 +75,7 @@ export default function AutoMapperButton({disabled}) {
       ],
     });
   },
-  [confirmDialog, handleAutoMapperRequest, mappingsChanged, onSave]
+  [confirmDialog, handleAutoMapperRequest, mappingsChanged, onSaveAndMap]
   );
 
   useEffect(() => {
@@ -88,19 +88,19 @@ export default function AutoMapperButton({disabled}) {
     if (saveTriggered && saveTerminated) {
       // only dispatch the auto-mapper request if the pending
       // save mapping operation is successful.
-      if (saveCompleted) {
-        dispatch(actions.mapping.autoMapper.request());
-      }
+      if (saveCompleted) handleAutoMapperRequest();
 
       setSaveTriggered(false);
     }
-  }, [dispatch, saveCompleted, saveTerminated, saveTriggered]);
+  }, [dispatch, handleAutoMapperRequest, saveCompleted, saveTerminated, saveTriggered]);
 
   if (!flowHasExport) {
     return null;
   }
 
-  const inProgress = saveInProgress || isFetchingAutoSuggestions;
+  // Save may be in progress, but unless it is triggered by this
+  // button, then we don't want to incorrectly flag as in progress.
+  const inProgress = (saveTriggered && saveInProgress) || isFetchingAutoSuggestions;
 
   return (
     <>

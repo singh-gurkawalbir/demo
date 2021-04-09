@@ -32,8 +32,13 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(2, 3),
   },
 }));
-const Mapping = props => {
-  const {flowId, importId, subRecordMappingId, disabled, onClose} = props;
+const Mapping = ({flowId, importId, subRecordMappingId, disabled, onClose}) => {
+  const canAutoMap = useSelector(state => {
+    const generateFields = selectors.mappingGenerates(state, importId, subRecordMappingId);
+    const extractFields = selectors.mappingExtracts(state, importId, flowId, subRecordMappingId);
+
+    return generateFields.length > 0 && extractFields.length > 0;
+  });
   const classes = useStyles();
 
   return (
@@ -51,9 +56,11 @@ const Mapping = props => {
                 flowId={flowId}
                 subRecordMappingId={subRecordMappingId}
               />
-              <div className={classes.autoMapper}>
-                <AutoMapperButton />
-              </div>
+              {canAutoMap && (
+                <div className={classes.autoMapper}>
+                  <AutoMapperButton />
+                </div>
+              )}
             </div>
           </div>
 
