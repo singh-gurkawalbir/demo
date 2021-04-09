@@ -1,5 +1,5 @@
 import React, { useRef, useCallback, useState } from 'react';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -93,11 +93,16 @@ const useStyles = makeStyles(theme => ({
     width: theme.spacing(4),
     marginRight: theme.spacing(1),
   },
-  autoMapperSeperation: {
+  autoMapDivider: {
+    display: 'flex',
+    alignItems: 'center',
+    margin: theme.spacing(1.5, 2),
+  },
+  autoMapDividerLine: {
     borderTop: `1px dashed ${theme.palette.secondary.light}`,
-    paddingTop: theme.spacing(1),
-    marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(2),
+    margin: theme.spacing(0, 1.25),
+    height: 1,
+    flexGrow: 1,
   },
   rowContainer: {
     '&:hover': {
@@ -241,10 +246,17 @@ export default function MappingRow({
   const isHardCodedValue = !!hardCodedValue;
   const extractValue = extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
   const disableDelete = !mappingKey || isRequired || isNotEditable || disabled;
+  const showAutoMapDivider = isAutoSuggestionStartRow && !isDragInProgress;
 
   return (
     <>
-      {isAutoSuggestionStartRow && !isDragInProgress && <div className={classes.autoMapperSeperation} />}
+      { showAutoMapDivider && (
+        <div className={classes.autoMapDivider}>
+          <div className={classes.autoMapDividerLine} />
+          <Typography variant="caption">New fields</Typography>
+          <div className={classes.autoMapDividerLine} />
+        </div>
+      )}
       <div
         ref={ref}
         onMouseEnter={handleOnMouseEnter}

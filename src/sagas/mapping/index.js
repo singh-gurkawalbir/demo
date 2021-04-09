@@ -597,12 +597,12 @@ export function* getAutoMapperSuggestion() {
 
   const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);
   const extractFields = yield select(selectors.mappingExtracts, importId, flowId, subRecordMappingId);
-  const reqBody = {};
+  let reqBody = {};
 
   const sourceApplication = yield select(selectors.applicationName, exportResource._id);
 
   reqBody.source_application = sourceApplication?.toLowerCase() || '';
-  reqBody.source_fields = extractFields;
+  reqBody.source_fields = extractFields.map(f => ({id: f.id}));
   const destApplication = yield select(selectors.applicationName, importResource._id);
 
   reqBody.dest_application = destApplication?.toLowerCase() || '';
@@ -628,7 +628,44 @@ export function* getAutoMapperSuggestion() {
     reqBody.source_record_type = '';
   }
 
-  reqBody.dest_fields = generateFields;
+  reqBody.dest_fields = generateFields.map(f => ({id: f.id}));
+
+  // NOTE: !!!This is temp code to test the feature while the
+  // BE service is completed. Current bugs cause 500 errors on
+  // most requests.
+  reqBody = {
+    source_application: 'salesforce',
+    source_record_type: 'contact',
+    source_fields: [
+      {id: 'AccountId'},
+      {id: 'Email'},
+      {id: 'Fax'},
+      {id: 'FirstName'},
+      {id: 'HomePhone'},
+      {id: 'IsDeleted'},
+      {id: 'LastName'},
+      {id: 'LeadSource'},
+      {id: 'MiddleName'},
+      {id: 'MobilePhone'},
+      {id: 'Name'},
+      {id: 'Phone'},
+      {id: 'Title'},
+    ],
+    dest_application: 'netsuite',
+    dest_record_type: 'contact',
+    dest_fields: [
+      {id: 'company'},
+      {id: 'email'},
+      {id: 'fax'},
+      {id: 'firstname'},
+      {id: 'homephone'},
+      {id: 'lastname'},
+      {id: 'mobilephone'},
+      {id: 'phone'},
+      {id: 'title'},
+    ],
+  };
+
   const path = '/autoMapperSuggestions';
   const opts = {
     method: 'PUT',
