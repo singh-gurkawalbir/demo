@@ -122,7 +122,6 @@ export default function CronBuilder(props) {
           options: [
             {
               items: [
-                { label: '00', value: '0' },
                 { label: '01', value: '1' },
                 { label: '02', value: '2' },
                 { label: '03', value: '3' },
@@ -311,7 +310,10 @@ export default function CronBuilder(props) {
   );
   const onFormChange = useCallback(
     formValue => {
-      if (reset) return;
+      if (reset) {
+        Object.keys(formValue).()
+          .return;
+      }
       const { tabHistory } = externalTabState;
       const finalResult = Object.keys(tabHistory)
         .map(key => {
