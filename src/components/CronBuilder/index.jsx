@@ -310,10 +310,7 @@ export default function CronBuilder(props) {
   );
   const onFormChange = useCallback(
     formValue => {
-      if (reset) {
-        Object.keys(formValue).()
-          .return;
-      }
+      if (reset) return;
       const { tabHistory } = externalTabState;
       const finalResult = Object.keys(tabHistory)
         .map(key => {
