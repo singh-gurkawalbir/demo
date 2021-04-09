@@ -2,16 +2,16 @@ import React, { useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import actions from '../../../actions';
-import { selectors } from '../../../reducers';
-import TrashIcon from '../../icons/TrashIcon';
-import RefreshIcon from '../../icons/RefreshIcon';
-import ActionButton from '../../ActionButton';
-import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
-import DynaSelect from '../../DynaForm/fields/DynaSelect';
+import actions from '../../../../../actions';
+import { selectors } from '../../../../../reducers';
+import TrashIcon from '../../../../icons/TrashIcon';
+import RefreshIcon from '../../../../icons/RefreshIcon';
+import ActionButton from '../../../../ActionButton';
+import DynaTypeableSelect from '../../DynaTypeableSelect';
+import DynaSelect from '../../DynaSelect';
 import {operators, operatorsByFieldType} from './operators';
-import Spinner from '../../Spinner';
-import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import Spinner from '../../../../Spinner';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   header: {

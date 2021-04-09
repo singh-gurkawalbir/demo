@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
-import SearchCriteriaDialog from '../../../AFE/SearchCriteria/Dialog';
+import SearchCriteriaDialog from './SearchCriteria/Dialog';
 import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles({

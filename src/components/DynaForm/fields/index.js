@@ -83,7 +83,7 @@ import DynaTextWithFlowContext from './text/DynaTextWithFlowContext';
 import DynaCheckboxForResetFields from './checkbox/DynaCheckboxForResetFields';
 import cronBuilderComponents from './cronBuilderComponents';
 import DynaCronGenerator from './DynaCronGenerator';
-import DynaNSSearchCriteria from './editors/DynaNSSearchCriteria';
+import DynaNSSearchCriteria from './DynaNSSearchCriteria';
 import DynaSettings from './DynaSettings';
 import DynaNetSuiteSubRecords from './DynaNetSuiteSubRecords';
 import DynaTypeableSelect from './DynaTypeableSelect';
