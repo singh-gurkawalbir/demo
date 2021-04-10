@@ -13,7 +13,6 @@ import importMappingAction from './actions/importMapping';
 import inputFilterAction from './actions/inputFilter_afe2';
 import pageProcessorHooksAction from './actions/pageProcessorHooks';
 import outputFilterAction from './actions/outputFilter_afe2';
-// import transformationAction from './actions/transformation';
 import lookupTransformationAction from './actions/lookupTransformation_afe2';
 import responseMapping from './actions/responseMapping';
 import postResponseMapHook from './actions/postResponseMapHook_afe2';
