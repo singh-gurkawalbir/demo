@@ -95,10 +95,11 @@ export default function DynaNetSuiteQualifier_afe2(props) {
       // we don't need sample data here,
       // hence adding dummy data to stop the saga from requesting the same
       data: 'dummy data',
+      customOptions: options,
     }));
 
     history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
+  }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId, options]);
 
   return (
     <div className={classes.dynaNetsuiteQWrapper}>

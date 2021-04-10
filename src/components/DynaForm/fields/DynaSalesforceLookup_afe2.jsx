@@ -44,6 +44,7 @@ export default function DynaSalesforceLookup_afe2(props) {
     label,
     multiline,
     formKey,
+    options,
   } = props;
   const history = useHistory();
   const match = useRouteMatch();
@@ -63,10 +64,11 @@ export default function DynaSalesforceLookup_afe2(props) {
       fieldId: id,
       stage: 'importMappingExtract',
       onSave: handleSave,
+      customOptions: options,
     }));
 
     history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
+  }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId, options]);
 
   return (
     <>
