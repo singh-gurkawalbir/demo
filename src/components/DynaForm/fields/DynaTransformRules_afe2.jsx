@@ -1,12 +1,15 @@
+/* eslint-disable camelcase */
 import React, { useCallback } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { deepClone } from 'fast-json-patch';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import TransformEditorDrawer from '../../AFE/TransformEditor/Drawer';
 import ActionButton from '../../ActionButton';
 import EditIcon from '../../icons/EditIcon';
-import CodeEditor from '../../CodeEditor';
-import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
+import CodeEditor from '../../CodeEditor2';
+import { getValidRelativePath } from '../../../utils/routePaths';
+import actions from '../../../actions';
 
 const useStyles = makeStyles({
   label: {
@@ -22,11 +25,6 @@ const useStyles = makeStyles({
     border: '1px solid rgb(0,0,0,0.1)',
     height: '20vh',
     width: '100%',
-  },
-  actions: {
-    flexDirection: 'row !important',
-    display: 'flex',
-    alignItems: 'flex-start',
   },
 });
 const constructTransformData = (rule, modifiedFirstRule) => {
@@ -50,31 +48,47 @@ const getTransformRule = value => {
 };
 
 // TODO (Azhar) Work on styling
-export default function DynaTransformRules(props) {
+export default function DynaTransformRules_afe2({
+  id,
+  resourceId,
+  resourceType,
+  flowId,
+  formKey,
+  value,
+  label,
+  onFieldChange,
+  disabled }) {
   const classes = useStyles();
-  const { id, resourceId, value, label, onFieldChange, disabled } = props;
-  const handleOpenDrawer = usePushRightDrawer(id);
   const rule = getTransformRule(value);
-  const handleSave = useCallback((shouldCommit, editorValues) => {
-    if (shouldCommit) {
-      const { rule: newRule } = editorValues;
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const match = useRouteMatch();
+  const editorId = getValidRelativePath(id);
 
-      onFieldChange(id, constructTransformData(rule || [], newRule));
-    }
+  const handleSave = useCallback(editorValues => {
+    const { rule: newRule } = editorValues;
+
+    onFieldChange(id, constructTransformData(rule || [], newRule));
   }, [id, onFieldChange, rule]);
+
+  const handleEditorClick = useCallback(() => {
+    dispatch(actions._editor.init(editorId, 'transform', {
+      data: {},
+      rule: rule?.[0],
+      formKey,
+      flowId,
+      resourceId,
+      resourceType,
+      fieldId: id,
+      stage: 'flowInput',
+      onSave: handleSave,
+    }));
+
+    history.push(`${match.url}/editor/${editorId}`);
+  }, [dispatch, editorId, flowId, formKey, handleSave, history, id, match.url, resourceId, resourceType, rule]);
 
   return (
     <div>
-      <TransformEditorDrawer
-        title={label}
-        id={id + resourceId}
-        data=""
-        rule={rule && rule[0]}
-        onSave={handleSave}
-        disabled={disabled}
-        path={id}
-        />
-
       <Typography className={classes.label}>{label}</Typography>
       <div className={classes.root}>
         <div className={classes.editorContainer}>
@@ -84,7 +98,7 @@ export default function DynaTransformRules(props) {
           <ActionButton
             disabled={disabled}
             data-test="editTransformation"
-            onClick={handleOpenDrawer}>
+            onClick={handleEditorClick}>
             <EditIcon />
           </ActionButton>
         </div>

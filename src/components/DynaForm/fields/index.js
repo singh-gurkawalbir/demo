@@ -21,7 +21,6 @@ import DynaHttpRequestBody_afe2 from './DynaHttpRequestBody_afe2';
 import DynaEditor from './DynaEditor';
 import DynaCsvParse_afe2 from './editors/DynaCsvParse_afe2';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
-import DynaTransformEditor from './editors/DynaTransformEditor';
 import DynaTextFtpPort from './DynaTextFtpPort';
 import DynaUploadFile from './DynaUploadFile';
 import DynaHook_afe2 from './DynaHook_afe2';
@@ -91,7 +90,7 @@ import DynaMarketplaceId from './DynaMarketplaceId';
 import DynaNetSuiteSubRecordJsonPath from './DynaNetSuiteSubRecordJsonPath';
 import DynaFormView from './DynaFormView';
 import DynaSkipRetries from './DynaSkipRetries';
-import DynaTransformRules from './DynaTransformRules';
+import DynaTransformRules_afe2 from './DynaTransformRules_afe2';
 import DynaNetsuiteExportType from './DynaNetsuiteExportType';
 import SuiteScript from './SuiteScript';
 import DynaExportSelect from './DynaExportSelect';
@@ -175,7 +174,6 @@ export default {
   xmlparse: DynaXmlParse_afe2,
   refreshableselect: DynaRefreshableSelect,
   netsuiteapiversion: DynaNetSuiteAPIVersion,
-  transformeditor: DynaTransformEditor,
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,
   labeltitle: DynaLabel,
@@ -248,7 +246,7 @@ export default {
   netsuitesubrecordjsonpath: DynaNetSuiteSubRecordJsonPath,
   formview: DynaFormView,
   skipRetries: DynaSkipRetries,
-  transformrules: DynaTransformRules,
+  transformrules: DynaTransformRules_afe2,
   netsuiteexporttype: DynaNetsuiteExportType,
   netsuiteimportoperation: DynaNetSuiteImportOperation,
   netsuitedefaultvalue: DynaNetSuiteDefaultValue,
