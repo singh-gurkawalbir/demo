@@ -198,31 +198,6 @@ export default function ConnectorInstallation(props) {
     []
   );
 
-  const handleDelete = useCallback(() => {
-    confirmDialog({
-      title: 'Confirm delete',
-      message: 'Are you sure you want to delete this integration?',
-      buttons: [
-        {
-          label: 'Delete',
-          onClick: () => {
-            dispatch(actions.resource.integrations.delete(integrationId));
-            history.push(getRoutePath('dashboard'));
-          },
-        },
-        {
-          label: 'Cancel',
-          color: 'secondary',
-        },
-      ],
-    });
-  }, [
-    confirmDialog,
-    dispatch,
-    integrationId,
-    history,
-  ]);
-
   const handleSubmitComplete = useCallback(
     (connId, isAuthorized, connectionDoc = {}) => {
       // Here connection Doc will come into picture for only for IA2.0 and if connection step doesn't contain connection Id.
@@ -343,6 +318,12 @@ export default function ConnectorInstallation(props) {
         {
           label: 'Uninstall',
           onClick: () => {
+            if (!_connectorId) {
+              dispatch(actions.resource.integrations.delete(integrationId));
+              history.push(getRoutePath('dashboard'));
+
+              return;
+            }
             const storeId = stores?.length
               ? stores[0].value
               : undefined;
@@ -569,7 +550,7 @@ export default function ConnectorInstallation(props) {
               <IconTextButton
                 variant="text"
                 data-test="deleteIntegration"
-                onClick={handleDelete}>
+                onClick={handleUninstall}>
                 <TrashIcon /> Delete integration
               </IconTextButton>
             )}
