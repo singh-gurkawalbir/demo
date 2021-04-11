@@ -5,7 +5,7 @@ import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import CodePanel from '../../AFE/GenericEditor/CodePanel';
+import CodePanel from '../../AFE2/Editor/panels/Code';
 
 const useStyles = makeStyles(theme => ({
   header: {

@@ -1,5 +1,3 @@
-import arrayUtil from '../array';
-
 export const FLOW_STAGES = [
   'outputFilter',
   'exportFilter',
@@ -18,31 +16,6 @@ export const HOOK_STAGES = [
   'contentBasedFlowRouter',
   'handleRequest',
 ];
-
-// todo: remove this when old AFE framework would be removed
-// it is now part of processorLogic
-export const preSaveValidate = ({ editor = {}, enquesnackbar }) => {
-  if (editor.processor === 'transform') {
-    const duplicates = arrayUtil.getDuplicateValues(
-      editor.rule,
-      editor.duplicateKeyToValidate
-    );
-
-    if (duplicates && duplicates.length) {
-      enquesnackbar({
-        message: `You have duplicate mappings for the field(s): ${duplicates.join(
-          ','
-        )}`,
-        variant: 'error',
-      });
-
-      return false;
-    }
-    // validation other transform editors to be added here
-  }
-
-  return true;
-};
 
 export function dataAsString(data) {
   return typeof data === 'string'
@@ -102,8 +75,6 @@ export const getUniqueFieldId = (fieldId, resource) => {
       return fieldId;
   }
 };
-
-export default { preSaveValidate };
 
 // DO NOT DELETE below utils
 // This file is unused right now but we might need

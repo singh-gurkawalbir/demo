@@ -139,7 +139,6 @@ export default function DynaXmlParse_afe2({
     (newOptions, isValid, touched) => {
       const parsersValue = getParserValue(newOptions);
 
-      // console.log('dyna xml parse handleFormChange', parsersValue);
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
       if (!isValid) {
@@ -151,8 +150,6 @@ export default function DynaXmlParse_afe2({
     [id, onFieldChange]
   );
 
-  // TODO: @Ashu: Why not just hardcode this sub-form key? I cant think of
-  // a case where we would have a collision.
   const parseFormKey = 'xmlParserFields';
 
   useUpdateParentForm(parseFormKey, handleFormChange);
