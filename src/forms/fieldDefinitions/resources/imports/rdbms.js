@@ -37,6 +37,7 @@ export default {
   },
   'rdbms.query1': {
     id: 'rdbms.query1',
+    dataTest: 'rdbms.query',
     type: 'sqlquerybuilder',
     helpKey: 'import.rdbms.query',
     querySetPos: 0,
@@ -51,6 +52,7 @@ export default {
   },
   'rdbms.query2': {
     id: 'rdbms.query2',
+    dataTest: 'rdbms.query',
     type: 'sqlquerybuilder',
     helpKey: 'import.rdbms.query',
     querySetPos: 0,

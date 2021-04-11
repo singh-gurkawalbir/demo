@@ -6,6 +6,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import DynaTableView from './DynaTable';
 import { makeExportResource } from '../../../../utils/exportData';
+import { emptyObject } from '../../../../utils/constants';
 
 const isExportRefresh = (kind, key, exportResource) => !!(kind && key && exportResource);
 
@@ -32,7 +33,7 @@ export default function DynaRefreshableStaticMap(props) {
   const [initComplete, setInitComplete] = useState(false);
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
-  const { _connectionId: resConnectionId, _connectorId: resConnectorId } = useSelector(state => (selectors.resource(state, resourceType, resourceId) || {}));
+  const { _connectionId: resConnectionId, _connectorId: resConnectorId } = useSelector(state => (selectors.resource(state, resourceType, resourceId) || emptyObject));
   const { kind: eKind, key: eKey, exportResource: eExportResource } = useMemo(() => makeExportResource(keyResource, resConnectionId, resConnectorId), [keyResource, resConnectionId, resConnectorId]);
   const { kind: gKind, key: gKey, exportResource: gExportResource } = useMemo(() => makeExportResource(valueResource, resConnectionId, resConnectorId), [resConnectionId, resConnectorId, valueResource]);
 

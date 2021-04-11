@@ -27,7 +27,7 @@ export function* getScriptDependencies({scriptId = '',
   if (flowId) {
     const flowResource = yield select(selectors.resource, 'flows', flowId);
 
-    flowResource.pageGenerators.forEach(({_exportId}) => {
+    flowResource?.pageGenerators?.forEach(({_exportId}) => {
       const resource = resourceReferences?.exports?.find(({id}) => id === _exportId);
 
       if (resource) {
@@ -35,7 +35,7 @@ export function* getScriptDependencies({scriptId = '',
       }
     });
 
-    flowResource.pageProcessors.forEach(({type: ppType, _importId, _exportId}) => {
+    flowResource?.pageProcessors?.forEach(({type: ppType, _importId, _exportId}) => {
       const resource = (ppType === 'export')
         ? resourceReferences?.exports?.find(({id}) => id === _exportId)
         : resourceReferences?.imports?.find(({id}) => id === _importId);

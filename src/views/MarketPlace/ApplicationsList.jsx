@@ -15,6 +15,8 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'grid',
+    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
+    overflowY: 'auto',
     gridTemplateColumns: 'repeat(auto-fill, minmax(204px, 1fr));',
     gridRowGap: theme.spacing(3),
     padding: '24px 10px',

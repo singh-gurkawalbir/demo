@@ -16,13 +16,14 @@ export default {
 
     return {
       ...options,
-      rule: value,
+      rule: options.rule || value,
     };
   },
-  buildData: (_, sampleData) => {
-    let formattedData = [];
+  buildData: (editor, sampleData) => {
+    const {wrapData, isGroupedSampleData, ssLinkedConnectionId} = editor || {};
+    let formattedData = safeParse(sampleData);
 
-    if (sampleData) {
+    if (sampleData && !ssLinkedConnectionId && !wrapData) {
       const extractPaths = getJSONPaths(
         pickFirstObject(safeParse(sampleData), null, {
           wrapSpecialChars: true,
@@ -34,9 +35,11 @@ export default {
     let modifiedData = Array.isArray(formattedData) ? formattedData.map(wrapSpecialChars) : formattedData;
 
     if (Array.isArray(formattedData)) {
-      modifiedData = modifiedData.concat(
-        modifiedData.map(i => ({ name: `*.${i.name}`, id: `*.${i.id}` }))
-      );
+      if (!ssLinkedConnectionId || isGroupedSampleData) {
+        modifiedData = modifiedData.concat(
+          modifiedData.map(i => ({ name: `*.${i.name}`, id: `*.${i.id}` }))
+        );
+      }
     }
 
     return modifiedData;

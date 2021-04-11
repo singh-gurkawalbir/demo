@@ -25,16 +25,16 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
   },
+  // TODO: (Azhar) make all pagebar dropdown same without border.
   storeSelect: {
     fontFamily: 'Roboto500',
     fontSize: 13,
-    borderRadius: 4,
-    backgroundColor: 'rgb(0,0,0,0)',
     transition: theme.transitions.create('background-color'),
     paddingLeft: theme.spacing(1),
     height: 'unset',
     '&:hover': {
-      backgroundColor: 'rgb(0,0,0,0.05)',
+      backgroundColor: theme.palette.background.default,
+      borderRadius: theme.spacing(0.5),
     },
     '& > div': {
       paddingTop: theme.spacing(1),
@@ -235,6 +235,7 @@ export default function PageBar() {
         {([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_MANAGE, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(accessLevel)) && (
         <IconTextButton
           variant="text"
+          color="primary"
           data-test={`add${storeLabel}`}
           onClick={handleAddNewStoreClick}>
           <AddIcon /> Add {storeLabel}

@@ -33,8 +33,8 @@ export default function OAuthButton(props) {
 
       if (
         resource._connectorId &&
-        ['shopify', 'squareup', 'hubspot'].includes(resource.assistant) &&
-        values['/http/auth/type'] === 'oauth'
+        ((['shopify', 'hubspot'].includes(resource.assistant) &&
+        values['/http/auth/type'] === 'oauth') || resource.assistant === 'squareup')
       ) {
         newValues['/http/_iClientId'] =
           iClients && iClients[0] && iClients[0]._id;

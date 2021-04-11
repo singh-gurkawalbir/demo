@@ -24,9 +24,11 @@ import CeligoPageBar from '../../../../../components/CeligoPageBar';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    margin: theme.spacing(2),
-    flexGrow: 1,
-    width: '100%',
+    // margin: theme.spacing(2),
+    // flexGrow: 1,
+    // width: '100%',
+    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
+    overflowY: 'auto',
   },
   formHead: {
     borderBottom: 'solid 1px',
@@ -36,6 +38,7 @@ const useStyles = makeStyles(theme => ({
   innerContent: {
     width: '100%',
     padding: theme.spacing(3),
+
   },
   stepTable: { maxWidth: 750 },
   floatRight: {

@@ -167,6 +167,34 @@ describe('integrationApps reducer test cases', () => {
         state[123].steps[0].isTriggered = true;
         expect(newState).toEqual(state);
       });
+      test('should update the state with the verify step status', () => {
+        state = {123: {steps: [{type: 'url', completed: false}]}};
+        const newState = reducer(
+          state,
+          actions.integrationApp.uninstaller2.updateStep(
+            '123',
+            'verify'
+          )
+        );
+
+        state[123].steps[0].isTriggered = true;
+        state[123].steps[0].verifying = true;
+        expect(newState).toEqual(state);
+      });
+      test('should update the state with the reset step status', () => {
+        state = {123: {steps: [{type: 'url', completed: false}]}};
+        const newState = reducer(
+          state,
+          actions.integrationApp.uninstaller2.updateStep(
+            '123',
+            'reset'
+          )
+        );
+
+        state[123].steps[0].isTriggered = false;
+        state[123].steps[0].verifying = false;
+        expect(newState).toEqual(state);
+      });
       test('should not modify already completed steps', () => {
         state = {123: {steps: [{type: 'form', completed: true}, {type: 'hidden', completed: true}, {type: 'hidden', completed: false}]}};
         const newState = reducer(
@@ -179,6 +207,7 @@ describe('integrationApps reducer test cases', () => {
 
         state[123].steps[2].isTriggered = false;
         state[123].steps[2].completed = true;
+        state[123].steps[2].verifying = false;
         expect(newState).toEqual(state);
       });
       test('should do nothing if all steps are completed', () => {
