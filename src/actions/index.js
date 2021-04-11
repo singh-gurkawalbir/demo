@@ -1401,29 +1401,7 @@ const clearCommByKey = key => action(actionTypes.CLEAR_COMM_BY_KEY, { key });
 const cancelTask = () => action(actionTypes.CANCEL_TASK, {});
 //
 // #region Editor actions
-const editor = {
-  init: (id, processor, options) =>
-    action(actionTypes.EDITOR.INIT, { id, processor, options }),
-  changeLayout: id => action(actionTypes.EDITOR.CHANGE_LAYOUT, { id }),
-  patch: (id, patch) => action(actionTypes.EDITOR.PATCH, { id, patch }),
-  reset: id => action(actionTypes.EDITOR.RESET, { id }),
-  clear: id => action(actionTypes.EDITOR.CLEAR, { id }),
-  updateHelperFunctions: helperFunctions =>
-    action(actionTypes.EDITOR.UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
-  refreshHelperFunctions: () =>
-    action(actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS),
-  evaluateRequest: id => action(actionTypes.EDITOR.EVALUATE_REQUEST, { id }),
-  validateFailure: (id, violations) =>
-    action(actionTypes.EDITOR.VALIDATE_FAILURE, { id, violations }),
-  evaluateFailure: (id, error) =>
-    action(actionTypes.EDITOR.EVALUATE_FAILURE, { id, error }),
-  evaluateResponse: (id, result) =>
-    action(actionTypes.EDITOR.EVALUATE_RESPONSE, { id, result }),
-  save: (id, context) => action(actionTypes.EDITOR.SAVE, { id, context }),
-  saveFailed: id => action(actionTypes.EDITOR.SAVE_FAILED, { id }),
-  saveComplete: id => action(actionTypes.EDITOR.SAVE_COMPLETE, { id }),
-};
-// TODO: parallel AFE refactor actions.
+
 const _editor = {
   init: (id, editorType, options) =>
     action(actionTypes._EDITOR.INIT, { id, editorType, options }),
@@ -1438,6 +1416,7 @@ const _editor = {
   sampleDataReceived: (id, sampleData, templateVersion) => action(actionTypes._EDITOR.SAMPLEDATA.RECEIVED, { id, sampleData, templateVersion }),
   sampleDataFailed: (id, sampleDataError) => action(actionTypes._EDITOR.SAMPLEDATA.FAILED, { id, sampleDataError }),
   toggleAutoPreview: (id, autoPreview) => action(actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW, { id, autoPreview }),
+  refreshHelperFunctions: () => action(actionTypes._EDITOR.REFRESH_HELPER_FUNCTIONS),
   updateHelperFunctions: helperFunctions =>
     action(actionTypes._EDITOR.UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
   previewRequest: id => action(actionTypes._EDITOR.PREVIEW.REQUEST, { id }),
@@ -2232,7 +2211,6 @@ export default {
   clearCommByKey,
   patchFilter,
   clearFilter,
-  editor,
   _editor,
   resourceForm,
   resource,
