@@ -594,7 +594,7 @@ export const getMetadata = ({
         helpKey: 'flow.schedule',
         type: 'crongenerator',
         label: 'Schedule',
-        defaultValue: schedule || '? * * * * *',
+        defaultValue: schedule || '? */5 * * * *',
         validWhen: {
           matchesRegEx: {
             pattern: '^(?!\\? \\* )',

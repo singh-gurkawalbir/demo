@@ -81,7 +81,6 @@ import DynaFileKeyColumn_afe2 from './DynaFileKeyColumn_afe2';
 import DynaRadioGroupForResetFields from './radiogroup/DynaRadioGroupForResetFields';
 import DynaTextWithFlowContext from './text/DynaTextWithFlowContext';
 import DynaCheckboxForResetFields from './checkbox/DynaCheckboxForResetFields';
-import cronBuilderComponents from './cronBuilderComponents';
 import DynaCronGenerator from './DynaCronGenerator';
 import DynaNSSearchCriteria from './editors/DynaNSSearchCriteria';
 import DynaSettings from './DynaSettings';
@@ -236,9 +235,6 @@ export default {
   textwithflowcontext: DynaTextWithFlowContext,
   checkboxforresetfields: DynaCheckboxForResetFields,
   crongenerator: DynaCronGenerator,
-  slider: cronBuilderComponents.slider,
-  groupedButton: cronBuilderComponents.groupedButton,
-  cronlabel: cronBuilderComponents.cronlabel,
   nssearchcriteria: DynaNSSearchCriteria,
   settings: DynaSettings,
   netsuitesubrecords: DynaNetSuiteSubRecords,
