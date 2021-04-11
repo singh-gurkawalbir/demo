@@ -734,4 +734,5 @@ export default [
   takeLatest(actionTypes._EDITOR.TOGGLE_VERSION, toggleEditorVersion),
   takeLatest(actionTypes._EDITOR.PREVIEW.REQUEST, requestPreview),
   takeLatest(actionTypes._EDITOR.SAVE.REQUEST, save),
+  takeLatest(actionTypes._EDITOR.REFRESH_HELPER_FUNCTIONS, refreshHelperFunctions),
 ];
