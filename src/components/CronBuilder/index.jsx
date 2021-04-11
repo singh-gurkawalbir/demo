@@ -57,7 +57,7 @@ export default function CronBuilder(props) {
   const [cronBuilderState, setCronBuilderState] = useReducer(cronBuilderReducer, {
     activeTab: 'Minute',
     touched: false,
-    subTabState: {
+    childTabState: {
       Minute: {
         everyNMinutes: {
           value: splitVal[1] || '*/5',
@@ -114,12 +114,12 @@ export default function CronBuilder(props) {
       },
     },
   });
-  const {activeTab, touched, subTabState} = cronBuilderState;
+  const {activeTab, touched, childTabState} = cronBuilderState;
   const subTabContainers = parentTabs.find(({label}) => label === activeTab).containers;
-  const activeSubTabIndex = isActiveSubTabId(subTabState[activeTab]);
-  const activeFieldValue = subTabState[activeTab][activeSubTabIndex]?.value;
+  const activeSubTabIndex = isActiveSubTabId(childTabState[activeTab]);
+  const activeFieldValue = childTabState[activeTab][activeSubTabIndex]?.value;
 
-  const finalRes = cronExpr(subTabState);
+  const finalRes = cronExpr(childTabState);
 
   useEffect(() => {
     if (touched) { onChange(finalRes); }

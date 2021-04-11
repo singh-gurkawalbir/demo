@@ -2,12 +2,12 @@ import produce from 'immer';
 import meta from '../meta';
 import actionTypes from '../actionTypes';
 
-export const isActiveSubTabId = subTabState => Object.keys(subTabState).find(key => subTabState[key].active);
+export const isActiveSubTabId = childTabState => Object.keys(childTabState).find(key => childTabState[key].active);
 
-export const cronExpr = subTabState => ['Minute', 'Hour', 'Day of month', 'Month', 'Day of week'].map(key => {
-  const activeSubId = isActiveSubTabId(subTabState[key]);
+export const cronExpr = childTabState => ['Minute', 'Hour', 'Day of month', 'Month', 'Day of week'].map(key => {
+  const activeSubId = isActiveSubTabId(childTabState[key]);
 
-  return subTabState[key][activeSubId]?.value || '*';
+  return childTabState[key][activeSubId]?.value || '*';
 }).reduce((finalRes, curr) => {
   let acc = finalRes;
 
@@ -20,7 +20,7 @@ const cronBuilderReducer = (state, action) => {
   const {type, value} = action;
 
   return produce(state, draft => {
-    const activeSubTabState = draft.subTabState[draft.activeTab];
+    const activeSubTabState = draft.childTabState[draft.activeTab];
 
     draft.touched = true;
     switch (type) {
