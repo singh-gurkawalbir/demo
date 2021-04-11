@@ -639,6 +639,18 @@ export function* deleteResource({ resourceType, id }) {
   }
 }
 
+export function* deleteIntegration({integrationId}) {
+  const integration = yield select(selectors.resource, 'integrations', integrationId);
+
+  if (integration._connectorId) return undefined;
+
+  yield call(deleteResource, {resourceType: 'integrations', id: integrationId});
+
+  yield put(actions.resource.requestCollection('integrations', null, true));
+  yield put(actions.resource.requestCollection('tiles', null, true));
+  yield put(actions.resource.requestCollection('scripts', null, true));
+}
+
 export function* getResourceCollection({ resourceType, refresh}) {
   let path = `/${resourceType}`;
   let hideNetWorkSnackbar;
@@ -1031,6 +1043,8 @@ export const resourceSagas = [
   takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
   takeEvery(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, linkUnlinkSuiteScriptIntegrator),
   takeEvery(actionTypes.RESOURCE.REPLACE_CONNECTION, replaceConnection),
+
+  takeLatest(actionTypes.INTEGRATION.DELETE, deleteIntegration),
 
   ...metadataSagas,
 ];

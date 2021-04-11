@@ -335,6 +335,10 @@ const resource = {
       op,
       offset,
     }),
+  integrations: {
+    delete: integrationId =>
+      action(actionTypes.INTEGRATION.DELETE, {integrationId}),
+  },
   connections: {
     pingAndUpdate: connectionId =>
       action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId }),

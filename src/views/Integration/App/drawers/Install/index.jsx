@@ -38,6 +38,7 @@ import RawHtml from '../../../../../components/RawHtml';
 import getRoutePath from '../../../../../utils/routePaths';
 import HelpIcon from '../../../../../components/icons/HelpIcon';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import TrashIcon from '../../../../../components/icons/TrashIcon';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -196,6 +197,32 @@ export default function ConnectorInstallation(props) {
     ],
     []
   );
+
+  const handleDelete = useCallback(() => {
+    confirmDialog({
+      title: 'Confirm delete',
+      message: 'Are you sure you want to delete this integration?',
+      buttons: [
+        {
+          label: 'Delete',
+          onClick: () => {
+            dispatch(actions.resource.integrations.delete(integrationId));
+            history.push(getRoutePath('dashboard'));
+          },
+        },
+        {
+          label: 'Cancel',
+          color: 'secondary',
+        },
+      ],
+    });
+  }, [
+    confirmDialog,
+    dispatch,
+    integrationId,
+    history,
+  ]);
+
   const handleSubmitComplete = useCallback(
     (connId, isAuthorized, connectionDoc = {}) => {
       // Here connection Doc will come into picture for only for IA2.0 and if connection step doesn't contain connection Id.
@@ -527,15 +554,25 @@ export default function ConnectorInstallation(props) {
               View help guide
             </IconTextButton>
           )}
-          <IconTextButton
-            data-test="uninstall"
-            component={Link}
-            variant="text"
-            onClick={handleUninstall}
-            color="primary">
-            <CloseIcon />
-            Uninstall
-          </IconTextButton>
+          {_connectorId ? (
+            <IconTextButton
+              data-test="uninstall"
+              component={Link}
+              variant="text"
+              onClick={handleUninstall}
+              color="primary">
+              <CloseIcon />
+              Uninstall
+            </IconTextButton>
+          )
+            : (
+              <IconTextButton
+                variant="text"
+                data-test="deleteIntegration"
+                onClick={handleDelete}>
+                <TrashIcon /> Delete integration
+              </IconTextButton>
+            )}
 
         </div>
       </CeligoPageBar>
