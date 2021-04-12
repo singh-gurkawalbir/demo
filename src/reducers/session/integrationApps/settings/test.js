@@ -1159,12 +1159,12 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe('integrationApps settings redirectTo action', () => {
+    describe('integration redirectTo action', () => {
       test('should set redirectTo prop on to the state and should not clear other data', () => {
         const state = reducer({
           '1-3': { initComplete: true},
           '1-2': { formSaveStatus: 'loading'},
-        }, actions.integrationApp.settings.redirectTo('integrationId', '/path'));
+        }, actions.resource.integrations.redirectTo('integrationId', '/path'));
 
         expect(state).toEqual({
           '1-3': { initComplete: true},

@@ -173,7 +173,7 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT:
         if (draft[integrationId]) delete draft[integrationId].redirectTo;
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.REDIRECT:
+      case actionTypes.INTEGRATION.REDIRECT:
         if (!draft[integrationId]) {
           draft[integrationId] = {};
         }

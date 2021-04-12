@@ -173,6 +173,14 @@ export default function ConnectorInstallation(props) {
   const isCloned = install.find(step => step.isClone);
   const isFrameWork2 = integrationInstallSteps.length || isCloned;
 
+  const redirectTo = useSelector(state => selectors.shouldRedirect(state, integrationId));
+
+  useEffect(() => {
+    if (redirectTo) {
+      history.push(getRoutePath('dashboard'));
+    }
+  }, [dispatch, history, integrationId, redirectTo]);
+
   useEffect(() => {
     const allStepsCompleted = !installSteps.reduce((result, step) => result || !step.completed, false);
 
@@ -320,7 +328,6 @@ export default function ConnectorInstallation(props) {
           onClick: () => {
             if (!_connectorId) {
               dispatch(actions.resource.integrations.delete(integrationId));
-              history.push(getRoutePath('dashboard'));
 
               return;
             }

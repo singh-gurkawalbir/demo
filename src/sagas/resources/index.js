@@ -508,7 +508,7 @@ export function* updateIntegrationSettings({
       // when Save button on section triggers a flow on integrationApp, it will send back _flowId in the response.
       // UI should navigate to dashboard so that user can the see the flow status.
       yield put(
-        actions.integrationApp.settings.redirectTo(integrationId, 'dashboard')
+        actions.resource.integrations.redirectTo(integrationId, 'dashboard')
       );
     }
 
@@ -649,6 +649,7 @@ export function* deleteIntegration({integrationId}) {
   yield put(actions.resource.requestCollection('integrations', null, true));
   yield put(actions.resource.requestCollection('tiles', null, true));
   yield put(actions.resource.requestCollection('scripts', null, true));
+  yield put(actions.resource.integrations.redirectTo(integrationId, 'dashboard'));
 }
 
 export function* getResourceCollection({ resourceType, refresh}) {
