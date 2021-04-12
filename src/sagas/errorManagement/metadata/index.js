@@ -5,6 +5,7 @@ import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
+import { safeParse } from '../../../utils/string';
 
 export function* downloadRetryData({flowId, resourceId, retryDataKey}) {
   let response;
@@ -159,6 +160,45 @@ export function* requestFilterMetadata() {
   }
 }
 
+export function* requestErrorHttpDocument({ flowId, resourceId, reqAndResKey }) {
+  try {
+    const errorHttpDoc = yield call(apiCallWithRetry, {
+      path: `/flows/${flowId}/${resourceId}/requests/${reqAndResKey}`,
+      opts: {
+        method: 'GET',
+      },
+      hidden: true,
+    });
+
+    yield put(actions.errorManager.errorHttpDoc.received(reqAndResKey, errorHttpDoc));
+  } catch (e) {
+    if (e.status >= 400 && e.status < 500) {
+      const errJSON = safeParse(e.message);
+      const errorMsg = errJSON?.errors?.[0]?.message;
+
+      if (errorMsg) {
+        yield put(actions.errorManager.errorHttpDoc.error(reqAndResKey, errorMsg));
+      }
+    }
+  }
+}
+
+export function* downloadBlobDocument({ flowId, resourceId, s3BlobKey }) {
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path: `/flows/${flowId}/${resourceId}/${s3BlobKey}/signedURL`,
+      opts: {
+        method: 'GET',
+      },
+    });
+
+    if (response?.signedURL) {
+      yield call(openExternalUrl, { url: response.signedURL });
+    }
+  // eslint-disable-next-line no-empty
+  } catch (e) {}
+}
+
 export default [
   takeLatest(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, requestRetryData),
   takeLatest(actionTypes.ERROR_MANAGER.RETRY_DATA.DOWNLOAD, downloadRetryData),
@@ -171,4 +211,6 @@ export default [
     updateRetryData
   ),
   takeLatest(actionTypes.ERROR_MANAGER.FILTER_METADATA.REQUEST, requestFilterMetadata),
+  takeLatest(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.REQUEST, requestErrorHttpDocument),
+  takeLatest(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.DOWNLOAD_BLOB_DOC, downloadBlobDocument),
 ];

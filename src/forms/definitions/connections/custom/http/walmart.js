@@ -105,7 +105,7 @@ export default {
     'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
       type: 'text',
-      label: 'Client Secret',
+      label: 'Client secret',
       helpKey: 'walmart.connection.http.encrypted.clientSecret',
       required: true,
       inputType: 'password',

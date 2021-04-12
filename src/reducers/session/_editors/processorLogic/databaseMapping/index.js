@@ -1,7 +1,7 @@
 import sql, { _hasDefaultMetaData } from '../sql';
 import { _editorSupportsV1V2data } from '../handlebars';
 
-const getEditorTitle = adaptorType => {
+export const getEditorTitle = adaptorType => {
   if (adaptorType === 'MongodbImport') {
     return 'MongoDB document builder';
   }
@@ -11,6 +11,8 @@ const getEditorTitle = adaptorType => {
   if (adaptorType === 'RDBMSImport') {
     return 'SQL query builder';
   }
+
+  return '';
 };
 
 export default {
@@ -18,7 +20,6 @@ export default {
   init: ({ resource, connection, isPageGenerator, options }) => {
     let adaptorSpecificOptions = {};
     let query;
-    let method;
 
     if (resource.adaptorType === 'RDBMSImport') {
       adaptorSpecificOptions = {
@@ -33,14 +34,12 @@ export default {
         adaptorType: 'MongodbImport',
       };
       query = resource.mongodb.method === 'insertMany' ? resource.mongodb.document : resource.mongodb.update;
-      method = resource.mongodb.method;
     } else if (resource.adaptorType === 'DynamodbImport') {
       adaptorSpecificOptions = {
         method: resource.dynamodb.method,
         adaptorType: 'DynamodbImport',
       };
       query = resource.dynamodb.method === 'putItem' && resource.dynamodb.itemDocument;
-      method = resource.dynamodb.method;
     }
 
     const formattedRule = typeof options.arrayIndex === 'number' && Array.isArray(query) ? query[options.arrayIndex] : query;
@@ -66,7 +65,6 @@ export default {
       resultMode: 'text',
       editorSupportsV1V2data,
       editorTitle: getEditorTitle(resource.adaptorType),
-      method,
     };
   },
   buildData: sql.buildData,

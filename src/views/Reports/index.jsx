@@ -1,6 +1,6 @@
 import { MenuItem, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useEffect, useMemo, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { generatePath, Link, useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import actions from '../../actions';
@@ -20,6 +20,7 @@ import ViewReportDetails from './ViewReportDetails';
 import infoText from '../ResourceList/infoText';
 import InfoIconButton from '../../components/InfoIconButton';
 import RefreshIcon from '../../components/icons/RefreshIcon';
+import Spinner from '../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   emptySpace: {
@@ -33,6 +34,9 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 3, 12, 3),
   },
   tablePaginationRoot: {
+    width: '167px',
+  },
+  tablePagination: {
     float: 'right',
     display: 'flex',
     alignItems: 'center',
@@ -50,7 +54,7 @@ const defaultFilter = {
 };
 
 const EVENT_REPORT_TYPE_VALUE = 'eventreports';
-const VALID_REPORT_TYPES = [{label: 'Flow events', value: EVENT_REPORT_TYPE_VALUE}];
+export const VALID_REPORT_TYPES = [{label: 'Flow events', value: EVENT_REPORT_TYPE_VALUE}];
 
 // poll for 5 seconds
 const REPORTS_REFRESH_TIMER = 5000;
@@ -73,6 +77,75 @@ const usePollLatestResourceCollection = resourceType => {
     };
   }, [dispatch, isReportTypeRunningOrQueued, resourceType]);
 };
+
+const Pagination = ({ filterKey}) => {
+  const reportsResultFilter = useSelector(
+    state => selectors.filter(state, filterKey), shallowEqual
+  );
+  const list = useSelectorMemo(
+    selectors.mkEventReportsFiltered,
+    reportsResultFilter
+  );
+  const dispatch = useDispatch();
+
+  const handleChangePage = useCallback(
+    (e, newPage) => dispatch(
+      actions.patchFilter(filterKey, {
+        paging: {
+          ...reportsResultFilter.paging,
+          currPage: newPage,
+        },
+      })
+    ),
+    [dispatch, filterKey, reportsResultFilter.paging]
+  );
+  const classes = useStyles();
+
+  const { currPage, rowsPerPage } = reportsResultFilter.paging || {};
+
+  return (
+
+    <CeligoPagination
+      className={classes.tablePagination}
+      count={list.count}
+      page={currPage}
+      rowsPerPage={rowsPerPage}
+      onChangePage={handleChangePage}
+      />
+
+  );
+};
+
+const RefreshPaginationComponent = ({resourceType, isLoadingResource}) => {
+  const [isRefreshedByUser, setIsRefreshedByUser] = useState(false);
+  const dispatch = useDispatch();
+  const classes = useStyles();
+
+  useEffect(() => {
+    if (!isLoadingResource) {
+      setIsRefreshedByUser(false);
+    }
+  }, [isLoadingResource]);
+
+  return (
+    <>
+      <IconTextButton
+        data-test="refreshReports"
+        disabled={isRefreshedByUser}
+        onClick={() => {
+          setIsRefreshedByUser(true);
+          dispatch(actions.resource.requestCollection(resourceType, null));
+        }}
+    >
+        <RefreshIcon />Refresh
+      </IconTextButton>
+
+      {isRefreshedByUser ? <div className={classes.tablePaginationRoot} />
+        : <Pagination className={classes.tablePaginationRoot} filterKey={resourceType} />}
+    </>
+
+  );
+};
 export default function Reports() {
   const match = useRouteMatch();
   const history = useHistory();
@@ -89,27 +162,26 @@ export default function Reports() {
     if (!isValidReportType) {
       // EVENT_REPORT_TYPE is the default report type
       const defaultEventReportPath =
-        generatePath(url, {
-          ...match.params,
-          reportType: EVENT_REPORT_TYPE_VALUE,
-        });
+      generatePath(url, {
+        ...match.params,
+        reportType: EVENT_REPORT_TYPE_VALUE,
+      });
 
       history.replace(defaultEventReportPath);
     }
   }, [history, isValidReportType, match.params, match.path, resourceType]);
 
+  const resourceStatus = useSelectorMemo(
+    selectors.makeAllResourceStatusSelector,
+    resourceType || ''
+  );
+  const {isReady: isDataReadyAfterUserRefresh, isLoading: isLoadingResource} = resourceStatus?.[0] || {};
+
   useEffect(() => {
-    dispatch(actions.patchFilter(resourceType, defaultFilter));
+    dispatch(actions.patchFilter(resourceType, {...defaultFilter, type: resourceType }));
   }, [dispatch, resourceType]);
   const filter =
     useSelector(state => selectors.filter(state, resourceType));
-  const filterConfig = useMemo(
-    () => ({
-      type: resourceType,
-      ...(filter || {}),
-    }),
-    [filter, resourceType]
-  );
 
   const selectNewReportType = e => {
     const reportType = e.target.value;
@@ -123,7 +195,7 @@ export default function Reports() {
 
   const list = useSelectorMemo(
     selectors.mkEventReportsFiltered,
-    filterConfig
+    filter
   );
 
   usePollLatestResourceCollection(resourceType);
@@ -178,19 +250,15 @@ export default function Reports() {
             color="primary">
             <AddIcon /> Run report
           </IconTextButton>
-          <IconTextButton
-            data-test="refreshReports"
-            onClick={() => dispatch(actions.resource.requestCollection(resourceType, null, true))}
-          >
-            <RefreshIcon />Refresh
-          </IconTextButton>
-          <Pagination filterKey={resourceType} count={list.count} />
+          <RefreshPaginationComponent
+            isLoadingResource={isLoadingResource}
+            resourceType={resourceType} />
         </div>
+        {!isDataReadyAfterUserRefresh && <Spinner centerAll />}
         <LoadResources required resources={`${resourceType},integrations,flows`}>
           {list.total === 0 ? (
             <Typography>
               {'You don\'t have any report results'}
-
             </Typography>
           ) : (
             <ResourceTable
@@ -204,36 +272,3 @@ export default function Reports() {
   );
 }
 
-const Pagination = ({ filterKey, count}) => {
-  const reportsResult = useSelector(
-    state => selectors.filter(state, filterKey), shallowEqual
-  );
-  const dispatch = useDispatch();
-
-  const handleChangePage = useCallback(
-    (e, newPage) => dispatch(
-      actions.patchFilter(filterKey, {
-        paging: {
-          ...reportsResult.paging,
-          currPage: newPage,
-        },
-      })
-    ),
-    [dispatch, filterKey, reportsResult.paging]
-  );
-  const classes = useStyles();
-
-  const { currPage, rowsPerPage } = reportsResult.paging || {};
-
-  return (
-
-    <CeligoPagination
-      className={classes.tablePaginationRoot}
-      count={count}
-      page={currPage}
-      rowsPerPage={rowsPerPage}
-      onChangePage={handleChangePage}
-      />
-
-  );
-};

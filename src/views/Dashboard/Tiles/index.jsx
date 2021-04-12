@@ -10,10 +10,14 @@ import { TILE_STATUS } from '../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   container: {
-    margin: theme.spacing(2),
+    padding: theme.spacing(4, 2),
+    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
+    overflowY: 'auto',
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr));',
     gridGap: theme.spacing(2),
+    bottom: theme.spacing(2),
+    position: 'relative',
     '& > div': {
       maxWidth: '100%',
     },

@@ -101,7 +101,7 @@ export function convertIOFilterExpression(filterExpression = [], context) {
                     temp.transformations = [];
                   }
 
-                  temp.transformations.push(tempExp[0].toLowerCase());
+                  temp.transformations.unshift(tempExp[0].toLowerCase());
                   [, tempExp] = tempExp;
                 } else {
                   dataTypeFound = true;

@@ -115,6 +115,7 @@ export default {
     'prestashop',
     'yotpo',
     'fulfilment.com',
+    'walmartmexico',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -192,6 +193,7 @@ export default {
     'microsoftteams',
     'adobesign',
     'mavenlink',
+    'googleads',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',

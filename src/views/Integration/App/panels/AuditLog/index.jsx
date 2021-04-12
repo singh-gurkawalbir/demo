@@ -10,6 +10,7 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     paddingBottom: theme.spacing(1),
+    minHeight: 124,
   },
 }));
 

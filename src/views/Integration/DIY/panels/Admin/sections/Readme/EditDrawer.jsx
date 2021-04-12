@@ -41,7 +41,7 @@ export default function ReadmeEditor({ value, integrationId }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const editorId = 'readme-editor';
-  const { cancelDialog } = useConfirmDialog();
+  const { saveDiscardDialog } = useConfirmDialog();
   const handleClose = history.goBack;
   const data = useSelector(state => selectors.editor(state, editorId).data);
   const handleChange = useCallback(
@@ -62,8 +62,8 @@ export default function ReadmeEditor({ value, integrationId }) {
       return handleClose();
     }
 
-    cancelDialog({onSave: handleClose});
-  }, [cancelDialog, isEditorDirty, handleClose]);
+    saveDiscardDialog({onSave: handleClose});
+  }, [saveDiscardDialog, isEditorDirty, handleClose]);
 
   useEffect(() => {
     dispatch(
