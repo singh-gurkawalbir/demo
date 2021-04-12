@@ -89,6 +89,19 @@ const useStyles = makeStyles(theme => ({
   flowsGroupContainer: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
+  gridContainer: {
+    display: 'grid',
+    gridColumnGap: '10px',
+    gridTemplateColumns: 'auto 38%',
+    position: 'relative',
+    '& > div:first-child': {
+      wordBreak: 'break-word',
+    },
+    '& > div:last-child': {
+      position: 'relative',
+      right: -12,
+    },
+  },
 }));
 
 const getBasePath = match => {
@@ -108,6 +121,43 @@ const getBasePath = match => {
     .join('/');
 };
 const tilesFilterConfig = { type: 'tiles'};
+
+const SectionTitle = ({integrationId, sectionId, title}) => {
+  const classes = useStyles();
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const errorCountByFlowGroup = useSelector(
+    state =>
+      selectors.integrationErrorsPerFlowGroup(state, integrationId)
+  );
+
+  const errorCount = errorCountByFlowGroup[sectionId] || 0;
+  const errorStatus = useMemo(() => {
+    if (errorCount === 0) {
+      return <StatusCircle size="mini" variant="success" />;
+    }
+
+    return (
+      <div>
+        <StatusCircle size="mini" variant="error" />
+        <span>{errorCount > 9999 ? '9999+' : errorCount}</span>
+      </div>
+    );
+  }, [errorCount]);
+
+  if (!isUserInErrMgtTwoDotZero) {
+    return title;
+  }
+
+  return (
+    <div className={classes.gridContainer}>
+      <div> { title }</div>
+      <div> {errorStatus} </div>
+    </div>
+  );
+};
+
 const FlowListingTable = ({
   flows,
   filterKey,
@@ -146,7 +196,7 @@ const FlowListingTable = ({
                 activeClassName={classes.activeListItem}
                 to={sectionId}
                 data-test={sectionId}>
-                {title}
+                <SectionTitle title={title} sectionId={sectionId} integrationId={integrationId} />
               </NavLink>
             </ListItem>
           ))}

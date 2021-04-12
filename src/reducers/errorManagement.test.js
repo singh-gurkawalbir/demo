@@ -2,6 +2,7 @@
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import { FILTER_KEYS } from '../utils/errorManagement';
+import { MISCELLANEOUS_SECTION_ID } from '../utils/constants';
 
 const flowId = 'flowId-1234';
 const resourceId = 'export-1234';
@@ -1203,6 +1204,124 @@ describe('Error Management region selector testcases', () => {
 
     test('should return empty object if integration doesn\'t exist', () => {
       expect(selectors.integrationErrorsPerStore(state, 'int2')).toEqual({});
+    });
+  });
+
+  describe('selectors.integrationErrorsPerFlowGroup test cases', () => {
+    let state;
+
+    beforeAll(() => {
+      const flows = [
+        {
+          _id: 'f1',
+          _flowGroupingId: 'group1',
+          _integrationId: 'int1',
+        },
+        {
+          _id: 'f2',
+          _flowGroupingId: 'group1',
+          _integrationId: 'int1',
+        },
+        {
+          _id: 'f3',
+          _flowGroupingId: 'group1',
+          _integrationId: 'int1',
+        },
+        {
+          _id: 'f4',
+          disabled: true,
+          _flowGroupingId: 'group2',
+          _integrationId: 'int1',
+        },
+        {
+          _id: 'f5',
+          _flowGroupingId: 'group2',
+          _integrationId: 'int1',
+        },
+        {
+          _id: 'f6',
+          _flowGroupingId: 'group3',
+          _integrationId: 'int1',
+        },
+        {
+          _id: 'f7',
+          _integrationId: 'int1',
+        },
+        {
+          _id: 'f8',
+          _integrationId: 'int1',
+        },
+      ];
+
+      state = reducer(state, actions.resource.receivedCollection('flows', flows));
+
+      state = reducer(state, actions.errorManager.integrationErrors.request({ integrationId: 'int1'}));
+      state = reducer(state, actions.errorManager.integrationErrors.received({ integrationId: 'int1',
+        integrationErrors: [
+          {
+            _flowId: 'f1',
+            numError: 10,
+          },
+          {
+            _flowId: 'f2',
+            numError: 20,
+          },
+          {
+            _flowId: 'f3',
+            numError: 5,
+          },
+          {
+            _flowId: 'f4',
+            numError: 50,
+          },
+          {
+            _flowId: 'f7',
+            numError: 15,
+          },
+          {
+            _flowId: 'f8',
+            numError: 50,
+          },
+        ],
+      }));
+    });
+
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.integrationErrorsPerFlowGroup()).toEqual({});
+    });
+
+    test('should return integration errors per flow group excluding disabled flow', () => {
+      expect(selectors.integrationErrorsPerFlowGroup(state, 'int1')).toEqual({
+        group1: 35,
+        group2: 0,
+        group3: 0,
+        [MISCELLANEOUS_SECTION_ID]: 65,
+      });
+    });
+
+    test('should return empty object if integration does not exist', () => {
+      expect(selectors.integrationErrorsPerFlowGroup(state, 'int-not-exists')).toEqual({});
+    });
+
+    test('should return object of groups with 0 errors if integration does not have any active flows with errors', () => {
+      state = reducer(state, actions.errorManager.integrationErrors.request({ integrationId: 'int1'}));
+      state = reducer(state, actions.errorManager.integrationErrors.received({ integrationId: 'int1',
+        integrationErrors: [],
+      }));
+      expect(selectors.integrationErrorsPerFlowGroup(state, 'int1')).toEqual({
+        group1: 0,
+        group2: 0,
+        group3: 0,
+        [MISCELLANEOUS_SECTION_ID]: 0,
+      });
+    });
+
+    test('should return empty object if there are no flows in the state', () => {
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('flows', [])
+      );
+      expect(selectors.integrationErrorsPerFlowGroup(state, 'int1')).toEqual({});
     });
   });
 

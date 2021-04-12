@@ -4772,6 +4772,29 @@ selectors.integrationErrorsPerStore = (state, integrationId) => {
   }, {});
 };
 
+/**
+ * Returns error count per flow group in an integration for IAF 2.0 & DIY Flow groupings
+ * A map of groupId and total errors on that group
+ */
+selectors.integrationErrorsPerFlowGroup = createSelector(
+  selectors.integrationEnabledFlowIds,
+  (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
+  state => state?.data?.resources?.flows,
+  (enabledFlowIds, errorMap, flowsList) => enabledFlowIds.reduce((groupErrorMap, flowId) => {
+    const flow = flowsList.find(f => f._id === flowId);
+    const groupId = flow._flowGroupingId || MISCELLANEOUS_SECTION_ID;
+    const errorCount = errorMap[flowId] || 0;
+
+    if (!groupErrorMap[groupId]) {
+      groupErrorMap[groupId] = errorCount;
+    } else {
+      groupErrorMap[groupId] += errorCount;
+    }
+
+    return groupErrorMap;
+  }, {})
+);
+
 selectors.getIntegrationUserNameById = (state, userId, flowId) => {
   const profile = selectors.userProfile(state) || emptyObject;
 
