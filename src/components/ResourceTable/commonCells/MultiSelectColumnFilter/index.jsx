@@ -1,10 +1,18 @@
 import React, { useCallback } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import {makeStyles} from '@material-ui/core/styles';
 import FilterIconWrapper from '../FilterIconWrapper';
 import { selectors } from '../../../../reducers';
 import MultiSelectFilter from '../../../MultiSelectFilter';
 import actions from '../../../../actions';
 
+const useStyles = makeStyles({
+  wrapperSelectFilter: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    whiteSpace: 'nowrap',
+  },
+});
 const emptyArr = [];
 
 export default function MultiSelectColumnFilter({
@@ -14,6 +22,7 @@ export default function MultiSelectColumnFilter({
   options = emptyArr,
   handleSave,
 }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const filterOptions = useSelector(state => selectors.filter(state, filterKey), shallowEqual);
 
@@ -49,7 +58,8 @@ export default function MultiSelectColumnFilter({
   const FilterIcon = () => <FilterIconWrapper selected={!selected.includes('all')} />;
 
   return (
-    <div> {title}
+    // TODO:(Azhar) try to use the container wrapper component where same CSS needed
+    <div className={classes.wrapperSelectFilter}> {title}
       <MultiSelectFilter
         Icon={FilterIcon}
         items={options}
