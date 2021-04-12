@@ -154,7 +154,7 @@ export default function SearchCriteriaEditor(props) {
                   options={[{ items: operators.filter(op => (operatorsByFieldType[r.fieldType] || operatorsByFieldType.text).includes(op.value)) }]}
                   disabled={disabled}
                   isValid={!invalidFields[r.index]?.includes('operator')}
-                  errorMessages="Please select a operator"
+                  errorMessages="Please select an operator"
                   onFieldChange={(id, _value) => {
                     handleFieldUpdate(r.index, _value, 'operator');
                   }}

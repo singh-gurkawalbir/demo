@@ -106,7 +106,7 @@ export default function EditorDialog(props) {
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { cancelDialog } = useConfirmDialog();
+  const { saveDiscardDialog } = useConfirmDialog();
   const [state, setState] = useState({
     layout: props.layout || 'compact',
     fullScreen: props.fullScreen || false,
@@ -149,11 +149,11 @@ export default function EditorDialog(props) {
   );
   const handleCancelClick = useCallback(() => {
     if (isEditorDirty) {
-      cancelDialog({onSave: onClose});
+      saveDiscardDialog({onSave: onClose});
     } else {
       onClose();
     }
-  }, [cancelDialog, isEditorDirty, onClose]);
+  }, [saveDiscardDialog, isEditorDirty, onClose]);
   const handleFullScreenClick = useCallback(() => {
     patchEditorLayoutChange();
     setState({ ...state, fullScreen: !fullScreen });

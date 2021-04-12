@@ -12,7 +12,8 @@ const flowsConfig = {type: 'flows'};
 
 const eventReportDetailRows = [
 
-  { heading: 'Integration',
+  {
+    heading: 'Integration',
     value: function IntegrationName(r) {
       const integrationId = useSelector(state => selectors.resource(state, 'flows', r?._flowIds[0])?._integrationId);
       const integration = useSelector(state => selectors.resource(state, 'integrations', integrationId));
@@ -51,7 +52,6 @@ const eventReportDetailRows = [
           <Typography>{flows?.length} flows</Typography>
           {flows?.map(({name}) => (
             <Fragment key={name}>
-              <div />
               <Typography>{name}</Typography>
             </Fragment>
           ))}
@@ -107,6 +107,14 @@ const useStyles = makeStyles(theme => ({
   listRoot: {
     padding: theme.spacing(2),
   },
+  tabWrapper: {
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    paddingLeft: theme.spacing(2),
+  },
+  reportDetailsWrapper: {
+    background: theme.palette.background.paper,
+    minHeight: '100%',
+  },
 }));
 
 function Details({resource}) {
@@ -126,18 +134,21 @@ function Details({resource}) {
 }
 
 export default function ViewReportDetails({resource}) {
+  const classes = useStyles();
+
   return (
-    <>
+    <div className={classes.reportDetailsWrapper}>
       <Tabs
         value="viewDetails"
         textColor="primary"
+        className={classes.tabWrapper}
         indicatorColor="primary" >
         <Tab
-          label="View Details"
+          label="View details"
           value="viewDetails"
         />
       </Tabs>
       <Details resource={resource} />
-    </>
+    </div>
   );
 }

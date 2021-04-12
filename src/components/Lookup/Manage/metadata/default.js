@@ -88,7 +88,7 @@ const getLookupMetadata = ({
         resourceType,
         flowId,
         label: 'HTTP request body',
-        defaultValue: lookup.body,
+        defaultValue: lookup.body || lookup.postBody,
         visibleWhenAll: [
           {
             field: '_mode',

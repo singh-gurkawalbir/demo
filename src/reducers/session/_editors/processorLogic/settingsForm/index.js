@@ -4,16 +4,42 @@ import util from '../../../../../utils/json';
 import { safeParse, isJsonString } from '../../../../../utils/string';
 import javascript from '../javascript';
 
-export function extractForm(data, mode) {
-  let parsedData = data;
+export function generateScriptInput(parsedData, flowGrouping, resourceDocs, defaultMeta) {
+  const {resource, parentResource, license, parentLicense} = resourceDocs || {};
 
-  if (typeof data === 'string') {
-    try {
-      parsedData = JSON.parse(data);
-    } catch (e) {
-      return;
-    }
+  const input = {
+    resource: {
+      ...resource || {},
+      settingsForm: {
+        form: parsedData || defaultMeta,
+      },
+    },
+    parentResource,
+    grandParentResource: undefined,
+    license: license || {},
+    parentLicense: parentLicense || {},
+    sandbox: !!resource?.sandbox,
+  };
+
+  // for flow grouping, the schema changes
+  if (flowGrouping) {
+    input.resource = {
+      name: flowGrouping.title,
+      settings: flowGrouping.settings,
+      _id: flowGrouping.sectionId,
+      settingsForm: {
+        form: parsedData || defaultMeta,
+      },
+    };
+    input.parentResource = resource || {};
+    input.grandParentResource = parentResource;
   }
+
+  return input;
+}
+
+export function extractForm(data, mode) {
+  const parsedData = safeParse(data);
 
   if (mode === 'json') {
     return parsedData;
@@ -24,16 +50,14 @@ export function extractForm(data, mode) {
   }
 }
 
-export function toggleData(data, mode) {
+export function toggleData(data, mode, flowGrouping, resourceDocs) {
   if (typeof data === 'string' && !isJsonString(data)) {
     return data;
   }
 
-  const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+  const parsedData = safeParse(data);
   const hasWrapper = !!(parsedData?.resource?.settingsForm?.form !== undefined);
   let finalData = parsedData;
-
-  // console.log(mode, hasWrapper);
 
   if (mode === 'json') {
     // try and find only the form meta...
@@ -45,23 +69,15 @@ export function toggleData(data, mode) {
     }
     // script
   } else if (!hasWrapper) {
-    finalData = {
-      resource: {
-        settingsForm: {
-          form: parsedData || { fieldMap: {}, layout: { fields: [] } },
-        },
-      },
-      parentResource: {},
-      license: {},
-      parentLicense: {},
-      sandbox: false,
-    };
+    const defaultMeta = { fieldMap: {}, layout: { fields: [] } };
+
+    finalData = generateScriptInput(parsedData, flowGrouping, resourceDocs, defaultMeta);
   }
 
   return JSON.stringify(finalData, null, 2);
 }
 
-// get correct patch path in case of flowgroupings sections for integration resource
+// get correct patch path in case of flow groupings sections for integration resource
 export function generatePatchPath(sectionId, allSections, path) {
   if (!sectionId || sectionId === 'general' || !allSections) return path;
   // if sectionId is defined and its not general we are probably looking up a flow grouping
@@ -79,7 +95,14 @@ export default {
 
     return !code || !entryFunction;
   },
-  init: ({options, settingsForm, settings, integrationAllSections}) => {
+  init: ({options, settingsForm, settings, integrationAllSections, resourceDocs}) => {
+    const isFlowGroupingSection = options.sectionId && options.sectionId !== 'general';
+    let flowGrouping;
+
+    if (isFlowGroupingSection) {
+      flowGrouping = integrationAllSections?.find(sec => sec.sectionId === options.sectionId);
+    }
+
     const { form, init = {} } = settingsForm || {};
     const mode = init._scriptId ? 'script' : 'json';
     const initForm = form || {
@@ -97,7 +120,7 @@ export default {
     if (init._scriptId) {
       rule.script.scriptId = init._scriptId;
     }
-    const data = mode === 'script' ? toggleData(initForm, 'script') : initForm;
+    const data = mode === 'script' ? toggleData(initForm, 'script', flowGrouping, resourceDocs) : initForm;
 
     return {
       ...options,
@@ -106,37 +129,19 @@ export default {
       settings,
       insertStubKey: 'formInit',
       activeProcessor: mode,
-      originalData: data,
+      originalData: initForm,
+      flowGrouping,
+      resourceDocs,
       settingsFormPatchPath: generatePatchPath(options.sectionId, integrationAllSections, '/settingsForm'),
     };
   },
   requestBody: editor => {
-    const { data, rule, context, activeProcessor } = editor;
+    const { data, rule, context, activeProcessor, flowGrouping, resourceDocs } = editor;
     const {code, entryFunction} = rule.script || {};
-    let parsedData;
-
-    if (typeof data === 'string') {
-      try {
-        parsedData = JSON.parse(data);
-      } catch (e) {
-        parsedData = {};
-      }
-    } else {
-      parsedData = data;
-    }
+    let parsedData = safeParse(data) || {};
 
     if (activeProcessor === 'json') {
-      parsedData = {
-        resource: {
-          settingsForm: {
-            form: parsedData,
-          },
-        },
-        parentResource: {},
-        license: {},
-        parentLicense: {},
-        sandbox: false,
-      };
+      parsedData = generateScriptInput(parsedData, flowGrouping, resourceDocs);
     }
 
     const body = {
@@ -168,7 +173,10 @@ export default {
       return true;
     }
 
-    return javascript.dirty(editor);
+    return javascript.dirty({
+      originalRule: editor.originalRule?.script,
+      rule: editor.rule?.script,
+    });
   },
 
   validate: ({ data }) => {
@@ -291,8 +299,6 @@ export default {
       resourceType,
       resourceId,
     });
-
-    // console.log(patches);
 
     return patches;
   },

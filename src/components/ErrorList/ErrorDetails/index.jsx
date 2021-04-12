@@ -85,8 +85,8 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
   const availableTabs = useMemo(() => {
     const tabs = [ERROR_DETAILS_TABS.VIEW_FIELDS];
 
-    if (retryId && !isResolved) {
-      if (isFlowDisabled) {
+    if (retryId) {
+      if (isFlowDisabled || isResolved) {
         tabs.push(ERROR_DETAILS_TABS.VIEW_RETRY_DATA);
       } else {
         tabs.push(ERROR_DETAILS_TABS.EDIT_RETRY_DATA);

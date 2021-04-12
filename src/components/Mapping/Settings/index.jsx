@@ -31,7 +31,7 @@ function MappingSettings({
   ...categoryMappingOpts
 }) {
   const history = useHistory();
-  const { editorId, integrationId, mappingIndex, depth } = categoryMappingOpts;
+  const { editorId, integrationId, mappingIndex, depth, sectionId } = categoryMappingOpts;
   const [enquesnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const {importId, flowId, subRecordMappingId, isGroupedSampleData} = useSelector(state => {
@@ -59,7 +59,7 @@ function MappingSettings({
   const generateFields = useSelector(state => {
     if (isCategoryMapping) {
       const {fields: generateFields} = selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
-        sectionId: editorId,
+        sectionId,
         depth,
       }) || emptyObject;
 
@@ -239,9 +239,9 @@ function MappingSettingsWrapper(props) {
   );
 }
 function CategoryMappingSettingsWrapper(props) {
-  const { integrationId, flowId, importId, sectionId } = props;
+  const { integrationId, flowId, importId } = props;
   const match = useRouteMatch();
-  const { editorId, mappingIndex, depth } = match.params;
+  const { editorId, mappingIndex, depth, sectionId } = match.params;
   const isSettingsConfigured = useSelector(state => {
     const {mappings} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId);
 
@@ -276,7 +276,7 @@ export default function SettingsDrawer(props) {
       disableBackdropClick
       path={[
         'settings/:mappingKey',
-        'settings/category/:editorId/:depth/:mappingIndex',
+        'settings/category/:editorId/sections/:sectionId/:depth/:mappingIndex',
       ]}
       height="tall"
     >
@@ -284,10 +284,10 @@ export default function SettingsDrawer(props) {
 
       <Switch>
         <Route
-          path={`${match.url}/settings/category/:editorId/:depth/:mappingIndex`}>
+          path={`${match.url}/settings/category/:editorId/sections/:sectionId/:depth/:mappingIndex`}>
           <CategoryMappingSettingsWrapper
             {...props}
-            sectionId={match.params?.categoryId} />
+            />
         </Route>
         <Route
           path={`${match.url}/settings/:mappingKey`}>

@@ -48,16 +48,15 @@ const useStyles = makeStyles(theme => ({
   },
   searchButton: {
     color: theme.palette.common.white,
-    // Has to update with the base svg
-    '& > * svg': {
-      fontSize: theme.spacing(2),
-      // check why position is not working when there is a parent wrapper
-      marginRight: theme.spacing(1),
-    },
+    minWidth: 190,
+    padding: theme.spacing(1, 5),
   },
-  searchMoreSpinner: {
+  iconSearchBtn: {
+    fontSize: 16,
+    marginRight: theme.spacing(1),
     color: theme.palette.common.white,
   },
+
 }));
 
 export default function LogsTable({ flowId, exportId }) {
@@ -145,12 +144,12 @@ export default function LogsTable({ flowId, exportId }) {
               onClick={loadMoreLogs}>
               {loadMoreStatus === 'requested' ? (
                 <>
-                  <Spinner className={classes.searchMoreSpinner} size="small" />
+                  <Spinner className={classes.iconSearchBtn} size="small" />
                   Searching
                 </>
               ) : (
                 <>
-                  <SearchIcon className={classes.searchMoreIcon} />
+                  <SearchIcon className={classes.iconSearchBtn} />
                   Search more
                 </>
               )}

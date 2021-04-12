@@ -629,11 +629,36 @@ export function* initEditor({ id, editorType, options }) {
 
       formattedOptions = init({options: formattedOptions, resource, formValues, fieldState, connection, isPageGenerator});
     } else if (editorType === 'settingsForm') {
-      const sectionMeta = yield select(selectors.mkGetCustomFormPerSectionId(), resourceType, resourceId, sectionId || 'general');
+      let parentResource = {};
+      const sectionMeta = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
       const { settingsForm, settings} = sectionMeta || {};
-      const integrationAllSections = yield select(selectors.mkGetAllCustomFormsForAResource(), 'integrations', integrationId);
+      const integrationAllSections = yield select(selectors.getAllSections, 'integrations', integrationId);
 
-      formattedOptions = init({options: formattedOptions, settingsForm, settings, integrationAllSections: integrationAllSections?.allSections});
+      if (resource?._parentId) {
+        parentResource = yield select(selectors.resource, resourceType, resource._parentId);
+      }
+      const isIAResource = !!(resource?._connectorId);
+      let license;
+      let parentLicense;
+
+      // license is only available for IAs
+      if (isIAResource) {
+        const licenses = yield select(selectors.licenses);
+
+        license = licenses.find(l => l._integrationId === integrationId);
+
+        if (license?._parentId) {
+          parentLicense = licenses.find(l => l._id === license._parentId);
+        }
+      }
+
+      formattedOptions = init({
+        options: formattedOptions,
+        settingsForm,
+        settings,
+        integrationAllSections: integrationAllSections?.allSections,
+        resourceDocs: {resource, parentResource, license, parentLicense},
+      });
     } else if (editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') {
       const {userDefinitionId, fileDefinitionResourcePath, value: fieldValue, options: fieldOptions} = fieldState;
       const { format, definitionId } = fieldOptions || {};

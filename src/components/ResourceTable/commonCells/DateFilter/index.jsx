@@ -22,6 +22,11 @@ const useStyles = makeStyles({
   filterTimeStampArrowPopperExpand: {
     left: '98% !important',
   },
+  dateFilterWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    whiteSpace: 'nowrap',
+  },
 
 });
 const defaultRange = {
@@ -69,7 +74,7 @@ export default function SelectDate({
   } : defaultRange, [isDateFilterSelected, filter, filterBy]);
 
   return (
-    <div> {title}
+    <div className={classes.dateFilterWrapper}> {title}
       <DateRangeSelector
         clearable
         classProps={classes}
