@@ -190,7 +190,7 @@ export function* installScriptStep({
     );
 
   if (!isEmpty(connectionDoc)) {
-    yield put(actions.resource.request('connections', currentConnectionStep._connectionId));
+    yield put(actions.resource.request('connections', currentConnectionStep?._connectionId));
   }
 
   if (currentConnectionStep && isOauth(connectionDoc)) {
