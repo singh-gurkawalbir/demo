@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
   },
   buttonWrapper: {
     color: theme.palette.primary.main,
-    fontWeight: 'bold',
+    fontFamily: 'source sans pro semibold',
   },
   spinner: {
     marginRight: theme.spacing(1),
@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 export default function FetchProgressIndicator({
   // we could also have a local state and action
   // which stores all below values and thus this component can read them
-  // via useSelector. We can enhance this based on the demand of this component
+  // via useSelector. We can enhance this based on the demand of the component
   fetchStatus,
   pauseHandler,
   resumeHandler,

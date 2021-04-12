@@ -29,7 +29,7 @@ const useStyles = makeStyles({
   },
 
 });
-const defaultRange = {
+const DEFAULT_RANGE = {
   startDate: startOfDay(addDays(new Date(), -29)),
   endDate: new Date(),
   preset: 'last30days',
@@ -42,6 +42,7 @@ export default function SelectDate({
   handleChange,
   customPresets,
   showTime = false,
+  defaultRange = DEFAULT_RANGE,
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -71,7 +72,7 @@ export default function SelectDate({
     startDate: new Date(filter[filterBy].startDate),
     endDate: new Date(filter[filterBy].endDate),
     preset: filter[filterBy].preset,
-  } : defaultRange, [isDateFilterSelected, filter, filterBy]);
+  } : defaultRange, [isDateFilterSelected, filter, filterBy, defaultRange]);
 
   return (
     <div className={classes.dateFilterWrapper}> {title}

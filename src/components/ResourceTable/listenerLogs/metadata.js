@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import DateFilter from '../commonCells/DateFilter';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
-import { LISTENER_LOGS_RANGE_FILTERS, FILTER_KEY, LISTENER_LOGS_STATUS_CODES } from '../../../utils/listenerLogs';
+import { LISTENER_LOGS_RANGE_FILTERS, FILTER_KEY, LISTENER_LOGS_STATUS_CODES, DEFAULT_RANGE } from '../../../utils/listenerLogs';
 import TrashIcon from '../../icons/TrashIcon';
 
 import LogDetailsLink from './cells/LogDetailsLink';
@@ -26,6 +26,7 @@ export default {
             filterKey={FILTER_KEY}
             handleChange={handleChange}
             customPresets={LISTENER_LOGS_RANGE_FILTERS}
+            defaultRange={DEFAULT_RANGE}
             showTime />
         );
       },
@@ -56,7 +57,6 @@ export default {
         );
       },
       value: log => log.statusCode,
-      align: 'right',
     },
   ],
   rowActions: (log, {flowId, exportId}) => ([

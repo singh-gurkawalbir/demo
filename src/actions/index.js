@@ -2214,6 +2214,8 @@ const logs = {
     startLogsPoll: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.START_POLL, { flowId, exportId }),
     stopLogsPoll: (exportId, hasNewLogs) => action(actionTypes.LOGS.LISTENER.STOP_POLL, { exportId, hasNewLogs }),
     setActiveLog: (exportId, activeLogKey) => action(actionTypes.LOGS.LISTENER.ACTIVE_LOG, { exportId, activeLogKey }),
+    setFetchStatus: (exportId, status) => action(actionTypes.LOGS.LISTENER.FETCH_STATUS, { exportId, status }),
+    pauseFetch: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.PAUSE_FETCH, { flowId, exportId }),
   },
 };
 
