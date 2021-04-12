@@ -12,6 +12,7 @@ import {
   assign,
   unionBy,
   isNumber,
+  get,
 } from 'lodash';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
@@ -1056,6 +1057,14 @@ export function generateValidReactFormFieldId(fieldId) {
     .replace(/\[/g, '*_*')
     .replace(/\]/g, '*__*');
 }
+export const isMetaRequiredValuesMet = (meta, value) => {
+  if (!meta.fields) return true;
+  const requiredFields = meta.fields.filter(field => field.required);
+
+  if (!requiredFields || !requiredFields.length) return true;
+
+  return requiredFields.map(({id}) => id).every(id => get(value, id));
+};
 
 export function convertToReactFormFields({
   paramMeta = {},
