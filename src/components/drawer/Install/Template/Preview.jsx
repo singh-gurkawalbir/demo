@@ -166,6 +166,17 @@ export default function TemplatePreview() {
     });
   };
 
+  const celigoAuthoredDisclaimer = 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the components in this template, but unlike Integration apps, updates to the master integration template will not be propagated to your account';
+  const thirdPartyDisclaimer = 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the components in this template, but unlike Integration apps, updates to the master integration template will not be propagated to your account. This template has not been reviewed by Celigo. Make sure you trust the publisher before installing, and carefully review all components in the integration before proceeding.';
+  const isStaging = process?.env.API_ENDPOINT === 'https://staging.integrator.io';
+  const getMessageForTemplate = () => {
+    if ((template?.user.company === 'Celigo') || (isStaging && template?.user.company === 'Celigo - Templates Team')) {
+      return celigoAuthoredDisclaimer;
+    }
+
+    return thirdPartyDisclaimer;
+  };
+
   const handleInstallIntegration = () => {
     if (template._connectorId) {
       installTemplate();
@@ -175,7 +186,7 @@ export default function TemplatePreview() {
 
     confirmDialog({
       title: 'Disclaimer',
-      message: 'Please note that by default all integration flows will be disabled when first installed, and that you will need to explicitly enable each flow that you want to use. Please note also that you can modify, delete, or extend any of the components that get installed, and unlike Integration apps, updates to the master integration template will never be propagated automatically to your account. Lastly, please note that integration templates are not explicitly reviewed by Celigo, and please be sure to review all components in the integration before proceeding.',
+      message: getMessageForTemplate(),
       buttons: [
         {
           label: 'Proceed',
