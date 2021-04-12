@@ -4333,8 +4333,9 @@ selectors.applicationType = (state, resourceType, id) => {
     );
   }
 
+  // For Data Loader cases, there is no image.
   if (getStagedValue('/type') === 'simple' || resourceObj?.type === 'simple') {
-    return 'dataLoader';
+    return '';
   }
 
   if (adaptorType?.toUpperCase().startsWith('RDBMS')) {
