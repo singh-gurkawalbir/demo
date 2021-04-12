@@ -177,7 +177,7 @@ export default {
           resourceId,
           flowId,
           resourceType: 'imports',
-          defaultValue: lookup.body || '',
+          defaultValue: lookup.body || lookup.postBody || '',
           required: true,
           label: 'HTTP request body',
           // helpText not present

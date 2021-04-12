@@ -62,6 +62,7 @@ export default function SaveButtonGroup({ value, formKey, disabled, onCancel, re
         lookupObj.method = formVal._method;
         lookupObj.relativeURI = formVal._relativeURI;
         lookupObj.body = formVal._body;
+        lookupObj.postBody = formVal._body;
         lookupObj.extract = formVal._extract;
       }
 
