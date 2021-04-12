@@ -126,6 +126,7 @@ const DateRange = props => {
     return (
       <Calendar
         {...props}
+        showDateDisplay={false}
         onChange={handleCalendardateSelection}
         months={1}
      />
