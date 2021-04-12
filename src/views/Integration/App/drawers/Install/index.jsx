@@ -145,9 +145,7 @@ export default function ConnectorInstallation(props) {
     (left, right) => (left.openOauthConnection === right.openOauthConnection && left.connectionId === right.connectionId)
   );
 
-  const oauthConnection = useSelector(state =>
-    selectors.resource(state, 'connections', connectionId)
-  );
+  const oauthConnection = useSelectorMemo(selectors.makeResourceSelector, 'connections', connectionId);
 
   useEffect(() => {
     if (openOauthConnection && oauthConnection) {
