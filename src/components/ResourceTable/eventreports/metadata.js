@@ -148,6 +148,7 @@ const metadata = {
     },
     {
       heading: 'Requested by',
+      width: '130px',
       Value: function RequestedByUser({r}) {
         const {requestedByUser} = r;
 

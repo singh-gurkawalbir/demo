@@ -6,10 +6,9 @@ import ImportMapping from './Mappings';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
 export default function MappingWrapper(props) {
-  const { flowId, generateFields, sectionId, integrationId, depth } = props;
+  const { flowId, id, generateFields, sectionId, integrationId, depth } = props;
   const [initTriggered, setInitTriggered] = useState(false);
   const [resetMappings, setResetMappings] = useState(false);
-  const id = sectionId;
   const resourceId = useSelector(state => {
     const flow = selectors.resource(state, 'flows', flowId);
 

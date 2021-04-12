@@ -409,6 +409,7 @@ export default function ImportMapping(props) {
                       integrationId={integrationId}
                       flowId={flowId}
                       depth={depth}
+                      sectionId={sectionId}
                       editorId={editorId}
                       {...options}
                     />

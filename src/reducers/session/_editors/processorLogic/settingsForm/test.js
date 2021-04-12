@@ -1,6 +1,6 @@
-/* global describe, test, expect */
+/* global describe, test, expect, beforeEach */
 
-import processorLogic, { extractForm, toggleData, generatePatchPath } from './index';
+import processorLogic, { generateScriptInput, extractForm, toggleData, generatePatchPath } from './index';
 
 const {
   skipPreview,
@@ -13,6 +13,67 @@ const {
 } = processorLogic;
 
 describe('settingsForm processor logic', () => {
+  describe('generateScriptInput util', () => {
+    let parsedData;
+    let resourceDocs;
+
+    beforeEach(() => {
+      parsedData = { fieldMap: {}, layout: { fields: [] } };
+      resourceDocs = {
+        license: {
+          _integrationId: 'intId',
+          name: 'license',
+        },
+        parentResource: {
+          name: 'Parent Resource name',
+        },
+        resource: {
+          _connectorId: 'connId',
+          _parentId: 'parentId',
+          name: 'Resource name',
+          sandbox: true,
+        },
+      };
+    });
+    test('should return correct input data if no flow grouping is passed', () => {
+      const expectedOutput = {
+        resource: {
+          _connectorId: 'connId',
+          _parentId: 'parentId',
+          name: 'Resource name',
+          sandbox: true,
+          settingsForm: {
+            form: parsedData,
+          },
+        },
+        parentResource: resourceDocs.parentResource,
+        license: resourceDocs.license,
+        parentLicense: {},
+        sandbox: true,
+      };
+
+      expect(generateScriptInput(parsedData, null, resourceDocs)).toEqual(expectedOutput);
+    });
+    test('should return correct input data if flow grouping is present', () => {
+      const flowGrouping = { title: 'Customers', sectionId: 'Cus-1234567', settingsForm: {} };
+      const expectedOutput = {
+        resource: {
+          name: flowGrouping.title,
+          _id: flowGrouping.sectionId,
+          settingsForm: {
+            form: parsedData,
+          },
+        },
+        parentResource: resourceDocs.resource,
+        grandParentResource: resourceDocs.parentResource,
+        license: resourceDocs.license,
+        parentLicense: {},
+        sandbox: true,
+      };
+
+      expect(generateScriptInput(parsedData, flowGrouping, resourceDocs)).toEqual(expectedOutput);
+    });
+  });
   describe('extractForm util', () => {
     test('should return undefined if data is invalid json', () => {
       const data = '{"id": 123}}';
@@ -78,7 +139,26 @@ describe('settingsForm processor logic', () => {
         sandbox: false,
       }, null, 2);
 
-      expect(toggleData(data, 'script')).toEqual(formData);
+      expect(toggleData(data, 'script', {}, {})).toEqual(formData);
+    });
+    test('should return the stringified complete resource with flow grouping when mode is not json and flow grouping is present', () => {
+      const data = { fieldMap: {}, layout: { fields: [] } };
+      const flowGrouping = { title: 'Customers', sectionId: 'Cus-1234567', settingsForm: {} };
+      const formData = JSON.stringify({
+        resource: {
+          name: 'Customers',
+          _id: 'Cus-1234567',
+          settingsForm: {
+            form: { fieldMap: {}, layout: { fields: [] } },
+          },
+        },
+        parentResource: {},
+        license: {},
+        parentLicense: {},
+        sandbox: false,
+      }, null, 2);
+
+      expect(toggleData(data, 'script', flowGrouping, {})).toEqual(formData);
     });
   });
   describe('generatePatchPath util', () => {
@@ -136,17 +216,23 @@ describe('settingsForm processor logic', () => {
     });
   });
   describe('init util', () => {
-    test('should correctly return data and activeProcessor when resource does not contain script', () => {
-      const options = {
+    let options;
+    let settingsForm;
+
+    beforeEach(() => {
+      options = {
         fieldId: 'settings',
         stage: 'flowInput',
         resourceId: 'res-123',
         resourceType: 'imports',
       };
-      const settingsForm = {
+      settingsForm = {
         form: { fieldMap: {}, layout: { fields: [] } },
         init: {},
       };
+    });
+
+    test('should correctly return data and activeProcessor when resource does not contain script', () => {
       const expectedOutput = {
         fieldId: 'settings',
         stage: 'flowInput',
@@ -168,26 +254,17 @@ describe('settingsForm processor logic', () => {
       expect(init({options, settingsForm})).toEqual(expectedOutput);
     });
     test('should correctly return data and activeProcessor when resource contains a script', () => {
-      const options = {
-        fieldId: 'settings',
-        stage: 'flowInput',
-        resourceId: 'res-123',
-        resourceType: 'imports',
+      settingsForm.init = {
+        _scriptId: '123456',
+        function: 'newFunc',
       };
-      const settingsForm = {
-        form: { fieldMap: {}, layout: { fields: [] } },
-        init: {
-          _scriptId: '123456',
-          function: 'newFunc',
-        },
-      };
+
       const parsedData = {
         resource: {
           settingsForm: {
             form: { fieldMap: {}, layout: { fields: [] } },
           },
         },
-        parentResource: {},
         license: {},
         parentLicense: {},
         sandbox: false,
@@ -207,11 +284,41 @@ describe('settingsForm processor logic', () => {
           },
         },
         insertStubKey: 'formInit',
-        originalData: JSON.stringify(parsedData, null, 2),
+        originalData: { fieldMap: {}, layout: { fields: [] } },
         settingsFormPatchPath: '/settingsForm',
+        resourceDocs: {},
       };
 
-      expect(init({options, settingsForm})).toEqual(expectedOutput);
+      expect(init({options, settingsForm, resourceDocs: {}})).toEqual(expectedOutput);
+    });
+    test('should correctly return data with flow grouping if applicable', () => {
+      options.sectionId = 'Cus-1234567';
+      const integrationAllSections = [
+        {settingsForm: {}, title: 'General', sectionId: 'general'},
+        { title: 'Customers', sectionId: 'Cus-1234567', settingsForm: {} },
+      ];
+      const expectedOutput = {
+        sectionId: 'Cus-1234567',
+        fieldId: 'settings',
+        stage: 'flowInput',
+        resourceId: 'res-123',
+        resourceType: 'imports',
+        activeProcessor: 'json',
+        data: { fieldMap: {}, layout: { fields: [] } },
+        rule: {
+          script: {
+            entryFunction: 'main',
+            fetchScriptContent: true,
+          },
+        },
+        insertStubKey: 'formInit',
+        originalData: { fieldMap: {}, layout: { fields: [] } },
+        settingsFormPatchPath: '/flowGroupings/0/settingsForm',
+        resourceDocs: {},
+        flowGrouping: { title: 'Customers', sectionId: 'Cus-1234567', settingsForm: {} },
+      };
+
+      expect(init({options, settingsForm, integrationAllSections, resourceDocs: {}})).toEqual(expectedOutput);
     });
   });
   describe('requestBody util', () => {
@@ -232,6 +339,7 @@ describe('settingsForm processor logic', () => {
           },
         },
         originalData: { fieldMap: {}, layout: { fields: [] } },
+        resourceDocs: {},
       };
       const expectedBody = {
         rules: {
@@ -243,7 +351,6 @@ describe('settingsForm processor logic', () => {
               form: { fieldMap: {}, layout: { fields: [] } },
             },
           },
-          parentResource: {},
           license: {},
           parentLicense: {},
           sandbox: false,

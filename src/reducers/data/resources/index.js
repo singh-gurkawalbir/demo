@@ -658,7 +658,7 @@ selectors.mkGetAllCustomFormsForAResource = () => {
     }
   );
 };
-
+selectors.getAllSections = selectors.mkGetAllCustomFormsForAResource();
 selectors.mkGetCustomFormPerSectionId = () => {
   const sectionsMetadata = selectors.mkGetAllCustomFormsForAResource();
 
