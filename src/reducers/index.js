@@ -4786,10 +4786,9 @@ selectors.integrationErrorsPerFlowGroup = createSelector(
     const errorCount = errorMap[flowId] || 0;
 
     if (!groupErrorMap[groupId]) {
-      groupErrorMap[groupId] = errorCount;
-    } else {
-      groupErrorMap[groupId] += errorCount;
+      groupErrorMap[groupId] = 0;
     }
+    groupErrorMap[groupId] += errorCount;
 
     return groupErrorMap;
   }, {})
