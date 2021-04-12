@@ -14,7 +14,8 @@ export default (state = {}, action) => {
     // eslint-disable-next-line default-case
     switch (type) {
       case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE:
-        draft[id] = {};
+        draft[id] = {openOauthConnection: draft[id]?.openOauthConnection, connectionId: draft[id]?.connectionId};
+
         break;
       case actionTypes.INTEGRATION_APPS.INSTALLER.RECEIVED_OAUTH_CONNECTION_STATUS:
         draft[id] = {};

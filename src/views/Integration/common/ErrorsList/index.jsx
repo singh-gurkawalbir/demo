@@ -32,6 +32,11 @@ const metadata = {
       heading: 'Application',
       value: function Application({ type, id }) {
         const applicationType = useSelector(state => selectors.applicationType(state, type, id));
+        const isDataLoader = useSelector(state => selectors.isDataLoaderExport(state, id));
+
+        if (isDataLoader) {
+          return 'Data loader';
+        }
 
         return (
           <ApplicationImg
