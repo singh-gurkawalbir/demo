@@ -41,7 +41,7 @@ export default function ViewReportDetails() {
         </LoadResources>
       </DrawerContent>
       <DrawerFooter >
-        <Button variant="contained" color="primary" onClick={() => history.goBack()}>Close </Button>
+        <Button variant="outlined" color="primary" onClick={() => history.goBack()}>Close </Button>
       </DrawerFooter>
     </RightDrawer>
   );

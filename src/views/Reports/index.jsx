@@ -29,20 +29,34 @@ const useStyles = makeStyles(theme => ({
   },
   actions: {
     display: 'flex',
+    padding: theme.spacing(2),
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
   resultContainer: {
-    padding: theme.spacing(3, 3, 12, 3),
+    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
+    overflowY: 'auto',
   },
-  tablePaginationRoot: {
-    width: '167px',
+  reportTypes: {
+    border: 'none',
   },
   tablePagination: {
-    float: 'right',
-    display: 'flex',
-    alignItems: 'center',
-    paddingBottom: 18,
-    whiteSpace: 'nowrap',
-    marginLeft: theme.spacing(2),
+    '& > div': {
+      marginRight: theme.spacing(-2),
+    },
+  },
+  noDataMessage: {
+    padding: theme.spacing(2),
+  },
+  resultData: {
+    margin: theme.spacing(3),
+    background: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    padding: theme.spacing(0, 2),
+    overflowX: 'auto',
+  },
+  reportsTable: {
+    overflowX: 'auto',
   },
 }));
 const defaultFilter = {
@@ -141,7 +155,7 @@ const RefreshPaginationComponent = ({resourceType, isLoadingResource}) => {
       </IconTextButton>
 
       {isRefreshedByUser ? <div className={classes.tablePaginationRoot} />
-        : <Pagination className={classes.tablePaginationRoot} filterKey={resourceType} />}
+        : <Pagination filterKey={resourceType} />}
     </>
 
   );
@@ -212,7 +226,7 @@ export default function Reports() {
       <ViewReportDetails />
       <CeligoPageBar
         title="Reports">
-        <div className={classes.actions}>
+        <div>
           <CeligoSelect
             className={classes.reportTypes}
             data-public
@@ -235,38 +249,42 @@ export default function Reports() {
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>
-        <div className={classes.actions}>
-          <Typography
-            variant="h4">
-            {reportTypeLabel} report results  {info && <InfoIconButton info={info} />}
-          </Typography>
-          <div className={classes.emptySpace} />
-
-          <IconTextButton
-            data-test="addNewResource"
-            component={Link}
-            to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
-            variant="text"
-            color="primary">
-            <AddIcon /> Run report
-          </IconTextButton>
-          <RefreshPaginationComponent
-            isLoadingResource={isLoadingResource}
-            resourceType={resourceType} />
-        </div>
-        {!isDataReadyAfterUserRefresh && <Spinner centerAll />}
-        <LoadResources required resources={`${resourceType},integrations,flows`}>
-          {list.total === 0 ? (
-            <Typography>
-              {'You don\'t have any report results'}
+        <div className={classes.resultData}>
+          <div className={classes.actions}>
+            <Typography
+              variant="h4">
+              {reportTypeLabel} report results  {info && <InfoIconButton info={info} />}
             </Typography>
-          ) : (
-            <ResourceTable
-              resourceType={resourceType}
-              resources={list.resources}
+            <div className={classes.emptySpace} />
+
+            <IconTextButton
+              data-test="addNewResource"
+              component={Link}
+              to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
+              variant="text"
+              color="primary">
+              <AddIcon /> Run report
+            </IconTextButton>
+            <RefreshPaginationComponent
+              isLoadingResource={isLoadingResource}
+              resourceType={resourceType} />
+          </div>
+          {!isDataReadyAfterUserRefresh && <Spinner centerAll />}
+          <div className={classes.reportsTable}>
+            <LoadResources required resources={`${resourceType},integrations,flows`}>
+              {list.total === 0 ? (
+                <Typography className={classes.noDataMessage}>
+                  {'You don\'t have any report results'}
+                </Typography>
+              ) : (
+                <ResourceTable
+                  resourceType={resourceType}
+                  resources={list.resources}
             />
-          )}
-        </LoadResources>
+              )}
+            </LoadResources>
+          </div>
+        </div>
       </div>
     </>
   );
