@@ -391,8 +391,10 @@ export default function getRequestOptions(
         if (!codesList.includes('all')) {
           codesList.forEach(c => queryParams.push(`statusCode=${c}`));
         }
-        if (time?.startDate && time?.endDate) {
+        if (time?.startDate) {
           queryParams.push(`time_gt=${time.startDate.getTime()}`);
+        }
+        if (time?.endDate) {
           queryParams.push(`time_lte=${time.endDate.getTime()}`);
         }
 

@@ -39,14 +39,16 @@ export const getLineColor = index => {
   return colorSpectrum[index % 8];
 };
 
-export const getSelectedRange = range => {
+export const getSelectedRange = (range, skipLastEndDate) => {
   if (!range || typeof range !== 'object') {
     return {};
   }
   const { startDate, endDate, preset = 'custom' } = range;
   let start = startDate;
   let end = endDate;
-  const currentDate = moment().toDate();
+
+  // if skipLastEndDate is true, end date is skipped for 'last x' preset types
+  const currentDate = skipLastEndDate ? null : moment().toDate();
 
   switch (preset) {
     case 'lastmin':
@@ -122,19 +124,19 @@ export const getSelectedRange = range => {
       end = currentDate;
       break;
     case 'after14days':
-      start = currentDate;
+      start = moment().toDate();
       end = moment().add(13, 'days').endOf('day').toDate();
       break;
     case 'after30days':
-      start = currentDate;
+      start = moment().toDate();
       end = moment().add(29, 'days').endOf('day').toDate();
       break;
     case 'after6months':
-      start = currentDate;
+      start = moment().toDate();
       end = moment().add(6, 'months').endOf('day').toDate();
       break;
     case 'after1year':
-      start = currentDate;
+      start = moment().toDate();
       end = moment().add(1, 'years').endOf('day').toDate();
       break;
     case 'lastrun':

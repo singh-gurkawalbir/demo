@@ -45,8 +45,9 @@ export default function LogsDrawerActions({ flowId, exportId }) {
     const {startDate, endDate} = filterOptions.time || {};
 
     return {
-      startTime: startDate ? startDate.getTime() : (hasCodesFilter && moment().subtract(29, 'days').startOf('day').toDate()),
-      endTime: endDate ? endDate.getTime() : (hasCodesFilter && moment().toDate()),
+      startTime: startDate ? startDate.getTime() : (hasCodesFilter && moment().subtract(29, 'days').startOf('day').toDate()
+        .getTime()),
+      endTime: endDate ? endDate.getTime() : null,
     };
   }, [filterOptions.codes, filterOptions.time]);
 

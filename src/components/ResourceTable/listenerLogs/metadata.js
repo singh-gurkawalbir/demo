@@ -27,7 +27,8 @@ export default {
             handleChange={handleChange}
             customPresets={LISTENER_LOGS_RANGE_FILTERS}
             defaultRange={DEFAULT_RANGE}
-            showTime />
+            showTime
+            skipLastEndDate />
         );
       },
       value: function LogDetails(log, {exportId}) {

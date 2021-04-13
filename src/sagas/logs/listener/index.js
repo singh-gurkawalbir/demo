@@ -97,35 +97,35 @@ export function* retryToFetchRequests({freshCall, count = 0, fetchRequestsPath, 
   const newCount = count + requests.length;
 
   if (!nextPageURL) {
-    yield put(
+    yield call(putReceivedAction, {exportId, requests, loadMore: !!shouldAppendLogs});
+
+    return yield put(
       actions.logs.listener.setFetchStatus(
         exportId,
         'completed'
       )
     );
-
-    return {requests, hasMore: !!shouldAppendLogs };
   }
 
   if (newCount >= 1000) {
-    yield put(
+    yield call(putReceivedAction, {exportId, requests, nextPageURL, loadMore: !!shouldAppendLogs});
+
+    return yield put(
       actions.logs.listener.setFetchStatus(
         exportId,
         'paused'
       )
     );
-
-    return {requests, nextPageURL, hasMore: !!shouldAppendLogs };
   }
 
   if (newCount < 1000) {
+    yield call(putReceivedAction, {exportId, requests, nextPageURL, loadMore: !!shouldAppendLogs});
     yield put(
       actions.logs.listener.setFetchStatus(
         exportId,
         'inProgress'
       )
     );
-    yield call(putReceivedAction, {exportId, requests, nextPageURL, loadMore: !!shouldAppendLogs});
     // continue
   }
 
@@ -142,9 +142,8 @@ export function* requestLogs({ flowId, exportId, loadMore }) {
     { flowId, exportId, filters, nextPageURL, loadMore }
   );
   const { path } = requestOptions;
-  const { requests = [], nextPageURL: nextPageURLResponse, hasMore } = yield call(retryToFetchRequests, {freshCall: true, fetchRequestsPath: path, loadMore, exportId });
 
-  yield call(putReceivedAction, {exportId, requests, nextPageURL: nextPageURLResponse, loadMore: !!hasMore});
+  yield call(retryToFetchRequests, {freshCall: true, fetchRequestsPath: path, loadMore, exportId });
 
   // get the hasNewLogs again from the state once logs are received
   const hasNewLogs = yield select(selectors.hasNewLogs, exportId);

@@ -43,6 +43,7 @@ export default function SelectDate({
   customPresets,
   showTime = false,
   defaultRange = DEFAULT_RANGE,
+  skipLastEndDate = false,
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -51,7 +52,7 @@ export default function SelectDate({
 
   const handleDateFilter = useCallback(
     dateFilter => {
-      const selectedRange = getSelectedRange(dateFilter);
+      const selectedRange = getSelectedRange(dateFilter, skipLastEndDate);
 
       dispatch(
         actions.patchFilter(filterKey, {
@@ -64,7 +65,7 @@ export default function SelectDate({
       );
       handleChange?.();
     },
-    [dispatch, filter, filterBy, filterKey, handleChange],
+    [dispatch, filter, filterBy, filterKey, handleChange, skipLastEndDate],
   );
   const FilterIcon = () => <FilterIconWrapper selected={isDateFilterSelected} />;
 

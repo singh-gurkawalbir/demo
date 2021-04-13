@@ -170,7 +170,7 @@ describe('Listener logs sagas', () => {
       ])
       .returns({})
       .run());
-    test('should dispatch setFetchStatus action and return requests and exit from saga if there is no nextPageURL', () => expectSaga(retryToFetchRequests, {fetchRequestsPath: '/somepath', exportId})
+    test('should dispatch setFetchStatus action and call putReceivedAction and exit from saga if there is no nextPageURL', () => expectSaga(retryToFetchRequests, {fetchRequestsPath: '/somepath', exportId})
       .provide([
         [call(apiCallWithRetry, {
           path: '/somepath',
@@ -184,9 +184,10 @@ describe('Listener logs sagas', () => {
           'completed'
         )
       )
-      .returns({requests: [{key: 'key1', others: {}}], hasMore: true})
+      .call(putReceivedAction, {exportId, requests: [{key: 'key1', others: {}}], loadMore: true})
+      .not.call.fn(retryToFetchRequests)
       .run());
-    test('should dispatch setFetchStatus action and return requests and exit from saga if total logs count is more than 1000', () => expectSaga(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/somepath', exportId})
+    test('should dispatch setFetchStatus action and call putReceivedAction and exit from saga if total logs count is more than 1000', () => expectSaga(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/somepath', exportId})
       .provide([
         [call(apiCallWithRetry, {
           path: '/somepath',
@@ -201,7 +202,8 @@ describe('Listener logs sagas', () => {
           'paused'
         )
       )
-      .returns({requests: get1000Logs(), nextPageURL: '/nexturl1', hasMore: false })
+      .call(putReceivedAction, {exportId, requests: get1000Logs(), nextPageURL: '/nexturl1', loadMore: false})
+      .not.call.fn(retryToFetchRequests)
       .run());
     test('should dispatch setFetchStatus action and call putReceivedAction and continue to retryToFetchRequests if total logs count is less than 1000', () => expectSaga(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/somepath', exportId})
       .provide([
@@ -229,17 +231,13 @@ describe('Listener logs sagas', () => {
   });
 
   describe('requestLogs saga', () => {
-    test('should call retryToFetchRequests and call putReceivedAction saga', () => expectSaga(requestLogs, { flowId, exportId })
+    test('should call retryToFetchRequests saga', () => expectSaga(requestLogs, { flowId, exportId })
       .provide([
         [select(selectors.listenerLogs, exportId), {nextPageURL: '/nexturl1'}],
         [select(selectors.filter, FILTER_KEY), {time: {}}],
         [matchers.call.fn(apiCallWithRetry), {}],
       ])
       .call(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/flows/flow-123/exp-123/requests', loadMore: undefined, exportId})
-      .call(putReceivedAction, {exportId: 'exp-123',
-        requests: [],
-        nextPageURL: undefined,
-        loadMore: false})
       .not.call.fn(startPollingForRequestLogs)
       .run());
     test('should call startPollingForRequestLogs if debugOn is set and hasNewLogs is false', () => expectSaga(requestLogs, { flowId, exportId })
@@ -250,10 +248,6 @@ describe('Listener logs sagas', () => {
         [matchers.call.fn(startPollingForRequestLogs), undefined],
       ])
       .call(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/flows/flow-123/exp-123/requests', loadMore: undefined, exportId})
-      .call(putReceivedAction, {exportId: 'exp-123',
-        requests: [],
-        nextPageURL: undefined,
-        loadMore: false})
       .call(startPollingForRequestLogs, {flowId, exportId})
       .run());
     test('should not call startPollingForRequestLogs if hasNewLogs is true and loadMore is true', () => expectSaga(requestLogs, { flowId, exportId, loadMore: true })
@@ -268,10 +262,6 @@ describe('Listener logs sagas', () => {
         [matchers.call.fn(startPollingForRequestLogs), undefined],
       ])
       .call(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/nexturl1', loadMore: true, exportId})
-      .call(putReceivedAction, {exportId: 'exp-123',
-        requests: [],
-        nextPageURL: undefined,
-        loadMore: false})
       .not.call.fn(startPollingForRequestLogs)
       .run());
     test('should continue poll and call startPollingForRequestLogs if hasNewLogs was true but logs received action is dispatched with loadMore as false', () => expectSaga(requestLogs, { flowId, exportId })
@@ -282,10 +272,6 @@ describe('Listener logs sagas', () => {
         [matchers.call.fn(startPollingForRequestLogs), undefined],
       ])
       .call(retryToFetchRequests, {freshCall: true, fetchRequestsPath: '/flows/flow-123/exp-123/requests', loadMore: undefined, exportId})
-      .call(putReceivedAction, {exportId: 'exp-123',
-        requests: [],
-        nextPageURL: undefined,
-        loadMore: false})
       .call(startPollingForRequestLogs, {flowId, exportId})
       .run());
   });
