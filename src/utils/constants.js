@@ -569,6 +569,9 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'salesforce.relatedLists.userDefined',
     'salesforce.distributed.batchSize',
     'salesforce.soql.query',
+    'salesforce.distributed.referencedFields',
+    'salesforce.distributed.relatedLists',
+    'salesforce.distributed.qualifier',
     'schedule',
     'timeZone',
     'activeTab',
@@ -626,6 +629,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'dayToRunOn',
     '_keepDeltaBehindFlowId',
     '_keepDeltaBehindExportId',
+    'settings',
   ],
 });
 export const CLONING_SUPPORTED_IAS = ['sfnsio'];
