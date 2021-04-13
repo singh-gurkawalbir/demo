@@ -11,7 +11,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import CeligoDivider from '../../../CeligoDivider';
 import FieldHelp from '../../../DynaForm/FieldHelp';
 import LookupDrawer from '../../../drawer/Lookup';
-import * as completers from '../../../AFE/editorSetup/completers';
+import * as completers from '../../Editor/panels/Handlebars/autocompleteSetup/completers';
 
 const useStyles = makeStyles({
   button: {

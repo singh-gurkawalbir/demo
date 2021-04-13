@@ -15,7 +15,7 @@ import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { apiCallWithRetry } from '../..';
-import { evaluateExternalProcessor } from '../../editor';
+import { evaluateExternalProcessor } from '../../_editor';
 import { getResource } from '../../resources';
 import {
   requestSampleDataForExports,
@@ -386,7 +386,7 @@ export function* requestProcessorData({
         processorData = {
           data: preProcessedSampleData,
           rule,
-          processor: 'transform',
+          editorType: 'transform',
         };
       }
     } else if (transform.type === 'script') {
@@ -400,9 +400,11 @@ export function* requestProcessorData({
 
         processorData = {
           data: preProcessedData,
-          code: script && script.content,
-          entryFunction,
-          processor: 'javascript',
+          rule: {
+            code: script?.content,
+            entryFunction,
+          },
+          editorType: 'javascript',
           wrapInArrayProcessedData: true,
         };
       } else {
@@ -438,11 +440,13 @@ export function* requestProcessorData({
 
       processorData = {
         data: preProcessedData,
-        code,
+        rule: {
+          code,
+          entryFunction: hook.function,
+        },
         context,
-        entryFunction: hook.function,
         removeDataPropFromProcessedData: stage === 'preMap',
-        processor: 'javascript',
+        editorType: 'javascript',
       };
     } else {
       hasNoRulesToProcess = true;

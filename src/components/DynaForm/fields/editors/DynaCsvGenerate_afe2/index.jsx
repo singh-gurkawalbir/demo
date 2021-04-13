@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../../reducers';
 import FieldHelp from '../../../FieldHelp';
-import getFormMetadata from '../DynaCsvGenerate/metadata';
+import getFormMetadata from './metadata';
 import DynaForm from '../../..';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import { generateNewId } from '../../../../../utils/resource';

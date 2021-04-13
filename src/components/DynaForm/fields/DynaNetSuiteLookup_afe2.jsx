@@ -67,10 +67,11 @@ export default function DynaNetSuiteLookup_afe2(props) {
       fieldId: id,
       stage: 'importMappingExtract',
       onSave: handleSave,
+      customOptions: options,
     }));
 
     history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
+  }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId, options]);
 
   return (
     <>

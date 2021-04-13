@@ -10,7 +10,7 @@ import {
   getPatchPathForCustomForms,
   getFieldWithReferenceById,
 } from '../../forms/formFactory/utils';
-import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
+import processorLogic from '../../reducers/session/_editors/processorLogic/javascript';
 import { getResource, commitStagedChanges } from '../resources';
 import connectionSagas, { createPayload } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
@@ -113,8 +113,9 @@ export function* runHook({ hook, data }) {
     method: 'post',
     body: processorLogic.requestBody({
       data,
-      code,
-      entryFunction,
+      rule: {code,
+        entryFunction,
+      },
     }),
   };
   const results = yield call(apiCallWithRetry, { path, opts });
