@@ -8,6 +8,7 @@ import actions from '../../../../actions';
 import useConfirmDialog from '../../../ConfirmDialog';
 import PreviewTable from '../common/PreviewTable';
 import getRoutePath from '../../../../utils/routePaths';
+import messageStore from '../../../../constants/messages';
 
 const emptyObject = {};
 
@@ -61,7 +62,7 @@ export default function IntegrationPreview() {
   const handleInstallIntegration = () => {
     confirmDialog({
       title: 'Disclaimer',
-      message: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the resources in this integration, but  updates to the original integration will not affect this new copy. This integration has not been reviewed by Celigo. Make sure you trust the author before installing, and carefully review all components in the integration before proceeding.',
+      message: messageStore('DIY_INTSALL_DISCLAIMER'),
       buttons: [
         {
           label: 'Proceed',

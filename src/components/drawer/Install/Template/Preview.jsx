@@ -9,6 +9,7 @@ import useConfirmDialog from '../../../ConfirmDialog';
 import PreviewTable from '../common/PreviewTable';
 import AddIcon from '../../../icons/AddIcon';
 import getRoutePath from '../../../../utils/routePaths';
+import messageStore from '../../../../constants/messages';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -166,15 +167,13 @@ export default function TemplatePreview() {
     });
   };
 
-  const celigoAuthoredDisclaimer = 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the components in this template, but unlike Integration apps, updates to the master integration template will not be propagated to your account';
-  const thirdPartyDisclaimer = 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the components in this template, but unlike Integration apps, updates to the master integration template will not be propagated to your account. This template has not been reviewed by Celigo. Make sure you trust the publisher before installing, and carefully review all components in the integration before proceeding.';
   const isStaging = process?.env.API_ENDPOINT === 'https://staging.integrator.io';
   const getMessageForTemplate = () => {
     if ((template?.user.company === 'Celigo') || (isStaging && template?.user.company === 'Celigo - Templates Team')) {
-      return celigoAuthoredDisclaimer;
+      return messageStore('CELIGO_AUTHORED_TEMPLATE_DISCLAIMER');
     }
 
-    return thirdPartyDisclaimer;
+    return messageStore('THIRD_PARTY_TEMPLATE_DISCLAIMER');
   };
 
   const handleInstallIntegration = () => {
