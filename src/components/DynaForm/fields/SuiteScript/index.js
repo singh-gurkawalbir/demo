@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import DynaApiMethod from './DynaApiMethod';
-import DynaCsvParse_afe from './editors/DynaCsvParse_afe';
+import DynaCsvParse_afe from './DynaCsvParse_afe';
 import DynaNetSuiteFolderPath from './DynaNetSuiteFolderPath';
 import DynaSoqlQuery from './DynaSoqlQuery';
 import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';

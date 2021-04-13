@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import actions from '../../../../../actions';
-import { selectors } from '../../../../../reducers';
-import { safeParse } from '../../../../../utils/string';
-import useFormContext from '../../../../Form/FormContext';
+import actions from '../../../../actions';
+import { selectors } from '../../../../reducers';
+import { safeParse } from '../../../../utils/string';
+import useFormContext from '../../../Form/FormContext';
 
 function extractResourcePath(value, initialResourcePath) {
   if (value) {

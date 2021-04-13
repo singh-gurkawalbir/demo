@@ -1,58 +1,78 @@
 /* eslint-disable camelcase */
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, FormLabel } from '@material-ui/core';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { selectors } from '../../../../../reducers';
+import actions from '../../../../../actions';
 import FieldHelp from '../../../FieldHelp';
-import getFormMetadata from './metadata';
+import getFormMetadata from '../../../../AFE/Editor/panels/CsvParseRules/suitescript/formMeta';
 import DynaForm from '../../..';
-import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import { useUpdateParentForm } from '../../DynaCsvGenerate_afe';
 import { generateNewId } from '../../../../../utils/resource';
-import useFormContext from '../../../../Form/FormContext';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useSetSubFormShowValidations from '../../../../../hooks/useSetSubFormShowValidations';
 import { getValidRelativePath } from '../../../../../utils/routePaths';
-import actions from '../../../../../actions';
+import FileDataChange from '../../DynaCsvParse_afe/FileDataChange';
 
 const useStyles = makeStyles(theme => ({
-  csvContainer: {
+  container: {
     width: '100%',
-    marginBottom: theme.spacing(2),
+    paddingLeft: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
   },
-  csvBtn: {
+  button: {
     maxWidth: 100,
   },
-  csvLabel: {
+  label: {
     marginBottom: 6,
   },
-  csvLabelWrapper: {
+  labelWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
   },
+  fileUploadLabelWrapper: {
+    width: '100%',
+    marginTop: 'auto',
+    marginBottom: 'auto',
+
+  },
+  fileUploadRoot: {
+    width: '100%',
+  },
+  actionContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+
+  },
+  uploadContainer: {
+    justifyContent: 'flex-end',
+    background: 'transparent !important',
+    border: '0px !important',
+    width: 'auto !important',
+    padding: 4,
+  },
+  uploadFileErrorContainer: {
+    marginBottom: 4,
+  },
+  fileUPloadBtnLabel: {
+    fontSize: 17,
+  },
 }));
 
-// resourceId and resourceType are not saved on form doc
-const getParserValue = ({customHeaderRows, resourceId, resourceType, ...rest}) => ({
-  ...rest,
-  customHeaderRows: customHeaderRows?.split('\n').filter(val => val !== ''),
+const getParserValue = ({
+  columnDelimiter,
+  rowDelimiter,
+  hasHeaderRow,
+  keyColumns,
+}) => ({
+  columnDelimiter,
+  rowDelimiter,
+  hasHeaderRow,
+  keyColumns,
 });
 
-export const useUpdateParentForm = (secondaryFormKey, handleFormChange) => {
-  const { value: secondaryFormValue, fields, isValid} = useFormContext(secondaryFormKey);
-
-  useEffect(() => {
-    if (secondaryFormValue) {
-      const isFormTouched = Object.values(fields).some(val => val.touched);
-
-      // skip updates till secondary form is touched
-      handleFormChange(secondaryFormValue, isValid, !isFormTouched);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [secondaryFormValue, fields, isValid]);
-};
-export default function DynaCsvGenerate_afe(props) {
-  const classes = useStyles();
+export default function DynaCsvParse_afe(props) {
   const {
     id,
     onFieldChange,
@@ -61,36 +81,20 @@ export default function DynaCsvGenerate_afe(props) {
     resourceId,
     resourceType,
     disabled,
-    flowId,
+    ssLinkedConnectionId,
     formKey: parentFormKey,
+    flowId,
   } = props;
+  const classes = useStyles();
   const [remountKey, setRemountKey] = useState(1);
+  const secondaryFormKey = useRef(generateNewId());
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
-  const secondaryFormKey = useRef(generateNewId());
   const editorId = getValidRelativePath(id);
 
-  const isHttpImport = useSelector(state => {
-    const {merged: resource = {}} = selectors.resourceData(state, resourceType, resourceId);
+  const [form, setForm] = useState(getFormMetadata({...value, resourceId, resourceType, ssLinkedConnectionId }));
 
-    return resource?.adaptorType === 'HTTPImport';
-  });
-  const getInitOptions = useCallback(
-    val => {
-      const {customHeaderRows = [], ...others} = val;
-      const opts = {...others, resourceId, resourceType};
-
-      if (isHttpImport) {
-        opts.customHeaderRows = customHeaderRows?.join('\n');
-      }
-
-      return opts;
-    },
-    [isHttpImport, resourceId, resourceType],
-  );
-  const initOptions = useMemo(() => getInitOptions(value), [getInitOptions, value]);
-  const [form, setForm] = useState(getFormMetadata({...initOptions, customHeaderRowsSupported: isHttpImport}));
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {
       const parsersValue = getParserValue(newOptions);
@@ -110,10 +114,10 @@ export default function DynaCsvGenerate_afe(props) {
     const { rule } = editorValues;
     const parsedVal = getParserValue(rule);
 
-    setForm(getFormMetadata({...rule, customHeaderRowsSupported: isHttpImport}));
+    setForm(getFormMetadata({...rule, resourceId, resourceType, ssLinkedConnectionId}));
     setRemountKey(remountKey => remountKey + 1);
     onFieldChange(id, parsedVal);
-  }, [id, isHttpImport, onFieldChange]);
+  }, [id, onFieldChange, resourceId, resourceType, ssLinkedConnectionId]);
 
   useUpdateParentForm(secondaryFormKey.current, handleFormChange);
   useSetSubFormShowValidations(parentFormKey, secondaryFormKey.current);
@@ -126,7 +130,7 @@ export default function DynaCsvGenerate_afe(props) {
   });
 
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(editorId, 'csvGenerator', {
+    dispatch(actions._editor.init(editorId, 'csvParser', {
       formKey: parentFormKey,
       flowId,
       resourceId,
@@ -134,23 +138,28 @@ export default function DynaCsvGenerate_afe(props) {
       fieldId: id,
       stage: 'flowInput',
       onSave: handleSave,
+      isSuiteScriptData: true,
+      ssLinkedConnectionId,
     }));
 
     history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
+  }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId, ssLinkedConnectionId]);
 
   return (
     <>
-      <div className={classes.csvContainer}>
-        <div className={classes.csvLabelWrapper}>
-          <FormLabel className={classes.csvLabel}>{label}</FormLabel>
+      <div className={classes.container}>
+        {/* todo: FileDataChange is a temporary hack until Raghu's changes are
+        done re dispatching of SAMPLEDATA_UPDATED action to update editor sample data */}
+        <FileDataChange editorId={editorId} fileType="csv" />
+        <div className={classes.labelWrapper}>
+          <FormLabel className={classes.label}>{label}</FormLabel>
           <FieldHelp {...props} />
         </div>
         <Button
           data-test={id}
           variant="outlined"
           color="secondary"
-          className={classes.csvBtn}
+          className={classes.button}
           onClick={handleEditorClick}>
           Launch
         </Button>

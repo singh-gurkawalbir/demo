@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { FormLabel, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import FieldHelp from '../../FieldHelp';
-import DynaHook from '../DynaHook_afe';
-import ModalDialog from '../../../ModalDialog';
+import FieldHelp from '../FieldHelp';
+import DynaHook from './DynaHook_afe';
+import ModalDialog from '../../ModalDialog';
 
 const useStyles = makeStyles({
   dynaRoutingRulesWrapper: {

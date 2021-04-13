@@ -1,4 +1,4 @@
-import csvOptions from '../../../../AFE/Editor/panels/CsvParseRules/options';
+import csvOptions from '../../../AFE/Editor/panels/CsvParseRules/options';
 
 export default function getFormMetadata(options) {
   const fieldMeta = {

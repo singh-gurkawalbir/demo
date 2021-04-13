@@ -1,19 +1,19 @@
 /* eslint-disable camelcase */
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, FormLabel } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import actions from '../../../../../../actions';
-import FieldHelp from '../../../../FieldHelp';
-import getFormMetadata from '../../../../../AFE/Editor/panels/CsvParseRules/suitescript/formMeta';
-import DynaForm from '../../../..';
-import { useUpdateParentForm } from '../../../editors/DynaCsvGenerate_afe';
-import { generateNewId } from '../../../../../../utils/resource';
-import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
-import useSetSubFormShowValidations from '../../../../../../hooks/useSetSubFormShowValidations';
-import { getValidRelativePath } from '../../../../../../utils/routePaths';
-import FileDataChange from '../../../editors/DynaCsvParse_afe/FileDataChange';
+import actions from '../../../../actions';
+import FieldHelp from '../../FieldHelp';
+import getForm from '../../../AFE/Editor/panels/CsvParseRules/formMeta';
+import DynaForm from '../..';
+import {useUpdateParentForm} from '../DynaCsvGenerate_afe';
+import { generateNewId } from '../../../../utils/resource';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
+import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowValidations';
+import { getValidRelativePath } from '../../../../utils/routePaths';
+import FileDataChange from './FileDataChange';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -31,45 +31,12 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-start',
   },
-  fileUploadLabelWrapper: {
-    width: '100%',
-    marginTop: 'auto',
-    marginBottom: 'auto',
-
-  },
-  fileUploadRoot: {
-    width: '100%',
-  },
-  actionContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-
-  },
-  uploadContainer: {
-    justifyContent: 'flex-end',
-    background: 'transparent !important',
-    border: '0px !important',
-    width: 'auto !important',
-    padding: 4,
-  },
-  uploadFileErrorContainer: {
-    marginBottom: 4,
-  },
-  fileUPloadBtnLabel: {
-    fontSize: 17,
-  },
 }));
 
-const getParserValue = ({
-  columnDelimiter,
-  rowDelimiter,
-  hasHeaderRow,
-  keyColumns,
-}) => ({
-  columnDelimiter,
-  rowDelimiter,
-  hasHeaderRow,
-  keyColumns,
+// multipleRowsPerRecord is not saved on form doc
+const getParserValue = ({rowsToSkip, multipleRowsPerRecord, ...rest}) => ({
+  ...rest,
+  rowsToSkip: Number.isInteger(rowsToSkip) ? rowsToSkip : 0,
 });
 
 export default function DynaCsvParse_afe(props) {
@@ -81,7 +48,6 @@ export default function DynaCsvParse_afe(props) {
     resourceId,
     resourceType,
     disabled,
-    ssLinkedConnectionId,
     formKey: parentFormKey,
     flowId,
   } = props;
@@ -93,7 +59,18 @@ export default function DynaCsvParse_afe(props) {
   const match = useRouteMatch();
   const editorId = getValidRelativePath(id);
 
-  const [form, setForm] = useState(getFormMetadata({...value, resourceId, resourceType, ssLinkedConnectionId }));
+  const getInitOptions = useCallback(
+    val => {
+      if (!('trimSpaces' in val)) {
+        return {...val, trimSpaces: true};
+      }
+
+      return val;
+    },
+    [],
+  );
+  const initOptions = useMemo(() => getInitOptions(value), [getInitOptions, value]);
+  const [form, setForm] = useState(getForm({...initOptions, resourceId, resourceType}));
 
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {
@@ -114,10 +91,25 @@ export default function DynaCsvParse_afe(props) {
     const { rule } = editorValues;
     const parsedVal = getParserValue(rule);
 
-    setForm(getFormMetadata({...rule, resourceId, resourceType, ssLinkedConnectionId}));
+    setForm(getForm({...rule, resourceId, resourceType}));
     setRemountKey(remountKey => remountKey + 1);
     onFieldChange(id, parsedVal);
-  }, [id, onFieldChange, resourceId, resourceType, ssLinkedConnectionId]);
+
+    // todo: @raghu removing this dispatch action from here as it will be taken care
+    // by field change on the form itself. Please confirm and remove this comment
+    // dispatch(
+    //   actions.sampleData.request(
+    //     resourceId,
+    //     resourceType,
+    //     {
+    //       type: 'csv',
+    //       // file: csvData,
+    //       editorValues,
+    //     },
+    //     'file'
+    //   )
+    // );
+  }, [id, onFieldChange, resourceId, resourceType]);
 
   useUpdateParentForm(secondaryFormKey.current, handleFormChange);
   useSetSubFormShowValidations(parentFormKey, secondaryFormKey.current);
@@ -138,12 +130,10 @@ export default function DynaCsvParse_afe(props) {
       fieldId: id,
       stage: 'flowInput',
       onSave: handleSave,
-      isSuiteScriptData: true,
-      ssLinkedConnectionId,
     }));
 
     history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId, ssLinkedConnectionId]);
+  }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
 
   return (
     <>
@@ -163,6 +153,7 @@ export default function DynaCsvParse_afe(props) {
           onClick={handleEditorClick}>
           Launch
         </Button>
+
       </div>
       <DynaForm
         formKey={formKeyComponent}

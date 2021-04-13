@@ -4,11 +4,11 @@ import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import actions from '../../../../../actions';
-import LoadResources from '../../../../LoadResources';
-import useFormContext from '../../../../Form/FormContext';
-import FieldHelp from '../../../FieldHelp';
-import { getValidRelativePath } from '../../../../../utils/routePaths';
+import actions from '../../../../actions';
+import LoadResources from '../../../LoadResources';
+import useFormContext from '../../../Form/FormContext';
+import FieldHelp from '../../FieldHelp';
+import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDefinitionChange from './FileDefinitionChange';
 
 /*

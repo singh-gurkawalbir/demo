@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import actions from '../../../../../actions';
-import { selectors } from '../../../../../reducers';
+import actions from '../../../../actions';
+import { selectors } from '../../../../reducers';
 
 export default function FileDataChange({editorId, fileType}) {
   const dispatch = useDispatch();

@@ -3,16 +3,16 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { makeStyles, Button, FormLabel } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { selectors } from '../../../../../reducers';
-import actions from '../../../../../actions';
-import DynaForm from '../../..';
-import FieldHelp from '../../../FieldHelp';
-import getForm from '../../../../AFE/Editor/panels/XmlParseRules/formMeta';
-import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
-import { isNewId } from '../../../../../utils/resource';
+import { selectors } from '../../../../reducers';
+import actions from '../../../../actions';
+import DynaForm from '../..';
+import FieldHelp from '../../FieldHelp';
+import getForm from '../../../AFE/Editor/panels/XmlParseRules/formMeta';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
+import { isNewId } from '../../../../utils/resource';
 import {useUpdateParentForm} from '../DynaCsvGenerate_afe';
-import useSetSubFormShowValidations from '../../../../../hooks/useSetSubFormShowValidations';
-import { getValidRelativePath } from '../../../../../utils/routePaths';
+import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowValidations';
+import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDataChange from '../DynaCsvParse_afe/FileDataChange';
 
 const getParserValue = ({
