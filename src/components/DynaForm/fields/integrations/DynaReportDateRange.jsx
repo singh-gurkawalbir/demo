@@ -28,6 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
   filterTimeStampPopper: {
     top: '5px !important',
+    zIndex: 1300,
   },
   filterTimeStampPopperArrow: {
     left: '90% !important',
