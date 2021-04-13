@@ -7,7 +7,7 @@ import actions from '../../../actions';
 import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import examples from '../examples';
-import { editorList } from '../../../components/AFE2/metadata';
+import { editorList } from '../../../components/AFE/metadata';
 
 const useStyles = makeStyles(theme => ({
   editorItem: {
