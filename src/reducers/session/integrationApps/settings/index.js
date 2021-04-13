@@ -65,7 +65,6 @@ export default (state = {}, action) => {
     flowId,
     licenseId,
     response,
-    redirectTo,
     metadata,
     error,
     mappingData,
@@ -172,13 +171,6 @@ export default (state = {}, action) => {
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT:
         if (draft[integrationId]) delete draft[integrationId].redirectTo;
-        break;
-      case actionTypes.INTEGRATION.REDIRECT:
-        if (!draft[integrationId]) {
-          draft[integrationId] = {};
-        }
-
-        draft[integrationId].redirectTo = redirectTo;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED:
         draft[licenseId] = true;
@@ -988,14 +980,6 @@ selectors.integrationAppMappingMetadata = (state, integrationId) => {
   }
 
   return state[integrationId] || emptyObj;
-};
-
-selectors.shouldRedirect = (state, integrationId) => {
-  if (!state || !state[integrationId]) {
-    return null;
-  }
-
-  return state[integrationId].redirectTo;
 };
 
 selectors.checkUpgradeRequested = (state, licenseId) => {

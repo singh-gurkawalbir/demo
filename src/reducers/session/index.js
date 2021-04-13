@@ -35,6 +35,7 @@ import exportDataReducer, { selectors as fromExportData } from './exportData';
 import customSettings, { selectors as fromCustomSettings } from './customSettings';
 import recycleBin, { selectors as fromRecycleBin } from './recycleBin';
 import logs, {selectors as fromLogs} from './logs';
+import integrations, {selectors as fromIntegrations} from './integrations';
 import { genSelectors } from '../util';
 
 export default combineReducers({
@@ -59,6 +60,7 @@ export default combineReducers({
   flowData,
   flowMetrics,
   integrationApps,
+  integrations,
   templates,
   oAuthAuthorize,
   mapping,
@@ -98,6 +100,7 @@ const subSelectors = {
   importSampleData: fromImportSampleData,
   flowData: fromFlowData,
   integrationApps: fromIntegrationApps,
+  integrations: fromIntegrations,
   templates: fromTemplates,
   oAuthAuthorize: fromOAuthAuthorize,
   resource: fromResource,
