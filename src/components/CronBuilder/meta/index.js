@@ -9,16 +9,13 @@ const meta = {
       max: 55,
       step: 5,
       unit: 'minute',
-
     },
     everySelectedMinute: {
       id: 'everySelectedMinute',
       name: 'everySelectedMinute',
       label: ' Each selected minute',
       type: 'groupedButton',
-
       unit: 'minute',
-
       options: [
         {
           items: [
@@ -35,7 +32,6 @@ const meta = {
       name: 'everyHour',
       unit: 'hour',
       type: 'cronlabel',
-
     },
     everyNHours: {
       id: 'everyNHours',
@@ -46,14 +42,12 @@ const meta = {
       min: 1,
       max: 23,
       step: 1,
-
     },
     eachSelectedHour: {
       id: 'eachSelectedHour',
       name: 'eachSelectedHour',
       label: 'Each selected',
       type: 'groupedButton',
-
       options: [
         {
           items: [
@@ -90,15 +84,12 @@ const meta = {
       name: 'everyDay',
       unit: 'day',
       type: 'cronlabel',
-
     },
     eachDay: {
       id: 'eachDay',
-
       name: 'eachDay',
       label: 'Each selected day',
       type: 'groupedButton',
-
       options: [
         {
           items: [
@@ -143,15 +134,12 @@ const meta = {
       name: 'everyMonth',
       unit: 'month',
       type: 'cronlabel',
-
     },
     eachMonth: {
       id: 'eachMonth',
-
       name: 'eachMonth',
       label: 'Each selected month',
       type: 'groupedButton',
-
       options: [
         {
           items: [
@@ -171,21 +159,17 @@ const meta = {
         },
       ],
     },
-
     everyWeek: {
       id: 'everyWeek',
       name: 'everyWeek',
       unit: 'week',
       type: 'cronlabel',
-
     },
     eachWeek: {
       id: 'eachWeek',
-
       name: 'eachWeek',
       label: 'Each selected day',
       type: 'groupedButton',
-
       options: [
         {
           items: [
@@ -202,11 +186,9 @@ const meta = {
     },
   },
   layout: {
-    type: 'tabWithoutSave',
     containers: [
       {
         label: 'Minute',
-        type: 'tabWithoutSave',
         containers: [
           { label: 'Every n minutes', fields: ['everyNMinutes'] },
           {
@@ -217,7 +199,6 @@ const meta = {
       },
       {
         label: 'Hour',
-        type: 'tabWithoutSave',
         containers: [
           { label: 'Every hour', fields: ['everyHour'] },
           { label: 'Every n hours', fields: ['everyNHours'] },
@@ -226,7 +207,6 @@ const meta = {
       },
       {
         label: 'Day of month',
-        type: 'tabWithoutSave',
         containers: [
           { label: 'Every day', fields: ['everyDay'] },
           { label: 'Each day', fields: ['eachDay'] },
@@ -234,7 +214,6 @@ const meta = {
       },
       {
         label: 'Month',
-        type: 'tabWithoutSave',
         containers: [
           { label: 'Every month', fields: ['everyMonth'] },
           { label: 'Each month', fields: ['eachMonth'] },
@@ -242,7 +221,6 @@ const meta = {
       },
       {
         label: 'Day of week',
-        type: 'tabWithoutSave',
         containers: [
           { label: 'Every week', fields: ['everyWeek'] },
           { label: 'Each week', fields: ['eachWeek'] },
