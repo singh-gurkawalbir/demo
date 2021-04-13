@@ -32,6 +32,7 @@ export default function RefreshSearchFilters({ editorId }) {
       editorType: e.editorType,
     };
   }, shallowEqual);
+  const customOptions = useSelector(state => selectors._editor(state, editorId).customOptions, shallowEqual);
 
   const connectionId = useSelector(state => {
     const { merged: resourceData} = selectors.resourceData(state, resourceType, resourceId);
@@ -42,7 +43,8 @@ export default function RefreshSearchFilters({ editorId }) {
   const fieldState = useSelector(state => selectors.fieldState(state, formKey, fieldId));
   const {required, options = {}} = fieldState || {};
 
-  const { disableFetch, commMetaPath } = options;
+  // for IAs, options are passed via component and not stored in field state
+  const { disableFetch, commMetaPath } = customOptions || options;
   let filterKey;
 
   if (editorType === 'salesforceLookupFilter' || editorType === 'salesforceQualificationCriteria') {
@@ -87,6 +89,7 @@ export default function RefreshSearchFilters({ editorId }) {
           Refresh  search filters
         </FormLabel>
         <Button
+          disabled={disabled}
           data-test="refreshLookupFilters"
           className={classes.refreshFiltersButton}
           variant="text"

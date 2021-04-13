@@ -9,7 +9,7 @@ import RightDrawer from '../../components/drawer/Right';
 import DrawerHeader from '../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../components/drawer/Right/DrawerContent';
 import DatabaseMapping from './DatabaseMapping_afe2';
-import SelectQueryType from './DatabaseMapping/SelectQueryType';
+import SelectQueryType from './DatabaseMapping_afe2/SelectQueryType';
 import EditorDrawer from '../../components/AFE2/Drawer';
 
 const MappingWrapper = ({integrationId}) => {

@@ -112,7 +112,6 @@ export default {
   dataURITemplate: {
     type: 'uri',
     label: 'Data URI template',
-    // enableEditorV2: true,
     showLookup: false,
   },
   traceKeyTemplate: {

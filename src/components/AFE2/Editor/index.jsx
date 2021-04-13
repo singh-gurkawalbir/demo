@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { selectors } from '../../../reducers';
-import PanelGrid from '../../AFE/PanelGrid';
+import PanelGrid from './gridItems/PanelGrid';
 import ErrorGridItem from './gridItems/ErrorGridItem';
 import WarningGridItem from './gridItems/WarningGridItem';
 import ConsoleGridItem from './gridItems/ConsoleGridItem';

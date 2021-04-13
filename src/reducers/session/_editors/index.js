@@ -119,7 +119,6 @@ export default function reducer(state = {}, action) {
           draftRule === undefined;
 
         if (!shouldReplace) {
-          // TODO: ashu do we need to deep clone?
           Object.assign(draftRule, deepClone(rulePatch));
         } else if (ap) {
           draft[id].rule[ap] = rulePatch;

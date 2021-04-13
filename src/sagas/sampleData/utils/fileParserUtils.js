@@ -1,5 +1,5 @@
 import { call } from 'redux-saga/effects';
-import { evaluateExternalProcessor } from '../../editor';
+import { evaluateExternalProcessor } from '../../_editor';
 import { apiCallWithRetry } from '../../index';
 import { processJsonSampleData, processJsonPreviewData } from '../../../utils/sampleData';
 
@@ -81,8 +81,8 @@ export function* parseFileData({ sampleData, resource }) {
   const options = generateFileParserOptionsFromResource(resource);
   const processorData = {
     data: sampleData,
-    processor: PARSERS[fileType],
-    ...options,
+    editorType: PARSERS[fileType],
+    rule: options,
   };
 
   // console.log('parseFileData', processorData);

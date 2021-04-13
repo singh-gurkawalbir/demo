@@ -2,10 +2,10 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../reducers';
-import DynaNetSuiteLookup from './DynaNetSuiteLookup';
-import DynaNSQualifier from './DynaNetSuiteQualifier';
-import DynaSFLookup from './DynaSalesforceLookup';
-import DynaSFQualifier from './DynaSalesforceQualifier';
+import DynaNetSuiteLookup from './DynaNetSuiteLookup_afe2';
+import DynaNSQualifier from './DynaNetSuiteQualifier_afe2';
+import DynaSFLookup from './DynaSalesforceLookup_afe2';
+import DynaSFQualifier from './DynaSalesforceQualifier_afe2';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 export default function DynaIAExpression(props) {
@@ -122,6 +122,7 @@ export default function DynaIAExpression(props) {
       options={options}
       resourceId={resource?._id}
       connectionId={connection._id}
+      resourceType={type === 'export' ? 'exports' : 'imports'}
     />
   );
 }

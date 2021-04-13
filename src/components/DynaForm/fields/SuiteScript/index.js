@@ -14,18 +14,14 @@ import DynaNetSuiteSubRecords from './DynaNetSuiteSubRecords';
 
 export default {
   suitescriptapimethod: DynaApiMethod,
-  // suitescriptcsvparse: DynaCsvParse,
   suitescriptcsvparse: DynaCsvParse_afe2,
   suitescriptnetsuitefolderpath: DynaNetSuiteFolderPath,
   suitescriptsoqlquery: DynaSoqlQuery,
   suitescriptsalesforcerefreshableselect: DynaSalesforceRefreshableSelect,
   suitescriptapiparameters: DynaApiParameters,
   suitescriptnetsuiteupsertfield: DynaNetSuiteUpsertField,
-  // suitescriptnetsuitelookup: DynaNetSuiteLookup,
   suitescriptnetsuitelookup: DynaNetSuiteLookup_afe2,
-  // suitescriptfilekeycolumn: DynaFileKeyColumn,
   suitescriptfilekeycolumn: DynaFileKeyColumn_afe2,
-  // suitescriptsalesforcelookupfilters: DynaSalesforceLookupFilters,
   suitescriptsalesforcelookupfilters: DynaSalesforceLookupFilters_afe2,
   suitescriptrefreshableselect: DynaRefreshableSelect,
   suitescriptnetsuitesubrecords: DynaNetSuiteSubRecords,

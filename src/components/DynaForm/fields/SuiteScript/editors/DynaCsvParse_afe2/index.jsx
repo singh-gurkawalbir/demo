@@ -8,7 +8,7 @@ import actions from '../../../../../../actions';
 import FieldHelp from '../../../../FieldHelp';
 import getFormMetadata from '../../../../../AFE2/Editor/panels/CsvParseRules/suitescript/formMeta';
 import DynaForm from '../../../..';
-import { useUpdateParentForm } from '../../../editors/DynaCsvGenerate';
+import { useUpdateParentForm } from '../../../editors/DynaCsvGenerate_afe2';
 import { generateNewId } from '../../../../../../utils/resource';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 import useSetSubFormShowValidations from '../../../../../../hooks/useSetSubFormShowValidations';
