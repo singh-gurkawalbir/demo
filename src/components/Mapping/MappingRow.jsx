@@ -253,7 +253,7 @@ export default function MappingRow({
       { showAutoMapDivider && (
         <div className={classes.autoMapDivider}>
           <div className={classes.autoMapDividerLine} />
-          <Typography variant="caption">New fields</Typography>
+          <Typography variant="caption">New mappings</Typography>
           <div className={classes.autoMapDividerLine} />
         </div>
       )}
