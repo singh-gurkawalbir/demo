@@ -14,7 +14,7 @@ import { _getSampleDataRecordSize, _hasSampleDataOnResource, _getProcessorOutput
   requestExportSampleData,
   requestLookupSampleData } from './index';
 import { DEFAULT_RECORD_SIZE } from '../../../utils/exportPanel';
-import { evaluateExternalProcessor } from '../../editor';
+import { evaluateExternalProcessor } from '../../_editor';
 import {
   constructResourceFromFormValues,
 } from '../../utils';
@@ -399,9 +399,9 @@ describe('sampleData exports saga', () => {
         },
       };
       const processorData = {
-        resourcePath: '/',
+        rule: {resourcePath: '/'},
         data: '<xml>somedata</xml>',
-        processor: 'xmlParser',
+        editorType: 'xmlParser',
       };
 
       return expectSaga(_processRawData, { resourceId, resourceType, values})

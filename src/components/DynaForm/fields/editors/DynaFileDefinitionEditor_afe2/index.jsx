@@ -6,10 +6,6 @@ import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../../actions';
 import LoadResources from '../../../../LoadResources';
-import {
-  FILE_GENERATOR,
-  FILE_PARSER,
-} from '../../../../AFE/FileDefinitionEditor/constants';
 import useFormContext from '../../../../Form/FormContext';
 import FieldHelp from '../../../FieldHelp';
 import { getValidRelativePath } from '../../../../../utils/routePaths';
@@ -50,7 +46,7 @@ export default function DynaFileDefinitionEditor_afe2(props) {
   const editorId = getValidRelativePath(id);
 
   const parserType = resourceType === 'imports' ? 'fileDefinitionGenerator' : 'fileDefinitionParser';
-  const editorType = resourceType === 'imports' ? FILE_GENERATOR : FILE_PARSER;
+  const editorType = resourceType === 'imports' ? 'structuredFileGenerator' : 'structuredFileParser';
 
   const handleSave = useCallback(editorValues => {
     const { data, rule } = editorValues;
