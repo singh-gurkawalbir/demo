@@ -17,9 +17,6 @@ const useStyles = makeStyles({
   fullWidth: {
     width: '100%',
   },
-  option: {
-    cursor: 'pointer',
-  },
 });
 
 const Option = props => {
@@ -97,7 +94,6 @@ export const GenericTypeableSelect = props => {
   const customStylesMultiselect = {
     option: (provided, state) => ({
       ...provided,
-      padding: '0px',
       color: state.isSelected
         ? theme.palette.secondary.main
         : theme.palette.secondary.light,
@@ -109,11 +105,15 @@ export const GenericTypeableSelect = props => {
       minHeight: '38px',
       display: 'flex',
       cursor: 'pointer',
-      alignItems: 'center',
+      alignItems: 'flex-start',
+      padding: 6,
       borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
       '&:active': {
         backgroundColor: theme.palette.background.paper,
         color: theme.palette.secondary.light,
+      },
+      '& > .MuiCheckbox-root': {
+        marginRight: theme.spacing(0.5),
       },
     }),
     control: () => ({
