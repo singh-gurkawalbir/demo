@@ -166,9 +166,6 @@ export const GenericTypeableSelect = props => {
       maxHeight: '260px',
       overflowY: 'auto',
     }),
-    // group: () => ({
-    //   padding: '0px',
-    // }),
     valueContainer: () => ({
       minHeight: '38px',
       maxHeight: '100%',
@@ -196,6 +193,10 @@ export const GenericTypeableSelect = props => {
       minWidth: 'unset',
       padding: '1px 8px',
       border: `1px solid ${theme.palette.secondary.lightest}`,
+      '& > * .MuiChip-root': {
+        border: 'none',
+        height: 'unset',
+      },
     }),
     multiValueLabel: styles => ({
       ...styles,
