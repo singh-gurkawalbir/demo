@@ -9,7 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import CeligoSelect from '../../../../CeligoSelect';
-import options from '../../../../AFE/CsvConfigEditor/options';
+import options from '../CsvParseRules/options';
 import DynaSelectWithInput from '../../../../DynaForm/fields/DynaSelectWithInput';
 import DynaText from '../../../../DynaForm/fields/DynaText';
 

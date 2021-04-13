@@ -96,11 +96,6 @@ export default function ResourceItemsBranch({onEditorChange, flowId, resourceId}
   };
 
   const handleEditorClick = (type, fieldId) => {
-    // eslint-disable-next-line no-console
-    // console.log('type, fieldId, flowId, resourceId, resource',
-    //   type, fieldId, flowId, resourceId, resource);
-
-    // TODO: @Ashu, what is the correct arg to properly init an editor?
     dispatch(actions._editor.init(fieldId, type, {
       rule: getValueFromPath(resource, fieldId),
       flowId,

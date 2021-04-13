@@ -59,14 +59,12 @@ export default {
   idLockTemplate: {
     type: 'uri',
     label: 'Concurrency ID lock template',
-    // enableEditorV2: true,
     showExtract: false,
     showLookup: false,
   },
   dataURITemplate: {
     type: 'uri',
     label: 'Data URI template',
-    // enableEditorV2: true,
     showLookup: false,
   },
   oneToMany: {

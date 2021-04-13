@@ -14,7 +14,7 @@ import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 import jQuery from 'jquery';
 import { isEmpty, uniqBy } from 'lodash';
 import config from './config';
-import './queryBuilder.css';
+import '../Filter/queryBuilder.css';
 import {
   convertNetSuiteQualifierExpressionToQueryBuilderRules,
   getFilterList,

@@ -72,10 +72,11 @@ export default function DynaSalesforceQualifier_afe2(props) {
       // we don't need sample data here,
       // hence adding dummy data to stop the saga from requesting the same
       data: 'dummy data',
+      customOptions: options,
     }));
 
     history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, editorId, flowId, formKey, handleSave, history, id, match.url, resourceId, resourceType]);
+  }, [dispatch, editorId, flowId, formKey, handleSave, history, id, match.url, resourceId, resourceType, options]);
 
   return (
     <div className={classes.dynaSalesforceQualifierWrapper}>
