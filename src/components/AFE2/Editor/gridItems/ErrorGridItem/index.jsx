@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
-import PanelTitle from '../../../../AFE/PanelTitle';
+import PanelTitle from '../PanelTitle';
 import CodePanel from '../../panels/Code';
 
 const useStyles = makeStyles(theme => ({
