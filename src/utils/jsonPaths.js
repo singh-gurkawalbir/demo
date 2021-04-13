@@ -99,6 +99,10 @@ export default function getJSONPaths(dataIn, prefix, options = {}) {
             type: 'array',
           });
         }
+        paths.push({
+          id: prefix ? [prefix, k, 'length'].join('.') : `${k}.length`,
+          type: 'number',
+        });
       } else if (type === '[object Boolean]') {
         paths.push({
           id: prefix ? [prefix, k].join('.') : k,

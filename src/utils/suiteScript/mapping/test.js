@@ -1010,22 +1010,22 @@ describe('Suitescript utils', () => {
         {
           fields: {a: [{b: 'c'}], d: 'e'},
           jsonPath: undefined,
-          output: [{id: 'd', type: 'string'}, {id: 'a[*].b', type: 'string'}],
+          output: [{id: 'a.length', type: 'number'}, {id: 'd', type: 'string'}, {id: 'a[*].b', type: 'string'}],
         },
         {
           fields: [{a: [{b: 'c'}], d: 'e'}],
           jsonPath: undefined,
-          output: [{id: 'd', type: 'string'}, {id: 'a[*].b', type: 'string'}],
+          output: [{id: 'a.length', type: 'number'}, {id: 'd', type: 'string'}, {id: 'a[*].b', type: 'string'}],
         },
         {
           fields: [{a: [{b: 'c'}], d: 'e'}],
           jsonPath: '$',
-          output: [{id: 'd', type: 'string'}, {id: 'a[*].b', type: 'string'}],
+          output: [{id: 'a.length', type: 'number'}, {id: 'd', type: 'string'}, {id: 'a[*].b', type: 'string'}],
         },
         {
           fields: [{a: [{b: 'c'}], d: 'e'}],
           jsonPath: '',
-          output: [{id: 'd', type: 'string'}, {id: 'a[*].b', type: 'string'}],
+          output: [{id: 'a.length', type: 'number'}, {id: 'd', type: 'string'}, {id: 'a[*].b', type: 'string'}],
         },
         {
           fields: [{a: [{b: {e: {f: 'e'}}}], d: 'e'}],
@@ -1035,7 +1035,7 @@ describe('Suitescript utils', () => {
         {
           fields: [{a: [{b: [{e: {f: 'e'}}]}], d: 'e'}],
           jsonPath: 'a',
-          output: [{id: 'b[*].e.f', type: 'string'}],
+          output: [{id: 'b.length', type: 'number'}, {id: 'b[*].e.f', type: 'string'}],
         },
       ];
 

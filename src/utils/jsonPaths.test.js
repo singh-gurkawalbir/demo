@@ -66,7 +66,7 @@ describe('jsonPaths util function test', () => {
         {id: '2', type: 'number'},
         {id: '3', type: 'string'},
       ]);
-      expect(getJSONPaths([[]])).toEqual([{ id: '0', type: 'array' }]);
+      expect(getJSONPaths([[]])).toEqual([{ id: '0', type: 'array' }, { id: '0.length', type: 'number'}]);
     });
 
     test('should return valid paths for getJSONPaths', () => {
@@ -128,6 +128,7 @@ describe('jsonPaths util function test', () => {
         ],
         [
           { id: 'parent.array', type: 'array' },
+          { id: 'parent.array.length', type: 'number'},
           { id: 'parent.boolean', type: 'boolean' },
           { id: 'parent.child.boolean', type: 'boolean' },
           { id: 'parent.child.grandchild', type: 'string' },
@@ -138,12 +139,15 @@ describe('jsonPaths util function test', () => {
         ],
         [
           { id: 'parent.array', type: 'array' },
+          { id: 'parent.array.length', type: 'number' },
           { id: 'parent.boolean', type: 'boolean' },
           { id: 'parent.child.boolean', type: 'boolean' },
           { id: 'parent.child.grandchild', type: 'string' },
           { id: 'parent.child.number', type: 'number' },
+          { id: 'parent.child.sublist2.length', type: 'number' },
           { id: 'parent.number', type: 'number' },
           { id: 'parent.sibling', type: 'string' },
+          { id: 'parent.sublist.length', type: 'number' },
           { id: 'sibling1', type: 'string' },
           { id: 'parent.child.sublist2[*].first', type: 'string' },
           { id: 'parent.child.sublist2[*].second', type: 'string' },
@@ -242,6 +246,7 @@ describe('jsonPaths util function test', () => {
         ],
         [
           { id: 'parent.array', type: 'array' },
+          { id: 'parent.array.length', type: 'number' },
           { id: 'parent.boolean', type: 'boolean' },
           { id: 'parent.child.boolean', type: 'boolean' },
           { id: 'parent.child.grandchild', type: 'string' },
@@ -254,6 +259,7 @@ describe('jsonPaths util function test', () => {
           { id: 'parent.[[number\\]]', type: 'number' },
           { id: 'parent.[sibling first]', type: 'string' },
           { id: 'parent.array', type: 'array' },
+          { id: 'parent.array.length', type: 'number' },
           { id: 'parent.boolean', type: 'boolean' },
           { id: 'parent.child.[grand&child]', type: 'string' },
           { id: 'parent.child.boolean', type: 'boolean' },
@@ -262,12 +268,15 @@ describe('jsonPaths util function test', () => {
         ],
         [
           { id: 'parent.array', type: 'array' },
+          { id: 'parent.array.length', type: 'number' },
           { id: 'parent.boolean', type: 'boolean' },
           { id: 'parent.child.boolean', type: 'boolean' },
           { id: 'parent.child.grandchild', type: 'string' },
           { id: 'parent.child.number', type: 'number' },
+          { id: 'parent.child.sublist2.length', type: 'number' },
           { id: 'parent.number', type: 'number' },
           { id: 'parent.sibling', type: 'string' },
+          { id: 'parent.sublist.length', type: 'number' },
           { id: 'sibling1', type: 'string' },
           { id: 'parent.child.sublist2[*].first', type: 'string' },
           { id: 'parent.child.sublist2[*].second', type: 'string' },
@@ -292,6 +301,7 @@ describe('jsonPaths util function test', () => {
         { id: 'a', type: 'string' },
         { id: 'b', type: 'string' },
         { id: 'c[*].d', type: 'string' },
+        { id: 'c.length', type: 'number'},
       ]);
       expect(getJSONPaths({
         a: 'a',
@@ -300,6 +310,7 @@ describe('jsonPaths util function test', () => {
       }, null, {skipSort: true})).toEqual([
         { id: 'a', type: 'string' },
         { id: 'c[*].d', type: 'string' },
+        { id: 'c.length', type: 'number'},
         { id: 'b', type: 'string' },
       ]);
     });
@@ -313,6 +324,7 @@ describe('jsonPaths util function test', () => {
         { id: 'a', type: 'string' },
         { id: 'b', type: 'string' },
         { id: 'c.0.d', type: 'string' },
+        { id: 'c.length', type: 'number'},
       ]);
       expect(getJSONPaths({
         a: 'a',
@@ -321,6 +333,7 @@ describe('jsonPaths util function test', () => {
       }, null, {isHandlebarExp: true, skipSort: true})).toEqual([
         { id: 'a', type: 'string' },
         { id: 'c.0.d', type: 'string' },
+        { id: 'c.length', type: 'number'},
         { id: 'b', type: 'string' },
       ]);
     });
