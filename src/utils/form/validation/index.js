@@ -4,7 +4,7 @@ import { allAreTrue, someAreTrue, noneAreTrue } from './validator';
 import { isValueForceComputed } from '..';
 
 /* eslint-disable no-restricted-globals */
-
+export const REQUIRED_MESSAGE = 'A value must be provided';
 export const compareSize = (value, comparedTo, type) => {
   const targetValue = parseFloat(value);
   const compareValue = parseFloat(comparedTo.value);
@@ -250,7 +250,7 @@ export const validateField = (
     if (required) {
       if (!valueProvided) {
         isValid = valueProvided;
-        const { missingValueMessage = 'A value must be provided' } = field;
+        const { missingValueMessage = REQUIRED_MESSAGE } = field;
 
         errorMessages.push(missingValueMessage);
       }

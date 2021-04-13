@@ -10,6 +10,7 @@ import useForm from '..';
 import actions from '../../../actions';
 import reducer, { selectors } from '../../../reducers';
 import themeProvider from '../../../theme/themeProvider';
+import { REQUIRED_MESSAGE } from '../../../utils/form/validation';
 import FormGenerator from '../../DynaForm/DynaFormGenerator';
 
 // fireEvent
@@ -321,12 +322,13 @@ describe('required behavior', () => {
       })
     ));
   });
+
   test('requiredField should be initially not required since it does not meet its requiredWhen expression criteria', () => {
     // find a field with that default value
     const formState = selectors.formState(store.getState(), '123');
 
     expect(formState.fields.FIELD1.required).toBe(false);
-    expect(queryByDisplayValue('A value must be provided')).not.toBeTruthy();
+    expect(queryByDisplayValue(REQUIRED_MESSAGE)).not.toBeTruthy();
   });
 
   test('requiredField should be required after it requiredWhen expression criteria is met ', () => {
@@ -370,7 +372,7 @@ describe('required behavior', () => {
         value: 'something else',
       },
     });
-    expect(queryByDisplayValue('A value must be provided')).not.toBeTruthy();
+    expect(queryByDisplayValue(REQUIRED_MESSAGE)).not.toBeTruthy();
   });
 });
 

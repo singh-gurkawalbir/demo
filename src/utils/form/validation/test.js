@@ -14,6 +14,7 @@ import {
   matchesRegEx,
   validateField,
   isLonger,
+  REQUIRED_MESSAGE,
 } from '.';
 import { createField } from '../test';
 
@@ -201,7 +202,7 @@ describe('validateField', () => {
 
     expect(testField.isValid).toBe(false);
     expect(testField.isDiscretelyInvalid).toBe(true);
-    expect(testField.errorMessages).toBe('A value must be provided');
+    expect(testField.errorMessages).toBe(REQUIRED_MESSAGE);
   });
 
   test('field validation rules not processed without value', () => {
