@@ -121,6 +121,8 @@ export default (state = {}, action) => {
           const logsLength = draft[exportId].logsSummary?.length;
           const lastLogTime = logsLength && draft[exportId].logsSummary?.[logsLength - 1].time;
 
+          // if nextPageURL does not have time_lte, we use the oldest log time
+          // or if logs list is also empty, we use current time
           draft[exportId].currQueryTime = parseInt(timeLte || lastLogTime || Date.now(), 10);
         }
         break;

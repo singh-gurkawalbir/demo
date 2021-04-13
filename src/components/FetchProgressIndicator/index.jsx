@@ -30,12 +30,19 @@ export default function FetchProgressIndicator({
   endTime,
   currTime,
 }) {
+  const end = endTime || Date.now();
   const classes = useStyles();
   const fetchInProgress = fetchStatus === 'inProgress';
   const fetchPaused = fetchStatus === 'paused';
-  const percentDone = Math.round(((endTime - currTime) / (endTime - startTime)) * 100) || 0;
 
-  if ((!fetchInProgress && !fetchPaused) || !startTime || !endTime || percentDone > 100) {
+  if ((!fetchInProgress && !fetchPaused) || !startTime) {
+    return null;
+  }
+  const percentDone = Math.round(((end - currTime) / (end - startTime)) * 100) || 0;
+
+  // ideally this should not happen
+  // but adding a safety check to not render these values in UI
+  if (percentDone < 0 || percentDone > 100) {
     return null;
   }
 
