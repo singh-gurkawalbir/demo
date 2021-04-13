@@ -40,7 +40,6 @@ export default {
     dataTest: 'rdbms.query',
     type: 'sqlquerybuilder',
     helpKey: 'import.rdbms.query',
-    querySetPos: 0,
     arrayIndex: 0,
     label: 'SQL query',
     visibleWhen: [
@@ -55,7 +54,6 @@ export default {
     dataTest: 'rdbms.query',
     type: 'sqlquerybuilder',
     helpKey: 'import.rdbms.query',
-    querySetPos: 0,
     arrayIndex: 0,
     label: 'SQL query',
     visibleWhen: [

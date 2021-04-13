@@ -8,7 +8,7 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { apiCallWithRetry } from '../../index';
 import { SCOPES } from '../../resourceForm';
-import { evaluateExternalProcessor } from '../../editor';
+import { evaluateExternalProcessor } from '../../_editor';
 import { getNetsuiteOrSalesforceMeta } from '../../resources/meta';
 import { exportPreview, pageProcessorPreview } from './previewCalls';
 import {
@@ -269,8 +269,8 @@ describe('Flow sample data utility sagas', () => {
         };
         const processorData = {
           data: sampleData,
-          processor: 'csvParser',
-          ...generateFileParserOptionsFromResource(ftpCsvResource),
+          editorType: 'csvParser',
+          rule: generateFileParserOptionsFromResource(ftpCsvResource),
         };
 
         return expectSaga(parseFileData, {sampleData, resource: ftpCsvResource })
@@ -297,8 +297,8 @@ describe('Flow sample data utility sagas', () => {
         const sampleData = { test: 5 };
         const processorData = {
           data: sampleData,
-          processor: 'csvParser',
-          ...generateFileParserOptionsFromResource(ftpCsvResource),
+          editorType: 'csvParser',
+          rule: generateFileParserOptionsFromResource(ftpCsvResource),
         };
         const error = JSON.stringify({
           errors: [{status: 404, message: '{"code":"Not a valid data to process"}'}],

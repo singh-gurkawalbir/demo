@@ -181,10 +181,10 @@ function* trackEditorSave({ context: a }) {
     flowId = m?.[1];
   }
   // eslint-disable-next-line prefer-const
-  let { processorKey: processorType, resourceType, resourceId, pageProcessorsObject: ppObj } = a?.editor?.optionalSaveParams || {};
+  let { editorType, resourceType, resourceId, pageProcessorsObject: ppObj } = a?.editor || {};
 
-  if (!processorType) return;
-  if (processorType === 'postResponseMapHook' && (!resourceType || !resourceId) && ppObj) {
+  if (!editorType) return;
+  if (editorType === 'postResponseMapHook' && (!resourceType || !resourceId) && ppObj) {
     resourceType = 'imports';
     resourceId = ppObj._importId;
   }
@@ -195,7 +195,7 @@ function* trackEditorSave({ context: a }) {
     flowId,
     bubbleType,
     bubbleConnector,
-    processorType,
+    editorType,
   });
 }
 
@@ -270,7 +270,7 @@ export const gainsightSagas = [
   takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, trackFormSubmit),
   takeEvery(actionTypes.MAPPING.SAVE, trackFormSubmit),
   takeEvery(actionTypes.RESPONSE_MAPPING.SAVE, trackFormSubmit),
-  takeEvery(actionTypes.EDITOR.SAVE, trackEditorSave),
+  takeEvery(actionTypes._EDITOR.SAVE.REQUEST, trackEditorSave),
   takeEvery(actionTypes.HOOKS.SAVE, trackHookSave),
   takeEvery(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, trackFlowEnableDisable),
   takeEvery(actionTypes.FLOW.RUN_REQUESTED, trackFlowRun),
