@@ -15,7 +15,7 @@ function PostResponseMapHook({ flowId, resourceType, resourceId, onClose, open, 
     // All this does is tell the parent component to shrink the set of processor icon buttons.
     onClose();
 
-    dispatch(actions._editor.init(editorId, 'postResponseMapHook', {
+    dispatch(actions.editor.init(editorId, 'postResponseMapHook', {
       flowId,
       resourceId,
       resourceType,

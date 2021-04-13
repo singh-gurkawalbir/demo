@@ -1,5 +1,5 @@
 import { call } from 'redux-saga/effects';
-import { evaluateExternalProcessor } from '../../_editor';
+import { evaluateExternalProcessor } from '../../editor';
 import { apiCallWithRetry } from '../../index';
 import { processJsonSampleData, processJsonPreviewData } from '../../../utils/sampleData';
 

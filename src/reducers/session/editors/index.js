@@ -31,30 +31,28 @@ export default function reducer(state = {}, action) {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes._EDITOR.UPDATE_HELPER_FUNCTIONS:
+      case actionTypes.EDITOR.UPDATE_HELPER_FUNCTIONS:
         draft.helperFunctions = helperFunctions;
         break;
 
-      case actionTypes._EDITOR.INIT_COMPLETE: {
+      case actionTypes.EDITOR.INIT_COMPLETE: {
         draft[id] = options;
         break;
       }
 
-      case actionTypes._EDITOR.CHANGE_LAYOUT: {
+      case actionTypes.EDITOR.CHANGE_LAYOUT: {
         if (!draft[id]) break;
         draft[id].layout = newLayout;
         break;
       }
 
-      case actionTypes._EDITOR.CLEAR: {
-        // TODO:
+      case actionTypes.EDITOR.CLEAR: {
         delete draft[id];
-        // draft[id] = {};
 
         break;
       }
 
-      case actionTypes._EDITOR.SAMPLEDATA.RECEIVED: {
+      case actionTypes.EDITOR.SAMPLEDATA.RECEIVED: {
         if (!draft[id]) break;
         const buildData = processorLogic.buildData(draft[id].editorType);
 
@@ -78,14 +76,14 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes._EDITOR.SAMPLEDATA.FAILED: {
+      case actionTypes.EDITOR.SAMPLEDATA.FAILED: {
         if (!draft[id]) break;
         draft[id].sampleDataStatus = 'error';
         draft[id].initError = sampleDataError;
         break;
       }
 
-      case actionTypes._EDITOR.TOGGLE_VERSION: {
+      case actionTypes.EDITOR.TOGGLE_VERSION: {
         if (!draft[id]) break;
         draft[id].sampleDataStatus = 'requested';
         draft[id].dataVersion = version;
@@ -98,7 +96,7 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW: {
+      case actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW: {
         if (!draft[id]) break;
         // TODO: change evaluate to preview
         draft[id].autoEvaluate = autoPreview ?? !draft[id].autoEvaluate;
@@ -108,7 +106,7 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes._EDITOR.PATCH.RULE: {
+      case actionTypes.EDITOR.PATCH.RULE: {
         if (!draft[id]) break;
         const ap = draft[id].activeProcessor;
         const draftRule = ap ? draft[id].rule[ap] : draft[id].rule;
@@ -140,7 +138,7 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes._EDITOR.PATCH.DATA: {
+      case actionTypes.EDITOR.PATCH.DATA: {
         if (!draft[id]) break;
         // Object.assign(draft[id].data, deepClone(dataPatch));
         const mode = draft[id].activeProcessor;
@@ -157,7 +155,7 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes._EDITOR.PATCH.FEATURES: {
+      case actionTypes.EDITOR.PATCH.FEATURES: {
         if (!draft[id]) break;
         Object.assign(draft[id], featuresPatch);
         const mode = featuresPatch?.activeProcessor;
@@ -178,7 +176,7 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes._EDITOR.PATCH.FILE_KEY_COLUMN: {
+      case actionTypes.EDITOR.PATCH.FILE_KEY_COLUMN: {
         // this action is specific to DynaFileKeyColumn component
         if (!draft[id]) break;
         if (fileKeyPatchType === 'data') {
@@ -193,7 +191,7 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes._EDITOR.PREVIEW.RESPONSE: {
+      case actionTypes.EDITOR.PREVIEW.RESPONSE: {
         if (!draft[id]) break;
         draft[id].result = result;
         draft[id].previewStatus = 'received';
@@ -203,14 +201,14 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes._EDITOR.VALIDATE_FAILURE: {
+      case actionTypes.EDITOR.VALIDATE_FAILURE: {
         if (!draft[id]) break;
         draft[id].violations = violations;
         draft[id].previewStatus = 'error';
         break;
       }
 
-      case actionTypes._EDITOR.PREVIEW.FAILED: {
+      case actionTypes.EDITOR.PREVIEW.FAILED: {
         if (!draft[id]) break;
         draft[id].error = error?.errorMessage;
         draft[id].errorLine = error?.errorLine;
@@ -218,20 +216,20 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes._EDITOR.SAVE.REQUEST: {
+      case actionTypes.EDITOR.SAVE.REQUEST: {
         if (!draft[id]) break;
         draft[id].saveStatus = 'requested';
         break;
       }
 
-      case actionTypes._EDITOR.SAVE.FAILED: {
+      case actionTypes.EDITOR.SAVE.FAILED: {
         if (!draft[id]) break;
         draft[id].saveStatus = 'failed';
         draft[id].saveMessage = saveMessage;
         break;
       }
 
-      case actionTypes._EDITOR.SAVE.COMPLETE: {
+      case actionTypes.EDITOR.SAVE.COMPLETE: {
         if (!draft[id]) break;
         const editor = draft[id];
 
@@ -264,7 +262,7 @@ export default function reducer(state = {}, action) {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors._editor = (state, id) => {
+selectors.editor = (state, id) => {
   if (!state) return emptyObj;
 
   const editor = state[id];
@@ -272,7 +270,7 @@ selectors._editor = (state, id) => {
   return editor || emptyObj;
 };
 
-selectors._editorData = (state, id) => {
+selectors.editorData = (state, id) => {
   if (!state) return;
 
   const editor = state[id];
@@ -287,7 +285,7 @@ selectors._editorData = (state, id) => {
   return editor.data;
 };
 
-selectors._editorResult = (state, id) => {
+selectors.editorResult = (state, id) => {
   if (!state) return emptyObj;
 
   const editor = state[id];
@@ -295,7 +293,7 @@ selectors._editorResult = (state, id) => {
   return editor?.result || emptyObj;
 };
 
-selectors._editorRule = (state, id) => {
+selectors.editorRule = (state, id) => {
   if (!state) return emptyObj;
 
   const editor = state[id];
@@ -310,7 +308,7 @@ selectors._editorRule = (state, id) => {
   return editor.rule;
 };
 
-selectors._editorPreviewError = (state, id) => {
+selectors.editorPreviewError = (state, id) => {
   if (!state) return emptyObj;
 
   const editor = state[id];
@@ -321,7 +319,7 @@ selectors._editorPreviewError = (state, id) => {
   };
 };
 
-selectors._editorDataVersion = (state, id) => {
+selectors.editorDataVersion = (state, id) => {
   if (!state) return;
 
   const editor = state[id];
@@ -329,7 +327,7 @@ selectors._editorDataVersion = (state, id) => {
   return editor?.dataVersion;
 };
 
-selectors._editorLayout = (state, id) => {
+selectors.editorLayout = (state, id) => {
   if (!state) return;
 
   const editor = state[id];
@@ -337,8 +335,8 @@ selectors._editorLayout = (state, id) => {
   return editor?.layout;
 };
 
-selectors._editorViolations = (state, id) => processorLogic.validate(state?.[id]);
+selectors.editorViolations = (state, id) => processorLogic.validate(state?.[id]);
 
-selectors._isEditorDirty = (state, id) => processorLogic.isDirty(state?.[id]);
+selectors.isEditorDirty = (state, id) => processorLogic.isDirty(state?.[id]);
 
 // #endregion

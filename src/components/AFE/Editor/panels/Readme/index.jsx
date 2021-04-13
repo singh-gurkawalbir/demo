@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function ReadmePanel({ editorId }) {
   const classes = useStyles();
-  const rule = useSelector(state => selectors._editorRule(state, editorId));
+  const rule = useSelector(state => selectors.editorRule(state, editorId));
 
   return (
     <div className={classes.preview}>

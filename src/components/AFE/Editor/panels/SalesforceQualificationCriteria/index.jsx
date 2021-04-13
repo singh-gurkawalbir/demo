@@ -51,9 +51,9 @@ export default function SalesforceQualificationCriteriaPanel({ editorId }) {
   const [builderInitComplete, setBuilderInitComplete] = useState(false);
   const [filtersMetadata, setFiltersMetadata] = useState();
   const dispatch = useDispatch();
-  const rule = useSelector(state => selectors._editorRule(state, editorId));
+  const rule = useSelector(state => selectors.editorRule(state, editorId));
   const { filters, connectionId, sObjectType} = useSelector(state => {
-    const e = selectors._editor(state, editorId);
+    const e = selectors.editor(state, editorId);
 
     return {
       filters: e.filters || defaultFilters,
@@ -64,7 +64,7 @@ export default function SalesforceQualificationCriteriaPanel({ editorId }) {
 
   const patchEditor = useCallback(
     value => {
-      dispatch(actions._editor.patchRule(editorId, value || ''));
+      dispatch(actions.editor.patchRule(editorId, value || ''));
     },
     [dispatch, editorId]
   );

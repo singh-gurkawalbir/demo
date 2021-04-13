@@ -15,7 +15,7 @@ function ExportFilterLauncher({ flowId, resourceType, resourceId, onClose, open 
     // All this does is tell the parent component to shrink the set of processor icon buttons.
     onClose();
 
-    dispatch(actions._editor.init(editorId, 'exportFilter', {
+    dispatch(actions.editor.init(editorId, 'exportFilter', {
       flowId,
       resourceId,
       resourceType,

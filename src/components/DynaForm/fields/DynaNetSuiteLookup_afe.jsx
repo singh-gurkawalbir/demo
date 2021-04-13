@@ -59,7 +59,7 @@ export default function DynaNetSuiteLookup_afe(props) {
   }, [id, onFieldChange]);
 
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(editorId, 'netsuiteLookupFilter', {
+    dispatch(actions.editor.init(editorId, 'netsuiteLookupFilter', {
       formKey,
       flowId,
       resourceId,

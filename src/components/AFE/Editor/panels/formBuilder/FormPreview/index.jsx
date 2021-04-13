@@ -33,7 +33,7 @@ export default function FormPreviewPanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { result, previewStatus, resourceId, resourceType } = useSelector(state => {
-    const e = selectors._editor(state, editorId);
+    const e = selectors.editor(state, editorId);
 
     return {
       result: e.result,
@@ -46,7 +46,7 @@ export default function FormPreviewPanel({ editorId }) {
     showFormValidationsBeforeTouch: false,
   });
   const handleFormPreviewChange = useCallback(values => {
-    dispatch(actions._editor.patchFeatures(editorId, {formOutput: values}));
+    dispatch(actions.editor.patchFeatures(editorId, {formOutput: values}));
   }, [dispatch, editorId]);
   const showCustomFormValidations = useCallback(() => {
     setFormState({

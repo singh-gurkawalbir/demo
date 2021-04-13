@@ -45,7 +45,7 @@ export default function DynaURI_afe(props) {
   }, [id, onFieldChange]);
 
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(editorId, 'handlebars', {
+    dispatch(actions.editor.init(editorId, 'handlebars', {
       formKey,
       flowId,
       resourceId,

@@ -28,8 +28,8 @@ const useStyles = makeStyles(theme => ({
 const overrides = { wrap: true };
 export default function WarningGridItem({ editorId }) {
   const classes = useStyles();
-  const sampleDataStatus = useSelector(state => selectors._editor(state, editorId).sampleDataStatus);
-  const { warning } = useSelector(state => selectors._editorResult(state, editorId));
+  const sampleDataStatus = useSelector(state => selectors.editor(state, editorId).sampleDataStatus);
+  const { warning } = useSelector(state => selectors.editorResult(state, editorId));
 
   if (!warning || sampleDataStatus === 'requested') return null;
 

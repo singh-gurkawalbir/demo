@@ -8,12 +8,12 @@ export default function useCancelConfirm(editorId, onClose) {
   const dispatch = useDispatch();
   const { saveDiscardDialog } = useConfirmDialog();
   const [closeTriggered, setCloseTriggered] = useState(false);
-  const isEditorDirty = useSelector(state => selectors._isEditorDirty(state, editorId));
-  const saveStatus = useSelector(state => selectors._editor(state, editorId).saveStatus);
+  const isEditorDirty = useSelector(state => selectors.isEditorDirty(state, editorId));
+  const saveStatus = useSelector(state => selectors.editor(state, editorId).saveStatus);
   const saveSuccessful = saveStatus === 'success';
   const saveInProgress = saveStatus === 'requested';
 
-  const handleSave = useCallback(() => dispatch(actions._editor.saveRequest(editorId)), [dispatch, editorId]);
+  const handleSave = useCallback(() => dispatch(actions.editor.saveRequest(editorId)), [dispatch, editorId]);
   const handleSaveAndClose = useCallback(() => {
     handleSave();
     setCloseTriggered(true);

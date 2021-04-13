@@ -18,8 +18,8 @@ const useStyles = makeStyles({
 
 export default function ActionsRibbon({ editorId, className }) {
   const classes = useStyles();
-  const editorType = useSelector(state => selectors._editor(state, editorId).editorType);
-  const hidePreview = useSelector(state => selectors._editor(state, editorId).hidePreview);
+  const editorType = useSelector(state => selectors.editor(state, editorId).editorType);
+  const hidePreview = useSelector(state => selectors.editor(state, editorId).hidePreview);
 
   // console.log('drawer editor', editorId, editor);
   const { drawer = {} } = editorMetadata[editorType] || {};

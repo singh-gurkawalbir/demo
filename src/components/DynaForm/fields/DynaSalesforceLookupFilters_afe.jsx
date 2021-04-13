@@ -38,10 +38,10 @@ export default function DynaSalesforceLookupFilters_afe(props) {
   } = props;
   const editorId = 'sf-mappingLookupFilter';
   const { disableFetch, commMetaPath } = options;
-  const isEditorInitialized = useSelector(state => selectors._editor(state, editorId).fieldId);
+  const isEditorInitialized = useSelector(state => selectors.editor(state, editorId).fieldId);
 
   useEffect(() => {
-    dispatch(actions._editor.init(editorId, 'salesforceLookupFilter', {
+    dispatch(actions.editor.init(editorId, 'salesforceLookupFilter', {
       fieldId: id,
       rule: value,
       stage: 'importMappingExtract',
@@ -49,7 +49,7 @@ export default function DynaSalesforceLookupFilters_afe(props) {
       wrapData: true,
     }));
 
-    return () => dispatch(actions._editor.clear(editorId));
+    return () => dispatch(actions.editor.clear(editorId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

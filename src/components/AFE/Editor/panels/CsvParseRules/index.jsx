@@ -26,9 +26,9 @@ export default function CsvParseRules({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const rule = useSelector(state => selectors._editorRule(state, editorId));
+  const rule = useSelector(state => selectors.editorRule(state, editorId));
   const { resourceId, resourceType, isSuiteScriptData, ssLinkedConnectionId } = useSelector(state => {
-    const editor = selectors._editor(state, editorId);
+    const editor = selectors.editor(state, editorId);
 
     return {
       resourceId: editor.resourceId,
@@ -59,7 +59,7 @@ export default function CsvParseRules({ editorId }) {
   useEffect(() => {
     if (!formContext?.value) return;
 
-    dispatch(actions._editor.patchRule(editorId, formContext.value));
+    dispatch(actions.editor.patchRule(editorId, formContext.value));
   },
   [dispatch, editorId, formContext.value]);
 

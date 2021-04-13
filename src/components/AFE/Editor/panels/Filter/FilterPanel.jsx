@@ -42,8 +42,8 @@ export default function FilterPanel({editorId}) {
   const qbuilder = useRef(null);
   const classes = useStyles();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const data = useSelector(state => selectors._editorData(state, editorId) || defaultData);
-  const rule = useSelector(state => selectors._editorRule(state, editorId));
+  const data = useSelector(state => selectors.editorData(state, editorId) || defaultData);
+  const rule = useSelector(state => selectors.editorRule(state, editorId));
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
   const [rules, setRules] = useState();
   const [filtersMetadata, setFiltersMetadata] = useState();
@@ -51,12 +51,12 @@ export default function FilterPanel({editorId}) {
   const dispatch = useDispatch();
   const patchEditor = useCallback(
     value => {
-      dispatch(actions._editor.patchRule(editorId, value || []));
+      dispatch(actions.editor.patchRule(editorId, value || []));
     },
     [dispatch, editorId]
   );
   const patchEditorValidation = useCallback(isInvalid => {
-    dispatch(actions._editor.patchFeatures(editorId, { isInvalid }));
+    dispatch(actions.editor.patchFeatures(editorId, { isInvalid }));
   }, [dispatch, editorId]);
 
   const jsonData = useMemo(() => safeParse(data) || {}, [data]);

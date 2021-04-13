@@ -62,7 +62,7 @@ export default function DynaSalesforceQualifier_afe(props) {
     onFieldChange(id, rule);
   }, [id, onFieldChange]);
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(editorId, 'salesforceQualificationCriteria', {
+    dispatch(actions.editor.init(editorId, 'salesforceQualificationCriteria', {
       formKey,
       flowId,
       resourceId,

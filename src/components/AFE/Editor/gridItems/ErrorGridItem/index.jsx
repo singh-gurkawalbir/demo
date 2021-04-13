@@ -26,9 +26,9 @@ const useStyles = makeStyles(theme => ({
 
 const overrides = { wrap: true };
 export default function ErrorGridItem({ editorId }) {
-  const {error, sampleDataStatus} = useSelector(state => selectors._editor(state, editorId));
+  const {error, sampleDataStatus} = useSelector(state => selectors.editor(state, editorId));
   const violations = useSelector(state =>
-    selectors._editorViolations(state, editorId),
+    selectors.editorViolations(state, editorId),
   );
   const classes = useStyles();
 

@@ -22,7 +22,7 @@ export default function RefreshSearchFilters({ editorId }) {
   const classes = useStyles();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const {resourceType, formKey, resourceId, fieldId, editorType} = useSelector(state => {
-    const e = selectors._editor(state, editorId);
+    const e = selectors.editor(state, editorId);
 
     return {resourceType: e.resourceType,
       formKey: e.formKey,
@@ -32,7 +32,7 @@ export default function RefreshSearchFilters({ editorId }) {
       editorType: e.editorType,
     };
   }, shallowEqual);
-  const customOptions = useSelector(state => selectors._editor(state, editorId).customOptions, shallowEqual);
+  const customOptions = useSelector(state => selectors.editor(state, editorId).customOptions, shallowEqual);
 
   const connectionId = useSelector(state => {
     const { merged: resourceData} = selectors.resourceData(state, resourceType, resourceId);
@@ -62,7 +62,7 @@ export default function RefreshSearchFilters({ editorId }) {
   }, [commMetaPath, connectionId, disableFetch, dispatch]);
   useEffect(() => {
     if (filters) {
-      dispatch(actions._editor.patchFeatures(editorId, { filters }));
+      dispatch(actions.editor.patchFeatures(editorId, { filters }));
     }
   }, [dispatch, editorId, filters]);
 

@@ -47,8 +47,8 @@ function RouterWrappedContent({ hideSave }) {
   const match = useRouteMatch();
   const { editorId } = useParams();
   const { onClose } = useDrawerContext();
-  const editorType = useSelector(state => selectors._editor(state, editorId).editorType);
-  const editorTitle = useSelector(state => selectors._editor(state, editorId).editorTitle);
+  const editorType = useSelector(state => selectors.editor(state, editorId).editorType);
+  const editorTitle = useSelector(state => selectors.editor(state, editorId).editorTitle);
 
   if (!editorType) {
     // redirect to parent url
@@ -63,7 +63,7 @@ function RouterWrappedContent({ hideSave }) {
   const { label } = editorMetadata[editorType] || {};
 
   const handleClose = () => {
-    dispatch(actions._editor.clear(editorId));
+    dispatch(actions.editor.clear(editorId));
     onClose();
   };
   const CloseButton = <CloseIconButton onClose={handleClose} editorId={editorId} />;

@@ -14,7 +14,7 @@ import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import { getResource, commitStagedChanges } from '../resources';
-import processorLogic, { featuresMap } from '../../reducers/session/_editors/processorLogic';
+import processorLogic, { featuresMap } from '../../reducers/session/editors/processorLogic';
 import { SCOPES } from '../resourceForm';
 import { requestSampleData } from '../sampleData/flows';
 import { requestExportSampleData } from '../sampleData/exports';
@@ -45,7 +45,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
   // for correct HTML/URL encoding
   if (processor === 'handlebars' && editorId) {
     const timezone = yield select(selectors.userTimezone);
-    const editor = yield select(selectors._editor, editorId);
+    const editor = yield select(selectors.editor, editorId);
     const {formKey, fieldId, resourceId, resourceType, supportsDefaultData} = editor;
     const formState = yield select(selectors.formState, formKey);
     const { value: formValues } = formState || {};
@@ -83,7 +83,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
 }
 
 export function* requestPreview({ id }) {
-  const editor = yield select(selectors._editor, id);
+  const editor = yield select(selectors.editor, id);
 
   const reqOpts = processorLogic.requestOptions(editor);
 
@@ -94,7 +94,7 @@ export function* requestPreview({ id }) {
   const { violations, skipPreview, processor, body } = reqOpts;
 
   if (violations) {
-    return yield put(actions._editor.validateFailure(id, violations));
+    return yield put(actions.editor.validateFailure(id, violations));
   }
 
   let result;
@@ -129,7 +129,7 @@ export function* requestPreview({ id }) {
             errorMessage.push(`Stack: ${errJSON.stack}`);
           }
 
-          return yield put(actions._editor.previewFailed(id, {errorMessage, errorLine}));
+          return yield put(actions.editor.previewFailed(id, {errorMessage, errorLine}));
         }
       }
     }
@@ -142,10 +142,10 @@ export function* requestPreview({ id }) {
 
     finalResult = processResult ? processResult(editor, result) : result;
   } catch (e) {
-    return yield put(actions._editor.previewFailed(id, {errorMessage: e.message}));
+    return yield put(actions.editor.previewFailed(id, {errorMessage: e.message}));
   }
 
-  return yield put(actions._editor.previewResponse(id, finalResult));
+  return yield put(actions.editor.previewResponse(id, finalResult));
 }
 
 export function* evaluateExternalProcessor({ processorData }) {
@@ -170,7 +170,7 @@ export function* evaluateExternalProcessor({ processorData }) {
 }
 
 export function* save({ id, context }) {
-  const editor = yield select(selectors._editor, id);
+  const editor = yield select(selectors.editor, id);
 
   if (!editor) {
     return; // nothing to do
@@ -187,7 +187,7 @@ export function* save({ id, context }) {
       evaluateResponse &&
           (evaluateResponse.error || evaluateResponse.violations)
     ) {
-      return yield put(actions._editor.saveFailed(id));
+      return yield put(actions.editor.saveFailed(id));
     }
   }
 
@@ -196,12 +196,12 @@ export function* save({ id, context }) {
     const {saveError, message} = preSaveValidate(editor);
 
     if (saveError) {
-      return yield put(actions._editor.saveFailed(id, message));
+      return yield put(actions.editor.saveFailed(id, message));
     }
   }
 
   if (!editor.onSave && !patches) {
-    return yield put(actions._editor.saveFailed(id));
+    return yield put(actions.editor.saveFailed(id));
   }
 
   if (editor.onSave) {
@@ -261,18 +261,18 @@ export function* save({ id, context }) {
 
         // trigger save failed in case of error
         if (error) {
-          return yield put(actions._editor.saveFailed(id));
+          return yield put(actions.editor.saveFailed(id));
         }
       } else {
         // trigger save failed in case any among patch, resourceType and resourceId is missing
-        return yield put(actions._editor.saveFailed(id));
+        return yield put(actions.editor.saveFailed(id));
       }
     }
 
-    yield put(actions._editor.saveComplete(id));
+    yield put(actions.editor.saveComplete(id));
   } else {
     // trigger save complete in case editor doesnt have any foreground processes
-    yield put(actions._editor.saveComplete(id));
+    yield put(actions.editor.saveComplete(id));
   }
 
   if (backgroundPatches && Array.isArray(backgroundPatches)) {
@@ -294,8 +294,8 @@ export function* save({ id, context }) {
 }
 
 export function* autoEvaluateProcessor({ id }) {
-  const editor = yield select(selectors._editor, id);
-  const editorViolations = yield select(selectors._editorViolations, id);
+  const editor = yield select(selectors.editor, id);
+  const editorViolations = yield select(selectors.editorViolations, id);
 
   if (!editor || (editorViolations && editorViolations.length)) {
     return; // nothing to do...
@@ -316,7 +316,7 @@ export function* autoEvaluateProcessorWithCancel(params) {
   yield race({
     editorEval: call(autoEvaluateProcessor, params),
     cancelEditorEval: take(action =>
-      action.type === actionTypes._EDITOR.CLEAR &&
+      action.type === actionTypes.EDITOR.CLEAR &&
       action.id === id
     ),
   });
@@ -361,14 +361,14 @@ export function* refreshHelperFunctions() {
     );
   }
 
-  yield put(actions._editor.updateHelperFunctions(helperFunctions));
+  yield put(actions.editor.updateHelperFunctions(helperFunctions));
 }
 
 export function* requestEditorSampleData({
   id,
   requestedTemplateVersion,
 }) {
-  const editor = yield select(selectors._editor, id);
+  const editor = yield select(selectors.editor, id);
 
   if (!editor) return;
 
@@ -517,7 +517,7 @@ export function* requestEditorSampleData({
       } else {
         // TODO: test this
         yield put(
-          actions._editor.sampleDataFailed(
+          actions.editor.sampleDataFailed(
             id
           )
         );
@@ -525,7 +525,7 @@ export function* requestEditorSampleData({
     } catch (e) {
       // TODO: How do we show error in case getContext api fails with some response
       yield put(
-        actions._editor.sampleDataFailed(
+        actions.editor.sampleDataFailed(
           id,
           e.message
         )
@@ -560,14 +560,14 @@ export function* requestEditorSampleData({
 
 export function* initSampleData({ id }) {
 // re-fetching the editor from state to get latest editor (in case init processorLogic made any changes)
-  const editor = yield select(selectors._editor, id);
+  const editor = yield select(selectors.editor, id);
 
   if (!editor) return;
 
   // if data is already passed during init, save it to state directly
   if (editor.data) {
     yield put(
-      actions._editor.sampleDataReceived(
+      actions.editor.sampleDataReceived(
         id,
         dataAsString(editor.data),
       )
@@ -577,7 +577,7 @@ export function* initSampleData({ id }) {
     const {data, templateVersion} = yield call(requestEditorSampleData, {id});
 
     yield put(
-      actions._editor.sampleDataReceived(
+      actions.editor.sampleDataReceived(
         id,
         dataAsString(data),
         templateVersion,
@@ -696,7 +696,7 @@ export function* initEditor({ id, editorType, options }) {
     onSave,
   };
 
-  yield put(actions._editor.initComplete(
+  yield put(actions.editor.initComplete(
     id,
     stateOptions,
   ));
@@ -711,7 +711,7 @@ export function* toggleEditorVersion({ id, version }) {
   const {data, templateVersion} = editorData;
 
   return yield put(
-    actions._editor.sampleDataReceived(
+    actions.editor.sampleDataReceived(
       id,
       dataAsString(data),
       templateVersion,
@@ -721,18 +721,18 @@ export function* toggleEditorVersion({ id, version }) {
 
 export default [
   takeLatest(
-    [actionTypes._EDITOR.PATCH.DATA,
-      actionTypes._EDITOR.PATCH.RULE,
-      actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW],
+    [actionTypes.EDITOR.PATCH.DATA,
+      actionTypes.EDITOR.PATCH.RULE,
+      actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW],
     autoEvaluateProcessorWithCancel
   ),
   // added a separate effect for DynaFileKeyColumn as
   // both, csv parser and file key editor can be in use and would require
   // the preview API call parallel
-  takeLatest(actionTypes._EDITOR.PATCH.FILE_KEY_COLUMN, autoEvaluateProcessorWithCancel),
-  takeEvery(actionTypes._EDITOR.INIT, initEditor),
-  takeLatest(actionTypes._EDITOR.TOGGLE_VERSION, toggleEditorVersion),
-  takeLatest(actionTypes._EDITOR.PREVIEW.REQUEST, requestPreview),
-  takeLatest(actionTypes._EDITOR.SAVE.REQUEST, save),
-  takeLatest(actionTypes._EDITOR.REFRESH_HELPER_FUNCTIONS, refreshHelperFunctions),
+  takeLatest(actionTypes.EDITOR.PATCH.FILE_KEY_COLUMN, autoEvaluateProcessorWithCancel),
+  takeEvery(actionTypes.EDITOR.INIT, initEditor),
+  takeLatest(actionTypes.EDITOR.TOGGLE_VERSION, toggleEditorVersion),
+  takeLatest(actionTypes.EDITOR.PREVIEW.REQUEST, requestPreview),
+  takeLatest(actionTypes.EDITOR.SAVE.REQUEST, save),
+  takeLatest(actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS, refreshHelperFunctions),
 ];

@@ -33,7 +33,7 @@ export default function Editor({ editorId }) {
     // return a static editor context object.
     // for now, adding fields as they are used so we understand what part of the
     // editor state is needed to render the editor wire-frame.
-    const e = selectors._editor(state, editorId);
+    const e = selectors.editor(state, editorId);
 
     return {
       editorId,

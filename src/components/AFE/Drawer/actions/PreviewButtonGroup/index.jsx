@@ -17,15 +17,15 @@ const useStyles = makeStyles(theme => ({
 export default function PreviewButtonGroup({ editorId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const autoEvaluate = useSelector(state => selectors._editor(state, editorId).autoEvaluate);
+  const autoEvaluate = useSelector(state => selectors.editor(state, editorId).autoEvaluate);
   const saveInProgress = useSelector(state => {
-    const {saveStatus} = selectors._editor(state, editorId);
+    const {saveStatus} = selectors.editor(state, editorId);
 
     return saveStatus === 'requested';
   });
 
-  const handlePreview = () => dispatch(actions._editor.previewRequest(editorId));
-  const handleToggle = () => dispatch(actions._editor.toggleAutoPreview(editorId));
+  const handlePreview = () => dispatch(actions.editor.previewRequest(editorId));
+  const handleToggle = () => dispatch(actions.editor.toggleAutoPreview(editorId));
 
   return (
     <ButtonGroup className={classes.previewButtonGroup}>

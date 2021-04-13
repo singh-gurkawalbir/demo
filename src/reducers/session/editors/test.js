@@ -18,7 +18,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         undefined,
-        actions._editor.updateHelperFunctions(helperFunctions)
+        actions.editor.updateHelperFunctions(helperFunctions)
       );
       const expectedState = {
         helperFunctions: {
@@ -38,7 +38,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.updateHelperFunctions(helperFunctions)
+        actions.editor.updateHelperFunctions(helperFunctions)
       );
 
       expect(newState).toHaveProperty('httpbody', { id: 'httpbody', editorType: 'handlebars' });
@@ -49,7 +49,7 @@ describe('editors reducers', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', {})
+        actions.editor.initComplete('httpbody', {})
       );
 
       expect(state).toEqual({httpbody: {}});
@@ -57,7 +57,7 @@ describe('editors reducers', () => {
     test('should not throw error in case of invalid arguments', () => {
       const state = reducer(
         undefined,
-        actions._editor.initComplete()
+        actions.editor.initComplete()
       );
 
       expect(state).toEqual({});
@@ -70,7 +70,7 @@ describe('editors reducers', () => {
       };
       const state = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const newState = {
         httpbody: {
@@ -88,7 +88,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.initComplete('httpbody', {})
+        actions.editor.initComplete('httpbody', {})
       );
 
       expect(newState).toHaveProperty('query', {id: 'query'});
@@ -98,7 +98,7 @@ describe('editors reducers', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
         undefined,
-        actions._editor.changeLayout('httpbody', 'compact')
+        actions.editor.changeLayout('httpbody', 'compact')
       );
 
       expect(state).toEqual({});
@@ -111,11 +111,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.changeLayout('httpbody', 'column')
+        actions.editor.changeLayout('httpbody', 'column')
       );
 
       expect(newState).toHaveProperty('httpbody.layout', 'column');
@@ -127,7 +127,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.changeLayout('httpbody', 'compact')
+        actions.editor.changeLayout('httpbody', 'compact')
       );
 
       expect(newState).toHaveProperty('query', {id: 'query'});
@@ -142,11 +142,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.clear('httpbody')
+        actions.editor.clear('httpbody')
       );
 
       expect(newState).not.toHaveProperty('httpbody');
@@ -158,7 +158,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.clear('httpbody')
+        actions.editor.clear('httpbody')
       );
 
       expect(newState).toHaveProperty('query', {id: 'query'});
@@ -168,7 +168,7 @@ describe('editors reducers', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
         undefined,
-        actions._editor.sampleDataReceived('httpbody', 'data')
+        actions.editor.sampleDataReceived('httpbody', 'data')
       );
 
       expect(state).toEqual({});
@@ -181,11 +181,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('httpbody', '{"id": "123"}', 2)
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}', 2)
       );
       const expectedState = {
         httpbody: {
@@ -209,11 +209,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('efilter-123', options)
+        actions.editor.initComplete('efilter-123', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('efilter-123', '{"rows": [{"id": "123"}]}')
+        actions.editor.sampleDataReceived('efilter-123', '{"rows": [{"id": "123"}]}')
       );
       const expectedState = {
         'efilter-123': {
@@ -240,11 +240,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('query', options)
+        actions.editor.initComplete('query', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('query', '{"rows": [{"id": "123"}]}')
+        actions.editor.sampleDataReceived('query', '{"rows": [{"id": "123"}]}')
       );
       const expectedState = {
         query: {
@@ -269,11 +269,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('rdbmsquery', options)
+        actions.editor.initComplete('rdbmsquery', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('rdbmsquery', '{"rows": [{"id": "123"}]}')
+        actions.editor.sampleDataReceived('rdbmsquery', '{"rows": [{"id": "123"}]}')
       );
       const expectedState = {
         rdbmsquery: {
@@ -296,7 +296,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('query', '{"rows": [{"id": "123"}]}')
+        actions.editor.sampleDataReceived('query', '{"rows": [{"id": "123"}]}')
       );
 
       expect(newState).toHaveProperty('httpbody', {id: 'httpbody'});
@@ -306,7 +306,7 @@ describe('editors reducers', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
         undefined,
-        actions._editor.sampleDataFailed('httpbody', 'some error')
+        actions.editor.sampleDataFailed('httpbody', 'some error')
       );
 
       expect(state).toEqual({});
@@ -319,11 +319,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.sampleDataFailed('httpbody', 'some error')
+        actions.editor.sampleDataFailed('httpbody', 'some error')
       );
       const expectedState = {
         httpbody: {
@@ -344,7 +344,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.sampleDataFailed('httpbody', 'some error')
+        actions.editor.sampleDataFailed('httpbody', 'some error')
       );
 
       expect(newState).toHaveProperty('query', {id: 'query'});
@@ -354,7 +354,7 @@ describe('editors reducers', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
         undefined,
-        actions._editor.toggleVersion('httpbody', 2)
+        actions.editor.toggleVersion('httpbody', 2)
       );
 
       expect(state).toEqual({});
@@ -368,15 +368,15 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const tempState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('httpbody', '{"id": "123"}', 1)
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}', 1)
       );
       const newState = reducer(
         tempState,
-        actions._editor.toggleVersion('httpbody', 2)
+        actions.editor.toggleVersion('httpbody', 2)
       );
 
       expect(newState).toHaveProperty('httpbody.rule', '{{v2}}');
@@ -391,15 +391,15 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const tempState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('httpbody', '{"id": "123"}')
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}')
       );
       const newState = reducer(
         tempState,
-        actions._editor.toggleVersion('httpbody', 1)
+        actions.editor.toggleVersion('httpbody', 1)
       );
 
       expect(newState).toHaveProperty('httpbody.rule', '{{v1}}');
@@ -413,15 +413,15 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const tempState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('httpbody', '{"id": "123"}')
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}')
       );
       const newState = reducer(
         tempState,
-        actions._editor.toggleVersion('httpbody', 1)
+        actions.editor.toggleVersion('httpbody', 1)
       );
       const expectedState = {
         httpbody: {
@@ -447,7 +447,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.toggleVersion('query', 2)
+        actions.editor.toggleVersion('query', 2)
       );
 
       expect(newState).toHaveProperty('httpbody', {id: 'httpbody'});
@@ -457,7 +457,7 @@ describe('editors reducers', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
         undefined,
-        actions._editor.toggleAutoPreview('httpbody', false)
+        actions.editor.toggleAutoPreview('httpbody', false)
       );
 
       expect(state).toEqual({});
@@ -471,11 +471,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.toggleAutoPreview('httpbody')
+        actions.editor.toggleAutoPreview('httpbody')
       );
 
       expect(newState).toHaveProperty('httpbody.autoEvaluate', false);
@@ -489,11 +489,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.toggleAutoPreview('httpbody', false)
+        actions.editor.toggleAutoPreview('httpbody', false)
       );
 
       expect(newState).toHaveProperty('httpbody.autoEvaluate', false);
@@ -507,11 +507,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.toggleAutoPreview('httpbody', true)
+        actions.editor.toggleAutoPreview('httpbody', true)
       );
       const expectedState = {
         httpbody: {
@@ -532,7 +532,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.toggleAutoPreview('query', false)
+        actions.editor.toggleAutoPreview('query', false)
       );
 
       expect(newState).toHaveProperty('httpbody', {id: 'httpbody', autoEvaluate: false});
@@ -542,7 +542,7 @@ describe('editors reducers', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
         undefined,
-        actions._editor.patchRule('httpbody', {})
+        actions.editor.patchRule('httpbody', {})
       );
 
       expect(state).toEqual({});
@@ -556,15 +556,15 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const tempState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('httpbody', '{"id": "123"}')
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}')
       );
       const newState = reducer(
         tempState,
-        actions._editor.patchRule('httpbody', '{{abs newField}}')
+        actions.editor.patchRule('httpbody', '{{abs newField}}')
       );
       const expectedState = {
         httpbody: {
@@ -589,15 +589,15 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const tempState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('httpbody', '{"id": "123"}')
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}')
       );
       const newState = reducer(
         tempState,
-        actions._editor.patchRule('httpbody', null)
+        actions.editor.patchRule('httpbody', null)
       );
       const expectedState = {
         httpbody: {
@@ -625,15 +625,15 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('file.csv', options)
+        actions.editor.initComplete('file.csv', options)
       );
       const tempState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('file.csv', 'name\tage-Bob\t30')
+        actions.editor.sampleDataReceived('file.csv', 'name\tage-Bob\t30')
       );
       const newState = reducer(
         tempState,
-        actions._editor.patchRule('file.csv', {columnDelimiter: '\t', wrapInQuotes: true})
+        actions.editor.patchRule('file.csv', {columnDelimiter: '\t', wrapInQuotes: true})
       );
       const expectedState = {
         'file.csv': {
@@ -667,15 +667,15 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('efilter', options)
+        actions.editor.initComplete('efilter', options)
       );
       const tempState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('efilter', '{"id": "abc"}')
+        actions.editor.sampleDataReceived('efilter', '{"id": "abc"}')
       );
       const newState = reducer(
         tempState,
-        actions._editor.patchRule('efilter', ['is', 'id', 'id'])
+        actions.editor.patchRule('efilter', ['is', 'id', 'id'])
       );
       const expectedState = {
         efilter: {
@@ -709,15 +709,15 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const tempState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('httpbody', '{"id": "123"}', 2)
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}', 2)
       );
       const newState = reducer(
         tempState,
-        actions._editor.patchRule('httpbody', '{{abs newField}}')
+        actions.editor.patchRule('httpbody', '{{abs newField}}')
       );
       const expectedState = {
         httpbody: {
@@ -745,15 +745,15 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const tempState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('httpbody', '{"id": "123"}')
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}')
       );
       const newState = reducer(
         tempState,
-        actions._editor.patchRule('httpbody', '{{abs newField}}')
+        actions.editor.patchRule('httpbody', '{{abs newField}}')
       );
 
       expect(newState).toHaveProperty('httpbody.previewStatus', 'requested');
@@ -765,7 +765,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.patchRule('httpbody', '{{abs newField}}')
+        actions.editor.patchRule('httpbody', '{{abs newField}}')
       );
 
       expect(newState).toHaveProperty('query', {id: 'query'});
@@ -775,7 +775,7 @@ describe('editors reducers', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
         undefined,
-        actions._editor.patchData('httpbody', '{}')
+        actions.editor.patchData('httpbody', '{}')
       );
 
       expect(state).toEqual({});
@@ -788,15 +788,15 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const tempState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('httpbody', '{"id": "123"}')
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}')
       );
       const newState = reducer(
         tempState,
-        actions._editor.patchData('httpbody', '{"id": "456"}')
+        actions.editor.patchData('httpbody', '{"id": "456"}')
       );
       const expectedState = {
         httpbody: {
@@ -821,15 +821,15 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('efilter', options)
+        actions.editor.initComplete('efilter', options)
       );
       const tempState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('efilter', '{"id": "abc"}')
+        actions.editor.sampleDataReceived('efilter', '{"id": "abc"}')
       );
       const newState = reducer(
         tempState,
-        actions._editor.patchData('efilter', '{"id": "abc", "name": "Bob"}')
+        actions.editor.patchData('efilter', '{"id": "abc", "name": "Bob"}')
       );
       const expectedState = {
         efilter: {
@@ -860,15 +860,15 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const tempState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('httpbody', '{"id": "123"}')
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}')
       );
       const newState = reducer(
         tempState,
-        actions._editor.patchData('httpbody', '{"id": "456"}')
+        actions.editor.patchData('httpbody', '{"id": "456"}')
       );
 
       expect(newState).toHaveProperty('httpbody.previewStatus', 'requested');
@@ -880,7 +880,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.patchData('httpbody', '{"id": "123"}')
+        actions.editor.patchData('httpbody', '{"id": "123"}')
       );
 
       expect(newState).toHaveProperty('query', {id: 'query'});
@@ -890,7 +890,7 @@ describe('editors reducers', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
         undefined,
-        actions._editor.patchFeatures('httpbody', {layout: 'compact'})
+        actions.editor.patchFeatures('httpbody', {layout: 'compact'})
       );
 
       expect(state).toEqual({});
@@ -903,11 +903,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.patchFeatures('httpbody', {layout: 'column'})
+        actions.editor.patchFeatures('httpbody', {layout: 'column'})
       );
       const expectedState = {
         httpbody: {
@@ -928,15 +928,15 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('settings', options)
+        actions.editor.initComplete('settings', options)
       );
       const tempState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('settings', '{"id": "123"}')
+        actions.editor.sampleDataReceived('settings', '{"id": "123"}')
       );
       const newState = reducer(
         tempState,
-        actions._editor.patchFeatures('settings', {activeProcessor: 'json'})
+        actions.editor.patchFeatures('settings', {activeProcessor: 'json'})
       );
       const expectedState = {
         settings: {
@@ -962,15 +962,15 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('settings', options)
+        actions.editor.initComplete('settings', options)
       );
       const tempState = reducer(
         initialState,
-        actions._editor.sampleDataReceived('settings', '{"id": "123"}')
+        actions.editor.sampleDataReceived('settings', '{"id": "123"}')
       );
       const newState = reducer(
         tempState,
-        actions._editor.patchFeatures('settings', {data: '{"id": "456"}'})
+        actions.editor.patchFeatures('settings', {data: '{"id": "456"}'})
       );
 
       expect(newState).not.toHaveProperty('settings.formOutput');
@@ -982,7 +982,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.patchFeatures('httpbody', {layout: 'compact'})
+        actions.editor.patchFeatures('httpbody', {layout: 'compact'})
       );
 
       expect(newState).toHaveProperty('query', {id: 'query'});
@@ -992,7 +992,7 @@ describe('editors reducers', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
         undefined,
-        actions._editor.patchFileKeyColumn('filekeycolumns', 'data', '{}')
+        actions.editor.patchFileKeyColumn('filekeycolumns', 'data', '{}')
       );
 
       expect(state).toEqual({});
@@ -1008,11 +1008,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('filekeycolumns', options)
+        actions.editor.initComplete('filekeycolumns', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.patchFileKeyColumn('filekeycolumns', 'data', 'new data')
+        actions.editor.patchFileKeyColumn('filekeycolumns', 'data', 'new data')
       );
       const expectedState = {
         filekeycolumns: {
@@ -1041,11 +1041,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('filekeycolumns', options)
+        actions.editor.initComplete('filekeycolumns', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.patchFileKeyColumn('filekeycolumns', 'rule', {
+        actions.editor.patchFileKeyColumn('filekeycolumns', 'rule', {
           hasHeader: true,
           columnDelimiter: '|',
         })
@@ -1081,7 +1081,7 @@ describe('editors reducers', () => {
 
       const newState = reducer(
         initialState,
-        actions._editor.patchFileKeyColumn('filekeycolumns', 'dummyType', {
+        actions.editor.patchFileKeyColumn('filekeycolumns', 'dummyType', {
           hasHeader: true,
           columnDelimiter: '|',
         })
@@ -1096,7 +1096,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.patchFileKeyColumn('filekeycolumns', 'data', 'new data')
+        actions.editor.patchFileKeyColumn('filekeycolumns', 'data', 'new data')
       );
 
       expect(newState).toHaveProperty('query', {id: 'query'});
@@ -1106,7 +1106,7 @@ describe('editors reducers', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
         undefined,
-        actions._editor.previewResponse('httpbody', 'some result')
+        actions.editor.previewResponse('httpbody', 'some result')
       );
 
       expect(state).toEqual({});
@@ -1123,11 +1123,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.previewResponse('httpbody', '123')
+        actions.editor.previewResponse('httpbody', '123')
       );
       const expectedState = {
         httpbody: {
@@ -1149,7 +1149,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.previewResponse('httpbody', 'some result')
+        actions.editor.previewResponse('httpbody', 'some result')
       );
 
       expect(newState).toHaveProperty('query', {id: 'query'});
@@ -1159,7 +1159,7 @@ describe('editors reducers', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
         undefined,
-        actions._editor.validateFailure('httpbody', 'invalid data')
+        actions.editor.validateFailure('httpbody', 'invalid data')
       );
 
       expect(state).toEqual({});
@@ -1173,11 +1173,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.validateFailure('httpbody', 'invalid data')
+        actions.editor.validateFailure('httpbody', 'invalid data')
       );
       const expectedState = {
         httpbody: {
@@ -1199,7 +1199,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.validateFailure('httpbody', 'invalid data')
+        actions.editor.validateFailure('httpbody', 'invalid data')
       );
 
       expect(newState).toHaveProperty('query', {id: 'query'});
@@ -1209,7 +1209,7 @@ describe('editors reducers', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
         undefined,
-        actions._editor.previewFailed('httpbody', {errorMessage: 'some error', errorLine: 12})
+        actions.editor.previewFailed('httpbody', {errorMessage: 'some error', errorLine: 12})
       );
 
       expect(state).toEqual({});
@@ -1223,11 +1223,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.previewFailed('httpbody', {errorMessage: 'some error', errorLine: 12})
+        actions.editor.previewFailed('httpbody', {errorMessage: 'some error', errorLine: 12})
       );
       const expectedState = {
         httpbody: {
@@ -1250,7 +1250,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.previewFailed('httpbody', {errorMessage: 'some error', errorLine: 12})
+        actions.editor.previewFailed('httpbody', {errorMessage: 'some error', errorLine: 12})
       );
 
       expect(newState).toHaveProperty('query', {id: 'query'});
@@ -1260,7 +1260,7 @@ describe('editors reducers', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
         undefined,
-        actions._editor.saveRequest('httpbody')
+        actions.editor.saveRequest('httpbody')
       );
 
       expect(state).toEqual({});
@@ -1274,11 +1274,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.saveRequest('httpbody')
+        actions.editor.saveRequest('httpbody')
       );
       const expectedState = {
         httpbody: {
@@ -1299,7 +1299,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.saveRequest('httpbody')
+        actions.editor.saveRequest('httpbody')
       );
 
       expect(newState).toHaveProperty('query', {id: 'query'});
@@ -1309,7 +1309,7 @@ describe('editors reducers', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
         undefined,
-        actions._editor.saveFailed('httpbody', 'save error msg')
+        actions.editor.saveFailed('httpbody', 'save error msg')
       );
 
       expect(state).toEqual({});
@@ -1323,11 +1323,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.saveFailed('httpbody', 'save error msg')
+        actions.editor.saveFailed('httpbody', 'save error msg')
       );
       const expectedState = {
         httpbody: {
@@ -1349,7 +1349,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.saveFailed('httpbody', 'save error msg')
+        actions.editor.saveFailed('httpbody', 'save error msg')
       );
 
       expect(newState).toHaveProperty('query', {id: 'query'});
@@ -1359,7 +1359,7 @@ describe('editors reducers', () => {
     test('should not throw error if state does not exist', () => {
       const state = reducer(
         undefined,
-        actions._editor.saveComplete('httpbody')
+        actions.editor.saveComplete('httpbody')
       );
 
       expect(state).toEqual({});
@@ -1374,11 +1374,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.saveComplete('httpbody')
+        actions.editor.saveComplete('httpbody')
       );
       const expectedState = {
         httpbody: {
@@ -1405,11 +1405,11 @@ describe('editors reducers', () => {
       };
       const initialState = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const newState = reducer(
         initialState,
-        actions._editor.saveComplete('httpbody')
+        actions.editor.saveComplete('httpbody')
       );
       const expectedState = {
         httpbody: {
@@ -1433,7 +1433,7 @@ describe('editors reducers', () => {
       };
       const newState = reducer(
         initialState,
-        actions._editor.saveComplete('httpbody')
+        actions.editor.saveComplete('httpbody')
       );
 
       expect(newState).toHaveProperty('query', {id: 'query'});
@@ -1444,11 +1444,11 @@ describe('editors reducers', () => {
 describe('editors selectors', () => {
   const editorId = 'httpbody';
 
-  describe('_editor', () => {
+  describe('editor', () => {
     test('should return empty object when no match found.', () => {
-      expect(selectors._editor(undefined, editorId)).toEqual({});
-      expect(selectors._editor({}, editorId)).toEqual({});
-      expect(selectors._editor({123: {}}, editorId)).toEqual({});
+      expect(selectors.editor(undefined, editorId)).toEqual({});
+      expect(selectors.editor({}, editorId)).toEqual({});
+      expect(selectors.editor({123: {}}, editorId)).toEqual({});
     });
     test('should return correct editor state when a match is found', () => {
       const options = {
@@ -1458,7 +1458,7 @@ describe('editors selectors', () => {
       };
       const state = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const expectedState = {
         id: 'httpbody',
@@ -1466,14 +1466,14 @@ describe('editors selectors', () => {
         stage: 'flowInput',
       };
 
-      expect(selectors._editor(state, editorId)).toEqual(expectedState);
+      expect(selectors.editor(state, editorId)).toEqual(expectedState);
     });
   });
-  describe('_editorData', () => {
+  describe('editorData', () => {
     test('should return undefined when no match found.', () => {
-      expect(selectors._editorData(undefined, editorId)).toBeUndefined();
-      expect(selectors._editorData({}, editorId)).toBeUndefined();
-      expect(selectors._editorData({123: {}}, editorId)).toBeUndefined();
+      expect(selectors.editorData(undefined, editorId)).toBeUndefined();
+      expect(selectors.editorData({}, editorId)).toBeUndefined();
+      expect(selectors.editorData({123: {}}, editorId)).toBeUndefined();
     });
     test('should return the active processor data if present', () => {
       const options = {
@@ -1488,11 +1488,11 @@ describe('editors selectors', () => {
       };
       const state = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const expectedData = '{"rows": [{"id": "123"}]}';
 
-      expect(selectors._editorData(state, editorId)).toEqual(expectedData);
+      expect(selectors.editorData(state, editorId)).toEqual(expectedData);
     });
     test('should correctly return state data', () => {
       const options = {
@@ -1503,18 +1503,18 @@ describe('editors selectors', () => {
       };
       const state = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const expectedData = '{"id": 123}';
 
-      expect(selectors._editorData(state, editorId)).toEqual(expectedData);
+      expect(selectors.editorData(state, editorId)).toEqual(expectedData);
     });
   });
-  describe('_editorResult', () => {
+  describe('editorResult', () => {
     test('should return empty object when no match found.', () => {
-      expect(selectors._editorResult(undefined, editorId)).toEqual({});
-      expect(selectors._editorResult({}, editorId)).toEqual({});
-      expect(selectors._editorResult({123: {}}, editorId)).toEqual({});
+      expect(selectors.editorResult(undefined, editorId)).toEqual({});
+      expect(selectors.editorResult({}, editorId)).toEqual({});
+      expect(selectors.editorResult({123: {}}, editorId)).toEqual({});
     });
     test('should return correct editor state when a match is found', () => {
       const options = {
@@ -1525,18 +1525,18 @@ describe('editors selectors', () => {
       };
       const state = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const expectedResult = '123';
 
-      expect(selectors._editorResult(state, editorId)).toEqual(expectedResult);
+      expect(selectors.editorResult(state, editorId)).toEqual(expectedResult);
     });
   });
-  describe('_editorRule', () => {
+  describe('editorRule', () => {
     test('should return empty object when no match found.', () => {
-      expect(selectors._editorRule(undefined, editorId)).toEqual({});
-      expect(selectors._editorRule({}, editorId)).toEqual({});
-      expect(selectors._editorRule({123: {}}, editorId)).toEqual({});
+      expect(selectors.editorRule(undefined, editorId)).toEqual({});
+      expect(selectors.editorRule({}, editorId)).toEqual({});
+      expect(selectors.editorRule({123: {}}, editorId)).toEqual({});
     });
     test('should return the active processor rule if present', () => {
       const options = {
@@ -1551,11 +1551,11 @@ describe('editors selectors', () => {
       };
       const state = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const expectedRule = ['is', 'a', 'b'];
 
-      expect(selectors._editorRule(state, editorId)).toEqual(expectedRule);
+      expect(selectors.editorRule(state, editorId)).toEqual(expectedRule);
     });
     test('should correctly return state rule', () => {
       const options = {
@@ -1567,18 +1567,18 @@ describe('editors selectors', () => {
       };
       const state = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const expectedRule = '{{id}}';
 
-      expect(selectors._editorRule(state, editorId)).toEqual(expectedRule);
+      expect(selectors.editorRule(state, editorId)).toEqual(expectedRule);
     });
   });
-  describe('_editorPreviewError', () => {
+  describe('editorPreviewError', () => {
     test('should return empty object when no match found.', () => {
-      expect(selectors._editorPreviewError(undefined, editorId)).toEqual({});
-      expect(selectors._editorPreviewError({}, editorId)).toEqual({});
-      expect(selectors._editorPreviewError({123: {}}, editorId)).toEqual({});
+      expect(selectors.editorPreviewError(undefined, editorId)).toEqual({});
+      expect(selectors.editorPreviewError({}, editorId)).toEqual({});
+      expect(selectors.editorPreviewError({123: {}}, editorId)).toEqual({});
     });
     test('should return object with error and errorLine when a match is found', () => {
       const options = {
@@ -1592,21 +1592,21 @@ describe('editors selectors', () => {
       };
       const state = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
       const expectedOutput = {
         error: 'some error',
         errorLine: 34,
       };
 
-      expect(selectors._editorPreviewError(state, editorId)).toEqual(expectedOutput);
+      expect(selectors.editorPreviewError(state, editorId)).toEqual(expectedOutput);
     });
   });
-  describe('_editorDataVersion', () => {
+  describe('editorDataVersion', () => {
     test('should return undefined when no match found.', () => {
-      expect(selectors._editorDataVersion(undefined, editorId)).toBeUndefined();
-      expect(selectors._editorDataVersion({}, editorId)).toBeUndefined();
-      expect(selectors._editorDataVersion({123: {}}, editorId)).toBeUndefined();
+      expect(selectors.editorDataVersion(undefined, editorId)).toBeUndefined();
+      expect(selectors.editorDataVersion({}, editorId)).toBeUndefined();
+      expect(selectors.editorDataVersion({123: {}}, editorId)).toBeUndefined();
     });
     test('should return the data version if found in state', () => {
       const options = {
@@ -1620,17 +1620,17 @@ describe('editors selectors', () => {
       };
       const state = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
 
-      expect(selectors._editorDataVersion(state, editorId)).toEqual(2);
+      expect(selectors.editorDataVersion(state, editorId)).toEqual(2);
     });
   });
-  describe('_editorLayout', () => {
+  describe('editorLayout', () => {
     test('should return undefined when no match found.', () => {
-      expect(selectors._editorLayout(undefined, editorId)).toBeUndefined();
-      expect(selectors._editorLayout({}, editorId)).toBeUndefined();
-      expect(selectors._editorLayout({123: {}}, editorId)).toBeUndefined();
+      expect(selectors.editorLayout(undefined, editorId)).toBeUndefined();
+      expect(selectors.editorLayout({}, editorId)).toBeUndefined();
+      expect(selectors.editorLayout({123: {}}, editorId)).toBeUndefined();
     });
     test('should return the data version if found in state', () => {
       const options = {
@@ -1645,17 +1645,17 @@ describe('editors selectors', () => {
       };
       const state = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
 
-      expect(selectors._editorLayout(state, editorId)).toEqual('compact');
+      expect(selectors.editorLayout(state, editorId)).toEqual('compact');
     });
   });
-  describe('_editorViolations', () => {
+  describe('editorViolations', () => {
     test('should return undefined when no match found.', () => {
-      expect(selectors._editorViolations(undefined, editorId)).toBeUndefined();
-      expect(selectors._editorViolations({}, editorId)).toBeUndefined();
-      expect(selectors._editorViolations({123: {}}, editorId)).toBeUndefined();
+      expect(selectors.editorViolations(undefined, editorId)).toBeUndefined();
+      expect(selectors.editorViolations({}, editorId)).toBeUndefined();
+      expect(selectors.editorViolations({123: {}}, editorId)).toBeUndefined();
     });
     test('should call and return the corresponding processor logic validate function result', () => {
       const options = {
@@ -1666,17 +1666,17 @@ describe('editors selectors', () => {
       };
       const state = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
 
-      expect(selectors._editorViolations(state, editorId)).toEqual({dataError: 'Must provide some sample data.'});
+      expect(selectors.editorViolations(state, editorId)).toEqual({dataError: 'Must provide some sample data.'});
     });
   });
-  describe('_isEditorDirty', () => {
+  describe('isEditorDirty', () => {
     test('should return undefined when no match found.', () => {
-      expect(selectors._isEditorDirty(undefined, editorId)).toBeUndefined();
-      expect(selectors._isEditorDirty({}, editorId)).toBeUndefined();
-      expect(selectors._isEditorDirty({123: {}}, editorId)).toBeUndefined();
+      expect(selectors.isEditorDirty(undefined, editorId)).toBeUndefined();
+      expect(selectors.isEditorDirty({}, editorId)).toBeUndefined();
+      expect(selectors.isEditorDirty({123: {}}, editorId)).toBeUndefined();
     });
     test('should call and return the corresponding processor logic dirty function result', () => {
       const options = {
@@ -1688,10 +1688,10 @@ describe('editors selectors', () => {
       };
       const state = reducer(
         undefined,
-        actions._editor.initComplete('httpbody', options)
+        actions.editor.initComplete('httpbody', options)
       );
 
-      expect(selectors._isEditorDirty(state, editorId)).toEqual(true);
+      expect(selectors.isEditorDirty(state, editorId)).toEqual(true);
     });
   });
 });

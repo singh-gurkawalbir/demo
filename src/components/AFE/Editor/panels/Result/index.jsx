@@ -4,7 +4,7 @@ import { selectors } from '../../../../../reducers';
 import CodePanel from '../Code';
 
 export default function ResultPanel({ editorId, mode }) {
-  const { data: result, warning } = useSelector(state => selectors._editorResult(state, editorId));
+  const { data: result, warning } = useSelector(state => selectors.editorResult(state, editorId));
 
   return (
     <CodePanel

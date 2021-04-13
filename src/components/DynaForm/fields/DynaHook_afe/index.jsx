@@ -108,7 +108,7 @@ export default function DynaHook_afe({
   }, [id, onFieldChange, value]);
 
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(editorId, 'javascript', {
+    dispatch(actions.editor.init(editorId, 'javascript', {
       flowId,
       resourceId,
       resourceType,

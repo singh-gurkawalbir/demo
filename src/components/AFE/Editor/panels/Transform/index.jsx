@@ -36,14 +36,14 @@ const useStyles = makeStyles(theme => ({
 export default function TransformPanel({ editorId }) {
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const data = useSelector(state => selectors._editorData(state, editorId));
-  const rule = useSelector(state => selectors._editorRule(state, editorId));
+  const data = useSelector(state => selectors.editorData(state, editorId));
+  const rule = useSelector(state => selectors.editorRule(state, editorId));
   const hasError =
-    useSelector(state => !!selectors._editorPreviewError(state, editorId).error);
+    useSelector(state => !!selectors.editorPreviewError(state, editorId).error);
   const classes = useStyles({hasError});
 
   const patchEditor = useCallback(value => {
-    dispatch(actions._editor.patchRule(editorId, value));
+    dispatch(actions.editor.patchRule(editorId, value));
   }, [dispatch, editorId]);
 
   const dataFields = useMemo(() => {

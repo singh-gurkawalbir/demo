@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
 const overrides = { wrap: true };
 export default function ConsoleGridItem({ editorId }) {
   const classes = useStyles();
-  const { logs } = useSelector(state => selectors._editorResult(state, editorId));
+  const { logs } = useSelector(state => selectors.editorResult(state, editorId));
 
   if (!logs && !Array.isArray(logs)) return null;
 

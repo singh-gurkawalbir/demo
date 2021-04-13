@@ -43,7 +43,7 @@ export default function DynaFileKeyColumn_afe(props) {
   const classes = useStyles();
   const editorId = 'filekeycolumns';
   const { data: editorData, previewStatus, result } = useSelector(state =>
-    selectors._editor(state, editorId)
+    selectors.editor(state, editorId)
   );
   /*
    * Fetches Raw data - CSV file to be parsed based on the rules
@@ -71,26 +71,26 @@ export default function DynaFileKeyColumn_afe(props) {
   useEffect(() => {
     // this component requires editor only to get the evaluated result of parser
     // and then use it to show options
-    dispatch(actions._editor.init(editorId, 'csvParser', {
+    dispatch(actions.editor.init(editorId, 'csvParser', {
       resourceId,
       resourceType,
       data: csvData,
       rule: options,
     }));
 
-    return () => dispatch(actions._editor.clear(editorId));
+    return () => dispatch(actions.editor.clear(editorId));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (csvData && csvData !== editorData) {
-      dispatch(actions._editor.patchFileKeyColumn(editorId, 'data', csvData));
+      dispatch(actions.editor.patchFileKeyColumn(editorId, 'data', csvData));
 
       onFieldChange(id, []);
     }
   }, [csvData, dispatch, id, editorData, onFieldChange]);
   useEffect(() => {
-    dispatch(actions._editor.patchFileKeyColumn(editorId, 'rule', { ...options }));
+    dispatch(actions.editor.patchFileKeyColumn(editorId, 'rule', { ...options }));
   }, [dispatch, options]);
 
   return (

@@ -23,7 +23,7 @@ export default function ExampleMenu({ onEditorChange }) {
   const classes = useStyles();
 
   const handleClick = ({key, type, rule, data }) => {
-    dispatch(actions._editor.init(key, type, { rule, data }));
+    dispatch(actions.editor.init(key, type, { rule, data }));
     onEditorChange(key);
   };
 

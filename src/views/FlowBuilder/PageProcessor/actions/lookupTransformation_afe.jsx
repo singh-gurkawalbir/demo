@@ -15,7 +15,7 @@ function LookupTransformationLauncher({ flowId, resourceType, resourceId, onClos
     // All this does is tell the parent component to shrink the set of processor icon buttons.
     onClose();
 
-    dispatch(actions._editor.init(editorId, 'flowTransform', {
+    dispatch(actions.editor.init(editorId, 'flowTransform', {
       flowId,
       resourceId,
       resourceType,

@@ -75,7 +75,7 @@ export default function DynaFileDefinitionEditor_afe(props) {
   }, [dispatch, formContext.value, id, onFieldChange, parserType, resourceId, resourceType]);
 
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(editorId, editorType, {
+    dispatch(actions.editor.init(editorId, editorType, {
       formKey,
       flowId,
       resourceId,

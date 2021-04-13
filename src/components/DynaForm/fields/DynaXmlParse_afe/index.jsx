@@ -163,7 +163,7 @@ export default function DynaXmlParse_afe({
   });
 
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(editorId, 'xmlParser', {
+    dispatch(actions.editor.init(editorId, 'xmlParser', {
       formKey: parentFormKey,
       flowId,
       resourceId,

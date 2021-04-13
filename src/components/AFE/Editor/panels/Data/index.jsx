@@ -7,13 +7,13 @@ import Spinner from '../../../../Spinner';
 
 export default function DataPanel({ editorId, mode }) {
   const dispatch = useDispatch();
-  const sampleDataStatus = useSelector(state => selectors._editor(state, editorId).sampleDataStatus);
+  const sampleDataStatus = useSelector(state => selectors.editor(state, editorId).sampleDataStatus);
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const data = useSelector(state => selectors._editorData(state, editorId));
-  const violations = useSelector(state => selectors._editorViolations(state, editorId));
+  const data = useSelector(state => selectors.editorData(state, editorId));
+  const violations = useSelector(state => selectors.editorViolations(state, editorId));
 
   const handleChange = newData => {
-    dispatch(actions._editor.patchData(editorId, newData));
+    dispatch(actions.editor.patchData(editorId, newData));
   };
 
   return (

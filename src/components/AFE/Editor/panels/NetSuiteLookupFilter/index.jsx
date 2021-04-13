@@ -45,15 +45,15 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
   const [filtersMetadata, setFiltersMetadata] = useState();
   const [rulesState, setRulesState] = useState({});
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const data = useSelector(state => selectors._editorData(state, editorId) || defaultData);
-  const rule = useSelector(state => selectors._editorRule(state, editorId));
-  const filters = useSelector(state => selectors._editor(state, editorId).filters || propFilters || defaultFilters);
+  const data = useSelector(state => selectors.editorData(state, editorId) || defaultData);
+  const rule = useSelector(state => selectors.editorRule(state, editorId));
+  const filters = useSelector(state => selectors.editor(state, editorId).filters || propFilters || defaultFilters);
 
   const dispatch = useDispatch();
   const patchEditor = useCallback(
     value => {
       if (editorId) {
-        dispatch(actions._editor.patchRule(editorId, value || []));
+        dispatch(actions.editor.patchRule(editorId, value || []));
       }
       if (onFieldChange) {
         onFieldChange(id, JSON.stringify(value));

@@ -85,7 +85,7 @@ export default function DynaNetSuiteQualifier_afe(props) {
   }, [id, onFieldChange]);
 
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(editorId, 'netsuiteQualificationCriteria', {
+    dispatch(actions.editor.init(editorId, 'netsuiteQualificationCriteria', {
       formKey,
       flowId,
       resourceId,

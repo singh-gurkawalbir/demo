@@ -42,7 +42,7 @@ export default function DynaSalesforceLookupFilters_afe(props) {
   const { disableFetch, commMetaPath } = options;
 
   useEffect(() => {
-    dispatch(actions._editor.init(newEditorId, 'salesforceLookupFilter', {
+    dispatch(actions.editor.init(newEditorId, 'salesforceLookupFilter', {
       fieldId: id,
       data,
       rule: value,
@@ -51,7 +51,7 @@ export default function DynaSalesforceLookupFilters_afe(props) {
       isGroupedSampleData: opts.isGroupedSampleData,
     }));
 
-    return () => dispatch(actions._editor.clear(editorId));
+    return () => dispatch(actions.editor.clear(editorId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

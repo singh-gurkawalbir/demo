@@ -28,7 +28,7 @@ export default function DatabaseMapping_afe() {
   const editorId = getValidRelativePath(fieldId);
 
   useEffect(() => {
-    dispatch(actions._editor.init(editorId, 'databaseMapping', {
+    dispatch(actions.editor.init(editorId, 'databaseMapping', {
       flowId,
       fieldId,
       resourceId: importId,

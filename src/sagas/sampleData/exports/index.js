@@ -20,7 +20,7 @@ import { DEFAULT_RECORD_SIZE, previewFileData } from '../../../utils/exportPanel
 import {
   constructResourceFromFormValues,
 } from '../../utils';
-import { evaluateExternalProcessor } from '../../_editor';
+import { evaluateExternalProcessor } from '../../editor';
 
 /*
  * Parsers for different file types used for converting into JSON format

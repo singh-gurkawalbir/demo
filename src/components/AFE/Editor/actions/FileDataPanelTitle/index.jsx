@@ -38,7 +38,7 @@ export default function FileDataPanelTitle({editorId, fileType}) {
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const { resourceId, resourceType, formKey, fieldId, isSuiteScriptData } = useSelector(state => {
-    const e = selectors._editor(state, editorId);
+    const e = selectors.editor(state, editorId);
 
     return ({
       resourceId: e.resourceId,

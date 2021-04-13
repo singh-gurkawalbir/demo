@@ -25,8 +25,8 @@ export default function XmlParseRules({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const rule = useSelector(state => selectors._editorRule(state, editorId));
-  const resourceId = useSelector(state => selectors._editor(state, editorId).resourceId);
+  const rule = useSelector(state => selectors.editorRule(state, editorId));
+  const resourceId = useSelector(state => selectors.editor(state, editorId).resourceId);
   const formContext = useFormContext(formKey);
 
   // Since the form metadata is used only once, we don't need to refresh the
@@ -44,7 +44,7 @@ export default function XmlParseRules({ editorId }) {
       V0_json: formContext.value.V0_json === 'true',
     };
 
-    dispatch(actions._editor.patchRule(editorId, rule));
+    dispatch(actions.editor.patchRule(editorId, rule));
   },
   [dispatch, editorId, formContext.value]);
 

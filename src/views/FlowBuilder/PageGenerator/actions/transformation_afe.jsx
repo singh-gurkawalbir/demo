@@ -20,7 +20,7 @@ function TxLauncher({ flowId, resourceType, resourceId, onClose, open }) {
     // the other processor buttons would not even be visible.
     onClose();
 
-    dispatch(actions._editor.init(editorId, 'flowTransform', {
+    dispatch(actions.editor.init(editorId, 'flowTransform', {
       flowId,
       resourceId,
       resourceType,

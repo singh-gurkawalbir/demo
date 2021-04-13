@@ -46,9 +46,9 @@ export default function CsvGeneratePanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const rule = useSelector(state => selectors._editorRule(state, editorId));
+  const rule = useSelector(state => selectors.editorRule(state, editorId));
   const {resourceId, resourceType} = useSelector(state => {
-    const {resourceId, resourceType} = selectors._editor(state, editorId);
+    const {resourceId, resourceType} = selectors.editor(state, editorId);
 
     return {resourceId, resourceType};
   }, shallowEqual);
@@ -75,7 +75,7 @@ export default function CsvGeneratePanel({ editorId }) {
   const patchEditor = (field, value) => {
     const newRule = {...rule, [field]: value};
 
-    dispatch(actions._editor.patchRule(editorId, newRule));
+    dispatch(actions.editor.patchRule(editorId, newRule));
   };
 
   /** customHeaderRow is not enabled for all Apps.

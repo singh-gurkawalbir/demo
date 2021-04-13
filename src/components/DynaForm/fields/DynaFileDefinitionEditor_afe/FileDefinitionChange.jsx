@@ -18,7 +18,7 @@ function extractResourcePath(value, initialResourcePath) {
 export default function FileDefinitionChange({editorId, formKey, fieldId, resourceType, resourceId}) {
   const dispatch = useDispatch();
   const formContext = useFormContext(formKey);
-  const isEditorActive = useSelector(state => selectors._editor(state, editorId).id);
+  const isEditorActive = useSelector(state => selectors.editor(state, editorId).id);
   const parserType = resourceType === 'imports' ? 'fileDefinitionGenerator' : 'fileDefinitionParser';
 
   const fieldState = useSelector(state => selectors.fieldState(state, formKey, fieldId));
@@ -37,7 +37,7 @@ export default function FileDefinitionChange({editorId, formKey, fieldId, resour
     // patch only if sampleData/rule is changed and editor state is active
     if (sampleData) {
       if (isEditorActive) {
-        dispatch(actions._editor.patchData(editorId, sampleData));
+        dispatch(actions.editor.patchData(editorId, sampleData));
       }
       dispatch(
         actions.sampleData.request(
@@ -55,7 +55,7 @@ export default function FileDefinitionChange({editorId, formKey, fieldId, resour
     }
     if (rule) {
       if (isEditorActive) {
-        dispatch(actions._editor.patchRule(editorId, rule));
+        dispatch(actions.editor.patchRule(editorId, rule));
       }
       // todo @raghu, we need to handle below onFieldChange inside
       // DynaFileDefinitionSelect.jsx

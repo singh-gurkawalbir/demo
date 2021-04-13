@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
 export default function OutputPanel({ editorId }) {
   const classes = useStyles();
   const { formOutput, previewStatus} = useSelector(state => {
-    const {formOutput, previewStatus} = selectors._editor(state, editorId);
+    const {formOutput, previewStatus} = selectors.editor(state, editorId);
 
     return { formOutput, previewStatus };
   });

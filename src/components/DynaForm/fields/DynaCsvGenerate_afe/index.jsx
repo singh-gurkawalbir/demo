@@ -126,7 +126,7 @@ export default function DynaCsvGenerate_afe(props) {
   });
 
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(editorId, 'csvGenerator', {
+    dispatch(actions.editor.init(editorId, 'csvGenerator', {
       formKey: parentFormKey,
       flowId,
       resourceId,

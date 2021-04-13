@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
 export default function HelpIconButton({ editorId }) {
   const classes = useStyles();
 
-  const { fieldId, editorType } = useSelector(state => selectors._editor(state, editorId));
+  const { fieldId, editorType } = useSelector(state => selectors.editor(state, editorId));
 
   if (!fieldId) return null;
 

@@ -26,12 +26,12 @@ export default function ManageLookup({ editorId }) {
   const history = useHistory();
   const match = useRouteMatch();
   const handlebarHelperFunction = useSelector(state =>
-    selectors._editorHelperFunctions(state), shallowEqual
+    selectors.editorHelperFunctions(state), shallowEqual
   );
 
   const showLookup = useSelector(state => selectors.isEditorLookupSupported(state, editorId));
   const {resourceType, formKey, resourceId, flowId, lastValidData, editorLookups, fieldId} = useSelector(state => {
-    const e = selectors._editor(state, editorId);
+    const e = selectors.editor(state, editorId);
 
     return {resourceType: e.resourceType,
       formKey: e.formKey,
@@ -80,7 +80,7 @@ export default function ManageLookup({ editorId }) {
       dispatch(actions.form.fieldChange(formKey)(lookupFieldId, lookups));
     } else {
       // save lookups in state
-      dispatch(actions._editor.patchFeatures(editorId, {lookups}));
+      dispatch(actions.editor.patchFeatures(editorId, {lookups}));
     }
   };
 

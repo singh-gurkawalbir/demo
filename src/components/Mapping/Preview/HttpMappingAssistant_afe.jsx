@@ -25,20 +25,20 @@ export default function HttpMappingAssistant_afe({ importId }) {
   const editorId = 'httpPreview';
   const dispatch = useDispatch();
   const classes = useStyles();
-  const { data: editorData, result, autoEvaluate } = useSelector(state => selectors._editor(state, editorId), shallowEqual);
+  const { data: editorData, result, autoEvaluate } = useSelector(state => selectors.editor(state, editorId), shallowEqual);
   const dataInput = useSelector(state => selectors.mappingHttpAssistantPreviewData(state, importId)?.data);
   const rule = useSelector(state => selectors.mappingHttpAssistantPreviewData(state, importId)?.rule);
 
   useEffect(() => {
     // this component requires editor only to view the evaluated result of the handlebars processor
-    dispatch(actions._editor.init(editorId, 'handlebars', {
+    dispatch(actions.editor.init(editorId, 'handlebars', {
       resourceId: importId,
       resourceType: 'imports',
       rule,
       data: dataInput,
     }));
 
-    return () => dispatch(actions._editor.clear(editorId));
+    return () => dispatch(actions.editor.clear(editorId));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -46,10 +46,10 @@ export default function HttpMappingAssistant_afe({ importId }) {
     // since handlebars editors use autoEvaluate as false everywhere
     // this is the only exception so dispatching the action to flip this flag
     if (autoEvaluate === false) {
-      dispatch(actions._editor.toggleAutoPreview(editorId));
+      dispatch(actions.editor.toggleAutoPreview(editorId));
     }
     if (editorData && dataInput && editorData !== dataInput) {
-      dispatch(actions._editor.patchData(editorId, dataInput));
+      dispatch(actions.editor.patchData(editorId, dataInput));
     }
   }, [autoEvaluate, dataInput, dispatch, editorData]);
 

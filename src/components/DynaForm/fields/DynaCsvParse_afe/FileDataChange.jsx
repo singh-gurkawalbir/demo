@@ -6,7 +6,7 @@ import { selectors } from '../../../../reducers';
 export default function FileDataChange({editorId, fileType}) {
   const dispatch = useDispatch();
   const {resourceType, resourceId} = useSelector(state => {
-    const {resourceType, resourceId} = selectors._editor(state, editorId);
+    const {resourceType, resourceId} = selectors.editor(state, editorId);
 
     return {resourceType, resourceId};
   }, shallowEqual);
@@ -18,7 +18,7 @@ export default function FileDataChange({editorId, fileType}) {
   useEffect(() => {
     // patch only if filedata is changed and editor state is active
     if (fileData && resourceId) {
-      dispatch(actions._editor.patchData(editorId, fileData));
+      dispatch(actions.editor.patchData(editorId, fileData));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileData]);

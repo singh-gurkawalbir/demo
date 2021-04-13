@@ -15,7 +15,7 @@ function ResponseTransformationLauncher({ flowId, resourceType, resourceId, onCl
     // All this does is tell the parent component to shrink the set of processor icon buttons.
     onClose();
 
-    dispatch(actions._editor.init(editorId, 'responseTransform', {
+    dispatch(actions.editor.init(editorId, 'responseTransform', {
       flowId,
       resourceId,
       resourceType,

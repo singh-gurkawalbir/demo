@@ -7,7 +7,7 @@ import CodePanel from '../Code';
 export default function HandlebarsPanel({ editorId, mode = 'handlebars', enableAutocomplete = true }) {
   const dispatch = useDispatch();
   const {rule, error, errorLine} = useSelector(state => {
-    const e = selectors._editor(state, editorId);
+    const e = selectors.editor(state, editorId);
 
     return {
       rule: e.rule,
@@ -18,7 +18,7 @@ export default function HandlebarsPanel({ editorId, mode = 'handlebars', enableA
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
 
   const handleChange = useCallback(newRule => {
-    dispatch(actions._editor.patchRule(editorId, newRule));
+    dispatch(actions.editor.patchRule(editorId, newRule));
   }, [dispatch, editorId]);
 
   return (

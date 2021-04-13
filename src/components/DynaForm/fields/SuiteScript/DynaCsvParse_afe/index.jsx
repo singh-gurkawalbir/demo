@@ -130,7 +130,7 @@ export default function DynaCsvParse_afe(props) {
   });
 
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(editorId, 'csvParser', {
+    dispatch(actions.editor.init(editorId, 'csvParser', {
       formKey: parentFormKey,
       flowId,
       resourceId,

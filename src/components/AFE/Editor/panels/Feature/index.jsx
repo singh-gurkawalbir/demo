@@ -7,12 +7,12 @@ import Spinner from '../../../../Spinner';
 
 export default function FeaturePanel({ editorId, mode, featureName }) {
   const dispatch = useDispatch();
-  const sampleDataStatus = useSelector(state => selectors._editor(state, editorId).sampleDataStatus);
-  const featureValue = useSelector(state => selectors._editor(state, editorId)[featureName]);
+  const sampleDataStatus = useSelector(state => selectors.editor(state, editorId).sampleDataStatus);
+  const featureValue = useSelector(state => selectors.editor(state, editorId)[featureName]);
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
 
   const handleChange = value => {
-    dispatch(actions._editor.patchFeatures(editorId, {[featureName]: value}));
+    dispatch(actions.editor.patchFeatures(editorId, {[featureName]: value}));
   };
 
   return (

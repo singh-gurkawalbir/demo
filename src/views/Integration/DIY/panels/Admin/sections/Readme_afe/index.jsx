@@ -44,7 +44,7 @@ export default function ReadmeSection({ integrationId }) {
   );
 
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(editorId, 'readme', {
+    dispatch(actions.editor.init(editorId, 'readme', {
       resourceId: integrationId,
       resourceType: 'integrations',
       // we don't need sample data for readme editor,

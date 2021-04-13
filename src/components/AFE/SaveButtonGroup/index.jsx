@@ -8,7 +8,7 @@ import useCancelConfirm from '../useCancelConfirm';
 export default function SaveButtonGroup({ editorId, onClose }) {
   const { handleSave, handleSaveAndClose, handleCancelClick, saveInProgress, isEditorDirty } = useCancelConfirm(editorId, onClose);
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const editorViolations = useSelector(state => selectors._editorViolations(state, editorId));
+  const editorViolations = useSelector(state => selectors.editorViolations(state, editorId));
   const disable = !!editorViolations || disabled || saveInProgress || !isEditorDirty;
 
   return (

@@ -54,20 +54,20 @@ export default function JavaScriptPanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const aceEditor = useRef(null);
-  const rule = useSelector(state => selectors._editorRule(state, editorId));
+  const rule = useSelector(state => selectors.editorRule(state, editorId));
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const {code = '', entryFunction = '', scriptId = '', fetchScriptContent } = rule || {};
-  const insertStubKey = useSelector(state => selectors._editor(state, editorId).insertStubKey);
+  const insertStubKey = useSelector(state => selectors.editor(state, editorId).insertStubKey);
 
   const { errorLine, error } =
-    useSelector(state => selectors._editorPreviewError(state, editorId), shallowEqual);
+    useSelector(state => selectors.editorPreviewError(state, editorId), shallowEqual);
   const hasError = !!error;
   const data = useSelectorMemo(selectors.makeResourceDataSelector, 'scripts', scriptId);
   const scriptContent = data?.merged?.content;
   const allScripts = useSelectorMemo(selectors.makeResourceListSelector, scriptFilterConfig).resources;
   const patchRule = useCallback(
     val => {
-      dispatch(actions._editor.patchRule(editorId, val));
+      dispatch(actions.editor.patchRule(editorId, val));
     },
     [dispatch, editorId]
   );

@@ -40,10 +40,10 @@ export default function DynaNetSuiteLookupFilters_afe(props) {
     disabled,
   } = props;
   const { disableFetch, commMetaPath } = options;
-  const isEditorInitialized = useSelector(state => selectors._editor(state, editorId).fieldId);
+  const isEditorInitialized = useSelector(state => selectors.editor(state, editorId).fieldId);
 
   useEffect(() => {
-    dispatch(actions._editor.init(editorId, 'netsuiteLookupFilter', {
+    dispatch(actions.editor.init(editorId, 'netsuiteLookupFilter', {
       fieldId: id,
       rule: value,
       stage: 'importMappingExtract',
@@ -51,7 +51,7 @@ export default function DynaNetSuiteLookupFilters_afe(props) {
       wrapData: true,
     }));
 
-    return () => dispatch(actions._editor.clear(editorId));
+    return () => dispatch(actions.editor.clear(editorId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

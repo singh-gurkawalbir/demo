@@ -5183,11 +5183,11 @@ selectors.flowConnectionsWithLogEntry = () => {
 // #endregion connection log selectors
 
 // #region AFE selectors
-selectors._editorHelperFunctions = state => state?.session?._editors?.helperFunctions || {};
+selectors.editorHelperFunctions = state => state?.session?.editors?.helperFunctions || {};
 
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
-  const {editorType, fieldId, flowId, resourceId, resourceType, stage} = fromSession._editor(state?.session, editorId);
+  const {editorType, fieldId, flowId, resourceId, resourceType, stage} = fromSession.editor(state?.session, editorId);
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
   if (stage === 'outputFilter' ||
@@ -5203,7 +5203,7 @@ selectors.editorSupportsOnlyV2Data = (state, editorId) => {
 };
 
 selectors.isEditorDisabled = (state, editorId) => {
-  const editor = fromSession._editor(state?.session, editorId);
+  const editor = fromSession.editor(state?.session, editorId);
   const {flowId, fieldId, formKey, editorType, activeProcessor} = editor;
   const flow = selectors.resource(state, 'flows', flowId);
   const integrationId = flow?._integrationId || 'none';
@@ -5229,7 +5229,7 @@ selectors.isEditorDisabled = (state, editorId) => {
 };
 
 selectors.isEditorLookupSupported = (state, editorId) => {
-  const editor = fromSession._editor(state?.session, editorId);
+  const editor = fromSession.editor(state?.session, editorId);
   const {resultMode, fieldId, editorType, resourceType} = editor;
   const lookupFields = [
     '_body',
@@ -5263,7 +5263,7 @@ selectors.isEditorLookupSupported = (state, editorId) => {
 // //TODO: update the logic here once BE trackers
 // IO-19867 and IO-19868 are complete
 selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
-  const editor = fromSession._editor(state?.session, editorId);
+  const editor = fromSession.editor(state?.session, editorId);
   const {stage, resourceId, resourceType, flowId, fieldId} = editor;
   const { merged: resource = {} } = selectors.resourceData(
     state,

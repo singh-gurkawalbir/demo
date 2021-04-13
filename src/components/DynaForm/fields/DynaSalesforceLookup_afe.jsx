@@ -56,7 +56,7 @@ export default function DynaSalesforceLookup_afe(props) {
     onFieldChange(id, rule);
   }, [id, onFieldChange]);
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(editorId, 'salesforceLookupFilter', {
+    dispatch(actions.editor.init(editorId, 'salesforceLookupFilter', {
       formKey,
       flowId,
       resourceId,

@@ -28,10 +28,10 @@ const useStyles = makeStyles(theme => ({
 export default function ToggleLayout({ editorId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const layout = useSelector(state => selectors._editor(state, editorId).layout);
+  const layout = useSelector(state => selectors.editor(state, editorId).layout);
 
-  const handleToggle2 = event => {
-    dispatch(actions._editor.changeLayout(editorId, event.target.value));
+  const handleToggle = event => {
+    dispatch(actions.editor.changeLayout(editorId, event.target.value));
   };
 
   return (
@@ -44,8 +44,7 @@ export default function ToggleLayout({ editorId }) {
           id="toggle-layout"
           value={layout}
           className={classes.togglelLayoutSelect}
-          onChange={handleToggle2}
-      >
+          onChange={handleToggle} >
           <MenuItem className={classes.item} value="column"><ViewColumnIcon /></MenuItem>
           <MenuItem className={classes.item} value="compact"><ViewCompactIcon /></MenuItem>
           <MenuItem className={classes.item} value="row"> <ViewRowIcon /></MenuItem>

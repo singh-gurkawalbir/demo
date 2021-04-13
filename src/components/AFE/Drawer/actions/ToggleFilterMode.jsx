@@ -11,13 +11,13 @@ const toggleOptions = [
 
 export default function ToggleFilterMode({ editorId }) {
   const dispatch = useDispatch();
-  const activeProcessor = useSelector(state => selectors._editor(state, editorId).activeProcessor);
+  const activeProcessor = useSelector(state => selectors.editor(state, editorId).activeProcessor);
   const saveInProgress = useSelector(state => {
-    const {saveStatus} = selectors._editor(state, editorId);
+    const {saveStatus} = selectors.editor(state, editorId);
 
     return saveStatus === 'requested';
   });
-  const handleToggle = activeProcessor => dispatch(actions._editor.patchFeatures(editorId, {activeProcessor}));
+  const handleToggle = activeProcessor => dispatch(actions.editor.patchFeatures(editorId, {activeProcessor}));
 
   return (
     <TextToggle

@@ -27,7 +27,7 @@ import { requestExportSampleData } from '../sampleData/exports';
 import { requestSampleData } from '../sampleData/flows';
 import { apiCallWithRetry } from '../index';
 import { APIException } from '../api';
-import processorLogic from '../../reducers/session/_editors/processorLogic';
+import processorLogic from '../../reducers/session/editors/processorLogic';
 
 const editorId = 'httpbody';
 
@@ -64,7 +64,7 @@ describe('editor sagas', () => {
         .provide([
           [matchers.call.fn(apiCallWithRetry), undefined],
           [select(selectors.userTimezone), 'Asia/Calcutta'],
-          [select(selectors._editor, editorId), editorState],
+          [select(selectors.editor, editorId), editorState],
           [matchers.call.fn(constructResourceFromFormValues), resource],
           [select(selectors.resource, 'connections', 'conn-123'), connection],
         ])
@@ -135,7 +135,7 @@ describe('editor sagas', () => {
         .provide([
           [matchers.call.fn(apiCallWithRetry), undefined],
           [select(selectors.userTimezone), null],
-          [select(selectors._editor, editorId), editorState],
+          [select(selectors.editor, editorId), editorState],
           [matchers.call.fn(constructResourceFromFormValues), resource],
           [select(selectors.resource, 'connections', 'conn-123'), connection],
         ])
@@ -168,7 +168,7 @@ describe('editor sagas', () => {
   describe('requestPreview saga', () => {
     test('should do nothing if no editor exists with given id', () => expectSaga(requestPreview, { id: editorId})
       .provide([
-        [select(selectors._editor, editorId), undefined],
+        [select(selectors.editor, editorId), undefined],
       ])
       .returns(undefined)
       .run());
@@ -181,9 +181,9 @@ describe('editor sagas', () => {
 
       return expectSaga(requestPreview, { id: editorId})
         .provide([
-          [select(selectors._editor, editorId), editor],
+          [select(selectors.editor, editorId), editor],
         ])
-        .put(actions._editor.validateFailure(editorId, {dataError: 'Must provide some sample data.'}))
+        .put(actions.editor.validateFailure(editorId, {dataError: 'Must provide some sample data.'}))
         .returns(undefined)
         .run();
     });
@@ -198,7 +198,7 @@ describe('editor sagas', () => {
 
       return expectSaga(requestPreview, { id: editorId})
         .provide([
-          [select(selectors._editor, editorId), editor],
+          [select(selectors.editor, editorId), editor],
         ])
         .call(invokeProcessor, {
           editorId,
@@ -220,7 +220,7 @@ describe('editor sagas', () => {
 
       return expectSaga(requestPreview, { id: editorId})
         .provide([
-          [select(selectors._editor, editorId), editor],
+          [select(selectors.editor, editorId), editor],
           [call(invokeProcessor, {
             editorId,
             processor: 'handlebars',
@@ -232,7 +232,7 @@ describe('editor sagas', () => {
             message: '{"message":"invalid processor", "code":"code"}',
           }))],
         ])
-        .put(actions._editor.previewFailed(editorId, {errorMessage: ['Message: invalid processor'], errorLine: undefined }))
+        .put(actions.editor.previewFailed(editorId, {errorMessage: ['Message: invalid processor'], errorLine: undefined }))
         .run();
     });
     test('should dispatch preview response action with the final result if invokeProcesor succeeds', () => {
@@ -246,7 +246,7 @@ describe('editor sagas', () => {
 
       return expectSaga(requestPreview, { id: editorId})
         .provide([
-          [select(selectors._editor, editorId), editor],
+          [select(selectors.editor, editorId), editor],
           [call(invokeProcessor, {
             editorId,
             processor: 'handlebars',
@@ -255,8 +255,8 @@ describe('editor sagas', () => {
               data: {id: '999'},
             } }), '999'],
         ])
-        .not.put(actions._editor.previewFailed(editorId))
-        .put(actions._editor.previewResponse(editorId, '999'))
+        .not.put(actions.editor.previewFailed(editorId))
+        .put(actions.editor.previewResponse(editorId, '999'))
         .run();
     });
   });
@@ -349,7 +349,7 @@ describe('editor sagas', () => {
 
     test('should do nothing if no editor exists with given id', async () => {
       const { effects } = await expectSaga(save, { id: editorId })
-        .provide([[select(selectors._editor, editorId), undefined]])
+        .provide([[select(selectors.editor, editorId), undefined]])
         .returns(undefined)
         .run();
 
@@ -361,16 +361,16 @@ describe('editor sagas', () => {
 
       return expectSaga(save, { id: editorId })
         .provide([
-          [select(selectors._editor, editorId), editor],
+          [select(selectors.editor, editorId), editor],
           [matchers.call.fn(requestPreview), { error: 'some error' }],
         ])
         .call.fn(requestPreview)
-        .put(actions._editor.saveFailed(editorId))
+        .put(actions.editor.saveFailed(editorId))
         .run();
     });
     test('should not call requestPreview when previewOnSave is false', () => expectSaga(save, { id: editorId })
       .provide([
-        [select(selectors._editor, editorId), editor],
+        [select(selectors.editor, editorId), editor],
       ])
       .not.call.fn(requestPreview)
       .run());
@@ -383,9 +383,9 @@ describe('editor sagas', () => {
 
       return expectSaga(save, { id: editorId })
         .provide([
-          [select(selectors._editor, editorId), editor],
+          [select(selectors.editor, editorId), editor],
         ])
-        .put(actions._editor.saveFailed(editorId, 'save failed error'))
+        .put(actions.editor.saveFailed(editorId, 'save failed error'))
         .run();
     });
     test('should call onSave handler when present in editor state and dispatch save complete action after foreground patches are run', async () => {
@@ -394,10 +394,10 @@ describe('editor sagas', () => {
 
       const { effects } = await expectSaga(save, { id: editorId })
         .provide([
-          [select(selectors._editor, editorId), editor],
+          [select(selectors.editor, editorId), editor],
           [matchers.call.fn(commitStagedChanges), undefined],
         ])
-        .not.put(actions._editor.saveFailed(editorId))
+        .not.put(actions.editor.saveFailed(editorId))
         .run();
 
       expect(editor.onSave.mock.calls.length).toBe(1);
@@ -406,16 +406,16 @@ describe('editor sagas', () => {
       expect(effects.call).toHaveLength(3);
       expect(effects.put).toHaveLength(6);
       // 4th action would be editor savecomplete, after first 3 for foreground patchStaged
-      expect(effects.put[3]).toEqual(put(actions._editor.saveComplete(editorId)));
+      expect(effects.put[3]).toEqual(put(actions.editor.saveComplete(editorId)));
     });
     test('should dispatch save failed action if no patch sets are given and onSave handler is also undefined', () => {
       processorLogic.getPatchSet = jest.fn().mockImplementationOnce(() => null);
 
       return expectSaga(save, { id: editorId })
         .provide([
-          [select(selectors._editor, editorId), editor],
+          [select(selectors.editor, editorId), editor],
         ])
-        .put(actions._editor.saveFailed(editorId))
+        .put(actions.editor.saveFailed(editorId))
         .run();
     }
     );
@@ -426,10 +426,10 @@ describe('editor sagas', () => {
 
       const { effects } = await expectSaga(save, { id: editorId })
         .provide([
-          [select(selectors._editor, editorId), editor],
+          [select(selectors.editor, editorId), editor],
         ])
         .not.call.fn(commitStagedChanges)
-        .put(actions._editor.saveComplete(editorId))
+        .put(actions.editor.saveComplete(editorId))
         .run();
 
       expect(effects.call).toBeUndefined();
@@ -439,7 +439,7 @@ describe('editor sagas', () => {
       processorLogic.getPatchSet = jest.fn().mockImplementationOnce(() => patches);
       const { effects } = await expectSaga(save, { id: editorId })
         .provide([
-          [select(selectors._editor, editorId), editor],
+          [select(selectors.editor, editorId), editor],
           [
             matchers.call(commitStagedChanges, {
               resourceType: 'imports',
@@ -459,8 +459,8 @@ describe('editor sagas', () => {
             { error: 'some error' },
           ],
         ])
-        .put(actions._editor.saveFailed(editorId))
-        .not.put(actions._editor.saveComplete(editorId))
+        .put(actions.editor.saveFailed(editorId))
+        .not.put(actions.editor.saveComplete(editorId))
         .run();
 
       // 2nd call for 'scripts' patch will fail, hence the 3rd commit call should not happen
@@ -471,24 +471,24 @@ describe('editor sagas', () => {
       processorLogic.getPatchSet = jest.fn().mockImplementationOnce(() => patches);
       const { effects } = await expectSaga(save, { id: editorId })
         .provide([
-          [select(selectors._editor, editorId), editor],
+          [select(selectors.editor, editorId), editor],
           [matchers.call.fn(commitStagedChanges), undefined],
         ])
-        .not.put(actions._editor.saveFailed(editorId))
+        .not.put(actions.editor.saveFailed(editorId))
         .run();
 
       // since there are 3 foreground patches, total call to commitStagedChanges would be 3
       expect(effects.call).toHaveLength(3);
       expect(effects.put).toHaveLength(6);
       // 4th action would be editor savecomplete, after first 3 for foreground patchStaged
-      expect(effects.put[3]).toEqual(put(actions._editor.saveComplete(editorId)));
+      expect(effects.put[3]).toEqual(put(actions.editor.saveComplete(editorId)));
     });
 
     test('should not dispatch save failed action even if background patches fail', async () => {
       processorLogic.getPatchSet = jest.fn().mockImplementationOnce(() => patches);
       const { effects } = await expectSaga(save, { id: editorId })
         .provide([
-          [select(selectors._editor, editorId), editor],
+          [select(selectors.editor, editorId), editor],
           [matchers.call.fn(commitStagedChanges), undefined],
           [
             call(commitStagedChanges, {
@@ -499,7 +499,7 @@ describe('editor sagas', () => {
             { error: 'some error' },
           ],
         ])
-        .not.put(actions._editor.saveFailed(editorId))
+        .not.put(actions.editor.saveFailed(editorId))
         .run();
 
       // since there are 3 foreground patches, total call to commitStagedChanges would be 3
@@ -518,7 +518,7 @@ describe('editor sagas', () => {
   describe('autoEvaluateProcessor saga', () => {
     test('should do nothing if no editor exists with given id', () => expectSaga(autoEvaluateProcessor, { id: editorId})
       .provide([
-        [select(selectors._editor, editorId), undefined],
+        [select(selectors.editor, editorId), undefined],
       ])
       .not.call(requestPreview, { id: editorId })
       .returns(undefined)
@@ -526,7 +526,7 @@ describe('editor sagas', () => {
 
     test('should do nothing if editor exists but auto evaluate is off.', () => expectSaga(autoEvaluateProcessor, { id: editorId})
       .provide([
-        [select(selectors._editor, editorId), {autoEvaluate: false}],
+        [select(selectors.editor, editorId), {autoEvaluate: false}],
       ])
       .not.call(requestPreview, { id: editorId })
       .returns(undefined)
@@ -541,7 +541,7 @@ describe('editor sagas', () => {
 
       return expectSaga(autoEvaluateProcessor, { id: editorId})
         .provide([
-          [select(selectors._editor, editorId), editor],
+          [select(selectors.editor, editorId), editor],
         ])
         .delay(500)
         .call(requestPreview, { id: editorId })
@@ -576,7 +576,7 @@ describe('editor sagas', () => {
 
       return expectSaga(refreshHelperFunctions)
         .not.call.fn(getResource)
-        .put(actions._editor.updateHelperFunctions(mockHelperFunctions))
+        .put(actions.editor.updateHelperFunctions(mockHelperFunctions))
         .run();
     });
     test('should create a new helperFunction instance when there isn\'t any in the local storage ', () => {
@@ -596,7 +596,7 @@ describe('editor sagas', () => {
             message: 'Getting Helper functions',
           }), mockHelperResp],
         ])
-        .put(actions._editor.updateHelperFunctions(['add', 'uri']))
+        .put(actions.editor.updateHelperFunctions(['add', 'uri']))
         .run();
 
       expect(localStorage.setItem).toBeCalledWith(
@@ -627,7 +627,7 @@ describe('editor sagas', () => {
 
       return expectSaga(refreshHelperFunctions)
         .not.call.fn(getResource)
-        .put(actions._editor.updateHelperFunctions(mockHelperFunctions))
+        .put(actions.editor.updateHelperFunctions(mockHelperFunctions))
         .run();
     });
 
@@ -658,7 +658,7 @@ describe('editor sagas', () => {
             message: 'Getting Helper functions',
           }), mockHelperResp],
         ])
-        .put(actions._editor.updateHelperFunctions(['add', 'abs']))
+        .put(actions.editor.updateHelperFunctions(['add', 'abs']))
         .run();
 
       expect(localStorage.setItem).toBeCalledWith(
@@ -679,7 +679,7 @@ describe('editor sagas', () => {
             message: 'Getting Helper functions',
           }), undefined],
         ])
-        .not.put(actions._editor.updateHelperFunctions(['add', 'abs']))
+        .not.put(actions.editor.updateHelperFunctions(['add', 'abs']))
         .run();
     });
   });
@@ -689,7 +689,7 @@ describe('editor sagas', () => {
 
     test('should do nothing if editor does not exist', () => expectSaga(requestEditorSampleData, { id: editorId })
       .provide([
-        [select(selectors._editor, editorId), undefined],
+        [select(selectors.editor, editorId), undefined],
       ])
       .returns(undefined)
       .run());
@@ -704,7 +704,7 @@ describe('editor sagas', () => {
 
       return expectSaga(requestEditorSampleData, { id: 'script' })
         .provide([
-          [select(selectors._editor, 'script'), editor],
+          [select(selectors.editor, 'script'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
         ])
         .returns({data: {}})
@@ -723,7 +723,7 @@ describe('editor sagas', () => {
 
       return expectSaga(requestEditorSampleData, { id: 'as2content' })
         .provide([
-          [select(selectors._editor, 'as2content'), editor],
+          [select(selectors.editor, 'as2content'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
         ])
         .returns({
@@ -754,7 +754,7 @@ describe('editor sagas', () => {
 
       return expectSaga(requestEditorSampleData, { id: 'filexml' })
         .provide([
-          [select(selectors._editor, 'filexml'), editor],
+          [select(selectors.editor, 'filexml'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
           [matchers.select.selector(selectors.fileSampleData), '<xml>some data</xml>'],
         ])
@@ -775,7 +775,7 @@ describe('editor sagas', () => {
 
       return expectSaga(requestEditorSampleData, { id: 'filefiledefinition' })
         .provide([
-          [select(selectors._editor, 'filefiledefinition'), editor],
+          [select(selectors.editor, 'filefiledefinition'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
         ])
         .returns({})
@@ -794,7 +794,7 @@ describe('editor sagas', () => {
 
       return expectSaga(requestEditorSampleData, { id: 'dataURITemplate' })
         .provide([
-          [select(selectors._editor, 'dataURITemplate'), editor],
+          [select(selectors.editor, 'dataURITemplate'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
           [matchers.call.fn(requestExportSampleData)],
           [matchers.call.fn(requestSampleData), {}],
@@ -817,7 +817,7 @@ describe('editor sagas', () => {
 
       return expectSaga(requestEditorSampleData, { id: 'traceKeyTemplate' })
         .provide([
-          [select(selectors._editor, 'traceKeyTemplate'), editor],
+          [select(selectors.editor, 'traceKeyTemplate'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
           [matchers.call.fn(requestExportSampleData)],
           [matchers.call.fn(requestSampleData), {}],
@@ -839,7 +839,7 @@ describe('editor sagas', () => {
 
       return expectSaga(requestEditorSampleData, { id: 'tx-123' })
         .provide([
-          [select(selectors._editor, 'tx-123'), editor],
+          [select(selectors.editor, 'tx-123'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
           [matchers.call.fn(requestSampleData), {}],
           [matchers.call.fn(apiCallWithRetry), {}],
@@ -860,7 +860,7 @@ describe('editor sagas', () => {
 
       return expectSaga(requestEditorSampleData, { id: 'tx-123' })
         .provide([
-          [select(selectors._editor, 'tx-123'), editor],
+          [select(selectors.editor, 'tx-123'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
           [matchers.call.fn(requestSampleData), {}],
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: false}],
@@ -881,7 +881,7 @@ describe('editor sagas', () => {
 
       return expectSaga(requestEditorSampleData, { id: 'eFilter' })
         .provide([
-          [select(selectors._editor, 'eFilter'), editor],
+          [select(selectors.editor, 'eFilter'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
           [matchers.call.fn(requestSampleData), {}],
           [matchers.call.fn(apiCallWithRetry), throwError(new APIException({
@@ -892,7 +892,7 @@ describe('editor sagas', () => {
         ])
         .call(requestSampleData, {flowId, resourceId, resourceType: 'exports', stage: 'exportFilter'})
         .call.fn(apiCallWithRetry)
-        .put(actions._editor.sampleDataFailed('eFilter', '{"message":"invalid processor", "code":"code"}'))
+        .put(actions.editor.sampleDataFailed('eFilter', '{"message":"invalid processor", "code":"code"}'))
         .run();
     });
     test('should make apiCallWithRetry call with correct request body and not dispatch sample data failed action if api call was a success', () => {
@@ -907,7 +907,7 @@ describe('editor sagas', () => {
 
       return expectSaga(requestEditorSampleData, { id: 'eFilter' })
         .provide([
-          [select(selectors._editor, 'eFilter'), editor],
+          [select(selectors.editor, 'eFilter'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
           [matchers.call.fn(requestSampleData), {}],
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, sampleData: {name: 'Bob'}}],
@@ -915,7 +915,7 @@ describe('editor sagas', () => {
         ])
         .call(requestSampleData, {flowId, resourceId, resourceType: 'exports', stage: 'exportFilter'})
         .call.fn(apiCallWithRetry)
-        .not.put(actions._editor.sampleDataFailed('eFilter', '{"message":"invalid processor", "code":"code"}'))
+        .not.put(actions.editor.sampleDataFailed('eFilter', '{"message":"invalid processor", "code":"code"}'))
         .returns({ data: { record: { name: 'Bob' } }, templateVersion: 2 })
         .run();
     });
@@ -931,7 +931,7 @@ describe('editor sagas', () => {
 
       return expectSaga(requestEditorSampleData, { id: 'eFilter' })
         .provide([
-          [select(selectors._editor, 'eFilter'), editor],
+          [select(selectors.editor, 'eFilter'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
           [matchers.select.selector(selectors.getSampleDataContext), {data: {id: 999}}],
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true}],
@@ -954,7 +954,7 @@ describe('editor sagas', () => {
           message: 'Loading',
           hidden: false,
         })
-        .not.put(actions._editor.sampleDataFailed('eFilter', '{"message":"invalid processor", "code":"code"}'))
+        .not.put(actions.editor.sampleDataFailed('eFilter', '{"message":"invalid processor", "code":"code"}'))
         .returns({ data: { record: {id: 999}}, templateVersion: 2 })
         .run();
     });
@@ -972,7 +972,7 @@ describe('editor sagas', () => {
 
       return expectSaga(requestEditorSampleData, { id: 'filecsv' })
         .provide([
-          [select(selectors._editor, 'filecsv'), editor],
+          [select(selectors.editor, 'filecsv'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
           [matchers.call.fn(requestSampleData), {}],
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, sampleData: {name: 'Bob'}}],
@@ -998,7 +998,7 @@ describe('editor sagas', () => {
 
       return expectSaga(requestEditorSampleData, { id: 'salesforceid' })
         .provide([
-          [select(selectors._editor, 'salesforceid'), editor],
+          [select(selectors.editor, 'salesforceid'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
           [matchers.call.fn(requestSampleData), {}],
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: false, sampleData: {name: 'Bob'}}],
@@ -1021,7 +1021,7 @@ describe('editor sagas', () => {
 
       return expectSaga(requestEditorSampleData, { id: 'tx-123' })
         .provide([
-          [select(selectors._editor, 'tx-123'), editor],
+          [select(selectors.editor, 'tx-123'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
           [matchers.select.selector(selectors.getSampleDataContext), {data: {id: 999}}],
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: false}],
@@ -1036,7 +1036,7 @@ describe('editor sagas', () => {
   describe('initSampleData saga', () => {
     test('should do nothing if editor does not exist', () => expectSaga(initSampleData, { id: editorId })
       .provide([
-        [select(selectors._editor, editorId), undefined],
+        [select(selectors.editor, editorId), undefined],
       ])
       .not.call(refreshHelperFunctions)
       .not.call(autoEvaluateProcessorWithCancel, { id: editorId })
@@ -1053,11 +1053,11 @@ describe('editor sagas', () => {
 
       return expectSaga(initSampleData, { id: editorId })
         .provide([
-          [select(selectors._editor, editorId), editor],
+          [select(selectors.editor, editorId), editor],
           [call(refreshHelperFunctions), undefined],
         ])
         .not.call.fn(requestEditorSampleData)
-        .put(actions._editor.sampleDataReceived(editorId, '{"id": "999"}')
+        .put(actions.editor.sampleDataReceived(editorId, '{"id": "999"}')
         )
         .call(refreshHelperFunctions)
         .call(autoEvaluateProcessorWithCancel, { id: editorId })
@@ -1072,12 +1072,12 @@ describe('editor sagas', () => {
 
       return expectSaga(initSampleData, { id: editorId })
         .provide([
-          [select(selectors._editor, editorId), editor],
+          [select(selectors.editor, editorId), editor],
           [call(requestEditorSampleData, {id: editorId}), {data: '{"id": "999"}', templateVersion: 2}],
           [call(refreshHelperFunctions), undefined],
         ])
         .call(requestEditorSampleData, {id: editorId})
-        .put(actions._editor.sampleDataReceived(editorId, '{"id": "999"}', 2)
+        .put(actions.editor.sampleDataReceived(editorId, '{"id": "999"}', 2)
         )
         .call(refreshHelperFunctions)
         .call(autoEvaluateProcessorWithCancel, { id: editorId })
@@ -1093,12 +1093,12 @@ describe('editor sagas', () => {
 
       return expectSaga(initSampleData, { id: editorId })
         .provide([
-          [select(selectors._editor, editorId), editor],
+          [select(selectors.editor, editorId), editor],
           [call(requestEditorSampleData, {id: editorId}), {data: '{"id": "999"}', templateVersion: 2}],
           [call(refreshHelperFunctions), undefined],
         ])
         .call(requestEditorSampleData, {id: editorId})
-        .put(actions._editor.sampleDataReceived(editorId, '{"id": "999"}', 2)
+        .put(actions.editor.sampleDataReceived(editorId, '{"id": "999"}', 2)
         )
         .call(refreshHelperFunctions)
         .call(autoEvaluateProcessorWithCancel, { id: editorId })
@@ -1615,14 +1615,14 @@ describe('editor sagas', () => {
         [call(requestEditorSampleData, {id: editorId, requestedTemplateVersion: 2}), undefined],
       ])
       .call(requestEditorSampleData, {id: editorId, requestedTemplateVersion: 2})
-      .not.put(actions._editor.sampleDataReceived(editorId, '{"name": "Bob"}', 2))
+      .not.put(actions.editor.sampleDataReceived(editorId, '{"name": "Bob"}', 2))
       .run());
     test('should call requestEditorSampleData and dispatch data received action', () => expectSaga(toggleEditorVersion, { id: editorId, version: 2 })
       .provide([
         [call(requestEditorSampleData, {id: editorId, requestedTemplateVersion: 2}), {data: '{"name": "Bob"}', templateVersion: 2}],
       ])
       .call(requestEditorSampleData, {id: editorId, requestedTemplateVersion: 2})
-      .put(actions._editor.sampleDataReceived(editorId, '{"name": "Bob"}', 2))
+      .put(actions.editor.sampleDataReceived(editorId, '{"name": "Bob"}', 2))
       .run());
   });
 });

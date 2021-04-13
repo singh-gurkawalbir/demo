@@ -42,12 +42,12 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
   const [filtersMetadata, setFiltersMetadata] = useState();
   const [rulesState, setRulesState] = useState({});
   const dispatch = useDispatch();
-  const rule = useSelector(state => selectors._editorRule(state, editorId));
-  const filters = useSelector(state => selectors._editor(state, editorId).filters || defaultFilters);
+  const rule = useSelector(state => selectors.editorRule(state, editorId));
+  const filters = useSelector(state => selectors.editor(state, editorId).filters || defaultFilters);
 
   const patchEditor = useCallback(
     value => {
-      dispatch(actions._editor.patchRule(editorId, value || null));
+      dispatch(actions.editor.patchRule(editorId, value || null));
     },
     [dispatch, editorId]
   );

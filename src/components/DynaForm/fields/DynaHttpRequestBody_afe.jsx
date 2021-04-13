@@ -39,7 +39,7 @@ export default function DynaHttpRequestBody_afe(props) {
   }, [arrayIndex, id, onFieldChange, value]);
 
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(editorId, 'handlebars', {
+    dispatch(actions.editor.init(editorId, 'handlebars', {
       formKey,
       flowId,
       resourceId,

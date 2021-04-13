@@ -72,7 +72,7 @@ export default function DynaTransformRules_afe({
   }, [id, onFieldChange, rule]);
 
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(editorId, 'transform', {
+    dispatch(actions.editor.init(editorId, 'transform', {
       data: {},
       rule: rule?.[0],
       formKey,
