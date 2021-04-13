@@ -80,7 +80,6 @@ export default function AutoMapperButton({disabled}) {
 
   useEffect(() => {
     if (failMsg) {
-      console.log(failSeverity, failMsg);
       enqueueSnackbar({ message: failMsg, variant: failSeverity || 'error' });
     }
   }, [enqueueSnackbar, failMsg, failSeverity]);
