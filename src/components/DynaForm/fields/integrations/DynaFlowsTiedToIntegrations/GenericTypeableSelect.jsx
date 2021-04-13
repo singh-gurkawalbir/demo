@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, makeStyles } from '@material-ui/core';
+import { FormControl, FormLabel, fade, makeStyles, useTheme } from '@material-ui/core';
 import React, { useCallback } from 'react';
 import Select, { components } from 'react-select';
 import SearchIcon from '../../../../icons/SearchIcon';
@@ -13,17 +13,14 @@ const REACT_SELECT_ACTION_TYPES = {
 
 Object.freeze(REACT_SELECT_ACTION_TYPES);
 
-const useStyles = makeStyles(theme => ({
-  option: {
-    paddingRight: theme.spacing(1),
-    paddingLeft: theme.spacing(1),
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-  },
+const useStyles = makeStyles({
   fullWidth: {
     width: '100%',
   },
-}));
+  option: {
+    cursor: 'pointer',
+  },
+});
 
 const Option = props => {
   const classes = useStyles();
@@ -40,11 +37,10 @@ const Option = props => {
   };
 
   return (
-    <div data-test={value} className={classes.option}>
+    <div data-test={value} className={classes.option} onClick={toggleSelection}>
       <components.Option {...props} isSelected={isSelected}>
         {React.cloneElement(children, {
           ...props,
-          onClick: toggleSelection,
           checked: isSelected,
         })}
 
@@ -95,9 +91,126 @@ export const GenericTypeableSelect = props => {
     // these prop give you the ability to provide the dropdown options jsx implementations
     SelectedOptionImpl,
   } = props;
-
+  const theme = useTheme();
   const classes = useStyles();
+  // TODO: (Azhar) most important to remove all the repeated code from all the react select
+  const customStylesMultiselect = {
+    option: (provided, state) => ({
+      ...provided,
+      padding: '0px',
+      color: state.isSelected
+        ? theme.palette.secondary.main
+        : theme.palette.secondary.light,
+      backgroundColor:
+        state.isSelected || state.isFocused
+          ? theme.palette.background.paper2
+          : theme.palette.background.paper,
+      border: 'none',
+      minHeight: '38px',
+      display: 'flex',
+      cursor: 'pointer',
+      alignItems: 'center',
+      borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+      '&:active': {
+        backgroundColor: theme.palette.background.paper,
+        color: theme.palette.secondary.light,
+      },
+    }),
+    control: () => ({
+      minWidth: 365,
+      border: '1px solid',
+      borderColor: theme.palette.secondary.lightest,
+      borderRadius: '2px',
+      backgroundColor: theme.palette.background.paper,
+      alignItems: 'flex-start',
+      cursor: 'default',
+      display: 'flex',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      minHeight: '38px',
+      position: 'relative',
+      boxSizing: 'borderBox',
+      transition: 'all 100ms ease 0s',
+      outline: '0px !important',
+      '&:hover': {
+        borderColor: theme.palette.primary.main,
+      },
+    }),
+    indicatorsContainer: () => ({
+      height: '38px',
+      display: 'flex',
+      alignItems: 'center',
+    }),
+    menu: () => ({
+      zIndex: 2,
+      border: '1px solid',
+      borderColor: theme.palette.secondary.lightest,
+      position: 'absolute',
+      backgroundColor: theme.palette.background.paper,
+      width: '100%',
+    }),
+    input: () => ({
+      color: theme.palette.secondary.light,
+      minWidth: theme.spacing(10),
+    }),
+    placeholder: () => ({
+      color: theme.palette.secondary.light,
+      position: 'absolute',
 
+    }),
+    indicatorSeparator: () => ({
+      display: 'none',
+    }),
+    menuList: () => ({
+      padding: '0px',
+      maxHeight: '260px',
+      overflowY: 'auto',
+    }),
+    // group: () => ({
+    //   padding: '0px',
+    // }),
+    valueContainer: () => ({
+      minHeight: '38px',
+      maxHeight: '100%',
+      alignItems: 'center',
+      display: 'flex',
+      flex: '1',
+      padding: '2px 8px',
+      position: 'relative',
+      overflow: 'hidden',
+      flexWrap: 'wrap',
+    }),
+    dropdownIndicator: () => ({
+      color: theme.palette.secondary.light,
+      padding: theme.spacing(0.5, 1, 0, 1),
+      cursor: 'pointer',
+      '&:hover': {
+        color: fade(theme.palette.secondary.light, 0.8),
+      },
+    }),
+    multiValue: styles => ({
+      ...styles,
+      backgroundColor: 'white',
+      borderRadius: theme.spacing(3),
+      height: 28,
+      minWidth: 'unset',
+      padding: '1px 8px',
+      border: `1px solid ${theme.palette.secondary.lightest}`,
+    }),
+    multiValueLabel: styles => ({
+      ...styles,
+      borderRadius: 0,
+      padding: 0,
+    }),
+    multiValueRemove: styles => ({
+      ...styles,
+      paddingRight: 'unset',
+      color: theme.palette.text.secondary,
+      ':hover': {
+        color: theme.palette.secondary.main,
+      },
+    }),
+  };
   const handleChange = useCallback((all, optionAction) => {
     if (optionAction.action === REACT_SELECT_ACTION_TYPES.CLEAR) {
       return onFieldChange(id, []);
@@ -151,6 +264,7 @@ export const GenericTypeableSelect = props => {
           onChange={handleChange}
           closeMenuOnSelect={false}
           hideSelectedOptions={false}
+          styles={customStylesMultiselect}
     />
 
         <FieldMessage {...props} />
