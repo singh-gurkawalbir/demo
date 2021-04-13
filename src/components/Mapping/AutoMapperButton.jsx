@@ -36,10 +36,10 @@ export default function AutoMapperButton({disabled}) {
   const { saveInProgress, saveCompleted, saveTerminated } = useSelector(state => selectors.mappingSaveStatus(state), shallowEqual);
   const mappingsChanged = useSelector(state => selectors.mappingChanged(state));
 
-  const {autoMapperErrorMsg, isFetchingAutoSuggestions} = useSelector(state => {
-    const {status, errorMsg} = selectors.autoMapper(state);
+  const {failMsg, failSeverity, isFetchingAutoSuggestions} = useSelector(state => {
+    const {status, failMsg, failSeverity} = selectors.autoMapper(state);
 
-    return { isFetchingAutoSuggestions: status === 'requested', autoMapperErrorMsg: errorMsg};
+    return { isFetchingAutoSuggestions: status === 'requested', failMsg, failSeverity};
   }, shallowEqual);
 
   const handleAutoMapperRequest = useCallback(() =>
@@ -79,10 +79,11 @@ export default function AutoMapperButton({disabled}) {
   );
 
   useEffect(() => {
-    if (autoMapperErrorMsg) {
-      enqueueSnackbar({ message: autoMapperErrorMsg, variant: 'error' });
+    if (failMsg) {
+      console.log(failSeverity, failMsg);
+      enqueueSnackbar({ message: failMsg, variant: failSeverity || 'error' });
     }
-  }, [autoMapperErrorMsg, enqueueSnackbar]);
+  }, [enqueueSnackbar, failMsg, failSeverity]);
 
   useEffect(() => {
     if (saveTriggered && saveTerminated) {

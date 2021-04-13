@@ -122,9 +122,7 @@ export const ConfirmDialogProvider = ({ children }) => {
 
   return (
     <ConfirmDialogContext.Provider
-      value={{
-        setConfirmDialogProps,
-      }}>
+      value={{ setConfirmDialogProps }}>
       {!!confirmDialogProps &&
         (confirmDialogProps.isPrompt ? (
           <Prompt {...confirmDialogProps} onClose={onClose} />

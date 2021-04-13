@@ -1492,7 +1492,7 @@ const mapping = {
   autoMapper: {
     request: () => action(actionTypes.MAPPING.AUTO_MAPPER.REQUEST),
     received: value => action(actionTypes.MAPPING.AUTO_MAPPER.RECEIVED, {value}),
-    failed: errorMsg => action(actionTypes.MAPPING.AUTO_MAPPER.FAILED, {errorMsg}),
+    failed: (failSeverity, failMsg) => action(actionTypes.MAPPING.AUTO_MAPPER.FAILED, {failSeverity, failMsg}),
   },
 };
 
