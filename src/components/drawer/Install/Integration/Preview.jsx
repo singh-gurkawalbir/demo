@@ -62,7 +62,7 @@ export default function IntegrationPreview() {
   const handleInstallIntegration = () => {
     confirmDialog({
       title: 'Disclaimer',
-      message: messageStore('DIY_INTSALL_DISCLAIMER'),
+      message: messageStore('DIY_INSTALL_DISCLAIMER'),
       buttons: [
         {
           label: 'Proceed',
