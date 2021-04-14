@@ -1251,6 +1251,18 @@ describe('Error Management region selector testcases', () => {
           _id: 'f8',
           _integrationId: 'int1',
         },
+        {
+          _id: 'f9',
+          _integrationId: 'int2',
+        },
+        {
+          _id: 'f10',
+          _integrationId: 'int2',
+        },
+        {
+          _id: 'f11',
+          _integrationId: 'int2',
+        },
       ];
 
       state = reducer(state, actions.resource.receivedCollection('flows', flows));
@@ -1284,6 +1296,23 @@ describe('Error Management region selector testcases', () => {
           },
         ],
       }));
+      state = reducer(state, actions.errorManager.integrationErrors.request({ integrationId: 'int2'}));
+      state = reducer(state, actions.errorManager.integrationErrors.received({ integrationId: 'int2',
+        integrationErrors: [
+          {
+            _flowId: 'f9',
+            numError: 20,
+          },
+          {
+            _flowId: 'f10',
+            numError: 40,
+          },
+          {
+            _flowId: 'f11',
+            numError: 0,
+          },
+        ],
+      }));
     });
 
     test('should not throw any exception for invalid arguments', () => {
@@ -1301,6 +1330,11 @@ describe('Error Management region selector testcases', () => {
 
     test('should return empty object if integration does not exist', () => {
       expect(selectors.integrationErrorsPerFlowGroup(state, 'int-not-exists')).toEqual({});
+    });
+    test('should return error count for miscellaneous section if the flows of an intergration are not under any flow group', () => {
+      expect(selectors.integrationErrorsPerFlowGroup(state, 'int2')).toEqual({
+        [MISCELLANEOUS_SECTION_ID]: 60,
+      });
     });
 
     test('should return object of groups with 0 errors if integration does not have any active flows with errors', () => {

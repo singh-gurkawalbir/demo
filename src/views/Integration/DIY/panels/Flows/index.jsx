@@ -24,6 +24,7 @@ import { getTemplateUrlName } from '../../../../../utils/template';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
+import SectionTitle from '../../../common/FlowSectionTitle';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -89,19 +90,6 @@ const useStyles = makeStyles(theme => ({
   flowsGroupContainer: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
-  gridContainer: {
-    display: 'grid',
-    gridColumnGap: '10px',
-    gridTemplateColumns: 'auto 38%',
-    position: 'relative',
-    '& > div:first-child': {
-      wordBreak: 'break-word',
-    },
-    '& > div:last-child': {
-      position: 'relative',
-      right: -12,
-    },
-  },
 }));
 
 const getBasePath = match => {
@@ -122,42 +110,6 @@ const getBasePath = match => {
 };
 const tilesFilterConfig = { type: 'tiles'};
 
-const SectionTitle = ({integrationId, sectionId, title}) => {
-  const classes = useStyles();
-  const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isOwnerUserInErrMgtTwoDotZero(state)
-  );
-  const errorCountByFlowGroup = useSelector(
-    state =>
-      selectors.integrationErrorsPerFlowGroup(state, integrationId)
-  );
-
-  const errorCount = errorCountByFlowGroup[sectionId] || 0;
-  const errorStatus = useMemo(() => {
-    if (errorCount === 0) {
-      return <StatusCircle size="mini" variant="success" />;
-    }
-
-    return (
-      <div>
-        <StatusCircle size="mini" variant="error" />
-        <span>{errorCount > 9999 ? '9999+' : errorCount}</span>
-      </div>
-    );
-  }, [errorCount]);
-
-  if (!isUserInErrMgtTwoDotZero) {
-    return title;
-  }
-
-  return (
-    <div className={classes.gridContainer}>
-      <div> { title }</div>
-      <div> {errorStatus} </div>
-    </div>
-  );
-};
-
 const FlowListingTable = ({
   flows,
   filterKey,
@@ -169,6 +121,10 @@ const FlowListingTable = ({
   const classes = useStyles();
 
   const sectionId = match?.params?.sectionId;
+  const errorCountByFlowGroup = useSelector(
+    state =>
+      selectors.integrationErrorsPerFlowGroup(state, integrationId)
+  );
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
   const hasMiscellaneousSection = shouldHaveMiscellaneousSection(flowGroupingsSections, flows);
 
@@ -196,7 +152,7 @@ const FlowListingTable = ({
                 activeClassName={classes.activeListItem}
                 to={sectionId}
                 data-test={sectionId}>
-                <SectionTitle title={title} sectionId={sectionId} integrationId={integrationId} />
+                <SectionTitle title={title} errorCount={errorCountByFlowGroup[sectionId]} />
               </NavLink>
             </ListItem>
           ))}
