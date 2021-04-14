@@ -672,7 +672,7 @@ export function* getAutoMapperSuggestion() {
         }));
         yield put(actions.mapping.autoMapper.received(suggestedMapping));
       } else {
-        yield put(actions.mapping.autoMapper.failed('info', 'There are no new fields to auto-map.'));
+        yield put(actions.mapping.autoMapper.failed('warning', 'There are no new fields to auto-map.'));
       }
   } else {
     yield put(actions.mapping.autoMapper.failed('error', 'Failed to fetch mapping suggestions.'));
