@@ -41,7 +41,7 @@ export const getResourceName = ({name, isResolvedGraph, flowResources}) => {
   const resourceId = name.split('-')[0];
 
   if (isResolvedGraph) {
-    return resourceId === 'autopilot' ? 'Auto resolved' : 'Users';
+    return resourceId === 'autopilot' ? 'Auto-resolved' : 'Users';
   }
   let modifiedName = resourceId;
   const resource = flowResources.find(r => r._id === resourceId);
