@@ -81,13 +81,17 @@ function CustomTextFields({selectedRange, setSelectedRange, reset, setReset}) {
         <DynaDateTime
           key={reset}
           onFieldChange={onFieldChange('startDate')}
-          value={startDate} skipTimezoneConversion label="Start date" />
+          value={startDate} skipTimezoneConversion label="Start date"
+          removePickerDialog
+          />
       </div>
       <div>
         <DynaDateTime
           key={reset}
           onFieldChange={onFieldChange('endDate')}
-          value={endDate} skipTimezoneConversion label="End date" />
+          value={endDate} skipTimezoneConversion label="End date"
+          removePickerDialog
+          />
       </div>
       <Typography className={classes.infoText}>You can generate a Report for upto 3 days of Data</Typography>
     </>
