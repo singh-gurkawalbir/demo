@@ -1797,10 +1797,13 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
   (_1, _2, childId) => childId,
   (_1, _2, _3, options) => options,
   selectors.errorMap,
-  (integrations = emptyArray, flows = emptyArray, integrationId, childId, options, errorMap) => {
+  selectors.currentEnvironment,
+  (integrations = emptyArray, flows = emptyArray, integrationId, childId, options, errorMap, currentEnvironment) => {
     const childIntegrationIds = integrations.filter(i => i._parentId === integrationId || i._id === integrationId).map(i => i._id);
     let integrationFlows = flows.filter(f => {
-      if (integrationId === STANDALONE_INTEGRATION.id) return !f._integrationId;
+      if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+        return !f._integrationId && !!f.sandbox === (currentEnvironment === 'sandbox');
+      }
       if (childId && childId !== integrationId) return f._integrationId === childId;
 
       return childIntegrationIds.includes(f._integrationId);
