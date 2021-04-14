@@ -101,7 +101,7 @@ export default function DynaSoqlQuery(props) {
     value,
   ]);
   const handleEditorClick = useCallback(() => {
-    dispatch(actions._editor.init(editorId, 'sql', {
+    dispatch(actions.editor.init(editorId, 'sql', {
       formKey,
       flowId,
       resourceId,
