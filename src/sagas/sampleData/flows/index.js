@@ -15,7 +15,7 @@ import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { apiCallWithRetry } from '../..';
-import { evaluateExternalProcessor } from '../../_editor';
+import { evaluateExternalProcessor } from '../../editor';
 import { getResource } from '../../resources';
 import {
   requestSampleDataForExports,
