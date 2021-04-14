@@ -1,5 +1,7 @@
 import moment from 'moment';
+import momenttz from 'moment-timezone';
 import * as d3 from 'd3';
+import { getTimezoneOffset } from 'date-fns-tz';
 import { convertUtcToTimezone } from './date';
 
 export const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
@@ -16,7 +18,7 @@ export const getDateTimeFormat = (range, epochTime, preferences = {}, timezone) 
     const days = moment(range.endDate).diff(moment(range.startDate), 'days');
 
     if (days > 4 && days < 4 * 30) {
-      return `${moment(epochTime).format(preferences?.dateFormat || 'MM/DD/YYYY')} GMT`;
+      return `${moment(epochTime).format(preferences?.dateFormat || 'MM/DD/YYYY')}`;
     } if (days >= 4 * 30) {
       return moment(epochTime).format('MMMM');
     }
@@ -238,7 +240,7 @@ const getFlowFilterExpression = (resourceType, resourceId, filters) => {
 const getISODateString = date => isDate(date) ? date.toISOString() : date;
 
 const getFlowMetricsQueryParams = (resourceType, resourceId, filters) => {
-  const { range = {} } = filters;
+  const { range = {}, timezone } = filters;
   let timeSrcExpression = '';
   const flowFilterExpression = getFlowFilterExpression(resourceType, resourceId, filters);
   let start = '-1d';
@@ -287,7 +289,10 @@ const getFlowMetricsQueryParams = (resourceType, resourceId, filters) => {
     timeSrcExpression = ', timeSrc: "_start"';
   }
 
-  return { bucket, start, end, flowFilterExpression, timeSrcExpression, duration };
+  const timezoneOffsetExpression = `|> timeShift(duration: ${(getTimezoneOffset(timezone || momenttz.tz.guess()) / (1000 * 60))}m)`;
+  const resetTimezoneExpression = `|> timeShift(duration: ${-(getTimezoneOffset(timezone || momenttz.tz.guess()) / (1000 * 60))}m)`;
+
+  return { bucket, start, end, flowFilterExpression, timeSrcExpression, duration, timezoneOffsetExpression, resetTimezoneExpression };
 };
 
 export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) => {
@@ -296,6 +301,8 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
     start,
     end,
     flowFilterExpression,
+    timezoneOffsetExpression,
+    resetTimezoneExpression,
     timeSrcExpression,
     duration,
   } = getFlowMetricsQueryParams(resourceType, resourceId, filters);
@@ -308,6 +315,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> filter(fn: (r) => r.u == "${userId}")
         ${flowFilterExpression}
         |> filter(fn: (r) => r._field == "c")
+        ${timezoneOffsetExpression}
     
     seiBaseData = baseData
         |> filter(fn: (r) => r._measurement != "r")
@@ -336,6 +344,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
 
     seiData = union(tables: [flowsData, integrationData])
     seirData = union(tables: [seiData, resolvedData])
+        ${resetTimezoneExpression}
         |> map(fn: (r) => ({
             _time: r._time,
             timeInMills: int(v: r._time)/1000000,
@@ -363,6 +372,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> filter(fn: (r) => r.u == "${userId}")
         ${flowFilterExpression}
         |> filter(fn: (r) => (r._measurement == "s"))
+        ${timezoneOffsetExpression}
         |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
         |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
         (tables
@@ -387,6 +397,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> group()
 
     attData = union(tables: [data3, data4])
+    ${resetTimezoneExpression}
     |> map(fn: (r) => ({
             _time: r._time,
             timeInMills: int(v: r._time)/1000000,
@@ -406,6 +417,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> range(start: ${start}, stop: ${end})
         |> filter(fn: (r) => r.u == "${userId}")
         ${flowFilterExpression}
+        ${timezoneOffsetExpression}
 
     seiBaseData = flowData
         |> filter(fn: (r) => r._field == "c" and r._measurement != "r")
@@ -429,6 +441,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
 
     seiData = union(tables: [data1, data2])
     seirData = union(tables: [seiData, resolvedData])
+    ${resetTimezoneExpression}
     |> map(fn: (r) => ({
         _time: r._time,
         timeInMills: int(v: r._time)/1000000,
@@ -476,6 +489,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> group()
 
     attData = union(tables: [data3, data4])
+    ${resetTimezoneExpression}
     |> map(fn: (r) => ({
         _time: r._time,
         timeInMills: int(v: r._time)/1000000,
