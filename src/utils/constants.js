@@ -571,7 +571,6 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'salesforce.soql.query',
     'salesforce.distributed.referencedFields',
     'salesforce.distributed.relatedLists',
-    'salesforce.distributed.qualifier',
     'schedule',
     'timeZone',
     'activeTab',
