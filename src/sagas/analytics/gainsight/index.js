@@ -270,7 +270,7 @@ export const gainsightSagas = [
   takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, trackFormSubmit),
   takeEvery(actionTypes.MAPPING.SAVE, trackFormSubmit),
   takeEvery(actionTypes.RESPONSE_MAPPING.SAVE, trackFormSubmit),
-  takeEvery(actionTypes._EDITOR.SAVE.REQUEST, trackEditorSave),
+  takeEvery(actionTypes.EDITOR.SAVE.REQUEST, trackEditorSave),
   takeEvery(actionTypes.HOOKS.SAVE, trackHookSave),
   takeEvery(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, trackFlowEnableDisable),
   takeEvery(actionTypes.FLOW.RUN_REQUESTED, trackFlowRun),

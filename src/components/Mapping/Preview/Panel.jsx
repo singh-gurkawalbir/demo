@@ -5,7 +5,7 @@ import actions from '../../../actions';
 import {selectors} from '../../../reducers';
 import SalesforceMappingAssistant from '../../SalesforceMappingAssistant';
 import NetSuiteMappingAssistant from '../../NetSuiteMappingAssistant';
-import HttpMappingAssistant from './HttpMappingAssistant_afe2';
+import HttpMappingAssistant from './HttpMappingAssistant_afe';
 
 const useStyles = makeStyles(theme => ({
   assistantContainer: {

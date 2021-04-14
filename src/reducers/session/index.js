@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import form, {selectors as fromForm} from './form';
 import stage, { selectors as fromStage } from './stage';
 import filters, { selectors as fromFilters } from './filters';
-import _editors, { selectors as fromEditorsAfe2 } from './_editors';
+import editors, { selectors as fromEditors } from './editors';
 import metadata, { selectors as fromMetadata } from './metadata';
 import connectors, { selectors as fromConnectors } from './connectors';
 import connections, { selectors as fromConnections } from './connections';
@@ -40,7 +40,7 @@ export default combineReducers({
   recycleBin,
   stage,
   filters,
-  _editors,
+  editors,
   metadata,
   connectors,
   connections,
@@ -78,7 +78,7 @@ const subSelectors = {
   form: fromForm,
   stage: fromStage,
   filters: fromFilters,
-  _editors: fromEditorsAfe2,
+  editors: fromEditors,
   metadata: fromMetadata,
   connectors: fromConnectors,
   connections: fromConnections,
