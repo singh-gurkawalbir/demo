@@ -65,11 +65,13 @@ const getParserValue = ({
   rowDelimiter,
   hasHeaderRow,
   keyColumns,
+  rowsPerRecord,
 }) => ({
   columnDelimiter,
   rowDelimiter,
   hasHeaderRow,
   keyColumns,
+  rowsPerRecord,
 });
 
 export default function DynaCsvParse_afe(props) {
