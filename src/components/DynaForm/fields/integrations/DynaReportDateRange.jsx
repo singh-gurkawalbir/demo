@@ -80,16 +80,20 @@ function CustomTextFields({selectedRange, setSelectedRange, reset, setReset}) {
       <div>
         <DynaDateTime
           key={reset}
+          dateLabel="Start date"
+          timeLabel="Start time"
           onFieldChange={onFieldChange('startDate')}
-          value={startDate} skipTimezoneConversion label="Start date"
+          value={startDate} skipTimezoneConversion
           removePickerDialog
           />
       </div>
       <div>
         <DynaDateTime
           key={reset}
+          dateLabel="End date"
+          timeLabel="End time"
           onFieldChange={onFieldChange('endDate')}
-          value={endDate} skipTimezoneConversion label="End date"
+          value={endDate} skipTimezoneConversion
           removePickerDialog
           />
       </div>
