@@ -23,7 +23,7 @@ import { jobSagas } from './jobs';
 import { flowMetricSagas } from './flowMetrics';
 import integrationAppsSagas from './integrationApps';
 import { flowSagas } from './flows';
-import editorAfe2 from './_editor';
+import editor from './editor';
 import {
   onRequestSaga,
   onSuccessSaga,
@@ -144,7 +144,7 @@ export function* allSagas() {
     ...connectorSagas,
     ...templateSagas,
     ...cloneSagas,
-    ...editorAfe2,
+    ...editor,
     ...userSagas,
     ...authenticationSagas,
     ...resourceFormSagas,

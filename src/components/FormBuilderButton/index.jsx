@@ -29,7 +29,7 @@ export default function FormBuilderButton({resourceId, resourceType, integration
     e => {
       e.stopPropagation();
       dispatch(
-        actions._editor.init(editorId, 'settingsForm', {
+        actions.editor.init(editorId, 'settingsForm', {
           integrationId,
           resourceId,
           resourceType,

@@ -8,7 +8,7 @@ import salesforceMetadata from '../../../Lookup/Manage/metadata/salesforce';
 import rdbmsMetadata from '../../../Lookup/Manage/metadata/rdbms';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import EditorDrawer from '../../../AFE2/Drawer';
+import EditorDrawer from '../../../AFE/Drawer';
 
 export default function ManageLookup({
   onSave,

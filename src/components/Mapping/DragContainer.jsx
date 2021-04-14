@@ -6,7 +6,7 @@ import MappingRow from './MappingRow';
 import actions from '../../actions';
 
 const emptyObject = {};
-export default function DragContainer({ onDrop, ...props }) {
+export default function DragContainer({ onDrop, className, ...props }) {
   const [isDragging, setIsDragging] = useState(false);
   const dispatch = useDispatch();
   const mappings = useSelector(state => selectors.mapping(state).mappings);
@@ -57,7 +57,7 @@ export default function DragContainer({ onDrop, ...props }) {
   const emptyRowIndex = mappingState.length;
 
   return (
-    <>
+    <div className={className}>
       <div ref={drop}>
 
         {tableData.map((mapping, index) => (
@@ -79,6 +79,6 @@ export default function DragContainer({ onDrop, ...props }) {
         isDraggable={false}
         {...props}
       />
-    </>
+    </div>
   );
 }
