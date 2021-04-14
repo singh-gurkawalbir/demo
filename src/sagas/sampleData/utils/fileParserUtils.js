@@ -81,8 +81,8 @@ export function* parseFileData({ sampleData, resource }) {
   const options = generateFileParserOptionsFromResource(resource);
   const processorData = {
     data: sampleData,
-    processor: PARSERS[fileType],
-    ...options,
+    editorType: PARSERS[fileType],
+    rule: options,
   };
 
   // console.log('parseFileData', processorData);

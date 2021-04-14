@@ -10,6 +10,7 @@ import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
 import { IAFormStateManager, useActiveTab } from '..';
 import useIASettingsStateWithHandleClose from '../../../../../../hooks/useIASettingsStateWithHandleClose';
+import EditorDrawer from '../../../../../../components/AFE/Drawer';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -131,6 +132,7 @@ export default function SettingsDrawerRoute(props) {
       <LoadResources required resources="exports,imports,flows,connections">
         <SettingsDrawer {...props} parentUrl={match.url} />
       </LoadResources>
+      <EditorDrawer />
     </Route>
   );
 }

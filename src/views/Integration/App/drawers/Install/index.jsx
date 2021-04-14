@@ -29,7 +29,6 @@ import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
 import { INSTALL_STEP_TYPES, emptyObject,
-  NETSUITE_BUNDLE_URL,
 } from '../../../../../utils/constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
@@ -38,6 +37,7 @@ import RawHtml from '../../../../../components/RawHtml';
 import getRoutePath from '../../../../../utils/routePaths';
 import HelpIcon from '../../../../../components/icons/HelpIcon';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import TrashIcon from '../../../../../components/icons/TrashIcon';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -82,9 +82,6 @@ export default function ConnectorInstallation(props) {
   const dispatch = useDispatch();
 
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
-  const connections = useSelector(state =>
-    selectors.resourceList(state, { type: 'connections' })
-  ).resources;
 
   const {
     name: integrationName,
@@ -149,12 +146,17 @@ export default function ConnectorInstallation(props) {
     (left, right) => (left.openOauthConnection === right.openOauthConnection && left.connectionId === right.connectionId)
   );
 
-  if (openOauthConnection) {
-    dispatch(actions.integrationApp.installer.setOauthConnectionMode(connectionId, false, integrationId));
-    setConnection({
-      _connectionId: connectionId,
-    });
-  }
+  const oauthConnection = useSelectorMemo(selectors.makeResourceSelector, 'connections', connectionId);
+
+  useEffect(() => {
+    if (openOauthConnection && oauthConnection) {
+      dispatch(actions.integrationApp.installer.setOauthConnectionMode(connectionId, false, integrationId));
+      setConnection({
+        _connectionId: connectionId,
+      });
+    }
+  }, [connectionId, dispatch, integrationId, openOauthConnection, oauthConnection]);
+
   const selectedConnectionType = useSelector(state => {
     const selectedConnection = selectors.resource(
       state,
@@ -171,6 +173,14 @@ export default function ConnectorInstallation(props) {
   }, []);
   const isCloned = install.find(step => step.isClone);
   const isFrameWork2 = integrationInstallSteps.length || isCloned;
+
+  const redirectTo = useSelector(state => selectors.shouldRedirect(state, integrationId));
+
+  useEffect(() => {
+    if (redirectTo) {
+      history.push(getRoutePath('dashboard'));
+    }
+  }, [dispatch, history, integrationId, redirectTo]);
 
   useEffect(() => {
     const allStepsCompleted = !installSteps.reduce((result, step) => result || !step.completed, false);
@@ -196,6 +206,7 @@ export default function ConnectorInstallation(props) {
     ],
     []
   );
+
   const handleSubmitComplete = useCallback(
     (connId, isAuthorized, connectionDoc = {}) => {
       // Here connection Doc will come into picture for only for IA2.0 and if connection step doesn't contain connection Id.
@@ -316,6 +327,11 @@ export default function ConnectorInstallation(props) {
         {
           label: 'Uninstall',
           onClick: () => {
+            if (!_connectorId) {
+              dispatch(actions.resource.integrations.delete(integrationId));
+
+              return;
+            }
             const storeId = stores?.length
               ? stores[0].value
               : undefined;
@@ -429,21 +445,7 @@ export default function ConnectorInstallation(props) {
             'inProgress'
           )
         );
-        // Below code should be reverted once https://celigo.atlassian.net/browse/IO-18981 is fixed.
-        let bundleURL = installURL || url;
-
-        if (
-          bundleURL === NETSUITE_BUNDLE_URL
-        ) {
-          const netsuiteConnectionStep = integrationInstallSteps.find(step => step?.sourceConnection?.type === 'netsuite');
-
-          if (netsuiteConnectionStep?._connectionId) {
-            const netsuiteConnection = connections.find(c => c._id === netsuiteConnectionStep._connectionId);
-
-            bundleURL = netsuiteConnection?.netsuite?.dataCenterURLs?.systemDomain + bundleURL;
-          }
-        }
-        openExternalUrl({ url: bundleURL });
+        openExternalUrl({ url: installURL || url });
       } else {
         if (step.verifying) {
           return false;
@@ -527,17 +529,25 @@ export default function ConnectorInstallation(props) {
               View help guide
             </IconTextButton>
           )}
-          {_connectorId && (
-          <IconTextButton
-            data-test="uninstall"
-            component={Link}
-            variant="text"
-            onClick={handleUninstall}
-            color="primary">
-            <CloseIcon />
-            Uninstall
-          </IconTextButton>
-          )}
+          {_connectorId ? (
+            <IconTextButton
+              data-test="uninstall"
+              component={Link}
+              variant="text"
+              onClick={handleUninstall}
+              color="primary">
+              <CloseIcon />
+              Uninstall
+            </IconTextButton>
+          )
+            : (
+              <IconTextButton
+                variant="text"
+                data-test="deleteIntegration"
+                onClick={handleUninstall}>
+                <TrashIcon /> Delete integration
+              </IconTextButton>
+            )}
 
         </div>
       </CeligoPageBar>

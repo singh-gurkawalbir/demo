@@ -150,12 +150,7 @@ export default function menuItems(
     items = items.filter(i => !['Resources'].includes(i.label));
     const toolsSubSectIndex = items.findIndex(i => i.label === 'Tools');
 
-    if (accessLevel === 'tile') {
-      items[toolsSubSectIndex].children = items[toolsSubSectIndex].children.filter(i => ['Reports', 'Dev playground'].includes(i.label));
-    } else {
-      // monitor
-      items[toolsSubSectIndex].children = items[toolsSubSectIndex].children.filter(i => ['Reports'].includes(i.label));
-    }
+    items[toolsSubSectIndex].children = items[toolsSubSectIndex].children.filter(i => ['Reports', 'Dev playground'].includes(i.label));
   } else {
     const resourceItems = items.find(i => i.label === 'Resources');
     const toolItems = items.find(i => i.label === 'Tools');

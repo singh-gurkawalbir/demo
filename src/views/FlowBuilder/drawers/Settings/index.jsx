@@ -18,7 +18,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import ButtonGroup from '../../../../components/ButtonGroup';
 import LoadResources from '../../../../components/LoadResources';
 import getSettingsMetadata from './metadata';
-import EditorDrawer from '../../../../components/AFE2/Drawer';
+import EditorDrawer from '../../../../components/AFE/Drawer';
 
 function Settings({
   flowId,

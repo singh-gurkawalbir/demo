@@ -31,7 +31,6 @@ const getLookupMetadata = ({
         id: '_relativeURI',
         name: '_relativeURI',
         type: 'relativeuri',
-        disableEditorV2: true,
         showLookup: false,
         label: 'Relative URI',
         connectionId,
@@ -81,14 +80,12 @@ const getLookupMetadata = ({
         name: '_body',
         type: 'httprequestbody',
         required: true,
-        // disableEditorV2: true,
-        // supportLookup: false,
         connectionId,
         resourceId,
         resourceType,
         flowId,
         label: 'HTTP request body',
-        defaultValue: lookup.body,
+        defaultValue: lookup.body || lookup.postBody,
         visibleWhenAll: [
           {
             field: '_mode',

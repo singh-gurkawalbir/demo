@@ -113,8 +113,9 @@ export function* runHook({ hook, data }) {
     method: 'post',
     body: processorLogic.requestBody({
       data,
-      code,
-      entryFunction,
+      rule: {code,
+        entryFunction,
+      },
     }),
   };
   const results = yield call(apiCallWithRetry, { path, opts });

@@ -272,7 +272,7 @@ selectors.accountOwner = createSelector(
 selectors.userTimezone = createSelector(
   state => state && state.profile,
   selectors.accountOwner,
-  (profile, accountOwner) => profile?.timezone || accountOwner.timezone
+  (profile, accountOwner) => profile?.timezone || accountOwner?.timezone
 );
 
 selectors.canUserPublish = createSelector(

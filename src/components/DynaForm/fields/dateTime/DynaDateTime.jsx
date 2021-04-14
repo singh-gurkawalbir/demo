@@ -93,9 +93,29 @@ const getTimeMask = timeMask => {
   return '__:__:__';
 };
 
+const useDatePickerProps = removePickerDialog => {
+  const classes = useStyles();
+
+  return removePickerDialog ? {
+    InputAdornmentProps: {disablePointerEvents: true},
+    keyboardIcon: null,
+  } : {
+    keyboardIcon: <CalendarIcon className={classes.iconWrapper} />,
+  };
+};
+const useTimePickerProps = removePickerDialog => {
+  const classes = useStyles();
+
+  return removePickerDialog ? {
+    InputAdornmentProps: {disablePointerEvents: true},
+    keyboardIcon: null,
+  } : {
+    keyboardIcon: <AccessTimeIcon className={classes.iconWrapper} />,
+  };
+};
 export default function DateTimePicker(props) {
   const classes = useStyles();
-  const { id, label, formKey, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId, skipTimezoneConversion} = props;
+  const { id, label, formKey, onFieldChange, value = '', disabled, removePickerDialog, resourceContext, ssLinkedConnectionId, skipTimezoneConversion} = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
@@ -182,6 +202,9 @@ export default function DateTimePicker(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateValue, timeValue]);
 
+  const datePickerProps = useTimePickerProps(removePickerDialog);
+  const timePickerProps = useDatePickerProps(removePickerDialog);
+
   return (
     <>
       <div className={classes.dynaDateTimeLabelWrapper}>
@@ -204,8 +227,7 @@ export default function DateTimePicker(props) {
               className={classes.keyBoardDateTimeWrapper}
               fullWidth
               InputProps={{ className: classes.inputDateTime }}
-              keyboardIcon={<CalendarIcon className={classes.iconWrapper} />}
-
+              {...datePickerProps}
       />
           </div>
           <div className={classes.fieldWrapper}>
@@ -222,7 +244,7 @@ export default function DateTimePicker(props) {
               fullWidth
               className={classes.keyBoardDateTimeWrapper}
               InputProps={{ className: classes.inputDateTime }}
-              keyboardIcon={<AccessTimeIcon className={classes.iconWrapper} />}
+              {...timePickerProps}
       />
           </div>
         </div>
