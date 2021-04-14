@@ -689,6 +689,11 @@ export default {
           color: colors.celigoAccent2,
         },
       },
+      colorPrimary: {
+        '&.Mui-disabled': {
+          color: colors.celigoNeutral3,
+        },
+      },
     },
     MuiTabs: {
       root: {

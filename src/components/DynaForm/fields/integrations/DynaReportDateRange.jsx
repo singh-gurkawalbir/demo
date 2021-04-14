@@ -26,6 +26,19 @@ const useStyles = makeStyles(theme => ({
   infoText: {
     marginTop: theme.spacing(2),
   },
+  filterTimeStampPopper: {
+    top: '5px !important',
+    zIndex: 1300,
+  },
+  filterTimeStampPopperArrow: {
+    left: '90% !important',
+  },
+  filterTimeStampPopperExpand: {
+    left: '0% !important',
+  },
+  filterTimeStampArrowPopperExpand: {
+    left: '98% !important',
+  },
 }));
 const WINDOW_LIMIT = 30;
 const selectedRangeConstraint = (startDate, endDate) => {
@@ -97,12 +110,13 @@ function CustomTextFields({selectedRange, setSelectedRange, reset, setReset}) {
           removePickerDialog
           />
       </div>
-      <Typography className={classes.infoText}>You can generate a Report for upto 3 days of Data</Typography>
+      <Typography className={classes.infoText}>You can generate a report for up to 3 days of data.</Typography>
     </>
 
   );
 }
 export default function DynaReportDateRange(props) {
+  const classes = useStyles();
   const {id, onFieldChange, required, label, value, formKey, isValid} = props;
   const ranges = EVENT_REPORTS_DEFAULT.map(({id, ...rest}) => ({...rest, id, ...getSelectedRange({preset: id})}));
   const timezone = useSelector(state => selectors.userTimezone(state));
@@ -148,6 +162,7 @@ export default function DynaReportDateRange(props) {
           {...props}
           disabled={disabled}
           showDateDisplay={false}
+          classProps={classes}
           customPresets={ranges}
           editableDateInputs={false}
           defaultPreset={value}
