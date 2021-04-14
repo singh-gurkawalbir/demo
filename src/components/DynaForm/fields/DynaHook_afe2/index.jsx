@@ -21,7 +21,7 @@ import { getValidRelativePath } from '../../../../utils/routePaths';
 import actions from '../../../../actions';
 import EditorDrawer from '../../../AFE2/Drawer';
 import LoadResources from '../../../LoadResources';
-import { REQUIRED_MESSAGE } from '../../../../utils/form/validation';
+import { REQUIRED_MESSAGE } from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {

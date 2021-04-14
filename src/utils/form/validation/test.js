@@ -14,8 +14,8 @@ import {
   matchesRegEx,
   validateField,
   isLonger,
-  REQUIRED_MESSAGE,
 } from '.';
+import { REQUIRED_MESSAGE } from '../../messageStore';
 import { createField } from '../test';
 
 const field1 = createField({

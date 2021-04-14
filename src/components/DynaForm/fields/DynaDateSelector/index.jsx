@@ -12,7 +12,7 @@ import CalendarIcon from '../../../icons/CalendarIcon';
 import DynaText from '../DynaText';
 import actions from '../../../../actions';
 import FieldMessage from '../FieldMessage';
-import { REQUIRED_MESSAGE } from '../../../../utils/form/validation';
+import { REQUIRED_MESSAGE } from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   iconWrapper: {

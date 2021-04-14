@@ -2,9 +2,9 @@
 
 import { allAreTrue, someAreTrue, noneAreTrue } from './validator';
 import { isValueForceComputed } from '..';
+import { REQUIRED_MESSAGE } from '../../messageStore';
 
 /* eslint-disable no-restricted-globals */
-export const REQUIRED_MESSAGE = 'A value must be provided';
 export const compareSize = (value, comparedTo, type) => {
   const targetValue = parseFloat(value);
   const compareValue = parseFloat(comparedTo.value);

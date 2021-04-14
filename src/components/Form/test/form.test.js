@@ -10,7 +10,7 @@ import useForm from '..';
 import actions from '../../../actions';
 import reducer, { selectors } from '../../../reducers';
 import themeProvider from '../../../theme/themeProvider';
-import { REQUIRED_MESSAGE } from '../../../utils/form/validation';
+import { REQUIRED_MESSAGE } from '../../../utils/messageStore';
 import FormGenerator from '../../DynaForm/DynaFormGenerator';
 
 // fireEvent
