@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { isEmpty, isArray, isObject } from 'lodash';
+import { isArray, isObject } from 'lodash';
+import { useDispatch } from 'react-redux';
 import ModalDialog from '../../../ModalDialog';
 import DynaForm from '../..';
 import DynaSubmit from '../../DynaSubmit';
@@ -9,10 +10,12 @@ import {
   convertToReactFormFields,
   updateFormValues,
   PARAMETER_LOCATION,
+  isMetaRequiredValuesMet,
 } from '../../../../utils/assistant';
 import FieldMessage from '../FieldMessage';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import FieldHelp from '../../FieldHelp';
+import actions from '../../../../actions';
 
 const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {
@@ -119,9 +122,23 @@ const SearchParamsModal = props => {
 export default function DynaAssistantSearchParams(props) {
   const classes = useStyles();
   let { label } = props;
-  const { value, onFieldChange, id, paramMeta = {}, required } = props;
+  const { value, disabled, onFieldChange, id, paramMeta = {}, required, formKey, isValid} = props;
   const [showSearchParamsModal, setShowSearchParamsModal] = useState(false);
-  const isValid = !required ? true : !isEmpty(value);
+  const dispatch = useDispatch();
+  const isMetaValid = isMetaRequiredValuesMet(paramMeta, value);
+
+  useEffect(() => {
+    if (!required) {
+      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
+
+      return;
+    }
+    dispatch(actions.form.forceFieldState(formKey)(id, {isValid: isMetaValid}));
+  }, [dispatch, formKey, id, isMetaValid, required]);
+
+  useEffect(() => () => {
+    dispatch(actions.form.clearForceFieldState(formKey)(id));
+  }, [dispatch, formKey, id]);
 
   if (!label) {
     label =
@@ -146,19 +163,24 @@ export default function DynaAssistantSearchParams(props) {
       )}
       <div className={classes.dynaAssSearchParamsWrapper}>
         <div className={classes.configureLabelWrapper}>
-          <FormLabel className={classes.dynaAssistantFormLabel}>
+          <FormLabel
+            disabled={disabled}
+            required={required}
+            error={!isValid}
+            className={classes.dynaAssistantFormLabel}>
             {label}
           </FormLabel>
           {/* {Todo (shiva): we need helpText for the component} */}
           <FieldHelp {...props} helpText="Configure search parameters" />
         </div>
         <Button
+          disabled={disabled}
           data-test={id}
           variant="outlined"
           color="secondary"
           className={classes.dynaAssistantbtn}
           onClick={() => setShowSearchParamsModal(true)}>
-          {'Launch'} {required && !isValid ? '*' : ''}
+          Launch
         </Button>
       </div>
       <FieldMessage

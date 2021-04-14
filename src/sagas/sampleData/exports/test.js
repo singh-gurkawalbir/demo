@@ -399,9 +399,9 @@ describe('sampleData exports saga', () => {
         },
       };
       const processorData = {
-        resourcePath: '/',
+        rule: {resourcePath: '/'},
         data: '<xml>somedata</xml>',
-        processor: 'xmlParser',
+        editorType: 'xmlParser',
       };
 
       return expectSaga(_processRawData, { resourceId, resourceType, values})

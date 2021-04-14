@@ -270,7 +270,7 @@ describe('installer saga', () => {
           ],
         ])
         .call(apiCallWithRetry, args)
-        .put(actions.resource.requestCollection('connections'))
+        .put(actions.resource.request('connections', currentConnectionStep._connectionId))
         .put(
           actions.integrationApp.installer.setOauthConnectionMode(
             currentConnectionStep._connectionId,
@@ -320,7 +320,7 @@ describe('installer saga', () => {
       })
         .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
         // .call(apiCallWithRetry, args)
-        .not.put(actions.resource.requestCollection('connections'))
+        .not.put(actions.resource.request('connections', currentConnectionStep._connectionId))
         .not.put(
           actions.integrationApp.installer.setOauthConnectionMode(
             currentConnectionStep._connectionId,
@@ -379,7 +379,7 @@ describe('installer saga', () => {
           [call(openOAuthWindowForConnection, currentConnectionStep._connectionId), throwError()],
         ])
         .call(apiCallWithRetry, args)
-        .put(actions.resource.requestCollection('connections'))
+        .put(actions.resource.request('connections', currentConnectionStep._connectionId))
         .put(
           actions.integrationApp.installer.setOauthConnectionMode(
             currentConnectionStep._connectionId,
@@ -658,7 +658,7 @@ describe('installer saga', () => {
       return expectSaga(addNewStore, { id })
         .provide([[call(apiCallWithRetry, args), steps]])
         .call(apiCallWithRetry, args)
-        .not.put(actions.resource.requestCollection('connections'))
+        .not.put(actions.resource.request('connections'))
         .run();
     });
     test('if api call is successful with response, should dispatch receivedNewStoreSteps', () => {

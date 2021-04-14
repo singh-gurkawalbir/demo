@@ -1,5 +1,6 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { isEqual } from 'lodash';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import Select from './DynaSelect';
@@ -16,27 +17,24 @@ export default function DynaFieldExpressionSelect(props) {
     isValid,
   } = props;
   const dispatch = useDispatch();
-  const handleInit = useCallback(() => {
-    dispatch(actions.editor.refreshHelperFunctions());
-  }, [dispatch]);
+  const options = useSelector(state => {
+    const functions = selectors.editorHelperFunctions(state);
+    const optionItems = [];
+
+    Object.keys(functions).forEach(func => {
+      optionItems.push({ label: func, value: functions[func] });
+    });
+
+    return [
+      {
+        items: optionItems,
+      },
+    ];
+  }, isEqual);
 
   useEffect(() => {
-    handleInit();
-  }, [handleInit]);
-  const fieldExpressions = useSelector(state =>
-    selectors.editorHelperFunctions(state)
-  );
-  const optionItems = [];
-
-  Object.keys(fieldExpressions).forEach(func => {
-    optionItems.push({ label: func, value: fieldExpressions[func] });
-  });
-
-  const options = [
-    {
-      items: optionItems,
-    },
-  ];
+    dispatch(actions.editor.refreshHelperFunctions());
+  }, [dispatch]);
 
   return (
     <Select
