@@ -51,7 +51,7 @@ export default function DynaSalesforceLookupFilters_afe(props) {
       isGroupedSampleData: opts.isGroupedSampleData,
     }));
 
-    return () => dispatch(actions.editor.clear(editorId));
+    return () => dispatch(actions.editor.clear(newEditorId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
