@@ -8,7 +8,7 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { apiCallWithRetry } from '../../index';
 import { SCOPES } from '../../resourceForm';
-import { evaluateExternalProcessor } from '../../_editor';
+import { evaluateExternalProcessor } from '../../editor';
 import { getNetsuiteOrSalesforceMeta } from '../../resources/meta';
 import { exportPreview, pageProcessorPreview } from './previewCalls';
 import {

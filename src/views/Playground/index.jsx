@@ -3,14 +3,14 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, IconButton, makeStyles, Tooltip, Typography } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
-import Editor from '../../components/AFE2/Editor';
+import Editor from '../../components/AFE/Editor';
 import FullScreenOpenIcon from '../../components/icons/FullScreenOpenIcon';
 import ExampleMenu from './ExampleMenu';
 import ExplorerMenu from './ExplorerMenu';
-import EditorDrawer from '../../components/AFE2/Drawer';
+import EditorDrawer from '../../components/AFE/Drawer';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ExportExampleButton from './ExportExampleButton';
-import ActionsRibbon from '../../components/AFE2/Drawer/ActionsRibbon';
+import ActionsRibbon from '../../components/AFE/Drawer/ActionsRibbon';
 
 const useStyles = makeStyles(theme => ({
   root: {

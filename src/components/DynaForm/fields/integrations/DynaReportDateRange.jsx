@@ -83,7 +83,9 @@ function CustomTextFields({selectedRange, setSelectedRange, reset, setReset}) {
           dateLabel="Start date"
           timeLabel="Start time"
           onFieldChange={onFieldChange('startDate')}
-          value={startDate} skipTimezoneConversion />
+          value={startDate} skipTimezoneConversion
+          removePickerDialog
+          />
       </div>
       <div>
         <DynaDateTime
@@ -91,7 +93,9 @@ function CustomTextFields({selectedRange, setSelectedRange, reset, setReset}) {
           dateLabel="End date"
           timeLabel="End time"
           onFieldChange={onFieldChange('endDate')}
-          value={endDate} skipTimezoneConversion />
+          value={endDate} skipTimezoneConversion
+          removePickerDialog
+          />
       </div>
       <Typography className={classes.infoText}>You can generate a Report for upto 3 days of Data</Typography>
     </>

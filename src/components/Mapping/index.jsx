@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import clsx from 'clsx';
 import {selectors} from '../../reducers';
 import Spinner from '../Spinner';
 import TopPanel from './TopPanel';
@@ -12,59 +11,66 @@ import actions from '../../actions';
 import SettingsDrawer from './Settings';
 import DrawerContent from '../drawer/Right/DrawerContent';
 import DrawerFooter from '../drawer/Right/DrawerFooter';
+import AutoMapperButton from './AutoMapperButton';
 
-const useStyles = makeStyles({
-  root: {
+const useStyles = makeStyles(theme => ({
+  mappingDrawerContent: {
     height: '100%',
     display: 'flex',
   },
-  mappingContainer: {
-    flex: '1 1 0',
+  mappingColumn: {
     width: 'calc(100% + 24px)',
     overflow: 'hidden',
     flexDirection: 'column',
     display: 'flex',
     marginLeft: -24,
   },
-  mappingsBody: {
-    height: '100%',
+  mappingTable: {
     overflow: 'auto',
   },
-});
-const Mapping = props => {
-  const {flowId, importId, subRecordMappingId, disabled, onClose} = props;
+  autoMapper: {
+    margin: theme.spacing(2, 3),
+  },
+}));
+const Mapping = ({flowId, importId, subRecordMappingId, disabled, onClose}) => {
+  const canAutoMap = useSelector(state => {
+    const generateFields = selectors.mappingGenerates(state, importId, subRecordMappingId);
+    const extractFields = selectors.mappingExtracts(state, importId, flowId, subRecordMappingId);
+
+    return generateFields.length > 0 && extractFields.length > 0;
+  });
   const classes = useStyles();
 
   return (
     <>
+      <SettingsDrawer disabled={disabled} />
       <DrawerContent>
-        <div className={classes.root}>
-          <div className={clsx(classes.mappingContainer)}>
-            <TopPanel
-              flowId={flowId}
-              importId={importId}
-              disabled={disabled}
-          />
-            <div className={classes.mappingsBody}>
+        <div className={classes.mappingDrawerContent}>
+          <div className={classes.mappingColumn}>
+            <TopPanel flowId={flowId} importId={importId} disabled={disabled} />
+
+            <div className={classes.mappingTable}>
               <DragContainer
                 disabled={disabled}
                 importId={importId}
                 flowId={flowId}
                 subRecordMappingId={subRecordMappingId}
-            />
+              />
+              {canAutoMap && (
+                <div className={classes.autoMapper}>
+                  <AutoMapperButton />
+                </div>
+              )}
             </div>
           </div>
 
           <PreviewPanel
             importId={importId}
             disabled={disabled}
-            subRecordMappingId={subRecordMappingId}
-        />
-          <SettingsDrawer
-            disabled={disabled}
-        />
+            subRecordMappingId={subRecordMappingId} />
         </div>
       </DrawerContent>
+
       <DrawerFooter>
         <ButtonPanel
           flowId={flowId}

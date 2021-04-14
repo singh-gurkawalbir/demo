@@ -36,7 +36,7 @@ export default function ExportExampleButton({ editorId }) {
     let editorState = emptyObj;
 
     if (canExport && open) {
-      const e = selectors._editor(state, editorId);
+      const e = selectors.editor(state, editorId);
 
       editorState = {
         type: e.editorType,
