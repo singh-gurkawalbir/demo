@@ -54,15 +54,6 @@ function iconMap(type = '') {
   return type.replace(/\.|\s/g, '');
 }
 
-function imageName(assistant) {
-  // There is issue with S3 upload with image name as googleads
-  if (assistant === 'googleads') {
-    return 'small-googleads';
-  }
-
-  return assistant;
-}
-
 export default function ApplicationImg({
   size = 'small',
   markOnly = false,
@@ -84,7 +75,7 @@ export default function ApplicationImg({
       )}.png`;
     }
   } else if (markOnly) {
-    path += `marketplace/small/${imageName(assistant)}.png`;
+    path += `marketplace/small/${assistant}.png`;
   } else {
     path += `flow-builder/company-logos/integration-icon-${assistant}.png`;
   }
