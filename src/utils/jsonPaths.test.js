@@ -66,10 +66,100 @@ describe('jsonPaths util function test', () => {
         {id: '2', type: 'number'},
         {id: '3', type: 'string'},
       ]);
-      expect(getJSONPaths([[]])).toEqual([{ id: '0', type: 'array' }, { id: '0.length', type: 'number'}]);
+      expect(getJSONPaths([[]])).toEqual([{ id: '0', type: 'array' }]);
     });
 
     test('should return valid paths for getJSONPaths', () => {
+      const inputArray = [
+        {a: 'yes', b: 'no'},
+        {
+          parent: {
+            child: {
+              grandchild: 'value',
+            },
+          },
+        },
+        {
+          parent: {
+            sibling: 'sibling',
+            number: 1,
+            boolean: false,
+            array: ['1'],
+            child: {
+              grandchild: 'value',
+              number: 1,
+              boolean: false,
+            },
+          },
+          sibling1: 'sibling1',
+        },
+        {
+          parent: {
+            sibling: 'sibling',
+            number: 1,
+            boolean: false,
+            array: ['1'],
+            sublist: [{
+              first: 'first',
+              second: 'second',
+              third: 'third',
+            }],
+            child: {
+              grandchild: 'value',
+              number: 1,
+              sublist2: [{
+                first: 'first',
+                second: 'second',
+                third: 'third',
+              }],
+              boolean: false,
+            },
+          },
+          sibling1: 'sibling1',
+        },
+      ];
+      const outputArray = [
+        [
+          { id: 'a', type: 'string' },
+          { id: 'b', type: 'string' },
+        ],
+        [
+          { id: 'parent.child.grandchild', type: 'string' },
+        ],
+        [
+          { id: 'parent.array', type: 'array' },
+          { id: 'parent.boolean', type: 'boolean' },
+          { id: 'parent.child.boolean', type: 'boolean' },
+          { id: 'parent.child.grandchild', type: 'string' },
+          { id: 'parent.child.number', type: 'number' },
+          { id: 'parent.number', type: 'number' },
+          { id: 'parent.sibling', type: 'string' },
+          { id: 'sibling1', type: 'string' },
+        ],
+        [
+          { id: 'parent.array', type: 'array' },
+          { id: 'parent.boolean', type: 'boolean' },
+          { id: 'parent.child.boolean', type: 'boolean' },
+          { id: 'parent.child.grandchild', type: 'string' },
+          { id: 'parent.child.number', type: 'number' },
+          { id: 'parent.number', type: 'number' },
+          { id: 'parent.sibling', type: 'string' },
+          { id: 'sibling1', type: 'string' },
+          { id: 'parent.child.sublist2[*].first', type: 'string' },
+          { id: 'parent.child.sublist2[*].second', type: 'string' },
+          { id: 'parent.child.sublist2[*].third', type: 'string' },
+          { id: 'parent.sublist[*].first', type: 'string' },
+          { id: 'parent.sublist[*].second', type: 'string' },
+          { id: 'parent.sublist[*].third', type: 'string' },
+        ],
+      ];
+
+      inputArray.forEach((test, testNo) => {
+        expect(getJSONPaths(test)).toEqual(outputArray[testNo]);
+      });
+    });
+
+    test('should return valid paths for getJSONPaths with option includeArrayLength is true', () => {
       const inputArray = [
         {a: 'yes', b: 'no'},
         {
@@ -139,7 +229,7 @@ describe('jsonPaths util function test', () => {
         ],
         [
           { id: 'parent.array', type: 'array' },
-          { id: 'parent.array.length', type: 'number' },
+          { id: 'parent.array.length', type: 'number'},
           { id: 'parent.boolean', type: 'boolean' },
           { id: 'parent.child.boolean', type: 'boolean' },
           { id: 'parent.child.grandchild', type: 'string' },
@@ -159,7 +249,7 @@ describe('jsonPaths util function test', () => {
       ];
 
       inputArray.forEach((test, testNo) => {
-        expect(getJSONPaths(test)).toEqual(outputArray[testNo]);
+        expect(getJSONPaths(test, null, { includeArrayLength: true})).toEqual(outputArray[testNo]);
       });
     });
 
@@ -246,7 +336,6 @@ describe('jsonPaths util function test', () => {
         ],
         [
           { id: 'parent.array', type: 'array' },
-          { id: 'parent.array.length', type: 'number' },
           { id: 'parent.boolean', type: 'boolean' },
           { id: 'parent.child.boolean', type: 'boolean' },
           { id: 'parent.child.grandchild', type: 'string' },
@@ -259,7 +348,6 @@ describe('jsonPaths util function test', () => {
           { id: 'parent.[[number\\]]', type: 'number' },
           { id: 'parent.[sibling first]', type: 'string' },
           { id: 'parent.array', type: 'array' },
-          { id: 'parent.array.length', type: 'number' },
           { id: 'parent.boolean', type: 'boolean' },
           { id: 'parent.child.[grand&child]', type: 'string' },
           { id: 'parent.child.boolean', type: 'boolean' },
@@ -268,15 +356,12 @@ describe('jsonPaths util function test', () => {
         ],
         [
           { id: 'parent.array', type: 'array' },
-          { id: 'parent.array.length', type: 'number' },
           { id: 'parent.boolean', type: 'boolean' },
           { id: 'parent.child.boolean', type: 'boolean' },
           { id: 'parent.child.grandchild', type: 'string' },
           { id: 'parent.child.number', type: 'number' },
-          { id: 'parent.child.sublist2.length', type: 'number' },
           { id: 'parent.number', type: 'number' },
           { id: 'parent.sibling', type: 'string' },
-          { id: 'parent.sublist.length', type: 'number' },
           { id: 'sibling1', type: 'string' },
           { id: 'parent.child.sublist2[*].first', type: 'string' },
           { id: 'parent.child.sublist2[*].second', type: 'string' },
@@ -301,7 +386,6 @@ describe('jsonPaths util function test', () => {
         { id: 'a', type: 'string' },
         { id: 'b', type: 'string' },
         { id: 'c[*].d', type: 'string' },
-        { id: 'c.length', type: 'number'},
       ]);
       expect(getJSONPaths({
         a: 'a',
@@ -310,7 +394,6 @@ describe('jsonPaths util function test', () => {
       }, null, {skipSort: true})).toEqual([
         { id: 'a', type: 'string' },
         { id: 'c[*].d', type: 'string' },
-        { id: 'c.length', type: 'number'},
         { id: 'b', type: 'string' },
       ]);
     });
@@ -324,7 +407,6 @@ describe('jsonPaths util function test', () => {
         { id: 'a', type: 'string' },
         { id: 'b', type: 'string' },
         { id: 'c.0.d', type: 'string' },
-        { id: 'c.length', type: 'number'},
       ]);
       expect(getJSONPaths({
         a: 'a',
@@ -333,7 +415,6 @@ describe('jsonPaths util function test', () => {
       }, null, {isHandlebarExp: true, skipSort: true})).toEqual([
         { id: 'a', type: 'string' },
         { id: 'c.0.d', type: 'string' },
-        { id: 'c.length', type: 'number'},
         { id: 'b', type: 'string' },
       ]);
     });

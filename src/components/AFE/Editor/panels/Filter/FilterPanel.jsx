@@ -68,6 +68,7 @@ export default function FilterPanel({editorId}) {
       null,
       {
         wrapSpecialChars: true,
+        includeArrayLength: true,
       }
     )
       .filter(p => p.id && !p.id.includes('[*].'))
@@ -81,6 +82,7 @@ export default function FilterPanel({editorId}) {
 
     getJSONPaths(jsonData.settings, null, {
       wrapSpecialChars: true,
+      includeArrayLength: true,
     })
       .filter(p => p.id && !p.id.includes('[*].'))
       .forEach(p => {

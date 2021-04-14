@@ -48,7 +48,7 @@ describe('Json paths util method', () => {
       },
     };
 
-    expect(getJsonPaths(sampleJSON, '', { excludeArrayIndices: true })).toEqual([
+    expect(getJsonPaths(sampleJSON, '', { excludeArrayIndices: true, includeArrayLength: true })).toEqual([
       { id: 'a.arr', type: 'array' },
       { id: 'a.arr.length', type: 'number' },
       { id: 'a.arr2', type: 'array' },
