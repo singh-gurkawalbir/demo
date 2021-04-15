@@ -30,14 +30,7 @@ export default function DynaSQLQueryBuilder_afe(props) {
 
       try {
         parsedDefaultData = JSON.parse(defaultData);
-
-        if (parsedDefaultData.data) {
-          onFieldChange('modelMetadata', parsedDefaultData.data);
-        } else if (parsedDefaultData.record) {
-          onFieldChange('modelMetadata', parsedDefaultData.record);
-        } else if (parsedDefaultData.row) {
-          onFieldChange('modelMetadata', parsedDefaultData.row);
-        }
+        onFieldChange('modelMetadata', parsedDefaultData);
       } catch (e) { // do nothing }
       }
     }

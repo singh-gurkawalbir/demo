@@ -90,14 +90,14 @@ describe('editor sagas', () => {
         resourceId: 'res-123',
         resourceType: 'imports',
         supportsDefaultData: true,
-        defaultData: JSON.stringify({data: {
+        defaultData: JSON.stringify({
           id: {
             default: '',
           },
           name: {
             default: 'default name',
           },
-        }}, null, 2),
+        }, null, 2),
       };
       const resource = {
         _id: 'res-123',
