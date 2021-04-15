@@ -9,7 +9,7 @@ export default function UserName({ userId, flowId }) {
   );
 
   if (userId === 'autopilot') {
-    return 'Autopilot';
+    return 'Auto resolved';
   }
 
   return <TextOverflowCell message={userName || userId} maxWidth={240} />;
