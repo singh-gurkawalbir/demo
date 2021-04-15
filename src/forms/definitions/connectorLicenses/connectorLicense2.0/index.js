@@ -5,6 +5,12 @@ export default {
       '/type': 'integrationApp',
     };
 
+    try {
+      newValues['/opts'] = JSON.parse(newValues['/opts']);
+    } catch (e) {
+      return newValues;
+    }
+
     return newValues;
   },
   fieldMap: {

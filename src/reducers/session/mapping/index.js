@@ -25,7 +25,8 @@ export default (state = {}, action) => {
     newValue,
     isConditionalLookup,
     isGroupedSampleData,
-    errorMsg,
+    failMsg,
+    failSeverity,
   } = action;
 
   return produce(state, draft => {
@@ -279,7 +280,8 @@ export default (state = {}, action) => {
           if (!draft.mapping.autoMapper) {
             draft.mapping.autoMapper = {};
           } else {
-            delete draft.mapping.autoMapper.errorMsg;
+            delete draft.mapping.autoMapper.failMsg;
+            delete draft.mapping.autoMapper.failSeverity;
           }
           draft.mapping.autoMapper.status = 'requested';
         }
@@ -295,7 +297,8 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.AUTO_MAPPER.FAILED:
         if (draft?.mapping?.autoMapper) {
           draft.mapping.autoMapper.status = 'error';
-          draft.mapping.autoMapper.errorMsg = errorMsg;
+          draft.mapping.autoMapper.failMsg = failMsg;
+          draft.mapping.autoMapper.failSeverity = failSeverity;
         }
         break;
 

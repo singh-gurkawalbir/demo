@@ -15,6 +15,7 @@ import {
   validateField,
   isLonger,
 } from '.';
+import { REQUIRED_MESSAGE } from '../../messageStore';
 import { createField } from '../test';
 
 const field1 = createField({
@@ -201,7 +202,7 @@ describe('validateField', () => {
 
     expect(testField.isValid).toBe(false);
     expect(testField.isDiscretelyInvalid).toBe(true);
-    expect(testField.errorMessages).toBe('A value must be provided');
+    expect(testField.errorMessages).toBe(REQUIRED_MESSAGE);
   });
 
   test('field validation rules not processed without value', () => {

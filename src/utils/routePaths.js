@@ -1,5 +1,4 @@
 export default function getRoutePath(path = '') {
-  const prefix = '';
   let pagePath = path;
 
   if (typeof pagePath !== 'string') {
@@ -12,7 +11,7 @@ export default function getRoutePath(path = '') {
     pagePath = `/${pagePath}`;
   }
 
-  return `${prefix + pagePath}`;
+  return pagePath;
 }
 
 export const getValidRelativePath = path => {

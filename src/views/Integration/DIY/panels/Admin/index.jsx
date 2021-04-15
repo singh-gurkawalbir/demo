@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import { useSelector, shallowEqual } from 'react-redux';
 import { selectors } from '../../../../../reducers';
-import ReadmeSection from './sections/Readme_afe2';
+import ReadmeSection from './sections/Readme_afe';
 import GeneralSection from './sections/General';
 import ApiTokensSection from './sections/ApiTokens';
 import SubscriptionSection from './sections/Subscription';

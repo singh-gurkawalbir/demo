@@ -16,7 +16,7 @@ import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import ButtonGroup from '../../ButtonGroup';
-import EditorDrawer from '../../AFE2/Drawer';
+import EditorDrawer from '../../AFE/Drawer';
 
 const emptySet = [];
 const emptyObject = {};

@@ -10,7 +10,7 @@ import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
 import { IAFormStateManager, useActiveTab } from '..';
 import useIASettingsStateWithHandleClose from '../../../../../../hooks/useIASettingsStateWithHandleClose';
-import EditorDrawer from '../../../../../../components/AFE2/Drawer';
+import EditorDrawer from '../../../../../../components/AFE/Drawer';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
