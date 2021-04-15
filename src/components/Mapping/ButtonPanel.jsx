@@ -5,7 +5,6 @@ import ButtonGroup from '../ButtonGroup';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
 import MappingSaveButton from './SaveButton';
-import AutoMapperButton from './AutoMapperButton';
 
 const useStyles = makeStyles(theme => ({
   importMappingButtonGroup: {
@@ -63,7 +62,6 @@ export default function ButtonPanel({flowId, importId, disabled, onClose}) {
           onClick={onClose}>
           Cancel
         </Button>
-        <AutoMapperButton />
         {showPreviewButton && (
         <Button
           variant="outlined"

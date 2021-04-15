@@ -106,6 +106,16 @@ const useStyles = makeStyles(theme => ({
   rightCalendar: {
     marginLeft: theme.spacing(2),
   },
+  dateRangePopperBtnFull: {
+    justifyContent: 'flex-start',
+    padding: [[6, 12]],
+    '& > .MuiButton-label': {
+      justifyContent: 'space-between',
+    },
+    '&:hover': {
+      color: theme.palette.secondary.main,
+    },
+  },
 }));
 const DateRange = props => {
   const { isCalendar, setSelectedRange } = props;
@@ -153,6 +163,7 @@ export default function DateRangeSelector({
   placement,
   Icon,
   disabled,
+  fullWidth,
   placeholder = 'Select range',
   defaultPreset = {preset: 'last30days'},
   selectedRangeConstraint,
@@ -237,7 +248,8 @@ export default function DateRangeSelector({
             onClick={toggleClick}
             variant="outlined"
             color="secondary"
-            className={classes.dateRangePopperBtn}>
+            fullWidth
+            className={clsx(classes.dateRangePopperBtn, {[classes.dateRangePopperBtnFull]: fullWidth})}>
             {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || placeholder}<ArrowDownIcon />
           </Button>
         )

@@ -25,9 +25,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Help(props) {
+export default function Help({ className, helpKey, helpText, ...rest }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
+
   const handleMenu = useCallback(
     event => {
       event.stopPropagation();
@@ -45,7 +46,7 @@ export default function Help(props) {
     if (event.target.name === 'feedbackText') return;
     setAnchorEl(null);
   }, []);
-  const { className, helpKey, helpText, ...rest } = props;
+
   const open = !!anchorEl;
   const helpTextValue = helpText || getHelpTextMap()[helpKey];
   // console.log('what help', helpText, helpKey, getHelpTextMap()[helpKey]);

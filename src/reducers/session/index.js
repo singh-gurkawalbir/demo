@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import form, {selectors as fromForm} from './form';
 import stage, { selectors as fromStage } from './stage';
 import filters, { selectors as fromFilters } from './filters';
-import _editors, { selectors as fromEditorsAfe2 } from './_editors';
+import editors, { selectors as fromEditors } from './editors';
 import metadata, { selectors as fromMetadata } from './metadata';
 import connectors, { selectors as fromConnectors } from './connectors';
 import connections, { selectors as fromConnections } from './connections';
@@ -33,6 +33,7 @@ import exportDataReducer, { selectors as fromExportData } from './exportData';
 import customSettings, { selectors as fromCustomSettings } from './customSettings';
 import recycleBin, { selectors as fromRecycleBin } from './recycleBin';
 import logs, {selectors as fromLogs} from './logs';
+import integrations, {selectors as fromIntegrations} from './integrations';
 import { genSelectors } from '../util';
 
 export default combineReducers({
@@ -40,7 +41,7 @@ export default combineReducers({
   recycleBin,
   stage,
   filters,
-  _editors,
+  editors,
   metadata,
   connectors,
   connections,
@@ -56,6 +57,7 @@ export default combineReducers({
   flowData,
   flowMetrics,
   integrationApps,
+  integrations,
   templates,
   oAuthAuthorize,
   mapping,
@@ -78,7 +80,7 @@ const subSelectors = {
   form: fromForm,
   stage: fromStage,
   filters: fromFilters,
-  _editors: fromEditorsAfe2,
+  editors: fromEditors,
   metadata: fromMetadata,
   connectors: fromConnectors,
   connections: fromConnections,
@@ -92,6 +94,7 @@ const subSelectors = {
   importSampleData: fromImportSampleData,
   flowData: fromFlowData,
   integrationApps: fromIntegrationApps,
+  integrations: fromIntegrations,
   templates: fromTemplates,
   oAuthAuthorize: fromOAuthAuthorize,
   resource: fromResource,

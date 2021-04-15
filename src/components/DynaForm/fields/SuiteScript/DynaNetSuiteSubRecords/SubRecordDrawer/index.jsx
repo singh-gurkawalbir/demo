@@ -12,7 +12,7 @@ import actions from '../../../../../../actions';
 import { getFormFieldMetadata } from './util';
 import { SCOPES } from '../../../../../../sagas/resourceForm';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
-import EditorDrawer from '../../../../../AFE2/Drawer';
+import EditorDrawer from '../../../../../AFE/Drawer';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {

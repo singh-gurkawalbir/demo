@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React from 'react';
-import { FormControl, makeStyles, Typography } from '@material-ui/core';
+import { FormControl, makeStyles } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FieldMessage from '../FieldMessage';
@@ -14,6 +14,10 @@ const useStyles = makeStyles({
   dynaCheckControlLabel: {
     margin: 0,
     marginRight: 4,
+    fontSize: 14,
+    '& > *.MuiFormControlLabel-label': {
+      paddingTop: 3,
+    },
   },
   dynaCheckbox: props => {
     props.hideLabelSpacing ? 0 : 12;
@@ -59,11 +63,8 @@ export default function DynaCheckbox(props) {
           />
         )}
         className={classes.dynaCheckControlLabel}
-        label={(
-          <Typography variant="subtitle2" component="span">
-            {label}
-          </Typography>
-        )}
+        label={label}
+
       />
       <FieldHelp {...props} />
       <FieldMessage {...props} />

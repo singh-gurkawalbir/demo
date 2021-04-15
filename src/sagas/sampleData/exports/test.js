@@ -14,7 +14,7 @@ import { _getSampleDataRecordSize, _hasSampleDataOnResource, _getProcessorOutput
   requestExportSampleData,
   requestLookupSampleData } from './index';
 import { DEFAULT_RECORD_SIZE } from '../../../utils/exportPanel';
-import { evaluateExternalProcessor } from '../../_editor';
+import { evaluateExternalProcessor } from '../../editor';
 import {
   constructResourceFromFormValues,
 } from '../../utils';

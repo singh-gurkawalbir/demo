@@ -7,7 +7,7 @@ import { throwError } from 'redux-saga-test-plan/providers';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import { evaluateExternalProcessor } from '../../_editor';
+import { evaluateExternalProcessor } from '../../editor';
 import { apiCallWithRetry } from '../..';
 import { getResource } from '../../resources';
 import {

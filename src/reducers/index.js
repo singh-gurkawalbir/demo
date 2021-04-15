@@ -1797,10 +1797,13 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
   (_1, _2, childId) => childId,
   (_1, _2, _3, options) => options,
   selectors.errorMap,
-  (integrations = emptyArray, flows = emptyArray, integrationId, childId, options, errorMap) => {
+  selectors.currentEnvironment,
+  (integrations = emptyArray, flows = emptyArray, integrationId, childId, options, errorMap, currentEnvironment) => {
     const childIntegrationIds = integrations.filter(i => i._parentId === integrationId || i._id === integrationId).map(i => i._id);
     let integrationFlows = flows.filter(f => {
-      if (integrationId === STANDALONE_INTEGRATION.id) return !f._integrationId;
+      if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+        return !f._integrationId && !!f.sandbox === (currentEnvironment === 'sandbox');
+      }
       if (childId && childId !== integrationId) return f._integrationId === childId;
 
       return childIntegrationIds.includes(f._integrationId);
@@ -4773,6 +4776,28 @@ selectors.integrationErrorsPerStore = (state, integrationId) => {
   }, {});
 };
 
+/**
+ * Returns error count per flow group in an integration for IAF 2.0 & DIY Flow groupings
+ * A map of groupId and total errors on that group
+ */
+selectors.integrationErrorsPerFlowGroup = createSelector(
+  selectors.integrationEnabledFlowIds,
+  (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
+  state => state?.data?.resources?.flows,
+  (enabledFlowIds, errorMap, flowsList) => enabledFlowIds.reduce((groupErrorMap, flowId) => {
+    const flow = flowsList.find(f => f._id === flowId);
+    const groupId = flow._flowGroupingId || MISCELLANEOUS_SECTION_ID;
+    const errorCount = errorMap[flowId] || 0;
+
+    if (!groupErrorMap[groupId]) {
+      groupErrorMap[groupId] = 0;
+    }
+    groupErrorMap[groupId] += errorCount;
+
+    return groupErrorMap;
+  }, {})
+);
+
 selectors.getIntegrationUserNameById = (state, userId, flowId) => {
   const profile = selectors.userProfile(state) || emptyObject;
 
@@ -5183,11 +5208,11 @@ selectors.flowConnectionsWithLogEntry = () => {
 // #endregion connection log selectors
 
 // #region AFE selectors
-selectors._editorHelperFunctions = state => state?.session?._editors?.helperFunctions || {};
+selectors.editorHelperFunctions = state => state?.session?.editors?.helperFunctions || {};
 
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
-  const {editorType, fieldId, flowId, resourceId, resourceType, stage} = fromSession._editor(state?.session, editorId);
+  const {editorType, fieldId, flowId, resourceId, resourceType, stage} = fromSession.editor(state?.session, editorId);
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
   if (stage === 'outputFilter' ||
@@ -5203,7 +5228,7 @@ selectors.editorSupportsOnlyV2Data = (state, editorId) => {
 };
 
 selectors.isEditorDisabled = (state, editorId) => {
-  const editor = fromSession._editor(state?.session, editorId);
+  const editor = fromSession.editor(state?.session, editorId);
   const {flowId, fieldId, formKey, editorType, activeProcessor} = editor;
   const flow = selectors.resource(state, 'flows', flowId);
   const integrationId = flow?._integrationId || 'none';
@@ -5229,7 +5254,7 @@ selectors.isEditorDisabled = (state, editorId) => {
 };
 
 selectors.isEditorLookupSupported = (state, editorId) => {
-  const editor = fromSession._editor(state?.session, editorId);
+  const editor = fromSession.editor(state?.session, editorId);
   const {resultMode, fieldId, editorType, resourceType} = editor;
   const lookupFields = [
     '_body',
@@ -5263,7 +5288,7 @@ selectors.isEditorLookupSupported = (state, editorId) => {
 // //TODO: update the logic here once BE trackers
 // IO-19867 and IO-19868 are complete
 selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
-  const editor = fromSession._editor(state?.session, editorId);
+  const editor = fromSession.editor(state?.session, editorId);
   const {stage, resourceId, resourceType, flowId, fieldId} = editor;
   const { merged: resource = {} } = selectors.resourceData(
     state,

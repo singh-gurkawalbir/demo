@@ -109,7 +109,7 @@ describe('flowMetrics util function test', () => {
         epochTime: 1609664979229,
         preferences: {dateFormat: 'MM/DD/YYYY', timeFormat: 'hh:mm'},
         timezone: 'Asia/Calcutta',
-        result: '01/03/2021 GMT',
+        result: '01/03/2021',
       },
       {
         range: {

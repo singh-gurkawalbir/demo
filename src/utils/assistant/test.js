@@ -1,4 +1,4 @@
-/* global describe,  expect */
+/* global describe,test  expect */
 import each from 'jest-each';
 import recurly from './recurly';
 import servicenow from './servicenow';
@@ -23,6 +23,7 @@ import {
   convertFromExport,
   convertFromImport,
   convertToImport,
+  isMetaRequiredValuesMet,
 } from '.';
 
 describe('getMatchingRoute', () => {
@@ -3196,3 +3197,22 @@ describe('convertToImport', () => {
   );
 });
 
+describe('isMetaRequiredValuesMet', () => {
+  test('should return true for invalidMeta', () => {
+    expect(isMetaRequiredValuesMet({}, null)).toEqual(true);
+  });
+  test('should return true for no fields having required meta', () => {
+    expect(isMetaRequiredValuesMet({fields: [{id: 'something.a'}, {id: 'something.b'}]}, null)).toEqual(true);
+  });
+  test('should return false for satisfied required fields', () => {
+    expect(isMetaRequiredValuesMet({fields: [{id: 'something.a', required: true}, {id: 'something.b', required: true}]}, {something: {
+      a: 'val1', b: 'val2',
+    }})).toEqual(true);
+  });
+
+  test('should return true for unsatisfied required fields', () => {
+    expect(isMetaRequiredValuesMet({fields: [{id: 'something.a', required: true}, {id: 'something.b', required: true}]}, {something: {
+      a: 'val1',
+    }})).toEqual(false);
+  });
+});
