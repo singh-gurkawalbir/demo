@@ -335,6 +335,15 @@ const resource = {
       op,
       offset,
     }),
+  integrations: {
+    delete: integrationId =>
+      action(actionTypes.INTEGRATION.DELETE, {integrationId}),
+    redirectTo: (integrationId, redirectTo) =>
+      action(actionTypes.INTEGRATION.REDIRECT, {
+        integrationId,
+        redirectTo,
+      }),
+  },
   connections: {
     pingAndUpdate: connectionId =>
       action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId }),
@@ -801,11 +810,6 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_UPGRADE, {
         integrationId,
         options,
-      }),
-    redirectTo: (integrationId, redirectTo) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.REDIRECT, {
-        integrationId,
-        redirectTo,
       }),
     receivedCategoryMappingMetadata: (integrationId, flowId, metadata) =>
       action(
