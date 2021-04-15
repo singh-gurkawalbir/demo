@@ -9,6 +9,7 @@ import useConfirmDialog from '../../../ConfirmDialog';
 import PreviewTable from '../common/PreviewTable';
 import AddIcon from '../../../icons/AddIcon';
 import getRoutePath from '../../../../utils/routePaths';
+import messageStore from '../../../../constants/messages';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -166,6 +167,14 @@ export default function TemplatePreview() {
     });
   };
 
+  const getMessageForTemplate = () => {
+    if (template?.user.company === 'Celigo') {
+      return messageStore('CELIGO_AUTHORED_TEMPLATE_DISCLAIMER');
+    }
+
+    return messageStore('THIRD_PARTY_TEMPLATE_DISCLAIMER');
+  };
+
   const handleInstallIntegration = () => {
     if (template._connectorId) {
       installTemplate();
@@ -175,7 +184,7 @@ export default function TemplatePreview() {
 
     confirmDialog({
       title: 'Disclaimer',
-      message: 'Please note that by default all integration flows will be disabled when first installed, and that you will need to explicitly enable each flow that you want to use. Please note also that you can modify, delete, or extend any of the components that get installed, and unlike Integration apps, updates to the master integration template will never be propagated automatically to your account. Lastly, please note that integration templates are not explicitly reviewed by Celigo, and please be sure to review all components in the integration before proceeding.',
+      message: getMessageForTemplate(),
       buttons: [
         {
           label: 'Proceed',
