@@ -294,10 +294,6 @@ export default function Endpoint() {
               <div className={classes.subscriptionFeaturesList} >
                 <ul className={clsx(classes.itemsList, classes.subscriptionFeaturesItems)}>
                   <li>
-                    {licenseActionDetails?.autopilot && (<CheckMarkIcon className={classes.enableIcon} />)}
-                    <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.autopilot)})}>Autopilot</Typography>
-                  </li>
-                  <li>
                     {licenseActionDetails?.sandbox && (<CheckMarkIcon className={classes.enableIcon} />)}
                     <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.sandbox)})}>Sandbox</Typography>
                   </li>
