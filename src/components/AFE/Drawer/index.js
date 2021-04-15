@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
-import { useParams, useRouteMatch, Redirect } from 'react-router-dom';
+import { useParams, useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
@@ -44,21 +44,25 @@ const useStyles = makeStyles(theme => ({
 function RouterWrappedContent({ hideSave }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
   const match = useRouteMatch();
   const { editorId } = useParams();
   const { onClose } = useDrawerContext();
   const editorType = useSelector(state => selectors.editor(state, editorId).editorType);
   const editorTitle = useSelector(state => selectors.editor(state, editorId).editorTitle);
 
-  if (!editorType) {
-    // redirect to parent url
-    const urlFields = match.url.split('/');
+  useEffect(() => {
+    if (!editorType) {
+      // redirect to parent url
+      const urlFields = match.url.split('/');
 
-    // strip the '/editor...' suffix from the url
-    const redirectToParentRoute = urlFields.slice(0, urlFields.indexOf('editor')).join('/');
+      // strip the '/editor...' suffix from the url
+      const redirectToParentRoute = urlFields.slice(0, urlFields.indexOf('editor')).join('/');
 
-    return <Redirect to={redirectToParentRoute} />;
-  }
+      history.replace(redirectToParentRoute);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const { label } = editorMetadata[editorType] || {};
 

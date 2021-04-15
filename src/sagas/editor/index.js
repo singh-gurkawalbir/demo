@@ -68,9 +68,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
     };
     // for sql editors, modelMetadata needs to be passed inside options
     if (supportsDefaultData) {
-      const parsedDefaults = safeParse(editor.defaultData) || {};
-
-      reqBody.options.modelMetadata = parsedDefaults.data || parsedDefaults.record || parsedDefaults.row || {};
+      reqBody.options.modelMetadata = safeParse(editor.defaultData) || {};
     }
   }
   const path = `/processors/${processor}`;

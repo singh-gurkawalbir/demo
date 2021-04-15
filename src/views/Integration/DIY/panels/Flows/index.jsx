@@ -24,6 +24,7 @@ import { getTemplateUrlName } from '../../../../../utils/template';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
+import SectionTitle from '../../../common/FlowSectionTitle';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -108,6 +109,7 @@ const getBasePath = match => {
     .join('/');
 };
 const tilesFilterConfig = { type: 'tiles'};
+
 const FlowListingTable = ({
   flows,
   filterKey,
@@ -119,6 +121,10 @@ const FlowListingTable = ({
   const classes = useStyles();
 
   const sectionId = match?.params?.sectionId;
+  const errorCountByFlowGroup = useSelector(
+    state =>
+      selectors.integrationErrorsPerFlowGroup(state, integrationId)
+  );
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
   const hasMiscellaneousSection = shouldHaveMiscellaneousSection(flowGroupingsSections, flows);
 
@@ -146,7 +152,7 @@ const FlowListingTable = ({
                 activeClassName={classes.activeListItem}
                 to={sectionId}
                 data-test={sectionId}>
-                {title}
+                <SectionTitle title={title} errorCount={errorCountByFlowGroup[sectionId]} />
               </NavLink>
             </ListItem>
           ))}

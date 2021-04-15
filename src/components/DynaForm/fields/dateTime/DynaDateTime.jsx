@@ -115,7 +115,7 @@ const useTimePickerProps = removePickerDialog => {
 };
 export default function DateTimePicker(props) {
   const classes = useStyles();
-  const { id, label, formKey, onFieldChange, value = '', disabled, removePickerDialog, resourceContext, ssLinkedConnectionId, skipTimezoneConversion} = props;
+  const { id, label, timeLabel, dateLabel, required, formKey, onFieldChange, value = '', disabled, removePickerDialog, resourceContext, ssLinkedConnectionId, skipTimezoneConversion} = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
@@ -157,17 +157,19 @@ export default function DateTimePicker(props) {
   const isEnteredDateAndTimeValue = moment(dateValue)?.isValid?.() && moment(timeValue)?.isValid?.();
 
   useEffect(() => {
-    if (isEnteredDateAndTimeValue) {
-      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
+    if (required) {
+      if (isEnteredDateAndTimeValue) {
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
 
-      return;
+        return;
+      }
+
+      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: value ? 'Invalid date time value' : 'A value must be provided' }));
     }
-
-    dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: 'Invalid date time value'}));
   },
-  [dispatch, formKey, id, isEnteredDateAndTimeValue]);
+  [dispatch, formKey, id, isEnteredDateAndTimeValue, required, value]);
 
-  // suspend force field state compuation once the component turns invisble
+  // suspend force field state computation once the component turns invisible
   useEffect(() => () => {
     dispatch(actions.form.clearForceFieldState(formKey)(id));
   }, [dispatch, formKey, id]);
@@ -208,8 +210,12 @@ export default function DateTimePicker(props) {
   return (
     <>
       <div className={classes.dynaDateTimeLabelWrapper}>
-        <FormLabel>{label}</FormLabel>
-        <FieldHelp {...props} />
+        {label && (
+        <>
+          <FormLabel>{label}</FormLabel>
+          <FieldHelp {...props} />
+        </>
+        )}
       </div>
       <MuiPickersUtilsProvider utils={MomentDateFnsUtils} >
         <div className={classes.dateTimeWrapper}>
@@ -221,7 +227,7 @@ export default function DateTimePicker(props) {
               placeholder={FIXED_DATE_FORMAT}
               mask={getDateMask(FIXED_DATE_FORMAT)}
               value={dateValue}
-              label="Date"
+              label={dateLabel || 'Date'}
               onChange={setFormatDateValue}
               disableToolbar
               className={classes.keyBoardDateTimeWrapper}
@@ -234,7 +240,7 @@ export default function DateTimePicker(props) {
             <KeyboardTimePicker
               disabled={disabled}
               variant="inline"
-              label="Time"
+              label={timeLabel || 'Time'}
               views={['hours', 'minutes', 'seconds']}
               format={FIXED_TIME_FORMAT}
               placeholder={FIXED_TIME_FORMAT}

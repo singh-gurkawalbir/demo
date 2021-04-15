@@ -55,7 +55,7 @@ export function convertSalesforceLookupFilterExpression(expression, data = []) {
     return toReturn;
   }
 
-  if (!expression || expression.length === 0) {
+  if (!expression || typeof expression === 'object' || expression.length === 0) {
     return {
       condition: 'AND',
       rules: [],

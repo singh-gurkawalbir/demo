@@ -68,6 +68,7 @@ export default function FilterPanel({editorId}) {
       null,
       {
         wrapSpecialChars: true,
+        includeArrayLength: true,
       }
     )
       .filter(p => p.id && !p.id.includes('[*].'))
@@ -81,6 +82,7 @@ export default function FilterPanel({editorId}) {
 
     getJSONPaths(jsonData.settings, null, {
       wrapSpecialChars: true,
+      includeArrayLength: true,
     })
       .filter(p => p.id && !p.id.includes('[*].'))
       .forEach(p => {
@@ -565,6 +567,15 @@ export default function FilterPanel({editorId}) {
             ) {
               r.lhs.dataType = 'epochtime';
             }
+
+            if (lhsValue?.endsWith('.length')) {
+              const fieldType = filtersMetadata.find(metadata => metadata.id === lhsValue).type;
+
+              if (fieldType === 'number') {
+                r.lhs.dataType = 'number';
+                r.rhs.dataType = 'number';
+              }
+            }
           }
 
           if (!r.lhs.dataType) {
@@ -592,6 +603,15 @@ export default function FilterPanel({editorId}) {
                   rhsValue === 'currentExportDateTime')
             ) {
               r.rhs.dataType = 'epochtime';
+            }
+
+            if (rhsValue?.endsWith('.length')) {
+              const fieldType = filtersMetadata.find(metadata => metadata.id === rhsValue).type;
+
+              if (fieldType === 'number') {
+                r.lhs.dataType = 'number';
+                r.rhs.dataType = 'number';
+              }
             }
           }
 
@@ -627,6 +647,15 @@ export default function FilterPanel({editorId}) {
               ) {
                 r.lhs.dataType = 'epochtime';
               }
+
+              if (lhsValue?.endsWith('.length')) {
+                const fieldType = filtersMetadata.find(metadata => metadata.id === lhsValue).type;
+
+                if (fieldType === 'number') {
+                  r.lhs.dataType = 'number';
+                  r.rhs.dataType = 'number';
+                }
+              }
             }
 
             if (!r.lhs.dataType) {
@@ -650,6 +679,15 @@ export default function FilterPanel({editorId}) {
                     rhsValue === 'currentExportDateTime')
               ) {
                 r.rhs.dataType = 'epochtime';
+              }
+
+              if (rhsValue?.endsWith('.length')) {
+                const fieldType = filtersMetadata.find(metadata => metadata.id === rhsValue).type;
+
+                if (fieldType === 'number') {
+                  r.lhs.dataType = 'number';
+                  r.rhs.dataType = 'number';
+                }
               }
             }
 

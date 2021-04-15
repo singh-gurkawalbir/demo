@@ -16,11 +16,12 @@ export const getRoundedDate = (d = new Date(), offsetInMins, isFloor) => {
 export const getDateTimeFormat = (range, epochTime, preferences = {}, timezone) => {
   if (range && range.startDate && range.endDate) {
     const days = moment(range.endDate).diff(moment(range.startDate), 'days');
+    const time = convertUtcToTimezone(moment(epochTime).toISOString(), null, null, timezone, {skipFormatting: true});
 
     if (days > 4 && days < 4 * 30) {
-      return `${moment(epochTime).format(preferences?.dateFormat || 'MM/DD/YYYY')}`;
+      return `${time.format(preferences?.dateFormat || 'MM/DD/YYYY')}`;
     } if (days >= 4 * 30) {
-      return moment(epochTime).format('MMMM');
+      return time.format('MMMM');
     }
   }
 

@@ -262,7 +262,7 @@ describe('readme processor logic', () => {
         fieldId: 'rdbms.query',
         lookups: [],
         method: undefined,
-        defaultData: '{"record": {"CUSTOMER_NUMBER": {"default": null}}}',
+        defaultData: '{"CUSTOMER_NUMBER": {"default": null}}',
         modelMetadata: {CUSTOMER_NUMBER: {}},
         query: ['update querychange again {{rows.0.CUSTOMER_NUMBER}}', 'update query'],
         resourceId: '123',

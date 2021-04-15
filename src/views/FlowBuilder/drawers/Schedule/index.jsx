@@ -10,6 +10,7 @@ import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
 import FlowScheduleForm from '../../../../components/FlowSchedule/Form';
 import FlowScheduleButtons from '../../../../components/FlowSchedule/Buttons';
+import LoadResources from '../../../../components/LoadResources';
 
 const useStyle = makeStyles(theme => ({
   scheduleContainer: {
@@ -41,7 +42,7 @@ function DrawerForm(props) {
   // TODO: Ashok: Connector specific things to be added for schedule drawer
   // incase of !isViewMode && isIntegrationApp
   return (
-    <>
+    <LoadResources required resources="flows">
       <DrawerContent className={classes.scheduleContainer}>
         <Paper elevation={0} className={classes.paperDefault}>
           <FlowScheduleForm formKey={formKey} flow={flow} />
@@ -55,7 +56,7 @@ function DrawerForm(props) {
           // eslint-disable-next-line react/jsx-handler-names
           onClose={history.goBack} />
       </DrawerFooter>
-    </>
+    </LoadResources>
   );
 }
 
