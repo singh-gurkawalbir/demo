@@ -108,6 +108,7 @@ export function* retrievingAssistantDetails() {
         import: asst.import,
         helpURL: asst.helpURL,
         webhook: webhookAssistants.some(assistantId => assistantId === asst._id),
+        group: asst.group,
       });
     });
     assistantConnectors.push({
