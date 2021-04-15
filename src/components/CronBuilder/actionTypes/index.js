@@ -1,0 +1,6 @@
+
+export default {
+  SET_PARENT_TAB: 'PARENT_TAB_SET',
+  SET_CHILD_TAB: 'CHILD_TAB_SET',
+  SET_VALUE: 'VALUE_SET',
+};
