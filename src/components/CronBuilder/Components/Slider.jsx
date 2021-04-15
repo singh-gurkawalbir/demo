@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { Typography, Slider } from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
-import useFormContext from '../../../Form/FormContext';
 
 const useStyles = makeStyles(theme => ({
   titleSlider: {
@@ -16,35 +15,23 @@ const useStyles = makeStyles(theme => ({
 export default function DynaSlider(props) {
   const classes = useStyles();
   const {
-    id,
     value,
     onFieldChange,
-    clearFields,
     unit,
     step,
     max,
     min,
-    formKey,
   } = props;
-  const fields = useFormContext(formKey)?.fields;
+  //   const fields = useFormContext(formKey)?.fields;
   const handleChange = useCallback(
     (evt, slidervalue) => {
-      if (unit === 'minute' && slidervalue > 9) {
-        onFieldChange(id, `10-59/${slidervalue.toString()}`);
-      } else onFieldChange(id, `*/${slidervalue.toString()}`);
+      if (unit === 'minute' && slidervalue > 10) {
+        onFieldChange(`10-59/${slidervalue.toString()}`);
+      } else onFieldChange(`*/${slidervalue.toString()}`);
     },
-    [id, onFieldChange, unit]
+    [onFieldChange, unit]
   );
   const sliderVal = value.split('/') && value.split('/')[1];
-
-  useEffect(() => {
-    !sliderVal && onFieldChange(id, `*/${min.toString()}`);
-    clearFields.forEach(id => {
-      Object.values(fields).some(field => field.id === id) &&
-        onFieldChange(id, '');
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
 
   return (
     <div className={classes.sliderWrapper}>
@@ -57,7 +44,7 @@ export default function DynaSlider(props) {
         step={step}
         min={min}
         max={max}
-      />
+        />
     </div>
   );
 }

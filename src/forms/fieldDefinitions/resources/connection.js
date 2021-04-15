@@ -610,6 +610,10 @@ export default {
     type: 'checkbox',
     label: 'Disable strict SSL',
   },
+  'rdbms.disableStrictSSL': {
+    type: 'checkbox',
+    label: 'Disable strict SSL',
+  },
   'http.concurrencyLevel': {
     label: 'Concurrency level',
     type: 'select',

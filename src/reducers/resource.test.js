@@ -4223,6 +4223,11 @@ describe('resource region selector testcases', () => {
           _id: 'flow1',
         }]);
       });
+      test('should return correct flow list for standalone integration for sandbox environment', () => {
+        expect(selector({...state, user: {preferences: { environment: 'sandbox'}}})).toEqual([
+          {name: 'flow name 1 sandbox', _id: 'flow1sb', sandbox: true, errors: 0},
+        ]);
+      });
 
       test('should return correct flow list for a diy integration in default order', () => {
         expect(selector(state, 'integrationId1')).toEqual([

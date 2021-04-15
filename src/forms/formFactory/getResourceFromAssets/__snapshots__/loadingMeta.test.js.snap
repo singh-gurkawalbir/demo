@@ -1793,6 +1793,9 @@ Object {
       "name": Object {
         "fieldId": "name",
       },
+      "rdbms.disableStrictSSL": Object {
+        "fieldId": "rdbms.disableStrictSSL",
+      },
       "rdbms.port": Object {
         "fieldId": "rdbms.port",
       },
@@ -1850,6 +1853,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "rdbms.disableStrictSSL",
                 "rdbmsAdvanced",
               ],
               "label": "Advanced",
@@ -2446,6 +2450,9 @@ Object {
       "name": Object {
         "fieldId": "name",
       },
+      "rdbms.disableStrictSSL": Object {
+        "fieldId": "rdbms.disableStrictSSL",
+      },
       "rdbms.port": Object {
         "fieldId": "rdbms.port",
       },
@@ -2503,6 +2510,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "rdbms.disableStrictSSL",
                 "rdbmsAdvanced",
               ],
               "label": "Advanced",
@@ -12556,7 +12564,7 @@ Object {
   },
   "init": undefined,
   "optionsHandler": [Function],
-  "preSave": undefined,
+  "preSave": [Function],
   "validationHandler": undefined,
 }
 `;
