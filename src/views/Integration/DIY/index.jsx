@@ -5,7 +5,7 @@ import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/Queued
 import LoadResources from '../../../components/LoadResources';
 import PageBar from './PageBar';
 import TabRedirection from './TabRedirection';
-import EditorDrawer from '../../../components/AFE2/Drawer';
+import EditorDrawer from '../../../components/AFE/Drawer';
 
 export default function IntegrationDIY() {
   return (

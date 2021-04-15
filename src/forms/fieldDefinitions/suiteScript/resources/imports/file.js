@@ -1,4 +1,4 @@
-import csvOptions from '../../../../../components/AFE/SuiteScript/CsvConfigEditor/options';
+import csvOptions from '../../../../../components/AFE/Editor/panels/CsvParseRules/suitescript/options';
 
 export default {
   'import.file.csv.columnDelimiter': {

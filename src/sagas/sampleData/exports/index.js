@@ -65,8 +65,6 @@ export function* _hasSampleDataOnResource({ resourceId, resourceType, body }) {
 
 export function* _getProcessorOutput({ processorData }) {
   try {
-    // TODO: change this evaluateExternalProcessor to use refactored AFE code and
-    // add the property 'editorType' in processorData
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
     });
@@ -193,7 +191,10 @@ export function* _processRawData({ resourceId, resourceType, values = {} }) {
     rawFile: { data: { body: file, type } },
     raw: { data: { body: file } },
   };
-  const processorData = deepClone(editorValues || {});
+
+  const processorData = {
+    rule: deepClone(editorValues || {}),
+  };
 
   if (type === 'json') {
     // For JSON, no need of processor call, the below util takes care of parsing json file as per options
@@ -221,7 +222,7 @@ export function* _processRawData({ resourceId, resourceType, values = {} }) {
   }
 
   if (type === 'xml') {
-    processorData.resourcePath = fileProps.xml && fileProps.xml.resourcePath;
+    processorData.rule.resourcePath = fileProps.xml && fileProps.xml.resourcePath;
   }
   if (type !== 'xlsx') {
     // 'data' here represents the source file content (based on file type) against which processor runs to get JSON data
@@ -229,7 +230,7 @@ export function* _processRawData({ resourceId, resourceType, values = {} }) {
     processorData.data = file;
   }
 
-  processorData.processor = processorData.processor || PARSERS[type];
+  processorData.editorType = processorData.editorType || PARSERS[type];
   const processorOutput = yield call(_getProcessorOutput, { processorData });
 
   if (processorOutput?.data) {

@@ -23,8 +23,8 @@ import {ActionsFactory as GenerateButtons} from '../../../../../components/drawe
 import consolidatedActions from '../../../../../components/ResourceFormFactory/Actions';
 import MappingDrawer from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
+import SectionTitle from '../../../common/FlowSectionTitle';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
-import StatusCircle from '../../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import ResponseMappingDrawer from '../../../../../components/ResponseMapping/Drawer';
 import KeywordSearch from '../../../../../components/KeywordSearch';
@@ -68,19 +68,6 @@ const useStyles = makeStyles(theme => ({
   },
   configureSectionBtn: {
     padding: 0,
-  },
-  gridContainer: {
-    display: 'grid',
-    gridColumnGap: '10px',
-    gridTemplateColumns: 'auto 38%',
-    position: 'relative',
-    '& > div:first-child': {
-      wordBreak: 'break-word',
-    },
-    '& > div:last-child': {
-      position: 'relative',
-      right: -12,
-    },
   },
   emptyMessageWrapper: {
     padding: theme.spacing(1, 2),
@@ -310,45 +297,15 @@ const Header = ({integrationId, storeId}) => {
   );
 };
 
-const SectionTitle = ({integrationId, storeId, title, titleId}) => {
-  const classes = useStyles();
-  const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isOwnerUserInErrMgtTwoDotZero(state)
-  );
-  const integrationErrorsPerSection = useSelector(state =>
-    selectors.integrationErrorsPerSection(state, integrationId, storeId),
-  shallowEqual);
-
-  const errorCount = integrationErrorsPerSection[titleId];
-  const errorStatus = useMemo(() => {
-    if (errorCount === 0) {
-      return <StatusCircle size="mini" variant="success" />;
-    }
-
-    return (
-      <div>
-        <StatusCircle size="mini" variant="error" />
-        <span>{errorCount > 9999 ? '9999+' : errorCount}</span>
-      </div>
-    );
-  }, [errorCount]);
-
-  if (!isUserInErrMgtTwoDotZero) {
-    return title;
-  }
-
-  return (
-    <div className={classes.gridContainer}>
-      <div> { title }</div>
-      <div> {errorStatus} </div>
-    </div>
-  );
-};
-
 export default function FlowsPanel({ storeId, integrationId }) {
   const match = useRouteMatch();
   const classes = useStyles();
+
+  const integrationErrorsPerSection = useSelector(state =>
+    selectors.integrationErrorsPerSection(state, integrationId, storeId),
+  shallowEqual);
   const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
+
   const history = useHistory();
   // If someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can
@@ -375,11 +332,7 @@ export default function FlowsPanel({ storeId, integrationId }) {
                   activeClassName={classes.activeListItem}
                   to={titleId}
                   data-test={titleId}>
-                  <SectionTitle
-                    title={title}
-                    titleId={titleId}
-                    integrationId={integrationId}
-                    storeId={storeId} />
+                  <SectionTitle title={title} errorCount={integrationErrorsPerSection[titleId]} />
                 </NavLink>
               </ListItem>
             ))}

@@ -11964,7 +11964,6 @@ Object {
         "defaultValue": [Function],
         "id": "rdbms.query",
         "label": "SQL query",
-        "querySetPos": 0,
         "required": true,
         "type": "sqlquerybuilder",
         "visibleWhen": Array [
