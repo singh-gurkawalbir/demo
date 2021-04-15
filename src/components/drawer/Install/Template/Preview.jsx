@@ -167,9 +167,8 @@ export default function TemplatePreview() {
     });
   };
 
-  const isStaging = process?.env.API_ENDPOINT === 'https://staging.integrator.io';
   const getMessageForTemplate = () => {
-    if ((template?.user.company === 'Celigo') || (isStaging && template?.user.company === 'Celigo - Templates Team')) {
+    if (template?.user.company === 'Celigo') {
       return messageStore('CELIGO_AUTHORED_TEMPLATE_DISCLAIMER');
     }
 
