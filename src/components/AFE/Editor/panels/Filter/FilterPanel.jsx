@@ -573,6 +573,7 @@ export default function FilterPanel({editorId}) {
 
               if (fieldType === 'number') {
                 r.lhs.dataType = 'number';
+                r.rhs.dataType = 'number';
               }
             }
           }
@@ -608,6 +609,7 @@ export default function FilterPanel({editorId}) {
               const fieldType = filtersMetadata.find(metadata => metadata.id === rhsValue).type;
 
               if (fieldType === 'number') {
+                r.lhs.dataType = 'number';
                 r.rhs.dataType = 'number';
               }
             }
@@ -651,6 +653,7 @@ export default function FilterPanel({editorId}) {
 
                 if (fieldType === 'number') {
                   r.lhs.dataType = 'number';
+                  r.rhs.dataType = 'number';
                 }
               }
             }
@@ -682,6 +685,7 @@ export default function FilterPanel({editorId}) {
                 const fieldType = filtersMetadata.find(metadata => metadata.id === rhsValue).type;
 
                 if (fieldType === 'number') {
+                  r.lhs.dataType = 'number';
                   r.rhs.dataType = 'number';
                 }
               }
