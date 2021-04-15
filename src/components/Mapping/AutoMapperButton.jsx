@@ -5,59 +5,67 @@ import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
 import Spinner from '../Spinner';
+import Help from '../Help';
 
 const useStyles = makeStyles(theme => ({
   spinner: {
     marginRight: theme.spacing(1),
   },
+  helpTextButton: {
+    padding: 0,
+    marginLeft: theme.spacing(1),
+  },
 }));
+
 export default function AutoMapperButton({disabled}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [enquesnackbar] = useEnqueueSnackbar();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
+
   const flowHasExport = useSelector(state => {
     const {flowId} = selectors.mapping(state);
-
     const {adaptorType} = selectors.firstFlowPageGenerator(state, flowId);
 
     return !!adaptorType;
   });
-  const isMappingSaveInProgress = useSelector(state => selectors.mappingSaveStatus(state).saveInProgress);
-  const {autoMapperErrorMsg, isFetchingAutoSuggestions} = useSelector(state => {
-    const {status, errorMsg} = selectors.autoMapper(state);
 
-    return { isFetchingAutoSuggestions: status === 'requested', autoMapperErrorMsg: errorMsg};
+  const {failMsg, failSeverity, isFetchingAutoSuggestions} = useSelector(state => {
+    const {status, failMsg, failSeverity} = selectors.autoMapper(state);
+
+    return { isFetchingAutoSuggestions: status === 'requested', failMsg, failSeverity};
   }, shallowEqual);
 
-  const handleButtonClick = useCallback(() => {
-    dispatch(actions.mapping.autoMapper.request());
-  }, [dispatch]);
+  const handleButtonClick = useCallback(() =>
+    dispatch(actions.mapping.autoMapper.request()), [dispatch]);
 
   useEffect(() => {
-    if (autoMapperErrorMsg) {
-      enquesnackbar({ message: autoMapperErrorMsg, variant: 'error' });
+    if (failMsg) {
+      enqueueSnackbar({ message: failMsg, variant: failSeverity || 'error' });
     }
-  }, [autoMapperErrorMsg, enquesnackbar]);
+  }, [enqueueSnackbar, failMsg, failSeverity]);
 
   if (!flowHasExport) {
     return null;
   }
 
   return (
-    <Button
-      color="secondary"
-      variant="outlined"
-      dataTest="autoMapper"
-      disabled={disabled || isMappingSaveInProgress || isFetchingAutoSuggestions}
-      onClick={handleButtonClick}
+    <>
+      <Button
+        color="primary"
+        variant="outlined"
+        data-test="autoMapper"
+        disabled={disabled || isFetchingAutoSuggestions}
+        onClick={handleButtonClick}
       >
-      {isFetchingAutoSuggestions && (
-        <>
-          <Spinner size="small" className={classes.spinner} />
-          Saving
-        </>
-      )}
-      Suggest mappings - BETA
-    </Button>
+        {(isFetchingAutoSuggestions) ? (
+          <>
+            <Spinner size="small" className={classes.spinner} />
+            Auto-mapping fields
+          </>
+        ) : 'Auto-map fields'}
+      </Button>
+
+      <Help title="Auto-map fields" helpKey="autoMapFields" className={classes.helpTextButton} />
+    </>
   );
 }

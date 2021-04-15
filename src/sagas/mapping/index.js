@@ -592,7 +592,7 @@ export function* getAutoMapperSuggestion() {
   const importResource = yield select(selectors.resource, 'imports', importId);
 
   if (!exportResource.adaptorType || !importResource) {
-    return yield put(actions.mapping.autoMapper.failed('Failed to fetch mapping suggestions'));
+    return yield put(actions.mapping.autoMapper.failed('error', 'Failed to fetch mapping suggestions.'));
   }
 
   const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);
@@ -602,7 +602,7 @@ export function* getAutoMapperSuggestion() {
   const sourceApplication = yield select(selectors.applicationName, exportResource._id);
 
   reqBody.source_application = sourceApplication?.toLowerCase() || '';
-  reqBody.source_fields = extractFields;
+  reqBody.source_fields = extractFields.map(f => ({id: f.id}));
   const destApplication = yield select(selectors.applicationName, importResource._id);
 
   reqBody.dest_application = destApplication?.toLowerCase() || '';
@@ -628,7 +628,8 @@ export function* getAutoMapperSuggestion() {
     reqBody.source_record_type = '';
   }
 
-  reqBody.dest_fields = generateFields;
+  reqBody.dest_fields = generateFields.map(f => ({id: f.id}));
+
   const path = '/autoMapperSuggestions';
   const opts = {
     method: 'PUT',
@@ -640,11 +641,15 @@ export function* getAutoMapperSuggestion() {
     response = yield call(apiCallWithRetry, {
       path,
       opts,
+      // We don't want to double report on errors. The catch block below already
+      // handles the api failure.
+      hidden: true,
       message: 'Loading',
     });
   } catch (e) {
-    return yield put(actions.mapping.autoMapper.failed('Failed to fetch mapping suggestions'));
+    return yield put(actions.mapping.autoMapper.failed('error', 'Failed to fetch mapping suggestions.'));
   }
+
   if (response) {
     const {mappings: _mappings, suggested_threshold: suggestedThreshold} = response;
     const suggestedMapping = [];
@@ -667,10 +672,10 @@ export function* getAutoMapperSuggestion() {
         }));
         yield put(actions.mapping.autoMapper.received(suggestedMapping));
       } else {
-        yield put(actions.mapping.autoMapper.failed('No additional suggestions'));
+        yield put(actions.mapping.autoMapper.failed('warning', 'There are no new fields to auto-map.'));
       }
   } else {
-    yield put(actions.mapping.autoMapper.failed('Failed to fetch mapping suggestions'));
+    yield put(actions.mapping.autoMapper.failed('error', 'Failed to fetch mapping suggestions.'));
   }
 }
 

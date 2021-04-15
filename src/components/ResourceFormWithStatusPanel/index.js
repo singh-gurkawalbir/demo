@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     padding: '0px !important',
   },
   notification: {
-    marginBottom: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
   },
 }));
 

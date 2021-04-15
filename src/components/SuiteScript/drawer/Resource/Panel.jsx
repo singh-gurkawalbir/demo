@@ -13,7 +13,7 @@ import { generateNewId, MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource
 import { selectors } from '../../../../reducers';
 import { useRedirectToParentRoute } from '../../../drawer/Resource/Panel';
 import SuiteScriptActionsPanel from '../../ResourceFormFactory/SuiteScriptActionsPanel';
-import EditorDrawer from '../../../AFE2/Drawer';
+import EditorDrawer from '../../../AFE/Drawer';
 
 const useStyles = makeStyles(theme => ({
   root: {

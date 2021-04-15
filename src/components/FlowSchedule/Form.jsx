@@ -49,9 +49,9 @@ export default function FlowScheduleForm({
 
   useFormInitWithPermissions({
     formKey,
-    integrationId: flow._integrationId,
+    integrationId: flow?._integrationId,
     resourceType: 'flows',
-    resourceId: flow._id,
+    resourceId: flow?._id,
     disabled,
     fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,

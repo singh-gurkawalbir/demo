@@ -4162,6 +4162,10 @@ describe('resource region selector testcases', () => {
                 name: 'flow name 1',
                 _id: 'flow1',
               }, {
+                name: 'flow name 1 sandbox',
+                _id: 'flow1sb',
+                sandbox: true,
+              }, {
                 name: 'flow name 2',
                 _id: 'flow2',
                 _integrationId: 'integrationId1',
