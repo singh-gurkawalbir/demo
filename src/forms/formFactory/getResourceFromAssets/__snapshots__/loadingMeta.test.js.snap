@@ -12557,7 +12557,7 @@ Object {
   },
   "init": undefined,
   "optionsHandler": [Function],
-  "preSave": undefined,
+  "preSave": [Function],
   "validationHandler": undefined,
 }
 `;

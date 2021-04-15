@@ -22,9 +22,8 @@ export default function DynaLicenseEditor(props) {
     }
     // try block is for all the string cases
     try {
-      const jsonObj = JSON.parse(value);
+      JSON.parse(value);
 
-      onFieldChange(id, jsonObj);
       dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
     } catch (e) {
       dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: 'Invalid Json format'}));
