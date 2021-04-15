@@ -21,6 +21,7 @@ import { getValidRelativePath } from '../../../../utils/routePaths';
 import actions from '../../../../actions';
 import EditorDrawer from '../../../AFE/Drawer';
 import LoadResources from '../../../LoadResources';
+import { REQUIRED_MESSAGE } from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -182,7 +183,7 @@ export default function DynaHook_afe({
       if (isValid) {
         dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
       } else {
-        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: 'A value must be provided '}));
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: REQUIRED_MESSAGE}));
       }
     }
   }, [id, dispatch, formKey, value, resourceType]);
