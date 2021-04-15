@@ -83,7 +83,7 @@ describe('sql processor logic', () => {
       };
       const expectedOutput = {
         data: sampleData,
-        defaultData: JSON.stringify({data: modelMetadata}, null, 2),
+        defaultData: JSON.stringify(modelMetadata, null, 2),
       };
 
       expect(buildData({supportsDefaultData: true, modelMetadata}, sampleData)).toEqual(expectedOutput);
@@ -92,11 +92,11 @@ describe('sql processor logic', () => {
       const sampleData = '{"data": {"id": 123}}';
       const expectedOutput = {
         data: sampleData,
-        defaultData: JSON.stringify({data: {
+        defaultData: JSON.stringify({
           id: {
             default: '',
           },
-        }}, null, 2),
+        }, null, 2),
       };
 
       expect(buildData({supportsDefaultData: true}, sampleData)).toEqual(expectedOutput);
@@ -105,11 +105,11 @@ describe('sql processor logic', () => {
       const sampleData = '{"rows": [{"id": 123}]}';
       const expectedOutput = {
         data: sampleData,
-        defaultData: JSON.stringify({row: {
+        defaultData: JSON.stringify({
           id: {
             default: '',
           },
-        }}, null, 2),
+        }, null, 2),
       };
 
       expect(buildData({supportsDefaultData: true}, sampleData)).toEqual(expectedOutput);
@@ -118,11 +118,11 @@ describe('sql processor logic', () => {
       const sampleData = '{"record": {"id": 123}}';
       const expectedOutput = {
         data: sampleData,
-        defaultData: JSON.stringify({record: {
+        defaultData: JSON.stringify({
           id: {
             default: '',
           },
-        }}, null, 2),
+        }, null, 2),
       };
 
       expect(buildData({supportsDefaultData: true}, sampleData)).toEqual(expectedOutput);
@@ -135,14 +135,14 @@ describe('sql processor logic', () => {
         resourceType: 'imports',
         stage: 'flowInput',
         data: '{"data": {"id": 123}}',
-        defaultData: JSON.stringify({data: {
+        defaultData: JSON.stringify({
           id: {
             default: '',
           },
           name: {
             default: 'default name',
           },
-        }}, null, 2),
+        }, null, 2),
         rule: 'some rule',
       };
       const expectedOutput = {
@@ -164,11 +164,11 @@ describe('sql processor logic', () => {
         resourceType: 'imports',
         stage: 'flowInput',
         data: '{"data": {"id": 123}}}',
-        defaultData: JSON.stringify({data: {
+        defaultData: JSON.stringify({
           id: {
             default: '',
           },
-        }}, null, 2),
+        }, null, 2),
         rule: 'some rule',
       };
 
@@ -180,11 +180,11 @@ describe('sql processor logic', () => {
         resourceType: 'imports',
         stage: 'flowInput',
         data: '{"data": {"id": 123}}',
-        defaultData: '{"data": {"id": 123}}}',
+        defaultData: '{"id": 123}}',
         rule: 'some rule',
       };
 
-      expect(validate(editor)).toEqual({dataError: 'Default Data: Unexpected token } in JSON at position 21'});
+      expect(validate(editor)).toEqual({dataError: 'Default Data: Unexpected token } in JSON at position 11'});
     });
   });
 });

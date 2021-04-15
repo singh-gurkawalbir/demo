@@ -46,21 +46,12 @@ export default {
     }
     const parsedData = safeParse(sampleData);
 
-    let dataContext = 'data';
-
-    if (parsedData?.rows) {
-      dataContext = 'row';
-    } else if (parsedData?.record) {
-      dataContext = 'record';
-    }
-
     if (modelMetadata) {
       const newMeta = cloneDeep(modelMetadata);
-      const defaultData = {[dataContext]: newMeta};
 
       return {
         data: sampleData,
-        defaultData: JSON.stringify(defaultData, null, 2),
+        defaultData: JSON.stringify(newMeta, null, 2),
       };
     }
 
@@ -70,20 +61,9 @@ export default {
       temp = cloneDeep(getUnionObject(parsedData));
     } else if (parsedData) {
       const {data, rows, record} = parsedData;
-      let sampleDataToClone;
+      const sampleDataToClone = record || rows?.[0] || data?.[0] || data;
 
-      if (dataContext === 'data') {
-        if (Array.isArray(data)) {
-          sampleDataToClone = data?.[0];
-        } else {
-          sampleDataToClone = data;
-        }
-      } else if (dataContext === 'row') {
-        sampleDataToClone = rows?.[0];
-      } else {
-        sampleDataToClone = record;
-      }
-      temp = {[dataContext]: cloneDeep(sampleDataToClone)};
+      temp = cloneDeep(sampleDataToClone);
     }
     const defaultData = getDefaultData(temp);
 

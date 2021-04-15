@@ -111,8 +111,7 @@ export default {
         value: lookups,
       });
       try {
-        const parsedDefaultData = JSON.parse(defaultData) || {};
-        const dataToPatch = parsedDefaultData.data || parsedDefaultData.record || parsedDefaultData.row;
+        const dataToPatch = JSON.parse(defaultData) || {};
 
         if (dataToPatch) {
           patches.push({
