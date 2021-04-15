@@ -55,7 +55,7 @@ function iconMap(type = '') {
 }
 
 function imageName(assistant) {
-  // There is issue with S3 upload with image name as googleads
+  // The Ad-blocker plugins and some browsers in-built ad-blockers are blocking image with name googleads.png, hence prefixing image name with small-
   if (assistant === 'googleads') {
     return 'small-googleads';
   }
