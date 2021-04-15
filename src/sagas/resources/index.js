@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
+import { call, put, takeEvery, select, take, cancel, fork, takeLatest, delay } from 'redux-saga/effects';
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean } from 'lodash';
 import actions from '../../actions';
@@ -1001,6 +1001,27 @@ export function* downloadReport({reportId}) {
 
   }
 }
+
+export function* pollForResourceCollection({ resourceType }) {
+  while (true) {
+    yield call(getResourceCollection, {resourceType});
+    yield delay(5 * 1000);
+  }
+}
+export function* startPollingForResourceCollection({ resourceType }) {
+  const watcher = yield fork(pollForResourceCollection, {resourceType});
+
+  yield take(action => {
+    if ([
+      actionTypes.RESOURCE.STOP_COLLECTION_POLL,
+      actionTypes.RESOURCE.START_COLLECTION_POLL,
+    ].includes(action.type) &&
+    action.resourceType === resourceType) {
+      return true;
+    }
+  });
+  yield cancel(watcher);
+}
 export const resourceSagas = [
   takeEvery(actionTypes.EVENT_REPORT.CANCEL, eventReportCancel),
   takeEvery(actionTypes.EVENT_REPORT.DOWNLOAD, downloadReport),
@@ -1031,6 +1052,6 @@ export const resourceSagas = [
   takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
   takeEvery(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, linkUnlinkSuiteScriptIntegrator),
   takeEvery(actionTypes.RESOURCE.REPLACE_CONNECTION, replaceConnection),
-
+  takeEvery(actionTypes.RESOURCE.START_COLLECTION_POLL, startPollingForResourceCollection),
   ...metadataSagas,
 ];

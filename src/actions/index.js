@@ -253,6 +253,10 @@ const resource = {
 
   requestCollection: (resourceType, message, refresh) =>
     action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh }),
+  startCollectionPoll: resourceType =>
+    action(actionTypes.RESOURCE.START_COLLECTION_POLL, { resourceType }),
+  stopCollectionPoll: resourceType =>
+    action(actionTypes.RESOURCE.STOP_COLLECTION_POLL, { resourceType }),
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
