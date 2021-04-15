@@ -57,7 +57,7 @@ function RouterWrappedContent({ hideSave }) {
       const urlFields = match.url.split('/');
 
       // strip the '/editor...' suffix from the url
-      const redirectToParentRoute = urlFields.slice(0, urlFields.lastIndexOf('editor')).join('/');
+      const redirectToParentRoute = urlFields.slice(0, urlFields.indexOf('editor')).join('/');
 
       history.replace(redirectToParentRoute);
     }
