@@ -1,27 +1,31 @@
-import { ButtonGroup, Button, makeStyles } from '@material-ui/core';
-import React, { useEffect, useCallback } from 'react';
-import useFormContext from '../../../Form/FormContext';
+import { Button, makeStyles } from '@material-ui/core';
+import React, { useCallback } from 'react';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
+  groupedButton: {
+    padding: theme.spacing(1),
+  },
   buttonGroup: {
     flexDirection: 'row',
   },
-});
+  button: {
+    padding: theme.spacing(1),
+    borderRadius: '0px',
+  },
+}));
 const wrapIndex = 5;
 
+export const splitGroupedValuesAr = value => !value || value.includes('/') || value.includes('*') ? [] : value && value.split(',');
 export default function GroupedButton(props) {
   const {
-    id,
     value,
     onFieldChange,
-    clearFields,
     options,
-    formKey,
+    // formKey,
   } = props;
-  const fields = useFormContext(formKey)?.fields;
+  //   const fields = useFormContext(formKey)?.fields;
   const classes = useStyles();
-  const finalValues =
-    value.includes('/') || value.includes('*') ? [] : value && value.split(',');
+  const finalValues = splitGroupedValuesAr(value);
   const handleChange = useCallback(
     item => () => {
       let res;
@@ -32,33 +36,21 @@ export default function GroupedButton(props) {
         res = [...finalValues, item.value];
       }
 
-      onFieldChange(id, !res.length ? '*' : res.sort().join(','));
+      onFieldChange(!res.length ? '*' : res.sort().join(','));
       // eslint-disable-next-line react-hooks/exhaustive-deps
     },
-    [finalValues, id, onFieldChange]
+    [finalValues, onFieldChange]
   );
 
-  useEffect(() => {
-    clearFields.forEach(id => {
-      Object.values(fields).some(field => field.id === id) &&
-        onFieldChange(id, '');
-    });
-
-    if (!finalValues.length) {
-      onFieldChange(id, '*');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
   return (
-    <>
+    <div className={classes.groupedButton}>
       {options &&
         options[0] &&
         options[0].items &&
         [...Array(parseInt(options[0].items.length / 5, 10) + 1).keys()].map(
           groupIndex => (
             <div key={groupIndex} className={classes.buttonGroup}>
-              <ButtonGroup color="primary">
+              <>
                 {options &&
                   options[0].items
                     .filter(
@@ -68,6 +60,7 @@ export default function GroupedButton(props) {
                     )
                     .map(item => (
                       <Button
+                        className={classes.button}
                         key={item.label}
                         color="primary"
                         onClick={handleChange(item)}
@@ -79,10 +72,10 @@ export default function GroupedButton(props) {
                         {item.label}
                       </Button>
                     ))}
-              </ButtonGroup>
+              </>
             </div>
           )
         )}
-    </>
+    </div>
   );
 }
