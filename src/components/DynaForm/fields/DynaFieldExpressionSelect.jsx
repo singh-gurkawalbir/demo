@@ -18,7 +18,7 @@ export default function DynaFieldExpressionSelect(props) {
   } = props;
   const dispatch = useDispatch();
   const options = useSelector(state => {
-    const functions = selectors._editorHelperFunctions(state);
+    const functions = selectors.editorHelperFunctions(state);
     const optionItems = [];
 
     Object.keys(functions).forEach(func => {
@@ -33,7 +33,7 @@ export default function DynaFieldExpressionSelect(props) {
   }, isEqual);
 
   useEffect(() => {
-    dispatch(actions._editor.refreshHelperFunctions());
+    dispatch(actions.editor.refreshHelperFunctions());
   }, [dispatch]);
 
   return (

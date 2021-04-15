@@ -4162,6 +4162,10 @@ describe('resource region selector testcases', () => {
                 name: 'flow name 1',
                 _id: 'flow1',
               }, {
+                name: 'flow name 1 sandbox',
+                _id: 'flow1sb',
+                sandbox: true,
+              }, {
                 name: 'flow name 2',
                 _id: 'flow2',
                 _integrationId: 'integrationId1',
@@ -4218,6 +4222,11 @@ describe('resource region selector testcases', () => {
           errors: 0,
           _id: 'flow1',
         }]);
+      });
+      test('should return correct flow list for standalone integration for sandbox environment', () => {
+        expect(selector({...state, user: {preferences: { environment: 'sandbox'}}})).toEqual([
+          {name: 'flow name 1 sandbox', _id: 'flow1sb', sandbox: true, errors: 0},
+        ]);
       });
 
       test('should return correct flow list for a diy integration in default order', () => {

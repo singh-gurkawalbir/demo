@@ -508,7 +508,7 @@ export function* updateIntegrationSettings({
       // when Save button on section triggers a flow on integrationApp, it will send back _flowId in the response.
       // UI should navigate to dashboard so that user can the see the flow status.
       yield put(
-        actions.integrationApp.settings.redirectTo(integrationId, 'dashboard')
+        actions.resource.integrations.redirectTo(integrationId, 'dashboard')
       );
     }
 
@@ -637,6 +637,19 @@ export function* deleteResource({ resourceType, id }) {
   } catch (error) {
     return undefined;
   }
+}
+
+export function* deleteIntegration({integrationId}) {
+  const integration = yield select(selectors.resource, 'integrations', integrationId);
+
+  if (integration._connectorId) return undefined;
+
+  yield call(deleteResource, {resourceType: 'integrations', id: integrationId});
+
+  yield put(actions.resource.requestCollection('integrations', null, true));
+  yield put(actions.resource.requestCollection('tiles', null, true));
+  yield put(actions.resource.requestCollection('scripts', null, true));
+  yield put(actions.resource.integrations.redirectTo(integrationId, 'dashboard'));
 }
 
 export function* getResourceCollection({ resourceType, refresh}) {
@@ -1053,5 +1066,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, linkUnlinkSuiteScriptIntegrator),
   takeEvery(actionTypes.RESOURCE.REPLACE_CONNECTION, replaceConnection),
   takeEvery(actionTypes.RESOURCE.START_COLLECTION_POLL, startPollingForResourceCollection),
+  takeLatest(actionTypes.INTEGRATION.DELETE, deleteIntegration),
+
   ...metadataSagas,
 ];

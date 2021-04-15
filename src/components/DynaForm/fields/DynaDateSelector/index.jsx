@@ -12,6 +12,7 @@ import CalendarIcon from '../../../icons/CalendarIcon';
 import DynaText from '../DynaText';
 import actions from '../../../../actions';
 import FieldMessage from '../FieldMessage';
+import { REQUIRED_MESSAGE } from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   iconWrapper: {
@@ -63,7 +64,7 @@ export default function DynaDateSelector(props) {
       if (isValid) {
         dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
       } else {
-        dispatch(actions.form.forceFieldState(formKey)(id, {isValid, errorMessages: !value ? 'A value must be provided' : 'Invalid date format'}));
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid, errorMessages: !value ? REQUIRED_MESSAGE : 'Invalid date format'}));
       }
     }
   }, [id, dispatch, formKey, isValid, value, required]);

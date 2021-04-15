@@ -24,42 +24,66 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export const ConfirmDialog = props => {
-  const {
+const getButtonProps = ({ variant, color }) => {
+  const buttonVariantProps = {
+    primary: {
+      color: 'primary',
+      variant: 'outlined',
+    },
+    secondary: {
+      color: 'secondary',
+      variant: 'outlined',
+    },
+    tertiary: {
+      variant: 'text',
+    },
+  };
+
+  let buttonProps;
+
+  if (variant) {
+    buttonProps = buttonVariantProps[variant];
+  } else {
+    // NOTE: This "else" block should be deleted when we update
+    // all instances of this component to use the new variant prop.
+    buttonProps = {
+      variant: color === 'secondary' ? 'text' : 'outlined',
+      color: color === 'secondary' ? '' : 'primary',
+    };
+  }
+
+  return buttonProps;
+};
+
+export const ConfirmDialog = (
+  {
     message,
     title = 'Confirm',
     isHtml = false,
     onClose,
     maxWidth,
     buttons = [
-      {
-        label: 'No',
-        color: 'secondary',
-      },
-      {
-        label: 'Yes',
-        color: 'primary',
-      },
+      { label: 'No', variant: 'secondary' },
+      { label: 'Yes', variant: 'primary' },
     ],
     onDialogClose,
-  } = props;
+  }) => {
+  const classes = useStyles();
   const handleButtonClick = useCallback(
     button => () => {
       onClose();
-      button.onClick && button.onClick();
+      button.onClick?.();
     },
     [onClose]
   );
 
   const handleClose = useCallback(() => {
-    // Calls onDialogClose if passed
     if (typeof onDialogClose === 'function') {
       onDialogClose();
     }
     // Default close fn which closes the dialog
     onClose();
   }, [onClose, onDialogClose]);
-  const classes = useStyles();
 
   return (
     <ModalDialog show onClose={handleClose} maxWidth={maxWidth}>
@@ -73,12 +97,11 @@ export const ConfirmDialog = props => {
         <ButtonsGroup>
           {buttons.map(button => (
             <Button
-              variant={button.variant || (button.color === 'secondary' ? 'text' : 'outlined')}
               data-test={button.dataTest || button.label}
               key={button.label}
               className={clsx({[classes.btnRight]: buttons.length > 2 && button.label === 'Cancel'})}
-              color={button.color === 'secondary' ? 'secondary' : 'primary'}
-              onClick={handleButtonClick(button)}>
+              onClick={handleButtonClick(button)}
+              {...getButtonProps(button)}>
               {button.label}
             </Button>
           ))}
@@ -99,9 +122,7 @@ export const ConfirmDialogProvider = ({ children }) => {
 
   return (
     <ConfirmDialogContext.Provider
-      value={{
-        setConfirmDialogProps,
-      }}>
+      value={{ setConfirmDialogProps }}>
       {!!confirmDialogProps &&
         (confirmDialogProps.isPrompt ? (
           <Prompt {...confirmDialogProps} onClose={onClose} />
@@ -134,8 +155,8 @@ export default function useConfirmDialog() {
         title: 'You’ve got unsaved changes',
         message: 'Are you sure you want to leave this page and lose your unsaved changes?',
         buttons: [
-          { label: 'Save Changes', color: 'primary', onClick: onSave },
-          { label: 'Discard Changes', variant: 'outlined', color: 'secondary', onClick: onDiscard },
+          { label: 'Save Changes', variant: 'primary', onClick: onSave },
+          { label: 'Discard Changes', variant: 'secondary', onClick: onDiscard },
         ],
       });
     },

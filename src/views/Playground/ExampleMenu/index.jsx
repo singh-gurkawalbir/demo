@@ -7,7 +7,7 @@ import actions from '../../../actions';
 import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import examples from '../examples';
-import { editorList } from '../../../components/AFE2/metadata';
+import { editorList } from '../../../components/AFE/metadata';
 
 const useStyles = makeStyles(theme => ({
   editorItem: {
@@ -23,7 +23,7 @@ export default function ExampleMenu({ onEditorChange }) {
   const classes = useStyles();
 
   const handleClick = ({key, type, rule, data }) => {
-    dispatch(actions._editor.init(key, type, { rule, data }));
+    dispatch(actions.editor.init(key, type, { rule, data }));
     onEditorChange(key);
   };
 

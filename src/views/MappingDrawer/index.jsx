@@ -8,9 +8,9 @@ import SelectImport from './SelectImport';
 import RightDrawer from '../../components/drawer/Right';
 import DrawerHeader from '../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../components/drawer/Right/DrawerContent';
-import DatabaseMapping from './DatabaseMapping_afe2';
-import SelectQueryType from './DatabaseMapping_afe2/SelectQueryType';
-import EditorDrawer from '../../components/AFE2/Drawer';
+import DatabaseMapping from './DatabaseMapping_afe';
+import SelectQueryType from './DatabaseMapping_afe/SelectQueryType';
+import EditorDrawer from '../../components/AFE/Drawer';
 
 const MappingWrapper = ({integrationId}) => {
   const history = useHistory();

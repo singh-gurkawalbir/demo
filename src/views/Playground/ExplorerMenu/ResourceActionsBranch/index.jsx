@@ -96,7 +96,7 @@ export default function ResourceItemsBranch({onEditorChange, flowId, resourceId}
   };
 
   const handleEditorClick = (type, fieldId) => {
-    dispatch(actions._editor.init(fieldId, type, {
+    dispatch(actions.editor.init(fieldId, type, {
       rule: getValueFromPath(resource, fieldId),
       flowId,
       resourceId,
