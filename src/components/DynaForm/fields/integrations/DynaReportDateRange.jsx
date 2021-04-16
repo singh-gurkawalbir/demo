@@ -162,6 +162,7 @@ export default function DynaReportDateRange(props) {
           {...props}
           disabled={disabled}
           showDateDisplay={false}
+          fullWidthBtn
           classProps={classes}
           customPresets={ranges}
           editableDateInputs={false}

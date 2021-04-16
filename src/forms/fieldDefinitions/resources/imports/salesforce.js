@@ -501,6 +501,7 @@ export default {
           { label: 'Update', value: 'update' },
           { label: 'Insert/Update', value: 'addupdate' },
           { label: 'Upsert', value: 'upsert' },
+          { label: 'Delete', value: 'delete'},
         ],
       },
     ],
@@ -567,7 +568,7 @@ export default {
       },
       {
         field: 'salesforce.operation',
-        is: ['update', 'addupdate'],
+        is: ['update', 'addupdate', 'delete'],
       },
       {
         field: 'salesforce.compositeOperation',
