@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { addDays, startOfDay } from 'date-fns';
 import actions from '../../../../actions';
@@ -29,7 +29,7 @@ const useStyles = makeStyles({
   },
 
 });
-const defaultRange = {
+const DEFAULT_RANGE = {
   startDate: startOfDay(addDays(new Date(), -29)),
   endDate: new Date(),
   preset: 'last30days',
@@ -42,15 +42,17 @@ export default function SelectDate({
   handleChange,
   customPresets,
   showTime = false,
+  defaultRange = DEFAULT_RANGE,
+  skipLastEndDate = false,
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const filter = useSelector(state => selectors.filter(state, filterKey), shallowEqual);
+  const filter = useSelector(state => selectors.filter(state, filterKey));
   const isDateFilterSelected = !!(filter[filterBy] && filter[filterBy].preset !== defaultRange.preset);
 
   const handleDateFilter = useCallback(
     dateFilter => {
-      const selectedRange = getSelectedRange(dateFilter);
+      const selectedRange = getSelectedRange(dateFilter, skipLastEndDate);
 
       dispatch(
         actions.patchFilter(filterKey, {
@@ -63,7 +65,7 @@ export default function SelectDate({
       );
       handleChange?.();
     },
-    [dispatch, filter, filterBy, filterKey, handleChange],
+    [dispatch, filter, filterBy, filterKey, handleChange, skipLastEndDate],
   );
   const FilterIcon = () => <FilterIconWrapper selected={isDateFilterSelected} />;
 
@@ -71,7 +73,7 @@ export default function SelectDate({
     startDate: new Date(filter[filterBy].startDate),
     endDate: new Date(filter[filterBy].endDate),
     preset: filter[filterBy].preset,
-  } : defaultRange, [isDateFilterSelected, filter, filterBy]);
+  } : defaultRange, [isDateFilterSelected, filter, filterBy, defaultRange]);
 
   return (
     <div className={classes.dateFilterWrapper}> {title}
