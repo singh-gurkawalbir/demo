@@ -27,6 +27,7 @@ export default function PreviewBody(props) {
     previewStageDataList,
     resourceId,
     resourceType,
+    showDefaultPreviewBody = false,
   } = props;
 
   const classes = useStyles(props);
@@ -52,6 +53,20 @@ export default function PreviewBody(props) {
       setDefaultTab('raw');
     }
   }, [resourceSampleData.status, defaultPanel, handlePanelViewChange, availablePreviewStages]);
+
+  if (showDefaultPreviewBody) {
+    return (
+      <>
+        <Templates.RequestUrlPanel showEmptyPanel />
+        <CeligoTabWrapper>
+          <CeligoPillTabs tabs={availablePreviewStages} defaultTab={defaultTab} />
+          <CeligoTabPanel panelId="preview"> <DefaultPanel /> </CeligoTabPanel>
+          <CeligoTabPanel panelId="request"> <RequestResponsePanel variant="previewPanel" /> </CeligoTabPanel>
+          <CeligoTabPanel panelId="raw"> <RequestResponsePanel variant="previewPanel" /> </CeligoTabPanel>
+        </CeligoTabWrapper>
+      </>
+    );
+  }
 
   return (
     <div className={classes.previewBodyContainer}>

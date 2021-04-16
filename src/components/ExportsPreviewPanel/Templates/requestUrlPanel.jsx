@@ -11,6 +11,7 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-all',
     borderColor: theme.palette.secondary.lightest,
     width: '100%',
+    minHeight: theme.spacing(6),
     borderRadius: theme.spacing(0.5),
     padding: theme.spacing(2),
     textAlign: 'left',
@@ -19,14 +20,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function RequestUrlPanel(props) {
-  const { previewStageDataList, resourceId, resourceType } = props;
+  const { previewStageDataList, resourceId, resourceType, showEmptyPanel = false } = props;
   const classes = useStyles();
   const isRequestUrlAvailable = useSelector(state =>
     selectors.isRequestUrlAvailableForPreviewPanel(state, resourceId, resourceType)
   );
   const requestURL = getRequestURL(previewStageDataList?.request);
 
-  if (!isRequestUrlAvailable || !requestURL) {
+  if (!showEmptyPanel && (!isRequestUrlAvailable || !requestURL)) {
     return null;
   }
 

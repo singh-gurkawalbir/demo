@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import { isJsonString } from '../string';
 
 export const getContentType = httpPayload => {
@@ -27,5 +28,5 @@ export const getHttpReqResFields = (httpPayload, variant = 'basic') => {
 
   const others = variant === 'previewPanel' ? otherPayloadDetails : { url, ...otherPayloadDetails};
 
-  return { headers, body, others};
+  return { headers, body, others: isEmpty(others) ? undefined : others};
 };
