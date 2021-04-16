@@ -2189,13 +2189,15 @@ const logs = {
     receivedLogDetails: (exportId, logKey, logDetails) => action(actionTypes.LOGS.LISTENER.LOG.RECEIVED, { exportId, logKey, logDetails }),
     removeLog: (flowId, exportId, logsToRemove) => action(actionTypes.LOGS.LISTENER.LOG.REMOVE, { flowId, exportId, logsToRemove }),
     logDeleted: (exportId, deletedLogKey) => action(actionTypes.LOGS.LISTENER.LOG.DELETED, { exportId, deletedLogKey }),
-    request: (flowId, exportId, loadMore) => action(actionTypes.LOGS.LISTENER.REQUEST, { flowId, exportId, loadMore }),
-    received: (exportId, logs, nextPageURL, loadMore) => action(actionTypes.LOGS.LISTENER.RECEIVED, { exportId, logs, nextPageURL, loadMore }),
+    request: ({flowId, exportId, loadMore}) => action(actionTypes.LOGS.LISTENER.REQUEST, { flowId, exportId, loadMore }),
+    received: ({exportId, logs, nextPageURL, loadMore}) => action(actionTypes.LOGS.LISTENER.RECEIVED, { exportId, logs, nextPageURL, loadMore }),
     failed: (exportId, error) => action(actionTypes.LOGS.LISTENER.FAILED, { exportId, error }),
     clear: exportId => action(actionTypes.LOGS.LISTENER.CLEAR, { exportId }),
     startLogsPoll: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.START_POLL, { flowId, exportId }),
     stopLogsPoll: (exportId, hasNewLogs) => action(actionTypes.LOGS.LISTENER.STOP_POLL, { exportId, hasNewLogs }),
     setActiveLog: (exportId, activeLogKey) => action(actionTypes.LOGS.LISTENER.ACTIVE_LOG, { exportId, activeLogKey }),
+    setFetchStatus: (exportId, status) => action(actionTypes.LOGS.LISTENER.FETCH_STATUS, { exportId, status }),
+    pauseFetch: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.PAUSE_FETCH, { flowId, exportId }),
   },
 };
 
