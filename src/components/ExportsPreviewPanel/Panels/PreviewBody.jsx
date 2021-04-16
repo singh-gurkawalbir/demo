@@ -57,7 +57,11 @@ export default function PreviewBody(props) {
   if (showDefaultPreviewBody) {
     return (
       <>
-        <Templates.RequestUrlPanel showEmptyPanel />
+        <Templates.RequestUrlPanel
+          showEmptyPanel
+          previewStageDataList={previewStageDataList}
+          resourceId={resourceId}
+          resourceType={resourceType} />
         <CeligoTabWrapper>
           <CeligoPillTabs tabs={availablePreviewStages} defaultTab={defaultTab} />
           <CeligoTabPanel panelId="preview"> <DefaultPanel /> </CeligoTabPanel>
