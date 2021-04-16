@@ -88,7 +88,7 @@ import {
   getParentJobSteps,
 } from '../utils/latestJobs';
 import getJSONPaths from '../utils/jsonPaths';
-import { getApp } from '../constants/applications';
+import { applicationsList, getApp } from '../constants/applications';
 import { FLOW_STAGES, HOOK_STAGES } from '../utils/editor';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
@@ -5457,5 +5457,16 @@ selectors.mkLogsInCurrPageSelector = () => createSelector(
     return debugLogsList.slice(currPage * LISTENER_LOG_DEFAULT_ROWS_PER_PAGE, (currPage + 1) * LISTENER_LOG_DEFAULT_ROWS_PER_PAGE);
   }
 );
+
+selectors.assistantName = (state, resourceType, resourceId) => {
+  const _resource = selectors.resource(state, resourceType, resourceId);
+
+  if (!_resource) {
+    return;
+  }
+  const conn = selectors.resource(state, 'connections', _resource._connectionId);
+
+  return _resource.assistant || conn?.assistant;
+};
 
 // #endregion listener request logs selectors

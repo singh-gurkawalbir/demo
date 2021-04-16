@@ -107,6 +107,20 @@ export const DEFAULT_PROPS = Object.freeze({
   },
 });
 
+export const AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE = Object.freeze(
+  [
+    'shopify',
+    'zendesk',
+    'magento',
+    'acumatica',
+    'bigcommerce',
+    'stripe',
+    'hubspot',
+    'jira',
+    'quickbooks',
+    'microsoftbusinesscentral',
+  ]
+);
 export function routeToRegExp(route) {
   const optionalParam = /\((.*?)\)/g;
   const namedParam = /(\(\?)?:\w+/g;
@@ -2036,4 +2050,26 @@ export function convertToImport({ assistantConfig, assistantData }) {
     '/ignoreExisting': !!ignoreExisting,
     '/ignoreMissing': !!ignoreMissing,
   };
+}
+
+export function getRecordTypeForAutoMapper(uri) {
+  const temp = uri.split('/');
+  const arr = [];
+  const pattern = '^[A-Za-z_-]*$';
+  const removable = '{|}|:|#|custbody|search|^api$|^$|^admin$|^id$|.*[cC]ustom[A-Z_].*';
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const s of temp) {
+    let str = s;
+
+    if (s.includes('?')) {
+      // eslint-disable-next-line prefer-destructuring
+      str = s.split('?')[0];
+    }
+    if (str.match(pattern) && !str.match(removable)) {
+      arr.push(str);
+    }
+  }
+
+  return arr.join('/');
 }

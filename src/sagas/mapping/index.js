@@ -10,7 +10,7 @@ import mappingUtil from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
 import { getResourceSubType} from '../../utils/resource';
-import { getImportOperationDetails } from '../../utils/assistant';
+import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE, getImportOperationDetails, getRecordTypeForAutoMapper } from '../../utils/assistant';
 import {requestSampleData as requestFlowSampleData} from '../sampleData/flows';
 import {requestSampleData as requestImportSampleData} from '../sampleData/imports';
 import {requestAssistantMetadata} from '../resources/meta';
@@ -606,14 +606,27 @@ export function* getAutoMapperSuggestion() {
   const destApplication = yield select(selectors.applicationName, importResource._id);
 
   reqBody.dest_application = destApplication?.toLowerCase() || '';
-  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType) && subRecordMappingId) {
+
+  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
     reqBody.dest_record_type = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
   } else if (importResource.adaptorType === 'SalesforceImport') {
     const { sObjectType } = importResource.salesforce;
 
     reqBody.dest_record_type = sObjectType;
   } else {
-    reqBody.dest_record_type = '';
+    const assistant = yield select(selectors.assistantName, 'imports', importId);
+    if (assistant && AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE.indexOf(assistant) !== -1) {
+      const relativeUri = importResource?.rest?.relativeURI || importResource?.http?.relativeURI;
+      const firstRelativeUri = Array.isArray(relativeUri) ? relativeUri[0] : relativeUri;
+
+      if (firstRelativeUri) {
+        reqBody.dest_record_type = getRecordTypeForAutoMapper(firstRelativeUri);
+      } else {
+        reqBody.dest_record_type = '';
+      }
+    } else {
+      reqBody.dest_record_type = '';
+    }
   }
 
   if (exportResource.adaptorType === 'NetSuiteExport') {
@@ -625,7 +638,22 @@ export function* getAutoMapperSuggestion() {
 
     reqBody.source_record_type = sObjectType;
   } else {
-    reqBody.source_record_type = '';
+    const assistant = yield select(selectors.assistantName, 'exports', exportResource._id);
+
+    if (assistant && AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE.indexOf(assistant) !== -1) {
+      const relativeUri = exportResource?.rest?.relativeURI || exportResource?.http?.relativeURI;
+
+      const firstRelativeUri = Array.isArray(relativeUri) ? relativeUri[0] : relativeUri;
+
+      if (firstRelativeUri) {
+        reqBody.source_record_type = getRecordTypeForAutoMapper(firstRelativeUri);
+      } else {
+        reqBody.source_record_type = '';
+      }
+      reqBody.source_record_type = getRecordTypeForAutoMapper(relativeUri);
+    } else {
+      reqBody.source_record_type = '';
+    }
   }
 
   reqBody.dest_fields = generateFields.map(f => ({id: f.id}));
