@@ -377,11 +377,14 @@ export default function SalesforceLookupFilterPanel({
         }
       });
 
-      qbContainer.queryBuilder({
-        ...config,
-        filters: filtersConfig,
-        rules,
-      });
+      try {
+        qbContainer.queryBuilder({
+          ...config,
+          filters: filtersConfig,
+          rules,
+        });
+      } catch (e) { // do nothing }
+      }
       qbContainer
         .unbind('rulesChanged.queryBuilder')
         .on('rulesChanged.queryBuilder', () => {
