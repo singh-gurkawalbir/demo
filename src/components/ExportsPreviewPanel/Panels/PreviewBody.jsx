@@ -59,7 +59,6 @@ export default function PreviewBody(props) {
       <>
         <Templates.RequestUrlPanel
           showEmptyPanel
-          previewStageDataList={previewStageDataList}
           resourceId={resourceId}
           resourceType={resourceType} />
         <CeligoTabWrapper>

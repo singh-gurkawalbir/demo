@@ -34,7 +34,7 @@ export default function RequestUrlPanel(props) {
   return (
     <>
       <Typography> Request URL </Typography>
-      <div className={classes.wrapper} > {!showEmptyPanel && requestURL} </div>
+      <div className={classes.wrapper} > {requestURL} </div>
     </>
   );
 }
