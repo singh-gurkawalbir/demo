@@ -9,8 +9,8 @@ import HttpMappingAssistant from './HttpMappingAssistant_afe';
 
 const useStyles = makeStyles(theme => ({
   assistantContainer: {
-    // flex: '1 1 0',
-    // width: '0px',
+    flex: '1 1 0',
+    width: '0px',
     marginRight: theme.spacing(1),
     marginLeft: theme.spacing(1),
     position: 'relative',

@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import clsx from 'clsx';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import {selectors} from '../../reducers';
@@ -32,9 +31,6 @@ const useStyles = makeStyles(theme => ({
   autoMapper: {
     margin: theme.spacing(2, 3),
   },
-  mappingColumnWithPreviewPanel: {
-    flex: 1,
-  },
 }));
 const Mapping = ({flowId, importId, subRecordMappingId, disabled, onClose}) => {
   const canAutoMap = useSelector(state => {
@@ -50,7 +46,7 @@ const Mapping = ({flowId, importId, subRecordMappingId, disabled, onClose}) => {
       <SettingsDrawer disabled={disabled} />
       <DrawerContent>
         <div className={classes.mappingDrawerContent}>
-          <div className={clsx(classes.mappingColumn, {[classes.mappingColumnWithPreviewPanel]: PreviewPanel})}>
+          <div className={classes.mappingColumn}>
             <TopPanel flowId={flowId} importId={importId} disabled={disabled} />
 
             <div className={classes.mappingTable}>
