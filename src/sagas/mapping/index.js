@@ -615,6 +615,7 @@ export function* getAutoMapperSuggestion() {
     reqBody.dest_record_type = sObjectType;
   } else {
     const assistant = yield select(selectors.assistantName, 'imports', importId);
+
     if (assistant && AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE.indexOf(assistant) !== -1) {
       const relativeUri = importResource?.rest?.relativeURI || importResource?.http?.relativeURI;
       const firstRelativeUri = Array.isArray(relativeUri) ? relativeUri[0] : relativeUri;
