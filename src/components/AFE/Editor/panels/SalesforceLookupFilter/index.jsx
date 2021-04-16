@@ -133,7 +133,7 @@ export default function SalesforceLookupFilterPanel({
       patchEditor(rule);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [patchEditor]);
+  }, [patchEditor, salesforceFilterDataTypes]);
   const showOperandSettings = ({ rule, rhs }) => {
     setShowOperandSettingsFor({ rule, rhs });
   };
