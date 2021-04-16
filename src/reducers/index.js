@@ -1528,7 +1528,7 @@ selectors.makeResourceDataSelector = () => {
 
   return createSelector(
     (state, resourceType, id) => {
-      if (!resourceType || !id) return null;
+      if (!resourceType || !id) return undefined;
       let type = resourceType;
 
       if (resourceType.indexOf('/licenses') >= 0) {
