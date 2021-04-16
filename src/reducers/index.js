@@ -2132,11 +2132,11 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
             if (sectionId) {
               const selectedSection = child.find(sec => getTitleIdFromSection(sec) === sectionId);
 
-              if (selectedSection) {
+              if (selectedSection?.flows?.length) {
                 flows = selectedSection.flows.map(f => f._id);
               }
             } else {
-              child.forEach(sec => flows.push(...sec.flows.map(f => f._id)));
+              child.forEach(sec => sec?.flows?.length && flows.push(...sec.flows.map(f => f._id)));
             }
           }
         } else {
@@ -2145,11 +2145,11 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
               if (sectionId) {
                 const selectedSection = sec.sections.find(s => getTitleIdFromSection(s) === sectionId);
 
-                if (selectedSection) {
+                if (selectedSection?.flows?.length) {
                   flows.push(...selectedSection.flows.map(f => f._id));
                 }
               } else {
-                sec.sections.forEach(s => flows.push(...s.flows.map(f => f._id)));
+                sec.sections.forEach(s => s?.flows?.length && flows.push(...s.flows.map(f => f._id)));
               }
             }
           });
@@ -2158,11 +2158,11 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
     } else if (sectionId) {
       const selectedSection = sections.find(sec => getTitleIdFromSection(sec) === sectionId);
 
-      if (selectedSection) {
+      if (selectedSection?.flows?.length) {
         flows = selectedSection.flows.map(f => f._id);
       }
     } else {
-      sections.forEach(sec => flows.push(...sec.flows.map(f => f._id)));
+      sections.forEach(sec => sec?.flows?.length && flows.push(...sec.flows.map(f => f._id)));
     }
 
     return flows;

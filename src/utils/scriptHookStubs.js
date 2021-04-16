@@ -282,6 +282,7 @@ const formInitFunctionStub = `/*
 * The function will be passed one 'options' argument that has the following fields:
 *   'resource' - the resource being viewed in the UI.
 *   'parentResource' - the parent of the resource being viewed in the UI.
+*   'grandparentResource': the grandparent of the resource being viewed in the UI.
 *   'license' - integration apps only.  the license provisioned to the integration.
 *   'parentLicense' - integration apps only. the parent of the license provisioned to the integration.
 *   'sandbox' - boolean value indicating whether the script is invoked for sandbox.

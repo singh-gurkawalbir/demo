@@ -87,7 +87,8 @@ export default function DynaFileKeyColumn_afe(props) {
   }, []);
 
   useEffect(() => {
-    if (csvData && csvData !== editorData) {
+    // added editorData truthy check as it gets undefined when editor is cleared
+    if (csvData && editorData && csvData !== editorData) {
       dispatch(actions.editor.patchFileKeyColumn(editorId, 'data', csvData));
 
       onFieldChange(id, []);
