@@ -44,7 +44,7 @@ export default {
           newValues['/salesforce/upsert'] = undefined;
           newValues['/salesforce/idLookup'] = undefined;
         }
-      } else if (newValues['/salesforce/operation'] === 'update') {
+      } else if (['update', 'delete'].includes(newValues['/salesforce/operation'])) {
         newValues['/ignoreExisting'] = false;
       } else if (newValues['/salesforce/operation'] === 'addupdate') {
         newValues['/ignoreMissing'] = false;
@@ -181,7 +181,7 @@ export default {
       fieldId: 'ignoreMissing',
       label: 'Ignore missing records',
       visibleWhen: [
-        { field: 'salesforce.operation', is: ['update'] },
+        { field: 'salesforce.operation', is: ['update', 'delete'] },
         { field: 'salesforce.compositeOperation', is: ['update'] },
       ],
     },
