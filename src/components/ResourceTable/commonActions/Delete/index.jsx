@@ -72,9 +72,11 @@ export default {
           : MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase();
       }
 
+      const disclaimer = resourceType === 'flows' ? ' Deleting a flow will cancel the run that is currently running.' : '';
+
       confirmDialog({
         title: 'Confirm delete',
-        message: `Are you sure you want to delete this ${type}?`,
+        message: `Are you sure you want to delete this ${type}?${disclaimer}`,
         buttons: [
           {
             label: 'Delete',
