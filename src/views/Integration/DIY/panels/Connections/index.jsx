@@ -14,6 +14,7 @@ import AddIcon from '../../../../../components/icons/AddIcon';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
 import ConfigConnectionDebugger from '../../../../../components/drawer/ConfigConnectionDebugger';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,6 +34,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
   const [showRegister, setShowRegister] = useState(false);
   const location = useLocation();
   const filterKey = `${_integrationId}+connections`;
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
   const tableConfig = useSelector(state => selectors.filter(state, filterKey));
   const connections = useSelector(state =>
     selectors.integrationConnectionList(state, integrationId, childId, tableConfig)
@@ -120,6 +122,19 @@ export default function ConnectionsPanel({ integrationId, childId }) {
                       value: _integrationId,
                     },
                   ];
+
+                  if (integration?._connectorId) {
+                    patchSet.push({
+                      op: 'add',
+                      path: '/_connectorId',
+                      value: integration._connectorId,
+                    });
+                    patchSet.push({
+                      op: 'add',
+                      path: '/newIA',
+                      value: true,
+                    });
+                  }
 
                   if (childId) {
                     patchSet.push({
