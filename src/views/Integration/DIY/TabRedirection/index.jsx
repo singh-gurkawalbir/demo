@@ -136,7 +136,7 @@ export default function TabRedirection({children: componentChildren}) {
         tab: redirectTo,
       });
 
-      dispatch(actions.integrationApp.settings.clearRedirect(integrationId));
+      dispatch(actions.resource.integrations.clearRedirect(integrationId));
       history.push(path);
     }
   }, [
