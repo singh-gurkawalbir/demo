@@ -109,6 +109,32 @@ describe('AFE region selectors test cases', () => {
 
       expect(selectors.isEditorDisabled(state, editorId)).toEqual(true);
     });
+
+    test('should return false if formKey is present in the editor and the field type is iaexpression though field is disabled', () => {
+      state.session.editors[editorId] = {
+        id: editorId,
+        formKey: 'new-dbfh7',
+        editorType: 'handlebars',
+        resourceType: 'imports',
+        resourceId: '123',
+        fieldId: 'http.body',
+        stage: 'flowInput',
+      };
+      state.session.form = {
+        'new-dbfh7': {
+          fields: {
+            'http.body': {
+              id: 'http.body',
+              type: 'iaexpression',
+              disabled: true,
+              label: 'HTTP request body',
+            },
+          },
+        },
+      };
+
+      expect(selectors.isEditorDisabled(state, editorId)).toEqual(false);
+    });
     test('should return true for monitor user if stage is input/output filter and active mode is filter', () => {
       state.user = {
         org: {
