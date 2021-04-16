@@ -9,6 +9,7 @@ import { IAFormStateManager, useActiveTab } from '../../../Flows';
 import { SavingMask } from '../../../../../../SuiteScript/Integration/App/panels/Settings/sections/ConfigureSettings';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import { FORM_SAVE_STATUS } from '../../../../../../../utils/constants';
+import EditorDrawer from '../../../../../../../components/AFE/Drawer';
 
 const useStyles = makeStyles(theme => ({
   configureform: {
@@ -63,24 +64,27 @@ export default function ConfigureSettings({ integrationId, storeId, sectionId })
   const activeTabProps = useActiveTab();
 
   return (
-    <LoadResources
-      required
-      resources={['flows', 'exports', 'imports', 'connections']}>
-      {formState?.formSaveStatus === FORM_SAVE_STATUS.LOADING && <SavingMask />}
-      <IAFormStateManager
-        {...activeTabProps}
-        key={storeId}
-        formState={formState}
-        className={clsx(classes.configureform, {
-          [classes.configureCamForm]: section.sections,
-        })}
-        isIAForm
-        integrationId={integrationId}
-        storeId={storeId}
-        sectionId={sectionId}
-        fieldMeta={translatedMeta}
-        orientation="horizontal"
+    <>
+      <LoadResources
+        required
+        resources={['flows', 'exports', 'imports', 'connections']}>
+        {formState?.formSaveStatus === FORM_SAVE_STATUS.LOADING && <SavingMask />}
+        <IAFormStateManager
+          {...activeTabProps}
+          key={storeId}
+          formState={formState}
+          className={clsx(classes.configureform, {
+            [classes.configureCamForm]: section.sections,
+          })}
+          isIAForm
+          integrationId={integrationId}
+          storeId={storeId}
+          sectionId={sectionId}
+          fieldMeta={translatedMeta}
+          orientation="horizontal"
         />
-    </LoadResources>
+      </LoadResources>
+      <EditorDrawer />
+    </>
   );
 }
