@@ -5237,7 +5237,16 @@ selectors.isEditorDisabled = (state, editorId) => {
   if (formKey) {
     const fieldState = selectors.fieldState(state, formKey, fieldId);
 
-    if (fieldState) return fieldState.disabled;
+    if (fieldState) {
+      // Currently, many IA settings of type expression has disabled property as true and they shouldn't
+      // be disabled. We added this below check temporarily and once IA fixes, we can remove the below code.
+      // reference for IA tracker: https://celigo.atlassian.net/browse/SFNSIO-1127
+      if (fieldState.type === 'iaexpression') {
+        return false;
+      }
+
+      return fieldState.disabled;
+    }
   }
 
   // if we are on FB actions, below logic applies
