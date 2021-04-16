@@ -69,7 +69,7 @@ export default function TabRedirection({children}) {
         tab: redirectTo,
       });
 
-      dispatch(actions.integrationApp.settings.clearRedirect(integrationId));
+      dispatch(actions.resource.integrations.clearRedirect(integrationId));
       history.push(path);
     }
   }, [dispatch, history, integrationAppName, integrationId, match.path, redirectTo, storeId, match.params]);

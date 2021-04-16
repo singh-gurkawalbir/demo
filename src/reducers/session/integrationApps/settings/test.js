@@ -1159,22 +1159,6 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe('integrationApps settings clear redirect action', () => {
-      test('should clear redirectTo from the state and should not clear other data', () => {
-        const state = reducer({
-          '1-3': { initComplete: true},
-          '1-2': { formSaveStatus: 'loading'},
-          integrationId: { redirectTo: '/request'},
-        }, actions.integrationApp.settings.clearRedirect('integrationId'));
-
-        expect(state).toEqual({
-          '1-3': { initComplete: true},
-          '1-2': { formSaveStatus: 'loading'},
-          integrationId: { },
-        });
-      });
-    });
-
     describe('integrationApps settings upgrade requested action', () => {
       test('should set upgrade request on to the state and should not clear other data', () => {
         const state = reducer({

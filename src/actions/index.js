@@ -343,6 +343,10 @@ const resource = {
         integrationId,
         redirectTo,
       }),
+    clearRedirect: integrationId =>
+      action(actionTypes.INTEGRATION.CLEAR_REDIRECT, {
+        integrationId,
+      }),
   },
   connections: {
     pingAndUpdate: connectionId =>
@@ -817,10 +821,6 @@ const integrationApp = {
           .RECEIVED_CATEGORY_MAPPING_METADATA,
         { integrationId, flowId, metadata }
       ),
-    clearRedirect: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
-        integrationId,
-      }),
     requestedUpgrade: licenseId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED, {
         licenseId,
