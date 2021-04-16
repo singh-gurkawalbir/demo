@@ -34,7 +34,7 @@ describe('Integration redirect action', () => {
   });
 });
 
-describe('integrationApps settings shouldRedirect test', () => {
+describe('shouldRedirect selector test', () => {
   test('should not throw exception for bad params', () => {
     expect(selectors.shouldRedirect()).toEqual(null);
     expect(selectors.shouldRedirect({})).toEqual(null);
