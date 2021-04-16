@@ -63,26 +63,24 @@ export default function ConfigureSettings({ integrationId, storeId, sectionId })
   const activeTabProps = useActiveTab();
 
   return (
-    <>
-      <LoadResources
-        required
-        resources={['flows', 'exports', 'imports', 'connections']}>
-        {formState?.formSaveStatus === FORM_SAVE_STATUS.LOADING && <SavingMask />}
-        <IAFormStateManager
-          {...activeTabProps}
-          key={storeId}
-          formState={formState}
-          className={clsx(classes.configureform, {
-            [classes.configureCamForm]: section.sections,
-          })}
-          isIAForm
-          integrationId={integrationId}
-          storeId={storeId}
-          sectionId={sectionId}
-          fieldMeta={translatedMeta}
-          orientation="horizontal"
+    <LoadResources
+      required
+      resources={['flows', 'exports', 'imports', 'connections']}>
+      {formState?.formSaveStatus === FORM_SAVE_STATUS.LOADING && <SavingMask />}
+      <IAFormStateManager
+        {...activeTabProps}
+        key={storeId}
+        formState={formState}
+        className={clsx(classes.configureform, {
+          [classes.configureCamForm]: section.sections,
+        })}
+        isIAForm
+        integrationId={integrationId}
+        storeId={storeId}
+        sectionId={sectionId}
+        fieldMeta={translatedMeta}
+        orientation="horizontal"
         />
-      </LoadResources>
-    </>
+    </LoadResources>
   );
 }
