@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { addDays, startOfDay } from 'date-fns';
 import actions from '../../../../actions';
@@ -47,7 +47,7 @@ export default function SelectDate({
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const filter = useSelector(state => selectors.filter(state, filterKey), shallowEqual);
+  const filter = useSelector(state => selectors.filter(state, filterKey));
   const isDateFilterSelected = !!(filter[filterBy] && filter[filterBy].preset !== defaultRange.preset);
 
   const handleDateFilter = useCallback(

@@ -14,7 +14,7 @@ export default {
       headerValue: function SelectTimestamp(_, {flowId, exportId}) {
         const dispatch = useDispatch();
         const handleChange = useCallback(() => {
-          dispatch(actions.logs.listener.request(flowId, exportId));
+          dispatch(actions.logs.listener.request({flowId, exportId}));
         },
         [dispatch, exportId, flowId],
         );
@@ -43,7 +43,7 @@ export default {
       headerValue: function SelectResponseCode(_, { flowId, exportId }) {
         const dispatch = useDispatch();
         const handleSave = useCallback(() => {
-          dispatch(actions.logs.listener.request(flowId, exportId));
+          dispatch(actions.logs.listener.request({flowId, exportId}));
         },
         [dispatch, exportId, flowId],
         );

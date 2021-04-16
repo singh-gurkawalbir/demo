@@ -70,11 +70,12 @@ export function* putReceivedAction({exportId, requests = [], nextPageURL, loadMo
   });
 
   yield put(
-    actions.logs.listener.received(
+    actions.logs.listener.received({
       exportId,
-      formattedLogs,
+      logs: formattedLogs,
       nextPageURL,
-      loadMore
+      loadMore,
+    }
     )
   );
 }

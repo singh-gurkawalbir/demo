@@ -36,7 +36,7 @@ export default function LogsDrawerActions({ flowId, exportId }) {
     };
   }, shallowEqual);
 
-  const filterOptions = useSelector(state => selectors.filter(state, FILTER_KEY), shallowEqual);
+  const filterOptions = useSelector(state => selectors.filter(state, FILTER_KEY));
   const { currPage = 0 } = filterOptions.paging || emptyObj;
 
   // used to determine fetch progress percentage
@@ -72,7 +72,7 @@ export default function LogsDrawerActions({ flowId, exportId }) {
       if (!loadMore) {
         dispatch(actions.clearFilter(FILTER_KEY));
       }
-      dispatch(actions.logs.listener.request(flowId, exportId, loadMore));
+      dispatch(actions.logs.listener.request({flowId, exportId, loadMore}));
     },
     [dispatch, exportId, flowId]
   );
@@ -103,7 +103,7 @@ export default function LogsDrawerActions({ flowId, exportId }) {
   }, [dispatch, exportId, flowId]);
 
   const resumeHandler = useCallback(() => {
-    dispatch(actions.logs.listener.request(flowId, exportId, true));
+    dispatch(actions.logs.listener.request({flowId, exportId, loadMore: true}));
   }, [dispatch, exportId, flowId]);
 
   return (

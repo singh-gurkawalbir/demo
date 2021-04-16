@@ -83,7 +83,7 @@ export default function LogsTable({ flowId, exportId }) {
   }, [dispatch, exportId]);
 
   useEffect(() => {
-    dispatch(actions.logs.listener.request(flowId, exportId));
+    dispatch(actions.logs.listener.request({flowId, exportId}));
     if (debugUntil) {
       dispatch(actions.logs.listener.startLogsPoll(flowId, exportId));
     }

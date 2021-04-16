@@ -77,7 +77,7 @@ describe('Listener logs reducer', () => {
     test('should not throw error if the listener state does not exist and set status as requested', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.request(flowId, exportId)
+        actions.logs.listener.request({flowId, exportId})
       );
       const expectedState = {
         [exportId]: {
@@ -95,7 +95,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.request(flowId, exportId)
+        actions.logs.listener.request({flowId, exportId})
       );
       const expectedState = {
         [exportId]: {
@@ -113,7 +113,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.request(flowId, exportId, true)
+        actions.logs.listener.request({flowId, exportId, loadMore: true})
       );
       const expectedState = {
         [exportId]: {
@@ -137,7 +137,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.request(flowId, exportId)
+        actions.logs.listener.request({flowId, exportId})
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -150,7 +150,7 @@ describe('Listener logs reducer', () => {
     test('should exit and not throw error if the listener state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.received(exportId)
+        actions.logs.listener.received({exportId})
       );
 
       expect(newState).toEqual({});
@@ -164,11 +164,11 @@ describe('Listener logs reducer', () => {
       };
       const tempState = reducer(
         initialState,
-        actions.logs.listener.request(flowId, exportId)
+        actions.logs.listener.request({flowId, exportId})
       );
       const newState = reducer(
         tempState,
-        actions.logs.listener.received(exportId, logsSummary, '/api/url')
+        actions.logs.listener.received({exportId, logs: logsSummary, nextPageURL: '/api/url'})
       );
       const expectedState = {
         [exportId]: {
@@ -191,11 +191,14 @@ describe('Listener logs reducer', () => {
       };
       const tempState = reducer(
         initialState,
-        actions.logs.listener.request(flowId, exportId)
+        actions.logs.listener.request({flowId, exportId})
       );
       const newState = reducer(
         tempState,
-        actions.logs.listener.received(exportId, logsSummary, '/api/url', true)
+        actions.logs.listener.received({exportId,
+          logs: logsSummary,
+          nextPageURL: '/api/url',
+          loadMore: true})
       );
       const expectedState = {
         [exportId]: {
@@ -220,7 +223,10 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.received(exportId, [], '/api/url')
+        actions.logs.listener.received({
+          exportId,
+          logs: [],
+          nextPageURL: '/api/url'})
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -264,7 +270,11 @@ describe('Listener logs reducer', () => {
       };
       const tempState = reducer(
         initialState,
-        actions.logs.listener.received(exportId, logsSummary, '/v1(api)/flows/:_flowId', true)
+        actions.logs.listener.received({
+          exportId,
+          logs: logsSummary,
+          nextPageURL: '/v1(api)/flows/:_flowId',
+          loadMore: true})
       );
       const newState = reducer(
         tempState,
