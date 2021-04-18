@@ -77,7 +77,7 @@ describe('Listener logs reducer', () => {
     test('should not throw error if the listener state does not exist and set status as requested', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.request(flowId, exportId)
+        actions.logs.listener.request({flowId, exportId})
       );
       const expectedState = {
         [exportId]: {
@@ -95,7 +95,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.request(flowId, exportId)
+        actions.logs.listener.request({flowId, exportId})
       );
       const expectedState = {
         [exportId]: {
@@ -113,7 +113,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.request(flowId, exportId, true)
+        actions.logs.listener.request({flowId, exportId, loadMore: true})
       );
       const expectedState = {
         [exportId]: {
@@ -137,7 +137,7 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.request(flowId, exportId)
+        actions.logs.listener.request({flowId, exportId})
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -150,7 +150,7 @@ describe('Listener logs reducer', () => {
     test('should exit and not throw error if the listener state does not exist', () => {
       const newState = reducer(
         undefined,
-        actions.logs.listener.received(exportId)
+        actions.logs.listener.received({exportId})
       );
 
       expect(newState).toEqual({});
@@ -164,11 +164,11 @@ describe('Listener logs reducer', () => {
       };
       const tempState = reducer(
         initialState,
-        actions.logs.listener.request(flowId, exportId)
+        actions.logs.listener.request({flowId, exportId})
       );
       const newState = reducer(
         tempState,
-        actions.logs.listener.received(exportId, logsSummary, '/api/url')
+        actions.logs.listener.received({exportId, logs: logsSummary, nextPageURL: '/api/url'})
       );
       const expectedState = {
         [exportId]: {
@@ -191,11 +191,14 @@ describe('Listener logs reducer', () => {
       };
       const tempState = reducer(
         initialState,
-        actions.logs.listener.request(flowId, exportId)
+        actions.logs.listener.request({flowId, exportId})
       );
       const newState = reducer(
         tempState,
-        actions.logs.listener.received(exportId, logsSummary, '/api/url', true)
+        actions.logs.listener.received({exportId,
+          logs: logsSummary,
+          nextPageURL: '/api/url',
+          loadMore: true})
       );
       const expectedState = {
         [exportId]: {
@@ -220,7 +223,10 @@ describe('Listener logs reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.logs.listener.received(exportId, [], '/api/url')
+        actions.logs.listener.received({
+          exportId,
+          logs: [],
+          nextPageURL: '/api/url'})
       );
 
       expect(newState).toHaveProperty('sibling-export', {
@@ -264,7 +270,11 @@ describe('Listener logs reducer', () => {
       };
       const tempState = reducer(
         initialState,
-        actions.logs.listener.received(exportId, logsSummary, '/v1(api)/flows/:_flowId', true)
+        actions.logs.listener.received({
+          exportId,
+          logs: logsSummary,
+          nextPageURL: '/v1(api)/flows/:_flowId',
+          loadMore: true})
       );
       const newState = reducer(
         tempState,
@@ -901,6 +911,102 @@ describe('Listener logs reducer', () => {
       const newState = reducer(
         initialState,
         actions.logs.listener.failed(exportId, error)
+      );
+
+      expect(newState).toHaveProperty('sibling-export', {
+        logsStatus: 'received',
+        error: {key: 123},
+      });
+    });
+  });
+  describe('LISTENER.FETCH_STATUS action', () => {
+    test('should exit and not throw error if the listener state does not exist', () => {
+      const newState = reducer(
+        undefined,
+        actions.logs.listener.setFetchStatus(exportId, 'paused')
+      );
+
+      expect(newState).toEqual({});
+    });
+    test('should update the state with fetch status', () => {
+      const initialState = {
+        [exportId]: {
+          activeLogKey: '5642310475121',
+          logsDetails: {5642310475121: {
+            status: 'received',
+            request: {},
+            response: {},
+          }},
+          logsStatus: 'received',
+          logsSummary: [{key: '5642310475121', time: 1234}],
+          nextPageURL: '/v1(api)/flows/:_flowId',
+        },
+      };
+
+      const newState = reducer(
+        initialState,
+        actions.logs.listener.setFetchStatus(exportId, 'inProgress')
+      );
+
+      expect(newState).toHaveProperty('exp-123.fetchStatus', 'inProgress');
+    });
+    test('should correctly set the currQueryTime equal to nextPageURL time_lte', () => {
+      const initialState = {
+        [exportId]: {
+          activeLogKey: '5642310475121',
+          logsDetails: {5642310475121: {
+            status: 'received',
+            request: {},
+            response: {},
+          }},
+          logsStatus: 'received',
+          logsSummary: [{key: '5642310475121', time: 1234}, {key: '56423104751214', time: 1089}],
+          nextPageURL: '/api/flows/6059c78dfddc8259d92362d5/6059c79ffddc8259d92362d9/requests?time_gt=3333&time_lte=9898',
+        },
+      };
+
+      const newState1 = reducer(
+        initialState,
+        actions.logs.listener.setFetchStatus(exportId, 'inProgress')
+      );
+
+      expect(newState1).toHaveProperty('exp-123.currQueryTime', 9898);
+    });
+    test('should correctly set the currQueryTime as last log time if nextPageURL does not have time_lte', () => {
+      const initialState = {
+        [exportId]: {
+          activeLogKey: '5642310475121',
+          logsDetails: {5642310475121: {
+            status: 'received',
+            request: {},
+            response: {},
+          }},
+          logsStatus: 'received',
+          logsSummary: [{key: '5642310475121', time: 1234}, {key: '56423104751214', time: 1089}],
+          nextPageURL: '/v1(api)/flows/:_flowId',
+        },
+      };
+
+      const newState2 = reducer(
+        initialState,
+        actions.logs.listener.setFetchStatus(exportId, 'inProgress')
+      );
+
+      expect(newState2).toHaveProperty('exp-123.currQueryTime', 1089);
+    });
+    test('should not alter any other sibling state', () => {
+      const initialState = {
+        'sibling-export': {
+          logsStatus: 'received',
+          error: {key: 123},
+        },
+        [exportId]: {
+          logsStatus: 'received',
+        },
+      };
+      const newState = reducer(
+        initialState,
+        actions.logs.listener.setFetchStatus(exportId, 'inProgress')
       );
 
       expect(newState).toHaveProperty('sibling-export', {

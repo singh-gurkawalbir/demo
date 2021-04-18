@@ -170,9 +170,6 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR:
         delete draft[key];
         break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT:
-        if (draft[integrationId]) delete draft[integrationId].redirectTo;
-        break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED:
         draft[licenseId] = true;
         break;

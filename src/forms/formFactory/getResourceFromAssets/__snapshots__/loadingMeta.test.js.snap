@@ -10964,6 +10964,7 @@ Object {
             "field": "salesforce.operation",
             "is": Array [
               "update",
+              "delete",
             ],
           },
           Object {
@@ -11706,6 +11707,7 @@ Object {
             "field": "salesforce.operation",
             "is": Array [
               "update",
+              "delete",
             ],
           },
           Object {
@@ -12564,7 +12566,7 @@ Object {
   },
   "init": undefined,
   "optionsHandler": [Function],
-  "preSave": undefined,
+  "preSave": [Function],
   "validationHandler": undefined,
 }
 `;

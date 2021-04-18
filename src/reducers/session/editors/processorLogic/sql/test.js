@@ -6,6 +6,7 @@ const {
   init,
   buildData,
   requestBody,
+  dirty,
   validate,
 } = processorLogic;
 
@@ -83,49 +84,55 @@ describe('sql processor logic', () => {
       };
       const expectedOutput = {
         data: sampleData,
-        defaultData: JSON.stringify({data: modelMetadata}, null, 2),
+        defaultData: JSON.stringify(modelMetadata, null, 2),
       };
 
       expect(buildData({supportsDefaultData: true, modelMetadata}, sampleData)).toEqual(expectedOutput);
     });
+    test('should return original sample data if its not a new resource and modelMetadata is undefined', () => {
+      const sampleData = '{data: {id: 123}}';
+
+      expect(buildData({supportsDefaultData: true, resourceId: '1234'}, sampleData)).toEqual({data: '{data: {id: 123}}'});
+    });
+
     test('should return correct data if sample data contains data object', () => {
       const sampleData = '{"data": {"id": 123}}';
       const expectedOutput = {
         data: sampleData,
-        defaultData: JSON.stringify({data: {
+        defaultData: JSON.stringify({
           id: {
             default: '',
           },
-        }}, null, 2),
+        }, null, 2),
       };
 
-      expect(buildData({supportsDefaultData: true}, sampleData)).toEqual(expectedOutput);
+      expect(buildData({supportsDefaultData: true, resourceId: 'new-1234'}, sampleData)).toEqual(expectedOutput);
     });
     test('should return correct data if sample data contains rows array', () => {
       const sampleData = '{"rows": [{"id": 123}]}';
       const expectedOutput = {
         data: sampleData,
-        defaultData: JSON.stringify({row: {
+        defaultData: JSON.stringify({
           id: {
             default: '',
           },
-        }}, null, 2),
+        }, null, 2),
       };
 
-      expect(buildData({supportsDefaultData: true}, sampleData)).toEqual(expectedOutput);
+      expect(buildData({supportsDefaultData: true, resourceId: 'new-1234'}, sampleData)).toEqual(expectedOutput);
     });
     test('should return correct data if sample data contains record object', () => {
       const sampleData = '{"record": {"id": 123}}';
       const expectedOutput = {
         data: sampleData,
-        defaultData: JSON.stringify({record: {
+        defaultData: JSON.stringify({
           id: {
             default: '',
           },
-        }}, null, 2),
+        }, null, 2),
       };
 
-      expect(buildData({supportsDefaultData: true}, sampleData)).toEqual(expectedOutput);
+      expect(buildData({supportsDefaultData: true, resourceId: 'new-1234'}, sampleData)).toEqual(expectedOutput);
     });
   });
   describe('requestBody util', () => {
@@ -135,14 +142,14 @@ describe('sql processor logic', () => {
         resourceType: 'imports',
         stage: 'flowInput',
         data: '{"data": {"id": 123}}',
-        defaultData: JSON.stringify({data: {
+        defaultData: JSON.stringify({
           id: {
             default: '',
           },
           name: {
             default: 'default name',
           },
-        }}, null, 2),
+        }, null, 2),
         rule: 'some rule',
       };
       const expectedOutput = {
@@ -157,6 +164,94 @@ describe('sql processor logic', () => {
       expect(requestBody(editor)).toEqual(expectedOutput);
     });
   });
+  describe('dirty util', () => {
+    test('should return false if default data is undefined', () => {
+      expect(dirty({})).toEqual(false);
+    });
+    test('should return true if original default data differs from patched default data', () => {
+      const editor = {
+        fieldId: 'rdbms.query',
+        resourceType: 'imports',
+        stage: 'flowInput',
+        data: '{"data": {"id": 123}}',
+        defaultData: JSON.stringify({
+          id: {
+            default: '',
+          },
+          name: {
+            default: 'default name',
+          },
+        }, null, 2),
+        originalDefaultData: JSON.stringify({
+          id: {
+            default: '',
+          },
+          name: {
+            default: 'default name123',
+          },
+        }, null, 2),
+        rule: 'some rule',
+      };
+
+      expect(dirty(editor)).toEqual(true);
+    });
+    test('should return true if original rule differs from patched rule', () => {
+      const editor = {
+        fieldId: 'rdbms.query',
+        resourceType: 'imports',
+        stage: 'flowInput',
+        data: '{"data": {"id": 123}}',
+        defaultData: JSON.stringify({
+          id: {
+            default: '',
+          },
+          name: {
+            default: 'default name',
+          },
+        }, null, 2),
+        originalDefaultData: JSON.stringify({
+          id: {
+            default: '',
+          },
+          name: {
+            default: 'default name',
+          },
+        }, null, 2),
+        rule: 'some rule',
+        originalRule: 'new rule',
+      };
+
+      expect(dirty(editor)).toEqual(true);
+    });
+    test('should return false if default data and rule has not changed', () => {
+      const editor = {
+        fieldId: 'rdbms.query',
+        resourceType: 'imports',
+        stage: 'flowInput',
+        data: '{"data": {"id": 123}}',
+        defaultData: JSON.stringify({
+          id: {
+            default: '',
+          },
+          name: {
+            default: 'default name',
+          },
+        }, null, 2),
+        originalDefaultData: JSON.stringify({
+          id: {
+            default: '',
+          },
+          name: {
+            default: 'default name',
+          },
+        }, null, 2),
+        rule: 'some rule',
+        originalRule: 'some rule',
+      };
+
+      expect(dirty(editor)).toEqual(false);
+    });
+  });
   describe('validate util', () => {
     test('should return dataError if editor data is invalid', () => {
       const editor = {
@@ -164,11 +259,11 @@ describe('sql processor logic', () => {
         resourceType: 'imports',
         stage: 'flowInput',
         data: '{"data": {"id": 123}}}',
-        defaultData: JSON.stringify({data: {
+        defaultData: JSON.stringify({
           id: {
             default: '',
           },
-        }}, null, 2),
+        }, null, 2),
         rule: 'some rule',
       };
 
@@ -180,11 +275,11 @@ describe('sql processor logic', () => {
         resourceType: 'imports',
         stage: 'flowInput',
         data: '{"data": {"id": 123}}',
-        defaultData: '{"data": {"id": 123}}}',
+        defaultData: '{"id": 123}}',
         rule: 'some rule',
       };
 
-      expect(validate(editor)).toEqual({dataError: 'Default Data: Unexpected token } in JSON at position 21'});
+      expect(validate(editor)).toEqual({dataError: 'Default Data: Unexpected token } in JSON at position 11'});
     });
   });
 });

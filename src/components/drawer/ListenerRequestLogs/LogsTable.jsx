@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useCallback } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import clsx from 'clsx';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
@@ -9,8 +9,6 @@ import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import Spinner from '../../Spinner';
 import PreviewLogDetails from './PreviewLogDetails';
-import SearchIcon from '../../icons/SearchIcon';
-import IconTextButton from '../../IconTextButton';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { FILTER_KEY } from '../../../utils/listenerLogs';
 
@@ -42,21 +40,11 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     padding: theme.spacing(3, 2),
   },
-  searchMoreWrapper: {
-    textAlign: 'center',
-    margin: theme.spacing(2, 0),
+  tableHeaderWithSpinner: {
+    position: 'relative',
+    top: 45,
+    height: '100%',
   },
-  searchButton: {
-    color: theme.palette.common.white,
-    minWidth: 190,
-    padding: theme.spacing(1, 5),
-  },
-  iconSearchBtn: {
-    fontSize: 16,
-    marginRight: theme.spacing(1),
-    color: theme.palette.common.white,
-  },
-
 }));
 
 export default function LogsTable({ flowId, exportId }) {
@@ -75,13 +63,13 @@ export default function LogsTable({ flowId, exportId }) {
 
     return debugUntil;
   });
-  const { hasNextPage, loadMoreStatus, logsStatus } = useSelector(state => {
+  const { hasNextPage, logsStatus, fetchStatus } = useSelector(state => {
     const l = selectors.listenerLogs(state, exportId);
 
     return {
       hasNextPage: !!l.nextPageURL,
-      loadMoreStatus: l.loadMoreStatus,
       logsStatus: l.logsStatus,
+      fetchStatus: l.fetchStatus,
     };
   }, shallowEqual);
 
@@ -95,7 +83,7 @@ export default function LogsTable({ flowId, exportId }) {
   }, [dispatch, exportId]);
 
   useEffect(() => {
-    dispatch(actions.logs.listener.request(flowId, exportId));
+    dispatch(actions.logs.listener.request({flowId, exportId}));
     if (debugUntil) {
       dispatch(actions.logs.listener.startLogsPoll(flowId, exportId));
     }
@@ -110,8 +98,6 @@ export default function LogsTable({ flowId, exportId }) {
   }, [currPageFirstKey, dispatch, exportId]);
 
   const actionProps = useMemo(() => ({ flowId, exportId }), [exportId, flowId]);
-
-  const loadMoreLogs = useCallback(() => dispatch(actions.logs.listener.request(flowId, exportId, true)), [dispatch, exportId, flowId]);
 
   if (!logsStatus || logsStatus === 'requested') {
     return (
@@ -135,26 +121,10 @@ export default function LogsTable({ flowId, exportId }) {
             You don’t have any debug log entries.
           </Typography>
           )}
-          {hasNextPage && (
-          <div className={classes.searchMoreWrapper}>
-            <IconTextButton
-              variant="outlined"
-              color="primary"
-              className={classes.searchButton}
-              onClick={loadMoreLogs}>
-              {loadMoreStatus === 'requested' ? (
-                <>
-                  <Spinner className={classes.iconSearchBtn} size="small" />
-                  Searching
-                </>
-              ) : (
-                <>
-                  <SearchIcon className={classes.iconSearchBtn} />
-                  Search more
-                </>
-              )}
-            </IconTextButton>
-          </div>
+          {!hasDebugLogs && hasNextPage && fetchStatus === 'inProgress' && (
+            <div className={classes.tableHeaderWithSpinner}>
+              <Spinner centerAll />
+            </div>
           )}
         </div>
         {hasDebugLogs && (

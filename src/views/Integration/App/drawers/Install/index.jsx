@@ -178,7 +178,8 @@ export default function ConnectorInstallation(props) {
 
   useEffect(() => {
     if (redirectTo) {
-      history.push(getRoutePath('dashboard'));
+      history.push(getRoutePath(redirectTo));
+      dispatch(actions.resource.integrations.clearRedirect(integrationId));
     }
   }, [dispatch, history, integrationId, redirectTo]);
 

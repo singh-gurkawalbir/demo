@@ -2132,11 +2132,11 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
             if (sectionId) {
               const selectedSection = child.find(sec => getTitleIdFromSection(sec) === sectionId);
 
-              if (selectedSection) {
+              if (selectedSection?.flows?.length) {
                 flows = selectedSection.flows.map(f => f._id);
               }
             } else {
-              child.forEach(sec => flows.push(...sec.flows.map(f => f._id)));
+              child.forEach(sec => sec?.flows?.length && flows.push(...sec.flows.map(f => f._id)));
             }
           }
         } else {
@@ -2145,11 +2145,11 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
               if (sectionId) {
                 const selectedSection = sec.sections.find(s => getTitleIdFromSection(s) === sectionId);
 
-                if (selectedSection) {
+                if (selectedSection?.flows?.length) {
                   flows.push(...selectedSection.flows.map(f => f._id));
                 }
               } else {
-                sec.sections.forEach(s => flows.push(...s.flows.map(f => f._id)));
+                sec.sections.forEach(s => s?.flows?.length && flows.push(...s.flows.map(f => f._id)));
               }
             }
           });
@@ -2158,11 +2158,11 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
     } else if (sectionId) {
       const selectedSection = sections.find(sec => getTitleIdFromSection(sec) === sectionId);
 
-      if (selectedSection) {
+      if (selectedSection?.flows?.length) {
         flows = selectedSection.flows.map(f => f._id);
       }
     } else {
-      sections.forEach(sec => flows.push(...sec.flows.map(f => f._id)));
+      sections.forEach(sec => sec?.flows?.length && flows.push(...sec.flows.map(f => f._id)));
     }
 
     return flows;
@@ -5237,7 +5237,16 @@ selectors.isEditorDisabled = (state, editorId) => {
   if (formKey) {
     const fieldState = selectors.fieldState(state, formKey, fieldId);
 
-    if (fieldState) return fieldState.disabled;
+    if (fieldState) {
+      // Currently, many IA settings of type expression has disabled property as true and they shouldn't
+      // be disabled. We added this below check temporarily and once IA fixes, we can remove the below code.
+      // reference for IA tracker: https://celigo.atlassian.net/browse/SFNSIO-1127
+      if (fieldState.type === 'iaexpression') {
+        return false;
+      }
+
+      return fieldState.disabled;
+    }
   }
 
   // if we are on FB actions, below logic applies
