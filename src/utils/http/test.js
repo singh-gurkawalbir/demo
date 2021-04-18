@@ -58,6 +58,19 @@ describe('getHttpReqResFields util', () => {
 
     expect(getHttpReqResFields(httpPayloadWithBody, 'previewPanel')).toEqual(expectedHttpPreviewPanelFields);
   });
+  test('should return others as undefined if there are no fields to show from the payload under others', () => {
+    const httpPayloadWithBody = {
+      body: '{"test":5}',
+      headers: { 'content-type': 'application/json' },
+    };
+    const expectedHttpPreviewPanelFields = {
+      body: '{"test":5}',
+      headers: { 'content-type': 'application/json' },
+      others: undefined,
+    };
+
+    expect(getHttpReqResFields(httpPayloadWithBody, 'previewPanel')).toEqual(expectedHttpPreviewPanelFields);
+  });
 });
 
 describe('getContentType util', () => {
