@@ -119,7 +119,7 @@ export default function DrawerTitleBar({
         helpText="Dummy content here now, just to give styling to the element"
           />
       )}
-      <Divider orientation="veritical" className={classes.divider} />
+      <Divider orientation="vertical" className={classes.divider} />
       <IconButton
         data-test="closeCategoryMapping"
         aria-label="Close"

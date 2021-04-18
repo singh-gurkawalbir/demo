@@ -35,8 +35,8 @@ function flattenChildrenStructrue(
       ...(meta || {}),
       isRoot,
       depth,
-      deleted:
-        allChildrenDeleted || deleted.includes(meta.id) || isParentDeleted,
+      ...(options?.lookups?.length && { lookups: options.lookups }),
+      deleted: allChildrenDeleted || deleted.includes(meta.id) || isParentDeleted,
     });
 
     if (meta.children) {
@@ -46,6 +46,7 @@ function flattenChildrenStructrue(
           depth: depth + 1,
           isParentDeleted: deleted.includes(meta.id),
           deleteChildlessParent,
+          lookups: meta.lookups,
         })
       );
     }
