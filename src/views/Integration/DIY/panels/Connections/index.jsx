@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
@@ -34,7 +34,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
   const [showRegister, setShowRegister] = useState(false);
   const location = useLocation();
   const filterKey = `${_integrationId}+connections`;
-  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
+  const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const tableConfig = useSelector(state => selectors.filter(state, filterKey));
   const connections = useSelector(state =>
     selectors.integrationConnectionList(state, integrationId, childId, tableConfig)
@@ -94,6 +94,49 @@ export default function ConnectionsPanel({ integrationId, childId }) {
       clearInterval(interval);
     };
   }, [dispatch, _integrationId]);
+  const handleClick = useCallback(e => {
+    e.preventDefault();
+
+    const newId = generateNewId();
+
+    setTempId(newId);
+    history.push(`${location.pathname}/add/connections/${newId}`);
+
+    if (!isStandalone) {
+      const patchSet = [
+        {
+          op: 'add',
+          path: '/_integrationId',
+          value: _integrationId,
+        },
+      ];
+
+      if (integration?._connectorId) {
+        patchSet.push({
+          op: 'add',
+          path: '/_connectorId',
+          value: integration._connectorId,
+        });
+        patchSet.push({
+          op: 'add',
+          path: '/newIA',
+          value: true,
+        });
+      }
+
+      if (childId) {
+        patchSet.push({
+          op: 'add',
+          path: '/applications',
+          value: applications,
+        });
+      }
+
+      dispatch(
+        actions.resource.patchStaged(newId, patchSet, 'value')
+      );
+    }
+  }, [_integrationId, applications, childId, dispatch, history, integration._connectorId, isStandalone, location.pathname]);
 
   return (
     <div className={classes.root}>
@@ -108,47 +151,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
         <>
           {permission.create && (
             <IconTextButton
-              onClick={() => {
-                const newId = generateNewId();
-
-                setTempId(newId);
-                history.push(`${location.pathname}/add/connections/${newId}`);
-
-                if (!isStandalone) {
-                  const patchSet = [
-                    {
-                      op: 'add',
-                      path: '/_integrationId',
-                      value: _integrationId,
-                    },
-                  ];
-
-                  if (integration?._connectorId) {
-                    patchSet.push({
-                      op: 'add',
-                      path: '/_connectorId',
-                      value: integration._connectorId,
-                    });
-                    patchSet.push({
-                      op: 'add',
-                      path: '/newIA',
-                      value: true,
-                    });
-                  }
-
-                  if (childId) {
-                    patchSet.push({
-                      op: 'add',
-                      path: '/applications',
-                      value: applications,
-                    });
-                  }
-
-                  dispatch(
-                    actions.resource.patchStaged(newId, patchSet, 'value')
-                  );
-                }
-              }}>
+              onClick={handleClick}>
               <AddIcon /> Create connection
             </IconTextButton>
           )}
