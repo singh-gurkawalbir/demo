@@ -160,8 +160,8 @@ export default function JobTable({
       setOpenedJobErrors(true);
     }
     // This logic is to handle the case when user tries to reload the page with viewErrors link
-    // ViewErrors drawer will work when user selectes a job error or from the error notification mail
-    // For reload case as there is no track of jobID, redirecting to the job table dashbaord
+    // ViewErrors drawer will work when user selects a job error or from the error notification mail
+    // For reload case as there is no track of jobID, redirecting to the job table dashboard
     if (history.location.pathname.includes('/viewErrors') && !(_JobId || showErrorDialogFor?.jobId)) {
       const urlExtractFields = history.location.pathname.split('/');
       const indexToBeStripped = urlExtractFields.length - urlExtractFields.indexOf('viewErrors');
@@ -177,7 +177,9 @@ export default function JobTable({
     // this drawer and not the child retry drawer.
     // if (match.isExact) setShowErrorDialogFor({});
     /** Dirty fix, I don't see a better option. */
-    if (history?.location?.pathname?.endsWith(isFlowBuilderView ? '/viewErrors' : 'dashboard/viewErrors')) {
+    // TODO: Need to come up with proper fix to remount ErrorDrawer
+    // Updated with patch fix @IO-20793
+    if (history?.location?.pathname?.endsWith('/viewErrors')) {
       setShowErrorDialogFor({});
     }
   }

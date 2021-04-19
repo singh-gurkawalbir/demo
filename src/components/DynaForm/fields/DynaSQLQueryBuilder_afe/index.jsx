@@ -26,12 +26,16 @@ export default function DynaSQLQueryBuilder_afe(props) {
     const { rule, defaultData, supportsDefaultData } = editorValues;
 
     if (supportsDefaultData) {
-      let parsedDefaultData;
+      if (!defaultData) {
+        onFieldChange('modelMetadata', {});
+      } else {
+        let parsedDefaultData;
 
-      try {
-        parsedDefaultData = JSON.parse(defaultData);
-        onFieldChange('modelMetadata', parsedDefaultData);
-      } catch (e) { // do nothing }
+        try {
+          parsedDefaultData = JSON.parse(defaultData);
+          onFieldChange('modelMetadata', parsedDefaultData);
+        } catch (e) { // do nothing }
+        }
       }
     }
     if (typeof arrayIndex !== 'undefined' && Array.isArray(value)) {

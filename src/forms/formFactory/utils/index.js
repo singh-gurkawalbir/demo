@@ -987,6 +987,7 @@ export const alterFileDefinitionRulesVisibility = fields => {
 
   // Incase of new resource - visibility of fileDefRules & fileDefFormat fields are based of fileType selected
   // Whether resource is in new or edit stage -- inferred by userDefinitionId
+
   if (
     fileType &&
     fileType.value &&
@@ -1002,15 +1003,15 @@ export const alterFileDefinitionRulesVisibility = fields => {
         fdField => fdField.id === formatFieldType
       );
 
-      fileDefinitionRulesField.visible = !!fileDefinitionFormatField.value;
+      fileDefinitionRulesField.defaultVisible = !!fileDefinitionFormatField.value;
     } else {
-      fileDefinitionRulesField.visible = false;
+      fileDefinitionRulesField.defaultVisible = false;
     }
   }
   // fileDefinitionRulesField should be hidden when there is no file type.
 
   if (fileType && !fileType.value) {
-    fileDefinitionRulesField.visible = false;
+    fileDefinitionRulesField.defaultVisible = false;
   }
   // userDefinitionId exists only in edit mode.
 
@@ -1022,7 +1023,7 @@ export const alterFileDefinitionRulesVisibility = fields => {
       );
 
       delete fileDefinitionFormatField.visibleWhenAll;
-      fileDefinitionFormatField.visible = false;
+      fileDefinitionFormatField.defaultVisible = false;
     });
   }
 };
