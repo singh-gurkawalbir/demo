@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import { makeStyles, TextField } from '@material-ui/core';
 import DynaSelect from '../../DynaSelect';
@@ -24,16 +24,130 @@ const useStyles = makeStyles(theme => ({
   refreshIcon: {
     cursor: 'pointer',
   },
+  dynaTableActions: {
+    alignSelf: 'flex-start',
+    marginTop: theme.spacing(1),
+  },
+  bodyElementsWrapper: {
+    display: 'flex',
+  },
+  child: {
+    '& + div': {
+      width: '100%',
+    },
+  },
+  childHeader: {
+    '& > div': {
+      width: '100%',
+    },
+  },
+  root: {
+    display: 'flex',
+  },
+  menuItemsWrapper: {
+    minWidth: 300,
+    '& > div': {
+      '& >.MuiMenuItem-root': {
+        wordWrap: 'break-word',
+        whiteSpace: 'normal',
+      },
+    },
+  },
 }));
 const TYPE_TO_ERROR_MESSAGE = {
   input: 'Please enter a value',
   number: 'Please enter a number',
   text: 'Please enter a value',
   autosuggest: 'Please select a value',
+  select: 'Please select a value',
 };
 
 Object.freeze(TYPE_TO_ERROR_MESSAGE);
+const RowCell = ({index, r, optionsMap, touched, arr, rowIndex, rowCollection, setTableState, onRowChange}) => {
+  const classes = useStyles();
 
+  // Update handler. Listens to change in any field and dispatches action to update state
+
+  const handleUpdate = value => {
+    setTableState({
+      type: 'updateField',
+      index: arr.row,
+      field: r.id,
+      value,
+      onRowChange,
+    });
+  };
+
+  const isCellValid = () => {
+    if (rowIndex === rowCollection.length - 1 || !touched) { return true; }
+
+    return !optionsMap[index].required ||
+        (optionsMap[index].required && r.value);
+  };
+  const isValid = isCellValid();
+
+  const id = `suggest-${r.id}-${arr.row}`;
+  const errorMessages = TYPE_TO_ERROR_MESSAGE[r.type];
+  const basicProps = {
+    isValid,
+    id,
+    errorMessages,
+    disabled: r.readOnly,
+    options: r.options || [],
+    value: r.value,
+  };
+
+  if (r.type === 'select') {
+    return (
+      <DynaSelect
+        {...basicProps}
+        onFieldChange={(id, value) => {
+          handleUpdate(value);
+        }}
+        className={clsx(classes.root, classes.menuItemsWrapper)}
+    />
+    );
+  }
+
+  if (r.type === 'number') {
+    return (
+      <div
+        className={clsx(classes.childHeader, classes.childRow)}>
+        <TextField
+          {...basicProps}
+          variant="filled"
+          value={r.value || 0}
+          helperText={
+            !isValid && errorMessages
+          }
+          error={!isValid}
+          type="number"
+          onBlur={evt => {
+            handleUpdate(evt.target.value);
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (['input', 'text', 'autosuggest'].includes(r.type)) {
+    return (
+      <div
+        className={clsx(classes.childHeader, classes.childRow)}>
+        <DynaTypeableSelect
+          {...basicProps}
+          labelName="label"
+          valueName="value"
+          onBlur={(id, value) => {
+            handleUpdate(value);
+          }}
+    />
+      </div>
+    );
+  }
+
+  return null;
+};
 export default function RefreshHeaders({
   arr,
   rowIndex,
@@ -45,19 +159,6 @@ export default function RefreshHeaders({
   disableDeleteRows,
 }) {
   const classes = useStyles();
-  // Update handler. Listens to change in any field and dispatches action to update state
-  const handleUpdate = useCallback(
-    (row, value, field) => {
-      setTableState({
-        type: 'updateField',
-        index: row,
-        field,
-        value,
-        onRowChange,
-      });
-    },
-    [onRowChange, setTableState]
-  );
 
   return (
     <div className={classes.bodyElementsWrapper} data-test={`row-${rowIndex}`}>
@@ -66,72 +167,18 @@ export default function RefreshHeaders({
           <div
             key={`${r.readOnly ? r.value || r.id : r.id}`}
             data-test={`col-${index}`}
-      >
-            {r.type === 'select' && (
-            <DynaSelect
-              id={`suggest-${r.id}-${arr.row}`}
-              value={r.value}
-              isValid={
-              !touched || !optionsMap[index].required ||
-                (optionsMap[index].required && r.value)
-            }
-              errorMessages="Please select a value"
-              options={r.options || []}
-              onFieldChange={(id, value) => {
-                handleUpdate(arr.row, value, r.id);
-              }}
-              className={clsx(classes.root, classes.menuItemsWrapper)}
+          >
+            <RowCell
+              r={r}
+              index={index}
+              optionsMap={optionsMap}
+              touched={touched}
+              arr={arr}
+              rowIndex={rowIndex}
+              rowCollection={rowCollection}
+              setTableState={setTableState}
+              onRowChange={onRowChange}
           />
-            )}
-            {['input', 'number', 'text', 'autosuggest'].includes(
-              r.type
-            ) && (
-            <div
-              className={clsx(classes.childHeader, classes.childRow)}>
-              {r.type === 'number' ? (
-                <TextField
-                  variant="filled"
-                  id={`suggest-${r.id}-${arr.row}`}
-                  key={`suggest-${r.id}-${arr.key}`}
-                  defaultValue={r.value || 0}
-                  disabled={r.readOnly}
-                  helperText={
-                  r.required &&
-                  r.value === '' &&
-                  TYPE_TO_ERROR_MESSAGE[r.type]
-                }
-                  error={r.required && r.value === ''}
-                  type={r.type}
-                  options={r.options}
-                  onBlur={evt => {
-                    handleUpdate(arr.row, evt.target.value, r.id);
-                  }}
-              />
-              ) : (
-                <DynaTypeableSelect
-                  id={`suggest-${r.id}-${arr.row}`}
-                  key={`suggest-${r.id}-${arr.key}`}
-                  value={r.value}
-                  labelName="label"
-                  disabled={r.readOnly}
-                  isValid={
-                  !optionsMap[index].required ||
-                  (rowIndex === rowCollection.length - 1 ||
-                    (optionsMap[index].required && r.value))
-                }
-                  errorMessages={
-                  TYPE_TO_ERROR_MESSAGE[r.type] ||
-                  'Please enter a value'
-                }
-                  valueName="value"
-                  options={r.options}
-                  onBlur={(id, evt) => {
-                    handleUpdate(arr.row, evt, r.id);
-                  }}
-              />
-              )}
-            </div>
-            )}
           </div>
         )
         )}

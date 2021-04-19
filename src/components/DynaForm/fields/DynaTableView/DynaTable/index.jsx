@@ -13,16 +13,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     marginRight: theme.spacing(2),
   },
-  child: {
-    '& + div': {
-      width: '100%',
-    },
-  },
-  childHeader: {
-    '& > div': {
-      width: '100%',
-    },
-  },
   childRow: {
     display: 'flex',
     position: 'relative',
@@ -43,29 +33,6 @@ const useStyles = makeStyles(theme => ({
   },
   rowContainer: {
     display: 'flex',
-  },
-  bodyElementsWrapper: {
-    display: 'flex',
-  },
-  dynaTableActions: {
-    alignSelf: 'flex-start',
-    marginTop: theme.spacing(1),
-  },
-  columnsWrapper: {
-    width: '95%',
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-    gridGap: '8px',
-    marginBottom: theme.spacing(1),
-  },
-  menuItemsWrapper: {
-    minWidth: 300,
-    '& > div': {
-      '& >.MuiMenuItem-root': {
-        wordWrap: 'break-word',
-        whiteSpace: 'normal',
-      },
-    },
   },
 }));
 
