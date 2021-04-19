@@ -1,7 +1,7 @@
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { generateNewId } from '../../../../../utils/resource';
 import { hashCode } from '../../../../../utils/string';
 import reducer, { preSubmit } from './reducer';
@@ -64,6 +64,46 @@ const initializeTableState = optionsMap => value => {
     tableStateValue: value.map(val => generateRow(val)),
   };
 };
+
+const BaseTable = ({
+  onFieldChange,
+  onRowChange,
+  disableDeleteRows,
+  optionsMapFinal,
+  optionsMapInit,
+  id,
+  value,
+}) => {
+  const [tableState, setTableState] = useReducer(reducer, value, initializeTableState(optionsMapInit));
+
+  const {touched, tableStateValue: tableValue} = tableState;
+  const hashOfOptions = hashCode(optionsMapFinal);
+
+  useEffect(() => {
+    if (touched) {
+      onFieldChange(id, preSubmit(tableValue, optionsMapFinal));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, onFieldChange, hashOfOptions, tableValue, touched]);
+
+  return (tableValue.map((arr, rowIndex) => {
+    const {value, key} = arr;
+
+    return (
+      <TableRow
+        key={key}
+        rowValue={value}
+        rowIndex={rowIndex}
+        tableSize={tableValue.length}
+        optionsMap={optionsMapFinal}
+        touched={touched}
+        setTableState={setTableState}
+        onRowChange={onRowChange}
+        disableDeleteRows={disableDeleteRows}
+      />
+    );
+  }));
+};
 export const DynaTable = props => {
   const classes = useStyles();
   const {
@@ -76,34 +116,13 @@ export const DynaTable = props => {
     handleCleanupHandler,
     hideHeaders = false,
     isLoading = false,
-    shouldReset = false,
     metadata = {},
     id,
     onFieldChange,
     onRowChange,
     disableDeleteRows,
   } = props;
-  const [shouldResetOptions, setShouldResetOptions] = useState(true);
-  const [optionsMap, setOptionsMap] = useState(optionsMapInit);
-  const [tableState, setTableState] = useReducer(reducer, value, initializeTableState(optionsMap));
-  const {touched, tableStateValue: tableValue} = tableState;
-  // isRequiredValue(tableState, optionsMap, setTableState);
-
-  useEffect(() => {
-    setShouldResetOptions(true);
-  }, [shouldReset]);
-
-  useEffect(() => {
-    if (
-      shouldResetOptions &&
-      metadata &&
-      metadata.optionsMap &&
-      Array.isArray(metadata.optionsMap)
-    ) {
-      setOptionsMap(metadata.optionsMap);
-      setShouldResetOptions(false);
-    }
-  }, [metadata, shouldResetOptions]);
+  const optionsMapFinal = metadata.optionsMap || optionsMapInit;
 
   useEffect(
     () => () => {
@@ -114,12 +133,6 @@ export const DynaTable = props => {
     [handleCleanupHandler, id]
   );
 
-  useEffect(() => {
-    if (touched) {
-      onFieldChange(id, preSubmit(tableValue, optionsMap));
-    }
-  }, [id, onFieldChange, optionsMap, tableValue, touched]);
-
   return (
     <div className={clsx(classes.container, className)}>
       {!hideLabel && <Typography variant="h6">{label}</Typography>}
@@ -128,29 +141,20 @@ export const DynaTable = props => {
           <RefreshHeaders
             hideHeaders={hideHeaders}
             isLoading={isLoading}
-            optionsMap={optionsMap}
+            optionsMap={optionsMapFinal}
             handleRefreshClickHandler={handleRefreshClickHandler}
           />
-          <>
-            {tableValue.map((arr, rowIndex) => {
-              const {value, key} = arr;
+          <BaseTable
+            onFieldChange={onFieldChange}
+            onRowChange={onRowChange}
+            disableDeleteRows={disableDeleteRows}
+            optionsMapFinal={optionsMapFinal}
+            optionsMapInit={optionsMapInit}
+            id={id}
+            value={value}
 
-              return (
-                <TableRow
-                  key={key}
-                  rowValue={value}
-                  rowIndex={rowIndex}
-                  tableSize={tableValue.length}
-                  optionsMap={optionsMap}
-                  touched={touched}
-                  setTableState={setTableState}
-                  onRowChange={onRowChange}
-                  disableDeleteRows={disableDeleteRows}
-              />
+          />
 
-              );
-            })}
-          </>
         </div>
 
       </div>

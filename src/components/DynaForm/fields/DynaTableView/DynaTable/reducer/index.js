@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { generateRow} from '.';
+import { generateRow} from '..';
 
 export default function reducer(state, action) {
   const {

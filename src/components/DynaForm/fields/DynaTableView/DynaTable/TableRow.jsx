@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import clsx from 'clsx';
 import { makeStyles, TextField } from '@material-ui/core';
 import DynaSelect from '../../DynaSelect';
@@ -93,12 +93,24 @@ const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, 
 
   const fieldTestAttr = `suggest-${rowIndex}-${id}`;
   const errorMessages = TYPE_TO_ERROR_MESSAGE[type];
+
+  const translatedOptions = useMemo(() => {
+    if (!options) return [];
+
+    const items = convertToSelectOptions(options);
+
+    if (type === 'select') {
+      return [{items}];
+    }
+
+    return items;
+  }, [options, type]);
   const basicProps = {
     isValid,
     id: fieldTestAttr,
     errorMessages,
     disabled: readOnly,
-    options: options && convertToSelectOptions(options),
+    options: translatedOptions,
     value: fieldValue,
   };
 
@@ -192,6 +204,7 @@ export default function RefreshHeaders({
         key="delete_button"
         className={classes.dynaTableActions}>
         <ActionButton
+          tooltip=""
           disabled={disableDeleteRows}
           data-test={`deleteTableRow-${rowIndex}`}
           aria-label="delete"
