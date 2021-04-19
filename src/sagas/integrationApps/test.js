@@ -25,6 +25,7 @@ import {
   saveCategoryMappings,
   getMappingMetadata,
 } from './settings';
+import { preUninstall, uninstallIntegration, uninstallStep as uninstallStepGen } from './uninstaller';
 import {initUninstall, uninstallStep, requestSteps} from './uninstaller2.0';
 import {resumeIntegration} from './resume';
 
@@ -1286,6 +1287,235 @@ describe('settings saga', () => {
             error.message
           )
         )
+        .run();
+    });
+  });
+});
+describe('uninstaller saga', () => {
+  const storeId = 's1';
+  const id = '123';
+
+  describe('preUninstall generator', () => {
+    const path = `/integrations/${id}/uninstaller/preUninstallFunction`;
+
+    test('should dispatch uninstallSteps on successful api call', () => {
+      const uninstallSteps = {};
+
+      return expectSaga(preUninstall, { storeId, id})
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts: { body: { storeId }, method: 'PUT' },
+            message: 'Loading',
+          }), uninstallSteps],
+          [call(getResource, { resourceType: 'integrations', id })],
+        ])
+        .put(
+          actions.integrationApp.uninstaller.receivedUninstallSteps(
+            uninstallSteps,
+            id
+          )
+        )
+        .run();
+    });
+    test('should dispatch failedUninstallSteps if api call fails', () => {
+      const error = new Error();
+
+      return expectSaga(preUninstall, {storeId, id})
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts: { body: { storeId }, method: 'PUT' },
+            message: 'Loading',
+          }), throwError(error)],
+        ])
+        .put(actions.api.failure(path, 'PUT', error && error.message, false))
+        .put(
+          actions.integrationApp.uninstaller.failedUninstallSteps(
+            id,
+            error.message || 'Failed to fetch Uninstall Steps.'
+          )
+        )
+        .returns(undefined)
+        .run();
+    });
+  });
+
+  describe('uninstallStep generator', () => {
+    const uninstallerFunction = 'uninstallConnectorComponents';
+    const path = `/integrations/${id}/uninstaller/${uninstallerFunction}`;
+
+    test('if api call is successfull with response, should dispatch uninstaller updateStep and subsequent actions if addOnId is defined', () => {
+      const addOnId = 'A123';
+      const stepCompleteResponse = {
+        success: true,
+      };
+
+      return expectSaga(uninstallStepGen, {storeId, id, uninstallerFunction, addOnId})
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts: { body: { storeId, addOnId }, method: 'PUT' },
+            message: 'Uninstalling',
+          }), stepCompleteResponse],
+          [call(getResource, {
+            resourceType: 'integrations',
+            id,
+          })],
+        ])
+        .put(
+          actions.integrationApp.uninstaller.updateStep(
+            id,
+            uninstallerFunction,
+            'completed'
+          )
+        )
+        .put(
+          actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
+        )
+        .put(
+          actions.integrationApp.isAddonInstallInprogress(false, addOnId)
+        )
+        .run();
+    });
+    test('if api call is successfull with response, should dispatch uninstaller updateStep only if no addOnId defined', () => {
+      const addOnId = undefined;
+      const stepCompleteResponse = {
+        success: true,
+      };
+
+      return expectSaga(uninstallStepGen, {storeId, id, uninstallerFunction, addOnId})
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts: { body: { storeId, addOnId }, method: 'PUT' },
+            message: 'Uninstalling',
+          }), stepCompleteResponse],
+          [call(getResource, {
+            resourceType: 'integrations',
+            id,
+          })],
+        ])
+        .put(
+          actions.integrationApp.uninstaller.updateStep(
+            id,
+            uninstallerFunction,
+            'completed'
+          )
+        )
+        .not.put(
+          actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
+        )
+        .run();
+    });
+    test('if api call is successfull with response failing, should not dispatch any action', () => {
+      const addOnId = undefined;
+      const stepCompleteResponse = {
+        success: false,
+      };
+
+      return expectSaga(uninstallStepGen, {storeId, id, uninstallerFunction, addOnId})
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts: { body: { storeId, addOnId }, method: 'PUT' },
+            message: 'Uninstalling',
+          }), stepCompleteResponse],
+        ])
+        .not.put(
+          actions.integrationApp.uninstaller.updateStep(
+            id,
+            uninstallerFunction,
+            'completed'
+          )
+        )
+        .run();
+    });
+    test('if api call fails, should dispatch updateStep and update install progress of addOn if addOnId is defined', () => {
+      const addOnId = 'A123';
+      const error = new Error();
+
+      return expectSaga(uninstallStepGen, {storeId, id, uninstallerFunction, addOnId})
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts: { body: { storeId, addOnId }, method: 'PUT' },
+            message: 'Uninstalling',
+          }), throwError(error)],
+        ])
+        .put(
+          actions.integrationApp.isAddonInstallInprogress(false, addOnId)
+        )
+        .put(
+          actions.integrationApp.uninstaller.updateStep(
+            id,
+            uninstallerFunction,
+            'failed'
+          )
+        )
+        .returns(undefined)
+        .run();
+    });
+    test('if api call fails, should dispatch only updateStep if addOnId is not defined', () => {
+      const addOnId = 'A123';
+      const error = new Error();
+
+      return expectSaga(uninstallStepGen, {storeId, id, uninstallerFunction, addOnId})
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts: { body: { storeId, addOnId }, method: 'PUT' },
+            message: 'Uninstalling',
+          }), throwError(error)],
+        ])
+        .put(
+          actions.integrationApp.uninstaller.updateStep(
+            id,
+            uninstallerFunction,
+            'failed'
+          )
+        )
+        .returns(undefined)
+        .run();
+    });
+  });
+  describe('uninstallIntegration generator', () => {
+    const integrationId = 'i1';
+    const path = `/integrations/${integrationId}/install`;
+
+    test('Should make an API call and dispatch resource request actions', () => expectSaga(uninstallIntegration, { integrationId })
+      .provide([
+        [call(apiCallWithRetry, {
+          path,
+          timeout: 5 * 60 * 1000,
+          opts: { body: {}, method: 'DELETE' },
+          message: 'Uninstalling',
+        })],
+      ])
+      .put(actions.resource.requestCollection('integrations'))
+      .put(actions.resource.requestCollection('tiles'))
+      .put(actions.resource.requestCollection('licenses'))
+      .run());
+    test('if API call fails return undefined', () => {
+      const error = new Error();
+
+      return expectSaga(uninstallIntegration, { integrationId })
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts: { body: {}, method: 'DELETE' },
+            message: 'Uninstalling',
+          }), throwError(error)],
+        ])
+        .returns(undefined)
         .run();
     });
   });
