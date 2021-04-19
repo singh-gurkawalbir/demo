@@ -62,8 +62,14 @@ const TYPE_TO_ERROR_MESSAGE = {
   select: 'Please select a value',
 };
 
+const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
+  label: Array.isArray(opt) ? opt[1] : opt.text || opt.label,
+  value: Array.isArray(opt) ? opt[0] : opt.id || opt.value,
+}));
+
 Object.freeze(TYPE_TO_ERROR_MESSAGE);
-const RowCell = ({index, r, optionsMap, touched, arr, rowIndex, rowCollection, setTableState, onRowChange}) => {
+const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, onRowChange}) => {
+  const {id, readOnly, required, options, type } = op;
   const classes = useStyles();
 
   // Update handler. Listens to change in any field and dispatches action to update state
@@ -71,33 +77,32 @@ const RowCell = ({index, r, optionsMap, touched, arr, rowIndex, rowCollection, s
   const handleUpdate = value => {
     setTableState({
       type: 'updateField',
-      index: arr.row,
-      field: r.id,
+      index: rowIndex,
+      field: id,
       value,
       onRowChange,
     });
   };
 
   const isCellValid = () => {
-    if (rowIndex === rowCollection.length - 1 || !touched) { return true; }
+    if (rowIndex === tableSize - 1 || !touched) { return true; }
 
-    return !optionsMap[index].required ||
-        (optionsMap[index].required && r.value);
+    return !required || (required && fieldValue);
   };
   const isValid = isCellValid();
 
-  const id = `suggest-${r.id}-${arr.row}`;
-  const errorMessages = TYPE_TO_ERROR_MESSAGE[r.type];
+  const fieldTestAttr = `suggest-${rowIndex}-${id}`;
+  const errorMessages = TYPE_TO_ERROR_MESSAGE[type];
   const basicProps = {
     isValid,
-    id,
+    id: fieldTestAttr,
     errorMessages,
-    disabled: r.readOnly,
-    options: r.options || [],
-    value: r.value,
+    disabled: readOnly,
+    options: options && convertToSelectOptions(options),
+    value: fieldValue,
   };
 
-  if (r.type === 'select') {
+  if (type === 'select') {
     return (
       <DynaSelect
         {...basicProps}
@@ -109,14 +114,14 @@ const RowCell = ({index, r, optionsMap, touched, arr, rowIndex, rowCollection, s
     );
   }
 
-  if (r.type === 'number') {
+  if (type === 'number') {
     return (
       <div
         className={clsx(classes.childHeader, classes.childRow)}>
         <TextField
           {...basicProps}
           variant="filled"
-          value={r.value || 0}
+          value={fieldValue || 0}
           helperText={
             !isValid && errorMessages
           }
@@ -130,7 +135,7 @@ const RowCell = ({index, r, optionsMap, touched, arr, rowIndex, rowCollection, s
     );
   }
 
-  if (['input', 'text', 'autosuggest'].includes(r.type)) {
+  if (['input', 'text', 'autosuggest'].includes(type)) {
     return (
       <div
         className={clsx(classes.childHeader, classes.childRow)}>
@@ -149,9 +154,9 @@ const RowCell = ({index, r, optionsMap, touched, arr, rowIndex, rowCollection, s
   return null;
 };
 export default function RefreshHeaders({
-  arr,
+  rowValue,
   rowIndex,
-  rowCollection,
+  tableSize,
   optionsMap,
   touched,
   setTableState,
@@ -163,19 +168,17 @@ export default function RefreshHeaders({
   return (
     <div className={classes.bodyElementsWrapper} data-test={`row-${rowIndex}`}>
       <div className={classes.columnsWrapper}>
-        {arr.values.map((r, index) => (
+        {optionsMap.map((op, index) => (
           <div
-            key={`${r.readOnly ? r.value || r.id : r.id}`}
+            key={op.id}
             data-test={`col-${index}`}
           >
             <RowCell
-              r={r}
-              index={index}
-              optionsMap={optionsMap}
+              op={op}
+              fieldValue={rowValue[op.id]}
               touched={touched}
-              arr={arr}
               rowIndex={rowIndex}
-              rowCollection={rowCollection}
+              tableSize={tableSize}
               setTableState={setTableState}
               onRowChange={onRowChange}
           />
@@ -184,13 +187,13 @@ export default function RefreshHeaders({
         )}
 
       </div>
-      {rowIndex !== rowCollection.length - 1 && (
+      {rowIndex !== tableSize - 1 && (
       <div
         key="delete_button"
         className={classes.dynaTableActions}>
         <ActionButton
           disabled={disableDeleteRows}
-          data-test={`deleteTableRow-${arr.rowIndex}`}
+          data-test={`deleteTableRow-${rowIndex}`}
           aria-label="delete"
           onClick={() => {
             setTableState({ type: 'remove', index: rowIndex });

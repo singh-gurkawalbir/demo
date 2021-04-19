@@ -114,41 +114,6 @@ export const DynaTable = props => {
     [handleCleanupHandler, id]
   );
 
-  // Convert the value to react form readable format
-  const tableData = tableValue.map((value, index) => {
-    const {key, value: actValue } = value;
-    const arr = optionsMap.map(op => {
-      let modifiedOptions;
-
-      if ((op.options || []).length) {
-        const items = op.options.filter(Boolean).map(opt => ({
-          label: Array.isArray(opt) ? opt[1] : opt.text || opt.label,
-          value: Array.isArray(opt) ? opt[0] : opt.id || opt.value,
-        }));
-        const options =
-          op.type === 'select'
-            ? [
-              {
-                items,
-              },
-            ]
-            : items;
-
-        modifiedOptions = {
-          options,
-        };
-      }
-
-      return {
-        ...op,
-        ...modifiedOptions,
-        value: actValue[op.id],
-      };
-    });
-
-    return { values: arr, row: index, key };
-  });
-
   useEffect(() => {
     if (touched) {
       onFieldChange(id, preSubmit(tableValue, optionsMap));
@@ -167,20 +132,24 @@ export const DynaTable = props => {
             handleRefreshClickHandler={handleRefreshClickHandler}
           />
           <>
-            {tableData.map((arr, rowIndex, rowCollection) => (
-              <TableRow
-                key={arr.key}
-                arr={arr}
-                rowIndex={rowIndex}
-                rowCollection={rowCollection}
-                optionsMap={optionsMap}
-                touched={touched}
-                setTableState={setTableState}
-                onRowChange={onRowChange}
-                disableDeleteRows={disableDeleteRows}
+            {tableValue.map((arr, rowIndex) => {
+              const {value, key} = arr;
+
+              return (
+                <TableRow
+                  key={key}
+                  rowValue={value}
+                  rowIndex={rowIndex}
+                  tableSize={tableValue.length}
+                  optionsMap={optionsMap}
+                  touched={touched}
+                  setTableState={setTableState}
+                  onRowChange={onRowChange}
+                  disableDeleteRows={disableDeleteRows}
               />
 
-            ))}
+              );
+            })}
           </>
         </div>
 
