@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select, take, cancel, fork, takeLatest, delay } from 'redux-saga/effects';
+import { call, put, takeEvery, select, take, cancel, fork, takeLatest, delay, race } from 'redux-saga/effects';
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean } from 'lodash';
 import actions from '../../actions';
@@ -14,6 +14,8 @@ import { REST_ASSISTANTS } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
+
+const STANDARD_DELAY_FOR_POLLING = 5 * 1000;
 
 function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -1018,22 +1020,22 @@ export function* downloadReport({reportId}) {
 export function* pollForResourceCollection({ resourceType }) {
   while (true) {
     yield call(getResourceCollection, {resourceType});
-    yield delay(5 * 1000);
+    yield delay(STANDARD_DELAY_FOR_POLLING);
   }
 }
 export function* startPollingForResourceCollection({ resourceType }) {
-  const watcher = yield fork(pollForResourceCollection, {resourceType});
-
-  yield take(action => {
-    if ([
-      actionTypes.RESOURCE.STOP_COLLECTION_POLL,
-      actionTypes.RESOURCE.START_COLLECTION_POLL,
-    ].includes(action.type) &&
+  return yield race({
+    pollCollection: call(pollForResourceCollection, {resourceType}),
+    cancelPoll: take(action => {
+      if ([
+        actionTypes.RESOURCE.STOP_COLLECTION_POLL,
+        actionTypes.RESOURCE.START_COLLECTION_POLL,
+      ].includes(action.type) &&
     action.resourceType === resourceType) {
-      return true;
-    }
+        return true;
+      }
+    }),
   });
-  yield cancel(watcher);
 }
 export const resourceSagas = [
   takeEvery(actionTypes.EVENT_REPORT.CANCEL, eventReportCancel),

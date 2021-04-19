@@ -1,6 +1,7 @@
-/* global describe, test, expect, beforeEach */
-import { call, put, select, take, race } from 'redux-saga/effects';
-import { expectSaga } from 'redux-saga-test-plan';
+/* global describe, test, expect, beforeEach, jest */
+import { call, put, select, take, race, fork, cancel, delay } from 'redux-saga/effects';
+import { expectSaga, testSaga } from 'redux-saga-test-plan';
+import { createMockTask } from '@redux-saga/testing-utils';
 import { throwError } from 'redux-saga-test-plan/providers';
 import actions, { availableResources } from '../../actions';
 import {
@@ -12,6 +13,8 @@ import {
   requestDeregister,
   normalizeFlow,
   resourceConflictDetermination,
+  pollForResourceCollection,
+  startPollingForResourceCollection,
 } from '.';
 import { apiCallWithRetry } from '..';
 import { selectors } from '../../reducers';
@@ -534,6 +537,61 @@ availableResources.forEach(type => {
       expect(final.done).toBe(true);
     });
   });
+});
+
+describe('pollForResourceCollection saga', () => {
+  test('should call getResourceCollection after 5 seconds delay continously', () => {
+    const saga = pollForResourceCollection({resourceType: 'connections'});
+
+    expect(saga.next().value).toEqual(call(getResourceCollection, {resourceType: 'connections'}));
+    expect(saga.next().value).toEqual(delay(5000));
+    expect(saga.next().done).toEqual(false);
+  });
+});
+describe('startPollingForResourceCollection saga', () => {
+  test('cancel poll effect should race ahead when stop connection poll action is called ', () => expectSaga(
+    startPollingForResourceCollection, { resourceType: 'connections' })
+    .provide(
+      [
+        // delay(5) stimulates an api delay that pollForResourceCollection makes
+        [call(pollForResourceCollection, {resourceType: 'connections'}), delay(5)],
+      ]
+    )
+    .dispatch({ type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections'})
+    .returns(({cancelPoll: {type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections' }}))
+    .run());
+  test('cancel poll effect should not race ahead when stop exports poll action is called since the resourceType does not match ', () => expectSaga(
+    startPollingForResourceCollection, { resourceType: 'connections' })
+    .provide(
+      [
+        //  delay(5) stimulates an api delay that pollForResourceCollection makes
+        [call(pollForResourceCollection, {resourceType: 'connections'}), delay(5)],
+      ]
+    )
+    .dispatch({ type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'exports'})
+    .not.returns(({cancelPoll: {type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections' }}))
+    .run());
+  test('cancel poll effect should not race ahead when pollForResourceCollection saga completes  ', () => expectSaga(
+    startPollingForResourceCollection, { resourceType: 'connections' })
+    .provide(
+      [
+        //  delay(5) stimulates an api delay that pollForResourceCollection makes
+        [call(pollForResourceCollection, {resourceType: 'connections'}), delay(5)],
+      ]
+    )
+    .dispatch('waitForData')
+    .not.returns(({cancelPoll: {type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections' }}))
+    .run());
+  test('pollForResourceCollections should complete when no action is dispatched ', () => expectSaga(
+    startPollingForResourceCollection, { resourceType: 'connections' })
+    .provide(
+      [
+        //  delay(5) stimulates an api delay that pollForResourceCollection makes
+        [call(pollForResourceCollection, {resourceType: 'connections'}), delay(5)],
+      ]
+    )
+    .not.returns(({cancelPoll: {type: actionTypes.RESOURCE.STOP_COLLECTION_POLL, resourceType: 'connections' }}))
+    .run());
 });
 
 describe('Deregister connection Saga', () => {
