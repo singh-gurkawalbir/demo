@@ -220,7 +220,7 @@ export default {
     },
     httpBasic: {
       formId: 'httpBasic',
-      visibleWhen: [
+      visibleWhenAll: [
         { field: 'http.auth.type', is: ['basic', 'digest', 'wsse'] },
       ],
     },

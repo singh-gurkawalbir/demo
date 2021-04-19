@@ -181,6 +181,8 @@ export default function RunFlowButton({
           fileProps: { maxSize: MAX_DATA_LOADER_FILE_SIZE },
         })
       );
+      // eslint-disable-next-line no-param-reassign
+      e.target.value = null;
     },
     [dataLoaderFileType, dispatch, fileId]
   );

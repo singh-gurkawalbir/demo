@@ -69,6 +69,7 @@ export default {
   },
   buildData: sql.buildData,
   requestBody: sql.requestBody,
+  dirty: sql.dirty,
   validate: sql.validate,
   patchSet: editor => {
     const {

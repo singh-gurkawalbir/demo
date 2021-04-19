@@ -61,7 +61,8 @@ export default function reducer(state = {}, action) {
             const {data, defaultData} = buildData(original(draft[id]), sampleData);
 
             draft[id].data = data;
-            draft[id].defaultData = defaultData;
+            draft[id].defaultData = defaultData || '';
+            draft[id].originalDefaultData = defaultData || '';
           } else {
             draft[id].data = buildData(original(draft[id]), sampleData);
           }
