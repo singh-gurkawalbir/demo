@@ -1,7 +1,6 @@
-/* global describe, test, expect, beforeEach, jest */
-import { call, put, select, take, race, fork, cancel, delay } from 'redux-saga/effects';
-import { expectSaga, testSaga } from 'redux-saga-test-plan';
-import { createMockTask } from '@redux-saga/testing-utils';
+/* global describe, test, expect, beforeEach */
+import { call, put, select, take, race, delay } from 'redux-saga/effects';
+import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
 import actions, { availableResources } from '../../actions';
 import {
