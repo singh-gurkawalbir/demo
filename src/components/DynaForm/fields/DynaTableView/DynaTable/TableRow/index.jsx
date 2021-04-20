@@ -1,10 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import clsx from 'clsx';
 import { makeStyles, TextField } from '@material-ui/core';
-import DynaSelect from '../../DynaSelect';
-import DeleteIcon from '../../../../icons/TrashIcon';
-import DynaTypeableSelect from '../../DynaTypeableSelect';
-import ActionButton from '../../../../ActionButton';
+import DynaSelect from '../../../DynaSelect';
+import DeleteIcon from '../../../../../icons/TrashIcon';
+import DynaTypeableSelect from '../../../DynaTypeableSelect';
+import ActionButton from '../../../../../ActionButton';
+import actionTypes from '../actionTypes';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -76,7 +77,7 @@ const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, 
 
   const handleUpdate = value => {
     setTableState({
-      type: 'updateField',
+      type: actionTypes.UPDATE_TABLE_ROW,
       index: rowIndex,
       field: id,
       value,
@@ -84,11 +85,12 @@ const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, 
     });
   };
 
-  const isCellValid = () => {
+  const isCellValid = useCallback(() => {
     if (rowIndex === tableSize - 1 || !touched) { return true; }
 
     return !required || (required && fieldValue);
-  };
+  }, [fieldValue, required, rowIndex, tableSize, touched]);
+
   const isValid = isCellValid();
 
   const fieldTestAttr = `suggest-${rowIndex}-${id}`;
@@ -105,14 +107,15 @@ const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, 
 
     return items;
   }, [options, type]);
-  const basicProps = {
+
+  const basicProps = useMemo(() => ({
     isValid,
     id: fieldTestAttr,
     errorMessages,
     disabled: readOnly,
     options: translatedOptions,
     value: fieldValue,
-  };
+  }), [errorMessages, fieldTestAttr, fieldValue, isValid, readOnly, translatedOptions]);
 
   if (type === 'select') {
     return (
@@ -165,7 +168,7 @@ const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, 
 
   return null;
 };
-export default function RefreshHeaders({
+export default function TableRow({
   rowValue,
   rowIndex,
   tableSize,
@@ -209,7 +212,7 @@ export default function RefreshHeaders({
           data-test={`deleteTableRow-${rowIndex}`}
           aria-label="delete"
           onClick={() => {
-            setTableState({ type: 'remove', index: rowIndex });
+            setTableState({ type: actionTypes.REMOVE_TABLE_ROW, index: rowIndex });
           }}
           className={classes.margin}>
           <DeleteIcon fontSize="small" />

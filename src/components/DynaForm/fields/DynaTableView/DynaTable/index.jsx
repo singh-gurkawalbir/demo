@@ -48,20 +48,21 @@ export const generateRow = value => ({
   value,
 });
 const initializeTableState = optionsMap => value => {
-  if (!value || !value.length) {
-    const value = generateEmptyRow(optionsMap);
+  const emptyRowValue = generateEmptyRow(optionsMap);
+  const emptyRow = generateRow(emptyRowValue);
 
+  if (!value || !value.length) {
     return {
 
       touched: false,
       tableStateValue: [
-        generateRow(value),
+        emptyRow,
       ]};
   }
 
   return {
     touched: false,
-    tableStateValue: value.map(val => generateRow(val)),
+    tableStateValue: [...value.map(val => generateRow(val)), emptyRow],
   };
 };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
-import Spinner from '../../../../Spinner';
-import RefreshIcon from '../../../../icons/RefreshIcon';
+import Spinner from '../../../../../Spinner';
+import RefreshIcon from '../../../../../icons/RefreshIcon';
 
 const useStyles = makeStyles(theme => ({
   header: {

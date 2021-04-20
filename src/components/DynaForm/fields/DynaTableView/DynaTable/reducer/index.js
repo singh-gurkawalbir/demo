@@ -1,5 +1,8 @@
 import produce from 'immer';
 import { generateRow} from '..';
+import actionTypes from '../actionTypes';
+
+const isAllValuesEnteredForARow = rowValue => Object.values(rowValue).every(val => !!val);
 
 export default function reducer(state, action) {
   const {
@@ -15,11 +18,11 @@ export default function reducer(state, action) {
 
     // eslint-disable-next-line default-case
     switch (type) {
-      case 'remove':
+      case actionTypes.REMOVE_TABLE_ROW:
         tableStateValue.splice(index, 1);
         draft.touched = true;
         break;
-      case 'updateField':
+      case actionTypes.UPDATE_TABLE_ROW:
         draft.touched = true;
 
         if (onRowChange) {
@@ -30,7 +33,7 @@ export default function reducer(state, action) {
         }
 
         // eslint-disable-next-line no-case-declarations
-        const isAllValuesEntered = Object.values(tableStateValue[index].value).every(val => !!val);
+        const isAllValuesEntered = isAllValuesEnteredForARow(tableStateValue[index].value);
         // eslint-disable-next-line no-case-declarations
         const isLastRowEmpty = Object.values(tableStateValue[tableStateValue.length - 1].value).every(val => !val);
 
@@ -50,7 +53,9 @@ export default function reducer(state, action) {
 }
 
 export const preSubmit = (stateValue = [], optionsMap) =>
-  stateValue.map(val => val.value).filter(val => {
+  stateValue.map(val => val.value).filter((val, index) => {
+    // we always remove the last row because we pre add one in the initial state
+    if (index === stateValue.length - 1) return false;
     let allRequiredFieldsPresent = true;
 
     optionsMap.forEach(op => {
