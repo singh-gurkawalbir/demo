@@ -58,7 +58,7 @@ export default function SalesforceQualificationCriteriaPanel({ editorId }) {
     return {
       filters: e.filters || defaultFilters,
       connectionId: e.connectionId,
-      sObjectType: e.sObjectType,
+      sObjectType: e.customOptions?.sObjectType,
     };
   }, shallowEqual);
 

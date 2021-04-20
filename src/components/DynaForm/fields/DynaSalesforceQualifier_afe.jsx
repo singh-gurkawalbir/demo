@@ -51,6 +51,7 @@ export default function DynaSalesforceQualifier_afe(props) {
     options,
     formKey,
     resourceType,
+    connectionId,
   } = props;
   const dispatch = useDispatch();
   const history = useHistory();
@@ -73,10 +74,11 @@ export default function DynaSalesforceQualifier_afe(props) {
       // hence adding dummy data to stop the saga from requesting the same
       data: 'dummy data',
       customOptions: options,
+      connectionId,
     }));
 
     history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, editorId, flowId, formKey, handleSave, history, id, match.url, resourceId, resourceType, options]);
+  }, [dispatch, editorId, flowId, formKey, handleSave, history, id, match.url, resourceId, resourceType, options, connectionId]);
 
   return (
     <div className={classes.dynaSalesforceQualifierWrapper}>
