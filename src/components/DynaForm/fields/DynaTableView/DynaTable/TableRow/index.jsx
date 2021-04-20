@@ -179,6 +179,7 @@ export default function TableRow({
   disableDeleteRows,
 }) {
   const classes = useStyles();
+  const isNotLastRow = rowIndex !== tableSize - 1;
 
   return (
     <div className={classes.bodyElementsWrapper} data-test={`row-${rowIndex}`}>
@@ -202,7 +203,7 @@ export default function TableRow({
         )}
 
       </div>
-      {rowIndex !== tableSize - 1 && (
+      {isNotLastRow && (
       <div
         key="delete_button"
         className={classes.dynaTableActions}>
