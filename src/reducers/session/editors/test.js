@@ -1432,6 +1432,45 @@ describe('editors reducers', () => {
 
       expect(newState).toEqual(expectedState);
     });
+    test('should update save status and reset original default data only if its already present', () => {
+      const options = {
+        id: 'rdbms.query',
+        editorType: 'sql',
+        stage: 'flowInput',
+        supportsDefaultData: true,
+        rule: 'some query',
+        originalRule: 'some query',
+        data: '{"id": 123, "name": "Angel"}',
+        originalData: '{"id": 123, "name": "Angel"}',
+        defaultData: '{"id": {"default": {}}}',
+        originalDefaultData: '{}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('rdbmsquery1', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.saveComplete('rdbmsquery1')
+      );
+      const expectedState = {
+        rdbmsquery1: {
+          id: 'rdbms.query',
+          editorType: 'sql',
+          stage: 'flowInput',
+          supportsDefaultData: true,
+          rule: 'some query',
+          originalRule: 'some query',
+          data: '{"id": 123, "name": "Angel"}',
+          originalData: '{"id": 123, "name": "Angel"}',
+          defaultData: '{"id": {"default": {}}}',
+          originalDefaultData: '{"id": {"default": {}}}',
+          saveStatus: 'success',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
     test('should not modify any other editor state', () => {
       const initialState = {
         query: {id: 'query'},
