@@ -37,6 +37,14 @@ export default function Invite(props) {
   }, [dispatch]);
 
   useEffect(() => {
+    dispatch(actions.resource.startCollectionPoll('integrations'));
+
+    return (() => {
+      dispatch(actions.resource.stopCollectionPoll('integrations'));
+    });
+  }, [dispatch]);
+
+  useEffect(() => {
     clearPreview();
   }, [clearPreview]);
   const data = useSelector(
@@ -95,7 +103,7 @@ export default function Invite(props) {
 
   // TODO: Ashok, There is  no description in the new mock please check.
 
-  const formKey = useFormInitWithPermissions({ fieldMeta });
+  const formKey = useFormInitWithPermissions({ fieldMeta, remount: integrations.length });
 
   return (
     <>

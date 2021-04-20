@@ -599,6 +599,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'restlet.once.booleanField',
     'restlet.type',
     '_connectionId',
+    'settings',
   ],
   imports: [
     '_connectionId',
@@ -614,6 +615,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'salesforce.idLookup.whereClause',
     'salesforce.upsert.externalIdField',
     'salesforce.lookups',
+    'settings',
   ],
   flows: [
     '_runNextFlowIds',
