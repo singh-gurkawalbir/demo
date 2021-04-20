@@ -11,6 +11,30 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const optionsMap = [
+  {
+    id: 'fieldName',
+    label: 'Field Description',
+    type: 'input',
+    required: true,
+    supportsRefresh: false,
+  },
+  {
+    id: 'path',
+    label: 'Path',
+    required: false,
+    type: 'input',
+    supportsRefresh: false,
+  },
+  {
+    id: 'regexExpression',
+    label: 'Regex',
+    required: false,
+    type: 'input',
+    supportsRefresh: false,
+  },
+];
+
 export default function DynaXMLMapper(props) {
   const classes = useStyles();
   const { onFieldChange, properties = {}, value, id } = props;
@@ -38,29 +62,6 @@ export default function DynaXMLMapper(props) {
   const handlePathUpdate = useCallback((id2, val) => {
     setPath(val);
   }, []);
-  const optionsMap = [
-    {
-      id: 'fieldName',
-      label: 'Field Description',
-      type: 'input',
-      required: true,
-      supportsRefresh: false,
-    },
-    {
-      id: 'path',
-      label: 'Path',
-      required: false,
-      type: 'input',
-      supportsRefresh: false,
-    },
-    {
-      id: 'regexExpression',
-      label: 'Regex',
-      required: false,
-      type: 'input',
-      supportsRefresh: false,
-    },
-  ];
 
   return (
     <>

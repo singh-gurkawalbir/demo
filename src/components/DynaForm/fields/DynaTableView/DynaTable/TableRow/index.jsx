@@ -111,16 +111,16 @@ const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, 
   const basicProps = useMemo(() => ({
     isValid,
     id: fieldTestAttr,
-    errorMessages,
     disabled: readOnly,
     options: translatedOptions,
-    value: fieldValue,
-  }), [errorMessages, fieldTestAttr, fieldValue, isValid, readOnly, translatedOptions]);
+  }), [fieldTestAttr, isValid, readOnly, translatedOptions]);
 
   if (type === 'select') {
     return (
       <DynaSelect
         {...basicProps}
+        value={fieldValue}
+        errorMessages={errorMessages}
         onFieldChange={(id, value) => {
           handleUpdate(value);
         }}
@@ -136,13 +136,13 @@ const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, 
         <TextField
           {...basicProps}
           variant="filled"
-          value={fieldValue || 0}
+          value={fieldValue}
           helperText={
             !isValid && errorMessages
           }
           error={!isValid}
           type="number"
-          onBlur={evt => {
+          onChange={evt => {
             handleUpdate(evt.target.value);
           }}
         />
@@ -156,6 +156,8 @@ const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, 
         className={clsx(classes.childHeader, classes.childRow)}>
         <DynaTypeableSelect
           {...basicProps}
+          errorMessages={errorMessages}
+          value={fieldValue}
           labelName="label"
           valueName="value"
           onBlur={(id, value) => {

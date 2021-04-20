@@ -4,18 +4,19 @@ import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import DynaTableView from './DynaTable';
 
+const addSupportsRefreshToOptions = option => ({
+  ...option,
+  supportsRefresh: [
+    'paymentAccount',
+    'subsidiary',
+    'debitAccount',
+    'depositAccount',
+  ].includes(option.id),
+});
 export default function DynaMultiSubsidiaryMapping(props) {
   const { optionsMap, _integrationId, id } = props;
-  const addSupportsRefreshToOptions = option => ({
-    ...option,
-    supportsRefresh: [
-      'paymentAccount',
-      'subsidiary',
-      'debitAccount',
-      'depositAccount',
-    ].includes(option.id),
-  });
-  const modifiedOptionsMap = optionsMap.map(addSupportsRefreshToOptions);
+
+  const modifiedOptionsMap = useMemo(() => optionsMap.map(addSupportsRefreshToOptions), [optionsMap]);
   const dispatch = useDispatch();
   const { isLoading, shouldReset, data: metadata, fieldType } = useSelector(
     state =>

@@ -41,7 +41,6 @@ export default function DynaStaticMapWidget(props) {
   const classes = useStyles();
   const [allowFailures, setAllowFailures] = useState(props.allowFailures);
   const [defaultVal, setDefaultVal] = useState(defaultValue);
-  const [initComplete, setInitComplete] = useState(false);
   const [showDefault, setShowDefault] = useState(false);
   const getRadioValue = ({ allowFailures, defaultValue }) => {
     if (allowFailures) {
@@ -62,17 +61,14 @@ export default function DynaStaticMapWidget(props) {
   );
 
   useEffect(() => {
-    if (!initComplete) {
-      onFieldChange(id, { map, default: defaultVal, allowFailures }, true);
-      setInitComplete(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allowFailures, defaultVal, id, initComplete, map]);
+    onFieldChange(id, { map, default: defaultVal, allowFailures }, true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const computedValue = Object.keys(map || {}).map(key => ({
+  const computedValue = useMemo(() => Object.keys(map || {}).map(key => ({
     extracts: key,
     generates: map[key],
-  }));
+  })), [map]);
   const dispatch = useDispatch();
   const optionsMap = [
     {
@@ -95,25 +91,34 @@ export default function DynaStaticMapWidget(props) {
       supportsRefresh: supportsGeneratesRefresh,
     },
   ];
-  const { isLoading, shouldReset, data: metadata, fieldType } = useSelector(
+  const { isLoading, shouldReset, data, fieldType } = useSelector(
     state =>
       selectors.connectorMetadata(state, id, null, _integrationId, optionsMap)
   );
-  let defaultOptions = Array.isArray(generates) ? generates.filter(Boolean).map(val => ({
-    value: val.id,
-    label: val.text,
-  })) : [];
-  // TODO: useMemo for the below code
+  const defaultOptions = useMemo(() => {
+    if (data) {
+      return data.generates.filter(Boolean).map(val => ({
+        value: val.id,
+        label: val.text,
+      }));
+    }
 
-  if (metadata) {
-    metadata.optionsMap = [...optionsMap];
-    metadata.optionsMap[0].options = metadata.extracts;
-    metadata.optionsMap[1].options = metadata.generates;
-    defaultOptions = metadata.generates.filter(Boolean).map(val => ({
+    return Array.isArray(generates) ? generates.filter(Boolean).map(val => ({
       value: val.id,
       label: val.text,
-    }));
-  }
+    })) : [];
+  }, [data, generates]);
+  // TODO: useMemo for the below code
+
+  const metadata = useMemo(() => {
+    if (metadata) {
+      data.optionsMap = [...optionsMap];
+      data.optionsMap[0].options = data.extracts;
+      data.optionsMap[1].options = data.generates;
+    }
+
+    return data;
+  }, [data, optionsMap]);
 
   const handleRefreshClick = useCallback(
     fieldId => {
@@ -160,12 +165,14 @@ export default function DynaStaticMapWidget(props) {
     });
   };
 
-  if (showDefault !== (radioState === 'defaultLookup')) setShowDefault(radioState === 'defaultLookup');
+  useEffect(() => {
+    if (showDefault !== (radioState === 'defaultLookup')) setShowDefault(radioState === 'defaultLookup');
+  }, [radioState, showDefault]);
 
-  const handleDefaultValueChange = (defaultId, val) => {
+  const handleDefaultValueChange = useCallback((defaultId, val) => {
     setDefaultVal(val);
     onFieldChange(id, { map, default: val, allowFailures });
-  };
+  }, [allowFailures, id, map, onFieldChange]);
 
   const isLoadingMap = useMemo(() => ({[fieldType]: isLoading}), [fieldType, isLoading]);
 
