@@ -16,6 +16,7 @@ import RunFlowButton from '../../../../components/RunFlowButton';
 import StatusCircle from '../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
+import { emptyObject } from '../../../../utils/constants';
 import useBottomDrawer from '../../drawers/BottomDrawer/useBottomDrawer';
 import { isNewFlowFn, useHandleExitClick, usePatchFlow, usePushOrReplaceHistory } from '../../hooks';
 import LastRun from '../../LastRun';
@@ -43,7 +44,7 @@ const CalcPageBarTitle = ({integrationId, flowId}) => {
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  ).merged;
+  )?.merged || emptyObject;
 
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -81,7 +82,7 @@ const CalcPageBarSubtitle = ({flowId}) => {
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  ).merged;
+  )?.merged || emptyObject;
 
   const isNewFlow = isNewFlowFn(flowId);
 

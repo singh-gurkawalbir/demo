@@ -79,7 +79,8 @@ function SubRecordDrawer(props) {
     selectors.makeResourceDataSelector,
     'imports',
     resourceContext.resourceId
-  ).merged.netsuite_da;
+  // eslint-disable-next-line camelcase
+  )?.merged?.netsuite_da;
   const fieldMeta = getFormFieldMetadata(
     recordTypeLabel,
     subrecords,

@@ -13,7 +13,7 @@ import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermiss
 import { selectors } from '../../../../reducers';
 import { isJsonString } from '../../../../utils/string';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
-import { STANDALONE_INTEGRATION, USER_ACCESS_LEVELS } from '../../../../utils/constants';
+import { emptyObject, STANDALONE_INTEGRATION, USER_ACCESS_LEVELS } from '../../../../utils/constants';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import ButtonGroup from '../../../../components/ButtonGroup';
 import LoadResources from '../../../../components/LoadResources';
@@ -30,7 +30,7 @@ function Settings({
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  ).merged;
+  )?.merged || emptyObject;
   const dispatch = useDispatch();
   const history = useHistory();
   const [remountKey, setRemountKey] = useState(1);
