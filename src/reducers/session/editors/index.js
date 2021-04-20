@@ -254,9 +254,7 @@ export default function reducer(state = {}, action) {
 
         // reset originalDefaultData also if already exists in state (for dirty check)
         if (editor.originalDefaultData) {
-          const originalData = editor.defaultData;
-
-          editor.originalDefaultData = originalData;
+          editor.originalDefaultData = editor.defaultData;
         }
 
         break;
