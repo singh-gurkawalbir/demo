@@ -19,7 +19,7 @@ export function getFilterRuleId(rule) {
   return rule.id.split('_rule_')[1];
 }
 
-export function convertSalesforceLookupFilterExpression(expression, data = []) {
+export function convertSalesforceLookupFilterExpression(expression, data = [], ssLinkedConnectionId) {
   function generateRules(expression) {
     let toReturn = {};
     let value = expression;
@@ -61,10 +61,17 @@ export function convertSalesforceLookupFilterExpression(expression, data = []) {
       rules: [],
     };
   }
-
-  const updatedExpression = expression
+  const updatedExpression = ssLinkedConnectionId ? expression.replace(/"and"/g, '"AND"').replace(/"or"/g, '"OR"').replace(/\[/g, '(').replace(/\]/g, ')')
+    .replace(/"/g, '')
+    .replace(/,/g, ' ')
+    .replace(/[a-zA-Z.]+\)/g, '{{{$&}}}')
+    .replace(/\)}}}/g, '}}})')
     .replace(/{{{/g, "'{{{")
-    .replace(/}}}\)/g, "}}}')");
+    .replace(/}}}\)/g, "}}}')")
+    : expression
+      .replace(/{{{/g, "'{{{")
+      .replace(/}}}\)/g, "}}}')");
+
   let whereClause;
 
   try {

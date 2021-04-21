@@ -59,13 +59,13 @@ export default function SalesforceLookupFilterPanel({
   const dispatch = useDispatch();
   const patchEditor = useCallback(
     value => {
+      // convert value to suiteScript supported format if its a ss resource
+      const formattedVal = ssLinkedConnectionId ? convertValueToSuiteScriptSupportedExpression(value) : value;
+
       if (editorId) {
-        dispatch(actions.editor.patchRule(editorId, value || ''));
+        dispatch(actions.editor.patchRule(editorId, formattedVal || ''));
       }
       if (onFieldChange) {
-        // convert value to suiteScript supported format if its a ss resource
-        const formattedVal = ssLinkedConnectionId ? convertValueToSuiteScriptSupportedExpression(value) : value;
-
         onFieldChange(id, formattedVal);
       }
     },
@@ -90,7 +90,7 @@ export default function SalesforceLookupFilterPanel({
   );
 
   useEffect(() => {
-    const qbRules = convertSalesforceLookupFilterExpression(rule, data);
+    const qbRules = convertSalesforceLookupFilterExpression(rule, data, ssLinkedConnectionId);
 
     if (
         qbRules?.rules?.length === 1 &&
@@ -101,8 +101,7 @@ export default function SalesforceLookupFilterPanel({
 
     setRules(qbRules);
     setRulesState(generateRulesState(qbRules));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [rule, data, ssLinkedConnectionId]);
 
   useEffect(() => {
     if (rules && filters.length) {
