@@ -75,7 +75,7 @@ const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, 
 
   // Update handler. Listens to change in any field and dispatches action to update state
 
-  const handleUpdate = value => {
+  const handleUpdate = useCallback(value => {
     setTableState({
       type: actionTypes.UPDATE_TABLE_ROW,
       index: rowIndex,
@@ -83,7 +83,7 @@ const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, 
       value,
       onRowChange,
     });
-  };
+  }, [id, onRowChange, rowIndex, setTableState]);
 
   const isCellValid = useCallback(() => {
     if (rowIndex === tableSize - 1 || !touched) { return true; }
@@ -108,6 +108,13 @@ const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, 
     return items;
   }, [options, type]);
 
+  const onFieldChange = useCallback((id, value) => {
+    handleUpdate(value);
+  }, [handleUpdate]);
+
+  const onNumberChange = useCallback(evt => {
+    handleUpdate(evt.target.value);
+  }, [handleUpdate]);
   const basicProps = useMemo(() => ({
     isValid,
     id: fieldTestAttr,
@@ -121,9 +128,7 @@ const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, 
         {...basicProps}
         value={fieldValue}
         errorMessages={errorMessages}
-        onFieldChange={(id, value) => {
-          handleUpdate(value);
-        }}
+        onFieldChange={onFieldChange}
         className={clsx(classes.root, classes.menuItemsWrapper)}
     />
     );
@@ -142,9 +147,7 @@ const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, 
           }
           error={!isValid}
           type="number"
-          onChange={evt => {
-            handleUpdate(evt.target.value);
-          }}
+          onChange={onNumberChange}
         />
       </div>
     );
@@ -160,9 +163,7 @@ const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, 
           value={fieldValue}
           labelName="label"
           valueName="value"
-          onBlur={(id, value) => {
-            handleUpdate(value);
-          }}
+          onBlur={onFieldChange}
     />
       </div>
     );
@@ -170,6 +171,33 @@ const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, 
 
   return null;
 };
+
+const RowCellMemo = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, onRowChange}) => useMemo(() => (
+  <RowCell
+    fieldValue={fieldValue}
+    op={op}
+    touched={touched}
+    rowIndex={rowIndex}
+    tableSize={tableSize}
+    setTableState={setTableState}
+    onRowChange={onRowChange}
+  />
+), [fieldValue, onRowChange, op, rowIndex, setTableState, tableSize, touched]);
+
+const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes}) =>
+  useMemo(() => (
+    <ActionButton
+      tooltip=""
+      disabled={disableDeleteRows}
+      data-test={`deleteTableRow-${rowIndex}`}
+      aria-label="delete"
+      onClick={() => {
+        setTableState({ type: actionTypes.REMOVE_TABLE_ROW, index: rowIndex });
+      }}
+      className={classes.margin}>
+      <DeleteIcon fontSize="small" />
+    </ActionButton>
+  ), [classes.margin, disableDeleteRows, rowIndex, setTableState]);
 export default function TableRow({
   rowValue,
   rowIndex,
@@ -191,7 +219,7 @@ export default function TableRow({
             key={op.id}
             data-test={`col-${index}`}
           >
-            <RowCell
+            <RowCellMemo
               op={op}
               fieldValue={rowValue[op.id]}
               touched={touched}
@@ -209,17 +237,12 @@ export default function TableRow({
       <div
         key="delete_button"
         className={classes.dynaTableActions}>
-        <ActionButton
-          tooltip=""
-          disabled={disableDeleteRows}
-          data-test={`deleteTableRow-${rowIndex}`}
-          aria-label="delete"
-          onClick={() => {
-            setTableState({ type: actionTypes.REMOVE_TABLE_ROW, index: rowIndex });
-          }}
-          className={classes.margin}>
-          <DeleteIcon fontSize="small" />
-        </ActionButton>
+        <ActionButtonMemo
+          disableDeleteRows={disableDeleteRows}
+          rowIndex={rowIndex}
+          setTableState={setTableState}
+          classes={classes}
+        />
       </div>
       )}
     </div>
