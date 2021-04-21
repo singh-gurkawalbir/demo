@@ -19,20 +19,15 @@ import FlowBuilderBody from './FlowBuilderBody';
 import Redirection from './Redirection';
 
 function FBComponent({flowId, integrationId, childId}) {
-  const [tabValue, setTabValue] = useState(0);
-
   return (
     <>
       <FlowBuilderBody
         flowId={flowId}
         integrationId={integrationId}
-        setTabValue={setTabValue}
       />
 
       <BottomDrawer
         flowId={flowId}
-        tabValue={tabValue}
-        setTabValue={setTabValue}
         integrationId={integrationId}
         childId={childId}
       />

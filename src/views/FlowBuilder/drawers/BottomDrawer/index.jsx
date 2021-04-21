@@ -1,7 +1,7 @@
 /* eslint-disable no-plusplus */
 import clsx from 'clsx';
 import { makeStyles, Drawer, IconButton, Tab, Tabs, useTheme } from '@material-ui/core';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
@@ -128,15 +128,22 @@ function TabPanel({ children, value, index, className }) {
     </div>
   );
 }
-export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
+export default function BottomDrawer({
+  flowId,
+  // setTabValue,
+  // tabValue,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
+  const drawerRef = useRef(null);
+  const [tabValue, setTabValue] = useState(0);
   const [isDragging, setIsDragging] = useState(null);
   const [startY, setStartY] = useState(0);
   const [dragY, setDragY] = useState(0);
   const [drawerHeight, setDrawerHeight] = useBottomDrawer();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+  const bottomDrawerActiveTab = useSelector(state => selectors.bottomDrawerActiveTab(state));
   const isAnyFlowConnectionOffline = useSelectorMemo(selectors.mkIsAnyFlowConnectionOffline, flowId);
   const isFlowRunInProgress = useSelector(state =>
     !!selectors.getInProgressLatestJobs(state, flowId).length
@@ -196,28 +203,33 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
 
   const handleTabChange = useCallback(
     (event, newValue) => {
-      setTabValue(newValue);
+      const tabContainer = document.querySelector('[role="tablist"]');
+      const newSelectedTabId = tabContainer.children[newValue]?.id;
+
+      dispatch(actions.bottomDrawer.setActiveTab(newSelectedTabId));
 
       if (drawerHeight < minDrawerHeight) setDrawerHeight(minDrawerHeight);
     },
-    [setDrawerHeight, setTabValue, drawerHeight]
+    [dispatch, drawerHeight, setDrawerHeight]
   );
   const handleScriptLogsClose = useCallback(
     scriptId => event => {
       event.stopPropagation();
       setTabValue(2);
+      dispatch(actions.bottomDrawer.setActiveTab('scripts'));
       dispatch(actions.logs.scripts.clear({scriptId, flowId}));
     },
-    [dispatch, flowId, setTabValue]
+    [dispatch, flowId]
   );
 
   const handleDebugLogsClose = useCallback(
     connectionId => event => {
       event.stopPropagation();
       setTabValue(1);
+      dispatch(actions.bottomDrawer.setActiveTab('connections'));
       dispatch(actions.logs.connections.clear({connectionId}));
     },
-    [dispatch, setTabValue]
+    [dispatch]
   );
 
   useEffect(() =>
@@ -251,7 +263,7 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
   [isDragging]);
 
   const tabProps = index => ({
-    id: `tab-${index}`, 'aria-controls': `tabpanel-${index}`,
+    'aria-controls': `tabpanel-${index}`,
   });
 
   const drawerClasses = useMemo(() => ({ paper: clsx(classes.drawerPaper, {
@@ -287,11 +299,21 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
 
   let tabIndex = 0;
   let tabContentIndex = 0;
+  const selectedTab = document.getElementById(bottomDrawerActiveTab);
+
+  useEffect(() => {
+    if (selectedTab) {
+      const newTabValue = Array.from(selectedTab.parentNode.children).indexOf(selectedTab);
+
+      setTabValue(newTabValue);
+    }
+  }, [dispatch, selectedTab]);
 
   return (
     <div>
       <Drawer
         open
+        ref={drawerRef}
         classes={drawerClasses}
         PaperProps={drawerPaperProps}
         variant="persistent"
@@ -310,16 +332,19 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
             aria-label="scrollable auto tabs example">
             <Tab
               {...tabProps(tabIndex++)}
+              id="dashboard"
               icon={<DashboardIcon />}
               label={dashboardLabel} />
             {isUserInErrMgtTwoDotZero && (
               <Tab
+                id="run-history"
                 {...tabProps(tabIndex++)}
                 icon={<RunHistoryIcon />}
                 label="Run history" />
             )}
             <Tab
               {...tabProps(tabIndex++)}
+              id="connections"
               icon={
                 isAnyFlowConnectionOffline ? (
                   <WarningIcon className={classes.connectionWarning} />
@@ -330,13 +355,14 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
               label="Connections"
             />
             {flowScripts?.length &&
-            <Tab {...tabProps(tabIndex++)} icon={<ScriptsIcon />} label="Scripts" />}
-            <Tab {...tabProps(tabIndex++)} icon={<AuditLogIcon />} label="Audit log" />
+            <Tab {...tabProps(tabIndex++)} icon={<ScriptsIcon />} label="Scripts" id="scripts" />}
+            <Tab {...tabProps(tabIndex++)} icon={<AuditLogIcon />} label="Audit log" id="audit-logs" />
 
             {flowScriptsWithLogEntry.map(script => (
               <Tab
                 className={classes.customTab}
                 // TODO pass correct tabProp Index
+                id={`script-logs-${script.scriptId}`}
                 {...tabProps(tabIndex++)}
                 icon={<AuditLogIcon />}
                 key={script.scriptId}
@@ -362,6 +388,7 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
                   (
                     <Tab
                       className={classes.customTab}
+                      id={`connection-logs-${connection._id}`}
                       {...tabProps(tabIndex++)}
                       icon={<DebugIcon />}
                       key={connection._id}
