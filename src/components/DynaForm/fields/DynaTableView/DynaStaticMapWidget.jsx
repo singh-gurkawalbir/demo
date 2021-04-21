@@ -112,7 +112,7 @@ export default function DynaStaticMapWidget(props) {
   // TODO: useMemo for the below code
 
   const metadata = useMemo(() => {
-    if (metadata) {
+    if (data) {
       data.optionsMap = [...optionsMap];
       data.optionsMap[0].options = data.extracts;
       data.optionsMap[1].options = data.generates;
@@ -146,7 +146,7 @@ export default function DynaStaticMapWidget(props) {
   const handleCleanup = useCallback(() => {
     dispatch(actions.connectors.clearMetadata(id, _integrationId));
   }, [_integrationId, dispatch, id]);
-  const handleAllowFailuresClick = (radioId, value) => {
+  const handleAllowFailuresClick = useCallback((radioId, value) => {
     setRadioState(value);
     setAllowFailures(value !== 'allowFailures');
     let defValue = defaultVal;
@@ -164,7 +164,7 @@ export default function DynaStaticMapWidget(props) {
       default: defValue,
       allowFailures: value !== 'allowFailures',
     });
-  };
+  }, [defaultVal, id, map, onFieldChange]);
 
   useEffect(() => {
     if (showDefault !== (radioState === 'defaultLookup')) setShowDefault(radioState === 'defaultLookup');
