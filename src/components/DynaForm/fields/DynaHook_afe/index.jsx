@@ -70,7 +70,7 @@ export default function DynaHook_afe({
   const [hookState, setHookState] = useReducer(hookReducer, {showCreateScriptDialog: false, tempScriptId: generateNewId(), isNewScriptIdAssigned: false });
 
   const createdScriptId = useSelector(state =>
-    selectors.createdResourceId(state, hookState?.tempScriptId)
+    selectors.createdResourceId(state, hookState.tempScriptId)
   );
   const handleSave = useCallback(editorValues => {
     const { scriptId, entryFunction } = editorValues.rule;
@@ -118,19 +118,19 @@ export default function DynaHook_afe({
   const handleCreateScriptSave = useCallback(values => {
     const options = { dispatch, isNew: true };
 
-    saveScript({ ...values, scriptId: hookState?.tempScriptId }, options, { flowId });
-  }, [dispatch, flowId, hookState?.tempScriptId]);
+    saveScript({ ...values, scriptId: hookState.tempScriptId }, options, { flowId });
+  }, [dispatch, flowId, hookState.tempScriptId]);
 
   const handleCreateScriptDialogClose = useCallback(() => {
     setHookState({ type: 'setShowCreateScriptDialog', value: false });
   }, []);
 
   useEffect(() => {
-    if (createdScriptId && !hookState?.isNewScriptIdAssigned) {
+    if (createdScriptId && !hookState.isNewScriptIdAssigned) {
       onFieldChange(id, { ...value, _scriptId: createdScriptId }, true);
       setHookState({ type: 'setIsNewScriptIdAssigned', value: true });
     }
-  }, [createdScriptId, handleEditorClick, hookState?.isNewScriptIdAssigned, id, onFieldChange, value]);
+  }, [createdScriptId, handleEditorClick, hookState.isNewScriptIdAssigned, id, onFieldChange, value]);
 
   // Below code is to make myapi resource form invalid if script or function is
   // not provided. If form is invalid, user can not save the resource.
@@ -171,11 +171,11 @@ export default function DynaHook_afe({
   return (
     <>
       <LoadResources resources="scripts">
-        {hookState?.showCreateScriptDialog && (
+        {hookState.showCreateScriptDialog && (
         <CreateScriptDialog
           onClose={handleCreateScriptDialogClose}
           onSave={handleCreateScriptSave}
-          scriptId={hookState?.tempScriptId}
+          scriptId={hookState.tempScriptId}
           flowId={flowId}
         />
         )}
