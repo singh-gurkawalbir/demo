@@ -69,8 +69,8 @@ const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
 }));
 
 Object.freeze(TYPE_TO_ERROR_MESSAGE);
-const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, onRowChange}) => {
-  const {id, readOnly, required, options, type } = op;
+const RowCell = ({ fieldValue, op, isValid, rowIndex, setTableState, onRowChange}) => {
+  const {id, readOnly, options, type } = op;
   const classes = useStyles();
 
   // Update handler. Listens to change in any field and dispatches action to update state
@@ -84,14 +84,6 @@ const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, 
       onRowChange,
     });
   }, [id, onRowChange, rowIndex, setTableState]);
-
-  const isCellValid = useCallback(() => {
-    if (rowIndex === tableSize - 1 || !touched) { return true; }
-
-    return !required || (required && fieldValue);
-  }, [fieldValue, required, rowIndex, tableSize, touched]);
-
-  const isValid = isCellValid();
 
   const fieldTestAttr = `suggest-${rowIndex}-${id}`;
   const errorMessages = TYPE_TO_ERROR_MESSAGE[type];
@@ -172,17 +164,28 @@ const RowCell = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, 
   return null;
 };
 
-const RowCellMemo = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, onRowChange}) => useMemo(() => (
-  <RowCell
-    fieldValue={fieldValue}
-    op={op}
-    touched={touched}
-    rowIndex={rowIndex}
-    tableSize={tableSize}
-    setTableState={setTableState}
-    onRowChange={onRowChange}
+const RowCellMemo = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, onRowChange}) => {
+  const {required } = op;
+
+  const isCellValid = useCallback(() => {
+    if (rowIndex === tableSize - 1 || !touched) { return true; }
+
+    return !required || (required && fieldValue);
+  }, [fieldValue, required, rowIndex, tableSize, touched]);
+
+  const isValid = isCellValid();
+
+  return useMemo(() => (
+    <RowCell
+      fieldValue={fieldValue}
+      op={op}
+      isValid={isValid}
+      rowIndex={rowIndex}
+      setTableState={setTableState}
+      onRowChange={onRowChange}
   />
-), [fieldValue, onRowChange, op, rowIndex, setTableState, tableSize, touched]);
+  ), [fieldValue, isValid, onRowChange, op, rowIndex, setTableState]);
+};
 
 const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes}) =>
   useMemo(() => (
