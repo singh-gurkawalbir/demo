@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 import ResourceDrawer from '../../components/drawer/Resource';

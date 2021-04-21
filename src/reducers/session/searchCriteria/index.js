@@ -1,4 +1,5 @@
 import produce from 'immer';
+import shortid from 'shortid';
 import actionTypes from '../../../actions/types';
 
 const emptySet = [];
@@ -17,18 +18,14 @@ export default function reducer(state = {}, action) {
 
     switch (type) {
       case actionTypes.SEARCH_CRITERIA.INIT: {
-        const initChangeIdentifier =
-          (draft[id] && draft[id].initChangeIdentifier) || 0;
-
         draft[id] = {
           searchCriteria: (value || []).map(m => {
             const searchValue2Enabled = !!(
               m.operator && enableSearchValue2(m.operator)
             );
 
-            return { ...m, rowIdentifier: 0, searchValue2Enabled };
+            return { ...m, rowIdentifier: 0, searchValue2Enabled, key: shortid.generate() };
           }),
-          initChangeIdentifier: initChangeIdentifier + 1,
         };
         break;
       }
@@ -68,6 +65,7 @@ export default function reducer(state = {}, action) {
           const newObj = {
             [field]: value,
             rowIdentifier: 0,
+            key: shortid.generate(),
           };
 
           if (field === 'operator') {
@@ -88,7 +86,6 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.SEARCH_CRITERIA.DELETE: {
-        draft[id].initChangeIdentifier += 1;
         draft[id].searchCriteria.splice(index, 1);
 
         break;

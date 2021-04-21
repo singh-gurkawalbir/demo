@@ -57,9 +57,7 @@ export default function SearchCriteriaEditor(props) {
   const { data: fields, status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey);
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { searchCriteria = [], initChangeIdentifier = 0 } = useSelector(state =>
-    selectors.searchCriteria(state, editorId)
-  );
+  const searchCriteria = useSelector(state => selectors.searchCriteria(state, editorId).searchCriteria);
   const handleInit = useCallback(() => {
     dispatch(actions.searchCriteria.init(editorId, value));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -119,16 +117,16 @@ export default function SearchCriteriaEditor(props) {
           </div>
         ))}
       </div>
-      <div key={initChangeIdentifier} className={classes.criteriaBody}>
+      <div className={classes.criteriaBody}>
         {tableData.map(r => (
-          <div className={classes.rowContainer} key={r.index}>
+          <div className={classes.rowContainer} key={r.key}>
             <div className={classes.innerRow}>
               <div
                 className={clsx(classes.childHeader, {
                   [classes.disabled]: disabled,
                 })}>
                 <DynaTypeableSelect
-                  key={`field-${initChangeIdentifier}-${r.rowIdentifier}`}
+                  key={`field-${r.rowIdentifier}`}
                   id={`field-${r.index}`}
                   labelName="label"
                   valueName="value"
@@ -148,7 +146,7 @@ export default function SearchCriteriaEditor(props) {
                   [classes.disabled]: disabled,
                 })}>
                 <DynaSelect
-                  key={`operator-${initChangeIdentifier}-${r.rowIdentifier}`}
+                  key={`operator-${r.rowIdentifier}`}
                   id={`operator-${r.index}`}
                   value={r.operator}
                   options={[{ items: operators.filter(op => (operatorsByFieldType[r.fieldType] || operatorsByFieldType.text).includes(op.value)) }]}
@@ -166,7 +164,7 @@ export default function SearchCriteriaEditor(props) {
                 })}>
                 <DynaTypeableSelect
                   id={`searchValue-${r.index}`}
-                  key={`searchValue-${initChangeIdentifier}-${r.rowIdentifier}`}
+                  key={`searchValue-${r.rowIdentifier}`}
                   onBlur={(_id, _value) => {
                     handleFieldUpdate(r.index, _value, 'searchValue');
                   }}
@@ -183,7 +181,7 @@ export default function SearchCriteriaEditor(props) {
                 <DynaTypeableSelect
                   id={`searchValue2-${r.index}`}
                   disabled={disabled || !r.searchValue2Enabled}
-                  key={`searchValue2-${initChangeIdentifier}-${r.rowIdentifier}`}
+                  key={`searchValue2-${r.rowIdentifier}`}
                   onBlur={(_id, _value) => {
                     handleFieldUpdate(r.index, _value, 'searchValue2');
                   }}
