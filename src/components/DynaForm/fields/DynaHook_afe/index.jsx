@@ -206,7 +206,7 @@ export default function DynaHook_afe({
             <StackView
               disabled={disabled}
               required={required}
-              value={value}
+              stackId={value?._stackId}
               handleFieldChange={handleFieldChange}
               isValidHookField={isValidHookField}
             />

@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 import React from 'react';
-
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
@@ -27,7 +26,7 @@ const stacksFilterConfig = { type: 'stacks' };
 export default function StackView({
   disabled,
   required,
-  value = {},
+  stackId,
   isValidHookField,
   handleFieldChange,
 }) {
@@ -46,12 +45,12 @@ export default function StackView({
   return (
 
     <div className={classes.field}>
-      <FormControl className={classes.select}>
+      <FormControl>
         <InputLabel htmlFor="stackId">Stack</InputLabel>
         <DynaSelect
           id="stackId"
           label="Stacks"
-          value={value._stackId}
+          value={stackId}
           placeholder="None"
           disabled={disabled}
           required={required}

@@ -38,6 +38,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const scriptsFilterConfig = { type: 'scripts' };
+const emptyObj = {};
 
 export default function ScriptView({
   id,
@@ -45,7 +46,7 @@ export default function ScriptView({
   disabled,
   onFieldChange,
   required,
-  value = {},
+  value = emptyObj,
   formKey,
   hookStage = 'preSavePage',
   resourceType,
