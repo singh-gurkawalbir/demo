@@ -47,7 +47,6 @@ const Option = props => {
   );
 };
 
-DoneButton;
 const MenuListImpl = props => {
   const {children, selectProps} = props;
   const { onMenuClose} = selectProps;
