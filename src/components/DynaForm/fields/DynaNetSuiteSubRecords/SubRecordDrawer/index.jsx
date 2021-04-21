@@ -75,12 +75,12 @@ function SubRecordDrawer(props) {
       subRecordJsonPathLabel:
         f.subRecordJsonPathLabel || 'Path to node that contains items data',
     }));
-  const { subrecords } = useSelectorMemo(
+  const subrecords = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'imports',
     resourceContext.resourceId
   // eslint-disable-next-line camelcase
-  )?.merged?.netsuite_da;
+  )?.merged?.netsuite_da?.subrecords;
   const fieldMeta = getFormFieldMetadata(
     recordTypeLabel,
     subrecords,
