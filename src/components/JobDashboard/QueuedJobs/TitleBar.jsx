@@ -113,7 +113,7 @@ export default function DrawerTitleBar({
             { items: connections.map(c => ({ label: c.name, value: c.id })) },
           ]}
         />
-        <Divider orientation="veritical" className={classes.divider} />
+        <Divider orientation="vertical" className={classes.divider} />
         <IconButton
           data-test="closeQueuedJobs"
           aria-label="Close"
