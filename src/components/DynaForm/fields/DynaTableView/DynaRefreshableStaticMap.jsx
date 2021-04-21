@@ -140,7 +140,8 @@ export default function DynaRefreshableStaticMap(props) {
         )
       );
     }
-  }, [commMetaPath, connectionId, disableOptionsLoad, dispatch, eExportResource, eKey, eKind, gExportResource, gKey, gKind, metadata, options.commMetaPath]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <DynaTableView

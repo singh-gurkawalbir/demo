@@ -2,7 +2,6 @@ import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { useEffect, useReducer } from 'react';
-import useTraceUpdate from 'use-trace-update';
 import { generateNewId } from '../../../../../utils/resource';
 import { hashCode } from '../../../../../utils/string';
 import reducer, { preSubmit } from './reducer';
@@ -81,7 +80,6 @@ const BaseTable = ({
   const {touched, tableStateValue: tableValue} = tableState;
   const hashOfOptions = hashCode(optionsMapFinal);
 
-  useTraceUpdate({onFieldChange, optionsMapFinal, tableValue});
   useEffect(() => {
     if (touched) {
       onFieldChange(id, preSubmit(tableValue, optionsMapFinal));

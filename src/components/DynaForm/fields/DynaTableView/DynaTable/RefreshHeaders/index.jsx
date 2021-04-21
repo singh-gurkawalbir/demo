@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core';
 import Spinner from '../../../../../Spinner';
 import RefreshIcon from '../../../../../icons/RefreshIcon';
@@ -25,6 +25,9 @@ const useStyles = makeStyles(theme => ({
 
 const RefreshComponent = ({handleRefreshClickHandler, header, isLoading}) => {
   const classes = useStyles();
+  const onRefresh = useCallback(() => {
+    handleRefreshClickHandler && handleRefreshClickHandler(header.id);
+  }, [handleRefreshClickHandler, header.id]);
 
   if (!header.supportsRefresh) { return null; }
 
@@ -33,11 +36,7 @@ const RefreshComponent = ({handleRefreshClickHandler, header, isLoading}) => {
 
       <RefreshIcon
         className={classes.refreshIcon}
-        onClick={
-         () => {
-           handleRefreshClickHandler && handleRefreshClickHandler(header.id);
-         }
-        } />
+        onClick={onRefresh} />
     );
   }
 

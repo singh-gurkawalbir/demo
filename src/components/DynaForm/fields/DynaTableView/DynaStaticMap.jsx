@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import DynaTableView from './DynaTable';
 
 export default function DynaStaticMap(props) {
@@ -16,7 +16,6 @@ export default function DynaStaticMap(props) {
   } = props;
   // TODO: (Aditya/Sravan) DynaTable to accept a single value and conversion to be made inside component.Check for validations and how error message will be displayed in case of incomplete map
   // if map is being passed instead of value, trigger a onFieldChange with formatted value
-  const handleRefreshClick = useCallback(() => {}, []);
   const optionsMap = useMemo(() => [
     {
       id: keyName,
@@ -60,7 +59,6 @@ export default function DynaStaticMap(props) {
       {...props}
       optionsMap={optionsMap}
       value={computedValue}
-      handleRefreshClickHandler={handleRefreshClick}
     />
   );
 }
