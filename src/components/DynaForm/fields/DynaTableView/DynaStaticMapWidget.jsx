@@ -23,6 +23,20 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const getRadioValue = ({ allowFailures, defaultValue }) => {
+  if (allowFailures) {
+    if (defaultValue) {
+      return 'defaultLookup';
+    } if (defaultValue === null) {
+      return 'useNull';
+    } if (defaultValue === '') {
+      return 'useEmptyString';
+    }
+  }
+
+  return 'allowFailures';
+};
+
 export default function DynaStaticMapWidget(props) {
   const {
     id,
@@ -42,19 +56,6 @@ export default function DynaStaticMapWidget(props) {
   const [allowFailures, setAllowFailures] = useState(props.allowFailures);
   const [defaultVal, setDefaultVal] = useState(defaultValue);
   const [showDefault, setShowDefault] = useState(false);
-  const getRadioValue = ({ allowFailures, defaultValue }) => {
-    if (allowFailures) {
-      if (defaultValue) {
-        return 'defaultLookup';
-      } if (defaultValue === null) {
-        return 'useNull';
-      } if (defaultValue === '') {
-        return 'useEmptyString';
-      }
-    }
-
-    return 'allowFailures';
-  };
 
   const [radioState, setRadioState] = useState(
     getRadioValue({ allowFailures, defaultValue: defaultVal })
@@ -70,7 +71,7 @@ export default function DynaStaticMapWidget(props) {
     generates: map[key],
   })), [map]);
   const dispatch = useDispatch();
-  const optionsMap = [
+  const optionsMap = useMemo(() => [
     {
       id: 'extracts',
       label: extractFieldHeader,
@@ -90,7 +91,7 @@ export default function DynaStaticMapWidget(props) {
       type: generates.length ? 'autosuggest' : 'input',
       supportsRefresh: supportsGeneratesRefresh,
     },
-  ];
+  ], [extractFieldHeader, extracts, generateFieldHeader, generates, supportsExtractsRefresh, supportsGeneratesRefresh]);
   const { isLoading, shouldReset, data, fieldType } = useSelector(
     state =>
       selectors.connectorMetadata(state, id, null, _integrationId, optionsMap)

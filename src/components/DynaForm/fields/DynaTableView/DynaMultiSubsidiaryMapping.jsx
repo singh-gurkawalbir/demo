@@ -18,7 +18,7 @@ export default function DynaMultiSubsidiaryMapping(props) {
 
   const modifiedOptionsMap = useMemo(() => optionsMap.map(addSupportsRefreshToOptions), [optionsMap]);
   const dispatch = useDispatch();
-  const { isLoading, shouldReset, data: metadata, fieldType } = useSelector(
+  const { isLoading, shouldReset, data, fieldType } = useSelector(
     state =>
       selectors.connectorMetadata(state, id, null, _integrationId, optionsMap)
   );
@@ -36,10 +36,13 @@ export default function DynaMultiSubsidiaryMapping(props) {
     dispatch(actions.connectors.clearMetadata(id, _integrationId));
   }, [_integrationId, dispatch, id]);
 
-  if (metadata && metadata.optionsMap && Array.isArray(metadata.optionsMap)) {
-    metadata.optionsMap = metadata.optionsMap.map(addSupportsRefreshToOptions);
-  }
+  const metadata = useMemo(() => {
+    if (data && data.optionsMap && Array.isArray(data.optionsMap)) {
+      data.optionsMap = data.optionsMap.map(addSupportsRefreshToOptions);
+    }
 
+    return data;
+  }, [data]);
   const isLoadingMap = useMemo(() => ({[fieldType]: isLoading}), [fieldType, isLoading]);
 
   return (
