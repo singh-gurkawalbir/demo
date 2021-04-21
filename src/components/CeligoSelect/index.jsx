@@ -59,22 +59,32 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
+export const DoneButton = ({onClose}) => {
+  const classes = useStyles();
+
+  return (
+
+    <Button
+      id="select-close"
+      data-test="closeSelect"
+      variant="outlined"
+      color="secondary"
+      onClick={onClose}
+      className={classes.doneButton}>
+      Done
+    </Button>
+  );
+};
 const MenuComponent = React.forwardRef((props, ref) => {
-  const {children, closeBtnClassName, closeSelect, ...others} = props;
+  const {children, closeSelect, ...others} = props;
 
   return (
     <div ref={ref} {...others}>
       {children}
       {closeSelect && (
-      <Button
-        id="select-close"
-        data-test="closeSelect"
-        variant="outlined"
-        color="secondary"
-        onClick={closeSelect}
-        className={closeBtnClassName}>
-        Done
-      </Button>
+      <DoneButton onClose={closeSelect} />
+
       )}
     </div>
   );
@@ -109,7 +119,6 @@ export default function CeligoSelect({ className, maxHeightOfSelect, children, .
         display: 'flex',
         flexDirection: 'column',
       },
-      closeBtnClassName: classes.doneButton,
       closeSelect: showCloseOption && closeSelect,
       component: MenuComponent,
     },
