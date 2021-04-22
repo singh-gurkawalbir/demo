@@ -469,18 +469,17 @@ export function* retryFlowJob({ jobId }) {
 
   const jobsToRetry = [];
 
-  job.children &&
-    job.children.forEach(cJob => {
+    job?.children?.forEach(cJob => {
       if (cJob.retriable) {
         jobsToRetry.push({ _id: cJob._id, _flowJobId: jobId });
       }
     });
 
-  if (jobsToRetry.length === 0) {
-    return true;
-  }
+    if (jobsToRetry.length === 0) {
+      return true;
+    }
 
-  yield call(retrySelected, { jobs: jobsToRetry });
+    yield call(retrySelected, { jobs: jobsToRetry });
 }
 
 export function* retryAllCommit({ flowIds }) {
