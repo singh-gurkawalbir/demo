@@ -1,13 +1,14 @@
 import { FormControl, FormLabel, fade, makeStyles, useTheme } from '@material-ui/core';
 import React, { useCallback } from 'react';
 import Select, { components } from 'react-select';
+import { DoneButton } from '../../../../CeligoSelect';
 import SearchIcon from '../../../../icons/SearchIcon';
 import FieldHelp from '../../../FieldHelp';
 import FieldMessage from '../../FieldMessage';
 
 const REACT_SELECT_ACTION_TYPES = {
   CLEAR: 'clear',
-  SELECT_VALUE: 'selectProps',
+  SELECT_VALUE: 'set-value',
   REMOVE_VALUE: 'remove-value',
 };
 
@@ -46,6 +47,20 @@ const Option = props => {
   );
 };
 
+const MenuListImpl = props => {
+  const {children, selectProps} = props;
+  const { onMenuClose} = selectProps;
+
+  return (
+    <>
+      <components.MenuList {...props}>
+        {children}
+
+      </components.MenuList>
+      <DoneButton onClose={onMenuClose} />
+    </>
+  );
+};
 const MultiValueLabel = props => {
   const {data, selectProps, children} = props;
 
@@ -259,14 +274,14 @@ export const GenericTypeableSelect = props => {
           isDisabled={disabled}
           isMulti
           placeholder={placeholder}
-          components={{DropdownIndicator, MultiValueLabel: MultiValueLabelImpl, Option: OptionImpl}}
+          components={{DropdownIndicator, MultiValueLabel: MultiValueLabelImpl, Option: OptionImpl, MenuList: MenuListImpl}}
           options={options}
           value={value}
           onChange={handleChange}
           closeMenuOnSelect={false}
           hideSelectedOptions={false}
           styles={customStylesMultiselect}
-    />
+     />
 
         <FieldMessage {...props} />
       </FormControl>
