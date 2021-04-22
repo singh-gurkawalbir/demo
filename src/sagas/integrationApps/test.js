@@ -1298,7 +1298,7 @@ describe('uninstaller saga', () => {
   describe('preUninstall generator', () => {
     const path = `/integrations/${id}/uninstaller/preUninstallFunction`;
 
-    test('should dispatch uninstallSteps on successful api call', () => {
+    test('should dispatch receivedUninstallSteps on successful api call', () => {
       const uninstallSteps = {};
 
       return expectSaga(preUninstall, { storeId, id})
@@ -1320,7 +1320,7 @@ describe('uninstaller saga', () => {
         .run();
     });
     test('should dispatch failedUninstallSteps if api call fails', () => {
-      const error = new Error();
+      const error = { message: 'Failed to fetch Uninstall Steps.' };
 
       return expectSaga(preUninstall, {storeId, id})
         .provide([
@@ -1338,7 +1338,12 @@ describe('uninstaller saga', () => {
             error.message || 'Failed to fetch Uninstall Steps.'
           )
         )
-        .returns(undefined)
+        .not.put(
+          actions.integrationApp.uninstaller.receivedUninstallSteps(
+            undefined,
+            id
+          )
+        )
         .run();
     });
   });
@@ -1347,7 +1352,7 @@ describe('uninstaller saga', () => {
     const uninstallerFunction = 'uninstallConnectorComponents';
     const path = `/integrations/${id}/uninstaller/${uninstallerFunction}`;
 
-    test('if api call is successfull with response, should dispatch uninstaller updateStep and subsequent actions if addOnId is defined', () => {
+    test('should dispatch uninstaller updateStep and subsequent actions if api call is successful and addOnId is defined', () => {
       const addOnId = 'A123';
       const stepCompleteResponse = {
         success: true,
@@ -1381,7 +1386,7 @@ describe('uninstaller saga', () => {
         )
         .run();
     });
-    test('if api call is successfull with response, should dispatch uninstaller updateStep only if no addOnId defined', () => {
+    test('should dispatch uninstaller updateStep only if api call is successful and no addOnId defined', () => {
       const addOnId = undefined;
       const stepCompleteResponse = {
         success: true,
@@ -1410,10 +1415,13 @@ describe('uninstaller saga', () => {
         .not.put(
           actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
         )
+        .not.put(
+          actions.integrationApp.isAddonInstallInprogress(false, addOnId)
+        )
         .run();
     });
-    test('if api call is successfull with response failing, should not dispatch any action', () => {
-      const addOnId = undefined;
+    test('should not dispatch any action if api call is successfull with response failing', () => {
+      const addOnId = 'A123';
       const stepCompleteResponse = {
         success: false,
       };
@@ -1434,11 +1442,17 @@ describe('uninstaller saga', () => {
             'completed'
           )
         )
+        .not.put(
+          actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
+        )
+        .not.put(
+          actions.integrationApp.isAddonInstallInprogress(false, addOnId)
+        )
         .run();
     });
-    test('if api call fails, should dispatch updateStep and update install progress of addOn if addOnId is defined', () => {
+    test('should dispatch updateStep and update install progress of addOn if api call fails and addOnId is defined', () => {
       const addOnId = 'A123';
-      const error = new Error();
+      const error = { code: 'dummy', message: 'dummy' };
 
       return expectSaga(uninstallStepGen, {storeId, id, uninstallerFunction, addOnId})
         .provide([
@@ -1459,12 +1473,11 @@ describe('uninstaller saga', () => {
             'failed'
           )
         )
-        .returns(undefined)
         .run();
     });
-    test('if api call fails, should dispatch only updateStep if addOnId is not defined', () => {
-      const addOnId = 'A123';
-      const error = new Error();
+    test('should dispatch only updateStep if api call fails and addOnId is not defined', () => {
+      const addOnId = undefined;
+      const error = { code: 'dummy', message: 'dummy' };
 
       return expectSaga(uninstallStepGen, {storeId, id, uninstallerFunction, addOnId})
         .provide([
@@ -1475,6 +1488,9 @@ describe('uninstaller saga', () => {
             message: 'Uninstalling',
           }), throwError(error)],
         ])
+        .not.put(
+          actions.integrationApp.isAddonInstallInprogress(false, addOnId)
+        )
         .put(
           actions.integrationApp.uninstaller.updateStep(
             id,
@@ -1482,7 +1498,6 @@ describe('uninstaller saga', () => {
             'failed'
           )
         )
-        .returns(undefined)
         .run();
     });
   });
@@ -1490,7 +1505,7 @@ describe('uninstaller saga', () => {
     const integrationId = 'i1';
     const path = `/integrations/${integrationId}/install`;
 
-    test('Should make an API call and dispatch resource request actions', () => expectSaga(uninstallIntegration, { integrationId })
+    test('Should make an API call and dispatch resource request actions if api call succeeds', () => expectSaga(uninstallIntegration, { integrationId })
       .provide([
         [call(apiCallWithRetry, {
           path,
@@ -1503,8 +1518,8 @@ describe('uninstaller saga', () => {
       .put(actions.resource.requestCollection('tiles'))
       .put(actions.resource.requestCollection('licenses'))
       .run());
-    test('if API call fails return undefined', () => {
-      const error = new Error();
+    test('should not put any collection requests if resource call fails', () => {
+      const error = { code: 'dummy', message: 'dummy' };
 
       return expectSaga(uninstallIntegration, { integrationId })
         .provide([
@@ -1515,7 +1530,9 @@ describe('uninstaller saga', () => {
             message: 'Uninstalling',
           }), throwError(error)],
         ])
-        .returns(undefined)
+        .not.put(actions.resource.requestCollection('integrations'))
+        .not.put(actions.resource.requestCollection('tiles'))
+        .not.put(actions.resource.requestCollection('licenses'))
         .run();
     });
   });
