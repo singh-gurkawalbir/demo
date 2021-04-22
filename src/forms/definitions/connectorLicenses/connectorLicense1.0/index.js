@@ -2,6 +2,10 @@ export default {
   preSave: formValues => {
     const newValues = formValues;
 
+    if (newValues['/expires']) {
+      delete newValues['/trialEndDate'];
+    }
+
     try {
       newValues['/opts'] = JSON.parse(newValues['/opts']);
     } catch (e) {

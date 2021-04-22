@@ -17,9 +17,6 @@ export default function DynaConnectorNColumnMap(props) {
     },
     [_integrationId, dispatch, id]
   );
-  const handleCleanup = useCallback(() => {
-    dispatch(actions.connectors.clearMetadata(id, _integrationId));
-  }, [_integrationId, dispatch, id]);
 
   // console.log('render: <DynaConnectorNColumnMap>');
   const isLoadingMap = useMemo(() => ({[fieldType]: isLoading}), [fieldType, isLoading]);
@@ -31,7 +28,6 @@ export default function DynaConnectorNColumnMap(props) {
       isLoading={isLoadingMap}
       shouldReset={shouldReset}
       metadata={metadata}
-      handleCleanupHandler={handleCleanup}
       handleRefreshClickHandler={handleRefreshClick}
     />
   );

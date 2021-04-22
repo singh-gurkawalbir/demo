@@ -990,6 +990,7 @@ export const destinationOptions = {
     },
   ],
 };
+// TODO:consider forceFieldState instead of using optionsHandler to affect fileDefinitionRulesField and fileDefinitionFormatField
 export const alterFileDefinitionRulesVisibility = fields => {
   // TODO @Raghu : Move this to metadata visibleWhen rules when we support combination of ANDs and ORs in Forms processor
   const fileDefinitionRulesField = fields.find(
@@ -1024,11 +1025,15 @@ export const alterFileDefinitionRulesVisibility = fields => {
     } else {
       fileDefinitionRulesField.defaultVisible = false;
     }
+    // defaultVisible forces a field to be invisible but it gets only registerd in the
+    // next getNextStateFromFields so we have to update that result over here as well
+    fileDefinitionRulesField.visible = fileDefinitionRulesField.defaultVisible;
   }
   // fileDefinitionRulesField should be hidden when there is no file type.
 
   if (fileType && !fileType.value) {
     fileDefinitionRulesField.defaultVisible = false;
+    fileDefinitionRulesField.visible = false;
   }
   // userDefinitionId exists only in edit mode.
 
@@ -1041,6 +1046,7 @@ export const alterFileDefinitionRulesVisibility = fields => {
 
       delete fileDefinitionFormatField.visibleWhenAll;
       fileDefinitionFormatField.defaultVisible = false;
+      fileDefinitionFormatField.visible = false;
     });
   }
 };
