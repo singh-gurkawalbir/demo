@@ -15,7 +15,7 @@ import {
 import { sendRequest } from 'redux-saga-requests';
 import actionsTypes from '../actions/types';
 import actions from '../actions';
-import rootSaga, { apiCallWithRetry, requestCleanup, CANCELLED_REQ, allSagas, unauthenticateAndDeleteProfile } from '.';
+import rootSaga, { apiCallWithRetry, requestCleanup, CANCELLED_REQ, allSagas } from '.';
 import { APIException } from './api';
 import * as apiConsts from './api/apiPaths';
 import { netsuiteUserRoles } from './resourceForm/connections';
@@ -598,12 +598,3 @@ describe('rootSaga', () => {
   });
 });
 
-describe('unauthenticateAndDeleteProfile', () => {
-  test('should unauthenticate and delete', () => {
-    const saga = unauthenticateAndDeleteProfile();
-
-    expect(saga.next().value).toEqual(put(actions.auth.failure('Authentication Failure')));
-    expect(saga.next().value).toEqual(put(actions.user.profile.delete()));
-    expect(saga.next().done).toBe(true);
-  });
-});
