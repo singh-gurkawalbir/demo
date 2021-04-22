@@ -10,6 +10,7 @@ import {
   isExpansionPanelErrored,
   translateDependencyProps,
   getAllFormValuesAssociatedToMeta,
+  AdjustingFieldRules,
 } from '.';
 
 describe('Form Utils', () => {
@@ -1465,6 +1466,87 @@ describe('integrationSettingsToDynaFormMetadata', () => {
               },
             ],
           },
+        });
+      });
+      test('should be able to delete visible prop when fields having both visible and visible when all props', () => {
+        const inputFieldMap = {
+          id: 'fieldA',
+          name: '/fieldA',
+          type: 'select',
+          visible: false,
+          visibleWhenAll: [
+            {
+              field: 'type',
+              is: ['field'],
+            },
+          ],
+        };
+        const resultFieldMap = AdjustingFieldRules(inputFieldMap);
+
+        expect(resultFieldMap).toEqual({
+          id: 'fieldA',
+          name: '/fieldA',
+          type: 'select',
+          visibleWhenAll: [
+            {
+              field: 'type',
+              is: ['field'],
+            },
+          ],
+        });
+      });
+      test('should be able to delete prop when having both required and requiredWhenAll props', () => {
+        const inputFieldMap = {
+          id: 'fieldA',
+          name: '/fieldA',
+          type: 'select',
+          required: true,
+          requiredWhenAll: [
+            {
+              field: 'type',
+              is: ['field'],
+            },
+          ],
+        };
+        const resultFieldMap = AdjustingFieldRules(inputFieldMap);
+
+        expect(resultFieldMap).toEqual({
+          id: 'fieldA',
+          name: '/fieldA',
+          type: 'select',
+          requiredWhenAll: [
+            {
+              field: 'type',
+              is: ['field'],
+            },
+          ],
+        });
+      });
+      test('should be able to delete defaultDisabled prop when fields having both disabledWhenAll and defaultDisabled props', () => {
+        const inputFieldMap = {
+          id: 'fieldA',
+          name: '/fieldA',
+          type: 'select',
+          defaultDisabled: false,
+          disabledWhenAll: [
+            {
+              field: 'type',
+              is: ['field'],
+            },
+          ],
+        };
+        const resultFieldMap = AdjustingFieldRules(inputFieldMap);
+
+        expect(resultFieldMap).toEqual({
+          id: 'fieldA',
+          name: '/fieldA',
+          type: 'select',
+          disabledWhenAll: [
+            {
+              field: 'type',
+              is: ['field'],
+            },
+          ],
         });
       });
     });
