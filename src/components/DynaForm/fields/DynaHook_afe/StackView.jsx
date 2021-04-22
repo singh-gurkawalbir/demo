@@ -22,6 +22,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const stacksFilterConfig = { type: 'stacks' };
+const emptyList = [];
 
 export default function StackView({
   disabled,
@@ -40,7 +41,7 @@ export default function StackView({
   const options = useMemo(() => [{ items: allStacks.map(stack => ({
     label: stack.name,
     value: stack._id,
-  })) || [] }], [allStacks]);
+  })) || emptyList }], [allStacks]);
 
   return (
 

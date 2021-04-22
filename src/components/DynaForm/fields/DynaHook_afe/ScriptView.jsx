@@ -39,6 +39,7 @@ const useStyles = makeStyles(theme => ({
 
 const scriptsFilterConfig = { type: 'scripts' };
 const emptyObj = {};
+const emptyList = [];
 
 export default function ScriptView({
   id,
@@ -92,7 +93,7 @@ export default function ScriptView({
   const options = useMemo(() => [{ items: allScripts.map(script => ({
     label: script.name,
     value: script._id,
-  })) || [] }], [allScripts]);
+  })) || emptyList }], [allScripts]);
 
   return (
     <>
