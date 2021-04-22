@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   container: {
     background: theme.palette.common.white,
     padding: theme.spacing(2),
-    height: `calc(100vh - ${200}px)`,
+    height: `calc(100vh - ${200 + theme.appBarHeight}px)`,
     overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',

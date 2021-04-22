@@ -11,9 +11,7 @@ import { selectors } from '../../reducers';
 const useStyles = makeStyles(theme => ({
   form: {
     height: props =>
-      `calc(100vh - ${props.heightOffset || 150}px - ${
-        props.notificationPanelHeight
-      }px)`,
+      `calc(100vh - ${props.heightOffset || (150 + theme.appBarHeight)}px - ${props.notificationPanelHeight}px)`,
     width: props => {
       if (props.occupyFullWidth) return '100%';
 
@@ -45,7 +43,7 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
     notificationPanelHeight,
   });
   const resize = useCallback((width, height) => {
-    setNotificationPanelHeight(height + 16);
+    setNotificationPanelHeight(height ? height + 16 : 0);
   }, []);
 
   const shouldRedact = shouldRedactLogRocket ? emptyObj : notRedactAttr;
