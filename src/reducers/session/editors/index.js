@@ -252,6 +252,11 @@ export default function reducer(state = {}, action) {
           editor.originalData = originalData;
         }
 
+        // reset originalDefaultData also if already exists in state (for dirty check)
+        if (editor.originalDefaultData) {
+          editor.originalDefaultData = editor.defaultData;
+        }
+
         break;
       }
 
