@@ -1,27 +1,21 @@
 /* eslint-disable camelcase */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useReducer } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory, useRouteMatch } from 'react-router-dom';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
 import { generateNewId } from '../../../../utils/resource';
-import DynaSelect from '../DynaSelect';
 import DynaText from '../DynaText';
 import FieldHelp from '../../FieldHelp';
 import { selectors } from '../../../../reducers';
-import EditIcon from '../../../icons/EditIcon';
-import AddIcon from '../../../icons/AddIcon';
 import CreateScriptDialog from './CreateScriptDialog';
 import { saveScript } from './utils';
-import ActionButton from '../../../ActionButton';
-import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import { getValidRelativePath } from '../../../../utils/routePaths';
 import actions from '../../../../actions';
 import EditorDrawer from '../../../AFE/Drawer';
 import LoadResources from '../../../LoadResources';
 import { REQUIRED_MESSAGE } from '../../../../utils/messageStore';
+import hookReducer from './stateReducer';
+import StackView from './StackView';
+import ScriptView from './ScriptView';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -38,14 +32,6 @@ const useStyles = makeStyles(theme => ({
       paddingRight: 0,
     },
   },
-  hookActionBtnAdd: {
-    marginLeft: 0,
-    alignSelf: 'flex-start',
-    marginTop: theme.spacing(4),
-  },
-  hookActionBtnEdit: {
-    marginLeft: theme.spacing(1),
-  },
   labelWithHelpTextWrapper: {
     flexDirection: 'row',
     display: 'flex',
@@ -55,9 +41,6 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 10,
   },
 }));
-
-const scriptsFilterConfig = { type: 'scripts' };
-const stacksFilterConfig = { type: 'stacks' };
 
 export default function DynaHook_afe({
   id,
@@ -78,49 +61,12 @@ export default function DynaHook_afe({
   helpKey: propsHelpKey,
 }) {
   const classes = useStyles();
-  const history = useHistory();
-  const match = useRouteMatch();
   const dispatch = useDispatch();
-  const editorId = getValidRelativePath(id);
+  const [hookState, setHookState] = useReducer(hookReducer, {showCreateScriptDialog: false, tempScriptId: generateNewId(), isNewScriptIdAssigned: false });
 
-  const [showCreateScriptDialog, setShowCreateScriptDialog] = useState(false);
-  const [tempScriptId, setTempScriptId] = useState(generateNewId());
-  const [isNewScriptIdAssigned, setIsNewScriptIdAssigned] = useState(false);
   const createdScriptId = useSelector(state =>
-    selectors.createdResourceId(state, tempScriptId)
+    selectors.createdResourceId(state, hookState.tempScriptId)
   );
-  const allScripts = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    scriptsFilterConfig
-  ).resources;
-  const allStacks = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    stacksFilterConfig
-  ).resources;
-
-  const handleSave = useCallback(editorValues => {
-    const { scriptId, entryFunction } = editorValues.rule;
-
-    onFieldChange(id, {
-      ...value,
-      _scriptId: scriptId,
-      function: entryFunction,
-    });
-  }, [id, onFieldChange, value]);
-
-  const handleEditorClick = useCallback(() => {
-    dispatch(actions.editor.init(editorId, 'javascript', {
-      flowId,
-      resourceId,
-      resourceType,
-      formKey: resourceType === 'apis' && formKey, // we need formkey only for apis resource type
-      stage: hookStage,
-      rule: value,
-      onSave: handleSave,
-    }));
-
-    history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, editorId, flowId, resourceId, resourceType, hookStage, history, match.url, value, handleSave, formKey]);
 
   const handleFieldChange = field => (event, fieldValue) => {
     // Incase user selects scripts/stacks list to 'None' for which fieldValue is '' , we remove function name if entered any
@@ -136,43 +82,27 @@ export default function DynaHook_afe({
   };
 
   const handleCreateScriptClick = () => {
-    setTempScriptId(generateNewId());
-    setIsNewScriptIdAssigned(false);
-    setShowCreateScriptDialog(true);
+    setHookState({ type: 'setTempScriptId', value: generateNewId() });
+    setHookState({ type: 'setIsNewScriptIdAssigned', value: false });
+    setHookState({ type: 'setShowCreateScriptDialog', value: true });
   };
 
   const handleCreateScriptSave = useCallback(values => {
     const options = { dispatch, isNew: true };
 
-    saveScript({ ...values, scriptId: tempScriptId }, options, { flowId });
-  }, [dispatch, flowId, tempScriptId]);
+    saveScript({ ...values, scriptId: hookState.tempScriptId }, options, { flowId });
+  }, [dispatch, flowId, hookState.tempScriptId]);
 
   const handleCreateScriptDialogClose = useCallback(() => {
-    setShowCreateScriptDialog(false);
+    setHookState({ type: 'setShowCreateScriptDialog', value: false });
   }, []);
 
   useEffect(() => {
-    if (createdScriptId && !isNewScriptIdAssigned) {
+    if (createdScriptId && !hookState.isNewScriptIdAssigned) {
       onFieldChange(id, { ...value, _scriptId: createdScriptId }, true);
-      setIsNewScriptIdAssigned(true);
+      setHookState({ type: 'setIsNewScriptIdAssigned', value: true });
     }
-  }, [
-    createdScriptId,
-    handleEditorClick,
-    id,
-    isNewScriptIdAssigned,
-    onFieldChange,
-    value,
-  ]);
-
-  const allScriptsOptions = allScripts.map(script => ({
-    label: script.name,
-    value: script._id,
-  }));
-  const allStacksOptions = allStacks.map(stack => ({
-    label: stack.name,
-    value: stack._id,
-  }));
+  }, [createdScriptId, hookState.isNewScriptIdAssigned, id, onFieldChange, value]);
 
   // Below code is to make myapi resource form invalid if script or function is
   // not provided. If form is invalid, user can not save the resource.
@@ -213,11 +143,11 @@ export default function DynaHook_afe({
   return (
     <>
       <LoadResources resources="scripts">
-        {showCreateScriptDialog && (
+        {hookState.showCreateScriptDialog && (
         <CreateScriptDialog
           onClose={handleCreateScriptDialogClose}
           onSave={handleCreateScriptSave}
-          scriptId={tempScriptId}
+          scriptId={hookState.tempScriptId}
           flowId={flowId}
         />
         )}
@@ -245,61 +175,30 @@ export default function DynaHook_afe({
             />
             </div>
             {hookType === 'stack' && (
-            <div className={classes.field}>
-              <FormControl className={classes.select}>
-                <InputLabel htmlFor="stackId">Stack</InputLabel>
-                <DynaSelect
-                  id="stackId"
-                  label="Stacks"
-                  value={value._stackId}
-                  placeholder="None"
-                  disabled={disabled}
-                  required={required}
-                  isValid={isValidHookField('_stackId')}
-                  onFieldChange={handleFieldChange('_stackId')}
-                  options={[{ items: allStacksOptions || [] }]}
-                />
-              </FormControl>
-            </div>
+            <StackView
+              disabled={disabled}
+              required={required}
+              stackId={value?._stackId}
+              handleFieldChange={handleFieldChange}
+              isValidHookField={isValidHookField}
+            />
             )}
             {hookType === 'script' && (
-            <>
-              <div className={classes.field}>
-                <FormControl className={classes.select}>
-                  <InputLabel htmlFor="scriptId">Script</InputLabel>
-                  <DynaSelect
-                    id="scriptId"
-                    label="Scripts"
-                    value={value._scriptId}
-                    disabled={disabled}
-                    placeholder="None"
-                    required={required}
-                    isValid={isValidHookField('_scriptId')}
-                    onFieldChange={handleFieldChange('_scriptId')}
-                    options={[{ items: allScriptsOptions || [] }]}
-                  />
-                </FormControl>
-              </div>
-              <ActionButton
-                onClick={handleCreateScriptClick}
-                disabled={disabled}
-                className={classes.hookActionBtnAdd}
-                data-test={id}>
-                <AddIcon />
-              </ActionButton>
-            </>
-            )}
-            {hookType === 'script' && (
-            <ActionButton
-              onClick={handleEditorClick}
-              disabled={disabled || !value._scriptId}
-              className={clsx(
-                classes.hookActionBtnAdd,
-                classes.hookActionBtnEdit
-              )}
-              data-test={id}>
-              <EditIcon />
-            </ActionButton>
+            <ScriptView
+              id={id}
+              flowId={flowId}
+              disabled={disabled}
+              onFieldChange={onFieldChange}
+              required={required}
+              value={value}
+              formKey={formKey}
+              hookStage={hookStage}
+              resourceType={resourceType}
+              resourceId={resourceId}
+              isValidHookField={isValidHookField}
+              handleFieldChange={handleFieldChange}
+              handleCreateScriptClick={handleCreateScriptClick}
+               />
             )}
           </div>
         </div>
