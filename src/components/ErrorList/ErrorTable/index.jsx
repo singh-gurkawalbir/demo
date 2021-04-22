@@ -27,12 +27,10 @@ const useStyles = makeStyles({
 export const useIsFreshLoadData = errorConfig => {
   const errorObj = useSelectorMemo(selectors.mkResourceFilteredErrorDetailsSelector, errorConfig);
 
-  console.log(errorObj, errorConfig);
-
   return !!((!errorObj.status || errorObj.status === 'requested') && !errorObj.nextPageURL);
 };
 
-export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
+export default function ErrorTable({ flowId, resourceId, isResolved }) {
   const classes = useStyles();
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
 
@@ -66,9 +64,8 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
 
   // TODO @Raghu: Refactor the pagination related code
   return (
-    <div className={clsx(classes.errorTableWrapper, { [classes.hide]: !show })}>
+    <div className={clsx(classes.errorTableWrapper)}>
       <FetchErrorsHook
-        show={show}
         flowId={flowId}
         resourceId={resourceId}
         isResolved={isResolved}

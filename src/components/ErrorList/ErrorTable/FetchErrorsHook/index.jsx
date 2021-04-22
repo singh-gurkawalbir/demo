@@ -38,7 +38,6 @@ export const useFetchErrors = ({
 const emptySet = [];
 
 export default function FetchErrorsHook({
-  show,
   filterKey,
   flowId,
   resourceId,
@@ -58,7 +57,7 @@ export default function FetchErrorsHook({
   }
 
   const errorFilter = useSelector(
-    state => selectors.filter(state, filterKey)?.paging?.rowsPerPage || DEFAULT_ROWS_PER_PAGE, shallowEqual
+    state => selectors.filter(state, filterKey), shallowEqual
   );
   const { rowsPerPage = DEFAULT_ROWS_PER_PAGE } = errorFilter.paging || emptyObj;
 
@@ -70,27 +69,24 @@ export default function FetchErrorsHook({
   });
 
   useEffect(() => {
-    if (show) {
-      if (!errorObj.status) {
-        fetchErrors();
-      }
+    if (!errorObj.status) {
+      fetchErrors();
+    }
 
-      if (
-        errorObj.status === 'received' &&
+    if (
+      errorObj.status === 'received' &&
               !errorObj.errors.length &&
               errorObj.outdated &&
               errorObj.nextPageURL
-      ) {
-        // fetch more errors
-        fetchErrors(true);
-      }
+    ) {
+      // fetch more errors
+      fetchErrors(true);
     }
   }, [
     errorObj.nextPageURL,
     errorObj.errors.length,
     errorObj.outdated,
     fetchErrors,
-    show,
     errorObj.status,
   ]);
 
