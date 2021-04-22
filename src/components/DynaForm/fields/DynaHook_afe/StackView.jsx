@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React from 'react';
+import React, {useMemo} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
@@ -37,10 +37,10 @@ export default function StackView({
     stacksFilterConfig
   ).resources;
 
-  const allStacksOptions = allStacks.map(stack => ({
+  const options = useMemo(() => [{ items: allStacks.map(stack => ({
     label: stack.name,
     value: stack._id,
-  }));
+  })) || [] }], [allStacks]);
 
   return (
 
@@ -56,7 +56,7 @@ export default function StackView({
           required={required}
           isValid={isValidHookField('_stackId')}
           onFieldChange={handleFieldChange('_stackId')}
-          options={[{ items: allStacksOptions || [] }]}
+          options={options}
                 />
       </FormControl>
     </div>

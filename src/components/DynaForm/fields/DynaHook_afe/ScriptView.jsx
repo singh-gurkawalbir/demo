@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
@@ -89,10 +89,10 @@ export default function ScriptView({
     history.push(`${match.url}/editor/${editorId}`);
   }, [dispatch, editorId, flowId, resourceId, resourceType, hookStage, history, match.url, value, handleSave, formKey]);
 
-  const allScriptsOptions = allScripts.map(script => ({
+  const options = useMemo(() => [{ items: allScripts.map(script => ({
     label: script.name,
     value: script._id,
-  }));
+  })) || [] }], [allScripts]);
 
   return (
     <>
@@ -108,7 +108,7 @@ export default function ScriptView({
             required={required}
             isValid={isValidHookField('_scriptId')}
             onFieldChange={handleFieldChange('_scriptId')}
-            options={[{ items: allScriptsOptions || [] }]}
+            options={options}
                   />
         </FormControl>
       </div>

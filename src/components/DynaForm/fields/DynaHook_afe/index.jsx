@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useEffect, useCallback, useReducer } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import { generateNewId } from '../../../../utils/resource';
@@ -10,7 +9,6 @@ import FieldHelp from '../../FieldHelp';
 import { selectors } from '../../../../reducers';
 import CreateScriptDialog from './CreateScriptDialog';
 import { saveScript } from './utils';
-import { getValidRelativePath } from '../../../../utils/routePaths';
 import actions from '../../../../actions';
 import EditorDrawer from '../../../AFE/Drawer';
 import LoadResources from '../../../LoadResources';
@@ -63,38 +61,12 @@ export default function DynaHook_afe({
   helpKey: propsHelpKey,
 }) {
   const classes = useStyles();
-  const history = useHistory();
-  const match = useRouteMatch();
   const dispatch = useDispatch();
-  const editorId = getValidRelativePath(id);
   const [hookState, setHookState] = useReducer(hookReducer, {showCreateScriptDialog: false, tempScriptId: generateNewId(), isNewScriptIdAssigned: false });
 
   const createdScriptId = useSelector(state =>
     selectors.createdResourceId(state, hookState.tempScriptId)
   );
-  const handleSave = useCallback(editorValues => {
-    const { scriptId, entryFunction } = editorValues.rule;
-
-    onFieldChange(id, {
-      ...value,
-      _scriptId: scriptId,
-      function: entryFunction,
-    });
-  }, [id, onFieldChange, value]);
-
-  const handleEditorClick = useCallback(() => {
-    dispatch(actions.editor.init(editorId, 'javascript', {
-      flowId,
-      resourceId,
-      resourceType,
-      formKey: resourceType === 'apis' && formKey, // we need formkey only for apis resource type
-      stage: hookStage,
-      rule: value,
-      onSave: handleSave,
-    }));
-
-    history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, editorId, flowId, resourceId, resourceType, hookStage, history, match.url, value, handleSave, formKey]);
 
   const handleFieldChange = field => (event, fieldValue) => {
     // Incase user selects scripts/stacks list to 'None' for which fieldValue is '' , we remove function name if entered any
@@ -130,7 +102,7 @@ export default function DynaHook_afe({
       onFieldChange(id, { ...value, _scriptId: createdScriptId }, true);
       setHookState({ type: 'setIsNewScriptIdAssigned', value: true });
     }
-  }, [createdScriptId, handleEditorClick, hookState.isNewScriptIdAssigned, id, onFieldChange, value]);
+  }, [createdScriptId, hookState.isNewScriptIdAssigned, id, onFieldChange, value]);
 
   // Below code is to make myapi resource form invalid if script or function is
   // not provided. If form is invalid, user can not save the resource.
