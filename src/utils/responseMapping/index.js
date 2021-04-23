@@ -75,21 +75,19 @@ export default {
     let tempFm;
     const toReturn = [];
 
-    mappings.fields &&
-      mappings.fields.forEach(fm => {
-        toReturn.push(fm);
-      });
-    mappings.lists &&
-      mappings.lists.forEach(lm => {
-        lm.fields.forEach(fm => {
-          tempFm = { ...fm };
-          tempFm.generate = lm.generate
-            ? [lm.generate, tempFm.generate].join('[*].')
-            : tempFm.generate;
+    mappings?.fields?.forEach(fm => {
+      toReturn.push(fm);
+    });
+    mappings?.lists?.forEach(lm => {
+      lm.fields.forEach(fm => {
+        tempFm = { ...fm };
+        tempFm.generate = lm.generate
+          ? [lm.generate, tempFm.generate].join('[*].')
+          : tempFm.generate;
 
-          toReturn.push(tempFm);
-        });
+        toReturn.push(tempFm);
       });
+    });
 
     return toReturn;
   },
