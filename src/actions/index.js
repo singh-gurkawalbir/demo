@@ -253,6 +253,10 @@ const resource = {
 
   requestCollection: (resourceType, message, refresh) =>
     action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh }),
+  startCollectionPoll: resourceType =>
+    action(actionTypes.RESOURCE.START_COLLECTION_POLL, { resourceType }),
+  stopCollectionPoll: resourceType =>
+    action(actionTypes.RESOURCE.STOP_COLLECTION_POLL, { resourceType }),
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
@@ -335,6 +339,19 @@ const resource = {
       op,
       offset,
     }),
+  integrations: {
+    delete: integrationId =>
+      action(actionTypes.INTEGRATION.DELETE, {integrationId}),
+    redirectTo: (integrationId, redirectTo) =>
+      action(actionTypes.INTEGRATION.REDIRECT, {
+        integrationId,
+        redirectTo,
+      }),
+    clearRedirect: integrationId =>
+      action(actionTypes.INTEGRATION.CLEAR_REDIRECT, {
+        integrationId,
+      }),
+  },
   connections: {
     pingAndUpdate: connectionId =>
       action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId }),
@@ -802,21 +819,12 @@ const integrationApp = {
         integrationId,
         options,
       }),
-    redirectTo: (integrationId, redirectTo) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.REDIRECT, {
-        integrationId,
-        redirectTo,
-      }),
     receivedCategoryMappingMetadata: (integrationId, flowId, metadata) =>
       action(
         actionTypes.INTEGRATION_APPS.SETTINGS
           .RECEIVED_CATEGORY_MAPPING_METADATA,
         { integrationId, flowId, metadata }
       ),
-    clearRedirect: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
-        integrationId,
-      }),
     requestedUpgrade: licenseId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED, {
         licenseId,
@@ -1399,57 +1407,35 @@ const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
 const clearComms = () => action(actionTypes.CLEAR_COMMS);
 const clearCommByKey = key => action(actionTypes.CLEAR_COMM_BY_KEY, { key });
 const cancelTask = () => action(actionTypes.CANCEL_TASK, {});
-//
+
 // #region Editor actions
 const editor = {
-  init: (id, processor, options) =>
-    action(actionTypes.EDITOR.INIT, { id, processor, options }),
-  changeLayout: id => action(actionTypes.EDITOR.CHANGE_LAYOUT, { id }),
-  patch: (id, patch) => action(actionTypes.EDITOR.PATCH, { id, patch }),
-  reset: id => action(actionTypes.EDITOR.RESET, { id }),
+  init: (id, editorType, options) =>
+    action(actionTypes.EDITOR.INIT, { id, editorType, options }),
+  initComplete: (id, options) => action(actionTypes.EDITOR.INIT_COMPLETE, { id, options }),
+  changeLayout: (id, newLayout) => action(actionTypes.EDITOR.CHANGE_LAYOUT, { id, newLayout }),
+  patchFeatures: (id, featuresPatch) => action(actionTypes.EDITOR.PATCH.FEATURES, { id, featuresPatch }),
+  patchRule: (id, rulePatch) => action(actionTypes.EDITOR.PATCH.RULE, { id, rulePatch }),
+  patchData: (id, dataPatch) => action(actionTypes.EDITOR.PATCH.DATA, { id, dataPatch }),
+  patchFileKeyColumn: (id, fileKeyPatchType, fileKeyPatch) => action(actionTypes.EDITOR.PATCH.FILE_KEY_COLUMN, { id, fileKeyPatchType, fileKeyPatch }),
   clear: id => action(actionTypes.EDITOR.CLEAR, { id }),
+  toggleVersion: (id, version) => action(actionTypes.EDITOR.TOGGLE_VERSION, { id, version }),
+  sampleDataReceived: (id, sampleData, templateVersion) => action(actionTypes.EDITOR.SAMPLEDATA.RECEIVED, { id, sampleData, templateVersion }),
+  sampleDataFailed: (id, sampleDataError) => action(actionTypes.EDITOR.SAMPLEDATA.FAILED, { id, sampleDataError }),
+  toggleAutoPreview: (id, autoPreview) => action(actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW, { id, autoPreview }),
+  refreshHelperFunctions: () => action(actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS),
   updateHelperFunctions: helperFunctions =>
     action(actionTypes.EDITOR.UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
-  refreshHelperFunctions: () =>
-    action(actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS),
-  evaluateRequest: id => action(actionTypes.EDITOR.EVALUATE_REQUEST, { id }),
+  previewRequest: id => action(actionTypes.EDITOR.PREVIEW.REQUEST, { id }),
+  previewFailed: (id, error) =>
+    action(actionTypes.EDITOR.PREVIEW.FAILED, { id, error }),
+  previewResponse: (id, result) =>
+    action(actionTypes.EDITOR.PREVIEW.RESPONSE, { id, result }),
+  saveRequest: (id, context) => action(actionTypes.EDITOR.SAVE.REQUEST, { id, context }),
+  saveFailed: (id, saveMessage) => action(actionTypes.EDITOR.SAVE.FAILED, { id, saveMessage }),
+  saveComplete: id => action(actionTypes.EDITOR.SAVE.COMPLETE, { id }),
   validateFailure: (id, violations) =>
     action(actionTypes.EDITOR.VALIDATE_FAILURE, { id, violations }),
-  evaluateFailure: (id, error) =>
-    action(actionTypes.EDITOR.EVALUATE_FAILURE, { id, error }),
-  evaluateResponse: (id, result) =>
-    action(actionTypes.EDITOR.EVALUATE_RESPONSE, { id, result }),
-  save: (id, context) => action(actionTypes.EDITOR.SAVE, { id, context }),
-  saveFailed: id => action(actionTypes.EDITOR.SAVE_FAILED, { id }),
-  saveComplete: id => action(actionTypes.EDITOR.SAVE_COMPLETE, { id }),
-};
-// TODO: parallel AFE refactor actions.
-const _editor = {
-  init: (id, editorType, options) =>
-    action(actionTypes._EDITOR.INIT, { id, editorType, options }),
-  initComplete: (id, options) => action(actionTypes._EDITOR.INIT_COMPLETE, { id, options }),
-  changeLayout: (id, newLayout) => action(actionTypes._EDITOR.CHANGE_LAYOUT, { id, newLayout }),
-  patchFeatures: (id, featuresPatch) => action(actionTypes._EDITOR.PATCH.FEATURES, { id, featuresPatch }),
-  patchRule: (id, rulePatch) => action(actionTypes._EDITOR.PATCH.RULE, { id, rulePatch }),
-  patchData: (id, dataPatch) => action(actionTypes._EDITOR.PATCH.DATA, { id, dataPatch }),
-  patchFileKeyColumn: (id, fileKeyPatchType, fileKeyPatch) => action(actionTypes._EDITOR.PATCH.FILE_KEY_COLUMN, { id, fileKeyPatchType, fileKeyPatch }),
-  clear: id => action(actionTypes._EDITOR.CLEAR, { id }),
-  toggleVersion: (id, version) => action(actionTypes._EDITOR.TOGGLE_VERSION, { id, version }),
-  sampleDataReceived: (id, sampleData, templateVersion) => action(actionTypes._EDITOR.SAMPLEDATA.RECEIVED, { id, sampleData, templateVersion }),
-  sampleDataFailed: (id, sampleDataError) => action(actionTypes._EDITOR.SAMPLEDATA.FAILED, { id, sampleDataError }),
-  toggleAutoPreview: (id, autoPreview) => action(actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW, { id, autoPreview }),
-  updateHelperFunctions: helperFunctions =>
-    action(actionTypes._EDITOR.UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
-  previewRequest: id => action(actionTypes._EDITOR.PREVIEW.REQUEST, { id }),
-  previewFailed: (id, error) =>
-    action(actionTypes._EDITOR.PREVIEW.FAILED, { id, error }),
-  previewResponse: (id, result) =>
-    action(actionTypes._EDITOR.PREVIEW.RESPONSE, { id, result }),
-  saveRequest: (id, context) => action(actionTypes._EDITOR.SAVE.REQUEST, { id, context }),
-  saveFailed: (id, saveMessage) => action(actionTypes._EDITOR.SAVE.FAILED, { id, saveMessage }),
-  saveComplete: id => action(actionTypes._EDITOR.SAVE.COMPLETE, { id }),
-  validateFailure: (id, violations) =>
-    action(actionTypes._EDITOR.VALIDATE_FAILURE, { id, violations }),
 };
 // #endregion
 // #region Mapping actions
@@ -2207,13 +2193,15 @@ const logs = {
     receivedLogDetails: (exportId, logKey, logDetails) => action(actionTypes.LOGS.LISTENER.LOG.RECEIVED, { exportId, logKey, logDetails }),
     removeLog: (flowId, exportId, logsToRemove) => action(actionTypes.LOGS.LISTENER.LOG.REMOVE, { flowId, exportId, logsToRemove }),
     logDeleted: (exportId, deletedLogKey) => action(actionTypes.LOGS.LISTENER.LOG.DELETED, { exportId, deletedLogKey }),
-    request: (flowId, exportId, loadMore) => action(actionTypes.LOGS.LISTENER.REQUEST, { flowId, exportId, loadMore }),
-    received: (exportId, logs, nextPageURL, loadMore) => action(actionTypes.LOGS.LISTENER.RECEIVED, { exportId, logs, nextPageURL, loadMore }),
+    request: ({flowId, exportId, loadMore}) => action(actionTypes.LOGS.LISTENER.REQUEST, { flowId, exportId, loadMore }),
+    received: ({exportId, logs, nextPageURL, loadMore}) => action(actionTypes.LOGS.LISTENER.RECEIVED, { exportId, logs, nextPageURL, loadMore }),
     failed: (exportId, error) => action(actionTypes.LOGS.LISTENER.FAILED, { exportId, error }),
     clear: exportId => action(actionTypes.LOGS.LISTENER.CLEAR, { exportId }),
     startLogsPoll: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.START_POLL, { flowId, exportId }),
     stopLogsPoll: (exportId, hasNewLogs) => action(actionTypes.LOGS.LISTENER.STOP_POLL, { exportId, hasNewLogs }),
     setActiveLog: (exportId, activeLogKey) => action(actionTypes.LOGS.LISTENER.ACTIVE_LOG, { exportId, activeLogKey }),
+    setFetchStatus: (exportId, status) => action(actionTypes.LOGS.LISTENER.FETCH_STATUS, { exportId, status }),
+    pauseFetch: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.PAUSE_FETCH, { flowId, exportId }),
   },
 };
 
@@ -2233,7 +2221,6 @@ export default {
   patchFilter,
   clearFilter,
   editor,
-  _editor,
   resourceForm,
   resource,
   user,

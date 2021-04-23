@@ -37,6 +37,7 @@ import RawHtml from '../../../../../components/RawHtml';
 import getRoutePath from '../../../../../utils/routePaths';
 import HelpIcon from '../../../../../components/icons/HelpIcon';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import TrashIcon from '../../../../../components/icons/TrashIcon';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -173,6 +174,15 @@ export default function ConnectorInstallation(props) {
   const isCloned = install.find(step => step.isClone);
   const isFrameWork2 = integrationInstallSteps.length || isCloned;
 
+  const redirectTo = useSelector(state => selectors.shouldRedirect(state, integrationId));
+
+  useEffect(() => {
+    if (redirectTo) {
+      history.push(getRoutePath(redirectTo));
+      dispatch(actions.resource.integrations.clearRedirect(integrationId));
+    }
+  }, [dispatch, history, integrationId, redirectTo]);
+
   useEffect(() => {
     const allStepsCompleted = !installSteps.reduce((result, step) => result || !step.completed, false);
 
@@ -197,6 +207,7 @@ export default function ConnectorInstallation(props) {
     ],
     []
   );
+
   const handleSubmitComplete = useCallback(
     (connId, isAuthorized, connectionDoc = {}) => {
       // Here connection Doc will come into picture for only for IA2.0 and if connection step doesn't contain connection Id.
@@ -317,6 +328,11 @@ export default function ConnectorInstallation(props) {
         {
           label: 'Uninstall',
           onClick: () => {
+            if (!_connectorId) {
+              dispatch(actions.resource.integrations.delete(integrationId));
+
+              return;
+            }
             const storeId = stores?.length
               ? stores[0].value
               : undefined;
@@ -514,17 +530,25 @@ export default function ConnectorInstallation(props) {
               View help guide
             </IconTextButton>
           )}
-          {_connectorId && (
-          <IconTextButton
-            data-test="uninstall"
-            component={Link}
-            variant="text"
-            onClick={handleUninstall}
-            color="primary">
-            <CloseIcon />
-            Uninstall
-          </IconTextButton>
-          )}
+          {_connectorId ? (
+            <IconTextButton
+              data-test="uninstall"
+              component={Link}
+              variant="text"
+              onClick={handleUninstall}
+              color="primary">
+              <CloseIcon />
+              Uninstall
+            </IconTextButton>
+          )
+            : (
+              <IconTextButton
+                variant="text"
+                data-test="deleteIntegration"
+                onClick={handleUninstall}>
+                <TrashIcon /> Delete integration
+              </IconTextButton>
+            )}
 
         </div>
       </CeligoPageBar>

@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
+import { call, put, takeEvery, select, take, cancel, fork, takeLatest, delay, race } from 'redux-saga/effects';
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean } from 'lodash';
 import actions from '../../actions';
@@ -14,6 +14,8 @@ import { REST_ASSISTANTS } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
+
+const STANDARD_DELAY_FOR_POLLING = 5 * 1000;
 
 function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -508,7 +510,7 @@ export function* updateIntegrationSettings({
       // when Save button on section triggers a flow on integrationApp, it will send back _flowId in the response.
       // UI should navigate to dashboard so that user can the see the flow status.
       yield put(
-        actions.integrationApp.settings.redirectTo(integrationId, 'dashboard')
+        actions.resource.integrations.redirectTo(integrationId, 'dashboard')
       );
     }
 
@@ -637,6 +639,19 @@ export function* deleteResource({ resourceType, id }) {
   } catch (error) {
     return undefined;
   }
+}
+
+export function* deleteIntegration({integrationId}) {
+  const integration = yield select(selectors.resource, 'integrations', integrationId);
+
+  if (integration._connectorId) return undefined;
+
+  yield call(deleteResource, {resourceType: 'integrations', id: integrationId});
+
+  yield put(actions.resource.requestCollection('integrations', null, true));
+  yield put(actions.resource.requestCollection('tiles', null, true));
+  yield put(actions.resource.requestCollection('scripts', null, true));
+  yield put(actions.resource.integrations.redirectTo(integrationId, 'dashboard'));
 }
 
 export function* getResourceCollection({ resourceType, refresh}) {
@@ -1001,6 +1016,27 @@ export function* downloadReport({reportId}) {
 
   }
 }
+
+export function* pollForResourceCollection({ resourceType }) {
+  while (true) {
+    yield call(getResourceCollection, {resourceType});
+    yield delay(STANDARD_DELAY_FOR_POLLING);
+  }
+}
+export function* startPollingForResourceCollection({ resourceType }) {
+  return yield race({
+    pollCollection: call(pollForResourceCollection, {resourceType}),
+    cancelPoll: take(action => {
+      if ([
+        actionTypes.RESOURCE.STOP_COLLECTION_POLL,
+        actionTypes.RESOURCE.START_COLLECTION_POLL,
+      ].includes(action.type) &&
+    action.resourceType === resourceType) {
+        return true;
+      }
+    }),
+  });
+}
 export const resourceSagas = [
   takeEvery(actionTypes.EVENT_REPORT.CANCEL, eventReportCancel),
   takeEvery(actionTypes.EVENT_REPORT.DOWNLOAD, downloadReport),
@@ -1031,6 +1067,8 @@ export const resourceSagas = [
   takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
   takeEvery(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, linkUnlinkSuiteScriptIntegrator),
   takeEvery(actionTypes.RESOURCE.REPLACE_CONNECTION, replaceConnection),
+  takeEvery(actionTypes.RESOURCE.START_COLLECTION_POLL, startPollingForResourceCollection),
+  takeLatest(actionTypes.INTEGRATION.DELETE, deleteIntegration),
 
   ...metadataSagas,
 ];

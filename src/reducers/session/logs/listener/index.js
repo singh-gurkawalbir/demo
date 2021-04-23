@@ -2,7 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, exportId, logKey, logDetails, logs, nextPageURL, loadMore, deletedLogKey, hasNewLogs, activeLogKey, error } = action;
+  const { type, exportId, logKey, logDetails, logs, nextPageURL, loadMore, deletedLogKey, hasNewLogs, activeLogKey, error, status } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -10,6 +10,8 @@ export default (state = {}, action) => {
         if (!draft[exportId]) {
           draft[exportId] = {};
         }
+        delete draft[exportId].fetchStatus;
+        delete draft[exportId].currQueryTime;
         if (loadMore) {
           draft[exportId].loadMoreStatus = 'requested';
         } else {
@@ -103,6 +105,26 @@ export default (state = {}, action) => {
         const changeIdentifier = draft[exportId].error?.changeIdentifier || 0;
 
         draft[exportId].error = {changeIdentifier: changeIdentifier + 1, ...error};
+        break;
+      }
+
+      case actionTypes.LOGS.LISTENER.FETCH_STATUS: {
+        if (!draft[exportId]) break;
+        draft[exportId].fetchStatus = status;
+        const {nextPageURL} = draft[exportId];
+
+        if (status !== 'completed' && nextPageURL) {
+          const queryParams = new URLSearchParams(nextPageURL);
+
+          const timeLte = queryParams.get('time_lte');
+
+          const logsLength = draft[exportId].logsSummary?.length;
+          const lastLogTime = logsLength && draft[exportId].logsSummary?.[logsLength - 1].time;
+
+          // if nextPageURL does not have time_lte, we use the oldest log time
+          // or if logs list is also empty, we use current time
+          draft[exportId].currQueryTime = parseInt(timeLte || lastLogTime || Date.now(), 10);
+        }
         break;
       }
 

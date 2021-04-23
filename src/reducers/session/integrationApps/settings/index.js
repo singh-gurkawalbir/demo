@@ -35,8 +35,8 @@ function flattenChildrenStructrue(
       ...(meta || {}),
       isRoot,
       depth,
-      deleted:
-        allChildrenDeleted || deleted.includes(meta.id) || isParentDeleted,
+      ...(options?.lookups?.length && { lookups: options.lookups }),
+      deleted: allChildrenDeleted || deleted.includes(meta.id) || isParentDeleted,
     });
 
     if (meta.children) {
@@ -46,6 +46,7 @@ function flattenChildrenStructrue(
           depth: depth + 1,
           isParentDeleted: deleted.includes(meta.id),
           deleteChildlessParent,
+          lookups: meta.lookups,
         })
       );
     }
@@ -65,7 +66,6 @@ export default (state = {}, action) => {
     flowId,
     licenseId,
     response,
-    redirectTo,
     metadata,
     error,
     mappingData,
@@ -169,16 +169,6 @@ export default (state = {}, action) => {
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR:
         delete draft[key];
-        break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT:
-        if (draft[integrationId]) delete draft[integrationId].redirectTo;
-        break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.REDIRECT:
-        if (!draft[integrationId]) {
-          draft[integrationId] = {};
-        }
-
-        draft[integrationId].redirectTo = redirectTo;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED:
         draft[licenseId] = true;
@@ -988,14 +978,6 @@ selectors.integrationAppMappingMetadata = (state, integrationId) => {
   }
 
   return state[integrationId] || emptyObj;
-};
-
-selectors.shouldRedirect = (state, integrationId) => {
-  if (!state || !state[integrationId]) {
-    return null;
-  }
-
-  return state[integrationId].redirectTo;
 };
 
 selectors.checkUpgradeRequested = (state, licenseId) => {

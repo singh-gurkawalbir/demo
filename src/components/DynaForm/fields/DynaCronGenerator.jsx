@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 export default function DynaCronGenerator(props) {
   const classes = useStyles();
   const { onFieldChange, id, value } = props;
-  const [reset, setReset] = useState(false);
+  const [reset, setReset] = useState(0);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onChange = useCallback(
     (value, touched) => onFieldChange(id, value, touched),
@@ -38,15 +38,14 @@ export default function DynaCronGenerator(props) {
           color="secondary"
           className={classes.resetBtn}
           onClick={() => {
-            setReset(true);
+            setReset(count => count + 1);
             onChange('');
           }}>
           Reset
         </Button>
       </div>
       <CronBuilder
-        reset={reset}
-        setReset={setReset}
+        key={reset}
         value={value}
         onChange={onChange}
       />

@@ -9,7 +9,7 @@ import {
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { generateNewId, isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
-import EditorDrawer from '../../../AFE2/Drawer';
+import EditorDrawer from '../../../AFE/Drawer';
 import ExportsPreviewPanel from '../../../ExportsPreviewPanel';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import Back from '../../../icons/BackArrowIcon';

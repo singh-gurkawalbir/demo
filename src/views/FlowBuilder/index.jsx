@@ -14,7 +14,7 @@ import ChartsDrawer from './drawers/LineGraph';
 import ReplaceConnectionDrawer from './drawers/ReplaceConnection';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
-import EditorDrawer from '../../components/AFE2/Drawer';
+import EditorDrawer from '../../components/AFE/Drawer';
 import FlowBuilderBody from './FlowBuilderBody';
 import Redirection from './Redirection';
 

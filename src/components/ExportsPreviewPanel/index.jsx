@@ -157,16 +157,14 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
           setShowPreviewData={setShowPreviewData}
           showPreviewData={showPreviewData}
       />
-        {
-        showPreviewData && (
-          <Panels.PreviewBody
-            resourceSampleData={resourceSampleData}
-            previewStageDataList={previewStageDataList}
-            availablePreviewStages={availablePreviewStages}
-            resourceId={resourceId}
-            resourceType={resourceType} />
-        )
-      }
+
+        <Panels.PreviewBody
+          resourceSampleData={resourceSampleData}
+          previewStageDataList={previewStageDataList}
+          availablePreviewStages={availablePreviewStages}
+          resourceId={resourceId}
+          showDefaultPreviewBody={!showPreviewData}
+          resourceType={resourceType} />
       </div>
     </div>
   );

@@ -569,6 +569,8 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'salesforce.relatedLists.userDefined',
     'salesforce.distributed.batchSize',
     'salesforce.soql.query',
+    'salesforce.distributed.referencedFields',
+    'salesforce.distributed.relatedLists',
     'schedule',
     'timeZone',
     'activeTab',
@@ -597,6 +599,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'restlet.once.booleanField',
     'restlet.type',
     '_connectionId',
+    'settings',
   ],
   imports: [
     '_connectionId',
@@ -612,6 +615,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'salesforce.idLookup.whereClause',
     'salesforce.upsert.externalIdField',
     'salesforce.lookups',
+    'settings',
   ],
   flows: [
     '_runNextFlowIds',
@@ -626,6 +630,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'dayToRunOn',
     '_keepDeltaBehindFlowId',
     '_keepDeltaBehindExportId',
+    'settings',
   ],
 });
 export const CLONING_SUPPORTED_IAS = ['sfnsio'];

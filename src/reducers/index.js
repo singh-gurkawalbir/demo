@@ -1797,10 +1797,13 @@ selectors.mkDIYIntegrationFlowList = () => createSelector(
   (_1, _2, childId) => childId,
   (_1, _2, _3, options) => options,
   selectors.errorMap,
-  (integrations = emptyArray, flows = emptyArray, integrationId, childId, options, errorMap) => {
+  selectors.currentEnvironment,
+  (integrations = emptyArray, flows = emptyArray, integrationId, childId, options, errorMap, currentEnvironment) => {
     const childIntegrationIds = integrations.filter(i => i._parentId === integrationId || i._id === integrationId).map(i => i._id);
     let integrationFlows = flows.filter(f => {
-      if (integrationId === STANDALONE_INTEGRATION.id) return !f._integrationId;
+      if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+        return !f._integrationId && !!f.sandbox === (currentEnvironment === 'sandbox');
+      }
       if (childId && childId !== integrationId) return f._integrationId === childId;
 
       return childIntegrationIds.includes(f._integrationId);
@@ -2129,11 +2132,11 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
             if (sectionId) {
               const selectedSection = child.find(sec => getTitleIdFromSection(sec) === sectionId);
 
-              if (selectedSection) {
+              if (selectedSection?.flows?.length) {
                 flows = selectedSection.flows.map(f => f._id);
               }
             } else {
-              child.forEach(sec => flows.push(...sec.flows.map(f => f._id)));
+              child.forEach(sec => sec?.flows?.length && flows.push(...sec.flows.map(f => f._id)));
             }
           }
         } else {
@@ -2142,11 +2145,11 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
               if (sectionId) {
                 const selectedSection = sec.sections.find(s => getTitleIdFromSection(s) === sectionId);
 
-                if (selectedSection) {
+                if (selectedSection?.flows?.length) {
                   flows.push(...selectedSection.flows.map(f => f._id));
                 }
               } else {
-                sec.sections.forEach(s => flows.push(...s.flows.map(f => f._id)));
+                sec.sections.forEach(s => s?.flows?.length && flows.push(...s.flows.map(f => f._id)));
               }
             }
           });
@@ -2155,11 +2158,11 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
     } else if (sectionId) {
       const selectedSection = sections.find(sec => getTitleIdFromSection(sec) === sectionId);
 
-      if (selectedSection) {
+      if (selectedSection?.flows?.length) {
         flows = selectedSection.flows.map(f => f._id);
       }
     } else {
-      sections.forEach(sec => flows.push(...sec.flows.map(f => f._id)));
+      sections.forEach(sec => sec?.flows?.length && flows.push(...sec.flows.map(f => f._id)));
     }
 
     return flows;
@@ -4773,6 +4776,28 @@ selectors.integrationErrorsPerStore = (state, integrationId) => {
   }, {});
 };
 
+/**
+ * Returns error count per flow group in an integration for IAF 2.0 & DIY Flow groupings
+ * A map of groupId and total errors on that group
+ */
+selectors.integrationErrorsPerFlowGroup = createSelector(
+  selectors.integrationEnabledFlowIds,
+  (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
+  state => state?.data?.resources?.flows,
+  (enabledFlowIds, errorMap, flowsList) => enabledFlowIds.reduce((groupErrorMap, flowId) => {
+    const flow = flowsList.find(f => f._id === flowId);
+    const groupId = flow._flowGroupingId || MISCELLANEOUS_SECTION_ID;
+    const errorCount = errorMap[flowId] || 0;
+
+    if (!groupErrorMap[groupId]) {
+      groupErrorMap[groupId] = 0;
+    }
+    groupErrorMap[groupId] += errorCount;
+
+    return groupErrorMap;
+  }, {})
+);
+
 selectors.getIntegrationUserNameById = (state, userId, flowId) => {
   const profile = selectors.userProfile(state) || emptyObject;
 
@@ -5183,69 +5208,11 @@ selectors.flowConnectionsWithLogEntry = () => {
 // #endregion connection log selectors
 
 // #region AFE selectors
-
-selectors.editorHelperFunctions = state => state?.session?.editors?.helperFunctions || [];
-selectors._editorHelperFunctions = state => state?.session?._editors?.helperFunctions || {};
-
-// todo: below selector would be removed once AFE refactored code is stable
-selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enableEditorV2) => {
-  const { merged: resource = {} } = selectors.resourceData(
-    state,
-    resourceType,
-    resourceId
-  );
-  const connection = selectors.resource(state, 'connections', resource._connectionId);
-
-  // enableEditorV2 is to force fields to show editor when
-  // the whole adaptor is not yet supported (except for native REST)
-  // TODO: we will not need all these conditions once all fields/adaptors support AFE2
-  if (enableEditorV2) {
-    if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-      return connection.isHTTP;
-    }
-
-    return true;
-  }
-
-  // no AFE1/2 is shown for PG export (with some exceptions)
-  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
-
-  if (isPageGenerator) {
-    return false;
-  }
-
-  // AFE 2.0 not supported for Native REST Adaptor for any fields
-  if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-    return connection.isHTTP;
-  }
-
-  // BE doesnt support snowflake adaptor yet
-  // remove this check once same is added in BE
-  if (connection?.rdbms?.type === 'snowflake') {
-    return false;
-  }
-
-  return [
-    'HTTPImport',
-    'HTTPExport',
-    'FTPImport',
-    'FTPExport',
-    'AS2Import',
-    'AS2Export',
-    'S3Import',
-    'S3Export',
-    'RDBMSImport',
-    'RDBMSExport',
-    'MongodbImport',
-    'MongodbExport',
-    'DynamodbImport',
-    'DynamodbExport',
-  ].includes(resource.adaptorType);
-};
+selectors.editorHelperFunctions = state => state?.session?.editors?.helperFunctions || {};
 
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
-  const {editorType, fieldId, flowId, resourceId, resourceType, stage} = fromSession._editor(state?.session, editorId);
+  const {editorType, fieldId, flowId, resourceId, resourceType, stage} = fromSession.editor(state?.session, editorId);
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
   if (stage === 'outputFilter' ||
@@ -5261,7 +5228,7 @@ selectors.editorSupportsOnlyV2Data = (state, editorId) => {
 };
 
 selectors.isEditorDisabled = (state, editorId) => {
-  const editor = fromSession._editor(state?.session, editorId);
+  const editor = fromSession.editor(state?.session, editorId);
   const {flowId, fieldId, formKey, editorType, activeProcessor} = editor;
   const flow = selectors.resource(state, 'flows', flowId);
   const integrationId = flow?._integrationId || 'none';
@@ -5270,7 +5237,16 @@ selectors.isEditorDisabled = (state, editorId) => {
   if (formKey) {
     const fieldState = selectors.fieldState(state, formKey, fieldId);
 
-    if (fieldState) return fieldState.disabled;
+    if (fieldState) {
+      // Currently, many IA settings of type expression has disabled property as true and they shouldn't
+      // be disabled. We added this below check temporarily and once IA fixes, we can remove the below code.
+      // reference for IA tracker: https://celigo.atlassian.net/browse/SFNSIO-1127
+      if (fieldState.type === 'iaexpression') {
+        return false;
+      }
+
+      return fieldState.disabled;
+    }
   }
 
   // if we are on FB actions, below logic applies
@@ -5287,7 +5263,7 @@ selectors.isEditorDisabled = (state, editorId) => {
 };
 
 selectors.isEditorLookupSupported = (state, editorId) => {
-  const editor = fromSession._editor(state?.session, editorId);
+  const editor = fromSession.editor(state?.session, editorId);
   const {resultMode, fieldId, editorType, resourceType} = editor;
   const lookupFields = [
     '_body',
@@ -5321,7 +5297,7 @@ selectors.isEditorLookupSupported = (state, editorId) => {
 // //TODO: update the logic here once BE trackers
 // IO-19867 and IO-19868 are complete
 selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
-  const editor = fromSession._editor(state?.session, editorId);
+  const editor = fromSession.editor(state?.session, editorId);
   const {stage, resourceId, resourceType, flowId, fieldId} = editor;
   const { merged: resource = {} } = selectors.resourceData(
     state,

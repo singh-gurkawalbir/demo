@@ -325,6 +325,7 @@ export const groupApplications = (
           export: asst.export,
           import: asst.import,
           webhook: asst.webhook,
+          group: asst.group,
         });
       }
     });

@@ -62,37 +62,75 @@ export function* startPollingForRequestLogs({flowId, exportId}) {
   }
 }
 
-export function* retryToFetchRequests({retryCount = 0, fetchRequestsPath}) {
-  const opts = {
-    method: 'GET',
-  };
+export function* putReceivedAction({exportId, requests = [], nextPageURL, loadMore}) {
+  const formattedLogs = requests.map(({time = '', ...others}) => {
+    const utcDateTime = moment(time);
 
-  // we try max of 4 times (to cover 1 hour window) as BE route may not give all the results on first try or after that (s3 limitation)
-  if (retryCount > 3) {
-    return {
-      nextPageURL: fetchRequestsPath,
-    };
-  }
+    return { utcDateTime, time, ...others };
+  });
 
+  yield put(
+    actions.logs.listener.received({
+      exportId,
+      logs: formattedLogs,
+      nextPageURL,
+      loadMore,
+    }
+    )
+  );
+}
+
+export function* retryToFetchRequests({freshCall, count = 0, fetchRequestsPath, loadMore, exportId}) {
+  // when user makes fresh request, we want to reset the logs and don't append the logs to existing logs state
+  // but when we are retrying on our end to fetch logs, we want to keep loadMore as true so logs gets added to the existing list
+  const shouldAppendLogs = loadMore || !freshCall;
   let response;
 
   try {
     response = yield call(apiCallWithRetry, {
       path: fetchRequestsPath.replace('/api', ''),
-      opts,
     });
   } catch (e) {
     return {};
   }
 
-  const {requests, nextPageURL} = response;
+  const {requests = [], nextPageURL} = response;
+  const newCount = count + requests.length;
 
-  // don't re-iterate in case logs are found or nextPageURL is not present. Return control to parent
-  if (requests?.length || !nextPageURL) {
-    return {requests, nextPageURL};
+  if (!nextPageURL) {
+    yield call(putReceivedAction, {exportId, requests, loadMore: !!shouldAppendLogs});
+
+    return yield put(
+      actions.logs.listener.setFetchStatus(
+        exportId,
+        'completed'
+      )
+    );
   }
 
-  return yield call(retryToFetchRequests, {retryCount: retryCount + 1, fetchRequestsPath: nextPageURL });
+  if (newCount >= 1000) {
+    yield call(putReceivedAction, {exportId, requests, nextPageURL, loadMore: !!shouldAppendLogs});
+
+    return yield put(
+      actions.logs.listener.setFetchStatus(
+        exportId,
+        'paused'
+      )
+    );
+  }
+
+  if (newCount < 1000) {
+    yield call(putReceivedAction, {exportId, requests, nextPageURL, loadMore: !!shouldAppendLogs});
+    yield put(
+      actions.logs.listener.setFetchStatus(
+        exportId,
+        'inProgress'
+      )
+    );
+    // continue
+  }
+
+  return yield call(retryToFetchRequests, {count: newCount, fetchRequestsPath: nextPageURL, loadMore, exportId });
 }
 
 export function* requestLogs({ flowId, exportId, loadMore }) {
@@ -105,22 +143,9 @@ export function* requestLogs({ flowId, exportId, loadMore }) {
     { flowId, exportId, filters, nextPageURL, loadMore }
   );
   const { path } = requestOptions;
-  const { requests = [], nextPageURL: nextPageURLResponse } = yield call(retryToFetchRequests, {fetchRequestsPath: path });
 
-  const formattedLogs = requests.map(({time = '', ...others}) => {
-    const utcDateTime = moment(time);
+  yield call(retryToFetchRequests, {freshCall: true, fetchRequestsPath: path, loadMore, exportId });
 
-    return { utcDateTime, time, ...others };
-  });
-
-  yield put(
-    actions.logs.listener.received(
-      exportId,
-      formattedLogs,
-      nextPageURLResponse,
-      loadMore
-    )
-  );
   // get the hasNewLogs again from the state once logs are received
   const hasNewLogs = yield select(selectors.hasNewLogs, exportId);
 
@@ -134,7 +159,8 @@ export function* requestLogsWithCancel(params) {
   yield race({
     callAPI: call(requestLogs, params),
     cancelCallAPI: take(action =>
-      action.type === actionTypes.LOGS.LISTENER.CLEAR
+      action.type === actionTypes.LOGS.LISTENER.CLEAR ||
+      action.type === actionTypes.LOGS.LISTENER.PAUSE_FETCH
     ),
   });
 }

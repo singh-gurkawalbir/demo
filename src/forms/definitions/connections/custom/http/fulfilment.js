@@ -12,7 +12,7 @@ export default {
     '/http/ping/relativeURI': '/v2/inventory',
     '/http/ping/method': 'GET',
     '/http/auth/token/refreshRelativeURI': 'https://api.fulfillment.com/v2/oauth/access_token',
-    '/http/auth/token/refreshBody': '{"grant_type":"refresh_token","client_id":"{{{connection.http.unencrypted.clientId}}}","client_secret":"{{{connection.http.encrypted.clientSecret}}}","refresh_token":"{{{connection.http.refreshToken}}}","password": "{{{connection.http.unencrypted.password}}}","scope": "oms","username": "{{{connection.http.unencrypted.username}}}"}',
+    '/http/auth/token/refreshBody': '{"grant_type":"refresh_token","client_id":"{{{connection.http.unencrypted.clientId}}}","client_secret":"{{{connection.http.encrypted.clientSecret}}}","refresh_token":"{{{connection.http.auth.token.refreshToken}}}","password": "{{{connection.http.encrypted.password}}}","scope": "oms","username": "{{{connection.http.unencrypted.username}}}"}',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'json',
   }),
