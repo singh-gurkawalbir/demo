@@ -9,16 +9,29 @@ import { makeExportResource } from '../../../../utils/exportData';
 import { emptyObject } from '../../../../utils/constants';
 
 const isExportRefresh = (kind, key, exportResource) => !!(kind && key && exportResource);
+const fixedListOptions = fixedList => {
+  if (fixedList) {
+    return {
+      type: 'autosuggest',
+      options: fixedList,
 
+      supportsRefresh: false,
+    };
+  }
+
+  return {};
+};
 export default function DynaRefreshableStaticMap(props) {
   const {
     connectionId,
     keyName = 'extract',
     keyLabel = 'Export',
+    fixedKeyOptionsList,
     map,
     value,
     valueLabel = 'Import',
     valueName = 'generate',
+    fixedValueOptionsList,
     filterKey,
     commMetaPath,
     disableFetch,
@@ -45,25 +58,32 @@ export default function DynaRefreshableStaticMap(props) {
     options.commMetaPath || commMetaPath,
     options.filterKey || filterKey);
 
-  const eOptions = useMemo(() => ((eData?.length && eData) || []).filter(Boolean), [eData]);
-  const gOptions = useMemo(() => ((gData?.length && gData) || []).filter(Boolean), [gData]);
+  const optionsMap = useMemo(() => {
+    const eOptions = ((eData?.length && eData) || []).filter(Boolean);
+    const gOptions = ((gData?.length && gData) || []).filter(Boolean);
 
-  const optionsMap = useMemo(() => [{
-    id: keyName,
-    label: keyLabel,
-    required: true,
-    options: eOptions,
-    type: eOptions.length ? 'autosuggest' : 'input',
-    supportsRefresh: isExportRefresh(eKind, eKey, eExportResource),
-  }, {
-    id: valueName,
-    label: valueLabel,
-    required: true,
-    type: 'autosuggest',
-    optionsChangeIdentifer: 0,
-    options: gOptions,
-    supportsRefresh: !!connectionId || !!isExportRefresh(gKind, gKey, gExportResource),
-  }], [connectionId, eExportResource, eKey, eKind, eOptions, gExportResource, gKey, gKind, gOptions, keyLabel, keyName, valueLabel, valueName]);
+    return [{
+      id: keyName,
+      label: keyLabel,
+      required: true,
+      options: eOptions,
+      type: eOptions.length ? 'autosuggest' : 'input',
+      supportsRefresh: isExportRefresh(eKind, eKey, eExportResource),
+      ...fixedListOptions(fixedKeyOptionsList),
+    }, {
+      id: valueName,
+      label: valueLabel,
+      required: true,
+      type: 'autosuggest',
+      optionsChangeIdentifer: 0,
+      options: gOptions,
+      supportsRefresh: !!connectionId || !!isExportRefresh(gKind, gKey, gExportResource),
+      ...fixedListOptions(fixedValueOptionsList),
+    }];
+  },
+  [connectionId, eData, eExportResource, eKey, eKind,
+    fixedKeyOptionsList, fixedValueOptionsList,
+    gData, gExportResource, gKey, gKind, keyLabel, keyName, valueLabel, valueName]);
 
   const metadata = useMemo(() => {
     if (isExportRefresh(gKind, gKey, gExportResource)) return {optionsMap};
@@ -127,10 +147,10 @@ export default function DynaRefreshableStaticMap(props) {
   }, [onFieldChange, preferMapValueAsNum, valueName]);
 
   useEffect(() => {
-    if (isExportRefresh(eKind, eKey, eExportResource)) {
+    if (optionsMap?.[0].supportsRefresh && isExportRefresh(eKind, eKey, eExportResource)) {
       dispatch(actions.exportData.request(eKind, eKey, eExportResource));
     }
-    if (isExportRefresh(gKind, gKey, gExportResource)) {
+    if (optionsMap?.[1].supportsRefresh && isExportRefresh(gKind, gKey, gExportResource)) {
       dispatch(actions.exportData.request(gKind, gKey, gExportResource));
     } else if (!metadata && !disableOptionsLoad) {
       dispatch(
