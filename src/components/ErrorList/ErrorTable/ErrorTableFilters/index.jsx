@@ -134,7 +134,7 @@ export default function ErrorTableFilters({flowId, resourceId, isResolved, filte
   const paginationOptions = useMemo(
     () => ({
       // fetch more errors
-      loadMoreHandler: fetchErrors(true),
+      loadMoreHandler: () => fetchErrors(true),
       hasMore: !!errorObj.nextPageURL,
       loading: errorObj.status === 'requested',
     }),
