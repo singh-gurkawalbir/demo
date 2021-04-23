@@ -5,11 +5,22 @@ export default {
       '/type': 'integrationApp',
     };
 
+    if (newValues['/expires']) {
+      delete newValues['/trialEndDate'];
+    }
+
+    try {
+      newValues['/opts'] = JSON.parse(newValues['/opts']);
+    } catch (e) {
+      return newValues;
+    }
+
     return newValues;
   },
   fieldMap: {
     email: { fieldId: 'email' },
-    edition: { fieldId: 'edition' },
+    _editionId: { fieldId: '_editionId' },
+    trialEndDate: { fieldId: 'trialEndDate' },
     expires: { fieldId: 'expires' },
     sandbox: { fieldId: 'sandbox' },
     opts: { fieldId: 'opts' },
@@ -21,7 +32,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['email', 'edition', 'expires', 'sandbox', 'opts'],
+        fields: ['email', '_editionId', 'expires', 'trialEndDate', 'sandbox', 'opts'],
       },
       {
         collapsed: true,

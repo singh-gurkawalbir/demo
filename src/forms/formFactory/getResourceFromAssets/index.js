@@ -343,6 +343,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
     case 'asyncHelpers':
     case 'pageProcessor':
     case 'pageGenerator':
+    case 'eventreports':
       meta = formMeta[resourceType];
       break;
 

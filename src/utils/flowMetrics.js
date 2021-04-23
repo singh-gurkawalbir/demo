@@ -1,16 +1,13 @@
-import startOfDay from 'date-fns/startOfDay';
-import addDays from 'date-fns/addDays';
-import endOfDay from 'date-fns/endOfDay';
-import addHours from 'date-fns/addHours';
-import addMinutes from 'date-fns/addMinutes';
 import moment from 'moment';
+import momenttz from 'moment-timezone';
 import * as d3 from 'd3';
-import addMonths from 'date-fns/addMonths';
+import { getTimezoneOffset } from 'date-fns-tz';
 import { convertUtcToTimezone } from './date';
 
 export const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
 
 export const getRoundedDate = (d = new Date(), offsetInMins, isFloor) => {
+  if (!d) return d;
   const ms = 1000 * 60 * offsetInMins; // convert minutes to ms
 
   return new Date(isFloor ? (Math.floor(d.getTime() / ms) * ms) : (Math.ceil(d.getTime() / ms) * ms));
@@ -19,11 +16,12 @@ export const getRoundedDate = (d = new Date(), offsetInMins, isFloor) => {
 export const getDateTimeFormat = (range, epochTime, preferences = {}, timezone) => {
   if (range && range.startDate && range.endDate) {
     const days = moment(range.endDate).diff(moment(range.startDate), 'days');
+    const time = convertUtcToTimezone(moment(epochTime).toISOString(), null, null, timezone, {skipFormatting: true});
 
     if (days > 4 && days < 4 * 30) {
-      return `${moment(epochTime).format(preferences?.dateFormat || 'MM/DD/YYYY')} GMT`;
+      return `${time.format(preferences?.dateFormat || 'MM/DD/YYYY')}`;
     } if (days >= 4 * 30) {
-      return moment(epochTime).format('MMMM');
+      return time.format('MMMM');
     }
   }
 
@@ -44,7 +42,7 @@ export const getLineColor = index => {
   return colorSpectrum[index % 8];
 };
 
-export const getSelectedRange = range => {
+export const getSelectedRange = (range, skipLastEndDate) => {
   if (!range || typeof range !== 'object') {
     return {};
   }
@@ -52,78 +50,97 @@ export const getSelectedRange = range => {
   let start = startDate;
   let end = endDate;
 
+  // if skipLastEndDate is true, end date is skipped for 'last x' preset types
+  const currentDate = skipLastEndDate ? null : moment().toDate();
+
   switch (preset) {
+    case 'lastmin':
+      start = moment().subtract(1, 'minutes').toDate();
+      end = currentDate;
+      break;
+    case 'last5min':
+      start = moment().subtract(5, 'minutes').toDate();
+      end = currentDate;
+      break;
     case 'last15minutes':
-      start = addMinutes(new Date(), -15);
-      end = new Date();
+      start = moment().subtract(15, 'minutes').toDate();
+      end = currentDate;
       break;
     case 'last30minutes':
-      start = addMinutes(new Date(), -30);
-      end = new Date();
+      start = moment().subtract(30, 'minutes').toDate();
+      end = currentDate;
       break;
     case 'last1hour':
-      start = addHours(new Date(), -1);
-      end = new Date();
+      start = moment().subtract(1, 'hours').toDate();
+      end = currentDate;
       break;
     case 'last4hours':
-      start = addHours(new Date(), -4);
-      end = new Date();
+      start = moment().subtract(4, 'hours').toDate();
+      end = currentDate;
+      break;
+    case 'last6hours':
+      start = moment().subtract(6, 'hours').toDate();
+      end = currentDate;
+      break;
+    case 'last12hours':
+      start = moment().subtract(12, 'hours').toDate();
+      end = currentDate;
       break;
     case 'last24hours':
-      start = addHours(new Date(), -24);
-      end = new Date();
+      start = moment().subtract(24, 'hours').toDate();
+      end = currentDate;
       break;
     case 'today':
-      start = startOfDay(new Date());
-      end = new Date();
+      start = moment().startOf('day').toDate();
+      end = currentDate;
       break;
     case 'yesterday':
-      start = startOfDay(addDays(new Date(), -1));
-      end = endOfDay(addDays(new Date(), -1));
+      start = moment().subtract(1, 'days').startOf('day').toDate();
+      end = moment().subtract(1, 'days').endOf('day').toDate();
       break;
     case 'last7days':
-      start = startOfDay(addDays(new Date(), -6));
-      end = new Date();
+      start = moment().subtract(6, 'days').startOf('day').toDate();
+      end = currentDate;
       break;
     case 'last15days':
-      start = startOfDay(addDays(new Date(), -14));
-      end = new Date();
+      start = moment().subtract(14, 'days').startOf('day').toDate();
+      end = currentDate;
       break;
     case 'last30days':
-      start = startOfDay(addDays(new Date(), -29));
-      end = new Date();
+      start = moment().subtract(29, 'days').startOf('day').toDate();
+      end = currentDate;
       break;
     case 'last3months':
-      start = addMonths(new Date(), -3);
-      end = new Date();
+      start = moment().subtract(3, 'months').startOf('day').toDate();
+      end = currentDate;
       break;
     case 'last6months':
-      start = addMonths(new Date(), -6);
-      end = new Date();
+      start = moment().subtract(6, 'months').startOf('day').toDate();
+      end = currentDate;
       break;
     case 'last9months':
-      start = addMonths(new Date(), -9);
-      end = new Date();
+      start = moment().subtract(9, 'months').startOf('day').toDate();
+      end = currentDate;
       break;
     case 'lastyear':
-      start = addMonths(new Date(), -12);
-      end = new Date();
+      start = moment().subtract(1, 'years').startOf('day').toDate();
+      end = currentDate;
       break;
     case 'after14days':
-      start = new Date();
-      end = endOfDay(addDays(new Date(), 13));
+      start = moment().toDate();
+      end = moment().add(13, 'days').endOf('day').toDate();
       break;
     case 'after30days':
-      start = new Date();
-      end = endOfDay(addDays(new Date(), 29));
+      start = moment().toDate();
+      end = moment().add(29, 'days').endOf('day').toDate();
       break;
     case 'after6months':
-      start = new Date();
-      end = addMonths(new Date(), 6);
+      start = moment().toDate();
+      end = moment().add(6, 'months').endOf('day').toDate();
       break;
     case 'after1year':
-      start = new Date();
-      end = addMonths(new Date(), 12);
+      start = moment().toDate();
+      end = moment().add(1, 'years').endOf('day').toDate();
       break;
     case 'lastrun':
     default:
@@ -152,6 +169,10 @@ export const getLegend = index => {
 
 export const getTicks = (domainRange, srange, isValue) => {
   let ticks;
+
+  if (!domainRange || !domainRange.ticks) {
+    return [];
+  }
   const range = getSelectedRange(srange);
 
   const startDateFromNowInDays = moment().diff(moment(range.startDate), 'days');
@@ -185,6 +206,9 @@ export const getTicks = (domainRange, srange, isValue) => {
   return ticks;
 };
 export const getXAxisFormat = range => {
+  if (!range || typeof range !== 'object') {
+    return '';
+  }
   const hours = moment(range.endDate).diff(moment(range.startDate), 'hours');
   let xAxisFormat;
 
@@ -208,13 +232,18 @@ const getFlowFilterExpression = (resourceType, resourceId, filters) => {
     return `|> filter(fn: (r) => ${selectedResources.map(r => `r.f == "${r}"`).join(' or ')})`;
   }
 
-  return `|> filter(fn: (r) => r.f == "${resourceId}")`;
+  if (selectedResources.includes(resourceId)) {
+    return `|> filter(fn: (r) => r.f == "${resourceId}")`;
+  }
+
+  return `|> filter(fn: (r) => r.f == "${resourceId}")
+          |> filter(fn: (r) => ${selectedResources.map(r => `r.ei == "${r}"`).join(' or ')})`;
 };
 
 const getISODateString = date => isDate(date) ? date.toISOString() : date;
 
 const getFlowMetricsQueryParams = (resourceType, resourceId, filters) => {
-  const { range = {} } = filters;
+  const { range = {}, timezone } = filters;
   let timeSrcExpression = '';
   const flowFilterExpression = getFlowFilterExpression(resourceType, resourceId, filters);
   let start = '-1d';
@@ -259,11 +288,14 @@ const getFlowMetricsQueryParams = (resourceType, resourceId, filters) => {
     duration = '1h';
   }
 
-  if ((bucket === 'flowEvents' && duration === '1m') || (bucket === 'flowEvents_1hr' && duration === '1h')) {
+  if ((bucket === 'flowEvents' && duration === '1m') || (bucket === 'flowEvents_1hr' && duration === '1h') || ['1d', '1mo'].includes(duration)) {
     timeSrcExpression = ', timeSrc: "_start"';
   }
 
-  return { bucket, start, end, flowFilterExpression, timeSrcExpression, duration };
+  const timezoneOffsetExpression = `|> timeShift(duration: ${(getTimezoneOffset(timezone || momenttz.tz.guess()) / (1000 * 60))}m)`;
+  const resetTimezoneExpression = `|> timeShift(duration: ${-(getTimezoneOffset(timezone || momenttz.tz.guess()) / (1000 * 60))}m)`;
+
+  return { bucket, start, end, flowFilterExpression, timeSrcExpression, duration, timezoneOffsetExpression, resetTimezoneExpression };
 };
 
 export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) => {
@@ -272,6 +304,8 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
     start,
     end,
     flowFilterExpression,
+    timezoneOffsetExpression,
+    resetTimezoneExpression,
     timeSrcExpression,
     duration,
   } = getFlowMetricsQueryParams(resourceType, resourceId, filters);
@@ -284,29 +318,43 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> filter(fn: (r) => r.u == "${userId}")
         ${flowFilterExpression}
         |> filter(fn: (r) => r._field == "c")
+        ${timezoneOffsetExpression}
+    
+    seiBaseData = baseData
+        |> filter(fn: (r) => r._measurement != "r")
         |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
         |> fill(value: 0.0)
         |> group(columns: ["_time", "f", "u", "_measurement"], mode: "by")
         |> sum()
+  
+    resolvedBaseData = baseData
+        |> filter(fn: (r) => r._measurement == "r")
+        |> map(fn: (r) => ({ r with by: if r.by == "autopilot" then "autopilot" else "users"}))
+        |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
+        |> fill(value: 0.0)
+        
 
-    data1 = baseData
+    flowsData = seiBaseData
         |> group()
-        |> pivot(rowKey: ["_time", "u", "f"], columnKey: ["_measurement"], valueColumn: "_value")
-    data2 = baseData
+    resolvedData = resolvedBaseData
+        |> group(columns: ["_time", "u", "_measurement", "by"], mode: "by")
+        |> sum()
+        |> group()
+    integrationData = seiBaseData
         |> group(columns: ["_time", "_measurement", "u"], mode: "by")
         |> sum()
         |> group()
-        |> pivot(rowKey: ["_time", "u"], columnKey: ["_measurement"], valueColumn: "_value")
 
-    seiData = union(tables: [data1, data2])
+    seiData = union(tables: [flowsData, integrationData])
+    seirData = union(tables: [seiData, resolvedData])
+        ${resetTimezoneExpression}
         |> map(fn: (r) => ({
             _time: r._time,
             timeInMills: int(v: r._time)/1000000,
             flowId: if exists r.f then r.f else "_integrationId",
-            success: if exists r.s then r.s else 0.0,
-            error: if exists r.e then r.e else 0.0,
-            ignored: if exists r.i then r.i else 0.0,
-            averageTimeTaken: if exists r._value then r._value else 0.0,
+            value: if exists r._value then r._value else 0.0,
+            attribute: if exists r._measurement then r._measurement else "unknown",
+            by: r.by,
             type: "sei"
           }))
 
@@ -327,6 +375,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> filter(fn: (r) => r.u == "${userId}")
         ${flowFilterExpression}
         |> filter(fn: (r) => (r._measurement == "s"))
+        ${timezoneOffsetExpression}
         |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
         |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
         (tables
@@ -351,49 +400,59 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> group()
 
     attData = union(tables: [data3, data4])
+    ${resetTimezoneExpression}
     |> map(fn: (r) => ({
             _time: r._time,
             timeInMills: int(v: r._time)/1000000,
             flowId: if exists r.f then r.f else "_integrationId",
-            success: if exists r.s then r.s else 0.0,
-            error: if exists r.e then r.e else 0.0,
-            ignored: if exists r.i then r.i else 0.0,
-            averageTimeTaken: if exists r._value then r._value else 0.0,
+            value: if exists r._value then r._value else 0.0,
+            attribute: "att",
+            by: "",
             type: "att"
           }))
 
-    union(tables: [seiData, attData])`;
+    union(tables: [seirData, attData])`;
   }
 
   return `import "math"
 
-    seiBaseData = from(bucket: "${bucket}")
+    flowData = from(bucket: "${bucket}")
         |> range(start: ${start}, stop: ${end})
         |> filter(fn: (r) => r.u == "${userId}")
-        |> filter(fn: (r) => r.f == "${resourceId}")
-        |> filter(fn: (r) => r._field == "c")
+        ${flowFilterExpression}
+        ${timezoneOffsetExpression}
+
+    seiBaseData = flowData
+        |> filter(fn: (r) => r._field == "c" and r._measurement != "r")
         |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
+
+    resolvedData = flowData
+        |> filter(fn: (r) => r._measurement == "r")
+        |> map(fn: (r) => ({ r with by: if r.by == "autopilot" then "autopilot" else "users"}))
+        |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
+        |> group(columns: ["_time", "u", "_measurement", "by"], mode: "by")
+        |> sum()
+        |> group()
 
     data1 = seiBaseData
         |> group()
-        |> pivot(rowKey: ["_time", "u", "f", "ei"], columnKey: ["_measurement"], valueColumn: "_value")
 
     data2 = seiBaseData
         |> group(columns: ["_time", "_measurement", "u"])
         |> sum()
         |> group()
-        |> pivot(rowKey: ["_time", "u"], columnKey: ["_measurement"], valueColumn: "_value")
 
     seiData = union(tables: [data1, data2])
+    seirData = union(tables: [seiData, resolvedData])
+    ${resetTimezoneExpression}
     |> map(fn: (r) => ({
         _time: r._time,
         timeInMills: int(v: r._time)/1000000,
         flowId: if exists r.f then r.f else "_flowId",
         resourceId: if exists r.ei then r.ei else "_flowId",
-        success: if exists r.s then r.s else 0.0,
-        error: if exists r.e then r.e else 0.0,
-        ignored: if exists r.i then r.i else 0.0,
-        averageTimeTaken: if exists r._value then r._value else 0.0,
+        attribute: if exists r._measurement then r._measurement else "unknown",
+        value: if exists r._value then r._value else 0.0,
+        by: r.by,
         type: "sei"
       }))
     
@@ -409,10 +468,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
             |> set(key: "_field", value: "attph")
             |> rename(columns: {attph: "_value"}))
 
-    attBaseData = from(bucket: "${bucket}")
-        |> range(start: ${start}, stop: ${end})
-        |> filter(fn: (r) => r.u == "${userId}")
-        |> filter(fn: (r) => r.f == "${resourceId}")
+    attBaseData = flowData
         |> filter(fn: (r) => (r._measurement == "s"))
         |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
         |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
@@ -436,19 +492,19 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> group()
 
     attData = union(tables: [data3, data4])
+    ${resetTimezoneExpression}
     |> map(fn: (r) => ({
         _time: r._time,
         timeInMills: int(v: r._time)/1000000,
         flowId: if exists r.ei then r.f else "_flowId",
         resourceId: if exists r.ei then r.ei else "_flowId",
-        success: if exists r.s then r.s else 0.0,
-        error: if exists r.e then r.e else 0.0,
-        ignored: if exists r.i then r.i else 0.0,
-        averageTimeTaken: if exists r._value then r._value else 0.0,
+        value: if exists r._value then r._value else 0.0,
+        attribute: "att",
+        by: r.by,
         type: "att"
     }))
 
-    union(tables: [seiData, attData])`;
+    union(tables: [seirData, attData])`;
 };
 
 export const getLabel = key => {
@@ -459,6 +515,8 @@ export const getLabel = key => {
       return 'Flow: Errors';
     case 'ignored':
       return 'Flow: Ignored';
+    case 'resolved':
+      return 'Flow: Resolved';
     default:
       return 'Average processing time/success record';
   }
@@ -472,6 +530,8 @@ export const getAxisLabel = key => {
       return '# of Errors';
     case 'ignored':
       return '# of Ignores';
+    case 'resolved':
+      return '# of Resolved';
     default:
       return 'Average processing time (ms)';
   }

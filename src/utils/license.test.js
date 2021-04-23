@@ -1,7 +1,9 @@
 /* global describe, test, expect */
 import moment from 'moment';
+import { selectors } from '../reducers';
+import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from './constants';
 
-const { upgradeStatus, upgradeButtonText, expiresInfo } = require('./license');
+const { upgradeStatus, upgradeButtonText, expiresInfo, platformLicenseActionDetails } = require('./license');
 
 const getRandomDatesOfToday = (n = 5) => {
   const dates = [];
@@ -274,5 +276,176 @@ describe('license util function test', () => {
         expect(expiresInfo({expires: date})).toEqual(`Expires on ${moment().add(1, 'days').format('MMM Do, YYYY')} (Tomorrow)`);
       });
     });
+  });
+});
+
+describe('platformLicenseActionDetails function test', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(platformLicenseActionDetails(undefined)).toEqual({});
+  });
+  test('should return correct number of trail days left for trial license', () => {
+    const state =
+      {
+        user: {
+          profile: {},
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+          org: {
+            accounts: [
+              {
+                _id: ACCOUNT_IDS.OWN,
+                accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                ownerUser: {
+                  licenses: [{
+                    _id: 'license1',
+                    type: 'integrator',
+                    tier: 'free',
+                    trialEndDate: moment()
+                      .add(10, 'days')
+                      .toISOString(),
+                  }],
+                },
+              },
+            ],
+            users: [],
+          },
+        },
+      };
+    const expected = {
+      action: 'upgrade',
+      expiresSoon: false,
+      label: '10 DAYS LEFT UPGRADE NOW',
+    };
+    const license = selectors.platformLicense(state);
+
+    expect(platformLicenseActionDetails(license)).toEqual(expected);
+  });
+  test('should return upgrade now for trail license expired account', () => {
+    const state =
+      {
+        user: {
+          profile: {},
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+          org: {
+            accounts: [
+              {
+                _id: ACCOUNT_IDS.OWN,
+                accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                ownerUser: {
+                  licenses: [{
+                    _id: 'license1',
+                    type: 'integrator',
+                    tier: 'free',
+                    trialEndDate: moment()
+                      .subtract(2, 'days')
+                      .toISOString(),
+                  },
+                  ],
+                },
+              },
+            ],
+            users: [],
+          },
+        },
+      };
+    const expected = {
+      action: 'upgrade',
+      label: 'UPGRADE NOW',
+    };
+    const license = selectors.platformLicense(state);
+
+    expect(platformLicenseActionDetails(license)).toEqual(expected);
+  });
+  test('should return empty for valid license account', () => {
+    const state =
+      {
+        user: {
+          profile: {},
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+          org: {
+            accounts: [
+              {
+                _id: ACCOUNT_IDS.OWN,
+                accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                ownerUser: {
+                  licenses: [{
+                    _id: 'license1',
+                    type: 'integrator',
+                    tier: 'standard',
+                    expires: moment()
+                      .add(60, 'days')
+                      .toISOString(),
+                  },
+                  ],
+                },
+              },
+            ],
+            users: [],
+          },
+        },
+      };
+    const license = selectors.platformLicense(state);
+
+    expect(platformLicenseActionDetails(license)).toEqual({});
+  });
+  test('should return action expired for license expired account', () => {
+    const state =
+      {
+        user: {
+          profile: {},
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+          org: {
+            accounts: [
+              {
+                _id: ACCOUNT_IDS.OWN,
+                accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                ownerUser: {
+                  licenses: [
+                    {
+                      _id: 'license1',
+                      type: 'integrator',
+                      tier: 'standard',
+                      expires: moment()
+                        .subtract(1, 'days')
+                        .toISOString(),
+                    },
+                  ],
+                },
+              },
+            ],
+            users: [],
+          },
+        },
+      };
+    const expected = {
+      action: 'expired',
+    };
+    const license = selectors.platformLicense(state);
+
+    expect(platformLicenseActionDetails(license)).toEqual(expected);
+  });
+  test('should return empty for invalid license or no license account', () => {
+    const state =
+      {
+        user: {
+          profile: {},
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+          org: {
+            accounts: [
+              {
+                _id: ACCOUNT_IDS.OWN,
+                accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+                ownerUser: {
+                  licenses: [
+                  ],
+                },
+              },
+            ],
+            users: [],
+          },
+        },
+      };
+    const license = selectors.platformLicense(state);
+
+    expect(platformLicenseActionDetails(license)).toEqual({});
   });
 });

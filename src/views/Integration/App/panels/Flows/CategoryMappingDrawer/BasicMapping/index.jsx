@@ -6,7 +6,7 @@ import ImportMapping from './Mappings';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
 export default function MappingWrapper(props) {
-  const { id, flowId, generateFields, sectionId, integrationId, depth } = props;
+  const { flowId, id, generateFields, sectionId, integrationId, depth } = props;
   const [initTriggered, setInitTriggered] = useState(false);
   const [resetMappings, setResetMappings] = useState(false);
   const resourceId = useSelector(state => {
@@ -27,7 +27,7 @@ export default function MappingWrapper(props) {
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );
-  const { _connectionId: connectionId, name: resourceName } = resourceData;
+  // const { _connectionId: connectionId, name: resourceName } = resourceData;
   const dispatch = useDispatch();
   const mappingInitialized = useSelector(
     state =>
@@ -36,12 +36,12 @@ export default function MappingWrapper(props) {
       )
   );
   const application = 'netsuite';
-  const options = {
-    flowId,
-    connectionId,
-    importId: resourceId,
-    resourceName,
-  };
+  // const options = {
+  //   flowId,
+  //   // connectionId,
+  //   importId: resourceId,
+  //   // resourceName,
+  // };
   const mappingOptions = {
     resourceData,
     adaptorType: 'netsuite',
@@ -109,7 +109,8 @@ export default function MappingWrapper(props) {
       integrationId={integrationId}
       flowId={flowId}
       sectionId={sectionId}
-      options={options}
+      depth={depth}
+      // options={options}
     />
   );
 }

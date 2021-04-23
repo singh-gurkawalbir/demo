@@ -25,9 +25,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Help(props) {
+export default function Help({ className, helpKey, helpText, ...rest }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
+
   const handleMenu = useCallback(
     event => {
       event.stopPropagation();
@@ -45,7 +46,7 @@ function Help(props) {
     if (event.target.name === 'feedbackText') return;
     setAnchorEl(null);
   }, []);
-  const { className, helpKey, helpText, ...rest } = props;
+
   const open = !!anchorEl;
   const helpTextValue = helpText || getHelpTextMap()[helpKey];
   // console.log('what help', helpText, helpKey, getHelpTextMap()[helpKey]);
@@ -67,7 +68,7 @@ function Help(props) {
         anchorEl={anchorEl}>
         <HelpContent {...rest}>
           {/<\/?[a-z][\s\S]*>/i.test(helpTextValue) ? (
-            <RawHtml html={helpTextValue} options={{allowedTags: ['a', 'b', 'i', 'br']}} />
+            <RawHtml html={helpTextValue} options={{allowedTags: ['a', 'p', 'table', 'thead', 'th', 'tr', 'td', 'b', 'i', 'br']}} />
           ) : (
             helpTextValue
           )}
@@ -76,5 +77,3 @@ function Help(props) {
     </>
   );
 }
-
-export default Help;

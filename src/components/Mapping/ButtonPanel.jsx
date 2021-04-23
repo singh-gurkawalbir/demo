@@ -62,7 +62,6 @@ export default function ButtonPanel({flowId, importId, disabled, onClose}) {
           onClick={onClose}>
           Cancel
         </Button>
-
         {showPreviewButton && (
         <Button
           variant="outlined"

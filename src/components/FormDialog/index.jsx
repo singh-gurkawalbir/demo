@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import ModalDialog from '../ModalDialog';
 import ButtonGroup from '../ButtonGroup';
 
-const withStyles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   contentContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
     height: '50vh',
@@ -22,7 +22,7 @@ export default function FormDialog(props) {
     submitLabel = 'Save',
     isValid = true,
   } = props;
-  const classes = withStyles();
+  const classes = useStyles();
 
   return (
     <ModalDialog show onClose={onClose}>

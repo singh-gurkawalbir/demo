@@ -658,7 +658,7 @@ selectors.mkGetAllCustomFormsForAResource = () => {
     }
   );
 };
-
+selectors.getAllSections = selectors.mkGetAllCustomFormsForAResource();
 selectors.mkGetCustomFormPerSectionId = () => {
   const sectionsMetadata = selectors.mkGetAllCustomFormsForAResource();
 
@@ -715,7 +715,8 @@ selectors.mkIntegrationAppSettings = subState => {
     }
   );
 };
-const integrationAppSettings = selectors.mkIntegrationAppSettings(true);
+
+export const integrationAppSettings = selectors.mkIntegrationAppSettings(true);
 
 selectors.defaultStoreId = (state, id, store) => {
   const settings = integrationAppSettings(state, id);
@@ -735,6 +736,27 @@ selectors.defaultStoreId = (state, id, store) => {
   }
 
   return undefined;
+};
+const filterByEnvironmentResources = (resources, flows, sandbox, resourceType) => {
+  const filterByEnvironment = typeof sandbox === 'boolean';
+
+  if (!filterByEnvironment) { return resources; }
+
+  if (resourceType !== 'eventreports') {
+    return resources.filter(r => !!r.sandbox === sandbox);
+  }
+
+  // event reports needs flows to determine the environment
+  if (!flows) { return []; }
+
+  // eventReports
+  return resources.filter(r => {
+    // the flows environment is the same for eventreport
+    const flowId = r._flowIds[0];
+    const flow = flows.find(({_id}) => _id === flowId);
+
+    return !!flow.sandbox === sandbox;
+  });
 };
 
 selectors.resources = (state, resourceType) => {
@@ -770,7 +792,6 @@ selectors.resourceList = (
 
   result.total = resources.length;
   result.count = resources.length;
-  const filterByEnvironment = typeof sandbox === 'boolean';
 
   function searchKey(resource, key) {
     if (key === 'environment') {
@@ -801,13 +822,8 @@ selectors.resourceList = (
     order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
   // console.log('sort:', sort, resources.sort(comparer, sort));
   const sorted = sort ? [...resources].sort(comparer(sort)) : resources;
-  let filteredByEnvironment;
 
-  if (filterByEnvironment) {
-    filteredByEnvironment = sorted.filter(r => !!r.sandbox === sandbox);
-  } else {
-    filteredByEnvironment = sorted;
-  }
+  const filteredByEnvironment = filterByEnvironmentResources(sorted, state?.flows, sandbox, type);
 
   const filtered = filteredByEnvironment.filter(
     filter ? sift({ $and: [filter, matchTest] }) : matchTest
@@ -905,10 +921,9 @@ selectors.iaFlowSettings = (state, integrationId, flowId, childId) => {
 // #endregion
 
 // #region script selectors
-const emptySet = [];
 
-selectors.scripts = createSelector(
-  state => state?.scripts || emptySet,
+selectors.mkGetScriptsTiedToFlow = () => createSelector(
+  state => state?.scripts,
   (state, flowId) => {
     if (!flowId) {
       return;
@@ -916,17 +931,27 @@ selectors.scripts = createSelector(
 
     return state?.flows?.find(({_id}) => _id === flowId);
   },
-  state => state?.imports || emptySet,
-  state => state?.exports || emptySet,
+  state => state?.imports,
+  state => state?.exports,
   (scripts, flow, imports, exports) => {
-    if (!scripts) {
-      return emptySet;
-    }
-    if (!flow) {
-      return scripts;
+    if (!scripts || !flow) {
+      return null;
     }
 
     return getScriptsReferencedInFlow({scripts, flow, imports, exports});
   });
 
 // #endregion script selectors
+
+// #region eventReports selectors
+selectors.isAnyReportRunningOrQueued = (state, reportType) => {
+  if (!state) { return false; }
+
+  const eventReports = selectors.resources(state, reportType);
+
+  if (!eventReports) { return false; }
+
+  return eventReports.some(eventReport => ['running', 'queued'].includes(eventReport?.status));
+};
+
+// #endregion eventReports selectors

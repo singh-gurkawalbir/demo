@@ -136,6 +136,7 @@ export default {
           id: 'useFirstRow',
           name: 'useFirstRow',
           type: 'checkbox',
+          helpKey: 'mapping.useFirstRow',
           defaultValue: value.useFirstRow || false,
           // helpText not present
           label: 'Use first row',
@@ -175,6 +176,7 @@ export default {
           id: 'isKey',
           name: 'isKey',
           type: 'checkbox',
+          helpKey: 'mapping.isKey',
           label: 'Use as a key field to find existing lines',
           visibleWhen: [
             { field: 'fieldMappingType', is: ['standard'] },

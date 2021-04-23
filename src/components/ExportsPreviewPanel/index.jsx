@@ -7,6 +7,7 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
 import Panels from './Panels';
 import { DEFAULT_RECORD_SIZE } from '../../utils/exportPanel';
+// import FieldHelp from '../DynaForm/FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   previewPanelWrapper: {
@@ -16,10 +17,8 @@ const useStyles = makeStyles(theme => ({
   container: {
     background: theme.palette.common.white,
     padding: theme.spacing(2),
-    width: '100%',
     height: `calc(100vh - ${200}px)`,
     overflowY: 'auto',
-    float: 'left',
     display: 'flex',
     flexDirection: 'column',
   },
@@ -114,7 +113,7 @@ function PreviewInfo({
   );
 }
 
-function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
+export default function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
   const classes = useStyles();
 
   const isPreviewDisabled = useSelector(state =>
@@ -123,21 +122,9 @@ function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
     selectors.getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId),
   shallowEqual
   );
-  // Default panel is the panel shown by default when export panel is launched
-  // We can configure it in the metadata with 'default' as true
-  // Else the last stage being the Parse stage till now is taken as the default stage
-  const defaultPanel = useMemo(() => {
-    if (!availablePreviewStages.length) return;
-    const defaultStage = availablePreviewStages.find(stage => stage.default === true);
-    const lastStage = availablePreviewStages[availablePreviewStages.length - 1];
-
-    return defaultStage ? defaultStage.value : lastStage.value;
-  }, [availablePreviewStages]);
   // TODO @Raghu: Refactor preview state as it is currently using sample data state
   // this local state controls view to show sample data only when user requests by clicking preview
   const [showPreviewData, setShowPreviewData] = useState(false);
-  // set the panel type with the default panel
-  const [panelType, setPanelType] = useState(defaultPanel);
   // get the map of all the stages with their respective sampleData for the stages
   const previewStages = useMemo(() => availablePreviewStages.map(({value}) => value), [availablePreviewStages]);
 
@@ -151,15 +138,12 @@ function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
   shallowEqual
   );
 
-  const handlePanelViewChange = useCallback(panelType => {
-    setPanelType(panelType);
-  }, []);
-
   return (
     <div
       className={classes.previewPanelWrapper}>
       <Typography className={classes.previewDataHeading}>
         Preview data
+        {/* <FieldHelp label="Preview data" helpKey="exports.previewData" /> */}
       </Typography>
       <div className={classes.container}>
         <PreviewInfo
@@ -173,23 +157,15 @@ function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
           setShowPreviewData={setShowPreviewData}
           showPreviewData={showPreviewData}
       />
-        {
-        showPreviewData && (
+
         <Panels.PreviewBody
           resourceSampleData={resourceSampleData}
           previewStageDataList={previewStageDataList}
-          panelType={panelType}
-          defaultPanel={defaultPanel}
           availablePreviewStages={availablePreviewStages}
-          handlePanelViewChange={handlePanelViewChange}
           resourceId={resourceId}
-          resourceType={resourceType}
-      />
-        )
-}
+          showDefaultPreviewBody={!showPreviewData}
+          resourceType={resourceType} />
       </div>
     </div>
   );
 }
-
-export default ExportsPreviewPanel;

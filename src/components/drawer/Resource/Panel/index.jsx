@@ -1,4 +1,4 @@
-import { IconButton, makeStyles, Typography } from '@material-ui/core';
+import { IconButton, makeStyles, Typography, Divider } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,7 +9,7 @@ import {
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { generateNewId, isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
-import EditorDrawer from '../../../AFE2/Drawer';
+import EditorDrawer from '../../../AFE/Drawer';
 import ExportsPreviewPanel from '../../../ExportsPreviewPanel';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import Back from '../../../icons/BackArrowIcon';
@@ -21,6 +21,10 @@ import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
 import {applicationsList} from '../../../../constants/applications';
 import InstallationGuideIcon from '../../../icons/InstallationGuideIcon';
 import { KBDocumentation } from '../../../../utils/connections';
+import DebugIcon from '../../../icons/DebugIcon';
+import IconTextButton from '../../../IconTextButton';
+import ListenerRequestLogsDrawer from '../../ListenerRequestLogs';
+import { VALID_REPORT_TYPES } from '../../../../views/Reports';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 const isNestedDrawer = url => !!matchPath(url, {
@@ -64,14 +68,12 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
   },
   appLogo: {
-    paddingRight: theme.spacing(2),
-    marginTop: theme.spacing(-0.5),
-    marginRight: theme.spacing(4),
-    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+    padding: theme.spacing(0, 1),
+    margin: theme.spacing(-0.5, 0),
   },
   guideWrapper: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   guideLink: {
     marginRight: theme.spacing(2),
@@ -104,7 +106,6 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.secondary.dark,
     },
   },
-
   backButton: {
     marginRight: theme.spacing(1),
     padding: 0,
@@ -122,7 +123,20 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
   },
-
+  debugLogButton: {
+    padding: '0px 8px',
+    borderRadius: 0,
+    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+  appLogoWrapper: {
+    position: 'relative',
+    display: 'flex',
+    marginRight: theme.spacing(3),
+  },
+  divider: {
+    height: 24,
+    width: 1,
+  },
 }));
 const useDetermineRequiredResources = type => useMemo(() => {
   const resourceType = [];
@@ -147,6 +161,9 @@ const useDetermineRequiredResources = type => useMemo(() => {
 }, [type]);
 
 const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
+  if (resourceType === 'eventreports') {
+    return 'Run report';
+  }
   if (resourceType === 'pageGenerator') {
     return 'Create source';
   }
@@ -160,6 +177,9 @@ const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
   return `${opTitle} ${resourceLabel.toLowerCase()}`;
 };
 
+export const redirectURlToParentListing = url => url.split('/')
+  .slice(0, -3)
+  .join('/');
 export const useRedirectToParentRoute = initFailed => {
   const history = useHistory();
   const match = useRouteMatch();
@@ -168,10 +188,7 @@ export const useRedirectToParentRoute = initFailed => {
     if (initFailed) {
       // remove the last 3 segments from the route ...
       // /:operation(add|edit)/:resourceType/:id
-      const stripedRoute = match.url
-        .split('/')
-        .slice(0, -3)
-        .join('/');
+      const stripedRoute = redirectURlToParentListing(match.url);
 
       history.replace(stripedRoute);
     }
@@ -189,7 +206,7 @@ const useResourceFormRedirectionToParentRoute = (resourceType, id) => {
 export default function Panel(props) {
   const { onClose, occupyFullWidth, flowId, integrationId } = props;
   const [newId] = useState(generateNewId());
-
+  const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
   const match = useRouteMatch();
@@ -205,6 +222,7 @@ export default function Panel(props) {
     match,
   });
 
+  const hasListenerLogsAccess = useSelector(state => selectors.hasLogsAccess(state, id, resourceType, isNew));
   const resourceLabel = useSelector(state =>
     selectors.getCustomResourceLabel(state, {
       resourceId: id,
@@ -237,7 +255,11 @@ export default function Panel(props) {
   const app = applications.find(a => a.id === applicationType) || {};
   // Incase of a multi step resource, with isNew flag indicates first step and shows Next button
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
-  const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save & close';
+  let submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save & close';
+
+  if (resourceType === 'eventreports') {
+    submitButtonLabel = 'Run report';
+  }
   const submitButtonColor = isNew && isMultiStepSaveResource ? 'primary' : 'secondary';
   const handleSubmitComplete = useHandleSubmitCompleteFn(resourceType, id, onClose);
   const showApplicationLogo =
@@ -279,6 +301,11 @@ export default function Panel(props) {
     return shouldShow && !isFirstStep;
   });
 
+  const listenerDrawerHandler = useCallback(() => {
+    history.push(`${match.url}/logs`);
+  }, [match.url, history]);
+  const isReportType = VALID_REPORT_TYPES.some(({value}) => value === resourceType);
+
   return (
     <>
       <div className={classes.root}>
@@ -304,13 +331,26 @@ export default function Panel(props) {
                 {app.name || applicationType} connection guide
               </a>
               )}
-              <ApplicationImg
-                className={classes.appLogo}
-                size="small"
-                type={applicationType}
-                alt={applicationType || 'Application image'}
-                assistant={app?.assistant}
+              {hasListenerLogsAccess && (
+                <IconTextButton
+                  onClick={listenerDrawerHandler}
+                  color="primary"
+                  className={classes.debugLogButton}
+                  data-test="listenerLogs">
+                  <DebugIcon />
+                  View debug logs
+                </IconTextButton>
+              )}
+              <div className={classes.appLogoWrapper}>
+                <ApplicationImg
+                  className={classes.appLogo}
+                  size="small"
+                  type={applicationType}
+                  alt={applicationType || 'Application image'}
+                  assistant={app?.assistant}
             />
+                <Divider orientation="vertical" className={classes.divider} />
+              </div>
             </div>
             )}
           </div>
@@ -338,6 +378,8 @@ export default function Panel(props) {
               resourceType={resourceType}
               resourceId={id}
               flowId={flowId}
+              // All users have access to reports
+              skipMonitorLevelAccessCheck={isReportType}
               integrationId={integrationId}
               isFlowBuilderView={!!flowId}
               onSubmitComplete={handleSubmitComplete}
@@ -371,6 +413,7 @@ export default function Panel(props) {
         </LoadResources>
       </div>
       <EditorDrawer />
+      <ListenerRequestLogsDrawer flowId={flowId} exportId={id} />
     </>
   );
 }

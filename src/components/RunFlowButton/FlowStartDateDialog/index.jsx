@@ -69,7 +69,7 @@ export default function FlowStartDateDialog(props) {
   });
 
   if (!selectorStatus) {
-    return <Spinner size={24} color="primary" />;
+    return <Spinner />;
   }
 
   if (selectorStatus === 'error') {
@@ -83,8 +83,8 @@ export default function FlowStartDateDialog(props) {
         <DynaForm formKey={formKey} />
         <ButtonGroup>
           <DynaSubmit
+            ignoreFormTouchedCheck
             formKey={formKey}
-            skipDisableButtonForFormTouched
             data-test="submit"
             onClick={handleSubmit}>
             Run

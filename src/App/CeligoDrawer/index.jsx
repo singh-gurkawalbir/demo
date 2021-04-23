@@ -125,8 +125,13 @@ const useStyles = makeStyles(theme => ({
     },
   },
   itemIconRoot: {
-    minWidth: 45,
+    minWidth: 'unset',
+    marginRight: theme.spacing(1),
     color: theme.palette.background.paper,
+  },
+  itemIconRootCollapsed: {
+    minWidth: 45,
+    marginRight: theme.spacing(1),
   },
   menuList: {
     overflowY: 'auto',
@@ -182,6 +187,15 @@ const useStyles = makeStyles(theme => ({
   },
   collapsedArrowIcon: {
     width: 18,
+  },
+  listItemText: {
+    flex: 1,
+  },
+  listItemTextCollapsed: {
+    paddingLeft: theme.spacing(4),
+  },
+  tooltipLeft: {
+    left: '25px !important',
   },
 }));
 
@@ -321,11 +335,15 @@ export default function CeligoDrawer() {
                   {...getHrefProps(href, path)}
                   data-test={dataTest || label}
                   onClick={children ? handleExpandClick(label) : null}>
-                  <ListItemIcon classes={{ root: classes.itemIconRoot }}>
+                  <ListItemIcon
+                    className={clsx(classes.itemIconRoot, {[classes.itemIconRootCollapsed]: !drawerOpened})}>
+
                     <>
                       {drawerOpened ? <Icon />
                         : (
-                          <Tooltip data-public placement="right-end" enterDelay={0} title={label}>
+                          <Tooltip
+                            data-public placement="right" enterDelay={0} title={label}
+                            classes={{popper: classes.tooltipLeft}}>
                             <div>
                               <Icon />
                             </div>
@@ -337,6 +355,7 @@ export default function CeligoDrawer() {
                     </>
                   </ListItemIcon>
                   <ListItemText
+                    className={clsx(classes.listItemText, {[classes.listItemTextCollapsed]: !drawerOpened})}
                     primaryTypographyProps={{
                       className: classes.itemText,
                     }}
@@ -375,11 +394,13 @@ export default function CeligoDrawer() {
                             {...getHrefProps(href, path)}
                             button>
                             <ListItemIcon
-                              classes={{ root: classes.itemIconRoot }}>
+                              className={clsx(classes.itemIconRoot, {[classes.itemIconRootCollapsed]: !drawerOpened})}>
                               {drawerOpened
                                 ? <Icon />
                                 : (
-                                  <Tooltip data-public placement="right-end" enterDelay={0} title={label}>
+                                  <Tooltip
+                                    data-public placement="right" enterDelay={0} title={label}
+                                    classes={{popper: classes.tooltipLeft}}>
                                     <div>
                                       <Icon />
                                     </div>
@@ -387,6 +408,7 @@ export default function CeligoDrawer() {
                                 )}
                             </ListItemIcon>
                             <ListItemText
+                              className={clsx(classes.listItemText, {[classes.listItemTextCollapsed]: !drawerOpened})}
                               primary={label}
                               primaryTypographyProps={{
                                 className: classes.itemText,

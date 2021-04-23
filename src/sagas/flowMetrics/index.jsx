@@ -29,6 +29,7 @@ export function* requestMetric({query}) {
 
 export function* requestFlowMetrics({resourceType, resourceId, filters }) {
   const userId = yield select(selectors.ownerUserId);
+  const timezone = yield select(selectors.userTimezone);
   let flowIds = [];
 
   if (resourceType === 'integrations') {
@@ -38,8 +39,10 @@ export function* requestFlowMetrics({resourceType, resourceId, filters }) {
 
       return;
     }
-    // eslint-disable-next-line no-param-reassign
-    filters.selectedResources = flowIds;
+    if (filters.selectedResources?.includes?.(resourceId)) {
+      // eslint-disable-next-line no-param-reassign
+      filters.selectedResources = flowIds;
+    }
   }
   if (filters?.range?.preset === 'lastrun' && resourceType === 'flows') {
     const flow = yield select(selectors.resource, 'flows', resourceId);
@@ -67,7 +70,7 @@ export function* requestFlowMetrics({resourceType, resourceId, filters }) {
       filters.range = { startDate, endDate, preset: 'lastrun' };
     }
   }
-  const query = getFlowMetricsQuery(resourceType, resourceId, userId, filters);
+  const query = getFlowMetricsQuery(resourceType, resourceId, userId, {...filters, timezone});
 
   try {
     const data = yield call(requestMetric, { query });

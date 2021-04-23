@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../reducers';
 import Spinner from '../Spinner';
-import SpinnerWrapper from '../SpinnerWrapper';
 import actions from '../../actions';
 import DrawerContent from '../drawer/Right/DrawerContent';
 import DrawerFooter from '../drawer/Right/DrawerFooter';
@@ -66,7 +65,7 @@ const ResponseMapping = ({ flowId, resourceId, integrationId}) => {
               variant="h5"
               className={classes.headerChild}
               key="heading_extract">
-              {resourceType === 'imports' ? 'Import' : 'Lookup'} response field
+              {resourceType === 'imports' ? 'Import response' : 'Lookup results'} field
             </Typography>
 
             <Typography
@@ -102,6 +101,7 @@ export default function ResponseMappingWrapper({integrationId}) {
   const { flowId, resourceId } = match.params;
   const dispatch = useDispatch();
   const mappingStatus = useSelector(state => selectors.responseMapping(state).status);
+  const resourceType = useSelector(state => selectors.responseMapping(state).resourceType);
 
   useEffect(() => {
     /** initiate a response mapping init each time user opens */
@@ -117,13 +117,11 @@ export default function ResponseMappingWrapper({integrationId}) {
   }, [dispatch, flowId, resourceId]);
 
   if (mappingStatus === 'error') {
-    return (<Typography>Failed to load response mapping.</Typography>);
+    return (<Typography>Failed to load {resourceType === 'exports' ? 'results' : 'response'} mapping.</Typography>);
   }
   if (mappingStatus !== 'received') {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+      <Spinner centerAll />
     );
   }
 

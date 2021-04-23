@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Tooltip, Chip, Zoom } from '@material-ui/core';
-import Truncate from 'react-truncate';
+import { Typography, Chip } from '@material-ui/core';
 import ApplicationImg from '../../components/icons/ApplicationImg';
+import CeligoTruncate from '../../components/CeligoTruncate';
 
 const useStyles = makeStyles(theme => ({
   description: {
@@ -26,7 +26,6 @@ const useStyles = makeStyles(theme => ({
 export default function ConnectorTemplateContent({ resource, application }) {
   const { name, description, free, applications } = resource;
   const classes = useStyles();
-  const [isTruncated, setIsTruncated] = useState(false);
   let assistant = applications.length >= 2 && application === applications[0]
     ? applications[1]
     : applications[0];
@@ -40,22 +39,9 @@ export default function ConnectorTemplateContent({ resource, application }) {
     <>
       <div className={classes.content}>
         <Typography className={classes.name} variant="body2">
-          {isTruncated ? (
-            <Tooltip
-              data-public
-              title={<span className={classes.tooltipNameFB}> {name}</span>}
-              TransitionComponent={Zoom}
-              placement="top"
-              enterDelay={100}>
-              <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
-                {name}
-              </Truncate>
-            </Tooltip>
-          ) : (
-            <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
-              {name}
-            </Truncate>
-          )}
+          <CeligoTruncate lines={2} dataPublic placement="top" enterDelay={100}>
+            {name}
+          </CeligoTruncate>
         </Typography>
         <div className={classes.imgChip}>
           <ApplicationImg

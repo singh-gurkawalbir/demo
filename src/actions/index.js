@@ -17,6 +17,7 @@ export const availableResources = [
   'flows',
   'templates',
   'apis',
+  'eventreports',
 ];
 
 export const availableOSTypes = ['windows', 'linux', 'macOS'];
@@ -117,8 +118,8 @@ const auth = {
   sessionTimestamp: () => action(actionTypes.AUTH_TIMESTAMP),
 };
 const api = {
-  request: (path, method, message, hidden) =>
-    action(actionTypes.API_REQUEST, { path, message, hidden, method }),
+  request: (path, method, message, hidden, refresh) =>
+    action(actionTypes.API_REQUEST, { path, message, hidden, method, refresh }),
   retry: (path, method) => action(actionTypes.API_RETRY, { path, method }),
   complete: (path, method, message) =>
     action(actionTypes.API_COMPLETE, { path, method, message }),
@@ -166,6 +167,13 @@ const connection = {
       iClients,
       connectionId,
     }),
+  receivedTradingPartnerConnections: (connectionId, connections) =>
+    action(actionTypes.CONNECTION.TRADING_PARTNER_CONNECTIONS_RECEIVED, {
+      connectionId,
+      connections,
+    }),
+  requestTradingPartnerConnections: connectionId =>
+    action(actionTypes.CONNECTION.TRADING_PARTNER_CONNECTIONS_REQUEST, { connectionId }),
   madeOnline: connectionId =>
     action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
   requestQueuedJobs: connectionId =>
@@ -243,8 +251,12 @@ const resource = {
     action(actionTypes.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
   clearChildIntegration: () => action(actionTypes.CLEAR_CHILD_INTEGRATION),
 
-  requestCollection: (resourceType, message) =>
-    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message }),
+  requestCollection: (resourceType, message, refresh) =>
+    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh }),
+  startCollectionPoll: resourceType =>
+    action(actionTypes.RESOURCE.START_COLLECTION_POLL, { resourceType }),
+  stopCollectionPoll: resourceType =>
+    action(actionTypes.RESOURCE.STOP_COLLECTION_POLL, { resourceType }),
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
@@ -327,6 +339,19 @@ const resource = {
       op,
       offset,
     }),
+  integrations: {
+    delete: integrationId =>
+      action(actionTypes.INTEGRATION.DELETE, {integrationId}),
+    redirectTo: (integrationId, redirectTo) =>
+      action(actionTypes.INTEGRATION.REDIRECT, {
+        integrationId,
+        redirectTo,
+      }),
+    clearRedirect: integrationId =>
+      action(actionTypes.INTEGRATION.CLEAR_REDIRECT, {
+        integrationId,
+      }),
+  },
   connections: {
     pingAndUpdate: connectionId =>
       action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId }),
@@ -424,6 +449,15 @@ const resource = {
       action(actionTypes.RESOURCE.UPDATE_TILE_NOTIFICATIONS, { resourcesToUpdate, integrationId, ...options }),
     updateFlow: (flowId, isSubscribed) =>
       action(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, {flowId, isSubscribed }),
+  },
+  eventreports: {
+    cancelReport: reportId => action(actionTypes.EVENT_REPORT.CANCEL, {
+      reportId,
+    }),
+    downloadReport: reportId => action(actionTypes.EVENT_REPORT.DOWNLOAD, {
+      reportId,
+    }),
+
   },
 };
 // #endregion
@@ -587,6 +621,26 @@ const fileDefinitions = {
 const integrationApp = {
   settings: {
     categoryMappings: {
+      requestMetadata: (
+        integrationId,
+        flowId,
+        categoryId,
+        options
+      ) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
+          { integrationId, flowId, categoryId, options }
+        ),
+      receivedGeneratesMetadata: (
+        integrationId,
+        flowId,
+        metadata
+      ) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS
+            .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA,
+          { integrationId, flowId, metadata }
+        ),
       init: (integrationId, flowId, id, options) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT, {
           integrationId,
@@ -677,18 +731,6 @@ const integrationApp = {
             .UPDATE_GENERATES,
           { integrationId, flowId, id, generateFields }
         ),
-      patchIncompleteGenerates: (integrationId, flowId, id, index, value) =>
-        action(
-          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-            .PATCH_INCOMPLETE_GENERATES,
-          {
-            integrationId,
-            flowId,
-            id,
-            index,
-            value,
-          }
-        ),
       saveVariationMappings: (integrationId, flowId, id, data = {}) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
@@ -736,6 +778,35 @@ const integrationApp = {
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.LOAD_FAILED,
           { integrationId, flowId, id }
         ),
+      setFilters: (integrationId, flowId, filters) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SET_FILTERS, {
+          integrationId,
+          flowId,
+          filters,
+        }),
+      addCategory: (integrationId, flowId, data) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.ADD_CATEGORY, {
+          integrationId,
+          flowId,
+          data,
+        }),
+      deleteCategory: (integrationId, flowId, sectionId) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE_CATEGORY, {
+          integrationId,
+          flowId,
+          sectionId,
+        }),
+      restoreCategory: (integrationId, flowId, sectionId) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.RESTORE_CATEGORY, {
+          integrationId,
+          flowId,
+          sectionId,
+        }),
+      receivedUpdatedMappingData: (integrationId, flowId, mappingData) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.RECEIVED_UPDATED_MAPPING_DATA,
+          { integrationId, flowId, mappingData }
+        ),
     },
     initComplete: (integrationId, flowId, sectionId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE, {
@@ -748,77 +819,12 @@ const integrationApp = {
         integrationId,
         options,
       }),
-    redirectTo: (integrationId, redirectTo) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.REDIRECT, {
-        integrationId,
-        redirectTo,
-      }),
-    receivedCategoryMappingData: (integrationId, flowId, mappingData) =>
-      action(
-        actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_CATEGORY_MAPPINGS_DATA,
-        { integrationId, flowId, mappingData }
-      ),
-    requestCategoryMappingMetadata: (
-      integrationId,
-      flowId,
-      categoryId,
-      options
-    ) =>
-      action(
-        actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
-        { integrationId, flowId, categoryId, options }
-      ),
     receivedCategoryMappingMetadata: (integrationId, flowId, metadata) =>
       action(
         actionTypes.INTEGRATION_APPS.SETTINGS
           .RECEIVED_CATEGORY_MAPPING_METADATA,
         { integrationId, flowId, metadata }
       ),
-    receivedCategoryMappingGeneratesMetadata: (
-      integrationId,
-      flowId,
-      metadata
-    ) =>
-      action(
-        actionTypes.INTEGRATION_APPS.SETTINGS
-          .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA,
-        { integrationId, flowId, metadata }
-      ),
-    setCategoryMappingFilters: (integrationId, flowId, filters) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPING_FILTERS, {
-        integrationId,
-        flowId,
-        filters,
-      }),
-    clearVariationMappings: (integrationId, flowId, data) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_VARIATION_MAPPINGS, {
-        integrationId,
-        flowId,
-        data,
-      }),
-
-    addCategory: (integrationId, flowId, data) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY, {
-        integrationId,
-        flowId,
-        data,
-      }),
-    deleteCategory: (integrationId, flowId, sectionId) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.DELETE_CATEGORY, {
-        integrationId,
-        flowId,
-        sectionId,
-      }),
-    restoreCategory: (integrationId, flowId, sectionId) =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.RESTORE_CATEGORY, {
-        integrationId,
-        flowId,
-        sectionId,
-      }),
-    clearRedirect: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
-        integrationId,
-      }),
     requestedUpgrade: licenseId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED, {
         licenseId,
@@ -1214,7 +1220,10 @@ const user = {
       disable: (_id, disabled) =>
         action(actionTypes.USER_DISABLE, { _id, disabled }),
       disabled: _id => action(actionTypes.USER_DISABLED, { _id }),
+      reinvited: _id => action(actionTypes.USER_REINVITED, { _id }),
       makeOwner: email => action(actionTypes.USER_MAKE_OWNER, { email }),
+      reinvite: _id => action(actionTypes.USER_REINVITE, { _id }),
+      reinviteError: _id => action(actionTypes.USER_REINVITE_ERROR, { _id }),
     },
     accounts: {
       requestCollection: message =>
@@ -1398,56 +1407,35 @@ const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
 const clearComms = () => action(actionTypes.CLEAR_COMMS);
 const clearCommByKey = key => action(actionTypes.CLEAR_COMM_BY_KEY, { key });
 const cancelTask = () => action(actionTypes.CANCEL_TASK, {});
-//
+
 // #region Editor actions
 const editor = {
-  init: (id, processor, options) =>
-    action(actionTypes.EDITOR.INIT, { id, processor, options }),
-  changeLayout: id => action(actionTypes.EDITOR.CHANGE_LAYOUT, { id }),
-  patch: (id, patch) => action(actionTypes.EDITOR.PATCH, { id, patch }),
-  reset: id => action(actionTypes.EDITOR.RESET, { id }),
+  init: (id, editorType, options) =>
+    action(actionTypes.EDITOR.INIT, { id, editorType, options }),
+  initComplete: (id, options) => action(actionTypes.EDITOR.INIT_COMPLETE, { id, options }),
+  changeLayout: (id, newLayout) => action(actionTypes.EDITOR.CHANGE_LAYOUT, { id, newLayout }),
+  patchFeatures: (id, featuresPatch) => action(actionTypes.EDITOR.PATCH.FEATURES, { id, featuresPatch }),
+  patchRule: (id, rulePatch) => action(actionTypes.EDITOR.PATCH.RULE, { id, rulePatch }),
+  patchData: (id, dataPatch) => action(actionTypes.EDITOR.PATCH.DATA, { id, dataPatch }),
+  patchFileKeyColumn: (id, fileKeyPatchType, fileKeyPatch) => action(actionTypes.EDITOR.PATCH.FILE_KEY_COLUMN, { id, fileKeyPatchType, fileKeyPatch }),
   clear: id => action(actionTypes.EDITOR.CLEAR, { id }),
+  toggleVersion: (id, version) => action(actionTypes.EDITOR.TOGGLE_VERSION, { id, version }),
+  sampleDataReceived: (id, sampleData, templateVersion) => action(actionTypes.EDITOR.SAMPLEDATA.RECEIVED, { id, sampleData, templateVersion }),
+  sampleDataFailed: (id, sampleDataError) => action(actionTypes.EDITOR.SAMPLEDATA.FAILED, { id, sampleDataError }),
+  toggleAutoPreview: (id, autoPreview) => action(actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW, { id, autoPreview }),
+  refreshHelperFunctions: () => action(actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS),
   updateHelperFunctions: helperFunctions =>
     action(actionTypes.EDITOR.UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
-  refreshHelperFunctions: () =>
-    action(actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS),
-  evaluateRequest: id => action(actionTypes.EDITOR.EVALUATE_REQUEST, { id }),
+  previewRequest: id => action(actionTypes.EDITOR.PREVIEW.REQUEST, { id }),
+  previewFailed: (id, error) =>
+    action(actionTypes.EDITOR.PREVIEW.FAILED, { id, error }),
+  previewResponse: (id, result) =>
+    action(actionTypes.EDITOR.PREVIEW.RESPONSE, { id, result }),
+  saveRequest: (id, context) => action(actionTypes.EDITOR.SAVE.REQUEST, { id, context }),
+  saveFailed: (id, saveMessage) => action(actionTypes.EDITOR.SAVE.FAILED, { id, saveMessage }),
+  saveComplete: id => action(actionTypes.EDITOR.SAVE.COMPLETE, { id }),
   validateFailure: (id, violations) =>
     action(actionTypes.EDITOR.VALIDATE_FAILURE, { id, violations }),
-  evaluateFailure: (id, error) =>
-    action(actionTypes.EDITOR.EVALUATE_FAILURE, { id, error }),
-  evaluateResponse: (id, result) =>
-    action(actionTypes.EDITOR.EVALUATE_RESPONSE, { id, result }),
-  save: (id, context) => action(actionTypes.EDITOR.SAVE, { id, context }),
-  saveFailed: id => action(actionTypes.EDITOR.SAVE_FAILED, { id }),
-  saveComplete: id => action(actionTypes.EDITOR.SAVE_COMPLETE, { id }),
-};
-// TODO: parallel AFE refactor actions.
-const _editor = {
-  init: (id, editorType, options) =>
-    action(actionTypes._EDITOR.INIT, { id, editorType, options }),
-  initComplete: (id, options) => action(actionTypes._EDITOR.INIT_COMPLETE, { id, options }),
-  changeLayout: (id, newLayout) => action(actionTypes._EDITOR.CHANGE_LAYOUT, { id, newLayout }),
-  patchFeatures: (id, featuresPatch) => action(actionTypes._EDITOR.PATCH.FEATURES, { id, featuresPatch }),
-  patchRule: (id, rulePatch) => action(actionTypes._EDITOR.PATCH.RULE, { id, rulePatch }),
-  patchData: (id, dataPatch) => action(actionTypes._EDITOR.PATCH.DATA, { id, dataPatch }),
-  clear: id => action(actionTypes._EDITOR.CLEAR, { id }),
-  toggleVersion: (id, version) => action(actionTypes._EDITOR.TOGGLE_VERSION, { id, version }),
-  sampleDataReceived: (id, sampleData, templateVersion) => action(actionTypes._EDITOR.SAMPLEDATA.RECEIVED, { id, sampleData, templateVersion }),
-  sampleDataFailed: (id, sampleDataError) => action(actionTypes._EDITOR.SAMPLEDATA.FAILED, { id, sampleDataError }),
-  toggleAutoPreview: (id, autoPreview) => action(actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW, { id, autoPreview }),
-  updateHelperFunctions: helperFunctions =>
-    action(actionTypes._EDITOR.UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
-  previewRequest: id => action(actionTypes._EDITOR.PREVIEW.REQUEST, { id }),
-  previewFailed: (id, error) =>
-    action(actionTypes._EDITOR.PREVIEW.FAILED, { id, error }),
-  previewResponse: (id, result) =>
-    action(actionTypes._EDITOR.PREVIEW.RESPONSE, { id, result }),
-  saveRequest: (id, context) => action(actionTypes._EDITOR.SAVE.REQUEST, { id, context }),
-  saveFailed: (id, saveMessage) => action(actionTypes._EDITOR.SAVE.FAILED, { id, saveMessage }),
-  saveComplete: id => action(actionTypes._EDITOR.SAVE.COMPLETE, { id }),
-  validateFailure: (id, violations) =>
-    action(actionTypes._EDITOR.VALIDATE_FAILURE, { id, violations }),
 };
 // #endregion
 // #region Mapping actions
@@ -1487,7 +1475,11 @@ const mapping = {
   clear: () => action(actionTypes.MAPPING.CLEAR, {}),
   shiftOrder: (key, shiftIndex) => action(actionTypes.MAPPING.SHIFT_ORDER, { key, shiftIndex }),
   setValidationMsg: value => action(actionTypes.MAPPING.SET_VALIDATION_MSG, { value }),
-
+  autoMapper: {
+    request: () => action(actionTypes.MAPPING.AUTO_MAPPER.REQUEST),
+    received: value => action(actionTypes.MAPPING.AUTO_MAPPER.RECEIVED, {value}),
+    failed: (failSeverity, failMsg) => action(actionTypes.MAPPING.AUTO_MAPPER.FAILED, {failSeverity, failMsg}),
+  },
 };
 
 const searchCriteria = {
@@ -1906,12 +1898,6 @@ const errorManager = {
           retryCount,
         }
       ),
-    trackTraceKeys: ({ flowId, resourceId, traceKeys }) =>
-      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.TRACK_RETRIED_TRACE_KEYS, {
-        flowId,
-        resourceId,
-        traceKeys,
-      }),
     resolveReceived: ({ flowId, resourceId, resolveCount }) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.RECEIVED,
@@ -1993,6 +1979,16 @@ const errorManager = {
     request: () => action(actionTypes.ERROR_MANAGER.FILTER_METADATA.REQUEST),
     received: (metadata = []) =>
       action(actionTypes.ERROR_MANAGER.FILTER_METADATA.RECEIVED, { metadata }),
+  },
+  errorHttpDoc: {
+    request: (flowId, resourceId, reqAndResKey) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.REQUEST, { flowId, resourceId, reqAndResKey }),
+    received: (reqAndResKey, errorHttpDoc) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.RECEIVED, { reqAndResKey, errorHttpDoc }),
+    error: (reqAndResKey, error) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.ERROR, { reqAndResKey, error }),
+    downloadBlobDoc: (flowId, resourceId, s3BlobKey) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.DOWNLOAD_BLOB_DOC, { flowId, resourceId, s3BlobKey }),
   },
 };
 const flow = {
@@ -2190,6 +2186,23 @@ const logs = {
     startDebug: (connectionId, value) =>
       action(actionTypes.LOGS.CONNECTIONS.START_DEBUG, { connectionId, value }),
   },
+  listener: {
+    startDebug: (flowId, exportId, minutes) => action(actionTypes.LOGS.LISTENER.DEBUG.START, { flowId, exportId, minutes }),
+    stopDebug: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.DEBUG.STOP, { flowId, exportId }),
+    requestLogDetails: (flowId, exportId, logKey) => action(actionTypes.LOGS.LISTENER.LOG.REQUEST, { flowId, exportId, logKey }),
+    receivedLogDetails: (exportId, logKey, logDetails) => action(actionTypes.LOGS.LISTENER.LOG.RECEIVED, { exportId, logKey, logDetails }),
+    removeLog: (flowId, exportId, logsToRemove) => action(actionTypes.LOGS.LISTENER.LOG.REMOVE, { flowId, exportId, logsToRemove }),
+    logDeleted: (exportId, deletedLogKey) => action(actionTypes.LOGS.LISTENER.LOG.DELETED, { exportId, deletedLogKey }),
+    request: ({flowId, exportId, loadMore}) => action(actionTypes.LOGS.LISTENER.REQUEST, { flowId, exportId, loadMore }),
+    received: ({exportId, logs, nextPageURL, loadMore}) => action(actionTypes.LOGS.LISTENER.RECEIVED, { exportId, logs, nextPageURL, loadMore }),
+    failed: (exportId, error) => action(actionTypes.LOGS.LISTENER.FAILED, { exportId, error }),
+    clear: exportId => action(actionTypes.LOGS.LISTENER.CLEAR, { exportId }),
+    startLogsPoll: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.START_POLL, { flowId, exportId }),
+    stopLogsPoll: (exportId, hasNewLogs) => action(actionTypes.LOGS.LISTENER.STOP_POLL, { exportId, hasNewLogs }),
+    setActiveLog: (exportId, activeLogKey) => action(actionTypes.LOGS.LISTENER.ACTIVE_LOG, { exportId, activeLogKey }),
+    setFetchStatus: (exportId, status) => action(actionTypes.LOGS.LISTENER.FETCH_STATUS, { exportId, status }),
+    pauseFetch: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.PAUSE_FETCH, { flowId, exportId }),
+  },
 };
 
 export default {
@@ -2208,7 +2221,6 @@ export default {
   patchFilter,
   clearFilter,
   editor,
-  _editor,
   resourceForm,
   resource,
   user,

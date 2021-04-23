@@ -42,9 +42,9 @@ export function* uninstallStep({ id, formVal }) {
     });
   } catch (error) {
     yield put(
-      actions.integrationApp.uninstaller2.failed(
+      actions.integrationApp.uninstaller2.updateStep(
         id,
-        error.message || 'Failed to post steps'
+        'reset'
       )
     );
 
@@ -59,6 +59,7 @@ export function* uninstallStep({ id, formVal }) {
       )
     );
     yield put(actions.resource.requestCollection('integrations'));
+    yield put(actions.resource.requestCollection('licenses'));
 
     // once all steps are done, mark state as complete
     return yield put(

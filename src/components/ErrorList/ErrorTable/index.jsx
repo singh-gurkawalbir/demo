@@ -8,7 +8,6 @@ import KeywordSearch from '../../KeywordSearch';
 import RefreshCard from './RefreshCard';
 import ErrorActions from './ErrorActions';
 import Spinner from '../../Spinner';
-import SpinnerWrapper from '../../SpinnerWrapper';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import CeligPagination from '../../CeligoPagination';
@@ -145,6 +144,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
     loadMore => {
       if (!loadMore) {
         dispatch(actions.clearFilter(filterKey));
+        dispatch(actions.patchFilter(filterKey, defaultFilter));
       }
       dispatch(
         actions.errorManager.flowErrorDetails.request({
@@ -155,6 +155,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
         })
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [dispatch, flowId, resourceId, isResolved, filterKey]
   );
   const fetchMoreErrors = useCallback(() => fetchErrors(true), [fetchErrors]);
@@ -242,18 +243,13 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorFilter.keyword]);
 
-  useEffect(() => {
-    dispatch(actions.patchFilter(filterKey, defaultFilter));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // TODO @Raghu: Refactor the pagination related code
   return (
     <div className={clsx(classes.errorTableWrapper, { [classes.hide]: !show })}>
       {isFreshDataLoad ? (
-        <SpinnerWrapper>
-          <Spinner />
-        </SpinnerWrapper>
+
+        <Spinner centerAll />
+
       ) : (
         <>
           <div className={classes.filtersErrorTable}>
@@ -262,7 +258,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
             hasErrors &&
               (
                 <div className={classes.errorsKeywordSearch}>
-                  <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
+                  <KeywordSearch filterKey={filterKey} />
                 </div>
               )
             }

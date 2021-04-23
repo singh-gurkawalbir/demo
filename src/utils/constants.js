@@ -1,3 +1,5 @@
+import {invert} from 'lodash';
+
 export const emptyList = [];
 export const emptyObject = {};
 export const ACCOUNT_IDS = Object.freeze({
@@ -29,6 +31,7 @@ export const INSTALL_STEP_TYPES = Object.freeze({
 });
 export const UNINSTALL_STEP_TYPES = Object.freeze({
   FORM: 'form',
+  URL: 'url',
   HIDDEN: 'hidden',
 });
 export const TILE_STATUS = Object.freeze({
@@ -268,6 +271,15 @@ export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
   'published',
   'shared/ashares',
 ];
+
+// email regex is used in our backend as well and is
+// referenced from this repo https://github.com/celigo/integrator-adaptor/blob/master/util/validator.js
+export const EMAIL_REGEX = /^[\w\-.+]+@[a-zA-Z0-9.-]+\.[a-zA-z0-9]{2,10}$/;
+
+// Regular Expression to Simple multiple email addresses separated by commas from regextester.com
+export const MULTIPLE_EMAILS = /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/;
+// Regular Expression to absolute url, e.g: (https|http)://abc.com but not relative urls such as www.abc.com or abc.com
+export const ABS_URL_VALIDATION_PATTERN = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/i;
 // eslint-disable-next-line no-useless-escape
 // export const URI_VALIDATION_PATTERN = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|localhost|127\.0\.0\.1|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?$/i;
 export const URI_VALIDATION_PATTERN = /(?:(?:https?:)?\/\/)?(?:\S+(?::\S*)?@)?(?:(?:(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:1\d\d|2[0-4]\d|25[0-4]|[1-9]\d?)))|\[(?:(?:[\da-f]{1,4}:){7,7}[\da-f]{1,4}|(?:[\da-f]{1,4}:){1,4}:(?:(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:1\d\d|2[0-4]\d|25[0-4]|[1-9]\d?)))|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:1\d\d|2[0-4]\d|25[0-4]|[1-9]\d?)))|[\da-f]{1,4}:(?:(?::[\da-f]{1,4}){1,6})|(?:[\da-f]{1,4}:){1,2}(?::[\da-f]{1,4}){1,5}|(?:[\da-f]{1,4}:){1,3}(?::[\da-f]{1,4}){1,4}|(?:[\da-f]{1,4}:){1,4}(?::[\da-f]{1,4}){1,3}|(?:[\da-f]{1,4}:){1,5}(?::[\da-f]{1,4}){1,2}|(?:[\da-f]{1,4}:){1,6}:[\da-f]{1,4}|(?:[\da-f]{1,4}:){1,7}:|:(?:(?::[\da-f]{1,4}){1,7}|:))\]|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?/i;
@@ -557,6 +569,8 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'salesforce.relatedLists.userDefined',
     'salesforce.distributed.batchSize',
     'salesforce.soql.query',
+    'salesforce.distributed.referencedFields',
+    'salesforce.distributed.relatedLists',
     'schedule',
     'timeZone',
     'activeTab',
@@ -585,6 +599,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'restlet.once.booleanField',
     'restlet.type',
     '_connectionId',
+    'settings',
   ],
   imports: [
     '_connectionId',
@@ -600,6 +615,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'salesforce.idLookup.whereClause',
     'salesforce.upsert.externalIdField',
     'salesforce.lookups',
+    'settings',
   ],
   flows: [
     '_runNextFlowIds',
@@ -614,6 +630,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'dayToRunOn',
     '_keepDeltaBehindFlowId',
     '_keepDeltaBehindExportId',
+    'settings',
   ],
 });
 export const CLONING_SUPPORTED_IAS = ['sfnsio'];
@@ -632,4 +649,31 @@ export const CONNECTORS_TO_IGNORE = ['yammer',
 
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'pagerduty', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
   'box', 'segment'];
+
+export const RESOLVED_GRAPH_DATAPOINTS = ['users', 'autopilot'];
+export const LINE_GRAPH_TYPES = Object.freeze({
+  SUCCESS: 'success',
+  AVERAGE_TIME_TAKEN: 'averageTimeTaken',
+  ERROR: 'error',
+  IGNORED: 'ignored',
+  RESOLVED: 'resolved',
+});
+export const LINE_GRAPH_CATEGORIES = [
+  LINE_GRAPH_TYPES.SUCCESS,
+  LINE_GRAPH_TYPES.AVERAGE_TIME_TAKEN,
+  LINE_GRAPH_TYPES.ERROR,
+  LINE_GRAPH_TYPES.IGNORED,
+  LINE_GRAPH_TYPES.RESOLVED,
+];
+export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
+  [LINE_GRAPH_TYPES.SUCCESS]: 's',
+  [LINE_GRAPH_TYPES.AVERAGE_TIME_TAKEN]: 'att',
+  [LINE_GRAPH_TYPES.ERROR]: 'e',
+  [LINE_GRAPH_TYPES.IGNORED]: 'i',
+  [LINE_GRAPH_TYPES.RESOLVED]: 'r',
+});
+export const LINE_GRAPH_TYPE_LONG = Object.freeze(
+  invert(LINE_GRAPH_TYPE_SHORTID)
+);
+export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
 

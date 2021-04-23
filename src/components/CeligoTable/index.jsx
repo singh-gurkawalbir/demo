@@ -32,7 +32,6 @@ const useStyles = makeStyles(theme => ({
     top: 20,
     width: 1,
   },
-
   row: {
     '& > td:last-child': {
       minWidth: '125px',
@@ -72,15 +71,16 @@ export default function CeligoTable({
   filterKey,
   className,
   actionProps = emptyObj,
+  variant = 'standard',  // slim | standard
 }) {
   const history = useHistory();
   const classes = useStyles();
   const dispatch = useDispatch();
   const [selectedAction, setSelectedAction] = useState(undefined);
-  const { sort = {} } = useSelector(state =>
+  const { sort } = useSelector(state =>
     selectors.filter(state, filterKey)
   );
-  const { order = 'desc', orderBy = 'lastModified' } = sort;
+  const { order, orderBy } = sort || emptyObj;
   const handleSort = useCallback(
     (order, orderBy) => {
       dispatch(actions.patchFilter(filterKey, { sort: { order, orderBy } }));
@@ -91,10 +91,11 @@ export default function CeligoTable({
   const [isAllSelected, setIsAllSelected] = useState(false);
 
   useEffect(() => {
-    if (filterKey) {
-      dispatch(actions.patchFilter(filterKey, { sort: { order, orderBy } }));
+    if (filterKey && !sort) {
+      // when no default order is defined then update lastModified to descending order
+      dispatch(actions.patchFilter(filterKey, {sort: { order: 'desc', orderBy: 'lastModified' }}));
     }
-  }, [dispatch, filterKey, order, orderBy]);
+  }, [dispatch, filterKey, sort]);
   useEffect(() => {
     const hasSelectableResources =
       !isSelectableRow ||
@@ -170,16 +171,8 @@ export default function CeligoTable({
             {selectableRows && (
               <TableCell>
                 <Checkbox
-                  icon={(
-                    <span>
-                      <CheckboxUnselectedIcon />
-                    </span>
-                  )}
-                  checkedIcon={(
-                    <span>
-                      <CheckboxSelectedIcon />
-                    </span>
-                  )}
+                  icon={(<span> <CheckboxUnselectedIcon /> </span>)}
+                  checkedIcon={(<span> <CheckboxSelectedIcon /> </span>)}
                   onChange={handleSelectAllChange}
                   checked={isAllSelected}
                   color="primary"
@@ -225,7 +218,9 @@ export default function CeligoTable({
               )
             )}
             {rowActions && (
-              <TableCell align="center" className={classes.actionColHead}>Actions</TableCell>
+              <TableCell align="center" className={classes.actionColHead}>
+                {variant === 'slim' ? '' : 'Actions'}
+              </TableCell>
             )}
           </TableRow>
         </TableHead>
@@ -245,16 +240,8 @@ export default function CeligoTable({
                       onChange={event => handleSelectChange(event, rowData._id)}
                       checked={!!selectedResources[rowData._id]}
                       color="primary"
-                      icon={(
-                        <span>
-                          <CheckboxUnselectedIcon />
-                        </span>
-                      )}
-                      checkedIcon={(
-                        <span>
-                          <CheckboxSelectedIcon />
-                        </span>
-                      )}
+                      icon={(<span><CheckboxUnselectedIcon /></span>)}
+                      checkedIcon={(<span><CheckboxSelectedIcon /></span>)}
                     />
                   )}
                 </TableCell>
@@ -282,6 +269,7 @@ export default function CeligoTable({
                     actionProps={actionProps}
                     rowActions={rowActions}
                     rowData={rowData}
+                    variant={variant}
                   />
                 </TableCell>
               )}

@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback, useReducer } from 'react';
 import { deepClone } from 'fast-json-patch';
-import { withStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers/index';
@@ -10,17 +9,6 @@ import { PING_STATES } from '../../../reducers/comms/ping';
 import { PingMessage } from './TestButton';
 import { useLoadingSnackbarOnSave } from '.';
 
-// TODO @Surya: Below styles are no longer useful, but breaking styles when removed
-// Need to Revisit after form refactor - Same for other Save buttons
-const styles = theme => ({
-  actions: {
-    textAlign: 'right',
-  },
-  actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
-  },
-});
 const ConfirmDialog = props => {
   const {
     formValues,
@@ -91,10 +79,9 @@ function reducer(state, action) {
   }
 }
 // TODO @Raghu: Refactor this component and push complexity to sagas
-const TestAndSaveButton = props => {
+export default function TestAndSaveButton(props) {
   const [formState, dispatchLocalAction] = useReducer(reducer, {});
   const {
-    classes,
     resourceType,
     resourceId,
     label,
@@ -230,7 +217,6 @@ const TestAndSaveButton = props => {
         {...props}
         disabled={disableSaveOnClick}
         onClick={handleTestAndSave}
-        className={classes.actionButton}
         size="small"
         variant="outlined"
         color={submitButtonColor}>
@@ -238,6 +224,5 @@ const TestAndSaveButton = props => {
       </DynaAction>
     </>
   );
-};
+}
 
-export default withStyles(styles)(TestAndSaveButton);

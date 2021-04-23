@@ -8,7 +8,6 @@ import { selectors } from '../../reducers';
 import { FORM_SAVE_STATUS } from '../../utils/constants';
 import DynaForm from '../DynaForm';
 import Spinner from '../Spinner';
-import SpinnerWrapper from '../SpinnerWrapper';
 
 const Form = props => {
   const formKey = useFormInitWithPermissions(props);
@@ -43,9 +42,7 @@ export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
 
   if (!formState.initComplete) {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+      <Spinner centerAll />
     );
   }
 

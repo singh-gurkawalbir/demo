@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { isNaN } from 'lodash';
 import actions from '../../../../actions';
@@ -6,6 +6,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import DynaTableView from './DynaTable';
 import { makeExportResource } from '../../../../utils/exportData';
+import { emptyObject } from '../../../../utils/constants';
 
 const isExportRefresh = (kind, key, exportResource) => !!(kind && key && exportResource);
 
@@ -29,10 +30,9 @@ export default function DynaRefreshableStaticMap(props) {
     valueResource,
   } = props;
   const dispatch = useDispatch();
-  const [initComplete, setInitComplete] = useState(false);
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
-  const { _connectionId: resConnectionId, _connectorId: resConnectorId } = useSelector(state => (selectors.resource(state, resourceType, resourceId) || {}));
+  const { _connectionId: resConnectionId, _connectorId: resConnectorId } = useSelector(state => (selectors.resource(state, resourceType, resourceId) || emptyObject));
   const { kind: eKind, key: eKey, exportResource: eExportResource } = useMemo(() => makeExportResource(keyResource, resConnectionId, resConnectorId), [keyResource, resConnectionId, resConnectorId]);
   const { kind: gKind, key: gKey, exportResource: gExportResource } = useMemo(() => makeExportResource(valueResource, resConnectionId, resConnectorId), [resConnectionId, resConnectorId, valueResource]);
 
@@ -45,8 +45,8 @@ export default function DynaRefreshableStaticMap(props) {
     options.commMetaPath || commMetaPath,
     options.filterKey || filterKey);
 
-  const eOptions = ((eData?.length && eData) || []).filter(Boolean);
-  const gOptions = ((gData?.length && gData) || []).filter(Boolean);
+  const eOptions = useMemo(() => ((eData?.length && eData) || []).filter(Boolean), [eData]);
+  const gOptions = useMemo(() => ((gData?.length && gData) || []).filter(Boolean), [gData]);
 
   const optionsMap = useMemo(() => [{
     id: keyName,
@@ -93,7 +93,7 @@ export default function DynaRefreshableStaticMap(props) {
     return value;
   }, [keyName, map, value, valueName]);
 
-  const handleRefreshClick = column => {
+  const handleRefreshClick = useCallback(column => {
     if (column === keyName && isExportRefresh(eKind, eKey, eExportResource)) {
       dispatch(actions.exportData.request(eKind, eKey, eExportResource));
     } else if (column === valueName && isExportRefresh(gKind, gKey, gExportResource)) {
@@ -107,7 +107,7 @@ export default function DynaRefreshableStaticMap(props) {
         )
       );
     }
-  };
+  }, [commMetaPath, connectionId, dispatch, eExportResource, eKey, eKind, gExportResource, gKey, gKind, keyName, options.commMetaPath, valueName]);
 
   const handleFieldChange = useCallback((id, val) => {
     if (!preferMapValueAsNum) {
@@ -127,23 +127,21 @@ export default function DynaRefreshableStaticMap(props) {
   }, [onFieldChange, preferMapValueAsNum, valueName]);
 
   useEffect(() => {
-    if (!initComplete) {
-      if (isExportRefresh(eKind, eKey, eExportResource)) {
-        dispatch(actions.exportData.request(eKind, eKey, eExportResource));
-      }
-      if (isExportRefresh(gKind, gKey, gExportResource)) {
-        dispatch(actions.exportData.request(gKind, gKey, gExportResource));
-      } else if (!metadata && !disableOptionsLoad) {
-        dispatch(
-          actions.metadata.request(
-            connectionId,
-            options.commMetaPath || commMetaPath
-          )
-        );
-      }
-      setInitComplete(true);
+    if (isExportRefresh(eKind, eKey, eExportResource)) {
+      dispatch(actions.exportData.request(eKind, eKey, eExportResource));
     }
-  }, [commMetaPath, connectionId, disableOptionsLoad, dispatch, eExportResource, eKey, eKind, gExportResource, gKey, gKind, initComplete, metadata, options.commMetaPath]);
+    if (isExportRefresh(gKind, gKey, gExportResource)) {
+      dispatch(actions.exportData.request(gKind, gKey, gExportResource));
+    } else if (!metadata && !disableOptionsLoad) {
+      dispatch(
+        actions.metadata.request(
+          connectionId,
+          options.commMetaPath || commMetaPath
+        )
+      );
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <DynaTableView

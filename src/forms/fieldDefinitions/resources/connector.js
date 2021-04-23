@@ -1,9 +1,6 @@
-// Regular Expression to Simple multiple email addresses separated by commas from regextester.com
-
 import { connectorsList } from '../../../constants/applications';
 import { isNewId } from '../../../utils/resource';
-
-const MULTIPLE_EMAILS = /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/;
+import { MULTIPLE_EMAILS, ABS_URL_VALIDATION_PATTERN } from '../../../utils/constants';
 
 export default {
   name: {
@@ -22,8 +19,7 @@ export default {
     label: 'Website URL',
     validWhen: {
       matchesRegEx: {
-        pattern:
-          "^(?:http(s)?:\\/\\/)?[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$",
+        pattern: ABS_URL_VALIDATION_PATTERN,
         message: 'Please enter a valid URL.',
       },
     },
@@ -39,18 +35,6 @@ export default {
         message: 'Please enter a valid Email.',
       },
     },
-  },
-  editions: {
-    type: 'text',
-    label: 'Editions',
-    placeholder: 'Comma seperated values',
-    value: r => r?.twoDotZero?.editions,
-    visibleWhen: [
-      {
-        field: 'framework',
-        is: ['twoDotZero'],
-      },
-    ],
   },
   framework: {
     type: 'text',
@@ -79,6 +63,10 @@ export default {
     label: 'Source integration',
     placeholder: 'Choose integration',
     resourceType: 'integrations',
+    filter: () => ({
+      _connectorId: { $exists: false },
+      _templateId: { $exists: false },
+    }),
     requiredWhen: [
       {
         field: 'framework',
@@ -157,5 +145,35 @@ export default {
         items: connectorsList(),
       },
     ],
+  },
+  trialEnabled: {
+    type: 'checkbox',
+    label: 'Enable trials',
+    defaultDisabled: r => isNewId(r._id),
+    helpKey: 'license.trialEnabled',
+  },
+  trialPeriod: {
+    type: 'select',
+    label: 'Trial period',
+    defaultValue: r => r?.trialPeriod || 30,
+    options: [
+      {
+        items: [
+          { label: '14 days', value: 14 },
+          { label: '30 days', value: 30 },
+          { label: '60 days', value: 60 },
+        ],
+      },
+    ],
+  },
+  _trialLicenseId: {
+    type: 'triallicense',
+    label: 'Trial license template',
+    resourceType: 'connectorLicenses',
+    allowNew: true,
+    allowEdit: true,
+    helpKey: 'license._trialLicenseId',
+    connectorId: r => r._id,
+    ignoreEnvironmentFilter: true,
   },
 };

@@ -207,7 +207,7 @@ export default {
   },
   'http.paging.body': {
     type: 'httprequestbody',
-    label: 'Build paging post body',
+    label: 'Paging post body',
     required: true,
     visibleWhenAll: [
       {
@@ -537,7 +537,6 @@ export default {
   'http.once.relativeURI': {
     type: 'relativeuri',
     label: 'Relative URI',
-    enableEditorV2: true,
     connectionId: r => r && r._connectionId,
     visibleWhenAll: [
       {
@@ -549,7 +548,6 @@ export default {
   },
   'http.once.body': {
     type: 'httprequestbody',
-    enableEditorV2: true,
     connectionId: r => r && r._connectionId,
     label: 'HTTP request body',
     refreshOptionsOnChangesTo: ['http.requestMediaType'],

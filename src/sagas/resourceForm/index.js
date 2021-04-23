@@ -113,8 +113,9 @@ export function* runHook({ hook, data }) {
     method: 'post',
     body: processorLogic.requestBody({
       data,
-      code,
-      entryFunction,
+      rule: {code,
+        entryFunction,
+      },
     }),
   };
   const results = yield call(apiCallWithRetry, { path, opts });
@@ -405,7 +406,7 @@ export function* submitFormValues({
 
   if (resourceType === 'connectorLicenses') {
     // construct url for licenses
-    const connectorUrlStr = '/connectors/';
+    const connectorUrlStr = match.url.indexOf('/connectors/edit/connectors/') >= 0 ? '/connectors/edit/connectors/' : '/connectors/';
     const startIndex =
       match.url.indexOf(connectorUrlStr) + connectorUrlStr.length;
 

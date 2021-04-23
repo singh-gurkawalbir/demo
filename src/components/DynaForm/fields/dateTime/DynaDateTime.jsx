@@ -1,7 +1,7 @@
 import MomentDateFnsUtils from '@date-io/moment';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
@@ -15,6 +15,7 @@ import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
 import FieldHelp from '../../FieldHelp';
 import CalendarIcon from '../../../icons/CalendarIcon';
+import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   dynaDateTimeLabelWrapper: {
@@ -92,14 +93,34 @@ const getTimeMask = timeMask => {
   return '__:__:__';
 };
 
+const useDatePickerProps = removePickerDialog => {
+  const classes = useStyles();
+
+  return removePickerDialog ? {
+    InputAdornmentProps: {disablePointerEvents: true},
+    keyboardIcon: null,
+  } : {
+    keyboardIcon: <CalendarIcon className={classes.iconWrapper} />,
+  };
+};
+const useTimePickerProps = removePickerDialog => {
+  const classes = useStyles();
+
+  return removePickerDialog ? {
+    InputAdornmentProps: {disablePointerEvents: true},
+    keyboardIcon: null,
+  } : {
+    keyboardIcon: <AccessTimeIcon className={classes.iconWrapper} />,
+  };
+};
 export default function DateTimePicker(props) {
   const classes = useStyles();
-  const { id, label, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId, skipTimezoneConversion} = props;
+  const { id, label, timeLabel, dateLabel, required, formKey, onFieldChange, value = '', disabled, removePickerDialog, resourceContext, ssLinkedConnectionId, skipTimezoneConversion} = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
   const [timeValue, setTimeValue] = useState(value || null);
-
+  const dispatch = useDispatch();
   const setFormatTimeValue = dateTimeValue => {
     if (dateTimeValue) {
       // some dummy year dates we only care about the time
@@ -133,7 +154,25 @@ export default function DateTimePicker(props) {
     return preferences?.ssConnectionIds?.includes(ssLinkedConnectionId);
   });
   const { dateFormat, timeFormat, timezone } = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
+  const isEnteredDateAndTimeValue = moment(dateValue)?.isValid?.() && moment(timeValue)?.isValid?.();
 
+  useEffect(() => {
+    if (required) {
+      if (isEnteredDateAndTimeValue) {
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
+
+        return;
+      }
+
+      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: value ? 'Invalid date time value' : 'A value must be provided' }));
+    }
+  },
+  [dispatch, formKey, id, isEnteredDateAndTimeValue, required, value]);
+
+  // suspend force field state computation once the component turns invisible
+  useEffect(() => () => {
+    dispatch(actions.form.clearForceFieldState(formKey)(id));
+  }, [dispatch, formKey, id]);
   useEffect(() => {
     let formattedDate = null;
     const dataTimeValueFormatted = moment();
@@ -143,7 +182,6 @@ export default function DateTimePicker(props) {
 
       return;
     }
-
     dataTimeValueFormatted.set('year', moment(dateValue)?.get('year') || 0);
     dataTimeValueFormatted.set('month', moment(dateValue)?.get('month') || 0);
     dataTimeValueFormatted.set('date', moment(dateValue)?.get('date') || 0);
@@ -161,16 +199,23 @@ export default function DateTimePicker(props) {
         timezone
       );
     }
-    onFieldChange(id, formattedDate || '', !componentMounted);
+    onFieldChange(id, formattedDate || '', !componentMounted, isEnteredDateAndTimeValue);
     setComponentMounted(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateValue, timeValue]);
 
+  const datePickerProps = useTimePickerProps(removePickerDialog);
+  const timePickerProps = useDatePickerProps(removePickerDialog);
+
   return (
     <>
       <div className={classes.dynaDateTimeLabelWrapper}>
-        <FormLabel>{label}</FormLabel>
-        <FieldHelp {...props} />
+        {label && (
+        <>
+          <FormLabel>{label}</FormLabel>
+          <FieldHelp {...props} />
+        </>
+        )}
       </div>
       <MuiPickersUtilsProvider utils={MomentDateFnsUtils} >
         <div className={classes.dateTimeWrapper}>
@@ -182,21 +227,20 @@ export default function DateTimePicker(props) {
               placeholder={FIXED_DATE_FORMAT}
               mask={getDateMask(FIXED_DATE_FORMAT)}
               value={dateValue}
-              label="Date"
+              label={dateLabel || 'Date'}
               onChange={setFormatDateValue}
               disableToolbar
               className={classes.keyBoardDateTimeWrapper}
               fullWidth
               InputProps={{ className: classes.inputDateTime }}
-              keyboardIcon={<CalendarIcon className={classes.iconWrapper} />}
-
+              {...datePickerProps}
       />
           </div>
           <div className={classes.fieldWrapper}>
             <KeyboardTimePicker
               disabled={disabled}
               variant="inline"
-              label="Time"
+              label={timeLabel || 'Time'}
               views={['hours', 'minutes', 'seconds']}
               format={FIXED_TIME_FORMAT}
               placeholder={FIXED_TIME_FORMAT}
@@ -206,7 +250,7 @@ export default function DateTimePicker(props) {
               fullWidth
               className={classes.keyBoardDateTimeWrapper}
               InputProps={{ className: classes.inputDateTime }}
-              keyboardIcon={<AccessTimeIcon className={classes.iconWrapper} />}
+              {...timePickerProps}
       />
           </div>
         </div>

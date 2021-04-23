@@ -29,6 +29,7 @@ const useStyles = makeStyles(theme => ({
 
 const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
+  sort: { order: 'desc', orderBy: 'expires' },
   searchBy: [
     'user.email',
     '_integrationId',
@@ -45,21 +46,26 @@ export default function Licenses(props) {
   const classes = useStyles();
   const resourceStatus = useSelectorMemo(
     selectors.makeAllResourceStatusSelector,
-    ['connectorLicenses']
+    'connectorLicenses'
   );
-  const sortFilterKey = 'connectorLicenses';
+  const filterKey = 'connectorLicenses';
   const filter =
-    useSelector(state => selectors.filter(state, sortFilterKey)) ||
-    defaultFilter;
+    useSelector(state => selectors.filter(state, filterKey));
   const connectorLicensesFilterConfig = useMemo(
     () => ({
       ignoreEnvironmentFilter: true,
       type: 'connectorLicenses',
-      ...defaultFilter,
-      ...filter,
+      ...(filter || {}),
     }),
     [filter]
   );
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  },
+  [dispatch]);
   const list = useSelectorMemo(
     selectors.makeResourceListSelector,
     connectorLicensesFilterConfig
@@ -67,7 +73,6 @@ export default function Licenses(props) {
   const connector = useSelector(state =>
     selectors.resource(state, 'connectors', connectorId)
   );
-  const dispatch = useDispatch();
   const resourceLoaded = useMemo(() => resourceStatus && resourceStatus[0].isReady, [resourceStatus]);
 
   useEffect(() => {
@@ -115,8 +120,7 @@ export default function Licenses(props) {
         infoText={infoText.licenses}>
         <div className={classes.actions}>
           <KeywordSearch
-            filterKey="connectorLicenses"
-            defaultFilter={defaultFilter}
+            filterKey={filterKey}
           />
           <IconTextButton
             onClick={handleClick}
@@ -127,25 +131,27 @@ export default function Licenses(props) {
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>
-        {list.count === 0 ? (
-          <Typography>
-            {list.total === 0
-              ? 'You don\'t have any licenses.'
-              : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
-          </Typography>
-        ) : (
-          <CeligoTable
-            data={list.resources}
-            {...metadata}
-            filterKey={sortFilterKey}
-            actionProps={{
-              resourceType: `connectors/${connectorId}/licenses`,
-            }}
+        <LoadResources required resources="integrations" >
+          {list.count === 0 ? (
+            <Typography>
+              {list.total === 0
+                ? 'You don\'t have any licenses.'
+                : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
+            </Typography>
+          ) : (
+            <CeligoTable
+              data={list.resources}
+              {...metadata}
+              filterKey={filterKey}
+              actionProps={{
+                resourceType: `connectors/${connectorId}/licenses`,
+              }}
           />
-        )}
+          )}
+        </LoadResources>
       </div>
       <ShowMoreDrawer
-        filterKey="connectorLicenses"
+        filterKey={filterKey}
         count={list.count}
         maxCount={list.filtered}
       />

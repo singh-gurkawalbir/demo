@@ -1,13 +1,15 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
 import { changeEmailParams, changePasswordParams } from '../../../sagas/api/apiPaths';
+import getRequestOptions from '../../../utils/requestOptions';
 
 export const RETRY_COUNT = 3;
 
 const initialState = {};
-
+const emptyObj = {};
 export const COMM_STATES = {
   LOADING: 'loading',
   ERROR: 'error',
@@ -17,7 +19,7 @@ export const COMM_STATES = {
 Object.freeze(COMM_STATES);
 
 export default (state = initialState, action) => {
-  const { type, path, message, hidden, method = 'GET', key } = action;
+  const { type, path, message, hidden, refresh = false, method = 'GET', key } = action;
   const timestamp = Date.now();
   const commKey = commKeyGenerator(path, method);
 
@@ -29,6 +31,7 @@ export default (state = initialState, action) => {
         draft[commKey].status = COMM_STATES.LOADING;
         draft[commKey].message = message;
         draft[commKey].hidden = hidden;
+        draft[commKey].refresh = refresh;
         draft[commKey].method = method;
         delete draft[commKey].retry;
 
@@ -54,6 +57,7 @@ export default (state = initialState, action) => {
         if (!draft[commKey]) draft[commKey] = {};
         draft[commKey].status = COMM_STATES.ERROR;
         draft[commKey].message = inferErrorMessages(message)?.[0] || 'unknown error';
+        draft[commKey].failedAtTimestamp = timestamp;
 
         // if not defined it should be false
         draft[commKey].hidden = !!hidden;
@@ -92,6 +96,9 @@ selectors.isLoading = (state, resourceName) => !!(
     state[resourceName] &&
     state[resourceName].status === COMM_STATES.LOADING
 );
+selectors.isRefreshing = (state, resourceName) => !!(
+    state?.[resourceName]?.refresh === true
+);
 
 selectors.isValidatingNetsuiteUserRoles = state => {
   const commPath = commKeyGenerator('/netsuite/alluserroles', 'POST');
@@ -114,17 +121,16 @@ selectors.retryCount = (state, resourceName) => (state && state[resourceName] &&
 
 selectors.commsErrors = commsState => {
   if (!commsState) return;
-  const errors = {};
 
-  Object.keys(commsState).forEach(key => {
-    const c = commsState[key];
+  return Object.values(commsState).reduce((acc, curr) => {
+    const {failedAtTimestamp, message, status, hidden} = curr;
 
-    if (!c.hidden && c.status === COMM_STATES.ERROR) {
-      errors[key] = inferErrorMessages(c.message);
+    if (!hidden && status === COMM_STATES.ERROR) {
+      acc[failedAtTimestamp] = inferErrorMessages(message);
     }
-  });
 
-  return errors;
+    return acc;
+  }, {});
 };
 
 selectors.commsSummary = commsState => {
@@ -163,13 +169,39 @@ selectors.commStatusByKey = (state, key) => {
   return commStatus;
 };
 
+selectors.mkActionsToMonitorCommStatus = () => createSelector(
+  (state, actionsToMonitor) => {
+    if (!actionsToMonitor || Object.keys(actionsToMonitor).length === 0) {
+      return emptyObj;
+    }
+
+    const toMonitor = {};
+
+    Object.keys(actionsToMonitor).forEach(actionName => {
+      const action = actionsToMonitor[actionName];
+      const { path, opts } = getRequestOptions(action.action, {
+        resourceId: action.resourceId,
+        integrationId: action.integrationId,
+      });
+
+      toMonitor[actionName] = selectors.commStatusByKey(
+        state,
+        commKeyGenerator(path, opts.method)
+      );
+    });
+
+    return toMonitor;
+  },
+  result => result
+);
+
 // #region PASSWORD & EMAIL update selectors for modals
 selectors.changePasswordSuccess = state => {
   const commKey = commKeyGenerator(
     changePasswordParams.path,
     changePasswordParams.opts.method
   );
-  const status = selectors.commStatus(state && state.comms, commKey);
+  const status = selectors.commStatus(state, commKey);
 
   return status === COMM_STATES.SUCCESS;
 };
@@ -179,7 +211,7 @@ selectors.changePasswordFailure = state => {
     changePasswordParams.path,
     changePasswordParams.opts.method
   );
-  const status = selectors.commStatus(state && state.comms, commKey);
+  const status = selectors.commStatus(state, commKey);
 
   return status === COMM_STATES.ERROR;
 };
@@ -189,7 +221,7 @@ selectors.changePasswordMsg = state => {
     changePasswordParams.path,
     changePasswordParams.opts.method
   );
-  const message = selectors.requestMessage(state && state.comms, commKey);
+  const message = selectors.requestMessage(state, commKey);
 
   return message || '';
 };
@@ -199,7 +231,7 @@ selectors.changeEmailFailure = state => {
     changeEmailParams.path,
     changeEmailParams.opts.method
   );
-  const status = selectors.commStatus(state && state.comms, commKey);
+  const status = selectors.commStatus(state, commKey);
 
   return status === COMM_STATES.ERROR;
 };
@@ -209,7 +241,7 @@ selectors.changeEmailSuccess = state => {
     changeEmailParams.path,
     changeEmailParams.opts.method
   );
-  const status = selectors.commStatus(state && state.comms, commKey);
+  const status = selectors.commStatus(state, commKey);
 
   return status === COMM_STATES.SUCCESS;
 };
@@ -219,7 +251,7 @@ selectors.changeEmailMsg = state => {
     changeEmailParams.path,
     changeEmailParams.opts.method
   );
-  const message = selectors.requestMessage(state && state.comms, commKey);
+  const message = selectors.requestMessage(state, commKey);
 
   return message || '';
 };

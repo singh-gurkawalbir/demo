@@ -23,7 +23,7 @@ export const isIntegrationAppVerion2 = (integration, skipCloneCheck) => {
       integration.installSteps.length) || (
       integration.uninstallSteps &&
         integration.uninstallSteps.length)) ||
-    isCloned;
+    !!isCloned;
 
   return isFrameWork2;
 };

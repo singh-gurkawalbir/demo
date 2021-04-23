@@ -1,43 +1,18 @@
 import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-// import JsonContent from '../../JsonContent';
 import { safeParse } from '../../../utils/string';
 import { HTTP_STAGES } from '../../../utils/exportPanel';
-import CodeEditor from '../../CodeEditor2';
+import DefaultPanel from '../../CeligoTabLayout/CustomPanels/DefaultPanel';
 
 const useStyles = makeStyles(theme => ({
-  sampleDataWrapper: {
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    background: theme.palette.background.paper,
-    padding: theme.spacing(1),
-    marginTop: -18,
-  },
-
-  sampleDataContainer: {
-    minHeight: theme.spacing(20),
-    marginTop: theme.spacing(2),
-    position: 'relative',
-    backgroundColor: theme.palette.background.paper,
-    // height: 345,
-    overflow: 'auto',
-    color: theme.palette.text.primary,
-    '& > div': {
-      wordBreak: 'break-word',
-    },
-  },
-  codeEditorWrapper: {
-    height: 345,
-    paddingTop: theme.spacing(1),
-  },
   error: {
-    position: 'relative',
-    top: theme.spacing(2),
+    marginTop: theme.spacing(4),
     color: theme.palette.error.main,
   },
 }));
 
 const DEFAULT_ERROR = 'No data to show - application responded with an error';
+
 export default function ErrorPanel(props) {
   const { resourceSampleData, availablePreviewStages } = props;
   const classes = useStyles();
@@ -51,26 +26,9 @@ export default function ErrorPanel(props) {
     return errorObj;
   }, [resourceSampleData.error]);
 
-  return (
-    <div className={classes.sampleDataWrapper}>
-      <div className={classes.sampleDataContainer}>
-        {
-          showDefaultErrorMessage
-            ? <span className={classes.error}> { DEFAULT_ERROR } </span>
-            // : <JsonContent json={error} />
-            : (
-              <div className={classes.codeEditorWrapper}>
-                <CodeEditor
-                  value={error}
-                  mode="json"
-                  readOnly
-                  showGutter={false}
-        />
-              </div>
-            )
-        }
+  if (showDefaultErrorMessage) {
+    return <span className={classes.error}> { DEFAULT_ERROR } </span>;
+  }
 
-      </div>
-    </div>
-  );
+  return <DefaultPanel value={error} />;
 }

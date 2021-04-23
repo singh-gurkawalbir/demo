@@ -1,7 +1,8 @@
 import { generatePath } from 'react-router-dom';
-import { shouldHaveMiscellaneousSection, MISCELLANEOUS_SECTION_ID} from '../views/Integration/DIY/panels/Flows';
+import { MISCELLANEOUS_SECTION_ID } from './constants';
+import { shouldHaveMiscellaneousSection } from './resource';
 
-const flowgroupingsRedirectTo = (match, flowGroupings, defaultSectionId) => {
+export default function flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId) {
   // this component can only enter either with baseroute/sections/:sectionId or just baseroute
   if (!match) return null;
   const {url, path, params} = match;
@@ -34,7 +35,7 @@ const flowgroupingsRedirectTo = (match, flowGroupings, defaultSectionId) => {
   }
 
   return null;
-};
+}
 
 export const redirectToFirstFlowGrouping = (flows, flowGroupingsSections, match) => {
   const firstFlowGroupingSectionId = flowGroupingsSections?.[0]?.sectionId;
@@ -46,4 +47,3 @@ export const redirectToFirstFlowGrouping = (flows, flowGroupingsSections, match)
   // the first sectionId of the flowGrouping is considered the defaultSectionId
   return flowgroupingsRedirectTo(match, flowGroupingsWithMiscSec, firstFlowGroupingSectionId);
 };
-export default flowgroupingsRedirectTo;

@@ -500,11 +500,7 @@ export const wrapSampleDataWithContext = ({
 
   let resourceType = 'export';
 
-  if (
-    resource &&
-      resource.adaptorType &&
-      resource.adaptorType.includes('Import')
-  ) {
+  if (resource.adaptorType?.includes('Import')) {
     resourceType = 'import';
   }
 
@@ -526,10 +522,17 @@ export const wrapSampleDataWithContext = ({
   }
   const settings = {
     integration: integration.settings || {},
+    flowGrouping: {},
     flow: flow.settings || {},
     [resourceType]: resource.settings || {},
     connection: connection.settings || {},
   };
+
+  if (flow._flowGroupingId && integration.flowGroupings) {
+    const index = integration.flowGroupings.findIndex(f => f._id === flow._flowGroupingId);
+
+    settings.flowGrouping = integration.flowGroupings[index]?.settings || {};
+  }
 
   const resourceIds = {
     [resourceType === 'import' ? '_importId' : '_exportId']: resource._id,

@@ -18,7 +18,6 @@ import VariationAttributesList from './AttributesList';
 import VariationMappings from './MappingsWrapper';
 import actions from '../../../../../../../actions';
 import Spinner from '../../../../../../../components/Spinner';
-import SpinnerWrapper from '../../../../../../../components/SpinnerWrapper';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -184,7 +183,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
         }}
         onClose={handleClose}>
         <DrawerTitleBar
-          title={`Configure ${uiAssistant} variation themes: ${uiAssistant} - NetSuie`}
+          title={`Configure ${uiAssistant} variation themes: ${uiAssistant} - NetSuite`}
           flowId={flowId}
           addCategory
           backToParent
@@ -255,9 +254,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
             </div>
           </div>
         ) : (
-          <SpinnerWrapper>
-            <Spinner />
-          </SpinnerWrapper>
+          <Spinner centerAll />
         )}
       </Drawer>
     </>

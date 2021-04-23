@@ -9,7 +9,7 @@ import retry from './retry';
 import adjustTimezone from './adjustTimezone';
 import inferErrorMessages from './inferErrorMessages';
 import flowgroupingsRedirectTo, { redirectToFirstFlowGrouping } from './flowgroupingsRedirectTo';
-import { MISCELLANEOUS_SECTION_ID } from '../views/Integration/DIY/panels/Flows';
+import { MISCELLANEOUS_SECTION_ID } from './constants';
 
 const uiRoutePathPrefix = '';
 
@@ -48,9 +48,11 @@ describe('Json paths util method', () => {
       },
     };
 
-    expect(getJsonPaths(sampleJSON, '', { excludeArrayIndices: true })).toEqual([
+    expect(getJsonPaths(sampleJSON, '', { excludeArrayIndices: true, includeArrayLength: true })).toEqual([
       { id: 'a.arr', type: 'array' },
+      { id: 'a.arr.length', type: 'number' },
       { id: 'a.arr2', type: 'array' },
+      { id: 'a.arr2.length', type: 'number' },
       { id: 'b.c', type: 'number' },
     ]);
   });

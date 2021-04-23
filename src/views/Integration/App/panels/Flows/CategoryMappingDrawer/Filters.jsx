@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Filters({ integrationId, flowId, uiAssistant }) {
+export default function Filters({ integrationId, flowId, uiAssistant }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -60,7 +60,7 @@ function Filters({ integrationId, flowId, uiAssistant }) {
   );
   const handleChange = e => {
     dispatch(
-      actions.integrationApp.settings.setCategoryMappingFilters(
+      actions.integrationApp.settings.categoryMappings.setFilters(
         integrationId,
         flowId,
         { mappingFilter: e.target.value }
@@ -70,7 +70,7 @@ function Filters({ integrationId, flowId, uiAssistant }) {
 
   const handleAttributeChange = name => event => {
     dispatch(
-      actions.integrationApp.settings.setCategoryMappingFilters(
+      actions.integrationApp.settings.categoryMappings.setFilters(
         integrationId,
         flowId,
         {
@@ -188,5 +188,3 @@ function Filters({ integrationId, flowId, uiAssistant }) {
     </ClickAwayListener>
   );
 }
-
-export default Filters;

@@ -12,6 +12,7 @@ import getJSONPaths, {
 import { isJsonString } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
+import { emptyObject } from '../constants';
 
 const isCsvOrXlsxResource = resource => {
   const { file } = resource;
@@ -74,29 +75,29 @@ const setMappingData = (
   isParentDeleted,
   deleteChildlessParent
 ) => {
-  recordMappings.forEach(mapping => {
-    const key = `${flowId}-${mapping.id}`;
+  recordMappings.forEach(category => {
+    const key = `${flowId}-${category.id}`;
     let allChildrenDeleted = false;
 
-    if (mapping.children && mapping.children.length) {
-      allChildrenDeleted = mapping.children.every(child =>
+    if (category.children && category.children.length) {
+      allChildrenDeleted = category.children.every(child =>
         deleted.includes(child.id)
       );
     }
 
     const mappingDeleted =
-      deleted.includes(mapping.id) ||
+      deleted.includes(category.id) ||
       isParentDeleted ||
       (deleteChildlessParent && allChildrenDeleted);
 
     if (mappingDeleted) {
       // eslint-disable-next-line no-param-reassign
-      mapping.delete = true;
+      category.delete = true;
     }
 
     if (mappings[key]) {
       // eslint-disable-next-line no-param-reassign
-      mapping.fieldMappings = mappings[key].mappings
+      category.fieldMappings = mappings[key].mappings
         .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
         .map(
           ({ index, rowIdentifier, hardCodedValueTmp, visible, ...rest }) => ({
@@ -105,15 +106,36 @@ const setMappingData = (
         );
 
       if (mappings[key].lookups && mappings[key].lookups.length) {
+        const allLookups = [...mappings[key]?.lookups || []];
+
+        if (category.children && category.children.length) {
+          category.children.forEach(child => {
+            const validLookups = mappings[`${flowId}-${child.id}`].mappings?.map(mapping => mapping.lookupName).filter(Boolean);
+
+            if (mappings[`${flowId}-${child.id}`]?.lookups?.length && validLookups.length) {
+              mappings[`${flowId}-${child.id}`].lookups.forEach(lookup => {
+                if (validLookups.includes(lookup.name)) {
+                  const lookupIndex = allLookups.findIndex(l => l.name === lookup.name);
+
+                  if (lookupIndex === -1) {
+                    allLookups.push(lookup);
+                  } else {
+                    allLookups[lookupIndex] = lookup;
+                  }
+                }
+              });
+            }
+          });
+        }
         // eslint-disable-next-line no-param-reassign
-        mapping.lookups = mappings[key].lookups;
+        category.lookups = allLookups;
       }
     }
 
-    if (mapping.children && mapping.children.length) {
+    if (category.children && category.children.length) {
       setMappingData(
         flowId,
-        mapping.children,
+        category.children,
         mappings,
         deleted,
         mappingDeleted
@@ -488,7 +510,7 @@ export default {
     relationshipData,
     deleteChildlessParent
   ) => {
-    const { basicMappings = {}, variationMappings = {} } = sessionMappedData;
+    const { basicMappings = {}, variationMappings = {} } = sessionMappedData || {};
 
     setMappingData(
       flowId,
@@ -726,17 +748,12 @@ export default {
     }
   },
   addVariation: (draft, cKey, data) => {
-    const { categoryId, subCategoryId, isVariationAttributes } = data;
-    const { response = [] } = draft[cKey];
+    const { categoryId, subCategoryId, isVariationAttributes } = data || emptyObject;
+    const { response = [] } = draft[cKey] || emptyObject;
     const mappingData = response.find(sec => sec.operation === 'mappingData');
     let categoryMappings;
 
-    if (
-      mappingData.data &&
-      mappingData.data.mappingData &&
-      mappingData.data.mappingData.variationMappings &&
-      mappingData.data.mappingData.variationMappings.recordMappings
-    ) {
+    if (mappingData?.data?.mappingData?.variationMappings?.recordMappings) {
       const { recordMappings } = mappingData.data.mappingData.variationMappings;
 
       categoryMappings = recordMappings.find(

@@ -31,6 +31,11 @@ export default {
       orderBy: 'expires',
     },
     {
+      heading: 'Trial expires',
+      value: r => <ExpiresOn date={r.trialEndDate} />,
+      orderBy: 'expires',
+    },
+    {
       heading: 'Environment',
       value: r => {
         if (r.type === 'integrationAppChild') {
@@ -39,6 +44,7 @@ export default {
 
         return r.sandbox ? 'Sandbox' : 'Production';
       },
+      orderBy: 'sandbox',
     },
   ],
   rowActions: [Edit, Delete],

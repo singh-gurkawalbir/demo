@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch, useLocation, matchPath } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
@@ -11,10 +11,21 @@ import ErrorDrawerAction from './ErrorDrawerAction';
 export default function ErrorDetailsDrawer({ flowId }) {
   const history = useHistory();
   const match = useRouteMatch();
-  const [errorType, setErrorType] = useState('open');
   const { pathname } = useLocation();
-  const matchErrorDrawerPath = matchPath(pathname, {
+
+  const matchIncompleteErrorDrawerPath = matchPath(pathname, {
     path: `${match.url}/errors/:resourceId`,
+  });
+
+  if (matchIncompleteErrorDrawerPath?.isExact) {
+    // when error type is not specified in the url, it adds open and opens Open errors by default
+    // Note: The url specified in the emails regarding errors to the users does not specify the error type
+    // This helps not to modify any dependent places to update url
+    history.replace(`${matchIncompleteErrorDrawerPath.url}/open`);
+  }
+
+  const matchErrorDrawerPath = matchPath(pathname, {
+    path: `${match.url}/errors/:resourceId/:errorType`,
   });
 
   const resourceName = useSelector(state => {
@@ -35,27 +46,25 @@ export default function ErrorDetailsDrawer({ flowId }) {
     } else {
       history.replace(match.url);
     }
-    setTimeout(() => setErrorType('open'), 1000);
   }, [history, match.url]);
+
+  const handleErrorTypeChange = useCallback(errorType => {
+    history.replace(`${match.url}/errors/${matchErrorDrawerPath.params.resourceId}/${errorType}`);
+  }, [history, match.url, matchErrorDrawerPath?.params?.resourceId]);
 
   return (
     <RightDrawer
-      path="errors/:resourceId"
+      path="errors/:resourceId/:errorType"
       width="full"
       onClose={handleClose}
       variant="temporary">
 
       <DrawerHeader title={`Errors: ${resourceName}`} hideBackButton>
-        <ErrorDrawerAction
-          flowId={flowId}
-          errorType={errorType}
-          setErrorType={setErrorType} />
+        <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} />
       </DrawerHeader>
 
       <DrawerContent>
-        <ErrorList
-          flowId={flowId}
-          errorType={errorType} />
+        <ErrorList flowId={flowId} />
       </DrawerContent>
     </RightDrawer>
   );

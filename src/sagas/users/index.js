@@ -200,26 +200,8 @@ export function* changeEmail({ updatedEmail }) {
         'Verification link sent to new email address.'
       )
     );
+  // eslint-disable-next-line no-empty
   } catch (e) {
-    if (e.status === 403) {
-      yield put(
-        actions.api.failure(
-          changeEmailParams.path,
-          changeEmailParams.opts.method,
-          'Existing email provided, Please try again.',
-          true
-        )
-      );
-    }
-
-    yield put(
-      actions.api.failure(
-        changeEmailParams.path,
-        changeEmailParams.opts.method,
-        'Cannot change user Email , Please try again.',
-        true
-      )
-    );
   }
 }
 
@@ -344,6 +326,26 @@ export function* disableUser({ _id, disabled }) {
   }
 
   yield put(actions.user.org.users.disabled(_id));
+}
+export function* reinviteUser({ _id }) {
+  const requestOptions = getRequestOptions(actionTypes.USER_REINVITE, {
+    resourceId: _id,
+  });
+  const { path, opts } = requestOptions;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: 'Reinviting User',
+    });
+  } catch (e) {
+    yield put(actions.user.org.users.reinviteError(_id));
+
+    return true;
+  }
+
+  yield put(actions.user.org.users.reinvited(_id));
 }
 
 export function* makeOwner({ email }) {
@@ -578,4 +580,5 @@ export const userSagas = [
     actionTypes.ACCOUNT_DELETE_SUITESCRIPT_LINKED_CONNECTION,
     deleteSuiteScriptLinkedConnection
   ),
+  takeLatest(actionTypes.USER_REINVITE, reinviteUser),
 ];

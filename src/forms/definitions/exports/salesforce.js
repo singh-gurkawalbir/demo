@@ -52,10 +52,11 @@ export default {
         soqlField.value.query &&
         soqlField.value.query.includes('lastExportDateTime')
       ) {
-        dateField.required = false;
+        dateField.defaultRequired = false;
       } else {
-        dateField.required = true;
+        dateField.defaultRequired = true;
       }
+      dateField.required = dateField.defaultRequired;
     }
   },
   preSave: formValues => {
@@ -290,6 +291,9 @@ export default {
       formId: 'advancedSettings',
       visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
     },
+    traceKeyTemplate: {
+      fieldId: 'traceKeyTemplate',
+    },
   },
   layout: {
     type: 'collapse',
@@ -350,6 +354,7 @@ export default {
           'dataURITemplate',
           'skipRetries',
           'apiIdentifier',
+          'traceKeyTemplate',
         ],
       },
     ],

@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 function RunFlowLabel({ isRequested, disabled, onRunClick, variant, label}) {
   const classes = useStyles();
 
-  if (isRequested) return <Spinner size={24} />;
+  if (isRequested) return <Spinner />;
 
   if (variant === 'icon') {
     if (disabled) {
@@ -181,6 +181,8 @@ export default function RunFlowButton({
           fileProps: { maxSize: MAX_DATA_LOADER_FILE_SIZE },
         })
       );
+      // eslint-disable-next-line no-param-reassign
+      e.target.value = null;
     },
     [dataLoaderFileType, dispatch, fileId]
   );

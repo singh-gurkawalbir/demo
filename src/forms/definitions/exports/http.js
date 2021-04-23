@@ -92,14 +92,14 @@ export default {
       retValues['/http/response/failValues'] = undefined;
     }
 
-    if (
-      retValues['/http/response/successValues'] === undefined &&
+    if (retValues['/http/successMediaType'] === 'csv' ||
+      (retValues['/http/response/successValues'] === undefined &&
       retValues['/http/response/successPath'] === undefined &&
       retValues['/http/response/failValues'] === undefined &&
       retValues['/http/response/failPath'] === undefined &&
       retValues['/http/response/resourcePath'] === '' &&
       retValues['/http/response/errorPath'] === ''
-    ) {
+      )) {
       retValues['/http/response'] = undefined;
       delete retValues['/http/response/resourcePath'];
       delete retValues['/http/response/successValues'];
@@ -408,6 +408,9 @@ export default {
     },
     formView: { fieldId: 'formView' },
     semiassistantoperationselect: {fieldId: 'semiassistantoperationselect', visibleWhenAll: [{field: 'formView', isNot: ['true']}]},
+    traceKeyTemplate: {
+      fieldId: 'traceKeyTemplate',
+    },
   },
 
   layout: {
@@ -507,6 +510,7 @@ export default {
           'advancedSettings',
           'configureAsyncHelper',
           'http._asyncHelperId',
+          'traceKeyTemplate',
         ],
       },
     ],

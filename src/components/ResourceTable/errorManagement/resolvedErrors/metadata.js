@@ -1,6 +1,8 @@
 import React from 'react';
 import Retry from '../actions/Retry';
 import ViewErrorDetails from '../actions/ViewErrorDetails';
+import ViewHttpRequest from '../actions/ViewHttpRequest';
+import ViewHttpResponse from '../actions/ViewHttpResponse';
 import SelectError from '../cells/SelectError';
 import SelectAllErrors from '../cells/SelectAllErrors';
 import UserName from '../cells/UserName';
@@ -51,13 +53,18 @@ export default {
     },
     {
       headerValue: function SelectResolvedAt(r, actionProps) {
-        return <SelectDate {...actionProps} title="Resolved at" filterBy="resolvedAt" />;
+        return (
+          <SelectDate
+            {...actionProps}
+            title="Resolved at"
+            filterBy="resolvedAt" />
+        );
       },
       width: '12%',
       value: r => <CeligoTimeAgo date={r.resolvedAt} />,
     },
   ],
-  rowActions: ({ retryDataKey }, { actionInProgress }) => {
+  rowActions: ({ retryDataKey, reqAndResKey }, { actionInProgress }) => {
     const actions = [];
 
     if (actionInProgress) return actions;
@@ -66,6 +73,9 @@ export default {
       actions.push(Retry);
     }
     actions.push(ViewErrorDetails);
+    if (reqAndResKey) {
+      actions.push(ViewHttpRequest, ViewHttpResponse);
+    }
 
     return actions;
   },

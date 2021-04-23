@@ -1,4 +1,3 @@
-import { withStyles } from '@material-ui/core/styles';
 import React, { useCallback, useState, useEffect } from 'react';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,13 +8,7 @@ import {selectors} from '../../reducers';
 import Spinner from '../Spinner';
 import { useLoadingSnackbarOnSave } from '../ResourceFormFactory/Actions';
 
-const styles = theme => ({
-  actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
-  },
-});
-const MappingSaveButton = ({
+export default function MappingSaveButton({
   submitButtonLabel = 'Save',
   variant = 'outlined',
   color = 'secondary',
@@ -23,28 +16,24 @@ const MappingSaveButton = ({
   dataTest,
   showOnlyOnChanges,
   onClose,
-}) => {
-  const [saveTrigerred, setSaveTriggered] = useState(false);
+}) {
+  const [saveTriggered, setSaveTriggered] = useState(false);
   const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
   const match = useRouteMatch();
-  const [enquesnackbar] = useEnqueueSnackbar();
-  const { validationErrMsg } = useSelector(state =>
-    selectors.mapping(state)
-  );
-  const mappingsChanged = useSelector(state =>
-    selectors.mappingChanged(state)
-  );
+  const [enqueueSnackbar] = useEnqueueSnackbar();
+  const { validationErrMsg } = useSelector(state => selectors.mapping(state));
+  const mappingsChanged = useSelector(state => selectors.mappingChanged(state));
   const dispatch = useDispatch();
-  const { saveTerminated, saveCompleted } = useSelector(state =>
+  const { saveTerminated, saveCompleted, saveInProgress } = useSelector(state =>
     selectors.mappingSaveStatus(state)
   );
 
   useEffect(() => {
-    if (saveTrigerred && saveCompleted && onClose) {
+    if (saveTriggered && saveCompleted && onClose) {
       onClose();
       setSaveTriggered(false);
     }
-  }, [onClose, saveCompleted, saveTerminated, saveTrigerred]);
+  }, [onClose, saveCompleted, saveTerminated, saveTriggered]);
   const onSave = useCallback(() => {
     dispatch(actions.mapping.save({ match }));
     setSaveTriggered(true);
@@ -58,7 +47,7 @@ const MappingSaveButton = ({
   });
   const handleButtonClick = useCallback(() => {
     if (validationErrMsg) {
-      enquesnackbar({
+      enqueueSnackbar({
         message: validationErrMsg,
         variant: 'error',
       });
@@ -67,11 +56,12 @@ const MappingSaveButton = ({
     }
 
     handleSubmitForm();
-  }, [enquesnackbar, handleSubmitForm, validationErrMsg]);
+  }, [enqueueSnackbar, handleSubmitForm, validationErrMsg]);
 
   if (showOnlyOnChanges && !mappingsChanged) {
     return null;
   }
+  // console.log('disableSave, saveInProgress: ', disableSave, saveInProgress);
 
   return (
     <Button
@@ -80,16 +70,13 @@ const MappingSaveButton = ({
       color={color}
       disabled={disabled || disableSave || !mappingsChanged}
       onClick={handleButtonClick}>
-      {disableSave ? (
+      {saveInProgress ? (
         <>
-          <Spinner size={16} />
-          Saving
+          <Spinner size="small" /> Saving
         </>
       ) : (
         <>{submitButtonLabel}</>
       )}
     </Button>
   );
-};
-
-export default withStyles(styles)(MappingSaveButton);
+}

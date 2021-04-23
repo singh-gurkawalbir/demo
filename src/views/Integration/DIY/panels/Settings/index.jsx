@@ -9,7 +9,7 @@ import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import { isJsonString } from '../../../../../utils/string';
 import PanelHeader from '../../../../../components/PanelHeader';
-import FormBuilderButton from '../../../../../components/FormBuilderButton/afe2';
+import FormBuilderButton from '../../../../../components/FormBuilderButton';
 import useSaveStatusIndicator from '../../../../../hooks/useSaveStatusIndicator';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
@@ -21,6 +21,8 @@ const useStyles = makeStyles(theme => ({
   },
   root: {
     backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
   noSettings: {
     margin: theme.spacing(1, 2, 4, 2),

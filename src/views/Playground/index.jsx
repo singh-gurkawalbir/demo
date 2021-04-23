@@ -3,22 +3,22 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, IconButton, makeStyles, Tooltip, Typography } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
-import Editor from '../../components/AFE2/Editor';
+import Editor from '../../components/AFE/Editor';
 import FullScreenOpenIcon from '../../components/icons/FullScreenOpenIcon';
 import ExampleMenu from './ExampleMenu';
 import ExplorerMenu from './ExplorerMenu';
-import EditorDrawer from '../../components/AFE2/Drawer';
+import EditorDrawer from '../../components/AFE/Drawer';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ExportExampleButton from './ExportExampleButton';
-import ActionsRibbon from '../../components/AFE2/Drawer/ActionsRibbon';
+import ActionsRibbon from '../../components/AFE/Drawer/ActionsRibbon';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    display: 'flex',
+    display: 'grid',
     height: `calc(100% - ${theme.pageBarHeight + theme.appBarHeight}px)`,
+    gridTemplateColumns: '25% 75%',
   },
   leftNav: {
-    width: 300,
     overflowY: 'auto',
     padding: theme.spacing(3),
     border: `solid 0 ${theme.palette.secondary.lightest}`,
@@ -28,8 +28,8 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
-  leftNavExpanded: {
-    width: 600,
+  rootExpanded: {
+    gridTemplateColumns: '35% 65%',
   },
   content: {
     display: 'flex',
@@ -74,8 +74,8 @@ export default function Editors() {
         )}
 
       </CeligoPageBar>
-      <div className={classes.root}>
-        <div className={clsx(classes.leftNav, {[classes.leftNavExpanded]: !editorId})}>
+      <div className={clsx(classes.root, {[classes.rootExpanded]: !editorId})}>
+        <div className={classes.leftNav}>
           <div className={classes.menuSection}>
             <Typography variant="h4">Editor Examples</Typography>
             <ExampleMenu onEditorChange={handleEditorChange} />

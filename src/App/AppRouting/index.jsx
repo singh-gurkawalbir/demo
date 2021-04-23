@@ -27,11 +27,12 @@ const NotFound = loadable(() =>
 const Permissions = loadable(() =>
   retry(() => import(/* webpackChunkName: 'Permissions' */ '../../views/Permissions'))
 );
-const Editors = loadable(() =>
-  retry(() => import(/* webpackChunkName: 'Editors' */ '../../views/Editors'))
+const Reports = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'Reports' */ '../../views/Reports'))
 );
+
 const Playground = loadable(() =>
-  retry(() => import(/* webpackChunkName: 'Editors' */ '../../views/Playground'))
+  retry(() => import(/* webpackChunkName: 'Playground' */ '../../views/Playground'))
 );
 const FlowBuilder = loadable(() =>
   retry(() => import(/* webpackChunkName: 'FlowBuilder' */ '../../views/FlowBuilder'))
@@ -233,7 +234,10 @@ export default function AppRouting() {
 
       <Route path={getRoutePath('/dashboard')} component={Dashboard} />
       <Route path={getRoutePath('/recycleBin')} component={RecycleBin} />
-      <Route path={getRoutePath('/editors')} component={Editors} />
+      <Route
+        path={[
+          getRoutePath('/reports/:reportType'),
+          getRoutePath('/reports')]} component={Reports} />
       <Route path={getRoutePath('/playground')} component={Playground} />
       <Route path={getRoutePath('/permissions')} component={Permissions} />
       <Route

@@ -180,10 +180,6 @@ export function* installScriptStep({
     return yield put(actions.resource.request('integrations', id));
   }
 
-  if (!isEmpty(connectionDoc)) {
-    yield put(actions.resource.requestCollection('connections'));
-  }
-
   const currentConnectionStep =
     stepCompleteResponse &&
     Array.isArray(stepCompleteResponse) &&
@@ -192,6 +188,10 @@ export function* installScriptStep({
         temp.completed === false &&
         temp._connectionId
     );
+
+  if (!isEmpty(connectionDoc)) {
+    yield put(actions.resource.request('connections', currentConnectionStep?._connectionId));
+  }
 
   if (currentConnectionStep && isOauth(connectionDoc)) {
     yield put(actions.integrationApp.installer.setOauthConnectionMode(currentConnectionStep._connectionId, true, id));
@@ -236,6 +236,10 @@ export function* installStoreStep({ id, installerFunction }) {
 
   if (stepCompleteResponse && stepCompleteResponse.success) {
     yield call(getResource, { resourceType: 'integrations', id });
+
+    yield put(
+      actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
+    );
     yield put(
       actions.integrationApp.store.completedStepInstall(
         id,

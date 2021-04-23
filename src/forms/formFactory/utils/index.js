@@ -114,12 +114,12 @@ export const getFieldByIdFromLayout = (layout, fieldMap, id) => {
   );
 };
 
-export const getInvalidFields = fieldStates => fieldsStateToArray(fieldStates).filter(
-  field => !field.isValid || field.isDiscretelyInvalid
+export const getInvalidFields = (fieldStates, shouldShowPurelyInvalid) => fieldsStateToArray(fieldStates).filter(
+  field => shouldShowPurelyInvalid ? !field.isValid : !field.isValid || field.isDiscretelyInvalid
 );
 
-export const isExpansionPanelErrored = (meta, fieldStates) => {
-  const invalidFields = getInvalidFields(fieldStates);
+export const isExpansionPanelErrored = (meta, fieldStates, shouldShowPurelyInvalid) => {
+  const invalidFields = getInvalidFields(fieldStates, shouldShowPurelyInvalid);
   const { layout, fieldMap } = meta;
 
   return invalidFields.some(
@@ -706,11 +706,11 @@ export const conditionalLookupOptionsforNetsuite = [
     value: 'extract_not_empty',
   },
   {
-    label: 'Lookup finds a record',
+    label: 'Look up finds a record',
     value: 'lookup_not_empty',
   },
   {
-    label: 'Lookup finds no records',
+    label: 'Look up finds no records',
     value: 'lookup_empty',
   },
   {
@@ -744,11 +744,11 @@ export const conditionalLookupOptionsforSalesforce = [
     value: 'extract_not_empty',
   },
   {
-    label: 'Lookup finds a record',
+    label: 'Look up finds a record',
     value: 'lookup_not_empty',
   },
   {
-    label: 'Lookup finds no records',
+    label: 'Look up finds no records',
     value: 'lookup_empty',
   },
 ];
@@ -772,11 +772,11 @@ export const conditionalLookupOptionsforRest = [
     value: 'extract_not_empty',
   },
   {
-    label: 'Lookup finds a record',
+    label: 'Look up finds a record',
     value: 'lookup_not_empty',
   },
   {
-    label: 'Lookup finds no records',
+    label: 'Look up finds no records',
     value: 'lookup_empty',
   },
 ];
@@ -859,7 +859,7 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup additional files (per record)',
+      label: 'Look up additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -869,7 +869,7 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup additional files (per record)',
+      label: 'Look up additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -879,7 +879,7 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup additional files (per record)',
+      label: 'Look up additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -893,11 +893,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup additional records (per record)',
+      label: 'Look up additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup additional files (per record)',
+      label: 'Look up additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -911,11 +911,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup additional records (per record)',
+      label: 'Look up additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup additional files (per record)',
+      label: 'Look up additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -929,11 +929,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup additional records (per record)',
+      label: 'Look up additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup additional files (per record)',
+      label: 'Look up additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -947,11 +947,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup additional records (per record)',
+      label: 'Look up additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup additional files (per record)',
+      label: 'Look up additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -968,11 +968,12 @@ export const destinationOptions = {
       value: 'importRecords',
     },
     {
-      label: 'Lookup additional records (per record)',
+      label: 'Look up additional records (per record)',
       value: 'lookupRecords',
     },
   ],
 };
+// TODO:consider forceFieldState instead of using optionsHandler to affect fileDefinitionRulesField and fileDefinitionFormatField
 export const alterFileDefinitionRulesVisibility = fields => {
   // TODO @Raghu : Move this to metadata visibleWhen rules when we support combination of ANDs and ORs in Forms processor
   const fileDefinitionRulesField = fields.find(
@@ -987,6 +988,7 @@ export const alterFileDefinitionRulesVisibility = fields => {
 
   // Incase of new resource - visibility of fileDefRules & fileDefFormat fields are based of fileType selected
   // Whether resource is in new or edit stage -- inferred by userDefinitionId
+
   if (
     fileType &&
     fileType.value &&
@@ -1002,14 +1004,18 @@ export const alterFileDefinitionRulesVisibility = fields => {
         fdField => fdField.id === formatFieldType
       );
 
-      fileDefinitionRulesField.visible = !!fileDefinitionFormatField.value;
+      fileDefinitionRulesField.defaultVisible = !!fileDefinitionFormatField.value;
     } else {
-      fileDefinitionRulesField.visible = false;
+      fileDefinitionRulesField.defaultVisible = false;
     }
+    // defaultVisible forces a field to be invisible but it gets only registerd in the
+    // next getNextStateFromFields so we have to update that result over here as well
+    fileDefinitionRulesField.visible = fileDefinitionRulesField.defaultVisible;
   }
   // fileDefinitionRulesField should be hidden when there is no file type.
 
   if (fileType && !fileType.value) {
+    fileDefinitionRulesField.defaultVisible = false;
     fileDefinitionRulesField.visible = false;
   }
   // userDefinitionId exists only in edit mode.
@@ -1022,6 +1028,7 @@ export const alterFileDefinitionRulesVisibility = fields => {
       );
 
       delete fileDefinitionFormatField.visibleWhenAll;
+      fileDefinitionFormatField.defaultVisible = false;
       fileDefinitionFormatField.visible = false;
     });
   }

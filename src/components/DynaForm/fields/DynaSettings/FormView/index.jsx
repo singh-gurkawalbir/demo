@@ -7,7 +7,6 @@ import actions from '../../../../../actions';
 import DynaForm from '../../..';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import Spinner from '../../../../Spinner';
-import SpinnerWrapper from '../../../../SpinnerWrapper';
 import useFormContext from '../../../../Form/FormContext';
 import { isFormTouched } from '../../../../../forms/formFactory/utils';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
@@ -77,9 +76,9 @@ export default function FormView({
 
   if (!settingsFormState || settingsFormState.status === 'request') {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+
+      <Spinner centerAll />
+
     );
   }
 

@@ -24,7 +24,7 @@ export default function OnOffCell({
       message: `Are you sure you want to ${label} this integration app?`,
       buttons: [
         {
-          label,
+          label: isPublished ? 'Unpublish' : 'Publish',
           onClick: () => dispatch(actions.connectors.publish.request(resourceId, isPublished)),
         },
         {
@@ -40,7 +40,7 @@ export default function OnOffCell({
   }
 
   if (toggleStatus === 'loading') {
-    return <Spinner size={24} />;
+    return <Spinner />;
   }
 
   return (

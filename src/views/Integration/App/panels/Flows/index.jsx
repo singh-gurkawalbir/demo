@@ -1,5 +1,5 @@
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, Fragment } from 'react';
 import {
   NavLink,
   useRouteMatch,
@@ -23,8 +23,8 @@ import {ActionsFactory as GenerateButtons} from '../../../../../components/drawe
 import consolidatedActions from '../../../../../components/ResourceFormFactory/Actions';
 import MappingDrawer from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
+import SectionTitle from '../../../common/FlowSectionTitle';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
-import StatusCircle from '../../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import ResponseMappingDrawer from '../../../../../components/ResponseMapping/Drawer';
 import KeywordSearch from '../../../../../components/KeywordSearch';
@@ -68,19 +68,6 @@ const useStyles = makeStyles(theme => ({
   },
   configureSectionBtn: {
     padding: 0,
-  },
-  gridContainer: {
-    display: 'grid',
-    gridColumnGap: '10px',
-    gridTemplateColumns: 'auto 38%',
-    position: 'relative',
-    '& > div:first-child': {
-      wordBreak: 'break-word',
-    },
-    '& > div:last-child': {
-      position: 'relative',
-      right: -12,
-    },
   },
   emptyMessageWrapper: {
     padding: theme.spacing(1, 2),
@@ -184,24 +171,20 @@ const defaultFilter = {
   ],
 };
 
-function FlowList({ integrationId, storeId }) {
+const FlowsTable = ({integrationId, storeId}) => {
   const match = useRouteMatch();
-  const classes = useStyles();
-  const { sectionId } = match.params;
-  const dispatch = useDispatch();
   const filterKey = `${integrationId}-flows`;
-  const flowFilter = useSelector(state => selectors.filter(state, filterKey)) || defaultFilter;
-  const flowsFilterConfig = useMemo(() => ({ ...flowFilter, excludeHiddenFlows: true }), [flowFilter]);
-
+  const { sectionId } = match.params;
+  const flowFilter = useSelector(state => selectors.filter(state, filterKey));
+  const flowsFilterConfig = useMemo(() => ({ ...(flowFilter || {}), excludeHiddenFlows: true }), [flowFilter]);
+  const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
+  const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, storeId, flowsFilterConfig);
-  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
+  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration, storeId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const section = flowSections.find(s => s.titleId === sectionId);
-  const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
-  const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
-  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration, storeId);
+
   const actionProps = useMemo(() => ({
     isIntegrationApp: true,
     storeId,
@@ -214,10 +197,33 @@ function FlowList({ integrationId, storeId }) {
     integration,
   }), [storeId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration]);
 
+  return (
+    <LoadResources required resources="flows,exports">
+      <CeligoTable
+        data-public
+        data={flows}
+        filterKey={filterKey}
+        {...flowTableMeta}
+        actionProps={actionProps}
+    />
+    </LoadResources>
+  );
+};
+
+function FlowList({ integrationId, storeId }) {
+  const filterKey = `${integrationId}-flows`;
+  const match = useRouteMatch();
+  const { sectionId } = match.params;
+  const dispatch = useDispatch();
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+
   useEffect(() => {
-    dispatch(actions.patchFilter(filterKey, {sort: {order: 'asc', orderBy: 'name'}}));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    dispatch(actions.patchFilter(filterKey, defaultFilter));
+  },
+  [dispatch, filterKey]);
+
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
 
@@ -231,7 +237,7 @@ function FlowList({ integrationId, storeId }) {
   }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
 
   return (
-    <LoadResources required resources="flows,exports">
+    <>
       <ScheduleDrawer />
       <QueuedJobsDrawer />
       <SettingsDrawer
@@ -266,64 +272,40 @@ function FlowList({ integrationId, storeId }) {
         sectionId={sectionId}
         // flowId={flowId}
       />
-      <PanelHeader title={`${section?.title} flows`} >
-        <div className={classes.action}>
-          <KeywordSearch
-            filterKey={filterKey}
-            defaultFilter={defaultFilter}
-        />
-        </div>
-      </PanelHeader>
-      <CeligoTable
-        data-public
-        data={flows}
-        filterKey={filterKey}
-        {...flowTableMeta}
-        actionProps={actionProps}
-        />
-    </LoadResources>
+      <Header integrationId={integrationId} storeId={storeId} />
+      <FlowsTable integrationId={integrationId} storeId={storeId} />
+    </>
   );
 }
 
-const SectionTitle = ({integrationId, storeId, title, titleId}) => {
+const Header = ({integrationId, storeId}) => {
   const classes = useStyles();
-  const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isOwnerUserInErrMgtTwoDotZero(state)
-  );
-  const integrationErrorsPerSection = useSelector(state =>
-    selectors.integrationErrorsPerSection(state, integrationId, storeId),
-  shallowEqual);
-
-  const errorCount = integrationErrorsPerSection[titleId];
-  const errorStatus = useMemo(() => {
-    if (errorCount === 0) {
-      return <StatusCircle size="mini" variant="success" />;
-    }
-
-    return (
-      <div>
-        <StatusCircle size="mini" variant="error" />
-        <span>{errorCount > 9999 ? '9999+' : errorCount}</span>
-      </div>
-    );
-  }, [errorCount]);
-
-  if (!isUserInErrMgtTwoDotZero) {
-    return title;
-  }
+  const filterKey = `${integrationId}-flows`;
+  const match = useRouteMatch();
+  const { sectionId } = match.params;
+  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
+  const section = flowSections.find(s => s.titleId === sectionId);
 
   return (
-    <div className={classes.gridContainer}>
-      <div> { title }</div>
-      <div> {errorStatus} </div>
-    </div>
+    <PanelHeader title={`${section?.title} flows`} >
+      <div className={classes.action}>
+        <KeywordSearch
+          filterKey={filterKey}
+        />
+      </div>
+    </PanelHeader>
   );
 };
 
 export default function FlowsPanel({ storeId, integrationId }) {
   const match = useRouteMatch();
   const classes = useStyles();
+
+  const integrationErrorsPerSection = useSelector(state =>
+    selectors.integrationErrorsPerSection(state, integrationId, storeId),
+  shallowEqual);
   const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
+
   const history = useHistory();
   // If someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can
@@ -350,20 +332,14 @@ export default function FlowsPanel({ storeId, integrationId }) {
                   activeClassName={classes.activeListItem}
                   to={titleId}
                   data-test={titleId}>
-                  <SectionTitle
-                    title={title}
-                    titleId={titleId}
-                    integrationId={integrationId}
-                    storeId={storeId} />
+                  <SectionTitle title={title} errorCount={integrationErrorsPerSection[titleId]} />
                 </NavLink>
               </ListItem>
             ))}
           </List>
         </Grid>
         <Grid item className={classes.content}>
-          <LoadResources required resources="flows">
-            <FlowList integrationId={integrationId} storeId={storeId} />
-          </LoadResources>
+          <FlowList integrationId={integrationId} storeId={storeId} />
         </Grid>
       </Grid>
     </div>

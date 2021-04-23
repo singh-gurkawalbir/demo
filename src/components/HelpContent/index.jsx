@@ -28,6 +28,7 @@ const useStyles = makeStyles(theme => ({
     fontSize: '14px',
     lineHeight: '22px',
     whiteSpace: 'normal',
+    wordBreak: 'break-word',
     '& > div > pre': {
       background: theme.palette.background.paper2,
       border: '1px solid',
@@ -85,9 +86,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function HelpContent(props) {
+export default function HelpContent({ children, title, caption, fieldId, resourceType }) {
   const classes = useStyles();
-  const { children, title, caption, fieldId, resourceType } = props;
   const dispatch = useDispatch();
   const [feedbackText, setFeedbackText] = useState(false);
   const [feedbackTextValue, setFeedbackTextValue] = useState('');
@@ -168,5 +168,3 @@ function HelpContent(props) {
     </div>
   );
 }
-
-export default HelpContent;

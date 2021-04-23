@@ -6,11 +6,14 @@ import CloseIcon from '../../icons/CloseIcon';
 import BackArrowIcon from '../../icons/BackArrowIcon';
 import InfoIconButton from '../../InfoIconButton';
 import Help from '../../Help';
+import { useDrawerContext } from './DrawerContext';
+// import BackgroundToggle from './BackgroundToggle';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {
     display: 'flex',
-    alignItems: 'center',
+    // alignItems: 'center',
+    alignItems: 'flex-start',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(2, 3),
     '& > :not(:last-child)': {
@@ -20,7 +23,8 @@ const useStyles = makeStyles(theme => ({
   title: {
     flexGrow: 1,
     color: theme.palette.secondary.main,
-    whiteSpace: 'nowrap',
+    wordBreak: 'break-word',
+    // whiteSpace: 'nowrap',
   },
   helpTextButton: {
     padding: 0,
@@ -38,8 +42,6 @@ export default function DrawerHeader({
   helpTitle,
   helpKey,
   hideBackButton = false,
-  fullPath, // forwarded from parent (RightDrawer)
-  onClose, // forwarded from parent (RightDrawer)
   CloseButton,
   disableClose,
   className,
@@ -47,6 +49,7 @@ export default function DrawerHeader({
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
+  const { fullPath, onClose } = useDrawerContext();
   const { isExact } = matchPath(location.pathname, fullPath) || {};
   const showBackButton = !isExact && !hideBackButton;
 
@@ -68,25 +71,26 @@ export default function DrawerHeader({
   };
 
   return (
+  // <BackgroundToggle>
     <div data-public className={clsx(classes.drawerHeader, className)}>
       {showBackButton && (
-      <IconButton
-        size="small"
-        data-test="backRightDrawer"
-        aria-label="Close"
+        <IconButton
+          size="small"
+          data-test="backRightDrawer"
+          aria-label="Close"
         // eslint-disable-next-line react/jsx-handler-names
-        onClick={history.goBack}>
-        <BackArrowIcon />
-      </IconButton>
+          onClick={history.goBack}>
+          <BackArrowIcon />
+        </IconButton>
       )}
       <Typography variant="h4" className={classes.title}>
         {title}
         {helpKey && (
-        <Help
-          title={helpTitle}
-          className={classes.helpTextButton}
-          helpKey={helpKey}
-          fieldId={helpKey}
+          <Help
+            title={helpTitle}
+            className={classes.helpTextButton}
+            helpKey={helpKey}
+            fieldId={helpKey}
       />
         )}
         {infoText && <InfoIconButton info={infoText} />}
@@ -97,6 +101,6 @@ export default function DrawerHeader({
 
       <CloseIconButton />
     </div>
-
+  // </BackgroundToggle>
   );
 }

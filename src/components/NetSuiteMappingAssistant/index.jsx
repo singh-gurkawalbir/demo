@@ -8,7 +8,6 @@ import Spinner from '../Spinner';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import SpinnerWrapper from '../SpinnerWrapper';
 
 const useStyles = makeStyles({
   NetsuiteRules: {
@@ -180,18 +179,14 @@ export default function NetSuiteMappingAssistant({
 
   if (!netSuiteRecordMetadata) {
     return (
-      <SpinnerWrapper>
-        <Spinner color="primary" />
-      </SpinnerWrapper>
+      <Spinner centerAll />
     );
   }
 
   return (
     <>
       {netSuiteFormIsLoading && (
-        <SpinnerWrapper>
-          <Spinner color="primary" />
-        </SpinnerWrapper>
+      <Spinner centerAll />
       )}
       {suiteletUrl && (
         <Iframe

@@ -7,42 +7,8 @@ import { requestReferences } from '../../resources';
 import { apiCallWithRetry } from '../..';
 import { selectors } from '../../../reducers';
 import {RESOURCE_TYPE_PLURAL_TO_SINGULAR} from '../../../constants/resource';
+import getFetchLogsPath from './utils';
 
-function getFetchLogsPath({
-  dateRange,
-  selectedResources,
-  functionType,
-  nextPageURL,
-  flowId,
-  scriptId,
-  fetchNextPage = false,
-}) {
-  let path;
-
-  if (fetchNextPage && nextPageURL) {
-    path = nextPageURL.replace('/api', '');
-  } else {
-    path = `/scripts/${scriptId}/logs?time_gt=${dateRange?.startDate?.getTime()}&time_lte=${dateRange?.endDate?.getTime()}`;
-
-    if (flowId) {
-      path += `&_flowId=${flowId}`;
-    }
-    if (selectedResources?.length) {
-      selectedResources.forEach(res => {
-        if (res.type === 'flows') {
-          path += `&_flowId=${res.id}`;
-        } else {
-          path += `&_resourceId=${res.id}`;
-        }
-      });
-    }
-    if (functionType) {
-      path += `&functionType=${functionType}`;
-    }
-  }
-
-  return path;
-}
 export function* getScriptDependencies({scriptId = '',
   flowId = '',
 }) {
@@ -61,7 +27,7 @@ export function* getScriptDependencies({scriptId = '',
   if (flowId) {
     const flowResource = yield select(selectors.resource, 'flows', flowId);
 
-    flowResource.pageGenerators.forEach(({_exportId}) => {
+    flowResource?.pageGenerators?.forEach(({_exportId}) => {
       const resource = resourceReferences?.exports?.find(({id}) => id === _exportId);
 
       if (resource) {
@@ -69,7 +35,7 @@ export function* getScriptDependencies({scriptId = '',
       }
     });
 
-    flowResource.pageProcessors.forEach(({type: ppType, _importId, _exportId}) => {
+    flowResource?.pageProcessors?.forEach(({type: ppType, _importId, _exportId}) => {
       const resource = (ppType === 'export')
         ? resourceReferences?.exports?.find(({id}) => id === _exportId)
         : resourceReferences?.imports?.find(({id}) => id === _importId);

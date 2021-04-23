@@ -39,9 +39,12 @@ export default {
     {
       heading: 'Website URL',
       value(r) {
+        // the hyperlink has to be an Absolute link to not open the link relative to our website domain
+        const websiteURL = r.websiteURL?.startsWith('http') ? r.websiteURL : `https://${r.websiteURL}`;
+
         return (
           r.websiteURL && (
-            <Link href={r.websiteURL} target="_blank" underline="none">
+            <Link href={websiteURL} target="_blank" underline="none">
               View
             </Link>
           )
@@ -61,6 +64,7 @@ export default {
 
         );
       },
+      orderBy: 'published',
     },
   ],
   rowActions: [Edit, UploadZipFile, Download, Delete],

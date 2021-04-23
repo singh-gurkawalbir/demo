@@ -269,8 +269,8 @@ describe('Flow sample data utility sagas', () => {
         };
         const processorData = {
           data: sampleData,
-          processor: 'csvParser',
-          ...generateFileParserOptionsFromResource(ftpCsvResource),
+          editorType: 'csvParser',
+          rule: generateFileParserOptionsFromResource(ftpCsvResource),
         };
 
         return expectSaga(parseFileData, {sampleData, resource: ftpCsvResource })
@@ -297,8 +297,8 @@ describe('Flow sample data utility sagas', () => {
         const sampleData = { test: 5 };
         const processorData = {
           data: sampleData,
-          processor: 'csvParser',
-          ...generateFileParserOptionsFromResource(ftpCsvResource),
+          editorType: 'csvParser',
+          rule: generateFileParserOptionsFromResource(ftpCsvResource),
         };
         const error = JSON.stringify({
           errors: [{status: 404, message: '{"code":"Not a valid data to process"}'}],
@@ -700,6 +700,7 @@ describe('Flow sample data utility sagas', () => {
           adaptorType: 'RESTExport',
           postData: {
             lastExportDateTime: expect.any(String),
+            currentExportDateTime: expect.any(String),
           },
         };
         const { returnValue } = await expectSaga(fetchResourceDataForNewFlowResource, { resourceId: '1234', resourceType: 'exports' })
@@ -846,7 +847,10 @@ describe('Flow sample data utility sagas', () => {
           pageGenerators: [{ _exportId: 'export-123'}, { _exportId: 'export-456'}],
           pageProcessors: [{ type: 'import', _importId: 'import-123'}],
         };
-        const postData = { lastExportDateTime: expect.any(String) };
+        const postData = {
+          lastExportDateTime: expect.any(String),
+          currentExportDateTime: expect.any(String),
+        };
         const pg1Options = {
           uiData: { users: [{_id: 'user1', name: 'user1'}, {_id: 'user2', name: 'user2'}]},
         };
@@ -902,7 +906,10 @@ describe('Flow sample data utility sagas', () => {
           runOffline: true,
           runOfflineSource: 'db',
         };
-        const postData = { lastExportDateTime: expect.any(String) };
+        const postData = {
+          lastExportDateTime: expect.any(String),
+          currentExportDateTime: expect.any(String),
+        };
 
         const pg1 = {
           _id: 'export-123',
@@ -1504,6 +1511,7 @@ describe('Flow sample data utility sagas', () => {
           id: '',
           ignored: '',
           statusCode: '',
+          headers: '',
         };
 
         expect(getPreProcessedResponseMappingData({resourceType: 'imports', adaptorType: 'RESTImport'}))
@@ -1600,7 +1608,7 @@ describe('Flow sample data utility sagas', () => {
           data: {test: 5},
         };
 
-        return expectSaga(fetchMetadata, { connectionId, commMetaPath, test: true })
+        return expectSaga(fetchMetadata, { connectionId, commMetaPath })
           .provide([
             [select(selectors.getMetadataOptions, {
               connectionId,

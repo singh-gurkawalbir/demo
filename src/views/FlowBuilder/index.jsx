@@ -14,7 +14,7 @@ import ChartsDrawer from './drawers/LineGraph';
 import ReplaceConnectionDrawer from './drawers/ReplaceConnection';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
-import EditorDrawer from '../../components/AFE2/Drawer';
+import EditorDrawer from '../../components/AFE/Drawer';
 import FlowBuilderBody from './FlowBuilderBody';
 import Redirection from './Redirection';
 
@@ -27,7 +27,7 @@ function FBComponent({flowId, integrationId, childId}) {
         flowId={flowId}
         integrationId={integrationId}
         setTabValue={setTabValue}
-   />
+      />
 
       <BottomDrawer
         flowId={flowId}
@@ -35,11 +35,11 @@ function FBComponent({flowId, integrationId, childId}) {
         setTabValue={setTabValue}
         integrationId={integrationId}
         childId={childId}
-/>
+      />
     </>
   );
 }
-function FlowBuilder() {
+export default function FlowBuilder() {
   const match = useRouteMatch();
 
   const { flowId, integrationId, childId } = match.params;
@@ -77,5 +77,3 @@ function FlowBuilder() {
     </LoadResources>
   );
 }
-
-export default FlowBuilder;

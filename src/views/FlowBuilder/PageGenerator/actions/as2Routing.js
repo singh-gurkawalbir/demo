@@ -22,6 +22,7 @@ const getFieldMeta = defaultValue => ({
       label:
         'Choose a script and function name to use for determining AS2 message routing',
       hookType: 'script',
+      hookStage: 'contentBasedFlowRouter',
       // we can "fake" sample data by piggy backing off the default hook and simply
       // override the sample data below.
       preHookData: {

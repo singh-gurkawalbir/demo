@@ -46,7 +46,7 @@ const importActions = [
   actionsMap.postResponseMap,
   actionsMap.proceedOnFailure,
 ];
-const isActionUsed = (resource, resourceType, flowNode, action) => {
+export const isActionUsed = (resource, resourceType, flowNode, action) => {
   const {
     inputFilter = {},
     filter = {},
@@ -237,7 +237,7 @@ export const isLookupResource = (flow = {}, resource = {}) => {
   if (resource.isLookup) return true;
   const { pageProcessors = [] } = flow;
 
-  return !!pageProcessors.find(pp => pp._exportId === resource._id);
+  return !!pageProcessors.find(pp => pp._exportId && pp._exportId === resource._id);
 };
 
 /*
@@ -367,8 +367,8 @@ export function flowSupportsSettings(flow, integration, childId) {
   const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
   return !!(
-    (flowSettings.settings && flowSettings.settings.length) ||
-    (flowSettings.sections && flowSettings.sections.length)
+    (flowSettings?.settings && flowSettings.settings.length) ||
+    (flowSettings?.sections && flowSettings.sections.length)
   );
 }
 
@@ -691,7 +691,7 @@ export function getIAFlowSettings(integration, flowId, childId) {
     if (childId) {
       const section = integration.settings.sections.find(sec => sec.id === childId);
 
-      if (!section.sections) {
+      if (!section || !section.sections) {
         return;
       }
 
@@ -797,7 +797,7 @@ export function getFlowDetails(flow, integration, exports, childId) {
     draft.isDeltaFlow = isDeltaFlow(flow, exports);
     const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
-    draft.showMapping = flowSettings.showMapping;
+    draft.showMapping = !!flowSettings.showMapping;
     draft.hasSettings = !!(
       (flowSettings.settings && flowSettings.settings.length) ||
       (flowSettings.sections && flowSettings.sections.length)
@@ -805,10 +805,10 @@ export function getFlowDetails(flow, integration, exports, childId) {
     draft.showSchedule = flow._connectorId
       ? draft.canSchedule && !!flowSettings.showSchedule
       : draft.canSchedule;
-    draft.showStartDateDialog = flowSettings.showStartDateDialog;
-    draft.disableSlider = flowSettings.disableSlider;
+    draft.showStartDateDialog = !!flowSettings.showStartDateDialog;
+    draft.disableSlider = !!flowSettings.disableSlider;
     draft.disableRunFlow = !!flowSettings.disableRunFlow;
-    draft.showUtilityMapping = flowSettings.showUtilityMapping;
+    draft.showUtilityMapping = !!flowSettings.showUtilityMapping;
   });
 }
 

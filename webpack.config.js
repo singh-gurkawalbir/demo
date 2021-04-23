@@ -89,6 +89,8 @@ const config = {
       RELEASE_VERSION: JSON.stringify(process.env.RELEASE_VERSION),
       LOGROCKET_IDENTIFIER: JSON.stringify(process.env.LOGROCKET_IDENTIFIER),
       LOGROCKET_IDENTIFIER_EU: JSON.stringify(process.env.LOGROCKET_IDENTIFIER_EU),
+      GA_KEY_1: JSON.stringify(process.env.GA_KEY_1),
+      GA_KEY_2: JSON.stringify(process.env.GA_KEY_2),
     }),
   ],
   output: {

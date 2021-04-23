@@ -6,18 +6,21 @@ import MappingRow from './MappingRow';
 import actions from '../../actions';
 
 const emptyObject = {};
-export default function DragContainer({ onDrop, ...props }) {
+export default function DragContainer({ onDrop, className, ...props }) {
+  const [isDragging, setIsDragging] = useState(false);
   const dispatch = useDispatch();
   const mappings = useSelector(state => selectors.mapping(state).mappings);
   const [mappingState, setMappingState] = useState(mappings);
   const handleDrop = useCallback(
     (key, finalIndex) => {
+      setIsDragging(false);
       dispatch(actions.mapping.shiftOrder(key, finalIndex));
     },
     [dispatch]
   );
   const handleMove = useCallback(
     (dragIndex, hoverIndex) => {
+      setIsDragging(true);
       const mappingsCopy = [...mappingState];
       const dragItem = mappingsCopy[dragIndex];
 
@@ -54,7 +57,7 @@ export default function DragContainer({ onDrop, ...props }) {
   const emptyRowIndex = mappingState.length;
 
   return (
-    <>
+    <div className={className}>
       <div ref={drop}>
 
         {tableData.map((mapping, index) => (
@@ -64,6 +67,7 @@ export default function DragContainer({ onDrop, ...props }) {
             mappingKey={mapping.key}
             onMove={handleMove}
             isDraggable
+            isDragInProgress={isDragging}
             {...props}
           />
         ))}
@@ -75,6 +79,6 @@ export default function DragContainer({ onDrop, ...props }) {
         isDraggable={false}
         {...props}
       />
-    </>
+    </div>
   );
 }

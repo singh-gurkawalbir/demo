@@ -5,6 +5,7 @@ import { selectors } from '../../../../reducers';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
+  EMAIL_REGEX,
 } from '../../../../utils/constants';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
@@ -65,6 +66,12 @@ export default function UserForm({
         defaultDisabled: isEditMode,
         helpText:
           'Enter the email of the user you would like to invite to manage and/or monitor selected integrations.',
+        validWhen: {
+          matchesRegEx: {
+            pattern: EMAIL_REGEX,
+            message: 'Please enter a valid email address',
+          },
+        },
       },
       accessLevel: {
         id: 'accessLevel',

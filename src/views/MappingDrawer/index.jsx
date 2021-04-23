@@ -8,8 +8,9 @@ import SelectImport from './SelectImport';
 import RightDrawer from '../../components/drawer/Right';
 import DrawerHeader from '../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../components/drawer/Right/DrawerContent';
-import DatabaseMapping from './DatabaseMapping';
-import SelectQueryType from './DatabaseMapping/SelectQueryType';
+import DatabaseMapping from './DatabaseMapping_afe';
+import SelectQueryType from './DatabaseMapping_afe/SelectQueryType';
+import EditorDrawer from '../../components/AFE/Drawer';
 
 const MappingWrapper = ({integrationId}) => {
   const history = useHistory();
@@ -37,11 +38,16 @@ export default function MappingDrawerRoute(props) {
   const match = useRouteMatch();
   const integrationId = match.params?.integrationId || props.integrationId;
 
+  let importId;
+
   const isMappingPreviewAvailable = useSelector(state => {
-    const importId = selectors.mapping(state)?.importId;
+    importId = selectors.mapping(state)?.importId;
 
     return !!selectors.mappingPreviewType(state, importId);
   });
+
+  const importName = useSelector(state => selectors.resourceData(state, 'imports', importId).merged?.name);
+  const title = importName ? `Edit Mapping > ${importName}` : 'Edit Mapping';
 
   return (
     // TODO (Aditya/Raghu): Break it into 2 side drawer after changes to RightDrawer is done on exact property.
@@ -61,7 +67,7 @@ export default function MappingDrawerRoute(props) {
         width={isMappingPreviewAvailable ? 'full' : 'default'}
         variant="persistent"
       >
-        <DrawerHeader title="Edit mapping" />
+        <DrawerHeader title={title} />
         <Switch>
           <Route
             path={[
@@ -100,10 +106,8 @@ export default function MappingDrawerRoute(props) {
 
       <Route
         path={`${match.url}/queryBuilder/:flowId/:importId/:index/view`}>
-        <DatabaseMapping
-          integrationId={integrationId}
-          {...props}
-          />
+        <DatabaseMapping />
+        <EditorDrawer />
       </Route>
     </LoadResources>
   );

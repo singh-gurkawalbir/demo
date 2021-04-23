@@ -13,7 +13,7 @@ import { getReferenceFieldsMap } from '../../../utils/metadata';
  * 2. Pass on for export preview call
  */
 
-function* attachRelatedLists({
+export function* _attachRelatedLists({
   metadata,
   relatedLists = [],
   connectionId,
@@ -50,14 +50,14 @@ function* attachRelatedLists({
 }
 
 export default function* requestRealTimeMetadata({ resource, refresh }) {
+  if (!resource) return;
   const { adaptorType } = resource;
 
   if (adaptorType) {
     switch (adaptorType) {
       case 'NetSuiteExport': {
         const { _connectionId: connectionId, netsuite = {} } = resource;
-        const recordType =
-          netsuite.distributed && netsuite.distributed.recordType;
+        const recordType = netsuite.distributed?.recordType;
 
         if (!recordType) return;
         const commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}`;
@@ -80,6 +80,7 @@ export default function* requestRealTimeMetadata({ resource, refresh }) {
         if (!sObjectType) return;
         const { referencedFields = [], relatedLists = [] } = distributed;
         const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}`;
+
         const sfMetadata = yield call(fetchMetadata, {
           connectionId,
           commMetaPath,
@@ -90,10 +91,13 @@ export default function* requestRealTimeMetadata({ resource, refresh }) {
 
         metadata = getSalesforceRealTimeSampleData(metadata);
         metadata = { ...metadata, ...getReferenceFieldsMap(referencedFields) };
+        if (!relatedLists?.length) {
+          return metadata;
+        }
 
-        return yield call(attachRelatedLists, {
+        return yield call(_attachRelatedLists, {
           metadata,
-          relatedLists: relatedLists || [],
+          relatedLists,
           childRelationships,
           connectionId,
           refresh,

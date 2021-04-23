@@ -16,6 +16,7 @@ import PanelHeader from '../../../../../components/PanelHeader';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { getEmptyMessage, isParentViewSelected } from '../../../../../utils/integrationApps';
 import flowgroupingsRedirectTo from '../../../../../utils/flowgroupingsRedirectTo';
+import EditorDrawer from '../../../../../components/AFE/Drawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,6 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     display: 'flex',
+    paddingTop: theme.spacing(1),
   },
   subNav: {
     minWidth: 200,
@@ -196,6 +198,7 @@ export default function SettingsPanel({
             storeId={storeId}
             sectionProps={sectionProps}
           />
+          <EditorDrawer />
         </div>
       </div>
     </div>
