@@ -3,7 +3,7 @@ import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import CeligoLogo from '../../components/CeligoLogo';
@@ -116,14 +116,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CeligoDrawer() {
+function CeligoDrawer({drawerOpened, isSandbox}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const environment = useSelector(
-    state => selectors.userPreferences(state).environment
-  );
-  const isSandbox = environment === 'sandbox';
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   const handleDrawerToggle = useCallback(() => {
     dispatch(
@@ -198,5 +193,21 @@ export default function CeligoDrawer() {
         </div>
       </div>
     </Drawer>
+  );
+}
+
+export default function MemoCeligoDrawer() {
+  const environment = useSelector(
+    state => selectors.userPreferences(state).environment
+  );
+  const isSandbox = environment === 'sandbox';
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+
+  return useMemo(() => (
+    <CeligoDrawer
+      isSandbox={isSandbox}
+      drawerOpened={drawerOpened}
+    />
+  ), [drawerOpened, isSandbox]
   );
 }

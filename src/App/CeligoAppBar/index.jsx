@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { AppBar, Toolbar } from '@material-ui/core';
 import clsx from 'clsx';
@@ -83,6 +83,27 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const CeligoAppBarChildrenMemo = () => {
+  const classes = useStyles();
+
+  return useMemo(() => (
+    <Toolbar className="topBar" variant="dense">
+      <CeligoBreadcrumb />
+      <ul className={classes.topBarActions}>
+        {/*
+          Including the AccountList causes the app to reload 3 times
+          (and re-run all init) I think this is causes by removing the
+          session caching layer we had in place
+        */}
+        <li><AccountList /></li>
+        <li><LicenseAction /></li>
+        <li><EnvironmentToggle /></li>
+        <li><Notifications /></li>
+        <li><ProfileMenuButton /></li>
+      </ul>
+    </Toolbar>
+  ), [classes.topBarActions]);
+};
 export default function CeligoAppBar() {
   const classes = useStyles();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -95,22 +116,8 @@ export default function CeligoAppBar() {
       elevation={0}
       className={clsx(classes.appBar, {
         [classes.appBarShift]: drawerOpened,
-      })}>
-      <Toolbar className="topBar" variant="dense">
-        <CeligoBreadcrumb />
-        <ul className={classes.topBarActions}>
-          {/*
-                Including the AccountList causes the app to reload 3 times
-                (and re-run all init) I think this is causes by removing the
-                session caching layer we had in place
-              */}
-          <li><AccountList /></li>
-          <li><LicenseAction /></li>
-          <li><EnvironmentToggle /></li>
-          <li><Notifications /></li>
-          <li><ProfileMenuButton /></li>
-        </ul>
-      </Toolbar>
+      })} >
+      <CeligoAppBarChildrenMemo />
     </AppBar>
   );
 }

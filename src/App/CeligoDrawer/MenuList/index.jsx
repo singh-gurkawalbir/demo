@@ -1,19 +1,12 @@
-import { Collapse, List, Tooltip } from '@material-ui/core';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import React, { Fragment, useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Link, matchPath, useLocation } from 'react-router-dom';
-import clsx from 'clsx';
+import { Collapse, List } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
-import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';
+import clsx from 'clsx';
+import React, { Fragment, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
-import getRoutePath from '../../../utils/routePaths';
 import menuItems from '../menuItems';
-import actions from '../../../actions';
+import MemoNavItem from '../NavListItem';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -105,24 +98,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function getHrefProps(href, path) {
-  return {
-    target: href && '_blank',
-    href,
-    to: !href ? getRoutePath(path) : undefined,
-  };
-}
-
 const integrationsFilterConfig = {
   type: 'integrations',
   ignoreEnvironmentFilter: true,
 };
 
 export default function () {
-  const dispatch = useDispatch();
   const classes = useStyles();
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const location = useLocation();
   const userProfile = useSelector(state => selectors.userProfile(state));
   const canUserPublish = useSelector(state => selectors.canUserPublish(state));
   const accessLevel = useSelector(
@@ -144,19 +126,6 @@ export default function () {
     isSandbox
   );
 
-  const handleExpandClick = useCallback(
-    label => () => {
-      const selectedExpandValue = label === expand ? null : label;
-
-      dispatch(
-        actions.user.preferences.update({
-          expand: selectedExpandValue,
-        })
-      );
-    },
-    [dispatch, expand]
-  );
-
   const listItemsMemo = useMemo(() => menuItems(
     userProfile,
     accessLevel,
@@ -175,52 +144,23 @@ export default function () {
   return (
 
     <List className={clsx(classes.list)}>
-      {listItemsMemo.map(({ label, Icon, path, routeProps, children, href, component, dataTest }) => (
+      {listItemsMemo.map(({ label, Icon, path, routeProps, children: navChildren, href, component, dataTest }) => (
         <Fragment key={label}>
-          <ListItem
-            button
-            className={clsx(classes.listItem, {
-              [classes.activeItem]:
-                  expand !== label &&
-                  matchPath(location.pathname, routeProps || getRoutePath(`${path}`)),
-            })}
-            component={children ? undefined : component || Link}
-            {...getHrefProps(href, path)}
-            data-test={dataTest || label}
-            onClick={children ? handleExpandClick(label) : null}>
-            <ListItemIcon
-              className={clsx(classes.itemIconRoot, {[classes.itemIconRootCollapsed]: !drawerOpened})}>
-
-              <>
-                {drawerOpened ? <Icon />
-                  : (
-                    <Tooltip
-                      data-public placement="right" enterDelay={0} title={label}
-                      classes={{popper: classes.tooltipLeft}}>
-                      <div>
-                        <Icon />
-                      </div>
-                    </Tooltip>
-                  )}
-
-                {(!drawerOpened && children) &&
-                (expand === label && !drawerOpened ? <ArrowUpIcon className={classes.collapsedArrowIcon} /> : <ArrowDownIcon className={classes.collapsedArrowIcon} />)}
-              </>
-            </ListItemIcon>
-            <ListItemText
-              className={clsx(classes.listItemText, {[classes.listItemTextCollapsed]: !drawerOpened})}
-              primaryTypographyProps={{
-                className: classes.itemText,
-              }}
-              primary={label}
-              />
-            {children &&
-                (expand === label ? <ArrowUpIcon /> : <ArrowDownIcon />)}
-          </ListItem>
-          {children && (
+          <MemoNavItem
+            isParentNavItem
+            label={label}
+            href={href}
+            navChildren={navChildren}
+            dataTest={dataTest}
+            path={path}
+            component={component}
+            routeProps={routeProps}
+            Icon={Icon}
+          />
+          {navChildren && (
           <Collapse in={expand === label} unmountOnExit timeout="auto">
             <List className={clsx(classes.list)} disablePadding>
-              {children.map(
+              {navChildren.map(
                 ({
                   label,
                   Icon,
@@ -230,44 +170,16 @@ export default function () {
                   component,
                   dataTest,
                 }) => (
-                  <ListItem
-                    className={clsx(
-                      classes.listItem,
-                      classes.innerListItems,
-                      {
-                        [classes.activeItem]: matchPath(
-                          location.pathname,
-                          routeProps || getRoutePath(`${path}`)
-                        ),
-                      }
-                    )}
-                    data-test={dataTest || label}
+                  <MemoNavItem
                     key={label}
-                    component={component || Link}
-                    {...getHrefProps(href, path)}
-                    button>
-                    <ListItemIcon
-                      className={clsx(classes.itemIconRoot, {[classes.itemIconRootCollapsed]: !drawerOpened})}>
-                      {drawerOpened
-                        ? <Icon />
-                        : (
-                          <Tooltip
-                            data-public placement="right" enterDelay={0} title={label}
-                            classes={{popper: classes.tooltipLeft}}>
-                            <div>
-                              <Icon />
-                            </div>
-                          </Tooltip>
-                        )}
-                    </ListItemIcon>
-                    <ListItemText
-                      className={clsx(classes.listItemText, {[classes.listItemTextCollapsed]: !drawerOpened})}
-                      primary={label}
-                      primaryTypographyProps={{
-                        className: classes.itemText,
-                      }}
-                        />
-                  </ListItem>
+                    label={label}
+                    Icon={Icon}
+                    path={path}
+                    routeProps={routeProps}
+                    href={href}
+                    component={component}
+                    dataTest={dataTest}
+                  />
                 )
               )}
             </List>
