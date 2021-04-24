@@ -14,12 +14,13 @@ export const useFetchErrors = ({
   isResolved,
 }) => {
   const dispatch = useDispatch();
-  const defaultFilter = isResolved => isResolved ? DEFAULT_FILTERS.RESOLVED : DEFAULT_FILTERS.OPEN;
 
   return useCallback(
     loadMore => {
       if (!loadMore) {
         dispatch(actions.clearFilter(filterKey));
+        const defaultFilter = isResolved ? DEFAULT_FILTERS.RESOLVED : DEFAULT_FILTERS.OPEN;
+
         dispatch(actions.patchFilter(filterKey, defaultFilter));
       }
       dispatch(
@@ -31,8 +32,7 @@ export const useFetchErrors = ({
         })
       );
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dispatch, flowId, resourceId, isResolved, filterKey]
+    [dispatch, filterKey, flowId, isResolved, resourceId]
   );
 };
 const emptySet = [];
