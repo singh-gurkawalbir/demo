@@ -944,7 +944,7 @@ describe('isCloningSupported', () => {
     }
   );
   each(testCases1).test(
-    'should return %s when _connectorId = %s and name = %s for qa environment',
+    'should return %s when _connectorId = %s and name = %s',
     (expected, _connectorId, name) => {
       windowSpy.mockImplementation(() => ({
         document: {
