@@ -69,7 +69,7 @@ const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
 }));
 
 Object.freeze(TYPE_TO_ERROR_MESSAGE);
-const RowCell = ({ fieldValue, op, isValid, rowIndex, setTableState, onRowChange}) => {
+const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState, onRowChange}) => {
   const {id, readOnly, options, type } = op;
   const classes = useStyles();
 
@@ -81,9 +81,10 @@ const RowCell = ({ fieldValue, op, isValid, rowIndex, setTableState, onRowChange
       index: rowIndex,
       field: id,
       value,
+      optionsMap,
       onRowChange,
     });
-  }, [id, onRowChange, rowIndex, setTableState]);
+  }, [id, onRowChange, optionsMap, rowIndex, setTableState]);
 
   const fieldTestAttr = `suggest-${id}-${rowIndex}`;
   const errorMessages = TYPE_TO_ERROR_MESSAGE[type];
@@ -164,7 +165,7 @@ const RowCell = ({ fieldValue, op, isValid, rowIndex, setTableState, onRowChange
   return null;
 };
 
-const RowCellMemo = ({ fieldValue, op, touched, rowIndex, tableSize, setTableState, onRowChange}) => {
+const RowCellMemo = ({ fieldValue, optionsMap, op, touched, rowIndex, tableSize, setTableState, onRowChange}) => {
   const {required } = op;
 
   const isCellValid = useCallback(() => {
@@ -177,6 +178,7 @@ const RowCellMemo = ({ fieldValue, op, touched, rowIndex, tableSize, setTableSta
 
   return useMemo(() => (
     <RowCell
+      optionsMap={optionsMap}
       fieldValue={fieldValue}
       op={op}
       isValid={isValid}
@@ -184,7 +186,7 @@ const RowCellMemo = ({ fieldValue, op, touched, rowIndex, tableSize, setTableSta
       setTableState={setTableState}
       onRowChange={onRowChange}
   />
-  ), [fieldValue, isValid, onRowChange, op, rowIndex, setTableState]);
+  ), [fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState]);
 };
 
 const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes}) =>
@@ -223,6 +225,7 @@ export default function TableRow({
             data-test={`col-${index}`}
           >
             <RowCellMemo
+              optionsMap={optionsMap}
               op={op}
               fieldValue={rowValue[op.id]}
               touched={touched}
