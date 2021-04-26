@@ -10,6 +10,16 @@ if [ -z "$LOGROCKET_IDENTIFIER" ] || [ -z "$LOGROCKET_API_KEY" ] || [ -z "$CDN_B
   exit 1
 fi
 
+if [ "$skipBuildAndCopyIndexFileForEUDeployment" = true ] ; then
+    echo 'copying NA build index file to EU eu-index file ...'
+    aws configure set aws_access_key_id $ACCESS_KEY_ID
+    aws configure set aws_secret_access_key $SECRET_ACCESS_KEY
+    aws s3 cp build/index.html s3://$S3_BUCKET/react/eu-index.html --acl public-read
+    aws configure set aws_access_key_id ''
+    aws configure set aws_secret_access_key ''
+    exit
+fi
+
 version=`python -c 'import version; print version.get_version_number()'`
 echo "building version $version ..."
 export RELEASE_VERSION="$version"
