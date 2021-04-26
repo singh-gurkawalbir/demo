@@ -2,17 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography} from '@material-ui/core';
-import Button from '@material-ui/core/Button';
 import Spinner from '../Spinner';
+import TeritiaryButton from '../CeligoButtons/TeritiaryButton';
 
 const useStyles = makeStyles(theme => ({
-  title: {
+  fetchLogTextWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    fontSize: 'unset',
     color: theme.palette.secondary.light,
-    fontSize: 'inherit',
-  },
-  buttonWrapper: {
-    color: theme.palette.primary.main,
-    fontFamily: 'source sans pro semibold',
   },
   spinner: {
     marginRight: theme.spacing(1),
@@ -47,30 +45,30 @@ export default function FetchProgressIndicator({
   }
 
   return (
-    <div>
-      <Typography variant="body2" component="span" className={classes.title} >
+    <div className={classes.fetchLogTextWrapper}>
+      <Typography variant="body2" component="span" className={classes.fetchLogTextWrapper} >
         {fetchInProgress
           ? (<> <Spinner size="small" className={classes.spinner} /> Fetching logs... {percentDone}% completed </>)
           : <>Fetching paused... {percentDone}% completed</>}
       </Typography>
       {fetchInProgress ? (
-        <Button
+        <TeritiaryButton
           data-test="pauseFetch"
-          variant="text"
-          color="primary"
+          fontWeight="bold"
+          color="secondary"
           onClick={pauseHandler}
-          className={classes.buttonWrapper} >
+          >
           Pause
-        </Button>
+        </TeritiaryButton>
       ) : (
-        <Button
+        <TeritiaryButton
           data-test="resumeFetch"
-          variant="text"
-          color="primary"
+          color="secondary"
+          fontWeight="bold"
           onClick={resumeHandler}
-          className={classes.buttonWrapper}>
+         >
           Resume
-        </Button>
+        </TeritiaryButton>
       )}
     </div>
   );
