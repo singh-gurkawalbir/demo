@@ -14,7 +14,7 @@ if [ "$skipBuildAndCopyIndexFileForEUDeployment" = true ] ; then
     echo 'copying NA build index file to EU eu-index file ...'
     aws configure set aws_access_key_id $ACCESS_KEY_ID
     aws configure set aws_secret_access_key $SECRET_ACCESS_KEY
-    aws s3 cp build/index.html s3://$S3_BUCKET/react/eu-index.html --acl public-read
+    aws s3 cp s3://$S3_BUCKET/react/index.html s3://$S3_BUCKET/react/eu-index.html --acl public-read
     aws configure set aws_access_key_id ''
     aws configure set aws_secret_access_key ''
     exit
