@@ -15,6 +15,8 @@ const SaveButton = ({
   dataTest,
   showOnDirty,
   onClose,
+  onClick,
+  selectedButtonLabel,
 }) => {
   const [saveTrigerred, setSaveTriggered] = useState(false);
   const match = useRouteMatch();
@@ -26,7 +28,8 @@ const SaveButton = ({
   const handleSave = useCallback(() => {
     dispatch(actions.responseMapping.save({ match }));
     setSaveTriggered(true);
-  }, [dispatch, match]);
+    onClick(submitButtonLabel);
+  }, [dispatch, match, onClick, submitButtonLabel]);
 
   useEffect(() => {
     if (saveTrigerred && saveCompleted && onClose) {
@@ -35,7 +38,7 @@ const SaveButton = ({
     }
   }, [onClose, saveCompleted, saveTerminated, saveTrigerred]);
 
-  const showSpinner = saveTrigerred && saveInProgress;
+  const showSpinner = saveTrigerred && saveInProgress && selectedButtonLabel === submitButtonLabel;
 
   if (showOnDirty && !mappingsChanged) {
     return null;
@@ -68,6 +71,10 @@ export default function SaveButtonGroup({ disabled, onClose}) {
     selectors.responseMappingChanged(state)
   );
   const disableSave = !!(disabled || saveInProgress || !mappingsChanged);
+  const [selectedButtonLabel, setSelectedButtonLabel] = useState('');
+  const onClick = useCallback(label => {
+    setSelectedButtonLabel(label);
+  }, []);
 
   return (
     <>
@@ -77,6 +84,8 @@ export default function SaveButtonGroup({ disabled, onClose}) {
           color="primary"
           dataTest="saveImportMapping"
           submitButtonLabel="Save"
+          onClick={onClick}
+          selectedButtonLabel={selectedButtonLabel}
           />
         <SaveButton
           variant="outlined"
@@ -86,6 +95,8 @@ export default function SaveButtonGroup({ disabled, onClose}) {
           disabled={disableSave}
           submitButtonLabel="Save & close"
           showOnDirty
+          onClick={onClick}
+          selectedButtonLabel={selectedButtonLabel}
           />
         <Button
           variant="text"
