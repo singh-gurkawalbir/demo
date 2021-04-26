@@ -5409,11 +5409,11 @@ selectors.tileLicenseDetails = (state, tile) => {
 
   if (resumable) {
     licenseMessageContent = 'Your subscription has been renewed. Click Reactivate to continue.';
-  } else if (license?.trialEndDate && trialExpiresInDays <= 0) {
+  } else if (!license?.expires && license?.trialEndDate && trialExpiresInDays <= 0) {
     licenseMessageContent = `Trial expired on ${moment(license.trialEndDate).format('MMM Do, YYYY')}`;
     showTrialLicenseMessage = true;
     trialExpired = true;
-  } else if (license?.trialEndDate && trialExpiresInDays > 0) {
+  } else if (!license?.expires && license?.trialEndDate && trialExpiresInDays > 0) {
     licenseMessageContent = `Trial expires in ${trialExpiresInDays} days.`;
     showTrialLicenseMessage = true;
   } else if (expiresInDays <= 0) {

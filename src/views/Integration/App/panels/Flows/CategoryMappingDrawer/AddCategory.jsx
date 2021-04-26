@@ -134,11 +134,14 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
           !categoryData.children.length
         ) {
           childCategory.defaultVisible = false;
+          childCategory.visible = false;
 
           return [];
         }
 
         childCategory.defaultVisible = true;
+        childCategory.visible = true;
+
         childCategory.value = undefined;
 
         return [
@@ -176,11 +179,14 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
           !subcategoryData.children.length
         ) {
           grandchildCategory.defaultVisible = false;
+          grandchildCategory.visible = false;
 
           return [];
         }
 
         grandchildCategory.defaultVisible = true;
+        grandchildCategory.visible = true;
+
         grandchildCategory.value = undefined;
 
         return [
