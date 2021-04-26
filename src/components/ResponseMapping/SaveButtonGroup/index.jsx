@@ -38,7 +38,7 @@ const SaveButton = ({
     }
   }, [onClose, saveCompleted, saveTerminated, saveTrigerred]);
 
-  const showSpinner = saveTrigerred && saveInProgress;
+  const showSpinner = saveTrigerred && saveInProgress && selectedButtonLabel === submitButtonLabel;
 
   if (showOnDirty && !mappingsChanged) {
     return null;
@@ -51,7 +51,7 @@ const SaveButton = ({
       color={color}
       disabled={disabled}
       onClick={handleSave}>
-      {showSpinner && selectedButtonLabel === submitButtonLabel ? (
+      {showSpinner ? (
         <>
           <Spinner size="small" />
           Saving
