@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import DynaConnectoroNColumnMap from './DynaConnectorNColumnMap';
 import DynaStaticMap from './DynaStaticMap';
 import DynaTableView from './DynaTable';
@@ -25,16 +25,15 @@ export default function DynaTable(props) {
     (id, value) => {
       onFieldChange(id, { value });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [onFieldChange]
   );
   // this is done to account for the above value save behavior
-  const updatedValue = (value && value.value) || value;
-  const updatedProps = {
+
+  const updatedProps = useMemo(() => ({
     ...props,
-    value: updatedValue,
+    value: (value && value.value) || value,
     onFieldChange: updatedOnFieldChange,
-  };
+  }), [props, updatedOnFieldChange, value]);
 
   if (extractFieldHeader || extracts) {
     tableType = 'staticMapWidget';
