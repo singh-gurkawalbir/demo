@@ -189,6 +189,8 @@ export const getIntegrationApp = ({ _connectorId, name }) => {
       'Salesforce - NetSuite Connector': 'sfnsio',
     },
   };
+
+  integrationAppId['qa.staging.integrator.io'] = integrationAppId['staging.integrator.io'];
   let integrationApp;
 
   if (domain.indexOf('localhost') > -1) {
