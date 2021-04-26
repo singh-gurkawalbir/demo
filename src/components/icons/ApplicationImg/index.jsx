@@ -68,7 +68,7 @@ export default function ApplicationImg({
   markOnly = false,
   assistant,
   type,
-  alt,
+  alt = 'Application image',
   className,
 }) {
   const classes = useStyles();
