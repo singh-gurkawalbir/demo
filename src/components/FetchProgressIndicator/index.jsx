@@ -54,7 +54,7 @@ export default function FetchProgressIndicator({
       {fetchInProgress ? (
         <TertiaryButton
           data-test="pauseFetch"
-          fontWeight="bold"
+          bold
           onClick={pauseHandler}
           >
           Pause
@@ -62,7 +62,7 @@ export default function FetchProgressIndicator({
       ) : (
         <TertiaryButton
           data-test="resumeFetch"
-          fontWeight="bold"
+          bold
           onClick={resumeHandler}
          >
           Resume
