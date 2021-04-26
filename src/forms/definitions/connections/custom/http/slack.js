@@ -98,7 +98,6 @@ export default {
         'reminders:write',
         'remote_files:read',
         'remote_files:share',
-        'remote_files:write',
         'search:read',
         'stars:read',
         'stars:write',
