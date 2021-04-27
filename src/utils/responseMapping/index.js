@@ -71,25 +71,28 @@ export default {
    *    ]
    */
   getFieldsAndListMappings: _mappings => {
+    if (!_mappings) return [];
     const mappings = deepClone(_mappings);
     let tempFm;
-    const toReturn = [];
+    const fieldsAndListCollection = [];
 
-    mappings?.fields?.forEach(fm => {
-      toReturn.push(fm);
-    });
-    mappings?.lists?.forEach(lm => {
-      lm.fields.forEach(fm => {
-        tempFm = { ...fm };
-        tempFm.generate = lm.generate
-          ? [lm.generate, tempFm.generate].join('[*].')
-          : tempFm.generate;
-
-        toReturn.push(tempFm);
+    mappings.fields &&
+      mappings.fields.forEach(fm => {
+        fieldsAndListCollection.push(fm);
       });
-    });
+    mappings.lists &&
+      mappings.lists.forEach(lm => {
+        lm.fields.forEach(fm => {
+          tempFm = { ...fm };
+          tempFm.generate = lm.generate
+            ? [lm.generate, tempFm.generate].join('[*].')
+            : tempFm.generate;
 
-    return toReturn;
+          fieldsAndListCollection.push(tempFm);
+        });
+      });
+
+    return fieldsAndListCollection;
   },
 
   /**
