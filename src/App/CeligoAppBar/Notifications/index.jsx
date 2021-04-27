@@ -75,8 +75,8 @@ export default function Notifications() {
     return (
       <>
         <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
-        <Tooltip data-public title="No notifications" placement="bottom">
-          <IconButton size="small" color="inherit">
+        <Tooltip data-public title="No notifications" placement="bottom" aria-label="no notifications">
+          <IconButton aria-label="notifications" size="small" color="inherit">
             <NotificationsIcon />
           </IconButton>
         </Tooltip>
@@ -87,7 +87,7 @@ export default function Notifications() {
   return (
     <>
       <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
-      <IconButton size="small" color="inherit" onClick={handleClick}>
+      <IconButton aria-label="notifications" size="small" color="inherit" onClick={handleClick}>
         <Badge
           badgeContent={notifications.length}
           color="primary"

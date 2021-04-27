@@ -73,6 +73,8 @@ export default {
   overrides: {
     MuiButton: {
       root: {
+        // Unused declaration: vertical alignment property should be  applied to the inline elements or table-cell, buttons are neither one.
+        verticalAlign: 'unset',
         textTransform: 'unset',
         fontFamily: 'Roboto400',
         '&: disabled': {
@@ -182,6 +184,24 @@ export default {
         },
         '&:disabled': {
           color: colors.celigoNeutral4,
+        },
+      },
+      MuiButtonBase: {
+        root: {
+          verticalAlign: 'unset',
+        },
+      },
+      MuiToggleButton: {
+        root: {
+          verticalAlign: 'unset',
+        },
+        grouped: {
+          verticalAlign: 'unset',
+        },
+      },
+      MuiToggleButtonGroup: {
+        groupedHorizontal: {
+          verticalAlign: 'unset',
         },
       },
     },
@@ -420,6 +440,7 @@ export default {
       root: {
         paddingBottom: 5,
         paddingTop: 5,
+        verticalAlign: 'unset',
       },
       button: {
         '&:hover': {
@@ -630,6 +651,7 @@ export default {
     },
     MuiIconButton: {
       root: {
+        verticalAlign: 'unset',
         color: colors.celigoNeutral6,
         '&: disabled': {
           cursor: 'not-allowed',

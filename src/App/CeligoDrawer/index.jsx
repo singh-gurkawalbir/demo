@@ -342,7 +342,8 @@ export default function CeligoDrawer() {
                       {drawerOpened ? <Icon />
                         : (
                           <Tooltip
-                            data-public placement="right" enterDelay={0} title={label}
+                            data-public placement="right" enterDelay={0} aria-label={label}
+                            title={label}
                             classes={{popper: classes.tooltipLeft}}>
                             <div>
                               <Icon />
@@ -400,6 +401,7 @@ export default function CeligoDrawer() {
                                 : (
                                   <Tooltip
                                     data-public placement="right" enterDelay={0} title={label}
+                                    aria-label={label}
                                     classes={{popper: classes.tooltipLeft}}>
                                     <div>
                                       <Icon />
@@ -428,6 +430,7 @@ export default function CeligoDrawer() {
           <div className={clsx(classes.toolbar, classes.toggleContainer)}>
             <IconButton
               data-test="celigoDrawerToggle"
+              aria-label="toggle drawer"
               color="inherit"
               onClick={handleDrawerToggle}
               className={classes.drawerToggle}>

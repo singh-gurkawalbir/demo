@@ -37,7 +37,7 @@ const Action = ({ isSingleAction, label, Icon, disabledActionText, useHasAccess,
   if (isSingleAction) {
     if (title) {
       return (
-        <Tooltip data-public title={title} placement="bottom" >
+        <Tooltip data-public title={title} placement="bottom" aria-label={title}>
           {/* The <div> below seems to be redundant as it does not provide any presentation benefit.
               However, without this wrapper div, if the action is disabled, the <Tooltip> wrapper
               doesn't recognize the hover state and thus doesn't show the tooltip message.
@@ -60,7 +60,9 @@ const Action = ({ isSingleAction, label, Icon, disabledActionText, useHasAccess,
 
   if (disabledActionTitle) {
     return (
-      <Tooltip data-public key={label} title={disabledActionTitle} placement="bottom" >
+      <Tooltip
+        data-public key={label} title={disabledActionTitle} placement="bottom"
+        aria-label={disabledActionTitle}>
         <div>
           <MenuItem disabled>
             {actionIcon}
