@@ -17,17 +17,13 @@ const useStyles = makeStyles(theme => ({
 
 export default function TertiaryButton(props) {
   const classes = useStyles(props);
-  const {children, color = 'primary', bold, startIcon, endIcon, size, ...rest} = props;
+  const {children, color = 'primary', ...rest} = props;
 
   return (
     <Button
       variant="text"
       color={color}
-      size={size}
-      bold={bold}
       className={classes.wrapper}
-      startIcon={startIcon}
-      endIcon={endIcon}
       {...rest}>
       {children}
     </Button>
