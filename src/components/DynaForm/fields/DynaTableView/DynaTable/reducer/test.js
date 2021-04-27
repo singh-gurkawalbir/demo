@@ -48,9 +48,31 @@ describe('table reducer', () => {
         ],
       });
     });
-    test('should update last row partially and not push a new row', () => {
-      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'k', index: 2, field: 'extract'});
+    test('should not push a new row since a non first column value has been updated', () => {
+      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'l', index: 2, field: 'generate'});
 
+      expect(state).toEqual({
+        touched: true,
+        tableStateValue: [
+          {
+            key: 'abc',
+            value: {generate: 'a', extract: 'k'},
+          },
+          {
+            key: 'bcd',
+            value: {generate: 'e', extract: 'f'},
+          },
+          {
+            key: 'efg',
+            value: {generate: 'l', extract: ''},
+          },
+        ],
+      });
+      state = reducer(state,
+        {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: '', index: 2, field: 'generate'});
+    });
+    test('should update first column value and a new row is added since it is the first column value', () => {
+      state = reducer(state, {type: actionTypes.UPDATE_TABLE_ROW, optionsMap: optionsMapNonRequiredFields, value: 'k', index: 2, field: 'extract'});
       expect(state).toEqual({
         touched: true,
         tableStateValue: [
@@ -66,6 +88,9 @@ describe('table reducer', () => {
             key: 'efg',
             value: {generate: '', extract: 'k'},
           },
+          expect.objectContaining({
+            value: {generate: '', extract: ''},
+          }),
         ],
       });
     });
@@ -94,6 +119,9 @@ describe('table reducer', () => {
             key: 'efg',
             value: {generate: '', extract: 'kz'},
           },
+          expect.objectContaining({
+            value: {generate: '', extract: ''},
+          }),
         ],
       });
     });

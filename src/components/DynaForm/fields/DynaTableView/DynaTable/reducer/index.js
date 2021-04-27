@@ -12,8 +12,9 @@ const isAllValuesEnteredForARow = (rowValue, optionsMap) => {
       return true;
     });
   }
+  const firstColumnId = optionsMap?.[0].id;
 
-  return optionsMap.every(op => !!rowValue[op.id]);
+  return !!rowValue[firstColumnId];
 };
 
 export default function reducer(state, action) {
