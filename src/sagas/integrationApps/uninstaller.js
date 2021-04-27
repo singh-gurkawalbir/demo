@@ -16,7 +16,7 @@ export function* preUninstall({ storeId, id }) {
       message: 'Loading',
     });
   } catch (error) {
-    yield put(actions.api.failure(path, 'PUT', error && error.message, false));
+    yield put(actions.api.failure(path, 'PUT', error?.message, false));
     yield put(
       actions.integrationApp.uninstaller.failedUninstallSteps(
         id,
@@ -24,7 +24,7 @@ export function* preUninstall({ storeId, id }) {
       )
     );
 
-    return undefined;
+    return;
   }
 
   yield call(getResource, { resourceType: 'integrations', id });
@@ -62,10 +62,10 @@ export function* uninstallStep({ storeId, id, uninstallerFunction, addOnId }) {
       )
     );
 
-    return undefined;
+    return;
   }
 
-  if (stepCompleteResponse && stepCompleteResponse.success) {
+  if (stepCompleteResponse?.success) {
     // After successful completion of step IA could update integration in the BE. Need to get updated doc.
     yield call(getResource, {
       resourceType: 'integrations',
@@ -101,7 +101,7 @@ export function* uninstallIntegration({ integrationId }) {
       message: 'Uninstalling',
     });
   } catch (error) {
-    return undefined;
+    return;
   }
 
   yield put(actions.resource.requestCollection('integrations'));

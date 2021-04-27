@@ -85,7 +85,7 @@ const RowCell = ({ fieldValue, op, isValid, rowIndex, setTableState, onRowChange
     });
   }, [id, onRowChange, rowIndex, setTableState]);
 
-  const fieldTestAttr = `suggest-${rowIndex}-${id}`;
+  const fieldTestAttr = `suggest-${id}-${rowIndex}`;
   const errorMessages = TYPE_TO_ERROR_MESSAGE[type];
 
   const translatedOptions = useMemo(() => {

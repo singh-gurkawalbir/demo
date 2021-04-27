@@ -47,7 +47,7 @@ selectors.connectors = (state, application, sandbox, licenses) => {
     if (conn._id === SUITESCRIPT_CONNECTOR_IDS.salesforce) {
       return conn;
     }
-    const connectorLicenses = licenses.filter(l => (((conn.framework === 'twoDotZero') ? (l.type === 'integrationApp') : (l.type === 'connector')) && l._connectorId === conn._id && (l.expires || l.trialEndDate)));
+    const connectorLicenses = licenses.filter(l => (((conn.framework === 'twoDotZero') ? (l.type === 'integrationApp') : (l.type === 'connector')) && l._connectorId === conn._id && (l.expires || l.trialEndDate) && (!!l.sandbox === sandbox)));
 
     let unusedPaidLicenseExists = false;
     let usedTrialLicenseExists = false;
