@@ -136,11 +136,11 @@ describe('marketplace selectors', () => {
       expect(
         selectors.connectors(state, 'some application', false, licenses)
       ).toEqual([
-        { _id: '123', applications: ['some application'], canInstall: true, usedTrialLicenseExists: false, usedPaidLicenseExists: false },
-        { _id: '456', applications: ['some application'], canInstall: false, usedTrialLicenseExists: false, usedPaidLicenseExists: true },
-        { _id: '567', applications: ['some application'], canInstall: false, usedTrialLicenseExists: true, usedPaidLicenseExists: false },
-        { _id: '789', applications: ['some application'], framework: 'twoDotZero', canInstall: false, usedTrialLicenseExists: true, usedPaidLicenseExists: false},
-        { _id: 'abc', applications: ['some application'], framework: 'twoDotZero', canInstall: false, usedTrialLicenseExists: true, usedPaidLicenseExists: true },
+        { _id: '123', applications: ['some application'], canInstall: true, usedTrialLicenseExists: false, canRequestDemo: false, canStartTrial: false },
+        { _id: '456', applications: ['some application'], canInstall: false, usedTrialLicenseExists: false, canRequestDemo: true, canStartTrial: false },
+        { _id: '567', applications: ['some application'], canInstall: false, usedTrialLicenseExists: true, canRequestDemo: true, canStartTrial: false },
+        { _id: '789', applications: ['some application'], framework: 'twoDotZero', canInstall: false, usedTrialLicenseExists: true, canRequestDemo: true, canStartTrial: false},
+        { _id: 'abc', applications: ['some application'], framework: 'twoDotZero', canInstall: false, usedTrialLicenseExists: true, canRequestDemo: true, canStartTrial: false },
       ]);
     });
   });

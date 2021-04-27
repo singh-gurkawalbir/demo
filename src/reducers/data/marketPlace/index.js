@@ -34,7 +34,7 @@ export const selectors = {};
 
 selectors.marketPlaceState = state => state;
 
-selectors.connectors = (state, application, sandbox, licenses) => {
+selectors.connectors = (state, application, sandbox, licenses, isAccountOwnerOrAdmin) => {
   if (!state) {
     return emptySet;
   }
@@ -71,8 +71,19 @@ selectors.connectors = (state, application, sandbox, licenses) => {
         usedTrialLicenseExists = true;
       }
     });
+    let canRequestDemo = false;
+    let canInstall = false;
+    let canStartTrial = false;
 
-    return { ...conn, canInstall: unusedPaidLicenseExists, usedTrialLicenseExists, usedPaidLicenseExists };
+    if (unusedPaidLicenseExists) {
+      canInstall = true;
+    } else if (!usedPaidLicenseExists && conn.trialEnabled && isAccountOwnerOrAdmin) {
+      canStartTrial = true;
+    } else {
+      canRequestDemo = true;
+    }
+
+    return { ...conn, canInstall, usedTrialLicenseExists, canStartTrial, canRequestDemo };
   });
 
   if (application) {
