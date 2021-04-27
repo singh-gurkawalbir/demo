@@ -2395,6 +2395,7 @@ describe('resource region selector testcases', () => {
           name: 'Sample Connector',
           published: false,
           usedTrialLicenseExists: false,
+          usedPaidLicenseExists: false,
         },
         {
           _id: 'connector2',
@@ -2406,6 +2407,7 @@ describe('resource region selector testcases', () => {
           name: 'Sample Connector2',
           published: true,
           usedTrialLicenseExists: false,
+          usedPaidLicenseExists: false,
         },
       ]);
       expect(marketplaceConnectorsSelector(state, 'amazonmws', false)).toEqual([
@@ -2419,6 +2421,7 @@ describe('resource region selector testcases', () => {
           installed: false,
           name: 'Sample Connector',
           published: false,
+          usedPaidLicenseExists: false,
         },
         {
           _id: 'connector2',
@@ -2430,6 +2433,7 @@ describe('resource region selector testcases', () => {
           installed: false,
           name: 'Sample Connector2',
           published: true,
+          usedPaidLicenseExists: false,
         },
       ]);
     });
@@ -2479,6 +2483,7 @@ describe('resource region selector testcases', () => {
           name: 'Sample Connector',
           published: false,
           usedTrialLicenseExists: false,
+          usedPaidLicenseExists: false,
         },
         {
           _id: 'connector2',
@@ -2490,6 +2495,7 @@ describe('resource region selector testcases', () => {
           name: 'Sample Connector2',
           published: true,
           usedTrialLicenseExists: false,
+          usedPaidLicenseExists: false,
         },
       ]);
       expect(marketplaceConnectorsSelector(state, 'amazonmws', false)).toEqual([
@@ -2503,6 +2509,7 @@ describe('resource region selector testcases', () => {
           name: 'Sample Connector',
           published: false,
           usedTrialLicenseExists: false,
+          usedPaidLicenseExists: false,
         },
         {
           _id: 'connector2',
@@ -2514,6 +2521,7 @@ describe('resource region selector testcases', () => {
           name: 'Sample Connector2',
           published: true,
           usedTrialLicenseExists: false,
+          usedPaidLicenseExists: false,
         },
       ]);
       expect(marketplaceConnectorsSelector(state, 'amazonmws', true)).toEqual([
@@ -2527,6 +2535,7 @@ describe('resource region selector testcases', () => {
           name: 'Sample Connector',
           published: false,
           usedTrialLicenseExists: false,
+          usedPaidLicenseExists: false,
         },
         {
           _id: 'connector2',
@@ -2538,6 +2547,7 @@ describe('resource region selector testcases', () => {
           name: 'Sample Connector2',
           published: true,
           usedTrialLicenseExists: false,
+          usedPaidLicenseExists: false,
         },
       ]);
     });

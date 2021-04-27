@@ -266,7 +266,7 @@ export default function MarketplaceList() {
                   Install
                 </Button>
               )}
-              {!connector.canInstall && connector.trialEnabled && isAccountOwner && (
+              {!connector.canInstall && !connector.usedPaidLicenseExists && connector.trialEnabled && isAccountOwner && (
                 <Button
                   data-test="startFreeTrial"
                   onClick={() => handletrialEnabledClick(connector)}
@@ -275,7 +275,7 @@ export default function MarketplaceList() {
                   Start free trial
                 </Button>
               )}
-              {!connector.canInstall && !(connector.trialEnabled && isAccountOwner) && (
+              {!connector.canInstall && !(!connector.usedPaidLicenseExists && connector.trialEnabled && isAccountOwner) && (
                 <Button
                   data-test="contactSales"
                   onClick={() => handleContactSalesClick(connector)}

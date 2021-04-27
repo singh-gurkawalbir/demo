@@ -51,6 +51,7 @@ selectors.connectors = (state, application, sandbox, licenses) => {
 
     let unusedPaidLicenseExists = false;
     let usedTrialLicenseExists = false;
+    let usedPaidLicenseExists = false;
 
     connectorLicenses &&
     connectorLicenses.forEach(l => {
@@ -58,16 +59,20 @@ selectors.connectors = (state, application, sandbox, licenses) => {
         if (l.expires) {
           if (new Date(l.expires).getTime() > Date.now()) {
             unusedPaidLicenseExists = true;
+          } else {
+            usedPaidLicenseExists = true;
           }
         } else if (new Date(l.trialEndDate).getTime() <= Date.now()) {
           usedTrialLicenseExists = true;
         }
-      } else if (!l.expires) {
+      } else if (l.expires) {
+        usedPaidLicenseExists = true;
+      } else {
         usedTrialLicenseExists = true;
       }
     });
 
-    return { ...conn, canInstall: unusedPaidLicenseExists, usedTrialLicenseExists };
+    return { ...conn, canInstall: unusedPaidLicenseExists, usedTrialLicenseExists, usedPaidLicenseExists };
   });
 
   if (application) {
