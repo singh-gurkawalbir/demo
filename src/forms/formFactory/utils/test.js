@@ -10,7 +10,7 @@ import {
   isExpansionPanelErrored,
   translateDependencyProps,
   getAllFormValuesAssociatedToMeta,
-  AdjustingFieldRules,
+  adjustingFieldRules,
 } from '.';
 
 describe('Form Utils', () => {
@@ -1481,7 +1481,7 @@ describe('integrationSettingsToDynaFormMetadata', () => {
             },
           ],
         };
-        const resultFieldMap = AdjustingFieldRules(inputFieldMap);
+        const resultFieldMap = adjustingFieldRules(inputFieldMap);
 
         expect(resultFieldMap).toEqual({
           id: 'fieldA',
@@ -1508,7 +1508,7 @@ describe('integrationSettingsToDynaFormMetadata', () => {
             },
           ],
         };
-        const resultFieldMap = AdjustingFieldRules(inputFieldMap);
+        const resultFieldMap = adjustingFieldRules(inputFieldMap);
 
         expect(resultFieldMap).toEqual({
           id: 'fieldA',
@@ -1535,7 +1535,7 @@ describe('integrationSettingsToDynaFormMetadata', () => {
             },
           ],
         };
-        const resultFieldMap = AdjustingFieldRules(inputFieldMap);
+        const resultFieldMap = adjustingFieldRules(inputFieldMap);
 
         expect(resultFieldMap).toEqual({
           id: 'fieldA',

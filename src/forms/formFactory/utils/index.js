@@ -474,7 +474,7 @@ const pushRuleToMeta = (meta, rule) => {
   return meta;
 };
 
-export const AdjustingFieldRules = fieldMapCopyRef => {
+export const adjustingFieldRules = fieldMapCopyRef => {
   const newValues = { ...fieldMapCopyRef };
 
   if (newValues?.visibleWhenAll?.length) {
@@ -543,7 +543,7 @@ export const translateDependencyProps = fieldMap => {
           );
         }
       }
-      fieldMapCopy[ref] = AdjustingFieldRules(fieldMapCopy[ref]);
+      fieldMapCopy[ref] = adjustingFieldRules(fieldMapCopy[ref]);
     });
   });
 
