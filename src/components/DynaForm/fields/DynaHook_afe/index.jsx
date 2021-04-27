@@ -99,7 +99,7 @@ export default function DynaHook_afe({
 
   useEffect(() => {
     if (createdScriptId && !hookState.isNewScriptIdAssigned) {
-      onFieldChange(id, { ...value, _scriptId: createdScriptId }, true);
+      onFieldChange(id, { ...value, _scriptId: createdScriptId }, false);
       setHookState({ type: 'setIsNewScriptIdAssigned', value: true });
     }
   }, [createdScriptId, hookState.isNewScriptIdAssigned, id, onFieldChange, value]);
