@@ -40,6 +40,7 @@ const useStyles = makeStyles(theme => ({
     border: 'none',
   },
   tablePagination: {
+    display: 'flex',
     '& > div': {
       marginRight: theme.spacing(-2),
     },
@@ -145,6 +146,8 @@ const RefreshPaginationComponent = ({resourceType, isLoadingResource}) => {
     <>
       <IconTextButton
         data-test="refreshReports"
+        color="secondary"
+        variant="text"
         disabled={isRefreshedByUser}
         onClick={() => {
           setIsRefreshedByUser(true);

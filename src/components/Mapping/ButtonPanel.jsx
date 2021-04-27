@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { makeStyles, Button } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import ButtonGroup from '../ButtonGroup';
@@ -24,6 +24,10 @@ export default function ButtonPanel({flowId, importId, disabled, onClose}) {
   const saveInProgress = useSelector(
     state => selectors.mappingSaveStatus(state).saveInProgress
   );
+  const [selectedButtonLabel, setSelectedButtonLabel] = useState('');
+  const onClick = useCallback(label => {
+    setSelectedButtonLabel(label);
+  }, []);
   const isNSAssistantFormLoaded = useSelector(state => selectors.mapping(state).isNSAssistantFormLoaded);
   const mappingPreviewType = useSelector(state =>
     selectors.mappingPreviewType(state, importId)
@@ -45,12 +49,16 @@ export default function ButtonPanel({flowId, importId, disabled, onClose}) {
           dataTest="saveImportMapping"
           submitButtonLabel="Save"
           flowId={flowId}
+          onClick={onClick}
+          selectedButtonLabel={selectedButtonLabel}
           />
         <MappingSaveButton
           variant="outlined"
           color="secondary"
           dataTest="saveAndCloseImportMapping"
           onClose={onClose}
+          onClick={onClick}
+          selectedButtonLabel={selectedButtonLabel}
           disabled={!!(disabled || saveInProgress)}
           submitButtonLabel="Save & close"
           flowId={flowId}
