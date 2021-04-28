@@ -23,7 +23,7 @@ import ScriptPanel from './panels/Script';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RunDashboardActions from './panels/Dashboard/RunDashboardActions';
 import useBottomDrawer from './useBottomDrawer';
-// import Spinner from '../../../../components/Spinner';
+import Spinner from '../../../../components/Spinner';
 import ScriptLogs from '../../../ScriptLogs';
 import ScriptsIcon from '../../../../components/icons/ScriptsIcon';
 import ConnectionLogs from '../../../ConnectionLogs';
@@ -142,7 +142,9 @@ export default function BottomDrawer({
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const {tabs, activeTabIndex, nextActiveTabIndex} = useSelector(state => selectors.bottomDrawerTabs(state), shallowEqual);
   const isAnyFlowConnectionOffline = useSelectorMemo(selectors.mkIsAnyFlowConnectionOffline, flowId);
-
+  const isFlowRunInProgress = useSelector(state =>
+    !!selectors.getInProgressLatestJobs(state, flowId).length
+  );
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
@@ -268,6 +270,22 @@ export default function BottomDrawer({
   const drawerPaperProps = useMemo(() =>
     ({ style: { height: tempDrawerHeight } }),
   [tempDrawerHeight]);
+
+  const dashboardLabel = useMemo(() => {
+    if (isUserInErrMgtTwoDotZero) {
+      return (
+        <>
+          Run console
+          {
+            isFlowRunInProgress &&
+            <Spinner color="primary" size={16} className={classes.inProgress} />
+          }
+        </>
+      );
+    }
+
+    return 'Dashboard';
+  }, [isUserInErrMgtTwoDotZero, classes.inProgress, isFlowRunInProgress]);
   let tabIndex = 0;
   let tabContentIndex = 0;
 
@@ -311,7 +329,7 @@ export default function BottomDrawer({
                       id={tabType}
                       key={tabType}
                       icon={<DashboardIcon />}
-                      label={label} />
+                      label={dashboardLabel} />
                   );
                 case 'runHistory':
                   return (
