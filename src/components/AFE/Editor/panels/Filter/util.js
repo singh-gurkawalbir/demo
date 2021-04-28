@@ -237,12 +237,12 @@ export function generateIOFilterExpression(rules, context) {
         rhs = undefined;
 
         if (rr.data.lhs.type === 'field') {
-          if (rr.data.lhs.field.startsWith(`${context}.`)) {
+          if (rr.data.lhs.field?.startsWith(`${context}.`)) {
             lhs = [
               rr.data.lhs.dataType,
               ['extract', rr.data.lhs.field.replace(`${context}.`, '')],
             ];
-          } else if (rr.data.lhs.field.startsWith('settings.')) {
+          } else if (rr.data.lhs.field?.startsWith('settings.')) {
             lhs = [
               rr.data.lhs.dataType,
               ['settings', rr.data.lhs.field.replace('settings.', '')],

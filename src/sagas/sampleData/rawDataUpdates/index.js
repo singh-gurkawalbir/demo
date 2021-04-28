@@ -18,7 +18,7 @@ import { exportPreview } from '../utils/previewCalls';
 import { saveRawDataOnResource, removeRawDataOnResource } from './utils';
 import saveRawDataForFileAdaptors from './fileAdaptorUpdates';
 import saveTransformationRulesForNewXMLExport from '../utils/xmlTransformationRulesGenerator';
-import { FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
+import { emptyObject, FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
 
 export function* _fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
   const resourceObj = yield select(
@@ -179,11 +179,11 @@ export function* onResourceUpdate({
   }
 
   if (resourceType === 'imports' && shouldUpdateResourceSampleData(patch)) {
-    const { merged: importResource = {} } = yield select(
+    const importResource = (yield select(
       selectors.resourceData,
       'imports',
       resourceId
-    );
+    ))?.merged || emptyObject;
 
     // Whenever an assistant import gets updated, its preview data ( sampleData ) needs to be reset
     if (importResource.assistant && !FILE_PROVIDER_ASSISTANTS.includes(importResource.assistant)) {

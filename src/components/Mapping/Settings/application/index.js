@@ -123,7 +123,7 @@ export default {
 
     if (formVal.dataType === 'date') {
       settings.dataType = 'string';
-    } else if (formVal.dataType) {
+    } else if ('dataType' in formVal) {
       settings.dataType = formVal.dataType;
     }
 

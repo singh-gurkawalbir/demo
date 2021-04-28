@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import produce from 'immer';
 import { makeStyles } from '@material-ui/core/styles';
 import DynaTableView from './DynaTable';
@@ -49,6 +49,19 @@ const optionsMap = [
   },
 ];
 
+const onRowChange = (state, field, newValue) =>
+  produce(state, draft => {
+    if (
+      optionsMap.find(f => f.id === field && f.type === 'number')
+    ) {
+    // eslint-disable-next-line no-restricted-globals
+      draft[field] = isNaN(newValue) ? null : parseInt(newValue, 10);
+    } else draft[field] = newValue;
+
+    if (['startPosition', 'endPosition'].includes(field)) {
+      draft.length = draft.endPosition - draft.startPosition + 1;
+    }
+  });
 export default function DynaTrueFixedWidthColmnMapper({
   value,
   onFieldChange,
@@ -56,35 +69,23 @@ export default function DynaTrueFixedWidthColmnMapper({
   label,
   title,
 }) {
-  let newValue;
   const classes = useStyles();
 
-  if (value) {
-    newValue = value.map(el => {
-      let length = 0;
+  const newValue = useMemo(() => {
+    if (value) {
+      return value.map(el => {
+        let length = 0;
 
-      if (el.startPosition && el.endPosition) {
-        length = el.endPosition - el.startPosition + 1;
-      }
+        if (el.startPosition && el.endPosition) {
+          length = el.endPosition - el.startPosition + 1;
+        }
 
-      return { ...el, length };
-    });
-  }
+        return { ...el, length };
+      });
+    }
+  }, [value]);
 
-  const onRowChange = (state, field, newValue) =>
-    produce(state, draft => {
-      if (
-        optionsMap.find(f => f.id === field && f.type === 'number')
-      ) {
-        // eslint-disable-next-line no-restricted-globals
-        draft[field] = isNaN(newValue) ? null : parseInt(newValue, 10);
-      } else draft[field] = newValue;
-
-      if (['startPosition', 'endPosition'].includes(field)) {
-        draft.length = draft.endPosition - draft.startPosition + 1;
-      }
-    });
-  const fieldChangeHandler = (id, val = []) => {
+  const fieldChangeHandler = useCallback((id, val = []) => {
     if (val && Array.isArray(val)) {
       onFieldChange(
         id,
@@ -98,7 +99,7 @@ export default function DynaTrueFixedWidthColmnMapper({
         )
       );
     }
-  };
+  }, [onFieldChange]);
 
   return (
     <DynaTableView

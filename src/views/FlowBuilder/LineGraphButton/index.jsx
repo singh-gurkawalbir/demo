@@ -5,6 +5,7 @@ import GraphIcon from '../../../components/icons/GraphIcon';
 import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
+import { emptyObject } from '../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   chartsIcon: {
@@ -28,7 +29,7 @@ export default function LineGraphButton({flowId, onClickHandler}) {
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  ).merged;
+  )?.merged || emptyObject;
   const flowJobExists = useSelector(state => {
     const latestJobs = selectors.latestFlowJobsList(state, flowId)?.data || [];
 

@@ -174,5 +174,6 @@ export default {
     allowEdit: true,
     helpKey: 'license._trialLicenseId',
     connectorId: r => r._id,
+    ignoreEnvironmentFilter: true,
   },
 };
