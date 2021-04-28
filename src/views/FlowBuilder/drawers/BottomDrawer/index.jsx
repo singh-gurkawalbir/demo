@@ -1,7 +1,7 @@
 /* eslint-disable no-plusplus */
 import clsx from 'clsx';
 import { makeStyles, Drawer, IconButton, Tab, Tabs, useTheme } from '@material-ui/core';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
@@ -134,7 +134,6 @@ export default function BottomDrawer({
   const classes = useStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const drawerRef = useRef(null);
   const [isDragging, setIsDragging] = useState(null);
   const [startY, setStartY] = useState(0);
   const [dragY, setDragY] = useState(0);
@@ -303,7 +302,6 @@ export default function BottomDrawer({
     <div>
       <Drawer
         open
-        ref={drawerRef}
         classes={drawerClasses}
         PaperProps={drawerPaperProps}
         variant="persistent"
@@ -381,12 +379,9 @@ export default function BottomDrawer({
                     <Tab
                       className={classes.customTab}
                       key={`${tabType}-${resourceId}`}
-                      // TODO pass correct tabProp Index
-                      // id={`script-logs-${script.scriptId}`}
                       id={`${tabType}-${resourceId}`}
                       {...tabProps(tabIndex++)}
                       icon={<AuditLogIcon />}
-                      // key={script.scriptId}
                       component="div"
                       label={(
                         <div className={classes.customTabContainer}>
@@ -417,7 +412,6 @@ export default function BottomDrawer({
                       component="div"
                       label={(
                         <div className={classes.customTabContainer}>
-                          {/* {connection.name} - DEBUG */}
                           <TabTitleWithResourceName
                             resourceId={resourceId}
                             resourceType="connections"

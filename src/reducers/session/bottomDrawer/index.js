@@ -75,6 +75,5 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-// selectors.bottomDrawerActiveTab = state => state?.bottomDrawer?.activeTab || 0;
 selectors.bottomDrawerTabs = state => state?.bottomDrawer || emptyObj;
 
