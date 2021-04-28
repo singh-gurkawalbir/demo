@@ -2,7 +2,20 @@ import produce from 'immer';
 import { generateRow} from '..';
 import actionTypes from '../actionTypes';
 
-const isAllValuesEnteredForARow = rowValue => Object.values(rowValue).every(val => !!val);
+const isAllValuesEnteredForARow = (rowValue, optionsMap) => {
+  const hasRequiredOptions = optionsMap.some(op => op.required);
+
+  if (hasRequiredOptions) {
+    return optionsMap.every(op => {
+      if (op.required) return !!rowValue[op.id];
+
+      return true;
+    });
+  }
+  const firstColumnId = optionsMap?.[0].id;
+
+  return !!rowValue[firstColumnId];
+};
 
 export default function reducer(state, action) {
   const {
@@ -10,6 +23,7 @@ export default function reducer(state, action) {
     value,
     index,
     field,
+    optionsMap,
     onRowChange,
   } = action;
 
@@ -33,7 +47,7 @@ export default function reducer(state, action) {
         }
 
         // eslint-disable-next-line no-case-declarations
-        const isAllValuesEntered = isAllValuesEnteredForARow(tableStateValue[index].value);
+        const isAllValuesEntered = isAllValuesEnteredForARow(tableStateValue[index].value, optionsMap);
         // eslint-disable-next-line no-case-declarations
         const isLastRowEmpty = Object.values(tableStateValue[tableStateValue.length - 1].value).every(val => !val);
 

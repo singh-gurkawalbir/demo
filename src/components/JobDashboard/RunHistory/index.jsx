@@ -154,7 +154,7 @@ export default function RunHistory({ flowId }) {
           </div>
         </>
       </div>
-      { isLoadingHistory && <Spinner />}
+      { isLoadingHistory && <Spinner centerAll />}
       { !hasFlowRunHistory &&
         (
         <Typography className={classes.messageContainer}>
