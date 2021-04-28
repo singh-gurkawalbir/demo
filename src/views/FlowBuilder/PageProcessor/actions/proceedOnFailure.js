@@ -23,11 +23,11 @@ function ProceedOnFailureDialog(props) {
     isViewMode,
     resourceType,
   } = props;
-  const { merged: flow = emptyObject } = useSelectorMemo(
+  const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  );
+  )?.merged || emptyObject;
 
   const { pageProcessors = [] } = flow;
   const defaultValue = !!(

@@ -5,13 +5,14 @@ import ButtonGroup from '../../../ButtonGroup';
 import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
+import { emptyObject } from '../../../../utils/constants';
 
 export default function SaveButtonGroup({ value, formKey, disabled, onCancel, resourceType, resourceId, parentOnSave }) {
-  const { merged: resource = {} } = useSelectorMemo(
+  const resource = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,
     resourceId
-  );
+  )?.merged || emptyObject;
   const isEdit = !!value.name;
 
   const submitHandler = useCallback(formVal => {
