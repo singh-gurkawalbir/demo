@@ -478,6 +478,13 @@ export function* retryFlowJob({ jobId }) {
     if (jobsToRetry.length === 0) {
       return true;
     }
+    if (jobsToRetry.length === 0) {
+      if (!job) {
+        yield put(actions.api.failure('JOBS', 'PUT', 'Retry operation failed.', false));
+      }
+
+      return true;
+    }
 
     yield call(retrySelected, { jobs: jobsToRetry });
 }
