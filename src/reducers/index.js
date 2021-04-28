@@ -1233,14 +1233,16 @@ selectors.marketplaceConnectors = (
   marketPlaceState,
   resourceState,
   application,
-  sandbox
+  sandbox,
+  isAccountOwnerOrAdmin,
 ) => {
   const licenses = fromUser.licenses(userState);
   const connectors = fromMarketPlace.connectors(
     marketPlaceState,
     application,
     sandbox,
-    licenses
+    licenses,
+    isAccountOwnerOrAdmin,
   );
 
   return connectors
@@ -1267,13 +1269,15 @@ selectors.makeMarketPlaceConnectorsSelector = () =>
     selectors.resourceState,
     (_, application) => application,
     (_1, _2, sandbox) => sandbox,
-    (userState, marketPlaceState, resourceState, application, sandbox) =>
+    selectors.isAccountOwnerOrAdmin,
+    (userState, marketPlaceState, resourceState, application, sandbox, isAccountOwnerOrAdmin) =>
       selectors.marketplaceConnectors(
         userState,
         marketPlaceState,
         resourceState,
         application,
-        sandbox
+        sandbox,
+        isAccountOwnerOrAdmin,
       )
   );
 
