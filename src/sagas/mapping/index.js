@@ -126,7 +126,7 @@ export function* refreshGenerates({ isInit = false }) {
   } else if (!isInit) {
     const opts = {};
 
-    if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType) && subRecordMappingId) {
+    if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource?.adaptorType) && subRecordMappingId) {
       opts.recordType = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
     }
     yield put(actions.importSampleData.request(
