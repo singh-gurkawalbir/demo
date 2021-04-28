@@ -366,6 +366,7 @@ const PageGenerator = ({
         actions={generatorActions}
         flowId={flowId}
         resource={resource}
+        resourceId={resourceId}
         resourceType="exports"
         index={index}
         schedule={schedule}

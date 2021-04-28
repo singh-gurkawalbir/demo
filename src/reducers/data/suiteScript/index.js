@@ -75,16 +75,17 @@ export default (
       case actionTypes.SUITESCRIPT.JOB.RECEIVED:
         {
           const { job } = action;
+          const jobs = state.jobs || [];
 
           job.duration = getJobDuration(job);
-          const jobIndex = state.jobs?.findIndex(
+          const jobIndex = jobs?.findIndex(
             j => j._id === job._id && j.type === job.type
           );
 
           if (jobIndex > -1) {
             draft.jobs[jobIndex] = job;
           } else if (job.status === 'queued') {
-            draft.jobs = [job, ...state.jobs];
+            draft.jobs = [job, ...jobs];
           }
         }
 
