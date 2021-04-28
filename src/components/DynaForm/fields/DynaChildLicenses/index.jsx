@@ -100,7 +100,7 @@ export default function DynaChildLicense({ connectorId, resourceId, id, formKey}
         </IconTextButton>
       </div>
       <div>
-        <LoadResources required resources="integrations,licenses,connectors" >
+        <LoadResources required resources="integrations,connectors" >
           <CeligoTable
             data={childLicenses}
             {...metadata}

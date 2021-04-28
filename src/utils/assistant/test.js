@@ -3495,4 +3495,23 @@ describe('isMetaRequiredValuesMet', () => {
       a: 'val1',
     }})).toEqual(false);
   });
+  describe('files of type repeat', () => {
+    test('should return true for satisfied required field with type repeat', () => {
+      expect(isMetaRequiredValuesMet({fields: [
+        {id: 'something.a', type: 'repeat', indexed: true, required: true},
+        {id: 'something.b', required: true},
+      ]},
+      {'something.a.1': 'val1',
+        'something.b': 'b',
+      })).toEqual(true);
+    });
+    test('should return false for unsatisfied required field with type repeat', () => {
+      expect(isMetaRequiredValuesMet({fields: [
+        {id: 'something.a', type: 'repeat', indexed: true, required: true},
+        {id: 'something.b', required: true},
+      ]},
+      {}
+      )).toEqual(false);
+    });
+  });
 });
