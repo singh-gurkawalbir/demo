@@ -7,6 +7,7 @@ import { parseFileData } from './fileParserUtils';
 import { pageProcessorPreview, exportPreview } from './previewCalls';
 import { getPreviewStageData } from '../../../utils/flowData';
 import { SCOPES } from '../../resourceForm';
+import { emptyObject } from '../../../utils/constants';
 
 /*
  * Incase of File adaptors XML type, fetch sampleData from the state that has uploaded XML file
@@ -71,12 +72,12 @@ export default function* saveTransformationRulesForNewXMLExport({
   resourceId,
   tempResourceId,
 }) {
-  const { merged: resource = {} } = yield select(
+  const resource = (yield select(
     selectors.resourceData,
     'exports',
     resourceId,
     SCOPES.VALUE
-  );
+  ))?.merged || emptyObject;
 
   const isXmlFileAdaptor =
     isFileAdaptor(resource) && resource.file.type === 'xml';

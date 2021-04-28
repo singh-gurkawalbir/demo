@@ -12,6 +12,7 @@ import CeligoSelect from '../../../../CeligoSelect';
 import options from '../CsvParseRules/options';
 import DynaSelectWithInput from '../../../../DynaForm/fields/DynaSelectWithInput';
 import DynaText from '../../../../DynaForm/fields/DynaText';
+import { emptyObject } from '../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -68,7 +69,7 @@ export default function CsvGeneratePanel({ editorId }) {
     if (!resourceId || !resourceType) {
       return false;
     }
-    const {merged: resource = {}} = selectors.resourceData(state, resourceType, resourceId);
+    const resource = selectors.resourceData(state, resourceType, resourceId)?.merged || emptyObject;
 
     return resource?.adaptorType === 'HTTPImport';
   });

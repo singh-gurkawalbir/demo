@@ -17,6 +17,7 @@ import {
 } from '../../../utils/flowData';
 import { isIntegrationApp } from '../../../utils/flows';
 import { isJsonString } from '../../../utils/string';
+import { emptyObject } from '../../../utils/constants';
 
 /*
  * Returns PG/PP Document saved on Flow Doc.
@@ -25,12 +26,12 @@ import { isJsonString } from '../../../utils/string';
  */
 export function* getFlowResourceNode({ flowId, resourceId, resourceType }) {
   // get flow on flowId base
-  const { merged: flow = {} } = yield select(
+  const flow = (yield select(
     selectors.resourceData,
     'flows',
     flowId,
     SCOPES.VALUE
-  );
+  ))?.merged || emptyObject;
   // check if resource is a pg/pp
   const isPageGeneratorExport = yield select(
     selectors.isPageGenerator,
@@ -80,12 +81,12 @@ export function* fetchResourceDataForNewFlowResource({
   if (!resourceId) {
     return;
   }
-  let { merged: newResource = {} } = yield select(
+  let newResource = (yield select(
     selectors.resourceData,
     resourceType,
     resourceId,
     SCOPES.VALUE
-  );
+  ))?.merged || emptyObject;
 
   // TODO @Raghu: Should handle in metadata to pass boolean instead of string
   // eslint-disable-next-line no-param-reassign
@@ -166,14 +167,13 @@ export function* requestSampleDataForImports({
     }
 
     case 'sampleResponse': {
-      const { merged: resource } = yield select(
+      const sampleResponseData = (yield select(
         selectors.resourceData,
         'imports',
         resourceId,
         SCOPES.VALUE
-      );
+      ))?.merged?.sampleResponseData || '';
 
-      const { sampleResponseData = '' } = resource;
       const sampleResponse = isJsonString(sampleResponseData)
         ? JSON.parse(sampleResponseData)
         : sampleResponseData;
