@@ -2052,6 +2052,9 @@ export function convertToImport({ assistantConfig, assistantData }) {
   };
 }
 
+// this is a temporary util to calculate record type for assistants while fetching mapping auto suggestions.
+// The same is used in prometheus stack.
+// This util should be deleted after recordtype calculation is moved from frontent to backend layer
 export function getRecordTypeForAutoMapper(uri) {
   const temp = uri.split('/');
   const arr = [];
