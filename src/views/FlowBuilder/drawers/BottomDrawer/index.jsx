@@ -139,7 +139,7 @@ export default function BottomDrawer({
   const [dragY, setDragY] = useState(0);
   const [drawerHeight, setDrawerHeight] = useBottomDrawer();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const {tabs, activeTabIndex, nextActiveTabIndex} = useSelector(state => selectors.bottomDrawerTabs(state), shallowEqual);
+  const {tabs, activeTabIndex} = useSelector(state => selectors.bottomDrawerTabs(state), shallowEqual);
   const isAnyFlowConnectionOffline = useSelectorMemo(selectors.mkIsAnyFlowConnectionOffline, flowId);
   const isFlowRunInProgress = useSelector(state =>
     !!selectors.getInProgressLatestJobs(state, flowId).length
@@ -291,12 +291,6 @@ export default function BottomDrawer({
   useEffect(() => {
     dispatch(actions.bottomDrawer.init(flowId));
   }, [dispatch, flowId]);
-
-  useEffect(() => {
-    if (nextActiveTabIndex !== undefined && nextActiveTabIndex !== activeTabIndex) {
-      dispatch(actions.bottomDrawer.setActiveTab({ index: nextActiveTabIndex }));
-    }
-  }, [activeTabIndex, dispatch, nextActiveTabIndex]);
 
   return (
     <div>
