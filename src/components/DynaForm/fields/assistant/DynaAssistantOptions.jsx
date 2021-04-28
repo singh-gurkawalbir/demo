@@ -78,8 +78,10 @@ function DynaAssistantOptions(props) {
       ),
     [fields]
   );
-  const queryParams = useSelector(state => selectors.fieldState(state, props.formKey, 'assistantMetadata.queryParams')?.value, shallowEqual);
-
+  const {
+    value: queryParams,
+    paramMeta: queryParamsMeta,
+  } = useSelector(state => selectors.fieldState(state, props.formKey, 'assistantMetadata.queryParams'), shallowEqual) || emptyObject;
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
       adaptorType: formContext.adaptorType,
@@ -190,6 +192,17 @@ function DynaAssistantOptions(props) {
           });
 
           allTouchedFields.push({id: 'assistantMetadata.queryParams', value: newParams});
+        } else if (value === 'delta') {
+          let anyParamValuesSet = false;
+
+          queryParamsMeta?.fields?.forEach(field => {
+            if (!field.readOnly && Object.prototype.hasOwnProperty.call(queryParams, field.id) && queryParams[field.id] !== field.defaultValue) {
+              anyParamValuesSet = true;
+            }
+          });
+          if (!anyParamValuesSet) {
+            allTouchedFields.push({id: 'assistantMetadata.queryParams', value: {...queryParams, ...queryParamsMeta?.defaultValuesForDeltaExport}});
+          }
         }
       }
       dispatch(

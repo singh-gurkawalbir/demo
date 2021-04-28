@@ -1761,6 +1761,286 @@ describe('convertToReactFormFields', () => {
       {
         paramMeta: {
           paramLocation: PARAMETER_LOCATION.QUERY,
+          isDeltaExport: true,
+          fields: [
+            { id: 'id_readOnly1', readOnly: true, name: 'ReadOnly 1' },
+            {
+              id: 'id_checkbox',
+              fieldType: 'checkbox',
+              name: 'Checkbox',
+              description: 'some help text',
+            },
+            {
+              id: 'id_multiselect',
+              fieldType: 'multiselect',
+              name: 'MultiSelect',
+              type: 'repeat',
+              indexed: true,
+              required: true,
+              options: [
+                'active',
+                'closed',
+                'subscriber',
+                'non_subscriber',
+                'past_due',
+              ],
+            },
+            {
+              id: 'id_select',
+              fieldType: 'select',
+              name: 'Select',
+              options: ['desc', 'asc'],
+            },
+            {
+              id: 'id_text',
+              fieldType: 'textwithflowsuggestion',
+              required: true,
+              name: 'Text',
+              placeholder: 'some placeholder',
+            },
+            { id: 'id_readOnly2', readOnly: true, name: 'ReadOnly 2' },
+            {
+              id: 'id_textarea',
+              fieldType: 'textarea',
+              name: 'Text Area',
+              type: 'something',
+            },
+            {
+              id: 'id_input',
+              fieldType: 'integer',
+              name: 'Input',
+              defaultValue: 121,
+            },
+            {
+              id: 'id_input2',
+              name: 'Input2',
+              defaultValue: 123,
+            },
+            { id: 'id_some.thing', fieldType: 'something' },
+          ],
+          defaultValuesForDeltaExport: {
+            'id_some.thing': 'something else',
+          },
+        },
+        value: {},
+      },
+    ],
+    [
+      {
+        fieldMap: {
+          id_readOnly1: {
+            id: 'id_readOnly1',
+            name: 'id_readOnly1',
+            readOnly: true,
+            defaultDisabled: true,
+            required: false,
+            label: 'ReadOnly 1',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
+          },
+          id_multiselect: {
+            id: 'id_multiselect',
+            label: 'MultiSelect',
+            name: 'id_multiselect',
+            options: [
+              {
+                items: [
+                  {
+                    label: 'active',
+                    value: 'active',
+                  },
+                  {
+                    label: 'closed',
+                    value: 'closed',
+                  },
+                  {
+                    label: 'subscriber',
+                    value: 'subscriber',
+                  },
+                  {
+                    label: 'non_subscriber',
+                    value: 'non_subscriber',
+                  },
+                  {
+                    label: 'past_due',
+                    value: 'past_due',
+                  },
+                ],
+              },
+            ],
+            required: true,
+            readOnly: false,
+            type: 'multiselect',
+            defaultValue: [],
+          },
+          id_text: {
+            id: 'id_text',
+            label: 'Text',
+            name: 'id_text',
+            placeholder: 'some placeholder',
+            required: true,
+            readOnly: false,
+            type: 'textwithflowsuggestion',
+            showLookup: false,
+            defaultValue: '',
+          },
+          id_readOnly2: {
+            id: 'id_readOnly2',
+            name: 'id_readOnly2',
+            readOnly: true,
+            defaultDisabled: true,
+            required: false,
+            label: 'ReadOnly 2',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
+          },
+          id_checkbox: {
+            id: 'id_checkbox',
+            label: 'Checkbox',
+            name: 'id_checkbox',
+            required: false,
+            readOnly: false,
+            type: 'checkbox',
+            helpText: 'some help text',
+            defaultValue: '',
+          },
+          id_select: {
+            id: 'id_select',
+            label: 'Select',
+            name: 'id_select',
+            options: [
+              {
+                items: [
+                  {
+                    label: 'desc',
+                    value: 'desc',
+                  },
+                  {
+                    label: 'asc',
+                    value: 'asc',
+                  },
+                ],
+              },
+            ],
+            required: false,
+            readOnly: false,
+            type: 'select',
+            defaultValue: '',
+          },
+          id_textarea: {
+            id: 'id_textarea',
+            label: 'Text Area',
+            name: 'id_textarea',
+            required: false,
+            readOnly: false,
+            type: 'textarea',
+            defaultValue: '',
+          },
+          id_input: {
+            id: 'id_input',
+            label: 'Input',
+            name: 'id_input',
+            required: false,
+            readOnly: false,
+            type: 'text',
+            validWhen: {
+              matchesRegEx: {
+                message: 'Must be a number.',
+                pattern: '^[\\d]+$',
+              },
+            },
+            defaultValue: 121,
+          },
+          id_input2: {
+            id: 'id_input2',
+            label: 'Input2',
+            name: 'id_input2',
+            required: false,
+            readOnly: false,
+            type: 'textwithflowsuggestion',
+            defaultValue: '123',
+            showLookup: false,
+          },
+          'id_some/thing': {
+            id: 'id_some/thing',
+            name: 'id_some/thing',
+            required: false,
+            readOnly: false,
+            type: 'textwithflowsuggestion',
+            showLookup: false,
+            defaultValue: '',
+          },
+        },
+        layout: {
+          fields: ['id_multiselect', 'id_text'],
+          type: 'collapse',
+          containers: [
+            {
+              label: 'Optional',
+              collapsed: true,
+              fields: [
+                'id_readOnly1',
+                'id_checkbox',
+                'id_select',
+                'id_readOnly2',
+                'id_textarea',
+                'id_input',
+                'id_input2',
+                'id_some/thing',
+              ],
+            },
+          ],
+        },
+        fieldDetailsMap: {
+          id_checkbox: {
+            id: 'id_checkbox',
+            inputType: 'checkbox',
+          },
+          id_multiselect: {
+            id: 'id_multiselect',
+            inputType: 'multiselect',
+            type: 'repeat',
+            indexed: true,
+          },
+          id_readOnly1: {
+            id: 'id_readOnly1',
+            inputType: 'textwithflowsuggestion',
+          },
+          id_readOnly2: {
+            id: 'id_readOnly2',
+            inputType: 'textwithflowsuggestion',
+          },
+          id_select: {
+            id: 'id_select',
+            inputType: 'select',
+          },
+          id_text: {
+            id: 'id_text',
+            inputType: 'textwithflowsuggestion',
+          },
+          id_textarea: {
+            id: 'id_textarea',
+            inputType: 'textarea',
+            type: 'something',
+          },
+          id_input: {
+            id: 'id_input',
+            inputType: 'text',
+            type: 'integer',
+          },
+          id_input2: {
+            id: 'id_input2',
+            inputType: 'textwithflowsuggestion',
+          },
+          'id_some/thing': {
+            id: 'id_some.thing',
+            inputType: 'textwithflowsuggestion',
+          },
+        },
+      },
+      {
+        paramMeta: {
+          paramLocation: PARAMETER_LOCATION.QUERY,
           fields: [
             { id: 'id_readOnly1', readOnly: true, name: 'ReadOnly 1' },
             {
