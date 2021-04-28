@@ -119,7 +119,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const DateRange = props => {
-  const { isCalendar, setSelectedRange } = props;
+  const { isCalendar, setSelectedRange, ranges } = props;
   const handleDateRangeSelection = useCallback(range => {
     let { startDate, endDate } = range;
 
@@ -137,7 +137,7 @@ const DateRange = props => {
     return (
       <Calendar
         {...props}
-        showDateDisplay={false}
+        date={ranges[0].endDate}
         onChange={handleCalendardateSelection}
         months={1}
      />
