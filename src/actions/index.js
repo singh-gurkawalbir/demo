@@ -2148,7 +2148,11 @@ const hooks = {
 };
 
 const bottomDrawer = {
-  setActiveTab: value => action(actionTypes.BOTTOM_DRAWER.SET_ACTIVE_TAB, {value}),
+  init: flowId => action(actionTypes.BOTTOM_DRAWER.INIT, { flowId }),
+  initComplete: value => action(actionTypes.BOTTOM_DRAWER.INIT_COMPLETE, { value }),
+  addTab: ({tabType, label, resourceId}) => action(actionTypes.BOTTOM_DRAWER.ADD_TAB, { tabType, resourceId, label }),
+  removeTab: ({tabType, resourceId}) => action(actionTypes.BOTTOM_DRAWER.REMOVE_TAB, { tabType, resourceId }),
+  setActiveTab: ({ index, tabType }) => action(actionTypes.BOTTOM_DRAWER.SET_ACTIVE_TAB, { index, tabType }),
   clear: () => action(actionTypes.BOTTOM_DRAWER.CLEAR),
 };
 

@@ -137,7 +137,7 @@ const RunFlowButtonWrapper = ({flowId}) => {
   const dispatch = useDispatch();
   const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
-    dispatch(actions.bottomDrawer.setActiveTab('dashboard'));
+    dispatch(actions.bottomDrawer.setActiveTab({ tabType: 'dashboard' }));
 
     // Raising bottom drawer in cases where console is minimized
     // and user can not see dashboard after running the flow

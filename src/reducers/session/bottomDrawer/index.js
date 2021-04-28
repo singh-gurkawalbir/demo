@@ -1,16 +1,66 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
+const emptyObj = {};
 export default (state = {}, action) => {
-  const { value, type } = action;
+  const { value, type, tabType, resourceId, label, index } = action;
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.BOTTOM_DRAWER.SET_ACTIVE_TAB:
+      case actionTypes.BOTTOM_DRAWER.INIT:
         if (!draft.bottomDrawer) {
           draft.bottomDrawer = {};
         }
-        draft.bottomDrawer.activeTab = value;
+        draft.bottomDrawer.tabs = [];
+
+        break;
+      case actionTypes.BOTTOM_DRAWER.INIT_COMPLETE:
+        draft.bottomDrawer.activeTabIndex = 0;
+        draft.bottomDrawer.tabs = value;
+        break;
+
+      case actionTypes.BOTTOM_DRAWER.ADD_TAB: {
+        const requestedTabIndex = draft.bottomDrawer.tabs.findIndex(tab => tab.tabType === tabType && tab.resourceId === resourceId);
+
+        if (requestedTabIndex !== -1) {
+          draft.bottomDrawer.activeTabIndex = requestedTabIndex;
+        } else {
+          draft.bottomDrawer.tabs.push({
+            tabType,
+            resourceId,
+            label,
+          });
+          draft.bottomDrawer.nextActiveTabIndex = draft.bottomDrawer.tabs.length - 1;
+        }
+        break;
+      }
+
+      case actionTypes.BOTTOM_DRAWER.REMOVE_TAB:
+        draft.bottomDrawer.tabs = draft.bottomDrawer.tabs.filter(tab => tab.resourceId !== resourceId);
+        delete draft.bottomDrawer.nextActiveTabIndex;
+        if (tabType === 'scriptLogs') {
+          const scriptTabIndex = draft.bottomDrawer.tabs.findIndex(tab => tab.tabType === 'scripts');
+
+          if (scriptTabIndex !== -1) {
+            draft.bottomDrawer.activeTabIndex = scriptTabIndex;
+          }
+        } else if (tabType === 'connectionLogs') {
+          const scriptTabIndex = draft.bottomDrawer.tabs.findIndex(tab => tab.tabType === 'scripts');
+
+          if (scriptTabIndex !== -1) {
+            draft.bottomDrawer.activeTabIndex = scriptTabIndex;
+          }
+        }
+        break;
+      case actionTypes.BOTTOM_DRAWER.SET_ACTIVE_TAB:
+        delete draft.bottomDrawer.nextActiveTabIndex;
+        if (index !== undefined) {
+          draft.bottomDrawer.activeTabIndex = index;
+        } else if (tabType) {
+          const newActiveTabIndex = draft.bottomDrawer.tabs.findIndex(tab => tab.tabType === tabType);
+
+          if (newActiveTabIndex !== -1) draft.bottomDrawer.activeTabIndex = newActiveTabIndex;
+        }
 
         break;
       case actionTypes.BOTTOM_DRAWER.CLEAR:
@@ -25,5 +75,6 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.bottomDrawerActiveTab = state => state?.bottomDrawer?.activeTab || 0;
+// selectors.bottomDrawerActiveTab = state => state?.bottomDrawer?.activeTab || 0;
+selectors.bottomDrawerTabs = state => state?.bottomDrawer || emptyObj;
 
