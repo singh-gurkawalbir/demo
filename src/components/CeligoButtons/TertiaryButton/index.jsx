@@ -4,11 +4,7 @@ import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
-<<<<<<< HEAD
   root: {
-=======
-  wrapper: {
->>>>>>> bd464ad3ef74836ee629f7088b83a6c6b6d29e56
     color: props => props.color === 'primary' ? theme.palette.primary.main : theme.palette.secondary.main,
     fontFamily: props => props.bold ? 'source sans pro semibold' : 'source sans pro',
     '&:focus': {
