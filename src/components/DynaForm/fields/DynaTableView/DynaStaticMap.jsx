@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import DynaTableView from './DynaTable';
 
 export default function DynaStaticMap(props) {
@@ -16,9 +16,7 @@ export default function DynaStaticMap(props) {
   } = props;
   // TODO: (Aditya/Sravan) DynaTable to accept a single value and conversion to be made inside component.Check for validations and how error message will be displayed in case of incomplete map
   // if map is being passed instead of value, trigger a onFieldChange with formatted value
-  const [initFieldChange, setInitFieldChange] = useState(false);
-  const handleRefreshClick = () => {};
-  const optionsMap = [
+  const optionsMap = useMemo(() => [
     {
       id: keyName,
       label: keyLabel,
@@ -35,32 +33,32 @@ export default function DynaStaticMap(props) {
       type: valueOptions ? 'autosuggest' : 'input',
       supportsRefresh: false,
     },
-  ];
-  let computedValue;
+  ], [keyLabel, keyName, keyOptions, valueLabel, valueName, valueOptions]);
 
-  // giving preference to map if present in props
-  if (map) {
-    computedValue = Object.keys(map).map(key => ({
-      [keyName]: key,
-      [valueName]: map[key],
-    }));
-  } else {
-    computedValue = value;
-  }
+  const computedValue = useMemo(() => {
+    // giving preference to map if present in props
+    if (map) {
+      return Object.keys(map).map(key => ({
+        [keyName]: key,
+        [valueName]: map[key],
+      }));
+    }
+
+    return value;
+  }, [keyName, map, value, valueName]);
 
   useEffect(() => {
-    if (!initFieldChange && map) {
-      setInitFieldChange(true);
+    if (map) {
       onFieldChange(id, computedValue, true);
     }
-  }, [computedValue, id, initFieldChange, map, onFieldChange]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <DynaTableView
       {...props}
       optionsMap={optionsMap}
       value={computedValue}
-      handleRefreshClickHandler={handleRefreshClick}
     />
   );
 }

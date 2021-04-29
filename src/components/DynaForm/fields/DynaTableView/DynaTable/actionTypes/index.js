@@ -1,0 +1,5 @@
+export default {
+  REMOVE_TABLE_ROW: 'TABLE_ROW_REMOVE',
+  UPDATE_TABLE_ROW: 'TABLE_ROW_UPDATE',
+};
+

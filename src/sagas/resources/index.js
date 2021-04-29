@@ -1,6 +1,6 @@
 import { call, put, takeEvery, select, take, cancel, fork, takeLatest, delay, race } from 'redux-saga/effects';
 import jsonPatch, { deepClone } from 'fast-json-patch';
-import { isEqual, isBoolean } from 'lodash';
+import { isEqual, isBoolean, isEmpty } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -415,11 +415,11 @@ export function* normalizeFlow(flow) {
 
   return newFlow;
 }
-export function* getResource({ resourceType, id, message }) {
+export function* getResource({ resourceType, id, message, hidden }) {
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
 
   try {
-    let resource = yield call(apiCallWithRetry, { path, message });
+    let resource = yield call(apiCallWithRetry, { path, message, hidden });
 
     if (resourceType === 'flows') {
       resource = yield call(normalizeFlow, resource);
@@ -711,6 +711,14 @@ export function* getResourceCollection({ resourceType, refresh}) {
     // saga failed and services team working on it
     return undefined;
   }
+}
+
+export function* validateResource({ resourceType, resourceId }) {
+  const resource = yield select(selectors.resource, resourceType, resourceId);
+
+  if (!isEmpty(resource) || !resourceType || !resourceId) return undefined;
+
+  return yield call(getResource, {resourceType, id: resourceId, hidden: true});
 }
 
 export function* updateTileNotifications({ resourcesToUpdate, integrationId, storeId, userEmail }) {
@@ -1047,6 +1055,7 @@ export const resourceSagas = [
   ),
   takeEvery(actionTypes.RESOURCE.PATCH, patchResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
+  takeEvery(actionTypes.RESOURCE.VALIDATE_RESOURCE, validateResource),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),

@@ -21,7 +21,7 @@ export const getDateTimeFormat = (range, epochTime, preferences = {}, timezone) 
     if (days > 4 && days < 4 * 30) {
       return `${time.format(preferences?.dateFormat || 'MM/DD/YYYY')}`;
     } if (days >= 4 * 30) {
-      return time.format('MMMM');
+      return time.format('MMMM YYYY');
     }
   }
 

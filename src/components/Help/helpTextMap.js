@@ -2153,6 +2153,20 @@ export default {
     'Select the data type of the import field, such as Boolean, string, or number array.',
   'mapping.discardIfEmpty':
     'Please check this checkbox if you would like to discard this mapping when the result of the mapping is empty. If you are mapping a list field and all the fields in the list are mapped to empty values then the whole list will be discarded.',
+  'mapping.useFirstRow':
+    `Check this box to update the destination sublist fields using only the value of the first sublist retrieved for the record. For example, if the source app contains the following two rows: 
+    <table style="width:98%; margin-top: 8px; margin-bottom: 8px; border-collapse:collapse;"  text-align: left; color:#D6E4ED; background-color: #ffffff;"> <thead><tr> <th style="border:1px solid #D6E4ED; padding-left: 6px;">Name</th> <th style="border:1px solid #D6E4ED; padding-left: 6px;">Visits</th> </tr></thead> 
+    <tr> <td style="border:1px solid #D6E4ED; padding-left: 6px;">Jones</td> <td style="border:1px solid #D6E4ED; padding-left: 6px;">13</td> </tr>
+     <tr> <td style="border:1px solid #D6E4ED; padding-left: 6px;">Smith</td> <td style="border:1px solid #D6E4ED; padding-left: 6px;">11</td> </tr>
+    </table>
+    When you select <b>Apply only the first row’s value and map the Visits</b>, the destination records will be synced as follows upon import, ignoring the second (or subsequent) rows.
+    <table style="width:98%; margin-top: 8px; margin-bottom: 8px; border-collapse:collapse;"  text-align: left; color:#D6E4ED; background-color: #ffffff;"> <thead><tr> <th style="border:1px solid #D6E4ED; padding-left: 6px;">Name</th> <th style="border:1px solid #D6E4ED; padding-left: 6px;">Visits</th> </tr></thead> 
+    <tr> <td style="border:1px solid #D6E4ED; padding-left: 6px;">Jones</td> <td style="border:1px solid #D6E4ED; padding-left: 6px;">3</td> </tr>
+     <tr> <td style="border:1px solid #D6E4ED; padding-left: 6px;">Smith</td> <td style="border:1px solid #D6E4ED; padding-left: 6px;">3</td> </tr>
+    </table>
+    `,
+  'mapping.isKey':
+    'Check this box to use this NetSuite sublist field to identify a NetSuite line with the same value as the external field. If a match is found, integrator.io will update the NetSuite sublist line; otherwise, it will insert a new line. \n For example, let’s say you are updating a sales order that has a custom field called VendorItemId in its line items. When the source app sends a VendorItemId in the line data, you can map that field to the NetSuite destination’s VendorItemId and select <b>Use as a key field to find existing lines.</b> Then, if NetSuite has the same VendorItemId value in that record’s sublist, <a href="https://www.celigo.com/ipaas-integration-platform/" target="_blank"/>integrator.io</a>will update the corresponding lines with the source value.',
   'mapping.fieldMappingType':
     `The type of field mapping that you want to perform. For more information, refer to <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/>Map source record fields to destination</a>.`,
   'mapping.extract':

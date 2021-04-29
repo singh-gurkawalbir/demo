@@ -14,6 +14,7 @@ import useFormContext from '../../../Form/FormContext';
 import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowValidations';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import actions from '../../../../actions';
+import { emptyObject } from '../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   csvContainer: {
@@ -72,9 +73,9 @@ export default function DynaCsvGenerate_afe(props) {
   const editorId = getValidRelativePath(id);
 
   const isHttpImport = useSelector(state => {
-    const {merged: resource = {}} = selectors.resourceData(state, resourceType, resourceId);
+    const resource = selectors.resourceData(state, resourceType, resourceId)?.merged || emptyObject;
 
-    return resource?.adaptorType === 'HTTPImport';
+    return resource.adaptorType === 'HTTPImport';
   });
   const getInitOptions = useCallback(
     val => {

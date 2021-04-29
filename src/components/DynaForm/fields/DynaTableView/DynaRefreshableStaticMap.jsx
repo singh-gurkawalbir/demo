@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { isNaN } from 'lodash';
 import actions from '../../../../actions';
@@ -9,16 +9,29 @@ import { makeExportResource } from '../../../../utils/exportData';
 import { emptyObject } from '../../../../utils/constants';
 
 const isExportRefresh = (kind, key, exportResource) => !!(kind && key && exportResource);
+const fixedListOptions = fixedList => {
+  if (fixedList) {
+    return {
+      type: 'autosuggest',
+      options: fixedList,
 
+      supportsRefresh: false,
+    };
+  }
+
+  return {};
+};
 export default function DynaRefreshableStaticMap(props) {
   const {
     connectionId,
     keyName = 'extract',
     keyLabel = 'Export',
+    fixedKeyOptionsList,
     map,
     value,
     valueLabel = 'Import',
     valueName = 'generate',
+    fixedValueOptionsList,
     filterKey,
     commMetaPath,
     disableFetch,
@@ -30,7 +43,6 @@ export default function DynaRefreshableStaticMap(props) {
     valueResource,
   } = props;
   const dispatch = useDispatch();
-  const [initComplete, setInitComplete] = useState(false);
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const { _connectionId: resConnectionId, _connectorId: resConnectorId } = useSelector(state => (selectors.resource(state, resourceType, resourceId) || emptyObject));
@@ -46,25 +58,32 @@ export default function DynaRefreshableStaticMap(props) {
     options.commMetaPath || commMetaPath,
     options.filterKey || filterKey);
 
-  const eOptions = ((eData?.length && eData) || []).filter(Boolean);
-  const gOptions = ((gData?.length && gData) || []).filter(Boolean);
+  const optionsMap = useMemo(() => {
+    const eOptions = ((eData?.length && eData) || []).filter(Boolean);
+    const gOptions = ((gData?.length && gData) || []).filter(Boolean);
 
-  const optionsMap = useMemo(() => [{
-    id: keyName,
-    label: keyLabel,
-    required: true,
-    options: eOptions,
-    type: eOptions.length ? 'autosuggest' : 'input',
-    supportsRefresh: isExportRefresh(eKind, eKey, eExportResource),
-  }, {
-    id: valueName,
-    label: valueLabel,
-    required: true,
-    type: 'autosuggest',
-    optionsChangeIdentifer: 0,
-    options: gOptions,
-    supportsRefresh: !!connectionId || !!isExportRefresh(gKind, gKey, gExportResource),
-  }], [connectionId, eExportResource, eKey, eKind, eOptions, gExportResource, gKey, gKind, gOptions, keyLabel, keyName, valueLabel, valueName]);
+    return [{
+      id: keyName,
+      label: keyLabel,
+      required: true,
+      options: eOptions,
+      type: eOptions.length ? 'autosuggest' : 'input',
+      supportsRefresh: isExportRefresh(eKind, eKey, eExportResource),
+      ...fixedListOptions(fixedKeyOptionsList),
+    }, {
+      id: valueName,
+      label: valueLabel,
+      required: true,
+      type: 'autosuggest',
+      optionsChangeIdentifer: 0,
+      options: gOptions,
+      supportsRefresh: !!connectionId || !!isExportRefresh(gKind, gKey, gExportResource),
+      ...fixedListOptions(fixedValueOptionsList),
+    }];
+  },
+  [connectionId, eData, eExportResource, eKey, eKind,
+    fixedKeyOptionsList, fixedValueOptionsList,
+    gData, gExportResource, gKey, gKind, keyLabel, keyName, valueLabel, valueName]);
 
   const metadata = useMemo(() => {
     if (isExportRefresh(gKind, gKey, gExportResource)) return {optionsMap};
@@ -94,7 +113,7 @@ export default function DynaRefreshableStaticMap(props) {
     return value;
   }, [keyName, map, value, valueName]);
 
-  const handleRefreshClick = column => {
+  const handleRefreshClick = useCallback(column => {
     if (column === keyName && isExportRefresh(eKind, eKey, eExportResource)) {
       dispatch(actions.exportData.request(eKind, eKey, eExportResource));
     } else if (column === valueName && isExportRefresh(gKind, gKey, gExportResource)) {
@@ -108,7 +127,7 @@ export default function DynaRefreshableStaticMap(props) {
         )
       );
     }
-  };
+  }, [commMetaPath, connectionId, dispatch, eExportResource, eKey, eKind, gExportResource, gKey, gKind, keyName, options.commMetaPath, valueName]);
 
   const handleFieldChange = useCallback((id, val) => {
     if (!preferMapValueAsNum) {
@@ -128,23 +147,21 @@ export default function DynaRefreshableStaticMap(props) {
   }, [onFieldChange, preferMapValueAsNum, valueName]);
 
   useEffect(() => {
-    if (!initComplete) {
-      if (isExportRefresh(eKind, eKey, eExportResource)) {
-        dispatch(actions.exportData.request(eKind, eKey, eExportResource));
-      }
-      if (isExportRefresh(gKind, gKey, gExportResource)) {
-        dispatch(actions.exportData.request(gKind, gKey, gExportResource));
-      } else if (!metadata && !disableOptionsLoad) {
-        dispatch(
-          actions.metadata.request(
-            connectionId,
-            options.commMetaPath || commMetaPath
-          )
-        );
-      }
-      setInitComplete(true);
+    if (optionsMap?.[0].supportsRefresh && isExportRefresh(eKind, eKey, eExportResource)) {
+      dispatch(actions.exportData.request(eKind, eKey, eExportResource));
     }
-  }, [commMetaPath, connectionId, disableOptionsLoad, dispatch, eExportResource, eKey, eKind, gExportResource, gKey, gKind, initComplete, metadata, options.commMetaPath]);
+    if (optionsMap?.[1].supportsRefresh && isExportRefresh(gKind, gKey, gExportResource)) {
+      dispatch(actions.exportData.request(gKind, gKey, gExportResource));
+    } else if (!metadata && !disableOptionsLoad) {
+      dispatch(
+        actions.metadata.request(
+          connectionId,
+          options.commMetaPath || commMetaPath
+        )
+      );
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <DynaTableView

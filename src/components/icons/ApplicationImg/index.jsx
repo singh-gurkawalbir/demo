@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { map } from 'lodash';
 import clsx from 'clsx';
+import PropTypes from 'prop-types';
 import { getDatabaseConnectors } from '../../../constants/applications';
 
 const useStyles = makeStyles(theme => ({
@@ -68,7 +69,7 @@ export default function ApplicationImg({
   markOnly = false,
   assistant,
   type,
-  alt,
+  alt = 'Application image',
   className,
 }) {
   const classes = useStyles();
@@ -97,3 +98,13 @@ export default function ApplicationImg({
     />
   );
 }
+
+ApplicationImg.propTypes = {
+  alt: PropTypes.string.isRequired,
+  src: PropTypes.string.isRequired,
+  size: PropTypes.oneOf(['small', 'medium', 'large']),
+};
+ApplicationImg.defaultProps = {
+  alt: 'Application image',
+  size: 'small',
+};
