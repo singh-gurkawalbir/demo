@@ -474,6 +474,22 @@ const pushRuleToMeta = (meta, rule) => {
   return meta;
 };
 
+export const adjustingFieldRules = fieldMapCopyRef => {
+  const newValues = { ...fieldMapCopyRef };
+
+  if (newValues?.visibleWhenAll?.length) {
+    delete newValues.visible;
+  }
+  if (newValues?.requiredWhenAll?.length) {
+    delete newValues.required;
+  }
+  if (newValues?.disabledWhenAll?.length) {
+    delete newValues.defaultDisabled;
+  }
+
+  return newValues;
+};
+
 export const translateDependencyProps = fieldMap => {
   const fieldMapCopy = deepClone(fieldMap);
 
@@ -527,6 +543,7 @@ export const translateDependencyProps = fieldMap => {
           );
         }
       }
+      fieldMapCopy[ref] = adjustingFieldRules(fieldMapCopy[ref]);
     });
   });
 
