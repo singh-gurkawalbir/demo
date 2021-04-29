@@ -16,6 +16,7 @@ import ApplicationImg from '../../../../components/icons/ApplicationImg';
 import { resourceCategory } from '../../../../utils/resource';
 import TextOverflowCell from '../../../../components/TextOverflowCell';
 import ResourceButton from '../../../FlowBuilder/ResourceButton';
+import { emptyObject } from '../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -75,11 +76,11 @@ const metadata = {
         const isDataLoader = useSelector(state =>
           selectors.isDataLoader(state, flowId)
         );
-        const { merged: integration = {} } = useSelectorMemo(
+        const integration = useSelectorMemo(
           selectors.makeResourceDataSelector,
           'integrations',
           integrationId
-        );
+        )?.merged || emptyObject;
         const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
         const flowBuilderTo = flowbuilderUrl(flowId, integrationId, {
           isIntegrationApp: !!integration._connectorId,
@@ -112,11 +113,11 @@ const ErrorsList = ({integrationId, childId}) => {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const { merged: flow = {} } = useSelectorMemo(
+  const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  );
+  )?.merged || emptyObject;
   const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
   const { data: errorMap, status } = useSelector(state => selectors.errorMap(state, flowId));
 
@@ -164,11 +165,11 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
   const history = useHistory();
   const location = useLocation();
   const { params: { flowId } = {} } = matchPath(location.pathname, {path: `${match.path}/:flowId/errorsList`}) || {};
-  const { merged: flow = {} } = useSelectorMemo(
+  const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  );
+  )?.merged || emptyObject;
   const handleClose = useCallback(() => {
     history.push(match.url);
   }, [match.url, history]);

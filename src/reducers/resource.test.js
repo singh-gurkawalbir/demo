@@ -2395,6 +2395,8 @@ describe('resource region selector testcases', () => {
           name: 'Sample Connector',
           published: false,
           usedTrialLicenseExists: false,
+          canRequestDemo: true,
+          canStartTrial: false,
         },
         {
           _id: 'connector2',
@@ -2406,6 +2408,8 @@ describe('resource region selector testcases', () => {
           name: 'Sample Connector2',
           published: true,
           usedTrialLicenseExists: false,
+          canRequestDemo: true,
+          canStartTrial: false,
         },
       ]);
       expect(marketplaceConnectorsSelector(state, 'amazonmws', false)).toEqual([
@@ -2419,7 +2423,8 @@ describe('resource region selector testcases', () => {
           installed: false,
           name: 'Sample Connector',
           published: false,
-        },
+          canRequestDemo: true,
+          canStartTrial: false },
         {
           _id: 'connector2',
           _stackId: '57be8a07be81b76e185bbb8d',
@@ -2430,7 +2435,8 @@ describe('resource region selector testcases', () => {
           installed: false,
           name: 'Sample Connector2',
           published: true,
-        },
+          canRequestDemo: true,
+          canStartTrial: false },
       ]);
     });
     test('should return correct values with license values', () => {
@@ -2479,7 +2485,8 @@ describe('resource region selector testcases', () => {
           name: 'Sample Connector',
           published: false,
           usedTrialLicenseExists: false,
-        },
+          canRequestDemo: true,
+          canStartTrial: false },
         {
           _id: 'connector2',
           _stackId: '57be8a07be81b76e185bbb8d',
@@ -2490,7 +2497,8 @@ describe('resource region selector testcases', () => {
           name: 'Sample Connector2',
           published: true,
           usedTrialLicenseExists: false,
-        },
+          canRequestDemo: true,
+          canStartTrial: false },
       ]);
       expect(marketplaceConnectorsSelector(state, 'amazonmws', false)).toEqual([
         {
@@ -2503,7 +2511,8 @@ describe('resource region selector testcases', () => {
           name: 'Sample Connector',
           published: false,
           usedTrialLicenseExists: false,
-        },
+          canRequestDemo: true,
+          canStartTrial: false },
         {
           _id: 'connector2',
           _stackId: '57be8a07be81b76e185bbb8d',
@@ -2514,7 +2523,8 @@ describe('resource region selector testcases', () => {
           name: 'Sample Connector2',
           published: true,
           usedTrialLicenseExists: false,
-        },
+          canRequestDemo: true,
+          canStartTrial: false },
       ]);
       expect(marketplaceConnectorsSelector(state, 'amazonmws', true)).toEqual([
         {
@@ -2527,7 +2537,8 @@ describe('resource region selector testcases', () => {
           name: 'Sample Connector',
           published: false,
           usedTrialLicenseExists: false,
-        },
+          canRequestDemo: true,
+          canStartTrial: false },
         {
           _id: 'connector2',
           _stackId: '57be8a07be81b76e185bbb8d',
@@ -2538,7 +2549,8 @@ describe('resource region selector testcases', () => {
           name: 'Sample Connector2',
           published: true,
           usedTrialLicenseExists: false,
-        },
+          canRequestDemo: true,
+          canStartTrial: false },
       ]);
     });
   });

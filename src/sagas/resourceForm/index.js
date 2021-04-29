@@ -17,7 +17,7 @@ import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
-import { UI_FIELD_VALUES, FORM_SAVE_STATUS} from '../../utils/constants';
+import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject} from '../../utils/constants';
 import { isIntegrationApp, isFlowUpdatedWithPgOrPP } from '../../utils/flows';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithoutFuncs from '../../forms/formFactory/getFieldsWithoutFuncs';
@@ -594,11 +594,11 @@ export function* skipRetriesPatches(
 
   if (createdResource.isLookup) return [];
 
-  const { merged: flow } = yield select(
+  const flow = (yield select(
     selectors.resourceData,
     'flows',
     flowId
-  );
+  ))?.merged || emptyObject;
   const index =
     flow.pageGenerators &&
     flow.pageGenerators.findIndex(
@@ -874,17 +874,17 @@ export function* initFormValues({
   integrationId,
 }) {
   const developerMode = yield select(selectors.developerMode);
-  const { merged: resource } = yield select(
+  const resource = (yield select(
     selectors.resourceData,
     resourceType,
     resourceId,
     SCOPES.VALUE
-  );
-  const { merged: flow } = yield select(
+  ))?.merged || emptyObject;
+  const flow = (yield select(
     selectors.resourceData,
     'flows',
     flowId
-  );
+  ))?.merged || emptyObject;
 
   if (isNewId(resourceId)) {
     resource._id = resourceId;

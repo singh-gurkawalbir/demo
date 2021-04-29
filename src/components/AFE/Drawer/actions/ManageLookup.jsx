@@ -12,6 +12,7 @@ import CeligoDivider from '../../../CeligoDivider';
 import FieldHelp from '../../../DynaForm/FieldHelp';
 import LookupDrawer from '../../../drawer/Lookup';
 import * as completers from '../../Editor/panels/Handlebars/autocompleteSetup/completers';
+import { emptyObject } from '../../../../utils/constants';
 
 const useStyles = makeStyles({
   button: {
@@ -43,11 +44,11 @@ export default function ManageLookup({ editorId }) {
     };
   }, shallowEqual);
   const formContext = useFormContext(formKey);
-  const { merged: resourceData = {} } = useSelectorMemo(
+  const resourceData = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,
     resourceId
-  );
+  )?.merged || emptyObject;
   const { adaptorType } = resourceData;
 
   const lookups = useMemo(() => {
