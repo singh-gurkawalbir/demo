@@ -193,13 +193,9 @@ function DynaAssistantOptions(props) {
 
           allTouchedFields.push({id: 'assistantMetadata.queryParams', value: newParams});
         } else if (value === 'delta') {
-          let anyParamValuesSet = false;
+          const anyParamValuesSet = queryParamsMeta?.fields?.some(field => !field.readOnly && Object.prototype.hasOwnProperty.call(queryParams, field.id) && queryParams[field.id] !== field.defaultValue);
 
-          queryParamsMeta?.fields?.forEach(field => {
-            if (!field.readOnly && Object.prototype.hasOwnProperty.call(queryParams, field.id) && queryParams[field.id] !== field.defaultValue) {
-              anyParamValuesSet = true;
-            }
-          });
+          console.log('anyParamValuesSet', anyParamValuesSet);
           if (!anyParamValuesSet) {
             allTouchedFields.push({id: 'assistantMetadata.queryParams', value: {...queryParams, ...queryParamsMeta?.defaultValuesForDeltaExport}});
           }
