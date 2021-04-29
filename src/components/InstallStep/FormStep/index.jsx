@@ -9,11 +9,14 @@ import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermission
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
-    width: 660,
+    width: 824,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
+  },
+  formStep: {
+    padding: 24,
   },
 }));
 
@@ -69,12 +72,15 @@ export default function FormStep({ integrationId, formMeta, title, formSubmitHan
       }}
       >
       <DrawerTitleBar title={title} onClose={formCloseHandler || onClose} />
-      <DynaForm formKey={formKey} />
-      <DynaSubmit
-        formKey={formKey}
-        onClick={formSubmitHandler || handleSubmit}>
-        Submit
-      </DynaSubmit>
+      <div className={classes.formStep} >
+
+        <DynaForm formKey={formKey} />
+        <DynaSubmit
+          formKey={formKey}
+          onClick={formSubmitHandler || handleSubmit}>
+          Submit
+        </DynaSubmit>
+      </div>
     </Drawer>
   );
 }
