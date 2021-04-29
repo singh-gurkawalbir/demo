@@ -195,7 +195,6 @@ function DynaAssistantOptions(props) {
         } else if (value === 'delta') {
           const anyParamValuesSet = queryParamsMeta?.fields?.some(field => !field.readOnly && Object.prototype.hasOwnProperty.call(queryParams, field.id) && queryParams[field.id] !== field.defaultValue);
 
-          console.log('anyParamValuesSet', anyParamValuesSet);
           if (!anyParamValuesSet) {
             allTouchedFields.push({id: 'assistantMetadata.queryParams', value: {...queryParams, ...queryParamsMeta?.defaultValuesForDeltaExport}});
           }
