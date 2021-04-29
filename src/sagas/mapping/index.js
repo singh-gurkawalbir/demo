@@ -60,7 +60,7 @@ export function* refreshGenerates({ isInit = false }) {
   const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);
   const importResource = yield select(selectors.resource, 'imports', importId);
 
-  if (importResource.adaptorType === 'SalesforceImport') {
+  if (importResource?.adaptorType === 'SalesforceImport') {
     // salesforce Import could have sub objects as well
     const { _connectionId, salesforce } = importResource;
     const { sObjectType } = salesforce;
@@ -126,7 +126,7 @@ export function* refreshGenerates({ isInit = false }) {
   } else if (!isInit) {
     const opts = {};
 
-    if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType) && subRecordMappingId) {
+    if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource?.adaptorType) && subRecordMappingId) {
       opts.recordType = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
     }
     yield put(actions.importSampleData.request(
@@ -510,7 +510,7 @@ export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
   } = yield select(selectors.mapping);
   const importResource = yield select(selectors.resource, 'imports', importId);
 
-  if (importResource.adaptorType !== 'SalesforceImport' || field !== 'generate') {
+  if (!importResource || importResource.adaptorType !== 'SalesforceImport' || field !== 'generate') {
     return;
   }
   const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);

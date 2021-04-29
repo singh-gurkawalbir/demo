@@ -5,6 +5,7 @@ import actions from '../../actions';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
+import { emptyObject } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
 import itemTypes from './itemTypes';
 
@@ -36,7 +37,7 @@ export const useHandleDelete = flowId => {
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  ).merged;
+  )?.merged || {};
 
   const patchFlow = usePatchFlow(flowId);
   const { pageProcessors = [], pageGenerators = [] } = flow;
@@ -84,7 +85,7 @@ export const useHandleMovePP = flowId => {
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  ).merged;
+  )?.merged || {};
 
   const { pageProcessors = [] } = flow;
   const handleMovePP = useCallback(
@@ -108,7 +109,7 @@ export const useHandleMovePG = flowId => {
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  ).merged;
+  )?.merged || emptyObject;
 
   const { pageGenerators = [] } = flow;
   const handleMovePG = useCallback(

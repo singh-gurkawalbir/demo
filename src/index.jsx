@@ -11,6 +11,7 @@ import App from './App';
 import rootReducer from './reducers';
 import rootSaga from './sagas';
 import actions from './actions';
+import { getDomain } from './utils/resource';
 
 let store;
 const env = process.env.NODE_ENV;
@@ -67,9 +68,9 @@ store = createStore(
 sagaMiddleware.run(rootSaga);
 
 // eslint-disable-next-line no-undef
-const GAKey1 = GA_KEY_1;
+const GAKey1 = (getDomain() === 'eu.integrator.io' ? GA_KEY_1_EU : GA_KEY_1);
 // eslint-disable-next-line no-undef
-const GAKey2 = GA_KEY_2;
+const GAKey2 = (getDomain() === 'eu.integrator.io' ? GA_KEY_2_EU : GA_KEY_2);
 
 if (env !== 'development' && GAKey1?.length > 1) {
   const ga4react = new GA4React(GAKey1);

@@ -13,6 +13,7 @@ import salesforceMetadata from './metadata/salesforce';
 import rdbmsMetadata from './metadata/rdbms';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { emptyObject } from '../../../utils/constants';
 
 export default function ManageLookup({
   onSave,
@@ -29,11 +30,11 @@ export default function ManageLookup({
 }) {
   const { extractFields, picklistOptions } = others;
 
-  const { merged: resource = {} } = useSelectorMemo(
+  const resource = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,
     resourceId
-  );
+  )?.merged || emptyObject;
 
   const { _connectionId: connectionId } = resource;
   const sampleData = useSelector(state =>

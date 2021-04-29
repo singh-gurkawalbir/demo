@@ -244,6 +244,8 @@ export default function SalesforceLookupFilterPanel({
           if (!rulesState[ruleId].data.rhs.type) {
             rulesState[ruleId].data.rhs.type = 'field';
           }
+          // IO-21280- temp fix. rulesState is not persisting when new filters are added intermittently.
+          setRulesState(rulesState);
 
           if (!disabled) {
             rule.$el

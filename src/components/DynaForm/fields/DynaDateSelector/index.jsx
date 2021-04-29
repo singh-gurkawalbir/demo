@@ -114,6 +114,7 @@ export default function DynaDateSelector(props) {
               customPresets={rangeFilters}
               clearValue={defaultRange}
               onSave={handleDateRangeChange}
+              showDateDisplay={false}
               showTime={false} />
           </InputAdornment>
         )}
