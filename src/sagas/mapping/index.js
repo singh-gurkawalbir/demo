@@ -654,13 +654,13 @@ export function* getAutoMapperSuggestion() {
     const {mappings: _mappings, suggested_threshold: suggestedThreshold} = response;
     const suggestedMapping = [];
 
-      _mappings?.fields?.forEach(({extract, generate, weight}) => {
+      _mappings?.fields?.forEach(({extract, generate, hardCodedValue, weight}) => {
         if (weight >= suggestedThreshold) {
           const itemWithSameGenerateIndex = suggestedMapping.findIndex((field => field.generate === generate));
 
           if (itemWithSameGenerateIndex === -1 || weight > suggestedMapping[itemWithSameGenerateIndex]?.weight) {
             if (!mappings.find(item => item.generate === generate)) {
-              suggestedMapping.push({extract, generate, key: shortid.generate()});
+              suggestedMapping.push({extract, generate, hardCodedValue, key: shortid.generate()});
             }
           }
         }
