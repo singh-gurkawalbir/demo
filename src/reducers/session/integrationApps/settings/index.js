@@ -27,7 +27,7 @@ function flattenChildrenStructrue(
 
     if (deleteChildlessParent && meta.children && meta.children.length) {
       allChildrenDeleted = !meta.children.some(
-        child => !deleted.includes(child.id)
+        child => !deleted?.[depth + 1]?.includes(child.id)
       );
     }
 
@@ -36,7 +36,7 @@ function flattenChildrenStructrue(
       isRoot,
       depth,
       ...(options?.lookups?.length && { lookups: options.lookups }),
-      deleted: allChildrenDeleted || deleted.includes(meta.id) || isParentDeleted,
+      deleted: allChildrenDeleted || deleted[depth]?.includes(meta.id) || isParentDeleted,
     });
 
     if (meta.children) {
@@ -44,7 +44,7 @@ function flattenChildrenStructrue(
         flattenChildrenStructrue(result, child, false, {
           deleted,
           depth: depth + 1,
-          isParentDeleted: deleted.includes(meta.id),
+          isParentDeleted: deleted[depth]?.includes(meta.id),
           deleteChildlessParent,
           lookups: meta.lookups,
         })
@@ -80,6 +80,7 @@ export default (state = {}, action) => {
     index,
     field,
     closeOnSave,
+    depth,
     options = {},
   } = action;
   const key = getStateKey(integrationId, flowId, sectionId);
@@ -529,18 +530,20 @@ export default (state = {}, action) => {
           if (!draft[cKey].deleted) {
             draft[cKey].deleted = [];
           }
+          if (!draft[cKey].deleted[depth]) {
+            draft[cKey].deleted[depth] = [];
+          }
 
-          draft[cKey].deleted.push(sectionId);
+          draft[cKey].deleted[depth].push(sectionId);
         }
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.RESTORE_CATEGORY:
         if (
-          draft[cKey] &&
-          draft[cKey].deleted &&
-          draft[cKey].deleted.indexOf(sectionId) > -1
+          draft[cKey]?.deleted?.[depth] &&
+          draft[cKey].deleted[depth]?.indexOf(sectionId) > -1
         ) {
-          draft[cKey].deleted.splice(draft[cKey].deleted.indexOf(sectionId), 1);
+          draft[cKey].deleted[depth].splice(draft[cKey].deleted[depth].indexOf(sectionId), 1);
         }
 
         break;

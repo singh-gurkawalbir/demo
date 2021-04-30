@@ -791,17 +791,19 @@ const integrationApp = {
           flowId,
           data,
         }),
-      deleteCategory: (integrationId, flowId, sectionId) =>
+      deleteCategory: (integrationId, flowId, sectionId, depth) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE_CATEGORY, {
           integrationId,
           flowId,
           sectionId,
+          depth,
         }),
-      restoreCategory: (integrationId, flowId, sectionId) =>
+      restoreCategory: (integrationId, flowId, sectionId, depth) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.RESTORE_CATEGORY, {
           integrationId,
           flowId,
           sectionId,
+          depth,
         }),
       receivedUpdatedMappingData: (integrationId, flowId, mappingData) =>
         action(
