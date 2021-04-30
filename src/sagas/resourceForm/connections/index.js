@@ -23,7 +23,7 @@ import { commitStagedChanges } from '../../resources';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import { isNewId } from '../../../utils/resource';
 import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
-import { REST_ASSISTANTS } from '../../../utils/constants';
+import { emptyObject, REST_ASSISTANTS } from '../../../utils/constants';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
 
 export function* createPayload({ values, resourceId }) {
@@ -144,11 +144,11 @@ export function* netsuiteUserRoles({ connectionId, values }) {
 
 export function* requestToken({ resourceId, fieldId, values }) {
   const resourceType = 'connections';
-  const { merged: connectionResource } = yield select(
+  const connectionResource = (yield select(
     selectors.resourceData,
     resourceType,
     resourceId
-  );
+  ))?.merged || emptyObject;
   let { assistant } = connectionResource;
 
   if (!assistant) throw new Error('Could not determine the assistant type');

@@ -119,8 +119,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const DateRange = props => {
-  const { isCalendar, setSelectedRange } = props;
-  const handleDateRangeSelection = useCallback(range => {
+  const { isCalendar, setSelectedRange, ranges } = props;
+  const handleDateRangeSelection = useCallback(({ selection: range }) => {
     let { startDate, endDate } = range;
 
     if (startDate.getTime() === endDate.getTime() && endDate.getTime() === startOfDay(endDate).getTime()) {
@@ -137,7 +137,7 @@ const DateRange = props => {
     return (
       <Calendar
         {...props}
-        showDateDisplay={false}
+        date={ranges[0].endDate} // ranges[0].endate consists the selected date
         onChange={handleCalendardateSelection}
         months={1}
      />
@@ -147,7 +147,7 @@ const DateRange = props => {
   return (
     <DateRangePicker
       {...props}
-      onChange={item => handleDateRangeSelection(item.selection)}
+      onChange={handleDateRangeSelection}
       months={2}
   />
   );

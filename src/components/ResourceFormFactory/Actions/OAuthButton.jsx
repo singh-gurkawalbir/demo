@@ -8,6 +8,7 @@ import { useLoadingSnackbarOnSave } from '.';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { useLoadIClientOnce } from '../../DynaForm/fields/DynaIclient';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { emptyObject } from '../../../utils/constants';
 
 export default function OAuthButton(props) {
   const { label, resourceType, disabled, resourceId, ...rest } = props;
@@ -15,7 +16,7 @@ export default function OAuthButton(props) {
     selectors.makeResourceDataSelector,
     resourceType,
     resourceId
-  ).merged;
+  )?.merged || emptyObject;
   const [snackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const { iClients } = useLoadIClientOnce({
