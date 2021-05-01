@@ -29,13 +29,20 @@ export default function Security() {
       if (isNewId(resourceId)) {
         return setIsSSOEnabled(prevValue => !prevValue);
       }
-      const patchSet = [
-        {
-          op: 'replace',
+      const patchSet = [];
+
+      if (oidcClient && 'disabled' in oidcClient) {
+        patchSet.push({
+          op: 'remove',
           path: '/disabled',
-          value: !oidcClient.disabled,
-        },
-      ];
+        });
+      } else {
+        patchSet.push({
+          op: 'add',
+          path: '/disabled',
+          value: true,
+        });
+      }
 
       dispatch(actions.resource.patch('ssoclients', resourceId, patchSet));
     },
