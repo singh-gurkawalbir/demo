@@ -1250,6 +1250,30 @@ describe('Flow sample data utility sagas', () => {
           })
           .run();
       });
+      test('should call fetchPageGeneratorPreview incase of flowInput/raw stages PP and pageprocessor is of type file adaptor', () => {
+        const resourceId = 'export-123';
+        const flowId = 'flow-123';
+        const sampleDataStage = 'raw';
+
+        return expectSaga(requestSampleDataForExports, { resourceId, flowId, sampleDataStage })
+          .provide([
+            [select(
+              selectors.isPageGenerator,
+              flowId,
+              resourceId,
+              'exports',
+            ), false],
+            [select(selectors.resource, 'exports', resourceId), {
+              adaptorType: 'FTPExport',
+            }],
+            [matchers.call.fn(apiCallWithRetry), undefined],
+          ])
+          .call(fetchPageGeneratorPreview, {
+            flowId,
+            _pageGeneratorId: resourceId,
+          })
+          .run();
+      });
       test('should call fetchPageProcessorPreview incase of flowInput/raw stages for PP', () => {
         const resourceId = 'export-123';
         const flowId = 'flow-123';
