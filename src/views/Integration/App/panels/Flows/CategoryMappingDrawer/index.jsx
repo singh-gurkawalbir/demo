@@ -253,8 +253,8 @@ function CategoryMappings({
   const handleVariation = useCallback(e => {
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
-    history.push(`${match.url}/variations/${sectionId}`);
-  }, [history, match.url, sectionId]);
+    history.push(`${match.url}/depth/${depth}/variations/${sectionId}`);
+  }, [history, match.url, sectionId, depth]);
 
   if (!generateFields) {
     return (

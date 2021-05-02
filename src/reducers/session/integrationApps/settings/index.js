@@ -718,11 +718,15 @@ selectors.mkMappingsForVariation = () => {
     variationMappingsSelector,
     (_1, _2, _3, filters) => filters,
     (recordMappings = emptyObj, filters = emptyObj) => {
-      const { sectionId, variation, isVariationAttributes } = filters;
+      const { sectionId, variation, isVariationAttributes, depth } = filters;
       let mappings = {};
 
       if (Array.isArray(recordMappings)) {
-        mappings = recordMappings.find(item => item.id === sectionId) || {};
+        if (depth === undefined) {
+          mappings = recordMappings.find(item => item.id === sectionId);
+        } else {
+          mappings = recordMappings.find(item => item.id === sectionId && +depth === item.depth);
+        }
       }
 
       if (isVariationAttributes) {
@@ -731,7 +735,7 @@ selectors.mkMappingsForVariation = () => {
 
       // propery being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
       // eslint-disable-next-line camelcase
-      const { variation_themes = [] } = mappings;
+      const { variation_themes = [] } = mappings || emptyObj;
 
       return (
         variation_themes.find(theme => theme.variation_theme === variation) || emptyObj
