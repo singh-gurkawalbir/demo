@@ -1416,7 +1416,7 @@ export default {
       lists: orderedLists,
     };
   },
-  autoMapperRecordTypeForAssistant: ({ resource }) => {
+  autoMapperRecordTypeForAssistant: resource => {
     const relativeUri = resource?.rest?.relativeURI || resource?.http?.relativeURI;
     const firstRelativeUri = Array.isArray(relativeUri) ? relativeUri[0] : relativeUri;
 

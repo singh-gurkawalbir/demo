@@ -606,41 +606,8 @@ export function* getAutoMapperSuggestion() {
   const destApplication = yield select(selectors.applicationName, importResource._id);
 
   reqBody.dest_application = destApplication?.toLowerCase() || '';
-
-  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
-    reqBody.dest_record_type = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
-  } else if (importResource.adaptorType === 'SalesforceImport') {
-    const { sObjectType } = importResource.salesforce;
-
-    reqBody.dest_record_type = sObjectType;
-  } else {
-    const assistant = yield select(selectors.assistantName, 'imports', importId);
-
-    if (assistant && AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE.indexOf(assistant) !== -1) {
-      reqBody.dest_record_type = mappingUtil.autoMapperRecordTypeForAssistant(importResource);
-    } else {
-      reqBody.dest_record_type = '';
-    }
-  }
-
-  if (exportResource.adaptorType === 'NetSuiteExport') {
-    const netsuiteType = exportResource.type === 'distributed' ? 'distributed' : 'restlet';
-
-    reqBody.source_record_type = exportResource.netsuite[netsuiteType].recordType;
-  } else if (exportResource.adaptorType === 'SalesforceExport') {
-    const { sObjectType } = exportResource.salesforce;
-
-    reqBody.source_record_type = sObjectType;
-  } else {
-    const assistant = yield select(selectors.assistantName, 'exports', exportResource._id);
-
-    if (assistant && AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE.indexOf(assistant) !== -1) {
-      reqBody.dest_record_type = mappingUtil.autoMapperRecordTypeForAssistant(exportResource);
-    } else {
-      reqBody.source_record_type = '';
-    }
-  }
-
+  reqBody.dest_record_type = yield select(selectors.recordTypeForAutoMapper(), 'imports', importId, subRecordMappingId);
+  reqBody.source_record_type = yield select(selectors.recordTypeForAutoMapper(), 'exports', exportResource._id);
   reqBody.dest_fields = generateFields.map(f => ({id: f.id}));
 
   const path = '/autoMapperSuggestions';
