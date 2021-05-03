@@ -56,8 +56,14 @@ export function resourceConflictResolution({ merged, master, origin }) {
   // resolution required
   // apply the staged patches over origin
   // mutate document set to false
-  const updatedMerged = applyPatch(origin, masterVsMerged, false, false)
-    .newDocument;
+  let updatedMerged;
+
+  try {
+    updatedMerged = applyPatch(origin, masterVsMerged, false, false)
+      .newDocument;
+  } catch (e) {
+    updatedMerged = {};
+  }
 
   return { conflict: null, merged: updatedMerged };
 }
