@@ -64,7 +64,7 @@ function PreviewInfo({
     // Note: If there is no flowId , it is a Standalone export as the resource type other than exports are restricted above
     if (!flowId || isPageGeneratorExport || isFileAdaptor(resource)) {
       dispatch(
-        actions.sampleData.request(resourceId, resourceType, value)
+        actions.sampleData.request(resourceId, resourceType, value, null, {flowId})
       );
     } else {
       dispatch(
