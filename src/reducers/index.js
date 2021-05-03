@@ -5430,8 +5430,8 @@ selectors.tileLicenseDetails = (state, tile) => {
 };
 
 // #region listener request logs selectors
-selectors.hasLogsAccess = (state, resourceId, resourceType, isNew) => {
-  if (resourceType !== 'exports') return false;
+selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
+  if (resourceType !== 'exports' || !flowId) return false;
   const resource = selectors.resource(state, 'exports', resourceId);
 
   if (!isRealtimeExport(resource)) return false;
