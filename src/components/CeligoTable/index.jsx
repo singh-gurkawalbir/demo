@@ -1,24 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import produce from 'immer';
-import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { useHistory } from 'react-router-dom';
 import {
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableSortLabel,
 } from '@material-ui/core';
-import Checkbox from '@material-ui/core/Checkbox';
+import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import produce from 'immer';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import ActionMenu from './ActionMenu';
-import CheckboxUnselectedIcon from '../icons/CheckboxUnselectedIcon';
-import CheckboxSelectedIcon from '../icons/CheckboxSelectedIcon';
-import DataRow from './DataRow';
+import TableBodyContent from './TableBodyContent';
+import { TableContextWrapper } from './TableContext';
+import TableHeader from './TableHeader';
 
 const useStyles = makeStyles(theme => ({
   visuallyHidden: {
@@ -60,10 +52,10 @@ const emptyObj = {};
 const emptySet = [];
 
 export default function CeligoTable({
-  columns,
+  useColumns,
   onRowOver,
   onRowOut,
-  rowActions,
+  useRowActions,
   data = emptySet,
   onSelectChange,
   selectableRows,
@@ -73,20 +65,12 @@ export default function CeligoTable({
   actionProps = emptyObj,
   variant = 'standard',  // slim | standard
 }) {
-  const history = useHistory();
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [selectedAction, setSelectedAction] = useState(undefined);
   const { sort } = useSelector(state =>
     selectors.filter(state, filterKey)
   );
-  const { order, orderBy } = sort || emptyObj;
-  const handleSort = useCallback(
-    (order, orderBy) => {
-      dispatch(actions.patchFilter(filterKey, { sort: { order, orderBy } }));
-    },
-    [dispatch, filterKey]
-  );
+
   const [selectedResources, setSelectedResources] = useState({});
   const [isAllSelected, setIsAllSelected] = useState(false);
 
@@ -158,125 +142,37 @@ export default function CeligoTable({
     },
     [data, isSelectableRow, onSelectChange, selectedResources]
   );
-  const handleActionSelected = useCallback(component => {
-    setSelectedAction(component);
-  }, []);
+
+  const columns = useColumns();
 
   return (
     <div className={clsx(className)}>
-      {selectedAction}
-      <Table data-public className={classes.table}>
-        <TableHead>
-          <TableRow>
-            {selectableRows && (
-              <TableCell>
-                <Checkbox
-                  icon={(<span> <CheckboxUnselectedIcon /> </span>)}
-                  checkedIcon={(<span> <CheckboxSelectedIcon /> </span>)}
-                  onChange={handleSelectAllChange}
-                  checked={isAllSelected}
-                  color="primary"
-                />
-              </TableCell>
-            )}
-            {(typeof columns === 'function'
-              ? columns('', actionProps)
-              : columns
-            ).map(col =>
-              col.orderBy ? (
-                <TableCell
-                  style={col.width ? { width: col.width } : undefined}
-                  key={col.heading}
-                  align={col.align || 'left'}
-                  sortDirection={orderBy === col.orderBy ? order : false}>
-                  <TableSortLabel
-                    active={orderBy === col.orderBy}
-                    direction={order}
-                    onClick={() =>
-                      handleSort(order === 'asc' ? 'desc' : 'asc', col.orderBy)}>
-                    {col.headerValue
-                      ? col.headerValue('', actionProps)
-                      : col.heading}
-                    {orderBy === col.orderBy ? (
-                      <span className={classes.visuallyHidden}>
-                        {order === 'desc'
-                          ? 'sorted descending'
-                          : 'sorted ascending'}
-                      </span>
-                    ) : null}
-                  </TableSortLabel>
-                </TableCell>
-              ) : (
-                <TableCell
-                  key={col.heading}
-                  style={col.width ? { width: col.width } : undefined}
-                  align={col.align || 'left'}>
-                  {col.headerValue
-                    ? col.headerValue('', actionProps)
-                    : col.heading}
-                </TableCell>
-              )
-            )}
-            {rowActions && (
-              <TableCell align="center" className={classes.actionColHead}>
-                {variant === 'slim' ? '' : 'Actions'}
-              </TableCell>
-            )}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.map(rowData => (
-            <DataRow
-              key={rowData.key || rowData._id}
-              rowData={rowData}
-              onRowOver={onRowOver}
-              onRowOut={onRowOut}
-              className={classes.row}
-            >
-              {selectableRows && (
-                <TableCell>
-                  {(isSelectableRow ? !!isSelectableRow(rowData) : true) && (
-                    <Checkbox
-                      onChange={event => handleSelectChange(event, rowData._id)}
-                      checked={!!selectedResources[rowData._id]}
-                      color="primary"
-                      icon={(<span><CheckboxUnselectedIcon /></span>)}
-                      checkedIcon={(<span><CheckboxSelectedIcon /></span>)}
-                    />
-                  )}
-                </TableCell>
-              )}
-              {(typeof columns === 'function'
-                ? columns(rowData, actionProps)
-                : columns
-              ).map((col, index) => index === 0 ? (
-                <TableCell
-                  component="th"
-                  scope="row"
-                  key={col.heading}
-                  align={col.align || 'left'}>
-                  {col.value(rowData, actionProps, history.location)}
-                </TableCell>
-              ) : (
-                <TableCell key={col.heading} align={col.align || 'left'}>
-                  {col.value(rowData, actionProps, history.location)}
-                </TableCell>
-              ))}
-              {rowActions && (
-                <TableCell className={classes.actionCell}>
-                  <ActionMenu
-                    selectAction={handleActionSelected}
-                    actionProps={actionProps}
-                    rowActions={rowActions}
-                    rowData={rowData}
-                    variant={variant}
-                  />
-                </TableCell>
-              )}
-            </DataRow>
-          ))}
-        </TableBody>
-      </Table>
+      <TableContextWrapper value={actionProps}>
+        <Table data-public className={classes.table}>
+          <TableHeader
+            selectableRows={selectableRows}
+            handleSelectAllChange={handleSelectAllChange}
+            isAllSelected={isAllSelected}
+            columns={columns}
+            filterKey={filterKey}
+            useRowActions={useRowActions}
+            variant={variant}
+  />
+
+          <TableBodyContent
+            data={data}
+            onRowOver={onRowOver}
+            onRowOut={onRowOut}
+            selectableRows={selectableRows}
+            isSelectableRow={isSelectableRow}
+            selectedResources={selectedResources}
+            handleSelectChange={handleSelectChange}
+            columns={columns}
+            useRowActions={useRowActions}
+            variant={variant}
+          />
+        </Table>
+      </TableContextWrapper>
     </div>
   );
 }
