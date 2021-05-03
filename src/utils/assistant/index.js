@@ -1181,6 +1181,7 @@ export function convertToReactFormFields({
       if (
         !anyParamValuesSet &&
         paramValue === undefined &&
+        paramMeta.isDeltaExport &&
         paramMeta.defaultValuesForDeltaExport &&
         Object.prototype.hasOwnProperty.call(
           paramMeta.defaultValuesForDeltaExport,

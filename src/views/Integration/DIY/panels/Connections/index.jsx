@@ -136,7 +136,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
         actions.resource.patchStaged(newId, patchSet, 'value')
       );
     }
-  }, [_integrationId, applications, childId, dispatch, history, integration._connectorId, isStandalone, location.pathname]);
+  }, [_integrationId, applications, childId, dispatch, history, integration?._connectorId, isStandalone, location.pathname]);
 
   return (
     <div className={classes.root}>

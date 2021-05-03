@@ -68,6 +68,33 @@ describe('rawDataUpdates sagas', () => {
         })
         .run();
     });
+
+    test('should call _fetchAndSaveRawDataForResource if the resource is a lookup and resource is of file adaptor type', () => {
+      const resourceId = 'lookup-123';
+      const tempId = 'new-123';
+      const resource = {
+        _id: resourceId,
+        name: 'rest lookup',
+        rawData: 'rawData1234',
+        adaptorType: 'FTPExport',
+        isLookup: true,
+      };
+
+      return expectSaga(onResourceCreate, { id: resourceId, resourceType: 'exports', tempId})
+        .provide([
+          [select(selectors.resource, 'exports', resourceId), resource],
+        ])
+        .call(saveTransformationRulesForNewXMLExport, {
+          resourceId,
+          tempResourceId: tempId,
+        })
+        .call(_fetchAndSaveRawDataForResource, {
+          type: 'exports',
+          resourceId,
+          tempResourceId: tempId,
+        })
+        .run();
+    });
     test('should call _fetchAndSaveRawDataForResource incase of imports', () => {
       const resourceId = 'import-123';
       const tempId = 'new-123';
@@ -154,6 +181,52 @@ describe('rawDataUpdates sagas', () => {
 
       return expectSaga(onResourceUpdate, { resourceId, resourceType, patch: rawDataPatchSet })
         .not.call(_fetchAndSaveRawDataForResource)
+        .run();
+    });
+
+    test('should call _fetchAndSaveRawDataForResource with exports type incase of lookups and resource is of file adaptor type', () => {
+      const relativeUriPatchSet = [{
+        path: '/rest/relativeURI',
+        op: 'replace',
+        value: '/api/v2/users.json',
+      }];
+      const resourceId = 'lookup-123';
+      const resourceType = 'exports';
+      const flowId = 'flow-1234';
+      const master = {
+        _id: resourceId,
+        name: 'rest lookup',
+        rawData: 'rawData1234',
+        adaptorType: 'RESTExport',
+        isLookup: true,
+      };
+
+      const flow = {
+        _id: flowId,
+        name: 'sample flow',
+        pageGenerators: [{_exportId: 'export-444' }],
+        pageProcessors: [{ type: 'export', _exportId: resourceId }, { type: 'import', _exportId: 'import-123' }],
+      };
+
+      return expectSaga(onResourceUpdate, { resourceType, resourceId, patch: relativeUriPatchSet, master})
+        .provide([
+          [select(
+            selectors.resourceFormState,
+            resourceType,
+            resourceId
+          ), { flowId }],
+          [select(selectors.resource, 'flows', flowId), flow],
+          [select(selectors.resource, resourceType, resourceId), {
+            adaptorType: 'HTTPExport',
+            http: {
+              type: 'file',
+            },
+          }],
+        ])
+        .call(_fetchAndSaveRawDataForResource, {
+          type: 'exports',
+          resourceId,
+        })
         .run();
     });
     test('should call _fetchAndSaveRawDataForResource with pageProcessors type incase of lookups or exports incase of exports', () => {

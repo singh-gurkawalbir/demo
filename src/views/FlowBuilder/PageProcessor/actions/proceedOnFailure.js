@@ -10,6 +10,7 @@ import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermiss
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 import { selectors } from '../../../../reducers';
+import ButtonGroup from '../../../../components/ButtonGroup';
 
 const emptyObject = {};
 
@@ -102,24 +103,28 @@ function ProceedOnFailureDialog(props) {
       <div>
         <DynaForm
           formKey={formKey} />
-        <DynaSubmit
-          formKey={formKey}
-          disabled={disableSave}
-          data-test="saveProceedOnFailure"
-          onClick={submitHandler()}>
-          {defaultLabels.saveLabel}
-        </DynaSubmit>
-        <DynaSubmit
-          formKey={formKey}
-          disabled={disableSave}
-          data-test="saveAndCloseProceedOnFailure"
-          color="secondary"
-          onClick={submitHandler(true)}>
-          {defaultLabels.saveAndCloseLabel}
-        </DynaSubmit>
-        <Button data-test="cancelProceedOnFailure" onClick={onClose}>
-          Cancel
-        </Button>
+      </div>
+      <div>
+        <ButtonGroup>
+          <DynaSubmit
+            formKey={formKey}
+            disabled={disableSave}
+            data-test="saveProceedOnFailure"
+            onClick={submitHandler()}>
+            {defaultLabels.saveLabel}
+          </DynaSubmit>
+          <DynaSubmit
+            formKey={formKey}
+            disabled={disableSave}
+            data-test="saveAndCloseProceedOnFailure"
+            color="secondary"
+            onClick={submitHandler(true)}>
+            {defaultLabels.saveAndCloseLabel}
+          </DynaSubmit>
+          <Button data-test="cancelProceedOnFailure" onClick={onClose}>
+            Cancel
+          </Button>
+        </ButtonGroup>
       </div>
     </ModalDialog>
   );
