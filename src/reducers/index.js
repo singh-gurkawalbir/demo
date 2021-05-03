@@ -5474,13 +5474,12 @@ selectors.assistantName = (state, resourceType, resourceId) => {
 
 selectors.recordTypeForAutoMapper = (state, resourceType, resourceId, subRecordMappingId) => {
   const resource = selectors.resource(state, resourceType, resourceId);
-  const assistantName = selectors.assistantName(state, resourceType, resourceId);
 
   if (!resource?.adaptorType) {
     return '';
   }
   if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(resource.adaptorType)) {
-    return selectors.mappingNSRecordType(state, resource._id, subRecordMappingId);
+    return selectors.mappingNSRecordType(state, resourceId, subRecordMappingId);
   }
   if (resource.adaptorType === 'NetSuiteExport') {
     const netsuiteType = resource.type === 'distributed' ? 'distributed' : 'restlet';
@@ -5492,6 +5491,8 @@ selectors.recordTypeForAutoMapper = (state, resourceType, resourceId, subRecordM
 
     return sObjectType;
   }
+  const assistantName = selectors.assistantName(state, resourceType, resourceId);
+
   if (assistantName && AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE.indexOf(assistantName) !== -1) {
     return mappingUtil.autoMapperRecordTypeForAssistant(resource);
   }
