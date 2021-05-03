@@ -358,7 +358,7 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
       resource.adaptorType
     ) >= 0 &&
       resource.type === 'blob') ||
-      (isFileAdaptor(resource) && resource.adaptorType.includes('Export'))
+      (isFileAdaptor(resource) && resource.adaptorType?.includes('Export'))
   ) {
     blockType = 'exportTransfer';
   } else if (
@@ -366,7 +366,7 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
       resource.adaptorType
     ) >= 0 &&
       resource.blob) ||
-      (isFileAdaptor(resource) && resource.adaptorType.includes('Import'))
+      (isFileAdaptor(resource) && resource.adaptorType?.includes('Import'))
   ) {
     blockType = 'importTransfer';
   }
