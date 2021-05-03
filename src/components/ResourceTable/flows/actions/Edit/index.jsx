@@ -7,7 +7,7 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { flowbuilderUrl } from '../../../../../utils/flows';
 
 export default {
-  label: 'Edit flow',
+  useLabel: () => 'Edit flow',
   icon: EditIcon,
   component: function Edit(props) {
     const { rowData = {} } = props;

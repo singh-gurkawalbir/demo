@@ -5,7 +5,7 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import CancelIcon from '../../../../icons/CancelIcon';
 
 export default {
-  label: 'Cancel transfer',
+  useLabel: () => 'Cancel transfer',
   icon: CancelIcon,
   component: function Cancel({ rowData: transfer }) {
     const dispatch = useDispatch();

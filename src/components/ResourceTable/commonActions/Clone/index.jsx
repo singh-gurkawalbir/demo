@@ -5,11 +5,18 @@ import { selectors } from '../../../../reducers';
 import CopyIcon from '../../../icons/CopyIcon';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import getRoutePath from '../../../../utils/routePaths';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
-  label: (rowData, actionProps) => `Clone ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`,
+  useLabel: () => {
+    const tableContext = useGetTableContext();
+
+    return `Clone ${MODEL_PLURAL_TO_LABEL[tableContext?.resourceType]?.toLowerCase()}`;
+  },
   icon: CopyIcon,
-  useHasAccess: ({ rowData, resourceType }) => {
+  useHasAccess: rowData => {
+    const {resourceType} = useGetTableContext();
+
     const { _integrationId } = rowData;
     const canClone = useSelector(state => selectors.resourcePermissions(
       state,

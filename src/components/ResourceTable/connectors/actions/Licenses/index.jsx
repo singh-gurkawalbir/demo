@@ -4,7 +4,7 @@ import TokensApiIcon from '../../../../icons/TokensApiIcon';
 import getRoutePath from '../../../../../utils/routePaths';
 
 export default {
-  label: 'Licenses',
+  useLabel: () => 'Licenses',
   icon: TokensApiIcon,
   component: function Licenses({ rowData = {} }) {
     const { _id: resourceId } = rowData;

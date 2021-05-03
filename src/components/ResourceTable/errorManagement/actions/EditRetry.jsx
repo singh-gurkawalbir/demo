@@ -3,7 +3,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import EditIcon from '../../../icons/EditIcon';
 
 export default {
-  label: 'Edit retry data',
+  useLabel: () => 'Edit retry data',
   icon: EditIcon,
   disabledActionText: ({isFlowDisabled}) => {
     if (isFlowDisabled) {

@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 
 export default {
-  label: 'Manage permissions',
+  useLabel: () => 'Manage permissions',
   component: function ManagePermissions({ rowData: user }) {
     const match = useRouteMatch();
     const history = useHistory();

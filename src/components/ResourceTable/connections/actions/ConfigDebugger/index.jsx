@@ -5,9 +5,9 @@ import { selectors } from '../../../../../reducers';
 import DebugIcon from '../../../../icons/DebugIcon';
 
 export default {
-  label: 'Debug connection',
+  useLabel: () => 'Debug connection',
   icon: DebugIcon,
-  useHasAccess: ({ rowData }) => {
+  useHasAccess: rowData => {
     const { _id: connectionId } = rowData;
 
     const hasAccess = useSelector(state => selectors.resourcePermissions(

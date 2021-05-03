@@ -5,7 +5,7 @@ import useConfirmDialog from '../../../ConfirmDialog';
 import RefreshIcon from '../../../icons/RefreshIcon';
 
 export default {
-  label: 'Retry',
+  useLabel: () => 'Retry',
   icon: RefreshIcon,
   disabledActionText: ({isFlowDisabled}) => {
     if (isFlowDisabled) {

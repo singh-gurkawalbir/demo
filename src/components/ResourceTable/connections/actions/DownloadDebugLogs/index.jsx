@@ -4,7 +4,7 @@ import actions from '../../../../../actions';
 import DownloadIcon from '../../../../icons/DownloadIcon';
 
 export default {
-  label: 'Download debug logs',
+  useLabel: () => 'Download debug logs',
   icon: DownloadIcon,
   component: function DownloadDebugLogs({ rowData = {} }) {
     const dispatch = useDispatch();

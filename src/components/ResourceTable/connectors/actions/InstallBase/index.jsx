@@ -4,7 +4,7 @@ import GroupOfUsersIcon from '../../../../icons/GroupOfUsersIcon';
 import getRoutePath from '../../../../../utils/routePaths';
 
 export default {
-  label: 'Install base',
+  useLabel: () => 'Install base',
   icon: GroupOfUsersIcon,
   component: function InstallBase({ rowData = {} }) {
     const { _id: resourceId } = rowData;

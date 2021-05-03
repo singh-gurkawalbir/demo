@@ -5,9 +5,9 @@ import { selectors } from '../../../../../reducers';
 import ReplaceIcon from '../../../../icons/ReplaceIcon';
 
 export default {
-  label: 'Replace connection',
+  useLabel: () => 'Replace connection',
   icon: ReplaceIcon,
-  useHasAccess: ({ rowData }) => {
+  useHasAccess: rowData => {
     const { _integrationId } = rowData;
     const hasAccess = useSelector(state => selectors.resourcePermissions(
       state,

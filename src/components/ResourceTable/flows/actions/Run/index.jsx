@@ -6,7 +6,7 @@ import actions from '../../../../../actions';
 import RunIcon from '../../../../icons/RunIcon';
 
 export default {
-  label: 'Run flow',
+  useLabel: () => 'Run flow',
   icon: RunIcon,
   component: withRouter(({ rowData = {}, history }) => {
     const { _integrationId: integrationId, _id: resourceId } = rowData;

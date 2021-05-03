@@ -63,7 +63,7 @@ export default {
   rowActions: (log, {flowId, exportId}) => ([
     {
       icon: TrashIcon,
-      label: 'Delete log',
+      useLabel: () => 'Delete log',
       onClick: (dispatch, confirmDialog) => {
         const handleClick = () => {
           dispatch(actions.logs.listener.removeLog(flowId, exportId, [log?.key]));

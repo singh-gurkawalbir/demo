@@ -3,10 +3,13 @@ import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import DownloadIcon from '../../../icons/DownloadIcon';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
-  label: (rowData, actionProps) => {
-    if (actionProps.resourceType === 'templates') {
+  useLabel: actionProps => {
+    const tableContext = useGetTableContext();
+
+    if (tableContext.resourceType === 'templates') {
       return 'Download template zip';
     }
 

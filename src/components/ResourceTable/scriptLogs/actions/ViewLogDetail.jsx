@@ -3,7 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 const emptyObject = {};
 export default {
-  label: () => 'View',
+  useLabel: () => 'View',
   component: function ViewLogDetail({scriptId, flowId = '', rowData = emptyObject}) {
     const {index} = rowData;
     const location = useLocation();

@@ -3,7 +3,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import HttpIcon from '../../../icons/HttpIcon';
 
 export default {
-  label: 'View HTTP response',
+  useLabel: () => 'View HTTP response',
   icon: HttpIcon,
   component: function ViewHttpResponse({ rowData = {} }) {
     const { errorId } = rowData;

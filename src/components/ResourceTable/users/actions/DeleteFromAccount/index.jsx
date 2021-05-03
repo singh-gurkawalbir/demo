@@ -8,7 +8,7 @@ import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
-  label: 'Remove user from account',
+  useLabel: () => 'Remove user from account',
   component: function DeleteFromAccount({ rowData: user }) {
     const { confirmDialog } = useConfirmDialog();
     const dispatch = useDispatch();

@@ -4,7 +4,7 @@ import actions from '../../../../actions';
 import DownloadIcon from '../../../icons/DownloadIcon';
 
 export default {
-  label: 'Download retry data',
+  useLabel: () => 'Download retry data',
   icon: DownloadIcon,
   disabledActionText: ({isFlowDisabled}) => {
     if (isFlowDisabled) {

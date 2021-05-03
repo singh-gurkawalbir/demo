@@ -4,7 +4,7 @@ import CalendarIcon from '../../../../icons/CalendarIcon';
 import ModalDialog from '../../../../ModalDialog';
 
 export default {
-  label: 'Schedule',
+  useLabel: () => 'Schedule',
   icon: CalendarIcon,
   component: function Schedule({ rowData = {} }) {
     const [showSchedule, setShowSchedule] = useState(true);

@@ -6,7 +6,7 @@ import { selectors } from '../../../../../reducers';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 
 export default {
-  label: 'Refresh metadata',
+  useLabel: () => 'Refresh metadata',
   icon: RefreshIcon,
   component: function RefreshMetadata({ rowData = {} }) {
     const { type: resourceType, _id: resourceId } = rowData;

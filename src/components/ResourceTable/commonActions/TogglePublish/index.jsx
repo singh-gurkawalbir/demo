@@ -4,13 +4,18 @@ import { useDispatch } from 'react-redux';
 import PublishIcon from '../../../icons/PublishIcon';
 import actions from '../../../../actions';
 import useConfirmDialog from '../../../ConfirmDialog';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
   label: r => (r.published ? 'Unpublish app' : 'Publish app'),
   // icon: r => (r.published ? UnpublishIcon : PublishIcon),
   // ToDo: Need to do changes here to render icon dynamically.
   icon: PublishIcon,
-  useHasAccess: ({ rowData, resourceType }) => !(resourceType === 'templates' && !rowData.applications?.length),
+  useHasAccess: rowData => {
+    const {resourceType} = useGetTableContext();
+
+    return !(resourceType === 'templates' && !rowData.applications?.length);
+  },
   component: function TogglePublish({ resourceType, rowData = {} }) {
     const { _id: resourceId, published: isPublished } = rowData;
     const { confirmDialog } = useConfirmDialog();

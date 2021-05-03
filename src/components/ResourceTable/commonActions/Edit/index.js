@@ -2,13 +2,16 @@ import { useCallback, useEffect} from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import EditIcon from '../../../icons/EditIcon';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
-  label: (rowData, actionProps) => {
-    if (['accesstokens', 'apis', 'connectors'].includes(actionProps.resourceType)) {
-      return `Edit ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]}`;
+  useLabel: rowData => {
+    const tableContext = useGetTableContext();
+
+    if (['accesstokens', 'apis', 'connectors'].includes(tableContext.resourceType)) {
+      return `Edit ${MODEL_PLURAL_TO_LABEL[tableContext?.resourceType]}`;
     }
-    if (actionProps?.resourceType?.includes('/licenses')) {
+    if (tableContext?.resourceType?.includes('/licenses')) {
       if (rowData.type === 'integrationAppChild') {
         return 'Edit child license';
       }
@@ -16,7 +19,7 @@ export default {
       return 'Edit license';
     }
 
-    return `Edit ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
+    return `Edit ${MODEL_PLURAL_TO_LABEL[tableContext?.resourceType]?.toLowerCase()}`;
   },
   icon: EditIcon,
   component: function Edit(props) {

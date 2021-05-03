@@ -5,7 +5,7 @@ import RevokeTokenIcon from '../../../../icons/RevokeTokenIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
-  label: 'Revoke',
+  useLabel: () => 'Revoke',
   icon: RevokeTokenIcon,
   component: function Revoke({ rowData = {} }) {
     const { _id: connectionId } = rowData;

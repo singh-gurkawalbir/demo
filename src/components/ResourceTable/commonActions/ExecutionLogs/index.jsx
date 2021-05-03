@@ -6,7 +6,7 @@ import actions from '../../../../actions';
 import AuditLogIcon from '../../../icons/AuditLogIcon';
 
 export default {
-  label: 'View execution log',
+  useLabel: () => 'View execution log',
   icon: AuditLogIcon,
   component: function ExecutionLogs({ rowData = {}, flowId }) {
     const { _id: scriptId } = rowData;

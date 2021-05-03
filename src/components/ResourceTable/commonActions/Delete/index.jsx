@@ -6,13 +6,16 @@ import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import ResourceReferences from '../../../ResourceReferences';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
-  label: (rowData, actionProps) => {
-    if (['accesstokens', 'apis', 'connectors'].includes(actionProps.resourceType)) {
-      return `Delete ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]}`;
+  useLabel: rowData => {
+    const tableContext = useGetTableContext();
+
+    if (['accesstokens', 'apis', 'connectors'].includes(tableContext.resourceType)) {
+      return `Delete ${MODEL_PLURAL_TO_LABEL[tableContext?.resourceType]}`;
     }
-    if (actionProps?.resourceType?.includes('/licenses')) {
+    if (tableContext?.resourceType?.includes('/licenses')) {
       if (rowData.type === 'integrationAppChild') {
         return 'Delete child license';
       }
@@ -20,10 +23,12 @@ export default {
       return 'Delete license';
     }
 
-    return `Delete ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
+    return `Delete ${MODEL_PLURAL_TO_LABEL[tableContext?.resourceType]?.toLowerCase()}`;
   },
   icon: TrashIcon,
-  useHasAccess: ({ rowData, resourceType }) => {
+  useHasAccess: rowData => {
+    const {resourceType} = useGetTableContext();
+
     const { _integrationId, _connectorId } = rowData;
     const canDelete = useSelector(state => selectors.resourcePermissions(
       state,

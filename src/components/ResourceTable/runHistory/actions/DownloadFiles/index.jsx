@@ -5,7 +5,7 @@ import JobFilesDownloadDialog from '../../../../JobDashboard/JobFilesDownloadDia
 import actions from '../../../../../actions';
 
 export default {
-  label: 'Download files',
+  useLabel: () => 'Download files',
   icon: DownloadIntegrationIcon,
   component: function DownloadFiles(props) {
     const { rowData: job = {} } = props;

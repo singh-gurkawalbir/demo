@@ -4,7 +4,7 @@ import actions from '../../../../../actions';
 import RegenerateTokenIcon from '../../../../icons/RegenerateTokenIcon';
 
 export default {
-  label: 'Generate new token',
+  useLabel: () => 'Generate new token',
   icon: RegenerateTokenIcon,
   component: function RegenerateAccessToken({ rowData = {} }) {
     const { _id: resourceId } = rowData;

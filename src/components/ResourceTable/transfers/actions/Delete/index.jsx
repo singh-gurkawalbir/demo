@@ -5,7 +5,7 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import TrashIcon from '../../../../icons/TrashIcon';
 
 export default {
-  label: 'Delete transfer',
+  useLabel: () => 'Delete transfer',
   icon: TrashIcon,
   component: function Delete({ rowData: transfer }) {
     const dispatch = useDispatch();

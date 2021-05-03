@@ -5,7 +5,7 @@ import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resour
 import RestoreIcon from '../../../../icons/RestoreIcon';
 
 export default {
-  label: 'Restore',
+  useLabel: () => 'Restore',
   icon: RestoreIcon,
   component: function Restore({ rowData = {} }) {
     const dispatch = useDispatch();

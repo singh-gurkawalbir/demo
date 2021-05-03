@@ -4,7 +4,7 @@ import actions from '../../../../actions';
 import CheckmarkIcon from '../../../icons/CheckmarkIcon';
 
 export default {
-  label: 'Resolve',
+  useLabel: () => 'Resolve',
   icon: CheckmarkIcon,
   component: function Resolve({ rowData, flowId, resourceId }) {
     const dispatch = useDispatch();

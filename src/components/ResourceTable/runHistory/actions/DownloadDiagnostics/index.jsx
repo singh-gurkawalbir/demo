@@ -4,7 +4,7 @@ import DownloadIntegrationIcon from '../../../../icons/DownloadIntegrationIcon';
 import actions from '../../../../../actions';
 
 export default {
-  label: 'Download diagnostics',
+  useLabel: () => 'Download diagnostics',
   icon: DownloadIntegrationIcon,
   component: function DownloadDiagnostics(props) {
     const { rowData: job = {} } = props;

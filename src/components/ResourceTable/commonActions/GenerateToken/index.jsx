@@ -3,12 +3,16 @@ import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import RegenerateTokenIcon from '../../../icons/RegenerateTokenIcon';
 import useConfirmDialog from '../../../ConfirmDialog';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
-  label: 'Generate new token',
+  useLabel: () => 'Generate new token',
   icon: RegenerateTokenIcon,
-  useHasAccess: ({ rowData, resourceType }) =>
-    !(resourceType === 'stacks' && rowData.type === 'lambda'),
+  useHasAccess: rowData => {
+    const {resourceType} = useGetTableContext();
+
+    return !(resourceType === 'stacks' && rowData.type === 'lambda');
+  },
   component: function GenerateToken({ rowData = {}, resourceType }) {
     const { _id: resourceId } = rowData;
     const dispatch = useDispatch();

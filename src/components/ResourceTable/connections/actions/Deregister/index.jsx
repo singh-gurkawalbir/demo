@@ -4,11 +4,14 @@ import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import CloseIcon from '../../../../icons/CloseIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
+import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 
 export default {
-  label: 'Deregister connection',
+  useLabel: () => 'Deregister connection',
   icon: CloseIcon,
-  useHasAccess: ({ integrationId }) => {
+  useHasAccess: () => {
+    const {integrationId} = useGetTableContext();
+
     const isStandalone = integrationId === 'none';
     const hasAccess = useSelector(state => selectors.resourcePermissions(
       state,

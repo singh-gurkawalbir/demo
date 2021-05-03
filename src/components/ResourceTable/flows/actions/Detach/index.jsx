@@ -7,9 +7,9 @@ import DetachIcon from '../../../../icons/unLinkedIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
-  label: 'Detach flow',
+  useLabel: () => 'Detach flow',
   icon: DetachIcon,
-  useHasAccess: ({ rowData }) => {
+  useHasAccess: rowData => {
     const { _integrationId } = rowData;
 
     const canDetach = useSelector(state => selectors.resourcePermissions(
