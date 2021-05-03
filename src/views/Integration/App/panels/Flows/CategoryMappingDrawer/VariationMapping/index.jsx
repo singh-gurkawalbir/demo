@@ -81,7 +81,7 @@ export const variationUrlName = (variation = '') => variation.replace(/\//g, '__
 function VariationMappingDrawer({ integrationId, parentUrl }) {
   const match = useRouteMatch();
   const { flowId, subCategoryId, variation: variationParamName, categoryId, depth } = match.params;
-  const variation = variationParamName?.replace(/__/g, '');
+  const variation = variationParamName?.replace(/__/g, '/');
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
