@@ -5480,4 +5480,12 @@ selectors.oidcSSOClient = state => {
 
   return ssoClients.find(client => client.type === 'oidc');
 };
+
+selectors.isSSOEnabled = state => {
+  const oidcClient = selectors.oidcSSOClient(state);
+
+  if (!oidcClient) return false;
+
+  return !!oidcClient.disabled;
+};
 // #endregion sso selectors

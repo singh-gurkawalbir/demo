@@ -32,6 +32,9 @@ export default function UserForm({
     integrationsFilterConfig
   ).resources;
   const users = useSelector(state => selectors.usersList(state));
+  const isAccountOwner = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
+  const isSSOEnabled = useSelector(state => selectors.isSSOEnabled(state));
+
   const isEditMode = !!id;
   const data = isEditMode ? users.find(u => u._id === id) : undefined;
   let integrationsToManage = [];
@@ -173,6 +176,15 @@ export default function UserForm({
         helpText:
           'The invited user will have permissions to monitor the integrations selected here.',
       },
+      accountSSORequired: {
+        type: 'checkbox',
+        id: 'accountSSORequired',
+        name: 'accountSSORequired',
+        label: 'Require account SSO?',
+        defaultValue: true,
+        omitWhenHidden: true,
+        visible: !isEditMode && isAccountOwner && isSSOEnabled,
+      },
     },
     layout: {
       fields: [
@@ -180,13 +192,14 @@ export default function UserForm({
         'accessLevel',
         'integrationsToManage',
         'integrationsToMonitor',
+        'accountSSORequired',
       ],
     },
   };
   const formKey = useFormInitWithPermissions({ fieldMeta });
 
   return (
-    <LoadResources required resources="integrations">
+    <LoadResources required resources="integrations,ssoclients">
       <DrawerContent>
         <DynaForm
           formKey={formKey} />

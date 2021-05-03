@@ -142,7 +142,7 @@ export default function Security() {
 
   return (
     <>
-      <LoadResources resources="ssoclients">
+      <LoadResources required resources="ssoclients">
         <div> Enable OIDC based SSO <CeligoSwitch
           onChange={handleEnableSSO}
           checked={isSSOEnabled}

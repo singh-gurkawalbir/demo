@@ -1,6 +1,7 @@
 import React from 'react';
 import AccessLevel from '../cells/AccessLevel';
 import EnableUser from '../cells/EnableUser';
+import RequireAccountSSO from '../cells/RequireAccountSSO';
 import ReinviteUser from '../cells/ReinviteUser';
 import Status from '../cells/Status';
 import Notifications from '../cells/Notifications';
@@ -13,7 +14,7 @@ import MakeAccountOwner from '../actions/MakeAccountOwner';
 import DeleteFromAccount from '../actions/DeleteFromAccount';
 
 export default {
-  columns: (r, { integrationId, isUserInErrMgtTwoDotZero }) => {
+  columns: (r, { integrationId, isUserInErrMgtTwoDotZero, isSSOEnabled }) => {
     const columns = [
       { heading: 'Name', value: r => r.sharedWithUser.name },
       { heading: 'Email', value: r => r.sharedWithUser.email },
@@ -44,6 +45,15 @@ export default {
         value: (r, { integrationId}) =>
           <Notifications user={r} integrationId={integrationId} />,
       }] : []),
+      ...((!integrationId && isSSOEnabled) ? [
+        { heading: 'Account SSO linked?',
+          value: r => {
+            if (!r.sharedWithUser.accountSSOLinked || r.sharedWithUser.accountSSOLinked === 'not_linked') return 'No';
+
+            return 'Yes';
+          }},
+        { heading: 'Require account SSO?', value: r => <RequireAccountSSO user={r} /> },
+      ] : []),
     ];
 
     return columns;
