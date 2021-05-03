@@ -590,6 +590,7 @@ selectors.resourceList = (state, options = {}) => {
       'published',
       'transfers',
       'apis',
+      'connectors',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type
@@ -617,6 +618,7 @@ selectors.resourceListModified = (userState, resourcesState, options = {}) => {
       'published',
       'transfers',
       'apis',
+      'connectors',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type
