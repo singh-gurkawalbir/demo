@@ -60,6 +60,8 @@ export default function ProfileComponent() {
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
+  const isSSOEnabled = useSelector(state => selectors.isSSOEnabled(state));
+
   const dateTimeZonesList = useMemo(
     () => [
       {
@@ -152,6 +154,7 @@ export default function ProfileComponent() {
         type: 'useremail',
         label: 'Email',
         helpKey: 'myaccount.email',
+        readOnly: isSSOEnabled,
         value: preferences && preferences.email,
       },
       password: {
@@ -160,6 +163,7 @@ export default function ProfileComponent() {
         label: 'Password',
         helpKey: 'myaccount.password',
         type: 'userpassword',
+        visible: !isSSOEnabled,
       },
       company: {
         id: 'company',

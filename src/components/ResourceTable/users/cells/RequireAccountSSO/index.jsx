@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
+import { Tooltip } from '@material-ui/core';
 import CeligoSwitch from '../../../../CeligoSwitch';
 import actions from '../../../../../actions';
 import actionTypes from '../../../../../actions/types';
@@ -45,10 +46,23 @@ export default function RequireAccountSSO({ user }) {
     commStatusHandler,
   });
 
+  const disableSwitch = sharedWithUser.accountSSOLinked === 'other_account' && !accountSSORequired;
+
+  if (disableSwitch) {
+    return (
+      <Tooltip data-public title="This user is already linked to another account’s SSO">
+        <CeligoSwitch
+          data-test="ssoRequired"
+          disabled
+          checked={accountSSORequired}
+          onChange={handleSwitch} />
+      </Tooltip>
+    );
+  }
+
   return (
     <CeligoSwitch
       data-test="ssoRequired"
-      disabled={sharedWithUser.accountSSOLinked === 'other_account' && !accountSSORequired}
       checked={accountSSORequired}
       onChange={handleSwitch}
       />
