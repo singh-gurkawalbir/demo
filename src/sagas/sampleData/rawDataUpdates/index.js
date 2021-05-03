@@ -18,7 +18,7 @@ import { exportPreview } from '../utils/previewCalls';
 import { saveRawDataOnResource, removeRawDataOnResource } from './utils';
 import saveRawDataForFileAdaptors from './fileAdaptorUpdates';
 import saveTransformationRulesForNewXMLExport from '../utils/xmlTransformationRulesGenerator';
-import { FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
+import { emptyObject, FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
 
 export function* _fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
   const resourceObj = yield select(
@@ -111,7 +111,7 @@ export function* onResourceCreate({ id, resourceType, tempId }) {
     });
     const resourceObj = yield select(selectors.resource, resourceType, id);
 
-    if (!resourceObj.isLookup) {
+    if (!resourceObj.isLookup || isFileAdaptor(resourceObj)) {
       // If export, get raw data calling preview and call save raw data with a patch on this id
       yield call(_fetchAndSaveRawDataForResource, {
         type: 'exports',
@@ -152,7 +152,9 @@ export function* onResourceUpdate({
       isLookup = !!pageProcessors.find(pp => pp._exportId === resourceId);
     }
 
-    if (isLookup) {
+    const resourceObj = yield select(selectors.resource, resourceType, resourceId);
+
+    if (isLookup && !isFileAdaptor(resourceObj)) {
       yield call(_fetchAndSaveRawDataForResource, {
         type: 'pageprocessors',
         flowId,
@@ -179,11 +181,11 @@ export function* onResourceUpdate({
   }
 
   if (resourceType === 'imports' && shouldUpdateResourceSampleData(patch)) {
-    const { merged: importResource = {} } = yield select(
+    const importResource = (yield select(
       selectors.resourceData,
       'imports',
       resourceId
-    );
+    ))?.merged || emptyObject;
 
     // Whenever an assistant import gets updated, its preview data ( sampleData ) needs to be reset
     if (importResource.assistant && !FILE_PROVIDER_ASSISTANTS.includes(importResource.assistant)) {

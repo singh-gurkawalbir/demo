@@ -8,14 +8,15 @@ import {
   getSubsequentStages,
   isRawDataPatchSet,
 } from '../../../../utils/flowData';
+import { emptyObject } from '../../../../utils/constants';
 
 export function* _updateResponseMapping({ flowId, resourceIndex }) {
-  const { merged: flow = {} } = yield select(
+  const flow = (yield select(
     selectors.resourceData,
     'flows',
     flowId,
     SCOPES.VALUE
-  );
+  ))?.merged || emptyObject;
   const { pageProcessors = [] } = flow;
   const updatedResource = pageProcessors[resourceIndex];
 

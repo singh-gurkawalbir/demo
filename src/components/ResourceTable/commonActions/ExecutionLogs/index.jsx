@@ -16,6 +16,7 @@ export default {
 
     useEffect(() => {
       dispatch(actions.logs.scripts.request({scriptId, flowId, isInit: true}));
+      dispatch(actions.bottomDrawer.addTab({tabType: 'scriptLogs', resourceId: scriptId}));
     }, [dispatch, flowId, scriptId]);
 
     useEffect(() => {

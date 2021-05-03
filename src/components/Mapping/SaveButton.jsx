@@ -70,7 +70,7 @@ export default function MappingSaveButton({
       color={color}
       disabled={disabled || disableSave || !mappingsChanged}
       onClick={handleButtonClick}>
-      {saveInProgress ? (
+      {saveInProgress && disableSave ? (
         <>
           <Spinner size="small" /> Saving
         </>
