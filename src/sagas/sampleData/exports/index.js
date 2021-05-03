@@ -145,7 +145,7 @@ export function* _getPreviewData({ resourceId, resourceType, values, runOffline,
       // if in case integration settings were used in export
       const flow = yield select(selectors.resource, 'flows', flowId);
 
-      const integrationId = flow?._integrationId || 'none';
+      const integrationId = flow?._integrationId;
 
       body._flowId = flowId;
       body._integrationId = integrationId;
