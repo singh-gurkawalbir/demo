@@ -56,10 +56,9 @@ const Mapping = ({flowId, importId, subRecordMappingId, disabled, onClose}) => {
                 flowId={flowId}
                 subRecordMappingId={subRecordMappingId}
               />
-              {canAutoMap && (
+              {canAutoMap && !disabled && (
                 <div className={classes.autoMapper}>
-                  <AutoMapperButton
-                    disabled={disabled} />
+                  <AutoMapperButton />
                 </div>
               )}
             </div>
