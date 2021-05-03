@@ -606,8 +606,8 @@ export function* getAutoMapperSuggestion() {
   const destApplication = yield select(selectors.applicationName, importResource._id);
 
   reqBody.dest_application = destApplication?.toLowerCase() || '';
-  reqBody.dest_record_type = yield select(selectors.recordTypeForAutoMapper(), 'imports', importId, subRecordMappingId);
-  reqBody.source_record_type = yield select(selectors.recordTypeForAutoMapper(), 'exports', exportResource._id);
+  reqBody.dest_record_type = yield select(selectors.recordTypeForAutoMapper, 'imports', importId, subRecordMappingId);
+  reqBody.source_record_type = yield select(selectors.recordTypeForAutoMapper, 'exports', exportResource._id);
   reqBody.dest_fields = generateFields.map(f => ({id: f.id}));
 
   const path = '/autoMapperSuggestions';
