@@ -10,7 +10,7 @@ import mappingUtil from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
 import { getResourceSubType} from '../../utils/resource';
-import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE, getImportOperationDetails } from '../../utils/assistant';
+import { getImportOperationDetails } from '../../utils/assistant';
 import {requestSampleData as requestFlowSampleData} from '../sampleData/flows';
 import {requestSampleData as requestImportSampleData} from '../sampleData/imports';
 import {requestAssistantMetadata} from '../resources/meta';
