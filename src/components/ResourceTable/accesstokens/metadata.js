@@ -14,17 +14,20 @@ const getDisplayToken = accessToken => <Display accessToken={accessToken} />;
 const getAutoPurgeAt = accessToken => <AutoPurgeAt accessToken={accessToken} />;
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'name',
       heading: 'Name',
       Value: ({rowData: r}) => <ResourceDrawerLink resourceType="accesstokens" resource={r} />,
       orderBy: 'name',
     },
     {
+      key: 'status',
       heading: 'Status',
       Value: ({rowData: r}) => (r.revoked ? 'Revoked' : 'Active'),
     },
     {
+      key: 'scope',
       heading: 'Scope',
       Value: ({rowData: r}) =>
         r.fullAccess ||
@@ -37,21 +40,24 @@ export default {
           : 'Custom',
     },
     {
+      key: 'autoPurge',
       heading: 'Auto purge',
       Value: ({rowData: r}) => getAutoPurgeAt(r),
     },
     {
+      key: 'lastUpdates',
       heading: 'Last updated',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {
+      key: 'token',
       // TODO add permission checks
       heading: 'Token',
       Value: ({rowData: r}) => getDisplayToken(r),
     },
   ],
-  rowActions: r => {
+  useRowActions: r => {
     let actionItems = [];
     const isOTT = r._connectorId && !r.autoPurgeAt;
 

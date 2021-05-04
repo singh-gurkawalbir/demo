@@ -10,7 +10,7 @@ const emptyArray = [];
 
 export default {
   key: 'tradingPartner',
-  label: rowData => `Mark as ${rowData?.ftp?.tradingPartner ? 'not' : ''} trading partner`,
+  useLabel: rowData => `Mark as ${rowData?.ftp?.tradingPartner ? 'not' : ''} trading partner`,
   icon: TradingPartnerIcon,
   useOnClick: rowData => {
     const { _id: connectionId } = rowData;
