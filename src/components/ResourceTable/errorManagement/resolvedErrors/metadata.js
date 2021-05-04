@@ -15,8 +15,10 @@ import { useGetTableContext } from '../../../CeligoTable/TableContext';
 export default {
   columns: [
     {
-      headerValue: function SelectAll(r, actionProps) {
-        return <SelectAllErrors {...actionProps} />;
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+        return <SelectAllErrors {...tableContext} />;
       },
       heading: 'Select All',
       Value: ({rowData: error}) => {
@@ -36,15 +38,19 @@ export default {
       Value: ({rowData: r}) => <TextOverflowCell message={r.code} />,
     },
     {
-      headerValue: function SelectResolvedSource(r, actionProps) {
-        return <SelectSource {...actionProps} />;
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+        return <SelectSource {...tableContext} />;
       },
       width: '10%',
       Value: ({rowData: r}) => <TextOverflowCell message={r.source} />,
     },
     {
-      headerValue: function SelectTimestamp(r, actionProps) {
-        return <SelectDate {...actionProps} />;
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+        return <SelectDate {...tableContext} />;
       },
       width: '12%',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.occurredAt} />,
@@ -59,10 +65,12 @@ export default {
       },
     },
     {
-      headerValue: function SelectResolvedAt(r, actionProps) {
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
         return (
           <SelectDate
-            {...actionProps}
+            {...tableContext}
             title="Resolved at"
             filterBy="resolvedAt" />
         );

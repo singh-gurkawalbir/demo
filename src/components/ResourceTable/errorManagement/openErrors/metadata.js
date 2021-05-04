@@ -18,8 +18,10 @@ import { useGetTableContext } from '../../../CeligoTable/TableContext';
 export default {
   columns: [
     {
-      headerValue: function SelectAll(r, actionProps) {
-        return <SelectAllErrors {...actionProps} />;
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+        return <SelectAllErrors {...tableContext} />;
       },
       heading: 'Select All',
       Value: ({rowData: error}) => {
@@ -52,15 +54,19 @@ export default {
       width: '15%',
     },
     {
-      headerValue: function SelectOpenSource(r, actionProps) {
-        return <SelectSource {...actionProps} />;
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+        return <SelectSource {...tableContext} />;
       },
       Value: ({rowData: r}) => <TextOverflowCell message={r.source} />,
       width: '15%',
     },
     {
-      headerValue: function SelectTimestamp(r, actionProps) {
-        return <SelectDate {...actionProps} />;
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+          <SelectDate {...tableContext} />;
       },
       width: '15%',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.occurredAt} />,

@@ -19,7 +19,7 @@ export default {
       { heading: 'Name', Value: ({rowData: r}) => r.sharedWithUser.name },
       { heading: 'Email', Value: ({rowData: r}) => r.sharedWithUser.email },
       {
-        headerValue: AccessLevelHeader,
+        HeaderValue: AccessLevelHeader,
         Value: ({rowData: r}) => {
           const {integrationId} = useGetTableContext();
 
@@ -27,7 +27,7 @@ export default {
         },
       },
       {
-        headerValue: StatusHeader,
+        HeaderValue: StatusHeader,
         Value: ({rowData: r}) => {
           const {integrationId} = useGetTableContext();
 
@@ -35,7 +35,7 @@ export default {
         },
       },
       {
-        headerValue: EnableUserHeader,
+        HeaderValue: EnableUserHeader,
         align: 'center',
         Value: ({rowData: r}) => {
           const {integrationId, accessLevel} = useGetTableContext();

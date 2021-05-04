@@ -12,7 +12,9 @@ import { useGetTableContext } from '../../CeligoTable/TableContext';
 export default {
   columns: [
     {
-      headerValue: function SelectTimestamp(_, {flowId, exportId}) {
+      HeaderValue: () => {
+        const {flowId, exportId} = useGetTableContext();
+
         const dispatch = useDispatch();
         const handleChange = useCallback(() => {
           dispatch(actions.logs.listener.request({flowId, exportId}));
@@ -43,7 +45,9 @@ export default {
       Value: log => log.method,
     },
     {
-      headerValue: function SelectResponseCode(_, { flowId, exportId }) {
+      HeaderValue: () => {
+        const {flowId, exportId} = useGetTableContext();
+
         const dispatch = useDispatch();
         const handleSave = useCallback(() => {
           dispatch(actions.logs.listener.request({flowId, exportId}));
