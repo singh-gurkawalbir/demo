@@ -8,7 +8,7 @@ import CeligoSwitch from '../../../components/CeligoSwitch';
 import DynaForm from '../../../components/DynaForm';
 import DynaSubmit from '../../../components/DynaForm/DynaSubmit';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
-import { generateNewId, isNewId } from '../../../utils/resource';
+import { generateNewId, isNewId, getDomainUrl } from '../../../utils/resource';
 import { hashCode } from '../../../utils/string';
 
 const useStyles = makeStyles(() => ({
@@ -140,6 +140,15 @@ export default function Security() {
     dispatch(actions.resource.commitStaged('ssoclients', resourceId, 'value'));
   }, [dispatch, resourceId]);
 
+  let domainURL = getDomainUrl();
+
+  if (domainURL.includes('localhost')) {
+    domainURL = 'https://staging.integrator.io';
+  }
+
+  const applicationLoginURL = `${domainURL}/sso/${oidcClient?.orgId}`;
+  const redirectURL = `${domainURL}/sso/${oidcClient?.orgId}/callback`;
+
   return (
     <>
       <LoadResources required resources="ssoclients">
@@ -152,6 +161,14 @@ export default function Security() {
           isSSOEnabled && (
             <div className={classes.ssoForm}>
               <DynaForm formKey={formKey} />
+              {
+                !!oidcClient?.orgId && (
+                <div>
+                  <div> Application login URL: { applicationLoginURL } </div>
+                  <div> Redirect URL: { redirectURL } </div>
+                </div>
+                )
+              }
               <DynaSubmit
                 formKey={formKey}
                 onClick={handleSubmit}>
