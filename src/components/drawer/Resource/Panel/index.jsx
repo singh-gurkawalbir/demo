@@ -69,10 +69,6 @@ const useStyles = makeStyles(theme => ({
     overflowY: 'auto',
 
   },
-  // exportsPanel: {
-  //   flexDirection: 'row',
-  //   margin: [[24, 0]],
-  // },
   appLogo: {
     padding: theme.spacing(0, 1),
     margin: theme.spacing(-0.5, 0),
@@ -397,7 +393,6 @@ export default function Panel(props) {
           />
             {showPreviewPanel && (
               <ExportsPreviewPanel
-                className={classes.exportsPanel}
                 resourceId={id}
                 formKey={newId}
                 resourceType={resourceType}

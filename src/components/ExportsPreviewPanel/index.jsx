@@ -1,6 +1,5 @@
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
@@ -120,7 +119,7 @@ function PreviewInfo({
   );
 }
 
-export default function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId, className }) {
+export default function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
   const classes = useStyles();
 
   const isPreviewDisabled = useSelector(state =>
@@ -147,7 +146,7 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
 
   return (
     <div
-      className={clsx(classes.previewPanelWrapper, className)}>
+      className={classes.previewPanelWrapper}>
       <Typography className={classes.previewDataHeading}>
         Preview data
         {/* <FieldHelp label="Preview data" helpKey="exports.previewData" /> */}
