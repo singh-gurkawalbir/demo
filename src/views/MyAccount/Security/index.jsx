@@ -11,9 +11,13 @@ import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermission
 import { generateNewId, isNewId, getDomainUrl } from '../../../utils/resource';
 import { hashCode } from '../../../utils/string';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   ssoForm: {
-    // maxWidth: '500px',
+    paddingLeft: theme.spacing(2),
+    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+  footer: {
+    marginTop: theme.spacing(2),
   },
 }));
 
@@ -84,7 +88,7 @@ export default function Security() {
         orgId: {
           id: 'orgId',
           name: 'orgId',
-          type: 'text',
+          type: 'ssoorgid',
           label: 'Organization id',
           required: true,
           defaultValue: oidcClient?.orgId,
@@ -159,9 +163,10 @@ export default function Security() {
         </div>
         {
           isSSOEnabled && (
-            <div className={classes.ssoForm}>
-              <DynaForm formKey={formKey} />
-              {
+            <>
+              <div className={classes.ssoForm}>
+                <DynaForm formKey={formKey} />
+                {
                 !!oidcClient?.orgId && (
                 <div>
                   <div> Application login URL: { applicationLoginURL } </div>
@@ -169,12 +174,15 @@ export default function Security() {
                 </div>
                 )
               }
-              <DynaSubmit
-                formKey={formKey}
-                onClick={handleSubmit}>
-                Save
-              </DynaSubmit>
-            </div>
+              </div>
+              <div className={classes.footer}>
+                <DynaSubmit
+                  formKey={formKey}
+                  onClick={handleSubmit}>
+                  Save
+                </DynaSubmit>
+              </div>
+            </>
           )
         }
 
