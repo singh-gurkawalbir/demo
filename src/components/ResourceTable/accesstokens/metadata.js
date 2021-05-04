@@ -17,18 +17,16 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: function TokenDrawerLink(r) {
-        return <ResourceDrawerLink resourceType="accesstokens" resource={r} />;
-      },
+      Value: ({rowData: r}) => <ResourceDrawerLink resourceType="accesstokens" resource={r} />,
       orderBy: 'name',
     },
     {
       heading: 'Status',
-      value: r => (r.revoked ? 'Revoked' : 'Active'),
+      Value: ({rowData: r}) => (r.revoked ? 'Revoked' : 'Active'),
     },
     {
       heading: 'Scope',
-      value: r =>
+      Value: ({rowData: r}) =>
         r.fullAccess ||
         (r._connectorId &&
           r.autoPurgeAt &&
@@ -40,17 +38,17 @@ export default {
     },
     {
       heading: 'Auto purge',
-      value: r => getAutoPurgeAt(r),
+      Value: ({rowData: r}) => getAutoPurgeAt(r),
     },
     {
       heading: 'Last updated',
-      value: r => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {
       // TODO add permission checks
       heading: 'Token',
-      value: r => getDisplayToken(r),
+      Value: ({rowData: r}) => getDisplayToken(r),
     },
   ],
   rowActions: r => {

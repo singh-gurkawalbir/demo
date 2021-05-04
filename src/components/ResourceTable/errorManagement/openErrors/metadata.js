@@ -13,6 +13,7 @@ import SelectAllErrors from '../cells/SelectAllErrors';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import TextOverflowCell from '../../../TextOverflowCell';
 import ErrorMessage from '../cells/ErrorMessage';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
   columns: [
@@ -21,34 +22,40 @@ export default {
         return <SelectAllErrors {...actionProps} />;
       },
       heading: 'Select All',
-      value: function Select(error, actionProps) {
-        return <SelectError error={error} {...actionProps} />;
+      Value: ({rowData: error}) => {
+        const tableContext = useGetTableContext();
+
+        return <SelectError error={error} {...tableContext} />;
       },
     },
     {
       heading: 'Message',
       width: '40%',
-      value: (r, { flowId, resourceId }) => (
-        <ErrorMessage
-          message={r.message}
-          errorId={r.errorId}
-          flowId={flowId}
-          resourceId={resourceId}
-          exportDataURI={r.exportDataURI}
-          importDataURI={r.importDataURI}
+      Value: ({rowData: r}) => {
+        const {flowId, resourceId} = useGetTableContext();
+
+        return (
+          <ErrorMessage
+            message={r.message}
+            errorId={r.errorId}
+            flowId={flowId}
+            resourceId={resourceId}
+            exportDataURI={r.exportDataURI}
+            importDataURI={r.importDataURI}
       />
-      ),
+        );
+      },
     },
     {
       heading: 'Code',
-      value: r => <TextOverflowCell message={r.code} />,
+      Value: ({rowData: r}) => <TextOverflowCell message={r.code} />,
       width: '15%',
     },
     {
       headerValue: function SelectOpenSource(r, actionProps) {
         return <SelectSource {...actionProps} />;
       },
-      value: r => <TextOverflowCell message={r.source} />,
+      Value: ({rowData: r}) => <TextOverflowCell message={r.source} />,
       width: '15%',
     },
     {
@@ -56,7 +63,7 @@ export default {
         return <SelectDate {...actionProps} />;
       },
       width: '15%',
-      value: r => <CeligoTimeAgo date={r.occurredAt} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.occurredAt} />,
     },
   ],
   rowActions: ({retryDataKey, source, reqAndResKey}, { actionInProgress }) => {

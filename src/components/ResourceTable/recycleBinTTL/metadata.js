@@ -7,22 +7,22 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: r => r.doc && r.doc.name,
+      Value: ({rowData: r}) => r.doc && r.doc.name,
       orderBy: 'doc.name',
     },
     {
       heading: 'Type',
-      value: r => r.model,
+      Value: ({rowData: r}) => r.model,
       orderBy: 'model',
     },
     {
       heading: 'Deleted date',
-      value: r => r.doc && <DateTimeDisplay dateTime={r.doc.lastModified} />,
+      Value: ({rowData: r}) => r.doc && <DateTimeDisplay dateTime={r.doc.lastModified} />,
       orderBy: 'doc.lastModified',
     },
     {
       heading: 'Auto purge',
-      value: r => {
+      Value: ({rowData: r}) => {
         const restoreWithin = Math.ceil(
           (30 * 24 * 60 * 60 * 1000 -
             (Date.now() - new Date(r.doc && r.doc.lastModified))) /

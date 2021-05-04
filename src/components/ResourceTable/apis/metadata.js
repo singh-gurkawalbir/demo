@@ -10,24 +10,20 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: function ExportDrawerLink(r) {
-        return <ResourceDrawerLink resourceType="apis" resource={r} />;
-      },
+      Value: ({rowData: r}) => <ResourceDrawerLink resourceType="apis" resource={r} />,
       orderBy: 'name',
     },
     {
       heading: 'Function',
-      value: function functionName(r) {
-        return r.function;
-      },
+      Value: ({rowData: r}) => r.function,
     },
     {
       heading: 'Script',
-      value: r => <ResourceName resourceType="scripts" resourceId={r._scriptId} />,
+      Value: ({rowData: r}) => <ResourceName resourceType="scripts" resourceId={r._scriptId} />,
     },
     {
       heading: 'Last updated',
-      value: r => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
   ],

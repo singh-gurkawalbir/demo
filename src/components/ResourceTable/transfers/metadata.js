@@ -9,19 +9,19 @@ export default {
     const columns = [
       {
         heading: 'From user',
-        value: r => r && <><div>{r?.ownerUser?.name || 'Me'}</div><div>{r?.ownerUser?.email}</div></>,
+        Value: ({rowData: r}) => r && <><div>{r?.ownerUser?.name || 'Me'}</div><div>{r?.ownerUser?.email}</div></>,
         orderBy: 'name',
       },
       {
         heading: 'To user',
-        value: r => r && <><div>{r?.transferToUser?.name || 'Me'}</div><div>{r?.transferToUser?.email}</div></>,
+        Value: ({rowData: r}) => r && <><div>{r?.transferToUser?.name || 'Me'}</div><div>{r?.transferToUser?.email}</div></>,
       },
       {
         heading: 'Integrations',
-        value: r => r && r.integrations,
+        Value: ({rowData: r}) => r && r.integrations,
       },
       { heading: <TableHeadWithRefreshIcon label="Status" resourceType="transfers" />,
-        value: r => {
+        Value: ({rowData: r}) => {
           if (!r) {
             return '';
           }
@@ -42,7 +42,7 @@ export default {
       },
       {
         heading: 'Transfer date',
-        value: r => r && <DateTimeDisplay dateTime={r.transferredAt} />,
+        Value: ({rowData: r}) => r && <DateTimeDisplay dateTime={r.transferredAt} />,
       },
     ];
 

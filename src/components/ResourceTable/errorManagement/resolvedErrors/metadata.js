@@ -10,6 +10,7 @@ import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import TextOverflowCell from '../../../TextOverflowCell';
 import SelectSource from '../cells/SelectSource';
 import SelectDate from '../cells/SelectDate';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
   columns: [
@@ -18,38 +19,44 @@ export default {
         return <SelectAllErrors {...actionProps} />;
       },
       heading: 'Select All',
-      value: function Select(error, actionProps) {
-        return <SelectError error={error} {...actionProps} />;
+      Value: ({rowData: error}) => {
+        const tableContext = useGetTableContext();
+
+        return <SelectError error={error} {...tableContext} />;
       },
     },
     {
       heading: 'Message',
       width: '25%',
-      value: r => <TextOverflowCell message={r.message} containsHtml />,
+      Value: ({rowData: r}) => <TextOverflowCell message={r.message} containsHtml />,
     },
     {
       heading: 'Code',
       width: '18%',
-      value: r => <TextOverflowCell message={r.code} />,
+      Value: ({rowData: r}) => <TextOverflowCell message={r.code} />,
     },
     {
       headerValue: function SelectResolvedSource(r, actionProps) {
         return <SelectSource {...actionProps} />;
       },
       width: '10%',
-      value: r => <TextOverflowCell message={r.source} />,
+      Value: ({rowData: r}) => <TextOverflowCell message={r.source} />,
     },
     {
       headerValue: function SelectTimestamp(r, actionProps) {
         return <SelectDate {...actionProps} />;
       },
       width: '12%',
-      value: r => <CeligoTimeAgo date={r.occurredAt} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.occurredAt} />,
     },
     {
       heading: 'Resolved by',
       width: '12%',
-      value: (r, { flowId }) => <UserName userId={r.resolvedBy} flowId={flowId} />,
+      Value: ({rowData: r}) => {
+        const {flowId} = useGetTableContext();
+
+        return <UserName userId={r.resolvedBy} flowId={flowId} />;
+      },
     },
     {
       headerValue: function SelectResolvedAt(r, actionProps) {
@@ -61,7 +68,7 @@ export default {
         );
       },
       width: '12%',
-      value: r => <CeligoTimeAgo date={r.resolvedAt} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.resolvedAt} />,
     },
   ],
   rowActions: ({ retryDataKey, reqAndResKey }, { actionInProgress }) => {

@@ -11,26 +11,35 @@ import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../../../utils/constants';
 import ManagePermissions from '../actions/ManagePermissions';
 import MakeAccountOwner from '../actions/MakeAccountOwner';
 import DeleteFromAccount from '../actions/DeleteFromAccount';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
   columns: (r, { integrationId, isUserInErrMgtTwoDotZero }) => {
     const columns = [
-      { heading: 'Name', value: r => r.sharedWithUser.name },
-      { heading: 'Email', value: r => r.sharedWithUser.email },
+      { heading: 'Name', Value: ({rowData: r}) => r.sharedWithUser.name },
+      { heading: 'Email', Value: ({rowData: r}) => r.sharedWithUser.email },
       {
         headerValue: AccessLevelHeader,
-        value: (r, { integrationId}) =>
-          <AccessLevel user={r} integrationId={integrationId} />,
+        Value: ({rowData: r}) => {
+          const {integrationId} = useGetTableContext();
+
+          return <AccessLevel user={r} integrationId={integrationId} />;
+        },
       },
       {
         headerValue: StatusHeader,
-        value: (r, { integrationId}) =>
-          <Status user={r} integrationId={integrationId} />,
+        Value: ({rowData: r}) => {
+          const {integrationId} = useGetTableContext();
+
+          return <Status user={r} integrationId={integrationId} />;
+        },
       },
       {
         headerValue: EnableUserHeader,
         align: 'center',
-        value: (r, { integrationId, accessLevel}) => {
+        Value: ({rowData: r}) => {
+          const {integrationId, accessLevel} = useGetTableContext();
+
           if (!r.dismissed) {
             return <EnableUser user={r} integrationId={integrationId} accessLevel={accessLevel} />;
           }
@@ -41,8 +50,12 @@ export default {
       ...((integrationId && isUserInErrMgtTwoDotZero) ? [{
         heading: 'Notifications',
         align: 'center',
-        value: (r, { integrationId}) =>
-          <Notifications user={r} integrationId={integrationId} />,
+        Value: ({rowData: r}) => {
+          const {integrationId} = useGetTableContext();
+
+          return <Notifications user={r} integrationId={integrationId} />;
+        },
+
       }] : []),
     ];
 

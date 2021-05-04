@@ -9,30 +9,28 @@ export default {
     const columns = [
       {
         heading: 'Date',
-        value: r => <CeligoTimeAgo date={r.time} />,
+        Value: ({rowData: r}) => <CeligoTimeAgo date={r.time} />,
       },
       {
         heading: 'Step name',
-        value: function StepName(r) {
-          return (
-            <ResourceName
-              resourceId={r._resourceId}
+        Value: ({rowData: r}) => (
+          <ResourceName
+            resourceId={r._resourceId}
           />
-          );
-        },
+        ),
       },
       {
         heading: 'Function type',
-        value: r => r.functionType,
+        Value: ({rowData: r}) => r.functionType,
       },
       {
         heading: 'Log level',
-        value: r => r.logLevel,
+        Value: ({rowData: r}) => r.logLevel,
       },
       {
         heading: 'Message',
         width: '25%',
-        value: r => (
+        Value: ({rowData: r}) => (
           <TextOverflowCell
             message={r.message}
             />

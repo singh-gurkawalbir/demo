@@ -5,7 +5,7 @@ export default {
   columns: (r, actionProps) => [
     {
       heading: 'Name',
-      value: resource => (
+      Value: ({rowData: resource}) => (
         <ResourceDrawerLink
           ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
           resourceType="connections"
@@ -16,7 +16,7 @@ export default {
     },
     {
       heading: 'Type',
-      value: resource => ({
+      Value: ({rowData: resource}) => ({
         ebay: 'eBay',
         ftp: 'FTP',
         sftp: 'SFTP',
@@ -32,12 +32,12 @@ export default {
     },
     {
       heading: 'API',
-      value: resource =>
+      Value: ({rowData: resource}) =>
         (resource[resource.type === 'sftp' ? 'ftp' : resource.type].hostURI),
     },
     {
       heading: 'Username',
-      value: resource =>
+      Value: ({rowData: resource}) =>
         (resource[resource.type === 'sftp' ? 'ftp' : resource.type].username),
     },
   ],

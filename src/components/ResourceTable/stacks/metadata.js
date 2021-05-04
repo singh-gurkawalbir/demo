@@ -15,37 +15,35 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: function StacksDrawerLink(r) {
-        return <ResourceDrawerLink resourceType="stacks" resource={r} />;
-      },
+      Value: ({rowData: r}) => <ResourceDrawerLink resourceType="stacks" resource={r} />,
       orderBy: 'name',
     },
     {
       heading: 'Type',
-      value: r => r.type,
+      Value: ({rowData: r}) => r.type,
       orderBy: 'type',
     },
     {
       heading: 'Host',
-      value: r => r.server && r.server.hostURI,
+      Value: ({rowData: r}) => r.server && r.server.hostURI,
     },
     {
       heading: 'Function name',
-      value: r => r.lambda && r.lambda.functionName,
+      Value: ({rowData: r}) => r.lambda && r.lambda.functionName,
     },
     {
       heading: 'Access key ID',
-      value: r => r.lambda && r.lambda.accessKeyId,
+      Value: ({rowData: r}) => r.lambda && r.lambda.accessKeyId,
     },
     {
       heading: 'Last updated',
-      value: r => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {
       heading: 'System token',
       width: '285px',
-      value: r => (r.server ? !r.shared && getSystemToken(r) : 'N/A'),
+      Value: ({rowData: r}) => (r.server ? !r.shared && getSystemToken(r) : 'N/A'),
     },
   ],
   rowActions: r => {

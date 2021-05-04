@@ -8,32 +8,32 @@ export default {
   columns: [
     {
       heading: 'Status',
-      value: r => getJobStatus(r),
+      Value: ({rowData: r}) => getJobStatus(r),
     },
     {
       heading: 'Duration',
-      value: r => getJobDuration(r),
+      Value: ({rowData: r}) => getJobDuration(r),
     },
     {
       heading: 'Started',
-      value: r => <CeligoTimeAgo date={r.startedAt} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.startedAt} />,
     },
     {
       heading: 'Completed',
-      value: r => <CeligoTimeAgo date={r.endedAt} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.endedAt} />,
     },
     {
       heading: 'Success',
-      value: r => r.numSuccess,
+      Value: ({rowData: r}) => r.numSuccess,
     },
     {
       heading: 'Ignored',
-      value: r => r.numIgnore,
+      Value: ({rowData: r}) => r.numIgnore,
     },
-    { heading: 'Errors', value: r => r.numOpenError },
+    { heading: 'Errors', Value: ({rowData: r}) => r.numOpenError },
     {
       heading: 'Pages',
-      value: r => r.numPagesGenerated,
+      Value: ({rowData: r}) => r.numPagesGenerated,
     },
 
   ],

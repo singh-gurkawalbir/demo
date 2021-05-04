@@ -11,14 +11,12 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: function ScriptsDrawerLink(r) {
-        return <ResourceDrawerLink resourceType="scripts" resource={r} />;
-      },
+      Value: ({rowData: r}) => <ResourceDrawerLink resourceType="scripts" resource={r} />,
       orderBy: 'name',
     },
     {
       heading: 'Last updated',
-      value: r => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
       width: '12%',
     },

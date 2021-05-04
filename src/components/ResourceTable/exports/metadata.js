@@ -12,16 +12,16 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: r => <ResourceDrawerLink resourceType="exports" resource={r} />,
+      Value: ({rowData: r}) => <ResourceDrawerLink resourceType="exports" resource={r} />,
       orderBy: 'name',
     },
     {
       heading: 'Application',
-      value: r => <ConnectorName resource={r} />,
+      Value: ({rowData: r}) => <ConnectorName resource={r} />,
     },
     {
       heading: 'Last updated',
-      value: r => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
   ],

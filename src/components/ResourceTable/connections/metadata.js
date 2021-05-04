@@ -23,7 +23,7 @@ export default {
     const columns = [
       {
         heading: 'Name',
-        value: r => (
+        Value: ({rowData: r}) => (
           <ConnectionResourceDrawerLink
             resource={r}
             integrationId={actionProps.integrationId}
@@ -33,15 +33,15 @@ export default {
       },
       {
         heading: 'Status',
-        value: r => <OnlineStatus offline={r.offline} />,
+        Value: ({rowData: r}) => <OnlineStatus offline={r.offline} />,
       },
       {
         heading: 'Type',
-        value: r => <ConnectorName resource={r} />,
+        Value: ({rowData: r}) => <ConnectorName resource={r} />,
       },
       {
         heading: 'API',
-        value: r => {
+        Value: ({rowData: r}) => {
           if (r.type === 'rest') return r && r.rest && r.rest.baseURI;
 
           if (r.type === 'http') return r && r.http && r.http.baseURI;
@@ -51,14 +51,14 @@ export default {
       },
       {
         heading: 'Last updated',
-        value: r => <CeligoTimeAgo date={r.lastModified} />,
+        Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
         orderBy: 'lastModified',
         width: 160,
       },
       {
         heading: 'Queue size',
         // align: 'right',
-        value: r => r.queueSize || 0,
+        Value: ({rowData: r}) => r.queueSize || 0,
         width: 120,
       },
     ];

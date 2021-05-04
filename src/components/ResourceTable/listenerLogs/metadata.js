@@ -7,6 +7,7 @@ import { LISTENER_LOGS_RANGE_FILTERS, FILTER_KEY, LISTENER_LOGS_STATUS_CODES, DE
 import TrashIcon from '../../icons/TrashIcon';
 
 import LogDetailsLink from './cells/LogDetailsLink';
+import { useGetTableContext } from '../../CeligoTable/TableContext';
 
 export default {
   columns: [
@@ -31,13 +32,15 @@ export default {
             skipLastEndDate />
         );
       },
-      value: function LogDetails(log, {exportId}) {
+      Value: ({rowData: log}) => {
+        const {exportId} = useGetTableContext();
+
         return <LogDetailsLink logKey={log.key} exportId={exportId} time={log.utcDateTime} />;
       },
     },
     {
       heading: 'Method',
-      value: log => log.method,
+      Value: log => log.method,
     },
     {
       headerValue: function SelectResponseCode(_, { flowId, exportId }) {
@@ -57,7 +60,7 @@ export default {
             options={LISTENER_LOGS_STATUS_CODES} />
         );
       },
-      value: log => log.statusCode,
+      Value: log => log.statusCode,
     },
   ],
   rowActions: (log, {flowId, exportId}) => ([

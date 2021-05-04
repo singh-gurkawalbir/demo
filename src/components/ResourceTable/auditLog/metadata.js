@@ -8,47 +8,52 @@ import DateTimeDisplay from '../../DateTimeDisplay';
 import OldValue from './cells/OldValue';
 import NewValue from './cells/NewValue';
 import NameCell from './cells/Name';
+import { useGetTableContext } from '../../CeligoTable/TableContext';
 
 export default {
   columns: [
     {
       heading: 'Time',
-      value: al => <DateTimeDisplay dateTime={al.time} />,
+      Value: ({rowData: al}) => <DateTimeDisplay dateTime={al.time} />,
       width: '10%',
     },
     {
       heading: 'Source',
-      value: al => AUDIT_LOG_SOURCE_LABELS[al.source] || al.source,
+      Value: ({rowData: al}) => AUDIT_LOG_SOURCE_LABELS[al.source] || al.source,
       width: '11%',
     },
     {
       heading: 'User',
-      value: al => al.byUser && (al.byUser.name || al.byUser.email),
+      Value: ({rowData: al}) => al.byUser && (al.byUser.name || al.byUser.email),
       width: '12%',
     },
     {
       heading: 'Resource',
-      value: al => RESOURCE_TYPE_SINGULAR_TO_LABEL[al.resourceType],
+      Value: ({rowData: al}) => RESOURCE_TYPE_SINGULAR_TO_LABEL[al.resourceType],
       width: '10%',
     },
     {
       heading: 'Name/ID',
-      value: (al, actionProps) => <NameCell al={al} actionProps={actionProps} />,
+      Value: ({rowData: al}) => {
+        const tableContext = useGetTableContext();
+
+        return <NameCell al={al} actionProps={tableContext} />;
+      },
       width: '10%',
     },
     {
       heading: 'Action',
-      value: al => AUDIT_LOG_EVENT_LABELS[al.event] || al.event,
+      Value: ({rowData: al}) => AUDIT_LOG_EVENT_LABELS[al.event] || al.event,
       width: '8%',
     },
     {
       heading: 'Field',
-      value: al => al.fieldChange && al.fieldChange.fieldPath,
+      Value: ({rowData: al}) => al.fieldChange && al.fieldChange.fieldPath,
       width: '13%',
     },
     {
       heading: 'Old value',
-      value: al => (
+      Value: ({rowData: al}) => (
         <OldValue
           auditLog={al}
           oldValue={al.fieldChange.oldValue}
@@ -59,7 +64,7 @@ export default {
     },
     {
       heading: 'New value',
-      value: al => (
+      Value: ({rowData: al}) => (
         <NewValue
           oldValue={al.fieldChange.oldValue}
           newValue={al.fieldChange.newValue}

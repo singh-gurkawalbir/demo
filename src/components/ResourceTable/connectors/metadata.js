@@ -14,22 +14,18 @@ export default {
   columns: [
     {
       heading: 'Applications',
-      value: function Applications(r) {
-        return <ApplicationImgCell applications={r.applications} />;
-      },
+      Value: ({rowData: r}) => <ApplicationImgCell applications={r.applications} />,
 
     },
     {
       heading: 'Name',
       width: '25%',
-      value: function ConnectorsDrawerLink(r) {
-        return <TextOverflowCell message={<ResourceDrawerLink resourceType="connectors" resource={r} />} />;
-      },
+      Value: ({rowData: r}) => <TextOverflowCell message={<ResourceDrawerLink resourceType="connectors" resource={r} />} />,
       orderBy: 'name',
     },
     {
       heading: 'Last updated',
-      value: r => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {
@@ -47,16 +43,14 @@ export default {
     },
     {
       heading: 'Published',
-      value: function Type(r) {
-        return (
-          <OnOffCell
-            connectorId={r._id}
-            published={r.published}
-            applications={r.applications}
-            resourceType="connectors"
+      Value: ({rowData: r}) => (
+        <OnOffCell
+          connectorId={r._id}
+          published={r.published}
+          applications={r.applications}
+          resourceType="connectors"
           />
-        );
-      },
+      ),
       orderBy: 'published',
     },
   ],

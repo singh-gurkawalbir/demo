@@ -11,7 +11,7 @@ export default {
   columns: (r, actionProps) => [
     {
       heading: 'Name',
-      value: resource => (
+      Value: ({rowData: resource}) => (
         <NameCell
           ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
           flow={resource}
@@ -20,11 +20,11 @@ export default {
     },
     {
       heading: 'Type',
-      value: resource => flowType(resource),
+      Value: ({rowData: resource}) => flowType(resource),
     },
     {
       heading: 'Mapping',
-      value: resource => (
+      Value: ({rowData: resource}) => (
         <MappingCell
           ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
           flow={resource}
@@ -33,7 +33,7 @@ export default {
     },
     {
       heading: 'Schedule',
-      value: resource => (
+      Value: ({rowData: resource}) => (
         <ScheduleCell
           ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
           flow={resource}
@@ -42,7 +42,7 @@ export default {
     },
     {
       heading: 'Run',
-      value: resource => (
+      Value: ({rowData: resource}) => (
         <RunCell
           ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
           flow={resource}
@@ -51,7 +51,7 @@ export default {
     },
     {
       heading: 'Off/On',
-      value: resource => (
+      Value: ({rowData: resource}) => (
         <OnOffCell
           ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
           flow={resource}
@@ -60,7 +60,7 @@ export default {
     },
     {
       heading: !actionProps.isConnector ? 'Delete' : '',
-      value: resource => {
+      Value: ({rowData: resource}) => {
         if (actionProps.isConnector) {
           return null;
         }

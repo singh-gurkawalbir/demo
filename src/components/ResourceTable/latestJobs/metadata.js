@@ -7,33 +7,33 @@ export default {
   columns: [
     {
       heading: 'Step',
-      value: r => <FlowStepName job={r} />,
+      Value: ({rowData: r}) => <FlowStepName job={r} />,
     },
     {
       heading: 'Status',
-      value: r => <FlowStepStatus job={r} />,
+      Value: ({rowData: r}) => <FlowStepStatus job={r} />,
     },
     {
       heading: 'Success',
-      value: r => r.numSuccess,
+      Value: ({rowData: r}) => r.numSuccess,
     },
     {
       heading: 'Ignored',
-      value: r => r.numIgnore,
+      Value: ({rowData: r}) => r.numIgnore,
     },
-    { heading: 'Errors', value: r => r.numOpenError },
-    { heading: 'Resolved', value: r => r.numResolved },
+    { heading: 'Errors', Value: ({rowData: r}) => r.numOpenError },
+    { heading: 'Resolved', Value: ({rowData: r}) => r.numResolved },
     {
       heading: 'Pages',
-      value: r => r.type === 'export' ? r.numPagesGenerated : r.numPagesProcessed,
+      Value: ({rowData: r}) => r.type === 'export' ? r.numPagesGenerated : r.numPagesProcessed,
     },
     {
       heading: 'Duration',
-      value: r => r.duration,
+      Value: ({rowData: r}) => r.duration,
     },
     {
       heading: 'Completed',
-      value: r => <CeligoTimeAgo date={r.endedAt} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.endedAt} />,
     },
   ],
 };

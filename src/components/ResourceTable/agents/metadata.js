@@ -18,33 +18,31 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: function ExportDrawerLink(r) {
-        return <ResourceDrawerLink resourceType="agents" resource={r} />;
-      },
+      Value: ({rowData: r}) => <ResourceDrawerLink resourceType="agents" resource={r} />,
       orderBy: 'name',
     },
     {
       heading: 'Status',
-      value: r => <OnlineStatus offline={r.offline} />,
+      Value: ({rowData: r}) => <OnlineStatus offline={r.offline} />,
     },
     {
       heading: 'Last heartbeat',
-      value: r => <CeligoTimeAgo date={r.lastHeartbeatAt} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastHeartbeatAt} />,
       orderBy: 'lastHeartbeatAt',
     },
     {
       heading: 'Last updated',
-      value: r => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
 
     {
       heading: 'Install',
-      value: r => getAgentDownloadInstaller(r),
+      Value: ({rowData: r}) => getAgentDownloadInstaller(r),
     },
     {
       heading: 'Access token',
-      value: r => <AgentToken agentId={r._id} />,
+      Value: ({rowData: r}) => <AgentToken agentId={r._id} />,
     },
   ],
   rowActions: () => [Edit, References, GenerateToken, Delete],
