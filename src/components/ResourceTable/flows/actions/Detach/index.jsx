@@ -7,6 +7,7 @@ import DetachIcon from '../../../../icons/unLinkedIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
+  key: 'detachFlow',
   useLabel: () => 'Detach flow',
   icon: DetachIcon,
   useHasAccess: rowData => {

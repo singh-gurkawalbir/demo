@@ -6,6 +6,7 @@ import CancelIcon from '../../../../icons/CancelIcon';
 import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 
 export default {
+  key: 'cancelTransfer',
   useLabel: () => 'Cancel transfer',
   icon: CancelIcon,
   useOnClick: () => {

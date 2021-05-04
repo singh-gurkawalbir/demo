@@ -6,6 +6,7 @@ import TrashIcon from '../../../../icons/TrashIcon';
 import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 
 export default {
+  key: 'deleteTransfer',
   useLabel: () => 'Delete transfer',
   icon: TrashIcon,
   useOnClick: () => {

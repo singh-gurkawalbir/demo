@@ -7,6 +7,7 @@ import useConfirmDialog from '../../../ConfirmDialog';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
+  key: 'togglePublish',
   label: r => (r.published ? 'Unpublish app' : 'Publish app'),
   // icon: r => (r.published ? UnpublishIcon : PublishIcon),
   // ToDo: Need to do changes here to render icon dynamically.

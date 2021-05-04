@@ -4,6 +4,7 @@ import DownloadIntegrationIcon from '../../../../icons/DownloadIntegrationIcon';
 import actions from '../../../../../actions';
 
 export default {
+  key: 'downloadDiagnostics',
   useLabel: () => 'Download diagnostics',
   icon: DownloadIntegrationIcon,
   useOnClick: rowData => {

@@ -6,6 +6,7 @@ import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
+  key: 'download',
   useLabel: actionProps => {
     const tableContext = useGetTableContext();
 

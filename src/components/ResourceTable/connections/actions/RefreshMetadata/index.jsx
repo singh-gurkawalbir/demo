@@ -6,6 +6,7 @@ import { selectors } from '../../../../../reducers';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 
 export default {
+  key: 'refreshMetadata',
   useLabel: () => 'Refresh metadata',
   icon: RefreshIcon,
   useOnClick: rowData => {

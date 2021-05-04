@@ -5,6 +5,7 @@ import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import DownloadIcon from '../../../icons/DownloadIcon';
 
 export default {
+  key: 'downloadRetryData',
   useLabel: () => 'Download retry data',
   icon: DownloadIcon,
   useDisabledActionText: () => {

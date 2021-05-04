@@ -4,6 +4,7 @@ import TokensApiIcon from '../../../../icons/TokensApiIcon';
 import getRoutePath from '../../../../../utils/routePaths';
 
 export default {
+  key: 'licenses',
   useLabel: () => 'Licenses',
   icon: TokensApiIcon,
   useOnClick: rowData => {

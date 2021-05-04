@@ -9,6 +9,7 @@ import ResourceReferences from '../../../ResourceReferences';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
+  key: 'delete',
   useLabel: rowData => {
     const tableContext = useGetTableContext();
 

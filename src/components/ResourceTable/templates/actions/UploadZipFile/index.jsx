@@ -4,6 +4,7 @@ import UploadIcon from '../../../../icons/UploadIcon';
 import UploadFileDialog from './UploadFileDialog';
 
 export default {
+  key: 'uploadTemplateZip',
   useLabel: () => 'Upload template zip',
   icon: UploadIcon,
   Component: ({rowData}) => {

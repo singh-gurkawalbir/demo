@@ -6,6 +6,7 @@ import useConfirmDialog from '../../../ConfirmDialog';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
+  key: 'generateNewToken',
   useLabel: () => 'Generate new token',
   icon: RegenerateTokenIcon,
   useHasAccess: rowData => {

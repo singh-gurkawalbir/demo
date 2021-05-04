@@ -6,6 +6,7 @@ import actions from '../../../../../actions';
 import RunIcon from '../../../../icons/RunIcon';
 
 export default {
+  key: 'runFlow',
   useLabel: () => 'Run flow',
   icon: RunIcon,
   useOnClick: rowData => {

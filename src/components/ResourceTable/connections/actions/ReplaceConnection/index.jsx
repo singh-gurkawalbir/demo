@@ -5,6 +5,7 @@ import { selectors } from '../../../../../reducers';
 import ReplaceIcon from '../../../../icons/ReplaceIcon';
 
 export default {
+  key: 'replaceConnection',
   useLabel: () => 'Replace connection',
   icon: ReplaceIcon,
   useHasAccess: rowData => {

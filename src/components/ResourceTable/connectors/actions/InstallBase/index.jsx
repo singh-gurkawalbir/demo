@@ -4,6 +4,7 @@ import GroupOfUsersIcon from '../../../../icons/GroupOfUsersIcon';
 import getRoutePath from '../../../../../utils/routePaths';
 
 export default {
+  key: 'installBase',
   useLabel: () => 'Install base',
   icon: GroupOfUsersIcon,
   useOnClick: rowData => {

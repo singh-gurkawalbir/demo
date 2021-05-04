@@ -4,6 +4,7 @@ import AuditLogDialog from '../../../AuditLog/AuditLogDialog';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
+  key: 'viewAuditLog',
   useLabel: () => 'View audit log',
   icon: AuditLogIcon,
   Component: ({rowData}) => {

@@ -4,6 +4,7 @@ import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import EditIcon from '../../../icons/EditIcon';
 
 export default {
+  key: 'editRetryData',
   useLabel: () => 'Edit retry data',
   icon: EditIcon,
   useDisabledActionText: () => {

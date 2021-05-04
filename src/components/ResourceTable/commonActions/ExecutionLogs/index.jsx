@@ -7,6 +7,7 @@ import AuditLogIcon from '../../../icons/AuditLogIcon';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
+  key: 'viewExecutionLog',
   useLabel: () => 'View execution log',
   icon: AuditLogIcon,
   useOnClick: rowData => {

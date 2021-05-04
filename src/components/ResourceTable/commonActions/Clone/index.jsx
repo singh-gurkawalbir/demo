@@ -8,6 +8,7 @@ import getRoutePath from '../../../../utils/routePaths';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
+  key: 'copyIcon',
   useLabel: () => {
     const tableContext = useGetTableContext();
 

@@ -3,6 +3,7 @@ import { useRouteMatch, useHistory } from 'react-router-dom';
 import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 
 export default {
+  key: 'managePermissions',
   useLabel: () => 'Manage permissions',
   useOnClick: () => {
     const match = useRouteMatch();

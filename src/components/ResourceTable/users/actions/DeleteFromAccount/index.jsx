@@ -9,6 +9,7 @@ import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
+  key: 'removeUserFromAccount',
   useLabel: () => 'Remove user from account',
   Component: () => {
     const { confirmDialog } = useConfirmDialog();

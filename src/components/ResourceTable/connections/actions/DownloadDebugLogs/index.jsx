@@ -4,6 +4,7 @@ import actions from '../../../../../actions';
 import DownloadIcon from '../../../../icons/DownloadIcon';
 
 export default {
+  key: 'downloadDebugLogs',
   useLabel: () => 'Download debug logs',
   icon: DownloadIcon,
   useOnClick: rowData => {

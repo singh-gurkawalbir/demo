@@ -5,6 +5,7 @@ import RevokeTokenIcon from '../../../../icons/RevokeTokenIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
+  key: 'revoke',
   useLabel: () => 'Revoke',
   icon: RevokeTokenIcon,
   useOnClick: rowData => {

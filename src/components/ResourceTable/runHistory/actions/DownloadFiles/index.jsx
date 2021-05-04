@@ -5,6 +5,7 @@ import JobFilesDownloadDialog from '../../../../JobDashboard/JobFilesDownloadDia
 import actions from '../../../../../actions';
 
 export default {
+  key: 'downloadFiles',
   useLabel: () => 'Download files',
   icon: DownloadIntegrationIcon,
   Component: ({rowData}) => {

@@ -5,6 +5,7 @@ import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 import ReactivateTokenIcon from '../../../../icons/ReactivateTokenIcon';
 
 export default {
+  key: 'reactivateToken',
   useLabel: () => 'Reactivate token',
   icon: ReactivateTokenIcon,
   useOnClick: rowData => {

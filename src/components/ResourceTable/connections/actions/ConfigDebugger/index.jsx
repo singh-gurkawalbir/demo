@@ -5,6 +5,7 @@ import { selectors } from '../../../../../reducers';
 import DebugIcon from '../../../../icons/DebugIcon';
 
 export default {
+  key: 'debugConnection',
   useLabel: () => 'Debug connection',
   icon: DebugIcon,
   useHasAccess: rowData => {

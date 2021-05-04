@@ -5,6 +5,7 @@ import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import CheckmarkIcon from '../../../icons/CheckmarkIcon';
 
 export default {
+  key: 'resolveError',
   useLabel: () => 'Resolve',
   icon: CheckmarkIcon,
   useOnClick: rowData => {

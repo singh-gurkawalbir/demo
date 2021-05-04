@@ -4,6 +4,7 @@ import CalendarIcon from '../../../../icons/CalendarIcon';
 import ModalDialog from '../../../../ModalDialog';
 
 export default {
+  key: 'schedule',
   useLabel: () => 'Schedule',
   icon: CalendarIcon,
   Component: ({rowData}) => {

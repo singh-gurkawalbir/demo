@@ -3,6 +3,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import ViewDetailsIcon from '../../../icons/ViewDetailsIcon';
 
 export default {
+  key: 'viewErrorDetails',
   useLabel: () => 'View error details',
   icon: ViewDetailsIcon,
   useOnClick: rowData => {

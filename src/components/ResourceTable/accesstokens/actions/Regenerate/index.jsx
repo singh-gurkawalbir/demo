@@ -4,6 +4,7 @@ import actions from '../../../../../actions';
 import RegenerateTokenIcon from '../../../../icons/RegenerateTokenIcon';
 
 export default {
+  key: 'generateNewToken',
   useLabel: () => 'Generate new token',
   icon: RegenerateTokenIcon,
   useOnClick: rowData => {

@@ -6,6 +6,7 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';
 
 export default {
+  key: 'purge',
   useLabel: () => 'Purge',
   icon: PurgeIcon,
   useOnClick: rowData => {

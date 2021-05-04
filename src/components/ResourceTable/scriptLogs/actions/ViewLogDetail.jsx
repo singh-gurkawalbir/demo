@@ -3,6 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
+  key: 'viewLogDetail',
   useLabel: () => 'View',
   useOnClick: rowData => {
     const {index} = rowData;

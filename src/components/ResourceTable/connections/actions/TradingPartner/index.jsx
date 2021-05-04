@@ -9,6 +9,7 @@ import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 const emptyArray = [];
 
 export default {
+  key: 'tradingPartner',
   label: rowData => `Mark as ${rowData?.ftp?.tradingPartner ? 'not' : ''} trading partner`,
   icon: TradingPartnerIcon,
   useOnClick: rowData => {

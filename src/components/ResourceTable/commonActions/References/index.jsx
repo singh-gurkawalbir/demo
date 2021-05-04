@@ -5,6 +5,7 @@ import ResourceReferences from '../../../ResourceReferences';
 
 // TODO: In case of monitor user, refernces shouldn't call accesstokens
 export default {
+  key: 'usedBy',
   useLabel: () => 'Used by',
   icon: ViewReferencesIcon,
   Component: ({rowData}) => {

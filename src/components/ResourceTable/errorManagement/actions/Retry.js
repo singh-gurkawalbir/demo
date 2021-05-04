@@ -6,6 +6,7 @@ import useConfirmDialog from '../../../ConfirmDialog';
 import RefreshIcon from '../../../icons/RefreshIcon';
 
 export default {
+  key: 'retryError',
   useLabel: () => 'Retry',
   icon: RefreshIcon,
   useDisabledActionText: () => {

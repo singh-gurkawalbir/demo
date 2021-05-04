@@ -7,6 +7,7 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { flowbuilderUrl } from '../../../../../utils/flows';
 
 export default {
+  key: 'editFlow',
   useLabel: () => 'Edit flow',
   icon: EditIcon,
   useOnClick: rowData => {

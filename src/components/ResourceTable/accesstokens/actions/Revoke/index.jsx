@@ -5,6 +5,7 @@ import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 import RevokeTokenIcon from '../../../../icons/RevokeTokenIcon';
 
 export default {
+  key: 'revokeApiToken',
   useLabel: () => 'Revoke API token',
   icon: RevokeTokenIcon,
   useOnClick: rowData => {

@@ -7,6 +7,7 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 
 export default {
+  key: 'deregisterConnection',
   useLabel: () => 'Deregister connection',
   icon: CloseIcon,
   useHasAccess: () => {
