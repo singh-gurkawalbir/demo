@@ -705,7 +705,11 @@ export function* getResourceCollection({ resourceType, refresh}) {
 
     yield put(actions.resource.receivedCollection(resourceType, collection));
 
-    return collection;
+    if (Array.isArray(collection)) {
+      return collection;
+    }
+
+    return;
   } catch (error) {
     // generic message to the user that the
     // saga failed and services team working on it
