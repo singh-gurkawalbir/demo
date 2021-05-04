@@ -8,7 +8,9 @@ import RefreshIcon from '../../../icons/RefreshIcon';
 export default {
   useLabel: () => 'Retry',
   icon: RefreshIcon,
-  disabledActionText: ({isFlowDisabled}) => {
+  useDisabledActionText: () => {
+    const {isFlowDisabled} = useGetTableContext();
+
     if (isFlowDisabled) {
       return 'Enable the flow to retry';
     }

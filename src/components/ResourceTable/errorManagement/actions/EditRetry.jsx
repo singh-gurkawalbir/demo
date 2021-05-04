@@ -1,11 +1,14 @@
 import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import EditIcon from '../../../icons/EditIcon';
 
 export default {
   useLabel: () => 'Edit retry data',
   icon: EditIcon,
-  disabledActionText: ({isFlowDisabled}) => {
+  useDisabledActionText: () => {
+    const {isFlowDisabled} = useGetTableContext();
+
     if (isFlowDisabled) {
       return 'Enable the flow to edit retry data';
     }

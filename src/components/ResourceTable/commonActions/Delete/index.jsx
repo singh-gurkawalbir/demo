@@ -48,7 +48,9 @@ export default {
 
     return canDelete;
   },
-  disabledActionText: ({rowData, resourceType}) => {
+  useDisabledActionText: rowData => {
+    const {resourceType} = useGetTableContext();
+
     if (resourceType === 'accesstokens' && !rowData.revoked) {
       return 'To delete this API token you need to revoke it first.';
     }

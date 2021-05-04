@@ -7,7 +7,9 @@ import DownloadIcon from '../../../icons/DownloadIcon';
 export default {
   useLabel: () => 'Download retry data',
   icon: DownloadIcon,
-  disabledActionText: ({isFlowDisabled}) => {
+  useDisabledActionText: () => {
+    const {isFlowDisabled} = useGetTableContext();
+
     if (isFlowDisabled) {
       return 'Enable the flow to download retry data';
     }
