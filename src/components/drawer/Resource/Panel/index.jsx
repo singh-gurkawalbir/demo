@@ -48,25 +48,30 @@ const useStyles = makeStyles(theme => ({
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
   },
   baseForm: {
-    paddingTop: theme.spacing(3),
-    '& > div:first-child': {
-      paddingTop: 0,
-    },
+    // paddingTop: theme.spacing(3),
+    // '& > div:first-child': {
+    //   paddingTop: 0,
+    // },
   },
   baseFormWithPreview: {
     display: 'grid',
     gridTemplateColumns: '50% 48%',
     gridColumnGap: theme.spacing(1),
+    '& > div:first-child': {
+      paddingTop: 0,
+    },
   },
   resourceFormWrapper: {
     flexDirection: 'row',
     width: '100%',
-    padding: theme.spacing(3, 3, 0, 3),
+    padding: theme.spacing(3),
     overflowY: 'auto',
+
   },
-  exportsPanel: {
-    flexDirection: 'row',
-  },
+  // exportsPanel: {
+  //   flexDirection: 'row',
+  //   margin: [[24, 0]],
+  // },
   appLogo: {
     padding: theme.spacing(0, 1),
     margin: theme.spacing(-0.5, 0),
@@ -136,6 +141,12 @@ const useStyles = makeStyles(theme => ({
   divider: {
     height: 24,
     width: 1,
+  },
+  resourcePanelFooter: {
+    background: theme.palette.common.white,
+  },
+  resourceFooterWithPreview: {
+    // background: 'limegreen',
   },
 }));
 const useDetermineRequiredResources = type => useMemo(() => {
@@ -396,7 +407,7 @@ export default function Panel(props) {
           />
             )}
           </div>
-          <div style={{overflowY: 'auto'}}>
+          <div className={clsx(classes.resourcePanelFooter, {[classes.resourceFooterWithPreview]: showPreviewPanel })}>
             <ResourceFormActionsPanel
               formKey={newId}
               isNew={isNew}

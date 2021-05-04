@@ -10,10 +10,11 @@ import { selectors } from '../../../reducers';
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 
 const useStyles = makeStyles(theme => ({
-  drawerPaper: {
+  resourceDrawerPaper: {
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
-    padding: 0,
+    // padding: 0,
     zIndex: theme.zIndex.drawer + 1,
+    marginTop: theme.appBarHeight,
   },
   panelContainer: {
     display: 'flex',
@@ -67,7 +68,7 @@ function ResourceDrawer(props) {
         elevation={3}
         open={open}
         classes={{
-          paper: clsx(classes.drawerPaper, {
+          paper: clsx(classes.resourceDrawerPaper, {
             [classes.fullWidthDrawerClose]:
               !drawerOpened && isPreviewPanelAvailableForResource,
             [classes.fullWidthDrawerOpen]:
