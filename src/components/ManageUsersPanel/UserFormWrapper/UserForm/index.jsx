@@ -32,7 +32,7 @@ export default function UserForm({
     integrationsFilterConfig
   ).resources;
   const users = useSelector(state => selectors.usersList(state));
-  const isAccountOwner = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
+  const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
   const isSSOEnabled = useSelector(state => selectors.isSSOEnabled(state));
 
   const isEditMode = !!id;
@@ -181,9 +181,8 @@ export default function UserForm({
         id: 'accountSSORequired',
         name: 'accountSSORequired',
         label: 'Require account SSO?',
-        defaultValue: true,
-        omitWhenHidden: true,
-        visible: !isEditMode && isAccountOwner && isSSOEnabled,
+        defaultValue: isEditMode ? !!data.accountSSORequired : true,
+        visible: !isEditMode && isAccountOwnerOrAdmin && isSSOEnabled,
       },
     },
     layout: {

@@ -13,6 +13,7 @@ import getImageUrl from '../../utils/image';
 import getRoutePath from '../../utils/routePaths';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
+import LoadResources from '../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   googleBtn: {
@@ -60,6 +61,7 @@ export default function ProfileComponent() {
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
+  const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
   const isSSOEnabled = useSelector(state => selectors.isSSOEnabled(state));
 
   const dateTimeZonesList = useMemo(
@@ -242,7 +244,7 @@ export default function ProfileComponent() {
         'developer',
       ],
     },
-  }), [dateFormatList, dateTimeZonesList, preferences, timeFormatList]);
+  }), [dateFormatList, dateTimeZonesList, preferences, timeFormatList, isSSOEnabled]);
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -256,7 +258,7 @@ export default function ProfileComponent() {
   });
 
   return (
-    <>
+    <LoadResources required resources={isAccountOwnerOrAdmin ? 'ssoclients' : ''}>
       <PanelHeader title="Profile" className={classes.profilePanelHeader} />
       <DynaForm formKey={formKey} />
       <DynaSubmit
@@ -304,6 +306,6 @@ export default function ProfileComponent() {
           )}
         </div>
       )}
-    </>
+    </LoadResources>
   );
 }

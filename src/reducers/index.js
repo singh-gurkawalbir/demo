@@ -5486,6 +5486,6 @@ selectors.isSSOEnabled = state => {
 
   if (!oidcClient) return false;
 
-  return !!oidcClient.disabled;
+  return !oidcClient.disabled;
 };
 // #endregion sso selectors

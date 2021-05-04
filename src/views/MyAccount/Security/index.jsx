@@ -51,7 +51,7 @@ export default function Security() {
 
   useEffect(() => {
     if (oidcClient) {
-      setIsSSOEnabled(!!oidcClient?.disabled);
+      setIsSSOEnabled(!oidcClient?.disabled);
     }
   }, [oidcClient]);
 
