@@ -47,12 +47,6 @@ const useStyles = makeStyles(theme => ({
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
   },
-  baseForm: {
-    // paddingTop: theme.spacing(3),
-    // '& > div:first-child': {
-    //   paddingTop: 0,
-    // },
-  },
   baseFormWithPreview: {
     display: 'grid',
     gridTemplateColumns: '50% 48%',

@@ -12,7 +12,6 @@ const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 const useStyles = makeStyles(theme => ({
   resourceDrawerPaper: {
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
-    // padding: 0,
     zIndex: theme.zIndex.drawer + 1,
     marginTop: theme.appBarHeight,
   },
