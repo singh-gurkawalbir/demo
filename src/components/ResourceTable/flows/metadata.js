@@ -167,6 +167,7 @@ export default {
       actions.push(Detach);
     }
     actions = [...actions, Delete];
+    console.log('see ', actions);
 
     return actions;
   },

@@ -7,14 +7,14 @@ import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
   key: 'download',
-  useLabel: actionProps => {
+  useLabel: () => {
     const tableContext = useGetTableContext();
 
     if (tableContext.resourceType === 'templates') {
       return 'Download template zip';
     }
 
-    return `Download ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
+    return `Download ${MODEL_PLURAL_TO_LABEL[tableContext?.resourceType]?.toLowerCase()}`;
   },
 
   icon: DownloadIcon,

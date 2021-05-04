@@ -2,14 +2,14 @@ import { IconButton, Tooltip } from '@material-ui/core';
 import React from 'react';
 import { useGetAllActionProps } from './hooks';
 
-const SingleAction = ({rowData, handleMenuClose, meta}) => {
+const SingleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) => {
   const {
     handleActionClick,
     actionIcon,
     hasAccess,
     label,
     disabledActionTitle,
-  } = useGetAllActionProps({meta, rowData, handleMenuClose});
+  } = useGetAllActionProps({meta, rowData, setSelectedComponent, handleMenuClose});
 
   if (!hasAccess) {
     return null;

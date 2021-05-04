@@ -89,7 +89,9 @@ export default function TableBodyContent(
             )}
             {columns.map((meta, index) => {
               const {key, Value, align, heading} = meta;
-              const cellValue = <Value rowData={rowData} />;
+              const val = Value({rowData});
+
+              const cellValue = val === undefined ? null : val;
 
               return (index === 0 ? (
                 <TableCell

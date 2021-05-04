@@ -143,6 +143,8 @@ export default function CeligoTable({
     [data, isSelectableRow, onSelectChange, selectedResources]
   );
 
+  console.log('see here', data, useColumns);
+
   return (
     <div className={clsx(className)}>
       <TableContextWrapper value={actionProps}>

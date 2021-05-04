@@ -1,4 +1,4 @@
-import { useCallback, useEffect} from 'react';
+import { useCallback} from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import EditIcon from '../../../icons/EditIcon';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
@@ -36,10 +36,6 @@ export default {
       history.push(`${match.url}/edit/${resourceType}/${rowData._id}`);
     }, [history, match.url, rowData._id, resourceType]);
 
-    useEffect(() => {
-      handleClick();
-    }, [handleClick]);
-
-    return null;
+    return handleClick;
   },
 };

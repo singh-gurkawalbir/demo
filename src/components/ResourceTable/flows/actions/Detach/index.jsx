@@ -55,6 +55,6 @@ export default {
       });
     }, [confirmDialog, detachFlow]);
 
-    return confirmDetachFlow();
+    return confirmDetachFlow;
   },
 };
