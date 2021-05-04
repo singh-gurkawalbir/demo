@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
@@ -18,15 +18,13 @@ export default {
 
     return hasAccess;
   },
-  component: function ReplaceConnections({ rowData = {} }) {
+  useOnClick: rowData => {
     const { _id: connectionId } = rowData;
     const history = useHistory();
     const match = useRouteMatch();
 
-    useEffect(() => {
+    return useCallback(() => {
       history.push(`${match.url}/replaceConnection/${connectionId}`);
     }, [history, connectionId, match.url]);
-
-    return null;
   },
 };

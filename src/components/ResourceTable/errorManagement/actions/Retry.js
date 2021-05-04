@@ -1,6 +1,7 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import useConfirmDialog from '../../../ConfirmDialog';
 import RefreshIcon from '../../../icons/RefreshIcon';
 
@@ -12,9 +13,15 @@ export default {
       return 'Enable the flow to retry';
     }
   },
-  component: function Retry({ flowId, resourceId, rowData, isResolved }) {
+  useOnClick: rowData => {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
+
+    const {
+      flowId,
+      resourceId,
+      isResolved,
+    } = useGetTableContext();
     const handleRetry = useCallback(() => {
       dispatch(
         actions.errorManager.flowErrorDetails.retry({
@@ -48,10 +55,6 @@ export default {
       });
     }, [isResolved, handleRetry, confirmDialog]);
 
-    useEffect(() => {
-      handleClick();
-    }, [handleClick]);
-
-    return null;
+    return handleClick;
   },
 };

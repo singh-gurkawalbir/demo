@@ -53,7 +53,9 @@ export default {
       return 'To delete this API token you need to revoke it first.';
     }
   },
-  component: function DeleteResource({ resourceType, rowData = {} }) {
+  Component: ({rowData}) => {
+    const {resourceType} = useGetTableContext();
+
     const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const [showRef, setShowRef] = useState(true);

@@ -5,14 +5,16 @@ import actionTypes from '../../../../../actions/types';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useCommStatus from '../../../../../hooks/useCommStatus';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
+import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
   useLabel: () => 'Remove user from account',
-  component: function DeleteFromAccount({ rowData: user }) {
+  Component: () => {
     const { confirmDialog } = useConfirmDialog();
     const dispatch = useDispatch();
     const [enquesnackbar] = useEnqueueSnackbar();
+    const {user} = useGetTableContext();
     const { _id: userId, sharedWithUser = {} } = user;
     const deleteFromAccount = useCallback(() => {
       confirmDialog({

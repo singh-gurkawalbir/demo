@@ -1,15 +1,17 @@
 import { useDispatch } from 'react-redux';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import actions from '../../../../../actions';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import CancelIcon from '../../../../icons/CancelIcon';
+import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 
 export default {
   useLabel: () => 'Cancel transfer',
   icon: CancelIcon,
-  component: function Cancel({ rowData: transfer }) {
+  useOnClick: () => {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
+    const {transfer} = useGetTableContext();
     const cancelTransfer = useCallback(() => {
       dispatch(actions.transfer.cancel(transfer._id));
     }, [dispatch, transfer._id]);
@@ -30,10 +32,6 @@ export default {
       });
     }, [confirmDialog, cancelTransfer]);
 
-    useEffect(() => {
-      handleClick();
-    }, [handleClick]);
-
-    return null;
+    return handleClick;
   },
 };

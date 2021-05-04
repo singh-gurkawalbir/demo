@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import ShareStackIcon from '../../../../icons/ShareStackIcon';
 
@@ -7,7 +7,7 @@ export default {
   useLabel: () => 'Share stack',
   icon: ShareStackIcon,
   key: 'stackShares',
-  component: function StackShares({ rowData = {} }) {
+  useOnClick: rowData => {
     const { _id: stackId } = rowData;
     const match = useRouteMatch();
     const history = useHistory();
@@ -15,10 +15,6 @@ export default {
       history.push(`${match.url}/share/stacks/${stackId}`);
     }, [history, match.url, stackId]);
 
-    useEffect(() => {
-      openShareStackURL();
-    }, [openShareStackURL]);
-
-    return null;
+    return openShareStackURL;
   },
 };

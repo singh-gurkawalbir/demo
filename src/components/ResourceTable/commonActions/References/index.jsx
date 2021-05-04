@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import ViewReferencesIcon from '../../../icons/ViewReferencesIcon';
 import ResourceReferences from '../../../ResourceReferences';
 
@@ -6,8 +7,9 @@ import ResourceReferences from '../../../ResourceReferences';
 export default {
   useLabel: () => 'Used by',
   icon: ViewReferencesIcon,
-  component: function References({ resourceType, rowData = {} }) {
+  Component: ({rowData}) => {
     const { _id: resourceId } = rowData;
+    const {resourceType} = useGetTableContext();
     const [show, setShow] = useState(true);
     const handleReferencesClose = useCallback(() => {
       setShow(false);

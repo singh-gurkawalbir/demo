@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
@@ -22,8 +22,11 @@ export default {
 
     return hasAccess && !isStandalone;
   },
-  component: function Deregister({ rowData = {}, integrationId }) {
+  useOnClick: rowData => {
     const { _id: connectionId } = rowData;
+
+    const {integrationId} = useGetTableContext();
+
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const deregisterConnection = useCallback(() => {
@@ -48,10 +51,6 @@ export default {
       });
     }, [confirmDialog, deregisterConnection]);
 
-    useEffect(() => {
-      confirmDeregister();
-    }, [confirmDeregister]);
-
-    return null;
+    return confirmDeregister;
   },
 };

@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import GroupOfUsersIcon from '../../../../icons/GroupOfUsersIcon';
 import getRoutePath from '../../../../../utils/routePaths';
@@ -6,17 +6,13 @@ import getRoutePath from '../../../../../utils/routePaths';
 export default {
   useLabel: () => 'Install base',
   icon: GroupOfUsersIcon,
-  component: function InstallBase({ rowData = {} }) {
+  useOnClick: rowData => {
     const { _id: resourceId } = rowData;
     const history = useHistory();
     const openInstallBaseURL = useCallback(() => {
       history.push(getRoutePath(`/connectors/${resourceId}/installBase`));
     }, [history, resourceId]);
 
-    useEffect(() => {
-      openInstallBaseURL();
-    }, [openInstallBaseURL]);
-
-    return null;
+    return openInstallBaseURL;
   },
 };

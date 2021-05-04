@@ -7,8 +7,8 @@ import actions from '../../../../../actions';
 export default {
   useLabel: () => 'Download files',
   icon: DownloadIntegrationIcon,
-  component: function DownloadFiles(props) {
-    const { rowData: job = {} } = props;
+  Component: ({rowData}) => {
+    const job = rowData || {};
 
     const dispatch = useDispatch();
     const [showDownloadFilesDialog, setShowDownloadFilesDialog] = useState(false);

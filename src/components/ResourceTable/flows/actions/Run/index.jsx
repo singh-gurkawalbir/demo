@@ -1,6 +1,6 @@
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import getRoutePath from '../../../../../utils/routePaths';
 import actions from '../../../../../actions';
 import RunIcon from '../../../../icons/RunIcon';
@@ -8,18 +8,15 @@ import RunIcon from '../../../../icons/RunIcon';
 export default {
   useLabel: () => 'Run flow',
   icon: RunIcon,
-  component: withRouter(({ rowData = {}, history }) => {
+  useOnClick: rowData => {
     const { _integrationId: integrationId, _id: resourceId } = rowData;
+    const history = useHistory();
     const dispatch = useDispatch();
     const runFlow = useCallback(() => {
       dispatch(actions.flow.run({ flowId: resourceId }));
       history.push(getRoutePath(`integrations/${integrationId}/dashboard`));
     }, [dispatch, history, integrationId, resourceId]);
 
-    useEffect(() => {
-      runFlow();
-    }, [runFlow]);
-
-    return null;
-  }),
+    return runFlow;
+  },
 };

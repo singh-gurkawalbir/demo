@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import RegenerateTokenIcon from '../../../icons/RegenerateTokenIcon';
@@ -13,9 +13,12 @@ export default {
 
     return !(resourceType === 'stacks' && rowData.type === 'lambda');
   },
-  component: function GenerateToken({ rowData = {}, resourceType }) {
+  useOnClick: rowData => {
     const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
+
+    const {resourceType} = useGetTableContext();
+
     const { confirmDialog } = useConfirmDialog();
     const generateSystemToken = useCallback(() => {
       if (resourceType === 'agents') {
@@ -40,10 +43,6 @@ export default {
       });
     }, [confirmDialog, generateSystemToken]);
 
-    useEffect(() => {
-      confirmGenerateToken();
-    }, [confirmGenerateToken]);
-
-    return null;
+    return confirmGenerateToken;
   },
 };

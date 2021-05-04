@@ -6,7 +6,7 @@ import ModalDialog from '../../../../ModalDialog';
 export default {
   useLabel: () => 'Schedule',
   icon: CalendarIcon,
-  component: function Schedule({ rowData = {} }) {
+  Component: ({rowData}) => {
     const [showSchedule, setShowSchedule] = useState(true);
     const handleClose = useCallback(() => {
       setShowSchedule(false);

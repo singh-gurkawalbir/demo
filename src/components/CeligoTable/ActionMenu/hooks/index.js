@@ -20,13 +20,14 @@ const useFunctionsFromHookProps = (meta, rowData) => {
   };
 };
 
-export const useGetAllActionProps = ({meta, rowData, handleMenuClose}) => {
+export const useGetAllActionProps = ({meta, rowData, handleMenuClose, setSelectedComponent}) => {
   const {
     useOnClick,
     useHasAccess,
     useDisabledActionText,
     useLabel,
     Icon,
+    Component,
   } = meta;
   const {
     onClick,
@@ -41,11 +42,14 @@ export const useGetAllActionProps = ({meta, rowData, handleMenuClose}) => {
   }, rowData);
 
   const handleActionClick = useCallback(() => {
+    // onClick triggers either component or onClick
     if (onClick && typeof onClick === 'function') {
       onClick();
+    } else if (Component) {
+      setSelectedComponent(<Component rowData={rowData} />);
     }
     handleMenuClose();
-  }, [handleMenuClose, onClick]);
+  }, [Component, handleMenuClose, onClick, rowData, setSelectedComponent]);
 
   const disabledActionTitle = disabledActionText;
   const actionIcon = Icon ? <Icon /> : null;

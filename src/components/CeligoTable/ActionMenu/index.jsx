@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ActionMenu({ useRowActions, variant, rowData }) {
+export default function ActionMenu({ useRowActions, variant, rowData, setSelectedComponent}) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   // We are passing state to action items where each Action item would check if it has got permission.
@@ -22,8 +22,9 @@ export default function ActionMenu({ useRowActions, variant, rowData }) {
   const handleMenuClick = useCallback(
     event => {
       setAnchorEl(event.currentTarget);
+      setSelectedComponent(null);
     },
-    []
+    [setSelectedComponent]
   );
   const handleMenuClose = useCallback(() => setAnchorEl(null), []);
   const actions = useRowActions(rowData);
@@ -38,7 +39,13 @@ export default function ActionMenu({ useRowActions, variant, rowData }) {
     // want a slim treatment but preserve ellipsis for multi-action rows.
     // The table will still be slim by eliminating the action column heading.
     // Possibly other slim CSS will get applied for row hover and reduced padding, etc.
-    return (<SingleAction rowData={rowData} handleMenuClose={handleMenuClose} meta={actions[0]} />);
+    return (
+      <SingleAction
+        rowData={rowData}
+        setSelectedComponent={setSelectedComponent}
+        handleMenuClose={handleMenuClose}
+        meta={actions[0]} />
+    );
   }
 
   return (
@@ -64,6 +71,7 @@ export default function ActionMenu({ useRowActions, variant, rowData }) {
         {actions.map(meta => (
           <MultipleAction
             key={meta.key}
+            setSelectedComponent={setSelectedComponent}
             handleMenuClose={handleMenuClose}
             meta={meta}
             rowData={rowData} />

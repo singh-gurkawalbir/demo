@@ -5,6 +5,7 @@ import actionTypes from '../../../../../actions/types';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useCommStatus from '../../../../../hooks/useCommStatus';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
+import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 const actionsToMonitor = {
@@ -12,10 +13,11 @@ const actionsToMonitor = {
 };
 export default {
   useLabel: () => 'Make account owner',
-  component: function MakeAccountOwner({ rowData: user }) {
+  Component: () => {
     const { confirmDialog } = useConfirmDialog();
     const dispatch = useDispatch();
     const [enquesnackbar] = useEnqueueSnackbar();
+    const {user} = useGetTableContext();
     const { name, email } = user.sharedWithUser || {};
 
     const makeAccountOwner = useCallback(() => {

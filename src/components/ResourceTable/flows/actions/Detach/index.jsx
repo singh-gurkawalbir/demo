@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
@@ -21,7 +21,7 @@ export default {
 
     return canDetach;
   },
-  component: function DetachFlow({ rowData = {} }) {
+  useOnClick: rowData => {
     const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
@@ -54,10 +54,6 @@ export default {
       });
     }, [confirmDialog, detachFlow]);
 
-    useEffect(() => {
-      confirmDetachFlow();
-    }, [confirmDetachFlow]);
-
-    return null;
+    return confirmDetachFlow();
   },
 };

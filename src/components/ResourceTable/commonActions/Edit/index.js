@@ -22,9 +22,8 @@ export default {
     return `Edit ${MODEL_PLURAL_TO_LABEL[tableContext?.resourceType]?.toLowerCase()}`;
   },
   icon: EditIcon,
-  component: function Edit(props) {
-    const { rowData = {} } = props;
-    let {resourceType} = props;
+  useOnClick: rowData => {
+    let {resourceType} = useGetTableContext();
     const history = useHistory();
     const match = useRouteMatch();
 

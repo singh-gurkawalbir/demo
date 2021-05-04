@@ -4,7 +4,7 @@ import {
 } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/core/styles';
-import React from 'react';
+import React, { useState } from 'react';
 import CheckboxSelectedIcon from '../../icons/CheckboxSelectedIcon';
 import CheckboxUnselectedIcon from '../../icons/CheckboxUnselectedIcon';
 import ActionMenu from '../ActionMenu';
@@ -59,61 +59,66 @@ export default function TableBodyContent(
   }
 ) {
   const classes = useStyles();
+  const [selectedComponent, setSelectedComponent] = useState();
 
   return (
-    <TableBody>
-      {data.map(rowData => (
-        <DataRow
-          key={rowData.key || rowData._id}
-          rowData={rowData}
-          onRowOver={onRowOver}
-          onRowOut={onRowOut}
-          className={classes.row}
+    <>
+      {selectedComponent}
+      <TableBody>
+        {data.map(rowData => (
+          <DataRow
+            key={rowData.key || rowData._id}
+            rowData={rowData}
+            onRowOver={onRowOver}
+            onRowOut={onRowOut}
+            className={classes.row}
         >
-          {selectableRows && (
-          <TableCell>
-            {(isSelectableRow ? !!isSelectableRow(rowData) : true) && (
-            <Checkbox
-              onChange={event => handleSelectChange(event, rowData._id)}
-              checked={!!selectedResources[rowData._id]}
-              color="primary"
-              icon={(<span><CheckboxUnselectedIcon /></span>)}
-              checkedIcon={(<span><CheckboxSelectedIcon /></span>)}
+            {selectableRows && (
+            <TableCell>
+              {(isSelectableRow ? !!isSelectableRow(rowData) : true) && (
+              <Checkbox
+                onChange={event => handleSelectChange(event, rowData._id)}
+                checked={!!selectedResources[rowData._id]}
+                color="primary"
+                icon={(<span><CheckboxUnselectedIcon /></span>)}
+                checkedIcon={(<span><CheckboxSelectedIcon /></span>)}
                 />
+              )}
+            </TableCell>
             )}
-          </TableCell>
-          )}
-          {columns.map((meta, index) => {
-            const {key, Value, align, heading} = meta;
-            const cellValue = <Value rowData={rowData} />;
+            {columns.map((meta, index) => {
+              const {key, Value, align, heading} = meta;
+              const cellValue = <Value rowData={rowData} />;
 
-            return (index === 0 ? (
-              <TableCell
-                component="th"
-                scope="row"
-                key={key}
-                align={align || 'left'}>
-                {cellValue}
-              </TableCell>
-            ) : (
-              <TableCell key={heading} align={align || 'left'}>
-                {cellValue}
-              </TableCell>
-            ));
-          }
+              return (index === 0 ? (
+                <TableCell
+                  component="th"
+                  scope="row"
+                  key={key}
+                  align={align || 'left'}>
+                  {cellValue}
+                </TableCell>
+              ) : (
+                <TableCell key={heading} align={align || 'left'}>
+                  {cellValue}
+                </TableCell>
+              ));
+            }
 
-          )}
-          {useRowActions && (
-          <TableCell className={classes.actionCell}>
-            <ActionMenu
-              useRowActions={useRowActions}
-              rowData={rowData}
-              variant={variant}
+            )}
+            {useRowActions && (
+            <TableCell className={classes.actionCell}>
+              <ActionMenu
+                setSelectedComponent={setSelectedComponent}
+                useRowActions={useRowActions}
+                rowData={rowData}
+                variant={variant}
               />
-          </TableCell>
-          )}
-        </DataRow>
-      ))}
-    </TableBody>
+            </TableCell>
+            )}
+          </DataRow>
+        ))}
+      </TableBody>
+    </>
   );
 }

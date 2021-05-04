@@ -1,6 +1,7 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import DownloadIcon from '../../../icons/DownloadIcon';
 
 export default {
@@ -11,18 +12,16 @@ export default {
       return 'Enable the flow to download retry data';
     }
   },
-  component: function DownloadRetry({rowData = {}, flowId, resourceId}) {
+  useOnClick: rowData => {
     const { retryDataKey } = rowData;
     const dispatch = useDispatch();
+
+    const {flowId, resourceId } = useGetTableContext();
 
     const handleClick = useCallback(() => {
       dispatch(actions.errorManager.retryData.download({flowId, resourceId, retryDataKey}));
     }, [dispatch, flowId, resourceId, retryDataKey]);
 
-    useEffect(() => {
-      handleClick();
-    }, [handleClick]);
-
-    return null;
+    return handleClick;
   },
 };
