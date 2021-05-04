@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   container: {
     background: theme.palette.common.white,
     padding: theme.spacing(2),
-    height: `calc(100vh - ${200}px)`,
+    height: `calc(100vh - ${250}px)`,
     overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',
@@ -64,7 +64,7 @@ function PreviewInfo({
     // Note: If there is no flowId , it is a Standalone export as the resource type other than exports are restricted above
     if (!flowId || isPageGeneratorExport || isFileAdaptor(resource)) {
       dispatch(
-        actions.sampleData.request(resourceId, resourceType, value)
+        actions.sampleData.request(resourceId, resourceType, value, null, {flowId})
       );
     } else {
       dispatch(
