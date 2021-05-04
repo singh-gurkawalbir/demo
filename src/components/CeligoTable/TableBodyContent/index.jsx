@@ -53,11 +53,12 @@ export default function TableBodyContent(
     isSelectableRow,
     selectedResources,
     handleSelectChange,
-    columns,
+    useColumns,
     useRowActions,
     variant,
   }
 ) {
+  const columns = useColumns();
   const classes = useStyles();
   const [selectedComponent, setSelectedComponent] = useState();
 

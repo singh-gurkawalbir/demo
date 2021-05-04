@@ -143,8 +143,6 @@ export default function CeligoTable({
     [data, isSelectableRow, onSelectChange, selectedResources]
   );
 
-  const columns = useColumns();
-
   return (
     <div className={clsx(className)}>
       <TableContextWrapper value={actionProps}>
@@ -153,7 +151,7 @@ export default function CeligoTable({
             selectableRows={selectableRows}
             handleSelectAllChange={handleSelectAllChange}
             isAllSelected={isAllSelected}
-            columns={columns}
+            useColumns={useColumns}
             filterKey={filterKey}
             useRowActions={useRowActions}
             variant={variant}
@@ -167,7 +165,7 @@ export default function CeligoTable({
             isSelectableRow={isSelectableRow}
             selectedResources={selectedResources}
             handleSelectChange={handleSelectChange}
-            columns={columns}
+            useColumns={useColumns}
             useRowActions={useRowActions}
             variant={variant}
           />

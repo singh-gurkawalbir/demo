@@ -21,6 +21,8 @@ import { useGetTableContext } from '../../CeligoTable/TableContext';
 export default {
   useColumns: () => {
     const actionProps = useGetTableContext();
+
+    console.log('see ', actionProps);
     let columns = [
       {
         key: 'name',

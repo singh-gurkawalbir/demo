@@ -35,11 +35,12 @@ export default function TableHeader({
   selectableRows,
   handleSelectAllChange,
   isAllSelected,
-  columns,
+  useColumns,
   filterKey,
   useRowActions,
   variant,
 }) {
+  const columns = useColumns();
   const classes = useStyles();
   const dispatch = useDispatch();
 
