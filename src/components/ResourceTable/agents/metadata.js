@@ -15,35 +15,41 @@ const getAgentDownloadInstaller = agent => (
 // const getAgentToken = agent => <AgentToken agentId={agent._id} />;
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'name',
       heading: 'Name',
       Value: ({rowData: r}) => <ResourceDrawerLink resourceType="agents" resource={r} />,
       orderBy: 'name',
     },
     {
+      key: 'status',
       heading: 'Status',
       Value: ({rowData: r}) => <OnlineStatus offline={r.offline} />,
     },
     {
+      key: 'lastHeartBeat',
       heading: 'Last heartbeat',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastHeartbeatAt} />,
       orderBy: 'lastHeartbeatAt',
     },
     {
+      key: 'lastUpdated',
       heading: 'Last updated',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
 
     {
+      key: 'install',
       heading: 'Install',
       Value: ({rowData: r}) => getAgentDownloadInstaller(r),
     },
     {
+      key: 'accessToken',
       heading: 'Access token',
       Value: ({rowData: r}) => <AgentToken agentId={r._id} />,
     },
   ],
-  rowActions: () => [Edit, References, GenerateToken, Delete],
+  useRowActions: () => [Edit, References, GenerateToken, Delete],
 };

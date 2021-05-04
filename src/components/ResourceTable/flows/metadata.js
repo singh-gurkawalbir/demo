@@ -19,9 +19,11 @@ import CeligoTimeAgo from '../../CeligoTimeAgo';
 import { useGetTableContext } from '../../CeligoTable/TableContext';
 
 export default {
-  columns: (empty, actionProps) => {
+  useColumns: () => {
+    const actionProps = useGetTableContext();
     let columns = [
       {
+        key: 'name',
         heading: 'Name',
         // TODO: update 'storeId' references to 'childId'
         Value: ({rowData: r}) => {
@@ -44,6 +46,7 @@ export default {
       },
       ...(actionProps.showChild ? [{
         heading: actionProps.childHeader || 'App',
+        key: 'app',
         Value: ({rowData: r}) => {
           const {integrationChildren = []} = actionProps;
 
@@ -52,6 +55,7 @@ export default {
         orderBy: actionProps.childHeader ? 'childName' : '_integrationId',
       }] : []),
       {
+        key: 'errors',
         heading: 'Errors',
         Value: ({rowData: r}) => (
           <ErrorsCell
@@ -64,21 +68,25 @@ export default {
         orderBy: 'errors',
       },
       {
+        key: 'lastUpdated',
         heading: 'Last updated',
         Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
         orderBy: 'lastModified',
       },
       {
+        key: 'lastRun',
         heading: 'Last run',
         Value: ({rowData: r}) => <StatusCell flowId={r._id} integrationId={r._integrationId || 'none'} date={r.lastExecutedAt} actionProps={actionProps} />,
         orderBy: 'lastExecutedAt',
       },
       {
+        key: 'mapping',
         heading: 'Mapping',
         align: 'center',
         Value: ({rowData: r}) => <MappingCell flowId={r._id} childId={actionProps?.storeId} />,
       },
       {
+        key: 'schedule',
         heading: 'Schedule',
         align: 'center',
         Value: ({rowData: r}) => <ScheduleCell flowId={r._id} name={r.name} actionProps={actionProps} />,
@@ -95,6 +103,7 @@ export default {
 
       columns.push(
         {
+          key: 'settings',
           heading: 'Settings',
           align: 'center',
           Value: ({rowData: r}) => <SettingsCell flowId={r._id} name={r.name} actionProps={actionProps} />,
@@ -105,6 +114,7 @@ export default {
     columns = [
       ...columns,
       {
+        key: 'run',
         heading: 'Run',
         Value: ({rowData: r}) => (
           <RunCell
@@ -117,6 +127,7 @@ export default {
         ),
       },
       {
+        key: 'off/On',
         heading: 'Off/On',
         Value: ({rowData: r}) => (
           <OnOffCell
@@ -136,7 +147,7 @@ export default {
     return columns;
   },
 
-  rowActions: r => {
+  useRowActions: r => {
     const isIntegrationApp = !!r._connectorId;
     const isStandalone = !r._integrationId;
     // all possible: detach, clone, audit, references, download, delete

@@ -7,11 +7,19 @@ import StatusHeader from '../cells/StatusHeader';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
-  columns: (r, {integrationId, isUserInErrMgtTwoDotZero}) => {
+  useColumns: () => {
+    const {integrationId, isUserInErrMgtTwoDotZero} = useGetTableContext();
     const columns = [
-      { heading: 'Name', Value: ({rowData: r}) => r.sharedWithUser.name },
-      { heading: 'Email', Value: ({rowData: r}) => r.sharedWithUser.email },
       {
+        key: 'name',
+        heading: 'Name',
+        Value: ({rowData: r}) => r.sharedWithUser.name },
+      {
+        key: 'email',
+        heading: 'Email',
+        Value: ({rowData: r}) => r.sharedWithUser.email },
+      {
+        key: 'accessLevelHeader',
         HeaderValue: AccessLevelHeader,
         Value: ({rowData: r}) => {
           const {integrationId} = useGetTableContext();
@@ -20,6 +28,7 @@ export default {
         },
       },
       {
+        key: 'statusHeader',
         HeaderValue: StatusHeader,
         Value: ({rowData: r}) => {
           const {integrationId} = useGetTableContext();
@@ -28,6 +37,7 @@ export default {
         },
       },
       ...((integrationId && isUserInErrMgtTwoDotZero) ? [{
+        key: 'notifications',
         heading: 'Notifications',
         align: 'center',
         Value: ({rowData: r}) => {

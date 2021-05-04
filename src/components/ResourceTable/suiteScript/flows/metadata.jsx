@@ -6,72 +6,84 @@ import RunCell from './RunCell';
 import OnOffCell from './OnOffCell';
 import DeleteCell from './DeleteCell';
 import { flowType } from '../../../../utils/suiteScript';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
-  columns: (r, actionProps) => [
-    {
-      heading: 'Name',
-      Value: ({rowData: resource}) => (
-        <NameCell
-          ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
-          flow={resource}
-        />
-      ),
-    },
-    {
-      heading: 'Type',
-      Value: ({rowData: resource}) => flowType(resource),
-    },
-    {
-      heading: 'Mapping',
-      Value: ({rowData: resource}) => (
-        <MappingCell
-          ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
-          flow={resource}
-        />
-      ),
-    },
-    {
-      heading: 'Schedule',
-      Value: ({rowData: resource}) => (
-        <ScheduleCell
-          ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
-          flow={resource}
-        />
-      ),
-    },
-    {
-      heading: 'Run',
-      Value: ({rowData: resource}) => (
-        <RunCell
-          ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
-          flow={resource}
-        />
-      ),
-    },
-    {
-      heading: 'Off/On',
-      Value: ({rowData: resource}) => (
-        <OnOffCell
-          ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
-          flow={resource}
-        />
-      ),
-    },
-    {
-      heading: !actionProps.isConnector ? 'Delete' : '',
-      Value: ({rowData: resource}) => {
-        if (actionProps.isConnector) {
-          return null;
-        }
+  useColumns: () => {
+    const tableContext = useGetTableContext();
 
-        return (
-          <DeleteCell
-            ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
+    return [
+      {
+        heading: 'Name',
+        key: 'name',
+        Value: ({rowData: resource}) => (
+          <NameCell
+            ssLinkedConnectionId={tableContext.ssLinkedConnectionId}
             flow={resource}
         />
-        );
+        ),
       },
-    },
-  ],
+      {
+        key: 'type',
+        heading: 'Type',
+        Value: ({rowData: resource}) => flowType(resource),
+      },
+      {
+        key: 'mapping',
+        heading: 'Mapping',
+        Value: ({rowData: resource}) => (
+          <MappingCell
+            ssLinkedConnectionId={tableContext.ssLinkedConnectionId}
+            flow={resource}
+        />
+        ),
+      },
+      {
+        key: 'schedule',
+        heading: 'Schedule',
+        Value: ({rowData: resource}) => (
+          <ScheduleCell
+            ssLinkedConnectionId={tableContext.ssLinkedConnectionId}
+            flow={resource}
+        />
+        ),
+      },
+      {
+        key: 'run',
+        heading: 'Run',
+        Value: ({rowData: resource}) => (
+          <RunCell
+            ssLinkedConnectionId={tableContext.ssLinkedConnectionId}
+            flow={resource}
+        />
+        ),
+      },
+      {
+        key: 'onOff',
+        heading: 'Off/On',
+        Value: ({rowData: resource}) => (
+          <OnOffCell
+            ssLinkedConnectionId={tableContext.ssLinkedConnectionId}
+            flow={resource}
+        />
+        ),
+      },
+      {
+        key: 'delete',
+        heading: !tableContext.isConnector ? 'Delete' : '',
+        Value: ({rowData: resource}) => {
+          if (tableContext.isConnector) {
+            return null;
+          }
+
+          return (
+            <DeleteCell
+              ssLinkedConnectionId={tableContext.ssLinkedConnectionId}
+              flow={resource}
+        />
+          );
+        },
+      },
+    ];
+  },
 };

@@ -16,8 +16,9 @@ import ErrorMessage from '../cells/ErrorMessage';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'selectAll',
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
@@ -31,6 +32,7 @@ export default {
       },
     },
     {
+      key: 'message',
       heading: 'Message',
       width: '40%',
       Value: ({rowData: r}) => {
@@ -49,11 +51,13 @@ export default {
       },
     },
     {
+      key: 'code',
       heading: 'Code',
       Value: ({rowData: r}) => <TextOverflowCell message={r.code} />,
       width: '15%',
     },
     {
+      key: 'selectSource',
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
@@ -63,6 +67,7 @@ export default {
       width: '15%',
     },
     {
+      key: 'selectDate',
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
@@ -72,7 +77,9 @@ export default {
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.occurredAt} />,
     },
   ],
-  rowActions: ({retryDataKey, source, reqAndResKey}, { actionInProgress }) => {
+  useRowActions: ({retryDataKey, source, reqAndResKey}) => {
+    const {actionInProgress} = useGetTableContext();
+
     if (actionInProgress) return [];
     const actions = [
       Resolve,

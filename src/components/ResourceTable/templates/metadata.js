@@ -12,13 +12,15 @@ import TextOverflowCell from '../../TextOverflowCell';
 
 export default {
 
-  columns: [
+  useColumns: () => [
     {
+      key: 'applications',
       heading: 'Applications',
       Value: ({rowData: r}) => <ApplicationImgCell applications={r.applications} />,
 
     },
     {
+      key: 'name',
       heading: 'Name',
       width: '25%',
       Value: ({rowData: r}) => (
@@ -28,11 +30,13 @@ export default {
       orderBy: 'name',
     },
     {
+      key: 'lastUpdated',
       heading: 'Last updated',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {
+      key: 'websiteUrl',
       heading: 'Website URL',
       Value: ({rowData: r}) => {
         // the hyperlink has to be an Absolute link to not open the link relative to our website domain
@@ -48,6 +52,7 @@ export default {
       },
     },
     {
+      key: 'published',
       heading: 'Published',
       Value: ({rowData: r}) => (
         <OnOffCell
@@ -61,5 +66,5 @@ export default {
       orderBy: 'published',
     },
   ],
-  rowActions: [Edit, UploadZipFile, Download, Delete],
+  useRowActions: () => [Edit, UploadZipFile, Download, Delete],
 };

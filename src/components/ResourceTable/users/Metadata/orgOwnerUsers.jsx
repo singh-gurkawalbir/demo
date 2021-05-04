@@ -14,11 +14,13 @@ import DeleteFromAccount from '../actions/DeleteFromAccount';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
-  columns: (r, { integrationId, isUserInErrMgtTwoDotZero }) => {
+  useColumns: () => {
+    const { integrationId, isUserInErrMgtTwoDotZero } = useGetTableContext();
     const columns = [
-      { heading: 'Name', Value: ({rowData: r}) => r.sharedWithUser.name },
-      { heading: 'Email', Value: ({rowData: r}) => r.sharedWithUser.email },
+      { heading: 'Name', key: 'name', Value: ({rowData: r}) => r.sharedWithUser.name },
+      { heading: 'Email', key: 'email', Value: ({rowData: r}) => r.sharedWithUser.email },
       {
+        key: 'accessLevelHeader',
         HeaderValue: AccessLevelHeader,
         Value: ({rowData: r}) => {
           const {integrationId} = useGetTableContext();
@@ -27,6 +29,7 @@ export default {
         },
       },
       {
+        key: 'statusHeader',
         HeaderValue: StatusHeader,
         Value: ({rowData: r}) => {
           const {integrationId} = useGetTableContext();
@@ -35,6 +38,7 @@ export default {
         },
       },
       {
+        key: 'enableUserHeader',
         HeaderValue: EnableUserHeader,
         align: 'center',
         Value: ({rowData: r}) => {
@@ -48,6 +52,7 @@ export default {
         },
       },
       ...((integrationId && isUserInErrMgtTwoDotZero) ? [{
+        key: 'notifications',
         heading: 'Notifications',
         align: 'center',
         Value: ({rowData: r}) => {
@@ -61,8 +66,9 @@ export default {
 
     return columns;
   },
-  rowActions: (user, actionProps = {}) => {
-    const { integrationId, accessLevel } = actionProps;
+  useRowActions: user => {
+    const tableContext = useGetTableContext();
+    const { integrationId, accessLevel } = tableContext;
     const actions = [];
 
     if ([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(accessLevel) && user._id === ACCOUNT_IDS.OWN) {

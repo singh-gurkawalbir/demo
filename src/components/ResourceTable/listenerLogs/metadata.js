@@ -10,8 +10,9 @@ import LogDetailsLink from './cells/LogDetailsLink';
 import { useGetTableContext } from '../../CeligoTable/TableContext';
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'time',
       HeaderValue: () => {
         const {flowId, exportId} = useGetTableContext();
 
@@ -41,10 +42,12 @@ export default {
       },
     },
     {
+      key: 'method',
       heading: 'Method',
       Value: log => log.method,
     },
     {
+      key: 'codes',
       HeaderValue: () => {
         const {flowId, exportId} = useGetTableContext();
 
@@ -67,30 +70,35 @@ export default {
       Value: log => log.statusCode,
     },
   ],
-  rowActions: (log, {flowId, exportId}) => ([
-    {
-      icon: TrashIcon,
-      useLabel: () => 'Delete log',
-      onClick: (dispatch, confirmDialog) => {
-        const handleClick = () => {
-          dispatch(actions.logs.listener.removeLog(flowId, exportId, [log?.key]));
-        };
+  useRowActions: log => {
+    const {flowId, exportId} = useGetTableContext();
 
-        confirmDialog({
-          title: 'Confirm delete',
-          message: 'Are you sure you want to delete this request?',
-          buttons: [
-            {
-              label: 'Delete',
-              onClick: handleClick,
-            },
-            {
-              label: 'Cancel',
-              color: 'secondary',
-            },
-          ],
-        });
+    return [
+      {
+        icon: TrashIcon,
+        useLabel: () => 'Delete log',
+        onClick: (dispatch, confirmDialog) => {
+          const handleClick = () => {
+            dispatch(actions.logs.listener.removeLog(flowId, exportId, [log?.key]));
+          };
+
+          confirmDialog({
+            title: 'Confirm delete',
+            message: 'Are you sure you want to delete this request?',
+            buttons: [
+              {
+                label: 'Delete',
+                onClick: handleClick,
+              },
+              {
+                label: 'Cancel',
+                color: 'secondary',
+              },
+            ],
+          });
+        },
       },
-    },
-  ]),
+    ];
+  },
+
 };

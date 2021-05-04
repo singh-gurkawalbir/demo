@@ -13,8 +13,9 @@ import SelectDate from '../cells/SelectDate';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'selectAll',
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
@@ -28,16 +29,19 @@ export default {
       },
     },
     {
+      key: 'message',
       heading: 'Message',
       width: '25%',
       Value: ({rowData: r}) => <TextOverflowCell message={r.message} containsHtml />,
     },
     {
+      key: 'code',
       heading: 'Code',
       width: '18%',
       Value: ({rowData: r}) => <TextOverflowCell message={r.code} />,
     },
     {
+      key: 'selectResource',
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
@@ -47,6 +51,7 @@ export default {
       Value: ({rowData: r}) => <TextOverflowCell message={r.source} />,
     },
     {
+      key: 'selectDate',
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
@@ -56,6 +61,7 @@ export default {
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.occurredAt} />,
     },
     {
+      key: 'resolvedBy',
       heading: 'Resolved by',
       width: '12%',
       Value: ({rowData: r}) => {
@@ -65,6 +71,7 @@ export default {
       },
     },
     {
+      key: 'resolvedAt',
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
@@ -79,7 +86,8 @@ export default {
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.resolvedAt} />,
     },
   ],
-  rowActions: ({ retryDataKey, reqAndResKey }, { actionInProgress }) => {
+  useRowAction: ({ retryDataKey, reqAndResKey }) => {
+    const {actionInProgress} = useGetTableContext();
     const actions = [];
 
     if (actionInProgress) return actions;

@@ -11,24 +11,27 @@ import ApplicationImgCell from './cells/ApplicationImgCell';
 import TextOverflowCell from '../../TextOverflowCell';
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'applications',
       heading: 'Applications',
       Value: ({rowData: r}) => <ApplicationImgCell applications={r.applications} />,
-
     },
     {
+      key: 'name',
       heading: 'Name',
       width: '25%',
       Value: ({rowData: r}) => <TextOverflowCell message={<ResourceDrawerLink resourceType="connectors" resource={r} />} />,
       orderBy: 'name',
     },
     {
+      key: 'lastUpdated',
       heading: 'Last updated',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {
+      key: 'websiteUrl',
       heading: 'Website URL',
       value(r) {
         // the hyperlink has to be an Absolute link to not open the link relative to our website domain
@@ -42,6 +45,7 @@ export default {
       },
     },
     {
+      key: 'published',
       heading: 'Published',
       Value: ({rowData: r}) => (
         <OnOffCell
@@ -54,5 +58,5 @@ export default {
       orderBy: 'published',
     },
   ],
-  rowActions: [Edit, InstallBase, Licenses, Delete],
+  useRowActions: () => [Edit, InstallBase, Licenses, Delete],
 };
