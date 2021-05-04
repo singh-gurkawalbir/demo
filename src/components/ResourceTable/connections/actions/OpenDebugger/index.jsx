@@ -17,13 +17,16 @@ export default {
 
     return hasAccess;
   },
-  component: function OpenDebugger({ rowData = {} }) {
+  component: function OpenDebugger({ rowData = {}, flowId }) {
     const { _id: connectionId } = rowData;
     const dispatch = useDispatch();
     const openDebugger = useCallback(() => {
       dispatch(actions.logs.connections.request(connectionId));
-      dispatch(actions.bottomDrawer.addTab({tabType: 'connectionLogs', resourceId: connectionId}));
-    }, [connectionId, dispatch]);
+      // bottomDrawer is supported in flow builder
+      if (flowId) {
+        dispatch(actions.bottomDrawer.addTab({tabType: 'connectionLogs', resourceId: connectionId}));
+      }
+    }, [connectionId, dispatch, flowId]);
 
     useEffect(() => {
       openDebugger();
