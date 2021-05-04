@@ -47,25 +47,21 @@ const useStyles = makeStyles(theme => ({
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
   },
-  baseForm: {
-    paddingTop: theme.spacing(3),
-    '& > div:first-child': {
-      paddingTop: 0,
-    },
-  },
   baseFormWithPreview: {
     display: 'grid',
     gridTemplateColumns: '50% 48%',
     gridColumnGap: theme.spacing(1),
+    padding: theme.spacing(3),
+    '& > div:first-child': {
+      padding: 0,
+    },
   },
   resourceFormWrapper: {
     flexDirection: 'row',
     width: '100%',
-    padding: theme.spacing(3, 3, 0, 3),
+    padding: theme.spacing(3),
     overflowY: 'auto',
-  },
-  exportsPanel: {
-    flexDirection: 'row',
+
   },
   appLogo: {
     padding: theme.spacing(0, 1),
@@ -136,6 +132,9 @@ const useStyles = makeStyles(theme => ({
   divider: {
     height: 24,
     width: 1,
+  },
+  resourcePanelFooter: {
+    background: theme.palette.common.white,
   },
 }));
 const useDetermineRequiredResources = type => useMemo(() => {
@@ -388,7 +387,6 @@ export default function Panel(props) {
           />
             {showPreviewPanel && (
               <ExportsPreviewPanel
-                className={classes.exportsPanel}
                 resourceId={id}
                 formKey={newId}
                 resourceType={resourceType}
@@ -396,7 +394,7 @@ export default function Panel(props) {
           />
             )}
           </div>
-          <div style={{overflowY: 'auto'}}>
+          <div className={classes.resourcePanelFooter}>
             <ResourceFormActionsPanel
               formKey={newId}
               isNew={isNew}
