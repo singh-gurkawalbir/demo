@@ -8,6 +8,7 @@ import Notifications from '../cells/Notifications';
 import AccessLevelHeader from '../cells/AccessLevelHeader';
 import EnableUserHeader from '../cells/EnableUserHeader';
 import StatusHeader from '../cells/StatusHeader';
+import HeaderWithHelpText from '../../commonCells/HeaderWithHelpText';
 import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../../../utils/constants';
 import ManagePermissions from '../actions/ManagePermissions';
 import MakeAccountOwner from '../actions/MakeAccountOwner';
@@ -46,13 +47,17 @@ export default {
           <Notifications user={r} integrationId={integrationId} />,
       }] : []),
       ...((!integrationId && isSSOEnabled) ? [
-        { heading: 'Account SSO linked?',
+        {
+          headerValue: () => <HeaderWithHelpText title="Account SSO linked?" helpKey="users.accountSSOLinked" />,
           value: r => {
             if (!r.sharedWithUser.accountSSOLinked || r.sharedWithUser.accountSSOLinked === 'not_linked') return 'No';
 
             return 'Yes';
           }},
-        { heading: 'Require account SSO?', value: r => <RequireAccountSSO user={r} /> },
+        {
+          headerValue: () => <HeaderWithHelpText title="Require account SSO?" helpKey="users.requireAccountSSO" />,
+          value: r => <RequireAccountSSO user={r} />,
+        },
       ] : []),
     ];
 

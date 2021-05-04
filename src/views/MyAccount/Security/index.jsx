@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
@@ -10,6 +11,8 @@ import DynaSubmit from '../../../components/DynaForm/DynaSubmit';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import { generateNewId, isNewId, getDomainUrl } from '../../../utils/resource';
 import { hashCode } from '../../../utils/string';
+import PanelHeader from '../../../components/PanelHeader';
+import Help from '../../../components/Help';
 
 const useStyles = makeStyles(theme => ({
   ssoForm: {
@@ -18,6 +21,28 @@ const useStyles = makeStyles(theme => ({
   },
   footer: {
     marginTop: theme.spacing(2),
+  },
+  helpTextButton: {
+    marginLeft: theme.spacing(1),
+    height: theme.spacing(2),
+    width: theme.spacing(2),
+    padding: 0,
+    marginRight: theme.spacing(1),
+  },
+  ssoSwitch: {
+    display: 'flex',
+    paddingLeft: theme.spacing(2),
+  },
+  flexContainer: {
+    display: 'flex',
+  },
+  content: {
+    fontSize: '14px',
+    lineHeight: '20px',
+  },
+  urlDetails: {
+    fontSize: '15px',
+    lineHeight: '20px',
   },
 }));
 
@@ -69,6 +94,7 @@ export default function Security() {
           label: 'Issuer URL',
           required: true,
           defaultValue: oidcClient?.oidc?.issuerURL,
+          helpKey: 'sso.issuerURL',
         },
         clientId: {
           id: 'clientId',
@@ -77,6 +103,7 @@ export default function Security() {
           label: 'Client Id',
           required: true,
           defaultValue: oidcClient?.oidc?.clientId,
+          helpKey: 'sso.clientId',
         },
         clientSecret: {
           id: 'clientSecret',
@@ -84,6 +111,7 @@ export default function Security() {
           type: 'text',
           label: 'Client secret',
           required: true,
+          helpKey: 'sso.clientSecret',
         },
         orgId: {
           id: 'orgId',
@@ -92,6 +120,7 @@ export default function Security() {
           label: 'Organization id',
           required: true,
           defaultValue: oidcClient?.orgId,
+          helpKey: 'sso.orgId',
         },
       },
       layout: {
@@ -156,9 +185,13 @@ export default function Security() {
   return (
     <>
       <LoadResources required resources="ssoclients">
-        <div> Enable OIDC based SSO <CeligoSwitch
-          onChange={handleEnableSSO}
-          checked={isSSOEnabled}
+        <PanelHeader title="Single Sign-on(SSO)" />
+        <div className={classes.ssoSwitch}>
+          <Typography variant="body2" className={classes.content}> Enable OIDC based SSO </Typography>
+          <Help title="Enable OIDC based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
+          <CeligoSwitch
+            onChange={handleEnableSSO}
+            checked={isSSOEnabled}
       />
         </div>
         {
@@ -169,8 +202,14 @@ export default function Security() {
                 {
                 !!oidcClient?.orgId && (
                 <div>
-                  <div> Application login URL: { applicationLoginURL } </div>
-                  <div> Redirect URL: { redirectURL } </div>
+                  <div className={classes.flexContainer}>
+                    <Typography className={classes.urlDetails}> Application login URL: { applicationLoginURL }</Typography>
+                    <Help title="Application login URL" helpKey="sso.loginURL" className={classes.helpTextButton} />
+                  </div>
+                  <div className={classes.flexContainer}>
+                    <Typography className={classes.urlDetails}>Redirect URL: { redirectURL }</Typography>
+                    <Help title="Redirect URL" helpKey="sso.redirectURL" className={classes.helpTextButton} />
+                  </div>
                 </div>
                 )
               }
