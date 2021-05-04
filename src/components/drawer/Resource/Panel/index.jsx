@@ -57,8 +57,9 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplateColumns: '50% 48%',
     gridColumnGap: theme.spacing(1),
+    padding: theme.spacing(3),
     '& > div:first-child': {
-      paddingTop: 0,
+      padding: 0,
     },
   },
   resourceFormWrapper: {
@@ -144,9 +145,6 @@ const useStyles = makeStyles(theme => ({
   },
   resourcePanelFooter: {
     background: theme.palette.common.white,
-  },
-  resourceFooterWithPreview: {
-    // background: 'limegreen',
   },
 }));
 const useDetermineRequiredResources = type => useMemo(() => {
@@ -407,7 +405,7 @@ export default function Panel(props) {
           />
             )}
           </div>
-          <div className={clsx(classes.resourcePanelFooter, {[classes.resourceFooterWithPreview]: showPreviewPanel })}>
+          <div className={classes.resourcePanelFooter}>
             <ResourceFormActionsPanel
               formKey={newId}
               isNew={isNew}
