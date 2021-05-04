@@ -34,6 +34,7 @@ import customSettings, { selectors as fromCustomSettings } from './customSetting
 import recycleBin, { selectors as fromRecycleBin } from './recycleBin';
 import logs, {selectors as fromLogs} from './logs';
 import sso, {selectors as fromSSO} from './sso';
+import bottomDrawer, {selectors as fromBottomDrawer} from './bottomDrawer';
 import integrations, {selectors as fromIntegrations} from './integrations';
 import { genSelectors } from '../util';
 
@@ -74,6 +75,7 @@ export default combineReducers({
   exportData: exportDataReducer,
   logs,
   sso,
+  bottomDrawer,
 });
 
 // #region PUBLIC SELECTORS
@@ -115,6 +117,7 @@ const subSelectors = {
   recycleBin: fromRecycleBin,
   logs: fromLogs,
   sso: fromSSO,
+  bottomDrawer: fromBottomDrawer,
 };
 
 genSelectors(selectors, subSelectors);

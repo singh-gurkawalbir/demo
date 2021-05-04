@@ -64,6 +64,7 @@ import exportDataSagas from './exportData';
 import {logsSagas} from './logs';
 import ssoSagas from './sso';
 import { APIException } from './api';
+import { bottomDrawerSagas } from './bottomDrawer';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -180,6 +181,7 @@ export function* allSagas() {
     ...exportDataSagas,
     ...logsSagas,
     ...ssoSagas,
+    ...bottomDrawerSagas,
   ]);
 }
 

@@ -2148,6 +2148,15 @@ const hooks = {
   save: context => action(actionTypes.HOOKS.SAVE, context),
 };
 
+const bottomDrawer = {
+  init: flowId => action(actionTypes.BOTTOM_DRAWER.INIT, { flowId }),
+  initComplete: value => action(actionTypes.BOTTOM_DRAWER.INIT_COMPLETE, { value }),
+  addTab: ({tabType, label, resourceId}) => action(actionTypes.BOTTOM_DRAWER.ADD_TAB, { tabType, resourceId, label }),
+  removeTab: ({tabType, resourceId}) => action(actionTypes.BOTTOM_DRAWER.REMOVE_TAB, { tabType, resourceId }),
+  setActiveTab: ({ index, tabType }) => action(actionTypes.BOTTOM_DRAWER.SET_ACTIVE_TAB, { index, tabType }),
+  clear: () => action(actionTypes.BOTTOM_DRAWER.CLEAR),
+};
+
 const logs = {
   scripts: {
     request: ({ scriptId, flowId, isInit }) =>
@@ -2265,4 +2274,5 @@ export default {
   hooks,
   logs,
   sso,
+  bottomDrawer,
 };

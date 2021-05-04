@@ -18,6 +18,7 @@ import {
 import { isIntegrationApp } from '../../../utils/flows';
 import { isJsonString } from '../../../utils/string';
 import { emptyObject } from '../../../utils/constants';
+import { isFileAdaptor } from '../../../utils/resource';
 
 /*
  * Returns PG/PP Document saved on Flow Doc.
@@ -224,7 +225,9 @@ export function* requestSampleDataForExports({
   );
 
   if (['flowInput', 'raw'].includes(sampleDataStage)) {
-    if (isPageGeneratorExport) {
+    const resourceObj = yield select(selectors.resource, resourceType, resourceId);
+
+    if (isPageGeneratorExport || isFileAdaptor(resourceObj)) {
       yield call(fetchPageGeneratorPreview, {
         flowId,
         _pageGeneratorId: resourceId,
