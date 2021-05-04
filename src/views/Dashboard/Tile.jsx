@@ -109,6 +109,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', tile && tile._integrationId)
   );
+  const supportsMultiStore = integration?.settings?.supportsMultiStore;
+  const storeLabel = integration?.settings?.storeLabel;
   const isCloned = integration?.install?.find(step => step?.isClone);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
@@ -319,6 +321,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             trialExpired={trialExpired}
             licenseId={licenseId}
             tileStatus={tile.status}
+            supportsMultiStore={supportsMultiStore}
+            storeLabel={storeLabel}
             isIntegrationV2={isIntegrationV2} integrationId={tile._integrationId}
             integrationAppTileName={integrationAppTileName} resumable={resumable} accessLevel={accessLevel} />
           )

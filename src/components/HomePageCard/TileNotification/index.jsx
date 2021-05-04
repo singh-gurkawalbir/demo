@@ -69,7 +69,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel, showTrialLicenseMessage, tileStatus, trialExpired}) {
+export default function TileNotification({ content, expired, connectorId, licenseId, integrationAppTileName, integrationId, isIntegrationV2, resumable, accessLevel, showTrialLicenseMessage, tileStatus, trialExpired, supportsMultiStore, storeLabel}) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -97,6 +97,8 @@ export default function TileNotification({ content, expired, connectorId, licens
     event.stopPropagation();
     if (![INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel)) {
       enquesnackbar({ message: 'Contact your account owner to uninstall this integration app.' });
+    } else if (supportsMultiStore && storeLabel && tileStatus !== TILE_STATUS.UNINSTALL) {
+      enquesnackbar({ message: `Open tile and  choose a ${storeLabel} from the ${storeLabel} drop-down to uninstall.`});
     } else {
       confirmDialog({
         title: 'Confirm uninstall',
@@ -119,7 +121,7 @@ export default function TileNotification({ content, expired, connectorId, licens
         ],
       });
     }
-  }, [accessLevel, confirmDialog, enquesnackbar, history, integrationAppTileName, integrationId]);
+  }, [accessLevel, confirmDialog, enquesnackbar, history, integrationAppTileName, integrationId, storeLabel, supportsMultiStore, tileStatus]);
 
   return (
     <div className={classes.trialExpireWrapper}>
