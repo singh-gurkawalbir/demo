@@ -55,12 +55,14 @@ export default function RequireAccountSSO({ user }) {
 
   if (disableSwitch) {
     return (
-      <Tooltip data-public title="This user is already linked to another account’s SSO">
-        <CeligoSwitch
-          data-test="ssoRequired"
-          disabled
-          checked={accountSSORequired}
-          onChange={handleSwitch} />
+      <Tooltip placement="bottom" data-public title="This user is already linked to another account’s SSO">
+        <div>
+          <CeligoSwitch
+            data-test="ssoRequired"
+            disabled
+            checked={accountSSORequired}
+            onChange={handleSwitch} />
+        </div>
       </Tooltip>
     );
   }

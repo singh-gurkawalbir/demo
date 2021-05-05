@@ -63,6 +63,7 @@ export default {
         {
           headerValue: () => <HeaderWithHelpText title="Require account SSO?" helpKey="users.requireAccountSSO" />,
           value: r => <RequireAccountSSO user={r} />,
+          align: 'center',
         },
       ] : []),
     ];
