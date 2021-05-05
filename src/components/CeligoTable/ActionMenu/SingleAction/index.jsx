@@ -1,6 +1,6 @@
 import { IconButton, Tooltip } from '@material-ui/core';
 import React from 'react';
-import { useGetAllActionProps } from './hooks';
+import { useGetAllActionProps } from '../hooks';
 
 const SingleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) => {
   const {

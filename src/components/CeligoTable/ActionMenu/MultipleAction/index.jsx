@@ -1,6 +1,6 @@
 import { MenuItem, Tooltip } from '@material-ui/core';
 import React from 'react';
-import { useGetAllActionProps } from './hooks';
+import { useGetAllActionProps } from '../hooks';
 
 const MultipleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) => {
   const {
