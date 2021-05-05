@@ -62,7 +62,7 @@ export default function ProfileComponent() {
     selectors.userProfilePreferencesProps(state)
   );
   const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
-  const isSSOEnabled = useSelector(state => selectors.isSSOEnabled(state));
+  const isUserAllowedOnlySSOLogin = useSelector(state => selectors.isUserAllowedOnlySSOLogin(state));
 
   const dateTimeZonesList = useMemo(
     () => [
@@ -156,7 +156,7 @@ export default function ProfileComponent() {
         type: 'useremail',
         label: 'Email',
         helpKey: 'myaccount.email',
-        readOnly: isSSOEnabled,
+        readOnly: isUserAllowedOnlySSOLogin,
         value: preferences && preferences.email,
       },
       password: {
@@ -165,7 +165,7 @@ export default function ProfileComponent() {
         label: 'Password',
         helpKey: 'myaccount.password',
         type: 'userpassword',
-        visible: !isSSOEnabled,
+        visible: !isUserAllowedOnlySSOLogin,
       },
       company: {
         id: 'company',
@@ -244,7 +244,7 @@ export default function ProfileComponent() {
         'developer',
       ],
     },
-  }), [dateFormatList, dateTimeZonesList, preferences, timeFormatList, isSSOEnabled]);
+  }), [dateFormatList, dateTimeZonesList, preferences, timeFormatList, isUserAllowedOnlySSOLogin]);
   const [count, setCount] = useState(0);
 
   useEffect(() => {

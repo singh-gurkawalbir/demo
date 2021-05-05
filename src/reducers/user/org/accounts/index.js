@@ -646,4 +646,16 @@ selectors.permissions = (
   return Object.freeze(permissions);
 };
 
+selectors.isAccountSSORequired = (state, accountId) => {
+  if (!state) {
+    return undefined;
+  }
+  const account = state.find(a => a._id === accountId);
+
+  if (!account) {
+    return undefined;
+  }
+
+  return !!account.accountSSORequired;
+};
 // #endregion

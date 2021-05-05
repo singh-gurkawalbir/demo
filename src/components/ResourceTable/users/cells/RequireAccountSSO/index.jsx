@@ -7,9 +7,10 @@ import actionTypes from '../../../../../actions/types';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useCommStatus from '../../../../../hooks/useCommStatus';
+import { ACCOUNT_IDS } from '../../../../../utils/constants';
 
 export default function RequireAccountSSO({ user }) {
-  const { accountSSORequired, _id, sharedWithUser = {} } = user;
+  const { accountSSORequired, _id: userId, sharedWithUser = {} } = user;
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
 
@@ -38,7 +39,7 @@ export default function RequireAccountSSO({ user }) {
     [enquesnackbar]
   );
 
-  const actionsToMonitor = useMemo(() => ({update: { action: actionTypes.USER_UPDATE, resourceId: _id }}), [_id]);
+  const actionsToMonitor = useMemo(() => ({update: { action: actionTypes.USER_UPDATE, resourceId: userId }}), [userId]);
 
   useCommStatus({
     actionsToMonitor,
@@ -47,6 +48,10 @@ export default function RequireAccountSSO({ user }) {
   });
 
   const disableSwitch = sharedWithUser.accountSSOLinked === 'other_account' && !accountSSORequired;
+
+  if (userId === ACCOUNT_IDS.OWN) {
+    return null;
+  }
 
   if (disableSwitch) {
     return (

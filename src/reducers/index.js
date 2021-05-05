@@ -5490,4 +5490,31 @@ selectors.isSSOEnabled = state => {
 
   return !oidcClient.disabled;
 };
+
+selectors.ownerSSOClientId = state => {
+  const accountOwner = selectors.accountOwner(state);
+
+  return accountOwner._ssoClientId;
+};
+
+selectors.isUserAllowedOnlySSOLogin = state => {
+  const userPermissions = selectors.userPermissions(state) || {};
+
+  // Account owner can always login through SSO/ email and password
+  if (userPermissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+    return false;
+  }
+
+  const ownerSSOClientId = selectors.ownerSSOClientId(state);
+
+  const preferences = selectors.userPreferences(state);
+  const isAccountSSORequired = selectors.isAccountSSORequired(state, preferences.defaultAShareId);
+
+  /*
+  * If owner has ssoClientId, owner has sso enabled
+  * accountUser has isAccountSSORequired infers he is required to log in only through SSO
+  * When above 2 conditions satisfy, it infers user can login only through SSO
+  */
+  return ownerSSOClientId && isAccountSSORequired;
+};
 // #endregion sso selectors
