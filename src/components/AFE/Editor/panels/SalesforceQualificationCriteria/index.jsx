@@ -77,7 +77,15 @@ export default function SalesforceQualificationCriteriaPanel({ editorId }) {
     setFiltersMetadata(getFilterList(jsonPathsFromData, rules || []));
   }, [jsonPathsFromData, rules]);
 
-  const isValid = () => jQuery(qbuilder.current).queryBuilder('validate');
+  const isValid = () => {
+    try {
+      return jQuery(qbuilder.current).queryBuilder('validate');
+    // eslint-disable-next-line no-empty
+    } catch (e) {
+    }
+
+    return false;
+  };
   const getRules = () => {
     const result = jQuery(qbuilder.current).queryBuilder('getSQL');
 
