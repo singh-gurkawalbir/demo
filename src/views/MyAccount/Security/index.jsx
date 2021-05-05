@@ -110,6 +110,7 @@ export default function Security() {
           id: 'clientSecret',
           name: 'clientSecret',
           type: 'text',
+          inputType: 'password',
           label: 'Client secret',
           required: true,
           helpKey: 'sso.clientSecret',
