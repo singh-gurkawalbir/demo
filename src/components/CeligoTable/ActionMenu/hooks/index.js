@@ -26,7 +26,7 @@ export const useGetAllActionProps = ({meta, rowData, handleMenuClose, setSelecte
     useHasAccess,
     useDisabledActionText,
     useLabel,
-    Icon,
+    icon: Icon,
     Component,
   } = meta;
   const {
