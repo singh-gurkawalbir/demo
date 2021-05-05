@@ -71,7 +71,7 @@ export default {
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
-          <SelectDate {...tableContext} />;
+        return <SelectDate {...tableContext} />;
       },
       width: '15%',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.occurredAt} />,
