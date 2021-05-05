@@ -50,7 +50,13 @@ export default {
         {
           headerValue: () => <HeaderWithHelpText title="Account SSO linked?" helpKey="users.accountSSOLinked" />,
           value: r => {
-            if (!r.sharedWithUser.accountSSOLinked || r.sharedWithUser.accountSSOLinked === 'not_linked') return 'No';
+            const { sharedWithUser = {}, _id: userId } = r;
+
+            if (userId === ACCOUNT_IDS.OWN) {
+              return null;
+            }
+
+            if (!sharedWithUser.accountSSOLinked || sharedWithUser.accountSSOLinked === 'not_linked') return 'No';
 
             return 'Yes';
           }},
