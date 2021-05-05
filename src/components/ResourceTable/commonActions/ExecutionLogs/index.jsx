@@ -21,7 +21,10 @@ export default {
 
     return useCallback(() => {
       dispatch(actions.logs.scripts.request({scriptId, flowId, isInit: true}));
-      dispatch(actions.bottomDrawer.addTab({tabType: 'scriptLogs', resourceId: scriptId}));
+      // bottomDrawer is supported in flow builder
+      if (flowId) {
+        dispatch(actions.bottomDrawer.addTab({tabType: 'scriptLogs', resourceId: scriptId}));
+      }
 
       if (!flowId) {
         history.push(

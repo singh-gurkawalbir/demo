@@ -126,7 +126,7 @@ selectors.commsErrors = commsState => {
     const {failedAtTimestamp, message, status, hidden} = curr;
 
     if (!hidden && status === COMM_STATES.ERROR) {
-      acc[failedAtTimestamp] = inferErrorMessages(message);
+      acc[failedAtTimestamp] = message;
     }
 
     return acc;
