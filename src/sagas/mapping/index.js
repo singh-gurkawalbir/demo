@@ -628,7 +628,9 @@ export function* getAutoMapperSuggestion() {
     reqBody.source_record_type = '';
   }
 
-  reqBody.dest_fields = generateFields.map(f => ({id: f.id}));
+  // filtering out all duplicates elements from generate fields
+  // there could be multiple generate with same id. Example: addressbook[*].id is common id for [Address : ID] and [Address : Line ID]
+  reqBody.dest_fields = Object.values(generateFields.map(f => ({id: f.id})).reduce((acc, cur) => Object.assign(acc, {[cur.id]: cur}), {}));
 
   const path = '/autoMapperSuggestions';
   const opts = {
