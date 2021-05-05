@@ -15,6 +15,9 @@ export default (state = {}, action) => {
 
         break;
       case actionTypes.BOTTOM_DRAWER.INIT_COMPLETE:
+        if (!draft.bottomDrawer) {
+          draft.bottomDrawer = {};
+        }
         draft.bottomDrawer.activeTabIndex = 0;
         draft.bottomDrawer.tabs = value;
         break;
