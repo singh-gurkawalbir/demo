@@ -11,7 +11,7 @@ import { selectors } from '../../reducers';
 const useStyles = makeStyles(theme => ({
   form: {
     height: props =>
-      `calc(100vh - ${props.heightOffset || 150}px - ${
+      `calc(100vh - ${props.heightOffset || 186}px - ${
         props.notificationPanelHeight
       }px)`,
     width: props => {
@@ -62,7 +62,11 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
           />
         )}
         {showNotificationToaster &&
-          <GenericAdaptorNotification className={classes.notification} onClose={onCloseNotificationToaster} />}
+        (
+          <div className={classes.notification}>
+            <GenericAdaptorNotification onClose={onCloseNotificationToaster} />
+          </div>
+        )}
         <NetSuiteBundleInstallNotification className={classes.notification} resourceType={resourceType} resourceId={resourceId} />
         <ReactResizeDetector handleHeight onResize={resize} />
       </div>

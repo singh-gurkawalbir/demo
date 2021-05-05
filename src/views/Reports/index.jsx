@@ -59,6 +59,9 @@ const useStyles = makeStyles(theme => ({
   reportsTable: {
     overflowX: 'auto',
   },
+  reportsHeading: {
+    display: 'flex',
+  },
 }));
 const defaultFilter = {
   sort: { order: 'desc', orderBy: 'createdAt' },
@@ -255,7 +258,10 @@ export default function Reports() {
         <div className={classes.resultData}>
           <div className={classes.actions}>
             <Typography
-              variant="h4">
+              variant="h4"
+              component="div"
+              className={classes.reportsHeading}
+              >
               {reportTypeLabel} report results  {info && <InfoIconButton info={info} />}
             </Typography>
             <div className={classes.emptySpace} />
