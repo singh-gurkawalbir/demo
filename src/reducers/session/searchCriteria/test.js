@@ -24,21 +24,21 @@ describe('search criteria tests', () => {
     {
       field: 'type',
       operator: 'is',
-      rowIdentifier: 0,
+      key: expect.any(String),
       searchValue: 'salesorder',
       searchValue2Enabled: false,
     },
     {
       field: 'account',
       operator: 'anyof',
-      rowIdentifier: 0,
+      key: expect.any(String),
       searchValue: '1',
       searchValue2Enabled: false,
     },
     {
       field: 'trandate',
       operator: 'between',
-      rowIdentifier: 0,
+      key: expect.any(String),
       searchValue: '01-01-2020',
       searchValue2: '31-12-2020',
       searchValue2Enabled: true,
@@ -48,7 +48,6 @@ describe('search criteria tests', () => {
   const defaultState = {
     [id]: {
       searchCriteria: [],
-      initChangeIdentifier: 0,
     },
   };
 
@@ -61,7 +60,6 @@ describe('search criteria tests', () => {
 
       expect(state).toEqual({
         [id]: {
-          initChangeIdentifier: 1,
           searchCriteria: expectedSearchCriteria,
         },
       });
@@ -70,7 +68,6 @@ describe('search criteria tests', () => {
     test('should update entry with init action if entry exists in prev state', () => {
       const state = reducer({
         'searchCriteria-netsuite.restlet.criteria-1': {
-          initChangeIdentifier: 3,
           searchCriteria: [],
         },
       },
@@ -79,7 +76,6 @@ describe('search criteria tests', () => {
 
       expect(state).toEqual({
         'searchCriteria-netsuite.restlet.criteria-1': {
-          initChangeIdentifier: 4,
           searchCriteria: expectedSearchCriteria,
         },
       });
@@ -93,10 +89,9 @@ describe('search criteria tests', () => {
 
       expect(state).toEqual({
         'searchCriteria-netsuite.restlet.criteria-1': {
-          initChangeIdentifier: 0,
           searchCriteria: [{
-            rowIdentifier: 0,
             field: 'account',
+            key: expect.any(String),
           }],
         },
       });
@@ -110,11 +105,10 @@ describe('search criteria tests', () => {
 
       expect(state).toEqual({
         'searchCriteria-netsuite.restlet.criteria-1': {
-          initChangeIdentifier: 0,
           searchCriteria: [{
-            rowIdentifier: 0,
             field: 'name',
             join: 'customer',
+            key: expect.any(String),
           }],
         },
       });
@@ -128,38 +122,35 @@ describe('search criteria tests', () => {
 
       expect(state).toEqual({
         'searchCriteria-netsuite.restlet.criteria-1': {
-          initChangeIdentifier: 0,
           searchCriteria: [{
-            rowIdentifier: 0,
             operator: 'between',
             searchValue2Enabled: true,
+            key: expect.any(String),
           }],
         },
       });
     });
 
-    test('should update field and increment row identifier if field changed in criteria', () => {
+    test('should update field if field changed in criteria', () => {
       const state = reducer(
         {
           [id]: {
             searchCriteria: [
               {
-                rowIdentifier: 0,
                 field: 'Account',
+                key: expect.any(String),
               },
             ],
-            initChangeIdentifier: 0,
           },
         },
         actions.searchCriteria.patchField(id, 'field', 0, 'Account2')
       );
 
       expect(state).toEqual({
-        'searchCriteria-netsuite.restlet.criteria-1': {
-          initChangeIdentifier: 0,
+        [id]: {
           searchCriteria: [{
-            rowIdentifier: 1,
             field: 'Account2',
+            key: expect.any(String),
           }],
         },
       });
@@ -171,11 +162,10 @@ describe('search criteria tests', () => {
           [id]: {
             searchCriteria: [
               {
-                rowIdentifier: 0,
+                key: expect.any(String),
                 field: 'Account',
               },
             ],
-            initChangeIdentifier: 0,
           },
         },
         actions.searchCriteria.patchField(id, 'field', 0, 'customer.firstname')
@@ -183,11 +173,10 @@ describe('search criteria tests', () => {
 
       expect(state).toEqual({
         'searchCriteria-netsuite.restlet.criteria-1': {
-          initChangeIdentifier: 0,
           searchCriteria: [{
-            rowIdentifier: 1,
             field: 'firstname',
             join: 'customer',
+            key: expect.any(String),
           }],
         },
       });
@@ -199,21 +188,19 @@ describe('search criteria tests', () => {
           [id]: {
             searchCriteria: [
               {
-                rowIdentifier: 0,
                 operator: 'is',
+                key: expect.any(String),
               },
             ],
-            initChangeIdentifier: 0,
           },
         },
         actions.searchCriteria.patchField(id, 'operator', 0, 'within')
       );
 
       expect(state).toEqual({
-        'searchCriteria-netsuite.restlet.criteria-1': {
-          initChangeIdentifier: 0,
+        [id]: {
           searchCriteria: [{
-            rowIdentifier: 1,
+            key: expect.any(String),
             operator: 'within',
             searchValue2Enabled: true,
           }],
@@ -221,7 +208,7 @@ describe('search criteria tests', () => {
       });
     });
 
-    test('should update initChangeIdentifier and should not throw error when delete action called on empty criteria', () => {
+    test('should not throw error when delete action called on empty criteria', () => {
       const state = reducer(
         defaultState,
         actions.searchCriteria.delete(id, 0)
@@ -229,7 +216,6 @@ describe('search criteria tests', () => {
 
       expect(state).toEqual({
         [id]: {
-          initChangeIdentifier: 1,
           searchCriteria: [],
         },
       });
@@ -247,8 +233,7 @@ describe('search criteria tests', () => {
       );
 
       expect(state).toEqual({
-        'searchCriteria-netsuite.restlet.criteria-1': {
-          initChangeIdentifier: 2,
+        [id]: {
           searchCriteria: [expectedSearchCriteria[0], expectedSearchCriteria[2]],
         },
       });
@@ -267,7 +252,6 @@ describe('search criteria tests', () => {
       );
 
       expect(selectors.searchCriteria(state, id)).toEqual({
-        initChangeIdentifier: 1,
         searchCriteria: expectedSearchCriteria,
       });
     });

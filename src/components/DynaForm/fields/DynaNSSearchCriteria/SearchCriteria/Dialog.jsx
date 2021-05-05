@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   Button,
   Dialog,
@@ -48,6 +48,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const emptyObject = {};
+
 export default function SearchCriteriaDialog(props) {
   const {
     id,
@@ -68,19 +70,28 @@ export default function SearchCriteriaDialog(props) {
   const { searchCriteria } = useSelector(state =>
     selectors.searchCriteria(state, id)
   );
-  const invalidFields = {};
 
-  searchCriteria?.forEach((criteria, index) => {
-    if (!criteria.field) {
-      invalidFields[index] = [...invalidFields[index] || [], 'field'];
+  const invalidFields = useMemo(() => {
+    const result = {};
+
+    searchCriteria?.forEach((criteria, index) => {
+      delete result[index];
+      if (!criteria.field) {
+        result[index] = [...result[index] || [], 'field'];
+      }
+      if (!criteria.operator) {
+        result[index] = [...result[index] || [], 'operator'];
+      }
+      if (!criteria.searchValue) {
+        result[index] = [...result[index] || [], 'searchValue'];
+      }
+    });
+    if (isEmpty(result)) {
+      return emptyObject;
     }
-    if (!criteria.operator) {
-      invalidFields[index] = [...invalidFields[index] || [], 'operator'];
-    }
-    if (!criteria.searchValue) {
-      invalidFields[index] = [...invalidFields[index] || [], 'searchValue'];
-    }
-  });
+
+    return result;
+  }, [searchCriteria]);
 
   const handleSave = useCallback(() => {
     if (onSave) {

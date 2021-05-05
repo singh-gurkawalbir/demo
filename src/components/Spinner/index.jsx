@@ -26,16 +26,16 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(1),
   },
   small: {
-    width: theme.spacing(2),
-    height: theme.spacing(2),
+    width: `${theme.spacing(2)}px !important`,
+    height: `${theme.spacing(2)}px !important`,
   },
   medium: {
-    width: theme.spacing(3),
-    height: theme.spacing(3),
+    width: `${theme.spacing(3)}px !important`,
+    height: `${theme.spacing(3)}px !important`,
   },
   large: {
-    width: theme.spacing(6),
-    height: theme.spacing(6),
+    width: `${theme.spacing(6)}px !important`,
+    height: `${theme.spacing(6)}px !important`,
   },
 }));
 
