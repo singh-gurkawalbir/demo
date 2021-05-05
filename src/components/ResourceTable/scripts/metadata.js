@@ -6,28 +6,32 @@ import AuditLogs from '../commonActions/AuditLogs';
 import ViewExecutionLogs from '../commonActions/ExecutionLogs';
 import Edit from '../commonActions/Edit';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
+import { useGetTableContext } from '../../CeligoTable/TableContext';
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'name',
       heading: 'Name',
       Value: ({rowData: r}) => <ResourceDrawerLink resourceType="scripts" resource={r} />,
       orderBy: 'name',
     },
     {
+      key: 'lastUpdated',
       heading: 'Last updated',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
       width: '12%',
     },
   ],
-  rowActions: (r, actionProps) => {
+  useRowActions: () => {
+    const tableContext = useGetTableContext();
     const actions = [Edit];
 
     actions.push(ViewExecutionLogs);
 
     actions.push(AuditLogs, References);
-    if (actionProps.type !== 'flowBuilder') {
+    if (tableContext.type !== 'flowBuilder') {
       actions.push(Delete);
     }
 

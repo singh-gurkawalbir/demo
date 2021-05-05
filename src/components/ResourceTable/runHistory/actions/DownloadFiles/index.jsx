@@ -29,7 +29,8 @@ export default {
 
     useEffect(() => {
       handleDownloadFiles();
-    }, [handleDownloadFiles]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     if (showDownloadFilesDialog) {
       return <JobFilesDownloadDialog job={job} onCloseClick={handleCloseDownloadFilesDialog} />;

@@ -143,7 +143,8 @@ export default function CeligoTable({
     [data, isSelectableRow, onSelectChange, selectedResources]
   );
 
-  console.log('see here', data, useColumns);
+  // if no useColumns hook no means to generate table
+  if (!useColumns) { return null; }
 
   return (
     <div className={clsx(className)}>

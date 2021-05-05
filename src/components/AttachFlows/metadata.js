@@ -1,8 +1,9 @@
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'selectAllFlows',
       heading: 'Select all flows',
-      value: r => r && r.name,
+      Value: r => r && r.name,
     },
   ],
 };

@@ -36,7 +36,8 @@ export default {
       });
     }, [confirmDialog, dispatch, userId]);
 
-    useEffect(() => deleteFromAccount(), [deleteFromAccount]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => deleteFromAccount(), []);
 
     const commStatusHandler = useCallback(
       objStatus => {
