@@ -15,51 +15,59 @@ export default (state = {}, action) => {
 
         break;
       case actionTypes.BOTTOM_DRAWER.INIT_COMPLETE:
-        draft.bottomDrawer.activeTabIndex = 0;
-        draft.bottomDrawer.tabs = value;
+        if (draft?.bottomDrawer?.tabs) {
+          draft.bottomDrawer.activeTabIndex = 0;
+          draft.bottomDrawer.tabs = value;
+        }
         break;
 
       case actionTypes.BOTTOM_DRAWER.ADD_TAB: {
-        const requestedTabIndex = draft.bottomDrawer.tabs.findIndex(tab => tab.tabType === tabType && tab.resourceId === resourceId);
+        if (draft?.bottomDrawer?.tabs) {
+          const requestedTabIndex = draft.bottomDrawer.tabs.findIndex(tab => tab.tabType === tabType && tab.resourceId === resourceId);
 
-        if (requestedTabIndex !== -1) {
-          draft.bottomDrawer.activeTabIndex = requestedTabIndex;
-        } else {
-          draft.bottomDrawer.tabs.push({
-            tabType,
-            resourceId,
-            label,
-          });
-          draft.bottomDrawer.activeTabIndex = draft.bottomDrawer.tabs.length - 1;
+          if (requestedTabIndex !== -1) {
+            draft.bottomDrawer.activeTabIndex = requestedTabIndex;
+          } else {
+            draft.bottomDrawer.tabs.push({
+              tabType,
+              resourceId,
+              label,
+            });
+            draft.bottomDrawer.activeTabIndex = draft.bottomDrawer.tabs.length - 1;
+          }
         }
+
         break;
       }
 
       case actionTypes.BOTTOM_DRAWER.REMOVE_TAB:
-        draft.bottomDrawer.tabs = draft.bottomDrawer.tabs.filter(tab => tab.resourceId !== resourceId);
-        if (tabType === 'scriptLogs') {
-          const scriptTabIndex = draft.bottomDrawer.tabs.findIndex(tab => tab.tabType === 'scripts');
+        if (draft?.bottomDrawer?.tabs) {
+          draft.bottomDrawer.tabs = draft.bottomDrawer.tabs.filter(tab => tab.resourceId !== resourceId);
+          if (tabType === 'scriptLogs') {
+            const scriptTabIndex = draft.bottomDrawer.tabs.findIndex(tab => tab.tabType === 'scripts');
 
-          if (scriptTabIndex !== -1) {
-            draft.bottomDrawer.activeTabIndex = scriptTabIndex;
-          }
-        } else if (tabType === 'connectionLogs') {
-          const connectionsTabIndex = draft.bottomDrawer.tabs.findIndex(tab => tab.tabType === 'connections');
+            if (scriptTabIndex !== -1) {
+              draft.bottomDrawer.activeTabIndex = scriptTabIndex;
+            }
+          } else if (tabType === 'connectionLogs') {
+            const connectionsTabIndex = draft.bottomDrawer.tabs.findIndex(tab => tab.tabType === 'connections');
 
-          if (connectionsTabIndex !== -1) {
-            draft.bottomDrawer.activeTabIndex = connectionsTabIndex;
+            if (connectionsTabIndex !== -1) {
+              draft.bottomDrawer.activeTabIndex = connectionsTabIndex;
+            }
           }
         }
         break;
       case actionTypes.BOTTOM_DRAWER.SET_ACTIVE_TAB:
-        if (index !== undefined) {
-          draft.bottomDrawer.activeTabIndex = index;
-        } else if (tabType) {
-          const newActiveTabIndex = draft.bottomDrawer.tabs.findIndex(tab => tab.tabType === tabType);
+        if (draft?.bottomDrawer?.tabs) {
+          if (index !== undefined) {
+            draft.bottomDrawer.activeTabIndex = index;
+          } else if (tabType) {
+            const newActiveTabIndex = draft.bottomDrawer.tabs.findIndex(tab => tab.tabType === tabType);
 
-          if (newActiveTabIndex !== -1) draft.bottomDrawer.activeTabIndex = newActiveTabIndex;
+            if (newActiveTabIndex !== -1) draft.bottomDrawer.activeTabIndex = newActiveTabIndex;
+          }
         }
-
         break;
       case actionTypes.BOTTOM_DRAWER.CLEAR:
         delete draft.bottomDrawer;
