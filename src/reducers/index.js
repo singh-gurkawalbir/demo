@@ -590,6 +590,7 @@ selectors.resourceList = (state, options = {}) => {
       'published',
       'transfers',
       'apis',
+      'connectors',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type
@@ -617,6 +618,7 @@ selectors.resourceListModified = (userState, resourcesState, options = {}) => {
       'published',
       'transfers',
       'apis',
+      'connectors',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type
@@ -5430,8 +5432,8 @@ selectors.tileLicenseDetails = (state, tile) => {
 };
 
 // #region listener request logs selectors
-selectors.hasLogsAccess = (state, resourceId, resourceType, isNew) => {
-  if (resourceType !== 'exports') return false;
+selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
+  if (resourceType !== 'exports' || !flowId) return false;
   const resource = selectors.resource(state, 'exports', resourceId);
 
   if (!isRealtimeExport(resource)) return false;
