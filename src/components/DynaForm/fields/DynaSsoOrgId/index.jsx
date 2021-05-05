@@ -1,15 +1,14 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { FormControl } from '@material-ui/core';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import DynaText from '../DynaText';
 import VerifyTag from './VerifyTag';
 
 const useStyles = makeStyles({
-  field: {
-    width: '100%',
+  ssoOrgIdField: {
+    height: 80,
   },
 });
 
@@ -18,17 +17,11 @@ export default function DynaSsoOrgId(props) {
   const { id, formKey, touched, value } = rest;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const oidcClient = useSelector(state => selectors.oidcSSOClient(state));
   const validationError = useSelector(state => selectors.orgIdValidationError(state));
   const validationInProgress = useSelector(state => selectors.orgIdValidationInProgress(state));
 
   useEffect(() => {
     if (!touched) return;
-    if (oidcClient && oidcClient.orgId === value) {
-      dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
-
-      return;
-    }
     dispatch(actions.sso.validateOrgId(value));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, dispatch]);
@@ -50,11 +43,9 @@ export default function DynaSsoOrgId(props) {
   useEffect(() => () => dispatch(actions.sso.clearValidations()), []);
 
   return (
-    <div>
-      <FormControl className={classes.field}>
-        <DynaText {...rest} isValid={!validationError} />
-        <VerifyTag error={errorMessages} />
-      </FormControl>
+    <div className={classes.ssoOrgIdField}>
+      <DynaText {...rest} isValid={!validationError} />
+      <VerifyTag error={errorMessages} />
     </div>
   );
 }

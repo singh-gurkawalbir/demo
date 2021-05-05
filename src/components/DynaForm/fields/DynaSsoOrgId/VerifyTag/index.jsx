@@ -27,6 +27,9 @@ const useStyles = makeStyles(theme => ({
     marginRight: 3,
     fontSize: theme.spacing(2),
   },
+  spinner: {
+    marginRight: theme.spacing(1),
+  },
 }));
 
 export default function VerifyTag({ error }) {

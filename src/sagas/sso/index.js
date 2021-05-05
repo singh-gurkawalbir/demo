@@ -1,11 +1,17 @@
-import { call, put, takeLatest, delay } from 'redux-saga/effects';
+import { call, put, takeLatest, delay, select } from 'redux-saga/effects';
 import { apiCallWithRetry } from '../index';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
+import { selectors } from '../../reducers';
 
 export function* validateOrgId({ orgId }) {
   yield delay(500);
   try {
+    const oidcClient = yield select(selectors.oidcSSOClient);
+
+    if (oidcClient && oidcClient.orgId === orgId) {
+      return yield put(actions.sso.validationSuccess());
+    }
     const orgIdRegex = /^[a-zA-Z][a-zA-Z0-9]{2,19}$/;
 
     if (!orgIdRegex.test(orgId)) {

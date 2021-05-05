@@ -43,6 +43,7 @@ const useStyles = makeStyles(theme => ({
   urlDetails: {
     fontSize: '15px',
     lineHeight: '20px',
+    marginBottom: theme.spacing(2),
   },
 }));
 
