@@ -180,7 +180,7 @@ export default function UserForm({
         type: 'checkbox',
         id: 'accountSSORequired',
         name: 'accountSSORequired',
-        label: 'Require account SSO?',
+        label: 'Require account Single sign-on(SSO)?',
         defaultValue: isEditMode ? !!data.accountSSORequired : true,
         visible: !isEditMode && isAccountOwnerOrAdmin && isSSOEnabled,
         helpText: 'Check this box to require single sign-on (SSO) authentication for this user.',
