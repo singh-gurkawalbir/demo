@@ -4706,10 +4706,11 @@ selectors.errorFilter = (state, params = {}) => {
 
 selectors.mkResourceFilteredErrorDetailsSelector = () => createSelector(
   selectors.allResourceErrorDetails,
-  selectors.errorFilter,
-  (errorDetails, errorFilter) => ({
+  (state, params) => selectors.errorFilter(state, params)?.options?.keyword,
+  (state, params) => selectors.errorFilter(state, params)?.options?.searchBy,
+  (errorDetails, keyword, searchBy) => ({
     ...errorDetails,
-    errors: getFilteredErrors(errorDetails.errors, errorFilter),
+    errors: getFilteredErrors(errorDetails.errors, keyword, searchBy),
   })
 );
 

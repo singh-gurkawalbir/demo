@@ -5,13 +5,11 @@ import {
   TableRow,
   TableSortLabel,
 } from '@material-ui/core';
-import Checkbox from '@material-ui/core/Checkbox';
-import React, {useCallback } from 'react';
-import { useSelector, useDispatch} from 'react-redux';
+import React, { useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import CheckboxSelectedIcon from '../../icons/CheckboxSelectedIcon';
-import CheckboxUnselectedIcon from '../../icons/CheckboxUnselectedIcon';
+import SelectableCheckBox from './SelectableCheckbox';
 
 const useStyles = makeStyles({
   visuallyHidden: {
@@ -32,9 +30,10 @@ const useStyles = makeStyles({
 });
 const emptyObj = {};
 export default function TableHeader({
+  data,
+  onSelectChange,
   selectableRows,
-  handleSelectAllChange,
-  isAllSelected,
+  isSelectableRow,
   useColumns,
   filterKey,
   useRowActions,
@@ -49,6 +48,16 @@ export default function TableHeader({
   );
   const { order, orderBy } = sort || emptyObj;
 
+  useEffect(() => {
+    if (filterKey && !sort) {
+      // when no default order is defined then update lastModified to descending order
+      dispatch(actions.patchFilter(filterKey,
+        {sort: { order: 'desc', orderBy: 'lastModified' },
+          selected: {},
+          isAllSelected: false}));
+    }
+  }, [dispatch, filterKey, sort]);
+
   const handleSort = useCallback(
     (order, orderBy) => {
       dispatch(actions.patchFilter(filterKey, { sort: { order, orderBy } }));
@@ -60,17 +69,13 @@ export default function TableHeader({
 
     <TableHead>
       <TableRow>
-        {selectableRows && (
-        <TableCell>
-          <Checkbox
-            icon={(<span> <CheckboxUnselectedIcon /> </span>)}
-            checkedIcon={(<span> <CheckboxSelectedIcon /> </span>)}
-            onChange={handleSelectAllChange}
-            checked={isAllSelected}
-            color="primary"
-            />
-        </TableCell>
-        )}
+        <SelectableCheckBox
+          onSelectChange={onSelectChange}
+          isSelectableRow={isSelectableRow}
+          data={data}
+          filterKey={filterKey}
+          selectableRows={selectableRows}
+        />
         {columns.map(({HeaderValue, ...col}) => {
           const headerValue = HeaderValue
             ? <HeaderValue />

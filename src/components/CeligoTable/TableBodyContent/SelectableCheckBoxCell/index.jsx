@@ -4,6 +4,9 @@ import {
 } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import React, { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import actions from '../../../../actions';
+import { selectors } from '../../../../reducers';
 import CheckboxSelectedIcon from '../../../icons/CheckboxSelectedIcon';
 import CheckboxUnselectedIcon from '../../../icons/CheckboxUnselectedIcon';
 
@@ -11,14 +14,35 @@ export default function SelectableCheckBoxCell({
   selectableRows,
   isSelectableRow,
   rowData,
-  handleSelectChange,
-  selectedResources,
+  filterKey,
+  onSelectChange,
 }) {
-  const onChange = useCallback(
-    event => handleSelectChange(event, rowData._id),
-    [handleSelectChange, rowData._id]);
+  const dispatch = useDispatch();
+
+  const selectedResources = useSelector(state =>
+    selectors.filter(state, filterKey)?.selected
+  );
+  const handleSelectChange = useCallback(
+    event => {
+      const resourceId = rowData._id;
+      const { checked } = event.target;
+      const selected = {...selectedResources, [resourceId]: checked};
+
+      onSelectChange(selected);
+
+      if (!checked) {
+        dispatch(actions.patchFilter(filterKey, {selected, isAllSelected: false}));
+
+        return;
+      }
+      dispatch(actions.patchFilter(filterKey, {selected}));
+    },
+    [dispatch, filterKey, onSelectChange, rowData._id, selectedResources]
+  );
+
+  console.log('checj ', selectedResources);
   const shouldShowSelectableCheckBox = isSelectableRow ? !!isSelectableRow(rowData) : true;
-  const isChecked = !!selectedResources[rowData._id];
+  const isChecked = !!selectedResources?.[rowData?._id];
 
   if (!selectableRows || !shouldShowSelectableCheckBox) { return null; }
 
@@ -26,7 +50,7 @@ export default function SelectableCheckBoxCell({
 
     <TableCell >
       <Checkbox
-        onChange={onChange}
+        onChange={handleSelectChange}
         checked={isChecked}
         color="primary"
         icon={(<span><CheckboxUnselectedIcon /></span>)}

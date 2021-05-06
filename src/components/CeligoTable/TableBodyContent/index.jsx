@@ -95,19 +95,19 @@ const TableMetaSanitizer = ({data, rowKey, useColumns, useRowActions = () => nul
 
   return null;
 };
-export default function TableBodyContent(
-  {
-    rowKey,
-    data,
-    onRowOver,
-    onRowOut, selectableRows,
-    isSelectableRow,
-    selectedResources,
-    handleSelectChange,
-    useColumns,
-    useRowActions,
-    variant,
-  }
+export default function TableBodyContent({
+  rowKey,
+  data,
+  onRowOver,
+  onRowOut,
+  selectableRows,
+  isSelectableRow,
+  useColumns,
+  useRowActions,
+  variant,
+  filterKey,
+  onSelectChange,
+}
 ) {
   const classes = useStyles();
   const [selectedComponent, setSelectedComponent] = useState();
@@ -140,8 +140,8 @@ export default function TableBodyContent(
               selectableRows={selectableRows}
               isSelectableRow={isSelectableRow}
               rowData={rowData}
-              handleSelectChange={handleSelectChange}
-              selectedResources={selectedResources}
+              filterKey={filterKey}
+              onSelectChange={onSelectChange}
             />
 
             <AllContentCells

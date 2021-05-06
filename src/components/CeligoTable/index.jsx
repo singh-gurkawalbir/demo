@@ -3,11 +3,7 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import produce from 'immer';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import actions from '../../actions';
-import { selectors } from '../../reducers';
+import React from 'react';
 import TableBodyContent from './TableBodyContent';
 import { TableContextWrapper } from './TableContext';
 import TableHeader from './TableHeader';
@@ -67,82 +63,6 @@ export default function CeligoTable({
   variant = 'standard',  // slim | standard
 }) {
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const { sort } = useSelector(state =>
-    selectors.filter(state, filterKey)
-  );
-
-  const [selectedResources, setSelectedResources] = useState({});
-  const [isAllSelected, setIsAllSelected] = useState(false);
-
-  useEffect(() => {
-    if (filterKey && !sort) {
-      // when no default order is defined then update lastModified to descending order
-      dispatch(actions.patchFilter(filterKey, {sort: { order: 'desc', orderBy: 'lastModified' }}));
-    }
-  }, [dispatch, filterKey, sort]);
-  useEffect(() => {
-    const hasSelectableResources =
-      !isSelectableRow ||
-      data.reduce(
-        (isSelected, resource) => isSelected || !!isSelectableRow(resource),
-        false
-      );
-    let isAllSelectableResourcesSelected = hasSelectableResources;
-
-    if (hasSelectableResources) {
-      isAllSelectableResourcesSelected = data.reduce((isSelected, resource) => {
-        if (isSelectableRow) {
-          if (isSelectableRow(resource)) {
-            return isSelected && !!selectedResources[resource._id];
-          }
-
-          return true;
-        }
-
-        return isSelected && !!selectedResources[resource._id];
-      }, hasSelectableResources);
-    }
-
-    setIsAllSelected(isAllSelectableResourcesSelected);
-  }, [isSelectableRow, data, selectedResources]);
-  const handleSelectChange = useCallback(
-    (event, resourceId) => {
-      const { checked } = event.target;
-      const selected = produce(selectedResources, draft => {
-        draft[resourceId] = checked;
-      });
-
-      setSelectedResources(selected);
-      onSelectChange(selected);
-
-      if (!checked) {
-        setIsAllSelected(false);
-      }
-    },
-    [onSelectChange, selectedResources]
-  );
-  const handleSelectAllChange = useCallback(
-    event => {
-      const { checked } = event.target;
-      const selected = produce(selectedResources, draft => {
-        const selectedCopy = draft;
-
-        data.forEach(r => {
-          if (isSelectableRow) {
-            selectedCopy[r._id] = isSelectableRow(r) ? checked : false;
-          } else {
-            selectedCopy[r._id] = checked;
-          }
-        });
-      });
-
-      setSelectedResources(selected);
-      onSelectChange(selected);
-      setIsAllSelected(checked);
-    },
-    [data, isSelectableRow, onSelectChange, selectedResources]
-  );
 
   // if no useColumns hook no means to generate table
   if (!useColumns) { return null; }
@@ -152,13 +72,15 @@ export default function CeligoTable({
       <TableContextWrapper value={actionProps}>
         <Table data-public className={classes.table}>
           <TableHeader
+            data={data}
+            onSelectChange={onSelectChange}
             selectableRows={selectableRows}
-            handleSelectAllChange={handleSelectAllChange}
-            isAllSelected={isAllSelected}
+            isSelectableRow={isSelectableRow}
             useColumns={useColumns}
             filterKey={filterKey}
             useRowActions={useRowActions}
             variant={variant}
+
   />
 
           <TableBodyContent
@@ -168,11 +90,11 @@ export default function CeligoTable({
             onRowOut={onRowOut}
             selectableRows={selectableRows}
             isSelectableRow={isSelectableRow}
-            selectedResources={selectedResources}
-            handleSelectChange={handleSelectChange}
             useColumns={useColumns}
             useRowActions={useRowActions}
             variant={variant}
+            filterKey={filterKey}
+            onSelectChange={onSelectChange}
           />
         </Table>
       </TableContextWrapper>

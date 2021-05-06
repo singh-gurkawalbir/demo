@@ -5,9 +5,9 @@ import DateFilter from '../commonCells/DateFilter';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
 import { LISTENER_LOGS_RANGE_FILTERS, FILTER_KEY, LISTENER_LOGS_STATUS_CODES, DEFAULT_RANGE } from '../../../utils/listenerLogs';
 import TrashIcon from '../../icons/TrashIcon';
-
 import LogDetailsLink from './cells/LogDetailsLink';
 import { useGetTableContext } from '../../CeligoTable/TableContext';
+import useConfirmDialog from '../../ConfirmDialog';
 
 export default {
   useColumns: () => [
@@ -44,7 +44,7 @@ export default {
     {
       key: 'method',
       heading: 'Method',
-      Value: log => log.method,
+      Value: ({rowData: log}) => log.method,
     },
     {
       key: 'codes',
@@ -67,17 +67,21 @@ export default {
             options={LISTENER_LOGS_STATUS_CODES} />
         );
       },
-      Value: log => log.statusCode,
+      Value: ({rowData: log}) => log.statusCode,
     },
   ],
-  useRowActions: log => {
-    const {flowId, exportId} = useGetTableContext();
+  useRowActions: log => [
+    {
+      icon: TrashIcon,
+      useLabel: () => 'Delete log',
+      useOnClick: () => {
+        const dispatch = useDispatch();
 
-    return [
-      {
-        icon: TrashIcon,
-        useLabel: () => 'Delete log',
-        onClick: (dispatch, confirmDialog) => {
+        const {flowId, exportId} = useGetTableContext();
+
+        const { confirmDialog } = useConfirmDialog();
+
+        return useCallback(() => {
           const handleClick = () => {
             dispatch(actions.logs.listener.removeLog(flowId, exportId, [log?.key]));
           };
@@ -96,9 +100,9 @@ export default {
               },
             ],
           });
-        },
+        }, [confirmDialog, dispatch, exportId, flowId]);
       },
-    ];
-  },
+    },
+  ],
 
 };
