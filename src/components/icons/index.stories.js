@@ -70,6 +70,7 @@ import IntegrationAppsIcon from './IntegrationAppsIcon';
 import ImportsIcon from './ImportsIcon';
 import InputFilterIcon from './InputFilterIcon';
 import KnowledgeBaseIcon from './KnowledgeBaseIcon';
+import LayoutFourCoIcon from './LayoutFourColIcon';
 import LayoutTriVerticalIcon from './LayoutTriVerticalIcon';
 import LayoutLgLeftSmrightIcon from './LayoutLgLeftSmrightIcon';
 import LayoutLgTopSmBottomIcon from './LayoutLgTopSmBottomIcon';
@@ -209,6 +210,7 @@ const icons =
       ImportsIcon,
       InputFilterIcon,
       KnowledgeBaseIcon,
+      LayoutFourCoIcon,
       LayoutTriVerticalIcon,
       LayoutLgLeftSmrightIcon,
       LayoutLgTopSmBottomIcon,
