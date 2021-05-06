@@ -4,9 +4,6 @@ import { makeStyles, CircularProgress } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
-  center: {
-    textAlign: 'center',
-  },
   spinnerWrapper: {
     display: 'flex',
     alignItems: 'center',
@@ -26,20 +23,23 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(1),
   },
   small: {
-    width: theme.spacing(2),
-    height: theme.spacing(2),
+    width: `${theme.spacing(2)}px !important`,
+    height: `${theme.spacing(2)}px !important`,
   },
   medium: {
-    width: theme.spacing(3),
-    height: theme.spacing(3),
+    width: `${theme.spacing(3)}px !important`,
+    height: `${theme.spacing(3)}px !important`,
   },
   large: {
-    width: theme.spacing(6),
-    height: theme.spacing(6),
+    width: `${theme.spacing(6)}px !important`,
+    height: `${theme.spacing(6)}px !important`,
   },
   spinnerWithChildren: {
     alignItems: 'center',
     display: 'flex',
+  },
+  loadingWithChildren: {
+    justifyContent: 'center',
   },
 }));
 
@@ -58,12 +58,13 @@ export default function Spinner(props) {
     />
   );
 
-  if (loading) {
-    return <div className={clsx(classes.center, className)}>{progress}</div>;
-  }
-
   return (
-    <div className={clsx({[classes.spinnerWrapper]: centerAll}, {[classes.spinnerWithChildren]: children}, className)}>
+    <div
+      className={clsx(
+        {[classes.spinnerWrapper]: centerAll},
+        {[classes.spinnerWithChildren]: children},
+        {[classes.loadingWithChildren]: loading},
+        className)}>
       {progress} {children && <div className={classes.spinnerChildren}>{children}</div> }
     </div>
   );
@@ -73,5 +74,6 @@ Spinner.propTypes = {
   children: PropTypes.node,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   centerAll: PropTypes.bool,
+  loading: PropTypes.bool,
 };
 
