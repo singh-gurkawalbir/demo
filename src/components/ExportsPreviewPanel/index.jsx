@@ -7,6 +7,7 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
 import Panels from './Panels';
 import { DEFAULT_RECORD_SIZE } from '../../utils/exportPanel';
+import { isFileAdaptor } from '../../utils/resource';
 // import FieldHelp from '../DynaForm/FieldHelp';
 
 const useStyles = makeStyles(theme => ({
@@ -17,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   container: {
     background: theme.palette.common.white,
     padding: theme.spacing(2),
-    height: `calc(100vh - ${200 + theme.appBarHeight}px)`,
+    height: `calc(100vh - ${250}px)`,
     overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',
@@ -50,6 +51,10 @@ function PreviewInfo({
   const isPageGeneratorExport = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId)
   );
+
+  const resource = useSelector(state =>
+    selectors.resource(state, resourceType, resourceId)
+  );
   // const [isPreviewDataFetched, setIsPreviewDataFetched] = useState(false);
 
   const fetchExportPreviewData = useCallback(() => {
@@ -57,9 +62,9 @@ function PreviewInfo({
     if (resourceType !== 'exports') return;
 
     // Note: If there is no flowId , it is a Standalone export as the resource type other than exports are restricted above
-    if (!flowId || isPageGeneratorExport) {
+    if (!flowId || isPageGeneratorExport || isFileAdaptor(resource)) {
       dispatch(
-        actions.sampleData.request(resourceId, resourceType, value)
+        actions.sampleData.request(resourceId, resourceType, value, null, {flowId})
       );
     } else {
       dispatch(
@@ -73,6 +78,7 @@ function PreviewInfo({
     resourceType,
     value,
     flowId,
+    resource,
   ]);
 
   const handlePreview = useCallback(() => {

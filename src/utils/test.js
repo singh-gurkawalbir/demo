@@ -344,10 +344,18 @@ describe('inferErrorMessages expect errored api message in this format { message
       expect(inferErrorMessages({errors: [{message: 'api failure1'}, {message: 'api failure2'}]})).toEqual(['api failure1', 'api failure2']);
     });
 
-    test('should parse be able to parse stringified inputs consisting of error property and return a collection of error messages', () => {
+    test('should be able to parse stringified inputs consisting of error property and return a collection of error messages', () => {
       expect(inferErrorMessages(JSON.stringify({errors: ['api failure1', 'api failure2']}))).toEqual(['api failure1', 'api failure2']);
       expect(inferErrorMessages(JSON.stringify({errors: [{message: 'api failure1'}, {message: 'api failure2'}]})))
         .toEqual(['api failure1', 'api failure2']);
+    });
+    test('should return {errors} value unit array if {errors} is not an array but a string', () => {
+      expect(inferErrorMessages({errors: 'api failure1'})).toEqual(['api failure1']);
+      expect(inferErrorMessages(JSON.stringify({errors: 'api failure1'}))).toEqual(['api failure1']);
+    });
+    test('should return stringified {errors} value unit array if {errors} is not an array but an object', () => {
+      expect(inferErrorMessages({errors: {e1: 'api failure1', e2: 'api failure2'}})).toEqual([JSON.stringify({e1: 'api failure1', e2: 'api failure2'})]);
+      expect(inferErrorMessages(JSON.stringify({errors: {e1: 'api failure1', e2: 'api failure2'}}))).toEqual([JSON.stringify({e1: 'api failure1', e2: 'api failure2'})]);
     });
   });
 });

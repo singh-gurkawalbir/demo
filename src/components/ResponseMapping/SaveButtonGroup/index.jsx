@@ -6,6 +6,7 @@ import ButtonGroup from '../../ButtonGroup';
 import actions from '../../../actions';
 import {selectors} from '../../../reducers';
 import Spinner from '../../Spinner';
+import { useLoadingSnackbarOnSave } from '../../ResourceFormFactory/Actions';
 
 const SaveButton = ({
   submitButtonLabel = 'Save',
@@ -15,21 +16,26 @@ const SaveButton = ({
   dataTest,
   showOnDirty,
   onClose,
-  onClick,
-  selectedButtonLabel,
 }) => {
   const [saveTrigerred, setSaveTriggered] = useState(false);
+  const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
   const match = useRouteMatch();
   const dispatch = useDispatch();
   const { saveTerminated, saveCompleted, saveInProgress } = useSelector(state => selectors.responseMappingSaveStatus(state), shallowEqual);
   const mappingsChanged = useSelector(state =>
     selectors.responseMappingChanged(state)
   );
-  const handleSave = useCallback(() => {
+  const onSave = useCallback(() => {
     dispatch(actions.responseMapping.save({ match }));
     setSaveTriggered(true);
-    onClick(submitButtonLabel);
-  }, [dispatch, match, onClick, submitButtonLabel]);
+  }, [dispatch, match]);
+  const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
+    saveTerminated,
+    onSave,
+    resourceType: 'mappings',
+    disableSaveOnClick,
+    setDisableSaveOnClick,
+  });
 
   useEffect(() => {
     if (saveTrigerred && saveCompleted && onClose) {
@@ -38,7 +44,7 @@ const SaveButton = ({
     }
   }, [onClose, saveCompleted, saveTerminated, saveTrigerred]);
 
-  const showSpinner = saveTrigerred && saveInProgress && selectedButtonLabel === submitButtonLabel;
+  const showSpinner = saveTrigerred && saveInProgress && disableSave;
 
   if (showOnDirty && !mappingsChanged) {
     return null;
@@ -50,7 +56,7 @@ const SaveButton = ({
       variant={variant}
       color={color}
       disabled={disabled}
-      onClick={handleSave}>
+      onClick={handleSubmitForm}>
       {showSpinner ? (
         <>
           <Spinner size="small" />
@@ -71,10 +77,6 @@ export default function SaveButtonGroup({ disabled, onClose}) {
     selectors.responseMappingChanged(state)
   );
   const disableSave = !!(disabled || saveInProgress || !mappingsChanged);
-  const [selectedButtonLabel, setSelectedButtonLabel] = useState('');
-  const onClick = useCallback(label => {
-    setSelectedButtonLabel(label);
-  }, []);
 
   return (
     <>
@@ -84,8 +86,6 @@ export default function SaveButtonGroup({ disabled, onClose}) {
           color="primary"
           dataTest="saveImportMapping"
           submitButtonLabel="Save"
-          onClick={onClick}
-          selectedButtonLabel={selectedButtonLabel}
           />
         <SaveButton
           variant="outlined"
@@ -95,8 +95,6 @@ export default function SaveButtonGroup({ disabled, onClose}) {
           disabled={disableSave}
           submitButtonLabel="Save & close"
           showOnDirty
-          onClick={onClick}
-          selectedButtonLabel={selectedButtonLabel}
           />
         <Button
           variant="text"
