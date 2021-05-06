@@ -28,6 +28,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const metadata = {
+  rowKey: 'id',
   useColumns: () => [
     {
       key: 'application',
