@@ -29,7 +29,6 @@ const useStyles = makeStyles(theme => ({
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     background: theme.palette.background.paper,
   },
-
 }));
 
 function PreviewInfo({

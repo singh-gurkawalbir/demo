@@ -45,7 +45,7 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
     notificationPanelHeight,
   });
   const resize = useCallback((width, height) => {
-    setNotificationPanelHeight(height ? height + 16 : 0);
+    setNotificationPanelHeight(height + 16);
   }, []);
 
   const shouldRedact = shouldRedactLogRocket ? emptyObj : notRedactAttr;
