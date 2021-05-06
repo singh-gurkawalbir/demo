@@ -59,7 +59,7 @@ export default function ActionMenu({ useRowActions, variant, rowData, setSelecte
         onClick={handleMenuClick}>
         <EllipsisIcon />
       </IconButton>
-
+      {open && (
       <ArrowPopper
         placement="bottom-end"
         restrictToParent={false}
@@ -77,6 +77,7 @@ export default function ActionMenu({ useRowActions, variant, rowData, setSelecte
             rowData={rowData} />
         ))}
       </ArrowPopper>
+      )}
     </>
   );
 }
