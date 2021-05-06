@@ -99,7 +99,7 @@ export default function TableHeader({
             </TableCell>
           ) : (
             <TableCell
-              key={col.heading}
+              key={col.key}
               style={col.width ? { width: col.width } : undefined}
               align={col.align || 'left'}>
               {headerValue}

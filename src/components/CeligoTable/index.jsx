@@ -55,6 +55,7 @@ export default function CeligoTable({
   useColumns,
   onRowOver,
   onRowOut,
+  rowKey,
   useRowActions,
   data = emptySet,
   onSelectChange,
@@ -161,6 +162,7 @@ export default function CeligoTable({
   />
 
           <TableBodyContent
+            rowKey={rowKey}
             data={data}
             onRowOver={onRowOver}
             onRowOut={onRowOut}
