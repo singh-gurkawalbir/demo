@@ -3,6 +3,7 @@ import React from 'react';
 import { useGetAllActionProps } from '../hooks';
 
 const MultipleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) => {
+  const {key} = meta;
   const {
     handleActionClick,
     actionIcon,
@@ -19,7 +20,7 @@ const MultipleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) 
     return (
       <Tooltip data-public title={disabledActionTitle} placement="bottom" >
         <div>
-          <MenuItem disabled>
+          <MenuItem data-test={key} disabled>
             {actionIcon}
             {label}
           </MenuItem>
@@ -29,7 +30,7 @@ const MultipleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) 
   }
 
   return (
-    <MenuItem key={label} onClick={handleActionClick}>
+    <MenuItem data-test={key} onClick={handleActionClick}>
       {actionIcon}
       {label}
     </MenuItem>

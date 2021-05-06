@@ -3,6 +3,8 @@ import React from 'react';
 import { useGetAllActionProps } from '../hooks';
 
 const SingleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) => {
+  const {key} = meta;
+
   const {
     handleActionClick,
     actionIcon,
@@ -24,7 +26,7 @@ const SingleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) =>
               doesn't recognize the hover state and thus doesn't show the tooltip message.
           */}
         <div>
-          <IconButton size="small" disabled={!!disabledActionTitle} onClick={handleActionClick}>
+          <IconButton data-test={key} size="small" disabled={!!disabledActionTitle} onClick={handleActionClick}>
             {actionIcon}
           </IconButton>
         </div>
@@ -33,7 +35,7 @@ const SingleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) =>
   }
 
   return (
-    <IconButton size="small" onClick={handleActionClick}>
+    <IconButton data-test={key} size="small" onClick={handleActionClick}>
       {actionIcon}
     </IconButton>
   );
