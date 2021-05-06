@@ -29,7 +29,7 @@ export function* validateOrgId({ orgId }) {
     if (valid) {
       return yield put(actions.sso.validationSuccess());
     }
-    yield put(actions.sso.validationError(errors[0]?.message));
+    yield put(actions.sso.validationError(errors?.[0]?.message));
   } catch (e) {
     // handle errors
   }
