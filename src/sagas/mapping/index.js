@@ -1,6 +1,7 @@
 import { call, takeEvery, put, select, takeLatest, all, take, race } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
 import shortid from 'shortid';
+import { uniqBy } from 'lodash';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
@@ -630,7 +631,7 @@ export function* getAutoMapperSuggestion() {
 
   // filtering out all duplicates elements from generate fields
   // there could be multiple generate with same id. Example: addressbook[*].id is common id for [Address : ID] and [Address : Line ID]
-  reqBody.dest_fields = Object.values(generateFields.map(f => ({id: f.id})).reduce((acc, cur) => Object.assign(acc, {[cur.id]: cur}), {}));
+  reqBody.dest_fields = uniqBy(generateFields.map(f => ({id: f.id})), 'id');
 
   const path = '/autoMapperSuggestions';
   const opts = {
