@@ -8317,14 +8317,6 @@ Object {
       },
       "dataMappings": Object {
         "formId": "dataMappings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "deleteAfterImport": Object {
         "fieldId": "deleteAfterImport",
@@ -10467,14 +10459,6 @@ Object {
       },
       "dataMappings": Object {
         "formId": "dataMappings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "deleteAfterImport": Object {
         "fieldId": "deleteAfterImport",
