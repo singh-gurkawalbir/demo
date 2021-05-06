@@ -115,16 +115,18 @@ export default function TableBodyContent(
   return (
     <>
       {selectedComponent}
-      {(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'staging') &&
-      data.length &&
-      (
-      <TableMetaSanitizer
-        data={data}
-        rowKey={rowKey}
-        useColumns={useColumns}
-        useRowActions={useRowActions}
+      {
+        (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'staging') &&
+      data.length
+          ? (
+            <TableMetaSanitizer
+              data={data}
+              rowKey={rowKey}
+              useColumns={useColumns}
+              useRowActions={useRowActions}
       />
-      )}
+          ) : null
+}
       <TableBody>
         {data.map(rowData => (
           <DataRow
