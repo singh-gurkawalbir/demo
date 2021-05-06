@@ -231,6 +231,7 @@ describe('sampleData exports saga', () => {
     });
 
     test('should make /preview call with rawData body if runOffline is true and adaptor is not realtime or distributed', () => {
+      const flowId = 'f1';
       const constructedBody = {
         _id: '111',
         name: 'mock http export',
@@ -247,16 +248,22 @@ describe('sampleData exports saga', () => {
           runOffline: true,
           runOfflineSource: 'db',
         },
+        _flowId: flowId,
+        _integrationId: 'i1',
         test: {limit: DEFAULT_RECORD_SIZE},
       };
 
-      return expectSaga(_getPreviewData, { resourceId, resourceType, runOffline: true })
+      return expectSaga(_getPreviewData, { resourceId, resourceType, runOffline: true, flowId })
         .provide([
           [call(constructResourceFromFormValues, {
             formValues: undefined,
             resourceId,
             resourceType,
           }), constructedBody],
+          [select(selectors.resource, 'flows', flowId), {
+            _id: 'f1',
+            _integrationId: 'i1',
+          }],
         ])
         .call(apiCallWithRetry, {
           path: `/${resourceType}/preview`,
@@ -705,6 +712,7 @@ describe('sampleData exports saga', () => {
           resourceType,
           values: undefined,
           runOffline: undefined,
+          flowId: undefined,
         })
         .run();
     });
@@ -734,6 +742,7 @@ describe('sampleData exports saga', () => {
         resourceType,
         values: undefined,
         runOffline: undefined,
+        flowId: undefined,
       })
       .not.call.fn(_processRawData)
       .run());
