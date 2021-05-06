@@ -37,6 +37,10 @@ const useStyles = makeStyles(theme => ({
     width: theme.spacing(6),
     height: theme.spacing(6),
   },
+  spinnerWithChildren: {
+    alignItems: 'center',
+    display: 'flex',
+  },
 }));
 
 /**
@@ -59,15 +63,14 @@ export default function Spinner(props) {
   }
 
   return (
-    centerAll ? (
-      <div className={clsx(classes.spinnerWrapper, className)}>
-        {progress} <div className={classes.spinnerChildren}>{children}</div>
-      </div>
-    ) : progress
+    <div className={clsx({[classes.spinnerWrapper]: centerAll}, {[classes.spinnerWithChildren]: children}, className)}>
+      {progress} {children && <div className={classes.spinnerChildren}>{children}</div> }
+    </div>
   );
 }
 
 Spinner.propTypes = {
+  children: PropTypes.node,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   centerAll: PropTypes.bool,
 };
