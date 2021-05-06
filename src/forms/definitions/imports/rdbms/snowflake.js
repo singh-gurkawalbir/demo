@@ -18,6 +18,10 @@ export default {
 
     newValues['/rdbms/queryType'] = [newValues['/rdbms/queryType']];
 
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
+
     return newValues;
   },
   fieldMap: {

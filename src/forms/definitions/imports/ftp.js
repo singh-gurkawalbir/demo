@@ -112,6 +112,10 @@ export default {
       newValues['/file/pgp/hashAlgorithm'] = undefined;
     }
 
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
+
     return {
       ...newValues,
     };

@@ -101,6 +101,10 @@ export default {
       resourcePath: 'files',
     };
 
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
+
     return {
       ...newValues,
     };
