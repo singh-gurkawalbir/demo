@@ -99,6 +99,9 @@ export default {
     if (newValues['/file/compressFiles'] === false) {
       newValues['/file/compressionFormat'] = undefined;
     }
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
 
     delete newValues['/file/compressFiles'];
     newValues['/file/skipAggregation'] = true;
