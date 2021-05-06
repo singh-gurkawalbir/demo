@@ -70,7 +70,6 @@ const TableMetaSanitizer = ({data, rowKey, useColumns, useRowActions = () => nul
       }
       const allColumnKeys = columns.map(col => col.key);
 
-      console.log('see here ', uniq(allColumnKeys));
       if (allColumnKeys.length && (allColumnKeys.length !== uniq(allColumnKeys).length)) {
         console.error('Keys are not unique amongst the column metadata,Please Correct it', allColumnKeys);
       }

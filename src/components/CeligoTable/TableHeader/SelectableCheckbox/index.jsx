@@ -38,13 +38,13 @@ export default function SelectableCheckBox({
       isAllSelectableResourcesSelected = data.reduce((isSelected, resource) => {
         if (isSelectableRow) {
           if (isSelectableRow(resource)) {
-            return isSelected && !!selectedResources[resource._id];
+            return isSelected && !!selectedResources?.[resource._id];
           }
 
           return true;
         }
 
-        return isSelected && !!selectedResources[resource._id];
+        return isSelected && !!selectedResources?.[resource._id];
       }, hasSelectableResources);
     }
 

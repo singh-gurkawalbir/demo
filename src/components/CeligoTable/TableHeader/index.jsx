@@ -58,6 +58,18 @@ export default function TableHeader({
     }
   }, [dispatch, filterKey, sort]);
 
+  // reset selected valued
+  useEffect(() => () => {
+    if (selectableRows) {
+      dispatch(actions.patchFilter(filterKey,
+        {
+          selected: {},
+          isAllSelected: false,
+        }));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleSort = useCallback(
     (order, orderBy) => {
       dispatch(actions.patchFilter(filterKey, { sort: { order, orderBy } }));

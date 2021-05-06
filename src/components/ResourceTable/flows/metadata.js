@@ -22,7 +22,6 @@ export default {
   useColumns: () => {
     const actionProps = useGetTableContext();
 
-    console.log('see ', actionProps);
     let columns = [
       {
         key: 'name',
@@ -167,7 +166,6 @@ export default {
       actions.push(Detach);
     }
     actions = [...actions, Delete];
-    console.log('see ', actions);
 
     return actions;
   },

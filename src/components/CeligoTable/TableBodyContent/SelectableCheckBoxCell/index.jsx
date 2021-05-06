@@ -40,7 +40,6 @@ export default function SelectableCheckBoxCell({
     [dispatch, filterKey, onSelectChange, rowData._id, selectedResources]
   );
 
-  console.log('checj ', selectedResources);
   const shouldShowSelectableCheckBox = isSelectableRow ? !!isSelectableRow(rowData) : true;
   const isChecked = !!selectedResources?.[rowData?._id];
 
