@@ -30,7 +30,9 @@ export const ERROR_MANAGEMENT_RANGE_FILTERS = [
   {id: 'custom', label: 'Custom'},
 ];
 
-export const getFilteredErrors = (errors = [], keyword, searchBy = []) => {
+export const getFilteredErrors = (errors = [], options = {}) => {
+  const { keyword, searchBy = [] } = options;
+
   function searchKey(resource, key) {
     const value = get(resource, key);
 
