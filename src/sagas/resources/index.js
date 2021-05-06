@@ -703,13 +703,11 @@ export function* getResourceCollection({ resourceType, refresh}) {
       else if (invitedTransfers) collection = [...collection, ...invitedTransfers];
     }
 
+    collection = Array.isArray(collection) ? collection : undefined;
+
     yield put(actions.resource.receivedCollection(resourceType, collection));
 
-    if (Array.isArray(collection)) {
-      return collection;
-    }
-
-    return;
+    return collection;
   } catch (error) {
     // generic message to the user that the
     // saga failed and services team working on it
