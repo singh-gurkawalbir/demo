@@ -100,11 +100,11 @@ export default function SubscriptionSection({ storeId, integrationId }) {
                   {`Integration ID ${integrationId}`}
                 </Typography>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={3}>
                 <Typography >{createdText}</Typography>
                 <Typography >{expiresText}</Typography>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={3}>
                 {upgradeText && (
                 <Button
                   variant="contained"
