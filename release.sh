@@ -26,8 +26,6 @@ do
   fi
 done
 
-exit
-
 if [ "$skipBuildAndCopyIndexFileForEUDeployment" = true ] ; then
     echo 'copying NA build index file to EU eu-index file ...'
     aws configure set aws_access_key_id $ACCESS_KEY_ID
