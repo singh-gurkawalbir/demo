@@ -55,12 +55,13 @@ const useStyles = makeStyles(theme => ({
 const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, disabled, handleDelete, index}) =>
   useMemo(() => {
     const fieldType = fieldId => fields?.find(f => f.value === fieldId)?.type;
+    const field = obj.join ? [obj.join, obj.field].join('.') : obj.field;
 
     const r =
         {
           ...obj,
-          field: obj.join ? [obj.join, obj.field].join('.') : obj.field,
-          fieldType: fieldType(obj.join ? [obj.join, obj.field].join('.') : obj.field),
+          field,
+          fieldType: fieldType(field),
         };
 
     return (
