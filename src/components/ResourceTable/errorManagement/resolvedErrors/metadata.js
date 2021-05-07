@@ -12,6 +12,7 @@ import SelectSource from '../cells/SelectSource';
 import SelectDate from '../cells/SelectDate';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
+const options = {allowedTags: ['a']};
 export default {
   rowKey: 'errorId',
   useColumns: () => [
@@ -33,7 +34,7 @@ export default {
       key: 'message',
       heading: 'Message',
       width: '25%',
-      Value: ({rowData: r}) => <TextOverflowCell message={r.message} containsHtml />,
+      Value: ({rowData: r}) => <TextOverflowCell message={r.message} rawHtmlOptions={options} containsHtml />,
     },
     {
       key: 'code',
