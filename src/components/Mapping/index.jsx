@@ -36,6 +36,9 @@ const useStyles = makeStyles(theme => ({
 }));
 const Mapping = ({flowId, importId, subRecordMappingId, disabled, onClose}) => {
   const canAutoMap = useSelector(state => {
+    if (disabled) {
+      return false;
+    }
     const generateFields = selectors.mappingGenerates(state, importId, subRecordMappingId);
     const extractFields = selectors.mappingExtracts(state, importId, flowId, subRecordMappingId);
 

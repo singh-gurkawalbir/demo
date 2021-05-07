@@ -6,6 +6,7 @@ with open('package.json', 'r') as myfile:
     data=myfile.read()
 obj = json.loads(data)
 gitRevision = obj["gitRevision"];
+gitRevision = gitRevision.replace("/","-");
 dateString = d.strftime("%d-%m-%H-%M"); 
 if gitRevision.find("release") == 0:
     version = gitRevision + "." + dateString

@@ -129,6 +129,7 @@ export function searchParameterFieldsMeta({
   oneMandatoryQueryParamFrom,
   value,
   deltaDefaults = {},
+  isDeltaExport,
 }) {
   let searchParamsField;
   const defaultValue = {};
@@ -152,6 +153,7 @@ export function searchParameterFieldsMeta({
         paramLocation,
         fields: parameters,
         oneMandatoryQueryParamFrom,
+        isDeltaExport,
         defaultValuesForDeltaExport: deltaDefaults,
       },
     };
@@ -229,8 +231,8 @@ export function fieldMeta({ resource, assistantData }) {
           oneMandatoryQueryParamFrom:
             operationDetails.oneMandatoryQueryParamFrom,
           value: assistantConfig.queryParams,
+          isDeltaExport: assistantConfig.exportType === 'delta',
           deltaDefaults:
-            assistantConfig.exportType === 'delta' &&
             operationDetails.delta &&
             operationDetails.delta.defaults
               ? operationDetails.delta.defaults
@@ -246,8 +248,8 @@ export function fieldMeta({ resource, assistantData }) {
           paramLocation: PARAMETER_LOCATION.BODY,
           parameters: operationDetails.bodyParameters,
           value: assistantConfig.bodyParams,
+          isDeltaExport: assistantConfig.exportType === 'delta',
           deltaDefaults:
-            assistantConfig.exportType === 'delta' &&
             operationDetails.delta &&
             operationDetails.delta.defaults
               ? operationDetails.delta.defaults

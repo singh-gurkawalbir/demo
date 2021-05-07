@@ -1,7 +1,8 @@
 import { IconButton, makeStyles, Typography, useTheme } from '@material-ui/core';
 import clsx from 'clsx';
-import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import actions from '../../../actions';
 import AddIcon from '../../../components/icons/AddIcon';
 import { selectors } from '../../../reducers';
 import useBottomDrawer from '../drawers/BottomDrawer/useBottomDrawer';
@@ -175,14 +176,20 @@ function Canvas({flowId, integrationId}) {
 }
 export default function FlowBuilderBody(
   {
-    flowId, integrationId, setTabValue,
+    flowId, integrationId,
   }
 ) {
+  const dispatch = useDispatch();
+
+  useEffect(() => (() => {
+    dispatch(actions.bottomDrawer.clear());
+  }), [dispatch]);
+
   return (
 
     <>
       <PageBar
-        flowId={flowId} integrationId={integrationId} setTabValue={setTabValue}
+        flowId={flowId} integrationId={integrationId}
       />
       <Canvas
         flowId={flowId} integrationId={integrationId}

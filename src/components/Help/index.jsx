@@ -42,8 +42,11 @@ export default function Help({ className, helpKey, helpText, ...rest }) {
     [anchorEl]
   );
   const handleClose = useCallback(event => {
-    // if clicking interacting with feedback text field do not close popper
-    if (event.target.name === 'feedbackText') return;
+    // if clicking interacting with feedback text field  or if clicking on No button
+    // do not close popper
+    if (event.target.name === 'feedbackText' ||
+    event.target.textContent === 'No'
+    ) return;
     setAnchorEl(null);
   }, []);
 
@@ -68,7 +71,7 @@ export default function Help({ className, helpKey, helpText, ...rest }) {
         anchorEl={anchorEl}>
         <HelpContent {...rest}>
           {/<\/?[a-z][\s\S]*>/i.test(helpTextValue) ? (
-            <RawHtml html={helpTextValue} options={{allowedTags: ['a', 'b', 'i', 'br']}} />
+            <RawHtml html={helpTextValue} options={{allowedTags: ['a', 'p', 'table', 'thead', 'th', 'tr', 'td', 'b', 'i', 'br']}} />
           ) : (
             helpTextValue
           )}

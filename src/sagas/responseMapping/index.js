@@ -6,13 +6,14 @@ import { SCOPES } from '../resourceForm';
 import { selectors } from '../../reducers';
 import { commitStagedChanges } from '../resources';
 import responseMappingUtil from '../../utils/responseMapping';
+import { emptyObject } from '../../utils/constants';
 
 export function* responseMappingInit({ flowId, resourceId }) {
-  const { merged: flow = {} } = yield select(
+  const flow = (yield select(
     selectors.resourceData,
     'flows',
     flowId
-  );
+  ))?.merged || emptyObject;
   const pageProcessor = flow?.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
 
   if (!pageProcessor) {
@@ -56,11 +57,11 @@ export function* responseMappingInit({ flowId, resourceId }) {
 
 export function* responseMappingSave() {
   const { mappings, flowId, resourceId } = yield select(selectors.responseMapping);
-  const { merged: flow = {} } = yield select(
+  const flow = (yield select(
     selectors.resourceData,
     'flows',
     flowId
-  );
+  ))?.merged || emptyObject;
   const pageProcessorIndex = flow?.pageProcessors.findIndex(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
 
   if (!flow?.pageProcessors || pageProcessorIndex === -1) {

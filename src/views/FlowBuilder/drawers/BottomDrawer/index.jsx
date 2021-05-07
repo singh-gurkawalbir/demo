@@ -35,6 +35,7 @@ const useStyles = makeStyles(theme => ({
   },
   drawerPaperShift: {
     marginLeft: theme.drawerWidth,
+    minHeight: 41,
   },
   drawerTransition: {
     transition: theme.transitions.create(['height', 'margin'], {
@@ -128,7 +129,9 @@ function TabPanel({ children, value, index, className }) {
     </div>
   );
 }
-export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
+export default function BottomDrawer({
+  flowId,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -137,11 +140,11 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
   const [dragY, setDragY] = useState(0);
   const [drawerHeight, setDrawerHeight] = useBottomDrawer();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+  const {tabs, activeTabIndex} = useSelector(state => selectors.bottomDrawerTabs(state), shallowEqual);
   const isAnyFlowConnectionOffline = useSelectorMemo(selectors.mkIsAnyFlowConnectionOffline, flowId);
   const isFlowRunInProgress = useSelector(state =>
     !!selectors.getInProgressLatestJobs(state, flowId).length
   );
-
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
@@ -149,7 +152,6 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
   const flowScripts = useSelectorMemo(selectors.mkGetScriptsTiedToFlow, flowId);
   const flowScriptsWithLogEntry = useSelector(state => selectors.flowExecutionLogScripts(state, flowId), shallowEqual);
 
-  // const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
   const minDrawerHeight = 41;
   const maxHeight = window.innerHeight - theme.appBarHeight - theme.pageBarHeight + 1; // border 1px
   const stepSize = parseInt((maxHeight - minDrawerHeight) / 4, 10);
@@ -196,28 +198,28 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
 
   const handleTabChange = useCallback(
     (event, newValue) => {
-      setTabValue(newValue);
+      dispatch(actions.bottomDrawer.setActiveTab({ index: newValue }));
 
       if (drawerHeight < minDrawerHeight) setDrawerHeight(minDrawerHeight);
     },
-    [setDrawerHeight, setTabValue, drawerHeight]
+    [dispatch, drawerHeight, setDrawerHeight]
   );
   const handleScriptLogsClose = useCallback(
     scriptId => event => {
       event.stopPropagation();
-      setTabValue(2);
+      dispatch(actions.bottomDrawer.removeTab(({tabType: 'scriptLogs', resourceId: scriptId})));
       dispatch(actions.logs.scripts.clear({scriptId, flowId}));
     },
-    [dispatch, flowId, setTabValue]
+    [dispatch, flowId]
   );
 
   const handleDebugLogsClose = useCallback(
     connectionId => event => {
       event.stopPropagation();
-      setTabValue(1);
+      dispatch(actions.bottomDrawer.removeTab(({tabType: 'connectionLogs', resourceId: connectionId})));
       dispatch(actions.logs.connections.clear({connectionId}));
     },
-    [dispatch, setTabValue]
+    [dispatch]
   );
 
   useEffect(() =>
@@ -251,7 +253,7 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
   [isDragging]);
 
   const tabProps = index => ({
-    id: `tab-${index}`, 'aria-controls': `tabpanel-${index}`,
+    'aria-controls': `tabpanel-${index}`,
   });
 
   const drawerClasses = useMemo(() => ({ paper: clsx(classes.drawerPaper, {
@@ -276,7 +278,7 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
           Run console
           {
             isFlowRunInProgress &&
-            <Spinner color="primary" size={16} className={classes.inProgress} />
+            <Spinner size="small" className={classes.inProgress} />
           }
         </>
       );
@@ -284,9 +286,12 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
 
     return 'Dashboard';
   }, [isUserInErrMgtTwoDotZero, classes.inProgress, isFlowRunInProgress]);
-
   let tabIndex = 0;
   let tabContentIndex = 0;
+
+  useEffect(() => {
+    dispatch(actions.bottomDrawer.init(flowId));
+  }, [dispatch, flowId]);
 
   return (
     <div>
@@ -301,88 +306,128 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
           id={DRAGGABLE_SECTION_DIV_ID}
           onMouseDown={handleMouseDown}>
           <Tabs
-            value={tabValue}
+            value={activeTabIndex}
             onChange={handleTabChange}
             indicatorColor="primary"
             textColor="primary"
             variant="scrollable"
             scrollButtons="auto"
             aria-label="scrollable auto tabs example">
-            <Tab
-              {...tabProps(tabIndex++)}
-              icon={<DashboardIcon />}
-              label={dashboardLabel} />
-            {isUserInErrMgtTwoDotZero && (
-              <Tab
-                {...tabProps(tabIndex++)}
-                icon={<RunHistoryIcon />}
-                label="Run history" />
-            )}
-            <Tab
-              {...tabProps(tabIndex++)}
-              icon={
-                isAnyFlowConnectionOffline ? (
-                  <WarningIcon className={classes.connectionWarning} />
-                ) : (
-                  <ConnectionsIcon />
-                )
-              }
-              label="Connections"
-            />
-            {flowScripts?.length &&
-            <Tab {...tabProps(tabIndex++)} icon={<ScriptsIcon />} label="Scripts" />}
-            <Tab {...tabProps(tabIndex++)} icon={<AuditLogIcon />} label="Audit log" />
-
-            {flowScriptsWithLogEntry.map(script => (
-              <Tab
-                className={classes.customTab}
-                // TODO pass correct tabProp Index
-                {...tabProps(tabIndex++)}
-                icon={<AuditLogIcon />}
-                key={script.scriptId}
-                component="div"
-                label={(
-                  <div className={classes.customTabContainer}>
-                    <TabTitleWithResourceName
-                      resourceId={script.scriptId}
-                      resourceType="scripts"
-                      postfix=" - Execution log"
+            {tabs?.map(({label, tabType, resourceId}) => {
+              switch (tabType) {
+                case 'dashboard':
+                  return (
+                    <Tab
+                      {...tabProps(tabIndex++)}
+                      id={tabType}
+                      key={tabType}
+                      icon={<DashboardIcon />}
+                      label={dashboardLabel} />
+                  );
+                case 'runHistory':
+                  return (
+                    <Tab
+                      id={tabType}
+                      key={tabType}
+                      {...tabProps(tabIndex++)}
+                      icon={<RunHistoryIcon />}
+                      label={label} />
+                  );
+                case 'connections':
+                  return (
+                    <Tab
+                      {...tabProps(tabIndex++)}
+                      id={tabType}
+                      key={tabType}
+                      icon={
+                        isAnyFlowConnectionOffline ? (
+                          <WarningIcon className={classes.connectionWarning} />
+                        ) : (
+                          <ConnectionsIcon />
+                        )
+                      }
+                      label={label}
                     />
-                    <IconButton
-                      className={classes.closeBtn}
-                      onClick={handleScriptLogsClose(script.scriptId)}>
-                      <CloseIcon />
-                    </IconButton>
-                  </div>
-                      )}
-                    />
-            ))}
-            {flowConnectionsWithLogEntry?.map(
-                connection =>
-                  (
+                  );
+                case 'scripts':
+                  return (
+                    <Tab
+                      {...tabProps(tabIndex++)}
+                      id={tabType}
+                      key={tabType}
+                      icon={<ScriptsIcon />}
+                      label={label}
+                      />
+                  );
+                case 'auditLogs':
+                  return (
+                    <Tab
+                      {...tabProps(tabIndex++)}
+                      id={tabType}
+                      key={tabType}
+                      icon={<AuditLogIcon />}
+                      label={label}
+                      />
+                  );
+                case 'scriptLogs':
+                  return (
                     <Tab
                       className={classes.customTab}
+                      key={`${tabType}-${resourceId}`}
+                      id={`${tabType}-${resourceId}`}
                       {...tabProps(tabIndex++)}
-                      icon={<DebugIcon />}
-                      key={connection._id}
+                      icon={<AuditLogIcon />}
                       component="div"
                       label={(
                         <div className={classes.customTabContainer}>
-                          {connection.name} - DEBUG
+                          <TabTitleWithResourceName
+                            resourceId={resourceId}
+                            resourceType="scripts"
+                            postfix=" - Execution log"
+                    />
                           <IconButton
                             className={classes.closeBtn}
-                            onClick={handleDebugLogsClose(connection._id)}>
+                            onClick={handleScriptLogsClose(resourceId)}>
                             <CloseIcon />
                           </IconButton>
                         </div>
                       )}
                     />
-                  )
-              )}
+                  );
+
+                case 'connectionLogs':
+                  return (
+                    <Tab
+                      className={classes.customTab}
+                      key={`${tabType}-${resourceId}`}
+                      // id={`connection-logs-${resourceId}`}
+                      id={`${tabType}-${resourceId}`}
+                      {...tabProps(tabIndex++)}
+                      icon={<DebugIcon />}
+                      component="div"
+                      label={(
+                        <div className={classes.customTabContainer}>
+                          <TabTitleWithResourceName
+                            resourceId={resourceId}
+                            resourceType="connections"
+                            postfix=" - DEBUG"
+                          />
+                          <IconButton
+                            className={classes.closeBtn}
+                            onClick={handleDebugLogsClose(resourceId)}>
+                            <CloseIcon />
+                          </IconButton>
+                        </div>
+                      )}
+                    />
+                  );
+                default:
+              }
+            })}
 
           </Tabs>
           {
-         isUserInErrMgtTwoDotZero && tabValue === 0 &&
+         isUserInErrMgtTwoDotZero && activeTabIndex === 0 &&
          <RunDashboardActions flowId={flowId} />
         }
           <div className={classes.actionsContainer}>
@@ -403,7 +448,7 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
           </div>
         </div>
         <>
-          <TabPanel value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
+          <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
             { isUserInErrMgtTwoDotZero
               ? <RunDashboardV2 flowId={flowId} />
               : <RunDashboardPanel flowId={flowId} />}
@@ -411,25 +456,25 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
           {
             isUserInErrMgtTwoDotZero &&
             (
-              <TabPanel value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
+              <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
                 <RunHistory flowId={flowId} />
               </TabPanel>
             )
           }
-          <TabPanel value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
+          <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
             <ConnectionPanel flowId={flowId} />
           </TabPanel>
           {!!flowScripts?.length && (
-            <TabPanel value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
+            <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
               <ScriptPanel flowId={flowId} />
             </TabPanel>
           )}
 
-          <TabPanel value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
+          <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
             <AuditPanel flowId={flowId} />
           </TabPanel>
           {flowScriptsWithLogEntry.map(script => (
-            <TabPanel key={script.scriptId} value={tabValue} index={tabContentIndex++} className={classes.tabPanel}>
+            <TabPanel key={script.scriptId} value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
               <ScriptLogs flowId={flowId} scriptId={script.scriptId} />
             </TabPanel>
           ))}
@@ -437,7 +482,7 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
               connection =>
                 (
                   <TabPanel
-                    value={tabValue}
+                    value={activeTabIndex}
                     key={connection._id}
                     index={tabContentIndex++}
                     className={classes.tabPanel}>

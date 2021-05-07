@@ -6,6 +6,7 @@ import ButtonGroup from '../../ButtonGroup';
 import actions from '../../../actions';
 import {selectors} from '../../../reducers';
 import Spinner from '../../Spinner';
+import { useLoadingSnackbarOnSave } from '../../ResourceFormFactory/Actions';
 
 const SaveButton = ({
   submitButtonLabel = 'Save',
@@ -17,16 +18,24 @@ const SaveButton = ({
   onClose,
 }) => {
   const [saveTrigerred, setSaveTriggered] = useState(false);
+  const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
   const match = useRouteMatch();
   const dispatch = useDispatch();
   const { saveTerminated, saveCompleted, saveInProgress } = useSelector(state => selectors.responseMappingSaveStatus(state), shallowEqual);
   const mappingsChanged = useSelector(state =>
     selectors.responseMappingChanged(state)
   );
-  const handleSave = useCallback(() => {
+  const onSave = useCallback(() => {
     dispatch(actions.responseMapping.save({ match }));
     setSaveTriggered(true);
   }, [dispatch, match]);
+  const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
+    saveTerminated,
+    onSave,
+    resourceType: 'mappings',
+    disableSaveOnClick,
+    setDisableSaveOnClick,
+  });
 
   useEffect(() => {
     if (saveTrigerred && saveCompleted && onClose) {
@@ -35,7 +44,7 @@ const SaveButton = ({
     }
   }, [onClose, saveCompleted, saveTerminated, saveTrigerred]);
 
-  const showSpinner = saveTrigerred && saveInProgress;
+  const showSpinner = saveTrigerred && saveInProgress && disableSave;
 
   if (showOnDirty && !mappingsChanged) {
     return null;
@@ -47,7 +56,7 @@ const SaveButton = ({
       variant={variant}
       color={color}
       disabled={disabled}
-      onClick={handleSave}>
+      onClick={handleSubmitForm}>
       {showSpinner ? (
         <>
           <Spinner size="small" />

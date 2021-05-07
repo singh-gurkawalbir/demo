@@ -358,7 +358,7 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
       resource.adaptorType
     ) >= 0 &&
       resource.type === 'blob') ||
-      (isFileAdaptor(resource) && resource.adaptorType.includes('Export'))
+      (isFileAdaptor(resource) && resource.adaptorType?.includes('Export'))
   ) {
     blockType = 'exportTransfer';
   } else if (
@@ -366,7 +366,7 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
       resource.adaptorType
     ) >= 0 &&
       resource.blob) ||
-      (isFileAdaptor(resource) && resource.adaptorType.includes('Import'))
+      (isFileAdaptor(resource) && resource.adaptorType?.includes('Import'))
   ) {
     blockType = 'importTransfer';
   }
@@ -442,7 +442,7 @@ export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {
       }
     }
   } else {
-    if (domain === 'staging.integrator.io') {
+    if (domain === 'staging.integrator.io' || domain === 'qa.staging.integrator.io') {
       connectorToCategoryMap = {
         '5656f5e3bebf89c03f5dd77e': '203963787',
         '5666865f67c1650309224904': '203958808',

@@ -40,6 +40,7 @@ const useStyles = makeStyles(theme => ({
     border: 'none',
   },
   tablePagination: {
+    display: 'flex',
     '& > div': {
       marginRight: theme.spacing(-2),
     },
@@ -57,6 +58,9 @@ const useStyles = makeStyles(theme => ({
   },
   reportsTable: {
     overflowX: 'auto',
+  },
+  reportsHeading: {
+    display: 'flex',
   },
 }));
 const defaultFilter = {
@@ -145,6 +149,8 @@ const RefreshPaginationComponent = ({resourceType, isLoadingResource}) => {
     <>
       <IconTextButton
         data-test="refreshReports"
+        color="secondary"
+        variant="text"
         disabled={isRefreshedByUser}
         onClick={() => {
           setIsRefreshedByUser(true);
@@ -252,7 +258,10 @@ export default function Reports() {
         <div className={classes.resultData}>
           <div className={classes.actions}>
             <Typography
-              variant="h4">
+              variant="h4"
+              component="div"
+              className={classes.reportsHeading}
+              >
               {reportTypeLabel} report results  {info && <InfoIconButton info={info} />}
             </Typography>
             <div className={classes.emptySpace} />

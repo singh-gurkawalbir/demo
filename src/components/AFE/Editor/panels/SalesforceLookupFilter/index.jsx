@@ -109,7 +109,15 @@ export default function SalesforceLookupFilterPanel({
     }
   }, [jsonPathsFromData, rules, filters]);
 
-  const isValid = () => jQuery(qbuilder.current).queryBuilder('validate');
+  const isValid = () => {
+    try {
+      return jQuery(qbuilder.current).queryBuilder('validate');
+    // eslint-disable-next-line no-empty
+    } catch (e) {
+    }
+
+    return false;
+  };
   const getRules = useCallback((options = {}) => {
     const qbRules = jQuery(qbuilder.current).queryBuilder('getRules', options);
 
@@ -244,6 +252,8 @@ export default function SalesforceLookupFilterPanel({
           if (!rulesState[ruleId].data.rhs.type) {
             rulesState[ruleId].data.rhs.type = 'field';
           }
+          // IO-21280- temp fix. rulesState is not persisting when new filters are added intermittently.
+          setRulesState(rulesState);
 
           if (!disabled) {
             rule.$el

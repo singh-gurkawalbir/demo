@@ -26,8 +26,11 @@ export default function inferErrorMessages(inputMessage) {
   if (message) {
     // mostly a csrf message format
     finalFormattedMessage = [message];
-  } else if (errors) {
+  } else if (errors && Array.isArray(errors)) {
     finalFormattedMessage = errors.map(error => error?.message || error);
+  } else if (errors) {
+    // if errors is not an array could be an object or string for some cases....This should not happen because errors is expected always to be a collection
+    finalFormattedMessage = [errors];
   } else finalFormattedMessage = [msg];
   // Unknown error message format response lets just return it completely
 

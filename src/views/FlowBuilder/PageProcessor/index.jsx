@@ -337,6 +337,7 @@ const PageProcessor = ({
           flowId={flowId}
           index={index}
           resource={resource}
+          resourceId={resourceId}
           resourceIndex={index}
           resourceType={resourceType}
           actions={processorActions}

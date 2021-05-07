@@ -34,7 +34,7 @@ export const selectors = {};
 
 selectors.marketPlaceState = state => state;
 
-selectors.connectors = (state, application, sandbox, licenses) => {
+selectors.connectors = (state, application, sandbox, licenses, isAccountOwnerOrAdmin) => {
   if (!state) {
     return emptySet;
   }
@@ -47,10 +47,11 @@ selectors.connectors = (state, application, sandbox, licenses) => {
     if (conn._id === SUITESCRIPT_CONNECTOR_IDS.salesforce) {
       return conn;
     }
-    const connectorLicenses = licenses.filter(l => (((conn.framework === 'twoDotZero') ? (l.type === 'integrationApp') : (l.type === 'connector')) && l._connectorId === conn._id && (l.expires || l.trialEndDate)));
+    const connectorLicenses = licenses.filter(l => (((conn.framework === 'twoDotZero') ? (l.type === 'integrationApp') : (l.type === 'connector')) && l._connectorId === conn._id && (l.expires || l.trialEndDate) && (!!l.sandbox === sandbox)));
 
     let unusedPaidLicenseExists = false;
     let usedTrialLicenseExists = false;
+    let usedPaidLicenseExists = false;
 
     connectorLicenses &&
     connectorLicenses.forEach(l => {
@@ -58,16 +59,31 @@ selectors.connectors = (state, application, sandbox, licenses) => {
         if (l.expires) {
           if (new Date(l.expires).getTime() > Date.now()) {
             unusedPaidLicenseExists = true;
+          } else {
+            usedPaidLicenseExists = true;
           }
         } else if (new Date(l.trialEndDate).getTime() <= Date.now()) {
           usedTrialLicenseExists = true;
         }
-      } else if (!l.expires) {
+      } else if (l.expires) {
+        usedPaidLicenseExists = true;
+      } else {
         usedTrialLicenseExists = true;
       }
     });
+    let canRequestDemo = false;
+    let canInstall = false;
+    let canStartTrial = false;
 
-    return { ...conn, canInstall: unusedPaidLicenseExists, usedTrialLicenseExists };
+    if (unusedPaidLicenseExists) {
+      canInstall = true;
+    } else if (!usedPaidLicenseExists && conn.trialEnabled && isAccountOwnerOrAdmin) {
+      canStartTrial = true;
+    } else {
+      canRequestDemo = true;
+    }
+
+    return { ...conn, canInstall, usedTrialLicenseExists, canStartTrial, canRequestDemo };
   });
 
   if (application) {

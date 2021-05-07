@@ -6,7 +6,7 @@ export default {
   'afe.handlebar.rule.relaviveUri': 'This is sample help for handlebar afe, rule panel, relativeUri fieldId',
   previewPanelRecords: 'Enter or select the maximum number of records – up to 100 – to preview. Then, click <b>Preview</b> to see the records that match your query in the order that they’re received.',
   settingsForm:
-    'Use the form builder to expose user friendly custom fields for your raw JSON custom settings.  Your forms can expose any field types that you see elsewhere in the UI.  Forms and custom fields make it much easier for less technical users to work with your custom settings.',
+    'Open <a href="https://docs.celigo.com/hc/en-us/articles/360058595552-Create-forms" target="_blank">Form builder</a> to create or edit user-friendly fields that prompt for text entry or selections that will be returned as settings applied to this resource. Your forms can include any <a href="https://docs.celigo.com/hc/en-us/articles/360059205112-Common-form-fields" target="_blank">field types</a> that you see elsewhere in integrator.io. Forms fields make it much easier for less technical users to work with your settings.',
   settings:
     'This same JSON settings field is exposed on many of the core resource types: integration, flow, export, import, connection, etc... Generally speaking, this settings field can be used to parameterize the logic within your resource. Hooks, filters, handlebars, etc... are all given access to the settings fields when they run, and can incorporate the settings values into their logic. It is worth highlighting that the settings fields stored on linked/related resources are also accessible at runtime. For example, the settings field defined at the integration tile level will be accessible to all flows running within the same integration tile. \n\nIt is recommended that you create a custom form to expose and manage your settings fields, so that less technical users do not need to work with raw JSON. Be sure to check out the "Launch form builder" button!.',
   'license._trialLicenseId': 'Create or select a license record that would serve as the default license configuration for any trial licenses.',
@@ -576,6 +576,9 @@ export default {
     'Please enter Client ID of your Walmart Account.',
   'walmart.connection.http.encrypted.clientSecret':
     'Please enter Client Secret of your Walmart Account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Client secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'walmartcanada.connection.http.unencrypted.consumerId': 'Enter the Consumer ID of Walmart Canda account.<br> <b>Steps to get the Consumer ID:</b> 1. Log in to Walmart Canda seller account > click on settings > Select “Consumer IDs & Private Keys” to get the Consumer ID.<br> 2. If Consumer ID is not generated already, you will have an option to generate a new.',
+  'walmartcanada.connection.http.unencrypted.localeId': 'Select the geographic location of your Walmart Canada account.',
+  'walmartcanada.connection.http.encrypted.consumerKey': 'Enter the Private Key of Walmart Canda account. <br> <b>Steps to get the private key:</b><br> 1.Log in to Walmart Canda seller account > click on settings > Select “Consumer IDs & Private Keys” to get the Private key.<br>2. If Private key is not generated already, you will have an option to generate a new.',
   'logisense.connection.environment':
     'Please select the environment of your LogiSense account.',
   'logisense.connection.storeURL':
@@ -2153,6 +2156,20 @@ export default {
     'Select the data type of the import field, such as Boolean, string, or number array.',
   'mapping.discardIfEmpty':
     'Please check this checkbox if you would like to discard this mapping when the result of the mapping is empty. If you are mapping a list field and all the fields in the list are mapped to empty values then the whole list will be discarded.',
+  'mapping.useFirstRow':
+    `Check this box to update the destination sublist fields using only the value of the first sublist retrieved for the record. For example, if the source app contains the following two rows: 
+    <table style="width:98%; margin-top: 8px; margin-bottom: 8px; border-collapse:collapse;"  text-align: left; color:#D6E4ED; background-color: #ffffff;"> <thead><tr> <th style="border:1px solid #D6E4ED; padding-left: 6px;">Name</th> <th style="border:1px solid #D6E4ED; padding-left: 6px;">Visits</th> </tr></thead> 
+    <tr> <td style="border:1px solid #D6E4ED; padding-left: 6px;">Jones</td> <td style="border:1px solid #D6E4ED; padding-left: 6px;">13</td> </tr>
+     <tr> <td style="border:1px solid #D6E4ED; padding-left: 6px;">Smith</td> <td style="border:1px solid #D6E4ED; padding-left: 6px;">11</td> </tr>
+    </table>
+    When you select <b>Apply only the first row’s value and map the Visits</b>, the destination records will be synced as follows upon import, ignoring the second (or subsequent) rows.
+    <table style="width:98%; margin-top: 8px; margin-bottom: 8px; border-collapse:collapse;"  text-align: left; color:#D6E4ED; background-color: #ffffff;"> <thead><tr> <th style="border:1px solid #D6E4ED; padding-left: 6px;">Name</th> <th style="border:1px solid #D6E4ED; padding-left: 6px;">Visits</th> </tr></thead> 
+    <tr> <td style="border:1px solid #D6E4ED; padding-left: 6px;">Jones</td> <td style="border:1px solid #D6E4ED; padding-left: 6px;">3</td> </tr>
+     <tr> <td style="border:1px solid #D6E4ED; padding-left: 6px;">Smith</td> <td style="border:1px solid #D6E4ED; padding-left: 6px;">3</td> </tr>
+    </table>
+    `,
+  'mapping.isKey':
+    'Check this box to use this NetSuite sublist field to identify a NetSuite line with the same value as the external field. If a match is found, integrator.io will update the NetSuite sublist line; otherwise, it will insert a new line. \n For example, let’s say you are updating a sales order that has a custom field called VendorItemId in its line items. When the source app sends a VendorItemId in the line data, you can map that field to the NetSuite destination’s VendorItemId and select <b>Use as a key field to find existing lines.</b> Then, if NetSuite has the same VendorItemId value in that record’s sublist, <a href="https://www.celigo.com/ipaas-integration-platform/" target="_blank"/>integrator.io</a>will update the corresponding lines with the source value.',
   'mapping.fieldMappingType':
     `The type of field mapping that you want to perform. For more information, refer to <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/>Map source record fields to destination</a>.`,
   'mapping.extract':

@@ -590,6 +590,7 @@ selectors.resourceList = (state, options = {}) => {
       'published',
       'transfers',
       'apis',
+      'connectors',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type
@@ -617,6 +618,7 @@ selectors.resourceListModified = (userState, resourcesState, options = {}) => {
       'published',
       'transfers',
       'apis',
+      'connectors',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type
@@ -1233,14 +1235,16 @@ selectors.marketplaceConnectors = (
   marketPlaceState,
   resourceState,
   application,
-  sandbox
+  sandbox,
+  isAccountOwnerOrAdmin,
 ) => {
   const licenses = fromUser.licenses(userState);
   const connectors = fromMarketPlace.connectors(
     marketPlaceState,
     application,
     sandbox,
-    licenses
+    licenses,
+    isAccountOwnerOrAdmin,
   );
 
   return connectors
@@ -1267,13 +1271,15 @@ selectors.makeMarketPlaceConnectorsSelector = () =>
     selectors.resourceState,
     (_, application) => application,
     (_1, _2, sandbox) => sandbox,
-    (userState, marketPlaceState, resourceState, application, sandbox) =>
+    selectors.isAccountOwnerOrAdmin,
+    (userState, marketPlaceState, resourceState, application, sandbox, isAccountOwnerOrAdmin) =>
       selectors.marketplaceConnectors(
         userState,
         marketPlaceState,
         resourceState,
         application,
-        sandbox
+        sandbox,
+        isAccountOwnerOrAdmin,
       )
   );
 
@@ -3187,8 +3193,7 @@ selectors.getMetadataOptions = (
 );
 
 selectors.getSalesforceMasterRecordTypeInfo = (state, resourceId) => {
-  const { merged: resource = emptyObject } = selectors.resourceData(state, 'imports', resourceId) || emptyObject;
-  const { _connectionId: connectionId, salesforce } = resource;
+  const { _connectionId: connectionId, salesforce } = selectors.resourceData(state, 'imports', resourceId)?.merged || emptyObject;
   const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce?.sObjectType}`;
   const { data, status } = selectors.metadataOptionsAndResources(state, {
     connectionId,
@@ -3211,7 +3216,7 @@ selectors.canSelectRecordsInPreviewPanel = (state, resourceId, resourceType) => 
   const isExportPreviewDisabled = selectors.isExportPreviewDisabled(state, resourceId, resourceType);
 
   if (isExportPreviewDisabled) return false;
-  const resource = selectors.resourceData(state, resourceType, resourceId).merged;
+  const resource = selectors.resourceData(state, resourceType, resourceId)?.merged || {};
   // TODO @Raghu: merge this as part of isRealTimeOrDistributedResource to handle this resourceType
   // it is realtime incase of new export for realtime adaptors
 
@@ -3298,7 +3303,7 @@ selectors.fileSampleData = (state, { resourceId, resourceType, fileType, ssLinke
 };
 
 selectors.getImportSampleData = (state, resourceId, options = {}) => {
-  const { merged: resource = emptyObject } = selectors.resourceData(state, 'imports', resourceId);
+  const resource = selectors.resourceData(state, 'imports', resourceId)?.merged || emptyObject;
   const { assistant, adaptorType, sampleData, _connectorId } = resource;
   const isIntegrationApp = !!_connectorId;
 
@@ -3426,12 +3431,12 @@ selectors.sampleDataWrapper = createSelector(
  * Any other criteria to disable preview panel can be added here
  */
 selectors.isExportPreviewDisabled = (state, resourceId, resourceType) => {
-  const { merged: resourceObj = {} } = selectors.resourceData(
+  const resourceObj = selectors.resourceData(
     state,
     resourceType,
     resourceId,
     'value',
-  );
+  )?.merged || emptyObject;
 
   // Incase of File adaptors(ftp, s3)/As2/Rest csv where file upload is supported
   // their preview does not depend on connection, so it can be enabled
@@ -3456,12 +3461,12 @@ selectors.getAvailableResourcePreviewStages = (
   resourceType,
   flowId
 ) => {
-  const { merged: resourceObj = {} } = selectors.resourceData(
+  const resourceObj = selectors.resourceData(
     state,
     resourceType,
     resourceId,
     'value'
-  );
+  )?.merged || emptyObject;
 
   const isDataLoader = selectors.isDataLoaderExport(state, resourceId, flowId);
   const isRestCsvExport = selectors.isRestCsvMediaTypeExport(state, resourceId);
@@ -4292,12 +4297,12 @@ selectors.isPreviewPanelAvailableForResource = (
   flowId
 ) => {
   if (resourceType !== 'exports') return false;
-  const { merged: resourceObj = {} } = selectors.resourceData(
+  const resourceObj = selectors.resourceData(
     state,
     resourceType,
     resourceId,
     'value'
-  );
+  )?.merged || emptyObject;
   const connectionObj = selectors.resource(
     state,
     'connections',
@@ -4430,10 +4435,10 @@ selectors.mappingHttpAssistantPreviewData = createSelector([
 });
 
 selectors.responseMappingExtracts = (state, resourceId, flowId) => {
-  const { merged: flow = {} } = selectors.resourceData(state,
+  const flow = selectors.resourceData(state,
     'flows',
     flowId
-  );
+  )?.merged || emptyObject;
   const pageProcessor = flow?.pageProcessors && flow?.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
 
   if (!pageProcessor) {
@@ -5015,18 +5020,18 @@ selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
 selectors.isDataLoaderExport = (state, resourceId, flowId) => {
   if (isNewId(resourceId)) {
     if (!flowId) return false;
-    const { merged: flowObj = {} } = selectors.resourceData(state, 'flows', flowId, 'value');
+    const flowObj = selectors.resourceData(state, 'flows', flowId, 'value')?.merged || emptyObject;
 
     return !!(flowObj.pageGenerators &&
               flowObj.pageGenerators[0] &&
               flowObj.pageGenerators[0].application === 'dataLoader');
   }
-  const { merged: resourceObj = {} } = selectors.resourceData(
+  const resourceObj = selectors.resourceData(
     state,
     'exports',
     resourceId,
     'value'
-  );
+  )?.merged || emptyObject;
 
   return resourceObj.type === 'simple';
 };
@@ -5299,11 +5304,11 @@ selectors.isEditorLookupSupported = (state, editorId) => {
 selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   const editor = fromSession.editor(state?.session, editorId);
   const {stage, resourceId, resourceType, flowId, fieldId} = editor;
-  const { merged: resource = {} } = selectors.resourceData(
+  const resource = selectors.resourceData(
     state,
     resourceType,
     resourceId
-  );
+  )?.merged || emptyObject;
   const connection = selectors.resource(state, 'connections', resource._connectionId);
   let _sampleData = null;
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
@@ -5409,11 +5414,11 @@ selectors.tileLicenseDetails = (state, tile) => {
 
   if (resumable) {
     licenseMessageContent = 'Your subscription has been renewed. Click Reactivate to continue.';
-  } else if (license?.trialEndDate && trialExpiresInDays <= 0) {
+  } else if (!license?.expires && license?.trialEndDate && trialExpiresInDays <= 0) {
     licenseMessageContent = `Trial expired on ${moment(license.trialEndDate).format('MMM Do, YYYY')}`;
     showTrialLicenseMessage = true;
     trialExpired = true;
-  } else if (license?.trialEndDate && trialExpiresInDays > 0) {
+  } else if (!license?.expires && license?.trialEndDate && trialExpiresInDays > 0) {
     licenseMessageContent = `Trial expires in ${trialExpiresInDays} days.`;
     showTrialLicenseMessage = true;
   } else if (expiresInDays <= 0) {
@@ -5427,8 +5432,8 @@ selectors.tileLicenseDetails = (state, tile) => {
 };
 
 // #region listener request logs selectors
-selectors.hasLogsAccess = (state, resourceId, resourceType, isNew) => {
-  if (resourceType !== 'exports') return false;
+selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
+  if (resourceType !== 'exports' || !flowId) return false;
   const resource = selectors.resource(state, 'exports', resourceId);
 
   if (!isRealtimeExport(resource)) return false;

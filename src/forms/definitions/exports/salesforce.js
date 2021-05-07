@@ -56,6 +56,7 @@ export default {
       } else {
         dateField.defaultRequired = true;
       }
+      dateField.required = dateField.defaultRequired;
     }
   },
   preSave: formValues => {
