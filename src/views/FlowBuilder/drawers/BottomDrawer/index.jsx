@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { makeStyles, Drawer, IconButton, Tab, Tabs, useTheme } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 import actions from '../../../../actions';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
@@ -28,8 +27,6 @@ import Spinner from '../../../../components/Spinner';
 import ScriptLogs from '../../../ScriptLogs';
 import ScriptsIcon from '../../../../components/icons/ScriptsIcon';
 import ConnectionLogs from '../../../ConnectionLogs';
-import getRoutePath from '../../../../utils/routePaths';
-import useConfirmDialog from '../../../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -107,7 +104,6 @@ const preventEvent = e => {
   e.stopPropagation();
 };
 export const DRAGGABLE_SECTION_DIV_ID = 'draggableSectionDivId';
-const emptyObject = {};
 
 const TabTitleWithResourceName = ({resourceId, resourceType, postfix}) => {
   const resourceName = useSelector(state => {
@@ -138,8 +134,6 @@ export default function BottomDrawer({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const history = useHistory();
-  const { confirmDialog } = useConfirmDialog();
   const theme = useTheme();
   const [isDragging, setIsDragging] = useState(null);
   const [startY, setStartY] = useState(0);
@@ -154,18 +148,7 @@ export default function BottomDrawer({
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const flowConnectionsWithLogEntry = useSelectorMemo(selectors.flowConnectionsWithLogEntry, flowId);
-  const flowScripts = useSelectorMemo(selectors.mkGetScriptsTiedToFlow, flowId);
-  const flowScriptsWithLogEntry = useSelector(state => selectors.flowExecutionLogScripts(state, flowId), shallowEqual);
-  const flow = useSelectorMemo(
-    selectors.makeResourceDataSelector,
-    'flows',
-    flowId
-  )?.merged || emptyObject;
-  const environment = useSelector(
-    state => selectors.userPreferences(state).environment
-  );
-  const [toggleEnvironmentRequested, setToggleEnvironmentRequested] = useState(true);
+
   const minDrawerHeight = 41;
   const maxHeight = window.innerHeight - theme.appBarHeight - theme.pageBarHeight + 1; // border 1px
   const stepSize = parseInt((maxHeight - minDrawerHeight) / 4, 10);
@@ -241,32 +224,6 @@ export default function BottomDrawer({
       dispatch(actions.logs.scripts.clear({flowId}));
     },
   [dispatch, flowId]);
-  useEffect(() => {
-    if (toggleEnvironmentRequested && !flow?.sandbox === (environment === 'sandbox')) {
-      dispatch(actions.user.preferences.update({ environment: flow?.sandbox ? 'sandbox' : 'production' }));
-      confirmDialog({
-        title: 'Confirm switch',
-        message: `You have successfully accessed ${flow.sandbox ? 'sandbox' : 'production'} flow. Switch back to your ${!flow.sandbox ? 'sandbox' : 'production'} account?.`,
-        buttons: [
-          {
-            label: 'Yes, switch',
-            onClick: () => {
-              dispatch(actions.user.preferences.update({ environment: flow?.sandbox ? 'production' : 'sandbox' }));
-              history.push(getRoutePath('/'));
-              setToggleEnvironmentRequested(false);
-            },
-          },
-          {
-            label: 'No, go back',
-            color: 'secondary',
-            onClick: () => {
-              setToggleEnvironmentRequested(false);
-            },
-          },
-        ],
-      });
-    }
-  }, [confirmDialog, dispatch, environment, flow?.sandbox, history, toggleEnvironmentRequested]);
 
   useEffect(() =>
     () => {
@@ -488,53 +445,71 @@ export default function BottomDrawer({
           </div>
         </div>
         <>
-          <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-            { isUserInErrMgtTwoDotZero
-              ? <RunDashboardV2 flowId={flowId} />
-              : <RunDashboardPanel flowId={flowId} />}
-          </TabPanel>
-          {
-            isUserInErrMgtTwoDotZero &&
-            (
-              <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-                <RunHistory flowId={flowId} />
-              </TabPanel>
-            )
-          }
-          <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-            <ConnectionPanel flowId={flowId} />
-          </TabPanel>
-          {!!flowScripts?.length && (
-            <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-              <ScriptPanel flowId={flowId} />
-            </TabPanel>
-          )}
+          {tabs?.map(({ tabType, resourceId}) => {
+            switch (tabType) {
+              case 'dashboard':
+                return (
+                  <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
+                    { isUserInErrMgtTwoDotZero
+                      ? <RunDashboardV2 flowId={flowId} />
+                      : <RunDashboardPanel flowId={flowId} />}
+                  </TabPanel>
+                );
+              case 'runHistory':
+                return (
+                  <>
+                    {isUserInErrMgtTwoDotZero &&
+                    (
+                      <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
+                        <RunHistory flowId={flowId} />
+                      </TabPanel>
+                    )}
+                  </>
+                );
 
-          <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-            <AuditPanel flowId={flowId} />
-          </TabPanel>
-          {flowScriptsWithLogEntry.map(script => (
-            <TabPanel key={script.scriptId} value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-              <ScriptLogs flowId={flowId} scriptId={script.scriptId} />
-            </TabPanel>
-          ))}
-          {flowConnectionsWithLogEntry?.map(
-              connection =>
-                (
+              case 'connections':
+                return (
+                  <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
+                    <ConnectionPanel flowId={flowId} />
+                  </TabPanel>
+                );
+              case 'scripts':
+                return (
+                  <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
+                    <ScriptPanel flowId={flowId} />
+                  </TabPanel>
+                );
+              case 'auditLogs':
+                return (
+                  <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
+                    <AuditPanel flowId={flowId} />
+                  </TabPanel>
+                );
+              case 'scriptLogs':
+                return (
+                  <TabPanel key={resourceId} value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
+                    <ScriptLogs flowId={flowId} scriptId={resourceId} />
+                  </TabPanel>
+                );
+
+              case 'connectionLogs':
+                return (
                   <TabPanel
                     value={activeTabIndex}
-                    key={connection._id}
+                    key={resourceId}
                     index={tabContentIndex++}
                     className={classes.tabPanel}>
                     <>
                       <ConnectionLogs
-                        connectionId={connection._id}
+                        connectionId={resourceId}
                         flowId={flowId}
                       />
                     </>
                   </TabPanel>
-                )
-            )}
+                );
+              default:
+            }
+          })}
         </>
       </Drawer>
     </div>
