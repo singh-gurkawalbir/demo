@@ -32,6 +32,7 @@ export function* validateOrgId({ orgId }) {
     yield put(actions.sso.validationError(errors?.[0]?.message));
   } catch (e) {
     // handle errors
+    yield put(actions.sso.validationError('validation error'));
   }
 }
 
