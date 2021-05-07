@@ -15,12 +15,16 @@ const useStyles = makeStyles(theme => ({
     left: 0,
     margin: 'auto',
     '& >.MuiCircularProgress-root': {
-      width: props => props.centerAll && !props.size ? '48px' : '',
-      height: props => props.centerAll && !props.size ? '48px' : '',
+      width: props => props.centerAll ? '48px !important' : '',
+      height: props => props.centerAll ? '48px !important' : '',
     },
   },
   spinnerChildren: {
     paddingLeft: theme.spacing(1),
+  },
+  extraSmall: {
+    width: `${theme.spacing(1)}px !important`,
+    height: `${theme.spacing(1)}px !important`,
   },
   small: {
     width: `${theme.spacing(2)}px !important`,
@@ -72,7 +76,7 @@ export default function Spinner(props) {
 
 Spinner.propTypes = {
   children: PropTypes.node,
-  size: PropTypes.oneOf(['small', 'medium', 'large']),
+  size: PropTypes.oneOf(['extraSmall', 'small', 'medium', 'large']),
   centerAll: PropTypes.bool,
   loading: PropTypes.bool,
 };
