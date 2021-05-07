@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import Checkbox from '@material-ui/core/Checkbox';
-import useTraceUpdate from 'use-trace-update';
 import CheckboxUnselectedIcon from '../../../icons/CheckboxUnselectedIcon';
 import CheckboxSelectedIcon from '../../../icons/CheckboxSelectedIcon';
 import actions from '../../../../actions';

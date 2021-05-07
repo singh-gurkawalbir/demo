@@ -13,6 +13,7 @@ import SelectDate from '../cells/SelectDate';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
+  rowKey: 'errorId',
   useColumns: () => [
     {
       key: 'selectAll',

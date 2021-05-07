@@ -16,7 +16,7 @@ import ErrorMessage from '../cells/ErrorMessage';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
-  rowKey: 'traceKey',
+  rowKey: 'errorId',
   useColumns: () => [
     {
       key: 'selectAll',
