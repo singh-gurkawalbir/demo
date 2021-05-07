@@ -47,8 +47,12 @@ const useStyles = makeStyles(theme => ({
       width: '100%',
     },
   },
+  headerName: {
+    width: '100%',
+    wordBreak: 'break-word',
+  },
   spinnerSearchCriteria: {
-    textAlign: 'right',
+    maxWidth: theme.spacing(3),
   },
   deleteButton: {
     marginTop: theme.spacing(1),
@@ -116,7 +120,7 @@ export default function SearchCriteriaEditor(props) {
       <div className={classes.header}>
         {headers.map(header => (
           <div className={classes.childHeader} key={header.name}>
-            <span>{header.name}</span>
+            <span className={classes.headerName}>{header.name}</span>
             {header.refreshable && status !== 'requested' && <RefreshIcon onClick={handleRefresh} />}
             {header.refreshable && status === 'requested' && <Spinner className={classes.spinnerSearchCriteria} />}
           </div>

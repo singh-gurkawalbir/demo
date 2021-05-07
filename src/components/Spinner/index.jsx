@@ -15,28 +15,28 @@ const useStyles = makeStyles(theme => ({
     left: 0,
     margin: 'auto',
     '& >.MuiCircularProgress-root': {
-      width: props => props.centerAll ? '48px !important' : '',
-      height: props => props.centerAll ? '48px !important' : '',
+      width: props => props.centerAll && props.size ? `${props.size} !important` : `${theme.spacing(6)}px`,
+      height: props => props.centerAll && props.size ? `${props.size} !important` : `${theme.spacing(6)}px`,
     },
   },
   spinnerChildren: {
     paddingLeft: theme.spacing(1),
   },
   extraSmall: {
-    width: `${theme.spacing(1)}px !important`,
-    height: `${theme.spacing(1)}px !important`,
+    width: `${theme.spacing(1)}px`,
+    height: `${theme.spacing(1)}px`,
   },
   small: {
-    width: `${theme.spacing(2)}px !important`,
-    height: `${theme.spacing(2)}px !important`,
+    width: `${theme.spacing(2)}px`,
+    height: `${theme.spacing(2)}px`,
   },
   medium: {
-    width: `${theme.spacing(3)}px !important`,
-    height: `${theme.spacing(3)}px !important`,
+    width: `${theme.spacing(3)}px`,
+    height: `${theme.spacing(3)}px`,
   },
   large: {
-    width: `${theme.spacing(6)}px !important`,
-    height: `${theme.spacing(6)}px !important`,
+    width: `${theme.spacing(6)}px`,
+    height: `${theme.spacing(6)}px`,
   },
   spinnerWithChildren: {
     alignItems: 'center',
