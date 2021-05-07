@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
   panel: {
     marginBottom: theme.spacing(2),
   },
-  karthik: {
+  ssoFormContainer: {
     '&>div>div:last-child': {
       marginBottom: 0,
     },
@@ -209,7 +209,7 @@ export default function Security() {
           isSSOEnabled && (
             <>
               <div className={classes.ssoForm}>
-                <DynaForm formKey={formKey} className={classes.karthik} />
+                <DynaForm formKey={formKey} className={classes.ssoFormContainer} />
                 {
                 !!oidcClient?.orgId && (
                 <div>
