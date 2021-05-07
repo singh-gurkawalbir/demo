@@ -15,19 +15,25 @@ export default function MappingSettingsButton(props) {
     mappingKey,
     disabled,
     isCategoryMapping,
+    integrationId,
+    flowId,
+    editorId,
+    depth,
+    sectionId,
   } = props;
   const history = useHistory();
-  const { mappingIndex, integrationId, flowId, editorId, depth, sectionId } = props;
-
   const isDisabled = useSelector(state => {
+    let mappings;
+
     if (isCategoryMapping) {
       if (disabled) return true;
-      const {mappings} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId);
-      const value = mappings?.[mappingIndex] || emptyObject;
+      ({mappings} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId));
+      // const value = mappings?.[mappingIndex] || emptyObject;
 
-      return !('generate' in value);
+      // return !('generate' in value);
+    } else {
+      ({ mappings} = selectors.mapping(state));
     }
-    const { mappings} = selectors.mapping(state);
 
     const value = mappings.find(({key}) => key === mappingKey) || emptyObject;
 
@@ -35,11 +41,11 @@ export default function MappingSettingsButton(props) {
   });
   const handleBtnClick = useCallback(() => {
     if (isCategoryMapping) {
-      history.push(`${history.location.pathname}/settings/category/${editorId}/sections/${sectionId}/${depth}/${mappingIndex}`);
+      history.push(`${history.location.pathname}/settings/category/${editorId}/sections/${sectionId}/${depth}/${mappingKey}`);
     } else {
       history.push(`${history.location.pathname}/settings/${mappingKey}`);
     }
-  }, [editorId, history, isCategoryMapping, mappingIndex, mappingKey, sectionId, depth]);
+  }, [editorId, history, isCategoryMapping, mappingKey, sectionId, depth]);
 
   return (
     <ActionButton

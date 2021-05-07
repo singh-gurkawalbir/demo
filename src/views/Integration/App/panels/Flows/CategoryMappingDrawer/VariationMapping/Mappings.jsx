@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import shortid from 'shortid';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import ActionButton from '../../../../../../../components/ActionButton';
@@ -12,6 +13,7 @@ import TrashIcon from '../../../../../../../components/icons/TrashIcon';
 import DynaTypeableSelect from '../../../../../../../components/DynaForm/fields/DynaTypeableSelect';
 import MappingConnectorIcon from '../../../../../../../components/icons/MappingConnectorIcon';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
+import { emptyList } from '../../../../../../../utils/constants';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -92,20 +94,42 @@ export default function ImportMapping(props) {
     editorId,
     integrationId,
     flowId,
-    generateFields = [],
+    sectionId,
+    depth,
+    isVariationAttributes,
     disabled,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const { mappings, initChangeIdentifier } = useSelectorMemo(selectors.mkCategoryMappingsForSection, integrationId, flowId, editorId);
   const extractFields = useSelectorMemo(selectors.mkCategoryMappingsExtractsMetadata, integrationId, flowId);
+  const { fields: generateFields = emptyList } =
+  useSelector(state => {
+    const generatesMetadata = selectors.categoryMappingGenerateFields(
+      state,
+      integrationId,
+      flowId,
+      {
+        sectionId,
+        depth,
+      }
+    );
+
+    if (isVariationAttributes) {
+      const { variation_attributes: variationAttributes } = generatesMetadata;
+
+      return { fields: variationAttributes };
+    }
+
+    return generatesMetadata;
+  }) || {};
   const mappingsCopy = mappings ? [...mappings] : [];
 
-  mappingsCopy.push({});
   const tableData = (mappingsCopy || []).map((value, index) => {
     const obj = value;
 
     obj.index = index;
+    obj.key = shortid.generate();
 
     if (obj.hardCodedValue) {
       obj.hardCodedValueTmp = `"${obj.hardCodedValue}"`;
@@ -114,7 +138,7 @@ export default function ImportMapping(props) {
     return obj;
   });
   const handleFieldUpdate = useCallback(
-    (rowIndex, event, field) => {
+    (mappingKey, event, field) => {
       const { value } = event.target;
 
       dispatch(
@@ -123,26 +147,26 @@ export default function ImportMapping(props) {
           flowId,
           editorId,
           field,
-          rowIndex,
+          mappingKey,
           value
         )
       );
     },
     [dispatch, editorId]
   );
-  const handleDelete = row => {
+  const handleDelete = key => {
     dispatch(
       actions.integrationApp.settings.categoryMappings.delete(
         integrationId,
         flowId,
         editorId,
-        row
+        key
       )
     );
   };
 
   const handleGenerateUpdate = mapping => (id, val) => {
-    handleFieldUpdate(mapping.index, { target: { value: val } }, 'generate');
+    handleFieldUpdate(mapping.key, { target: { value: val } }, 'generate');
   };
 
   return (
@@ -151,7 +175,7 @@ export default function ImportMapping(props) {
       key={`mapping-${editorId}-${initChangeIdentifier}`}>
       <div className={classes.mappingsBody}>
         {tableData.map(mapping => (
-          <div className={classes.rowContainer} key={mapping.index}>
+          <div className={classes.rowContainer} key={mapping.key}>
             <div className={classes.innerRow}>
               <div
                 className={clsx(classes.childHeader, classes.mapField, {
@@ -159,7 +183,7 @@ export default function ImportMapping(props) {
                 })}>
                 <DynaTypeableSelect
                   key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
-                  id={`fieldMappingGenerate-${mapping.index}`}
+                  id={`fieldMappingGenerate-${mapping.key}`}
                   value={mapping.generate}
                   labelName="name"
                   components={{ ItemSeperator: () => null }}
@@ -186,7 +210,7 @@ export default function ImportMapping(props) {
                 })}>
                 <DynaTypeableSelect
                   key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
-                  id={`fieldMappingExtract-${mapping.index}`}
+                  id={`fieldMappingExtract-${mapping.key}`}
                   labelName="name"
                   valueName="id"
                   value={mapping.extract || mapping.hardCodedValueTmp}
@@ -195,7 +219,7 @@ export default function ImportMapping(props) {
                   components={{ ItemSeperator: () => null }}
                   onBlur={(id, evt) => {
                     handleFieldUpdate(
-                      mapping.index,
+                      mapping.key,
                       { target: { value: evt } },
                       'extract'
                     );
@@ -204,13 +228,13 @@ export default function ImportMapping(props) {
               </div>
               <div key="delete_button">
                 <ActionButton
-                  data-test={`fieldMappingRemove-${mapping.index}`}
+                  data-test={`fieldMappingRemove-${mapping.key}`}
                   aria-label="delete"
                   disabled={
                     mapping.isRequired || mapping.isNotEditable || disabled
                   }
                   onClick={() => {
-                    handleDelete(mapping.index);
+                    handleDelete(mapping.key);
                   }}
                   className={classes.deleteIcon}>
                   <TrashIcon />
