@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, Fragment, useState } from 'react';
+import React, { useCallback, useEffect, Fragment, useState, useMemo } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function LicenseAction() {
+function LicenseAction() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
@@ -132,4 +132,8 @@ export default function LicenseAction() {
       )}
     </>
   );
+}
+
+export default function LicenseActionMemo() {
+  return useMemo(() => <LicenseAction />, []);
 }

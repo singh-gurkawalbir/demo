@@ -12,43 +12,48 @@ import CeligoTimeAgo from '../../CeligoTimeAgo';
 const getSystemToken = stack => <StackSystemToken stackId={stack._id} />;
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'name',
       heading: 'Name',
-      value: function StacksDrawerLink(r) {
-        return <ResourceDrawerLink resourceType="stacks" resource={r} />;
-      },
+      Value: ({rowData: r}) => <ResourceDrawerLink resourceType="stacks" resource={r} />,
       orderBy: 'name',
     },
     {
+      key: 'type',
       heading: 'Type',
-      value: r => r.type,
+      Value: ({rowData: r}) => r.type,
       orderBy: 'type',
     },
     {
+      key: 'host',
       heading: 'Host',
-      value: r => r.server && r.server.hostURI,
+      Value: ({rowData: r}) => r.server && r.server.hostURI,
     },
     {
+      key: 'functionName',
       heading: 'Function name',
-      value: r => r.lambda && r.lambda.functionName,
+      Value: ({rowData: r}) => r.lambda && r.lambda.functionName,
     },
     {
+      key: 'accessKeyId',
       heading: 'Access key ID',
-      value: r => r.lambda && r.lambda.accessKeyId,
+      Value: ({rowData: r}) => r.lambda && r.lambda.accessKeyId,
     },
     {
+      key: 'lastUpdated',
       heading: 'Last updated',
-      value: r => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {
+      key: 'systemToken',
       heading: 'System token',
       width: '285px',
-      value: r => (r.server ? !r.shared && getSystemToken(r) : 'N/A'),
+      Value: ({rowData: r}) => (r.server ? !r.shared && getSystemToken(r) : 'N/A'),
     },
   ],
-  rowActions: r => {
+  useRowActions: r => {
     if (!r || !r.shared) {
       return [Edit, AuditLogs, References, GenerateToken, StackShares, Delete];
     }

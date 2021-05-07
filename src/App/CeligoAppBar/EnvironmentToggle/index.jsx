@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { selectors } from '../../../reducers';
@@ -6,7 +6,7 @@ import actions from '../../../actions';
 import TextToggle from '../../../components/TextToggle';
 import getRoutePath from '../../../utils/routePaths';
 
-export default function EnvironmentToggle() {
+function EnvironmentToggle() {
   const dispatch = useDispatch();
   const history = useHistory();
   const { environment = 'production' } = useSelector(state =>
@@ -46,4 +46,7 @@ export default function EnvironmentToggle() {
       ]}
     />
   );
+}
+export default function EnvironmentToggleMemo() {
+  return useMemo(() => <EnvironmentToggle />, []);
 }

@@ -5,10 +5,11 @@ import JobFilesDownloadDialog from '../../../../JobDashboard/JobFilesDownloadDia
 import actions from '../../../../../actions';
 
 export default {
-  label: 'Download files',
+  key: 'downloadFiles',
+  useLabel: () => 'Download files',
   icon: DownloadIntegrationIcon,
-  component: function DownloadFiles(props) {
-    const { rowData: job = {} } = props;
+  Component: ({rowData}) => {
+    const job = rowData || {};
 
     const dispatch = useDispatch();
     const [showDownloadFilesDialog, setShowDownloadFilesDialog] = useState(false);
@@ -28,7 +29,8 @@ export default {
 
     useEffect(() => {
       handleDownloadFiles();
-    }, [handleDownloadFiles]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     if (showDownloadFilesDialog) {
       return <JobFilesDownloadDialog job={job} onCloseClick={handleCloseDownloadFilesDialog} />;

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import TradingPartnerIcon from '../../../../icons/RevokeTokenIcon';
@@ -9,9 +9,10 @@ import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 const emptyArray = [];
 
 export default {
-  label: rowData => `Mark as ${rowData?.ftp?.tradingPartner ? 'not' : ''} trading partner`,
+  key: 'tradingPartner',
+  useLabel: rowData => `Mark as ${rowData?.ftp?.tradingPartner ? 'not' : ''} trading partner`,
   icon: TradingPartnerIcon,
-  component: function TradingPartner({ rowData = {}}) {
+  useOnClick: rowData => {
     const { _id: connectionId } = rowData;
     const dispatch = useDispatch();
     const [tradingPartnerConnectionsRequested, setTradingPartnerConnectionsRequested] = useState(false);
@@ -49,7 +50,7 @@ export default {
       });
     }, [confirmDialog, rowData?.ftp?.tradingPartner, updateTradingPartner, connectionsList]);
 
-    useEffect(() => {
+    return useCallback(() => {
       if (!tradingPartnerConnectionsRequested) {
         dispatch(actions.connection.requestTradingPartnerConnections(connectionId));
         setTradingPartnerConnectionsRequested(true);
@@ -57,7 +58,5 @@ export default {
         confirmTradingPartner();
       }
     }, [confirmTradingPartner, dispatch, connectionId, status, tradingPartnerConnectionsRequested]);
-
-    return null;
   },
 };

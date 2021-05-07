@@ -24,13 +24,13 @@ const useStyles = makeStyles({
 
 });
 
-export default function TextOverflowCell({ message, containsHtml, style, maxWidth}) {
+export default function TextOverflowCell({ message, containsHtml, rawHtmlOptions, style, maxWidth}) {
   const classes = useStyles(maxWidth);
 
   return (
     <div className={classes.wrapper} style={style}>
       <div className={classes.message}>
-        {containsHtml ? <RawHtml html={message} className={classes.htmlMessage} /> : message}
+        {containsHtml ? <RawHtml html={message} options={rawHtmlOptions} className={classes.htmlMessage} /> : message}
       </div>
     </div>
   );
