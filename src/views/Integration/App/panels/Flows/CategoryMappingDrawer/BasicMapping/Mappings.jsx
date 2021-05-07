@@ -336,6 +336,7 @@ export default function ImportMapping(props) {
 
   return (
     <div
+      key={`mapping-${editorId}-${initChangeIdentifier}`}
       className={classes.root}>
       <div className={classes.mappingsBody}>
         {tableData
@@ -368,8 +369,9 @@ export default function ImportMapping(props) {
                     [classes.disableChildRow]:
                       mapping.isNotEditable || disabled,
                   })}>
+
                   <DynaTypeableSelect
-                    key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
+                    key={`extract-${editorId}-${mapping.extract || (mapping.hardCodedValue ? `"${mapping.hardCodedValue}"` : undefined)}`}
                     id={`fieldMappingExtract-${mapping.key}`}
                     labelName="name"
                     valueName="id"
@@ -380,7 +382,7 @@ export default function ImportMapping(props) {
                         generateFields={generateFields}
                       />
                     )}
-                    value={mapping.extract || mapping.hardCodedValueTmp}
+                    value={mapping.extract || (mapping.hardCodedValue ? `"${mapping.hardCodedValue}"` : undefined)}
                     options={extractFields}
                     disabled={mapping.isNotEditable || disabled}
                     components={{ ItemSeperator: () => null }}
@@ -414,7 +416,7 @@ export default function ImportMapping(props) {
                       data-test={`fieldMappingRemove-${mapping.key}`}
                       aria-label="delete"
                       disabled={
-                        mapping.isRequired || mapping.isNotEditable || disabled
+                        (!mapping.extract && !mapping.hardCodedValue) || disabled
                       }
                       onClick={() => {
                         handleDelete(mapping.key);

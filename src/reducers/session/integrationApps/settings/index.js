@@ -340,8 +340,6 @@ export default (state = {}, action) => {
           );
         }
 
-        console.log('options', options);
-
         if (draft?.[cKey]?.mappings?.[id]) {
           draft[cKey].mappings[id] = {
             ...options,
@@ -423,12 +421,9 @@ export default (state = {}, action) => {
         const index = (draft[cKey]?.mappings?.[id]?.mappings || []).findIndex(m => m.key === mappingKey);
 
         if (index !== -1) {
-          console.log('found index', index);
           const mapping = draft[cKey].mappings[id].mappings[index];
 
-          console.log('mapping', mapping);
           Object.assign(mapping, value);
-          console.log('mapping after', mapping);
 
           // removing lookups
           if (!value.lookupName) {
