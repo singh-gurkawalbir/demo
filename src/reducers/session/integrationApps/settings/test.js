@@ -2566,7 +2566,7 @@ describe('integrationApps reducer test cases', () => {
           'flowId-integrationId': {
             mappings: {
               mappingId: {
-                initChangeIdentifier: 1,
+                initChangeIdentifier: 0,
                 lookups: [
                   {
                     id: 'oldLookup',
@@ -2637,8 +2637,8 @@ describe('integrationApps reducer test cases', () => {
           'flowId-integrationId': {
             mappings: {
               mappingId: {
-                lastModifiedRow: -1,
-                initChangeIdentifier: 1,
+                lastModifiedRow: 1,
+                initChangeIdentifier: 0,
                 lookups: [
                   {
                     id: 'oldLookup',
@@ -2705,8 +2705,8 @@ describe('integrationApps reducer test cases', () => {
           'flowId-integrationId': {
             mappings: {
               mappingId: {
-                lastModifiedRow: -1,
-                initChangeIdentifier: 1,
+                lastModifiedRow: 1,
+                initChangeIdentifier: 0,
                 lookups: [
                   {
                     id: 'oldLookup',

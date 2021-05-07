@@ -198,12 +198,15 @@ export default (state = {}, action) => {
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE: {
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
-          const index = draft[cKey].mappings[id].mappings?.findIndex(m => m.key === mappingKey);
+          const mappingToDelete = draft[cKey].mappings[id].mappings?.find(m => m.key === mappingKey);
 
-          draft[cKey].mappings[id].initChangeIdentifier += 1;
-          draft[cKey].mappings[id].mappings.splice(index, 1);
+          if (mappingToDelete?.lookupName) {
+          // delete lookup
+            draft[cKey].mappings[id].lookups = draft[cKey].mappings[id].lookups.filter(l => l.name !== mappingToDelete.lookupName);
+          }
+          draft[cKey].mappings[id].mappings = draft[cKey].mappings[id].mappings.filter(m => m.key !== mappingKey);
+          if (draft[cKey].mappings[id].lastModifiedRowKey === key) { delete draft[cKey].mappings[id].lastModifiedRowKey; }
 
-          if (draft[cKey].mappings[id].lastModifiedRow === index) draft[cKey].mappings[id].lastModifiedRow = -1;
           const {
             isSuccess,
             errMessage: validationErrMsg,
