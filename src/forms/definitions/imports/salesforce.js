@@ -46,12 +46,17 @@ export default {
         }
       } else if (['update', 'delete'].includes(newValues['/salesforce/operation'])) {
         newValues['/ignoreExisting'] = false;
+        newValues['/salesforce/idLookup/extract'] = undefined;
+        newValues['/salesforce/upsert/externalIdField'] = undefined;
       } else if (newValues['/salesforce/operation'] === 'addupdate') {
         newValues['/ignoreMissing'] = false;
         newValues['/ignoreExisting'] = false;
+        newValues['/salesforce/idLookup/extract'] = undefined;
+        newValues['/salesforce/upsert/externalIdField'] = undefined;
       } else {
         newValues['/ignoreMissing'] = false;
         newValues['/ignoreExisting'] = false;
+        newValues['/salesforce/idLookup/whereClause'] = undefined;
       }
     }
 
@@ -63,6 +68,10 @@ export default {
     }
 
     delete newValues['/inputMode'];
+
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
 
     return {
       ...newValues,

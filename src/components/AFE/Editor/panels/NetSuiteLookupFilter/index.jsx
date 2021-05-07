@@ -91,7 +91,15 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
     }
   }, [jsonPathsFromData, rules]);
 
-  const isValid = () => jQuery(qbuilder.current).queryBuilder('validate');
+  const isValid = () => {
+    try {
+      return jQuery(qbuilder.current).queryBuilder('validate');
+    // eslint-disable-next-line no-empty
+    } catch (e) {
+    }
+
+    return false;
+  };
   const getRules = (options = {}) => {
     const qbRules = jQuery(qbuilder.current).queryBuilder('getRules', options);
 
