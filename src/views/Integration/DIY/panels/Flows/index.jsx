@@ -176,17 +176,20 @@ const FlowListingTable = ({
 const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
   const match = useRouteMatch();
   const history = useHistory();
+  const integrationIsAvailable = useSelector(state => selectors.resource(state, 'integrations', integrationId)?._id);
+
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
 
   const redirectTo = redirectToFirstFlowGrouping(flows, flowGroupingsSections, match);
 
   useEffect(() => {
-    const shouldRedirect = !!redirectTo;
+    // redirect should only happen if integration is still present and not deleted
+    const shouldRedirect = !!redirectTo && !!integrationIsAvailable;
 
     if (shouldRedirect) {
       history.replace(redirectTo);
     }
-  }, [history, redirectTo]);
+  }, [history, redirectTo, integrationIsAvailable]);
 
   if (!flowGroupingsSections) {
     return (
