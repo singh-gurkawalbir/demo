@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import Checkbox from '@material-ui/core/Checkbox';
+import useTraceUpdate from 'use-trace-update';
 import CheckboxUnselectedIcon from '../../../icons/CheckboxUnselectedIcon';
 import CheckboxSelectedIcon from '../../../icons/CheckboxSelectedIcon';
 import actions from '../../../../actions';
@@ -13,7 +14,8 @@ export default function SelectError({
   actionInProgress,
 }) {
   const dispatch = useDispatch();
-  const handleChange = event => {
+
+  const handleChange = useCallback(event => {
     const { checked } = event.target;
 
     dispatch(
@@ -25,26 +27,30 @@ export default function SelectError({
         checked,
       })
     );
-  };
+  }, [dispatch, error.errorId, flowId, isResolved, resourceId]);
 
   const isDisabled = !!actionInProgress;
 
+  // useTraceUpdate({selected: error.selected, handleChange, isDisabled});
+
   return (
-    <Checkbox
-      icon={(
-        <span>
-          <CheckboxUnselectedIcon />
-        </span>
+    useMemo(() => (
+      <Checkbox
+        icon={(
+          <span>
+            <CheckboxUnselectedIcon />
+          </span>
       )}
-      checkedIcon={(
-        <span>
-          <CheckboxSelectedIcon />
-        </span>
+        checkedIcon={(
+          <span>
+            <CheckboxSelectedIcon />
+          </span>
       )}
-      onChange={event => handleChange(event)}
-      checked={error.selected || false}
-      disabled={isDisabled}
-      color="primary"
+        onChange={handleChange}
+        checked={error.selected || false}
+        disabled={isDisabled}
+        color="primary"
     />
+    ), [error.selected, handleChange, isDisabled])
   );
 }
