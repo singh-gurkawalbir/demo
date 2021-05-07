@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { makeStyles, Drawer, IconButton, Tab, Tabs, useTheme } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import actions from '../../../../actions';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
@@ -27,6 +28,8 @@ import Spinner from '../../../../components/Spinner';
 import ScriptLogs from '../../../ScriptLogs';
 import ScriptsIcon from '../../../../components/icons/ScriptsIcon';
 import ConnectionLogs from '../../../ConnectionLogs';
+import getRoutePath from '../../../../utils/routePaths';
+import useConfirmDialog from '../../../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -135,6 +138,8 @@ export default function BottomDrawer({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
+  const { confirmDialog } = useConfirmDialog();
   const theme = useTheme();
   const [isDragging, setIsDragging] = useState(null);
   const [startY, setStartY] = useState(0);
@@ -239,9 +244,29 @@ export default function BottomDrawer({
   useEffect(() => {
     if (toggleEnvironmentRequested && !flow?.sandbox === (environment === 'sandbox')) {
       dispatch(actions.user.preferences.update({ environment: flow?.sandbox ? 'sandbox' : 'production' }));
-      setToggleEnvironmentRequested(false);
+      confirmDialog({
+        title: 'Confirm switch',
+        message: `You have successfully accessed ${flow.sandbox ? 'sandbox' : 'production'} flow. Switch back to your ${!flow.sandbox ? 'sandbox' : 'production'} account?.`,
+        buttons: [
+          {
+            label: 'Yes, switch',
+            onClick: () => {
+              dispatch(actions.user.preferences.update({ environment: flow?.sandbox ? 'production' : 'sandbox' }));
+              history.push(getRoutePath('/'));
+              setToggleEnvironmentRequested(false);
+            },
+          },
+          {
+            label: 'No, go back',
+            color: 'secondary',
+            onClick: () => {
+              setToggleEnvironmentRequested(false);
+            },
+          },
+        ],
+      });
     }
-  }, [dispatch, environment, flow?.sandbox, toggleEnvironmentRequested]);
+  }, [confirmDialog, dispatch, environment, flow?.sandbox, history, toggleEnvironmentRequested]);
 
   useEffect(() =>
     () => {
