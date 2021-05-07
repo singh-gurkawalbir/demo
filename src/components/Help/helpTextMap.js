@@ -576,6 +576,9 @@ export default {
     'Please enter Client ID of your Walmart Account.',
   'walmart.connection.http.encrypted.clientSecret':
     'Please enter Client Secret of your Walmart Account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Client secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'walmartcanada.connection.http.unencrypted.consumerId': 'Enter the Consumer ID of Walmart Canda account.<br> <b>Steps to get the Consumer ID:</b> 1. Log in to Walmart Canda seller account > click on settings > Select “Consumer IDs & Private Keys” to get the Consumer ID.<br> 2. If Consumer ID is not generated already, you will have an option to generate a new.',
+  'walmartcanada.connection.http.unencrypted.localeId': 'Select the geographic location of your Walmart Canada account.',
+  'walmartcanada.connection.http.encrypted.consumerKey': 'Enter the Private Key of Walmart Canda account. <br> <b>Steps to get the private key:</b><br> 1.Log in to Walmart Canda seller account > click on settings > Select “Consumer IDs & Private Keys” to get the Private key.<br>2. If Private key is not generated already, you will have an option to generate a new.',
   'logisense.connection.environment':
     'Please select the environment of your LogiSense account.',
   'logisense.connection.storeURL':
