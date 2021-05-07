@@ -1,19 +1,21 @@
 import React from 'react';
 import AccessLevel from '../cells/AccessLevel';
 import EnableUser from '../cells/EnableUser';
+import RequireAccountSSO from '../cells/RequireAccountSSO';
 import ReinviteUser from '../cells/ReinviteUser';
 import Status from '../cells/Status';
 import Notifications from '../cells/Notifications';
 import AccessLevelHeader from '../cells/AccessLevelHeader';
 import EnableUserHeader from '../cells/EnableUserHeader';
 import StatusHeader from '../cells/StatusHeader';
-import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../../../utils/constants';
+import HeaderWithHelpText from '../../commonCells/HeaderWithHelpText';
+import { ACCOUNT_IDS, USER_ACCESS_LEVELS, ACCOUNT_SSO_STATUS } from '../../../../utils/constants';
 import ManagePermissions from '../actions/ManagePermissions';
 import MakeAccountOwner from '../actions/MakeAccountOwner';
 import DeleteFromAccount from '../actions/DeleteFromAccount';
 
 export default {
-  columns: (r, { integrationId, isUserInErrMgtTwoDotZero }) => {
+  columns: (r, { integrationId, isUserInErrMgtTwoDotZero, isSSOEnabled }) => {
     const columns = [
       { heading: 'Name', value: r => r.sharedWithUser.name },
       { heading: 'Email', value: r => r.sharedWithUser.email },
@@ -44,6 +46,26 @@ export default {
         value: (r, { integrationId}) =>
           <Notifications user={r} integrationId={integrationId} />,
       }] : []),
+      ...((!integrationId && isSSOEnabled) ? [
+        {
+          headerValue: () => <HeaderWithHelpText title="Account SSO linked?" helpKey="users.accountSSOLinked" />,
+          value: r => {
+            const { sharedWithUser = {}, _id: userId } = r;
+
+            if (userId === ACCOUNT_IDS.OWN) {
+              return null;
+            }
+
+            if (!sharedWithUser.accountSSOLinked || sharedWithUser.accountSSOLinked === ACCOUNT_SSO_STATUS.NOT_LINKED) return 'No';
+
+            return 'Yes';
+          }},
+        {
+          headerValue: () => <HeaderWithHelpText title="Require account SSO?" helpKey="users.requireAccountSSO" />,
+          value: r => <RequireAccountSSO user={r} />,
+          align: 'center',
+        },
+      ] : []),
     ];
 
     return columns;
