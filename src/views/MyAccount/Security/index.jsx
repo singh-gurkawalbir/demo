@@ -54,6 +54,9 @@ const useStyles = makeStyles(theme => ({
       marginBottom: 0,
     },
   },
+  headSpacing: {
+    padding: theme.spacing(2, 0, 2, 0),
+  },
 }));
 
 export default function Security() {
@@ -196,7 +199,7 @@ export default function Security() {
     <>
       <LoadResources required resources="ssoclients">
         <div className={classes.panel}>
-          <PanelHeader title="Single Sign-on(SSO)" infoText={infoTextUsers} />
+          <PanelHeader className={classes.headSpacing} title="Single Sign-on(SSO)" infoText={infoTextUsers} />
           <div className={classes.ssoSwitch}>
             <Typography variant="body2" className={classes.content}> Enable OIDC based SSO </Typography>
             <Help title="Enable OIDC based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
