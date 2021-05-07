@@ -7,7 +7,7 @@ import actionTypes from '../../../../../actions/types';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useCommStatus from '../../../../../hooks/useCommStatus';
-import { ACCOUNT_IDS } from '../../../../../utils/constants';
+import { ACCOUNT_IDS, ACCOUNT_SSO_STATUS } from '../../../../../utils/constants';
 
 export default function RequireAccountSSO({ user }) {
   const { accountSSORequired, _id: userId, sharedWithUser = {} } = user;
@@ -47,7 +47,7 @@ export default function RequireAccountSSO({ user }) {
     commStatusHandler,
   });
 
-  const disableSwitch = sharedWithUser.accountSSOLinked === 'other_account' && !accountSSORequired;
+  const disableSwitch = sharedWithUser.accountSSOLinked === ACCOUNT_SSO_STATUS.LINKED_TO_OTHER_ACCOUNT && !accountSSORequired;
 
   if (userId === ACCOUNT_IDS.OWN) {
     return null;
