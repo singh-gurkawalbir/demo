@@ -284,17 +284,6 @@ export default function ImportMapping(props) {
         }
 
         return visible;
-      })
-      .map((value, index) => {
-        const obj = value;
-
-        obj.index = index;
-
-        if (obj.hardCodedValue) {
-          obj.hardCodedValueTmp = `"${obj.hardCodedValue}"`;
-        }
-
-        return obj;
       });
 
     mappings.push({key: shortid.generate()});
