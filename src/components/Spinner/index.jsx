@@ -15,8 +15,8 @@ const useStyles = makeStyles(theme => ({
     left: 0,
     margin: 'auto',
     '& >.MuiCircularProgress-root': {
-      width: props => props.centerAll && props.size ? `${props.size} !important` : `${theme.spacing(6)}px`,
-      height: props => props.centerAll && props.size ? `${props.size} !important` : `${theme.spacing(6)}px`,
+      width: props => props.centerAll && props.size ? `${props.size} !important` : theme.spacing(6),
+      height: props => props.centerAll && props.size ? `${props.size} !important` : theme.spacing(6),
     },
   },
   spinnerChildren: {
