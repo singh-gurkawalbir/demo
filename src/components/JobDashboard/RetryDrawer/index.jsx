@@ -104,7 +104,7 @@ function RetryForm({jobId, flowJobId}) {
 
   return (
     <>
-      <DrawerContent>
+      <DrawerContent noPadding>
         <div className={classes.content}>
           <CodeEditor name="retryEditor" mode="json" value={data} onChange={handleChange} />
           {error && <Typography className={classes.errorText} component="div" color="error">{error}</Typography>}

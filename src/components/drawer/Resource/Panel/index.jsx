@@ -54,10 +54,10 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
     '& > div:first-child': {
       padding: 0,
+      paddingRight: theme.spacing(2),
     },
   },
   resourceFormWrapper: {
-    flexDirection: 'row',
     width: '100%',
     padding: theme.spacing(3),
     overflowY: 'auto',
