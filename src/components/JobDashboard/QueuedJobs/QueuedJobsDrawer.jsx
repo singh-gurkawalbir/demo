@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory, useLocation, matchPath } from 'react-router-dom';
-import { Typography, makeStyles } from '@material-ui/core';
+import { Typography, makeStyles, Divider } from '@material-ui/core';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -69,10 +69,11 @@ const metadata = {
 
 const useStyles = makeStyles(theme => ({
   content: {
-    padding: theme.spacing(1, 2),
+    paddingBottom: theme.spacing(1),
   },
   select: {
     width: 'auto',
+    minWidth: 230,
   },
   info: {
     padding: theme.spacing(1, 0),
@@ -83,6 +84,12 @@ const useStyles = makeStyles(theme => ({
   },
   infoBlock: {
     marginRight: 12,
+  },
+  queuedDrawerHeader: {
+    alignItems: 'center',
+  },
+  divider: {
+    height: 20,
   },
 }));
 
@@ -187,8 +194,8 @@ export default function QueuedJobsDrawer() {
         hideBackButton
         onClose={handleClose}
         path={paths}>
-
-        <DrawerHeader title={`Queued Jobs: ${connectionName}`}>
+        <DrawerHeader title={`Queued Jobs: ${connectionName}`} className={classes.queuedDrawerHeader}>
+          {/* TODO: as per the mock we need help component <Help /> beside the select field */}
           <DynaSelect
             rootClassName={classes.select}
             id="queuedJobs_connection"
@@ -199,6 +206,8 @@ export default function QueuedJobsDrawer() {
               { items: connections.map(c => ({ label: c.name, value: c.id })) },
             ]}
           />
+          {/* TODO: @Azhar need to create seperate component */}
+          <Divider orientation="vertical" className={classes.divider} />
         </DrawerHeader>
 
         <DrawerContent>
