@@ -112,7 +112,6 @@ function getHrefProps(href, path) {
 }
 
 function NavListItem(
-
   {isParentNavItem, label, href, navChildren, dataTest, path, component, isActiveItem, Icon}
 ) {
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -135,7 +134,6 @@ function NavListItem(
   );
 
   return (
-
     <ListItem
       button
       className={clsx(classes.listItem, {[classes.innerListItems]: !isParentNavItem}, {
