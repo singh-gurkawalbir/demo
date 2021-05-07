@@ -31,10 +31,12 @@ const useStyles = makeStyles(theme => ({
   },
   ssoSwitch: {
     display: 'flex',
-    paddingLeft: theme.spacing(2),
   },
   flexContainer: {
     display: 'flex',
+    '& + div': {
+      marginTop: theme.spacing(2),
+    },
   },
   content: {
     fontSize: '14px',
@@ -43,7 +45,14 @@ const useStyles = makeStyles(theme => ({
   urlDetails: {
     fontSize: '15px',
     lineHeight: '20px',
+  },
+  panel: {
     marginBottom: theme.spacing(2),
+  },
+  ssoFormContainer: {
+    '&>div>div:last-child': {
+      marginBottom: 0,
+    },
   },
 }));
 
@@ -180,24 +189,27 @@ export default function Security() {
 
   const applicationLoginURL = `${domainURL}/sso/${oidcClient?.orgId}`;
   const redirectURL = `${domainURL}/sso/${oidcClient?.orgId}/callback`;
+  const infoTextUsers =
+  'Configure single sign-on settings in this section';
 
   return (
     <>
       <LoadResources required resources="ssoclients">
-        <PanelHeader title="Single Sign-on(SSO)" />
-        <div className={classes.ssoSwitch}>
-          <Typography variant="body2" className={classes.content}> Enable OIDC based SSO </Typography>
-          <Help title="Enable OIDC based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
-          <CeligoSwitch
-            onChange={handleEnableSSO}
-            checked={isSSOEnabled}
+        <div className={classes.panel}>
+          <PanelHeader title="Single Sign-on(SSO)" infoText={infoTextUsers} />
+          <div className={classes.ssoSwitch}>
+            <Typography variant="body2" className={classes.content}> Enable OIDC based SSO </Typography>
+            <Help title="Enable OIDC based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
+            <CeligoSwitch
+              onChange={handleEnableSSO}
+              checked={isSSOEnabled}
       />
-        </div>
-        {
+          </div>
+          {
           isSSOEnabled && (
             <>
               <div className={classes.ssoForm}>
-                <DynaForm formKey={formKey} />
+                <DynaForm formKey={formKey} className={classes.ssoFormContainer} />
                 {
                 !!oidcClient?.orgId && (
                 <div>
@@ -223,8 +235,9 @@ export default function Security() {
             </>
           )
         }
-
+        </div>
       </LoadResources>
     </>
   );
 }
+

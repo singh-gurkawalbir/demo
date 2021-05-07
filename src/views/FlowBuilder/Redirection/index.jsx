@@ -5,6 +5,7 @@ import { isNewFlowFn, usePatchNewFlow } from '../hooks';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { generateNewId, isNewId } from '../../../utils/resource';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 export default function Redirection({children}) {
   const match = useRouteMatch();
@@ -17,6 +18,18 @@ export default function Redirection({children}) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const flow = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'flows',
+    flowId
+  )?.merged;
+  const environment = useSelector(
+    state => selectors.userPreferences(state).environment
+  );
+
+  if (flow && !flow.sandbox === (environment === 'sandbox')) {
+    dispatch(actions.user.preferences.update({ environment: flow?.sandbox ? 'sandbox' : 'production' }));
+  }
   const location = useLocation();
   const rewriteUrl = useCallback(
     id => {
