@@ -23,20 +23,20 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(1),
   },
   extraSmall: {
-    width: `${theme.spacing(1)}px`,
-    height: `${theme.spacing(1)}px`,
+    width: theme.spacing(1),
+    height: theme.spacing(1),
   },
   small: {
-    width: `${theme.spacing(2)}px`,
-    height: `${theme.spacing(2)}px`,
+    width: theme.spacing(2),
+    height: theme.spacing(2),
   },
   medium: {
-    width: `${theme.spacing(3)}px`,
-    height: `${theme.spacing(3)}px`,
+    width: theme.spacing(3),
+    height: theme.spacing(3),
   },
   large: {
-    width: `${theme.spacing(6)}px`,
-    height: `${theme.spacing(6)}px`,
+    width: theme.spacing(6),
+    height: theme.spacing(6),
   },
   spinnerWithChildren: {
     alignItems: 'center',
