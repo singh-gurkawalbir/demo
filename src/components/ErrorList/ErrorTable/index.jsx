@@ -2,7 +2,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import useTraceUpdate from 'use-trace-update';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
@@ -50,7 +49,6 @@ export default function ErrorTable({ flowId, resourceId, isResolved }) {
 
   const errorsInCurrPage = useSelectorMemo(selectors.mkResourceFilteredErrorsInCurrPageSelector, errorConfig);
 
-  useTraceUpdate({errorsInCurrPage});
   const isFreshDataLoad = useIsFreshLoadData(errorConfig);
 
   const actionProps = useMemo(

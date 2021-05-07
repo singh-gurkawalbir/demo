@@ -109,7 +109,7 @@ export default function TableBodyContent({
 }
 ) {
   const classes = useStyles();
-  const [selectedComponent, setSelectedComponent] = useState();
+  const [selectedComponent, setSelectedComponent] = useState(null);
 
   return (
     <>
