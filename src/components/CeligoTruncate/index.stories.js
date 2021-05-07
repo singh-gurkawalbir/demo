@@ -50,6 +50,6 @@ export const TwoLines = Template.bind({});
 TwoLines.args = {
   lines: 2,
   delay: 1000,
-  placement: 'right',
+  placement: 'bottom',
   ellipsis: ' (more)',
 };
