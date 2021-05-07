@@ -5475,13 +5475,7 @@ selectors.mkLogsInCurrPageSelector = () => createSelector(
 // #endregion listener request logs selectors
 
 // #region sso selectors
-selectors.oidcSSOClient = state => {
-  const ssoClients = selectors.resourceList(state, {
-    type: 'ssoclients',
-  }).resources;
-
-  return ssoClients.find(client => client.type === 'oidc');
-};
+selectors.oidcSSOClient = state => state.data.resources?.ssoclients?.find(client => client.type === 'oidc');
 
 selectors.isSSOEnabled = state => {
   const oidcClient = selectors.oidcSSOClient(state);
