@@ -35,6 +35,7 @@ const useStyles = makeStyles(theme => ({
   },
   drawerPaperShift: {
     marginLeft: theme.drawerWidth,
+    minHeight: 41,
   },
   drawerTransition: {
     transition: theme.transitions.create(['height', 'margin'], {
@@ -277,7 +278,7 @@ export default function BottomDrawer({
           Run console
           {
             isFlowRunInProgress &&
-            <Spinner color="primary" size={16} className={classes.inProgress} />
+            <Spinner size="small" className={classes.inProgress} />
           }
         </>
       );

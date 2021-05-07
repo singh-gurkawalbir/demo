@@ -191,6 +191,10 @@ export default {
       retValues['/pathToMany'] = undefined;
     }
 
+    if (retValues['/oneToMany'] === 'false') {
+      retValues['/pathToMany'] = undefined;
+    }
+
     return {
       ...retValues,
     };
