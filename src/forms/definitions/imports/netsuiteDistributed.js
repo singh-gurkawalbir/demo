@@ -28,6 +28,9 @@ export default {
     if (subrecords) {
       mapping = updateMappingsBasedOnNetSuiteSubrecords(mapping, subrecords);
     }
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
 
     if (newValues['/oneToMany'] === 'false') {
       newValues['/pathToMany'] = undefined;
