@@ -9,7 +9,7 @@ import AccessLevelHeader from '../cells/AccessLevelHeader';
 import EnableUserHeader from '../cells/EnableUserHeader';
 import StatusHeader from '../cells/StatusHeader';
 import HeaderWithHelpText from '../../commonCells/HeaderWithHelpText';
-import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../../../utils/constants';
+import { ACCOUNT_IDS, USER_ACCESS_LEVELS, ACCOUNT_SSO_STATUS } from '../../../../utils/constants';
 import ManagePermissions from '../actions/ManagePermissions';
 import MakeAccountOwner from '../actions/MakeAccountOwner';
 import DeleteFromAccount from '../actions/DeleteFromAccount';
@@ -56,7 +56,7 @@ export default {
               return null;
             }
 
-            if (!sharedWithUser.accountSSOLinked || sharedWithUser.accountSSOLinked === 'not_linked') return 'No';
+            if (!sharedWithUser.accountSSOLinked || sharedWithUser.accountSSOLinked === ACCOUNT_SSO_STATUS.NOT_LINKED) return 'No';
 
             return 'Yes';
           }},

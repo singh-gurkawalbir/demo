@@ -5495,7 +5495,7 @@ selectors.ownerSSOClientId = state => {
   const accountOwner = selectors.accountOwner(state) || emptyObject;
   const profile = selectors.userProfile(state) || emptyObject;
 
-  if (accountOwner?._id === profile._id) {
+  if (accountOwner._id === profile._id) {
     // extract ssoClientId for the user's profile
     return profile.authTypeSSO?._ssoClientId;
   }

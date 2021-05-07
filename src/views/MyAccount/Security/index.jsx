@@ -125,9 +125,6 @@ export default function Security() {
           helpKey: 'sso.orgId',
         },
       },
-      layout: {
-        fields: ['issuerURL', 'clientId', 'clientSecret', 'orgId'],
-      },
     }),
     [oidcClient]
   );
@@ -178,7 +175,7 @@ export default function Security() {
   let domainURL = getDomainUrl();
 
   if (domainURL.includes('localhost')) {
-    domainURL = 'https://staging.integrator.io';
+    domainURL = process.env.API_ENDPOINT;
   }
 
   const applicationLoginURL = `${domainURL}/sso/${oidcClient?.orgId}`;

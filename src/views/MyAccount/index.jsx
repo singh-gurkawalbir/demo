@@ -29,7 +29,7 @@ const Transfers = loadable(() =>
   retry(() => import(/* webpackChunkName: 'MyAccount.Transfers' */ './Transfers/index'))
 );
 const Security = loadable(() =>
-  retry(() => import(/* webpackChunkName: 'MyAccount.Transfers' */ './Security/index'))
+  retry(() => import(/* webpackChunkName: 'MyAccount.Security' */ './Security/index'))
 );
 
 const tabs = [
