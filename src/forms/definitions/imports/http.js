@@ -288,6 +288,10 @@ export default {
     retValues['/statusExport'] = undefined;
     delete retValues['/inputMode'];
 
+    if (retValues['/oneToMany'] === 'false') {
+      retValues['/pathToMany'] = undefined;
+    }
+
     return {
       ...retValues,
     };

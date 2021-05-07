@@ -166,8 +166,6 @@ export default {
       } else {
         toReturn[index].isRequired = true;
       }
-    } else {
-      toReturn = toReturn.filter(m => (!['celigo_nlobjAttachToId', 'celigo_nlobjDetachFromId', 'celigo_nlobjAttachedType', 'celigo_nlobjDetachedType', 'celigo_nlobjAttachedId', 'celigo_nlobjDetachedId'].includes(m.generate)));
     }
 
     if (['attach', 'detach'].includes(resource && resource.netsuite_da?.operation) && !isPrevOperationAttachOrDetach) {

@@ -203,6 +203,7 @@ import mavenlink from './mavenlink';
 import googleads from './googleads';
 import fulfilment from './fulfilment';
 import walmartmexico from './walmartmexico';
+import walmartcanada from './walmartcanada';
 
 export default {
   channelape,
@@ -410,4 +411,5 @@ export default {
   googleads,
   'fulfilment.com': fulfilment,
   walmartmexico,
+  walmartcanada,
 };
