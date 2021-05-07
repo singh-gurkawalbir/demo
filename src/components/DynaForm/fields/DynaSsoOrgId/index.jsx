@@ -1,21 +1,13 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import DynaText from '../DynaText';
 import VerifyTag from './VerifyTag';
 
-const useStyles = makeStyles({
-  ssoOrgIdField: {
-    height: 80,
-  },
-});
-
 export default function DynaSsoOrgId(props) {
   const { description, errorMessages, isValid, ...rest } = props;
   const { id, formKey, touched, value } = rest;
-  const classes = useStyles();
   const dispatch = useDispatch();
   const validationError = useSelector(state => selectors.orgIdValidationError(state));
   const validationInProgress = useSelector(state => selectors.orgIdValidationInProgress(state));
@@ -43,7 +35,7 @@ export default function DynaSsoOrgId(props) {
   useEffect(() => () => dispatch(actions.sso.clearValidations()), []);
 
   return (
-    <div className={classes.ssoOrgIdField}>
+    <div>
       <DynaText {...rest} isValid={!validationError} />
       <VerifyTag error={errorMessages} />
     </div>
