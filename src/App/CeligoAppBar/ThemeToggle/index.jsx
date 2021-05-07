@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
@@ -11,7 +11,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ThemeToggle() {
+function ThemeToggle() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const themeName = useSelector(state => selectors.appTheme(state));
@@ -36,4 +36,8 @@ export default function ThemeToggle() {
       ]}
     />
   );
+}
+
+export default function ThemeToggleMemo() {
+  return useMemo(() => <ThemeToggle />, []);
 }

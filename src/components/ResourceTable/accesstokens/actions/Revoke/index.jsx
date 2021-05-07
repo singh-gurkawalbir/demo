@@ -1,14 +1,18 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
+import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 import RevokeTokenIcon from '../../../../icons/RevokeTokenIcon';
 
 export default {
-  label: 'Revoke API token',
+  key: 'revokeApiToken',
+  useLabel: () => 'Revoke API token',
   icon: RevokeTokenIcon,
-  component: function RevokeAccessToken({ resourceType, rowData = {} }) {
+  useOnClick: rowData => {
     const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
+    const {resourceType} = useGetTableContext();
+
     const revokeAccessToken = useCallback(() => {
       const patchSet = [
         {
@@ -24,10 +28,6 @@ export default {
       );
     }, [dispatch, resourceId, resourceType]);
 
-    useEffect(() => {
-      revokeAccessToken();
-    }, [revokeAccessToken]);
-
-    return null;
+    return revokeAccessToken;
   },
 };

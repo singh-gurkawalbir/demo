@@ -241,6 +241,7 @@ const routes = [
       { path: '/subscription', breadcrumb: 'Subscription' },
       { path: '/audit', breadcrumb: 'Audit log' },
       { path: '/transfers', breadcrumb: 'Transfers' },
+      { path: '/security', breadcrumb: 'Security' },
     ],
   },
 

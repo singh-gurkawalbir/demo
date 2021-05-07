@@ -2223,6 +2223,13 @@ const logs = {
   },
 };
 
+const sso = {
+  validateOrgId: orgId => action(actionTypes.SSO.ORG_ID.VALIDATION_REQUEST, { orgId }),
+  validationSuccess: () => action(actionTypes.SSO.ORG_ID.VALIDATION_SUCCESS),
+  validationError: error => action(actionTypes.SSO.ORG_ID.VALIDATION_ERROR, { error }),
+  clearValidations: () => action(actionTypes.SSO.ORG_ID.VALIDATION_CLEAR),
+};
+
 export default {
   form,
   postFeedback,
@@ -2274,5 +2281,6 @@ export default {
   editorSampleData,
   hooks,
   logs,
+  sso,
   bottomDrawer,
 };

@@ -1,21 +1,20 @@
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import ViewDetailsIcon from '../../../icons/ViewDetailsIcon';
 
 export default {
-  label: 'View report details',
+  key: 'viewReport',
+  useLabel: () => 'View report details',
   icon: ViewDetailsIcon,
-  component: function ViewReport({ rowData = {} }) {
+  useOnClick: function ViewReport(rowData = {}) {
     const { _id } = rowData;
     const history = useHistory();
     const match = useRouteMatch();
     const viewDetailsRoute = `${match.url}/view/reportDetails/${_id}`;
 
-    useEffect(() => {
+    return useCallback(() => {
       history.push(viewDetailsRoute);
     }, [history, viewDetailsRoute]);
-
-    return null;
   },
 };
 
