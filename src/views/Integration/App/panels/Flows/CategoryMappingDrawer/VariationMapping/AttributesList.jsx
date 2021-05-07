@@ -4,6 +4,7 @@ import { makeStyles, List, ListItem } from '@material-ui/core';
 import { NavLink } from 'react-router-dom';
 import { selectors } from '../../../../../../../reducers';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
+import { variationUrlName } from '.';
 
 const useStyles = makeStyles(theme => ({
   nested: {
@@ -22,9 +23,10 @@ export default function VariationAttributesList({
   integrationId,
   flowId,
   categoryId,
+  depth,
 }) {
   const classes = useStyles();
-  const memoizedOptions = useMemo(() => ({sectionId: categoryId}), [categoryId]);
+  const memoizedOptions = useMemo(() => ({sectionId: categoryId, depth}), [categoryId, depth]);
   const { variation_themes = [] } = useSelectorMemo(selectors.mkCategoryMappingGenerateFields, integrationId, flowId, memoizedOptions) || {};
   // propery being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
   const { variation_attributes = [] } =
@@ -37,7 +39,7 @@ export default function VariationAttributesList({
           <NavLink
             className={classes.listItem}
             activeClassName={classes.activeListItem}
-            to={attribute}
+            to={variationUrlName(attribute)}
             data-test={attribute}>
             {attribute}
           </NavLink>

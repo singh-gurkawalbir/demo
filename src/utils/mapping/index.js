@@ -73,20 +73,21 @@ const setMappingData = (
   mappings,
   deleted = [],
   isParentDeleted,
-  deleteChildlessParent
+  deleteChildlessParent,
+  depth = 0
 ) => {
   recordMappings.forEach(category => {
-    const key = `${flowId}-${category.id}`;
+    const key = `${flowId}-${category.id}-${depth}`;
     let allChildrenDeleted = false;
 
     if (category.children && category.children.length) {
       allChildrenDeleted = category.children.every(child =>
-        deleted.includes(child.id)
+        deleted[depth + 1]?.includes(child.id)
       );
     }
 
     const mappingDeleted =
-      deleted.includes(category.id) ||
+      deleted[depth]?.includes(category.id) ||
       isParentDeleted ||
       (deleteChildlessParent && allChildrenDeleted);
 
@@ -110,10 +111,10 @@ const setMappingData = (
 
         if (category.children && category.children.length) {
           category.children.forEach(child => {
-            const validLookups = mappings[`${flowId}-${child.id}`].mappings?.map(mapping => mapping.lookupName).filter(Boolean);
+            const validLookups = mappings[`${flowId}-${child.id}-${depth + 1}`]?.mappings?.map(mapping => mapping.lookupName).filter(Boolean);
 
-            if (mappings[`${flowId}-${child.id}`]?.lookups?.length && validLookups.length) {
-              mappings[`${flowId}-${child.id}`].lookups.forEach(lookup => {
+            if (mappings[`${flowId}-${child.id}-${depth + 1}`]?.lookups?.length && validLookups.length) {
+              mappings[`${flowId}-${child.id}-${depth + 1}`].lookups.forEach(lookup => {
                 if (validLookups.includes(lookup.name)) {
                   const lookupIndex = allLookups.findIndex(l => l.name === lookup.name);
 
@@ -138,7 +139,9 @@ const setMappingData = (
         category.children,
         mappings,
         deleted,
-        mappingDeleted
+        mappingDeleted,
+        deleteChildlessParent,
+        depth + 1
       );
     }
   });

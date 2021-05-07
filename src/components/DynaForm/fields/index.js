@@ -128,6 +128,7 @@ import DynaReportDateRange from './integrations/DynaReportDateRange';
 import DynaTrialLicense from './DynaTrialLicense';
 import DynaLicenseExpires from './DynaLicenseExpires';
 import DynaLicenseEditor from './DynaLicenseEditor';
+import DynaSsoOrgId from './DynaSsoOrgId';
 
 export default {
   reportdaterange: DynaReportDateRange,
@@ -266,4 +267,5 @@ export default {
   triallicense: DynaTrialLicense,
   licenseexpires: DynaLicenseExpires,
   licenseeditor: DynaLicenseEditor,
+  ssoorgid: DynaSsoOrgId,
 };

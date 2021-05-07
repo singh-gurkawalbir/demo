@@ -20,6 +20,7 @@ export default function UsersList({ integrationId, storeId, className }) {
   const isIntegrationUsersRequested = useSelector(state =>
     !!selectors.integrationUsers(state, integrationId)
   );
+  const isSSOEnabled = useSelector(state => selectors.isSSOEnabled(state));
 
   useEffect(() => {
     if (integrationId && !isIntegrationUsersRequested) {
@@ -33,11 +34,18 @@ export default function UsersList({ integrationId, storeId, className }) {
       storeId,
       accessLevel,
       isUserInErrMgtTwoDotZero,
-    }), [integrationId, storeId, accessLevel, isUserInErrMgtTwoDotZero]);
+      isSSOEnabled,
+    }), [integrationId, storeId, accessLevel, isUserInErrMgtTwoDotZero, isSSOEnabled]);
+
+  const requiredResources = ['integrations', 'connections', 'notifications'];
+
+  if (isAccountOwner) {
+    requiredResources.push('ssoclients');
+  }
 
   return (
     <>
-      <LoadResources required resources="integrations, connections, notifications">
+      <LoadResources required resources={requiredResources}>
         <ResourceTable
           resources={users}
           className={className}
