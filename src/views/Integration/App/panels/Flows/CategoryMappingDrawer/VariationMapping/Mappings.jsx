@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -123,20 +123,14 @@ export default function ImportMapping(props) {
 
     return generatesMetadata;
   }) || {};
-  const mappingsCopy = mappings ? [...mappings] : [];
 
-  const tableData = (mappingsCopy || []).map((value, index) => {
-    const obj = value;
+  const tableData = useMemo(() => {
+    const mappingsTemp = mappings ? [...mappings] : [];
 
-    obj.index = index;
-    obj.key = shortid.generate();
+    mappingsTemp.push({key: shortid.generate()});
 
-    if (obj.hardCodedValue) {
-      obj.hardCodedValueTmp = `"${obj.hardCodedValue}"`;
-    }
-
-    return obj;
-  });
+    return mappingsTemp;
+  }, [mappings]);
   const handleFieldUpdate = useCallback(
     (mappingKey, event, field) => {
       const { value } = event.target;
