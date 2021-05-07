@@ -116,6 +116,7 @@ export default {
     'yotpo',
     'fulfilment.com',
     'walmartmexico',
+    'walmartcanada',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

@@ -100,6 +100,13 @@ export default {
     newValues['/http/response'] = {
       resourcePath: 'files',
     };
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
+
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
 
     return {
       ...newValues,

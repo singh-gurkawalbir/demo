@@ -250,7 +250,8 @@ function AppBlock({
     setActiveAction(null);
     setExpanded();
   }, []);
-  const hasActions = flowActions && Array.isArray(flowActions) && flowActions.length;
+
+  const hasActions = resourceId && flowActions && Array.isArray(flowActions) && flowActions.length;
   const { leftActions, middleActions, rightActions } = useMemo(() => {
     let leftActions = [];
     let middleActions = [];

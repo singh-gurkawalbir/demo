@@ -111,7 +111,7 @@ export function* onResourceCreate({ id, resourceType, tempId }) {
     });
     const resourceObj = yield select(selectors.resource, resourceType, id);
 
-    if (!resourceObj.isLookup) {
+    if (!resourceObj.isLookup || isFileAdaptor(resourceObj)) {
       // If export, get raw data calling preview and call save raw data with a patch on this id
       yield call(_fetchAndSaveRawDataForResource, {
         type: 'exports',
@@ -152,7 +152,9 @@ export function* onResourceUpdate({
       isLookup = !!pageProcessors.find(pp => pp._exportId === resourceId);
     }
 
-    if (isLookup) {
+    const resourceObj = yield select(selectors.resource, resourceType, resourceId);
+
+    if (isLookup && !isFileAdaptor(resourceObj)) {
       yield call(_fetchAndSaveRawDataForResource, {
         type: 'pageprocessors',
         flowId,

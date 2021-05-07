@@ -16,8 +16,6 @@ export default function MappingSaveButton({
   dataTest,
   showOnlyOnChanges,
   onClose,
-  selectedButtonLabel,
-  onClick,
 }) {
   const [saveTriggered, setSaveTriggered] = useState(false);
   const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
@@ -56,10 +54,9 @@ export default function MappingSaveButton({
 
       return;
     }
-    onClick(submitButtonLabel);
 
     handleSubmitForm();
-  }, [enqueueSnackbar, handleSubmitForm, onClick, submitButtonLabel, validationErrMsg]);
+  }, [enqueueSnackbar, handleSubmitForm, validationErrMsg]);
 
   if (showOnlyOnChanges && !mappingsChanged) {
     return null;
@@ -73,7 +70,7 @@ export default function MappingSaveButton({
       color={color}
       disabled={disabled || disableSave || !mappingsChanged}
       onClick={handleButtonClick}>
-      {saveInProgress && selectedButtonLabel === submitButtonLabel ? (
+      {saveInProgress && disableSave ? (
         <>
           <Spinner size="small" /> Saving
         </>

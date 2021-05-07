@@ -33,13 +33,19 @@ export function convertSalesforceLookupFilterExpression(expression, data = [], s
       toReturn.condition = value.operator.toUpperCase();
       toReturn.rules = [generateRules(value.left), generateRules(value.right)];
     } else {
+      let rightValue = value.right;
+
+      // To handle nested wrapped braces
+      while (rightValue.type === 'SimpleExprParentheses') {
+        [rightValue] = rightValue.value.value;
+      }
       toReturn = {
         id: value.left.value,
         field: value.left.value,
         operator: operatorsMap.ioFiltersToJQuery[value.operator.toLowerCase()],
-        value: value.right.value
-          .replace(/(^'\{{3})(.*)(\}{3}')$/g, '$2')
-          .replace(/^\w+\s/, ''),
+        value: rightValue.value
+          ?.replace(/(^'\{{3})(.*)(\}{3}')$/g, '$2')
+          ?.replace(/^\w+\s/, ''),
       };
       const isInData = data.find(f => f.id === toReturn.value);
 
