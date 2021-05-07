@@ -104,6 +104,7 @@ const preventEvent = e => {
   e.stopPropagation();
 };
 export const DRAGGABLE_SECTION_DIV_ID = 'draggableSectionDivId';
+const emptyObject = {};
 
 const TabTitleWithResourceName = ({resourceId, resourceType, postfix}) => {
   const resourceName = useSelector(state => {
@@ -151,7 +152,15 @@ export default function BottomDrawer({
   const flowConnectionsWithLogEntry = useSelectorMemo(selectors.flowConnectionsWithLogEntry, flowId);
   const flowScripts = useSelectorMemo(selectors.mkGetScriptsTiedToFlow, flowId);
   const flowScriptsWithLogEntry = useSelector(state => selectors.flowExecutionLogScripts(state, flowId), shallowEqual);
-
+  const flow = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'flows',
+    flowId
+  )?.merged || emptyObject;
+  const environment = useSelector(
+    state => selectors.userPreferences(state).environment
+  );
+  const [toggleEnvironmentRequested, setToggleEnvironmentRequested] = useState(true);
   const minDrawerHeight = 41;
   const maxHeight = window.innerHeight - theme.appBarHeight - theme.pageBarHeight + 1; // border 1px
   const stepSize = parseInt((maxHeight - minDrawerHeight) / 4, 10);
@@ -227,6 +236,12 @@ export default function BottomDrawer({
       dispatch(actions.logs.scripts.clear({flowId}));
     },
   [dispatch, flowId]);
+  useEffect(() => {
+    if (toggleEnvironmentRequested && !flow?.sandbox === (environment === 'sandbox')) {
+      dispatch(actions.user.preferences.update({ environment: flow?.sandbox ? 'sandbox' : 'production' }));
+      setToggleEnvironmentRequested(false);
+    }
+  }, [dispatch, environment, flow?.sandbox, toggleEnvironmentRequested]);
 
   useEffect(() =>
     () => {
