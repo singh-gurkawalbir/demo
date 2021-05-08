@@ -1,12 +1,17 @@
 import React, { useState, useCallback } from 'react';
 import AuditLogIcon from '../../../icons/AuditLogIcon';
 import AuditLogDialog from '../../../AuditLog/AuditLogDialog';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
-  label: 'View audit log',
+  key: 'viewAuditLog',
+  useLabel: () => 'View audit log',
   icon: AuditLogIcon,
-  component: function AuditLogs({ resourceType, rowData = {} }) {
+  Component: ({rowData}) => {
     const { _id: resourceId } = rowData;
+
+    const {resourceType} = useGetTableContext();
+
     const [show, setShow] = useState(true);
     const handleAuditLogsClose = useCallback(() => {
       setShow(false);

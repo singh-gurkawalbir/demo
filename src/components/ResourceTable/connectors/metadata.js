@@ -11,28 +11,27 @@ import ApplicationImgCell from './cells/ApplicationImgCell';
 import TextOverflowCell from '../../TextOverflowCell';
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'applications',
       heading: 'Applications',
-      value: function Applications(r) {
-        return <ApplicationImgCell applications={r.applications} />;
-      },
-
+      Value: ({rowData: r}) => <ApplicationImgCell applications={r.applications} />,
     },
     {
+      key: 'name',
       heading: 'Name',
       width: '25%',
-      value: function ConnectorsDrawerLink(r) {
-        return <TextOverflowCell message={<ResourceDrawerLink resourceType="connectors" resource={r} />} />;
-      },
+      Value: ({rowData: r}) => <TextOverflowCell message={<ResourceDrawerLink resourceType="connectors" resource={r} />} />,
       orderBy: 'name',
     },
     {
+      key: 'lastUpdated',
       heading: 'Last updated',
-      value: r => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {
+      key: 'websiteUrl',
       heading: 'Website URL',
       value(r) {
         // the hyperlink has to be an Absolute link to not open the link relative to our website domain
@@ -46,19 +45,18 @@ export default {
       },
     },
     {
+      key: 'published',
       heading: 'Published',
-      value: function Type(r) {
-        return (
-          <OnOffCell
-            connectorId={r._id}
-            published={r.published}
-            applications={r.applications}
-            resourceType="connectors"
+      Value: ({rowData: r}) => (
+        <OnOffCell
+          connectorId={r._id}
+          published={r.published}
+          applications={r.applications}
+          resourceType="connectors"
           />
-        );
-      },
+      ),
       orderBy: 'published',
     },
   ],
-  rowActions: [Edit, InstallBase, Licenses, Delete],
+  useRowActions: () => [Edit, InstallBase, Licenses, Delete],
 };

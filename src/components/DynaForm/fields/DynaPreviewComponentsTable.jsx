@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DynaPreviewComponentsTable({ data: objects, columns, resourceType: cloneResourceType }) {
+export default function DynaPreviewComponentsTable({ data: objects, useColumns, resourceType: cloneResourceType }) {
   const classes = useStyles();
   const componentsMap = useMemo(() => {
     if (!objects || !objects.length) return [];
@@ -50,7 +50,7 @@ export default function DynaPreviewComponentsTable({ data: objects, columns, res
         collapsable
         className={classes.accordianWrapper}
         data={componentsMap?.Flow}
-        columns={columns}
+        useColumns={useColumns}
         defaultExpand />
       )}
       {Object.keys(componentsMap).map(resourceType => (
@@ -61,7 +61,7 @@ export default function DynaPreviewComponentsTable({ data: objects, columns, res
             title={`${resourceType}s`}
             collapsable
             data={componentsMap[resourceType]}
-            columns={columns}
+            useColumns={useColumns}
             defaultExpand={cloneResourceType !== 'integrations' && cloneResourceType === RESOURCE_TYPE_SINGULAR_TO_PLURAL[RESOURCE_TYPE_LABEL_TO_SINGULAR[resourceType]]}
             />
           )}

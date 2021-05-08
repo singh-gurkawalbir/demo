@@ -36,12 +36,6 @@ export default function MappingWrapper(props) {
       )
   );
   const application = 'netsuite';
-  // const options = {
-  //   flowId,
-  //   // connectionId,
-  //   importId: resourceId,
-  //   // resourceName,
-  // };
   const mappingOptions = {
     resourceData,
     adaptorType: 'netsuite',
@@ -50,6 +44,7 @@ export default function MappingWrapper(props) {
     lookups,
     mappings: { fields: fieldMappings },
   };
+
   const handleInit = useCallback(() => {
     dispatch(
       actions.integrationApp.settings.categoryMappings.init(

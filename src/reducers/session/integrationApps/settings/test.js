@@ -5772,14 +5772,16 @@ describe('integrationApps reducer test cases', () => {
           childCategory: 'babyproducts',
           grandChildCategory: undefined,
         }));
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.deleteCategory('integrationId', 'flowId', 'babyproducts'));
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.deleteCategory('integrationId', 'flowId', 'babyproducts', 0));
         expect(state).toEqual({
           'flow1-integration1': {
             data: 'dummy',
           },
           'flowId-integrationId': {
             deleted: [
-              'babyproducts',
+              [
+                'babyproducts',
+              ],
             ],
             filters: {
               attributes: {
@@ -6333,7 +6335,7 @@ describe('integrationApps reducer test cases', () => {
             data: 'dummy',
           },
           'flowId-integrationId': {
-            deleted: ['coins', 'batteries', 'clothing'],
+            deleted: [['coins', 'batteries', 'clothing']],
             mappings: {
               mappingId: {
                 lookups: [],
@@ -6343,14 +6345,14 @@ describe('integrationApps reducer test cases', () => {
           },
         };
 
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.restoreCategory('integrationId', 'flowId', 'coins'));
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.restoreCategory('integrationId', 'flowId', 'coins', 0));
 
         expect(state).toEqual({
           'flow1-integration1': {
             data: 'dummy',
           },
           'flowId-integrationId': {
-            deleted: ['batteries', 'clothing'],
+            deleted: [['batteries', 'clothing']],
             mappings: {
               mappingId: {
                 lookups: [],
@@ -10582,70 +10584,90 @@ describe('integrationApps selectors test cases', () => {
       const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration', 'flow', amazonCategoryMappings));
 
       state['flow-integration'].mappings = {
-        'flow-commonAttributes': {
+        'flow-commonAttributes-0': {
           mappings: [{
             extract: 'first',
             generate: 'second',
           }],
         },
-        'flow-Dimensions': {
+        'flow-Dimensions-1': {
           mappings: [{
             extract: 'dimensions_e',
             generate: 'dimensions_g',
           }],
         },
       };
-      expect(selector(state, 'integration', 'flow')).toEqual({
-        basicMappings: {
-          recordMappings: [
-            {
-              children: [
-                {
-                  children: [],
-                  fieldMappings: [
-                    {
-                      extract: 'dimensions_e',
-                      generate: 'dimensions_g',
-                    },
-                  ],
-                  id: 'Dimensions',
-                  name: 'Dimensions',
-                },
-                {
-                  children: [],
-                  fieldMappings: [],
-                  id: 'Discovery',
-                  name: 'Discovery',
-                },
-                {
-                  children: [],
-                  fieldMappings: [],
-                  id: 'Images',
-                  name: 'Images',
-                },
-                {
-                  children: [],
-                  fieldMappings: [],
-                  id: 'Fulfillment',
-                  name: 'Fulfillment',
-                },
-              ],
-              fieldMappings: [
-                {
-                  extract: 'first',
-                  generate: 'second',
-                },
-              ],
-              id: 'commonAttributes',
-              lookups: [],
-              name: 'Common',
-            },
-          ],
-        },
-        variationMappings: {
-          recordMappings: [],
-        },
-      });
+      expect(selector(state, 'integration', 'flow')).toEqual(
+        {
+          basicMappings: {
+            recordMappings: [
+              {
+                children: [
+                  {
+                    children: [
+
+                    ],
+                    fieldMappings: [
+                      {
+                        extract: 'dimensions_e',
+                        generate: 'dimensions_g',
+                      },
+                    ],
+                    id: 'Dimensions',
+                    name: 'Dimensions',
+                  },
+                  {
+                    children: [
+
+                    ],
+                    fieldMappings: [
+
+                    ],
+                    id: 'Discovery',
+                    name: 'Discovery',
+                  },
+                  {
+                    children: [
+
+                    ],
+                    fieldMappings: [
+
+                    ],
+                    id: 'Images',
+                    name: 'Images',
+                  },
+                  {
+                    children: [
+
+                    ],
+                    fieldMappings: [
+
+                    ],
+                    id: 'Fulfillment',
+                    name: 'Fulfillment',
+                  },
+                ],
+                fieldMappings: [
+                  {
+                    extract: 'first',
+                    generate: 'second',
+                  },
+                ],
+                id: 'commonAttributes',
+                lookups: [
+
+                ],
+                name: 'Common',
+              },
+            ],
+          },
+          variationMappings: {
+            recordMappings: [
+
+            ],
+          },
+        }
+      );
     });
   });
 
@@ -10667,13 +10689,13 @@ describe('integrationApps selectors test cases', () => {
       const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration', 'flow', amazonCategoryMappings));
 
       state['flow-integration'].mappings = {
-        'flow-commonAttributes': {
+        'flow-commonAttributes-0': {
           mappings: [{
             extract: 'first',
             generate: 'second',
           }],
         },
-        'flow-Dimensions': {
+        'flow-Dimensions-1': {
           mappings: [{
             extract: 'dimensions_e',
             generate: 'dimensions_g',

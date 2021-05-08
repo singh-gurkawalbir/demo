@@ -1,13 +1,16 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import CheckmarkIcon from '../../../icons/CheckmarkIcon';
 
 export default {
-  label: 'Resolve',
+  key: 'resolveError',
+  useLabel: () => 'Resolve',
   icon: CheckmarkIcon,
-  component: function Resolve({ rowData, flowId, resourceId }) {
+  useOnClick: rowData => {
     const dispatch = useDispatch();
+    const {flowId, resourceId} = useGetTableContext();
     const handleClick = useCallback(() => {
       dispatch(
         actions.errorManager.flowErrorDetails.resolve({
@@ -18,10 +21,6 @@ export default {
       );
     }, [dispatch, flowId, rowData.errorId, resourceId]);
 
-    useEffect(() => {
-      handleClick();
-    }, [handleClick]);
-
-    return null;
+    return handleClick;
   },
 };

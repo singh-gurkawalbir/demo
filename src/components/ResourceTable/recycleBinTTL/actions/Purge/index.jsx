@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import PurgeIcon from '../../../../icons/PurgeIcon';
 import actions from '../../../../../actions';
@@ -6,9 +6,10 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';
 
 export default {
-  label: 'Purge',
+  key: 'purge',
+  useLabel: () => 'Purge',
   icon: PurgeIcon,
-  component: function Purge({ rowData = {} }) {
+  useOnClick: rowData => {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const purgeResource = useCallback(() => {
@@ -38,10 +39,6 @@ export default {
       });
     }, [confirmDialog, purgeResource, rowData.model]);
 
-    useEffect(() => {
-      confirmPurge();
-    }, [confirmPurge]);
-
-    return null;
+    return confirmPurge;
   },
 };

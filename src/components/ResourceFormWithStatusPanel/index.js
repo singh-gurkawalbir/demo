@@ -11,7 +11,7 @@ import { selectors } from '../../reducers';
 const useStyles = makeStyles(theme => ({
   form: {
     height: props =>
-      `calc(100vh - ${props.heightOffset || 186}px - ${
+      `calc(100vh - ${props.heightOffset || (155 + theme.appBarHeight)}px - ${
         props.notificationPanelHeight
       }px)`,
     width: props => {

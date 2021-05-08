@@ -9,21 +9,24 @@ import References from '../commonActions/References';
 import Edit from '../commonActions/Edit';
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'name',
       heading: 'Name',
-      value: r => <ResourceDrawerLink resourceType="exports" resource={r} />,
+      Value: ({rowData: r}) => <ResourceDrawerLink resourceType="exports" resource={r} />,
       orderBy: 'name',
     },
     {
+      key: 'application',
       heading: 'Application',
-      value: r => <ConnectorName resource={r} />,
+      Value: ({rowData: r}) => <ConnectorName resource={r} />,
     },
     {
+      key: 'lastUpdated',
       heading: 'Last updated',
-      value: r => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
   ],
-  rowActions: () => [Edit, AuditLogs, References, Clone, Delete],
+  useRowActions: () => [Edit, AuditLogs, References, Clone, Delete],
 };

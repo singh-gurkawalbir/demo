@@ -17,31 +17,37 @@ import TradingPartner from './actions/TradingPartner';
 import Revoke from './actions/Revoke';
 import actions from '../../../actions';
 import ReplaceConnection from './actions/ReplaceConnection';
+import { useGetTableContext } from '../../CeligoTable/TableContext';
 
 export default {
-  columns: (r, actionProps) => {
+  useColumns: () => {
+    const tableContext = useGetTableContext();
     const columns = [
       {
+        key: 'name',
         heading: 'Name',
-        value: r => (
+        Value: ({rowData: r}) => (
           <ConnectionResourceDrawerLink
             resource={r}
-            integrationId={actionProps.integrationId}
+            integrationId={tableContext.integrationId}
             />
         ),
         orderBy: 'name',
       },
       {
+        key: 'status',
         heading: 'Status',
-        value: r => <OnlineStatus offline={r.offline} />,
+        Value: ({rowData: r}) => <OnlineStatus offline={r.offline} />,
       },
       {
+        key: 'type',
         heading: 'Type',
-        value: r => <ConnectorName resource={r} />,
+        Value: ({rowData: r}) => <ConnectorName resource={r} />,
       },
       {
+        key: 'api',
         heading: 'API',
-        value: r => {
+        Value: ({rowData: r}) => {
           if (r.type === 'rest') return r && r.rest && r.rest.baseURI;
 
           if (r.type === 'http') return r && r.http && r.http.baseURI;
@@ -50,15 +56,17 @@ export default {
         },
       },
       {
+        key: 'lastUpdated',
         heading: 'Last updated',
-        value: r => <CeligoTimeAgo date={r.lastModified} />,
+        Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
         orderBy: 'lastModified',
         width: 160,
       },
       {
+        key: 'queueSize',
         heading: 'Queue size',
         // align: 'right',
-        value: r => r.queueSize || 0,
+        Value: ({rowData: r}) => r.queueSize || 0,
         width: 120,
       },
     ];
@@ -69,10 +77,12 @@ export default {
   onRowOver: (r, dispatch) => dispatch(actions.connection.setActive(r._id)),
   onRowOut: (r, dispatch) => dispatch(actions.connection.setActive()),
 
-  rowActions: (r, actionProps) => {
+  useRowActions: r => {
+    const tableContext = useGetTableContext();
+
     const actions = [Edit];
 
-    if (actionProps.type === 'flowBuilder') {
+    if (tableContext.type === 'flowBuilder') {
       actions.push(OpenDebugger);
     } else {
       actions.push(ConfigureDebugger);
@@ -83,7 +93,7 @@ export default {
     actions.push(AuditLogs);
     actions.push(References);
 
-    if (actionProps.integrationId && !r._connectorId && actionProps.type !== 'flowBuilder') {
+    if (tableContext.integrationId && !r._connectorId && tableContext.type !== 'flowBuilder') {
       actions.push(Deregister);
     }
 
@@ -94,13 +104,13 @@ export default {
     if (r.type === 'http' && !!r.http?.auth?.token?.revoke?.uri) {
       actions.push(Revoke);
     }
-    if (r.type === 'ftp' && !r._connectorId && actionProps?.showTradingPartner) {
+    if (r.type === 'ftp' && !r._connectorId && tableContext?.showTradingPartner) {
       actions.push(TradingPartner);
     }
-    if (actionProps.type === 'flowBuilder') {
+    if (tableContext.type === 'flowBuilder') {
       actions.push(ReplaceConnection);
     }
-    if (!actionProps.integrationId && !r._connectorId && actionProps.type !== 'flowBuilder') {
+    if (!tableContext.integrationId && !r._connectorId && tableContext.type !== 'flowBuilder') {
       actions.push(Delete);
     }
 
