@@ -21,6 +21,7 @@ export default function VariationMappings(props) {
     integrationId,
     variation,
     categoryId,
+    depth,
     isVariationAttributes,
   } = props;
   const id = `${flowId}-${sectionId}-${
@@ -36,6 +37,7 @@ export default function VariationMappings(props) {
         flowId,
         {
           sectionId,
+          depth,
         }
       );
 
@@ -64,7 +66,8 @@ export default function VariationMappings(props) {
     sectionId,
     variation,
     isVariationAttributes,
-  }), [sectionId, variation, isVariationAttributes]);
+    depth,
+  }), [sectionId, variation, isVariationAttributes, depth]);
   const { fieldMappings } = useSelectorMemo(selectors.mkMappingsForVariation, integrationId, flowId, memoizedOptions) || {};
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
@@ -153,6 +156,7 @@ export default function VariationMappings(props) {
         integrationId={integrationId}
         flowId={flowId}
         isGenerateRefreshSupported
+        depth={depth}
         application={application}
         options={options}
       />

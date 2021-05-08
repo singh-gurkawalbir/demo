@@ -72,8 +72,8 @@ export default function* getPreviewOptionsForResource({ resource, flow, refresh,
     ? yield call(_getUIDataForResource, { resource, connection, flow, refresh })
     : undefined;
   const postData = {
-    lastExportDateTime: getLastExportDateTime(),
-    currentExportDateTime: getCurrentExportDateTime(),
+    lastExportDateTime: getLastExportDateTime(resource),
+    currentExportDateTime: getCurrentExportDateTime(resource),
   };
   const { type, rawData } = resource || {};
 

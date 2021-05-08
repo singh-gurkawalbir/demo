@@ -10,11 +10,11 @@ REQUIRED_ENV_VARS=(S3_BUCKET ACCESS_KEY_ID SECRET_ACCESS_KEY)
 
 if [ "$skipBuildAndCopyIndexFileForEUDeployment" != true ] ; then
   REQUIRED_ENV_VARS+=(LOGROCKET_IDENTIFIER LOGROCKET_API_KEY CDN_BASE_URI GA_KEY_1 GA_KEY_2)
-fi
 
-# if production env
-if [ $S3_BUCKET = "integrator-ui-resources" ]; then
-  REQUIRED_ENV_VARS+=(LOGROCKET_IDENTIFIER_EU LOGROCKET_API_KEY_EU GA_KEY_1_EU GA_KEY_2_EU)
+  # if production env
+  if [ $S3_BUCKET = "integrator-ui-resources" ]; then
+    REQUIRED_ENV_VARS+=(LOGROCKET_IDENTIFIER_EU LOGROCKET_API_KEY_EU GA_KEY_1_EU GA_KEY_2_EU)
+  fi
 fi
 
 for eVar in ${REQUIRED_ENV_VARS[@]}

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, Fragment } from 'react';
+import React, { useState, useCallback, Fragment, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Tooltip, IconButton, Badge, Divider } from '@material-ui/core';
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Notifications() {
+function Notifications() {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
@@ -124,4 +124,8 @@ export default function Notifications() {
       </ArrowPopper>
     </>
   );
+}
+
+export default function NotificationsMemo() {
+  return useMemo(() => <Notifications />, []);
 }

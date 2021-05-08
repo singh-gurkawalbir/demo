@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import { FILTER_KEYS, ERROR_MANAGEMENT_RANGE_FILTERS } from '../../../../utils/errorManagement';
@@ -22,11 +22,14 @@ export default function SelectSource({flowId, resourceId, isResolved, title, fil
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
 
   return (
-    <DateFilter
-      title={title}
-      filterBy={filterBy}
-      filterKey={filterKey}
-      handleChange={handleChange}
-      customPresets={ERROR_MANAGEMENT_RANGE_FILTERS} />
+    useMemo(() => (
+      <DateFilter
+        title={title}
+        filterBy={filterBy}
+        filterKey={filterKey}
+        handleChange={handleChange}
+        customPresets={ERROR_MANAGEMENT_RANGE_FILTERS} />
+    ),
+    [filterBy, filterKey, handleChange, title])
   );
 }

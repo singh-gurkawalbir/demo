@@ -97,7 +97,7 @@ export default function DynaStaticMapWidget(props) {
       selectors.connectorMetadata(state, id, null, _integrationId, optionsMap)
   );
   const defaultOptions = useMemo(() => {
-    if (data) {
+    if (data && Array.isArray(data.generates)) {
       return data.generates.filter(Boolean).map(val => ({
         value: val.id,
         label: val.text,
