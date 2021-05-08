@@ -180,6 +180,7 @@ const setVariationMappingData = (
               description,
               name,
               filterType,
+              showListOption,
               hardCodedValueTmp,
               visible,
               ...rest

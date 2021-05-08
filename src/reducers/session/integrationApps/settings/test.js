@@ -9884,6 +9884,7 @@ describe('integrationApps selectors test cases', () => {
               filterType: 'required',
               generate: 'item_sku',
               name: 'Seller SKU',
+              showListOption: false,
             },
             {
               description: 'A short title for the product. This will be displayed in bold on the product page and in the title bar of the browser window.',
@@ -9892,6 +9893,8 @@ describe('integrationApps selectors test cases', () => {
               filterType: 'required',
               generate: 'item_name',
               name: 'Product Name',
+              showListOption: false,
+
             },
             {
               description: 'A standard, alphanumeric string that uniquely identifies the product.',
@@ -9900,6 +9903,8 @@ describe('integrationApps selectors test cases', () => {
               filterType: 'preferred',
               generate: 'ASIN',
               name: 'ASIN',
+              showListOption: false,
+
             },
             {
               description: 'A standard, alphanumeric string that uniquely identifies the product.',
@@ -9908,6 +9913,8 @@ describe('integrationApps selectors test cases', () => {
               filterType: 'preferred',
               generate: 'UPC',
               name: 'UPC',
+              showListOption: false,
+
             },
             {
               description: 'The unit of measure used to describe the dimensions (width, length, height) of the product, expressed in centimeters, meters, inches, or feet. Required if item dimensions are provided.',
@@ -9916,6 +9923,7 @@ describe('integrationApps selectors test cases', () => {
               filterType: 'optional',
               generate: 'item_length_unit_of_measure',
               name: 'Item Length Unit Of Measure',
+              showListOption: true,
             },
           ],
           id: 'commonAttributes',
@@ -9946,6 +9954,7 @@ describe('integrationApps selectors test cases', () => {
               filterType: 'conditional',
               generate: 'swatchImage.1.swatchVariantAttribute',
               name: 'Swatch Images > Swatch Variant Attribute 1',
+              showListOption: false,
             },
             {
               description: 'Attribute name corresponding to the swatch.',
@@ -9954,6 +9963,8 @@ describe('integrationApps selectors test cases', () => {
               filterType: 'conditional',
               generate: 'swatchImage.2.swatchVariantAttribute',
               name: 'Swatch Images > Swatch Variant Attribute 2',
+              showListOption: false,
+
             },
             {
               description: 'Attribute name corresponding to the swatch.',
@@ -9962,6 +9973,8 @@ describe('integrationApps selectors test cases', () => {
               filterType: 'conditional',
               generate: 'swatchImage.3.swatchVariantAttribute',
               name: 'Swatch Images > Swatch Variant Attribute 3',
+              showListOption: false,
+
             },
             {
               description: 'Attribute name corresponding to the swatch.',
@@ -9970,6 +9983,8 @@ describe('integrationApps selectors test cases', () => {
               filterType: 'conditional',
               generate: 'swatchImage.4.swatchVariantAttribute',
               name: 'Swatch Images > Swatch Variant Attribute 4',
+              showListOption: false,
+
             },
             {
               description: 'Attribute name corresponding to the swatch.',
@@ -9978,6 +9993,8 @@ describe('integrationApps selectors test cases', () => {
               filterType: 'conditional',
               generate: 'swatchImage.5.swatchVariantAttribute',
               name: 'Swatch Images > Swatch Variant Attribute 5',
+              showListOption: false,
+
             },
           ],
           id: 'Variation',

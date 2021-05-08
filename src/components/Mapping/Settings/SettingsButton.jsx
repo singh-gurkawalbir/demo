@@ -22,20 +22,18 @@ export default function MappingSettingsButton(props) {
     sectionId,
   } = props;
   const history = useHistory();
+
   const isDisabled = useSelector(state => {
     let mappings;
 
     if (isCategoryMapping) {
       if (disabled) return true;
       ({mappings} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId));
-      // const value = mappings?.[mappingIndex] || emptyObject;
-
-      // return !('generate' in value);
     } else {
       ({ mappings} = selectors.mapping(state));
     }
 
-    const value = mappings.find(({key}) => key === mappingKey) || emptyObject;
+    const value = mappings?.find(({key}) => key === mappingKey) || emptyObject;
 
     return !('generate' in value);
   });

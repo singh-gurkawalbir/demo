@@ -897,6 +897,7 @@ selectors.mkMappingsForCategory = () => {
         return mapConfig ? {
           ...mapConfig,
           filterType: field.filterType,
+          showListOption: !!field.options?.length,
           description: field.description,
           name: field.name,
         }
@@ -905,6 +906,7 @@ selectors.mkMappingsForCategory = () => {
             extract: '',
             discardIfEmpty: true,
             name: field.name,
+            showListOption: !!field.options?.length,
             filterType: field.filterType,
             description: field.description,
           };
