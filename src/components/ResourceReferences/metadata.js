@@ -3,6 +3,7 @@ import { useGetTableContext } from '../CeligoTable/TableContext';
 import ResourceLink from './ResourceLink';
 
 export default {
+  rowKey: 'id',
   useColumns: () => [
     {
       key: 'name',
