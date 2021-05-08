@@ -100,7 +100,7 @@ export default {
     }
 
     if (actionProps.isIntegrationApp) {
-      columns = columns.map(col => pick(col, ['heading', 'align', 'value', 'orderBy']));
+      columns = columns.map(col => pick(col, ['heading', 'key', 'align', 'Value', 'orderBy']));
 
       columns.push(
         {

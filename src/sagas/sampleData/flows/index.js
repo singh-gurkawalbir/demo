@@ -266,6 +266,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
       resourceId: _pageGeneratorId,
       runOffline: true,
       throwOnError: true,
+      flowId,
     });
     previewData = getPreviewStageData(previewData, 'parse');
   }

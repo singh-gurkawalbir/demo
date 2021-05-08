@@ -692,12 +692,14 @@ describe('flow sample data sagas', () => {
             resourceId: _pageGeneratorId,
             runOffline: true,
             throwOnError: true,
+            flowId,
           }), previewResponse],
         ])
         .call(exportPreview, {
           resourceId: _pageGeneratorId,
           runOffline: true,
           throwOnError: true,
+          flowId,
         })
         .put(
           actions.flowData.receivedPreviewData(
