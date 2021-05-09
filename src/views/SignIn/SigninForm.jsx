@@ -75,6 +75,15 @@ const useStyles = makeStyles(theme => ({
     fontSize: 16,
     backgroundColor: theme.palette.background.paper,
   },
+  ssoBtn: {
+    borderRadius: 4,
+    width: '100%',
+    backgroundSize: theme.spacing(2),
+    height: 38,
+    fontSize: 16,
+    margin: theme.spacing(0, 0, 2, 0),
+    backgroundColor: theme.palette.background.paper,
+  },
   or: {
     display: 'flex',
     alignItems: 'center',
@@ -125,7 +134,10 @@ export default function SignIn({dialogOpen}) {
   let error = useSelector(state => selectors.authenticationErrored(state));
   const userEmail = useSelector(state => selectors.userProfileEmail(state));
   const userProfileLinkedWithGoogle = useSelector(state => selectors.userProfileLinkedWithGoogle(state));
+  const isUserAllowedSSOSignIn = useSelector(state => selectors.isUserAllowedSSOSignIn(state));
   const showError = useSelector(state => selectors.showAuthError(state));
+
+  const userHasOtherLoginOptions = (userEmail && userProfileLinkedWithGoogle) || isUserAllowedSSOSignIn;
 
   const handleOnChangeEmail = useCallback(e => {
     setEmail(e.target.value);
@@ -148,6 +160,11 @@ export default function SignIn({dialogOpen}) {
     e.preventDefault();
     dispatch(actions.auth.reSignInWithGoogle(userEmail));
   }, [dispatch, userEmail]);
+
+  const handleReSignInWithSSO = e => {
+    e.preventDefault();
+    dispatch(actions.auth.reSignInWithSSO());
+  };
 
   window.signedInWithGoogle = () => {
     handleReSignInWithGoogleCompleted();
@@ -235,11 +252,24 @@ export default function SignIn({dialogOpen}) {
           </Button>
         </form>
         )}
-        {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
-        <form onSubmit={handleReSignInWithGoogle}>
+        {dialogOpen && userHasOtherLoginOptions && (
           <div className={classes.or}>
             <Typography variant="body1">or</Typography>
           </div>
+        )}
+        {dialogOpen && isUserAllowedSSOSignIn && (
+          <form onSubmit={handleReSignInWithSSO}>
+            <Button
+              type="submit"
+              variant="contained"
+              className={classes.ssoBtn}
+              color="secondary">
+              Sign in with SSO
+            </Button>
+          </form>
+        )}
+        {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
+        <form onSubmit={handleReSignInWithGoogle}>
           <Button
             type="submit"
             variant="contained"

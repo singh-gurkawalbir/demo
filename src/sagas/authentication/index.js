@@ -409,6 +409,21 @@ export function* reSignInWithGoogle({ email }) {
   form.submit();
   document.body.removeChild(form);
 }
+export function* reSignInWithSSO() {
+  const _csrf = yield call(getCSRFTokenBackend);
+
+  yield call(setCSRFToken, _csrf);
+  const ssoClientId = yield select(selectors.userLinkedSSOClientId);
+
+  yield call(apiCallWithRetry, {
+    path: `/reSigninWithSSO/${ssoClientId}`,
+    opts: {
+      method: 'POST',
+      body: {},
+    },
+  });
+  yield put(actions.auth.complete());
+}
 
 export function* linkWithGoogle({ returnTo }) {
   const _csrf = yield call(getCSRFTokenBackend);
@@ -433,5 +448,6 @@ export const authenticationSagas = [
   takeEvery(actionTypes.UI_VERSION_FETCH, fetchUIVersion),
   takeEvery(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, signInWithGoogle),
   takeEvery(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
+  takeEvery(actionTypes.AUTH_RE_SIGNIN_WITH_SSO, reSignInWithSSO),
   takeEvery(actionTypes.AUTH_LINK_WITH_GOOGLE, linkWithGoogle),
 ];

@@ -2488,6 +2488,11 @@ selectors.isAccountOwnerOrAdmin = state => {
 
   return [USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(userPermissions.accessLevel);
 };
+selectors.isAccountOwner = state => {
+  const userPermissions = selectors.userPermissions(state) || emptyObject;
+
+  return userPermissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
+};
 
 selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
   selectors.userPermissions,
@@ -5485,36 +5490,40 @@ selectors.isSSOEnabled = state => {
   return !oidcClient.disabled;
 };
 
-selectors.ownerSSOClientId = state => {
-  const accountOwner = selectors.accountOwner(state) || emptyObject;
+selectors.userLinkedSSOClientId = state => {
   const profile = selectors.userProfile(state) || emptyObject;
 
-  if (accountOwner._id === profile._id) {
-    // extract ssoClientId for the user's profile
-    return profile.authTypeSSO?._ssoClientId;
-  }
-
-  return accountOwner._ssoClientId;
+  return profile.authTypeSSO?._ssoClientId;
 };
 
 selectors.isUserAllowedOnlySSOLogin = state => {
-  const userPermissions = selectors.userPermissions(state) || {};
-
-  // Account owner can always login through SSO/ email and password
-  if (userPermissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+  if (selectors.isAccountOwner(state)) {
     return false;
   }
+  const linkedSSOClientId = selectors.userLinkedSSOClientId(state);
 
-  const ownerSSOClientId = selectors.ownerSSOClientId(state);
+  if (!linkedSSOClientId) {
+    return false;
+  }
+  const orgAccounts = state.user.org.accounts.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
+  const ssoLinkedAccount = orgAccounts.find(acc => acc.ownerUser._ssoClientId === linkedSSOClientId);
 
-  const preferences = selectors.userPreferences(state);
-  const isAccountSSORequired = selectors.isAccountSSORequired(state, preferences.defaultAShareId);
+  return !!ssoLinkedAccount.accountSSORequired;
+};
 
-  /*
-  * If owner has ssoClientId, owner has sso enabled
-  * accountUser has isAccountSSORequired infers he is required to log in only through SSO
-  * When above 2 conditions satisfy, it infers user can login only through SSO
-  */
-  return ownerSSOClientId && isAccountSSORequired;
+selectors.isUserAllowedSSOSignIn = state => {
+  if (selectors.isAccountOwner(state)) {
+    return selectors.isSSOEnabled(state);
+  }
+  const linkedSSOClientId = selectors.userLinkedSSOClientId(state);
+
+  if (!linkedSSOClientId) return false;
+  if (linkedSSOClientId) {
+    const orgAccounts = state.user.org.accounts.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
+    const ssoLinkedAccount = orgAccounts.find(acc => acc.ownerUser._ssoClientId === linkedSSOClientId);
+
+    // _ssoClientId matched owner's account ashare has accountSSORequired - false
+    return (ssoLinkedAccount && !ssoLinkedAccount.accountSSORequired);
+  }
 };
 // #endregion sso selectors
