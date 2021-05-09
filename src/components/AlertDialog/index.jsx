@@ -104,7 +104,7 @@ const WarningSessionContent = () => {
 };
 
 const ExpiredSessionContent = () => {
-  const showSSOSignIn = useSelector(state => selectors.isUserAllowedOnlySSOLogin(state));
+  const showSSOSignIn = useSelector(state => selectors.isUserAllowedOnlySSOSignIn(state));
 
   return (
     <ModalDialog show disableEnforceFocus>

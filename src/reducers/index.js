@@ -5496,7 +5496,7 @@ selectors.userLinkedSSOClientId = state => {
   return profile.authTypeSSO?._ssoClientId;
 };
 
-selectors.isUserAllowedOnlySSOLogin = state => {
+selectors.isUserAllowedOnlySSOSignIn = state => {
   if (selectors.isAccountOwner(state)) {
     return false;
   }
