@@ -415,14 +415,18 @@ export function* reSignInWithSSO() {
   yield call(setCSRFToken, _csrf);
   const ssoClientId = yield select(selectors.userLinkedSSOClientId);
 
-  yield call(apiCallWithRetry, {
-    path: `/reSigninWithSSO/${ssoClientId}`,
-    opts: {
-      method: 'POST',
-      body: {},
-    },
-  });
-  yield put(actions.auth.complete());
+  try {
+    yield call(apiCallWithRetry, {
+      path: `/reSigninWithSSO/${ssoClientId}`,
+      opts: {
+        method: 'POST',
+        body: {},
+      },
+    });
+    yield put(actions.auth.complete());
+  } catch (e) {
+    yield put(actions.auth.failure('Authentication Failure'));
+  }
 }
 
 export function* linkWithGoogle({ returnTo }) {
