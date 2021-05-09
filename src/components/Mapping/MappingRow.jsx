@@ -1,9 +1,8 @@
-import React, { useRef, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Tooltip, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { useDrag, useDrop } from 'react-dnd-cjs';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import {selectors} from '../../reducers';
 import actions from '../../actions';
@@ -113,14 +112,12 @@ const useStyles = makeStyles(theme => ({
 const emptyObject = {};
 export default function MappingRow({
   disabled,
-  onMove,
   index,
   importId,
   flowId,
   mappingKey,
   subRecordMappingId,
   isDragInProgress = false,
-  isDraggable = false,
 }) {
   const mapping = useSelector(state => {
     const {mappings} = selectors.mapping(state);
@@ -141,7 +138,6 @@ export default function MappingRow({
   const dispatch = useDispatch();
   const classes = useStyles();
   const [isActive, setIsActive] = useState(false);
-  const ref = useRef(null);
   const generateFields = useSelector(state =>
     selectors.mappingGenerates(state, importId, subRecordMappingId)
   );
@@ -153,37 +149,6 @@ export default function MappingRow({
   const extractFields = useSelector(state =>
     selectors.mappingExtracts(state, importId, flowId, subRecordMappingId)
   );
-
-  const [, drop] = useDrop({
-    accept: 'MAPPING',
-    hover(item) {
-      if (!ref.current || !isDraggable) {
-        return;
-      }
-
-      const dragIndex = item.index;
-      const hoverIndex = index;
-
-      // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-
-      onMove(dragIndex, hoverIndex);
-      // eslint-disable-next-line no-param-reassign
-      item.index = hoverIndex;
-    },
-  });
-  const [{ isDragging }, drag, preview] = useDrag({
-    item: { type: 'MAPPING', index, key: mappingKey },
-    collect: monitor => ({
-      isDragging: monitor.isDragging(),
-    }),
-    canDrag: isDraggable,
-  });
-  const opacity = isDragging ? 0.2 : 1;
-
-  drop(preview(ref));
 
   const handleBlur = useCallback((field, value) => {
     // check if value changes or user entered something in new row
@@ -258,13 +223,11 @@ export default function MappingRow({
         </div>
       )}
       <div
-        ref={ref}
         onMouseEnter={handleOnMouseEnter}
         onMouseLeave={handleOnMouseLeave}
-        style={{ opacity }}
         className={classes.rowContainer}>
         <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled })}>
-          <div className={classes.dragIcon} ref={drag}>
+          <div className={classes.dragIcon}>
             <GripperIcon />
           </div>
           <div
