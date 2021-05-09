@@ -391,6 +391,7 @@ const MappingRow = ({
 const areMappingRowsEqual = (prevProps, nextProps) =>
   prevProps.extract === nextProps.extract &&
   prevProps.generate === nextProps.generate &&
+  prevProps.disabled === nextProps.disabled &&
   prevProps.hardCodedValue === nextProps.hardCodedValue;
 const MappingRowMemoized = React.memo(MappingRow, areMappingRowsEqual);
 
