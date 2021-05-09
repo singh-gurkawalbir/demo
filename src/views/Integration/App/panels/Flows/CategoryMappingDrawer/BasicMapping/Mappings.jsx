@@ -368,7 +368,7 @@ const MappingRow = ({
               data-test={`fieldMappingRemove-${mapping.key}`}
               aria-label="delete"
               disabled={
-              (!mapping.extract && !mapping.hardCodedValue) || disabled
+              mapping.isNotEditable || disabled
             }
               onClick={handleDeleteClick}>
               <TrashIcon />
@@ -388,11 +388,10 @@ const MappingRow = ({
   );
 };
 
-const areMappingRowsEqual = (prevProps, nextProps) =>
-  prevProps.extract === nextProps.extract &&
-  prevProps.generate === nextProps.generate &&
-  prevProps.disabled === nextProps.disabled &&
-  prevProps.hardCodedValue === nextProps.hardCodedValue;
+const areMappingRowsEqual = (prevProps, nextProps) => prevProps?.mapping?.extract === nextProps?.mapping?.extract &&
+  prevProps?.mapping?.generate === nextProps?.mapping?.generate &&
+  prevProps?.disabled === nextProps?.disabled &&
+  prevProps?.mapping?.hardCodedValue === nextProps?.mapping?.hardCodedValue;
 const MappingRowMemoized = React.memo(MappingRow, areMappingRowsEqual);
 
 export default function ImportMapping(props) {
