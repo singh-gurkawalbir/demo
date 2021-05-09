@@ -5511,7 +5511,7 @@ selectors.isUserAllowedOnlySSOSignIn = state => {
   return !!ssoLinkedAccount.accountSSORequired;
 };
 
-selectors.isUserAllowedSSOSignIn = state => {
+selectors.canUserLoginViaSSO = state => {
   if (selectors.isAccountOwner(state)) {
     return selectors.isSSOEnabled(state);
   }

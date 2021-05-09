@@ -134,10 +134,10 @@ export default function SignIn({dialogOpen}) {
   let error = useSelector(state => selectors.authenticationErrored(state));
   const userEmail = useSelector(state => selectors.userProfileEmail(state));
   const userProfileLinkedWithGoogle = useSelector(state => selectors.userProfileLinkedWithGoogle(state));
-  const isUserAllowedSSOSignIn = useSelector(state => selectors.isUserAllowedSSOSignIn(state));
+  const canUserLoginViaSSO = useSelector(state => selectors.canUserLoginViaSSO(state));
   const showError = useSelector(state => selectors.showAuthError(state));
 
-  const userHasOtherLoginOptions = (userEmail && userProfileLinkedWithGoogle) || isUserAllowedSSOSignIn;
+  const userHasOtherLoginOptions = (userEmail && userProfileLinkedWithGoogle) || canUserLoginViaSSO;
 
   const handleOnChangeEmail = useCallback(e => {
     setEmail(e.target.value);
@@ -257,7 +257,7 @@ export default function SignIn({dialogOpen}) {
             <Typography variant="body1">or</Typography>
           </div>
         )}
-        {dialogOpen && isUserAllowedSSOSignIn && (
+        {dialogOpen && canUserLoginViaSSO && (
           <form onSubmit={handleReSignInWithSSO}>
             <Button
               type="submit"
