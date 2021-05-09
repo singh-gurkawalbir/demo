@@ -101,7 +101,7 @@ const setMappingData = (
       category.fieldMappings = (mappings[key].mappings || [])
         .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
         .map(
-          ({ index, rowIdentifier, hardCodedValueTmp, visible, ...rest }) => ({
+          ({ index, rowIdentifier, hardCodedValueTmp, key, name, description, showListOption, filterType, visible, ...rest }) => ({
             ...rest,
           })
         );
@@ -508,6 +508,19 @@ export default {
     )
       ? objectKeys.every(key => this.isEqual(object[key], otherObject[key]))
       : false;
+  },
+  removeChildLookups: sessionMappings => {
+    if (!Array.isArray(sessionMappings?.basicMappings?.recordMappings)) {
+      return;
+    }
+    sessionMappings.basicMappings.recordMappings.forEach(category => {
+      if (category?.children?.length) {
+        category.children.forEach(childCategory => {
+          // eslint-disable-next-line no-param-reassign
+          delete childCategory.lookups;
+        });
+      }
+    });
   },
   setCategoryMappingData: (
     flowId,

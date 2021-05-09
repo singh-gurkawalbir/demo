@@ -972,9 +972,8 @@ selectors.mkCategoryMappingsChanged = () => {
       const { response = emptySet } = categoryMappingData || emptyObj;
       const mappingData = response.find(op => op.operation === 'mappingData');
       const sessionMappedData = mappingData?.data?.mappingData;
-      const sessionMappings = deepClone(sessionMappedData);
 
-      return sessionMappings;
+      return sessionMappedData;
     },
     categoryMappingsGeneratesSelector,
     (_1, _2, flowId) => flowId,
@@ -987,19 +986,22 @@ selectors.mkCategoryMappingsChanged = () => {
       if (!sessionMappings) {
         return isMappingsEqual;
       }
+      if (!initData) {
+        return !isMappingsEqual;
+      }
+      const sessionMappingsCopy = deepClone(sessionMappings);
+
       mappingUtil.setCategoryMappingData(
         flowId,
-        sessionMappings,
+        sessionMappingsCopy,
         userMappings,
         deletedMappings,
         categoryRelationshipData
       );
 
-      if (!initData) {
-        return !isMappingsEqual;
-      }
+      mappingUtil.removeChildLookups(sessionMappingsCopy);
 
-      return !mappingUtil.isEqual(initData, sessionMappings);
+      return !mappingUtil.isEqual(initData, sessionMappingsCopy);
     });
 };
 
