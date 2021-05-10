@@ -174,10 +174,8 @@ export default function AlertDialog() {
   if (isUserLoggedInDifferentTab) { return <LoggedInWithADifferentAccount />; }
 
   return (
-    <div>
-      <LoadResources required resources={isAccountOwner ? 'ssoclients' : ''}>
-
-        {showSessionStatus && (
+    <LoadResources required resources={isAccountOwner ? 'ssoclients' : ''}>
+      {showSessionStatus && (
         <Dialog disableEnforceFocus open style={contentWrapper}>
           {showSessionStatus === 'warning' ? (
             <WarningSessionContent />
@@ -185,10 +183,9 @@ export default function AlertDialog() {
             showSessionStatus === 'expired' && <ExpiredSessionContent />
           )}
         </Dialog>
-        )}
-        {!showSessionStatus && isUiVersionDifferent && <StaleUIVersion />}
-        {!showSessionStatus && isUserAcceptedAccountTransfer && <UserAcceptedAccountTransfer />}
-      </LoadResources>
-    </div>
+      )}
+      {!showSessionStatus && isUiVersionDifferent && <StaleUIVersion />}
+      {!showSessionStatus && isUserAcceptedAccountTransfer && <UserAcceptedAccountTransfer />}
+    </LoadResources>
   );
 }
