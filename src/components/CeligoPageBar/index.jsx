@@ -1,11 +1,13 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
+import { useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Paper, Grid, IconButton } from '@material-ui/core';
 import { selectors } from '../../reducers';
 import InfoIconButton from '../InfoIconButton';
 import BackArrowIcon from '../icons/BackArrowIcon';
+import { redirectURlToParentListing } from '../drawer/Resource/Panel';
 
 const useStyles = makeStyles(theme => ({
   pageHeader: {
@@ -55,7 +57,20 @@ export default function CeligoPageBar(props) {
     className,
   } = props;
   const classes = useStyles();
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+  const location = useLocation();
+
+  const handleOnClick = useCallback(() => {
+    if (history.length > 2) {
+      return history.goBack();
+    }
+    let listingPageUrl = redirectURlToParentListing(location.pathname);
+
+    if (!listingPageUrl && location.pathname.endsWith('/connectorLicenses') && location.pathname.startsWith('/connectors')) {
+      listingPageUrl = '/connectors';
+    }
+    history.replace(listingPageUrl);
+  }, [history, location.pathname]);
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state)); // afhgf
 
   return (
     <>
@@ -70,7 +85,7 @@ export default function CeligoPageBar(props) {
         <Grid item container wrap="nowrap">
           {history && (
           // eslint-disable-next-line react/jsx-handler-names
-          <IconButton size="small" onClick={history.goBack}>
+          <IconButton size="small" onClick={handleOnClick}>
             <BackArrowIcon />
           </IconButton>
           )}
