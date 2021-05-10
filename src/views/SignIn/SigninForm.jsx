@@ -8,6 +8,7 @@ import { useLocation } from 'react-router-dom';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
+import SecurityIcon from '../../components/icons/SecurityIcon';
 import { getDomain } from '../../utils/resource';
 import getRoutePath from '../../utils/routePaths';
 import Spinner from '../../components/Spinner';
@@ -83,6 +84,10 @@ const useStyles = makeStyles(theme => ({
     fontSize: 16,
     margin: theme.spacing(0, 0, 2, 0),
     backgroundColor: theme.palette.background.paper,
+    display: 'flex',
+    justifyContent: 'space-around',
+    paddingLeft: theme.spacing(5),
+    paddingRight: theme.spacing(16),
   },
   or: {
     display: 'flex',
@@ -263,6 +268,7 @@ export default function SignIn({dialogOpen}) {
               type="submit"
               variant="contained"
               className={classes.ssoBtn}
+              startIcon={<SecurityIcon />}
               color="secondary">
               Sign in with SSO
             </Button>
