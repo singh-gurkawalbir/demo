@@ -1,17 +1,25 @@
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import RegenerateTokenIcon from '../../../icons/RegenerateTokenIcon';
 import useConfirmDialog from '../../../ConfirmDialog';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
-  label: 'Generate new token',
+  key: 'generateNewToken',
+  useLabel: () => 'Generate new token',
   icon: RegenerateTokenIcon,
-  useHasAccess: ({ rowData, resourceType }) =>
-    !(resourceType === 'stacks' && rowData.type === 'lambda'),
-  component: function GenerateToken({ rowData = {}, resourceType }) {
+  useHasAccess: rowData => {
+    const {resourceType} = useGetTableContext();
+
+    return !(resourceType === 'stacks' && rowData.type === 'lambda');
+  },
+  useOnClick: rowData => {
     const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
+
+    const {resourceType} = useGetTableContext();
+
     const { confirmDialog } = useConfirmDialog();
     const generateSystemToken = useCallback(() => {
       if (resourceType === 'agents') {
@@ -36,10 +44,6 @@ export default {
       });
     }, [confirmDialog, generateSystemToken]);
 
-    useEffect(() => {
-      confirmGenerateToken();
-    }, [confirmGenerateToken]);
-
-    return null;
+    return confirmGenerateToken;
   },
 };

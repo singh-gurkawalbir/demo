@@ -23,23 +23,6 @@ import DownloadIcon from '../icons/DownloadIcon';
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
   fileInput: { display: 'none' },
-  spinner: {
-    left: 0,
-    right: 0,
-    top: -40,
-    bottom: 0,
-    width: '100%',
-    position: 'absolute',
-    textAlign: 'center',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 'inherit',
-    zIndex: '3',
-    '& span': {
-      marginLeft: '10px',
-    },
-  },
   btnsWrappper: {
     marginTop: theme.spacing(1),
     '& button': {
@@ -71,7 +54,7 @@ const useStyles = makeStyles(theme => ({
   downloadOnlyDivider: {
     margin: theme.spacing(2),
   },
-  // TODO (Azhar):  we need to keep a varaint for this button
+  // TODO (Azhar):  we need to keep a variant for this button
   btnErrorTable: {
     borderColor: theme.palette.secondary.lightest,
     color: theme.palette.secondary.light,
@@ -452,9 +435,9 @@ export default function JobErrorTable({
   return (
     <>
       {jobErrorsPreview && jobErrorsPreview.status === 'requested' && (
-        <div data-public className={classes.spinner}>
-          <Spinner /> <span>Uploading...</span>
-        </div>
+      <Spinner centerAll>
+        <Typography>Uploading...</Typography>
+      </Spinner>
       )}
       <ul data-public className={classes.statusWrapper}>
         <li>
@@ -482,7 +465,7 @@ export default function JobErrorTable({
       {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
 
         <Spinner centerAll>
-          <Typography variant="body2">Loading job errors</Typography>
+          <Typography>Loading job errors</Typography>
         </Spinner>
 
       ) : (

@@ -2235,6 +2235,8 @@ export default {
   'users.accesslevel': 'Users with administer-level access can perform all the same actions as an account Owner, with the exception of transferring account ownership to another user, and will have full access to all integrations in the account. Users with manage level access can make changes to the integration. Users with monitor level access can view the integration only for the purpose of running flows and troubleshooting integration errors. Owner and Administrator users are responsible for provisioning access to the integration. <a href="https://docs.celigo.com/hc/en-us/articles/115003929872" target="_blank">Find out more about role and permissions.</a>',
   'users.status': "'Pending' means the user has not yet accepted the invite to your account.  'Accepted' means the user has accepted the invite to your account.  'Dismissed' means the user dismissed the invite to your account.",
   'users.enable': 'This enables you to revoke access without deleting the user from the account. If Off, then the user will no longer be able to switch to this account - it will no longer show up in their <b>Accounts</b> drop-down.',
+  'users.accountSSOLinked': ' This field indicates whether the user has successfully signed in using the account’s SSO settings. If yes, the user can only sign in to integrator.io using this account’s SSO settings. If no, the user can sign in to integrator.io using other authentication methods.',
+  'users.requireAccountSSO': 'This field indicates whether the user is required to sign in with the account’s SSO settings.',
   'users.actions': 'These are actions the account owner can perform, like <b>Make account owner</b>, which will make that user the owner of the selected account. <b>Change permissions</b> enables the account owner to manage each user’s access level. <b>Delete</b> will delete the user from the account and they will no longer have access.',
   'myaccount.name':
     'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
@@ -2307,4 +2309,11 @@ export default {
   'afe.lookups': 'Lookups can be used to dynamically retrieve information from the destination application for the purpose of setting fields that cannot be set directly from the fields provided by the source application. For example, if the destination application requires \'customer_id\' values, but the source application only gives you email addresses, then you can define a lookup to search for \'customer_id\' values using the email addresses, and then inject the \'customer_id\' values into your final API requests.',
   'listener.debugLogs': 'Enable debug logs to store all requests for the selected period of time. Debug log entries are kept for 30 days by default, and can be deleted manually as needed.',
   autoMapFields: 'Auto-map populates known field mappings for destination fields that have not yet been configured. Auto-map doesn’t overwrite mapping values that you have already set up manually. For example, if you have already mapped firstName in the destination field, then auto-map will preserve your configuration for firstName and only add field mappings for the remaining destination fields.',
+  enableSSO: 'Use this toggle to enable single sign-on (SSO) for the account.',
+  'sso.issuerURL': 'Enter the domain-specific URL issued by your SSO provider',
+  'sso.clientId': 'Enter the  unique ID issued by your SSO provider.',
+  'sso.clientSecret': 'Enter the  secret key issued by your SSO provider ',
+  'sso.orgId': 'Enter a unique organization ID that integrator.io will use to generate a unique SSO URL for your account. This field only accepts alphanumeric characters and must be 3-20 characters in length.',
+  'sso.loginURL': 'Use this unique URL to sign in to your account with SSO. Use this URL  when configuring the integrator.io app in your SSO provider.',
+  'sso.redirectURL': 'Your SSO provider will send the authorization code tokens to this unique URL. Use this URL when configuring the integrator.io app in your SSO provider.',
 };

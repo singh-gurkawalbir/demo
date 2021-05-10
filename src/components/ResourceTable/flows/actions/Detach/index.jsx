@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
@@ -7,9 +7,10 @@ import DetachIcon from '../../../../icons/unLinkedIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
-  label: 'Detach flow',
+  key: 'detachFlow',
+  useLabel: () => 'Detach flow',
   icon: DetachIcon,
-  useHasAccess: ({ rowData }) => {
+  useHasAccess: rowData => {
     const { _integrationId } = rowData;
 
     const canDetach = useSelector(state => selectors.resourcePermissions(
@@ -21,7 +22,7 @@ export default {
 
     return canDetach;
   },
-  component: function DetachFlow({ rowData = {} }) {
+  useOnClick: rowData => {
     const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
@@ -54,10 +55,6 @@ export default {
       });
     }, [confirmDialog, detachFlow]);
 
-    useEffect(() => {
-      confirmDetachFlow();
-    }, [confirmDetachFlow]);
-
-    return null;
+    return confirmDetachFlow;
   },
 };

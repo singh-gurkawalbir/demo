@@ -1,13 +1,14 @@
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../../reducers';
 import DebugIcon from '../../../../icons/DebugIcon';
 
 export default {
-  label: 'Debug connection',
+  key: 'debugConnection',
+  useLabel: () => 'Debug connection',
   icon: DebugIcon,
-  useHasAccess: ({ rowData }) => {
+  useHasAccess: rowData => {
     const { _id: connectionId } = rowData;
 
     const hasAccess = useSelector(state => selectors.resourcePermissions(
@@ -18,15 +19,12 @@ export default {
 
     return hasAccess;
   },
-  component: function ConfigDebuggerAction({rowData}) {
+  useOnClick: rowData => {
     const history = useHistory();
     const match = useRouteMatch();
 
-    useEffect(() => {
+    return useCallback(() => {
       history.push(`${match.url}/configDebugger/${rowData._id}`);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    return null;
+    }, [history, match.url, rowData._id]);
   },
 };

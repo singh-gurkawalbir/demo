@@ -8,39 +8,37 @@ import AddonInstallerButton from './AddonInstallerButton';
 import InfoIconButton from '../../../../../../../components/InfoIconButton';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../../../reducers';
+import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
 
 const metadata = {
-  columns: (empty, actionProps) => {
-    const { supportsMultiStore, storeId, storeLabel, stores } = actionProps;
+  useColumns: () => {
+    const { supportsMultiStore, storeId, storeLabel, stores } = useGetTableContext();
 
     let columns = [
       {
+        key: 'name',
         heading: 'Name',
-        value: function NameWithInfoicon(r) {
-          return (
-            <>
-              {r && r.name}
-              <InfoIconButton info={r.description} size="xs" />
-            </>
-          );
-        },
+        Value: ({rowData: r}) => (
+          <>
+            {r && r.name}
+            <InfoIconButton info={r.description} size="xs" />
+          </>
+        ),
       },
       {
+        key: 'storeLabel',
         heading: storeLabel,
-        value: function Store(r) {
-          return stores.find(s => s.value === r.storeId)?.label || r.storeId;
-        },
+        Value: ({rowData: r}) => stores.find(s => s.value === r.storeId)?.label || r.storeId,
       },
       {
+        key: 'installedOn',
         heading: 'Installed on',
-        value: r =>
-          r.installedOn ? moment(r.installedOn).format('MMM D, YYYY') : '',
+        Value: ({rowData: r}) => r.installedOn ? moment(r.installedOn).format('MMM D, YYYY') : '',
       },
       {
+        key: 'action',
         heading: 'Action',
-        value: function Installer(r) {
-          return <AddonInstallerButton resource={r} />;
-        },
+        Value: ({rowData: r}) => <AddonInstallerButton resource={r} />,
       },
     ];
 
