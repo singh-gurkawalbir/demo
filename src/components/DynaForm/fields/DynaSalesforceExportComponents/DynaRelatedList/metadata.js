@@ -1,59 +1,59 @@
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 import DeleteIcon from '../../../../icons/TrashIcon';
 import EditIcon from '../../../../icons/EditIcon';
+import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 
 const Delete = {
-  label: 'Delete',
+  useLabel: () => 'Delete',
+  key: 'delete',
   icon: DeleteIcon,
-  component: function Delete({ handleDeleteItem, rowData }) {
-    useEffect(() => {
+  useOnClick: rowData => {
+    const {handleDeleteItem} = useGetTableContext();
+
+    return useCallback(() => {
       handleDeleteItem(rowData.index);
     }, [handleDeleteItem, rowData.index]);
-
-    return null;
   },
 };
 const Edit = {
-  label: 'Edit',
+  useLabel: () => 'Edit',
+  key: 'edit',
   icon: EditIcon,
-  component: function Edit({ handleEditItem, rowData }) {
-    useEffect(() => {
+  useOnClick: rowData => {
+    const {handleEditItem} = useGetTableContext();
+
+    return useCallback(() => {
       handleEditItem(rowData.index);
     }, [handleEditItem, rowData.index]);
-
-    return null;
   },
 };
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'relationship',
       heading: 'Relationship',
-      value: r => r && r.relationshipName,
+      Value: ({rowData: r}) => r && r.relationshipName,
     },
-
     {
+      key: 'childSObject',
       heading: 'Child sObject',
-      value: r => r && r.sObjectType,
+      Value: ({rowData: r}) => r && r.sObjectType,
     },
     {
+      key: 'referencedFields',
       heading: 'Referenced Fields',
-      value(r) {
-        return r && r.referencedFields;
-      },
+      Value: ({rowData: r}) => r && r.referencedFields,
     },
     {
-      heading: 'Filter',
-      value(r) {
-        return r && r.filter;
-      },
+      key: 'filter',
+      Value: ({rowData: r}) => r && r.filter,
     },
     {
+      key: 'orderBy',
       heading: 'Order By',
-      value(r) {
-        return r && r.orderBy;
-      },
+      Value: ({rowData: r}) => r && r.orderBy,
     },
   ],
-  rowActions: [Delete, Edit],
+  useRowActions: () => [Delete, Edit],
 };

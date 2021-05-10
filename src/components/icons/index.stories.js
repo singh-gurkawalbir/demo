@@ -109,6 +109,7 @@ import ShowContentIcon from './ShowContentIcon';
 import SuccessIcon from './SuccessIcon';
 import ScriptsIcon from './ScriptsIcon';
 import SearchIcon from './SearchIcon';
+import SecurityIcon from './SecurityIcon';
 import ShareStackIcon from './ShareStackIcon';
 import SettingsIcon from './SettingsIcon';
 import SubtractIcon from './SubtractIcon';
@@ -248,6 +249,7 @@ const icons =
       SuccessIcon,
       ScriptsIcon,
       SearchIcon,
+      SecurityIcon,
       ShareStackIcon,
       SettingsIcon,
       SubtractIcon,

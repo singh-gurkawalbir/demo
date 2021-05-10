@@ -5,39 +5,49 @@ import DownloadFiles from './actions/DownloadFiles';
 import DownloadDiagnostics from './actions/DownloadDiagnostics';
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'status',
       heading: 'Status',
-      value: r => getJobStatus(r),
+      Value: ({rowData: r}) => getJobStatus(r),
     },
     {
+      key: 'duration',
       heading: 'Duration',
-      value: r => getJobDuration(r),
+      Value: ({rowData: r}) => getJobDuration(r),
     },
     {
+      key: 'started',
       heading: 'Started',
-      value: r => <CeligoTimeAgo date={r.startedAt} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.startedAt} />,
     },
     {
+      key: 'completed',
       heading: 'Completed',
-      value: r => <CeligoTimeAgo date={r.endedAt} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.endedAt} />,
     },
     {
+      key: 'success',
       heading: 'Success',
-      value: r => r.numSuccess,
+      Value: ({rowData: r}) => r.numSuccess,
     },
     {
+      key: 'Ignored',
       heading: 'Ignored',
-      value: r => r.numIgnore,
+      Value: ({rowData: r}) => r.numIgnore,
     },
-    { heading: 'Errors', value: r => r.numOpenError },
     {
+      key: 'errors',
+      heading: 'Errors',
+      Value: ({rowData: r}) => r.numOpenError },
+    {
+      key: 'pages',
       heading: 'Pages',
-      value: r => r.numPagesGenerated,
+      Value: ({rowData: r}) => r.numPagesGenerated,
     },
 
   ],
-  rowActions: job => {
+  useRowActions: job => {
     const actions = [DownloadDiagnostics];
 
     if (job.files?.length) {

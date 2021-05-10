@@ -432,7 +432,7 @@ export function* requestEditorSampleData({
   const fetchPreviewStageData = resourceType === 'exports' && (fieldId?.includes('once') || fieldId === 'dataURITemplate' || fieldId === 'traceKeyTemplate');
 
   if (fetchPreviewStageData) {
-    yield call(requestExportSampleData, { resourceId, resourceType, values: formValues });
+    yield call(requestExportSampleData, { resourceId, resourceType, values: formValues, options: {flowId} });
     const parsedData = yield select(
       selectors.getResourceSampleDataWithStatus,
       resourceId,

@@ -77,6 +77,7 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
 
   useEffect(() => {
     dispatch(actions.patchFilter(filterKey, defaultFilter));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     dispatch(actions.resource.connections.refreshStatus(integrationId));
