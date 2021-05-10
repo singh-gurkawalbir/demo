@@ -3,23 +3,17 @@ import References from '../../actions/references';
 import ResourceDrawerLink from '../../../../../components/ResourceDrawerLink';
 
 export default {
-  columns: () => {
-    const columns = [
-      {
-        heading: 'Agent',
-        value: function AgentsNameLink(r) {
-          return <ResourceDrawerLink resourceType="agents" resource={r} />;
-        },
-        orderBy: 'name',
-      },
-      {
-        heading: 'Where used',
-        value: function Type(r) {
-          return <References resourceType="agents" rowData={r} />;
-        },
-      },
-    ];
-
-    return columns;
-  },
+  useColumns: () => [
+    {
+      key: 'agent',
+      heading: 'Agent',
+      Value: ({rowData: r}) => <ResourceDrawerLink resourceType="agents" resource={r} />,
+      orderBy: 'name',
+    },
+    {
+      key: 'whereUsed',
+      heading: 'Where used',
+      Value: ({rowData: r}) => <References resourceType="agents" rowData={r} />,
+    },
+  ],
 };

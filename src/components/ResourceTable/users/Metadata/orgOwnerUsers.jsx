@@ -13,26 +13,39 @@ import { ACCOUNT_IDS, USER_ACCESS_LEVELS, ACCOUNT_SSO_STATUS } from '../../../..
 import ManagePermissions from '../actions/ManagePermissions';
 import MakeAccountOwner from '../actions/MakeAccountOwner';
 import DeleteFromAccount from '../actions/DeleteFromAccount';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
-  columns: (r, { integrationId, isUserInErrMgtTwoDotZero, isSSOEnabled }) => {
+  useColumns: () => {
+    const { integrationId, isUserInErrMgtTwoDotZero, isSSOEnabled } = useGetTableContext();
     const columns = [
-      { heading: 'Name', value: r => r.sharedWithUser.name },
-      { heading: 'Email', value: r => r.sharedWithUser.email },
+      { heading: 'Name', key: 'name', Value: ({rowData: r}) => r.sharedWithUser.name },
+      { heading: 'Email', key: 'email', Value: ({rowData: r}) => r.sharedWithUser.email },
       {
-        headerValue: AccessLevelHeader,
-        value: (r, { integrationId}) =>
-          <AccessLevel user={r} integrationId={integrationId} />,
+        key: 'accessLevelHeader',
+        HeaderValue: AccessLevelHeader,
+        Value: ({rowData: r}) => {
+          const {integrationId} = useGetTableContext();
+
+          return <AccessLevel user={r} integrationId={integrationId} />;
+        },
       },
       {
-        headerValue: StatusHeader,
-        value: (r, { integrationId}) =>
-          <Status user={r} integrationId={integrationId} />,
+        key: 'statusHeader',
+        HeaderValue: StatusHeader,
+        Value: ({rowData: r}) => {
+          const {integrationId} = useGetTableContext();
+
+          return <Status user={r} integrationId={integrationId} />;
+        },
       },
       {
-        headerValue: EnableUserHeader,
+        key: 'enableUserHeader',
+        HeaderValue: EnableUserHeader,
         align: 'center',
-        value: (r, { integrationId, accessLevel}) => {
+        Value: ({rowData: r}) => {
+          const {integrationId, accessLevel} = useGetTableContext();
+
           if (!r.dismissed) {
             return <EnableUser user={r} integrationId={integrationId} accessLevel={accessLevel} />;
           }
@@ -41,10 +54,15 @@ export default {
         },
       },
       ...((integrationId && isUserInErrMgtTwoDotZero) ? [{
+        key: 'notifications',
         heading: 'Notifications',
         align: 'center',
-        value: (r, { integrationId}) =>
-          <Notifications user={r} integrationId={integrationId} />,
+        Value: ({rowData: r}) => {
+          const {integrationId} = useGetTableContext();
+
+          return <Notifications user={r} integrationId={integrationId} />;
+        },
+
       }] : []),
       ...((!integrationId && isSSOEnabled) ? [
         {
@@ -70,8 +88,9 @@ export default {
 
     return columns;
   },
-  rowActions: (user, actionProps = {}) => {
-    const { integrationId, accessLevel } = actionProps;
+  useRowActions: user => {
+    const tableContext = useGetTableContext();
+    const { integrationId, accessLevel } = tableContext;
     const actions = [];
 
     if ([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(accessLevel) && user._id === ACCOUNT_IDS.OWN) {

@@ -1,14 +1,18 @@
-import { useCallback, useEffect} from 'react';
+import { useCallback} from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import EditIcon from '../../../icons/EditIcon';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
-  label: (rowData, actionProps) => {
-    if (['accesstokens', 'apis', 'connectors'].includes(actionProps.resourceType)) {
-      return `Edit ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]}`;
+  key: 'edit',
+  useLabel: rowData => {
+    const tableContext = useGetTableContext();
+
+    if (['accesstokens', 'apis', 'connectors'].includes(tableContext.resourceType)) {
+      return `Edit ${MODEL_PLURAL_TO_LABEL[tableContext?.resourceType]}`;
     }
-    if (actionProps?.resourceType?.includes('/licenses')) {
+    if (tableContext?.resourceType?.includes('/licenses')) {
       if (rowData.type === 'integrationAppChild') {
         return 'Edit child license';
       }
@@ -16,12 +20,11 @@ export default {
       return 'Edit license';
     }
 
-    return `Edit ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
+    return `Edit ${MODEL_PLURAL_TO_LABEL[tableContext?.resourceType]?.toLowerCase()}`;
   },
   icon: EditIcon,
-  component: function Edit(props) {
-    const { rowData = {} } = props;
-    let {resourceType} = props;
+  useOnClick: rowData => {
+    let {resourceType} = useGetTableContext();
     const history = useHistory();
     const match = useRouteMatch();
 
@@ -33,10 +36,6 @@ export default {
       history.push(`${match.url}/edit/${resourceType}/${rowData._id}`);
     }, [history, match.url, rowData._id, resourceType]);
 
-    useEffect(() => {
-      handleClick();
-    }, [handleClick]);
-
-    return null;
+    return handleClick;
   },
 };

@@ -20,28 +20,6 @@ import DateTimeDisplay from '../DateTimeDisplay';
 import ErrorCountCell from './ErrorCountCell';
 
 const useStyles = makeStyles(theme => ({
-  icon: {
-    margin: theme.spacing.double,
-  },
-  spinner: {
-    left: '0px',
-    right: '0px',
-    background: 'rgba(106, 123, 137, 0.7)',
-    width: '100%',
-    position: 'absolute',
-    color: theme.palette.background.paper,
-    textAlign: 'center',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 'inherit',
-    zIndex: 1,
-    padding: 14,
-    '& span': {
-      marginLeft: '10px',
-      color: theme.palette.background.paper,
-    },
-  },
   checkAction: {
     listStyle: 'none',
     padding: 0,
@@ -82,12 +60,6 @@ const useStyles = makeStyles(theme => ({
   errorCount: {
     color: theme.palette.error.dark,
   },
-  // statusBtn: {
-  //   color: theme.palette.error.dark,
-  //   float: 'right',
-  //   padding: 0,
-  //   minWidth: 'unset',
-  // },
   resolved: {
     width: '9%',
     textAlign: 'right',

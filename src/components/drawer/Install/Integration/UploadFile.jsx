@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
   defaultText: {
     margin: 0,
     marginLeft: theme.spacing(0.5),
-    color: '#b1c6d7',
+    color: theme.palette.secondary.contrastText,
   },
 }));
 

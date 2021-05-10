@@ -38,13 +38,14 @@ export function* _getXmlFileAdaptorSampleData({ resource, newResourceId }) {
 export function* _getXmlHttpAdaptorSampleData({ resource, newResourceId }) {
   if (!resource || !newResourceId) return;
 
+  const { flowId } = yield select(
+    selectors.resourceFormState,
+    'exports',
+    newResourceId
+  );
+
   if (resource.isLookup) {
     // Make a pageProcessorPreview call incase of a lookup
-    const { flowId } = yield select(
-      selectors.resourceFormState,
-      'exports',
-      newResourceId
-    );
     const pageProcessorPreviewData = yield call(pageProcessorPreview, {
       flowId,
       _pageProcessorId: resource._id,
@@ -59,6 +60,7 @@ export function* _getXmlHttpAdaptorSampleData({ resource, newResourceId }) {
   const exportPreviewData = yield call(exportPreview, {
     resourceId: resource._id,
     hidden: true,
+    flowId,
   });
 
   // parse stage of preview data contains JSON sample data

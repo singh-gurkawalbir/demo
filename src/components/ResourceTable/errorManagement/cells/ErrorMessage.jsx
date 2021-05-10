@@ -39,6 +39,7 @@ function isValidURL(url) {
   return url.indexOf('http://') === 0 || url.indexOf('https://') === 0;
 }
 
+const options = {allowedTags: ['a']};
 export default function ErrorMessage({errorId, message, flowId, resourceId, exportDataURI, importDataURI }) {
   let exportRecordLink;
   let exportRecordText;
@@ -78,7 +79,7 @@ export default function ErrorMessage({errorId, message, flowId, resourceId, expo
     <div className={classes.wrapper}>
       <div className={classes.message}>
         {isErrorRetryFailed && retryFailedTag}
-        <RawHtml html={message} className={classes.htmlMessage} />
+        <RawHtml html={message} options={options} className={classes.htmlMessage} />
         <div>
           {exportRecordLink && (
           <Button

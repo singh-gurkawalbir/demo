@@ -5,14 +5,17 @@ import actionTypes from '../../../../../actions/types';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useCommStatus from '../../../../../hooks/useCommStatus';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
+import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
-  label: 'Remove user from account',
-  component: function DeleteFromAccount({ rowData: user }) {
+  key: 'removeUserFromAccount',
+  useLabel: () => 'Remove user from account',
+  Component: () => {
     const { confirmDialog } = useConfirmDialog();
     const dispatch = useDispatch();
     const [enquesnackbar] = useEnqueueSnackbar();
+    const {user} = useGetTableContext();
     const { _id: userId, sharedWithUser = {} } = user;
     const deleteFromAccount = useCallback(() => {
       confirmDialog({
@@ -33,7 +36,8 @@ export default {
       });
     }, [confirmDialog, dispatch, userId]);
 
-    useEffect(() => deleteFromAccount(), [deleteFromAccount]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => deleteFromAccount(), []);
 
     const commStatusHandler = useCallback(
       objStatus => {

@@ -16,52 +16,56 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import DynaSelect from '../../DynaForm/fields/DynaSelect';
 
 const metadata = {
-  columns: [
+  useColumns: () => [
     {
+      key: 'integration',
       heading: 'Integration',
-      value: job => job._integrationId && job._integrationId.name,
+      Value: ({rowData: job}) => job._integrationId && job._integrationId.name,
     },
     {
+      key: 'flow',
       heading: 'Flow',
-      value: job => job._flowId && job._flowId.name,
+      Value: ({rowData: job}) => job._flowId && job._flowId.name,
     },
     {
+      key: 'status',
       heading: 'Status',
-      value: job => getStatus({ ...job, uiStatus: job.status }),
+      Value: ({rowData: job}) => getStatus({ ...job, uiStatus: job.status }),
     },
     {
+      key: 'success',
       heading: 'Success',
-      value: job => job.numSuccess,
+      Value: ({rowData: job}) => job.numSuccess,
     },
     {
+      key: 'ignore',
       heading: 'Ignore',
-      value: job => job.numIgnore,
+      Value: ({rowData: job}) => job.numIgnore,
     },
     {
+      key: 'error',
       heading: 'Error',
-      value: job => job.numError,
+      Value: ({rowData: job}) => job.numError,
     },
     {
+      key: 'pages',
       heading: 'Pages',
-      value: job => getPages(job),
+      Value: ({rowData: job}) => getPages(job),
     },
   ],
-  rowActions: [
+  useRowActions: () => [
     {
+      key: 'cancel',
       label: 'Cancel',
       icon: CancelIcon,
-      component: function CancelQueuedJobAction({ rowData = {} }) {
+      useOnClick: rowData => {
         const dispatch = useDispatch();
         const resourceId = rowData?._id;
         const handleCancelJob = useCallback(() => {
           dispatch(actions.connection.cancelQueuedJob(resourceId));
         }, [dispatch, resourceId]);
 
-        useEffect(() => {
-          handleCancelJob();
-        }, [handleCancelJob]);
-
-        return null;
+        return handleCancelJob;
       },
     },
   ],

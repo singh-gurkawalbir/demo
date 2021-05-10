@@ -10,21 +10,25 @@ import Spinner from '../../../../Spinner';
 const useStyles = makeStyles(theme => ({
   message: {
     position: 'relative',
-    top: theme.spacing(-2),
+    top: theme.spacing(-1),
     display: 'flex',
     alignItems: 'center',
+    lineHeight: `${theme.spacing(2)}px`,
+    color: theme.palette.secondary.light,
+    marginBottom: theme.spacing(1),
+    '& > div': {
+      marginRight: theme.spacing(0.5),
+      height: theme.spacing(2),
+    },
   },
   successIcon: {
-    marginRight: 3,
+    marginRight: theme.spacing(0.5),
     fontSize: theme.spacing(2),
     color: theme.palette.success.main,
   },
   errorIcon: {
-    marginRight: 3,
+    marginRight: theme.spacing(0.5),
     fontSize: theme.spacing(2),
-  },
-  spinner: {
-    marginRight: theme.spacing(1),
   },
 }));
 
@@ -36,7 +40,7 @@ export default function VerifyTag({ error }) {
   if (validationInProgress) {
     return (
       <FormHelperText className={classes.message}>
-        <Spinner className={classes.spinner} size={10} /> Verifying
+        <Spinner className={classes.spinner} size="small" /> Verifying...
       </FormHelperText>
     );
   }
