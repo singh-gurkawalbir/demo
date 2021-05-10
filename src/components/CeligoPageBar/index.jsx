@@ -65,7 +65,7 @@ export default function CeligoPageBar(props) {
     }
     let listingPageUrl = redirectURlToParentListing(location.pathname);
 
-    if (!listingPageUrl && location.pathname.endsWith('/connectorLicenses') && location.pathname.startsWith('/connectors')) {
+    if (!listingPageUrl && location.pathname.startsWith('/connectors')) {
       listingPageUrl = '/connectors';
     }
     history.replace(listingPageUrl);
