@@ -147,7 +147,8 @@ export function* _getPreviewData({ resourceId, resourceType, values, runOffline,
 
       const integrationId = flow?._integrationId;
 
-      body._flowId = flowId;
+      // while working with newly created flows, flowId could be temporary UI generated. Rely on flow._id as flowId while making page processor preview call.
+      body._flowId = flow?._id;
       body._integrationId = integrationId;
       // Makes base preview calls for all other adaptors
       previewData = yield call(apiCallWithRetry, {
