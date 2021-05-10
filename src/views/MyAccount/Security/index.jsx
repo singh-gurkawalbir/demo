@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   spinner: {
-    marginLeft: theme.spacing(1),
+    marginLeft: theme.spacing(0.5),
     display: 'flex',
   },
   securityPanelHeader: {
@@ -223,7 +223,7 @@ export default function Security() {
             <CeligoSwitch
               onChange={handleEnableSSO}
               checked={isSSOEnabled} />
-            {isEnableSSOSwitchInProgress && <Spinner size="medium" className={classes.spinner} />}
+            {isEnableSSOSwitchInProgress && <Spinner size="small" className={classes.spinner} />}
           </div>
           {
           isSSOEnabled && (
