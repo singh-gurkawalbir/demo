@@ -649,11 +649,6 @@ const integrationApp = {
         id,
         options,
       }),
-      initFailed: (integrationId, flowId, error) => action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT_COMPLETE, {
-        integrationId,
-        flowId,
-        error,
-      }),
       clear: (integrationId, flowId) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR, {
           integrationId,
