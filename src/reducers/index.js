@@ -5480,7 +5480,7 @@ selectors.mkLogsInCurrPageSelector = () => createSelector(
 // #endregion listener request logs selectors
 
 // #region sso selectors
-selectors.oidcSSOClient = state => state.data.resources?.ssoclients?.find(client => client.type === 'oidc');
+selectors.oidcSSOClient = state => state?.data?.resources?.ssoclients?.find(client => client.type === 'oidc');
 
 selectors.isSSOEnabled = state => {
   const oidcClient = selectors.oidcSSOClient(state);
@@ -5514,7 +5514,7 @@ selectors.isUserAllowedOnlySSOSignIn = state => {
   return !!ssoLinkedAccount?.accountSSORequired;
 };
 
-selectors.canUserLoginViaSSO = state => {
+selectors.isUserAllowedOptionalSSOSignIn = state => {
   if (selectors.isAccountOwner(state)) {
     return selectors.isSSOEnabled(state);
   }
@@ -5526,7 +5526,7 @@ selectors.canUserLoginViaSSO = state => {
     const ssoLinkedAccount = orgAccounts.find(acc => acc.ownerUser._ssoClientId === linkedSSOClientId);
 
     // _ssoClientId matched owner's account ashare has accountSSORequired - false
-    return (ssoLinkedAccount && !ssoLinkedAccount.accountSSORequired);
+    return !!(ssoLinkedAccount && !ssoLinkedAccount.accountSSORequired);
   }
 };
 // #endregion sso selectors

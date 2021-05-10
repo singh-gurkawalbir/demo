@@ -139,7 +139,7 @@ export default function SignIn({dialogOpen}) {
   let error = useSelector(state => selectors.authenticationErrored(state));
   const userEmail = useSelector(state => selectors.userProfileEmail(state));
   const userProfileLinkedWithGoogle = useSelector(state => selectors.userProfileLinkedWithGoogle(state));
-  const canUserLoginViaSSO = useSelector(state => selectors.canUserLoginViaSSO(state));
+  const canUserLoginViaSSO = useSelector(state => selectors.isUserAllowedOptionalSSOSignIn(state));
   const showError = useSelector(state => selectors.showAuthError(state));
 
   const userHasOtherLoginOptions = (userEmail && userProfileLinkedWithGoogle) || canUserLoginViaSSO;
