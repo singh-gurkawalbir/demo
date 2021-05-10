@@ -6,6 +6,7 @@ import React from 'react';
 import { Button} from '@material-ui/core';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
+import Spinner from '../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -35,6 +36,7 @@ export default function SignInSSOForm() {
   const dispatch = useDispatch();
   const classes = useStyles();
   const userEmail = useSelector(state => selectors.userProfileEmail(state));
+  const isAuthenticating = useSelector(state => selectors.isAuthenticating(state));
   const handleSignInWithSSO = e => {
     e.preventDefault();
     dispatch(actions.auth.reSignInWithSSO());
@@ -51,15 +53,17 @@ export default function SignInSSOForm() {
         value={userEmail}
         className={classes.textField}
         disabled />
-      <Button
-        data-test="submit"
-        variant="contained"
-        color="primary"
-        type="submit"
-        className={classes.submit}
-        onClick={handleSignInWithSSO} >
-        Sign in with SSO
-      </Button>
+      {isAuthenticating ? <Spinner /> : (
+        <Button
+          data-test="submit"
+          variant="contained"
+          color="primary"
+          type="submit"
+          className={classes.submit}
+          onClick={handleSignInWithSSO} >
+          Sign in with SSO
+        </Button>
+      )}
     </div>
   );
 }

@@ -177,7 +177,7 @@ export default function AlertDialog() {
     <div>
       <LoadResources required resources={isAccountOwner ? 'ssoclients' : ''}>
 
-        {showSessionStatus && showSessionStatus !== 'warning' && (
+        {showSessionStatus && (
         <Dialog disableEnforceFocus open style={contentWrapper}>
           {showSessionStatus === 'warning' ? (
             <WarningSessionContent />

@@ -5491,6 +5491,9 @@ selectors.isSSOEnabled = state => {
 };
 
 selectors.userLinkedSSOClientId = state => {
+  if (selectors.isAccountOwner(state)) {
+    return selectors.oidcSSOClient(state)?._id;
+  }
   const profile = selectors.userProfile(state) || emptyObject;
 
   return profile.authTypeSSO?._ssoClientId;
@@ -5508,7 +5511,7 @@ selectors.isUserAllowedOnlySSOSignIn = state => {
   const orgAccounts = state.user.org.accounts.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
   const ssoLinkedAccount = orgAccounts.find(acc => acc.ownerUser._ssoClientId === linkedSSOClientId);
 
-  return !!ssoLinkedAccount.accountSSORequired;
+  return !!ssoLinkedAccount?.accountSSORequired;
 };
 
 selectors.canUserLoginViaSSO = state => {

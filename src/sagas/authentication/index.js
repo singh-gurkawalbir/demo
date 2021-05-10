@@ -423,10 +423,10 @@ export function* reSignInWithSSO() {
         body: {},
       },
     });
-    yield put(actions.auth.complete());
   } catch (e) {
-    yield put(actions.auth.failure('Authentication Failure'));
+    return yield put(actions.auth.failure('Authentication Failure'));
   }
+  yield call(initializeSession);
 }
 
 export function* linkWithGoogle({ returnTo }) {
