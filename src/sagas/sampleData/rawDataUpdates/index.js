@@ -20,7 +20,7 @@ import saveRawDataForFileAdaptors from './fileAdaptorUpdates';
 import saveTransformationRulesForNewXMLExport from '../utils/xmlTransformationRulesGenerator';
 import { emptyObject, FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
 
-export function* _fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
+export function* _fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId, flowId }) {
   const resourceObj = yield select(
     selectors.resource,
     type === 'imports' ? 'imports' : 'exports',
@@ -64,6 +64,7 @@ export function* _fetchAndSaveRawDataForResource({ type, resourceId, tempResourc
     const exportPreviewData = yield call(exportPreview, {
       resourceId,
       hidden: true,
+      flowId,
     });
 
     if (exportPreviewData) {
@@ -112,11 +113,18 @@ export function* onResourceCreate({ id, resourceType, tempId }) {
     const resourceObj = yield select(selectors.resource, resourceType, id);
 
     if (!resourceObj.isLookup || isFileAdaptor(resourceObj)) {
+      const { flowId } = yield select(
+        selectors.resourceFormState,
+        resourceType,
+        tempId
+      );
+
       // If export, get raw data calling preview and call save raw data with a patch on this id
       yield call(_fetchAndSaveRawDataForResource, {
         type: 'exports',
         resourceId: id,
         tempResourceId: tempId,
+        flowId,
       });
     }
   }
@@ -164,6 +172,7 @@ export function* onResourceUpdate({
       yield call(_fetchAndSaveRawDataForResource, {
         type: 'exports',
         resourceId,
+        flowId,
       });
     }
   }

@@ -1,4 +1,4 @@
-import { useEffect} from 'react';
+import { useCallback} from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import EditIcon from '../../../../icons/EditIcon';
@@ -7,11 +7,10 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { flowbuilderUrl } from '../../../../../utils/flows';
 
 export default {
-  label: 'Edit flow',
+  key: 'editFlow',
+  useLabel: () => 'Edit flow',
   icon: EditIcon,
-  component: function Edit(props) {
-    const { rowData = {} } = props;
-
+  useOnClick: rowData => {
     const flowId = rowData._id;
     const integrationId = rowData._integrationId;
     const isIntegrationApp = !!rowData._connectorId;
@@ -22,10 +21,8 @@ export default {
     const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
     const flowBuilderTo = flowbuilderUrl(flowId, integrationId, {isIntegrationApp, appName, isDataLoader});
 
-    useEffect(() => {
+    return useCallback(() => {
       history.push(flowBuilderTo);
     }, [history, flowBuilderTo]);
-
-    return null;
   },
 };
