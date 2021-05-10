@@ -35,6 +35,7 @@ const useStyles = makeStyles(theme => ({
   },
   drawerPaperShift: {
     marginLeft: theme.drawerWidth,
+    minHeight: 41,
   },
   drawerTransition: {
     transition: theme.transitions.create(['height', 'margin'], {
@@ -147,9 +148,6 @@ export default function BottomDrawer({
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const flowConnectionsWithLogEntry = useSelectorMemo(selectors.flowConnectionsWithLogEntry, flowId);
-  const flowScripts = useSelectorMemo(selectors.mkGetScriptsTiedToFlow, flowId);
-  const flowScriptsWithLogEntry = useSelector(state => selectors.flowExecutionLogScripts(state, flowId), shallowEqual);
 
   const minDrawerHeight = 41;
   const maxHeight = window.innerHeight - theme.appBarHeight - theme.pageBarHeight + 1; // border 1px
@@ -277,7 +275,7 @@ export default function BottomDrawer({
           Run console
           {
             isFlowRunInProgress &&
-            <Spinner color="primary" size={16} className={classes.inProgress} />
+            <Spinner size="small" className={classes.inProgress} />
           }
         </>
       );
@@ -447,53 +445,71 @@ export default function BottomDrawer({
           </div>
         </div>
         <>
-          <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-            { isUserInErrMgtTwoDotZero
-              ? <RunDashboardV2 flowId={flowId} />
-              : <RunDashboardPanel flowId={flowId} />}
-          </TabPanel>
-          {
-            isUserInErrMgtTwoDotZero &&
-            (
-              <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-                <RunHistory flowId={flowId} />
-              </TabPanel>
-            )
-          }
-          <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-            <ConnectionPanel flowId={flowId} />
-          </TabPanel>
-          {!!flowScripts?.length && (
-            <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-              <ScriptPanel flowId={flowId} />
-            </TabPanel>
-          )}
+          {tabs?.map(({ tabType, resourceId}) => {
+            switch (tabType) {
+              case 'dashboard':
+                return (
+                  <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
+                    { isUserInErrMgtTwoDotZero
+                      ? <RunDashboardV2 flowId={flowId} />
+                      : <RunDashboardPanel flowId={flowId} />}
+                  </TabPanel>
+                );
+              case 'runHistory':
+                return (
+                  <>
+                    {isUserInErrMgtTwoDotZero &&
+                    (
+                      <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
+                        <RunHistory flowId={flowId} />
+                      </TabPanel>
+                    )}
+                  </>
+                );
 
-          <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-            <AuditPanel flowId={flowId} />
-          </TabPanel>
-          {flowScriptsWithLogEntry.map(script => (
-            <TabPanel key={script.scriptId} value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
-              <ScriptLogs flowId={flowId} scriptId={script.scriptId} />
-            </TabPanel>
-          ))}
-          {flowConnectionsWithLogEntry?.map(
-              connection =>
-                (
+              case 'connections':
+                return (
+                  <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
+                    <ConnectionPanel flowId={flowId} />
+                  </TabPanel>
+                );
+              case 'scripts':
+                return (
+                  <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
+                    <ScriptPanel flowId={flowId} />
+                  </TabPanel>
+                );
+              case 'auditLogs':
+                return (
+                  <TabPanel value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
+                    <AuditPanel flowId={flowId} />
+                  </TabPanel>
+                );
+              case 'scriptLogs':
+                return (
+                  <TabPanel key={resourceId} value={activeTabIndex} index={tabContentIndex++} className={classes.tabPanel}>
+                    <ScriptLogs flowId={flowId} scriptId={resourceId} />
+                  </TabPanel>
+                );
+
+              case 'connectionLogs':
+                return (
                   <TabPanel
                     value={activeTabIndex}
-                    key={connection._id}
+                    key={resourceId}
                     index={tabContentIndex++}
                     className={classes.tabPanel}>
                     <>
                       <ConnectionLogs
-                        connectionId={connection._id}
+                        connectionId={resourceId}
                         flowId={flowId}
                       />
                     </>
                   </TabPanel>
-                )
-            )}
+                );
+              default:
+            }
+          })}
         </>
       </Drawer>
     </div>

@@ -4,9 +4,6 @@ import { makeStyles, CircularProgress } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
-  center: {
-    textAlign: 'center',
-  },
   spinnerWrapper: {
     display: 'flex',
     alignItems: 'center',
@@ -18,12 +15,16 @@ const useStyles = makeStyles(theme => ({
     left: 0,
     margin: 'auto',
     '& >.MuiCircularProgress-root': {
-      width: props => props.centerAll && !props.size ? '48px' : '',
-      height: props => props.centerAll && !props.size ? '48px' : '',
+      width: props => props.centerAll && props.size ? `${props.size} !important` : theme.spacing(6),
+      height: props => props.centerAll && props.size ? `${props.size} !important` : theme.spacing(6),
     },
   },
   spinnerChildren: {
     paddingLeft: theme.spacing(1),
+  },
+  extraSmall: {
+    width: theme.spacing(1),
+    height: theme.spacing(1),
   },
   small: {
     width: theme.spacing(2),
@@ -36,6 +37,13 @@ const useStyles = makeStyles(theme => ({
   large: {
     width: theme.spacing(6),
     height: theme.spacing(6),
+  },
+  spinnerWithChildren: {
+    alignItems: 'center',
+    display: 'flex',
+  },
+  loadingWithChildren: {
+    justifyContent: 'center',
   },
 }));
 
@@ -54,21 +62,22 @@ export default function Spinner(props) {
     />
   );
 
-  if (loading) {
-    return <div className={clsx(classes.center, className)}>{progress}</div>;
-  }
-
   return (
-    centerAll ? (
-      <div className={clsx(classes.spinnerWrapper, className)}>
-        {progress} <div className={classes.spinnerChildren}>{children}</div>
-      </div>
-    ) : progress
+    <div
+      className={clsx(
+        {[classes.spinnerWrapper]: centerAll},
+        {[classes.spinnerWithChildren]: children},
+        {[classes.loadingWithChildren]: loading},
+        className)}>
+      {progress} {children && <div className={classes.spinnerChildren}>{children}</div> }
+    </div>
   );
 }
 
 Spinner.propTypes = {
-  size: PropTypes.oneOf(['small', 'medium', 'large']),
+  children: PropTypes.node,
+  size: PropTypes.oneOf(['extraSmall', 'small', 'medium', 'large']),
   centerAll: PropTypes.bool,
+  loading: PropTypes.bool,
 };
 

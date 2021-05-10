@@ -9,14 +9,10 @@ import PanelHeader from '../PanelHeader';
 import UsersList from './UsersList';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.common.white,
-    overflow: 'visible',
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-  },
   userListWrapper: {
-    overflow: 'visible',
+    overflowX: 'auto',
+    marginLeft: -theme.spacing(2),
+    marginRight: -theme.spacing(2),
   },
 }));
 
@@ -44,7 +40,7 @@ export default function ManageUsersPanel({ integrationId, storeId }) {
   const handleInvite = useCallback(() => history.push(`${match.url}/invite`), [history, match]);
 
   return (
-    <div className={classes.root}>
+    <div className={classes.fullPanel}>
       <PanelHeader title="Users" infoText={infoTextUsers}>
         {isAccountOwner && (
           <IconTextButton onClick={handleInvite}>
@@ -57,3 +53,4 @@ export default function ManageUsersPanel({ integrationId, storeId }) {
     </div>
   );
 }
+

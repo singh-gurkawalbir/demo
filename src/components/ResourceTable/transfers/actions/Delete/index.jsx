@@ -1,14 +1,17 @@
 import { useDispatch } from 'react-redux';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import actions from '../../../../../actions';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import TrashIcon from '../../../../icons/TrashIcon';
+import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 
 export default {
-  label: 'Delete transfer',
+  key: 'deleteTransfer',
+  useLabel: () => 'Delete transfer',
   icon: TrashIcon,
-  component: function Delete({ rowData: transfer }) {
+  useOnClick: () => {
     const dispatch = useDispatch();
+    const {transfer} = useGetTableContext();
     const { confirmDialog } = useConfirmDialog();
     const deleteTransfer = useCallback(() => {
       dispatch(actions.resource.delete('transfers', transfer._id));
@@ -32,10 +35,6 @@ export default {
       });
     }, [confirmDialog, deleteTransfer]);
 
-    useEffect(() => {
-      handleClick();
-    }, [handleClick]);
-
-    return null;
+    return handleClick;
   },
 };

@@ -1,22 +1,19 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
 import RegenerateTokenIcon from '../../../../icons/RegenerateTokenIcon';
 
 export default {
-  label: 'Generate new token',
+  key: 'generateNewToken',
+  useLabel: () => 'Generate new token',
   icon: RegenerateTokenIcon,
-  component: function RegenerateAccessToken({ rowData = {} }) {
+  useOnClick: rowData => {
     const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const regenerateAccessToken = useCallback(() => {
       dispatch(actions.accessToken.generateToken(resourceId));
     }, [dispatch, resourceId]);
 
-    useEffect(() => {
-      regenerateAccessToken();
-    }, [regenerateAccessToken]);
-
-    return null;
+    return regenerateAccessToken;
   },
 };

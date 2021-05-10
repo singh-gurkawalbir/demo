@@ -74,6 +74,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
 
   useEffect(() => {
     dispatch(actions.patchFilter(filterKey, {sort: { order: 'asc', orderBy: 'name' }}));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     if (permission.register && newResourceId && !isStandalone) {

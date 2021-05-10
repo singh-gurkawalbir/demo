@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import getDomPurify from '../../utils/domPurify';
 import { ALLOWED_HTML_TAGS } from '../../utils/constants';
 
 export default function RawHtml({ html, options = {}, ...props }) {
-  const { sanitize } = getDomPurify(options);
-  const sanitizedHtml = sanitize(html, {
-    ALLOWED_TAGS: options.allowedTags || ALLOWED_HTML_TAGS,
-  });
+  const sanitizedHtml = useMemo(() => {
+    const { sanitize } = getDomPurify(options);
+
+    return sanitize(html, {
+      ALLOWED_TAGS: options.allowedTags || ALLOWED_HTML_TAGS,
+    });
+  }, [html, options]);
 
   return (
     <div

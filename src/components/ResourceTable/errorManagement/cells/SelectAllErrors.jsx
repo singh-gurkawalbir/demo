@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Checkbox from '@material-ui/core/Checkbox';
 import CheckboxUnselectedIcon from '../../../icons/CheckboxUnselectedIcon';
@@ -21,7 +21,7 @@ export default function SelectAllErrors({
       isResolved,
     })
   );
-  const handleChange = event => {
+  const handleChange = useCallback(event => {
     const { checked } = event.target;
 
     dispatch(
@@ -32,24 +32,25 @@ export default function SelectAllErrors({
         isResolved,
       })
     );
-  };
+  }, [dispatch, flowId, isResolved, resourceId]);
 
   return (
-    <Checkbox
-      icon={(
-        <span>
-          <CheckboxUnselectedIcon />
-        </span>
+    useMemo(() => (
+      <Checkbox
+        icon={(
+          <span>
+            <CheckboxUnselectedIcon />
+          </span>
       )}
-      checkedIcon={(
-        <span>
-          <CheckboxSelectedIcon />
-        </span>
+        checkedIcon={(
+          <span>
+            <CheckboxSelectedIcon />
+          </span>
       )}
-      onChange={event => handleChange(event)}
-      checked={isAllSelected}
-      disabled={!!actionInProgress}
-      color="primary"
+        onChange={handleChange}
+        checked={isAllSelected}
+        disabled={!!actionInProgress}
+        color="primary"
     />
-  );
+    ), [actionInProgress, handleChange, isAllSelected]));
 }

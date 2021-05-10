@@ -1,22 +1,29 @@
 import React from 'react';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import ResourceDrawerLink from '../../../SuiteScript/ResourceDrawerLink';
 
 export default {
-  columns: (r, actionProps) => [
+  useColumns: () => [
     {
+      key: 'name',
       heading: 'Name',
-      value: resource => (
-        <ResourceDrawerLink
-          ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
-          resourceType="connections"
-          resource={resource}
+      Value: ({rowData: resource}) => {
+        const tableContext = useGetTableContext();
+
+        return (
+          <ResourceDrawerLink
+            ssLinkedConnectionId={tableContext.ssLinkedConnectionId}
+            resourceType="connections"
+            resource={resource}
         />
-      ),
+        );
+      },
       orderBy: 'name',
     },
     {
+      key: 'type',
       heading: 'Type',
-      value: resource => ({
+      Value: ({rowData: resource}) => ({
         ebay: 'eBay',
         ftp: 'FTP',
         sftp: 'SFTP',
@@ -31,13 +38,15 @@ export default {
       }[resource.type] || resource.type),
     },
     {
+      key: 'api',
       heading: 'API',
-      value: resource =>
+      Value: ({rowData: resource}) =>
         (resource[resource.type === 'sftp' ? 'ftp' : resource.type].hostURI),
     },
     {
+      key: 'username',
       heading: 'Username',
-      value: resource =>
+      Value: ({rowData: resource}) =>
         (resource[resource.type === 'sftp' ? 'ftp' : resource.type].username),
     },
   ],

@@ -5473,3 +5473,48 @@ selectors.mkLogsInCurrPageSelector = () => createSelector(
 );
 
 // #endregion listener request logs selectors
+
+// #region sso selectors
+selectors.oidcSSOClient = state => state.data.resources?.ssoclients?.find(client => client.type === 'oidc');
+
+selectors.isSSOEnabled = state => {
+  const oidcClient = selectors.oidcSSOClient(state);
+
+  if (!oidcClient) return false;
+
+  return !oidcClient.disabled;
+};
+
+selectors.ownerSSOClientId = state => {
+  const accountOwner = selectors.accountOwner(state) || emptyObject;
+  const profile = selectors.userProfile(state) || emptyObject;
+
+  if (accountOwner._id === profile._id) {
+    // extract ssoClientId for the user's profile
+    return profile.authTypeSSO?._ssoClientId;
+  }
+
+  return accountOwner._ssoClientId;
+};
+
+selectors.isUserAllowedOnlySSOLogin = state => {
+  const userPermissions = selectors.userPermissions(state) || {};
+
+  // Account owner can always login through SSO/ email and password
+  if (userPermissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+    return false;
+  }
+
+  const ownerSSOClientId = selectors.ownerSSOClientId(state);
+
+  const preferences = selectors.userPreferences(state);
+  const isAccountSSORequired = selectors.isAccountSSORequired(state, preferences.defaultAShareId);
+
+  /*
+  * If owner has ssoClientId, owner has sso enabled
+  * accountUser has isAccountSSORequired infers he is required to log in only through SSO
+  * When above 2 conditions satisfy, it infers user can login only through SSO
+  */
+  return ownerSSOClientId && isAccountSSORequired;
+};
+// #endregion sso selectors

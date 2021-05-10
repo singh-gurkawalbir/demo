@@ -12,33 +12,33 @@ import TextOverflowCell from '../../TextOverflowCell';
 
 export default {
 
-  columns: [
+  useColumns: () => [
     {
+      key: 'applications',
       heading: 'Applications',
-      value: function Applications(r) {
-        return <ApplicationImgCell applications={r.applications} />;
-      },
+      Value: ({rowData: r}) => <ApplicationImgCell applications={r.applications} />,
 
     },
     {
+      key: 'name',
       heading: 'Name',
       width: '25%',
-      value: function TemplatesDrawerLink(r) {
-        return (
-          <TextOverflowCell
-            message={<ResourceDrawerLink resourceType="templates" resource={r} />} />
-        );
-      },
+      Value: ({rowData: r}) => (
+        <TextOverflowCell
+          message={<ResourceDrawerLink resourceType="templates" resource={r} />} />
+      ),
       orderBy: 'name',
     },
     {
+      key: 'lastUpdated',
       heading: 'Last updated',
-      value: r => <CeligoTimeAgo date={r.lastModified} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {
+      key: 'websiteUrl',
       heading: 'Website URL',
-      value(r) {
+      Value: ({rowData: r}) => {
         // the hyperlink has to be an Absolute link to not open the link relative to our website domain
         const websiteURL = r.websiteURL?.startsWith('http') ? r.websiteURL : `https://${r.websiteURL}`;
 
@@ -52,20 +52,19 @@ export default {
       },
     },
     {
+      key: 'published',
       heading: 'Published',
-      value: function Type(r) {
-        return (
-          <OnOffCell
-            templateId={r._id}
-            published={r.published}
-            applications={r.applications}
-            resourceType="templates"
+      Value: ({rowData: r}) => (
+        <OnOffCell
+          templateId={r._id}
+          published={r.published}
+          applications={r.applications}
+          resourceType="templates"
           />
 
-        );
-      },
+      ),
       orderBy: 'published',
     },
   ],
-  rowActions: [Edit, UploadZipFile, Download, Delete],
+  useRowActions: () => [Edit, UploadZipFile, Download, Delete],
 };

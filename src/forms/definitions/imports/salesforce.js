@@ -69,6 +69,10 @@ export default {
 
     delete newValues['/inputMode'];
 
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
+
     return {
       ...newValues,
     };

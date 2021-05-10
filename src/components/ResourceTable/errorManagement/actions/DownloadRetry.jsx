@@ -1,28 +1,30 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import DownloadIcon from '../../../icons/DownloadIcon';
 
 export default {
-  label: 'Download retry data',
+  key: 'downloadRetryData',
+  useLabel: () => 'Download retry data',
   icon: DownloadIcon,
-  disabledActionText: ({isFlowDisabled}) => {
+  useDisabledActionText: () => {
+    const {isFlowDisabled} = useGetTableContext();
+
     if (isFlowDisabled) {
       return 'Enable the flow to download retry data';
     }
   },
-  component: function DownloadRetry({rowData = {}, flowId, resourceId}) {
+  useOnClick: rowData => {
     const { retryDataKey } = rowData;
     const dispatch = useDispatch();
+
+    const {flowId, resourceId } = useGetTableContext();
 
     const handleClick = useCallback(() => {
       dispatch(actions.errorManager.retryData.download({flowId, resourceId, retryDataKey}));
     }, [dispatch, flowId, resourceId, retryDataKey]);
 
-    useEffect(() => {
-      handleClick();
-    }, [handleClick]);
-
-    return null;
+    return handleClick;
   },
 };

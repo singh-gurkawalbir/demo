@@ -1,12 +1,16 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
+import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 import ReactivateTokenIcon from '../../../../icons/ReactivateTokenIcon';
 
 export default {
-  label: 'Reactivate token',
+  key: 'reactivateToken',
+  useLabel: () => 'Reactivate token',
   icon: ReactivateTokenIcon,
-  component: function ReactivateAccessToken({ resourceType, rowData = {} }) {
+  useOnClick: rowData => {
+    const {resourceType} = useGetTableContext();
+
     const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const reactivateAccessToken = useCallback(() => {
@@ -24,10 +28,6 @@ export default {
       );
     }, [dispatch, resourceId, resourceType]);
 
-    useEffect(() => {
-      reactivateAccessToken();
-    }, [reactivateAccessToken]);
-
-    return null;
+    return reactivateAccessToken;
   },
 };

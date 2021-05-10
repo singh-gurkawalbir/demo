@@ -16,14 +16,20 @@ import ScheduleCell from './cells/ScheduleCell';
 import MappingCell from './cells/MappingCell';
 import SettingsCell from './cells/SettingsCell';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
+import { useGetTableContext } from '../../CeligoTable/TableContext';
 
 export default {
-  columns: (empty, actionProps) => {
+  useColumns: () => {
+    const actionProps = useGetTableContext();
+
     let columns = [
       {
+        key: 'name',
         heading: 'Name',
         // TODO: update 'storeId' references to 'childId'
-        value: function Name(r, { parentId, storeId }) {
+        Value: ({rowData: r}) => {
+          const {parentId, storeId} = useGetTableContext();
+
           return (
             <NameCell
               flowId={r._id}
@@ -41,7 +47,8 @@ export default {
       },
       ...(actionProps.showChild ? [{
         heading: actionProps.childHeader || 'App',
-        value: function ChildName(r, actionProps) {
+        key: 'app',
+        Value: ({rowData: r}) => {
           const {integrationChildren = []} = actionProps;
 
           return r.childName || integrationChildren.find(i => i.value === r._integrationId)?.label || '';
@@ -49,42 +56,41 @@ export default {
         orderBy: actionProps.childHeader ? 'childName' : '_integrationId',
       }] : []),
       {
+        key: 'errors',
         heading: 'Errors',
-        value: function Errors(r) {
-          return (
-            <ErrorsCell
-              flowId={r._id}
-              integrationId={actionProps?.parentId || r._integrationId}
-              isIntegrationApp={!!r._connectorId}
-              childId={actionProps?.storeId}
+        Value: ({rowData: r}) => (
+          <ErrorsCell
+            flowId={r._id}
+            integrationId={actionProps?.parentId || r._integrationId}
+            isIntegrationApp={!!r._connectorId}
+            childId={actionProps?.storeId}
             />
-          );
-        },
+        ),
         orderBy: 'errors',
       },
       {
+        key: 'lastUpdated',
         heading: 'Last updated',
-        value: r => <CeligoTimeAgo date={r.lastModified} />,
+        Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
         orderBy: 'lastModified',
       },
       {
+        key: 'lastRun',
         heading: 'Last run',
-        value: r => <StatusCell flowId={r._id} integrationId={r._integrationId || 'none'} date={r.lastExecutedAt} actionProps={actionProps} />,
+        Value: ({rowData: r}) => <StatusCell flowId={r._id} integrationId={r._integrationId || 'none'} date={r.lastExecutedAt} actionProps={actionProps} />,
         orderBy: 'lastExecutedAt',
       },
       {
+        key: 'mapping',
         heading: 'Mapping',
         align: 'center',
-        value: function Mapping(r) {
-          return <MappingCell flowId={r._id} childId={actionProps?.storeId} />;
-        },
+        Value: ({rowData: r}) => <MappingCell flowId={r._id} childId={actionProps?.storeId} />,
       },
       {
+        key: 'schedule',
         heading: 'Schedule',
         align: 'center',
-        value: function Schedule(r) {
-          return <ScheduleCell flowId={r._id} name={r.name} actionProps={actionProps} />;
-        },
+        Value: ({rowData: r}) => <ScheduleCell flowId={r._id} name={r.name} actionProps={actionProps} />,
       },
     ];
 
@@ -94,15 +100,14 @@ export default {
     }
 
     if (actionProps.isIntegrationApp) {
-      columns = columns.map(col => pick(col, ['heading', 'align', 'value', 'orderBy']));
+      columns = columns.map(col => pick(col, ['heading', 'key', 'align', 'Value', 'orderBy']));
 
       columns.push(
         {
+          key: 'settings',
           heading: 'Settings',
           align: 'center',
-          value: function Settings(r) {
-            return <SettingsCell flowId={r._id} name={r.name} actionProps={actionProps} />;
-          },
+          Value: ({rowData: r}) => <SettingsCell flowId={r._id} name={r.name} actionProps={actionProps} />,
         }
       );
     }
@@ -110,42 +115,40 @@ export default {
     columns = [
       ...columns,
       {
+        key: 'run',
         heading: 'Run',
-        value: function Name(r) {
-          return (
-            <RunCell
-              flowId={r._id}
-              integrationId={actionProps?.parentId || r._integrationId}
-              isIntegrationApp={!!r._connectorId}
-              storeId={actionProps?.storeId}
-              actionProps={actionProps}
+        Value: ({rowData: r}) => (
+          <RunCell
+            flowId={r._id}
+            integrationId={actionProps?.parentId || r._integrationId}
+            isIntegrationApp={!!r._connectorId}
+            storeId={actionProps?.storeId}
+            actionProps={actionProps}
             />
-          );
-        },
+        ),
       },
       {
+        key: 'off/On',
         heading: 'Off/On',
-        value: function Type(r) {
-          return (
-            <OnOffCell
-              flowId={r._id}
-              integrationId={r._integrationId}
-              isIntegrationApp={!!r._connectorId}
-              name={r.name}
-              isFree={r.free}
-              disabled={r.disabled}
-              storeId={actionProps.storeId}
-              actionProps={actionProps}
+        Value: ({rowData: r}) => (
+          <OnOffCell
+            flowId={r._id}
+            integrationId={r._integrationId}
+            isIntegrationApp={!!r._connectorId}
+            name={r.name}
+            isFree={r.free}
+            disabled={r.disabled}
+            storeId={actionProps.storeId}
+            actionProps={actionProps}
             />
-          );
-        },
+        ),
       },
     ];
 
     return columns;
   },
 
-  rowActions: r => {
+  useRowActions: r => {
     const isIntegrationApp = !!r._connectorId;
     const isStandalone = !r._integrationId;
     // all possible: detach, clone, audit, references, download, delete

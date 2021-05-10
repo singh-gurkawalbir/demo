@@ -1,23 +1,22 @@
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
-const emptyObject = {};
 export default {
-  label: () => 'View',
-  component: function ViewLogDetail({scriptId, flowId = '', rowData = emptyObject}) {
+  key: 'viewLogDetail',
+  useLabel: () => 'View',
+  useOnClick: rowData => {
     const {index} = rowData;
+    const {flowId, scriptId } = useGetTableContext();
     const location = useLocation();
     const history = useHistory();
 
-    useEffect(() => {
+    return useCallback(() => {
       const detailPath = flowId ? `/scriptLog/${scriptId}/${flowId}/${index}` : `/scriptLog/${scriptId}/${index}`;
 
       history.push(
         `${location.pathname}${detailPath}`
       );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    return null;
+    }, [flowId, history, index, location.pathname, scriptId]);
   },
 };
