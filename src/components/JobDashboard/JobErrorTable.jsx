@@ -560,10 +560,11 @@ export default function JobErrorTable({
                 isSelectableRow={r =>
                   r.metadata && r.metadata.isParent && !r.resolved}
                 onSelectChange={handleJobErrorSelectChange}
-                columns={[
+                useColumns={() => [
                   {
+                    key: 'expandClick',
                     heading: '',
-                    value: r =>
+                    Value: ({rowData: r}) =>
                       r.similarErrors?.length > 0 && (
                         <IconButton
                           data-test="expandJobsErrors"
@@ -579,27 +580,31 @@ export default function JobErrorTable({
                       ),
                   },
                   {
+                    key: 'resolved',
                     heading: 'Resolved?',
                     align: 'center',
-                    value: r => r.resolved
+                    Value: ({rowData: r}) => r.resolved
                       ? (<span className={classes.resolved}>Yes</span>)
                       : (<span className={classes.error}>No</span>),
                   },
                   {
+                    key: 'source',
                     heading: 'Source',
                     width: '15%',
-                    value: r => r.source && (<span className={classes.code}>{r.source}</span>),
+                    Value: ({rowData: r}) => r.source && (<span className={classes.code}>{r.source}</span>),
                   },
                   {
+                    key: 'code',
                     heading: 'Code',
                     align: 'left',
                     width: '15%',
-                    value: r => r.code && (<span className={classes.code}>{r.code}</span>),
+                    Value: ({rowData: r}) => r.code && (<span className={classes.code}>{r.code}</span>),
                   },
                   {
+                    key: 'message',
                     heading: 'Message',
                     width: '30%',
-                    value: r => (
+                    Value: ({rowData: r}) => (
                       <JobErrorMessage
                         message={r.message}
                         exportDataURI={r.exportDataURI}
@@ -608,14 +613,16 @@ export default function JobErrorTable({
                     ),
                   },
                   {
+                    key: 'time',
                     heading: 'Time',
                     width: '15%',
-                    value: r => <DateTimeDisplay dateTime={r.createdAt} />,
+                    Value: ({rowData: r}) => <DateTimeDisplay dateTime={r.createdAt} />,
                   },
                   {
+                    key: 'retryData',
                     heading: 'Retry data',
                     align: 'center',
-                    value: r => (
+                    Value: ({rowData: r}) => (
                       <EditRetryCell
                         retryId={r._retryId}
                         isEditable={r.metadata?.isParent &&

@@ -3,19 +3,18 @@ import { useCallback } from 'react';
 import actions from '../../../../../actions';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import CancelIcon from '../../../../icons/CancelIcon';
-import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 
 export default {
   key: 'cancelTransfer',
   useLabel: () => 'Cancel transfer',
   icon: CancelIcon,
-  useOnClick: () => {
+  useOnClick: rowData => {
+    const { _id: transferId} = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
-    const {transfer} = useGetTableContext();
     const cancelTransfer = useCallback(() => {
-      dispatch(actions.transfer.cancel(transfer._id));
-    }, [dispatch, transfer._id]);
+      dispatch(actions.transfer.cancel(transferId));
+    }, [dispatch, transferId]);
     const handleClick = useCallback(() => {
       confirmDialog({
         title: 'Confirm cancel',
