@@ -11,13 +11,15 @@ import PanelHeader from '../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   root: {
+    backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',
+    minHeight: 124,
   },
   topHeading: {
     display: 'flex',
     justifyContent: 'space-between',
-    paddingBottom: theme.spacing(1),
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
   heading: {
     paddingLeft: theme.spacing(1),
@@ -56,6 +58,12 @@ export default function Transfers() {
                   Create transfer
                 </IconTextButton>
               </div>
+
+              <ResourceTable
+                resourceType="transfers"
+                resources={transfers}
+                className={classes.transferTableWrapper}
+            />
             </div>
 
             {
@@ -71,12 +79,6 @@ export default function Transfers() {
               as the sender.
             </div> */
             }
-
-            <ResourceTable
-              resourceType="transfers"
-              resources={transfers}
-              className={classes.transferTableWrapper}
-            />
           </>
         )}
         {showInviteView && <Invite setShowInviteView={setShowInviteView} />}

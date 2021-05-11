@@ -13,8 +13,11 @@ import UpgradeDrawer from './drawers/Upgrade';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    margin: theme.spacing(0, 1, 2, 1),
+    backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',
+    minHeight: 124,
   },
   wrapper: {
     border: '1px solid',
@@ -66,6 +69,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 'normal',
   },
   block: {
+    padding: theme.spacing(0, 2),
     marginBottom: theme.spacing(3),
   },
   linkCompare: {
