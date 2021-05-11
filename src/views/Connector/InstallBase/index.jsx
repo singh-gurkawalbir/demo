@@ -29,7 +29,7 @@ const defaultFilter = {
 };
 
 export default function InstallBase(props) {
-  const { match, history } = props;
+  const { match } = props;
   const { connectorId } = match.params;
   const filterKey = 'connectorInstallBase';
   const classes = useStyles();
@@ -123,7 +123,7 @@ export default function InstallBase(props) {
     <>
       <ResourceDrawer {...props} />
       <CeligoPageBar
-        history={history}
+        parentUrl="/connectors"
         title={`View / Update Install Base: ${connector.name}`}>
         <div className={classes.actions}>
           <KeywordSearch
