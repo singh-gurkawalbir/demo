@@ -174,7 +174,7 @@ export default function AlertDialog() {
   if (isUserLoggedInDifferentTab) { return <LoggedInWithADifferentAccount />; }
 
   return (
-    <LoadResources required resources={isAccountOwner ? 'ssoclients' : ''}>
+    <LoadResources required resources={isAccountOwner ? 'ssoclients' : []}>
       {showSessionStatus && (
         <Dialog disableEnforceFocus open style={contentWrapper}>
           {showSessionStatus === 'warning' ? (

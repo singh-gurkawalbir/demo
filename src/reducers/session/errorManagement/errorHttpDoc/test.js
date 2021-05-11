@@ -245,8 +245,9 @@ describe('errorHttpDoc selectors', () => {
         others: { status: 200 },
       },
       response: {
-        body: { test: 5, bodyKey: 'blob-1234' },
+        body: { test: 5 },
         others: { status: 200 },
+        bodyKey: 'blob-1234',
       },
     };
     const sampleState2 = {
@@ -262,10 +263,10 @@ describe('errorHttpDoc selectors', () => {
       expect(selectors.s3HttpBlobKey(sampleState, 'key-000')).toBeUndefined();
     });
     test('should return the bodyKey if exists for the passed reqAndResKey for both request and response based on isRequest prop in the state', () => {
-      expect(selectors.s3HttpBlobKey(sampleState, reqAndResKey, true)).toBe(mockResponse.request.body.bodyKey);
+      expect(selectors.s3HttpBlobKey(sampleState, reqAndResKey, true)).toBe(mockResponse.request.bodyKey);
       expect(selectors.s3HttpBlobKey(sampleState, reqAndResKey, false)).toBeUndefined();
       expect(selectors.s3HttpBlobKey(sampleState2, reqAndResKey, true)).toBeUndefined();
-      expect(selectors.s3HttpBlobKey(sampleState2, reqAndResKey, false)).toBe(mockResponse2.response.body.bodyKey);
+      expect(selectors.s3HttpBlobKey(sampleState2, reqAndResKey, false)).toBe(mockResponse2.response.bodyKey);
     });
   });
 });
