@@ -5,10 +5,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import SignInForm from '../../views/SignIn/SigninForm';
+import SignInSSOForm from '../../views/SignIn/SignInSSOForm';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import ModalDialog from '../ModalDialog';
 import getRoutePath from '../../utils/routePaths';
+import LoadResources from '../LoadResources';
 
 const contentWrapper = {
   minWidth: 432,
@@ -101,26 +103,30 @@ const WarningSessionContent = () => {
   );
 };
 
-const ExpiredSessionContent = () => (
-  <ModalDialog show disableEnforceFocus>
-    <div>
-      <Typography>Your session has expired</Typography>
-      <br />
-      <Typography>Please sign in again</Typography>
-    </div>
-    <div style={contentWrapper}>
-      <SignInForm dialogOpen />
-    </div>
-  </ModalDialog>
-);
+const ExpiredSessionContent = () => {
+  const showSSOSignIn = useSelector(state => selectors.isUserAllowedOnlySSOSignIn(state));
+
+  return (
+    <ModalDialog show disableEnforceFocus>
+      <div>
+        <Typography>Your session has expired</Typography>
+        <br />
+        <Typography>Please sign in again</Typography>
+      </div>
+      <div style={contentWrapper}>
+        {showSSOSignIn ? <SignInSSOForm /> : <SignInForm dialogOpen />}
+      </div>
+    </ModalDialog>
+  );
+};
 
 export default function AlertDialog() {
   const dispatch = useDispatch();
   const sessionValidTimestamp = useSelector(state => selectors.sessionValidTimestamp(state));
   const showSessionStatus = useSelector(state => selectors.showSessionStatus(state));
+  const isAccountOwner = useSelector(state => selectors.isAccountOwner(state));
   const isAuthenticated = useSelector(state => selectors.isAuthenticated(state));
   const isUiVersionDifferent = useSelector(selectors.isUiVersionDifferent);
-
   const isUserAcceptedAccountTransfer = useSelector(state =>
     selectors.isUserAcceptedAccountTransfer(state)
   );
@@ -168,7 +174,7 @@ export default function AlertDialog() {
   if (isUserLoggedInDifferentTab) { return <LoggedInWithADifferentAccount />; }
 
   return (
-    <div>
+    <LoadResources required resources={isAccountOwner ? 'ssoclients' : ''}>
       {showSessionStatus && (
         <Dialog disableEnforceFocus open style={contentWrapper}>
           {showSessionStatus === 'warning' ? (
@@ -180,6 +186,6 @@ export default function AlertDialog() {
       )}
       {!showSessionStatus && isUiVersionDifferent && <StaleUIVersion />}
       {!showSessionStatus && isUserAcceptedAccountTransfer && <UserAcceptedAccountTransfer />}
-    </div>
+    </LoadResources>
   );
 }
