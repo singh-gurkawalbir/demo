@@ -1048,11 +1048,7 @@ selectors.flowSupportsMapping = (state, id, childId) => {
 
   if (!flow) return false;
 
-  const isApp = flow._connectorId;
-  const isAppVersion2 = selectors.isIntegrationAppVersion2(state, flow._integrationId, true);
-
-  // For IA2.0, 'showMapping' is assumed true for now until we have more clarity
-  if (!isApp || isAppVersion2) return true;
+  if (!flow._connectorId) return true;
 
   const integration = selectors.resource(state, 'integrations', flow._integrationId);
 
