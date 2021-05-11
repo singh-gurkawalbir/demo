@@ -8,19 +8,19 @@ export default {
     {
       key: 'created',
       heading: 'Created',
-      Value: r => <CeligoTimeAgo date={r.created} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.created} />,
       orderBy: 'created',
     },
     {
       key: 'status',
       heading: 'Status',
-      Value: r => r._integrationId ? 'Installed' : 'Pending',
+      Value: ({rowData: r}) => r._integrationId ? 'Installed' : 'Pending',
       orderBy: 'status',
     },
     {
       key: 'integrationId',
       heading: 'Integration ID',
-      Value: r => r._integrationId,
+      Value: ({rowData: r}) => r._integrationId,
     },
   ],
   useRowActions: () => [Edit, Delete],
