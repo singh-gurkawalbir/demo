@@ -20,7 +20,6 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     height: '92%',
-    overflowY: 'auto',
   },
   btnGroup: {
 

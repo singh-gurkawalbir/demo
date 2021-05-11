@@ -54,6 +54,9 @@ const useStyles = makeStyles(theme => ({
       marginBottom: 0,
     },
   },
+  securityPanelHeader: {
+    padding: theme.spacing(2, 0),
+  },
 }));
 
 export default function Security() {
@@ -189,14 +192,14 @@ export default function Security() {
 
   const applicationLoginURL = `${domainURL}/sso/${oidcClient?.orgId}`;
   const redirectURL = `${domainURL}/sso/${oidcClient?.orgId}/callback`;
-  const infoTextUsers =
+  const infoTextSSO =
   'Configure single sign-on settings in this section';
 
   return (
     <>
       <LoadResources required resources="ssoclients">
         <div className={classes.panel}>
-          <PanelHeader title="Single Sign-on(SSO)" infoText={infoTextUsers} />
+          <PanelHeader className={classes.securityPanelHeader} title="Single Sign-on(SSO)" infoText={infoTextSSO} />
           <div className={classes.ssoSwitch}>
             <Typography variant="body2" className={classes.content}> Enable OIDC based SSO </Typography>
             <Help title="Enable OIDC based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
