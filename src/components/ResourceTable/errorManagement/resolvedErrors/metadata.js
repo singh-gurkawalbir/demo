@@ -11,6 +11,7 @@ import TextOverflowCell from '../../../TextOverflowCell';
 import SelectSource from '../cells/SelectSource';
 import SelectDate from '../cells/SelectDate';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
+import EditRetryData from '../actions/EditRetry';
 
 const options = {allowedTags: ['a']};
 export default {
@@ -88,7 +89,7 @@ export default {
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.resolvedAt} />,
     },
   ],
-  useRowAction: ({ retryDataKey, reqAndResKey }) => {
+  useRowActions: ({ retryDataKey, reqAndResKey }) => {
     const {actionInProgress} = useGetTableContext();
     const actions = [];
 
@@ -98,6 +99,9 @@ export default {
       actions.push(Retry);
     }
     actions.push(ViewErrorDetails);
+    if (retryDataKey) {
+      actions.push(EditRetryData);
+    }
     if (reqAndResKey) {
       actions.push(ViewHttpRequest, ViewHttpResponse);
     }
