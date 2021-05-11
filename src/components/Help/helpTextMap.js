@@ -2159,7 +2159,7 @@ export default {
   'mapping.useFirstRow':
     `Check this box to update the destination sublist fields using only the value of the first sublist retrieved for the record. For example, if the source app contains the following two rows: 
     <table style="width:98%; margin-top: 8px; margin-bottom: 8px; border-collapse:collapse;"  text-align: left; color:#D6E4ED; background-color: #ffffff;"> <thead><tr> <th style="border:1px solid #D6E4ED; padding-left: 6px;">Name</th> <th style="border:1px solid #D6E4ED; padding-left: 6px;">Visits</th> </tr></thead> 
-    <tr> <td style="border:1px solid #D6E4ED; padding-left: 6px;">Jones</td> <td style="border:1px solid #D6E4ED; padding-left: 6px;">13</td> </tr>
+    <tr> <td style="border:1px solid #D6E4ED; padding-left: 6px;">Jones</td> <td style="border:1px solid #D6E4ED; padding-left: 6px;">3</td> </tr>
      <tr> <td style="border:1px solid #D6E4ED; padding-left: 6px;">Smith</td> <td style="border:1px solid #D6E4ED; padding-left: 6px;">11</td> </tr>
     </table>
     When you select <b>Apply only the first row’s value and map the Visits</b>, the destination records will be synced as follows upon import, ignoring the second (or subsequent) rows.
