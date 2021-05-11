@@ -40,11 +40,12 @@ export default function SelectableCheckBoxCell({
   const shouldShowSelectableCheckBox = isSelectableRow ? !!isSelectableRow(rowData) : true;
   const isChecked = !!selectedResources?.[rowData?._id];
 
-  if (!selectableRows || !shouldShowSelectableCheckBox) { return null; }
+  if (!selectableRows) { return null; }
 
   return (
 
     <TableCell >
+      {shouldShowSelectableCheckBox && (
       <Checkbox
         onChange={handleSelectChange}
         checked={isChecked}
@@ -52,7 +53,7 @@ export default function SelectableCheckBoxCell({
         icon={(<span><CheckboxUnselectedIcon /></span>)}
         checkedIcon={(<span><CheckboxSelectedIcon /></span>)}
               />
-
+      )}
     </TableCell>
   );
 }

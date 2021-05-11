@@ -16,6 +16,8 @@ const isDownloadButtonDisabled = selected => {
   return disabled;
 };
 
+const useColumns = () => [{ key: 'name', heading: 'Name', Value: ({rowData: r}) => r.name }];
+
 export default function JobFilesDownloadDialog({
   job,
   onCloseClick,
@@ -50,7 +52,7 @@ export default function JobFilesDownloadDialog({
       <div>
         <CeligoTable
           data={job.files.map(file => ({ ...file, _id: file.id }))}
-          columns={[{ heading: 'Name', value: r => r.name }]}
+          useColumns={useColumns}
           onSelectChange={handleSelectChange}
           selectableRows
         />
