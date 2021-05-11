@@ -68,7 +68,7 @@ export default function CeligoPageBar(props) {
       history.replace(getRoutePath('/'));
     }
   }, [history, parentUrl]);
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state)); // afhgf
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
     <>
