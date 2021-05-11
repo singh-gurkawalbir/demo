@@ -67,7 +67,7 @@ export default {
       ...((!integrationId && isSSOEnabled) ? [
         {
           headerValue: () => <HeaderWithHelpText title="Account SSO linked?" helpKey="users.accountSSOLinked" />,
-          value: r => {
+          Value: ({rowData: r}) => {
             const { sharedWithUser = {}, _id: userId } = r;
 
             if (userId === ACCOUNT_IDS.OWN) {
@@ -80,7 +80,7 @@ export default {
           }},
         {
           headerValue: () => <HeaderWithHelpText title="Require account SSO?" helpKey="users.requireAccountSSO" />,
-          value: r => <RequireAccountSSO user={r} />,
+          Value: ({rowData: r}) => <RequireAccountSSO user={r} />,
           align: 'center',
         },
       ] : []),
