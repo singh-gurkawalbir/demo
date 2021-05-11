@@ -5508,8 +5508,8 @@ selectors.isUserAllowedOnlySSOSignIn = state => {
   if (!linkedSSOClientId) {
     return false;
   }
-  const orgAccounts = state.user.org.accounts.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
-  const ssoLinkedAccount = orgAccounts.find(acc => acc.ownerUser._ssoClientId === linkedSSOClientId);
+  const orgAccounts = state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
+  const ssoLinkedAccount = orgAccounts?.find(acc => acc.ownerUser?._ssoClientId === linkedSSOClientId);
 
   return !!ssoLinkedAccount?.accountSSORequired;
 };
@@ -5522,8 +5522,8 @@ selectors.isUserAllowedOptionalSSOSignIn = state => {
 
   if (!linkedSSOClientId) return false;
   if (linkedSSOClientId) {
-    const orgAccounts = state.user.org.accounts.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
-    const ssoLinkedAccount = orgAccounts.find(acc => acc.ownerUser._ssoClientId === linkedSSOClientId);
+    const orgAccounts = state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
+    const ssoLinkedAccount = orgAccounts?.find(acc => acc.ownerUser?._ssoClientId === linkedSSOClientId);
 
     // _ssoClientId matched owner's account ashare has accountSSORequired - false
     return !!(ssoLinkedAccount && !ssoLinkedAccount.accountSSORequired);
