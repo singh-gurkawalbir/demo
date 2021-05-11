@@ -1,13 +1,13 @@
 import React, {useCallback} from 'react';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
-import { useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Paper, Grid, IconButton } from '@material-ui/core';
 import { selectors } from '../../reducers';
 import InfoIconButton from '../InfoIconButton';
 import BackArrowIcon from '../icons/BackArrowIcon';
-import { redirectURlToParentListing } from '../drawer/Resource/Panel';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   pageHeader: {
@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function CeligoPageBar(props) {
   const {
-    history,
+    parentUrl,
     children,
     title,
     infoText,
@@ -57,19 +57,17 @@ export default function CeligoPageBar(props) {
     className,
   } = props;
   const classes = useStyles();
-  const location = useLocation();
+  const history = useHistory();
 
   const handleOnClick = useCallback(() => {
     if (history.length > 2) {
       return history.goBack();
+    } if (parentUrl) {
+      history.replace(parentUrl);
+    } else {
+      history.replace(getRoutePath('/'));
     }
-    let listingPageUrl = redirectURlToParentListing(location.pathname);
-
-    if (!listingPageUrl && location.pathname.startsWith('/connectors')) {
-      listingPageUrl = '/connectors';
-    }
-    history.replace(listingPageUrl);
-  }, [history, location.pathname]);
+  }, [history, parentUrl]);
   const drawerOpened = useSelector(state => selectors.drawerOpened(state)); // afhgf
 
   return (
@@ -83,7 +81,7 @@ export default function CeligoPageBar(props) {
         square>
 
         <Grid item container wrap="nowrap">
-          {history && (
+          {parentUrl && (
           // eslint-disable-next-line react/jsx-handler-names
           <IconButton size="small" onClick={handleOnClick}>
             <BackArrowIcon />
