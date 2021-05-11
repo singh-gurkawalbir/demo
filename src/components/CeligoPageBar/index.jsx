@@ -1,11 +1,13 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Paper, Grid, IconButton } from '@material-ui/core';
 import { selectors } from '../../reducers';
 import InfoIconButton from '../InfoIconButton';
 import BackArrowIcon from '../icons/BackArrowIcon';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   pageHeader: {
@@ -46,7 +48,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function CeligoPageBar(props) {
   const {
-    history,
+    parentUrl,
     children,
     title,
     infoText,
@@ -55,6 +57,17 @@ export default function CeligoPageBar(props) {
     className,
   } = props;
   const classes = useStyles();
+  const history = useHistory();
+
+  const handleOnClick = useCallback(() => {
+    if (history.length > 2) {
+      return history.goBack();
+    } if (parentUrl) {
+      history.replace(parentUrl);
+    } else {
+      history.replace(getRoutePath('/'));
+    }
+  }, [history, parentUrl]);
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
@@ -68,9 +81,9 @@ export default function CeligoPageBar(props) {
         square>
 
         <Grid item container wrap="nowrap">
-          {history && (
+          {parentUrl && (
           // eslint-disable-next-line react/jsx-handler-names
-          <IconButton size="small" onClick={history.goBack}>
+          <IconButton size="small" onClick={handleOnClick}>
             <BackArrowIcon />
           </IconButton>
           )}
