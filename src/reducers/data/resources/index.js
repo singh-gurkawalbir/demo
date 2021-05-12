@@ -862,7 +862,7 @@ selectors.resourceDetailsMap = createSelector(
       if (!['published', 'tiles'].includes(resourceType)) {
         allResources[resourceType] = {};
 
-        if (state[resourceType] && state[resourceType].length) {
+        if (state[resourceType] && Array.isArray(state[resourceType])) {
           state[resourceType].forEach(resource => {
             allResources[resourceType][resource._id] = {
               name: resource.name,

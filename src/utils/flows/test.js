@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 
-import { getFlowResources, getFlowType, flowbuilderUrl, getFlowListWithMetadata, getImportsFromFlow, isRunnable, showScheduleIcon, hasBatchExport, isRealtimeFlow, isSimpleImportFlow, getExportIdsFromFlow, getImportIdsFromFlow, isDeltaFlow, isIntegrationApp, isPageGeneratorResource, isFlowUpdatedWithPgOrPP, convertOldFlowSchemaToNewOne, isOldFlowSchema, getAllConnectionIdsUsedInTheFlow, getFirstExportFromFlow, isRealtimeExport, getScriptsReferencedInFlow, isFreeFlowResource, isLookupResource, isActionUsed, isImportMappingAvailable, getPageProcessorImportsFromFlow, getFlowReferencesForResource, getFlowDetails, getUsedActionsMapForResource, getIAFlowSettings, flowSupportsSettings, getNextDataFlows, flowAllowsScheduling, getIAResources} from '.';
+import { getFlowResources, getFlowType, flowbuilderUrl, getFlowListWithMetadata, getImportsFromFlow, isRunnable, showScheduleIcon, hasBatchExport, isRealtimeFlow, isSimpleImportFlow, getExportIdsFromFlow, getImportIdsFromFlow, isDeltaFlow, isIntegrationApp, isPageGeneratorResource, isFlowUpdatedWithPgOrPP, convertOldFlowSchemaToNewOne, isOldFlowSchema, getAllConnectionIdsUsedInTheFlow, getFirstExportFromFlow, isRealtimeExport, getScriptsReferencedInFlow, isFreeFlowResource, isLookupResource, isActionUsed, isImportMappingAvailable, getPageProcessorImportsFromFlow, getFlowReferencesForResource, getFlowDetails, getUsedActionsMapForResource, getIAFlowSettings, flowSupportsSettings, getNextDataFlows, flowAllowsScheduling, getIAResources, defaultIA2Flow} from '.';
 import getRoutePath from '../routePaths';
 
 const integration = {
@@ -184,6 +184,40 @@ const imports = [{
 const diyIntegration = {
   _id: 'i1',
   installSteps: [{something: 'something'}],
+};
+const integrationAppVersion2 = {
+  name: 'Payout to Reconciliation',
+  description: 'This business process app streamlines the reconciliation process by auto-matching the settlement transactions of payment gateway against the outstanding payments of NetSuite and provides a clear explanation for any unreconciled items.',
+  _connectorId: '_connectorId2',
+  install: [
+
+  ],
+  mode: 'settings',
+  version: '1.0.2',
+  installSteps: [
+    {
+      name: 'NetSuite connection',
+      description: 'Configure your NetSuite connection',
+      imageUrl: '/images/company-logos/netsuite.png',
+      completed: true,
+      type: 'connection',
+      sourceConnection: {
+        type: 'netsuite',
+        externalId: 'payout_to_reconciliation_netsuite_connection',
+        name: 'NetSuite Connection',
+      },
+    },
+  ],
+  uninstallSteps: [
+
+  ],
+  flowGroupings: [
+
+  ],
+  initChild: {
+    _scriptId: '_scriptId',
+    function: 'addNewChild',
+  },
 };
 
 const integrationApp = {
@@ -1884,6 +1918,9 @@ describe('getIAFlowSettings', () => {
     },
   };
 
+  test('should return default integration app version 2 object for IA2.0 integration', () => {
+    expect(getIAFlowSettings(integrationAppVersion2, flowIdIA, undefined)).toEqual(defaultIA2Flow);
+  });
   test('should return empty object for DIY integrations', () => {
     expect(getIAFlowSettings(diyIntegration, flowIdIA, undefined)).toEqual({});
   });
