@@ -94,6 +94,8 @@ const auth = {
     action(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, { returnTo }),
   reSignInWithGoogle: email =>
     action(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, { email }),
+  reSignInWithSSO: () =>
+    action(actionTypes.AUTH_RE_SIGNIN_WITH_SSO),
   linkWithGoogle: returnTo =>
     action(actionTypes.AUTH_LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),

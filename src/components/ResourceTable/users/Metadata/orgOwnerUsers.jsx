@@ -66,8 +66,9 @@ export default {
       }] : []),
       ...((!integrationId && isSSOEnabled) ? [
         {
-          headerValue: () => <HeaderWithHelpText title="Account SSO linked?" helpKey="users.accountSSOLinked" />,
-          value: r => {
+          key: 'accountSSOLinked',
+          HeaderValue: () => <HeaderWithHelpText title="Account SSO linked?" helpKey="users.accountSSOLinked" />,
+          Value: ({rowData: r}) => {
             const { sharedWithUser = {}, _id: userId } = r;
 
             if (userId === ACCOUNT_IDS.OWN) {
@@ -79,8 +80,9 @@ export default {
             return 'Yes';
           }},
         {
-          headerValue: () => <HeaderWithHelpText title="Require account SSO?" helpKey="users.requireAccountSSO" />,
-          value: r => <RequireAccountSSO user={r} />,
+          key: 'requireAccountSSO',
+          HeaderValue: () => <HeaderWithHelpText title="Require account SSO?" helpKey="users.requireAccountSSO" />,
+          Value: ({rowData: r}) => <RequireAccountSSO user={r} />,
           align: 'center',
         },
       ] : []),
