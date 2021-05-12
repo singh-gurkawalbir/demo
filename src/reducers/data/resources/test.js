@@ -1425,6 +1425,21 @@ describe('resourceDetailsMap selector', () => {
 
     expect(selectors.resourceDetailsMap(state)).toEqual({});
   });
+
+  test('should return {} and not throw any exceptions when the state has invalid collections', () => {
+    const state = reducer(
+      { invalid: 'string', invalid2: '<html></html>', invalid3: {test: '123'}, '': '<html />' },
+      'some action'
+    );
+
+    expect(selectors.resourceDetailsMap(state)).toEqual({
+      invalid: {},
+      invalid2: {},
+      invalid3: {},
+      '': {},
+    });
+  });
+
   test('should return correct resource details', () => {
     const integrations = [
       { _id: 'int1', name: 'int_One', something: 'something' },
