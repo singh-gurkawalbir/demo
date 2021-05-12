@@ -68,6 +68,7 @@ export default function TableHeader({
           selectableRows={selectableRows}
         />
         <AllTableHeaderCells
+          filterKey={filterKey}
           useColumns={useColumns}
         />
         {useRowActions && (
