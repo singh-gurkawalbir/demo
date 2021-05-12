@@ -1462,6 +1462,13 @@ describe('resource region selector testcases', () => {
             _integrationId: 'integrationId1',
             _connectorId: 'connector2',
 
+          },
+          {
+            _id: 'flowId7',
+            name: 'flow 7',
+            _integrationId: 'integrationId3',
+            _connectorId: 'connector2',
+
           }],
           integrations: [{
             _id: 'integrationId1',
@@ -1525,6 +1532,23 @@ describe('resource region selector testcases', () => {
                 },
               ],
             },
+          },
+          {
+            _id: 'integrationId3',
+            _connectorId: 'connector3',
+            installSteps: [
+              {
+                name: 'NetSuite connection',
+                description: 'Configure your NetSuite connection',
+                imageUrl: '/images/company-logos/netsuite.png',
+                completed: true,
+                type: 'connection',
+                sourceConnection: {
+                  type: 'netsuite',
+                  externalId: 'payout_to_reconciliation_netsuite_connection',
+                  name: 'NetSuite Connection',
+                },
+              }],
           }],
         },
       },
@@ -1540,6 +1564,7 @@ describe('resource region selector testcases', () => {
 
     test('should return correct value for single store connector', () => {
       expect(selectors.flowSupportsMapping(state, 'integrationId1')).toEqual(false);
+      expect(selectors.flowSupportsMapping(state, 'flowId7')).toEqual(true);
       expect(selectors.flowSupportsMapping(state, 'flowId4')).toEqual(true);
       expect(selectors.flowSupportsMapping(state, 'flowId3')).toEqual(false);
     });
@@ -1674,7 +1699,7 @@ describe('resource region selector testcases', () => {
       expect(selectors.flowSupportsSettings(state, 'flowId3')).toEqual(false);
     });
 
-    test('should return correct value for mullti store connector', () => {
+    test('should return correct value for multi store connector', () => {
       expect(selectors.flowSupportsSettings(state, 'flowId1', 'child1')).toEqual(false);
       expect(selectors.flowSupportsSettings(state, 'flowId2')).toEqual(true);
       expect(selectors.flowSupportsSettings(state, 'flowId2', 'child1')).toEqual(true);
