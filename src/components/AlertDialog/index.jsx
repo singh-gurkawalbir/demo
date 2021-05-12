@@ -11,6 +11,7 @@ import actions from '../../actions';
 import ModalDialog from '../ModalDialog';
 import getRoutePath from '../../utils/routePaths';
 import LoadResources from '../LoadResources';
+import { emptyList } from '../../utils/constants';
 
 const contentWrapper = {
   minWidth: 432,
@@ -174,7 +175,7 @@ export default function AlertDialog() {
   if (isUserLoggedInDifferentTab) { return <LoggedInWithADifferentAccount />; }
 
   return (
-    <LoadResources required resources={isAccountOwner ? 'ssoclients' : ''}>
+    <LoadResources required resources={isAccountOwner ? 'ssoclients' : emptyList}>
       {showSessionStatus && (
         <Dialog disableEnforceFocus open style={contentWrapper}>
           {showSessionStatus === 'warning' ? (
