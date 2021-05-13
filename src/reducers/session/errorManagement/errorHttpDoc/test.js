@@ -241,13 +241,13 @@ describe('errorHttpDoc selectors', () => {
   describe('s3HttpBlobKey selector', () => {
     const mockResponse2 = {
       request: {
-        body: { test: 5, body: {test: 'blob-1234'} },
-        others: { status: 200 },
+        body: { test: 5 },
+        status: 200,
       },
       response: {
-        body: { test: 5 },
-        others: { status: 200 },
+        headers: { 'content-type': 'application/json' },
         bodyKey: 'blob-1234',
+        status: 200,
       },
     };
     const sampleState2 = {

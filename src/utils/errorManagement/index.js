@@ -173,7 +173,6 @@ export function getJobStatus(job) {
 
 export function getMockHttpErrorDoc() {
   const MOCK_HTTP_BLOB_DOC = {
-    body: { test: 5 },
     headers: { 'content-type': 'application/json' },
     status: 200,
     bodyKey: 'blob-1234',
