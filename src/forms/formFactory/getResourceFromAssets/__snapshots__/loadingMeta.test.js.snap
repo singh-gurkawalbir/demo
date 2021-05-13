@@ -3111,9 +3111,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "traceKeyTemplate": Object {
-        "fieldId": "traceKeyTemplate",
-      },
     },
     "layout": Object {
       "containers": Array [
@@ -3156,7 +3153,6 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "advancedSettings",
-                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -3322,9 +3318,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "traceKeyTemplate": Object {
-        "fieldId": "traceKeyTemplate",
-      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -3395,7 +3388,6 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "advancedSettings",
-                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -3799,14 +3791,6 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "common": Object {
         "formId": "common",
@@ -3991,9 +3975,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "traceKeyTemplate": Object {
-        "fieldId": "traceKeyTemplate",
-      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -4129,10 +4110,9 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "advancedSettings",
                 "configureAsyncHelper",
                 "http._asyncHelperId",
-                "traceKeyTemplate",
+                "advancedSettings",
               ],
               "label": "Advanced",
             },
@@ -4185,9 +4165,6 @@ Object {
       },
       "settings": Object {
         "fieldId": "settings",
-      },
-      "traceKeyTemplate": Object {
-        "fieldId": "traceKeyTemplate",
       },
       "type": Object {
         "defaultValue": [Function],
@@ -4253,7 +4230,6 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "advancedSettings",
-                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -4280,8 +4256,8 @@ Object {
   "fieldMeta": Object {
     "actions": undefined,
     "fieldMap": Object {
-      "apiIdentifier": Object {
-        "fieldId": "apiIdentifier",
+      "advancedSettings": Object {
+        "formId": "advancedSettings",
       },
       "blob": Object {
         "formId": "blob",
@@ -4296,29 +4272,6 @@ Object {
       },
       "common": Object {
         "formId": "common",
-      },
-      "dataURITemplate": Object {
-        "fieldId": "dataURITemplate",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "netsuite.execution.type",
-            "isNot": Array [
-              "",
-            ],
-          },
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-          Object {
-            "field": "netsuite.api.type",
-            "isNot": Array [
-              "",
-            ],
-          },
-        ],
       },
       "delta.dateField": Object {
         "connectionId": [Function],
@@ -4734,30 +4687,6 @@ Object {
         "type": "mode",
         "visible": false,
       },
-      "pageSize": Object {
-        "fieldId": "pageSize",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "netsuite.api.type",
-            "is": Array [
-              "restlet",
-              "search",
-            ],
-          },
-          Object {
-            "field": "netsuite.execution.type",
-            "is": Array [
-              "scheduled",
-            ],
-          },
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
       "restlet": Object {
         "formId": "restlet",
         "visibleWhenAll": Array [
@@ -4990,12 +4919,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "skipRetries": Object {
-        "fieldId": "skipRetries",
-      },
-      "traceKeyTemplate": Object {
-        "fieldId": "traceKeyTemplate",
-      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -5108,14 +5031,10 @@ Object {
                 Object {
                   "fields": Array [
                     "netsuite.blob.purgeFileAfterExport",
-                    "dataURITemplate",
                     "netsuite.distributed.skipExportFieldId",
                     "netsuite.distributed.forceReload",
-                    "pageSize",
                     "netsuite.restlet.batchSize",
-                    "skipRetries",
-                    "apiIdentifier",
-                    "traceKeyTemplate",
+                    "advancedSettings",
                   ],
                 },
               ],
@@ -5547,23 +5466,9 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "apiIdentifier": Object {
-        "fieldId": "apiIdentifier",
       },
       "common": Object {
         "formId": "common",
-      },
-      "dataURITemplate": Object {
-        "fieldId": "dataURITemplate",
       },
       "delta.dateField": Object {
         "connectionId": [Function],
@@ -5634,9 +5539,6 @@ Object {
         "required": true,
         "type": "mode",
         "visible": false,
-      },
-      "pageSize": Object {
-        "fieldId": "pageSize",
       },
       "salesforce.distributed.batchSize": Object {
         "fieldId": "salesforce.distributed.batchSize",
@@ -5761,12 +5663,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "skipRetries": Object {
-        "fieldId": "skipRetries",
-      },
-      "traceKeyTemplate": Object {
-        "fieldId": "traceKeyTemplate",
-      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -5852,13 +5748,9 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "pageSize",
                 "salesforce.distributed.batchSize",
                 "salesforce.distributed.skipExportFieldId",
-                "dataURITemplate",
-                "skipRetries",
-                "apiIdentifier",
-                "traceKeyTemplate",
+                "advancedSettings",
               ],
               "label": "Advanced",
             },
@@ -6222,9 +6114,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "traceKeyTemplate": Object {
-        "fieldId": "traceKeyTemplate",
-      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -6294,7 +6183,6 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "advancedSettings",
-                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -6323,14 +6211,6 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "common": Object {
         "formId": "common",
@@ -6404,9 +6284,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "traceKeyTemplate": Object {
-        "fieldId": "traceKeyTemplate",
-      },
       "uploadFile": Object {
         "id": "uploadFile",
         "options": "csv",
@@ -6476,7 +6353,6 @@ Object {
               "collapsed": "true",
               "fields": Array [
                 "advancedSettings",
-                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -6505,23 +6381,9 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "apiIdentifier": Object {
-        "fieldId": "apiIdentifier",
       },
       "common": Object {
         "formId": "common",
-      },
-      "dataURITemplate": Object {
-        "fieldId": "dataURITemplate",
       },
       "delta.dateField": Object {
         "connectionId": [Function],
@@ -6592,9 +6454,6 @@ Object {
         "required": true,
         "type": "mode",
         "visible": false,
-      },
-      "pageSize": Object {
-        "fieldId": "pageSize",
       },
       "salesforce.distributed.batchSize": Object {
         "fieldId": "salesforce.distributed.batchSize",
@@ -6719,12 +6578,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "skipRetries": Object {
-        "fieldId": "skipRetries",
-      },
-      "traceKeyTemplate": Object {
-        "fieldId": "traceKeyTemplate",
-      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -6810,13 +6663,9 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "pageSize",
                 "salesforce.distributed.batchSize",
                 "salesforce.distributed.skipExportFieldId",
-                "dataURITemplate",
-                "skipRetries",
-                "apiIdentifier",
-                "traceKeyTemplate",
+                "advancedSettings",
               ],
               "label": "Advanced",
             },
@@ -6845,14 +6694,6 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "common": Object {
         "formId": "common",
@@ -7002,9 +6843,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "traceKeyTemplate": Object {
-        "fieldId": "traceKeyTemplate",
-      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -7113,7 +6951,6 @@ Object {
               "collapsed": "true",
               "fields": Array [
                 "advancedSettings",
-                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -7309,23 +7146,9 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "apiIdentifier": Object {
-        "fieldId": "apiIdentifier",
       },
       "common": Object {
         "formId": "common",
-      },
-      "dataURITemplate": Object {
-        "fieldId": "dataURITemplate",
       },
       "delta.dateField": Object {
         "connectionId": [Function],
@@ -7396,9 +7219,6 @@ Object {
         "required": true,
         "type": "mode",
         "visible": false,
-      },
-      "pageSize": Object {
-        "fieldId": "pageSize",
       },
       "salesforce.distributed.batchSize": Object {
         "fieldId": "salesforce.distributed.batchSize",
@@ -7523,12 +7343,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "skipRetries": Object {
-        "fieldId": "skipRetries",
-      },
-      "traceKeyTemplate": Object {
-        "fieldId": "traceKeyTemplate",
-      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -7614,13 +7428,9 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "pageSize",
                 "salesforce.distributed.batchSize",
                 "salesforce.distributed.skipExportFieldId",
-                "dataURITemplate",
-                "skipRetries",
-                "apiIdentifier",
-                "traceKeyTemplate",
+                "advancedSettings",
               ],
               "label": "Advanced",
             },
@@ -7673,9 +7483,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "traceKeyTemplate": Object {
-        "fieldId": "traceKeyTemplate",
-      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -7737,7 +7544,6 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "advancedSettings",
-                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -7790,9 +7596,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "traceKeyTemplate": Object {
-        "fieldId": "traceKeyTemplate",
-      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -7854,7 +7657,6 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "advancedSettings",
-                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
