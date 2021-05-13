@@ -25,7 +25,6 @@ export default function TableHeader({
   useColumns,
   filterKey,
   useRowActions,
-  variant,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -73,7 +72,7 @@ export default function TableHeader({
         />
         {useRowActions && (
         <TableCell align="center" className={classes.actionColHead}>
-          {variant === 'slim' ? '' : 'Actions'}
+          Actions
         </TableCell>
         )}
       </TableRow>
