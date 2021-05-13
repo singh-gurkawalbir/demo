@@ -54,9 +54,6 @@ export default {
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
     exportOneToMany: { formId: 'exportOneToMany' },
-    traceKeyTemplate: {
-      fieldId: 'traceKeyTemplate',
-    },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
@@ -76,7 +73,7 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['advancedSettings', 'traceKeyTemplate'],
+        fields: ['advancedSettings'],
       },
     ],
   },
