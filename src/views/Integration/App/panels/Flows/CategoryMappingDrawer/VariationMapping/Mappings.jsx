@@ -101,7 +101,7 @@ export default function ImportMapping(props) {
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { mappings, initChangeIdentifier } = useSelectorMemo(selectors.mkCategoryMappingsForSection, integrationId, flowId, editorId);
+  const { mappings } = useSelectorMemo(selectors.mkCategoryMappingsForSection, integrationId, flowId, editorId);
   const extractFields = useSelectorMemo(selectors.mkCategoryMappingsExtractsMetadata, integrationId, flowId);
   const { fields: generateFields = emptyList } =
   useSelector(state => {
@@ -164,9 +164,7 @@ export default function ImportMapping(props) {
   };
 
   return (
-    <div
-      className={classes.root}
-      key={`mapping-${editorId}-${initChangeIdentifier}`}>
+    <div className={classes.root}>
       <div className={classes.mappingsBody}>
         {tableData.map(mapping => (
           <div className={classes.rowContainer} key={mapping.key}>
@@ -176,7 +174,6 @@ export default function ImportMapping(props) {
                   [classes.disableChildRow]: mapping.isRequired || disabled,
                 })}>
                 <DynaTypeableSelect
-                  key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
                   id={`fieldMappingGenerate-${mapping.key}`}
                   value={mapping.generate}
                   labelName="name"
@@ -203,7 +200,6 @@ export default function ImportMapping(props) {
                   [classes.disableChildRow]: mapping.isNotEditable || disabled,
                 })}>
                 <DynaTypeableSelect
-                  key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
                   id={`fieldMappingExtract-${mapping.key}`}
                   labelName="name"
                   valueName="id"
