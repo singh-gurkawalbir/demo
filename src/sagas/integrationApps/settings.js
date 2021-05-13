@@ -1,7 +1,9 @@
-import { call, put, takeLatest, select } from 'redux-saga/effects';
+import { call, put, takeLatest, select, race, take } from 'redux-saga/effects';
+import shortid from 'shortid';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
+import { emptyList, emptyObject } from '../../utils/constants';
 import { apiCallWithRetry } from '../index';
 import { getResourceCollection, getResource } from '../resources';
 
@@ -286,11 +288,82 @@ export function* upgrade({ integrationId, license }) {
   }
 }
 
+export function* initCategoryMappings({ integrationId, flowId, id, sectionId, depth, isVariationAttributes, variation, isVariationMapping }) {
+  const categoryMappingData = yield select(selectors.categoryMappingData, integrationId, flowId);
+
+  if (!categoryMappingData) {
+    const { cancelInit } = yield race({
+      fetchData: call(getCategoryMappingMetadata, {
+        flowId,
+        integrationId,
+      }),
+      cancelInit: take(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR),
+    });
+
+    if (cancelInit) return;
+  }
+  const generatesData = yield select(selectors.mkCategoryMappingGenerateFields(), integrationId, flowId, { sectionId, depth });
+  let { fields: generateFields = emptyList} = generatesData || emptyObject;
+
+  if (isVariationAttributes) {
+    const { variation_attributes: variationAttributes } = generatesData || emptyObject;
+
+    generateFields = variationAttributes;
+  }
+  let fieldMappings;
+  let lookups;
+  let deleted;
+
+  if (isVariationMapping) {
+    const mappingsForVariation = yield select(selectors.mkMappingsForVariation(), integrationId, flowId, {
+      sectionId,
+      variation,
+      isVariationAttributes,
+      depth,
+    });
+
+    ({ fieldMappings = emptyList} = mappingsForVariation || {});
+  } else {
+    const mappingsForCategory = yield select(selectors.mkMappingsForCategory(), integrationId, flowId, { depth, sectionId });
+
+    ({ fieldMappings, lookups = [], deleted = false } = mappingsForCategory || {});
+  }
+
+  const mappings = yield select(selectors.categoryMappingById, integrationId, flowId, id);
+  const { staged } = mappings || emptyObject;
+  const formattedMappings = staged || fieldMappings;
+
+  yield put(
+    actions.integrationApp.settings.categoryMappings.initComplete(
+      integrationId,
+      flowId,
+      id,
+      {
+        mappings: formattedMappings.map(m => ({
+          ...m,
+          key: shortid.generate(),
+        })),
+        lookups,
+        isCategoryMapping: true,
+        adaptorType: 'netsuite',
+        application: 'netsuite',
+        flowId,
+        generateFields,
+        deleted,
+        isVariationMapping,
+        childCategoryId: sectionId,
+        variation,
+        isVariationAttributes,
+      })
+  );
+}
+
 export default [
   takeLatest(
     actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_UPGRADE,
     requestUpgrade
   ),
+  takeLatest(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT, initCategoryMappings),
   takeLatest(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE, upgrade),
   takeLatest(
     actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA,
