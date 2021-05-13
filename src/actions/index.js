@@ -94,6 +94,8 @@ const auth = {
     action(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, { returnTo }),
   reSignInWithGoogle: email =>
     action(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, { email }),
+  reSignInWithSSO: () =>
+    action(actionTypes.AUTH_RE_SIGNIN_WITH_SSO),
   linkWithGoogle: returnTo =>
     action(actionTypes.AUTH_LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
@@ -642,13 +644,13 @@ const integrationApp = {
             .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA,
           { integrationId, flowId, metadata }
         ),
-      init: (integrationId, flowId, id, options) =>
-        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT, {
-          integrationId,
-          flowId,
-          id,
-          options,
-        }),
+      init: opts => action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT, opts),
+      initComplete: (integrationId, flowId, id, options) => action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT_COMPLETE, {
+        integrationId,
+        flowId,
+        id,
+        options,
+      }),
       clear: (integrationId, flowId) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR, {
           integrationId,
@@ -663,7 +665,7 @@ const integrationApp = {
             flowId,
           }
         ),
-      patchField: (integrationId, flowId, id, field, index, value) =>
+      patchField: (integrationId, flowId, id, field, key, value) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.PATCH_FIELD,
           {
@@ -671,22 +673,23 @@ const integrationApp = {
             flowId,
             id,
             field,
-            index,
+            key,
             value,
           }
         ),
-      patchSettings: (integrationId, flowId, id, index, value) =>
+      patchSettings: (integrationId, flowId, id, key, value) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
             .PATCH_SETTINGS,
-          { integrationId, flowId, id, index, value }
+          { integrationId, flowId, id, key, value }
         ),
-      delete: (integrationId, flowId, id, row) =>
+      updateLastFieldTouched: key => action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LAST_TOUCHED_FIELD, { key }),
+      delete: (integrationId, flowId, id, key) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE, {
           integrationId,
           flowId,
           id,
-          index: row,
+          key,
         }),
       collapseAll: (integrationId, flowId) =>
         action(

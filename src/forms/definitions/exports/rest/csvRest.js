@@ -97,17 +97,8 @@ export default {
     exportOneToMany: { formId: 'exportOneToMany' },
     advancedSettings: {
       formId: 'advancedSettings',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
     },
     formView: { fieldId: 'formView' },
-    traceKeyTemplate: {
-      fieldId: 'traceKeyTemplate',
-    },
   },
   layout: {
     type: 'collapse',
@@ -149,7 +140,7 @@ export default {
         label: 'Non-standard API response patterns',
         fields: ['rest.resourcePath'],
       },
-      { collapsed: 'true', label: 'Advanced', fields: ['advancedSettings', 'traceKeyTemplate'] },
+      { collapsed: 'true', label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },
 };

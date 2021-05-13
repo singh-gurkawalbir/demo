@@ -77,11 +77,12 @@ const TableHeaderCell = ({filterKey, HeaderValue, heading,
     </TableCell>
   );
 };
-export default function AllTableHeaderCells({useColumns}) {
+export default function AllTableHeaderCells({useColumns, filterKey}) {
   const columns = useColumns();
 
   return columns.map(col => (
     <TableHeaderCell
+      filterKey={filterKey}
       key={col.key}
       {...col}
          />

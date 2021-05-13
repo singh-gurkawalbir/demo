@@ -259,14 +259,6 @@ export default {
     exportOneToMany: {
       formId: 'exportOneToMany',
     },
-    dataURITemplate: {
-      fieldId: 'dataURITemplate',
-      visibleWhenAll: [
-        { field: 'netsuite.execution.type', isNot: [''] },
-        { field: 'outputMode', is: ['records'] },
-        { field: 'netsuite.api.type', isNot: [''] },
-      ],
-    },
     'netsuite.distributed.forceReload': {
       fieldId: 'netsuite.distributed.forceReload',
       visibleWhenAll: [
@@ -339,18 +331,7 @@ export default {
         { field: 'outputMode', is: ['records'] },
       ],
     },
-    skipRetries: {
-      fieldId: 'skipRetries',
-    },
-    apiIdentifier: { fieldId: 'apiIdentifier' },
-    pageSize: {
-      fieldId: 'pageSize',
-      visibleWhenAll: [
-        { field: 'netsuite.api.type', is: ['restlet', 'search'] },
-        { field: 'netsuite.execution.type', is: ['scheduled'] },
-        { field: 'outputMode', is: ['records'] },
-      ],
-    },
+    advancedSettings: {formId: 'advancedSettings'},
     common: { formId: 'common' },
     settings: { fieldId: 'settings' },
     'delta.dateField': {
@@ -513,9 +494,6 @@ export default {
       fieldId: 'netsuite.blob.purgeFileAfterExport',
       visibleWhenAll: [{ field: 'outputMode', is: ['blob'] }],
     },
-    traceKeyTemplate: {
-      fieldId: 'traceKeyTemplate',
-    },
   },
   layout: {
     type: 'collapse',
@@ -591,14 +569,10 @@ export default {
           {
             fields: [
               'netsuite.blob.purgeFileAfterExport',
-              'dataURITemplate',
               'netsuite.distributed.skipExportFieldId',
               'netsuite.distributed.forceReload',
-              'pageSize',
               'netsuite.restlet.batchSize',
-              'skipRetries',
-              'apiIdentifier',
-              'traceKeyTemplate',
+              'advancedSettings',
             ],
           },
         ],

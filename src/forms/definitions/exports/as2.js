@@ -129,9 +129,6 @@ export default {
       defaultValue: 'records',
       visible: false,
     },
-    traceKeyTemplate: {
-      fieldId: 'traceKeyTemplate',
-    },
     'file.type': { fieldId: 'file.type' },
     'file.csv': { fieldId: 'file.csv' },
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
@@ -182,7 +179,7 @@ export default {
           'file.csv',
         ]}],
       },
-      { collapsed: true, label: 'Advanced', fields: ['advancedSettings', 'traceKeyTemplate'] },
+      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },
   actions: [

@@ -13,6 +13,8 @@ import { generateNewId, isNewId, getDomainUrl } from '../../../utils/resource';
 import { hashCode } from '../../../utils/string';
 import PanelHeader from '../../../components/PanelHeader';
 import Help from '../../../components/Help';
+import Spinner from '../../../components/Spinner';
+import useSaveStatusIndicator from '../../../hooks/useSaveStatusIndicator';
 
 const useStyles = makeStyles(theme => ({
   ssoForm: {
@@ -62,6 +64,10 @@ const useStyles = makeStyles(theme => ({
       marginBottom: 0,
     },
   },
+  spinner: {
+    marginLeft: theme.spacing(0.5),
+    display: 'flex',
+  },
   securityPanelHeader: {
     '& > h4 > .MuiButtonBase-root': {
       color: theme.palette.secondary.light,
@@ -75,9 +81,12 @@ export default function Security() {
   const oidcClient = useSelector(state => selectors.oidcSSOClient(state));
   const key = hashCode(oidcClient);
   const resourceId = oidcClient?._id || generateNewId();
+  const isEnableSSOSwitchInProgress = useSelector(state => selectors.commStatusPerPath(state, `/ssoclients/${resourceId}`, 'PATCH') === 'loading');
   const [isSSOEnabled, setIsSSOEnabled] = useState(!!oidcClient?.disabled);
   const handleEnableSSO = useCallback(
     () => {
+      if (isEnableSSOSwitchInProgress) return;
+
       if (isNewId(resourceId)) {
         return setIsSSOEnabled(prevValue => !prevValue);
       }
@@ -98,7 +107,7 @@ export default function Security() {
 
       dispatch(actions.resource.patch('ssoclients', resourceId, patchSet));
     },
-    [dispatch, oidcClient, resourceId],
+    [dispatch, oidcClient, resourceId, isEnableSSOSwitchInProgress],
   );
 
   useEffect(() => {
@@ -194,6 +203,14 @@ export default function Security() {
     dispatch(actions.resource.commitStaged('ssoclients', resourceId, 'value'));
   }, [dispatch, resourceId]);
 
+  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
+    {
+      path: isNewId(resourceId) ? '/ssoclients' : `/ssoclients/${resourceId}`,
+      method: isNewId(resourceId) ? 'post' : 'put',
+      onSave: handleSubmit,
+    }
+  );
+
   let domainURL = getDomainUrl();
 
   if (domainURL.includes('localhost')) {
@@ -215,8 +232,8 @@ export default function Security() {
             <Help title="Enable OIDC based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
             <CeligoSwitch
               onChange={handleEnableSSO}
-              checked={isSSOEnabled}
-      />
+              checked={isSSOEnabled} />
+            {isEnableSSOSwitchInProgress && <Spinner size="small" className={classes.spinner} />}
           </div>
           {
           isSSOEnabled && (
@@ -241,8 +258,9 @@ export default function Security() {
               <div className={classes.footer}>
                 <DynaSubmit
                   formKey={formKey}
-                  onClick={handleSubmit}>
-                  Save
+                  disabled={disableSave}
+                  onClick={submitHandler()}>
+                  {defaultLabels.saveLabel}
                 </DynaSubmit>
               </div>
             </>

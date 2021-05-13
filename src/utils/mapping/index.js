@@ -12,7 +12,7 @@ import getJSONPaths, {
 import { isJsonString } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
-import { emptyObject } from '../constants';
+import { emptyList, emptyObject } from '../constants';
 
 const isCsvOrXlsxResource = resource => {
   const { file } = resource;
@@ -98,10 +98,10 @@ const setMappingData = (
 
     if (mappings[key]) {
       // eslint-disable-next-line no-param-reassign
-      category.fieldMappings = mappings[key].mappings
+      category.fieldMappings = (mappings[key].mappings || [])
         .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
         .map(
-          ({ index, rowIdentifier, hardCodedValueTmp, visible, ...rest }) => ({
+          ({ index, rowIdentifier, hardCodedValueTmp, key, name, description, showListOption, filterType, visible, ...rest }) => ({
             ...rest,
           })
         );
@@ -171,12 +171,16 @@ const setVariationMappingData = (
 
       if (mappings[key]) {
         // eslint-disable-next-line no-param-reassign
-        mapping.fieldMappings = mappings[key].mappings
+        mapping.fieldMappings = (mappings[key].mappings || [])
           .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
           .map(
             ({
               index,
               rowIdentifier,
+              description,
+              name,
+              filterType,
+              showListOption,
               hardCodedValueTmp,
               visible,
               ...rest
@@ -201,7 +205,7 @@ const setVariationMappingData = (
 
           if (mappings[key]) {
             const stagedMappings =
-              mappings[key].staged || mappings[key].mappings;
+              mappings[key].staged || mappings[key].mappings || emptyList;
 
             if (
               !mapping.variation_themes.find(vt => vt.variation_theme === vm)
@@ -504,6 +508,19 @@ export default {
     )
       ? objectKeys.every(key => this.isEqual(object[key], otherObject[key]))
       : false;
+  },
+  removeChildLookups: sessionMappings => {
+    if (!Array.isArray(sessionMappings?.basicMappings?.recordMappings)) {
+      return;
+    }
+    sessionMappings.basicMappings.recordMappings.forEach(category => {
+      if (category?.children?.length) {
+        category.children.forEach(childCategory => {
+          // eslint-disable-next-line no-param-reassign
+          delete childCategory.lookups;
+        });
+      }
+    });
   },
   setCategoryMappingData: (
     flowId,

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Tooltip } from '@material-ui/core';
 import CeligoSwitch from '../../../../CeligoSwitch';
@@ -13,6 +13,7 @@ export default function RequireAccountSSO({ user }) {
   const { accountSSORequired, _id: userId, sharedWithUser = {} } = user;
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
+  const [switchInProgress, setSwitchInProgress] = useState(false);
 
   const handleSwitch = () => {
     const updatedAshareDoc = {
@@ -20,23 +21,30 @@ export default function RequireAccountSSO({ user }) {
       accountSSORequired: !accountSSORequired,
     };
 
+    setSwitchInProgress(true);
     dispatch(actions.user.org.users.update(user._id, updatedAshareDoc));
   };
 
   const commStatusHandler = useCallback(
     objStatus => {
+      if (!switchInProgress) return;
       const { status } = objStatus.update || {};
 
       if (status === COMM_STATES.SUCCESS) {
-        const statusMessage = 'Updated successfully';
+        const { name, email } = sharedWithUser || {};
+        const userName = name || email;
+        const statusMessage = `User ${userName} ${!accountSSORequired ? 'requires' : 'does not require'} SSO to sign in`;
 
         enquesnackbar({
           message: statusMessage,
           variant: status,
         });
       }
+      if ([COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(status)) {
+        setSwitchInProgress(false);
+      }
     },
-    [enquesnackbar]
+    [enquesnackbar, switchInProgress, accountSSORequired, sharedWithUser]
   );
 
   const actionsToMonitor = useMemo(() => ({update: { action: actionTypes.USER_UPDATE, resourceId: userId }}), [userId]);
@@ -72,6 +80,7 @@ export default function RequireAccountSSO({ user }) {
       data-test="ssoRequired"
       checked={accountSSORequired}
       onChange={handleSwitch}
+      disabled={switchInProgress}
       />
   );
 }

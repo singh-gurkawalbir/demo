@@ -5,6 +5,7 @@ import { components } from 'react-select';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import ListIcon from '@material-ui/icons/List';
+import shortid from 'shortid';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import ActionButton from '../../../../../../../components/ActionButton';
@@ -118,18 +119,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const ListIconComponent = ({ mapping, generateFields = [] }) => {
-  const { generate } = mapping;
-  const generateField = generateFields.find(f => f.id === generate);
-
-  return generateField &&
-    generateField.options &&
-    generateField.options.length ? (
-    // TODO: @Azhar should be replaced by a ListIcon
-      <ListIcon />
-    ) : null;
-};
-
+const ListIconComponent = ({ showListIcon }) => showListIcon ? <ListIcon /> : null;
 const TextContainer = ({ options, onFieldChange, ...props }) => {
   const classes = useStyles();
   const [textvalue, setValue] = useState(props.value);
@@ -186,19 +176,12 @@ const TextContainer = ({ options, onFieldChange, ...props }) => {
   );
 };
 
-const FieldHelp = ({ integrationId, flowId, sectionId, depth, id }) => {
+const FieldHelp = ({id, name, description = 'No Description available.' }) => {
   const classes = useStyles();
-  const memoizedOptions = useMemo(() => ({ sectionId, depth }), [sectionId]);
-  const { fields = [] } = useSelectorMemo(selectors.mkCategoryMappingGenerateFields, integrationId, flowId, memoizedOptions) || {};
-
-  const field = fields.find(f => f.id === id);
-  const { name: title, description = 'No Description available.' } =
-    field || {};
 
   return (
     <Help
-      title={title}
-      disabled={!field}
+      title={name}
       className={classes.helpTextButtonCategroryMapping}
       helpKey={`categoryMappings-${id}`}
       helpText={description}
@@ -256,6 +239,161 @@ const ValueContainer = ({ children, ...props }) => {
   );
 };
 
+const MappingRow = ({
+  mapping,
+  integrationId,
+  flowId,
+  editorId,
+  disabled,
+  extractFields,
+  generateFields,
+  depth,
+  sectionId,
+  options = {},
+}) => {
+  const dispatch = useDispatch();
+  const classes = useStyles();
+  const {
+    extract,
+    generate,
+    name,
+    description,
+    isRequired,
+    key: mappingKey,
+    hardCodedValue,
+  } = mapping;
+  const extractValue = extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
+
+  const handleBlur = useCallback((field, value) => {
+    // check if value changes or user entered something in new row
+    if ((!mappingKey && value) || (mappingKey && mapping[field] !== value)) {
+      if (mappingKey && value === '') {
+        if (
+          (field === 'extract' && !generate) ||
+            (field === 'generate' &&
+              !extract &&
+              !('hardCodedValue' in mapping))
+        ) {
+          dispatch(actions.integrationApp.settings.categoryMappings.delete(integrationId, flowId, editorId, mappingKey));
+
+          return;
+        }
+      }
+      dispatch(actions.integrationApp.settings.categoryMappings.patchField(integrationId, flowId, editorId, field, mappingKey, value));
+    }
+  },
+  [dispatch, extract, generate, mapping, mappingKey]
+  );
+
+  const handleExtractBlur = useCallback((_id, value) => {
+    handleBlur('extract', value);
+  }, [handleBlur]);
+
+  const handleGenerateBlur = useCallback((_id, value) => {
+    handleBlur('generate', value);
+  }, [handleBlur]);
+
+  const handleFieldTouch = useCallback(() => {
+    dispatch(actions.integrationApp.settings.categoryMappings.updateLastFieldTouched(integrationId, flowId, editorId, mappingKey));
+  }, [dispatch, mappingKey]);
+
+  const handleDeleteClick = useCallback(() => {
+    dispatch(actions.integrationApp.settings.categoryMappings.delete(integrationId, flowId, editorId, mappingKey));
+  }, [dispatch, mappingKey]);
+
+  return (
+    <div className={classes.rowContainer} key={mappingKey}>
+      <div className={classes.innerRow}>
+        <div
+          className={clsx(classes.childHeader, classes.mapField, {
+            [classes.disableChildRow]: isRequired || disabled,
+          })}>
+          <DynaTypeableSelect
+            key={generate}
+            id={`fieldMappingGenerate-${mappingKey}`}
+            value={generate}
+            labelName="name"
+            valueName="id"
+            components={{
+              ValueContainer,
+            }}
+            TextComponent={TextContainer}
+            options={generateFields}
+            disabled={mapping.isRequired || disabled}
+            onBlur={handleGenerateBlur}
+        />
+
+        </div>
+        <MappingConnectorIcon className={classes.mappingIcon} />
+        <div
+          className={clsx(classes.childHeader, classes.mapField, {
+            [classes.disableChildRow]:
+            mapping.isNotEditable || disabled,
+          })}>
+
+          <DynaTypeableSelect
+            key={extractValue}
+            id={`fieldMappingExtract-${mapping.key}`}
+            labelName="name"
+            valueName="id"
+            endAdornment={(
+              <ListIconComponent showListIcon={mapping.showListOption} />
+            )}
+            value={extractValue}
+            options={extractFields}
+            disabled={mapping.isNotEditable || disabled}
+            components={{ ItemSeperator: () => null }}
+            onBlur={handleExtractBlur}
+            onTouch={handleFieldTouch}
+        />
+
+        </div>
+        <div className={classes.mappingActionsCategory}>
+          <div>
+            <MappingSettings
+              dataTest={`fieldMappingSettings-${mapping.key}`}
+              isCategoryMapping
+              disabled={mapping.isNotEditable || disabled}
+              mappingKey={mapping.key}
+              integrationId={integrationId}
+              flowId={flowId}
+              depth={depth}
+              sectionId={sectionId}
+              editorId={editorId}
+              {...options}
+          />
+          </div>
+          <div key="delete_button">
+            <ActionButton
+              data-test={`fieldMappingRemove-${mapping.key}`}
+              aria-label="delete"
+              disabled={
+              mapping.isNotEditable || disabled
+            }
+              onClick={handleDeleteClick}>
+              <TrashIcon />
+            </ActionButton>
+          </div>
+          <div>
+            <FieldHelp
+              id={generate}
+              name={name}
+              description={description}
+          />
+          </div>
+        </div>
+      </div>
+    </div>
+
+  );
+};
+
+const areMappingRowsEqual = (prevProps, nextProps) => prevProps?.mapping?.extract === nextProps?.mapping?.extract &&
+  prevProps?.mapping?.generate === nextProps?.mapping?.generate &&
+  prevProps?.disabled === nextProps?.disabled &&
+  prevProps?.mapping?.hardCodedValue === nextProps?.mapping?.hardCodedValue;
+const MappingRowMemoized = React.memo(MappingRow, areMappingRowsEqual);
+
 export default function ImportMapping(props) {
   // generateFields and extractFields are passed as an array of field names
   const {
@@ -263,182 +401,59 @@ export default function ImportMapping(props) {
     integrationId,
     flowId,
     generateFields = [],
-    disabled,
     sectionId,
     options = {},
     depth,
   } = props;
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const memoizedOptions = useMemo(() => ({ sectionId, depth }), [sectionId]);
+  const memoizedOptions = useMemo(() => ({ sectionId, depth }), [sectionId, depth]);
+  const { deleted: disabled = false } = useSelectorMemo(selectors.mkMappingsForCategory, integrationId, flowId, memoizedOptions) || {};
   const { attributes = {}, mappingFilter = 'mapped' } = useSelectorMemo(selectors.mkCategoryMappingFilters, integrationId, flowId) || {};
   const { mappings, initChangeIdentifier } = useSelectorMemo(selectors.mkCategoryMappingsForSection, integrationId, flowId, editorId, depth);
-  const { fields = [] } = useSelectorMemo(selectors.mkCategoryMappingGenerateFields, integrationId, flowId, memoizedOptions) || {};
   const extractFields = useSelectorMemo(selectors.mkCategoryMappingsExtractsMetadata, integrationId, flowId);
   const mappingsCopy = mappings ? [...mappings] : [];
 
-  mappingsCopy.push({});
-  const tableData = useMemo(() => (mappingsCopy || []).map((value, index) => {
-    const obj = value;
+  const visibleAttributes = Object.keys(attributes).filter(key => attributes[key]);
 
-    obj.index = index;
-    let visible = true;
-    const field = fields.find(f => f.id === obj.generate);
+  const tableData = useMemo(() => {
+    const mappings = (mappingsCopy || [])
+      .filter(field => {
+        let visible = visibleAttributes.includes(field.filterType);
 
-    if (field) {
-      visible = visible && attributes[field.filterType];
-    }
+        if (mappingFilter === 'mapped') {
+          visible = visible && (!!field.extract || !!field.hardCodedValue) && !!field.generate;
+        } else if (mappingFilter === 'unmapped') {
+          visible = visible && !field.extract && !field.hardCodedValue;
+        }
 
-    if (mappingFilter === 'mapped') {
-      visible =
-        visible && (!!obj.extract || !!obj.hardCodedValue) && !!obj.generate;
-    } else if (mappingFilter === 'unmapped') {
-      visible = visible && !obj.extract;
-    }
+        return visible;
+      });
 
-    if (obj.hardCodedValue) {
-      obj.hardCodedValueTmp = `"${obj.hardCodedValue}"`;
-    }
+    mappings.push({key: shortid.generate()});
 
-    obj.visible = visible;
-
-    return obj;
-  }), [mappings, attributes, mappingFilter]);
-
-  const handleFieldUpdate = useCallback(
-    (rowIndex, event, field) => {
-      const { value } = event.target;
-
-      dispatch(
-        actions.integrationApp.settings.categoryMappings.patchField(
-          integrationId,
-          flowId,
-          editorId,
-          field,
-          rowIndex,
-          value
-        )
-      );
-    },
-    [dispatch, editorId]
-  );
-  const handleDelete = useCallback(row => {
-    dispatch(
-      actions.integrationApp.settings.categoryMappings.delete(
-        integrationId,
-        flowId,
-        editorId,
-        row
-      )
-    );
-  }, [integrationId, flowId, editorId]);
-
-  const handleGenerateUpdate = useCallback(mapping => (id, val) => {
-    handleFieldUpdate(mapping.index, { target: { value: val } }, 'generate');
-  }, []);
+    return mappings;
+  }, [mappings, attributes, mappingFilter]);
 
   return (
     <div
-      className={classes.root}
-      key={`mapping-${editorId}-${initChangeIdentifier}`}>
+      key={`mapping-${editorId}-${initChangeIdentifier}`}
+      className={classes.root}>
       <div className={classes.mappingsBody}>
-        {tableData
-          .filter(mapping => mapping.visible)
-          .map(mapping => (
-            <div className={classes.rowContainer} key={mapping.index}>
-              <div className={classes.innerRow}>
-                <div
-                  className={clsx(classes.childHeader, classes.mapField, {
-                    [classes.disableChildRow]: mapping.isRequired || disabled,
-                  })}>
-                  <DynaTypeableSelect
-                    key={`generate-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
-                    id={`fieldMappingGenerate-${mapping.index}`}
-                    value={mapping.generate}
-                    labelName="name"
-                    valueName="id"
-                    components={{
-                      ValueContainer,
-                    }}
-                    TextComponent={TextContainer}
-                    options={generateFields}
-                    disabled={mapping.isRequired || disabled}
-                    onBlur={handleGenerateUpdate(mapping)}
-                  />
-
-                </div>
-                <MappingConnectorIcon className={classes.mappingIcon} />
-                <div
-                  className={clsx(classes.childHeader, classes.mapField, {
-                    [classes.disableChildRow]:
-                      mapping.isNotEditable || disabled,
-                  })}>
-                  <DynaTypeableSelect
-                    key={`extract-${editorId}-${initChangeIdentifier}-${mapping.rowIdentifier}`}
-                    id={`fieldMappingExtract-${mapping.index}`}
-                    labelName="name"
-                    valueName="id"
-                    endAdornment={(
-                      <ListIconComponent
-                        mapping={mapping}
-                        extractFields={extractFields}
-                        generateFields={generateFields}
-                      />
-                    )}
-                    value={mapping.extract || mapping.hardCodedValueTmp}
-                    options={extractFields}
-                    disabled={mapping.isNotEditable || disabled}
-                    components={{ ItemSeperator: () => null }}
-                    onBlur={(id, evt) => {
-                      handleFieldUpdate(
-                        mapping.index,
-                        { target: { value: evt } },
-                        'extract'
-                      );
-                    }}
-                  />
-
-                </div>
-                <div className={classes.mappingActionsCategory}>
-                  <div>
-                    <MappingSettings
-                      dataTest={`fieldMappingSettings-${mapping.index}`}
-                      isCategoryMapping
-                      disabled={mapping.isNotEditable || disabled}
-                      mappingIndex={mapping.index}
-                      integrationId={integrationId}
-                      flowId={flowId}
-                      depth={depth}
-                      sectionId={sectionId}
-                      editorId={editorId}
-                      {...options}
-                    />
-                  </div>
-                  <div key="delete_button">
-                    <ActionButton
-                      data-test={`fieldMappingRemove-${mapping.index}`}
-                      aria-label="delete"
-                      disabled={
-                        mapping.isRequired || mapping.isNotEditable || disabled
-                      }
-                      onClick={() => {
-                        handleDelete(mapping.index);
-                      }}>
-                      <TrashIcon />
-                    </ActionButton>
-                  </div>
-                  <div>
-                    <FieldHelp
-                      id={mapping.generate}
-                      integrationId={integrationId}
-                      flowId={flowId}
-                      sectionId={sectionId}
-                      depth={depth} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+        {tableData.map(mapping => (
+          <MappingRowMemoized
+            key={mapping.key}
+            integrationId={integrationId}
+            flowId={flowId}
+            editorId={editorId}
+            sectionId={sectionId}
+            depth={depth}
+            extractFields={extractFields}
+            generateFields={generateFields}
+            mapping={mapping}
+            disabled={disabled}
+            options={options}
+            />
+        ))}
       </div>
     </div>
   );
