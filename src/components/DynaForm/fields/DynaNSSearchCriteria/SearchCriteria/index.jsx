@@ -152,14 +152,15 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
   }, [obj, classes, handleFieldUpdate, invalidFields, fields, disabled, handleDelete, index]);
 
 const emptyObject = {};
+const emptyArray = [];
 
 export default function SearchCriteriaEditor(props) {
-  const { editorId, disabled, value, onRefresh, connectionId, commMetaPath, filterKey, invalidFields = {}} = props;
+  const { editorId, disabled, value, onRefresh, connectionId, commMetaPath, filterKey, invalidFields = emptyObject} = props;
   const { data: fields, status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey);
   const classes = useStyles();
   const dispatch = useDispatch();
   const searchCriteria = useSelector(state =>
-    selectors.searchCriteria(state, editorId).searchCriteria || []
+    selectors.searchCriteria(state, editorId).searchCriteria || emptyArray
   );
 
   const handleInit = useCallback(() => {

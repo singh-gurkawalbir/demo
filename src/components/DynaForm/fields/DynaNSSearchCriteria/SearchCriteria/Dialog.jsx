@@ -75,7 +75,6 @@ export default function SearchCriteriaDialog(props) {
     const result = {};
 
     searchCriteria?.forEach((criteria, index) => {
-      delete result[index];
       if (!criteria.field) {
         result[index] = [...result[index] || [], 'field'];
       }
