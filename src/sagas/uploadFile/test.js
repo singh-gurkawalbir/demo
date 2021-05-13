@@ -14,7 +14,7 @@ describe('uploadFile saga', () => {
   const file = { _id: '456', name: 'someFile' };
   const response = { signedURL: 'someURL' };
 
-  test('should success on successfull api call', () => expectSaga(uploadFile, { resourceType, resourceId, fileType, file })
+  test('should succeed on successful api call', () => expectSaga(uploadFile, { resourceType, resourceId, fileType, file })
     .provide([[matchers.call.fn(apiCallWithRetry), response]])
     .call.fn(apiCallWithRetry)
     .run());
@@ -45,7 +45,7 @@ describe('previewZip saga', () => {
     },
   ];
 
-  test('should success on successfull api call', () => expectSaga(previewZip, { file, fileType})
+  test('should succeed on successful api call', () => expectSaga(previewZip, { file, fileType})
     .provide([[matchers.call.fn(apiCallWithRetry), components],
       [matchers.call.fn(uploadFile), runKey]])
     .call.fn(uploadFile)
@@ -95,7 +95,7 @@ describe('processFile saga', () => {
   const fileId = 'field1';
   const fileContent = { test: 5 };
 
-  test('should success on successfull api call', () => expectSaga(processFile, { fileId, file, fileType, fileProps})
+  test('should succeed on successful api call', () => expectSaga(processFile, { fileId, file, fileType, fileProps})
     .provide([[matchers.call.fn(configureFileReader), fileContent]])
     .call.fn(configureFileReader)
     .put(
