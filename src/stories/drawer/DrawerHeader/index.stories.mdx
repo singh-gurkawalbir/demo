@@ -2,20 +2,28 @@ import { MemoryRouter } from 'react-router-dom';
 import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
 import { action } from '@storybook/addon-actions';
 import DrawerHeader from '../../../components/drawer/Right/DrawerHeader';
+import RightDrawer from '../../../components/drawer/Right';
 import { DrawerProvider } from '../../../components/drawer/Right/DrawerContext';
 
 <Meta 
   title="Right Drawer/Header" 
   component={DrawerHeader}
-  // argTypes={{ onClose: { action: 'Drawer closed.' } }} 
 />
 
   <Story name="Basic" >
-    <MemoryRouter initialEntries={["/drawer/next"]} initialIndex={1}>
+    <MemoryRouter initialEntries={["/drawer", "/drawer/next"]} initialIndex={1}>
       <div style={{border: 'solid 1px black'}} >
-        <DrawerProvider fullPath="/drawer">
-          <DrawerHeader title="Basic Drawer Header" onClose={action('close drawer')} />
+        <DrawerProvider fullPath="/drawer" onClose={action('close-drawer')}>
+          <DrawerHeader title="Basic Drawer Header"  />
         </DrawerProvider>
       </div>
+    </MemoryRouter>
+  </Story>
+
+  <Story name="Basic 2" >
+    <MemoryRouter initialEntries={["drawer", "drawer/next"]} initialIndex={1}>
+      <RightDrawer path="drawer" height="tall" onClose={action('close-drawer')}>
+        <DrawerHeader title="Basic Drawer Header"  />
+      </RightDrawer>
     </MemoryRouter>
   </Story>
