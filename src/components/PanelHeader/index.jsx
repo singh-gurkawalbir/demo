@@ -33,3 +33,4 @@ export default function PanelHeader({ title, children, infoText, className }) {
     </div>
   );
 }
+

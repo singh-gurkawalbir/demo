@@ -1048,11 +1048,7 @@ selectors.flowSupportsMapping = (state, id, childId) => {
 
   if (!flow) return false;
 
-  const isApp = flow._connectorId;
-  const isAppVersion2 = selectors.isIntegrationAppVersion2(state, flow._integrationId, true);
-
-  // For IA2.0, 'showMapping' is assumed true for now until we have more clarity
-  if (!isApp || isAppVersion2) return true;
+  if (!flow._connectorId) return true;
 
   const integration = selectors.resource(state, 'integrations', flow._integrationId);
 
@@ -2487,6 +2483,11 @@ selectors.isAccountOwnerOrAdmin = state => {
   const userPermissions = selectors.userPermissions(state) || emptyObject;
 
   return [USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(userPermissions.accessLevel);
+};
+selectors.isAccountOwner = state => {
+  const userPermissions = selectors.userPermissions(state) || emptyObject;
+
+  return userPermissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
 };
 
 selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
@@ -5473,3 +5474,55 @@ selectors.mkLogsInCurrPageSelector = () => createSelector(
 );
 
 // #endregion listener request logs selectors
+
+// #region sso selectors
+selectors.oidcSSOClient = state => state?.data?.resources?.ssoclients?.find(client => client.type === 'oidc');
+
+selectors.isSSOEnabled = state => {
+  const oidcClient = selectors.oidcSSOClient(state);
+
+  if (!oidcClient) return false;
+
+  return !oidcClient.disabled;
+};
+
+selectors.userLinkedSSOClientId = state => {
+  if (selectors.isAccountOwner(state)) {
+    return selectors.oidcSSOClient(state)?._id;
+  }
+  const profile = selectors.userProfile(state) || emptyObject;
+
+  return profile.authTypeSSO?._ssoClientId;
+};
+
+selectors.isUserAllowedOnlySSOSignIn = state => {
+  if (selectors.isAccountOwner(state)) {
+    return false;
+  }
+  const linkedSSOClientId = selectors.userLinkedSSOClientId(state);
+
+  if (!linkedSSOClientId) {
+    return false;
+  }
+  const orgAccounts = state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
+  const ssoLinkedAccount = orgAccounts?.find(acc => acc.ownerUser?._ssoClientId === linkedSSOClientId);
+
+  return !!ssoLinkedAccount?.accountSSORequired;
+};
+
+selectors.isUserAllowedOptionalSSOSignIn = state => {
+  if (selectors.isAccountOwner(state)) {
+    return selectors.isSSOEnabled(state);
+  }
+  const linkedSSOClientId = selectors.userLinkedSSOClientId(state);
+
+  if (!linkedSSOClientId) return false;
+  if (linkedSSOClientId) {
+    const orgAccounts = state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
+    const ssoLinkedAccount = orgAccounts?.find(acc => acc.ownerUser?._ssoClientId === linkedSSOClientId);
+
+    // _ssoClientId matched owner's account ashare has accountSSORequired - false
+    return !!(ssoLinkedAccount && !ssoLinkedAccount.accountSSORequired);
+  }
+};
+// #endregion sso selectors

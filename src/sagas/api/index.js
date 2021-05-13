@@ -37,7 +37,8 @@ export function normalizeUrlAndOptions(path, opts) {
       path.includes('/netsuiteDA') ||
       /^\/connections.*distributed$/.test(path) ||
       path.includes('/mappingPreview') ||
-      path.includes('/unlink/google')
+      path.includes('/unlink/google') ||
+      path.includes('/reSigninWithSSO')
     ) {
       url = path;
     } else {

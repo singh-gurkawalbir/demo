@@ -10,61 +10,87 @@ import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import TextOverflowCell from '../../../TextOverflowCell';
 import SelectSource from '../cells/SelectSource';
 import SelectDate from '../cells/SelectDate';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
+import EditRetryData from '../actions/EditRetry';
 
+const options = {allowedTags: ['a']};
 export default {
-  columns: [
+  rowKey: 'errorId',
+  useColumns: () => [
     {
-      headerValue: function SelectAll(r, actionProps) {
-        return <SelectAllErrors {...actionProps} />;
+      key: 'selectAll',
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+        return <SelectAllErrors {...tableContext} />;
       },
       heading: 'Select All',
-      value: function Select(error, actionProps) {
-        return <SelectError error={error} {...actionProps} />;
+      Value: ({rowData: error}) => {
+        const tableContext = useGetTableContext();
+
+        return <SelectError error={error} {...tableContext} />;
       },
     },
     {
+      key: 'message',
       heading: 'Message',
       width: '25%',
-      value: r => <TextOverflowCell message={r.message} containsHtml />,
+      Value: ({rowData: r}) => <TextOverflowCell message={r.message} rawHtmlOptions={options} containsHtml />,
     },
     {
+      key: 'code',
       heading: 'Code',
       width: '18%',
-      value: r => <TextOverflowCell message={r.code} />,
+      Value: ({rowData: r}) => <TextOverflowCell message={r.code} />,
     },
     {
-      headerValue: function SelectResolvedSource(r, actionProps) {
-        return <SelectSource {...actionProps} />;
+      key: 'selectResource',
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+        return <SelectSource {...tableContext} />;
       },
       width: '10%',
-      value: r => <TextOverflowCell message={r.source} />,
+      Value: ({rowData: r}) => <TextOverflowCell message={r.source} />,
     },
     {
-      headerValue: function SelectTimestamp(r, actionProps) {
-        return <SelectDate {...actionProps} />;
+      key: 'selectDate',
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
+        return <SelectDate {...tableContext} />;
       },
       width: '12%',
-      value: r => <CeligoTimeAgo date={r.occurredAt} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.occurredAt} />,
     },
     {
+      key: 'resolvedBy',
       heading: 'Resolved by',
       width: '12%',
-      value: (r, { flowId }) => <UserName userId={r.resolvedBy} flowId={flowId} />,
+      Value: ({rowData: r}) => {
+        const {flowId} = useGetTableContext();
+
+        return <UserName userId={r.resolvedBy} flowId={flowId} />;
+      },
     },
     {
-      headerValue: function SelectResolvedAt(r, actionProps) {
+      key: 'resolvedAt',
+      HeaderValue: () => {
+        const tableContext = useGetTableContext();
+
         return (
           <SelectDate
-            {...actionProps}
+            {...tableContext}
             title="Resolved at"
             filterBy="resolvedAt" />
         );
       },
       width: '12%',
-      value: r => <CeligoTimeAgo date={r.resolvedAt} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.resolvedAt} />,
     },
   ],
-  rowActions: ({ retryDataKey, reqAndResKey }, { actionInProgress }) => {
+  useRowActions: ({ retryDataKey, reqAndResKey }) => {
+    const {actionInProgress} = useGetTableContext();
     const actions = [];
 
     if (actionInProgress) return actions;
@@ -73,6 +99,9 @@ export default {
       actions.push(Retry);
     }
     actions.push(ViewErrorDetails);
+    if (retryDataKey) {
+      actions.push(EditRetryData);
+    }
     if (reqAndResKey) {
       actions.push(ViewHttpRequest, ViewHttpResponse);
     }

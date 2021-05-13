@@ -1164,7 +1164,15 @@ describe('settings saga', () => {
           utilities: {
             options: {
               _flowId: flowId,
-              requestOptions: [{ operation: 'mappingData', params: {} }],
+              requestOptions: [
+                { operation: 'mappingData', params: {} },
+                {
+                  operation: 'generatesMetaData',
+                  params: {
+                    categoryId: 'commonAttributes',
+                    categoryRelationshipData: true,
+                  },
+                }],
             },
           },
         },

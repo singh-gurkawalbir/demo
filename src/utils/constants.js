@@ -50,6 +50,11 @@ export const INTEGRATION_MODES = Object.freeze({
   UNINSTALL: 'uninstall',
   SETTINGS: 'settings',
 });
+export const ACCOUNT_SSO_STATUS = Object.freeze({
+  NOT_LINKED: 'not_linked',
+  LINKED_TO_THIS_ACCOUNT: 'this_account',
+  LINKED_TO_OTHER_ACCOUNT: 'other_account',
+});
 
 export const UI_FIELD_VALUES = Object.freeze(['/formView']);
 export const SALESFORCE_DA_PACKAGE_URL =
@@ -296,6 +301,7 @@ export const REST_ASSISTANTS = [
   'namely',
   'servicenow',
   'squareup',
+  'authorize.net',
   'stripe',
   'twilio',
   'woocommerce',

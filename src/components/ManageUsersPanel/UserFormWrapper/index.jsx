@@ -17,12 +17,13 @@ export default function UserFormWrapper({ userId }) {
   const [actionsToClear, setActionsToClear] = useState();
   const [disableSave, setDisableSave] = useState(false);
   const handleSaveClick = useCallback(
-    ({ email, accessLevel, integrationsToMonitor, integrationsToManage }) => {
+    ({ email, accessLevel, integrationsToMonitor, integrationsToManage, accountSSORequired }) => {
       const aShareData = {
         _id: userId,
         email,
         accessLevel,
         integrationAccessLevel: [],
+        accountSSORequired,
       };
 
       if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {

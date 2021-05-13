@@ -703,6 +703,12 @@ export function* getResourceCollection({ resourceType, refresh}) {
       else if (invitedTransfers) collection = [...collection, ...invitedTransfers];
     }
 
+    if (!Array.isArray(collection)) {
+      // eslint-disable-next-line no-console
+      console.warn('Getting unexpected collection values: ', collection);
+      collection = undefined;
+    }
+
     yield put(actions.resource.receivedCollection(resourceType, collection));
 
     return collection;
