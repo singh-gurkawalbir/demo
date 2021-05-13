@@ -356,12 +356,6 @@ export default {
     'http.response.blobFormat': { fieldId: 'http.response.blobFormat' },
     advancedSettings: {
       formId: 'advancedSettings',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
     },
     'file.csv': {
       id: 'file.csv',
@@ -408,9 +402,6 @@ export default {
     },
     formView: { fieldId: 'formView' },
     semiassistantoperationselect: {fieldId: 'semiassistantoperationselect', visibleWhenAll: [{field: 'formView', isNot: ['true']}]},
-    traceKeyTemplate: {
-      fieldId: 'traceKeyTemplate',
-    },
   },
 
   layout: {
@@ -507,10 +498,9 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          'advancedSettings',
           'configureAsyncHelper',
           'http._asyncHelperId',
-          'traceKeyTemplate',
+          'advancedSettings',
         ],
       },
     ],
