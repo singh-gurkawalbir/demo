@@ -79,6 +79,7 @@ const withRedux = (Story, context) => {
     </Provider>
   )
 }
+
 export const decorators = [
   // provide access to react-redux store to all stories.
   // possibly this does not need to be global as many
