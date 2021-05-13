@@ -117,8 +117,20 @@ export default {
   traceKeyTemplate: {
     id: 'traceKeyTemplate',
     type: 'uri',
-    label: 'Override trace key template',
-    visible: r => !(r?.isLookup),
+    label: r => r && !r.isLookup ? 'Override trace key template' : 'Override child record trace key template',
+    helpKey: r => r && r.isLookup && 'import.traceKeyTemplate',
+    visibleWhenAll: r => {
+      if (r && r.isLookup) {
+        return [
+          {
+            field: 'oneToMany',
+            is: ['true'],
+          },
+        ];
+      }
+
+      return [];
+    },
   },
   oneToMany: {
     type: 'radiogroup',

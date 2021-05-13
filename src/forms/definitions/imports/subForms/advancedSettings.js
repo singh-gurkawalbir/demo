@@ -1,12 +1,64 @@
+import { getResourceSubType } from '../../../../utils/resource';
+
 export default {
   fieldMap: {
     idLockTemplate: {
       fieldId: 'idLockTemplate',
+      visibleWhenAll: r => {
+        const importType = getResourceSubType(r).type;
+        const showOnlyForRecordsTypes = ['http', 'rest', 'salesforce', 'netsuite'];
+
+        if (showOnlyForRecordsTypes.includes(importType)) {
+          return [
+            {
+              field: 'inputMode',
+              is: ['records'],
+            },
+          ];
+        }
+
+        return [];
+      },
     },
-    dataURITemplate: { fieldId: 'dataURITemplate' },
-    apiIdentifier: { fieldId: 'apiIdentifier' },
+    dataURITemplate: {
+      fieldId: 'dataURITemplate',
+      visibleWhenAll: r => {
+        const importType = getResourceSubType(r).type;
+        const showOnlyForRecordsTypes = ['http', 'rest', 'salesforce', 'netsuite'];
+
+        if (showOnlyForRecordsTypes.includes(importType)) {
+          return [
+            {
+              field: 'inputMode',
+              is: ['records'],
+            },
+          ];
+        }
+
+        return [];
+      },
+    },
+    apiIdentifier: {
+      fieldId: 'apiIdentifier',
+      visibleWhenAll: r => {
+        const importType = getResourceSubType(r).type;
+        const showOnlyForRecordsTypes = ['http', 'rest', 'salesforce', 'netsuite'];
+
+        if (showOnlyForRecordsTypes.includes(importType)) {
+          return [
+            {
+              field: 'inputMode',
+              is: ['records'],
+            },
+          ];
+        }
+
+        return [];
+      },
+    },
+    traceKeyTemplate: { fieldId: 'traceKeyTemplate' },
   },
   layout: {
-    fields: ['idLockTemplate', 'dataURITemplate', 'apiIdentifier'],
+    fields: ['idLockTemplate', 'dataURITemplate', 'traceKeyTemplate', 'apiIdentifier'],
   },
 };

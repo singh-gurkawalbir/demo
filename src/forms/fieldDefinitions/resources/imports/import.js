@@ -30,6 +30,17 @@ export default {
     type: 'apiidentifier',
     visible: r => r && !isNewId(r._id),
   },
+  traceKeyTemplate: {
+    id: 'traceKeyTemplate',
+    type: 'uri',
+    label: 'Override child record trace key template',
+    visibleWhenAll: [
+      {
+        field: 'oneToMany',
+        is: ['true'],
+      },
+    ],
+  },
   sampleData: { type: 'text', label: 'Sample Data' },
   distributed: {
     type: 'text',

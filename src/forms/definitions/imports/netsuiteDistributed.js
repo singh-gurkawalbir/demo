@@ -114,36 +114,11 @@ export default {
       ],
     },
     dataMappings: { formId: 'dataMappings' },
-    idLockTemplate: {
-      fieldId: 'idLockTemplate',
-      visibleWhen: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    dataURITemplate: {
-      fieldId: 'dataURITemplate',
-      visibleWhenA: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    apiIdentifier: {
-      fieldId: 'apiIdentifier',
-      visibleWhen: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ] },
     settings: { fieldId: 'settings' },
     'netsuite_da.useSS2Restlets': {
       fieldId: 'netsuite_da.useSS2Restlets',
     },
+    advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
     type: 'collapse',
@@ -182,7 +157,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          'netsuite_da.useSS2Restlets', 'blobKeyPath', 'idLockTemplate', 'dataURITemplate', 'netsuite_da.batchSize', 'apiIdentifier', 'deleteAfterImport'],
+          'netsuite_da.useSS2Restlets', 'blobKeyPath', 'netsuite_da.batchSize', 'advancedSettings', 'deleteAfterImport'],
       },
     ],
   },
