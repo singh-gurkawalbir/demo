@@ -114,7 +114,7 @@ function MappingSettings({
     return disabled || (isNotEditable && !fieldMap.useAsAnInitializeValue);
   }, [disabled, fieldMeta, value]);
 
-  const hadleClose = useCallback(
+  const handleClose = useCallback(
     () => {
       history.goBack();
     },
@@ -135,8 +135,8 @@ function MappingSettings({
       dispatch(actions.mapping.patchSettings(mappingKey, settings));
     }
 
-    hadleClose();
-  }, [dispatch, editorId, flowId, hadleClose, integrationId, isCategoryMapping, mappingKey]);
+    handleClose();
+  }, [dispatch, editorId, flowId, handleClose, integrationId, isCategoryMapping, mappingKey]);
 
   const handleLookupUpdate = useCallback((oldLookup, newLookup) => {
     if (oldLookup && newLookup) {
@@ -210,7 +210,7 @@ function MappingSettings({
           </DynaSubmit>
           <Button
             data-test="fieldMappingSettingsCancel"
-            onClick={hadleClose}
+            onClick={handleClose}
             variant="text"
             color="primary">
             Cancel
