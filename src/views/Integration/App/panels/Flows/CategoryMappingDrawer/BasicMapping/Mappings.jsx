@@ -302,7 +302,7 @@ const MappingRow = ({
   }, [dispatch, mappingKey]);
 
   return (
-    <div className={classes.rowContainer} key={mappingKey}>
+    <div className={classes.rowContainer}>
       <div className={classes.innerRow}>
         <div
           className={clsx(classes.childHeader, classes.mapField, {
