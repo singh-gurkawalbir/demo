@@ -70,7 +70,7 @@ const dateFormats = [{ value: 'MM/DD/YYYY', label: '12/31/1900' },
   { value: 'YYYY/MM/DD', label: '1900/12/31' },
   { value: 'YYYY-MM-DD', label: '1900-12-31' }];
 
-export default function ProfileComponent() {
+export default function ProfilePanel() {
   const classes = useStyles();
 
   const preferences = useSelector(state =>
@@ -274,8 +274,8 @@ export default function ProfileComponent() {
 
   return (
     <div className={classes.root}>
+      <PanelHeader title="Profile" className={classes.profilePanelHeader} />
       <LoadResources required resources={isAccountOwnerOrAdmin ? 'ssoclients' : ''}>
-        <PanelHeader title="Profile" className={classes.profilePanelHeader} />
         <DynaForm formKey={formKey} className={classes.formContainer} />
         <DynaSubmit
           formKey={formKey}

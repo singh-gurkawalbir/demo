@@ -17,11 +17,9 @@ export default function Audit() {
   const classes = useStyles();
 
   return (
-    <>
-      <div className={classes.root}>
-        <PanelHeader title="Audit Log" />
-        <AuditLog />
-      </div>
-    </>
+    <div className={classes.root}>
+      <PanelHeader title="Audit Log" />
+      <AuditLog />
+    </div>
   );
 }

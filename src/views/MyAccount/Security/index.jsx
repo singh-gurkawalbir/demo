@@ -68,11 +68,6 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(0.5),
     display: 'flex',
   },
-  securityPanelHeader: {
-    '& > h4 > .MuiButtonBase-root': {
-      color: theme.palette.secondary.light,
-    },
-  },
 }));
 
 export default function Security() {
@@ -226,7 +221,7 @@ export default function Security() {
     <>
       <LoadResources required resources="ssoclients">
         <div className={classes.root}>
-          <PanelHeader className={classes.securityPanelHeader} title="Single Sign-on(SSO)" infoText={infoTextSSO} />
+          <PanelHeader title="Single Sign-on(SSO)" infoText={infoTextSSO} />
           <div className={classes.ssoSwitch}>
             <Typography variant="body2" className={classes.content}> Enable OIDC based SSO </Typography>
             <Help title="Enable OIDC based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
