@@ -717,30 +717,45 @@ selectors.getChildIntegrationLabelsTiedToFlows = (state, integrationId, flowIds)
 };
 const resourceListSel = selectors.makeResourceListSelector();
 
-selectors.getAllValidIntegrations = createSelector(
-  state => resourceListSel(state, integrationsFilter)?.resources,
-  selectors.licenses,
-  (integrations, allLicenses) => {
-    if (!integrations || !integrations.length) return [];
+selectors.mkGetAllValidIntegrations = () => {
+  const integrationsListSelector = selectors.makeResourceListSelector();
+  const flowListSelector = selectors.makeResourceListSelector();
 
-    return integrations.filter(({mode, _id, _connectorId }) => {
+  return createSelector(
+    state => integrationsListSelector(state, integrationsFilter)?.resources,
+    state => flowListSelector(state, flowsFilter)?.resources,
+    selectors.licenses,
+    (integrations, flows, allLicenses) => {
+      if (!integrations || !integrations.length) return [];
+      const hasStandaloneFlows = flows.some(({_integrationId}) => !_integrationId);
+
+      const allValidIntegrations = integrations.filter(({mode, _id, _connectorId }) => {
       // DIY
-      if (!_connectorId && mode !== 'install' && mode !== 'uninstall') return true;
+        if (!_connectorId && mode !== 'install' && mode !== 'uninstall') return true;
 
-      // integrationApp
-      if (_connectorId) {
-        const expiresTimeStamp = allLicenses?.find(l => l._integrationId === _id)?.expires;
+        // integrationApp
+        if (_connectorId) {
+          const expiresTimeStamp = allLicenses?.find(l => l._integrationId === _id)?.expires;
 
-        if (!expiresTimeStamp) return false;
-        const isIntegrationNotExpired = remainingDays(expiresTimeStamp) > 0;
+          if (!expiresTimeStamp) return false;
+          const isIntegrationNotExpired = remainingDays(expiresTimeStamp) > 0;
 
-        return mode === 'settings' && isIntegrationNotExpired;
+          return mode === 'settings' && isIntegrationNotExpired;
+        }
+
+        return false;
+      });
+
+      if (hasStandaloneFlows) {
+        return [
+          {_id: STANDALONE_INTEGRATION.id, name: STANDALONE_INTEGRATION.name},
+          ...(allValidIntegrations || [])];
       }
 
-      return false;
-    });
-  }
-);
+      return allValidIntegrations;
+    }
+  );
+};
 const integrationSettingsSel = selectors.mkIntegrationAppSettings();
 
 selectors.isParentChildIntegration = (state, integrationId) => {
@@ -775,6 +790,10 @@ selectors.mkAllFlowsTiedToIntegrations = () => {
     (flows, parentIntegration, isV2, isDiy, flowsFromAllStores, childIntegrationIds) => {
       if (!flows || !parentIntegration) return null;
 
+      if (parentIntegration === STANDALONE_INTEGRATION.id) {
+        return flows.filter(({_integrationId}) => !_integrationId);
+      }
+
       if (isV2 || isDiy) {
         const consolidatedIntegrationIds = [parentIntegration, ...(childIntegrationIds || [])];
 
@@ -808,10 +827,14 @@ selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
     const integrationId = selectors.resource(state, 'flows', r?._flowIds[0])?._integrationId;
     const integration = selectors.resource(state, 'integrations', integrationId);
 
+    if (!integration) {
+      return STANDALONE_INTEGRATION;
+    }
+
     return integration;
   }).filter(Boolean);
 
-  // get soreted integrations
+  // get sorted integrations
   return uniqBy(allIntegrations, '_id').sort((e1, e2) => e1.name < e2.name);
 },
 integrations => integrations
