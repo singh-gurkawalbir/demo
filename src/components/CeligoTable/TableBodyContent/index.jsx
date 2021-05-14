@@ -103,7 +103,6 @@ export default function TableBodyContent({
   isSelectableRow,
   useColumns,
   useRowActions,
-  variant,
   filterKey,
   onSelectChange,
 }
@@ -153,7 +152,6 @@ export default function TableBodyContent({
                 setSelectedComponent={setSelectedComponent}
                 useRowActions={useRowActions}
                 rowData={rowData}
-                variant={variant}
               />
             </TableCell>
             )}

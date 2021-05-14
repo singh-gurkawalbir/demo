@@ -176,10 +176,6 @@ export default function Subscription() {
     }
   }, [enquesnackbar, platformLicenseActionMessage]);
 
-  const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isUserInErrMgtTwoDotZero(state)
-  );
-
   return (
     <>
       <UpgradeDrawer />
@@ -235,14 +231,6 @@ export default function Subscription() {
                   </span>
                   {capitalize(licenseActionDetails.supportTier || 'N/A')}
                 </li>
-                {isUserInErrMgtTwoDotZero && (
-                <li>
-                  <span className={classes.bold}>
-                    Autopilot:&nbsp;
-                  </span>
-                  {licenseActionDetails.autopilot ? 'On' : 'Off'}
-                </li>
-                )}
               </ul>
             </div>
           </div>

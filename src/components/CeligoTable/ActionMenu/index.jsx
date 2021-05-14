@@ -4,7 +4,6 @@ import React, { useCallback, useState } from 'react';
 import ArrowPopper from '../../ArrowPopper';
 import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
 import MultipleAction from './MultipleAction';
-import SingleAction from './SingleAction';
 
 const useStyles = makeStyles(theme => ({
   actionsMenuPopper: {
@@ -13,7 +12,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ActionMenu({ useRowActions, variant, rowData, setSelectedComponent}) {
+export default function ActionMenu({ useRowActions, rowData, setSelectedComponent}) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   // We are passing state to action items where each Action item would check if it has got permission.
@@ -30,23 +29,6 @@ export default function ActionMenu({ useRowActions, variant, rowData, setSelecte
   const actions = useRowActions(rowData);
 
   if (!actions || !actions.length) return null;
-
-  if (actions.length === 1 && variant === 'slim') {
-    // lets keep the isSingleAction mechanism so 'slim' variants of CeligoTable
-    // will still intelligently render single action when possible, or group
-    // multiple under an ellipsis.
-    // "Slim" variants currently have at most 1 action, but possibly future tables
-    // want a slim treatment but preserve ellipsis for multi-action rows.
-    // The table will still be slim by eliminating the action column heading.
-    // Possibly other slim CSS will get applied for row hover and reduced padding, etc.
-    return (
-      <SingleAction
-        rowData={rowData}
-        setSelectedComponent={setSelectedComponent}
-        handleMenuClose={handleMenuClose}
-        meta={actions[0]} />
-    );
-  }
 
   return (
     <>
