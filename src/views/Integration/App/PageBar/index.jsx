@@ -142,7 +142,7 @@ export default function PageBar() {
   const classes = useStyles();
   const match = useRouteMatch();
   const dispatch = useDispatch();
-  const { integrationId, storeId, tab } = match.params;
+  const { integrationId, childId, tab } = match.params;
 
   // TODO: Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.
@@ -171,13 +171,13 @@ export default function PageBar() {
   );
   const handleStoreChange = useCallback(
     e => {
-      const newStoreId = e.target.value;
+      const newChildId = e.target.value;
 
-      if (newStoreId) {
-        // Redirect to current tab of new store
+      if (newChildId) {
+        // Redirect to current tab of new child
         history.push(
           getRoutePath(
-            `integrationapps/${integrationAppName}/${integrationId}/child/${newStoreId}/${tab}`
+            `integrationapps/${integrationAppName}/${integrationId}/child/${newChildId}/${tab}`
           )
         );
       } else {
@@ -196,12 +196,12 @@ export default function PageBar() {
     );
   }, [history, integrationAppName, integrationId]);
 
-  const renderStoreLabel = useCallback(selectedStoreId => {
-    if (selectedStoreId === '') {
+  const renderStoreLabel = useCallback(selectedChildId => {
+    if (selectedChildId === '') {
       return `All ${storeLabel}s`;
     }
 
-    return integration.stores?.find(store => store.value === selectedStoreId)?.label || selectedStoreId;
+    return integration.stores?.find(store => store.value === selectedChildId)?.label || selectedChildId;
   },
   [integration.stores, storeLabel]);
 
@@ -249,7 +249,7 @@ export default function PageBar() {
           onChange={handleStoreChange}
           renderValue={renderStoreLabel}
           IconComponent={ArrowDownIcon}
-          value={storeId || ''}>
+          value={childId || ''}>
           {allStoreItem}
           {storeItems}
         </Select>

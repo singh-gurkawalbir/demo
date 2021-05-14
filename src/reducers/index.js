@@ -295,13 +295,13 @@ selectors.isIAConnectionSetupPending = (state, connectionId) => {
   return false;
 };
 
-selectors.isUninstallComplete = (state, { integrationId, storeId }) => {
+selectors.isUninstallComplete = (state, { integrationId, childId }) => {
   let isSetupComplete = false;
   const uninstallSteps =
     fromSession.uninstallSteps(
       state && state.session,
       integrationId,
-      storeId
+      childId
     ) || [];
 
   isSetupComplete =
@@ -1601,13 +1601,13 @@ selectors.auditLogs = (
     totalCount: 0,
   };
 
-  if (options.storeId) {
+  if (options.childId) {
     const {
       exports = [],
       imports = [],
       flows = [],
       connections = [],
-    } = selectors.integrationAppResourceList(state, resourceId, options.storeId);
+    } = selectors.integrationAppResourceList(state, resourceId, options.childId);
     const resourceIds = [
       ...exports,
       ...imports,
@@ -2012,9 +2012,9 @@ selectors.mkIntegrationAppResourceList = () => {
     state => state?.data?.resources?.exports,
     state => state?.data?.resources?.imports,
     (_1, integrationId) => integrationId,
-    (_1, _2, storeId) => storeId,
+    (_1, _2, childId) => childId,
     (_1, _2, _3, options) => options,
-    (integrationResource, flows = emptyArray, connections = emptyArray, exports = emptyArray, imports = emptyArray, integrationId, storeId, options = emptyObject) => getIAResources(integrationResource, flows, connections, exports, imports, {...options, integrationId, storeId})
+    (integrationResource, flows = emptyArray, connections = emptyArray, exports = emptyArray, imports = emptyArray, integrationId, childId, options = emptyObject) => getIAResources(integrationResource, flows, connections, exports, imports, {...options, integrationId, childId})
   );
 };
 selectors.integrationAppResourceList = selectors.mkIntegrationAppResourceList();
@@ -2024,14 +2024,14 @@ selectors.mkIntegrationAppStore = () => {
 
   return createSelector(
     (state, integrationId) => integrationSettings(state, integrationId),
-    (_1, _2, storeId) => storeId,
-    (integration, storeId) => {
+    (_1, _2, childId) => childId,
+    (integration, childId) => {
       if (!integration || !integration.stores || !integration.stores.length) {
         return emptyObject;
       }
 
       return (
-        integration.stores.find(store => store.value === storeId) || emptyObject
+        integration.stores.find(store => store.value === childId) || emptyObject
       );
     }
 
@@ -2225,15 +2225,15 @@ selectors.mkIntegrationAppGeneralSettings = () => {
   return createSelector(
 
     (state, id) => (state && integrationSettingsSelector(state, id)),
-    (_1, _2, storeId) => storeId,
-    (integrationResource, storeId) => {
+    (_1, _2, childId) => childId,
+    (integrationResource, childId) => {
       if (!integrationResource) return emptyObject;
       let fields;
       let subSections;
       const { supportsMultiStore, general } = integrationResource.settings || {};
 
       if (supportsMultiStore) {
-        const storeSection = (general || []).find(s => s.id === storeId) || {};
+        const storeSection = (general || []).find(s => s.id === childId) || {};
 
         ({ fields, sections: subSections } = storeSection);
       } else if (Array.isArray(general)) {
@@ -2254,14 +2254,14 @@ selectors.mkIntegrationAppGeneralSettings = () => {
 
 selectors.integrationAppGeneralSettings = selectors.mkIntegrationAppGeneralSettings();
 
-selectors.hasGeneralSettings = (state, integrationId, storeId) => {
+selectors.hasGeneralSettings = (state, integrationId, childId) => {
   if (!state) return false;
   const integrationResource =
     selectors.integrationAppSettings(state, integrationId) || {};
   const { supportsMultiStore, general } = integrationResource.settings || {};
 
   if (supportsMultiStore) {
-    return !!(general || []).find(s => s.id === storeId);
+    return !!(general || []).find(s => s.id === childId);
   }
   if (Array.isArray(general)) {
     return !!general.find(s => s.title === 'General');
@@ -2276,17 +2276,17 @@ selectors.mkIntegrationAppSectionMetadata = () => {
   return createSelector(
     (state, integrationId) => integrationSettings(state, integrationId),
     (_1, _2, section) => section,
-    (_1, _2, _3, storeId) => storeId,
-    (integrationResource, section, storeId) => {
+    (_1, _2, _3, childId) => childId,
+    (integrationResource, section, childId) => {
       if (!integrationResource) return emptyObject;
 
       const { supportsMultiStore, sections = [] } = integrationResource.settings || {};
       let allSections = sections;
 
       if (supportsMultiStore) {
-        if (storeId) {
-          // If storeId passed, return sections from that store
-          const store = sections.find(s => s.id === storeId) || {};
+        if (childId) {
+          // If childId passed, return sections from that store
+          const store = sections.find(s => s.id === childId) || {};
 
           allSections = store.sections || [];
         }
@@ -2327,12 +2327,12 @@ selectors.makeIntegrationAppSectionFlows = () =>
 
       if (supportsMultiStore) {
         if (childId) {
-          // If storeId passed, return sections from that store
+          // If childId passed, return sections from that store
           const store = sections.find(s => s.id === childId) || {};
 
           allSections = store.sections || [];
         } else {
-          // If no storeId is passed, return all sections from all stores
+          // If no childId is passed, return all sections from all stores
           allSections = [];
           sections.forEach(sec => {
             allSections.push(...(sec.sections.map(s => ({...s, childId: sec.id, childName: sec.title}))));
@@ -2351,7 +2351,7 @@ selectors.makeIntegrationAppSectionFlows = () =>
           const flow = requiredFlows.find(fi => fi.id === f._id);
 
           if (flow) {
-            // If flow is present in two stores, then it is a commom flow and does not belong to any single store, so remove store information from flow
+            // If flow is present in two stores, then it is a common flow and does not belong to any single store, so remove store information from flow
             delete flow.childId;
             delete flow.childName;
           } else if (flows.find(fi => fi._id === f._id)) {
@@ -2375,7 +2375,7 @@ selectors.integrationAppSectionFlows = selectors.makeIntegrationAppSectionFlows(
 
 // This selector is used in dashboard, it shows all the flows including the flows not in sections.
 // Integration App settings page should not use this selector.
-selectors.integrationAppFlowIds = (state, integrationId, storeId) => {
+selectors.integrationAppFlowIds = (state, integrationId, childId) => {
   const allIntegrationFlows = selectors.resourceList(state, {
     type: 'flows',
     filter: { _integrationId: integrationId },
@@ -2383,13 +2383,13 @@ selectors.integrationAppFlowIds = (state, integrationId, storeId) => {
 
   const integration = selectors.integrationAppSettings(state, integrationId);
 
-  if (integration && integration.stores && storeId) {
-    const store = integration.stores.find(store => store.value === storeId);
+  if (integration?.stores && childId) {
+    const store = integration.stores.find(store => store.value === childId);
     const flows = selectors.integrationAppSectionFlows(
       state,
       integrationId,
       null,
-      storeId
+      childId
     );
 
     if (store) {
@@ -3127,7 +3127,7 @@ selectors.mkIntegrationNotificationResources = () => {
     (state, _integrationId) => selectors.resource(state, 'integrations', _integrationId)?._connectorId,
     diyFlows,
     diyConnections,
-    (state, _integrationId, options) => integrationAppResourceList(state, _integrationId, options?.storeId, options),
+    (state, _integrationId, options) => integrationAppResourceList(state, _integrationId, options?.childId, options),
     (state, _1, options) => subscribedNotifications(state, options?.userEmail),
     (_integrationId, _connectorId, diyFlows, diyConnections, integrationAppResources, notifications = emptyArray) => {
       const connections = _connectorId ? integrationAppResources?.connections : diyConnections;
@@ -4763,7 +4763,7 @@ selectors.integrationErrorsPerSection = createSelector(
 
 /**
  * Returns error count per Store in an Integration for IA 1.0
- * A map of storeId and total errors on that Store
+ * A map of store id and total errors on that Store
  */
 selectors.integrationErrorsPerStore = (state, integrationId) => {
   const integrationAppSettings = selectors.integrationAppSettings(state, integrationId) || emptyObject;

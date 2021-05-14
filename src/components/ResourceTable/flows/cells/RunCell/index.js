@@ -9,7 +9,7 @@ export default function RunCell({
   flowId,
   integrationId,
   isIntegrationApp,
-  storeId,
+  childId,
   actionProps,
 }) {
   const history = useHistory();
@@ -21,9 +21,9 @@ export default function RunCell({
     }
 
     if (isIntegrationApp) {
-      if (storeId) {
+      if (childId) {
         history.push(
-          getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${storeId}/dashboard`)
+          getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${childId}/dashboard`)
         );
       } else {
         history.push(
@@ -37,7 +37,7 @@ export default function RunCell({
     } else {
       history.push(getRoutePath(`/integrations/${integrationId || 'none'}/dashboard`));
     }
-  }, [appName, history, integrationId, isIntegrationApp, isUserInErrMgtTwoDotZero, storeId, templateName]);
+  }, [appName, history, integrationId, isIntegrationApp, isUserInErrMgtTwoDotZero, childId, templateName]);
 
   return (
     <RemoveMargin>

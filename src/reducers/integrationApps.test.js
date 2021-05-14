@@ -1497,7 +1497,7 @@ describe('integrationApps selector testcases', () => {
 
       expect(selector(undefined, {})).toEqual({connections: [], flows: []});
     });
-    test('should return connections and flows used in integration if storeId is not passed', () => {
+    test('should return connections and flows used in integration if childId is not passed', () => {
       const conns = [{
         _id: 'c1',
         _integrationId: 'i1',
@@ -1570,7 +1570,7 @@ describe('integrationApps selector testcases', () => {
       ]});
     });
 
-    test('should return all resources used in integration if storeId is passed', () => {
+    test('should return all resources used in integration if childId is passed', () => {
       const conns = [{
         _id: 'c1',
         _integrationId: 'i1',
@@ -1709,7 +1709,7 @@ describe('integrationApps selector testcases', () => {
       );
     });
 
-    test('should return all resources used in integration if storeId is passed and ignore unused connections', () => {
+    test('should return all resources used in integration if childId is passed and ignore unused connections', () => {
       const conns = [{
         _id: 'c1',
         _integrationId: 'i1',
@@ -4299,7 +4299,7 @@ describe('integrationApps selector testcases', () => {
       ]);
     });
 
-    test('should return all flows when section and storeId is not passed to a multi store integration App', () => {
+    test('should return all flows when section and childId is not passed to a multi store integration App', () => {
       const state = reducer(
         {
           data: {
@@ -4336,7 +4336,7 @@ describe('integrationApps selector testcases', () => {
       ]);
     });
 
-    test('should return all flows of the store when storeId is passed to a multi store integration App', () => {
+    test('should return all flows of the store when childId is passed to a multi store integration App', () => {
       const state = reducer(
         {
           data: {
@@ -4404,7 +4404,7 @@ describe('integrationApps selector testcases', () => {
       );
     });
 
-    test('should return flowIds linked to the integration if storeId is passed', () => {
+    test('should return flowIds linked to the integration if childId is passed', () => {
       const flows = [
         {
           _id: 'f1',

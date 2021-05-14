@@ -44,7 +44,7 @@ export default function PageBar() {
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
   const availableTabs = useAvailableTabs();
-  const { integrationId, storeId: childId, tab} = match?.params;
+  const { integrationId, childId, tab} = match?.params;
 
   const {
     name,

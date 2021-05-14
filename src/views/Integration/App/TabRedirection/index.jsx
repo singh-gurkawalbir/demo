@@ -12,12 +12,12 @@ export default function TabRedirection({children}) {
   const dispatch = useDispatch();
   const location = useLocation();
   const match = useRouteMatch();
-  const { integrationId, storeId, tab} = match.params;
+  const { integrationId, childId, tab} = match.params;
 
   // TODO: Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
-  const currentStore = useSelectorMemo(selectors.mkIntegrationAppStore, integrationId, storeId);
+  const currentStore = useSelectorMemo(selectors.mkIntegrationAppStore, integrationId, childId);
 
   const redirectTo = useSelector(state =>
     selectors.shouldRedirect(state, integrationId)
@@ -72,17 +72,17 @@ export default function TabRedirection({children}) {
       dispatch(actions.resource.integrations.clearRedirect(integrationId));
       history.push(path);
     }
-  }, [dispatch, history, integrationAppName, integrationId, match.path, redirectTo, storeId, match.params]);
+  }, [dispatch, history, integrationAppName, integrationId, match.path, redirectTo, childId, match.params]);
 
   const supportsMultiStore = integration?.settings?.supportsMultiStore;
 
   // To support breadcrumbs, and also to have a more robust url interface,
   // we want to "self-heal" partial urls hitting this page.  If an integration app
-  // is routed to this component without a storeId (if it supports multi-store),
+  // is routed to this component without a childId (if it supports multi-store),
   // or if no tab is selected, we rewrite the current url in the history to carry
   // this state information forward.
   if (supportsMultiStore) {
-    if (!storeId && searchParamChildId) {
+    if (!childId && searchParamChildId) {
       return (
         <Redirect
           push={false}
@@ -109,7 +109,7 @@ export default function TabRedirection({children}) {
     );
   } else if (currentStore.mode === 'uninstall') {
     redirectToPage = getRoutePath(
-      `integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`
+      `integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`
     );
   } else if (integration.mode === 'install') {
     redirectToPage = getRoutePath(
@@ -118,7 +118,7 @@ export default function TabRedirection({children}) {
   } else if (integration.mode === 'uninstall') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall${
-        storeId ? `/${storeId}` : ''
+        childId ? `/${childId}` : ''
       }`
     );
   }

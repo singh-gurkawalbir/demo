@@ -873,11 +873,11 @@ const integrationApp = {
         integrationId,
         license,
       }),
-    update: (integrationId, flowId, storeId, sectionId, values, options) =>
+    update: (integrationId, flowId, childId, sectionId, values, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE, {
         integrationId,
         flowId,
-        storeId,
+        childId,
         sectionId,
         values,
         options,
@@ -904,11 +904,11 @@ const integrationApp = {
     initChild: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
       id: integrationId,
     }),
-    installStep: (integrationId, installerFunction, storeId, addOnId) =>
+    installStep: (integrationId, installerFunction, childId, addOnId) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {
         id: integrationId,
         installerFunction,
-        storeId,
+        childId,
         addOnId,
       }),
     scriptInstallStep: (
@@ -945,9 +945,9 @@ const integrationApp = {
       }),
   },
   uninstaller: {
-    preUninstall: (storeId, integrationId) =>
+    preUninstall: (childId, integrationId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.PRE_UNINSTALL, {
-        storeId,
+        childId,
         id: integrationId,
       }),
     clearSteps: integrationId =>
@@ -960,9 +960,9 @@ const integrationApp = {
         uninstallerFunction,
         update,
       }),
-    stepUninstall: (storeId, integrationId, uninstallerFunction, addOnId) =>
+    stepUninstall: (childId, integrationId, uninstallerFunction, addOnId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.STEP.REQUEST, {
-        storeId,
+        childId,
         id: integrationId,
         uninstallerFunction,
         addOnId,
@@ -972,11 +972,11 @@ const integrationApp = {
         uninstallSteps,
         id,
       }),
-    failedUninstallSteps: (id, error, storeId) =>
+    failedUninstallSteps: (id, error, childId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.FAILED_UNINSTALL_STEPS, {
         id,
         error,
-        storeId,
+        childId,
       }),
     uninstallIntegration: integrationId =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION, {
@@ -1635,8 +1635,8 @@ const job = {
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING),
   resolveSelected: ({ jobs, match }) =>
     action(actionTypes.JOB.RESOLVE_SELECTED, { jobs, match }),
-  resolveAll: ({ flowId, storeId, integrationId, filteredJobsOnly, match }) =>
-    action(actionTypes.JOB.RESOLVE_ALL, { flowId, storeId, integrationId, filteredJobsOnly, match }),
+  resolveAll: ({ flowId, childId, integrationId, filteredJobsOnly, match }) =>
+    action(actionTypes.JOB.RESOLVE_ALL, { flowId, childId, integrationId, filteredJobsOnly, match }),
   resolveInit: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RESOLVE_INIT, { parentJobId, childJobId }),
   resolveAllInit: () => action(actionTypes.JOB.RESOLVE_ALL_INIT),
@@ -1656,8 +1656,8 @@ const job = {
     action(actionTypes.JOB.RETRY_UNDO, { parentJobId, childJobId }),
   retryCommit: () => action(actionTypes.JOB.RETRY_COMMIT),
   retryFlowJobCommit: () => action(actionTypes.JOB.RETRY_FLOW_JOB_COMMIT),
-  retryAll: ({ flowId, storeId, integrationId, match }) =>
-    action(actionTypes.JOB.RETRY_ALL, { flowId, storeId, integrationId, match }),
+  retryAll: ({ flowId, childId, integrationId, match }) =>
+    action(actionTypes.JOB.RETRY_ALL, { flowId, childId, integrationId, match }),
   retryAllUndo: () => action(actionTypes.JOB.RETRY_ALL_UNDO),
   retryAllCommit: () => action(actionTypes.JOB.RETRY_ALL_COMMIT),
   requestRetryObjects: ({ jobId }) =>

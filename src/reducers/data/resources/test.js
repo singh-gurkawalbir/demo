@@ -1613,53 +1613,6 @@ describe('Export needs routing selector', () => {
   });
 });
 
-describe('Default store id selector', () => {
-  const integrations = [
-    { _id: 'int1',
-      _connectorId: 'connector3',
-      settings: {supportsMultiStore: true, sections: [{title: 'store1', id: '123'}, {title: 'store2', id: '143'}]},
-      name: 'int_One',
-      something: 'something' },
-    {
-      _id: 'int2',
-      name: 'int_Two',
-      settings: {supportsMultiStore: true, sections: [{title: 'store1', id: '1234'}]},
-      _connectorId: 'connector2',
-      something: 'something',
-    },
-  ];
-
-  test('should return undefined when the state is undefined', () => {
-    const state = reducer(undefined, 'some action');
-
-    expect(selectors.defaultStoreId(state)).toEqual(undefined);
-  });
-  test('should return default store id', () => {
-    const state = reducer(
-      undefined,
-      actions.resource.receivedCollection('integrations', integrations)
-    );
-
-    expect(selectors.defaultStoreId(state, 'int1')).toEqual('123');
-  });
-  test('should return correct store id', () => {
-    const state = reducer(
-      undefined,
-      actions.resource.receivedCollection('integrations', integrations)
-    );
-
-    expect(selectors.defaultStoreId(state, 'int1', '143')).toEqual('143');
-  });
-  test('should return undefined for invalid integration Id', () => {
-    const state = reducer(
-      undefined,
-      actions.resource.receivedCollection('integrations', integrations)
-    );
-
-    expect(selectors.defaultStoreId(state, 'int11234', '143')).toEqual(undefined);
-  });
-});
-
 describe('mkFlowGroupingsSections', () => {
   const groupingsSelector = selectors.mkFlowGroupingsSections();
 

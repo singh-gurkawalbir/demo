@@ -706,7 +706,7 @@ describe('job sagas', () => {
       };
       const path = '/flows/jobs/resolve';
 
-      return expectSaga(resolveAllCommit, { storeId: '123' })
+      return expectSaga(resolveAllCommit, { childId: '123' })
         .provide([
           [select(
             selectors.integrationAppFlowIds,
@@ -835,11 +835,11 @@ describe('job sagas', () => {
 
   describe('resolveAll saga', () => {
     const integrationId = 'i1';
-    const storeId = 's1';
+    const childId = 's1';
 
     describe('integration level resolve all', () => {
       test('should resolve all pending and init resolve all, wait for resolve all pending and then commit resolve all', () => {
-        const saga = resolveAll({ integrationId, storeId });
+        const saga = resolveAll({ integrationId, childId });
 
         expect(saga.next().value).toEqual(put(actions.job.resolveAllPending()));
         expect(saga.next().value).toEqual(put(actions.job.resolveAllInit()));
@@ -852,13 +852,13 @@ describe('job sagas', () => {
           ])
         );
         expect(saga.next(actions.job.resolveAllPending()).value).toEqual(
-          call(resolveAllCommit, { integrationId, storeId })
+          call(resolveAllCommit, { integrationId, childId })
         );
         expect(saga.next().done).toEqual(true);
       });
 
       test('should resolve all pending and init resolve all, wait for resolve all commit and then commit resolve all', () => {
-        const saga = resolveAll({ integrationId, storeId });
+        const saga = resolveAll({ integrationId, childId });
 
         expect(saga.next().value).toEqual(put(actions.job.resolveAllPending()));
         expect(saga.next().value).toEqual(put(actions.job.resolveAllInit()));
@@ -871,7 +871,7 @@ describe('job sagas', () => {
           ])
         );
         expect(saga.next(actions.job.resolveAllCommit()).value).toEqual(
-          call(resolveAllCommit, { integrationId, storeId })
+          call(resolveAllCommit, { integrationId, childId })
         );
         expect(saga.next().done).toEqual(true);
       });

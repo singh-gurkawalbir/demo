@@ -33,12 +33,12 @@ describe('installer saga', () => {
   describe('installStep generator', () => {
     const id = 'dummyId';
     const installerFunction = () => {};
-    const storeId = 'dummyStoreId';
+    const childId = 'dummyChildId';
     const path = `/integrations/${id}/installer/${installerFunction}`;
     const args = {
       path,
       timeout: 5 * 60 * 1000,
-      opts: { body: { storeId }, method: 'PUT' },
+      opts: { body: { storeId: childId }, method: 'PUT' },
       hidden: true,
     };
 
@@ -51,7 +51,7 @@ describe('installer saga', () => {
       return expectSaga(installStep, {
         id,
         installerFunction,
-        storeId,
+        childId,
         addOnId,
       })
         .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
@@ -78,7 +78,7 @@ describe('installer saga', () => {
       return expectSaga(installStep, {
         id,
         installerFunction,
-        storeId,
+        childId,
         addOnId,
       })
         .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
@@ -105,7 +105,7 @@ describe('installer saga', () => {
       return expectSaga(installStep, {
         id,
         installerFunction,
-        storeId,
+        childId,
         addOnId,
       })
         .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
@@ -135,7 +135,7 @@ describe('installer saga', () => {
       return expectSaga(installStep, {
         id,
         installerFunction,
-        storeId,
+        childId,
         addOnId,
       })
         .provide([[call(apiCallWithRetry, args), throwError(error)]])
@@ -1300,7 +1300,7 @@ describe('settings saga', () => {
   });
 });
 describe('uninstaller saga', () => {
-  const storeId = 's1';
+  const childId = 's1';
   const id = '123';
 
   describe('preUninstall generator', () => {
@@ -1309,12 +1309,12 @@ describe('uninstaller saga', () => {
     test('should dispatch receivedUninstallSteps on successful api call', () => {
       const uninstallSteps = {};
 
-      return expectSaga(preUninstall, { storeId, id})
+      return expectSaga(preUninstall, { childId, id})
         .provide([
           [call(apiCallWithRetry, {
             path,
             timeout: 5 * 60 * 1000,
-            opts: { body: { storeId }, method: 'PUT' },
+            opts: { body: { storeId: childId }, method: 'PUT' },
             message: 'Loading',
           }), uninstallSteps],
           [call(getResource, { resourceType: 'integrations', id })],
@@ -1330,12 +1330,12 @@ describe('uninstaller saga', () => {
     test('should dispatch failedUninstallSteps if api call fails', () => {
       const error = { message: 'Failed to fetch Uninstall Steps.' };
 
-      return expectSaga(preUninstall, {storeId, id})
+      return expectSaga(preUninstall, {childId, id})
         .provide([
           [call(apiCallWithRetry, {
             path,
             timeout: 5 * 60 * 1000,
-            opts: { body: { storeId }, method: 'PUT' },
+            opts: { body: { storeId: childId }, method: 'PUT' },
             message: 'Loading',
           }), throwError(error)],
         ])
@@ -1366,12 +1366,12 @@ describe('uninstaller saga', () => {
         success: true,
       };
 
-      return expectSaga(uninstallStepGen, {storeId, id, uninstallerFunction, addOnId})
+      return expectSaga(uninstallStepGen, {childId, id, uninstallerFunction, addOnId})
         .provide([
           [call(apiCallWithRetry, {
             path,
             timeout: 5 * 60 * 1000,
-            opts: { body: { storeId, addOnId }, method: 'PUT' },
+            opts: { body: { storeId: childId, addOnId }, method: 'PUT' },
             message: 'Uninstalling',
           }), stepCompleteResponse],
           [call(getResource, {
@@ -1400,12 +1400,12 @@ describe('uninstaller saga', () => {
         success: true,
       };
 
-      return expectSaga(uninstallStepGen, {storeId, id, uninstallerFunction, addOnId})
+      return expectSaga(uninstallStepGen, {childId, id, uninstallerFunction, addOnId})
         .provide([
           [call(apiCallWithRetry, {
             path,
             timeout: 5 * 60 * 1000,
-            opts: { body: { storeId, addOnId }, method: 'PUT' },
+            opts: { body: { storeId: childId, addOnId }, method: 'PUT' },
             message: 'Uninstalling',
           }), stepCompleteResponse],
           [call(getResource, {
@@ -1434,12 +1434,12 @@ describe('uninstaller saga', () => {
         success: false,
       };
 
-      return expectSaga(uninstallStepGen, {storeId, id, uninstallerFunction, addOnId})
+      return expectSaga(uninstallStepGen, {childId, id, uninstallerFunction, addOnId})
         .provide([
           [call(apiCallWithRetry, {
             path,
             timeout: 5 * 60 * 1000,
-            opts: { body: { storeId, addOnId }, method: 'PUT' },
+            opts: { body: { storeId: childId, addOnId }, method: 'PUT' },
             message: 'Uninstalling',
           }), stepCompleteResponse],
         ])
@@ -1462,12 +1462,12 @@ describe('uninstaller saga', () => {
       const addOnId = 'A123';
       const error = { code: 'dummy', message: 'dummy' };
 
-      return expectSaga(uninstallStepGen, {storeId, id, uninstallerFunction, addOnId})
+      return expectSaga(uninstallStepGen, {childId, id, uninstallerFunction, addOnId})
         .provide([
           [call(apiCallWithRetry, {
             path,
             timeout: 5 * 60 * 1000,
-            opts: { body: { storeId, addOnId }, method: 'PUT' },
+            opts: { body: { storeId: childId, addOnId }, method: 'PUT' },
             message: 'Uninstalling',
           }), throwError(error)],
         ])
@@ -1487,12 +1487,12 @@ describe('uninstaller saga', () => {
       const addOnId = undefined;
       const error = { code: 'dummy', message: 'dummy' };
 
-      return expectSaga(uninstallStepGen, {storeId, id, uninstallerFunction, addOnId})
+      return expectSaga(uninstallStepGen, {childId, id, uninstallerFunction, addOnId})
         .provide([
           [call(apiCallWithRetry, {
             path,
             timeout: 5 * 60 * 1000,
-            opts: { body: { storeId, addOnId }, method: 'PUT' },
+            opts: { body: { storeId: childId, addOnId }, method: 'PUT' },
             message: 'Uninstalling',
           }), throwError(error)],
         ])

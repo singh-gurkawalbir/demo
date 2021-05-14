@@ -31,7 +31,7 @@ const infoTextUsers =
   the flows within the integration. The user will see 
   only those integrations that you have invited them to.`;
 
-export default function ManageUsersPanel({ integrationId, storeId }) {
+export default function ManageUsersPanel({ integrationId, childId }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const history = useHistory();
@@ -48,8 +48,7 @@ export default function ManageUsersPanel({ integrationId, storeId }) {
           </IconTextButton>
         )}
       </PanelHeader>
-      <UsersList integrationId={integrationId} storeId={storeId} className={classes.userListWrapper} />
-
+      <UsersList integrationId={integrationId} childId={childId} className={classes.userListWrapper} />
     </div>
   );
 }

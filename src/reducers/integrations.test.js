@@ -208,7 +208,7 @@ describe('selectors.getChildIntegrationLabelsTiedToFlows ', () => {
 
     expect(result).toEqual(['int1', 'int2']);
   });
-  test('should return storeId specific label for a v1 multistore childIntegrations', () => {
+  test('should return childId specific label for a v1 multistore childIntegrations', () => {
     const result = selectors.getChildIntegrationLabelsTiedToFlows(state, 'integrationId', ['ia1.0Flow1']);
 
     expect(result).toEqual(['store1']);
@@ -292,7 +292,7 @@ describe('selectors.mkAllFlowsTiedToIntegrations ', () => {
         },
       ]);
     });
-    test('should return allFlows related to the storeId when just the integrationParent and storeId is provided for a 1.0 multistore integration ', () => {
+    test('should return allFlows related to the childId when just the integrationParent and childId is provided for a 1.0 multi store integration', () => {
       const result = getAllFlowsTiedToIntegrations(state, 'integrationId', ['store1']);
 
       expect(result).toEqual([

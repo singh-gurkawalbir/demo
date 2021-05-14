@@ -113,7 +113,7 @@ export default function Filters({
     selectors.flowJobsPagingDetails(state)
   );
   const {
-    storeId,
+    childId,
     flowId: filterFlowId,
     status = 'all',
     hideEmpty = false,
@@ -135,7 +135,7 @@ export default function Filters({
         filter.currentPage = 0;
       }
 
-      if (key === 'storeId') {
+      if (key === 'childId') {
         filter.flowId = '';
       }
 
@@ -208,7 +208,7 @@ export default function Filters({
         <FlowSelector
           integrationId={integrationId}
           data-test="selectAFlow"
-          storeId={storeId}
+          childId={childId}
           value={filterFlowId}
           onChange={flowId => patchFilter('flowId', flowId)}
         />

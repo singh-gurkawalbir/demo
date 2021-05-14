@@ -185,7 +185,7 @@ export default function AppRouting() {
         />
       <Route
         path={[
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall/:storeId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall/:childId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall'),
         ]}
         component={IntegrationAppUninstallation}
@@ -193,9 +193,9 @@ export default function AppRouting() {
 
       <Route
         path={[
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab/sections/:sectionId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/:tab/sections/:sectionId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/:tab'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab/sections/:sectionId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId'),

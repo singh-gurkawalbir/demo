@@ -333,7 +333,7 @@ export default function ConnectorInstallation(props) {
 
               return;
             }
-            const storeId = stores?.length
+            const childId = stores?.length
               ? stores[0].value
               : undefined;
 
@@ -358,7 +358,7 @@ export default function ConnectorInstallation(props) {
               }
             } else if (supportsMultiStore) {
               history.push(
-                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`)
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`)
               );
             } else {
               history.push(

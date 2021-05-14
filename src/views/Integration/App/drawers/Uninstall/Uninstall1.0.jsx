@@ -50,14 +50,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Uninstaller1({ integration, integrationId, storeId }) {
+export default function Uninstaller1({ integration, integrationId, childId }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   const {_id, mode, name, stores} = integration;
   const integrationAppName = getIntegrationAppUrlName(name);
   const isUninstallComplete = useSelector(state =>
-    selectors.isUninstallComplete(state, { integrationId, storeId })
+    selectors.isUninstallComplete(state, { integrationId, childId })
   );
   const { steps: uninstallSteps, error } = useSelector(state =>
     selectors.integrationUninstallSteps(state, { integrationId }), shallowEqual
@@ -66,10 +66,10 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
   useEffect(() => {
     if (!error && !uninstallSteps) {
       dispatch(
-        actions.integrationApp.uninstaller.preUninstall(storeId, integrationId)
+        actions.integrationApp.uninstaller.preUninstall(childId, integrationId)
       );
     }
-  }, [_id, dispatch, error, integrationId, storeId, uninstallSteps]);
+  }, [_id, dispatch, error, integrationId, childId, uninstallSteps]);
 
   useEffect(() => {
     if (
@@ -130,7 +130,7 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
   }
 
   const storeName = stores
-    ? (stores.find(s => s.value === storeId) || {}).label
+    ? (stores.find(s => s.value === childId) || {}).label
     : undefined;
   const handleStepClick = step => {
     // TODO: installURL should eventually changed to uninstallURL. Currently it is left as installURL to support shopify uninstall.
@@ -177,7 +177,7 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
       );
       dispatch(
         actions.integrationApp.uninstaller.stepUninstall(
-          storeId,
+          childId,
           integrationId,
           uninstallerFunction
         )

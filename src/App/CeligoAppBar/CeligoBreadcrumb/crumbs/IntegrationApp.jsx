@@ -16,25 +16,25 @@ export const IntegrationAppCrumb = ({ integrationId }) => {
   );
 };
 
-export const StoreCrumb = ({ integrationId, storeId }) => {
+export const ChildCrumb = ({ integrationId, childId }) => {
   const iaSettings = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
 
-  const store = iaSettings?.stores?.find(s => s?.value === storeId);
+  const child = iaSettings?.stores?.find(s => s?.value === childId);
 
   const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
   const childName = useSelector(state => {
-    const integration = selectors.resource(state, 'integrations', storeId);
+    const integration = selectors.resource(state, 'integrations', childId);
 
     return integration && integration.name;
   });
 
   if (isFrameWork2) {
-    return childName || storeId;
+    return childName || childId;
   }
 
   return (
     <LoadResources resources="integrations">
-      {store ? store.label : storeId}
+      {child ? child.label : childId}
     </LoadResources>
   );
 };

@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SubscriptionSection({ storeId, integrationId }) {
+export default function SubscriptionSection({ childId, integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
@@ -125,7 +125,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
           (tile) of this Integration App. Contact your Account Manager for more
           info.
         </Typography>
-        <Addons storeId={storeId} integrationId={integrationId} />
+        <Addons childId={childId} integrationId={integrationId} />
       </div>
     </>
   );

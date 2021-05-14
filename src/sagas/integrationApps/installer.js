@@ -10,7 +10,7 @@ import { selectors } from '../../reducers';
 import { getResource } from '../resources';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
 
-export function* installStep({ id, installerFunction, storeId, addOnId }) {
+export function* installStep({ id, installerFunction, childId, addOnId }) {
   const path = `/integrations/${id}/installer/${installerFunction}`;
   let stepCompleteResponse;
 
@@ -18,7 +18,7 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
       timeout: 5 * 60 * 1000,
-      opts: { body: { storeId, addOnId }, method: 'PUT' },
+      opts: { body: { storeId: childId, addOnId }, method: 'PUT' },
       hidden: true,
     }) || {};
   } catch (error) {
