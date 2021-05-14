@@ -20,19 +20,23 @@ const useStyles = makeStyles(theme => ({
   ssoForm: {
     paddingLeft: theme.spacing(2),
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+    margin: theme.spacing(0, 2),
   },
   footer: {
-    marginTop: theme.spacing(2),
+    margin: theme.spacing(2),
   },
   helpTextButton: {
-    marginLeft: theme.spacing(1),
+    marginLeft: theme.spacing(0.5),
     height: theme.spacing(2),
     width: theme.spacing(2),
     padding: 0,
-    marginRight: theme.spacing(1),
+    marginRight: theme.spacing(2),
   },
   ssoSwitch: {
     display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(0, 2),
+    marginBottom: theme.spacing(0.5),
   },
   flexContainer: {
     display: 'flex',
@@ -42,14 +46,18 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     fontSize: '14px',
-    lineHeight: '20px',
+    height: theme.spacing(2),
   },
   urlDetails: {
     fontSize: '15px',
     lineHeight: '20px',
   },
-  panel: {
-    marginBottom: theme.spacing(2),
+  root: {
+    backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    overflowX: 'auto',
+    minHeight: 124,
   },
   ssoFormContainer: {
     '&>div>div:last-child': {
@@ -59,9 +67,6 @@ const useStyles = makeStyles(theme => ({
   spinner: {
     marginLeft: theme.spacing(0.5),
     display: 'flex',
-  },
-  securityPanelHeader: {
-    padding: theme.spacing(2, 0),
   },
 }));
 
@@ -215,8 +220,8 @@ export default function Security() {
   return (
     <>
       <LoadResources required resources="ssoclients">
-        <div className={classes.panel}>
-          <PanelHeader className={classes.securityPanelHeader} title="Single Sign-on(SSO)" infoText={infoTextSSO} />
+        <div className={classes.root}>
+          <PanelHeader title="Single Sign-on(SSO)" infoText={infoTextSSO} />
           <div className={classes.ssoSwitch}>
             <Typography variant="body2" className={classes.content}> Enable OIDC based SSO </Typography>
             <Help title="Enable OIDC based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
