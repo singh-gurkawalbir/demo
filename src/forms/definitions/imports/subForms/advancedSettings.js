@@ -1,14 +1,18 @@
 import { getResourceSubType } from '../../../../utils/resource';
 
+const shouldInputModeBeRecords = r => {
+  const importType = getResourceSubType(r).type;
+  const importTypes = ['http', 'rest', 'salesforce'];
+
+  return importTypes.includes(importType);
+};
+
 export default {
   fieldMap: {
     idLockTemplate: {
       fieldId: 'idLockTemplate',
       visibleWhenAll: r => {
-        const importType = getResourceSubType(r).type;
-        const showOnlyForRecordsTypes = ['http', 'rest', 'salesforce'];
-
-        if (showOnlyForRecordsTypes.includes(importType)) {
+        if (shouldInputModeBeRecords(r)) {
           return [
             {
               field: 'inputMode',
@@ -23,10 +27,7 @@ export default {
     dataURITemplate: {
       fieldId: 'dataURITemplate',
       visibleWhenAll: r => {
-        const importType = getResourceSubType(r).type;
-        const showOnlyForRecordsTypes = ['http', 'rest', 'salesforce'];
-
-        if (showOnlyForRecordsTypes.includes(importType)) {
+        if (shouldInputModeBeRecords(r)) {
           return [
             {
               field: 'inputMode',
@@ -41,10 +42,7 @@ export default {
     apiIdentifier: {
       fieldId: 'apiIdentifier',
       visibleWhenAll: r => {
-        const importType = getResourceSubType(r).type;
-        const showOnlyForRecordsTypes = ['http', 'rest', 'salesforce'];
-
-        if (showOnlyForRecordsTypes.includes(importType)) {
+        if (shouldInputModeBeRecords(r)) {
           return [
             {
               field: 'inputMode',

@@ -117,10 +117,10 @@ export default {
   traceKeyTemplate: {
     id: 'traceKeyTemplate',
     type: 'uri',
-    label: r => r && !r.isLookup ? 'Override trace key template' : 'Override child record trace key template',
-    helpKey: r => r && r.isLookup && 'import.traceKeyTemplate',
+    label: r => !(r?.isLookup) ? 'Override trace key template' : 'Override child record trace key template',
+    helpKey: r => r?.isLookup && 'import.traceKeyTemplate',
     visibleWhenAll: r => {
-      if (r && r.isLookup) {
+      if (r?.isLookup) {
         return [
           {
             field: 'oneToMany',
