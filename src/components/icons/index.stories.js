@@ -70,6 +70,7 @@ import IntegrationAppsIcon from './IntegrationAppsIcon';
 import ImportsIcon from './ImportsIcon';
 import InputFilterIcon from './InputFilterIcon';
 import KnowledgeBaseIcon from './KnowledgeBaseIcon';
+import LayoutFourPanelIcon from './LayoutFourPanelIcon';
 import LayoutTriVerticalIcon from './LayoutTriVerticalIcon';
 import LayoutLgLeftSmrightIcon from './LayoutLgLeftSmrightIcon';
 import LayoutLgTopSmBottomIcon from './LayoutLgTopSmBottomIcon';
@@ -109,6 +110,7 @@ import ShowContentIcon from './ShowContentIcon';
 import SuccessIcon from './SuccessIcon';
 import ScriptsIcon from './ScriptsIcon';
 import SearchIcon from './SearchIcon';
+import SecurityIcon from './SecurityIcon';
 import ShareStackIcon from './ShareStackIcon';
 import SettingsIcon from './SettingsIcon';
 import SubtractIcon from './SubtractIcon';
@@ -209,6 +211,7 @@ const icons =
       ImportsIcon,
       InputFilterIcon,
       KnowledgeBaseIcon,
+      LayoutFourPanelIcon,
       LayoutTriVerticalIcon,
       LayoutLgLeftSmrightIcon,
       LayoutLgTopSmBottomIcon,
@@ -248,6 +251,7 @@ const icons =
       SuccessIcon,
       ScriptsIcon,
       SearchIcon,
+      SecurityIcon,
       ShareStackIcon,
       SettingsIcon,
       SubtractIcon,

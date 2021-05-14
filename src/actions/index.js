@@ -94,6 +94,8 @@ const auth = {
     action(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, { returnTo }),
   reSignInWithGoogle: email =>
     action(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, { email }),
+  reSignInWithSSO: () =>
+    action(actionTypes.AUTH_RE_SIGNIN_WITH_SSO),
   linkWithGoogle: returnTo =>
     action(actionTypes.AUTH_LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
@@ -247,12 +249,17 @@ const resource = {
 
   request: (resourceType, id, message) =>
     action(actionTypes.RESOURCE.REQUEST, { resourceType, id, message }),
+  validate: (resourceType, resourceId) => action(actionTypes.RESOURCE.VALIDATE_RESOURCE, { resourceType, resourceId }),
   updateChildIntegration: (parentId, childId) =>
     action(actionTypes.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
   clearChildIntegration: () => action(actionTypes.CLEAR_CHILD_INTEGRATION),
 
   requestCollection: (resourceType, message, refresh) =>
     action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh }),
+  startCollectionPoll: resourceType =>
+    action(actionTypes.RESOURCE.START_COLLECTION_POLL, { resourceType }),
+  stopCollectionPoll: resourceType =>
+    action(actionTypes.RESOURCE.STOP_COLLECTION_POLL, { resourceType }),
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
@@ -342,6 +349,10 @@ const resource = {
       action(actionTypes.INTEGRATION.REDIRECT, {
         integrationId,
         redirectTo,
+      }),
+    clearRedirect: integrationId =>
+      action(actionTypes.INTEGRATION.CLEAR_REDIRECT, {
+        integrationId,
       }),
   },
   connections: {
@@ -633,13 +644,13 @@ const integrationApp = {
             .RECEIVED_CATEGORY_MAPPING_GENERATES_METADATA,
           { integrationId, flowId, metadata }
         ),
-      init: (integrationId, flowId, id, options) =>
-        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT, {
-          integrationId,
-          flowId,
-          id,
-          options,
-        }),
+      init: opts => action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT, opts),
+      initComplete: (integrationId, flowId, id, options) => action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT_COMPLETE, {
+        integrationId,
+        flowId,
+        id,
+        options,
+      }),
       clear: (integrationId, flowId) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR, {
           integrationId,
@@ -654,7 +665,7 @@ const integrationApp = {
             flowId,
           }
         ),
-      patchField: (integrationId, flowId, id, field, index, value) =>
+      patchField: (integrationId, flowId, id, field, key, value) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.PATCH_FIELD,
           {
@@ -662,22 +673,23 @@ const integrationApp = {
             flowId,
             id,
             field,
-            index,
+            key,
             value,
           }
         ),
-      patchSettings: (integrationId, flowId, id, index, value) =>
+      patchSettings: (integrationId, flowId, id, key, value) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
             .PATCH_SETTINGS,
-          { integrationId, flowId, id, index, value }
+          { integrationId, flowId, id, key, value }
         ),
-      delete: (integrationId, flowId, id, row) =>
+      updateLastFieldTouched: key => action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LAST_TOUCHED_FIELD, { key }),
+      delete: (integrationId, flowId, id, key) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE, {
           integrationId,
           flowId,
           id,
-          index: row,
+          key,
         }),
       collapseAll: (integrationId, flowId) =>
         action(
@@ -782,17 +794,19 @@ const integrationApp = {
           flowId,
           data,
         }),
-      deleteCategory: (integrationId, flowId, sectionId) =>
+      deleteCategory: (integrationId, flowId, sectionId, depth) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE_CATEGORY, {
           integrationId,
           flowId,
           sectionId,
+          depth,
         }),
-      restoreCategory: (integrationId, flowId, sectionId) =>
+      restoreCategory: (integrationId, flowId, sectionId, depth) =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.RESTORE_CATEGORY, {
           integrationId,
           flowId,
           sectionId,
+          depth,
         }),
       receivedUpdatedMappingData: (integrationId, flowId, mappingData) =>
         action(
@@ -817,10 +831,6 @@ const integrationApp = {
           .RECEIVED_CATEGORY_MAPPING_METADATA,
         { integrationId, flowId, metadata }
       ),
-    clearRedirect: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
-        integrationId,
-      }),
     requestedUpgrade: licenseId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED, {
         licenseId,
@@ -2143,6 +2153,15 @@ const hooks = {
   save: context => action(actionTypes.HOOKS.SAVE, context),
 };
 
+const bottomDrawer = {
+  init: flowId => action(actionTypes.BOTTOM_DRAWER.INIT, { flowId }),
+  initComplete: value => action(actionTypes.BOTTOM_DRAWER.INIT_COMPLETE, { value }),
+  addTab: ({tabType, label, resourceId}) => action(actionTypes.BOTTOM_DRAWER.ADD_TAB, { tabType, resourceId, label }),
+  removeTab: ({tabType, resourceId}) => action(actionTypes.BOTTOM_DRAWER.REMOVE_TAB, { tabType, resourceId }),
+  setActiveTab: ({ index, tabType }) => action(actionTypes.BOTTOM_DRAWER.SET_ACTIVE_TAB, { index, tabType }),
+  clear: () => action(actionTypes.BOTTOM_DRAWER.CLEAR),
+};
+
 const logs = {
   scripts: {
     request: ({ scriptId, flowId, isInit }) =>
@@ -2189,14 +2208,23 @@ const logs = {
     receivedLogDetails: (exportId, logKey, logDetails) => action(actionTypes.LOGS.LISTENER.LOG.RECEIVED, { exportId, logKey, logDetails }),
     removeLog: (flowId, exportId, logsToRemove) => action(actionTypes.LOGS.LISTENER.LOG.REMOVE, { flowId, exportId, logsToRemove }),
     logDeleted: (exportId, deletedLogKey) => action(actionTypes.LOGS.LISTENER.LOG.DELETED, { exportId, deletedLogKey }),
-    request: (flowId, exportId, loadMore) => action(actionTypes.LOGS.LISTENER.REQUEST, { flowId, exportId, loadMore }),
-    received: (exportId, logs, nextPageURL, loadMore) => action(actionTypes.LOGS.LISTENER.RECEIVED, { exportId, logs, nextPageURL, loadMore }),
+    request: ({flowId, exportId, loadMore}) => action(actionTypes.LOGS.LISTENER.REQUEST, { flowId, exportId, loadMore }),
+    received: ({exportId, logs, nextPageURL, loadMore}) => action(actionTypes.LOGS.LISTENER.RECEIVED, { exportId, logs, nextPageURL, loadMore }),
     failed: (exportId, error) => action(actionTypes.LOGS.LISTENER.FAILED, { exportId, error }),
     clear: exportId => action(actionTypes.LOGS.LISTENER.CLEAR, { exportId }),
     startLogsPoll: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.START_POLL, { flowId, exportId }),
     stopLogsPoll: (exportId, hasNewLogs) => action(actionTypes.LOGS.LISTENER.STOP_POLL, { exportId, hasNewLogs }),
     setActiveLog: (exportId, activeLogKey) => action(actionTypes.LOGS.LISTENER.ACTIVE_LOG, { exportId, activeLogKey }),
+    setFetchStatus: (exportId, status) => action(actionTypes.LOGS.LISTENER.FETCH_STATUS, { exportId, status }),
+    pauseFetch: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.PAUSE_FETCH, { flowId, exportId }),
   },
+};
+
+const sso = {
+  validateOrgId: orgId => action(actionTypes.SSO.ORG_ID.VALIDATION_REQUEST, { orgId }),
+  validationSuccess: () => action(actionTypes.SSO.ORG_ID.VALIDATION_SUCCESS),
+  validationError: error => action(actionTypes.SSO.ORG_ID.VALIDATION_ERROR, { error }),
+  clearValidations: () => action(actionTypes.SSO.ORG_ID.VALIDATION_CLEAR),
 };
 
 export default {
@@ -2250,4 +2278,6 @@ export default {
   editorSampleData,
   hooks,
   logs,
+  sso,
+  bottomDrawer,
 };

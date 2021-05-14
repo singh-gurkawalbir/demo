@@ -91,6 +91,8 @@ const config = {
       LOGROCKET_IDENTIFIER_EU: JSON.stringify(process.env.LOGROCKET_IDENTIFIER_EU),
       GA_KEY_1: JSON.stringify(process.env.GA_KEY_1),
       GA_KEY_2: JSON.stringify(process.env.GA_KEY_2),
+      GA_KEY_1_EU: JSON.stringify(process.env.GA_KEY_1_EU),
+      GA_KEY_2_EU: JSON.stringify(process.env.GA_KEY_2_EU),
     }),
   ],
   output: {
@@ -213,6 +215,8 @@ module.exports = (env, argv) => {
         '/litmos/sso': proxyOpts,
         '/auth/google': proxyOpts,
         '/reSigninWithGoogle': proxyOpts,
+        '/reSigninWithSSO/*': proxyOpts,
+        '/sso/*': proxyOpts,
         '/link/google': proxyOpts,
         '/unlink/google': proxyOpts,
         '/signout': proxyOpts,

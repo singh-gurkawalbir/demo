@@ -1000,5 +1000,87 @@ describe('account (ashares) reducers', () => {
         expect(selectors.owner(state, 'invalid')).toEqual(undefined);
       });
     });
+    describe('isAccountSSORequired', () => {
+      test('should return false for invalid state or no accountId passed', () => {
+        const state = reducer(
+          [
+            {
+              _id: 'ashare1',
+              ownerUser: { email: 'owner1@test.com', name: 'Owner One' },
+            },
+            {
+              _id: 'ashare2',
+              ownerUser: { email: 'owner2@test.com', name: 'Owner Two' },
+            },
+          ],
+          'some action'
+        );
+
+        expect(selectors.isAccountSSORequired()).toBeFalsy();
+        expect(selectors.isAccountSSORequired(state, 'invalid')).toBeFalsy();
+      });
+      test('should return false if the accountId passed does not match existing accounts', () => {
+        const state = reducer(
+          [
+            {
+              _id: 'ashare1',
+              ownerUser: { email: 'owner1@test.com', name: 'Owner One' },
+            },
+            {
+              _id: 'ashare2',
+              ownerUser: { email: 'owner2@test.com', name: 'Owner Two' },
+            },
+          ],
+          'some action'
+        );
+
+        expect(selectors.isAccountSSORequired()).toBeFalsy();
+        expect(selectors.isAccountSSORequired(state, 'ashare3')).toBeFalsy();
+      });
+      test('should return false if the account for passed accountId has isAccountSSORequired false', () => {
+        const state = reducer(
+          [
+            {
+              _id: 'ashare1',
+              ownerUser: { email: 'owner1@test.com', name: 'Owner One' },
+            },
+            {
+              _id: 'ashareId123',
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+              accountSSORequired: false,
+              ownerUser: {
+                _id: 'ownerId',
+                _ssoClientId: 'clientId123',
+              },
+            },
+          ],
+          'some action'
+        );
+
+        expect(selectors.isAccountSSORequired(state, 'ashareId123')).toBeFalsy();
+      });
+      test('should return true if the account for passed accountId has isAccountSSORequired true', () => {
+        const state = reducer(
+          [
+            {
+              _id: 'ashare1',
+              ownerUser: { email: 'owner1@test.com', name: 'Owner One' },
+            },
+            {
+              _id: 'ashareId123',
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+              accountSSORequired: true,
+              ownerUser: {
+                _id: 'ownerId',
+                _ssoClientId: 'clientId123',
+              },
+            },
+          ],
+          'some action'
+        );
+
+        expect(selectors.isAccountSSORequired(state, 'ashareId123')).toBeTruthy();
+      });
+    });
   });
 });

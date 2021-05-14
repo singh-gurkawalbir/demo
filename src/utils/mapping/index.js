@@ -13,7 +13,7 @@ import { getRecordTypeForAutoMapper } from '../assistant';
 import { isJsonString } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
-import { emptyObject } from '../constants';
+import { emptyList, emptyObject } from '../constants';
 
 const isCsvOrXlsxResource = resource => {
   const { file } = resource;
@@ -74,51 +74,75 @@ const setMappingData = (
   mappings,
   deleted = [],
   isParentDeleted,
-  deleteChildlessParent
+  deleteChildlessParent,
+  depth = 0
 ) => {
-  recordMappings.forEach(mapping => {
-    const key = `${flowId}-${mapping.id}`;
+  recordMappings.forEach(category => {
+    const key = `${flowId}-${category.id}-${depth}`;
     let allChildrenDeleted = false;
 
-    if (mapping.children && mapping.children.length) {
-      allChildrenDeleted = mapping.children.every(child =>
-        deleted.includes(child.id)
+    if (category.children && category.children.length) {
+      allChildrenDeleted = category.children.every(child =>
+        deleted[depth + 1]?.includes(child.id)
       );
     }
 
     const mappingDeleted =
-      deleted.includes(mapping.id) ||
+      deleted[depth]?.includes(category.id) ||
       isParentDeleted ||
       (deleteChildlessParent && allChildrenDeleted);
 
     if (mappingDeleted) {
       // eslint-disable-next-line no-param-reassign
-      mapping.delete = true;
+      category.delete = true;
     }
 
     if (mappings[key]) {
       // eslint-disable-next-line no-param-reassign
-      mapping.fieldMappings = mappings[key].mappings
+      category.fieldMappings = (mappings[key].mappings || [])
         .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
         .map(
-          ({ index, rowIdentifier, hardCodedValueTmp, visible, ...rest }) => ({
+          ({ index, rowIdentifier, hardCodedValueTmp, key, name, description, showListOption, filterType, visible, ...rest }) => ({
             ...rest,
           })
         );
 
       if (mappings[key].lookups && mappings[key].lookups.length) {
+        const allLookups = [...mappings[key]?.lookups || []];
+
+        if (category.children && category.children.length) {
+          category.children.forEach(child => {
+            const validLookups = mappings[`${flowId}-${child.id}-${depth + 1}`]?.mappings?.map(mapping => mapping.lookupName).filter(Boolean);
+
+            if (mappings[`${flowId}-${child.id}-${depth + 1}`]?.lookups?.length && validLookups.length) {
+              mappings[`${flowId}-${child.id}-${depth + 1}`].lookups.forEach(lookup => {
+                if (validLookups.includes(lookup.name)) {
+                  const lookupIndex = allLookups.findIndex(l => l.name === lookup.name);
+
+                  if (lookupIndex === -1) {
+                    allLookups.push(lookup);
+                  } else {
+                    allLookups[lookupIndex] = lookup;
+                  }
+                }
+              });
+            }
+          });
+        }
         // eslint-disable-next-line no-param-reassign
-        mapping.lookups = mappings[key].lookups;
+        category.lookups = allLookups;
       }
     }
 
-    if (mapping.children && mapping.children.length) {
+    if (category.children && category.children.length) {
       setMappingData(
         flowId,
-        mapping.children,
+        category.children,
         mappings,
         deleted,
-        mappingDeleted
+        mappingDeleted,
+        deleteChildlessParent,
+        depth + 1
       );
     }
   });
@@ -148,12 +172,16 @@ const setVariationMappingData = (
 
       if (mappings[key]) {
         // eslint-disable-next-line no-param-reassign
-        mapping.fieldMappings = mappings[key].mappings
+        mapping.fieldMappings = (mappings[key].mappings || [])
           .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
           .map(
             ({
               index,
               rowIdentifier,
+              description,
+              name,
+              filterType,
+              showListOption,
               hardCodedValueTmp,
               visible,
               ...rest
@@ -178,7 +206,7 @@ const setVariationMappingData = (
 
           if (mappings[key]) {
             const stagedMappings =
-              mappings[key].staged || mappings[key].mappings;
+              mappings[key].staged || mappings[key].mappings || emptyList;
 
             if (
               !mapping.variation_themes.find(vt => vt.variation_theme === vm)
@@ -481,6 +509,19 @@ export default {
     )
       ? objectKeys.every(key => this.isEqual(object[key], otherObject[key]))
       : false;
+  },
+  removeChildLookups: sessionMappings => {
+    if (!Array.isArray(sessionMappings?.basicMappings?.recordMappings)) {
+      return;
+    }
+    sessionMappings.basicMappings.recordMappings.forEach(category => {
+      if (category?.children?.length) {
+        category.children.forEach(childCategory => {
+          // eslint-disable-next-line no-param-reassign
+          delete childCategory.lookups;
+        });
+      }
+    });
   },
   setCategoryMappingData: (
     flowId,

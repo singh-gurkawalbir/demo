@@ -55,13 +55,7 @@ export default function ErrorList({ flowId }) {
       <ErrorTable
         flowId={flowId}
         resourceId={resourceId}
-        show={errorType === 'open'}
-      />
-      <ErrorTable
-        flowId={flowId}
-        resourceId={resourceId}
-        show={errorType === 'resolved'}
-        isResolved
+        isResolved={errorType === 'resolved'}
       />
       <DownloadErrorsDrawer flowId={flowId} resourceId={resourceId} />
       <ErrorDetailsDrawer flowId={flowId} resourceId={resourceId} isResolved={errorType === 'resolved'} />

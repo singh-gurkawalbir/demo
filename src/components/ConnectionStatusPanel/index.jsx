@@ -11,6 +11,7 @@ import NotificationToaster from '../NotificationToaster';
 import { PING_STATES } from '../../reducers/comms/ping';
 import { isNewId } from '../../utils/resource';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import { emptyObject } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   fixConnectionBtn: {
@@ -60,11 +61,11 @@ export default function ConnectionStatusPanel({ className, resourceId, resourceT
   const location = useLocation();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { merged: resource } = useSelectorMemo(
+  const resource = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,
     resourceId
-  );
+  )?.merged || emptyObject;
   const connectionId =
     resourceType === 'connections' ? resourceId : resource._connectionId;
   const testStatus = useSelector(

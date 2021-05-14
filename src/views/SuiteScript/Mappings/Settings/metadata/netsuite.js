@@ -81,6 +81,7 @@ export default {
           id: 'isKey',
           name: 'isKey',
           type: 'checkbox',
+          helpKey: 'mapping.isKey',
           label: 'Use as a key field to find existing lines',
           visibleWhen: [
             { field: 'fieldMappingType', is: ['standard'] },

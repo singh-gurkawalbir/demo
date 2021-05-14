@@ -88,11 +88,12 @@ export default function RightDrawer({
   }, [history, onClose]);
 
   let fullPath;
+  const getFullPath = path => match.url === '/' ? path : `${match.url}/${path}`;
 
   if (typeof path === 'string' || typeof path === 'number') {
-    fullPath = `${match.url}/${path}`;
+    fullPath = getFullPath(path);
   } else if (Array.isArray(path)) {
-    fullPath = path.map(p => `${match.url}/${p}`);
+    fullPath = path.map(p => getFullPath(p));
   } else {
     // bad path datatype... don't know what do do.. render nothing.
     return null;

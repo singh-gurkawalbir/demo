@@ -62,7 +62,9 @@ import runHistorySagas from './errorManagement/runHistory';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
 import {logsSagas} from './logs';
+import ssoSagas from './sso';
 import { APIException } from './api';
+import { bottomDrawerSagas } from './bottomDrawer';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -178,6 +180,8 @@ export function* allSagas() {
     ...customSettingsSagas,
     ...exportDataSagas,
     ...logsSagas,
+    ...ssoSagas,
+    ...bottomDrawerSagas,
   ]);
 }
 

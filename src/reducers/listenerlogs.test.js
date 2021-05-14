@@ -128,10 +128,13 @@ describe('Listener request logs region selectors test cases', () => {
       expect(selectors.hasLogsAccess(state, '1234', 'exports')).toEqual(false);
     });
     test('should return true if resource is a realtime export and isNew is false', () => {
-      expect(selectors.hasLogsAccess(state, exportId, 'exports')).toEqual(true);
+      expect(selectors.hasLogsAccess(state, exportId, 'exports', false, '123')).toEqual(true);
+    });
+    test('should return false if resource is a realtime export, isNew is false and flow id is not set', () => {
+      expect(selectors.hasLogsAccess(state, exportId, 'exports', false)).toEqual(false);
     });
     test('should return false if resource is a realtime export and isNew is true', () => {
-      expect(selectors.hasLogsAccess(state, exportId, 'exports', true)).toEqual(false);
+      expect(selectors.hasLogsAccess(state, exportId, 'exports', true, '123')).toEqual(false);
     });
   });
   describe('selectors.canEnableDebug test cases', () => {

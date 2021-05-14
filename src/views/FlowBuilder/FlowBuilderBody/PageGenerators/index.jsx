@@ -7,6 +7,7 @@ import { selectors } from '../../../../reducers';
 import AppBlock from '../../AppBlock';
 import itemTypes from '../../itemTypes';
 import PageGenerator from '../../PageGenerator';
+import { emptyObject } from '../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   generatorContainer: {
@@ -29,7 +30,7 @@ export default function PageGenerators({integrationId, flowId}) {
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  ).merged;
+  )?.merged || emptyObject;
 
   const pageGenerators = flow.pageGenerators || [];
   const {

@@ -2,17 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography} from '@material-ui/core';
-import Button from '@material-ui/core/Button';
 import Spinner from '../Spinner';
+import TertiaryButton from '../CeligoButtons/TertiaryButton';
 
 const useStyles = makeStyles(theme => ({
-  title: {
+  fetchLogTextWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    fontSize: 'unset',
     color: theme.palette.secondary.light,
-    fontSize: 'inherit',
-  },
-  buttonWrapper: {
-    color: theme.palette.primary.main,
-    fontWeight: 'bold',
   },
   spinner: {
     marginRight: theme.spacing(1),
@@ -22,7 +20,7 @@ const useStyles = makeStyles(theme => ({
 export default function FetchProgressIndicator({
   // we could also have a local state and action
   // which stores all below values and thus this component can read them
-  // via useSelector. We can enhance this based on the demand of this component
+  // via useSelector. We can enhance this based on the demand of the component
   fetchStatus,
   pauseHandler,
   resumeHandler,
@@ -30,40 +28,45 @@ export default function FetchProgressIndicator({
   endTime,
   currTime,
 }) {
+  const end = endTime || Date.now();
   const classes = useStyles();
   const fetchInProgress = fetchStatus === 'inProgress';
   const fetchPaused = fetchStatus === 'paused';
-  const percentDone = Math.round(((endTime - currTime) / (endTime - startTime)) * 100) || 0;
 
-  if ((!fetchInProgress && !fetchPaused) || !startTime || !endTime || percentDone > 100) {
+  if ((!fetchInProgress && !fetchPaused) || !startTime) {
+    return null;
+  }
+  const percentDone = Math.round(((end - currTime) / (end - startTime)) * 100) || 0;
+
+  // ideally this should not happen
+  // but adding a safety check to not render these values in UI
+  if (percentDone < 0 || percentDone > 100) {
     return null;
   }
 
   return (
-    <div>
-      <Typography variant="body2" component="span" className={classes.title} >
+    <div className={classes.fetchLogTextWrapper}>
+      <Typography variant="body2" component="span" className={classes.fetchLogTextWrapper} >
         {fetchInProgress
           ? (<> <Spinner size="small" className={classes.spinner} /> Fetching logs... {percentDone}% completed </>)
           : <>Fetching paused... {percentDone}% completed</>}
       </Typography>
       {fetchInProgress ? (
-        <Button
+        <TertiaryButton
           data-test="pauseFetch"
-          variant="text"
-          color="primary"
+          bold
           onClick={pauseHandler}
-          className={classes.buttonWrapper} >
+          >
           Pause
-        </Button>
+        </TertiaryButton>
       ) : (
-        <Button
+        <TertiaryButton
           data-test="resumeFetch"
-          variant="text"
-          color="primary"
+          bold
           onClick={resumeHandler}
-          className={classes.buttonWrapper}>
+         >
           Resume
-        </Button>
+        </TertiaryButton>
       )}
     </div>
   );

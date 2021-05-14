@@ -591,6 +591,7 @@ selectors.resourceList = (state, options = {}) => {
       'published',
       'transfers',
       'apis',
+      'connectors',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type
@@ -618,6 +619,7 @@ selectors.resourceListModified = (userState, resourcesState, options = {}) => {
       'published',
       'transfers',
       'apis',
+      'connectors',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type
@@ -1047,11 +1049,7 @@ selectors.flowSupportsMapping = (state, id, childId) => {
 
   if (!flow) return false;
 
-  const isApp = flow._connectorId;
-  const isAppVersion2 = selectors.isIntegrationAppVersion2(state, flow._integrationId, true);
-
-  // For IA2.0, 'showMapping' is assumed true for now until we have more clarity
-  if (!isApp || isAppVersion2) return true;
+  if (!flow._connectorId) return true;
 
   const integration = selectors.resource(state, 'integrations', flow._integrationId);
 
@@ -1234,14 +1232,16 @@ selectors.marketplaceConnectors = (
   marketPlaceState,
   resourceState,
   application,
-  sandbox
+  sandbox,
+  isAccountOwnerOrAdmin,
 ) => {
   const licenses = fromUser.licenses(userState);
   const connectors = fromMarketPlace.connectors(
     marketPlaceState,
     application,
     sandbox,
-    licenses
+    licenses,
+    isAccountOwnerOrAdmin,
   );
 
   return connectors
@@ -1268,13 +1268,15 @@ selectors.makeMarketPlaceConnectorsSelector = () =>
     selectors.resourceState,
     (_, application) => application,
     (_1, _2, sandbox) => sandbox,
-    (userState, marketPlaceState, resourceState, application, sandbox) =>
+    selectors.isAccountOwnerOrAdmin,
+    (userState, marketPlaceState, resourceState, application, sandbox, isAccountOwnerOrAdmin) =>
       selectors.marketplaceConnectors(
         userState,
         marketPlaceState,
         resourceState,
         application,
-        sandbox
+        sandbox,
+        isAccountOwnerOrAdmin,
       )
   );
 
@@ -2133,11 +2135,11 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
             if (sectionId) {
               const selectedSection = child.find(sec => getTitleIdFromSection(sec) === sectionId);
 
-              if (selectedSection) {
+              if (selectedSection?.flows?.length) {
                 flows = selectedSection.flows.map(f => f._id);
               }
             } else {
-              child.forEach(sec => flows.push(...sec.flows.map(f => f._id)));
+              child.forEach(sec => sec?.flows?.length && flows.push(...sec.flows.map(f => f._id)));
             }
           }
         } else {
@@ -2146,11 +2148,11 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
               if (sectionId) {
                 const selectedSection = sec.sections.find(s => getTitleIdFromSection(s) === sectionId);
 
-                if (selectedSection) {
+                if (selectedSection?.flows?.length) {
                   flows.push(...selectedSection.flows.map(f => f._id));
                 }
               } else {
-                sec.sections.forEach(s => flows.push(...s.flows.map(f => f._id)));
+                sec.sections.forEach(s => s?.flows?.length && flows.push(...s.flows.map(f => f._id)));
               }
             }
           });
@@ -2159,11 +2161,11 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
     } else if (sectionId) {
       const selectedSection = sections.find(sec => getTitleIdFromSection(sec) === sectionId);
 
-      if (selectedSection) {
+      if (selectedSection?.flows?.length) {
         flows = selectedSection.flows.map(f => f._id);
       }
     } else {
-      sections.forEach(sec => flows.push(...sec.flows.map(f => f._id)));
+      sections.forEach(sec => sec?.flows?.length && flows.push(...sec.flows.map(f => f._id)));
     }
 
     return flows;
@@ -2482,6 +2484,11 @@ selectors.isAccountOwnerOrAdmin = state => {
   const userPermissions = selectors.userPermissions(state) || emptyObject;
 
   return [USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(userPermissions.accessLevel);
+};
+selectors.isAccountOwner = state => {
+  const userPermissions = selectors.userPermissions(state) || emptyObject;
+
+  return userPermissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
 };
 
 selectors.allRegisteredConnectionIdsFromManagedIntegrations = createSelector(
@@ -3188,8 +3195,7 @@ selectors.getMetadataOptions = (
 );
 
 selectors.getSalesforceMasterRecordTypeInfo = (state, resourceId) => {
-  const { merged: resource = emptyObject } = selectors.resourceData(state, 'imports', resourceId) || emptyObject;
-  const { _connectionId: connectionId, salesforce } = resource;
+  const { _connectionId: connectionId, salesforce } = selectors.resourceData(state, 'imports', resourceId)?.merged || emptyObject;
   const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce?.sObjectType}`;
   const { data, status } = selectors.metadataOptionsAndResources(state, {
     connectionId,
@@ -3212,7 +3218,7 @@ selectors.canSelectRecordsInPreviewPanel = (state, resourceId, resourceType) => 
   const isExportPreviewDisabled = selectors.isExportPreviewDisabled(state, resourceId, resourceType);
 
   if (isExportPreviewDisabled) return false;
-  const resource = selectors.resourceData(state, resourceType, resourceId).merged;
+  const resource = selectors.resourceData(state, resourceType, resourceId)?.merged || {};
   // TODO @Raghu: merge this as part of isRealTimeOrDistributedResource to handle this resourceType
   // it is realtime incase of new export for realtime adaptors
 
@@ -3299,7 +3305,7 @@ selectors.fileSampleData = (state, { resourceId, resourceType, fileType, ssLinke
 };
 
 selectors.getImportSampleData = (state, resourceId, options = {}) => {
-  const { merged: resource = emptyObject } = selectors.resourceData(state, 'imports', resourceId);
+  const resource = selectors.resourceData(state, 'imports', resourceId)?.merged || emptyObject;
   const { assistant, adaptorType, sampleData, _connectorId } = resource;
   const isIntegrationApp = !!_connectorId;
 
@@ -3427,12 +3433,12 @@ selectors.sampleDataWrapper = createSelector(
  * Any other criteria to disable preview panel can be added here
  */
 selectors.isExportPreviewDisabled = (state, resourceId, resourceType) => {
-  const { merged: resourceObj = {} } = selectors.resourceData(
+  const resourceObj = selectors.resourceData(
     state,
     resourceType,
     resourceId,
     'value',
-  );
+  )?.merged || emptyObject;
 
   // Incase of File adaptors(ftp, s3)/As2/Rest csv where file upload is supported
   // their preview does not depend on connection, so it can be enabled
@@ -3457,12 +3463,12 @@ selectors.getAvailableResourcePreviewStages = (
   resourceType,
   flowId
 ) => {
-  const { merged: resourceObj = {} } = selectors.resourceData(
+  const resourceObj = selectors.resourceData(
     state,
     resourceType,
     resourceId,
     'value'
-  );
+  )?.merged || emptyObject;
 
   const isDataLoader = selectors.isDataLoaderExport(state, resourceId, flowId);
   const isRestCsvExport = selectors.isRestCsvMediaTypeExport(state, resourceId);
@@ -4293,12 +4299,12 @@ selectors.isPreviewPanelAvailableForResource = (
   flowId
 ) => {
   if (resourceType !== 'exports') return false;
-  const { merged: resourceObj = {} } = selectors.resourceData(
+  const resourceObj = selectors.resourceData(
     state,
     resourceType,
     resourceId,
     'value'
-  );
+  )?.merged || emptyObject;
   const connectionObj = selectors.resource(
     state,
     'connections',
@@ -4431,10 +4437,10 @@ selectors.mappingHttpAssistantPreviewData = createSelector([
 });
 
 selectors.responseMappingExtracts = (state, resourceId, flowId) => {
-  const { merged: flow = {} } = selectors.resourceData(state,
+  const flow = selectors.resourceData(state,
     'flows',
     flowId
-  );
+  )?.merged || emptyObject;
   const pageProcessor = flow?.pageProcessors && flow?.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
 
   if (!pageProcessor) {
@@ -5016,18 +5022,18 @@ selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
 selectors.isDataLoaderExport = (state, resourceId, flowId) => {
   if (isNewId(resourceId)) {
     if (!flowId) return false;
-    const { merged: flowObj = {} } = selectors.resourceData(state, 'flows', flowId, 'value');
+    const flowObj = selectors.resourceData(state, 'flows', flowId, 'value')?.merged || emptyObject;
 
     return !!(flowObj.pageGenerators &&
               flowObj.pageGenerators[0] &&
               flowObj.pageGenerators[0].application === 'dataLoader');
   }
-  const { merged: resourceObj = {} } = selectors.resourceData(
+  const resourceObj = selectors.resourceData(
     state,
     'exports',
     resourceId,
     'value'
-  );
+  )?.merged || emptyObject;
 
   return resourceObj.type === 'simple';
 };
@@ -5238,7 +5244,16 @@ selectors.isEditorDisabled = (state, editorId) => {
   if (formKey) {
     const fieldState = selectors.fieldState(state, formKey, fieldId);
 
-    if (fieldState) return fieldState.disabled;
+    if (fieldState) {
+      // Currently, many IA settings of type expression has disabled property as true and they shouldn't
+      // be disabled. We added this below check temporarily and once IA fixes, we can remove the below code.
+      // reference for IA tracker: https://celigo.atlassian.net/browse/SFNSIO-1127
+      if (fieldState.type === 'iaexpression') {
+        return false;
+      }
+
+      return fieldState.disabled;
+    }
   }
 
   // if we are on FB actions, below logic applies
@@ -5291,11 +5306,11 @@ selectors.isEditorLookupSupported = (state, editorId) => {
 selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   const editor = fromSession.editor(state?.session, editorId);
   const {stage, resourceId, resourceType, flowId, fieldId} = editor;
-  const { merged: resource = {} } = selectors.resourceData(
+  const resource = selectors.resourceData(
     state,
     resourceType,
     resourceId
-  );
+  )?.merged || emptyObject;
   const connection = selectors.resource(state, 'connections', resource._connectionId);
   let _sampleData = null;
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
@@ -5401,11 +5416,11 @@ selectors.tileLicenseDetails = (state, tile) => {
 
   if (resumable) {
     licenseMessageContent = 'Your subscription has been renewed. Click Reactivate to continue.';
-  } else if (license?.trialEndDate && trialExpiresInDays <= 0) {
+  } else if (!license?.expires && license?.trialEndDate && trialExpiresInDays <= 0) {
     licenseMessageContent = `Trial expired on ${moment(license.trialEndDate).format('MMM Do, YYYY')}`;
     showTrialLicenseMessage = true;
     trialExpired = true;
-  } else if (license?.trialEndDate && trialExpiresInDays > 0) {
+  } else if (!license?.expires && license?.trialEndDate && trialExpiresInDays > 0) {
     licenseMessageContent = `Trial expires in ${trialExpiresInDays} days.`;
     showTrialLicenseMessage = true;
   } else if (expiresInDays <= 0) {
@@ -5419,8 +5434,8 @@ selectors.tileLicenseDetails = (state, tile) => {
 };
 
 // #region listener request logs selectors
-selectors.hasLogsAccess = (state, resourceId, resourceType, isNew) => {
-  if (resourceType !== 'exports') return false;
+selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
+  if (resourceType !== 'exports' || !flowId) return false;
   const resource = selectors.resource(state, 'exports', resourceId);
 
   if (!isRealtimeExport(resource)) return false;
@@ -5499,3 +5514,55 @@ selectors.recordTypeForAutoMapper = (state, resourceType, resourceId, subRecordM
 
   return '';
 };
+
+// #region sso selectors
+selectors.oidcSSOClient = state => state?.data?.resources?.ssoclients?.find(client => client.type === 'oidc');
+
+selectors.isSSOEnabled = state => {
+  const oidcClient = selectors.oidcSSOClient(state);
+
+  if (!oidcClient) return false;
+
+  return !oidcClient.disabled;
+};
+
+selectors.userLinkedSSOClientId = state => {
+  if (selectors.isAccountOwner(state)) {
+    return selectors.oidcSSOClient(state)?._id;
+  }
+  const profile = selectors.userProfile(state) || emptyObject;
+
+  return profile.authTypeSSO?._ssoClientId;
+};
+
+selectors.isUserAllowedOnlySSOSignIn = state => {
+  if (selectors.isAccountOwner(state)) {
+    return false;
+  }
+  const linkedSSOClientId = selectors.userLinkedSSOClientId(state);
+
+  if (!linkedSSOClientId) {
+    return false;
+  }
+  const orgAccounts = state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
+  const ssoLinkedAccount = orgAccounts?.find(acc => acc.ownerUser?._ssoClientId === linkedSSOClientId);
+
+  return !!ssoLinkedAccount?.accountSSORequired;
+};
+
+selectors.isUserAllowedOptionalSSOSignIn = state => {
+  if (selectors.isAccountOwner(state)) {
+    return selectors.isSSOEnabled(state);
+  }
+  const linkedSSOClientId = selectors.userLinkedSSOClientId(state);
+
+  if (!linkedSSOClientId) return false;
+  if (linkedSSOClientId) {
+    const orgAccounts = state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
+    const ssoLinkedAccount = orgAccounts?.find(acc => acc.ownerUser?._ssoClientId === linkedSSOClientId);
+
+    // _ssoClientId matched owner's account ashare has accountSSORequired - false
+    return !!(ssoLinkedAccount && !ssoLinkedAccount.accountSSORequired);
+  }
+};
+// #endregion sso selectors

@@ -8,8 +8,9 @@ import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
-  label: 'Remove user from account',
-  component: function DeleteFromAccount({ rowData: user }) {
+  key: 'removeUserFromAccount',
+  useLabel: () => 'Remove user from account',
+  Component: ({rowData: user}) => {
     const { confirmDialog } = useConfirmDialog();
     const dispatch = useDispatch();
     const [enquesnackbar] = useEnqueueSnackbar();
@@ -33,7 +34,8 @@ export default {
       });
     }, [confirmDialog, dispatch, userId]);
 
-    useEffect(() => deleteFromAccount(), [deleteFromAccount]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => deleteFromAccount(), []);
 
     const commStatusHandler = useCallback(
       objStatus => {

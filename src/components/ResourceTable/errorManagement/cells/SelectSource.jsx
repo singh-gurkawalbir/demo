@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
@@ -24,9 +24,12 @@ export default function SelectSource({ flowId, resourceId, isResolved }) {
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
 
   return (
-    <MultiSelectColumnFilter
-      filterKey={filterKey}
-      handleSave={handleSave}
-      options={sourceOptions} />
+    useMemo(() => (
+      <MultiSelectColumnFilter
+        filterKey={filterKey}
+        handleSave={handleSave}
+        options={sourceOptions} />
+    ),
+    [filterKey, handleSave, sourceOptions])
   );
 }

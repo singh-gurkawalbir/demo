@@ -11,19 +11,44 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const optionsMap = [
+  {
+    id: 'fieldName',
+    label: 'Field Description',
+    type: 'input',
+    required: true,
+    supportsRefresh: false,
+  },
+  {
+    id: 'path',
+    label: 'Path',
+    required: false,
+    type: 'input',
+    supportsRefresh: false,
+  },
+  {
+    id: 'regexExpression',
+    label: 'Regex',
+    required: false,
+    type: 'input',
+    supportsRefresh: false,
+  },
+];
+
+const generateTableValue = value => {
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  return value ? value.value : [];
+};
+
 export default function DynaXMLMapper(props) {
   const classes = useStyles();
   const { onFieldChange, properties = {}, value, id } = props;
   const [path, setPath] = useState(properties.path || '');
-  let tableValue;
 
-  if (Array.isArray(value)) {
-    tableValue = value;
-  } else {
-    tableValue = value ? value.value : [];
-  }
-
-  const [dynaTableValue, setDynaTableValue] = useState(tableValue);
+  const [dynaTableValue, setDynaTableValue] = useState(generateTableValue(value));
 
   useEffect(() => {
     onFieldChange(id, { path, value: dynaTableValue });
@@ -38,29 +63,6 @@ export default function DynaXMLMapper(props) {
   const handlePathUpdate = useCallback((id2, val) => {
     setPath(val);
   }, []);
-  const optionsMap = [
-    {
-      id: 'fieldName',
-      label: 'Field Description',
-      type: 'input',
-      required: true,
-      supportsRefresh: false,
-    },
-    {
-      id: 'path',
-      label: 'Path',
-      required: false,
-      type: 'input',
-      supportsRefresh: false,
-    },
-    {
-      id: 'regexExpression',
-      label: 'Regex',
-      required: false,
-      type: 'input',
-      supportsRefresh: false,
-    },
-  ];
 
   return (
     <>

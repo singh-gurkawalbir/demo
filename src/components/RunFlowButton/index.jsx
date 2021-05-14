@@ -99,7 +99,6 @@ export default function RunFlowButton({
     state => selectors.flowDetails(state, flowId),
     shallowEqual
   );
-  const isIntegrationAppVersion2 = useSelector(state => selectors.isIntegrationAppVersion2(state, flowDetails._integrationId, true));
 
   const isNewFlow = !flowId || flowId.startsWith('new');
   const isDataLoaderFlow = flowDetails.isSimpleImport;
@@ -160,13 +159,13 @@ export default function RunFlowButton({
 
     if (
       flowDetails.isDeltaFlow &&
-      (!flowDetails._connectorId || !!flowDetails.showStartDateDialog || isIntegrationAppVersion2)
+      (!flowDetails._connectorId || !!flowDetails.showStartDateDialog)
     ) {
       setShowDeltaStartDateDialog(true);
     } else {
       handleRunFlow();
     }
-  }, [flowDetails._connectorId, flowDetails.isDeltaFlow, flowDetails.showStartDateDialog, handleRunFlow, hasRunKey, isDataLoaderFlow, isIntegrationAppVersion2]);
+  }, [flowDetails._connectorId, flowDetails.isDeltaFlow, flowDetails.showStartDateDialog, handleRunFlow, hasRunKey, isDataLoaderFlow]);
   const handleFileChange = useCallback(
     e => {
       const file = e.target.files[0];
@@ -181,6 +180,8 @@ export default function RunFlowButton({
           fileProps: { maxSize: MAX_DATA_LOADER_FILE_SIZE },
         })
       );
+      // eslint-disable-next-line no-param-reassign
+      e.target.value = null;
     },
     [dataLoaderFileType, dispatch, fileId]
   );

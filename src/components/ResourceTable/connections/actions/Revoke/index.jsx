@@ -1,13 +1,14 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
 import RevokeTokenIcon from '../../../../icons/RevokeTokenIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
-  label: 'Revoke',
+  key: 'revoke',
+  useLabel: () => 'Revoke',
   icon: RevokeTokenIcon,
-  component: function Revoke({ rowData = {} }) {
+  useOnClick: rowData => {
     const { _id: connectionId } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
@@ -31,10 +32,6 @@ export default {
       });
     }, [confirmDialog, revokeConnection]);
 
-    useEffect(() => {
-      confirmRevoke();
-    }, [confirmRevoke]);
-
-    return null;
+    return confirmRevoke;
   },
 };

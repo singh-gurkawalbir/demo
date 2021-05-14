@@ -16,6 +16,7 @@ import ApplicationImg from '../../../../components/icons/ApplicationImg';
 import { resourceCategory } from '../../../../utils/resource';
 import TextOverflowCell from '../../../../components/TextOverflowCell';
 import ResourceButton from '../../../FlowBuilder/ResourceButton';
+import { emptyObject } from '../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -27,10 +28,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const metadata = {
-  columns: [
+  rowKey: 'id',
+  useColumns: () => [
     {
+      key: 'application',
       heading: 'Application',
-      value: function Application({ type, id }) {
+      Value: ({rowData}) => {
+        const { type, id } = rowData;
         const applicationType = useSelector(state => selectors.applicationType(state, type, id));
         const isDataLoader = useSelector(state => selectors.isDataLoaderExport(state, id));
 
@@ -48,10 +52,12 @@ const metadata = {
       },
     },
     {
+      key: 'type',
       heading: 'Type',
-      value: function Application(r) {
-        const { merged: doc } = useSelectorMemo(selectors.makeResourceDataSelector, r.type, r.id);
-        const category = resourceCategory(doc, r.isLookup, r.type === 'imports');
+      Value: ({rowData}) => {
+        const { type, id, isLookup } = rowData;
+        const { merged: doc } = useSelectorMemo(selectors.makeResourceDataSelector, type, id);
+        const category = resourceCategory(doc, isLookup, type === 'imports');
         const handleClick = useCallback(() => {}, []);
 
         return (
@@ -63,23 +69,26 @@ const metadata = {
       },
     },
     {
+      key: 'flowStepName',
       heading: 'Flow step name',
       width: '25%',
-      value: r => <TextOverflowCell message={r.name} />,
+      Value: ({rowData: r}) => <TextOverflowCell message={r.name} />,
     },
     {
+      key: 'errors',
       heading: 'Errors',
-      value: function Errors({flowId, integrationId, childId, id, count}) {
+      Value: ({rowData}) => {
+        const { flowId, integrationId, childId, id, count } = rowData;
         const classes = useStyles();
         const history = useHistory();
         const isDataLoader = useSelector(state =>
           selectors.isDataLoader(state, flowId)
         );
-        const { merged: integration = {} } = useSelectorMemo(
+        const integration = useSelectorMemo(
           selectors.makeResourceDataSelector,
           'integrations',
           integrationId
-        );
+        )?.merged || emptyObject;
         const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
         const flowBuilderTo = flowbuilderUrl(flowId, integrationId, {
           isIntegrationApp: !!integration._connectorId,
@@ -112,11 +121,11 @@ const ErrorsList = ({integrationId, childId}) => {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const { merged: flow = {} } = useSelectorMemo(
+  const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  );
+  )?.merged || emptyObject;
   const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
   const { data: errorMap, status } = useSelector(state => selectors.errorMap(state, flowId));
 
@@ -164,11 +173,11 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
   const history = useHistory();
   const location = useLocation();
   const { params: { flowId } = {} } = matchPath(location.pathname, {path: `${match.path}/:flowId/errorsList`}) || {};
-  const { merged: flow = {} } = useSelectorMemo(
+  const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  );
+  )?.merged || emptyObject;
   const handleClose = useCallback(() => {
     history.push(match.url);
   }, [match.url, history]);

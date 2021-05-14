@@ -1,10 +1,11 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import util from '../../../../../utils/json';
 import { dataAsString } from '../../../../../utils/editor';
 import handlebars from '../handlebars';
 import { getDefaultData } from '../../../../../utils/sampleData';
 import { getUnionObject } from '../../../../../utils/jsonPaths';
 import { safeParse } from '../../../../../utils/string';
+import { isNewId } from '../../../../../utils/resource';
 
 export function _hasDefaultMetaData({fieldId, resourceType}) {
   const hideDefaultDataFields = [
@@ -40,7 +41,7 @@ export default {
 
     return handlebars.init({...props, modelMetadata, supportsDefaultData: _hasDefaultMetaData(props.options)});
   },
-  buildData: ({modelMetadata, supportsDefaultData}, sampleData) => {
+  buildData: ({modelMetadata, supportsDefaultData, resourceId}, sampleData) => {
     if (!supportsDefaultData) {
       return { data: sampleData};
     }
@@ -53,6 +54,12 @@ export default {
         data: sampleData,
         defaultData: JSON.stringify(newMeta, null, 2),
       };
+    }
+    const isNewResource = isNewId(resourceId);
+
+    // we only show suggested defaults for new resource
+    if (!isNewResource) {
+      return { data: sampleData};
     }
 
     let temp = {};
@@ -76,6 +83,19 @@ export default {
     rules: { strict: !!editor.strict, template: editor.rule },
     data: safeParse(editor.data) || {},
   }),
+  dirty: editor => {
+    const {originalDefaultData, defaultData, originalRule, rule} = editor;
+
+    if (!isEqual(originalDefaultData, defaultData)) {
+      return true;
+    }
+
+    if (!isEqual(originalRule, rule)) {
+      return true;
+    }
+
+    return false;
+  },
   validate: editor => {
     const getDataError = () => {
       const errMessages = [];

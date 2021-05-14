@@ -48,6 +48,7 @@ export default {
           id: 'useFirstRow',
           name: 'useFirstRow',
           type: 'checkbox',
+          helpKey: 'mapping.useFirstRow',
           defaultValue: value.useFirstRow || false,
           // helpText not present
           label: 'Use first row',

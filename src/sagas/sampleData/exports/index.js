@@ -96,7 +96,7 @@ export function* _updateDataForStages({resourceId, dataForEachStageMap }) {
   }
 }
 
-export function* _getPreviewData({ resourceId, resourceType, values, runOffline }) {
+export function* _getPreviewData({ resourceId, resourceType, values, runOffline, flowId }) {
   const { transform, filter, hooks, ...constructedResourceObj } = yield call(constructResourceFromFormValues, {
     formValues: values,
     resourceId,
@@ -141,6 +141,15 @@ export function* _getPreviewData({ resourceId, resourceType, values, runOffline 
 
       previewData = [data];
     } else {
+      // BE need flowId and integrationId in the preview call
+      // if in case integration settings were used in export
+      const flow = yield select(selectors.resource, 'flows', flowId);
+
+      const integrationId = flow?._integrationId;
+
+      // while working with newly created flows, flowId could be temporary UI generated. Rely on flow._id as flowId while making page processor preview call.
+      body._flowId = flow?._id;
+      body._integrationId = integrationId;
       // Makes base preview calls for all other adaptors
       previewData = yield call(apiCallWithRetry, {
         path,
@@ -254,6 +263,7 @@ export function* _fetchExportPreviewData({
   resourceType,
   values,
   runOffline,
+  flowId,
 }) {
   const body = yield call(constructResourceFromFormValues, {
     formValues: values,
@@ -314,6 +324,7 @@ export function* _fetchExportPreviewData({
     resourceType,
     values,
     runOffline,
+    flowId,
   });
 }
 
@@ -324,7 +335,7 @@ export function* requestExportSampleData({
   stage,
   options = {},
 }) {
-  const { runOffline } = options;
+  const { runOffline, flowId } = options;
 
   if (stage) {
     yield call(_processRawData, {
@@ -339,6 +350,7 @@ export function* requestExportSampleData({
       resourceType,
       values,
       runOffline,
+      flowId,
     });
   }
 }

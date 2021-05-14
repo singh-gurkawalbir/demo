@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {makeStyles} from '@material-ui/core/styles';
 import FilterIconWrapper from '../FilterIconWrapper';
 import { selectors } from '../../../../reducers';
@@ -24,7 +24,7 @@ export default function MultiSelectColumnFilter({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const filterOptions = useSelector(state => selectors.filter(state, filterKey), shallowEqual);
+  const filterOptions = useSelector(state => selectors.filter(state, filterKey));
 
   const handleSelect = useCallback((selectedIds, id) => {
     if (id === 'all') {

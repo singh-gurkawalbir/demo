@@ -216,7 +216,7 @@ export default function DynaSelectResource(props) {
 
   useEffect(() => {
     if (createdId) {
-      onFieldChange(id, createdId, true);
+      onFieldChange(id, createdId, false);
       // in case someone clicks + again to add another resource...
       setNewResourceId(generateNewId());
     }

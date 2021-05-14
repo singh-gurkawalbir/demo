@@ -44,14 +44,19 @@ export default {
           newValues['/salesforce/upsert'] = undefined;
           newValues['/salesforce/idLookup'] = undefined;
         }
-      } else if (newValues['/salesforce/operation'] === 'update') {
+      } else if (['update', 'delete'].includes(newValues['/salesforce/operation'])) {
         newValues['/ignoreExisting'] = false;
+        newValues['/salesforce/idLookup/extract'] = undefined;
+        newValues['/salesforce/upsert/externalIdField'] = undefined;
       } else if (newValues['/salesforce/operation'] === 'addupdate') {
         newValues['/ignoreMissing'] = false;
         newValues['/ignoreExisting'] = false;
+        newValues['/salesforce/idLookup/extract'] = undefined;
+        newValues['/salesforce/upsert/externalIdField'] = undefined;
       } else {
         newValues['/ignoreMissing'] = false;
         newValues['/ignoreExisting'] = false;
+        newValues['/salesforce/idLookup/whereClause'] = undefined;
       }
     }
 
@@ -63,6 +68,13 @@ export default {
     }
 
     delete newValues['/inputMode'];
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
+
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
 
     return {
       ...newValues,
@@ -181,7 +193,7 @@ export default {
       fieldId: 'ignoreMissing',
       label: 'Ignore missing records',
       visibleWhen: [
-        { field: 'salesforce.operation', is: ['update'] },
+        { field: 'salesforce.operation', is: ['update', 'delete'] },
         { field: 'salesforce.compositeOperation', is: ['update'] },
       ],
     },

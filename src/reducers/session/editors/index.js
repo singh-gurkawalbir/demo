@@ -61,7 +61,8 @@ export default function reducer(state = {}, action) {
             const {data, defaultData} = buildData(original(draft[id]), sampleData);
 
             draft[id].data = data;
-            draft[id].defaultData = defaultData;
+            draft[id].defaultData = defaultData || '';
+            draft[id].originalDefaultData = defaultData || '';
           } else {
             draft[id].data = buildData(original(draft[id]), sampleData);
           }
@@ -249,6 +250,11 @@ export default function reducer(state = {}, action) {
             originalData = deepClone(editor.data);
           }
           editor.originalData = originalData;
+        }
+
+        // reset originalDefaultData also if already exists in state (for dirty check)
+        if (editor.originalDefaultData) {
+          editor.originalDefaultData = editor.defaultData;
         }
 
         break;

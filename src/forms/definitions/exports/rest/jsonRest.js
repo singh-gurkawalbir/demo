@@ -239,17 +239,8 @@ export default {
     exportOneToMany: { formId: 'exportOneToMany' },
     advancedSettings: {
       formId: 'advancedSettings',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
     },
     formView: { fieldId: 'formView' },
-    traceKeyTemplate: {
-      fieldId: 'traceKeyTemplate',
-    },
   },
   layout: {
     type: 'collapse',
@@ -314,7 +305,7 @@ export default {
       {
         collapsed: 'true',
         label: 'Advanced',
-        fields: ['advancedSettings', 'traceKeyTemplate'],
+        fields: ['advancedSettings'],
       },
     ],
   },

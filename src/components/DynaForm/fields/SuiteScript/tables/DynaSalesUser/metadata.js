@@ -4,30 +4,31 @@ import CheckmarkIcon from '../../../../../icons/CheckmarkIcon';
 import CancelIcon from '../../../../../icons/CancelIcon';
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'email',
       heading: 'Email',
-      value: r => r?.email,
+      Value: ({rowData: r}) => r?.email,
     },
     {
+      key: 'inSalesforce',
       heading: 'In Salesforce',
-
-      value: r => r?.inSalesforce ? <><CheckmarkIcon color="primary" />{r?.sfName} </> : <CancelIcon color="error" />,
+      Value: ({rowData: r}) => r?.inSalesforce ? <><CheckmarkIcon color="primary" />{r?.sfName} </> : <CancelIcon color="error" />,
     },
     {
+      key: 'profile',
       heading: 'Profile',
-
-      value: r => r?.profile,
+      Value: ({rowData: r}) => r?.profile,
     },
     {
+      key: 'inNetsuite',
       heading: 'In Netsuite',
-
-      value: r => r?.inNetSuite ? <><CheckmarkIcon color="primary" />{r?.sfName} </> : <CancelIcon color="error" />,
+      Value: ({rowData: r}) => r?.inNetSuite ? <><CheckmarkIcon color="primary" />{r?.sfName} </> : <CancelIcon color="error" />,
     },
     {
+      key: 'salesRole',
       heading: 'Sales Role',
-
-      value: r => r?.salesRole,
+      Value: ({rowData: r}) => r?.salesRole,
     },
   ],
 };

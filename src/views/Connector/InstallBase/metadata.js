@@ -2,34 +2,40 @@ import React from 'react';
 import ExpiresOn from '../../../components/ResourceTable/commonCells/ExpiredOn';
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'name',
       heading: 'Name',
-      value: r => r.name,
+      Value: ({rowData: r}) => r.name,
       orderBy: 'name',
     },
     {
+      key: 'email',
       heading: 'Email',
-      value: r => r.email,
+      Value: ({rowData: r}) => r.email,
       orderBy: 'email',
     },
     {
+      key: 'integrationId',
       heading: 'Integration ID',
-      value: r => r._integrationId,
+      Value: ({rowData: r}) => r._integrationId,
       orderBy: '_integrationId',
     },
     {
+      key: 'expiresOn',
       heading: 'Expires on',
-      value: r => <ExpiresOn date={r && r.license && r.license.expires} />,
+      Value: ({rowData: r}) => <ExpiresOn date={r && r.license && r.license.expires} />,
       orderBy: 'license.expires',
     },
     {
+      key: 'environment',
       heading: 'Environment',
-      value: r => (r.sandbox ? 'Sandbox' : 'Production'),
+      Value: ({rowData: r}) => (r.sandbox ? 'Sandbox' : 'Production'),
     },
     {
+      key: 'version',
       heading: 'Version',
-      value: r => (r.updateInProgress ? 'In progress...' : r.version),
+      Value: ({rowData: r}) => (r.updateInProgress ? 'In progress...' : r.version),
       orderBy: 'version',
     },
   ],

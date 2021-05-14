@@ -19,7 +19,7 @@ export function getFilterRuleId(rule) {
   return rule.id.split('_rule_')[1];
 }
 
-export function convertSalesforceLookupFilterExpression(expression, data = []) {
+export function convertSalesforceLookupFilterExpression(expression, data = [], ssLinkedConnectionId) {
   function generateRules(expression) {
     let toReturn = {};
     let value = expression;
@@ -33,13 +33,19 @@ export function convertSalesforceLookupFilterExpression(expression, data = []) {
       toReturn.condition = value.operator.toUpperCase();
       toReturn.rules = [generateRules(value.left), generateRules(value.right)];
     } else {
+      let rightValue = value.right;
+
+      // To handle nested wrapped braces
+      while (rightValue.type === 'SimpleExprParentheses') {
+        [rightValue] = rightValue.value.value;
+      }
       toReturn = {
         id: value.left.value,
         field: value.left.value,
         operator: operatorsMap.ioFiltersToJQuery[value.operator.toLowerCase()],
-        value: value.right.value
-          .replace(/(^'\{{3})(.*)(\}{3}')$/g, '$2')
-          .replace(/^\w+\s/, ''),
+        value: rightValue.value
+          ?.replace(/(^'\{{3})(.*)(\}{3}')$/g, '$2')
+          ?.replace(/^\w+\s/, ''),
       };
       const isInData = data.find(f => f.id === toReturn.value);
 
@@ -61,10 +67,17 @@ export function convertSalesforceLookupFilterExpression(expression, data = []) {
       rules: [],
     };
   }
-
-  const updatedExpression = expression
+  const updatedExpression = ssLinkedConnectionId ? expression.replace(/"and"/g, '"AND"').replace(/"or"/g, '"OR"').replace(/\[/g, '(').replace(/\]/g, ')')
+    .replace(/"/g, '')
+    .replace(/,/g, ' ')
+    .replace(/[a-zA-Z.]+\)/g, '{{{$&}}}')
+    .replace(/\)}}}/g, '}}})')
     .replace(/{{{/g, "'{{{")
-    .replace(/}}}\)/g, "}}}')");
+    .replace(/}}}\)/g, "}}}')")
+    : expression
+      .replace(/{{{/g, "'{{{")
+      .replace(/}}}\)/g, "}}}')");
+
   let whereClause;
 
   try {

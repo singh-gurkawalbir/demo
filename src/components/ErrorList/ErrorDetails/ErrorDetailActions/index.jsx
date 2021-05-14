@@ -95,23 +95,6 @@ export default function Actions({
     [flowId, resourceId, s3BlobKey, dispatch],
   );
 
-  if (isResolved) {
-    if (s3BlobKey) {
-      return (
-        <>
-          <Button variant="outlined" color="secondary" onClick={handleDownloadBlob}>
-            Download file
-          </Button>
-          <Button variant="text" color="primary" onClick={onClose}>
-            Close
-          </Button>
-        </>
-      );
-    }
-
-    return null;
-  }
-
   const isRetryDataChanged = updatedRetryData && !isEqual(retryData, updatedRetryData);
 
   if (mode === 'editRetry' && !isFlowDisabled) {
@@ -123,9 +106,11 @@ export default function Actions({
         <Button variant="outlined" color="secondary" disabled={!isRetryDataChanged} onClick={updateRetry}>
           Save &amp; close
         </Button>
-        <Button variant="outlined" color="secondary" onClick={resolve}>
-          Resolve
-        </Button>
+        { !isResolved && (
+          <Button variant="outlined" color="secondary" onClick={resolve}>
+            Resolve
+          </Button>
+        )}
         <Button variant="text" color="primary" onClick={onClose}>
           Close
         </Button>
@@ -135,9 +120,11 @@ export default function Actions({
 
   return (
     <div className={classes.action}>
-      <Button variant="outlined" color="primary" onClick={resolve}>
-        Resolve
-      </Button>
+      {!isResolved && (
+        <Button variant="outlined" color="primary" onClick={resolve}>
+          Resolve
+        </Button>
+      )}
       {
         !!s3BlobKey && (
         <Button variant="outlined" color="secondary" onClick={handleDownloadBlob}>

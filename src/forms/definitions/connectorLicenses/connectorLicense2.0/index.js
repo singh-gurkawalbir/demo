@@ -5,6 +5,10 @@ export default {
       '/type': 'integrationApp',
     };
 
+    if (newValues['/expires']) {
+      delete newValues['/trialEndDate'];
+    }
+
     try {
       newValues['/opts'] = JSON.parse(newValues['/opts']);
     } catch (e) {

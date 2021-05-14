@@ -1,6 +1,6 @@
-import { call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
+import { call, put, takeEvery, select, take, cancel, fork, takeLatest, delay, race } from 'redux-saga/effects';
 import jsonPatch, { deepClone } from 'fast-json-patch';
-import { isEqual, isBoolean } from 'lodash';
+import { isEqual, isBoolean, isEmpty } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -14,6 +14,8 @@ import { REST_ASSISTANTS } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
+
+const STANDARD_DELAY_FOR_POLLING = 5 * 1000;
 
 function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -413,11 +415,11 @@ export function* normalizeFlow(flow) {
 
   return newFlow;
 }
-export function* getResource({ resourceType, id, message }) {
+export function* getResource({ resourceType, id, message, hidden }) {
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
 
   try {
-    let resource = yield call(apiCallWithRetry, { path, message });
+    let resource = yield call(apiCallWithRetry, { path, message, hidden });
 
     if (resourceType === 'flows') {
       resource = yield call(normalizeFlow, resource);
@@ -701,6 +703,12 @@ export function* getResourceCollection({ resourceType, refresh}) {
       else if (invitedTransfers) collection = [...collection, ...invitedTransfers];
     }
 
+    if (!Array.isArray(collection)) {
+      // eslint-disable-next-line no-console
+      console.warn('Getting unexpected collection values: ', collection);
+      collection = undefined;
+    }
+
     yield put(actions.resource.receivedCollection(resourceType, collection));
 
     return collection;
@@ -709,6 +717,14 @@ export function* getResourceCollection({ resourceType, refresh}) {
     // saga failed and services team working on it
     return undefined;
   }
+}
+
+export function* validateResource({ resourceType, resourceId }) {
+  const resource = yield select(selectors.resource, resourceType, resourceId);
+
+  if (!isEmpty(resource) || !resourceType || !resourceId) return undefined;
+
+  return yield call(getResource, {resourceType, id: resourceId, hidden: true});
 }
 
 export function* updateTileNotifications({ resourcesToUpdate, integrationId, storeId, userEmail }) {
@@ -1014,6 +1030,27 @@ export function* downloadReport({reportId}) {
 
   }
 }
+
+export function* pollForResourceCollection({ resourceType }) {
+  while (true) {
+    yield call(getResourceCollection, {resourceType});
+    yield delay(STANDARD_DELAY_FOR_POLLING);
+  }
+}
+export function* startPollingForResourceCollection({ resourceType }) {
+  return yield race({
+    pollCollection: call(pollForResourceCollection, {resourceType}),
+    cancelPoll: take(action => {
+      if ([
+        actionTypes.RESOURCE.STOP_COLLECTION_POLL,
+        actionTypes.RESOURCE.START_COLLECTION_POLL,
+      ].includes(action.type) &&
+    action.resourceType === resourceType) {
+        return true;
+      }
+    }),
+  });
+}
 export const resourceSagas = [
   takeEvery(actionTypes.EVENT_REPORT.CANCEL, eventReportCancel),
   takeEvery(actionTypes.EVENT_REPORT.DOWNLOAD, downloadReport),
@@ -1024,6 +1061,7 @@ export const resourceSagas = [
   ),
   takeEvery(actionTypes.RESOURCE.PATCH, patchResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
+  takeEvery(actionTypes.RESOURCE.VALIDATE_RESOURCE, validateResource),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
@@ -1044,7 +1082,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
   takeEvery(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, linkUnlinkSuiteScriptIntegrator),
   takeEvery(actionTypes.RESOURCE.REPLACE_CONNECTION, replaceConnection),
-
+  takeEvery(actionTypes.RESOURCE.START_COLLECTION_POLL, startPollingForResourceCollection),
   takeLatest(actionTypes.INTEGRATION.DELETE, deleteIntegration),
 
   ...metadataSagas,

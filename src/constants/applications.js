@@ -274,7 +274,7 @@ const connectors = [
     webhookOnly: true,
     icon: 'travis',
   },
-  { id: 's3', name: 'Amazon S3', type: 's3'},
+  { id: 's3', name: 'Amazon S3', type: 's3', group: 'tech'},
   // Metadata doesn't exist for below connectors. Only connections are available as of now.
   {id: 'banking', name: 'Banking', type: 'http', assistant: 'banking'},
   {id: 'clover', name: 'Clover', type: 'http', assistant: 'clover'},
@@ -325,6 +325,7 @@ export const groupApplications = (
           export: asst.export,
           import: asst.import,
           webhook: asst.webhook,
+          group: asst.group,
         });
       }
     });

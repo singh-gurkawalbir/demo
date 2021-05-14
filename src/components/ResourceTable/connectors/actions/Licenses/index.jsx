@@ -1,22 +1,19 @@
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import TokensApiIcon from '../../../../icons/TokensApiIcon';
 import getRoutePath from '../../../../../utils/routePaths';
 
 export default {
-  label: 'Licenses',
+  key: 'licenses',
+  useLabel: () => 'Licenses',
   icon: TokensApiIcon,
-  component: function Licenses({ rowData = {} }) {
+  useOnClick: rowData => {
     const { _id: resourceId } = rowData;
     const history = useHistory();
     const openLicensesURL = useCallback(() => {
       history.push(getRoutePath(`/connectors/${resourceId}/connectorLicenses`));
     }, [history, resourceId]);
 
-    useEffect(() => {
-      openLicensesURL();
-    }, [openLicensesURL]);
-
-    return null;
+    return openLicensesURL;
   },
 };

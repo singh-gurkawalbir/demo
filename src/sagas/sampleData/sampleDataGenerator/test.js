@@ -592,6 +592,45 @@ describe('Sample data generator sagas', () => {
           .run();
       });
 
+      test('should not call _attachRelatedLists saga and return metadata if SF resource have related lists as null', () => {
+        const connectionId = 'conn-123';
+        const sObjectType = 'Account';
+
+        const sfResource = {
+          _id: 'id-123',
+          _connectionId: connectionId,
+          type: 'distributed',
+          adaptorType: 'SalesforceExport',
+          salesforce: {
+            sObjectType,
+            distributed: {
+              referenceFields: [],
+              relatedLists: null,
+            },
+          },
+        };
+        const metadata = {
+          actionOverrides: [],
+          activateable: false,
+          relatedLists: [],
+        };
+        const sampleData = getSalesforceRealTimeSampleData(metadata);
+        const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}`;
+
+        return expectSaga(realTimeSampleData, { resource: sfResource })
+          .provide([
+            [call(fetchMetadata, {
+              connectionId,
+              commMetaPath,
+              refresh: undefined,
+            }), { data: metadata}],
+          ])
+          .call.fn(fetchMetadata)
+          .not.call.fn(_attachRelatedLists)
+          .returns(sampleData)
+          .run();
+      });
+
       test('should return undefined if the resource has no sampleData and it is a webhook', () => {
         const webhookResource = {
           _id: '123',

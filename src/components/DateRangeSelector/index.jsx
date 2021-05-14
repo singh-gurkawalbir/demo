@@ -107,6 +107,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
   },
   dateRangePopperBtnFull: {
+    width: '100%',
     justifyContent: 'flex-start',
     padding: [[6, 12]],
     '& > .MuiButton-label': {
@@ -118,8 +119,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const DateRange = props => {
-  const { isCalendar, setSelectedRange } = props;
-  const handleDateRangeSelection = useCallback(range => {
+  const { isCalendar, setSelectedRange, ranges } = props;
+  const handleDateRangeSelection = useCallback(({ selection: range }) => {
     let { startDate, endDate } = range;
 
     if (startDate.getTime() === endDate.getTime() && endDate.getTime() === startOfDay(endDate).getTime()) {
@@ -136,7 +137,7 @@ const DateRange = props => {
     return (
       <Calendar
         {...props}
-        showDateDisplay={false}
+        date={ranges[0].endDate} // ranges[0].endate consists the selected date
         onChange={handleCalendardateSelection}
         months={1}
      />
@@ -146,7 +147,7 @@ const DateRange = props => {
   return (
     <DateRangePicker
       {...props}
-      onChange={item => handleDateRangeSelection(item.selection)}
+      onChange={handleDateRangeSelection}
       months={2}
   />
   );
@@ -164,7 +165,7 @@ export default function DateRangeSelector({
   placement,
   Icon,
   disabled,
-  fullWidth,
+  fullWidthBtn,
   placeholder = 'Select range',
   defaultPreset = {preset: 'last30days'},
   selectedRangeConstraint,
@@ -249,8 +250,7 @@ export default function DateRangeSelector({
             onClick={toggleClick}
             variant="outlined"
             color="secondary"
-            fullWidth
-            className={clsx(classes.dateRangePopperBtn, {[classes.dateRangePopperBtnFull]: fullWidth})}>
+            className={clsx(classes.dateRangePopperBtn, {[classes.dateRangePopperBtnFull]: fullWidthBtn})}>
             {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || placeholder}<ArrowDownIcon />
           </Button>
         )

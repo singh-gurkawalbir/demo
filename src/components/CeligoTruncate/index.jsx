@@ -48,7 +48,7 @@ CeligoTruncate.propTypes = {
 
 CeligoTruncate.defaultProps = {
   ellipsis: '...',
-  placement: 'top',
+  placement: 'right',
   lines: 1,
   delay: 500,
   dataPublic: false,

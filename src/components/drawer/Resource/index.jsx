@@ -10,10 +10,10 @@ import { selectors } from '../../../reducers';
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 
 const useStyles = makeStyles(theme => ({
-  drawerPaper: {
+  resourceDrawerPaper: {
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
-    padding: 0,
     zIndex: theme.zIndex.drawer + 1,
+    marginTop: theme.appBarHeight,
   },
   panelContainer: {
     display: 'flex',
@@ -35,9 +35,9 @@ function ResourceDrawer(props) {
   const { id, resourceType } = (match && match.params) || {};
 
   // if we pass flowId/integration id to result/status export which we open
-  // from asyncHelper, getting sampledata preview errors. As result/status export
-  // are not related to flow, not passing flowId/integrationId conitionally.
-  // TODO: This code need to be revisited as there might be othercases as well where
+  // from asyncHelper, getting sample data preview errors. As result/status export
+  // are not related to flow, not passing flowId/integrationId conditionally.
+  // TODO: This code need to be revisited as there might be other cases as well where
   // flowId need not to be passed.
   const isAsyncHelper = resourceType === 'asyncHelpers';
   const handleClose = useCallback(() => {
@@ -67,7 +67,7 @@ function ResourceDrawer(props) {
         elevation={3}
         open={open}
         classes={{
-          paper: clsx(classes.drawerPaper, {
+          paper: clsx(classes.resourceDrawerPaper, {
             [classes.fullWidthDrawerClose]:
               !drawerOpened && isPreviewPanelAvailableForResource,
             [classes.fullWidthDrawerOpen]:

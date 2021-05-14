@@ -47,19 +47,129 @@ const useStyles = makeStyles(theme => ({
       width: '100%',
     },
   },
+  headerName: {
+    width: '100%',
+    wordBreak: 'break-word',
+  },
+  spinnerSearchCriteria: {
+    maxWidth: theme.spacing(3),
+  },
   deleteButton: {
     marginTop: theme.spacing(1),
   },
 }));
 
+const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, disabled, handleDelete, index}) =>
+  useMemo(() => {
+    const fieldType = fieldId => fields?.find(f => f.value === fieldId)?.type;
+    const field = obj.join ? [obj.join, obj.field].join('.') : obj.field;
+
+    const r =
+        {
+          ...obj,
+          field,
+          fieldType: fieldType(field),
+        };
+
+    return (
+      <div className={classes.rowContainer} key={r.key}>
+        <div className={classes.innerRow}>
+          <div
+            className={clsx(classes.childHeader, {
+              [classes.disabled]: disabled,
+            })}>
+            <DynaTypeableSelect
+              id={`field-${index}`}
+              labelName="label"
+              valueName="value"
+              data-test={`field-${index}`}
+              value={r.field}
+              options={fields}
+              isValid={!invalidFields?.includes('field')}
+              errorMessages="Please select a field"
+              disabled={disabled}
+              onBlur={(_, _value) => {
+                handleFieldUpdate(index, _value, 'field');
+              }}
+              />
+          </div>
+          <div
+            className={clsx(classes.childHeader, {
+              [classes.disabled]: disabled,
+            })}>
+            <DynaSelect
+              id={`operator-${index}`}
+              value={r.operator}
+              options={[{ items: operators.filter(op => (operatorsByFieldType[r.fieldType] || operatorsByFieldType.text).includes(op.value)) }]}
+              disabled={disabled}
+              isValid={!invalidFields?.includes('operator')}
+              errorMessages="Please select an operator"
+              onFieldChange={(id, _value) => {
+                handleFieldUpdate(index, _value, 'operator');
+              }}
+              />
+          </div>
+          <div
+            className={clsx(classes.childHeader, {
+              [classes.disabled]: disabled,
+            })}>
+            <DynaTypeableSelect
+              id={`searchValue-${index}`}
+              onBlur={(_id, _value) => {
+                handleFieldUpdate(index, _value, 'searchValue');
+              }}
+              isValid={!invalidFields?.includes('searchValue')}
+              errorMessages="Please enter a value"
+              disabled={disabled}
+              value={r.searchValue} />
+          </div>
+          <div
+            className={clsx(classes.childHeader, {
+              [classes.disabled]: disabled || !r.searchValue2Enabled,
+            })}>
+            <DynaTypeableSelect
+              id={`searchValue2-${index}`}
+              disabled={disabled || !r.searchValue2Enabled}
+              onBlur={(_id, _value) => {
+                handleFieldUpdate(index, _value, 'searchValue2');
+              }}
+              isValid={!r.searchValue2Enabled || r.searchValue2}
+              errorMessages="Please enter a value"
+              value={r.searchValue2}
+              />
+          </div>
+          <div
+            key="delete_button"
+            className={clsx(classes.deleteButton, {
+              [classes.disabled]: disabled,
+            })}>
+            <ActionButton
+              id={`delete-${index}`}
+              data-test={`searchValue2-${index}`}
+              onClick={() => {
+                handleDelete(index);
+              }}
+              disabled={disabled}>
+              <TrashIcon />
+            </ActionButton>
+          </div>
+        </div>
+      </div>
+    );
+  }, [obj, classes, handleFieldUpdate, invalidFields, fields, disabled, handleDelete, index]);
+
+const emptyObject = {};
+const emptyArray = [];
+
 export default function SearchCriteriaEditor(props) {
-  const { editorId, disabled, value, onRefresh, connectionId, commMetaPath, filterKey, invalidFields = {} } = props;
+  const { editorId, disabled, value, onRefresh, connectionId, commMetaPath, filterKey, invalidFields = emptyObject} = props;
   const { data: fields, status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey);
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { searchCriteria = [], initChangeIdentifier = 0 } = useSelector(state =>
-    selectors.searchCriteria(state, editorId)
+  const searchCriteria = useSelector(state =>
+    selectors.searchCriteria(state, editorId).searchCriteria || emptyArray
   );
+
   const handleInit = useCallback(() => {
     dispatch(actions.searchCriteria.init(editorId, value));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,33 +179,19 @@ export default function SearchCriteriaEditor(props) {
     handleInit();
   }, [dispatch, handleInit]);
 
-  const handleFieldUpdate = (row, _value, field) => {
+  const handleFieldUpdate = useCallback((row, _value, field) => {
     dispatch(actions.searchCriteria.patchField(editorId, field, row, _value));
     // operator should be cleared on changing field
     // available operators for a field will be based on its type
     if (field === 'field') {
       dispatch(actions.searchCriteria.patchField(editorId, 'operator', row, null));
     }
-  };
+  }, [dispatch, editorId]);
 
-  const handleDelete = row => {
+  const handleDelete = useCallback(row => {
     dispatch(actions.searchCriteria.delete(editorId, row));
-  };
+  }, [dispatch, editorId]);
 
-  const fieldType = useCallback(fieldId =>
-    fields?.find(f => f.value === fieldId)?.type,
-  [fields]);
-
-  const tableData = useMemo(
-    () =>
-      [...(searchCriteria || []), {}].map((obj, index) => ({
-        ...obj,
-        field: obj.join ? [obj.join, obj.field].join('.') : obj.field,
-        fieldType: fieldType(obj.join ? [obj.join, obj.field].join('.') : obj.field),
-        index,
-      })),
-    [fieldType, searchCriteria]
-  );
   const handleRefresh = useCallback(() => {
     if (onRefresh) {
       onRefresh(true);
@@ -113,102 +209,25 @@ export default function SearchCriteriaEditor(props) {
       <div className={classes.header}>
         {headers.map(header => (
           <div className={classes.childHeader} key={header.name}>
-            <span>{header.name}</span>
+            <span className={classes.headerName}>{header.name}</span>
             {header.refreshable && status !== 'requested' && <RefreshIcon onClick={handleRefresh} />}
-            {header.refreshable && status === 'requested' && <Spinner />}
+            {header.refreshable && status === 'requested' && <Spinner className={classes.spinnerSearchCriteria} />}
           </div>
         ))}
       </div>
-      <div key={initChangeIdentifier} className={classes.criteriaBody}>
-        {tableData.map(r => (
-          <div className={classes.rowContainer} key={r.index}>
-            <div className={classes.innerRow}>
-              <div
-                className={clsx(classes.childHeader, {
-                  [classes.disabled]: disabled,
-                })}>
-                <DynaTypeableSelect
-                  key={`field-${initChangeIdentifier}-${r.rowIdentifier}`}
-                  id={`field-${r.index}`}
-                  labelName="label"
-                  valueName="value"
-                  data-test={`field-${r.index}`}
-                  value={r.field}
-                  options={fields}
-                  isValid={!invalidFields[r.index]?.includes('field')}
-                  errorMessages="Please select a field"
-                  disabled={disabled}
-                  onBlur={(_, _value) => {
-                    handleFieldUpdate(r.index, _value, 'field');
-                  }}
-                />
-              </div>
-              <div
-                className={clsx(classes.childHeader, {
-                  [classes.disabled]: disabled,
-                })}>
-                <DynaSelect
-                  key={`operator-${initChangeIdentifier}-${r.rowIdentifier}`}
-                  id={`operator-${r.index}`}
-                  value={r.operator}
-                  options={[{ items: operators.filter(op => (operatorsByFieldType[r.fieldType] || operatorsByFieldType.text).includes(op.value)) }]}
-                  disabled={disabled}
-                  isValid={!invalidFields[r.index]?.includes('operator')}
-                  errorMessages="Please select an operator"
-                  onFieldChange={(id, _value) => {
-                    handleFieldUpdate(r.index, _value, 'operator');
-                  }}
-                />
-              </div>
-              <div
-                className={clsx(classes.childHeader, {
-                  [classes.disabled]: disabled,
-                })}>
-                <DynaTypeableSelect
-                  id={`searchValue-${r.index}`}
-                  key={`searchValue-${initChangeIdentifier}-${r.rowIdentifier}`}
-                  onBlur={(_id, _value) => {
-                    handleFieldUpdate(r.index, _value, 'searchValue');
-                  }}
-                  isValid={!invalidFields[r.index]?.includes('searchValue')}
-                  errorMessages="Please enter a value"
-                  disabled={disabled}
-                  value={r.searchValue}
-                />
-              </div>
-              <div
-                className={clsx(classes.childHeader, {
-                  [classes.disabled]: disabled || !r.searchValue2Enabled,
-                })}>
-                <DynaTypeableSelect
-                  id={`searchValue2-${r.index}`}
-                  disabled={disabled || !r.searchValue2Enabled}
-                  key={`searchValue2-${initChangeIdentifier}-${r.rowIdentifier}`}
-                  onBlur={(_id, _value) => {
-                    handleFieldUpdate(r.index, _value, 'searchValue2');
-                  }}
-                  isValid={!r.searchValue2Enabled || r.searchValue2}
-                  errorMessages="Please enter a value"
-                  value={r.searchValue2}
-                />
-              </div>
-              <div
-                key="delete_button"
-                className={clsx(classes.deleteButton, {
-                  [classes.disabled]: disabled,
-                })}>
-                <ActionButton
-                  id={`delete-${r.index}`}
-                  data-test={`searchValue2-${r.index}`}
-                  onClick={() => {
-                    handleDelete(r.index);
-                  }}
-                  disabled={disabled}>
-                  <TrashIcon />
-                </ActionButton>
-              </div>
-            </div>
-          </div>
+      <div className={classes.criteriaBody}>
+        {[...searchCriteria, emptyObject].map((r, index) => (
+          <TableRowMemo
+            obj={r}
+            classes={classes}
+            handleFieldUpdate={handleFieldUpdate}
+            invalidFields={invalidFields[index]}
+            fields={fields}
+            disabled={disabled}
+            handleDelete={handleDelete}
+            key={r.key}
+            index={index}
+           />
         ))}
       </div>
     </div>

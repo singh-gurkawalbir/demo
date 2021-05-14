@@ -237,6 +237,7 @@ describe('editors reducers', () => {
         editorType: 'sql',
         stage: 'flowInput',
         supportsDefaultData: true,
+        resourceId: 'new-1234',
       };
       const initialState = reducer(
         undefined,
@@ -251,9 +252,11 @@ describe('editors reducers', () => {
           id: 'query',
           editorType: 'sql',
           stage: 'flowInput',
+          resourceId: 'new-1234',
           supportsDefaultData: true,
           data: '{"rows": [{"id": "123"}]}',
           defaultData: JSON.stringify({id: {default: ''}}, null, 2),
+          originalDefaultData: JSON.stringify({id: {default: ''}}, null, 2),
           sampleDataStatus: 'received',
           lastValidData: '{"rows": [{"id": "123"}]}',
         },
@@ -266,6 +269,7 @@ describe('editors reducers', () => {
         fieldId: 'rdbms.query',
         editorType: 'databaseMapping',
         supportsDefaultData: true,
+        resourceId: 'new-1234',
       };
       const initialState = reducer(
         undefined,
@@ -279,9 +283,11 @@ describe('editors reducers', () => {
         rdbmsquery: {
           fieldId: 'rdbms.query',
           editorType: 'databaseMapping',
+          resourceId: 'new-1234',
           supportsDefaultData: true,
           data: '{"rows": [{"id": "123"}]}',
           defaultData: JSON.stringify({id: {default: ''}}, null, 2),
+          originalDefaultData: JSON.stringify({id: {default: ''}}, null, 2),
           sampleDataStatus: 'received',
           lastValidData: '{"rows": [{"id": "123"}]}',
         },
@@ -1421,6 +1427,45 @@ describe('editors reducers', () => {
           originalRule: {rowSuffix: '\n'},
           data: '{"id": 123, "name": "Angel"}',
           originalData: '{"id": 123, "name": "Angel"}',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should update save status and reset original default data only if its already present', () => {
+      const options = {
+        id: 'rdbms.query',
+        editorType: 'sql',
+        stage: 'flowInput',
+        supportsDefaultData: true,
+        rule: 'some query',
+        originalRule: 'some query',
+        data: '{"id": 123, "name": "Angel"}',
+        originalData: '{"id": 123, "name": "Angel"}',
+        defaultData: '{"id": {"default": {}}}',
+        originalDefaultData: '{}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('rdbmsquery1', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.saveComplete('rdbmsquery1')
+      );
+      const expectedState = {
+        rdbmsquery1: {
+          id: 'rdbms.query',
+          editorType: 'sql',
+          stage: 'flowInput',
+          supportsDefaultData: true,
+          rule: 'some query',
+          originalRule: 'some query',
+          data: '{"id": 123, "name": "Angel"}',
+          originalData: '{"id": 123, "name": "Angel"}',
+          defaultData: '{"id": {"default": {}}}',
+          originalDefaultData: '{"id": {"default": {}}}',
+          saveStatus: 'success',
         },
       };
 

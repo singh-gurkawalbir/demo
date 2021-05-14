@@ -59,13 +59,13 @@ export default function SalesforceLookupFilterPanel({
   const dispatch = useDispatch();
   const patchEditor = useCallback(
     value => {
+      // convert value to suiteScript supported format if its a ss resource
+      const formattedVal = ssLinkedConnectionId ? convertValueToSuiteScriptSupportedExpression(value) : value;
+
       if (editorId) {
-        dispatch(actions.editor.patchRule(editorId, value || ''));
+        dispatch(actions.editor.patchRule(editorId, formattedVal || ''));
       }
       if (onFieldChange) {
-        // convert value to suiteScript supported format if its a ss resource
-        const formattedVal = ssLinkedConnectionId ? convertValueToSuiteScriptSupportedExpression(value) : value;
-
         onFieldChange(id, formattedVal);
       }
     },
@@ -90,7 +90,7 @@ export default function SalesforceLookupFilterPanel({
   );
 
   useEffect(() => {
-    const qbRules = convertSalesforceLookupFilterExpression(rule, data);
+    const qbRules = convertSalesforceLookupFilterExpression(rule, data, ssLinkedConnectionId);
 
     if (
         qbRules?.rules?.length === 1 &&
@@ -101,8 +101,7 @@ export default function SalesforceLookupFilterPanel({
 
     setRules(qbRules);
     setRulesState(generateRulesState(qbRules));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [rule, data, ssLinkedConnectionId]);
 
   useEffect(() => {
     if (rules && filters.length) {
@@ -110,7 +109,15 @@ export default function SalesforceLookupFilterPanel({
     }
   }, [jsonPathsFromData, rules, filters]);
 
-  const isValid = () => jQuery(qbuilder.current).queryBuilder('validate');
+  const isValid = () => {
+    try {
+      return jQuery(qbuilder.current).queryBuilder('validate');
+    // eslint-disable-next-line no-empty
+    } catch (e) {
+    }
+
+    return false;
+  };
   const getRules = useCallback((options = {}) => {
     const qbRules = jQuery(qbuilder.current).queryBuilder('getRules', options);
 
@@ -133,7 +140,7 @@ export default function SalesforceLookupFilterPanel({
       patchEditor(rule);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [patchEditor]);
+  }, [patchEditor, salesforceFilterDataTypes]);
   const showOperandSettings = ({ rule, rhs }) => {
     setShowOperandSettingsFor({ rule, rhs });
   };
@@ -245,6 +252,8 @@ export default function SalesforceLookupFilterPanel({
           if (!rulesState[ruleId].data.rhs.type) {
             rulesState[ruleId].data.rhs.type = 'field';
           }
+          // IO-21280- temp fix. rulesState is not persisting when new filters are added intermittently.
+          setRulesState(rulesState);
 
           if (!disabled) {
             rule.$el
@@ -377,11 +386,14 @@ export default function SalesforceLookupFilterPanel({
         }
       });
 
-      qbContainer.queryBuilder({
-        ...config,
-        filters: filtersConfig,
-        rules,
-      });
+      try {
+        qbContainer.queryBuilder({
+          ...config,
+          filters: filtersConfig,
+          rules,
+        });
+      } catch (e) { // do nothing }
+      }
       qbContainer
         .unbind('rulesChanged.queryBuilder')
         .on('rulesChanged.queryBuilder', () => {

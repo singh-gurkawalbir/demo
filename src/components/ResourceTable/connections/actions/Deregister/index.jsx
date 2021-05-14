@@ -1,14 +1,18 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import CloseIcon from '../../../../icons/CloseIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
+import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 
 export default {
-  label: 'Deregister connection',
+  key: 'deregisterConnection',
+  useLabel: () => 'Deregister connection',
   icon: CloseIcon,
-  useHasAccess: ({ integrationId }) => {
+  useHasAccess: () => {
+    const {integrationId} = useGetTableContext();
+
     const isStandalone = integrationId === 'none';
     const hasAccess = useSelector(state => selectors.resourcePermissions(
       state,
@@ -19,8 +23,11 @@ export default {
 
     return hasAccess && !isStandalone;
   },
-  component: function Deregister({ rowData = {}, integrationId }) {
+  useOnClick: rowData => {
     const { _id: connectionId } = rowData;
+
+    const {integrationId} = useGetTableContext();
+
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const deregisterConnection = useCallback(() => {
@@ -45,10 +52,6 @@ export default {
       });
     }, [confirmDialog, deregisterConnection]);
 
-    useEffect(() => {
-      confirmDeregister();
-    }, [confirmDeregister]);
-
-    return null;
+    return confirmDeregister;
   },
 };

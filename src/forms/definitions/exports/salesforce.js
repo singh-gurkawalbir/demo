@@ -52,10 +52,11 @@ export default {
         soqlField.value.query &&
         soqlField.value.query.includes('lastExportDateTime')
       ) {
-        dateField.required = false;
+        dateField.defaultRequired = false;
       } else {
-        dateField.required = true;
+        dateField.defaultRequired = true;
       }
+      dateField.required = dateField.defaultRequired;
     }
   },
   preSave: formValues => {
@@ -278,20 +279,12 @@ export default {
     'salesforce.objectType': {
       fieldId: 'salesforce.objectType',
     },
-    pageSize: { fieldId: 'pageSize' },
-    skipRetries: { fieldId: 'skipRetries' },
-    apiIdentifier: { fieldId: 'apiIdentifier' },
-    dataURITemplate: { fieldId: 'dataURITemplate' },
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
     },
     advancedSettings: {
       formId: 'advancedSettings',
-      visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
-    },
-    traceKeyTemplate: {
-      fieldId: 'traceKeyTemplate',
     },
   },
   layout: {
@@ -347,13 +340,9 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          'pageSize',
           'salesforce.distributed.batchSize',
           'salesforce.distributed.skipExportFieldId',
-          'dataURITemplate',
-          'skipRetries',
-          'apiIdentifier',
-          'traceKeyTemplate',
+          'advancedSettings',
         ],
       },
     ],

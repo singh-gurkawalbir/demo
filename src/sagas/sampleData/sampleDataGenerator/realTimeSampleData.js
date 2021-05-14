@@ -91,7 +91,7 @@ export default function* requestRealTimeMetadata({ resource, refresh }) {
 
         metadata = getSalesforceRealTimeSampleData(metadata);
         metadata = { ...metadata, ...getReferenceFieldsMap(referencedFields) };
-        if (!relatedLists.length) {
+        if (!relatedLists?.length) {
           return metadata;
         }
 

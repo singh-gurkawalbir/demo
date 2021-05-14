@@ -19,6 +19,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
   mappingColumn: {
+    flex: '1 1 0',
     width: 'calc(100% + 24px)',
     overflow: 'hidden',
     flexDirection: 'column',
@@ -26,6 +27,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: -24,
   },
   mappingTable: {
+    height: '100%',
     overflow: 'auto',
   },
   autoMapper: {
@@ -34,6 +36,9 @@ const useStyles = makeStyles(theme => ({
 }));
 const Mapping = ({flowId, importId, subRecordMappingId, disabled, onClose}) => {
   const canAutoMap = useSelector(state => {
+    if (disabled) {
+      return false;
+    }
     const generateFields = selectors.mappingGenerates(state, importId, subRecordMappingId);
     const extractFields = selectors.mappingExtracts(state, importId, flowId, subRecordMappingId);
 
