@@ -10953,8 +10953,16 @@ Object {
   "fieldMeta": Object {
     "actions": undefined,
     "fieldMap": Object {
-      "advancedSettings": Object {
-        "formId": "advancedSettings",
+      "apiIdentifier": Object {
+        "fieldId": "apiIdentifier",
+        "visibleWhen": Array [
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "blobKeyPath": Object {
         "fieldId": "blobKeyPath",
@@ -10964,6 +10972,17 @@ Object {
       },
       "dataMappings": Object {
         "formId": "dataMappings",
+      },
+      "dataURITemplate": Object {
+        "fieldId": "dataURITemplate",
+        "visibleWhenA": Array [
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "deleteAfterImport": Object {
         "fieldId": "deleteAfterImport",
@@ -10978,6 +10997,17 @@ Object {
       },
       "distributed": Object {
         "fieldId": "distributed",
+      },
+      "idLockTemplate": Object {
+        "fieldId": "idLockTemplate",
+        "visibleWhen": Array [
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "ignoreExisting": Object {
         "fieldId": "ignoreExisting",
@@ -11083,6 +11113,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
     },
     "layout": Object {
       "containers": Array [
@@ -11121,8 +11154,11 @@ Object {
               "fields": Array [
                 "netsuite_da.useSS2Restlets",
                 "blobKeyPath",
+                "idLockTemplate",
+                "dataURITemplate",
                 "netsuite_da.batchSize",
-                "advancedSettings",
+                "traceKeyTemplate",
+                "apiIdentifier",
                 "deleteAfterImport",
               ],
               "label": "Advanced",
@@ -11150,8 +11186,16 @@ Object {
   "fieldMeta": Object {
     "actions": undefined,
     "fieldMap": Object {
-      "advancedSettings": Object {
-        "formId": "advancedSettings",
+      "apiIdentifier": Object {
+        "fieldId": "apiIdentifier",
+        "visibleWhen": Array [
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "blobKeyPath": Object {
         "fieldId": "blobKeyPath",
@@ -11161,6 +11205,17 @@ Object {
       },
       "dataMappings": Object {
         "formId": "dataMappings",
+      },
+      "dataURITemplate": Object {
+        "fieldId": "dataURITemplate",
+        "visibleWhenA": Array [
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "deleteAfterImport": Object {
         "fieldId": "deleteAfterImport",
@@ -11175,6 +11230,17 @@ Object {
       },
       "distributed": Object {
         "fieldId": "distributed",
+      },
+      "idLockTemplate": Object {
+        "fieldId": "idLockTemplate",
+        "visibleWhen": Array [
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "ignoreExisting": Object {
         "fieldId": "ignoreExisting",
@@ -11280,6 +11346,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
     },
     "layout": Object {
       "containers": Array [
@@ -11318,8 +11387,11 @@ Object {
               "fields": Array [
                 "netsuite_da.useSS2Restlets",
                 "blobKeyPath",
+                "idLockTemplate",
+                "dataURITemplate",
                 "netsuite_da.batchSize",
-                "advancedSettings",
+                "traceKeyTemplate",
+                "apiIdentifier",
                 "deleteAfterImport",
               ],
               "label": "Advanced",

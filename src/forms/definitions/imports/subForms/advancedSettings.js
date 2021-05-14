@@ -6,7 +6,7 @@ export default {
       fieldId: 'idLockTemplate',
       visibleWhenAll: r => {
         const importType = getResourceSubType(r).type;
-        const showOnlyForRecordsTypes = ['http', 'rest', 'salesforce', 'netsuite'];
+        const showOnlyForRecordsTypes = ['http', 'rest', 'salesforce'];
 
         if (showOnlyForRecordsTypes.includes(importType)) {
           return [
@@ -24,7 +24,7 @@ export default {
       fieldId: 'dataURITemplate',
       visibleWhenAll: r => {
         const importType = getResourceSubType(r).type;
-        const showOnlyForRecordsTypes = ['http', 'rest', 'salesforce', 'netsuite'];
+        const showOnlyForRecordsTypes = ['http', 'rest', 'salesforce'];
 
         if (showOnlyForRecordsTypes.includes(importType)) {
           return [
@@ -42,7 +42,7 @@ export default {
       fieldId: 'apiIdentifier',
       visibleWhenAll: r => {
         const importType = getResourceSubType(r).type;
-        const showOnlyForRecordsTypes = ['http', 'rest', 'salesforce', 'netsuite'];
+        const showOnlyForRecordsTypes = ['http', 'rest', 'salesforce'];
 
         if (showOnlyForRecordsTypes.includes(importType)) {
           return [
