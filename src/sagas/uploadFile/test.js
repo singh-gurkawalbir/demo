@@ -6,17 +6,21 @@ import { apiCallWithRetry } from '../index';
 import { uploadFile, previewZip, processFile, configureFileReader } from '.';
 import actions from '../../actions';
 import messageStore from '../../constants/messages';
+import {
+  getCsvFromXlsx,
+} from '../../utils/file';
 
 describe('uploadFile saga', () => {
   const resourceId = '123';
   const resourceType = 'templates';
   const fileType = 'application/zip';
   const file = { _id: '456', name: 'someFile' };
-  const response = { signedURL: 'someURL' };
+  const response = { signedURL: 'someURL', runKey: 'runKey' };
 
   test('should succeed on successful api call', () => expectSaga(uploadFile, { resourceType, resourceId, fileType, file })
     .provide([[matchers.call.fn(apiCallWithRetry), response]])
     .call.fn(apiCallWithRetry)
+    .returns(true)
     .run());
   test('should handle api error properly', () => {
     const error = new Error('error');
@@ -26,6 +30,7 @@ describe('uploadFile saga', () => {
         [matchers.call.fn(apiCallWithRetry), throwError(error)],
       ])
       .call.fn(apiCallWithRetry)
+      .returns(true)
       .run();
   });
 });
@@ -91,11 +96,18 @@ describe('processFile saga', () => {
     type: 'text/plain',
     webkitRelativePath: '',
   };
+  const xlsxFile = {
+    name: 'certificate',
+    size: 500,
+    type: 'application/vnd.ms-excel',
+    webkitRelativePath: '',
+  };
+  const jsonFile = '';
   const fileProps = {};
   const fileId = 'field1';
   const fileContent = { test: 5 };
 
-  test('should succeed on successful api call', () => expectSaga(processFile, { fileId, file, fileType, fileProps})
+  test('should be able to dispatch processedFile if valid file is uploaded', () => expectSaga(processFile, { fileId, file, fileType, fileProps})
     .provide([[matchers.call.fn(configureFileReader), fileContent]])
     .call.fn(configureFileReader)
     .put(
@@ -106,7 +118,29 @@ describe('processFile saga', () => {
       })
     )
     .run());
-  test('should handle if file size exeeds', () => expectSaga(processFile, { fileId, file: file1, fileType, fileProps})
+  test('should be able to dispatch processError if invalid json file uploaded', () => expectSaga(processFile, { fileId, file: jsonFile, fileType: 'json', fileProps})
+    .provide([[matchers.call.fn(configureFileReader), {}]])
+    .call.fn(configureFileReader)
+    .put(
+      actions.file.processError({
+        fileId,
+        error: 'Please select valid JSON file',
+      })
+    )
+    .run());
+  test('should be able to dispatch processError if invalid xlsx file uploaded', () => expectSaga(processFile, { fileId, file: xlsxFile, fileType: 'xlsx', fileProps})
+    .provide([[matchers.call.fn(configureFileReader), {}],
+      [matchers.call.fn(getCsvFromXlsx), {error: 'Invalid xlsx file'}]])
+    .call.fn(configureFileReader)
+    .call.fn(getCsvFromXlsx)
+    .put(
+      actions.file.processError({
+        fileId,
+        error: 'Invalid xlsx file',
+      })
+    )
+    .run());
+  test('should be able to dispatch processError if file size exceeds', () => expectSaga(processFile, { fileId, file: file1, fileType, fileProps})
     .provide([[matchers.call.fn(configureFileReader), fileContent]])
     .put(actions.file.processError({ fileId, error: messageStore('FILE_SIZE_EXCEEDED') }))
     .run());
