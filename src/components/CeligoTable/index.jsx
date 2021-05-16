@@ -60,7 +60,6 @@ export default function CeligoTable({
   filterKey,
   className,
   actionProps = emptyObj,
-  variant = 'standard',  // slim | standard
 }) {
   const classes = useStyles();
 
@@ -79,7 +78,6 @@ export default function CeligoTable({
             useColumns={useColumns}
             filterKey={filterKey}
             useRowActions={useRowActions}
-            variant={variant}
 
   />
 
@@ -92,7 +90,6 @@ export default function CeligoTable({
             isSelectableRow={isSelectableRow}
             useColumns={useColumns}
             useRowActions={useRowActions}
-            variant={variant}
             filterKey={filterKey}
             onSelectChange={onSelectChange}
           />

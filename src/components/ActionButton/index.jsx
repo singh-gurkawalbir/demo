@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ActionButton({ className, children, tooltip, ...props }) {
+export default function ActionButton({ className, children, tooltip = '', ...props }) {
   const classes = useStyles();
 
   return (

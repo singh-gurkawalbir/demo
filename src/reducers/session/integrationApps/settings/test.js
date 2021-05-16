@@ -1784,248 +1784,327 @@ describe('integrationApps reducer test cases', () => {
         };
 
         state = reducer(state, actions.integrationApp.settings.receivedCategoryMappingMetadata('integrationId', 'flowId', amazonCategoryMappings));
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.init('integrationId', 'flowId', 'variation', {
-          adaptorType: 'netsuite',
-          application: 'netsuite',
-          isCategoryMapping: true,
-          lookups: [],
-          mappings: {
-            fields: [{
-              extract: 'SKU',
-              generate: 'item_sku',
-              discardIfEmpty: true,
-            },
-            {
-              extract: 'upccode',
-              generate: 'UPC',
-              discardIfEmpty: true,
-            },
-            {
-              extract: 'salesdescription',
-              generate: 'product_description',
-              discardIfEmpty: true,
-            }],
-          },
-          resourceData: {
-            adaptorType: 'WrapperImport',
-            mapping: {
-              fields: [{extract: 'SKU', generate: 'SKU'}],
-            },
-            _connectionId: 'connectionId',
-          },
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.init({
+          depth: '1',
+          flowId: 'flowId',
+          id: 'flowId-autoaccessorymisc-itempackagequantity',
+          integrationId: 'integrationId',
+          isVariationAttributes: false,
+          isVariationMapping: true,
+          sectionId: 'autoaccessorymisc',
+          variation: 'itempackagequantity',
         }));
+        state['flowId-integrationId'].mappings['flowId-autoaccessorymisc-itempackagequantity'].mappings = [{
+          extract: 'yes',
+          generate: 'no',
+        }];
+        state['flowId-integrationId'].mappings['flowId-autoaccessorymisc-itempackagequantity'].lookups = [{
+          lookupName: 'yes',
+          map: {yes: 'no'},
+        }];
         state = reducer(state, actions.integrationApp.settings.categoryMappings.saveVariationMappings(
           'integrationId',
           'flowId',
-          'variation',
+          'flowId-autoaccessorymisc-itempackagequantity',
           {
             categoryId: 'autoaccessory',
             isVariationAttributes: false,
             subCategoryId: 'autoaccessorymisc',
           }
         ));
-        expect(state).toEqual(
-          {
-            'flow1-integration1': {
-              dummy: 'value',
-            },
-            'flowId-integrationId': {
-              filters: {
-                attributes: {
-                  conditional: false,
-                  optional: false,
-                  preferred: false,
-                  required: true,
-
-                },
-                mappingFilter: 'all',
-
+        expect(state).toEqual({
+          'flow1-integration1': {
+            dummy: 'value',
+          },
+          'flowId-integrationId': {
+            filters: {
+              attributes: {
+                conditional: false,
+                optional: false,
+                preferred: false,
+                required: true,
               },
-              generatesMetadata: [
-                {
-                  children: [
+              mappingFilter: 'all',
+            },
+            generatesMetadata: [
+              {
+                children: [
 
-                  ],
-                  fields: [
-                    {
-                      description: 'A unique identifier for the product, assigned by the merchant.  The SKU must be unique for each product listed.  After you have established a SKU for a product, please do not change it without first deleting the original SKU from our systems through a delete feed.',
-                      filterType: 'required',
-                      id: 'item_sku',
-                      name: 'Seller SKU',
-                      options: [
+                ],
+                fields: [
+                  {
+                    description: 'A unique identifier for the product, assigned by the merchant.  The SKU must be unique for each product listed.  After you have established a SKU for a product, please do not change it without first deleting the original SKU from our systems through a delete feed.',
+                    filterType: 'required',
+                    id: 'item_sku',
+                    name: 'Seller SKU',
+                    options: [
 
-                      ],
-                      type: 'input',
+                    ],
+                    type: 'input',
+                  },
+                  {
+                    description: 'A short title for the product. This will be displayed in bold on the product page and in the title bar of the browser window.',
+                    filterType: 'required',
+                    id: 'item_name',
+                    name: 'Product Name',
+                    options: [
 
-                    },
-                    {
-                      description: 'A short title for the product. This will be displayed in bold on the product page and in the title bar of the browser window.',
-                      filterType: 'required',
-                      id: 'item_name',
-                      name: 'Product Name',
-                      options: [
+                    ],
+                    type: 'input',
+                  },
+                  {
+                    description: 'A standard, alphanumeric string that uniquely identifies the product.',
+                    filterType: 'preferred',
+                    id: 'ASIN',
+                    name: 'ASIN',
+                    options: [
 
-                      ],
-                      type: 'input',
+                    ],
+                    type: 'input',
+                  },
+                  {
+                    description: 'A standard, alphanumeric string that uniquely identifies the product.',
+                    filterType: 'preferred',
+                    id: 'UPC',
+                    name: 'UPC',
+                    options: [
 
-                    },
-                    {
-                      description: 'A standard, alphanumeric string that uniquely identifies the product.',
-                      filterType: 'preferred',
-                      id: 'ASIN',
-                      name: 'ASIN',
-                      options: [
+                    ],
+                    type: 'input',
+                  },
+                  {
+                    description: 'The unit of measure used to describe the dimensions (width, length, height) of the product, expressed in centimeters, meters, inches, or feet. Required if item dimensions are provided.',
+                    filterType: 'optional',
+                    id: 'item_length_unit_of_measure',
+                    name: 'Item Length Unit Of Measure',
+                    options: [
+                      {
+                        id: 'CM',
+                        text: 'CM',
+                      },
+                      {
+                        id: 'FT',
+                        text: 'FT',
+                      },
+                      {
+                        id: 'IN',
+                        text: 'IN',
+                      },
+                      {
+                        id: 'M',
+                        text: 'M',
+                      },
+                      {
+                        id: 'MM',
+                        text: 'MM',
+                      },
+                    ],
+                    type: 'select',
+                  },
+                ],
+                id: 'commonAttributes',
+                isLeafNode: false,
+                marketplace_domain: 'US',
+                name: 'Common',
+                variation_attributes: [
 
-                      ],
-                      type: 'input',
+                ],
+                variation_themes: [
 
-                    },
-                    {
-                      description: 'A standard, alphanumeric string that uniquely identifies the product.',
-                      filterType: 'preferred',
-                      id: 'UPC',
-                      name: 'UPC',
-                      options: [
+                ],
+              },
+            ],
+            initMappingData: {
+              data: {
+                mappingData: {
+                  basicMappings: {
+                    recordMappings: [
+                      {
+                        children: [
+                          {
+                            children: [
 
-                      ],
-                      type: 'input',
+                            ],
+                            fieldMappings: [
 
-                    },
-                    {
-                      description: 'The unit of measure used to describe the dimensions (width, length, height) of the product, expressed in centimeters, meters, inches, or feet. Required if item dimensions are provided.',
-                      filterType: 'optional',
-                      id: 'item_length_unit_of_measure',
-                      name: 'Item Length Unit Of Measure',
-                      options: [
-                        {
-                          id: 'CM',
-                          text: 'CM',
+                            ],
+                            id: 'Dimensions',
+                            name: 'Dimensions',
+                          },
+                          {
+                            children: [
 
-                        },
-                        {
-                          id: 'FT',
-                          text: 'FT',
+                            ],
+                            fieldMappings: [
 
-                        },
-                        {
-                          id: 'IN',
-                          text: 'IN',
+                            ],
+                            id: 'Discovery',
+                            name: 'Discovery',
+                          },
+                          {
+                            children: [
 
-                        },
-                        {
-                          id: 'M',
-                          text: 'M',
+                            ],
+                            fieldMappings: [
 
-                        },
-                        {
-                          id: 'MM',
-                          text: 'MM',
+                            ],
+                            id: 'Images',
+                            name: 'Images',
+                          },
+                          {
+                            children: [
 
-                        },
+                            ],
+                            fieldMappings: [
 
-                      ],
-                      type: 'select',
+                            ],
+                            id: 'Fulfillment',
+                            name: 'Fulfillment',
+                          },
+                        ],
+                        fieldMappings: [
+                          {
+                            discardIfEmpty: true,
+                            extract: 'SKU',
+                            generate: 'item_sku',
+                          },
+                          {
+                            discardIfEmpty: true,
+                            extract: 'upccode',
+                            generate: 'UPC',
+                          },
+                          {
+                            discardIfEmpty: true,
+                            extract: 'salesdescription',
+                            generate: 'product_description',
+                          },
+                          {
+                            discardIfEmpty: true,
+                            extract: 'displayname',
+                            generate: 'item_name',
+                          },
+                          {
+                            discardIfEmpty: true,
+                            extract: 'manufacturer',
+                            generate: 'brand_name',
+                          },
+                        ],
+                        id: 'commonAttributes',
+                        lookups: [
 
-                    },
+                        ],
+                        name: 'Common',
+                      },
+                    ],
+                  },
+                  variationMappings: {
+                    recordMappings: [
 
-                  ],
-                  id: 'commonAttributes',
-                  isLeafNode: false,
-                  marketplace_domain: 'US',
-                  name: 'Common',
-                  variation_attributes: [
-
-                  ],
-                  variation_themes: [
-
-                  ],
-
+                    ],
+                  },
                 },
-
-              ],
-              initMappingData: {
+              },
+              operation: 'mappingData',
+            },
+            mappings: {
+              'flowId-autoaccessorymisc-itempackagequantity': {
+                lookups: [
+                  {
+                    lookupName: 'yes',
+                    map: {
+                      yes: 'no',
+                    },
+                  },
+                ],
+                mappings: [
+                  {
+                    extract: 'yes',
+                    generate: 'no',
+                  },
+                ],
+                staged: [
+                  {
+                    extract: 'yes',
+                    generate: 'no',
+                  },
+                ],
+                stagedLookups: [
+                  {
+                    lookupName: 'yes',
+                    map: {
+                      yes: 'no',
+                    },
+                  },
+                ],
+                status: 'requested',
+              },
+            },
+            response: [
+              {
                 data: {
                   mappingData: {
                     basicMappings: {
                       recordMappings: [
                         {
                           children: [
+
                             {
-                              children: [
-
-                              ],
-                              fieldMappings: [
-
-                              ],
+                              children: [],
+                              fieldMappings: [],
                               id: 'Dimensions',
                               name: 'Dimensions',
-
                             },
+
                             {
-                              children: [
-
-                              ],
-                              fieldMappings: [
-
-                              ],
+                              children: [],
+                              fieldMappings: [],
                               id: 'Discovery',
                               name: 'Discovery',
-
                             },
+
                             {
-                              children: [
-
-                              ],
-                              fieldMappings: [
-
-                              ],
+                              children: [],
+                              fieldMappings: [],
                               id: 'Images',
                               name: 'Images',
-
                             },
                             {
-                              children: [
-
-                              ],
-                              fieldMappings: [
-
-                              ],
+                              children: [],
+                              fieldMappings: [],
                               id: 'Fulfillment',
                               name: 'Fulfillment',
-
                             },
-
                           ],
                           fieldMappings: [
+
                             {
                               discardIfEmpty: true,
                               extract: 'SKU',
                               generate: 'item_sku',
-
                             },
+
                             {
                               discardIfEmpty: true,
                               extract: 'upccode',
                               generate: 'UPC',
-
                             },
+
                             {
                               discardIfEmpty: true,
                               extract: 'salesdescription',
                               generate: 'product_description',
-
                             },
+
                             {
                               discardIfEmpty: true,
                               extract: 'displayname',
                               generate: 'item_name',
-
                             },
+
                             {
                               discardIfEmpty: true,
                               extract: 'manufacturer',
                               generate: 'brand_name',
-
                             },
 
                           ],
@@ -2034,626 +2113,349 @@ describe('integrationApps reducer test cases', () => {
 
                           ],
                           name: 'Common',
-
                         },
-
                       ],
-
                     },
                     variationMappings: {
                       recordMappings: [
+                        {
+                          children: [
 
+                            {
+                              children: [],
+                              id: 'autoaccessorymisc',
+                              variation_themes: [],
+                            },
+
+                          ],
+                          id: 'autoaccessory',
+                          variation_themes: [
+
+                          ],
+                        },
                       ],
-
                     },
-
                   },
-
                 },
                 operation: 'mappingData',
-
               },
-              mappings: {
-                variation: {
-                  adaptorType: 'netsuite',
-                  application: 'netsuite',
-                  flowSampleData: undefined,
-                  generateFields: undefined,
-                  incompleteGenerates: [
-
-                  ],
-                  initChangeIdentifier: 1,
-                  isGroupedSampleData: undefined,
-                  lastModifiedRow: -1,
-                  lookups: [
-
-                  ],
-                  mappings: [
+              {
+                data: [
+                  {
+                    id: 'hits',
+                    name: '# Times Viewed',
+                    type: 'integer',
+                  },
+                  {
+                    id: 'atpleadtime',
+                    name: 'ATP Lead Time',
+                    type: 'float',
+                  },
+                  {
+                    id: 'accountingbook',
+                    name: 'Accounting Book',
+                    type: 'select',
+                  },
+                  {
+                    id: 'accountingbookamortization',
+                    name: 'Accounting Book Amortization Schedule',
+                    type: 'select',
+                  },
+                  {
+                    id: 'accountingbookrevrecschedule',
+                    name: 'Accounting Book Rev. Rec. Schedule',
+                    type: 'select',
+                  },
+                  {
+                    id: 'custitem_celigo_ebay_list_add_fee',
+                    name: 'Add Listing Fee',
+                    type: 'text',
+                  },
+                  {
+                    id: 'custitem_celigo_etail_channel',
+                    name: 'eTail Channel (2)',
+                    type: 'multiselect',
+                  },
+                ],
+                operation: 'extractsMetaData',
+              },
+              {
+                data: {
+                  categoryRelationshipData: [
                     {
-                      discardIfEmpty: true,
-                      extract: 'SKU',
-                      generate: 'item_sku',
-                      rowIdentifier: 0,
-
-                    },
-                    {
-                      discardIfEmpty: true,
-                      extract: 'upccode',
-                      generate: 'UPC',
-                      rowIdentifier: 0,
-
-                    },
-                    {
-                      discardIfEmpty: true,
-                      extract: 'salesdescription',
-                      generate: 'product_description',
-                      rowIdentifier: 0,
-
-                    },
-
-                  ],
-                  netsuiteRecordType: undefined,
-                  resource: {
-                    _connectionId: 'connectionId',
-                    adaptorType: 'WrapperImport',
-                    mapping: {
-                      fields: [
+                      children: [
                         {
-                          extract: 'SKU',
-                          generate: 'SKU',
-
+                          id: 'autoaccessorymisc',
+                          isLeafNode: true,
+                          name: 'autoaccessorymisc',
                         },
-
+                        {
+                          id: 'autobattery',
+                          isLeafNode: true,
+                          name: 'autobattery',
+                        },
+                        {
+                          id: 'autooil',
+                          isLeafNode: true,
+                          name: 'autooil',
+                        },
+                        {
+                          id: 'Underwear',
+                          isLeafNode: true,
+                          name: 'Underwear [Moved to Clothing]',
+                        },
                       ],
-
-                    },
-
-                  },
-                  staged: [
-                    {
-                      discardIfEmpty: true,
-                      extract: 'SKU',
-                      generate: 'item_sku',
-                      rowIdentifier: 0,
-
+                      id: 'autoaccessory',
+                      isLeafNode: false,
+                      marketplace_domain: 'US',
+                      name: 'Auto Accessory',
                     },
                     {
-                      discardIfEmpty: true,
-                      extract: 'upccode',
-                      generate: 'UPC',
-                      rowIdentifier: 0,
-
+                      children: [
+                        {
+                          id: 'babyproducts',
+                          isLeafNode: true,
+                          name: 'babyproducts',
+                        },
+                        {
+                          id: 'infanttoddlercarseat',
+                          isLeafNode: true,
+                          name: 'infanttoddlercarseat',
+                        },
+                        {
+                          id: 'stroller',
+                          isLeafNode: true,
+                          name: 'stroller',
+                        },
+                      ],
+                      id: 'baby',
+                      isLeafNode: false,
+                      marketplace_domain: 'US',
+                      name: 'Baby',
                     },
                     {
-                      discardIfEmpty: true,
-                      extract: 'salesdescription',
-                      generate: 'product_description',
-                      rowIdentifier: 0,
-
-                    },
-
-                  ],
-                  stagedLookups: [
-
-                  ],
-                  visible: true,
-
-                },
-
-              },
-              response: [
-                {
-                  data: {
-                    mappingData: {
-                      basicMappings: {
-                        recordMappings: [
-                          {
-                            children: [
-                              {
-                                children: [
-
-                                ],
-                                fieldMappings: [
-
-                                ],
-                                id: 'Dimensions',
-                                name: 'Dimensions',
-
-                              },
-                              {
-                                children: [
-
-                                ],
-                                fieldMappings: [
-
-                                ],
-                                id: 'Discovery',
-                                name: 'Discovery',
-
-                              },
-                              {
-                                children: [
-
-                                ],
-                                fieldMappings: [
-
-                                ],
-                                id: 'Images',
-                                name: 'Images',
-
-                              },
-                              {
-                                children: [
-
-                                ],
-                                fieldMappings: [
-
-                                ],
-                                id: 'Fulfillment',
-                                name: 'Fulfillment',
-
-                              },
-
-                            ],
-                            fieldMappings: [
-                              {
-                                discardIfEmpty: true,
-                                extract: 'SKU',
-                                generate: 'item_sku',
-
-                              },
-                              {
-                                discardIfEmpty: true,
-                                extract: 'upccode',
-                                generate: 'UPC',
-
-                              },
-                              {
-                                discardIfEmpty: true,
-                                extract: 'salesdescription',
-                                generate: 'product_description',
-
-                              },
-                              {
-                                discardIfEmpty: true,
-                                extract: 'displayname',
-                                generate: 'item_name',
-
-                              },
-                              {
-                                discardIfEmpty: true,
-                                extract: 'manufacturer',
-                                generate: 'brand_name',
-
-                              },
-
-                            ],
-                            id: 'commonAttributes',
-                            lookups: [
-
-                            ],
-                            name: 'Common',
-
-                          },
-
-                        ],
-
-                      },
-                      variationMappings: {
-                        recordMappings: [
-                          {
-                            children: [
-                              {
-                                children: [
-
-                                ],
-                                id: 'autoaccessorymisc',
-                                variation_themes: [
-
-                                ],
-
-                              },
-
-                            ],
-                            id: 'autoaccessory',
-                            variation_themes: [
-
-                            ],
-
-                          },
-
-                        ],
-
-                      },
-
-                    },
-
-                  },
-                  operation: 'mappingData',
-
-                },
-                {
-                  data: [
-                    {
-                      id: 'hits',
-                      name: '# Times Viewed',
-                      type: 'integer',
-
+                      children: [
+                        {
+                          id: 'beautymisc',
+                          isLeafNode: true,
+                          name: 'beautymisc',
+                        },
+                        {
+                          id: 'bodycareproduct',
+                          isLeafNode: true,
+                          name: 'bodycareproduct',
+                        },
+                        {
+                          id: 'conditioner',
+                          isLeafNode: true,
+                          name: 'conditioner',
+                        },
+                      ],
+                      id: 'beauty',
+                      isLeafNode: false,
+                      marketplace_domain: 'US',
+                      name: 'Beauty',
                     },
                     {
-                      id: 'atpleadtime',
-                      name: 'ATP Lead Time',
-                      type: 'float',
-
-                    },
-                    {
-                      id: 'accountingbook',
-                      name: 'Accounting Book',
-                      type: 'select',
-
-                    },
-                    {
-                      id: 'accountingbookamortization',
-                      name: 'Accounting Book Amortization Schedule',
-                      type: 'select',
-
-                    },
-                    {
-                      id: 'accountingbookrevrecschedule',
-                      name: 'Accounting Book Rev. Rec. Schedule',
-                      type: 'select',
-
-                    },
-                    {
-                      id: 'custitem_celigo_ebay_list_add_fee',
-                      name: 'Add Listing Fee',
-                      type: 'text',
-
-                    },
-                    {
-                      id: 'custitem_celigo_etail_channel',
-                      name: 'eTail Channel (2)',
-                      type: 'multiselect',
-
-                    },
-
-                  ],
-                  operation: 'extractsMetaData',
-
-                },
-                {
-                  data: {
-                    categoryRelationshipData: [
-                      {
-                        children: [
-                          {
-                            id: 'autoaccessorymisc',
-                            isLeafNode: true,
-                            name: 'autoaccessorymisc',
-
-                          },
-                          {
-                            id: 'autobattery',
-                            isLeafNode: true,
-                            name: 'autobattery',
-
-                          },
-                          {
-                            id: 'autooil',
-                            isLeafNode: true,
-                            name: 'autooil',
-
-                          },
-                          {
-                            id: 'Underwear',
-                            isLeafNode: true,
-                            name: 'Underwear [Moved to Clothing]',
-
-                          },
-
-                        ],
-                        id: 'autoaccessory',
-                        isLeafNode: false,
-                        marketplace_domain: 'US',
-                        name: 'Auto Accessory',
-
-                      },
-                      {
-                        children: [
-                          {
-                            id: 'babyproducts',
-                            isLeafNode: true,
-                            name: 'babyproducts',
-
-                          },
-                          {
-                            id: 'infanttoddlercarseat',
-                            isLeafNode: true,
-                            name: 'infanttoddlercarseat',
-
-                          },
-                          {
-                            id: 'stroller',
-                            isLeafNode: true,
-                            name: 'stroller',
-
-                          },
-
-                        ],
-                        id: 'baby',
-                        isLeafNode: false,
-                        marketplace_domain: 'US',
-                        name: 'Baby',
-
-                      },
-                      {
-                        children: [
-                          {
-                            id: 'beautymisc',
-                            isLeafNode: true,
-                            name: 'beautymisc',
-
-                          },
-                          {
-                            id: 'bodycareproduct',
-                            isLeafNode: true,
-                            name: 'bodycareproduct',
-
-                          },
-                          {
-                            id: 'conditioner',
-                            isLeafNode: true,
-                            name: 'conditioner',
-
-                          },
-
-                        ],
-                        id: 'beauty',
-                        isLeafNode: false,
-                        marketplace_domain: 'US',
-                        name: 'Beauty',
-
-                      },
-                      {
-                        children: [
-
-                        ],
-                        id: 'BookLoader',
-                        isLeafNode: true,
-                        marketplace_domain: 'US',
-                        name: 'Book Loader',
-
-                      },
-                      {
-                        children: [
-                          {
-                            id: 'binocular',
-                            isLeafNode: true,
-                            name: 'binocular',
-
-                          },
-                          {
-                            id: 'blankmediaforcameras',
-                            isLeafNode: true,
-                            name: 'blankmediaforcameras',
-
-                          },
-                          {
-                            id: 'camcorder',
-                            isLeafNode: true,
-                            name: 'camcorder',
-
-                          },
-                          {
-                            id: 'Tripod',
-                            isLeafNode: true,
-                            name: 'Tripod [Deprecated]',
-
-                          },
-
-                        ],
-                        id: 'cameraandphoto',
-                        isLeafNode: false,
-                        marketplace_domain: 'US',
-                        name: 'Camera and Photo',
-
-                      },
-                      {
-                        children: [
-                          {
-                            id: 'PROTECTIVE_GLOVE',
-                            isLeafNode: true,
-                            name: 'PROTECTIVE_GLOVE',
-
-                          },
-                          {
-                            id: 'accessory',
-                            isLeafNode: true,
-                            name: 'accessory',
-
-                          },
-                          {
-                            id: 'childrenscostume',
-                            isLeafNode: true,
-                            name: 'childrenscostume',
-
-                          },
-                          {
-                            id: 'vest',
-                            isLeafNode: true,
-                            name: 'vest',
-
-                          },
-
-                        ],
-                        id: 'clothing',
-                        isLeafNode: false,
-                        marketplace_domain: 'US',
-                        name: 'Clothing',
-
-                      },
-                      {
-                        children: [
-                          {
-                            id: 'Bullion',
-                            isLeafNode: true,
-                            name: 'Bullion',
-
-                          },
-                          {
-                            id: 'Coins',
-                            isLeafNode: true,
-                            name: 'Coins',
-
-                          },
-                          {
-                            id: 'CollectibleCoins',
-                            isLeafNode: true,
-                            name: 'CollectibleCoins',
-
-                          },
-
-                        ],
-                        id: 'coins',
-                        isLeafNode: false,
-                        marketplace_domain: 'US',
-                        name: 'Coins',
-
-                      },
-                      {
-                        children: [
-                          {
-                            id: 'FoodServiceSupply',
-                            isLeafNode: true,
-                            name: 'FoodServiceSupply',
-
-                          },
-                          {
-                            id: 'JanitorialSupply',
-                            isLeafNode: true,
-                            name: 'JanitorialSupply',
-
-                          },
-
-                        ],
-                        id: 'FoodServiceAndJanSan',
-                        isLeafNode: false,
-                        marketplace_domain: 'US',
-                        name: 'Food Service and Jan San',
-
-                      },
-
-                    ],
-                    generatesMetaData: {
                       children: [
 
                       ],
-                      fields: [
+                      id: 'BookLoader',
+                      isLeafNode: true,
+                      marketplace_domain: 'US',
+                      name: 'Book Loader',
+                    },
+                    {
+                      children: [
                         {
-                          description: 'A unique identifier for the product, assigned by the merchant.  The SKU must be unique for each product listed.  After you have established a SKU for a product, please do not change it without first deleting the original SKU from our systems through a delete feed.',
-                          filterType: 'required',
-                          id: 'item_sku',
-                          name: 'Seller SKU',
-                          options: [
-
-                          ],
-                          type: 'input',
-
+                          id: 'binocular',
+                          isLeafNode: true,
+                          name: 'binocular',
                         },
                         {
-                          description: 'A short title for the product. This will be displayed in bold on the product page and in the title bar of the browser window.',
-                          filterType: 'required',
-                          id: 'item_name',
-                          name: 'Product Name',
-                          options: [
-
-                          ],
-                          type: 'input',
-
+                          id: 'blankmediaforcameras',
+                          isLeafNode: true,
+                          name: 'blankmediaforcameras',
                         },
                         {
-                          description: 'A standard, alphanumeric string that uniquely identifies the product.',
-                          filterType: 'preferred',
-                          id: 'ASIN',
-                          name: 'ASIN',
-                          options: [
-
-                          ],
-                          type: 'input',
-
+                          id: 'camcorder',
+                          isLeafNode: true,
+                          name: 'camcorder',
                         },
                         {
-                          description: 'A standard, alphanumeric string that uniquely identifies the product.',
-                          filterType: 'preferred',
-                          id: 'UPC',
-                          name: 'UPC',
-                          options: [
-
-                          ],
-                          type: 'input',
-
+                          id: 'Tripod',
+                          isLeafNode: true,
+                          name: 'Tripod [Deprecated]',
                         },
-                        {
-                          description: 'The unit of measure used to describe the dimensions (width, length, height) of the product, expressed in centimeters, meters, inches, or feet. Required if item dimensions are provided.',
-                          filterType: 'optional',
-                          id: 'item_length_unit_of_measure',
-                          name: 'Item Length Unit Of Measure',
-                          options: [
-                            {
-                              id: 'CM',
-                              text: 'CM',
-
-                            },
-                            {
-                              id: 'FT',
-                              text: 'FT',
-
-                            },
-                            {
-                              id: 'IN',
-                              text: 'IN',
-
-                            },
-                            {
-                              id: 'M',
-                              text: 'M',
-
-                            },
-                            {
-                              id: 'MM',
-                              text: 'MM',
-
-                            },
-
-                          ],
-                          type: 'select',
-
-                        },
-
                       ],
-                      id: 'commonAttributes',
+                      id: 'cameraandphoto',
                       isLeafNode: false,
                       marketplace_domain: 'US',
-                      name: 'Common',
-                      variation_attributes: [
-
-                      ],
-                      variation_themes: [
-
-                      ],
-
+                      name: 'Camera and Photo',
                     },
+                    {
+                      children: [
+                        {
+                          id: 'PROTECTIVE_GLOVE',
+                          isLeafNode: true,
+                          name: 'PROTECTIVE_GLOVE',
+                        },
+                        {
+                          id: 'accessory',
+                          isLeafNode: true,
+                          name: 'accessory',
+                        },
+                        {
+                          id: 'childrenscostume',
+                          isLeafNode: true,
+                          name: 'childrenscostume',
+                        },
+                        {
+                          id: 'vest',
+                          isLeafNode: true,
+                          name: 'vest',
+                        },
+                      ],
+                      id: 'clothing',
+                      isLeafNode: false,
+                      marketplace_domain: 'US',
+                      name: 'Clothing',
+                    },
+                    {
+                      children: [
+                        {
+                          id: 'Bullion',
+                          isLeafNode: true,
+                          name: 'Bullion',
+                        },
+                        {
+                          id: 'Coins',
+                          isLeafNode: true,
+                          name: 'Coins',
+                        },
+                        {
+                          id: 'CollectibleCoins',
+                          isLeafNode: true,
+                          name: 'CollectibleCoins',
+                        },
+                      ],
+                      id: 'coins',
+                      isLeafNode: false,
+                      marketplace_domain: 'US',
+                      name: 'Coins',
+                    },
+                    {
+                      children: [
+                        {
+                          id: 'FoodServiceSupply',
+                          isLeafNode: true,
+                          name: 'FoodServiceSupply',
+                        },
+                        {
+                          id: 'JanitorialSupply',
+                          isLeafNode: true,
+                          name: 'JanitorialSupply',
+                        },
+                      ],
+                      id: 'FoodServiceAndJanSan',
+                      isLeafNode: false,
+                      marketplace_domain: 'US',
+                      name: 'Food Service and Jan San',
+                    },
+                  ],
+                  generatesMetaData: {
+                    children: [
 
+                    ],
+                    fields: [
+                      {
+                        description: 'A unique identifier for the product, assigned by the merchant.  The SKU must be unique for each product listed.  After you have established a SKU for a product, please do not change it without first deleting the original SKU from our systems through a delete feed.',
+                        filterType: 'required',
+                        id: 'item_sku',
+                        name: 'Seller SKU',
+                        options: [
+
+                        ],
+                        type: 'input',
+                      },
+                      {
+                        description: 'A short title for the product. This will be displayed in bold on the product page and in the title bar of the browser window.',
+                        filterType: 'required',
+                        id: 'item_name',
+                        name: 'Product Name',
+                        options: [
+
+                        ],
+                        type: 'input',
+                      },
+                      {
+                        description: 'A standard, alphanumeric string that uniquely identifies the product.',
+                        filterType: 'preferred',
+                        id: 'ASIN',
+                        name: 'ASIN',
+                        options: [
+
+                        ],
+                        type: 'input',
+                      },
+                      {
+                        description: 'A standard, alphanumeric string that uniquely identifies the product.',
+                        filterType: 'preferred',
+                        id: 'UPC',
+                        name: 'UPC',
+                        options: [
+
+                        ],
+                        type: 'input',
+                      },
+                      {
+                        description: 'The unit of measure used to describe the dimensions (width, length, height) of the product, expressed in centimeters, meters, inches, or feet. Required if item dimensions are provided.',
+                        filterType: 'optional',
+                        id: 'item_length_unit_of_measure',
+                        name: 'Item Length Unit Of Measure',
+                        options: [
+                          {
+                            id: 'CM',
+                            text: 'CM',
+                          },
+                          {
+                            id: 'FT',
+                            text: 'FT',
+                          },
+                          {
+                            id: 'IN',
+                            text: 'IN',
+                          },
+                          {
+                            id: 'M',
+                            text: 'M',
+                          },
+                          {
+                            id: 'MM',
+                            text: 'MM',
+                          },
+                        ],
+                        type: 'select',
+                      },
+                    ],
+                    id: 'commonAttributes',
+                    isLeafNode: false,
+                    marketplace_domain: 'US',
+                    name: 'Common',
+                    variation_attributes: [
+
+                    ],
+                    variation_themes: [
+
+                    ],
                   },
-                  operation: 'generatesMetaData',
-
                 },
-
-              ],
-              uiAssistant: 'amazon',
-
-            },
-          });
+                operation: 'generatesMetaData',
+              },
+            ],
+            uiAssistant: 'amazon',
+          },
+        });
       });
     });
 
@@ -2741,14 +2543,17 @@ describe('integrationApps reducer test cases', () => {
                   {
                     extract: 'a',
                     generate: 'b',
+                    key: 'key0',
                   },
                   {
                     extract: 'c',
                     generate: 'd',
+                    key: 'key1',
                   },
                   {
                     extract: 'e',
                     generate: 'f',
+                    key: 'key2',
                   },
                 ],
               },
@@ -2756,12 +2561,12 @@ describe('integrationApps reducer test cases', () => {
           },
         };
 
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.delete('integrationId', 'flowId', 'mappingId', 0));
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.delete('integrationId', 'flowId', 'mappingId', 'key0'));
         expect(state).toEqual({
           'flowId-integrationId': {
             mappings: {
               mappingId: {
-                initChangeIdentifier: 1,
+                initChangeIdentifier: 0,
                 lookups: [
                   {
                     id: 'oldLookup',
@@ -2771,10 +2576,13 @@ describe('integrationApps reducer test cases', () => {
                   {
                     extract: 'c',
                     generate: 'd',
+                    key: 'key1',
                   },
                   {
                     extract: 'e',
                     generate: 'f',
+                    key: 'key2',
+
                   },
                 ],
                 validationErrMsg: undefined,
@@ -2804,14 +2612,19 @@ describe('integrationApps reducer test cases', () => {
                   {
                     extract: 'a',
                     generate: 'b',
+                    key: 'key0',
                   },
                   {
                     extract: 'c',
                     generate: 'd',
+                    key: 'key1',
+
                   },
                   {
                     extract: 'e',
                     generate: 'f',
+                    key: 'key2',
+
                   },
                 ],
               },
@@ -2819,13 +2632,13 @@ describe('integrationApps reducer test cases', () => {
           },
         };
 
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.delete('integrationId', 'flowId', 'mappingId', 1));
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.delete('integrationId', 'flowId', 'mappingId', 'key1'));
         expect(state).toEqual({
           'flowId-integrationId': {
             mappings: {
               mappingId: {
-                lastModifiedRow: -1,
-                initChangeIdentifier: 1,
+                lastModifiedRow: 1,
+                initChangeIdentifier: 0,
                 lookups: [
                   {
                     id: 'oldLookup',
@@ -2835,10 +2648,12 @@ describe('integrationApps reducer test cases', () => {
                   {
                     extract: 'a',
                     generate: 'b',
+                    key: 'key0',
                   },
                   {
                     extract: 'e',
                     generate: 'f',
+                    key: 'key2',
                   },
                 ],
                 validationErrMsg: undefined,
@@ -2867,14 +2682,17 @@ describe('integrationApps reducer test cases', () => {
                 mappings: [
                   {
                     extract: 'a',
+                    key: 'key0',
                   },
                   {
                     extract: 'c',
                     generate: 'd',
+                    key: 'key1',
                   },
                   {
                     extract: 'e',
                     generate: 'f',
+                    key: 'key2',
                   },
                 ],
               },
@@ -2882,13 +2700,13 @@ describe('integrationApps reducer test cases', () => {
           },
         };
 
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.delete('integrationId', 'flowId', 'mappingId', 1));
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.delete('integrationId', 'flowId', 'mappingId', 'key1'));
         expect(state).toEqual({
           'flowId-integrationId': {
             mappings: {
               mappingId: {
-                lastModifiedRow: -1,
-                initChangeIdentifier: 1,
+                lastModifiedRow: 1,
+                initChangeIdentifier: 0,
                 lookups: [
                   {
                     id: 'oldLookup',
@@ -2897,10 +2715,12 @@ describe('integrationApps reducer test cases', () => {
                 mappings: [
                   {
                     extract: 'a',
+                    key: 'key0',
                   },
                   {
                     extract: 'e',
                     generate: 'f',
+                    key: 'key2',
                   },
                 ],
                 validationErrMsg: 'One or more generate fields missing',
@@ -3025,244 +2845,19 @@ describe('integrationApps reducer test cases', () => {
       test('should correctly set the mappings init object', () => {
         let state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integrationId', 'flowId', amazonCategoryMappings));
 
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.init('integrationId', 'flowId', 'flowId-commonAttributes', {
-          adaptorType: 'netsuite',
-          application: 'netsuite',
-          isCategoryMapping: true,
-          lookups: [],
-          mappings: {
-            fields: [{
-              extract: 'SKU',
-              generate: 'item_sku',
-              discardIfEmpty: true,
-            },
-            {
-              extract: 'upccode',
-              generate: 'UPC',
-              discardIfEmpty: true,
-            },
-            {
-              extract: 'salesdescription',
-              generate: 'product_description',
-              discardIfEmpty: true,
-            }],
-          },
-          resourceData: {
-            adaptorType: 'WrapperImport',
-            mapping: {
-              fields: [{extract: 'SKU', generate: 'SKU'}],
-            },
-            _connectionId: 'connectionId',
-          },
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.init({
+          depth: '1',
+          flowId: 'flowId',
+          id: 'flowId-autoaccessorymisc-itempackagequantity',
+          integrationId: 'integrationId',
+          sectionId: 'autoaccessorymisc',
         }));
-        expect(state).toEqual({
-          'flowId-integrationId': {
-            filters: {
-              attributes: {
-                conditional: false,
-                optional: false,
-                preferred: false,
-                required: true,
-              },
-              mappingFilter: 'all',
-            },
-            generatesMetadata: [
-              {
-                children: [],
-                fields: [
-                  {
-                    description: 'A unique identifier for the product, assigned by the merchant.  The SKU must be unique for each product listed.  After you have established a SKU for a product, please do not change it without first deleting the original SKU from our systems through a delete feed.',
-                    filterType: 'required',
-                    id: 'item_sku',
-                    name: 'Seller SKU',
-                    options: [],
-                    type: 'input',
-                  },
-                  {
-                    description: 'A short title for the product. This will be displayed in bold on the product page and in the title bar of the browser window.',
-                    filterType: 'required',
-                    id: 'item_name',
-                    name: 'Product Name',
-                    options: [],
-                    type: 'input',
-                  },
-                  {
-                    description: 'A standard, alphanumeric string that uniquely identifies the product.',
-                    filterType: 'preferred',
-                    id: 'ASIN',
-                    name: 'ASIN',
-                    options: [],
-                    type: 'input',
-                  },
-                  {
-                    description: 'A standard, alphanumeric string that uniquely identifies the product.',
-                    filterType: 'preferred',
-                    id: 'UPC',
-                    name: 'UPC',
-                    options: [],
-                    type: 'input',
-                  },
-                  {
-                    description: 'The unit of measure used to describe the dimensions (width, length, height) of the product, expressed in centimeters, meters, inches, or feet. Required if item dimensions are provided.',
-                    filterType: 'optional',
-                    id: 'item_length_unit_of_measure',
-                    name: 'Item Length Unit Of Measure',
-                    options: [
-                      {
-                        id: 'CM',
-                        text: 'CM',
-                      },
-                      {
-                        id: 'FT',
-                        text: 'FT',
-                      },
-                      {
-                        id: 'IN',
-                        text: 'IN',
-                      },
-                      {
-                        id: 'M',
-                        text: 'M',
-                      },
-                      {
-                        id: 'MM',
-                        text: 'MM',
-                      },
-                    ],
-                    type: 'select',
-                  },
-                ],
-                id: 'commonAttributes',
-                isLeafNode: false,
-                marketplace_domain: 'US',
-                name: 'Common',
-                variation_attributes: [],
-                variation_themes: [],
-              },
-            ],
-            initMappingData: {
-              data: {
-                mappingData: {
-                  basicMappings: {
-                    recordMappings: [
-                      {
-                        children: [
-                          {
-                            children: [],
-                            fieldMappings: [],
-                            id: 'Dimensions',
-                            name: 'Dimensions',
-                          },
-                          {
-                            children: [],
-                            fieldMappings: [],
-                            id: 'Discovery',
-                            name: 'Discovery',
-                          },
-                          {
-                            children: [],
-                            fieldMappings: [],
-                            id: 'Images',
-                            name: 'Images',
-                          },
-                          {
-                            children: [],
-                            fieldMappings: [],
-                            id: 'Fulfillment',
-                            name: 'Fulfillment',
-                          },
-                        ],
-                        fieldMappings: [
-                          {
-                            discardIfEmpty: true,
-                            extract: 'SKU',
-                            generate: 'item_sku',
-                          },
-                          {
-                            discardIfEmpty: true,
-                            extract: 'upccode',
-                            generate: 'UPC',
-                          },
-                          {
-                            discardIfEmpty: true,
-                            extract: 'salesdescription',
-                            generate: 'product_description',
-                          },
-                          {
-                            discardIfEmpty: true,
-                            extract: 'displayname',
-                            generate: 'item_name',
-                          },
-                          {
-                            discardIfEmpty: true,
-                            extract: 'manufacturer',
-                            generate: 'brand_name',
-                          },
-                        ],
-                        id: 'commonAttributes',
-                        lookups: [],
-                        name: 'Common',
-                      },
-                    ],
-                  },
-                  variationMappings: {
-                    recordMappings: [],
-                  },
-                },
-              },
-              operation: 'mappingData',
-            },
-            mappings: {
-              'flowId-commonAttributes': {
-                adaptorType: 'netsuite',
-                application: 'netsuite',
-                flowSampleData: undefined,
-                generateFields: undefined,
-                incompleteGenerates: [],
-                initChangeIdentifier: 1,
-                isGroupedSampleData: undefined,
-                lastModifiedRow: -1,
-                lookups: [],
-                mappings: [
-                  {
-                    discardIfEmpty: true,
-                    extract: 'SKU',
-                    generate: 'item_sku',
-                    rowIdentifier: 0,
-                  },
-                  {
-                    discardIfEmpty: true,
-                    extract: 'upccode',
-                    generate: 'UPC',
-                    rowIdentifier: 0,
-                  },
-                  {
-                    discardIfEmpty: true,
-                    extract: 'salesdescription',
-                    generate: 'product_description',
-                    rowIdentifier: 0,
-                  },
-                ],
-                netsuiteRecordType: undefined,
-                resource: {
-                  _connectionId: 'connectionId',
-                  adaptorType: 'WrapperImport',
-                  mapping: {
-                    fields: [
-                      {
-                        extract: 'SKU',
-                        generate: 'SKU',
-                      },
-                    ],
-                  },
-                },
-                staged: undefined,
-                visible: true,
-              },
-            },
-            response: amazonCategoryMappings.response,
-            uiAssistant: 'amazon',
-          }});
+
+        expect(state['flowId-integrationId'].mappings).toEqual({
+          'flowId-autoaccessorymisc-itempackagequantity': {
+            status: 'requested',
+          },
+        });
       });
 
       test('should correctly set the mappings init object for variation mappings', () => {
@@ -3292,39 +2887,17 @@ describe('integrationApps reducer test cases', () => {
           },
         };
 
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.init('integrationId', 'flowId', 'flowId-commonAttributes', {
-          adaptorType: 'netsuite',
-          application: 'netsuite',
-          categoryId: 'autoaccessory',
-          childCategoryId: 'autoaccessorymisc',
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.init({
+          depth: '1',
+          flowId: 'flowId',
+          id: 'flowId-autoaccessorymisc-itempackagequantity',
+          integrationId: 'integrationId',
           isVariationAttributes: false,
           isVariationMapping: true,
-          lookups: [],
-          mappings: {
-            fields: [{
-              extract: 'SKU',
-              generate: 'item_sku',
-              discardIfEmpty: true,
-            },
-            {
-              extract: 'upccode',
-              generate: 'UPC',
-              discardIfEmpty: true,
-            },
-            {
-              extract: 'salesdescription',
-              generate: 'product_description',
-              discardIfEmpty: true,
-            }],
-          },
-          resourceData: {
-            adaptorType: 'WrapperImport',
-            mapping: {
-              fields: [{extract: 'SKU', generate: 'SKU'}],
-            },
-            _connectionId: 'connectionId',
-          },
+          sectionId: 'autoaccessorymisc',
+          variation: 'itempackagequantity',
         }));
+
         expect(state).toEqual({
           'flow1-integration1': {
             data: 'dummy',
@@ -3343,55 +2916,16 @@ describe('integrationApps reducer test cases', () => {
               },
             },
             mappings: {
-              'flowId-commonAttributes': {
-                adaptorType: 'netsuite',
-                application: 'netsuite',
-                flowSampleData: undefined,
-                generateFields: undefined,
-                incompleteGenerates: [],
-                initChangeIdentifier: 1,
-                isGroupedSampleData: undefined,
-                lastModifiedRow: -1,
-                lookups: [],
-                mappings: [
-                  {
-                    discardIfEmpty: true,
-                    extract: 'SKU',
-                    generate: 'item_sku',
-                    rowIdentifier: 0,
-                  },
-                  {
-                    discardIfEmpty: true,
-                    extract: 'upccode',
-                    generate: 'UPC',
-                    rowIdentifier: 0,
-                  },
-                  {
-                    discardIfEmpty: true,
-                    extract: 'salesdescription',
-                    generate: 'product_description',
-                    rowIdentifier: 0,
-                  },
-                ],
-                netsuiteRecordType: undefined,
-                resource: {
-                  _connectionId: 'connectionId',
-                  adaptorType: 'WrapperImport',
-                  mapping: {
-                    fields: [
-                      {
-                        extract: 'SKU',
-                        generate: 'SKU',
-                      },
-                    ],
-                  },
-                },
-                staged: undefined,
-                visible: true,
+              'flowId-autoaccessorymisc-itempackagequantity': {
+                status: 'requested',
               },
               mappingId: {
-                lookups: [],
-                mappings: [],
+                lookups: [
+
+                ],
+                mappings: [
+
+                ],
               },
             },
           },
@@ -3439,13 +2973,13 @@ describe('integrationApps reducer test cases', () => {
           'flowId-integrationId': {
             mappings: {
               mappingId: {
-                mappings: [],
+                mappings: [{key: 'key1'}],
               },
             },
           },
         };
 
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'generate', 0, 'value'));
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'generate', 'key1', 'value'));
         expect(state).toEqual({
           'flow1-integration1': {
             data: 'dummy',
@@ -3453,9 +2987,9 @@ describe('integrationApps reducer test cases', () => {
           'flowId-integrationId': {
             mappings: {
               mappingId: {
-                lastModifiedRow: 0,
+                lastModifiedRowKey: 'key1',
                 mappings: [{
-                  rowIdentifier: 0,
+                  key: 'key1',
                   generate: 'value',
                 }],
                 validationErrMsg: 'Extract Fields missing for field(s): value',
@@ -3476,18 +3010,18 @@ describe('integrationApps reducer test cases', () => {
                 mappings: [{
                   extract: 'hello',
                   generate: 'world',
+                  key: 'key0',
                 }, {
                   extract: 'hello1',
                   generate: 'world1',
-                  useFirstRow: true,
-                  isKey: true,
+                  key: 'key1',
                 }],
               },
             },
           },
         };
 
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'generate', 1, 'value'));
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'generate', 'key1', 'value'));
         expect(state).toEqual({
           'flow1-integration1': {
             data: 'dummy',
@@ -3495,14 +3029,15 @@ describe('integrationApps reducer test cases', () => {
           'flowId-integrationId': {
             mappings: {
               mappingId: {
-                lastModifiedRow: 1,
+                lastModifiedRowKey: 'key1',
                 mappings: [{
                   extract: 'hello',
                   generate: 'world',
+                  key: 'key0',
                 }, {
                   extract: 'hello1',
                   generate: 'value',
-                  rowIdentifier: NaN,
+                  key: 'key1',
                 }],
                 validationErrMsg: undefined,
               },
@@ -3520,19 +3055,19 @@ describe('integrationApps reducer test cases', () => {
               mappingId: {
                 mappings: [{
                   hardCodedValue: 'hello',
-                  hardCodedValueTmp: '"hello"',
                   generate: 'world',
-                  rowIdentifier: 0,
+                  key: 'key0',
                 }, {
                   extract: 'hello1',
                   generate: 'world1',
+                  key: 'key1',
                 }],
               },
             },
           },
         };
 
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'extract', 0, 'value'));
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'extract', 'key0', 'value'));
         expect(state).toEqual({
           'flow1-integration1': {
             data: 'dummy',
@@ -3540,14 +3075,15 @@ describe('integrationApps reducer test cases', () => {
           'flowId-integrationId': {
             mappings: {
               mappingId: {
-                lastModifiedRow: 0,
+                lastModifiedRowKey: 'key0',
                 mappings: [{
                   extract: 'value',
                   generate: 'world',
-                  rowIdentifier: 1,
+                  key: 'key0',
                 }, {
                   extract: 'hello1',
                   generate: 'world1',
+                  key: 'key1',
                 }],
                 validationErrMsg: undefined,
               },
@@ -3567,16 +3103,18 @@ describe('integrationApps reducer test cases', () => {
                 mappings: [{
                   extract: 'hello',
                   generate: 'world',
+                  key: 'key0',
                 }, {
                   extract: 'hello1',
                   generate: 'world1',
+                  key: 'key1',
                 }],
               },
             },
           },
         };
 
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'extract', 1, '"value"'));
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'extract', 'key1', '"value"'));
         expect(state).toEqual({
           'flow1-integration1': {
             data: 'dummy',
@@ -3584,15 +3122,15 @@ describe('integrationApps reducer test cases', () => {
           'flowId-integrationId': {
             mappings: {
               mappingId: {
-                lastModifiedRow: 1,
+                lastModifiedRowKey: 'key1',
                 mappings: [{
                   extract: 'hello',
                   generate: 'world',
+                  key: 'key0',
                 }, {
                   hardCodedValue: 'value',
-                  hardCodedValueTmp: '"value"',
                   generate: 'world1',
-                  rowIdentifier: NaN,
+                  key: 'key1',
                 }],
                 validationErrMsg: undefined,
               },
@@ -3611,16 +3149,18 @@ describe('integrationApps reducer test cases', () => {
               mappingId: {
                 mappings: [{
                   generate: 'world',
+                  key: 'key0',
                 }, {
                   extract: 'hello1',
                   generate: 'world1',
+                  key: 'key1',
                 }],
               },
             },
           },
         };
 
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'generate', 1, 'value'));
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'generate', 'key1', 'value'));
         expect(state).toEqual({
           'flow1-integration1': {
             data: 'dummy',
@@ -3628,13 +3168,14 @@ describe('integrationApps reducer test cases', () => {
           'flowId-integrationId': {
             mappings: {
               mappingId: {
-                lastModifiedRow: 1,
+                lastModifiedRowKey: 'key1',
                 mappings: [{
                   generate: 'world',
+                  key: 'key0',
                 }, {
                   extract: 'hello1',
                   generate: 'value',
-                  rowIdentifier: NaN,
+                  key: 'key1',
                 }],
                 validationErrMsg: 'Extract Fields missing for field(s): world',
               },
@@ -3685,18 +3226,18 @@ describe('integrationApps reducer test cases', () => {
                 mappings: [{
                   extract: 'hello',
                   generate: 'world',
+                  key: 'key0',
                 }, {
                   extract: 'hello1',
                   generate: 'world1',
-                  useFirstRow: true,
-                  isKey: true,
+                  key: 'key1',
                 }],
               },
             },
           },
         };
 
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchSettings('integrationId', 'flowId', 'mappingId', 1, {
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchSettings('integrationId', 'flowId', 'mappingId', 'key1', {
           dataType: 'number',
           discardIfEmpty: true,
           extract: 'manufacturer',
@@ -3712,21 +3253,19 @@ describe('integrationApps reducer test cases', () => {
           'flowId-integrationId': {
             mappings: {
               mappingId: {
-                lastModifiedRow: 1,
+                lastModifiedRowKey: 'key1',
                 mappings: [{
                   extract: 'hello',
                   generate: 'world',
+                  key: 'key0',
                 }, {
                   dataType: 'number',
                   discardIfEmpty: true,
                   extract: 'manufacturer',
                   generate: 'manufacturer',
                   immutable: false,
-                  index: undefined,
-                  isNotEditable: undefined,
-                  isRequired: undefined,
-                  rowIdentifier: NaN,
                   useAsAnInitializeValue: false,
+                  key: 'key1',
                 }],
                 validationErrMsg: undefined,
               },
@@ -3744,19 +3283,19 @@ describe('integrationApps reducer test cases', () => {
               mappingId: {
                 mappings: [{
                   hardCodedValue: 'hello',
-                  hardCodedValueTmp: '"hello"',
                   generate: 'world',
-                  rowIdentifier: 0,
+                  key: 'key0',
                 }, {
                   extract: 'hello1',
                   generate: 'world1',
+                  key: 'key1',
                 }],
               },
             },
           },
         };
 
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 0, {
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchSettings('integrationId', 'flowId', 'mappingId', 'key0', {
           discardIfEmpty: true,
           generate: 'item_sku',
           hardCodedValue: 'fghjkl',
@@ -3770,21 +3309,18 @@ describe('integrationApps reducer test cases', () => {
           'flowId-integrationId': {
             mappings: {
               mappingId: {
-                lastModifiedRow: {
+                lastModifiedRowKey: 'key0',
+                mappings: [{
                   discardIfEmpty: true,
                   generate: 'item_sku',
                   hardCodedValue: 'fghjkl',
                   immutable: false,
                   useAsAnInitializeValue: false,
-                },
-                mappings: [{
-                  generate: 'world',
-                  hardCodedValue: 'hello',
-                  hardCodedValueTmp: '"hello"',
-                  rowIdentifier: 0,
+                  key: 'key0',
                 }, {
                   extract: 'hello1',
                   generate: 'world1',
+                  key: 'key1',
                 }],
                 validationErrMsg: undefined,
               },
@@ -3801,19 +3337,22 @@ describe('integrationApps reducer test cases', () => {
           'flowId-integrationId': {
             mappings: {
               mappingId: {
+                lookups: [],
                 mappings: [{
                   extract: 'hello',
                   generate: 'world',
+                  key: 'key0',
                 }, {
                   extract: 'hello1',
                   generate: 'world1',
+                  key: 'key1',
                 }],
               },
             },
           },
         };
 
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 1, {
+        state = reducer(state, actions.integrationApp.settings.categoryMappings.patchSettings('integrationId', 'flowId', 'mappingId', 'key1', {
           discardIfEmpty: true,
           extract: undefined,
           generate: 'item_sku',
@@ -3828,22 +3367,22 @@ describe('integrationApps reducer test cases', () => {
           'flowId-integrationId': {
             mappings: {
               mappingId: {
-                lastModifiedRow: {
+                lookups: [],
+                lastModifiedRowKey: 'key1',
+                mappings: [{
+                  extract: 'hello',
+                  generate: 'world',
+                  key: 'key0',
+                }, {
                   discardIfEmpty: true,
                   extract: undefined,
                   generate: 'item_sku',
                   immutable: false,
                   lookupName: 'SJ4yXwtIe',
                   useAsAnInitializeValue: false,
-                },
-                mappings: [{
-                  extract: 'hello',
-                  generate: 'world',
-                }, {
-                  generate: 'world1',
-                  extract: 'hello1',
+                  key: 'key1',
                 }],
-                validationErrMsg: undefined,
+                validationErrMsg: 'Extract Fields missing for field(s): item_sku',
               },
             },
           },
@@ -10339,39 +9878,52 @@ describe('integrationApps selectors test cases', () => {
           depth: 0,
           fieldMappings: [
             {
+              description: 'A unique identifier for the product, assigned by the merchant.  The SKU must be unique for each product listed.  After you have established a SKU for a product, please do not change it without first deleting the original SKU from our systems through a delete feed.',
               discardIfEmpty: true,
               extract: 'SKU',
+              filterType: 'required',
               generate: 'item_sku',
+              name: 'Seller SKU',
+              showListOption: false,
             },
             {
-              discardIfEmpty: true,
-              extract: 'upccode',
-              generate: 'UPC',
-            },
-            {
-              discardIfEmpty: true,
-              extract: 'salesdescription',
-              generate: 'product_description',
-            },
-            {
+              description: 'A short title for the product. This will be displayed in bold on the product page and in the title bar of the browser window.',
               discardIfEmpty: true,
               extract: 'displayname',
+              filterType: 'required',
               generate: 'item_name',
+              name: 'Product Name',
+              showListOption: false,
+
             },
             {
-              discardIfEmpty: true,
-              extract: 'manufacturer',
-              generate: 'brand_name',
-            },
-            {
+              description: 'A standard, alphanumeric string that uniquely identifies the product.',
               discardIfEmpty: true,
               extract: '',
+              filterType: 'preferred',
               generate: 'ASIN',
+              name: 'ASIN',
+              showListOption: false,
+
             },
             {
+              description: 'A standard, alphanumeric string that uniquely identifies the product.',
+              discardIfEmpty: true,
+              extract: 'upccode',
+              filterType: 'preferred',
+              generate: 'UPC',
+              name: 'UPC',
+              showListOption: false,
+
+            },
+            {
+              description: 'The unit of measure used to describe the dimensions (width, length, height) of the product, expressed in centimeters, meters, inches, or feet. Required if item dimensions are provided.',
               discardIfEmpty: true,
               extract: '',
+              filterType: 'optional',
               generate: 'item_length_unit_of_measure',
+              name: 'Item Length Unit Of Measure',
+              showListOption: true,
             },
           ],
           id: 'commonAttributes',
@@ -10387,43 +9939,69 @@ describe('integrationApps selectors test cases', () => {
     test('should return correct form state for params passed for variationAttributes set as true', () => {
       const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration1', 'flow1', walmartCategoryMappings));
 
-      expect(selector(state, 'integration1', 'flow1', { sectionId: 'Variation' })).toEqual({
-        children: [
+      expect(selector(state, 'integration1', 'flow1', { sectionId: 'Variation' })).toEqual(
+        {
+          children: [
 
-        ],
-        deleted: false,
-        depth: 1,
-        fieldMappings: [
-          {
-            discardIfEmpty: true,
-            extract: '',
-            generate: 'swatchImage.1.swatchVariantAttribute',
-          },
-          {
-            discardIfEmpty: true,
-            extract: '',
-            generate: 'swatchImage.2.swatchVariantAttribute',
-          },
-          {
-            discardIfEmpty: true,
-            extract: '',
-            generate: 'swatchImage.3.swatchVariantAttribute',
-          },
-          {
-            discardIfEmpty: true,
-            extract: '',
-            generate: 'swatchImage.4.swatchVariantAttribute',
-          },
-          {
-            discardIfEmpty: true,
-            extract: '',
-            generate: 'swatchImage.5.swatchVariantAttribute',
-          },
-        ],
-        id: 'Variation',
-        isRoot: false,
-        name: 'Variation',
-      });
+          ],
+          deleted: false,
+          depth: 1,
+          fieldMappings: [
+            {
+              description: 'Attribute name corresponding to the swatch.',
+              discardIfEmpty: true,
+              extract: '',
+              filterType: 'conditional',
+              generate: 'swatchImage.1.swatchVariantAttribute',
+              name: 'Swatch Images > Swatch Variant Attribute 1',
+              showListOption: false,
+            },
+            {
+              description: 'Attribute name corresponding to the swatch.',
+              discardIfEmpty: true,
+              extract: '',
+              filterType: 'conditional',
+              generate: 'swatchImage.2.swatchVariantAttribute',
+              name: 'Swatch Images > Swatch Variant Attribute 2',
+              showListOption: false,
+
+            },
+            {
+              description: 'Attribute name corresponding to the swatch.',
+              discardIfEmpty: true,
+              extract: '',
+              filterType: 'conditional',
+              generate: 'swatchImage.3.swatchVariantAttribute',
+              name: 'Swatch Images > Swatch Variant Attribute 3',
+              showListOption: false,
+
+            },
+            {
+              description: 'Attribute name corresponding to the swatch.',
+              discardIfEmpty: true,
+              extract: '',
+              filterType: 'conditional',
+              generate: 'swatchImage.4.swatchVariantAttribute',
+              name: 'Swatch Images > Swatch Variant Attribute 4',
+              showListOption: false,
+
+            },
+            {
+              description: 'Attribute name corresponding to the swatch.',
+              discardIfEmpty: true,
+              extract: '',
+              filterType: 'conditional',
+              generate: 'swatchImage.5.swatchVariantAttribute',
+              name: 'Swatch Images > Swatch Variant Attribute 5',
+              showListOption: false,
+
+            },
+          ],
+          id: 'Variation',
+          isRoot: false,
+          name: 'Variation',
+        }
+      );
     });
   });
 

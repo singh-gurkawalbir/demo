@@ -318,6 +318,7 @@ export const updatePGPFormValues = formValues => {
     newValues['/pgp'] = undefined;
   } else {
     if (!newValues['/pgp/publicKey']) { newValues['/pgp/publicKey'] = undefined; }
+    if (!newValues['/pgp/compressionAlgorithm']) { newValues['/pgp/compressionAlgorithm'] = undefined; }
     if (!newValues['/pgp/privateKey']) { newValues['/pgp/privateKey'] = undefined; }
     if (!newValues['/pgp/passphrase']) { newValues['/pgp/passphrase'] = undefined; }
     if (newValues['/pgp/asciiArmored'] === 'false') {

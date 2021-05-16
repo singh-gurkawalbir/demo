@@ -3,7 +3,7 @@ export default {
     {
       key: 'selectAllFlows',
       heading: 'Select all flows',
-      Value: r => r && r.name,
+      Value: ({rowData: r}) => r && r.name,
     },
   ],
 };

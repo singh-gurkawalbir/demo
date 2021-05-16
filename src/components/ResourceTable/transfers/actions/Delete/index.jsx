@@ -3,19 +3,18 @@ import { useCallback } from 'react';
 import actions from '../../../../../actions';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import TrashIcon from '../../../../icons/TrashIcon';
-import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 
 export default {
   key: 'deleteTransfer',
   useLabel: () => 'Delete transfer',
   icon: TrashIcon,
-  useOnClick: () => {
+  useOnClick: rowData => {
+    const { _id: transferId} = rowData;
     const dispatch = useDispatch();
-    const {transfer} = useGetTableContext();
     const { confirmDialog } = useConfirmDialog();
     const deleteTransfer = useCallback(() => {
-      dispatch(actions.resource.delete('transfers', transfer._id));
-    }, [dispatch, transfer._id]);
+      dispatch(actions.resource.delete('transfers', transferId));
+    }, [dispatch, transferId]);
     const handleClick = useCallback(() => {
       confirmDialog({
         title: 'Confirm delete',
