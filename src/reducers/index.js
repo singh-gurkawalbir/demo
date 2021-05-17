@@ -835,7 +835,7 @@ selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
   }).filter(Boolean);
 
   // get sorted integrations
-  return uniqBy(allIntegrations, '_id').sort((e1, e2) => e1.name < e2.name);
+  return uniqBy(allIntegrations, '_id').sort(stringCompare('name'));
 },
 integrations => integrations
 );
@@ -853,7 +853,7 @@ selectors.getAllFlowsTiedToEventReports = createSelector(state => {
   if (!allFlowIdsTiedToEvenReports) { return emptyArray; }
 
   return flows.filter(({_id: flowId}) =>
-    allFlowIdsTiedToEvenReports.includes(flowId)).sort((e1, e2) => e1.name < e2.name);
+    allFlowIdsTiedToEvenReports.includes(flowId)).sort(stringCompare('name'));
 },
 flows => flows
 );
