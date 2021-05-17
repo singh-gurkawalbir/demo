@@ -5294,7 +5294,7 @@ selectors.isEditorDisabled = (state, editorId) => {
 selectors.isEditorLookupSupported = (state, editorId) => {
   const editor = fromSession.editor(state?.session, editorId);
   const {resultMode, fieldId, editorType, resourceType} = editor;
-  const fieldsWhichDoesNotSupportslookup = [
+  const fieldsWhichNotSupportlookup = [
     '_body',
     '_postBody',
     '_relativeURI',
@@ -5315,7 +5315,7 @@ selectors.isEditorLookupSupported = (state, editorId) => {
     return true;
   }
 
-  if (fieldsWhichDoesNotSupportslookup.includes(fieldId) || (resultMode === 'text' && editorType !== 'sql' && editorType !== 'databaseMapping')) {
+  if (fieldsWhichNotSupportlookup.includes(fieldId) || (resultMode === 'text' && editorType !== 'sql' && editorType !== 'databaseMapping')) {
     return false;
   }
 
