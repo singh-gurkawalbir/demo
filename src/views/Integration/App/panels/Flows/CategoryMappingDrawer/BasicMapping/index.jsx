@@ -27,13 +27,7 @@ export default function MappingWrapper(props) {
       id,
       depth,
     }));
-
-    return () => {
-      // clear the mapping list when component unloads.
-      dispatch(actions.integrationApp.settings.categoryMappings.clear(id));
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [depth, dispatch, flowId, id, integrationId, sectionId]);
 
   if (mappingStatus === 'error') {
     return (<Typography>Failed to load mapping.</Typography>);
