@@ -290,7 +290,6 @@ const MappingRow = ({
             freeSolo
             noOptionsText=""
             size="small"
-            inputValue={generateLabel}
             onChange={handleGenerateBlur}
             renderOption={Option}
             getOptionLabel={option => option.name || generateFields.find(f => f.id === option)?.name || ''}
@@ -298,6 +297,7 @@ const MappingRow = ({
               <TextField
                 className={classes.dynaTextContainer}
                 {...params}
+                value={generateLabel}
                 variant="outlined"
                 InputProps={{
                   ...params.InputProps,
@@ -322,7 +322,6 @@ const MappingRow = ({
             id={`fieldMappingExtract-${mapping.key}`}
             options={extractFields}
             value={extractValue}
-            inputValue={extractLabel}
             disableClearable
             freeSolo
             autoSelect
@@ -337,6 +336,7 @@ const MappingRow = ({
                 className={classes.dynaTextContainer}
                 {...params}
                 variant="outlined"
+                value={extractLabel}
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
