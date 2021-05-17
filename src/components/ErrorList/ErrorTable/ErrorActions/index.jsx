@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import clsx from 'clsx';
+import { Typography } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import CeligoSelect from '../../../CeligoSelect';
 import actions from '../../../../actions';
@@ -19,11 +20,11 @@ const useStyles = makeStyles(theme => ({
     height: theme.spacing(4),
   },
   retryBtn: {
-    minWidth: 100,
+    minWidth: 120,
     marginLeft: 10,
   },
   resolveBtn: {
-    minWidth: 115,
+    minWidth: 120,
   },
   loading: {
     verticalAlign: 'middle',
@@ -32,6 +33,9 @@ const useStyles = makeStyles(theme => ({
     '& >.MuiSelect-selectMenu': {
       padding: 0,
     },
+  },
+  spinnerLable: {
+    fontSize: '15px',
   },
 }));
 
@@ -117,7 +121,9 @@ const RetryAction = ({ onClick, flowId, resourceId, isResolved, disable, isSearc
       displayEmpty
       value="">
       <MenuItem value="" disabled >
-        Retry { isRetryInProgress && <Spinner size="small" className={classes.loading} />}
+        { isRetryInProgress
+          ? <Spinner size="small" className={classes.loading}><Typography className={classes.spinnerLable}>Retry</Typography></Spinner>
+          : 'Retry'}
       </MenuItem>
       <MenuItem value="selected" disabled={!selectedRetriableErrorCount}>
         {selectedRetriableErrorCount} retriable {selectedRetriableErrorCount === 1 ? 'error' : 'errors'}
@@ -183,7 +189,9 @@ const ResolveAction = ({ onClick, flowId, resourceId, disable, isSearchFilterApp
       displayEmpty
       value="">
       <MenuItem value="" disabled>
-        Resolve  { isResolveInProgress && <Spinner size="small" className={classes.loading} />}
+        { isResolveInProgress
+          ? <Spinner size="small" className={classes.loading}><Typography className={classes.spinnerLable}>Resolve</Typography></Spinner>
+          : 'Resolve'}
       </MenuItem>
       <MenuItem value="selected" disabled={!selectedErrorCount}>
         {selectedErrorCount} selected {selectedErrorCount === 1 ? 'error' : 'errors'}

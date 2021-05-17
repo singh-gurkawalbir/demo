@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 0,
   },
   selectMenu: {
-    diaplay: 'flex',
+    display: 'flex',
     flexDirection: 'column',
   },
   select: {
