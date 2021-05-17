@@ -726,7 +726,7 @@ selectors.mkGetAllValidIntegrations = () => {
     state => flowListSelector(state, flowsFilter)?.resources,
     selectors.licenses,
     (integrations, flows, allLicenses) => {
-      if (!integrations || !integrations.length) return [];
+      if (!integrations || !integrations.length) return emptyArray;
       const hasStandaloneFlows = flows.some(({_integrationId}) => !_integrationId);
 
       const allValidIntegrations = integrations.filter(({mode, _id, _connectorId }) => {
