@@ -4,55 +4,31 @@ const shouldInputModeBeRecords = r => {
   const importType = getResourceSubType(r).type;
   const importTypes = ['http', 'rest', 'salesforce'];
 
-  return importTypes.includes(importType);
+  if (importTypes.includes(importType)) {
+    return [
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ];
+  }
+
+  return [];
 };
 
 export default {
   fieldMap: {
     idLockTemplate: {
       fieldId: 'idLockTemplate',
-      visibleWhenAll: r => {
-        if (shouldInputModeBeRecords(r)) {
-          return [
-            {
-              field: 'inputMode',
-              is: ['records'],
-            },
-          ];
-        }
-
-        return [];
-      },
+      visibleWhenAll: shouldInputModeBeRecords,
     },
     dataURITemplate: {
       fieldId: 'dataURITemplate',
-      visibleWhenAll: r => {
-        if (shouldInputModeBeRecords(r)) {
-          return [
-            {
-              field: 'inputMode',
-              is: ['records'],
-            },
-          ];
-        }
-
-        return [];
-      },
+      visibleWhenAll: shouldInputModeBeRecords,
     },
     apiIdentifier: {
       fieldId: 'apiIdentifier',
-      visibleWhenAll: r => {
-        if (shouldInputModeBeRecords(r)) {
-          return [
-            {
-              field: 'inputMode',
-              is: ['records'],
-            },
-          ];
-        }
-
-        return [];
-      },
+      visibleWhenAll: shouldInputModeBeRecords,
     },
     traceKeyTemplate: { fieldId: 'traceKeyTemplate' },
   },
