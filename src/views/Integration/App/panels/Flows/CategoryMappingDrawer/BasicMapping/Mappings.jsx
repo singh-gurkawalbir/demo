@@ -35,14 +35,6 @@ const useStyles = makeStyles(theme => ({
       width: '100%',
     },
   },
-  formField: {
-    width: '100%',
-  },
-  textAreaField: {
-    '& > .MuiFilledInput-multiline': {
-      paddingRight: theme.spacing(4),
-    },
-  },
   innerRow: {
     display: 'flex',
     width: '100%',
@@ -90,13 +82,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     position: 'relative',
     width: '40%',
-  },
-  multilineText: {
-    width: '100%',
-    '& div:first-child': {
-      minHeight: 38,
-      padding: '8px 35px 8px 8px',
-    },
   },
   dynaTextContainer: {
     padding: 0,
