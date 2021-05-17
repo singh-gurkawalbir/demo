@@ -11,13 +11,15 @@ import PanelHeader from '../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   root: {
+    backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',
+    minHeight: 124,
   },
   topHeading: {
     display: 'flex',
     justifyContent: 'space-between',
-    paddingBottom: theme.spacing(1),
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
   heading: {
     paddingLeft: theme.spacing(1),
@@ -56,8 +58,13 @@ export default function Transfers() {
                   Create transfer
                 </IconTextButton>
               </div>
-            </div>
 
+              <ResourceTable
+                resourceType="transfers"
+                resources={transfers}
+                className={classes.transferTableWrapper}
+            />
+            </div>
             <div>
               Transfer individual integrations between integrator.io accounts.
               Send integrations by specifying the email of the owner
@@ -68,12 +75,6 @@ export default function Transfers() {
               to be an account owner and cannot be part of the same organization
               as the sender.
             </div>
-
-            <ResourceTable
-              resourceType="transfers"
-              resources={transfers}
-              className={classes.transferTableWrapper}
-            />
           </>
         )}
         {showInviteView && <Invite setShowInviteView={setShowInviteView} />}
