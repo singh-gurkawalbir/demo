@@ -56,6 +56,7 @@ module.exports.sections = [
           'src/components/StatusTag/index.jsx',
           // 'src/components/Loader/index.jsx',
           'src/components/ActionButton/index.jsx',
+          'src/components/CeligoButtons/PrimaryButton/index.jsx',
         ],
       },
     ],

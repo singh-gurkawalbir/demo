@@ -76,19 +76,18 @@ export default {
         // Unused declaration: vertical alignment property should be  applied to the inline elements or table-cell, buttons are neither one.
         verticalAlign: 'unset',
         textTransform: 'unset',
-        fontFamily: 'Roboto400',
+        fontFamily: 'source sans pro',
+        padding: '6px 24px',
+        fontSize: '15px',
+        lineHeight: '19px',
         '&: disabled': {
           cursor: 'not-allowed',
         },
       },
       contained: {
-        borderRadius: '17px',
-        fontSize: '13px',
-        lineHeight: '15px',
+        // borderRadius: '17px',
         border: '1px solid',
-        textTransform: 'none',
         boxShadow: 'none',
-        padding: '6px 20px',
         '&:disabled': {
           background: 'none',
         },
@@ -128,10 +127,6 @@ export default {
       },
       outlined: {
         borderRadius: '4px',
-        textTransform: 'none',
-        fontSize: '13px',
-        lineHeight: '15px',
-        padding: '6px 20px',
         border: '1px solid',
         '&:disabled': {
           color: colors.celigoNeutral4,
@@ -159,8 +154,6 @@ export default {
         },
       },
       text: {
-        fontSize: '13px',
-        lineHeight: '15px',
         '&::after': {
           background: 'none repeat scroll 0 0 transparent',
           bottom: '0',
