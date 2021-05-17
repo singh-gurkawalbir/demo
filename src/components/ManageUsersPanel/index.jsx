@@ -11,8 +11,13 @@ import UsersList from './UsersList';
 const useStyles = makeStyles(theme => ({
   userListWrapper: {
     overflowX: 'auto',
-    marginLeft: -theme.spacing(2),
-    marginRight: -theme.spacing(2),
+  },
+  root: {
+    backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    overflowX: 'auto',
+    minHeight: 124,
   },
 }));
 
@@ -40,7 +45,7 @@ export default function ManageUsersPanel({ integrationId, storeId }) {
   const handleInvite = useCallback(() => history.push(`${match.url}/invite`), [history, match]);
 
   return (
-    <div className={classes.fullPanel}>
+    <div className={classes.root}>
       <PanelHeader title="Users" infoText={infoTextUsers}>
         {isAccountOwner && (
           <IconTextButton onClick={handleInvite}>
