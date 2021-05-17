@@ -4,7 +4,7 @@ import actionTypes from '../../../../../actions/types';
 const DEFAULT_VALUE = {};
 
 export default (state = {}, action) => {
-  const { ssLinkedConnectionId, integrationId, flowId, type } = action;
+  const { ssLinkedConnectionId, integrationId, flowId, type, previewData, error } = action;
   const id = `${ssLinkedConnectionId}-${integrationId}-${flowId}`;
 
   return produce(state, draft => {
@@ -20,8 +20,6 @@ export default (state = {}, action) => {
         break;
       }
       case actionTypes.SUITESCRIPT.SAMPLEDATA.RECEIVED: {
-        const {previewData} = action;
-
         if (!draft[id]) {
           draft[id] = {};
         }
@@ -30,8 +28,6 @@ export default (state = {}, action) => {
         break;
       }
       case actionTypes.SUITESCRIPT.SAMPLEDATA.RECEIVED_ERROR: {
-        const {error} = action;
-
         if (!draft[id]) {
           draft[id] = {};
         }
@@ -57,7 +53,7 @@ selectors.suiteScriptFlowSampleDataContext = (
 ) => {
   // returns input data for that stage to populate
   const id = `${ssLinkedConnectionId}-${integrationId}-${flowId}`;
-  const flowData = state[id];
+  const flowData = state?.[id];
 
   return flowData || DEFAULT_VALUE;
 };
