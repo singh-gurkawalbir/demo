@@ -37,6 +37,12 @@ const metadata = {
         const { type, id } = rowData;
         const applicationType = useSelector(state => selectors.applicationType(state, type, id));
         const isDataLoader = useSelector(state => selectors.isDataLoaderExport(state, id));
+        const assistantType = useSelector(state => {
+          const { _connectionId} = selectors.resource(state, type, id) || {};
+          const {assistant} = selectors.resource(state, 'connections', _connectionId) || {};
+
+          return assistant || '';
+        });
 
         if (isDataLoader) {
           return 'Data loader';
@@ -44,9 +50,8 @@ const metadata = {
 
         return (
           <ApplicationImg
-            size="small"
             type={applicationType}
-            alt={applicationType || 'Application image'}
+            assistant={assistantType}
       />
         );
       },
