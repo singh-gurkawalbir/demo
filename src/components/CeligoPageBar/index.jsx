@@ -41,9 +41,6 @@ const useStyles = makeStyles(theme => ({
   bannerOffset: {
     height: theme.pageBarHeight + 58,
   },
-  subTitleShift: {
-    marginLeft: theme.spacing(4),
-  },
 }));
 
 export default function CeligoPageBar(props) {
@@ -97,7 +94,7 @@ export default function CeligoPageBar(props) {
         </Grid>
         <Typography
           variant="caption"
-          className={clsx({ [classes.subTitleShift]: history })}>
+          className={classes.history}>
           {subtitle}
         </Typography>
       </Paper>
