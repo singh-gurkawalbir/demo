@@ -34,6 +34,8 @@ export default {
     id: 'traceKeyTemplate',
     type: 'uri',
     label: 'Override child record trace key template',
+    visible: r => !(r?._connectorId),
+    omitWhenHidden: true,
     visibleWhenAll: [
       {
         field: 'oneToMany',
