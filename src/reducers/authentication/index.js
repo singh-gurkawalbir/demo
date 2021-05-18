@@ -30,7 +30,6 @@ export default function (state = defaultState, action) {
         break;
 
       case actionTypes.AUTH_REQUEST:
-      case actionTypes.AUTH_RE_SIGNIN_WITH_SSO:
         if (showAuthError) { draft.showAuthError = true; }
         delete draft.failure;
         draft.authenticated = false;
