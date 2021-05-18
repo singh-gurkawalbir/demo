@@ -5294,11 +5294,12 @@ selectors.isEditorDisabled = (state, editorId) => {
 selectors.isEditorLookupSupported = (state, editorId) => {
   const editor = fromSession.editor(state?.session, editorId);
   const {resultMode, fieldId, editorType, resourceType} = editor;
-  const lookupFields = [
+  const fieldsWhichNotSupportlookup = [
     '_body',
     '_postBody',
     '_relativeURI',
     '_query',
+    'file.xml.body',
   ];
   const uriFields = [
     'http.relativeURI',
@@ -5314,7 +5315,7 @@ selectors.isEditorLookupSupported = (state, editorId) => {
     return true;
   }
 
-  if (lookupFields.includes(fieldId) || (resultMode === 'text' && editorType !== 'sql' && editorType !== 'databaseMapping')) {
+  if (fieldsWhichNotSupportlookup.includes(fieldId) || (resultMode === 'text' && editorType !== 'sql' && editorType !== 'databaseMapping')) {
     return false;
   }
 
