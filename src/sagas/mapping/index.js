@@ -657,26 +657,35 @@ export function* getAutoMapperSuggestion() {
     const {mappings: _mappings, suggested_threshold: suggestedThreshold} = response;
     const suggestedMapping = [];
 
-      _mappings?.fields?.forEach(({extract, generate, hardCodedValue, weight}) => {
-        if (weight >= suggestedThreshold) {
-          const itemWithSameGenerateIndex = suggestedMapping.findIndex((field => field.generate === generate));
+    _mappings?.fields?.forEach(field => {
+      const { weight, generate } = field;
 
-          if (itemWithSameGenerateIndex === -1 || weight > suggestedMapping[itemWithSameGenerateIndex]?.weight) {
-            if (!mappings.find(item => item.generate === generate)) {
-              suggestedMapping.push({extract, generate, hardCodedValue, key: shortid.generate()});
+      if (weight >= suggestedThreshold) {
+        const itemWithSameGenerateIndex = suggestedMapping.findIndex((field => field.generate === generate));
+
+        if (itemWithSameGenerateIndex === -1 || weight > suggestedMapping[itemWithSameGenerateIndex]?.weight) {
+          if (!mappings.find(item => item.generate === generate)) {
+            const newMappingObj = { generate, key: shortid.generate()};
+
+            if ('hardCodedValue' in field) {
+              newMappingObj.hardCodedValue = field.hardCodedValue;
+            } else if ('extract' in field) {
+              newMappingObj.extract = field.extract;
             }
+            suggestedMapping.push(newMappingObj);
           }
         }
-      });
-      if (suggestedMapping?.length) {
-        suggestedMapping.map(m => ({
-          ...m,
-          key: shortid.generate(),
-        }));
-        yield put(actions.mapping.autoMapper.received(suggestedMapping));
-      } else {
-        yield put(actions.mapping.autoMapper.failed('warning', 'There are no new fields to auto-map.'));
       }
+    });
+    if (suggestedMapping?.length) {
+      suggestedMapping.map(m => ({
+        ...m,
+        key: shortid.generate(),
+      }));
+      yield put(actions.mapping.autoMapper.received(suggestedMapping));
+    } else {
+      yield put(actions.mapping.autoMapper.failed('warning', 'There are no new fields to auto-map.'));
+    }
   } else {
     yield put(actions.mapping.autoMapper.failed('error', 'Failed to fetch mapping suggestions.'));
   }
