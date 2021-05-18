@@ -1,5 +1,7 @@
 /* global describe, expect, test */
+import produce from 'immer';
 import { selectors } from '.';
+import { STANDALONE_INTEGRATION } from '../utils/constants';
 
 const v1Integrations = [
   {
@@ -98,6 +100,11 @@ const v2Integrations = [
     _connectorId: 'connector1',
     installSteps: [{someStep1: 'someprops'}],
   },
+];
+const standaloneFlows = [
+  { _id: 'flowStandalone1', name: 'flowStandalone1'},
+  { _id: 'flowStandalone2', name: 'flowStandalone2'},
+
 ];
 const diyFlows = [
   {_integrationId: 'diyIntegration', _id: 'flowdiy1', name: 'flowDiy1'},
@@ -376,17 +383,31 @@ describe('selectors.getAllValidIntegrations', () => {
     user: usersState,
 
   };
+  const getAllValidIntegrations = selectors.mkGetAllValidIntegrations();
 
   test('should return [] when integrations hasn`t loaded ', () => {
-    const result = selectors.getAllValidIntegrations({user: usersState});
+    const result = getAllValidIntegrations({user: usersState});
 
     expect(result).toEqual([]);
   });
   test('should return correct installed and not expired integrations ', () => {
-    const result = selectors.getAllValidIntegrations(stateCopy);
+    const result = getAllValidIntegrations(stateCopy);
     const notExpiredV1Int = v1Integrations.find(({_id}) => _id === 'integrationId');
 
     expect(result).toEqual([
+      diyIntegration[0],
+      notExpiredV1Int,
+    ]);
+  });
+  test('should return correct installed,not expired integrations and standalone flows', () => {
+    const stateWithStandaloneFlows = produce(stateCopy, draft => {
+      draft.data.resources.flows = [...standaloneFlows, ...draft.data.resources.flows];
+    });
+    const result = getAllValidIntegrations(stateWithStandaloneFlows);
+    const notExpiredV1Int = v1Integrations.find(({_id}) => _id === 'integrationId');
+
+    expect(result).toEqual([
+      {_id: STANDALONE_INTEGRATION.id, name: STANDALONE_INTEGRATION.name},
       diyIntegration[0],
       notExpiredV1Int,
     ]);

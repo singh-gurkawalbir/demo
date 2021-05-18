@@ -62,5 +62,5 @@ selectors.s3HttpBlobKey = (state, reqAndResKey, isRequest) => {
     return;
   }
 
-  return state[reqAndResKey].data[isRequest ? 'request' : 'response']?.body?.bodyKey;
+  return state[reqAndResKey].data[isRequest ? 'request' : 'response']?.bodyKey;
 };
