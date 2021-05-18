@@ -308,7 +308,6 @@ const MappingRow = ({
             noOptionsText=""
             size="small"
             disabled={disabled}
-            // onInputChange={handleInputChange}
             onBlur={handleExtractBlur}
             getOptionLabel={option => option.name || extractFields.find(f => f.id === option)?.name || option || ''}
             renderInput={params => (
