@@ -829,6 +829,35 @@ export default {
         borderTop: `1px solid ${colors.celigoNeutral3}`,
       },
     },
+    MuiAutocomplete: {
+      option: {
+        position: 'relative',
+        fontSize: '14px',
+        alignItems: 'flex-start',
+        borderBottom: `1px solid ${colors.celigoNeutral3}`,
+        '&:before': {
+          content: '""',
+          width: '6px',
+          height: '100%',
+          position: 'absolute',
+          background: 'transparent',
+          left: 0,
+          top: 0,
+        },
+        '&[data-focus="true"]': {
+          backgroundColor: colors.celigoNeutral2,
+          '&:before': {
+            background: colors.celigoAccent3,
+          },
+        },
+        '&:active': {
+          backgroundColor: colors.celigoNeutral2,
+        },
+      },
+      inputRoot: {
+        alignItems: 'flex-start',
+      },
+    },
   },
   props: {
     MuiCheckbox: {
