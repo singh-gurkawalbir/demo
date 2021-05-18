@@ -179,13 +179,17 @@ const MappingRow = ({
   [dispatch, editorId, extract, flowId, generate, integrationId, mapping, mappingKey]
   );
 
-  const handleInputChange = useCallback((e, value) => {
-    if (e) {
-      const field = extractFields.find(field => field.name === value);
+  const handleExtractBlur = useCallback(e => {
+    let extract = e.target.value;
 
-      handleBlur('extract', field?.id || value);
+    const field = extractFields.find(field => field.name === extract);
+
+    if (field) {
+      extract = field.id;
     }
-  }, []);
+
+    handleBlur('extract', extract);
+  }, [extractFields, handleBlur]);
 
   const handleGenerateBlur = useCallback((_id, value) => {
     let generate = value;
@@ -289,6 +293,7 @@ const MappingRow = ({
         </div>
         <MappingConnectorIcon className={classes.mappingIcon} />
         <div
+          key={extractValue}
           className={clsx(classes.childHeader, classes.mapField, {
             [classes.disableChildRow]:
             mapping.isNotEditable || disabled,
@@ -303,8 +308,8 @@ const MappingRow = ({
             noOptionsText=""
             size="small"
             disabled={disabled}
-            onInputChange={handleInputChange}
-            // onChange={handleExtractBlur}
+            // onInputChange={handleInputChange}
+            onBlur={handleExtractBlur}
             getOptionLabel={option => option.name || extractFields.find(f => f.id === option)?.name || option || ''}
             renderInput={params => (
               <TextField
