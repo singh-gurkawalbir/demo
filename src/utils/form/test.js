@@ -21,10 +21,10 @@ import {
   determineChangedValues,
 } from '.';
 import {
-  fieldDefIsValid,
   shouldOptionsBeRefreshed,
   getFirstDefinedValue,
   splitDelimitedValue,
+  fieldDefIsValidUpdated,
 } from './field';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -165,13 +165,13 @@ describe('registerFields', () => {
   });
 });
 
-describe('fieldDefIsValid', () => {
+describe('fieldDefIsValidUpdated', () => {
   test('field is valid when the form does not contain a field with the same id', () => {
-    expect(fieldDefIsValid(field1, [])).toEqual(true);
+    expect(fieldDefIsValidUpdated(field1, {})).toEqual(true);
   });
 
   test('field is not valid when form already contains a field with the same id', () => {
-    expect(fieldDefIsValid(field1, [field1])).toEqual(false);
+    expect(fieldDefIsValidUpdated(field1, {[field1.id]: field1})).toEqual(false);
   });
 });
 
