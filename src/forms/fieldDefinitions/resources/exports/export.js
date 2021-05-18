@@ -1,3 +1,4 @@
+import { isIntegrationApp } from '../../../../utils/flows';
 import { isNewId } from '../../../../utils/resource';
 
 const dateTimeOptions = [
@@ -119,7 +120,7 @@ export default {
     type: 'uri',
     label: r => !(r?.isLookup) ? 'Override trace key template' : 'Override child record trace key template',
     helpKey: r => r?.isLookup && 'import.traceKeyTemplate',
-    visible: r => !(r?._connectorId),
+    visible: r => !isIntegrationApp(r),
     omitWhenHidden: true,
     visibleWhenAll: r => {
       if (r?.isLookup) {
