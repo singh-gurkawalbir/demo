@@ -411,22 +411,18 @@ export function* reSignInWithGoogle({ email }) {
 }
 export function* reSignInWithSSO() {
   const _csrf = yield call(getCSRFTokenBackend);
-
-  yield call(setCSRFToken, _csrf);
   const ssoClientId = yield select(selectors.userLinkedSSOClientId);
+  const form = document.createElement('form');
 
-  try {
-    yield call(apiCallWithRetry, {
-      path: `/reSigninWithSSO/${ssoClientId}`,
-      opts: {
-        method: 'POST',
-        body: {},
-      },
-    });
-  } catch (e) {
-    return yield put(actions.auth.failure('Authentication Failure'));
-  }
-  yield call(initializeSession);
+  form.id = 'reSigninWithSSO';
+  form.method = 'POST';
+  form.action = `/reSigninWithSSO/${ssoClientId}`;
+  form.target = '_blank';
+
+  form.innerHTML = `<input name="_csrf" value="${_csrf}">`;
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
 }
 
 export function* linkWithGoogle({ returnTo }) {

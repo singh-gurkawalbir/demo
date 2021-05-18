@@ -10,11 +10,7 @@ export default {
     }
 
     if (formValues['/framework'] === 'twoDotZero') {
-      const twoDotZero = {
-        _integrationId: newValues['/_integrationId'],
-      };
-
-      newValues['/twoDotZero'] = twoDotZero;
+      newValues['/twoDotZero/_integrationId'] = newValues['/_integrationId'];
 
       delete newValues['/editions'];
 

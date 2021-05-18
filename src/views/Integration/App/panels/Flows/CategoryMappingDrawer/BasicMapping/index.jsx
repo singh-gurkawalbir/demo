@@ -27,12 +27,7 @@ export default function MappingWrapper(props) {
       id,
       depth,
     }));
-
-    return () => {
-      // clear the mapping list when component unloads.
-      dispatch(actions.integrationApp.settings.categoryMappings.clear(id));
-    };
-  }, [depth, dispatch, flowId, integrationId, sectionId, id]);
+  }, [depth, dispatch, flowId, id, integrationId, sectionId]);
 
   if (mappingStatus === 'error') {
     return (<Typography>Failed to load mapping.</Typography>);

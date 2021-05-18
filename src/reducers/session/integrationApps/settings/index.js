@@ -202,7 +202,9 @@ export default (state = {}, action) => {
 
           if (mappingToDelete?.lookupName) {
           // delete lookup
-            draft[cKey].mappings[id].lookups = draft[cKey].mappings[id].lookups.filter(l => l.name !== mappingToDelete.lookupName);
+            const lookupIndex = draft[cKey].mappings[id].lookups.findIndex(l => l.lookupName === mappingToDelete.lookupName);
+
+            if (lookupIndex !== -1) { draft[cKey].mappings[id].lookups = draft[cKey].mappings[id].lookups.splice(lookupIndex, 1); }
           }
           draft[cKey].mappings[id].mappings = draft[cKey].mappings[id].mappings.filter(m => m.key !== mappingKey);
           if (draft[cKey].mappings[id].lastModifiedRowKey === key) { delete draft[cKey].mappings[id].lastModifiedRowKey; }
@@ -272,11 +274,6 @@ export default (state = {}, action) => {
         }
         break;
       }
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT_FAILED:
-        if (draft?.[cKey]?.mappings?.[id]) {
-          draft[cKey].mappings[id].status = 'error';
-        }
-        break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LAST_TOUCHED_FIELD:
         if (draft?.[cKey]?.mappings?.[id]) {
           draft[cKey].mappings[id].lastModifiedRowKey = mappingKey || 'new';
