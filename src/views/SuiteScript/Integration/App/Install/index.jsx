@@ -22,7 +22,7 @@ import getRoutePath from '../../../../../utils/routePaths';
 import LoadResources from '../../../../../components/LoadResources';
 import ConnectionDrawer from '../drawer/Connection';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
-import ConnectionStatusPanel from '../../../../../components/SuiteScript/ConnectionStatusPanel'; // this is
+import ConnectionStatusPanel from '../../../../../components/SuiteScript/ConnectionStatusPanel';
 
 const useStyles = makeStyles(theme => ({
   root: {
