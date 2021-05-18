@@ -704,7 +704,7 @@ selectors.mkIntegrationAppSettings = subState => {
           draft.settings.hasGeneralSettings = true;
         }
         if (draft.settings.supportsMultiStore) {
-          draft.stores = draft.settings.sections.map(s => ({
+          draft.children = draft.settings.sections.map(s => ({
             label: s.title,
             hidden: !!s.hidden,
             mode: s.mode || 'settings',
@@ -718,25 +718,6 @@ selectors.mkIntegrationAppSettings = subState => {
 
 export const integrationAppSettings = selectors.mkIntegrationAppSettings(true);
 
-selectors.defaultStoreId = (state, id, store) => {
-  const settings = integrationAppSettings(state, id);
-
-  if (settings && settings.stores && settings.stores.length) {
-    if (settings.stores.find(s => s.value === store)) {
-      return store;
-    }
-
-    // If the first store in the integration is in incomplete state or uninstall mode, on clicking the tile from dashboard
-    // user will be redirected directly to uninstall steps or install steps, which may confuse user.
-    // As done in ampersand, will select first "valid" store available as defaullt store.
-    return (
-      (settings.stores.find(s => s.mode === 'settings') || {}).value ||
-      settings.stores[0].value
-    );
-  }
-
-  return undefined;
-};
 const filterByEnvironmentResources = (resources, flows, sandbox, resourceType) => {
   const filterByEnvironment = typeof sandbox === 'boolean';
 

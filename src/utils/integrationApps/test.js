@@ -341,9 +341,9 @@ describe('isParentViewSelected', () => {
   ];
 
   each(testCases).test(
-    'should return %s when integration = %o and storeId = %s',
-    (expected, integration, storeId) => {
-      expect(isParentViewSelected(integration, storeId)).toEqual(expected);
+    'should return %s when integration = %o and childId = %s',
+    (expected, integration, childId) => {
+      expect(isParentViewSelected(integration, childId)).toEqual(expected);
     }
   );
 });

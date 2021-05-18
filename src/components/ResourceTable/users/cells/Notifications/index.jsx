@@ -6,7 +6,7 @@ import ShowContentIcon from '../../../../icons/ShowContentIcon';
 import EditIcon from '../../../../icons/EditIcon';
 import AddIcon from '../../../../icons/AddIcon';
 
-export default function Notifications({ user, integrationId, storeId }) {
+export default function Notifications({ user, integrationId, childId }) {
   const match = useRouteMatch();
   const userEmail = user.sharedWithUser?.email;
   const canManageNotifications = useSelector(state => {
@@ -20,7 +20,7 @@ export default function Notifications({ user, integrationId, storeId }) {
 
   const hasNotifications = useSelector(state => {
     if (!integrationId) return false;
-    const { flowValues = [], connectionValues = [] } = selectors.integrationNotificationResources(state, integrationId, { storeId, userEmail});
+    const { flowValues = [], connectionValues = [] } = selectors.integrationNotificationResources(state, integrationId, { childId, userEmail});
 
     return flowValues.length || connectionValues.length;
   });

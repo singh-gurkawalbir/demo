@@ -88,7 +88,7 @@ export default function ConnectorInstallation(props) {
     install = [],
     integrationInstallSteps = [],
     mode,
-    stores,
+    children,
     supportsMultiStore,
     _connectorId,
     initChild,
@@ -98,7 +98,7 @@ export default function ConnectorInstallation(props) {
     initChild: integration.initChild,
     install: integration.install,
     mode: integration.mode,
-    stores: integration.stores,
+    children: integration.children,
     supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
     _connectorId: integration._connectorId,
     integrationInstallSteps: integration.installSteps,
@@ -333,8 +333,8 @@ export default function ConnectorInstallation(props) {
 
               return;
             }
-            const storeId = stores?.length
-              ? stores[0].value
+            const childId = children?.length
+              ? children[0].value
               : undefined;
 
             // for old cloned IAs, uninstall should happen the old way
@@ -346,7 +346,7 @@ export default function ConnectorInstallation(props) {
               );
 
               // REVIEW: @ashu, review with Dave once
-              // if url contains '/child/xxx' use that id as store id
+              // if url contains '/child/xxx' use that id as child id
               if (index === -1) {
                 history.push(
                   getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall`)
@@ -358,7 +358,7 @@ export default function ConnectorInstallation(props) {
               }
             } else if (supportsMultiStore) {
               history.push(
-                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`)
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`)
               );
             } else {
               history.push(

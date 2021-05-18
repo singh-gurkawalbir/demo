@@ -25,7 +25,7 @@ export default function IntegrationTabs({ tabs, className }) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
-  const { tab, storeId: childId } = match.params;
+  const { tab, childId } = match.params;
   let currentTabIndex = tabs.findIndex(t => t.path === tab);
 
   // if you cant find tab index default it to zero

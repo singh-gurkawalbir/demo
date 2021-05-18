@@ -4,7 +4,7 @@ import loadable from '../../utils/loadable';
 import ClonePreview from '../../views/Clone/Preview';
 import CloneSetup from '../../views/Clone/Setup';
 import IntegrationInstallation from '../../views/Integration/App/drawers/Install';
-import IntegrationAppAddNewStore from '../../views/Integration/App/drawers/AddStore';
+import IntegrationAppAddNewChild from '../../views/Integration/App/drawers/AddChild';
 import IntegrationAppUninstallation from '../../views/Integration/App/drawers/Uninstall/index';
 import Marketplace from '../../views/MarketPlace';
 import MarketplaceList from '../../views/MarketplaceList';
@@ -181,11 +181,11 @@ export default function AppRouting() {
         />
       <Route
         path={getRoutePath('/integrationapps/:integrationAppName/:integrationId/install/addNewStore')}
-        component={IntegrationAppAddNewStore}
+        component={IntegrationAppAddNewChild}
         />
       <Route
         path={[
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall/:storeId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall/:childId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall'),
         ]}
         component={IntegrationAppUninstallation}
@@ -193,9 +193,9 @@ export default function AppRouting() {
 
       <Route
         path={[
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab/sections/:sectionId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/:tab/sections/:sectionId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/:tab'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab/sections/:sectionId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
