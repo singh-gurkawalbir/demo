@@ -213,7 +213,7 @@ export function* installScriptStep({
   );
 }
 
-export function* installStoreStep({ id, installerFunction }) {
+export function* installChildStep({ id, installerFunction }) {
   const path = `/integrations/${id}/installer/${installerFunction}`;
   let stepCompleteResponse;
 
@@ -227,7 +227,7 @@ export function* installStoreStep({ id, installerFunction }) {
     }) || {};
   } catch (error) {
     yield put(
-      actions.integrationApp.store.updateStep(id, installerFunction, 'failed')
+      actions.integrationApp.child.updateStep(id, installerFunction, 'failed')
     );
     yield put(actions.api.failure(path, 'PUT', error, false));
 
@@ -241,7 +241,7 @@ export function* installStoreStep({ id, installerFunction }) {
       actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
     );
     yield put(
-      actions.integrationApp.store.completedStepInstall(
+      actions.integrationApp.child.completedStepInstall(
         id,
         installerFunction,
         stepCompleteResponse.stepsToUpdate
@@ -263,7 +263,7 @@ export function* installStoreStep({ id, installerFunction }) {
   }
 }
 
-export function* addNewStore({ id }) {
+export function* addNewChild({ id }) {
   const path = `/integrations/${id}/installer/addNewStore`;
   let steps;
 
@@ -277,7 +277,7 @@ export function* addNewStore({ id }) {
   } catch (error) {
     yield put(actions.api.failure(path, 'PUT', error && error.message, false));
     yield put(
-      actions.integrationApp.store.failedNewStoreSteps(id, error.message)
+      actions.integrationApp.child.failedNewChildSteps(id, error.message)
     );
 
     return undefined;
@@ -285,7 +285,7 @@ export function* addNewStore({ id }) {
 
   if (steps) {
     yield put(actions.resource.requestCollection('connections'));
-    yield put(actions.integrationApp.store.receivedNewStoreSteps(id, steps));
+    yield put(actions.integrationApp.child.receivedNewChildSteps(id, steps));
   }
 }
 
@@ -350,7 +350,7 @@ export default [
     actionTypes.INTEGRATION_APPS.INSTALLER.STEP.CURRENT_STEP,
     getCurrentStep
   ),
-  takeLatest(actionTypes.INTEGRATION_APPS.STORE.ADD, addNewStore),
-  takeLatest(actionTypes.INTEGRATION_APPS.STORE.INSTALL, installStoreStep),
+  takeLatest(actionTypes.INTEGRATION_APPS.CHILD.ADD, addNewChild),
+  takeLatest(actionTypes.INTEGRATION_APPS.CHILD.INSTALL, installChildStep),
   takeLatest(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, installInitChild),
 ];

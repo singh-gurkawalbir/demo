@@ -346,7 +346,7 @@ export default function ConnectorInstallation(props) {
               );
 
               // REVIEW: @ashu, review with Dave once
-              // if url contains '/child/xxx' use that id as store id
+              // if url contains '/child/xxx' use that id as child id
               if (index === -1) {
                 history.push(
                   getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall`)

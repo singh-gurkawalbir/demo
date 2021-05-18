@@ -11,8 +11,8 @@ describe('integrationApps reducer test cases', () => {
     expect(reducer(undefined, { type: undefined })).toEqual({});
     expect(reducer(123, { type: 123 })).toEqual(123);
   });
-  describe('intetgrationApps addNewStore reducer', () => {
-    const addNewStoreSteps = [
+  describe('integrationApps addNewChild reducer', () => {
+    const addNewChildSteps = [
       {
         name: 'Install Bank',
         description: 'Install the bank in CAM',
@@ -29,11 +29,11 @@ describe('integrationApps reducer test cases', () => {
       },
     ];
 
-    describe('integrationApps addNewStore install_inProgress action', () => {
+    describe('integrationApps addNewChild install_inProgress action', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
-          { 1: addNewStoreSteps },
-          actions.integrationApp.store.updateStep(
+          { 1: addNewChildSteps },
+          actions.integrationApp.child.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
             'inProgress'
@@ -64,8 +64,8 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should find the integration with id and set isTriggered flag to true', () => {
         const state = reducer(
-          { 1: { steps: addNewStoreSteps } },
-          actions.integrationApp.store.updateStep(
+          { 1: { steps: addNewChildSteps } },
+          actions.integrationApp.child.updateStep(
             1,
             'installConnectorComponents',
             'inProgress'
@@ -102,13 +102,13 @@ describe('integrationApps reducer test cases', () => {
         const integrationId = 1;
         const initialState = {
 
-          1: { steps: addNewStoreSteps },
-          2: { steps: addNewStoreSteps },
+          1: { steps: addNewChildSteps },
+          2: { steps: addNewChildSteps },
 
         };
         const state = reducer(
           initialState,
-          actions.integrationApp.store.updateStep(
+          actions.integrationApp.child.updateStep(
             integrationId,
             'installConnectorComponents',
             'inProgress'
@@ -160,11 +160,11 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe('integrationApps addNewStore install step verify action', () => {
+    describe('integrationApps addNewChild install step verify action', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
-          { 1: { steps: addNewStoreSteps } },
-          actions.integrationApp.store.updateStep(
+          { 1: { steps: addNewChildSteps } },
+          actions.integrationApp.child.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
             'verify'
@@ -197,8 +197,8 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should find the integration with id and set verifying flag to true', () => {
         const state = reducer(
-          { 1: { steps: addNewStoreSteps } },
-          actions.integrationApp.store.updateStep(
+          { 1: { steps: addNewChildSteps } },
+          actions.integrationApp.child.updateStep(
             1,
             'installConnectorComponents',
             'verify'
@@ -236,13 +236,13 @@ describe('integrationApps reducer test cases', () => {
         const integrationId = 1;
         const initialState = {
 
-          1: { steps: addNewStoreSteps },
-          2: { steps: addNewStoreSteps },
+          1: { steps: addNewChildSteps },
+          2: { steps: addNewChildSteps },
 
         };
         const state = reducer(
           initialState,
-          actions.integrationApp.store.updateStep(
+          actions.integrationApp.child.updateStep(
             integrationId,
             'installConnectorComponents',
             'verify'
@@ -295,11 +295,11 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe('integrationApps addNewStore install_step failed action', () => {
+    describe('integrationApps addNewChild install_step failed action', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
-          { 1: { steps: addNewStoreSteps } },
-          actions.integrationApp.store.updateStep(
+          { 1: { steps: addNewChildSteps } },
+          actions.integrationApp.child.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
             'failed'
@@ -332,8 +332,8 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should find the integration with id and reset all flags', () => {
         const state = reducer(
-          { 1: { steps: addNewStoreSteps } },
-          actions.integrationApp.store.updateStep(
+          { 1: { steps: addNewChildSteps } },
+          actions.integrationApp.child.updateStep(
             1,
             'installConnectorComponents',
             'failed'
@@ -371,13 +371,13 @@ describe('integrationApps reducer test cases', () => {
         const integrationId = 1;
         const initialState = {
 
-          1: addNewStoreSteps,
-          2: addNewStoreSteps,
+          1: addNewChildSteps,
+          2: addNewChildSteps,
 
         };
         const state = reducer(
           initialState,
-          actions.integrationApp.store.updateStep(
+          actions.integrationApp.child.updateStep(
             integrationId,
             'installConnectorComponents',
             'failed'
@@ -424,11 +424,11 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe('integrationApps addNewStore install step completed action', () => {
+    describe('integrationApps addNewChild install step completed action', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
-          { 1: { steps: addNewStoreSteps } },
-          actions.integrationApp.store.updateStep(
+          { 1: { steps: addNewChildSteps } },
+          actions.integrationApp.child.updateStep(
             1,
             'INCORRECT_FUNCTION_NAME',
             'completed'
@@ -461,7 +461,7 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should find the integration with id and reset all flags', () => {
         const state = reducer(
-          { 1: { steps: addNewStoreSteps } },
+          { 1: { steps: addNewChildSteps } },
           actions.integrationApp.uninstaller.updateStep(
             1,
             'installConnectorComponents',
@@ -498,13 +498,13 @@ describe('integrationApps reducer test cases', () => {
         const integrationId = 1;
         const initialState = {
 
-          1: { steps: addNewStoreSteps },
-          2: { steps: addNewStoreSteps },
+          1: { steps: addNewChildSteps },
+          2: { steps: addNewChildSteps },
 
         };
         const state = reducer(
           initialState,
-          actions.integrationApp.store.updateStep(
+          actions.integrationApp.child.updateStep(
             integrationId,
             'installConnectorComponents',
             'completed'
@@ -557,13 +557,13 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe('integrationApps addNewStore - received install steps reducer', () => {
-      test('should update the addStore state to include the step received', () => {
+    describe('integrationApps addNewChild - received install steps reducer', () => {
+      test('should update the addChild state to include the step received', () => {
         const state = reducer(
           undefined,
-          actions.integrationApp.store.receivedNewStoreSteps(
+          actions.integrationApp.child.receivedNewChildSteps(
             2,
-            addNewStoreSteps
+            addNewChildSteps
           )
         );
         const expectedValue = {
@@ -591,12 +591,12 @@ describe('integrationApps reducer test cases', () => {
 
         expect(state).toEqual(expectedValue);
       });
-      test('should not affect other integrations when new store steps are received', () => {
+      test('should not affect other integrations when new child steps are received', () => {
         const state = reducer(
-          { 1: { steps: addNewStoreSteps } },
-          actions.integrationApp.store.receivedNewStoreSteps(
+          { 1: { steps: addNewChildSteps } },
+          actions.integrationApp.child.receivedNewChildSteps(
             2,
-            addNewStoreSteps
+            addNewChildSteps
           )
         );
         const expectedValue = {
@@ -642,12 +642,12 @@ describe('integrationApps reducer test cases', () => {
 
         expect(state).toEqual(expectedValue);
       });
-      test('should not affect the state when new integration store steps are received and no integrationId is passed', () => {
+      test('should not affect the state when new integration child steps are received and no integrationId is passed', () => {
         const state = reducer(
-          { 1: { steps: addNewStoreSteps } },
-          actions.integrationApp.store.receivedNewStoreSteps(
+          { 1: { steps: addNewChildSteps } },
+          actions.integrationApp.child.receivedNewChildSteps(
             undefined,
-            addNewStoreSteps
+            addNewChildSteps
           )
         );
         const expectedValue = {
@@ -675,12 +675,12 @@ describe('integrationApps reducer test cases', () => {
 
         expect(state).toEqual(expectedValue);
       });
-      test('should not affect the state new integration store steps are received and no integrationId is passed', () => {
+      test('should not affect the state new integration child steps are received and no integrationId is passed', () => {
         const state = reducer(
-          { 1: { steps: addNewStoreSteps } },
-          actions.integrationApp.store.receivedNewStoreSteps(
+          { 1: { steps: addNewChildSteps } },
+          actions.integrationApp.child.receivedNewChildSteps(
             undefined,
-            addNewStoreSteps
+            addNewChildSteps
           )
         );
         const expectedValue = {
@@ -710,7 +710,7 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe('integrationApps addNewStore - step installation complete reducer', () => {
+    describe('integrationApps addNewChild - step installation complete reducer', () => {
       test('should find and update failed flag on integrationId if found', () => {
         const state = reducer(
           {
@@ -720,7 +720,7 @@ describe('integrationApps reducer test cases', () => {
               }],
             },
           },
-          actions.integrationApp.store.completedStepInstall(
+          actions.integrationApp.child.completedStepInstall(
             2,
             'installerFunction',
             [{step1: 'step1 name'}]
@@ -754,7 +754,7 @@ describe('integrationApps reducer test cases', () => {
               }],
             },
           },
-          actions.integrationApp.store.completedStepInstall(
+          actions.integrationApp.child.completedStepInstall(
             2,
             null,
             [
@@ -788,7 +788,7 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe('integrationApps addNewStore - failed reducer', () => {
+    describe('integrationApps addNewChild - failed reducer', () => {
       test('should find and update failed flag on integrationId if found', () => {
         const state = reducer(
           {
@@ -798,7 +798,7 @@ describe('integrationApps reducer test cases', () => {
               }],
             },
           },
-          actions.integrationApp.store.failedNewStoreSteps(
+          actions.integrationApp.child.failedNewChildSteps(
             2,
             'failed to fetch data'
           )
@@ -817,8 +817,8 @@ describe('integrationApps reducer test cases', () => {
 
       test('should not affect the state when clearSteps is called and no integrationId is passed', () => {
         const state = reducer(
-          { 1: { steps: addNewStoreSteps } },
-          actions.integrationApp.store.failedNewStoreSteps()
+          { 1: { steps: addNewChildSteps } },
+          actions.integrationApp.child.failedNewChildSteps()
         );
         const expectedValue = {
 
@@ -846,21 +846,21 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe('integrationApps addNewStore - clear steps reducer', () => {
-      test('should initialise the addStore state and remove the integrationId if found', () => {
+    describe('integrationApps addNewChild - clear steps reducer', () => {
+      test('should initialise the addChild state and remove the integrationId if found', () => {
         const state = reducer(
           undefined,
-          actions.integrationApp.store.clearSteps(2)
+          actions.integrationApp.child.clearSteps(2)
         );
         const expectedValue = {};
 
         expect(state).toEqual(expectedValue);
       });
 
-      test('should update the addStore state and remove the integrationId if found', () => {
+      test('should update the addChild state and remove the integrationId if found', () => {
         const state = reducer(
-          { 1: { steps: addNewStoreSteps } },
-          actions.integrationApp.store.clearSteps(1)
+          { 1: { steps: addNewChildSteps } },
+          actions.integrationApp.child.clearSteps(1)
         );
         const expectedValue = {};
 
@@ -869,10 +869,10 @@ describe('integrationApps reducer test cases', () => {
       test('should not affect other integrations when new clearSteps are called on one integration', () => {
         const state = reducer(
           {
-            1: { steps: addNewStoreSteps },
-            2: { steps: addNewStoreSteps },
+            1: { steps: addNewChildSteps },
+            2: { steps: addNewChildSteps },
           },
-          actions.integrationApp.store.clearSteps(2)
+          actions.integrationApp.child.clearSteps(2)
         );
         const expectedValue = {
 
@@ -901,8 +901,8 @@ describe('integrationApps reducer test cases', () => {
       });
       test('should not affect the state when clearSteps is called and no integrationId is passed', () => {
         const state = reducer(
-          { 1: { steps: addNewStoreSteps } },
-          actions.integrationApp.store.clearSteps()
+          { 1: { steps: addNewChildSteps } },
+          actions.integrationApp.child.clearSteps()
         );
         const expectedValue = {
 
@@ -932,28 +932,28 @@ describe('integrationApps reducer test cases', () => {
   });
 });
 
-describe('integrationApps addStore selectors test cases', () => {
-  describe('addNewStoreSteps', () => {
+describe('integrationApps addChild selectors test cases', () => {
+  describe('addNewChildSteps', () => {
     test('should return empty state when no match found.', () => {
-      expect(selectors.addNewStoreSteps(undefined, 'dummy')).toEqual({});
-      expect(selectors.addNewStoreSteps({}, 'dummy')).toEqual({});
-      expect(selectors.addNewStoreSteps(null, 'dummy')).toEqual({});
-      expect(selectors.addNewStoreSteps(123, 'dummy')).toEqual({});
-      expect(selectors.addNewStoreSteps(undefined)).toEqual({});
-      expect(selectors.addNewStoreSteps({}, null)).toEqual({});
+      expect(selectors.addNewChildSteps(undefined, 'dummy')).toEqual({});
+      expect(selectors.addNewChildSteps({}, 'dummy')).toEqual({});
+      expect(selectors.addNewChildSteps(null, 'dummy')).toEqual({});
+      expect(selectors.addNewChildSteps(123, 'dummy')).toEqual({});
+      expect(selectors.addNewChildSteps(undefined)).toEqual({});
+      expect(selectors.addNewChildSteps({}, null)).toEqual({});
     });
 
     test('should return correct state data when a match is found.', () => {
       const expectedData = { steps: [{type: 'form'}, {type: 'url'}] };
       const newState = reducer(
         undefined,
-        actions.integrationApp.store.receivedNewStoreSteps(
+        actions.integrationApp.child.receivedNewChildSteps(
           '123',
           [{type: 'form'}, {type: 'url'}]
         )
       );
 
-      expect(selectors.addNewStoreSteps(newState, '123')).toEqual(expectedData);
+      expect(selectors.addNewChildSteps(newState, '123')).toEqual(expectedData);
     });
   });
 });

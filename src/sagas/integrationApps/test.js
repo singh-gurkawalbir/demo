@@ -13,8 +13,8 @@ import {
   installStep,
   installScriptStep,
   getCurrentStep,
-  addNewStore,
-  installStoreStep,
+  addNewChild,
+  installChildStep,
   installInitChild,
 } from './installer';
 import {
@@ -643,7 +643,7 @@ describe('installer saga', () => {
         .run();
     });
   });
-  describe('addNewStore generator', () => {
+  describe('addNewChild generator', () => {
     const id = '123';
     const path = `/integrations/${id}/installer/addNewStore`;
     const args = {
@@ -656,13 +656,13 @@ describe('installer saga', () => {
     test('if api call is successful without any response, should not dispatch any actions', () => {
       const steps = null;
 
-      return expectSaga(addNewStore, { id })
+      return expectSaga(addNewChild, { id })
         .provide([[call(apiCallWithRetry, args), steps]])
         .call(apiCallWithRetry, args)
         .not.put(actions.resource.request('connections'))
         .run();
     });
-    test('if api call is successful with response, should dispatch receivedNewStoreSteps', () => {
+    test('if api call is successful with response, should dispatch receivedNewChildSteps', () => {
       const steps = [
         {
           completed: false,
@@ -680,27 +680,27 @@ describe('installer saga', () => {
         },
       ];
 
-      return expectSaga(addNewStore, { id })
+      return expectSaga(addNewChild, { id })
         .provide([[call(apiCallWithRetry, args), steps]])
         .call(apiCallWithRetry, args)
         .put(actions.resource.requestCollection('connections'))
-        .put(actions.integrationApp.store.receivedNewStoreSteps(id, steps))
+        .put(actions.integrationApp.child.receivedNewChildSteps(id, steps))
         .run();
     });
-    test('if api call fails, should dispatch api.failure and failedNewStoreSteps', () => {
+    test('if api call fails, should dispatch api.failure and failedNewChildSteps', () => {
       const error = new Error();
 
-      return expectSaga(addNewStore, { id })
+      return expectSaga(addNewChild, { id })
         .provide([[call(apiCallWithRetry, args), throwError(error)]])
         .call(apiCallWithRetry, args)
         .put(actions.api.failure(path, 'PUT', error && error.message, false))
         .put(
-          actions.integrationApp.store.failedNewStoreSteps(id, error.message)
+          actions.integrationApp.child.failedNewChildSteps(id, error.message)
         )
         .run();
     });
   });
-  describe('installStoreStep generator', () => {
+  describe('installChildStep generator', () => {
     const id = '123';
     const installerFunction = () => {};
     const path = `/integrations/${id}/installer/${installerFunction}`;
@@ -715,7 +715,7 @@ describe('installer saga', () => {
     test('if api call is successful without any response, should not dispatch any actions', () => {
       const stepCompleteResponse = null;
 
-      return expectSaga(installStoreStep, { id, installerFunction })
+      return expectSaga(installChildStep, { id, installerFunction })
         .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
         .call(apiCallWithRetry, args)
         .not.put(
@@ -736,7 +736,7 @@ describe('installer saga', () => {
         },
       };
 
-      return expectSaga(installStoreStep, { id, installerFunction })
+      return expectSaga(installChildStep, { id, installerFunction })
         .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
         .call(apiCallWithRetry, args)
         .put(
@@ -758,7 +758,7 @@ describe('installer saga', () => {
         ],
       };
 
-      return expectSaga(installStoreStep, { id, installerFunction })
+      return expectSaga(installChildStep, { id, installerFunction })
         .provide([
           [call(apiCallWithRetry, args), stepCompleteResponse],
           [call(getResource, { resourceType: 'integrations', id })],
@@ -766,7 +766,7 @@ describe('installer saga', () => {
         .call(apiCallWithRetry, args)
         .call(getResource, { resourceType: 'integrations', id })
         .put(
-          actions.integrationApp.store.completedStepInstall(
+          actions.integrationApp.child.completedStepInstall(
             id,
             installerFunction,
             stepCompleteResponse.stepsToUpdate
@@ -777,11 +777,11 @@ describe('installer saga', () => {
     test('if api call fails, should dispatch updateStep with flag as failed', () => {
       const error = new Error();
 
-      return expectSaga(installStoreStep, { id, installerFunction })
+      return expectSaga(installChildStep, { id, installerFunction })
         .provide([[call(apiCallWithRetry, args), throwError(error)]])
         .call(apiCallWithRetry, args)
         .put(
-          actions.integrationApp.store.updateStep(
+          actions.integrationApp.child.updateStep(
             id,
             installerFunction,
             'failed'

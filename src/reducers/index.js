@@ -264,11 +264,11 @@ selectors.isIAConnectionSetupPending = (state, connectionId) => {
   const { _integrationId } = connection;
   const integration = selectors.resource(state, 'integrations', _integrationId);
 
-  const addNewStoreSteps = fromSession.addNewStoreSteps(
+  const addNewChildSteps = fromSession.addNewChildSteps(
     state?.session,
     _integrationId
   );
-  const { steps } = addNewStoreSteps;
+  const { steps } = addNewChildSteps;
 
   if (steps && Array.isArray(steps)) {
     const installStep = steps.find(s => s._connectionId === connectionId);
@@ -360,15 +360,15 @@ selectors.integrationUninstallSteps = (state, { integrationId, isFrameWork2 }) =
   return { steps: modifiedSteps, error, isFetched, isComplete };
 };
 
-selectors.addNewStoreSteps = (state, integrationId) => {
-  const addNewStoreSteps = fromSession.addNewStoreSteps(
+selectors.addNewChildSteps = (state, integrationId) => {
+  const addNewChildSteps = fromSession.addNewChildSteps(
     state && state.session,
     integrationId
   );
-  const { steps } = addNewStoreSteps;
+  const { steps } = addNewChildSteps;
 
   if (!steps || !Array.isArray(steps)) {
-    return addNewStoreSteps;
+    return addNewChildSteps;
   }
 
   const modifiedSteps = produce(steps, draft => {

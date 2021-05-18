@@ -153,7 +153,7 @@ export default function PageBar() {
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId)?.accessLevel
   );
-  const { supportsMultiStore, storeLabel: childLabel } = integration?.settings || {};
+  const { supportsMultiStore, storeLabel } = integration?.settings || {};
 
   const isCloningSupported =
   integration &&
@@ -198,15 +198,15 @@ export default function PageBar() {
 
   const renderChildLabel = useCallback(selectedChildId => {
     if (selectedChildId === '') {
-      return `All ${childLabel}s`;
+      return `All ${storeLabel}s`;
     }
 
     return integration.children?.find(child => child.value === selectedChildId)?.label || selectedChildId;
   },
-  [integration.children, childLabel]);
+  [integration.children, storeLabel]);
 
   const childItems = ChildMenuItems({ integration, integrationId });
-  const allChildren = AllChildren({integrationId, childLabel});
+  const allChildren = AllChildren({integrationId, childLabel: storeLabel});
 
   return (
     <CeligoPageBar
@@ -236,15 +236,15 @@ export default function PageBar() {
         <IconTextButton
           variant="text"
           color="primary"
-          data-test={`add${childLabel}`}
+          data-test={`add${storeLabel}`}
           onClick={handleAddNewChildClick}>
-          <AddIcon /> Add {childLabel}
+          <AddIcon /> Add {storeLabel}
         </IconTextButton>
         )}
         <Select
           data-public
           displayEmpty
-          data-test={`select${childLabel}`}
+          data-test={`select${storeLabel}`}
           className={classes.childSelect}
           onChange={handleChildChange}
           renderValue={renderChildLabel}

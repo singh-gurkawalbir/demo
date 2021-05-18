@@ -20,7 +20,7 @@ const metadata = {
         heading: 'Name',
         Value: ({rowData: r}) => (
           <>
-            {r && r.name}
+            {r?.name}
             <InfoIconButton info={r.description} size="xs" />
           </>
         ),
@@ -106,9 +106,9 @@ export default function AddOns({integrationId, childId}) {
   } = useMemo(() => {
     if (integration) {
       return {
-        supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
+        supportsMultiStore: !!integration.settings?.supportsMultiStore,
         children: integration.children,
-        storeLabel: integration.settings && integration.settings.storeLabel,
+        storeLabel: integration.settings?.storeLabel,
       };
     }
 

@@ -642,8 +642,8 @@ export function getIAResources(integrationResource = {}, allFlows, allConnection
   (selectedChild.sections || []).forEach(sec => {
     flowIds.push(...map(sec.flows, '_id'));
   });
-  (sections || []).forEach(store => {
-    (store.sections || []).forEach(sec => {
+  (sections || []).forEach(child => {
+    (child.sections || []).forEach(sec => {
       allFlowIds.push(...map(sec.flows, '_id'));
     });
   });

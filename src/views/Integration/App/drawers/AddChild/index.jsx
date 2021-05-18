@@ -67,7 +67,7 @@ const getConnectionType = resource => {
   return type;
 };
 
-export default function IntegrationAppAddNewStore(props) {
+export default function IntegrationAppAddNewChild(props) {
   const classes = useStyles();
   const history = useHistory();
   const { integrationId } = props.match.params;
@@ -86,38 +86,37 @@ export default function IntegrationAppAddNewStore(props) {
   );
   const integrationChildren = integration?.children;
   const integrationAppName = getIntegrationAppUrlName(integration.name);
-  const { steps: addNewStoreSteps, error } = useSelector(state =>
-    selectors.addNewStoreSteps(state, integrationId)
+  const { steps: addNewChildSteps, error } = useSelector(state =>
+    selectors.addNewChildSteps(state, integrationId)
   );
   const selectedConnection = useSelector(state =>
     selectors.resource(state, 'connections', selectedConnectionId)
   );
 
   useEffect(() => {
-    if ((!addNewStoreSteps || !addNewStoreSteps.length) && !requestedSteps) {
-      dispatch(actions.integrationApp.store.addNew(integrationId));
+    if ((!addNewChildSteps || !addNewChildSteps.length) && !requestedSteps) {
+      dispatch(actions.integrationApp.child.addNew(integrationId));
       setRequestedSteps(true);
     }
-  }, [addNewStoreSteps, requestedSteps, dispatch, integrationId]);
+  }, [addNewChildSteps, requestedSteps, dispatch, integrationId]);
   useEffect(() => {
     if (
-      addNewStoreSteps &&
-      addNewStoreSteps.length &&
-      !addNewStoreSteps.reduce(
+      addNewChildSteps?.length &&
+      !addNewChildSteps.reduce(
         (result, step) => result || !step.completed,
         false
       )
     ) {
       setIsSetupComplete(true);
     }
-  }, [addNewStoreSteps]);
+  }, [addNewChildSteps]);
 
   useEffect(() => {
     if (isSetupComplete) {
       // redirect to integration Settings
       let childId;
 
-      dispatch(actions.integrationApp.store.clearSteps(integrationId));
+      dispatch(actions.integrationApp.child.clearSteps(integrationId));
       dispatch(actions.resource.request('integrations', integrationId));
       dispatch(actions.resource.requestCollection('flows'));
       dispatch(actions.resource.requestCollection('exports'));
@@ -156,7 +155,7 @@ export default function IntegrationAppAddNewStore(props) {
     return null;
   }
 
-  if (!addNewStoreSteps || !addNewStoreSteps.length) {
+  if (!addNewChildSteps || !addNewChildSteps.length) {
     return (
       <Loader open>
         <Spinner />
@@ -179,7 +178,7 @@ export default function IntegrationAppAddNewStore(props) {
     } else if (installURL) {
       if (!step.isTriggered) {
         dispatch(
-          actions.integrationApp.store.updateStep(
+          actions.integrationApp.child.updateStep(
             integrationId,
             installerFunction,
             'inProgress'
@@ -192,14 +191,14 @@ export default function IntegrationAppAddNewStore(props) {
         }
 
         dispatch(
-          actions.integrationApp.store.updateStep(
+          actions.integrationApp.child.updateStep(
             integrationId,
             installerFunction,
             'verify'
           )
         );
         dispatch(
-          actions.integrationApp.store.installStep(
+          actions.integrationApp.child.installStep(
             integrationId,
             installerFunction
           )
@@ -208,14 +207,14 @@ export default function IntegrationAppAddNewStore(props) {
       // handle Action step click
     } else if (!step.isTriggered) {
       dispatch(
-        actions.integrationApp.store.updateStep(
+        actions.integrationApp.child.updateStep(
           integrationId,
           installerFunction,
           'inProgress'
         )
       );
       dispatch(
-        actions.integrationApp.store.installStep(
+        actions.integrationApp.child.installStep(
           integrationId,
           installerFunction
         )
@@ -224,7 +223,7 @@ export default function IntegrationAppAddNewStore(props) {
   };
 
   const handleSubmitComplete = (connId, isAuthorized) => {
-    const step = addNewStoreSteps.find(s => s.isCurrentStep);
+    const step = addNewChildSteps.find(s => s.isCurrentStep);
 
     if (
       resourceConstants.OAUTH_APPLICATIONS.includes(
@@ -236,14 +235,14 @@ export default function IntegrationAppAddNewStore(props) {
     }
 
     dispatch(
-      actions.integrationApp.store.updateStep(
+      actions.integrationApp.child.updateStep(
         integrationId,
         (step || {}).installerFunction,
         'inProgress'
       )
     );
     dispatch(
-      actions.integrationApp.store.installStep(
+      actions.integrationApp.child.installStep(
         integrationId,
         (step || {}).installerFunction
       )
@@ -300,7 +299,7 @@ export default function IntegrationAppAddNewStore(props) {
           </Typography>
 
           <div className={classes.installIntegrationSteps}>
-            {addNewStoreSteps.map((step, index) => (
+            {addNewChildSteps.map((step, index) => (
               <InstallationStep
                 key={step.name}
                 handleStepClick={handleStepClick}

@@ -34,7 +34,7 @@ export default function DashboardPanel({ integrationId, childId }) {
   }
 
   // We may not have an IA that supports children, but those who do,
-  // we want to reset the jobs filter any time the store changes.
+  // we want to reset the jobs filter any time the child changes.
   useEffect(() => {
     if (childId && childId !== filterChildId) {
       dispatch(

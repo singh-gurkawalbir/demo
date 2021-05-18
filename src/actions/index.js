@@ -1021,35 +1021,35 @@ const integrationApp = {
         id: integrationId,
       }),
   },
-  store: {
+  child: {
     addNew: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.STORE.ADD, { id: integrationId }),
+      action(actionTypes.INTEGRATION_APPS.CHILD.ADD, { id: integrationId }),
     updateStep: (integrationId, installerFunction, update) =>
-      action(actionTypes.INTEGRATION_APPS.STORE.UPDATE, {
+      action(actionTypes.INTEGRATION_APPS.CHILD.UPDATE, {
         id: integrationId,
         installerFunction,
         update,
       }),
     clearSteps: integrationId =>
-      action(actionTypes.INTEGRATION_APPS.STORE.CLEAR, { id: integrationId }),
+      action(actionTypes.INTEGRATION_APPS.CHILD.CLEAR, { id: integrationId }),
     completedStepInstall: (integrationId, installerFunction, steps) =>
-      action(actionTypes.INTEGRATION_APPS.STORE.COMPLETE, {
+      action(actionTypes.INTEGRATION_APPS.CHILD.COMPLETE, {
         id: integrationId,
         installerFunction,
         steps,
       }),
     installStep: (integrationId, installerFunction) =>
-      action(actionTypes.INTEGRATION_APPS.STORE.INSTALL, {
+      action(actionTypes.INTEGRATION_APPS.CHILD.INSTALL, {
         id: integrationId,
         installerFunction,
       }),
-    failedNewStoreSteps: (integrationId, message) =>
-      action(actionTypes.INTEGRATION_APPS.STORE.FAILURE, {
+    failedNewChildSteps: (integrationId, message) =>
+      action(actionTypes.INTEGRATION_APPS.CHILD.FAILURE, {
         id: integrationId,
         message,
       }),
-    receivedNewStoreSteps: (integrationId, steps) =>
-      action(actionTypes.INTEGRATION_APPS.STORE.RECEIVED, {
+    receivedNewChildSteps: (integrationId, steps) =>
+      action(actionTypes.INTEGRATION_APPS.CHILD.RECEIVED, {
         id: integrationId,
         steps,
       }),
