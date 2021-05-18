@@ -156,7 +156,6 @@ const MappingRow = ({
     hardCodedValue,
   } = mapping;
   const extractValue = extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
-  const extractLabel = extractFields.find(f => f.id === extract)?.name || extractValue;
   const generateLabel = generateFields.find(f => f.id === generate)?.name || generate;
 
   const handleBlur = useCallback((field, value) => {
@@ -180,20 +179,13 @@ const MappingRow = ({
   [dispatch, editorId, extract, flowId, generate, integrationId, mapping, mappingKey]
   );
 
-  const handleExtractBlur = useCallback((_id, value) => {
-    let extract = value;
-
-    if (value?.id) {
-      extract = value.id;
-    } else if (typeof value === 'string') {
+  const handleInputChange = useCallback((e, value) => {
+    if (e) {
       const field = extractFields.find(field => field.name === value);
 
-      if (field) {
-        extract = field.id;
-      }
+      handleBlur('extract', field?.id || value);
     }
-    handleBlur('extract', extract);
-  }, [handleBlur]);
+  }, []);
 
   const handleGenerateBlur = useCallback((_id, value) => {
     let generate = value;
@@ -208,7 +200,7 @@ const MappingRow = ({
       }
     }
     handleBlur('generate', generate);
-  }, [handleBlur]);
+  }, [generateFields, handleBlur]);
 
   const handleDeleteClick = useCallback(() => {
     dispatch(actions.integrationApp.settings.categoryMappings.delete(integrationId, flowId, editorId, mappingKey));
@@ -265,7 +257,6 @@ const MappingRow = ({
           className={clsx(classes.childHeader, classes.mapField, {
             [classes.disableChildRow]: isRequired || disabled,
           })}>
-
           <Autocomplete
             id={`fieldMappingGenerate-${mappingKey}`}
             options={generateFields}
@@ -302,26 +293,24 @@ const MappingRow = ({
             [classes.disableChildRow]:
             mapping.isNotEditable || disabled,
           })}>
-
           <Autocomplete
             id={`fieldMappingExtract-${mapping.key}`}
             options={extractFields}
-            value={extractValue}
+            defaultValue={extractValue}
             disableClearable
             freeSolo
-            autoSelect
             forcePopupIcon={false}
             noOptionsText=""
             size="small"
             disabled={disabled}
-            onChange={handleExtractBlur}
+            onInputChange={handleInputChange}
+            // onChange={handleExtractBlur}
             getOptionLabel={option => option.name || extractFields.find(f => f.id === option)?.name || option || ''}
             renderInput={params => (
               <TextField
                 className={classes.dynaTextContainer}
                 {...params}
                 variant="outlined"
-                value={extractLabel}
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
@@ -376,7 +365,6 @@ const MappingRow = ({
 
 const Row = ({index, isScrolling, style, data}) => {
   const {
-
     integrationId,
     flowId,
     editorId,
