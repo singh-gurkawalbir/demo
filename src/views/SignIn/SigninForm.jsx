@@ -130,7 +130,7 @@ export default function SignIn({dialogOpen}) {
     dispatch(actions.auth.request(email, password, true));
   }, [dispatch]);
 
-  const handleReSignInWithGoogleCompleted = useCallback(() => {
+  const reInitializeSession = useCallback(() => {
     dispatch(actions.auth.initSession());
   }, [dispatch]);
 
@@ -172,7 +172,10 @@ export default function SignIn({dialogOpen}) {
   };
 
   window.signedInWithGoogle = () => {
-    handleReSignInWithGoogleCompleted();
+    reInitializeSession();
+  };
+  window.signedInWithSSO = () => {
+    reInitializeSession();
   };
 
   const attemptedRoute =
