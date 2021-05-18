@@ -6,6 +6,7 @@ import {
   ACCOUNT_IDS,
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
+  emptyList,
 } from '../../../../utils/constants';
 
 // this could be moved into some common place... just testing this now.
@@ -219,6 +220,12 @@ describe('account (ashares) reducers', () => {
     ];
 
     describe('sharedAccounts', () => {
+      test('should return empty array if received state is undefined', () => {
+        const state = reducer(undefined, 'some action');
+        const result = selectors.sharedAccounts(state);
+
+        expect(result).toEqual(emptyList);
+      });
       test('should return correct sandbox state if account supports sandbox.', () => {
         const state = reducer(
           undefined,
@@ -519,6 +526,12 @@ describe('account (ashares) reducers', () => {
 
         expect(result).toEqual(expectedResult);
       });
+      test('should return empty array if received state is undefined.', () => {
+        const state = reducer(undefined, 'some action');
+        const result = selectors.accountSummary(state);
+
+        expect(result).toEqual(emptyList);
+      });
 
       test('should return correct set of account options for own account.', () => {
         const state = reducer(
@@ -538,6 +551,12 @@ describe('account (ashares) reducers', () => {
       });
     });
     describe('notifications', () => {
+      test('should return empty array if received state is undefined', () => {
+        const state = reducer(undefined, 'some action');
+        const result = selectors.notifications(state);
+
+        expect(result).toEqual(emptyList);
+      });
       test('should return correct set of account options.', () => {
         const state = reducer(
           [],
