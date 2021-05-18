@@ -3760,9 +3760,9 @@ Object {
                 "pageSize",
                 "dataURITemplate",
                 "skipRetries",
+                "traceKeyTemplate",
                 "apiIdentifier",
                 "file.batchSize",
-                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -5436,8 +5436,8 @@ Object {
                 "pageSize",
                 "dataURITemplate",
                 "skipRetries",
-                "apiIdentifier",
                 "traceKeyTemplate",
+                "apiIdentifier",
               ],
               "label": "Advanced",
             },
@@ -7817,6 +7817,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
     },
     "layout": Object {
       "containers": Array [
@@ -7861,6 +7864,7 @@ Object {
               "fields": Array [
                 "compressFiles",
                 "as2.maxRetries",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -8259,6 +8263,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "uploadFile": Object {
         "fieldId": "uploadFile",
         "helpKey": "import.uploadFile",
@@ -8322,6 +8329,7 @@ Object {
                 "blobKeyPath",
                 "fileAdvancedSettings",
                 "deleteAfterImport",
+                "traceKeyTemplate",
                 "fileApiIdentifier",
               ],
               "label": "Advanced",
@@ -8351,14 +8359,6 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "blobKeyPath": Object {
         "fieldId": "blobKeyPath",
@@ -9400,14 +9400,6 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "blobKeyPath": Object {
         "fieldId": "blobKeyPath",
@@ -10401,6 +10393,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "uploadFile": Object {
         "fieldId": "uploadFile",
         "helpKey": "import.uploadFile",
@@ -10460,6 +10455,7 @@ Object {
                 "blobKeyPath",
                 "fileAdvancedSettings",
                 "deleteAfterImport",
+                "traceKeyTemplate",
                 "fileApiIdentifier",
               ],
               "label": "Advanced",
@@ -10682,14 +10678,6 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "apiType": Object {
         "id": "apiType",
@@ -11125,6 +11113,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
     },
     "layout": Object {
       "containers": Array [
@@ -11166,6 +11157,7 @@ Object {
                 "idLockTemplate",
                 "dataURITemplate",
                 "netsuite_da.batchSize",
+                "traceKeyTemplate",
                 "apiIdentifier",
                 "deleteAfterImport",
               ],
@@ -11354,6 +11346,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
     },
     "layout": Object {
       "containers": Array [
@@ -11395,6 +11390,7 @@ Object {
                 "idLockTemplate",
                 "dataURITemplate",
                 "netsuite_da.batchSize",
+                "traceKeyTemplate",
                 "apiIdentifier",
                 "deleteAfterImport",
               ],
@@ -11425,14 +11421,6 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "apiType": Object {
         "id": "apiType",

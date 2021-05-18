@@ -172,6 +172,7 @@ export default {
           'fileAdvancedSettings',
           'file.backupPath',
           'deleteAfterImport',
+          'traceKeyTemplate',
           'fileApiIdentifier',
         ],
       },

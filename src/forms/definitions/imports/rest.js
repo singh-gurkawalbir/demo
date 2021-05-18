@@ -846,12 +846,6 @@ export default {
     dataMappings: { formId: 'dataMappings' },
     advancedSettings: {
       formId: 'advancedSettings',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
     },
     deleteAfterImport: {
       fieldId: 'deleteAfterImport',

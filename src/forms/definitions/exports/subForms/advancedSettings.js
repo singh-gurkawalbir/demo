@@ -83,6 +83,6 @@ export default {
     traceKeyTemplate: { fieldId: 'traceKeyTemplate' },
   },
   layout: {
-    fields: ['pageSize', 'dataURITemplate', 'skipRetries', 'apiIdentifier', 'traceKeyTemplate'],
+    fields: ['pageSize', 'dataURITemplate', 'skipRetries', 'traceKeyTemplate', 'apiIdentifier'],
   },
 };

@@ -217,12 +217,6 @@ export default {
     },
     advancedSettings: {
       formId: 'advancedSettings',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
     },
   },
   layout: {

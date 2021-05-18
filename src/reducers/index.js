@@ -5251,7 +5251,7 @@ selectors.editorSupportsOnlyV2Data = (state, editorId) => {
   // no use case yet where any PG field supports only v2 data
   if (isPageGenerator) return false;
 
-  if (editorType === 'csvGenerator' || fieldId === 'file.backupPath') return true;
+  if (editorType === 'csvGenerator' || fieldId === 'file.backupPath' || fieldId === 'traceKeyTemplate') return true;
 
   return false;
 };
