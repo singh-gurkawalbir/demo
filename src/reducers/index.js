@@ -666,7 +666,7 @@ selectors.mkGetChildIntegrations = () => {
           value: int._id}));
       }
 
-      return integrationSettings?.stores;
+      return integrationSettings?.children;
     }
 
   );
@@ -686,19 +686,19 @@ selectors.getChildIntegrationLabelsTiedToFlows = (state, integrationId, flowIds)
   const integration = fromData.resource(state.data, 'integrations', integrationId);
 
   if (integration?.settings?.supportsMultiStore) {
-    const { stores } = selectors.integrationAppSettings(state, integrationId);
+    const { children } = selectors.integrationAppSettings(state, integrationId);
 
     if (!flowIds) {
       return null;
     }
 
-    return stores.filter(store => {
-      const allFlowIds = selectors.integrationAppFlowIds(state, integrationId, store?.value);
+    return children.filter(child => {
+      const allFlowIds = selectors.integrationAppFlowIds(state, integrationId, child?.value);
 
       return flowIds?.some(flowId => allFlowIds?.includes(flowId));
-    }).reduce((acc, store) => {
-      if (store?.label && !acc.includes(store.label)) {
-        acc.push(store.label);
+    }).reduce((acc, child) => {
+      if (child?.label && !acc.includes(child.label)) {
+        acc.push(child.label);
       }
 
       return acc;
@@ -772,7 +772,7 @@ selectors.mkAllFlowsTiedToIntegrations = () => {
     (state, parentIntegration) => !selectors.isIntegrationApp(state, parentIntegration),
     (state, parentIntegration) => allFlowsFromSections(state, parentIntegration),
     (_1, _2, childIntegrationIds) => childIntegrationIds,
-    (flows, parentIntegration, isV2, isDiy, flowsFromAllStores, childIntegrationIds) => {
+    (flows, parentIntegration, isV2, isDiy, flowsFromAllChildren, childIntegrationIds) => {
       if (!flows || !parentIntegration) return null;
 
       if (isV2 || isDiy) {
@@ -783,14 +783,14 @@ selectors.mkAllFlowsTiedToIntegrations = () => {
       // v1
 
       if (!childIntegrationIds || childIntegrationIds?.length === 0) {
-        // no store filter in this case...just return all parent integrations
+        // no child filter in this case...just return all parent integrations
 
-        return flowsFromAllStores;
+        return flowsFromAllChildren;
       }
 
       // filter based on selected childIntegrations
 
-      return flowsFromAllStores.filter(({childId}) => childIntegrationIds.includes(childId));
+      return flowsFromAllChildren.filter(({childId}) => childIntegrationIds.includes(childId));
     }
   );
 };
@@ -2019,19 +2019,19 @@ selectors.mkIntegrationAppResourceList = () => {
 };
 selectors.integrationAppResourceList = selectors.mkIntegrationAppResourceList();
 
-selectors.mkIntegrationAppStore = () => {
+selectors.mkIntegrationAppChild = () => {
   const integrationSettings = selectors.mkIntegrationAppSettings();
 
   return createSelector(
     (state, integrationId) => integrationSettings(state, integrationId),
     (_1, _2, childId) => childId,
     (integration, childId) => {
-      if (!integration || !integration.stores || !integration.stores.length) {
+      if (!integration || !integration.children || !integration.children.length) {
         return emptyObject;
       }
 
       return (
-        integration.stores.find(store => store.value === childId) || emptyObject
+        integration.children.find(child => child.value === childId) || emptyObject
       );
     }
 
@@ -2176,17 +2176,17 @@ selectors.mkIntegrationAppFlowSections = () => {
 
   return createSelector(
     (state, id) => (state && integrationSettingsSelector(state, id)) || emptyObject,
-    (_1, _2, store) => store,
-    (integrationResource, store) => {
+    (_1, _2, childId) => childId,
+    (integrationResource, childId) => {
       let flowSections = [];
       const { sections = [], supportsMultiStore } =
       integrationResource.settings || {};
 
       if (supportsMultiStore) {
         if (Array.isArray(sections) && sections.length) {
-          if (store) {
+          if (childId) {
             flowSections =
-            (sections.find(sec => sec.id === store) || {}).sections || [];
+            (sections.find(sec => sec.id === childId) || {}).sections || [];
           } else {
             const allFlowsections = sections
               .filter(sec => sec.mode !== 'install')
@@ -2233,9 +2233,9 @@ selectors.mkIntegrationAppGeneralSettings = () => {
       const { supportsMultiStore, general } = integrationResource.settings || {};
 
       if (supportsMultiStore) {
-        const storeSection = (general || []).find(s => s.id === childId) || {};
+        const childSection = (general || []).find(s => s.id === childId) || {};
 
-        ({ fields, sections: subSections } = storeSection);
+        ({ fields, sections: subSections } = childSection);
       } else if (Array.isArray(general)) {
         ({ fields, sections: subSections } =
       general.find(s => s.title === 'General') || {});
@@ -2285,10 +2285,10 @@ selectors.mkIntegrationAppSectionMetadata = () => {
 
       if (supportsMultiStore) {
         if (childId) {
-          // If childId passed, return sections from that store
-          const store = sections.find(s => s.id === childId) || {};
+          // If childId passed, return sections from that child
+          const child = sections.find(s => s.id === childId) || {};
 
-          allSections = store.sections || [];
+          allSections = child.sections || [];
         }
       }
 
@@ -2327,12 +2327,12 @@ selectors.makeIntegrationAppSectionFlows = () =>
 
       if (supportsMultiStore) {
         if (childId) {
-          // If childId passed, return sections from that store
-          const store = sections.find(s => s.id === childId) || {};
+          // If childId passed, return sections from that child
+          const child = sections.find(s => s.id === childId) || {};
 
-          allSections = store.sections || [];
+          allSections = child.sections || [];
         } else {
-          // If no childId is passed, return all sections from all stores
+          // If no childId is passed, return all sections from all children
           allSections = [];
           sections.forEach(sec => {
             allSections.push(...(sec.sections.map(s => ({...s, childId: sec.id, childName: sec.title}))));
@@ -2351,12 +2351,12 @@ selectors.makeIntegrationAppSectionFlows = () =>
           const flow = requiredFlows.find(fi => fi.id === f._id);
 
           if (flow) {
-            // If flow is present in two stores, then it is a common flow and does not belong to any single store, so remove store information from flow
+            // If flow is present in two children, then it is a common flow and does not belong to any single child, so remove child information from flow
             delete flow.childId;
             delete flow.childName;
           } else if (flows.find(fi => fi._id === f._id)) {
-            // Add only valid flows, the flow must be present in flows collection. This is possible when store is in uninstall mode.
-            // Flow may be deleted but store structure is intact on integration json.
+            // Add only valid flows, the flow must be present in flows collection. This is possible when child is in uninstall mode.
+            // Flow may be deleted but child structure is intact on integration json.
             requiredFlows.push({id: f._id, childId: sec.childId, childName: sec.childName});
           }
         });
@@ -2383,8 +2383,8 @@ selectors.integrationAppFlowIds = (state, integrationId, childId) => {
 
   const integration = selectors.integrationAppSettings(state, integrationId);
 
-  if (integration?.stores && childId) {
-    const store = integration.stores.find(store => store.value === childId);
+  if (integration?.children && childId) {
+    const child = integration.children.find(c => c.value === childId);
     const flows = selectors.integrationAppSectionFlows(
       state,
       integrationId,
@@ -2392,23 +2392,23 @@ selectors.integrationAppFlowIds = (state, integrationId, childId) => {
       childId
     );
 
-    if (store) {
-      const storeFlows = allIntegrationFlows.filter(f => {
-        // TODO: this is not reliable way to extract store flows. With current integration json,
+    if (child) {
+      const childFlows = allIntegrationFlows.filter(f => {
+        // TODO: this is not reliable way to extract child flows. With current integration json,
         // there is no good way to extract this
-        // Extract store from the flow name. (Regex extracts store label from flow name)
+        // Extract child from the flow name. (Regex extracts child label from flow name)
         // Flow name usually follows this format: <Flow Name> [<StoreLabel>]
-        const regex = new RegExp(`\\s\\[(${integration.stores.map(s => s.label).join('|')})\\]$`);
-        const flowStore = regex.test(f.name)
+        const regex = new RegExp(`\\s\\[(${integration.children.map(c => c.label).join('|')})\\]$`);
+        const flowChild = regex.test(f.name)
           ? regex.exec(f.name)[1]
           : null;
 
-        return flowStore
-          ? flowStore === store.label
+        return flowChild
+          ? flowChild === child.label
           : map(flows, '_id').indexOf(f._id) > -1;
       });
 
-      return map(storeFlows.length ? storeFlows : flows,
+      return map(childFlows.length ? childFlows : flows,
         '_id'
       );
     }
@@ -2441,13 +2441,13 @@ selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {
   const integration = fromData.resource(state.data, 'integrations', integrationId);
 
   if (integration?.settings?.supportsMultiStore) {
-    const { stores } = selectors.integrationAppSettings(state, integrationId);
+    const { children } = selectors.integrationAppSettings(state, integrationId);
 
     if (!flowId) {
       return null;
     }
 
-    return stores.find(store => selectors.integrationAppFlowIds(state, integrationId, store?.value)?.includes(flowId))?.value;
+    return children.find(child => selectors.integrationAppFlowIds(state, integrationId, child?.value)?.includes(flowId))?.value;
   }
   if (selectors.isIntegrationAppVersion2(state, integrationId, true)) {
     if (!flowId) return integrationId;
@@ -4733,7 +4733,7 @@ selectors.mkResourceFilteredErrorsInCurrPageSelector = () => {
 selectors.resourceFilteredErrorsInCurrPage = selectors.mkResourceFilteredErrorsInCurrPageSelector();
 
 /**
- * Returns error count per category in a store for IA 1.0
+ * Returns error count per category in a child for IA 1.0
  * A map of titleId and total errors on that category
  */
 selectors.integrationErrorsPerSection = createSelector(
@@ -4762,23 +4762,23 @@ selectors.integrationErrorsPerSection = createSelector(
 );
 
 /**
- * Returns error count per Store in an Integration for IA 1.0
- * A map of store id and total errors on that Store
+ * Returns error count per child in an Integration for IA 1.0
+ * A map of child id and total errors on that child
  */
-selectors.integrationErrorsPerStore = (state, integrationId) => {
+selectors.integrationErrorsPerChild = (state, integrationId) => {
   const integrationAppSettings = selectors.integrationAppSettings(state, integrationId) || emptyObject;
-  const { supportsMultiStore, sections: stores = [] } = integrationAppSettings.settings || {};
+  const { supportsMultiStore, sections: children = [] } = integrationAppSettings.settings || {};
 
   if (!supportsMultiStore) return emptyObject;
 
-  return stores.reduce((storeErrorsMap, store) => {
-    const sectionErrorsMap = selectors.integrationErrorsPerSection(state, integrationId, store.id);
+  return children.reduce((childErrorsMap, child) => {
+    const sectionErrorsMap = selectors.integrationErrorsPerSection(state, integrationId, child.id);
 
-    storeErrorsMap[store.id] = Object.values(sectionErrorsMap).reduce(
+    childErrorsMap[child.id] = Object.values(sectionErrorsMap).reduce(
       (total, count) => total + count,
       0);
 
-    return storeErrorsMap;
+    return childErrorsMap;
   }, {});
 };
 

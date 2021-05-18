@@ -17,7 +17,7 @@ export default function TabRedirection({children}) {
   // TODO: Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
-  const currentStore = useSelectorMemo(selectors.mkIntegrationAppStore, integrationId, childId);
+  const currentChild = useSelectorMemo(selectors.mkIntegrationAppChild, integrationId, childId);
 
   const redirectTo = useSelector(state =>
     selectors.shouldRedirect(state, integrationId)
@@ -103,11 +103,11 @@ export default function TabRedirection({children}) {
 
   let redirectToPage;
 
-  if (currentStore.mode === 'install') {
+  if (currentChild.mode === 'install') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/install/addNewStore`
     );
-  } else if (currentStore.mode === 'uninstall') {
+  } else if (currentChild.mode === 'uninstall') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`
     );

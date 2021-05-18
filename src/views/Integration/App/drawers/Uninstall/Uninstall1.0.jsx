@@ -54,7 +54,7 @@ export default function Uninstaller1({ integration, integrationId, childId }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const {_id, mode, name, stores} = integration;
+  const {_id, mode, name, children} = integration;
   const integrationAppName = getIntegrationAppUrlName(name);
   const isUninstallComplete = useSelector(state =>
     selectors.isUninstallComplete(state, { integrationId, childId })
@@ -129,8 +129,8 @@ export default function Uninstaller1({ integration, integrationId, childId }) {
     return <Loader open>Uninstalling</Loader>;
   }
 
-  const storeName = stores
-    ? (stores.find(s => s.value === childId) || {}).label
+  const childName = children
+    ? (children.find(c => c.value === childId) || {}).label
     : undefined;
   const handleStepClick = step => {
     // TODO: installURL should eventually changed to uninstallURL. Currently it is left as installURL to support shopify uninstall.
@@ -188,15 +188,15 @@ export default function Uninstaller1({ integration, integrationId, childId }) {
   return (
     <div>
       <CeligoPageBar
-        title={`Uninstall app: ${name}${storeName ? ` - ${storeName}` : ''}`}
+        title={`Uninstall app: ${name}${childName ? ` - ${childName}` : ''}`}
         // Todo: (Mounika) please add the helpText
         // infoText="we need to have the help text for the following."
         />
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
           <Typography className={classes.message}>
-            {storeName
-              ? `Complete the below steps to uninstall your integration app child ${storeName}`
+            {childName
+              ? `Complete the below steps to uninstall your integration app child ${childName}`
               : 'Complete the below steps to uninstall your integration app.'}
           </Typography>
 

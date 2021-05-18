@@ -633,7 +633,7 @@ describe('integrationAppSettings reducer', () => {
         ],
         supportsMultiStore: true,
       },
-      stores: [
+      children: [
         { hidden: false, label: undefined, mode: 'settings', value: 'store1' },
       ],
     });
@@ -651,7 +651,7 @@ describe('integrationAppSettings reducer', () => {
         ],
         supportsMultiStore: true,
       },
-      stores: [
+      children: [
         { hidden: false, label: undefined, mode: 'settings', value: 'store1' },
       ],
     });

@@ -88,7 +88,7 @@ export default function ConnectorInstallation(props) {
     install = [],
     integrationInstallSteps = [],
     mode,
-    stores,
+    children,
     supportsMultiStore,
     _connectorId,
     initChild,
@@ -98,7 +98,7 @@ export default function ConnectorInstallation(props) {
     initChild: integration.initChild,
     install: integration.install,
     mode: integration.mode,
-    stores: integration.stores,
+    children: integration.children,
     supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
     _connectorId: integration._connectorId,
     integrationInstallSteps: integration.installSteps,
@@ -333,8 +333,8 @@ export default function ConnectorInstallation(props) {
 
               return;
             }
-            const childId = stores?.length
-              ? stores[0].value
+            const childId = children?.length
+              ? children[0].value
               : undefined;
 
             // for old cloned IAs, uninstall should happen the old way

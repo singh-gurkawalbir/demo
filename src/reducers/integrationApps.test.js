@@ -1849,7 +1849,7 @@ describe('integrationApps selector testcases', () => {
     });
   });
 
-  describe('selectors.mkIntegrationAppStore test cases', () => {
+  describe('selectors.mkIntegrationAppChild test cases', () => {
     const state = {
       data: {
         resources: {
@@ -1894,7 +1894,7 @@ describe('integrationApps selector testcases', () => {
     };
 
     test('should not throw any exception for invalid arguments', () => {
-      const selector = selectors.mkIntegrationAppStore();
+      const selector = selectors.mkIntegrationAppChild();
 
       expect(selector()).toEqual({});
       expect(selector(null)).toEqual({});
@@ -1903,7 +1903,7 @@ describe('integrationApps selector testcases', () => {
     });
 
     test('should return correct value for integration App with multistore and single store', () => {
-      const selector = selectors.mkIntegrationAppStore();
+      const selector = selectors.mkIntegrationAppChild();
 
       expect(selector(state, 'integration1', 'child1')).toEqual({
         hidden: false,

@@ -1103,7 +1103,7 @@ describe('Error Management region selector testcases', () => {
     });
   });
 
-  describe('selectors.integrationErrorsPerStore test cases', () => {
+  describe('selectors.integrationErrorsPerChild test cases', () => {
     let state;
 
     beforeAll(() => {
@@ -1189,21 +1189,21 @@ describe('Error Management region selector testcases', () => {
       }));
     });
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.integrationErrorsPerStore()).toEqual({});
+      expect(selectors.integrationErrorsPerChild()).toEqual({});
     });
 
     test('should return emptyObject if integration doesn\'t support multistore', () => {
-      expect(selectors.integrationErrorsPerStore(state, 'intid1')).toEqual({});
+      expect(selectors.integrationErrorsPerChild(state, 'intid1')).toEqual({});
     });
-    test('should return integration errors per store if integration supports multiStore', () => {
-      expect(selectors.integrationErrorsPerStore(state, 'intid2')).toEqual({
+    test('should return integration errors per child if integration supports multiStore', () => {
+      expect(selectors.integrationErrorsPerChild(state, 'intid2')).toEqual({
         sec1: 30,
         sec2: 5,
       });
     });
 
     test('should return empty object if integration doesn\'t exist', () => {
-      expect(selectors.integrationErrorsPerStore(state, 'int2')).toEqual({});
+      expect(selectors.integrationErrorsPerChild(state, 'int2')).toEqual({});
     });
   });
 

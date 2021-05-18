@@ -12,11 +12,32 @@ export default function IntegrationAppUninstallation({ match }) {
   const initialState = useSelector(state => state?.data?.resources?.integrations);
   const i = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
 
-  const integration = useMemo(() => i ? {mode: i.mode, name: i.name, _id: i._id, stores: i.stores, install: i.install, installSteps: i.installSteps, uninstallSteps: i.uninstallSteps} : emptyobj, [i]);
+  const integration = useMemo(() => i
+    ? {
+      mode: i.mode,
+      name: i.name,
+      _id: i._id,
+      children: i.children,
+      install: i.install,
+      installSteps: i.installSteps,
+      uninstallSteps: i.uninstallSteps,
+    }
+    : emptyobj, [i]);
 
   const childSettings = useSelectorMemo(selectors.mkIntegrationAppSettings, childId);
 
-  const childIntegration = useMemo(() => childSettings ? {mode: childSettings.mode, name: childSettings.name, _id: childSettings._id, stores: childSettings.stores, install: childSettings.install, installSteps: childSettings.installSteps, uninstallSteps: childSettings.uninstallSteps} : emptyobj, [childSettings]);
+  const childIntegration = useMemo(() => childSettings
+    ? {
+      mode: childSettings.mode,
+      name: childSettings.name,
+      _id: childSettings._id,
+      children: childSettings.children,
+      install: childSettings.install,
+      installSteps: childSettings.installSteps,
+      uninstallSteps: childSettings.uninstallSteps,
+    }
+    : emptyobj,
+  [childSettings]);
 
   const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
 

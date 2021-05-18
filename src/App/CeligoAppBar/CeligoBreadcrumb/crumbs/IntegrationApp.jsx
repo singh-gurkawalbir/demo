@@ -19,7 +19,7 @@ export const IntegrationAppCrumb = ({ integrationId }) => {
 export const ChildCrumb = ({ integrationId, childId }) => {
   const iaSettings = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
 
-  const child = iaSettings?.stores?.find(s => s?.value === childId);
+  const child = iaSettings?.children?.find(c => c?.value === childId);
 
   const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
   const childName = useSelector(state => {

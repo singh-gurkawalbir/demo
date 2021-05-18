@@ -522,13 +522,9 @@ export function* retryAll({ flowId, childId, integrationId }) {
 
     if (allFlows?.resources) {
       if (childId) {
-        const storeFlowIds = yield select(
-          selectors.integrationAppFlowIds,
-          integrationId,
-          childId
-        );
+        const childFlowIds = yield select(selectors.integrationAppFlowIds, integrationId, childId);
 
-        flowIds = allFlows.resources.filter(f => storeFlowIds.includes(f._id) && !f.disabled).map(f => f._id);
+        flowIds = allFlows.resources.filter(f => childFlowIds.includes(f._id) && !f.disabled).map(f => f._id);
       } else {
         flowIds = allFlows.resources.filter(f => (integrationId === 'none' ? !f._integrationId : (f._integrationId === integrationId)) && !f.disabled).map(f => f._id);
       }

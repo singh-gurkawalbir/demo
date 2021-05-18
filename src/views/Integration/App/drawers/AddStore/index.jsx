@@ -78,13 +78,13 @@ export default function IntegrationAppAddNewStore(props) {
 
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
 
-  const [initialStores] = useState(integration.stores);
+  const [initialChildren] = useState(integration.children);
   const showUninstall = !!(
     integration &&
     integration.settings &&
     integration.settings.defaultSectionId
   );
-  const integrationStores = integration?.stores;
+  const integrationChildren = integration?.children;
   const integrationAppName = getIntegrationAppUrlName(integration.name);
   const { steps: addNewStoreSteps, error } = useSelector(state =>
     selectors.addNewStoreSteps(state, integrationId)
@@ -123,10 +123,10 @@ export default function IntegrationAppAddNewStore(props) {
       dispatch(actions.resource.requestCollection('exports'));
       dispatch(actions.resource.requestCollection('imports'));
       dispatch(actions.resource.requestCollection('connections'));
-      if (integrationStores.length > initialStores.length) {
-        const newStore = differenceBy(integrationStores, initialStores, 'value');
+      if (integrationChildren.length > initialChildren.length) {
+        const newChild = differenceBy(integrationChildren, initialChildren, 'value');
 
-        childId = newStore?.length && newStore[0].value;
+        childId = newChild?.length && newChild[0].value;
       }
       if (childId) {
         props.history.push(
@@ -139,8 +139,8 @@ export default function IntegrationAppAddNewStore(props) {
       }
     }
   }, [dispatch,
-    initialStores,
-    integrationStores,
+    initialChildren,
+    integrationChildren,
     integrationAppName,
     integrationId,
     isSetupComplete,

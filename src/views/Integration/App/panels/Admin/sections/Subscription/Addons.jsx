@@ -12,7 +12,7 @@ import { useGetTableContext } from '../../../../../../../components/CeligoTable/
 
 const metadata = {
   useColumns: () => {
-    const { supportsMultiStore, childId, storeLabel, stores } = useGetTableContext();
+    const { supportsMultiStore, childId, storeLabel, children } = useGetTableContext();
 
     let columns = [
       {
@@ -28,7 +28,7 @@ const metadata = {
       {
         key: 'storeLabel',
         heading: storeLabel,
-        Value: ({rowData: r}) => stores.find(s => s.value === r.storeId)?.label || r.storeId,
+        Value: ({rowData: r}) => children.find(c => c.value === r.storeId)?.label || r.storeId,
       },
       {
         key: 'installedOn',
@@ -101,13 +101,13 @@ export default function AddOns({integrationId, childId}) {
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
   const {
     supportsMultiStore,
-    stores,
+    children,
     storeLabel,
   } = useMemo(() => {
     if (integration) {
       return {
         supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
-        stores: integration.stores,
+        children: integration.children,
         storeLabel: integration.settings && integration.settings.storeLabel,
       };
     }
@@ -184,7 +184,7 @@ export default function AddOns({integrationId, childId}) {
           </Typography>
         </div>
 
-        <CeligoTable data={subscribedAddOns} {...metadata} actionProps={{ supportsMultiStore, childId, storeLabel, stores }} />
+        <CeligoTable data={subscribedAddOns} {...metadata} actionProps={{ supportsMultiStore, childId, storeLabel, children }} />
       </>
       )}
     </>
