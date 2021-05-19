@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FixedSizeList } from 'react-window';
 import { stringCompare } from '../../../utils/sort';
 import CeligoSelect from '../../CeligoSelect';
+import CeligoTruncate from '../../CeligoTruncate';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 
@@ -161,7 +162,9 @@ const Row = ({ index, style, data }) => {
 
         setOpen(false);
       }}>
-      {label}
+      <CeligoTruncate placement="top" lines={1}>
+        {label}
+      </CeligoTruncate>
     </MenuItem>
   );
 };
