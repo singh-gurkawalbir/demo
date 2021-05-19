@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import { addDays, startOfDay } from 'date-fns';
 import actions from '../../../actions';
 import DateFilter from '../commonCells/DateFilter';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
@@ -30,6 +31,7 @@ export default {
             filterKey={FILTER_KEY}
             handleChange={handleChange}
             customPresets={LISTENER_LOGS_RANGE_FILTERS}
+            fromDate={startOfDay(addDays(new Date(), -29))}
             showTime
             skipLastEndDate />
         );

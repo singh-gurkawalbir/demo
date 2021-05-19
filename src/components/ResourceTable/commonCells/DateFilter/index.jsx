@@ -44,6 +44,7 @@ export default function SelectDate({
   showTime = false,
   defaultRange = DEFAULT_RANGE,
   skipLastEndDate = false,
+  fromDate,
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -89,6 +90,7 @@ export default function SelectDate({
         value={selectedDate}
         customPresets={customPresets}
         showTime={showTime}
+        fromDate={fromDate}
          />
     </div>
   );
