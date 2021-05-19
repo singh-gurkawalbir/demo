@@ -858,6 +858,9 @@ export default {
       inputRoot: {
         alignItems: 'flex-start',
       },
+      listbox: {
+        padding: '2px 0px',
+      },
     },
 
   },
