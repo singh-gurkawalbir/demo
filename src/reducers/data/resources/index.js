@@ -1,70 +1,20 @@
 import produce from 'immer';
-import { get, isEqual } from 'lodash';
+import { get } from 'lodash';
 import { createSelector } from 'reselect';
 import sift from 'sift';
+import reduceReducers from 'reduce-reducers';
 import actionTypes from '../../../actions/types';
-import { convertOldFlowSchemaToNewOne, getIAFlowSettings, getScriptsReferencedInFlow, isIntegrationApp } from '../../../utils/flows';
+import { getIAFlowSettings, getScriptsReferencedInFlow, isIntegrationApp } from '../../../utils/flows';
 import { stringCompare } from '../../../utils/sort';
 import mappingUtil from '../../../utils/mapping';
 import getRoutePath from '../../../utils/routePaths';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
 import { FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
+import connectionUpdateReducer from './connectionUpdate';
+import resourceUpdateReducer from './resourceUpdate';
 
 const emptyObject = {};
 const emptyList = [];
-
-export const initializationResources = ['profile', 'preferences'];
-const accountResources = ['ashares', 'shared/ashares', 'licenses'];
-const resourceTypesToIgnore = [
-  ...initializationResources,
-  ...accountResources,
-  'audit',
-];
-
-function replaceOrInsertResource(draft, resourceType, resourceValue) {
-  // handle case of no collection
-  let type = resourceType;
-  // RESOURCE_RECEIVED is being called with null on some GET resource calls when api doesnt return anything.
-  let resource = resourceValue || {};
-
-  if (type.indexOf('/licenses') >= 0) {
-    const id = type.substring('connectors/'.length, type.indexOf('/licenses'));
-
-    resource._connectorId = id;
-    type = 'connectorLicenses';
-  }
-
-  // For accesstokens and connections within an integration
-  if (type.indexOf('integrations/') >= 0) {
-    type = type.split('/').pop();
-  }
-
-  if (type === 'flows') resource = convertOldFlowSchemaToNewOne(resource);
-
-  if (!draft[type]) {
-    draft[type] = [resource];
-
-    return;
-  }
-
-  // if we have a collection, look for a match
-  const collection = draft[type];
-  const index = collection.findIndex(r => r._id === resource._id);
-
-  // insert if not found, replace if found...
-  if (index === -1) {
-    draft[type].push(resource);
-
-    return;
-  }
-
-  // no need to make an update when it is the same resource...this helps in saving some render cycles
-  if (isEqual(resource, collection[index])) {
-    return;
-  }
-
-  collection.splice(index, 1, resource);
-}
 
 function getIntegrationAppsNextState(draft, action) {
   const { stepsToUpdate, id } = action;
@@ -115,122 +65,16 @@ function getIntegrationAppsNextState(draft, action) {
   }
 }
 
-export default (state = {}, action) => {
+const rootDataReducer = (state = {}, action) => {
   const {
     id,
     type,
-    resource,
-    collection,
-    resourceType,
-    connectionIds,
-    integrationId,
-    deregisteredId,
-    connectionId,
   } = action;
-
-  // Some resources are managed by custom reducers.
-  // Lets skip those for this generic implementation
-  if (resourceTypesToIgnore.find(t => t === resourceType)) {
-    return state;
-  }
-
-  // skip integrations/:_integrationId/ashares
-  // skip integrations/:_integrationId/audit
-  if (
-    resourceType &&
-    resourceType.startsWith('integrations/') &&
-    (resourceType.endsWith('/ashares') || resourceType.endsWith('/audit'))
-  ) {
-    return state;
-  }
-
-  // skip all SuiteScript unification resources
-  if (resourceType && resourceType.startsWith('suitescript/connections/')) {
-    return state;
-  }
 
   return produce(state, draft => {
     let resourceIndex;
 
     switch (type) {
-      case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
-        if (resourceType.indexOf('/installBase') >= 0) {
-          const id = resourceType.substring(
-            'connectors/'.length,
-            resourceType.indexOf('/installBase')
-          );
-
-          // IO-16602, We shouldn't show child integrations in the install base for IAF 2.0 as
-          // we can not push update to child integrations. Can identify them by _parentId prop
-          const filteredCollection = collection?.filter(c => !c._parentId);
-
-          const newCollection =
-          filteredCollection?.map(c => ({ ...c, _connectorId: id }));
-
-          draft.connectorInstallBase = newCollection || [];
-
-          return;
-        }
-
-        if (resourceType.indexOf('/licenses') >= 0) {
-          const id = resourceType.substring(
-            'connectors/'.length,
-            resourceType.indexOf('/licenses')
-          );
-          const newCollection =
-          collection &&
-          collection.map(c => ({
-            ...c,
-            _connectorId: id,
-          }));
-
-          draft.connectorLicenses = newCollection || [];
-
-          return;
-        }
-
-        if (resourceType === 'recycleBinTTL' && collection && collection.length) {
-          draft.recycleBinTTL = collection.map(i => ({...i, key: i.doc._id}));
-
-          return;
-        }
-
-        // TODO: Raghu, we should move all this code into the "produce" function. Lets talk
-        // about it when you have time to refactor.
-        if (resourceType === 'flows') {
-          const newCollection =
-            collection &&
-            collection.map &&
-            collection.map(convertOldFlowSchemaToNewOne);
-
-          draft.flows = newCollection || [];
-
-          return;
-        }
-
-        draft[resourceType] = collection || [];
-
-        return;
-      }
-
-      case actionTypes.RESOURCE.RECEIVED:
-        return replaceOrInsertResource(draft, resourceType, resource);
-      case actionTypes.RESOURCE.DELETED:
-        if (resourceType.indexOf('/licenses') >= 0) {
-          const connectorId = resourceType.substring(
-            'connectors/'.length,
-            resourceType.indexOf('/licenses')
-          );
-
-          draft.connectorLicenses = draft.connectorLicenses.filter(
-            l => l._id !== id || l._connectorId !== connectorId
-          );
-
-          return;
-        }
-        draft[resourceType] = draft[resourceType].filter(r => r._id !== id);
-
-        return;
       case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE:
         return getIntegrationAppsNextState(draft, action);
       case actionTypes.STACK.USER_SHARING_TOGGLED:
@@ -245,54 +89,6 @@ export default (state = {}, action) => {
 
         return;
 
-      case actionTypes.CONNECTION.TRADING_PARTNER_UPDATE_COMPLETE: {
-      // cant implement immer here with current implementation. Need to revisit again.
-        if (connectionIds?.length) {
-          connectionIds.forEach(({ _id: cId}) => {
-            resourceIndex = draft.connections.findIndex(r => r._id === cId);
-            if (resourceIndex !== -1) {
-              draft.connections[resourceIndex].ftp.tradingPartner = !(draft.connections[resourceIndex].ftp.tradingPartner);
-            }
-          });
-
-          return;
-        }
-
-        return;
-      }
-      case actionTypes.CONNECTION.DEREGISTER_COMPLETE:
-        resourceIndex = draft.integrations?.findIndex(
-        r => r._id === integrationId
-      );
-
-        if (resourceIndex > -1) {
-          draft.integrations[
-            resourceIndex
-          ]._registeredConnectionIds = draft.integrations[
-            resourceIndex
-          ]._registeredConnectionIds.filter(ele => ele !== deregisteredId);
-        }
-
-        return;
-
-      case actionTypes.CONNECTION.REGISTER_COMPLETE:
-        resourceIndex = draft.integrations?.findIndex(
-        r => r._id === integrationId
-      );
-
-        if (resourceIndex > -1) {
-          connectionIds.forEach(cId =>
-            draft.integrations[resourceIndex]._registeredConnectionIds.push(cId)
-          );
-        }
-
-        return;
-
-      case actionTypes.RESOURCE.CLEAR_COLLECTION:
-
-        draft[resourceType] = [];
-
-        return;
       case actionTypes.TRANSFER.CANCELLED:
         resourceIndex = draft.transfers.findIndex(r => r._id === id);
         if (resourceIndex > -1) {
@@ -310,40 +106,14 @@ export default (state = {}, action) => {
         );
 
         return;
-      case actionTypes.CONNECTION.UPDATE_STATUS: {
-        if (collection?.length) {
-          collection.forEach(({ _id: cId, offline, queues }) => {
-            resourceIndex = draft?.connections?.findIndex(r => r._id === cId);
-            if (resourceIndex >= 0) {
-              draft.connections[resourceIndex].offline = !!offline;
-              draft.connections[resourceIndex].queueSize = queues[0].size;
-            }
-          });
-        }
-
-        return;
-      }
-      case actionTypes.CONNECTION.MADE_ONLINE:
-        if (!draft.tiles) {
-          return draft;
-        }
-
-        draft.tiles.forEach(tile => {
-          if (tile.offlineConnections) {
-            // eslint-disable-next-line no-param-reassign
-            tile.offlineConnections = tile.offlineConnections.filter(
-              c => c !== connectionId
-            );
-          }
-        });
-
-        return;
 
       default:
         return draft;
     }
   });
 };
+
+export default reduceReducers(rootDataReducer, connectionUpdateReducer, resourceUpdateReducer);
 
 export const selectors = {};
 
