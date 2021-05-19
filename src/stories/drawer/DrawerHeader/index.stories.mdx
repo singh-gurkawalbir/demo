@@ -4,9 +4,10 @@ import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
 import { action } from '@storybook/addon-actions';
 import DrawerHeader from '../../../components/drawer/Right/DrawerHeader';
 import RightDrawer from '../../../components/drawer/Right';
-import { DrawerProvider } from '../../../components/drawer/Right/DrawerContext';
 import Spinner from '../../../components/Spinner';
 import ActionGroup from '../../../components/ActionGroup';
+import MockAppBar from '../../mocks/AppBar';
+import MockPageBar from '../../mocks/PageBar';
 
 <Meta 
   title="Right Drawer/Header" 
@@ -15,6 +16,8 @@ import ActionGroup from '../../../components/ActionGroup';
 
 <Story name="No Frills">
   <MemoryRouter initialEntries={["drawer"]}>
+    <MockAppBar />
+    <MockPageBar />
     <RightDrawer path="drawer" height="tall" onClose={action('close-drawer')}>
       <DrawerHeader title="Drawer title"  />
     </RightDrawer>
