@@ -21,7 +21,7 @@ const resourceTypesToIgnore = [
   'audit',
 ];
 
-function replaceOrInsertResource(state, resourceType, resourceValue) {
+function replaceOrInsertResource(draft, resourceType, resourceValue) {
   // handle case of no collection
   let type = resourceType;
   // RESOURCE_RECEIVED is being called with null on some GET resource calls when api doesnt return anything.
@@ -41,50 +41,48 @@ function replaceOrInsertResource(state, resourceType, resourceValue) {
 
   if (type === 'flows') resource = convertOldFlowSchemaToNewOne(resource);
 
-  if (!state[type]) {
-    return { ...state, [type]: [resource] };
+  if (!draft[type]) {
+    draft[type] = [resource];
+
+    return;
   }
 
   // if we have a collection, look for a match
-  const collection = state[type];
+  const collection = draft[type];
   const index = collection.findIndex(r => r._id === resource._id);
 
   // insert if not found, replace if found...
   if (index === -1) {
-    return { ...state, [type]: [...collection, resource] };
+    draft[type].push(resource);
+
+    return;
   }
 
   // no need to make an update when it is the same resource...this helps in saving some render cycles
   if (isEqual(resource, collection[index])) {
-    return state;
+    return;
   }
-  const newCollection = [
-    ...collection.slice(0, index),
-    resource,
-    ...collection.slice(index + 1),
-  ];
 
-  return { ...state, [type]: newCollection };
+  collection.splice(index, 1, resource);
 }
 
-function getIntegrationAppsNextState(state, action) {
+function getIntegrationAppsNextState(draft, action) {
   const { stepsToUpdate, id } = action;
 
-  return produce(state, draft => {
-    const integration = draft.integrations.find(i => i._id === id);
+  const integration = draft.integrations.find(i => i._id === id);
 
-    if (
-      !integration ||
+  if (
+    !integration ||
       !(
         (integration.install && integration.install.length) ||
         (integration.installSteps && integration.installSteps.length)
       )
-    ) {
-      return;
-    }
+  ) {
+    return;
+  }
 
-    if (integration.installSteps && integration.installSteps.length) {
-      stepsToUpdate &&
+  if (integration.installSteps && integration.installSteps.length) {
+    stepsToUpdate &&
         stepsToUpdate.forEach(step => {
           const stepIndex = integration.installSteps.findIndex(
             s => s.name === step.name
@@ -97,8 +95,8 @@ function getIntegrationAppsNextState(state, action) {
             };
           }
         });
-    } else {
-      stepsToUpdate &&
+  } else {
+    stepsToUpdate &&
         stepsToUpdate.forEach(step => {
           const stepIndex = integration.install.findIndex(
             s =>
@@ -114,8 +112,7 @@ function getIntegrationAppsNextState(state, action) {
             };
           }
         });
-    }
-  });
+  }
 }
 
 export default (state = {}, action) => {
@@ -152,178 +149,168 @@ export default (state = {}, action) => {
     return state;
   }
 
-  let resourceIndex;
-  const newState = { ...state };
+  return produce(state, draft => {
+    let resourceIndex;
 
-  switch (type) {
-    case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
-      if (resourceType.indexOf('/installBase') >= 0) {
-        const id = resourceType.substring(
-          'connectors/'.length,
-          resourceType.indexOf('/installBase')
-        );
+    switch (type) {
+      case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
+        if (resourceType.indexOf('/installBase') >= 0) {
+          const id = resourceType.substring(
+            'connectors/'.length,
+            resourceType.indexOf('/installBase')
+          );
 
-        // IO-16602, We shouldn't show child integrations in the install base for IAF 2.0 as
-        // we can not push update to child integrations. Can identify them by _parentId prop
-        const filteredCollection = collection?.filter(c => !c._parentId);
+          // IO-16602, We shouldn't show child integrations in the install base for IAF 2.0 as
+          // we can not push update to child integrations. Can identify them by _parentId prop
+          const filteredCollection = collection?.filter(c => !c._parentId);
 
-        const newCollection =
+          const newCollection =
           filteredCollection?.map(c => ({ ...c, _connectorId: id }));
 
-        return produce(state, draft => {
           draft.connectorInstallBase = newCollection || [];
-        });
-      }
 
-      if (resourceType.indexOf('/licenses') >= 0) {
-        const id = resourceType.substring(
-          'connectors/'.length,
-          resourceType.indexOf('/licenses')
-        );
-        const newCollection =
+          return;
+        }
+
+        if (resourceType.indexOf('/licenses') >= 0) {
+          const id = resourceType.substring(
+            'connectors/'.length,
+            resourceType.indexOf('/licenses')
+          );
+          const newCollection =
           collection &&
           collection.map(c => ({
             ...c,
             _connectorId: id,
           }));
 
-        return produce(state, draft => {
           draft.connectorLicenses = newCollection || [];
-        });
-      }
 
-      if (resourceType === 'recycleBinTTL' && collection && collection.length) {
-        return produce(state, draft => {
+          return;
+        }
+
+        if (resourceType === 'recycleBinTTL' && collection && collection.length) {
           draft.recycleBinTTL = collection.map(i => ({...i, key: i.doc._id}));
-        });
-      }
 
-      // TODO: Raghu, we should move all this code into the "produce" function. Lets talk
-      // about it when you have time to refactor.
-      if (resourceType === 'flows') {
-        return produce(state, draft => {
+          return;
+        }
+
+        // TODO: Raghu, we should move all this code into the "produce" function. Lets talk
+        // about it when you have time to refactor.
+        if (resourceType === 'flows') {
           const newCollection =
             collection &&
             collection.map &&
             collection.map(convertOldFlowSchemaToNewOne);
 
           draft.flows = newCollection || [];
-        });
+
+          return;
+        }
+
+        draft[resourceType] = collection || [];
+
+        return;
       }
 
-      return { ...state, [resourceType]: collection || [] };
-    }
+      case actionTypes.RESOURCE.RECEIVED:
+        return replaceOrInsertResource(draft, resourceType, resource);
+      case actionTypes.RESOURCE.DELETED:
+        if (resourceType.indexOf('/licenses') >= 0) {
+          const connectorId = resourceType.substring(
+            'connectors/'.length,
+            resourceType.indexOf('/licenses')
+          );
 
-    case actionTypes.RESOURCE.RECEIVED:
-      return replaceOrInsertResource(state, resourceType, resource);
-    case actionTypes.RESOURCE.DELETED:
-      if (resourceType.indexOf('/licenses') >= 0) {
-        const connectorId = resourceType.substring(
-          'connectors/'.length,
-          resourceType.indexOf('/licenses')
-        );
-
-        return produce(state, draft => {
           draft.connectorLicenses = draft.connectorLicenses.filter(
             l => l._id !== id || l._connectorId !== connectorId
           );
-        });
-      }
 
-      return {
-        ...state,
-        [resourceType]: state[resourceType].filter(r => r._id !== id),
-      };
-    case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE:
-      return getIntegrationAppsNextState(state, action);
-    case actionTypes.STACK.USER_SHARING_TOGGLED:
-      resourceIndex = state.sshares?.findIndex(user => user._id === id);
+          return;
+        }
+        draft[resourceType] = draft[resourceType].filter(r => r._id !== id);
 
-      if (resourceIndex > -1) {
-        return produce(state, draft => {
+        return;
+      case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE:
+        return getIntegrationAppsNextState(state, action);
+      case actionTypes.STACK.USER_SHARING_TOGGLED:
+        resourceIndex = state.sshares?.findIndex(user => user._id === id);
+
+        if (resourceIndex > -1) {
           draft.sshares[resourceIndex].disabled = !draft.sshares[resourceIndex]
             .disabled;
-        });
-      }
 
-      return state;
+          return;
+        }
 
-    case actionTypes.CONNECTION.TRADING_PARTNER_UPDATE_COMPLETE: {
+        return;
+
+      case actionTypes.CONNECTION.TRADING_PARTNER_UPDATE_COMPLETE: {
       // cant implement immer here with current implementation. Need to revisit again.
-      if (connectionIds?.length) {
-        connectionIds.forEach(({ _id: cId}) => {
-          resourceIndex = newState.connections.findIndex(r => r._id === cId);
-          if (resourceIndex !== -1) {
-            newState.connections[resourceIndex].ftp.tradingPartner = !(state.connections[resourceIndex].ftp.tradingPartner);
-          }
-        });
+        if (connectionIds?.length) {
+          connectionIds.forEach(({ _id: cId}) => {
+            resourceIndex = draft.connections.findIndex(r => r._id === cId);
+            if (resourceIndex !== -1) {
+              draft.connections[resourceIndex].ftp.tradingPartner = !(draft.connections[resourceIndex].ftp.tradingPartner);
+            }
+          });
 
-        return newState;
+          return;
+        }
+
+        return;
       }
-
-      return state;
-    }
-    case actionTypes.CONNECTION.DEREGISTER_COMPLETE:
-      resourceIndex = state.integrations?.findIndex(
+      case actionTypes.CONNECTION.DEREGISTER_COMPLETE:
+        resourceIndex = draft.integrations?.findIndex(
         r => r._id === integrationId
       );
 
-      if (resourceIndex > -1) {
-        return produce(state, draft => {
+        if (resourceIndex > -1) {
           draft.integrations[
             resourceIndex
           ]._registeredConnectionIds = draft.integrations[
             resourceIndex
           ]._registeredConnectionIds.filter(ele => ele !== deregisteredId);
-        });
-      }
+        }
 
-      return state;
+        return;
 
-    case actionTypes.CONNECTION.REGISTER_COMPLETE:
-      resourceIndex = state.integrations?.findIndex(
+      case actionTypes.CONNECTION.REGISTER_COMPLETE:
+        resourceIndex = draft.integrations?.findIndex(
         r => r._id === integrationId
       );
 
-      if (resourceIndex > -1) {
-        return produce(state, draft => {
+        if (resourceIndex > -1) {
           connectionIds.forEach(cId =>
             draft.integrations[resourceIndex]._registeredConnectionIds.push(cId)
           );
-        });
-      }
+        }
 
-      return state;
+        return;
 
-    case actionTypes.RESOURCE.CLEAR_COLLECTION:
-      return produce(state, draft => {
+      case actionTypes.RESOURCE.CLEAR_COLLECTION:
+
         draft[resourceType] = [];
-      });
-    case actionTypes.TRANSFER.CANCELLED:
-      resourceIndex = state.transfers.findIndex(r => r._id === id);
 
-      // Need to verify why below code is not working
-      // if (resourceIndex > -1) {
-      //   return produce(state, draft => {
-      //     draft.transfers[resourceIndex].status = 'canceled';
-      //   });
-      // }
-      if (resourceIndex > -1) {
-        newState.transfers[resourceIndex].status = 'canceled';
+        return;
+      case actionTypes.TRANSFER.CANCELLED:
+        resourceIndex = draft.transfers.findIndex(r => r._id === id);
+        if (resourceIndex > -1) {
+          draft.transfers[resourceIndex].status = 'canceled';
 
-        return newState;
-      }
+          return;
+        }
 
-      return state;
-    case actionTypes.ACCESSTOKEN_DELETE_PURGED:
-      return produce(state, draft => {
+        return;
+      case actionTypes.ACCESSTOKEN_DELETE_PURGED:
+
         draft.accesstokens = draft.accesstokens.filter(
           token =>
             !token.autoPurgeAt || new Date(token.autoPurgeAt) > new Date()
         );
-      });
-    case actionTypes.CONNECTION.UPDATE_STATUS: {
-      return produce(state, draft => {
+
+        return;
+      case actionTypes.CONNECTION.UPDATE_STATUS: {
         if (collection?.length) {
           collection.forEach(({ _id: cId, offline, queues }) => {
             resourceIndex = draft?.connections?.findIndex(r => r._id === cId);
@@ -333,29 +320,29 @@ export default (state = {}, action) => {
             }
           });
         }
-      });
-    }
-    case actionTypes.CONNECTION.MADE_ONLINE:
-      if (!state.tiles) {
-        return state;
-      }
 
-      return produce(state, draft => {
-        draft.tiles = draft.tiles.map(tile => {
+        return;
+      }
+      case actionTypes.CONNECTION.MADE_ONLINE:
+        if (!draft.tiles) {
+          return draft;
+        }
+
+        draft.tiles.forEach(tile => {
           if (tile.offlineConnections) {
             // eslint-disable-next-line no-param-reassign
             tile.offlineConnections = tile.offlineConnections.filter(
               c => c !== connectionId
             );
           }
-
-          return tile;
         });
-      });
 
-    default:
-      return state;
-  }
+        return;
+
+      default:
+        return draft;
+    }
+  });
 };
 
 export const selectors = {};
