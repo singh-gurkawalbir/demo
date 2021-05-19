@@ -488,9 +488,6 @@ export default {
         border: '1px solid',
         borderColor: colors.celigoNeutral3,
         backgroundColor: colors.celigoWhite,
-        '&$focused': {
-          borderColor: colors.celigoAccent2,
-        },
         '&:hover': {
           borderColor: colors.celigoAccent2,
         },
