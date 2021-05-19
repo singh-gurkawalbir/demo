@@ -74,18 +74,19 @@ export default {
     MuiButton: {
       root: {
         textTransform: 'unset',
-        fontFamily: 'source sans pro',
-        padding: '6px 24px',
-        fontSize: '15px',
-        lineHeight: '19px',
+        fontFamily: 'Roboto400',
         '&: disabled': {
           cursor: 'not-allowed',
         },
       },
       contained: {
-        // borderRadius: '17px',
+        borderRadius: '17px',
+        fontSize: '13px',
+        lineHeight: '15px',
         border: '1px solid',
+        textTransform: 'none',
         boxShadow: 'none',
+        padding: '6px 20px',
         '&:disabled': {
           background: 'none',
         },
@@ -125,6 +126,10 @@ export default {
       },
       outlined: {
         borderRadius: '4px',
+        textTransform: 'none',
+        fontSize: '13px',
+        lineHeight: '15px',
+        padding: '6px 20px',
         border: '1px solid',
         '&:disabled': {
           color: colors.celigoNeutral4,
@@ -152,6 +157,8 @@ export default {
         },
       },
       text: {
+        fontSize: '13px',
+        lineHeight: '15px',
         '&::after': {
           background: 'none repeat scroll 0 0 transparent',
           bottom: '0',
