@@ -485,10 +485,18 @@ export default {
     },
     MuiOutlinedInput: {
       root: {
+        border: '1px solid',
+        borderColor: colors.celigoNeutral3,
         backgroundColor: colors.celigoWhite,
         '&$focused': {
           borderColor: colors.celigoAccent2,
         },
+        '&:hover': {
+          borderColor: colors.celigoAccent2,
+        },
+      },
+      notchedOutline: {
+        border: `${colors.celigoNeutral3} !important`,
       },
     },
     MuiFormLabel: {
@@ -851,6 +859,7 @@ export default {
         alignItems: 'flex-start',
       },
     },
+
   },
   props: {
     MuiCheckbox: {

@@ -121,6 +121,10 @@ const useStyles = makeStyles(theme => ({
   fieldFilterIcon: {
     marginRight: 0,
   },
+  paper: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
 }));
 
 const FieldHelp = ({id, name, description = 'No Description available.' }) => {
@@ -275,6 +279,7 @@ const MappingRow = ({
             noOptionsText=""
             size="small"
             onChange={handleGenerateBlur}
+            classes={{paper: classes.paper}}
             renderOption={Option}
             getOptionLabel={option => option.name || generateFields.find(f => f.id === option)?.name || ''}
             renderInput={params => (
