@@ -8,7 +8,6 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import InvitationItem from './InvitationItem';
 import LoadResources from '../../../components/LoadResources';
-import { USER_ACCESS_LEVELS } from '../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   notificationContainer: {
@@ -40,7 +39,7 @@ function Notifications() {
     selectors.userNotifications(state)
   );
   const isAccountOwner = useSelector(state =>
-    selectors.resourcePermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
+    selectors.isAccountOwner(state)
   );
   const handleClick = useCallback(
     event => {

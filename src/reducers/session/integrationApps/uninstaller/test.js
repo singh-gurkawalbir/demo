@@ -35,7 +35,7 @@ describe('integrationApps uninstaller reducer test cases', () => {
         const state = reducer(
           undefined,
           actions.integrationApp.uninstaller.preUninstall(
-            'storeId',
+            'childId',
             'integrationId'
           )
         );
@@ -46,7 +46,7 @@ describe('integrationApps uninstaller reducer test cases', () => {
         const state = reducer(
           { integrationId: { steps: uninstallSteps } },
           actions.integrationApp.uninstaller.preUninstall(
-            'storeId',
+            'childId',
             'integrationId'
           )
         );

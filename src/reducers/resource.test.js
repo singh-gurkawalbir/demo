@@ -3657,7 +3657,7 @@ describe('resource region selector testcases', () => {
       );
     });
 
-    test('should return logs for IA if storeId is passed as argument', () => {
+    test('should return logs for IA if childId is passed as argument', () => {
       const conns = [{
         _id: 'c1',
         _integrationId: 'i1',
@@ -3788,7 +3788,7 @@ describe('resource region selector testcases', () => {
       );
 
       expect(selectors.auditLogs(state, undefined, 'i1', undefined, {
-        storeId: 's1',
+        childId: 's1',
       })).toEqual({
         count: 4,
         logs: [

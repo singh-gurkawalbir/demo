@@ -11,7 +11,7 @@ export default function IntegrationSettingsSaveButton(props) {
   const {
     submitButtonLabel = 'Save',
     integrationId,
-    storeId,
+    childId,
     flowId,
     postProcessValuesFn,
     disabled,
@@ -19,7 +19,7 @@ export default function IntegrationSettingsSaveButton(props) {
   } = props;
   const dispatch = useDispatch();
   const { settings: fields, sections } = useSelector(
-    state => selectors.iaFlowSettings(state, integrationId, flowId, storeId),
+    state => selectors.iaFlowSettings(state, integrationId, flowId, childId),
     shallowEqual
   );
   const flowSettingsMemo = useMemo(
@@ -73,13 +73,13 @@ export default function IntegrationSettingsSaveButton(props) {
         actions.integrationApp.settings.update(
           integrationId,
           flowId,
-          storeId,
+          childId,
           sectionId,
           allValuesWithFlowId
         )
       );
     },
-    [dispatch, flowId, flowSettingsMemo?.fieldMap, integrationId, postProcessValuesFn, sectionId, storeId]
+    [dispatch, flowId, flowSettingsMemo?.fieldMap, integrationId, postProcessValuesFn, sectionId, childId]
   );
   const submitCompleted = useSelector(state => {
     const formState = selectors.integrationAppSettingsFormState(

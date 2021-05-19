@@ -39,13 +39,7 @@ export default function VariationMappings(props) {
       variation,
       isVariationMapping: true,
     }));
-
-    return () => {
-      // clear the mapping list when component unloads.
-      dispatch(actions.integrationApp.settings.categoryMappings.clear(id));
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [variation, depth, sectionId, dispatch, integrationId, flowId, id, isVariationAttributes]);
 
   if (mappingStatus === 'error') {
     return (<Typography>Failed to load mapping.</Typography>);

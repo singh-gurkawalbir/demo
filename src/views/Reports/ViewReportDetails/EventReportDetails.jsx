@@ -7,6 +7,7 @@ import { shallowEqual, useSelector } from 'react-redux';
 import DateTimeDisplay from '../../../components/DateTimeDisplay';
 import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
+import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 
 const flowsConfig = {type: 'flows'};
 
@@ -18,7 +19,7 @@ const eventReportDetailRows = [
       const integrationId = useSelector(state => selectors.resource(state, 'flows', r?._flowIds[0])?._integrationId);
       const integration = useSelector(state => selectors.resource(state, 'integrations', integrationId));
 
-      return integration?.name;
+      return integration?.name || STANDALONE_INTEGRATION.name;
     },
   },
   {

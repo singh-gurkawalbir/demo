@@ -76,6 +76,11 @@ const useStyles = makeStyles(theme => ({
   },
   tabsAccount: {
     padding: theme.spacing(3),
+    '& > [role = tabpanel]': {
+      background: 'none',
+      padding: 0,
+      border: 'none',
+    },
   },
 }));
 

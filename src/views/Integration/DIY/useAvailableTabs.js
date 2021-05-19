@@ -71,7 +71,7 @@ const emptyObj = {};
 
 export function useAvailableTabs() {
   const match = useRouteMatch();
-  const { integrationId, storeId: childId } = match?.params;
+  const { integrationId, childId } = match?.params;
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
