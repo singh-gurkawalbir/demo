@@ -151,6 +151,7 @@ export default {
         },
       ],
     },
+    traceKeyTemplate: {fieldId: 'traceKeyTemplate'},
   },
   layout: {
     type: 'collapse',
@@ -185,7 +186,7 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['compressFiles', 'as2.maxRetries'],
+        fields: ['compressFiles', 'as2.maxRetries', 'traceKeyTemplate'],
       },
     ],
   },

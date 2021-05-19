@@ -35,6 +35,9 @@ describe('handlebars processor logic', () => {
       expect(_editorSupportsV1V2data({fieldId: '_relativeURI'})).toEqual(false);
       expect(_editorSupportsV1V2data({fieldId: 'lookup.body'})).toEqual(false);
     });
+    test('should return false for traceKeyTemplate field', () => {
+      expect(_editorSupportsV1V2data({fieldId: 'traceKeyTemplate'})).toEqual(false);
+    });
     test('should return true for data uri and concurrency fields', () => {
       expect(_editorSupportsV1V2data({fieldId: 'idLockTemplate'})).toEqual(true);
       expect(_editorSupportsV1V2data({fieldId: 'dataURITemplate'})).toEqual(true);

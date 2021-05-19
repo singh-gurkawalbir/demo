@@ -305,6 +305,7 @@ fileApiIdentifier: {
 's3.bucket': {
   fieldId: 's3.bucket',
 },
+traceKeyTemplate: {fieldId: 'traceKeyTemplate'},
 };
 export const updatePGPFormValues = formValues => {
   const newValues = { ...formValues };

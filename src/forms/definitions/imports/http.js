@@ -1292,12 +1292,6 @@ export default {
     'http.ignoreEmptyNodes': { fieldId: 'http.ignoreEmptyNodes' },
     advancedSettings: {
       formId: 'advancedSettings',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
     },
     'http.configureAsyncHelper': { fieldId: 'http.configureAsyncHelper' },
     'http._asyncHelperId': { fieldId: 'http._asyncHelperId' },
