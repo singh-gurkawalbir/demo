@@ -313,9 +313,9 @@ const MappingRow = ({
             defaultValue={extractValue}
             disableClearable
             freeSolo
-            elevation={3}
             forcePopupIcon={false}
             noOptionsText=""
+            classes={{paper: classes.paper}}
             size="small"
             disabled={disabled}
             onBlur={handleExtractBlur}
