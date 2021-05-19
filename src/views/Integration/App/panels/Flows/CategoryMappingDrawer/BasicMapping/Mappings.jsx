@@ -305,6 +305,7 @@ const MappingRow = ({
             defaultValue={extractValue}
             disableClearable
             freeSolo
+            elevation={3}
             forcePopupIcon={false}
             noOptionsText=""
             size="small"
