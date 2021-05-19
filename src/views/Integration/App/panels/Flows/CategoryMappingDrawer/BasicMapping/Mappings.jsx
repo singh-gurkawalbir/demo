@@ -60,7 +60,6 @@ const useStyles = makeStyles(theme => ({
   filterTypeIcon: {
     width: 9,
     height: 9,
-    marginRight: theme.spacing(1),
     marginTop: theme.spacing(1),
   },
   PreferredIcon: {
