@@ -232,9 +232,9 @@ export default (state = {}, action) => {
 
         return;
       case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE:
-        return getIntegrationAppsNextState(state, action);
+        return getIntegrationAppsNextState(draft, action);
       case actionTypes.STACK.USER_SHARING_TOGGLED:
-        resourceIndex = state.sshares?.findIndex(user => user._id === id);
+        resourceIndex = draft.sshares?.findIndex(user => user._id === id);
 
         if (resourceIndex > -1) {
           draft.sshares[resourceIndex].disabled = !draft.sshares[resourceIndex]
