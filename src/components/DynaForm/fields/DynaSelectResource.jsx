@@ -34,6 +34,7 @@ const handleAddNewResource = args => {
     integrationId,
     connectorId,
     isFrameWork2,
+    email,
   } = args;
 
   if (
@@ -64,6 +65,7 @@ const handleAddNewResource = args => {
         ...values,
         '/_connectorId': connectorId,
         '/trialLicenseTemplate': true,
+        '/email': email,
       };
       if (isFrameWork2) {
         values = {
@@ -202,6 +204,9 @@ export default function DynaSelectResource(props) {
   const isFrameWork2 = useSelector(state =>
     selectors.resource(state, 'connectors', connectorId)?.framework === 'twoDotZero'
   );
+  const preferences = useSelector(state =>
+    selectors.userProfilePreferencesProps(state)
+  );
   const createdId = useSelector(state =>
     selectors.createdResourceId(state, newResourceId)
   );
@@ -274,8 +279,9 @@ export default function DynaSelectResource(props) {
         integrationId: integrationId || integrationIdFromUrl,
         connectorId,
         isFrameWork2,
+        email: preferences?.email,
       }),
-    [dispatch, history, location, resourceType, options, newResourceId, statusExport, expConnId, assistant, integrationId, integrationIdFromUrl, connectorId, isFrameWork2]
+    [dispatch, history, location, resourceType, options, newResourceId, statusExport, expConnId, assistant, integrationId, integrationIdFromUrl, connectorId, isFrameWork2, preferences?.email]
   );
   const handleEditResource = useCallback(() => {
     if (
