@@ -17,7 +17,13 @@ export default (state = null, action) => {
       return { ...newState, auth_type_google: {} };
 
     case actionTypes.DELETE_PROFILE:
-      if (state && state.email) return { email: state.email, auth_type_google: state.auth_type_google };
+      if (state && state.email) {
+        return {
+          email: state.email,
+          auth_type_google: state.auth_type_google,
+          authTypeSSO: state.authTypeSSO || null,
+        };
+      }
 
       return {};
 
