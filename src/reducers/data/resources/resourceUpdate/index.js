@@ -10,6 +10,13 @@ const resourceTypesToIgnore = [
   ...accountResources,
   'audit',
 ];
+const updateStateWhenValueDiff = (state, key, value) => {
+  if (isEqual(state[key], value)) {
+    return;
+  }
+  // eslint-disable-next-line no-param-reassign
+  state[key] = value;
+};
 
 function replaceOrInsertResource(draft, resourceType, resourceValue) {
   // handle case of no collection
@@ -70,7 +77,7 @@ const addResourceCollection = (draft, resourceType, collection) => {
     const newCollection =
         filteredCollection?.map(c => ({ ...c, _connectorId: id }));
 
-    draft.connectorInstallBase = newCollection || [];
+    updateStateWhenValueDiff(draft, 'connectorInstallBase', newCollection || []);
 
     return;
   }
@@ -87,13 +94,15 @@ const addResourceCollection = (draft, resourceType, collection) => {
           _connectorId: id,
         }));
 
-    draft.connectorLicenses = newCollection || [];
+    updateStateWhenValueDiff(draft, 'connectorLicenses', newCollection || []);
 
     return;
   }
 
   if (resourceType === 'recycleBinTTL' && collection && collection.length) {
-    draft.recycleBinTTL = collection.map(i => ({...i, key: i.doc._id}));
+    const updatedRecycleBinTTL = collection.map(i => ({...i, key: i.doc._id}));
+
+    updateStateWhenValueDiff(draft, 'recycleBinTTL', updatedRecycleBinTTL);
 
     return;
   }
@@ -106,12 +115,11 @@ const addResourceCollection = (draft, resourceType, collection) => {
           collection.map &&
           collection.map(convertOldFlowSchemaToNewOne);
 
-    draft.flows = newCollection || [];
+    updateStateWhenValueDiff(draft, 'flows', newCollection || []);
 
     return;
   }
-
-  draft[resourceType] = collection || [];
+  updateStateWhenValueDiff(draft, resourceType, collection || []);
 };
 export default (state = {}, action) => {
   const {
