@@ -61,6 +61,7 @@ const useStyles = makeStyles(theme => ({
     width: 9,
     height: 9,
     marginTop: theme.spacing(1),
+    marginRight: theme.spacing(1),
   },
   PreferredIcon: {
     color: theme.palette.warning.main,
@@ -116,6 +117,9 @@ const useStyles = makeStyles(theme => ({
         color: theme.palette.primary.main,
       },
     },
+  },
+  fieldFilterIcon: {
+    marginRight: 0,
   },
 }));
 
@@ -282,7 +286,7 @@ const MappingRow = ({
                 InputProps={{
                   ...params.InputProps,
                   startAdornment: (
-                    <InputAdornment position="start">
+                    <InputAdornment position="start" className={classes.fieldFilterIcon}>
                       <Icon filterType={mapping.filterType || generateFields.find(f => f.id === mapping.generate)?.filterType} />
                     </InputAdornment>
                   ),
