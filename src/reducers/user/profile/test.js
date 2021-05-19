@@ -66,7 +66,7 @@ describe('user reducers', () => {
       expect(state2).toEqual({
         email: actionWithoutAuthTypes.resource.email,
         auth_type_google: undefined,
-        authTypeSSO: null,
+        authTypeSSO: undefined,
       });
     });
     test('when unlink with google request is received, clear auth type google info', () => {
