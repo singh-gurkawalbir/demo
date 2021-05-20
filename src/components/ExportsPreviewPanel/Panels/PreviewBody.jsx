@@ -84,7 +84,7 @@ export default function PreviewBody(props) {
             resourceType={resourceType}
           />
           <CeligoTabWrapper>
-            <CeligoPillTabs tabs={availablePreviewStages} defaultTab={defaultTab} />
+            <CeligoPillTabs dataPublic tabs={availablePreviewStages} defaultTab={defaultTab} />
             <CeligoTabPanel panelId="preview">
               { resourceSampleData.status === 'error'
                 ? <Templates.ErrorPanel resourceSampleData={resourceSampleData} availablePreviewStages={availablePreviewStages} />

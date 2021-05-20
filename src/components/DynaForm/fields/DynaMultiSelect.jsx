@@ -96,6 +96,7 @@ export default function DynaMultiSelect(props) {
     required,
     removeInvalidValues = false,
     selectAllIdentifier,
+    dataPublic = false,
   } = props;
   const classes = useStyles();
   let processedValue = value || [];
@@ -196,6 +197,7 @@ export default function DynaMultiSelect(props) {
         className={classes.multislectWrapper}>
         <CeligoSelect
           multiple
+          data-public={dataPublic ? true : null}
           data-test={id}
           disabled={disabled}
           value={processedValue}

@@ -78,7 +78,7 @@ export const FieldComponent = props => {
   );
 };
 
-export default function FormFragment({ defaultFields, formKey }) {
+export default function FormFragment({ defaultFields, formKey, dataPublic = false}) {
   const dispatch = useDispatch();
 
   const onFieldChange = useCallback(
@@ -119,6 +119,7 @@ export default function FormFragment({ defaultFields, formKey }) {
     <>
       {defaultFields.map(field => (
         <FieldComponent
+          dataPublic={dataPublic}
           {...field}
           key={field.id}
           id={field.id}

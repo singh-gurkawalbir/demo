@@ -63,6 +63,7 @@ export default function TopPanel({
   importId,
   disabled,
   subRecordMappingId,
+  dataPublic = false,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -116,6 +117,7 @@ export default function TopPanel({
     <div className={classes.header}>
       <div className={classes.headerChild}>
         <Typography
+          data-public={dataPublic ? true : null}
           variant="h5"
           className={clsx(classes.topHeading, {
           // [classes.topHeadingCustomWidth]: mappingPreviewType,
@@ -137,6 +139,7 @@ export default function TopPanel({
       <div className={clsx(classes.headerChild, classes.headerChildRight)}>
 
         <Typography
+          data-public={dataPublic ? true : null}
           variant="h5"
           className={clsx(classes.topHeading)}>
           {generateLabel}

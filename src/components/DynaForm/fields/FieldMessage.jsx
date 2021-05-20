@@ -29,11 +29,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FieldMessage({ description, errorMessages, isValid }) {
+export default function FieldMessage({ description, errorMessages, isValid, dataPublic = false}) {
   const classes = useStyles();
 
   return description || errorMessages ? (
     <FormHelperText
+      data-public={dataPublic ? true : null}
       error={!isValid}
       className={clsx(classes.error, { [classes.description]: description })}>
       {errorMessages && !isValid && <ErrorIcon className={classes.icon} />}

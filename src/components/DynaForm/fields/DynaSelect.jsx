@@ -188,6 +188,7 @@ export default function DynaSelect(props) {
     onFieldChange,
     skipSort,
     dataTest,
+    dataPublic = false,
   } = props;
 
   const listRef = React.createRef();
@@ -289,6 +290,7 @@ export default function DynaSelect(props) {
         className={classes.dynaSelectWrapper}>
         <CeligoSelect
           data-test={dataTest || id}
+          data-public={dataPublic ? true : null}
           value={finalTextValue}
           disableUnderline
           displayEmpty

@@ -35,7 +35,7 @@ const Content = ({error, timedOut, pastDelay, classes}) => {
   } else if (timedOut || pastDelay) {
     return (
       <Loader open>
-        <Typography variant="h4">Loading</Typography>
+        <Typography data-public variant="h4">Loading</Typography>
         <CircularProgress
           size={24}
           classes={{

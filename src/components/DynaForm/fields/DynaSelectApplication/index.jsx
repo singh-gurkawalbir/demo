@@ -224,6 +224,8 @@ export default function SelectApplication(props) {
   const Option = props => {
     const { type, icon, value } = props.data;
 
+    const {dataPublic = false} = props.selectProps || {};
+
     return (
       <div data-test={props.label} className={classes.optionRoot}>
         <components.Option {...props}>
@@ -235,7 +237,7 @@ export default function SelectApplication(props) {
               className={classes.img}
             />
           </span>
-          <span className={classes.optionLabel}>{props.label}</span>
+          <span data-public={dataPublic ? true : null} className={classes.optionLabel}>{props.label}</span>
         </components.Option>
       </div>
     );
@@ -322,7 +324,7 @@ export default function SelectApplication(props) {
         <FieldHelp {...props} />
       </div>
       <Select
-        data-public
+        dataPublic
         ref={ref}
         name={name}
         placeholder={placeholder}

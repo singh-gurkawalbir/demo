@@ -63,6 +63,7 @@ export default function DynaRadio(props) {
     label,
     isValid,
     onFieldChange,
+    dataPublic = false,
   } = props;
   const classes = useStyles();
   const items = options.reduce(
@@ -111,6 +112,7 @@ export default function DynaRadio(props) {
             />
           </div>
           <RadioGroup
+            data-public={dataPublic ? true : null}
             data-test={id}
             aria-label={label}
             className={clsx(classes.radioGroup, {

@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function CeligoPillTabs(props) {
-  const { tabs, defaultTab } = props;
+  const { tabs, defaultTab, dataPublic = false } = props;
   const classes = useStyles(props);
   const {activeTab, setActiveTab} = useTabContext();
 
@@ -62,6 +62,7 @@ export default function CeligoPillTabs(props) {
   return (
     <div className={classes.textToggleContainer}>
       <TextToggle
+        data-public={dataPublic ? true : null}
         value={activeTab}
         className={classes.toggleButtons}
         onChange={setActiveTab}

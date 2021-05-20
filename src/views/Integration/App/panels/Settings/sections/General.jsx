@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function GeneralPanel({ integrationId, storeId }) {
+export default function GeneralPanel({ integrationId, storeId, dataPublic = false }) {
   const classes = useStyles();
   // TODO: rethink our data-layer just as we would an API. Currently we
   // have selectors that do too much and as such, they are wasteful and
@@ -62,6 +62,7 @@ export default function GeneralPanel({ integrationId, storeId }) {
         <IAFormStateManager
           {...activeTabProps}
           key={storeId}
+          dataPublic={dataPublic}
           fieldMeta={translatedMeta}
           integrationId={integrationId}
           isIAForm

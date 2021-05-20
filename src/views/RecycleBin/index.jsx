@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
 
 export const LoadingMask = ({message}) => (
   <Loader open>
-    <Typography variant="h4">{message}</Typography>
+    <Typography data-public variant="h4">{message}</Typography>
     <Spinner />
   </Loader>
 );

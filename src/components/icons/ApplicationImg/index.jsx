@@ -71,6 +71,7 @@ export default function ApplicationImg({
   type,
   alt = 'Application image',
   className,
+  dataPublic = false,
 }) {
   const classes = useStyles();
   let path = `${process.env.CDN_BASE_URI}images/`;
@@ -92,6 +93,7 @@ export default function ApplicationImg({
 
   return (
     <img
+      data-public={dataPublic ? true : null}
       className={clsx(classes[size], className)}
       alt={assistant || alt}
       src={path}

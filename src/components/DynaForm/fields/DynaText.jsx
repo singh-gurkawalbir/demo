@@ -82,6 +82,7 @@ function DynaText(props) {
     className,
     disableText = false,
     uppercase = false,
+    dataPublic = false,
   } = props;
   const [valueChanged, setValueChanged] = useState(false);
 
@@ -162,6 +163,7 @@ function DynaText(props) {
         <FieldHelp {...props} />
       </div>
       <TextField
+        data-public={dataPublic ? true : null}
         autoComplete="off"
         key={id}
         data-test={id}
