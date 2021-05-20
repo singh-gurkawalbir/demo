@@ -23,7 +23,7 @@ import { initializationResources } from '../../reducers/data/resources';
 import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE } from '../../utils/constants';
 import getRoutePath from '../../utils/routePaths';
 import { getDomain } from '../../utils/resource';
-import { getErrorMessage } from '../utils';
+import inferErrorMessages from '../../utils/inferErrorMessages';
 
 export function* retrievingOrgDetails() {
   yield all([
@@ -323,12 +323,12 @@ export function* auth({ email, password }) {
     yield call(initializeApp, { reload: isExpired });
     // Important: initializeApp should be the last thing to happen in this function
   } catch (error) {
-    let signInErrorMessage = getErrorMessage(error);
+    let authError = inferErrorMessages(error?.message)?.[0];
 
-    if (typeof signInErrorMessage !== 'string') {
-      signInErrorMessage = AUTH_FAILURE_MESSAGE;
+    if (typeof authError !== 'string') {
+      authError = AUTH_FAILURE_MESSAGE;
     }
-    yield put(actions.auth.failure(signInErrorMessage));
+    yield put(actions.auth.failure(authError));
     yield put(actions.user.profile.delete());
   }
 }
