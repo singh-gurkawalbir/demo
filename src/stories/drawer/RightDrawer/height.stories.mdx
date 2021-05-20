@@ -1,0 +1,42 @@
+import { Checkbox, Button } from '@material-ui/core';
+import { MemoryRouter } from 'react-router-dom';
+import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
+import { action } from '@storybook/addon-actions';
+import DrawerHeader from '../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../components/drawer/Right/DrawerContent';
+import DrawerFooter from '../../../components/drawer/Right/DrawerFooter';
+import RightDrawer from '../../../components/drawer/Right';
+import ActionGroup from '../../../components/ActionGroup';
+import MockAppBar from '../../mocks/AppBar';
+import MockPageBar from '../../mocks/PageBar';
+
+<Meta 
+  title="Right Drawer/Drawer/Height" 
+  component={RightDrawer}
+/>
+
+<Story name="Tall">
+  <MockAppBar />
+  <MockPageBar />
+  <MemoryRouter initialEntries={["drawer"]}>
+    <RightDrawer path="drawer" height="tall" onClose={action('close-drawer')}>
+      <DrawerHeader title="Tall" />
+      <DrawerContent>
+        This drawer has its width set to "tall".
+      </DrawerContent>
+    </RightDrawer>
+  </MemoryRouter>
+</Story>
+
+<Story name="Short">
+  <MockAppBar />
+  <MockPageBar />
+  <MemoryRouter initialEntries={["drawer"]}>
+    <RightDrawer path="drawer" height="short" onClose={action('close-drawer')}>
+      <DrawerHeader title="Short" />
+      <DrawerContent>
+        This drawer has its width set to "short".
+      </DrawerContent>
+    </RightDrawer>
+  </MemoryRouter>
+</Story>
