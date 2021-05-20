@@ -226,7 +226,7 @@ describe('sampleData exports saga', () => {
             resourceType,
           }), constructedBody],
         ])
-        .call(requestRealTimeMetadata, { resource: expectedPostBody })
+        .call(requestRealTimeMetadata, { resource: expectedPostBody, refresh: undefined })
         .run();
     });
 
@@ -713,6 +713,7 @@ describe('sampleData exports saga', () => {
           values: undefined,
           runOffline: undefined,
           flowId: undefined,
+          refreshCache: undefined,
         })
         .run();
     });
@@ -743,6 +744,7 @@ describe('sampleData exports saga', () => {
         values: undefined,
         runOffline: undefined,
         flowId: undefined,
+        refreshCache: undefined,
       })
       .not.call.fn(_processRawData)
       .run());
@@ -787,6 +789,7 @@ describe('sampleData exports saga', () => {
           _pageProcessorDoc: expectedDoc,
           throwOnError: true,
           includeStages: true,
+          refresh: undefined,
         })
         .run();
     });
