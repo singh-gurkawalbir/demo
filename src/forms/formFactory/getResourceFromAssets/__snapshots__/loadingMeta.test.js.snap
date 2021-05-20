@@ -2976,17 +2976,21 @@ Object {
           },
         },
       },
+      "settings": Object {
+        "fieldId": "settings",
+      },
     },
     "layout": Object {
       "fields": Array [
         "application",
+        "settings",
       ],
     },
   },
   "init": undefined,
   "optionsHandler": [Function],
   "preSave": [Function],
-  "validationHandler": undefined,
+  "validationHandler": [Function],
 }
 `;
 
@@ -7078,6 +7082,9 @@ Object {
           },
         ],
       },
+      "settings": Object {
+        "fieldId": "settings",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -7129,13 +7136,14 @@ Object {
         "connection",
         "name",
         "description",
+        "settings",
       ],
     },
   },
   "init": undefined,
   "optionsHandler": [Function],
   "preSave": [Function],
-  "validationHandler": undefined,
+  "validationHandler": [Function],
 }
 `;
 
@@ -10654,6 +10662,9 @@ Object {
           },
         ],
       },
+      "settings": Object {
+        "fieldId": "settings",
+      },
     },
     "layout": Object {
       "fields": Array [
@@ -10661,13 +10672,14 @@ Object {
         "connection",
         "name",
         "description",
+        "settings",
       ],
     },
   },
   "init": undefined,
   "optionsHandler": [Function],
   "preSave": [Function],
-  "validationHandler": undefined,
+  "validationHandler": [Function],
 }
 `;
 
