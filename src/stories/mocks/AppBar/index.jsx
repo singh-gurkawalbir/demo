@@ -14,6 +14,7 @@ const useStyles = makeStyles(theme => ({
   },
   text: {
     alignSelf: 'center',
+    color: theme.palette.secondary.lightest,
   },
 }));
 
@@ -23,7 +24,7 @@ export default function MockAppBar() {
   return (
     <div className={classes.mockPageBar}>
       <Typography className={classes.text}>
-        &lt;AppBar&gt;
+        CELIGO APP BAR
       </Typography>
     </div>
   );

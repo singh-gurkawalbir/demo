@@ -1,0 +1,81 @@
+import { Checkbox, Button } from '@material-ui/core';
+import { MemoryRouter } from 'react-router-dom';
+import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
+import { action } from '@storybook/addon-actions';
+import DrawerHeader from '../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../components/drawer/Right/DrawerContent';
+import DrawerFooter from '../../../components/drawer/Right/DrawerFooter';
+import RightDrawer from '../../../components/drawer/Right';
+import ActionGroup from '../../../components/ActionGroup';
+import MockAppBar from '../../mocks/AppBar';
+import MockPageBar from '../../mocks/PageBar';
+
+<Meta 
+  title="Right Drawer/Drawer/Width" 
+  component={RightDrawer}
+/>
+
+<Story name="Small">
+  <MockAppBar />
+  <MockPageBar />
+  <MemoryRouter initialEntries={["drawer"]}>
+    <RightDrawer path="drawer" width="small" onClose={action('close-drawer')}>
+      <DrawerHeader title="Small" />
+      <DrawerContent>
+        This drawer has its height set to "small".
+      </DrawerContent>
+    </RightDrawer>
+  </MemoryRouter>
+</Story>
+
+<Story name="Medium">
+  <MockAppBar />
+  <MockPageBar />
+  <MemoryRouter initialEntries={["drawer"]}>
+    <RightDrawer path="drawer" width="medium" onClose={action('close-drawer')}>
+      <DrawerHeader title="Medium" />
+      <DrawerContent>
+        This drawer has its height set to "medium".
+      </DrawerContent>
+    </RightDrawer>
+  </MemoryRouter>
+</Story>
+
+<Story name="Default">
+  <MockAppBar />
+  <MockPageBar />
+  <MemoryRouter initialEntries={["drawer"]}>
+    <RightDrawer path="drawer" onClose={action('close-drawer')}>
+      <DrawerHeader title="Default" />
+      <DrawerContent>
+        This drawer has no width set. This is the default width.
+      </DrawerContent>
+    </RightDrawer>
+  </MemoryRouter>
+</Story>
+
+<Story name="Large">
+  <MockAppBar />
+  <MockPageBar />
+  <MemoryRouter initialEntries={["drawer"]}>
+    <RightDrawer path="drawer" width="large" onClose={action('close-drawer')}>
+      <DrawerHeader title="Large" />
+      <DrawerContent>
+        This drawer has its width set to "large".
+      </DrawerContent>
+    </RightDrawer>
+  </MemoryRouter>
+</Story>
+
+<Story name="XL">
+  <MockAppBar />
+  <MockPageBar />
+  <MemoryRouter initialEntries={["drawer"]}>
+    <RightDrawer path="drawer" width="xl" onClose={action('close-drawer')}>
+      <DrawerHeader title="XL" />
+      <DrawerContent>
+        This drawer has its width set to "XL".
+      </DrawerContent>
+    </RightDrawer>
+  </MemoryRouter>
+</Story>
