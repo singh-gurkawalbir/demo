@@ -1,6 +1,7 @@
 import jsonPatch, { deepClone, applyPatch } from 'fast-json-patch';
 import { select, call } from 'redux-saga/effects';
 import util from '../../utils/array';
+import { safeParse } from '../../utils/string';
 import { selectors } from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 
@@ -93,4 +94,10 @@ export function* constructResourceFromFormValues({
   } catch (e) {
     return {};
   }
+}
+
+export function getErrorMessage(error) {
+  const errorObj = safeParse(error?.message);
+
+  return errorObj?.errors?.[0]?.message;
 }

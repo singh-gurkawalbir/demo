@@ -20,9 +20,10 @@ import {
 } from '../../utils/session';
 import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources';
-import { ACCOUNT_IDS } from '../../utils/constants';
+import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE } from '../../utils/constants';
 import getRoutePath from '../../utils/routePaths';
 import { getDomain } from '../../utils/resource';
+import { getErrorMessage } from '../utils';
 
 export function* retrievingOrgDetails() {
   yield all([
@@ -320,9 +321,14 @@ export function* auth({ email, password }) {
     // Important: Do not start off any async saga actions(esp those making network calls)
     // before logrocket initialization
     yield call(initializeApp, { reload: isExpired });
-    // Important: intializeApp should be the last thing to happen in this function
+    // Important: initializeApp should be the last thing to happen in this function
   } catch (error) {
-    yield put(actions.auth.failure('Authentication Failure'));
+    let signInErrorMessage = getErrorMessage(error);
+
+    if (typeof signInErrorMessage !== 'string') {
+      signInErrorMessage = AUTH_FAILURE_MESSAGE;
+    }
+    yield put(actions.auth.failure(signInErrorMessage));
     yield put(actions.user.profile.delete());
   }
 }
