@@ -350,12 +350,12 @@ describe('EM2.0 metadata sagas', () => {
     });
   });
   describe('downloadBlobDocument saga', () => {
-    const s3BlobKey = 'blob-123';
+    const reqAndResKey = 'blob-123';
 
-    test('should make api call and do nothing if the response does not contain signedURL', () => expectSaga(downloadBlobDocument, { flowId, resourceId, s3BlobKey })
+    test('should make api call and do nothing if the response does not contain signedURL', () => expectSaga(downloadBlobDocument, { flowId, resourceId, reqAndResKey })
       .provide([
         [call(apiCallWithRetry, {
-          path: `/flows/${flowId}/${resourceId}/${s3BlobKey}/signedURL`,
+          path: `/flows/${flowId}/${resourceId}/requests/${reqAndResKey}/files/signedURL`,
           opts: {
             method: 'GET',
           },
@@ -364,7 +364,7 @@ describe('EM2.0 metadata sagas', () => {
       ])
       .not.call.fn(openExternalUrl)
       .run());
-    test('should make api call and do nothing if the api call fails', () => expectSaga(downloadBlobDocument, { flowId, resourceId, s3BlobKey })
+    test('should make api call and do nothing if the api call fails', () => expectSaga(downloadBlobDocument, { flowId, resourceId, reqAndResKey })
       .provide([
         [matchers.call.fn(apiCallWithRetry), throwError({ status: 500, message: 'invalid id'})],
       ])
@@ -373,7 +373,7 @@ describe('EM2.0 metadata sagas', () => {
     test('should make api call and call openExternalURL with the signedURL from the response', () => {
       const response = { signedURL: 'https://www.samplesignedurl.com/s3/asdfg'};
 
-      expectSaga(downloadBlobDocument, { flowId, resourceId, s3BlobKey })
+      expectSaga(downloadBlobDocument, { flowId, resourceId, reqAndResKey })
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
         ])
