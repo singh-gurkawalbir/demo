@@ -2105,10 +2105,32 @@ selectors.mkIntegrationChildren = () => createSelector(
 );
 selectors.integrationChildren = selectors.mkIntegrationChildren();
 
+selectors.integrationAppEdition = (state, id) => {
+  if (!state) return 'Standard plan';
+  const integrationResource = selectors.integrationAppSettings(state, id);
+  let { connectorEdition: edition } = integrationResource.settings || {};
+  const userLicenses = fromUser.licenses(state?.user) || [];
+  const license = userLicenses.find(l => l._integrationId === id) || {};
+  const integrationAppList = selectors.publishedConnectors(state);
+
+  const connector =
+     integrationAppList?.find(ia => ia._id === license?._connectorId);
+
+  const editions = connector?.twoDotZero?.editions || emptyArray;
+
+  edition = edition ||
+            (editions.find(ed => ed._id === license._editionId) || {})?.displayName;
+
+  const plan = `${
+    edition ? edition.charAt(0).toUpperCase() + edition.slice(1) : 'Standard'
+  } plan`;
+
+  return plan;
+};
+
 selectors.integrationAppLicense = (state, id) => {
   if (!state) return emptyObject;
   const integrationResource = selectors.integrationAppSettings(state, id);
-  let { connectorEdition: edition } = integrationResource.settings || {};
   const userLicenses = fromUser.licenses(state && state.user) || [];
   const license = userLicenses.find(l => l._integrationId === id) || {};
   const upgradeRequested = selectors.checkUpgradeRequested(state, license._id);
@@ -2125,23 +2147,9 @@ selectors.integrationAppLicense = (state, id) => {
     integrationResource,
     upgradeRequested
   );
-  const integrationAppList = selectors.publishedConnectors(state);
-
-  const connector =
-     integrationAppList?.find(ia => ia._id === license?._connectorId);
-
-  const editions = connector?.twoDotZero?.editions || emptyArray;
-
-  edition = edition ||
-            (editions.find(ed => ed._id === license._editionId) || {})?.displayName;
-
-  const plan = `${
-    edition ? edition.charAt(0).toUpperCase() + edition.slice(1) : 'Standard'
-  } plan`;
 
   return {
     ...license,
-    plan,
     expiresText,
     upgradeText,
     upgradeRequested: !!upgradeRequested,
