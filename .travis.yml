@@ -7,10 +7,10 @@ cache:
 script:
   - yarn test
   - yarn run lint 
+  - yarn build-storybook
 
 # Script that is run before the script phase
-before_script:
-- yarn build-storybook
+# before_script:
 
 # Deployment information
 deploy:
