@@ -684,3 +684,4 @@ export const LINE_GRAPH_TYPE_LONG = Object.freeze(
 export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
 export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
 
+export const SENSITIVE_DATA = ['token', 'password'];
