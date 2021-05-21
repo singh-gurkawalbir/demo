@@ -659,10 +659,14 @@ export function* getResourceCollection({ resourceType, refresh}) {
   let hideNetWorkSnackbar;
 
   /** hide the error that GET SuiteScript tiles throws when connection is offline */
+  /** hide transfers API call as it throws error when account user accepts first account and
+   *  logs in with SSO for the very first time when his preferences still hold defaultAshareId as 'own'
+   */
   if (
     resourceType &&
     ((resourceType.includes('suitescript/connections/') && resourceType.includes('/tiles')) ||
-    resourceType.includes('ashares'))
+    resourceType.includes('ashares') ||
+    resourceType.includes('transfers'))
   ) {
     hideNetWorkSnackbar = true;
   }
