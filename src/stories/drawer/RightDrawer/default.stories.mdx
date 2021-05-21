@@ -9,6 +9,7 @@ import RightDrawer from '../../../components/drawer/Right';
 import ActionGroup from '../../../components/ActionGroup';
 import MockAppBar from '../../mocks/AppBar';
 import MockPageBar from '../../mocks/PageBar';
+import Template from './Template';
 
 <Meta 
   title="Right Drawer/Drawer" 
@@ -16,14 +17,6 @@ import MockPageBar from '../../mocks/PageBar';
 />
 
 <Story name="Default">
-  <MockAppBar />
-  <MockPageBar />
-  <MemoryRouter initialEntries={["drawer"]}>
-    <RightDrawer path="drawer" onClose={action('close-drawer')}>
-      <DrawerHeader title="Default" />
-      <DrawerContent>
-        This is a default drawer.
-      </DrawerContent>
-    </RightDrawer>
-  </MemoryRouter>
+  {Template.bind({})}
 </Story>
+
