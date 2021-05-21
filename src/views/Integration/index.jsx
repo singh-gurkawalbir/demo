@@ -12,7 +12,7 @@ export default function Integration() {
   const isIntegrationAppV1 = useSelector(state => selectors.isIntegrationAppV1(state, integrationId));
 
   return (
-    <LoadResources required resources="integrations" >
+    <LoadResources required resources="integrations,published" >
       {isIntegrationAppV1
         ? <IntegrationApp />
         : <IntegrationDIY />}
