@@ -11,6 +11,7 @@ import FieldMessage from './FieldMessage';
 import CeligoSelect from '../../CeligoSelect';
 import FieldHelp from '../FieldHelp';
 import Tag from '../../HomePageCard/Footer/Tag';
+import shouldNotRedactInLogrocket from '../../../utils/shouldNotRedactInLogrocket';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -96,7 +97,7 @@ export default function DynaMultiSelect(props) {
     required,
     removeInvalidValues = false,
     selectAllIdentifier,
-    dataPublic = false,
+    dataPublic,
   } = props;
   const classes = useStyles();
   let processedValue = value || [];
@@ -197,7 +198,7 @@ export default function DynaMultiSelect(props) {
         className={classes.multislectWrapper}>
         <CeligoSelect
           multiple
-          data-public={dataPublic ? true : null}
+          data-public={shouldNotRedactInLogrocket(id, dataPublic)}
           data-test={id}
           disabled={disabled}
           value={processedValue}

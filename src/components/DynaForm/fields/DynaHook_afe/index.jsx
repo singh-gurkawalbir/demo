@@ -59,7 +59,7 @@ export default function DynaHook_afe({
   resourceId,
   label: propsLabel,
   helpKey: propsHelpKey,
-  dataPublic = false,
+  dataPublic,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();

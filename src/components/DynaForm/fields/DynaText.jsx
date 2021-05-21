@@ -11,6 +11,7 @@ import ActionButton from '../../ActionButton';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import shouldNotRedactInLogrocket from '../../../utils/shouldNotRedactInLogrocket';
 
 const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
@@ -82,7 +83,7 @@ function DynaText(props) {
     className,
     disableText = false,
     uppercase = false,
-    dataPublic = false,
+    dataPublic,
   } = props;
   const [valueChanged, setValueChanged] = useState(false);
 
@@ -163,7 +164,7 @@ function DynaText(props) {
         <FieldHelp {...props} />
       </div>
       <TextField
-        data-public={dataPublic ? true : null}
+        data-public={shouldNotRedactInLogrocket(id, dataPublic)}
         autoComplete="off"
         key={id}
         data-test={id}

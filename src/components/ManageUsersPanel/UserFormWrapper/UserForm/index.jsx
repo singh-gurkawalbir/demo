@@ -26,7 +26,7 @@ export default function UserForm({
   onSaveClick,
   onCancelClick,
   disableSave,
-  dataPublic = false,
+  dataPublic,
 }) {
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,

@@ -37,7 +37,7 @@ export default function DynaCheckbox(props) {
     required,
     isValid,
     className,
-    dataPublic = false,
+    dataPublic,
   } = props;
 
   return (
@@ -63,7 +63,7 @@ export default function DynaCheckbox(props) {
               )}
           />
         )}
-        data-public={dataPublic ? true : null}
+        data-public={!!dataPublic}
         className={classes.dynaCheckControlLabel}
         label={label}
 

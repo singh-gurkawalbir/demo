@@ -48,7 +48,7 @@ export default function RefreshHeaders({
   isLoading = false,
   optionsMap,
   handleRefreshClickHandler,
-  dataPublic = false,
+  dataPublic,
 }) {
   const classes = useStyles();
 
@@ -59,7 +59,7 @@ export default function RefreshHeaders({
     <div className={classes.columnsWrapper}>
       {optionsMap.map(header => (
         <div className={classes.header} key={header.id}>
-          <span data-public={dataPublic ? true : null} className={classes.label}>{header.label || header.name}</span>
+          <span data-public={!!dataPublic} className={classes.label}>{header.label || header.name}</span>
           <RefreshComponent
             isLoading={isLoading}
             header={header}

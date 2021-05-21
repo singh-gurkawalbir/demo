@@ -4,7 +4,7 @@ import RightDrawer from '../../../drawer/Right';
 import DrawerHeader from '../../../drawer/Right/DrawerHeader';
 import UserFormWrapper from '../../UserFormWrapper';
 
-function ManagePermissions({ integrationId, dataPublic = false }) {
+function ManagePermissions({ integrationId, dataPublic }) {
   const match = useRouteMatch();
   const { userId } = match.params;
 

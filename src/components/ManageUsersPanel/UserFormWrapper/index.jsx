@@ -11,7 +11,7 @@ import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
 import useCommStatus from '../../../hooks/useCommStatus';
 
-export default function UserFormWrapper({ userId, dataPublic = false }) {
+export default function UserFormWrapper({ userId, dataPublic }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const [actionsToClear, setActionsToClear] = useState();

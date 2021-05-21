@@ -30,7 +30,7 @@ export default function StackView({
   stackId,
   isValidHookField,
   handleFieldChange,
-  dataPublic = false,
+  dataPublic,
 }) {
   const classes = useStyles();
 

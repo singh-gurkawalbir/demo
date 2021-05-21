@@ -122,7 +122,7 @@ export const DynaTable = props => {
     onFieldChange,
     onRowChange,
     disableDeleteRows,
-    dataPublic = false,
+    dataPublic,
   } = props;
   const optionsMapFinal = metadata.optionsMap || optionsMapInit;
 
@@ -137,7 +137,7 @@ export const DynaTable = props => {
 
   return (
     <div className={clsx(classes.container, className)}>
-      {!hideLabel && <Typography data-public={dataPublic ? true : null} variant="h6">{label}</Typography>}
+      {!hideLabel && <Typography data-public={!!dataPublic} variant="h6">{label}</Typography>}
       <div data-test={id} className={classes.root} >
         <div className={classes.fieldsContentColumn}>
           <RefreshHeaders

@@ -48,7 +48,7 @@ export const getCorrespondingFieldMap = (fields, fieldMap) =>
     return { key: field, ...transformedFieldValue };
   });
 
-const FormFragmentWithDefaultFields = ({ formKey, fields, fieldMap, dataPublic = false}) => {
+const FormFragmentWithDefaultFields = ({ formKey, fields, fieldMap, dataPublic}) => {
   const classes = useStyles();
   const defaultFields = useMemo(
     () => getCorrespondingFieldMap(fields, fieldMap),
@@ -67,7 +67,7 @@ const FormFragmentWithDefaultFields = ({ formKey, fields, fieldMap, dataPublic =
 
 export default function FormGenerator(props) {
   const classes = useStyles();
-  const {layout, fieldMap, formKey, dataPublic = false} = props || {};
+  const {layout, fieldMap, formKey, dataPublic} = props || {};
 
   if (!layout || !fieldMap) return null;
 

@@ -55,7 +55,7 @@ export default function ScriptView({
   isValidHookField,
   handleFieldChange,
   handleCreateScriptClick,
-  dataPublic = false,
+  dataPublic,
 }) {
   const classes = useStyles();
   const history = useHistory();

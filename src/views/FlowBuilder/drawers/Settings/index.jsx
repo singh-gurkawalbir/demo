@@ -25,7 +25,7 @@ function Settings({
   integrationId,
   resourceType,
   resourceId,
-  dataPublic = false,
+  dataPublic,
 }) {
   const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
