@@ -121,6 +121,9 @@ export default function SubscriptionSection({ childId, integrationId }) {
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
   );
+  const plan = useSelector(state =>
+    selectors.integrationAppEdition(state, integrationId)
+  );
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
@@ -164,7 +167,6 @@ export default function SubscriptionSection({ childId, integrationId }) {
     addOnState.addOns.addOnMetaData &&
     addOnState.addOns.addOnMetaData.length > 0;
   const {
-    plan,
     createdText,
     expiresText,
     upgradeText,

@@ -2299,7 +2299,6 @@ describe('integrationApps selector testcases', () => {
         createdText: 'Started on Jul 10th, 2018',
         expires: '2020-08-18T06:00:43.721Z',
         expiresText: 'Expired on Aug 18th, 2020',
-        plan: 'Standard plan',
         showLicenseExpiringWarning: true,
         upgradeRequested: true,
         upgradeText: 'UPGRADE REQUESTED',
@@ -2342,14 +2341,13 @@ describe('integrationApps selector testcases', () => {
         createdText: 'Started on Jul 10th, 2018',
         expires: '2022-08-18T06:00:43.721Z',
         expiresText: 'Expires on Aug 18th, 2022',
-        plan: 'Standard plan',
         showLicenseExpiringWarning: false,
         upgradeRequested: false,
         upgradeText: '',
       });
     });
 
-    test('should retun license details for the integration app for owner user for expiring soon', () => {
+    test('should return license details for the integration app for owner user for expiring soon', () => {
       const expiryDate = moment(new Date()).add(10, 'days').toISOString();
       const state = reducer(
         {
@@ -2386,7 +2384,6 @@ describe('integrationApps selector testcases', () => {
         createdText: 'Started on Jul 10th, 2018',
         expires: expiryDate,
         expiresText: `Expires on ${moment(expiryDate).format('MMM Do, YYYY')} (10 Days)`,
-        plan: 'Standard plan',
         showLicenseExpiringWarning: true,
         upgradeRequested: false,
         upgradeText: '',
@@ -2429,11 +2426,152 @@ describe('integrationApps selector testcases', () => {
         createdText: 'Started on Jul 10th, 2018',
         expires: '2022-08-18T06:00:43.721Z',
         expiresText: 'Expires on Aug 18th, 2022',
-        plan: 'Standard plan',
         showLicenseExpiringWarning: false,
         upgradeRequested: false,
         upgradeText: '',
       });
+    });
+  });
+
+  describe('selectors.integrationAppEdition test cases', () => {
+    test('should return default plan for invalid arguments', () => {
+      expect(selectors.integrationAppEdition()).toEqual('Standard plan');
+    });
+
+    const integration = {
+      _id: 'i1',
+    };
+    const integration2 = {
+      _id: 'i2',
+      settings: {
+        connectorEdition: 'premium',
+      },
+    };
+    const integration3 = {
+      _id: 'i3',
+      settings: {
+      },
+    };
+
+    const published = [
+      {
+        _id: 'connector1',
+        name: 'Connector 1',
+        user: { name: 'User 1', company: 'Company 1' },
+        applications: ['app1', 'app2'],
+        framework: 'twoDotZero',
+        twoDotZero: {
+          editions: [{displayName: 'edition1', _id: 'e1'}],
+        },
+      },
+      {
+        _id: 'connector2',
+        name: 'Connector 2',
+        user: { name: 'User 2' },
+      },
+    ];
+
+    test('should return valid edition plan for IA2.0 connectors', () => {
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: '2020-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                        _editionId: 'e1',
+                        _connectorId: 'connector1',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+          data: {
+            resources: {
+              published,
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.integrationAppEdition(state, 'i1')).toEqual('Edition1 plan');
+    });
+    test('should return valid edition plan for IA1.0 connectors', () => {
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i2',
+                        expires: '2020-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                        _connectorId: 'connector1',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration2)
+      );
+
+      expect(selectors.integrationAppEdition(state, 'i2')).toEqual('Premium plan');
+    });
+    test('should return default plan if no edition exists', () => {
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i3',
+                        expires: '2020-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                        _connectorId: 'connector1',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration3)
+      );
+
+      expect(selectors.integrationAppEdition(state, 'i3')).toEqual('Standard plan');
     });
   });
 

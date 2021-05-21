@@ -58,9 +58,11 @@ export default function SubscriptionSection({ storeId, integrationId }) {
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
   );
+  const plan = useSelector(state =>
+    selectors.integrationAppEdition(state, integrationId)
+  );
 
   const {
-    plan,
     createdText,
     expiresText,
     upgradeText,
