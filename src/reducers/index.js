@@ -2105,12 +2105,12 @@ selectors.mkIntegrationChildren = () => createSelector(
 );
 selectors.integrationChildren = selectors.mkIntegrationChildren();
 
-selectors.integrationAppEdition = (state, id) => {
+selectors.integrationAppEdition = (state, integrationId) => {
   if (!state) return 'Standard plan';
-  const integrationResource = selectors.integrationAppSettings(state, id);
+  const integrationResource = selectors.integrationAppSettings(state, integrationId);
   let { connectorEdition: edition } = integrationResource.settings || {};
   const userLicenses = fromUser.licenses(state?.user) || [];
-  const license = userLicenses.find(l => l._integrationId === id) || {};
+  const license = userLicenses.find(l => l._integrationId === integrationId) || {};
   const integrationAppList = selectors.publishedConnectors(state);
 
   const connector =
