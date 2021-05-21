@@ -682,4 +682,5 @@ export const LINE_GRAPH_TYPE_LONG = Object.freeze(
   invert(LINE_GRAPH_TYPE_SHORTID)
 );
 export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
+export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
 

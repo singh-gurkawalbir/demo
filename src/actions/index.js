@@ -1288,11 +1288,12 @@ const sampleData = {
       stage,
       options,
     }),
-  requestLookupPreview: (resourceId, flowId, formValues) =>
+  requestLookupPreview: (resourceId, flowId, formValues, options) =>
     action(actionTypes.SAMPLEDATA.LOOKUP_REQUEST, {
       resourceId,
       flowId,
       formValues,
+      options,
     }),
   received: (resourceId, previewData) =>
     action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
@@ -1373,6 +1374,7 @@ const flowData = {
     }),
   resetStages: (flowId, resourceId, stages = [], statusToUpdate) =>
     action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages, statusToUpdate}),
+  clearStages: flowId => action(actionTypes.FLOW_DATA.CLEAR_STAGES, {flowId}),
   resetFlowSequence: (flowId, updatedFlow) =>
     action(actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET, { flowId, updatedFlow }),
   updateFlowsForResource: (resourceId, resourceType, stagesToReset = []) =>
@@ -1993,8 +1995,8 @@ const errorManager = {
       action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.RECEIVED, { reqAndResKey, errorHttpDoc }),
     error: (reqAndResKey, error) =>
       action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.ERROR, { reqAndResKey, error }),
-    downloadBlobDoc: (flowId, resourceId, s3BlobKey) =>
-      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.DOWNLOAD_BLOB_DOC, { flowId, resourceId, s3BlobKey }),
+    downloadBlobDoc: (flowId, resourceId, reqAndResKey) =>
+      action(actionTypes.ERROR_MANAGER.ERROR_HTTP_DOC.DOWNLOAD_BLOB_DOC, { flowId, resourceId, reqAndResKey }),
   },
 };
 const flow = {

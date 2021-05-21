@@ -298,6 +298,7 @@ export function fieldMeta({ resource, assistantData }) {
     formView: { fieldId: 'formView' },
     dataMappings: { formId: 'dataMappings' },
     apiIdentifier: { fieldId: 'apiIdentifier' },
+    traceKeyTemplate: { fieldId: 'traceKeyTemplate' },
   };
   const fieldIds = [];
 
@@ -328,7 +329,7 @@ export function fieldMeta({ resource, assistantData }) {
         {
           collapsed: true,
           label: 'Advanced',
-          fields: ['apiIdentifier'],
+          fields: ['traceKeyTemplate', 'apiIdentifier'],
         },
       ],
     },
