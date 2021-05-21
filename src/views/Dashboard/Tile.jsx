@@ -1,9 +1,8 @@
 
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Typography, Tooltip, makeStyles, Button, IconButton } from '@material-ui/core';
-import { useDrag, useDrop } from 'react-dnd-cjs';
 import { selectors } from '../../reducers';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
@@ -23,7 +22,7 @@ import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon'
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
 import ConnectionDownIcon from '../../components/icons/unLinkedIcon';
 import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
-import { tileStatus, isTileStatusConnectionDown, dragTileConfig, dropTileConfig } from './util';
+import { tileStatus, isTileStatusConnectionDown } from './util';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
 import { getIntegrationAppUrlName, isIntegrationAppVerion2 } from '../../utils/integrationApps';
@@ -102,7 +101,11 @@ function AppLogosContainer({ tile }) {
   );
 }
 
-function Tile({ tile, history, onMove, onDrop, index }) {
+function Tile({
+  tile,
+  history,
+  isDragInProgress,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
@@ -234,19 +237,9 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   );
 
   // #region Drag&Drop related
-  const ref = useRef(null);
-  // isOver is set to true when hover happens over component
-  const [, drop] = useDrop(dropTileConfig(ref, index, onMove));
-  const [{ isDragging }, drag, preview] = useDrag(dragTileConfig(index, onDrop, ref));
-  // need to show different style for selected tile
-  const isCardSelected = !!isDragging;
-
-  drop(preview(ref));
-  // #endregion
-
   return (
-    <div ref={ref}>
-      <HomePageCardContainer drag={drag} isCardSelected={isCardSelected} >
+    <div>
+      <HomePageCardContainer>
         <Header>
           <Status
             label={status.label}

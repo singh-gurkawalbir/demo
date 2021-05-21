@@ -56,9 +56,9 @@ export default function DashboardTiles() {
     <LoadResources
       required
       resources="published,integrations,connections,marketplacetemplates">
-      <div className={classes.container}>
-        <DashboardCard sortedTiles={sortedTiles} />
-      </div>
+      {/* <div className={classes.container}> */}
+      <DashboardCard sortedTiles={sortedTiles} />
+      {/* </div> */}
     </LoadResources>
   );
 }

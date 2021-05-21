@@ -60,56 +60,6 @@ export function tileStatus(tile) {
   return { label, variant };
 }
 
-/*
- * The below utils dragTileConfig and dropTileConfig are used for Tile, SuiteScript Tile Components
- * It supplies required config to support drag and drop functionality among tiles
- */
-
-export const dragTileConfig = (index, onDrop, elementReference) => ({
-  item: { type: 'TILE', index },
-  collect: monitor => ({
-    isDragging: monitor.isDragging(),
-  }),
-  begin: monitor => {
-    // for scrollbar element, need to go three levels up and send element as argument
-    addEventListenerForSidebar(elementReference.current?.parentElement?.parentElement?.parentElement, elementReference.current?.offsetHeight);
-
-    return monitor.getItem();
-  },
-  end: dropResult => {
-    removeEventListenerForSidebar();
-    if (dropResult) {
-      onDrop();
-    }
-  },
-
-  canDrag: true,
-});
-
-export const dropTileConfig = (ref, index, onMove) => ({
-  accept: 'TILE',
-  hover(item) {
-    if (!ref.current) {
-      return;
-    }
-
-    const dragIndex = item.index;
-    const hoverIndex = index;
-
-    // Don't replace items with themselves
-    if (dragIndex === hoverIndex) {
-      return;
-    }
-
-    onMove(dragIndex, hoverIndex);
-    // eslint-disable-next-line no-param-reassign
-    item.index = hoverIndex;
-  },
-  collect: monitor => ({
-    isOver: monitor.isOver(),
-  }),
-});
-
 export const getTileId = tile =>
   tile.ssLinkedConnectionId
     ? `${tile.ssLinkedConnectionId}_${tile._integrationId}`

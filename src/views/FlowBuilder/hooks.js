@@ -89,12 +89,14 @@ export const useHandleMovePP = flowId => {
 
   const { pageProcessors = [] } = flow;
   const handleMovePP = useCallback(
-    (dragIndex, hoverIndex) => {
-      const dragItem = pageProcessors[dragIndex];
+    ({oldIndex, newIndex}) => {
+      if (oldIndex === newIndex) {
+        return;
+      }
       const newOrder = [...pageProcessors];
+      const [removed] = newOrder.splice(oldIndex, 1);
 
-      newOrder.splice(dragIndex, 1);
-      newOrder.splice(hoverIndex, 0, dragItem);
+      newOrder.splice(newIndex, 0, removed);
       patchFlow('/pageProcessors', newOrder);
     },
     [pageProcessors, patchFlow]

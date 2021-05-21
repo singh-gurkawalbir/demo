@@ -153,7 +153,6 @@ function AppBlock({
   onDelete,
   onErrors,
   children,
-  forwardedRef,
   onBlockClick,
   blockType,
   connectorType,
@@ -161,7 +160,7 @@ function AppBlock({
   name,
   actions: flowActions,
   resourceIndex,
-  opacity = 1,
+  // opacity = 1,
   flowId,
   resourceType,
   resource,
@@ -308,9 +307,9 @@ function AppBlock({
         onMouseLeave={handleMouseOver(false)}
         onBlur={handleMouseOver(false)}
         {...rest}
-        ref={forwardedRef}
         className={clsx(classes.box, { [classes.draggable]: !isNew })}
-        style={{ opacity }}>
+        // style={{ opacity }}
+        >
         <div className={classes.bubbleContainer}>
           {onDelete && !isViewMode && !resource._connectorId && (
             <IconButton
@@ -381,6 +380,6 @@ function AppBlock({
 
 // TODO: whats the best pattern to address below violation?
 // eslint-disable-next-line react/display-name
-export default React.forwardRef((props, ref) => (
-  <AppBlock {...props} forwardedRef={ref} />
+export default React.forwardRef(props => (
+  <AppBlock {...props} />
 ));

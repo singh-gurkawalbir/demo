@@ -1,6 +1,7 @@
 import { makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import AppBlock from '../../AppBlock';
@@ -10,9 +11,19 @@ import PageProcessor from '../../PageProcessor';
 
 const useStyles = makeStyles(theme => ({
   processorContainer: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    paddingRight: theme.spacing(3),
+    '& > ul': {
+      display: 'flex',
+      alignItems: 'flex-start',
+      paddingRight: theme.spacing(3),
+      marginInlineStart: 0,
+      marginBlockStart: 0,
+      paddingInlineStart: 0,
+      marginBlockEnd: 0,
+      listStyleType: 'none',
+      '& > li': {
+        listStyle: 'none',
+      },
+    },
   },
   newPP: {
     marginLeft: 100,
@@ -21,7 +32,50 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(5, 0, 0, 5),
     maxWidth: 450,
   },
+  dottedLine: {
+    width: '100%',
+    borderBottom: `3px dotted ${theme.palette.divider}`,
+    top: 86,
+    position: 'relative',
+  },
 }));
+
+const SortableItem = SortableElement(({ value }) => (<li>{value}</li>));
+const SortableList = SortableContainer(({ pageProcessors, handleDelete, flowId, integrationId, flowErrorsMap, isViewMode, isMonitorLevelAccess }) => (
+  <ul>
+    {pageProcessors.map((pp, i) => (
+      <SortableItem
+        index={i}
+        key={
+          pp._importId ||
+          pp._exportId ||
+          pp._connectionId ||
+          `${pp.application}-${i}`
+        }
+        value={
+         (
+           <PageProcessor
+             {...pp}
+             onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
+             flowId={flowId}
+             integrationId={integrationId}
+             openErrorCount={
+                      (flowErrorsMap &&
+                        flowErrorsMap[pp._importId || pp._exportId]) ||
+                      0
+                    }
+             index={i}
+             isViewMode={isViewMode}
+             isMonitorLevelAccess={isMonitorLevelAccess}
+             isLast={pageProcessors.length === i + 1}
+          // onMove={handleMovePP}
+        />
+         )
+       } />
+
+    ))}
+  </ul>
+));
 export default function PageProcessors({integrationId, flowId}) {
   const handleDelete = useHandleDelete(flowId);
   const classes = useStyles();
@@ -33,7 +87,10 @@ export default function PageProcessors({integrationId, flowId}) {
   const pageProcessors = flow?.pageProcessors || [];
 
   const handleAddProcessor = useHandleAddProcessor();
-  const handleMovePP = useHandleMovePP(flowId);
+  const handleSortEnd = useHandleMovePP(flowId);
+  // const handleSortEnd = (startIndex, endIndex) => {
+  // console.log('111', startIndex, endIndex);
+  // };
   const {
     data: flowErrorsMap,
   } = useSelector(state => selectors.errorMap(state, flowId));
@@ -50,30 +107,19 @@ export default function PageProcessors({integrationId, flowId}) {
 
   return (
     <div className={classes.processorContainer}>
-      {pageProcessors.map((pp, i) => (
-        <PageProcessor
-          {...pp}
-          onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
-          flowId={flowId}
-          integrationId={integrationId}
-          openErrorCount={
-                        (flowErrorsMap &&
-                          flowErrorsMap[pp._importId || pp._exportId]) ||
-                        0
-                      }
-          key={
-                        pp._importId ||
-                        pp._exportId ||
-                        pp._connectionId ||
-                        `${pp.application}-${i}`
-                      }
-          index={i}
-          isViewMode={isViewMode || isFreeFlow}
-          isMonitorLevelAccess={isMonitorLevelAccess}
-          isLast={pageProcessors.length === i + 1}
-          onMove={handleMovePP}
-                    />
-      ))}
+      <div className={classes.dottedLine} />
+      <SortableList
+        onSortEnd={handleSortEnd}
+        helperClass={classes.sortableHelper}
+        pageProcessors={pageProcessors}
+        handleDelete={handleDelete}
+        flowId={flowId}
+        integrationId={integrationId}
+        flowErrorsMap={flowErrorsMap}
+        isMonitorLevelAccess={isMonitorLevelAccess}
+        isViewMode={isViewMode || isFreeFlow}
+        axis="x"
+      />
       {!pageProcessors.length && showAddPageProcessor && (
       <AppBlock
         className={classes.newPP}

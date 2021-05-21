@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import clsx from 'clsx';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, fade } from '@material-ui/core/styles';
+import { SortableHandle } from 'react-sortable-hoc';
 import GripperIcon from '../../icons/GripperIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -51,43 +51,32 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function HomePageCardContainer({ children, onClick, drag, isCardSelected = false }) {
+const DragHandle = SortableHandle(({ className }) => (
+  <div className={className}>
+    <GripperIcon />
+  </div>
+));
+
+export default function HomePageCardContainer({ children, onClick }) {
   const classes = useStyles();
   const [showGripper, setShowGripper] = useState(false);
 
   return (
-    <>
-      {!isCardSelected
-        ? (
-          <>
-            <div
-              className={classes.tileGripperWrapper}
-              onMouseEnter={() => setShowGripper(true)}
-              onMouseLeave={() => setShowGripper(false)}>
-              <Paper
-                className={classes.wrapper}
-                elevation={0}
-                onClick={onClick} >
-                <div>
-                  {showGripper && (
-                  <div className={classes.gripper} ref={drag}>
-                    <GripperIcon />
-                  </div>
-                  )}
-                  {children}
-                </div>
-              </Paper>
-            </div>
-          </>
-        )
-        : (
-          <Paper
-            className={clsx(classes.wrapper, classes.wrapperPlaceholder)}
-            elevation={0}
-            onClick={onClick}>
-            <GripperIcon className={classes.gripper} />
-          </Paper>
-        )}
-    </>
+    <div
+      className={classes.tileGripperWrapper}
+      onMouseEnter={() => setShowGripper(true)}
+      onMouseLeave={() => setShowGripper(false)}>
+      <Paper
+        className={classes.wrapper}
+        elevation={0}
+        onClick={onClick} >
+        <div>
+          {showGripper && (
+          <DragHandle className={classes.gripper} />
+          )}
+          {children}
+        </div>
+      </Paper>
+    </div>
   );
 }

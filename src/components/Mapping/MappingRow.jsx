@@ -149,6 +149,8 @@ export default function MappingRow({
   const extractFields = useSelector(state =>
     selectors.mappingExtracts(state, importId, flowId, subRecordMappingId)
   );
+  console.log("generateFields", generateFields);
+  console.log("extractFields", extractFields);
 
   const handleBlur = useCallback((field, value) => {
     // check if value changes or user entered something in new row
