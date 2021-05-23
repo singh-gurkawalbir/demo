@@ -3373,4 +3373,39 @@ describe('mapping utils', () => {
   // TODO (Sravan)
   test('addVariation util', () => {
   });
+
+  test('autoMapperRecordTypeForAssistant util', () => {
+    const testCases = [
+      {
+        resource: {
+          _id: 567,
+          name: 'B',
+          adaptorType: 'RESTImport',
+          assistant: 'zendesk',
+          _connectionId: 768,
+          rest: {
+            relativeURI: '/api/v2/organizations/{{{organizationId}}}.json',
+          },
+        },
+        result: 'organizations',
+      },
+      {
+        resource: {
+          _id: 567,
+          name: 'B',
+          adaptorType: 'RESTImport',
+          assistant: 'zendesk',
+          _connectionId: 768,
+          rest: {
+            relativeURI: '/api/v2/employee.json',
+          },
+        },
+        result: '',
+      },
+    ];
+
+    testCases.forEach(({resource, result}) => {
+      expect(util.autoMapperRecordTypeForAssistant(resource)).toEqual(result);
+    });
+  });
 });
