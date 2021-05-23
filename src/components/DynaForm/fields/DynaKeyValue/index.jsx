@@ -1,29 +1,40 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import clsx from 'clsx';
-import TextField from '@material-ui/core/TextField';
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormLabel, FormControl } from '@material-ui/core';
 import shortid from 'shortid';
 import { isEqual } from 'lodash';
-import FieldMessage from './FieldMessage';
-import TrashIcon from '../../icons/TrashIcon';
-import AutoSuggest from './DynaAutoSuggest';
-import ActionButton from '../../ActionButton';
-import FieldHelp from '../FieldHelp';
+import FieldMessage from '../FieldMessage';
+import FieldHelp from '../../FieldHelp';
+import KeyValueRow from './Row';
 
 const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing(1),
     width: '100%',
   },
-
+  label: {
+    marginBottom: 6,
+  },
+  listContainer: {
+    marginInlineStart: 0,
+    marginBlockStart: 0,
+    paddingInlineStart: 0,
+    marginBlockEnd: 0,
+    listStyleType: 'none',
+    '& > li': {
+      listStyle: 'none',
+    },
+  },
   rowContainer: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr auto',
     marginBottom: 6,
   },
-  label: {
-    marginBottom: 6,
+  dragIconWrapper: {
+    cursor: 'move',
+    background: 'none',
+    minWidth: theme.spacing(3.5),
   },
   dynaField: {
     flex: 1,
@@ -52,6 +63,15 @@ const useStyles = makeStyles(theme => ({
     },
   }
  */
+
+const SortableItem = SortableElement(({value}) => (
+  <li>
+    {value}
+  </li>
+));
+
+const SortableList = SortableContainer(({children, className}) => <ul className={className}>{children}</ul>);
+
 export function KeyValueComponent(props) {
   const {
     value,
@@ -64,11 +84,8 @@ export function KeyValueComponent(props) {
     classes,
     showDelete,
     disabled,
+    enableSorting = false,
   } = props;
-  const {
-    keyConfig: suggestKeyConfig,
-    valueConfig: suggestValueConfig,
-  } = suggestionConfig;
 
   const preUpdate = useCallback(val => val.filter(
     val => val[keyName] || val[valueName]
@@ -97,6 +114,12 @@ export function KeyValueComponent(props) {
   const [values, setValues] = useState(getInitVal());
   const [rowInd, setRowInd] = useState(0);
   const [isKey, setIsKey] = useState(true);
+  const [dragState, setDragState] = useState({
+    isDragging: false,
+    dragIndex: undefined,
+  });
+
+  const {isDragging, dragIndex} = dragState;
 
   useEffect(() => {
     // set state in case of lazy loading or value changed by parent
@@ -162,6 +185,34 @@ export function KeyValueComponent(props) {
     handleUpdate(key, value, valueName);
   };
 
+  const handleSortStart = ({ index }) => {
+    setDragState({isDragging: true, dragIndex: index});
+  };
+
+  const handleSortEnd = useCallback(({oldIndex, newIndex}) => {
+    setDragState({isDragging: false, dragIndex: undefined});
+    if (oldIndex !== newIndex) {
+      // re-order here
+      const valuesCopy = [...values];
+      const [removed] = valuesCopy.splice(oldIndex, 1);
+
+      valuesCopy.splice(newIndex, 0, removed);
+
+      const removedEmptyValues = valuesCopy.filter(
+        value => value[keyName] || value[valueName]
+      );
+      const lastRow = valuesCopy[valuesCopy.length - 1];
+      const isLastRowEmpty = !(lastRow[keyName] || lastRow[valueName]);
+
+      if (isLastRowEmpty) {
+        setValues([...removedEmptyValues, lastRow]);
+      } else {
+        setValues(addEmptyLastRowIfNotExist(removedEmptyValues));
+      }
+      onUpdate(preUpdate(removedEmptyValues));
+    }
+  }, [addEmptyLastRowIfNotExist, keyName, onUpdate, preUpdate, valueName, values]);
+
   return (
     <FormControl
       disabled={disabled}
@@ -172,83 +223,51 @@ export function KeyValueComponent(props) {
         <FieldHelp {...props} />
       </div>
       <>
-        {values.map((r, index) => (
-          <div className={classes.rowContainer} key={r.key}>
-            {suggestKeyConfig && (
-              <AutoSuggest
+        <SortableList
+          onSortEnd={handleSortEnd}
+          updateBeforeSortStart={handleSortStart}
+          // className="classNameclassName"
+          className={classes.listContainer}
+          axis="y"
+          useDragHandle>
+          {values.map((r, index) => {
+            const Row = (
+              <KeyValueRow
+                suggestionConfig={suggestionConfig}
+                isDragInProgress={isDragging}
+                isRowDragged={dragIndex === index}
                 disabled={disabled}
-                value={r[keyName]}
-                id={`${keyName}-${index}`}
-                data-test={`${keyName}-${index}`}
-                // autoFocus={r.row === rowInd && isKey}
-                placeholder={keyName}
-                variant="filled"
-                onFieldChange={(_, _value) =>
-                  handleUpdate(r.key, _value, keyName)}
-                labelName={suggestKeyConfig.labelName}
-                valueName={suggestKeyConfig.valueName}
-                options={{ suggestions: suggestKeyConfig.suggestions }}
-                fullWidth
-              />
-            )}
-            {!suggestKeyConfig && (
-              <TextField
-                disabled={disabled}
-                autoFocus={index === rowInd && isKey}
-                defaultValue={r[keyName]}
-                id={`${keyName}-${index}`}
-                data-test={`${keyName}-${index}`}
-                placeholder={keyName}
-                variant="filled"
-                fullWidth
-                onChange={handleKeyUpdate(r.key)}
-                className={clsx(classes.dynaField, classes.dynaKeyField)}
-              />
-            )}
+                keyName={keyName}
+                valueName={valueName}
+                index={index}
+                handleUpdate={handleUpdate}
+                rowInd={rowInd}
+                handleKeyUpdate={handleKeyUpdate}
+                handleValueUpdate={handleValueUpdate}
+                showDelete={showDelete}
+                handleDelete={handleDelete}
+                isKey={isKey}
+                classes={classes}
+                r={r}
+                enableSorting={enableSorting}
+            />
+            );
 
-            {suggestValueConfig && (
-              <AutoSuggest
-                disabled={disabled}
-                value={r[valueName]}
-                id={`${valueName}-${index}`}
-                data-test={`${valueName}-${index}`}
-                // autoFocus={r.row === rowInd && isKey}
-                placeholder={valueName}
-                variant="filled"
-                labelName={suggestValueConfig.labelName}
-                valueName={suggestValueConfig.valueName}
-                onFieldChange={(_, _value) =>
-                  handleUpdate(r.key, _value, valueName)}
-                options={{ suggestions: suggestValueConfig.suggestions }}
-                fullWidth
-              />
-            )}
-            {!suggestValueConfig && (
-              <TextField
-                disabled={disabled}
-                autoFocus={index === rowInd && !isKey}
-                id={`${valueName}-${index}`}
-                data-test={`${valueName}-${index}`}
-                defaultValue={r[valueName]}
-                placeholder={valueName}
-                variant="filled"
-                fullWidth
-                onChange={handleValueUpdate(r.key)}
-                className={clsx(classes.dynaField, classes.dynaValueField)}
-              />
-            )}
+            if (!r[keyName] && !r[valueName]) {
+              return Row;
+            }
 
-            {showDelete && (
-              <ActionButton
-                disabled={disabled || (!(r[keyName] || r[valueName]))}
-                id={`delete-${index}`}
-                data-test={`delete-${index}`}
-                onClick={handleDelete(r.key)}>
-                <TrashIcon />
-              </ActionButton>
-            )}
-          </div>
-        ))}
+            return (
+              <SortableItem
+                key={r.key}
+                disabled={!enableSorting}
+                index={index}
+                hideSortableGhost={false}
+                value={Row}
+              />
+            );
+          })};
+        </SortableList>
       </>
     </FormControl>
   );

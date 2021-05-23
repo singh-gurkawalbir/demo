@@ -21,6 +21,16 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     paddingTop: theme.spacing(1),
   },
+  listContainer: {
+    marginInlineStart: 0,
+    marginBlockStart: 0,
+    paddingInlineStart: 0,
+    marginBlockEnd: 0,
+    listStyleType: 'none',
+    '& > li': {
+      listStyle: 'none',
+    },
+  },
   input: {
     flex: '1 1 auto',
     marginRight: theme.spacing(1),
@@ -98,6 +108,7 @@ export default function TransformPanel({ editorId }) {
       value={rule}
       keyName="extract"
       valueName="generate"
+      enableSorting
     />
   );
 }
