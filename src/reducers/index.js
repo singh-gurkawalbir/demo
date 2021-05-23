@@ -5497,9 +5497,9 @@ selectors.recordTypeForAutoMapper = (state, resourceType, resourceId, subRecordM
     return selectors.mappingNSRecordType(state, resourceId, subRecordMappingId);
   }
   if (resource.adaptorType === 'NetSuiteExport') {
-    const netsuiteType = resource.type === 'distributed' ? 'distributed' : 'restlet';
+    const netsuiteType = resource.netsuite?.type === 'distributed' ? 'distributed' : 'restlet';
 
-    return resource.netsuite[netsuiteType].recordType;
+    return resource.netsuite[netsuiteType]?.recordType;
   }
   if (['SalesforceExport', 'SalesforceImport'].includes(resource.adaptorType)) {
     const { sObjectType } = resource.salesforce;
