@@ -268,7 +268,6 @@ const PageProcessor = ({
           connectorType={resource.adaptorType || resource.type}
           assistant={resource.assistant}
           ref={ref}
-          // opacity={opacity} /* used for drag n drop */
           blockType={blockType}
           flowId={flowId}
           index={index}

@@ -28,29 +28,7 @@ const useStyles = makeStyles(theme => ({
       position: 'relative',
       '& > li': {
         listStyle: 'none',
-        // '&::after': {
-        //   display: 'inline-block',
-        //   content: '""',
-        //   borderTop: `3px dotted ${theme.palette.divider}`,
-        //   width: '100%',
-        //   /* margin: 0 1rem; */
-        //   transform: 'translateY(-1rem)',
-        //   position: 'relative',
-        //   top: '-194px',
-        //   right: '0px',
-        // },
       },
-      // '& > li::after': {
-      //   display: 'inline-block',
-      //   content: '',
-      //   borderTop: '.3rem solid black',
-      //   width: '100%',
-      //   /* margin: 0 1rem; */
-      //   transform: 'translateY(-1rem)',
-      //   position: 'relative',
-      //   top: '-194px',
-      //   right: '0px',
-      // },
     },
   },
   newPG: {
