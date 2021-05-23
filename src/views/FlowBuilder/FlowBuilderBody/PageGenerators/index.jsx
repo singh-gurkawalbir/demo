@@ -87,9 +87,13 @@ const useStyles = makeStyles(theme => ({
     borderRight: '0 !important',
   },
 }));
-const SortableItem = SortableElement(({ value }) => (<li>{value}</li>));
+const SortableItem = SortableElement(({ value }) => (
+  <li>
+    {value}
+  </li>
+));
 
-const SortableList = SortableContainer(({ pageGenerators, classes, handleDelete, flowId, integrationId, flowErrorsMap, isViewMode, handleMovePG }) => (
+const SortableList = SortableContainer(({ pageGenerators, classes, handleDelete, flowId, integrationId, flowErrorsMap, isViewMode }) => (
   <ul>
     {pageGenerators.map((pg, i) => (
       <>
@@ -99,6 +103,7 @@ const SortableList = SortableContainer(({ pageGenerators, classes, handleDelete,
           })} style={{top: 86 + 285 * i}} />
         <SortableItem
           index={i}
+          hideSortableGhost={false}
           key={
           pg._exportId ||
           pg._connectionId ||
@@ -117,8 +122,7 @@ const SortableList = SortableContainer(({ pageGenerators, classes, handleDelete,
           index={i}
           isViewMode={isViewMode}
           isLast={pageGenerators.length === i + 1}
-          onMove={handleMovePG}
-                  />
+        />
       )
     }
     />
@@ -143,12 +147,13 @@ export default function PageGenerators({integrationId, flowId}) {
 
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
 
-  const handleMovePG = useHandleMovePG(flowId);
+  const handleSortEnd = useHandleMovePG(flowId);
   const handleAddGenerator = useHandleAddGenerator();
 
   return (
     <div className={classes.generatorContainer}>
       <SortableList
+        onSortEnd={handleSortEnd}
         axis="y"
         pageGenerators={pageGenerators}
         handleDelete={handleDelete}
@@ -156,7 +161,6 @@ export default function PageGenerators({integrationId, flowId}) {
         integrationId={integrationId}
         flowErrorsMap={flowErrorsMap}
         isViewMode={isViewMode || isFreeFlow}
-        handleMovePG={handleMovePG}
         classes={classes}
       />
 

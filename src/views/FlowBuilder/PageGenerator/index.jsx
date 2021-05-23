@@ -23,23 +23,14 @@ import { actionsMap } from '../../../utils/flows';
 /* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme.
    We use the block const across several components and thus is a maintenance issue to
    manage as we enhance the FB layout. */
-const lineWidth = 160;
 const emptyObj = {};
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   pgContainer: {
     display: 'flex',
     alignItems: 'flex-start',
     justifyContent: 'center',
   },
-  line: {
-    borderBottom: `3px dotted ${theme.palette.divider}`,
-    width: lineWidth,
-    marginTop: 85,
-  },
-  firstLine: {
-    position: 'relative',
-  },
-}));
+});
 const PageGenerator = ({
   history,
   match,
@@ -49,7 +40,6 @@ const PageGenerator = ({
   integrationId,
   isViewMode,
   onDelete,
-  onMove,
   openErrorCount,
   ...pg
 }) => {
@@ -316,14 +306,6 @@ const PageGenerator = ({
         openErrorCount={openErrorCount}
         isPageGenerator
       />
-      {/* -- connecting line */}
-
-      {/* <div
-        className={clsx({
-          [classes.line]: !pending,
-          [classes.connectingLine]: index > 0 && !pending,
-        })}
-      /> */}
     </div>
   );
 };

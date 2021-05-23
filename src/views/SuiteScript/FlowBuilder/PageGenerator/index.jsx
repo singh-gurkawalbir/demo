@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { withRouter } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import AppBlock from '../AppBlock';
 import { selectors } from '../../../../reducers';
@@ -9,17 +8,12 @@ import { selectors } from '../../../../reducers';
 /* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme.
    We use the block const across several components and thus is a maintenance issue to
    manage as we enhance the FB layout. */
-const blockHeight = 200;
-const lineHeightOffset = 85;
-const lineWidth = 160;
+
 const useStyles = makeStyles({
   pgContainer: {
     display: 'flex',
     alignItems: 'center',
     // marginBottom: theme.spacing(3),
-  },
-  firstLine: {
-    position: 'relative',
   },
 });
 const PageGenerator = ({ history, match }) => {

@@ -1,7 +1,6 @@
 import React, { useRef, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-// import { useDrag, useDrop } from 'react-dnd-cjs';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 // import itemTypes from '../itemTypes';

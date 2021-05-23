@@ -2,7 +2,7 @@ import React, { useRef, useCallback, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
-import { useDrag, useDrop } from 'react-dnd-cjs';
+import { SortableHandle } from 'react-sortable-hoc';
 import TrashIcon from '../../../components/icons/TrashIcon';
 import ActionButton from '../../../components/ActionButton';
 import GripperIcon from '../../../components/icons/GripperIcon';
@@ -25,18 +25,19 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   dragRow: {
-    '& > div[class*="dragIcon"]': {
-      visibility: 'hidden',
-    },
     '&:hover': {
       '& > div[class*="dragIcon"]': {
         visibility: 'visible',
       },
     },
   },
+  showDragIcon: {
+    visibility: 'visible !important',
+  },
   dragIcon: {
     cursor: 'move',
     background: 'none',
+    visibility: 'hidden',
   },
   mapField: {
     display: 'flex',
@@ -86,13 +87,19 @@ const useStyles = makeStyles(theme => ({
 }));
 const emptySet = [];
 const emptyObject = {};
+
+const DragHandle = SortableHandle(({ className }) => (
+  <div className={className}>
+    <GripperIcon />
+  </div>
+));
 export default function MappingRow(props) {
   const {
     index,
     mappingKey,
-    onMove,
-    isDraggable = false,
     disabled,
+    isDragInProgress = false,
+    isRowDragged = false,
   } = props;
   const classes = useStyles();
   const ref = useRef(null);
@@ -131,37 +138,6 @@ export default function MappingRow(props) {
 
   const generateFields = useSelector(state => selectors.suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}).data);
   const extractFields = useSelector(state => selectors.suiteScriptExtracts(state, {ssLinkedConnectionId, integrationId, flowId})).data;
-  // isOver is set to true when hover happens over component
-  const [, drop] = useDrop({
-    accept: 'MAPPING',
-    hover(item) {
-      if (!ref.current || !isDraggable) {
-        return;
-      }
-
-      const dragIndex = item.index;
-      const hoverIndex = index;
-
-      // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-
-      onMove(dragIndex, hoverIndex);
-      // eslint-disable-next-line no-param-reassign
-      item.index = hoverIndex;
-    },
-  });
-  const [{ isDragging }, drag, preview] = useDrag({
-    item: { type: 'MAPPING', index, key: mappingKey },
-    collect: monitor => ({
-      isDragging: monitor.isDragging(),
-    }),
-    canDrag: isDraggable,
-  });
-  const opacity = isDragging ? 0.2 : 1;
-
-  drop(preview(ref));
 
   const handleBlur = useCallback((field, value) => {
     dispatch(actions.suiteScript.mapping.patchFieldRequest(field, mappingKey, value));
@@ -202,12 +178,9 @@ export default function MappingRow(props) {
       ref={ref}
       onMouseEnter={handleOnMouseEnter}
       onMouseLeave={handleOnMouseLeave}
-      style={{ opacity }}
       className={classes.rowContainer}>
-      <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled })}>
-        <div className={classes.dragIcon} ref={drag}>
-          <GripperIcon />
-        </div>
+      <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled && !isDragInProgress })}>
+        <DragHandle className={clsx(classes.dragIcon, { [classes.showDragIcon]: isRowDragged})} />
         <div
           className={clsx(classes.childHeader, classes.mapField, {
             [classes.disableChildRow]: disabled,

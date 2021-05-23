@@ -1,78 +1,87 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useDrop } from 'react-dnd-cjs';
+import React, { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core';
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import {selectors} from '../../../reducers';
 import MappingRow from './MappingRow';
 import actions from '../../../actions';
 
 const emptyObject = {};
+const useStyles = makeStyles({
+  listContainer: {
+    marginInlineStart: 0,
+    marginBlockStart: 0,
+    paddingInlineStart: 0,
+    marginBlockEnd: 0,
+    listStyleType: 'none',
+    '& > li': {
+      listStyle: 'none',
+    },
+  },
+});
+
+const SortableItem = SortableElement(({value}) => (
+  <li>
+    {value}
+  </li>
+));
+
+const SortableList = SortableContainer(({children, className}) => <ul className={className}>{children}</ul>);
+
 export default function DragContainer({disabled}) {
   const dispatch = useDispatch();
-  const mappings = useSelector(state => selectors.suiteScriptMapping(state).mappings);
-  const [mappingState, setMappingState] = useState(mappings);
-  const handleDrop = useCallback(
-    (key, finalIndex) => {
-      dispatch(actions.suiteScript.mapping.shiftOrder(key, finalIndex));
-    },
-    [dispatch]
-  );
-  const handleMove = useCallback(
-    (dragIndex, hoverIndex) => {
-      const mappingsCopy = [...mappingState];
-      const dragItem = mappingsCopy[dragIndex];
-
-      mappingsCopy.splice(dragIndex, 1);
-      mappingsCopy.splice(hoverIndex, 0, dragItem);
-
-      setMappingState(mappingsCopy);
-    },
-    [mappingState]
-  );
-
-  const tableData = useMemo(
-    () =>
-      (mappingState || []).map((value, index) => {
-        const obj = { ...value };
-
-        obj.index = index;
-
-        return obj;
-      }),
-    [mappingState]
-  );
-  const [, drop] = useDrop({ accept: 'MAPPING',
-    drop(item) {
-      handleDrop(item.key, item.index);
-    },
+  const classes = useStyles();
+  const [dragState, setDragState] = useState({
+    isDragging: false,
+    itemIndex: undefined,
   });
+  const mappings = useSelector(state => selectors.suiteScriptMapping(state).mappings);
+  const onDragEnd = useCallback(
+    ({oldIndex, newIndex}) => {
+      if (oldIndex !== newIndex) {
+        dispatch(actions.suiteScript.mapping.shiftOrder(mappings[oldIndex].key, newIndex));
+      }
+      setDragState({isDragging: false, itemIndex: undefined});
+    },
+    [dispatch, mappings]
+  );
+  const handleDragStart = ({ index }) => {
+    setDragState({isDragging: true, itemIndex: index});
+  };
 
-  useEffect(() => {
-    if (mappings.length !== mappingState.length) {
-      setMappingState(mappings);
-    }
-  }, [mappingState.length, mappings]);
-  const emptyRowIndex = mappingState.length;
+  const emptyRowIndex = mappings.length;
 
   return (
     <>
-      <div ref={drop}>
-
-        {tableData.map((mapping, index) => (
-          <MappingRow
-            index={index}
+      <SortableList
+        onSortEnd={onDragEnd}
+        updateBeforeSortStart={handleDragStart}
+        className={classes.listContainer}
+        axis="y"
+        useDragHandle>
+        {mappings.map((mapping, index) => (
+          <SortableItem
             key={mapping.key}
-            mappingKey={mapping.key}
-            onMove={handleMove}
-            isDraggable
-            disabled={disabled}
+            index={index}
+            hideSortableGhost={false}
+            value={(
+              <MappingRow
+                index={index}
+                key={mapping.key}
+                mappingKey={mapping.key}
+                // onMove={handleMove}
+                isDragInProgress={dragState.isDragging}
+                isRowDragged={dragState.itemIndex === index}
+                disabled={disabled}
+          />
+          )}
           />
         ))}
-      </div>
+      </SortableList>
       <MappingRow
         key={`newMappingRow-${emptyRowIndex}`}
         index={emptyRowIndex}
         mapping={emptyObject}
-        isDraggable={false}
         disabled={disabled}
       />
     </>

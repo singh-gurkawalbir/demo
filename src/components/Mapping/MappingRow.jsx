@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import { SortableHandle } from 'react-sortable-hoc';
 import {selectors} from '../../reducers';
 import actions from '../../actions';
 import DynaTypeableSelect from '../DynaForm/fields/DynaTypeableSelect';
@@ -30,18 +31,19 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   dragRow: {
-    '& > div[class*="dragIcon"]': {
-      visibility: 'hidden',
-    },
     '&:hover': {
       '& > div[class*="dragIcon"]': {
         visibility: 'visible',
       },
     },
   },
+  showDragIcon: {
+    visibility: 'visible !important',
+  },
   dragIcon: {
     cursor: 'move',
     background: 'none',
+    visibility: 'hidden',
   },
   mapField: {
     display: 'flex',
@@ -110,6 +112,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const emptyObject = {};
+
+const DragHandle = SortableHandle(({ className }) => (
+  <div className={className}>
+    <GripperIcon />
+  </div>
+));
 export default function MappingRow({
   disabled,
   index,
@@ -118,6 +126,7 @@ export default function MappingRow({
   mappingKey,
   subRecordMappingId,
   isDragInProgress = false,
+  isRowDragged = false,
 }) {
   const mapping = useSelector(state => {
     const {mappings} = selectors.mapping(state);
@@ -149,9 +158,6 @@ export default function MappingRow({
   const extractFields = useSelector(state =>
     selectors.mappingExtracts(state, importId, flowId, subRecordMappingId)
   );
-  console.log("generateFields", generateFields);
-  console.log("extractFields", extractFields);
-
   const handleBlur = useCallback((field, value) => {
     // check if value changes or user entered something in new row
     if ((!mappingKey && value) || (mappingKey && mapping[field] !== value)) {
@@ -228,10 +234,8 @@ export default function MappingRow({
         onMouseEnter={handleOnMouseEnter}
         onMouseLeave={handleOnMouseLeave}
         className={classes.rowContainer}>
-        <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled })}>
-          <div className={classes.dragIcon}>
-            <GripperIcon />
-          </div>
+        <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled && !isDragInProgress })}>
+          <DragHandle className={clsx(classes.dragIcon, { [classes.showDragIcon]: isRowDragged})} />
           <div
             data-public
             className={clsx(classes.childHeader, classes.mapField, {
