@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
@@ -24,20 +24,10 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(1),
     alignItems: 'center',
   },
-  dragRow: {
-    '&:hover': {
-      '& > div[class*="dragIcon"]': {
-        visibility: 'visible',
-      },
-    },
-  },
-  showDragIcon: {
-    visibility: 'visible !important',
-  },
-  dragIcon: {
+  dragIconWrapper: {
     cursor: 'move',
     background: 'none',
-    visibility: 'hidden',
+    minWidth: theme.spacing(3.5),
   },
   mapField: {
     display: 'flex',
@@ -88,11 +78,7 @@ const useStyles = makeStyles(theme => ({
 const emptySet = [];
 const emptyObject = {};
 
-const DragHandle = SortableHandle(({ className }) => (
-  <div className={className}>
-    <GripperIcon />
-  </div>
-));
+const DragHandle = SortableHandle(() => (<div><GripperIcon /></div>));
 export default function MappingRow(props) {
   const {
     index,
@@ -102,9 +88,8 @@ export default function MappingRow(props) {
     isRowDragged = false,
   } = props;
   const classes = useStyles();
-  const ref = useRef(null);
   const dispatch = useDispatch();
-  const [isActive, setIsActive] = useState(false);
+  const [showGripper, setShowGripper] = useState(false);
   const {
     mapping = emptyObject,
     ssLinkedConnectionId,
@@ -164,23 +149,34 @@ export default function MappingRow(props) {
   }, [dispatch, mappingKey]);
 
   const handleOnMouseEnter = useCallback(() => {
-    setIsActive(true);
-  }, []);
+    if (!isDragInProgress) {
+      setShowGripper(true);
+    }
+  }, [isDragInProgress]);
   const handleOnMouseLeave = useCallback(() => {
-    setIsActive(false);
+    setShowGripper(false);
   }, []);
+
+  useEffect(() => {
+    if (isRowDragged) {
+      setShowGripper(true);
+    }
+  }, [isRowDragged]);
   const extractValue = extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
   const disableDelete = !mappingKey || disabled;
 
   // generateFields and extractFields are passed as an array of field names
   return (
     <div
-      ref={ref}
       onMouseEnter={handleOnMouseEnter}
       onMouseLeave={handleOnMouseLeave}
       className={classes.rowContainer}>
-      <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled && !isDragInProgress })}>
-        <DragHandle className={clsx(classes.dragIcon, { [classes.showDragIcon]: isRowDragged})} />
+      <div className={classes.innerRow}>
+        <div className={classes.dragIconWrapper}>
+          {showGripper && (
+          <DragHandle />
+          )}
+        </div>
         <div
           className={clsx(classes.childHeader, classes.mapField, {
             [classes.disableChildRow]: disabled,
@@ -231,7 +227,7 @@ export default function MappingRow(props) {
               disabled={disableDelete}
               onClick={handleDeleteClick}
               className={clsx(classes.deleteBtn, {
-                [classes.hide]: !isActive,
+                [classes.hide]: !showGripper,
               })}>
               <TrashIcon />
             </ActionButton>

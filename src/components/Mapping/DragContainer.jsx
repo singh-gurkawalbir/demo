@@ -35,13 +35,13 @@ export default function DragContainer({ onDrop, disabled, className, ...props })
     itemIndex: undefined,
   });
   const mappings = useSelector(state => selectors.mapping(state).mappings);
-  const onDragEnd = useCallback(({oldIndex, newIndex}) => {
+  const handleSortEnd = useCallback(({oldIndex, newIndex}) => {
+    setDragState({isDragging: false, itemIndex: undefined});
     if (oldIndex !== newIndex) {
       dispatch(actions.mapping.shiftOrder(mappings[oldIndex].key, newIndex));
     }
-    setDragState({isDragging: false, itemIndex: undefined});
   }, [dispatch, mappings]);
-  const handleDragStart = ({ index }) => {
+  const handleSortStart = ({ index }) => {
     setDragState({isDragging: true, itemIndex: index});
   };
   const emptyRowIndex = mappings.length;
@@ -49,8 +49,8 @@ export default function DragContainer({ onDrop, disabled, className, ...props })
   return (
     <>
       <SortableList
-        onSortEnd={onDragEnd}
-        updateBeforeSortStart={handleDragStart}
+        onSortEnd={handleSortEnd}
+        updateBeforeSortStart={handleSortStart}
         className={classes.listContainer}
         axis="y"
         useDragHandle>

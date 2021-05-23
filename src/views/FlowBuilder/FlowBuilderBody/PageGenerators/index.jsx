@@ -87,49 +87,10 @@ const useStyles = makeStyles(theme => ({
     borderRight: '0 !important',
   },
 }));
-const SortableItem = SortableElement(({ value }) => (
-  <li>
-    {value}
-  </li>
-));
 
-const SortableList = SortableContainer(({ pageGenerators, classes, handleDelete, flowId, integrationId, flowErrorsMap, isViewMode }) => (
-  <ul>
-    {pageGenerators.map((pg, i) => (
-      <>
-        <li
-          className={clsx(classes.seperator, {
-            [classes.lastSeperator]: i + 1 === pageGenerators.length,
-          })} style={{top: 86 + 285 * i}} />
-        <SortableItem
-          index={i}
-          hideSortableGhost={false}
-          key={
-          pg._exportId ||
-          pg._connectionId ||
-          `${pg.application}${pg.webhookOnly}`
-        }
-          value={
-      (
-        <PageGenerator
-          {...pg}
-          onDelete={handleDelete(itemTypes.PAGE_GENERATOR)}
-          flowId={flowId}
-          integrationId={integrationId}
-          openErrorCount={
-            (flowErrorsMap && flowErrorsMap[pg._exportId]) || 0
-          }
-          index={i}
-          isViewMode={isViewMode}
-          isLast={pageGenerators.length === i + 1}
-        />
-      )
-    }
-    />
-      </>
-    ))}
-  </ul>
-));
+const SortableItem = SortableElement(({value}) => (<li>{value}</li>));
+const SortableList = SortableContainer(({children, className}) => <ul className={className}>{children}</ul>);
+
 export default function PageGenerators({integrationId, flowId}) {
   const handleDelete = useHandleDelete(flowId);
   const classes = useStyles();
@@ -154,16 +115,40 @@ export default function PageGenerators({integrationId, flowId}) {
     <div className={classes.generatorContainer}>
       <SortableList
         onSortEnd={handleSortEnd}
-        axis="y"
-        pageGenerators={pageGenerators}
-        handleDelete={handleDelete}
-        flowId={flowId}
-        integrationId={integrationId}
-        flowErrorsMap={flowErrorsMap}
-        isViewMode={isViewMode || isFreeFlow}
-        classes={classes}
-      />
-
+        className={classes.listContainer}
+        axis="y">
+        {pageGenerators.map((pg, i) => (
+          <>
+            <li
+              className={clsx(classes.seperator, {
+                [classes.lastSeperator]: i + 1 === pageGenerators.length,
+              })} style={{top: 86 + 285 * i}} />
+            <SortableItem
+              index={i}
+              hideSortableGhost={false}
+              key={
+                pg._exportId ||
+                pg._connectionId ||
+                `${pg.application}${pg.webhookOnly}`
+              }
+              value={(
+                <PageGenerator
+                  {...pg}
+                  onDelete={handleDelete(itemTypes.PAGE_GENERATOR)}
+                  flowId={flowId}
+                  integrationId={integrationId}
+                  openErrorCount={
+                    (flowErrorsMap && flowErrorsMap[pg._exportId]) || 0
+                  }
+                  index={i}
+                  isViewMode={isViewMode || isFreeFlow}
+                  isLast={pageGenerators.length === i + 1}
+                />
+              )}
+            />
+          </>
+        ))}
+      </SortableList>
       {!pageGenerators.length && (
         <AppBlock
           integrationId={integrationId}

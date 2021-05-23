@@ -105,6 +105,7 @@ function Tile({
   tile,
   history,
   isDragInProgress,
+  isTileDragged,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -239,7 +240,7 @@ function Tile({
   // #region Drag&Drop related
   return (
     <div>
-      <HomePageCardContainer>
+      <HomePageCardContainer isDragInProgress={isDragInProgress} isTileDragged={isTileDragged}>
         <Header>
           <Status
             label={status.label}

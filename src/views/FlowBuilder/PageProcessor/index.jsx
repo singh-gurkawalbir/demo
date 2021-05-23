@@ -45,7 +45,6 @@ const PageProcessor = ({
   history,
   flowId,
   index,
-  onMove,
   isLast,
   integrationId,
   isViewMode,

@@ -40,42 +40,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const SortableItem = SortableElement(({ value }) => (<li>{value}</li>));
-const SortableList = SortableContainer(({ pageProcessors, handleDelete, flowId, integrationId, flowErrorsMap, isViewMode, isMonitorLevelAccess }) => (
-  <ul>
-    {pageProcessors.map((pp, i) => (
-      <SortableItem
-        index={i}
-        key={
-          pp._importId ||
-          pp._exportId ||
-          pp._connectionId ||
-          `${pp.application}-${i}`
-        }
-        value={
-         (
-           <PageProcessor
-             {...pp}
-             onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
-             flowId={flowId}
-             integrationId={integrationId}
-             openErrorCount={
-                      (flowErrorsMap &&
-                        flowErrorsMap[pp._importId || pp._exportId]) ||
-                      0
-                    }
-             index={i}
-             isViewMode={isViewMode}
-             isMonitorLevelAccess={isMonitorLevelAccess}
-             isLast={pageProcessors.length === i + 1}
-          // onMove={handleMovePP}
-        />
-         )
-       } />
-
-    ))}
-  </ul>
-));
+const SortableItem = SortableElement(({value}) => (<li>{value}</li>));
+const SortableList = SortableContainer(({children, className}) => <ul className={className}>{children}</ul>);
 export default function PageProcessors({integrationId, flowId}) {
   const handleDelete = useHandleDelete(flowId);
   const classes = useStyles();
@@ -88,9 +54,6 @@ export default function PageProcessors({integrationId, flowId}) {
 
   const handleAddProcessor = useHandleAddProcessor();
   const handleSortEnd = useHandleMovePP(flowId);
-  // const handleSortEnd = (startIndex, endIndex) => {
-  // console.log('111', startIndex, endIndex);
-  // };
   const {
     data: flowErrorsMap,
   } = useSelector(state => selectors.errorMap(state, flowId));
@@ -110,16 +73,38 @@ export default function PageProcessors({integrationId, flowId}) {
       <div className={classes.dottedLine} />
       <SortableList
         onSortEnd={handleSortEnd}
-        helperClass={classes.sortableHelper}
-        pageProcessors={pageProcessors}
-        handleDelete={handleDelete}
-        flowId={flowId}
-        integrationId={integrationId}
-        flowErrorsMap={flowErrorsMap}
-        isMonitorLevelAccess={isMonitorLevelAccess}
-        isViewMode={isViewMode || isFreeFlow}
+        className={classes.listContainer}
         axis="x"
-      />
+      >
+        {pageProcessors.map((pp, i) => (
+          <SortableItem
+            index={i}
+            key={
+              pp._importId ||
+              pp._exportId ||
+              pp._connectionId ||
+              `${pp.application}-${i}`
+            }
+            value={(
+              <PageProcessor
+                {...pp}
+                onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
+                flowId={flowId}
+                integrationId={integrationId}
+                openErrorCount={
+                      (flowErrorsMap &&
+                        flowErrorsMap[pp._importId || pp._exportId]) ||
+                      0
+                    }
+                index={i}
+                isViewMode={isViewMode || isFreeFlow}
+                isMonitorLevelAccess={isMonitorLevelAccess}
+                isLast={pageProcessors.length === i + 1}
+              />
+            )}
+          />
+        ))}
+      </SortableList>
       {!pageProcessors.length && showAddPageProcessor && (
       <AppBlock
         className={classes.newPP}

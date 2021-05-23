@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Tooltip, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -30,20 +30,10 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(1),
     alignItems: 'center',
   },
-  dragRow: {
-    '&:hover': {
-      '& > div[class*="dragIcon"]': {
-        visibility: 'visible',
-      },
-    },
-  },
-  showDragIcon: {
-    visibility: 'visible !important',
-  },
-  dragIcon: {
+  dragIconWrapper: {
     cursor: 'move',
     background: 'none',
-    visibility: 'hidden',
+    minWidth: theme.spacing(3.5),
   },
   mapField: {
     display: 'flex',
@@ -113,8 +103,8 @@ const useStyles = makeStyles(theme => ({
 }));
 const emptyObject = {};
 
-const DragHandle = SortableHandle(({ className }) => (
-  <div className={className}>
+const DragHandle = SortableHandle(() => (
+  <div>
     <GripperIcon />
   </div>
 ));
@@ -128,6 +118,10 @@ export default function MappingRow({
   isDragInProgress = false,
   isRowDragged = false,
 }) {
+  const dispatch = useDispatch();
+  const classes = useStyles();
+  const [showGripper, setShowGripper] = useState(false);
+
   const mapping = useSelector(state => {
     const {mappings} = selectors.mapping(state);
     const mapping = mappings.find(({key}) => key === mappingKey);
@@ -144,9 +138,7 @@ export default function MappingRow({
     hardCodedValue,
     lookupName,
   } = mapping;
-  const dispatch = useDispatch();
-  const classes = useStyles();
-  const [isActive, setIsActive] = useState(false);
+
   const generateFields = useSelector(state =>
     selectors.mappingGenerates(state, importId, subRecordMappingId)
   );
@@ -207,11 +199,19 @@ export default function MappingRow({
   }, [dispatch, mappingKey]);
 
   const handleOnMouseEnter = useCallback(() => {
-    setIsActive(true);
-  }, []);
+    if (!isDragInProgress) {
+      setShowGripper(true);
+    }
+  }, [isDragInProgress]);
   const handleOnMouseLeave = useCallback(() => {
-    setIsActive(false);
+    setShowGripper(false);
   }, []);
+
+  useEffect(() => {
+    if (isRowDragged) {
+      setShowGripper(true);
+    }
+  }, [isRowDragged]);
 
   const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
   const isLookup = !!lookupName;
@@ -234,8 +234,12 @@ export default function MappingRow({
         onMouseEnter={handleOnMouseEnter}
         onMouseLeave={handleOnMouseLeave}
         className={classes.rowContainer}>
-        <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled && !isDragInProgress })}>
-          <DragHandle className={clsx(classes.dragIcon, { [classes.showDragIcon]: isRowDragged})} />
+        <div className={classes.innerRow}>
+          <div className={classes.dragIconWrapper}>
+            {showGripper && (
+              <DragHandle />
+            )}
+          </div>
           <div
             data-public
             className={clsx(classes.childHeader, classes.mapField, {
@@ -316,7 +320,7 @@ export default function MappingRow({
                 disabled={disableDelete}
                 onClick={handleDeleteClick}
                 className={clsx(classes.deleteBtn, {
-                  [classes.hide]: !isActive,
+                  [classes.hide]: !showGripper,
                 })}>
                 <TrashIcon />
               </ActionButton>

@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function SuiteScriptTile({ tile, history }) {
+function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
   const classes = useStyles();
   const accessLevel = useSelector(state => selectors.userAccessLevelOnConnection(state, tile.ssLinkedConnectionId));
   const ssLinkedConnection = useSelector(state => selectors.resource(state, 'connections', tile.ssLinkedConnectionId));
@@ -118,7 +118,7 @@ function SuiteScriptTile({ tile, history }) {
   // #region Drag&Drop related
   return (
     <div>
-      <HomePageCardContainer onClick={handleTileClick}>
+      <HomePageCardContainer onClick={handleTileClick} isDragInProgress={isDragInProgress} isTileDragged={isTileDragged}>
         <Header>
           <Status
             label={status.label}

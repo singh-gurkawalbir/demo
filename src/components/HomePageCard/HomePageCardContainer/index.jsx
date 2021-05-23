@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, fade } from '@material-ui/core/styles';
 import { SortableHandle } from 'react-sortable-hoc';
@@ -57,15 +57,32 @@ const DragHandle = SortableHandle(({ className }) => (
   </div>
 ));
 
-export default function HomePageCardContainer({ children, onClick }) {
+export default function HomePageCardContainer({ children, onClick, isDragInProgress, isTileDragged }) {
   const classes = useStyles();
   const [showGripper, setShowGripper] = useState(false);
+
+  useEffect(() => {
+    if (isTileDragged) {
+      setShowGripper(true);
+    }
+  }, [isTileDragged]);
+
+  const handleMouseEnter = () => {
+    if (!isDragInProgress) {
+      setShowGripper(true);
+    }
+  };
+  const handleMouseLeave = () => {
+    if (!isDragInProgress) {
+      setShowGripper(false);
+    }
+  };
 
   return (
     <div
       className={classes.tileGripperWrapper}
-      onMouseEnter={() => setShowGripper(true)}
-      onMouseLeave={() => setShowGripper(false)}>
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}>
       <Paper
         className={classes.wrapper}
         elevation={0}
