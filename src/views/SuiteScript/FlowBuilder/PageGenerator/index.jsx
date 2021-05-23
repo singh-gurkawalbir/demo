@@ -12,26 +12,16 @@ import { selectors } from '../../../../reducers';
 const blockHeight = 200;
 const lineHeightOffset = 85;
 const lineWidth = 160;
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   pgContainer: {
     display: 'flex',
     alignItems: 'center',
     // marginBottom: theme.spacing(3),
   },
-  line: {
-    borderBottom: `3px dotted ${theme.palette.divider}`,
-    width: lineWidth,
-    marginTop: 0,
-  },
   firstLine: {
     position: 'relative',
   },
-  connectingLine: {
-    marginTop: -blockHeight,
-    height: blockHeight + lineHeightOffset,
-    borderRight: `3px dotted ${theme.palette.divider}`,
-  },
-}));
+});
 const PageGenerator = ({ history, match }) => {
   const { flowId, ssLinkedConnectionId } = match.params;
   const classes = useStyles();
@@ -58,10 +48,6 @@ const PageGenerator = ({ history, match }) => {
         blockType="export"
         onBlockClick={handleBlockClick}
         resource={resource}
-      />
-      <div
-        /* -- connecting line */
-        className={clsx([classes.line])}
       />
     </div>
   );

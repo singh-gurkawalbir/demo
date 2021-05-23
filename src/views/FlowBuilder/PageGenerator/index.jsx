@@ -1,7 +1,6 @@
-import React, { useRef, useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 // import itemTypes from '../itemTypes';
 import AppBlock from '../AppBlock';
@@ -24,8 +23,6 @@ import { actionsMap } from '../../../utils/flows';
 /* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme.
    We use the block const across several components and thus is a maintenance issue to
    manage as we enhance the FB layout. */
-const blockHeight = 200;
-const lineHeightOffset = 85;
 const lineWidth = 160;
 const emptyObj = {};
 const useStyles = makeStyles(theme => ({
@@ -41,11 +38,6 @@ const useStyles = makeStyles(theme => ({
   },
   firstLine: {
     position: 'relative',
-  },
-  connectingLine: {
-    marginTop: -blockHeight,
-    height: blockHeight + lineHeightOffset,
-    borderRight: `3px dotted ${theme.palette.divider}`,
   },
 }));
 const PageGenerator = ({
@@ -324,13 +316,14 @@ const PageGenerator = ({
         openErrorCount={openErrorCount}
         isPageGenerator
       />
-      <div
-        /* -- connecting line */
+      {/* -- connecting line */}
+
+      {/* <div
         className={clsx({
           [classes.line]: !pending,
           [classes.connectingLine]: index > 0 && !pending,
         })}
-      />
+      /> */}
     </div>
   );
 };

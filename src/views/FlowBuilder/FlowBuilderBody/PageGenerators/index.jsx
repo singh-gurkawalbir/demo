@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import clsx from 'clsx';
 import { useHandleAddGenerator, useHandleDelete, useHandleMovePG } from '../../hooks';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
@@ -24,6 +25,7 @@ const useStyles = makeStyles(theme => ({
       paddingInlineStart: 0,
       marginBlockEnd: 0,
       listStyleType: 'none',
+      position: 'relative',
       '& > li': {
         listStyle: 'none',
         // '&::after': {
@@ -54,13 +56,6 @@ const useStyles = makeStyles(theme => ({
   newPG: {
     marginRight: 50,
   },
-  dottedLine: {
-    width: '100%',
-    borderBottom: `3px dotted ${theme.palette.divider}`,
-    // top: 86,
-    position: 'relative',
-    transform: 'rotate(-90deg)',
-  },
   lineContainer: {
     width: '100%',
     height: '100%',
@@ -79,20 +74,37 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  seperator: {
+    width: 'calc(100% - 275px)',
+    position: 'absolute',
+    // top: 86,
+    marginLeft: 275,
+    borderTop: `3px dotted ${theme.palette.divider}`,
+    height: 285,
+    borderRight: `3px dotted ${theme.palette.divider}`,
+  },
+  lastSeperator: {
+    borderRight: '0 !important',
+  },
 }));
 const SortableItem = SortableElement(({ value }) => (<li>{value}</li>));
 
-const SortableList = SortableContainer(({ pageGenerators, handleDelete, flowId, integrationId, flowErrorsMap, isViewMode, handleMovePG }) => (
+const SortableList = SortableContainer(({ pageGenerators, classes, handleDelete, flowId, integrationId, flowErrorsMap, isViewMode, handleMovePG }) => (
   <ul>
     {pageGenerators.map((pg, i) => (
-      <SortableItem
-        index={i}
-        key={
+      <>
+        <li
+          className={clsx(classes.seperator, {
+            [classes.lastSeperator]: i + 1 === pageGenerators.length,
+          })} style={{top: 86 + 285 * i}} />
+        <SortableItem
+          index={i}
+          key={
           pg._exportId ||
           pg._connectionId ||
           `${pg.application}${pg.webhookOnly}`
         }
-        value={
+          value={
       (
         <PageGenerator
           {...pg}
@@ -110,6 +122,7 @@ const SortableList = SortableContainer(({ pageGenerators, handleDelete, flowId, 
       )
     }
     />
+      </>
     ))}
   </ul>
 ));
@@ -135,11 +148,6 @@ export default function PageGenerators({integrationId, flowId}) {
 
   return (
     <div className={classes.generatorContainer}>
-      <div className={classes.lineContainer}>
-        <div className={classes.line}>
-          {pageGenerators.map((pg, i) => (<div key={i} className="subLine" />))}
-        </div>
-      </div>
       <SortableList
         axis="y"
         pageGenerators={pageGenerators}
@@ -149,9 +157,8 @@ export default function PageGenerators({integrationId, flowId}) {
         flowErrorsMap={flowErrorsMap}
         isViewMode={isViewMode || isFreeFlow}
         handleMovePG={handleMovePG}
+        classes={classes}
       />
-
-      <div className={classes.dottedLine} />
 
       {!pageGenerators.length && (
         <AppBlock
