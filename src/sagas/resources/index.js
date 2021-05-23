@@ -433,7 +433,7 @@ export function* getResource({ resourceType, id, message, hidden }) {
   }
 }
 export function* updateIntegrationSettings({
-  storeId,
+  childId,
   integrationId,
   values,
   flowId,
@@ -446,14 +446,14 @@ export function* updateIntegrationSettings({
 
   const integration = yield select(selectors.resource, 'integrations', integrationId);
   const supportsMultiStore = integration?.settings?.supportsMultiStore;
-  let childId = storeId;
+  let finalChildId = childId;
 
-  if (supportsMultiStore && !storeId && flowId) {
-    childId = yield select(selectors.integrationAppChildIdOfFlow, integrationId, flowId);
+  if (supportsMultiStore && !childId && flowId) {
+    finalChildId = yield select(selectors.integrationAppChildIdOfFlow, integrationId, flowId);
   }
 
-  if (childId) {
-    payload = { [childId]: payload };
+  if (finalChildId) {
+    payload = { [finalChildId]: payload };
   }
 
   payload = {
@@ -480,7 +480,7 @@ export function* updateIntegrationSettings({
 
     return yield put(
       actions.integrationApp.settings.submitFailed({
-        storeId: childId,
+        childId: finalChildId,
         integrationId,
         response,
         flowId,
@@ -545,7 +545,7 @@ export function* updateIntegrationSettings({
 
     yield put(
       actions.integrationApp.settings.submitComplete({
-        storeId: childId,
+        childId,
         integrationId,
         response,
         flowId,
@@ -659,10 +659,14 @@ export function* getResourceCollection({ resourceType, refresh}) {
   let hideNetWorkSnackbar;
 
   /** hide the error that GET SuiteScript tiles throws when connection is offline */
+  /** hide transfers API call as it throws error when account user accepts first account and
+   *  logs in with SSO for the very first time when his preferences still hold defaultAshareId as 'own'
+   */
   if (
     resourceType &&
     ((resourceType.includes('suitescript/connections/') && resourceType.includes('/tiles')) ||
-    resourceType.includes('ashares'))
+    resourceType.includes('ashares') ||
+    resourceType.includes('transfers'))
   ) {
     hideNetWorkSnackbar = true;
   }
@@ -703,6 +707,12 @@ export function* getResourceCollection({ resourceType, refresh}) {
       else if (invitedTransfers) collection = [...collection, ...invitedTransfers];
     }
 
+    if (!Array.isArray(collection)) {
+      // eslint-disable-next-line no-console
+      console.warn('Getting unexpected collection values: ', collection);
+      collection = undefined;
+    }
+
     yield put(actions.resource.receivedCollection(resourceType, collection));
 
     return collection;
@@ -721,12 +731,12 @@ export function* validateResource({ resourceType, resourceId }) {
   return yield call(getResource, {resourceType, id: resourceId, hidden: true});
 }
 
-export function* updateTileNotifications({ resourcesToUpdate, integrationId, storeId, userEmail }) {
+export function* updateTileNotifications({ resourcesToUpdate, integrationId, childId, userEmail }) {
   const { subscribedConnections = [], subscribedFlows = [] } = resourcesToUpdate;
   const {
     flows: availableFlows = [],
     connections: availableConnections = [],
-  } = yield select(selectors.integrationNotificationResources, integrationId, { storeId, userEmail });
+  } = yield select(selectors.integrationNotificationResources, integrationId, { childId, userEmail });
   const notifications = [];
 
   notifications.push({

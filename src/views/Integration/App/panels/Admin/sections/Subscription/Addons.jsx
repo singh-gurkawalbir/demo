@@ -12,7 +12,7 @@ import { useGetTableContext } from '../../../../../../../components/CeligoTable/
 
 const metadata = {
   useColumns: () => {
-    const { supportsMultiStore, storeId, storeLabel, stores } = useGetTableContext();
+    const { supportsMultiStore, childId, storeLabel, children } = useGetTableContext();
 
     let columns = [
       {
@@ -20,7 +20,7 @@ const metadata = {
         heading: 'Name',
         Value: ({rowData: r}) => (
           <>
-            {r && r.name}
+            {r?.name}
             <InfoIconButton info={r.description} size="xs" />
           </>
         ),
@@ -28,7 +28,7 @@ const metadata = {
       {
         key: 'storeLabel',
         heading: storeLabel,
-        Value: ({rowData: r}) => stores.find(s => s.value === r.storeId)?.label || r.storeId,
+        Value: ({rowData: r}) => children.find(c => c.value === r.storeId)?.label || r.storeId,
       },
       {
         key: 'installedOn',
@@ -42,7 +42,7 @@ const metadata = {
       },
     ];
 
-    if (!supportsMultiStore || storeId) {
+    if (!supportsMultiStore || childId) {
       columns = columns.filter(c => c.heading !== storeLabel);
     }
 
@@ -95,20 +95,20 @@ const useStyles = makeStyles(theme => ({
 }));
 const emptyObject = {};
 
-export default function AddOns({integrationId, storeId}) {
+export default function AddOns({integrationId, childId}) {
   const classes = useStyles();
   const match = useRouteMatch();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
   const {
     supportsMultiStore,
-    stores,
+    children,
     storeLabel,
   } = useMemo(() => {
     if (integration) {
       return {
-        supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
-        stores: integration.stores,
-        storeLabel: integration.settings && integration.settings.storeLabel,
+        supportsMultiStore: !!integration.settings?.supportsMultiStore,
+        children: integration.children,
+        storeLabel: integration.settings?.storeLabel,
       };
     }
 
@@ -116,12 +116,11 @@ export default function AddOns({integrationId, storeId}) {
   }, [integration]);
 
   const addOnState = useSelector(state =>
-    selectors
-      .integrationAppAddOnState(state, integrationId)
+    selectors.integrationAppAddOnState(state, integrationId)
   );
   const subscribedAddOns = addOnState?.addOns?.addOnLicenses?.filter(model => {
     if (supportsMultiStore) {
-      return storeId ? model.storeId === storeId : true;
+      return childId ? model.storeId === childId : true;
     }
 
     return true;
@@ -185,7 +184,7 @@ export default function AddOns({integrationId, storeId}) {
           </Typography>
         </div>
 
-        <CeligoTable data={subscribedAddOns} {...metadata} actionProps={{ supportsMultiStore, storeId, storeLabel, stores }} />
+        <CeligoTable data={subscribedAddOns} {...metadata} actionProps={{ supportsMultiStore, childId, storeLabel, children }} />
       </>
       )}
     </>

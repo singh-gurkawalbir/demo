@@ -183,6 +183,8 @@ export default function UserForm({
         label: 'Require account Single sign-on(SSO)?',
         defaultValue: isEditMode ? !!data.accountSSORequired : true,
         visible: !isEditMode && isAccountOwnerOrAdmin && isSSOEnabled,
+        // Incase of invite, this field should not be passed if the owner has not enabled SSO
+        omitWhenHidden: !isEditMode,
         helpText: 'Check this box to require single sign-on (SSO) authentication for this user.',
       },
     },

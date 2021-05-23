@@ -1,7 +1,7 @@
 import produce from 'immer';
-import map from 'lodash/map';
 import { createSelector } from 'reselect';
 import { deepClone } from 'fast-json-patch/lib/core';
+import shortid from 'shortid';
 import actionTypes from '../../../../actions/types';
 import mappingUtil from '../../../../utils/mapping';
 import { FORM_SAVE_STATUS } from '../../../../utils/constants';
@@ -73,11 +73,11 @@ export default (state = {}, action) => {
     sectionId,
     data,
     id,
+    key: mappingKey,
     generateFields,
     oldValue,
     newValue,
     value,
-    index,
     field,
     closeOnSave,
     depth,
@@ -198,10 +198,17 @@ export default (state = {}, action) => {
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE: {
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
-          draft[cKey].mappings[id].initChangeIdentifier += 1;
-          draft[cKey].mappings[id].mappings.splice(index, 1);
+          const mappingToDelete = draft[cKey].mappings[id].mappings?.find(m => m.key === mappingKey);
 
-          if (draft[cKey].mappings[id].lastModifiedRow === index) draft[cKey].mappings[id].lastModifiedRow = -1;
+          if (mappingToDelete?.lookupName) {
+          // delete lookup
+            const lookupIndex = draft[cKey].mappings[id].lookups.findIndex(l => l.lookupName === mappingToDelete.lookupName);
+
+            if (lookupIndex !== -1) { draft[cKey].mappings[id].lookups = draft[cKey].mappings[id].lookups.splice(lookupIndex, 1); }
+          }
+          draft[cKey].mappings[id].mappings = draft[cKey].mappings[id].mappings.filter(m => m.key !== mappingKey);
+          if (draft[cKey].mappings[id].lastModifiedRowKey === key) { delete draft[cKey].mappings[id].lastModifiedRowKey; }
+
           const {
             isSuccess,
             errMessage: validationErrMsg,
@@ -225,83 +232,52 @@ export default (state = {}, action) => {
         delete draft[cKey].saveStatus;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT:
-        {
-          const {
-            adaptorType,
-            resourceData,
-            application,
-            lookups,
-            isGroupedSampleData,
-            isVariationMapping,
+        if (!draft[cKey]) {
+          draft[cKey] = {};
+        }
+        if (!draft[cKey].mappings) {
+          draft[cKey].mappings = {};
+        }
+        if (!draft[cKey].mappings[id]) {
+          draft[cKey].mappings[id] = {
+            status: 'requested',
+          };
+        } else {
+          draft[cKey].mappings[id].status = 'requested';
+        }
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT_COMPLETE: {
+        const {
+          isVariationMapping,
+          categoryId,
+          childCategoryId,
+          variation,
+          isVariationAttributes,
+        } = options;
+
+        if (isVariationMapping) {
+          mappingUtil.addVariationMap(
+            draft[cKey],
             categoryId,
             childCategoryId,
             variation,
-            isVariationAttributes,
-            netsuiteRecordType,
-            ...additionalOptions
-          } = options;
-
-          if (isVariationMapping) {
-            mappingUtil.addVariationMap(
-              draft[cKey],
-              categoryId,
-              childCategoryId,
-              variation,
-              isVariationAttributes
-            );
-          }
-
-          const staged =
-            draft[cKey] &&
-            draft[cKey].mappings &&
-            draft[cKey].mappings[id] &&
-            draft[cKey].mappings[id].staged;
-          const formattedMappings =
-            staged ||
-            mappingUtil.getMappingFromResource({
-              importResource: resourceData,
-              isFieldMapping: false,
-              isGroupedSampleData,
-              netsuiteRecordType,
-              options: {
-                ...additionalOptions,
-                isVariationMapping,
-              },
-            });
-          const initChangeIdentifier =
-            (draft[cKey] &&
-              draft[cKey].mappings &&
-              draft[cKey].mappings[id] &&
-              draft[cKey].mappings[id].initChangeIdentifier) ||
-            0;
-
-          if (!draft[cKey]) {
-            draft[cKey] = {};
-          }
-
-          if (!draft[cKey].mappings) {
-            draft[cKey].mappings = {};
-          }
-
-          draft[cKey].mappings[id] = {
-            mappings: formattedMappings.map(m => ({ ...m, rowIdentifier: 0 })),
-            incompleteGenerates: [],
-            lookups: lookups || [],
-            initChangeIdentifier: initChangeIdentifier + 1,
-            application,
-            resource: resourceData,
-            adaptorType,
-            generateFields,
-            staged,
-            visible: true,
-            isGroupedSampleData,
-            flowSampleData: undefined,
-            netsuiteRecordType,
-            // lastModifiedRow helps to set generate field when any field in salesforce mapping assistant is clicked
-            lastModifiedRow: -1,
-          };
+            isVariationAttributes
+          );
         }
 
+        if (draft?.[cKey]?.mappings?.[id]) {
+          draft[cKey].mappings[id] = {
+            ...options,
+            status: 'received',
+          };
+        }
+        break;
+      }
+      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LAST_TOUCHED_FIELD:
+        if (draft?.[cKey]?.mappings?.[id]) {
+          draft[cKey].mappings[id].lastModifiedRowKey = mappingKey || 'new';
+        }
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_GENERATES: {
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
@@ -312,53 +288,40 @@ export default (state = {}, action) => {
       }
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.PATCH_FIELD: {
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
-          if (draft[cKey].mappings[id].mappings[index]) {
-            const objCopy = {
-              ...draft[cKey].mappings[id].mappings[index],
-            };
+          const index = draft[cKey].mappings[id].mappings?.findIndex(m => m.key === mappingKey);
 
-            // TODO: @Aditya, @Sravan, move this logic to mapping Util
-            objCopy.rowIdentifier += 1;
-
-            let inputValue = value;
+          if (index !== -1) {
+            const mapping = draft[cKey].mappings[id].mappings[index];
 
             if (field === 'extract') {
-              if (inputValue.indexOf('"') === 0) {
-                if (inputValue.charAt(inputValue.length - 1) !== '"') inputValue += '"';
-                delete objCopy.extract;
-                objCopy.hardCodedValue = inputValue.substr(
-                  1,
-                  inputValue.length - 2
-                );
-                objCopy.hardCodedValueTmp = inputValue;
+              if (value.indexOf('"') === 0) {
+                delete mapping.extract;
+                mapping.hardCodedValue = value.replace(/(^")|("$)/g, '');
               } else {
-                delete objCopy.hardCodedValue;
-                delete objCopy.hardCodedValueTmp;
-                objCopy.extract = inputValue;
+                delete mapping.hardCodedValue;
+                mapping.extract = value;
               }
             } else {
-              objCopy[field] = inputValue;
-
-              if (inputValue.indexOf('[*].') === -1) {
-                if ('isKey' in objCopy) {
-                  delete objCopy.isKey;
-                }
-
-                if ('useFirstRow' in objCopy) {
-                  delete objCopy.useFirstRow;
-                }
-              }
+              mapping[field] = value;
             }
 
-            draft[cKey].mappings[id].mappings[index] = objCopy;
+            draft[cKey].mappings[id].mappings[index] = mapping;
+            draft[cKey].mappings[id].lastModifiedRowKey = mapping.key;
           } else if (value) {
-            draft[cKey].mappings[id].mappings.push({
-              [field]: value,
-              rowIdentifier: 0,
-            });
+            const newKey = shortid.generate();
+            const newRow = {
+              key: newKey,
+            };
+
+            if (field === 'extract' && value.indexOf('"') === 0) {
+              newRow.hardCodedValue = value.replace(/(^")|("$)/g, '');
+            } else {
+              newRow[field] = value;
+            }
+            draft[cKey].mappings[id].mappings.push(newRow);
+            draft[cKey].mappings[id].lastModifiedRowKey = newKey;
           }
 
-          draft[cKey].mappings[id].lastModifiedRow = index;
           const {
             isSuccess,
             errMessage: validationErrMsg,
@@ -375,45 +338,27 @@ export default (state = {}, action) => {
         break;
       }
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.PATCH_SETTINGS:
-        if (draft[cKey]?.mappings?.[id]?.mappings?.[index]) {
-          const {
-            generate,
-            extract,
-            isNotEditable,
-            index: mappingIndex,
-            isRequired,
-            rowIdentifier,
-          } = draft[cKey].mappings[id].mappings[index];
-          const valueTmp = {
-            generate,
-            extract,
-            isNotEditable,
-            index: mappingIndex,
-            isRequired,
-            rowIdentifier,
-          };
+      {
+        const index = (draft[cKey]?.mappings?.[id]?.mappings || []).findIndex(m => m.key === mappingKey);
 
-          Object.assign(valueTmp, value);
+        if (index !== -1) {
+          const mapping = draft[cKey].mappings[id].mappings[index];
+
+          Object.assign(mapping, value);
 
           // removing lookups
           if (!value.lookupName) {
-            delete valueTmp.lookupName;
+            delete mapping.lookupName;
           }
 
-          // TODO: @Aditya, @Sravan, move this logic to mapping Util
-          valueTmp.rowIdentifier += 1;
-
-          if ('hardCodedValue' in valueTmp) {
-            // wrap anything expect '' and null ,
-
-            if (valueTmp.hardCodedValue && valueTmp.hardCodedValue.length) valueTmp.hardCodedValueTmp = `"${valueTmp.hardCodedValue}"`;
-            delete valueTmp.extract;
+          if ('hardCodedValue' in value) {
+            delete mapping.extract;
+          } else {
+            delete mapping.hardCodedValue;
           }
+          draft[cKey].mappings[id].mappings[index] = mapping;
+          draft[cKey].mappings[id].lastModifiedRowKey = mappingKey;
 
-          draft[cKey].mappings[id].mappings[index] = {
-            ...valueTmp,
-          };
-          draft[cKey].mappings[id].lastModifiedRow = index;
           const {
             isSuccess,
             errMessage: validationErrMsg,
@@ -428,6 +373,7 @@ export default (state = {}, action) => {
         }
 
         break;
+      }
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LOOKUP: {
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
           if (oldValue) {
@@ -672,6 +618,16 @@ selectors.categoryMapping = (state, integrationId, flowId) => {
   return state[cKey];
 };
 
+selectors.categoryMappingById = (state, integrationId, flowId, id) => {
+  const cKey = getCategoryKey(integrationId, flowId);
+
+  if (!state || !state[cKey]) {
+    return null;
+  }
+
+  return state[cKey]?.mappings?.[id];
+};
+
 selectors.mkMappedCategories = () => createSelector(
   (state, integrationId, flowId) => {
     const {response} = state?.[getCategoryKey(integrationId, flowId)] || emptyObj;
@@ -856,17 +812,26 @@ selectors.mkMappingsForCategory = () => {
         return mappings;
       }
 
-      const mappedFields = map(mappings.fieldMappings, 'generate');
-      // Filter all generateFields with filter which are not yet mapped
-      const filteredFields = fields
-        .filter(field => !mappedFields.includes(field.id))
-        .map(field => ({
-          generate: field.id,
-          extract: '',
-          discardIfEmpty: true,
-        }));
-      // Combine filtered mappings and unmapped fields and generate unmapped fields
-      const filteredMappings = [...(mappings.fieldMappings || []), ...filteredFields];
+      const filteredMappings = fields.map(field => {
+        const mapConfig = mappings.fieldMappings.find(f => f.generate === field.id);
+
+        return mapConfig ? {
+          ...mapConfig,
+          filterType: field.filterType,
+          showListOption: !!field.options?.length,
+          description: field.description,
+          name: field.name,
+        }
+          : {
+            generate: field.id,
+            extract: '',
+            discardIfEmpty: true,
+            name: field.name,
+            showListOption: !!field.options?.length,
+            filterType: field.filterType,
+            description: field.description,
+          };
+      });
 
       // return mappings object by overriding field mappings with filtered mappings
       return {
@@ -928,9 +893,8 @@ selectors.mkCategoryMappingsChanged = () => {
       const { response = emptySet } = categoryMappingData || emptyObj;
       const mappingData = response.find(op => op.operation === 'mappingData');
       const sessionMappedData = mappingData?.data?.mappingData;
-      const sessionMappings = deepClone(sessionMappedData);
 
-      return sessionMappings;
+      return sessionMappedData;
     },
     categoryMappingsGeneratesSelector,
     (_1, _2, flowId) => flowId,
@@ -943,19 +907,22 @@ selectors.mkCategoryMappingsChanged = () => {
       if (!sessionMappings) {
         return isMappingsEqual;
       }
+      if (!initData) {
+        return !isMappingsEqual;
+      }
+      const sessionMappingsCopy = deepClone(sessionMappings);
+
       mappingUtil.setCategoryMappingData(
         flowId,
-        sessionMappings,
+        sessionMappingsCopy,
         userMappings,
         deletedMappings,
         categoryRelationshipData
       );
 
-      if (!initData) {
-        return !isMappingsEqual;
-      }
+      mappingUtil.removeChildLookups(sessionMappingsCopy);
 
-      return !mappingUtil.isEqual(initData, sessionMappings);
+      return !mappingUtil.isEqual(initData, sessionMappingsCopy);
     });
 };
 

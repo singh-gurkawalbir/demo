@@ -27,7 +27,7 @@ export default function AuditLogTable({ resourceType, resourceId, filters, child
       resourceType,
       resourceId,
       filters,
-      {storeId: childId, take}
+      {childId, take}
     ));
 
   const actionProps = useMemo(() => ({ childId }), [childId]);

@@ -171,6 +171,7 @@ export default {
           'blobKeyPath',
           'fileAdvancedSettings',
           'deleteAfterImport',
+          'traceKeyTemplate',
           'fileApiIdentifier',
         ],
       },

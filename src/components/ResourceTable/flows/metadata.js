@@ -26,9 +26,8 @@ export default {
       {
         key: 'name',
         heading: 'Name',
-        // TODO: update 'storeId' references to 'childId'
         Value: ({rowData: r}) => {
-          const {parentId, storeId} = useGetTableContext();
+          const {parentId, childId} = useGetTableContext();
 
           return (
             <NameCell
@@ -38,7 +37,7 @@ export default {
               name={r.name}
               description={r.description}
               isFree={r.free}
-              childId={storeId}
+              childId={childId}
               actionProps={actionProps}
             />
           );
@@ -63,7 +62,7 @@ export default {
             flowId={r._id}
             integrationId={actionProps?.parentId || r._integrationId}
             isIntegrationApp={!!r._connectorId}
-            childId={actionProps?.storeId}
+            childId={actionProps?.childId}
             />
         ),
         orderBy: 'errors',
@@ -84,7 +83,7 @@ export default {
         key: 'mapping',
         heading: 'Mapping',
         align: 'center',
-        Value: ({rowData: r}) => <MappingCell flowId={r._id} childId={actionProps?.storeId} />,
+        Value: ({rowData: r}) => <MappingCell flowId={r._id} childId={actionProps?.childId} />,
       },
       {
         key: 'schedule',
@@ -122,7 +121,7 @@ export default {
             flowId={r._id}
             integrationId={actionProps?.parentId || r._integrationId}
             isIntegrationApp={!!r._connectorId}
-            storeId={actionProps?.storeId}
+            childId={actionProps?.childId}
             actionProps={actionProps}
             />
         ),
@@ -138,7 +137,7 @@ export default {
             name={r.name}
             isFree={r.free}
             disabled={r.disabled}
-            storeId={actionProps.storeId}
+            childId={actionProps.childId}
             actionProps={actionProps}
             />
         ),

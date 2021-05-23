@@ -96,9 +96,6 @@ export default {
         },
       ],
     },
-    traceKeyTemplate: {
-      fieldId: 'traceKeyTemplate',
-    },
     'delta.dateField': {
       fieldId: 'delta.dateField',
     },
@@ -148,7 +145,7 @@ export default {
           'dynamodb.onceExportSortKey',
         ],
       },
-      { collapsed: true, label: 'Advanced', fields: ['advancedSettings', 'traceKeyTemplate'] },
+      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },
 };

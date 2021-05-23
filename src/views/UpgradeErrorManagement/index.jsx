@@ -9,7 +9,7 @@ import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import useConfirmDialog from '../../components/ConfirmDialog';
-import { ERROR_MANAGEMENT_DOC_URL, USER_ACCESS_LEVELS } from '../../utils/constants';
+import { ERROR_MANAGEMENT_DOC_URL } from '../../utils/constants';
 import LoadResources from '../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
@@ -44,8 +44,7 @@ export default function UpgradeErrorManagement() {
   const { confirmDialog } = useConfirmDialog();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
   const isMigrationPageAccessible = useSelector(state => {
-    const userPermissions = selectors.userPermissions(state) || {};
-    const isAccountOwner = userPermissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
+    const isAccountOwner = selectors.isAccountOwner(state);
     const isUserInErrMgtTwoDotZero = selectors.isOwnerUserInErrMgtTwoDotZero(state);
 
     return isAccountOwner && !isUserInErrMgtTwoDotZero;

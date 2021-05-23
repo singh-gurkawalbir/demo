@@ -27,7 +27,7 @@ export default function Redirection({children}) {
     state => selectors.userPreferences(state).environment
   );
 
-  if (flow && !flow.sandbox === (environment === 'sandbox')) {
+  if (flow && !isNewId(flowId) && !flow.sandbox === (environment === 'sandbox')) {
     dispatch(actions.user.preferences.update({ environment: flow?.sandbox ? 'sandbox' : 'production' }));
   }
   const location = useLocation();

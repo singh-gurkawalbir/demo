@@ -11,7 +11,7 @@ import useGetNotificationOptions from '../../../../hooks/useGetNotificationOptio
 import DynaForm from '../../../DynaForm';
 import LoadResources from '../../../LoadResources';
 
-function ViewNotifications({ integrationId, storeId, onClose }) {
+function ViewNotifications({ integrationId, childId, onClose }) {
   const match = useRouteMatch();
   const [count, setCount] = useState(0);
   const { userEmail } = match.params;
@@ -21,7 +21,7 @@ function ViewNotifications({ integrationId, storeId, onClose }) {
       return selectors.subscribedNotifications(state, userEmail);
     }
 
-    return selectors.integrationNotificationResources(state, integrationId, { storeId, userEmail});
+    return selectors.integrationNotificationResources(state, integrationId, { childId, userEmail});
   },
   shallowEqual
   );
@@ -66,7 +66,7 @@ function ViewNotifications({ integrationId, storeId, onClose }) {
   );
 }
 
-export default function ViewNotificationsDrawer({ integrationId, storeId }) {
+export default function ViewNotificationsDrawer({ integrationId, childId }) {
   const match = useRouteMatch();
   const history = useHistory();
   const handleClose = useCallback(() => history.replace(`${match.url}`), [history, match]);
@@ -77,7 +77,7 @@ export default function ViewNotificationsDrawer({ integrationId, storeId }) {
       variant="temporary"
       width="medium">
       <DrawerHeader title="View notifications" />
-      <ViewNotifications integrationId={integrationId} storeId={storeId} onClose={handleClose} />
+      <ViewNotifications integrationId={integrationId} childId={childId} onClose={handleClose} />
     </RightDrawer>
   );
 }

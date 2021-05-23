@@ -13,24 +13,30 @@ import { generateNewId, isNewId, getDomainUrl } from '../../../utils/resource';
 import { hashCode } from '../../../utils/string';
 import PanelHeader from '../../../components/PanelHeader';
 import Help from '../../../components/Help';
+import Spinner from '../../../components/Spinner';
+import useSaveStatusIndicator from '../../../hooks/useSaveStatusIndicator';
 
 const useStyles = makeStyles(theme => ({
   ssoForm: {
     paddingLeft: theme.spacing(2),
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+    margin: theme.spacing(0, 2),
   },
   footer: {
-    marginTop: theme.spacing(2),
+    margin: theme.spacing(2),
   },
   helpTextButton: {
-    marginLeft: theme.spacing(1),
+    marginLeft: theme.spacing(0.5),
     height: theme.spacing(2),
     width: theme.spacing(2),
     padding: 0,
-    marginRight: theme.spacing(1),
+    marginRight: theme.spacing(2),
   },
   ssoSwitch: {
     display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(0, 2),
+    marginBottom: theme.spacing(0.5),
   },
   flexContainer: {
     display: 'flex',
@@ -40,22 +46,27 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     fontSize: '14px',
-    lineHeight: '20px',
+    height: theme.spacing(2),
   },
   urlDetails: {
     fontSize: '15px',
     lineHeight: '20px',
   },
-  panel: {
-    marginBottom: theme.spacing(2),
+  root: {
+    backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    overflowX: 'auto',
+    minHeight: 124,
   },
   ssoFormContainer: {
     '&>div>div:last-child': {
       marginBottom: 0,
     },
   },
-  securityPanelHeader: {
-    padding: theme.spacing(2, 0),
+  spinner: {
+    marginLeft: theme.spacing(0.5),
+    display: 'flex',
   },
 }));
 
@@ -65,9 +76,12 @@ export default function Security() {
   const oidcClient = useSelector(state => selectors.oidcSSOClient(state));
   const key = hashCode(oidcClient);
   const resourceId = oidcClient?._id || generateNewId();
+  const isEnableSSOSwitchInProgress = useSelector(state => selectors.commStatusPerPath(state, `/ssoclients/${resourceId}`, 'PATCH') === 'loading');
   const [isSSOEnabled, setIsSSOEnabled] = useState(!!oidcClient?.disabled);
   const handleEnableSSO = useCallback(
     () => {
+      if (isEnableSSOSwitchInProgress) return;
+
       if (isNewId(resourceId)) {
         return setIsSSOEnabled(prevValue => !prevValue);
       }
@@ -88,7 +102,7 @@ export default function Security() {
 
       dispatch(actions.resource.patch('ssoclients', resourceId, patchSet));
     },
-    [dispatch, oidcClient, resourceId],
+    [dispatch, oidcClient, resourceId, isEnableSSOSwitchInProgress],
   );
 
   useEffect(() => {
@@ -184,6 +198,14 @@ export default function Security() {
     dispatch(actions.resource.commitStaged('ssoclients', resourceId, 'value'));
   }, [dispatch, resourceId]);
 
+  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
+    {
+      path: isNewId(resourceId) ? '/ssoclients' : `/ssoclients/${resourceId}`,
+      method: isNewId(resourceId) ? 'post' : 'put',
+      onSave: handleSubmit,
+    }
+  );
+
   let domainURL = getDomainUrl();
 
   if (domainURL.includes('localhost')) {
@@ -198,15 +220,15 @@ export default function Security() {
   return (
     <>
       <LoadResources required resources="ssoclients">
-        <div className={classes.panel}>
-          <PanelHeader className={classes.securityPanelHeader} title="Single Sign-on(SSO)" infoText={infoTextSSO} />
+        <div className={classes.root}>
+          <PanelHeader title="Single Sign-on(SSO)" infoText={infoTextSSO} />
           <div className={classes.ssoSwitch}>
             <Typography variant="body2" className={classes.content}> Enable OIDC based SSO </Typography>
             <Help title="Enable OIDC based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
             <CeligoSwitch
               onChange={handleEnableSSO}
-              checked={isSSOEnabled}
-      />
+              checked={isSSOEnabled} />
+            {isEnableSSOSwitchInProgress && <Spinner size="small" className={classes.spinner} />}
           </div>
           {
           isSSOEnabled && (
@@ -231,8 +253,9 @@ export default function Security() {
               <div className={classes.footer}>
                 <DynaSubmit
                   formKey={formKey}
-                  onClick={handleSubmit}>
-                  Save
+                  disabled={disableSave}
+                  onClick={submitHandler()}>
+                  {defaultLabels.saveLabel}
                 </DynaSubmit>
               </div>
             </>
