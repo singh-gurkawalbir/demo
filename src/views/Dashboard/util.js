@@ -1,6 +1,5 @@
 import { sortBy } from 'lodash';
 import { TILE_STATUS } from '../../utils/constants';
-import {addEventListenerForSidebar, removeEventListenerForSidebar} from '../../utils/dndScrollbarHelper';
 
 export function sortTiles(tiles = [], tilesOrder = []) {
   let maxIndex = Math.max(tiles.length, tilesOrder.length);
