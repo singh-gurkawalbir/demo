@@ -203,7 +203,7 @@ export default function ImportMapping(props) {
                   id={`fieldMappingExtract-${mapping.key}`}
                   labelName="name"
                   valueName="id"
-                  value={mapping.extract || mapping.hardCodedValueTmp}
+                  value={mapping.extract || (mapping.hardCodedValue ? `"${mapping.hardCodedValue}"` : undefined)}
                   options={extractFields}
                   disabled={mapping.isNotEditable || disabled}
                   components={{ ItemSeperator: () => null }}
