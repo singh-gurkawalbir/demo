@@ -1,6 +1,4 @@
-/* global describe, expect, beforeAll, test */
-import each from 'jest-each';
-import moment from 'moment';
+/* global describe, expect, test */
 import reducer, { selectors } from '.';
 import actions from '../actions';
 
