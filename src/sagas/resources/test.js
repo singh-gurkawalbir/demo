@@ -463,7 +463,7 @@ describe('downloadFile saga', () => {
       .returns(true)
       .run();
 
-    expect(window.open.mock.calls.length).toBe(0);
+    expect(window.open).not.toBeCalled();
   });
 });
 
@@ -1497,7 +1497,7 @@ describe('downloadReport saga', () => {
       })
       .run();
 
-    expect(window.open.mock.calls.length).toBe(0);
+    expect(window.open).not.toBeCalled();
   });
 });
 

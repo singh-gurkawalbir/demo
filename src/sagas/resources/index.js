@@ -34,11 +34,13 @@ export function* isDataLoaderFlow(flow) {
   const data = yield select(selectors.resourceData, 'exports', exportId);
   const exp = data.merged;
 
-  if (exp && exp.type === 'simple') {
+  if (exp?.type === 'simple') {
     // console.log('we have a data loader flow!');
 
     return true;
   }
+
+  return false;
 }
 
 export function* resourceConflictDetermination({
