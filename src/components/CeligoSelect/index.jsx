@@ -16,10 +16,6 @@ const useStyles = makeStyles(theme => ({
     borderColor: `${theme.palette.secondary.lightest} !important`,
     borderRadius: 0,
   },
-  selectMenu: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
   select: {
     display: 'flex !important',
     flexWrap: 'nowrap',

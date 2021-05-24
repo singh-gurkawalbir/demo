@@ -10,6 +10,7 @@ import { selectors } from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
 import SecurityIcon from '../../components/icons/SecurityIcon';
 import { getDomain } from '../../utils/resource';
+import { AUTH_FAILURE_MESSAGE } from '../../utils/constants';
 import getRoutePath from '../../utils/routePaths';
 import Spinner from '../../components/Spinner';
 
@@ -181,7 +182,7 @@ export default function SignIn({dialogOpen}) {
   const attemptedRoute =
       location && location.state && location.state.attemptedRoute;
 
-  if (error) {
+  if (error && error === AUTH_FAILURE_MESSAGE) {
     error = 'Sign in failed. Please try again.';
   } else if (window.signInError) {
     error = window.signInError;

@@ -183,10 +183,10 @@ export function* requestErrorHttpDocument({ flowId, resourceId, reqAndResKey }) 
   }
 }
 
-export function* downloadBlobDocument({ flowId, resourceId, s3BlobKey }) {
+export function* downloadBlobDocument({ flowId, resourceId, reqAndResKey }) {
   try {
     const response = yield call(apiCallWithRetry, {
-      path: `/flows/${flowId}/${resourceId}/${s3BlobKey}/signedURL`,
+      path: `/flows/${flowId}/${resourceId}/requests/${reqAndResKey}/files/signedURL`,
       opts: {
         method: 'GET',
       },

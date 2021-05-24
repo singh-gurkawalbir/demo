@@ -15,6 +15,14 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     marginLeft: theme.spacing(1),
   },
+  betaLabel: {
+    border: '1px solid',
+    borderColor: theme.palette.common.white,
+    padding: '2px 4px',
+    fontSize: 12,
+    fontWeight: 700,
+    marginLeft: 10,
+  },
 }));
 
 export default function AutoMapperButton({disabled}) {
@@ -35,8 +43,12 @@ export default function AutoMapperButton({disabled}) {
     return { isFetchingAutoSuggestions: status === 'requested', failMsg, failSeverity};
   }, shallowEqual);
 
-  const handleButtonClick = useCallback(() =>
-    dispatch(actions.mapping.autoMapper.request()), [dispatch]);
+  const handleButtonClick = useCallback(() => {
+    dispatch(actions.mapping.autoMapper.request());
+    dispatch(
+      actions.analytics.gainsight.trackEvent('AUTO_MAP_BUTTON_CLICKED')
+    );
+  }, [dispatch]);
 
   useEffect(() => {
     if (failMsg) {
@@ -53,16 +65,16 @@ export default function AutoMapperButton({disabled}) {
       <Button
         color="primary"
         variant="outlined"
-        data-test="autoMapper"
+        data-test="auto-map"
         disabled={disabled || isFetchingAutoSuggestions}
         onClick={handleButtonClick}
       >
-        {(isFetchingAutoSuggestions) ? (
-          <>
-            <Spinner size="small" className={classes.spinner} />
-            Auto-mapping fields
-          </>
-        ) : 'Auto-map fields'}
+        {isFetchingAutoSuggestions &&
+          (<Spinner size="small" className={classes.spinner} />)}
+        Auto-map fields
+        <span className={classes.betaLabel}>
+          BETA
+        </span>
       </Button>
 
       <Help title="Auto-map fields" helpKey="autoMapFields" className={classes.helpTextButton} />

@@ -338,7 +338,7 @@ describe('Notifications region selector testcases', () => {
     test('should return notifications if connector integrationId is passed', () => {
       expect(selectors.integrationNotificationResources(state, 'i2', {
         userEmail: 'u1@abc.com',
-        storeId: 's1',
+        childId: 's1',
       })).toEqual({
         connectionValues: [
           'c4',

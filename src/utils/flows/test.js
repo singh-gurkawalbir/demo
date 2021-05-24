@@ -1811,11 +1811,11 @@ describe('getIAResources', () => {
   };
   const options3 = {
     integrationId: 'i3',
-    storeId: 'c1',
+    childId: 'c1',
   };
   const options4 = {
     integrationId: 'i4',
-    storeId: 'c4',
+    childId: 'c4',
   };
 
   test('should return correct object for a DIY Integration', () => {

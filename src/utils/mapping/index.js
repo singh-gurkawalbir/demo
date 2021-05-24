@@ -16,7 +16,7 @@ import { emptyList, emptyObject } from '../constants';
 
 const isCsvOrXlsxResource = resource => {
   const { file } = resource;
-  const resourceFileType = file && file.type;
+  const resourceFileType = file?.type;
 
   if (isFileAdaptor(resource) && (resourceFileType === 'xlsx' || resourceFileType === 'csv')) { return true; }
 
@@ -80,7 +80,7 @@ const setMappingData = (
     const key = `${flowId}-${category.id}-${depth}`;
     let allChildrenDeleted = false;
 
-    if (category.children && category.children.length) {
+    if (category.children?.length) {
       allChildrenDeleted = category.children.every(child =>
         deleted[depth + 1]?.includes(child.id)
       );
@@ -106,10 +106,10 @@ const setMappingData = (
           })
         );
 
-      if (mappings[key].lookups && mappings[key].lookups.length) {
+      if (mappings[key].lookups?.length) {
         const allLookups = [...mappings[key]?.lookups || []];
 
-        if (category.children && category.children.length) {
+        if (category.children?.length) {
           category.children.forEach(child => {
             const validLookups = mappings[`${flowId}-${child.id}-${depth + 1}`]?.mappings?.map(mapping => mapping.lookupName).filter(Boolean);
 
@@ -133,7 +133,7 @@ const setMappingData = (
       }
     }
 
-    if (category.children && category.children.length) {
+    if (category.children?.length) {
       setMappingData(
         flowId,
         category.children,
@@ -156,16 +156,14 @@ const setVariationMappingData = (
 ) => {
   recordMappings.forEach(mapping => {
     const relation =
-      relationshipData &&
-      relationshipData.find(
+      relationshipData?.find(
         rel => rel.id === mapping.id && rel.depth === (options.depth || 0)
       );
 
     if (!relation) return;
 
     if (
-      relation.variation_attributes &&
-      !!relation.variation_attributes.length
+      relation.variation_attributes?.length
     ) {
       const key = `${flowId}-${mapping.id}-variationAttributes`;
 
@@ -189,15 +187,14 @@ const setVariationMappingData = (
             })
           );
 
-        if (mappings[key].lookups && mappings[key].lookups.length) {
+        if (mappings[key].lookups?.length) {
           // eslint-disable-next-line no-param-reassign
           mapping.lookups = mappings[key].lookups;
         }
       }
     } else {
       const variationTheme =
-        relation.variation_themes &&
-        relation.variation_themes.find(theme => theme.id === 'variation_theme');
+        relation.variation_themes?.find(theme => theme.id === 'variation_theme');
 
       if (variationTheme) {
         variationTheme.variation_attributes.forEach(vm => {
@@ -242,13 +239,13 @@ const setVariationMappingData = (
       }
     }
 
-    if (relation.children && relation.children.length) {
+    if (relation.children?.length) {
       const mappingKeys = Object.keys(mappings);
 
       relation.children.forEach(child => {
         const childExists = mapping.children.find(c => c.id === child.id);
         const isVariationAttributes =
-          child.variation_attributes && !!child.variation_attributes.length;
+          !!child.variation_attributes?.length;
 
         if (!childExists) {
           const mappingFound = mappingKeys.some(key =>
@@ -554,7 +551,7 @@ export default {
     if ('hardCodedValue' in value) {
       return 'hardCoded';
     }
-    if (value.extract && value.extract.indexOf('{{') !== -1) {
+    if (value.extract?.indexOf('{{') !== -1) {
       return 'multifield';
     }
 
@@ -606,7 +603,7 @@ export default {
     }
   },
   getDefaultExpression: value => {
-    if (value.extract && value.extract.indexOf('{{') !== -1) {
+    if (value.extract?.indexOf('{{') !== -1) {
       return value.extract;
     }
     if (value.extract) {
@@ -624,11 +621,7 @@ export default {
     const mappingData = response.find(sec => sec.operation === 'mappingData');
 
     if (
-      mappingData &&
-      mappingData.data &&
-      mappingData.data.mappingData &&
-      mappingData.data.mappingData.variationMappings &&
-      mappingData.data.mappingData.variationMappings.recordMappings
+      mappingData?.data?.mappingData?.variationMappings?.recordMappings
     ) {
       const { recordMappings } = mappingData.data.mappingData.variationMappings;
       const category = recordMappings.find(
@@ -690,9 +683,7 @@ export default {
       sec => sec.operation === 'generatesMetaData'
     );
     const categoryRelationshipData =
-      generatesMetaData &&
-      generatesMetaData.data &&
-      generatesMetaData.data.categoryRelationshipData;
+      generatesMetaData?.data?.categoryRelationshipData;
     const mappingData = response.find(sec => sec.operation === 'mappingData');
     let childCategoryDetails;
     let grandchildCategoryDetails;
@@ -700,16 +691,15 @@ export default {
       rel => rel.id === category
     );
 
-    if (childCategory && categoryDetails.children) {
+    if (categoryDetails?.children) {
       childCategoryDetails = categoryDetails.children.find(
         child => child.id === childCategory
       );
     }
 
     if (
-      childCategoryDetails &&
       grandchildCategory &&
-      childCategoryDetails.children
+      childCategoryDetails?.children
     ) {
       grandchildCategoryDetails = childCategoryDetails.children.find(
         child => child.id === grandchildCategory
@@ -717,10 +707,7 @@ export default {
     }
 
     if (
-      mappingData.data &&
-      mappingData.data.mappingData &&
-      mappingData.data.mappingData.basicMappings &&
-      mappingData.data.mappingData.basicMappings.recordMappings
+      mappingData.data?.mappingData?.basicMappings?.recordMappings
     ) {
       const { recordMappings } = mappingData.data.mappingData.basicMappings;
 
@@ -744,7 +731,7 @@ export default {
       if (!children.find(child => child.id === childCategory)) {
         children.push({
           id: childCategory,
-          name: childCategoryDetails.name,
+          name: childCategoryDetails?.name,
           children: [],
           fieldMappings: [],
         });
@@ -760,7 +747,7 @@ export default {
       if (!grandChildren.find(child => child.id === grandchildCategory)) {
         grandChildren.push({
           id: grandchildCategory,
-          name: grandchildCategoryDetails.name,
+          name: grandchildCategoryDetails?.name,
           children: [],
           fieldMappings: [],
         });
@@ -843,13 +830,13 @@ export default {
         let toReturn;
 
         if (conn) {
-          if (conn.rdbms && conn.rdbms.type === 'mysql') {
+          if (conn.rdbms?.type === 'mysql') {
             toReturn = 'MySQL';
-          } else if (conn.rdbms && conn.rdbms.type === 'mssql') {
+          } else if (conn.rdbms?.type === 'mssql') {
             toReturn = 'Microsoft SQL';
-          } else if (conn.rdbms && conn.rdbms.type === 'oracle') {
+          } else if (conn.rdbms?.type === 'oracle') {
             toReturn = 'Oracle DB (SQL)';
-          } else if (conn.rdbms && conn.rdbms.type === 'postgresql') {
+          } else if (conn.rdbms?.type === 'postgresql') {
             toReturn = 'PostgreSQL';
           } else {
             toReturn = 'Snowflake';
@@ -1093,16 +1080,14 @@ export default {
     let tempFm;
     const toReturn = [];
 
-    mappings.fields &&
-      mappings.fields.forEach(fm => {
+      mappings.fields?.forEach(fm => {
         const _fm = { ...fm };
 
         if (isGroupedSampleData && isCsvOrXlsxResource(resource) && isNetSuiteBatchExport(exportResource)) _fm.useFirstRow = true;
         _fm.extract = unwrapTextForSpecialChars(_fm.extract);
         toReturn.push(_fm);
       });
-    mappings.lists &&
-      mappings.lists.forEach(lm => {
+      mappings.lists?.forEach(lm => {
         lm.fields.forEach(fm => {
           tempFm = { ...fm };
           tempFm.generate = lm.generate
@@ -1110,7 +1095,7 @@ export default {
             : tempFm.generate;
 
           if (useFirstRowSupported && isGroupedSampleData) {
-            if (tempFm.extract && tempFm.extract && tempFm.extract.indexOf('*.') !== 0) {
+            if (tempFm.extract?.indexOf('*.') !== 0) {
               tempFm.useFirstRow = true;
             }
           }
@@ -1120,16 +1105,16 @@ export default {
             tempFm.useIterativeRow = true;
           }
           // remove *. if present after setting useFirstRow
-          if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) { tempFm.extract = tempFm.extract.substr('*.'.length); }
+          if (tempFm.extract?.indexOf('*.') === 0) { tempFm.extract = tempFm.extract.substr('*.'.length); }
 
           tempFm.extract = unwrapTextForSpecialChars(tempFm.extract);
           toReturn.push(tempFm);
         });
       });
-    // removing duplicate items if present
-    const _toReturn = uniqBy(toReturn, item => item.generate);
+      // removing duplicate items if present
+      const _toReturn = uniqBy(toReturn, item => item.generate);
 
-    return _toReturn;
+      return _toReturn;
   },
   generateMappingFieldsAndList: ({
     mappings = [],
@@ -1153,7 +1138,7 @@ export default {
       generateParts = mapping.generate ? mapping.generate.split('[*].') : null;
       let list;
 
-      if (generateParts && generateParts.length > 1) {
+      if (generateParts?.length > 1) {
         mapping.generate = generateParts.pop();
         generateListPath = generateParts.join('.');
 
@@ -1170,8 +1155,7 @@ export default {
         if (
           ((useFirstRowSupported && isGroupedSampleData) || mapping.useIterativeRow) &&
           !mapping.useFirstRow &&
-          mapping.extract &&
-          mapping.extract.indexOf('[*].') === -1 &&
+          mapping.extract?.indexOf('[*].') === -1 &&
           !handlebarRegex.test(mapping.extract)
         ) {
           mapping.extract = `*.${mapping.extract}`;
@@ -1181,8 +1165,7 @@ export default {
       } else if (isCsvOrXlsxResource(importResource) && (isGroupedSampleData || mapping.useIterativeRow) && isNetSuiteBatchExport(exportResource)) {
         if (
           !mapping.useFirstRow &&
-          mapping.extract &&
-          mapping.extract.indexOf('[*].') === -1 &&
+          mapping.extract?.indexOf('[*].') === -1 &&
           !handlebarRegex.test(mapping.extract)
         ) {
           mapping.extract = `*.${mapping.extract}`;
@@ -1204,8 +1187,7 @@ export default {
       }
 
       if (
-        mapping.extract &&
-        mapping.extract.indexOf('*.') === 0 &&
+        mapping.extract?.indexOf('*.') === 0 &&
         useFirstRowSupported &&
         !mapping.useFirstRow
       ) {
@@ -1266,8 +1248,7 @@ export default {
         }
 
         formattedGenerateFields =
-          formattedSampleData &&
-          formattedSampleData.map(sd => ({ ...sd, name: sd.id }));
+          formattedSampleData?.map(sd => ({ ...sd, name: sd.id }));
       }
     }
 
@@ -1281,8 +1262,7 @@ export default {
 
         if (fld.indexOf('[*].') > 0) {
           fldContainer =
-            mappings.lists &&
-            mappings.lists.find(l => l.generate === fld.split('[*].')[0]);
+            mappings.lists?.find(l => l.generate === fld.split('[*].')[0]);
 
           if (!fldContainer) {
             fldContainer = {
@@ -1299,9 +1279,7 @@ export default {
         }
 
         let field =
-          fldContainer &&
-          fldContainer.fields &&
-          fldContainer.fields.find(l => l.generate === fld);
+          fldContainer?.fields?.find(l => l.generate === fld);
 
         if (!field) {
           field = {
@@ -1324,14 +1302,12 @@ export default {
   ) => {
     const connectorMappingMetadata = mappingMetadata[connectorExternalId];
 
-    connectorMappingMetadata &&
-      connectorMappingMetadata.forEach(meta => {
+      connectorMappingMetadata?.forEach(meta => {
         let mappingContainer;
 
         if (meta.generateList) {
           mappingContainer =
-            mappings.lists &&
-            mappings.lists.find(list => list.generate === meta.generateList);
+            mappings.lists?.find(list => list.generate === meta.generateList);
         } else {
           mappingContainer = mappings;
         }
@@ -1356,7 +1332,7 @@ export default {
         }
       });
 
-    return mappings;
+      return mappings;
   },
 
   validateMappings: (mappings, lookups) => {
@@ -1431,7 +1407,7 @@ export default {
     }
 
     return extractPaths
-      .filter(f => f.id && f.id.indexOf(`${jsonPath}[*].`) === 0)
+      .filter(f => f.id?.indexOf(`${jsonPath}[*].`) === 0)
       .map(f => ({
         ...f,
         id: f.id.replace(`${jsonPath}[*].`, ''),

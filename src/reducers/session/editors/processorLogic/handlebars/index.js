@@ -30,6 +30,9 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
   // lookup fields don't support toggle yet
   if (fieldId?.startsWith('lookup') || fieldId === '_body' || fieldId === '_relativeURI') return false;
 
+  // traceKeyTemplate field doesn't support toggle.
+  if (fieldId === 'traceKeyTemplate') return false;
+
   // for below fields,
   // the whole adaptor is not yet supported (except for native REST)
   // TODO: we will not need all these conditions once all fields/adaptors support AFE2

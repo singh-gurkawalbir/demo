@@ -75,7 +75,7 @@ const useStyles = makeStyles(theme => ({
   filterTypeIcon: {
     width: 9,
     height: 9,
-    marginRight: 6,
+    marginRight: theme.spacing(1),
   },
   mappingIcon: {
     color: theme.palette.secondary.lightest,

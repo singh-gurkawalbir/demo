@@ -319,7 +319,7 @@ export function fieldMeta({ resource, assistantData }) {
         {
           collapsed: true,
           label: 'Advanced',
-          fields: ['pageSize', 'skipRetries', 'apiIdentifier', 'traceKeyTemplate'],
+          fields: ['pageSize', 'skipRetries', 'traceKeyTemplate', 'apiIdentifier'],
         },
       ],
     },

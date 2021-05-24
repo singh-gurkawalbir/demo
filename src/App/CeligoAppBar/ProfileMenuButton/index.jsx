@@ -123,6 +123,7 @@ function ProfileMenuButton() {
         data-test="profileMenu"
         size="small"
         className={classes.avatarButton}
+        aria-label="avatar"
         aria-owns={open ? 'profileOptions' : null}
         aria-haspopup="true"
         onClick={handleMenu}
