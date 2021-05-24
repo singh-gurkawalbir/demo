@@ -3,7 +3,7 @@ import produce from 'immer';
 import formMeta from '../../definitions';
 import { isJsonString } from '../../../utils/string';
 import { RDBMS_TYPES, REST_ASSISTANTS } from '../../../utils/constants';
-import { getResourceSubType } from '../../../utils/resource';
+import { getResourceSubType, isNewId } from '../../../utils/resource';
 
 const getAllOptionsHandlerSubForms = (
   fieldMap,
@@ -396,7 +396,7 @@ const getResourceFormAssets = ({
   const resourceTypesWithSettings = ['exports', 'imports', 'connections'];
 
   if (
-    !isNew &&
+    !isNewId(resource?._id) &&
       resourceTypesWithSettings.includes(resourceType) &&
       !ssLinkedConnectionId
   ) {

@@ -9,34 +9,17 @@ import RightDrawer from '../../../components/drawer/Right';
 import ActionGroup from '../../../components/ActionGroup';
 import MockAppBar from '../../mocks/AppBar';
 import MockPageBar from '../../mocks/PageBar';
+import Template from './Template';
 
 <Meta 
   title="Right Drawer/Drawer/Height" 
   component={RightDrawer}
 />
 
-<Story name="Tall">
-  <MockAppBar />
-  <MockPageBar />
-  <MemoryRouter initialEntries={["drawer"]}>
-    <RightDrawer path="drawer" height="tall" onClose={action('close-drawer')}>
-      <DrawerHeader title="Tall" />
-      <DrawerContent>
-        This drawer has its width set to "tall".
-      </DrawerContent>
-    </RightDrawer>
-  </MemoryRouter>
+<Story name="Tall" args={{ height: 'tall' }}>
+  {Template.bind({})}
 </Story>
 
-<Story name="Short">
-  <MockAppBar />
-  <MockPageBar />
-  <MemoryRouter initialEntries={["drawer"]}>
-    <RightDrawer path="drawer" height="short" onClose={action('close-drawer')}>
-      <DrawerHeader title="Short" />
-      <DrawerContent>
-        This drawer has its width set to "short".
-      </DrawerContent>
-    </RightDrawer>
-  </MemoryRouter>
+<Story name="Short" args={{ height: 'short' }}>
+  {Template.bind({})}
 </Story>

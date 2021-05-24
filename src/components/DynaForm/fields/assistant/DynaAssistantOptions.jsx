@@ -183,7 +183,13 @@ function DynaAssistantOptions(props) {
       if (id === 'assistantMetadata.exportType') {
         const newParams = {};
 
-        if (value === 'all') {
+        if (value === 'delta') {
+          const anyParamValuesSet = queryParamsMeta?.fields?.some(field => !field.readOnly && Object.prototype.hasOwnProperty.call(queryParams, field.id) && queryParams[field.id] !== field.defaultValue);
+
+          if (!anyParamValuesSet) {
+            allTouchedFields.push({id: 'assistantMetadata.queryParams', value: {...queryParams, ...queryParamsMeta?.defaultValuesForDeltaExport}});
+          }
+        } else {
           Object.keys(queryParams || emptyObject).forEach(param => {
             // When export type is changed to all, delete query params with delta attributes in them
             if (!queryParams[param]?.includes?.('lastExportDateTime')) {
@@ -192,12 +198,6 @@ function DynaAssistantOptions(props) {
           });
 
           allTouchedFields.push({id: 'assistantMetadata.queryParams', value: newParams});
-        } else if (value === 'delta') {
-          const anyParamValuesSet = queryParamsMeta?.fields?.some(field => !field.readOnly && Object.prototype.hasOwnProperty.call(queryParams, field.id) && queryParams[field.id] !== field.defaultValue);
-
-          if (!anyParamValuesSet) {
-            allTouchedFields.push({id: 'assistantMetadata.queryParams', value: {...queryParams, ...queryParamsMeta?.defaultValuesForDeltaExport}});
-          }
         }
       }
       dispatch(

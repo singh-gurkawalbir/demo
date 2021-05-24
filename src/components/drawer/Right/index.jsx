@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import React, { useCallback } from 'react';
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import {
   useLocation,
@@ -64,11 +65,11 @@ const useStyles = makeStyles(theme => ({
 
 export default function RightDrawer({
   path,
-  width = 'default',
-  height = 'short',
+  width,
+  height,
   children,
   onClose,
-  variant = 'persistent',
+  variant,
   ...muiDrawerProps
 }) {
   const classes = useStyles();
@@ -133,3 +134,14 @@ export default function RightDrawer({
     </Switch>
   );
 }
+
+RightDrawer.propTypes = {
+  height: PropTypes.oneOf(['tall', 'short']),
+  width: PropTypes.oneOf(['small', 'medium', 'large', 'default', 'xl', 'full']),
+  variant: PropTypes.oneOf(['permanent', 'temporary']),
+};
+RightDrawer.defaultProps = {
+  width: 'default',
+  height: 'short',
+  variant: 'permanent',
+};
