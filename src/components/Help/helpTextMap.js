@@ -576,9 +576,9 @@ export default {
     'Please enter Client ID of your Walmart Account.',
   'walmart.connection.http.encrypted.clientSecret':
     'Please enter Client Secret of your Walmart Account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Client secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
-  'walmartcanada.connection.http.unencrypted.consumerId': 'Enter the Consumer ID of Walmart Canda account.<br> <b>Steps to get the Consumer ID:</b> 1. Log in to Walmart Canda seller account > click on settings > Select “Consumer IDs & Private Keys” to get the Consumer ID.<br> 2. If Consumer ID is not generated already, you will have an option to generate a new.',
+  'walmartcanada.connection.http.unencrypted.consumerId': 'Enter the Consumer ID of Walmart Canada account.<br> <b>Steps to get the Consumer ID:</b> <br>1. Log in to Walmart Canada seller account > click on settings > Select “Consumer IDs & Private Keys” to get the Consumer ID.<br> 2. If Consumer ID is not generated already, you will have an option to generate a new one.',
   'walmartcanada.connection.http.unencrypted.localeId': 'Select the geographic location of your Walmart Canada account.',
-  'walmartcanada.connection.http.encrypted.consumerKey': 'Enter the Private Key of Walmart Canda account. <br> <b>Steps to get the private key:</b><br> 1.Log in to Walmart Canda seller account > click on settings > Select “Consumer IDs & Private Keys” to get the Private key.<br>2. If Private key is not generated already, you will have an option to generate a new.',
+  'walmartcanada.connection.http.encrypted.consumerKey': 'Enter the Private key of Walmart Canada account. <br> <b>Steps to get the private key:</b><br> 1.Log in to Walmart Canada seller account > click on settings > Select “Consumer IDs & Private Keys” to get the Private key.<br>2. If Private key is not generated already, you will have an option to generate a new one.',
   'logisense.connection.environment':
     'Please select the environment of your LogiSense account.',
   'logisense.connection.storeURL':
@@ -628,11 +628,9 @@ export default {
   'checkout.connection.environment': 'Please select the environment of your Checkout.com account.',
   'checkout.connection.http.auth.token.token': 'Please enter the API key of Checkout.com account here.Login to your Sandbox/Live account, under Settings > Channels, you will find your API keys.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'walmartmexico.connection.environment':
-    'Please select the environment of your Walmart account here.',
-  'walmartmexico.connection.http.unencrypted.clientId':
-    'Please enter Client ID of your Walmart Account.<br><b>Steps to get Client ID and Client Secret:</b> <br> 1. Enter into the Walmart Mexico developer web page with the following URL (<a href="https://developer.walmart.com/mx/">https://developer.walmart.com/mx/</a>).<br> 2. On the top right, click on MyAccounts <b>></b> Select the Login type as Marketplace from popup page <b>></b> Enter the Email ID and Password of the Walmart Mexico developer account on the login page.<br> 3. On the dashboard, we will get the <b>Client ID and Client Secret</b>, if not created, we have an option to generate new keys.',
-  'walmartmexico.connection.http.encrypted.clientSecret':
-    'Please enter Client Secret of your Walmart Account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your client secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.<br> <b>NOTE:</b> For steps to get Client Secret please refer to the help text of the Client ID field.',
+    'Please select the environment of your Walmart Mexico account here.',
+  'walmartmexico.connection.http.unencrypted.clientId': 'Enter the client ID, which you can find at the Walmart Mexico <a href="https://developer.walmart.com/mx/">Developer portal</a>: <br> 1. Click My Account at the top right.<br> 2. Choose the account type Marketplace, and sign in with your email address & password. <br> 3. Copy the client ID and client secret shown on the dashboard. (If none exists yet or you want to change the API credentials, click to generate a new pair.)',
+  'walmartmexico.connection.http.encrypted.clientSecret': 'Enter the client secret, which you can find at the Walmart Mexico <a href="https://developer.walmart.com/mx/">Developer portal</a>: <br> 1. Click My Account at the top right.<br> 2. Choose the account type Marketplace, and sign in with your email address & password. <br> 3. Copy the client ID and client secret shown on the dashboard. (If none exists yet or you want to change the API credentials, click to generate a new pair.)',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
