@@ -29,7 +29,7 @@ import {
   fetchUIVersion,
 } from '.';
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
-import { ACCOUNT_IDS } from '../../utils/constants';
+import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE } from '../../utils/constants';
 
 describe('initialize all app relevant resources sagas', () => {
   describe('retrievingOrgDetails sagas', () => {
@@ -302,11 +302,40 @@ describe('auth saga flow', () => {
       })
     );
     expect(saga.throw().value).toEqual(
-      put(actions.auth.failure('Authentication Failure'))
+      put(actions.auth.failure(AUTH_FAILURE_MESSAGE))
     );
     const effect = saga.next().value;
 
     expect(effect).toEqual(put(actions.user.profile.delete()));
+  });
+  test('should dispatch an auth failure action when authentication fails with a message from sign in api', () => {
+    const email = 'someUserEmail';
+    const password = 'someUserPassword';
+    const _csrf = 'someCSRF';
+    const SIGN_IN_ERROR_MESSAGE = 'Sign in failed. Sign in via SSO is required for this user.';
+    const signInErrorResponse = { message: JSON.stringify({ errors: [{ code: '!user', message: SIGN_IN_ERROR_MESSAGE}]})};
+    const saga = auth({ email, password });
+    const getCSRFBackend = saga.next().value;
+
+    expect(getCSRFBackend).toEqual(call(getCSRFTokenBackend));
+
+    const callEffect = saga.next(_csrf).value;
+    const payload = {
+      ...authParams.opts,
+      body: { email, password, _csrf },
+    };
+
+    expect(callEffect).toEqual(
+      call(apiCallWithRetry, {
+        path: authParams.path,
+        opts: payload,
+        message: authMessage,
+        hidden: true,
+      })
+    );
+    expect(saga.throw(signInErrorResponse).value).toEqual(
+      put(actions.auth.failure(SIGN_IN_ERROR_MESSAGE))
+    );
   });
 
   test('should remount the app when the session has expired and the user has been successfully authenticated', () => {

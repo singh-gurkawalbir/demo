@@ -78,7 +78,7 @@ export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, su
   );
 };
 
-export const isParentViewSelected = (integration, storeId) => !!(integration && integration.settings && integration.settings.supportsMultiStore && !storeId);
+export const isParentViewSelected = (integration, childId) => !!(integration?.settings?.supportsMultiStore && !childId);
 
 export const getTopLevelTabs = (options = {}) => {
   const {

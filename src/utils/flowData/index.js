@@ -365,7 +365,7 @@ export const getResourceStageUpdatedFromPatch = (patchSet = []) => {
     if (patchSetValue.postMap) return 'postMap';
   }
   if (patchSetPath === '/sampleResponseData') return 'sampleResponse';
-  if (patchSetPath === '/mapping') return 'importMapping';
+  if (patchSetPath?.includes('/mapping')) return 'importMapping';
 };
 
 /**

@@ -576,9 +576,9 @@ export default {
     'Please enter Client ID of your Walmart Account.',
   'walmart.connection.http.encrypted.clientSecret':
     'Please enter Client Secret of your Walmart Account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Client secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
-  'walmartcanada.connection.http.unencrypted.consumerId': 'Enter the Consumer ID of Walmart Canda account.<br> <b>Steps to get the Consumer ID:</b> 1. Log in to Walmart Canda seller account > click on settings > Select “Consumer IDs & Private Keys” to get the Consumer ID.<br> 2. If Consumer ID is not generated already, you will have an option to generate a new.',
+  'walmartcanada.connection.http.unencrypted.consumerId': 'Enter the Consumer ID of Walmart Canada account.<br> <b>Steps to get the Consumer ID:</b> <br>1. Log in to Walmart Canada seller account > click on settings > Select “Consumer IDs & Private Keys” to get the Consumer ID.<br> 2. If Consumer ID is not generated already, you will have an option to generate a new one.',
   'walmartcanada.connection.http.unencrypted.localeId': 'Select the geographic location of your Walmart Canada account.',
-  'walmartcanada.connection.http.encrypted.consumerKey': 'Enter the Private Key of Walmart Canda account. <br> <b>Steps to get the private key:</b><br> 1.Log in to Walmart Canda seller account > click on settings > Select “Consumer IDs & Private Keys” to get the Private key.<br>2. If Private key is not generated already, you will have an option to generate a new.',
+  'walmartcanada.connection.http.encrypted.consumerKey': 'Enter the Private key of Walmart Canada account. <br> <b>Steps to get the private key:</b><br> 1.Log in to Walmart Canada seller account > click on settings > Select “Consumer IDs & Private Keys” to get the Private key.<br>2. If Private key is not generated already, you will have an option to generate a new one.',
   'logisense.connection.environment':
     'Please select the environment of your LogiSense account.',
   'logisense.connection.storeURL':
@@ -628,11 +628,9 @@ export default {
   'checkout.connection.environment': 'Please select the environment of your Checkout.com account.',
   'checkout.connection.http.auth.token.token': 'Please enter the API key of Checkout.com account here.Login to your Sandbox/Live account, under Settings > Channels, you will find your API keys.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'walmartmexico.connection.environment':
-    'Please select the environment of your Walmart account here.',
-  'walmartmexico.connection.http.unencrypted.clientId':
-    'Please enter Client ID of your Walmart Account.<br><b>Steps to get Client ID and Client Secret:</b> <br> 1. Enter into the Walmart Mexico developer web page with the following URL (<a href="https://developer.walmart.com/mx/">https://developer.walmart.com/mx/</a>).<br> 2. On the top right, click on MyAccounts <b>></b> Select the Login type as Marketplace from popup page <b>></b> Enter the Email ID and Password of the Walmart Mexico developer account on the login page.<br> 3. On the dashboard, we will get the <b>Client ID and Client Secret</b>, if not created, we have an option to generate new keys.',
-  'walmartmexico.connection.http.encrypted.clientSecret':
-    'Please enter Client Secret of your Walmart Account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your client secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.<br> <b>NOTE:</b> For steps to get Client Secret please refer to the help text of the Client ID field.',
+    'Please select the environment of your Walmart Mexico account here.',
+  'walmartmexico.connection.http.unencrypted.clientId': 'Enter the client ID, which you can find at the Walmart Mexico <a href="https://developer.walmart.com/mx/">Developer portal</a>: <br> 1. Click My Account at the top right.<br> 2. Choose the account type Marketplace, and sign in with your email address & password. <br> 3. Copy the client ID and client secret shown on the dashboard. (If none exists yet or you want to change the API credentials, click to generate a new pair.)',
+  'walmartmexico.connection.http.encrypted.clientSecret': 'Enter the client secret, which you can find at the Walmart Mexico <a href="https://developer.walmart.com/mx/">Developer portal</a>: <br> 1. Click My Account at the top right.<br> 2. Choose the account type Marketplace, and sign in with your email address & password. <br> 3. Copy the client ID and client secret shown on the dashboard. (If none exists yet or you want to change the API credentials, click to generate a new pair.)',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
@@ -1078,7 +1076,7 @@ export default {
   'export.dataURITemplate':
     "When your flow runs but has data errors this field can be really helpful in that it allows you to make sure that all the errors in your job dashboard have a link to the original data in the export application.  This field uses a handlebars template to generate the dynamic links based on the data being exported.  For example, if you are exporting a customer record from Shopify, you would most likely set this field to the following value 'https://your-store.myshopify.com/admin/customers/{{{id}}}'.  Or, if you are just exporting a CSV file from an FTP site then this field could simply be one or more columns from the file: {{{internal_id}}, {{{email}}}, etc...",
   'export.traceKeyTemplate':
-    'Set this field to override default trace key field(s) that are used to identify a unique record. You can use a single field such as {{field1}} or use a handlebar expression. For example, this syntax {{join “_” field1 field2}} will generate a trace key template field1_field2.',
+    'Define a <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" target="_blank">trace key</a> that integrator.io will use to identify a unique record. You can use a single field such as {{{field1}}} or use a handlebar expression. For example, this syntax {{join “_” field1 field2}} will generate a trace key template field1_field2. When this field is set, you will override the platform default trace key field.',
   'export.sampleData':
     'Enter a sample destination record here so that integrator.io can help you later map fields between source and destination applications. The sample destination record should ideally contain all fields that you want to process in this flow, and should follow the exact same formatting rules that the destination application/API requires.',
   'export.description':
@@ -1410,6 +1408,8 @@ export default {
     'System generated datetime to track the last time this resource was modified.',
   'import.uploadFile':
     'Please provide a sample file that this transfer would need to process. We will use the sample file to auto set various fields (where possible), and also to help you map data in a subsequent step. The sample file that you provide does not need to be overly large, but it should contain all the fields that you want to work with, and also be in the same format that the transfer will need to generate when running in a production capacity.',
+  'import.traceKeyTemplate':
+    'Define a <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" target="_blank">trace key</a> that integrator.io will use to identify a unique record for a parent-child record combination. You can use a single field such as {{{field1}}} or use a handlebar expression. When this field is set, you will override the platform default child record trace key field. The child record trace key template value will include the parent record trace key in the format ‘parent_record_trace_key - child_record_trace_key’.',
   'import.apiIdentifier':
     "Every import that you create is assigned a unique handle that you can then use in your own application logic to invoke the import programmatically via the integrator.io API.  For example, your import identifier might be 'i662cb46', and you could invoke this import with a simple HTTP POST (with the data to be imported as a JSON array in the post body) to https://api.integrator.io/i662cb46",
   'import._integrationId':

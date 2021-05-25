@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AuditLogSection({ integrationId, storeId }) {
+export default function AuditLogSection({ integrationId, childId }) {
   const classes = useStyles();
   const infoTextAuditLog =
     'Keep track of changes to your flow, enabling you to track down problems based on changes to your flows. Know exactly who made the change, what the change was, and when it happened.';
@@ -26,7 +26,7 @@ export default function AuditLogSection({ integrationId, storeId }) {
       <AuditLog
         resourceType="integrations"
         resourceId={integrationId}
-        childId={storeId}
+        childId={childId}
       />
     </div>
   );

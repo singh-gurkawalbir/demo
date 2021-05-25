@@ -204,8 +204,8 @@ export default function DateTimePicker(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateValue, timeValue]);
 
-  const datePickerProps = useTimePickerProps(removePickerDialog);
-  const timePickerProps = useDatePickerProps(removePickerDialog);
+  const datePickerProps = useDatePickerProps(removePickerDialog);
+  const timePickerProps = useTimePickerProps(removePickerDialog);
 
   return (
     <>

@@ -23,8 +23,6 @@ export default (state = {}, action) => {
               connection.ftp.tradingPartner = !(connection.ftp.tradingPartner);
             }
           });
-
-          return;
         }
 
         return;

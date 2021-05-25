@@ -4,7 +4,7 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import { getResource } from '../resources';
 
-export function* preUninstall({ storeId, id }) {
+export function* preUninstall({ childId, id }) {
   const path = `/integrations/${id}/uninstaller/preUninstallFunction`;
   let uninstallSteps;
 
@@ -12,7 +12,7 @@ export function* preUninstall({ storeId, id }) {
     uninstallSteps = yield call(apiCallWithRetry, {
       path,
       timeout: 5 * 60 * 1000,
-      opts: { body: { storeId }, method: 'PUT' },
+      opts: { body: { storeId: childId }, method: 'PUT' },
       message: 'Loading',
     });
   } catch (error) {
@@ -36,7 +36,7 @@ export function* preUninstall({ storeId, id }) {
   );
 }
 
-export function* uninstallStep({ storeId, id, uninstallerFunction, addOnId }) {
+export function* uninstallStep({ childId, id, uninstallerFunction, addOnId }) {
   const path = `/integrations/${id}/uninstaller/${uninstallerFunction}`;
   let stepCompleteResponse;
 
@@ -44,7 +44,7 @@ export function* uninstallStep({ storeId, id, uninstallerFunction, addOnId }) {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
       timeout: 5 * 60 * 1000,
-      opts: { body: { storeId, addOnId }, method: 'PUT' },
+      opts: { body: { storeId: childId, addOnId }, method: 'PUT' },
       message: 'Uninstalling',
     }) || {};
   } catch (error) {

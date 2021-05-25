@@ -87,12 +87,10 @@ const addResourceCollection = (draft, resourceType, collection) => {
       'connectors/'.length,
       resourceType.indexOf('/licenses')
     );
-    const newCollection =
-        collection &&
-        collection.map(c => ({
-          ...c,
-          _connectorId: id,
-        }));
+    const newCollection = collection?.map(c => ({
+      ...c,
+      _connectorId: id,
+    }));
 
     updateStateWhenValueDiff(draft, 'connectorLicenses', newCollection || []);
 
@@ -107,13 +105,8 @@ const addResourceCollection = (draft, resourceType, collection) => {
     return;
   }
 
-  // TODO: Raghu, we should move all this code into the "produce" function. Lets talk
-  // about it when you have time to refactor.
   if (resourceType === 'flows') {
-    const newCollection =
-          collection &&
-          collection.map &&
-          collection.map(convertOldFlowSchemaToNewOne);
+    const newCollection = collection?.map?.(convertOldFlowSchemaToNewOne);
 
     updateStateWhenValueDiff(draft, 'flows', newCollection || []);
 

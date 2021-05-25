@@ -53,7 +53,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function SettingsDrawer({ integrationId, storeId, parentUrl }) {
+function SettingsDrawer({ integrationId, childId, parentUrl }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const { flowId } = match.params;
@@ -69,7 +69,7 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
   // We have a data-layer for a reason. There is absolutely no reason to proxy data-layer
   // results deeply through many nested components.
   const { settings: fields, sections } = useSelector(
-    state => selectors.iaFlowSettings(state, integrationId, flowId, storeId),
+    state => selectors.iaFlowSettings(state, integrationId, flowId, childId),
     shallowEqual
 
   );
@@ -114,7 +114,7 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
         })}
         integrationId={integrationId}
         flowId={flowId}
-        storeId={storeId}
+        childId={childId}
         onSubmitComplete={handleClose}
         formState={formState}
         fieldMeta={flowSettingsMemo}

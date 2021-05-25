@@ -8,7 +8,6 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import InvitationItem from './InvitationItem';
 import LoadResources from '../../../components/LoadResources';
-import { USER_ACCESS_LEVELS } from '../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   notificationContainer: {
@@ -40,7 +39,7 @@ function Notifications() {
     selectors.userNotifications(state)
   );
   const isAccountOwner = useSelector(state =>
-    selectors.resourcePermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
+    selectors.isAccountOwner(state)
   );
   const handleClick = useCallback(
     event => {
@@ -75,8 +74,8 @@ function Notifications() {
     return (
       <>
         <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
-        <Tooltip data-public title="No notifications" placement="bottom">
-          <IconButton size="small" color="inherit">
+        <Tooltip data-public title="No notifications" placement="bottom" aria-label="no notifications">
+          <IconButton aria-label="notifications" size="small" color="inherit">
             <NotificationsIcon />
           </IconButton>
         </Tooltip>
@@ -87,7 +86,7 @@ function Notifications() {
   return (
     <>
       <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
-      <IconButton size="small" color="inherit" onClick={handleClick}>
+      <IconButton aria-label="notifications" size="small" color="inherit" onClick={handleClick}>
         <Badge
           badgeContent={notifications.length}
           color="primary"

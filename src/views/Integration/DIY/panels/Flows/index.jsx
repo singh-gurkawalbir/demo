@@ -327,7 +327,7 @@ export default function FlowsPanel({ integrationId, childId }) {
   const actionProps = useMemo(() => (
     {
       parentId: integrationId,
-      storeId: childId,
+      childId,
       isIntegrationApp,
       resourceType: 'flows',
       isUserInErrMgtTwoDotZero,

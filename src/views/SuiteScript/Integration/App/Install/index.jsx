@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import ReactResizeDetector from 'react-resize-detector';
 import { isEqual } from 'lodash';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -21,6 +22,7 @@ import getRoutePath from '../../../../../utils/routePaths';
 import LoadResources from '../../../../../components/LoadResources';
 import ConnectionDrawer from '../drawer/Connection';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
+import ConnectionStatusPanel from '../../../../../components/SuiteScript/ConnectionStatusPanel';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -34,6 +36,14 @@ const useStyles = makeStyles(theme => ({
     borderBottom: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     marginBottom: 29,
+  },
+  formContainer: {
+    padding: theme.spacing(3),
+    paddingTop: props => (props.notificationPanelHeight ? 0 : theme.spacing(3)),
+    borderColor: 'rgb(0,0,0,0.1)',
+    borderStyle: 'solid',
+    borderWidth: '1px 0 0 0',
+    overflowY: 'auto',
   },
   innerContent: {
     width: '100%',
@@ -51,12 +61,19 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function SuiteScriptIntegrationAppInstallation() {
-  const classes = useStyles();
+  const [notificationPanelHeight, setNotificationPanelHeight] = useState(0);
+  const classes = useStyles({
+    notificationPanelHeight,
+  });
   const dispatch = useDispatch();
   const match = useRouteMatch();
+
   const paramSSLinkedConnId = match.params.ssLinkedConnectionId;
   const suiteScriptConnectorId = match.params.integrationAppName;
   const { _id: connectorId, name, urlName, ssName } = useMemo(() => SUITESCRIPT_CONNECTORS.find(s => s._id === suiteScriptConnectorId), [suiteScriptConnectorId]);
+  const resize = (width, height) => {
+    setNotificationPanelHeight(height);
+  };
 
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const [ssConnection, setSSConnection] = useState(null);
@@ -342,12 +359,22 @@ export default function SuiteScriptIntegrationAppInstallation() {
             width="medium">
             <DrawerHeader title="Set up connection" />
             <DrawerContent>
-              <ResourceForm
-                ssLinkedConnectionId={ssLinkedConnectionId}
-                resourceId={ssConnection._id}
-                resourceType="connections"
-                onSubmitComplete={onSSConnSubmitComplete}
-            />
+              <div className={classes.formContainer}>
+                <div>
+                  <ConnectionStatusPanel
+                    resourceType="connections"
+                    resourceId={ssConnection._id}
+                    ssLinkedConnectionId={ssLinkedConnectionId}
+                  />
+                  <ReactResizeDetector handleHeight onResize={resize} />
+                </div>
+                <ResourceForm
+                  ssLinkedConnectionId={ssLinkedConnectionId}
+                  resourceId={ssConnection._id}
+                  resourceType="connections"
+                  onSubmitComplete={onSSConnSubmitComplete}
+                  />
+              </div>
             </DrawerContent>
           </RightDrawer>
           )}

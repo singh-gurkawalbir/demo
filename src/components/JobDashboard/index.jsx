@@ -168,7 +168,7 @@ export default function JobDashboard({
     closeSnackbar();
     const filteredJobsOnly = ![undefined, 'all', 'error'].includes(filters.status) || ![null, undefined, 'last30days'].includes(filters.dateRange?.[0]?.preset);
 
-    dispatch(actions.job.resolveAll({ flowId: selectedFlowId, storeId: filters.storeId, integrationId, filteredJobsOnly, match }));
+    dispatch(actions.job.resolveAll({ flowId: selectedFlowId, childId: filters.childId, integrationId, filteredJobsOnly, match }));
     enqueueSnackbar({
       message: `${numberOfJobsToResolve} jobs marked as resolved.`,
       showUndo: true,
@@ -200,7 +200,7 @@ export default function JobDashboard({
         });
       },
     });
-  }, [flowId, filters.flowId, filters.status, filters.dateRange, filters.storeId, jobs, closeSnackbar, dispatch, integrationId, match, enqueueSnackbar]);
+  }, [flowId, filters.flowId, filters.status, filters.dateRange, filters.childId, jobs, closeSnackbar, dispatch, integrationId, match, enqueueSnackbar]);
   const resolveSelectedJobs = useCallback(() => {
     const jobsToResolve = [];
 
@@ -280,7 +280,7 @@ export default function JobDashboard({
 
     setSelectedJobs({});
     closeSnackbar();
-    dispatch(actions.job.retryAll({ flowId: selectedFlowId, storeId: filters.storeId, integrationId, match }));
+    dispatch(actions.job.retryAll({ flowId: selectedFlowId, childId: filters.childId, integrationId, match }));
     enqueueSnackbar({
       message: `${numberOfJobsToRetry} jobs retried.`,
       showUndo: true,
@@ -306,7 +306,7 @@ export default function JobDashboard({
         });
       },
     });
-  }, [closeSnackbar, dispatch, enqueueSnackbar, filters.flowId, filters.storeId, flowId, integrationId, jobs, match]);
+  }, [closeSnackbar, dispatch, enqueueSnackbar, filters.flowId, filters.childId, flowId, integrationId, jobs, match]);
   const retrySelectedJobs = useCallback(() => {
     const jobsToRetry = [];
 

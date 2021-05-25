@@ -184,6 +184,7 @@ function CeligoDrawer({drawerOpened, isSandbox}) {
           <div className={clsx(classes.toolbar, classes.toggleContainer)}>
             <IconButton
               data-test="celigoDrawerToggle"
+              aria-label="toggle drawer"
               color="inherit"
               onClick={handleDrawerToggle}
               className={classes.drawerToggle}>

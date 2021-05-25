@@ -2,8 +2,6 @@ export const FILTER_KEY = 'listenerLogs';
 
 export const DEFAULT_ROWS_PER_PAGE = 50;
 
-export const DEFAULT_RANGE = {startDate: null, endDate: null, preset: null};
-
 export const LISTENER_LOGS_RANGE_FILTERS = [
   {id: 'last15minutes', label: 'Last 15 minutes'},
   {id: 'last24hours', label: 'Last 24 hours'},

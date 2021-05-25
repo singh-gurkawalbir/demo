@@ -29,17 +29,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ConfigureSettings({ integrationId, storeId, sectionId }) {
+export default function ConfigureSettings({ integrationId, childId, sectionId }) {
   const classes = useStyles();
-
-  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId,
-    storeId);
-
+  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, childId);
   const section = useMemo(() => flowSections.find(s => s.titleId === sectionId), [flowSections, sectionId]);
   const flowSettingsMeta = useSelectorMemo(selectors.mkIntegrationAppSectionMetadata,
     integrationId,
     sectionId,
-    storeId);
+    childId);
 
   const translatedMeta = useMemo(
     () =>
@@ -69,14 +66,14 @@ export default function ConfigureSettings({ integrationId, storeId, sectionId })
       {formState?.formSaveStatus === FORM_SAVE_STATUS.LOADING && <SavingMask />}
       <IAFormStateManager
         {...activeTabProps}
-        key={storeId}
+        key={childId}
         formState={formState}
         className={clsx(classes.configureform, {
           [classes.configureCamForm]: section.sections,
         })}
         isIAForm
         integrationId={integrationId}
-        storeId={storeId}
+        childId={childId}
         sectionId={sectionId}
         fieldMeta={translatedMeta}
         orientation="horizontal"

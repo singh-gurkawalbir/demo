@@ -44,6 +44,7 @@ export default function SelectDate({
   showTime = false,
   defaultRange = DEFAULT_RANGE,
   skipLastEndDate = false,
+  fromDate,
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -71,9 +72,12 @@ export default function SelectDate({
 
   const selectedDate = useMemo(() => isDateFilterSelected ? {
     startDate: new Date(filter[filterBy].startDate),
-    endDate: new Date(filter[filterBy].endDate),
+    // when end date can be null in the filter, we should get the correct endDate to pass to DateRange module
+    endDate: !skipLastEndDate
+      ? new Date(filter[filterBy].endDate)
+      : new Date(filter[filterBy].endDate || getSelectedRange(filter[filterBy]).endDate),
     preset: filter[filterBy].preset,
-  } : defaultRange, [isDateFilterSelected, filter, filterBy, defaultRange]);
+  } : defaultRange, [skipLastEndDate, isDateFilterSelected, filter, filterBy, defaultRange]);
 
   return (
     <div className={classes.dateFilterWrapper}> {title}
@@ -86,6 +90,7 @@ export default function SelectDate({
         value={selectedDate}
         customPresets={customPresets}
         showTime={showTime}
+        fromDate={fromDate}
          />
     </div>
   );

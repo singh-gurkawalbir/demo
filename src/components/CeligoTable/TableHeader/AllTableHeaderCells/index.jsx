@@ -44,7 +44,7 @@ const TableHeaderCell = ({filterKey, HeaderValue, heading,
   const headerValue = HeaderValue ? HeaderValue() : heading;
   const cellValue = headerValue === undefined ? null : headerValue;
 
-  if (sortOrderBy) {
+  if (orderBy) {
     return (
       <TableCell
         style={width ? { width } : undefined}
