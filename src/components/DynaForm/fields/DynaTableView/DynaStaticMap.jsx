@@ -57,6 +57,7 @@ export default function DynaStaticMap(props) {
   return (
     <DynaTableView
       {...props}
+      isVirtualizedTable
       optionsMap={optionsMap}
       value={computedValue}
     />

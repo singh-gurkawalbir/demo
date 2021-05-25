@@ -7,6 +7,7 @@ import { hashCode } from '../../../../../utils/string';
 import reducer, { preSubmit } from './reducer';
 import RefreshHeaders from './RefreshHeaders';
 import TableRow from './TableRow';
+import VirtualizedTable from './VirtualizedTable';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -36,6 +37,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const LARGE_NUMBER_OF_ITEMS = 200;
 export const generateEmptyRow = optionsMap => optionsMap.reduce((acc, curr) => {
   acc[curr.id] = '';
 
@@ -66,12 +68,15 @@ const initializeTableState = optionsMap => value => {
   };
 };
 
+const shouldEnableVirtualizaton = items => items?.length > LARGE_NUMBER_OF_ITEMS;
+
 const BaseTable = ({
   onFieldChange,
   onRowChange,
   disableDeleteRows,
   optionsMapFinal,
   optionsMapInit,
+  isVirtualizedTable,
   id,
   value,
 }) => {
@@ -86,6 +91,21 @@ const BaseTable = ({
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, onFieldChange, hashOfOptions, tableValue, touched]);
+
+  if (isVirtualizedTable || shouldEnableVirtualizaton(tableValue)) {
+    console.log('should not enter', tableValue);
+
+    return (
+      <VirtualizedTable
+        items={tableValue}
+        optionsMapFinal={optionsMapFinal}
+        touched={touched}
+        setTableState={setTableState}
+        onRowChange={onRowChange}
+        disableDeleteRows={disableDeleteRows}
+    />
+    );
+  }
 
   return (tableValue.map((arr, rowIndex) => {
     const {value, key} = arr;
@@ -119,6 +139,7 @@ export const DynaTable = props => {
     isLoading = false,
     metadata = {},
     id,
+    isVirtualizedTable,
     onFieldChange,
     onRowChange,
     disableDeleteRows,
@@ -146,6 +167,7 @@ export const DynaTable = props => {
             handleRefreshClickHandler={handleRefreshClickHandler}
           />
           <BaseTable
+            isVirtualizedTable={isVirtualizedTable}
             onFieldChange={onFieldChange}
             onRowChange={onRowChange}
             disableDeleteRows={disableDeleteRows}

@@ -191,6 +191,7 @@ export default function DynaTypeableSelect(props) {
     options = [],
     isValid,
     TextComponent,
+    updateOnUnmount,
     onTouch,
     components = {
       DropdownIndicator: () => null,
@@ -228,6 +229,16 @@ export default function DynaTypeableSelect(props) {
     }
     if (isFocused) { setIsFocused(false); }
   }, [isFocused]);
+
+  console.log('check herer', suggestions);
+  useEffect(() => () => {
+    console.log('has entered', id, value);
+
+    if (isFocused && updateOnUnmount) {
+      updateOnUnmount(id, value);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const div = ref.current;

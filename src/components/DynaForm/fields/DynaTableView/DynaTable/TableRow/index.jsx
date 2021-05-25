@@ -69,7 +69,7 @@ const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
 }));
 
 Object.freeze(TYPE_TO_ERROR_MESSAGE);
-const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState, onRowChange}) => {
+const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState, onRowChange, isVirtualizedTable}) => {
   const {id, readOnly, options, type } = op;
   const classes = useStyles();
 
@@ -152,6 +152,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState,
         className={clsx(classes.childHeader, classes.childRow)}>
         <DynaTypeableSelect
           {...basicProps}
+          updateOnUnmount={isVirtualizedTable ? onFieldChange : null}
           errorMessages={errorMessages}
           value={fieldValue}
           labelName="label"
@@ -165,7 +166,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState,
   return null;
 };
 
-const RowCellMemo = ({ fieldValue, optionsMap, op, touched, rowIndex, tableSize, setTableState, onRowChange}) => {
+const RowCellMemo = ({ fieldValue, optionsMap, op, touched, rowIndex, tableSize, setTableState, onRowChange, isVirtualizedTable}) => {
   const {required } = op;
 
   const isCellValid = useCallback(() => {
@@ -178,6 +179,7 @@ const RowCellMemo = ({ fieldValue, optionsMap, op, touched, rowIndex, tableSize,
 
   return useMemo(() => (
     <RowCell
+      isVirtualizedTable={isVirtualizedTable}
       optionsMap={optionsMap}
       fieldValue={fieldValue}
       op={op}
@@ -186,7 +188,7 @@ const RowCellMemo = ({ fieldValue, optionsMap, op, touched, rowIndex, tableSize,
       setTableState={setTableState}
       onRowChange={onRowChange}
   />
-  ), [fieldValue, isValid, onRowChange, op, optionsMap, rowIndex, setTableState]);
+  ), [fieldValue, isValid, isVirtualizedTable, onRowChange, op, optionsMap, rowIndex, setTableState]);
 };
 
 const ActionButtonMemo = ({disableDeleteRows, rowIndex, setTableState, classes}) =>
@@ -212,6 +214,7 @@ export default function TableRow({
   setTableState,
   onRowChange,
   disableDeleteRows,
+  isVirtualizedTable,
 }) {
   const classes = useStyles();
   const isNotLastRow = rowIndex !== tableSize - 1;
@@ -225,6 +228,7 @@ export default function TableRow({
             data-test={`col-${index}`}
           >
             <RowCellMemo
+              isVirtualizedTable={isVirtualizedTable}
               optionsMap={optionsMap}
               op={op}
               fieldValue={rowValue[op.id]}
