@@ -1,4 +1,4 @@
-import { FormLabel, Input } from '@material-ui/core';
+import { FormLabel, TextField } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core/styles';
@@ -27,11 +27,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Row = props => {
-  console.log('check props', props);
-  const { index, style, data } = props;
+  const {value, label, disabled, style } = props;
 
-  const { items, finalTextValue} = data;
-  const { label, value, disabled = false } = items[index];
+  console.log('check props', props);
 
   return (
     <MenuItem
@@ -40,7 +38,6 @@ const Row = props => {
       data-value={value}
       disabled={disabled}
       style={style}
-      selected={value === finalTextValue}
         >
       <CeligoTruncate placement="left" lines={2}>
         {label}
@@ -49,14 +46,6 @@ const Row = props => {
   );
 };
 
-const options = [{
-  label: 'Surya',
-  value: 'surya',
-}, {
-  label: 'Vamsi',
-  value: 'vamsi',
-},
-];
 export default function DynaAutocomplete(props) {
   const {
     disabled,
@@ -70,6 +59,7 @@ export default function DynaAutocomplete(props) {
     label,
     onFieldChange,
     dataTest,
+    options,
   } = props;
 
   const classes = useStyles();
@@ -91,15 +81,16 @@ export default function DynaAutocomplete(props) {
         className={classes.dynaSelectWrapper}>
         <Autocomplete
           options={options}
+          getOptionLabel={option => option.label || ''}
           data-test={dataTest || id}
-          noOptionsText=""
           value={value}
-          renderOption={props => <Row {...props} data={{items: options, finalTextValue: value}} />}
+        //   getOptionLabel={option => options.find(f => f.value === option)?.label || ''}
+          renderOption={option => <Row {...option} />}
           onChange={(evt, value) => {
             console.log('see ', value);
             onFieldChange(id, value);
           }}
-          renderInput={params => <Input {...params} name={name} id={id} />}
+          renderInput={params => <TextField {...params} name={name} id={id} />}
         />
       </FormControl>
 
