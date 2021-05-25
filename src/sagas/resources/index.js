@@ -707,7 +707,7 @@ export function* getResourceCollection({ resourceType, refresh}) {
       else if (invitedTransfers) collection = [...collection, ...invitedTransfers];
     }
 
-    if (collection && !Array.isArray(collection) && !NON_ARRAY_RESOURCE_TYPES.includes(resourceType)) {
+    if (collection !== undefined && !Array.isArray(collection) && !NON_ARRAY_RESOURCE_TYPES.includes(resourceType)) {
       // eslint-disable-next-line no-console
       console.warn('Getting unexpected collection values: ', collection);
       collection = undefined;
