@@ -2105,10 +2105,32 @@ selectors.mkIntegrationChildren = () => createSelector(
 );
 selectors.integrationChildren = selectors.mkIntegrationChildren();
 
+selectors.integrationAppEdition = (state, integrationId) => {
+  if (!state) return 'Standard plan';
+  const integrationResource = selectors.integrationAppSettings(state, integrationId);
+  let { connectorEdition: edition } = integrationResource.settings || {};
+  const userLicenses = fromUser.licenses(state?.user) || [];
+  const license = userLicenses.find(l => l._integrationId === integrationId) || {};
+  const integrationAppList = selectors.publishedConnectors(state);
+
+  const connector =
+     integrationAppList?.find(ia => ia._id === license?._connectorId);
+
+  const editions = connector?.twoDotZero?.editions || emptyArray;
+
+  edition = edition ||
+            (editions.find(ed => ed._id === license._editionId) || {})?.displayName;
+
+  const plan = `${
+    edition ? edition.charAt(0).toUpperCase() + edition.slice(1) : 'Standard'
+  } plan`;
+
+  return plan;
+};
+
 selectors.integrationAppLicense = (state, id) => {
   if (!state) return emptyObject;
   const integrationResource = selectors.integrationAppSettings(state, id);
-  const { connectorEdition: edition } = integrationResource.settings || {};
   const userLicenses = fromUser.licenses(state && state.user) || [];
   const license = userLicenses.find(l => l._integrationId === id) || {};
   const upgradeRequested = selectors.checkUpgradeRequested(state, license._id);
@@ -2125,13 +2147,9 @@ selectors.integrationAppLicense = (state, id) => {
     integrationResource,
     upgradeRequested
   );
-  const plan = `${
-    edition ? edition.charAt(0).toUpperCase() + edition.slice(1) : 'Standard'
-  } plan`;
 
   return {
     ...license,
-    plan,
     expiresText,
     upgradeText,
     upgradeRequested: !!upgradeRequested,
@@ -5420,11 +5438,6 @@ selectors.isConnectionLogsNotSupported = (state, connectionId) => {
 
 selectors.tileLicenseDetails = (state, tile) => {
   const licenses = selectors.licenses(state);
-  const accessLevel =
-    tile.integration &&
-    tile.integration.permissions &&
-    tile.integration.permissions.accessLevel;
-
   const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
   const expiresInDays = license && remainingDays(license.expires);
   const trialExpiresInDays = license && remainingDays(license.trialEndDate);
@@ -5433,7 +5446,7 @@ selectors.tileLicenseDetails = (state, tile) => {
   let expired = false;
   let trialExpired = false;
   let showTrialLicenseMessage = false;
-  const resumable = license?.resumable && [INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel);
+  const resumable = license?.resumable;
 
   if (resumable) {
     licenseMessageContent = 'Your subscription has been renewed. Click Reactivate to continue.';

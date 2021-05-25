@@ -96,7 +96,7 @@ export function* _updateDataForStages({resourceId, dataForEachStageMap }) {
   }
 }
 
-export function* _getPreviewData({ resourceId, resourceType, values, runOffline, flowId }) {
+export function* _getPreviewData({ resourceId, resourceType, values, runOffline, flowId, refreshCache }) {
   const { transform, filter, hooks, ...constructedResourceObj } = yield call(constructResourceFromFormValues, {
     formValues: values,
     resourceId,
@@ -137,7 +137,7 @@ export function* _getPreviewData({ resourceId, resourceType, values, runOffline,
     if (isRealTimeOrDistributedResource(body)) {
       // Handles SF/NS : Fetches metadata for the real time adaptors
       // @Raghu: Update this when we support other real time adaptors like Webhooks
-      const data = yield call(requestRealTimeMetadata, { resource: body });
+      const data = yield call(requestRealTimeMetadata, { resource: body, refresh: refreshCache });
 
       previewData = [data];
     } else {
@@ -264,6 +264,7 @@ export function* _fetchExportPreviewData({
   values,
   runOffline,
   flowId,
+  refreshCache,
 }) {
   const body = yield call(constructResourceFromFormValues, {
     formValues: values,
@@ -325,6 +326,7 @@ export function* _fetchExportPreviewData({
     values,
     runOffline,
     flowId,
+    refreshCache,
   });
 }
 
@@ -335,7 +337,7 @@ export function* requestExportSampleData({
   stage,
   options = {},
 }) {
-  const { runOffline, flowId } = options;
+  const { runOffline, flowId, refreshCache } = options;
 
   if (stage) {
     yield call(_processRawData, {
@@ -351,11 +353,12 @@ export function* requestExportSampleData({
       values,
       runOffline,
       flowId,
+      refreshCache,
     });
   }
 }
 
-export function* requestLookupSampleData({ resourceId, flowId, formValues }) {
+export function* requestLookupSampleData({ resourceId, flowId, formValues, options = {} }) {
   const resourceType = 'exports';
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId) || DEFAULT_RECORD_SIZE;
   const { transform, filter, hooks, ...constructedResourceObj } = yield call(constructResourceFromFormValues, {
@@ -389,6 +392,7 @@ export function* requestLookupSampleData({ resourceId, flowId, formValues }) {
       _pageProcessorDoc,
       throwOnError: true,
       includeStages: true,
+      refresh: options.refreshCache,
     });
 
     yield put(

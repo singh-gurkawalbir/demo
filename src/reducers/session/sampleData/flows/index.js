@@ -229,6 +229,10 @@ export default function (state = {}, action) {
         break;
       }
 
+      case actionTypes.FLOW_DATA.CLEAR_STAGES:
+        delete draft[flowId];
+        break;
+
       case actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET: {
         const currentFlow = draft[flowId];
 

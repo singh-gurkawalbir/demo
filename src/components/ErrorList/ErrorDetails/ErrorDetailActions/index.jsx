@@ -90,9 +90,9 @@ export default function Actions({
 
   const handleDownloadBlob = useCallback(
     () => {
-      dispatch(actions.errorManager.errorHttpDoc.downloadBlobDoc(flowId, resourceId, s3BlobKey));
+      dispatch(actions.errorManager.errorHttpDoc.downloadBlobDoc(flowId, resourceId, reqAndResKey));
     },
-    [flowId, resourceId, s3BlobKey, dispatch],
+    [flowId, resourceId, reqAndResKey, dispatch],
   );
 
   const isRetryDataChanged = updatedRetryData && !isEqual(retryData, updatedRetryData);
