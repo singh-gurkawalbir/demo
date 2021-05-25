@@ -592,10 +592,10 @@ export default function ConnectorInstallation(props) {
           {helpUrl ? (
             <RawHtml
               className={classes.message}
-              html={` Complete the steps below to install your ${_connectorId ? 'integration app' : 'template'}.<br /> 
+              html={` Complete the steps below to install your ${_connectorId ? 'integration app' : 'integration'}.<br /> 
             Need more help? <a href="${helpUrl}" target="_blank">Check out our help guide</a>`} />
           ) : (
-            <Typography className={classes.message}>{`Complete the steps below to install your ${_connectorId ? 'integration app' : 'template'}.`}</Typography>
+            <Typography className={classes.message}>{`Complete the steps below to install your ${_connectorId ? 'integration app' : 'integration'}.`}</Typography>
           )}
           <div className={classes.installIntegrationSteps}>
             {installSteps.map((step, index) => (
