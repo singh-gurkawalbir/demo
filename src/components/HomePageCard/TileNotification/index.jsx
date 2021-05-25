@@ -83,11 +83,15 @@ export default function TileNotification({ content, expired, connectorId, licens
     event.stopPropagation();
     setUpgradeRequested(true);
     if (resumable) {
-      dispatch(actions.integrationApp.license.resume(integrationId));
+      if (![INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel)) {
+        enquesnackbar({ message: 'Contact your account owner to reactivate this integration app.' });
+      } else {
+        dispatch(actions.integrationApp.license.resume(integrationId));
+      }
     } else {
       dispatch(actions.user.org.accounts.requestUpdate('connectorRenewal', connectorId, licenseId));
     }
-  }, [connectorId, dispatch, integrationId, licenseId, resumable]);
+  }, [accessLevel, connectorId, dispatch, enquesnackbar, integrationId, licenseId, resumable]);
   const onClickBuyButton = useCallback(event => {
     event.stopPropagation();
     setUpgradeRequested(true);
