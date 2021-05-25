@@ -62,6 +62,7 @@ export default function DynaEditor(props) {
     required,
     isValid,
     skipJsonParse,
+    customHandleUpdate,
   } = props;
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
@@ -70,6 +71,11 @@ export default function DynaEditor(props) {
   }, [showEditor]);
   const handleUpdate = useCallback(
     (editorVal, isTouched = false) => {
+      if (customHandleUpdate) {
+        customHandleUpdate(editorVal);
+
+        return;
+      }
       let sanitizedVal = editorVal;
 
       // convert to json if form value is an object
@@ -96,7 +102,7 @@ export default function DynaEditor(props) {
 
       onFieldChange(id, sanitizedVal, isTouched);
     },
-    [id, mode, onFieldChange, saveMode, value, skipJsonParse]
+    [customHandleUpdate, saveMode, mode, value, skipJsonParse, onFieldChange, id]
   );
   const handleUpdateOnDrawerSave = useCallback(
     editorVal => handleUpdate(editorVal, true),
