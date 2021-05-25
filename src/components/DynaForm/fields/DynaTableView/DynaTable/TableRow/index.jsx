@@ -6,6 +6,7 @@ import DeleteIcon from '../../../../../icons/TrashIcon';
 import DynaTypeableSelect from '../../../DynaTypeableSelect';
 import ActionButton from '../../../../../ActionButton';
 import actionTypes from '../actionTypes';
+import DynaAutocomplete from '../../../DynaAutocomplete';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -150,9 +151,9 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, setTableState,
     return (
       <div
         className={clsx(classes.childHeader, classes.childRow)}>
-        <DynaTypeableSelect
+        <DynaAutocomplete
           {...basicProps}
-          updateOnUnmount={isVirtualizedTable ? onFieldChange : null}
+          onFieldChange={onFieldChange}
           errorMessages={errorMessages}
           value={fieldValue}
           labelName="label"

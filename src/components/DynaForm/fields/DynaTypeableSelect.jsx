@@ -230,10 +230,7 @@ export default function DynaTypeableSelect(props) {
     if (isFocused) { setIsFocused(false); }
   }, [isFocused]);
 
-  console.log('check herer', suggestions);
   useEffect(() => () => {
-    console.log('has entered', id, value);
-
     if (isFocused && updateOnUnmount) {
       updateOnUnmount(id, value);
     }
