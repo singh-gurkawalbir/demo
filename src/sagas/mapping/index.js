@@ -470,7 +470,7 @@ export function* previewMappings() {
 
     if (cancelPreview) return;
 
-    if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
+    if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(_importRes.adaptorType)) {
       if (
         preview?.data?.returnedObjects?.mappingErrors[0]?.error
       ) {
