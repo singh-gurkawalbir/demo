@@ -12,6 +12,7 @@ import rootSaga from '../src/sagas';
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
 }
+ const env = process.env.Node_Env;
 
 export const globalTypes = {
   theme: {
