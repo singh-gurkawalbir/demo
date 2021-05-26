@@ -35,6 +35,7 @@ export default {
     name: { fieldId: 'name' },
     'rest.baseURI': {
       fieldId: 'rest.baseURI',
+      helpKey: 'jira.connection.rest.baseURI',
     },
     'rest.basicAuth.username': {
       fieldId: 'rest.basicAuth.username',

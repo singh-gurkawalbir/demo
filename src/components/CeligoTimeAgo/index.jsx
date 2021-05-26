@@ -34,7 +34,7 @@ export default function CeligoTimeAgo(props) {
   }
 
   return (
-    <Tooltip data-public title={<LocalDateTime date={props.date} />}>
+    <Tooltip data-public title={<LocalDateTime date={props.date} />} aria-label="local date time">
       <TimeAgo {...props} formatter={formatter} />
     </Tooltip>
   );

@@ -18,29 +18,11 @@ import useConfirmDialog from '../ConfirmDialog';
 import JobErrorPreviewDialogContent from './JobErrorPreviewDialogContent';
 import JobErrorMessage from './JobErrorMessage';
 import { UNDO_TIME } from './util';
-import SpinnerWrapper from '../SpinnerWrapper';
 import DownloadIcon from '../icons/DownloadIcon';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
   fileInput: { display: 'none' },
-  spinner: {
-    left: 0,
-    right: 0,
-    top: -40,
-    bottom: 0,
-    width: '100%',
-    position: 'absolute',
-    textAlign: 'center',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 'inherit',
-    zIndex: '3',
-    '& span': {
-      marginLeft: '10px',
-    },
-  },
   btnsWrappper: {
     marginTop: theme.spacing(1),
     '& button': {
@@ -72,7 +54,7 @@ const useStyles = makeStyles(theme => ({
   downloadOnlyDivider: {
     margin: theme.spacing(2),
   },
-  // TODO (Azhar):  we need to keep a varaint for this button
+  // TODO (Azhar):  we need to keep a variant for this button
   btnErrorTable: {
     borderColor: theme.palette.secondary.lightest,
     color: theme.palette.secondary.light,
@@ -453,9 +435,9 @@ export default function JobErrorTable({
   return (
     <>
       {jobErrorsPreview && jobErrorsPreview.status === 'requested' && (
-        <div data-public className={classes.spinner}>
-          <Spinner size={20} /> <span>Uploading...</span>
-        </div>
+      <Spinner centerAll>
+        <Typography>Uploading...</Typography>
+      </Spinner>
       )}
       <ul data-public className={classes.statusWrapper}>
         <li>
@@ -481,9 +463,11 @@ export default function JobErrorTable({
         </li>
       </ul>
       {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
-        <SpinnerWrapper>
-          <Spinner /> <span>Loading job errors</span>
-        </SpinnerWrapper>
+
+        <Spinner centerAll>
+          <Typography>Loading job errors</Typography>
+        </Spinner>
+
       ) : (
         <>
           <ButtonsGroup className={classes.btnsWrappper}>
@@ -576,10 +560,11 @@ export default function JobErrorTable({
                 isSelectableRow={r =>
                   r.metadata && r.metadata.isParent && !r.resolved}
                 onSelectChange={handleJobErrorSelectChange}
-                columns={[
+                useColumns={() => [
                   {
+                    key: 'expandClick',
                     heading: '',
-                    value: r =>
+                    Value: ({rowData: r}) =>
                       r.similarErrors?.length > 0 && (
                         <IconButton
                           data-test="expandJobsErrors"
@@ -595,27 +580,31 @@ export default function JobErrorTable({
                       ),
                   },
                   {
+                    key: 'resolved',
                     heading: 'Resolved?',
                     align: 'center',
-                    value: r => r.resolved
+                    Value: ({rowData: r}) => r.resolved
                       ? (<span className={classes.resolved}>Yes</span>)
                       : (<span className={classes.error}>No</span>),
                   },
                   {
+                    key: 'source',
                     heading: 'Source',
                     width: '15%',
-                    value: r => r.source && (<span className={classes.code}>{r.source}</span>),
+                    Value: ({rowData: r}) => r.source && (<span className={classes.code}>{r.source}</span>),
                   },
                   {
+                    key: 'code',
                     heading: 'Code',
                     align: 'left',
                     width: '15%',
-                    value: r => r.code && (<span className={classes.code}>{r.code}</span>),
+                    Value: ({rowData: r}) => r.code && (<span className={classes.code}>{r.code}</span>),
                   },
                   {
+                    key: 'message',
                     heading: 'Message',
                     width: '30%',
-                    value: r => (
+                    Value: ({rowData: r}) => (
                       <JobErrorMessage
                         message={r.message}
                         exportDataURI={r.exportDataURI}
@@ -624,14 +613,16 @@ export default function JobErrorTable({
                     ),
                   },
                   {
+                    key: 'time',
                     heading: 'Time',
                     width: '15%',
-                    value: r => <DateTimeDisplay dateTime={r.createdAt} />,
+                    Value: ({rowData: r}) => <DateTimeDisplay dateTime={r.createdAt} />,
                   },
                   {
+                    key: 'retryData',
                     heading: 'Retry data',
                     align: 'center',
-                    value: r => (
+                    Value: ({rowData: r}) => (
                       <EditRetryCell
                         retryId={r._retryId}
                         isEditable={r.metadata?.isParent &&

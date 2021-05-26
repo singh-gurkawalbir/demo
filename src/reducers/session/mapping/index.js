@@ -25,6 +25,8 @@ export default (state = {}, action) => {
     newValue,
     isConditionalLookup,
     isGroupedSampleData,
+    failMsg,
+    failSeverity,
   } = action;
 
   return produce(state, draft => {
@@ -68,6 +70,9 @@ export default (state = {}, action) => {
         }
         draft.mapping.mappings = draft.mapping.mappings.filter(m => m.key !== key);
         if (draft.mapping.lastModifiedRowKey === key) { delete draft.mapping.lastModifiedRowKey; }
+        if (draft?.mapping?.autoMapper) {
+          delete draft.mapping.autoMapper.startKey;
+        }
         break;
       }
 
@@ -123,7 +128,9 @@ export default (state = {}, action) => {
           draft.mapping.mappings.push(newRow);
           draft.mapping.lastModifiedRowKey = newKey;
         }
-
+        if (draft?.mapping?.autoMapper) {
+          delete draft.mapping.autoMapper.startKey;
+        }
         break;
       }
 
@@ -174,13 +181,18 @@ export default (state = {}, action) => {
           draft.mapping.mappings[index] = mapping;
           draft.mapping.lastModifiedRowKey = key;
         }
-
+        if (draft?.mapping?.autoMapper) {
+          delete draft.mapping.autoMapper.startKey;
+        }
         break;
       }
 
       case actionTypes.MAPPING.SAVE:
         if (draft.mapping) {
           draft.mapping.saveStatus = 'requested';
+        }
+        if (draft?.mapping?.autoMapper) {
+          delete draft.mapping.autoMapper.startKey;
         }
         break;
       case actionTypes.MAPPING.SAVE_COMPLETE:
@@ -232,6 +244,9 @@ export default (state = {}, action) => {
         const [removed] = draft.mapping.mappings.splice(itemIndex, 1);
 
         draft.mapping.mappings.splice(shiftIndex, 0, removed);
+        if (draft?.mapping?.autoMapper) {
+          delete draft.mapping.autoMapper.startKey;
+        }
         break;
       }
       case actionTypes.MAPPING.ADD_LOOKUP:
@@ -260,6 +275,33 @@ export default (state = {}, action) => {
           draft.mapping.validationErrMsg = value;
         }
         break;
+      case actionTypes.MAPPING.AUTO_MAPPER.REQUEST:
+        if (draft.mapping) {
+          if (!draft.mapping.autoMapper) {
+            draft.mapping.autoMapper = {};
+          } else {
+            delete draft.mapping.autoMapper.failMsg;
+            delete draft.mapping.autoMapper.failSeverity;
+          }
+          draft.mapping.autoMapper.status = 'requested';
+        }
+        break;
+      case actionTypes.MAPPING.AUTO_MAPPER.RECEIVED:
+        if (draft?.mapping?.autoMapper) {
+          draft.mapping.autoMapper.status = 'received';
+          draft.mapping.autoMapper.startKey = value[0].key;
+          // adding suggested list to mapping list
+          draft.mapping.mappings.push(...value);
+        }
+        break;
+      case actionTypes.MAPPING.AUTO_MAPPER.FAILED:
+        if (draft?.mapping?.autoMapper) {
+          draft.mapping.autoMapper.status = 'error';
+          draft.mapping.autoMapper.failMsg = failMsg;
+          draft.mapping.autoMapper.failSeverity = failSeverity;
+        }
+        break;
+
       default:
     }
   });
@@ -309,3 +351,12 @@ selectors.mappingSaveStatus = state => {
     saveInProgress: saveStatus === 'requested',
   };
 };
+selectors.autoMapper = state => {
+  if (!state || !state?.mapping?.autoMapper) {
+    return emptyObj;
+  }
+
+  return state.mapping.autoMapper;
+};
+// selectors.autoMapperStartKey = state => state?.mapping?.autoMapper?.startKey || '';
+// selectors.autoMapperErrorMsg = state => state?.mapping?.autoMapper?.errorMsg;

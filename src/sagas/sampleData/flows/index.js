@@ -54,6 +54,7 @@ import {
   isRestCsvMediaTypeExport,
 } from '../../../utils/resource';
 import { isIntegrationApp } from '../../../utils/flows';
+import { emptyObject } from '../../../utils/constants';
 
 const VALID_RESOURCE_TYPES_FOR_FLOW_DATA = ['exports', 'imports', 'connections'];
 export function* _initFlowData({ flowId, resourceId, resourceType, refresh }) {
@@ -66,12 +67,12 @@ export function* _initFlowData({ flowId, resourceId, resourceType, refresh }) {
 
   if (isNewId(resourceId)) {
     // For a new export/lookup/import initiating flow with this new temp id
-    const { merged: resource } = yield select(
+    const resource = (yield select(
       selectors.resourceData,
       resourceType,
       resourceId,
       SCOPES.VALUE
-    );
+    ))?.merged || emptyObject;
     const isPageGenerator = resourceType === 'exports' && !resource.isLookup;
     const processorType = isPageGenerator ? 'pageGenerators' : 'pageProcessors';
 
@@ -190,12 +191,12 @@ export function* fetchPageProcessorPreview({
     refresh: refresh || flowDataState?.refresh,
     runOffline: true,
   });
-  const { merged: resource = {} } = yield select(
+  const resource = (yield select(
     selectors.resourceData,
     resourceType,
     _pageProcessorId,
     'value'
-  );
+  ))?.merged;
 
   if (isOneToManyResource(resource)) {
     previewData = processOneToManySampleData(previewData, resource);
@@ -265,6 +266,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
       resourceId: _pageGeneratorId,
       runOffline: true,
       throwOnError: true,
+      flowId,
     });
     previewData = getPreviewStageData(previewData, 'parse');
   }
@@ -386,7 +388,7 @@ export function* requestProcessorData({
         processorData = {
           data: preProcessedSampleData,
           rule,
-          processor: 'transform',
+          editorType: 'transform',
         };
       }
     } else if (transform.type === 'script') {
@@ -400,9 +402,11 @@ export function* requestProcessorData({
 
         processorData = {
           data: preProcessedData,
-          code: script && script.content,
-          entryFunction,
-          processor: 'javascript',
+          rule: {
+            code: script?.content,
+            entryFunction,
+          },
+          editorType: 'javascript',
           wrapInArrayProcessedData: true,
         };
       } else {
@@ -438,11 +442,13 @@ export function* requestProcessorData({
 
       processorData = {
         data: preProcessedData,
-        code,
+        rule: {
+          code,
+          entryFunction: hook.function,
+        },
         context,
-        entryFunction: hook.function,
         removeDataPropFromProcessedData: stage === 'preMap',
-        processor: 'javascript',
+        editorType: 'javascript',
       };
     } else {
       hasNoRulesToProcess = true;

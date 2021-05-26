@@ -492,10 +492,15 @@ export default {
     },
     MuiOutlinedInput: {
       root: {
+        border: '1px solid',
+        borderColor: colors.celigoNeutral3,
         backgroundColor: colors.celigoWhite,
-        '&$focused': {
+        '&:hover': {
           borderColor: colors.celigoAccent2,
         },
+      },
+      notchedOutline: {
+        border: `${colors.celigoNeutral3} !important`,
       },
     },
     MuiFormLabel: {
@@ -505,7 +510,7 @@ export default {
         lineHeight: '24px',
         color: colors.celigoNeutral8,
         '&.Mui-required': {
-          fontWeight: 'bold',
+          fontFamily: 'source sans pro semibold',
         },
       },
     },
@@ -689,6 +694,11 @@ export default {
           color: colors.celigoAccent2,
         },
       },
+      colorPrimary: {
+        '&.Mui-disabled': {
+          color: colors.celigoNeutral3,
+        },
+      },
     },
     MuiTabs: {
       root: {
@@ -723,7 +733,7 @@ export default {
       },
       textColorPrimary: {
         '&.Mui-selected': {
-          fontWeight: 'bold',
+          fontFamily: 'source sans pro semibold',
         },
       },
       labelIcon: {
@@ -824,6 +834,39 @@ export default {
         borderTop: `1px solid ${colors.celigoNeutral3}`,
       },
     },
+    MuiAutocomplete: {
+      option: {
+        position: 'relative',
+        fontSize: '14px',
+        alignItems: 'flex-start',
+        borderBottom: `1px solid ${colors.celigoNeutral3}`,
+        '&:before': {
+          content: '""',
+          width: '6px',
+          height: '100%',
+          position: 'absolute',
+          background: 'transparent',
+          left: 0,
+          top: 0,
+        },
+        '&[data-focus="true"]': {
+          backgroundColor: colors.celigoNeutral2,
+          '&:before': {
+            background: colors.celigoAccent3,
+          },
+        },
+        '&:active': {
+          backgroundColor: colors.celigoNeutral2,
+        },
+      },
+      inputRoot: {
+        alignItems: 'flex-start',
+      },
+      listbox: {
+        padding: '2px 0px',
+      },
+    },
+
   },
   props: {
     MuiCheckbox: {

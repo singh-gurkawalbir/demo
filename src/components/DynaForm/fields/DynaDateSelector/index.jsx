@@ -12,6 +12,7 @@ import CalendarIcon from '../../../icons/CalendarIcon';
 import DynaText from '../DynaText';
 import actions from '../../../../actions';
 import FieldMessage from '../FieldMessage';
+import { REQUIRED_MESSAGE } from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   iconWrapper: {
@@ -50,17 +51,28 @@ const defaultRange = {
 export default function DynaDateSelector(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { id, label, name, value, onFieldChange, required, formKey } = props;
+  const { id, label, name, value, onFieldChange, required, isValid: isValidState, formKey} = props;
   const calendarIcon = () => <CalendarIcon className={classes.iconWrapper} />;
   const { dateFormat } = useSelector(state => selectors.userProfilePreferencesProps(state));
   const isValueParsableByMoment = useCallback(value =>
     (moment(value).isValid() && value?.length === dateFormat.length) || moment(value, moment.ISO_8601, true).isValid(), [dateFormat.length]);
 
-  useEffect(() => {
-    const isValid = moment(value).isValid();
+  const isValid = isValueParsableByMoment(value);
 
-    dispatch(actions.form.forceFieldState(formKey)(id, {isValid, errorMessages: 'Invalid date format'}));
-  }, [value, id, dispatch, formKey]);
+  useEffect(() => {
+    if (required || value) {
+      if (isValid) {
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
+      } else {
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid, errorMessages: !value ? REQUIRED_MESSAGE : 'Invalid date format'}));
+      }
+    }
+  }, [id, dispatch, formKey, isValid, value, required]);
+
+  // suspend force field state compuation once the component turns invisible
+  useEffect(() => () => {
+    dispatch(actions.form.clearForceFieldState(formKey)(id));
+  }, [dispatch, formKey, id]);
 
   const handleFieldChange = useCallback((id, value) => {
     // isValueParsableByMoment checks for an incomplete form value or invalid date
@@ -80,7 +92,7 @@ export default function DynaDateSelector(props) {
   return (
     <>
       <div className={classes.dynaDateLabelWrapper}>
-        <FormLabel required={required}>{label}</FormLabel>
+        <FormLabel error={!isValidState} required={required}>{label}</FormLabel>
         <FieldHelp {...props} />
       </div>
       <DynaText
@@ -102,6 +114,7 @@ export default function DynaDateSelector(props) {
               customPresets={rangeFilters}
               clearValue={defaultRange}
               onSave={handleDateRangeChange}
+              showDateDisplay={false}
               showTime={false} />
           </InputAdornment>
         )}

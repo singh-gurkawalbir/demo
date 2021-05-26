@@ -165,7 +165,7 @@ function CategoryMappings({
   const isCommonCategory =
     sectionId === 'commonAttributes' || isParentCommonCategory;
   const [expanded, setExpanded] = useState(isRoot);
-  const memoizedOptions = useMemo(() => ({ sectionId }), [sectionId]);
+  const memoizedOptions = useMemo(() => ({ sectionId, depth }), [sectionId, depth]);
   const {
     fields: generateFields,
     name,
@@ -224,35 +224,37 @@ function CategoryMappings({
   const handleChange = useCallback(() => {
     setExpanded(!expanded);
   }, [expanded]);
-  const handleDelete = e => {
+  const handleDelete = useCallback(e => {
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
     dispatch(
       actions.integrationApp.settings.categoryMappings.deleteCategory(
         integrationId,
         flowId,
-        sectionId
+        sectionId,
+        depth
       )
     );
-  };
+  }, [dispatch, flowId, integrationId, sectionId, depth]);
 
-  const handleRestore = e => {
+  const handleRestore = useCallback(e => {
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
     dispatch(
       actions.integrationApp.settings.categoryMappings.restoreCategory(
         integrationId,
         flowId,
-        sectionId
+        sectionId,
+        depth
       )
     );
-  };
+  }, [dispatch, flowId, integrationId, sectionId, depth]);
 
-  const handleVariation = e => {
+  const handleVariation = useCallback(e => {
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
-    history.push(`${match.url}/variations/${sectionId}`);
-  };
+    history.push(`${match.url}/depth/${depth}/variations/${sectionId}`);
+  }, [history, match.url, sectionId, depth]);
 
   if (!generateFields) {
     return (
@@ -340,7 +342,7 @@ function CategoryMappings({
         <AccordionDetails>
           <div className={classes.fullWidth}>
             <Mappings
-              id={`${flowId}-${sectionId}`}
+              id={`${flowId}-${sectionId}-${depth}`}
               flowId={flowId}
               depth={depth}
               integrationId={integrationId}
@@ -457,7 +459,8 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
           integrationId={integrationId}
           flowId={flowId}
           categoryId={categoryId}
-          parentUrl={parentUrl} />
+          parentUrl={parentUrl}
+        />
 
         <DrawerTitleBar flowId={flowId} parentUrl={parentUrl} />
         {metadataLoaded ? (
@@ -554,7 +557,7 @@ const InitializationComp = ({integrationId, flowId, categoryId, parentUrl}) => {
       selectors.categoryMapping(state, integrationId, flowId) || {};
     const { deleted = [] } = categoryMappingMetadata;
 
-    return deleted.includes(categoryId);
+    return deleted?.[0]?.includes?.(categoryId);
   });
 
   useEffect(() => {

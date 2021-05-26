@@ -19,7 +19,7 @@ export const COMM_STATES = {
 Object.freeze(COMM_STATES);
 
 export default (state = initialState, action) => {
-  const { type, path, message, hidden, method = 'GET', key } = action;
+  const { type, path, message, hidden, refresh = false, method = 'GET', key } = action;
   const timestamp = Date.now();
   const commKey = commKeyGenerator(path, method);
 
@@ -31,6 +31,7 @@ export default (state = initialState, action) => {
         draft[commKey].status = COMM_STATES.LOADING;
         draft[commKey].message = message;
         draft[commKey].hidden = hidden;
+        draft[commKey].refresh = refresh;
         draft[commKey].method = method;
         delete draft[commKey].retry;
 
@@ -95,6 +96,9 @@ selectors.isLoading = (state, resourceName) => !!(
     state[resourceName] &&
     state[resourceName].status === COMM_STATES.LOADING
 );
+selectors.isRefreshing = (state, resourceName) => !!(
+    state?.[resourceName]?.refresh === true
+);
 
 selectors.isValidatingNetsuiteUserRoles = state => {
   const commPath = commKeyGenerator('/netsuite/alluserroles', 'POST');
@@ -122,7 +126,7 @@ selectors.commsErrors = commsState => {
     const {failedAtTimestamp, message, status, hidden} = curr;
 
     if (!hidden && status === COMM_STATES.ERROR) {
-      acc[failedAtTimestamp] = inferErrorMessages(message);
+      acc[failedAtTimestamp] = message;
     }
 
     return acc;

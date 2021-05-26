@@ -14,6 +14,8 @@ export function* _formatErrors({ errors = [], resourceId }) {
   const formattedErrors = errors.map(e => ({
     ...e,
     source: (e.source === 'application' && application) ? application : e.source,
+    // TODO: Remove this once actual API is updated to get reqAndResKey
+    // reqAndResKey: (index % 2 === 0) ? index : undefined,
   }));
 
   return formattedErrors;
@@ -182,17 +184,6 @@ export function* retryErrors({ flowId, resourceId, retryIds = [], isResolved = f
         errorIds,
       })
     );
-    const traceKeyList = allErrors
-      .filter(({errorId, traceKey }) => !!(errorIds.includes(errorId) && traceKey))
-      .map(error => error.traceKey);
-
-    if (traceKeyList.length) {
-      yield put(actions.errorManager.flowErrorDetails.trackTraceKeys({
-        flowId,
-        resourceId,
-        traceKeys: traceKeyList,
-      }));
-    }
   } catch (e) {
     // console.log('error');
   }

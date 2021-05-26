@@ -8,10 +8,10 @@ import ErrorDetailsDrawer from './ErrorTable/ErrorDetailsDrawer';
 import { FILTER_KEYS } from '../../utils/errorManagement';
 import { selectors } from '../../reducers';
 
-export default function ErrorList({ flowId, errorType }) {
+export default function ErrorList({ flowId }) {
   const match = useRouteMatch();
   const dispatch = useDispatch();
-  const { resourceId } = match.params;
+  const { resourceId, errorType } = match.params;
 
   const integrationId = useSelector(state =>
     selectors.resource(state, 'flows', flowId)?._integrationId || 'none'
@@ -55,13 +55,7 @@ export default function ErrorList({ flowId, errorType }) {
       <ErrorTable
         flowId={flowId}
         resourceId={resourceId}
-        show={errorType === 'open'}
-      />
-      <ErrorTable
-        flowId={flowId}
-        resourceId={resourceId}
-        show={errorType === 'resolved'}
-        isResolved
+        isResolved={errorType === 'resolved'}
       />
       <DownloadErrorsDrawer flowId={flowId} resourceId={resourceId} />
       <ErrorDetailsDrawer flowId={flowId} resourceId={resourceId} isResolved={errorType === 'resolved'} />

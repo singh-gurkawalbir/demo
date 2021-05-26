@@ -1,595 +1,1742 @@
-/* global describe, test, expect, fail */
-import deepFreeze from 'deep-freeze';
+/* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 
-describe('editor reducers', () => {
+describe('editors reducers', () => {
   test('should return previous state if action is not handled.', () => {
     const unknownAction = { type: 'unknown' };
     const oldState = { key: { keyword: 'findme' } };
     const newState = reducer(oldState, unknownAction);
 
-    expect(newState).toEqual(oldState);
+    expect(newState).toBe(oldState);
   });
 
-  test('should return the default data and rules when editor is initialized', () => {
-    // {
-    //   type, processor, id, rules, data, result, error;
-    // }
-
-    const rules = [{ a: 1 }, { b: 3 }];
-    const data = [{ d: 3 }, { e: 5 }];
-    const id = 1;
-    const processor = 'javascript';
-    const newState = reducer(
-      undefined,
-      actions.editor.init(id, processor, { rules, data })
-    );
-
-    expect(newState[1]).toMatchObject({
-      data,
-      rules,
-      defaultOptions: { rules, data },
-    });
-  });
-
-  test('should reset data with default values', () => {
-    const rules = [{ a: 1 }, { b: 3 }];
-    const data = [{ d: 3 }, { e: 5 }];
-    const id = 1;
-    const processor = 'javascript';
-    const initializedState = reducer(
-      undefined,
-      actions.editor.init(id, processor, { rules, data })
-    );
-    // intialized state
-    const changedData = 'someChange';
-    const dataChangedState = reducer(
-      initializedState,
-      actions.editor.patch(id, { data: changedData })
-    );
-
-    expect(dataChangedState[1]).toMatchObject({
-      data: 'someChange',
-    });
-
-    const resetState = reducer(dataChangedState, actions.editor.reset(id));
-
-    expect(resetState[1]).toMatchObject({
-      data,
-      defaultOptions: { rules, data },
-    });
-  });
-
-  test('should update last rule or data when the corresponding actions is dispatched', () => {
-    const rules = [{ a: 1 }, { b: 3 }];
-    const data = [{ d: 3 }, { e: 5 }];
-    const id = 1;
-    const processor = 'javascript';
-    const intializedState = reducer(
-      undefined,
-      actions.editor.init(id, processor, rules, data)
-    );
-    const changedData = 'someChange';
-    const dataChangedState = reducer(
-      intializedState,
-      actions.editor.patch(id, { data: changedData })
-    );
-
-    expect(dataChangedState[1]).toMatchObject({ data: changedData });
-
-    const someRuleChange = 'someRuleChange';
-    // Data change should be ignored by the reducer only rule should be affected
-    const ruleChangedState = reducer(
-      dataChangedState,
-      actions.editor.patch(id, { rule: someRuleChange })
-    );
-
-    expect(ruleChangedState[1]).toMatchObject({
-      rule: 'someRuleChange',
-    });
-  });
-
-  test('should get rid off all errors reset editor', () => {
-    const id = 1;
-    const processor = 'javascript';
-    const intializedState = reducer(
-      undefined,
-      actions.editor.init(id, processor)
-    );
-    const failureState = reducer(
-      intializedState,
-      actions.editor.evaluateFailure(id, {errorMessage: 'someError'})
-    );
-
-    expect(failureState[1]).toMatchObject({ error: 'someError' });
-
-    const resetState = reducer(failureState, actions.editor.reset(id));
-
-    expect(resetState[1]).not.toMatchObject({ error: 'someError' });
-  });
-
-  test('should get rid off all evaluations in reset editor', () => {
-    const id = 1;
-    const response = 'some result';
-    const processor = 'javascript';
-    const intializedState = reducer(
-      undefined,
-      actions.editor.init(id, processor)
-    );
-    const evaluationSuccessState = reducer(
-      intializedState,
-      actions.editor.evaluateResponse(id, response)
-    );
-
-    expect(evaluationSuccessState[1]).toMatchObject({
-      result: 'some result',
-    });
-    const resetStateAfterSuccessfulEvaluation = reducer(
-      evaluationSuccessState,
-      actions.editor.reset(id)
-    );
-
-    expect(resetStateAfterSuccessfulEvaluation[1]).not.toMatchObject({
-      result: 'some result',
-    });
-  });
-
-  // This test case is to verify we are doing a deep copy and not mutating
-  // the reducer state
-
-  describe('mutation behaviour of patch operations', () => {
-    test('should initialize with all options defined in the action and subsequent mutation to an option property should not alter the state', () => {
-      const id = 1;
-      const processor = 'transform';
-      const options = {
-        rules: [{ extract: 't', generate: 'g' }],
+  describe('UPDATE_HELPER_FUNCTIONS action', () => {
+    test('should add the helper functions in the state', () => {
+      const helperFunctions = {
+        abs: '{{abs field}}',
       };
-      const initProcessorState = reducer(
+      const newState = reducer(
         undefined,
-        actions.editor.init(id, processor, options)
+        actions.editor.updateHelperFunctions(helperFunctions)
       );
+      const expectedState = {
+        helperFunctions: {
+          abs: '{{abs field}}',
+        },
+      };
 
-      deepFreeze(initProcessorState);
-      expect(initProcessorState[id].rules).toEqual(options.rules);
-
-      try {
-        options.rules.push({ extract: 'c', generate: 'd' });
-      } catch (e) {
-        fail('should not throw an object freeze exception');
-      }
+      expect(newState).toEqual(expectedState);
     });
-    test('should not mutate the state of patch operation when the patch property is changed', () => {
-      const id = 1;
-      const processor = 'transform';
-      const intializedState = reducer(
+    test('should not modify any other editor state', () => {
+      const helperFunctions = {
+        abs: '{{abs field}}',
+      };
+      const initialState = {
+        httpbody: { id: 'httpbody', editorType: 'handlebars' },
+        query: { id: 'query', editorType: 'sql' },
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.updateHelperFunctions(helperFunctions)
+      );
+
+      expect(newState).toHaveProperty('httpbody', { id: 'httpbody', editorType: 'handlebars' });
+      expect(newState).toHaveProperty('query', { id: 'query', editorType: 'sql' });
+    });
+  });
+  describe('INIT_COMPLETE action', () => {
+    test('should not throw error if state does not exist', () => {
+      const state = reducer(
         undefined,
-        actions.editor.init(id, processor)
-      );
-      const patch = { rules: [{ extract: 'a', generate: 'b' }] };
-      const patchedState = reducer(
-        intializedState,
-        actions.editor.patch(id, patch)
+        actions.editor.initComplete('httpbody', {})
       );
 
-      deepFreeze(patchedState);
-      expect(patchedState[id].rules).toEqual(patch.rules);
+      expect(state).toEqual({httpbody: {}});
+    });
+    test('should not throw error in case of invalid arguments', () => {
+      const state = reducer(
+        undefined,
+        actions.editor.initComplete()
+      );
 
-      // this mutation should not throw an error
-      try {
-        patch.rules.push({ extract: 'c', generate: 'd' });
-      } catch (e) {
-        fail('should not throw an object freeze exception');
-      }
+      expect(state).toEqual({});
+    });
+    test('should create the editor state with passed options', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+      };
+      const state = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const newState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+        },
+      };
+
+      expect(state).toEqual(newState);
+    });
+    test('should not affect sibling entries', () => {
+      const initialState = {
+        query: {id: 'query'},
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.initComplete('httpbody', {})
+      );
+
+      expect(newState).toHaveProperty('query', {id: 'query'});
+    });
+  });
+  describe('CHANGE_LAYOUT action', () => {
+    test('should not throw error if state does not exist', () => {
+      const state = reducer(
+        undefined,
+        actions.editor.changeLayout('httpbody', 'compact')
+      );
+
+      expect(state).toEqual({});
+    });
+    test('should update the editor state with provided layout', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.changeLayout('httpbody', 'column')
+      );
+
+      expect(newState).toHaveProperty('httpbody.layout', 'column');
+    });
+    test('should not alter sibling editor states', () => {
+      const initialState = {
+        query: {id: 'query'},
+        httpbody: {id: 'httpbody'},
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.changeLayout('httpbody', 'compact')
+      );
+
+      expect(newState).toHaveProperty('query', {id: 'query'});
+    });
+  });
+  describe('CLEAR action', () => {
+    test('should clear the editor reference from the state', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.clear('httpbody')
+      );
+
+      expect(newState).not.toHaveProperty('httpbody');
+    });
+    test('should not alter any other editor state', () => {
+      const initialState = {
+        query: {id: 'query'},
+        httpbody: {id: 'httpbody'},
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.clear('httpbody')
+      );
+
+      expect(newState).toHaveProperty('query', {id: 'query'});
+    });
+  });
+  describe('SAMPLEDATA.RECEIVED action', () => {
+    test('should not throw error if state does not exist', () => {
+      const state = reducer(
+        undefined,
+        actions.editor.sampleDataReceived('httpbody', 'data')
+      );
+
+      expect(state).toEqual({});
+    });
+    test('should not call processor logic if buildData does not exist and store the passed sample data to the state directly', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}', 2)
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          data: '{"id": "123"}',
+          dataVersion: 2,
+          sampleDataStatus: 'received',
+          lastValidData: '{"id": "123"}',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should store the sample data returned by processor logic buildData function, if exists', () => {
+      const options = {
+        id: 'efilter-123',
+        editorType: 'exportFilter',
+        stage: 'exportFilter',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('efilter-123', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('efilter-123', '{"rows": [{"id": "123"}]}')
+      );
+      const expectedState = {
+        'efilter-123': {
+          id: 'efilter-123',
+          editorType: 'exportFilter',
+          stage: 'exportFilter',
+          data: {
+            filter: '{"rows": [{"id": "123"}]}',
+            javascript: JSON.stringify({record: [{id: '123'}]}, null, 2),
+          },
+          sampleDataStatus: 'received',
+          lastValidData: '{"rows": [{"id": "123"}]}',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should store the defaultData along with data if editorType is sql', () => {
+      const options = {
+        id: 'query',
+        editorType: 'sql',
+        stage: 'flowInput',
+        supportsDefaultData: true,
+        resourceId: 'new-1234',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('query', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('query', '{"rows": [{"id": "123"}]}')
+      );
+      const expectedState = {
+        query: {
+          id: 'query',
+          editorType: 'sql',
+          stage: 'flowInput',
+          resourceId: 'new-1234',
+          supportsDefaultData: true,
+          data: '{"rows": [{"id": "123"}]}',
+          defaultData: JSON.stringify({id: {default: ''}}, null, 2),
+          originalDefaultData: JSON.stringify({id: {default: ''}}, null, 2),
+          sampleDataStatus: 'received',
+          lastValidData: '{"rows": [{"id": "123"}]}',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should store the defaultData along with data if editorType is databaseMapping', () => {
+      const options = {
+        fieldId: 'rdbms.query',
+        editorType: 'databaseMapping',
+        supportsDefaultData: true,
+        resourceId: 'new-1234',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('rdbmsquery', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('rdbmsquery', '{"rows": [{"id": "123"}]}')
+      );
+      const expectedState = {
+        rdbmsquery: {
+          fieldId: 'rdbms.query',
+          editorType: 'databaseMapping',
+          resourceId: 'new-1234',
+          supportsDefaultData: true,
+          data: '{"rows": [{"id": "123"}]}',
+          defaultData: JSON.stringify({id: {default: ''}}, null, 2),
+          originalDefaultData: JSON.stringify({id: {default: ''}}, null, 2),
+          sampleDataStatus: 'received',
+          lastValidData: '{"rows": [{"id": "123"}]}',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should not modify sibling state entries', () => {
+      const initialState = {
+        query: {id: 'query'},
+        httpbody: {id: 'httpbody'},
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('query', '{"rows": [{"id": "123"}]}')
+      );
+
+      expect(newState).toHaveProperty('httpbody', {id: 'httpbody'});
+    });
+  });
+  describe('SAMPLEDATA.FAILED action', () => {
+    test('should not throw error if state does not exist', () => {
+      const state = reducer(
+        undefined,
+        actions.editor.sampleDataFailed('httpbody', 'some error')
+      );
+
+      expect(state).toEqual({});
+    });
+    test('should update the sample data status and store error msg', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.sampleDataFailed('httpbody', 'some error')
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          sampleDataStatus: 'error',
+          initError: 'some error',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should not alter any other editor state', () => {
+      const initialState = {
+        query: {id: 'query'},
+        httpbody: {id: 'httpbody'},
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.sampleDataFailed('httpbody', 'some error')
+      );
+
+      expect(newState).toHaveProperty('query', {id: 'query'});
+    });
+  });
+  describe('TOGGLE_VERSION action', () => {
+    test('should not throw error if state does not exist', () => {
+      const state = reducer(
+        undefined,
+        actions.editor.toggleVersion('httpbody', 2)
+      );
+
+      expect(state).toEqual({});
+    });
+    test('should update the state with v2 rule if passed version is 2', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        v2Rule: '{{v2}}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const tempState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}', 1)
+      );
+      const newState = reducer(
+        tempState,
+        actions.editor.toggleVersion('httpbody', 2)
+      );
+
+      expect(newState).toHaveProperty('httpbody.rule', '{{v2}}');
+    });
+    test('should update the state with v1 rule if passed version is 1', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        v1Rule: '{{v1}}',
+        v2Rule: '{{v2}}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const tempState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}')
+      );
+      const newState = reducer(
+        tempState,
+        actions.editor.toggleVersion('httpbody', 1)
+      );
+
+      expect(newState).toHaveProperty('httpbody.rule', '{{v1}}');
+    });
+    test('should update state correctly with dataVersion prop matching the passed version', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        v2Rule: '{{v2}}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const tempState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}')
+      );
+      const newState = reducer(
+        tempState,
+        actions.editor.toggleVersion('httpbody', 1)
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          data: '{"id": "123"}',
+          sampleDataStatus: 'requested',
+          lastValidData: '{"id": "123"}',
+          v2Rule: '{{v2}}',
+          dataVersion: 1,
+          result: '',
+          rule: '',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should not alter sibling state entries', () => {
+      const initialState = {
+        query: {id: 'query'},
+        httpbody: {id: 'httpbody'},
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.toggleVersion('query', 2)
+      );
+
+      expect(newState).toHaveProperty('httpbody', {id: 'httpbody'});
+    });
+  });
+  describe('TOGGLE_AUTO_PREVIEW action', () => {
+    test('should not throw error if state does not exist', () => {
+      const state = reducer(
+        undefined,
+        actions.editor.toggleAutoPreview('httpbody', false)
+      );
+
+      expect(state).toEqual({});
+    });
+    test('should toggle the current flag state if no argument is passed', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        autoEvaluate: true,
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.toggleAutoPreview('httpbody')
+      );
+
+      expect(newState).toHaveProperty('httpbody.autoEvaluate', false);
+    });
+    test('should set the autoEvaluate flag to the passed argument', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        autoEvaluate: false,
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.toggleAutoPreview('httpbody', false)
+      );
+
+      expect(newState).toHaveProperty('httpbody.autoEvaluate', false);
+    });
+    test('should reset the previewStatus flag if autoEvaluate is true', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        autoEvaluate: false,
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.toggleAutoPreview('httpbody', true)
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          autoEvaluate: true,
+          previewStatus: 'requested',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should not alter sibling state entries', () => {
+      const initialState = {
+        query: {id: 'query', autoEvaluate: true},
+        httpbody: {id: 'httpbody', autoEvaluate: false},
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.toggleAutoPreview('query', false)
+      );
+
+      expect(newState).toHaveProperty('httpbody', {id: 'httpbody', autoEvaluate: false});
+    });
+  });
+  describe('PATCH.RULE action', () => {
+    test('should not throw error if state does not exist', () => {
+      const state = reducer(
+        undefined,
+        actions.editor.patchRule('httpbody', {})
+      );
+
+      expect(state).toEqual({});
+    });
+    test('should replace the editor rule if its not of object type', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        rule: '{{abs oldField}}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const tempState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}')
+      );
+      const newState = reducer(
+        tempState,
+        actions.editor.patchRule('httpbody', '{{abs newField}}')
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          data: '{"id": "123"}',
+          sampleDataStatus: 'received',
+          lastValidData: '{"id": "123"}',
+          rule: '{{abs newField}}',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should replace the editor rule if the patch is null or undefined', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        rule: '{{abs oldField}}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const tempState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}')
+      );
+      const newState = reducer(
+        tempState,
+        actions.editor.patchRule('httpbody', null)
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          data: '{"id": "123"}',
+          sampleDataStatus: 'received',
+          lastValidData: '{"id": "123"}',
+          rule: null,
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should add the props in the rule if rule patch is of object type', () => {
+      const options = {
+        id: 'file.csv',
+        editorType: 'csvParser',
+        stage: 'flowInput',
+        rule: {
+          columnDelimiter: '\n',
+          rowDelimiter: '-',
+        },
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('file.csv', options)
+      );
+      const tempState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('file.csv', 'name\tage-Bob\t30')
+      );
+      const newState = reducer(
+        tempState,
+        actions.editor.patchRule('file.csv', {columnDelimiter: '\t', wrapInQuotes: true})
+      );
+      const expectedState = {
+        'file.csv': {
+          id: 'file.csv',
+          editorType: 'csvParser',
+          stage: 'flowInput',
+          data: 'name\tage-Bob\t30',
+          sampleDataStatus: 'received',
+          lastValidData: 'name\tage-Bob\t30',
+          rule: {
+            columnDelimiter: '\t',
+            rowDelimiter: '-',
+            wrapInQuotes: true,
+          },
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should only replace the active processor rule if editor is of dual mode type', () => {
+      const options = {
+        id: 'efilter',
+        editorType: 'exportFilter',
+        stage: 'exportFilter',
+        rule: {
+          filter: ['is', 'a', 'b'],
+          javascript: {fetchScriptContent: true},
+        },
+        activeProcessor: 'filter',
+
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('efilter', options)
+      );
+      const tempState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('efilter', '{"id": "abc"}')
+      );
+      const newState = reducer(
+        tempState,
+        actions.editor.patchRule('efilter', ['is', 'id', 'id'])
+      );
+      const expectedState = {
+        efilter: {
+          id: 'efilter',
+          editorType: 'exportFilter',
+          stage: 'exportFilter',
+          activeProcessor: 'filter',
+          data: {
+            filter: '{"id": "abc"}',
+            javascript: JSON.stringify({id: 'abc'}, null, 2),
+          },
+          sampleDataStatus: 'received',
+          lastValidData: '{"id": "abc"}',
+          rule: {
+            filter: ['is', 'id', 'id'],
+            javascript: {fetchScriptContent: true},
+          },
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should replace v1/v2 rule if dataVersion is available in the state', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        v2Rule: '{{v2 rule}}',
+        v1Rule: '{{abs oldField}}',
+        rule: '{{abs oldField}}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const tempState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}', 2)
+      );
+      const newState = reducer(
+        tempState,
+        actions.editor.patchRule('httpbody', '{{abs newField}}')
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          data: '{"id": "123"}',
+          sampleDataStatus: 'received',
+          lastValidData: '{"id": "123"}',
+          dataVersion: 2,
+          v2Rule: '{{abs newField}}',
+          v1Rule: '{{abs oldField}}',
+          rule: '{{abs newField}}',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should reset previewStatus if autoEvaluate is true', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        autoEvaluate: true,
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const tempState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}')
+      );
+      const newState = reducer(
+        tempState,
+        actions.editor.patchRule('httpbody', '{{abs newField}}')
+      );
+
+      expect(newState).toHaveProperty('httpbody.previewStatus', 'requested');
+    });
+    test('should not modify any other editor state', () => {
+      const initialState = {
+        query: {id: 'query'},
+        httpbody: {id: 'httpbody'},
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.patchRule('httpbody', '{{abs newField}}')
+      );
+
+      expect(newState).toHaveProperty('query', {id: 'query'});
+    });
+  });
+  describe('PATCH.DATA action', () => {
+    test('should not throw error if state does not exist', () => {
+      const state = reducer(
+        undefined,
+        actions.editor.patchData('httpbody', '{}')
+      );
+
+      expect(state).toEqual({});
+    });
+    test('should update the editor data with the passed patched data', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const tempState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}')
+      );
+      const newState = reducer(
+        tempState,
+        actions.editor.patchData('httpbody', '{"id": "456"}')
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          data: '{"id": "456"}',
+          sampleDataStatus: 'received',
+          lastValidData: '{"id": "456"}',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should only replace the active processor data if editor is of dual mode type', () => {
+      const options = {
+        id: 'efilter',
+        editorType: 'exportFilter',
+        stage: 'exportFilter',
+        activeProcessor: 'filter',
+
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('efilter', options)
+      );
+      const tempState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('efilter', '{"id": "abc"}')
+      );
+      const newState = reducer(
+        tempState,
+        actions.editor.patchData('efilter', '{"id": "abc", "name": "Bob"}')
+      );
+      const expectedState = {
+        efilter: {
+          id: 'efilter',
+          editorType: 'exportFilter',
+          stage: 'exportFilter',
+          activeProcessor: 'filter',
+          data: {
+            filter: '{"id": "abc", "name": "Bob"}',
+            javascript: JSON.stringify({id: 'abc'}, null, 2),
+          },
+          sampleDataStatus: 'received',
+          lastValidData: {
+            filter: '{"id": "abc", "name": "Bob"}',
+            javascript: JSON.stringify({id: 'abc'}, null, 2),
+          },
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should reset previewStatus if autoEvaluate is true', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        autoEvaluate: true,
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const tempState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('httpbody', '{"id": "123"}')
+      );
+      const newState = reducer(
+        tempState,
+        actions.editor.patchData('httpbody', '{"id": "456"}')
+      );
+
+      expect(newState).toHaveProperty('httpbody.previewStatus', 'requested');
+    });
+    test('should not modify any other editor state', () => {
+      const initialState = {
+        query: {id: 'query'},
+        httpbody: {id: 'httpbody'},
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.patchData('httpbody', '{"id": "123"}')
+      );
+
+      expect(newState).toHaveProperty('query', {id: 'query'});
+    });
+  });
+  describe('PATCH.FEATURES action', () => {
+    test('should not throw error if state does not exist', () => {
+      const state = reducer(
+        undefined,
+        actions.editor.patchFeatures('httpbody', {layout: 'compact'})
+      );
+
+      expect(state).toEqual({});
+    });
+    test('should patch passed props in the editor state', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.patchFeatures('httpbody', {layout: 'column'})
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          layout: 'column',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should toggle form data and update layout if editor type is settingsForm and patch contains activeProcessor', () => {
+      const options = {
+        id: 'settings',
+        editorType: 'settingsForm',
+        stage: 'flowInput',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('settings', options)
+      );
+      const tempState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('settings', '{"id": "123"}')
+      );
+      const newState = reducer(
+        tempState,
+        actions.editor.patchFeatures('settings', {activeProcessor: 'json'})
+      );
+      const expectedState = {
+        settings: {
+          id: 'settings',
+          editorType: 'settingsForm',
+          stage: 'flowInput',
+          data: JSON.stringify({id: '123'}, null, 2),
+          sampleDataStatus: 'received',
+          layout: 'jsonFormBuilder',
+          lastValidData: '{"id": "123"}',
+          activeProcessor: 'json',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should delete formOutput from state if editor type is settingsForm and patch contains data changes', () => {
+      const options = {
+        id: 'settings',
+        editorType: 'settingsForm',
+        stage: 'flowInput',
+        formOutput: {id: 123},
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('settings', options)
+      );
+      const tempState = reducer(
+        initialState,
+        actions.editor.sampleDataReceived('settings', '{"id": "123"}')
+      );
+      const newState = reducer(
+        tempState,
+        actions.editor.patchFeatures('settings', {data: '{"id": "456"}'})
+      );
+
+      expect(newState).not.toHaveProperty('settings.formOutput');
+    });
+    test('should not modify any other editor state', () => {
+      const initialState = {
+        query: {id: 'query'},
+        httpbody: {id: 'httpbody'},
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.patchFeatures('httpbody', {layout: 'compact'})
+      );
+
+      expect(newState).toHaveProperty('query', {id: 'query'});
+    });
+  });
+  describe('PATCH.FILE_KEY_COLUMN action', () => {
+    test('should not throw error if state does not exist', () => {
+      const state = reducer(
+        undefined,
+        actions.editor.patchFileKeyColumn('filekeycolumns', 'data', '{}')
+      );
+
+      expect(state).toEqual({});
+    });
+    test('should update the editor data if patch type is data', () => {
+      const options = {
+        id: 'filekeycolumns',
+        editorType: 'csvParser',
+        resourceType: 'exports',
+        autoEvaluate: true,
+        data: 'old data',
+        rule: {},
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('filekeycolumns', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.patchFileKeyColumn('filekeycolumns', 'data', 'new data')
+      );
+      const expectedState = {
+        filekeycolumns: {
+          id: 'filekeycolumns',
+          editorType: 'csvParser',
+          resourceType: 'exports',
+          autoEvaluate: true,
+          data: 'new data',
+          rule: {},
+          previewStatus: 'requested',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should update the editor rule if patch type is rule', () => {
+      const options = {
+        id: 'filekeycolumns',
+        editorType: 'csvParser',
+        resourceType: 'exports',
+        data: 'csv data',
+        rule: {
+          hasHeader: true,
+          columnDelimiter: ',',
+        },
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('filekeycolumns', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.patchFileKeyColumn('filekeycolumns', 'rule', {
+          hasHeader: true,
+          columnDelimiter: '|',
+        })
+      );
+      const expectedState = {
+        filekeycolumns: {
+          id: 'filekeycolumns',
+          editorType: 'csvParser',
+          resourceType: 'exports',
+          data: 'csv data',
+          rule: {
+            hasHeader: true,
+            columnDelimiter: '|',
+          },
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should not modify editor state if patch type is neither data nor rule', () => {
+      const initialState = {
+        filekeycolumns: {
+          id: 'filekeycolumns',
+          editorType: 'csvParser',
+          resourceType: 'exports',
+          data: 'csv data',
+          rule: {
+            hasHeader: true,
+            columnDelimiter: ',',
+          },
+        },
+      };
+
+      const newState = reducer(
+        initialState,
+        actions.editor.patchFileKeyColumn('filekeycolumns', 'dummyType', {
+          hasHeader: true,
+          columnDelimiter: '|',
+        })
+      );
+
+      expect(newState).toBe(initialState);
+    });
+    test('should not modify any other editor state', () => {
+      const initialState = {
+        query: {id: 'query'},
+        filekeycolumns: {id: 'filekeycolumns'},
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.patchFileKeyColumn('filekeycolumns', 'data', 'new data')
+      );
+
+      expect(newState).toHaveProperty('query', {id: 'query'});
+    });
+  });
+  describe('PREVIEW.RESPONSE action', () => {
+    test('should not throw error if state does not exist', () => {
+      const state = reducer(
+        undefined,
+        actions.editor.previewResponse('httpbody', 'some result')
+      );
+
+      expect(state).toEqual({});
+    });
+    test('should correctly update state with preview status as received', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        rule: '{{data.id}}',
+        error: 'error',
+        errorLine: 24,
+        violations: 'violations',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.previewResponse('httpbody', '123')
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          rule: '{{data.id}}',
+          previewStatus: 'received',
+          result: '123',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should not modify any other editor state', () => {
+      const initialState = {
+        query: {id: 'query'},
+        httpbody: {id: 'httpbody'},
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.previewResponse('httpbody', 'some result')
+      );
+
+      expect(newState).toHaveProperty('query', {id: 'query'});
+    });
+  });
+  describe('VALIDATE_FAILURE action', () => {
+    test('should not throw error if state does not exist', () => {
+      const state = reducer(
+        undefined,
+        actions.editor.validateFailure('httpbody', 'invalid data')
+      );
+
+      expect(state).toEqual({});
+    });
+    test('should correctly update state with preview status as error', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        rule: '{{data.id}}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.validateFailure('httpbody', 'invalid data')
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          rule: '{{data.id}}',
+          previewStatus: 'error',
+          violations: 'invalid data',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should not modify any other editor state', () => {
+      const initialState = {
+        query: {id: 'query'},
+        httpbody: {id: 'httpbody'},
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.validateFailure('httpbody', 'invalid data')
+      );
+
+      expect(newState).toHaveProperty('query', {id: 'query'});
+    });
+  });
+  describe('PREVIEW.FAILED action', () => {
+    test('should not throw error if state does not exist', () => {
+      const state = reducer(
+        undefined,
+        actions.editor.previewFailed('httpbody', {errorMessage: 'some error', errorLine: 12})
+      );
+
+      expect(state).toEqual({});
+    });
+    test('should correctly update state with preview status as error and errorLine', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        rule: '{{data.id}}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.previewFailed('httpbody', {errorMessage: 'some error', errorLine: 12})
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          rule: '{{data.id}}',
+          previewStatus: 'error',
+          error: 'some error',
+          errorLine: 12,
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should not modify any other editor state', () => {
+      const initialState = {
+        query: {id: 'query'},
+        httpbody: {id: 'httpbody'},
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.previewFailed('httpbody', {errorMessage: 'some error', errorLine: 12})
+      );
+
+      expect(newState).toHaveProperty('query', {id: 'query'});
+    });
+  });
+  describe('SAVE.REQUEST action', () => {
+    test('should not throw error if state does not exist', () => {
+      const state = reducer(
+        undefined,
+        actions.editor.saveRequest('httpbody')
+      );
+
+      expect(state).toEqual({});
+    });
+    test('should correctly update state with save status as requested', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        rule: '{{data.id}}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.saveRequest('httpbody')
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          rule: '{{data.id}}',
+          saveStatus: 'requested',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should not modify any other editor state', () => {
+      const initialState = {
+        query: {id: 'query'},
+        httpbody: {id: 'httpbody'},
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.saveRequest('httpbody')
+      );
+
+      expect(newState).toHaveProperty('query', {id: 'query'});
+    });
+  });
+  describe('SAVE.FAILED action', () => {
+    test('should not throw error if state does not exist', () => {
+      const state = reducer(
+        undefined,
+        actions.editor.saveFailed('httpbody', 'save error msg')
+      );
+
+      expect(state).toEqual({});
+    });
+    test('should correctly update state with save status as failed and error message', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        rule: '{{data.id}}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.saveFailed('httpbody', 'save error msg')
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          rule: '{{data.id}}',
+          saveStatus: 'failed',
+          saveMessage: 'save error msg',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should not modify any other editor state', () => {
+      const initialState = {
+        query: {id: 'query'},
+        httpbody: {id: 'httpbody'},
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.saveFailed('httpbody', 'save error msg')
+      );
+
+      expect(newState).toHaveProperty('query', {id: 'query'});
+    });
+  });
+  describe('SAVE.COMPLETE action', () => {
+    test('should not throw error if state does not exist', () => {
+      const state = reducer(
+        undefined,
+        actions.editor.saveComplete('httpbody')
+      );
+
+      expect(state).toEqual({});
+    });
+    test('should update save status and reset original rule', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        rule: '{{data.name}}',
+        originalRule: '{{data.id}}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.saveComplete('httpbody')
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          rule: '{{data.name}}',
+          saveStatus: 'success',
+          originalRule: '{{data.name}}',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should update save status and reset original data only if its already present', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        rule: {rowSuffix: '\n'},
+        originalRule: {rowSuffix: '-'},
+        data: '{"id": 123, "name": "Angel"}',
+        originalData: '{"id": 123, "name": "Bob"}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.saveComplete('httpbody')
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          rule: {rowSuffix: '\n'},
+          saveStatus: 'success',
+          originalRule: {rowSuffix: '\n'},
+          data: '{"id": 123, "name": "Angel"}',
+          originalData: '{"id": 123, "name": "Angel"}',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should update save status and reset original default data only if its already present', () => {
+      const options = {
+        id: 'rdbms.query',
+        editorType: 'sql',
+        stage: 'flowInput',
+        supportsDefaultData: true,
+        rule: 'some query',
+        originalRule: 'some query',
+        data: '{"id": 123, "name": "Angel"}',
+        originalData: '{"id": 123, "name": "Angel"}',
+        defaultData: '{"id": {"default": {}}}',
+        originalDefaultData: '{}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('rdbmsquery1', options)
+      );
+      const newState = reducer(
+        initialState,
+        actions.editor.saveComplete('rdbmsquery1')
+      );
+      const expectedState = {
+        rdbmsquery1: {
+          id: 'rdbms.query',
+          editorType: 'sql',
+          stage: 'flowInput',
+          supportsDefaultData: true,
+          rule: 'some query',
+          originalRule: 'some query',
+          data: '{"id": 123, "name": "Angel"}',
+          originalData: '{"id": 123, "name": "Angel"}',
+          defaultData: '{"id": {"default": {}}}',
+          originalDefaultData: '{"id": {"default": {}}}',
+          saveStatus: 'success',
+        },
+      };
+
+      expect(newState).toEqual(expectedState);
+    });
+    test('should not modify any other editor state', () => {
+      const initialState = {
+        query: {id: 'query'},
+        httpbody: {id: 'httpbody'},
+      };
+      const newState = reducer(
+        initialState,
+        actions.editor.saveComplete('httpbody')
+      );
+
+      expect(newState).toHaveProperty('query', {id: 'query'});
     });
   });
 });
 
-describe('editor selectors', () => {
+describe('editors selectors', () => {
+  const editorId = 'httpbody';
+
   describe('editor', () => {
     test('should return empty object when no match found.', () => {
-      expect(selectors.editor(undefined, 'key')).toEqual({});
-      expect(selectors.editor({}, 'key')).toEqual({});
+      expect(selectors.editor(undefined, editorId)).toEqual({});
+      expect(selectors.editor({}, editorId)).toEqual({});
+      expect(selectors.editor({123: {}}, editorId)).toEqual({});
+    });
+    test('should return correct editor state when a match is found', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+      };
+      const state = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const expectedState = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+      };
+
+      expect(selectors.editor(state, editorId)).toEqual(expectedState);
     });
   });
-
-  describe('processorRequestOptions', () => {
-    test('should return empty object when no match found.', () => {
-      expect(selectors.processorRequestOptions(undefined, 'missingId')).toEqual(
-        {}
-      );
-      expect(selectors.processorRequestOptions({}, 'missingId')).toEqual({});
+  describe('editorData', () => {
+    test('should return undefined when no match found.', () => {
+      expect(selectors.editorData(undefined, editorId)).toBeUndefined();
+      expect(selectors.editorData({}, editorId)).toBeUndefined();
+      expect(selectors.editorData({123: {}}, editorId)).toBeUndefined();
     });
+    test('should return the active processor data if present', () => {
+      const options = {
+        id: 'efilter',
+        editorType: 'exportFilter',
+        stage: 'exportFilter',
+        activeProcessor: 'filter',
+        data: {
+          filter: '{"rows": [{"id": "123"}]}',
+          javascript: JSON.stringify({record: [{id: '123'}]}, null, 2),
+        },
+      };
+      const state = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const expectedData = '{"rows": [{"id": "123"}]}';
 
-    const processorTestData = [
-      {
-        processor: 'csvParser',
-        valid: {
-          initOpts: {
-            columnDelimiter: '\t',
-            hasHeaderRow: true,
-            trimSpaces: true,
-            data: 'a,b,c',
-            rowsToSkip: 0,
-          },
-          expectedRequest: {
-            body: {
-              data: 'a,b,c',
-              rules: {
-                columnDelimiter: '\t',
-                trimSpaces: true,
-                keyColumns: undefined,
-                hasHeaderRow: true,
-                rowsToSkip: 0,
-              },
-              options: { includeEmptyValues: true },
-            },
-            processor: 'csvParser',
-          },
-        },
-        invalid: {
-          initOpts: { data: '' },
-          violations: { dataError: 'Must provide some sample data.' },
-        },
-      },
-      {
-        processor: 'csvDataGenerator',
-        valid: {
-          initOpts: {
-            columnDelimiter: '\t',
-            rowDelimiter: '\r\n',
-            hasHeaderRow: true,
-            trimSpaces: true,
-            includeHeader: false,
-            truncateLastRowDelimiter: true,
-            data: '{ "a": 1, "b": 2, "c": 3 }',
-          },
-          expectedRequest: {
-            body: {
-              data: [{ a: 1, b: 2, c: 3 }],
-              rules: {
-                rowDelimiter: '\r\n',
-                columnDelimiter: '\t',
-                hasHeaderRow: true,
-                trimSpaces: true,
-                includeHeader: false,
-                replaceNewlineWithSpace: undefined,
-                replaceTabWithSpace: undefined,
-                truncateLastRowDelimiter: true,
-                wrapWithQuotes: undefined,
-              },
-            },
-            processor: 'csvDataGenerator',
-          },
-        },
-        invalid: {
-          initOpts: { data: '' },
-          violations: { dataError: 'Must provide some sample data.' },
-        },
-      },
-      {
-        processor: 'handlebars',
-        valid: [
-          {
-            initOpts: { template: '{{a}}', strict: true, data: '{"a": 123}' },
-            expectedRequest: {
-              body: {
-                data: { a: 123 },
-                rules: { strict: true, template: '{{a}}' },
-              },
-              processor: 'handlebars',
-            },
-          },
-          {
-            initOpts: { template: 'Test', strict: true, data: '{"a": 123}' },
-            expectedRequest: {
-              body: {
-                data: { a: 123 },
-                rules: { strict: true, template: 'Test' },
-              },
-              processor: 'handlebars',
-            },
-          },
-        ],
-        invalid: {
-          initOpts: { template: '{{a}', data: '{a: xxx}' },
-          violations: { dataError: 'Unexpected token a in JSON at position 1' },
-        },
-      },
-      {
-        processor: 'sql',
-        valid: [
-          {
-            initOpts: {
-              template: 'Select * from {{id}}',
-              strict: true,
-              sampleData: '{"age": 33}',
-              defaultData: '{"id": 99}',
-            },
-            expectedRequest: {
-              body: {
-                data: { age: 33, id: 99 },
-                rules: { strict: true, template: 'Select * from {{id}}' },
-              },
-              processor: 'handlebars',
-            },
-          },
-          {
-            initOpts: {
-              template: 'Select * from {{id}}',
-              strict: true,
-              sampleData: '{"id": 33}',
-              defaultData: '{"id": 99}',
-            },
-            expectedRequest: {
-              body: {
-                data: { id: 33 },
-                rules: { strict: true, template: 'Select * from {{id}}' },
-              },
-              processor: 'handlebars',
-            },
-          },
-          {
-            initOpts: {
-              template: 'Select * from {{id}}',
-              strict: true,
-              sampleData: '{"age": 33}',
-              defaultData: '{"id": 99, "age": 1}',
-            },
-            expectedRequest: {
-              body: {
-                data: { age: 33, id: 99 },
-                rules: { strict: true, template: 'Select * from {{id}}' },
-              },
-              processor: 'handlebars',
-            },
-          },
-          {
-            initOpts: {
-              template: 'Select * from {{id}}',
-              strict: true,
-              sampleData: '',
-              defaultData: '',
-            },
-            expectedRequest: {
-              body: {
-                data: {},
-                rules: { strict: true, template: 'Select * from {{id}}' },
-              },
-              processor: 'handlebars',
-            },
-          },
-          {
-            initOpts: {
-              template: 'Select * from {{id}}',
-              strict: true,
-              sampleData: '{}',
-              defaultData: '{}',
-            },
-            expectedRequest: {
-              body: {
-                data: {},
-                rules: { strict: true, template: 'Select * from {{id}}' },
-              },
-              processor: 'handlebars',
-            },
-          },
-        ],
-        invalid: [
-          {
-            initOpts: {
-              template: '{{a}}',
-              sampleData: '{a: xxx}',
-              defaultData: '',
-            },
-            violations: {
-              dataError:
-                'Sample Data: Unexpected token a in JSON at position 1',
-            },
-          },
-          {
-            initOpts: {
-              template: '{{a}}',
-              sampleData: '',
-              defaultData: '{a: xxx}',
-            },
-            violations: {
-              dataError:
-                'Default Data: Unexpected token a in JSON at position 1',
-            },
-          },
-          {
-            initOpts: {
-              template: '{{a}}',
-              sampleData: '{"a": 1}',
-              defaultData: '{a: xxx}',
-            },
-            violations: {
-              dataError:
-                'Default Data: Unexpected token a in JSON at position 1',
-            },
-          },
-          {
-            initOpts: {
-              template: '{{a}}',
-              sampleData: '{',
-              defaultData: '{"a": "xxx"}',
-            },
-            violations: {
-              dataError: 'Sample Data: Unexpected end of JSON input',
-            },
-          },
-          {
-            initOpts: {
-              template: '{{a}}',
-              sampleData: '{{',
-              defaultData: '{',
-            },
-            violations: {
-              dataError:
-                'Sample Data: Unexpected token { in JSON at position 1\nDefault Data: Unexpected end of JSON input',
-            },
-          },
-        ],
-      },
-      {
-        processor: 'merge',
-        valid: [
-          {
-            initOpts: { rule: '{"b": true}', data: '{"a": 123}' },
-            expectedRequest: {
-              body: {
-                data: [{ a: 123 }],
-                rules: { b: true },
-              },
-              processor: 'merge',
-            },
-          },
-          {
-            initOpts: { rule: '[{"a": 1}]', data: '{"a": 123}' },
-            expectedRequest: {
-              body: {
-                data: [{ a: 123 }],
-                rules: [{ a: 1 }],
-              },
-              processor: 'merge',
-            },
-          },
-        ],
-        invalid: {
-          initOpts: { rule: '{a: xx}', data: '{"b": t}' },
-          violations: {
-            dataError: 'Unexpected token } in JSON at position 7',
-            ruleError: 'Unexpected token a in JSON at position 1',
-          },
-        },
-      },
-      {
-        processor: 'transform',
-        valid: {
-          initOpts: {
-            rule: [{ extract: 'a', generate: 'A' }],
-            data: '{"a": 123}',
-          },
-          expectedRequest: {
-            body: {
-              data: [{ a: 123 }],
-              rules: {
-                version: '1',
-                rules: [[{ extract: 'a', generate: 'A' }]],
-              },
-            },
-            processor: 'transform',
-          },
-        },
-        invalid: {
-          initOpts: {
-            rule: [{ extract: 'a', generate: 'A' }],
-            data: '{"a: 123}',
-          },
-          violations: {
-            dataError: 'Unexpected end of JSON input',
-            ruleError: false,
-          },
-        },
-      },
-      {
-        processor: 'xmlParser',
-        valid: {
-          initOpts: {
-            V0_json: false,
-            trimSpaces: true,
-            stripNewLineChars: true,
-            attributePrefix: '@',
-            textNodeName: '#',
-            listNodes: '/doc',
-            data: '<doc>empty</doc>',
-          },
-          expectedRequest: {
-            body: {
-              data: '<doc>empty</doc>',
-              options: {
-                isSimplePath: true,
-              },
-              rules: {
-                resourcePath: undefined,
-                doc: {
-                  parsers: [
-                    {
-                      type: 'xml',
-                      version: 1,
-                      rules: {
-                        V0_json: false,
-                        trimSpaces: true,
-                        stripNewLineChars: true,
-                        attributePrefix: '@',
-                        textNodeName: '#',
-                        listNodes: ['/doc'],
-                      },
-                    },
-                  ],
-                },
-              },
-            },
-            processor: 'xmlParser',
-          },
-        },
-        invalid: {
-          initOpts: {
-            advanced: true,
-            data: '',
-          },
-          violations: {
-            dataError: 'Must provide some sample data.',
-          },
-        },
-      },
-    ];
+      expect(selectors.editorData(state, editorId)).toEqual(expectedData);
+    });
+    test('should correctly return state data', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        data: '{"id": 123}',
+      };
+      const state = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const expectedData = '{"id": 123}';
 
-    processorTestData.forEach(testData => {
-      describe(`${testData.processor}`, () => {
-        test('should return correct opts for valid editor.', () => {
-          const id = 1;
-          let validCases;
+      expect(selectors.editorData(state, editorId)).toEqual(expectedData);
+    });
+  });
+  describe('editorResult', () => {
+    test('should return empty object when no match found.', () => {
+      expect(selectors.editorResult(undefined, editorId)).toEqual({});
+      expect(selectors.editorResult({}, editorId)).toEqual({});
+      expect(selectors.editorResult({123: {}}, editorId)).toEqual({});
+    });
+    test('should return correct editor state when a match is found', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        result: '123',
+      };
+      const state = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const expectedResult = '123';
 
-          if (testData.valid instanceof Array) {
-            validCases = testData.valid;
-          } else validCases = [testData.valid];
-          validCases.forEach(validCase => {
-            const state = reducer(
-              undefined,
-              actions.editor.init(id, testData.processor, validCase.initOpts)
-            );
-            const requestOpts = selectors.processorRequestOptions(state, id);
+      expect(selectors.editorResult(state, editorId)).toEqual(expectedResult);
+    });
+  });
+  describe('editorRule', () => {
+    test('should return empty object when no match found.', () => {
+      expect(selectors.editorRule(undefined, editorId)).toEqual({});
+      expect(selectors.editorRule({}, editorId)).toEqual({});
+      expect(selectors.editorRule({123: {}}, editorId)).toEqual({});
+    });
+    test('should return the active processor rule if present', () => {
+      const options = {
+        id: 'efilter',
+        editorType: 'exportFilter',
+        stage: 'exportFilter',
+        activeProcessor: 'filter',
+        rule: {
+          filter: ['is', 'a', 'b'],
+          javascript: {fetchScriptContent: true},
+        },
+      };
+      const state = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const expectedRule = ['is', 'a', 'b'];
 
-            expect(requestOpts).toEqual(validCase.expectedRequest);
-          });
-        });
+      expect(selectors.editorRule(state, editorId)).toEqual(expectedRule);
+    });
+    test('should correctly return state rule', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        data: '{"id": 123}',
+        rule: '{{id}}',
+      };
+      const state = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const expectedRule = '{{id}}';
 
-        test('should return errors for invalid editor.', () => {
-          const id = 1;
-          let invalidCases;
+      expect(selectors.editorRule(state, editorId)).toEqual(expectedRule);
+    });
+  });
+  describe('editorPreviewError', () => {
+    test('should return empty object when no match found.', () => {
+      expect(selectors.editorPreviewError(undefined, editorId)).toEqual({});
+      expect(selectors.editorPreviewError({}, editorId)).toEqual({});
+      expect(selectors.editorPreviewError({123: {}}, editorId)).toEqual({});
+    });
+    test('should return object with error and errorLine when a match is found', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        data: '{"id": 123}',
+        rule: '{{id}}',
+        error: 'some error',
+        errorLine: 34,
+      };
+      const state = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const expectedOutput = {
+        error: 'some error',
+        errorLine: 34,
+      };
 
-          if (testData.invalid instanceof Array) {
-            invalidCases = testData.invalid;
-          } else invalidCases = [testData.invalid];
-          invalidCases.forEach(invalidCaseTestData => {
-            const state = reducer(
-              undefined,
-              actions.editor.init(
-                id,
-                testData.processor,
-                invalidCaseTestData.initOpts
-              )
-            );
-            const requestOpts = selectors.processorRequestOptions(state, id);
+      expect(selectors.editorPreviewError(state, editorId)).toEqual(expectedOutput);
+    });
+  });
+  describe('editorDataVersion', () => {
+    test('should return undefined when no match found.', () => {
+      expect(selectors.editorDataVersion(undefined, editorId)).toBeUndefined();
+      expect(selectors.editorDataVersion({}, editorId)).toBeUndefined();
+      expect(selectors.editorDataVersion({123: {}}, editorId)).toBeUndefined();
+    });
+    test('should return the data version if found in state', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        data: '{"id": 123}',
+        rule: '{{id}}',
+        v2Rule: '{{id}}',
+        dataVersion: 2,
+      };
+      const state = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
 
-            expect(requestOpts.violations).toEqual(
-              invalidCaseTestData.violations
-            );
-          });
-        });
-      });
+      expect(selectors.editorDataVersion(state, editorId)).toEqual(2);
+    });
+  });
+  describe('editorLayout', () => {
+    test('should return undefined when no match found.', () => {
+      expect(selectors.editorLayout(undefined, editorId)).toBeUndefined();
+      expect(selectors.editorLayout({}, editorId)).toBeUndefined();
+      expect(selectors.editorLayout({123: {}}, editorId)).toBeUndefined();
+    });
+    test('should return the data version if found in state', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        data: '{"id": 123}',
+        rule: '{{id}}',
+        v2Rule: '{{id}}',
+        dataVersion: 2,
+        layout: 'compact',
+      };
+      const state = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+
+      expect(selectors.editorLayout(state, editorId)).toEqual('compact');
+    });
+  });
+  describe('editorViolations', () => {
+    test('should return undefined when no match found.', () => {
+      expect(selectors.editorViolations(undefined, editorId)).toBeUndefined();
+      expect(selectors.editorViolations({}, editorId)).toBeUndefined();
+      expect(selectors.editorViolations({123: {}}, editorId)).toBeUndefined();
+    });
+    test('should call and return the corresponding processor logic validate function result', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        rule: '{{id}}',
+      };
+      const state = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+
+      expect(selectors.editorViolations(state, editorId)).toEqual({dataError: 'Must provide some sample data.'});
+    });
+  });
+  describe('isEditorDirty', () => {
+    test('should return undefined when no match found.', () => {
+      expect(selectors.isEditorDirty(undefined, editorId)).toBeUndefined();
+      expect(selectors.isEditorDirty({}, editorId)).toBeUndefined();
+      expect(selectors.isEditorDirty({123: {}}, editorId)).toBeUndefined();
+    });
+    test('should call and return the corresponding processor logic dirty function result', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        rule: '{{id}}',
+        originalRule: '{{name}}',
+      };
+      const state = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+
+      expect(selectors.isEditorDirty(state, editorId)).toEqual(true);
     });
   });
 });

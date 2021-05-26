@@ -111,11 +111,11 @@ export function* requestJobCollection({ integrationId, flowId, filters = {}, opt
   }
 
   if (!jobFilters.flowId) {
-    if (jobFilters.storeId) {
+    if (jobFilters.childId) {
       const flowIds = yield select(
         selectors.integrationAppFlowIds,
         integrationId,
-        jobFilters.storeId
+        jobFilters.childId
       );
 
       jobFilters.flowIds = flowIds;
@@ -139,7 +139,7 @@ export function* requestJobCollection({ integrationId, flowId, filters = {}, opt
     }
   }
 
-  delete jobFilters.storeId;
+  delete jobFilters.childId;
   delete jobFilters.refreshAt;
 
   switch (jobFilters.status) {
@@ -308,7 +308,7 @@ export function* resolveCommit({ jobs = [] }) {
   yield all(uniqueParentJobIds.map(jobId => call(getJobFamily, { jobId })));
 }
 
-export function* resolveAllCommit({ flowId, storeId, integrationId, filteredJobsOnly }) {
+export function* resolveAllCommit({ flowId, childId, integrationId, filteredJobsOnly }) {
   let flowIds = [];
   let jobIds = [];
 
@@ -318,11 +318,11 @@ export function* resolveAllCommit({ flowId, storeId, integrationId, filteredJobs
     jobIds = filteredJobs.filter(j => j?.__original?.numError > 0).map(j => j._id);
   } else if (flowId) {
     flowIds.push(flowId);
-  } else if (storeId) {
+  } else if (childId) {
     flowIds = yield select(
       selectors.integrationAppFlowIds,
       integrationId,
-      storeId
+      childId
     );
   }
 
@@ -378,7 +378,7 @@ export function* resolveSelected({ jobs }) {
   }
 }
 
-export function* resolveAll({ flowId, storeId, integrationId, filteredJobsOnly }) {
+export function* resolveAll({ flowId, childId, integrationId, filteredJobsOnly }) {
   yield put(actions.job.resolveAllPending());
 
   yield put(actions.job.resolveAllInit());
@@ -394,7 +394,7 @@ export function* resolveAll({ flowId, storeId, integrationId, filteredJobsOnly }
       actionTypes.JOB.RESOLVE_ALL_PENDING,
     ].includes(undoOrCommitAction.type)
   ) {
-    yield call(resolveAllCommit, { flowId, storeId, integrationId, filteredJobsOnly });
+    yield call(resolveAllCommit, { flowId, childId, integrationId, filteredJobsOnly });
   }
 }
 
@@ -469,18 +469,21 @@ export function* retryFlowJob({ jobId }) {
 
   const jobsToRetry = [];
 
-  job.children &&
-    job.children.forEach(cJob => {
+    job?.children?.forEach(cJob => {
       if (cJob.retriable) {
         jobsToRetry.push({ _id: cJob._id, _flowJobId: jobId });
       }
     });
 
-  if (jobsToRetry.length === 0) {
-    return true;
-  }
+    if (jobsToRetry.length === 0) {
+      if (!job) {
+        yield put(actions.api.failure('JOBS', 'PUT', 'Retry operation failed.', false));
+      }
 
-  yield call(retrySelected, { jobs: jobsToRetry });
+      return true;
+    }
+
+    yield call(retrySelected, { jobs: jobsToRetry });
 }
 
 export function* retryAllCommit({ flowIds }) {
@@ -507,7 +510,7 @@ export function* retryAllCommit({ flowIds }) {
   }
 }
 
-export function* retryAll({ flowId, storeId, integrationId }) {
+export function* retryAll({ flowId, childId, integrationId }) {
   yield put(actions.job.retryAllPending());
 
   let flowIds = [];
@@ -518,14 +521,10 @@ export function* retryAll({ flowId, storeId, integrationId }) {
     const allFlows = yield select(selectors.resourceList, { type: 'flows' });
 
     if (allFlows?.resources) {
-      if (storeId) {
-        const storeFlowIds = yield select(
-          selectors.integrationAppFlowIds,
-          integrationId,
-          storeId
-        );
+      if (childId) {
+        const childFlowIds = yield select(selectors.integrationAppFlowIds, integrationId, childId);
 
-        flowIds = allFlows.resources.filter(f => storeFlowIds.includes(f._id) && !f.disabled).map(f => f._id);
+        flowIds = allFlows.resources.filter(f => childFlowIds.includes(f._id) && !f.disabled).map(f => f._id);
       } else {
         flowIds = allFlows.resources.filter(f => (integrationId === 'none' ? !f._integrationId : (f._integrationId === integrationId)) && !f.disabled).map(f => f._id);
       }

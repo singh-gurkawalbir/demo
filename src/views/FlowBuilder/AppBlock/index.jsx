@@ -5,12 +5,10 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton, Tooltip, Zoom } from '@material-ui/core';
+import { Typography, IconButton } from '@material-ui/core';
 import clsx from 'clsx';
-// import LinesEllipsis from 'react-lines-ellipsis';
-import Truncate from 'react-truncate';
 import { selectors } from '../../../reducers';
 import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
@@ -19,6 +17,8 @@ import ResourceButton from '../ResourceButton';
 import BubbleSvg from '../BubbleSvg';
 import CloseIcon from '../../../components/icons/CloseIcon';
 import ErrorStatus from '../ErrorStatus';
+import CeligoTruncate from '../../../components/CeligoTruncate';
+import actions from '../../../actions';
 
 const blockHeight = 170;
 const blockWidth = 275;
@@ -135,9 +135,6 @@ const useStyles = makeStyles(theme => ({
     // marginTop: -theme.spacing(1),
     // marginLeft: -theme.spacing(1),
   },
-  tooltipNameFB: {
-    wordWrap: 'break-word',
-  },
   deleteButton: {
     position: 'absolute',
     right: -theme.spacing(0.5),
@@ -162,12 +159,13 @@ function AppBlock({
   connectorType,
   assistant,
   name,
-  actions,
+  actions: flowActions,
   resourceIndex,
   opacity = 1,
   flowId,
   resourceType,
   resource,
+  resourceId,
   integrationId,
   isViewMode,
   isMonitorLevelAccess,
@@ -178,9 +176,9 @@ function AppBlock({
   ...rest
 }) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [expanded, setExpanded] = useState(false);
   const [isOver, setIsOver] = useState(false);
-  const [isTruncated, setIsTruncated] = useState(false);
   const [activeAction, setActiveAction] = useState(null);
   const isNew = blockType.startsWith('new');
   const isActive = useSelector(state => {
@@ -190,6 +188,7 @@ function AppBlock({
 
     return activeConn === resource?._id || activeConn === resource?._connectionId;
   });
+
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;
 
@@ -232,6 +231,11 @@ function AppBlock({
     }
   }, [isOver, expanded]);
 
+  useEffect(() => {
+    dispatch(actions.resource.validate(resourceType, resourceId));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleDelete = useCallback(index => () => onDelete(index), [onDelete]);
   const handleExpandClick = useCallback(() => setExpanded(true), []);
   const handleMouseOver = useCallback(
@@ -246,25 +250,26 @@ function AppBlock({
     setActiveAction(null);
     setExpanded();
   }, []);
-  const hasActions = actions && Array.isArray(actions) && actions.length;
+
+  const hasActions = resourceId && flowActions && Array.isArray(flowActions) && flowActions.length;
   const { leftActions, middleActions, rightActions } = useMemo(() => {
     let leftActions = [];
     let middleActions = [];
     let rightActions = [];
 
     if (hasActions) {
-      leftActions = actions.filter(a => a.position === 'left');
-      middleActions = actions.filter(a => a.position === 'middle');
-      rightActions = actions.filter(a => a.position === 'right');
+      leftActions = flowActions.filter(a => a.position === 'left');
+      middleActions = flowActions.filter(a => a.position === 'middle');
+      rightActions = flowActions.filter(a => a.position === 'right');
     }
 
     return { leftActions, middleActions, rightActions };
-  }, [actions, hasActions]);
+  }, [flowActions, hasActions]);
 
-  function renderActions(actions) {
-    if (!actions || !actions.length) return null;
+  function renderActions(flowActions) {
+    if (!flowActions || !flowActions.length) return null;
 
-    return actions.map(a => (
+    return flowActions.map(a => (
       <Fragment key={a.name}>
         <ActionIconButton
           variant={a.position !== 'middle' ? 'contained' : undefined}
@@ -367,25 +372,9 @@ function AppBlock({
       </div>
       <div className={clsx(classes.name, {[classes.pgContainerName]: isPageGenerator})}>
         <Typography className={classes.containerName}>
-          {isTruncated ? (
-            <Tooltip
-              data-public
-              title={<span className={classes.tooltipNameFB}>{name}</span>}
-              TransitionComponent={Zoom}
-              placement="top"
-              enterDelay={1000}>
-              <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
-                {name}
-              </Truncate>
-            </Tooltip>
-          ) : (
-            <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
-              {name}
-            </Truncate>
-          )}
+          <CeligoTruncate data-public lines={2}>{name}</CeligoTruncate>
         </Typography>
       </div>
-
     </div>
   );
 }

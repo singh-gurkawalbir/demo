@@ -106,10 +106,21 @@ const useStyles = makeStyles(theme => ({
   rightCalendar: {
     marginLeft: theme.spacing(2),
   },
+  dateRangePopperBtnFull: {
+    width: '100%',
+    justifyContent: 'flex-start',
+    padding: [[6, 12]],
+    '& > .MuiButton-label': {
+      justifyContent: 'space-between',
+    },
+    '&:hover': {
+      color: theme.palette.secondary.main,
+    },
+  },
 }));
 const DateRange = props => {
-  const { isCalendar, setSelectedRange } = props;
-  const handleDateRangeSelection = useCallback(range => {
+  const { isCalendar, setSelectedRange, ranges } = props;
+  const handleDateRangeSelection = useCallback(({ selection: range }) => {
     let { startDate, endDate } = range;
 
     if (startDate.getTime() === endDate.getTime() && endDate.getTime() === startOfDay(endDate).getTime()) {
@@ -126,6 +137,7 @@ const DateRange = props => {
     return (
       <Calendar
         {...props}
+        date={ranges[0].endDate} // ranges[0].endate consists the selected date
         onChange={handleCalendardateSelection}
         months={1}
      />
@@ -135,11 +147,12 @@ const DateRange = props => {
   return (
     <DateRangePicker
       {...props}
-      onChange={item => handleDateRangeSelection(item.selection)}
+      onChange={handleDateRangeSelection}
       months={2}
   />
   );
 };
+
 export default function DateRangeSelector({
   value = {},
   onSave,
@@ -151,10 +164,18 @@ export default function DateRangeSelector({
   clearValue,
   placement,
   Icon,
+  disabled,
+  fullWidthBtn,
+  placeholder = 'Select range',
+  defaultPreset = {preset: 'last30days'},
+  selectedRangeConstraint,
+  CustomTextFields,
   toDate,
+  // default Date display to be shown in all cases
+  showDateDisplay = true,
   isCalendar,
 }) {
-  const defaultValue = getSelectedRange({preset: 'last30days'});
+  const defaultValue = getSelectedRange(defaultPreset);
   const { startDate = defaultValue.startDate, endDate = defaultValue.endDate, preset = defaultValue.preset } = value;
   const [initalValue, setInitialValue] = useState(
     {
@@ -163,19 +184,29 @@ export default function DateRangeSelector({
       preset,
     },
   );
+  const [reset, setReset] = useState(false);
+
   const [selectedRange, setSelectedRange] = useState(initalValue);
+
+  const setSelectedRangeWithConstraint = useCallback(selected => {
+    const {startDate, endDate} = selected;
+
+    if (selectedRangeConstraint && !selectedRangeConstraint(startDate, endDate)) { return; }
+    setSelectedRange(selected);
+    setReset(state => !state);
+  }, [selectedRangeConstraint]);
   const handleListItemClick = (event, id) => {
-    setSelectedRange(state => ({...state, preset: id}));
+    setSelectedRangeWithConstraint(state => ({...state, preset: id}));
   };
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const presets = useMemo(() => customPresets.length ? customPresets : defaultPresets, [customPresets]);
   const toggleClick = useCallback(event => {
     if (anchorEl) {
-      setSelectedRange(initalValue);
+      setSelectedRangeWithConstraint(initalValue);
     }
     setAnchorEl(state => (state ? null : event.currentTarget));
-  }, [anchorEl, initalValue]);
+  }, [anchorEl, setSelectedRangeWithConstraint, initalValue]);
 
   const handleSave = useCallback(() => {
     if (selectedRange.preset === 'lastrun') {
@@ -191,12 +222,12 @@ export default function DateRangeSelector({
   }, [customPresets, onSave, selectedRange]);
 
   const handleClose = useCallback(() => {
-    setSelectedRange(initalValue);
+    setSelectedRangeWithConstraint(initalValue);
     setAnchorEl(null);
-  }, [initalValue]);
+  }, [initalValue, setSelectedRangeWithConstraint]);
 
   const handleClear = useCallback(() => {
-    setSelectedRange(() => {
+    setSelectedRangeWithConstraint(() => {
       const clearRangeValue = clearValue || {startDate: null, endDate: null, preset: null};
 
       onSave && onSave(clearRangeValue);
@@ -204,22 +235,23 @@ export default function DateRangeSelector({
       return clearRangeValue;
     });
     setAnchorEl(null);
-  }, [onSave, clearValue]);
+  }, [setSelectedRangeWithConstraint, clearValue, onSave]);
 
   return (
     <>
       {
         Icon ? (
-          <ActionButton onClick={toggleClick}>
+          <ActionButton disabled={!!disabled} onClick={toggleClick}>
             <Icon />
           </ActionButton>
         ) : (
           <Button
+            disabled={!!disabled}
             onClick={toggleClick}
             variant="outlined"
             color="secondary"
-            className={classes.dateRangePopperBtn}>
-            {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || 'Select range'}<ArrowDownIcon />
+            className={clsx(classes.dateRangePopperBtn, {[classes.dateRangePopperBtnFull]: fullWidthBtn})}>
+            {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || placeholder}<ArrowDownIcon />
           </Button>
         )
       }
@@ -253,14 +285,22 @@ export default function DateRangeSelector({
                   ))}
 
                 </List>
+                {selectedRange.preset === 'custom' &&
+                CustomTextFields && (
+                <CustomTextFields
+                  reset={reset}
+                  setReset={setReset} selectedRange={selectedRange}
+                  setSelectedRange={setSelectedRange} />
+                )}
               </div>
               {selectedRange.preset === 'custom' && (
               <div className={classes.rightCalendar}>
                 <DateRange
                   isCalendar={isCalendar}
-                  setSelectedRange={setSelectedRange}
+                  setSelectedRange={setSelectedRangeWithConstraint}
                   staticRanges={[]}
                   showSelectionPreview
+                  showDateDisplay={showDateDisplay}
                   moveRangeOnFirstSelection={false}
                   showMonthAndYearPickers={false}
                   editableDateInputs={false}

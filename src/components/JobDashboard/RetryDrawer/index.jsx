@@ -13,9 +13,6 @@ import CodeEditor from '../../CodeEditor';
 import ButtonGroup from '../../ButtonGroup';
 
 const useStyles = makeStyles(theme => ({
-  spinner: {
-    marginRight: theme.spacing(1),
-  },
   errorText: {
     margin: theme.spacing(1),
   },
@@ -100,14 +97,14 @@ function RetryForm({jobId, flowJobId}) {
   }, [retryData]);
 
   if (!retryData) {
-    return <Spinner className={classes.spinner} />;
+    return <Spinner centerAll />;
   }
 
   const disabled = !!error || !touched;
 
   return (
     <>
-      <DrawerContent>
+      <DrawerContent noPadding>
         <div className={classes.content}>
           <CodeEditor name="retryEditor" mode="json" value={data} onChange={handleChange} />
           {error && <Typography className={classes.errorText} component="div" color="error">{error}</Typography>}

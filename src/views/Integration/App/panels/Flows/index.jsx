@@ -23,8 +23,8 @@ import {ActionsFactory as GenerateButtons} from '../../../../../components/drawe
 import consolidatedActions from '../../../../../components/ResourceFormFactory/Actions';
 import MappingDrawer from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
+import SectionTitle from '../../../common/FlowSectionTitle';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
-import StatusCircle from '../../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import ResponseMappingDrawer from '../../../../../components/ResponseMapping/Drawer';
 import KeywordSearch from '../../../../../components/KeywordSearch';
@@ -68,19 +68,6 @@ const useStyles = makeStyles(theme => ({
   },
   configureSectionBtn: {
     padding: 0,
-  },
-  gridContainer: {
-    display: 'grid',
-    gridColumnGap: '10px',
-    gridTemplateColumns: 'auto 38%',
-    position: 'relative',
-    '& > div:first-child': {
-      wordBreak: 'break-word',
-    },
-    '& > div:last-child': {
-      position: 'relative',
-      right: -12,
-    },
   },
   emptyMessageWrapper: {
     padding: theme.spacing(1, 2),
@@ -184,7 +171,7 @@ const defaultFilter = {
   ],
 };
 
-const FlowsTable = ({integrationId, storeId}) => {
+const FlowsTable = ({integrationId, childId}) => {
   const match = useRouteMatch();
   const filterKey = `${integrationId}-flows`;
   const { sectionId } = match.params;
@@ -192,23 +179,23 @@ const FlowsTable = ({integrationId, storeId}) => {
   const flowsFilterConfig = useMemo(() => ({ ...(flowFilter || {}), excludeHiddenFlows: true }), [flowFilter]);
   const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
   const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
-  const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, storeId, flowsFilterConfig);
-  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration, storeId);
+  const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, childId, flowsFilterConfig);
+  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration, childId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
 
   const actionProps = useMemo(() => ({
     isIntegrationApp: true,
-    storeId,
+    childId,
     resourceType: 'flows',
     isUserInErrMgtTwoDotZero,
-    showChild: (integration?.settings?.supportsMultiStore && !storeId),
+    showChild: (integration?.settings?.supportsMultiStore && !childId),
     appName,
     childHeader: integration?.settings?.storeLabel,
     flowAttributes,
     integration,
-  }), [storeId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration]);
+  }), [childId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration]);
 
   return (
     <LoadResources required resources="flows,exports">
@@ -223,7 +210,7 @@ const FlowsTable = ({integrationId, storeId}) => {
   );
 };
 
-function FlowList({ integrationId, storeId }) {
+function FlowList({ integrationId, childId }) {
   const filterKey = `${integrationId}-flows`;
   const match = useRouteMatch();
   const { sectionId } = match.params;
@@ -255,48 +242,43 @@ function FlowList({ integrationId, storeId }) {
       <QueuedJobsDrawer />
       <SettingsDrawer
         integrationId={integrationId}
-        storeId={storeId}
+        childId={childId}
         sectionId={sectionId}
       />
       <MappingDrawer
         integrationId={integrationId}
-        // storeId={storeId}
-        // sectionId={sectionId}
       />
       <ResponseMappingDrawer
         integrationId={integrationId}
       />
-      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={storeId} />}
+      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={childId} />}
       <CategoryMappingDrawer
         integrationId={integrationId}
-        storeId={storeId}
+        childId={childId}
         sectionId={sectionId}
-        // flowId={flowId}
       />
       <AddCategoryMappingDrawer
         integrationId={integrationId}
-        storeId={storeId}
+        childId={childId}
         sectionId={sectionId}
-        // flowId={flowId}
       />
       <VariationMappingDrawer
         integrationId={integrationId}
-        storeId={storeId}
+        childId={childId}
         sectionId={sectionId}
-        // flowId={flowId}
       />
-      <Header integrationId={integrationId} storeId={storeId} />
-      <FlowsTable integrationId={integrationId} storeId={storeId} />
+      <Header integrationId={integrationId} childId={childId} />
+      <FlowsTable integrationId={integrationId} childId={childId} />
     </>
   );
 }
 
-const Header = ({integrationId, storeId}) => {
+const Header = ({integrationId, childId}) => {
   const classes = useStyles();
   const filterKey = `${integrationId}-flows`;
   const match = useRouteMatch();
   const { sectionId } = match.params;
-  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
+  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, childId);
   const section = flowSections.find(s => s.titleId === sectionId);
 
   return (
@@ -310,45 +292,15 @@ const Header = ({integrationId, storeId}) => {
   );
 };
 
-const SectionTitle = ({integrationId, storeId, title, titleId}) => {
-  const classes = useStyles();
-  const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isOwnerUserInErrMgtTwoDotZero(state)
-  );
-  const integrationErrorsPerSection = useSelector(state =>
-    selectors.integrationErrorsPerSection(state, integrationId, storeId),
-  shallowEqual);
-
-  const errorCount = integrationErrorsPerSection[titleId];
-  const errorStatus = useMemo(() => {
-    if (errorCount === 0) {
-      return <StatusCircle size="mini" variant="success" />;
-    }
-
-    return (
-      <div>
-        <StatusCircle size="mini" variant="error" />
-        <span>{errorCount > 9999 ? '9999+' : errorCount}</span>
-      </div>
-    );
-  }, [errorCount]);
-
-  if (!isUserInErrMgtTwoDotZero) {
-    return title;
-  }
-
-  return (
-    <div className={classes.gridContainer}>
-      <div> { title }</div>
-      <div> {errorStatus} </div>
-    </div>
-  );
-};
-
-export default function FlowsPanel({ storeId, integrationId }) {
+export default function FlowsPanel({ childId, integrationId }) {
   const match = useRouteMatch();
   const classes = useStyles();
-  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
+
+  const integrationErrorsPerSection = useSelector(state =>
+    selectors.integrationErrorsPerSection(state, integrationId, childId),
+  shallowEqual);
+  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, childId);
+
   const history = useHistory();
   // If someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can
@@ -375,18 +327,14 @@ export default function FlowsPanel({ storeId, integrationId }) {
                   activeClassName={classes.activeListItem}
                   to={titleId}
                   data-test={titleId}>
-                  <SectionTitle
-                    title={title}
-                    titleId={titleId}
-                    integrationId={integrationId}
-                    storeId={storeId} />
+                  <SectionTitle title={title} errorCount={integrationErrorsPerSection[titleId]} />
                 </NavLink>
               </ListItem>
             ))}
           </List>
         </Grid>
         <Grid item className={classes.content}>
-          <FlowList integrationId={integrationId} storeId={storeId} />
+          <FlowList integrationId={integrationId} childId={childId} />
         </Grid>
       </Grid>
     </div>

@@ -633,7 +633,7 @@ describe('integrationAppSettings reducer', () => {
         ],
         supportsMultiStore: true,
       },
-      stores: [
+      children: [
         { hidden: false, label: undefined, mode: 'settings', value: 'store1' },
       ],
     });
@@ -651,7 +651,7 @@ describe('integrationAppSettings reducer', () => {
         ],
         supportsMultiStore: true,
       },
-      stores: [
+      children: [
         { hidden: false, label: undefined, mode: 'settings', value: 'store1' },
       ],
     });
@@ -1425,6 +1425,21 @@ describe('resourceDetailsMap selector', () => {
 
     expect(selectors.resourceDetailsMap(state)).toEqual({});
   });
+
+  test('should return {} and not throw any exceptions when the state has invalid collections', () => {
+    const state = reducer(
+      { invalid: 'string', invalid2: '<html></html>', invalid3: {test: '123'}, '': '<html />' },
+      'some action'
+    );
+
+    expect(selectors.resourceDetailsMap(state)).toEqual({
+      invalid: {},
+      invalid2: {},
+      invalid3: {},
+      '': {},
+    });
+  });
+
   test('should return correct resource details', () => {
     const integrations = [
       { _id: 'int1', name: 'int_One', something: 'something' },
@@ -1595,53 +1610,6 @@ describe('Export needs routing selector', () => {
     );
 
     expect(selectors.exportNeedsRouting(state, '12358')).toEqual(false);
-  });
-});
-
-describe('Default store id selector', () => {
-  const integrations = [
-    { _id: 'int1',
-      _connectorId: 'connector3',
-      settings: {supportsMultiStore: true, sections: [{title: 'store1', id: '123'}, {title: 'store2', id: '143'}]},
-      name: 'int_One',
-      something: 'something' },
-    {
-      _id: 'int2',
-      name: 'int_Two',
-      settings: {supportsMultiStore: true, sections: [{title: 'store1', id: '1234'}]},
-      _connectorId: 'connector2',
-      something: 'something',
-    },
-  ];
-
-  test('should return undefined when the state is undefined', () => {
-    const state = reducer(undefined, 'some action');
-
-    expect(selectors.defaultStoreId(state)).toEqual(undefined);
-  });
-  test('should return default store id', () => {
-    const state = reducer(
-      undefined,
-      actions.resource.receivedCollection('integrations', integrations)
-    );
-
-    expect(selectors.defaultStoreId(state, 'int1')).toEqual('123');
-  });
-  test('should return correct store id', () => {
-    const state = reducer(
-      undefined,
-      actions.resource.receivedCollection('integrations', integrations)
-    );
-
-    expect(selectors.defaultStoreId(state, 'int1', '143')).toEqual('143');
-  });
-  test('should return undefined for invalid integration Id', () => {
-    const state = reducer(
-      undefined,
-      actions.resource.receivedCollection('integrations', integrations)
-    );
-
-    expect(selectors.defaultStoreId(state, 'int11234', '143')).toEqual(undefined);
   });
 });
 
@@ -1872,5 +1840,56 @@ describe('mkGetCustomFormPerSectionId', () => {
     };
 
     expect(received).toEqual(expected);
+  });
+});
+
+describe('isAnyReportRunningOrQueued', () => {
+  test('should return false when no eventreports are loaded', () => {
+    const state = {};
+
+    expect(selectors.isAnyReportRunningOrQueued(state, 'eventreports')).toBe(false);
+  });
+  test('should return true since an eventReport is queued', () => {
+    const state = {
+      eventreports: [
+        {_id: '1',
+          status: 'queued',
+        },
+        {_id: '2',
+          status: 'completed',
+        },
+      ],
+    };
+
+    expect(selectors.isAnyReportRunningOrQueued(state, 'eventreports')).toBe(true);
+  });
+
+  test('should return true since an eventReport is running', () => {
+    const state = {
+      eventreports: [
+        {_id: '1',
+          status: 'running',
+        },
+        {_id: '2',
+          status: 'completed',
+        },
+      ],
+    };
+
+    expect(selectors.isAnyReportRunningOrQueued(state, 'eventreports')).toBe(true);
+  });
+  test('should return false when there are completed reports', () => {
+    const state = {
+      eventreports: [
+        {_id: '1',
+          status: 'failed',
+        },
+        {_id: '2',
+          status: 'completed',
+        },
+      ],
+    };
+
+    expect(selectors.isAnyReportRunningOrQueued(state, 'eventreports')).toBe(false);
   });
 });

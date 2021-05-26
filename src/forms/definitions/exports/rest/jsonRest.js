@@ -239,12 +239,6 @@ export default {
     exportOneToMany: { formId: 'exportOneToMany' },
     advancedSettings: {
       formId: 'advancedSettings',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
     },
     formView: { fieldId: 'formView' },
   },

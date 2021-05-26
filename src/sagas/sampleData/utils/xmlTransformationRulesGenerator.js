@@ -7,6 +7,7 @@ import { parseFileData } from './fileParserUtils';
 import { pageProcessorPreview, exportPreview } from './previewCalls';
 import { getPreviewStageData } from '../../../utils/flowData';
 import { SCOPES } from '../../resourceForm';
+import { emptyObject } from '../../../utils/constants';
 
 /*
  * Incase of File adaptors XML type, fetch sampleData from the state that has uploaded XML file
@@ -37,13 +38,14 @@ export function* _getXmlFileAdaptorSampleData({ resource, newResourceId }) {
 export function* _getXmlHttpAdaptorSampleData({ resource, newResourceId }) {
   if (!resource || !newResourceId) return;
 
+  const { flowId } = yield select(
+    selectors.resourceFormState,
+    'exports',
+    newResourceId
+  );
+
   if (resource.isLookup) {
     // Make a pageProcessorPreview call incase of a lookup
-    const { flowId } = yield select(
-      selectors.resourceFormState,
-      'exports',
-      newResourceId
-    );
     const pageProcessorPreviewData = yield call(pageProcessorPreview, {
       flowId,
       _pageProcessorId: resource._id,
@@ -58,6 +60,7 @@ export function* _getXmlHttpAdaptorSampleData({ resource, newResourceId }) {
   const exportPreviewData = yield call(exportPreview, {
     resourceId: resource._id,
     hidden: true,
+    flowId,
   });
 
   // parse stage of preview data contains JSON sample data
@@ -71,12 +74,12 @@ export default function* saveTransformationRulesForNewXMLExport({
   resourceId,
   tempResourceId,
 }) {
-  const { merged: resource = {} } = yield select(
+  const resource = (yield select(
     selectors.resourceData,
     'exports',
     resourceId,
     SCOPES.VALUE
-  );
+  ))?.merged || emptyObject;
 
   const isXmlFileAdaptor =
     isFileAdaptor(resource) && resource.file.type === 'xml';

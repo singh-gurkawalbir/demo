@@ -187,6 +187,13 @@ export default {
     }
 
     delete retValues['/inputMode'];
+    if (retValues['/oneToMany'] === 'false') {
+      retValues['/pathToMany'] = undefined;
+    }
+
+    if (retValues['/oneToMany'] === 'false') {
+      retValues['/pathToMany'] = undefined;
+    }
 
     return {
       ...retValues,
@@ -842,12 +849,6 @@ export default {
     dataMappings: { formId: 'dataMappings' },
     advancedSettings: {
       formId: 'advancedSettings',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
     },
     deleteAfterImport: {
       fieldId: 'deleteAfterImport',

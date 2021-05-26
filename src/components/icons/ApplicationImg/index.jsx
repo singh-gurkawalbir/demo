@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { map } from 'lodash';
 import clsx from 'clsx';
+import PropTypes from 'prop-types';
 import { getDatabaseConnectors } from '../../../constants/applications';
 
 const useStyles = makeStyles(theme => ({
@@ -54,12 +55,21 @@ function iconMap(type = '') {
   return type.replace(/\.|\s/g, '');
 }
 
+function imageName(assistant) {
+  // The Ad-blocker plugins and some browsers in-built ad-blockers are blocking image with name googleads.png, hence prefixing image name with small-
+  if (assistant === 'googleads') {
+    return 'small-googleads';
+  }
+
+  return assistant;
+}
+
 export default function ApplicationImg({
   size = 'small',
   markOnly = false,
   assistant,
   type,
-  alt,
+  alt = 'Application image',
   className,
 }) {
   const classes = useStyles();
@@ -75,7 +85,7 @@ export default function ApplicationImg({
       )}.png`;
     }
   } else if (markOnly) {
-    path += `marketplace/small/${assistant}.png`;
+    path += `marketplace/small/${imageName(assistant)}.png`;
   } else {
     path += `flow-builder/company-logos/integration-icon-${assistant}.png`;
   }
@@ -88,3 +98,13 @@ export default function ApplicationImg({
     />
   );
 }
+
+ApplicationImg.propTypes = {
+  alt: PropTypes.string.isRequired,
+  src: PropTypes.string.isRequired,
+  size: PropTypes.oneOf(['small', 'medium', 'large']),
+};
+ApplicationImg.defaultProps = {
+  alt: 'Application image',
+  size: 'small',
+};

@@ -7,6 +7,7 @@
 import { call, select } from 'redux-saga/effects';
 import {
   getLastExportDateTime,
+  getCurrentExportDateTime,
   isUIDataExpectedForResource,
   getBlobResourceSampleData,
 } from '../../../../utils/flowData';
@@ -71,7 +72,8 @@ export default function* getPreviewOptionsForResource({ resource, flow, refresh,
     ? yield call(_getUIDataForResource, { resource, connection, flow, refresh })
     : undefined;
   const postData = {
-    lastExportDateTime: getLastExportDateTime(),
+    lastExportDateTime: getLastExportDateTime(resource),
+    currentExportDateTime: getCurrentExportDateTime(resource),
   };
   const { type, rawData } = resource || {};
 

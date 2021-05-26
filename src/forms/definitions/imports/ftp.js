@@ -1,4 +1,4 @@
-import { IMPORT_FILE_FIELD_MAP } from '../../../utils/fileUtil';
+import { IMPORT_FILE_FIELD_MAP } from '../../metaDataUtils/fileUtil';
 
 export default {
   preSave: formValues => {
@@ -102,6 +102,22 @@ export default {
 
     newValues['/ftp/fileName'] = undefined;
     newValues['/ftp/backupDirectoryPath'] = undefined;
+    if (!newValues['/file/encrypt']) {
+      newValues['/file/encrypt'] = undefined;
+    }
+    if (!newValues['/file/pgp/symmetricKeyAlgorithm']) {
+      newValues['/file/pgp/symmetricKeyAlgorithm'] = undefined;
+    }
+    if (!newValues['/file/pgp/hashAlgorithm']) {
+      newValues['/file/pgp/hashAlgorithm'] = undefined;
+    }
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
+
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
 
     return {
       ...newValues,
@@ -226,6 +242,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
+          'fileAdvanced',
           'ftp.useTempFile',
           'ftp.inProgressFileName',
           'ftp.blobUseTempFile',
@@ -235,6 +252,7 @@ export default {
           'blobKeyPath',
           'fileAdvancedSettings',
           'deleteAfterImport',
+          'traceKeyTemplate',
           'fileApiIdentifier',
         ],
       },

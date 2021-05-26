@@ -429,7 +429,7 @@ describe('getResourceFromAssets load correct form', () => {
       ['salesforce', {id: 'something1', adaptorType: 'SalesforceImport' }, {}, 'salesforce.attachment.contentType'],
       ['financialforce', {id: 'something1', assistant: 'financialforce'}, {}, 'salesforce.attachment.contentType'],
       ['snowflake', {id: 'something1', adaptorType: 'RDBMSImport'}, {id: 'something2', rdbms: {type: 'snowflake'}}, 'rdbms.bulkInsert.batchSize'],
-      ['sql', {id: 'something1', adaptorType: 'RDBMSImport'}, {id: 'something2', rdbms: {type: 'mssql'}}, 'rdbms.query'],
+      ['sql', {id: 'something1', adaptorType: 'RDBMSImport'}, {id: 'something2', rdbms: {type: 'mssql'}}, 'rdbms.query1'],
     ];
 
     test.each(inputs)('should load %s form', (formName, resource, connection, expectedField) => {

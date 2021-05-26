@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -117,7 +117,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AccountList() {
+function AccountList() {
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -247,4 +247,7 @@ export default function AccountList() {
       </ArrowPopper>
     </>
   );
+}
+export default function AccountListMemo() {
+  return useMemo(() => <AccountList />, []);
 }

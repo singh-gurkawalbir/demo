@@ -1,21 +1,21 @@
-import React, { useEffect, useCallback, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import PanelLoader from '../../PanelLoader';
 import Templates from '../Templates';
-import { getPreviewBodyTemplateType, HTTP_STAGES, getFormattedPreviewData, getBodyHeaderFieldsForPreviewData } from '../../../utils/exportPanel';
-import { selectors } from '../../../reducers';
-import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { HTTP_STAGES } from '../../../utils/exportPanel';
+import { wrapExportFileSampleData } from '../../../utils/sampleData';
 import { CeligoTabWrapper } from '../../CeligoTabLayout/CeligoTabWrapper';
 import CeligoPillTabs from '../../CeligoTabLayout/CeligoPillTabs';
 import DefaultPanel from '../../CeligoTabLayout/CustomPanels/DefaultPanel';
 import RequestResponsePanel from '../../CeligoTabLayout/CustomPanels/RequestResponsePanel';
 import CeligoTabPanel from '../../CeligoTabLayout/CeligoTabPanel';
+import Spinner from '../../Spinner';
 
 const useStyles = makeStyles({
   previewBodyContainer: {
     display: 'flex',
     flexGrow: 1,
     flexDirection: 'column',
+    position: 'relative',
   },
 });
 
@@ -27,11 +27,15 @@ export default function PreviewBody(props) {
     previewStageDataList,
     resourceId,
     resourceType,
+    showDefaultPreviewBody = false,
   } = props;
+
+  const classes = useStyles(props);
+  const [defaultTab, setDefaultTab] = useState();
+
   // Default panel is the panel shown by default when export panel is launched
   // We can configure it in the metadata with 'default' as true
   // Else the last stage is taken as the default stage
-  const classes = useStyles(props);
   const defaultPanel = useMemo(() => {
     if (!availablePreviewStages.length) return;
     const defaultStage = availablePreviewStages.find(stage => stage.default === true);
@@ -39,21 +43,6 @@ export default function PreviewBody(props) {
 
     return defaultStage ? defaultStage.value : lastStage.value;
   }, [availablePreviewStages]);
-  const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId)?.merged;
-  const [defaultTab, setDefaultTab] = useState();
-  const panelContent = useCallback(panelType => {
-    const previewBodyTemplate = getPreviewBodyTemplateType(resource, panelType);
-
-    if (previewBodyTemplate === 'default') {
-      return getFormattedPreviewData(previewStageDataList[panelType]);
-    }
-    if (previewBodyTemplate === 'tab') {
-      return getBodyHeaderFieldsForPreviewData(
-        previewStageDataList[panelType],
-        panelType
-      );
-    }
-  }, [previewStageDataList, resource]);
 
   // Always default to defaultPanel whenever sample data is refreshed
   useEffect(() => {
@@ -65,10 +54,27 @@ export default function PreviewBody(props) {
     }
   }, [resourceSampleData.status, defaultPanel, handlePanelViewChange, availablePreviewStages]);
 
+  if (showDefaultPreviewBody) {
+    return (
+      <>
+        <Templates.RequestUrlPanel
+          showEmptyPanel
+          resourceId={resourceId}
+          resourceType={resourceType} />
+        <CeligoTabWrapper>
+          <CeligoPillTabs tabs={availablePreviewStages} defaultTab={defaultTab} />
+          <CeligoTabPanel panelId="preview"> <DefaultPanel /> </CeligoTabPanel>
+          <CeligoTabPanel panelId="request"> <RequestResponsePanel variant="previewPanel" /> </CeligoTabPanel>
+          <CeligoTabPanel panelId="raw"> <RequestResponsePanel variant="previewPanel" /> </CeligoTabPanel>
+        </CeligoTabWrapper>
+      </>
+    );
+  }
+
   return (
     <div className={classes.previewBodyContainer}>
       {resourceSampleData.status === 'requested' && (
-        <PanelLoader />
+        <Spinner centerAll />
       )}
       {['received', 'error'].includes(resourceSampleData.status) && (
         <>
@@ -82,13 +88,13 @@ export default function PreviewBody(props) {
             <CeligoTabPanel panelId="preview">
               { resourceSampleData.status === 'error'
                 ? <Templates.ErrorPanel resourceSampleData={resourceSampleData} availablePreviewStages={availablePreviewStages} />
-                : <DefaultPanel value={panelContent('preview')} />}
+                : <DefaultPanel value={wrapExportFileSampleData(previewStageDataList.preview?.data)} /> }
             </CeligoTabPanel>
             <CeligoTabPanel panelId="request">
-              <RequestResponsePanel value={panelContent('request')} />
+              <RequestResponsePanel value={previewStageDataList.request?.data?.[0]} variant="previewPanel" />
             </CeligoTabPanel>
             <CeligoTabPanel panelId="raw">
-              <RequestResponsePanel value={panelContent('raw')} />
+              <RequestResponsePanel value={previewStageDataList.raw?.data?.[0]} variant="previewPanel" />
             </CeligoTabPanel>
           </CeligoTabWrapper>
         </>

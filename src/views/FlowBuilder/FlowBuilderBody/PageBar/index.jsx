@@ -1,8 +1,9 @@
 import { IconButton, makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
+import actions from '../../../../actions';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import EditableText from '../../../../components/EditableText';
@@ -16,6 +17,7 @@ import RunFlowButton from '../../../../components/RunFlowButton';
 import StatusCircle from '../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
+import { emptyObject } from '../../../../utils/constants';
 import useBottomDrawer from '../../drawers/BottomDrawer/useBottomDrawer';
 import { isNewFlowFn, useHandleExitClick, usePatchFlow, usePushOrReplaceHistory } from '../../hooks';
 import LastRun from '../../LastRun';
@@ -43,7 +45,7 @@ const CalcPageBarTitle = ({integrationId, flowId}) => {
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  ).merged;
+  )?.merged || emptyObject;
 
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -81,7 +83,7 @@ const CalcPageBarSubtitle = ({flowId}) => {
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  ).merged;
+  )?.merged || emptyObject;
 
   const isNewFlow = isNewFlowFn(flowId);
 
@@ -131,19 +133,19 @@ const pageChildreUseStyles = makeStyles(theme => ({
 
 }));
 
-const RunFlowButtonWrapper = ({flowId, setTabValue}) => {
+const RunFlowButtonWrapper = ({flowId}) => {
   const [bottomDrawerHeight, setBottomDrawerHeight] = useBottomDrawer();
-
+  const dispatch = useDispatch();
   const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
-    setTabValue(0);
+    dispatch(actions.bottomDrawer.setActiveTab({ tabType: 'dashboard' }));
 
     // Raising bottom drawer in cases where console is minimized
     // and user can not see dashboard after running the flow
     if (bottomDrawerHeight < 225) {
       setBottomDrawerHeight(300);
     }
-  }, [setTabValue, bottomDrawerHeight, setBottomDrawerHeight]);
+  }, [bottomDrawerHeight, dispatch, setBottomDrawerHeight]);
 
   return (
 
@@ -154,7 +156,7 @@ const RunFlowButtonWrapper = ({flowId, setTabValue}) => {
 
 const excludes = ['mapping', 'detach', 'audit', 'schedule'];
 
-const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
+const PageBarChildren = ({integrationId, flowId}) => {
   const classes = pageChildreUseStyles();
   const match = useRouteMatch();
   const isUserInErrMgtTwoDotZero = useSelector(state =>
@@ -200,7 +202,7 @@ const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
           <FlowToggle
             integrationId={integrationId}
             resource={flowDetails}
-            storeId={match.params?.childId}
+            childId={match.params?.childId}
             disabled={isNewFlow || isMonitorLevelAccess}
             isConnector={isIAType}
             data-test="switchFlowOnOff"
@@ -208,7 +210,7 @@ const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
         </div>
       )}
 
-      <RunFlowButtonWrapper flowId={flowId} setTabValue={setTabValue} />
+      <RunFlowButtonWrapper flowId={flowId} />
       {allowSchedule && (
         <IconButtonWithTooltip
           tooltipProps={tooltipSchedule}
@@ -269,7 +271,7 @@ const TotalErrors = ({flowId}) => {
   );
 };
 
-export default function PageBar({flowId, integrationId, setTabValue}) {
+export default function PageBar({flowId, integrationId}) {
   const description = useSelector(state => {
     const flow = selectors.resourceData(state, 'flows',
       flowId
@@ -286,7 +288,6 @@ export default function PageBar({flowId, integrationId, setTabValue}) {
       <TotalErrors flowId={flowId} />
       <PageBarChildren
         flowId={flowId} integrationId={integrationId}
-        setTabValue={setTabValue}
       />
     </CeligoPageBar>
   );

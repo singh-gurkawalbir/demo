@@ -1,3 +1,4 @@
+import { isIntegrationApp } from '../../../../utils/flows';
 import { isNewId } from '../../../../utils/resource';
 
 export default {
@@ -30,6 +31,19 @@ export default {
     type: 'apiidentifier',
     visible: r => r && !isNewId(r._id),
   },
+  traceKeyTemplate: {
+    id: 'traceKeyTemplate',
+    type: 'uri',
+    label: 'Override child record trace key template',
+    visible: r => !isIntegrationApp(r),
+    omitWhenHidden: true,
+    visibleWhenAll: [
+      {
+        field: 'oneToMany',
+        is: ['true'],
+      },
+    ],
+  },
   sampleData: { type: 'text', label: 'Sample Data' },
   distributed: {
     type: 'text',
@@ -59,20 +73,17 @@ export default {
   idLockTemplate: {
     type: 'uri',
     label: 'Concurrency ID lock template',
-    // enableEditorV2: true,
     showExtract: false,
     showLookup: false,
   },
   dataURITemplate: {
     type: 'uri',
     label: 'Data URI template',
-    // enableEditorV2: true,
     showLookup: false,
   },
   oneToMany: {
     type: 'radiogroup',
     label: 'One to many',
-    helpKey: 'oneToMany',
     defaultValue: r => ((r?.oneToMany && r?.oneToMany !== 'false') ? 'true' : 'false'),
     options: [
       {
@@ -88,7 +99,7 @@ export default {
     label: 'Path to many',
     helpKey: 'pathToMany',
     placeholder: 'Not needed for array/row based data',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'oneToMany',
         is: ['true'],

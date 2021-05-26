@@ -1,18 +1,20 @@
 import { useDispatch } from 'react-redux';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import actions from '../../../../../actions';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import TrashIcon from '../../../../icons/TrashIcon';
 
 export default {
-  label: 'Delete transfer',
+  key: 'deleteTransfer',
+  useLabel: () => 'Delete transfer',
   icon: TrashIcon,
-  component: function Delete({ rowData: transfer }) {
+  useOnClick: rowData => {
+    const { _id: transferId} = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const deleteTransfer = useCallback(() => {
-      dispatch(actions.resource.delete('transfers', transfer._id));
-    }, [dispatch, transfer._id]);
+      dispatch(actions.resource.delete('transfers', transferId));
+    }, [dispatch, transferId]);
     const handleClick = useCallback(() => {
       confirmDialog({
         title: 'Confirm delete',
@@ -32,10 +34,6 @@ export default {
       });
     }, [confirmDialog, deleteTransfer]);
 
-    useEffect(() => {
-      handleClick();
-    }, [handleClick]);
-
-    return null;
+    return handleClick;
   },
 };

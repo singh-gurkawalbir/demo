@@ -159,6 +159,100 @@ describe('jsonPaths util function test', () => {
       });
     });
 
+    test('should return valid paths for getJSONPaths with option includeArrayLength is true', () => {
+      const inputArray = [
+        {a: 'yes', b: 'no'},
+        {
+          parent: {
+            child: {
+              grandchild: 'value',
+            },
+          },
+        },
+        {
+          parent: {
+            sibling: 'sibling',
+            number: 1,
+            boolean: false,
+            array: ['1'],
+            child: {
+              grandchild: 'value',
+              number: 1,
+              boolean: false,
+            },
+          },
+          sibling1: 'sibling1',
+        },
+        {
+          parent: {
+            sibling: 'sibling',
+            number: 1,
+            boolean: false,
+            array: ['1'],
+            sublist: [{
+              first: 'first',
+              second: 'second',
+              third: 'third',
+            }],
+            child: {
+              grandchild: 'value',
+              number: 1,
+              sublist2: [{
+                first: 'first',
+                second: 'second',
+                third: 'third',
+              }],
+              boolean: false,
+            },
+          },
+          sibling1: 'sibling1',
+        },
+      ];
+      const outputArray = [
+        [
+          { id: 'a', type: 'string' },
+          { id: 'b', type: 'string' },
+        ],
+        [
+          { id: 'parent.child.grandchild', type: 'string' },
+        ],
+        [
+          { id: 'parent.array', type: 'array' },
+          { id: 'parent.array.length', type: 'number'},
+          { id: 'parent.boolean', type: 'boolean' },
+          { id: 'parent.child.boolean', type: 'boolean' },
+          { id: 'parent.child.grandchild', type: 'string' },
+          { id: 'parent.child.number', type: 'number' },
+          { id: 'parent.number', type: 'number' },
+          { id: 'parent.sibling', type: 'string' },
+          { id: 'sibling1', type: 'string' },
+        ],
+        [
+          { id: 'parent.array', type: 'array' },
+          { id: 'parent.array.length', type: 'number'},
+          { id: 'parent.boolean', type: 'boolean' },
+          { id: 'parent.child.boolean', type: 'boolean' },
+          { id: 'parent.child.grandchild', type: 'string' },
+          { id: 'parent.child.number', type: 'number' },
+          { id: 'parent.child.sublist2.length', type: 'number' },
+          { id: 'parent.number', type: 'number' },
+          { id: 'parent.sibling', type: 'string' },
+          { id: 'parent.sublist.length', type: 'number' },
+          { id: 'sibling1', type: 'string' },
+          { id: 'parent.child.sublist2[*].first', type: 'string' },
+          { id: 'parent.child.sublist2[*].second', type: 'string' },
+          { id: 'parent.child.sublist2[*].third', type: 'string' },
+          { id: 'parent.sublist[*].first', type: 'string' },
+          { id: 'parent.sublist[*].second', type: 'string' },
+          { id: 'parent.sublist[*].third', type: 'string' },
+        ],
+      ];
+
+      inputArray.forEach((test, testNo) => {
+        expect(getJSONPaths(test, null, { includeArrayLength: true})).toEqual(outputArray[testNo]);
+      });
+    });
+
     test('should return valid paths for getJSONPaths with options wrapSpecialChars', () => {
       const inputArray = [
         {a: 'yes', b: 'no'},

@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SubscriptionSection({ storeId, integrationId }) {
+export default function SubscriptionSection({ childId, integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
@@ -58,9 +58,11 @@ export default function SubscriptionSection({ storeId, integrationId }) {
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
   );
+  const plan = useSelector(state =>
+    selectors.integrationAppEdition(state, integrationId)
+  );
 
   const {
-    plan,
     createdText,
     expiresText,
     upgradeText,
@@ -100,11 +102,11 @@ export default function SubscriptionSection({ storeId, integrationId }) {
                   {`Integration ID ${integrationId}`}
                 </Typography>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={3}>
                 <Typography >{createdText}</Typography>
                 <Typography >{expiresText}</Typography>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={3}>
                 {upgradeText && (
                 <Button
                   variant="contained"
@@ -125,7 +127,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
           (tile) of this Integration App. Contact your Account Manager for more
           info.
         </Typography>
-        <Addons storeId={storeId} integrationId={integrationId} />
+        <Addons childId={childId} integrationId={integrationId} />
       </div>
     </>
   );

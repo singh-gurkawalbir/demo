@@ -12,7 +12,7 @@ describe('AFE region selectors test cases', () => {
         resources: {},
       },
       session: {
-        _editors: {},
+        editors: {},
       },
     };
   });
@@ -21,7 +21,7 @@ describe('AFE region selectors test cases', () => {
       expect(selectors.editorSupportsOnlyV2Data()).toEqual(false);
     });
     test('should return true for filters stage', () => {
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         resourceType: 'exports',
         resourceId: '123',
@@ -35,7 +35,7 @@ describe('AFE region selectors test cases', () => {
         _id: '123',
         type: 'webhook',
       }];
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         resourceType: 'exports',
         resourceId: '123',
@@ -45,8 +45,8 @@ describe('AFE region selectors test cases', () => {
 
       expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(false);
     });
-    test('should return true for csv generator and backup path fields', () => {
-      state.session._editors[editorId] = {
+    test('should return true for csv generator, backup path and traceKeyTemplate fields', () => {
+      state.session.editors[editorId] = {
         id: editorId,
         editorType: 'csvGenerator',
         resourceType: 'imports',
@@ -54,7 +54,7 @@ describe('AFE region selectors test cases', () => {
         fieldId: 'file.csv',
         stage: 'flowInput',
       };
-      state.session._editors.def = {
+      state.session.editors.def = {
         id: 'def',
         editorType: 'handlebars',
         resourceType: 'imports',
@@ -62,12 +62,21 @@ describe('AFE region selectors test cases', () => {
         fieldId: 'file.backupPath',
         stage: 'flowInput',
       };
+      state.session.editors.def1 = {
+        id: 'def1',
+        editorType: 'handlebars',
+        resourceType: 'imports',
+        resourceId: '1234',
+        fieldId: 'traceKeyTemplate',
+        stage: 'flowInput',
+      };
 
       expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(true);
       expect(selectors.editorSupportsOnlyV2Data(state, 'def')).toEqual(true);
+      expect(selectors.editorSupportsOnlyV2Data(state, 'def1')).toEqual(true);
     });
     test('should return false for all other cases', () => {
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         editorType: 'handlebars',
         resourceType: 'imports',
@@ -85,7 +94,7 @@ describe('AFE region selectors test cases', () => {
       expect(selectors.isEditorDisabled()).toEqual(false);
     });
     test('should return true if formKey is present in the editor and the field state is disabled', () => {
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         formKey: 'new-dbfh7',
         editorType: 'handlebars',
@@ -109,6 +118,32 @@ describe('AFE region selectors test cases', () => {
 
       expect(selectors.isEditorDisabled(state, editorId)).toEqual(true);
     });
+
+    test('should return false if formKey is present in the editor and the field type is iaexpression though field is disabled', () => {
+      state.session.editors[editorId] = {
+        id: editorId,
+        formKey: 'new-dbfh7',
+        editorType: 'handlebars',
+        resourceType: 'imports',
+        resourceId: '123',
+        fieldId: 'http.body',
+        stage: 'flowInput',
+      };
+      state.session.form = {
+        'new-dbfh7': {
+          fields: {
+            'http.body': {
+              id: 'http.body',
+              type: 'iaexpression',
+              disabled: true,
+              label: 'HTTP request body',
+            },
+          },
+        },
+      };
+
+      expect(selectors.isEditorDisabled(state, editorId)).toEqual(false);
+    });
     test('should return true for monitor user if stage is input/output filter and active mode is filter', () => {
       state.user = {
         org: {
@@ -120,7 +155,7 @@ describe('AFE region selectors test cases', () => {
         _id: 'flow-456',
         _integrationId: 'int-id',
       }];
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         editorType: 'outputFilter',
         resourceType: 'imports',
@@ -150,7 +185,7 @@ describe('AFE region selectors test cases', () => {
         _id: 'flow-456',
         _integrationId: 'int-id',
       }];
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         editorType: 'outputFilter',
         resourceType: 'imports',
@@ -168,7 +203,7 @@ describe('AFE region selectors test cases', () => {
         _integrationId: 'int-id',
         _connectorId: 'connector-id',
       }];
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         editorType: 'handlebars',
         resourceType: 'imports',
@@ -185,7 +220,7 @@ describe('AFE region selectors test cases', () => {
         _integrationId: 'int-id',
         free: true,
       }];
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         editorType: 'handlebars',
         resourceType: 'imports',
@@ -197,7 +232,7 @@ describe('AFE region selectors test cases', () => {
       expect(selectors.isEditorDisabled(state, editorId)).toEqual(true);
     });
     test('should return false if field state is not disabled', () => {
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         formKey: 'new-dbfh7',
         editorType: 'handlebars',
@@ -226,7 +261,7 @@ describe('AFE region selectors test cases', () => {
         _id: 'flow-456',
         _integrationId: 'int-id',
       }];
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         editorType: 'handlebars',
         resourceType: 'imports',
@@ -244,7 +279,7 @@ describe('AFE region selectors test cases', () => {
       expect(selectors.isEditorLookupSupported()).toEqual(false);
     });
     test('should return false if resource type is exports', () => {
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         resourceType: 'exports',
         resourceId: '123',
@@ -253,13 +288,13 @@ describe('AFE region selectors test cases', () => {
       expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(false);
     });
     test('should return false if field is of lookup type', () => {
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         resourceType: 'imports',
         resourceId: '123',
         fieldId: '_query',
       };
-      state.session._editors.def = {
+      state.session.editors.def = {
         id: 'def',
         resourceType: 'imports',
         resourceId: '657',
@@ -269,17 +304,17 @@ describe('AFE region selectors test cases', () => {
       expect(selectors.isEditorLookupSupported(state, 'def')).toEqual(false);
     });
     test('should return false if result mode is text for non-sql fields', () => {
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         resourceType: 'imports',
         resourceId: '123',
-        fieldId: 'realtiveUri',
+        fieldId: 'ftp.body',
         resultMode: 'text',
       };
       expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(false);
     });
     test('should return true for http body or sql fields', () => {
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         editorType: 'sql',
         resourceType: 'imports',
@@ -287,7 +322,7 @@ describe('AFE region selectors test cases', () => {
         fieldId: 'queryInsert',
         resultMode: 'text',
       };
-      state.session._editors.def = {
+      state.session.editors.def = {
         id: 'def',
         editorType: 'handlebars',
         resourceType: 'imports',
@@ -298,8 +333,19 @@ describe('AFE region selectors test cases', () => {
       expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(true);
       expect(selectors.isEditorLookupSupported(state, 'def')).toEqual(true);
     });
+    test('should return true for relative uri field', () => {
+      state.session.editors[editorId] = {
+        id: editorId,
+        editorType: 'handlebars',
+        resourceType: 'imports',
+        resourceId: '123',
+        fieldId: 'http.relativeURI',
+        resultMode: 'text',
+      };
+      expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(true);
+    });
     test('should return true for editor type equal to databaseMapping for imports', () => {
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         editorType: 'databaseMapping',
         resourceType: 'imports',
@@ -332,7 +378,7 @@ describe('AFE region selectors test cases', () => {
           isHTTP: false,
         }],
       };
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         resourceType: 'exports',
         resourceId: '123',
@@ -364,14 +410,14 @@ describe('AFE region selectors test cases', () => {
           _connectionId: 'conn-id',
         }],
       };
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         resourceType: 'exports',
         resourceId: '123',
         flowId: 'flow-456',
         stage: 'transform',
       };
-      state.session._editors.def = {
+      state.session.editors.def = {
         id: 'def',
         resourceType: 'imports',
         resourceId: '999',
@@ -397,7 +443,7 @@ describe('AFE region selectors test cases', () => {
           _connectionId: 'conn-id',
         }],
       };
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         resourceType: 'exports',
         resourceId: '123',
@@ -410,7 +456,7 @@ describe('AFE region selectors test cases', () => {
       };
 
       expect(selectors.shouldGetContextFromBE(state, editorId, sampleData)).toEqual(expectedOutput);
-      state.session._editors.def = {
+      state.session.editors.def = {
         id: 'def',
         resourceType: 'exports',
         resourceId: '123',
@@ -428,7 +474,7 @@ describe('AFE region selectors test cases', () => {
           _connectionId: 'conn-id',
         }],
       };
-      state.session._editors[editorId] = {
+      state.session.editors[editorId] = {
         id: editorId,
         resourceType: 'imports',
         resourceId: '123',

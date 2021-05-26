@@ -109,7 +109,7 @@ describe('flowMetrics util function test', () => {
         epochTime: 1609664979229,
         preferences: {dateFormat: 'MM/DD/YYYY', timeFormat: 'hh:mm'},
         timezone: 'Asia/Calcutta',
-        result: '01/03/2021 GMT',
+        result: '01/03/2021',
       },
       {
         range: {
@@ -119,7 +119,7 @@ describe('flowMetrics util function test', () => {
         epochTime: 1609664979229,
         preferences: {dateFormat: 'MM/DD/YYYY', timeFormat: 'hh:mm'},
         timezone: 'Asia/Calcutta',
-        result: 'January',
+        result: 'January 2021',
       },
       {
         range: {
@@ -518,6 +518,17 @@ describe('flowMetrics util function test', () => {
       expect(getSelectedRange({...testRange, preset: 'anyInvalidPreset'})).toEqual({...testRange, preset: 'anyInvalidPreset'});
     });
     describe('getSelectedRange all preset test cases', () => {
+      test.each([
+        ['lastmin', '2020-06-04T23:59:00.000Z', '2020-06-05T00:00:00.000Z'],
+        ['last5min', '2020-06-04T23:55:00.000Z', '2020-06-05T00:00:00.000Z'],
+        ['last6hours', '2020-06-04T18:00:00.000Z', '2020-06-05T00:00:00.000Z'],
+        ['last12hours', '2020-06-04T12:00:00.000Z', '2020-06-05T00:00:00.000Z'],
+      ])('getSelectedRange %s', (preset, expectedStartDate, expectedEndDate) => {
+        const {startDate, endDate} = getSelectedRange({preset});
+
+        expect(startDate.toISOString()).toEqual(expectedStartDate);
+        expect(endDate.toISOString()).toEqual(expectedEndDate);
+      });
       test('getSelectedRange last15minutes test', () => {
         const testRange = {
           startDate: new Date(),

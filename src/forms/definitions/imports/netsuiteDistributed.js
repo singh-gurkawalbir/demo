@@ -28,6 +28,13 @@ export default {
     if (subrecords) {
       mapping = updateMappingsBasedOnNetSuiteSubrecords(mapping, subrecords);
     }
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
+
+    if (newValues['/oneToMany'] === 'false') {
+      newValues['/pathToMany'] = undefined;
+    }
 
     return {
       ...newValues,
@@ -141,6 +148,7 @@ export default {
     'netsuite_da.useSS2Restlets': {
       fieldId: 'netsuite_da.useSS2Restlets',
     },
+    traceKeyTemplate: {fieldId: 'traceKeyTemplate'},
   },
   layout: {
     type: 'collapse',
@@ -179,7 +187,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          'netsuite_da.useSS2Restlets', 'blobKeyPath', 'idLockTemplate', 'dataURITemplate', 'netsuite_da.batchSize', 'apiIdentifier', 'deleteAfterImport'],
+          'netsuite_da.useSS2Restlets', 'blobKeyPath', 'idLockTemplate', 'dataURITemplate', 'netsuite_da.batchSize', 'traceKeyTemplate', 'apiIdentifier', 'deleteAfterImport'],
       },
     ],
   },

@@ -131,6 +131,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "fileAdvanced": Object {
+        "formId": "fileAdvanced",
+      },
       "http._iClientId": Object {
         "connectionId": [Function],
         "connectorId": [Function],
@@ -198,6 +201,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "fileAdvanced",
                 "httpAdvanced",
               ],
               "label": "Advanced",
@@ -718,6 +722,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "fileAdvanced": Object {
+        "formId": "fileAdvanced",
+      },
       "ftp.authKey": Object {
         "fieldId": "ftp.authKey",
         "visibleWhen": Array [
@@ -741,60 +748,6 @@ Object {
       },
       "ftp.password": Object {
         "fieldId": "ftp.password",
-      },
-      "ftp.pgpDecryptKey": Object {
-        "fieldId": "ftp.pgpDecryptKey",
-        "omitWhenHidden": true,
-        "visibleWhen": Array [
-          Object {
-            "field": "ftp.usePgp",
-            "is": Array [
-              true,
-            ],
-          },
-        ],
-      },
-      "ftp.pgpEncryptKey": Object {
-        "fieldId": "ftp.pgpEncryptKey",
-        "omitWhenHidden": true,
-        "visibleWhen": Array [
-          Object {
-            "field": "ftp.usePgp",
-            "is": Array [
-              true,
-            ],
-          },
-        ],
-      },
-      "ftp.pgpKeyAlgorithm": Object {
-        "fieldId": "ftp.pgpKeyAlgorithm",
-        "omitWhenHidden": true,
-        "visibleWhenAll": Array [
-          Object {
-            "field": "ftp.useCustomPGPEncryptionAlgorithm",
-            "is": Array [
-              true,
-            ],
-          },
-          Object {
-            "field": "ftp.usePgp",
-            "is": Array [
-              true,
-            ],
-          },
-        ],
-      },
-      "ftp.pgpPassphrase": Object {
-        "fieldId": "ftp.pgpPassphrase",
-        "omitWhenHidden": true,
-        "visibleWhen": Array [
-          Object {
-            "field": "ftp.usePgp",
-            "is": Array [
-              true,
-            ],
-          },
-        ],
       },
       "ftp.port": Object {
         "fieldId": "ftp.port",
@@ -823,20 +776,6 @@ Object {
       "ftp.type": Object {
         "fieldId": "ftp.type",
       },
-      "ftp.useCustomPGPEncryptionAlgorithm": Object {
-        "defaultValue": [Function],
-        "id": "ftp.useCustomPGPEncryptionAlgorithm",
-        "label": "Use custom PGP encryption algorithm",
-        "type": "checkbox",
-        "visibleWhen": Array [
-          Object {
-            "field": "ftp.usePgp",
-            "is": Array [
-              true,
-            ],
-          },
-        ],
-      },
       "ftp.useImplicitFtps": Object {
         "fieldId": "ftp.useImplicitFtps",
         "visibleWhen": Array [
@@ -859,9 +798,6 @@ Object {
             ],
           },
         ],
-      },
-      "ftp.usePgp": Object {
-        "fieldId": "ftp.usePgp",
       },
       "ftp.userDirectoryIsRoot": Object {
         "fieldId": "ftp.userDirectoryIsRoot",
@@ -908,12 +844,7 @@ Object {
                 "ftp.userDirectoryIsRoot",
                 "ftp.entryParser",
                 "ftp.requireSocketReUse",
-                "ftp.usePgp",
-                "ftp.pgpEncryptKey",
-                "ftp.pgpDecryptKey",
-                "ftp.pgpPassphrase",
-                "ftp.useCustomPGPEncryptionAlgorithm",
-                "ftp.pgpKeyAlgorithm",
+                "fileAdvanced",
                 "ftp.concurrencyLevel",
               ],
               "label": "Advanced",
@@ -1476,6 +1407,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "fileAdvanced": Object {
+        "formId": "fileAdvanced",
+      },
       "name": Object {
         "fieldId": "name",
       },
@@ -1514,6 +1448,13 @@ Object {
                 "s3.pingBucket",
               ],
               "label": "Application details",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "fileAdvanced",
+              ],
+              "label": "Advanced",
             },
           ],
           "type": "collapse",
@@ -1852,6 +1793,9 @@ Object {
       "name": Object {
         "fieldId": "name",
       },
+      "rdbms.disableStrictSSL": Object {
+        "fieldId": "rdbms.disableStrictSSL",
+      },
       "rdbms.port": Object {
         "fieldId": "rdbms.port",
       },
@@ -1909,6 +1853,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "rdbms.disableStrictSSL",
                 "rdbmsAdvanced",
               ],
               "label": "Advanced",
@@ -2505,6 +2450,9 @@ Object {
       "name": Object {
         "fieldId": "name",
       },
+      "rdbms.disableStrictSSL": Object {
+        "fieldId": "rdbms.disableStrictSSL",
+      },
       "rdbms.port": Object {
         "fieldId": "rdbms.port",
       },
@@ -2562,6 +2510,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "rdbms.disableStrictSSL",
                 "rdbmsAdvanced",
               ],
               "label": "Advanced",
@@ -3027,17 +2976,21 @@ Object {
           },
         },
       },
+      "settings": Object {
+        "fieldId": "settings",
+      },
     },
     "layout": Object {
       "fields": Array [
         "application",
+        "settings",
       ],
     },
   },
   "init": undefined,
   "optionsHandler": [Function],
   "preSave": [Function],
-  "validationHandler": undefined,
+  "validationHandler": [Function],
 }
 `;
 
@@ -3298,11 +3251,11 @@ Object {
   "fieldMeta": Object {
     "actions": undefined,
     "fieldMap": Object {
+      "advancedSettings": Object {
+        "formId": "advancedSettings",
+      },
       "common": Object {
         "formId": "common",
-      },
-      "dataURITemplate": Object {
-        "fieldId": "dataURITemplate",
       },
       "delta.dateField": Object {
         "fieldId": "delta.dateField",
@@ -3368,9 +3321,6 @@ Object {
       },
       "settings": Object {
         "fieldId": "settings",
-      },
-      "skipRetries": Object {
-        "fieldId": "skipRetries",
       },
       "type": Object {
         "defaultValue": [Function],
@@ -3441,8 +3391,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "dataURITemplate",
-                "skipRetries",
+                "advancedSettings",
               ],
               "label": "Advanced",
             },
@@ -3642,6 +3591,9 @@ Object {
         "disabledWhenAll": [Function],
         "fieldId": "file.xlsx.rowsPerRecord",
       },
+      "fileAdvanced": Object {
+        "formId": "fileAdvanced",
+      },
       "fileMetadata": Object {
         "defaultValue": [Function],
         "id": "fileMetadata",
@@ -3744,6 +3696,9 @@ Object {
       "skipRetries": Object {
         "fieldId": "skipRetries",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "uploadFile": Object {
         "fieldId": "uploadFile",
         "placeholder": "Sample file (that would be parsed)",
@@ -3799,6 +3754,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "fileAdvanced",
                 "file.decompressFiles",
                 "file.compressionFormat",
                 "file.skipDelete",
@@ -3808,6 +3764,7 @@ Object {
                 "pageSize",
                 "dataURITemplate",
                 "skipRetries",
+                "traceKeyTemplate",
                 "apiIdentifier",
                 "file.batchSize",
               ],
@@ -3838,14 +3795,6 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "common": Object {
         "formId": "common",
@@ -4165,9 +4114,9 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "advancedSettings",
                 "configureAsyncHelper",
                 "http._asyncHelperId",
+                "advancedSettings",
               ],
               "label": "Advanced",
             },
@@ -4311,8 +4260,8 @@ Object {
   "fieldMeta": Object {
     "actions": undefined,
     "fieldMap": Object {
-      "apiIdentifier": Object {
-        "fieldId": "apiIdentifier",
+      "advancedSettings": Object {
+        "formId": "advancedSettings",
       },
       "blob": Object {
         "formId": "blob",
@@ -4327,29 +4276,6 @@ Object {
       },
       "common": Object {
         "formId": "common",
-      },
-      "dataURITemplate": Object {
-        "fieldId": "dataURITemplate",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "netsuite.execution.type",
-            "isNot": Array [
-              "",
-            ],
-          },
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-          Object {
-            "field": "netsuite.api.type",
-            "isNot": Array [
-              "",
-            ],
-          },
-        ],
       },
       "delta.dateField": Object {
         "connectionId": [Function],
@@ -4765,30 +4691,6 @@ Object {
         "type": "mode",
         "visible": false,
       },
-      "pageSize": Object {
-        "fieldId": "pageSize",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "netsuite.api.type",
-            "is": Array [
-              "restlet",
-              "search",
-            ],
-          },
-          Object {
-            "field": "netsuite.execution.type",
-            "is": Array [
-              "scheduled",
-            ],
-          },
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
       "restlet": Object {
         "formId": "restlet",
         "visibleWhenAll": Array [
@@ -5021,9 +4923,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "skipRetries": Object {
-        "fieldId": "skipRetries",
-      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -5136,13 +5035,10 @@ Object {
                 Object {
                   "fields": Array [
                     "netsuite.blob.purgeFileAfterExport",
-                    "dataURITemplate",
                     "netsuite.distributed.skipExportFieldId",
                     "netsuite.distributed.forceReload",
-                    "pageSize",
                     "netsuite.restlet.batchSize",
-                    "skipRetries",
-                    "apiIdentifier",
+                    "advancedSettings",
                   ],
                 },
               ],
@@ -5370,6 +5266,9 @@ Object {
         "disabledWhenAll": [Function],
         "fieldId": "file.xlsx.rowsPerRecord",
       },
+      "fileAdvanced": Object {
+        "formId": "fileAdvanced",
+      },
       "fileMetadata": Object {
         "defaultValue": [Function],
         "id": "fileMetadata",
@@ -5472,6 +5371,9 @@ Object {
       "skipRetries": Object {
         "fieldId": "skipRetries",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "uploadFile": Object {
         "fieldId": "uploadFile",
         "placeholder": "Sample file (that would be parsed)",
@@ -5528,6 +5430,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "fileAdvanced",
                 "file.decompressFiles",
                 "file.compressionFormat",
                 "file.skipDelete",
@@ -5537,6 +5440,7 @@ Object {
                 "pageSize",
                 "dataURITemplate",
                 "skipRetries",
+                "traceKeyTemplate",
                 "apiIdentifier",
               ],
               "label": "Advanced",
@@ -5566,23 +5470,9 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "apiIdentifier": Object {
-        "fieldId": "apiIdentifier",
       },
       "common": Object {
         "formId": "common",
-      },
-      "dataURITemplate": Object {
-        "fieldId": "dataURITemplate",
       },
       "delta.dateField": Object {
         "connectionId": [Function],
@@ -5653,9 +5543,6 @@ Object {
         "required": true,
         "type": "mode",
         "visible": false,
-      },
-      "pageSize": Object {
-        "fieldId": "pageSize",
       },
       "salesforce.distributed.batchSize": Object {
         "fieldId": "salesforce.distributed.batchSize",
@@ -5780,9 +5667,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "skipRetries": Object {
-        "fieldId": "skipRetries",
-      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -5868,12 +5752,9 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "pageSize",
                 "salesforce.distributed.batchSize",
                 "salesforce.distributed.skipExportFieldId",
-                "dataURITemplate",
-                "skipRetries",
-                "apiIdentifier",
+                "advancedSettings",
               ],
               "label": "Advanced",
             },
@@ -5991,6 +5872,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "uploadFile": Object {
         "helpKey": "export.uploadFile",
         "id": "uploadFile",
@@ -6050,6 +5934,7 @@ Object {
                 "file.encoding",
                 "pageSize",
                 "dataURITemplate",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -6090,6 +5975,9 @@ Object {
       },
       "skipRetries": Object {
         "fieldId": "skipRetries",
+      },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
       },
       "webhook.algorithm": Object {
         "fieldId": "webhook.algorithm",
@@ -6185,6 +6073,7 @@ Object {
                 "pageSize",
                 "dataURITemplate",
                 "skipRetries",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -6326,14 +6215,6 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "common": Object {
         "formId": "common",
@@ -6504,23 +6385,9 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "apiIdentifier": Object {
-        "fieldId": "apiIdentifier",
       },
       "common": Object {
         "formId": "common",
-      },
-      "dataURITemplate": Object {
-        "fieldId": "dataURITemplate",
       },
       "delta.dateField": Object {
         "connectionId": [Function],
@@ -6591,9 +6458,6 @@ Object {
         "required": true,
         "type": "mode",
         "visible": false,
-      },
-      "pageSize": Object {
-        "fieldId": "pageSize",
       },
       "salesforce.distributed.batchSize": Object {
         "fieldId": "salesforce.distributed.batchSize",
@@ -6718,9 +6582,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "skipRetries": Object {
-        "fieldId": "skipRetries",
-      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -6806,12 +6667,9 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "pageSize",
                 "salesforce.distributed.batchSize",
                 "salesforce.distributed.skipExportFieldId",
-                "dataURITemplate",
-                "skipRetries",
-                "apiIdentifier",
+                "advancedSettings",
               ],
               "label": "Advanced",
             },
@@ -6840,14 +6698,6 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "common": Object {
         "formId": "common",
@@ -7232,6 +7082,9 @@ Object {
           },
         ],
       },
+      "settings": Object {
+        "fieldId": "settings",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -7283,13 +7136,14 @@ Object {
         "connection",
         "name",
         "description",
+        "settings",
       ],
     },
   },
   "init": undefined,
   "optionsHandler": [Function],
   "preSave": [Function],
-  "validationHandler": undefined,
+  "validationHandler": [Function],
 }
 `;
 
@@ -7300,23 +7154,9 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "apiIdentifier": Object {
-        "fieldId": "apiIdentifier",
       },
       "common": Object {
         "formId": "common",
-      },
-      "dataURITemplate": Object {
-        "fieldId": "dataURITemplate",
       },
       "delta.dateField": Object {
         "connectionId": [Function],
@@ -7387,9 +7227,6 @@ Object {
         "required": true,
         "type": "mode",
         "visible": false,
-      },
-      "pageSize": Object {
-        "fieldId": "pageSize",
       },
       "salesforce.distributed.batchSize": Object {
         "fieldId": "salesforce.distributed.batchSize",
@@ -7514,9 +7351,6 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
-      "skipRetries": Object {
-        "fieldId": "skipRetries",
-      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -7602,12 +7436,9 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "pageSize",
                 "salesforce.distributed.batchSize",
                 "salesforce.distributed.skipExportFieldId",
-                "dataURITemplate",
-                "skipRetries",
-                "apiIdentifier",
+                "advancedSettings",
               ],
               "label": "Advanced",
             },
@@ -7634,20 +7465,14 @@ Object {
   "fieldMeta": Object {
     "actions": undefined,
     "fieldMap": Object {
-      "apiIdentifier": Object {
-        "fieldId": "apiIdentifier",
+      "advancedSettings": Object {
+        "formId": "advancedSettings",
       },
       "common": Object {
         "formId": "common",
       },
-      "dataURITemplate": Object {
-        "fieldId": "dataURITemplate",
-      },
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
-      },
-      "pageSize": Object {
-        "fieldId": "pageSize",
       },
       "rdbms.once.query": Object {
         "fieldId": "rdbms.once.query",
@@ -7665,9 +7490,6 @@ Object {
       },
       "settings": Object {
         "fieldId": "settings",
-      },
-      "skipRetries": Object {
-        "fieldId": "skipRetries",
       },
       "type": Object {
         "defaultValue": [Function],
@@ -7729,10 +7551,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "pageSize",
-                "dataURITemplate",
-                "skipRetries",
-                "apiIdentifier",
+                "advancedSettings",
               ],
               "label": "Advanced",
             },
@@ -7759,20 +7578,14 @@ Object {
   "fieldMeta": Object {
     "actions": undefined,
     "fieldMap": Object {
-      "apiIdentifier": Object {
-        "fieldId": "apiIdentifier",
+      "advancedSettings": Object {
+        "formId": "advancedSettings",
       },
       "common": Object {
         "formId": "common",
       },
-      "dataURITemplate": Object {
-        "fieldId": "dataURITemplate",
-      },
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
-      },
-      "pageSize": Object {
-        "fieldId": "pageSize",
       },
       "rdbms.once.query": Object {
         "fieldId": "rdbms.once.query",
@@ -7790,9 +7603,6 @@ Object {
       },
       "settings": Object {
         "fieldId": "settings",
-      },
-      "skipRetries": Object {
-        "fieldId": "skipRetries",
       },
       "type": Object {
         "defaultValue": [Function],
@@ -7854,10 +7664,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "pageSize",
-                "dataURITemplate",
-                "skipRetries",
-                "apiIdentifier",
+                "advancedSettings",
               ],
               "label": "Advanced",
             },
@@ -8018,6 +7825,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
     },
     "layout": Object {
       "containers": Array [
@@ -8062,6 +7872,7 @@ Object {
               "fields": Array [
                 "compressFiles",
                 "as2.maxRetries",
+                "traceKeyTemplate",
               ],
               "label": "Advanced",
             },
@@ -8320,14 +8131,6 @@ Object {
       },
       "dataMappings": Object {
         "formId": "dataMappings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "deleteAfterImport": Object {
         "fieldId": "deleteAfterImport",
@@ -8383,6 +8186,9 @@ Object {
             ],
           },
         ],
+      },
+      "fileAdvanced": Object {
+        "formId": "fileAdvanced",
       },
       "fileAdvancedSettings": Object {
         "formId": "fileAdvancedSettings",
@@ -8465,6 +8271,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "uploadFile": Object {
         "fieldId": "uploadFile",
         "helpKey": "import.uploadFile",
@@ -8518,6 +8327,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "fileAdvanced",
                 "ftp.useTempFile",
                 "ftp.inProgressFileName",
                 "ftp.blobUseTempFile",
@@ -8527,6 +8337,7 @@ Object {
                 "blobKeyPath",
                 "fileAdvancedSettings",
                 "deleteAfterImport",
+                "traceKeyTemplate",
                 "fileApiIdentifier",
               ],
               "label": "Advanced",
@@ -8556,14 +8367,6 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "blobKeyPath": Object {
         "fieldId": "blobKeyPath",
@@ -9605,14 +9408,6 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "blobKeyPath": Object {
         "fieldId": "blobKeyPath",
@@ -10466,14 +10261,6 @@ Object {
       },
       "dataMappings": Object {
         "formId": "dataMappings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "deleteAfterImport": Object {
         "fieldId": "deleteAfterImport",
@@ -10529,6 +10316,9 @@ Object {
             ],
           },
         ],
+      },
+      "fileAdvanced": Object {
+        "formId": "fileAdvanced",
       },
       "fileAdvancedSettings": Object {
         "formId": "fileAdvancedSettings",
@@ -10611,6 +10401,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
       "uploadFile": Object {
         "fieldId": "uploadFile",
         "helpKey": "import.uploadFile",
@@ -10664,11 +10457,13 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "fileAdvanced",
                 "file.backupPath",
                 "file.encoding",
                 "blobKeyPath",
                 "fileAdvancedSettings",
                 "deleteAfterImport",
+                "traceKeyTemplate",
                 "fileApiIdentifier",
               ],
               "label": "Advanced",
@@ -10867,6 +10662,9 @@ Object {
           },
         ],
       },
+      "settings": Object {
+        "fieldId": "settings",
+      },
     },
     "layout": Object {
       "fields": Array [
@@ -10874,13 +10672,14 @@ Object {
         "connection",
         "name",
         "description",
+        "settings",
       ],
     },
   },
   "init": undefined,
   "optionsHandler": [Function],
   "preSave": [Function],
-  "validationHandler": undefined,
+  "validationHandler": [Function],
 }
 `;
 
@@ -10891,14 +10690,6 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "apiType": Object {
         "id": "apiType",
@@ -10959,6 +10750,7 @@ Object {
             "field": "salesforce.operation",
             "is": Array [
               "update",
+              "delete",
             ],
           },
           Object {
@@ -11333,6 +11125,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
     },
     "layout": Object {
       "containers": Array [
@@ -11374,6 +11169,7 @@ Object {
                 "idLockTemplate",
                 "dataURITemplate",
                 "netsuite_da.batchSize",
+                "traceKeyTemplate",
                 "apiIdentifier",
                 "deleteAfterImport",
               ],
@@ -11562,6 +11358,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
     },
     "layout": Object {
       "containers": Array [
@@ -11603,6 +11402,7 @@ Object {
                 "idLockTemplate",
                 "dataURITemplate",
                 "netsuite_da.batchSize",
+                "traceKeyTemplate",
                 "apiIdentifier",
                 "deleteAfterImport",
               ],
@@ -11633,14 +11433,6 @@ Object {
     "fieldMap": Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "apiType": Object {
         "id": "apiType",
@@ -11701,6 +11493,7 @@ Object {
             "field": "salesforce.operation",
             "is": Array [
               "update",
+              "delete",
             ],
           },
           Object {
@@ -11956,9 +11749,9 @@ Object {
       },
       "rdbms.query": Object {
         "arrayIndex": 0,
+        "defaultValue": [Function],
         "id": "rdbms.query",
         "label": "SQL query",
-        "querySetPos": 0,
         "required": true,
         "type": "sqlquerybuilder",
         "visibleWhen": Array [
@@ -12106,9 +11899,14 @@ Object {
         "fieldId": "rdbms.lookups",
         "visible": false,
       },
-      "rdbms.query": Object {
+      "rdbms.query1": Object {
         "defaultValue": [Function],
-        "fieldId": "rdbms.query",
+        "fieldId": "rdbms.query1",
+        "required": true,
+      },
+      "rdbms.query2": Object {
+        "defaultValue": [Function],
+        "fieldId": "rdbms.query2",
         "required": true,
       },
       "rdbms.queryInsert": Object {
@@ -12155,7 +11953,8 @@ Object {
                 "rdbms.ignoreExtract",
                 "rdbms.updateExtract",
                 "rdbms.lookups",
-                "rdbms.query",
+                "rdbms.query1",
+                "rdbms.query2",
                 "rdbms.queryInsert",
                 "rdbms.queryUpdate",
               ],
@@ -12530,6 +12329,9 @@ Object {
       "sandbox": Object {
         "fieldId": "sandbox",
       },
+      "trialEndDate": Object {
+        "fieldId": "trialEndDate",
+      },
     },
     "layout": Object {
       "containers": Array [
@@ -12537,6 +12339,7 @@ Object {
           "collapsed": true,
           "fields": Array [
             "email",
+            "trialEndDate",
             "expires",
             "sandbox",
             "opts",
@@ -12549,7 +12352,7 @@ Object {
   },
   "init": undefined,
   "optionsHandler": [Function],
-  "preSave": undefined,
+  "preSave": [Function],
   "validationHandler": undefined,
 }
 `;
@@ -12564,6 +12367,26 @@ Object {
       },
       "_stackId": Object {
         "fieldId": "_stackId",
+      },
+      "_trialLicenseId": Object {
+        "fieldId": "_trialLicenseId",
+        "omitWhenHidden": true,
+        "requiredWhen": Array [
+          Object {
+            "field": "trialEnabled",
+            "is": Array [
+              true,
+            ],
+          },
+        ],
+        "visibleWhen": Array [
+          Object {
+            "field": "trialEnabled",
+            "is": Array [
+              true,
+            ],
+          },
+        ],
       },
       "applications": Object {
         "fieldId": "applications",
@@ -12586,6 +12409,29 @@ Object {
       "name": Object {
         "fieldId": "name",
       },
+      "trialEnabled": Object {
+        "fieldId": "trialEnabled",
+      },
+      "trialPeriod": Object {
+        "fieldId": "trialPeriod",
+        "omitWhenHidden": true,
+        "requiredWhen": Array [
+          Object {
+            "field": "trialEnabled",
+            "is": Array [
+              true,
+            ],
+          },
+        ],
+        "visibleWhen": Array [
+          Object {
+            "field": "trialEnabled",
+            "is": Array [
+              true,
+            ],
+          },
+        ],
+      },
       "uninstallerFunction": Object {
         "fieldId": "uninstallerFunction",
       },
@@ -12599,6 +12445,7 @@ Object {
     "layout": Object {
       "containers": Array [
         Object {
+          "collapsed": true,
           "fields": Array [
             "name",
             "description",
@@ -12606,16 +12453,25 @@ Object {
             "_integrationId",
             "contactEmail",
             "websiteURL",
-            "editions",
             "_stackId",
             "installerFunction",
             "uninstallerFunction",
             "updateFunction",
             "framework",
           ],
+          "label": "General",
+        },
+        Object {
+          "collapsed": true,
+          "fields": Array [
+            "trialEnabled",
+            "trialPeriod",
+            "_trialLicenseId",
+          ],
+          "label": "Trials",
         },
       ],
-      "type": "box",
+      "type": "collapse",
     },
   },
   "init": undefined,

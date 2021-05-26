@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, LinearProgress } from '@material-ui/core';
+import { Typography, LinearProgress, capitalize } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
@@ -13,8 +13,11 @@ import UpgradeDrawer from './drawers/Upgrade';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    margin: theme.spacing(0, 1, 2, 1),
+    backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',
+    minHeight: 124,
   },
   wrapper: {
     border: '1px solid',
@@ -66,6 +69,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 'normal',
   },
   block: {
+    padding: theme.spacing(0, 2),
     marginBottom: theme.spacing(3),
   },
   linkCompare: {
@@ -84,12 +88,6 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 0,
   },
 }));
-
-const capitalize = s => {
-  if (typeof s !== 'string') return '';
-
-  return s.charAt(0).toUpperCase() + s.slice(1);
-};
 
 export default function Subscription() {
   const dispatch = useDispatch();
@@ -182,10 +180,6 @@ export default function Subscription() {
     }
   }, [enquesnackbar, platformLicenseActionMessage]);
 
-  const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isUserInErrMgtTwoDotZero(state)
-  );
-
   return (
     <>
       <UpgradeDrawer />
@@ -241,14 +235,6 @@ export default function Subscription() {
                   </span>
                   {capitalize(licenseActionDetails.supportTier || 'N/A')}
                 </li>
-                {isUserInErrMgtTwoDotZero && (
-                <li>
-                  <span className={classes.bold}>
-                    Autopilot:&nbsp;
-                  </span>
-                  {licenseActionDetails.autopilot ? 'On' : 'Off'}
-                </li>
-                )}
               </ul>
             </div>
           </div>

@@ -28,20 +28,20 @@ const useStyles = makeStyles(theme => ({
 
 const defaultFilter = { sort: {order: 'asc', orderBy: 'name'}};
 
-export default function ConnectionsPanel({ integrationId, storeId }) {
+export default function ConnectionsPanel({ integrationId, childId }) {
   const classes = useStyles();
   const [showRegister, setShowRegister] = useState(false);
   const location = useLocation();
   const dispatch = useDispatch();
   const history = useHistory();
-  const filterKey = `${integrationId}${`+${storeId}` || ''}+connections`;
+  const filterKey = `${integrationId}${`+${childId}` || ''}+connections`;
   const tableConfig = useSelector(state => selectors.filter(state, filterKey)) || defaultFilter;
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
   const connections = useSelector(state =>
     selectors.integrationAppConnectionList(
       state,
       integrationId,
-      storeId,
+      childId,
       tableConfig
     )
   );
@@ -77,6 +77,7 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
 
   useEffect(() => {
     dispatch(actions.patchFilter(filterKey, defaultFilter));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     dispatch(actions.resource.connections.refreshStatus(integrationId));

@@ -6,13 +6,17 @@ import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import ResourceReferences from '../../../ResourceReferences';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
-  label: (rowData, actionProps) => {
-    if (['accesstokens', 'apis', 'connectors'].includes(actionProps.resourceType)) {
-      return `Delete ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]}`;
+  key: 'delete',
+  useLabel: rowData => {
+    const tableContext = useGetTableContext();
+
+    if (['accesstokens', 'apis', 'connectors'].includes(tableContext.resourceType)) {
+      return `Delete ${MODEL_PLURAL_TO_LABEL[tableContext?.resourceType]}`;
     }
-    if (actionProps?.resourceType?.includes('/licenses')) {
+    if (tableContext?.resourceType?.includes('/licenses')) {
       if (rowData.type === 'integrationAppChild') {
         return 'Delete child license';
       }
@@ -20,29 +24,41 @@ export default {
       return 'Delete license';
     }
 
-    return `Delete ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
+    return `Delete ${MODEL_PLURAL_TO_LABEL[tableContext?.resourceType]?.toLowerCase()}`;
   },
   icon: TrashIcon,
-  useHasAccess: ({ rowData, resourceType }) => {
-    const { _integrationId } = rowData;
+  useHasAccess: rowData => {
+    const {resourceType} = useGetTableContext();
+
+    const { _integrationId, _connectorId } = rowData;
     const canDelete = useSelector(state => selectors.resourcePermissions(
       state,
       'integrations',
       _integrationId,
       'flows'
     ))?.delete;
+    const isTrialLicense = useSelector(state =>
+      selectors.resource(state, 'connectors', _connectorId)?._trialLicenseId === rowData?._id
+    );
 
+    if (isTrialLicense) {
+      return false;
+    }
     // only check permissions for integration flows as only those can be shared
     if (resourceType !== 'flows' || !_integrationId) { return true; }
 
     return canDelete;
   },
-  disabledActionText: ({rowData, resourceType}) => {
+  useDisabledActionText: rowData => {
+    const {resourceType} = useGetTableContext();
+
     if (resourceType === 'accesstokens' && !rowData.revoked) {
       return 'To delete this API token you need to revoke it first.';
     }
   },
-  component: function DeleteResource({ resourceType, rowData = {} }) {
+  Component: ({rowData}) => {
+    const {resourceType} = useGetTableContext();
+
     const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const [showRef, setShowRef] = useState(true);
@@ -66,9 +82,11 @@ export default {
           : MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase();
       }
 
+      const disclaimer = resourceType === 'flows' && 'Are you sure you want to delete this flow? Deleting a flow will cancel the run that is currently running.';
+
       confirmDialog({
         title: 'Confirm delete',
-        message: `Are you sure you want to delete this ${type}?`,
+        message: disclaimer || `Are you sure you want to delete this ${type}?`,
         buttons: [
           {
             label: 'Delete',
@@ -87,7 +105,8 @@ export default {
 
     useEffect(() => {
       handleDelete();
-    }, [handleDelete]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
       <>

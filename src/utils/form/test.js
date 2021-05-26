@@ -21,10 +21,10 @@ import {
   determineChangedValues,
 } from '.';
 import {
-  fieldDefIsValid,
   shouldOptionsBeRefreshed,
   getFirstDefinedValue,
   splitDelimitedValue,
+  fieldDefIsValidUpdated,
 } from './field';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -165,13 +165,13 @@ describe('registerFields', () => {
   });
 });
 
-describe('fieldDefIsValid', () => {
+describe('fieldDefIsValidUpdated', () => {
   test('field is valid when the form does not contain a field with the same id', () => {
-    expect(fieldDefIsValid(field1, [])).toEqual(true);
+    expect(fieldDefIsValidUpdated(field1, {})).toEqual(true);
   });
 
   test('field is not valid when form already contains a field with the same id', () => {
-    expect(fieldDefIsValid(field1, [field1])).toEqual(false);
+    expect(fieldDefIsValidUpdated(field1, {[field1.id]: field1})).toEqual(false);
   });
 });
 
@@ -399,6 +399,25 @@ describe('rule evaluation', () => {
 
       expect(isVisible(testField, fieldsById)).toBe(false);
     });
+
+    describe('should AND both the default rule and expression', () => {
+      const inputs = [
+        ['should return true when defaultVisible is true and expression rule is true',
+          {visibleWhenAll: [aIs1, bIs2], defaultVisible: true}, true],
+        ['should return false when defaultVisible is true and expression rule is false',
+          {visibleWhenAll: [aIs1, bIs2], defaultVisible: false}, false],
+        ['should return false when defaultVisible is false and when no expresssion is provided ',
+          {visibleWhenAll: [aIs1, bIs2], defaultVisible: false}, false],
+        ['should return the default result that visible is true when no expresssion is provided ',
+          {}, true],
+      ];
+
+      test.each(inputs)('%s', (testName, conditions, result) => {
+        const testField = { ...field, ...conditions};
+
+        expect(isVisible(testField, fieldsById)).toBe(result);
+      });
+    });
   });
 
   describe('isRequired', () => {
@@ -416,25 +435,43 @@ describe('rule evaluation', () => {
       c: fieldC,
     };
 
-    test('returns true when visibleWhen rule is true', () => {
+    test('returns true when requiredWhen rule is true', () => {
       const testField = { ...field, requiredWhen: [aIs1] };
 
       expect(isRequired(testField, fieldsById)).toBe(true);
     });
-    test('return false when visibleWhen rule is false', () => {
+    test('return false when requiredWhen rule is false', () => {
       const testField = { ...field, requiredWhen: [cIs3] };
 
       expect(isRequired(testField, fieldsById)).toBe(false);
     });
-    test('returns true when visibleWhenAll rule is true', () => {
+    test('returns true when requiredWhenAll rule is true', () => {
       const testField = { ...field, requiredWhenAll: [aIs1, bIs2] };
 
       expect(isRequired(testField, fieldsById)).toBe(true);
     });
-    test('return false when visibleWhenAll rule is false', () => {
+    test('return false when requiredWhenAll rule is false', () => {
       const testField = { ...field, requiredWhenAll: [aIs1, cIs3] };
 
       expect(isRequired(testField, fieldsById)).toBe(false);
+    });
+    describe('should AND both the default rule and expression', () => {
+      const inputs = [
+        ['should return true when defaultRequired is true and expression rule is true',
+          {requiredWhenAll: [aIs1, bIs2], defaultRequired: true}, true],
+        ['should return false when defaultRequired is true and expression rule is false',
+          {requiredWhenAll: [aIs1, bIs2], defaultRequired: false}, false],
+        ['should return false when defaultRequired is false and when no expresssion is provided ',
+          {requiredWhenAll: [aIs1, bIs2], defaultRequired: false}, false],
+        ['should return the default result that required is false when no expresssion is provided ',
+          {}, false],
+      ];
+
+      test.each(inputs)('%s', (testName, conditions, result) => {
+        const testField = { ...field, ...conditions};
+
+        expect(isRequired(testField, fieldsById)).toBe(result);
+      });
     });
   });
 
@@ -453,25 +490,43 @@ describe('rule evaluation', () => {
       c: fieldC,
     };
 
-    test('returns true when visibleWhen rule is true', () => {
+    test('returns true when disableWhen rule is true', () => {
       const testField = { ...field, disabledWhen: [aIs1] };
 
       expect(isDisabled(testField, fieldsById)).toBe(true);
     });
-    test('return false when visibleWhen rule is false', () => {
+    test('return false when disableWhen rule is false', () => {
       const testField = { ...field, disabledWhen: [cIs3] };
 
       expect(isDisabled(testField, fieldsById)).toBe(false);
     });
-    test('returns true when visibleWhenAll rule is true', () => {
+    test('returns true when disableWhenAll rule is true', () => {
       const testField = { ...field, disabledWhenAll: [aIs1, bIs2] };
 
       expect(isDisabled(testField, fieldsById)).toBe(true);
     });
-    test('return false when visibleWhenAll rule is false', () => {
+    test('return false when disableWhenAll rule is false', () => {
       const testField = { ...field, disabledWhenAll: [aIs1, cIs3] };
 
       expect(isDisabled(testField, fieldsById)).toBe(false);
+    });
+    describe('should AND both the default rule and expression', () => {
+      const inputs = [
+        ['should return true when defaultDisabled is true and expression rule is true',
+          {disabledWhenAll: [aIs1, bIs2], defaultDisabled: true}, true],
+        ['should return false when defaultDisabled is true and expression rule is false',
+          {disabledWhenAll: [aIs1, bIs2], defaultDisabled: false}, false],
+        ['should return false when defaultDisabled is false and when no expresssion is provided ',
+          {disabledWhenAll: [aIs1, bIs2], defaultDisabled: false}, false],
+        ['should return the default result that visible is true when no expresssion is provided ',
+          {}, false],
+      ];
+
+      test.each(inputs)('%s', (testName, conditions, result) => {
+        const testField = { ...field, ...conditions};
+
+        expect(isDisabled(testField, fieldsById)).toBe(result);
+      });
     });
   });
 });

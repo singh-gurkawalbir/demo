@@ -1,3 +1,5 @@
+import {invert} from 'lodash';
+
 export const emptyList = [];
 export const emptyObject = {};
 export const ACCOUNT_IDS = Object.freeze({
@@ -29,6 +31,7 @@ export const INSTALL_STEP_TYPES = Object.freeze({
 });
 export const UNINSTALL_STEP_TYPES = Object.freeze({
   FORM: 'form',
+  URL: 'url',
   HIDDEN: 'hidden',
 });
 export const TILE_STATUS = Object.freeze({
@@ -46,6 +49,11 @@ export const INTEGRATION_MODES = Object.freeze({
   INSTALL: 'install',
   UNINSTALL: 'uninstall',
   SETTINGS: 'settings',
+});
+export const ACCOUNT_SSO_STATUS = Object.freeze({
+  NOT_LINKED: 'not_linked',
+  LINKED_TO_THIS_ACCOUNT: 'this_account',
+  LINKED_TO_OTHER_ACCOUNT: 'other_account',
 });
 
 export const UI_FIELD_VALUES = Object.freeze(['/formView']);
@@ -268,6 +276,11 @@ export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
   'published',
   'shared/ashares',
 ];
+
+// email regex is used in our backend as well and is
+// referenced from this repo https://github.com/celigo/integrator-adaptor/blob/master/util/validator.js
+export const EMAIL_REGEX = /^[\w\-.+]+@[a-zA-Z0-9.-]+\.[a-zA-z0-9]{2,10}$/;
+
 // Regular Expression to Simple multiple email addresses separated by commas from regextester.com
 export const MULTIPLE_EMAILS = /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/;
 // Regular Expression to absolute url, e.g: (https|http)://abc.com but not relative urls such as www.abc.com or abc.com
@@ -288,6 +301,7 @@ export const REST_ASSISTANTS = [
   'namely',
   'servicenow',
   'squareup',
+  'authorize.net',
   'stripe',
   'twilio',
   'woocommerce',
@@ -561,6 +575,8 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'salesforce.relatedLists.userDefined',
     'salesforce.distributed.batchSize',
     'salesforce.soql.query',
+    'salesforce.distributed.referencedFields',
+    'salesforce.distributed.relatedLists',
     'schedule',
     'timeZone',
     'activeTab',
@@ -589,6 +605,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'restlet.once.booleanField',
     'restlet.type',
     '_connectionId',
+    'settings',
   ],
   imports: [
     '_connectionId',
@@ -604,6 +621,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'salesforce.idLookup.whereClause',
     'salesforce.upsert.externalIdField',
     'salesforce.lookups',
+    'settings',
   ],
   flows: [
     '_runNextFlowIds',
@@ -618,6 +636,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'dayToRunOn',
     '_keepDeltaBehindFlowId',
     '_keepDeltaBehindExportId',
+    'settings',
   ],
 });
 export const CLONING_SUPPORTED_IAS = ['sfnsio'];
@@ -636,4 +655,32 @@ export const CONNECTORS_TO_IGNORE = ['yammer',
 
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'pagerduty', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
   'box', 'segment'];
+
+export const RESOLVED_GRAPH_DATAPOINTS = ['users', 'autopilot'];
+export const LINE_GRAPH_TYPES = Object.freeze({
+  SUCCESS: 'success',
+  AVERAGE_TIME_TAKEN: 'averageTimeTaken',
+  ERROR: 'error',
+  IGNORED: 'ignored',
+  RESOLVED: 'resolved',
+});
+export const LINE_GRAPH_CATEGORIES = [
+  LINE_GRAPH_TYPES.SUCCESS,
+  LINE_GRAPH_TYPES.AVERAGE_TIME_TAKEN,
+  LINE_GRAPH_TYPES.ERROR,
+  LINE_GRAPH_TYPES.IGNORED,
+  LINE_GRAPH_TYPES.RESOLVED,
+];
+export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
+  [LINE_GRAPH_TYPES.SUCCESS]: 's',
+  [LINE_GRAPH_TYPES.AVERAGE_TIME_TAKEN]: 'att',
+  [LINE_GRAPH_TYPES.ERROR]: 'e',
+  [LINE_GRAPH_TYPES.IGNORED]: 'i',
+  [LINE_GRAPH_TYPES.RESOLVED]: 'r',
+});
+export const LINE_GRAPH_TYPE_LONG = Object.freeze(
+  invert(LINE_GRAPH_TYPE_SHORTID)
+);
+export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
+export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
 

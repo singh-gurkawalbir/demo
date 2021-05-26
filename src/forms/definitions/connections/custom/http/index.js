@@ -198,6 +198,12 @@ import pipedrive from './pipedrive';
 import microsoftteams from './microsoftteams';
 import adobesign from './adobesign';
 import prestashop from './prestashop';
+import yotpo from './yotpo';
+import mavenlink from './mavenlink';
+import googleads from './googleads';
+import fulfilment from './fulfilment';
+import walmartmexico from './walmartmexico';
+import walmartcanada from './walmartcanada';
 
 export default {
   channelape,
@@ -400,4 +406,10 @@ export default {
   microsoftteams,
   adobesign,
   prestashop,
+  yotpo,
+  mavenlink,
+  googleads,
+  'fulfilment.com': fulfilment,
+  walmartmexico,
+  walmartcanada,
 };

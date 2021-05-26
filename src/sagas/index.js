@@ -23,9 +23,7 @@ import { jobSagas } from './jobs';
 import { flowMetricSagas } from './flowMetrics';
 import integrationAppsSagas from './integrationApps';
 import { flowSagas } from './flows';
-import editorSagas from './editor';
-import editorAfe2 from './_editor';
-import editorSampleData from './editorSampleData';
+import editor from './editor';
 import {
   onRequestSaga,
   onSuccessSaga,
@@ -64,7 +62,9 @@ import runHistorySagas from './errorManagement/runHistory';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
 import {logsSagas} from './logs';
+import ssoSagas from './sso';
 import { APIException } from './api';
+import { bottomDrawerSagas } from './bottomDrawer';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -146,8 +146,7 @@ export function* allSagas() {
     ...connectorSagas,
     ...templateSagas,
     ...cloneSagas,
-    ...editorSagas,
-    ...editorAfe2,
+    ...editor,
     ...userSagas,
     ...authenticationSagas,
     ...resourceFormSagas,
@@ -180,8 +179,9 @@ export function* allSagas() {
     ...runHistorySagas,
     ...customSettingsSagas,
     ...exportDataSagas,
-    ...editorSampleData,
     ...logsSagas,
+    ...ssoSagas,
+    ...bottomDrawerSagas,
   ]);
 }
 

@@ -147,7 +147,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
 
       state = reducer(
         state,
-        actions.integrationApp.store.receivedNewStoreSteps('i1', steps)
+        actions.integrationApp.child.receivedNewChildSteps('i1', steps)
       );
 
       expect(selectors.isIAConnectionSetupPending(state, 'c1')).toEqual(true);
@@ -478,11 +478,11 @@ describe('installer,uninstaller, clone and template region selector testcases', 
     });
   });
 
-  describe('selectors.addNewStoreSteps test cases', () => {
+  describe('selectors.addNewChildSteps test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.addNewStoreSteps()).toEqual({});
+      expect(selectors.addNewChildSteps()).toEqual({});
     });
-    test('should return newStoreSteps with adding current Step', () => {
+    test('should return newChildSteps with adding current Step', () => {
       const steps = [{
         stepId: 'sid1',
       }, {
@@ -491,10 +491,10 @@ describe('installer,uninstaller, clone and template region selector testcases', 
 
       const state = reducer(
         undefined,
-        actions.integrationApp.store.receivedNewStoreSteps('i1', steps)
+        actions.integrationApp.child.receivedNewChildSteps('i1', steps)
       );
 
-      expect(selectors.addNewStoreSteps(state, 'i1')).toEqual({
+      expect(selectors.addNewChildSteps(state, 'i1')).toEqual({
         steps: [{
           stepId: 'sid1',
           isCurrentStep: true,
@@ -506,10 +506,10 @@ describe('installer,uninstaller, clone and template region selector testcases', 
     test('should return empty array when install steps are empty', () => {
       const state = reducer(
         undefined,
-        actions.integrationApp.store.receivedNewStoreSteps('i1', [])
+        actions.integrationApp.child.receivedNewChildSteps('i1', [])
       );
 
-      expect(selectors.addNewStoreSteps(state, 'i1')).toEqual({
+      expect(selectors.addNewChildSteps(state, 'i1')).toEqual({
         steps: []});
     });
   });

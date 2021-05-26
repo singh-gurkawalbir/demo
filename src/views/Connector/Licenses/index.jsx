@@ -46,7 +46,7 @@ export default function Licenses(props) {
   const classes = useStyles();
   const resourceStatus = useSelectorMemo(
     selectors.makeAllResourceStatusSelector,
-    ['connectorLicenses']
+    'connectorLicenses'
   );
   const filterKey = 'connectorLicenses';
   const filter =
@@ -115,7 +115,7 @@ export default function Licenses(props) {
     <>
       {resourceLoaded && <ResourceDrawer {...props} />}
       <CeligoPageBar
-        history={history}
+        parentUrl="/connectors"
         title={`Licenses: ${connector.name}`}
         infoText={infoText.licenses}>
         <div className={classes.actions}>

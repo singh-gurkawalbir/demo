@@ -12,6 +12,7 @@ import {
   assign,
   unionBy,
   isNumber,
+  get,
 } from 'lodash';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
@@ -1056,6 +1057,30 @@ export function generateValidReactFormFieldId(fieldId) {
     .replace(/\[/g, '*_*')
     .replace(/\]/g, '*__*');
 }
+// ids look like this AmazonOrderId.Id and keys AmazonOrderId.Id.1
+const isRepeatIndexedKey = (k, fieldId
+) => k && k.startsWith(fieldId) && k.split('.').length > 1 && !isNaN(parseInt(last(k.split('.')), 10));
+export const isMetaRequiredValuesMet = (meta, value) => {
+  if (!meta.fields) return true;
+  const requiredFields = meta.fields.filter(field => field.required);
+
+  if (!requiredFields || !requiredFields.length) return true;
+
+  return requiredFields.every(({id, type, indexed}) => {
+    if (type === 'repeat' && indexed) {
+      const repeatIndexedKeys = value && Object.keys(value)
+        .filter(key => isRepeatIndexedKey(key, id));
+
+      if (!repeatIndexedKeys || !repeatIndexedKeys.length) {
+        return false;
+      }
+
+      return repeatIndexedKeys.every(key => get(value, key));
+    }
+
+    return get(value, id);
+  });
+};
 
 export function convertToReactFormFields({
   paramMeta = {},
@@ -1074,12 +1099,7 @@ export function convertToReactFormFields({
       const fieldValue = [];
 
       each(value, (v, k) => {
-        if (
-          k &&
-          k.startsWith(field.id) &&
-          k.split('.').length > 1 &&
-          !isNaN(parseInt(last(k.split('.')), 10))
-        ) {
+        if (isRepeatIndexedKey(k, field.id)) {
           fieldValue.push(v);
         }
       });
@@ -1161,6 +1181,7 @@ export function convertToReactFormFields({
       if (
         !anyParamValuesSet &&
         paramValue === undefined &&
+        paramMeta.isDeltaExport &&
         paramMeta.defaultValuesForDeltaExport &&
         Object.prototype.hasOwnProperty.call(
           paramMeta.defaultValuesForDeltaExport,

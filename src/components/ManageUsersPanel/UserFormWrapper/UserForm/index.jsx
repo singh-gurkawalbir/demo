@@ -5,6 +5,7 @@ import { selectors } from '../../../../reducers';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
+  EMAIL_REGEX,
 } from '../../../../utils/constants';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
@@ -31,6 +32,9 @@ export default function UserForm({
     integrationsFilterConfig
   ).resources;
   const users = useSelector(state => selectors.usersList(state));
+  const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
+  const isSSOEnabled = useSelector(state => selectors.isSSOEnabled(state));
+
   const isEditMode = !!id;
   const data = isEditMode ? users.find(u => u._id === id) : undefined;
   let integrationsToManage = [];
@@ -67,7 +71,7 @@ export default function UserForm({
           'Enter the email of the user you would like to invite to manage and/or monitor selected integrations.',
         validWhen: {
           matchesRegEx: {
-            pattern: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$',
+            pattern: EMAIL_REGEX,
             message: 'Please enter a valid email address',
           },
         },
@@ -172,6 +176,17 @@ export default function UserForm({
         helpText:
           'The invited user will have permissions to monitor the integrations selected here.',
       },
+      accountSSORequired: {
+        type: 'checkbox',
+        id: 'accountSSORequired',
+        name: 'accountSSORequired',
+        label: 'Require account Single sign-on(SSO)?',
+        defaultValue: isEditMode ? !!data.accountSSORequired : true,
+        visible: !isEditMode && isAccountOwnerOrAdmin && isSSOEnabled,
+        // Incase of invite, this field should not be passed if the owner has not enabled SSO
+        omitWhenHidden: !isEditMode,
+        helpText: 'Check this box to require single sign-on (SSO) authentication for this user.',
+      },
     },
     layout: {
       fields: [
@@ -179,13 +194,14 @@ export default function UserForm({
         'accessLevel',
         'integrationsToManage',
         'integrationsToMonitor',
+        'accountSSORequired',
       ],
     },
   };
   const formKey = useFormInitWithPermissions({ fieldMeta });
 
   return (
-    <LoadResources required resources="integrations">
+    <LoadResources required resources="integrations,ssoclients">
       <DrawerContent>
         <DynaForm
           formKey={formKey} />

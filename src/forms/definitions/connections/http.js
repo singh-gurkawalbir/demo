@@ -220,7 +220,7 @@ export default {
     },
     httpBasic: {
       formId: 'httpBasic',
-      visibleWhen: [
+      visibleWhenAll: [
         { field: 'http.auth.type', is: ['basic', 'digest', 'wsse'] },
       ],
     },
@@ -236,7 +236,6 @@ export default {
       id: 'http.auth.wsse.headerName',
       type: 'text',
       label: 'Header name',
-      helpKey: 'connection.http.auth.token.headerName',
       defaultValue: r =>
         (r &&
           r.http &&
@@ -417,7 +416,6 @@ export default {
       id: 'http.auth.oauth.headerName',
       type: 'text',
       label: 'Header name',
-      helpKey: 'connection.http.auth.token.headerName',
       defaultValue: r =>
         (r &&
           r.http &&

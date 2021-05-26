@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import Select from '@material-ui/core/Select';
@@ -15,10 +15,6 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: `${theme.palette.secondary.lightest} !important`,
     borderRadius: 0,
-  },
-  selectMenu: {
-    diaplay: 'flex',
-    flexDirection: 'column',
   },
   select: {
     display: 'flex !important',
@@ -59,22 +55,32 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
+export const DoneButton = ({onClose}) => {
+  const classes = useStyles();
+
+  return (
+
+    <Button
+      id="select-close"
+      data-test="closeSelect"
+      variant="outlined"
+      color="secondary"
+      onClick={onClose}
+      className={classes.doneButton}>
+      Done
+    </Button>
+  );
+};
 const MenuComponent = React.forwardRef((props, ref) => {
-  const {children, closeBtnClassName, closeSelect, ...others} = props;
+  const {children, closeSelect, ...others} = props;
 
   return (
     <div ref={ref} {...others}>
       {children}
       {closeSelect && (
-      <Button
-        id="select-close"
-        data-test="closeSelect"
-        variant="outlined"
-        color="secondary"
-        onClick={closeSelect}
-        className={closeBtnClassName}>
-        Done
-      </Button>
+      <DoneButton onClose={closeSelect} />
+
       )}
     </div>
   );
@@ -98,7 +104,10 @@ export default function CeligoSelect({ className, maxHeightOfSelect, children, .
   */
   const showCloseOption = !props.open && props.multiple;
 
-  const MenuProps = useMemo(() => ({
+  const menuProps = {
+    // TODO: the menu options is a bit jumpy when selecting options...setting the variant to menu resolves it for now
+    //  this is an open issue in material ui ...lets keep tracking it https://github.com/mui-org/material-ui/issues/19245
+    variant: 'menu',
     PaperProps: {
       style: {
         maxHeight: maxHeightOfSelect,
@@ -106,17 +115,20 @@ export default function CeligoSelect({ className, maxHeightOfSelect, children, .
         display: 'flex',
         flexDirection: 'column',
       },
-      closeBtnClassName: classes.doneButton,
       closeSelect: showCloseOption && closeSelect,
       component: MenuComponent,
+    },
+    getContentAnchorEl: null,
+    anchorOrigin: {
+      vertical: 'bottom',
+      horizontal: 'left',
     },
     MenuListProps: {
       style: {
         overflowY: 'auto',
       },
     },
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [maxHeightOfSelect]);
+  };
 
   return (
     <Select
@@ -126,7 +138,7 @@ export default function CeligoSelect({ className, maxHeightOfSelect, children, .
       onOpen={openSelect}
       onClose={closeSelect}
       classes={{selectMenu: classes.selectMenu}}
-      MenuProps={MenuProps}
+      MenuProps={menuProps}
       {...props}
       >
       {children}

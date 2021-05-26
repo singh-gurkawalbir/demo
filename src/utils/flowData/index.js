@@ -163,10 +163,29 @@ export function getPreviewStageData(previewData, previewStage = 'parse') {
 export const getSampleDataStage = (stage, resourceType = 'exports') =>
   (sampleDataStage?.[resourceType]?.[stage]) || stage;
 
-export const getLastExportDateTime = () =>
-  moment()
+export const getLastExportDateTime = resource => {
+  const dateFormat = resource?.delta?.dateFormat;
+
+  if (dateFormat) {
+    return moment()
+      .add(-1, 'y')
+      .format(dateFormat);
+  }
+
+  return moment()
     .add(-1, 'y')
     .toISOString();
+};
+
+export const getCurrentExportDateTime = resource => {
+  const dateFormat = resource?.delta?.dateFormat;
+
+  if (dateFormat) {
+    return moment().format(dateFormat);
+  }
+
+  return moment().toISOString();
+};
 
 export const getAddedLookupIdInFlow = (patchSet = []) => {
   const pageProcessorsPatch = patchSet.find(
@@ -305,7 +324,8 @@ export const getFormattedResourceForPreview = (
 
   if (isPostDataNeededInResource(resource)) {
     resource.postData = {
-      lastExportDateTime: getLastExportDateTime(),
+      lastExportDateTime: getLastExportDateTime(resource),
+      currentExportDateTime: getCurrentExportDateTime(resource),
     };
   }
 
@@ -345,7 +365,7 @@ export const getResourceStageUpdatedFromPatch = (patchSet = []) => {
     if (patchSetValue.postMap) return 'postMap';
   }
   if (patchSetPath === '/sampleResponseData') return 'sampleResponse';
-  if (patchSetPath === '/mapping') return 'importMapping';
+  if (patchSetPath?.includes('/mapping')) return 'importMapping';
 };
 
 /**

@@ -1,13 +1,14 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';
 import RestoreIcon from '../../../../icons/RestoreIcon';
 
 export default {
-  label: 'Restore',
+  key: 'restore',
+  useLabel: () => 'Restore',
   icon: RestoreIcon,
-  component: function Restore({ rowData = {} }) {
+  useOnClick: rowData => {
     const dispatch = useDispatch();
     const restore = useCallback(() => {
       dispatch(
@@ -18,10 +19,6 @@ export default {
       );
     }, [dispatch, rowData.doc, rowData.model]);
 
-    useEffect(() => {
-      restore();
-    }, [restore]);
-
-    return null;
+    return restore;
   },
 };

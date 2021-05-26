@@ -33,11 +33,11 @@ export default function SelectImport() {
   const match = useRouteMatch();
   const { flowId, importId } = match.params;
   const classes = useStyles();
-  const { merged: flow = {} } = useSelectorMemo(
+  const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
     flowId
-  );
+  )?.merged || emptyObject;
   const flowImports = useSelectorMemo(selectors.flowMappingsImportsList, flowId, importId);
   const imports = useMemo(() => flowImports.filter(i => !i.blob), [flowImports]);
   const [subrecordImports, setSubrecordImports] = useState();

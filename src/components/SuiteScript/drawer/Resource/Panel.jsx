@@ -13,6 +13,7 @@ import { generateNewId, MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource
 import { selectors } from '../../../../reducers';
 import { useRedirectToParentRoute } from '../../../drawer/Resource/Panel';
 import SuiteScriptActionsPanel from '../../ResourceFormFactory/SuiteScriptActionsPanel';
+import EditorDrawer from '../../../AFE/Drawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -182,6 +183,7 @@ export default function Panel(props) {
           <Panel {...props} zIndex={zIndex + 1} onClose={onClose} />
         )}
       />
+      <EditorDrawer />
     </>
   );
 }

@@ -74,7 +74,20 @@ const integrationsFilterConfig = {
     _connectorId: { $exists: false },
   },
 };
-
+const useColumns = () => [
+  {
+    key: 'name',
+    heading: 'Name',
+    width: '40%',
+    Value: ({rowData: r}) => r?.doc?.name || r?.doc?._id,
+  },
+  {
+    key: 'description',
+    heading: 'Description',
+    width: '60%',
+    Value: ({rowData: r}) => r.doc?.description,
+  },
+];
 export default function ClonePreview(props) {
   const classes = useStyles(props);
   const cloningDescription = `
@@ -122,18 +135,6 @@ export default function ClonePreview(props) {
   );
 
   const remountKey = useMemo(() => hashCode(components), [components]);
-  const columns = [
-    {
-      heading: 'Name',
-      width: '40%',
-      value: r => r?.doc?.name || r?.doc?._id,
-    },
-    {
-      heading: 'Description',
-      width: '60%',
-      value: r => r.doc?.description,
-    },
-  ];
 
   useEffect(() => {
     if (resourceType === 'integrations') {
@@ -282,7 +283,7 @@ export default function ClonePreview(props) {
           _id: index,
         })),
         resourceType,
-        columns,
+        useColumns,
       },
     },
     layout: {
@@ -363,7 +364,7 @@ export default function ClonePreview(props) {
     return (
       <Loader open>
         <Typography variant="h4">Loading</Typography>
-        <Spinner color="primary" />
+        <Spinner />
       </Loader>
     );
   }
@@ -372,7 +373,7 @@ export default function ClonePreview(props) {
     return (
       <Loader open>
         <Typography variant="h4">Loading Clone Preview</Typography>
-        <Spinner color="primary" />
+        <Spinner />
       </Loader>
     );
   }
@@ -443,7 +444,7 @@ export default function ClonePreview(props) {
     return (
       <Loader open>
         <Typography variant="h4">Loading</Typography>
-        <Spinner color="primary" />
+        <Spinner />
       </Loader>
     );
   }

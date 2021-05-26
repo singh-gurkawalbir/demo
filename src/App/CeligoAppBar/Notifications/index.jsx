@@ -1,4 +1,4 @@
-import React, { useState, useCallback, Fragment } from 'react';
+import React, { useState, useCallback, Fragment, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Tooltip, IconButton, Badge, Divider } from '@material-ui/core';
@@ -8,7 +8,6 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import InvitationItem from './InvitationItem';
 import LoadResources from '../../../components/LoadResources';
-import { USER_ACCESS_LEVELS } from '../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   notificationContainer: {
@@ -27,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Notifications() {
+function Notifications() {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
@@ -40,7 +39,7 @@ export default function Notifications() {
     selectors.userNotifications(state)
   );
   const isAccountOwner = useSelector(state =>
-    selectors.resourcePermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
+    selectors.isAccountOwner(state)
   );
   const handleClick = useCallback(
     event => {
@@ -75,8 +74,8 @@ export default function Notifications() {
     return (
       <>
         <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
-        <Tooltip data-public title="No notifications" placement="bottom">
-          <IconButton size="small" color="inherit">
+        <Tooltip data-public title="No notifications" placement="bottom" aria-label="no notifications">
+          <IconButton aria-label="notifications" size="small" color="inherit">
             <NotificationsIcon />
           </IconButton>
         </Tooltip>
@@ -87,7 +86,7 @@ export default function Notifications() {
   return (
     <>
       <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
-      <IconButton size="small" color="inherit" onClick={handleClick}>
+      <IconButton aria-label="notifications" size="small" color="inherit" onClick={handleClick}>
         <Badge
           badgeContent={notifications.length}
           color="primary"
@@ -124,4 +123,8 @@ export default function Notifications() {
       </ArrowPopper>
     </>
   );
+}
+
+export default function NotificationsMemo() {
+  return useMemo(() => <Notifications />, []);
 }

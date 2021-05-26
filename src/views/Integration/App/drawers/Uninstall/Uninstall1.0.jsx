@@ -50,14 +50,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Uninstaller1({ integration, integrationId, storeId }) {
+export default function Uninstaller1({ integration, integrationId, childId }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const {_id, mode, name, stores} = integration;
+  const {_id, mode, name, children} = integration;
   const integrationAppName = getIntegrationAppUrlName(name);
   const isUninstallComplete = useSelector(state =>
-    selectors.isUninstallComplete(state, { integrationId, storeId })
+    selectors.isUninstallComplete(state, { integrationId, childId })
   );
   const { steps: uninstallSteps, error } = useSelector(state =>
     selectors.integrationUninstallSteps(state, { integrationId }), shallowEqual
@@ -66,10 +66,10 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
   useEffect(() => {
     if (!error && !uninstallSteps) {
       dispatch(
-        actions.integrationApp.uninstaller.preUninstall(storeId, integrationId)
+        actions.integrationApp.uninstaller.preUninstall(childId, integrationId)
       );
     }
-  }, [_id, dispatch, error, integrationId, storeId, uninstallSteps]);
+  }, [_id, dispatch, error, integrationId, childId, uninstallSteps]);
 
   useEffect(() => {
     if (
@@ -129,8 +129,8 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
     return <Loader open>Uninstalling</Loader>;
   }
 
-  const storeName = stores
-    ? (stores.find(s => s.value === storeId) || {}).label
+  const childName = children
+    ? (children.find(c => c.value === childId) || {}).label
     : undefined;
   const handleStepClick = step => {
     // TODO: installURL should eventually changed to uninstallURL. Currently it is left as installURL to support shopify uninstall.
@@ -177,7 +177,7 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
       );
       dispatch(
         actions.integrationApp.uninstaller.stepUninstall(
-          storeId,
+          childId,
           integrationId,
           uninstallerFunction
         )
@@ -188,15 +188,15 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
   return (
     <div>
       <CeligoPageBar
-        title={`Uninstall app: ${name}${storeName ? ` - ${storeName}` : ''}`}
+        title={`Uninstall app: ${name}${childName ? ` - ${childName}` : ''}`}
         // Todo: (Mounika) please add the helpText
         // infoText="we need to have the help text for the following."
         />
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
           <Typography className={classes.message}>
-            {storeName
-              ? `Complete the below steps to uninstall your integration app child ${storeName}`
+            {childName
+              ? `Complete the below steps to uninstall your integration app child ${childName}`
               : 'Complete the below steps to uninstall your integration app.'}
           </Typography>
 

@@ -1,6 +1,7 @@
 import { call, takeEvery, put, select, takeLatest, all, take, race } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
 import shortid from 'shortid';
+import { uniqBy } from 'lodash';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
@@ -60,7 +61,7 @@ export function* refreshGenerates({ isInit = false }) {
   const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);
   const importResource = yield select(selectors.resource, 'imports', importId);
 
-  if (importResource.adaptorType === 'SalesforceImport') {
+  if (importResource?.adaptorType === 'SalesforceImport') {
     // salesforce Import could have sub objects as well
     const { _connectionId, salesforce } = importResource;
     const { sObjectType } = salesforce;
@@ -126,7 +127,7 @@ export function* refreshGenerates({ isInit = false }) {
   } else if (!isInit) {
     const opts = {};
 
-    if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType) && subRecordMappingId) {
+    if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource?.adaptorType) && subRecordMappingId) {
       opts.recordType = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
     }
     yield put(actions.importSampleData.request(
@@ -510,7 +511,7 @@ export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
   } = yield select(selectors.mapping);
   const importResource = yield select(selectors.resource, 'imports', importId);
 
-  if (importResource.adaptorType !== 'SalesforceImport' || field !== 'generate') {
+  if (!importResource || importResource.adaptorType !== 'SalesforceImport' || field !== 'generate') {
     return;
   }
   const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);
@@ -586,6 +587,109 @@ export function* patchGenerateThroughAssistant({value}) {
     );
   }
 }
+export function* getAutoMapperSuggestion() {
+  const {mappings, flowId, importId, subRecordMappingId} = yield select(selectors.mapping);
+  const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
+  const importResource = yield select(selectors.resource, 'imports', importId);
+
+  if (!exportResource.adaptorType || !importResource) {
+    return yield put(actions.mapping.autoMapper.failed('error', 'Failed to fetch mapping suggestions.'));
+  }
+
+  const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);
+  const extractFields = yield select(selectors.mappingExtracts, importId, flowId, subRecordMappingId);
+  const reqBody = {};
+
+  const sourceApplication = yield select(selectors.applicationName, exportResource._id);
+
+  reqBody.source_application = sourceApplication?.toLowerCase() || '';
+  reqBody.source_fields = extractFields.map(f => ({id: f.id}));
+  const destApplication = yield select(selectors.applicationName, importResource._id);
+
+  reqBody.dest_application = destApplication?.toLowerCase() || '';
+  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType) && subRecordMappingId) {
+    reqBody.dest_record_type = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
+  } else if (importResource.adaptorType === 'SalesforceImport') {
+    const { sObjectType } = importResource.salesforce;
+
+    reqBody.dest_record_type = sObjectType;
+  } else {
+    reqBody.dest_record_type = '';
+  }
+
+  if (exportResource.adaptorType === 'NetSuiteExport') {
+    const netsuiteType = exportResource.type === 'distributed' ? 'distributed' : 'restlet';
+
+    reqBody.source_record_type = exportResource.netsuite[netsuiteType].recordType;
+  } else if (exportResource.adaptorType === 'SalesforceExport') {
+    const { sObjectType } = exportResource.salesforce;
+
+    reqBody.source_record_type = sObjectType;
+  } else {
+    reqBody.source_record_type = '';
+  }
+
+  // filtering out all duplicates elements from generate fields
+  // there could be multiple generate with same id. Example: addressbook[*].id is common id for [Address : ID] and [Address : Line ID]
+  reqBody.dest_fields = uniqBy(generateFields.map(f => ({id: f.id})), 'id');
+
+  const path = '/autoMapperSuggestions';
+  const opts = {
+    method: 'PUT',
+    body: reqBody,
+  };
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+      // We don't want to double report on errors. The catch block below already
+      // handles the api failure.
+      hidden: true,
+      message: 'Loading',
+    });
+  } catch (e) {
+    return yield put(actions.mapping.autoMapper.failed('error', 'Failed to fetch mapping suggestions.'));
+  }
+
+  if (response) {
+    const {mappings: _mappings, suggested_threshold: suggestedThreshold} = response;
+    const suggestedMapping = [];
+
+    _mappings?.fields?.forEach(field => {
+      const { weight, generate } = field;
+
+      if (weight >= suggestedThreshold) {
+        const itemWithSameGenerateIndex = suggestedMapping.findIndex((field => field.generate === generate));
+
+        if (itemWithSameGenerateIndex === -1 || weight > suggestedMapping[itemWithSameGenerateIndex]?.weight) {
+          if (!mappings.find(item => item.generate === generate)) {
+            const newMappingObj = { generate, key: shortid.generate()};
+
+            if ('hardCodedValue' in field) {
+              newMappingObj.hardCodedValue = field.hardCodedValue;
+            } else if ('extract' in field) {
+              newMappingObj.extract = field.extract;
+            }
+            suggestedMapping.push(newMappingObj);
+          }
+        }
+      }
+    });
+    if (suggestedMapping?.length) {
+      suggestedMapping.map(m => ({
+        ...m,
+        key: shortid.generate(),
+      }));
+      yield put(actions.mapping.autoMapper.received(suggestedMapping));
+    } else {
+      yield put(actions.mapping.autoMapper.failed('warning', 'There are no new fields to auto-map.'));
+    }
+  } else {
+    yield put(actions.mapping.autoMapper.failed('error', 'Failed to fetch mapping suggestions.'));
+  }
+}
 
 export const mappingSagas = [
   takeEvery(actionTypes.MAPPING.INIT, mappingInit),
@@ -600,5 +704,5 @@ export const mappingSagas = [
     actionTypes.MAPPING.UPDATE_LOOKUP,
     actionTypes.MAPPING.PATCH_SETTINGS,
   ], validateMappings),
-
+  takeLatest(actionTypes.MAPPING.AUTO_MAPPER.REQUEST, getAutoMapperSuggestion),
 ];

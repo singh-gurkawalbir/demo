@@ -29,7 +29,6 @@ import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
 import { INSTALL_STEP_TYPES, emptyObject,
-  NETSUITE_BUNDLE_URL,
 } from '../../../../../utils/constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
@@ -38,6 +37,7 @@ import RawHtml from '../../../../../components/RawHtml';
 import getRoutePath from '../../../../../utils/routePaths';
 import HelpIcon from '../../../../../components/icons/HelpIcon';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import TrashIcon from '../../../../../components/icons/TrashIcon';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -82,16 +82,13 @@ export default function ConnectorInstallation(props) {
   const dispatch = useDispatch();
 
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
-  const connections = useSelector(state =>
-    selectors.resourceList(state, { type: 'connections' })
-  ).resources;
 
   const {
     name: integrationName,
     install = [],
     integrationInstallSteps = [],
     mode,
-    stores,
+    children,
     supportsMultiStore,
     _connectorId,
     initChild,
@@ -101,7 +98,7 @@ export default function ConnectorInstallation(props) {
     initChild: integration.initChild,
     install: integration.install,
     mode: integration.mode,
-    stores: integration.stores,
+    children: integration.children,
     supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
     _connectorId: integration._connectorId,
     integrationInstallSteps: integration.installSteps,
@@ -149,12 +146,17 @@ export default function ConnectorInstallation(props) {
     (left, right) => (left.openOauthConnection === right.openOauthConnection && left.connectionId === right.connectionId)
   );
 
-  if (openOauthConnection) {
-    dispatch(actions.integrationApp.installer.setOauthConnectionMode(connectionId, false, integrationId));
-    setConnection({
-      _connectionId: connectionId,
-    });
-  }
+  const oauthConnection = useSelectorMemo(selectors.makeResourceSelector, 'connections', connectionId);
+
+  useEffect(() => {
+    if (openOauthConnection && oauthConnection) {
+      dispatch(actions.integrationApp.installer.setOauthConnectionMode(connectionId, false, integrationId));
+      setConnection({
+        _connectionId: connectionId,
+      });
+    }
+  }, [connectionId, dispatch, integrationId, openOauthConnection, oauthConnection]);
+
   const selectedConnectionType = useSelector(state => {
     const selectedConnection = selectors.resource(
       state,
@@ -171,6 +173,15 @@ export default function ConnectorInstallation(props) {
   }, []);
   const isCloned = install.find(step => step.isClone);
   const isFrameWork2 = integrationInstallSteps.length || isCloned;
+
+  const redirectTo = useSelector(state => selectors.shouldRedirect(state, integrationId));
+
+  useEffect(() => {
+    if (redirectTo) {
+      history.push(getRoutePath(redirectTo));
+      dispatch(actions.resource.integrations.clearRedirect(integrationId));
+    }
+  }, [dispatch, history, integrationId, redirectTo]);
 
   useEffect(() => {
     const allStepsCompleted = !installSteps.reduce((result, step) => result || !step.completed, false);
@@ -192,9 +203,11 @@ export default function ConnectorInstallation(props) {
       'netsuite-oauth',
       'shopify-oauth',
       'acumatica-oauth',
+      'hubspot-oauth',
     ],
     []
   );
+
   const handleSubmitComplete = useCallback(
     (connId, isAuthorized, connectionDoc = {}) => {
       // Here connection Doc will come into picture for only for IA2.0 and if connection step doesn't contain connection Id.
@@ -269,7 +282,7 @@ export default function ConnectorInstallation(props) {
           );
         } else if (parentId) {
           props.history.push(
-            getRoutePath(`/integrationapps/${integrationAppName}/${parentId}`)
+            getRoutePath(`/integrationapps/${integrationAppName}/${parentId}/child/${integrationId}/flows`)
           );
         } else if (integrationInstallSteps && integrationInstallSteps.length > 0) {
           if (_connectorId) {
@@ -315,8 +328,13 @@ export default function ConnectorInstallation(props) {
         {
           label: 'Uninstall',
           onClick: () => {
-            const storeId = stores?.length
-              ? stores[0].value
+            if (!_connectorId) {
+              dispatch(actions.resource.integrations.delete(integrationId));
+
+              return;
+            }
+            const childId = children?.length
+              ? children[0].value
               : undefined;
 
             // for old cloned IAs, uninstall should happen the old way
@@ -328,7 +346,7 @@ export default function ConnectorInstallation(props) {
               );
 
               // REVIEW: @ashu, review with Dave once
-              // if url contains '/child/xxx' use that id as store id
+              // if url contains '/child/xxx' use that id as child id
               if (index === -1) {
                 history.push(
                   getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall`)
@@ -340,7 +358,7 @@ export default function ConnectorInstallation(props) {
               }
             } else if (supportsMultiStore) {
               history.push(
-                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`)
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`)
               );
             } else {
               history.push(
@@ -428,21 +446,7 @@ export default function ConnectorInstallation(props) {
             'inProgress'
           )
         );
-        // Below code should be reverted once https://celigo.atlassian.net/browse/IO-18981 is fixed.
-        let bundleURL = installURL || url;
-
-        if (
-          bundleURL === NETSUITE_BUNDLE_URL
-        ) {
-          const netsuiteConnectionStep = integrationInstallSteps.find(step => step?.sourceConnection?.type === 'netsuite');
-
-          if (netsuiteConnectionStep?._connectionId) {
-            const netsuiteConnection = connections.find(c => c._id === netsuiteConnectionStep._connectionId);
-
-            bundleURL = netsuiteConnection?.netsuite?.dataCenterURLs?.systemDomain + bundleURL;
-          }
-        }
-        openExternalUrl({ url: bundleURL });
+        openExternalUrl({ url: installURL || url });
       } else {
         if (step.verifying) {
           return false;
@@ -510,7 +514,7 @@ export default function ConnectorInstallation(props) {
   return (
     <LoadResources required resources="connections,integrations,published">
       <CeligoPageBar
-        title={`Install app: ${integrationName}`}
+        title={`Install integration: ${integrationName}`}
         // Todo: (Mounika) please add the helpText
         // infoText="we need to have the help text for the following."
         >
@@ -526,17 +530,25 @@ export default function ConnectorInstallation(props) {
               View help guide
             </IconTextButton>
           )}
-          {_connectorId && (
-          <IconTextButton
-            data-test="uninstall"
-            component={Link}
-            variant="text"
-            onClick={handleUninstall}
-            color="primary">
-            <CloseIcon />
-            Uninstall
-          </IconTextButton>
-          )}
+          {_connectorId ? (
+            <IconTextButton
+              data-test="uninstall"
+              component={Link}
+              variant="text"
+              onClick={handleUninstall}
+              color="primary">
+              <CloseIcon />
+              Uninstall
+            </IconTextButton>
+          )
+            : (
+              <IconTextButton
+                variant="text"
+                data-test="deleteIntegration"
+                onClick={handleUninstall}>
+                <TrashIcon /> Delete integration
+              </IconTextButton>
+            )}
 
         </div>
       </CeligoPageBar>

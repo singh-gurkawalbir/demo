@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   },
   headerChildRight: {
     marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(8),
+    marginRight: theme.spacing(10),
   },
   refreshButton: {
     marginLeft: theme.spacing(1),
@@ -55,7 +55,7 @@ const RefreshButton = ({className, ...props}) => (
 );
 const SpinnerLoader = ({className}) => (
   <span className={className}>
-    <Spinner size={24} color="primary" />
+    <Spinner />
   </span>
 );
 export default function TopPanel({

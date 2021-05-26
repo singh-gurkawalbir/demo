@@ -23,7 +23,8 @@ const preSavePageFunctionStub = `
 *
 * The function will be passed one 'options' argument that has the following fields:
 *   'data' - an array of records representing one page of data. A record can be an object {} or array [] depending on the data source.
-*   'errors' - an array of errors where each error has the structure {code: '', message: '', source: ''}.
+*   'errors' - an array of errors where each error has the structure {code: '', message: '', source: '', retryDataKey: ''}.
+*   'retryData' - a dictionary object containing the retry data for all errors: {retryDataKey: { data: <record>, stage: '', traceKey: ''}}.
 *   '_exportId' - the _exportId currently running.
 *   '_connectionId' - the _connectionId currently running.
 *   '_flowId' - the _flowId currently running.
@@ -37,6 +38,7 @@ const preSavePageFunctionStub = `
 *   'data' - your modified data.
 *   'errors' - your modified errors.
 *   'abort' - instruct the batch export currently running to stop generating new pages of data.
+*   'newErrorsAndRetryData' - return brand new errors linked to retry data: [{retryData: <record>, errors: [<error>]}].
 * Throwing an exception will signal a fatal error and stop the flow.
 */
 function preSavePage (options) {
@@ -44,7 +46,8 @@ function preSavePage (options) {
   return {
     data: options.data,
     errors: options.errors,
-    abort: false
+    abort: false,
+    newErrorsAndRetryData: []
   }
 }`;
 const preMapFunctionStub = `/*
@@ -279,6 +282,7 @@ const formInitFunctionStub = `/*
 * The function will be passed one 'options' argument that has the following fields:
 *   'resource' - the resource being viewed in the UI.
 *   'parentResource' - the parent of the resource being viewed in the UI.
+*   'grandparentResource': the grandparent of the resource being viewed in the UI.
 *   'license' - integration apps only.  the license provisioned to the integration.
 *   'parentLicense' - integration apps only. the parent of the license provisioned to the integration.
 *   'sandbox' - boolean value indicating whether the script is invoked for sandbox.

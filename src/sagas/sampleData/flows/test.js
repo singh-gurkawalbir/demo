@@ -257,7 +257,7 @@ describe('flow sample data sagas', () => {
     const resourceId = 'export-123';
 
     test('should call evaluateExternalProcessor saga to fetch processor data and call updateStateForProcessorData saga with the response of processor data', () => {
-      const processorData = { processor: 'transform', rules: [] };
+      const processorData = { editorType: 'transform', rules: [] };
       const processedData = { test: 5 };
 
       return expectSaga(_processData, { flowId, resourceId, processorData, stage: 'transform' })
@@ -277,7 +277,7 @@ describe('flow sample data sagas', () => {
         .run();
     });
     test('should extract needed properties from processorData passed and proxy the same to  updateStateForProcessorData when called', () => {
-      const processorData = { processor: 'transform', rules: [], wrapInArrayProcessedData: true, removeDataPropFromProcessedData: true };
+      const processorData = { editorType: 'transform', rules: [], wrapInArrayProcessedData: true, removeDataPropFromProcessedData: true };
       const processedData = { test: 5 };
 
       return expectSaga(_processData, { flowId, resourceId, processorData, stage: 'transform' })
@@ -692,12 +692,14 @@ describe('flow sample data sagas', () => {
             resourceId: _pageGeneratorId,
             runOffline: true,
             throwOnError: true,
+            flowId,
           }), previewResponse],
         ])
         .call(exportPreview, {
           resourceId: _pageGeneratorId,
           runOffline: true,
           throwOnError: true,
+          flowId,
         })
         .put(
           actions.flowData.receivedPreviewData(
@@ -783,7 +785,7 @@ describe('flow sample data sagas', () => {
       const processorData = {
         data: preProcessedSampleData,
         rule: [{ extract: 'count', generate: 'total'}],
-        processor: 'transform',
+        editorType: 'transform',
       };
 
       return expectSaga(requestProcessorData, {
@@ -840,9 +842,11 @@ describe('flow sample data sagas', () => {
       const stage = 'transform';
       const processorData = {
         data: preProcessedData,
-        code: script.content,
-        entryFunction: 'transform',
-        processor: 'javascript',
+        editorType: 'javascript',
+        rule: {
+          code: script.content,
+          entryFunction: 'transform',
+        },
         wrapInArrayProcessedData: true,
       };
 
@@ -1263,6 +1267,7 @@ describe('pageProcessorPreviewOptions sagas', () => {
       const uiData = { test: 5 };
       const postData = {
         lastExportDateTime: expect.any(String),
+        currentExportDateTime: expect.any(String),
       };
 
       const { returnValue } = await expectSaga(getPreviewOptionsForResource, { resource: iaDeltaResource, flow })

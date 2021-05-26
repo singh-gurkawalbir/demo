@@ -106,6 +106,9 @@ describe('installConnector saga', () => {
     expect(saga.next().value).toEqual(
       put(actions.resource.requestCollection('connections'))
     );
+    expect(saga.next().value).toEqual(
+      put(actions.resource.requestCollection('licenses'))
+    );
 
     expect(saga.next().done).toEqual(true);
   });

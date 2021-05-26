@@ -269,8 +269,8 @@ describe('Flow sample data utility sagas', () => {
         };
         const processorData = {
           data: sampleData,
-          processor: 'csvParser',
-          ...generateFileParserOptionsFromResource(ftpCsvResource),
+          editorType: 'csvParser',
+          rule: generateFileParserOptionsFromResource(ftpCsvResource),
         };
 
         return expectSaga(parseFileData, {sampleData, resource: ftpCsvResource })
@@ -297,8 +297,8 @@ describe('Flow sample data utility sagas', () => {
         const sampleData = { test: 5 };
         const processorData = {
           data: sampleData,
-          processor: 'csvParser',
-          ...generateFileParserOptionsFromResource(ftpCsvResource),
+          editorType: 'csvParser',
+          rule: generateFileParserOptionsFromResource(ftpCsvResource),
         };
         const error = JSON.stringify({
           errors: [{status: 404, message: '{"code":"Not a valid data to process"}'}],
@@ -700,6 +700,7 @@ describe('Flow sample data utility sagas', () => {
           adaptorType: 'RESTExport',
           postData: {
             lastExportDateTime: expect.any(String),
+            currentExportDateTime: expect.any(String),
           },
         };
         const { returnValue } = await expectSaga(fetchResourceDataForNewFlowResource, { resourceId: '1234', resourceType: 'exports' })
@@ -846,7 +847,10 @@ describe('Flow sample data utility sagas', () => {
           pageGenerators: [{ _exportId: 'export-123'}, { _exportId: 'export-456'}],
           pageProcessors: [{ type: 'import', _importId: 'import-123'}],
         };
-        const postData = { lastExportDateTime: expect.any(String) };
+        const postData = {
+          lastExportDateTime: expect.any(String),
+          currentExportDateTime: expect.any(String),
+        };
         const pg1Options = {
           uiData: { users: [{_id: 'user1', name: 'user1'}, {_id: 'user2', name: 'user2'}]},
         };
@@ -902,7 +906,10 @@ describe('Flow sample data utility sagas', () => {
           runOffline: true,
           runOfflineSource: 'db',
         };
-        const postData = { lastExportDateTime: expect.any(String) };
+        const postData = {
+          lastExportDateTime: expect.any(String),
+          currentExportDateTime: expect.any(String),
+        };
 
         const pg1 = {
           _id: 'export-123',
@@ -1235,6 +1242,30 @@ describe('Flow sample data utility sagas', () => {
               resourceId,
               'exports',
             ), true],
+            [matchers.call.fn(apiCallWithRetry), undefined],
+          ])
+          .call(fetchPageGeneratorPreview, {
+            flowId,
+            _pageGeneratorId: resourceId,
+          })
+          .run();
+      });
+      test('should call fetchPageGeneratorPreview incase of flowInput/raw stages PP and pageprocessor is of type file adaptor', () => {
+        const resourceId = 'export-123';
+        const flowId = 'flow-123';
+        const sampleDataStage = 'raw';
+
+        return expectSaga(requestSampleDataForExports, { resourceId, flowId, sampleDataStage })
+          .provide([
+            [select(
+              selectors.isPageGenerator,
+              flowId,
+              resourceId,
+              'exports',
+            ), false],
+            [select(selectors.resource, 'exports', resourceId), {
+              adaptorType: 'FTPExport',
+            }],
             [matchers.call.fn(apiCallWithRetry), undefined],
           ])
           .call(fetchPageGeneratorPreview, {
@@ -2508,6 +2539,8 @@ describe('Flow sample data utility sagas', () => {
           rawData: 'raw1234',
         };
         const body = {
+          _flowId: 'f1',
+          _integrationId: 'i1',
           ...formattedResourceWithoutOnceDoc,
           verbose: true,
           runOfflineOptions: {
@@ -2517,7 +2550,9 @@ describe('Flow sample data utility sagas', () => {
         };
         const hidden = false;
 
-        return expectSaga(exportPreview, { resourceId, runOffline: true, hidden })
+        const flowId = 'f1';
+
+        return expectSaga(exportPreview, { resourceId, runOffline: true, hidden, flowId })
           .provide([
             [select(
               selectors.resourceData,
@@ -2531,6 +2566,10 @@ describe('Flow sample data utility sagas', () => {
               message: 'Loading',
               hidden: true,
             }), previewData],
+            [select(selectors.resource, 'flows', flowId), {
+              _id: 'f1',
+              _integrationId: 'i1',
+            }],
           ])
           .returns(previewData)
           .run();
@@ -2547,6 +2586,8 @@ describe('Flow sample data utility sagas', () => {
           },
           adaptorType: 'RESTExport',
         };
+        const flowId = 'f1';
+
         const formattedResourceWithoutOnceDoc = {
           name: 'Test export',
           _id: resourceId,
@@ -2554,9 +2595,11 @@ describe('Flow sample data utility sagas', () => {
             relativeURI: '/api/v2/users.json',
           },
           adaptorType: 'RESTExport',
+          _flowId: flowId,
+          _integrationId: 'i1',
         };
 
-        return expectSaga(exportPreview, { resourceId, runOffline: true })
+        return expectSaga(exportPreview, { resourceId, runOffline: true, flowId })
           .provide([
             [select(
               selectors.resourceData,
@@ -2570,6 +2613,10 @@ describe('Flow sample data utility sagas', () => {
               message: 'Loading',
               hidden: false,
             }), previewData],
+            [select(selectors.resource, 'flows', flowId), {
+              _id: 'f1',
+              _integrationId: 'i1',
+            }],
           ])
           .returns(previewData)
           .run();
@@ -2818,6 +2865,7 @@ describe('Flow sample data utility sagas', () => {
           name: 'test',
         };
         const newResourceId = 'new-123';
+        const flowId = 'f1';
         const previewData = {
           data: [{
             InSituTestRequest: [{
@@ -2861,7 +2909,15 @@ describe('Flow sample data utility sagas', () => {
             [call(exportPreview, {
               resourceId: resource._id,
               hidden: true,
+              flowId,
             }), previewData],
+            [select(
+              selectors.resourceFormState,
+              'exports',
+              newResourceId
+            ), {
+              flowId,
+            }],
           ])
           .returns(xmlParsedData)
           .run();

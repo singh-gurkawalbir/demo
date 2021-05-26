@@ -610,6 +610,10 @@ export default {
     type: 'checkbox',
     label: 'Disable strict SSL',
   },
+  'rdbms.disableStrictSSL': {
+    type: 'checkbox',
+    label: 'Disable strict SSL',
+  },
   'http.concurrencyLevel': {
     label: 'Concurrency level',
     type: 'select',
@@ -1260,6 +1264,80 @@ export default {
     requiredWhen: [
       {
         field: 'ftp.pgpDecryptKey',
+        isNot: [''],
+      },
+    ],
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+  },
+  usePgp: {
+    type: 'checkbox',
+    defaultValue: r =>
+      !!(r?.pgp?.publicKey || r?.pgp?.privateKey),
+    label: 'Enable PGP cryptographic',
+  },
+  'pgp.publicKey': {
+    type: 'text',
+    multiline: true,
+    label: 'PGP public key',
+    defaultValue: '',
+    requiredWhen: [
+      {
+        field: 'pgp.privateKey',
+        is: [''],
+      },
+    ],
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+  },
+  'pgp.compressionAlgorithm': {
+    type: 'select',
+    label: 'Compression algorithm',
+    skipSort: true,
+    options: [
+      {
+        items: [
+          { label: 'zip', value: 'zip' },
+          { label: 'zlib', value: 'zlib' },
+          { label: 'bzip2', value: 'bzip2' },
+        ],
+      },
+    ],
+  },
+  'pgp.asciiArmored': {
+    label: 'ASCII armor',
+    type: 'radiogroup',
+    defaultValue: r => r?.pgp?.asciiArmored === false ? 'false' : 'true',
+    options: [
+      {
+        items: [
+          { value: 'true', label: 'Yes' },
+          { value: 'false', label: 'No' },
+        ],
+      },
+    ],
+  },
+  'pgp.privateKey': {
+    type: 'text',
+    label: 'PGP private key',
+    defaultValue: '',
+    multiline: true,
+    requiredWhen: [
+      {
+        field: 'pgp.publicKey',
+        is: [''],
+      },
+    ],
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+  },
+  'pgp.passphrase': {
+    type: 'text',
+    label: 'Private key passphrase',
+    defaultValue: '',
+    requiredWhen: [
+      {
+        field: 'pgp.privateKey',
         isNot: [''],
       },
     ],
@@ -2038,7 +2116,7 @@ export default {
     ],
   },
   'netsuite.linkSuiteScriptIntegrator': {
-    label: 'Link suitescript integrator',
+    label: 'Link SuiteScript integrator',
     type: 'linksuitescriptintegrator',
   },
   'netsuite._iClientId': {

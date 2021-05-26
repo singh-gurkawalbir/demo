@@ -12,6 +12,7 @@ import actions from '../../../../../../actions';
 import { getFormFieldMetadata } from './util';
 import { SCOPES } from '../../../../../../sagas/resourceForm';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
+import EditorDrawer from '../../../../../AFE/Drawer';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -154,9 +155,7 @@ function SubRecordDrawer(props) {
       onClose={handleClose}>
       <DrawerTitleBar
         title={referenceFieldId ? 'Edit subrecord import' : 'Add subrecord import'}
-        backToParent
-      />
-
+        backToParent />
       <div className={classes.container}>
         <div className={classes.content}>
           {fieldMeta && (
@@ -182,6 +181,7 @@ function SubRecordDrawer(props) {
           )}
         </div>
       </div>
+      <EditorDrawer />
     </Drawer>
   );
 }
@@ -191,7 +191,7 @@ export default function SubRecordDrawerRoute(props) {
 
   return (
     <Route
-      exact
+      // exact
       path={[`${match.url}/subrecords/`, `${match.url}/subrecords/:referenceFieldId`]}>
       <SubRecordDrawer {...props} />
     </Route>

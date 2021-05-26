@@ -11,13 +11,14 @@ import IntegrationCrumb from './crumbs/Integration';
 import MarketplaceCrumb from './crumbs/Marketplace';
 import TemplateCrumb from './crumbs/Template';
 import CloneCrumb from './crumbs/Clone';
-import { IntegrationAppCrumb, StoreCrumb } from './crumbs/IntegrationApp';
+import { IntegrationAppCrumb, ChildCrumb } from './crumbs/IntegrationApp';
 import EditResourceTypeCrumb from './crumbs/EditResourceType';
 import AddResourceTypeCrumb from './crumbs/AddResourceType';
 import suiteScriptRoutes from './suiteScript';
 import getRoutePath from '../../../utils/routePaths';
 import ConnectorCrumb from './crumbs/Connector';
 
+const modelLabelToPlural = resourceType => MODEL_PLURAL_TO_LABEL[resourceType] ? `${MODEL_PLURAL_TO_LABEL[resourceType]}s` : '';
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
     flexGrow: 1,
@@ -133,8 +134,8 @@ const routes = [
     childRoutes: [
       ...integrationAppRoutes,
       {
-        path: '/child/:storeId',
-        breadcrumb: StoreCrumb,
+        path: '/child/:childId',
+        breadcrumb: ChildCrumb,
         childRoutes: integrationAppRoutes,
       },
     ],
@@ -170,8 +171,8 @@ const routes = [
       { path: '/notifications', breadcrumb: 'Notifications' },
       { path: '/addons', breadcrumb: 'Add-ons' },
       {
-        path: '/:storeId',
-        breadcrumb: StoreCrumb,
+        path: '/:childId',
+        breadcrumb: ChildCrumb,
         childRoutes: [
           { path: '/users', breadcrumb: 'Users' },
           { path: '/uninstall', breadcrumb: 'Uninstall' },
@@ -240,19 +241,20 @@ const routes = [
       { path: '/subscription', breadcrumb: 'Subscription' },
       { path: '/audit', breadcrumb: 'Audit log' },
       { path: '/transfers', breadcrumb: 'Transfers' },
+      { path: '/security', breadcrumb: 'Security' },
     ],
   },
 
   { path: getRoutePath('/accesstokens'), breadcrumb: 'API tokens' },
   // Dev tools
   { path: getRoutePath('/resources'), breadcrumb: 'Resources' },
-  { path: getRoutePath('/editors'), breadcrumb: 'Dev playground' },
   { path: getRoutePath('/playground'), breadcrumb: 'Developer playground' },
   { path: getRoutePath('/permissions'), breadcrumb: 'Permission explorer' },
   { path: getRoutePath('/migrate'), breadcrumb: 'Our new error management' },
+  { path: getRoutePath('/reports'), breadcrumb: 'Reports' },
   {
     path: getRoutePath('/:resourceType'),
-    breadcrumb: ({ resourceType }) => MODEL_PLURAL_TO_LABEL[resourceType] ? `${MODEL_PLURAL_TO_LABEL[resourceType]}s` : '',
+    breadcrumb: ({ resourceType }) => modelLabelToPlural(resourceType),
   },
 ];
 const commonChildRoutes = [
@@ -268,6 +270,9 @@ const commonChildRoutes = [
   {
     path: '/edit/:resourceType/:id',
     breadcrumb: EditResourceTypeCrumb,
+    childRoutes: [
+      { path: '/logs', breadcrumb: 'View listener debug logs' },
+    ],
   },
 ];
 
@@ -334,7 +339,6 @@ function parseUrl(pathname, routes, url = '', params = {}) {
 
   return crumbs;
 }
-
 export default function CeligoBreadcrumb() {
   const { pathname } = useLocation();
 

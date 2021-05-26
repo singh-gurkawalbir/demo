@@ -1,4 +1,4 @@
-import { EXPORT_FILE_FIELD_MAP } from '../../../utils/fileUtil';
+import { EXPORT_FILE_FIELD_MAP } from '../../metaDataUtils/fileUtil';
 import { alterFileDefinitionRulesVisibility } from '../../formFactory/utils';
 
 export default {
@@ -155,6 +155,9 @@ export default {
     } else {
       newValues['/file/filter'] = undefined;
     }
+    if (!newValues['/file/decrypt']) {
+      newValues['/file/decrypt'] = undefined;
+    }
 
     return {
       ...newValues,
@@ -255,6 +258,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
+          'fileAdvanced',
           'file.decompressFiles',
           'file.compressionFormat',
           'file.skipDelete',
@@ -264,8 +268,10 @@ export default {
           'pageSize',
           'dataURITemplate',
           'skipRetries',
+          'traceKeyTemplate',
           'apiIdentifier',
-          'file.batchSize'],
+          'file.batchSize',
+        ],
       },
     ],
   },

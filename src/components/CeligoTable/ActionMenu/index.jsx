@@ -1,8 +1,9 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { IconButton, MenuItem, Tooltip } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
+import React, { useCallback, useState } from 'react';
 import ArrowPopper from '../../ArrowPopper';
+import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
+import MultipleAction from './MultipleAction';
 
 const useStyles = makeStyles(theme => ({
   actionsMenuPopper: {
@@ -11,57 +12,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Action = ({ isSingleAction, label, Icon, disabledActionText, useHasAccess, actionProps, rowData, component, selectAction, handleMenuClose}) => {
-  const handleActionClick = useCallback(() => {
-    selectAction(component);
-    handleMenuClose();
-  }, [component, handleMenuClose, selectAction]);
-  const hasAccess = useHasAccess({...actionProps, rowData });
-
-  if (!hasAccess) {
-    return null;
-  }
-  const disabledActionTitle = disabledActionText?.({ ...actionProps, rowData });
-  const actionIcon = Icon ? <Icon /> : null;
-
-  if (isSingleAction) {
-    return (
-      <Tooltip data-public title={disabledActionTitle || label} placement="bottom" >
-        {/* The <div> below seems to be redundant as it does not provide any presentation benefit.
-            However, without this wrapper div, if the action is disabled, the <Tooltip> wrapper
-            doesn't recognize the hover state and thus doesn't show the tooltip message.
-        */}
-        <div>
-          <IconButton size="small" disabled={!!disabledActionTitle} onClick={handleActionClick}>
-            {actionIcon}
-          </IconButton>
-        </div>
-      </Tooltip>
-    );
-  }
-
-  if (disabledActionTitle) {
-    return (
-      <Tooltip data-public key={label} title={disabledActionTitle} placement="bottom" >
-        <div>
-          <MenuItem disabled>
-            {actionIcon}
-            {label}
-          </MenuItem>
-        </div>
-      </Tooltip>
-    );
-  }
-
-  return (
-    <MenuItem key={label} onClick={handleActionClick}>
-      {actionIcon}
-      {label}
-    </MenuItem>
-  );
-};
-
-export default function ActionMenu({ variant, rowActions, rowData, actionProps, selectAction }) {
+export default function ActionMenu({ useRowActions, rowData, setSelectedComponent}) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   // We are passing state to action items where each Action item would check if it has got permission.
@@ -70,50 +21,14 @@ export default function ActionMenu({ variant, rowActions, rowData, actionProps, 
   const handleMenuClick = useCallback(
     event => {
       setAnchorEl(event.currentTarget);
-      selectAction(undefined);
+      setSelectedComponent(null);
     },
-    [selectAction]
+    [setSelectedComponent]
   );
   const handleMenuClose = useCallback(() => setAnchorEl(null), []);
-
-  const actions = useMemo(() => {
-    // rowActions may or may not be a fn. Sometimes
-    // the actions are static, other times they are
-    // determinant on the resource they apply to.
-    // Check on this later for the scope of refactor
-    const meta = typeof rowActions === 'function'
-      ? rowActions(rowData, actionProps)
-      : rowActions;
-
-    return meta.map(({ icon, label, disabledActionText, useHasAccess, component: Action }) => ({
-      Icon: icon,
-      disabledActionText,
-      selectAction,
-      handleMenuClose,
-      // if its not defined return true
-      useHasAccess: useHasAccess || (() => true),
-      rowData,
-      actionProps,
-      label:
-      typeof label === 'function'
-        ? label(rowData, actionProps)
-        : label,
-      component: <Action {...actionProps} rowData={rowData} />,
-    }));
-  }, [actionProps, handleMenuClose, rowActions, rowData, selectAction]);
+  const actions = useRowActions(rowData);
 
   if (!actions || !actions.length) return null;
-
-  if (actions.length === 1 && variant === 'slim') {
-    // lets keep the isSingleAction mechanism so 'slim' variants of CeligoTable
-    // will still intelligently render single action when possible, or group
-    // multiple under an ellipsis.
-    // "Slim" variants currently have at most 1 action, but possibly future tables
-    // want a slim treatment but preserve ellipsis for multi-action rows.
-    // The table will still be slim by eliminating the action column heading.
-    // Possibly other slim CSS will get applied for row hover and reduced padding, etc.
-    return (<Action isSingleAction {...actions[0]} />);
-  }
 
   return (
     <>
@@ -126,7 +41,7 @@ export default function ActionMenu({ variant, rowActions, rowData, actionProps, 
         onClick={handleMenuClick}>
         <EllipsisIcon />
       </IconButton>
-
+      {open && (
       <ArrowPopper
         placement="bottom-end"
         restrictToParent={false}
@@ -135,8 +50,16 @@ export default function ActionMenu({ variant, rowActions, rowData, actionProps, 
         anchorEl={anchorEl}
         id={actionsPopoverId}
         onClose={handleMenuClose}>
-        {actions.map(a => <Action key={a.label} {...a} />)}
+        {actions.map(meta => (
+          <MultipleAction
+            key={meta.key}
+            setSelectedComponent={setSelectedComponent}
+            handleMenuClose={handleMenuClose}
+            meta={meta}
+            rowData={rowData} />
+        ))}
       </ArrowPopper>
+      )}
     </>
   );
 }

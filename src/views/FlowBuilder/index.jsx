@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 import ResourceDrawer from '../../components/drawer/Resource';
@@ -14,28 +14,23 @@ import ChartsDrawer from './drawers/LineGraph';
 import ReplaceConnectionDrawer from './drawers/ReplaceConnection';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
-import EditorDrawer from '../../components/AFE2/Drawer';
+import EditorDrawer from '../../components/AFE/Drawer';
 import FlowBuilderBody from './FlowBuilderBody';
 import Redirection from './Redirection';
 
 function FBComponent({flowId, integrationId, childId}) {
-  const [tabValue, setTabValue] = useState(0);
-
   return (
     <>
       <FlowBuilderBody
         flowId={flowId}
         integrationId={integrationId}
-        setTabValue={setTabValue}
-   />
+      />
 
       <BottomDrawer
         flowId={flowId}
-        tabValue={tabValue}
-        setTabValue={setTabValue}
         integrationId={integrationId}
         childId={childId}
-/>
+      />
     </>
   );
 }

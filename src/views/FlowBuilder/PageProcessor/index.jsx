@@ -10,14 +10,13 @@ import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import { getResourceSubType, generateNewId, isFileAdaptor} from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
-import inputFilterAction from './actions/inputFilter_afe2';
+import inputFilterAction from './actions/inputFilter_afe';
 import pageProcessorHooksAction from './actions/pageProcessorHooks';
-import outputFilterAction from './actions/outputFilter_afe2';
-// import transformationAction from './actions/transformation';
-import lookupTransformationAction from './actions/lookupTransformation_afe2';
+import outputFilterAction from './actions/outputFilter_afe';
+import lookupTransformationAction from './actions/lookupTransformation_afe';
 import responseMapping from './actions/responseMapping';
-import postResponseMapHook from './actions/postResponseMapHook_afe2';
-import responseTransformationAction from './actions/responseTransformation_afe2';
+import postResponseMapHook from './actions/postResponseMapHook_afe';
+import responseTransformationAction from './actions/responseTransformation_afe';
 import proceedOnFailureAction from './actions/proceedOnFailure';
 import { actionsMap, isImportMappingAvailable } from '../../../utils/flows';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
@@ -338,6 +337,7 @@ const PageProcessor = ({
           flowId={flowId}
           index={index}
           resource={resource}
+          resourceId={resourceId}
           resourceIndex={index}
           resourceType={resourceType}
           actions={processorActions}

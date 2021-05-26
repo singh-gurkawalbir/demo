@@ -1,19 +1,18 @@
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import DownloadIntegrationIcon from '../../../../icons/DownloadIntegrationIcon';
 import actions from '../../../../../actions';
 
 export default {
-  label: 'Download diagnostics',
+  key: 'downloadDiagnostics',
+  useLabel: () => 'Download diagnostics',
   icon: DownloadIntegrationIcon,
-  component: function DownloadDiagnostics(props) {
-    const { rowData: job = {} } = props;
+  useOnClick: rowData => {
+    const job = rowData || {};
     const dispatch = useDispatch();
 
-    useEffect(() => {
+    return useCallback(() => {
       dispatch(actions.job.downloadFiles({ jobId: job._id, fileType: 'diagnostics' }));
     }, [dispatch, job._id]);
-
-    return null;
   },
 };

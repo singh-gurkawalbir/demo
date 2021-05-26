@@ -314,7 +314,7 @@ describe('errorDetails sagas', () => {
         }))
         .run();
     });
-    test('should dispatch remove action to remove retried open errors from the list and also dispatch trackTraceKeys action when the retried errors have traceKeys', () => {
+    test('should dispatch remove action to remove retried open errors from the list', () => {
       const retryIds = ['id1', 'id2', 'id3'];
       const response = { _jobId: 'job-123' };
       const errors = [
@@ -323,7 +323,6 @@ describe('errorDetails sagas', () => {
         { errorId: 'error3', message: 'invalid id', retryDataKey: 'id3', traceKey: 't2' },
       ];
       const errorIds = ['error1', 'error2', 'error3'];
-      const traceKeysToTrack = ['t1', 't2'];
 
       return expectSaga(retryErrors, { flowId, resourceId, retryIds })
         .provide([
@@ -350,11 +349,6 @@ describe('errorDetails sagas', () => {
           flowId,
           resourceId,
           errorIds,
-        }))
-        .put(actions.errorManager.flowErrorDetails.trackTraceKeys({
-          flowId,
-          resourceId,
-          traceKeys: traceKeysToTrack,
         }))
         .run();
     });

@@ -13,11 +13,16 @@ import SearchIcon from '../../../icons/SearchIcon';
 import actions from '../../../../actions';
 import useFormContext from '../../../Form/FormContext';
 import { isNewId } from '../../../../utils/resource';
+import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
+  fieldWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
   optionRoot: {
     display: 'flex',
-    borderBottom: `1px solid ${theme.palette.divider}`,
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     wordBreak: 'break-word',
     padding: '0px',
   },
@@ -28,8 +33,8 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
     borderRight: '1px solid',
-    borderColor: theme.palette.divider,
-    color: theme.palette.divider,
+    borderColor: theme.palette.secondary.lightest,
+    color: theme.palette.secondary.lightest,
     height: '100%',
   },
   optionLabel: {
@@ -137,34 +142,22 @@ export default function SelectApplication(props) {
         color: theme.palette.secondary.light,
       },
     }),
-    control: () => ({
-      minWidth: 365,
-      height: '38px',
-      border: '1px solid',
-      borderColor: theme.palette.divider,
-      borderRadius: '2px',
-      backgroundColor: theme.palette.background.paper,
-      alignItems: 'center',
-      cursor: 'default',
-      display: 'flex',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-      minHeight: '38px',
-      position: 'relative',
-      boxSizing: 'borderBox',
-      transition: 'all 100ms ease 0s',
-      outline: '0px !important',
+    control: provided => ({
+      ...provided,
+      borderColor: theme.palette.secondary.lightest,
+      boxShadow: 'none',
+      borderRadius: 2,
       '&:hover': {
         borderColor: theme.palette.primary.main,
       },
     }),
-    menu: () => ({
-      zIndex: 2,
+    menu: provided => ({
+      ...provided,
       border: '1px solid',
+      boxShadow: 'none',
       borderColor: theme.palette.secondary.lightest,
-      position: 'absolute',
-      backgroundColor: theme.palette.background.paper,
-      width: '100%',
+      marginTop: 0,
+      borderRadius: '0px 0px 2px 2px',
     }),
     input: () => ({
       color: theme.palette.secondary.light,
@@ -322,9 +315,12 @@ export default function SelectApplication(props) {
       key={id}
       disabled={disabled}
       className={classes.formControl}>
-      <InputLabel shrink className={classes.inputLabel} htmlFor={id}>
-        {label}
-      </InputLabel>
+      <div className={classes.fieldWrapper}>
+        <InputLabel shrink className={classes.inputLabel} htmlFor={id}>
+          {label}
+        </InputLabel>
+        <FieldHelp {...props} />
+      </div>
       <Select
         data-public
         ref={ref}

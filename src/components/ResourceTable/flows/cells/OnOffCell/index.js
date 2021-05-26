@@ -29,7 +29,7 @@ export default function OnOffCell({
   disabled,
   isFree,
   isIntegrationApp,
-  storeId,
+  childId,
   actionProps,
 }) {
   const classes = useStyles();
@@ -81,7 +81,7 @@ export default function OnOffCell({
                 actions.integrationApp.settings.update(
                   integrationId,
                   flowId,
-                  storeId,
+                  childId,
                   null,
                   {
                     '/flowId': flowId,
@@ -125,7 +125,7 @@ export default function OnOffCell({
     isLicenseValidToEnableFlow.enable,
     isLicenseValidToEnableFlow.message,
     patchFlow,
-    storeId,
+    childId,
     istwoDotZeroFrameWork,
   ]);
 
@@ -136,7 +136,7 @@ export default function OnOffCell({
   }, [onOffInProgress]);
 
   if (onOffInProgressStatus) {
-    return <Spinner size={24} className={classes.spinnerOnOff} />;
+    return <Spinner className={classes.spinnerOnOff} />;
   }
 
   if (!isFlowEnableLocked) {

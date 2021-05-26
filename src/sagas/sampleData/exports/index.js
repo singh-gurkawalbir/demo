@@ -65,8 +65,6 @@ export function* _hasSampleDataOnResource({ resourceId, resourceType, body }) {
 
 export function* _getProcessorOutput({ processorData }) {
   try {
-    // TODO: change this evaluateExternalProcessor to use refactored AFE code and
-    // add the property 'editorType' in processorData
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
     });
@@ -98,7 +96,7 @@ export function* _updateDataForStages({resourceId, dataForEachStageMap }) {
   }
 }
 
-export function* _getPreviewData({ resourceId, resourceType, values, runOffline }) {
+export function* _getPreviewData({ resourceId, resourceType, values, runOffline, flowId, refreshCache }) {
   const { transform, filter, hooks, ...constructedResourceObj } = yield call(constructResourceFromFormValues, {
     formValues: values,
     resourceId,
@@ -139,10 +137,19 @@ export function* _getPreviewData({ resourceId, resourceType, values, runOffline 
     if (isRealTimeOrDistributedResource(body)) {
       // Handles SF/NS : Fetches metadata for the real time adaptors
       // @Raghu: Update this when we support other real time adaptors like Webhooks
-      const data = yield call(requestRealTimeMetadata, { resource: body });
+      const data = yield call(requestRealTimeMetadata, { resource: body, refresh: refreshCache });
 
       previewData = [data];
     } else {
+      // BE need flowId and integrationId in the preview call
+      // if in case integration settings were used in export
+      const flow = yield select(selectors.resource, 'flows', flowId);
+
+      const integrationId = flow?._integrationId;
+
+      // while working with newly created flows, flowId could be temporary UI generated. Rely on flow._id as flowId while making page processor preview call.
+      body._flowId = flow?._id;
+      body._integrationId = integrationId;
       // Makes base preview calls for all other adaptors
       previewData = yield call(apiCallWithRetry, {
         path,
@@ -193,7 +200,10 @@ export function* _processRawData({ resourceId, resourceType, values = {} }) {
     rawFile: { data: { body: file, type } },
     raw: { data: { body: file } },
   };
-  const processorData = deepClone(editorValues || {});
+
+  const processorData = {
+    rule: deepClone(editorValues || {}),
+  };
 
   if (type === 'json') {
     // For JSON, no need of processor call, the below util takes care of parsing json file as per options
@@ -221,7 +231,7 @@ export function* _processRawData({ resourceId, resourceType, values = {} }) {
   }
 
   if (type === 'xml') {
-    processorData.resourcePath = fileProps.xml && fileProps.xml.resourcePath;
+    processorData.rule.resourcePath = fileProps.xml && fileProps.xml.resourcePath;
   }
   if (type !== 'xlsx') {
     // 'data' here represents the source file content (based on file type) against which processor runs to get JSON data
@@ -229,7 +239,7 @@ export function* _processRawData({ resourceId, resourceType, values = {} }) {
     processorData.data = file;
   }
 
-  processorData.processor = processorData.processor || PARSERS[type];
+  processorData.editorType = processorData.editorType || PARSERS[type];
   const processorOutput = yield call(_getProcessorOutput, { processorData });
 
   if (processorOutput?.data) {
@@ -253,6 +263,8 @@ export function* _fetchExportPreviewData({
   resourceType,
   values,
   runOffline,
+  flowId,
+  refreshCache,
 }) {
   const body = yield call(constructResourceFromFormValues, {
     formValues: values,
@@ -313,6 +325,8 @@ export function* _fetchExportPreviewData({
     resourceType,
     values,
     runOffline,
+    flowId,
+    refreshCache,
   });
 }
 
@@ -323,7 +337,7 @@ export function* requestExportSampleData({
   stage,
   options = {},
 }) {
-  const { runOffline } = options;
+  const { runOffline, flowId, refreshCache } = options;
 
   if (stage) {
     yield call(_processRawData, {
@@ -338,11 +352,13 @@ export function* requestExportSampleData({
       resourceType,
       values,
       runOffline,
+      flowId,
+      refreshCache,
     });
   }
 }
 
-export function* requestLookupSampleData({ resourceId, flowId, formValues }) {
+export function* requestLookupSampleData({ resourceId, flowId, formValues, options = {} }) {
   const resourceType = 'exports';
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId) || DEFAULT_RECORD_SIZE;
   const { transform, filter, hooks, ...constructedResourceObj } = yield call(constructResourceFromFormValues, {
@@ -376,6 +392,7 @@ export function* requestLookupSampleData({ resourceId, flowId, formValues }) {
       _pageProcessorDoc,
       throwOnError: true,
       includeStages: true,
+      refresh: options.refreshCache,
     });
 
     yield put(

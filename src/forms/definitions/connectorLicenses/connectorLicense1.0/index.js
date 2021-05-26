@@ -1,7 +1,23 @@
 export default {
+  preSave: formValues => {
+    const newValues = formValues;
+
+    if (newValues['/expires']) {
+      delete newValues['/trialEndDate'];
+    }
+
+    try {
+      newValues['/opts'] = JSON.parse(newValues['/opts']);
+    } catch (e) {
+      return newValues;
+    }
+
+    return newValues;
+  },
   fieldMap: {
     email: { fieldId: 'email' },
     expires: { fieldId: 'expires' },
+    trialEndDate: { fieldId: 'trialEndDate' },
     sandbox: { fieldId: 'sandbox' },
     opts: { fieldId: 'opts' },
   },
@@ -12,7 +28,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['email', 'expires', 'sandbox', 'opts'],
+        fields: ['email', 'trialEndDate', 'expires', 'sandbox', 'opts'],
       },
     ],
   },

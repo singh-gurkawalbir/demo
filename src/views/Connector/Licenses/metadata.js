@@ -6,33 +6,45 @@ import ResourceDrawerLink from '../../../components/ResourceDrawerLink';
 import CeligoTimeAgo from '../../../components/CeligoTimeAgo';
 
 export default {
-  columns: [
+  useColumns: () => [
     {
+      key: 'email',
       heading: 'Email',
-      value: r => <ResourceDrawerLink resourceType="connectorLicenses" resource={r} />,
+      Value: ({rowData: r}) => <ResourceDrawerLink resourceType="connectorLicenses" resource={r} />,
       orderBy: 'email',
     },
     {
+      key: 'status',
       heading: 'Status',
-      value: r => (r._integrationId ? 'Installed' : 'Pending install'),
+      Value: ({rowData: r}) => (r._integrationId ? 'Installed' : 'Pending install'),
     },
     {
+      key: 'created',
       heading: 'Created',
-      value: r => <CeligoTimeAgo date={r.created} />,
+      Value: ({rowData: r}) => <CeligoTimeAgo date={r.created} />,
       orderBy: 'created',
     },
     {
+      key: 'integrationId',
       heading: 'Integration ID',
-      value: r => r._integrationId,
+      Value: ({rowData: r}) => r._integrationId,
     },
     {
+      key: 'expires',
       heading: 'Expires',
-      value: r => <ExpiresOn date={r.expires} />,
+      Value: ({rowData: r}) => <ExpiresOn date={r.expires} />,
       orderBy: 'expires',
     },
     {
+      key: 'trialExpires',
+      heading: 'Trial expires',
+      Value: ({rowData: r}) => <ExpiresOn date={r.trialEndDate} />,
+      orderBy: 'expires',
+    },
+    {
+      key: 'environment',
       heading: 'Environment',
-      value: r => {
+      Value: ({rowData: r}) => {
         if (r.type === 'integrationAppChild') {
           return null;
         }
@@ -42,5 +54,5 @@ export default {
       orderBy: 'sandbox',
     },
   ],
-  rowActions: [Edit, Delete],
+  useRowActions: () => [Edit, Delete],
 };

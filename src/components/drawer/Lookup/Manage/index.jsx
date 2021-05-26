@@ -8,7 +8,8 @@ import salesforceMetadata from '../../../Lookup/Manage/metadata/salesforce';
 import rdbmsMetadata from '../../../Lookup/Manage/metadata/rdbms';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import EditorDrawer from '../../../AFE2/Drawer';
+import EditorDrawer from '../../../AFE/Drawer';
+import { emptyObject } from '../../../../utils/constants';
 
 export default function ManageLookup({
   onSave,
@@ -26,11 +27,11 @@ export default function ManageLookup({
 }) {
   const { extractFields, picklistOptions } = others;
 
-  const { merged: resource = {} } = useSelectorMemo(
+  const resource = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,
     resourceId
-  );
+  )?.merged || emptyObject;
 
   const { _connectionId: connectionId } = resource;
 

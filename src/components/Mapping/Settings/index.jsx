@@ -16,7 +16,7 @@ import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import ButtonGroup from '../../ButtonGroup';
-import EditorDrawer from '../../AFE2/Drawer';
+import EditorDrawer from '../../AFE/Drawer';
 
 const emptySet = [];
 const emptyObject = {};
@@ -31,7 +31,7 @@ function MappingSettings({
   ...categoryMappingOpts
 }) {
   const history = useHistory();
-  const { editorId, integrationId, mappingIndex, depth } = categoryMappingOpts;
+  const { editorId, integrationId, depth, sectionId } = categoryMappingOpts;
   const [enquesnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const {importId, flowId, subRecordMappingId, isGroupedSampleData} = useSelector(state => {
@@ -48,7 +48,9 @@ function MappingSettings({
     if (isCategoryMapping) {
       const {mappings, lookups} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId);
 
-      return {value: mappings[mappingIndex], lookups};
+      const value = mappings?.find(({key}) => key === mappingKey) || emptyObject;
+
+      return {value, lookups};
     }
     const { mappings, lookups } = selectors.mapping(state);
     const value = mappings?.find(({key}) => key === mappingKey) || emptyObject;
@@ -58,10 +60,8 @@ function MappingSettings({
 
   const generateFields = useSelector(state => {
     if (isCategoryMapping) {
-      const category = editorId?.split?.('-')[1];
-
       const {fields: generateFields} = selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
-        sectionId: category,
+        sectionId,
         depth,
       }) || emptyObject;
 
@@ -114,7 +114,7 @@ function MappingSettings({
     return disabled || (isNotEditable && !fieldMap.useAsAnInitializeValue);
   }, [disabled, fieldMeta, value]);
 
-  const hadleClose = useCallback(
+  const handleClose = useCallback(
     () => {
       history.goBack();
     },
@@ -127,7 +127,7 @@ function MappingSettings({
           integrationId,
           flowId,
           editorId,
-          mappingIndex,
+          mappingKey,
           settings
         )
       );
@@ -135,8 +135,8 @@ function MappingSettings({
       dispatch(actions.mapping.patchSettings(mappingKey, settings));
     }
 
-    hadleClose();
-  }, [dispatch, editorId, flowId, hadleClose, integrationId, isCategoryMapping, mappingIndex, mappingKey]);
+    handleClose();
+  }, [dispatch, editorId, flowId, handleClose, integrationId, isCategoryMapping, mappingKey]);
 
   const handleLookupUpdate = useCallback((oldLookup, newLookup) => {
     if (oldLookup && newLookup) {
@@ -210,7 +210,7 @@ function MappingSettings({
           </DynaSubmit>
           <Button
             data-test="fieldMappingSettingsCancel"
-            onClick={hadleClose}
+            onClick={handleClose}
             variant="text"
             color="primary">
             Cancel
@@ -241,13 +241,14 @@ function MappingSettingsWrapper(props) {
   );
 }
 function CategoryMappingSettingsWrapper(props) {
-  const { integrationId, flowId, importId, sectionId } = props;
+  const { integrationId, flowId, importId } = props;
   const match = useRouteMatch();
-  const { editorId, mappingIndex, depth } = match.params;
+  const { editorId, mappingKey, depth, sectionId } = match.params;
   const isSettingsConfigured = useSelector(state => {
     const {mappings} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId);
+    const value = mappings?.find(({key}) => key === mappingKey) || emptyObject;
 
-    return !!mappings?.[mappingIndex]?.generate;
+    return !!value?.generate;
   });
 
   if (!isSettingsConfigured) {
@@ -264,7 +265,7 @@ function CategoryMappingSettingsWrapper(props) {
       editorId={editorId}
       sectionId={sectionId}
       depth={depth}
-      mappingIndex={mappingIndex}
+      mappingKey={mappingKey}
     />
   );
 }
@@ -278,7 +279,7 @@ export default function SettingsDrawer(props) {
       disableBackdropClick
       path={[
         'settings/:mappingKey',
-        'settings/category/:editorId/:depth/:mappingIndex',
+        'settings/category/:editorId/sections/:sectionId/:depth/:mappingKey',
       ]}
       height="tall"
     >
@@ -286,10 +287,10 @@ export default function SettingsDrawer(props) {
 
       <Switch>
         <Route
-          path={`${match.url}/settings/category/:editorId/:depth/:mappingIndex`}>
+          path={`${match.url}/settings/category/:editorId/sections/:sectionId/:depth/:mappingKey`}>
           <CategoryMappingSettingsWrapper
             {...props}
-            sectionId={match.params?.categoryId} />
+            />
         </Route>
         <Route
           path={`${match.url}/settings/:mappingKey`}>

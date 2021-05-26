@@ -3,7 +3,7 @@ import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
 
-const integrations = [
+export const integrations = [
   {
     _id: 'integrationId',
     name: 'Cash Application Manager for NetSuite',
@@ -1497,7 +1497,7 @@ describe('integrationApps selector testcases', () => {
 
       expect(selector(undefined, {})).toEqual({connections: [], flows: []});
     });
-    test('should return connections and flows used in integration if storeId is not passed', () => {
+    test('should return connections and flows used in integration if childId is not passed', () => {
       const conns = [{
         _id: 'c1',
         _integrationId: 'i1',
@@ -1570,7 +1570,7 @@ describe('integrationApps selector testcases', () => {
       ]});
     });
 
-    test('should return all resources used in integration if storeId is passed', () => {
+    test('should return all resources used in integration if childId is passed', () => {
       const conns = [{
         _id: 'c1',
         _integrationId: 'i1',
@@ -1709,7 +1709,7 @@ describe('integrationApps selector testcases', () => {
       );
     });
 
-    test('should return all resources used in integration if storeId is passed and ignore unused connections', () => {
+    test('should return all resources used in integration if childId is passed and ignore unused connections', () => {
       const conns = [{
         _id: 'c1',
         _integrationId: 'i1',
@@ -1849,7 +1849,7 @@ describe('integrationApps selector testcases', () => {
     });
   });
 
-  describe('selectors.mkIntegrationAppStore test cases', () => {
+  describe('selectors.mkIntegrationAppChild test cases', () => {
     const state = {
       data: {
         resources: {
@@ -1894,7 +1894,7 @@ describe('integrationApps selector testcases', () => {
     };
 
     test('should not throw any exception for invalid arguments', () => {
-      const selector = selectors.mkIntegrationAppStore();
+      const selector = selectors.mkIntegrationAppChild();
 
       expect(selector()).toEqual({});
       expect(selector(null)).toEqual({});
@@ -1903,7 +1903,7 @@ describe('integrationApps selector testcases', () => {
     });
 
     test('should return correct value for integration App with multistore and single store', () => {
-      const selector = selectors.mkIntegrationAppStore();
+      const selector = selectors.mkIntegrationAppChild();
 
       expect(selector(state, 'integration1', 'child1')).toEqual({
         hidden: false,
@@ -2299,7 +2299,6 @@ describe('integrationApps selector testcases', () => {
         createdText: 'Started on Jul 10th, 2018',
         expires: '2020-08-18T06:00:43.721Z',
         expiresText: 'Expired on Aug 18th, 2020',
-        plan: 'Standard plan',
         showLicenseExpiringWarning: true,
         upgradeRequested: true,
         upgradeText: 'UPGRADE REQUESTED',
@@ -2342,14 +2341,13 @@ describe('integrationApps selector testcases', () => {
         createdText: 'Started on Jul 10th, 2018',
         expires: '2022-08-18T06:00:43.721Z',
         expiresText: 'Expires on Aug 18th, 2022',
-        plan: 'Standard plan',
         showLicenseExpiringWarning: false,
         upgradeRequested: false,
         upgradeText: '',
       });
     });
 
-    test('should retun license details for the integration app for owner user for expiring soon', () => {
+    test('should return license details for the integration app for owner user for expiring soon', () => {
       const expiryDate = moment(new Date()).add(10, 'days').toISOString();
       const state = reducer(
         {
@@ -2386,7 +2384,6 @@ describe('integrationApps selector testcases', () => {
         createdText: 'Started on Jul 10th, 2018',
         expires: expiryDate,
         expiresText: `Expires on ${moment(expiryDate).format('MMM Do, YYYY')} (10 Days)`,
-        plan: 'Standard plan',
         showLicenseExpiringWarning: true,
         upgradeRequested: false,
         upgradeText: '',
@@ -2429,11 +2426,152 @@ describe('integrationApps selector testcases', () => {
         createdText: 'Started on Jul 10th, 2018',
         expires: '2022-08-18T06:00:43.721Z',
         expiresText: 'Expires on Aug 18th, 2022',
-        plan: 'Standard plan',
         showLicenseExpiringWarning: false,
         upgradeRequested: false,
         upgradeText: '',
       });
+    });
+  });
+
+  describe('selectors.integrationAppEdition test cases', () => {
+    test('should return default plan for invalid arguments', () => {
+      expect(selectors.integrationAppEdition()).toEqual('Standard plan');
+    });
+
+    const integration = {
+      _id: 'i1',
+    };
+    const integration2 = {
+      _id: 'i2',
+      settings: {
+        connectorEdition: 'premium',
+      },
+    };
+    const integration3 = {
+      _id: 'i3',
+      settings: {
+      },
+    };
+
+    const published = [
+      {
+        _id: 'connector1',
+        name: 'Connector 1',
+        user: { name: 'User 1', company: 'Company 1' },
+        applications: ['app1', 'app2'],
+        framework: 'twoDotZero',
+        twoDotZero: {
+          editions: [{displayName: 'edition1', _id: 'e1'}],
+        },
+      },
+      {
+        _id: 'connector2',
+        name: 'Connector 2',
+        user: { name: 'User 2' },
+      },
+    ];
+
+    test('should return valid edition plan for IA2.0 connectors', () => {
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: '2020-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                        _editionId: 'e1',
+                        _connectorId: 'connector1',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+          data: {
+            resources: {
+              published,
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.integrationAppEdition(state, 'i1')).toEqual('Edition1 plan');
+    });
+    test('should return valid edition plan for IA1.0 connectors', () => {
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i2',
+                        expires: '2020-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                        _connectorId: 'connector1',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration2)
+      );
+
+      expect(selectors.integrationAppEdition(state, 'i2')).toEqual('Premium plan');
+    });
+    test('should return default plan if no edition exists', () => {
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i3',
+                        expires: '2020-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                        _connectorId: 'connector1',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration3)
+      );
+
+      expect(selectors.integrationAppEdition(state, 'i3')).toEqual('Standard plan');
     });
   });
 
@@ -4299,7 +4437,7 @@ describe('integrationApps selector testcases', () => {
       ]);
     });
 
-    test('should return all flows when section and storeId is not passed to a multi store integration App', () => {
+    test('should return all flows when section and childId is not passed to a multi store integration App', () => {
       const state = reducer(
         {
           data: {
@@ -4336,7 +4474,7 @@ describe('integrationApps selector testcases', () => {
       ]);
     });
 
-    test('should return all flows of the store when storeId is passed to a multi store integration App', () => {
+    test('should return all flows of the store when childId is passed to a multi store integration App', () => {
       const state = reducer(
         {
           data: {
@@ -4404,7 +4542,7 @@ describe('integrationApps selector testcases', () => {
       );
     });
 
-    test('should return flowIds linked to the integration if storeId is passed', () => {
+    test('should return flowIds linked to the integration if childId is passed', () => {
       const flows = [
         {
           _id: 'f1',
@@ -4431,6 +4569,12 @@ describe('integrationApps selector testcases', () => {
           name: 'flow5 [store1]',
           _integrationId: 'i1',
         },
+
+        {
+          _id: 'f6',
+          name: 'flow5 [random_string]',
+          _integrationId: 'i1',
+        },
       ];
 
       let state = reducer(
@@ -4453,6 +4597,8 @@ describe('integrationApps selector testcases', () => {
                     _id: 'f1',
                   }, {
                     _id: 'f2',
+                  }, {
+                    _id: 'f6',
                   }],
                 },
               ],
@@ -4485,6 +4631,7 @@ describe('integrationApps selector testcases', () => {
           'f1',
           'f2',
           'f5',
+          'f6',
         ]
       );
 
@@ -4547,6 +4694,79 @@ describe('integrationApps selector testcases', () => {
       expect(selectors.isIntegrationAppVersion2(state, 'integration2', true)).toEqual(true);
       expect(selectors.isIntegrationAppVersion2(state, 'integration3', true)).toEqual(true);
       expect(selectors.isIntegrationAppVersion2(state, 'integration4', true)).toEqual(true);
+    });
+  });
+
+  describe('selectors.isIntegrationAppV1 test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          integrations: [{
+            _id: 'integration1',
+            name: 'Integration',
+            install: [{
+              isClone: true,
+            }],
+          }, {
+            _id: 'integration2',
+            name: 'Integration',
+            _connectorId: 'connector1',
+            installSteps: [{}],
+            uninstallSteps: [{}],
+          }, {
+            _id: 'integration3',
+            name: 'Integration',
+            install: [{}],
+            _connectorId: 'connector2',
+          }, {
+            _id: 'integration4',
+            name: 'Integration',
+            uninstallSteps: [{}],
+          }, {
+            _id: 'integration5',
+            name: 'Integration',
+            _connectorId: 'connector2',
+          }, {
+            _id: 'integration6',
+            name: 'Integration',
+          }, {
+            _id: 'integration7',
+            _connectorId: 'abc',
+            name: 'IA1.0 Cloned integration',
+            install: [{
+              isClone: true,
+            }],
+          }],
+        },
+      },
+    };
+
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.isIntegrationAppV1()).toEqual(false);
+      expect(selectors.isIntegrationAppV1(null)).toEqual(false);
+      expect(selectors.isIntegrationAppV1({})).toEqual(false);
+      expect(selectors.isIntegrationAppV1({}, null)).toEqual(false);
+    });
+    test('should return false when integration not found', () => {
+      expect(selectors.isIntegrationAppV1(state, 'invalid')).toEqual(false);
+      expect(selectors.isIntegrationAppV1(state, 'invalid')).toEqual(false);
+      expect(selectors.isIntegrationAppV1(state, 'invalid')).toEqual(false);
+    });
+
+    test('should return false when integration found and is a IA2.0 integration', () => {
+      expect(selectors.isIntegrationAppV1(state, 'integration2')).toEqual(false);
+      expect(selectors.isIntegrationAppV1(state, 'integration4')).toEqual(false);
+    });
+
+    test('should return false when integration found and is a DIY integration', () => {
+      expect(selectors.isIntegrationAppV1(state, 'integration6')).toEqual(false);
+    });
+    test('should return true when integration found and is a IA1.0 integration', () => {
+      expect(selectors.isIntegrationAppV1(state, 'integration5')).toEqual(true);
+    });
+
+    test('should return true when integration found and is a IA1.0 cloned integration', () => {
+      expect(selectors.isIntegrationAppV1(state, 'integration7')).toEqual(true);
     });
   });
 

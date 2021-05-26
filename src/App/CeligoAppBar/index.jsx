@@ -4,8 +4,6 @@ import { AppBar, Toolbar } from '@material-ui/core';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 // import GlobalSearch from '../GlobalSearch';
-import ElevateOnScroll from '../../components/ElevateOnScroll';
-import SlideOnScroll from '../../components/SlideOnScroll';
 // import DebugOnly from '../../components/DebugOnly';
 import ProfileMenuButton from './ProfileMenuButton';
 import { selectors } from '../../reducers';
@@ -90,32 +88,29 @@ export default function CeligoAppBar() {
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
-    <SlideOnScroll threshold={500}>
-      <ElevateOnScroll threshold={250}>
-        <AppBar
-          data-public
-          color="inherit"
-          position="fixed"
-          className={clsx(classes.appBar, {
-            [classes.appBarShift]: drawerOpened,
-          })}>
-          <Toolbar className="topBar" variant="dense">
-            <CeligoBreadcrumb />
-            <ul className={classes.topBarActions}>
-              {/*
+    <AppBar
+      data-public
+      color="inherit"
+      position="fixed"
+      elevation={0}
+      className={clsx(classes.appBar, {
+        [classes.appBarShift]: drawerOpened,
+      })}>
+      <Toolbar className="topBar" variant="dense">
+        <CeligoBreadcrumb />
+        <ul className={classes.topBarActions}>
+          {/*
                 Including the AccountList causes the app to reload 3 times
                 (and re-run all init) I think this is causes by removing the
                 session caching layer we had in place
               */}
-              <li><AccountList /></li>
-              <li><LicenseAction /></li>
-              <li><EnvironmentToggle /></li>
-              <li><Notifications /></li>
-              <li><ProfileMenuButton /></li>
-            </ul>
-          </Toolbar>
-        </AppBar>
-      </ElevateOnScroll>
-    </SlideOnScroll>
+          <li><AccountList /></li>
+          <li><LicenseAction /></li>
+          <li><EnvironmentToggle /></li>
+          <li><Notifications /></li>
+          <li><ProfileMenuButton /></li>
+        </ul>
+      </Toolbar>
+    </AppBar>
   );
 }

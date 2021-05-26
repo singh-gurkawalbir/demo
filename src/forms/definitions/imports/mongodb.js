@@ -15,6 +15,9 @@ export default {
     ) {
       retValues['/mongodb/ignoreExtract'] = undefined;
     }
+    if (retValues['/oneToMany'] === 'false') {
+      retValues['/pathToMany'] = undefined;
+    }
 
     return {
       ...retValues,

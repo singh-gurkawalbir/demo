@@ -25,6 +25,7 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   pageGenerator: 'Source',
   pageProcessor: 'Destination / lookup',
   apis: 'My API',
+  eventreports: 'Event Report',
 });
 
 export const appTypeToAdaptorType = {
@@ -357,7 +358,7 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
       resource.adaptorType
     ) >= 0 &&
       resource.type === 'blob') ||
-      (isFileAdaptor(resource) && resource.adaptorType.includes('Export'))
+      (isFileAdaptor(resource) && resource.adaptorType?.includes('Export'))
   ) {
     blockType = 'exportTransfer';
   } else if (
@@ -365,7 +366,7 @@ export function resourceCategory(resource = {}, isLookup, isImport) {
       resource.adaptorType
     ) >= 0 &&
       resource.blob) ||
-      (isFileAdaptor(resource) && resource.adaptorType.includes('Import'))
+      (isFileAdaptor(resource) && resource.adaptorType?.includes('Import'))
   ) {
     blockType = 'importTransfer';
   }
@@ -441,7 +442,7 @@ export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {
       }
     }
   } else {
-    if (domain === 'staging.integrator.io') {
+    if (domain === 'staging.integrator.io' || domain === 'qa.staging.integrator.io') {
       connectorToCategoryMap = {
         '5656f5e3bebf89c03f5dd77e': '203963787',
         '5666865f67c1650309224904': '203958808',
@@ -769,7 +770,7 @@ export const isOauth = connectionDoc =>
 export function getConnectionType(resource) {
   const { assistant, type } = getResourceSubType(resource);
 
-  if (['acumatica', 'shopify'].includes(assistant)) {
+  if (['acumatica', 'shopify', 'hubspot'].includes(assistant)) {
     if (
       resource.http &&
       resource.http.auth &&
@@ -824,6 +825,9 @@ export const isQueryBuilderSupported = (importResource = {}) => {
 
   return false;
 };
+
+// when there are flowGroupings and there are uncategorized flows do you have a MiscellaneousSection
+export const shouldHaveMiscellaneousSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId);
 
 export const getUserAccessLevelOnConnection = (permissions = {}, ioIntegrations = [], connectionId) => {
   let accessLevelOnConnection;

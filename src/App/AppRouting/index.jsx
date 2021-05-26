@@ -4,7 +4,7 @@ import loadable from '../../utils/loadable';
 import ClonePreview from '../../views/Clone/Preview';
 import CloneSetup from '../../views/Clone/Setup';
 import IntegrationInstallation from '../../views/Integration/App/drawers/Install';
-import IntegrationAppAddNewStore from '../../views/Integration/App/drawers/AddStore';
+import IntegrationAppAddNewChild from '../../views/Integration/App/drawers/AddChild';
 import IntegrationAppUninstallation from '../../views/Integration/App/drawers/Uninstall/index';
 import Marketplace from '../../views/MarketPlace';
 import MarketplaceList from '../../views/MarketplaceList';
@@ -27,11 +27,12 @@ const NotFound = loadable(() =>
 const Permissions = loadable(() =>
   retry(() => import(/* webpackChunkName: 'Permissions' */ '../../views/Permissions'))
 );
-const Editors = loadable(() =>
-  retry(() => import(/* webpackChunkName: 'Editors' */ '../../views/Editors'))
+const Reports = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'Reports' */ '../../views/Reports'))
 );
+
 const Playground = loadable(() =>
-  retry(() => import(/* webpackChunkName: 'Editors' */ '../../views/Playground'))
+  retry(() => import(/* webpackChunkName: 'Playground' */ '../../views/Playground'))
 );
 const FlowBuilder = loadable(() =>
   retry(() => import(/* webpackChunkName: 'FlowBuilder' */ '../../views/FlowBuilder'))
@@ -180,11 +181,11 @@ export default function AppRouting() {
         />
       <Route
         path={getRoutePath('/integrationapps/:integrationAppName/:integrationId/install/addNewStore')}
-        component={IntegrationAppAddNewStore}
+        component={IntegrationAppAddNewChild}
         />
       <Route
         path={[
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall/:storeId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall/:childId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall'),
         ]}
         component={IntegrationAppUninstallation}
@@ -192,9 +193,9 @@ export default function AppRouting() {
 
       <Route
         path={[
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab/sections/:sectionId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/:tab/sections/:sectionId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/:tab'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab/sections/:sectionId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
@@ -233,7 +234,10 @@ export default function AppRouting() {
 
       <Route path={getRoutePath('/dashboard')} component={Dashboard} />
       <Route path={getRoutePath('/recycleBin')} component={RecycleBin} />
-      <Route path={getRoutePath('/editors')} component={Editors} />
+      <Route
+        path={[
+          getRoutePath('/reports/:reportType'),
+          getRoutePath('/reports')]} component={Reports} />
       <Route path={getRoutePath('/playground')} component={Playground} />
       <Route path={getRoutePath('/permissions')} component={Permissions} />
       <Route

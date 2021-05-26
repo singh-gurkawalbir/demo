@@ -1,6 +1,6 @@
-import { call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
+import { call, put, takeEvery, select, take, cancel, fork, takeLatest, delay, race } from 'redux-saga/effects';
 import jsonPatch, { deepClone } from 'fast-json-patch';
-import { isEqual, isBoolean } from 'lodash';
+import { isEqual, isBoolean, isEmpty } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -15,14 +15,16 @@ import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
 
-function* isDataLoaderFlow(flow) {
+const STANDARD_DELAY_FOR_POLLING = 5 * 1000;
+
+export function* isDataLoaderFlow(flow) {
   if (!flow) return false;
 
   // assume old DL interface
   let exportId = flow._exportId;
 
   // override if new interface present.
-  if (flow.pageGenerators && flow.pageGenerators.length > 0) {
+  if (flow.pageGenerators?.length > 0) {
     exportId = flow.pageGenerators[0]._exportId;
   }
 
@@ -32,11 +34,13 @@ function* isDataLoaderFlow(flow) {
   const data = yield select(selectors.resourceData, 'exports', exportId);
   const exp = data.merged;
 
-  if (exp && exp.type === 'simple') {
+  if (exp?.type === 'simple') {
     // console.log('we have a data loader flow!');
 
     return true;
   }
+
+  return false;
 }
 
 export function* resourceConflictDetermination({
@@ -75,9 +79,7 @@ export function* linkUnlinkSuiteScriptIntegrator({ connectionId, link }) {
     return;
   }
   const userPreferences = yield select(selectors.userPreferences);
-  const isLinked = userPreferences &&
-    userPreferences.ssConnectionIds &&
-    userPreferences.ssConnectionIds.includes(connectionId);
+  const isLinked = userPreferences?.ssConnectionIds?.includes(connectionId);
   const isAccountOwnerOrAdmin = yield select(selectors.isAccountOwnerOrAdmin);
 
   if (isAccountOwnerOrAdmin) {
@@ -120,7 +122,7 @@ export function* requestRevoke({ connectionId, hideNetWorkSnackbar = false }) {
       message: 'Revoking Connection',
     });
 
-    if (response && response.errors) {
+    if (response?.errors) {
       yield put(
         actions.api.failure(path, 'GET', JSON.stringify(response.errors), hideNetWorkSnackbar)
       );
@@ -413,11 +415,11 @@ export function* normalizeFlow(flow) {
 
   return newFlow;
 }
-export function* getResource({ resourceType, id, message }) {
+export function* getResource({ resourceType, id, message, hidden }) {
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
 
   try {
-    let resource = yield call(apiCallWithRetry, { path, message });
+    let resource = yield call(apiCallWithRetry, { path, message, hidden });
 
     if (resourceType === 'flows') {
       resource = yield call(normalizeFlow, resource);
@@ -431,7 +433,7 @@ export function* getResource({ resourceType, id, message }) {
   }
 }
 export function* updateIntegrationSettings({
-  storeId,
+  childId,
   integrationId,
   values,
   flowId,
@@ -444,14 +446,14 @@ export function* updateIntegrationSettings({
 
   const integration = yield select(selectors.resource, 'integrations', integrationId);
   const supportsMultiStore = integration?.settings?.supportsMultiStore;
-  let childId = storeId;
+  let finalChildId = childId;
 
-  if (supportsMultiStore && !storeId && flowId) {
-    childId = yield select(selectors.integrationAppChildIdOfFlow, integrationId, flowId);
+  if (supportsMultiStore && !childId && flowId) {
+    finalChildId = yield select(selectors.integrationAppChildIdOfFlow, integrationId, flowId);
   }
 
-  if (childId) {
-    payload = { [childId]: payload };
+  if (finalChildId) {
+    payload = { [finalChildId]: payload };
   }
 
   payload = {
@@ -478,7 +480,7 @@ export function* updateIntegrationSettings({
 
     return yield put(
       actions.integrationApp.settings.submitFailed({
-        storeId: childId,
+        childId: finalChildId,
         integrationId,
         response,
         flowId,
@@ -508,7 +510,7 @@ export function* updateIntegrationSettings({
       // when Save button on section triggers a flow on integrationApp, it will send back _flowId in the response.
       // UI should navigate to dashboard so that user can the see the flow status.
       yield put(
-        actions.integrationApp.settings.redirectTo(integrationId, 'dashboard')
+        actions.resource.integrations.redirectTo(integrationId, 'dashboard')
       );
     }
 
@@ -543,7 +545,7 @@ export function* updateIntegrationSettings({
 
     yield put(
       actions.integrationApp.settings.submitComplete({
-        storeId: childId,
+        childId,
         integrationId,
         response,
         flowId,
@@ -639,15 +641,32 @@ export function* deleteResource({ resourceType, id }) {
   }
 }
 
-export function* getResourceCollection({ resourceType }) {
+export function* deleteIntegration({integrationId}) {
+  const integration = yield select(selectors.resource, 'integrations', integrationId);
+
+  if (integration._connectorId) return;
+
+  yield call(deleteResource, {resourceType: 'integrations', id: integrationId});
+
+  yield put(actions.resource.requestCollection('integrations', null, true));
+  yield put(actions.resource.requestCollection('tiles', null, true));
+  yield put(actions.resource.requestCollection('scripts', null, true));
+  yield put(actions.resource.integrations.redirectTo(integrationId, 'dashboard'));
+}
+
+export function* getResourceCollection({ resourceType, refresh}) {
   let path = `/${resourceType}`;
   let hideNetWorkSnackbar;
 
   /** hide the error that GET SuiteScript tiles throws when connection is offline */
+  /** hide transfers API call as it throws error when account user accepts first account and
+   *  logs in with SSO for the very first time when his preferences still hold defaultAshareId as 'own'
+   */
   if (
     resourceType &&
     ((resourceType.includes('suitescript/connections/') && resourceType.includes('/tiles')) ||
-    resourceType.includes('ashares'))
+    resourceType.includes('ashares') ||
+    resourceType.includes('transfers'))
   ) {
     hideNetWorkSnackbar = true;
   }
@@ -663,11 +682,13 @@ export function* getResourceCollection({ resourceType }) {
     let collection = yield call(apiCallWithRetry, {
       path,
       hidden: hideNetWorkSnackbar,
+      refresh,
     });
 
     if (resourceType === 'stacks') {
       let sharedStacks = yield call(apiCallWithRetry, {
         path: '/shared/stacks',
+        refresh,
       });
 
       sharedStacks = sharedStacks.map(stack => ({ ...stack, shared: true }));
@@ -679,10 +700,17 @@ export function* getResourceCollection({ resourceType }) {
     if (resourceType === 'transfers') {
       const invitedTransfers = yield call(apiCallWithRetry, {
         path: '/transfers/invited',
+        refresh,
       });
 
       if (!collection) collection = invitedTransfers;
       else if (invitedTransfers) collection = [...collection, ...invitedTransfers];
+    }
+
+    if (!Array.isArray(collection)) {
+      // eslint-disable-next-line no-console
+      console.warn('Getting unexpected collection values: ', collection);
+      collection = undefined;
     }
 
     yield put(actions.resource.receivedCollection(resourceType, collection));
@@ -691,16 +719,24 @@ export function* getResourceCollection({ resourceType }) {
   } catch (error) {
     // generic message to the user that the
     // saga failed and services team working on it
-    return undefined;
+
   }
 }
 
-export function* updateTileNotifications({ resourcesToUpdate, integrationId, storeId, userEmail }) {
+export function* validateResource({ resourceType, resourceId }) {
+  const resource = yield select(selectors.resource, resourceType, resourceId);
+
+  if (!isEmpty(resource) || !resourceType || !resourceId) return;
+
+  return yield call(getResource, {resourceType, id: resourceId, hidden: true});
+}
+
+export function* updateTileNotifications({ resourcesToUpdate, integrationId, childId, userEmail }) {
   const { subscribedConnections = [], subscribedFlows = [] } = resourcesToUpdate;
   const {
     flows: availableFlows = [],
     connections: availableConnections = [],
-  } = yield select(selectors.integrationNotificationResources, integrationId, { storeId, userEmail });
+  } = yield select(selectors.integrationNotificationResources, integrationId, { childId, userEmail });
   const notifications = [];
 
   notifications.push({
@@ -738,7 +774,7 @@ export function* updateTileNotifications({ resourcesToUpdate, integrationId, sto
       message: 'Updating notifications',
     });
   } catch (e) {
-    return undefined;
+    return;
   }
 
   if (response) {
@@ -748,7 +784,7 @@ export function* updateTileNotifications({ resourcesToUpdate, integrationId, sto
 
 export function* updateFlowNotification({ flowId, isSubscribed }) {
   const flow = yield select(selectors.resource, 'flows', flowId);
-  const integrationId = flow._integrationId || 'none';
+  const integrationId = flow?._integrationId || 'none';
   const { flowValues: subscribedFlows = [] } = yield select(selectors.integrationNotificationResources, integrationId);
   const isAllFlowsSelectedPreviously = subscribedFlows.find(id => id === integrationId);
   const notifications = [];
@@ -791,7 +827,7 @@ export function* updateFlowNotification({ flowId, isSubscribed }) {
       message: 'Updating notifications',
     });
   } catch (e) {
-    return undefined;
+    return;
   }
 
   if (response) {
@@ -908,7 +944,7 @@ export function* requestQueuedJobs({ connectionId }) {
   try {
     response = yield call(apiCallWithRetry, { path });
   } catch (error) {
-    return undefined;
+    return;
   }
 
   yield put(actions.connection.receivedQueuedJobs(response, connectionId));
@@ -940,9 +976,7 @@ export function* cancelQueuedJob({ jobId }) {
       },
     });
   } catch (error) {
-    yield put(actions.api.failure(path, 'PUT', error && error.message, false));
-
-    return undefined;
+    yield put(actions.api.failure(path, 'PUT', error?.message, false));
   }
 }
 export function* replaceConnection({ _resourceId, _connectionId, _newConnectionId }) {
@@ -957,16 +991,70 @@ export function* replaceConnection({ _resourceId, _connectionId, _newConnectionI
       },
     });
   } catch (error) {
-    yield put(actions.api.failure(path, 'PUT', error && error.message, false));
+    yield put(actions.api.failure(path, 'PUT', error?.message, false));
 
-    return undefined;
+    return;
   }
-  yield put(actions.resource.requestCollection('flows'));
-  yield put(actions.resource.requestCollection('exports'));
-  yield put(actions.resource.requestCollection('imports'));
+  yield put(actions.resource.requestCollection('flows', null, true));
+  yield put(actions.resource.requestCollection('exports', null, true));
+  yield put(actions.resource.requestCollection('imports', null, true));
 }
 
+export function* eventReportCancel({reportId}) {
+  const path = `/eventreports/${reportId}/cancel`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'PUT',
+      },
+    });
+  } catch (e) {
+    return;
+  }
+
+  yield put(actions.resource.request('eventreports', reportId));
+}
+
+export function* downloadReport({reportId}) {
+  const path = `/eventreports/${reportId}/signedURL`;
+
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+    });
+
+    window.open(response.signedURL, 'target=_blank', 'noopener,noreferrer');
+  // eslint-disable-next-line no-empty
+  } catch (e) {
+
+  }
+}
+
+export function* pollForResourceCollection({ resourceType }) {
+  while (true) {
+    yield call(getResourceCollection, {resourceType});
+    yield delay(STANDARD_DELAY_FOR_POLLING);
+  }
+}
+export function* startPollingForResourceCollection({ resourceType }) {
+  return yield race({
+    pollCollection: call(pollForResourceCollection, {resourceType}),
+    cancelPoll: take(action => {
+      if ([
+        actionTypes.RESOURCE.STOP_COLLECTION_POLL,
+        actionTypes.RESOURCE.START_COLLECTION_POLL,
+      ].includes(action.type) &&
+    action.resourceType === resourceType) {
+        return true;
+      }
+    }),
+  });
+}
 export const resourceSagas = [
+  takeEvery(actionTypes.EVENT_REPORT.CANCEL, eventReportCancel),
+  takeEvery(actionTypes.EVENT_REPORT.DOWNLOAD, downloadReport),
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
   takeEvery(
     actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE,
@@ -974,6 +1062,7 @@ export const resourceSagas = [
   ),
   takeEvery(actionTypes.RESOURCE.PATCH, patchResource),
   takeEvery(actionTypes.RESOURCE.REQUEST_COLLECTION, getResourceCollection),
+  takeEvery(actionTypes.RESOURCE.VALIDATE_RESOURCE, validateResource),
   takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
   takeEvery(actionTypes.RESOURCE.DELETE, deleteResource),
   takeEvery(actionTypes.RESOURCE.REFERENCES_REQUEST, requestReferences),
@@ -994,6 +1083,8 @@ export const resourceSagas = [
   takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
   takeEvery(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, linkUnlinkSuiteScriptIntegrator),
   takeEvery(actionTypes.RESOURCE.REPLACE_CONNECTION, replaceConnection),
+  takeEvery(actionTypes.RESOURCE.START_COLLECTION_POLL, startPollingForResourceCollection),
+  takeLatest(actionTypes.INTEGRATION.DELETE, deleteIntegration),
 
   ...metadataSagas,
 ];

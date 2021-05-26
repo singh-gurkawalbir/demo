@@ -39,17 +39,23 @@ function isValidURL(url) {
   return url.indexOf('http://') === 0 || url.indexOf('https://') === 0;
 }
 
-export default function ErrorMessage({ message, traceKey, flowId, resourceId, exportDataURI, importDataURI }) {
+const options = {allowedTags: ['a']};
+export default function ErrorMessage({errorId, message, flowId, resourceId, exportDataURI, importDataURI }) {
   let exportRecordLink;
   let exportRecordText;
   let importRecordLink;
   let importRecordText;
   const classes = useStyles();
-  const isRetryFailed = useSelector(state => selectors.isTraceKeyRetried(state, {
-    flowId,
-    resourceId,
-    traceKey,
-  }));
+
+  const isErrorRetryFailed = useSelector(state => {
+    const error = selectors.resourceError(state, {
+      flowId,
+      resourceId,
+      errorId,
+    });
+
+    return !error?._flowJobId;
+  });
   const retryFailedTag = <span className={classes.retryTag}> Retry failed </span>;
 
   if (exportDataURI) {
@@ -72,8 +78,8 @@ export default function ErrorMessage({ message, traceKey, flowId, resourceId, ex
   return (
     <div className={classes.wrapper}>
       <div className={classes.message}>
-        {isRetryFailed && retryFailedTag}
-        <RawHtml html={message} className={classes.htmlMessage} />
+        {isErrorRetryFailed && retryFailedTag}
+        <RawHtml html={message} options={options} className={classes.htmlMessage} />
         <div>
           {exportRecordLink && (
           <Button

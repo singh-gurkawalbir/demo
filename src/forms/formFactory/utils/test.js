@@ -10,6 +10,7 @@ import {
   isExpansionPanelErrored,
   translateDependencyProps,
   getAllFormValuesAssociatedToMeta,
+  adjustingFieldRules,
 } from '.';
 
 describe('Form Utils', () => {
@@ -720,208 +721,324 @@ describe('Form Utils', () => {
   });
 
   describe('isExpansionPanelErrored should determine whether the expansion panel should open', () => {
-    test('should error specific expansion pannel only when those field states and unfullfilled', () => {
-      const metadata = {
-        actions: undefined,
-        fieldMap: {
-          'custom.Field': {
-            defaultValue: '',
-            fieldId: 'custom.Field',
-            helpKey: 'someResourceType.custom.Field',
-            id: 'custom.Field',
-            name: '/custom/Field',
-            resourceId: undefined,
-            resourceType: 'someResourceType',
-            someProp: 'faa',
-            visibleWhenAll: [
-              {
-                field: 'fieldA',
-                is: ['someValue'],
-              },
-              {
-                field: 'someOtherField',
-                is: ['foo'],
-              },
-            ],
-          },
-          someField: {
-            defaultValue: '',
-            fieldId: 'someField',
-            helpKey: 'someResourceType.someField',
-            id: 'someField',
-            name: '/someField',
-            resourceId: undefined,
-            someProp: 'foo',
-            resourceType: 'someResourceType',
-            visibleWhenAll: [
-              { field: 'fieldA', is: ['someValue'] },
-              { field: 'someOtherField', is: ['foo'] },
-            ],
-          },
-          'file.decompressFiles': {
-            defaultValue: '',
-            fieldId: 'file.decompressFiles',
-            helpKey: 'someResourceType.file.decompressFiles',
-            id: 'file.decompressFiles',
-            name: '/file/decompressFiles',
-            resourceId: undefined,
-            resourceType: 'someResourceType',
-          },
-          exportData: {
-            defaultValue: '',
-            fieldId: 'exportData',
-            helpKey: 'someResourceType.exportData',
-            id: 'exportData',
-            name: '/exportData',
-            resourceId: undefined,
-            resourceType: 'someResourceType',
-          },
-        },
-        layout: {
-          type: 'collapse',
-          containers: [
-            {
-              label: 'Some heading 1',
-              fields: ['file.decompressFiles', 'someField'],
-            },
-            {
-              label: 'Some heading 2',
-              fields: ['custom.Field', 'exportData'],
-            },
-          ],
-        },
-      };
-      const fieldStates = [
-        { id: 'file.decompressFiles', isValid: true },
-        { id: 'someField', isValid: true },
-        { id: 'custom.Field', isValid: true },
-        { id: 'exportData', isValid: false },
-      ];
-      const { layout, fieldMap } = metadata;
-
-      expect(
-        isExpansionPanelErrored(
-          { layout: layout.containers[0], fieldMap },
-          fieldStates
-        )
-      ).toEqual(false);
-
-      expect(
-        isExpansionPanelErrored(
-          { layout: metadata.layout.containers[1], fieldMap },
-          fieldStates
-        )
-      ).toEqual(true);
-    });
-
-    test('should error specific expansion pannel only when those field states and unfullfilled', () => {
-      const metadata = {
-        actions: undefined,
-        fieldMap: {
-          'custom.Field': {
-            defaultValue: '',
-            fieldId: 'custom.Field',
-            helpKey: 'someResourceType.custom.Field',
-            id: 'custom.Field',
-            name: '/custom/Field',
-            resourceId: undefined,
-            resourceType: 'someResourceType',
-            someProp: 'faa',
-            visibleWhenAll: [
-              {
-                field: 'fieldA',
-                is: ['someValue'],
-              },
-              {
-                field: 'someOtherField',
-                is: ['foo'],
-              },
-            ],
-          },
-          someField: {
-            defaultValue: '',
-            fieldId: 'someField',
-            helpKey: 'someResourceType.someField',
-            id: 'someField',
-            name: '/someField',
-            resourceId: undefined,
-            someProp: 'foo',
-            resourceType: 'someResourceType',
-            visibleWhenAll: [
-              { field: 'fieldA', is: ['someValue'] },
-              { field: 'someOtherField', is: ['foo'] },
-            ],
-          },
-          'file.decompressFiles': {
-            defaultValue: '',
-            fieldId: 'file.decompressFiles',
-            helpKey: 'someResourceType.file.decompressFiles',
-            id: 'file.decompressFiles',
-            name: '/file/decompressFiles',
-            resourceId: undefined,
-            resourceType: 'someResourceType',
-          },
-          exportData: {
-            defaultValue: '',
-            fieldId: 'exportData',
-            helpKey: 'someResourceType.exportData',
-            id: 'exportData',
-            name: '/exportData',
-            resourceId: undefined,
-            resourceType: 'someResourceType',
-          },
-        },
-        layout: {
-          type: 'collapse',
-          containers: [
-            {
-              label: 'Some heading 1',
-              fields: ['file.decompressFiles', 'someField'],
-            },
-            {
-              label: 'Some heading 2',
-              fields: ['custom.Field'],
-              containers: [
+    describe('default isExpansionPanelErrored should consider field isValid or discretely invalid', () => {
+      test('should error specific expansion panel only when those field states and unfulfilled', () => {
+        const metadata = {
+          actions: undefined,
+          fieldMap: {
+            'custom.Field': {
+              defaultValue: '',
+              fieldId: 'custom.Field',
+              helpKey: 'someResourceType.custom.Field',
+              id: 'custom.Field',
+              name: '/custom/Field',
+              resourceId: undefined,
+              resourceType: 'someResourceType',
+              someProp: 'faa',
+              visibleWhenAll: [
                 {
-                  label: 'Some heading 3',
-                  fields: ['exportData'],
+                  field: 'fieldA',
+                  is: ['someValue'],
+                },
+                {
+                  field: 'someOtherField',
+                  is: ['foo'],
                 },
               ],
             },
-          ],
-        },
-      };
-      const fieldStates = [
-        { id: 'file.decompressFiles', isValid: true },
-        { id: 'someField', isValid: true },
-        { id: 'custom.Field', isValid: true },
-        { id: 'exportData', isValid: false },
-      ];
-      const { layout, fieldMap } = metadata;
+            someField: {
+              defaultValue: '',
+              fieldId: 'someField',
+              helpKey: 'someResourceType.someField',
+              id: 'someField',
+              name: '/someField',
+              resourceId: undefined,
+              someProp: 'foo',
+              resourceType: 'someResourceType',
+              visibleWhenAll: [
+                { field: 'fieldA', is: ['someValue'] },
+                { field: 'someOtherField', is: ['foo'] },
+              ],
+            },
+            'file.decompressFiles': {
+              defaultValue: '',
+              fieldId: 'file.decompressFiles',
+              helpKey: 'someResourceType.file.decompressFiles',
+              id: 'file.decompressFiles',
+              name: '/file/decompressFiles',
+              resourceId: undefined,
+              resourceType: 'someResourceType',
+            },
+            exportData: {
+              defaultValue: '',
+              fieldId: 'exportData',
+              helpKey: 'someResourceType.exportData',
+              id: 'exportData',
+              name: '/exportData',
+              resourceId: undefined,
+              resourceType: 'someResourceType',
+            },
+          },
+          layout: {
+            type: 'collapse',
+            containers: [
+              {
+                label: 'Some heading 1',
+                fields: ['file.decompressFiles', 'someField'],
+              },
+              {
+                label: 'Some heading 2',
+                fields: ['custom.Field', 'exportData'],
+              },
+            ],
+          },
+        };
+        const fieldStates = [
+          { id: 'file.decompressFiles', isValid: true, isDiscretlyInvalid: false },
+          { id: 'someField', isValid: true, isDiscretlyInvalid: false },
+          { id: 'custom.Field', isValid: false, isDiscretlyInvalid: true },
+          { id: 'exportData', isValid: false, isDiscretlyInvalid: true },
+        ];
+        const { layout, fieldMap } = metadata;
 
-      expect(
-        isExpansionPanelErrored(
-          { layout: layout.containers[0], fieldMap },
-          fieldStates
-        )
-      ).toEqual(false);
+        expect(
+          isExpansionPanelErrored(
+            { layout: layout.containers[0], fieldMap },
+            fieldStates
+          )
+        ).toEqual(false);
 
-      expect(
-        isExpansionPanelErrored(
-          { layout: metadata.layout.containers[1], fieldMap },
-          fieldStates
-        )
-      ).toEqual(true);
+        expect(
+          isExpansionPanelErrored(
+            { layout: metadata.layout.containers[1], fieldMap },
+            fieldStates
+          )
+        ).toEqual(true);
+      });
 
-      expect(
-        isExpansionPanelErrored(
-          { layout: metadata.layout.containers[1].containers[0], fieldMap },
-          fieldStates
-        )
-      ).toEqual(true);
+      test('should error specific expansion panel only when those field states and unfulfilled for nested containers', () => {
+        const metadata = {
+          actions: undefined,
+          fieldMap: {
+            'custom.Field': {
+              defaultValue: '',
+              fieldId: 'custom.Field',
+              helpKey: 'someResourceType.custom.Field',
+              id: 'custom.Field',
+              name: '/custom/Field',
+              resourceId: undefined,
+              resourceType: 'someResourceType',
+              someProp: 'faa',
+              visibleWhenAll: [
+                {
+                  field: 'fieldA',
+                  is: ['someValue'],
+                },
+                {
+                  field: 'someOtherField',
+                  is: ['foo'],
+                },
+              ],
+            },
+            someField: {
+              defaultValue: '',
+              fieldId: 'someField',
+              helpKey: 'someResourceType.someField',
+              id: 'someField',
+              name: '/someField',
+              resourceId: undefined,
+              someProp: 'foo',
+              resourceType: 'someResourceType',
+              visibleWhenAll: [
+                { field: 'fieldA', is: ['someValue'] },
+                { field: 'someOtherField', is: ['foo'] },
+              ],
+            },
+            'file.decompressFiles': {
+              defaultValue: '',
+              fieldId: 'file.decompressFiles',
+              helpKey: 'someResourceType.file.decompressFiles',
+              id: 'file.decompressFiles',
+              name: '/file/decompressFiles',
+              resourceId: undefined,
+              resourceType: 'someResourceType',
+            },
+            exportData: {
+              defaultValue: '',
+              fieldId: 'exportData',
+              helpKey: 'someResourceType.exportData',
+              id: 'exportData',
+              name: '/exportData',
+              resourceId: undefined,
+              resourceType: 'someResourceType',
+            },
+          },
+          layout: {
+            type: 'collapse',
+            containers: [
+              {
+                label: 'Some heading 1',
+                fields: ['file.decompressFiles', 'someField'],
+              },
+              {
+                label: 'Some heading 2',
+                fields: ['custom.Field'],
+                containers: [
+                  {
+                    label: 'Some heading 3',
+                    fields: ['exportData'],
+                  },
+                ],
+              },
+            ],
+          },
+        };
+
+        const fieldStates = [
+          { id: 'file.decompressFiles', isValid: true, isDiscretlyInvalid: false },
+          { id: 'someField', isValid: true, isDiscretlyInvalid: false },
+          { id: 'custom.Field', isValid: false, isDiscretlyInvalid: true },
+          { id: 'exportData', isValid: false, isDiscretlyInvalid: true },
+        ];
+        const { layout, fieldMap } = metadata;
+
+        expect(
+          isExpansionPanelErrored(
+            { layout: layout.containers[0], fieldMap },
+            fieldStates
+          )
+        ).toEqual(false);
+
+        expect(
+          isExpansionPanelErrored(
+            { layout: metadata.layout.containers[1], fieldMap },
+            fieldStates
+          )
+        ).toEqual(true);
+
+        expect(
+          isExpansionPanelErrored(
+            { layout: metadata.layout.containers[1].containers[0], fieldMap },
+            fieldStates
+          )
+        ).toEqual(true);
+      });
+    });
+    describe('default isExpansionPanelErrored should consider only field isValid', () => {
+      test('should error specific expansion panel only when those field states and unfulfilled', () => {
+        const metadata = {
+          actions: undefined,
+          fieldMap: {
+            'custom.Field': {
+              defaultValue: '',
+              fieldId: 'custom.Field',
+              helpKey: 'someResourceType.custom.Field',
+              id: 'custom.Field',
+              name: '/custom/Field',
+              resourceId: undefined,
+              resourceType: 'someResourceType',
+              someProp: 'faa',
+              visibleWhenAll: [
+                {
+                  field: 'fieldA',
+                  is: ['someValue'],
+                },
+                {
+                  field: 'someOtherField',
+                  is: ['foo'],
+                },
+              ],
+            },
+            someField: {
+              defaultValue: '',
+              fieldId: 'someField',
+              helpKey: 'someResourceType.someField',
+              id: 'someField',
+              name: '/someField',
+              resourceId: undefined,
+              someProp: 'foo',
+              resourceType: 'someResourceType',
+              visibleWhenAll: [
+                { field: 'fieldA', is: ['someValue'] },
+                { field: 'someOtherField', is: ['foo'] },
+              ],
+            },
+            'file.decompressFiles': {
+              defaultValue: '',
+              fieldId: 'file.decompressFiles',
+              helpKey: 'someResourceType.file.decompressFiles',
+              id: 'file.decompressFiles',
+              name: '/file/decompressFiles',
+              resourceId: undefined,
+              resourceType: 'someResourceType',
+            },
+            exportData: {
+              defaultValue: '',
+              fieldId: 'exportData',
+              helpKey: 'someResourceType.exportData',
+              id: 'exportData',
+              name: '/exportData',
+              resourceId: undefined,
+              resourceType: 'someResourceType',
+            },
+          },
+          layout: {
+            type: 'collapse',
+            containers: [
+              {
+                label: 'Some heading 1',
+                fields: ['file.decompressFiles', 'someField'],
+              },
+              {
+                label: 'Some heading 2',
+                fields: ['custom.Field'],
+                containers: [
+                  {
+                    label: 'Some heading 3',
+                    fields: ['exportData'],
+                  },
+                ],
+              },
+            ],
+          },
+        };
+        const fieldStates = [
+          { id: 'file.decompressFiles', isValid: true, isDiscretlyInvalid: false },
+          // field state to stimulate required field ....it is discretely invalid initially.
+          { id: 'someField', isValid: false, isDiscretlyInvalid: true },
+          { id: 'custom.Field', isValid: false, isDiscretlyInvalid: true },
+          // field state to stimulate required field..meeting required condition.
+          { id: 'exportData', isValid: true, isDiscretlyInvalid: false },
+        ];
+        const { layout, fieldMap } = metadata;
+
+        expect(
+          isExpansionPanelErrored(
+            { layout: layout.containers[0], fieldMap },
+            fieldStates,
+            true
+          ),
+
+        ).toEqual(true);
+
+        expect(
+          isExpansionPanelErrored(
+            { layout: metadata.layout.containers[1], fieldMap },
+            fieldStates,
+            true
+          ),
+        ).toEqual(true);
+
+        expect(
+          isExpansionPanelErrored(
+            { layout: metadata.layout.containers[1].containers[0], fieldMap },
+            fieldStates,
+            true
+          ),
+        ).toEqual(false);
+      });
     });
   });
-
   describe('getAllFormValuesAssociatedToMeta ', () => {
     test('should only gather values of form associated to its metadata', () => {
       const metadata = {
@@ -1349,6 +1466,87 @@ describe('integrationSettingsToDynaFormMetadata', () => {
               },
             ],
           },
+        });
+      });
+      test('should be able to delete visible prop when fields having both visible and visible when all props', () => {
+        const inputFieldMap = {
+          id: 'fieldA',
+          name: '/fieldA',
+          type: 'select',
+          visible: false,
+          visibleWhenAll: [
+            {
+              field: 'type',
+              is: ['field'],
+            },
+          ],
+        };
+        const resultFieldMap = adjustingFieldRules(inputFieldMap);
+
+        expect(resultFieldMap).toEqual({
+          id: 'fieldA',
+          name: '/fieldA',
+          type: 'select',
+          visibleWhenAll: [
+            {
+              field: 'type',
+              is: ['field'],
+            },
+          ],
+        });
+      });
+      test('should be able to delete prop when having both required and requiredWhenAll props', () => {
+        const inputFieldMap = {
+          id: 'fieldA',
+          name: '/fieldA',
+          type: 'select',
+          required: true,
+          requiredWhenAll: [
+            {
+              field: 'type',
+              is: ['field'],
+            },
+          ],
+        };
+        const resultFieldMap = adjustingFieldRules(inputFieldMap);
+
+        expect(resultFieldMap).toEqual({
+          id: 'fieldA',
+          name: '/fieldA',
+          type: 'select',
+          requiredWhenAll: [
+            {
+              field: 'type',
+              is: ['field'],
+            },
+          ],
+        });
+      });
+      test('should be able to delete defaultDisabled prop when fields having both disabledWhenAll and defaultDisabled props', () => {
+        const inputFieldMap = {
+          id: 'fieldA',
+          name: '/fieldA',
+          type: 'select',
+          defaultDisabled: false,
+          disabledWhenAll: [
+            {
+              field: 'type',
+              is: ['field'],
+            },
+          ],
+        };
+        const resultFieldMap = adjustingFieldRules(inputFieldMap);
+
+        expect(resultFieldMap).toEqual({
+          id: 'fieldA',
+          name: '/fieldA',
+          type: 'select',
+          disabledWhenAll: [
+            {
+              field: 'type',
+              is: ['field'],
+            },
+          ],
         });
       });
     });

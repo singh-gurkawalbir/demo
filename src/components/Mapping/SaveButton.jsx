@@ -17,27 +17,23 @@ export default function MappingSaveButton({
   showOnlyOnChanges,
   onClose,
 }) {
-  const [saveTrigerred, setSaveTriggered] = useState(false);
+  const [saveTriggered, setSaveTriggered] = useState(false);
   const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
   const match = useRouteMatch();
-  const [enquesnackbar] = useEnqueueSnackbar();
-  const { validationErrMsg } = useSelector(state =>
-    selectors.mapping(state)
-  );
-  const mappingsChanged = useSelector(state =>
-    selectors.mappingChanged(state)
-  );
+  const [enqueueSnackbar] = useEnqueueSnackbar();
+  const { validationErrMsg } = useSelector(state => selectors.mapping(state));
+  const mappingsChanged = useSelector(state => selectors.mappingChanged(state));
   const dispatch = useDispatch();
-  const { saveTerminated, saveCompleted } = useSelector(state =>
+  const { saveTerminated, saveCompleted, saveInProgress } = useSelector(state =>
     selectors.mappingSaveStatus(state)
   );
 
   useEffect(() => {
-    if (saveTrigerred && saveCompleted && onClose) {
+    if (saveTriggered && saveCompleted && onClose) {
       onClose();
       setSaveTriggered(false);
     }
-  }, [onClose, saveCompleted, saveTerminated, saveTrigerred]);
+  }, [onClose, saveCompleted, saveTerminated, saveTriggered]);
   const onSave = useCallback(() => {
     dispatch(actions.mapping.save({ match }));
     setSaveTriggered(true);
@@ -51,7 +47,7 @@ export default function MappingSaveButton({
   });
   const handleButtonClick = useCallback(() => {
     if (validationErrMsg) {
-      enquesnackbar({
+      enqueueSnackbar({
         message: validationErrMsg,
         variant: 'error',
       });
@@ -60,11 +56,12 @@ export default function MappingSaveButton({
     }
 
     handleSubmitForm();
-  }, [enquesnackbar, handleSubmitForm, validationErrMsg]);
+  }, [enqueueSnackbar, handleSubmitForm, validationErrMsg]);
 
   if (showOnlyOnChanges && !mappingsChanged) {
     return null;
   }
+  // console.log('disableSave, saveInProgress: ', disableSave, saveInProgress);
 
   return (
     <Button
@@ -73,10 +70,9 @@ export default function MappingSaveButton({
       color={color}
       disabled={disabled || disableSave || !mappingsChanged}
       onClick={handleButtonClick}>
-      {disableSave ? (
+      {saveInProgress && disableSave ? (
         <>
-          <Spinner size={16} />
-          Saving
+          <Spinner size="small" /> Saving
         </>
       ) : (
         <>{submitButtonLabel}</>

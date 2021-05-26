@@ -3,14 +3,17 @@ import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import DynaPreviewComponentsTable from '../../../DynaForm/fields/DynaPreviewComponentsTable';
 import Spinner from '../../../Spinner';
-import SpinnerWrapper from '../../../SpinnerWrapper';
 
-const columns = [
+const useColumns = () => [
   {
+    key: 'name',
     heading: 'Name',
-    value: r => r?.doc?.name || r?.doc?._id,
+    Value: ({rowData: r}) => r?.doc?.name || r?.doc?._id,
   },
-  { heading: 'Description', value: r => r.doc?.description },
+  {
+    key: 'description',
+    heading: 'Description',
+    Value: ({rowData: r}) => r.doc?.description },
 ];
 
 export default function PreviewTable({ templateId }) {
@@ -33,12 +36,9 @@ export default function PreviewTable({ templateId }) {
   }
   if (status === 'requested') {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
-
+      <Spinner centerAll />
     );
   }
 
-  return <DynaPreviewComponentsTable data={data} columns={columns} />;
+  return <DynaPreviewComponentsTable data={data} useColumns={useColumns} />;
 }

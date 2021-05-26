@@ -341,9 +341,9 @@ describe('isParentViewSelected', () => {
   ];
 
   each(testCases).test(
-    'should return %s when integration = %o and storeId = %s',
-    (expected, integration, storeId) => {
-      expect(isParentViewSelected(integration, storeId)).toEqual(expected);
+    'should return %s when integration = %o and childId = %s',
+    (expected, integration, childId) => {
+      expect(isParentViewSelected(integration, childId)).toEqual(expected);
     }
   );
 });
@@ -527,6 +527,20 @@ describe('getIntegrationApp', () => {
         document: {
           location: {
             hostname: 'www.staging.integrator.io',
+          },
+        },
+      }));
+
+      return expect(getIntegrationApp({ _connectorId, name })).toEqual(expected);
+    }
+  );
+  each(testCases1).test(
+    'should return %o when options = %o',
+    (expected, { _connectorId, name }) => {
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'www.qa.staging.integrator.io',
           },
         },
       }));
@@ -828,6 +842,20 @@ describe('getHighestEditionForIntegrationApp', () => {
       return expect(IntegrationApp.getHighestEditionForIntegrationApp(integration)).toEqual(expected);
     }
   );
+  each(testCases1).test(
+    'should return %s when integration = %o',
+    (expected, integration) => {
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'www.qa.staging.integrator.io',
+          },
+        },
+      }));
+
+      return expect(IntegrationApp.getHighestEditionForIntegrationApp(integration)).toEqual(expected);
+    }
+  );
   each(testCases2).test(
     'should return %s when integration = %o',
     (expected, integration) => {
@@ -908,6 +936,20 @@ describe('isCloningSupported', () => {
         document: {
           location: {
             hostname: 'www.staging.integrator.io',
+          },
+        },
+      }));
+
+      return expect(IntegrationApp.isCloningSupported(_connectorId, name)).toEqual(expected);
+    }
+  );
+  each(testCases1).test(
+    'should return %s when _connectorId = %s and name = %s',
+    (expected, _connectorId, name) => {
+      windowSpy.mockImplementation(() => ({
+        document: {
+          location: {
+            hostname: 'www.qa.staging.integrator.io',
           },
         },
       }));

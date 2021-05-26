@@ -113,6 +113,10 @@ export default {
     'freshworks',
     'pipedrive',
     'prestashop',
+    'yotpo',
+    'fulfilment.com',
+    'walmartmexico',
+    'walmartcanada',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -189,6 +193,8 @@ export default {
     'pipedrive',
     'microsoftteams',
     'adobesign',
+    'mavenlink',
+    'googleads',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',

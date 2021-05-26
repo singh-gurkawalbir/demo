@@ -1,13 +1,13 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Paper, Grid, IconButton } from '@material-ui/core';
-import ElevateOnScroll from '../ElevateOnScroll';
-import SlideOnScroll from '../SlideOnScroll';
 import { selectors } from '../../reducers';
 import InfoIconButton from '../InfoIconButton';
 import BackArrowIcon from '../icons/BackArrowIcon';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   pageHeader: {
@@ -41,14 +41,11 @@ const useStyles = makeStyles(theme => ({
   bannerOffset: {
     height: theme.pageBarHeight + 58,
   },
-  subTitleShift: {
-    marginLeft: theme.spacing(4),
-  },
 }));
 
 export default function CeligoPageBar(props) {
   const {
-    history,
+    parentUrl,
     children,
     title,
     infoText,
@@ -57,43 +54,50 @@ export default function CeligoPageBar(props) {
     className,
   } = props;
   const classes = useStyles();
+  const history = useHistory();
+
+  const handleOnClick = useCallback(() => {
+    if (history.length > 2) {
+      return history.goBack();
+    } if (parentUrl) {
+      history.replace(parentUrl);
+    } else {
+      history.replace(getRoutePath('/'));
+    }
+  }, [history, parentUrl]);
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
     <>
-      <SlideOnScroll threshold={250}>
-        <ElevateOnScroll threshold={0}>
-          <Paper
-            data-public
-            className={clsx(classes.pageHeader, className, {
-              [classes.pageHeaderShift]: drawerOpened,
-            })}
-            elevation={0}
-            square>
+      <Paper
+        data-public
+        className={clsx(classes.pageHeader, className, {
+          [classes.pageHeaderShift]: drawerOpened,
+        })}
+        elevation={0}
+        square>
 
-            <Grid item container wrap="nowrap">
-              {history && (
-                // eslint-disable-next-line react/jsx-handler-names
-                <IconButton size="small" onClick={history.goBack}>
-                  <BackArrowIcon />
-                </IconButton>
-              )}
-              <Typography className={classes.title} variant="h3">
-                {title}
-              </Typography>
-              {titleTag && <span>{titleTag}</span>}
-              {infoText && <InfoIconButton info={infoText} />}
-              <div className={classes.emptySpace} />
-              {children}
-            </Grid>
-            <Typography
-              variant="caption"
-              className={clsx({ [classes.subTitleShift]: history })}>
-              {subtitle}
-            </Typography>
-          </Paper>
-        </ElevateOnScroll>
-      </SlideOnScroll>
+        <Grid item container wrap="nowrap">
+          {parentUrl && (
+          // eslint-disable-next-line react/jsx-handler-names
+          <IconButton size="small" onClick={handleOnClick}>
+            <BackArrowIcon />
+          </IconButton>
+          )}
+          <Typography className={classes.title} variant="h3">
+            {title}
+          </Typography>
+          {titleTag && <span>{titleTag}</span>}
+          {infoText && <InfoIconButton info={infoText} />}
+          <div className={classes.emptySpace} />
+          {children}
+        </Grid>
+        <Typography
+          variant="caption"
+          className={classes.history}>
+          {subtitle}
+        </Typography>
+      </Paper>
       <div
         className={clsx(classes.pageBarOffset)}
       />

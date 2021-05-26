@@ -28,12 +28,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function NotificationsSection({ integrationId, storeId }) {
+export default function NotificationsSection({ integrationId, childId }) {
   const dispatch = useDispatch();
   const [count, setCount] = useState(0);
   const classes = useStyles();
 
-  const notificationsConfig = useMemo(() => ({ storeId, ignoreUnusedConnections: true }), [storeId]);
+  const notificationsConfig = useMemo(() => ({ childId, ignoreUnusedConnections: true }), [childId]);
   const notifications = useSelectorMemo(
     selectors.mkIntegrationNotificationResources,
     integrationId,
@@ -82,9 +82,9 @@ export default function NotificationsSection({ integrationId, storeId }) {
   const handleSubmit = useCallback(formVal => {
     const resourcesToUpdate = { subscribedConnections: formVal.connections, subscribedFlows: formVal.flows};
 
-    dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, integrationId, { storeId }));
+    dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, integrationId, { childId }));
     setCount(count => count + 1);
-  }, [integrationId, dispatch, storeId]);
+  }, [integrationId, dispatch, childId]);
 
   const infoTextNotifications =
 'Get notified via email if your flow encounters an error, or if a connection goes offline. These notifications will only be sent to you. If any other users in your account wish to receive the same notifications, then they will need to subscribe from their account.';

@@ -288,6 +288,10 @@ export default {
     retValues['/statusExport'] = undefined;
     delete retValues['/inputMode'];
 
+    if (retValues['/oneToMany'] === 'false') {
+      retValues['/pathToMany'] = undefined;
+    }
+
     return {
       ...retValues,
     };
@@ -1288,12 +1292,6 @@ export default {
     'http.ignoreEmptyNodes': { fieldId: 'http.ignoreEmptyNodes' },
     advancedSettings: {
       formId: 'advancedSettings',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
     },
     'http.configureAsyncHelper': { fieldId: 'http.configureAsyncHelper' },
     'http._asyncHelperId': { fieldId: 'http._asyncHelperId' },

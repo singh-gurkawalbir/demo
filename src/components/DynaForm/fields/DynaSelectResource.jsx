@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import sift from 'sift';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -32,6 +33,9 @@ const handleAddNewResource = args => {
     statusExport,
     assistant,
     integrationId,
+    connectorId,
+    isFrameWork2,
+    email,
   } = args;
 
   if (
@@ -43,6 +47,7 @@ const handleAddNewResource = args => {
       'pageGenerator',
       'asyncHelpers',
       'iClients',
+      'connectorLicenses',
     ].includes(resourceType)
   ) {
     let values;
@@ -56,6 +61,19 @@ const handleAddNewResource = args => {
         ...values,
         '/assistant': assistant,
       };
+    } else if (['connectorLicenses'].includes(resourceType)) {
+      values = {
+        ...values,
+        '/_connectorId': connectorId,
+        '/trialLicenseTemplate': true,
+        '/email': email,
+      };
+      if (isFrameWork2) {
+        values = {
+          ...values,
+          '/type': 'integrationApp',
+        };
+      }
     } else {
       values = resourceMeta[resourceType].new.preSave({
         application: options.appType,
@@ -116,6 +134,22 @@ const useStyles = makeStyles(theme => ({
     textOverflow: 'ellipsis',
     overflow: 'hidden',
   },
+  dynaSelectWrapper: {
+    width: '100%',
+  },
+  dynaSelectWithStatusWrapper: {
+    maxWidth: '95%',
+    position: 'relative',
+    overflow: 'hidden',
+    '& > div:last-child': {
+      position: 'absolute',
+      right: '50px',
+      top: theme.spacing(4),
+    },
+    '& >* .MuiSelect-selectMenu': {
+      paddingRight: 140,
+    },
+  },
 }));
 
 function ConnectionLoadingChip(props) {
@@ -163,6 +197,7 @@ export default function DynaSelectResource(props) {
     resourceContext,
     skipPingConnection,
     integrationId,
+    connectorId,
   } = props;
   const {options} = props;
   const classes = useStyles();
@@ -183,6 +218,12 @@ export default function DynaSelectResource(props) {
     selectors.makeResourceListSelector,
     filterConfig
   );
+  const isFrameWork2 = useSelector(state =>
+    selectors.resource(state, 'connectors', connectorId)?.framework === 'twoDotZero'
+  );
+  const preferences = useSelector(state =>
+    selectors.userProfilePreferencesProps(state)
+  );
   const createdId = useSelector(state =>
     selectors.createdResourceId(state, newResourceId)
   );
@@ -197,7 +238,7 @@ export default function DynaSelectResource(props) {
 
   useEffect(() => {
     if (createdId) {
-      onFieldChange(id, createdId, true);
+      onFieldChange(id, createdId, false);
       // in case someone clicks + again to add another resource...
       setNewResourceId(generateNewId());
     }
@@ -226,7 +267,7 @@ export default function DynaSelectResource(props) {
       label: conn.offline ? `${conn.name || conn._id} - Offline` : conn.name || conn._id,
       value: conn._id,
     }));
-  }, [filter, options, resources, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations, resourceType]);
+  }, [resources, options, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
   const { merged } =
     useSelectorMemo(
       selectors.makeResourceDataSelector,
@@ -253,20 +294,11 @@ export default function DynaSelectResource(props) {
         expConnId,
         assistant,
         integrationId: integrationId || integrationIdFromUrl,
+        connectorId,
+        isFrameWork2,
+        email: preferences?.email,
       }),
-    [
-      dispatch,
-      history,
-      location,
-      resourceType,
-      options,
-      newResourceId,
-      statusExport,
-      expConnId,
-      assistant,
-      integrationId,
-      integrationIdFromUrl,
-    ]
+    [dispatch, history, location, resourceType, options, newResourceId, statusExport, expConnId, assistant, integrationId, integrationIdFromUrl, connectorId, isFrameWork2, preferences?.email]
   );
   const handleEditResource = useCallback(() => {
     if (
@@ -292,17 +324,33 @@ export default function DynaSelectResource(props) {
       // this not an actual value we would like to commit...this is just to load the right form
       dispatch(actions.resource.patchStaged(value, patchSet, 'value'));
     }
+    if (resourceType === 'connectorLicenses') {
+      const patchSet = [
+        {
+          op: 'add',
+          path: '/_connectorId',
+          value: connectorId,
+        },
+        {
+          op: 'add',
+          path: '/trialLicenseTemplate',
+          value: true,
+        },
+      ];
+
+      if (isFrameWork2) {
+        patchSet.push({
+          op: 'add',
+          path: '/type',
+          value: 'integrationApp',
+        });
+      }
+
+      dispatch(actions.resource.patchStaged(value, patchSet, 'value'));
+    }
 
     history.push(`${location.pathname}/edit/${resourceType}/${value}`);
-  }, [
-    dispatch,
-    expConnId,
-    history,
-    location.pathname,
-    resourceType,
-    statusExport,
-    value,
-  ]);
+  }, [isFrameWork2, connectorId, dispatch, expConnId, history, location.pathname, resourceType, statusExport, value]);
   const truncatedItems = items =>
     items.sort(stringCompare('label')).map(i => ({
       label: (
@@ -320,7 +368,7 @@ export default function DynaSelectResource(props) {
 
   return (
     <div className={classes.root}>
-      <LoadResources required resources={resourceType}>
+      <LoadResources required resources={resourceType !== 'connectorLicenses' ? resourceType : []}>
         {multiselect ? (
           <DynaMultiSelect
             {...props}
@@ -328,12 +376,18 @@ export default function DynaSelectResource(props) {
             options={[{ items: resourceItems || [] }]}
           />
         ) : (
-          <DynaSelect
-            {...props}
-            disabled={disableSelect}
-            removeHelperText={isAddingANewResource}
-            options={[{ items: truncatedItems(resourceItems || []) }]}
+          <div className={clsx(classes.dynaSelectWrapper, {[classes.dynaSelectWithStatusWrapper]: resourceType === 'connections' && !!value && !skipPingConnection})}>
+            <DynaSelect
+              {...props}
+              disabled={disableSelect}
+              removeHelperText={isAddingANewResource}
+              options={[{ items: truncatedItems(resourceItems || []) }]}
           />
+            {resourceType === 'connections' && !!value && !skipPingConnection && (
+            <ConnectionLoadingChip connectionId={value} />
+            )}
+          </div>
+
         )}
       </LoadResources>
       <div className={classes.dynaSelectMultiSelectActions}>
@@ -354,9 +408,7 @@ export default function DynaSelectResource(props) {
             <EditIcon />
           </ActionButton>
         )}
-        {resourceType === 'connections' && !!value && !skipPingConnection && (
-          <ConnectionLoadingChip connectionId={value} />
-        )}
+
       </div>
     </div>
   );

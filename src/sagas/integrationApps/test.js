@@ -13,8 +13,8 @@ import {
   installStep,
   installScriptStep,
   getCurrentStep,
-  addNewStore,
-  installStoreStep,
+  addNewChild,
+  installChildStep,
   installInitChild,
 } from './installer';
 import {
@@ -25,6 +25,7 @@ import {
   saveCategoryMappings,
   getMappingMetadata,
 } from './settings';
+import { preUninstall, uninstallIntegration, uninstallStep as uninstallStepGen } from './uninstaller';
 import {initUninstall, uninstallStep, requestSteps} from './uninstaller2.0';
 import {resumeIntegration} from './resume';
 
@@ -32,12 +33,12 @@ describe('installer saga', () => {
   describe('installStep generator', () => {
     const id = 'dummyId';
     const installerFunction = () => {};
-    const storeId = 'dummyStoreId';
+    const childId = 'dummyChildId';
     const path = `/integrations/${id}/installer/${installerFunction}`;
     const args = {
       path,
       timeout: 5 * 60 * 1000,
-      opts: { body: { storeId }, method: 'PUT' },
+      opts: { body: { storeId: childId }, method: 'PUT' },
       hidden: true,
     };
 
@@ -50,7 +51,7 @@ describe('installer saga', () => {
       return expectSaga(installStep, {
         id,
         installerFunction,
-        storeId,
+        childId,
         addOnId,
       })
         .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
@@ -77,7 +78,7 @@ describe('installer saga', () => {
       return expectSaga(installStep, {
         id,
         installerFunction,
-        storeId,
+        childId,
         addOnId,
       })
         .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
@@ -104,7 +105,7 @@ describe('installer saga', () => {
       return expectSaga(installStep, {
         id,
         installerFunction,
-        storeId,
+        childId,
         addOnId,
       })
         .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
@@ -134,7 +135,7 @@ describe('installer saga', () => {
       return expectSaga(installStep, {
         id,
         installerFunction,
-        storeId,
+        childId,
         addOnId,
       })
         .provide([[call(apiCallWithRetry, args), throwError(error)]])
@@ -270,7 +271,7 @@ describe('installer saga', () => {
           ],
         ])
         .call(apiCallWithRetry, args)
-        .put(actions.resource.requestCollection('connections'))
+        .put(actions.resource.request('connections', currentConnectionStep._connectionId))
         .put(
           actions.integrationApp.installer.setOauthConnectionMode(
             currentConnectionStep._connectionId,
@@ -320,7 +321,7 @@ describe('installer saga', () => {
       })
         .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
         // .call(apiCallWithRetry, args)
-        .not.put(actions.resource.requestCollection('connections'))
+        .not.put(actions.resource.request('connections', currentConnectionStep._connectionId))
         .not.put(
           actions.integrationApp.installer.setOauthConnectionMode(
             currentConnectionStep._connectionId,
@@ -379,7 +380,7 @@ describe('installer saga', () => {
           [call(openOAuthWindowForConnection, currentConnectionStep._connectionId), throwError()],
         ])
         .call(apiCallWithRetry, args)
-        .put(actions.resource.requestCollection('connections'))
+        .put(actions.resource.request('connections', currentConnectionStep._connectionId))
         .put(
           actions.integrationApp.installer.setOauthConnectionMode(
             currentConnectionStep._connectionId,
@@ -642,7 +643,7 @@ describe('installer saga', () => {
         .run();
     });
   });
-  describe('addNewStore generator', () => {
+  describe('addNewChild generator', () => {
     const id = '123';
     const path = `/integrations/${id}/installer/addNewStore`;
     const args = {
@@ -655,13 +656,13 @@ describe('installer saga', () => {
     test('if api call is successful without any response, should not dispatch any actions', () => {
       const steps = null;
 
-      return expectSaga(addNewStore, { id })
+      return expectSaga(addNewChild, { id })
         .provide([[call(apiCallWithRetry, args), steps]])
         .call(apiCallWithRetry, args)
-        .not.put(actions.resource.requestCollection('connections'))
+        .not.put(actions.resource.request('connections'))
         .run();
     });
-    test('if api call is successful with response, should dispatch receivedNewStoreSteps', () => {
+    test('if api call is successful with response, should dispatch receivedNewChildSteps', () => {
       const steps = [
         {
           completed: false,
@@ -679,27 +680,27 @@ describe('installer saga', () => {
         },
       ];
 
-      return expectSaga(addNewStore, { id })
+      return expectSaga(addNewChild, { id })
         .provide([[call(apiCallWithRetry, args), steps]])
         .call(apiCallWithRetry, args)
         .put(actions.resource.requestCollection('connections'))
-        .put(actions.integrationApp.store.receivedNewStoreSteps(id, steps))
+        .put(actions.integrationApp.child.receivedNewChildSteps(id, steps))
         .run();
     });
-    test('if api call fails, should dispatch api.failure and failedNewStoreSteps', () => {
+    test('if api call fails, should dispatch api.failure and failedNewChildSteps', () => {
       const error = new Error();
 
-      return expectSaga(addNewStore, { id })
+      return expectSaga(addNewChild, { id })
         .provide([[call(apiCallWithRetry, args), throwError(error)]])
         .call(apiCallWithRetry, args)
         .put(actions.api.failure(path, 'PUT', error && error.message, false))
         .put(
-          actions.integrationApp.store.failedNewStoreSteps(id, error.message)
+          actions.integrationApp.child.failedNewChildSteps(id, error.message)
         )
         .run();
     });
   });
-  describe('installStoreStep generator', () => {
+  describe('installChildStep generator', () => {
     const id = '123';
     const installerFunction = () => {};
     const path = `/integrations/${id}/installer/${installerFunction}`;
@@ -714,7 +715,7 @@ describe('installer saga', () => {
     test('if api call is successful without any response, should not dispatch any actions', () => {
       const stepCompleteResponse = null;
 
-      return expectSaga(installStoreStep, { id, installerFunction })
+      return expectSaga(installChildStep, { id, installerFunction })
         .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
         .call(apiCallWithRetry, args)
         .not.put(
@@ -735,7 +736,7 @@ describe('installer saga', () => {
         },
       };
 
-      return expectSaga(installStoreStep, { id, installerFunction })
+      return expectSaga(installChildStep, { id, installerFunction })
         .provide([[call(apiCallWithRetry, args), stepCompleteResponse]])
         .call(apiCallWithRetry, args)
         .put(
@@ -757,7 +758,7 @@ describe('installer saga', () => {
         ],
       };
 
-      return expectSaga(installStoreStep, { id, installerFunction })
+      return expectSaga(installChildStep, { id, installerFunction })
         .provide([
           [call(apiCallWithRetry, args), stepCompleteResponse],
           [call(getResource, { resourceType: 'integrations', id })],
@@ -765,7 +766,7 @@ describe('installer saga', () => {
         .call(apiCallWithRetry, args)
         .call(getResource, { resourceType: 'integrations', id })
         .put(
-          actions.integrationApp.store.completedStepInstall(
+          actions.integrationApp.child.completedStepInstall(
             id,
             installerFunction,
             stepCompleteResponse.stepsToUpdate
@@ -776,11 +777,11 @@ describe('installer saga', () => {
     test('if api call fails, should dispatch updateStep with flag as failed', () => {
       const error = new Error();
 
-      return expectSaga(installStoreStep, { id, installerFunction })
+      return expectSaga(installChildStep, { id, installerFunction })
         .provide([[call(apiCallWithRetry, args), throwError(error)]])
         .call(apiCallWithRetry, args)
         .put(
-          actions.integrationApp.store.updateStep(
+          actions.integrationApp.child.updateStep(
             id,
             installerFunction,
             'failed'
@@ -1163,7 +1164,15 @@ describe('settings saga', () => {
           utilities: {
             options: {
               _flowId: flowId,
-              requestOptions: [{ operation: 'mappingData', params: {} }],
+              requestOptions: [
+                { operation: 'mappingData', params: {} },
+                {
+                  operation: 'generatesMetaData',
+                  params: {
+                    categoryId: 'commonAttributes',
+                    categoryRelationshipData: true,
+                  },
+                }],
             },
           },
         },
@@ -1290,6 +1299,252 @@ describe('settings saga', () => {
     });
   });
 });
+describe('uninstaller saga', () => {
+  const childId = 's1';
+  const id = '123';
+
+  describe('preUninstall generator', () => {
+    const path = `/integrations/${id}/uninstaller/preUninstallFunction`;
+
+    test('should dispatch receivedUninstallSteps on successful api call', () => {
+      const uninstallSteps = {};
+
+      return expectSaga(preUninstall, { childId, id})
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts: { body: { storeId: childId }, method: 'PUT' },
+            message: 'Loading',
+          }), uninstallSteps],
+          [call(getResource, { resourceType: 'integrations', id })],
+        ])
+        .put(
+          actions.integrationApp.uninstaller.receivedUninstallSteps(
+            uninstallSteps,
+            id
+          )
+        )
+        .run();
+    });
+    test('should dispatch failedUninstallSteps if api call fails', () => {
+      const error = { message: 'Failed to fetch Uninstall Steps.' };
+
+      return expectSaga(preUninstall, {childId, id})
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts: { body: { storeId: childId }, method: 'PUT' },
+            message: 'Loading',
+          }), throwError(error)],
+        ])
+        .put(actions.api.failure(path, 'PUT', error && error.message, false))
+        .put(
+          actions.integrationApp.uninstaller.failedUninstallSteps(
+            id,
+            error.message || 'Failed to fetch Uninstall Steps.'
+          )
+        )
+        .not.put(
+          actions.integrationApp.uninstaller.receivedUninstallSteps(
+            undefined,
+            id
+          )
+        )
+        .run();
+    });
+  });
+
+  describe('uninstallStep generator', () => {
+    const uninstallerFunction = 'uninstallConnectorComponents';
+    const path = `/integrations/${id}/uninstaller/${uninstallerFunction}`;
+
+    test('should dispatch uninstaller updateStep and subsequent actions if api call is successful and addOnId is defined', () => {
+      const addOnId = 'A123';
+      const stepCompleteResponse = {
+        success: true,
+      };
+
+      return expectSaga(uninstallStepGen, {childId, id, uninstallerFunction, addOnId})
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts: { body: { storeId: childId, addOnId }, method: 'PUT' },
+            message: 'Uninstalling',
+          }), stepCompleteResponse],
+          [call(getResource, {
+            resourceType: 'integrations',
+            id,
+          })],
+        ])
+        .put(
+          actions.integrationApp.uninstaller.updateStep(
+            id,
+            uninstallerFunction,
+            'completed'
+          )
+        )
+        .put(
+          actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
+        )
+        .put(
+          actions.integrationApp.isAddonInstallInprogress(false, addOnId)
+        )
+        .run();
+    });
+    test('should dispatch uninstaller updateStep only if api call is successful and no addOnId defined', () => {
+      const addOnId = undefined;
+      const stepCompleteResponse = {
+        success: true,
+      };
+
+      return expectSaga(uninstallStepGen, {childId, id, uninstallerFunction, addOnId})
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts: { body: { storeId: childId, addOnId }, method: 'PUT' },
+            message: 'Uninstalling',
+          }), stepCompleteResponse],
+          [call(getResource, {
+            resourceType: 'integrations',
+            id,
+          })],
+        ])
+        .put(
+          actions.integrationApp.uninstaller.updateStep(
+            id,
+            uninstallerFunction,
+            'completed'
+          )
+        )
+        .not.put(
+          actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
+        )
+        .not.put(
+          actions.integrationApp.isAddonInstallInprogress(false, addOnId)
+        )
+        .run();
+    });
+    test('should not dispatch any action if api call is successfull with response failing', () => {
+      const addOnId = 'A123';
+      const stepCompleteResponse = {
+        success: false,
+      };
+
+      return expectSaga(uninstallStepGen, {childId, id, uninstallerFunction, addOnId})
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts: { body: { storeId: childId, addOnId }, method: 'PUT' },
+            message: 'Uninstalling',
+          }), stepCompleteResponse],
+        ])
+        .not.put(
+          actions.integrationApp.uninstaller.updateStep(
+            id,
+            uninstallerFunction,
+            'completed'
+          )
+        )
+        .not.put(
+          actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
+        )
+        .not.put(
+          actions.integrationApp.isAddonInstallInprogress(false, addOnId)
+        )
+        .run();
+    });
+    test('should dispatch updateStep and update install progress of addOn if api call fails and addOnId is defined', () => {
+      const addOnId = 'A123';
+      const error = { code: 'dummy', message: 'dummy' };
+
+      return expectSaga(uninstallStepGen, {childId, id, uninstallerFunction, addOnId})
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts: { body: { storeId: childId, addOnId }, method: 'PUT' },
+            message: 'Uninstalling',
+          }), throwError(error)],
+        ])
+        .put(
+          actions.integrationApp.isAddonInstallInprogress(false, addOnId)
+        )
+        .put(
+          actions.integrationApp.uninstaller.updateStep(
+            id,
+            uninstallerFunction,
+            'failed'
+          )
+        )
+        .run();
+    });
+    test('should dispatch only updateStep if api call fails and addOnId is not defined', () => {
+      const addOnId = undefined;
+      const error = { code: 'dummy', message: 'dummy' };
+
+      return expectSaga(uninstallStepGen, {childId, id, uninstallerFunction, addOnId})
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts: { body: { storeId: childId, addOnId }, method: 'PUT' },
+            message: 'Uninstalling',
+          }), throwError(error)],
+        ])
+        .not.put(
+          actions.integrationApp.isAddonInstallInprogress(false, addOnId)
+        )
+        .put(
+          actions.integrationApp.uninstaller.updateStep(
+            id,
+            uninstallerFunction,
+            'failed'
+          )
+        )
+        .run();
+    });
+  });
+  describe('uninstallIntegration generator', () => {
+    const integrationId = 'i1';
+    const path = `/integrations/${integrationId}/install`;
+
+    test('Should make an API call and dispatch resource request actions if api call succeeds', () => expectSaga(uninstallIntegration, { integrationId })
+      .provide([
+        [call(apiCallWithRetry, {
+          path,
+          timeout: 5 * 60 * 1000,
+          opts: { body: {}, method: 'DELETE' },
+          message: 'Uninstalling',
+        })],
+      ])
+      .put(actions.resource.requestCollection('integrations'))
+      .put(actions.resource.requestCollection('tiles'))
+      .put(actions.resource.requestCollection('licenses'))
+      .run());
+    test('should not put any collection requests if resource call fails', () => {
+      const error = { code: 'dummy', message: 'dummy' };
+
+      return expectSaga(uninstallIntegration, { integrationId })
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts: { body: {}, method: 'DELETE' },
+            message: 'Uninstalling',
+          }), throwError(error)],
+        ])
+        .not.put(actions.resource.requestCollection('integrations'))
+        .not.put(actions.resource.requestCollection('tiles'))
+        .not.put(actions.resource.requestCollection('licenses'))
+        .run();
+    });
+  });
+});
 describe('uninstaller2.0 saga', () => {
   const id = '123';
 
@@ -1354,7 +1609,7 @@ describe('uninstaller2.0 saga', () => {
         )
       )
       .run());
-    test('should dispatch failed action if API call throws error', () => {
+    test('should dispatch update action if API call throws error', () => {
       const error = { code: 404, message: 'integration not found' };
 
       return expectSaga(uninstallStep, { id })
@@ -1367,9 +1622,9 @@ describe('uninstaller2.0 saga', () => {
           )
         )
         .put(
-          actions.integrationApp.uninstaller2.failed(
+          actions.integrationApp.uninstaller2.updateStep(
             id,
-            error.message
+            'reset'
           )
         )
         .run();

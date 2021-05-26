@@ -110,8 +110,7 @@ export default {
         },
       ],
     },
-    skipRetries: { fieldId: 'skipRetries' },
-    dataURITemplate: { fieldId: 'dataURITemplate' },
+    advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
     type: 'collapse',
@@ -146,7 +145,7 @@ export default {
           'dynamodb.onceExportSortKey',
         ],
       },
-      { collapsed: true, label: 'Advanced', fields: ['dataURITemplate', 'skipRetries'] },
+      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },
 };

@@ -22,14 +22,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ActionButton({ className, children, tooltip, ...props }) {
+export default function ActionButton({ className, children, tooltip = '', ...props }) {
   const classes = useStyles();
 
   return (
-    // The strange looking open property expression disables the tooltip for any action button
-    // which does not have a tooltip. If anyone has a more elegant way to do this, plmk. (Dave Riedl)
-    <Tooltip arrow open={tooltip ? undefined : false} placement="top" title={tooltip}>
-      <IconButton className={clsx(classes.editorButton, className)} {...props}>
+  // The strange looking open property expression disables the tooltip for any action button
+  // which does not have a tooltip. If anyone has a more elegant way to do this, plmk. (Dave Riedl)
+
+    // TODO:(Dave) Tooltip title is a default required prop, undefined throwing a warning
+    <Tooltip
+      arrow open={tooltip ? undefined : false} placement="top" title={tooltip}
+      aria-label={tooltip}>
+      <IconButton className={clsx(classes.editorButton, className)} {...props} aria-label="tooltip">
         <span>{children}</span>
       </IconButton>
     </Tooltip>

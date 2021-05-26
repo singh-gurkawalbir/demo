@@ -14,15 +14,17 @@ import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
 import flowTableMeta from '../../../../../components/ResourceTable/flows/metadata';
 import Spinner from '../../../../../components/Spinner';
-import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 import StatusCircle from '../../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../reducers';
+import { MISCELLANEOUS_SECTION_ID } from '../../../../../utils/constants';
 import { redirectToFirstFlowGrouping } from '../../../../../utils/flowgroupingsRedirectTo';
+import { shouldHaveMiscellaneousSection } from '../../../../../utils/resource';
 import { getTemplateUrlName } from '../../../../../utils/template';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
+import SectionTitle from '../../../common/FlowSectionTitle';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -107,9 +109,7 @@ const getBasePath = match => {
     .join('/');
 };
 const tilesFilterConfig = { type: 'tiles'};
-// when there are flowGroupings and there are uncategorized flows do you have a MiscellaneousSection
-export const shouldHaveMiscellaneousSection = (flowGroupingsSections, flows) => flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId);
-export const MISCELLANEOUS_SECTION_ID = 'miscellaneous';
+
 const FlowListingTable = ({
   flows,
   filterKey,
@@ -121,6 +121,10 @@ const FlowListingTable = ({
   const classes = useStyles();
 
   const sectionId = match?.params?.sectionId;
+  const errorCountByFlowGroup = useSelector(
+    state =>
+      selectors.integrationErrorsPerFlowGroup(state, integrationId)
+  );
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
   const hasMiscellaneousSection = shouldHaveMiscellaneousSection(flowGroupingsSections, flows);
 
@@ -148,7 +152,7 @@ const FlowListingTable = ({
                 activeClassName={classes.activeListItem}
                 to={sectionId}
                 data-test={sectionId}>
-                {title}
+                <SectionTitle title={title} errorCount={errorCountByFlowGroup[sectionId]} />
               </NavLink>
             </ListItem>
           ))}
@@ -172,17 +176,20 @@ const FlowListingTable = ({
 const FlowListing = ({integrationId, filterKey, actionProps, flows}) => {
   const match = useRouteMatch();
   const history = useHistory();
+  const integrationIsAvailable = useSelector(state => selectors.resource(state, 'integrations', integrationId)?._id);
+
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
 
   const redirectTo = redirectToFirstFlowGrouping(flows, flowGroupingsSections, match);
 
   useEffect(() => {
-    const shouldRedirect = !!redirectTo;
+    // redirect should only happen if integration is still present and not deleted
+    const shouldRedirect = !!redirectTo && !!integrationIsAvailable;
 
     if (shouldRedirect) {
       history.replace(redirectTo);
     }
-  }, [history, redirectTo]);
+  }, [history, redirectTo, integrationIsAvailable]);
 
   if (!flowGroupingsSections) {
     return (
@@ -320,7 +327,7 @@ export default function FlowsPanel({ integrationId, childId }) {
   const actionProps = useMemo(() => (
     {
       parentId: integrationId,
-      storeId: childId,
+      childId,
       isIntegrationApp,
       resourceType: 'flows',
       isUserInErrMgtTwoDotZero,
@@ -334,9 +341,7 @@ export default function FlowsPanel({ integrationId, childId }) {
 
   if (!flowErrorCountStatus && isUserInErrMgtTwoDotZero) {
     return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
+      <Spinner centerAll />
     );
   }
   const infoTextFlow =

@@ -1,16 +1,23 @@
 import React from 'react';
+import { useGetTableContext } from '../CeligoTable/TableContext';
 import ResourceLink from './ResourceLink';
 
 export default {
-  columns: [
+  rowKey: 'id',
+  useColumns: () => [
     {
+      key: 'name',
       heading: 'Name',
-      value: (r, { onClose }) =>
-        <ResourceLink name={r.name} resourceType={r.resourceType} id={r.id} onClick={onClose} />,
+      Value: ({rowData: r}) => {
+        const {onClose} = useGetTableContext();
+
+        return <ResourceLink name={r.name} resourceType={r.resourceType} id={r.id} onClick={onClose} />;
+      },
     },
     {
+      key: 'type',
       heading: 'Type',
-      value: r => r.resourceType,
+      Value: ({rowData: r}) => r.resourceType,
     },
   ],
 };

@@ -13,6 +13,7 @@ import getImageUrl from '../../utils/image';
 import getRoutePath from '../../utils/routePaths';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
+import LoadResources from '../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   googleBtn: {
@@ -29,7 +30,6 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
   },
   signInOption: {
-    paddingLeft: 0,
     margin: theme.spacing(2, 0),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
@@ -38,10 +38,26 @@ const useStyles = makeStyles(theme => ({
     lineHeight: 0,
   },
   saveBtnProfile: {
-    marginLeft: theme.spacing(1),
+    marginLeft: theme.spacing(2),
   },
   profilePanelHeader: {
-    padding: theme.spacing(0, 3, 3, 0),
+    padding: theme.spacing(2),
+  },
+  formContainer: {
+    padding: theme.spacing(0, 2),
+  },
+  root: {
+    backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    overflowX: 'auto',
+    minHeight: 124,
+  },
+  googleSignInPanel: {
+    paddingBottom: theme.spacing(2),
+    '& > .MuiFormLabel-root': {
+      padding: theme.spacing(0, 2),
+    },
   },
 }));
 
@@ -54,12 +70,15 @@ const dateFormats = [{ value: 'MM/DD/YYYY', label: '12/31/1900' },
   { value: 'YYYY/MM/DD', label: '1900/12/31' },
   { value: 'YYYY-MM-DD', label: '1900-12-31' }];
 
-export default function ProfileComponent() {
+export default function ProfilePanel() {
   const classes = useStyles();
 
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
+  const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
+  const isUserAllowedOnlySSOSignIn = useSelector(state => selectors.isUserAllowedOnlySSOSignIn(state));
+
   const dateTimeZonesList = useMemo(
     () => [
       {
@@ -152,6 +171,7 @@ export default function ProfileComponent() {
         type: 'useremail',
         label: 'Email',
         helpKey: 'myaccount.email',
+        readOnly: isUserAllowedOnlySSOSignIn,
         value: preferences && preferences.email,
       },
       password: {
@@ -160,6 +180,7 @@ export default function ProfileComponent() {
         label: 'Password',
         helpKey: 'myaccount.password',
         type: 'userpassword',
+        visible: !isUserAllowedOnlySSOSignIn,
       },
       company: {
         id: 'company',
@@ -238,7 +259,7 @@ export default function ProfileComponent() {
         'developer',
       ],
     },
-  }), [dateFormatList, dateTimeZonesList, preferences, timeFormatList]);
+  }), [dateFormatList, dateTimeZonesList, preferences, timeFormatList, isUserAllowedOnlySSOSignIn]);
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -252,18 +273,19 @@ export default function ProfileComponent() {
   });
 
   return (
-    <>
+    <div className={classes.root}>
       <PanelHeader title="Profile" className={classes.profilePanelHeader} />
-      <DynaForm formKey={formKey} />
-      <DynaSubmit
-        formKey={formKey}
-        onClick={submitHandler()}
-        className={classes.saveBtnProfile}
-        disabled={disableSave}>
-        {defaultLabels.saveLabel}
-      </DynaSubmit>
-      {getDomain() !== 'eu.integrator.io' && (
-        <div>
+      <LoadResources required resources={isAccountOwnerOrAdmin ? 'ssoclients' : ''}>
+        <DynaForm formKey={formKey} className={classes.formContainer} />
+        <DynaSubmit
+          formKey={formKey}
+          onClick={submitHandler()}
+          className={classes.saveBtnProfile}
+          disabled={disableSave}>
+          {defaultLabels.saveLabel}
+        </DynaSubmit>
+        {getDomain() !== 'eu.integrator.io' && (
+        <div className={classes.googleSignInPanel}>
           <PanelHeader
             title="Sign in via Google"
             className={classes.signInOption}
@@ -299,7 +321,8 @@ export default function ProfileComponent() {
               </InputLabel>
           )}
         </div>
-      )}
-    </>
+        )}
+      </LoadResources>
+    </div>
   );
 }

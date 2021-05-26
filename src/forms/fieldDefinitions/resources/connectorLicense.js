@@ -4,15 +4,22 @@ import { isNewId } from '../../../utils/resource';
 export default {
   expires: {
     defaultValue: r => r.expires && moment(r.expires).format('L'),
-    type: 'dateselector',
+    type: 'licenseexpires',
     label: 'Expires',
-    required: true,
+    connectorId: r => r._connectorId,
+    trialLicenseTemplate: r => r.trialLicenseTemplate,
+  },
+  trialEndDate: {
+    defaultValue: r => r.trialEndDate && moment(r.trialEndDate).format('L'),
+    type: 'licenseexpires',
+    label: 'Trial expires',
+    connectorId: r => r._connectorId,
+    trialLicenseTemplate: r => r.trialLicenseTemplate,
   },
   opts: {
     defaultValue: r => r.opts,
-    type: 'editor',
+    type: 'licenseeditor',
     mode: 'json',
-    saveMode: 'json',
     label: 'Options',
   },
   sandbox: {
@@ -31,15 +38,17 @@ export default {
     defaultDisabled: r => !isNewId(r._id),
   },
   email: {
-    defaultValue: r => r.user && r.user.email,
+    defaultValue: r => r.user?.email || r.email,
     type: 'text',
     label: 'Email',
     required: true,
-    disableText: r => !isNewId(r._id),
+    disableText: r => !isNewId(r._id) || r.trialLicenseTemplate,
   },
-  edition: {
-    type: 'text',
+  _editionId: {
+    type: 'licenseedition',
     label: 'Edition',
+    defaultDisabled: r => !isNewId(r._id),
+    connectorId: r => r?._connectorId,
   },
   childLicenses: {
     type: 'childlicenses',

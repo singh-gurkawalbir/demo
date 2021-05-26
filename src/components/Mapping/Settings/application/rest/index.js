@@ -85,6 +85,7 @@ export default {
         useFirstRow: {
           id: 'useFirstRow',
           name: 'useFirstRow',
+          helpKey: 'mapping.useFirstRow',
           type: 'checkbox',
           defaultValue: value.useFirstRow || false,
           label: 'Use first row',
@@ -177,7 +178,7 @@ export default {
           resourceId,
           flowId,
           resourceType: 'imports',
-          defaultValue: lookup.body || '',
+          defaultValue: lookup.body || lookup.postBody || '',
           required: true,
           label: 'HTTP request body',
           // helpText not present

@@ -68,7 +68,7 @@ export default function ConfigureDebugger(props) {
   const classes = useStyles();
   const match = useRouteMatch();
   const { id, debugDate, onClose } = props;
-  const { confirmDialog } = useConfirmDialog();
+  const { saveDiscardDialog } = useConfirmDialog();
   const [debugValue, setDebugValue] = useState(0);
   const dispatch = useDispatch();
   const handleSaveClick = useCallback(() => {
@@ -99,22 +99,6 @@ export default function ConfigureDebugger(props) {
       return moment(debugDate).diff(moment(), 'minutes');
     }
   }, [debugDate]);
-  const handleCancelClick = useCallback(() => {
-    confirmDialog({
-      title: 'Confirm cancel',
-      message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
-      buttons: [
-        {
-          label: 'Yes, cancel',
-          onClick: onClose,
-        },
-        {
-          label: 'No, go back',
-          color: 'secondary',
-        },
-      ],
-    });
-  }, [onClose, confirmDialog]);
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {
@@ -124,6 +108,12 @@ export default function ConfigureDebugger(props) {
       onClose,
     }
   );
+  const handleCancelClick = useCallback(() => {
+    saveDiscardDialog({
+      onSave: submitHandler(true),
+      onDiscard: onClose,
+    });
+  }, [saveDiscardDialog, submitHandler, onClose]);
 
   // TODO @Raghu: Convert this into a Right Drawer
   return (

@@ -9,7 +9,7 @@ import ViewNotificationsDrawer from '../Drawers/ViewNotifications';
 import ManageNotificationsDrawer from '../Drawers/ManageNotifications';
 import LoadResources from '../../LoadResources';
 
-export default function UsersList({ integrationId, storeId, className }) {
+export default function UsersList({ integrationId, childId, className }) {
   const dispatch = useDispatch();
   const accessLevel = useSelector(state => selectors.resourcePermissions(state)?.accessLevel);
   const isAccountOwner = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
@@ -20,6 +20,7 @@ export default function UsersList({ integrationId, storeId, className }) {
   const isIntegrationUsersRequested = useSelector(state =>
     !!selectors.integrationUsers(state, integrationId)
   );
+  const isSSOEnabled = useSelector(state => selectors.isSSOEnabled(state));
 
   useEffect(() => {
     if (integrationId && !isIntegrationUsersRequested) {
@@ -30,14 +31,21 @@ export default function UsersList({ integrationId, storeId, className }) {
   const actionProps = useMemo(() => (
     {
       integrationId,
-      storeId,
+      childId,
       accessLevel,
       isUserInErrMgtTwoDotZero,
-    }), [integrationId, storeId, accessLevel, isUserInErrMgtTwoDotZero]);
+      isSSOEnabled,
+    }), [integrationId, childId, accessLevel, isUserInErrMgtTwoDotZero, isSSOEnabled]);
+
+  const requiredResources = ['integrations', 'connections', 'notifications'];
+
+  if (isAccountOwner) {
+    requiredResources.push('ssoclients');
+  }
 
   return (
     <>
-      <LoadResources required resources="integrations, connections, notifications">
+      <LoadResources required resources={requiredResources}>
         <ResourceTable
           resources={users}
           className={className}
@@ -50,8 +58,8 @@ export default function UsersList({ integrationId, storeId, className }) {
       { integrationId
         ? (
           <>
-            <ViewNotificationsDrawer integrationId={integrationId} storeId={storeId} />
-            <ManageNotificationsDrawer integrationId={integrationId} storeId={storeId} />
+            <ViewNotificationsDrawer integrationId={integrationId} childId={childId} />
+            <ManageNotificationsDrawer integrationId={integrationId} childId={childId} />
           </>
         ) : null }
 

@@ -3,9 +3,7 @@ import form, {selectors as fromForm} from './form';
 import stage, { selectors as fromStage } from './stage';
 import filters, { selectors as fromFilters } from './filters';
 import editors, { selectors as fromEditors } from './editors';
-import _editors, { selectors as fromEditorsAfe2 } from './_editors';
 import metadata, { selectors as fromMetadata } from './metadata';
-import editorSampleData, { selectors as fromEditorSampleData } from './editorSampleData';
 import connectors, { selectors as fromConnectors } from './connectors';
 import connections, { selectors as fromConnections } from './connections';
 import resourceForm, { selectors as fromResourceForm } from './resourceForm';
@@ -35,6 +33,9 @@ import exportDataReducer, { selectors as fromExportData } from './exportData';
 import customSettings, { selectors as fromCustomSettings } from './customSettings';
 import recycleBin, { selectors as fromRecycleBin } from './recycleBin';
 import logs, {selectors as fromLogs} from './logs';
+import sso, {selectors as fromSSO} from './sso';
+import bottomDrawer, {selectors as fromBottomDrawer} from './bottomDrawer';
+import integrations, {selectors as fromIntegrations} from './integrations';
 import { genSelectors } from '../util';
 
 export default combineReducers({
@@ -43,7 +44,6 @@ export default combineReducers({
   stage,
   filters,
   editors,
-  _editors,
   metadata,
   connectors,
   connections,
@@ -59,6 +59,7 @@ export default combineReducers({
   flowData,
   flowMetrics,
   integrationApps,
+  integrations,
   templates,
   oAuthAuthorize,
   mapping,
@@ -72,8 +73,9 @@ export default combineReducers({
   errorManagement,
   customSettings,
   exportData: exportDataReducer,
-  editorSampleData,
   logs,
+  sso,
+  bottomDrawer,
 });
 
 // #region PUBLIC SELECTORS
@@ -83,9 +85,7 @@ const subSelectors = {
   stage: fromStage,
   filters: fromFilters,
   editors: fromEditors,
-  _editors: fromEditorsAfe2,
   metadata: fromMetadata,
-  editorSampleData: fromEditorSampleData,
   connectors: fromConnectors,
   connections: fromConnections,
   resourceForm: fromResourceForm,
@@ -98,6 +98,7 @@ const subSelectors = {
   importSampleData: fromImportSampleData,
   flowData: fromFlowData,
   integrationApps: fromIntegrationApps,
+  integrations: fromIntegrations,
   templates: fromTemplates,
   oAuthAuthorize: fromOAuthAuthorize,
   resource: fromResource,
@@ -115,6 +116,8 @@ const subSelectors = {
   customSettings: fromCustomSettings,
   recycleBin: fromRecycleBin,
   logs: fromLogs,
+  sso: fromSSO,
+  bottomDrawer: fromBottomDrawer,
 };
 
 genSelectors(selectors, subSelectors);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory, useLocation, matchPath } from 'react-router-dom';
-import { Typography, makeStyles } from '@material-ui/core';
+import { Typography, makeStyles, Divider } from '@material-ui/core';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -16,52 +16,56 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import DynaSelect from '../../DynaForm/fields/DynaSelect';
 
 const metadata = {
-  columns: [
+  useColumns: () => [
     {
+      key: 'integration',
       heading: 'Integration',
-      value: job => job._integrationId && job._integrationId.name,
+      Value: ({rowData: job}) => job._integrationId && job._integrationId.name,
     },
     {
+      key: 'flow',
       heading: 'Flow',
-      value: job => job._flowId && job._flowId.name,
+      Value: ({rowData: job}) => job._flowId && job._flowId.name,
     },
     {
+      key: 'status',
       heading: 'Status',
-      value: job => getStatus({ ...job, uiStatus: job.status }),
+      Value: ({rowData: job}) => getStatus({ ...job, uiStatus: job.status }),
     },
     {
+      key: 'success',
       heading: 'Success',
-      value: job => job.numSuccess,
+      Value: ({rowData: job}) => job.numSuccess,
     },
     {
+      key: 'ignore',
       heading: 'Ignore',
-      value: job => job.numIgnore,
+      Value: ({rowData: job}) => job.numIgnore,
     },
     {
+      key: 'error',
       heading: 'Error',
-      value: job => job.numError,
+      Value: ({rowData: job}) => job.numError,
     },
     {
+      key: 'pages',
       heading: 'Pages',
-      value: job => getPages(job),
+      Value: ({rowData: job}) => getPages(job),
     },
   ],
-  rowActions: [
+  useRowActions: () => [
     {
+      key: 'cancel',
       label: 'Cancel',
       icon: CancelIcon,
-      component: function CancelQueuedJobAction({ rowData = {} }) {
+      useOnClick: rowData => {
         const dispatch = useDispatch();
         const resourceId = rowData?._id;
         const handleCancelJob = useCallback(() => {
           dispatch(actions.connection.cancelQueuedJob(resourceId));
         }, [dispatch, resourceId]);
 
-        useEffect(() => {
-          handleCancelJob();
-        }, [handleCancelJob]);
-
-        return null;
+        return handleCancelJob;
       },
     },
   ],
@@ -69,10 +73,11 @@ const metadata = {
 
 const useStyles = makeStyles(theme => ({
   content: {
-    padding: theme.spacing(1, 2),
+    paddingBottom: theme.spacing(1),
   },
   select: {
     width: 'auto',
+    minWidth: 230,
   },
   info: {
     padding: theme.spacing(1, 0),
@@ -83,6 +88,12 @@ const useStyles = makeStyles(theme => ({
   },
   infoBlock: {
     marginRight: 12,
+  },
+  queuedDrawerHeader: {
+    alignItems: 'center',
+  },
+  divider: {
+    height: 20,
   },
 }));
 
@@ -187,8 +198,8 @@ export default function QueuedJobsDrawer() {
         hideBackButton
         onClose={handleClose}
         path={paths}>
-
-        <DrawerHeader title={`Queued Jobs: ${connectionName}`}>
+        <DrawerHeader title={`Queued Jobs: ${connectionName}`} className={classes.queuedDrawerHeader}>
+          {/* TODO: as per the mock we need help component <Help /> beside the select field */}
           <DynaSelect
             rootClassName={classes.select}
             id="queuedJobs_connection"
@@ -199,6 +210,8 @@ export default function QueuedJobsDrawer() {
               { items: connections.map(c => ({ label: c.name, value: c.id })) },
             ]}
           />
+          {/* TODO: @Azhar need to create seperate component */}
+          <Divider orientation="vertical" className={classes.divider} />
         </DrawerHeader>
 
         <DrawerContent>
@@ -208,3 +221,4 @@ export default function QueuedJobsDrawer() {
     </LoadResources>
   );
 }
+
