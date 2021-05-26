@@ -1825,7 +1825,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
   if (operationDetails.parameters) {
     identifiers = operationDetails.parameters.filter(p => !!p.isIdentifier);
 
-    if (identifiers.length > 0) {
+    if (identifiers && identifiers.length > 0) {
       importDoc.lookups = importDoc.lookups.filter(
         lu => lu.name !== identifiers[0].id
       );
@@ -1908,7 +1908,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
   }
 
   if (ignoreExisting) {
-    if (identifiers.length > 0) {
+    if (identifiers && identifiers.length > 0) {
       if (lookupType === 'source') {
         importDoc.ignoreExtract = pathParams[identifiers[0].id];
       }
@@ -1918,7 +1918,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
     lookupType === 'lookup' ||
     ignoreMissing
   ) {
-    if (identifiers.length > 0) {
+    if (identifiers && identifiers.length > 0) {
       if (lookupType === 'source') {
         importDoc.ignoreExtract = pathParams[identifiers[0].id];
       } else if (lookupType === 'lookup') {

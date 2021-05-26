@@ -119,7 +119,7 @@ export function howToFindIdentifierFieldsMeta({
   const lookupTypeOptions = [];
   const fields = [];
 
-  if (operationDetails.howToFindIdentifier) {
+  if (operationDetails.howToFindIdentifier && !isEmpty(operationDetails.howToFindIdentifier)) {
     if (operationDetails.supportIgnoreExisting) {
       lookupTypeOptions.push({
         value: 'source',
