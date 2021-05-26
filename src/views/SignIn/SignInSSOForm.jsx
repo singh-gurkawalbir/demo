@@ -41,6 +41,10 @@ export default function SignInSSOForm() {
     dispatch(actions.auth.reSignInWithSSO());
   };
 
+  window.signedInWithSSO = () => {
+    dispatch(actions.auth.initSession());
+  };
+
   return (
     <div className={classes.editableFields}>
       <TextField
