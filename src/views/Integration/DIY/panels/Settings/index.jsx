@@ -134,7 +134,8 @@ function CustomSettings({ integrationId, sectionId }) {
         actions.resource.commitStaged(
           'integrations',
           integrationId,
-          SCOPES.VALUE
+          SCOPES.VALUE,
+          {action: 'UpdatedIA2.0Settings'}
         )
       );
     },
