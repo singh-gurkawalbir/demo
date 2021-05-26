@@ -50,6 +50,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-start',
   },
+  helperClass: {
+    listStyleType: 'none',
+    zIndex: '999999',
+  },
 }));
 
 /**
@@ -226,9 +230,9 @@ export function KeyValueComponent(props) {
         <SortableList
           onSortEnd={handleSortEnd}
           updateBeforeSortStart={handleSortStart}
-          // className="classNameclassName"
           className={classes.listContainer}
           axis="y"
+          helperClass={classes.helperClass}
           useDragHandle>
           {values.map((r, index) => {
             const Row = (

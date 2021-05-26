@@ -64,6 +64,10 @@ const useStyles = makeStyles(theme => ({
   lastSeperator: {
     borderRight: '0 !important',
   },
+  helperClass: {
+    listStyleType: 'none',
+    zIndex: '999999',
+  },
 }));
 
 const SortableItem = SortableElement(({value}) => (<li>{value}</li>));
@@ -94,7 +98,9 @@ export default function PageGenerators({integrationId, flowId}) {
       <SortableList
         onSortEnd={handleSortEnd}
         className={classes.listContainer}
-        axis="y">
+        distance={20}
+        axis="y"
+        helperClass={classes.helperClass}>
         {pageGenerators.map((pg, i) => (
           <>
             <li

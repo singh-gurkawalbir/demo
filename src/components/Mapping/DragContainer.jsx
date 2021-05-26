@@ -17,6 +17,10 @@ const useStyles = makeStyles({
       listStyle: 'none',
     },
   },
+  helperClass: {
+    listStyleType: 'none',
+    zIndex: '999999',
+  },
 });
 
 const SortableItem = SortableElement(({value}) => (
@@ -53,6 +57,7 @@ export default function DragContainer({ onDrop, disabled, className, ...props })
         updateBeforeSortStart={handleSortStart}
         className={classes.listContainer}
         axis="y"
+        helperClass={classes.helperClass}
         useDragHandle>
         {mappings.map((mapping, index) => (
           <SortableItem

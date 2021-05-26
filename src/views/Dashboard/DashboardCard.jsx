@@ -35,6 +35,10 @@ const useStyles = makeStyles(theme => ({
       gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr));',
     },
   },
+  helperClass: {
+    listStyleType: 'none',
+    zIndex: '999999',
+  },
 }));
 
 const SortableItem = SortableElement(({value}) => (<li>{value}</li>));
@@ -86,6 +90,7 @@ export default function DashboardCard({ sortedTiles }) {
         onSortEnd={handleSortEnd}
         updateBeforeSortStart={handleSortStart}
         axis="xy"
+        helperClass={classes.helperClass}
         useDragHandle
       >
         {sortedTiles.map((t, index) => (

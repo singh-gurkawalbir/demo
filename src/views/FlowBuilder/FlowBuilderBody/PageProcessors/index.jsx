@@ -38,6 +38,10 @@ const useStyles = makeStyles(theme => ({
     top: 86,
     position: 'relative',
   },
+  helperClass: {
+    listStyleType: 'none',
+    zIndex: '999999',
+  },
 }));
 
 const SortableItem = SortableElement(({value}) => (<li>{value}</li>));
@@ -74,6 +78,8 @@ export default function PageProcessors({integrationId, flowId}) {
       <SortableList
         onSortEnd={handleSortEnd}
         className={classes.listContainer}
+        helperClass={classes.helperClass}
+        distance={20}
         axis="x"
       >
         {pageProcessors.map((pp, i) => (
