@@ -59,12 +59,13 @@ export default function DynaAutocomplete(props) {
     options,
   } = props;
 
-  console.log('value', value);
   const classes = useStyles();
   const onChange = useCallback((evt, selectedOption) => {
-  // evt comes from the text field and selectedOption comes from the select drop down values
-  // they are both mutually exclusive. evt is for a selectedOption which does not belong to the options
-  // selectedOption comes from the options
+    console.log('input', selectedOption?.value || evt.target.value);
+
+    // evt comes from the text field and selectedOption comes from the select drop down values
+    // they are both mutually exclusive. evt is for a selectedOption which does not belong to the options
+    // selectedOption comes from the options
     onFieldChange(id, selectedOption?.value || evt.target.value);
   }, [id, onFieldChange]);
   const onBlur = useCallback(evt => {
@@ -79,9 +80,14 @@ export default function DynaAutocomplete(props) {
     }
   }, [id, onFieldChange, value]);
 
-  const getOptionLabel = useCallback(option =>
-    option?.label ||
-    options.find(opt => opt.value === option)?.label || value,
+  const getOptionLabel = useCallback(option => {
+    const label = option?.label ||
+    options.find(opt => opt.value === option)?.label || value;
+
+    console.log('label ', label);
+
+    return label;
+  },
 
   [options, value]);
 
@@ -109,6 +115,11 @@ export default function DynaAutocomplete(props) {
           data-test={dataTest || id}
           value={value}
           onBlur={onBlur}
+          onInputChange={event => {
+            if (event?.target) {
+              onFieldChange(id, event.target.value);
+            }
+          }}
           renderOption={renderOption}
           onChange={onChange}
           renderInput={renderInput}
