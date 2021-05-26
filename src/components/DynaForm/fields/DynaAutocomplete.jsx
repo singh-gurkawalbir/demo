@@ -1,10 +1,9 @@
 import { FormLabel, TextField } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
-import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core/styles';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import clsx from 'clsx';
-import React from 'react';
+import React, { useCallback } from 'react';
 import CeligoTruncate from '../../CeligoTruncate';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
@@ -29,10 +28,8 @@ const useStyles = makeStyles(theme => ({
 const Row = props => {
   const {value, label, disabled, style } = props;
 
-  console.log('check props', props);
-
   return (
-    <MenuItem
+    <div
       key={value}
       value={value}
       data-value={value}
@@ -42,10 +39,10 @@ const Row = props => {
       <CeligoTruncate placement="left" lines={2}>
         {label}
       </CeligoTruncate>
-    </MenuItem>
+    </div>
   );
 };
-
+const renderOption = option => <Row {...option} />;
 export default function DynaAutocomplete(props) {
   const {
     disabled,
@@ -62,9 +59,33 @@ export default function DynaAutocomplete(props) {
     options,
   } = props;
 
+  console.log('value', value);
   const classes = useStyles();
+  const onChange = useCallback((evt, selectedOption) => {
+  // evt comes from the text field and selectedOption comes from the select drop down values
+  // they are both mutually exclusive. evt is for a selectedOption which does not belong to the options
+  // selectedOption comes from the options
+    onFieldChange(id, selectedOption?.value || evt.target.value);
+  }, [id, onFieldChange]);
+  const onBlur = useCallback(evt => {
+    // in onChange updates are made either through
+    // 1. entering a text and hitting enter
+    // 2. navigating through the options and hitting enter
+    // On blur is also required when the user enters some text and moves to another field
+    const textFieldValue = evt.target.value;
 
-  console.log('check ', props);
+    if (textFieldValue !== value) {
+      onFieldChange(id, evt.target.value);
+    }
+  }, [id, onFieldChange, value]);
+
+  const getOptionLabel = useCallback(option =>
+    option?.label ||
+    options.find(opt => opt.value === option)?.label || value,
+
+  [options, value]);
+
+  const renderInput = useCallback(params => <TextField {...params} name={name} id={id} />, [id, name]);
 
   return (
     <div className={clsx(classes.dynaSelectWrapper, rootClassName)}>
@@ -80,17 +101,17 @@ export default function DynaAutocomplete(props) {
         required={required}
         className={classes.dynaSelectWrapper}>
         <Autocomplete
+          disableClearable
+          freeSolo
           options={options}
-          getOptionLabel={option => option.label || ''}
+          includeInputInList
+          getOptionLabel={getOptionLabel}
           data-test={dataTest || id}
           value={value}
-        //   getOptionLabel={option => options.find(f => f.value === option)?.label || ''}
-          renderOption={option => <Row {...option} />}
-          onChange={(evt, value) => {
-            console.log('see ', value);
-            onFieldChange(id, value);
-          }}
-          renderInput={params => <TextField {...params} name={name} id={id} />}
+          onBlur={onBlur}
+          renderOption={renderOption}
+          onChange={onChange}
+          renderInput={renderInput}
         />
       </FormControl>
 
