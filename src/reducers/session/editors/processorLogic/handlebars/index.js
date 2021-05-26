@@ -110,7 +110,7 @@ export default {
     if (fieldState?.type !== 'httprequestbody') {
       resultMode = 'text';
     } else {
-      resultMode = contentType === 'json' ? 'json' : 'xml';
+      resultMode = contentType;
     }
 
     return {
