@@ -113,6 +113,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const supportsMultiStore = integration?.settings?.supportsMultiStore;
   const {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable, licenseId} = useSelector(state =>
     selectors.tileLicenseDetails(state, tile), shallowEqual
   );
@@ -318,6 +319,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             content={licenseMessageContent} showTrialLicenseMessage={showTrialLicenseMessage} expired={expired} connectorId={tile._connectorId}
             trialExpired={trialExpired}
             licenseId={licenseId}
+            supportsMultiStore={supportsMultiStore}
             tileStatus={tile.status}
             isIntegrationV2={isIntegrationV2} integrationId={tile._integrationId}
             integrationAppTileName={integrationAppTileName} resumable={resumable} accessLevel={accessLevel} />
