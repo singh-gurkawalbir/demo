@@ -5,7 +5,7 @@ import { withDesign } from 'storybook-addon-designs';
 import { jsxDecorator } from 'storybook-addon-jsx';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import FilledButton from './index';
-import AddIcon from '../../icons/AddIcon';
+import RefreshIcon from '../../icons/RefreshIcon';
 import DeleteIcon from '../../icons/TrashIcon';
 
 export default {
@@ -32,8 +32,8 @@ defaultButton.parameters = designParameters;
 export const startIcon = Template.bind();
 
 startIcon.args = {
-  startIcon: <AddIcon />,
-  children: 'Start icon',
+  startIcon: <RefreshIcon />,
+  children: 'Load more',
 };
 
 startIcon.parameters = designParameters;
