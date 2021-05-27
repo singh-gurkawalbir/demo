@@ -3,7 +3,8 @@ import FormControl from '@material-ui/core/FormControl';
 import { makeStyles } from '@material-ui/core/styles';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import clsx from 'clsx';
-import React, { useCallback } from 'react';
+import produce from 'immer';
+import React, { useCallback, useReducer, useState } from 'react';
 import CeligoTruncate from '../../CeligoTruncate';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
@@ -43,6 +44,30 @@ const Row = props => {
   );
 };
 const renderOption = option => <Row {...option} />;
+const SELECT_OPTION = 'select-option';
+const ON_INPUT = 'input';
+
+const reducer = (state, action) => {
+  const {type, value, label} = action;
+
+  return produce(state, draft => {
+    switch (type) {
+      case SELECT_OPTION: {
+        draft.eventOrigin = SELECT_OPTION;
+        draft.inputTextValue = label;
+
+        return;
+      }
+      case ON_INPUT:
+        draft.eventOrigin = ON_INPUT;
+        draft.inputTextValue = value;
+
+        break;
+      default:
+    }
+  });
+};
+
 export default function DynaAutocomplete(props) {
   const {
     disabled,
@@ -59,10 +84,9 @@ export default function DynaAutocomplete(props) {
     options,
   } = props;
 
+  useReducer(reducer, {});
   const classes = useStyles();
   const onChange = useCallback((evt, selectedOption) => {
-    console.log('input', selectedOption?.value || evt.target.value);
-
     // evt comes from the text field and selectedOption comes from the select drop down values
     // they are both mutually exclusive. evt is for a selectedOption which does not belong to the options
     // selectedOption comes from the options
@@ -84,14 +108,13 @@ export default function DynaAutocomplete(props) {
     const label = option?.label ||
     options.find(opt => opt.value === option)?.label || value;
 
-    console.log('label ', label);
-
     return label;
   },
 
   [options, value]);
 
   const renderInput = useCallback(params => <TextField {...params} name={name} id={id} />, [id, name]);
+  const [inputValue, setInputValue] = useState('');
 
   return (
     <div className={clsx(classes.dynaSelectWrapper, rootClassName)}>
@@ -114,11 +137,15 @@ export default function DynaAutocomplete(props) {
           getOptionLabel={getOptionLabel}
           data-test={dataTest || id}
           value={value}
+          filterOptions={(options, state) => {
+            console.log('check here', options, state);
+
+            return options;
+          }}
           onBlur={onBlur}
-          onInputChange={event => {
-            if (event?.target) {
-              onFieldChange(id, event.target.value);
-            }
+          inputValue={inputValue}
+          onInputChange={(event, val) => {
+            setInputValue(val);
           }}
           renderOption={renderOption}
           onChange={onChange}
