@@ -13,8 +13,7 @@ const fixedListOptions = fixedList => {
   if (fixedList) {
     return {
       type: 'autosuggest',
-      options: [...fixedList],
-
+      options: fixedList,
       supportsRefresh: false,
     };
   }
