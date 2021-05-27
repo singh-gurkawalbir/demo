@@ -26,12 +26,12 @@ export default function DynaRefreshableStaticMap(props) {
     connectionId,
     keyName = 'extract',
     keyLabel = 'Export',
-    fixedKeyOptionsList,
+    keyOptions,
     map,
     value,
     valueLabel = 'Import',
     valueName = 'generate',
-    fixedValueOptionsList,
+    valueOptions,
     filterKey,
     commMetaPath,
     disableFetch,
@@ -69,7 +69,7 @@ export default function DynaRefreshableStaticMap(props) {
       options: eOptions,
       type: eOptions.length ? 'autosuggest' : 'input',
       supportsRefresh: isExportRefresh(eKind, eKey, eExportResource),
-      ...fixedListOptions(fixedKeyOptionsList),
+      ...fixedListOptions(keyOptions),
     }, {
       id: valueName,
       label: valueLabel,
@@ -78,11 +78,11 @@ export default function DynaRefreshableStaticMap(props) {
       optionsChangeIdentifer: 0,
       options: gOptions,
       supportsRefresh: !!connectionId || !!isExportRefresh(gKind, gKey, gExportResource),
-      ...fixedListOptions(fixedValueOptionsList),
+      ...fixedListOptions(valueOptions),
     }];
   },
   [connectionId, eData, eExportResource, eKey, eKind,
-    fixedKeyOptionsList, fixedValueOptionsList,
+    keyOptions, valueOptions,
     gData, gExportResource, gKey, gKind, keyLabel, keyName, valueLabel, valueName]);
 
   const metadata = useMemo(() => {
