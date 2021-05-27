@@ -161,7 +161,7 @@ export default function HooksForm({flowId}) {
     <LoadResources resources="scripts,stacks">
       <DrawerContent>
         <Paper elevation={0} className={classes.paperDefault}>
-          <DynaForm formKey={formKey} />
+          <DynaForm dataPublic formKey={formKey} />
         </Paper>
       </DrawerContent>
 

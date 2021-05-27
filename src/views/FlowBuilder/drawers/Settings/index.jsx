@@ -25,6 +25,7 @@ function Settings({
   integrationId,
   resourceType,
   resourceId,
+  dataPublic,
 }) {
   const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
@@ -188,7 +189,7 @@ function Settings({
   return (
     <LoadResources required resources="notifications">
       <DrawerContent>
-        <DynaForm formKey={formKey} />
+        <DynaForm dataPublic={dataPublic} formKey={formKey} />
       </DrawerContent>
 
       <DrawerFooter>

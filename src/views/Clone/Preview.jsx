@@ -363,7 +363,7 @@ export default function ClonePreview(props) {
   if (!components || isEmpty(components)) {
     return (
       <Loader open>
-        <Typography variant="h4">Loading</Typography>
+        <Typography data-public variant="h4">Loading</Typography>
         <Spinner />
       </Loader>
     );
@@ -372,7 +372,7 @@ export default function ClonePreview(props) {
   if (!components || isEmpty(components)) {
     return (
       <Loader open>
-        <Typography variant="h4">Loading Clone Preview</Typography>
+        <Typography data-public variant="h4">Loading Clone Preview</Typography>
         <Spinner />
       </Loader>
     );
@@ -443,7 +443,7 @@ export default function ClonePreview(props) {
   if (cloneRequested) {
     return (
       <Loader open>
-        <Typography variant="h4">Loading</Typography>
+        <Typography data-public variant="h4">Loading</Typography>
         <Spinner />
       </Loader>
     );

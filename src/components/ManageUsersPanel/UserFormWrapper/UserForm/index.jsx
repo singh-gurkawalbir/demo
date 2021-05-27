@@ -26,6 +26,7 @@ export default function UserForm({
   onSaveClick,
   onCancelClick,
   disableSave,
+  dataPublic,
 }) {
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -204,6 +205,7 @@ export default function UserForm({
     <LoadResources required resources="integrations,ssoclients">
       <DrawerContent>
         <DynaForm
+          dataPublic={dataPublic}
           formKey={formKey} />
       </DrawerContent>
       <DrawerFooter>
